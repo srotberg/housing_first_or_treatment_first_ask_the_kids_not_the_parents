@@ -1,3 +1,37 @@
+## 23:21 UTC 7 September -- THE 200-ITERATION COUNT STARTS HERE
+
+The author: *"i want to see how the gaps table looks like after 200
+iterations"*, *"start counting now. let's see it in 200 iterations"*, *"i think
+it should converge then"*.
+
+BASELINE, set at 23:19:07 UTC: **304 points on the live economy a3cc3f2a9b.**
+Two hundred more is **504**. At the measured cadence of 2.33 minutes an
+iteration that is 7.8 hours, so about 07:15 UTC. A trigger is armed for then and
+it COUNTS THE REAL NUMBER by resolving each point's stamp rather than assuming
+two hundred ran.
+
+STATE AT THE BASELINE, 13 of 18 targeted moments in band:
+
+    tau_u  +63.6    h_1  +34.3    lambda_m  -31.5
+    sud_homeless  +23.5    b  +19.8
+
+and mu_H had just landed, -12.1 to inside in six iterations on its corrected
+-1.00 slope.
+
+WHAT SHOULD AND SHOULD NOT CONVERGE IN THAT SPAN, written down now so the
+morning is a check and not a rationalisation:
+
+  - tau_u SHOULD. About five hours of runway at its current rate against 7.8
+    available.
+  - lambda_m SHOULD, needing about 150 iterations, but it has been WORSENING
+    since 23:09 and that has to reverse first.
+  - mu_H is already in and should stay.
+  - b MAY NOT. It is not slowly converging, it is sitting at a shifted level
+    since the 23:09 jump. Two hundred iterations only help if whatever moved it
+    moves back.
+  - h_1 PROBABLY NOT. The involuntary floor is 0.0133 against a 0.012 target,
+    which is arithmetic and not something the search grinds down.
+
 ## 23:18 UTC 7 September -- b and lambda_m JUMPED IN ONE ITERATION WITH EVERY INSTRUMENT SMOOTH. Not aleph, not the instruments. FOR THE MORNING.
 
 The author offered two explanations for the oscillation -- *"maybe because aleph
