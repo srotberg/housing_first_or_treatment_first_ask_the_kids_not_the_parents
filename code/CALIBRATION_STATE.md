@@ -1,3 +1,44 @@
+## 7 September, 17:45 -- THE DRUG BLOCK IS CALIBRATED. b, lambda_d, beta and
+## y_u all inside one per cent, theta pinned at -10.
+
+    semantic economy   raw 211b867a51
+    best point         point_16398ec68f, 10 of 25 inside the band
+    b        0.089448 vs 0.089     +0.5%
+    lambda_d 0.036808 vs 0.0368    +0.0%
+    beta     2.9872   vs 3.0       -0.4%
+    y_u      0.74737  vs 0.74      +1.0%
+    theta    0.12668  vs 0.14098  -10.1%
+
+THE CONFIGURATION THE AUTHOR SPECIFIED, and it works:
+
+    PINNED  lambda_addiction               0.0
+    PINNED  relative_share_of_addiction_1  0.27      -> theta
+    PINNED  addiction_onset_base           0.0428    -> lambda_d, ARITHMETIC
+    DRIVEN  addiction_scalar_1             0.0037    -> b
+
+lambda_d landing at +0.0 per cent is the payoff from setting the base by the
+ratio rather than searching it: with the hazard flat, lambda_d/b depends on the
+base alone, so once b reached target lambda_d followed automatically. Nothing
+searched for it.
+
+THE ROOT MOVED WHEN THE BASE WAS PINNED, from 0.00484 to 0.0037, because raising
+the base raises the onset hazard and fewer choose to use. The base fixes the
+RATIO but also shifts the LEVEL, and that cost one bracket to discover.
+
+A CLIFF SITS BESIDE THE OPERATING POINT. b falls twenty fold between
+addiction_scalar_1 0.0036 and 0.0047 -- 0.10675 to 0.00528. The model must run a
+few per cent from that edge, and crossing it is not a drift but a fall, which is
+what happened overnight when b went to zero. Any future step that moves
+addiction_scalar_1 by more than a few per cent should be treated as dangerous.
+
+theta falls monotonically with b -- -2, -3, -5, -6, -8, -10 per cent as b runs
+0.210 down to 0.089 -- so the 0.27 pin, chosen at a higher b, leaves theta a
+little under target. The author judged that acceptable: *"that's good enough i
+think"*, and *"it can be a bit higher or a bit lower"*.
+
+STILL STRUCTURALLY UNREACHABLE, no instrument at all: w_bot +305, kappa_uem
++202, h_3 -94, kappa_ued -20.
+
 ## 7 September, 17:05 -- THE DRUG BLOCK IS ALIVE AND b IS ON TARGET. theta is
 ## PINNED, not driven, and the loop is running again.
 
