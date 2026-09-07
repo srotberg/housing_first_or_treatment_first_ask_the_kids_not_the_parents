@@ -1,3 +1,49 @@
+## 22:22 UTC 7 September -- the street rung moves down every iteration; the homelessness rate does not follow
+
+The author: *"does h1 move down to get homelessness to 1%?"*. The two things
+that name means split here, which is exactly what ENGINE.md's "two names mean
+two things" section warns about.
+
+THE PARAMETER MOVES DOWN, every iteration, at the full half per cent cap, in the
+correct direction, for twenty-two consecutive iterations:
+
+    21:29  street 3.973e-05   h_1 0.01472  +47.2%   b -26.4%
+    21:52  street 3.779e-05   h_1 0.01561  +56.1%   b -13.8%
+    22:01  street 3.704e-05   h_1 0.01678  +67.8%   b +16.6%
+    22:15  street 3.595e-05   h_1 0.01711  +71.1%   b +18.0%
+    22:17  street 3.577e-05   h_1 0.01715  +71.5%   b +28.5%
+
+THE MOMENT NEVER TURNS. Not once in twenty-two iterations. And the last six of
+those have b sitting flat near +18 per cent, so this is no longer the drug
+block's transient: with participation still, the street shrinking 2.9 per cent
+and h_1 rising 2.0 per cent.
+
+A HYPOTHESIS TESTED AND WRONG. bottom_productivity_level is falling at the same
+half per cent an iteration, chasing emp_homeless, and lowering the bottom node's
+productivity looked like the obvious thing making the poorest poorer and pushing
+them onto the street. It is not: measured over 57 controlled pairs its
+elasticity on h_1 is 0.000. utility_cost_of_treatment is also 0.000 over 78
+pairs. Neither is fighting the street.
+
+WHAT IS ACTUALLY THE STRONGEST LEVER ON h_1 IN THE WHOLE ARCHIVE:
+
+    d log h_1 / d log value_of_life           = -2.872   (52 controlled pairs)
+    d log h_1 / d log size_homelessness       = +0.103   (at our level)
+    d log h_1 / d log bottom_productivity     =  0.000   (57 pairs)
+    d log h_1 / d log utility_cost_of_treat   =  0.000   (78 pairs)
+
+value_of_life moves h_1 about twenty-eight times harder than h_1's own assigned
+instrument does at the level we are at, and the sign is negative, so the fact
+that it is rising is HELPING h_1 rather than hurting it. h_1's real lever exists
+in the model; it is assigned to aleph.
+
+WHAT IS PUSHING h_1 UP IS NOT IDENTIFIED. The four measured cross effects above
+do not account for it, and the rest is a trajectory in which fifteen coordinates
+move at once. Guessing at it from that is the mistake that has already been made
+twice on this project. It needs a controlled pair or a one-coordinate sweep, and
+neither is being started without the author, because the loop owns code/points
+and a sweep would take the machine.
+
 ## 22:18 UTC 7 September -- h_1 CANNOT REACH ONE PER CENT ON size_homelessness ALONE, measured
 
 The author asked whether h_1 has enough room below to get to one per cent. It
