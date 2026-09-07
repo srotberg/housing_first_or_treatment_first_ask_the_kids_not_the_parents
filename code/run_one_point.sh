@@ -98,6 +98,11 @@ declare -A P=(
     # penalty. At 1.0 finding is unpenalised; the old economy is kappa_find_smi
     # equal to kappa_uem.
     [kappa_find_smi]=1.0
+    # multiple_find_if_addicted splits the disorder's job-finding penalty off the
+    # separation penalty the employment multiplier carries, exactly as
+    # kappa_find_smi does for SMI. At 1.0 finding is unpenalised; the old economy
+    # is multiple_find_if_addicted equal to the multiplier.
+    [multiple_find_if_addicted]=1.0
     [lambda_m]=0.067
     [zeta_DI]=0.0
     [smi_onset_level]=0.003306

@@ -4369,6 +4369,30 @@
         
         real(8) :: multiple_of_probabilities_of_employment_if_addicted=&
             have_increased_unemployment_from_addiction*2.7+(1-have_increased_unemployment_from_addiction)*size_of_penalty*1.7
+        ! MULTIPLE_FIND_IF_ADDICTED SPLITS THE DISORDER'S JOB-FINDING PENALTY OFF
+        ! ITS SEPARATION PENALTY, 7 September, on the author's instruction. They
+        ! had already asked for exactly this split on the SMI side -- kappa_uem
+        ! for separation, kappa_find_smi for finding -- and then: *"And I think
+        ! for Sud we might just want to have the same thing...?"*, and *"Let's do
+        ! the split now"*.
+        !
+        ! multiple_of_probabilities_of_employment_if_addicted used to do BOTH,
+        ! sep*M and find/M, so the disorder's unemployment RATE and its spell
+        ! DURATION were one knob. The rate is pbu*M^2/(pbu*M^2+p_find) and the
+        ! duration is M/p_find, so no single M can put the rate where the data
+        ! wants it and the duration wherever homelessness needs it. That is the
+        ! same argument that split kappa_uem on 6 September, and it applies here
+        ! unchanged.
+        !
+        ! Split, the multiplier sets the rate and this sets the duration: longer
+        ! spells drain wealth, and wealth depletion is what puts a household with
+        ! the disorder on the street. That is the channel sud_homeless needs.
+        !
+        ! At 1.0 the finding margin is unpenalised, which is NOT the old
+        ! behaviour: the old code divided finding by the multiplier. A point that
+        ! wants the old economy passes multiple_find_if_addicted equal to
+        ! multiple_of_probabilities_of_employment_if_addicted.
+        real(8) :: multiple_find_if_addicted=1.0
         real(8), dimension(0:include_addiction,0:include_addiction,&
             0:include_addiction+include_heavy_vs_light_use_transitions,1:2) :: &
             addiction_probabilities,addiction_probabilities_percieved
@@ -36481,7 +36505,7 @@
 
         probability_becoming_employed_if_addicted=&
             max(min(probability_becoming_employed/&
-            multiple_of_probabilities_of_employment_if_addicted,1.d0),0.d0)
+            multiple_find_if_addicted,1.d0),0.d0)
 
         ! Mortality with both. The note multiplies the two hazards; the code used
         ! to add the two excesses, which is not the same thing once either is
@@ -37613,6 +37637,12 @@
                         "->", handover_value
                     multiple_of_probabilities_of_employment_if_addicted=&
                         max(min(handover_value,20.d0),1.d0)
+
+                case ("multiple_find_if_addicted")
+                    write(*,*) "HANDOVER multiple_find_if_addicted:",&
+                        multiple_find_if_addicted, "->", handover_value
+                    multiple_find_if_addicted=&
+                        max(min(handover_value,100.d0),1.d0)
 
                 case ("financial_grid_expander_positive")
                     write(*,*) "HANDOVER financial_grid_expander_positive:",&
