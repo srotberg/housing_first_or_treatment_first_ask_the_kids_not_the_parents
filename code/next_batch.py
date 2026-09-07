@@ -1525,6 +1525,11 @@ UNSCORED = {'rent50',
     # floor not to be an instrument for it, and with nothing else aimed at
     # band 5 a scored moment would hold the minimax open against nothing.
     'h_age5',
+    # kappa_uem IS CONCEDED, 7 September, on the author's instruction to leave
+    # the SMI unemployment rate at everyone else's and carry the whole penalty
+    # on job finding. It was at its ceiling of 70 with a 74 per cent gap, so
+    # nothing achievable is given up.
+    'kappa_uem',
     }
 
 

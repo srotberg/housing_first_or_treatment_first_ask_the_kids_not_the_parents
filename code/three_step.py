@@ -438,7 +438,6 @@ RULES = {
     # shows it stepping while the moment does not move. At 70 that happens if pbu
     # rises past 0.0143, which is close to where it is, so this bound is a
     # measurement decision that expires if the unemployment target moves again.
-    'kappa_uem':                                 ('kappa_uem',    -1.00, 1.0, 70.0, 0.25, 0.20),
     'utility_cost_of_treatment':                 ('tau_u',        -1.00, 0.0, 8.0, 0.25, 0.20),
     'multiple_of_probabilities_of_employment_if_addicted':
                                                  # upper bound 20, the Fortran's own
@@ -530,7 +529,27 @@ FIXED = {'kkk_s_deviation_bottom': 3.4113,
          # generous than 0.13, so fewer old households are priced onto the
          # street and band 5 moves further from the 7.5 per cent in the data --
          # the gap the author has just accepted as untargeted.
-         'ssi_floor_level': 0.1774}
+         'ssi_floor_level': 0.1774,
+         # SMI DOES NOT COST YOU YOUR JOB, IT COSTS YOU THE NEXT ONE. The author,
+         # 7 September: *"maybe we should conceded the unemployment rate of those
+         # with smi. And just leave it at the same rate as everyone else. And just
+         # set the job finding rate to match the share of the homeless with smi"*.
+         #
+         # kappa_uem multiplies the SEPARATION rate under SMI, and at 1.0 an SMI
+         # household loses its job at exactly the rate everyone else does. The
+         # whole SMI labour penalty then runs through kappa_find_smi, which
+         # divides the job-FINDING rate and is already pointed at lambda_m.
+         #
+         # IT COULD NOT REACH ITS TARGET ANYWAY. It sat at 70, its ceiling, with
+         # employment given SMI at 0.522 against 0.300 -- a 74 per cent gap at the
+         # top of its range, having been raised from 20 earlier in the night when
+         # the old ceiling was found to have expired. Conceding it gives up
+         # nothing that was achievable and stops an instrument grinding at a bound.
+         #
+         # The channel the author named on 6 September is the one that survives:
+         # long spells drain wealth, and wealth depletion is what puts an SMI
+         # household on the street.
+         'kappa_uem': 1.0}
 
 # A PARAMETER AT ZERO CANNOT BE REACHED BY A PROPORTIONAL STEP. The step is
 # value*exp(...), so zero times anything is zero and the instrument is frozen
@@ -1030,6 +1049,7 @@ def main():
     WHY = {
         'kkk_s_deviation_bottom': "the author's 0.2 per cent bottom node",
         'lambda_addiction':       "held at zero, the base carries the drug block",
+        'kappa_uem':              "SMI separation conceded; kappa_find_smi carries it",
         'ssi_floor_level':        "the SSI floor is not an instrument; band 5 untargeted",
     }
     for k, v in FIXED.items():
