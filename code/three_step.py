@@ -695,7 +695,46 @@ for _p, _m in sorted(_OWN.items()):
 # iterations"*. 0.04 e-folds is 4.08 per cent, the middle of the range they gave.
 # It was 0.10 for one commit and that was still too loose for a method whose only
 # assumption is locality.
-SLOW_DAMPING, SLOW_CAP = 0.25, 0.04
+# TWO PER CENT, on the author's instruction of 7 September: *"Maybe you need to
+# reduce the steps of each parameter to 2% at most"*. It was four, and ten before
+# that, and 101 before that.
+SLOW_DAMPING, SLOW_CAP = 0.25, 0.02
+
+# THE HOLD IS HYSTERETIC: an instrument stops at five per cent and does not start
+# again until ten. The author, 7 September: *"maybe stop updating when the moment
+# is within 5% and only start updating when it goes outside of 10%?"*.
+#
+# ONE THRESHOLD CHATTERS. With a single ten per cent rule an instrument that
+# lands at 9.9 holds, drifts to 10.1 on somebody else's step, moves, lands at
+# 9.8, holds again -- and every one of those moves disturbs the moments it cross
+# affects, which is how a settled moment gets knocked out of band by an
+# instrument that was itself almost on target. Two thresholds give it somewhere
+# to rest: it must be properly wrong, not marginally wrong, before it moves.
+#
+# THE STATE HAS TO PERSIST, because the rule is about where a moment HAS BEEN,
+# not only where it is. A moment sitting at seven per cent is held if it got
+# there by converging from twelve, and stepped if it is on its way out from
+# three. That history lives in three_step_active.json, next to the ledger.
+HOLD_ENTER, HOLD_EXIT = 0.05, 0.10
+_ACTIVE_FILE = os.path.join(HERE, 'three_step_active.json')
+
+
+def _load_active():
+    try:
+        with open(_ACTIVE_FILE) as fh:
+            return json.load(fh)
+    except Exception:
+        return {}
+
+
+def _save_active(a):
+    try:
+        tmp = _ACTIVE_FILE + '.tmp'
+        with open(tmp, 'w') as fh:
+            json.dump(a, fh, indent=0, sort_keys=True)
+        os.replace(tmp, _ACTIVE_FILE)
+    except Exception:
+        pass
 for _p, (_m, _fb, _lo, _hi, _d, _e) in list(RULES.items()):
     RULES[_p] = (_m, _fb, _lo, _hi, min(_d, SLOW_DAMPING), min(_e, SLOW_CAP))
 
@@ -1044,6 +1083,7 @@ def main():
     # step there is no ledger, so the newest configured point seeds it; after
     # that, a point solved from someone else's vector can supply slopes but not
     # the base.
+    active = _load_active()
     own = bases(pts)
     if own:
         _, tag, vec, mom = own[-1]
@@ -1156,10 +1196,24 @@ def main():
                   f'cannot reach it', file=sys.stderr)
             continue
         cur = mom[moment]
-        if abs(cur - tgt) <= BAND_TOL * abs(tgt):
+        gap = abs(cur - tgt) / abs(tgt)
+        # THE STATE IS ALWAYS WRITTEN BACK, including when it does not change.
+        # The first version only assigned inside the two transition branches, so
+        # an instrument that stayed active fell through with nothing stored and
+        # the next line raised KeyError -- which stops three_step, and stopping
+        # three_step stops the loop.
+        was = active.get(moment, True)
+        now = was
+        if was and gap <= HOLD_ENTER:
+            now = False
+        elif not was and gap > HOLD_EXIT:
+            now = True
+        active[moment] = now
+        if not now:
+            why = ('reached' if was else 'still inside')
             print(f'#   {param:<44}{vec[param]:10.5g}   {moment} {cur:.5f} vs '
-                  f'{tgt:.5f}, {100*(cur-tgt)/tgt:+.1f}% is inside the band, '
-                  f'HOLDING', file=sys.stderr)
+                  f'{tgt:.5f}, {100*(cur-tgt)/tgt:+.1f}%, HOLDING ({why} the five '
+                  f'per cent hold; resumes past ten)', file=sys.stderr)
             continue
         e, src = slope(pts, param, moment, fb)
         if e is None:
@@ -1189,6 +1243,7 @@ def main():
               f'{moment} {cur:.5f} vs {tgt:.5f}, slope {e:+.2f} ({src}){at}',
               file=sys.stderr)
         nxt[param] = new
+    _save_active(active)
     emit = {k: float(f'{v:g}') for k, v in nxt.items()}
     remember(emit)
     print('bash code/run_one_point.sh ' +
