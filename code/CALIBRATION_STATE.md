@@ -15,8 +15,24 @@ THE JUMP, at the 23:09 point:
 EVERY INSTRUMENT STEPPED NORMALLY. multiple_find_if_addicted -0.063 per cent at
 that iteration, identical to every neighbouring one; utility_cost_of_treatment
 +0.15; addiction_scalar_1 +0.19; kappa_find_smi +0.50. Not one of them changed
-shape. So the author's second hypothesis is ruled out directly: mfa did not move
-differently there.
+shape.
+
+CORRECTED AT 23:20, AND THE CORRECTION IS THE AUTHOR'S. This paragraph first said
+their mfa hypothesis was "ruled out directly". IT IS NOT, and they pushed back:
+*"it's possible still what i am saying"*. They are right. What the smoothness
+shows is only that NO INSTRUMENT TOOK AN UNUSUAL STEP. It says nothing about a
+NONLINEAR response to a normal step, and a nonlinear response is exactly what
+would produce a persistent level shift out of smooth inputs -- a mass of addicted
+households crossing a job-finding margin as mfa declines steadily through some
+level. mfa has NO measured elasticity on anything, zero controlled pairs in 2500
+points, so there is no basis whatever for excluding it.
+
+The same correction applies to aleph below: +0.08 per cent rules out a gradual
+proportional effect, not a threshold crossed by steady movement.
+
+SO THE ONLY THING RULED OUT IS AN UNUSUAL STEP. Every hypothesis about a
+nonlinear response -- the author's mfa one included, and it is the leading one --
+remains open.
 
 AND THE SIGNS ARE WRONG, which is the part that matters. addiction_scalar_1 moved
 UP and b moved UP, against a slope measured at -2.54 over 139 controlled pairs --
@@ -24,7 +40,8 @@ implied elasticity +52 with the wrong sign, so it cannot be a1's own effect at
 all. kappa_find_smi moved UP and lambda_m moved DOWN, against +0.438 over 13
 pairs. Both blocks inverted in the same iteration.
 
-ALEPH IS RULED OUT TOO. value_of_life moved 157.44 to 157.57 at that step, +0.08
+ALEPH SHOWS NO UNUSUAL STEP EITHER, which is not the same as being ruled out --
+see the correction above. value_of_life moved 157.44 to 157.57 at that step, +0.08
 per cent, the same as every other step; aleph closed smoothly from -3.4 to -2.2
 per cent straight through the jump, and mu_H, tau_u and h_1 passed through
 smoothly as well. h_1 actually FELL, 0.01651 to 0.01613, while the by-choice
