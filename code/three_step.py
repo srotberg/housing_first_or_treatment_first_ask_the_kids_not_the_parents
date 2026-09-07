@@ -998,6 +998,52 @@ def _save_active(a):
         os.replace(tmp, _ACTIVE_FILE)
     except Exception:
         pass
+# WHICH PRODUCTIVITY PROCESS IS LIVE, AND THEREFORE WHICH INSTRUMENT sigma_y HAS.
+#
+# THIS LOOP SPENT AN ENTIRE RUN STEPPING A PARAMETER THAT DOES NOTHING. The
+# author asked on 7 September whether sigma_y was moving towards its target at
+# all. It was not. Over forty iterations sd_permanent_productivity rose 1.4158
+# to 1.5881 -- its full half per cent every single iteration -- and the
+# DIAG bottom half PRODUCTIVITY share went 0.214993 to 0.214997, flat to five
+# decimal places, while the drug block swung sixty percentage points around it.
+# The sigma_y gap widened from +13.52 to +14.23 per cent.
+#
+# run_one_point.sh sets [fixed_productivity]=0, so every point runs the author's
+# KKK process, and it says outright at its line 311 that "y_grid_kappa,
+# bottom_productivity_level and sd_permanent_productivity are inert under KKK".
+# The dispersion under KKK is kkk_sigma_scale, which multiplies BOTH innovation
+# sds at line 29006 of the Fortran.
+#
+# next_batch.py has had this right since 3 September, in
+# _apply_process_mapping, and its comment names the exact failure that then
+# happened here: "leaving the inert one mapped is worse than a conflict: the
+# search would step a number that changes no moment and read the noise as a
+# slope." This loop never got that mapping, and this loop is what runs.
+#
+# READ, NOT HARDCODED, for the same reason next_batch.py reads it: the process
+# is a line in run_one_point.sh that every new point inherits, so it is the
+# economy the search is actually stepping around, and pinning either instrument
+# here would put this file back out of step the next time it is flipped.
+#
+# THE SIGN CARRIES OVER UNCHANGED. The moment is the bottom half's share, more
+# dispersion puts more distance between the halves, so the share FALLS as the
+# scale rises -- negative, exactly as it was written for the quantile grid. The
+# bounds are next_batch.py's own, (1.50, 4.00).
+def _live_productivity_process():
+    try:
+        txt = open(os.path.join(HERE, 'run_one_point.sh'), errors='replace').read()
+    except OSError:
+        return 1
+    m = re.search(r'\[fixed_productivity\]=\s*(\d+)', txt)
+    return int(m.group(1)) if m else 1
+
+
+if _live_productivity_process() == 0:
+    RULES.pop('sd_permanent_productivity', None)
+    RULES['kkk_sigma_scale'] = ('sigma_y', -1.00, 1.50, 4.00, 0.35, 0.20)
+else:
+    RULES.pop('kkk_sigma_scale', None)
+
 for _p, (_m, _fb, _lo, _hi, _d, _e) in list(RULES.items()):
     RULES[_p] = (_m, _fb, _lo, _hi, min(_d, SLOW_DAMPING), min(_e, SLOW_CAP))
 

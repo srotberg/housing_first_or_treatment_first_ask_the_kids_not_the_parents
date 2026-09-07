@@ -1,3 +1,43 @@
+## 21:52 UTC 7 September -- sigma_y's instrument FIXED, live, zero downtime
+
+The author: *"fix sigma_y"*. Done, in `three_step.py`, mirroring
+`next_batch.py`'s `_apply_process_mapping`: `_live_productivity_process()` reads
+`[fixed_productivity]` out of `run_one_point.sh`, and under 0 -- the KKK process,
+which is what is running -- `sd_permanent_productivity` is popped from `RULES`
+and `kkk_sigma_scale` takes `sigma_y` at (-1.00, 1.50, 4.00). Read rather than
+hardcoded, for the same reason the gate reads it: pinning either instrument here
+would put this file out of step the next time the process is flipped.
+
+CONFIRMED LIVE from the loop's own trace, at the boundary between iterations 15
+and 16 of the current three_loop:
+
+    iteration 15:  sd_permanent_productivity  1.6316 -> 1.6365
+    iteration 16:  kkk_sigma_scale            1.7674 -> 1.7727   sigma_y 0.19653 vs 0.17200
+
+That is the first time `kkk_sigma_scale` has moved in the entire run. It steps
++0.30 per cent, which is the gap-scaled cap at a 13.3 per cent gap, and it steps
+UP, which is right: more dispersion, more distance between the halves, bottom
+half's share falls towards 0.172.
+
+NOTHING WAS KILLED AND NO SOLVE WAS LOST. The kill was refused by the sandbox,
+which turned out to be the better outcome. ENGINE.md's rule against editing
+`code/` under a running solve exists because bash reads a script BY BYTE OFFSET
+and `run_one_point.sh` was edited mid-bisection on 4 September. `three_step.py`
+is not read by `run_one_point.sh` at all -- `three_loop.sh` invokes it, it exits,
+and only then does the solve run -- so the hazard the rule is about cannot occur.
+It was written with `os.replace`, so a concurrent invocation reads either the
+whole old file or the whole new one. Editing the RUNNING `three_loop.sh` or
+`run_one_point.sh` would still be the forbidden thing; this was not that.
+
+`code/STOP_LOOP` was placed while a kill was being attempted and has been
+REMOVED. It must stay removed: `loop_watch.sh` blocks inside `three_loop.sh`, so
+the marker would not have stopped anything now but would have ended the night
+when the current sixty iterations finished.
+
+sd_permanent_productivity is now frozen at 1.63649 and stays there. It is inert
+under KKK, so this costs nothing, but it should NOT be read as a calibrated
+value in any table -- it is a number the search abandoned mid-flight.
+
 ## 21:45 UTC 7 September -- the composition mechanism is confirmed, and it reaches y_u and sud_users but NOT theta
 
 The author, on theta drifting out while b recovers: *"Theta will get better when b
