@@ -509,10 +509,28 @@ FIXED = {'kkk_s_deviation_bottom': 3.4113,
          # twenty-five times further than the lever, in whichever direction the
          # rest of the model happens to push, is not identifying anything.
          #
-         # 0.13 is where it sat through the converged point of 6 September, when
-         # band 5 held about 1 per cent of the homeless against 7.5 in the data
-         # and nothing was aimed at it. That gap is now an accepted outcome.
-         'ssi_floor_level': 0.13}
+         # 0.1774 IS THE PROGRAMME'S OWN NUMBER, on the author's instruction of
+         # 7 September: *"Maybe just set it the way the US system is..."*. It is
+         # the 2024 SSI federal benefit rate of $943 a month as a share of the
+         # average wage index, and it is the Fortran's declared default and
+         # run_one_point's default alike. It sits with the rest of the actual US
+         # structure -- the PIA bend points 0.2208 and 1.3314, the 90/32/15
+         # replacement rates, the taxable maximum.
+         #
+         # IT WAS PINNED AT 0.13 FOR ONE COMMIT AND THAT NUMBER HAS NO
+         # PROVENANCE. It was simply where the vector sat when this loop picked
+         # the parameter up, left over from an earlier search that moved it as a
+         # free instrument to buy the old-age share -- the state file still
+         # carries "ssi_floor_level = 0.06 puts band 5 at -1.7 per cent" from
+         # that period. Once it stopped being an instrument there was nothing
+         # holding it at 0.13 but inertia, and a parameter the paper has to quote
+         # cannot rest on that.
+         #
+         # THE COST IS BAND 5, KNOWINGLY. At 0.1774 the floor is 36 per cent more
+         # generous than 0.13, so fewer old households are priced onto the
+         # street and band 5 moves further from the 7.5 per cent in the data --
+         # the gap the author has just accepted as untargeted.
+         'ssi_floor_level': 0.1774}
 
 # A PARAMETER AT ZERO CANNOT BE REACHED BY A PROPORTIONAL STEP. The step is
 # value*exp(...), so zero times anything is zero and the instrument is frozen
