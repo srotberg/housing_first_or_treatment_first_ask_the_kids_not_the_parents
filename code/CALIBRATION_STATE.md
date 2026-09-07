@@ -1,3 +1,46 @@
+## 21:12 UTC 7 September -- the drug block is recovering fast, and it is pushing the homelessness block out
+
+`point_f3d381fc5a`, 70 points on `c9ebefc35f`, 10 of 37 inside ten per cent.
+
+The in-band count has fallen 12 -> 11 -> 10 over the last twenty minutes and
+that reads like a regression. It is not. Against `point_e96ead989f` at 20:52
+the large gaps closed hard:
+
+    b            -66.1%  ->  -51.3%
+    sud_homeless -36.2%  ->  -22.2%
+    y_u          -45.2%  ->  -27.4%
+    lambda_d     -71.8%  ->  -56.6%
+    sud_users    -17.0%  ->  -10.8%
+    tau_u       +110.4%  ->  +98.2%
+    aleph        -10.3%  ->   -8.2%
+    pi_eu        -10.7%  ->   -7.1%
+
+and four small ones crossed OUT of the band while two crossed in:
+
+    mu_H          -8.8%  ->  -12.6%
+    theta         -9.8%  ->  -15.2%
+    h_age1        +6.7%  ->  +10.9%
+    h_share4      -9.9%  ->  -10.2%
+    h_1          +32.6%  ->  +38.3%
+
+The count is the wrong statistic while a block this far out is closing. Every
+moment that crossed out is a homelessness or SUD-composition moment, and every
+one of them moved because participation is rising: more addicts means more
+people on the street, a different recovery ratio housed against homeless, and a
+different income position for the user population.
+
+WHAT TO WATCH OVERNIGHT, and it is one thing. `size_homelessness` is h_1's
+instrument, it is falling the full half per cent every iteration, and h_1 is
+getting WORSE anyway -- the drug block's recovery is adding to the street faster
+than the rung can take away. It stands at 4.13e-05 against a lower bound of
+1e-05, so at the current rate it reaches the bound in about 284 iterations,
+roughly twelve hours. If b lands first, as it should in about forty more
+iterations, h_1 turns and the bound is never reached. If it does not, h_1 has no
+instrument left by morning.
+
+This is NOT a reason to intervene. The author's instruction at 20:55 was to let
+aleph settle and let b settle with it, and both are doing exactly that.
+
 ## 7 September, 20:50 -- UNFREEZING value_of_life BROKE THE DRUG BLOCK. The
 ## author predicted it: *"if aleph changes, then b changes, and beta"*.
 
