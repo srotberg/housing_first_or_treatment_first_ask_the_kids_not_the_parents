@@ -1899,7 +1899,26 @@
         ! IT IS STILL NOT A CITABLE FIGURE and the rebuild above is still owed.
         ! Nothing here changes that; 0.005 is a working target, and the AHAR Part
         ! 2 construction is what the paper will have to quote.
-        real(8), parameter :: fraction_homeless_data=0.01
+        ! MOVED TO 1.2 PER CENT ON THE AUTHOR'S INSTRUCTION, 7 September:
+        ! *"h1 can target 1.2% i think"*, in the same message that set h_2 to 8
+        ! and confirmed bottom_productivity_level targets nothing.
+        !
+        ! It was 0.005 until earlier the same day, then 0.01 on *"i think h1 can
+        ! target 1%"* after *"i think we can argue for anything around 0.5-1%"*.
+        !
+        ! WHY IT MATTERS HERE. The involuntary component -- households priced out
+        ! of the cheapest rental rather than choosing the street -- has sat near
+        ! 0.0137 all evening and is the floor no value of size_homelessness can
+        ! pass, because that instrument only prices the one fifth who choose. At
+        ! a target of 0.01 the floor alone was +37 per cent and the moment was
+        ! unreachable. At 0.012 the floor is +14 per cent, and the h_2 retarget in
+        ! the same round pushes the cheapest rung down, which is the one channel
+        ! that reaches the other four fifths. The two changes are one decision.
+        !
+        ! Hash-inert: fraction_homeless_data has been in model_hash's
+        ! TARGET_CONSTANTS since 6 September, so the value is blanked before the
+        ! semantic hash is taken and the archive survives the change.
+        real(8), parameter :: fraction_homeless_data=0.012
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe
