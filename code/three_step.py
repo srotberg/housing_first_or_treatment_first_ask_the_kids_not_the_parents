@@ -484,7 +484,6 @@ RULES = {
     'mu_homeless':                               ('mu_H',         -1.00, 0.0, 1.0, 0.35, 0.20),
     'probability_of_voucher_benchmark_used':     ('pi_V',         +1.00, 1e-05, 1.0, 0.35, 0.20),
     'newborn_endowment_scale':                   ('h_age1',       -1.00, 0.0, 3.0, 0.35, 0.20),
-    'ssi_floor_level':                           ('h_age5',       -1.00, 0.0, 0.30, 0.35, 0.20),
 }
 
 # THE BOTTOM NODE'S MASS IS FIXED AT 0.2 PER CENT, on the author's instruction.
@@ -496,7 +495,24 @@ FIXED = {'kkk_s_deviation_bottom': 3.4113,
          # now let's keep lambda_addiction=0 and only adjust the base"*. It is
          # written into every iterate rather than merely left unstepped, so a
          # base inherited from elsewhere cannot reintroduce it.
-         'lambda_addiction': 0.0}
+         'lambda_addiction': 0.0,
+         # THE SSI FLOOR IS NOT AN INSTRUMENT, on the author's judgement of
+         # 7 September: *"Maybe best to leave the ssi as if was when homelessness
+         # of the old was just low and untargeted. It was below 7.5% and around
+         # 1%. I think maybe the ssi floor is not a good instrument"*.
+         #
+         # The measurement agrees with them. Across eight iterations the floor
+         # moved 13 per cent while its moment swung by a factor of 3.4 -- first
+         # as h_share5, which was a simplex artefact, and then as h_age5, which
+         # is independent and still widened 197 -> 258 -> 281 -> 336 per cent
+         # while the instrument stepped toward it. A lever whose moment moves
+         # twenty-five times further than the lever, in whichever direction the
+         # rest of the model happens to push, is not identifying anything.
+         #
+         # 0.13 is where it sat through the converged point of 6 September, when
+         # band 5 held about 1 per cent of the homeless against 7.5 in the data
+         # and nothing was aimed at it. That gap is now an accepted outcome.
+         'ssi_floor_level': 0.13}
 
 # A PARAMETER AT ZERO CANNOT BE REACHED BY A PROPORTIONAL STEP. The step is
 # value*exp(...), so zero times anything is zero and the instrument is frozen

@@ -1521,6 +1521,10 @@ UNSCORED = {'rent50',
     # no such constraint. h_age1 and h_age5 leave this set; h_share1 and
     # h_share5 join it and are reported rather than scored.
     'h_share1', 'h_share5',
+    # h_age5 RETURNS TO UNSCORED, 7 September. The author judged the SSI
+    # floor not to be an instrument for it, and with nothing else aimed at
+    # band 5 a scored moment would hold the minimax open against nothing.
+    'h_age5',
     }
 
 
