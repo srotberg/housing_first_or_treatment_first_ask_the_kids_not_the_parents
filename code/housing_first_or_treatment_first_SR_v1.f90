@@ -3431,7 +3431,41 @@
         ! blocks, and identical households cannot respond at the margin -- they
         ! move together, which is what turned a two per cent step into a
         ! sixty-fold jump in drug use on 7 September.
-        integer, parameter :: employment_grid_size=8
+        ! BACK TO SEVEN, 7 September 23:45, on the author's instruction:
+        ! *"let's go back to 7 grid points, i think it might help"*, reaffirmed
+        ! after being shown the paragraph above: *"i suggest just go back to 7
+        ! grids and let it run again"*.
+        !
+        ! THEIR MECHANISM, and it is a claim about MASS rather than about node
+        ! positions: *"i think the 3rd grid from the bottom was just high enough
+        ! to make the homelessness rate possible. we the added one taking away
+        ! from the 3rd grid, it makes more poor households"*. The eighth node went
+        ! in between nodes 3 and 4, so it drew mass out of node 3 and pushed the
+        ! quantile boundaries down, putting more households below the level at
+        ! which the cheapest rental is affordable. That is a direct account of why
+        ! h_1 sits at +32 per cent and will not come down: the involuntary
+        ! component is set by how many households cannot afford the rung at all.
+        !
+        ! THE OBJECTION, RAISED AND OVERRULED, recorded because it may yet be
+        ! right. The paragraph above says seven nodes put 39.9 per cent of
+        ! households in node 4 with a factor of 2.2 gap below it, and that this
+        ! coarseness "turned a two per cent step into a sixty-fold jump in drug
+        ! use on 7 September" -- the same signature as the jump in b at 23:09
+        ! tonight, where every instrument stepped normally and b moved 9.9 per
+        ! cent with an inverted sign. If that returns at seven nodes, this is the
+        ! cause and this comment is where to look.
+        !
+        ! WHAT WAS CHECKED FIRST. The commit that set eight, b6c22ac8, touched
+        ! ONLY this file, so nothing else moved with it and reverting the size
+        ! alone cannot leave a hybrid. y_grid_kappa is already 3.2, which is the
+        ! value the seven-node design was tuned at -- the node table above, node 1
+        ! at 0.198 per cent mass, BELOW the h_1 target so the target is reached by
+        ! node one entire plus part of node two rather than by a node boundary.
+        !
+        ! WHAT IT COSTS: this is a parameter with 414 uses dimensioning most of
+        ! the model's arrays. The model hash moves, all 305 points on the previous
+        ! economy are orphaned, and the loop must SEED rather than iterate.
+        integer, parameter :: employment_grid_size=7
         integer :: use_unemployment_by_productivity=1
         ! Persistent income risk over working life. See the block beside
         ! employment_process for why this is not fixed_productivity=0.
