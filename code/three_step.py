@@ -401,7 +401,7 @@ RULES = {
     # damping is the honest response to that, where substituting -9 for -2.32
     # would be reading a derivative off a diagonal move.
     'addiction_onset_base':                      ('sud_users',    +0.58, 1e-06, 0.95, 0.15, 0.20),
-    'addiction_scalar_1':                        ('b',            -2.32, 1e-12, 1.0, 0.15, 0.20),
+    'addiction_scalar_1':                        ('b',            -4.65, 1e-12, 1.0, 0.15, 0.20),
     # THREE MORE SIGNS THE AUTHOR SUPPLIED OR THE SOURCE SETTLES, 6 September.
     # All three were assigned to their moment already and frozen only for want of
     # a measured slope -- the method will not guess a direction -- so a sign is
@@ -494,7 +494,6 @@ RULES = {
     # said. The magnitude +1.92 is the single controlled pair measured on the
     # PREVIOUS economy -- carried as a prior for the sign and the order of
     # magnitude, and replaced as soon as this economy produces a pair of its own.
-    'relative_share_of_addiction_1':             ('theta',        +1.92, 0.08, 0.25, 0.25, 0.02),
     # THE SUD MORTALITY MULTIPLIER IS A TARGET AGAIN, on the author's instruction
     # of 7 September once the history was traced: *"ah! ok, in that case allow
     # that to continue to be a target"*, *"but move it only very very slowly"*.
@@ -556,6 +555,22 @@ RULES = {
 # 3.25 -> 0.318, 3.50 -> 0.155, and log-interpolating those puts 0.200 per cent
 # at 3.4113. Written into every iterate so it cannot drift.
 FIXED = {'kkk_s_deviation_bottom': 3.4113,
+         # PINNED, on the author's instruction of 7 September: *"i suggest to
+         # pin theta to 0.27 and let my method run"*, after *"find a relative
+         # share of addiction that is close to 14% and then pin it and not move
+         # it. Because it affects b alot"*.
+         #
+         # IT AFFECTS b SIX TIMES HARDER THAN theta. Measured on one-coordinate
+         # solves: d log theta / d log this = +1.73, d log b / d log this =
+         # +11.14, against the +1.92 the rule assumed. Used as a theta
+         # instrument it swung participation fifty fold overnight and took the
+         # drug block to exactly zero, four moments with it.
+         #
+         # 0.248 gave theta 0.13297 at b 0.4023. theta falls with b -- the
+         # author: *"if b gives you a higher share of users, they are richer,
+         # which is why theta is high"* -- so the pin sits ABOVE 0.248, and
+         # theta is then hit by construction rather than chased.
+         'relative_share_of_addiction_1': 0.27,
          # HELD AT ZERO on the author's instruction of 6 September: *"i think for
          # now let's keep lambda_addiction=0 and only adjust the base"*. It is
          # written into every iterate rather than merely left unstepped, so a
