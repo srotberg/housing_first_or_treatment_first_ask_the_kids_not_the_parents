@@ -1,3 +1,65 @@
+## 7 September, 16:30 -- theta IS NOT INDEPENDENTLY CONTROLLABLE. It is a
+## function of b, and the two cannot both be hit with the current instruments.
+
+    semantic economy   raw 211b867a51, 106 points
+    serial loop        STOPPED since 10:35, STOP_LOOP set
+    drug block         measured, not searched: see the numbers below
+
+WHAT THE DAY'S SWEEPS ESTABLISHED, all from one-coordinate solves.
+
+    d log b / d log addiction_scalar_1              -4.65   at the root
+    d log b / d log relative_share_of_addiction_1  +11.14
+    d log theta / d log relative_share_of_addiction_1  +1.73
+
+The second and third are the important pair. relative_share_of_addiction_1 is
+assigned to theta in three_step at an assumed +1.92; measured, it moves theta at
++1.73 and b at +11.14. It is a PARTICIPATION instrument that nudges theta, and
+used as a theta instrument it moves b six times harder than intended. The 33 per
+cent fall in it during the night was worth a fifty fold cut in b on its own,
+which addiction_scalar_1 at -4.65 could never have offset. That is the collapse,
+quantified.
+
+AND THEN THE STRONGER RESULT. Six points spanning a TWENTY FOUR FOLD range in b
+and a 56 per cent range in relative_share_of_addiction_1 all lie on one curve:
+
+    theta = 0.1449 * b^0.198      R2 = 0.91
+
+It makes no difference which instrument moved b; theta follows b and nothing
+else. So
+
+    at b = 0.089, ON TARGET,  theta = 0.0898, which is -36 per cent
+    theta reaches 0.14098 only at b = 0.87, which is +878 per cent on b
+
+The two moments cannot both be hit at any values of these two instruments. Not
+hard to hit -- the surface is one dimensional in this pair. That is why theta
+sat near -37 per cent all night whatever else happened, and why its instrument
+kept driving relative_share_of_addiction_1 down: it was chasing a target
+reachable only by making b ten times too large.
+
+**theta THEREFORE HAS NO INSTRUMENT**, in the same sense as w_bot, kappa_uem,
+h_3 and kappa_ued. Left as a driven moment it will keep dragging a
+participation instrument around and will reproduce the collapse.
+
+THREE OPTIONS, AND THE CHOICE IS THE AUTHOR'S:
+  1. concede theta as the other four unreachable moments are conceded, freeing
+     relative_share_of_addiction_1 to drive b, which is what it measurably does;
+  2. give theta a real instrument -- one that changes spending PER USER without
+     changing participation, price_of_addictive_good being the obvious
+     candidate, though that is a model change and its slopes are unmeasured;
+  3. revisit the target. 0.14098 dates from the 5 September retarget, and the
+     model says it is incompatible with 8.9 per cent participation under this
+     specification.
+
+WHAT IS SETTLED AND USABLE MEANWHILE:
+    addiction_scalar_1 root for b = 0.089        ~0.000732 at rel_share 0.1667
+    addiction_onset_base, arithmetic              0.0417  (05:52 value 0.0410)
+    lambda_addiction                              0, and the flat lambda_d/b
+                                                  ratio across the band confirms
+                                                  the hazard really is flat
+
+The loop is NOT restarted. Restarting with theta driven reproduces the exact
+failure just diagnosed.
+
 ## 7 September, 10:35 -- THE LOOP DEADLOCKED IN A DEGENERATE CORNER, AND BOTH
 ## HALVES OF THAT NEED THE AUTHOR. STOPPED, NOT RESTARTED.
 
