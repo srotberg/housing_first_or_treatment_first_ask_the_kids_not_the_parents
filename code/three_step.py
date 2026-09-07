@@ -553,7 +553,12 @@ for _p, _m in sorted(_OWN.items()):
 # a step is about five iterations rather than two, which at four minutes a solve
 # is twenty minutes. That is cheap against one runaway, which is what the drug
 # block just cost.
-SLOW_DAMPING, SLOW_CAP = 0.25, 0.10
+# FOUR PER CENT, on the author's instruction of 7 September: *"I suggest smaller
+# steps.... Let's say that a parameter should not move more than 3-5% between
+# iterations"*. 0.04 e-folds is 4.08 per cent, the middle of the range they gave.
+# It was 0.10 for one commit and that was still too loose for a method whose only
+# assumption is locality.
+SLOW_DAMPING, SLOW_CAP = 0.25, 0.04
 for _p, (_m, _fb, _lo, _hi, _d, _e) in list(RULES.items()):
     RULES[_p] = (_m, _fb, _lo, _hi, min(_d, SLOW_DAMPING), min(_e, SLOW_CAP))
 
