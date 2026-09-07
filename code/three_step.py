@@ -447,14 +447,14 @@ RULES = {
     # shows it stepping while the moment does not move. At 70 that happens if pbu
     # rises past 0.0143, which is close to where it is, so this bound is a
     # measurement decision that expires if the unemployment target moves again.
-    'utility_cost_of_treatment':                 ('tau_u',        -1.00, 0.0, 8.0, 0.25, 0.20),
+    'utility_cost_of_treatment':                 ('tau_u',        -84.30, 0.0, 8.0, 0.25, 0.20),
     # tau_l. NEGATIVE, on the author's instruction of 6 September: *"tau_l should
     # be lowered when the model is low relative to the data"*. The source agrees
     # and explains why a value of 0.79 yields an average tax of 0.21 --
     # net_income = labor_income_tax_rate * y**curvature, so the parameter is a
     # RETENTION scale, not a rate. Higher means more income kept and a LOWER
     # average tax.
-    'labor_income_tax_rate':                     ('tau_l',        -1.00, 0.3, 0.95, 0.35, 0.20),
+    'labor_income_tax_rate':                     ('tau_l',        -7.40, 0.3, 0.95, 0.35, 0.20),
     # sigma_y. NEGATIVE, on the author's instruction of 6 September: *"sigma_y
     # should decline if the share of income at the bottom is too low. raising it
     # will reduce the share even more"*. sd_permanent_productivity is the
@@ -531,7 +531,7 @@ RULES = {
     # carries lambda_m.
     #
     # Bound 100, the Fortran's own handover clamp, matching kappa_find_smi's.
-    'multiple_find_if_addicted':                 ('sud_homeless', +1.00, 1.0, 100.0, 0.25, 0.20),
+    'multiple_find_if_addicted':                 ('sud_homeless', +86.40, 1.0, 100.0, 0.25, 0.20),
     'smi_onset_level':                           ('p_m',          +1.00, 1e-08, 0.5, 0.35, 0.20),
     # +9.0, MEASURED, not assumed. It was +1.00, and that single wrong number
     # is why beta moved too much: across the 81bf69176d archive the discount
@@ -546,9 +546,9 @@ RULES = {
     # consumption, and drug quantity is a share of consumption. b was never
     # discontinuous in its own instrument; it was bimodal in this one.
     'discount_factor':                           ('beta',         +9.00, 0.9, 1.02, 0.35, 0.10),
-    'mu_homeless':                               ('mu_H',         -1.00, 0.0, 1.0, 0.35, 0.20),
+    'mu_homeless':                               ('mu_H',         -32.40, 0.0, 1.0, 0.35, 0.20),
     'probability_of_voucher_benchmark_used':     ('pi_V',         +1.00, 1e-05, 1.0, 0.35, 0.20),
-    'newborn_endowment_scale':                   ('h_age1',       -1.00, 0.0, 3.0, 0.35, 0.20),
+    'newborn_endowment_scale':                   ('h_age1',       -17.10, 0.0, 3.0, 0.35, 0.20),
 }
 
 # THE BOTTOM NODE'S MASS IS FIXED AT 0.2 PER CENT, on the author's instruction.
@@ -797,6 +797,52 @@ for _p, _m in sorted(_OWN.items()):
 # the cap rather than a convergence. discount_factor did exactly that for 148
 # iterations at 2 per cent.
 SLOW_DAMPING, SLOW_CAP = 0.25, 0.005
+
+# THE SIGN-FLIP RATCHET, on the author's instruction of 7 September: *"sure add
+# the halving"*.
+#
+# WHAT IT FIXES, which a step cap does not. A cap bounds how far a wrong-gain
+# step travels; it cannot stop that step repeating in the opposite direction
+# for ever. On 7 September eight instruments sat at the two per cent cap in
+# antiphase for 150 iterations -- discount_factor alternating 0.90986 <-> 0.92824
+# while beta straddled its target at 2.036 and 2.521, and b riding underneath it
+# 0.003 <-> 0.19 -- because each one's assumed slope was one to two orders of
+# magnitude too small and the cap merely set the amplitude of the cycle.
+#
+# THE MODEL ALREADY KNEW THIS. The Fortran's own stepper for discount_factor
+# carries the same rule at discount_factor_damping=0.5 and its comment says why:
+# *"Wealth over output is very sensitive to beta close to one, so a fixed step
+# overshoots and then oscillates"*. That stepper is inert when a point is run --
+# the handover pins every parameter, so calibrating_model never steps -- which
+# is how the method outside it came to be the only updater and to be missing the
+# ratchet. This restores it rather than inventing it, and the constants are the
+# Fortran's own: halve on a flip, grow by 1.2 otherwise.
+#
+# A GAIN, NOT A CAP. The ratchet multiplies the damping, so an instrument that
+# is converging keeps its full speed and only one that has just jumped over its
+# target is slowed -- and only that one, because the state is per instrument.
+# The floor is 1/500 of the ceiling, matching the Fortran's adjuster_floor
+# against adjuster_start, so a ratcheted instrument slows without ever freezing.
+RATCHET_HALVE, RATCHET_GROW = 0.5, 1.2
+RATCHET_FLOOR, RATCHET_CEIL = 0.002, 1.0
+_GAIN_FILE = os.path.join(HERE, 'three_step_gain.json')
+
+
+def _load_gain():
+    try:
+        with open(_GAIN_FILE) as fh:
+            return json.load(fh)
+    except Exception:
+        return {}
+
+
+def _save_gain(g):
+    try:
+        with open(_GAIN_FILE, 'w') as fh:
+            json.dump(g, fh, indent=1, sort_keys=True)
+    except Exception:
+        pass
+
 
 # THE HOLD IS HYSTERETIC: an instrument stops at five per cent and does not start
 # again until ten. The author, 7 September: *"maybe stop updating when the moment
@@ -1195,6 +1241,7 @@ def main():
     # that, a point solved from someone else's vector can supply slopes but not
     # the base.
     active = _load_active()
+    gain = _load_gain()
     own = bases(pts)
     if own:
         _, tag, vec, mom = own[-1]
@@ -1347,15 +1394,29 @@ def main():
                 print(f'#   {param}: held at zero, a proportional step cannot '
                       f'leave it', file=sys.stderr)
             continue
-        step = damp * math.log(tgt / cur) / e
+        # THE RATCHET. The sign is of the gap, not of the step, so it does not
+        # matter whether the instrument raises or lowers its moment: an
+        # instrument that was above target and is now below has jumped over it,
+        # whatever direction it moved to get there.
+        sign = 1.0 if cur > tgt else -1.0
+        g, prev = gain.get(param, [RATCHET_CEIL, 0.0])
+        if prev != 0.0 and sign * prev < 0:
+            g = max(RATCHET_FLOOR, g * RATCHET_HALVE)
+            marks = f'  RATCHET x{g:.3f}'
+        else:
+            g = min(RATCHET_CEIL, g * RATCHET_GROW)
+            marks = '' if g >= RATCHET_CEIL else f'  gain {g:.3f}'
+        gain[param] = [g, sign]
+        step = damp * g * math.log(tgt / cur) / e
         step = max(-efold, min(efold, step))
         new = max(lo, min(hi, vec[param] * math.exp(step)))
         at = '  AT BOUND' if new in (lo, hi) else ''
         print(f'#   {param:<44}{vec[param]:10.5g} -> {new:10.5g}   '
-              f'{moment} {cur:.5f} vs {tgt:.5f}, slope {e:+.2f} ({src}){at}',
+              f'{moment} {cur:.5f} vs {tgt:.5f}, slope {e:+.2f} ({src}){at}{marks}',
               file=sys.stderr)
         nxt[param] = new
     _save_active(active)
+    _save_gain(gain)
     emit = {k: float(f'{v:g}') for k, v in nxt.items()}
     remember(emit)
     print('bash code/run_one_point.sh ' +
