@@ -41,9 +41,14 @@ def main():
             continue
         if ts._resolve(parsed[0]) == sem:
             live += 1
-    connected = sem == ts._resolve('c9ebefc35f')
-    print('economy        %s   %s' % (sem, 'CONNECTED' if connected else
-                                      'DISCONNECTED -- the loop is dead'))
+    # CONNECTED means the live source has points to iterate on, NOT that it
+    # matches one hardcoded stamp. The first version compared against
+    # ts._resolve('c9ebefc35f'), which was the economy on 7 September; the
+    # moment the author moved to seven nodes that test reported "the loop is
+    # dead" while the loop was merely seeding a new economy correctly.
+    connected = live > 0
+    print('economy        %s   %s' % (sem, 'HAS BASES' if connected else
+                                      'NO BASES -- seed before iterating'))
     print('live points    %d' % live)
     print('skipped        %d unparseable' % skipped)
     base = int(sys.argv[1]) if len(sys.argv) > 1 else None

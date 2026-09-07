@@ -1,3 +1,53 @@
+## 23:52 UTC 7 September -- SEVEN NODES IS LIVE. The first point contradicts the mechanism, and the fair test is still running.
+
+The author instructed the revert twice and it is done. Economy 02da791f0c.
+Both standing builds pass clean. kkk_s_deviation_bottom needed no change: 3.4113
+log-interpolates to a 0.200 per cent bottom node, which IS the seven-node
+design's 0.198.
+
+THE SEED, point_23cf2ad965, solved at the eight-node economy's final vector so
+the two are directly comparable:
+
+                      8 nodes            7 nodes
+    h_1            0.01619  +34.9%    0.01781  +48.4%
+    involuntary    0.01325  +10.4%    0.01562  +30.2%
+    by choice        18.1%              12.3%
+    h_2             +4.2%              +19.9%
+    lambda_m       -30.8%              -38.5%
+    in band          13 of 18           12 of 18
+
+INVOLUNTARY HOMELESSNESS ROSE 18 PER CENT. The author's mechanism was that
+seven nodes means FEWER poor households -- *"the 3rd grid from the bottom was
+just high enough to make the homelessness rate possible. we the added one taking
+away from the 3rd grid, it makes more poor households"* -- and at the same
+vector the model says the opposite: more households cannot afford the rung at
+seven nodes, not fewer.
+
+THE CAVEAT IS REAL AND THIS IS NOT YET A VERDICT. One point, at a vector
+optimised for a different grid, with no instrument re-adapted. The rung, the
+street and the bottom node all sit where eight nodes wanted them. The fair test
+is the re-converged calibration, which is what the author asked for and what is
+now running.
+
+WHAT WOULD SETTLE IT, and what to look at rather than the in-band count: whether
+the INVOLUNTARY component comes back below the 0.01325 it held at eight nodes.
+That is the quantity h_1's target turns on and it is the one the node count is
+supposed to move. The in-band count will move around for other reasons while the
+instruments re-adapt.
+
+ALSO OPEN, and not changed: merge_bottom_nodes is 2.0 and was 3.0 at seven
+nodes -- it moved in the SAME commit as the eighth node, 869cc7f1. But it was
+chosen by MEASUREMENT, not by pairing: *"the arm at merge_bottom_nodes=2 took
+the burden moment from +28 per cent to -2.6 for a 4 per cent cost in
+homelessness: node 3's 19.4 per cent were being made poor enough to be
+rent-burdened and not poor enough to be homeless"*. That measurement was taken
+at eight nodes. It bears directly on node 3, which is exactly the author's
+mechanism, so whether it should go back to 3.0 is a live question FOR THEM.
+
+count_live_points.py's connectivity test was wrong and is fixed: it compared
+against a hardcoded c9ebefc35f, so it reported "the loop is dead" the moment the
+economy changed, when the loop was merely seeding correctly.
+
 ## 23:40 UTC 7 September -- CAN h_1 REACH ITS TARGET? No, +32 per cent, and the reason is that h_2 releases the rung before the rung has done enough
 
 The author asked directly. Measured over the last 30 points, trajectory
