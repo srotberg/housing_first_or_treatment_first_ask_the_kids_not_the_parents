@@ -472,6 +472,20 @@ RULES = {
     #   voucher          the probability an eligible household draws a voucher, so
     #                    the share of eligibles holding one rises with it. Positive.
     'kappa_find_smi':                            ('lambda_m',     +1.00, 1.0, 60.0, 0.35, 0.20),
+    # THETA'S INSTRUMENT NEEDS A SIGN. The author, 7 September, on seeing it
+    # frozen: *"it should move down towards the target"*. It could not: the
+    # eight-node economy has no controlled pair for it, so it printed NO
+    # CONTROLLED PAIR YET on every iteration where theta was off, and HOLDING on
+    # every iteration where theta was inside five per cent. Twenty-two points
+    # with the value unchanged at 0.248728.
+    #
+    # POSITIVE, and unambiguously so: it is the utility weight on the addiction
+    # good, so a larger weight means households spend a larger share on it. theta
+    # above target therefore wants the weight LOWER, which is what the author
+    # said. The magnitude +1.92 is the single controlled pair measured on the
+    # PREVIOUS economy -- carried as a prior for the sign and the order of
+    # magnitude, and replaced as soon as this economy produces a pair of its own.
+    'relative_share_of_addiction_1':             ('theta',        +1.92, 0.08, 0.25, 0.25, 0.02),
     # THE SUD MORTALITY MULTIPLIER IS A TARGET AGAIN, on the author's instruction
     # of 7 September once the history was traced: *"ah! ok, in that case allow
     # that to continue to be a target"*, *"but move it only very very slowly"*.
