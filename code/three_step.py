@@ -603,14 +603,15 @@ FIXED = {'kkk_s_deviation_bottom': 3.4113,
          # with it closed a loop, because y_u is really set by whether the drug
          # block is alive that iteration.
          #
-         # Nine sits inside Hjorthoj's six to ten and above the 8 the author set
-         # on 1 September. It is on the DETERRING side of the threshold at the
-         # current scalar, so b starts collapsed and addiction_scalar_1 -- now
-         # the only instrument on the drug block -- has to walk it back. That is
-         # one lever on one margin instead of two feeding each other.
+         # EIGHT, which is the value the author set on 1 September and the
+         # midpoint of Hjorthoj's six to ten. It is on the DETERRING side of the
+         # threshold at the current scalar, so b starts collapsed and
+         # addiction_scalar_1 -- now the only instrument on the drug block -- has
+         # to walk it back. That is one lever on one margin instead of two
+         # feeding each other.
          #
          # y_u loses its instrument again and goes untargeted.
-         'kappa_phi_d_level': 9.0,
+         'kappa_phi_d_level': 8.0,
          # THE DISORDER DOES NOT COST YOU YOUR JOB EITHER, the same concession
          # the author made for SMI and for the same reason. At 1.0 a household
          # with the disorder loses its job at exactly the rate everyone else
@@ -1179,7 +1180,7 @@ def main():
         'kkk_s_deviation_bottom': "the author's 0.2 per cent bottom node",
         'lambda_addiction':       "held at zero, the base carries the drug block",
         'kappa_uem':              "SMI separation conceded; kappa_find_smi carries it",
-        'kappa_phi_d_level':      "held at 9; it was driving the drug two-cycle",
+        'kappa_phi_d_level':      "held at 8; it was driving the drug two-cycle",
         'multiple_of_probabilities_of_employment_if_addicted':
                                   "SUD separation conceded; multiple_find_if_addicted carries it",
         'ssi_floor_level':        "the SSI floor is not an instrument; band 5 untargeted",
