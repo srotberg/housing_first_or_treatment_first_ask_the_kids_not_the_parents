@@ -510,18 +510,6 @@ RULES = {
     #
     # It restarts from 8.0, the author's own value, not from the 5.64 it drifted
     # to unobserved.
-    # AT MOST ONE PER CENT A STEP, on the author's instruction of 7 September:
-    # *"kappa should move at most 1% between iterations"*, and their reading of
-    # why it matters: *"it can explain a lot about the oscillations you have
-    # seen"*. It does. Their own note of 1 September warned that a lower
-    # multiplier makes the participation elasticity too high, and it has been
-    # 5.64 against 8 for five days -- a deterrent about thirty per cent too weak,
-    # so the participation margin has been far more elastic than intended. A two
-    # per cent move in addiction_scalar_1 flipping b sixtyfold is what that looks
-    # like. Calibrating this instrument DOWN to buy y_u pushes the elasticity
-    # back up, so the cap is the thing keeping the cure from restoring the
-    # disease.
-    'kappa_phi_d_level':                         ('y_u',          -1.00, 4.0, 10.0, 0.10, 0.00995),
     # THE DISORDER'S JOB-FINDING PENALTY, split off its separation penalty in the
     # Fortran on 7 September at the author's instruction: *"for Sud we might just
     # want to have the same thing"*, then *"Let's do the split now"*.
@@ -607,6 +595,22 @@ FIXED = {'kkk_s_deviation_bottom': 3.4113,
          # long spells drain wealth, and wealth depletion is what puts an SMI
          # household on the street.
          'kappa_uem': 1.0,
+         # NINE, HELD, on the author's instruction of 7 September: *"hold
+         # kappa_phi_d_level=9"*. It was the driver of the two-cycle that had
+         # five moments hostage: it alternated between exactly 7.688 and 7.765 --
+         # a one per cent spread -- in perfect antiphase with a fiftyfold swing
+         # in b, while addiction_scalar_1 walked smoothly through. Chasing y_u
+         # with it closed a loop, because y_u is really set by whether the drug
+         # block is alive that iteration.
+         #
+         # Nine sits inside Hjorthoj's six to ten and above the 8 the author set
+         # on 1 September. It is on the DETERRING side of the threshold at the
+         # current scalar, so b starts collapsed and addiction_scalar_1 -- now
+         # the only instrument on the drug block -- has to walk it back. That is
+         # one lever on one margin instead of two feeding each other.
+         #
+         # y_u loses its instrument again and goes untargeted.
+         'kappa_phi_d_level': 9.0,
          # THE DISORDER DOES NOT COST YOU YOUR JOB EITHER, the same concession
          # the author made for SMI and for the same reason. At 1.0 a household
          # with the disorder loses its job at exactly the rate everyone else
@@ -772,7 +776,20 @@ SLOW_DAMPING, SLOW_CAP = 0.25, 0.02
 # not only where it is. A moment sitting at seven per cent is held if it got
 # there by converging from twelve, and stepped if it is on its way out from
 # three. That history lives in three_step_active.json, next to the ledger.
-HOLD_ENTER, HOLD_EXIT = 0.05, 0.10
+# NO BANDS FROM 7 September, on the author's instruction: *"let all parameters
+# move together without any bands"*. Every instrument steps every iteration,
+# however small its gap.
+#
+# The hold was theirs too, earlier the same night, and it did what it was asked:
+# it stopped instruments chattering on a single threshold. What it also did was
+# freeze coordinates while the rest of the system moved underneath them, so a
+# moment that was on target at one iteration was off at the next and its
+# instrument had sat out the change. Moving everything together is a joint step
+# in all coordinates rather than a sequence of frozen ones.
+#
+# Set to zero rather than deleted so the machinery and its state file survive and
+# the hold can be restored by putting the two numbers back.
+HOLD_ENTER, HOLD_EXIT = 0.0, 0.0
 _ACTIVE_FILE = os.path.join(HERE, 'three_step_active.json')
 
 
@@ -1162,6 +1179,7 @@ def main():
         'kkk_s_deviation_bottom': "the author's 0.2 per cent bottom node",
         'lambda_addiction':       "held at zero, the base carries the drug block",
         'kappa_uem':              "SMI separation conceded; kappa_find_smi carries it",
+        'kappa_phi_d_level':      "held at 9; it was driving the drug two-cycle",
         'multiple_of_probabilities_of_employment_if_addicted':
                                   "SUD separation conceded; multiple_find_if_addicted carries it",
         'ssi_floor_level':        "the SSI floor is not an instrument; band 5 untargeted",
