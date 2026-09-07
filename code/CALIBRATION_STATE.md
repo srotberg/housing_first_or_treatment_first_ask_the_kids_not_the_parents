@@ -1,3 +1,40 @@
+## 7 September, 17:05 -- THE DRUG BLOCK IS ALIVE AND b IS ON TARGET. theta is
+## PINNED, not driven, and the loop is running again.
+
+    semantic economy   raw 211b867a51
+    best point         point_9d96274185, 10 of 25 inside the band, NOTHING degenerate
+    b                  0.088857 against 0.089, -0.2 per cent
+    serial loop        running, based on that point
+
+HOW IT WAS RECOVERED, and none of it was a search over the whole vector.
+
+  1. A one-coordinate sweep of addiction_scalar_1 over four decades, everything
+     else frozen, gave the first unconfounded slopes this parameter has ever
+     had and bracketed b's target between two real solves.
+  2. addiction_onset_base is ARITHMETIC, not searched: with lambda_addiction=0
+     the hazard is flat, so lambda_d/b depends on the base alone. Measured flat
+     across the whole band, 0.3365 to 0.3565, exactly as a flat hazard implies.
+  3. relative_share_of_addiction_1 is PINNED at 0.27 on the author's
+     instruction, because measured it moves b at +11.14 and theta at only +1.73,
+     against the +1.92 the rules assumed. As a theta instrument it swung
+     participation fifty fold overnight and took the block to exactly zero.
+
+THE AUTHOR PREDICTED THE ONE REMAINING GAP AND WAS RIGHT: *"if b gives you a
+higher share of users, they are richer, which is why theta is high"*. theta read
++1 per cent at b = 0.365 and -10.5 per cent at b = 0.089, having fallen as the
+marginal users left. They judged that good enough rather than chase it: *"that's
+good enough i think"*. So theta sits at -10.5 and lambda_d at -10.8, both just
+outside the band, and NEITHER WILL BE FIXED BY THE LOOP -- theta's instrument is
+pinned. Correcting them is one step each if the author ever wants it:
+relative_share_of_addiction_1 to ~0.288, base to ~0.0501.
+
+WHAT IS STRUCTURALLY UNREACHABLE, unchanged and not fixable by this instrument
+set: w_bot +297, kappa_uem +202, h_3 -94, kappa_ued -22. Four moments with no
+instrument at all.
+
+mu_H reads 0.997 here against 4.99e+10 at the corner, confirming that number was
+arithmetic rather than a model fault.
+
 ## 7 September, 16:30 -- theta IS NOT INDEPENDENTLY CONTROLLABLE. It is a
 ## function of b, and the two cannot both be hit with the current instruments.
 
