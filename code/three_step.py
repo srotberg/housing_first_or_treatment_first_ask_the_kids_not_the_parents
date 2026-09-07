@@ -230,7 +230,16 @@ def _gate_targets():
     """
     t = dict(_GATE_TARGETS)
     t.update(_file_targets())
-    t.update({'h_1': 0.005, 'h_2': 0.101, 'emp_homeless': 0.46, 'pi_eu': 0.049})
+    # beta at 3.0, on the author's instruction of 7 September: *"i think maybe we
+    # need it to hit a ratio of 4"*, corrected in the next message to *"of 3"*.
+    #
+    # OVERRIDDEN HERE AND NOT ONLY IN THE FORTRAN, because _file_targets reads
+    # the NEWEST POINT and every point in the archive was measured against 2.25.
+    # Without this the first step after the retarget would drive the discount
+    # factor at the old number and only the second would see the new one. This
+    # is the TARGET_OVERRIDE treatment ENGINE.md prescribes for exactly this.
+    t.update({'h_1': 0.005, 'h_2': 0.101, 'emp_homeless': 0.46, 'pi_eu': 0.049,
+              'beta': 3.0})
     if t.get('b'):
         t['sud_users'] = t['lambda_d'] / t['b']
     _annualise_age_rates(t)
@@ -524,7 +533,19 @@ RULES = {
     # Bound 100, the Fortran's own handover clamp, matching kappa_find_smi's.
     'multiple_find_if_addicted':                 ('sud_homeless', +1.00, 1.0, 100.0, 0.25, 0.20),
     'smi_onset_level':                           ('p_m',          +1.00, 1e-08, 0.5, 0.35, 0.20),
-    'discount_factor':                           ('beta',         +1.00, 0.9, 1.02, 0.35, 0.10),
+    # +9.0, MEASURED, not assumed. It was +1.00, and that single wrong number
+    # is why beta moved too much: across the 81bf69176d archive the discount
+    # factor runs 0.90986 to 0.93907 and wealth over output runs 2.05 to 2.73,
+    # which is d log(W/Y) / d log(beta) = +9.0 end to end. A stepper dividing by
+    # 1.00 asks for a move nine times too large, gets clipped to the cap, and
+    # lands on the far side of the target -- 0.90986 <-> 0.92824 for 148
+    # iterations while W/Y straddled 2.25 at 2.04 and 2.57.
+    #
+    # THE DRUG BLOCK RODE ON IT. b flipped 0.003 <-> 0.19 in perfect antiphase,
+    # 26 of 26 solves, because patience sets saving, saving sets current
+    # consumption, and drug quantity is a share of consumption. b was never
+    # discontinuous in its own instrument; it was bimodal in this one.
+    'discount_factor':                           ('beta',         +9.00, 0.9, 1.02, 0.35, 0.10),
     'mu_homeless':                               ('mu_H',         -1.00, 0.0, 1.0, 0.35, 0.20),
     'probability_of_voucher_benchmark_used':     ('pi_V',         +1.00, 1e-05, 1.0, 0.35, 0.20),
     'newborn_endowment_scale':                   ('h_age1',       -1.00, 0.0, 3.0, 0.35, 0.20),
@@ -760,7 +781,22 @@ for _p, _m in sorted(_OWN.items()):
 # TWO PER CENT, on the author's instruction of 7 September: *"Maybe you need to
 # reduce the steps of each parameter to 2% at most"*. It was four, and ten before
 # that, and 101 before that.
-SLOW_DAMPING, SLOW_CAP = 0.25, 0.02
+# HALF A PER CENT, on the author's instruction of 7 September: *"you need to
+# check that all parameters we update do not move more than 2% between
+# iterations at most. i think even 0.5% is better"*, then *"maybe the most they
+# should move is 0.5%"*. 0.005 e-folds is 0.501 per cent.
+#
+# IT IS A CEILING OVER EVERY RULE, applied by the min() below the table, so this
+# one number binds all twenty-two instruments and a per-instrument cap can only
+# be tighter than it, never looser.
+#
+# WHAT A CAP CANNOT DO, which is why it is not the whole fix: it bounds how far
+# a mis-signed or mis-scaled step travels, not whether it repeats. An instrument
+# whose gain is wrong by a factor of nine asks for a nine-times-too-large move
+# every iteration and is clipped to the cap every iteration, which is a cycle at
+# the cap rather than a convergence. discount_factor did exactly that for 148
+# iterations at 2 per cent.
+SLOW_DAMPING, SLOW_CAP = 0.25, 0.005
 
 # THE HOLD IS HYSTERETIC: an instrument stops at five per cent and does not start
 # again until ten. The author, 7 September: *"maybe stop updating when the moment
