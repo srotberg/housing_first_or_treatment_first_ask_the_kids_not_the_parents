@@ -1,3 +1,55 @@
+## 7 September, 20:50 -- UNFREEZING value_of_life BROKE THE DRUG BLOCK. The
+## author predicted it: *"if aleph changes, then b changes, and beta"*.
+
+    49 iterations since the last adjustment, untouched
+    12 of 37 inside the band, against 13 before it started
+    best point earlier today: point_16398ec68f, b +0.5, lambda_d +0.0
+
+WHAT HAPPENED.
+
+    iter   a_scalar        b     value_of_life
+      0    0.003841    0.10602      119.06
+     12    0.003757    0.06392      125.41
+     24    0.003538    0.02173      129.74
+     48    0.003138    0.02249      139.75
+     61    0.002941    0.02978      144.47
+
+value_of_life rose 21 per cent chasing aleph and took b with it. Over the first
+24 iterations it rose 9 per cent while b fell 80, a cross elasticity of about
+-18. addiction_scalar_1's own slope on b is -2.5, so value_of_life moves drug
+participation SEVEN TIMES HARDER than the instrument assigned to it, and
+addiction_scalar_1 falling 23 per cent could not keep up.
+
+THE SAME FAILURE AS THIS MORNING, DIFFERENT PARAMETER. relative_share_of_addiction_1
+was assigned to theta at an assumed +1.92 while moving b at a measured +11.14,
+and it drove the block to zero. value_of_life is assigned to aleph at a THEORY
+slope of +1.00 -- correct for aleph, silent about b -- and it has done the same
+thing more slowly. It was frozen all day and unfreezing it at 18:35 is what
+started this.
+
+    b            +4.7  ->  -66.5 per cent
+    lambda_d     +4.8  ->  -72.2
+    sud_users    +0.1  ->  -16.8
+    sud_homeless +8.2  ->  -36.7
+    y_u          -3.4  ->  -45.4
+    tau_u        +43   -> +110      (instrument still AT BOUND at 8.0)
+
+WHAT DID CONVERGE, and it is real:
+
+    emp_homeless  -8.3  ->  -1.6
+    h_2          -23.4  ->  -5.0
+    mu_H         -28.1  ->  -8.7
+    pi_eu        -24.5  -> -11.0
+    tau_l                    +0.0
+    beta                     +0.3
+
+b has also stopped falling -- flat near 0.022 since iteration 24 and rising
+slightly since, as addiction_scalar_1 keeps coming down.
+
+BUT aleph is still -9.8 per cent, so value_of_life will keep climbing and keep
+pressing b down. It needs a bound, a much smaller step, or pinning -- the
+treatment relative_share_of_addiction_1 got. Not decided here.
+
 ## 7 September, 18:40 -- THERE IS NO CLIFF. Retracting it, measured.
 
 The author: *"b is not a cliff, between 0.0037 and 0.0047 is 27%....so if you
