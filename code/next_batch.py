@@ -372,7 +372,7 @@ OWN = {
     # selection, so it does not identify the causal effect the model needs, and
     # holding it at its age-65 value replaced an unusable number with an ASSUMED
     # one. This gives the assumption a target instead.
-    'rr_homeless_old_level':                               'h_share5',
+    'rr_homeless_old_level':                               'h_age5',
     # NOT given a moment. homeless_excess_death_risk sets the LEVEL of the
     # deterrent and size_homelessness already owns h_1; giving both the same
     # moment would be the duplicate-driver mistake beta was just cured of.
@@ -819,7 +819,7 @@ OWN = {
     # 0.1930 at street 0.045 to 0.7546 at 0.030, so at whatever street size fixes
     # h_1 the young are likely to OVERSHOOT -- and that is exactly the case the
     # author's rule turns it on for.
-    'newborn_endowment_scale':                              'h_share1',
+    'newborn_endowment_scale':                              'h_age1',
     # THE SSI FLOOR OWNS OLD-AGE HOMELESSNESS, and it has never been able to
     # act. The author, 3 September: *"we need to make sure that the old are not
     # homeless too much... You have an instrument for that? I think we fixed the
@@ -895,7 +895,7 @@ OWN = {
     # instrument acting through two links rather than one.
     'lambda_addiction':                                    'sud_homeless',
     'addiction_scalar_1':                                   'b',
-    'ssi_floor_level':                                      'h_share5',
+    'ssi_floor_level':                                      'h_age5',
     # THE ENDOWMENT IS HELD AT ZERO AND h_share1 HAS NO INSTRUMENT. The author,
     # 3 September: *"If you don't need an endowment for the youngest to get the
     # right share of homeless young, that's ok too!"* -- and the measurement
@@ -1472,7 +1472,7 @@ UNSCORED = {'rent50',
             # shares and all five rates are reported and not scored. h_share1 is
             # the share of the homeless aged 25 to 34, 0.91 against 0.26; these
             # are how anyone sees WHERE the mass went when it moves.
-            'h_age1', 'h_age2', 'h_age3', 'h_age4', 'h_age5',
+             'h_age2', 'h_age3', 'h_age4', 
             # h_share5 LEFT THIS SET on 3 September. The author: *"we need to
             # make sure that the old are not homeless too much, they should have
             # very little of the share of the homeless"*.
@@ -1513,7 +1513,15 @@ UNSCORED = {'rent50',
     # them -- y_u at +20.2 per cent and burden50 at +12.8 -- so they held the
     # minimax open against nothing. They are still measured and reported.
     'y_u', 'burden50',
-}
+    # THE AGE PROFILE IS SCORED ON RATES, NOT SHARES, 7 September. The author
+    # chose it over holding the SSI floor: *"Go with 2"*. The five shares sum
+    # to one, so two instruments aimed at two of them fight -- the endowment
+    # drove h_share1 from 0.48 to 0.33 and h_share5 rose to 197 per cent
+    # absorbing it, while its own instrument had moved 13 per cent. Rates carry
+    # no such constraint. h_age1 and h_age5 leave this set; h_share1 and
+    # h_share5 join it and are reported rather than scored.
+    'h_share1', 'h_share5',
+    }
 
 
 

@@ -154,6 +154,74 @@ def _file_targets():
     return {}
 
 
+_PIT_OVERALL = None
+
+
+def _pit_overall():
+    """The point-in-time overall rate the HUD band rates are normalised on.
+
+    Read from the Fortran rather than typed: it is the divisor the model itself
+    uses at 6766 to turn val_hud_rate_1 into the observed PROFILE, so it is by
+    construction the overall rate on the same basis as the five band rates.
+    """
+    global _PIT_OVERALL
+    if _PIT_OVERALL is None:
+        src = open(os.path.join(HERE, 'housing_first_or_treatment_first_SR_v1.f90'),
+                   errors='replace').read()
+        m = re.search(r'val_hud_rate_1\(k_1\)\s*/\s*([0-9.]+)d0', src)
+        _PIT_OVERALL = float(m.group(1)) if m else 0.0
+    return _PIT_OVERALL
+
+
+def _annualise_age_rates(t):
+    """Put the five HUD band rates on the model's ANNUAL basis.
+
+    THE AUTHOR CHOSE THIS, 7 September, over holding the SSI floor or dropping
+    the old band: *"Go with 2"* -- target the band RATE rather than the band
+    SHARE.
+
+    WHY THE SHARES COULD NOT WORK. The five shares sum to one, which the model's
+    own invariant confirms, so they are not independent. Two instruments aimed at
+    two components of a simplex fight by construction: newborn_endowment_scale
+    drove h_share1 from 0.48 to 0.33 and every other band's share rose to absorb
+    it, so ssi_floor_level read a 197 per cent gap on h_share5 that its own
+    instrument had not caused. The instrument moved 13 per cent across eight
+    iterations while the moment swung by a factor of 3.4. Rates carry no such
+    constraint: each band's rate is its own homeless mass over its own
+    population, and one band can move without touching another.
+
+    THE RATES HAD TO BE RE-BASED FIRST. val_hud_rate_1 is HUD's POINT IN TIME
+    count and the model's period is a YEAR, the same mismatch that moved h_1 from
+    0.00399 to 0.01097 on 6 September. Comparing an annual model rate against a
+    point-in-time observed one would have read every band as three to four times
+    too homeless -- h_age1 showed +641 per cent in the gaps table for exactly
+    this reason, and it was flagged as a basis artefact rather than a model
+    failure.
+
+    The re-basing preserves the PROFILE and fixes only the level: every band is
+    scaled by the same factor, the annual overall over the point-in-time overall.
+    That is the one number the two bases disagree on, and it is the same
+    construction h_1 already uses. Nothing new is asserted about the age gradient
+    -- the shape is HUD's, untouched.
+
+    DONE HERE AND NOT IN THE FORTRAN, deliberately. val_hud_rate_1 is a
+    multi-line array declaration, so it cannot be blanked by TARGET_CONSTANTS the
+    way a scalar target can, and editing it would change the semantic hash and
+    orphan all 47 points on this economy -- including the loop's own base, which
+    would stop it dead. The model still prints the point-in-time figure as its
+    observed column; only the method's target is re-based.
+    """
+    pit = _pit_overall()
+    ann = t.get('h_1')
+    if not pit or not ann:
+        return
+    factor = ann / pit
+    for k in range(1, 6):
+        key = 'h_age%d' % k
+        if key in t:
+            t[key] = t[key] * factor
+
+
 def _gate_targets():
     """Every scored target, with the author's own three overridden.
 
@@ -165,6 +233,7 @@ def _gate_targets():
     t.update({'h_1': 0.01097, 'h_2': 0.101, 'emp_homeless': 0.46, 'pi_eu': 0.049})
     if t.get('b'):
         t['sud_users'] = t['lambda_d'] / t['b']
+    _annualise_age_rates(t)
     return t
 
 
@@ -414,8 +483,8 @@ RULES = {
     'discount_factor':                           ('beta',         +1.00, 0.9, 1.02, 0.35, 0.10),
     'mu_homeless':                               ('mu_H',         -1.00, 0.0, 1.0, 0.35, 0.20),
     'probability_of_voucher_benchmark_used':     ('pi_V',         +1.00, 1e-05, 1.0, 0.35, 0.20),
-    'newborn_endowment_scale':                   ('h_share1',     -1.00, 0.0, 3.0, 0.35, 0.20),
-    'ssi_floor_level':                           ('h_share5',     -1.00, 0.0, 0.30, 0.35, 0.20),
+    'newborn_endowment_scale':                   ('h_age1',       -1.00, 0.0, 3.0, 0.35, 0.20),
+    'ssi_floor_level':                           ('h_age5',       -1.00, 0.0, 0.30, 0.35, 0.20),
 }
 
 # THE BOTTOM NODE'S MASS IS FIXED AT 0.2 PER CENT, on the author's instruction.
