@@ -1,3 +1,59 @@
+## 21:56 UTC 7 September -- projection to convergence on the 19 internally calibrated instruments
+
+Asked for by the author. Fitted as d log|gap| per iteration over the last 20
+points on `c9ebefc35f` (21:04 to 21:50), at a measured cadence of 2.4 minutes an
+iteration. `weight_on_child` is the twentieth instrument and is excluded: omega_c
+is not reported in a point file at all, so it has no moment and cannot be scored.
+
+ALREADY IN BAND, 9 of 19: sud_homeless 9.0, aleph 7.8, omega_l 3.8, gamma 3.6,
+pi_V 1.5, beta 0.7, tau_l 0.2, p_m 0.1, pi_eu 0.0 per cent.
+
+CONVERGING, 5:
+
+    addiction_scalar_1   b          13.5%      4 iters    10 min
+    max_food_cost        cbar       14.4%      8 iters    20 min
+    smallest_rental      h_2        13.8%     69 iters     2.8 h
+    kkk_sigma_scale      sigma_y    13.4%    276 iters    11.1 h
+    utility_cost_treat   tau_u      90.3%    432 iters    17.3 h
+
+TWO OF THOSE FIVE FIGURES ARE NOT REAL AND MUST NOT BE QUOTED AS PROJECTIONS.
+
+`tau_u` at 17.3 hours is fiction. `utility_cost_of_treatment` is at its upper
+bound of 8.0 and has not moved; the -0.005 decay the fit reports is other
+instruments dragging the moment, not its own. The instrument is frozen, so the
+true projection is NEVER until the bound is raised. Nothing in the Fortran
+clamps it -- it is a plain declaration -- so the bound is `next_batch.py`'s
+alone and can be raised safely to 20. Asked at 20:56 and again here.
+
+`sigma_y` at 11.1 hours is fitted over a window in which only TWO points carry
+the instrument that was fixed at 21:52. The other eighteen measure the dead
+period. It is not yet measurable in either direction; the first honest reading
+is about ten iterations out.
+
+MOVING AWAY, 5, all of them homelessness or composition:
+
+    size_homelessness         h_1           55.0%   +0.0216 per iter
+    kappa_find_smi            lambda_m      24.5%   +0.0132
+    newborn_endowment_scale   h_age1        23.5%   +0.0494
+    mu_homeless               mu_H          14.2%   +0.0083
+    bottom_productivity_level emp_homeless  13.3%   +0.0457
+
+Every one of these is downstream of participation rising, and the window fitted
+is dominated by that transient: b closed from -66 to -13.5 per cent inside it.
+b lands in about four iterations, so the transient ends tonight and these five
+should turn. THAT IS A PREDICTION, NOT A MEASUREMENT. If they have not turned
+within twenty iterations of b landing, the street is not lagging its instrument,
+it is outrunning it, and one rung is not enough to hold h_1 against the drug
+block.
+
+WHAT THIS PROJECTION IS NOT. It covers the 19 instruments. It does NOT cover the
+16 scored moments that have no instrument at all -- w_bot +273, kappa_uem +184,
+h_age2 +120, h_3 -98, h_age3 +87, h_share5 -79, h_age5 -72, h_age4 +49,
+h_share2 +37, h_share1 -31, h_share3 +26, kappa_ued +21, lambda_d -18, y_u -17,
+theta -14, burden50 -10. Converging all 19 instruments and meeting the author's
+"below 10 per cent for everything" are different things, and the second is not
+reachable through the first.
+
 ## 21:52 UTC 7 September -- sigma_y's instrument FIXED, live, zero downtime
 
 The author: *"fix sigma_y"*. Done, in `three_step.py`, mirroring
