@@ -1,3 +1,43 @@
+## 00:02 UTC 8 September -- THE DISCRIMINATING TEST FIRED AND THE AUTHOR WAS RIGHT: b JUMPS AT SEVEN NODES TOO
+
+The author, before the revert: *"i think b was jumping around not because of the
+grids, but because aleph, and theta were moving together"*. Changing the grid was
+the test. b jumped again on the SECOND seven-node point.
+
+    b   0.10706 -> 0.12072   +12.8 per cent in ONE iteration
+
+and every instrument stepped normally through it, exactly as at eight nodes:
+
+    addiction_scalar_1         0.0029972 -> 0.0030097   +0.42 per cent
+    value_of_life                 158.44 -> 158.54      +0.06
+    multiple_find_if_addicted      23.54 -> 23.532      -0.03
+    kappa_find_smi                 16.05 -> 16.13       +0.50
+
+AND THE SIGN IS INVERTED AGAIN. addiction_scalar_1 moved UP and b moved UP,
+against a slope of -4.65. That is the same signature as the 23:09 jump at eight
+nodes, on a different grid, so THE GRID IS NOT THE CAUSE. The eight-node
+comment's claim that coarseness "turned a two per cent step into a sixtyfold
+jump in drug use" does not survive this: the jump follows the model across grid
+sizes.
+
+The author's explanation is now the standing one and the grid explanation is
+out. What remains to be shown is the mechanism -- aleph and theta co-moving --
+and the check for it is unchanged: compare the full solve logs, worker_<tag>.log,
+either side of a jump. They carry prices and the whole stdout that the point
+files filter.
+
+SEPARATELY, THE REVERT IS NOT PAYING FOR ITSELF SO FAR. The involuntary
+component, which is what h_1's target turns on:
+
+    eight nodes, converged   0.01325
+    seven nodes, seed        0.01562
+    seven nodes, point 2     0.01586
+
+It is going the wrong way and h_1 with it, +48.4 to +50.6. Two points is not a
+verdict and the instruments have not re-adapted, which is the fair test and is
+running. But the two things the revert was meant to buy -- fewer poor households
+and a smoother b -- are both so far unbought.
+
 ## 23:52 UTC 7 September -- SEVEN NODES IS LIVE. The first point contradicts the mechanism, and the fair test is still running.
 
 The author instructed the revert twice and it is done. Economy 02da791f0c.
