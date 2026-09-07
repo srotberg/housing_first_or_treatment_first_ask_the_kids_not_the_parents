@@ -1,3 +1,21 @@
+## 23:06 UTC 7 September -- multiple_find_if_addicted CLOSED as acceptable; no sweep
+
+The author: *"just keep going. if multiple_find_if_addicted is moving in the
+right direction, it is ok"*.
+
+So the open question from 22:52 is CLOSED, not outstanding. It declines when
+sud_homeless is above target, which is the behaviour the author asked about and
+the behaviour the model needs. That it moves at 0.097 per cent an iteration
+rather than the half per cent the cap allows, because +86.40 is a distance and
+not a log elasticity, is accepted. The one-coordinate sweep is NOT to be started.
+
+Do not reopen this by proposing the sweep again, and do not "fix" the +86.40 on
+the strength of the other three corrections: its true elasticity is unmeasured
+and the author has judged the direction sufficient.
+
+mu_homeless's corrected slope is live and behaving as predicted: the step went
+from -0.099 per cent an iteration to -0.28, close to the three times expected.
+
 ## 23:02 UTC 7 September -- mu_homeless's slope corrected, and the second cache can no longer go stale
 
 The author, on the two open items: *"1. sure. ... 3. ok"*.
