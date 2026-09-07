@@ -1,3 +1,76 @@
+## 7 September, 05:20 -- THE TWO-CYCLE IS THE SEARCH, NOT THE MODEL. Eight
+## instruments are locked at the step cap because the fallback slope is wrong
+## by one to two orders of magnitude, and b is being whipped by beta.
+
+    semantic economy   raw 81bf69176d, 33 points
+    serial loop        three_loop.sh, 140 iterations, alive
+    standing           8 of 25 scored moments inside the band, worst w_bot +281%
+    speeds             2.02 per cent a step, damping 0.25, no hold band
+
+b IS NOT DRIFTING SLOWLY. IT IS CYCLING, AND NOT ON ITS OWN INSTRUMENT.
+
+    b:  0.00305  0.18508  0.00336  0.20246  0.00340  0.15726  0.00331  0.11894
+
+A 55-fold swing every other iteration while addiction_scalar_1 moves under one
+per cent. The cause is discount_factor: the stepper assumes d log(wealth/output)
+/ d log(beta) = 1 and it is 10.7, so every step is ten times too large, it
+overshoots to the far side, reverses, and locks at the cap forever --
+
+    discount_factor  0.90986 <-> 0.92824   (exactly the 2 per cent cap, each way)
+    beta              2.036  <->  2.521    (target 2.25, straddled every step)
+
+A 2 per cent swing in the discount factor swings savings and consumption, drug
+quantity is a share of consumption, and b flips across the participation margin
+with it. Five of the drug block's misses are still one failure, but the failure
+is upstream of the drug block and always was.
+
+EIGHT INSTRUMENTS ARE DOING THIS. All of them carry the +/-1.00 fallback, and
+the measured elasticity comes off the two solved points either side of the
+crossing, so the last column is a bracket root and not an estimate:
+
+    instrument                       moment        assumed  MEASURED  bracket
+    discount_factor                  beta            +1.00     +10.7  0.918385
+    utility_cost_of_treatment        tau_u           -1.00     -84.3  7.02613
+    mu_homeless                      mu_H            -1.00     -32.4  0.55242
+    multiple_find_if_addicted        sud_homeless    +1.00     +86.4  19.5313
+    newborn_endowment_scale          h_age1          -1.00     -17.1  0.844406
+    labor_income_tax_rate            tau_l           -1.00      -7.4  0.769436
+    kappa_phi_d_level                y_u             -1.00    -120.9  7.69776
+    smallest_rental_relative...      h_2             +5.36    -106.2  0.108807
+
+THE CAP DID NOT PREVENT THE CYCLE, IT SET ITS AMPLITUDE. Twelve hours at this
+cadence buys 200 more iterations of the same alternation. The fix is the
+method's own standing preference, A MEASURED BRACKET RATHER THAN AN ELASTICITY:
+when a moment crosses its target between two iterates, both sides are real
+solves, so interpolate inside the bracket instead of stepping on a guessed
+slope. That kills a two-cycle by construction. IT IS A CHANGE TO THE AUTHOR'S
+METHOD AND IS NOT MADE WITHOUT THEM.
+
+THE SUD GRADIENT IS BUILT AND HELD BACK. code/pending_sud_gradient.py is the
+patch; it applies cleanly and both standing builds are clean on the result. It
+adds the moment lambda_addiction is for -- the mean conversion hazard among
+clean users above the 53.91st percentile of quantity over the same below it,
+target 3.22 from NSDUH. The author on what it is and is not: *"not everyone
+above the 53.9 percentile get a 3.22 higher chance. it should just be on
+average... some use a lot more and they get addicted more quickly"*, *"it's not
+a discontinuous jump, but a slope"*. The hazard is untouched; the split only
+measures.
+
+It is held back on the author's own gate: *"i suggest not to change lammda too
+much until we have a good stable b and base"*, *"because if b gives 0.0002
+users that is not enough to pick lambda"*. b is 0.0034 against 0.089 AND
+cycling, so a gradient measured on it is noise. lambda stays pinned until b and
+the base hold still, and the gate belongs in three_step.py rather than in FIXED
+so that it releases itself.
+
+APPLYING IT COSTS 33 POINTS, NOT THE ARCHIVE. The eight-node change already
+reset the economy, so 81bf69176d carries 33 points and not the two thousand an
+earlier note implied. The patch is a pure diagnostic -- accumulation and output,
+nothing in a household's problem, a price or an equilibrium condition -- so
+EQUIVALENT_MODELS is the right home for the pair, filled in from the measured
+table ENGINE.md demands and never from the argument that the change ought to be
+small: same vector, both binaries, every moment diffed, in a scratch copy.
+
 ## 7 September, 03:15 -- EIGHT NODES, h_1 ON TARGET, AND THE DRUG BLOCK IS THE
 ## ONE REMAINING FAILURE. The author: *"let the method run for several hours"*.
 
