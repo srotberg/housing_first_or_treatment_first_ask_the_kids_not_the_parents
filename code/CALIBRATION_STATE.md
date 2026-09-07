@@ -1,3 +1,30 @@
+## 22:46 UTC 7 September -- THERE IS A SECOND CACHE AND IT HAS NO VERSION KEY
+
+`code/resolve_cache.json` is three_step.py's own memo of raw stamp to semantic
+hash, written at line 1185. It is NOT the same file as `code/.model_hash_map`,
+which is what `model_hash.build_map` writes and which DOES carry
+`__hash_version__` and self-invalidates on a bump.
+
+resolve_cache.json carries no version key at all. It currently holds 88 entries
+and is correct -- c9ebefc35f resolves to a3cc3f2a9b -- only because it was
+deleted by hand during the 22:39 repair and rebuilt from the fixed map.
+
+SO THE HASH_VERSION BUMP ALONE WOULD NOT HAVE FIXED THE OUTAGE, and will not fix
+the next one. The bump drops .model_hash_map; resolve_cache.json would have kept
+serving the pre-rule answers and three_step would have gone on exiting 2. Both
+files have to go.
+
+THE REMEDY, added to the rule recorded below:
+
+    ADDING A NAME TO TARGET_CONSTANTS  -> bump HASH_VERSION *and*
+                                          rm code/resolve_cache.json
+
+A cleaner fix is to give resolve_cache.json the same `__hash_version__` key and
+the same drop-on-mismatch that build_map already has, so it heals itself. That
+is a fourth edit to the live stepper tonight and it is not being made without
+the author; the manual remedy above is written down and the one-line check
+catches it either way.
+
 ## 22:39 UTC 7 September -- ADDING A NAME TO TARGET_CONSTANTS IS A HASH RULE CHANGE AND NEEDS HASH_VERSION BUMPED. It took the loop down.
 
 WHAT HAPPENED. `severe_cost_burden_data` was added to `model_hash.TARGET_CONSTANTS`
