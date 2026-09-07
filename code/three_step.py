@@ -604,7 +604,14 @@ CONFIG = {
     'homeless_job_penalty_pp':    0.0,
     'increased_prob_if_homeless': 0.20,
     'merge_from_node':            2.0,
-    'merge_bottom_nodes':         3.0,
+    # TWO FROM 7 September, not three. The arm at merge_bottom_nodes=2 took the
+    # burden moment from +28 per cent to -2.6 for a 4 per cent cost in
+    # homelessness: node 3's 19.4 per cent were being made poor enough to be
+    # rent-burdened and not poor enough to be homeless, so the merge was paying
+    # h_2 and buying nothing. Unmerged, bottom_productivity_level moved h_1 by 37
+    # per cent and emp_homeless by 50 while h_2 stayed at 0.0983 -> 0.0985, which
+    # is the decoupling the merged grid never gave.
+    'merge_bottom_nodes':         2.0,
 }
 # THE ENDOWMENT IS AN INSTRUMENT AGAIN, on the author's instruction of 6
 # September: *"i think we need to add an endowment for the newborns so that
