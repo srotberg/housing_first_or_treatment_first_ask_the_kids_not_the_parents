@@ -532,6 +532,31 @@ for _p, _m in sorted(_OWN.items()):
     _lo, _hi = _BOUNDS[_p]
     RULES[_p] = (_m, None, _lo, _hi, 0.45, 0.35)
 
+# EVERYTHING MOVES SLOWLY, on the author's instruction of 7 September: *"Are you
+# adjusting parameters slowly? They should move slowly"*.
+#
+# They were not. probability_becoming_unemployed could move 101 per cent in one
+# iteration, six instruments 42 per cent, and most of the rest 22. A step that
+# large breaks the one assumption this whole method rests on -- that the response
+# is LOCAL, so a slope measured near the current point still describes the step
+# being taken. Every failure tonight was that assumption breaking: the street's
+# slope measured a decade away, the drug block's realised response four to six
+# times its assumed one, the addiction multiplier onto its floor in a single
+# step.
+#
+# So the cap is a tenth of an e-fold, about ten and a half per cent, and damping
+# is a quarter. Applied as a ceiling rather than a rewrite, so anything already
+# slower keeps its own number -- the rung stays at 0.08 and the discount factor
+# at 0.10, both set against measured misbehaviour.
+#
+# THE COST IS ITERATIONS, NOT ACCURACY. A 68 per cent gap closed at ten per cent
+# a step is about five iterations rather than two, which at four minutes a solve
+# is twenty minutes. That is cheap against one runaway, which is what the drug
+# block just cost.
+SLOW_DAMPING, SLOW_CAP = 0.25, 0.10
+for _p, (_m, _fb, _lo, _hi, _d, _e) in list(RULES.items()):
+    RULES[_p] = (_m, _fb, _lo, _hi, min(_d, SLOW_DAMPING), min(_e, SLOW_CAP))
+
 
 def model_hash():
     """The SEMANTIC hash, not a raw md5 of the file.
