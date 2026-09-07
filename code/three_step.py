@@ -925,6 +925,10 @@ SLOW_DAMPING, SLOW_CAP = 0.25, 0.005
 # target is slowed -- and only that one, because the state is per instrument.
 # The floor is 1/500 of the ceiling, matching the Fortran's adjuster_floor
 # against adjuster_start, so a ratcheted instrument slows without ever freezing.
+# The step cap reaches its full value only at a gap of about 25 per cent;
+# below that the ceiling is this fraction of the gap. See the step block.
+GAP_SCALE = 0.0225
+
 RATCHET_HALVE, RATCHET_GROW = 0.5, 1.2
 RATCHET_FLOOR, RATCHET_CEIL = 0.002, 1.0
 _GAIN_FILE = os.path.join(HERE, 'three_step_gain.json')
@@ -1509,8 +1513,27 @@ def main():
             g = min(RATCHET_CEIL, g * RATCHET_GROW)
             marks = '' if g >= RATCHET_CEIL else f'  gain {g:.3f}'
         gain[param] = [g, sign]
+        # THE CAP SCALES WITH THE GAP, on the author's instruction of 7 September:
+        # *"even 0.5% should be on large gaps"*, *"it should be less for smaller
+        # gaps"*, after *"in general parameters should move very very slowly"*.
+        #
+        # WHY THE FLAT CAP WAS NOT ENOUGH. The step is already proportional to
+        # the log gap, so a small gap SHOULD give a small step -- and for every
+        # instrument with a large measured slope it did: beta at -0.7 per cent
+        # took 0.01, tau_l at +0.3 took 0.01, sud_homeless at -8.2 took 0.02,
+        # mu_H at -24.1 took 0.21. But an instrument whose slope is near or below
+        # one divides by almost nothing, so even a tiny gap asks for a step far
+        # past the cap and is clipped to the whole 0.5. Measured on the live
+        # trace: gamma at a 2.6 PER CENT gap was taking the full cap, because a
+        # slope of 0.17 says closing it needs a 15 per cent parameter move.
+        #
+        # So the ceiling is now a fraction of the gap, with the flat cap still
+        # the absolute limit on top. The full 0.5 per cent is reached only past a
+        # 25 per cent gap; 12 per cent is allowed 0.26, 2.6 per cent is allowed
+        # 0.06. A wrong slope can no longer turn a small gap into a maximum step.
+        room = min(efold, GAP_SCALE * abs(math.log(tgt / cur)))
         step = damp * g * math.log(tgt / cur) / e
-        step = max(-efold, min(efold, step))
+        step = max(-room, min(room, step))
         new = max(lo, min(hi, vec[param] * math.exp(step)))
         at = '  AT BOUND' if new in (lo, hi) else ''
         print(f'#   {param:<44}{vec[param]:10.5g} -> {new:10.5g}   '
