@@ -1,3 +1,38 @@
+## 7 September, 18:40 -- THERE IS NO CLIFF. Retracting it, measured.
+
+The author: *"b is not a cliff, between 0.0037 and 0.0047 is 27%....so if you
+update b slowly, it wont be falling off a cliff"*, and *"as long as vars dont
+move more than 0.5% between iterations, it should not fall off a cliff"*.
+
+They are right and the arithmetic is not close:
+
+    from       to        instrument   b falls   slope   steps at 0.5%  b/step
+    0.0036     0.0037       +2.8%      0.84x    -6.5          5         -3.2%
+    0.0037     0.00378      +2.2%      0.85x    -7.5          4         -3.7%
+    0.00378    0.0047      +24.4%      0.07x   -12.2         44         -5.9%
+
+    end to end: 31 per cent in the instrument, 53 steps at the cap
+
+The steepest stretch has a slope of -12, which at a half per cent step moves b
+by 5.9 per cent an iteration -- slower than several other instruments move their
+own moments. Crossing the whole region takes 53 visible iterations. Nothing can
+fall off anything at this cap, which is what the cap is for.
+
+WHAT THE ERROR WAS, because it has now been made twice in one day. Two sample
+points 24 per cent apart showed b differing by fourteen fold, and the
+interpolation between them was described as a discontinuity. The same mistake
+produced the "b is not monotone in addiction_scalar_1" claim earlier, retracted
+when the 0.0030 point landed and showed a clean -8.20 across the range. Sparse
+sampling read as structure, twice.
+
+IT ALSO MISDESCRIBED THE OVERNIGHT COLLAPSE. b did not fall off an edge. It was
+walked down by relative_share_of_addiction_1, which moves b at a measured +11.14
+while assigned to theta at +1.73. That cause was already established and the
+cliff was a redundant embellishment on top of it.
+
+The earlier entries in this file describing a cliff beside the operating point
+are wrong on that point and stand corrected here.
+
 ## 7 September, 17:45 -- THE DRUG BLOCK IS CALIBRATED. b, lambda_d, beta and
 ## y_u all inside one per cent, theta pinned at -10.
 
