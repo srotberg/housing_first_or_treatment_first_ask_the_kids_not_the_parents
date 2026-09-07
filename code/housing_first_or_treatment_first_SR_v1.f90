@@ -3379,7 +3379,17 @@
         ! node one entire plus part of node two rather than by a node boundary.
         ! That is what makes seven nodes safe here where it was not before, and it
         ! is the reason kappa is not left at 2.8.
-        integer, parameter :: employment_grid_size=7
+        ! EIGHT NODES FROM 7 September, on the author's instruction: *"maybe we
+        ! should add 1 more productivity between node 3 and 4"*, *"it would help
+        ! even more to smooth things"*.
+        !
+        ! Node 4 alone carried 39.9 per cent of households at seven nodes and the
+        ! gap from node 3 to node 4 was a factor of 2.2, so the grid was coarsest
+        ! exactly where the mass is. A coarse grid makes households identical in
+        ! blocks, and identical households cannot respond at the margin -- they
+        ! move together, which is what turned a two per cent step into a
+        ! sixty-fold jump in drug use on 7 September.
+        integer, parameter :: employment_grid_size=8
         integer :: use_unemployment_by_productivity=1
         ! Persistent income risk over working life. See the block beside
         ! employment_process for why this is not fixed_productivity=0.
@@ -30609,6 +30619,9 @@
         
         real(8), dimension(employment_grid_size), intent(out) :: adjusted_probability_1
         real(8) :: mean_tilt_1
+        real(8), dimension(4) :: edu_share_1,edu_rate_1,edu_odds_1,edu_hi_1
+        real(8) :: cum_lo_1,cum_hi_1,acc_1,w_1,elo_1,ovl_1
+        integer :: i_edu_1,j_edu_1
         
         do i=1,employment_grid_size
         
@@ -30647,10 +30660,60 @@
         ! The formula above is DEAD and stays dead. At seven nodes it runs 3.00
         ! down to exactly 0.00, giving the top type zero separation risk, which is
         ! not a fact about the world.
-        if ((use_unemployment_by_productivity==1) .AND. (employment_grid_size==7)) then
+        ! COMPUTED FROM THE EDUCATION TABLE, NOT WRITTEN OUT AS A LITERAL, from
+        ! 7 September. It used to be seven numbers guarded by
+        ! employment_grid_size==7, which is a trap: change the grid and the guard
+        ! goes false, the profile silently becomes uniform, every productivity
+        ! type gets the same separation rate, and since job loss is what puts a
+        ! household on the street, homelessness moves for a reason nothing
+        ! reports. The model compiles, runs, and passes all sixteen invariants.
+        !
+        ! The same file already carries the scar: relative_endowments is a NINE
+        ! node SCF profile with min(9,employment_grid_size) guards bolted on after
+        ! the grid was cut to seven, so three distinct levels collapsed onto one.
+        !
+        ! So the method in data/UNEMPLOYMENT_BY_PRODUCTIVITY.md is implemented
+        ! here instead of its output being pasted in. BLS 2019 annual averages,
+        ! age 25 and over, unemployment by educational attainment; education
+        ! orders productivity by median earnings so each group takes a contiguous
+        ! block of the distribution as wide as its population share; each node
+        ! takes the share-weighted average over its own quantile interval; and the
+        ! average is over the ODDS u/(1-u) because this multiplies a SEPARATION
+        ! rate while BLS reports a STOCK.
+        !
+        ! It reproduces the old literal exactly at seven nodes -- node 4's blend
+        ! of "less than high school" and "high school" comes out at 0.0439 against
+        ! the 0.0439 in that file -- and now follows the grid wherever it goes.
+        if (use_unemployment_by_productivity==1) then
 
-            adjusted_probability_1=(/1.7373d0,1.7373d0,1.7373d0,&
-                1.3345d0,1.1694d0,1.0528d0,0.6757d0/)
+            edu_share_1=(/0.096d0,0.274d0,0.264d0,0.366d0/)
+            edu_rate_1=(/0.054d0,0.037d0,0.033d0,0.021d0/)
+            edu_odds_1=edu_rate_1/(1.d0-edu_rate_1)
+
+            edu_hi_1(1)=edu_share_1(1)
+            do j_edu_1=2,4
+                edu_hi_1(j_edu_1)=edu_hi_1(j_edu_1-1)+edu_share_1(j_edu_1)
+            end do
+
+            cum_lo_1=0.d0
+            do i_edu_1=1,employment_grid_size
+                cum_hi_1=cum_lo_1+unconditional_employment_probability(i_edu_1)
+                acc_1=0.d0
+                w_1=0.d0
+                elo_1=0.d0
+                do j_edu_1=1,4
+                    ovl_1=max(0.d0,min(cum_hi_1,edu_hi_1(j_edu_1))-max(cum_lo_1,elo_1))
+                    acc_1=acc_1+ovl_1*edu_odds_1(j_edu_1)
+                    w_1=w_1+ovl_1
+                    elo_1=edu_hi_1(j_edu_1)
+                end do
+                if (w_1>10.d0**(-14)) then
+                    adjusted_probability_1(i_edu_1)=acc_1/w_1
+                else
+                    adjusted_probability_1(i_edu_1)=1.d0
+                end if
+                cum_lo_1=cum_hi_1
+            end do
 
             ! RENORMALISED ON THE LIVE MASSES, not on the ones this vector was
             ! built with. The numbers above average to one under the QUANTILE
