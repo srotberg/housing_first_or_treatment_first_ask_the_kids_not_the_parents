@@ -39,7 +39,7 @@ always-homeless sliver and becomes a large low-productivity block whose own
 unemployment dominates, so the moment reverses. A step that crosses 2.2 is not a
 smaller step in the same direction; it is a different economy.
 """
-import glob, hashlib, math, os, re, sys
+import glob, hashlib, json, math, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -604,10 +604,42 @@ def _mh_module():
 _RESOLVE_CACHE = {}
 
 
+_RESOLVE_FILE = os.path.join(HERE, 'resolve_cache.json')
+_RESOLVE_LOADED = False
+
+
 def _resolve(stamp):
-    """A point's raw md5 stamp, mapped to the semantic hash of its economy."""
+    """A point's raw md5 stamp, mapped to the semantic hash of its economy.
+
+    CACHED ON DISK, because resolving is expensive and the answer never changes.
+    model_hash.resolve() walks the git revision table, which costs about 0.59
+    seconds a stamp; the archive carries 82 distinct stamps, so a cold step spent
+    47.7 seconds here -- against 0.1 seconds for the pair search it all feeds.
+    Over the two to three hundred iterations the author expects that is four
+    hours of re-deriving a fixed mapping.
+
+    A raw md5 identifies a file's exact contents, so its semantic hash cannot
+    change; the cache is append-only and never needs invalidating. It lives in
+    code/ so it survives a container reclaim through the pusher, which matters
+    because a cold start would otherwise pay the 47.7 seconds again.
+    """
+    global _RESOLVE_LOADED
+    if not _RESOLVE_LOADED:
+        _RESOLVE_LOADED = True
+        try:
+            with open(_RESOLVE_FILE) as fh:
+                _RESOLVE_CACHE.update(json.load(fh))
+        except Exception:
+            pass
     if stamp not in _RESOLVE_CACHE:
         _RESOLVE_CACHE[stamp] = _mh_module().resolve(stamp)
+        try:
+            tmp = _RESOLVE_FILE + '.tmp'
+            with open(tmp, 'w') as fh:
+                json.dump(_RESOLVE_CACHE, fh, indent=0, sort_keys=True)
+            os.replace(tmp, _RESOLVE_FILE)
+        except Exception:
+            pass
     return _RESOLVE_CACHE[stamp]
 
 
