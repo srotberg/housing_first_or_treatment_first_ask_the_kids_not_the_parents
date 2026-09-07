@@ -1,3 +1,51 @@
+## 21:45 UTC 7 September -- the composition mechanism is confirmed, and it reaches y_u and sud_users but NOT theta
+
+The author, on theta drifting out while b recovers: *"Theta will get better when b
+gets closer. When the share is low, it's only the lowest income using and so their
+share of spending on drugs is lower"*.
+
+The compositional half of that is right and it is strong. Measured over the 76
+points on `c9ebefc35f`, every one of which carries
+`relative_share_of_addiction_1` pinned at 0.27 -- so the confound that broke the
+6-point fit on 6 September is absent by construction -- across a b range of
+0.0127 to 0.1060, a factor of 7.4:
+
+    d log y_u       / d log b  =  +0.463    R2 = 0.950
+    d log sud_users / d log b  =  +0.209    R2 = 0.907
+    d log theta     / d log b  =  -0.019    R2 = 0.009
+    d log theta     / d log y_u=  -0.063    R2 = 0.022
+
+Low participation does mean only the poorest use, and the user population's
+income follows b at an elasticity of 0.46 with ninety-five per cent of the
+variation explained. y_u at -15 per cent and sud_users at -11 per cent are
+therefore both b's arithmetic and both close as b closes. That part needs no
+instrument and should be left alone.
+
+THETA DOES NOT FOLLOW. Over a 7.4-fold swing in participation the drug spending
+share moved with no relationship to b at all, and none to the users' own income
+either. If theta depended on composition at anything like y_u's strength it
+would be visible in this range; it is not.
+
+That agrees with the joint fit of 6 September, which the author's matched pairs
+forced after an earlier claim was retracted:
+
+    log theta = c - 0.060 log b + 1.321 log relative_share_of_addiction_1
+
+The coefficient on b was already nil there; what is new is that it is now
+measured with rel_share genuinely held constant rather than inferred from a fit
+with both moving. Both routes give the same answer.
+
+WHAT THIS MEANS FOR THETA. Its only real lever is
+`relative_share_of_addiction_1`, at an elasticity above one, and that parameter
+is pinned at 0.27 because it moves b at +11.14 against theta's +1.73 -- it was
+never a theta instrument and using it as one destroyed the drug block overnight
+on 6 September. Closing theta's -15 per cent would need rel_share near 0.306,
+which would move b by about +148 per cent.
+
+So theta has no instrument, by a decision that is correct, and it will read
+roughly -15 per cent in the morning whatever b does. Stated here rather than
+left to be rediscovered from a gap table.
+
 ## 21:35 UTC 7 September -- sigma_y CANNOT move: three_step.py is stepping a parameter that is inert in this economy
 
 The author asked whether sigma_y is moving towards its target at all. It is not,
