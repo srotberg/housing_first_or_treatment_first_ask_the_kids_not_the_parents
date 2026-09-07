@@ -1,3 +1,39 @@
+## 23:02 UTC 7 September -- mu_homeless's slope corrected, and the second cache can no longer go stale
+
+The author, on the two open items: *"1. sure. ... 3. ok"*.
+
+1. mu_homeless -> mu_H, slope -32.40 CORRECTED TO -1.00. Measured, not assumed:
+   -1.000 over 50 controlled pairs, and unit elastic is what the model requires,
+   since the recovery probability if homeless is mu_homeless*0.025 and mu_H is
+   the housed-to-homeless ratio, so mu_H goes as 1/mu_homeless exactly. The step
+   is damping x loggap / slope, so the old figure made every step a
+   thirty-second of what it should be. mu_H needed about 40 iterations and needs
+   about 13 now, the gap-scaled cap binding instead of the slope.
+
+   -32.40 was a DISTANCE. So are multiple_find_if_addicted +86.40,
+   newborn_endowment_scale -17.10 and utility_cost_of_treatment -84.30, written
+   in the same pass, and they are named in the source so the next reader does not
+   have to rediscover it. Only this one has been measured, so only this one is
+   changed.
+
+3. resolve_cache.json NOW CARRIES __hash_version__ and drops itself on a
+   mismatch, the same guard model_hash.build_map has always had. The docstring
+   that claimed the cache "never needs invalidating" is corrected in place, with
+   what it cost written next to it.
+
+   VERIFIED BY POISONING IT: the file was rewritten with version 999 and
+   c9ebefc35f mapped to DEADBEEF00, and _resolve returned a3cc3f2a9b and rewrote
+   the file at version 5. Tonight's outage cannot recur.
+
+2. multiple_find_if_addicted IS moving and IS moving the right way, which was
+   the author's question: *"it should decline if there are too many homeless
+   with SUD"*. It declines, 23.919 to 23.826 over five iterations while
+   sud_homeless fell 0.29184 to 0.27290. But it moves 0.097 per cent an
+   iteration against a half per cent cap, five times slower than allowed,
+   because +86.40 is a distance. Its true elasticity is still unknown -- zero
+   controlled pairs in 2500 points -- so the slope is NOT guessed at. The sweep
+   remains the only way to know.
+
 ## 22:52 UTC 7 September -- do mu_H, lambda_m and sud_homeless have working instruments? Two yes, one unknown.
 
 The author asked directly. Measured from controlled pairs, the same way sigma_y

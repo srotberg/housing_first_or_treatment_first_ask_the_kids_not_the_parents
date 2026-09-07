@@ -646,7 +646,27 @@ RULES = {
     # consumption, and drug quantity is a share of consumption. b was never
     # discontinuous in its own instrument; it was bimodal in this one.
     'discount_factor':                           ('beta',         +9.00, 0.9, 1.02, 0.35, 0.10),
-    'mu_homeless':                               ('mu_H',         -32.40, 0.0, 1.0, 0.35, 0.20),
+    # THE SLOPE IS -1.00 AND IT IS MEASURED, not assumed. The author, 7 September,
+    # on being shown that the instrument works but steps a thirty-second of what
+    # it should: *"sure"*.
+    #
+    #     d log mu_H / d log mu_homeless = -1.000 over 50 CONTROLLED PAIRS,
+    #     range -4.03 to -1.00
+    #
+    # Unit elastic is also what the model says it must be: the recovery
+    # probability if homeless is mu_homeless*0.025 and mu_H is the HOUSED-to-
+    # homeless ratio, so mu_H goes as 1/mu_homeless exactly, and composition is
+    # the only reason the pairs scatter above it.
+    #
+    # WHAT -32.40 WAS. A DISTANCE, not a log elasticity, written in the same pass
+    # as multiple_find_if_addicted +86.40, newborn_endowment_scale -17.10 and
+    # utility_cost_of_treatment -84.30. The step is damping x loggap / slope, so a
+    # slope thirty-two times too large makes the step thirty-two times too small:
+    # mu_H at -12.9 per cent needed about 40 iterations and needs about 13 now,
+    # because the gap-scaled cap binds instead of the slope. The other three are
+    # named here because they have the same defect and only this one has been
+    # measured yet.
+    'mu_homeless':                               ('mu_H',          -1.00, 0.0, 1.0, 0.35, 0.20),
     'probability_of_voucher_benchmark_used':     ('pi_V',         +1.00, 1e-05, 1.0, 0.35, 0.20),
     'newborn_endowment_scale':                   ('h_age1',       -17.10, 0.0, 3.0, 0.35, 0.20),
 }
@@ -1197,16 +1217,31 @@ def _resolve(stamp):
     hours of re-deriving a fixed mapping.
 
     A raw md5 identifies a file's exact contents, so its semantic hash cannot
-    change; the cache is append-only and never needs invalidating. It lives in
-    code/ so it survives a container reclaim through the pusher, which matters
-    because a cold start would otherwise pay the 47.7 seconds again.
+    change UNDER A FIXED HASH RULE. It lives in code/ so it survives a container
+    reclaim through the pusher, which matters because a cold start would
+    otherwise pay the 47.7 seconds again.
+
+    THE RULE IS NOT FIXED, AND THIS DOCSTRING USED TO SAY THE CACHE "never needs
+    invalidating". That sentence took the loop down on 7 September. Adding a name
+    to model_hash.TARGET_CONSTANTS -- done that evening so h_2's target could move
+    from 10.1 to 8 per cent -- changes what semantic() computes for EVERY revision
+    at once, so every stored value became wrong rather than stale. model_hash
+    already guards its own map with HASH_VERSION and rebuilds on a bump; this
+    second cache had no version key, went on serving the pre-rule answers after
+    the bump, and three_step kept exiting 2 with "no solved point carries the
+    configuration yet" until the file was deleted by hand.
+
+    So the version is stored alongside the entries and a mismatch drops the lot.
+    The author, on being shown the two caches disagree: *"ok"*.
     """
     global _RESOLVE_LOADED
     if not _RESOLVE_LOADED:
         _RESOLVE_LOADED = True
         try:
             with open(_RESOLVE_FILE) as fh:
-                _RESOLVE_CACHE.update(json.load(fh))
+                _disk = json.load(fh)
+            if _disk.pop('__hash_version__', None) == _mh_module().HASH_VERSION:
+                _RESOLVE_CACHE.update(_disk)
         except Exception:
             pass
     if stamp not in _RESOLVE_CACHE:
@@ -1214,7 +1249,9 @@ def _resolve(stamp):
         try:
             tmp = _RESOLVE_FILE + '.tmp'
             with open(tmp, 'w') as fh:
-                json.dump(_RESOLVE_CACHE, fh, indent=0, sort_keys=True)
+                json.dump(dict(_RESOLVE_CACHE,
+                               __hash_version__=_mh_module().HASH_VERSION),
+                          fh, indent=0, sort_keys=True)
             os.replace(tmp, _RESOLVE_FILE)
         except Exception:
             pass
