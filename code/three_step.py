@@ -400,7 +400,6 @@ RULES = {
     # they establish is the SIGN of the error -- the step is far too big -- and
     # damping is the honest response to that, where substituting -9 for -2.32
     # would be reading a derivative off a diagonal move.
-    'addiction_onset_base':                      ('sud_users',    +0.58, 1e-06, 0.95, 0.15, 0.20),
     'addiction_scalar_1':                        ('b',            -4.65, 1e-12, 1.0, 0.15, 0.20),
     # THREE MORE SIGNS THE AUTHOR SUPPLIED OR THE SOURCE SETTLES, 6 September.
     # All three were assigned to their moment already and frozen only for want of
@@ -576,6 +575,46 @@ FIXED = {'kkk_s_deviation_bottom': 3.4113,
          # written into every iterate rather than merely left unstepped, so a
          # base inherited from elsewhere cannot reintroduce it.
          'lambda_addiction': 0.0,
+         # PINNED, on the author's instruction of 7 September: they asked to
+         # *"calibrate the model first with lambdad=0 and just pick the base.
+         # We know arithmetically what the base should be"*, and confirmed the
+         # pin when it turned out the base was still being searched.
+         #
+         # IT IS ARITHMETIC, NOT A SEARCH. With lambda_addiction at zero the
+         # onset hazard is flat in quantity, so every user faces the same
+         # probability and the disorder share among users depends on the base
+         # ALONE. Measured flat across the whole sweep band -- lambda_d/b read
+         # 0.3365, 0.3524, 0.3510, 0.3549, 0.3565 at five values of
+         # addiction_scalar_1 -- which is what a flat hazard implies and what a
+         # dose-response one would not.
+         #
+         # 0.0428 comes from two points with different bases, corrected for the
+         # ratio being SUBLINEAR in the base at an elasticity of 0.58 rather
+         # than the 1.0 a naive scaling assumes. Both then agree:
+         #   base 0.035291, lambda_d/b 0.3695  ->  0.042840
+         #   base 0.044755, lambda_d/b 0.4241  ->  0.042841
+         'addiction_onset_base': 0.0428,
+         # PINNED, on the author's instruction of 7 September: *"so you pin
+         # theta, and the base ... and lambda_d is 0 ... and let the rest run
+         # through my method"*.
+         #
+         # IT IS ARITHMETIC, NOT A SEARCH. With lambda_addiction at zero the
+         # onset hazard is flat in quantity, so every user faces the same
+         # probability and the disorder share among users depends on the base
+         # ALONE. Measured flat across the sweep band -- lambda_d/b read 0.3365,
+         # 0.3524, 0.3510, 0.3549, 0.3565 at five values of addiction_scalar_1 --
+         # which is what a flat hazard implies and a dose-response one would not.
+         #
+         # CLOSE, NOT EXACT, AND THE AUTHOR SAID WHY: *"the base is not exact
+         # because it depends on the age and the mortality rates, but it can be
+         # chosen to be close"*. That is visible in the measurement. Scaling the
+         # base does not scale the ratio one for one; the elasticity is 0.58,
+         # because the stock share among users is the flat hazard integrated
+         # over the time a household spends using, which survival and the age
+         # structure govern. Corrected for that, two points with quite different
+         # bases agree to six figures:
+         #   base 0.035291, lambda_d/b 0.3695  ->  0.042840
+         #   base 0.044755, lambda_d/b 0.4241  ->  0.042841
          # THE SSI FLOOR IS NOT AN INSTRUMENT, on the author's judgement of
          # 7 September: *"Maybe best to leave the ssi as if was when homelessness
          # of the old was just low and untargeted. It was below 7.5% and around
