@@ -238,7 +238,12 @@ def _gate_targets():
     # Without this the first step after the retarget would drive the discount
     # factor at the old number and only the second would see the new one. This
     # is the TARGET_OVERRIDE treatment ENGINE.md prescribes for exactly this.
-    t.update({'h_1': 0.005, 'h_2': 0.101, 'emp_homeless': 0.46, 'pi_eu': 0.049,
+    # h_1 at 1 per cent, on the author's instruction of 7 September: *"i think
+    # h1 can target 1%"*, *"instead of 0.5%"*, after *"i think we can argue for
+    # anything around 0.5-1%"*. fraction_homeless_data was changed in the Fortran
+    # at the same time, but this override was still carrying 0.005 and silently
+    # winning -- the points said 0.01 and the stepper chased 0.005.
+    t.update({'h_1': 0.01, 'h_2': 0.101, 'emp_homeless': 0.46, 'pi_eu': 0.049,
               'beta': 3.0})
     if t.get('b'):
         t['sud_users'] = t['lambda_d'] / t['b']
@@ -460,7 +465,15 @@ RULES = {
     # DISPERSION of the permanent draw, and more dispersion puts more distance
     # between the halves, so the bottom half's share of labour income falls. The
     # table had this backwards.
-    'sd_permanent_productivity':                 ('sigma_y',      -1.00, 0.6, 1.3, 0.35, 0.20),
+    # THE UPPER BOUND WAS BINDING AND sigma_y HAD NO WORKING INSTRUMENT. It sat at
+    # 1.3, the ceiling, printing AT BOUND every iteration while sigma_y read +12
+    # per cent and the stepper needed to raise it further to bring the share
+    # down. Opened to 2.0 on the author's instruction: *"open the bound for
+    # sigma_y"*. Nothing in the Fortran clamps this parameter -- it is a plain
+    # declaration with no max or min -- so the handover cannot silently truncate
+    # a value above 1.3, which is the risk ENGINE.md warns about when a bound is
+    # raised.
+    'sd_permanent_productivity':                 ('sigma_y',      -1.00, 0.6, 2.0, 0.35, 0.20),
     # THE LAST FIVE SIGNS, each read off the code rather than the parameter's
     # name. Four of the seven signs written from names on 6 September were wrong,
     # so every one of these was checked at its point of use:
