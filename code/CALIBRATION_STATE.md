@@ -1,3 +1,50 @@
+## 7 September, 03:15 -- EIGHT NODES, h_1 ON TARGET, AND THE DRUG BLOCK IS THE
+## ONE REMAINING FAILURE. The author: *"let the method run for several hours"*.
+
+    semantic economy   raw 358432b497
+    seed               point_815870bb3b, 3 min, 74 of 74 applied, invariants all PASS
+    standing           8 of 21 driven moments inside the band
+    speeds             2.02 per cent a step, damping 0.25, hold 5 per cent / resume 10
+
+WHAT THE NIGHT'S STRUCTURAL CHANGES BOUGHT. h_1 is at 0.00484 against the
+author's 0.005, which is -3.3 per cent, and the age profile came in with it:
+h_age1 +7.3, h_age3 +3.7, h_age4 +1.5, h_share4 +0.5, h_share1 -4.8. Homelessness
+and its age composition are effectively solved, which they were not at any point
+in the previous twelve hours.
+
+THE MERGE WAS COSTING h_2 AND BUYING NOTHING. Unmerging took the burden moment
+from +28 per cent to -2.6 for a 4 per cent cost in homelessness: node 3's 19.4
+per cent were being made poor enough to be rent-burdened and not poor enough to
+be homeless. On the thin grid bottom_productivity_level then moved h_1 by 37 per
+cent and emp_homeless by 50 while h_2 held at 0.0983 -> 0.0985 -- the decoupling
+the merged grid never gave.
+
+FIVE OF THE TWELVE MISSES ARE ONE FAILURE. b -98.6, lambda_d -98.6, sud_homeless
+-94.0, tau_u +123.0 and theta +36.7 are all "almost nobody uses drugs" seen five
+ways. Nothing else in the table is worse than -65 per cent.
+
+THE AUTHOR FOUND THE LIKELY CAUSE AND IT IS NOT IN THE DRUG BLOCK: *"look at
+aleph...it is very high, that is why b gets so little use"*. aleph is 132.9
+against 80, so households value life 66 per cent more than the data says, and
+increased_risk_of_death_addicted is 5.9 -- addiction multiplies mortality nearly
+sevenfold. They have been paying a 66 per cent inflated price for that risk.
+value_of_life sits at 196.777 against its own declared default of 120; it was
+raised on the seven-node economy when aleph read BELOW target, and the new grid
+moved average income underneath it.
+
+This is the third cross-effect of the night with the same shape: an instrument
+aimed at one moment quietly setting another. The employment multiplier destroyed
+b while aimed at sud_homeless; kappa_uem and the SSI floor reshaped the age
+distribution under each other; and value_of_life prices every mortality risk in
+the model while being calibrated on a wealth ratio. A coordinate method with no
+cross terms cannot see any of them, which is why the author's reading of the
+table keeps beating the loop's.
+
+IF ALEPH IS THE CAUSE, b RECOVERS AS A REGIME CHANGE, NOT A WALK. aleph needs
+about 25 iterations at 2 per cent, an hour and a half. b's own gap would need 213
+iterations if it closed smoothly, which is twelve hours, so the two paths are
+easy to tell apart in the trace.
+
 ## 7 September, 01:30 -- NEW ECONOMY, NEW BASELINE. The 00:20 baseline is void.
 
 The SUD margins were split at the author's instruction and the economy changed
