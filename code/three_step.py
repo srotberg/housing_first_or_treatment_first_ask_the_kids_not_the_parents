@@ -800,11 +800,46 @@ CONFIG = {
 # question, not a calibration one, and it is not changed here.
 HELD = {'lambda_addiction'}
 
+# A FALLBACK OF None MEANS THE INSTRUMENT NEVER MOVES, and nobody chose that.
+#
+# The author, 7 September: *"i want cbar and aleph to be moving"*, *"who told
+# you to freeze them? same with omega_l, and gamma?"*, *"who said they should be
+# frozen?"*. Nobody did. It was an accident of this loop.
+#
+# An instrument added here got fallback None. slope() returns None when there is
+# no controlled pair AND no fallback, and the stepper then skips the parameter
+# and prints "NO CONTROLLED PAIR YET", which reads as a temporary state. It is
+# permanent: the loop steps about fifteen coordinates every iteration, so a pair
+# differing in exactly ONE of them is never produced. Measured over 136 points
+# on this economy, max_food_cost, value_of_life, relative_share_of_housing and
+# relative_share_of_leisure each had exactly one distinct value. Not one step in
+# a whole day, while cbar sat at -69 per cent and aleph at -15.
+#
+# THE SLOPES BELOW ARE FROM THEORY, NOT MEASURED, and are marked so in the
+# trace. Three of them are near certainties of arithmetic rather than guesses:
+# aleph is the value of life over income and value_of_life scales its numerator,
+# cbar is food stamps over income and max_food_cost caps the numerator, so both
+# are +1 by construction. A higher taste for leisure means less labour supplied,
+# so omega_l takes -1. gamma's 0.167 is the one real measurement available: it
+# is the slope ENGINE.md records over 226 archived points, where Cobb-Douglas
+# would give 1.0 and the discrete ladder saturates it.
+#
+# A WRONG MAGNITUDE CANNOT DO MUCH DAMAGE HERE, which is why this is safe to do
+# without a sweep first: the half per cent cap bounds every step, and the
+# sign-flip ratchet halves the gain the first time one of these overshoots. A
+# wrong sign costs one iteration and then self-corrects.
+_THEORY = {
+    'value_of_life':             +1.00,   # aleph = VSL / income, direct
+    'max_food_cost':             +1.00,   # cbar = food stamps / income, direct
+    'relative_share_of_leisure': -1.00,   # more leisure weight, less labour
+    'relative_share_of_housing': +0.167,  # ENGINE.md, measured over 226 points
+}
+
 for _p, _m in sorted(_OWN.items()):
     if _p in RULES or _p in FIXED or _p in CONFIG or _p in HELD or _p not in _BOUNDS:
         continue
     _lo, _hi = _BOUNDS[_p]
-    RULES[_p] = (_m, None, _lo, _hi, 0.45, 0.35)
+    RULES[_p] = (_m, _THEORY.get(_p), _lo, _hi, 0.45, 0.35)
 
 # EVERYTHING MOVES SLOWLY, on the author's instruction of 7 September: *"Are you
 # adjusting parameters slowly? They should move slowly"*.

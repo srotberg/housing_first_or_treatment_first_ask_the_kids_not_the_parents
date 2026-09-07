@@ -1899,7 +1899,7 @@
         ! IT IS STILL NOT A CITABLE FIGURE and the rebuild above is still owed.
         ! Nothing here changes that; 0.005 is a working target, and the AHAR Part
         ! 2 construction is what the paper will have to quote.
-        real(8), parameter :: fraction_homeless_data=0.005
+        real(8), parameter :: fraction_homeless_data=0.01
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe
