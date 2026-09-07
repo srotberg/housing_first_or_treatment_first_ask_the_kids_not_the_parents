@@ -1318,7 +1318,13 @@ SKIP = {
         # is 3*h2 and h2 is spoken for by burden50, so nothing can move the share
         # in the largest unit. Measured: it extrapolates to about 0.025 at 3x h2
         # against a target of 0.627.
-        'h_3',# h_3 IS UN-CONCEDED, 5 September. It entered SKIP on 31 August because its
+        'h_3',
+        # emp_homeless IS UNTARGETED, 7 September: *"and forget about targeting
+        # the emp_homeless"*, *"let it be untargeted"*. Its instrument,
+        # bottom_productivity_level, is inert under KKK and measured -0.0003 on
+        # this moment over 54 controlled pairs; it is pinned at 0.0 in the same
+        # round. three_step.py drops it from TARGETS for the same reason.
+        'emp_homeless',# h_3 IS UN-CONCEDED, 5 September. It entered SKIP on 31 August because its
         # only instrument moved it at -0.01 -- the author's *"h3 can be off"* --
         # and that instrument was smallest_rental_relative_to_lowest_income.
         # largest_house_size is an independent absolute level now and moves it

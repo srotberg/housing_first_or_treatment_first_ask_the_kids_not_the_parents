@@ -243,8 +243,16 @@ def _gate_targets():
     # anything around 0.5-1%"*. fraction_homeless_data was changed in the Fortran
     # at the same time, but this override was still carrying 0.005 and silently
     # winning -- the points said 0.01 and the stepper chased 0.005.
-    t.update({'h_1': 0.01, 'h_2': 0.101, 'emp_homeless': 0.46, 'pi_eu': 0.049,
-              'beta': 3.0})
+    t.update({'h_1': 0.01, 'h_2': 0.101, 'pi_eu': 0.049, 'beta': 3.0})
+    # emp_homeless IS UNTARGETED, 7 September: *"and forget about targeting the
+    # emp_homeless"*, *"let it be untargeted"*. Its only instrument moved it at
+    # -0.0003 over 54 controlled pairs and has been pinned in the same round, so
+    # scoring it would hold the ten per cent rule open on a moment with nothing
+    # able to reach it. Dropped HERE rather than in the Fortran on purpose: the
+    # write statement is not a comment and not a TARGET_CONSTANT, so editing it
+    # would change the model hash and orphan every point in this economy.
+    # next_batch.py's SKIP carries the same decision for the gate.
+    t.pop('emp_homeless', None)
     if t.get('b'):
         t['sud_users'] = t['lambda_d'] / t['b']
     _annualise_age_rates(t)
@@ -368,7 +376,42 @@ RULES = {
     # silently truncated and the point that came back was not the point asked
     # for, with nothing in the trace to say so. Found in the bounds audit of
     # 23:30, on the author's instruction to check every parameter's range.
-    'bottom_productivity_level':                 ('emp_homeless', -2.66, 0.02, 1.00, 0.60, 0.25),
+    # bottom_productivity_level IS PINNED AND emp_homeless IS UNTARGETED, on the
+    # author's instruction of 7 September: *"i suggest to unpin the bottom
+    # productivity level"*, corrected immediately to *"i mean to pin"*, then
+    # *"and forget about targeting the emp_homeless"*, *"let it be untargeted"*,
+    # and on where to put it, *"just let it be at the value it would be naturally
+    # if we didnt actually touch it"*.
+    #
+    # IT WAS NOT MOVING ITS OWN MOMENT. Measured over 57 controlled pairs in the
+    # archive -- points differing in this coordinate and nothing else:
+    #
+    #     d log emp_homeless / d log bottom_productivity_level = -0.0003  (n=54)
+    #     d log h_1          / d log bottom_productivity_level = -0.0004  (n=57)
+    #     d log w_bot        / d log bottom_productivity_level = +0.0014  (n=57)
+    #     d log sigma_y      / d log bottom_productivity_level = +0.0002  (n=57)
+    #     d log burden50     / d log bottom_productivity_level = -0.3903  (n=20)
+    #
+    # Four of the five are zero to three decimal places. It had stepped its full
+    # half per cent every iteration through the night, 0.0668 up to 0.09695,
+    # chasing emp_homeless from -1.9 per cent out to -19.6, and never touched it.
+    # run_one_point.sh line 311 says why: "y_grid_kappa, bottom_productivity_level
+    # and sd_permanent_productivity are inert under KKK", and every point runs
+    # KKK. This is the second instrument tonight found pointing at nothing; the
+    # first was sd_permanent_productivity on sigma_y.
+    #
+    # ZERO, NOT 0.0668. The Fortran declares it 0.d0 at line 3430 and says at 3417
+    # that "bottom_productivity_level=0 LEAVES THE GRID ALONE"; line 29356 guards
+    # the whole bottom-node override with if (bottom_productivity_level>0.d0), so
+    # at zero the block does not run and the grid is whatever KKK produced. That
+    # is what "naturally, if we didn't touch it" means. run_one_point.sh's own
+    # default is 0.0668, so the zero has to be written into the vector explicitly,
+    # which the pin below does on every iteration.
+    #
+    # THE EFFECT OF THIS IS NOT PREDICTABLE FROM THE ARCHIVE. Every one of the 57
+    # controlled pairs has the parameter ABOVE zero, so they measure the margin
+    # and not the switch. burden50, the one moment with a real elasticity, is
+    # inside the band now and may well leave it.
     # THE NO-WAGE-INCOME SHARE, added 6 September when the author moved its
     # target from 0.1393 to 0.049: *"Let the method run with the new unemployment
     # rate target"*. Without an instrument pointed at it the target change does
@@ -753,7 +796,11 @@ FIXED = {'kkk_s_deviation_bottom': 3.4113,
          # multiple_find_if_addicted, which divides job finding and carries
          # sud_homeless. Before the split this one parameter did both margins, so
          # the disorder's unemployment rate and its spell duration were one knob.
-         'multiple_of_probabilities_of_employment_if_addicted': 1.0}
+         'multiple_of_probabilities_of_employment_if_addicted': 1.0,
+         # See the note where this left RULES: inert under KKK, measured at
+         # -0.0003 on its own moment over 54 controlled pairs, and returned to
+         # the value at which the Fortran leaves the employment grid alone.
+         'bottom_productivity_level': 0.0}
 
 # A PARAMETER AT ZERO CANNOT BE REACHED BY A PROPORTIONAL STEP. The step is
 # value*exp(...), so zero times anything is zero and the instrument is frozen
