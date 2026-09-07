@@ -1,3 +1,32 @@
+## 22:08 UTC 7 September -- both opened bounds confirmed stepping, and tau_u's SLOPE is out by a factor of thirty four
+
+    before:  utility_cost_of_treatment   8 ->      8   tau_u 0.44820 vs 0.24500   AT BOUND
+    after:   utility_cost_of_treatment   8 -> 8.0143   tau_u 0.44687 vs 0.24500
+
+size_homelessness steps cleanly at the new floor too, 3.6857e-05 -> 3.6673e-05.
+
+IT STEPS +0.18 PER CENT, NOT THE HALF PER CENT CAP, and the reason is worth
+writing down because it is not the cap and not the ratchet. The step is
+damping * gain * log(target/model) / slope, and RULES carries -84.30 for this
+instrument. That number is a DISTANCE, not a log elasticity. The archive puts
+the local elasticity near -2.5, so the fallback is out by a factor of about
+thirty four and the step is a thirty fourth of what the cap would allow.
+
+LEFT AS IT IS, DELIBERATELY. At +0.18 per cent an iteration against a true
+-2.5, tau_u falls about 0.45 per cent an iteration and closes its 60 per cent
+log gap in roughly 135 iterations, five and a half hours -- inside the night.
+Correcting the slope to -2.5 would land it in about two hours instead. That is
+a third change in an hour to a system that has just started moving correctly,
+and the cost of being wrong about it is an overshoot on the one moment furthest
+out. If the author wants it faster, the one-line change is the slope.
+
+WORTH CHECKING THE OTHER FALLBACKS THE SAME WAY. -84.30 is not the only entry
+in RULES that looks like a distance rather than a slope: multiple_find_if_addicted
++86.40, mu_homeless -32.40, newborn_endowment_scale -17.10 and
+utility_cost_of_treatment -84.30 were all set together. Where the moment is
+converging anyway the size only costs speed, but an instrument that looks stuck
+should have its slope checked against the archive before its bound is blamed.
+
 ## 22:03 UTC 7 September -- the two bounds that were blocking the night, opened
 
 The author: *"please adjust all the parameters that are pinned at their bounds
