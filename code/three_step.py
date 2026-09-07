@@ -322,7 +322,25 @@ RULES = {
     # iteration moves seven or more, so slopes refresh from one-coordinate arms
     # and nowhere else. Bounding the step bounds what a stale slope can cost;
     # replacing +0.29 with a number nothing measured would not.
-    'size_homelessness':                        ('h_1',          +0.30, 1e-5, 0.20, 0.55, 0.25),
+    # THE LOWER BOUND WAS ARTIFICIAL AND WOULD HAVE BOUND BEFORE MORNING. h_1 is
+    # the worst behaved moment with a live instrument -- +63 per cent and still
+    # climbing, because the recovering drug block adds to the street faster than
+    # the rung takes away -- and size_homelessness was moving its full half per
+    # cent down every iteration from 3.72e-05. That is about 263 iterations from
+    # 1e-05, roughly ten and a half hours, which is inside the night the author
+    # asked for.
+    #
+    # 1e-05 was this file's own invention. next_batch.py has carried (1e-06,
+    # 0.60) since the street was decoupled, and the FORTRAN's real floor is
+    # street_size_floor=10.d0**(-6) at line 3245, applied at line 28039 as
+    # housing_size(lowest) = max(size_homelessness*(1+increase_homeless_size*5),
+    # street_size_floor) with increase_homeless_size=0.
+    #
+    # SET TO 2e-06, NOT 1e-06. At exactly the floor the max() takes over and the
+    # parameter stops moving the street at all -- inert, in the way
+    # sd_permanent_productivity was inert, and silently. Twice the floor keeps it
+    # strictly live and still gives about 584 iterations of room.
+    'size_homelessness':                        ('h_1',          +0.30, 2e-6, 0.20, 0.55, 0.25),
     'smallest_rental_relative_to_lowest_income': ('h_2',          +5.36, 5e-3, 0.40, 0.30, 0.08),
     # THE SECOND NODE'S LEVEL, NOT THE BOTTOM NODE'S MASS. The author,
     # 6 September: *"instead of choosing the bottom mass, fix it to 0.2% and
@@ -451,7 +469,35 @@ RULES = {
     # shows it stepping while the moment does not move. At 70 that happens if pbu
     # rises past 0.0143, which is close to where it is, so this bound is a
     # measurement decision that expires if the unemployment target moves again.
-    'utility_cost_of_treatment':                 ('tau_u',        -84.30, 0.0, 8.0, 0.25, 0.20),
+    # THE UPPER BOUND WAS THE ONLY THING HOLDING tau_u OUT, and it held it out
+    # for the whole of the 7 September night run. The parameter sat at 8.0
+    # printing AT BOUND every iteration while treatment take up read +84 per
+    # cent and drifted further out. The author, 7 September: *"please adjust all
+    # the parameters that are pinned at their bounds and prevent the model from
+    # moving properly"*.
+    #
+    # CHECKED FIRST THAT IT IS NOT A DEAD LEVER, because that is exactly the
+    # mistake sigma_y had just cost -- a bound was opened on an inert parameter
+    # earlier the same evening and changed nothing. Four independent economies in
+    # the archive agree that this one is strong and monotone:
+    #
+    #   211b867a51   u 6.99 -> 8.00   tau_u 0.659 -> 0.455   53 values, monotone
+    #   0014027387   u 2.83 -> 11.0   tau_u 0.604 -> 0.0004
+    #   ae7259b5bb   u 0.57 -> 2.86   tau_u 0.969 -> 0.030
+    #   375aed92cf   u 2.18 -> 2.65   tau_u 0.704 -> 0.254   60 values
+    #
+    # The first of those brackets the value we are at, so the LOCAL elasticity is
+    # about -2.5, not the -84.30 fallback below, which is a distance and not a
+    # log slope. tau_u needs -0.611 in logs, so u needs about +28 per cent, near
+    # 10.2. Twenty leaves room without being reachable in a night at the half per
+    # cent cap.
+    #
+    # NOTHING IN THE FORTRAN CLAMPS IT. Line 289 is a plain
+    # "real(8) :: utility_cost_of_treatment=0" with no max or min, and line 22349
+    # is its only use, "flow_utility_1=flow_utility_1-utility_cost_of_treatment".
+    # So the handover cannot silently truncate a value above 8, which is the risk
+    # ENGINE.md warns about whenever a bound is raised.
+    'utility_cost_of_treatment':                 ('tau_u',        -84.30, 0.0, 20.0, 0.25, 0.20),
     # tau_l. NEGATIVE, on the author's instruction of 6 September: *"tau_l should
     # be lowered when the model is low relative to the data"*. The source agrees
     # and explains why a value of 0.79 yields an average tax of 0.21 --

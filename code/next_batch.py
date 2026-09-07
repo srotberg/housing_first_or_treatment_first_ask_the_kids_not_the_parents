@@ -991,7 +991,9 @@ BOUNDS = {
     # vector and was weighted double, and a parameter the author holds would have
     # been moved by the search. Dropping the bounds entry is what holds it,
     # because that is the test instruments_all applies.
-    'utility_cost_of_treatment':                            (0.0, 8.0),
+    # Raised with three_step.py's own bound on 7 September; see the note there.
+    # The two tables disagreeing is what cost sigma_y a whole run.
+    'utility_cost_of_treatment':                            (0.0, 20.0),
     'probability_becoming_unemployed':                     (1e-6, 0.500),
     # THE FLOOR EXCLUDED THE SOLUTION and was found by measurement, 2 September.
     # theta falls monotonically in this parameter and the target, 0.162, is

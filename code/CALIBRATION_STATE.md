@@ -1,3 +1,58 @@
+## 22:03 UTC 7 September -- the two bounds that were blocking the night, opened
+
+The author: *"please adjust all the parameters that are pinned at their bounds
+and prevent the model from moving properly"*.
+
+Checked all twenty instruments against their bounds first. Exactly ONE was at a
+bound, one would reach a bound inside the night, and one more is close enough to
+be worth naming and leaving alone.
+
+1. utility_cost_of_treatment, AT ITS UPPER BOUND OF 8.0, tau_u +84 per cent.
+   RAISED TO 20.0, in three_step.py AND in next_batch.py so the two tables agree
+   -- the two disagreeing is exactly what cost sigma_y a whole run this evening.
+
+   VERIFIED IT IS NOT A DEAD LEVER BEFORE OPENING IT, which is the lesson sigma_y
+   had just taught. Four independent economies in the archive, monotone in all
+   four:
+
+       211b867a51   u 6.99 -> 8.00   tau_u 0.659 -> 0.455   53 values
+       0014027387   u 2.83 -> 11.0   tau_u 0.604 -> 0.0004
+       ae7259b5bb   u 0.57 -> 2.86   tau_u 0.969 -> 0.030
+       375aed92cf   u 2.18 -> 2.65   tau_u 0.704 -> 0.254   60 values
+
+   The first brackets the value we sit at, so the LOCAL elasticity is about -2.5.
+   tau_u needs -0.611 in logs, so u needs about +28 per cent, near 10.2, and 20
+   leaves room without being reachable in a night at the half per cent cap.
+
+   NOTHING IN THE FORTRAN CLAMPS IT: line 289 is a plain declaration with no max
+   or min, line 22349 its only use, flow_utility_1 = flow_utility_1 -
+   utility_cost_of_treatment. So the handover cannot silently truncate above 8.
+
+2. size_homelessness, NOT at its bound but 263 iterations from it, about ten and
+   a half hours, which is inside the night. It is h_1's only instrument and h_1
+   is the worst behaved moment with an instrument, +63 per cent and climbing.
+   LOWERED FROM 1e-05 TO 2e-06.
+
+   1e-05 was this file's own invention. next_batch.py has carried (1e-06, 0.60)
+   since the street was decoupled, and the Fortran's real floor is
+   street_size_floor=10.d0**(-6) at line 3245, applied at 28039 inside a max()
+   with increase_homeless_size=0. 2e-06 rather than 1e-06 deliberately: AT the
+   floor the max() takes over and the parameter stops moving the street at all,
+   inert and silent, in the way sd_permanent_productivity was. Twice the floor
+   keeps it live and still gives about 584 iterations of room.
+
+3. discount_factor, NOT CHANGED and named here so it is not rediscovered.
+   It is drifting monotonically down -- 0.937375 to 0.934928 over the last thirty
+   points -- while beta's gap widens from +0.21 to +1.21 per cent, so the rest of
+   the system is pushing wealth over output up faster than patience pulls it
+   down. At -0.009 per cent an iteration its 0.9 floor is about 423 iterations
+   off, seventeen hours, so it clears the night. If it is still falling in the
+   morning the floor is the next thing to decide, and how low beta may go is an
+   economic question rather than a calibration one.
+
+SIGMA_Y MEANWHILE IS WORKING. kkk_sigma_scale 1.7674 -> 1.8060 and the moment
+0.19653 -> 0.19148, a gap of 13.40 down to 11.3 per cent in nine iterations.
+
 ## 21:56 UTC 7 September -- projection to convergence on the 19 internally calibrated instruments
 
 Asked for by the author. Fitted as d log|gap| per iteration over the last 20
