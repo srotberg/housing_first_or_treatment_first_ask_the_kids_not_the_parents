@@ -1,3 +1,69 @@
+## 7 September, 10:35 -- THE LOOP DEADLOCKED IN A DEGENERATE CORNER, AND BOTH
+## HALVES OF THAT NEED THE AUTHOR. STOPPED, NOT RESTARTED.
+
+    semantic economy   raw 211b867a51, 84 points
+    serial loop        STOPPED at 10:35, STOP_LOOP set
+    best point         point_54f8f7eb61, 12 of 25 scored moments inside the band
+    what the night won beta 3.010 against 3.0, emp_homeless -2.3 per cent,
+                       h_1 +28 per cent, and no oscillation anywhere
+
+WHAT WORKED, AND IT IS WORTH KEEPING. The author's three changes -- wealth over
+output retargeted to 3.0, every parameter capped at half a per cent an
+iteration, and the discount factor's slope corrected from the +1.00 placeholder
+to the measured +9.0 -- plus the sign-flip ratchet took the count of moments
+inside ten per cent from 7 to 12 and stopped the two-cycle dead. discount_factor
+settled at 3.008-3.013 for sixty consecutive solves having previously alternated
+2.036 <-> 2.521 forever. The ratchet fired on five instruments, halved each,
+and released each again once it stopped overshooting. None of that is in doubt.
+
+THE DRUG BLOCK WENT TO EXACTLY ZERO AND TOOK FOUR MOMENTS WITH IT.
+
+    b        0.089 target, model 0.0000000    nobody uses drugs at all
+    lambda_d 0.0368 target, model 0.0000000
+    theta    0.14098 target, model -1.0       the file's undefined convention
+    mu_H     1.4732 target, model 4.99e+10    a divide by zero, reported as a number
+    sud_users 0.41348 target, model 1.00000   0/0 read as every user disordered
+
+High patience is what did it: hitting wealth over output of 3.0 needs a discount
+factor near 0.937, and at that patience households save rather than buy, so the
+drug threshold (phi/theta)*p*b is never cleared. addiction_scalar_1 walked down
+from 0.00727 to 0.00484 chasing it and never revived a single buyer. Its lower
+bound is 1e-12, so it cannot hit a bound; it can only descend for ever.
+
+THE MOMENTS AT THIS CORNER ARE NOT MEASURING ANYTHING, which is ENGINE.md's own
+rule, so the 12 in band is flattered: some of those read as on target only
+because they have degenerated. mu_H at 5e10 is steering mu_homeless off a number
+that means nothing at all.
+
+AND THE LOOP ITSELF DEADLOCKED, which is a separate defect from the economics.
+three_step bases off the newest iterate-derived point, steps, and emits a
+vector; run_one_point skips a vector already measured on this economy. From
+point_fb49c795c3 the step lands exactly on point_4b5b0ffa67, which is already
+in the archive -- so nothing new lands, the newest point never changes, the base
+never changes, and the identical vector is emitted for ever. Sixty iterations
+completed in thirty-seven seconds, all skips, and loop_watch restarted it every
+ninety seconds to do it again.
+
+**If the step lands on an already-measured vector the loop stalls permanently.**
+It cannot recover on its own and no amount of waiting changes it.
+
+STOPPED RATHER THAN RESTARTED. A loop that cannot advance should not be left
+hammering, and stopping a no-op is not a scope decision -- but WHERE to restart
+from is, and that is the author's. The two questions waiting on them:
+
+  1. the corner: what should addiction_scalar_1 and relative_share_of_addiction_1
+     be reset to, given that wealth over output of 3.0 and any drug use at all
+     are now in tension? The tension is real and measured, not conjectured:
+     at discount_factor 0.90986 b was 0.063 to 0.20, at 0.92824 it was 0.003,
+     and at 0.937 it is zero.
+  2. the deadlock: a step landing on a measured vector should advance the base
+     to that vector rather than re-emitting it. That is a change to the loop
+     machinery and is not made unasked.
+
+The SUD gradient patch remains built, compiled clean on both standing builds and
+deliberately unapplied, on the author's own gate -- b must be stable first, and
+b is zero.
+
 ## 7 September, 05:20 -- THE TWO-CYCLE IS THE SEARCH, NOT THE MODEL. Eight
 ## instruments are locked at the step cap because the fallback slope is wrong
 ## by one to two orders of magnitude, and b is being whipped by beta.
