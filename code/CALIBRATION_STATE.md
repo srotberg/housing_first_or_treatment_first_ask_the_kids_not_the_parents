@@ -1,3 +1,61 @@
+## 22:52 UTC 7 September -- do mu_H, lambda_m and sud_homeless have working instruments? Two yes, one unknown.
+
+The author asked directly. Measured from controlled pairs, the same way sigma_y
+and bottom_productivity_level were caught.
+
+1. mu_homeless -> mu_H: WORKS, AND IS EXACTLY UNIT ELASTIC.
+
+       measured -1.000 over 50 controlled pairs, range -4.03 to -1.00
+
+   The sign agrees with RULES and the magnitude is what theory says: the recovery
+   ratio housed-to-homeless goes as 1/mu_homeless, so -1 is the right answer and
+   the archive returns it to three decimals.
+
+   BUT RULES CARRIES -32.40, thirty two times too large, and the step is
+   damping x loggap / slope, so the instrument moves a THIRTY-SECOND of what it
+   should. mu_H at -12.9 per cent closes in about 40 iterations at the current
+   step and about 13 with the slope corrected, because the gap-scaled cap then
+   binds instead of the slope. One line, high confidence, NOT taken without the
+   author.
+
+2. kappa_find_smi -> lambda_m: WORKS.
+
+       measured +0.438 over 13 controlled pairs, range +0.02 to +0.59
+
+   Sign agrees. The fallback +1.00 is 2.3 times too large, but here it does NOT
+   matter: at a 28 per cent gap the raw step is 0.082 and the half per cent cap
+   binds either way, so correcting the slope would change nothing. lambda_m
+   closes in about 150 iterations, six hours. Slow, and working.
+
+3. multiple_find_if_addicted -> sud_homeless: UNKNOWN, AND THE ARCHIVE CANNOT
+   SAY.
+
+   ZERO controlled pairs, in 2500 points, despite the parameter taking 206
+   distinct values from 12.34 to 24.47. It has never once moved alone -- the loop
+   steps fifteen coordinates an iteration and the older rounds moved it in
+   batches. Controlling for log b inside each economy that varied it widely:
+
+       c9ebefc35f   n=106   +1.188
+       211b867a51   n=104   -3.543
+       81bf69176d   n= 43   +0.984
+       c98acae0f3   n= 29   -0.057
+
+   No consistent sign, so this is not evidence of anything. What IS consistent
+   across all four is b's own coefficient, +0.52 to +0.78, which is why
+   sud_homeless tracked b's swing exactly tonight: -36.2 to +0.5 to +32.0 while
+   its own instrument moved 24.29 to 24.05 and did nothing visible.
+
+   THIS NEEDS A ONE-COORDINATE SWEEP. It is the only way, it takes the machine,
+   and it is not being started without the author.
+
+4. theta: SCORED BUT NOT TARGETED, by the author's own decision.
+
+   relative_share_of_addiction_1 is pinned at 0.27 (*"i suggest to pin theta to
+   0.27"*), so theta has no live instrument. It appears in the 36-moment table at
+   -9.5 per cent and not in the 18-moment instrument table. That is correct, not
+   an omission. Measured at 22:18: theta is flat in b, -0.019 with R2 0.009 over
+   76 points, so it will sit near -10 per cent wherever b lands.
+
 ## 22:46 UTC 7 September -- THERE IS A SECOND CACHE AND IT HAS NO VERSION KEY
 
 `code/resolve_cache.json` is three_step.py's own memo of raw stamp to semantic
