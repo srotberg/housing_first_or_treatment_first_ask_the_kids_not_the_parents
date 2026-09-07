@@ -1,3 +1,67 @@
+## 7 September, 00:20 -- THE BASELINE FOR THE LONG RUN. The author: *"Update me
+## in 3-4 hrs"*, and before that *"We might need 200-300 iterations"*.
+
+Three changes were made in the hour before this baseline and all of them bear on
+what the run will show.
+
+FOUR PER CENT A STEP, on their instruction: *"a parameter should not move more
+than 3-5% between iterations"*. It was 101 per cent for
+probability_becoming_unemployed, 42 for six others and 22 for most of the rest.
+Every failure of the evening was the locality assumption breaking under a step
+that size, so this is the fix for the class rather than for any one instrument.
+
+THE STEP COSTS 0.2 SECONDS INSTEAD OF 49.9. Resolving a point's raw md5 to its
+economy walks the git revision table at 0.59 seconds a stamp and the archive
+carries 82 of them, so every step re-derived a fixed mapping. Cached on disk in
+code/resolve_cache.json, which survives a reclaim through the pusher. At 300
+iterations that was four hours of the run.
+
+I WAS WRONG ABOUT addiction_scalar_1 AND THE AUTHOR WAS RIGHT. I reported it had
+the wrong sign and was driving b into the floor, from a slope read off steps
+where eight instruments moved -- the exact error this file has been recording
+against me all night. addiction_onset_base was CONSTANT at 0.0417896 across all
+four iterates, and the first step had the scalar unchanged too, yet b still fell
+0.0927 to 0.0515. The drug block did not do it. multiple_of_probabilities_of_
+employment_if_addicted went 3.11 -> 5.63 and kappa_uem 23.7 -> 37.2 over the same
+four steps, and M raises the addicted's job loss while dividing their job
+finding, so it makes using ruinous and households stop. b's collapse is a CROSS
+EFFECT from an instrument aimed at sud_homeless, and this method has no cross
+terms by construction. Nothing was pinned.
+
+WHAT TO COMPARE AGAINST IN THREE HOURS:
+
+BASELINE at 00:20 UTC, point_bc6473b615, 80 points on this economy
+  aleph             74.90343    80.00000     -6.4%
+  b                  0.04802     0.08900    -46.0%
+  beta               2.44491     2.25000     +8.7%
+  cbar               0.00450     0.00420     +7.2%
+  emp_homeless       0.43156     0.46000     -6.2%
+  gamma              0.25237     0.26800     -5.8%
+  h_1                0.01003     0.01097     -8.6%
+  h_2                0.11270     0.10100    +11.6%
+  h_share1           0.42088     0.26000    +61.9%
+  h_share5           0.07829     0.07500     +4.4%
+  kappa_uem          0.49467     0.30000    +64.9%
+  lambda_m           0.28183     0.25000    +12.7%
+  mu_H               1.29969     1.47321    -11.8%
+  omega_l            0.40273     0.40000     +0.7%
+  p_m                0.05012     0.04818     +4.0%
+  pi_V               0.26283     0.26600     -1.2%
+  pi_eu              0.05753     0.04900    +17.4%
+  sigma_y            0.17069     0.17200     -0.8%
+  sud_homeless       0.12703     0.21700    -41.5%
+  sud_users          0.44522     0.41348     +7.7%
+  tau_l              0.21297     0.22400     -4.9%
+  tau_u              0.25991     0.24500     +6.1%
+  theta              0.13386     0.14098     -5.1%
+
+h_share5 is the one to watch. It went 32 per cent to 131 in two iterations as
+ssi_floor_level was driven 0.13 -> 0.0156, and it is the same cross-effect shape:
+the floor is cut hard while the endowment and kappa_uem reshape the age
+distribution underneath it. If the four per cent cap is doing its job this
+settles; if it swings, the cap is not enough and the answer is a joint step over
+the age block rather than a smaller coordinate one.
+
 ## 6 September, 23:20 -- THE AUTHOR REVIEWED EVERY ASSIGNMENT AND FOUR OF MY
 ## SEVEN GUESSED SIGNS WERE WRONG. ALL FOUR WERE READ OFF PARAMETER NAMES.
 
