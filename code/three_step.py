@@ -230,7 +230,7 @@ def _gate_targets():
     """
     t = dict(_GATE_TARGETS)
     t.update(_file_targets())
-    t.update({'h_1': 0.01097, 'h_2': 0.101, 'emp_homeless': 0.46, 'pi_eu': 0.049})
+    t.update({'h_1': 0.005, 'h_2': 0.101, 'emp_homeless': 0.46, 'pi_eu': 0.049})
     if t.get('b'):
         t['sud_users'] = t['lambda_d'] / t['b']
     _annualise_age_rates(t)

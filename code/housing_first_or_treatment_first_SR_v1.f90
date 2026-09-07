@@ -1888,7 +1888,18 @@
         ! not a multiplier applied to a household rate. Until then it is a
         ! defensible order of magnitude and not a citable figure, and the paper
         ! must not quote it as one.
-        real(8), parameter :: fraction_homeless_data=0.01097
+        !
+        ! 0.005 FROM 7 September, the author's choice: *"let's set h1 to target
+        ! 0.5%"*. It sits between HUD's point-in-time household rate of 0.00399,
+        ! which is measured but is the wrong object for an annual period, and the
+        ! 0.01097 above, which is the right object but is 0.00399 times a
+        ! multiplier of 2.75 that this comment already refuses to let the paper
+        ! quote. The model was running at 0.0046 to 0.0048 when they set it.
+        !
+        ! IT IS STILL NOT A CITABLE FIGURE and the rebuild above is still owed.
+        ! Nothing here changes that; 0.005 is a working target, and the AHAR Part
+        ! 2 construction is what the paper will have to quote.
+        real(8), parameter :: fraction_homeless_data=0.005
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe
