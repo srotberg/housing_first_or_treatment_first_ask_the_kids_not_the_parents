@@ -1,3 +1,69 @@
+## 21:35 UTC 7 September -- sigma_y CANNOT move: three_step.py is stepping a parameter that is inert in this economy
+
+The author asked whether sigma_y is moving towards its target at all. It is not,
+and it cannot, and the reason is a bug in `three_step.py`.
+
+WHAT WAS MEASURED. Over the last forty iterations
+`sd_permanent_productivity` rose 1.4158 -> 1.5881, twelve per cent, moving its
+full half per cent every single iteration. Over the same forty iterations:
+
+    MOMENT sigma_y, bottom half labour income share   0.19525 -> 0.19647
+    gap against 0.172                                 +13.52% -> +14.23%
+    DIAG bottom half PRODUCTIVITY share              0.214993 -> 0.214997
+
+The productivity share is FLAT TO FIVE DECIMAL PLACES across a twelve per cent
+move in the parameter that is supposed to set it -- while the drug block swung
+sixty percentage points and the whole economy churned around it. A parameter
+that moves a distribution does not leave it identical in the sixth decimal.
+The gap did not close; it widened by seven tenths of a point.
+
+WHY. `run_one_point.sh` line 330 sets `[fixed_productivity]=0`, so every point
+runs the author's KKK process, and the newest vector carries
+`fixed_productivity=0` explicitly. Under KKK the dispersion is set by
+`kkk_sigma_scale`, which multiplies BOTH innovation sds at line 29006 of the
+Fortran. `sd_permanent_productivity` builds the quantile grid, which is not in
+use. `run_one_point.sh` says so itself at line 311: *"y_grid_kappa,
+bottom_productivity_level and sd_permanent_productivity are inert under KKK"*.
+
+`next_batch.py` HANDLES THIS CORRECTLY and has since 3 September.
+`_apply_process_mapping()` reads `fixed_productivity` out of `run_one_point.sh`
+and swaps the instrument: under 0 it pops `sd_permanent_productivity` and sets
+`OWN['kkk_sigma_scale'] = 'sigma_y'`. Its comment at line 2245 states the exact
+failure that has now happened: *"leaving the inert one mapped is worse than a
+conflict: the search would step a number that changes no moment and read the
+noise as a slope."*
+
+`three_step.py` never got that mapping. Line 476 hardcodes
+
+    'sd_permanent_productivity': ('sigma_y', -1.00, 0.6, 2.0, 0.35, 0.20),
+
+and the live loop is `three_loop.sh` calling `three_step.py`, not `next_batch.py`.
+So `kkk_sigma_scale` has sat frozen at 1.7674 for the entire run -- it appears in
+every vector and has never once been stepped -- while the loop diligently moved a
+lever connected to nothing.
+
+TWO CONSEQUENCES ALREADY PAID. Opening the bound 1.3 -> 2.0 on the author's
+instruction of 20:0x opened the bound on an inert parameter and changed nothing.
+And `sd_permanent_productivity` is now at 1.588 climbing half a per cent an
+iteration, so it reaches that 2.0 bound in about forty-six iterations, roughly
+two hours, and then sits there. Wasteful, not damaging: an inert parameter at a
+bound is still inert.
+
+THE FIX, one line, mirroring what `next_batch.py` already does: map
+`kkk_sigma_scale` to `sigma_y` in `RULES` and drop `sd_permanent_productivity`,
+reading `fixed_productivity` from `run_one_point.sh` rather than hardcoding
+either. The sign is unchanged -- the bottom half's share falls as dispersion
+rises, so the -1.00 fallback carries over as written -- and `next_batch.py`
+already carries bounds of (1.50, 4.00). Direction is coherent: the moment is
+fourteen per cent ABOVE target, meaning too little inequality, and the vector's
+1.7674 is twenty per cent BELOW the 2.20949 at which the two sds sit at their
+nominal values, so `kkk_sigma_scale` needs to RISE and has room.
+
+NOT APPLIED. ENGINE.md forbids editing `code/` while a solve is running, and
+the overnight loop the author asked for at 21:0x is mid-iteration. Applying it
+costs a pause of one iteration, about two and a half minutes. Held for the
+author because instrument assignment is theirs.
+
 ## 21:12 UTC 7 September -- the drug block is recovering fast, and it is pushing the homelessness block out
 
 `point_f3d381fc5a`, 70 points on `c9ebefc35f`, 10 of 37 inside ten per cent.
