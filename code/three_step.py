@@ -1003,10 +1003,21 @@ def main():
               file=sys.stderr)
     nxt = dict(vec)
 
+    # THE REASON IS PER PARAMETER. This message was written when
+    # kkk_s_deviation_bottom was the only pinned parameter and said so
+    # literally, so when lambda_addiction and ssi_floor_level joined FIXED the
+    # trace reported both of them as "the author's 0.2 per cent bottom node". A
+    # trace that names the wrong reason is worse than one that gives none: it is
+    # read later as evidence.
+    WHY = {
+        'kkk_s_deviation_bottom': "the author's 0.2 per cent bottom node",
+        'lambda_addiction':       "held at zero, the base carries the drug block",
+        'ssi_floor_level':        "the SSI floor is not an instrument; band 5 untargeted",
+    }
     for k, v in FIXED.items():
         if abs(vec.get(k, v) - v) > 1e-9:
-            print(f'#   {k:<44}{vec[k]:10.5g} -> {v:10.5g}   held at the '
-                  f'author\'s 0.2 per cent bottom node', file=sys.stderr)
+            print(f'#   {k:<44}{vec[k]:10.5g} -> {v:10.5g}   pinned: '
+                  f'{WHY.get(k, "the author fixed it")}', file=sys.stderr)
         nxt[k] = v
 
     # THE RUNG SERVES h_1 WHILE h_1 IS FAR OFF. The author, 6 September: *"If h1
