@@ -557,6 +557,25 @@ FIXED = {'kkk_s_deviation_bottom': 3.4113,
          # long spells drain wealth, and wealth depletion is what puts an SMI
          # household on the street.
          'kappa_uem': 1.0,
+         # THE SUD MORTALITY MULTIPLIER, PINNED AT THE EIGHT THE AUTHOR SET ON
+         # 1 September and every other file in the repo already carries. The
+         # author, 7 September: *"we agreed that it was supposeed to be a flat 8
+         # across all ages too"*, *"so (1-survival)*8"*, *"for the death
+         # probability"*. That is exactly the live formula -- line 28310 is
+         # kappa_phi_d_by_age(i)*(1-survival_probability(i,...)) and
+         # shape_sud_profile is 1.0 at every age, so the multiplier is flat.
+         #
+         # IT HAD BEEN 5.64 IN EVERY VECTOR SINCE 2 September. The Fortran
+         # declares 8.0, run_one_point defaults to 8.0, next_batch's IMPLICIT
+         # says 8.0 and its own comment reads "kappa_phi_d_level IS FIXED AT 8
+         # AND OWNS NOTHING. The author, 1 September". A 5.64 entered one vector
+         # at 12:26 that day and propagated because this loop copies its base
+         # point's whole vector forward and re-emits it: 1960 points carry 5.64
+         # and none carries 8. Five days of calibration ran on it.
+         #
+         # Pinned here rather than left to the default so a vector can never
+         # reintroduce it, which is precisely how it survived.
+         'kappa_phi_d_level': 8.0,
          # THE DISORDER DOES NOT COST YOU YOUR JOB EITHER, the same concession
          # the author made for SMI and for the same reason. At 1.0 a household
          # with the disorder loses its job at exactly the rate everyone else
@@ -1112,6 +1131,7 @@ def main():
         'kkk_s_deviation_bottom': "the author's 0.2 per cent bottom node",
         'lambda_addiction':       "held at zero, the base carries the drug block",
         'kappa_uem':              "SMI separation conceded; kappa_find_smi carries it",
+        'kappa_phi_d_level':      "the author's flat 8 SUD mortality multiplier",
         'multiple_of_probabilities_of_employment_if_addicted':
                                   "SUD separation conceded; multiple_find_if_addicted carries it",
         'ssi_floor_level':        "the SSI floor is not an instrument; band 5 untargeted",
