@@ -642,27 +642,6 @@
         ! carries about a tenth to a fifth of the intergenerational
         ! correlation and genes, environment and behaviour carry the rest.
         real(8) :: penalty_child_addicted=0.24
-        ! THE DIRECT CHANNEL, AND IT EXISTS BECAUSE THE INCOME ONE CANNOT
-        ! REACH THE TARGET. penalty_child_addicted above is an EARNINGS penalty
-        ! and it is set at the earnings estimate; the note beside it already
-        ! records that income carries only a tenth to a fifth of the
-        ! intergenerational correlation and that "genes, environment and
-        ! behaviour carry the rest". Nothing in the model carried the rest:
-        ! onset is addiction_onset_base plus a term in drug quantity, times
-        ! iota_smi under SMI, and NOTHING in it keys on the parent. delta_d
-        ! read 1.063 against 2.0 as a result.
-        !
-        ! This is the rest, in the cheapest form that works: the child of a
-        ! parent who carried the disorder is BORN carrying it with this
-        ! probability. It needs no new state variable -- the alternative, a
-        ! parent's disorder carried as a permanent type, doubles the state
-        ! space -- because the draw happens once, at entry, and the disorder
-        ! state already exists.
-        !
-        ! DEFAULT ZERO, so the model is unchanged until it is switched on and
-        ! the archive survives the change. Added 8 September on the author's
-        ! instruction, "go ahead with the at-birth channel".
-        real(8) :: child_sud_at_birth=0
         ! TWO, NOT THREE, AND THE CHANGE IS ABOUT WHICH POPULATION.
         !
         ! Three was the midpoint of a two to four range, but that range
@@ -4444,19 +4423,9 @@
         real(8), dimension(employment_grid_size,0:1,1:2) :: newborn_parent_share_acc=0
 
         real(8), dimension(employment_grid_size) :: newborn_productivity_draw
-        ! WIDENED FROM threshold_addiction_index TO unemployment_grid_size, 8
-        ! September, so that a newborn can be placed in a DISORDERED state.
-        ! idx_of(e,m,d)=6d+3m+e, so the clean states are 1 to 6 and the
-        ! disordered ones are 7 to 12; at the old width idx_of(1,0,1)=7 was one
-        ! past the end and would have been a silent out-of-bounds write.
-        real(8), dimension(unemployment_grid_size) :: newborn_state_draw
+        real(8), dimension(threshold_addiction_index) :: newborn_state_draw
         integer :: newborn_d_index_1,newborn_h_index_1,newborn_parent_node_1
         real(8) :: newborn_smi_at_birth
-        ! THE UNCONDITIONAL PROBABILITY THAT A NEWBORN ARRIVES CARRYING THE
-        ! DISORDER, which is child_sud_at_birth times the share of the parents
-        ! being replaced who carried one. The per-child probability is the
-        ! parameter; this is what it becomes once averaged over the cohort.
-        real(8) :: newborn_sud_at_birth
 
         ! THE CHILD IN THE CONTINUATION, AT EVERY AGE. The written model has the
         ! household value its child at weight omega whenever it does not survive,
@@ -6533,22 +6502,6 @@
                         percent_homeless_by_employment(1,k_1)/max(csud_w_1(0,1),10.d0**(-14))
                 end do
             end do
-
-            ! THE AT-BIRTH CHANNEL ENTERS THE NUMERATOR AND ONLY THE NUMERATOR.
-            !
-            ! csud_n_1 is now the disorder rate of a child of a disordered
-            ! parent: born carrying it with probability child_sud_at_birth, and
-            ! otherwise facing the same rate by node as anyone else who lands
-            ! there. csud_d_1, the child of a clean parent, is untouched, which
-            ! is what makes the ratio the thing the odds ratio measures.
-            !
-            ! IT HAD TO BE ADDED HERE AS WELL AS IN THE PLACEMENT. The moment is
-            ! CONSTRUCTED from the newborn productivity distribution and
-            ! percent_addicted_by_employment, not read off the newborns' actual
-            ! disorder states, so putting mass into idx_of(1,0,1) changes the
-            ! economy but would not have moved this number by itself. The two
-            ! edits are one change and neither is complete alone.
-            csud_n_1=child_sud_at_birth+(1-child_sud_at_birth)*csud_n_1
 
             write(*,*) "===== ALL TARGETED MOMENTS ====="
             ! SIGMA_Y IS SCORED ON INCOME, NOT ON PRODUCTIVITY, from 3
@@ -26598,38 +26551,6 @@
 
                 end if
 
-                ! THE DIRECT PARENT-TO-CHILD CHANNEL, and it is direct on
-                ! purpose. Every other route from a parent's disorder to a
-                ! child's runs through the child's PRODUCTIVITY NODE -- the
-                ! penalty_child_addicted earnings cut and rho_intergenerational
-                ! -- and that route cannot reach the observed ratio of two,
-                ! because the disorder rate is nearly flat across nodes and an
-                ! average over a flat function does not move when the
-                ! distribution under it does. delta_d read 1.063 against 2.0
-                ! with both of those switched on at literature values.
-                !
-                ! child_sud_at_birth is the probability that the child of a
-                ! parent who carried the disorder arrives carrying it too. It
-                ! stands for the inherited liability -- genetic, prenatal and
-                ! early-environment -- that the earnings channel is not, and it
-                ! is deliberately the SAME SHAPE as iota_smi, which doubles SMI
-                ! onset for those with a disorder.
-                !
-                ! Averaged over the cohort: a child is born disordered with
-                ! probability child_sud_at_birth if its parent carried one, and
-                ! sum(newborn_parent_share(:,1,:)) is the share of replaced
-                ! parents who did, housed and street together.
-                newborn_sud_at_birth=0
-
-                if (include_addiction==1) then
-
-                    newborn_sud_at_birth=child_sud_at_birth*&
-                        sum(newborn_parent_share(:,1,:))
-
-                end if
-
-                newborn_sud_at_birth=max(min(newborn_sud_at_birth,1.d0),0.d0)
-
                 ! EVERY NEWBORN ENTERS EMPLOYED. Reverted 5 September on the
                 ! author's instruction: *"actually, no revert to no unemployment
                 ! for newborns"*.
@@ -26649,54 +26570,18 @@
                 ! 0.109 of average income by 27, 0.414 by 30. Age 26 is the only age
                 ! at which every household has zero wealth and also the only age
                 ! with exactly zero homelessness.
-                !
-                ! SMI AND THE DISORDER ARE ASSIGNED INDEPENDENTLY AT BIRTH, so
-                ! the four cells are the product of the two marginals. That is an
-                ! assumption and not a measurement: the two are correlated in the
-                ! population and iota_smi makes them correlated in the model from
-                ! age two on, but nothing here says how they arrive together, and
-                ! a product is the only split that adds no further claim. It
-                ! collapses to the old two-cell assignment exactly when
-                ! newborn_sud_at_birth is zero, which is the default.
                 newborn_state_draw(:)=0
-                newborn_state_draw(idx_of(1,0,0))=&
-                    (1-newborn_smi_at_birth)*(1-newborn_sud_at_birth)
+                newborn_state_draw(idx_of(1,0,0))=1-newborn_smi_at_birth
 
                 if (number_of_smi_states>1) then
 
-                    newborn_state_draw(idx_of(1,1,0))=&
-                        newborn_smi_at_birth*(1-newborn_sud_at_birth)
+                    newborn_state_draw(idx_of(1,1,0))=newborn_smi_at_birth
 
                 end if
-
-                if (include_addiction==1) then
-
-                    newborn_state_draw(idx_of(1,0,1))=&
-                        (1-newborn_smi_at_birth)*newborn_sud_at_birth
-
-                    if (number_of_smi_states>1) then
-
-                        newborn_state_draw(idx_of(1,1,1))=&
-                            newborn_smi_at_birth*newborn_sud_at_birth
-
-                    end if
-
-                end if
-
-                write(*,*) "newborn_sud_at_birth=", newborn_sud_at_birth,&
-                    " child_sud_at_birth=", child_sud_at_birth,&
-                    " disordered parent share=", sum(newborn_parent_share(:,1,:))
 
                 do future_employment_index=1,employment_grid_size
             
-                    ! WAS threshold_addiction_index, WHICH IS THE CLEAN BLOCK
-                    ! ONLY. The disordered states are 7 to 12 and a newborn can
-                    ! now be placed in them, so the whole grid has to be walked
-                    ! or newborn_sud_at_birth would be computed, stored and
-                    ! silently dropped. At newborn_sud_at_birth = 0 the extra
-                    ! cells are all zero and this writes the same distribution
-                    ! the narrower loop did.
-                    do future_unemployment_index=1,unemployment_grid_size
+                    do future_unemployment_index=1,threshold_addiction_index
                                 
                         if (include_exogenous_endowment==1) then
                     
@@ -38043,11 +37928,6 @@
                 case ("value_of_life")
                     write(*,*) "HANDOVER value_of_life:", value_of_life, "->", handover_value
                     value_of_life=max(min(handover_value,10.d0**(4)),10.d0**(-2))
-
-                case ("child_sud_at_birth")
-                    write(*,*) "HANDOVER child_sud_at_birth:",&
-                        child_sud_at_birth, "->", handover_value
-                    child_sud_at_birth=max(min(handover_value,1.d0),0.d0)
 
                 case ("penalty_child_addicted")
                     write(*,*) "HANDOVER penalty_child_addicted:",&

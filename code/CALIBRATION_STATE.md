@@ -1,3 +1,47 @@
+## 8 September 04:22 UTC -- THE DIRECT CHANNEL IS REMOVED. Do not rebuild it.
+
+The author, on being shown the at-birth channel: *"I don't want children to be
+born with Sud!"* and then, decisively, *"I don't want children whose parents had
+Sud to have anything higher, like a higher onset. Do not do that"*.
+
+REMOVED IN FULL from the Fortran, run_one_point.sh's whitelist and three_step's
+FIXED. No residual reference remains outside this file. The diff against the
+pre-channel source is now exactly the two clamp raises and comments.
+
+THIS IS A STANDING INSTRUCTION AND IT COVERS MORE THAN THE THING I BUILT. The
+ruling is not "not at birth"; it is that a child of a parent with the disorder
+gets NO elevated disorder risk of its own by any mechanism -- not entry in the
+disordered state, not a raised onset hazard, not an inherited liability type.
+Do not propose it again in another form.
+
+WHAT REMAINS, and it is the whole of the transmission the model has: the child
+of a disordered parent draws a lower productivity node, through
+penalty_child_addicted at the Nilsson earnings estimate of 0.24 and through
+rho_intergenerational at 0.35. Both are income. Nothing else.
+
+THE CONSEQUENCE, to be stated in the paper rather than discovered by a referee:
+delta_d sits near 1.06 against an observed 2.0 and CANNOT BE MOVED. That is not
+a calibration failure to be fixed but a property of the model as the author
+wants it, and the note beside penalty_child_addicted already says why -- income
+carries a tenth to a fifth of the intergenerational correlation and genes,
+environment and behaviour carry the rest, and this model deliberately has no
+channel for the rest. delta_d is UNTARGETED and score_points ignores it, so
+nothing in the calibration depends on it. delta_h is the mirror at about 3.65
+against 2.10, too HIGH, because homelessness is income-driven where the disorder
+is not.
+
+MY NAMING CAUSED THE ALARM AND THE LESSON IS MINE. "At birth" is the code's word
+for entry, and entry is data age 26 -- model age one is data age 26, line 5725.
+I carried the code's word into chat without translating it, so a mechanism that
+meant "arrives at 26 having developed a disorder in adolescence" read as a
+neonate born addicted. TRANSLATE THE MODEL'S JARGON BEFORE PUTTING IT TO THE
+AUTHOR: say "at entry, which is 26", never "at birth".
+
+COST: a third economy hash, e9b4d75808 -- the original plus the clamp fix and
+nothing else. The eleven points on 7e3f464eff stop counting. The VECTOR carries
+forward, so the position is kept and only the history is lost, and the loop was
+re-seeded by hand as before.
+
 ## 8 September 03:35 UTC -- THE tau_u STAIRCASE WAS A CLAMP, AND I CALLED IT WRONG
 
 `utility_cost_of_treatment` was clamped at 10 in the Fortran's own handover

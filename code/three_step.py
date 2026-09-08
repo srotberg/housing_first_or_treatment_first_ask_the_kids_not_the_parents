@@ -733,14 +733,7 @@ RULES = {
 # The source's own calibration of the instrument reads 3.00 -> 0.621 per cent,
 # 3.25 -> 0.318, 3.50 -> 0.155, and log-interpolating those puts 0.200 per cent
 # at 3.4113. Written into every iterate so it cannot drift.
-FIXED = {# THE AT-BIRTH CHANNEL, HELD AT ZERO FOR NOW. The mechanism is built
-         # and one number turns it on; it is off tonight so that the
-         # utility_cost_of_treatment clamp fix converges tau_u against an
-         # otherwise unchanged economy. Turning it on moves SUD prevalence and
-         # therefore b, sud_homeless and tau_u itself, and running both at once
-         # would confound the one measurement that is now finally possible.
-         'child_sud_at_birth': 0.0,
-         'kkk_s_deviation_bottom': 3.4113,
+FIXED = {'kkk_s_deviation_bottom': 3.4113,
          # PINNED, on the author's instruction of 7 September: *"i suggest to
          # pin theta to 0.27 and let my method run"*, after *"find a relative
          # share of addiction that is close to 14% and then pin it and not move
