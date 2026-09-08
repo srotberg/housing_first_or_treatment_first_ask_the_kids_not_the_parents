@@ -1108,7 +1108,14 @@ GAP_SCALE = 0.0225
 #
 # THIS IS FASTER THAN THE AUTHOR'S OWN HALF-PER-CENT RULE, deliberately and at
 # their instruction. Do not add entries here without them.
-FAST = {'utility_cost_of_treatment': 0.03,
+# SLOWED FROM 3 PER CENT TO 1 ON THE AUTHOR'S INSTRUCTION OF 8 September 03:12:
+# *"maybe slow down the 3% parameters to 1%?"*. Both still land before morning --
+# utility_cost_of_treatment reaches its bound of 20 in about fifty iterations
+# rather than seventeen, kappa_find_smi reaches the 40 lambda_m needs in about
+# the same -- so the only thing three per cent was buying was arrival an hour
+# earlier, against a real cost: two instruments moving fast together is what
+# made b jump before, and neither of these slopes is measured.
+FAST = {'utility_cost_of_treatment': 0.01,
         # kappa_find_smi ADDED 8 September 02:59: *"Maybe add 3% rate to the
         # endowment and lamdba m?"*. Safe because its SLOPE IS ALREADY RIGHT --
         # measured +0.890 over 49 points against the +1.00 fallback, so unlike
@@ -1116,7 +1123,7 @@ FAST = {'utility_cost_of_treatment': 0.03,
         # Raw step is 0.25*0.262/1.00 = 0.0655 against a 0.005 cap, so the
         # instrument was moving at a thirteenth of what it asked for. At three
         # per cent lambda_m's 0.262 log gap closes in about nine iterations.
-        'kappa_find_smi': 0.03,
+        'kappa_find_smi': 0.01,
         # newborn_endowment_scale AT ONE PER CENT, not three, on the author's
         # instruction of 8 September 03:02: *"on the endowment just raise it to
         # 1%"*, after being shown that its sign is not established. Twice the
