@@ -1,3 +1,55 @@
+## 02:08 UTC 8 September -- WHICH OF THE THREE REMAINING MOMENTS CONVERGE, measured; and a RETRACTION on h_age1
+
+Elasticities from 49 points on 02da791f0c, model values so the four h_1 retargets
+tonight do not contaminate them:
+
+    d log lambda_m / d log kappa_find_smi           = +0.890   fallback +1.00
+    d log tau_u    / d log utility_cost_of_treatment = -0.975   fallback -84.30
+    d log h_age1   / d log newborn_endowment_scale   = +2.849   fallback -17.10
+
+  lambda_m CONVERGES. Sign and size both right, gap -38.5 to -28.0, shrinking
+    0.83 per cent a point, about 124 points or 4.4 hours. It should land.
+
+  tau_u CONVERGES TOO SLOWLY TO MATTER. The instrument works -- -0.975, sign
+    right -- but -84.30 is a DISTANCE, not a log slope, so the step is 86 times
+    too small. 0.34 per cent a point, 442 points, 15.5 hours. It will read about
+    +35 at 07:50. The one-line fix is the slope; NOT taken, it is an instrument
+    call. The author, told this: *"so it will converge, dont worry"*.
+
+  h_age1: I CLAIMED THE SIGN WAS BACKWARDS AND THAT IS RETRACTED.
+
+RETRACTION IN FULL, because it was stated to the author as a finding. I reported
+that newborn_endowment_scale has the wrong sign and was driving h_age1 away from
+target. The +2.849 is NINETY PER CENT AGGREGATE:
+
+    d log h_age1       / d log newborn = +2.849
+    d log h_1          / d log newborn = +2.553   <- overall homelessness falling
+    d log (h_age1/h_1) / d log newborn = +0.296   <- the endowment's OWN effect
+
+Overall homelessness fell 36 per cent over the window as the rung came down, and
+h_age1 fell with it. The residual own-effect is small AND unstable: h_age1/h_1
+fell to 0.8066 at 00:50 and rose back to 0.8585 by 01:29 while the endowment kept
+falling, which is the opposite sign. Over the last four readings the endowment
+fell 8.6 per cent and the young share ROSE 6.4 -- which is the author's own
+mechanism, *"we have too few young homeless, right? so the endowmnet just has to
+decline"*.
+
+THE TRAJECTORY CANNOT IDENTIFY THIS RELATIONSHIP. What is actually true is
+narrower: h_age1's model value has sat at 0.00999 to 0.01001 for three readings
+while the endowment fell a further 8 per cent, so it is FLAT, not diverging, and
+possibly at a floor. Nothing solid enough to act on.
+
+THE LESSON, and it is the third time tonight: a trajectory fit where fifteen
+coordinates move attributes the aggregate to whichever instrument happens to move
+monotonically. Control for the aggregate before calling a sign wrong. The same
+error produced the "seven nodes is worse" headline at 23:52 and the theta slide
+warning at 00:38.
+
+CPU CONTENTION, and it is real: the elasticity measurement in the scratch copy
+and the loop each launched expecting four cores, so each gets about two. The
+loop's point ran 9:43 against a 2:06 normal and nothing landed between 01:29 and
+02:04. The author was offered the choice and left both running.
+
 ## 01:50 UTC 8 September -- QUEUED: the SUD dose-response gradient, lambda_d. THE PATCH IS GONE AND MUST BE REBUILT.
 
 The author: *"when the model calibrates, i think we should consider adding
