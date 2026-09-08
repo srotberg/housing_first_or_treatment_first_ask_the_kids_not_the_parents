@@ -1,3 +1,48 @@
+## 00:10 UTC 8 September -- THE GRID-SIZE MECHANISM, and why nine or ten is a real experiment rather than an extrapolation
+
+The author: *"Ok, so 7 productivities are doing worse on homelessness. Maybe we
+should have 9 or 10"*.
+
+THE EVIDENCE IS ONE CONTROLLED COMPARISON, and it is clean because the seed was
+solved at the eight-node economy's FINAL vector, so grid size was the only thing
+that differed:
+
+    8 nodes, converged     involuntary 0.01325
+    7 nodes, same vector               0.01562
+    7 nodes, 8 points in               0.01612
+
+THE MECHANISM, which is what makes this more than an extrapolation. Under KKK the
+span is FIXED by kkk_s_deviation_bottom=3.4113 and kkk_s_deviation_top=3, so the
+nodes divide a fixed income range. The eight-node grid ran 0.053365 to 7.310631,
+a factor of 137, geometric at ratio 2.019. Over the same span:
+
+     7 nodes   ratio 2.27
+     8 nodes   ratio 2.02
+     9 nodes   ratio 1.86
+    10 nodes   ratio 1.72
+
+More nodes puts adjacent incomes closer together, so the boundary between "can
+afford the cheapest rung" and "cannot" is finer and fewer households are lumped
+on the wrong side of it. The bottom node's LEVEL and its 0.2 per cent mass are
+pinned by kkk_s_deviation_bottom either way, so what a larger grid buys is
+resolution immediately ABOVE the bottom node -- which is exactly where the
+involuntary homeless sit.
+
+NOTE y_grid_kappa IS NOT THE LEVER HERE. Line 29335 builds the quantile grid from
+(index-1/size)**kappa, but that branch is the fixed_productivity=1 path and every
+point runs KKK, under which run_one_point.sh line 311 records y_grid_kappa as
+inert. The seven-node design note that reads "with y_grid_kappa raised to 3.2
+alongside" describes the quantile grid and does NOT apply to the economy running
+now. Do not tune kappa expecting it to move the nodes.
+
+RECOMMENDED TEN RATHER THAN NINE, and the reason is signal: nine moves the ratio
+2.02 to 1.86, small enough that a null result would not distinguish "the idea is
+wrong" from "the step was too small". Ten gives 1.72 for the same reseed cost.
+
+NOTHING CHANGED. Awaiting the author. The seven-node run continues meanwhile and
+has already given both answers it could -- b jumps regardless of grid, and seven
+is worse on the involuntary component.
+
 ## 00:02 UTC 8 September -- THE DISCRIMINATING TEST FIRED AND THE AUTHOR WAS RIGHT: b JUMPS AT SEVEN NODES TOO
 
 The author, before the revert: *"i think b was jumping around not because of the
