@@ -74,12 +74,20 @@ disordered parent's rate and d the child of a clean parent's, currently
 n = 1.063d. Setting delta_d = 2 needs p = 0.937d/(1-1.063d), so p is close to
 the population disorder rate itself -- a few per cent, not a large number.
 
-THE ECONOMY HASH MOVED, 02da791f0c -> 08b1ab4c8d, and the archive does not carry
+THE ECONOMY HASH MOVED, 02da791f0c -> 7e3f464eff, and the archive does not carry
 forward: EQUIVALENT_MODELS is NOT appropriate here because the clamp fix
 genuinely changes every point whose handover asked for more than 10, which is
 the last forty. three_step returns 2 with no line when nothing carries the
 configuration, which is what killed the loop on 7 September, so the new economy
 was SEEDED by hand before the loop was restarted.
+
+CORRECTION, 03:42: this entry first said the new hash was 08b1ab4c8d. That was
+an INTERMEDIATE, computed after the placement and moment edits but before the
+handover case for child_sud_at_birth was added, and no point was ever solved
+under it. The live economy is 7e3f464eff and count_live_points.py agrees. The
+lesson is small and worth keeping: a hash quoted mid-edit is not the hash of the
+thing that runs, so take it from the archive after the first point lands rather
+than from the source while it is still being changed.
 
 ## 8 September -- the author asks about intergenerational productivity, and it is already in
 
