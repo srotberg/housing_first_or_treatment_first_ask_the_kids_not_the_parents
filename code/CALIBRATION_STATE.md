@@ -1,3 +1,37 @@
+## 03:14 UTC 8 September -- WHY A 24 PER CENT EARNINGS PENALTY CANNOT DOUBLE A CHILD'S SUD RISK, stated without algebra
+
+The author asked what penalty would give a ratio of 2, then said *"I don't
+understand why"* about the answer. The intuition, which is the version worth
+keeping:
+
+IN THE DATA, SUD BY INCOME BAND RUNS 13.65 PER CENT AT THE BOTTOM TO 4.82 AT THE
+TOP. So moving a person from the very top of the income distribution to the very
+bottom multiplies their SUD risk by 2.83 -- and that is the ENTIRE range the
+income channel has to work with.
+
+A ratio of 2 is already most of that range: log(2)/log(2.83) = 67 per cent. THE
+CHILD WOULD HAVE TO FALL TWO THIRDS OF THE WAY DOWN THE WHOLE INCOME DISTRIBUTION
+for income alone to double their risk.
+
+What penalty_child_addicted=0.24 actually does is cut the child's income by 24
+per cent. On a distribution spanning a factor of eight or ten, that is a short
+step, nowhere near two thirds of the way down. Hence 1.06 rather than 2.
+
+THE PENALTIES NEEDED, computed at 03:12: 66 to 95 per cent with the DATA's
+gradient depending on the band span, and 100 per cent -- unattainable -- with the
+MODEL's, because the model's own profile is nearly flat at 6.1, 1.0, 3.1, 3.6,
+5.5, 2.7, 2.6 per cent, so the destination is no more addicted than the origin
+and no penalty of any size works.
+
+AND THE SAME CUT TRANSMITS HOMELESSNESS TOO WELL, which is the mirror image and
+the proof that earnings is the wrong sole channel: homelessness here is almost
+entirely about whether a household can afford the cheapest rent, so a modest
+income cut pushes a real fraction of children over that threshold. delta_h is
++75 per cent too high on the same 0.31 penalty.
+
+ONE CHANNEL, TWO MOMENTS, OPPOSITE FAILURES. That asymmetry is the finding, and
+it is a result the paper can state rather than a gap the calibration must close.
+
 ## 03:08 UTC 8 September -- WHY delta_d TRANSMITS SO LITTLE: the income channel CANNOT carry a ratio of 2, even with the data's own gradient. CORRECTS what was said at 02:52.
 
 The author: *"Why is deltad transmitting so little??"* The answer at 02:52 was
