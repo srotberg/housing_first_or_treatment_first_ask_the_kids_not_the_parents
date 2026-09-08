@@ -979,8 +979,13 @@
         real(8) :: diag_mass_top_financial,diag_mass_top3_financial
         real(8) :: bottom_half_wealth_share
         ! the bottom 1, 5, 10, 25 and 50 per cent
-        real(8), dimension(5), parameter :: wealth_percentiles=&
-            (/0.01d0,0.05d0,0.10d0,0.25d0,0.50d0/)
+        ! 0.20 IS APPENDED AT THE END, NOT INSERTED IN ORDER, and the ugliness
+        ! is deliberate. model_bottom_half_wealth_share reads index 5 and
+        ! sigma_y's own share reads the last income entry, so inserting 0.20 in
+        ! sorted position would silently renumber both. Appending leaves every
+        ! existing index where it was and costs only a comment.
+        real(8), dimension(6), parameter :: wealth_percentiles=&
+            (/0.01d0,0.05d0,0.10d0,0.25d0,0.50d0,0.20d0/)
         real(8) :: wealth_hist_mass_check,wealth_hist_wealth_check
         ! THE SAME MACHINERY ON INCOME. The author asked on 29 August for the
         ! bottom percentiles of the INCOME distribution alongside those of the
@@ -1058,8 +1063,8 @@
         ! rather than about the economy. The income histogram already walks the
         ! actual distribution of household income at the bottom 1, 5 and 10 per
         ! cent, so the bottom HALF is the same walk at a fourth cut point.
-        real(8), dimension(4), parameter :: bottom_percentiles=&
-            (/0.01d0,0.05d0,0.10d0,0.50d0/)
+        real(8), dimension(5), parameter :: bottom_percentiles=&
+            (/0.01d0,0.05d0,0.10d0,0.50d0,0.20d0/)
         real(8), dimension(:), allocatable :: smi_onset_shape_by_age
 
         ! ONSET IS NOW A LEVEL ON THAT SHAPE, AND THE LEVEL IS CALIBRATED.
@@ -5494,8 +5499,8 @@
             model_average_assets_drug_users,model_drug_users_getting_voucher,model_eligibles_getting_voucher_relative_to_pop,&
             model_choose_addiction_when_income_is_low,model_average_drug_spending_experimenters,model_drug_threshold,&
             model_fraction_light_users
-        real(8), dimension(5,transition_length) :: model_wealth_share_below
-        real(8), dimension(4,transition_length) :: model_income_share_below
+        real(8), dimension(6,transition_length) :: model_wealth_share_below
+        real(8), dimension(5,transition_length) :: model_income_share_below
         ! The bottom half of the INCOME distribution, which is what sigma_y is
         ! scored on from 3 September. Index 4 of the array above.
         real(8), dimension(transition_length) :: model_bottom_half_income_share=0
@@ -6935,6 +6940,21 @@
                 model_income_share_below(2,1), " observed=", 0.00288d0
             write(*,*) "UNTARGETED income share bottom 10 pct        model=",&
                 model_income_share_below(3,1), " observed=", 0.00924d0
+            ! BOTTOM 20 PER CENT, both distributions, on the author's request of
+            ! 8 September. Index 6 on wealth and 5 on income because 0.20 is
+            ! appended rather than inserted -- see the percentile declarations.
+            !
+            ! The observed values are SCF 2022 weighted by wgt over households
+            ! aged 26 to 65, the same universe and the same method as the three
+            ! above. The method was checked by reproducing all six existing
+            ! numbers before either new one was taken: net worth -0.00224,
+            ! -0.00422, -0.00446 against the -0.00225, -0.00422, -0.00446 in
+            ! data/SCF_wealth_shares.txt, and income 0.00009, 0.00288, 0.00923
+            ! against the 0.00009, 0.00288, 0.00924 carried here.
+            write(*,*) "UNTARGETED wealth share bottom 20 pct        model=",&
+                model_wealth_share_below(6,1), " observed=", -0.00375d0
+            write(*,*) "UNTARGETED income share bottom 20 pct        model=",&
+                model_income_share_below(5,1), " observed=", 0.02871d0
             write(*,*) "DIAG income histogram mass / distribution (want 1.0) =",&
                 income_hist_mass_check
 
@@ -11137,7 +11157,7 @@
         ! per cent. A share far above that is a lower tail with too much in it,
         ! which is the same thing as saying nobody can be shut out of the
         ! smallest rent.
-        do percentile_index_1=1,5
+        do percentile_index_1=1,6
 
             percentile_1=wealth_percentiles(percentile_index_1)
             cumulative_mass_1=0
@@ -11171,7 +11191,7 @@
         ! THE SAME WALK ON INCOME, at the bottom 1, 5, 10 and 50 per cent. The
         ! bucket that straddles each cut is split in proportion to the mass
         ! taken from it, exactly as above.
-        do percentile_index_1=1,4
+        do percentile_index_1=1,5
 
             percentile_1=bottom_percentiles(percentile_index_1)
             cumulative_mass_1=0

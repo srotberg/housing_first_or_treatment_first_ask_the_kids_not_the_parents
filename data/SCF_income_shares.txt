@@ -1,0 +1,40 @@
+SCF 2022, share of aggregate INCOME held by the bottom x per cent.
+Weighted by wgt. Computed 8 September 2026 from data/SCF_2022.dta.
+
+Written because the three income shares already carried in the Fortran had NO
+recorded source, unlike the wealth ones in SCF_wealth_shares.txt. The method
+below reproduces all of them before the new 20 per cent row was taken from it:
+the Fortran carries 0.00009, 0.00288 and 0.00924, and this computation returns
+0.00009, 0.00288 and 0.00923.
+
+  pct   aged 26-65    aged 26+
+    1      0.00009     0.00015
+    5      0.00288     0.00328
+   10      0.00923     0.00938
+   20      0.02871     0.02756
+
+NET WORTH on the same two universes, for comparison with SCF_wealth_shares.txt:
+
+  pct   aged 26-65    aged 26+
+    1     -0.00224    -0.00150
+    5     -0.00422    -0.00262
+   10     -0.00446    -0.00265
+   20     -0.00375    -0.00185
+
+WHICH UNIVERSE THE TABLE SHOULD USE IS AN OPEN QUESTION, put to the author on
+8 September. The Fortran currently carries the 26-65 column, described as "the
+universe the paper already uses for wealth". The MODEL's histogram has no age
+restriction at all: it covers every household from model age 1, which is data
+age 26, to death. So the two sides are not on the same universe today.
+
+It matters less than it looks for income -- the bottom tenth moves 0.00923 to
+0.00938, under two per cent, against a model gap of about forty -- and more for
+wealth, where the bottom tenth halves in magnitude. But the model reports
+exactly zero at every wealth percentile because no household in it holds
+negative net worth, so wealth is a SIGN disagreement and no choice of universe
+repairs it.
+
+METHOD. Sort on the variable, cumulate the weight, and split the bucket that
+straddles each cut in proportion to the mass taken from it -- the same rule the
+Fortran uses when it walks its own histogram, so the two are computed the same
+way and not merely described the same way.
