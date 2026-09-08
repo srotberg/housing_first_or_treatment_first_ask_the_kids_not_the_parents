@@ -1,3 +1,63 @@
+## 8 September -- the author asks about intergenerational productivity, and it is already in
+
+Asked whether to add transmission of productivity so a child of a SUD parent is
+born poorer, and whether the odds ratio is instead conditional on income.
+
+**IT IS ALREADY IN.** `rho_intergenerational=0.35d0`, line 4398, a compile-time
+PARAMETER, assigned as the intergenerational earnings elasticity. Its own
+comment gives the author's reasoning back to them: without it
+`penalty_child_addicted` had to explain the whole odds ratio, and *"much of why
+the children of addicted parents do badly is that those parents are poor and
+poor parents have poor children for ordinary reasons"*. delta_d reads 1.063
+against 2.0 WITH that channel on.
+
+**WHY RAISING IT CANNOT FIX delta_d.** Three bindings, and the third is the one
+the code already documents:
+
+1. The child's draw is `newborn_employment_probability(child, PARENT NODE, d, h)`.
+   It keys on the parent's productivity NODE, not on the parent's realised
+   income. Most of why a SUD parent is poor in this model is unemployment and
+   drug spending, and NONE of that reaches the child.
+2. SUD is nearly flat across nodes, so SUD parents are not concentrated at the
+   bottom and the composition tilt rho multiplies is small.
+3. The child's own risk is read off that same flat profile. Moving the child's
+   distribution cannot change an average taken over a flat function, whatever
+   rho is. The Fortran says this at line 41575: *"it can therefore only move as
+   far as THAT PROFILE IS STEEP"*.
+
+Raising rho does have one real lever -- `sigma_e = sd*sqrt(1-rho^2)` narrows, so
+the penalty's log shift bites harder on a discrete node grid -- but it is
+multiplied by the same flat profile. HOW MUCH is not known: the decomposition
+that would answer it is gated behind `sweep_addiction_scalar==1` and does not
+print in ordinary points.
+
+**AND IT WOULD MAKE delta_h WORSE.** delta_h reads 3.653 against 2.10, +74 per
+cent, because homelessness IS income-driven. The same rho that does nothing for
+delta_d is already over-transmitting for delta_h. One dial, two moments, opposite
+failures -- the same asymmetry as delta_d/delta_h themselves.
+
+**THE SECOND QUESTION IS THE REAL ONE, AND THE ANSWER LEANS THEIR WAY.** Yoon et
+al. (2013) publish 2.51 as an **AOR** -- an ADJUSTED odds ratio. What the
+adjustment set contains is not in the abstract and needs the full text; the
+Mellentin 1.44 was not checked. If income or SES is in it, the target is exactly
+"same person, same income, different parental SUD", the income channel must not
+count toward it at all, and `penalty_child_addicted` is the wrong instrument by
+construction rather than merely a weak one.
+
+**THERE IS NO DIRECT CHANNEL AT ALL.** Onset is
+`addiction_onset_base + (1-exp(-lambda_addiction*drug_quantity))`, times
+`iota_smi=2.0` if SMI. Nothing in it keys on the parent, and the parent's SUD is
+forgotten the moment the child's node is drawn.
+
+**EITHER WAY THE FIX IS A DIRECT CHANNEL.** If the OR is crude, the code's own
+note says income should carry a tenth to a fifth and something must carry the
+other four fifths. If it is income-adjusted, income should carry zero. Both roads
+end in the same place, and `iota_smi` is the shape it would take. Two
+implementations, very different costs: at birth (newborns of SUD parents draw
+d=1 with some probability) needs no new state; a permanent inherited liability
+doubles the state space. NOT BUILT -- the model is frozen and this is the
+author's scope call. Put to them.
+
 ## 8 September 03:05 UTC -- the four out-of-band rows, diagnosed one at a time
 
 Eighteen targeted rows, fourteen in band. The four that are out are out for four
