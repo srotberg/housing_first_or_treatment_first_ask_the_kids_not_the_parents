@@ -1,3 +1,62 @@
+## 8 September 03:05 UTC -- the four out-of-band rows, diagnosed one at a time
+
+Eighteen targeted rows, fourteen in band. The four that are out are out for four
+DIFFERENT reasons, and lumping them together as "still converging" would have
+been wrong about three of them.
+
+**lambda_m, SMI share of the homeless, -25.7 per cent. WORKING, just slow.**
+kappa_find_smi has run 16.5 -> 24.18 in the current economy and the moment has
+gone 0.1486 -> 0.1858 monotonically: elasticity about +0.6, not the +1.00 the
+rule assumes, but alive and the right sign. Do NOT read the cross-economy bins
+as the response -- kappa 7-8 shows the moment at 0.234 and kappa 16-17 at 0.149,
+which is three different economies laid on one axis and not a slope at all.
+Closing the remaining gap at elasticity 0.6 needs kappa near 40; the bound is
+60, so it fits, and at the author's 3 per cent step it is about 17 iterations.
+
+**tau_u, treatment take up, +18.7 per cent. STALLED, and the stall is real.**
+The response is a STAIRCASE, which is what a discrete policy function over a
+discrete state space gives, and the trace shows it plainly:
+
+    u  8.69 -> 9.03    tau_u 0.3619 -> 0.3544    elasticity -0.55
+    u  9.03 -> 10.185  tau_u 0.3544 -> 0.2886    elasticity -1.71
+    u 10.185 -> 12.193 tau_u 0.2886 -> 0.2909    elasticity +0.045
+
+A block of households left treatment between 9 and 10.2 and the next block is
+somewhere above 12.2. Between the steps the derivative is exactly zero, so
+"it is not responding" and "the instrument is broken" are different claims and
+only the first is true. Where the next tread is cannot be known without walking
+to it. At 3 per cent the loop reaches the bound of 20 in about 17 iterations,
+so the question "is 20 high enough" answers itself within the hour.
+
+**h_age1, -31.1 per cent. THE SIGN IS RIGHT AND THE SLOPE WAS 46x TOO BIG.**
+This is the first clean measurement of the newborn endowment, and it is clean
+only because h_1's target was pinned to where h_1 sits: over the twelve
+iterations 0.74755 -> 0.70310 the aggregate stayed within half a per cent of
+target, so band 1 was answering to the endowment alone. That is the control the
+three earlier misreadings lacked.
+
+    d log h_age1 / d log newborn_endowment_scale = -0.371
+    (0.01002 -> 0.01025 while h_1 held flat)
+
+-17.10 was a distance, the fourth of that pass after mu_homeless -32.40,
+utility_cost_of_treatment -84.30 and multiple_find_if_addicted +86.40. The
+consequence was specific: FAST caps this instrument at 1 per cent on the
+author's instruction, the too-large slope made the step 0.54 per cent, and so
+the cap never bound and the 1 per cent that was asked for was not what the loop
+took. Corrected to -0.37, the cap binds. Gap closes in about 100 iterations,
+roughly four hours, which lands before the morning report.
+
+**sud_homeless, +12.9 per cent. THE STEP WAS 0.034 PER CENT AN ITERATION.**
+multiple_find_if_addicted is the last of the four distance slopes. It has NOT
+been measured: the loop's own trace, 23.165 -> 22.813 against 0.26789 ->
+0.23971, reads as an elasticity near seven, but the moment's scatter is +-2 per
+cent against an instrument that moved 1.5 per cent in total, and that is not a
+number to hand a step to. Set to +5.00 as a FLOOR chosen so the gap-scaled cap
+binds and the slope does not: at this gap the cap is 0.27 per cent an iteration
+and the slope asks for 0.59, so the step is the cap's for any slope below about
+eleven. The safety is that a rule which shrinks with the gap governs the step,
+not a number nobody has measured.
+
 ## 03:14 UTC 8 September -- WHY A 24 PER CENT EARNINGS PENALTY CANNOT DOUBLE A CHILD'S SUD RISK, stated without algebra
 
 The author asked what penalty would give a ratio of 2, then said *"I don't

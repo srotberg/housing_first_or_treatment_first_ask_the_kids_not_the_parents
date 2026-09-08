@@ -631,7 +631,27 @@ RULES = {
     # carries lambda_m.
     #
     # Bound 100, the Fortran's own handover clamp, matching kappa_find_smi's.
-    'multiple_find_if_addicted':                 ('sud_homeless', +86.40, 1.0, 100.0, 0.25, 0.20),
+    #
+    # THE SLOPE IS 5.00 AND IT IS A FLOOR, not a measurement, and the difference
+    # is the point. +86.40 was a DISTANCE written in the pass that also produced
+    # mu_homeless -32.40, newborn_endowment_scale -17.10 and
+    # utility_cost_of_treatment -84.30; the first two have since been measured at
+    # -1.00 and -0.37, so the defect is established and this is the last of the
+    # four still carrying it. What is NOT established is what the true elasticity
+    # is here. The loop's own trace over the current economy runs 23.165 -> 22.813
+    # against sud_homeless 0.26789 -> 0.23971, which reads as an elasticity near
+    # seven, but the moment's iteration-to-iteration scatter is +-2 per cent
+    # against an instrument that moved 1.5 per cent in total, so that number is
+    # not one to hand a step to.
+    #
+    # 5.00 is chosen so the GAP-SCALED CAP BINDS AND THE SLOPE DOES NOT. At the
+    # 12.9 per cent gap the cap is 0.0225 x 0.121 = 0.27 per cent per iteration
+    # and the slope asks for 0.59, so the step is the cap's and stays the cap's
+    # for any slope below about 11. That is the safety: the step is governed by a
+    # rule that shrinks with the gap rather than by a number I have not measured.
+    # It is eight times the 0.034 per cent the fallback was taking, which needed
+    # 140 iterations for a gap the cap closes in single figures.
+    'multiple_find_if_addicted':                 ('sud_homeless',  +5.00, 1.0, 100.0, 0.25, 0.20),
     'smi_onset_level':                           ('p_m',          +1.00, 1e-08, 0.5, 0.35, 0.20),
     # +9.0, MEASURED, not assumed. It was +1.00, and that single wrong number
     # is why beta moved too much: across the 81bf69176d archive the discount
@@ -668,7 +688,29 @@ RULES = {
     # measured yet.
     'mu_homeless':                               ('mu_H',          -1.00, 0.0, 1.0, 0.35, 0.20),
     'probability_of_voucher_benchmark_used':     ('pi_V',         +1.00, 1e-05, 1.0, 0.35, 0.20),
-    'newborn_endowment_scale':                   ('h_age1',       -17.10, 0.0, 3.0, 0.35, 0.20),
+    # THE SLOPE IS -0.37 AND IT IS MEASURED. h_1's target was pinned to where h_1
+    # actually sat, which is what finally made this measurable: every earlier
+    # reading of h_age1 was contaminated by the aggregate moving underneath it,
+    # the error that was made three times and is now a standing check. Over the
+    # twelve iterations from 0.74755 to 0.70310 the aggregate h_1 sat within half
+    # a per cent of its target the whole way, so band 1 is answering to the
+    # endowment and to nothing else:
+    #
+    #     d log h_age1 / d log newborn_endowment_scale = -0.371
+    #     (0.01002 -> 0.01025 against 0.74755 -> 0.70310, h_1 flat throughout)
+    #
+    # THE SIGN IS RIGHT, which is the thing worth saying, because the sign was
+    # what was in doubt: a smaller endowment does put more of the young on the
+    # street. It is the SIZE that was wrong, by a factor of forty-six, -17.10
+    # being a distance and not a log elasticity.
+    #
+    # It matters here because FAST caps this instrument at one per cent per
+    # iteration on the author's instruction -- *"on the endowment just raise it to
+    # 1%"* -- and with the slope forty-six times too large the step came out at
+    # 0.54 per cent, so the cap never bound and the author's one per cent was not
+    # what the loop was taking. With the measured slope the cap binds and the
+    # instrument moves at the rate that was asked for.
+    'newborn_endowment_scale':                   ('h_age1',        -0.37, 0.0, 3.0, 0.35, 0.20),
 }
 
 # THE BOTTOM NODE'S MASS IS FIXED AT 0.2 PER CENT, on the author's instruction.
