@@ -69,48 +69,12 @@ CF = [
      "        integer, parameter :: is_counterfactual=1",
      "is_counterfactual to one"),
 
-    # THE COUNTERFACTUAL PATH NEVER READ THE HANDOVER. apply_param_handover has
-    # exactly one caller in the file, at ~38390 inside calibrating_model, so a
-    # run routed to long_run_counter_factual takes all 80 parameters from the
-    # DECLARATIONS -- not from the vector it was asked for, and not from the
-    # calibrated benchmark. It would produce numbers.
-    #
-    # It goes in as the FIRST executable statement, before the
-    # voucher_conditional_on_clean test three lines below, because that test
-    # reads a switch the handover supplies.
-    #
-    # set_files_names is then called AGAIN. The main program calls it before
-    # this subroutine, and it keys file_number off
-    # probability_of_voucher_benchmark_used and
-    # increased_prob_of_voucher_if_homeless_and_addicted -- both of which
-    # arrive in the handover, so the first call named the run off the declared
-    # values. counter_VTE_TF would have been written under the benchmark's name.
-    ("""        real(8) :: previous_distance
-        integer :: end_loop
-        character*1 :: string_used
-        
-        if (voucher_conditional_on_clean==1) then""",
-     """        real(8) :: previous_distance
-        integer :: end_loop
-        character*1 :: string_used
-
-        ! THE HANDOVER, WHICH THIS PATH NEVER READ. See make_variant.py.
-        call apply_param_handover()
-
-        ! AND THE NAMES AGAIN, now that the switches they key on are the
-        ! vector's rather than the declarations'.
-        call set_files_names()
-
-        write(*,*) "CF VARIANT: file_number=", trim(file_number)
-        write(*,*) "CF VARIANT: old_results=", trim(old_results)
-        write(*,*) "CF VARIANT: probability_of_voucher_benchmark_used=",&
-            probability_of_voucher_benchmark_used
-        write(*,*) "CF VARIANT: increased_prob_of_voucher_if_homeless_and_addicted=",&
-            increased_prob_of_voucher_if_homeless_and_addicted
-        write(*,*) "CF VARIANT: voucher_conditional_on_clean=", voucher_conditional_on_clean
-
-        if (voucher_conditional_on_clean==1) then""",
-     "apply the handover and re-name on the counterfactual path"),
+    # NOTHING ELSE. The handover, the names and the missing initialisers used
+    # to be patched in here; they are in the MASTER now, because they are a
+    # real defect in long_run_counter_factual rather than a property of this
+    # build. They do nothing when is_counterfactual is zero -- the subroutine
+    # is never called -- so the benchmark is untouched by them, and keeping
+    # them in one place is what stops the two copies drifting.
 ]
 
 VARIANTS = {"save": SAVE, "cf": CF}

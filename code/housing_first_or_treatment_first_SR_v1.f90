@@ -42026,7 +42026,46 @@
         real(8) :: previous_distance
         integer :: end_loop
         character*1 :: string_used
-        
+
+        ! EVERYTHING calibrating_model DOES BEFORE IT SOLVES, AND THIS PATH DID
+        ! NOT. The counterfactual was built for the old workflow, where a
+        ! parameter reached the model by being edited into its declaration. It
+        ! has never been run with a vector handed in, and it shows: of the
+        ! initialisers calibrating_model calls before its first solve, this
+        ! subroutine called none of the ones that depend on the vector.
+        !
+        ! apply_param_handover has exactly ONE caller in the file, inside
+        ! calibrating_model, so a counterfactual took all eighty parameters
+        ! from the declarations and solved happily.
+        !
+        ! set_renter_floor is the one that crashed. renter_floor_by_age is
+        ! declared =0 and is the LOWER BOUND of the financial loop at 19360, so
+        ! with it unset the loop starts at index 0 and reads financial_grid(0),
+        ! one before the array. At -O3 that returns whatever precedes the array
+        ! in memory: the distribution grew by a factor of 1.4 a sweep to 5.97e31
+        ! over 200 sweeps and then segfaulted in addiction_transition. A bounds
+        ! checked build named it in one run, which is why that build is standing
+        ! practice for anything that opens an array index.
+        !
+        ! set_files_names is called by the main program BEFORE this subroutine
+        ! and keys file_number off two switches the handover supplies, so
+        ! counter_VTE_TF would have been written under the benchmark's name.
+        !
+        ! ORDER MIRRORS calibrating_model at 38383-38424: state, handover, the
+        ! tie, the house size, the transfer, the floor. The grids are built
+        ! below, after these, exactly as they are there.
+        call apply_param_handover()
+        call set_files_names()
+        call apply_gamma_tie()
+        call set_smallest_house_size()
+        call set_newborn_age_transfer(transition_length)
+        call set_renter_floor(transition_length)
+
+        write(*,*) "CF INIT: file_number=", trim(file_number)
+        write(*,*) "CF INIT: old_results=", trim(old_results)
+        write(*,*) "CF INIT: renter_floor_by_age(1:5)=", renter_floor_by_age(1:5)
+        write(*,*) "CF INIT: smallest_house_size=", smallest_house_size
+
         if (voucher_conditional_on_clean==1) then
         
             probability_of_voucher=1
@@ -42112,6 +42151,13 @@
         call initialize_variables_and_grids()
         call GKKOC_intergenerational_employment_process(transition_length)
         call initialize_financial_grid(transition_length)
+
+        ! AGAIN AFTER THE GRIDS, exactly as calibrating_model does at 38459-38461:
+        ! both of these are functions of the financial grid that has just been
+        ! rebuilt, so the values set above are stale by this line.
+        call set_newborn_age_transfer(transition_length)
+        call set_renter_floor(transition_length)
+
         call set_SS_benefits(transition_length)        
         call initialize_feasible_distribution(transition_length)
 
