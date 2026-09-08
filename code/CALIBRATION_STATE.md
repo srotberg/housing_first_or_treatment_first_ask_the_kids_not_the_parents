@@ -1,3 +1,42 @@
+## 00:16 UTC 8 September -- CORRECTION: SEVEN NODES IS NOW BETTER THAN EIGHT, NOT WORSE. The seed comparison was misleading and I reported it as if it were not.
+
+At 23:52 and again at 00:02 the seven-node revert was reported as failing on the
+thing it was meant to fix, with involuntary homelessness at 0.01562 and then
+0.01612 against the 0.01325 eight nodes held. The author reasoned from that to
+*"7 productivities are doing worse on homelessness. Maybe we should have 9 or
+10"*. THAT READING IS NOW WRONG and the correction is theirs to have before they
+decide anything.
+
+    time      h_1              by choice   involuntary   rung
+    23:55  0.01829  +52.4%        9.1%      0.01663    0.11563
+    23:59  0.01796  +49.7%        9.1%      0.01632    0.11448
+    00:06  0.01731  +44.2%        9.9%      0.01559    0.11313
+    00:08  0.01626  +35.5%       17.9%      0.01336    0.11271
+    00:14  0.01571  +31.0%       18.0%      0.01289    0.11159
+
+    eight nodes, converged                  0.01325
+
+Monotone all the way down, and it has PASSED the eight-node figure. h_1 is
++31.0 per cent against the +34.7 eight nodes finished at, and both are still
+falling.
+
+WHY THE EARLIER READING WAS WRONG, and it is a lesson rather than an accident: a
+seed is solved at the PREVIOUS economy's vector, so every instrument sits where
+the old grid wanted it. The rung was at 0.11983 and belonged to eight nodes.
+Judging a grid change on its seed measures the vector, not the grid. The caveat
+was stated at the time -- "one point at a vector optimised for a different grid"
+-- but the headline said "worse", and the headline is what gets acted on.
+
+A SEED IS NOT A COMPARISON. Wait for the instruments to move before calling a
+model change good or bad. Fourteen points was enough here; one was not.
+
+WHAT THIS MEANS FOR NINE OR TEN. The ratio argument still holds -- 2.27 at seven,
+2.02 at eight, 1.86 at nine, 1.72 at ten over a span fixed by
+kkk_s_deviation_bottom and _top -- but it now points the OTHER WAY. If seven
+beats eight on the involuntary component, finer is not obviously better and the
+monotone-in-node-count story is not supported. Do not order a ten-node run on the
+strength of the 23:52 numbers.
+
 ## 00:10 UTC 8 September -- THE GRID-SIZE MECHANISM, and why nine or ten is a real experiment rather than an extrapolation
 
 The author: *"Ok, so 7 productivities are doing worse on homelessness. Maybe we
