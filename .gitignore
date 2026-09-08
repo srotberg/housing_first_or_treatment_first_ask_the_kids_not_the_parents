@@ -107,3 +107,15 @@ code/.run_one_point.lock
 # the way, used to separate 'the model stopped early' from 'the pipeline ate the
 # output'. A per-container artefact like the binary, not history.
 code/raw_control.log
+
+# GENERATED VARIANT SOURCES AND THEIR BINARIES.
+# make_variant.py rebuilds these from the master plus an asserted patch list,
+# so committing 2.4 MB of near-duplicate Fortran would add nothing that the
+# generator and the master do not already carry -- and a committed copy would
+# go stale against the master silently, which is the one failure the md5
+# sidecar exists to catch.
+code/variant_*.f90
+code/variant_*.f90.from
+code/hftf_save
+code/hftf_cf
+code/hftf_*.srcmd5

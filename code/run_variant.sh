@@ -18,7 +18,7 @@
 set -uo pipefail
 cd "$(dirname "$0")"
 
-VARIANT=${1:?usage: run_variant.sh {save|cf} name=value ...}
+VARIANT=${1:?"usage: run_variant.sh save|cf name=value ..."}
 shift
 case "$VARIANT" in save|cf) ;; *) echo "variant must be save or cf" >&2; exit 1 ;; esac
 
