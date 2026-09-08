@@ -1,3 +1,40 @@
+## 01:04 UTC 8 September -- 14 of 18. b landed. h_age1 is a THIRD instrument that moves while its moment does not.
+
+point_7a962ea110, 36 points on 02da791f0c, 14 of 18 -- the best of the night.
+
+    b             +0.3%   ON TARGET, from a +70.8 peak after the grid change
+    h_1           -6.5%   in band
+    h_2                   in band, so the rung has been released
+    theta         -6.9%   in band
+    emp_homeless +10.5%   easing back on its own from a +15.1 peak, untargeted
+
+Four out: tau_u +46.0, h_age1 -40.2, lambda_m -31.5, sud_homeless +10.6.
+
+h_age1 IS THE ONE TO LOOK AT AND IT IS NOT MECHANICAL. The retarget rescaled the
+h_age band targets, which explains the step at 00:22, but not the drift since:
+-20.0 at the change, -32.1 at 00:44, -39.9 at 00:53, -40.2 now.
+
+    newborn_endowment_scale  0.81387 -> 0.80981 -> 0.80578 -> 0.80176   -1.5%
+    h_age1                   0.01005 -> 0.00997 -> 0.00996              flat
+
+THE INSTRUMENT IS MOVING IN THE RIGHT DIRECTION. h_age1 is 40 per cent BELOW
+target, so more young homelessness is wanted, and lowering the newborn endowment
+should deliver it -- fewer assets at birth, more of the young priced out. The
+stepper has the sign right. The moment does not follow.
+
+That is the same signature as sd_permanent_productivity on sigma_y and
+bottom_productivity_level on emp_homeless, both found dead tonight. It is the
+THIRD candidate.
+
+NOT MEASURED AND NOT ACTED ON. Thirty-six points on this economy and no
+controlled pair on that coordinate, so there is nothing to fit yet. The standing
+rule applies -- an instrument that looks stuck has its slope checked against the
+archive before its bound or its damping is blamed -- and the morning will have
+the points to do it. Note that -17.10 is one of the four fallbacks identified as
+a DISTANCE rather than a log elasticity, alongside multiple_find_if_addicted
++86.40 and utility_cost_of_treatment -84.30, so a wrong step size is the other
+candidate and the two are distinguishable only by measurement.
+
 ## 00:38 UTC 8 September -- theta is IN BAND at seven nodes, and now MOVES WITH b, which it did not before
 
     00:12  theta 0.13530  -4.0%   b +56.0
