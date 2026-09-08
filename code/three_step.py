@@ -1074,7 +1074,14 @@ FAST = {'utility_cost_of_treatment': 0.03,
         # Raw step is 0.25*0.262/1.00 = 0.0655 against a 0.005 cap, so the
         # instrument was moving at a thirteenth of what it asked for. At three
         # per cent lambda_m's 0.262 log gap closes in about nine iterations.
-        'kappa_find_smi': 0.03}
+        'kappa_find_smi': 0.03,
+        # newborn_endowment_scale AT ONE PER CENT, not three, on the author's
+        # instruction of 8 September 03:02: *"on the endowment just raise it to
+        # 1%"*, after being shown that its sign is not established. Twice the
+        # half per cent it had, a third of what the other two got. If the sign is
+        # wrong h_age1 moves away at twice the old rate rather than six times,
+        # which is recoverable inside an hour.
+        'newborn_endowment_scale': 0.01}
 
 # newborn_endowment_scale IS DELIBERATELY NOT HERE, though the author asked for
 # it in the same breath. ITS SIGN IS NOT ESTABLISHED. The claim that it was
