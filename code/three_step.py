@@ -1066,7 +1066,30 @@ GAP_SCALE = 0.0225
 #
 # THIS IS FASTER THAN THE AUTHOR'S OWN HALF-PER-CENT RULE, deliberately and at
 # their instruction. Do not add entries here without them.
-FAST = {'utility_cost_of_treatment': 0.03}
+FAST = {'utility_cost_of_treatment': 0.03,
+        # kappa_find_smi ADDED 8 September 02:59: *"Maybe add 3% rate to the
+        # endowment and lamdba m?"*. Safe because its SLOPE IS ALREADY RIGHT --
+        # measured +0.890 over 49 points against the +1.00 fallback, so unlike
+        # tau_u no slope correction is needed and only the ceiling was binding.
+        # Raw step is 0.25*0.262/1.00 = 0.0655 against a 0.005 cap, so the
+        # instrument was moving at a thirteenth of what it asked for. At three
+        # per cent lambda_m's 0.262 log gap closes in about nine iterations.
+        'kappa_find_smi': 0.03}
+
+# newborn_endowment_scale IS DELIBERATELY NOT HERE, though the author asked for
+# it in the same breath. ITS SIGN IS NOT ESTABLISHED. The claim that it was
+# backwards was made and RETRACTED at 02:08, and a retraction is not a
+# confirmation: the own-effect on h_age1, after removing the aggregate, measured
+# +0.296 over the full window and about -0.74 over the last four readings. At the
+# half per cent step a wrong sign is slow and recoverable; at three per cent it
+# drives h_age1 away six times faster, from an already -32.7 per cent.
+#
+# AND THE MEASUREMENT IS ABOUT TO BECOME POSSIBLE. h_age1's target is annualised
+# off h_1's, and h_1's target moved FOUR times between 23:00 and 02:35, so every
+# gap history for h_age1 tonight is contaminated by retargeting. h_1's target is
+# now PINNED at 0.01160, so from 02:35 onward h_age1's target is fixed and the
+# endowment's own effect can be read cleanly for the first time. Measure over the
+# next hour, THEN add it here if the sign holds.
 
 RATCHET_HALVE, RATCHET_GROW = 0.5, 1.2
 RATCHET_FLOOR, RATCHET_CEIL = 0.002, 1.0
