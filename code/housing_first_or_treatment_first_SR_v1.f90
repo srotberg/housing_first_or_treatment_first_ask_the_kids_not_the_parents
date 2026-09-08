@@ -1554,6 +1554,14 @@
         ! level after the declarations changed and left the reported rent
         ! describing a different price from the one households pay. That
         ! assignment now reads rent(1,0), so it tracks whatever p_r is set to.
+        ! ONE SWITCH FOR BOTH PATHS. The long-run counterfactual and the
+        ! transition each had their own rent and housing-price updates, in
+        ! different subroutines seven hundred lines apart, and pegging one and
+        ! not the other is exactly how the two come to describe different
+        ! economies. Section 7 of TRANSITION_LESSONS.md is about this class of
+        ! divergence, and it is far cheaper to build them together than to find
+        ! the difference later. Both read this.
+        integer, parameter :: peg_prices_in_counterfactual=1
         integer, parameter :: fix_rent=1
         integer, parameter :: infinite_elasticity_of_rental_supply=1
         integer, parameter :: other_rental_supply_elasticity=1
@@ -42756,7 +42764,7 @@
             ! Pegging it is what makes infinite_elasticity_of_rental_supply mean
             ! what it says: rental supply perfectly elastic AT THE BENCHMARK
             ! PRICE, rather than at whatever price the housing stock implies.
-            if (is_counterfactual==1) then
+            if ((is_counterfactual==1) .AND. (peg_prices_in_counterfactual==1)) then
 
                 housing_price(transition_length)=calibrated_stationary_housing_price
                 distance_housing_market(transition_length)=0
@@ -43179,6 +43187,17 @@
             end do
             
         end if
+
+        ! FLATTEN THE INITIAL PRICE PATH, for the reason given at the rent
+        ! block below: the first solve must face the same price the loop will
+        ! hold it at.
+        if (peg_prices_in_counterfactual==1) then
+
+            do time_index=1-solve_transition_dynamics,transition_length
+                housing_price(time_index)=calibrated_stationary_housing_price
+            end do
+
+        end if
         
         if (use_old_results==0) then
                             
@@ -43236,6 +43255,20 @@
                                     
             end do 
             
+        end if
+
+        ! AND FLATTEN THE INITIAL PATH. The block above ramps the rent from
+        ! rent_calibrated*rent_upon_implementation to its long-run value; with
+        ! the peg on there is nothing to ramp to, and the FIRST value function
+        ! solve would otherwise be taken against a path that the loop then
+        ! overwrites. Households would have priced one economy and been counted
+        ! in another.
+        if (peg_prices_in_counterfactual==1) then
+
+            do time_index=1-solve_transition_dynamics,transition_length
+                rent(time_index,:)=rent_calibrated(:)
+            end do
+
         end if
         
         lump_sum_transfer(1-solve_transition_dynamics)=0
@@ -43481,14 +43514,31 @@
                 
                 end if
                 
-                if (loop_count>start_updating_at_loop_number) then
-                                    
+                ! PEGGED ALONG THE PATH TOO, on the author's instruction of
+                ! 8 September: "I also want to keep constant the housing price
+                ! and rent in a transition computation".
+                !
+                ! Same reason as in the long-run counterfactual: homeownership
+                ! is off, so P prices rental units and nothing else, and a
+                ! reform that houses more people would otherwise bid it up
+                ! period by period and drag the rent along with it. A transition
+                ! whose prices wander is not comparable with the long-run
+                ! counterfactual it is supposed to converge to, which is most of
+                ! the point of computing one.
+                if (peg_prices_in_counterfactual==1) then
+
+                    housing_price(time_index)=calibrated_stationary_housing_price
+                    distance_housing_market(time_index)=0
+                    largest_housing_market_distance=0
+
+                elseif (loop_count>start_updating_at_loop_number) then
+
                     housing_price(time_index)=(1-weight_on_housing_price)*&
                         housing_price(time_index)+weight_on_housing_price*&
                         (c_1_calibrated)*(max(total_housing_demand(time_index)-&
                         (1-housing_depreciation_rate)*housing_stock(time_index-solve_transition_dynamics),0.d0))**&
                         (1/empirical_housing_supplpy_elasticity)
-                                                    
+
                 end if
                                 
             end do
@@ -43509,12 +43559,22 @@
             
                 end if
                                 
-                if (loop_count>start_updating_at_loop_number) then
-                                                  
+                ! AND THE RENT, same instruction. rent_calibrated is the
+                ! benchmark's p_r, so the path carries the same rental price as
+                ! the benchmark and as the long-run counterfactual it converges
+                ! to.
+                if (peg_prices_in_counterfactual==1) then
+
+                    rent(time_index,:)=rent_calibrated(:)
+                    distance_rental_market(time_index)=0
+                    largest_rental_market_distance=0
+
+                elseif (loop_count>start_updating_at_loop_number) then
+
                     rent(time_index,:)=rent(time_index,:)+&
                         rental_market_adjuster*(total_rental_demand(time_index,:)-total_rental_supply(time_index,:))
-                                                                         
-                end if                                                         
+
+                end if
                                                      
                 call function_of_utility_advantage_from_homeowning(time_index)
                                                   
