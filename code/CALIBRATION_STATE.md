@@ -1,3 +1,34 @@
+## 8 September 06:20 UTC -- THE CONTAINER LIVES ONLY DURING A TURN. This is why
+## the archive is not growing.
+
+Not a restart loop. The container is torn down when a turn ends and built again
+for the next one. The evidence:
+
+  - EVERY engine firing finds uptime about 30 seconds, at 05:14, 05:22, 05:32,
+    05:42, 05:51 and 06:17. A machine that crashed on its own would not land 30
+    seconds before each firing six times running.
+  - Points land only in the minutes right after a firing: 05:25, 05:35, 05:45,
+    05:54 against firings at 05:22, 05:32, 05:42, 05:51. One point per firing.
+  - When the :01 trigger slipped from 06:01 to 06:16, ZERO points landed in those
+    25 minutes. Nothing was running to produce them.
+
+loop_watch.sh and ensure_loop.sh are working exactly as written. There is simply
+nothing alive between firings for them to guard, and no watchdog inside the
+container can fix that -- the watchdog dies with it.
+
+WHAT THIS COSTS. Throughput is one solve per firing, about six an hour, against
+a 2.3 minute solve that could give twenty-five. The overnight run has produced 17
+points where it should have produced several hundred, and NO overnight
+instruction can change that by itself. "Let it run" cannot be honoured in this
+environment by leaving it alone.
+
+THE LEVER IS TURN LENGTH. A long foreground command keeps the container alive
+for its duration -- a 600 second Bash call earlier tonight ran to completion --
+so a firing that RUNS the loop in the foreground for eight minutes produces three
+or four points instead of one. That is the only way to convert wall clock into
+solves here, and it is what the firings should do from now on rather than
+starting the loop and ending the turn.
+
 ## 8 September 05:51 UTC -- b at -28.4 per cent, outside its own night's range
 
     b        0.07236 -> 0.06376   (-18.7 -> -28.4 per cent)
