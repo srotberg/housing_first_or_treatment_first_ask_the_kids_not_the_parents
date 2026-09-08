@@ -17535,7 +17535,12 @@
                                         is_addicted_1=1
                                     end if
 
-                                    call compute_voucher_index_1(is_homeless_1,voucher_index_1)
+                                    call compute_voucher_index_1(is_homeless_1,&
+                                        policy_function_frac_spent_on_addiction_benchmark&
+                                        (years_left_on_mortgage_index)%&
+                                        vector_real(age_index,financial_index,unemployment_index,&
+                                        employment_index,housing_status_index,voucher_index),&
+                                        voucher_index_1)
                                     call calculate_future_voucher_index_and_opportunity&
                                         (has_opportunity_1,first_voucher_index,second_voucher_index,&
                                         time_period,has_house,choose_to_own,voucher_index_1,income_1)
@@ -20142,7 +20147,13 @@
                 
                 end if
                 
-                call compute_voucher_index_1(is_homeless_1,voucher_index_1)
+                ! THE VOUCHER CATEGORY IS COMPUTED BELOW, NOT HERE. It now depends
+                ! on the household's drug share, and the secant further down is
+                ! what sets that, so computing it here would use the PREVIOUS
+                ! branch's choice -- wrong in a way nothing in the output shows.
+                ! voucher_index_1 is read at exactly one place in this subroutine,
+                ! the calculate_future_voucher_index_and_opportunity call, and the
+                ! new call sits immediately above it.
 
                 ! The window for this branch's a' search, and the per branch
                 ! argmax that both the window and coarse mode need.
@@ -20295,6 +20306,9 @@
                     end if
 
                     end if
+
+                    call compute_voucher_index_1(is_homeless_1,frac_spent_on_addiction,&
+                        voucher_index_1)
 
                     call calculate_future_voucher_index_and_opportunity&
                         (has_opportunity_1,first_voucher_index,second_voucher_index,&
@@ -22140,7 +22154,13 @@
             
                 end if
                 
-                call compute_voucher_index_1(is_homeless_1,voucher_index_1)
+                ! THE VOUCHER CATEGORY IS COMPUTED BELOW, NOT HERE. It now depends
+                ! on the household's drug share, and the secant further down is
+                ! what sets that, so computing it here would use the PREVIOUS
+                ! branch's choice -- wrong in a way nothing in the output shows.
+                ! voucher_index_1 is read at exactly one place in this subroutine,
+                ! the calculate_future_voucher_index_and_opportunity call, and the
+                ! new call sits immediately above it.
                 
                 do global_search_index=0,coarse_grid
                             
@@ -22188,6 +22208,9 @@
                     end if
                     end if
                     
+                    call compute_voucher_index_1(is_homeless_1,frac_spent_on_addiction,&
+                        voucher_index_1)
+
                     call calculate_future_voucher_index_and_opportunity&
                         (has_opportunity_1,first_voucher_index,second_voucher_index,&
                         time_period,1,0,voucher_index_1,gross_wage_income+investment_income)
@@ -24686,7 +24709,8 @@
             
         end if
         
-        call compute_voucher_index_1(is_homeless_1,voucher_index_1)              
+        ! Computed below, immediately above the future-voucher call, for the
+        ! reason given in the renter problem.
          
         proceed_2=1
         
@@ -25060,6 +25084,10 @@
             
             income_to_use=optimal_gross_wage_income_1+(risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))
             
+        ! frac_spent_on_addiction_2 is this household's drug share, set just
+        ! above; the category has to see it, so the call sits here.
+        call compute_voucher_index_1(is_homeless_1,frac_spent_on_addiction_2,voucher_index_1)
+
             call calculate_future_voucher_index_and_opportunity&
                 (has_opportunity_1,first_voucher_index,second_voucher_index,&
                 time_period,is_current_owner_1,ownership_status_index_1,voucher_index_1,income_to_use)
@@ -25960,7 +25988,7 @@
         
     end subroutine
     
-    subroutine compute_voucher_index_1(is_homeless_1,voucher_index_1)
+    subroutine compute_voucher_index_1(is_homeless_1,drug_share_1,voucher_index_1)
     
         use global_vars
         
@@ -25968,7 +25996,15 @@
         
         integer, intent(out) :: voucher_index_1
         integer, intent(in) :: is_homeless_1
-        integer :: meets_condition_1
+        ! THE HOUSEHOLD'S OWN DRUG SHARE THIS PERIOD, PASSED IN AND NOT READ
+        ! FROM MODULE SCOPE. frac_spent_on_addiction is threadprivate and would
+        ! compile, but at three of the six call sites it is not yet set when the
+        ! voucher category is computed -- it is the secant below that sets it --
+        ! so reading it here would have used the PREVIOUS branch's value and
+        ! been wrong in a way nothing in the output would show. A required
+        ! argument makes the compiler ask the question at every site.
+        real(8), intent(in) :: drug_share_1
+        integer :: meets_condition_1,fails_1
         
         voucher_index_1=1
 
@@ -25992,21 +26028,73 @@
 
         end if
         
+        ! WHO FAILS THE CONDITION.
+        !
+        ! THE AUTHOR'S RULE, 8 September, stated four times before it was built:
+        ! *"TF is v=0 and no SUD"*, *"any use is forbidden if you want a
+        ! voucher"*, *"vouchers should be taken away and not given even if v>0
+        ! and SUD=0"*, and *"it should apply to v>0 even if SUD=0"*. Both
+        ! conditions, so a household passes only by using nothing AND not
+        ! carrying the disorder.
+        !
+        ! WHAT THIS REPLACES, AND WHY IT MATTERED. The condition used to fire on
+        ! the DISORDER STATE alone. A clean household deciding to use this
+        ! period was not disordered yet, so it kept its voucher and lost it only
+        ! later, if the onset hazard happened to fire. Nobody choosing whether
+        ! to use was giving up anything today, and under a universal programme
+        ! -- where everyone holds a voucher and nobody is on the street -- that
+        ! left the policy with no deterrent on the margin it is named after.
+        ! Use rose 23 per cent above the benchmark in the first counterfactual
+        ! that ran with the machinery working.
+        !
+        ! TREATMENT IS NO LONGER AN EXEMPTION, on the author's instruction:
+        ! *"are you giving vouchers to those in treatment? they should not get
+        ! vouchers"*. A household in treatment still carries the disorder, so it
+        ! fails "no SUD". Treatment still pays, through recovery rather than
+        ! through exemption.
+        !
+        ! FALSE POSITIVES AND FALSE NEGATIVES COME FREE WITH THE CATEGORY.
+        ! Routing a user into category 3 is what subjects it to
+        ! probability_of_detection and probability_of_false_positive in
+        ! voucher_probabilities, so a user keeps the voucher one time in ten and
+        ! a clean household loses it one time in twenty, which is the imperfect
+        ! test the author specified.
+        fails_1=0
+
+        if (voucher_conditional_on_clean==1) then
+
+            if (unemployment_index>threshold_addiction_index) fails_1=1
+            if (drug_share_1>0) fails_1=1
+
+        else
+
+            ! The disorder-based rule, kept for a run that does not switch the
+            ! testing on, and with treatment still meeting it there.
+            if ((unemployment_index>threshold_addiction_index) .AND. &
+                (meets_condition_1==0)) fails_1=1
+
+        end if
+
         if (is_homeless_1==1) then
         
             voucher_index_1=2
                                     
-            if ((unemployment_index>threshold_addiction_index) .AND. &
-                (meets_condition_1==0)) then
+            if (fails_1==1) then
             
                 voucher_index_1=3
                 
             end if
             
-        elseif ((is_counterfactual==1) .AND. (unemployment_index>threshold_addiction_index) .AND. &
-            (meets_condition_1==0) .AND. &
-            (increased_prob_of_voucher_if_homeless_and_addicted==0)) then
+        elseif ((is_counterfactual==1) .AND. (fails_1==1) .AND. &
+            ((increased_prob_of_voucher_if_homeless_and_addicted==0) .OR. &
+             (voucher_conditional_on_clean==1))) then
             
+            ! THE HOUSED LOSE IT TOO. This branch used to be reachable only when
+            ! increased_prob_of_voucher_if_homeless_and_addicted was zero, which
+            ! is one of the two switches that make a run Treatment First; a run
+            ! that asked for the drug test alone left every housed household
+            ! untouchable. Under a universal programme that is every household
+            ! there is.
             voucher_index_1=3
             
         end if 
@@ -26435,7 +26523,11 @@
                                             
                                             end if
                                             
-                                            call compute_voucher_index_1(is_homeless_2,voucher_index_1)
+                                                call compute_voucher_index_1(is_homeless_2,&
+                                                    (policy_function_frac_spent_on_addiction(years_left_on_mortgage_index)%&
+                                                    vector_transition_real(time_period,age_index,financial_index,&
+                                                    unemployment_index,employment_index,housing_status_index,voucher_index)),&
+                                                    voucher_index_1)
                                             
                                             call calculate_future_voucher_index_and_opportunity&
                                                 (has_opportunity_2,first_voucher_index_1,second_voucher_index_1,&
@@ -27747,7 +27839,11 @@
                                             
                                             end if
                                             
-                                            call compute_voucher_index_1(is_homeless_2,voucher_index_1)
+                                                call compute_voucher_index_1(is_homeless_2,&
+                                                    (policy_function_frac_spent_on_addiction(years_left_on_mortgage_index)%&
+                                                    vector_transition_real(time_period,age_index,financial_index,&
+                                                    unemployment_index,employment_index,housing_status_index,voucher_index)),&
+                                                    voucher_index_1)
                                             
                                             call calculate_future_voucher_index_and_opportunity&
                                                 (has_opportunity_2,first_voucher_index_1,second_voucher_index_1,&
@@ -42066,11 +42162,39 @@
         write(*,*) "CF INIT: renter_floor_by_age(1:5)=", renter_floor_by_age(1:5)
         write(*,*) "CF INIT: smallest_house_size=", smallest_house_size
 
-        if (voucher_conditional_on_clean==1) then
-        
+        ! UNIVERSALITY IS A PROPERTY OF THE VOUCHER RATE, NOT OF THE DRUG TEST.
+        !
+        ! This used to read `if (voucher_conditional_on_clean==1) then
+        ! probability_of_voucher=1`, which tied two independent things together
+        ! and made one experiment unrunnable: asking for testing FORCED the
+        ! programme universal, so "Treatment First with rationed vouchers" could
+        ! not be expressed at all. The author settled it on 8 September.
+        !
+        ! AND probability_of_voucher IS A THREE-VECTOR, not a scalar: one offer
+        ! rate per category -- housed, homeless, homeless and addicted --
+        ! built as p, p*increased_prob_if_homeless, p*increased_prob_if_addicted.
+        ! At the benchmark's p that is 0.0433 / 0.0087 / 0.0433, so the homeless
+        ! without a disorder are offered a voucher at a FIFTH the rate of
+        ! everyone else. Setting p to one therefore gives 1.0 / 0.2 / 1.0, which
+        ! is not a universal programme; this line is what flattens all three.
+        !
+        ! Keyed on the old switch it flattened them only for runs that also
+        ! asked for testing, so universal HF ran at (1.0, 0.2, 1.0) against
+        ! universal TF at (1, 1, 1) and the two arms were not comparable: one
+        ! gave the non-disordered homeless five times the access of the other.
+        ! Keyed on the rate, "universal" means universal in both.
+        !
+        ! The testing cost underneath already assumed rationing -- it grosses up
+        ! by dividing by probability_of_voucher_benchmark_used_1, a division
+        ! that does nothing at a rate of one -- so the formula and the forcing
+        ! line contradicted each other.
+        if (probability_of_voucher_benchmark_used==1) then
+
             probability_of_voucher=1
-            
-        elseif (use_revenues_to_increase_voucher_probability==1) then
+
+        end if
+
+        if (use_revenues_to_increase_voucher_probability==1) then
             
             if (increased_prob_of_voucher_if_homeless_and_addicted==0) then
             
@@ -42158,7 +42282,25 @@
         call set_newborn_age_transfer(transition_length)
         call set_renter_floor(transition_length)
 
-        call set_SS_benefits(transition_length)        
+        ! SOCIAL SECURITY IS THE BENCHMARK'S, PER PRODUCTIVITY, AND IS NOT
+        ! RECOMPUTED. The author, 8 September: *"the amount given per
+        ! productivity should be held fixed across simulations"*.
+        !
+        ! upload_vars has just read model_ss_benefits -- one benefit level per
+        ! employment node -- from the benchmark's file, and this call used to
+        ! overwrite the whole vector from the COUNTERFACTUAL'S own distribution
+        ! and its own lifetime earnings. So a policy that changed who works and
+        ! how much also changed what retirees receive, and the welfare
+        ! comparison carried a pension system that had moved underneath it.
+        !
+        ! use_old_results is is_counterfactual, so the benchmark still computes
+        ! its own schedule and every counterfactual inherits it.
+        if (use_old_results==0) then
+
+            call set_SS_benefits(transition_length)
+
+        end if
+        
         call initialize_feasible_distribution(transition_length)
 
         if (use_old_results==0) then
