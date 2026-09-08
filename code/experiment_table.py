@@ -57,6 +57,30 @@ ROWS = ["homelessness rate", "participation rate", "SUD rate",
         "treatment take-up, given a SUD", "average age of drug users"]
 
 
+def model_log_for(wrapper_path):
+    """The MODEL's log, not the wrapper's.
+
+    run_phase1.sh redirects run_variant.sh's own stdout to p1_<name>.log, and
+    run_variant.sh sends the MODEL's output to variant_cf_<timestamp>.log. So
+    the moments block is never in p1_<name>.log -- it holds four lines of
+    scaffolding and the name of the file that has the run in it. Scraping the
+    wrapper would have found nothing and printed a table of dashes, and the
+    "hide a column with no moments block" guard would have hidden every
+    counterfactual rather than reporting that the parse had failed.
+
+    Caught on 8 September by noticing that live progress quoted from a
+    variant_cf log belonged to a killed run, and then asking which file the
+    table would actually read.
+    """
+    if not os.path.exists(wrapper_path):
+        return None
+    for line in open(wrapper_path, errors="replace"):
+        if line.startswith("run_variant: log is "):
+            name = line.split("run_variant: log is ", 1)[1].strip()
+            return os.path.join(os.path.dirname(HERE), name)
+    return None
+
+
 def scrape(path):
     out, loose = {}, {}
     if not os.path.exists(path):
@@ -111,7 +135,8 @@ def main():
 
     cols = [("benchmark", bench)]
     for name in ("tf_rationed", "universal_hf", "universal_tf"):
-        d = scrape(os.path.join(HERE, "p1_%s.log" % name))
+        model_log = model_log_for(os.path.join(HERE, "p1_%s.log" % name))
+        d = scrape(model_log) if model_log else None
         # A LOG THAT EXISTS IS NOT A RUN THAT FINISHED. A counterfactual that
         # is still building or still iterating has a log with no moments block
         # in it, and a column of dashes and a NaN reads like a result.
@@ -119,7 +144,7 @@ def main():
             continue
         cev = d["_loose"].get("welfare_of_gains_by_addiction")
         d["CEV of newborns"] = cev if cev is not None else float("nan")
-        _, inc = lambda_of(os.path.join(HERE, "p1_%s.log" % name))
+        _, inc = lambda_of(model_log)
         if ybar and base_lambda is not None:
             d["change in average tax at benchmark income"] = -inc * ybar ** KAPPA
         cols.append((name, d))
