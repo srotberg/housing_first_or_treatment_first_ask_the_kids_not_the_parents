@@ -1,3 +1,35 @@
+## 00:38 UTC 8 September -- theta is IN BAND at seven nodes, and now MOVES WITH b, which it did not before
+
+    00:12  theta 0.13530  -4.0%   b +56.0
+    00:20  theta 0.13411  -4.9%   b +43.1
+    00:25  theta 0.13204  -6.3%   b +30.6
+    00:31  theta 0.13143  -6.8%   b +25.2
+
+    eight nodes finished at -9.8%
+
+relative_share_of_addiction_1 is pinned at 0.2700 throughout, so nothing acted on
+theta. The grid change moved it, the same way it moved emp_homeless.
+
+THE CO-MOVEMENT WITH b IS NEW AND IT MATTERS. On the eight-node economy theta was
+measured FLAT in b -- d log theta / d log b = -0.019, R2 0.009 over 76 points with
+rel_share pinned -- and that measurement was used to tell the author theta would
+read about -10 per cent wherever b landed. At seven nodes theta tracks b closely
+over these ten points, and in the direction that is WRONG for the composition
+story: b falls, so users should be poorer and the drug share lower, yet theta
+falls too.
+
+SO THE SEVEN-NODE ECONOMY HAS GIVEN theta A SENSITIVITY IT DID NOT HAVE. The old
+measurement does not transfer and should not be quoted for this economy.
+
+THE RISK, and it is why this is not "solved": theta has NO INSTRUMENT, b is still
++25.2 per cent out and unwinding toward target, and on the ten-point slope theta
+slides back to about -10 per cent by the time b lands. In band now, plausibly out
+again in an hour, with nothing able to catch it.
+
+Nothing changed. For the morning: re-measure d log theta / d log b on this
+economy once there are enough settled points, rather than carrying the eight-node
+figure across.
+
 ## 00:27 UTC 8 September -- SETTLED: SEVEN NODES, h_1 AT 1.3 PER CENT. The nine/ten question is CLOSED.
 
 The author: *"Ok, if 7 nodes can get 1.3% homelessness, I prefer thay"*, after
