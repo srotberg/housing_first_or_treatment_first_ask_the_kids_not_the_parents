@@ -1,3 +1,53 @@
+## 03:08 UTC 8 September -- WHY delta_d TRANSMITS SO LITTLE: the income channel CANNOT carry a ratio of 2, even with the data's own gradient. CORRECTS what was said at 02:52.
+
+The author: *"Why is deltad transmitting so little??"* The answer at 02:52 was
+that the model's SUD-by-income profile is flat. That is TRUE BUT EXPLAINS ONLY A
+TENTH OF THE GAP, and the fuller answer is more useful.
+
+TRANSMISSION IS A PRODUCT OF TWO THINGS AND THE FIRST IS FINE. At line 29068
+penalty = (1-0.24)^1 = 0.76, and log(0.76) = -0.274 goes straight into the
+child's log income mean at 29073:
+
+    mean_1 = mu_1 + rho_intergenerational*(log(parent_node)-mu_1) + log(penalty)
+
+So a child of a disordered parent starts 27.4 PER CENT LOWER in log income. The
+channel is wide open. include_child_penalty is 1, so it is switched on.
+
+THE SECOND FACTOR IS THE PROBLEM AND IT IS NOT ONLY THE MODEL'S. To get
+delta_d = 2.0 out of a 0.274 log income shift needs an elasticity of SUD with
+respect to log income of -2.53. What the DATA's own profile implies, for a range
+of assumptions about how much log income the seven bands span:
+
+    span 1.5 : data elasticity -0.639 -> delta_d 1.19
+    span 2.0 : data elasticity -0.479 -> delta_d 1.14
+    span 3.0 : data elasticity -0.319 -> delta_d 1.09
+    span 4.0 : data elasticity -0.240 -> delta_d 1.07
+
+EVEN WITH THE DATA'S REAL GRADIENT THE INCOME CHANNEL YIELDS ABOUT 1.07 TO 1.19.
+A ratio of 2 would need a gradient four to ten times steeper than anything the
+data shows. It was never reachable through earnings at any penalty.
+
+The model's own gradient is -0.008 to -0.020 against the data's -0.24 to -0.64,
+so it IS flat and that IS a defect -- the lambda_addiction=0 defect -- but fixing
+it moves delta_d from 1.06 to about 1.10, NOT to 2.00.
+
+WHAT THIS MEANS. The source comment is exactly right and should be believed:
+*"the ratios are not reachable through an income channel at any earnings penalty
+the evidence supports"*. Its companion warning is the live one: *"if it collapses
+to nothing then rho is doing too much"* -- rho_intergenerational is carrying
+essentially all of the intergenerational correlation, and delta_d at 1.06 is
+reporting that THE MODEL HAS NO DIRECT ADDICTION TRANSMISSION AT ALL.
+
+A ratio of 2 needs a channel that does not exist yet: a child of a disordered
+parent facing a HIGHER ONSET HAZARD DIRECTLY, not via their income node. That is
+a model decision and it is the author's.
+
+THE ASYMMETRY WITH delta_h IS NOW EXPLAINED TOO. delta_h is +75 per cent too HIGH
+through the same channel, because homelessness IS strongly income dependent in
+this model -- four fifths of the homeless are priced out -- so the same 27.4 per
+cent shift transmits homelessness very effectively and addiction not at all. One
+channel, two moments, opposite failures.
+
 ## 02:56 UTC 8 September -- THE 3 PER CENT STEP WORKS. tau_u +44.9 to +21.1 in twenty minutes. And the ratchet warning was TOO PESSIMISTIC.
 
 point_9fa23a9e28, 56 points, 15 of 18.
