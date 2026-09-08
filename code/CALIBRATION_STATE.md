@@ -1,3 +1,43 @@
+## 8 September 04:33 UTC -- the endowment does NOT drive b, and my h_age1 slope was wrong
+
+A one-coordinate arm, point_564ad3087b -> point_8ea4ed51ee, newborn_endowment_scale
+0.523362 -> 0.601866 with every other coordinate identical:
+
+    d log b        / d log endowment = +0.129
+    d log h_age1   / d log endowment = -1.056
+    d log h_1      / d log endowment = -0.243
+    d log h_2      / d log endowment = +0.193
+    d log lambda_d / d log endowment = +0.146
+    d log theta    / d log endowment = +0.038
+    d log tau_u    / d log endowment = -0.056
+
+TWO THINGS I HAD WRONG.
+
+**The endowment is not what is pushing b down.** I said the candidate was
+obvious: the endowment fell 28.6 per cent, drug quantity is a share of total
+consumption, so households drop under the participation threshold. At an
+elasticity of +0.129 that accounts for -3.6 per cent of b against the -13.4
+observed -- about a quarter, and the story was offered as though it were the
+whole thing. It was a mechanism that sounded right, and the arm cost one solve
+slot and settled it.
+
+**h_age1's slope is -1.056, not the -0.37 I recorded as MEASURED.** The -0.37
+came from twelve consecutive loop iterations with the AGGREGATE h_1 near target,
+and I treated holding one other moment still as equivalent to holding the other
+coordinates still. It is not: kappa_find_smi, utility_cost_of_treatment and six
+more moved the whole way through. Same family as the three sign errors -- a
+derivative read off a diagonal move -- but wrong by a factor of three rather
+than in sign, which is why it passed. THE TEST FOR "CONTROLLED" IS THE VECTOR,
+NEVER THE MOMENTS: one coordinate differs, or it is not a controlled pair.
+
+WHAT IS LEFT TO EXPLAIN ON b. Over the window addiction_scalar_1 fell 7.1 per
+cent and b fell 13.4; the endowment accounts for -3.6, leaving about -9.8. That
+residual is what a POSITIVE slope near +1.4 on addiction_scalar_1 would produce,
+against the -4.65 in the rule -- i.e. the sign may be backwards and the loop may
+be walking b away from its target deliberately. NOT ASSERTED. A second arm is
+queued, same base, addiction_scalar_1 0.00316947 -> 0.00380336, one coordinate,
+which settles it either way.
+
 ## 8 September 04:22 UTC -- THE DIRECT CHANNEL IS REMOVED. Do not rebuild it.
 
 The author, on being shown the at-birth channel: *"I don't want children to be

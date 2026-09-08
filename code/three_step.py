@@ -726,7 +726,27 @@ RULES = {
     # 0.54 per cent, so the cap never bound and the author's one per cent was not
     # what the loop was taking. With the measured slope the cap binds and the
     # instrument moves at the rate that was asked for.
-    'newborn_endowment_scale':                   ('h_age1',        -0.37, 0.0, 3.0, 0.35, 0.20),
+    # -1.056, AND THIS ONE IS A REAL CONTROLLED PAIR. point_564ad3087b and
+    # point_8ea4ed51ee differ in this coordinate and in nothing else --
+    # 0.523362 -> 0.601866 -- which is what "controlled" has to mean.
+    #
+    #     d log h_age1 / d log newborn_endowment_scale = -1.056
+    #     (0.014064 -> 0.012134)
+    #
+    # IT REPLACES A -0.37 THAT THIS COMMENT CALLED MEASURED AND THAT WAS NOT.
+    # That number came from twelve consecutive loop iterations with the
+    # AGGREGATE h_1 held near its target, and holding one other moment still is
+    # not the same as holding the other coordinates still: kappa_find_smi,
+    # utility_cost_of_treatment and six more were moving throughout. It was the
+    # same error as the three sign errors before it, in a milder form -- reading
+    # a derivative off a diagonal move -- and it was wrong by a factor of three
+    # rather than in sign, which is exactly why it survived.
+    #
+    # THE ARM ALSO KILLED THE STORY ABOUT b. d log b / d log endowment is only
+    # +0.129, so the endowment's 28.6 per cent fall accounts for about -3.6 per
+    # cent of b against the -13.4 observed. The endowment is not what is pushing
+    # b away from its target and the search for what is continues elsewhere.
+    'newborn_endowment_scale':                   ('h_age1',       -1.056, 0.0, 3.0, 0.35, 0.20),
 }
 
 # THE BOTTOM NODE'S MASS IS FIXED AT 0.2 PER CENT, on the author's instruction.
