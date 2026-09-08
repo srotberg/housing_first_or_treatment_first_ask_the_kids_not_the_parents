@@ -1,3 +1,43 @@
+## 02:42 UTC 8 September -- BOTH CHANGES LIVE. tau_u steps 3 per cent as asked. THE BRAKE DISARMED ITSELF ON ITERATION ONE.
+
+tau_u IS WORKING:
+
+    utility_cost_of_treatment  9.033 -> 9.3081   tau_u 0.35442 vs 0.24500, slope -0.97
+
+That is +3.05 per cent, the step the author asked for, with the corrected slope
+and the FAST ceiling both in effect.
+
+THE RATCHET RISK RECORDED FOUR MINUTES AGO WAS NOT SPECULATIVE. It fired on the
+FIRST iteration after h_1's target was pinned to the model value:
+
+    size_homelessness  2.8207e-05 -> 2.8207e-05   h_1 0.01159 vs 0.01160  RATCHET x0.360
+
+h_1 came in at 0.01159 against a target of 0.01160 -- a gap of one part in twelve
+thousand -- with the sign opposite to the previous step. The ratchet read that as
+a reversal, halved the gain 0.720 to 0.360, and the parameter DID NOT MOVE AT ALL.
+
+IT WILL REPEAT EVERY ITERATION. The gap is solver noise around zero, so the sign
+flips at random and the gain halves each time to the 0.002 floor. Within about
+eight iterations size_homelessness is 360 times weaker than it was, so when h_1
+does start sliding under the rung the brake the author asked for WILL NOT BE
+THERE.
+
+THE FIX, one of two, both named to the author before this happened:
+
+  - set the target a hair BELOW the model value, 0.01150 rather than 0.01160, so
+    the gap keeps a consistent sign and the ratchet stops firing. One character,
+    closest to the author's intent.
+  - or exempt size_homelessness from the ratchet.
+
+NOT DONE. Awaiting the author. This is a case where the mechanism they specified
+is being defeated by another mechanism they specified, so the resolution is
+theirs.
+
+THE GENERAL LESSON, worth keeping: PINNING A TARGET TO THE CURRENT MODEL VALUE
+AND KEEPING A SIGN-FLIP RATCHET ARE INCOMPATIBLE. A zero gap has no stable sign.
+Any future "set the target to where it is now" needs the ratchet handled in the
+same breath.
+
 ## 02:38 UTC 8 September -- h_1's target pinned to the model, tau_u stepping at three per cent, and a RISK IN THE BRAKE
 
 The author: *"For the homelessness rate just set the target to what h1 is now, so
