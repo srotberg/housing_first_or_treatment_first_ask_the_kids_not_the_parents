@@ -1,3 +1,41 @@
+## 8 September 05:05 UTC -- value_of_life is climbing to chase an aleph that is
+## moving away from it. PUT TO THE AUTHOR, NOT ACTED ON.
+
+Over the last 25 iterations value_of_life rose 3.15 per cent (154.15 -> 159.00)
+and aleph fell 7.41 per cent (78.227 -> 72.432), monotonically. Implied
+elasticity -2.485 against a rule slope of +1.00.
+
+THE +1.00 IS A THEORY SLOPE AND three_step SAYS SO: *"aleph is the value of life
+over income and value_of_life scales its numerator ... +1 by construction"*.
+That holds the DENOMINATOR fixed. In general equilibrium it is not fixed, and
+the realised sign says the denominator moves more than the numerator.
+
+I am NOT calling the sign backwards. That reading is diagonal -- kappa_find_smi,
+the endowment and six more moved across the same 25 iterations -- and calling a
+sign backwards off a diagonal move is the error made three times this week.
+
+WHAT IS NOT AMBIGUOUS IS ALREADY IN THIS FILE AND IN ENGINE.md:
+
+  - *"value_of_life rose 21 per cent chasing aleph and took b with it. Over the
+    first 24 iterations it rose 9 per cent while b fell 80, a cross elasticity of
+    about -18."*
+  - ENGINE.md: *"aleph is the case that shows why -- its full step moves b by -85
+    per cent and lambda_d by -91."*
+  - *"It was frozen all day and unfreezing it at 18:35 is what started this."*
+
+So b is not merely wandering while aleph settles. value_of_life is early in a
+pattern that has already destroyed the drug block once: it is up 3.15 per cent,
+and 9 per cent is what took b down 80 last time.
+
+THE OPTIONS PUT TO THE AUTHOR: freeze value_of_life at 159 and leave aleph at
+-9.5 inside the band, which is the remedy that was in force before 18:35; let it
+run as they instructed; or spend one controlled arm on value_of_life to settle
+whether the +1.00 sign is actually backwards. Recommended the first, because
+aleph is IN band and b is not, and the instrument chasing the in-band moment is
+the one damaging the out-of-band one.
+
+NOTHING WAS CHANGED. Freezing an instrument is a scope change and theirs to make.
+
 ## 8 September 04:55 UTC -- b moves because aleph is still moving. STOP DIAGNOSING IT.
 
 The author: *"You have to remember that b is also affected by aleph... So if
