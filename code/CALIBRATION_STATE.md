@@ -1,3 +1,23 @@
+## 8 September 05:51 UTC -- b at -28.4 per cent, outside its own night's range
+
+    b        0.07236 -> 0.06376   (-18.7 -> -28.4 per cent)
+    aleph    73.151 -> 73.096     (-8.6, flat)
+    lambda_m 0.19625 -> 0.19814   (-21.5 -> -20.7)
+    value_of_life 161.07 -> 161.40  (+4.70 per cent since 154.15)
+
+LEVEL AND RANGE, as the 05:42 entry requires, and no direction claimed. But
+-28.4 is ten points below the bottom of the -14.8 to -18.7 band described one
+firing ago, so it is not inside the oscillation it was described as. The night's
+range for b is now -14.8 to -28.4.
+
+THE PRECEDENT IS ON FILE AND THE COMPARISON IS ARITHMETIC, NOT A FORECAST:
+value_of_life once rose 21 per cent chasing aleph, and over the first 9 per cent
+of that rise b fell 80. It is up 4.70 per cent now. aleph has not closed in
+response -- 78.23 at the start of the climb, 73.10 now, further from target than
+when the climb began.
+
+The freeze was put to the author at 05:05 and remains theirs. Nothing changed.
+
 ## 8 September 05:42 UTC -- b and aleph are OSCILLATING. Stop calling direction.
 
     aleph  72.586 -> 73.305 -> 73.151   (-9.3, -8.4, -8.6 per cent)
