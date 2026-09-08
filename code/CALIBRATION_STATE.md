@@ -1,3 +1,28 @@
+## 02:56 UTC 8 September -- THE 3 PER CENT STEP WORKS. tau_u +44.9 to +21.1 in twenty minutes. And the ratchet warning was TOO PESSIMISTIC.
+
+point_9fa23a9e28, 56 points, 15 of 18.
+
+    tau_u  +44.9%  ->  +21.1%   in about twenty minutes
+    utility_cost_of_treatment  9.3081 -> 9.8836
+
+Against the 442 points and 15.5 hours it needed before the slope and ceiling were
+corrected. It should land within the hour, and at 9.88 it is nowhere near the 20
+bound -- the projection said it would settle near 13.6.
+
+h_1 is at -1.70 per cent against the pinned 0.01160, so the brake is holding it
+close, which is what the author asked for.
+
+THE RATCHET WARNING WAS TOO PESSIMISTIC AND IS CORRECTED HERE. At 02:42 the gain
+had halved 0.720 to 0.360 on the first flip and this file said it would chatter
+to the 0.002 floor within about eight iterations, leaving the brake 360 times
+weaker. It has not: the gain is back to 0.6221. The reason is that the ratchet
+GROWS 1.2x on every consistent step and the flips are not happening every
+iteration, so it recovers between them faster than it loses on a flip.
+
+The risk is real but bounded, and the prediction of collapse was wrong. Watch it;
+do not act on it. If the gain does trend toward the floor over hours rather than
+recovering, the two fixes recorded at 02:42 still stand.
+
 ## 02:52 UTC 8 September -- IS delta_d COMPUTED CORRECTLY? YES. It is the CHANNEL that is dead, and the source predicted this exact failure.
 
 The author: *"are you sure you are calculatibg the odds ratio for children of
