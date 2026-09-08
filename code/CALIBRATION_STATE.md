@@ -1,3 +1,46 @@
+## 01:50 UTC 8 September -- QUEUED: the SUD dose-response gradient, lambda_d. THE PATCH IS GONE AND MUST BE REBUILT.
+
+The author: *"when the model calibrates, i think we should consider adding
+lambda_d so that those who consume more than the mean v, are on average 3.22
+times more likely to acquire a sud"*. Explicitly AFTER convergence, not now.
+
+THE PATCH BUILT FOR THIS EARLIER TONIGHT NO LONGER EXISTS. It was written to
+the session scratchpad, compiled clean on both standing builds, and held back
+pending a stable b. The scratchpad did not survive a container cycle. Anything
+kept outside the repo is lost on a restart -- that is the lesson and it is why
+the design is being written HERE instead.
+
+THE DESIGN, as the author specified it across several messages:
+
+  - the onset hazard is min(addiction_onset_base + (1 - exp(-lambda_addiction*q)), 1)
+    and lambda_addiction is currently 0, so THE HAZARD IS FLAT. There is no
+    dose-response at all: conversion is whoever the base hazard catches,
+    regardless of how much they use.
+  - *"we just have to give those above the median a 3.22 higher chance of
+    converting to SUD on average"*
+  - *"sure, we can use 53.9 percentile"* -- the split point, sud_grad_split=0.5391
+  - *"not everyone above the 53.9 percentile get a 3.22 higher chance. it should
+    just be on average...some use a lot more and they get addicted more quickly"*
+  - *"it's not a discontinuous jump, but a slope"* -- so the ratio is a property
+    of the exponential hazard integrated over the quantity distribution, NOT a
+    step function at the split.
+
+  The patch added sud_grad_bins=600, a LOG histogram of quantity, a
+  sud_grad_bin_of() lookup and sud_gradient_from_histogram(), reporting both a
+  FLOW ratio (mean onset hazard among clean users above the split over below)
+  and a STOCK ratio, against a target sud_gradient_data=3.22.
+
+ONE DISCREPANCY TO SETTLE WITH THE AUTHOR BEFORE REBUILDING: tonight they said
+"more than the mean v" where the earlier specification was the 53.9th
+PERCENTILE. For a right-skewed quantity distribution those are different points.
+Ask which; do not assume the percentile just because that is what the lost patch
+implemented.
+
+WHAT IT COSTS. lambda_addiction is pinned at 0.0 in FIXED and listed in HELD.
+Turning it on adds a moment and an instrument and changes the model hash, so it
+orphans the archive and needs a reseed and both standing builds -- the same cost
+as the grid change. Hence "when the model calibrates" rather than now.
+
 ## 01:38 UTC 8 September -- WHAT SETS DRUG MORTALITY: kappa_phi_d_level, ASSIGNED at 8.0 and pinned. OPEN for the author.
 
 Traced after the author's *"ah, it could be mortality"*.
