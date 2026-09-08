@@ -1,3 +1,54 @@
+## 01:26 UTC 8 September -- SUD BY AGE AND HOMELESSNESS BY AGE, and the h_age targets DO track h_1's
+
+The author asked for both profiles and whether the young were adjusted when h_1
+moved to 1.3 per cent.
+
+THE h_age TARGETS RESCALE AUTOMATICALLY. _annualise_age_rates multiplies each
+band's point-in-time rate by factor = h_1_target / pit_overall, so all five moved
+by 1.3/1.2 when the target changed. That is why h_age1 jumped to -20 per cent at
+the change, and it is mechanical rather than a regression. NOTHING was adjusted
+for the young specifically.
+
+DRUG USE AND SUD BY AGE:
+
+    age      use rate  of whom SUD  user share mdl  user share dat  income/avg
+    26-34      0.3302       0.2029          0.6488          0.2840      0.5776
+    35-44      0.0860       0.8329          0.1839          0.2505      0.6817
+    45-54      0.0537       0.8574          0.1104          0.1777      0.6531
+    55-64      0.0249       0.8051          0.0474          0.1633      0.5006
+    65+        0.0031       0.8946              --              --      0.5311
+
+    mean age of users 34.3 against 45.5 in the data
+
+THE STRUCTURE UNDERNEATH THE AGE MISMATCH, and it is worth stating because it is
+not just "too young": THE MODEL'S YOUNG USE AND ITS OLD ARE ADDICTED. A third of
+the 26-34s use but only 20 per cent of those have the disorder, against 80 to 89
+per cent in EVERY older band. So the young are experimenters and the conversion
+happens later. That is why the mean age of USERS is eleven years too young while
+the SUD stock is less skewed.
+
+HOMELESSNESS BY AGE, model annual against the ANNUALISED target -- not against
+the raw point-in-time observed printed in the point file, which is the unit trap
+recorded at 01:20:
+
+    age      rate mdl   rate tgt      gap  |  share mdl  share dat      gap
+    26-34     0.01003    0.01665   -39.8%  |     0.1501     0.2600   -42.3%
+    35-44     0.02613    0.01779   +46.8%  |     0.4257     0.2720   +56.5%
+    45-54     0.01693    0.01534   +10.4%  |     0.2649     0.2100   +26.2%
+    55-64     0.01011    0.01315   -23.1%  |     0.1466     0.1840   -20.3%
+    65+       0.00054    0.00406   -86.6%  |     0.0127     0.0750   -83.1%
+
+THE AGGREGATE IS IN BAND AT -9.1 WHILE EVERY BAND IS OFF. Too much homelessness
+in the 35-54 range and far too little at both ends. The 65+ band at -86.6 is the
+SSI floor working, arguably too well: ssi_floor_takeup is 1, so nobody is priced
+out in retirement, and the Fortran's own note calls that dial "the instrument for
+how many of the old end up on the street".
+
+ONLY h_age1 HAS AN INSTRUMENT, newborn_endowment_scale, and it is the band at
+-39.8 whose instrument moves while the moment does not, recorded at 01:04. The
+other four have no instrument at all, so their gaps are whatever falls out of the
+rest of the calibration.
+
 ## 01:20 UTC 8 September -- THE UNTARGETED MOMENTS AGAINST THE DATA, and a comparison in the point files that is apples to oranges
 
 The author asked how the untargeted statistics stand against the paper's table,
