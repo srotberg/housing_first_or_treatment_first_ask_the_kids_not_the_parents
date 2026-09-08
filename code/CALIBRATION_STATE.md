@@ -1,3 +1,26 @@
+## 8 September 05:42 UTC -- b and aleph are OSCILLATING. Stop calling direction.
+
+    aleph  72.586 -> 73.305 -> 73.151   (-9.3, -8.4, -8.6 per cent)
+    b      0.07280 -> 0.07391 -> 0.07236 (-18.2, -17.0, -18.7 per cent)
+
+The turn recorded at 05:32 did not hold for one iteration. b is now below the
+-18.2 that entry called a low.
+
+THREE CONSECUTIVE ENTRIES HAVE CALLED A DIRECTION AND ALL THREE WERE OVERTAKEN:
+05:22 said b was in monotone decline, 05:32 said it had turned and the author was
+right, 05:42 says neither. The numbers in each were correct. The reading of a
+direction from four or five points at a ten-minute cadence was not, and the 05:32
+entry even names that hazard before repeating it in the next paragraph.
+
+THE HONEST DESCRIPTION: b oscillates in a band from -14.8 to -18.7 per cent and
+aleph between -8.4 and -9.5, with value_of_life climbing throughout, 154.15 ->
+161.07. Neither is settling; neither is running away. Which of those it turns
+into cannot be read from this many points.
+
+STANDING FOR THE REST OF THE NIGHT AND FOR THE MORNING REPORT: give the LEVEL and
+the RANGE for b and aleph. Do not report a trend, a turn, or a recovery unless
+the table has enough points behind it to carry one.
+
 ## 8 September 05:32 UTC -- aleph turned, and b turned with it. The author was right.
 
     aleph   72.586 -> 73.305   (-9.3 -> -8.4 per cent)
