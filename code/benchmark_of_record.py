@@ -80,6 +80,16 @@ def main():
                     % (os.path.basename(newest), int(os.path.getmtime(newest))))
         for h in head:
             f.write(h + "\n")
+        # AGGREGATES THE MOMENTS BLOCK DOES NOT CARRY. The tax row of the
+        # experiment table is T(ybar) evaluated at the BENCHMARK's average
+        # labour income, and that number is printed by the run but sits above
+        # the moments block, so the record would not have it.
+        for key in ("average_labor_income_calibrated", "median_income_calibrated",
+                    "average_net_wealth_calibrated", "price_of_addictive_good"):
+            for line in text.splitlines():
+                if line.strip().startswith(key + "="):
+                    f.write("AGG %s\n" % line.strip())
+                    break
         f.write("\n".join(block) + "\n")
 
     print("wrote %s" % os.path.relpath(OUT, os.path.dirname(HERE)))
