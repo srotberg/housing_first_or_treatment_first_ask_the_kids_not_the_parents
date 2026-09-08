@@ -1,3 +1,40 @@
+## 8 September 15:25 UTC -- the conditionality experiment is settable, and inert
+
+On the author's instruction, "Yes, begin getting it ready".
+
+FIVE HANDLES NOW EXIST AS VECTOR PARAMETERS rather than as source edits:
+
+    voucher_conditional_on_clean              was integer, parameter
+    voucher_conditional_on_clean_just_addicts was integer, parameter
+    probability_of_detection                  had no handover case
+    probability_of_false_positive             had no handover case
+    cost_per_drug_test                        had no handover case
+
+The two switches were safe to convert because every use is a runtime comparison
+or a multiply and none is a parameter expression or an array bound -- checked at
+lines 13378, 13380, 13389, 13391, 15508, 29952 and 41865 rather than assumed.
+
+MEASURED INERT, NOT ARGUED INERT. point_cdbef0553c re-solved as point_9f740c8231
+under the new source at the same vector: the worst of 36 scored moments moved
+0.017 per cent of target, h_age3, which is solver noise. The five handles change
+nothing at their defaults.
+
+Economy e9b4d75808 -> b235a4522d. The archive does not carry across and nothing
+is lost by it: three_step does not consult EQUIVALENT_MODELS, and the four
+measured slopes live as constants in RULES rather than being re-derived from
+points, so a reset costs one seed and no knowledge.
+
+WHAT IT BUYS. A Phase 1 variant is now a line through run_one_point.sh carrying
+the same HANDOVER assertion and the same md5-tagged point file as any calibration
+point. The provenance of a counterfactual lives in the archive instead of in
+which binary happened to be built that day, which is what the paper will need to
+say what produced each number.
+
+STILL BLOCKING THE EXPERIMENTS: the benchmark. b and sud_homeless are fighting
+over multiple_find_if_addicted, lambda_m is conceded with its instrument pinned,
+and counterfactuals run off a moving benchmark have to be run again when it
+moves. The order is settle the trade, freeze the benchmark, then Phase 1.
+
 ## 8 September 15:13 UTC -- multiple_find_if_addicted's SIGN WAS BACKWARDS.
 ## The loop was driving sud_homeless away from target.
 
