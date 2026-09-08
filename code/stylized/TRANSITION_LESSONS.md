@@ -404,3 +404,53 @@ carry over.
 Before committing an overnight run, set transition_length to three or five and
 time one solve. The passes are near linear in the period count, so it
 extrapolates, and it costs half an hour on a spare container.
+
+## 12. p_v MUST CLEAR ALONG THE PATH, AND IT CANNOT UNTIL IT IS TIME-INDEXED
+
+The author asked on 8 September for the drug market to be cleared in the
+counterfactuals "and also the transition when we run it". The long-run
+counterfactual was done that day: `clear_drug_market` is called inside
+`long_run_counter_factual`'s loop and `distance_drug_market` is in its
+convergence test. **The transition was NOT, and it is not a one-line
+addition.**
+
+`price_of_addictive_good` is declared a SCALAR (line ~2951). Every other
+market in the transition carries a time index -- `rent(time_period,:)`,
+`housing_price(time_period)`, `lump_sum_transfer(time_period)`,
+`net_govt_revenues(time_period)` -- and the drug price does not. So a
+transition path cannot hold a different p_v in period 3 from period 30, and a
+per-period call to `clear_drug_market(time_index)` inside
+`transition_simulation`'s loop would simply leave the LAST period's price
+standing for every period, which is worse than not clearing at all: the log
+would report `largest_distance_drug_market` converged while every period but
+one faced a price that does not clear its own quantity.
+
+What building it actually requires, in order:
+
+1. Dimension the price like every other transition price:
+   `real(8), dimension(1-solve_transition_dynamics:transition_length) :: price_of_addictive_good`,
+   initialised across the range from the benchmark's normalisation.
+2. Index all ~100 read sites. Most are in household loops where
+   `time_period` is already in scope. The ones that are NOT are the trap:
+   `calculate_utility` takes the price through a local
+   `price_of_addictive_good_to_use` (~22391) and has no time argument, and
+   the elasticity test at 7424--7517 saves and restores the scalar. Both need
+   the period passed in rather than reaching for a global.
+3. Check the OpenMP clauses. `price_of_addictive_good` appears in the private
+   and shared lists of the parallel regions; an array is shared, and a copy
+   of a scalar that used to be private is not the same thing.
+4. Only then add `largest_distance_drug_market` to `transition_simulation`'s
+   do-while, on the pattern of `largest_distance_govt_budget`: zero it before
+   the per-period sweep, call `clear_drug_market(time_index)` inside it, and
+   keep the maximum.
+
+The supply shifter itself needs no change. It is the BENCHMARK's, read once
+from `drug_supply_shifterbaseline_benchmark.dat` and held fixed, which is
+already what makes the price rather than the quantity the endogenous object.
+
+The lesson this belongs to is section 7's: a market that is present in the
+model but has no caller is invisible in the output. `clear_drug_market`'s
+`is_counterfactual` branch existed, was correct, and had NO CALLER for as
+long as it had existed, and no log line said so, because
+`distance_drug_market` sits at its declared zero and zero is what a cleared
+market also reports.
