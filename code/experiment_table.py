@@ -74,11 +74,20 @@ def model_log_for(wrapper_path):
     """
     if not os.path.exists(wrapper_path):
         return None
+    found = None
     for line in open(wrapper_path, errors="replace"):
+        # The END-OF-RUN line, which is the authoritative one.
         if line.startswith("run_variant: log is "):
-            name = line.split("run_variant: log is ", 1)[1].strip()
-            return os.path.join(os.path.dirname(HERE), name)
-    return None
+            return os.path.join(os.path.dirname(HERE),
+                                line.split("run_variant: log is ", 1)[1].strip())
+        # The START line names it too, and only this one exists while a run is
+        # still solving. Without it a live counterfactual cannot be inspected
+        # through this script at all, which meant reading the log by hand and,
+        # once, quoting a KILLED run's numbers as live progress.
+        m = re.search(r"run_variant: \S+ on .* log (\S+)", line)
+        if m:
+            found = os.path.join(HERE, m.group(1))
+    return found
 
 
 def scrape(path):
