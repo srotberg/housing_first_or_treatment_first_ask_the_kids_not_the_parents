@@ -1,3 +1,36 @@
+## 8 September 06:30 UTC -- CORRECTIONS to the 06:20 entry. One claim of three holds.
+
+**HOLDS: the container is torn down between turns.** Uptime reads about 30
+seconds at every engine firing -- 05:14, 05:22, 05:32, 05:42, 05:51, 06:17 --
+and when the :01 trigger slipped from 06:01 to 06:16 exactly zero points landed
+in those 25 minutes. Six coincidences in a row is not a coincidence.
+
+**DOES NOT HOLD: that holding a turn open therefore converts wall clock into
+solves.** The 06:20 entry asserted this as the lever and it was not tested. It
+was tested immediately afterwards -- nine minutes of held turn -- and produced
+ZERO points. The container did stay alive, uptime reached 735 seconds, so the
+premise was right and the conclusion did not follow.
+
+Two reasons, and the first is mine. The hold was written as a BUSY WAIT, a bare
+while loop calling ls with no sleep, which took a core and hammered the
+filesystem for nine minutes on a four core box running a four thread solve. That
+is careless and it is the kind of measurement that contaminates what it measures.
+Second, a run_one_point was queued on the checkout flock for eleven of those
+minutes and only started solving at 06:29.
+
+**WRONG: that a stray bash held the lock.** fuser truncates the command to
+"bash", and pid 17062 was an ordinary run_one_point.sh with ./hftf running under
+it, a child of the loop. There was no deadlock, only a queue that cleared.
+
+STATE NOW IS CLEAN: one loop_watch, one three_loop, one run_one_point solving.
+17 live points on e9b4d75808.
+
+WHAT TO ACTUALLY CONCLUDE. Throughput here is about one solve per firing and the
+reason is the container lifetime, which nothing inside the container can fix. If
+more solves per hour are wanted the lever is MORE FIRINGS, not longer ones, and
+that is a change to the trigger schedule rather than to any code. Not done: it is
+the author's call and it costs a turn each time.
+
 ## 8 September 06:20 UTC -- THE CONTAINER LIVES ONLY DURING A TURN. This is why
 ## the archive is not growing.
 
