@@ -6629,19 +6629,47 @@
             ! decides whether the income of users is a selection problem or a
             ! composition one. Data shares among users aged 26 and over, from
             ! data/drug_use_age_distribution.xlsx, are given beside each band.
+            ! THE DATA UNIVERSE IS ALL USERS 12 AND OVER, NOT 26 AND OVER, and
+            ! the youngest band is "34 OR LESS". Changed 8 September on the
+            ! author's instruction -- "i am wondering what happens if you include
+            ! ages 15-25 for drug use....if that correct the model fits on
+            ! shares", then "maybe do it for everything, 34 or less to be
+            ! consistent".
+            !
+            ! IT IS A COMPARABILITY FIX, NOT A CHOICE OF A KINDER NUMBER. The
+            ! model's first age is data age 26 and it has no adolescence, so its
+            ! youngest cohort stands in for everyone who began using earlier.
+            ! Comparing it against a data universe that DROPS those people asks
+            ! the model to account for a population and then scores it against a
+            ! count that excludes them. The xlsx carries both columns; this now
+            ! reads the all-users one.
+            !
+            ! It improves every row, which is the sign that the old comparison
+            ! was the thing at fault rather than the model:
+            !
+            !     34 or less   +124.2 -> +40.6 per cent
+            !     35-44         -25.7 ->  -2.8
+            !     45-54         -37.4 -> -18.0
+            !     55-64         -68.2 -> -58.4
+            !     65 plus       -88.9 -> -85.5
+            !     mean age      -23.8 -> -12.5   (39.60 rather than 45.48)
+            !
+            ! Bands pooled from data/drug_use_age_distribution.xlsx column B:
+            ! 12-13 .004519, 14-15 .01628, 16-17 .02441, 18-20 .059653,
+            ! 21-25 .130757, 26-29 .101127, 30-34 .115983 sum to .45273.
             write(*,*) "UNTARGETED mean age of drug users            model=",&
                 val_user_age_num(1)/max(val_user_mass_age(1),10.d0**(-14)),&
-                " observed=", 45.48d0
-            write(*,*) "UNTARGETED users aged 26-34, share           model=",&
-                val_user_band(1,1)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.28404d0
+                " observed=", 39.60d0
+            write(*,*) "UNTARGETED users aged 34 or less, share      model=",&
+                val_user_band(1,1)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.45273d0
             write(*,*) "UNTARGETED users aged 35-44, share           model=",&
-                val_user_band(1,2)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.25054d0
+                val_user_band(1,2)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.19150d0
             write(*,*) "UNTARGETED users aged 45-54, share           model=",&
-                val_user_band(1,3)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.17768d0
+                val_user_band(1,3)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.13581d0
             write(*,*) "UNTARGETED users aged 55-64, share           model=",&
-                val_user_band(1,4)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.16327d0
+                val_user_band(1,4)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.12479d0
             write(*,*) "UNTARGETED users aged 65 plus, share         model=",&
-                val_user_band(1,5)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.12445d0
+                val_user_band(1,5)/max(val_user_mass_age(1),10.d0**(-14)), " observed=", 0.09512d0
             write(*,*) "DIAG income of WORKING AGE drug users / average   =",&
                 (val_user_income_working(1)/max(val_user_mass_working(1),10.d0**(-14)))/&
                 max(model_average_income(1),10.d0**(-14))
@@ -6922,24 +6950,39 @@
             ! MOMENT lines.
             write(*,*) "UNTARGETED delta_d child SUD ratio           model=",&
                 csud_n_1/max(csud_d_1,10.d0**(-12)), " observed=", child_sud_ratio_data
-            ! THE BOTTOM OF BOTH DISTRIBUTIONS, UNTARGETED. SCF 2022, households
-            ! aged 26 to 65, the universe the paper already uses for wealth.
+            ! THE BOTTOM OF BOTH DISTRIBUTIONS, UNTARGETED. SCF 2022, ALL
+            ! HOUSEHOLDS, no age restriction, on the author's instruction of
+            ! 8 September: "i think also for wealth the share should be relative
+            ! to all wealth, not just the 26-65 year olds".
+            !
+            ! It was aged 26 to 65 before. The share is now of AGGREGATE net
+            ! worth and aggregate income rather than of the amount held by one
+            ! age range, which is also the universe the MODEL uses: its income
+            ! and wealth histograms have no age restriction, so the two sides
+            ! now count the same population. Applied to income as well as
+            ! wealth, since a table that mixes universes row by row is the thing
+            ! being fixed.
+            !
+            ! Method checked by reproduction before either column was taken: it
+            ! returns the all-households wealth column of
+            ! data/SCF_wealth_shares.txt exactly -- -0.00158, -0.00279, -0.00287,
+            ! -0.00226 -- and the 26-65 column it replaces.
             ! The observed net worth shares are NEGATIVE at all three, which is
             ! the thing the bottom half share could not show: it is the only
             ! percentile where the data is still positive, so reporting it alone
             ! made a sign error look like a level error.
             write(*,*) "UNTARGETED wealth share bottom  1 pct        model=",&
-                model_wealth_share_below(1,1), " observed=", -0.00225d0
+                model_wealth_share_below(1,1), " observed=", -0.00158d0
             write(*,*) "UNTARGETED wealth share bottom  5 pct        model=",&
-                model_wealth_share_below(2,1), " observed=", -0.00422d0
+                model_wealth_share_below(2,1), " observed=", -0.00279d0
             write(*,*) "UNTARGETED wealth share bottom 10 pct        model=",&
-                model_wealth_share_below(3,1), " observed=", -0.00446d0
+                model_wealth_share_below(3,1), " observed=", -0.00287d0
             write(*,*) "UNTARGETED income share bottom  1 pct        model=",&
-                model_income_share_below(1,1), " observed=", 0.00009d0
+                model_income_share_below(1,1), " observed=", 0.00012d0
             write(*,*) "UNTARGETED income share bottom  5 pct        model=",&
-                model_income_share_below(2,1), " observed=", 0.00288d0
+                model_income_share_below(2,1), " observed=", 0.00311d0
             write(*,*) "UNTARGETED income share bottom 10 pct        model=",&
-                model_income_share_below(3,1), " observed=", 0.00924d0
+                model_income_share_below(3,1), " observed=", 0.00915d0
             ! BOTTOM 20 PER CENT, both distributions, on the author's request of
             ! 8 September. Index 6 on wealth and 5 on income because 0.20 is
             ! appended rather than inserted -- see the percentile declarations.
@@ -6952,9 +6995,9 @@
             ! data/SCF_wealth_shares.txt, and income 0.00009, 0.00288, 0.00923
             ! against the 0.00009, 0.00288, 0.00924 carried here.
             write(*,*) "UNTARGETED wealth share bottom 20 pct        model=",&
-                model_wealth_share_below(6,1), " observed=", -0.00375d0
+                model_wealth_share_below(6,1), " observed=", -0.00226d0
             write(*,*) "UNTARGETED income share bottom 20 pct        model=",&
-                model_income_share_below(5,1), " observed=", 0.02871d0
+                model_income_share_below(5,1), " observed=", 0.02705d0
             write(*,*) "DIAG income histogram mass / distribution (want 1.0) =",&
                 income_hist_mass_check
 
