@@ -81,9 +81,25 @@ the model's ANNUAL rate against HUD's raw POINT-IN-TIME observed, a factor of
   turns on `use_old_results`.
 - `probability_of_voucher_benchmark_used` IS settable from `run_one_point.sh`,
   which is exactly what "keeping pi_V in the benchmark" requires.
-- `p_det`, `p_fp` and `c_test` do nothing in the benchmark because
+- THE DETECTION PARAMETERS EXIST, BUT NOT UNDER THE NAMES THIS FILE FIRST GAVE.
+  `p_det`, `p_fp` and `c_test` are the PAPER's notation and appear nowhere in the
+  Fortran; grepping for them returns nothing, which is exactly the trap a heading
+  reading "checked rather than assumed" should not have set. The code names are
+
+      probability_of_detection        = 0.9      line 214
+      probability_of_false_positive   = 0.05     line 215
+      cost_per_drug_test              = 0.00031  line 231
+
+  All three are plain `real(8)`, not parameters, so they are mutable -- but see
+  the settability note below. They do nothing in the benchmark because
   `voucher_conditional_on_clean` is 0. Per `CLAUDE.md` they belong with the
   experiment and must NOT be added to the calibration table.
+
+- NONE OF THE THREE IS SETTABLE FROM `run_one_point.sh`: no handover case, no
+  whitelist entry. Being a `real(8)` rather than a `parameter` makes them
+  changeable in source, not from a vector. Varying detection or the false
+  positive rate across experiments needs the same one-time edit as
+  `voucher_conditional_on_clean` below.
 
 ## Two things that will bite if not planned for
 
@@ -98,3 +114,23 @@ per experiment, which changes the hash per experiment. The first is cleaner.
 which is what was asked for. Anyone wanting a transition must change that line
 and read `code/stylized/TRANSITION_LESSONS.md` first -- it is a standing
 instruction, not notes.
+
+
+## Readiness, audited 8 September 15:20
+
+THE MECHANISM IS ALL THERE. The conditionality switch, the detection probability,
+the false positive rate and the test cost all exist, and the cost already reaches
+the government budget through `govt_spending_on_drug_tests`. Nothing has to be
+built from scratch.
+
+WHAT IS NOT READY IS THE BENCHMARK, and that is the binding constraint rather than
+any of the code above. At the time of writing b reads -10.9 per cent and
+sud_homeless +15.0 and rising until the sign fix works through; lambda_m is
+conceded at about -20 with its instrument pinned; and closing sud_homeless needs
+roughly 150 iterations that drag b further out as they go. A counterfactual run
+off a moving benchmark has to be run again when the benchmark moves, and at about
+one solve per firing that is expensive to repeat.
+
+THE ORDER IS THEREFORE: settle the sud_homeless-versus-b trade, freeze the
+benchmark, then run Phase 1. The three settability edits can be made at any time
+because they are inert while `voucher_conditional_on_clean` is 0.
