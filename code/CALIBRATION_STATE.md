@@ -1,3 +1,52 @@
+## 02:14 UTC 8 September -- THE PLAN AFTER CONVERGENCE, in the author's own words, and what machinery already exists
+
+The author: *"once the program converges, i think we should do the experiments to
+see how the model performs. one is keeping pi_V in the benchmark and doing TF
+with cost of testing all eligibiles and false positive and false negative. then
+do a universal HF and universal TF (all Long run equilibria). after we do these
+it would be good to maybe do further calibrations like we said about lambda_d and
+try to understand why so many young are users relative to the data. but also, it
+would be good to get the untargeted statistics"*.
+
+THE ORDER IS THEIRS: experiments first, further calibration second.
+
+  1. TF AT BENCHMARK pi_V, with the cost of testing every eligible plus false
+     positives and false negatives.
+  2. UNIVERSAL HF and UNIVERSAL TF.
+  3. All LONG-RUN EQUILIBRIA, not transitions.
+  4. THEN lambda_d (the SUD gradient, design recorded at 01:50) and the question
+     of why the model's users are so young.
+  5. And the untargeted statistics.
+
+WHAT ALREADY EXISTS, checked rather than assumed:
+
+  - voucher_conditional_on_clean, line 199, is the conditionality switch, with
+    voucher_conditional_on_clean_just_addicts beside it at 192.
+  - cost_per_drug_test already feeds govt_spending_on_drug_tests at line 15490,
+    gated on the same switch, so the testing cost is already in the government
+    budget rather than needing to be added.
+  - is_counterfactual, line 5, retunes the rental and inheritance tolerances and
+    turns on use_old_results, so the counterfactual scaffolding exists.
+  - probability_of_voucher_benchmark_used IS settable from run_one_point.sh,
+    which is what "keeping pi_V in the benchmark" needs.
+
+TWO THINGS THAT WILL BITE IF NOT PLANNED FOR:
+
+  - voucher_conditional_on_clean is an `integer, parameter`, exactly like
+    measure_price_elasticity. IT CANNOT BE SET FROM run_one_point.sh AND EACH
+    VARIANT NEEDS ITS OWN BUILD. Either make it a plain integer with a handover
+    case, mirroring measure_child_gap, or build one binary per experiment. The
+    former changes the hash once; the latter changes it per experiment.
+  - solve_transition_dynamics is hardwired to 0 in BOTH branches of its
+    is_counterfactual expression at line 1769. Long-run equilibria only, which is
+    what the author asked for, but anyone wanting a transition must change that
+    line and read TRANSITION_LESSONS.md first.
+
+CLAUDE.md IS ALREADY RIGHT ABOUT THE PARAMETERS: p_det, p_fp and c_test do
+nothing in the benchmark because voucher_conditional_on_clean is 0, so they
+belong with the experiment rather than in the calibration table. That is why they
+are not in Table 5 and must not be added to it.
+
 ## 02:08 UTC 8 September -- WHICH OF THE THREE REMAINING MOMENTS CONVERGE, measured; and a RETRACTION on h_age1
 
 Elasticities from 49 points on 02da791f0c, model values so the four h_1 retargets
