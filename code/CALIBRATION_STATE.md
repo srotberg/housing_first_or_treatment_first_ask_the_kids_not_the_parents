@@ -1,3 +1,38 @@
+## 01:32 UTC 8 September -- TREATMENT IS NOT WHY THE USERS ARE YOUNG. It is holding the age UP, and mortality is the better candidate.
+
+The author, on the user age profile being eleven years too young: *"not sure what
+i can do about it....maybe too many are in treatment"*. Tested against the 47
+points on this economy and it goes the OTHER WAY.
+
+                tau_u     mean age   share 26-34
+    23:46     0.39072       35.222       0.6312
+    00:20     0.36118       34.779       0.6443
+    01:20     0.35431       34.275       0.6488
+
+    d(mean age)   / d log tau_u = +13.65 YEARS
+    d log share26 / d log tau_u = -0.293
+
+The elasticity is POSITIVE, so LESS treatment means a YOUNGER user stock.
+tau_u must still fall 30.8 per cent to reach 0.245, and on this slope that takes
+the mean age DOWN about five more years, to 29.2 against 45.5 in the data.
+Landing tau_u makes the age profile WORSE, not better.
+
+THE BETTER CANDIDATE IS MORTALITY. drug deaths as a share of all deaths reads
+0.321 against 0.200 observed, +60 per cent. The model's users die too much, so
+the stock never ages -- they are killed before they reach 45 -- and treatment
+cuts that mortality, which is exactly why more of it raises the mean age. It also
+explains the other column: the old users who DO survive are 89 per cent addicted
+against 20 per cent of the young, which is what an excessive death rate leaves
+behind.
+
+CAVEAT: trajectory fit, fifteen coordinates moving, not controlled pairs. The
+co-movement is monotone over 47 points, which is stronger than the theta fit that
+misled the author earlier tonight, but it is not a measurement.
+
+NOT YET CHECKED, and it is the next thing rather than a conclusion: what sets
+drug mortality in the Fortran and whether it is calibrated at all. Nothing has
+been changed.
+
 ## 01:26 UTC 8 September -- SUD BY AGE AND HOMELESSNESS BY AGE, and the h_age targets DO track h_1's
 
 The author asked for both profiles and whether the young were adjusted when h_1
