@@ -1,3 +1,35 @@
+## 8 September 04:55 UTC -- b moves because aleph is still moving. STOP DIAGNOSING IT.
+
+The author: *"You have to remember that b is also affected by aleph... So if
+aleph is not fully settled obviously b will continue to move. I think it's ok.
+Just let it move on its own"*.
+
+They are right, and IT WAS ALREADY IN ENGINE.md, at the line about reading an arm
+beside its cross-effects: *"That table is what revealed that
+discount_factor_impatient, value_of_life and kappa_phi_d_level all pass through
+the drug block, which is why the hand-built anchors kept exploding."*
+
+aleph sat at -9.0 per cent, inside the band but nowhere near settled, and
+value_of_life was still stepping. b is hypersensitive -- its own instrument moves
+it ten-for-one, so a cross-effect worth 1.3 per cent of that instrument knocks it
+out of band unaided. An unsettled aleph is more than enough.
+
+THREE EXPLANATIONS WERE OFFERED FOR b's DRIFT LAST NIGHT AND THE FIRST TWO WERE
+WRONG: the newborn endowment, measured at +0.129 and worth a quarter of the
+drift at most; and a backwards sign on addiction_scalar_1, which is firmly
+negative at -10.499. Both were arithmetic that fit the residual. The third came
+from the author in one sentence, and the file that would have supplied it was
+already in the repository and had been read that same night.
+
+THE LESSON IS CHEAPER THAN THE TWO SOLVES IT COST: before running an arm to find
+what moves a moment, GREP ENGINE.md AND CALIBRATION_STATE.md FOR THE MOMENT'S
+NAME. The cross-effects that have already been discovered are written down, and
+rediscovering one by measurement is not diligence.
+
+STANDING: b is expected to move while aleph settles. Do not diagnose it further,
+do not run arms on it, do not report it as a fault. Report where it is and
+whether aleph has settled, and nothing more.
+
 ## 8 September 04:36 UTC -- b's slope measured at -10.499. Both my stories were wrong.
 
 point_564ad3087b -> point_02a1777379, addiction_scalar_1 alone, 0.00316947 ->
