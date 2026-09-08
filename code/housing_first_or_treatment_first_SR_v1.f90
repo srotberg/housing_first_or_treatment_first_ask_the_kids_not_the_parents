@@ -1964,7 +1964,25 @@
         ! through 1.2 to 1.1 when seven nodes beat that projection. The paper must
         ! state 1.1 as a choice within the 0.5 to 1 per cent range they described
         ! as arguable, not as a measurement.
-        real(8), parameter :: fraction_homeless_data=0.011
+        ! SET TO WHERE THE MODEL NOW IS, 8 September 02:35, on the author's
+        ! instruction: *"For the homelessness rate just set the target to what h1
+        ! is now, so that h1 doesn't decline too much"*. h_1 read 0.011603 at
+        ! point_1b6760f424 and the target is that, rounded.
+        !
+        ! WHAT THIS DOES, and it is a STABILISER rather than a fit. h_1 has been
+        ! falling all night because the cheapest rung keeps coming down under h_2,
+        ! not because size_homelessness pushed it. With the target above the model
+        ! value, size_homelessness was pushing h_1 DOWN as well. With the target
+        ! AT the model value, any further fall puts h_1 BELOW target and
+        ! size_homelessness pushes back UP. The instrument becomes a brake on the
+        ! rung's drift instead of an accelerator.
+        !
+        ! IT IS ALSO A CHOICE, AND THE PAPER MUST SAY SO. 1.16 per cent is not a
+        ! measurement; it is where the model happened to settle. The author's
+        ! stated defensible range was 0.5 to 1 per cent, and this is above it. The
+        ! honest framing is that the model produces 1.16 and the data supports
+        ! anything from about 0.5 to 1, not that 1.16 was targeted.
+        real(8), parameter :: fraction_homeless_data=0.01160
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe

@@ -243,7 +243,7 @@ def _gate_targets():
     # anything around 0.5-1%"*. fraction_homeless_data was changed in the Fortran
     # at the same time, but this override was still carrying 0.005 and silently
     # winning -- the points said 0.01 and the stepper chased 0.005.
-    t.update({'h_1': 0.011, 'h_2': 0.08, 'pi_eu': 0.049, 'beta': 3.0})
+    t.update({'h_1': 0.01160, 'h_2': 0.08, 'pi_eu': 0.049, 'beta': 3.0})
     # emp_homeless IS UNTARGETED, 7 September: *"and forget about targeting the
     # emp_homeless"*, *"let it be untargeted"*. Its only instrument moved it at
     # -0.0003 over 54 controlled pairs and has been pinned in the same round, so
@@ -540,7 +540,7 @@ RULES = {
     # is its only use, "flow_utility_1=flow_utility_1-utility_cost_of_treatment".
     # So the handover cannot silently truncate a value above 8, which is the risk
     # ENGINE.md warns about whenever a bound is raised.
-    'utility_cost_of_treatment':                 ('tau_u',        -84.30, 0.0, 20.0, 0.25, 0.20),
+    'utility_cost_of_treatment':                 ('tau_u',         -0.975, 0.0, 20.0, 0.25, 0.20),
     # tau_l. NEGATIVE, on the author's instruction of 6 September: *"tau_l should
     # be lowered when the model is low relative to the data"*. The source agrees
     # and explains why a value of 0.79 yields an average tax of 0.21 --
@@ -1041,6 +1041,32 @@ SLOW_DAMPING, SLOW_CAP = 0.25, 0.005
 # The step cap reaches its full value only at a gap of about 25 per cent;
 # below that the ceiling is this fraction of the gap. See the step block.
 GAP_SCALE = 0.0225
+
+# A PER-INSTRUMENT STEP CEILING, on the author's instruction of 8 September:
+# *"Maybe make the steps on tau_u larger. Maybe 3% per iteration"*.
+#
+# An entry here replaces BOTH limits for that instrument: the flat efold from
+# RULES and the gap-scaled ceiling above. Both had to go to deliver three per
+# cent. At tau_u's log gap of 0.3698 the gap-scaling alone allows
+# 0.0225*0.3698 = 0.0083, so raising the flat cap by itself would have bought
+# 0.83 per cent and no more, and the author would have been told three and given
+# less than one.
+#
+# THE SLOPE HAD TO BE CORRECTED IN THE SAME BREATH or the ceiling is irrelevant.
+# The step is damping*loggap/slope, and at the old -84.30 that is 0.25*0.3698/84.30
+# = 0.0011, so the instrument was moving 0.11 per cent an iteration and would
+# never have reached ANY ceiling. -84.30 is a DISTANCE, not a log elasticity;
+# the measured value over 49 points on this economy is -0.975, which also makes
+# economic sense as very nearly unit elastic. With both changed the raw step is
+# 0.25*0.3698/0.975 = 0.0948 and the new ceiling binds at 0.03.
+#
+# WHAT IT BUYS: tau_u was 442 points and 15.5 hours from band and would have read
+# about +35 per cent in the morning. At three per cent a step with a unit slope
+# it closes 0.3698 in logs in about a dozen iterations.
+#
+# THIS IS FASTER THAN THE AUTHOR'S OWN HALF-PER-CENT RULE, deliberately and at
+# their instruction. Do not add entries here without them.
+FAST = {'utility_cost_of_treatment': 0.03}
 
 RATCHET_HALVE, RATCHET_GROW = 0.5, 1.2
 RATCHET_FLOOR, RATCHET_CEIL = 0.002, 1.0
@@ -1707,7 +1733,10 @@ def main():
         # the absolute limit on top. The full 0.5 per cent is reached only past a
         # 25 per cent gap; 12 per cent is allowed 0.26, 2.6 per cent is allowed
         # 0.06. A wrong slope can no longer turn a small gap into a maximum step.
-        room = min(efold, GAP_SCALE * abs(math.log(tgt / cur)))
+        if param in FAST:
+            room = FAST[param]
+        else:
+            room = min(efold, GAP_SCALE * abs(math.log(tgt / cur)))
         step = damp * g * math.log(tgt / cur) / e
         step = max(-room, min(room, step))
         new = max(lo, min(hi, vec[param] * math.exp(step)))
