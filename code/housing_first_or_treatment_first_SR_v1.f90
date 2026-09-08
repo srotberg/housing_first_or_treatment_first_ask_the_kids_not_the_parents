@@ -2112,7 +2112,13 @@
        
         real(8) :: stopping_rule_housing_market=2*10.d0**(-2)                                                           
         real(8) :: stopping_rule_rental_market=is_counterfactual*(1*10.d0**(-2))+(1-is_counterfactual)*2*10.d0**(-2)
-        real(8) :: stopping_rule_govt_budget=1*10.d0**(-2)        
+        ! LOOSENED ON THE AUTHOR'S INSTRUCTION, 8 September: "I also don't think
+        ! we should have such strict stopping rules for the budget and the drug
+        ! market. You can make them a bit weaker until we decide on the final
+        ! simulation to present in the paper". Was 1e-2, about 1.8 per cent of
+        ! the benchmark's net revenue of 0.5453; 2.5e-2 is about 4.6 per cent.
+        ! TIGHTEN BOTH BEFORE THE RUNS THAT GO IN THE PAPER.
+        real(8) :: stopping_rule_govt_budget=2.5*10.d0**(-2)        
         real(8) :: stopping_rule_inheritance_amount=(1-is_counterfactual)*2*10.d0**(-3)+is_counterfactual*2*10.d0**(-3)
                                                            
         real(8), parameter :: stopping_rule_value_function=5*10.d0**(-8)
@@ -2940,7 +2946,12 @@
         real(8), parameter :: drug_supply_curvature=1+1/drug_supply_elasticity
         real(8) :: drug_supply_shifter=1
         real(8) :: distance_drug_market=0
-        real(8) :: stopping_rule_drug_market=10.d0**(-4)
+        ! LOOSENED WITH THE BUDGET RULE, same instruction. This distance is
+        ! |implied supply price - price faced| against a price near one, so 1e-4
+        ! was a hundredth of a per cent: far tighter relative to its own scale
+        ! than the budget rule was to its. 1e-3 is a tenth of a per cent.
+        ! TIGHTEN BEFORE THE PAPER.
+        real(8) :: stopping_rule_drug_market=10.d0**(-3)
         real(8) :: drug_market_adjuster=0.5
         real(8) :: previous_price_of_addictive_good=0
         real(8) :: previous_drug_price_gap=0
@@ -28167,10 +28178,37 @@
                 
             if (infinite_elasticity_of_rental_supply==1) then
                             
-                rent(time_period,:)=max(rental_management_costs_calibrated(:)+housing_price(time_period)-&
-                    housing_price(time_period-solve_transition_dynamics)*&
-                    (1-housing_depreciation_rate-property_tax(time_period-solve_transition_dynamics))/&
-                    (1+risk_free_rate(time_period)),0.d0)
+                if (fix_rent==1) then
+
+                    ! THE BENCHMARK'S RENT, SET THE WAY THE BENCHMARK SETS IT.
+                    !
+                    ! The branch below reconstructs the rent by INVERTING the
+                    ! benchmark's management-cost formula, which returns the
+                    ! benchmark's rent only if the housing price has not moved.
+                    ! It had: in the first counterfactual to get this far the
+                    ! price went 12.048193 to 12.094289 and the rent came out
+                    ! 1.0015193 instead of 1. Small, and not the peg the design
+                    ! block claims -- "MARKET RENT DOES NOT MOVE ... p_r is the
+                    ! same number in the benchmark and in every counterfactual".
+                    !
+                    ! distance_rental_market being zero did not catch it and
+                    ! could not: perfectly elastic supply makes EXCESS DEMAND
+                    ! identically zero, so that test says nothing about whether
+                    ! the price moved. It reported 0.0000000000000000 through
+                    ! sixty loops of a rent that was not the benchmark's.
+                    !
+                    ! The author, 8 September: "the rent should be pegged to
+                    ! what it was in the benchmark".
+                    rent(time_period,:)=rent_calibrated(:)
+
+                else
+
+                    rent(time_period,:)=max(rental_management_costs_calibrated(:)+housing_price(time_period)-&
+                        housing_price(time_period-solve_transition_dynamics)*&
+                        (1-housing_depreciation_rate-property_tax(time_period-solve_transition_dynamics))/&
+                        (1+risk_free_rate(time_period)),0.d0)
+
+                end if
                                  
             else
             
@@ -42697,6 +42735,33 @@
                 (1-partial_equilibrium)*abs(housing_price(transition_length)-&
                 (c_1_calibrated)*(housing_depreciation_rate*total_housing_demand(transition_length))**&
                 (1/empirical_housing_supplpy_elasticity))
+
+            ! THE HOUSING PRICE IS PEGGED IN A COUNTERFACTUAL. The author,
+            ! 8 September: "why is the housing price different? It should be
+            ! pegged to the same value as the benchmark".
+            !
+            ! WHAT IT WAS DOING. Homeownership is off in this paper, so nobody
+            ! owns and P has one job left: pricing rental units through the
+            ! management-cost formula. Left free it was solved against the
+            ! housing supply curve, so a policy that houses more people bid it
+            ! up, and it dragged the rent with it -- which is how a rent that
+            ! the design block says never moves came out at 1.0015 rather than 1.
+            !
+            ! AND IT WAS THE BINDING CONSTRAINT. At loop 59 of the first
+            ! counterfactual to get this far, the budget sat at 0.0018 and the
+            ! drug market at 0.0020, both inside tolerance, while the housing
+            ! market sat at 0.0392 against a 0.02 rule. An hour of solving was
+            ! spent converging a price the paper holds fixed.
+            !
+            ! Pegging it is what makes infinite_elasticity_of_rental_supply mean
+            ! what it says: rental supply perfectly elastic AT THE BENCHMARK
+            ! PRICE, rather than at whatever price the housing stock implies.
+            if (is_counterfactual==1) then
+
+                housing_price(transition_length)=calibrated_stationary_housing_price
+                distance_housing_market(transition_length)=0
+
+            end if
                 
             weight_on_housing_price=(1-check_tax_incidence)*0.02
             
