@@ -37,16 +37,44 @@ fi
 VEC=$(grep -a "^VECTOR " code/benchmark_of_record.txt | head -1 | sed 's/^VECTOR //')
 [ -n "$VEC" ] || { echo "no benchmark vector in benchmark_of_record.txt"; exit 1; }
 
-echo "child SUD odds ratio against penalty_child_addicted"
-echo "  benchmark value 0.24 gives 1.0945; the data target is 2.00"
+# BOTH RATIOS, AND THEY RUN IN OPPOSITE DIRECTIONS.
+#
+#   delta_d, penalty_child_addicted = 0.24 -> ratio 1.0945, target 2.00  (raise)
+#   delta_h, penalty_child_homeless = 0.31 -> ratio 3.4477, target 2.10  (LOWER)
+#
+# Same channel and the same contraction of the newborn draw against the rate at
+# each node, so the fact that one overshoots by 64 per cent while the other
+# undershoots by 45 is a statement about the model, not about the penalties: a
+# child's homelessness is far steeper in productivity than a child's disorder.
+#
+# BOTH PENALTIES ARE EXTERNALLY SET, so neither number is free -- 0.24 is
+# Nilsson (2017) and 0.31 is Chetty, Hendren and Katz (2016). What the bracket
+# measures is how far the model's mapping is from the external estimate, which
+# is a diagnostic and not a calibration.
+#
+# EACH IS SWEPT WITH THE OTHER HELD AT ITS CALIBRATED VALUE. They are not
+# independent: a parent can be both disordered and homeless, so each penalty
+# moves the other's ratio a little. Sweeping one at a time is the right first
+# cut and the cross term is worth checking before either number is used.
+run_sweep () {
+    NAME=$1; PARAM=$2; ROW=$3; shift 3
+    echo
+    echo "$NAME: $ROW against $PARAM"
+    printf '%-10s %-14s %s\n' "penalty" "ratio" "point"
+    for PEN in "$@"; do
+        LINE=$(echo "$VEC" | sed -E "s/(^| )$PARAM=[^ ]*/\1$PARAM=$PEN/")
+        bash code/run_one_point.sh $LINE > "code/bracket_${PARAM}_${PEN}.log" 2>&1
+        TAG=$(ls -t code/points/point_*.txt | head -1)
+        R=$(grep -a "$ROW" "$TAG" | sed 's/.*model=//' | awk '{print $1}')
+        printf '%-10s %-14s %s\n' "$PEN" "${R:-FAILED}" "$(basename "$TAG" .txt)"
+    done
+}
+
+run_sweep "SUD, target 2.00" penalty_child_addicted \
+    "delta_d child SUD ratio" 0.24 0.45 0.65 0.85
+
+run_sweep "HOMELESSNESS, target 2.10" penalty_child_homeless \
+    "delta_h child homelessness ratio" 0.31 0.22 0.14 0.07
+
 echo
-printf '%-10s %-14s %s\n' "penalty" "ratio" "point"
-for PEN in 0.24 0.45 0.65 0.85; do
-    LINE=$(echo "$VEC" | sed -E "s/(^| )penalty_child_addicted=[^ ]*/\1penalty_child_addicted=$PEN/")
-    bash code/run_one_point.sh $LINE > "code/bracket_${PEN}.log" 2>&1
-    TAG=$(ls -t code/points/point_*.txt | head -1)
-    R=$(grep -a "delta_d child SUD ratio" "$TAG" | sed 's/.*model=//' | awk '{print $1}')
-    printf '%-10s %-14s %s\n' "$PEN" "${R:-FAILED}" "$(basename "$TAG" .txt)"
-done
-echo
-echo "Interpolate for 2.0 on the measured curve; do not extrapolate off its end."
+echo "Interpolate on the measured curve; do not extrapolate off either end."
