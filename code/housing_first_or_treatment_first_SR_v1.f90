@@ -2961,6 +2961,9 @@
         ! TIGHTEN BEFORE THE PAPER.
         real(8) :: stopping_rule_drug_market=10.d0**(-3)
         real(8) :: drug_market_adjuster=0.5
+        ! THE MOST THE DRUG PRICE MAY MOVE IN ONE LOOP, as a share of itself.
+        ! See the cap in clear_drug_market for what it replaces and why.
+        real(8), parameter :: max_drug_price_move=0.005
         real(8) :: previous_price_of_addictive_good=0
         real(8) :: previous_drug_price_gap=0
         integer :: have_drug_price_secant=0
@@ -37171,7 +37174,26 @@
 
             end if
 
-            step_1=max(min(step_1,2*price_of_addictive_good),price_of_addictive_good/2)
+            ! AND A HARD CAP OF HALF A PER CENT A LOOP, on the author's
+            ! instruction of 8 September: *"You might need to update the price
+            ! more slowly. Like 0.5% at most"*.
+            !
+            ! The clamp this replaces allowed the price to DOUBLE or halve in one
+            ! step, and the trust region above still allowed four damped steps --
+            ! about twenty per cent at the gaps universal_tf was seeing. A cap
+            ! this tight cannot oscillate: the price is a bounded monotone walk
+            ! toward the supply curve, and the direction is all the secant is
+            ! being trusted for.
+            !
+            ! IT COSTS LOOPS, and that is the trade. universal_tf's price sat
+            ! near 1.10, so reaching it from 1.00 takes about twenty passes at
+            ! this rate. The arms already run twenty-three to forty-five loops
+            ! with the budget as the slow condition, so the price is unlikely to
+            ! become the binding one -- but if a later arm exits on loop count
+            ! rather than on the price having settled, this is the line to look
+            ! at first.
+            step_1=max(min(step_1,price_of_addictive_good*(1+max_drug_price_move)),&
+                price_of_addictive_good*(1-max_drug_price_move))
 
             previous_price_of_addictive_good=price_of_addictive_good
             previous_drug_price_gap=gap_1
