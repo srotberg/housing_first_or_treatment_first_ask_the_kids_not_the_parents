@@ -1,3 +1,41 @@
+## 02:29 UTC 8 September -- THE ELASTICITY MEASUREMENT IS DEFERRED. It cost half the loop's throughput for an hour.
+
+The author: *"Ok, no problem wait on the elasticity for another time"*. Killed,
+scratch copy removed, loop back to four cores.
+
+WHAT IT COST, so the next attempt is priced properly. The measurement ran in a
+scratch copy of the tree with measure_price_elasticity flipped to 1, which kept
+the live source, its hash and the archive untouched -- that part worked. But both
+it and the loop launch with four OpenMP threads on a FOUR CORE box, so each got
+about two:
+
+    the loop produced ONE point in the hour from 01:29 to 02:29, against ~28 normal
+    the elasticity was 41 minutes into the FIRST of its TWO solves when killed
+
+So a full measurement is roughly EIGHTY MINUTES at half throughput, costing about
+forty overnight iterations. That is the real price and it was underestimated at
+offer time as "about fifteen minutes".
+
+HOW TO DO IT PROPERLY NEXT TIME: pause the loop first and run it alone, where two
+solves at full cores is about ten minutes. Do NOT run it beside the loop.
+
+WHY IT NEEDS A SOURCE EDIT AT ALL: measure_price_elasticity is an
+`integer, parameter` at line 406 with no handover case, so unlike
+measure_child_gap it cannot be set from run_one_point.sh. The scratch-copy trick
+is the way to measure it without moving the live hash, and it is worth keeping.
+
+WHAT THE MEASUREMENT DOES, confirmed against the source and matching the author's
+own description -- *"to estimate the leasticity you just raise the price of the
+drug, and check what happens to usage"*: it stores the base price and user mass,
+sets price = base*(1+elasticity_price_step) with the step at 0.10, re-solves the
+value function, re-converges the stationary equilibrium, recomputes statistics
+and govt_revenues_calc, then reports
+log(users_new/users_base)/log(1.10) against an observed -0.63.
+
+The source notes the design point that makes it a DEMAND elasticity rather than
+an equilibrium response: *"The market clears in the OUTER loop, so the price stays
+where it is put across a direct solve and converge."*
+
 ## 02:14 UTC 8 September -- THE PLAN AFTER CONVERGENCE, in the author's own words, and what machinery already exists
 
 The author: *"once the program converges, i think we should do the experiments to
