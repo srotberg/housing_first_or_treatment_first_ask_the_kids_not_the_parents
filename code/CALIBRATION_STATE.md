@@ -1,3 +1,54 @@
+## 02:52 UTC 8 September -- IS delta_d COMPUTED CORRECTLY? YES. It is the CHANNEL that is dead, and the source predicted this exact failure.
+
+The author: *"are you sure you are calculatibg the odds ratio for children of
+parents with Sud correctly? It seems way too low to me."* Checked in the source.
+
+THE FORMULA IS RIGHT. At line 6491:
+
+    csud_n += newborn_parent_share(cp,1,1) * newborn_employment_probability(k,cp,1,1)
+                                           * percent_addicted_by_employment(1,k) / w(1,1)
+    csud_d += newborn_parent_share(cp,0,1) * newborn_employment_probability(k,cp,0,1)
+                                           * percent_addicted_by_employment(1,k) / w(0,1)
+
+Numerator is children of DISORDERED parents, denominator children of CLEAN
+parents -- not the overall rate, so there is no bias toward one from a wrong
+denominator, which was the obvious suspect and is not the problem.
+
+BOTH SIDES MULTIPLY BY THE SAME percent_addicted_by_employment(1,k). That rate is
+computed over the whole population at line 14481 and is NOT conditioned on the
+parent. So THE ONLY WAY A PARENT'S SUD RAISES A CHILD'S SUD RISK IS BY PUSHING
+THE CHILD TO A POORER NODE. There is no direct transmission term anywhere: no
+child of a disordered parent faces a higher onset hazard at the same node.
+penalty_child_addicted=0.24 acts at line 29068 purely as an EARNINGS penalty.
+
+WHY THAT CHANNEL DELIVERS ALMOST NOTHING. The model's SUD rate by income band is
+
+    6.1%  1.0%  3.1%  3.6%  5.5%  2.7%  2.6%     model
+   13.7% 13.1%  9.1% 10.2%  7.9%  7.2%  4.8%     data
+
+NON-MONOTONE AND NEARLY FLAT, against a data profile that falls by a factor of
+three. Shifting a child down a flat profile barely changes their expected SUD
+risk and can LOWER it -- a 24 per cent earnings penalty moving a child from band
+5 to band 2 REDUCES their SUD probability in this model.
+
+THE SOURCE ANTICIPATED EXACTLY THIS AND SAYS SO, which is why the number is
+untargeted: *"the ratios are not reachable through an income channel at any
+earnings penalty the evidence supports"*, and *"delta_d should fall to something
+like half the work it was doing once rho carries the other half, AND IF IT
+COLLAPSES TO NOTHING THEN RHO IS DOING TOO MUCH."*
+
+The literature split is roughly even, so income should carry about half of a 2.0
+ratio, around 1.5. It carries 1.06. IT HAS COLLAPSED TO NOTHING -- the condition
+the comment itself names as the failure case.
+
+THE DEFECT IS UPSTREAM AND IS THE SAME ONE AS lambda_addiction=0. With no
+dose-response the onset hazard is flat in quantity, so addiction does not
+concentrate among the poor who use most, so the SUD-by-income gradient is flat,
+so no earnings penalty can generate an intergenerational ratio. Fixing the
+gradient (Phase 2a in EXPERIMENT_PLAN.md) is the same fix as fixing delta_d.
+
+NOTHING CHANGED. The author asked whether the calculation is right; it is.
+
 ## 02:47 UTC 8 September -- IS tau_u REACHABLE INSIDE ITS BOUND? Yes, with 115 per cent headroom, but the slope above u=9.3 is EXTRAPOLATION.
 
 The author asked directly: *"Are you saying the tauu can be hit? Did you make
