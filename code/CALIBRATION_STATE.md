@@ -1,3 +1,44 @@
+## 8 September 04:36 UTC -- b's slope measured at -10.499. Both my stories were wrong.
+
+point_564ad3087b -> point_02a1777379, addiction_scalar_1 alone, 0.00316947 ->
+0.00380336:
+
+    d log b            / d log scalar = -10.499
+    d log lambda_d     / d log scalar = -11.431
+    d log sud_homeless / d log scalar =  -4.871
+    d log theta        / d log scalar =  +4.583
+    d log tau_u        / d log scalar =  +2.290
+    d log h_1          / d log scalar =  -0.733
+
+THE SIGN IS NOT BACKWARDS. I suggested it might be, off a residual: the
+endowment explained only -3.6 of b's -13.4 per cent, and the remaining -9.8
+matched a positive slope near +1.4. It does not. That is TWO wrong explanations
+for the same drift in one hour -- the endowment first, then the sign -- and the
+lesson is that a residual is not evidence for whatever happens to fit it. Both
+were arithmetic that worked; neither was a measurement.
+
+WHAT IS ACTUALLY TRUE, AND IT DISSOLVES THE QUESTION. b moves ten-for-one in
+logs against its own instrument. A 14.8 per cent gap closes on a 1.4 per cent
+move of addiction_scalar_1, and equally, ANY cross-effect worth 1.3 per cent of
+the instrument pushes b out of band by itself. The drift needs no large cause
+and probably has none. The author's read -- "It's probably fine and b will go
+back down over the loop" -- is the right one, and for a better reason than
+either of us gave: not that the drift will reverse, but that the instrument is
+strong enough to absorb it in one or two steps.
+
+THE RULE HAS BEEN STEPPING 2.26 TIMES TOO FAR SINCE IT WAS WRITTEN. The old
+comment recorded realised responses of -8.96 to -14.35 off diagonal moves,
+correctly refused to use them, and set -4.65 as a damped compromise. The
+controlled number, -10.499, sits inside the range those diagonal moves
+suggested. The caution was right in method and costly in fact, and the fix was
+always one controlled arm.
+
+ADDICTION_SCALAR_1 IS NOT A ONE-MOMENT INSTRUMENT. It moves lambda_d harder than
+b, and sud_homeless and theta by four to five. A step taken for b lands on four
+other moments, which is worth remembering before blaming any of those on their
+own instruments -- sud_homeless in particular has its own rule and its own
+slope-that-is-a-floor.
+
 ## 8 September 04:33 UTC -- the endowment does NOT drive b, and my h_age1 slope was wrong
 
 A one-coordinate arm, point_564ad3087b -> point_8ea4ed51ee, newborn_endowment_scale

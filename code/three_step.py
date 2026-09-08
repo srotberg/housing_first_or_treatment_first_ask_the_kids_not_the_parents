@@ -466,7 +466,38 @@ RULES = {
     # they establish is the SIGN of the error -- the step is far too big -- and
     # damping is the honest response to that, where substituting -9 for -2.32
     # would be reading a derivative off a diagonal move.
-    'addiction_scalar_1':                        ('b',            -4.65, 1e-12, 1.0, 0.15, 0.20),
+    # -10.499, MEASURED ON A CONTROLLED PAIR at last. point_564ad3087b ->
+    # point_02a1777379 differ in addiction_scalar_1 alone, 0.00316947 ->
+    # 0.00380336:
+    #
+    #     d log b            / d log scalar = -10.499
+    #     d log lambda_d     / d log scalar = -11.431
+    #     d log sud_homeless / d log scalar =  -4.871
+    #     d log theta        / d log scalar =  +4.583
+    #     d log tau_u        / d log scalar =  +2.290
+    #     d log h_1          / d log scalar =  -0.733
+    #
+    # THE COMMENT ABOVE GUESSED THE MAGNITUDE RIGHT AND HELD BACK ANYWAY. It
+    # recorded realised responses of -8.96 to -14.35 off diagonal moves, called
+    # them uncontrolled, and used -4.65 as a damped compromise. That caution was
+    # correct in method and expensive in fact: the controlled number is -10.499,
+    # inside the range those diagonal moves suggested, so the rule has been
+    # stepping 2.26 times too far for as long as it has existed. THAT is why b
+    # oscillates -- the author has been watching it jump since the start.
+    #
+    # b IS HYPERSENSITIVE AND THAT IS THE USEFUL FACT. Ten-for-one in logs means
+    # a 14.8 per cent gap closes on a 1.4 per cent move of the instrument, and it
+    # equally means any cross-effect worth 1.3 per cent of the instrument can
+    # push b out of band on its own. Two separate explanations for b's drift were
+    # offered tonight, the newborn endowment and a backwards sign, and BOTH WERE
+    # WRONG -- the endowment carries +0.129 and the sign is firmly negative. The
+    # drift needs no large cause and probably has none.
+    #
+    # IT IS NOT A ONE-MOMENT INSTRUMENT EITHER. It moves lambda_d harder than b,
+    # sud_homeless at -4.87 and theta at +4.58, so a step taken for b lands on
+    # four other moments. That is worth remembering before blaming any of them on
+    # their own instruments.
+    'addiction_scalar_1':                        ('b',           -10.499, 1e-12, 1.0, 0.15, 0.20),
     # THREE MORE SIGNS THE AUTHOR SUPPLIED OR THE SOURCE SETTLES, 6 September.
     # All three were assigned to their moment already and frozen only for want of
     # a measured slope -- the method will not guess a direction -- so a sign is
