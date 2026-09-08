@@ -42970,6 +42970,22 @@
 !        call calculate_welfare(1)
         call stationary_equilibrium_wealth_distribution(transition_length)
         call calculate_gini_coefficient(transition_length)
+        ! THE SAME MOMENTS BLOCK THE BENCHMARK PRINTS.
+        !
+        ! print_all_moments is a Global_Vars module procedure, and it had one
+        ! caller: the benchmark's sweep stop. So a counterfactual reported
+        ! whatever its own scattered write statements happened to carry, and a
+        ! comparison against the benchmark had to be assembled by hand out of
+        ! two different formats -- with anything the counterfactual did not
+        ! print, the age distribution of users among them, simply unavailable.
+        !
+        ! It runs after convergence and after the final statistics pass, so it
+        ! reports the equilibrium rather than an iterate, and it is print-only:
+        ! nothing downstream reads what it recomputes.
+        write(*,*) "===== COUNTERFACTUAL MOMENTS ====="
+        call print_all_moments()
+        write(*,*) "===== END OF COUNTERFACTUAL MOMENTS ====="
+
         call save_vars_and_functions(transition_length)
         
         write(*,*) "model_drug_use_by_income_quintile", model_drug_use_by_income_quintile(transition_length,:)
