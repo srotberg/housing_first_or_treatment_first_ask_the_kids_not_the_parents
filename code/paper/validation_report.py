@@ -38,12 +38,16 @@ import sys
 # section of their own, on the author's instruction, because they are the same
 # kind of object as the bottom shares: a slice of a distribution.
 ORDER = [
-    "share of the homeless, band",
+    # NOT "share of the homeless, band": the BAND regex strips the word when
+    # it builds the row name, so the old entry matched nothing and the age
+    # bands sorted to the BOTTOM of the table instead of the top.
+    "share of the homeless",
     "earnings share, bottom tenth",
     "earnings share, top tenth",
     "income share bottom",
     "net worth share, bottom half",
     "wealth share bottom",
+    "assets of the homeless",
     "renters above 30 pct of income",
     "renters above 50 pct of income",
     "tenant contribution rate",
@@ -94,6 +98,17 @@ BAND = re.compile(
 )
 SKIP = re.compile(r"(ELASTICITY|VALIDATION) (SKIPPED|HELD|NOT COMPUTED)(?P<why>.*)")
 
+# MODEL ONLY ROWS. The author, 8 September: *"i also want to add the average
+# assets of the homeless (not sure if there is data on it, but i just want to
+# see it)"*. There is no observed counterpart, so the row carries a dash in the
+# data and gap columns rather than a zero, which would read as a target of zero
+# and a gap against it.
+#
+# The quantity is already computed and already printed -- model_avg_homeless_assets
+# reaches the point file as a DIAG line -- so nothing in the Fortran changes.
+DIAG_ROWS = {"average assets of the homeless": "assets of the homeless"}
+DIAG = re.compile(r"DIAG\s+(?P<name>.*?)\s+=\s*(?P<model>[-\d.E+]+)")
+
 
 def rows_of(path):
     found, notes = [], []
@@ -112,6 +127,11 @@ def rows_of(path):
         if m and m.group("key") in MOMENT_ROWS:
             found.append((MOMENT_ROWS[m.group("key")],
                           float(m.group("model")), float(m.group("obs"))))
+            continue
+        m = DIAG.search(line)
+        if m and m.group("name").strip() in DIAG_ROWS:
+            found.append((DIAG_ROWS[m.group("name").strip()],
+                          float(m.group("model")), None))
             continue
         m = SKIP.search(line)
         if m:
@@ -153,6 +173,9 @@ def main():
         return (len(ORDER), item[0])
 
     for name, model, obs in sorted(found, key=key):
+        if obs is None:
+            print("%-*s %12.5f %12s %8s" % (width, name, model, "no data", "--"))
+            continue
         g = gap(model, obs)
         print("%-*s %12.5f %12.5f %8s" % (
             width, name, model, obs,
