@@ -1,3 +1,47 @@
+## 01:38 UTC 8 September -- WHAT SETS DRUG MORTALITY: kappa_phi_d_level, ASSIGNED at 8.0 and pinned. OPEN for the author.
+
+Traced after the author's *"ah, it could be mortality"*.
+
+    kappa_phi_d_by_age(j) = 1 + (kappa_phi_d_level - 1) * shape_sud_profile(j)
+    kappa_phi_d_level = 8.0, line 3659, PINNED in three_step's FIXED
+
+THE SOURCE SAYS IT IS ASSIGNED, NOT CALIBRATED: *"ASSIGNED, at the midpoint of
+the literature range. All cause standardised mortality ratios for opioid use
+disorder run 6 to 10, so 8 is the middle of it rather than an old point estimate.
+This used to be calibrated on the drug price participation elasticity; that
+elasticity is now an untargeted validation moment instead."*
+
+So nothing in the loop can move it, and drug deaths are untargeted, so the +60
+per cent overshoot -- 0.321 of all deaths against 0.200 observed -- has no
+instrument and no scorer.
+
+THE OPTION PUT TO THE AUTHOR: 6.0 is the BOTTOM of the range the source itself
+cites, not outside it. It cuts the excess term from 7*shape to 5*shape, about 29
+per cent less excess mortality, which on a proportional reading takes drug deaths
+from 0.321 toward 0.23 against a 0.200 target. Most of the gap, not all.
+
+THREE THINGS RECORDED WITH IT:
+
+  - It is a DATA choice, not a calibration one. Picking 6 because it helps a
+    moment, when 8 was chosen as the midpoint on principle, must be declared in
+    the paper as such -- the same treatment h_2's 8 per cent got.
+  - The magnitude above is an estimate FROM THE FUNCTIONAL FORM, not a
+    measurement. There are no controlled pairs on kappa_phi_d_level because it
+    has been pinned throughout, so only moving it and solving will say.
+  - It moves the model hash and orphans the seven-node archive, like the grid
+    change did.
+
+CHEAPEST TEST if wanted: ONE solve at 6.0 off the current vector gives the
+direction and rough size for the price of a single point, rather than a reseed.
+
+NOTHING CHANGED. This is the author's call.
+
+WHY IT MATTERS BEYOND THE AGE PROFILE: tau_u must still fall about 31 per cent
+to reach its target, and the measured co-movement says that pushes the mean user
+age from 34.3 DOWN toward 29 against 45.5 in the data. So tau_u and the age
+profile cannot both be satisfied by moving treatment take-up. Mortality is the
+only candidate found so far that could relieve both.
+
 ## 01:32 UTC 8 September -- TREATMENT IS NOT WHY THE USERS ARE YOUNG. It is holding the age UP, and mortality is the better candidate.
 
 The author, on the user age profile being eleven years too young: *"not sure what
