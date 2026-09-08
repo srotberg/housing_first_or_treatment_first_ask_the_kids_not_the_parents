@@ -540,7 +540,23 @@ RULES = {
     # is its only use, "flow_utility_1=flow_utility_1-utility_cost_of_treatment".
     # So the handover cannot silently truncate a value above 8, which is the risk
     # ENGINE.md warns about whenever a bound is raised.
-    'utility_cost_of_treatment':                 ('tau_u',         -0.975, 0.0, 20.0, 0.25, 0.20),
+    # -3.174, MEASURED ON A CONTROLLED PAIR, and the pair is the cleanest one
+    # this loop has produced: point_90e331ce52 and point_e9df87e1e7 differ in
+    # this coordinate and in nothing else.
+    #
+    #     u 10.000 -> 11.000   tau_u 0.29872 -> 0.21940   d log / d log = -3.174
+    #
+    # AND THE TARGET IS BRACKETED BY IT, 0.21940 < 0.24500 < 0.29872, which is
+    # worth more than the slope: u = 10.624 is an interpolation inside a
+    # measured interval rather than an extrapolation off a tangent.
+    #
+    # WHY -0.975 WAS WRONG, and it is not the usual reason. It was fitted over
+    # 49 points and it was still meaningless, because the Fortran clamped this
+    # parameter at 10 and forty of those points were solved at exactly 10 while
+    # their handovers ranged up to 14.74. The fit was reading scatter across
+    # points that shared an identical value of the regressor. A slope measured
+    # over many points is not therefore a measured slope.
+    'utility_cost_of_treatment':                 ('tau_u',         -3.174, 0.0, 20.0, 0.25, 0.20),
     # tau_l. NEGATIVE, on the author's instruction of 6 September: *"tau_l should
     # be lowered when the model is low relative to the data"*. The source agrees
     # and explains why a value of 0.79 yields an average tax of 0.21 --
