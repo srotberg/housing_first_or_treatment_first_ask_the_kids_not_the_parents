@@ -1,3 +1,50 @@
+## 02:38 UTC 8 September -- h_1's target pinned to the model, tau_u stepping at three per cent, and a RISK IN THE BRAKE
+
+The author: *"For the homelessness rate just set the target to what h1 is now, so
+that h1 doesn't decline too much. Maybe make the steps on tau_u larger. Maybe 3%
+per iteration."*
+
+h_1 TARGET -> 0.01160, its value at point_1b6760f424. It makes size_homelessness
+a BRAKE: h_1 falls because the rung keeps coming down under h_2, and with the
+target above the model value the instrument was pushing it down as well. At the
+model value a further fall puts h_1 below target and the instrument pushes back.
+
+  1.16 IS NOT A MEASUREMENT. It is where the model settled, ABOVE the 0.5 to 1
+  per cent the author called defensible. The paper must say the model produces
+  1.16 and the data supports 0.5 to 1, not that 1.16 was targeted.
+
+tau_u AT THREE PER CENT NEEDED TWO CHANGES, and telling the author "done" after
+only one would have delivered less than a fifth of what was asked:
+
+  - the GAP-SCALED CEILING had to be bypassed. At a 0.3698 log gap
+    GAP_SCALE*0.3698 = 0.0083, so raising the flat cap alone buys 0.83 per cent.
+    A new FAST dict replaces BOTH ceilings for named instruments.
+  - the SLOPE had to be corrected in the same breath. At -84.30 the raw step is
+    0.25*0.3698/84.30 = 0.0011, so the instrument moved 0.11 per cent an
+    iteration and would never have reached any ceiling. -84.30 is a DISTANCE;
+    the measured value over 49 points is -0.975, near unit elastic.
+
+  raw step now 0.0948, clamped to 0.0300. tau_u was 442 points and 15.5 hours
+  from band and should now close in about a dozen iterations.
+
+  FAST IS FASTER THAN THE AUTHOR'S OWN HALF-PER-CENT RULE, deliberately and at
+  their instruction. Do not add entries without them.
+
+THE RISK IN THE BRAKE, flagged before it bites rather than after. With the target
+set exactly AT the model value the gap is ~0, so the sign of log(tgt/cur) flips on
+solver noise, and THE SIGN-FLIP RATCHET HALVES THE GAIN ON EVERY FLIP down to a
+floor of 0.002. size_homelessness could chatter its gain down 360-fold and be
+feeble exactly when h_1 starts drifting. Its gain is already 0.720 rather than
+1.0.
+
+  Partly self-correcting, because the gap-scaled ceiling grows as h_1 drifts --
+  but it grows against a possibly-crushed gain.
+
+  IF THE MORNING SHOWS h_1 SLIDING WITH size_homelessness BARELY MOVING, THIS IS
+  THE CAUSE. The fix is either exempting it from the ratchet or setting the
+  target a hair BELOW the model value, say 0.01150, so the gap has a consistent
+  sign to push against. Not done: it is the author's mechanism and may hold.
+
 ## 02:29 UTC 8 September -- THE ELASTICITY MEASUREMENT IS DEFERRED. It cost half the loop's throughput for an hour.
 
 The author: *"Ok, no problem wait on the elasticity for another time"*. Killed,
