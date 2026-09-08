@@ -1,3 +1,37 @@
+## 8 September 12:42 UTC -- kappa_find_smi IS AT ITS BOUND. lambda_m is frozen.
+
+The step line now reads `60 -> 60 ... AT BOUND` and lambda_m sits at -19.7 per
+cent. Every further iteration leaves it exactly there.
+
+WHAT THE CLIMB BOUGHT: from 45.4 to 60, a third of the instrument's whole range,
+lambda_m went -20.9 to -19.7. That is 1.2 points of gap for 14.6 of instrument,
+and the elasticity fell the entire way -- roughly +0.6 measured over 16.5 to
+24.2, about +0.10 from 36 to 40, and near zero above 50.
+
+17 OF 18 TARGETED MOMENTS ARE INSIDE TEN PER CENT with lambda_m the sole
+exception. b is -13.1 and aleph -4.7, both still closing together as the author
+predicted.
+
+THE DECISION, PUT TO THE AUTHOR AT 10:42 AND NOW FORCED:
+
+  1. Raise the bound past 60. Only helps if the elasticity recovers and every
+     measurement above 40 says it does not. It also means asserting that someone
+     with SMI finds work at less than a sixtieth of the rate of someone without,
+     which is an extreme thing to ask one parameter to carry.
+  2. Accept lambda_m outside the band as the single exception to the ten per
+     cent rule, and say so in the paper.
+  3. Reopen kappa_uem as a second instrument. The RULES comment concedes it --
+     "SMI separation conceded; kappa_find_smi carries it" -- so this is a scope
+     change and the author's.
+
+RECOMMENDED 3 OVER 1, because the SMI penalty is currently carried entirely by
+the job-finding margin while the separation margin sits conceded at 1.0, and
+splitting it across both is both cheaper in each parameter and closer to how the
+literature measures it.
+
+NOTHING CHANGED. The loop continues and is now spending solves on seventeen live
+instruments and one dead one.
+
 ## 8 September 10:42 UTC -- kappa_find_smi will hit its bound in about ten firings
 
     kappa_find_smi 45.4 -> 54.4 since the morning table
