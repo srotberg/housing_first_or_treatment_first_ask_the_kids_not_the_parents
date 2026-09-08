@@ -1,195 +1,100 @@
-# The policy experiments, in the order they have to be run
+# The plan after convergence
 
-Written down because the order matters and because each step depends on the one
-before it. Nothing here runs until the quantitative model is calibrated.
+The author's, given at 02:13 UTC on 8 September, in their own words:
 
-The paper's claim is that the moral hazard the debate argues about is not an
-inefficiency, so the case for conditionality has to rest on something outside the
-household's own objective, and that there are three such things which the debate
-runs together: a genuine externality, the distortions that fund the programme, and
-the programme's own distortions. These experiments are how that claim is tested
-rather than asserted.
+> once the program converges, i think we should do the experiments to see how the
+> model performs. one is keeping pi_V in the benchmark and doing TF with cost of
+> testing all eligibiles and false positive and false negative. then do a
+> universal HF and universal TF (all Long run equilibria). after we do these it
+> would be good to maybe do further calibrations like we said about lambda_d and
+> try to understand why so many young are users relative to the data. but also,
+> it would be good to get the untargeted statistics
 
----
+**The order is theirs: experiments FIRST, further calibration SECOND.** That is
+the opposite of the instinct to keep calibrating until everything is in band, and
+it is deliberate -- the experiments are what say whether the model is worth
+calibrating further.
 
-## Step 1. The optimal generosity of each policy, separately
+## Phase 1, the experiments. All LONG-RUN EQUILIBRIA, no transitions.
 
-Solve for the welfare maximising design of **Housing First** and, separately, of
-**Treatment First**. Generosity is not one number, so the search is over the
-programme's two margins:
+### 1a. Treatment First at the benchmark voucher rate
 
-| margin | switch |
-|---|---|
-| who is eligible | `threshold_income_vouchers`, currently half of median income |
-| how much of the rent is covered | `rent_to_income_ratio_vouchers`, currently 0.30 |
-| how many eligibles are served | `probability_of_voucher_benchmark_used_1` |
+Hold `probability_of_voucher_benchmark_used` at its benchmark value -- pi_V stays
+where the calibration put it -- and make the voucher conditional on being clean.
+Charge the programme for:
 
-The third is the rationing margin. Referee 3's minor comment 3 asks for it to be
-varied **continuously** rather than jumped from rationing to universal cover, which
-is the only way to see whether there is a Laffer curve in voucher generosity or
-whether the corner is optimal. Referee 2's C6 asks the same question from the
-eligibility and coverage side. One search answers both.
+- the cost of testing EVERY eligible, not only those who fail;
+- false positives, clean households denied a voucher;
+- false negatives, using households granted one.
 
-Treatment First is the same search with `voucher_conditional_on_clean = 1`, so it
-carries the detection rates and the cost of testing with it.
+The author's phrase is "cost of testing all eligibiles", and "all" is the
+operative word: the budget carries a test for each eligible household rather than
+a test for each detection.
 
-**The welfare criterion is the ex-ante newborn value**, stated in the paper's Section
-on the welfare criterion and used throughout. It is the standard criterion in this
-literature (Conesa, Kitao and Krueger, 2009; Guvenen, Kambourov, Kuruscu, Ocampo and
-Chen, 2023), and the paper no longer reports a utilitarian sum beside it: the reader
-asked for one criterion rather than two, on 19 August. Every number in the four steps
-below is therefore that same object, a newborn's expected value before any draw is
-realised, taken under each policy's own equilibrium.
+### 1b. Universal Housing First
 
-**Output:** two optimal designs, one per policy. They will not be the same design.
-Treatment First excludes people, which lets it be more generous to those it serves,
-but it pays for testing and it keeps households alive longer to collect, both of which
-pull the other way. That is exactly why
-Step 2 has to be run at both.
+### 1c. Universal Treatment First
 
----
+## Phase 2, further calibration, only after Phase 1
 
-## Step 2. Compare each optimum to the other policy at the *same* generosity
+### 2a. lambda_d, the SUD dose-response gradient
 
-This is the step that separates conditionality from generosity, and it is the whole
-reason the paper can say anything clean.
+Design recorded in `CALIBRATION_STATE.md` at 01:50 on 8 September. In short: the
+onset hazard is `min(addiction_onset_base + (1 - exp(-lambda_addiction*q)), 1)`
+and `lambda_addiction` is currently 0, so it is FLAT -- conversion is whoever the
+base hazard catches, regardless of how much they use. The target is that heavier
+users are on average **3.22 times** more likely to acquire a SUD.
 
-1. At the optimal Housing First design, run Treatment First with the *same*
-   generosity. Difference = conditionality alone.
-2. At the optimal Treatment First design, run Housing First with the *same*
-   generosity. Difference = conditionality alone, at the other point.
+**One question is open and must be settled before building it.** The author said
+"more than the mean v" on 8 September; the earlier specification was the **53.9th
+percentile**. For a right-skewed quantity distribution those are different points
+and the 3.22 would be identified off a different comparison. ASK.
 
-Two comparisons rather than one, because **the optimal Housing First design is not
-the optimal Treatment First design**, and the answer can differ depending on which
-point in generosity space it is asked at. If it does differ, that is itself a result
-and the paper should say so rather than pick the comparison that reads better.
+### 2b. Why the model's users are so young
 
-**"The same generosity" means two different things and both have to be reported.**
+Mean age of users is 34.3 against 45.5 in the data, and 65 per cent of users are
+26-34 against 28 per cent. Two leads are already measured and recorded:
 
-* **Same design.** Same eligibility cutoff, same share of rent covered, same
-  probability of receipt. This is what isolates conditionality *alone*, and it is the
-  primary comparison, because it is the quantitative counterpart of the stylized
-  model's ranking at equal generosity.
-* **Same cost.** Two forces pull the conditional programme's outlay in opposite
-  directions, and which wins is a quantitative question rather than an obvious one.
-  Excluding people and paying only clean tenants makes it cheaper; but the extra
-  households Housing First puts into the disorder state die sooner and collect fewer
-  periods of voucher, which makes Housing First cheaper. In the stylized model the
-  second dominates and **Treatment First is very slightly the dearer** at every
-  generosity, before any testing cost. Do not assume the sign in the quantitative
-  model: measure it, and add the cost of testing on top, which pulls the same way.
-  Then run the cost matched comparison, adjusting one generosity margin until outlays
-  match.
+- **Treatment is not the cause.** `d(mean age)/d log tau_u = +13.65 years`, so
+  LESS treatment gives a YOUNGER stock. Landing tau_u makes the profile worse,
+  not better.
+- **Mortality is the better candidate.** Drug deaths are 0.321 of all deaths
+  against 0.200 observed, +60 per cent, so users are killed before they reach 45.
+  `kappa_phi_d_level` is ASSIGNED at 8.0, the midpoint of a literature range of 6
+  to 10, and is pinned. Six is inside that range.
 
-They cannot both be held fixed at once, which is why both are reported. And whichever
-way the sign falls, a cost difference is not a welfare argument for either policy: the
-two are different programmes, and the whole point of the separation this paper insists
-on is that a conclusion resting on the budget is a different claim from one resting on
-an externality.
+## Phase 3, the untargeted statistics
 
-**Output:** the effect of conditionality, holding generosity fixed, at two points,
-under both definitions of fixed.
+Their state as of 8 September is in `CALIBRATION_STATE.md` at 01:20. Note the
+unit trap recorded there: the `UNTARGETED homelessness rate, band k` lines print
+the model's ANNUAL rate against HUD's raw POINT-IN-TIME observed, a factor of
+5.27 apart. Use the scored gaps, never those lines.
 
----
+## What already exists, checked rather than assumed
 
-## Step 3. Transition against the long run, for the winner
+- `voucher_conditional_on_clean`, line 199, with
+  `voucher_conditional_on_clean_just_addicts` at 192.
+- `cost_per_drug_test` already feeds `govt_spending_on_drug_tests` at line 15490,
+  gated on the same switch, so the testing cost is ALREADY in the government
+  budget and does not need adding.
+- `is_counterfactual`, line 5, retunes the rental and inheritance tolerances and
+  turns on `use_old_results`.
+- `probability_of_voucher_benchmark_used` IS settable from `run_one_point.sh`,
+  which is exactly what "keeping pi_V in the benchmark" requires.
+- `p_det`, `p_fp` and `c_test` do nothing in the benchmark because
+  `voucher_conditional_on_clean` is 0. Per `CLAUDE.md` they belong with the
+  experiment and must NOT be added to the calibration table.
 
-Take whichever policy wins Step 2 and solve the **transition path** as well as the
-new steady state. `solve_transition_dynamics = 1`, `transition_length = 75`.
+## Two things that will bite if not planned for
 
-This matters because the two horizons answer different questions and the reports
-disagreed about which one the experimental literature speaks to. A randomised trial
-runs six to twenty four months, so it sees the first periods of a transition and
-not the steady state. If housing responds immediately and the disorder adjusts
-slowly, a short trial is well powered for the first and not the second, whatever
-the long run effect turns out to be. Referee 1's comment 3(d) asks for proper
-transition paths for exactly this reason.
+**`voucher_conditional_on_clean` is an `integer, parameter`.** Exactly like
+`measure_price_elasticity`, it cannot be set from `run_one_point.sh` and each
+variant needs its own build. Either make it a plain integer with a handover case,
+mirroring `measure_child_gap` -- one hash change, done once -- or build a binary
+per experiment, which changes the hash per experiment. The first is cleaner.
 
-**Output:** the winning policy's path and its new steady state.
-
----
-
-## Step 4. The channel shutdown ladder, at the optimum, in both horizons
-
-Break the welfare change down by channel, **at the optimal design**, reported
-separately for **period 1 of the transition** and for **the long run**. Reporting it
-at the optimum rather than at an arbitrary policy is what makes it say how much of
-the optimal design each channel is responsible for.
-
-| rung | switch | what it isolates |
-|---|---|---|
-| full counterfactual | — | everything |
-| child externality off | `child_penalty_off = 1` | the intergenerational externality |
-| aggregate externality off | `kappa_x = 0` | the disamenity of the headcount |
-| labour supply frozen | `freeze_labor_supply = 1` | the distortion from the tax that funds it |
-| drug price fixed | `fix_drug_price = 1` | general equilibrium |
-| testing cost off | `cost_per_drug_test = 0` | the programme's own distortion |
-
-Two things to state in the paper rather than let a reader find:
-
-**The rungs do not commute.** Switching the externality off changes who is poor and
-therefore how far the tax base moves, so the split depends on the order. Report a
-fixed order *and the interaction term explicitly*. A residual buried inside whichever
-channel happens to go last is exactly the conflation this paper argues against.
-
-**The drug price rung is neither an externality nor a distortion.** A policy that
-cures households takes them out of the market, the price falls, and a cheaper drug
-draws others in. That is general equilibrium. Without a rung of its own it would be
-attributed to whichever channel is switched last.
-
-**Both columns are a newborn, and that is what makes them comparable.** Report the
-transition column as the consumption equivalent for a **newborn on the date of
-implementation**, and the long run column for a **newborn in the new steady state**.
-The two are then the same object, the ex ante value of a household at age one, and
-the only thing that differs between them is the path it lives through: the first is
-born into the transition, the second into the new steady state. Any difference
-between the columns is therefore the transition itself rather than a change in who is
-being counted.
-
-This also keeps one criterion running through the whole design, since Step 1 chooses
-the optimum on the same ex ante newborn value.
-
-The alternative, averaging over households alive at the reform, does not work here
-and it is worth recording why. That population is a mix of ages and states, so its
-average moves with the age and state composition as well as with the policy, and the
-composition itself responds to the reform. A channel could then look as though it
-grows with the horizon when what actually changed is the mix of people in the
-average. It is the artefact the split is meant to detect, so the measure must not be
-capable of generating it.
-
-Splitting the ladder across the two horizons is the point of doing Step 3 first. The
-externality is intergenerational, so it is almost absent from period 1 and grows with
-the horizon; the tax distortion bites immediately. If that pattern holds it is the
-cleanest statement the paper can make about why the trials and the model disagree,
-and it is a prediction rather than a hope, so it is worth writing down now and
-checking against the numbers later.
-
-**Output:** a welfare decomposition by channel, twice, at the optimum.
-
----
-
-## What each referee comment this answers
-
-| comment | asks for | step |
-|---|---|---|
-| R1 3(d) | proper transition paths | 3 |
-| R2 C2 | the homelessness disamenity priced | 4 |
-| R2 C6 | optimal voucher design, broader eligibility or coverage | 1 |
-| R3 M2(c) | where the externalities come from, numerically | 4 |
-| R3 m3 | the voucher probability varied continuously | 1 |
-| AE A9 | welfare and mortality consequences separately | 4 |
-| AE A18 | fewer counterfactuals in the body | the four steps are the body |
-
----
-
-## What is not built yet
-
-* `freeze_labor_supply` and `fix_drug_price` are declared and not yet read anywhere.
-  Freezing hours must hold the choice at its benchmark schedule, not penalise the
-  disutility of labour: penalising it drives hours to a corner, which is a different
-  experiment. Freezing the choice set preserves the Bellman identity.
-* The search in Step 1 needs an outer loop over the three generosity margins. Each
-  evaluation is a full solve, so the grid has to be coarse first and refined around
-  the optimum.
-* `solve_transition_dynamics` is off and has not been exercised since the model was
-  rebuilt. Step 3 is where it gets tested.
+**`solve_transition_dynamics` is hardwired to 0 in BOTH branches** of its
+`is_counterfactual` expression at line 1769. That suits long-run equilibria,
+which is what was asked for. Anyone wanting a transition must change that line
+and read `code/stylized/TRANSITION_LESSONS.md` first -- it is a standing
+instruction, not notes.
