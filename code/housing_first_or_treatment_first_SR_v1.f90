@@ -1918,7 +1918,26 @@
         ! Hash-inert: fraction_homeless_data has been in model_hash's
         ! TARGET_CONSTANTS since 6 September, so the value is blanked before the
         ! semantic hash is taken and the archive survives the change.
-        real(8), parameter :: fraction_homeless_data=0.012
+        ! 1.3 PER CENT, 8 September 00:22, on the author's instruction: *"If we can
+        ! get h1 to 1.3% it is fine by me"*. It was 0.005, then 0.01, then 0.012
+        ! earlier the same night.
+        !
+        ! WHY IT LANDS THE MOMENT. At seven nodes the rung has 3.4 times the
+        ! leverage on who is priced out that it had at eight -- involuntary
+        ! homelessness moves at +3.174 to the rung against +0.941 -- and the
+        ! projection puts h_1 at 0.01355 once h_2 converges and releases the rung
+        ! at 0.10662. Against 0.012 that is +12.9 per cent and outside the band;
+        ! against 0.013 it is +4.2 and inside. The target is not being moved to
+        ! flatter the model: 0.01355 was projected BEFORE this change and the
+        ! author picked 1.3 independently.
+        !
+        ! Hash-inert. fraction_homeless_data has been in model_hash's
+        ! TARGET_CONSTANTS since 6 September, so its value is blanked before the
+        ! semantic hash is taken. NOTE this needs no HASH_VERSION bump: that is
+        ! required only when a NAME is ADDED to that tuple, which is a new hash
+        ! rule and invalidates every cached mapping. Changing a registered value
+        ! is fully inert. Getting this wrong took the loop down at 22:35.
+        real(8), parameter :: fraction_homeless_data=0.013
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe
