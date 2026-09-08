@@ -628,7 +628,6 @@ RULES = {
     #                    target. Composition keeps it from being exactly -1.
     #   voucher          the probability an eligible household draws a voucher, so
     #                    the share of eligibles holding one rises with it. Positive.
-    'kappa_find_smi':                            ('lambda_m',     +1.00, 1.0, 60.0, 0.35, 0.20),
     # THETA'S INSTRUMENT NEEDS A SIGN. The author, 7 September, on seeing it
     # frozen: *"it should move down towards the target"*. It could not: the
     # eight-node economy has no controlled pair for it, so it printed NO
@@ -784,7 +783,32 @@ RULES = {
 # The source's own calibration of the instrument reads 3.00 -> 0.621 per cent,
 # 3.25 -> 0.318, 3.50 -> 0.155, and log-interpolating those puts 0.200 per cent
 # at 3.4113. Written into every iterate so it cannot drift.
-FIXED = {'kkk_s_deviation_bottom': 3.4113,
+FIXED = {# PINNED AT 60 ON THE AUTHOR'S INSTRUCTION OF 8 September: "pin it at 60",
+         # after "if it does helps, we can pin it and accept a larger gap for
+         # homeless with smi". It does not help.
+         #
+         # THE INSTRUMENT IS SATURATED AND IT IS MEASURED, not inferred.
+         # point_0ec6c246f0 -> point_778bb7ae60 differ in this coordinate alone,
+         # 60 -> 100, which is the Fortran's own handover clamp and a 67 per cent
+         # step -- the size ENGINE.md demands before calling an instrument dead:
+         #
+         #     d log lambda_m / d log kappa_find_smi = +0.030
+         #     (0.20078 -> 0.20392)
+         #
+         # At that elasticity the value needed for lambda_m = 0.25 is about
+         # 81,000. 100 would buy 1.6 per cent of the moment and cost a
+         # hundredfold job-finding penalty to defend in the paper, so 60 it is.
+         #
+         # LAMBDA_M'S MOMENT IS THEREFORE CONCEDED at about -20 per cent, the one
+         # exception to the author's ten per cent rule. It is NOT in SKIP -- the
+         # moment is still measured and still scored, it simply has no live
+         # instrument, and the gap table should keep showing it rather than hide
+         # a conceded moment.
+         #
+         # NOTE lambda_m THE PARAMETER IS A DIFFERENT OBJECT and is untouched:
+         # 0.0663688, assigned from the recovery literature, never in RULES.
+         'kappa_find_smi': 60.0,
+         'kkk_s_deviation_bottom': 3.4113,
          # PINNED, on the author's instruction of 7 September: *"i suggest to
          # pin theta to 0.27 and let my method run"*, after *"find a relative
          # share of addiction that is close to 14% and then pin it and not move
