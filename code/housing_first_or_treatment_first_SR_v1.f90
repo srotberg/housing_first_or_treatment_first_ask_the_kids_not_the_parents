@@ -5,7 +5,16 @@
         integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
         real(8) :: probability_of_voucher_benchmark_used=0.06
-        real(8), parameter :: increased_prob_of_voucher_if_homeless_and_addicted=1
+        ! THE HF/TF DISCRIMINATOR, and the source's own naming block says so:
+        ! at 8850 and 8873 a zero here is written out as TF, at 8867 a one is
+        ! written as HF. It has real economic uses at 25906, 25949, 29922, 29945
+        ! and 29971, so it is not only a label.
+        !
+        ! WAS A COMPILE-TIME PARAMETER, converted 8 September so a counterfactual
+        ! is a vector line rather than a build. Every use is a runtime comparison
+        ! or a multiply and none is a parameter expression or an array bound,
+        ! which is what makes the conversion safe. Default 1 is the benchmark.
+        real(8) :: increased_prob_of_voucher_if_homeless_and_addicted=1
         integer, parameter :: how_many_iterations_to_do_on_distribution=0     
         integer, parameter :: compare_to_original_benchmark=1
         
@@ -6874,6 +6883,19 @@
             ! THE COMPONENTS AND THE OLD FORM, so the change above is auditable
             ! from the point file rather than from this comment, and so the
             ! alternative denominators can be read off without another run.
+            ! THE PROGRAMME'S OWN FISCAL COST, WHICH WAS COMPUTED AND NEVER
+            ! SHOWN. govt_spending_on_drug_tests is built at 15522 and taken out
+            ! of the budget at 15531, and until now appeared in no write
+            ! statement anywhere, so the cost of testing every eligible could not
+            ! be read off a run. That is the one number Phase 1a exists to
+            ! produce.
+            !
+            ! Reported as a level and over output, matching cbar's convention, so
+            ! it can sit beside food stamps in the same units.
+            write(*,*) "DIAG drug testing, aggregate spending            =",&
+                govt_spending_on_drug_tests
+            write(*,*) "DIAG drug testing / output                       =",&
+                govt_spending_on_drug_tests/max(model_output(1),10.d0**(-12))
             write(*,*) "DIAG food stamps, aggregate spending             =",&
                 govt_spending_on_food_stamps(1)
             write(*,*) "DIAG output, the denominator above               =",&
@@ -38066,6 +38088,17 @@
                     write(*,*) "HANDOVER penalty_child_homeless:",&
                         penalty_child_homeless, "->", handover_value
                     penalty_child_homeless=max(min(handover_value,0.6d0),0.d0)
+
+                case ("increased_prob_of_voucher_if_homeless_and_addicted")
+
+                    write(*,*) "HANDOVER increased_prob_of_voucher_if_homeless_and_addicted:",&
+
+                        increased_prob_of_voucher_if_homeless_and_addicted, "->", handover_value
+
+                    increased_prob_of_voucher_if_homeless_and_addicted=&
+
+                        max(min(handover_value,1.d0),0.d0)
+
 
                 case ("probability_of_voucher_benchmark_used")
                     write(*,*) "HANDOVER voucher probability:",&

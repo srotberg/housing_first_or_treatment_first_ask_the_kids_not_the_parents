@@ -134,3 +134,78 @@ one solve per firing that is expensive to repeat.
 THE ORDER IS THEREFORE: settle the sud_homeless-versus-b trade, freeze the
 benchmark, then run Phase 1. The three settability edits can be made at any time
 because they are inert while `voucher_conditional_on_clean` is 0.
+
+## READY TO RUN, as of 8 September 16:00
+
+Everything below was checked by running it, not by reading the source.
+
+### The runner
+
+    bash code/run_experiments.sh code/points/point_<frozen benchmark>.txt
+    bash code/run_experiments.sh code/points/point_<benchmark>.txt tf_benchmark
+
+Each experiment is a one-line change off a frozen benchmark vector, run through
+run_one_point.sh like any calibration point, so it lands as an md5-tagged point
+file with the HANDOVER assertion behind it. Names and switch settings are in the
+script's own table. It appends to `code/experiment_index.txt`.
+
+    python3 code/compare_experiments.py
+
+reads that index and prints levels and differences from the benchmark. It does
+NOT print gaps against targets: a counterfactual has no target, and printing one
+would invite reading the benchmark's targets as though they still applied.
+
+### The four handles, all settable from a vector now
+
+    probability_of_voucher_benchmark_used              already was
+    increased_prob_of_voucher_if_homeless_and_addicted converted 8 September
+    voucher_conditional_on_clean                       converted 8 September
+    voucher_conditional_on_clean_just_addicts          converted 8 September
+    probability_of_detection                           handover added
+    probability_of_false_positive                      handover added
+    cost_per_drug_test                                 handover added
+
+All measured inert at their defaults: re-solving the same vector under each
+change moved the worst of 36 scored moments by 0.017 per cent of target.
+
+### CONDITIONALITY FIRES, and here is what it does
+
+point_5b89ba333a -> point_bdeb35efe1, voucher_conditional_on_clean 0 -> 1 and
+nothing else:
+
+    pi_V          0.26568 -> 0.06788   -74 per cent
+    lambda_d      0.03449 -> 0.01290   -59
+    b             0.07987 -> 0.03221   -54
+    sud_homeless  0.25288 -> 0.18070   -33
+
+Vouchers are revoked on failed tests, take-up collapses, and drug use falls with
+it. Thirty-four scored moments move by more than half a per cent of target.
+
+### THE TESTING COST IS NOW OBSERVABLE, and it was not before
+
+govt_spending_on_drug_tests is built at 15522 and taken out of the budget at
+15531, and appeared in NO write statement, so the fiscal cost of testing every
+eligible could not be read off a run -- the one number Phase 1a exists to
+produce. Two DIAG lines now report it as a level and over output, matching
+cbar's convention.
+
+### THE ONE THING THE AUTHOR MUST SETTLE BEFORE 1a RUNS
+
+"Treatment First" has two readings here and they are different experiments:
+
+  (a) the SOURCE's naming, at 8850 and 8873: TF is
+      increased_prob_of_voucher_if_homeless_and_addicted = 0, vouchers simply not
+      steered to the addicted homeless. Nothing is tested and nothing revoked.
+  (b) the AUTHOR's phase 1a: "TF with cost of testing all eligibles and false
+      positive and false negative", which is voucher_conditional_on_clean = 1.
+
+run_experiments.sh currently applies BOTH for tf_benchmark and universal_tf,
+since 1a names the testing explicitly and the source names the steering. If only
+one is meant, change the one line in the script's EXP table.
+
+### STILL BLOCKING: the benchmark, not the code
+
+b and sud_homeless contest multiple_find_if_addicted -- closing one opens the
+other -- and lambda_m is conceded with its instrument pinned at 60. A
+counterfactual run off a moving benchmark has to be run again when it moves.
+Settle the trade, freeze the benchmark, then Phase 1.

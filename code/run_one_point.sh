@@ -108,6 +108,9 @@ declare -A P=(
     [smi_onset_level]=0.003306
     [multiple_of_probabilities_of_employment_if_addicted]=2.43741
     [penalty_child_addicted]=0.24
+    # THE HF/TF DISCRIMINATOR. 1 steers vouchers to the addicted homeless,
+    # which the source names HF; 0 does not, which it names TF. Benchmark 1.
+    [increased_prob_of_voucher_if_homeless_and_addicted]=1
     # THE CONDITIONALITY EXPERIMENT. All five default to the benchmark, where
     # voucher_conditional_on_clean is 0 and the other four are inert, so adding
     # them to this list changes no point that does not name them.
