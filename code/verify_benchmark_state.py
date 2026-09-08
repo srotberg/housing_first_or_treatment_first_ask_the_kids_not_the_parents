@@ -19,7 +19,7 @@ Three checks, in order of what they would catch:
    the supply shifter must put the drug price at one at the benchmark's
    quantity, and the budget constraint must equal the benchmark's net revenue.
 """
-import os, re, sys, glob, hashlib
+import os, re, sys, glob, time, hashlib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "housing_first_or_treatment_first_SR_v1.f90")
@@ -71,6 +71,34 @@ def main():
         print()
     else:
         print("EXISTENCE: all %d present\n" % len(present))
+
+    # THE RECORD AND THE STATE MUST COME FROM ONE RUN.
+    #
+    # This is the check that makes the whole thing exact rather than
+    # approximate. benchmark_of_record.txt names the save log it was derived
+    # from and the newest state file at the time; if a later save run has since
+    # rewritten the state, the record is describing numbers that no longer
+    # match what a counterfactual would import, and no tolerance on the values
+    # can tell the difference.
+    rec = os.path.join(HERE, "benchmark_of_record.txt")
+    if not os.path.exists(rec):
+        print("NO BENCHMARK OF RECORD. Run:")
+        print("   python3 code/benchmark_of_record.py")
+        return 1
+    rtext = open(rec, errors="replace").read()
+    m = re.search(r"^STATE_NEWEST\s+(\S+)\s+(\d+)", rtext, re.M)
+    if m:
+        named, when = m.group(1), int(m.group(2))
+        actual = max((os.path.getmtime(p) for _, p in present), default=0)
+        if actual > when + 2:
+            print("RECORD IS BEHIND THE STATE: the state was rewritten at %s,"
+                  % time.strftime("%H:%M:%S", time.gmtime(actual)))
+            print("   after the record was taken at %s. Re-derive it:"
+                  % time.strftime("%H:%M:%S", time.gmtime(when)))
+            print("   python3 code/benchmark_of_record.py")
+            return 1
+        print("RECORD: matches the state written at %s\n"
+              % time.strftime("%H:%M:%S", time.gmtime(when)))
 
     # FRESHNESS against the benchmark point.
     pts = sorted(glob.glob(os.path.join(HERE, "points", "point_*.txt")),
