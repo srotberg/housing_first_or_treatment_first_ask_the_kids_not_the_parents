@@ -1,3 +1,29 @@
+## 8 September 10:42 UTC -- kappa_find_smi will hit its bound in about ten firings
+
+    kappa_find_smi 45.4 -> 54.4 since the morning table
+    lambda_m       -20.9 -> -20.3 over the same stretch
+
+Six-tenths of a point of gap for nine points of instrument. The bound is 60 and
+at the current step it arrives in roughly ten more firings, at which point the
+instrument stops and lambda_m is simply stuck near -20 per cent.
+
+THAT IS THE MOMENT A DECISION IS NEEDED RATHER THAN MORE ITERATIONS, and it is
+worth naming now so it is not discovered at the bound. The options, none of them
+taken:
+
+  - raise the bound past 60, which only helps if the elasticity recovers, and
+    everything from 40 upward says it does not;
+  - accept lambda_m outside the band and say so in the paper, since the author's
+    rule is ten per cent on everything and this would be the exception;
+  - find a second instrument for the SMI share of the homeless. kappa_uem was
+    conceded to kappa_find_smi in the RULES comment -- "SMI separation conceded;
+    kappa_find_smi carries it" -- so reopening it is a scope change and the
+    author's call.
+
+MEANWHILE aleph and b keep closing together, slowly, exactly as the author said
+they would: aleph -7.8 -> -6.1 and b -16.1 -> -14.3 since the morning table, with
+value_of_life at 169.35. Nothing has been changed.
+
 ## 8 September 07:52 UTC -- THE MORNING TABLE. 16 of 18, on 27 points.
 
 point_96a81daea6, economy e9b4d75808, solved 07:44. Loop and watchdog alive; the
