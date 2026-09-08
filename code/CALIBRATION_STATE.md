@@ -1,3 +1,41 @@
+## 8 September 14:47 UTC -- kappa_find_smi IS SATURATED, and now it is MEASURED
+
+point_0ec6c246f0 -> point_778bb7ae60, kappa_find_smi alone, 60 -> 100. That is
+the Fortran's own handover clamp and a 67 per cent step, which is the size
+ENGINE.md demands before an instrument is called dead.
+
+    kappa_find_smi 60 -> 100    lambda_m 0.20078 -> 0.20392
+    d log lambda_m / d log kappa_find_smi = +0.030
+
+    p_m          -0.000
+    b            +0.001
+    sud_homeless -0.004
+    h_1          +0.009
+    emp_homeless -0.010
+
+AT THAT ELASTICITY THE VALUE NEEDED FOR lambda_m = 0.25 IS ABOUT 81,000. The
+instrument is saturated, not slow.
+
+I had asserted this three times from one per cent steps, which is exactly the
+inference ENGINE.md forbids. The conclusion survives the test it should have had
+first, and that is luck rather than method: the same reasoning about
+utility_cost_of_treatment was WRONG last night, and the difference was a clamp
+nobody had checked. A conclusion that happens to hold is not a conclusion that
+was justified.
+
+THE AUTHOR'S DECISION, given the arm: *"if it does helps, we can pin it and
+accept a larger gap for homeless with smi"*. It does not help, so pin at 60
+rather than 100 -- 100 buys 1.6 per cent of the moment and costs a hundredfold
+job-finding penalty to defend in the paper.
+
+NOT YET DONE. Awaiting the word, since pinning is what the author asked for
+conditionally and the condition came out the other way.
+
+ALSO NEW AND UNRELATED: sud_homeless has drifted OUT to +12.5 per cent, so the
+table is 15 of 18 rather than 17. multiple_find_if_addicted is at 19.17 on a
+slope that is a floor rather than a measurement. b is -12.8 and still moving with
+aleph, which is at -4.3.
+
 ## 8 September 14:35 UTC -- lambda_m: the PARAMETER is assigned, the MOMENT is not
 ## pinned, its INSTRUMENT is. Three different things, one name.
 
