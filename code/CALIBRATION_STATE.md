@@ -1,3 +1,86 @@
+## 8 September 03:35 UTC -- THE tau_u STAIRCASE WAS A CLAMP, AND I CALLED IT WRONG
+
+`utility_cost_of_treatment` was clamped at 10 in the Fortran's own handover
+block, line 37981 as it then was:
+
+    utility_cost_of_treatment=max(min(handover_value,10.d0),0.d0)
+
+three_step's bound was raised 8 -> 20 on the author's instruction to open the
+parameters pinned at their bounds. THIS clamp was not raised with it. So every
+handover above 10 arrived as exactly 10, and the instrument has been dead since
+it crossed that value -- about five hours and forty iterations.
+
+WHAT I SAID INSTEAD, twice to the author and once in a commit message: that the
+response was a discrete policy function between treads, and that walking to the
+bound would find the next one. The evidence I gave for it was real and the
+reading of it was wrong:
+
+    u  9.03  -> 10.185   tau_u 0.3544 -> 0.2886   elasticity -1.71
+    u 10.185 -> 14.744   tau_u 0.2886 -> 0.2969   elasticity +0.045
+
+The break is AT 10, not near it. A clamp and a staircase produce the same
+picture from outside -- a live segment, then a flat one -- and take up genuinely
+IS an integer choice over a discrete state space, so the staircase was
+plausible. That is what made it dangerous. THE CHECK THAT SEPARATES THEM COSTS
+ONE grep AND I DID NOT RUN IT: read the handover clamp before theorising about
+the policy function.
+
+STANDING CHECK, added here because this is the fourth error of the same family
+this week (three were "control for the aggregate before calling a sign wrong"):
+**WHEN AN INSTRUMENT GOES FLAT, CHECK ITS CEILING IN BOTH PLACES BEFORE
+EXPLAINING THE FLATNESS.** three_step's bound and the Fortran's handover clamp
+are two different numbers and either can bind silently. A sweep of all nineteen
+driven instruments against their Fortran clamps found this one and only this
+one; every other instrument has headroom. The sweep is worth re-running whenever
+a bound is changed.
+
+FIXED: both ceilings raised 10 -> 20, the live handover one and the dormant one
+in the internal adjuster at what is now line 40196, so the two cannot disagree
+again. Take up should reach zero well before 20, since the lowest value of a
+whole period of life in this economy is about 5.4 utils and this is subtracted
+from one period's flow utility. tau_u is therefore very probably REACHABLE and
+was never tested.
+
+## 8 September 03:35 UTC -- the at-birth channel is built, and held at zero
+
+On the author's instruction, "go ahead with the at-birth channel".
+
+`child_sud_at_birth` is the probability that the child of a parent who carried
+the disorder arrives carrying it. Four edits, and the middle two are one change:
+
+1. `newborn_state_draw` widened from `threshold_addiction_index` (6) to
+   `unemployment_grid_size` (12). idx_of(e,m,d)=6d+3m+e, so the disordered
+   states are 7 to 12 and at the old width idx_of(1,0,1)=7 was one past the end.
+   Both build configurations were re-run, bounds-checked and fpe-trapped.
+2. PLACEMENT: newborns are split across the four (SMI, disorder) cells as the
+   product of the two marginals, and the placement loop was widened from the
+   clean block to the whole grid or the mass would have been computed and
+   silently dropped.
+3. THE MOMENT: delta_d's numerator becomes p + (1-p)*csud_n_1. This was
+   necessary AS WELL AS the placement, because the moment is CONSTRUCTED from
+   the newborn productivity distribution and percent_addicted_by_employment
+   rather than read off the newborns' actual states -- putting mass into the
+   disordered cells changes the economy but would not have moved the number.
+4. Handover case, clamped to [0,1].
+
+HELD AT ZERO in three_step's FIXED. The model is byte-identical in behaviour at
+p=0 except for the clamp fix. It is off tonight because turning it on moves SUD
+prevalence and therefore b, sud_homeless and tau_u itself, and running it beside
+the clamp fix would confound the one tau_u measurement that is now finally
+possible. ONE NUMBER TURNS IT ON and the author has been told so.
+
+THE ARITHMETIC FOR WHEN IT DOES. delta_d = (p + (1-p)n)/d with n the child of a
+disordered parent's rate and d the child of a clean parent's, currently
+n = 1.063d. Setting delta_d = 2 needs p = 0.937d/(1-1.063d), so p is close to
+the population disorder rate itself -- a few per cent, not a large number.
+
+THE ECONOMY HASH MOVED, 02da791f0c -> 08b1ab4c8d, and the archive does not carry
+forward: EQUIVALENT_MODELS is NOT appropriate here because the clamp fix
+genuinely changes every point whose handover asked for more than 10, which is
+the last forty. three_step returns 2 with no line when nothing carries the
+configuration, which is what killed the loop on 7 September, so the new economy
+was SEEDED by hand before the loop was restarted.
+
 ## 8 September -- the author asks about intergenerational productivity, and it is already in
 
 Asked whether to add transmission of productivity so a child of a SUD parent is

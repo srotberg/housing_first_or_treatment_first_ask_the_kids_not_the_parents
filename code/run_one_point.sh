@@ -108,6 +108,12 @@ declare -A P=(
     [smi_onset_level]=0.003306
     [multiple_of_probabilities_of_employment_if_addicted]=2.43741
     [penalty_child_addicted]=0.24
+    # THE DIRECT PARENT-TO-CHILD CHANNEL. The probability that the child of a
+    # parent carrying the disorder is born carrying it. Zero restores the model
+    # exactly as it was before 8 September; everything else about the child runs
+    # through the earnings penalty above and rho_intergenerational, which
+    # together reach delta_d of only 1.063 against an observed 2.0.
+    [child_sud_at_birth]=0
     [penalty_child_homeless]=0.31
     [probability_becoming_unemployed]=0.0294178
     [probability_of_voucher_benchmark_used]=0.0121367
