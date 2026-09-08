@@ -1,3 +1,34 @@
+## 8 September 05:22 UTC -- lambda_m's extrapolation FAILED, and b is still going
+
+TWO REPORTS OF MINE HAVE NOT SURVIVED THE NIGHT AND BOTH ARE CORRECTED HERE.
+
+**lambda_m: reaching kappa_find_smi = 40 did not deliver.** I projected 40 from
+an elasticity of about +0.6 measured over 16.5-24.2, and flagged it as an
+extrapolation rather than a prediction. The instrument is now at 39.87 and
+lambda_m reads -21.9 per cent, against -22.6 at 36.44. That is an elasticity
+near +0.10 over the stretch -- a sixth of the measured one. The instrument is
+losing traction as it climbs, so 40 was not the answer and 50 probably is not
+either. The bound is 60 and the honest position is that lambda_m is not
+reachable through this instrument at any value the bound allows, but that is a
+diagonal read over few points and wants a controlled arm before it is asserted.
+
+**b is not recovering.** Across five firings: -14.8, -15.5, -15.8, -16.5, -18.2
+per cent, monotone. Over the same stretch value_of_life climbed 154.15 -> 160.43,
+up 4.1 per cent, and aleph did not move -- 78.23 -> 72.59, away from its target
+throughout. The author's expectation was that b settles once aleph does; aleph
+is not settling, and the instrument chasing it is the one the record already
+blames for taking b from +4.7 to -66.5 last time.
+
+NOTHING WAS CHANGED. The freeze on value_of_life is the author's call and was
+put to them at 05:05. On current evidence neither out-of-band row will be inside
+ten per cent by the 07:50 report, and b will be further out than it is now. That
+is the projection to check the morning table against.
+
+CONTAINER RESTARTS ARE NOW THE BINDING CONSTRAINT ON THROUGHPUT. Five since
+04:41, roughly one every eight or nine minutes, each killing the in-flight solve.
+ensure_loop.sh has revived the run every time from step 0 of the engine firing,
+which is the only reason there is a run at all.
+
 ## 8 September 05:05 UTC -- value_of_life is climbing to chase an aleph that is
 ## moving away from it. PUT TO THE AUTHOR, NOT ACTED ON.
 
