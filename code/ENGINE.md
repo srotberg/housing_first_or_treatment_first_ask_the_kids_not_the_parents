@@ -1,5 +1,45 @@
 # The calibration engine
 
+> ## PHASE 2. THE CALIBRATION IS STOPPED. READ THIS BEFORE THE FIRING SEQUENCE.
+>
+> The author, 8 September: *"and i think you can stop the calibration and test
+> how the model performs on simualtions. i want to see if TF with rationed
+> vouchers is bettter than HF and then look at universal HF vs universal TF"*,
+> and then *"I think the model now looks like it is in good shape!"*
+>
+> **A firing must NOT start a calibration loop.** Do not run `ensure_loop.sh`,
+> `loop_watch.sh`, `three_loop.sh`, `next_batch.py` or `supervise_calibration.py`.
+> Step 0 of the firing sequence below -- restart the loop if it is absent -- is
+> SUSPENDED, and a loop found running should be stopped, not kept alive: it
+> competes for the same four cores as an experiment solve and the standing rule
+> against running a search beside a measurement applies unchanged.
+>
+> **What a firing does now**, in order:
+>
+> 1. The stale-checkout guard, exactly as below. Re-point only when `behind > 0`.
+> 2. If a solve is running (`ps -eo args | grep "[h]ftf"`), report its age in one
+>    line and STOP. Never edit `code/` while it runs. Do not start a second one:
+>    the solver takes every core, so two runs in one checkout are slower than
+>    two runs one after the other.
+> 3. If nothing is running, advance `code/EXPERIMENT_PLAN.md` by ONE step and
+>    report the one line. The plan is the live state for this phase, the way
+>    `CALIBRATION_STATE.md` was for phase 1.
+>
+> **The scoring rules below do not apply to an experiment.** A counterfactual has
+> no target, so it has no gap; `next_batch.py`'s minimax is about the benchmark
+> and the benchmark alone. Report a counterfactual as levels and differences from
+> the benchmark, never as a gap.
+>
+> **THE MODEL IS NO LONGER FROZEN, but it is the author's to change.** The
+> section "THE MODEL IS FROZEN" below was a phase 1 rule. Three edits were made on
+> 8 September on the author's explicit instruction -- the two government costs of
+> homelessness and disorder to zero, `clear_drug_market` called in the
+> counterfactual, `distance_drug_market` in its convergence test. Each reset the
+> point archive, which is the expected cost and is why they were made once
+> calibration had stopped. **A model edit still requires the author to have asked
+> for it in their own words**, and the words go in the commit.
+
+
 **This file is the engine's instructions. The trigger prompts are stubs that
 point here.** They used to carry the whole thing, in three copies, and that cost
 real mistakes: on 1 September both prompts asserted a concession the author had

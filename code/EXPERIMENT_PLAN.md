@@ -1,5 +1,77 @@
 # The plan after convergence
 
+## THE LIVE STATE, 8 September 18:15. Read this first; the sections below are the design.
+
+The four Phase 1 runs of 17:52 COMPLETED and are SUPERSEDED. They were solved
+through `calibrating_model()` with the policy switches flipped, which is not a
+counterfactual: the voucher eligibility threshold re-equilibrated instead of
+being held at the benchmark's median, no tax cleared the government budget, and
+`p_v` never moved. Their points are `point_914c6dd5eb` (TF rationed),
+`point_bbc416b4fa` (universal HF), `point_2208a6b871` (universal TF). Keep them
+as a first pass; do not put them in the paper.
+
+Three model edits then landed on the author's instruction (commit 7e13fa42):
+the two government costs of homelessness and disorder to zero,
+`clear_drug_market` called in the counterfactual's loop, and
+`distance_drug_market` added to its convergence test. Those reset the archive.
+
+### The queue, in order. One step per firing.
+
+1. **RUNNING.** The benchmark re-solve at the frozen vector on the new economy,
+   `code/bench_rerun_nocosts.log`, launched 18:05. Its purpose is a CHECK, not a
+   new calibration: with the costs zeroed nothing feeds back off
+   `net_govt_revenues` while a fixed vector is measured, so **every calibration
+   moment should be unchanged** against the superseded `point_6876263050` in
+   `points_superseded/`. If any moved, that claim was wrong and the reason has
+   to be found before anything else proceeds.
+
+2. **The benchmark SAVE run.** A point run stops at line ~41704 inside
+   `if (sweep_addiction_scalar==1)`, immediately after the moments, so it never
+   reaches `save_vars_and_functions(1)` and writes no `*baseline_benchmark.dat`.
+   Without those the counterfactual has no `median_income` to freeze the voucher
+   threshold at, no `govt_revenues_to_use_in_tests` to use as its budget
+   constraint, and no `average_labor_income_by_employment` to refill the zeroed
+   profile the `STOP` at 29464 guards. Build a variant with
+   `sweep_addiction_scalar=0` and `diagnostic_simulation=1` -- their max is
+   `re_do_simulation_with_fixed_parameters`, so the vector is still measured
+   rather than calibrated -- and note that `addiction_scalar_1` must then come
+   through `PARAM_HANDOVER` (case at 37620) because the sweep grid is what
+   normally carries it.
+
+3. **The counterfactual binary**, `is_counterfactual=1`. It cannot be a handover
+   parameter: seven other `parameter` declarations are initialised from it
+   (1650, 1797, 2114, 2116, 2245, 2953, 4365, 4376), so it is a build-time
+   substitution into a generated copy of the source. Keep the master byte
+   identical so the point archive stays valid. Both binaries run in ONE
+   directory, because the counterfactual reads the benchmark's `.dat` files.
+
+4. **Re-run the four experiments** through `long_run_counter_factual()`.
+
+5. **The v=0 TF condition.** The author, 8 September: *"As for the TV
+   experiment, I want it to be conditional on v=0. So any use is forbidden if you
+   want a voucher"* and then *"and yes, TF is v=0 and no SUD"* -- BOTH, so a
+   disordered household abstaining without treatment does not pass.
+   `compute_voucher_index_1` (~25882) currently keys category 3 on the disorder
+   state alone. `v` is a choice, not a state, and is in scope at only three of
+   the six call sites (17458, 20065, 22063, 24609, 26358, 27670).
+
+6. **The validation table** re-run against a current-economy point, so the
+   "34 or less" age bands and the all-household wealth and income shares appear.
+
+### What does NOT need doing, checked rather than assumed
+
+`upload_vars` (33404, 33434-33437) refreshes every `*_calibrated` aggregate from
+the benchmark's files at run time, and in `long_run_counter_factual` it is called
+at 42053, BEFORE the `GKKOC` guard at 42096. So the stale numbers in the
+declarations look dangerous and are not used, once step 2 exists.
+
+`set_files_names` (8879 onward) already names the experiments -- `counter_VTE_TF`,
+`counter_VTE_HF`, `counter_TF` -- keyed on exactly the two switches
+`run_experiments.sh` sets. It does NOT distinguish `voucher_conditional_on_clean`,
+so a TF run with testing and one without would write to the same files. That
+needs a name before both are run.
+
+
 The author's, given at 02:13 UTC on 8 September, in their own words:
 
 > once the program converges, i think we should do the experiments to see how the
