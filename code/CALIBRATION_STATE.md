@@ -1,3 +1,42 @@
+## 00:27 UTC 8 September -- SETTLED: SEVEN NODES, h_1 AT 1.3 PER CENT. The nine/ten question is CLOSED.
+
+The author: *"Ok, if 7 nodes can get 1.3% homelessness, I prefer thay"*, after
+*"If we can get h1 to 1.3% it is fine by me"*.
+
+THE CONFIGURATION IS ALREADY THIS. employment_grid_size=7, economy 02da791f0c,
+fraction_homeless_data=0.013 in the Fortran and 'h_1': 0.013 in three_step's
+override. Nothing was changed to honour the decision; it names what is running.
+
+DO NOT REOPEN NINE OR TEN NODES. The author raised it at 00:08 -- *"Maybe we
+should have 9 or 10"* -- while reasoning from a reading that was WRONG: the
+seven-node seed had shown involuntary homelessness at 0.01562 against the
+0.01325 eight nodes held, and that was a seed artefact, corrected at 00:16 when
+fourteen adapted points put it at 0.01289 and still falling. With seven beating
+eight, the monotone-in-node-count argument that motivated nine or ten does not
+hold, and the author has now chosen seven. Each grid change costs the whole
+archive, both standing builds and a reseed. It is not to be proposed again
+without them.
+
+WHERE IT STANDS AT THE DECISION:
+
+    h_1           0.01520   +16.9 per cent against 0.013
+    involuntary   0.01242    -4.5 per cent  -- ALREADY IN BAND
+    emp_homeless  0.50356    +9.5 per cent  -- fixed itself at seven nodes
+                                               from -12.5 at eight, instrument
+                                               still pinned at zero
+    projected h_1 once h_2 releases the rung: 0.01355, +4.2 per cent
+
+WHAT WOULD FALSIFY THIS OVERNIGHT, and the morning report should check it
+first: the +4.2 projection rests on SIX settled points and an involuntary
+elasticity to the rung of +3.174. If that elasticity is a transient of the grid
+change rather than a property of seven nodes, h_1 stalls above the band and the
+decision needs revisiting. The 23:52 headline was wrong for exactly this class
+of reason.
+
+ALSO WATCH: emp_homeless is inside the band but drifting UP steadily, +1.3 at
+00:04 to +9.5 now. It may cross out the far side. It is untargeted, so nothing
+will catch it.
+
 ## 00:20 UTC 8 September -- CAN SEVEN NODES HIT h_1? Close, about +13 per cent, against +32 at eight. And the reason is a 3.4x stronger rung.
 
 The author: *"So you think 7 nodes can match the homelessness rate?"*
