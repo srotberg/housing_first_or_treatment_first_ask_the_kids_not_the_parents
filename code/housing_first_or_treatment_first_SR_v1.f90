@@ -1937,7 +1937,19 @@
         ! required only when a NAME is ADDED to that tuple, which is a new hash
         ! rule and invalidates every cached mapping. Changing a registered value
         ! is fully inert. Getting this wrong took the loop down at 22:35.
-        real(8), parameter :: fraction_homeless_data=0.013
+        ! BACK TO 1.2 PER CENT, 8 September 01:56, on the author's instruction:
+        ! *"you can reset the target for h1 to 1.2%"*. It went 0.005 -> 0.01 ->
+        ! 0.012 -> 0.013 -> 0.012 across the night.
+        !
+        ! WHY IT COMES BACK. 1.3 was set at 00:22 because the projection put h_1
+        ! at 0.01355 once h_2 released the rung, which was +12.9 per cent against
+        ! 0.012 and outside the band. Seven nodes then did far better than that
+        ! projection: h_1 fell through the band and OUT the low side, reading
+        ! -10.5 per cent against 0.013 by 01:53. Against 0.012 the same model
+        ! value is about -3, comfortably inside. So the target returns to the
+        ! figure the data actually supports rather than the one chosen to be
+        ! reachable, which is the right direction for that decision to move.
+        real(8), parameter :: fraction_homeless_data=0.012
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe
