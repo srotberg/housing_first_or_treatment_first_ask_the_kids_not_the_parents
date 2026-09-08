@@ -1,3 +1,30 @@
+## 8 September 05:32 UTC -- aleph turned, and b turned with it. The author was right.
+
+    aleph   72.586 -> 73.305   (-9.3 -> -8.4 per cent)
+    b       0.07280 -> 0.07391 (-18.2 -> -17.0 per cent)
+
+FIRST MOVEMENT OF ALEPH TOWARD ITS TARGET ALL NIGHT, and b reversed in the same
+iteration. That is exactly what the author said would happen: *"b is also
+affected by aleph... So if aleph is not fully settled obviously b will continue
+to move. I think it's ok. Just let it move on its own"*.
+
+MY 05:22 ENTRY SAID b WAS NOT RECOVERING and called the decline monotone over
+five firings. It was, up to that point, and it is not any more. The entry also
+said aleph *"did not move -- 78.23 -> 72.59, away from its target throughout"*,
+and one firing later it moved 0.9 points toward it. Both statements were
+accurate when written and neither is a safe basis for the morning report, which
+is the general hazard of reporting a trend off five points at a ten-minute
+cadence.
+
+IT IS ONE ITERATION AND NOT A TREND. value_of_life is still climbing, 160.75,
+and aleph is still 8.4 per cent out, so the concern recorded at 05:05 stands and
+the freeze is still the author's to decide. But the direction of the evidence has
+changed and the 05:22 projection -- that neither out-of-band row lands and b ends
+further out -- should be checked rather than assumed.
+
+lambda_m is the one that has not turned: kappa_find_smi 40.27, lambda_m -21.7 per
+cent, still moving at about a sixth of the elasticity it had below 25.
+
 ## 8 September 05:22 UTC -- lambda_m's extrapolation FAILED, and b is still going
 
 TWO REPORTS OF MINE HAVE NOT SURVIVED THE NIGHT AND BOTH ARE CORRECTED HERE.
