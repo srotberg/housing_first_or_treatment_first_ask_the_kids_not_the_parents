@@ -1,3 +1,44 @@
+## 8 September 16:55 UTC -- the author settles TF: conditional on v=0. SCOPED, NOT BUILT.
+
+The author: *"As for the TF experiment, I want it to be conditional on v=0. So
+any use is forbidden if you want a voucher"*. That resolves the ambiguity flagged
+in run_experiments.sh -- TF is the TESTING condition, and the condition is on USE
+rather than on diagnosis.
+
+WHAT IS IMPLEMENTED TODAY, read at compute_voucher_index_1, line 25882:
+category 3 -- the branch that loses the voucher -- is entered when
+`unemployment_index > threshold_addiction_index` AND `meets_condition_1 == 0`,
+where meets_condition_1 is treatment. So the rule is "you fail if you carry the
+disorder and are not in treatment". Treatment passes because in treatment v=0 by
+construction, which the comment there already argues for.
+
+CONDITIONING ON v=0 MOVES IT IN TWO DIRECTIONS, and only the first is obviously
+intended:
+
+  1. EXPERIMENTERS START FAILING. A household with no disorder that uses
+     currently passes and keeps the voucher. Under v=0 it loses it. This is the
+     point of "any use is forbidden".
+  2. DISORDERED NON-USERS START PASSING. A household carrying the disorder that
+     chooses v=0 without entering treatment currently fails; under a literal v=0
+     rule it passes. That may be intended -- the rule is about use, not diagnosis
+     -- or it may be a loophole the author would rather close by requiring
+     treatment OR v=0.
+
+PUT TO THE AUTHOR AND AWAITING THEIR ANSWER ON (2).
+
+THE COST, so it is not discovered halfway. v is a CHOICE, not a state.
+compute_voucher_index_1 takes only is_homeless_1 and reads the disorder state, so
+the voucher transition would move from being indexed by state to being indexed by
+the household's own current decision. Six call sites -- 17458, 20065, 22063,
+24609, 26358, 27670 -- and the drug quantity is in scope at only three; the rest
+need it threaded through. It also means the household internalises "if I use I
+lose the voucher", which IS the deterrent the policy is meant to have, but it
+changes the household's problem rather than a parameter of it.
+
+NOT BUILT. The model is frozen and this is structural; the author asked for it,
+which thaws it, but (2) changes what gets built and is cheaper to answer than to
+undo.
+
 ## 8 September 16:07 UTC -- the experiment machinery is finished and tested
 
 On the author's instruction, "Please finish the code and get it all set up and
