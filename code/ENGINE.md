@@ -444,6 +444,29 @@ The freeze is back on the moment the change lands.
 Comments are safe: `model_hash.py` strips them, so documenting the code no longer
 resets the archive. That was one of the twelve.
 
+## THE CONTAINER CAN RESTART, AND IT TAKES THE WHOLE RUN WITH IT
+
+**Step 0 of every firing is `bash code/ensure_loop.sh`.** It is idempotent and
+prints one line either way.
+
+On 8 September at 04:41 the container restarted -- uptime read 147 seconds at
+04:44 -- and killed loop_watch, three_loop and the in-flight solve. NOTHING WAS
+LOGGED. That is the tell: every way the loop exits on its own writes a line,
+either "three_step returned N with no line; stopping" or its own footer, so an
+iteration header with nothing after it means the process was taken, not that it
+stopped.
+
+It was misread once as the harness reaping the process group, because the loop
+had been started with plain nohup from inside a tool call. setsid is worth doing
+anyway and ensure_loop.sh does it, but it is not the fix and would not have
+helped here: a container restart kills a detached process just as dead.
+
+loop_watch.sh restarts three_loop, and nothing restarts loop_watch. The
+ten-minute engine firings are the only thing that survives a restart, so they
+are the outer watchdog. Without step 0 the run dies silently and the next report
+is built on an archive that stopped growing hours earlier -- which is worse than
+no report, because the table still looks like a table.
+
 ## Rules that do not move
 
 - Every point runs through `code/run_one_point.sh`, cold, with the HANDOVER
