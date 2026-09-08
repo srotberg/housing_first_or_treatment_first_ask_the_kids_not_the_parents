@@ -189,14 +189,28 @@
         real(8) :: increased_prob_of_voucher_if_homeless_1=increased_prob_of_voucher_if_homeless    
         integer, parameter :: double_voucher_program=0
         real(8), parameter :: cost_of_addict_scaling=1    
-        integer, parameter :: voucher_conditional_on_clean_just_addicts=0
+        ! SETTABLE FROM A VECTOR, 8 September, on the author's instruction to get
+        ! the experiments ready. It was an integer PARAMETER, so each conditional
+        ! variant needed its own build and its own model hash. It is used only in
+        ! runtime comparisons -- 13380 and 13389 -- and in no parameter expression
+        ! or array bound, which is what makes the conversion safe.
+        integer :: voucher_conditional_on_clean_just_addicts=0
         integer, parameter :: clear_only_vouchers_govt_budget=0
                 
         integer :: tax_system_type=1
         integer, parameter :: perceived_probability_lower=0
         real(8), parameter :: difference_in_perceived_of_becoming_addicted_if_experiment=&
             (1-perceived_probability_lower)*1+perceived_probability_lower*0.5
-        integer, parameter :: voucher_conditional_on_clean=0
+        ! SETTABLE FROM A VECTOR, for the same reason and with the same check:
+        ! every use is a runtime comparison or a multiply -- 13378, 13391, 15508,
+        ! 29952, 41865 -- and none is a parameter expression or an array bound.
+        !
+        ! DEFAULT STAYS 0, so the benchmark is untouched and Phase 1's variants
+        ! become vector changes rather than builds. That matters beyond
+        ! convenience: a variant run through run_one_point.sh carries the same
+        ! HANDOVER assertion and the same md5 tag as every other point, instead of
+        ! being a separate binary whose provenance lives in somebody's memory.
+        integer :: voucher_conditional_on_clean=0
 
         ! ---- CONDITIONALITY IS NOT PERFECTLY ENFORCED -------------------------
         ! Equation (32) of the note. Under Treatment First a household that meets
@@ -37928,6 +37942,44 @@
                 case ("value_of_life")
                     write(*,*) "HANDOVER value_of_life:", value_of_life, "->", handover_value
                     value_of_life=max(min(handover_value,10.d0**(4)),10.d0**(-2))
+
+                ! THE CONDITIONALITY EXPERIMENT'S FIVE HANDLES, added 8 September so
+                ! Phase 1 runs as vectors rather than as five separate binaries.
+                ! All five are inert while voucher_conditional_on_clean is 0,
+                ! which is the benchmark, so adding them changes no number.
+                case ("voucher_conditional_on_clean")
+                    write(*,*) "HANDOVER voucher_conditional_on_clean:",&
+                        voucher_conditional_on_clean, "->", handover_value
+                    voucher_conditional_on_clean=&
+                        max(min(nint(handover_value),1),0)
+
+                case ("voucher_conditional_on_clean_just_addicts")
+                    write(*,*) "HANDOVER voucher_conditional_on_clean_just_addicts:",&
+                        voucher_conditional_on_clean_just_addicts, "->", handover_value
+                    voucher_conditional_on_clean_just_addicts=&
+                        max(min(nint(handover_value),1),0)
+
+                ! A PROBABILITY, so the clamp is [0,1] and not a bound picked for
+                ! this parameter. 1 means the test never misses, 0 that it never
+                ! detects, and both are admissible ends of the experiment.
+                case ("probability_of_detection")
+                    write(*,*) "HANDOVER probability_of_detection:",&
+                        probability_of_detection, "->", handover_value
+                    probability_of_detection=max(min(handover_value,1.d0),0.d0)
+
+                case ("probability_of_false_positive")
+                    write(*,*) "HANDOVER probability_of_false_positive:",&
+                        probability_of_false_positive, "->", handover_value
+                    probability_of_false_positive=max(min(handover_value,1.d0),0.d0)
+
+                ! CLAMPED BELOW AT ZERO ONLY. The author asked for the cost of
+                ! testing all eligibles, and the Arkansas figure the default comes
+                ! from is one point in a wide range, so an upper bound here would
+                ! be a guess constraining the very thing the experiment varies.
+                case ("cost_per_drug_test")
+                    write(*,*) "HANDOVER cost_per_drug_test:",&
+                        cost_per_drug_test, "->", handover_value
+                    cost_per_drug_test=max(handover_value,0.d0)
 
                 case ("penalty_child_addicted")
                     write(*,*) "HANDOVER penalty_child_addicted:",&

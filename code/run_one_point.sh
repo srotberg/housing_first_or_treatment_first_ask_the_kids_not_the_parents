@@ -108,6 +108,19 @@ declare -A P=(
     [smi_onset_level]=0.003306
     [multiple_of_probabilities_of_employment_if_addicted]=2.43741
     [penalty_child_addicted]=0.24
+    # THE CONDITIONALITY EXPERIMENT. All five default to the benchmark, where
+    # voucher_conditional_on_clean is 0 and the other four are inert, so adding
+    # them to this list changes no point that does not name them.
+    #
+    # probability_of_detection and probability_of_false_positive are the test's
+    # two error rates; cost_per_drug_test already reaches the government budget
+    # through govt_spending_on_drug_tests, gated on the same switch, so the
+    # testing cost needs no separate accounting.
+    [voucher_conditional_on_clean]=0
+    [voucher_conditional_on_clean_just_addicts]=0
+    [probability_of_detection]=0.9
+    [probability_of_false_positive]=0.05
+    [cost_per_drug_test]=0.00031
     [penalty_child_homeless]=0.31
     [probability_becoming_unemployed]=0.0294178
     [probability_of_voucher_benchmark_used]=0.0121367
