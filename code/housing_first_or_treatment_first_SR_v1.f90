@@ -4677,8 +4677,25 @@
         ! wrote that the fiscal cost of homelessness "appears high (see R3)", and
         ! 0.4286 is itself a raised value from 0.252. That is a live comment to
         ! answer in the revision, not a reason to drop the term.
-        real(8), parameter :: homeless_cost_govt_as_perc_of_avg_inc=0.4286
-        real(8), parameter :: addict_cost_govt_as_perc_of_avg_inc=cost_of_addict_scaling*0.212  ! 38393
+        ! BOTH ZERO ON THE AUTHOR'S INSTRUCTION, 8 September: "i want you to set
+        ! the homlessness and addiction cost to the govt to be 0 in the benchmark
+        ! and all counter factualus".
+        !
+        ! The values they replace are 0.4286 and cost_of_addict_scaling*0.212,
+        ! each a share of average labour income charged per head per period --
+        ! the homeless at 14685, anyone above threshold_addiction_index at 14991
+        ! -- and both subtracted from govt_revenues_to_use_in_tests at 15614.
+        !
+        ! WHAT ZEROING THEM DOES, AND WHERE. In the BENCHMARK nothing feeds back
+        ! off net_govt_revenues while a fixed vector is being measured, so the
+        ! allocations and every calibration moment are unchanged and only the
+        ! reported revenue moves. In a COUNTERFACTUAL it binds: the budget the
+        ! counterfactual must hit is the benchmark's revenue with no offsetting
+        ! saving from lower homelessness or lower disorder, so a policy earns no
+        ! fiscal credit for reducing either and has to pay for itself out of the
+        ! labour income tax. That is the conservative direction.
+        real(8), parameter :: homeless_cost_govt_as_perc_of_avg_inc=0
+        real(8), parameter :: addict_cost_govt_as_perc_of_avg_inc=cost_of_addict_scaling*0  ! 38393
         real(8), parameter :: threshold_for_food_stamps_as_perc_of_average_net_wealth=100000 !0.015
         real(8), parameter :: fraction_of_income_spent_on_food=0.4
                                                                                               
@@ -42330,9 +42347,15 @@
         write(*,*) "size_of_penalty=", size_of_penalty
         write(*,*) "drug_threshold_calibrated=", drug_threshold_calibrated
                                       
+        ! distance_drug_market IS IN THIS LIST AND WAS NOT. The benchmark's loop
+        ! at 38728 has always required it; this one tested the rental market, the
+        ! housing market, the budget and inheritance only, so even once
+        ! clear_drug_market is called the loop could exit with p_v still moving.
+        ! A price that is updated but not converged on is not a cleared market.
         do while ((distance_rental_market(transition_length)>stopping_rule_rental_market) .OR. &
             (distance_housing_market(transition_length)>stopping_rule_housing_market) .OR. &
             (distance_govt_budget>stopping_rule_govt_budget) .OR. &
+            (distance_drug_market>stopping_rule_drug_market) .OR. &
             (distance_inheritance_amount>stopping_rule_inheritance_amount) .OR. &
             (loop_count<aftr_how_mny_lps_start_update))
                                 
@@ -42384,6 +42407,23 @@
             call calculate_welfare_by_characteristics(transition_length)
             call calculate_homeownership_by_characteristics(transition_length)
             call calculate_aggregate_consumption(transition_length)
+
+            ! THE DRUG MARKET, WHICH THE COUNTERFACTUAL WAS NOT CLEARING AT ALL.
+            !
+            ! clear_drug_market has had an is_counterfactual branch since it was
+            ! written -- read the benchmark's supply shifter, hold it fixed, and
+            ! move p_v by a secant until nu_1 V^(nu_2-1) equals the price
+            ! households faced -- and that branch had NO CALLER. The only call in
+            ! the file was at 41409, inside calibrating_model. So a counterfactual
+            ! ran with p_v pinned at the benchmark's normalised 1 whatever
+            ! quantity it produced, and distance_drug_market stayed at its
+            ! declared zero, which is indistinguishable in the log from a market
+            ! that cleared. The supply curve was in the model and did nothing.
+            !
+            ! It goes here because stationary_equilibrium_statistics at 42381 is
+            ! what fills model_drugs_consumed_by_users, so V is the quantity this
+            ! loop's distribution actually bought.
+            call clear_drug_market(transition_length)
             
             if ((include_bequests_in_govt_constraint==0) .AND. &
                 (partial_equilibrium==0) .AND. (adjust_inheritance==1) .AND. &

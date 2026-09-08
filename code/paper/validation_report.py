@@ -17,33 +17,72 @@ import re
 import sys
 
 # The order the note's table lists them in, so the two can be read side by side.
+# The order the note's table lists them in, so the two can be read side by side.
+#
+# TRIMMED 8 September on the author's instruction. What went, and why it is a
+# DROP rather than a deletion: every one of these is still printed by the model
+# and still lands in the point file, so nothing is lost and any of them can come
+# back by adding a line here.
+#
+#   housing over income, renters      asked to be removed
+#   voucher holders, wages main       asked to be removed
+#   participation, with a SUD         "just average income of users and those
+#   participation, without a SUD       with SUD" -- the two income rows stay
+#   SMI alongside SUD at admission    asked to be removed
+#   working, homeless in treatment    asked to be removed
+#   SUD share of the homeless         asked to be removed
+#   homelessness rate, band           "just keep shares"
+#   homelessness profile, band        "just keep shares"
+#
+# The two earnings shares move INTO the income block rather than standing in a
+# section of their own, on the author's instruction, because they are the same
+# kind of object as the bottom shares: a slice of a distribution.
 ORDER = [
-    "homelessness rate, band",
-    "homelessness profile, band",
     "share of the homeless, band",
     "earnings share, bottom tenth",
     "earnings share, top tenth",
+    "income share bottom",
     "net worth share, bottom half",
     "wealth share bottom",
-    "income share bottom",
     "renters above 30 pct of income",
     "renters above 50 pct of income",
     "tenant contribution rate",
-    "voucher holders, wages main",
-    "income with a SUD",
     "income of drug users",
-    "participation, with a SUD",
-    "participation, without a SUD",
+    "income with a SUD",
     "homeless at treatment admission",
-    "SMI alongside SUD at admission",
-    "working, homeless in treatment",
-    "SUD share of the homeless",
     "drug deaths, share of deaths",
+    "mean age of drug users",
+    "users aged",
     "price elasticity, participation",
     "price elasticity, intensive",
     "delta_h child homelessness ratio",
     "delta_d child SUD ratio",
 ]
+
+# Printed by the model and deliberately not shown. Kept by name so the drop is
+# auditable and reversible rather than silent.
+DROPPED = [
+    "housing over income, renters",
+    "voucher holders, wages main",
+    "participation, with a SUD",
+    "participation, without a SUD",
+    "SMI alongside SUD at admission",
+    "working, homeless in treatment",
+    "SUD share of the homeless",
+    "over half of income, all renters",
+    "homelessness rate",
+    "homelessness profile",
+]
+
+# y_u IS A MOMENT LINE, NOT AN UNTARGETED ONE, which is why "income of drug
+# users" was silently absent from this table until 8 September. It is a
+# calibration target, so it prints as "MOMENT y_u ... target=" rather than
+# "UNTARGETED ... observed=", and a reader asking for the average income of a
+# user would have found no row at all rather than a wrong one.
+MOMENT_ROWS = {"y_u": "income of drug users"}
+MOMENT = re.compile(
+    r"MOMENT\s+(?P<key>\S+)\s+.*?model=\s*(?P<model>[-\d.E+]+)\s+target=\s*(?P<obs>[-\d.E+]+)"
+)
 
 ROW = re.compile(
     r"UNTARGETED\s+(?P<name>.*?)\s+model=\s*(?P<model>[-\d.E+]+)\s+observed=\s*(?P<obs>[-\d.E+]+)"
@@ -69,6 +108,11 @@ def rows_of(path):
             found.append((m.group("name").strip(),
                           float(m.group("model")), float(m.group("obs"))))
             continue
+        m = MOMENT.search(line)
+        if m and m.group("key") in MOMENT_ROWS:
+            found.append((MOMENT_ROWS[m.group("key")],
+                          float(m.group("model")), float(m.group("obs"))))
+            continue
         m = SKIP.search(line)
         if m:
             notes.append(line.strip())
@@ -90,6 +134,12 @@ def main():
         sys.exit("no UNTARGETED rows in %s; was it measured before the "
                  "validation column existed?" % path)
 
+    # Drop what the author asked not to see. Filtered HERE rather than never
+    # printed by the model, so the point file stays complete and a row comes
+    # back by editing one list.
+    hidden = [n for n, _, _ in found if any(n.startswith(d) for d in DROPPED)]
+    found = [r for r in found if not any(r[0].startswith(d) for d in DROPPED)]
+
     width = max(len(n) for n, _, _ in found)
     print("validation moments at %s" % path)
     print()
@@ -107,6 +157,11 @@ def main():
         print("%-*s %12.5f %12.5f %8s" % (
             width, name, model, obs,
             "--" if g is None else "%+.1f%%" % g))
+
+    if hidden:
+        print()
+        print("  not shown, still measured and still in the point file: %s"
+              % ", ".join(sorted(set(hidden))))
 
     if notes:
         print()
