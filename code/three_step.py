@@ -697,7 +697,39 @@ RULES = {
     # rule that shrinks with the gap rather than by a number I have not measured.
     # It is eight times the 0.034 per cent the fallback was taking, which needed
     # 140 iterations for a gap the cap closes in single figures.
-    'multiple_find_if_addicted':                 ('sud_homeless',  +5.00, 1.0, 100.0, 0.25, 0.20),
+    # -0.244, MEASURED, AND THE SIGN IS THE OPPOSITE OF WHAT THIS RULE HELD.
+    # point_9a8e271cc3 -> point_a74155c282 differ in this coordinate alone,
+    # 19.0241 -> 23.7801, a 25 per cent step:
+    #
+    #     d log sud_homeless / d log multiple_find_if_addicted = -0.244
+    #     d log b            / d log multiple_find_if_addicted = -0.598
+    #     d log lambda_d     / d log multiple_find_if_addicted = -0.618
+    #
+    # THE LOOP WAS DIVERGING ON THIS MOMENT AND THE COMMENT ABOVE EXPLAINS WHY IT
+    # LOOKED FINE. The sign was taken from the code -- finding enters as
+    # probability_becoming_employed / multiple_find_if_addicted, so a higher value
+    # means longer spells, thinner wealth, more of the disordered on the street --
+    # and that reasoning is sound and still wrong, because it follows one channel
+    # and the general equilibrium runs the other way. sud_homeless is a SHARE, and
+    # raising the penalty pushes households out of the disorder faster than it
+    # pushes the disordered onto the street.
+    #
+    # The consequence was concrete: the moment sat above target, the rule believed
+    # a positive slope, so it lowered the instrument, and under the true negative
+    # slope that RAISED the moment. sud_homeless went from +7.5 to +13.9 per cent
+    # over the morning while every step was taken correctly against a wrong sign.
+    #
+    # THE +5.00 WAS NEVER A MEASUREMENT and its own comment said so -- a floor
+    # chosen so the gap-scaled cap would govern the step. A floor with the wrong
+    # sign is worse than no rule at all, because the cap then bounds how fast the
+    # moment is driven away.
+    #
+    # AND IT FIGHTS b. At -0.598, closing sud_homeless by the 70 per cent rise in
+    # the instrument this elasticity implies would take b down about 32 per cent
+    # in logs, from -11 to something near -40. That is a real trade and it is the
+    # author's to make; the sign fix below is not, since a diverging rule is a bug
+    # whichever way the trade goes.
+    'multiple_find_if_addicted':                 ('sud_homeless', -0.244, 1.0, 100.0, 0.25, 0.20),
     'smi_onset_level':                           ('p_m',          +1.00, 1e-08, 0.5, 0.35, 0.20),
     # +9.0, MEASURED, not assumed. It was +1.00, and that single wrong number
     # is why beta moved too much: across the 81bf69176d archive the discount

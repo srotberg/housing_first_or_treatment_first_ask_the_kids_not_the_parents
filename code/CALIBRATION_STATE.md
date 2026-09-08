@@ -1,3 +1,41 @@
+## 8 September 15:13 UTC -- multiple_find_if_addicted's SIGN WAS BACKWARDS.
+## The loop was driving sud_homeless away from target.
+
+point_9a8e271cc3 -> point_a74155c282, one coordinate, 19.0241 -> 23.7801:
+
+    d log sud_homeless / d log multiple_find_if_addicted = -0.244
+    d log b            / d log multiple_find_if_addicted = -0.598
+    d log lambda_d     / d log multiple_find_if_addicted = -0.618
+
+THE RULE HELD +5.00. The moment sits above target, so with a positive slope the
+rule lowers the instrument -- and under the true negative slope that RAISES the
+moment. sud_homeless went +7.5 -> +13.9 per cent across the morning with every
+step taken correctly against a wrong sign.
+
+WHY THE SIGN LOOKED RIGHT, because the reasoning was good and still wrong.
+Finding enters as probability_becoming_employed / multiple_find_if_addicted, so a
+higher value means longer unemployment, thinner wealth, more of the disordered on
+the street. That follows one channel. sud_homeless is a SHARE, and in general
+equilibrium raising the penalty pushes households out of the disorder faster than
+it pushes the disordered onto the street. Reading a sign off the code's own
+arithmetic is not the same as measuring it.
+
+THE +5.00 WAS NEVER A MEASUREMENT and its own comment said so -- a floor chosen so
+the gap-scaled cap would govern the step. A floor with the WRONG SIGN is worse
+than no rule, because the cap then bounds how fast the moment is driven away
+rather than how fast it converges. That is the lesson: a deliberately
+unmeasured slope must have its SIGN measured even when its magnitude is
+conceded.
+
+CORRECTED to -0.244. This is a search change, not a model change: no hash move,
+no archive reset.
+
+IT FIGHTS b, AND THAT PART IS THE AUTHOR'S CALL. At -0.598, the 70 per cent rise
+in the instrument that this elasticity implies for closing sud_homeless would take
+b down about 32 per cent in logs, from -11 to near -40. The sign fix is not
+optional -- a diverging rule is a bug whichever way the trade goes -- but which
+of the two moments gives way is not mine to decide. Put to the author.
+
 ## 8 September 14:47 UTC -- kappa_find_smi IS SATURATED, and now it is MEASURED
 
 point_0ec6c246f0 -> point_778bb7ae60, kappa_find_smi alone, 60 -> 100. That is
