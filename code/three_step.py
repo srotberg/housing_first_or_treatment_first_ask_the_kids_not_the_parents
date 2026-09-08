@@ -1238,7 +1238,22 @@ GAP_SCALE = 0.0225
 # the same -- so the only thing three per cent was buying was arrival an hour
 # earlier, against a real cost: two instruments moving fast together is what
 # made b jump before, and neither of these slopes is measured.
-FAST = {'utility_cost_of_treatment': 0.01,
+FAST = {# RAISED FOR sud_homeless ON THE AUTHOR'S INSTRUCTION, 8 September:
+        # "Can you raise the rate at which Sud homeless is updated?"
+        #
+        # The gap-scaled cap was giving about 0.36 per cent an iteration, and at
+        # the measured -0.244 the instrument needs roughly 70 per cent of travel,
+        # so nearly 200 iterations. At three per cent it is about 22.
+        #
+        # THE RATE COSTS b NOTHING EXTRA, which is why three rather than one.
+        # b's exposure is d log b / d log instrument = -0.598 times the TOTAL
+        # travel, not the speed: about -32 per cent in logs by the time
+        # sud_homeless arrives, whatever rate takes it there. A faster rate only
+        # reaches the same destination sooner -- and sooner is better here,
+        # because the question the author actually has to answer is whether that
+        # trade is acceptable, and 22 iterations answers it while 200 hides it.
+        'multiple_find_if_addicted': 0.03,
+        'utility_cost_of_treatment': 0.01,
         # kappa_find_smi ADDED 8 September 02:59: *"Maybe add 3% rate to the
         # endowment and lamdba m?"*. Safe because its SLOPE IS ALREADY RIGHT --
         # measured +0.890 over 49 points against the +1.00 fallback, so unlike
