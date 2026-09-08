@@ -1,3 +1,49 @@
+## 8 September 07:52 UTC -- THE MORNING TABLE. 16 of 18, on 27 points.
+
+point_96a81daea6, economy e9b4d75808, solved 07:44. Loop and watchdog alive; the
+run survived the night.
+
+    OUT   lambda_m  -20.9  (kappa_find_smi 45.409)
+          b         -16.1  (addiction_scalar_1 0.0029417)
+    IN    sud_homeless +8.1, aleph -7.8, tau_u +2.3, h_2 +2.0, pi_V -1.8,
+          gamma -1.6, h_1 +1.3, omega_l +1.2, mu_H +0.6, cbar -0.5, p_m -0.5,
+          h_age1 -0.3, pi_eu +0.1, tau_l +0.1, sigma_y -0.1, beta +0.1
+
+TWENTY-SEVEN POINTS, not two hundred, and the reason is structural rather than a
+fault: the container is torn down between turns, so throughput is about one solve
+per firing. Recorded in ENGINE.md; nothing inside the container can change it.
+
+WHAT CONVERGED, AND BOTH WERE INSTRUMENT FAULTS RATHER THAN ECONOMICS:
+
+  tau_u  +20.0 -> +2.3   once the Fortran handover clamp at 10 was raised to 20.
+                         The instrument had been dead for forty iterations and I
+                         had diagnosed the flat response as a discrete policy
+                         staircase.
+  h_age1 -31   -> -0.3   once its slope was corrected from the -0.37 I recorded
+                         as measured, which came off a diagonal move, to the
+                         -1.056 from a genuine one-coordinate arm.
+
+WHAT DID NOT: lambda_m at -20.9. kappa_find_smi is at 45.4 against a bound of 60,
+and my projection that about 40 would deliver was wrong -- since 36.4 it has
+gained 1.7 points of gap for 9 points of instrument. The +0.6 elasticity measured
+over 16.5-24.2 does not survive above 40 and the bound will not save it. What
+this instrument can actually reach is now an open question and wants a controlled
+arm before anything else is tried.
+
+CLAMP SWEEP: zero instruments at a Fortran clamp. Clean.
+
+SLOPE PROVENANCE: two of eighteen are measured -- addiction_scalar_1 at -10.50
+and newborn_endowment_scale at -1.06, one controlled pair each. Sixteen are
+fallbacks, including value_of_life at +1.00, the theory slope the overnight
+evidence contradicts.
+
+ALEPH HAS NOT SETTLED. value_of_life 164.53, up 6.7 per cent from 154.15, and
+aleph is 73.76 against 78.23 when the climb began -- further from target than at
+the start. It stayed inside the band all night, -7.8 to -9.5.
+
+AWAITING THE AUTHOR: whether to freeze value_of_life; and lambda_d, mean of v or
+the 53.9th percentile.
+
 ## 8 September 06:30 UTC -- CORRECTIONS to the 06:20 entry. One claim of three holds.
 
 **HOLDS: the container is torn down between turns.** Uptime reads about 30
