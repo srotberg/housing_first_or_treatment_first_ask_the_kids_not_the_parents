@@ -1,3 +1,39 @@
+## 00:20 UTC 8 September -- CAN SEVEN NODES HIT h_1? Close, about +13 per cent, against +32 at eight. And the reason is a 3.4x stronger rung.
+
+The author: *"So you think 7 nodes can match the homelessness rate?"*
+
+FITTED ON THE SETTLED REGIME ONLY, six points where the by-choice share holds
+near 17-18 per cent. The first fit spanned the 00:08 regime jump, where by choice
+went 9.9 to 17.9 per cent, and returned an involuntary elasticity of +9.756 --
+extrapolating a discontinuity as if it were a slope. Discarded. The clean fit:
+
+    d log h_2         / d log rung = +3.030
+    d log involuntary / d log rung = +3.174     eight nodes gave +0.941
+
+    now: rung 0.11097   h_2 0.09030 (+12.9% vs 0.080)   involuntary 0.01271
+
+    h_2 needs -11.4 per cent, so the rung falls -3.9 to 0.10662 and STOPS
+    -> involuntary 0.01119, h_1 0.01355 = +12.9 per cent against 0.012
+
+THE MECHANISM, and it is the author's original instinct vindicated: the rung has
+3.4 TIMES more leverage on who is priced out at seven nodes than at eight. Same
+movement in the cheapest rent, far more households cross the affordability line,
+because the income levels either side of that line are closer together. That is
+why seven does better and it is not what the seed suggested.
+
+    to land h_1 exactly on 0.012 the rung must reach 0.10818
+    it is released at                                  0.10662
+    eight nodes needed                                 0.08598
+    and was released at                                0.11550
+
+So seven nodes MISSES BY A HAIR where eight missed by a mile. The shortfall is
+now small enough that a modest further move in h_2's target would close it, which
+is the author's to spend or not.
+
+CAVEAT, AND IT IS THE SAME ONE THAT ALREADY BIT ONCE TONIGHT: six points over ten
+minutes. The involuntary component is still falling. Do not treat +12.9 as
+settled -- the 23:52 headline was wrong for exactly this reason.
+
 ## 00:16 UTC 8 September -- CORRECTION: SEVEN NODES IS NOW BETTER THAN EIGHT, NOT WORSE. The seed comparison was misleading and I reported it as if it were not.
 
 At 23:52 and again at 00:02 the seven-node revert was reported as failing on the
