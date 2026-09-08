@@ -1,3 +1,50 @@
+## 8 September 16:07 UTC -- the experiment machinery is finished and tested
+
+On the author's instruction, "Please finish the code and get it all set up and
+ready". Economy is now 5e852b72a1.
+
+FOUR PIECES, and two were gaps found only by testing rather than by reading.
+
+**Conditionality fires.** point_5b89ba333a -> point_bdeb35efe1,
+voucher_conditional_on_clean 0 -> 1 and nothing else: pi_V 0.2657 -> 0.0679,
+lambda_d 0.0345 -> 0.0129, b 0.0799 -> 0.0322, sud_homeless 0.2529 -> 0.1807, and
+34 scored moments move more than half a per cent of target. "Settable and inert
+at defaults" was never the same claim as "works when switched on", and I had
+reported the first as if it settled the second.
+
+**The testing cost was invisible.** govt_spending_on_drug_tests is built at 15522
+and taken out of the budget at 15531 and appeared in NO write statement, so the
+fiscal cost of testing every eligible could not be read off a run -- the one
+number Phase 1a exists to produce. Two DIAG lines now report it as a level and
+over output. Verified: it prints, and reads exactly zero in the benchmark, which
+is what voucher_conditional_on_clean = 0 requires.
+
+**A fourth compile-time switch had been missed.**
+increased_prob_of_voucher_if_homeless_and_addicted is the HF/TF discriminator --
+the source's own naming block writes 0 as TF at 8850 and 8873 and 1 as HF at 8867
+-- with economic uses at 25906, 25949, 29922, 29945 and 29971. Converted, with a
+handover case and whitelist entry. HANDOVER OK now reads 80 of 80.
+
+**Two scripts.** run_experiments.sh turns each counterfactual into a one-line
+change off a frozen benchmark, run through run_one_point.sh so it lands
+md5-tagged with the HANDOVER assertion behind it; its vector construction was
+smoke-tested on all three experiments with no duplicate keys.
+compare_experiments.py prints levels and differences and deliberately prints NO
+gaps, because a counterfactual has no target and showing one invites reading the
+benchmark's targets as though they still applied.
+
+INERT AT DEFAULTS, MEASURED: worst of 36 scored moments 0.16 per cent of target.
+Both build configurations clean.
+
+**THE AMBIGUITY THE AUTHOR MUST SETTLE.** Treatment First means
+increased_prob = 0 in the source's naming and voucher_conditional_on_clean = 1 in
+the author's phase 1a. These are different experiments. run_experiments.sh
+applies BOTH and says so in its header; one line changes it.
+
+**STILL BLOCKING: the benchmark.** b and sud_homeless contest
+multiple_find_if_addicted, lambda_m is conceded with its instrument pinned. A
+counterfactual off a moving benchmark must be run again when it moves.
+
 ## 8 September 15:25 UTC -- the conditionality experiment is settable, and inert
 
 On the author's instruction, "Yes, begin getting it ready".
