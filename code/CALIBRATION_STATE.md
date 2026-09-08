@@ -1,3 +1,33 @@
+## 8 September 14:35 UTC -- lambda_m: the PARAMETER is assigned, the MOMENT is not
+## pinned, its INSTRUMENT is. Three different things, one name.
+
+The author asked "Lambdam pinned?". ENGINE.md already warns about exactly this
+class of confusion for h_2 and h_3; lambda_m is the same trap with three sides.
+
+  lambda_m THE PARAMETER   0.0663688, ASSIGNED from the recovery literature --
+                           50 per cent recovery within ten years, mean spell
+                           14.9 years. Never in RULES, never calibrated, has held
+                           this value throughout.
+
+  lambda_m THE MOMENT      SMI share of the homeless, 0.2008 against 0.25, -19.7
+                           per cent. Free to move; nothing pins it.
+
+  kappa_find_smi           ITS INSTRUMENT, stuck at 60. This is THREE_STEP'S OWN
+                           BOUND in RULES, not a Fortran clamp -- the Fortran's
+                           handover clamp for it is 100.
+
+THAT DISTINCTION CHANGES THE COST OF ONE OPTION. Raising the bound is a one-line
+edit to three_step.py, not a model change, so it resets no archive and costs no
+seed. It is still not recommended: the elasticity fell from about +0.6 measured
+over 16.5-24.2 to near zero above 50, and the climb from 45.4 to 60 bought 1.2
+points of gap. Going to 100 asserts that SMI cuts job finding by a factor of a
+hundred and on the evidence would still not close the gap.
+
+The other two stand: accept lambda_m outside the band as the one exception to the
+ten per cent rule, or reopen kappa_uem so the SMI penalty is carried by
+separation as well as finding. kappa_uem is currently 1, doing nothing, while
+kappa_find_smi carries all of it at 60.
+
 ## 8 September 12:42 UTC -- kappa_find_smi IS AT ITS BOUND. lambda_m is frozen.
 
 The step line now reads `60 -> 60 ... AT BOUND` and lambda_m sits at -19.7 per
