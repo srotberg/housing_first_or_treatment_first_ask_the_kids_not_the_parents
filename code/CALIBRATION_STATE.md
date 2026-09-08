@@ -1,3 +1,31 @@
+## 02:47 UTC 8 September -- IS tau_u REACHABLE INSIDE ITS BOUND? Yes, with 115 per cent headroom, but the slope above u=9.3 is EXTRAPOLATION.
+
+The author asked directly: *"Are you saying the tauu can be hit? Did you make
+sure that the upper bound is high enough?"* Checked rather than asserted.
+
+tau_u must fall 30.9 per cent, -0.3692 in logs. Where
+utility_cost_of_treatment ends up depends entirely on the slope:
+
+    |slope| 0.975  measured here, u 8.5-9.0        u -> 13.59   bound 20, OK
+    |slope| 2.500  archive 211b867a51, u 7.0-8.0   u -> 10.79   bound 20, OK
+    |slope| 0.500  pessimistic, half the measured  u -> 19.48   bound 20, only just
+
+Current u is 9.3081 with 115 per cent headroom to the 20.0 bound. It clears on
+the measured slope and clears even at half of it.
+
+THE CAVEAT, AND IT IS REAL: THE ARCHIVE HAS NOTHING ABOVE u = 9.3. Every figure
+past that is extrapolation. The elasticity could flatten as treatment becomes
+very costly, which is economically plausible -- the households still choosing
+treatment at u = 13 are those who want it most and are least deterrable -- and if
+it flattens far enough the required value exceeds 20 and the instrument prints
+AT BOUND.
+
+DO NOT PRE-EMPT IT. The trace prints AT BOUND when it happens and the morning
+report already checks for it. If it binds, raising 20 to 30 is safe on the same
+grounds as the 8 to 20 raise earlier tonight: nothing in the Fortran clamps the
+parameter, it is a plain declaration at line 289 subtracted from flow utility at
+22349, and the bound exists only in next_batch.py and RULES.
+
 ## 02:42 UTC 8 September -- BOTH CHANGES LIVE. tau_u steps 3 per cent as asked. THE BRAKE DISARMED ITSELF ON ITERATION ONE.
 
 tau_u IS WORKING:
