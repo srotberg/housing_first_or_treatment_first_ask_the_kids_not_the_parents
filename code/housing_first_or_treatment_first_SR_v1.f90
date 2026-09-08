@@ -37125,6 +37125,52 @@
 
             end if
 
+            ! THE SECANT DIVERGED ON UNIVERSAL TREATMENT FIRST, so it is now
+            ! kept inside a trust region around the damped step and abandoned
+            ! outright when the gap grew.
+            !
+            ! WHAT HAPPENED. universal_tf ran 47 loops without converging. The
+            ! budget cleared at loop 37 and held, and the drug price then
+            ! oscillated between 1.02 and 1.20 with distance_drug_market going
+            ! 0.0198 at loop 32, 0.165, 0.346, 0.520 -- growing, not shrinking,
+            ! and with no iteration cap on the loop above it would have run
+            ! indefinitely. The other two arms converged cleanly at 7.1e-4 and
+            ! 5.4e-4, so the tolerance is reachable and this was the iteration.
+            !
+            ! WHY THAT ARM. It is the only one carrying the full feedback loop: a
+            ! household's drug choice sets its voucher status, which moves its
+            ! income, which moves the budget and the price, which moves the drug
+            ! choice. tf_rationed has the same loop on a far smaller eligible
+            ! base and universal_hf has no condition at all. A secant amplifies
+            ! when the gap it differences is noisy, and the quantity feeding it
+            ! comes from a distribution solved only to 6e-4 with addiction on --
+            ! so the secant was extrapolating off numerical noise.
+            !
+            ! TWO GUARDS, both cheap. If the gap grew, the previous step was
+            ! wrong and its secant is worthless: take the damped step. And a
+            ! secant step is never allowed further from the current price than
+            ! four damped steps, which leaves the fast convergence the other
+            ! arms got and removes the excursions.
+            !
+            ! THIS CHANGES NO EQUILIBRIUM CONDITION. The fixed point is still
+            ! implied_price == price_faced to within stopping_rule_drug_market;
+            ! only the path to it changes.
+            if (have_drug_price_secant==1) then
+
+                if (abs(gap_1)>abs(previous_drug_price_gap)) then
+
+                    step_1=price_of_addictive_good+drug_market_adjuster*gap_1
+
+                else
+
+                    step_1=max(min(step_1,&
+                        price_of_addictive_good+4*abs(drug_market_adjuster*gap_1)),&
+                        price_of_addictive_good-4*abs(drug_market_adjuster*gap_1))
+
+                end if
+
+            end if
+
             step_1=max(min(step_1,2*price_of_addictive_good),price_of_addictive_good/2)
 
             previous_price_of_addictive_good=price_of_addictive_good
