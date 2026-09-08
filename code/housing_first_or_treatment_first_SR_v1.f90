@@ -1949,7 +1949,22 @@
         ! value is about -3, comfortably inside. So the target returns to the
         ! figure the data actually supports rather than the one chosen to be
         ! reachable, which is the right direction for that decision to move.
-        real(8), parameter :: fraction_homeless_data=0.012
+        ! 1.1 PER CENT, 8 September 01:58: *"you can even set it to 1.1%"*, the
+        ! last of five settings tonight -- 0.005, 0.01, 0.012, 0.013, 0.012, 0.011.
+        !
+        ! CHOSEN AGAINST THE DRIFT, not against the current reading. h_1 is still
+        ! FALLING because the cheapest rung is still coming down: 0.01195 at 01:05
+        ! to 0.01163 at 01:29, about a quarter of a per cent a point, with the rung
+        ! 0.10532 to 0.10409 over the same span. At 1.2 the moment reads -3.1 now
+        ! and would leave the band on the low side within about an hour. At 1.1 it
+        ! reads +5.7 and passes through dead on in about forty-five minutes.
+        !
+        ! The author has now moved this target in BOTH directions on the evidence,
+        ! up to 1.3 when the projection said 1.2 was unreachable and back down
+        ! through 1.2 to 1.1 when seven nodes beat that projection. The paper must
+        ! state 1.1 as a choice within the 0.5 to 1 per cent range they described
+        ! as arguable, not as a measurement.
+        real(8), parameter :: fraction_homeless_data=0.011
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe

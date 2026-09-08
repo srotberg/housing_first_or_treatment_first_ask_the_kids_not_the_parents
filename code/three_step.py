@@ -243,7 +243,7 @@ def _gate_targets():
     # anything around 0.5-1%"*. fraction_homeless_data was changed in the Fortran
     # at the same time, but this override was still carrying 0.005 and silently
     # winning -- the points said 0.01 and the stepper chased 0.005.
-    t.update({'h_1': 0.012, 'h_2': 0.08, 'pi_eu': 0.049, 'beta': 3.0})
+    t.update({'h_1': 0.011, 'h_2': 0.08, 'pi_eu': 0.049, 'beta': 3.0})
     # emp_homeless IS UNTARGETED, 7 September: *"and forget about targeting the
     # emp_homeless"*, *"let it be untargeted"*. Its only instrument moved it at
     # -0.0003 over 54 controlled pairs and has been pinned in the same round, so
