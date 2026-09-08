@@ -1,3 +1,59 @@
+## 01:20 UTC 8 September -- THE UNTARGETED MOMENTS AGAINST THE DATA, and a comparison in the point files that is apples to oranges
+
+The author asked how the untargeted statistics stand against the paper's table,
+and specifically about y_u, emp_homeless, the bottom income and wealth shares,
+and the child odds ratios.
+
+FIRST, A TRAP IN THE POINT FILES. The five "UNTARGETED homelessness rate, band k"
+lines print the model's ANNUAL rate against HUD's raw POINT-IN-TIME observed, so
+they read +218 to +674 per cent and mean nothing as printed. The SCORED h_age
+targets are annualised by _annualise_age_rates -- band 1 targets 0.016650 where
+the untargeted line says 0.003161, a factor of 5.27. Use the scored gaps
+(h_age1 -40 per cent) and NOT the untargeted band lines. Anyone quoting +674 per
+cent from a point file is quoting a unit mismatch.
+
+CHILD TRANSMISSION IS SPLIT, and both are stable over six points:
+
+    delta_d  child SUD ratio           1.063  vs 2.0   -47%   UNDER-transmits
+    delta_h  child homelessness ratio  3.754  vs 2.1   +79%   OVER-transmits
+
+A child of a SUD parent is barely more likely to have SUD than anyone else,
+while a child of a homeless parent is nearly twice as likely to be homeless as
+the data says. The channels are penalty_child_addicted=0.24 and
+penalty_child_homeless=0.31, both untargeted, and measure_child_gap=0 so the
+child counterfactual is not computed at all.
+
+BOTTOM SHARES:
+
+    income share bottom  1%   0.00062   0.00009   +593%
+    income share bottom  5%   0.00312   0.00288     +8%
+    income share bottom 10%   0.01305   0.00924    +41%
+    wealth share bottom 1/5/10%  0.00000  vs -0.00225 / -0.00422 / -0.00446
+
+The wealth ones are STRUCTURAL, not a calibration failure:
+include_unsecured_borrowing=0, so no household can hold debt, and the data's
+bottom deciles are negative precisely because real ones do. That cannot close
+while borrowing is off.
+
+The income ones say something real: THE MODEL HAS NO DESTITUTE HOUSEHOLDS. The
+data's poorest one per cent earn essentially nothing; the model's earn seven
+times that. The bottom node is pinned at 0.2 per cent mass with income 8.4 per
+cent of average and there is a floor under everyone -- the same fact that makes
+h_1's involuntary component hard to move.
+
+    y_u           0.60115  vs 0.74   -18.8%   old benchmark was 0.41
+    emp_homeless  0.49406  vs 0.46    +7.4%   in band, untargeted
+
+CLOSEST TO DATA: tenant contribution rate -0.7, homeless at treatment admission
+-2.9, income with a SUD +5.6, renters above 30 per cent of income +7.5.
+
+FURTHEST AND WORTH THE AUTHOR'S EYE: voucher holders with wages main +141
+(0.676 vs 0.280); participation with a SUD +50 (0.984 vs 0.658, so nearly every
+addict in the model works); SMI alongside SUD at admission -90 (0.045 vs 0.431);
+working while homeless in treatment exactly 0 against 0.066; and the user age
+profile far too young, mean 34.3 against 45.5 with 65 per cent of users aged
+26-34 against 28 in the data.
+
 ## 01:04 UTC 8 September -- 14 of 18. b landed. h_age1 is a THIRD instrument that moves while its moment does not.
 
 point_7a962ea110, 36 points on 02da791f0c, 14 of 18 -- the best of the night.
