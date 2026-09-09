@@ -277,6 +277,38 @@
         integer, parameter :: retirement_span=20
         integer, parameter :: include_addiction=1                           
         integer, parameter :: include_vouchers=1
+
+        ! A THIRD VOUCHER STATE: EXCLUDED. The author, 9 September: *"I think you
+        ! need to introduce some future exclusion if you fail your test... just
+        ! have a probability of remaining excluded so that on average you are
+        ! excluded for 3 years."*
+        !
+        ! WHAT IT REPLACES. The sanction was ONE PERIOD: fail a test, lose the
+        ! voucher that period, re-enter the lottery the next. Every conditional
+        ! result measured before this was a one-year sanction, and the author is
+        ! right that the length of the sanction is what the policy turns on.
+        !
+        ! WHY ONE EXTRA STATE IS ENOUGH. A geometric duration is memoryless, so
+        ! it needs a flag and not a counter. Release with probability 1/3 a year
+        ! gives an expected exclusion of exactly three years.
+        !
+        ! OFF BY DEFAULT, AND THAT IS THE SAFETY PROPERTY. With the switch at
+        ! zero voucher_state_max IS include_vouchers, so every bound keyed on it
+        ! is the value it has today and the model is unchanged. The acceptance
+        ! test is that the benchmark reproduces BIT-IDENTICALLY with the switch
+        ! off, before it is ever turned on.
+        !
+        ! THE RISK SURFACE IS ONE LINE, checked rather than assumed. Exactly one
+        ! test reads voucher_index==0 as "no voucher" -- the lottery-entry branch
+        ! -- and an excluded household correctly falls through it. The seven
+        ! voucher_index==1 tests all mean "holds a voucher" and stay correct. The
+        ! index is never used as a 0/1 multiplier and there are no >0 or >=1
+        ! tests. What exclusion DOES need is its own explicit branch, because
+        ! falling through leaves an empty transition range, which would release
+        ! the household with certainty after one year -- the opposite of intent.
+        integer, parameter :: include_voucher_exclusion=0
+        integer, parameter :: voucher_state_max=include_vouchers*(1+include_voucher_exclusion)
+        real(8), parameter :: voucher_exclusion_release=1.d0/3.d0
         integer, parameter :: use_cobb_douglas=0
         integer, parameter :: use_cobb_douglas_2=0
         integer, parameter :: include_probability_of_becoming_addicted=1
@@ -4965,7 +4997,11 @@
         real(8) :: probability_becoming_unemployed_if_addicted=0
         real(8) :: probability_becoming_employed_if_addicted=0
         
-        real(8), dimension(0:include_vouchers,0:include_vouchers,0:include_vouchers,1:3) :: &
+        ! (current voucher state, future voucher state, HAS_OPPORTUNITY, category).
+        ! The third index is an opportunity flag and stays 0:1 -- it is not a
+        ! voucher state, and it only shared the bound because include_vouchers
+        ! happened to be one. The first two grow with the exclusion state.
+        real(8), dimension(0:voucher_state_max,0:voucher_state_max,0:include_vouchers,1:3) :: &
             voucher_probabilities,voucher_probabilities_benchmark
                     
         real(8), dimension(0:2) :: probability_of_voucher_benchmark=0
@@ -9537,7 +9573,7 @@
                                 is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                                 (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
                                 
-                            do voucher_index=0,(1-has_house)*include_vouchers
+                            do voucher_index=0,(1-has_house)*voucher_state_max
                             
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,housing_status_index-1
@@ -10005,7 +10041,7 @@
                         avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                             (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
                         
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
                             
                             do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                
@@ -12102,7 +12138,7 @@
                         avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                             (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
                                                     
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
                         
                             do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                
@@ -12968,7 +13004,7 @@
                         avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                             (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
                                            
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
                 
                             do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                             
@@ -13331,7 +13367,7 @@
                         avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                             (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
                     
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
                                            
                             do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                             
@@ -14162,7 +14198,7 @@
                             
                         end if
                     
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
 
                             avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                                 (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
@@ -15859,7 +15895,7 @@
                     
                         do employment_index=1,employment_grid_size
                         
-                            do voucher_index=0,(1-has_house)*include_vouchers
+                            do voucher_index=0,(1-has_house)*voucher_state_max
                            
                                 do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                    
@@ -16143,7 +16179,7 @@
                 
                     do employment_index=1,employment_grid_size
                     
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
 
                             avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                                 (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
@@ -16575,7 +16611,7 @@
                 
                     do employment_index=1,employment_grid_size
                     
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
                     
                             avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                                 (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
@@ -16882,7 +16918,7 @@
                 
                     do employment_index=1,employment_grid_size
                     
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
                     
                             avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                                 (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
@@ -17828,7 +17864,7 @@
                         avg_income_to_use_2=is_counterfactual*average_labor_income_by_employment_calibrated(employment_index)+&
                             (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
 
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
 
                             do financial_index=newborn_household*negative_financial_grid_size+&
                                  (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
@@ -18097,7 +18133,7 @@
 
                 do unemployment_index=1,unemployment_grid_size
                     do employment_index=1,employment_grid_size
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
 
                             do financial_index=newborn_household*negative_financial_grid_size+&
                                 (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
@@ -18338,7 +18374,7 @@
                             
                         end if
 
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
                                                     
                             do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                
@@ -19221,7 +19257,7 @@
                 
                     do employment_index=1,employment_grid_size
                     
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
                                     
                             do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                
@@ -19693,7 +19729,7 @@
                 
                 do employment_index=1,employment_grid_size
                 
-                    do voucher_index=0,(1-has_house)*include_vouchers
+                    do voucher_index=0,(1-has_house)*voucher_state_max
                                                     
                         ! LAST PERIOD'S DWELLING IS NOT A STATE FOR A RENTER,
                         ! so it is solved once rather than twice.
@@ -26312,7 +26348,7 @@
                     
                         do employment_index=1,employment_grid_size
                         
-                            do voucher_index=0,(1-has_house)*include_vouchers
+                            do voucher_index=0,(1-has_house)*voucher_state_max
                                                                                         
                                 do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                                                    
@@ -26507,13 +26543,13 @@
 
                 has_opportunity=1
                 first_voucher_index=0
-                second_voucher_index=include_vouchers
+                second_voucher_index=voucher_state_max
 
             elseif ((has_house==0) .AND. (choose_to_own_1==0) .AND. (voucher_index==1)) then
 
                 has_opportunity=1
-                first_voucher_index=include_vouchers
-                second_voucher_index=include_vouchers
+                first_voucher_index=voucher_state_max
+                second_voucher_index=voucher_state_max
                 
                 ! Those who are addicted in a counterfactual, has the option to move to both not getting a vouchers                
                 if ((is_counterfactual==1) .AND. (voucher_index_1==3) .AND. &
@@ -26521,7 +26557,7 @@
                     
                     has_opportunity=1
                     first_voucher_index=0
-                    second_voucher_index=include_vouchers
+                    second_voucher_index=voucher_state_max
                     
                 end if             
                 
@@ -26529,7 +26565,7 @@
 
                 has_opportunity=1
                 first_voucher_index=0
-                second_voucher_index=include_vouchers
+                second_voucher_index=voucher_state_max
 
             end if
 
@@ -26736,7 +26772,7 @@
                                     average_labor_income_by_employment_calibrated(employment_index)+&
                                     (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
                             
-                                do voucher_index=0,(1-has_house)*include_vouchers
+                                do voucher_index=0,(1-has_house)*voucher_state_max
                                                                              
                                     !$omp parallel do default(none) &
                                     !$omp& shared(&
@@ -27238,7 +27274,7 @@
                             
                                 do employment_index=1,employment_grid_size
 
-                                    do voucher_index=0,(1-has_house)*include_vouchers
+                                    do voucher_index=0,(1-has_house)*voucher_state_max
                                                                   
                                         !$omp parallel do default(none) &
                                         !$omp& shared(distribution_implied_private,distribution_guess,&
@@ -27537,7 +27573,7 @@
                     
                         do employment_index=1,employment_grid_size
                         
-                            do voucher_index=0,(1-has_house)*include_vouchers
+                            do voucher_index=0,(1-has_house)*voucher_state_max
                                             
                                 !$omp parallel do default(none) &
                                 !$omp& shared(distribution_implied_private,distribution_implied,track_housing_1,&
@@ -28113,7 +28149,7 @@
                                     average_labor_income_by_employment_calibrated(employment_index)+&
                                     (1-is_counterfactual)*model_average_labour_income_by_employment(time_period,employment_index)
                             
-                                do voucher_index=0,(1-has_house)*include_vouchers
+                                do voucher_index=0,(1-has_house)*voucher_state_max
                                                                              !                                                                        
                                     do financial_index=newborn_household*negative_financial_grid_size+&
                                          (1-newborn_household)*(has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span))),&
@@ -32880,7 +32916,7 @@
                 
                     do employment_index=1,employment_grid_size
                     
-                        do voucher_index=0,(1-has_house)*include_vouchers
+                        do voucher_index=0,(1-has_house)*voucher_state_max
                                                                                                       
                             do financial_index=has_house*1+(1-has_house)*renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
                             
@@ -36357,11 +36393,11 @@
             
             allocate(income_matrix(i)%&
                 vector_real_income(life_span+1,1:financial_grid_size,unemployment_grid_size,employment_grid_size,&
-                lowest_housing_grid_point:housing_status_grid_size-1,0:include_vouchers))
+                lowest_housing_grid_point:housing_status_grid_size-1,0:voucher_state_max))
                 
             allocate(income_matrix_saved(i)%&
                 vector_real_income(life_span+1,1:financial_grid_size,unemployment_grid_size,employment_grid_size,&
-                lowest_housing_grid_point:housing_status_grid_size-1,0:include_vouchers))
+                lowest_housing_grid_point:housing_status_grid_size-1,0:voucher_state_max))
         
             if (.NOT. allocated(ev_table)) then
 
@@ -36394,7 +36430,7 @@
                     renter_array_floor:financial_grid_size,&
                     unemployment_grid_size,employment_grid_size,&
                     lowest_housing_grid_point:housing_status_grid_size,&
-                    0:include_vouchers,0:ev_addiction_top,&
+                    0:voucher_state_max,0:ev_addiction_top,&
                     lowest_housing_grid_point:housing_status_grid_size))
 
                 warm_start_a_prime=-999999
@@ -36404,80 +36440,80 @@
             allocate(value_function(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                     
             allocate(policy_function_wage_income_tax_paid(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                         
             allocate(policy_function_mortgage_interest_deductions(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                         
             allocate(policy_function_consumption(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                         
             allocate(policy_function_space_lived_in_size(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                                                 
             allocate(policy_function_labor_supply(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_cutoff_taxable_income(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_frac_spent_on_addiction(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_total_consumption(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_addiction(i)%&
                 vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                         
             allocate(policy_function_treatment(i)%&
                 vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                         
             allocate(frac_mov_optimal_1(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                        
             allocate(distribution_guess(i)%&
                 vector_transition_real((1-solve_transition_dynamics):transition_length,&
                 life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
 
             allocate(dist_prev_1(i)%&
                 vector_transition_real((1-solve_transition_dynamics):transition_length,&
                 life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
 
             allocate(dist_prev_2(i)%&
                 vector_transition_real((1-solve_transition_dynamics):transition_length,&
                 life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
 
             ! Zeroed so the first two shuffles move defined values. They are
             ! overwritten before the first Aitken step reads them, but an
@@ -36488,54 +36524,54 @@
             allocate(distribution_implied(i)%&
                 vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                         
             allocate(distribution_stationary(i)%&
                 vector_transition_real((1-solve_transition_dynamics):transition_length,life_span+1,&
                 is_owner*1+(1-is_owner)*renter_array_floor:financial_grid_size,&
                 unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(distribution_forward(i)%&
                 vector_transition_real((1-solve_transition_dynamics):transition_length,life_span+1,&
                 is_owner*1+(1-is_owner)*renter_array_floor:financial_grid_size,&
                 unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
             
             allocate(policy_function_financial_index(i)%&
                 vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                        
             allocate(policy_function_housing_status_index(i)%&
                 vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                         
             allocate(policy_function_space_lived_in_index(i)%&
                 vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                         
             allocate(policy_function_years_of_amortization_index(i)%&
                 vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                                 
             allocate(fin_index_frac_mov_to_optimal(i)%&
                 vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                        
             allocate(distribution_implied_private(i)%&
                 vector_cpu_real(max_CPUs,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                     
             allocate(value_function_guess(i)%&
                 vector_youngest_real(is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
             
         end do
         
@@ -36553,66 +36589,66 @@
         
             allocate(value_function_benchmark(i)%vector_real(life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(value_function_comparison(i)%vector_real(life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                         
             allocate(distribution_stationary_benchmark(i)%&
                 vector_real(life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
             
             allocate(policy_function_labor_supply_benchmark(i)%vector_real&
                 (life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_total_consumption_benchmark(i)%vector_real&
                 (life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_consumption_benchmark(i)%vector_real&
                 (life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_addiction_benchmark(i)%vector_integer&
                 (life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(frac_mov_optimal_1_benchmark(i)%vector_real&
                 (life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_frac_spent_on_addiction_benchmark(i)%vector_real&
                 (life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_housing_status_index_benchmark(i)%vector_integer&
                 (life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_years_of_amortization_index_benchmark(i)%vector_integer&
                 (life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_financial_index_benchmark(i)%vector_integer&
                 (life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(fin_index_frac_mov_to_optimal_benchmark(i)%vector_integer&
                 (life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
-                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))    
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))    
                                             
         end do
         
@@ -36634,13 +36670,13 @@
                     (life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                     financial_grid_size,unemployment_grid_size,employment_grid_size,&
                     (1-is_owner)*lowest_housing_grid_point+is_owner*index_of_smallest_house_hhld_can_buy:&
-                    housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                    housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                     
                 allocate(policy_function_space_lived_in_size_to_fetch(i)%vector_real&
                     (life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                     financial_grid_size,unemployment_grid_size,employment_grid_size,&
                     (1-is_owner)*lowest_housing_grid_point+is_owner*index_of_smallest_house_hhld_can_buy:&
-                    housing_status_grid_size-1,0:(1-is_owner)*include_vouchers))
+                    housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                         
             end do
             
