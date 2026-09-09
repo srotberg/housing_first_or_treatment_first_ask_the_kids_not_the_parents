@@ -234,8 +234,27 @@
         ! perfectly met. Here some households fail the condition because they
         ! cannot get clean and some fail it because the test is wrong, and those
         ! two groups are the empirical case for Housing First.
-        real(8) :: probability_of_detection=0.9d0
-        real(8) :: probability_of_false_positive=0.05d0
+        ! THE TEST'S ACCURACY, SET BY THE AUTHOR ON 9 SEPTEMBER TO WHAT A REAL
+        ! CONFIRMED URINE PROGRAMME DELIVERS. Urine testing is two stage: an
+        ! immunoassay screen, then GC-MS or LC-MS/MS confirmation, and federal
+        ! programmes require the confirmation before a positive is reported.
+        ! Screening assays alone run false positives in the low single digits to
+        ! about ten per cent depending on the analyte; confirmation drives the
+        ! reported rate well under one per cent. Five per cent was the screen's
+        ! number applied as if nothing confirmed it.
+        !
+        ! IT COMPOUNDS, WHICH IS WHY IT MATTERS. These are per PERIOD, and a
+        ! period is a year. At five per cent a clean household had a
+        ! 0.95**40 = 12.9 per cent chance of never being wrongly removed across a
+        ! working life; at 0.5 per cent it is 0.995**40 = 81.8 per cent.
+        !
+        ! Detection at 0.95 rather than 0.9 for the same reason: a ten per cent
+        ! false negative is high for a confirmed test. The binding constraint on
+        ! detection is the window -- one to three days for most drugs -- against
+        ! testing frequency, and here frac_spent_on_addiction>0 means sustained
+        ! use across a whole year, which any regular testing catches.
+        real(8) :: probability_of_detection=0.95d0
+        real(8) :: probability_of_false_positive=0.005d0
 
         ! ---- WHAT THE TESTING COSTS ------------------------------------------
         ! The government pays to run the test, per household screened, per period.
@@ -427,6 +446,20 @@
         ! Rents, house prices, taxes and inheritances are equally untouched for
         ! the same reason.
         integer, parameter :: measure_price_elasticity=0
+        ! HOW MANY EXTRA SOLVE-AND-CONVERGE PASSES TO RUN AT FROZEN PARAMETERS
+        ! BEFORE STOPPING, so the distance between the saved state and a fixed
+        ! point can be measured. Zero in every ordinary run: it costs a full
+        ! solve per pass and changes nothing.
+        ! CONVERGING THE CALIBRATED MODEL'S OWN STATIONARY EQUILIBRIUM at the
+        ! sweep's stop, before the benchmark state is written. Sixty passes is
+        ! generous; if it needs them the model is telling us something.
+        integer, parameter :: max_frozen_passes=60
+        ! On the largest absolute move across b, lambda_d, h_1 and average labour
+        ! income between consecutive passes. b is 0.0777 and lambda_d 0.0336, so
+        ! 1e-6 is about one part in thirty thousand of the smaller of them.
+        real(8), parameter :: stopping_rule_frozen_moments=10.d0**(-6)
+        integer :: frozen_pass_index
+        real(8) :: frozen_b_1,frozen_d_1,frozen_h_1,frozen_y_1,distance_frozen_moments
         real(8), parameter :: elasticity_price_step=0.10
         real(8) :: val_price_base_1=0,val_users_base_1=0,val_qty_base_1=0
         ! THE INTENSIVE MARGIN HAS TO BE DECOMPOSED OR IT CANNOT BE READ.
@@ -42153,6 +42186,89 @@
 
                 write(*,*) "B SWEEP POINT DONE at b=", addiction_scalar_1,&
                     " participation=", model_exprimenters(1)
+
+                ! CONVERGE THE CALIBRATED MODEL'S OWN STATIONARY EQUILIBRIUM
+                ! BEFORE THE STATE IS SAVED. The author, 9 September: *"you have
+                ! to converge on the actual calibrated model's stationary
+                ! equilibrium"*.
+                !
+                ! WHY THIS EXISTS. The state used to be written here, at one
+                ! iterate of the calibration sweep, and that is not an
+                ! equilibrium. Its own convergence test said so:
+                ! distance_average_labor_income stood at 1.8281e-2 against a
+                ! stopping rule of 1e-4, a hundred and eighty-three times its
+                ! tolerance. Anything that RE-SOLVED from that state therefore
+                ! moved, and two things do: the elasticity block, which found
+                ! users +8.67 per cent at an UNCHANGED price, and
+                ! long_run_counter_factual, which landed on a different economy
+                ! with no policy change at all. Every counterfactual was
+                ! measuring the distance between two code paths on top of
+                ! whatever the policy did.
+                !
+                ! WHAT IS AND IS NOT FROZEN. This iterates the EQUILIBRIUM map
+                ! only -- value function, distribution, statistics, budget -- and
+                ! never re-enters the calibration update block, so no calibrated
+                ! parameter moves. That is the distinction the old comment here
+                ! was reaching for when it said re_do_simulation_with_fixed_
+                ! parameters "does NOT freeze everything": that routine ran the
+                ! calibration loop with some parameters pinned, and
+                ! sd_permanent_productivity kept moving. This does not run the
+                ! calibration loop at all.
+                !
+                ! The newborn endowment DOES move here, and should: it is
+                ! newborn_endowment_scale times model_average_labour_income, set
+                ! inside stationary_equilibrium_statistics, so it is an
+                ! equilibrium object and belongs inside the fixed point rather
+                ! than outside it. Leaving it outside is part of why one more
+                ! pass moved participation at all.
+                distance_frozen_moments=1
+
+                do frozen_pass_index=1,max_frozen_passes
+
+                    frozen_b_1=model_total_drug_users(1)
+                    frozen_d_1=model_fraction_addicted(1)
+                    frozen_h_1=model_fraction_homeless(1)
+                    frozen_y_1=model_average_labour_income(1)
+
+                    call solve_value_function_and_policy_functions(1)
+                    call converge_to_stationary_equilibrium(1)
+                    call stationary_equilibrium_statistics(1)
+                    call govt_revenues_calc(1)
+
+                    distance_frozen_moments=max(max(&
+                        abs(model_total_drug_users(1)-frozen_b_1),&
+                        abs(model_fraction_addicted(1)-frozen_d_1)),max(&
+                        abs(model_fraction_homeless(1)-frozen_h_1),&
+                        abs(model_average_labour_income(1)-frozen_y_1)))
+
+                    write(*,*) "FROZEN PASS", frozen_pass_index,&
+                        " b=", model_total_drug_users(1),&
+                        " lambda_d=", model_fraction_addicted(1),&
+                        " h_1=", model_fraction_homeless(1),&
+                        " avg_lab_inc=", model_average_labour_income(1),&
+                        " distance=", distance_frozen_moments
+
+                    if (distance_frozen_moments<=stopping_rule_frozen_moments) then
+
+                        write(*,*) "FROZEN CONVERGED after", frozen_pass_index,&
+                            "passes, distance=", distance_frozen_moments
+                        exit
+
+                    end if
+
+                end do
+
+                if (distance_frozen_moments>stopping_rule_frozen_moments) then
+
+                    write(*,*) "FROZEN DID NOT CONVERGE in", max_frozen_passes,&
+                        "passes, distance=", distance_frozen_moments,&
+                        " against a rule of", stopping_rule_frozen_moments
+                    write(*,*) "FROZEN the saved state is NOT a fixed point"
+
+                end if
+
+                call print_all_moments()
+
                 stop
 
             end if

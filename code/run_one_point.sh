@@ -121,8 +121,8 @@ declare -A P=(
     # testing cost needs no separate accounting.
     [voucher_conditional_on_clean]=0
     [voucher_conditional_on_clean_just_addicts]=0
-    [probability_of_detection]=0.9
-    [probability_of_false_positive]=0.05
+    [probability_of_detection]=0.95
+    [probability_of_false_positive]=0.005
     [cost_per_drug_test]=0.00031
     [penalty_child_homeless]=0.31
     [probability_becoming_unemployed]=0.0294178
