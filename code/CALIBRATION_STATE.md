@@ -1,3 +1,40 @@
+# THIS FILE IS NOT THE LIVE STATE. READ `code/EXPERIMENT_PLAN.md`.
+
+Everything below predates the night of 8-9 September and is kept as a record of
+how the Treatment First experiment came to be specified. It is out of date in
+every particular that matters. In summary, what happened after it was written:
+
+**The benchmark of record was not a stationary equilibrium.** It was saved at one
+iterate of the calibration sweep, with the outer loop's
+`distance_average_labor_income` at 1.8281e-2 against a stopping rule of 1e-4 --
+a hundred and eighty-three times its tolerance. Anything that re-solved from it
+moved, so **every counterfactual and every elasticity in this archive was
+measuring the distance between two code paths on top of whatever the policy
+did.** The save path now converges the equilibrium map at frozen parameters
+before writing state; look for `FROZEN CONVERGED` in a save log.
+
+**Eight defects were found and fixed**, listed with their evidence in
+EXPERIMENT_PLAN.md. Besides the benchmark: a hard-coded `inheritance_amount`
+transfer paid in every counterfactual and none of the benchmark; the tax search's
+gain and cap set in per-household units against an aggregate budget; a
+counterfactual loop free to exit while its own moments still moved; two stale
+income constants including the median that sets voucher eligibility; an
+asymmetric elasticity measurement; and an over-correction to the tax cap.
+
+**Two null tests now pass.** The counterfactual path at the benchmark's own
+switches reproduces the benchmark within 0.33 per cent with the tax landing at
+-3.4e-4; and the zero-step elasticity null returns users bit-identical.
+
+**The complete 2x2 is measured** on that code, all four cells converged, none
+capped -- see EXPERIMENT_PLAN.md for the table. Conditionality sets the sign on
+drug use, universality sets who ends up housed, and the only arm a newborn wants
+is the one with the most drug use.
+
+**CALIBRATION MUST NOT RESUME** against this file's "current best point". The
+vector in it was fitted against a benchmark that was not a solution.
+
+---
+
 ## 8 September 16:55 UTC -- the author settles TF: conditional on v=0. SCOPED, NOT BUILT.
 
 The author: *"As for the TF experiment, I want it to be conditional on v=0. So
