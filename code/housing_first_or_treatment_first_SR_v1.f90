@@ -42461,20 +42461,56 @@
             
         end do
                                                            
+        ! THE NEWBORN'S INHERITANCE IS THE BENCHMARK'S, AND THE GOVERNMENT TAKES
+        ! THE DIFFERENCE. The author, 9 September: *"you keep the newborns
+        ! bequests at their benchmark level and the government gets the
+        ! difference in the counterfactual"*.
+        !
+        ! upload_vars has read inheritance_amount from the benchmark's own file
+        ! at 33497, a few hundred lines above, and on the current benchmark that
+        ! is ZERO at all sixty ages. This block used to overwrite it with a
+        ! hard-coded constant, one per arm, of about 0.0133 -- and nothing could
+        ! ever revise it, because the update at 42760 is gated on
+        ! residual_bequests_to_government==0 and that parameter is 1, so
+        ! distance_inheritance_amount is zero on every loop.
+        !
+        ! inheritance_amount is NOT a warm start for something the loop solves.
+        ! It is a transfer, paid as
+        !     bequest = employment_grid(age,e)*inheritance_amount(age) + ...
+        ! to every household at every age in every period. At 0.0133 against an
+        ! average labour income of 0.637 that is 2.1 per cent of average income
+        ! a year for sixty years, given to everybody in every counterfactual and
+        ! to nobody in the benchmark. It showed up as bequests 0.4923 -> 0.8492
+        ! under rationed Treatment First, and since include_bequests=1 with
+        ! residual_bequests_to_government=1 puts the residual bequest into
+        ! government revenue at full weight, the budget rule returned the
+        ! windfall as a 7.7 point cut in the average labour income tax. Two
+        ! calibration targets moved in the counterfactual as a result: beta
+        ! 3.0018 -> 4.265 and tau_l 0.2241 -> 0.1475.
+        !
+        ! The null test caught it with NO policy change at all: the
+        ! counterfactual path at the benchmark's own switches reached net revenue
+        ! 0.9174 against the benchmark's 0.5452 by loop eight, with the tax
+        ! already walked to 0.0213 off the benchmark's zero.
+        !
+        ! The residual-bequests-to-government machinery is left exactly as it
+        ! was; it is the half of the author's rule that was already right. Only
+        ! the overwrite is gone. The rent, housing price and tax warm starts stay
+        ! -- rent and the housing price are pegged inside the loop anyway, and
+        ! the tax IS something the loop solves, so a starting guess for it is
+        ! legitimate.
         if (partial_equilibrium==0) then
                                     
             if (increased_prob_of_voucher_if_homeless_and_addicted==0) then
                 
                 if (probability_of_voucher_benchmark_used==1) then
                 
-                    inheritance_amount=1.372690695275861320E-002
                     rent(transition_length,:)=rent_calibrated(:)*1.042
                     housing_price(transition_length)=calibrated_stationary_housing_price*0.997
                     increase_in_labour_income_tax=-7.3590906975202195E-004
                     
                 else
                 
-                    inheritance_amount=1.3297417759844228E-002
                     rent(transition_length,:)=rent_calibrated(:)*1.0051228061206543528
                     housing_price(transition_length)=calibrated_stationary_housing_price*1.002
                     increase_in_labour_income_tax=1.4488423360367944E-003
@@ -42483,7 +42519,6 @@
                     
             else
                                                     
-                inheritance_amount=1.39072551538156174E-002
                 rent(transition_length,:)=rent_calibrated(:)*1.037
                 housing_price(transition_length)=calibrated_stationary_housing_price*0.997
                 increase_in_labour_income_tax=-2.59935794204448567E-003
@@ -42494,7 +42529,6 @@
         
             if (compare_to_original_benchmark==0) then
         
-                inheritance_amount=1.3696075975896095E-002
                 rent(transition_length,:)=1.1193194446996844
                 housing_price(transition_length)=12.961085243325376
                 increase_in_labour_income_tax=-3.6609417107389751E-003
