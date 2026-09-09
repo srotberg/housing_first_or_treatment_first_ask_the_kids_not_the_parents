@@ -3089,8 +3089,25 @@
         ! That is the same shape as the stale-constant defect found earlier
         ! today, where the benchmark used a live value and the counterfactual a
         ! frozen one.
+        ! THE LITERAL IS DELIBERATELY NOT 1.46d0, AND THAT IS NOT A TYPO.
+        !
+        ! `1.46` with no suffix is a DEFAULT-REAL literal: float32, widened to
+        ! double, so the value actually held is 1.4600000381469727 and not 1.46.
+        ! The original was `real(8), parameter :: drug_supply_curvature=
+        ! 1+1/drug_supply_elasticity`, which divided that widened float32 in
+        ! double. A variable's initialiser cannot reference another variable, so
+        ! it has to be written out -- and writing it as 1.46d0 changes the
+        ! curvature by 1.06e-8, which is exactly what made the exclusion null
+        ! miss bit-identical reproduction at the ninth digit on b, lambda_d, h_1,
+        ! pi_V, beta and w_bot. real(1.46,8) reproduces the original exactly.
+        !
+        ! THE SAME TRAP IS ALL OVER THIS FILE. Every `real(8) :: x=<literal>`
+        ! without a d0 suffix holds a float32-rounded value. "Correcting" any of
+        ! them moves every number that depends on it in the eighth digit, so
+        ! none should be touched casually, and certainly not in the same round as
+        ! a change whose whole acceptance test is bit-identical reproduction.
         real(8) :: drug_supply_elasticity=1.46
-        real(8) :: drug_supply_curvature=1+1/1.46d0
+        real(8) :: drug_supply_curvature=1+1/real(1.46,8)
         real(8) :: drug_supply_shifter=1
         real(8) :: distance_drug_market=0
         ! 5e-3, BECAUSE 1e-3 IS BELOW THE NOISE FLOOR AND MEASURABLY UNREACHABLE.
