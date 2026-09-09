@@ -281,3 +281,106 @@ b and sud_homeless contest multiple_find_if_addicted -- closing one opens the
 other -- and lambda_m is conceded with its instrument pinned at 60. A
 counterfactual run off a moving benchmark has to be run again when it moves.
 Settle the trade, freeze the benchmark, then Phase 1.
+
+---
+
+## 9 September: why every counterfactual came out richer than the benchmark
+
+The author, reading the phase 1 arms: *"The economic response for universal tf
+makes no sense and is too large in the counterintuitive way"*. They were right,
+and the cause is not in the policy.
+
+### The defect
+
+`long_run_counter_factual` overwrites `inheritance_amount` with a hard-coded
+constant, one per arm, at 42470-42497:
+
+    inheritance_amount=1.3297417759844228E-002    ! rationed TF
+    inheritance_amount=1.39072551538156174E-002   ! universal HF
+    inheritance_amount=1.372690695275861320E-002  ! universal TF
+
+`upload_vars` has already read the benchmark's own value at 33497, and on the
+current benchmark that value is ZERO at all sixty ages
+(`inheritance_amountbaseline_benchmark.dat` is sixty lines of zeros, and the
+benchmark log prints sixty zeros). The hard-coded line discards it.
+
+Nothing ever revises it. The update block at 42760 is gated on
+`residual_bequests_to_government==0` and that parameter is 1, so
+`distance_inheritance_amount` is zero on every loop and the constant stands for
+the whole solve. `inheritance_amountcounter_TF.dat` comes back as sixty lines of
+`.01329741813242` -- the warm start, untouched.
+
+These read as stale warm starts from a configuration in which the benchmark's
+own inheritance was non-zero. They are not warm starts for anything the loop
+solves.
+
+### Why it is large
+
+`inheritance_amount` is a live transfer, not a guess:
+
+    bequest = employment_grid(age_index,employment_index)*inheritance_amount(age_index) + ...
+
+paid to every household, at every age, in every period. At 0.0133 against an
+average labour income of 0.63725 that is about 2.1 per cent of average income a
+year for sixty years -- on the order of a year and a quarter of average labour
+income, given to everybody, in every counterfactual and in none of the
+benchmark.
+
+### The chain to the reported result
+
+| | benchmark | tf_rationed | universal_hf |
+|---|---|---|---|
+| `inheritance_amount` | 0 | 0.013297 | 0.013907 |
+| `model_bequests` | 0.4923 | 0.8492 (+72.5%) | 0.5034 (+2.2%) |
+| `beta` wealth over output | 3.0018 (target 3.0) | 4.265 | 2.676 |
+| `tau_l` average labour tax | 0.2241 (target 0.224) | 0.1475 | 0.2208 |
+| `increase_in_labour_income_tax` | 0 | +0.0574 (a CUT) | -0.0091 |
+
+`govt_revenues_to_use_in_tests` carries
+`(model_bequests - value_of_initial_assets - model_total_inheritance)` at FULL
+weight, because `include_bequests=1` and `residual_bequests_to_government=1`
+make the coefficient exactly one: unclaimed estates are government revenue.
+Bequests moving 0.492 to 0.849 is a windfall of the same order as the entire net
+budget of 0.545, and the budget rule returns it as a 7.7 point cut in the
+average labour income tax. Higher after-tax income, more drug use.
+
+Two calibration targets move in the counterfactual as a result -- `beta` by 42
+per cent and `tau_l` by 7.7 points -- which no voucher revocation can do.
+
+### What this does NOT yet explain
+
+The two arms get nearly the same hard-coded transfer, 0.0133 against 0.0139, yet
+universal HF comes out with wealth BELOW the benchmark and its tax essentially
+unmoved. So there is a level defect, identified here, and possibly a second
+arm-specific one on top of it.
+
+### The null test, which should have been run before any arm
+
+The counterfactual path at the BENCHMARK'S OWN switches
+(`voucher_conditional_on_clean=0`,
+`increased_prob_of_voucher_if_homeless_and_addicted=1`,
+`probability_of_voucher_benchmark_used=0.0433173`) has to reproduce
+
+    net_govt_revenues = 0.545217
+    tau_l             = 0.2241
+    beta              = 3.0018
+
+and a conditionality-only arm behind it separates the two switches that
+`tf_rationed` moves together. Until the null passes, no arm's numbers mean
+anything. The cleared-price universal TF run was stopped to give the null the
+cores; its partial log is kept as `code/PARTIAL_universal_tf_cleared.log`.
+
+### For the author to settle, because it is accounting and not code
+
+- should the counterfactual inherit the benchmark's `inheritance_amount` (zero,
+  so the transfer disappears), or actually solve for it, which needs
+  `residual_bequests_to_government` set so the update block runs;
+- should the residual bequest fund the counterfactual's tax at all? As it
+  stands, any policy that changes saving changes the government's non-tax
+  revenue by more than the policy costs.
+
+### Also found, and separate
+
+`experiment_table.py`'s "change in average tax" row reports -3.9pp where the
+model's own `tau_l` moment says -7.7pp. The row reconstructs the rate instead of
+reading `tau_l`, and it should read `tau_l`.
