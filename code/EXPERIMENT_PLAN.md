@@ -384,3 +384,113 @@ cores; its partial log is kept as `code/PARTIAL_universal_tf_cleared.log`.
 `experiment_table.py`'s "change in average tax" row reports -3.9pp where the
 model's own `tau_l` moment says -7.7pp. The row reconstructs the rate instead of
 reading `tau_l`, and it should read `tau_l`.
+
+---
+
+## 9 September, later: the full state after four defects
+
+The author asked for the whole plan in one place. This is it.
+
+### FIXED AND COMMITTED
+
+1. `inheritance_amount` overwrite (04bc57b5). long_run_counter_factual replaced
+   the benchmark's zero with a hard-coded ~0.0133 at all sixty ages -- a
+   transfer of about 2 per cent of average labour income a year for life, paid
+   in every counterfactual and in none of the benchmark. It could never be
+   revised, because the update block at 42760 is gated on
+   `residual_bequests_to_government==0` and that parameter is 1.
+
+   The author's rule, which the code now implements exactly: no inheritance
+   anywhere; a flat endowment paid to newborns only, held at the benchmark's
+   average labour income; and the government takes the difference between the
+   bequests in each equilibrium and that fixed endowment.
+
+2. Stale income constants (4075635b). `average_labor_income_calibrated` was
+   declared 0.637248 against a realised 0.646389, and `median_income_calibrated`
+   0.475981 against 0.431324 -- ten per cent out. A counterfactual overwrites
+   both in upload_vars; the benchmark never calls upload_vars, so it ran on the
+   declarations. The median one was inert (every voucher site selects
+   `is_counterfactual*median_income_calibrated`); the income one was not, since
+   the wealth and income histogram bin edges read it with no selector. A
+   STALE CONSTANT guard beside the benchmark's own write now prints if the
+   benchmark drifts more than half a per cent from either.
+
+3. Stale rent and housing price warm starts (4075635b), in the same block:
+   `rent_calibrated*1.0051` and `calibrated_stationary_housing_price*1.002`.
+   Masked by fix_rent and peg_prices_in_counterfactual, which overwrite both
+   inside the loop -- but a constant that is harmless only because something
+   downstream overwrites it is one edit from being harmful.
+
+4. The tax search (4075635b, corrected in the follow-up). Two defects. The gain
+   was `0.005*gap` against a Newton step of about `1.46*gap`, three hundred
+   times too small, so no arm could close the budget inside the eighty loop cap
+   and each exited on the loose tolerance mid-walk. And it integrated the cold
+   start: the distribution begins far from stationary, loop-one revenue runs 1.4
+   to 2.4 against a target of 0.545, and an integrator cannot give that back.
+   Across four runs the final tax tracked loop-one revenue and not the policy,
+   and a null with NO policy change walked further than either TF arm.
+
+   Replaced with a guarded secant plus a hold. The hold criterion was wrong
+   first time -- it compared the drift to the GAP, which is permissive exactly
+   when the cold start is worst -- and now compares it to
+   stopping_rule_govt_budget: do not move the tax while revenue is still moving
+   further per loop than the distance the budget is being asked to close.
+
+### THE ACCEPTANCE TEST, WHICH GATES EVERYTHING
+
+The null -- the counterfactual path at the BENCHMARK'S OWN switches -- must
+return
+
+    net_govt_revenues = 0.545217   tau_l = 0.2241   beta = 3.0018
+    increase_in_labour_income_tax ~ 0
+    b = 0.077700   h_1 = 0.011650   lambda_d = 0.033558
+
+No arm's numbers mean anything until it does. It should have been run before any
+arm was, and was not.
+
+### FOUND, NOT FIXED, NEEDS THE AUTHOR
+
+- ENFORCEMENT TIMING. probability_of_false_positive=0.05 is applied every
+  period, so a clean household has a 13 per cent chance (0.95^40) of never being
+  wrongly removed across a life; probability_of_detection=0.9 per period makes
+  detection certain over a decade. These read as per-TEST rates applied per
+  PERIOD.
+- TF'S SANCTION IS ONE PERIOD, NOT A TERMINATION. Stop using and the voucher
+  returns at 0.95. Real programmes terminate with a re-application delay. This
+  is the largest single reason the stylized model's TF deters everyone
+  (`sudt=0.000`) and the quantitative model's deters almost nobody.
+- THE BEQUEST ARITHMETIC THAT DOES NOT BALANCE. A transfer costing about 0.013 a
+  period was associated with 0.357 a period of extra estates. Either the
+  population mass is being misread or there is a second leak. Needs
+  model_total_inheritance printed, which is a diagnostic and not a model change.
+- THREE INCONSISTENT CAPS on penalty_child_addicted: 0.4 in the calibrator, 0.6
+  in the handover, 0.9 in a warning.
+- experiment_table.py reconstructs the average tax rather than reading the
+  model's own tau_l moment, which is why it reported -3.9pp where tau_l said
+  -7.7pp.
+
+### OPEN ON THE ECONOMICS, NOT BUGS
+
+- Participation elasticity -3.14 against -0.63. The flat hazard is why: with
+  addiction_onset_base charged on any use whatever the dose, the only way to
+  escape it is to stop, so the extensive margin carries the whole response.
+- The author's trap, and it is correct: a pure dose hazard with no base needs a
+  large b to deter the first unit, which needs theta up to hold the 14 per cent
+  spending share, which cuts the effective housing weight gamma*(1-theta) --
+  and since gamma*(1-theta)*[log h_small - log h_1] is the ONLY deterrent to the
+  street (consumption_penalty_homeless, extra_job_loss_if_homeless and
+  homeless_job_penalty_pp are all zero), size_homelessness would have to fall
+  from 2.75e-5 to about 2e-10 at theta=0.7 and 1e-14 at theta=0.8 to hold the
+  deterrent constant. Not a calibration. The way out is base PLUS dose, since
+  the marginal hazard lambda*exp(-lambda*v) does not involve the base at all;
+  that grid has not been run.
+- Intensive elasticity -1.37 against -0.55, and nothing in the hazard shape
+  moves it.
+- Child SUD odds ratio cannot reach 2.0 within any plausible penalty; child
+  homelessness ratio needs a penalty under 0.07 against Chetty, Hendren and
+  Katz's 0.31.
+
+### WHAT IS VOID
+
+Every counterfactual run before 4075635b. The benchmark is unaffected -- the
+overwrites were all in long_run_counter_factual.
