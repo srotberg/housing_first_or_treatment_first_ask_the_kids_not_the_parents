@@ -665,6 +665,18 @@
         ! carries about a tenth to a fifth of the intergenerational
         ! correlation and genes, environment and behaviour carry the rest.
         real(8) :: penalty_child_addicted=0.24
+        ! ONE CAP, IN ONE PLACE. There were four numbers doing this job and no
+        ! two agreed: 0.4 in the calibrator, 0.6 when restoring from file, 0.6 on
+        ! the handover, and 0.9 in the warning that says the parameter is pinned
+        ! at a bound. A run could therefore be clamped at 0.6 by the handover
+        ! while the calibrator believed the ceiling was 0.4 and the warning
+        ! watched for 0.9. The author, 9 September: *"make it all a cap at
+        ! 0.99"*.
+        !
+        ! It bounds a penalty applied as (1-penalty_child_addicted)**d_index, so
+        ! 0.99 leaves the child of an addicted parent a hundredth of the
+        ! productivity draw and one is the degenerate case.
+        real(8), parameter :: penalty_child_cap=0.99d0
         ! TWO, NOT THREE, AND THE CHANGE IS ABOUT WHICH POPULATION.
         !
         ! Three was the midpoint of a two to four range, but that range
@@ -4464,20 +4476,45 @@
         real(8) :: secant_revenue_tax=0
         real(8) :: secant_tax_level=0
         integer :: have_tax_secant=0
-        ! HOLD THE TAX WHILE REVENUE IS STILL MOVING BY MORE THAN THE ACCURACY
-        ! THE BUDGET IS BEING ASKED FOR. The first try compared the drift to the
-        ! GAP, and that is backwards: early on the gap is huge, so a drift of
-        ! 0.078 looked small against 1.955 and the hold released on loop two --
-        ! permissive exactly when the cold start is worst, strict later when it
-        ! no longer matters. Revenue had in fact risen between those two loops,
-        ! which is as clear a statement as the model can make that it is still in
-        ! transit. Compared against the tolerance instead, the test says the
-        ! right thing: if revenue is still moving further per loop than the
-        ! distance you intend to close, the gap is not yet a fact about the
-        ! policy and there is nothing to respond to.
+        ! CONVERGE THE DRUG MARKET, THEN MOVE THE TAX. A NESTED FIXED POINT, NOT
+        ! A TUNED TOLERANCE.
+        !
+        ! Two tolerance-shaped attempts at this both failed, and it is worth
+        ! recording why rather than trying a third threshold.
+        !
+        !   FIRST: hold while the revenue drift exceeds a quarter of the GAP.
+        !   Backwards -- the gap is huge early, so a drift of 0.078 looked small
+        !   beside 1.955 and the hold released on loop two, permissive exactly
+        !   when the cold start is worst.
+        !
+        !   SECOND: hold while the drift exceeds the budget tolerance. Better,
+        !   but revenue PLATEAUS TRANSIENTLY. On universal Treatment First it
+        !   ran 3.2031, 3.2477, 3.2492 -- a drift of 0.0015 on loop three, well
+        !   inside the tolerance -- while distance_drug_market was still swinging
+        !   0.108, 0.076, 0.096, twenty times its own stopping rule. The economy
+        !   was nowhere near settled and the test believed it was. For scale, the
+        !   pre-fix null took eighteen loops to fall from 2.44 to 0.76, so a
+        !   two-loop plateau at loop three says nothing at all.
+        !
+        ! The structural statement is the one to make. Rent and the housing price
+        ! are PEGGED in a counterfactual, so their distances are identically
+        ! zero and the drug market is the only other live market. "The rest of
+        ! the equilibrium has converged at the current tax" therefore reduces to
+        ! one testable condition, and the tax becomes the outer loop of a nested
+        ! fixed point rather than an instrument fighting a moving economy.
+        !
+        ! The drift test is kept as a second condition, because the drug market
+        ! can clear while the distribution is still settling. Both must hold.
         real(8), parameter :: tax_hold_drift_tolerance_mult=1.0d0
+        ! How close the drug market must be to its own stopping rule before the
+        ! tax may move. Two, not one, so the tax is not held hostage to the last
+        ! digit of a market that the tax itself perturbs.
+        real(8), parameter :: drug_settled_mult_for_tax=2.0d0
         ! ... but never hold past this, so a run that drifts forever still moves.
-        integer, parameter :: tax_hold_max_loops=25
+        ! The escape, so a run whose drug market never quite settles still moves
+        ! its tax rather than capping with the budget untouched. Raised from 25:
+        ! the drug market takes into the twenties to come inside twice its rule.
+        integer, parameter :: tax_hold_max_loops=35
         ! Damping on the secant step, and a cap so one bad slope cannot throw the
         ! tax across the plausible range in a single loop.
         real(8), parameter :: tax_step_damping=0.5d0
@@ -15766,6 +15803,31 @@
         if (solve_transition_dynamics==0) then
                 
             write(*,*) "net_govt_revenues=", net_govt_revenues(time_period)
+
+            ! THE BUDGET, COMPONENT BY COMPONENT. Added because an arithmetic
+            ! check would not close: a transfer costing the government about
+            ! 0.013 a period was associated with 0.357 a period of extra estates,
+            ! a ratio of twenty-seven to one that no steady state supports. Either
+            ! the population mass is being misread or something in here does not
+            ! net. It cannot be settled from the aggregate alone, so the pieces
+            ! print.
+            write(*,*) "BUDGET total_revenues=", total_govt_revenues(time_period)
+            write(*,*) "BUDGET ss=", govt_spending_on_ss(time_period),&
+                " ui=", govt_spending_on_ui(time_period),&
+                " di=", govt_spending_on_di(time_period)
+            write(*,*) "BUDGET food_stamps=", govt_spending_on_food_stamps(time_period),&
+                " vouchers=", govt_spending_on_housing_vouchers(time_period),&
+                " vouchers_2=", govt_spending_on_housing_vouchers_2(time_period)
+            write(*,*) "BUDGET drug_tests=", govt_spending_on_drug_tests,&
+                " homeless=", govt_spending_on_homeless(time_period),&
+                " addicts=", govt_spending_on_addicts(time_period)
+            write(*,*) "BUDGET bequests=", model_bequests(time_period),&
+                " initial_assets=", value_of_initial_assets,&
+                " inheritance_paid=", model_total_inheritance(time_period)
+            write(*,*) "BUDGET bequest_residual=",&
+                model_bequests(time_period)-value_of_initial_assets-&
+                model_total_inheritance(time_period),&
+                " lump_sum=", govt_lump_sum_transfers(time_period)
             
         end if
     
@@ -37636,7 +37698,7 @@
             ! leader and the simplex's vertex at 0.421 was SILENTLY CLAMPED to
             ! 0.4, so the point measured the base and the search learned
             ! nothing -- the same failure kappa_uem's arms had at 0.10 and 0.30.
-            penalty_child_addicted=max(min(penalty_child_addicted,0.6d0),0.d0)
+            penalty_child_addicted=max(min(penalty_child_addicted,penalty_child_cap),0.d0)
             read(72,'(F30.15)') penalty_child_addicted_adjuster
             read(72,'(F30.15)') previous_gap_penalty_child
             read(72,'(I10)') have_gap_penalty_child
@@ -38429,7 +38491,7 @@
                 case ("penalty_child_addicted")
                     write(*,*) "HANDOVER penalty_child_addicted:",&
                         penalty_child_addicted, "->", handover_value
-                    penalty_child_addicted=max(min(handover_value,0.6d0),0.d0)
+                    penalty_child_addicted=max(min(handover_value,penalty_child_cap),0.d0)
 
                 ! BLOCK A, SO IT CAN BE PINNED WHILE A LATER BLOCK IS SWEPT.
                 ! Income, hours, wealth and the tax rate are upstream of every
@@ -40796,7 +40858,7 @@
                             ! is 0.31 and already inside it.
                             penalty_child_addicted=&
                                 max(min(penalty_child_addicted-penalty_child_addicted_adjuster*&
-                                gap_penalty_child_1,0.4d0),0.d0)
+                                gap_penalty_child_1,penalty_child_cap),0.d0)
 
                             distance_penalty_child_addicted=abs(gap_penalty_child_1)
 
@@ -40809,7 +40871,7 @@
                             call create_newborn_employment_probability()
 
                             if ((penalty_child_addicted<=10.d0**(-8)) .OR. &
-                                (penalty_child_addicted>=0.9d0-10.d0**(-8))) then
+                                (penalty_child_addicted>=penalty_child_cap-10.d0**(-8))) then
 
                                 write(*,*) "delta_d IS PINNED AT A BOUND", penalty_child_addicted,&
                                     " and the child SUD ratio is ", child_sud_ratio_model_1,&
@@ -43078,13 +43140,15 @@
                         have_last_revenue_tax=1
 
                         if ((loop_count<=tax_hold_max_loops) .AND. &
-                            (tax_drift_1>tax_hold_drift_tolerance_mult*stopping_rule_govt_budget)) then
+                            ((tax_drift_1>tax_hold_drift_tolerance_mult*stopping_rule_govt_budget) .OR. &
+                             (distance_drug_market>drug_settled_mult_for_tax*stopping_rule_drug_market))) then
 
                             ! STILL IN TRANSIT. Record and do not act. Acting here
                             ! is what put the whole cold start into the tax: the
                             ! gap is not yet a fact about the policy.
-                            write(*,*) "TAX HELD: revenue still drifting, drift=",&
-                                tax_drift_1, " gap=", tax_gap_1
+                            write(*,*) "TAX HELD: drift=", tax_drift_1,&
+                                " gap=", tax_gap_1,&
+                                " drug=", distance_drug_market
 
                         else
 

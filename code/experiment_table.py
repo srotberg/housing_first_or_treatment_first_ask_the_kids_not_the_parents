@@ -49,11 +49,22 @@ WANT_MOMENT = {"h_1": "homelessness rate",
                "b": "participation rate",
                "lambda_d": "SUD rate",
                "pi_eu": "unemployment rate",
-               "tau_u": "treatment take-up, given a SUD"}
+               "tau_u": "treatment take-up, given a SUD",
+               # READ THE MODEL'S OWN AVERAGE TAX, DO NOT RECONSTRUCT IT.
+               # This row used to be -increase_in_labour_income_tax * ybar**0.85,
+               # a reconstruction of the change in tax REVENUE at the mean, and
+               # it reported -3.9pp where the model's own tau_l said -7.7pp. Two
+               # ways to compute one number is two numbers.
+               "tau_l": "average labour income tax",
+               # Wealth over output is a calibration target the benchmark hits at
+               # 3.0, so a counterfactual that moves it is saying something about
+               # the solve rather than about the policy. It belongs in this table
+               # for the same reason tau_l does.
+               "beta": "wealth over output"}
 WANT_UNTARG = {"mean age of drug users": "average age of drug users"}
 ROWS = ["homelessness rate", "participation rate", "SUD rate",
         "CEV of newborns", "unemployment rate",
-        "change in average tax at benchmark income",
+        "average labour income tax", "wealth over output",
         "treatment take-up, given a SUD", "average age of drug users"]
 
 
@@ -140,7 +151,6 @@ def main():
     ybar = bench["_loose"].get("average_labor_income_calibrated") \
         or bench["_loose"].get("model_average_income")
     bench["CEV of newborns"] = 0.0
-    bench["change in average tax at benchmark income"] = 0.0
 
     cols = [("benchmark", bench)]
     for name in ("tf_rationed", "universal_hf", "universal_tf"):
@@ -153,9 +163,6 @@ def main():
             continue
         cev = d["_loose"].get("welfare_of_gains_by_addiction")
         d["CEV of newborns"] = cev if cev is not None else float("nan")
-        _, inc = lambda_of(model_log)
-        if ybar and base_lambda is not None:
-            d["change in average tax at benchmark income"] = -inc * ybar ** KAPPA
         cols.append((name, d))
 
     if len(cols) == 1:
