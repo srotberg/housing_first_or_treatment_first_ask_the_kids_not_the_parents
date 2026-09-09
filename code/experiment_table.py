@@ -153,8 +153,23 @@ def main():
     bench["CEV of newborns"] = 0.0
 
     cols = [("benchmark", bench)]
-    for name in ("tf_rationed", "universal_hf", "universal_tf"):
-        model_log = model_log_for(os.path.join(HERE, "p1_%s.log" % name))
+    # THE ARM LOGS, AND WHY THEY ARE NAMED HERE RATHER THAN GLOBBED.
+    #
+    # This list used to read p1_<name>.log, which are the runs from BEFORE the
+    # night of 8-9 September. Every one of those is void -- they were solved
+    # against a benchmark that was not a stationary equilibrium. The benchmark
+    # column, meanwhile, comes from benchmark_of_record.txt and IS the converged
+    # one, so the table was silently pairing a good benchmark with dead
+    # counterfactuals and would have been read as a valid comparison.
+    #
+    # Adding a new arm means adding a line here. That is deliberate: a glob
+    # would pick up whatever happened to be in code/, which is how the stale
+    # pairing survived in the first place.
+    for name, log in (("tf_rationed", "a3_tf_rationed.log"),
+                      ("universal_hf", "a4_universal_hf.log"),
+                      ("universal_tf", "a2_universal_tf.log"),
+                      ("cond_only", "a5_cond_only.log")):
+        model_log = model_log_for(os.path.join(HERE, log))
         d = scrape(model_log) if model_log else None
         # A LOG THAT EXISTS IS NOT A RUN THAT FINISHED. A counterfactual that
         # is still building or still iterating has a log with no moments block
