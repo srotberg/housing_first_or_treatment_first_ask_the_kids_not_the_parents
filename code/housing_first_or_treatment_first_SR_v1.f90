@@ -7599,6 +7599,36 @@
             else
 
                 val_price_base_1=price_of_addictive_good
+
+                ! MEASURE BOTH POINTS THE SAME WAY. The base used to be read
+                ! straight off the main loop's distribution while the raised
+                ! point got an extra solve-and-converge, so the two were not
+                ! produced by the same procedure and the difference between the
+                ! procedures was counted as a price response.
+                !
+                ! The author asked for the null that catches it: step the price
+                ! by ZERO and see whether participation moves. It moved by
+                ! +8.6661 per cent -- users 0.0775553 to 0.0842763 at a price of
+                ! 1.0000000 in both -- which is a spurious participation
+                ! elasticity of +0.87199 with the WRONG SIGN, sitting inside a
+                ! reported -3.2074. Quantity per addict moved -2.8396 per cent
+                ! the other way, a spurious -0.30224 inside a reported -1.4821, a
+                ! fifth of it.
+                !
+                ! One extra solve at the BASE price, before anything is recorded,
+                ! makes the two points symmetric and the difference between them
+                ! the price and nothing else. It costs a third solve, which is
+                ! the right price for a number the paper quotes.
+                !
+                ! NOTE FOR LATER, because it is a bigger fact than the
+                ! elasticity: one more pass at an unchanged price moving
+                ! participation by 8.7 per cent says the main loop's own
+                ! convergence is loose in the moment that matters most here.
+                call solve_value_function_and_policy_functions(1)
+                call converge_to_stationary_equilibrium(1)
+                call stationary_equilibrium_statistics(1)
+                call govt_revenues_calc(1)
+
                 val_users_base_1=model_total_drug_users(1)
                 val_qty_base_1=model_drugs_used_by_users_on_average(1)
                 val_qty_addict_base_1=model_drugs_used_by_addicts_on_average(1)
