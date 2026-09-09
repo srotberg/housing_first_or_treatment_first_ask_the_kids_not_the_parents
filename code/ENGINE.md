@@ -1,5 +1,47 @@
 # The calibration engine
 
+> ## THE BENCHMARK OF RECORD IS NOT A FIXED POINT. READ THIS FIRST.
+>
+> Found 9 September, and it sits upstream of every number in the archive.
+>
+> The benchmark's state is written at a `stop` inside the b-sweep, before the
+> calibration's outer `do while` is ever satisfied. At the moment of writing,
+> that loop's own test reads
+>
+>     distance_average_labor_income  = 1.8281e-2   against a rule of 1e-4
+>
+> a hundred and eighty-three times its tolerance. The saved state is therefore
+> one iterate of a search, not an equilibrium, and anything that RE-SOLVES from
+> it moves. Two things do, and both were mistaken for economics:
+>
+> * the price elasticity block re-solves, and at a **zero** price step it found
+>   users **+8.67 per cent** -- a spurious participation elasticity of +0.872,
+>   with the wrong sign, inside a reported -3.207;
+> * `long_run_counter_factual` re-solves, and lands on a different economy with
+>   no policy change at all.
+>
+> **So every counterfactual in the archive was measuring the distance between
+> two code paths on top of whatever the policy did.** The four defects fixed on
+> 9 September -- the inheritance overwrite, the stale income constants, the
+> stale price warm starts and the tax integrator -- were all real and all worth
+> fixing, and none of them would have made a null test pass, because the thing a
+> null compares against was not a solution.
+>
+> **The remedy, on the author's instruction** (*"you have to converge on the
+> actual calibrated model's stationary equilibrium"*): the save path now
+> iterates the EQUILIBRIUM map at frozen parameters -- value function,
+> distribution, statistics, budget -- until the largest move across `b`,
+> `lambda_d`, `h_1` and average labour income falls below 1e-6, and saves after
+> that. It never re-enters the calibration update block, so no calibrated
+> parameter can move. Look for `FROZEN PASS` and `FROZEN CONVERGED` in a save
+> run's log; `FROZEN DID NOT CONVERGE` means the saved state is still not a
+> fixed point and nothing downstream of it should be believed.
+>
+> **CALIBRATION MUST NOT RESUME** until a benchmark has been produced this way
+> and a null test -- the counterfactual path at the benchmark's own switches --
+> reproduces it. Restarting a search against a moving target is how the archive
+> filled with points whose moments cannot be reproduced by re-solving them.
+
 > ## PHASE 2. THE CALIBRATION IS STOPPED. READ THIS BEFORE THE FIRING SEQUENCE.
 >
 > The author, 8 September: *"and i think you can stop the calibration and test
