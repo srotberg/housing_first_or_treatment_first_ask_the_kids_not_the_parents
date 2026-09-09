@@ -4605,10 +4605,27 @@
         ! 0.0005 in lambda moves revenue about 0.012, half the tolerance: small
         ! enough that a blind first step cannot overshoot, and the secant takes
         ! over from the second step onward with a real slope.
-        real(8), parameter :: max_tax_move=0.0005d0
+        ! TWO CAPS, BECAUSE THE TWO KINDS OF STEP FAIL DIFFERENTLY.
+        !
+        ! A BLIND step -- no secant yet, so the size comes from a guessed gain --
+        ! can be arbitrarily wrong and must be capped hard. 0.0005 moves revenue
+        ! about 0.015, well inside the 0.025 tolerance, so a blind step cannot
+        ! overshoot even when the gain is wrong.
+        !
+        ! A SECANT step is self-limiting: it is -0.5*gap/slope on a slope the tax
+        ! itself measured, so it lands at half the gap by construction and cannot
+        ! run away. Capping it at 0.0005 as well was an over-correction, and it
+        ! cost the universal Treatment First arm its convergence: at loop 32 the
+        ! budget gap sat at 0.63 with a measured slope of -29.7, so the Newton
+        ! step was 0.021 and the cap allowed 0.0005 -- forty times too small. The
+        ! gap went 0.644, 0.617, 0.614, 0.632 across four loops: flat, because the
+        ! steps were smaller than the economy's own movement, and the run would
+        ! have hit the eighty loop cap with the budget untouched.
+        real(8), parameter :: max_tax_move_blind=0.0005d0
+        real(8), parameter :: max_tax_move_secant=0.03d0
         ! A half Newton step on the AGGREGATE slope: 0.5/23.25 = 0.0215.
         real(8), parameter :: tax_fallback_gain=0.0215d0
-        real(8) :: tax_gap_1,tax_slope_1,tax_step_1,tax_drift_1
+        real(8) :: tax_gap_1,tax_slope_1,tax_step_1,tax_drift_1,max_tax_move_1
         
         real(8), dimension(1-solve_transition_dynamics:transition_length) :: housing_price
         
@@ -43446,14 +43463,16 @@
                             if (tax_slope_1<-10.d0**(-4)) then
 
                                 tax_step_1=-tax_step_damping*tax_gap_1/tax_slope_1
+                                max_tax_move_1=max_tax_move_secant
 
                             else
 
                                 tax_step_1=tax_fallback_gain*tax_gap_1
+                                max_tax_move_1=max_tax_move_blind
 
                             end if
 
-                            tax_step_1=max(min(tax_step_1,max_tax_move),-max_tax_move)
+                            tax_step_1=max(min(tax_step_1,max_tax_move_1),-max_tax_move_1)
 
                             secant_revenue_tax=net_govt_revenues(transition_length)
                             secant_tax_level=increase_in_labour_income_tax
