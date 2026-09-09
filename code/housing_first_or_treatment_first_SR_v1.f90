@@ -4464,10 +4464,18 @@
         real(8) :: secant_revenue_tax=0
         real(8) :: secant_tax_level=0
         integer :: have_tax_secant=0
-        ! Hold the tax while revenue is still moving by more than this fraction
-        ! of its own distance from target: the economy is in transit and the gap
-        ! is not yet a fact about the policy.
-        real(8), parameter :: tax_hold_drift_fraction=0.25d0
+        ! HOLD THE TAX WHILE REVENUE IS STILL MOVING BY MORE THAN THE ACCURACY
+        ! THE BUDGET IS BEING ASKED FOR. The first try compared the drift to the
+        ! GAP, and that is backwards: early on the gap is huge, so a drift of
+        ! 0.078 looked small against 1.955 and the hold released on loop two --
+        ! permissive exactly when the cold start is worst, strict later when it
+        ! no longer matters. Revenue had in fact risen between those two loops,
+        ! which is as clear a statement as the model can make that it is still in
+        ! transit. Compared against the tolerance instead, the test says the
+        ! right thing: if revenue is still moving further per loop than the
+        ! distance you intend to close, the gap is not yet a fact about the
+        ! policy and there is nothing to respond to.
+        real(8), parameter :: tax_hold_drift_tolerance_mult=1.0d0
         ! ... but never hold past this, so a run that drifts forever still moves.
         integer, parameter :: tax_hold_max_loops=25
         ! Damping on the secant step, and a cap so one bad slope cannot throw the
@@ -43070,7 +43078,7 @@
                         have_last_revenue_tax=1
 
                         if ((loop_count<=tax_hold_max_loops) .AND. &
-                            (tax_drift_1>tax_hold_drift_fraction*abs(tax_gap_1))) then
+                            (tax_drift_1>tax_hold_drift_tolerance_mult*stopping_rule_govt_budget)) then
 
                             ! STILL IN TRANSIT. Record and do not act. Acting here
                             ! is what put the whole cold start into the tax: the
