@@ -211,6 +211,14 @@ bash code/run_one_point.sh $(grep -m1 '^VECTOR' code/benchmark_of_record.txt | s
 ```
 
 Four cores, gfortran 13.3.0, `-O3`; 3 to 4.5 minutes a point including the second
-solve the elasticity block needs. The point files are NOT committed with this
-report — only the report is — so the four solves above have to be re-run to
-recover them.
+solve the elasticity block needs.
+
+The four point files ARE committed alongside this report, so every number in the
+tables above can be checked without re-solving. Run A's vector had an archived
+point measured on an earlier economy; `run_one_point.sh` moved it to
+`code/points_superseded/point_6876263050.20260909T015424Z.txt` and re-solved,
+which is that script's own convention and not a hand edit.
+
+The `measure_price_elasticity` edit is deliberately NOT committed — the file on
+this branch still reads `=0`. Re-apply the `sed` above before re-running, or the
+elasticity block prints `ELASTICITY SKIPPED` and measures nothing.

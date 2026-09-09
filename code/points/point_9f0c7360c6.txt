@@ -1,0 +1,510 @@
+point 9f0c7360c6 solved in 4 min on 4 cores
+HANDOVER OK: 80 of 80 parameters applied
+MODEL 873cb2fa1f
+VECTOR addiction_onset_base=0 addiction_scalar_1=0.00254988 bottom_productivity_level=0 consumption_penalty_homeless=0 cost_per_drug_test=0.00031 discount_factor=0.934317 discount_factor_impatient=0.95 endowment_is_a_transfer=1 extra_job_loss_if_homeless=0 financial_grid_expander_negative=1 financial_grid_expander_positive=3 fixed_productivity=0 homeless_death_risk_flat_in_age=2 homeless_excess_death_risk=0.00396 homeless_job_penalty_pp=0 housing_status_grid_expander=1 include_unsecured_borrowing=0 increased_prob_if_homeless=0.2 increased_prob_of_voucher_if_homeless_and_addicted=1 kappa_find_smi=60 kappa_phi_d_level=8 kappa_uem=1 kkk_s_deviation_bottom=3.4113 kkk_s_deviation_top=3 kkk_sigma_scale=1.89703 labor_income_tax_rate=0.782021 lambda_addiction=0.8 lambda_m=0.0663688 largest_house_size=0.6 max_age_to_choose_homelessness=58 max_food_cost=0.0412539 max_ui_as_perc_of_avg_inc=1 measure_child_gap=0 merge_bottom_nodes=2 merge_from_node=2 money_cost_of_treatment=0 mu_homeless=0.560903 multiple_find_if_addicted=28.5416 multiple_of_probabilities_of_employment_if_addicted=1 newborn_endowment_scale=0.464544 number_of_beta_types=1 penalty_child_addicted=0.24 penalty_child_homeless=0.31 persistence_employment_surviving=0.9 persistence_fixed_employment_newborn=0.5 persistent_income_risk=0 probability_becoming_unemployed=0.0196932 probability_of_detection=0.9 probability_of_false_positive=0.05 probability_of_voucher_benchmark_used=0.0433173 relative_share_of_addiction_1=0.27 relative_share_of_housing=0.221181 relative_share_of_leisure=4.23887 replacement_rate_ui=0.5 restrict_borrowing_to_impatient=1 rho_d=1 rho_m=1 rho_productivity=0.98 rr_homeless_hold_age=64 rr_homeless_old_level=9 rung_ratio_h3=2 rung_ratio_h4=3 sd_employment_surviving=0.2 sd_fixed_employment_newborn=0.309 sd_permanent_productivity=1.63649 size_homelessness=2.7525e-05 smallest_rental_relative_to_lowest_income=0.102084 smi_onset_level=0.0038043 ssi_floor_level=0.1774 ssi_floor_takeup=1 unsecured_borrowing_limit=0.3 unsecured_borrowing_rate=0.055 use_pia_formula=1 use_unemployment_by_productivity=1 utility_cost_of_treatment=12.6916 value_of_life=177.77 voucher_conditional_on_clean=0 voucher_conditional_on_clean_just_addicts=0 weight_on_child=0.007 y_grid_kappa=3.2 zeta_DI=0.0
+DIAG cheapest rental over lowest net income = smallest_house_size*rent(1)/net_income_lowest=   1.6360129775776004     
+ ===== ALL TARGETED MOMENTS =====
+ MOMENT sigma_y   bottom half labour income share model=  0.17221707245538176       target=  0.17199999999999999     
+ DIAG bottom half PRODUCTIVITY share (the old sigma_y) =  0.19811139884560591     
+ DIAG bottom half share of TOTAL income, all ages      =  0.19367083645938321     
+ MOMENT tau_l     average labour income tax   model=  0.21893024518765664       target=  0.22400000691413879     
+ MOMENT omega_l   labour supply / total hours model=  0.38275312128103239       target=  0.40000000596046448     
+ MOMENT beta      wealth over output          model=   3.0087973609985532       target=   3.0000000000000000     
+ MOMENT h_2       above half of spending      model=   9.0731686701197675E-002  target=   8.0000000000000002E-002
+ MOMENT h_3       share in the largest unit   model=   5.9597987704515146E-002  target=  0.62672300000000003     
+ DIAG unit           0  share of renters=  0.77658259335989943       of whom over half of income=  0.23516370705816236     
+ DIAG unit           1  share of renters=  0.16381941893558549       of whom over half of income=  0.12921650086243958     
+ DIAG unit           2  share of renters=   5.9597987704515153E-002  of whom over half of income=  0.15718830176115961     
+ DIAG aggregate rent / aggregate income           =  0.26176025572332795     
+ DIAG aggregate housing / aggregate expenditure   =  0.26532343589595048     
+ DIAG over half of EXPENDITURE, all households    =   9.0731686701197675E-002
+ DIAG over half of EXPENDITURE, housed only       =   9.1817410028434104E-002
+ UNTARGETED mean age of drug users            model=   50.484057467702542       observed=   39.600000000000001     
+ UNTARGETED users aged 34 or less, share      model=  0.19128908050796603       observed=  0.45273000000000002     
+ UNTARGETED users aged 35-44, share           model=  0.20803195483156270       observed=  0.19150000000000000     
+ UNTARGETED users aged 45-54, share           model=  0.19831222142979291       observed=  0.13580999999999999     
+ UNTARGETED users aged 55-64, share           model=  0.17777413947166923       observed=  0.12479000000000000     
+ UNTARGETED users aged 65 plus, share         model=  0.22459260375902421       observed=   9.5119999999999996E-002
+ DIAG income of WORKING AGE drug users / average   =   1.0644823421010812     
+ DIAG working age share of drug users             =  0.79180003457024350     
+ DIAG users band           1  use rate=  0.99911455451143583       share with the disorder=   3.0217954498603757E-002  income/average=  0.91333090907056824     
+ DIAG users band           2  use rate=  0.99667003556797207       share with the disorder=   6.9633971679850429E-002  income/average=   1.1021977675174892     
+ DIAG users band           3  use rate=  0.99182279034272736       share with the disorder=   7.0975069799314894E-002  income/average=   1.1859483950002694     
+ DIAG users band           4  use rate=  0.97058522190097629       share with the disorder=   4.6265371482382169E-002  income/average=   1.0564061772784861     
+ DIAG users band           5  use rate=  0.81822391914237236       share with the disorder=   2.3477725647903170E-002  income/average=  0.72993895144632792     
+ DIAG drug threshold, (phi/theta)*p*b            =   5.3692716442799993E-003
+ DIAG buyers: mean C                             =  0.34405541279466656     
+ DIAG non-buyers: mean C                         =  0.47341298420490646     
+ DIAG buyers: mean income                        =  0.54750638666273510     
+ DIAG non-buyers: mean income                    =  0.62169448000277006     
+ DIAG buyers as a share of clean households      =  0.94278629061372954     
+ DIAG assets of drug users / average net worth    =  0.87265330499243998     
+ DIAG assets of experimenters / average net worth =  0.87107265915099641     
+ DIAG assets with a SUD / average net worth       =  0.90411333641588187     
+ DIAG share with a NEGATIVE value of life         =   0.0000000000000000       raw mass=   0.0000000000000000       of    49.462088587725646     
+ DIAG lowest value of a period of life            =   10.386909650210555     
+ DIAG value of life, drug users                   =   164.75754656909803     
+ DIAG value of life, everyone else                =   157.11736757555269     
+ DIAG aleph itself, for scale                     =   177.77000000000001     
+ DIAG treatment price / average labour income     =   0.0000000000000000       data outpatient=   3.4000000000000002E-002  to   6.5000000000000002E-002
+ DIAG households receiving food stamps            =   9.4700254092697667E-002  data=  0.12500000000000000     
+ DIAG max allotment / avg labour income           =   6.5687783065784988E-002  data=   3.9586000000000003E-002
+ DIAG gross eligibility cutoff                     =  0.21895927688594999       data=  0.21487200000000001     
+ DIAG aggregate rent / output                     =  0.29088751717108613     
+ DIAG asset grid, reachable points                =   25.000000000000000     
+ DIAG share in the smallest unit                  =  0.77658259335989932     
+ MOMENT gamma     housing over expenditure    model=  0.26532343589595048       target=  0.26800000667572021     
+ UNTARGETED housing over income, renters      model=  0.32527789805071478       observed=  0.20200000000000001     
+ MOMENT h_1       homelessness rate           model=   1.1824808899531459E-002  target=   1.1599999852478504E-002
+ MOMENT b         total drug users            model=  0.94537384400794022       target=   8.9000001549720764E-002
+ MOMENT lambda_d  disorder rate               model=   4.5226107902418509E-002  target=   3.6800000816583633E-002
+ MOMENT theta     drug spending share         model=   1.7449625269131842E-002  target=  0.14098000526428223     
+ MOMENT aleph     value of life / income      model=   92.564934423442807       target=   80.000000000000000     
+ MOMENT pi_eu     unemployment rate           model=   4.9709443294892637E-002  target=   4.8999998718500137E-002
+ MOMENT kappa_ued unemployment given SUD      model=  0.17427337721446548       target=  0.16249999403953552     
+ MOMENT kappa_uem employment given SMI        model=  0.82154487916684782       target=  0.30000001192092896     
+ MOMENT p_m       SMI population share        model=   4.9185980868678494E-002  target=   4.8955817947204397E-002
+ MOMENT lambda_m  SMI share of the homeless   model=  0.22037516723170461       target=  0.25000000000000000     
+ MOMENT pi_V      eligibles with a voucher    model=  0.27340486401422165       target=  0.26600000262260437     
+ MOMENT cbar      food stamps / income        model=   4.6886715434836619E-003  target=   4.1999998502433300E-003
+ DIAG drug testing, aggregate spending            =   0.0000000000000000     
+ DIAG drug testing / output                       =   0.0000000000000000     
+ DIAG food stamps, aggregate spending             =  0.10318597419776834     
+ DIAG output, the denominator above               =   22.007507508427778       total income, which is NOT used=   24.456383573436717     
+ DIAG food stamps / average labour income (OLD)   =  0.16430102095885948     
+ MOMENT tau_u     treatment take up           model=  0.38555402306881853       target=  0.24500000476837158     
+ MOMENT mu_H      recovery housed / homeless  model=   1.5172299371149631       target=   1.4732142857142856     
+ UNTARGETED delta_d child SUD ratio           model=   1.0520506723624332       observed=   2.0000000000000000     
+ UNTARGETED wealth share bottom  1 pct        model=   0.0000000000000000       observed=  -1.5800000000000000E-003
+ UNTARGETED wealth share bottom  5 pct        model=   0.0000000000000000       observed=  -2.7899999999999999E-003
+ UNTARGETED wealth share bottom 10 pct        model=   0.0000000000000000       observed=  -2.8700000000000002E-003
+ UNTARGETED income share bottom  1 pct        model=   6.3968480779912496E-004  observed=   1.2000000000000000E-004
+ UNTARGETED income share bottom  5 pct        model=   3.1984240389956249E-003  observed=   3.1099999999999999E-003
+ UNTARGETED income share bottom 10 pct        model=   1.2802466009894757E-002  observed=   9.1500000000000001E-003
+ UNTARGETED wealth share bottom 20 pct        model=   5.7566753686200947E-004  observed=  -2.2599999999999999E-003
+ UNTARGETED income share bottom 20 pct        model=   4.2113211928287049E-002  observed=   2.7050000000000001E-002
+ DIAG income histogram mass / distribution (want 1.0) =   1.0000000000000224     
+ DIAG SUD rate, income band           1  model=   6.8885822963587751E-002  data=  0.13650000000000001     
+ DIAG SUD rate, income band           2  model=   1.4064371495806896E-002  data=  0.13080000000000000     
+ DIAG SUD rate, income band           3  model=   3.0063650295237845E-002  data=   9.1100000000000000E-002
+ DIAG SUD rate, income band           4  model=   7.5771809039459653E-002  data=  0.10199999999999999     
+ DIAG SUD rate, income band           5  model=  0.17378642459113258       data=   7.8600000000000003E-002
+ DIAG SUD rate, income band           6  model=   3.1174004323483107E-002  data=   7.1700000000000000E-002
+ DIAG SUD rate, income band           7  model=   3.5073941443403735E-002  data=   4.8200000000000000E-002
+ UNTARGETED delta_h child homelessness ratio  model=   3.4441545960124702       observed=   2.1000000000000001     
+ DIAG homelessness rate rebuilt from the bands    =   1.1824808899531284E-002
+ UNTARGETED homelessness rate, band           1  model=   1.4911422865274162E-002  observed=   3.1610000000000002E-003
+ UNTARGETED homelessness rate, band           2  model=   2.3737827187037212E-002  observed=   3.3779999999999999E-003
+ UNTARGETED homelessness rate, band           3  model=   1.3656329182987984E-002  observed=   2.9120000000000001E-003
+ UNTARGETED homelessness rate, band           4  model=   9.8284937862330151E-003  observed=   2.4960000000000000E-003
+ UNTARGETED homelessness rate, band           5  model=   6.1088768736043079E-004  observed=   7.6999999999999996E-004
+ UNTARGETED homelessness profile, band           1  model=   1.2610286552593020       observed=   1.2807941653160453     
+ UNTARGETED homelessness profile, band           2  model=   2.0074596882473204       observed=   1.3687196110210695     
+ UNTARGETED homelessness profile, band           3  model=   1.1548879393331506       observed=   1.1799027552674231     
+ UNTARGETED homelessness profile, band           4  model=  0.83117569761508792       observed=   1.0113452188006482     
+ UNTARGETED homelessness profile, band           5  model=   5.1661527264482504E-002  observed=  0.31199351701782818     
+ DIAG disorder rate, band           1                     =   3.0191198147119330E-002
+ DIAG disorder rate, band           2                     =   6.9402093030895673E-002
+ DIAG disorder rate, band           3                     =   7.0394691773126336E-002
+ DIAG disorder rate, band           4                     =   4.4904485846558997E-002
+ DIAG disorder rate, band           5                     =   1.9210036692176725E-002
+ DIAG SUD share of the homeless, band           1         =   9.0640894845197620E-002
+ DIAG SUD share of the homeless, band           2         =  0.17343669668206635     
+ DIAG SUD share of the homeless, band           3         =  0.27104260880787262     
+ DIAG SUD share of the homeless, band           4         =  0.25339652868596618     
+ DIAG SUD share of the homeless, band           5         =  0.17802903237323495     
+ UNTARGETED share of the homeless, band           1  model=  0.22824613484129991       observed=  0.26000000000000001     
+ UNTARGETED share of the homeless, band           2  model=  0.39612209184336938       observed=  0.27200000000000002     
+ UNTARGETED share of the homeless, band           3  model=  0.21830255782663394       observed=  0.20999999999999999     
+ UNTARGETED share of the homeless, band           4  model=  0.14392337330876850       observed=  0.18400000000000000     
+ UNTARGETED share of the homeless, band           5  model=   1.3405842179928393E-002  observed=   7.4999999999999997E-002
+ UNTARGETED earnings share, bottom tenth      model=   2.1352230301325145E-002  observed=   9.9000000000000008E-003
+ UNTARGETED earnings share, top tenth         model=  0.31684220513330241       observed=  0.41099999999999998     
+ MOMENT w_bot     net worth share, bottom half model=   7.1990360990108887E-002  target=   2.5000000000000001E-002
+ UNTARGETED renters above 30 pct of income    model=  0.43938791723444171       observed=  0.40600000000000003     
+ MOMENT burden50  over half of income, in h2 model=  0.18262404149135542       target=  0.17499999999999999     
+ UNTARGETED over half of income, all renters  model=  0.21316032005518648       observed=  0.17499999999999999     
+ UNTARGETED tenant contribution rate          model=  0.31816028859091344       observed=  0.31200000000000000     
+ UNTARGETED voucher holders, wages main       model=  0.67808006555678901       observed=  0.28000000000000003     
+ UNTARGETED participation, with a SUD         model=  0.90057864448932745       observed=  0.65800000000000003     
+ UNTARGETED participation, without a SUD      model=  0.74980762842698745       observed=  0.61499999999999999     
+ DIAG participation, with a SUD, working age      =  0.99996198923241364     
+ DIAG households with no wage income, working age =   4.9709443294892637E-002  data=  0.13930000000000001     
+ DIAG participation, without a SUD, working age   =  0.99999787555723307     
+ UNTARGETED homeless at treatment admission   model=   7.7917811596456901E-002  observed=  0.14499999999999999     
+ UNTARGETED SMI alongside SUD at admission    model=   4.9039446831812383E-002  observed=  0.43099999999999999     
+ UNTARGETED working, homeless in treatment    model=   0.0000000000000000       observed=   6.6000000000000003E-002
+ DIAG employed share of the homeless, working age =  0.45652080714227794     
+ DIAG working age homeless mass                   =  0.58487974532155584     
+ DIAG homelessness rate among the UNEMPLOYED      =  0.17086570097617146     
+ DIAG   ... over the working age homelessness rate=   10.933117670089889     
+ UNTARGETED SUD share of the homeless         model=  0.18741614808649540       observed=  0.21700000000000000     
+ DIAG kappa_phi_d_level, SUD mortality level      =   8.0000000000000000     
+ UNTARGETED drug deaths, share of deaths      model=  0.28265122767418166       observed=  0.20000000000000001     
+ VALIDATION NOT COMPUTED: returns to homelessness within 24 months, and the two drug price elasticities; each needs a second solve.
+ OMEGA SKIPPED    child counterfactual off by measure_child_gap
+ ELASTICITY_DIAG base price=   1.0000000000000000       users=  0.94537384400794022       quantity per user=   9.2673680530758317E-003
+ ELASTICITY_DIAG base per addict=   8.7782679233352034E-002  per experimenter=   5.3225245646123520E-003  addict share of users=   4.7839389876370070E-002
+ expected_child_value=   0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000       -26.175215880918586       -24.848565431380848       -23.176674642768830       -21.354530474214698       -19.510645109651705       -17.723655659190626       -16.025349425842705       -35.591372260480512       -33.921535350079921       -31.726104470453265       -29.287804279501415       -26.794131039876447       -24.362085089331231       -22.045310286479889       -62.499238112519834       -60.368914958537516       -56.989411578450927       -52.952386183114413       -48.663093784352895       -44.383344504356501       -40.258461314821488     
+ number of threads =            4
+ -------- asset lottery --------
+ calls                 =                     0
+ the lottery was never called
+ ------------------------------
+ AGE_TIME age=  60  wall_s=      0.04  cpu_s=      0.14
+ AGE_TIME age=  59  wall_s=      0.05  cpu_s=      0.19
+ AGE_TIME age=  58  wall_s=      0.05  cpu_s=      0.19
+ AGE_TIME age=  57  wall_s=      0.04  cpu_s=      0.18
+ AGE_TIME age=  56  wall_s=      0.04  cpu_s=      0.17
+ AGE_TIME age=  55  wall_s=      0.10  cpu_s=      0.39
+ AGE_TIME age=  54  wall_s=      0.12  cpu_s=      0.48
+ AGE_TIME age=  53  wall_s=      0.10  cpu_s=      0.42
+ AGE_TIME age=  52  wall_s=      0.10  cpu_s=      0.38
+ AGE_TIME age=  51  wall_s=      0.12  cpu_s=      0.50
+ -------- asset lottery --------
+ calls                 =                     0
+ the lottery was never called
+ ------------------------------
+ AGE_TIME age=  50  wall_s=      0.12  cpu_s=      0.49
+ AGE_TIME age=  49  wall_s=      0.10  cpu_s=      0.39
+ AGE_TIME age=  48  wall_s=      0.11  cpu_s=      0.42
+ AGE_TIME age=  47  wall_s=      0.09  cpu_s=      0.38
+ AGE_TIME age=  46  wall_s=      0.10  cpu_s=      0.37
+ AGE_TIME age=  45  wall_s=      0.10  cpu_s=      0.38
+ AGE_TIME age=  44  wall_s=      0.09  cpu_s=      0.38
+ AGE_TIME age=  43  wall_s=      0.10  cpu_s=      0.38
+ AGE_TIME age=  42  wall_s=      0.09  cpu_s=      0.37
+ AGE_TIME age=  41  wall_s=      0.09  cpu_s=      0.37
+ -------- asset lottery --------
+ calls                 =                     0
+ the lottery was never called
+ ------------------------------
+ AGE_TIME age=  40  wall_s=      1.43  cpu_s=      5.48
+ AGE_TIME age=  39  wall_s=      1.43  cpu_s=      5.54
+ AGE_TIME age=  38  wall_s=      1.41  cpu_s=      5.46
+ AGE_TIME age=  37  wall_s=      1.44  cpu_s=      5.54
+ AGE_TIME age=  36  wall_s=      1.43  cpu_s=      5.56
+ AGE_TIME age=  35  wall_s=      1.47  cpu_s=      5.64
+ AGE_TIME age=  34  wall_s=      1.44  cpu_s=      5.57
+ AGE_TIME age=  33  wall_s=      1.41  cpu_s=      5.48
+ AGE_TIME age=  32  wall_s=      1.43  cpu_s=      5.53
+ AGE_TIME age=  31  wall_s=      1.45  cpu_s=      5.61
+ -------- asset lottery --------
+ calls                 =                     0
+ the lottery was never called
+ ------------------------------
+ AGE_TIME age=  30  wall_s=      1.48  cpu_s=      5.65
+ AGE_TIME age=  29  wall_s=      1.55  cpu_s=      5.80
+ AGE_TIME age=  28  wall_s=      1.46  cpu_s=      5.62
+ AGE_TIME age=  27  wall_s=      1.46  cpu_s=      5.63
+ AGE_TIME age=  26  wall_s=      1.46  cpu_s=      5.65
+ AGE_TIME age=  25  wall_s=      1.48  cpu_s=      5.66
+ AGE_TIME age=  24  wall_s=      1.60  cpu_s=      6.09
+ AGE_TIME age=  23  wall_s=      1.54  cpu_s=      5.82
+ AGE_TIME age=  22  wall_s=      1.53  cpu_s=      5.77
+ AGE_TIME age=  21  wall_s=      1.58  cpu_s=      5.92
+ -------- asset lottery --------
+ calls                 =                     0
+ the lottery was never called
+ ------------------------------
+ AGE_TIME age=  20  wall_s=      1.58  cpu_s=      5.90
+ AGE_TIME age=  19  wall_s=      1.60  cpu_s=      5.98
+ AGE_TIME age=  18  wall_s=      1.57  cpu_s=      5.89
+ AGE_TIME age=  17  wall_s=      1.67  cpu_s=      6.07
+ AGE_TIME age=  16  wall_s=      1.65  cpu_s=      6.05
+ AGE_TIME age=  15  wall_s=      1.64  cpu_s=      6.04
+ AGE_TIME age=  14  wall_s=      1.71  cpu_s=      6.17
+ AGE_TIME age=  13  wall_s=      1.61  cpu_s=      5.91
+ AGE_TIME age=  12  wall_s=      1.62  cpu_s=      5.99
+ AGE_TIME age=  11  wall_s=      1.62  cpu_s=      5.96
+ -------- asset lottery --------
+ calls                 =                     0
+ the lottery was never called
+ ------------------------------
+ AGE_TIME age=  10  wall_s=      1.65  cpu_s=      5.98
+ AGE_TIME age=   9  wall_s=      1.62  cpu_s=      5.95
+ AGE_TIME age=   8  wall_s=      1.60  cpu_s=      5.87
+ AGE_TIME age=   7  wall_s=      1.67  cpu_s=      6.03
+ AGE_TIME age=   6  wall_s=      1.66  cpu_s=      6.02
+ AGE_TIME age=   5  wall_s=      1.63  cpu_s=      5.96
+ AGE_TIME age=   4  wall_s=      1.61  cpu_s=      5.95
+ AGE_TIME age=   3  wall_s=      1.58  cpu_s=      5.81
+ AGE_TIME age=   2  wall_s=      1.64  cpu_s=      5.93
+ -------- asset lottery --------
+ calls                 =                     0
+ the lottery was never called
+ ------------------------------
+ time=   239.41517799999997     
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ DIST_MAX sweep=           0  block=           1  age=          56  fin=           5  uem=           1  emp=           4  hou=           0  vch=           0  gap=  0.13777650935769381       max_mass=  0.34743611100974114     
+ DIST_MAX sweep=           0  block=           2  age=           1  fin=           1  uem=           1  emp=           1  hou=           2  vch=           0  gap=   0.0000000000000000       max_mass=   0.0000000000000000     
+ DIST_MOM sweep=     0 mass=    49.458868757644396 wealth=    67.821361846939226 by_housing=     0.768551555208281    48.690317202437136     0.000000000000000
+        
+ distribution distance=  0.13777650935769381     
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=  0.12447190957753801     
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   1.4812980746096806E-002
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   1.9295507066327149E-002
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   2.0709551188317202E-002
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   1.9171461842960633E-002
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   2.3947344470551139E-002
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   2.3516229598572858E-002
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   2.4383382892006807E-002
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   2.0881460003064276E-002
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   1.4873734722794879E-002
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   1.0596846372858404E-002
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   7.9689546061410821E-003
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   6.5777748720903181E-003
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   5.3037343617499538E-003
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   4.4410547414760193E-003
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   4.1939786240340476E-003
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   3.8758611298927714E-003
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   3.2447672170186834E-003
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   2.6987115149370161E-003
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   2.2059006755258195E-003
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   1.7019675249729041E-003
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   1.3382266994511061E-003
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   1.0401705056630461E-003
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   7.8863910569650086E-004
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   6.8883421967415315E-004
+ newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.88081314648417075       0.11035003799896034        3.1564346937501338E-003   5.6803808231188279E-003
+ newborn_productivity_draw=   3.1745318441297405E-003   4.0185009666662129E-002  0.20201822282237478       0.38767230032554051       0.28210306036316940        7.6887843847616905E-002   7.9590311305066455E-003
+ newborn_employment_probability, clean housed, parent at the median node=   1.2716816904004835E-003   2.8957601609059025E-002  0.20041250332612343       0.42623886817086937       0.28190559989857589        5.7591201164225780E-002   3.6225441407460313E-003
+ newborn_employment_probability, disordered housed, parent at the median node=   4.1382881154147233E-003   6.2685205763156449E-002  0.29290873494820319       0.42302087176609771       0.18995814538897893        2.6192825970542732E-002   1.0959280476062760E-003
+ distribution distance=   5.8146896326964626E-004
+ DIST_DONE sweeps=          27  final_distance=   5.8146896326964626E-004
+ homeless income parts: inc_homeless=   2.0359327945651800E-002  mass_homeless=  0.65255835669725670       inc_all=   22.416291396467461       mass_all=   37.428905899764409     
+ SMI prevalence by age, model against profile:
+   age   1  model=  0.12129  profile=  0.12129
+   age  11  model=  0.08063  profile=  0.07811
+   age  21  model=  0.05265  profile=  0.05030
+   age  31  model=  0.03282  profile=  0.03239
+   age  41  model=  0.01922  profile=  0.02086
+   age  51  model=  0.00992  profile=  0.01344
+ SMI prevalence all ages, model=   4.9205209691723456E-002  profile at the model's age weights=   4.8972660053440385E-002
+ SMI mass over the working age base (not a prevalence)=   6.4999380520097683E-002  onset(1)=   3.8043000000000000E-003  onset(30)=   9.6570253349999996E-004  lambda_m=   6.6368800000000006E-002
+ SMI share of homeless=  0.20146191217431120       employment rate given SMI=  0.82074241705716100     
+ homeless income share=   5.5287067681728357E-002  employed share of homeless=  0.47741776398216518     
+ parents replaced by newborns: clean housed=  0.87789067960082057       clean homeless=   5.0413531672594269E-003  disordered housed=  0.11148261097944498       disordered homeless=   5.5853562524747847E-003
+ rent_to_income_cdf(time_period,101)=  0.92856400901247504     
+ total_renters_to_consider=   48.790492740366290     
+ model_financial(           1 )=   77.769584250590356     
+ model_mortgages(           1 )=   0.0000000000000000     
+ model_net_housing_wealth(           1 )=   0.0000000000000000     
+ model_gross_housing_wealth(           1 )=   0.0000000000000000     
+ model_total_net_wealth(           1 )=   77.769584250590356     
+ model_bequests(           1 )=  0.64479182645966493     
+ model_average_net_wealth(time_period)=   1.5729123208419673     
+ net_govt_revenues=   2.1798292974464748     
+ ELASTICITY_DIAG new price=   1.1000000014901161       users=  0.94461337780550969       quantity per user=   8.7876048575982694E-003
+ UNTARGETED price elasticity, participation   model=  -8.4432913097731519E-003  observed= -0.63000000000000000     
+ UNTARGETED price elasticity, intensive       model=  -1.1909728608432031       observed= -0.55000000000000004     
+ DIAG elasticity, quantity per USER (mixed)      = -0.55772875517807041     
+ ELASTICITY_DIAG new per addict=   7.8363038368736398E-002  per experimenter=   5.3076082613073500E-003  addict share of users=   4.7635016194874556E-002
+ DIAG elasticity, quantity per ADDICT            =  -1.1909728608432031     
+ DIAG elasticity, quantity per EXPERIMENTER      =  -2.9445131632773743E-002
+ DIAG elasticity, ADDICT SHARE of users          =  -4.4918926304356489E-002
+ UNTARGETED income of the homeless            model=   7.0945672899603157E-002  observed=  0.19100000000000000     
+ MOMENT emp_homeless employed share of homeless model=  0.47741776398216518       target=  0.46000000000000002     
+ DIAG homeless who could afford it on INCOME ALONE=   6.0716012628568274E-002
+ DIAG homeless by choice, share of the homeless   =  0.21131618699807064     
+ DIAG homeless receiving food stamps              =   49.321036938012739     
+ DIAG average assets of the homeless              =   4.0650912801792914E-002
+ DIAG wealth share of the bottom 25 pct           =   1.0127779713504577E-002
+ DIAG mean drug quantity, users                   =   8.7876048575982694E-003
+ DIAG onset at the mean quantity                  =   7.0054306516204035E-003
+ MOMENT y_u       income of drug users        model=   1.0035115630761240       target=  0.73999999999999999     
+ UNTARGETED income with a SUD                 model=  0.82789322171064073       observed=  0.71099999999999997     
+ DIAG carriers of the disorder consuming no drugs =   3.0680258416305055E-002
+ DIAG income of experimenters / average           =  0.93043027949789003     
+ DIAG income of drug users / labour income        =  0.89885349214488774     
+ DIAG income with a SUD / labour income           =  0.74155071136060369     
+ DIAG mass ON the top savings grid point          =   2.5931816130361491E-004
+ DIAG mass in the top THREE savings grid points   =   2.1190912683212498E-003
+ DIAG histogram mass / distribution  (want 1.0)   =   1.0000000000000318     
+ DIAG histogram wealth / total wealth (want 1.0)  =   1.0000000000000324     
+ DIAG --- the age profile of the housing margin ---
+DIAG age  26  homeless=  0.000000  own=  0.00000  renter wealth=    0.00000  renter income=    0.40113  sud=  1.000000  mass=    1.000000
+DIAG age  27  homeless=  0.000827  own=  0.00000  renter wealth=    0.41912  renter income=    0.41422  sud=  1.000000  mass=    0.998886
+DIAG age  28  homeless=  0.002679  own=  0.00000  renter wealth=    0.53724  renter income=    0.42118  sud=  1.000000  mass=    0.997697
+DIAG age  29  homeless=  0.007323  own=  0.00000  renter wealth=    0.64794  renter income=    0.43074  sud=  0.999988  mass=    0.996426
+DIAG age  30  homeless=  0.018729  own=  0.00000  renter wealth=    0.75433  renter income=    0.44126  sud=  0.999204  mass=    0.995065
+DIAG age  31  homeless=  0.023570  own=  0.00000  renter wealth=    0.85898  renter income=    0.45100  sud=  0.998567  mass=    0.993603
+DIAG age  32  homeless=  0.025939  own=  0.00000  renter wealth=    0.95957  renter income=    0.46131  sud=  0.997890  mass=    0.992045
+DIAG age  33  homeless=  0.027383  own=  0.00000  renter wealth=    1.06029  renter income=    0.46993  sud=  0.997273  mass=    0.990393
+DIAG age  34  homeless=  0.028114  own=  0.00000  renter wealth=    1.15666  renter income=    0.47864  sud=  0.996949  mass=    0.988647
+DIAG age  35  homeless=  0.027807  own=  0.00000  renter wealth=    1.24943  renter income=    0.48777  sud=  0.996340  mass=    0.986795
+DIAG age  36  homeless=  0.027176  own=  0.00000  renter wealth=    1.34111  renter income=    0.49487  sud=  0.996132  mass=    0.984834
+DIAG age  37  homeless=  0.026459  own=  0.00000  renter wealth=    1.42722  renter income=    0.50243  sud=  0.995808  mass=    0.982740
+DIAG age  38  homeless=  0.025792  own=  0.00000  renter wealth=    1.50872  renter income=    0.50984  sud=  0.995468  mass=    0.980504
+DIAG age  39  homeless=  0.025498  own=  0.00000  renter wealth=    1.58727  renter income=    0.51653  sud=  0.995171  mass=    0.978119
+DIAG age  40  homeless=  0.024759  own=  0.00000  renter wealth=    1.66245  renter income=    0.52277  sud=  0.994827  mass=    0.975566
+DIAG age  41  homeless=  0.022751  own=  0.00000  renter wealth=    1.73506  renter income=    0.52803  sud=  0.994213  mass=    0.972834
+DIAG age  42  homeless=  0.018442  own=  0.00000  renter wealth=    1.80158  renter income=    0.53367  sud=  0.994247  mass=    0.969890
+DIAG age  43  homeless=  0.019904  own=  0.00000  renter wealth=    1.86250  renter income=    0.53880  sud=  0.993560  mass=    0.966675
+DIAG age  44  homeless=  0.018542  own=  0.00000  renter wealth=    1.91847  renter income=    0.54353  sud=  0.993561  mass=    0.963126
+DIAG age  45  homeless=  0.017324  own=  0.00000  renter wealth=    1.97040  renter income=    0.54991  sud=  0.992804  mass=    0.959202
+DIAG age  46  homeless=  0.014373  own=  0.00000  renter wealth=    2.01998  renter income=    0.55335  sud=  0.992577  mass=    0.954904
+DIAG age  47  homeless=  0.015112  own=  0.00000  renter wealth=    2.06225  renter income=    0.55679  sud=  0.990610  mass=    0.950247
+DIAG age  48  homeless=  0.014285  own=  0.00000  renter wealth=    2.09843  renter income=    0.55920  sud=  0.989922  mass=    0.945214
+DIAG age  49  homeless=  0.013673  own=  0.00000  renter wealth=    2.12977  renter income=    0.56163  sud=  0.989663  mass=    0.939771
+DIAG age  50  homeless=  0.013317  own=  0.00000  renter wealth=    2.15723  renter income=    0.56301  sud=  0.988583  mass=    0.933913
+DIAG age  51  homeless=  0.012662  own=  0.00000  renter wealth=    2.17952  renter income=    0.56360  sud=  0.987366  mass=    0.927657
+DIAG age  52  homeless=  0.012283  own=  0.00000  renter wealth=    2.19475  renter income=    0.56379  sud=  0.986206  mass=    0.920923
+DIAG age  53  homeless=  0.011829  own=  0.00000  renter wealth=    2.20418  renter income=    0.56252  sud=  0.984696  mass=    0.913955
+DIAG age  54  homeless=  0.011426  own=  0.00000  renter wealth=    2.20505  renter income=    0.56082  sud=  0.984639  mass=    0.906431
+DIAG age  55  homeless=  0.011033  own=  0.00000  renter wealth=    2.19828  renter income=    0.55917  sud=  0.981410  mass=    0.898553
+DIAG age  56  homeless=  0.010686  own=  0.00000  renter wealth=    2.18389  renter income=    0.55708  sud=  0.979928  mass=    0.890305
+DIAG age  57  homeless=  0.010326  own=  0.00000  renter wealth=    2.16292  renter income=    0.55441  sud=  0.976404  mass=    0.881659
+DIAG age  58  homeless=  0.010015  own=  0.00000  renter wealth=    2.13572  renter income=    0.54925  sud=  0.971788  mass=    0.872612
+DIAG age  59  homeless=  0.009728  own=  0.00000  renter wealth=    2.09488  renter income=    0.54152  sud=  0.971753  mass=    0.863151
+DIAG age  60  homeless=  0.009499  own=  0.00000  renter wealth=    2.03902  renter income=    0.53527  sud=  0.970493  mass=    0.853333
+DIAG age  61  homeless=  0.009313  own=  0.00000  renter wealth=    1.97356  renter income=    0.52900  sud=  0.969787  mass=    0.843012
+DIAG age  62  homeless=  0.009406  own=  0.00000  renter wealth=    1.89889  renter income=    0.51884  sud=  0.967475  mass=    0.832306
+DIAG age  63  homeless=  0.009373  own=  0.00000  renter wealth=    1.80820  renter income=    0.50949  sud=  0.964723  mass=    0.821152
+DIAG age  64  homeless=  0.008695  own=  0.00000  renter wealth=    1.70322  renter income=    0.50054  sud=  0.960952  mass=    0.809499
+DIAG age  65  homeless=  0.009832  own=  0.00000  renter wealth=    1.58400  renter income=    0.49246  sud=  0.956231  mass=    0.797262
+DIAG age  66  homeless=  0.000000  own=  0.00000  renter wealth=    1.45441  renter income=    0.45409  sud=  0.904070  mass=    0.784331
+DIAG age  67  homeless=  0.000000  own=  0.00000  renter wealth=    1.23053  renter income=    0.44747  sud=  0.919494  mass=    0.770702
+DIAG age  68  homeless=  0.000000  own=  0.00000  renter wealth=    1.03255  renter income=    0.44165  sud=  0.934012  mass=    0.756270
+DIAG age  69  homeless=  0.000000  own=  0.00000  renter wealth=    0.85885  renter income=    0.43658  sud=  0.953988  mass=    0.741046
+DIAG age  70  homeless=  0.000000  own=  0.00000  renter wealth=    0.70651  renter income=    0.43216  sud=  0.962562  mass=    0.725061
+DIAG age  71  homeless=  0.000000  own=  0.00000  renter wealth=    0.57566  renter income=    0.42840  sud=  0.970158  mass=    0.708201
+DIAG age  72  homeless=  0.000000  own=  0.00000  renter wealth=    0.46453  renter income=    0.42527  sud=  0.979078  mass=    0.690448
+DIAG age  73  homeless=  0.000000  own=  0.00000  renter wealth=    0.37128  renter income=    0.42269  sud=  0.989855  mass=    0.671706
+DIAG age  74  homeless=  0.000000  own=  0.00000  renter wealth=    0.29385  renter income=    0.42061  sud=  0.993985  mass=    0.651869
+DIAG age  75  homeless=  0.000000  own=  0.00000  renter wealth=    0.23034  renter income=    0.41897  sud=  0.998279  mass=    0.630859
+DIAG age  76  homeless=  0.000000  own=  0.00000  renter wealth=    0.17899  renter income=    0.41771  sud=  0.999799  mass=    0.608649
+DIAG age  77  homeless=  0.000000  own=  0.00000  renter wealth=    0.13833  renter income=    0.41680  sud=  0.999994  mass=    0.585242
+DIAG age  78  homeless=  0.000000  own=  0.00000  renter wealth=    0.10648  renter income=    0.41616  sud=  1.000000  mass=    0.560488
+DIAG age  79  homeless=  0.000000  own=  0.00000  renter wealth=    0.08209  renter income=    0.41577  sud=  1.000000  mass=    0.534456
+DIAG age  80  homeless=  0.000000  own=  0.00000  renter wealth=    0.06671  renter income=    0.41566  sud=  1.000000  mass=    0.507031
+DIAG age  81  homeless=  0.000000  own=  0.00000  renter wealth=    0.07560  renter income=    0.41631  sud=  0.019613  mass=    0.477890
+DIAG age  82  homeless=  0.000000  own=  0.00000  renter wealth=    0.04065  renter income=    0.41566  sud=  0.011347  mass=    0.447383
+DIAG age  83  homeless=  0.000000  own=  0.00000  renter wealth=    0.02364  renter income=    0.41541  sud=  0.006050  mass=    0.417467
+DIAG age  84  homeless=  0.000000  own=  0.00000  renter wealth=    0.01367  renter income=    0.41526  sud=  0.002912  mass=    0.387672
+DIAG age  85  homeless=  0.000000  own=  0.00000  renter wealth=    0.00565  renter income=    0.41510  sud=  0.001213  mass=    0.357375
+ DIAG mass by beta type:  patient=     49.443051  impatient=      0.000000  patient/impatient=**********
+ DIAG pooled mass=   49.443051097063645       one-type equivalent=   49.443051097063645     
+ DIAG labour secant hit its iteration cap        =           0
+ ===== INVARIANTS =====
+ INVARIANT PASS     income histogram holds the whole distribution  =     1.0000000000
+ INVARIANT PASS     wealth histogram holds the whole distribution  =     1.0000000000
+ INVARIANT PASS     wealth histogram holds the whole of net worth  =     1.0000000000
+ INVARIANT PASS          rental market clears, demand over supply  =     1.0000000000
+ INVARIANT PASS                                 homelessness rate  =     0.0131981814
+ INVARIANT PASS                                        drug users  =     0.9446133778
+ INVARIANT PASS                                     disorder rate  =     0.0449966735
+ INVARIANT PASS                              SMI population share  =     0.0492052097
+ INVARIANT PASS                                 unemployment rate  =     0.0497935812
+ INVARIANT PASS                                homeownership rate  =     0.0000000000
+ INVARIANT PASS         homeless by choice, share of the homeless  =     0.2113161870
+ INVARIANT PASS            homeless who could afford it on income  =     0.0607160126
+ INVARIANT PASS                    employed share of the homeless  =     0.4774177640
+ INVARIANT PASS                         SMI share of the homeless  =     0.2014619122
+ INVARIANT PASS                  households receiving food stamps  =     0.1321691779
+ INVARIANT PASS       the five age bands hold all of the homeless  =     1.0000000000
+ INVARIANTS: all PASS
+ ===== END OF MOMENTS =====
