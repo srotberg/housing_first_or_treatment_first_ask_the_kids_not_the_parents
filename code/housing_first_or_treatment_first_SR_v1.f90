@@ -306,8 +306,29 @@
         ! tests. What exclusion DOES need is its own explicit branch, because
         ! falling through leaves an empty transition range, which would release
         ! the household with certainty after one year -- the opposite of intent.
-        integer, parameter :: include_voucher_exclusion=0
-        integer, parameter :: voucher_state_max=include_vouchers*(1+include_voucher_exclusion)
+        ! THE STATE ALWAYS EXISTS; ENTERING IT IS A RUNTIME MATTER.
+        !
+        ! The first version made include_voucher_exclusion a compile-time
+        ! parameter so that voucher_state_max collapsed to 1 when it was off.
+        ! That produced eleven "Array reference is out of bounds (2 > 1)"
+        ! warnings: every index-2 write sat inside `if (include_voucher_exclusion
+        ! ==1)`, compile-time false, and was therefore expected to be eliminated
+        ! before it could execute.
+        !
+        ! THAT IS THE EXACT REASONING THAT ALREADY COST THIS MODEL ONCE. The
+        ! comment at the age-table fill records an unreachable write that moved
+        ! w_bot from 0.0295 to 3.27, homelessness from 0.084 to 0.011 and drug
+        ! use to exactly zero -- and, in its own words, "Something downstream
+        ! reads the table below the chosen index, so an unreachable entry is not
+        ! an unread one." Correctness must not rest on dead-code elimination.
+        !
+        ! So the third slice is always allocated and always in bounds, and the
+        ! flag only decides whether any household ever transitions into it. With
+        ! the flag at zero state 2 carries zero mass and the model is
+        ! behaviourally what it was; the cost is a state space half again as
+        ! large, which is the right price for not having to trust the optimiser.
+        integer :: include_voucher_exclusion=0
+        integer, parameter :: voucher_state_max=include_vouchers*2
         real(8), parameter :: voucher_exclusion_release=1.d0/3.d0
         integer, parameter :: use_cobb_douglas=0
         integer, parameter :: use_cobb_douglas_2=0
@@ -26556,7 +26577,27 @@
             is_counterfactual*median_income_calibrated)) .AND. &
             (include_vouchers==1)) then
             
-            if ((has_house==0) .AND. (choose_to_own_1==0) .AND. (voucher_index==0)) then
+            ! AN EXCLUDED HOUSEHOLD NEEDS ITS OWN BRANCH, and this is the one
+            ! line in the file where a third voucher state could have gone
+            ! wrong silently. voucher_index==2 falls through the ==0 and ==1
+            ! tests correctly -- it neither holds a voucher nor is in the queue
+            ! -- but falling through leaves first_voucher_index and
+            ! second_voucher_index at whatever they were, so the expectation
+            ! would integrate over an empty or wrong range and the household
+            ! would be released after one period with certainty. That is the
+            ! opposite of a three-year exclusion, and it would not crash.
+            !
+            ! The range has to span 0 to voucher_state_max so the release row
+            ! (2 -> 0) and the stay row (2 -> 2) are both reachable; the (2 -> 1)
+            ! row is zero, so the middle contributes nothing.
+            if ((has_house==0) .AND. (choose_to_own_1==0) .AND. &
+                (voucher_index==2) .AND. (include_voucher_exclusion==1)) then
+
+                has_opportunity=1
+                first_voucher_index=0
+                second_voucher_index=voucher_state_max
+
+            elseif ((has_house==0) .AND. (choose_to_own_1==0) .AND. (voucher_index==0)) then
 
                 has_opportunity=1
                 first_voucher_index=0
@@ -30639,7 +30680,80 @@
                 voucher_probabilities(0,0,1,1:2)=1-voucher_probabilities(0,1,1,1:2)
                 voucher_probabilities(1,1,1,1:2)=1-probability_of_false_positive
                 voucher_probabilities(1,0,1,1:2)=probability_of_false_positive
-                
+
+                ! ---- FAILING THE TEST SENDS YOU TO THE EXCLUDED STATE --------
+                ! The author, 9 September: a probability of remaining excluded
+                ! such that the expected exclusion is three years, applied
+                ! whether you were RECEIVING a voucher or were ELIGIBLE and
+                ! applying. Both are covered below.
+                !
+                ! WHY THIS IS THE SANCTION THAT BITES. A homeless household's
+                ! voucher pays exactly zero -- calculate_housing_voucher_2 caps
+                ! the payment by actual rent spending, and a homeless household
+                ! spends nothing on rent -- while voucher_probabilities(1,1,1,:)
+                ! lets it hold the voucher as long as it stays income-eligible.
+                ! So taking THIS period's voucher away from the very households
+                ! the policy targets costs them nothing; the only thing of value
+                ! they hold is the option to draw on it once housed. A bar on
+                ! FUTURE offers destroys that option. The one-period removal did
+                ! not, which is why every conditional result measured before this
+                ! is a lower bound.
+                !
+                ! A FALSE POSITIVE EXCLUDES TOO, and that is deliberate rather
+                ! than an oversight: the programme cannot tell a false positive
+                ! from a true one, so it applies the same sanction. It is what
+                ! makes probability_of_false_positive genuinely costly.
+                if (include_voucher_exclusion==1) then
+
+                    ! A HOLDER who is caught, or wrongly flagged, is excluded
+                    ! rather than merely dropped back into the lottery.
+                    voucher_probabilities(1,2,1,3)=probability_of_detection
+                    voucher_probabilities(1,0,1,3)=0
+                    voucher_probabilities(1,2,1,1:2)=probability_of_false_positive
+                    voucher_probabilities(1,0,1,1:2)=0
+
+                    ! AN APPLICANT is offered with the offer probability and
+                    ! then tested. Offered-and-caught is excluded; never offered
+                    ! simply stays out. The three destinations must sum to one,
+                    ! which is why (0,0,1,.) is written as the remainder of both
+                    ! rather than of (0,1,1,.) alone.
+                    voucher_probabilities(0,2,1,3)=probability_of_detection*&
+                        min(real(probability_of_voucher_benchmark_used_1*&
+                        increased_prob_of_voucher_if_homeless_and_addicted),1.0)
+                    voucher_probabilities(0,0,1,3)=1-voucher_probabilities(0,1,1,3)-&
+                        voucher_probabilities(0,2,1,3)
+
+                    voucher_probabilities(0,2,1,1)=probability_of_false_positive*&
+                        real(probability_of_voucher_benchmark_used_1)
+                    voucher_probabilities(0,2,1,2)=probability_of_false_positive*&
+                        min(real(probability_of_voucher_benchmark_used_1*&
+                        increased_prob_of_voucher_if_homeless_1),1.0)
+                    voucher_probabilities(0,0,1,1:2)=1-voucher_probabilities(0,1,1,1:2)-&
+                        voucher_probabilities(0,2,1,1:2)
+
+                end if
+
+            end if
+
+            ! ---- LEAVING THE EXCLUDED STATE ---------------------------------
+            ! Geometric, so memoryless, which is the whole reason one extra
+            ! state suffices instead of a counter: release with probability
+            ! voucher_exclusion_release each period gives an expected exclusion
+            ! of 1/voucher_exclusion_release = three years.
+            !
+            ! SET FOR BOTH VALUES OF THE OPPORTUNITY INDEX ON PURPOSE. An
+            ! excluded household is barred whether or not its income is below
+            ! the threshold, and writing both slices identically means the
+            ! result cannot depend on which one the caller happens to pass.
+            !
+            ! RELEASE IS TO STATE 0, NEVER STRAIGHT TO 1. Coming out of
+            ! exclusion returns you to the queue, not to the front of it.
+            if (include_voucher_exclusion==1) then
+
+                voucher_probabilities(2,0,:,:)=voucher_exclusion_release
+                voucher_probabilities(2,1,:,:)=0
+                voucher_probabilities(2,2,:,:)=1-voucher_exclusion_release
+
             end if
             
         end if
@@ -38596,6 +38710,13 @@
                 ! THE SUPPLY ELASTICITY, and the curvature that follows from it.
                 ! Both paths must be given the same value: the benchmark writes
                 ! the shifter from it and the arms read that shifter back.
+                ! Whether a failed test leads to exclusion. The state slice
+                ! exists either way; this decides whether anyone enters it.
+                case ("include_voucher_exclusion")
+                    write(*,*) "HANDOVER include_voucher_exclusion:", &
+                        include_voucher_exclusion, "->", handover_value
+                    include_voucher_exclusion=max(min(nint(handover_value),1),0)
+
                 case ("drug_supply_elasticity")
                     write(*,*) "HANDOVER drug_supply_elasticity:", &
                         drug_supply_elasticity, "->", handover_value
