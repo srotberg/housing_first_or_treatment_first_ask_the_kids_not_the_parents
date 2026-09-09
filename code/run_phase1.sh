@@ -25,6 +25,15 @@ run () {
     echo "PHASE1 $name starting"
     bash code/run_variant.sh cf $VEC "$@" > "code/p1_${name}.log" 2>&1
     echo "PHASE1 $name: $(grep -a 'run_variant: finished' code/p1_${name}.log)"
+    # DID IT CONVERGE, OR DID IT HIT THE CAP? A run that stops at
+    # max_counterfactual_loops is NOT a result and must not be read as one.
+    ML=$(grep -a "run_variant: log is\|log variant_cf" "code/p1_${name}.log" | tail -1 | sed 's/.*log //;s/.*log is //')
+    LOOPS=$(grep -ac "loop_count=" "code/${ML}" 2>/dev/null || echo 0)
+    if [ "${LOOPS:-0}" -ge 80 ]; then
+        echo "PHASE1 $name NOT CONVERGED: hit the ${LOOPS}-loop cap"
+    else
+        echo "PHASE1 $name converged in ${LOOPS} loops"
+    fi
 }
 
 # TF WITH RATIONED VOUCHERS. The voucher rate stays at the benchmark's, so this

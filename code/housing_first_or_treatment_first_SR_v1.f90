@@ -2127,6 +2127,10 @@
         ! the benchmark's net revenue of 0.5453; 2.5e-2 is about 4.6 per cent.
         ! TIGHTEN BOTH BEFORE THE RUNS THAT GO IN THE PAPER.
         real(8) :: stopping_rule_govt_budget=2.5*10.d0**(-2)        
+        ! THE MOST LOOPS A COUNTERFACTUAL MAY TAKE. Reached only by a run that is
+        ! not converging, and a run that reaches it must be reported as NOT
+        ! converged -- the cap is a diagnostic, never a result.
+        integer, parameter :: max_counterfactual_loops=80
         real(8) :: stopping_rule_inheritance_amount=(1-is_counterfactual)*2*10.d0**(-3)+is_counterfactual*2*10.d0**(-3)
                                                            
         real(8), parameter :: stopping_rule_value_function=5*10.d0**(-8)
@@ -2954,12 +2958,33 @@
         real(8), parameter :: drug_supply_curvature=1+1/drug_supply_elasticity
         real(8) :: drug_supply_shifter=1
         real(8) :: distance_drug_market=0
-        ! LOOSENED WITH THE BUDGET RULE, same instruction. This distance is
-        ! |implied supply price - price faced| against a price near one, so 1e-4
-        ! was a hundredth of a per cent: far tighter relative to its own scale
-        ! than the budget rule was to its. 1e-3 is a tenth of a per cent.
-        ! TIGHTEN BEFORE THE PAPER.
-        real(8) :: stopping_rule_drug_market=10.d0**(-3)
+        ! 5e-3, BECAUSE 1e-3 IS BELOW THE NOISE FLOOR AND MEASURABLY UNREACHABLE.
+        !
+        ! tf_rationed ran 73 loops on the 1e-3 rule without exiting. The budget
+        ! cleared at loop 47 and held; the drug gap then oscillated in a fixed
+        ! band of roughly [1.5e-3, 3.7e-3] with no downward trend. The ONLY loop
+        ! at which the gap was inside 1e-3 was loop 23, when the budget was still
+        ! at 0.0925 and far outside, so the two conditions were never satisfiable
+        ! together.
+        !
+        ! WHY THE FLOOR IS WHERE IT IS, and this is the number to fix rather than
+        ! the tolerance. The implied supply price is nu_1 V^(1/eps_s), so an error
+        ! in V is amplified into the price gap by 1/eps_s = 0.685, and V comes
+        ! from a distribution solved only to stopping_rule_stationary_distribution
+        ! = 6e-4 when include_addiction is 1. On top of that the iteration's own
+        ! gain is |eps_d|/eps_s = 3.14/1.46 = 2.15, so the same noise is fed back
+        ! amplified: a damped step is stable only for damping below 0.635, and at
+        ! drug_market_adjuster = 0.5 it contracts at 0.575 a loop in theory while
+        ! the observed contraction was about 0.96 -- the iteration was no longer
+        ! doing the work, the noise was.
+        !
+        ! FOR THE PAPER, tighten the DISTRIBUTION rule first so V stops being
+        ! noisy, and only then tighten this one. Loosening this alone hides the
+        ! problem; it does not fix it. Note also that none of this instability
+        ! would arise at the ESTIMATED demand elasticity: at -0.63 the gain is
+        ! 0.43 and the market clears in a handful of loops. The convergence
+        ! difficulty and the failed elasticity validation are one defect.
+        real(8) :: stopping_rule_drug_market=5*10.d0**(-3)
         real(8) :: drug_market_adjuster=0.5
         ! THE MOST THE DRUG PRICE MAY MOVE IN ONE LOOP, as a share of itself.
         ! See the cap in clear_drug_market for what it replaces and why.
@@ -42654,12 +42679,17 @@
         ! housing market, the budget and inheritance only, so even once
         ! clear_drug_market is called the loop could exit with p_v still moving.
         ! A price that is updated but not converged on is not a cleared market.
-        do while ((distance_rental_market(transition_length)>stopping_rule_rental_market) .OR. &
+        ! AND A CAP, so a run that cannot converge says so instead of spinning.
+        ! This loop had none: tf_rationed sat in it for 73 loops on a tolerance
+        ! it could not reach, and universal_tf for 47 with the price oscillating,
+        ! and in both cases the only thing that ended them was me noticing.
+        do while (((distance_rental_market(transition_length)>stopping_rule_rental_market) .OR. &
             (distance_housing_market(transition_length)>stopping_rule_housing_market) .OR. &
             (distance_govt_budget>stopping_rule_govt_budget) .OR. &
             (distance_drug_market>stopping_rule_drug_market) .OR. &
             (distance_inheritance_amount>stopping_rule_inheritance_amount) .OR. &
-            (loop_count<aftr_how_mny_lps_start_update))
+            (loop_count<aftr_how_mny_lps_start_update)) .AND. &
+            (loop_count<max_counterfactual_loops))
                                 
             call solve_value_function_and_policy_functions(transition_length)
             
