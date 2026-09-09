@@ -16751,8 +16751,15 @@
         do i=1,number_of_quintiles
         
             if (current_beta_type==number_of_beta_types) then
+                ! GUARDED: an income quintile of the youngest cohort can be
+                ! empty, and this is 0/0 when it is. Like the LTV one it feeds
+                ! nothing -- reset, accumulated, divided here, then only written
+                ! out -- so it is not a results bug. It IS a checking bug: the
+                ! -ffpe-trap build dies here on the first statistics pass and so
+                ! has never been able to examine the rest of the model.
                 average_welfare_of_youngest_by_quintile(time_period,i)=&
-                    average_welfare_of_youngest_by_quintile(time_period,i)/population_by_quintile(time_period,i)
+                    average_welfare_of_youngest_by_quintile(time_period,i)/&
+                    max(population_by_quintile(time_period,i),10.d0**(-14))
             end if
                 
         end do
