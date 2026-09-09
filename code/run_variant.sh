@@ -56,7 +56,7 @@ fi
 if [ ! -x "$BIN" ] || [ "$BUILT" != "$SRC_MD5" ]; then
     echo "run_variant: building $BIN from $SRC_MD5"
     rm -f "$BIN" "${BIN}.srcmd5"
-    gfortran "$SRC" -mcmodel=medium -fopenmp -fimplicit-none -O3 -funroll-loops \
+    gfortran "$SRC" -mcmodel=medium -fopenmp -fimplicit-none ${HFTF_OPT:--O3 -funroll-loops} \
         -ffree-line-length-none -g -fbacktrace -o "$BIN" 2> "build_${VARIANT}.log" \
         || { tail -20 "build_${VARIANT}.log" >&2; fail "the build failed"; }
     printf '%s\n' "$SRC_MD5" > "${BIN}.srcmd5"
