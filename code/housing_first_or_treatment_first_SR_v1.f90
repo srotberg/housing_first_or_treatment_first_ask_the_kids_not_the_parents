@@ -3022,8 +3022,43 @@
         ! households choose: a policy that cuts drug use cuts the price, which
         ! feeds back into use. That feedback is the reason the supply elasticity
         ! is in the paper at all, and it was absent.
-        real(8), parameter :: drug_supply_elasticity=1.46
-        real(8), parameter :: drug_supply_curvature=1+1/drug_supply_elasticity
+        ! SETTABLE, BECAUSE 1.46 IS A CANNABIS NUMBER AND THIS IS NOT A CANNABIS
+        ! MARKET. Mace, Patel and Seegert estimate it from Washington State
+        ! administrative data -- a LICENSED, taxed, canopy-capped market, and
+        ! licence caps are exactly what make a supply curve slope up in the short
+        ! run. Heroin, cocaine and diverted oxycodone have nothing of the sort.
+        !
+        ! WHAT THE LITERATURE SAYS. There is no direct econometric estimate for
+        ! an illicit drug. The National Academies review records that studies of
+        ! illegal drug markets assume very high elasticities, and Rhodes et al.
+        ! (2002) assume very elastic cocaine supply because the production
+        ! technology is simple and cheap. The cost structure agrees: the
+        ! retail-to-farmgate ratio for cocaine is about 262 to 1, so production
+        ! is roughly 0.4 per cent of the retail price, and commercialisation
+        ! estimates put the fall at 96 per cent for cocaine and 98 for heroin.
+        ! Essentially all of the retail price is prohibition risk and
+        ! distribution labour, both of which scale with quantity -- a flat
+        ! marginal cost curve.
+        !
+        ! PERFECTLY ELASTIC NEEDS NO SPECIAL CASE, and it was a mistake to think
+        ! it did. curvature is 1+1/elasticity, so as elasticity grows the
+        ! exponent on quantity goes to zero and implied_price = shifter, which
+        ! the benchmark normalises to one. The gap is then identically zero at
+        ! EVERY quantity: the market clears at a price of one by construction and
+        ! there is nothing to iterate. Clearing is a step only when the curve
+        ! slopes up. At elasticity 1e6 the implied price is 0.9999976 against a
+        ! price of 1, so the ordinary code path converges on loop one.
+        !
+        ! PASS IT TO THE BENCHMARK AS WELL AS THE ARMS. The shifter is computed
+        ! on the benchmark path as 1/q**(curvature-1) and READ by the
+        ! counterfactual. Pass a new elasticity only to the arms and the shifter
+        ! still carries the 1.46 normalisation while the arm evaluates q**0
+        ! against it, which pegs the price at the wrong level rather than at one.
+        ! That is the same shape as the stale-constant defect found earlier
+        ! today, where the benchmark used a live value and the counterfactual a
+        ! frozen one.
+        real(8) :: drug_supply_elasticity=1.46
+        real(8) :: drug_supply_curvature=1+1/1.46d0
         real(8) :: drug_supply_shifter=1
         real(8) :: distance_drug_market=0
         ! 5e-3, BECAUSE 1e-3 IS BELOW THE NOISE FLOOR AND MEASURABLY UNREACHABLE.
@@ -38504,6 +38539,16 @@
                 case ("rho_m")
                     write(*,*) "HANDOVER rho_m:", rho_m, "->", handover_value
                     rho_m=max(min(handover_value,1.d0),0.05d0)
+
+                ! THE SUPPLY ELASTICITY, and the curvature that follows from it.
+                ! Both paths must be given the same value: the benchmark writes
+                ! the shifter from it and the arms read that shifter back.
+                case ("drug_supply_elasticity")
+                    write(*,*) "HANDOVER drug_supply_elasticity:", &
+                        drug_supply_elasticity, "->", handover_value
+                    drug_supply_elasticity=max(handover_value,10.d0**(-2))
+                    drug_supply_curvature=1+1/drug_supply_elasticity
+                    write(*,*) "  drug_supply_curvature is now", drug_supply_curvature
 
                 ! THE COUNTERFACTUAL'S STARTING DRUG PRICE, and nothing else.
                 !
