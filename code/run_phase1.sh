@@ -27,7 +27,11 @@ run () {
     echo "PHASE1 $name: $(grep -a 'run_variant: finished' code/p1_${name}.log)"
     # DID IT CONVERGE, OR DID IT HIT THE CAP? A run that stops at
     # max_counterfactual_loops is NOT a result and must not be read as one.
-    ML=$(grep -a "run_variant: log is\|log variant_cf" "code/p1_${name}.log" | tail -1 | sed 's/.*log //;s/.*log is //')
+    # THE SED MUST ANCHOR ON THE FILENAME, NOT ON THE WORD "log". The line reads
+    # "run_variant: log is code/variant_cf_....log", so a greedy 's/.*log //'
+    # stops at "log is" and leaves "is code/variant_cf...", which is not a path.
+    # The result was "converged in 0 loops" on a run that took 34.
+    ML=$(grep -ao "variant_cf_[0-9TZ]*\.log" "code/p1_${name}.log" | tail -1)
     LOOPS=$(grep -ac "loop_count=" "code/${ML}" 2>/dev/null || echo 0)
     if [ "${LOOPS:-0}" -ge 80 ]; then
         echo "PHASE1 $name NOT CONVERGED: hit the ${LOOPS}-loop cap"
