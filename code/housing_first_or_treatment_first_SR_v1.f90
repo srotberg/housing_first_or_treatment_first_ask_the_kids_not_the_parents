@@ -4216,10 +4216,36 @@
         real(8) :: stopping_rule_largest_house_size=10.d0**(-3)
         
         real(8), dimension(employment_grid_size) :: adjusted_probability
+        ! THE BENCHMARK'S REALISED VALUES, NOT AN OLD ECONOMY'S.
+        !
+        ! A counterfactual overwrites both of these in upload_vars, from
+        ! model_average_labour_income and median_income of the benchmark it
+        ! imports (33621 and 33591). The BENCHMARK never calls upload_vars, so in
+        ! the benchmark these declarations stand -- and they were written down
+        ! from a finished run of an older economy. average_labor_income_calibrated
+        ! read 0.637248 against the benchmark's realised 0.646389, and
+        ! median_income_calibrated read 0.475981 against a realised 0.431324, ten
+        ! per cent out.
+        !
+        ! The median one is inert: every voucher eligibility site selects
+        ! is_counterfactual*median_income_calibrated and the benchmark takes
+        ! median_income(time_period) instead. The income one is NOT inert -- the
+        ! wealth and income histogram bin edges at 10605, 10619 and 10652 read it
+        ! with no is_counterfactual selector, on the stated ground that a fixed
+        ! constant "keeps the bin edges the same across points, which is what
+        ! makes the shares comparable between vertices at all". That argument is
+        ! right and the constant defeated it: the benchmark binned on 0.637248
+        ! while every counterfactual binned on 0.646389, so the one comparison
+        ! the bins exist to support was the one they did not hold for.
+        !
+        ! Both now carry the benchmark of record's realised values, so the two
+        ! paths agree. check_benchmark_constants below warns if the benchmark
+        ! moves away from them, because a constant written down from a finished
+        ! run goes stale silently and this one did.
         real(8) :: average_labor_income_calibrated=&
-            (1-perceived_probability_lower)*0.63724801720916613+perceived_probability_lower*0.63724801720916613
+            (1-perceived_probability_lower)*0.646388551189+perceived_probability_lower*0.646388551189
         real(8) :: median_income_calibrated=&
-            (1-perceived_probability_lower)*0.47598081051989916+perceived_probability_lower*0.47595992169857460
+            (1-perceived_probability_lower)*0.431323729224+perceived_probability_lower*0.431323729224
         ! ZEROED BECAUSE THE GRID IT WAS TAKEN ON NO LONGER EXISTS.
         !
         ! These were average labour income at each of NINE evenly spaced nodes,
@@ -4410,6 +4436,48 @@
         real(8), parameter :: max_times_labour_income_saved=3.2
                                               
         real(8) :: increase_in_labour_income_tax=is_counterfactual*0
+
+        ! THE TAX SEARCH. Three quantities it needs and did not have.
+        !
+        ! WHY THE OLD RULE COULD NOT WORK. It was
+        !     increase_in_labour_income_tax += 0.005*(revenue - target)
+        ! once a loop. Revenue is roughly sum(y - lambda*y**0.85), so
+        ! d(revenue)/d(lambda) is about -sum(y**0.85), which is near -0.69 here:
+        ! the Newton step is about 1.46 times the gap and the rule took 0.005 of
+        ! it, three hundred times too small. No counterfactual could close the
+        ! budget inside the eighty loop cap, so every one of them exited on the
+        ! loose 2.5e-2 tolerance with the tax still walking.
+        !
+        ! WORSE, IT WALKED IN THE WRONG DIRECTION FIRST. The counterfactual's
+        ! distribution starts far from stationary -- loop one revenue runs 1.4 to
+        ! 2.4 against a target of 0.545 -- so the first fifteen or so loops
+        ! integrate a cold start that has nothing to do with any policy, and an
+        ! integrator has no way to give that back. The signature was plain once
+        ! it was looked for: across four runs the final tax tracked the loop-one
+        ! revenue and not the policy, and the null with NO policy change at all
+        ! walked further than either Treatment First arm.
+        ! last_revenue_seen_tax moves EVERY loop and measures drift; the secant
+        ! pair moves only when a step is actually taken, so the slope is always
+        ! between two points the tax itself separated.
+        real(8) :: last_revenue_seen_tax=0
+        integer :: have_last_revenue_tax=0
+        real(8) :: secant_revenue_tax=0
+        real(8) :: secant_tax_level=0
+        integer :: have_tax_secant=0
+        ! Hold the tax while revenue is still moving by more than this fraction
+        ! of its own distance from target: the economy is in transit and the gap
+        ! is not yet a fact about the policy.
+        real(8), parameter :: tax_hold_drift_fraction=0.25d0
+        ! ... but never hold past this, so a run that drifts forever still moves.
+        integer, parameter :: tax_hold_max_loops=25
+        ! Damping on the secant step, and a cap so one bad slope cannot throw the
+        ! tax across the plausible range in a single loop.
+        real(8), parameter :: tax_step_damping=0.5d0
+        real(8), parameter :: max_tax_move=0.02d0
+        ! Fallback when there is no usable secant: the analytic slope is about
+        ! -0.69, so this is a half Newton step taken on that.
+        real(8), parameter :: tax_fallback_gain=0.3d0
+        real(8) :: tax_gap_1,tax_slope_1,tax_step_1,tax_drift_1
         
         real(8), dimension(1-solve_transition_dynamics:transition_length) :: housing_price
         
@@ -33086,6 +33154,38 @@
             write(1,'(F35.13)') welfare_by_addiction_youngest(time_period,:)
         close(1)
                                
+        ! THE STALE-CONSTANT GUARD. average_labor_income_calibrated and
+        ! median_income_calibrated are declared with the benchmark of record's
+        ! realised values, because the benchmark never calls upload_vars and so
+        ! runs on the declarations while every counterfactual runs on what it
+        ! imports. If the benchmark moves and the declarations are not moved with
+        ! it, the two paths silently bin and normalise on different economies --
+        ! which is exactly what had happened, by 1.4 per cent on income and 10
+        ! per cent on the median. This does not stop the run; it prints, loudly,
+        ! so the next person sees it in the log rather than in a result.
+        if (is_counterfactual==0) then
+
+            if (abs(model_average_labour_income(time_period)-average_labor_income_calibrated)>&
+                5.d0*10.d0**(-3)*max(abs(average_labor_income_calibrated),10.d0**(-8))) then
+
+                write(*,*) "STALE CONSTANT: average_labor_income_calibrated=",&
+                    average_labor_income_calibrated, " but the benchmark realises",&
+                    model_average_labour_income(time_period), &
+                    " -- update the declaration."
+
+            end if
+
+            if (abs(median_income(time_period)-median_income_calibrated)>&
+                5.d0*10.d0**(-3)*max(abs(median_income_calibrated),10.d0**(-8))) then
+
+                write(*,*) "STALE CONSTANT: median_income_calibrated=",&
+                    median_income_calibrated, " but the benchmark realises",&
+                    median_income(time_period), " -- update the declaration."
+
+            end if
+
+        end if
+
         open(unit=18,file="average_labor_income"//trim(file_number)//".dat",status='replace')
             write(18,'(F15.12)') model_average_labour_income(time_period)
         close(18)
@@ -42499,28 +42599,36 @@
         ! -- rent and the housing price are pegged inside the loop anyway, and
         ! the tax IS something the loop solves, so a starting guess for it is
         ! legitimate.
+        ! THE RENT AND THE HOUSING PRICE START AT THE BENCHMARK'S, NOT AT A
+        ! HARD-CODED MULTIPLE OF IT. This block used to open each arm at
+        ! rent_calibrated*1.0051 and calibrated_stationary_housing_price*1.002,
+        ! stale constants of the same family as the inheritance overwrite that
+        ! sat here: written down from a finished run of an older economy and
+        ! never revised. They were masked, because fix_rent and
+        ! peg_prices_in_counterfactual overwrite both inside the loop -- but a
+        ! constant that is only harmless because something downstream happens to
+        ! overwrite it is one edit away from being harmful, so it is gone. What
+        ! upload_vars imported from the benchmark now stands.
+        !
+        ! increase_in_labour_income_tax keeps its warm start. It is the one
+        ! quantity here the loop genuinely solves for, so a starting guess is a
+        ! guess and not an assumption.
         if (partial_equilibrium==0) then
                                     
             if (increased_prob_of_voucher_if_homeless_and_addicted==0) then
                 
                 if (probability_of_voucher_benchmark_used==1) then
                 
-                    rent(transition_length,:)=rent_calibrated(:)*1.042
-                    housing_price(transition_length)=calibrated_stationary_housing_price*0.997
                     increase_in_labour_income_tax=-7.3590906975202195E-004
                     
                 else
                 
-                    rent(transition_length,:)=rent_calibrated(:)*1.0051228061206543528
-                    housing_price(transition_length)=calibrated_stationary_housing_price*1.002
                     increase_in_labour_income_tax=1.4488423360367944E-003
                 
                 end if
                     
             else
                                                     
-                rent(transition_length,:)=rent_calibrated(:)*1.037
-                housing_price(transition_length)=calibrated_stationary_housing_price*0.997
                 increase_in_labour_income_tax=-2.59935794204448567E-003
                         
             end if
@@ -42952,8 +43060,61 @@
                     
                         write(*,*) "increase_in_labour_income_tax=", increase_in_labour_income_tax
 
-                        increase_in_labour_income_tax=increase_in_labour_income_tax+&
-                            0.005*(net_govt_revenues(transition_length)-net_govt_revenue_constraint)
+                        tax_gap_1=net_govt_revenues(transition_length)-net_govt_revenue_constraint
+
+                        tax_drift_1=huge(1.d0)
+                        if (have_last_revenue_tax==1) then
+                            tax_drift_1=abs(net_govt_revenues(transition_length)-last_revenue_seen_tax)
+                        end if
+                        last_revenue_seen_tax=net_govt_revenues(transition_length)
+                        have_last_revenue_tax=1
+
+                        if ((loop_count<=tax_hold_max_loops) .AND. &
+                            (tax_drift_1>tax_hold_drift_fraction*abs(tax_gap_1))) then
+
+                            ! STILL IN TRANSIT. Record and do not act. Acting here
+                            ! is what put the whole cold start into the tax: the
+                            ! gap is not yet a fact about the policy.
+                            write(*,*) "TAX HELD: revenue still drifting, drift=",&
+                                tax_drift_1, " gap=", tax_gap_1
+
+                        else
+
+                            tax_slope_1=0
+
+                            if ((have_tax_secant==1) .AND. &
+                                (abs(increase_in_labour_income_tax-secant_tax_level)>10.d0**(-8))) then
+
+                                tax_slope_1=(net_govt_revenues(transition_length)-secant_revenue_tax)/&
+                                    (increase_in_labour_income_tax-secant_tax_level)
+
+                            end if
+
+                            ! A usable slope is NEGATIVE: raising lambda cuts the
+                            ! tax and so cuts revenue. A positive or tiny one is
+                            ! noise off a loop that has not settled, so fall back
+                            ! rather than divide by it.
+                            if (tax_slope_1<-10.d0**(-4)) then
+
+                                tax_step_1=-tax_step_damping*tax_gap_1/tax_slope_1
+
+                            else
+
+                                tax_step_1=tax_fallback_gain*tax_gap_1
+
+                            end if
+
+                            tax_step_1=max(min(tax_step_1,max_tax_move),-max_tax_move)
+
+                            secant_revenue_tax=net_govt_revenues(transition_length)
+                            secant_tax_level=increase_in_labour_income_tax
+                            have_tax_secant=1
+
+                            increase_in_labour_income_tax=increase_in_labour_income_tax+tax_step_1
+
+                            write(*,*) "TAX STEP: slope=", tax_slope_1, " step=", tax_step_1
+
+                        end if
 
                         write(*,*) "increase_in_labour_income_tax=", increase_in_labour_income_tax
                                             
