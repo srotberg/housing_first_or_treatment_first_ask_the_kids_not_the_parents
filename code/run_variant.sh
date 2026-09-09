@@ -53,13 +53,21 @@ if command -v flock >/dev/null 2>&1; then
     flock -n 9 || { echo "run_variant: waiting for the checkout lock"; flock 9; }
 fi
 
-if [ ! -x "$BIN" ] || [ "$BUILT" != "$SRC_MD5" ]; then
-    echo "run_variant: building $BIN from $SRC_MD5"
+# THE STAMP CARRIES THE FLAGS, NOT JUST THE SOURCE, and that is not fussiness.
+# It used to hold SRC_MD5 alone. Run the standing -ffpe-trap check, then run an
+# ordinary solve on unchanged source, and this test says "already built" and
+# silently reuses the DEBUG binary: the flat-supply benchmark exited 136 on a
+# floating-point trap that has nothing to do with the economics, and a less
+# obvious flag difference -- -O1 against -O3 -funroll-loops -- would have
+# produced a plausible answer from the wrong build with nothing to notice.
+BUILD_TAG="$SRC_MD5 ${HFTF_OPT:--O3 -funroll-loops}"
+if [ ! -x "$BIN" ] || [ "$BUILT" != "$BUILD_TAG" ]; then
+    echo "run_variant: building $BIN from $SRC_MD5 [${HFTF_OPT:--O3 -funroll-loops}]"
     rm -f "$BIN" "${BIN}.srcmd5"
     gfortran "$SRC" -mcmodel=medium -fopenmp -fimplicit-none ${HFTF_OPT:--O3 -funroll-loops} \
         -ffree-line-length-none -g -fbacktrace -o "$BIN" 2> "build_${VARIANT}.log" \
         || { tail -20 "build_${VARIANT}.log" >&2; fail "the build failed"; }
-    printf '%s\n' "$SRC_MD5" > "${BIN}.srcmd5"
+    printf '%s\n' "$BUILD_TAG" > "${BIN}.srcmd5"
 fi
 
 # The state file carries the PREVIOUS run's parameters and adjusters, and the
