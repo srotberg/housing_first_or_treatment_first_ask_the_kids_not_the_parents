@@ -455,11 +455,34 @@
         ! generous; if it needs them the model is telling us something.
         integer, parameter :: max_frozen_passes=60
         ! On the largest absolute move across b, lambda_d, h_1 and average labour
-        ! income between consecutive passes. b is 0.0777 and lambda_d 0.0336, so
-        ! 1e-6 is about one part in thirty thousand of the smaller of them.
-        real(8), parameter :: stopping_rule_frozen_moments=10.d0**(-6)
+        ! income between consecutive passes. Set by the author on 9 September.
+        !
+        ! 1e-6 was tried first and was tighter than the solver. The frozen loop
+        ! went 1.69e-2, 2.13e-3, 2.55e-5, 2.19e-5 -- three orders of magnitude in
+        ! three passes and then a stall at about 2e-5, which is the solver's own
+        ! floor. At 5e-4 the loop converges on the third pass, where the moments
+        ! have genuinely stopped moving: 5e-4 is 0.6 per cent of b at 0.0864 and
+        ! 1.4 per cent of lambda_d at 0.0364, against a first-pass move of 8.5
+        ! and 6.0 per cent. The plateau detector below stays, so a run that
+        ! stalls ABOVE this still says so rather than grinding out sixty passes.
+        real(8), parameter :: stopping_rule_frozen_moments=5*10.d0**(-4)
         integer :: frozen_pass_index
         real(8) :: frozen_b_1,frozen_d_1,frozen_h_1,frozen_y_1,distance_frozen_moments
+        ! PLATEAU DETECTION, because the tolerance was tighter than the solver.
+        ! The first run of this loop went 1.69e-2, 2.13e-3, 2.55e-5, 2.19e-5 --
+        ! three orders of magnitude in three passes and then a stall at about
+        ! 2e-5, which is 0.024 per cent of b and is the solver's own noise floor,
+        ! not a failure to converge. Left alone it would have spent all sixty
+        ! passes there. A run that has stopped improving should say so and stop,
+        ! and report the level it stalled at, which is the honest statement of
+        ! how well the equilibrium is pinned down.
+        real(8) :: previous_distance_frozen=0
+        ! The counterfactual's own copy of the same test.
+        real(8) :: distance_counterfactual_moments=1
+        real(8) :: previous_cf_b_1=0,previous_cf_d_1=0,previous_cf_h_1=0,previous_cf_y_1=0
+        integer :: frozen_stall_count=0
+        real(8), parameter :: frozen_stall_ratio=0.9d0
+        integer, parameter :: frozen_stall_passes=3
         real(8), parameter :: elasticity_price_step=0.10
         real(8) :: val_price_base_1=0,val_users_base_1=0,val_qty_base_1=0
         ! THE INTENSIVE MARGIN HAS TO BE DECOMPOSED OR IT CANNOT BE READ.
@@ -7633,35 +7656,40 @@
 
                 val_price_base_1=price_of_addictive_good
 
-                ! MEASURE BOTH POINTS THE SAME WAY. The base used to be read
-                ! straight off the main loop's distribution while the raised
-                ! point got an extra solve-and-converge, so the two were not
-                ! produced by the same procedure and the difference between the
-                ! procedures was counted as a price response.
+                ! HOLD THE BENCHMARK DISTRIBUTION AND ITERATE ONCE. The
+                ! author, 9 September: *"the elasticity of participation should
+                ! be using the benchmark distribution and iterate only once on it
+                ! with the change in the price"*.
                 !
-                ! The author asked for the null that catches it: step the price
-                ! by ZERO and see whether participation moves. It moved by
-                ! +8.6661 per cent -- users 0.0775553 to 0.0842763 at a price of
-                ! 1.0000000 in both -- which is a spurious participation
-                ! elasticity of +0.87199 with the WRONG SIGN, sitting inside a
-                ! reported -3.2074. Quantity per addict moved -2.8396 per cent
-                ! the other way, a spurious -0.30224 inside a reported -1.4821, a
-                ! fifth of it.
+                ! WHAT THIS REPLACES, AND WHY BOTH EARLIER VERSIONS WERE WRONG.
+                ! Originally the base was read straight off the main loop's
+                ! distribution while the raised point got its own
+                ! solve_value_function_and_policy_functions AND
+                ! converge_to_stationary_equilibrium, so the two points came from
+                ! different procedures and the difference between the procedures
+                ! was counted as a price response. The author's own null caught
+                ! it: at a ZERO price step users moved +8.6661 per cent, a
+                ! spurious participation elasticity of +0.87199 with the WRONG
+                ! SIGN sitting inside a reported -3.2074, and a spurious -0.30224
+                ! inside a reported intensive -1.4821.
                 !
-                ! One extra solve at the BASE price, before anything is recorded,
-                ! makes the two points symmetric and the difference between them
-                ! the price and nothing else. It costs a third solve, which is
-                ! the right price for a number the paper quotes.
+                ! The first repair gave the base its own solve-and-converge, so
+                ! the two were symmetric. That removes the asymmetry but measures
+                ! the wrong object: the difference between two STATIONARY
+                ! EQUILIBRIA, which mixes the demand response with everything the
+                ! distribution does in response to it.
                 !
-                ! NOTE FOR LATER, because it is a bigger fact than the
-                ! elasticity: one more pass at an unchanged price moving
-                ! participation by 8.7 per cent says the main loop's own
-                ! convergence is loose in the moment that matters most here.
-                call solve_value_function_and_policy_functions(1)
-                call converge_to_stationary_equilibrium(1)
-                call stationary_equilibrium_statistics(1)
-                call govt_revenues_calc(1)
-
+                ! This measures the demand response. The benchmark distribution
+                ! is held; the value function is re-solved at the new price; the
+                ! moments are read off the SAME distribution under the new
+                ! policy. Same households, one price change, no distributional
+                ! feedback and no second convergence to contaminate anything. It
+                ! is also the right object for a paper that quotes an elasticity
+                ! from a cross section.
+                !
+                ! There is therefore NO converge_to_stationary_equilibrium call
+                ! in this block, in either direction. If one reappears, the null
+                ! above comes back with it.
                 val_users_base_1=model_total_drug_users(1)
                 val_qty_base_1=model_drugs_used_by_users_on_average(1)
                 val_qty_addict_base_1=model_drugs_used_by_addicts_on_average(1)
@@ -7681,7 +7709,10 @@
                 price_of_addictive_good=val_price_base_1*(1+elasticity_price_step)
 
                 call solve_value_function_and_policy_functions(1)
-                call converge_to_stationary_equilibrium(1)
+                ! NO converge_to_stationary_equilibrium HERE. The benchmark
+                ! distribution is what the moments are read off; re-converging it
+                ! would make this the difference between two equilibria instead
+                ! of the response of the same households to a price.
                 call stationary_equilibrium_statistics(1)
                 ! model_total_drug_users is built in govt_revenues_calc and not
                 ! in stationary_equilibrium_statistics, which is the mistake
@@ -42256,14 +42287,42 @@
 
                     end if
 
+                    ! Stopped improving? Count it, and give up after three in a
+                    ! row rather than grinding out the remaining passes at a
+                    ! level the solver cannot go below.
+                    if ((frozen_pass_index>1) .AND. &
+                        (distance_frozen_moments>frozen_stall_ratio*previous_distance_frozen)) then
+
+                        frozen_stall_count=frozen_stall_count+1
+
+                    else
+
+                        frozen_stall_count=0
+
+                    end if
+
+                    previous_distance_frozen=distance_frozen_moments
+
+                    if (frozen_stall_count>=frozen_stall_passes) then
+
+                        write(*,*) "FROZEN STALLED at", distance_frozen_moments,&
+                            "after", frozen_pass_index, "passes -- this is the",&
+                            "solver's floor, not a fixed point failure"
+                        exit
+
+                    end if
+
                 end do
 
                 if (distance_frozen_moments>stopping_rule_frozen_moments) then
 
-                    write(*,*) "FROZEN DID NOT CONVERGE in", max_frozen_passes,&
+                    write(*,*) "FROZEN NOT AT TOLERANCE after", frozen_pass_index,&
                         "passes, distance=", distance_frozen_moments,&
                         " against a rule of", stopping_rule_frozen_moments
-                    write(*,*) "FROZEN the saved state is NOT a fixed point"
+                    write(*,*) "FROZEN read the STALLED line above: if it is there,",&
+                        " this is the solver's floor and the state is as pinned",&
+                        " down as this solver makes it. If it is not there, the",&
+                        " loop ran out of passes and the state is NOT a fixed point."
 
                 end if
 
@@ -43041,7 +43100,26 @@
         ! This loop had none: tf_rationed sat in it for 73 loops on a tolerance
         ! it could not reach, and universal_tf for 47 with the price oscillating,
         ! and in both cases the only thing that ended them was me noticing.
-        do while (((distance_rental_market(transition_length)>stopping_rule_rental_market) .OR. &
+        ! THE COUNTERFACTUAL MUST CONVERGE ITS OWN MOMENTS, NOT ONLY ITS MARKETS.
+        ! The author, 9 September: *"i hope you converge on the stationary
+        ! equilibrium with the counterfactuals"*.
+        !
+        ! The test below asks whether rent, housing, the budget, the drug market
+        ! and inheritance have settled. It never asks whether b, lambda_d or h_1
+        ! have stopped moving, and those are not the same question: the drug
+        ! market can clear while participation is still drifting. That is exactly
+        ! the trap that caught the tax hold criterion twice -- revenue plateaued
+        ! for two loops at 3.2031, 3.2477, 3.2492 while distance_drug_market was
+        ! still swinging 0.108, 0.076, 0.096.
+        !
+        ! The benchmark's own frozen loop measured what this costs: one pass at
+        ! frozen parameters moved b by 8.5 per cent, lambda_d by 6.0 and h_1 by
+        ! 9.0. A counterfactual free to exit in the same condition is reporting a
+        ! policy effect with that much drift inside it.
+        distance_counterfactual_moments=1
+
+        do while (((distance_counterfactual_moments>stopping_rule_frozen_moments) .OR. &
+            (distance_rental_market(transition_length)>stopping_rule_rental_market) .OR. &
             (distance_housing_market(transition_length)>stopping_rule_housing_market) .OR. &
             (distance_govt_budget>stopping_rule_govt_budget) .OR. &
             (distance_drug_market>stopping_rule_drug_market) .OR. &
@@ -43114,6 +43192,29 @@
             ! what fills model_drugs_consumed_by_users, so V is the quantity this
             ! loop's distribution actually bought.
             call clear_drug_market(transition_length)
+
+            ! HAVE THE MOMENTS STOPPED MOVING? Measured here, after
+            ! stationary_equilibrium_statistics has rebuilt them for this loop
+            ! and before anything is adjusted for the next one.
+            if (loop_count>0) then
+
+                distance_counterfactual_moments=max(max(&
+                    abs(model_total_drug_users(transition_length)-previous_cf_b_1),&
+                    abs(model_fraction_addicted(transition_length)-previous_cf_d_1)),max(&
+                    abs(model_fraction_homeless(transition_length)-previous_cf_h_1),&
+                    abs(model_average_labour_income(transition_length)-previous_cf_y_1)))
+
+                write(*,*) "CF MOMENTS distance=", distance_counterfactual_moments,&
+                    " b=", model_total_drug_users(transition_length),&
+                    " lambda_d=", model_fraction_addicted(transition_length),&
+                    " h_1=", model_fraction_homeless(transition_length)
+
+            end if
+
+            previous_cf_b_1=model_total_drug_users(transition_length)
+            previous_cf_d_1=model_fraction_addicted(transition_length)
+            previous_cf_h_1=model_fraction_homeless(transition_length)
+            previous_cf_y_1=model_average_labour_income(transition_length)
             
             if ((include_bequests_in_govt_constraint==0) .AND. &
                 (partial_equilibrium==0) .AND. (adjust_inheritance==1) .AND. &
