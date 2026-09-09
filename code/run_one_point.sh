@@ -124,6 +124,21 @@ declare -A P=(
     [probability_of_detection]=0.95
     [probability_of_false_positive]=0.005
     [cost_per_drug_test]=0.00031
+    # THREE-YEAR EXCLUSION AFTER A FAILED TEST, the author's 9 September
+    # instruction. 0 keeps the old one-period sanction: fail, lose the voucher
+    # that period, re-enter the lottery next. Inert in the benchmark, where
+    # nothing is tested so nothing can be failed.
+    [include_voucher_exclusion]=0
+    # THE DRUG SUPPLY ELASTICITY. 1.46 is Mace, Patel and Seegert's CANNABIS
+    # figure from licensed Washington State producers, and licence caps are what
+    # make that curve slope up; heroin, cocaine and diverted oxycodone have no
+    # such constraint, and the literature's default for illicit supply is very
+    # elastic. Pass a large value for the flat-supply case.
+    #
+    # IT MUST GO TO THE BENCHMARK AS WELL AS THE ARMS. The benchmark computes
+    # the supply shifter from it and the arms read that shifter back; pass it to
+    # the arms alone and the price is pegged at the wrong level.
+    [drug_supply_elasticity]=1.46
     [penalty_child_homeless]=0.31
     [probability_becoming_unemployed]=0.0294178
     [probability_of_voucher_benchmark_used]=0.0121367
