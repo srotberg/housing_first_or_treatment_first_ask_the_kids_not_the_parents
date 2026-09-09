@@ -783,3 +783,47 @@ policy which is best behind the veil is the one that produces the most disorder.
 - The drug price and the tax are solved in a nested loop, so every tax step
   costs six or seven loops of re-clearing. Solving them jointly would remove it
   and would invalidate the null test. Not to be attempted unsupervised.
+
+---
+
+# THE ZERO-STEP ELASTICITY NULL PASSES EXACTLY, 9 September 07:55
+
+    ELASTICITY_DIAG base price= 1.0000  users= 8.5316054836136107E-002
+    ELASTICITY_DIAG new price = 1.0000  users= 8.5316054836136107E-002
+
+Bit-identical, every digit. At an unchanged price the number of drug users does
+not move. The reported elasticity is NaN because the model divides log(1/1)=0 by
+log(1+0)=0, which is what a null that passed perfectly looks like: zero over
+zero rather than something over zero.
+
+The history, since it took three attempts:
+
+| | zero-step movement | reported participation elasticity |
+|---|---|---|
+| original, asymmetric procedure | +8.6661% (wrong sign) | -3.2074 |
+| after the symmetry fix, unconverged benchmark | +2.5394% (wrong sign) | -3.7220 |
+| author's design on a converged benchmark | **0.0000%** | to be measured |
+
+TWO THINGS HAD TO BE TRUE TOGETHER and neither alone was enough. The author's
+design -- hold the benchmark distribution, re-solve the value function at the
+new price, read the moments off the same households -- removes the
+distributional feedback. The frozen convergence makes the distribution being
+held an actual equilibrium. Each earlier attempt had one and not the other.
+
+The base confirms the anchoring: 0.085316 against the converged benchmark's
+0.085038, a 0.3 per cent difference, where the PRE-convergence block reads
+0.081484.
+
+## A TRAP IN READING THE LOG, and it caught me once
+
+`print_all_moments` is called TWICE in a save run: at 42229, BEFORE the frozen
+loop, and again at 42376, AFTER it. The elasticity block lives inside that
+subroutine, so a save log carries TWO `ELASTICITY_DIAG` sets. The first is
+measured on the unconverged state and is meaningless.
+
+**Always read the SECOND block.** `grep ... | head` gives the wrong one;
+`grep ... | tail` gives the right one. I read the first and briefly concluded
+the null had failed at +3.56 per cent.
+
+Worth suppressing the first call's elasticity so the wrong number cannot be read
+at all. Not done -- it is a source edit and a solve was running.
