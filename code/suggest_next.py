@@ -42,14 +42,22 @@ OWNS = {
 
     'addiction_scalar_1':                    ('b',        0.0890),
     'lambda_addiction':                      ('lambda_d', 0.0368),
-    'relative_share_of_addiction_1':         ('theta',    0.1620),
+    # FOUR TARGETS HERE HAD GONE STALE against the Fortran's own _data
+    # parameters, found 9 September. The Fortran calibrates against its
+    # declarations and was never affected, but this table is what picks the
+    # DIRECTION of a search, so a refit driven from here would have pushed h_1
+    # down by a factor of three and h_2 up by 1.65. Corrected to the live
+    # values: theta 0.1620 -> drug_spending_share_data 0.14098, h_1 0.00399 ->
+    # fraction_homeless_data 0.01160, pi_eu 0.0485 -> unemployment_rate_data
+    # 0.049, h_2 0.132065 -> severe_cost_burden_data 0.08.
+    'relative_share_of_addiction_1':         ('theta',    0.14098),
     'value_of_life':                         ('aleph',   80.0),
-    'size_homelessness':                     ('h_1',      0.00399),
+    'size_homelessness':                     ('h_1',      0.01160),
     'discount_factor':                       ('beta',     3.0),
     'relative_share_of_leisure':             ('omega_l',  0.400),
     'labor_income_tax_rate':                 ('tau_l',    0.224),
     'sd_permanent_productivity':             ('sigma_y',  0.172),
-    'probability_becoming_unemployed':       ('pi_eu',    0.0485),
+    'probability_becoming_unemployed':       ('pi_eu',    0.049),
     'multiple_of_probabilities_of_employment_if_addicted':
                                              ('kappa_ued', 0.1625),
     'kappa_uem':                             ('kappa_uem', 0.300),
@@ -76,7 +84,7 @@ OWNS = {
     # earnings cut. penalty_child_addicted is Nilsson (2017)'s 0.24 and
     # penalty_child_homeless stays at 0.31; the two ratios are reported
     # untargeted.
-    'smallest_rental_relative_to_lowest_income': ('h_2',  0.132065),
+    'smallest_rental_relative_to_lowest_income': ('h_2',  0.08),
     'largest_house_size':                    ('h_3',      0.626723),
     # IN THE VECTOR AT LAST. The housing preference weight is internally
     # calibrated with its own adjuster and owns the renters' housing spending

@@ -62,7 +62,12 @@ GATE = {
     'relative_share_of_addiction_1':         ('b', 0.0890, 3.0),
     'utility_cost_of_treatment':             ('b', 0.0890, 3.0),
     'multiple_of_probabilities_of_employment_if_addicted': ('b', 0.0890, 3.0),
-    'zeta_DI':                               ('h_1', 0.00399, 3.0),
+    # 0.00399 -> 0.01160, the Fortran's live fraction_homeless_data. The old
+    # value was HUD's point-in-time household rate, which the target moved off
+    # on 8 September; the gate was refusing readings against a number the model
+    # had stopped aiming at. zeta_DI's adjuster is zero, so nothing was
+    # mis-stepped by it, but the gate is shared machinery.
+    'zeta_DI':                               ('h_1', 0.01160, 3.0),
 }
 
 # AN ARM THAT KNOCKS THE POPULATION OFF TARGET MEASURES A DIFFERENT ECONOMY.

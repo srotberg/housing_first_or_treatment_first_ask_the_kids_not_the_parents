@@ -4323,8 +4323,28 @@
         ! thirteen per cent narrower. Every counterfactual reads this.
         real(8) :: average_labor_income_calibrated=&
             (1-perceived_probability_lower)*0.66786175+perceived_probability_lower*0.66786175
+        ! STALE A THIRD TIME, CAUGHT 9 SEPTEMBER 19:00 BY THE GUARD BELOW.
+        ! 0.37578380 was written down this morning from the converged benchmark
+        ! and was out again by the afternoon. Four benchmark saves today, across
+        ! two source revisions and both -O3 and -O1 -fcheck=bounds, realise the
+        ! median at 0.38750440, 0.38750519, 0.38750373 and 0.38750473 -- six
+        ! figures of agreement, so this is drift in the CONSTANT, not noise in
+        ! the model.
+        !
+        ! WHAT IT COST. Voucher eligibility is threshold_income_vouchers times
+        ! is_counterfactual*median_income_calibrated at six sites, and the
+        ! benchmark takes median_income(time_period) instead. So the benchmark
+        ! cut at 0.193752 and every counterfactual cut at 0.187892: the eligible
+        ! set in the arms was 3.02 per cent narrower than the benchmark's own
+        ! definition, and coverage is the channel the arms differ on.
+        !
+        ! THIS WILL GO STALE AGAIN at the next benchmark, and the guard is the
+        ! only thing standing between that and another round of quietly wrong
+        ! coverage. The durable fix is to write the realised median at save time
+        ! and read it on the counterfactual path, the way drug_supply_shifter
+        ! already works; that is a mechanism change and is the author's to take.
         real(8) :: median_income_calibrated=&
-            (1-perceived_probability_lower)*0.37578380+perceived_probability_lower*0.37578380
+            (1-perceived_probability_lower)*0.38750473+perceived_probability_lower*0.38750473
         ! ZEROED BECAUSE THE GRID IT WAS TAKEN ON NO LONGER EXISTS.
         !
         ! These were average labour income at each of NINE evenly spaced nodes,
@@ -33218,8 +33238,24 @@
         ! divided value again and adds the second type on top of a finished
         ! average. Nothing at one type moves: the condition is 1==1 there.
         if (current_beta_type==number_of_beta_types) then
+            ! GUARDED BECAUSE THE DIVISOR IS IDENTICALLY ZERO. include_homeownership
+            ! is 0, so no mortgage is ever originated and model_mass_origination is
+            ! exactly 0. This line is 0/0.
+            !
+            ! IT IS NOT A RESULTS BUG. model_average_LTV_at_orgination is reset,
+            ! accumulated, divided here, and then only written out; nothing reads
+            ! it, so the NaN it produced went to the moments file and no further.
+            !
+            ! IT WAS A CHECKING BUG, AND THAT IS WHY THIS IS GUARDED. The trap in
+            ! -ffpe-trap=invalid,zero,overflow fires HERE, on the first statistics
+            ! pass, so the standing floating-point build has never been able to
+            ! reach the rest of the model. A dead homeownership moment has already
+            ! destroyed one calibration in this file -- the discount factor was
+            ! driven to zero by beta+adjuster*NaN -- so the check this unblocks is
+            ! the one that would have caught that.
             model_average_LTV_at_orgination(time_period)=&
-                model_average_LTV_at_orgination(time_period)/model_mass_origination(time_period)
+                model_average_LTV_at_orgination(time_period)/&
+                max(model_mass_origination(time_period),10.d0**(-14))
         end if
             
         ! NORMALISE ONLY ON THE LAST PASS. This division puts its result back
@@ -33228,8 +33264,10 @@
         ! divided value again and adds the second type on top of a finished
         ! average. Nothing at one type moves: the condition is 1==1 there.
         if (current_beta_type==number_of_beta_types) then
+            ! The home-switchers leg of the same 0/0, guarded for the same reason.
             model_average_LTV_at_orgination_2(time_period)=&
-                model_average_LTV_at_orgination_2(time_period)/model_mass_origination_2(time_period)
+                model_average_LTV_at_orgination_2(time_period)/&
+                max(model_mass_origination_2(time_period),10.d0**(-14))
         end if
                                                     
         write(*,*) "aggregate_consumption", time_period, "=", aggregate_consumption(time_period)
@@ -38466,6 +38504,45 @@
                 case ("rho_m")
                     write(*,*) "HANDOVER rho_m:", rho_m, "->", handover_value
                     rho_m=max(min(handover_value,1.d0),0.05d0)
+
+                ! THE COUNTERFACTUAL'S STARTING DRUG PRICE, and nothing else.
+                !
+                ! WHY IT EXISTS. Correcting probability_of_false_positive to
+                ! 0.005 moves universal treatment first into a regime where the
+                ! market clears far below the benchmark price: at the end of its
+                ! run the implied supply price was 0.1323 against a price still
+                ! walking down through 0.6696. The author's cap of half a per
+                ! cent a loop cannot cross that gap from 1.0 inside
+                ! max_counterfactual_loops, so the arm exited on LOOP COUNT with
+                ! distance_drug_market at 0.54 -- a hundred times its tolerance
+                ! -- while the budget and the moments both converged. Three of
+                ! the four conditions looked immaculate and the market never
+                ! cleared, and it printed a welfare number of +12.7 per cent
+                ! that reads perfectly plausibly.
+                !
+                ! THIS IS AN INITIAL GUESS AND NOTHING MORE. It changes no
+                ! equilibrium condition, and it deliberately does NOT touch
+                ! max_drug_price_move, which the author set at 0.005 on 8
+                ! September after the secant oscillated. The fixed point is
+                ! still implied_price == price_faced to within
+                ! stopping_rule_drug_market; only where the walk starts moves.
+                !
+                ! COUNTERFACTUAL ONLY. On the benchmark path the price IS the
+                ! normalisation -- drug_supply_shifter is computed from it and
+                ! written out for the arms to read -- so seeding it there would
+                ! silently redefine the numeraire and every arm would clear
+                ! against the wrong supply curve. is_counterfactual is a
+                ! compile-time parameter, so the benchmark build cannot reach
+                ! the assignment at all.
+                case ("drug_price_start")
+                    if (is_counterfactual==1) then
+                        write(*,*) "HANDOVER drug_price_start:", &
+                            price_of_addictive_good, "->", handover_value
+                        price_of_addictive_good=max(min(handover_value,5.d0),10.d0**(-4))
+                    else
+                        write(*,*) "HANDOVER drug_price_start IGNORED on the benchmark", &
+                            " path, where the price is the normalisation:", handover_value
+                    end if
 
                 ! THE CHILD GAP SWITCH, for omega_c in the final round.
                 case ("measure_child_gap")
