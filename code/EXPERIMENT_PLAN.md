@@ -722,3 +722,64 @@ Also unexplained and worth measuring: `beta` moves +9.6 per cent under rationed
 TF and +23.8 under universal, both away from the 3.0 target and in the same
 direction. Precautionary saving against losing voucher insurance is the natural
 story and it is a story, not a measurement.
+
+---
+
+# THE COMPLETE 2x2, 9 September 07:30
+
+All four cells converged on their own stopping rules, none capped, all on code
+where the null test passes.
+
+| | benchmark | rationed TF | universal TF | universal HF |
+|---|---|---|---|---|
+| `b` total drug users | 0.085038 | 0.066063 (-22.3%) | 0.069361 (-18.4%) | 0.114119 (+34.2%) |
+| `lambda_d` disorder | 0.036045 | 0.026188 (-27.3%) | 0.029914 (-17.0%) | 0.050670 (+40.6%) |
+| `h_1` homelessness | 0.012537 | 0.016954 (+35.2%) | 0.009617 (-23.3%) | 0.000188 (-98.5%) |
+| drug price | 1.000 | 0.862 | 0.909 | 1.208 |
+| `tau_l` average tax | 0.207863 | 0.191811 | 0.181988 | 0.247890 |
+| `beta` wealth over output | 3.497 | 3.832 | 4.330 | 2.674 |
+| `vouchers_2` outlay | 0.218 | -- | -- | 0.831 |
+| newborn CEV | -- | -0.0998 | -0.2141 | +0.3838 |
+| loops / cap | -- | 38 / 80 | 37 / 80 | 42 / 80 |
+
+## The reading
+
+CONDITIONALITY SETS THE SIGN ON DRUG USE. Both Treatment First arms cut it;
+Housing First raises it 34 per cent and the disorder rate 41.
+
+UNIVERSALITY SETS WHO ENDS UP HOUSED. Housing First all but eliminates
+homelessness, universal TF cuts it 23 per cent, and rationed TF RAISES it 35 per
+cent because it strips vouchers with no expanded programme to catch anyone.
+
+WELFARE SPLITS FROM THE DRUG OUTCOMES ENTIRELY. Universal HF is the only arm a
+newborn wants (+0.384) and it is the arm with the most drug use. Both TF arms
+are negative. So the paper's trade-off is not "which policy works" but that the
+policy which is best behind the veil is the one that produces the most disorder.
+
+## Why these hang together rather than look like noise
+
+- The drug price moves with demand in every arm: down to 0.86 and 0.91 where use
+  falls, up to 1.21 where it rises. Behavioural responses, not a price artefact.
+- The tax moves with the programme's cost. Universal HF is the only arm that
+  RAISES taxes, and it is the only one paying universal vouchers with no
+  revocations: `vouchers_2` 0.831 against the benchmark's 0.218, nearly four
+  times the bill. Every TF arm cuts taxes because revocation saves money.
+- Universal TF being worse for a newborn than rationed TF, which puzzled me
+  earlier, resolves here: it is the more expensive programme without the welfare
+  payoff of unconditional coverage -- paying for near-universal vouchers while
+  revoking them from exactly the households whose risk it would otherwise
+  insure.
+
+## STILL OPEN, AND NOT TO BE NARRATED WITHOUT MEASURING
+
+- `beta` ranges 2.674 to 4.330 across the arms against a 3.0 target. The natural
+  story is precautionary saving against voucher insurance -- rising where
+  conditionality strips it, falling where universality supplies it, and the
+  ordering does fit -- but it is a story until someone decomposes it.
+- The calibration vector was fitted against a benchmark that was not a solution.
+  Converging it moved `tau_l` and `beta` off target by 7.2 and 16.6 per cent
+  while pulling `b` and `lambda_d` much closer. How much to re-fit is the
+  author's call.
+- The drug price and the tax are solved in a nested loop, so every tax step
+  costs six or seven loops of re-clearing. Solving them jointly would remove it
+  and would invalidate the null test. Not to be attempted unsupervised.
