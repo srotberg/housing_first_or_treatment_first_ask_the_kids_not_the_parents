@@ -261,3 +261,94 @@ died mid-run and was relaunched.
 strings, it installs a handler. The check that works is `nm -D` for
 `feenableexcept` / `set_fpe`, which returns 1 for that binary and is what the
 rerun records.
+
+## Flat supply and the three-year exclusion, 9 September 23:10
+
+`.gitignore` excludes `*.log`, so this section is the record; the logs do not
+survive the container.
+
+### The change of specification
+
+The author, 9 September: 1.46 is "way too low", the drug price "fluctuates way
+too much", and with a participation elasticity of -2 to -3 that translates into
+a lot of spurious addiction. Also: a failed test should carry a FUTURE
+exclusion, geometric with a three-year mean, not the one-period removal the
+model had.
+
+`drug_supply_elasticity` is now a handover parameter, passed as 1e6. The
+curvature becomes 1.000001, so `implied_price = shifter * q**1e-6 = shifter`,
+the benchmark normalises the shifter to 1, and the price is pinned at 1 for any
+quantity. Clearing is a step only when the curve slopes up; flat supply clears
+by construction. Verified in the run: shifter normalised to 1.0000015, price
+0.99999749, `distance_drug_market = 7.2e-9`, converged in THREE loops rather
+than fifty.
+
+### Rationed Treatment First, against the flat-supply benchmark
+
+Benchmark: `b` 0.084902, `lambda_d` 0.035920, `h_1` 0.012529, `pi_V` 0.251825,
+`beta` 3.497412. `FROZEN CONVERGED` in 3 passes.
+
+| | flexible price, 1-year sanction | flat price, 3-year exclusion |
+|---|---|---|
+| `b` | 0.051527 (-39.3%) | **0.012160 (-85.7%)** |
+| `lambda_d` | 0.019985 (-44.4%) | **0.003855 (-89.3%)** |
+| `h_1` | 0.015185 (**+21.2%**) | **0.012513 (-0.1%)** |
+| `pi_V` | 0.176946 (-29.7%) | 0.224890 (-10.7%) |
+| welfare | -4.30% | **-2.14%** |
+| drug price | 0.797 | 0.99999749 |
+| loops | 46 | 3 |
+
+### The price was doing two thirds of the work, and that is measured
+
+At loop 11 of the flexible-price arm, with the price still at 0.975, `b` read
+0.0123795. The flat-price arm converges at 0.0121604. So the deterrent at an
+unchanged price was always about -86 per cent, and the falling price clawed back
+two thirds of it. That is the author's hypothesis, confirmed against the log
+rather than argued.
+
+**Homelessness stops rising**, +21.2% becoming -0.1%, and the chain is visible
+in the same table: use collapses, so almost nobody fails a test, so almost
+nobody is sanctioned -- which is why coverage falls only 10.7 per cent here
+against 29.7 per cent before. The deterrent works well enough that the
+punishment rarely lands.
+
+### What is NOT established
+
+- **Flat supply and the exclusion moved together.** The loop-11 comparison
+  suggests the price dominates and the exclusion adds little, but that is a
+  comparison against an unconverged iterate, not a decomposition. One arm at
+  flat supply with `include_voucher_exclusion=0` settles it, and is owed.
+- **Three loops is few.** The budget finished at 1.35e-2 -- inside the 2.5e-2
+  rule but ten times looser than the flexible-price arms reached -- so `tau_l`
+  and the welfare number are the least reliable entries above.
+- Eight benchmark moments are still outside the author's 10 per cent rule.
+
+### The exclusion state, and the null that guarded it
+
+A third voucher value, entered by failing a test, left with probability 1/3 a
+year. Applies to holders and to applicants who are offered and then caught; a
+false positive excludes too, since the programme cannot tell one from the other.
+
+It is the sanction that bites, and the one-period removal was not: a homeless
+household's voucher pays exactly ZERO -- `calculate_housing_voucher_2` caps the
+payment by actual rent spending -- so confiscating this period's voucher from
+the households the policy targets costs them nothing. Only a bar on future
+offers destroys the option value, which is all they hold.
+
+THE NULL EARNED ITS KEEP TWICE. First it caught `first_voucher_index` being set
+to `voucher_state_max` in the holder branch: that index means "has a voucher",
+not "top of the state space", so with the third slice present a holder
+integrated its future only over the EXCLUDED state, whose probability is zero
+with the flag off. `pi_V` fell from 0.2518 to 0.0245 and `b` from 0.0849 to
+0.0253 -- and it compiled clean, converged in 3 frozen passes and passed the
+bounds build, because nothing was out of bounds. A wrong number in a valid
+index. Second, it established that this model is NOT bit-reproducible: the same
+binary on the same vector differs by 3.8e-9 run to run, from OpenMP reduction
+order, so no null can ever be exact and the working threshold is about 1e-8.
+
+RESIDUAL, HONESTLY: with the flag off the three-state build agrees with the
+two-state one to 1.0e-5, not to 3.8e-9. That is 600 times inside the frozen
+tolerance and about a thousand times below the resolution at which arm effects
+mean anything, but it is not explained. The signalling-NaN build would localise
+it and cannot yet run: it dies on the pre-existing `X/mass` divisions, of which
+59 are unguarded, three now fixed.
