@@ -39,6 +39,17 @@ It destroys no number reported here; every quantity below was printed before it.
 It is still a defect worth fixing, since it means a converged counterfactual
 does not finish writing its outputs.
 
+It also leaves a mess behind. `write_outputs` opens
+`"name"//trim(file_number)`, and on this path `file_number` is empty, so the run
+wrote 88 extensionless files into `code/` -- `code/housing_price`,
+`code/model_ss_benefits`, `code/value_function1` and so on, the same stems as
+the `.dat` files but with no suffix and 264 MB in total -- before reaching the
+one name that came out entirely empty and killed it. They are byproducts of the
+defect, not results; this branch deletes them rather than adding them to
+`.gitignore`, because ignoring them would hide the symptom. The 89
+`*baseline_benchmark.dat` state files are untouched and
+`verify_benchmark_state.py` still passes.
+
 Two facts about the benchmark run itself, before the comparison:
 
 - `code/benchmark_of_record.txt` was rewritten by this run, as instructed. The
