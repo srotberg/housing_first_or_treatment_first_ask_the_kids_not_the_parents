@@ -127,3 +127,60 @@ rule: `w_bot` +268%, `kappa_uem` +174%, `h_3` -89%, `kappa_ued` +27%,
 0.0485 (live `unemployment_rate_data` 0.049). The Fortran calibrates against
 its own `_data` parameters and was never affected, but a refit that used these
 tools to choose directions would have driven `h_1` down by a factor of three.
+
+## The standing two-build check, 9 September 18:35
+
+`.gitignore` line 5 excludes `*.log`, so this section is where the debug builds
+are recorded; the logs themselves do not survive the container.
+
+### Why it was run
+
+`w_bot` reads 0.0919 against a target of 0.025. The source carries a table
+measured on 2 September (line 3251) where `w_bot` sat at 0.0247-0.0251 across
+discount factors from 0.9998 to 1.015 -- on target, and close to orthogonal to
+that instrument. A moment that was pinned and is now 3.7 times its old value
+has the shape of the defect documented at line 20240, where an over-wide table
+fill moved `w_bot` from 0.0295 to 3.27, homelessness from 0.084 to 0.011 and
+drug use to exactly zero -- in that comment's own words, numbers that "look
+like an economy".
+
+### What it says: nothing is wrong with the build
+
+`-O1 -fcheck=bounds,pointer`, exit 0, no out-of-bounds, no backtrace, and it
+REPRODUCES the production run:
+
+| | `-O3` production | `-O1 -fcheck=bounds,pointer` |
+|---|---|---|
+| `beta` | 3.49804 | 3.49718 |
+| `w_bot` | 0.091926 | 0.091891 |
+| `kappa_uem` | 0.821334 | 0.821362 |
+| frozen loop | CONVERGED, 3 passes | CONVERGED, 3 passes |
+
+So the numbers are not an optimisation artefact and not a memory error, and the
+archive's parametric explanation for `w_bot` -- `newborn_endowment_scale`, which
+takes the median from 0.0351 at zero to 0.0848 when positive across 2,286
+recent points -- stands unchallenged.
+
+### The first attempt was worthless, and that was a design fault
+
+It deleted the binary immediately, to stop a later production run inheriting a
+debug build. So when the time came to check that `-fcheck=bounds` had actually
+been compiled in, there was nothing to inspect. **"No error from a build that
+cannot be shown to have been checking" is not evidence.** The driver now
+fingerprints the binary WHILE the run is in flight -- 1497 bounds-check strings,
+against 0 in a production build -- and deletes it only at the end.
+`run_variant.sh` now takes an `HFTF_OPT` override so this check is repeatable
+rather than a one-off script.
+
+### Still open
+
+The run ends with `IEEE_INVALID_FLAG IEEE_DIVIDE_BY_ZERO are signalling`.
+Invalid operations and divide-by-zero do occur somewhere. Masked NaNs in dead
+branches are ordinary and this is not yet a finding, but it has not been
+localised. The `-ffpe-trap=invalid,zero,overflow` build that would localise it
+died mid-run and was relaunched.
+
+**A strings fingerprint CANNOT verify the fpe build** -- `-ffpe-trap` embeds no
+strings, it installs a handler. The check that works is `nm -D` for
+`feenableexcept` / `set_fpe`, which returns 1 for that binary and is what the
+rerun records.
