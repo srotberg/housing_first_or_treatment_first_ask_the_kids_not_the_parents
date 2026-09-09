@@ -675,3 +675,50 @@ so every tax step knocks the drug market out and costs six or seven loops to
 re-clear -- visible in the log as TAX HELD runs between TAX STEPs. Solving them
 jointly would remove that, and it is a solver redesign that would invalidate the
 null test. Not to be attempted unsupervised.
+
+---
+
+# RESULT: rationed Treatment First, 9 September 06:45
+
+Converged at loop 38 of 80, comfortably inside every rule:
+
+    CF MOMENTS distance  = 8.62e-05   (rule 5e-4)
+    distance_drug_market = 3.53e-03   (rule 5e-3)
+    distance_govt_budget = 2.98e-03   (rule 2.5e-2)
+
+## The two Treatment First arms, against the converged benchmark
+
+| | benchmark | rationed TF | universal TF |
+|---|---|---|---|
+| `b` total drug users | 0.085038 | 0.066063 (-22.3%) | 0.069361 (-18.4%) |
+| `lambda_d` disorder | 0.036045 | 0.026188 (-27.3%) | 0.029914 (-17.0%) |
+| `h_1` homelessness | 0.012537 | 0.016954 (+35.2%) | 0.009617 (-23.3%) |
+| drug price | 1.000 | 0.862 | 0.909 |
+| `tau_l` average tax | 0.207863 | 0.191811 | 0.181988 |
+| `beta` wealth over output | 3.497 | 3.832 | 4.330 |
+| newborn CEV | -- | -0.0998 | -0.2141 |
+
+## What it says
+
+CONDITIONALITY DETERS; UNIVERSALITY CATCHES. Rationed Treatment First cuts use
+HARDER than universal -- 22.3 against 18.4 per cent, and disorder 27.3 against
+17.0 -- and drives homelessness UP 35 per cent. Universal Treatment First gets a
+slightly smaller reduction in use and takes homelessness DOWN 23 per cent.
+
+The reading that fits: losing the voucher costs more when there is no expanded
+programme to fall back into, so rationing sharpens the deterrent -- and the same
+sharpness is what puts the households it strips onto the street.
+
+THE WELFARE ORDERING IS THE INTERESTING PART AND IT IS NOT YET EXPLAINED.
+Rationed TF is the LESS bad arm for a newborn, -0.0998 against -0.2141, despite
+cutting use more AND raising homelessness. Both are negative: every arm improves
+drug outcomes and a newborn behind the veil rejects all of them. Why universal
+is worse behind the veil than an arm that raises homelessness 35 per cent needs
+a decomposition -- the candidates are the tax (universal TF cuts tau_l further,
+0.182 against 0.192, so it is not obviously the tax), the coverage cost, and the
+disorder rate itself. NOT to be asserted without measuring.
+
+Also unexplained and worth measuring: `beta` moves +9.6 per cent under rationed
+TF and +23.8 under universal, both away from the 3.0 target and in the same
+direction. Precautionary saving against losing voucher insurance is the natural
+story and it is a story, not a measurement.
