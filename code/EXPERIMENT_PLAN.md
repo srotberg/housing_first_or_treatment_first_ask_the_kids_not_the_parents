@@ -616,3 +616,62 @@ cannot say which did what.
   `-finit-real=snan -ffpe-trap=invalid,zero,overflow`.
 - Report ONE equilibrium, never a best-of across points.
 - A capped or unconverged run is not a result and is reported as a failure.
+
+---
+
+# RESULT: universal Treatment First, 9 September 05:57
+
+THE FIRST NULL-VALIDATED COUNTERFACTUAL OF THE PROJECT. Converged at loop 37 of
+a cap of 80, all three conditions inside their rules:
+
+    CF MOMENTS distance  = 3.72e-05   (rule 5e-4)
+    distance_drug_market = 1.54e-04   (rule 5e-3)
+    distance_govt_budget = 2.48e-02   (rule 2.5e-2)
+
+| | benchmark | universal TF | change |
+|---|---|---|---|
+| `b` total drug users | 0.085038 | 0.069361 | -18.4% |
+| `lambda_d` disorder | 0.036045 | 0.029914 | -17.0% |
+| `h_1` homelessness | 0.012537 | 0.009617 | -23.3% |
+| drug price | 1.000 | 0.909 | -9.1% |
+| `tau_l` average tax | 0.207863 | 0.181988 | -2.6 points |
+| `beta` wealth over output | 3.497 | 4.330 | +23.8% |
+| newborn CEV | -- | -0.214 | |
+
+Use, disorder and homelessness all fall, and the drug price FALLS with them, so
+the reduction is deterrence and not a price choking off demand. Newborn welfare
+is nevertheless negative: the policy improves all three quantities and a newborn
+behind the veil still does not want it.
+
+FLAGGED, NOT SWEPT UP:
+
+- `beta` moves +23.8 per cent, 3.50 to 4.33. Coherent -- Treatment First strips
+  voucher insurance from users, so precautionary saving rises -- but a 24 per
+  cent move in aggregate wealth in a calibration target deserves looking at. It
+  is inside the (3.0, 4.5) band, only just.
+- The budget cleared at 0.02484 against a rule of 0.025. Inside, barely. That is
+  the author's loosened tolerance doing its job and the number would tighten if
+  the rule did.
+
+WHAT THIS RESULT COST. Seven defects, three of which only became visible after
+the ones above them were fixed:
+
+1. the benchmark was not a stationary equilibrium -- saved mid-sweep, its own
+   convergence test 183 times out of tolerance;
+2. `inheritance_amount` overwritten with a hard-coded transfer in every
+   counterfactual and none of the benchmark;
+3. the tax search's gain and cap set in per-household units against an aggregate
+   budget, 50 times too large a first step;
+4. the counterfactual loop free to exit while its own moments were still moving;
+5. two stale income constants, one of them the median that sets voucher
+   eligibility, 13 per cent out;
+6. the null arm running with an empty `file_number`, so its state files had no
+   name (mild, ignored, still to fix);
+7. and then the over-correction to (3): one cap doing two jobs, throttling the
+   secant step that cannot run away as hard as the blind step that can.
+
+THE ONE I DID NOT MAKE. The drug price and the tax are solved in a nested loop,
+so every tax step knocks the drug market out and costs six or seven loops to
+re-clear -- visible in the log as TAX HELD runs between TAX STEPs. Solving them
+jointly would remove that, and it is a solver redesign that would invalidate the
+null test. Not to be attempted unsupervised.
