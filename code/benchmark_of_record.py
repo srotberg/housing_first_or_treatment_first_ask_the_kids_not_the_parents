@@ -54,14 +54,32 @@ def main():
         if line.startswith("VECTOR "):
             break
 
-    block, keep = [], False
+    # THE LAST MOMENTS BLOCK, NOT THE FIRST.
+    #
+    # A save run now prints TWO. The first is the sweep's own, before the frozen
+    # equilibrium converges; the second is after it. They are not close --- on
+    # the 9 September run the first said b = 0.0775588 and the second
+    # b = 0.0864386, eleven per cent apart --- and the .dat state written at the
+    # end belongs to the SECOND. Taking the first put a record and a state from
+    # two different economies into the same file, which is the exact failure the
+    # save-at-the-sweep-stop design existed to prevent.
+    #
+    # Collect every block and keep the last.
+    blocks, block, keep = [], [], False
     for line in text.splitlines():
         if "ALL TARGETED MOMENTS" in line:
-            keep = True
+            keep, block = True, []
         if keep:
             block.append(line)
         if "END OF MOMENTS" in line and keep:
-            break
+            blocks.append(block)
+            keep = False
+    if not blocks:
+        sys.exit("%s has no complete moments block" % os.path.basename(log))
+    block = blocks[-1]
+    if len(blocks) > 1:
+        print("  %d moments blocks in the log; took the last "
+              "(after the frozen equilibrium converged)" % len(blocks))
 
     # WHICH STATE THIS RECORD BELONGS TO. The .dat files are what a
     # counterfactual imports; naming the newest of them and its time is what
@@ -86,10 +104,14 @@ def main():
         # the moments block, so the record would not have it.
         for key in ("average_labor_income_calibrated", "median_income_calibrated",
                     "average_net_wealth_calibrated", "price_of_addictive_good"):
+            # The LAST occurrence, for the same reason the block is the last:
+            # these are printed before and after the frozen passes.
+            hit = None
             for line in text.splitlines():
                 if line.strip().startswith(key + "="):
-                    f.write("AGG %s\n" % line.strip())
-                    break
+                    hit = line.strip()
+            if hit:
+                f.write("AGG %s\n" % hit)
         f.write("\n".join(block) + "\n")
 
     print("wrote %s" % os.path.relpath(OUT, os.path.dirname(HERE)))
