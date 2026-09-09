@@ -26595,19 +26595,28 @@
 
                 has_opportunity=1
                 first_voucher_index=0
-                second_voucher_index=voucher_state_max
+                second_voucher_index=include_vouchers+include_voucher_exclusion
 
             elseif ((has_house==0) .AND. (choose_to_own_1==0) .AND. (voucher_index==0)) then
 
                 has_opportunity=1
                 first_voucher_index=0
-                second_voucher_index=voucher_state_max
+                second_voucher_index=include_vouchers+include_voucher_exclusion
 
             elseif ((has_house==0) .AND. (choose_to_own_1==0) .AND. (voucher_index==1)) then
 
                 has_opportunity=1
-                first_voucher_index=voucher_state_max
-                second_voucher_index=voucher_state_max
+                ! THIS IS THE HAS-VOUCHER INDEX, NOT THE TOP OF THE STATE SPACE,
+                ! and conflating the two is what the three-state null caught. A
+                ! blunt rewrite turned this into voucher_state_max, which with
+                ! the third slice present is EXCLUDED. A voucher holder then
+                ! integrated its future only over the excluded state, whose
+                ! probability is zero while the flag is off, so holding a voucher
+                ! carried no continuation value at all: pi_V fell from 0.2518 to
+                ! 0.0245, drug use from 0.0849 to 0.0253 and beta rose to 4.51.
+                ! Nothing crashed and every convergence test passed.
+                first_voucher_index=include_vouchers
+                second_voucher_index=include_vouchers+include_voucher_exclusion
                 
                 ! Those who are addicted in a counterfactual, has the option to move to both not getting a vouchers                
                 if ((is_counterfactual==1) .AND. (voucher_index_1==3) .AND. &
@@ -26615,7 +26624,7 @@
                     
                     has_opportunity=1
                     first_voucher_index=0
-                    second_voucher_index=voucher_state_max
+                    second_voucher_index=include_vouchers+include_voucher_exclusion
                     
                 end if             
                 
@@ -26623,7 +26632,7 @@
 
                 has_opportunity=1
                 first_voucher_index=0
-                second_voucher_index=voucher_state_max
+                second_voucher_index=include_vouchers+include_voucher_exclusion
 
             end if
 
