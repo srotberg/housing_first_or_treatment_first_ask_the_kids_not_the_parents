@@ -23,7 +23,7 @@ distance = 1.66e-5`, log `variant_save_20260909T075231Z.log`.
 
 ## The arms
 
-| | benchmark | rationed TF | conditionality only | universal HF | universal TF |
+| | benchmark | condition, no steering | condition + steering | universal HF | universal TF |
 |---|---|---|---|---|---|
 | rates | -- | 0.95/0.005 | 0.95/0.005 | n/a, no condition | 0.95/0.005 |
 | `b` | 0.08532 | 0.05253 (-38.4%) | 0.05036 (-41.0%) | 0.11412 (+33.8%) | -- |
@@ -40,17 +40,49 @@ distance = 1.66e-5`, log `variant_save_20260909T075231Z.log`.
 
 Tolerances: drug market 5e-3, government budget 2.5e-2, counterfactual moments
 5e-4. Logs: `variant_cf_20260909T150812Z` (rationed TF),
-`variant_cf_20260909T173844Z` (conditionality only),
+`variant_cf_20260909T173844Z` (condition + steering, mislabelled b3_cond_only),
 `variant_cf_20260909T064500Z` (universal HF),
 `variant_cf_20260909T160315Z` (universal TF).
 
 ## What the arms say
 
-**The sobriety condition is the whole mechanism.** Conditionality alone gets
-MORE drug-use reduction than rationed treatment first (-41.0 against -38.4),
-LESS homelessness (+17.3 against +22.0), the same tax to four digits and
-welfare within 0.2 points. The steering machinery on top of the condition
-buys nothing.
+**WRONG, AND CORRECTED 9 SEPTEMBER 19:30. The arm labelled "conditionality
+only" is not conditionality only.** Its launch flags are
+`voucher_conditional_on_clean=1` PLUS
+`increased_prob_of_voucher_if_homeless_and_addicted=1`, and the arm labelled
+"rationed TF" is `voucher_conditional_on_clean=1` with that steering flag at
+**0**. So the pair is not condition-alone against condition-plus-steering with
+the steering on the wrong side; it is the exact reverse of how it was read.
+The claim struck through below -- that the sobriety condition is the whole
+mechanism and steering buys nothing -- was taken from the FILENAMES without
+checking the flags, and it is backwards.
+
+**What the two arms actually say.** `b1` is the condition with no steering;
+`b3` is the condition plus steering toward the homeless-and-addicted. Adding
+steering:
+
+| | condition alone (`b1`) | condition + steering (`b3`) |
+|---|---|---|
+| `b` | -38.4% | **-40.8%** |
+| `h_1` | +22.0% | **+17.3%** |
+| `pi_V` | 0.1765 | 0.1790 |
+| welfare | -3.99% | -4.18% |
+
+**Steering helps on both real margins** -- more drug-use reduction and less of
+the homelessness the condition causes -- at a welfare cost of 0.2 points. That
+is the opposite of "buys nothing".
+
+**But read it against the resolution.** Four benchmark saves put `b` in a band
+of 2.8e-4, inside the frozen loop's own 5e-4 rule, so the benchmark is pinned
+to roughly +/-0.6 per cent on `b`. The 2.4-point gap between -38.4 and -40.8
+is close to that floor. The DIRECTION is a result; the size is not yet one, and
+both arms are due a re-run against the corrected eligibility cutoff anyway.
+
+~~The sobriety condition is the whole mechanism. Conditionality alone gets MORE
+drug-use reduction than rationed treatment first (-41.0 against -38.4), LESS
+homelessness (+17.3 against +22.0), the same tax to four digits and welfare
+within 0.2 points. The steering machinery on top of the condition buys
+nothing.~~
 
 **`beta`'s rise was the false-positive rate.** Two independent converged arms
 put it at 3.5601 and 3.5582 against a benchmark 3.4980 -- up 1.7 to 1.8 per
