@@ -46,8 +46,53 @@ Tolerances: drug market 5e-3, government budget 2.5e-2, counterfactual moments
 
 ## What the arms say
 
-**WRONG, AND CORRECTED 9 SEPTEMBER 19:30. The arm labelled "conditionality
-only" is not conditionality only.** Its launch flags are
+**THE 19:30 CORRECTION BELOW IS ITSELF WRONG. SETTLED 21:15 AGAINST THE CODE.**
+
+`increased_prob_of_voucher_if_homeless_and_addicted` multiplies the voucher
+offer probability for households who are BOTH homeless AND addicted. At 1 they
+enter the lottery on the same terms as everyone else; at **0 they are excluded
+from voucher offers entirely**. The benchmark has it at 1.
+
+**That flag IS the Treatment-First / Housing-First switch**, and the model names
+the arms itself at line 9271:
+
+| offer prob | homeless-and-addicted | the code's own file_number |
+|---|---|---|
+| 1 | 0 | `counter_VTE_TF` -- universal Treatment First |
+| 1 | 1 | `counter_VTE_HF` -- universal Housing First |
+| < 1 | 0 | `counter_TF` -- rationed Treatment First |
+
+Each arm's own VECTOR line, read back: `b1` cond=1 flag=0 offer=0.0433173 --
+**rationed TF, exactly as first labelled**. `b2` cond=1 flag=0 offer=1 --
+universal TF. `a4` cond=0 flag=1 offer=1 -- universal HF. So the ORIGINAL
+labels were right, the 19:30 "correction" was the error, and "steering" is a
+word I invented that describes nothing in this model. Excluding the addicted
+homeless from housing is what makes a policy Treatment First.
+
+**`b3` is therefore a fourth cell nobody asked for, and it is the most
+informative one in the set**: cond=1, flag=1, rationed -- the sobriety
+condition applied WITHOUT the categorical exclusion.
+
+| | rationed TF (excludes addicted homeless) | condition only (no exclusion) |
+|---|---|---|
+| drug use | -38.4% | **-40.8%** |
+| homelessness | +22.0% | **+17.3%** |
+
+Same sobriety test, better on both margins without the exclusion. Excluding the
+addicted homeless removes their reason to get clean -- there is no voucher to
+earn -- so they use more and stay homeless more.
+
+**ALSO RECORDED: the three-year exclusion is NOT in the model.** A search for
+any multi-period ban state (`years_excluded`, `consecutive`, `reinstate`, and
+the rest) returns nothing. The sanction that actually runs is ONE PERIOD: fail a
+test, lose the voucher that period with probability `p_det`, and re-enter the
+lottery the next period. A three-year exclusion would be a materially stronger
+policy than anything measured here.
+
+---
+
+~~WRONG, AND CORRECTED 9 SEPTEMBER 19:30. The arm labelled "conditionality
+only" is not conditionality only.~~ Its launch flags are
 `voucher_conditional_on_clean=1` PLUS
 `increased_prob_of_voucher_if_homeless_and_addicted=1`, and the arm labelled
 "rationed TF" is `voucher_conditional_on_clean=1` with that steering flag at
