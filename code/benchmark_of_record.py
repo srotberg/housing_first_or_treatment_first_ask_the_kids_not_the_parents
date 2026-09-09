@@ -123,3 +123,41 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+# ---------------------------------------------------------------------------
+# THE COUNTERFACTUAL-ONLY PARAMETERS GO STALE IN THE VECTOR, SILENTLY.
+#
+# probability_of_detection, probability_of_false_positive and cost_per_drug_test
+# do nothing in the benchmark -- voucher_conditional_on_clean is zero there, so
+# nothing is tested. CLAUDE.md says as much: a parameter that only binds in a
+# counterfactual is not a calibration parameter.
+#
+# But they ride in the VECTOR line anyway, and the VECTOR is regenerated from a
+# run that echoes the vector it was handed. So a value set once perpetuates
+# itself forever, and its handover BEATS both the Fortran declaration and
+# run_one_point.sh's defaults. On 9 September the author set the rates to 0.95
+# and 0.005; both places were changed; and every arm still ran at 0.9 and 0.05
+# because the record's vector overrode them. The universal Treatment First arm
+# reached 43 per cent of eligibles against Housing First's 85, and the welfare
+# ordering that came out of it was the thing that exposed the bug.
+#
+# This does not fix the vector -- an arm must still pass the rates explicitly --
+# it makes the disagreement impossible to miss.
+def warn_stale_counterfactual_params(vector_line, fortran_path):
+    import re as _re
+    src = open(fortran_path, errors="replace").read()
+    for name in ("probability_of_detection", "probability_of_false_positive",
+                 "cost_per_drug_test"):
+        m = _re.search(r"^\s*real\(8\)\s*::\s*" + name + r"\s*=\s*([0-9.eEdD+-]+)",
+                       src, _re.M)
+        v = _re.search(r"(?:^| )" + name + r"=([0-9.eEdD+-]+)", vector_line)
+        if not m or not v:
+            continue
+        decl = float(m.group(1).lower().replace("d", "e").rstrip("e") or 0)
+        vec = float(v.group(1).lower().replace("d", "e"))
+        if abs(decl - vec) > 1e-12 * max(abs(decl), 1.0):
+            print("  STALE IN VECTOR: %s is %g in the vector but %g in the "
+                  "declaration. The vector WINS via the handover -- pass it "
+                  "explicitly on any counterfactual that should use %g."
+                  % (name, vec, decl, decl))
