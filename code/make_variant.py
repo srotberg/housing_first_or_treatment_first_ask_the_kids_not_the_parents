@@ -40,19 +40,32 @@ def patch(text, old, new, label, expect=1):
 # average_labor_income_by_employment to refill the zeroed profile that the STOP
 # at ~29464 guards.
 #
-# THE STATE IS SAVED AT THE SWEEP'S STOP AND NOT AFTER A FULL CONVERGENCE LOOP,
-# deliberately. The comment above that stop records that
+# THE STATE IS NOW SAVED AFTER THE FROZEN EQUILIBRIUM CONVERGES, WHICH IS A
+# CHANGE, and the old reasoning is kept here because it was right about the
+# thing it was worried about and wrong about the remedy.
+#
+# It used to save at the sweep's stop, on the ground that
 # re_do_simulation_with_fixed_parameters does NOT freeze everything --
-# sd_permanent_productivity was still moving pass by pass, and participation at
-# a fixed b drifted 0.3326, 0.3244, 0.3327 across three passes. So a save run
-# that let the loop keep going would write a state that is not the state the
-# benchmark's reported moments came from. This writes exactly that state.
+# sd_permanent_productivity kept moving pass by pass, and participation at a
+# fixed b drifted 0.3326, 0.3244, 0.3327 across three passes -- so letting the
+# loop keep going would write a state that is not the state the reported moments
+# came from.
+#
+# The missing distinction is between the CALIBRATION map and the EQUILIBRIUM
+# map. The worry was about the first: re-entering the calibration update block
+# moves calibrated parameters, and then the saved state belongs to a different
+# vector. The remedy was to stop iterating at all, which left the saved state at
+# one iterate of a search --- distance_average_labor_income at 1.8281e-2 against
+# a rule of 1e-4, a hundred and eighty-three times its tolerance.
+#
+# The Fortran now iterates the EQUILIBRIUM map only, at frozen parameters, until
+# the moments stop moving, and saves after that. No calibrated parameter can
+# move, because the calibration update block is never re-entered.
 SAVE = [
-    ("""                write(*,*) "B SWEEP POINT DONE at b=", addiction_scalar_1,&
-                    " participation=", model_exprimenters(1)
+    ("""                call print_all_moments()
+
                 stop""",
-     """                write(*,*) "B SWEEP POINT DONE at b=", addiction_scalar_1,&
-                    " participation=", model_exprimenters(1)
+     """                call print_all_moments()
 
                 ! THE VARIANT'S WHOLE PURPOSE. See make_variant.py.
                 write(*,*) "SAVE VARIANT: writing the benchmark state"
@@ -60,7 +73,7 @@ SAVE = [
                 write(*,*) "SAVE VARIANT: benchmark state written"
 
                 stop""",
-     "save the benchmark state at the sweep's stop"),
+     "save the benchmark state after the frozen equilibrium converges"),
 ]
 
 # ------------------------------------------------------------------ cf
