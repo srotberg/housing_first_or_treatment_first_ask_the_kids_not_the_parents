@@ -827,3 +827,44 @@ the null had failed at +3.56 per cent.
 
 Worth suppressing the first call's elasticity so the wrong number cannot be read
 at all. Not done -- it is a source edit and a solve was running.
+
+---
+
+# THE DECOMPOSITION: the drug test is the whole mechanism, 9 September 08:55
+
+`tf_rationed` moves TWO switches -- the sobriety test on, AND the
+addicted-homeless steering off -- so it could never say which did what. This arm
+turns on only the test, leaving `increased_prob_of_voucher_if_homeless_and_
+addicted` at the benchmark's 1. Converged at loop 45, all conditions inside
+their rules (moments 6.27e-05, drug 3.90e-04, budget 1.75e-03).
+
+| | benchmark | conditionality only | rationed TF (both) |
+|---|---|---|---|
+| `b` drug users | 0.085038 | 0.057202 (-32.7%) | 0.066063 (-22.3%) |
+| `lambda_d` disorder | 0.036045 | 0.022552 (-37.4%) | 0.026188 (-27.3%) |
+| `h_1` homelessness | 0.012537 | 0.016279 (+29.8%) | 0.016954 (+35.2%) |
+| drug price | 1.000 | 0.821 | 0.862 |
+| `tau_l` | 0.207863 | 0.192176 | 0.191811 |
+| newborn CEV | -- | -0.0952 | -0.0998 |
+
+THE SOBRIETY CONDITION IS THE ENTIRE MECHANISM, in both directions. Alone it
+cuts use 32.7 per cent and disorder 37.4, and alone it raises homelessness 29.8.
+Adding the steering removal WEAKENS the use reduction to 22.3 per cent and adds
+only five points of homelessness.
+
+So steering vouchers away from the addicted homeless is a pure cost: it buys no
+additional deterrence -- it destroys some -- and adds homelessness. The likely
+reason is that it pushes users onto the street, where there is no voucher left
+to lose and the test stops binding on exactly the households it targets.
+
+TWO PREDICTIONS MADE BEFORE THIS RAN, BOTH WRONG, recorded because the pattern
+matters more than the guesses. I said conditionality would deliver MOST of the
+use reduction and the steering removal MOST of the homelessness. It delivers
+MORE THAN ALL of the use reduction and nearly all of the homelessness. I also
+narrated a mechanism off loop-9 numbers (-82 per cent on use) that unwound to
+-32.7 as the drug price fell.
+
+THE STANDING LESSON, now visible in all five arms: the early-loop deterrent is
+always far larger than the converged one, because the price has not yet fallen
+to absorb the drop in demand. Mid-solve numbers are not results and reading a
+mechanism off them produced a wrong story three times tonight.
