@@ -494,3 +494,125 @@ arm was, and was not.
 
 Every counterfactual run before 4075635b. The benchmark is unaffected -- the
 overwrites were all in long_run_counter_factual.
+
+---
+
+# THE PLAN, as of 9 September 04:00. Supersedes everything above it.
+
+Everything above this line is a log of what was found. This is the ordered
+sequence of what to do, what it depends on, and how each step is known to have
+worked. Steps run in order; a step whose CHECK fails stops the sequence.
+
+## Where the work stands
+
+The benchmark of record was not a stationary equilibrium -- it was saved at one
+iterate of the calibration sweep, with the outer loop's own
+`distance_average_labor_income` at 1.8281e-2 against a rule of 1e-4. Converging
+it at frozen parameters moves the headline moments a long way:
+
+| | saved state | converged | target |
+|---|---|---|---|
+| `b` participation | 0.077700 | 0.086434 | 0.089 |
+| `lambda_d` disorder | 0.033558 | 0.036437 | 0.0368 |
+| `h_1` homelessness | 0.011650 | 0.013203 | 0.0116 |
+
+Two of three fit far better once solved. Everything measured against the old
+state -- every counterfactual, both elasticities, every calibration gap -- was
+measured against a point that is not a solution.
+
+## THE SEQUENCE
+
+### 1. Converge the benchmark  [RUNNING]
+The save path iterates the equilibrium map at frozen parameters until the
+largest move across `b`, `lambda_d`, `h_1` and average labour income is below
+1e-6, then writes the state.
+**CHECK**: the log carries `FROZEN CONVERGED after N passes`. If it says
+`FROZEN DID NOT CONVERGE`, stop and report -- nothing downstream is valid.
+
+### 2. Converge the counterfactuals  [NEXT, blocked on 1 finishing so code/ is free]
+`long_run_counter_factual`'s `do while` tests the market distances and never
+asks whether its own moments have stopped moving. The drug market can clear
+while participation is still drifting -- exactly the trap that caught the tax
+criterion twice. Add `distance_frozen_moments` over `b`, `lambda_d`, `h_1` and
+average labour income to that loop's test.
+**CHECK**: a counterfactual log shows the moment distance falling below 1e-6
+before the loop exits, and does not exit on the market distances alone.
+
+### 3. Rewrite the elasticity  [blocked on 2]
+The author's design: hold the BENCHMARK distribution, re-solve the value
+function at the new price, read the moments off the same distribution. No
+re-convergence, no second stationary equilibrium. Same households, one price
+change. Drop both `converge_to_stationary_equilibrium` calls from the block.
+**CHECK**: the zero-step null returns users unchanged to at least five
+significant figures. Before the symmetry fix it moved +8.6661 per cent.
+
+### 4. A new benchmark of record  [blocked on 1]
+Re-run `benchmark_of_record.py` and `verify_benchmark_state.py` against the
+converged state. Every downstream vector and every reported moment comes from
+this.
+**CHECK**: `VERDICT: the counterfactual imports this benchmark`, and the moments
+in the record match the last `FROZEN PASS` line.
+
+### 5. THE NULL TEST  [blocked on 2 and 4] -- THE GATE
+The counterfactual path at the benchmark's own switches:
+`voucher_conditional_on_clean=0`,
+`increased_prob_of_voucher_if_homeless_and_addicted=1`,
+`probability_of_voucher_benchmark_used=0.0433173`.
+**CHECK**: reproduces the converged benchmark on `b`, `lambda_d`, `h_1`,
+`tau_l`, `beta` and `net_govt_revenues`, with
+`increase_in_labour_income_tax` near zero. **No arm is run until this passes.**
+This is the author's own test: "run a counterfactual once to see that the
+rationed HF gives the exact same economy as the benchmark".
+
+### 6. Re-measure the participation elasticity  [blocked on 3 and 4]
+On the converged benchmark, with the new method. The old -3.2074 was measured on
+a state that is not a solution, by a procedure that contributed +0.872 of its
+own with the wrong sign. Do NOT propose an instrument for it until it has been
+measured properly.
+**CHECK**: a number, with the zero-step null passing beside it.
+
+### 7. The four arms  [blocked on 5]
+benchmark rerun, tf_rationed, universal HF, universal TF, at
+`probability_of_detection=0.95` and `probability_of_false_positive=0.005`.
+Cleared drug price throughout; held-price versions only as decomposition.
+**CHECK**: each converges on its own stopping rules without hitting
+`max_counterfactual_loops`, and `tau_l` and `beta` stay near the benchmark's
+unless the policy explains why.
+
+### 8. A conditionality-only arm  [blocked on 7]
+`tf_rationed` moves two switches at once -- testing on, steering off -- so it
+cannot say which did what.
+
+## DECIDED, CLOSED, DO NOT REOPEN
+
+- **No inheritance anywhere.** A flat endowment to newborns only, held at the
+  benchmark's average labour income; the government takes the difference between
+  bequests in each equilibrium and that endowment. Implemented and verified.
+- **Enforcement rates**: `probability_of_detection=0.95`,
+  `probability_of_false_positive=0.005`. Per period. Confirmed urine testing is
+  two stage and confirmation drives the false positive under one per cent.
+- **The dose-dependent onset hazard is DROPPED.** `lambda_addiction=0` stays,
+  the base stays. No base-plus-dose grid.
+- **The intensive elasticity is accepted at about -1.** It is bounded below -1
+  by the Cobb-Douglas nest: with `theta*log(b+v)` inside a Cobb-Douglas
+  aggregator the own-price elasticity is exactly `-1 - (1-theta)*b/v`, so the
+  -0.55 target is unreachable for ANY `b` and `theta`. The paper needs one
+  sentence saying so; ASK before writing it.
+- **One child-penalty cap at 0.99**, replacing four numbers that disagreed.
+
+## OPEN, NEEDS THE AUTHOR
+
+- The three-period exclusion state: caught, barred three consecutive periods,
+  early reinstatement on completing treatment. Four voucher states rather than
+  two, so about 2x on the value function, the policy functions and the
+  distributions. Not started.
+- Whether the paper states the intensive elasticity as a limitation, and in
+  what words.
+
+## STANDING RULES THIS SEQUENCE OBEYS
+
+- Never edit `code/` while a solve is running.
+- Both standing builds on every source change: `-fcheck=bounds,pointer` and
+  `-finit-real=snan -ffpe-trap=invalid,zero,overflow`.
+- Report ONE equilibrium, never a best-of across points.
+- A capped or unconverged run is not a result and is reported as a failure.
