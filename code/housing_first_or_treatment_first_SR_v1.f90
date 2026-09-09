@@ -4310,10 +4310,21 @@
         ! paths agree. check_benchmark_constants below warns if the benchmark
         ! moves away from them, because a constant written down from a finished
         ! run goes stale silently and this one did.
+        ! UPDATED 9 SEPTEMBER to the CONVERGED benchmark's values, after the
+        ! STALE CONSTANT guard below caught them one run after it was written:
+        !
+        !   average_labor_income_calibrated 0.64638853 -> realised 0.66786175
+        !   median_income_calibrated        0.43132374 -> realised 0.37578380
+        !
+        ! Converging the equilibrium moved average labour income 3.3 per cent and
+        ! the MEDIAN thirteen. The median is not cosmetic: voucher eligibility is
+        ! threshold_income_vouchers*median_income_calibrated, so the cutoff moves
+        ! 0.21566 to 0.18789 and the set of households a voucher can reach is
+        ! thirteen per cent narrower. Every counterfactual reads this.
         real(8) :: average_labor_income_calibrated=&
-            (1-perceived_probability_lower)*0.646388551189+perceived_probability_lower*0.646388551189
+            (1-perceived_probability_lower)*0.66786175+perceived_probability_lower*0.66786175
         real(8) :: median_income_calibrated=&
-            (1-perceived_probability_lower)*0.431323729224+perceived_probability_lower*0.431323729224
+            (1-perceived_probability_lower)*0.37578380+perceived_probability_lower*0.37578380
         ! ZEROED BECAUSE THE GRID IT WAS TAKEN ON NO LONGER EXISTS.
         !
         ! These were average labour income at each of NINE evenly spaced nodes,
@@ -4574,10 +4585,29 @@
         ! Damping on the secant step, and a cap so one bad slope cannot throw the
         ! tax across the plausible range in a single loop.
         real(8), parameter :: tax_step_damping=0.5d0
-        real(8), parameter :: max_tax_move=0.02d0
-        ! Fallback when there is no usable secant: the analytic slope is about
-        ! -0.69, so this is a half Newton step taken on that.
-        real(8), parameter :: tax_fallback_gain=0.3d0
+        ! THE CAP AND THE FALLBACK WERE BOTH SET IN THE WRONG UNITS, and it cost
+        ! the null test ten loops.
+        !
+        ! d(revenue)/d(lambda) is about -0.69 PER HOUSEHOLD. The living
+        ! population mass here is about fifty-one, so in the AGGREGATE the
+        ! quantity the budget is actually measured in, it is about -23. Measured
+        ! rather than assumed this time: the null stepped lambda by +0.02 and
+        ! total revenue fell 5.83878 to 5.37369, which is -23.25.
+        !
+        ! With a fallback of 0.3*gap and a cap of 0.02, the very first step --
+        ! taken before any secant exists -- moved revenue by 0.465 against a
+        ! budget tolerance of 0.025, an eighteen-fold overshoot, in a direction
+        ! chosen by a gap that was itself small. It then took ten loops to walk
+        ! back, and every walk-back kicked the drug market out of tolerance for
+        ! four more, which is why the null's moments oscillated instead of
+        ! settling.
+        !
+        ! 0.0005 in lambda moves revenue about 0.012, half the tolerance: small
+        ! enough that a blind first step cannot overshoot, and the secant takes
+        ! over from the second step onward with a real slope.
+        real(8), parameter :: max_tax_move=0.0005d0
+        ! A half Newton step on the AGGREGATE slope: 0.5/23.25 = 0.0215.
+        real(8), parameter :: tax_fallback_gain=0.0215d0
         real(8) :: tax_gap_1,tax_slope_1,tax_step_1,tax_drift_1
         
         real(8), dimension(1-solve_transition_dynamics:transition_length) :: housing_price
