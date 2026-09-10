@@ -652,3 +652,49 @@ zero, and the file itself prescribes the discipline: report omega_c across the
 range with the threshold at which a conclusion changes. That has not been done
 yet and it should be, because the false positive threshold is now sharp enough
 that the two ranges have to be read together.
+
+## THE MOMENT BY AGE SUBSET: it is not stable, and 65+ is not the problem
+
+The author, 10 September: *"Maybe you are not looking at the right ages in the
+computations?"* Recomputed on the microdata, past-month use, reweighting redone
+WITHIN each subset:
+
+    sample                           raw  reweighted    rise   omega_c  cells  cover
+    26+   (the moment in use)      0.983       0.845   18.4%     1.060    234  97.2%
+    26-64 (drop 65+)               0.787       0.859   16.4%     0.950    190  99.0%
+    26-49 (child-rearing)          0.639       0.845   18.4%     1.061    138  99.8%
+    26-34                          0.735       0.900   11.1%     0.662     84  99.7%
+    35-49 alone                    0.600       0.792   26.3%     1.490     54  99.9%
+    65+ alone                      0.478       0.771   29.7%     1.673     44  94.3%
+
+**DROPPING 65+ BARELY MATTERS.** omega_c goes 1.060 to 0.950. The suspicion in
+the section above -- that grandparents were contaminating the moment -- is mostly
+WRONG, because that group carries little weight in the pooled figure. To the
+extent the earlier note read the file's credibility argument against its own RAW
+table, it should be softened: reweighted, 35-49 gives 0.792 and 65+ gives 0.771,
+which are close, and the anomaly is much milder than the raw ratios suggested.
+
+**WHAT DOES MATTER IS THAT THE MOMENT IS NOT STABLE.** Across sensible windows
+the implied omega_c runs from 0.66 at 26-34 to 1.49 at 35-49, a factor of 2.3,
+and 26-34 is the window where a young parent's concern for a child is most
+plausible. There is no age range on which this moment settles down.
+
+**AND THE REWEIGHTING PULLS IN OPPOSITE DIRECTIONS IN DIFFERENT SAMPLES.** Over
+26+ the raw pooled gap is nothing, 0.983, and reweighting OPENS it to 0.845. Over
+26-49 the raw gap is wide, 0.639, and reweighting NARROWS it to 0.845. So within
+narrow age bands most of the parent against non-parent difference is income, sex
+and marital composition, which the adjustment strips out; across the full age
+range it is age composition, which the adjustment restores. The two effects
+happen to land on the same 0.845, which is a coincidence of this sample rather
+than a sign of robustness.
+
+**THE ARGUABLY RIGHT SAMPLE FOR THIS MODEL IS 26-64**, since the model's
+households choose over drugs through working life and
+`max_age_to_choose_homelessness` is 58. That gives 0.859, a 16.4 per cent rise,
+and omega_c = 0.950.
+
+None of this changes the conclusion already recorded: omega_c is the top of a
+range, not a point, and the range is now bracketed by the data itself at roughly
+0.66 to 1.49 before any allowance for the selection the source file warns about
+or for the narrowness of the model's channel, both of which push the honest
+number DOWN from there.
