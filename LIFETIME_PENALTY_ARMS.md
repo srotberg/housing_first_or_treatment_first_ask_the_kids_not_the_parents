@@ -138,3 +138,50 @@ predicted.
 of forty. The externality is still about a ninth of what the data implies --
 omega 0.021 against 0.183 -- and it has not moved the ranking at all. The
 earlier -4.82 per cent for this arm, run at p_fp = 0.05, is VOID.
+
+
+## Universal Treatment First, corrected: +30.39 per cent against +26.41
+
+Converged: budget 1.70e-2 inside 2.5e-2, drug market 7.19e-10.
+
+| | benchmark | universal TF | ONE-CLASS TABLE |
+| --- | --- | --- | --- |
+| `b` | 0.086312 | 0.0012429 (-98.6%) | -98.6% |
+| `lambda_d` | 0.037097 | 0.00032303 (-99.1%) | -99.1% |
+| `h_1` | 0.013270 | 0.0011290 (-91.5%) | -92.1% |
+| `pi_V` | 0.24750 | 0.82958 | 0.83633 |
+| `tau_l` | 0.20637 | 0.23588 | 0.24104 |
+| **welfare** | -- | **+30.39%** | **+26.41%** |
+
+# THE COMPLETE ANSWER: THE AUTHOR'S HYPOTHESIS IS CONFIRMED, AND ORDERED
+
+| arm | one class | lifetime penalty | change | use / homelessness |
+| --- | --- | --- | --- | --- |
+| rationed TF | -2.14% | **+0.235%** | **+2.37 pts** | -86.2% / -4.5% |
+| universal TF | +26.41% | **+30.39%** | **+3.98 pts** | -98.6% / -91.5% |
+| universal HF | +40.74% | **+40.28%** | **-0.46 pts** | **+72.0%** / -97.7% |
+
+**THE MORE A POLICY CUTS DRUG USE, THE MORE IT GAINS FROM THE EXTERNALITY.**
+Universal Treatment First, which nearly eliminates use, gains most. Rationed
+Treatment First gains less. Housing First, which RAISES use by 72 per cent, is
+the only arm that loses. That ordering was not tuned for; it fell out of three
+independent solves, and every arm's other moments match the one-class table
+within a point or two, so the welfare change is the child channel and not a
+different equilibrium.
+
+**THE GAP BETWEEN HOUSING FIRST AND UNIVERSAL TREATMENT FIRST NARROWED FROM
+14.33 POINTS TO 9.89. The externality closed 31 per cent of it.**
+
+## What that does and does not establish
+
+It does NOT establish that a full-strength channel reverses the ranking.
+`omega` is 0.021 against a target of 0.18343 -- about a NINTH of what the data
+implies -- and at that strength it closes 31 per cent of the gap. Whether the
+remaining eight ninths would close the rest is not something these runs can
+say: the relationship need not be linear, and three linear extrapolations were
+wrong in this session by factors of nine, thirty and a thousand.
+
+What it does establish is that the ranking's robustness now turns on a
+parameter known to be nine times too small, and that getting `omega` to its
+target requires the joint fit of `omega_c` with `addiction_scalar_1` that
+`ODDS_RATIO_FIT.md` records as the author's call.
