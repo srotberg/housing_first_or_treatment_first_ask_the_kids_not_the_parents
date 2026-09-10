@@ -328,6 +328,7 @@ declare -A P=(
     # so there is nothing else to set. 0.98 gives 0.9651*sqrt(1-0.98^2)=0.1921.
     [persistent_income_risk]=0
     [rho_productivity]=0.98
+    [rho_intergenerational]=0.30
     # THE PRODUCTIVITY PROCESS ITSELF, on the author's instruction of 3
     # September: "yes, switch to my process and use it". 1 is the quantile grid
     # built from y_grid_kappa and sd_permanent_productivity, frozen over the life

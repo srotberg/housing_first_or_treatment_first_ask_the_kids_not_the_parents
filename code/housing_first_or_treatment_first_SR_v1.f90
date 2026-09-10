@@ -3841,7 +3841,7 @@
         ! child_penalty_classes times bigger. At 1 the model is exactly the one
         ! that came before -- one class, factor one, no expansion -- which is the
         ! null this was built against.
-        integer, parameter :: child_penalty_classes=4
+        integer, parameter :: child_penalty_classes=2
         integer, parameter :: employment_grid_size=employment_base_size*child_penalty_classes
         integer :: use_unemployment_by_productivity=1
         ! Persistent income risk over working life. See the block beside
@@ -4880,10 +4880,18 @@
         ! to the disorder biases the paper's central channel upward by
         ! construction.
         !
-        ! 0.35 is the intergenerational earnings elasticity, assigned rather than
+        ! The intergenerational earnings elasticity, assigned rather than
         ! calibrated. At rho = 0 this reduces exactly to the old behaviour, which
         ! is what makes it testable against it.
-        real(8), parameter :: rho_intergenerational=0.35d0
+        !
+        ! SETTABLE from 10 September. It was a parameter at 0.35, which is the
+        ! middle of the US estimates, but it is the whole of the model's
+        ! parent-to-child transmission for a HOUSING penalty and therefore the
+        ! thing that decides the homelessness odds ratio. Fixing it at 0.35 put
+        ! that ratio at 2.82 with penalty_child_homeless at zero, above the 2.10
+        ! in the data with no penalty left to remove. It is a variable so the
+        ! ratio can be read at a rho the literature also supports.
+        real(8) :: rho_intergenerational=0.30d0
 
         ! The node boundaries in LOG productivity, filled where the grid is
         ! built. Needed because the child's conditional distribution is
@@ -7360,11 +7368,16 @@
                 model_smi_share_of_homeless(1), " target=", smi_share_of_homeless_data
             write(*,*) "MOMENT pi_V      eligibles with a voucher    model=",&
                 model_eligibles_getting_voucher(1), " target=", voucher_coverage_data
-            write(*,*) "DIAG child-class mass: none=", model_mass_by_child_class(0), &
-                " SUD parent=", model_mass_by_child_class(1), &
-                " homeless parent=", model_mass_by_child_class(2), &
-                " both=", model_mass_by_child_class(3)
-            write(*,*) "DIAG child-class factors:", child_penalty_factor
+            if (child_penalty_classes>=4) then
+                write(*,*) "DIAG child-class mass: none=", model_mass_by_child_class(0), &
+                    " SUD parent=", model_mass_by_child_class(1), &
+                    " homeless parent=", model_mass_by_child_class(2), &
+                    " both=", model_mass_by_child_class(3)
+            else
+                write(*,*) "DIAG child-class mass: none=", model_mass_by_child_class(0), &
+                    " SUD parent=", model_mass_by_child_class(1)
+            end if
+            write(*,*) "DIAG child-class factors:", child_penalty_factor(0:child_penalty_classes-1)
 
             write(*,*) "DIAG voucher-state mass: none=", model_mass_by_voucher_state(0), &
                 " holding=", model_mass_by_voucher_state(1), &
@@ -29945,13 +29958,29 @@
                 ! TO PUT IT IN. With child_penalty_classes = 1 it is the old
                 ! birth shift: one level shift to the newborn's draw, which the
                 ! AR(1) then erodes at persistence_employment_surviving. With
-                ! four classes the child is BORN INTO the block whose nodes are
-                ! already scaled, the shift is dropped, and the penalty is
-                ! permanent by construction. Applying both would count it twice.
-                if (child_penalty_classes>1) then
+                ! more than one class the child is BORN INTO the block whose
+                ! nodes are already scaled, that part of the shift is dropped,
+                ! and the penalty is permanent by construction. Applying both
+                ! would count it twice.
+                !
+                ! TWO CLASSES, NOT FOUR, from 10 September. The class exists to
+                ! carry a penalty that never wears off, and with
+                ! penalty_child_homeless at zero the housing penalty is not a
+                ! penalty at all: classes 2 and 3 held grids identical to 0 and
+                ! 1 and doubled the state space for nothing. The class is the
+                ! parent's disorder at death and only that. Whatever housing
+                ! penalty is set stays in the birth shift, where it erodes at
+                ! persistence_employment_surviving, so the four-class case is
+                ! recovered exactly by raising child_penalty_classes to 4.
+                if (child_penalty_classes>=4) then
 
                     class_1=d_index+2*(h_index-1)
                     penalty=1.d0
+
+                else if (child_penalty_classes==2) then
+
+                    class_1=d_index
+                    penalty=(1-penalty_child_homeless)**((h_index-1)*include_child_penalty)
 
                 else
 
@@ -38836,6 +38865,10 @@
                 case ("rho_productivity")
                     write(*,*) "HANDOVER rho_productivity:", rho_productivity, "->", handover_value
                     rho_productivity=max(min(handover_value,0.999d0),0.d0)
+
+                case ("rho_intergenerational")
+                    write(*,*) "HANDOVER rho_intergenerational:", rho_intergenerational, "->", handover_value
+                    rho_intergenerational=max(min(handover_value,0.999d0),0.d0)
                 case ("endowment_is_a_transfer")
                     write(*,*) "HANDOVER endowment_is_a_transfer:", endowment_is_a_transfer, "->", handover_value
                     endowment_is_a_transfer=nint(max(min(handover_value,1.d0),0.d0))
