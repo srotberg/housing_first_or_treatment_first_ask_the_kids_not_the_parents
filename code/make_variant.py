@@ -104,8 +104,18 @@ CF = [
 # the arms read out of the benchmark, so a benchmark built at 0 cannot be
 # compared with an arm built at 1. It is 0 here and only here, because the
 # benchmark has no conditionality and so has nothing to exclude.
+# THE ANCHOR SAYS 2, NOT 4, AND THAT IS THE POINT OF ASSERTING THE COUNT. The
+# master went from four classes to two on 10 September, and this patch would
+# have matched nothing -- which make_variant.py turns into a refusal rather than
+# into a variant that is the unmodified model wearing a new name.
+#
+# STEP 3 STAYS AT ONE CLASS, which is the brief's own instruction and is a SPEED
+# setting, not a claim about the model. The two-class change already cut the
+# employment grid from 28 nodes to 14; one class halves it again to 7. The
+# benchmark that goes in the paper is the two-class one and step 4 re-measures
+# there, so nothing fitted here transfers without being re-measured.
 ONE_CLASS = [
-    ("        integer, parameter :: child_penalty_classes=4",
+    ("        integer, parameter :: child_penalty_classes=2",
      "        integer, parameter :: child_penalty_classes=1",
      "child_penalty_classes to one"),
 
@@ -134,15 +144,18 @@ POINT1 = list(ONE_CLASS)
 # 2.00 with the classes off, so a live distance on a moment nobody is fitting
 # would hold the outer do while open for ever.
 #
-# THE CHILD HOMELESSNESS BLOCK IS DELIBERATELY LEFT LIVE. From 10 September its
-# instrument is rho_intergenerational, on the author's instruction, and the swap
-# happens INSIDE that block: it computes the odds ratio, maintains the distance,
-# and steps whichever of the two adjusters is positive. Switching it off would
-# take the moment out of the loop along with the instrument.
+# AND THE CHILD HOMELESSNESS BLOCK GOES OFF TOO, because the author has now
+# assigned BOTH of its candidate instruments. delta_h is fixed at zero and
+# rho_intergenerational at 0.30, so nothing is left to move that moment -- and a
+# moment with no instrument is exactly what must not be left scored. Its gap is
+# about 0.7 against a stopping rule of 5e-2, so a live distance_penalty_child_
+# homeless would hold the outer do while open until the loop cap, every time,
+# while no parameter in the model could ever close it.
 #
-# So the two child penalties are held HERE by their values, not by switches:
-# delta_d = 0.36 and delta_h = 0.24 ride in on the vector, and only
-# rho_intergenerational_adjuster is non-zero.
+# That is the same trap the delta_d switch is closed for, and it is worth saying
+# twice because it is invisible in a log: the loop does not fail, it simply never
+# terminates, and every other parameter goes on being stepped around a distance
+# that is pinned.
 CALIB1 = list(ONE_CLASS) + [
     ("        integer, parameter :: sweep_addiction_scalar=1",
      "        integer, parameter :: sweep_addiction_scalar=0",
@@ -151,6 +164,10 @@ CALIB1 = list(ONE_CLASS) + [
     ("        integer, parameter :: calibrate_penalty_child_addicted=1",
      "        integer, parameter :: calibrate_penalty_child_addicted=0",
      "delta_d held, and its moment out of the convergence test"),
+
+    ("        integer, parameter :: calibrate_penalty_child_homeless=1",
+     "        integer, parameter :: calibrate_penalty_child_homeless=0",
+     "the homelessness odds ratio out of the convergence test: no instrument left"),
 
     # THE ADJUSTER, AND WHY IT HAD TO BE RAISED BEFORE THE LOOP WAS STARTED.
     #

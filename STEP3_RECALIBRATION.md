@@ -57,3 +57,70 @@ left to be discovered.
     -O1 -finit-real=snan -ffpe-trap=invalid,zero,overflow -g -fbacktrace   7 warnings, 0 errors
 
 Seven warnings is the documented pre-existing count.
+
+
+# THE CONFIGURATION MOVED TWICE WHILE THIS WAS BEING SET UP
+
+Recorded because three briefs gave three different answers within one session and
+a reader of the results has to know which one the run actually used.
+
+| | delta_d | delta_h | rho | classes | omega_c |
+| --- | --- | --- | --- | --- | --- |
+| step 3 brief | 0.36 held | 0.14 held, provisional | 0.35, fixed | 1 | calibrated |
+| `ODDS_RATIO_FIT.md`, first update | 0.36 held | externally set | **calibrated** on the odds ratio | 1 | calibrated |
+| the two-class commit, latest | 0.36 held | **0 , fixed** | **0.30, assigned** | **2** by default | calibrated |
+
+**THE RUN USES THE LATEST VALUES AND THE BRIEF'S CLASS COUNT.** delta_d 0.36,
+delta_h 0, rho 0.30 assigned with its adjuster at zero, omega_c calibrated, and
+`child_penalty_classes=1`.
+
+Why one class rather than the new default of two: the brief's class setting is a
+SPEED setting and says so -- *"28 min a point becomes ~7"* -- not a claim about
+the model. The two-class change already cut the employment grid from 28 nodes to
+14; one class halves it again to 7. Nothing about step 3 was superseded by it.
+**The benchmark that goes in the paper is the two-class one, and step 4
+re-measures there. Nothing fitted here transfers without being re-measured.**
+
+## THE HOMELESSNESS ODDS RATIO NOW HAS NO INSTRUMENT, AND THAT CHANGES THE BUILD
+
+Both of its candidate instruments are assigned: delta_h at 0 and rho at 0.30. So
+`calibrate_penalty_child_homeless` goes to 0 in the variant, and the reason is
+not tidiness. Its gap is about 0.7 against a stopping rule of 5e-2, and
+`distance_penalty_child_homeless` sits in the outer `do while`. Left live it
+would hold that loop open until the cap on every single run while no parameter
+in the model could close it -- and that failure is invisible in a log. The loop
+does not error; it simply never terminates, and every other parameter goes on
+being stepped around a distance that is pinned.
+
+The same argument closes `calibrate_penalty_child_addicted`: delta_d pins near
+1.11 against a target of 2.00 with the classes off, so its moment cannot be met
+here either.
+
+## FOUR OF THE EIGHT OUT-OF-BAND MOMENTS ARE NOT IN THE AUTHOR'S LOSS
+
+Read out of `gaps.py`'s own sets rather than assumed, because the recalibration
+cannot be asked for what nothing can reach:
+
+| moment | gap in the brief | status | instrument |
+| --- | --- | --- | --- |
+| `w_bot` | +268% | `UNSCORED`, and a BAND of 0.008-0.05 | none: `discount_factor_impatient` retired with the second beta |
+| `kappa_uem` | +174% | scored | `kappa_uem` |
+| `h_3` | -89% | `SKIP`, conceded | none: h_3 = 2 x h_2 by the 5 September ladder ruling |
+| `kappa_ued` | +27% | `UNSCORED` | `multiple_of_probabilities_of_employment_if_addicted` |
+| `h_2` | +25% | scored | `smallest_rental_relative_to_lowest_income` |
+| `lambda_m` | -24% | scored | `lambda_m` -- see below |
+| `y_u` | -23% | not scored: mortality pinned at 8 by the author | none |
+| `beta` | +17% | scored | `discount_factor` |
+
+So **four** of the eight are moments the author has already taken out of the
+loss, and only `kappa_uem`, `h_2`, `lambda_m` and `beta` are scored moments this
+recalibration can work on.
+
+**`lambda_m` HAS NO ROW IN `gaps.OWN` AND IT IS INTERNALLY CALIBRATED.**
+`distance_lambda_m` sits in the outer `do while` and the update steps it on
+`model_smi_share_of_homeless` against `smi_share_of_homeless_data`, which is
+exactly that moment. This is the same class of fault `gaps.py` already records
+against its own `y_h` and `ssi_floor_level` rows: the report named one parameter
+and the walk moved another. NOT fixed here -- that file is the author's report
+and editing it is not step 3's job -- but the row is carried in step 3's own
+table with its source named.
