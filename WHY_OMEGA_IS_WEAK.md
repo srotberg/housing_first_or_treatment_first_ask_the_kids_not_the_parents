@@ -848,3 +848,41 @@ parent dies, which costs a factor of 4.3 on its own, and beyond that the
 quantitative model's drug-use margin is genuinely far less elastic than the
 stylized model's because the gap between using and not using is dispersed across
 sixty periods and several state dimensions rather than concentrated at one point.
+
+## FALSE NEGATIVES ARE FREE; FALSE POSITIVES ARE EVERYTHING
+
+`arm0_utf_perfect` closes the omega_c = 0 chain, and the result is a null worth
+as much as any of the positives.
+
+    arm0_utf_nofp     p_fp = 0,     p_det = 0.90     30.7701%
+    arm0_utf_perfect  p_fp = 0,     p_det = 1.00     30.7701%
+      raising DETECTION from 0.90 to 1.00 is worth   -0.0000023 points
+      a 0.5 per cent FALSE POSITIVE rate is worth    -8.5844 points
+
+PERFECT DETECTION BUYS NOTHING AT ALL, to seven decimal places. The reason is the
+deterrence corner: at p_fp = 0 drug use is already 0.0066 per cent of the
+population, so a tenth of users escaping detection is a tenth of almost nobody,
+and closing that gap catches no one.
+
+The asymmetry is the cleanest statement of the policy result in this model.
+CONDITIONALITY IS ENTIRELY INSENSITIVE TO FALSE NEGATIVES AND EXTREMELY SENSITIVE
+TO FALSE POSITIVES. A programme that lets one user in ten slip through loses
+nothing; a programme that wrongly excludes one compliant household in two
+thousand a year loses more than the whole gap between the two policies.
+
+That also disposes of the natural policy instinct. Testing harder, testing more
+often, or catching more of the people who are actually using -- all of that is
+worth nothing here. The only thing worth spending on is not punishing the
+innocent, which is a Medical Review Officer and an appeals process rather than a
+better assay.
+
+### The omega_c = 0 chain, complete
+
+    Housing First                         29.973%
+    HF, no child penalty                  36.826%   externality under HF  +6.852
+    Treatment First                       22.186%
+    TF, no child penalty                  22.262%   externality under TF  +0.076
+    TF, no treatment cost                 21.526%   treatment cost        +0.659
+    TF, no false positives                30.770%   false positives       -8.584
+    TF, p_fp = 0.0005                     29.818%   the crossing, 1 in 2391
+    TF, perfect enforcement               30.770%   false negatives        0.000
