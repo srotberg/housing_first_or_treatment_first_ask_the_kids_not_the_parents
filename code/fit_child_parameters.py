@@ -44,6 +44,15 @@ def parse(path):
         m = re.findall(r'HANDOVER ' + name + r':\s*\S+\s*->\s*(\S+)', head)
         if m:
             p[name] = float(m[-1].replace('D', 'E'))
+    # THE FROZEN DISTANCE IS THE RESOLUTION OF EVERY MOMENT IN THIS RUN.
+    # omega is the difference between two solves of a model that is itself only
+    # pinned to that distance, so an omega whose numerator is below it is noise
+    # and must not be fitted to. Measured at delta_d=0.36: the child term moved
+    # b by 2.15e-5 against a frozen distance of 2.47e-4.
+    fd = re.findall(r'FROZEN CONVERGED after\s+\d+\s+passes, distance=\s*(\S+)', tail)
+    frozen = float(fd[-1].replace('D', 'E')) if fd else None
+    base = re.findall(r'OMEGA_DIAG baseline users=\s*(\S+)', tail)
+
     mom = {}
     for key, pat in (('odds_d', r'delta_d child SUD odds ratio\s+model=\s*(\S+)'),
                      ('odds_h', r'delta_h child homeless odds ratio\s+model=\s*(\S+)'),
@@ -53,6 +62,13 @@ def parse(path):
             mom[key] = float(m[-1].replace('D', 'E'))
     if len(p) != 3 or len(mom) != 3:
         return None
+    # Flag omega as unresolved when the counterfactual's own move in b is
+    # smaller than five times the distance the equilibrium is pinned to.
+    if frozen is not None and base:
+        signal = abs(mom['omega']) * float(base[-1].replace('D', 'E'))
+        mom['omega_resolved'] = signal > 5.0 * frozen
+    else:
+        mom['omega_resolved'] = False
     return p, mom
 
 
@@ -84,6 +100,10 @@ def propose(pts):
     p1, m1, _ = pts[-2]
     nxt = dict(p2)
     for name, (key, _kind) in OWNS.items():
+        if key == 'omega' and not (m1.get('omega_resolved') and m2.get('omega_resolved')):
+            # Both readings must be above the noise floor or the secant is a
+            # line through two pieces of solver noise.
+            continue
         t = TARGETS[key]
         x1, x2 = x_of(name, p1[name]), x_of(name, p2[name])
         y1, y2 = m1[key], m2[key]
@@ -125,6 +145,9 @@ def main():
               f'w={p["weight_on_child"]:.4f}  ->  odds_d={m["odds_d"]:.4f} '
               f'odds_h={m["odds_h"]:.4f} omega={m["omega"]:.6f}')
         print(f'   gaps: ' + ', '.join(f'{k} {100*v:.1f}%' for k, v in g.items()))
+        if not m.get('omega_resolved'):
+            print('   omega is BELOW the solver floor at this weight and is not '
+                  'being fitted to; the two odds ratios still are')
         if max(g.values()) <= TOL:
             print('ON TARGET. Stopping; the one-class recalibration is next.')
             return 0
