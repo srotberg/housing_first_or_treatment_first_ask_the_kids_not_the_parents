@@ -3834,7 +3834,7 @@
         ! child_penalty_classes times bigger. At 1 the model is exactly the one
         ! that came before -- one class, factor one, no expansion -- which is the
         ! null this was built against.
-        integer, parameter :: child_penalty_classes=1
+        integer, parameter :: child_penalty_classes=4
         integer, parameter :: employment_grid_size=employment_base_size*child_penalty_classes
         integer :: use_unemployment_by_productivity=1
         ! Persistent income risk over working life. See the block beside
