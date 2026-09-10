@@ -90,7 +90,123 @@ CF = [
     # them in one place is what stops the two copies drifting.
 ]
 
-VARIANTS = {"save": SAVE, "cf": CF}
+# --------------------------------------------------------- one class
+# STEP 3, THE FAST RECALIBRATION. The author's sequencing of 10 September:
+# *"then if it's ready, we hold them fixed and recalibrate the other parameters
+# using the faster method with no permanent impact on the child"*.
+#
+# WHY A VARIANT AND NOT AN EDIT TO THE MASTER. Step 4 goes back to four classes,
+# and the MODEL stamp on every point in points/ is the md5 of the master source.
+# Editing the master to run step 3 would reset the archive for a run that is not
+# a calibration point at all, and would then have to be edited back.
+#
+# voucher_exclusion_states GOES BACK TO 1 FOR ANY ARM. It dimensions the arrays
+# the arms read out of the benchmark, so a benchmark built at 0 cannot be
+# compared with an arm built at 1. It is 0 here and only here, because the
+# benchmark has no conditionality and so has nothing to exclude.
+ONE_CLASS = [
+    ("        integer, parameter :: child_penalty_classes=4",
+     "        integer, parameter :: child_penalty_classes=1",
+     "child_penalty_classes to one"),
+
+    ("        integer, parameter :: voucher_exclusion_states=1",
+     "        integer, parameter :: voucher_exclusion_states=0",
+     "voucher_exclusion_states to zero"),
+]
+
+# ------------------------------------------------------------- point1
+# The measurement half of step 3. sweep_addiction_scalar stays at 1, which is
+# what reaches the frozen-equilibrium loop and print_all_moments, so this is the
+# master's own point run at one class. The gap table is read from the block
+# AFTER `FROZEN CONVERGED`: b read 0.0795 before the frozen loop and 0.0849
+# after on the four-class benchmark, a 6.4 per cent difference.
+POINT1 = list(ONE_CLASS)
+
+# ------------------------------------------------------------- calib1
+# The search half. sweep_addiction_scalar=0 is what opens the calibration's
+# outer do while; at 1 the run is a fixed-parameter measurement and no parameter
+# moves.
+#
+# THE TWO CHILD PENALTIES ARE HELD BY THEIR calibrate_ SWITCHES, not by their
+# adjusters. An adjuster at zero is the documented trap: the damping branch
+# resurrects it on the first sign flip. With the switch at zero the update block
+# is skipped and the distance is set to 0, so the parameter cannot move AND the
+# outer do while is not held open by a moment nobody is fitting.
+#
+# delta_d is held at 0.36, which hits the SUD odds ratio at 1.9857 against 2.00.
+# delta_h is held at 0.14 PROVISIONALLY: its target of 2.10 is below the model's
+# measured floor of 2.889, and 2.80 of that floor is rho_intergenerational
+# transmitting homeless parents' poverty rather than the penalty. Neither is
+# fittable here in any case -- delta_d pins near 1.11 with the classes off.
+CALIB1 = list(ONE_CLASS) + [
+    ("        integer, parameter :: sweep_addiction_scalar=1",
+     "        integer, parameter :: sweep_addiction_scalar=0",
+     "sweep_addiction_scalar to zero, which opens the calibration loop"),
+
+    ("        integer, parameter :: calibrate_penalty_child_addicted=1",
+     "        integer, parameter :: calibrate_penalty_child_addicted=0",
+     "delta_d held"),
+
+    ("        integer, parameter :: calibrate_penalty_child_homeless=1",
+     "        integer, parameter :: calibrate_penalty_child_homeless=0",
+     "delta_h held"),
+
+    # THE ADJUSTER, AND WHY IT HAD TO BE RAISED BEFORE THE LOOP WAS STARTED.
+    #
+    # The update is
+    #     weight_on_child -= adjuster * clamp(gap - target, -1, 1)
+    # and the model's gap is about 0.02 against a target of 0.18343, so the
+    # clamped term is about -0.163 every loop whatever omega_c does. At the
+    # declared 2e-3 that is a step of 3.3e-4, and walking omega_c from 0.007 to
+    # its ceiling of 1.0 would take about three thousand loops.
+    #
+    # THAT FAILURE MODE IS INDISTINGUISHABLE FROM A PARAMETER PARKED ON A BOUND.
+    # The parameter barely moves, the distance barely moves, and the log reads
+    # like a converging loop. Raising the adjuster 250-fold makes the step about
+    # 0.082, so the ceiling -- or the fit -- is reached in roughly a dozen loops
+    # and which of the two happened is visible.
+    #
+    # IT CANNOT RING. The sign of the step is the sign of the gap and the gap is
+    # one-signed all the way: the measured elasticity of omega in omega_c is
+    # about 0.32 in logs -- omega was 0.0075 at omega_c=0.007 and 0.0209 at 0.17
+    # -- so omega_c would have to rise by three orders of magnitude to triple
+    # omega, and the step shrinks in proportion to the gap as the gap closes.
+    ("        real(8) :: weight_on_child_adjuster=2*10.d0**(-3)",
+     "        real(8) :: weight_on_child_adjuster=5*10.d0**(-1)",
+     "weight_on_child_adjuster raised 250-fold, from 2e-3 to 0.5"),
+
+    # A CAP, BECAUSE THE OUTER do while HAS NONE. Its omega_c term is
+    # distance_weight_on_child > 1e-2, and the gap is about 0.163. If omega_c
+    # walks to its ceiling of 1.0 with omega still far below target -- which is
+    # what the death-probability scaling of the child term predicts -- that term
+    # never falls under its rule and the loop never terminates. A cap turns an
+    # unbounded run into a bounded measurement with the evidence in the log.
+    ("""            loop_count=loop_count+1
+            
+            write(*,*) "loop_count=", loop_count""",
+     """            loop_count=loop_count+1
+            
+            write(*,*) "loop_count=", loop_count
+
+            ! See make_variant.py: the outer do while has no loop cap and its
+            ! omega_c term cannot be satisfied if omega_c pins at its ceiling.
+            if (loop_count>=calib_loop_cap) then
+                write(*,*) "CALIB CAP: stopping after", loop_count,&
+                    " loops. distance_weight_on_child=", distance_weight_on_child,&
+                    " weight_on_child=", weight_on_child
+                stop
+            end if""",
+     "a loop cap on the calibration's outer do while"),
+
+    # The cap's own declaration, beside the adjuster it is there to bound.
+    ("        real(8) :: distance_weight_on_child=1",
+     """        real(8) :: distance_weight_on_child=1
+        ! STEP 3's LOOP CAP. See make_variant.py.
+        integer, parameter :: calib_loop_cap=300""",
+     "calib_loop_cap declared"),
+]
+
+VARIANTS = {"save": SAVE, "cf": CF, "calib1": CALIB1, "point1": POINT1}
 
 
 def main():

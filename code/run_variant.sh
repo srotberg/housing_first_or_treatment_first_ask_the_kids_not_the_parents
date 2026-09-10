@@ -2,8 +2,10 @@
 # Run a VARIANT binary at a given vector, in code/, under the same lock as
 # run_one_point.sh.
 #
-#   bash code/run_variant.sh save <name=value ...>
-#   bash code/run_variant.sh cf   <name=value ...>
+#   bash code/run_variant.sh save   <name=value ...>
+#   bash code/run_variant.sh cf     <name=value ...>
+#   bash code/run_variant.sh calib1 <name=value ...>   step 3's calibration loop
+#   bash code/run_variant.sh point1 <name=value ...>   step 3's measurement
 #
 # WHY IT SHARES THE DIRECTORY. The counterfactual reads the benchmark's
 # *baseline_benchmark.dat, which the save run writes, so both must run where
@@ -18,9 +20,9 @@
 set -uo pipefail
 cd "$(dirname "$0")"
 
-VARIANT=${1:?"usage: run_variant.sh save|cf name=value ..."}
+VARIANT=${1:?"usage: run_variant.sh save|cf|calib1|point1 name=value ..."}
 shift
-case "$VARIANT" in save|cf) ;; *) echo "variant must be save or cf" >&2; exit 1 ;; esac
+case "$VARIANT" in save|cf|calib1|point1) ;; *) echo "variant must be save, cf, calib1 or point1" >&2; exit 1 ;; esac
 
 fail() { echo "run_variant: $*" >&2; exit 1; }
 
@@ -79,7 +81,15 @@ rm -f calibration_state.dat calibration_distribution*.dat
 printf '%s\n' "${P[addiction_scalar_1]}" > B_SWEEP_GRID.txt
 : > PARAM_HANDOVER.txt
 for k in "${!P[@]}"; do
-    if [ "$VARIANT" = save ] && [ "$k" = addiction_scalar_1 ]; then continue; fi
+    # b REACHES THE MODEL BY TWO DIFFERENT ROADS AND ONLY ONE IS OPEN AT A TIME.
+    # On a run with sweep_addiction_scalar=1 -- save and point1 -- it comes off
+    # the sweep grid, and a handover line for it would be overwritten by the
+    # grid read a few lines later. On calib1 the sweep block is compiled out
+    # entirely, so the grid is never read and the handover is the only way in:
+    # b is the calibration's STARTING value there, not a pinned one.
+    case "$VARIANT" in
+        save|point1) [ "$k" = addiction_scalar_1 ] && continue ;;
+    esac
     printf '"%s" %s\n' "$k" "${P[$k]}" >> PARAM_HANDOVER.txt
 done
 WANT=$(wc -l < PARAM_HANDOVER.txt)
