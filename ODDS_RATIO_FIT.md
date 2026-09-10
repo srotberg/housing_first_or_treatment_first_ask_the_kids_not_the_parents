@@ -263,3 +263,69 @@ where the term is switched off by design, and the OMEGA_DIAG lines show only the
 first two of 112 values, both in the clean-housed slice that is zero by
 construction. The live term is 112 utils. **Read the print that follows
 `compute_expected_child_value`, not the one inside the omega counterfactual.**
+
+
+# THE AUTHOR'S DECISION, 10 September: rho_intergenerational becomes the instrument
+
+*"my suggestion is to use the one class calibration with delta_d=0.36, and
+rho_intergenerational to target the odds ratio of the homeless, you probably
+need about 0.1-0.15? and calibrate omega_c at the same time."*
+
+**FOR THE STEP 3 SESSION: this supersedes the brief on delta_h.** delta_h is no
+longer the instrument for the homelessness odds ratio; `rho_intergenerational`
+is. delta_h becomes an externally set parameter.
+
+## Why delta_h cannot do it, in one line
+
+To reach 2.10 delta_h would have to be **-0.2164** -- a 21.6 per cent
+productivity BONUS for the child of a homeless parent. The target sits below
+what the model produces with the penalty entirely switched off (2.821 at
+delta_h = 0), because `rho_intergenerational` transmits homeless parents'
+poverty on its own: they are **7.1x less productive** than housed parents and
+0.35 of that log gap reaches the child.
+
+## The frontier: pairs that deliver an odds ratio of 2.10
+
+Fitted from four measured delta_h points, R^2 = 0.9984:
+
+    log(odds) = 1.0370 - 1.5065 * [ rho*(-1.967)/0.35 + log(1-delta_h) ] / (-1.5065)
+
+equivalently, the child's log-productivity shift is `rho*(-1.967) + log(1-delta_h)`.
+
+| `rho` | `delta_h` it needs | | `delta_h` | `rho` it needs |
+| --- | --- | --- | --- | --- |
+| 0.100 | +0.256 | | 0.00 | 0.250 |
+| 0.125 | +0.219 | | 0.14 | 0.174 |
+| 0.150 | +0.179 | | **0.24** | **0.111** |
+| 0.200 | +0.094 | | 0.31 | 0.062 |
+| 0.250 | +0.001 | | 0.40 | -0.009 |
+
+**SUGGESTED PAIR: hold delta_h at 0.24 (Nilsson) and let rho calibrate to about
+0.111**, which lands inside the author's own 0.1-0.15 guess. Any pair on the
+frontier is admissible; the author has not fixed delta_h, so if a different
+value is chosen the table gives the rho that goes with it.
+
+## What the step 3 session has to change
+
+`rho_intergenerational` is a compile-time `real(8), parameter` at line 4886 with
+NO handover case and no adjuster. To calibrate it:
+
+1. make it a runtime variable;
+2. give it a handover case (clamp to something like [0.01, 0.6]);
+3. give it an adjuster and point it at the homelessness odds ratio -- the moment
+   `calibrate_penalty_child_homeless` used to own, so swap the instrument rather
+   than adding a second one on the same target;
+4. hold `penalty_child_homeless` at its chosen external value.
+
+Its two uses are at 29936 (`sqrt(1-rho^2)`, the innovation variance) and 29975
+(the AR(1) mean). Both are executable; nothing reads it at compile time.
+
+## A caveat the author asked for and should stay attached to the number
+
+Calibrating rho to 0.111 puts it a factor of three BELOW the intergenerational
+income elasticity literature, which is 0.3 to 0.5. That departure is itself a
+finding, and it may be fixing the symptom in the wrong place: the excess could be
+rho, or the model's homeless being 7.1x less productive, or homelessness being
+too steep in income -- measured earlier this session at about 1.8x too
+income-elastic. rho also feeds delta_d's channel and the dispersion sigma_y is
+calibrated on, so it is not a free parameter.
