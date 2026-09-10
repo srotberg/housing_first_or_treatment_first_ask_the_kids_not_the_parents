@@ -3800,7 +3800,42 @@
         ! WHAT IT COSTS: this is a parameter with 414 uses dimensioning most of
         ! the model's arrays. The model hash moves, all 305 points on the previous
         ! economy are orphaned, and the loop must SEED rather than iterate.
-        integer, parameter :: employment_grid_size=7
+        integer, parameter :: employment_base_size=7
+        ! THE CHILD'S INHERITED PENALTY AS A STATE, on the author's instruction:
+        ! *"you can basically have another state var: 1,2,3, where 1 is a child
+        ! of a parent with SUD, 2 is for a child with parent who was homeless,
+        ! and 3 is for a child of a parent with both. and each of these reduces
+        ! the productivity of the child in each y productivity it lives"*, and
+        ! *"you dont need move productivity grids....you have 7 like before. and
+        ! then you multiple the actual productivity by the penalty for each case
+        ! (1/2/3)"*.
+        !
+        ! WHY IT HAD TO BECOME A STATE. The penalty used to be a level shift
+        ! applied ONCE, to the newborn's draw, and the AR(1) that carries
+        ! productivity through life then pulled it back toward the mean at
+        ! persistence_employment_surviving = 0.9. The present value of a shift
+        ! that decays at 0.9 over a forty year working life is 41 per cent of a
+        ! shift that does not, so a nominal 24 per cent penalty was worth an
+        ! effective 10.7 per cent and the child disorder ratio it had to explain
+        ! came out at 1.11 against 2. A permanent multiplicative factor cannot be
+        ! carried by a process whose only persistence is 0.9; it needs its own
+        ! index, and this is it.
+        !
+        ! HOW IT IS PACKED. NOT a new array rank -- the value function and the
+        ! distribution are rank seven and every one of the hundreds of index
+        ! sites would have to change. The class is folded into the productivity
+        ! index instead: index (c-1)*employment_base_size + k carries base node k
+        ! scaled by child_penalty_factor(c-1), and employment_process is block
+        ! diagonal, so a household never changes class. Every existing
+        ! employment_grid(age,employment_index) site is then correct with no edit
+        ! at all, because the grid it reads already has the penalty in it.
+        !
+        ! WHAT IT COSTS: the state space, and so the solve, is
+        ! child_penalty_classes times bigger. At 1 the model is exactly the one
+        ! that came before -- one class, factor one, no expansion -- which is the
+        ! null this was built against.
+        integer, parameter :: child_penalty_classes=1
+        integer, parameter :: employment_grid_size=employment_base_size*child_penalty_classes
         integer :: use_unemployment_by_productivity=1
         ! Persistent income risk over working life. See the block beside
         ! employment_process for why this is not fixed_productivity=0.
@@ -4804,6 +4839,13 @@
                                                
         real(8), dimension(unemployment_grid_size) :: unemployment_grid
         real(8), dimension(life_span,employment_grid_size) :: employment_grid
+        ! THE FOUR CLASSES' PRODUCTIVITY FACTORS, index 0 to 3: neither parent
+        ! condition, a parent with a substance use disorder (SUD), a parent who
+        ! was homeless, and both. Filled in recompute_derived_parameters from
+        ! penalty_child_addicted and penalty_child_homeless, so the two penalties
+        ! stay the only place either number lives. At child_penalty_classes = 1
+        ! only element 0 is ever read and it is one.
+        real(8), dimension(0:3) :: child_penalty_factor=1
         integer, dimension(employment_grid_size) :: initial_endowment
         real(8), dimension(employment_grid_size) :: relative_endowments
         real(8), dimension(employment_grid_size) :: fraction_with_positive_wealth
@@ -5075,6 +5117,13 @@
         ! one, and both explanations tested for that were rejected by their own
         ! predictions.
         real(8), dimension(0:2) :: model_mass_by_voucher_state=0
+        ! THE REALISED SHARE OF THE POPULATION IN EACH CHILD CLASS, which is an
+        ! equilibrium outcome and not a property of the productivity process, so
+        ! it is measured rather than assumed. It is also the sanity check on the
+        ! packing: at child_penalty_classes = 1 everything is in class 0, and at
+        ! four the shares have to match the disorder and homelessness rates of
+        ! the parents who died, not the rates in the cross section.
+        real(8), dimension(0:3) :: model_mass_by_child_class=0
 
         real(8), dimension(0:2) :: probability_of_voucher_benchmark=0
 
@@ -7304,6 +7353,12 @@
                 model_smi_share_of_homeless(1), " target=", smi_share_of_homeless_data
             write(*,*) "MOMENT pi_V      eligibles with a voucher    model=",&
                 model_eligibles_getting_voucher(1), " target=", voucher_coverage_data
+            write(*,*) "DIAG child-class mass: none=", model_mass_by_child_class(0), &
+                " SUD parent=", model_mass_by_child_class(1), &
+                " homeless parent=", model_mass_by_child_class(2), &
+                " both=", model_mass_by_child_class(3)
+            write(*,*) "DIAG child-class factors:", child_penalty_factor
+
             write(*,*) "DIAG voucher-state mass: none=", model_mass_by_voucher_state(0), &
                 " holding=", model_mass_by_voucher_state(1), &
                 " excluded=", model_mass_by_voucher_state(2)
@@ -14120,6 +14175,7 @@
         ! predictions. This says directly whether the bar traps a large group
         ! with nothing left to lose or barely binds at all.
         if (accumulating_beta_types==0) model_mass_by_voucher_state=0
+        if (accumulating_beta_types==0) model_mass_by_child_class=0
         if (accumulating_beta_types==0) model_eligibles_getting_voucher(time_period)=0
         if (accumulating_beta_types==0) model_eligibles_getting_voucher_relative_to_pop(time_period)=0
         if (accumulating_beta_types==0) model_addicts_getting_voucher(time_period)=0
@@ -14355,6 +14411,13 @@
                                     ! household passes this point exactly once.
                                     model_mass_by_voucher_state(min(max(voucher_index,0),2))=&
                                         model_mass_by_voucher_state(min(max(voucher_index,0),2))+&
+                                        distribution_mass_used
+
+                                    ! Child class, read off the productivity index
+                                    ! it is packed into, at the same point and for
+                                    ! the same reason.
+                                    model_mass_by_child_class(min((employment_index-1)/employment_base_size,3))=&
+                                        model_mass_by_child_class(min((employment_index-1)/employment_base_size,3))+&
                                         distribution_mass_used
 
                                     ! THE DENOMINATOR OF THE DISORDER RATE BY PRODUCTIVITY, and it has
@@ -19190,12 +19253,14 @@
         
             if (current_beta_type==number_of_beta_types) then
                 homeownership_by_employment(time_period,employment_index)=&
-                    homeownership_by_employment(time_period,employment_index)/mass_by_employment(time_period,employment_index)
+                    homeownership_by_employment(time_period,employment_index)/&
+                    max(mass_by_employment(time_period,employment_index),10.d0**(-14))
             end if
             
             if (current_beta_type==number_of_beta_types) then
                 housing_size_by_employment(time_period,employment_index)=&
-                    housing_size_by_employment(time_period,employment_index)/mass_by_employment(time_period,employment_index)
+                    housing_size_by_employment(time_period,employment_index)/&
+                    max(mass_by_employment(time_period,employment_index),10.d0**(-14))
             end if
                                 
         end do
@@ -26221,28 +26286,28 @@
                     ! ever switched back off, these nine numbers have to be
                     ! re-read onto the grid actually in use before the branch
                     ! means anything.
-                    relative_endowments(min(9,employment_grid_size))=1.3853
-                    relative_endowments(min(8,employment_grid_size))=1.3853
-                    relative_endowments(min(7,employment_grid_size))=1.3853
-                    relative_endowments(min(6,employment_grid_size))=0.8520
-                    relative_endowments(min(5,employment_grid_size))=0.2609
-                    relative_endowments(min(4,employment_grid_size))=0.1964
-                    relative_endowments(min(3,employment_grid_size))=0.1338
-                    relative_endowments(min(2,employment_grid_size))=0.1319
-                    relative_endowments(min(1,employment_grid_size))=0.1319
+                    relative_endowments(min(9,employment_base_size))=1.3853
+                    relative_endowments(min(8,employment_base_size))=1.3853
+                    relative_endowments(min(7,employment_base_size))=1.3853
+                    relative_endowments(min(6,employment_base_size))=0.8520
+                    relative_endowments(min(5,employment_base_size))=0.2609
+                    relative_endowments(min(4,employment_base_size))=0.1964
+                    relative_endowments(min(3,employment_base_size))=0.1338
+                    relative_endowments(min(2,employment_base_size))=0.1319
+                    relative_endowments(min(1,employment_base_size))=0.1319
                     
                     relative_endowments(:)=&
                         max(relative_endowments(:),relative_endowments(:)*increase_in_newborns_bequests)
 
-                    fraction_with_positive_wealth(min(9,employment_grid_size))=0.7690
-                    fraction_with_positive_wealth(min(8,employment_grid_size))=0.7690
-                    fraction_with_positive_wealth(min(7,employment_grid_size))=0.7690
-                    fraction_with_positive_wealth(min(6,employment_grid_size))=0.6654
-                    fraction_with_positive_wealth(min(5,employment_grid_size))=0.5946
-                    fraction_with_positive_wealth(min(4,employment_grid_size))=0.6482
-                    fraction_with_positive_wealth(min(3,employment_grid_size))=0.5171
-                    fraction_with_positive_wealth(min(2,employment_grid_size))=0.4779
-                    fraction_with_positive_wealth(min(1,employment_grid_size))=0.4779
+                    fraction_with_positive_wealth(min(9,employment_base_size))=0.7690
+                    fraction_with_positive_wealth(min(8,employment_base_size))=0.7690
+                    fraction_with_positive_wealth(min(7,employment_base_size))=0.7690
+                    fraction_with_positive_wealth(min(6,employment_base_size))=0.6654
+                    fraction_with_positive_wealth(min(5,employment_base_size))=0.5946
+                    fraction_with_positive_wealth(min(4,employment_base_size))=0.6482
+                    fraction_with_positive_wealth(min(3,employment_base_size))=0.5171
+                    fraction_with_positive_wealth(min(2,employment_base_size))=0.4779
+                    fraction_with_positive_wealth(min(1,employment_base_size))=0.4779
                     
                     fraction_with_positive_wealth(:)=&
                         min(max(fraction_with_positive_wealth(:),&
@@ -26254,15 +26319,15 @@
                             
             else    
             
-                relative_endowments(min(9,employment_grid_size))=3.4658762
-                relative_endowments(min(8,employment_grid_size))=3.3657614
-                relative_endowments(min(7,employment_grid_size))=0.89245148
-                relative_endowments(min(6,employment_grid_size))=0.6887341
-                relative_endowments(min(5,employment_grid_size))=0.25194367
-                relative_endowments(min(4,employment_grid_size))=0.14127229
-                relative_endowments(min(3,employment_grid_size))=0.04659514
-                relative_endowments(min(2,employment_grid_size))=0
-                relative_endowments(min(1,employment_grid_size))=0
+                relative_endowments(min(9,employment_base_size))=3.4658762
+                relative_endowments(min(8,employment_base_size))=3.3657614
+                relative_endowments(min(7,employment_base_size))=0.89245148
+                relative_endowments(min(6,employment_base_size))=0.6887341
+                relative_endowments(min(5,employment_base_size))=0.25194367
+                relative_endowments(min(4,employment_base_size))=0.14127229
+                relative_endowments(min(3,employment_base_size))=0.04659514
+                relative_endowments(min(2,employment_base_size))=0
+                relative_endowments(min(1,employment_base_size))=0
                 
             end if
                         
@@ -27291,9 +27356,9 @@
                     sum(newborn_parent_share(:,0,2)), sum(newborn_parent_share(:,1,2))
                 write(*,*) "newborn_productivity_draw=", newborn_productivity_draw(:)
                 write(*,*) "newborn_employment_probability, clean housed, parent at the median node=", &
-                    newborn_employment_probability(:,(employment_grid_size+1)/2,0,1)
+                    newborn_employment_probability(:,(employment_base_size+1)/2,0,1)
                 write(*,*) "newborn_employment_probability, disordered housed, parent at the median node=", &
-                    newborn_employment_probability(:,(employment_grid_size+1)/2,1,1)
+                    newborn_employment_probability(:,(employment_base_size+1)/2,1,1)
 
                 newborn_smi_at_birth=0
 
@@ -29824,7 +29889,7 @@
 
         implicit none
 
-        integer :: d_index,h_index,child_index,parent_index
+        integer :: d_index,h_index,child_index,parent_index,class_1,offset_1
         real(8) :: penalty,mu_1,sigma_e_1,mean_1,mass_1,sd_log_y_1
 
         ! THE WIDTH OF THE DISTRIBUTION THE NODES WERE CUT FROM. Under the
@@ -29848,17 +29913,43 @@
 
             do h_index=1,2
 
-                penalty=((1-penalty_child_addicted)**(d_index*include_child_penalty))*&
-                    ((1-penalty_child_homeless)**((h_index-1)*include_child_penalty))
+                ! WHERE THE PENALTY LIVES DEPENDS ON WHETHER THERE IS A CLASS
+                ! TO PUT IT IN. With child_penalty_classes = 1 it is the old
+                ! birth shift: one level shift to the newborn's draw, which the
+                ! AR(1) then erodes at persistence_employment_surviving. With
+                ! four classes the child is BORN INTO the block whose nodes are
+                ! already scaled, the shift is dropped, and the penalty is
+                ! permanent by construction. Applying both would count it twice.
+                if (child_penalty_classes>1) then
+
+                    class_1=d_index+2*(h_index-1)
+                    penalty=1.d0
+
+                else
+
+                    class_1=0
+                    penalty=((1-penalty_child_addicted)**(d_index*include_child_penalty))*&
+                        ((1-penalty_child_homeless)**((h_index-1)*include_child_penalty))
+
+                end if
+
+                offset_1=class_1*employment_base_size
 
                 do parent_index=1,employment_grid_size
 
+                    ! THE PARENT'S ACTUAL PRODUCTIVITY, penalty included, since
+                    ! employment_grid already carries the parent's own class
+                    ! factor. So a penalty echoes into the GRANDCHILD through
+                    ! the parent's lower earnings at rho_intergenerational and
+                    ! dies out from there, which is what an earnings penalty
+                    ! does; it is the class indicator, not this, that makes it
+                    ! permanent within one life.
                     mean_1=mu_1+rho_intergenerational*&
                         (log(employment_grid(1,parent_index))-mu_1)+log(penalty)
 
-                    do child_index=1,employment_grid_size
+                    do child_index=1,employment_base_size
 
-                        newborn_employment_probability(child_index,parent_index,d_index,h_index)=&
+                        newborn_employment_probability(offset_1+child_index,parent_index,d_index,h_index)=&
                             normal_cdf((log_y_edge(child_index+1)-mean_1)/sigma_e_1)-&
                             normal_cdf((log_y_edge(child_index)-mean_1)/sigma_e_1)
 
@@ -29873,7 +29964,7 @@
 
                     else
 
-                        newborn_employment_probability(1,parent_index,d_index,h_index)=1
+                        newborn_employment_probability(offset_1+1,parent_index,d_index,h_index)=1
 
                     end if
 
@@ -29913,7 +30004,7 @@
         real(8) :: sum_of_dist,sum_of_unconditional_unemployment
         real(8) :: mu_prod_1,sigma_prod_1,mean_prod_1,row_sum_prod_1
         real(8) :: bottom_mass_1,bottom_old_1,bottom_rescale_1
-        integer :: merged_n_1,merge_lo_1
+        integer :: merged_n_1,merge_lo_1,class_index_1
         real(8) :: low_sum_1
         integer, intent(in) :: time_period
          
@@ -30019,9 +30110,9 @@
             ! some other set. The outer edges run to plus and minus twelve, as
             ! on the quantile grid.
             log_y_edge(1)=-12.d0
-            log_y_edge(employment_grid_size+1)=12.d0
+            log_y_edge(employment_base_size+1)=12.d0
 
-            do employment_index=2,employment_grid_size
+            do employment_index=2,employment_base_size
 
                 log_y_edge(employment_index)=&
                     (employment_grid(1,employment_index-1)+employment_grid(1,employment_index))/2.d0
@@ -30156,6 +30247,22 @@
 
         end if
 
+        ! THE CHILD PENALTY CLASSES ARE BUILT ON THE QUANTILE GRID AND ONLY ON
+        ! IT. Everything the packing needs -- the base node masses, the log edges
+        ! the newborn draw integrates over, the AR(1) the class blocks replicate
+        ! -- is constructed inside `if (fixed_productivity==1)`. With the flag
+        ! off the grid comes from KKK_process, which would build a single AR(1)
+        ! over all child_penalty_classes*employment_base_size nodes and hand back
+        ! a productivity process that has nothing to do with the classes, with
+        ! nothing in the output to say so.
+        if ((child_penalty_classes>1) .AND. (fixed_productivity==0)) then
+
+            write(*,*) "STOP: child_penalty_classes=", child_penalty_classes,&
+                " needs fixed_productivity=1 and this run has 0."
+            stop
+
+        end if
+
         if (fixed_productivity==1) then
         
             ! NODES AT THE CONDITIONAL MEAN OF QUANTILE INTERVALS.
@@ -30176,15 +30283,15 @@
             ! represented by the mass they actually carry. Mean productivity is
             ! one by construction rather than by rescaling, since the interval
             ! means weighted by the interval masses sum to the whole mean.
-            do employment_index=1,employment_grid_size+1
+            do employment_index=1,employment_base_size+1
 
                 p_edge_1(employment_index)=&
-                    (real(employment_index-1,8)/real(employment_grid_size,8))**y_grid_kappa
+                    (real(employment_index-1,8)/real(employment_base_size,8))**y_grid_kappa
 
             end do
 
             p_edge_1(1)=0
-            p_edge_1(employment_grid_size+1)=1
+            p_edge_1(employment_base_size+1)=1
 
             ! THE NODE BOUNDARIES IN LOG PRODUCTIVITY, kept for the newborn
             ! draw. The grid is a lognormal of mean one, so its log has mean
@@ -30195,7 +30302,7 @@
             ! not: the two point split preserved the GEOMETRIC mean of the pair
             ! and so overstated E[y] by about four per cent, almost all of it at
             ! the top node where the gap from 1.32 to 3.09 is widest.
-            do employment_index=1,employment_grid_size+1
+            do employment_index=1,employment_base_size+1
                 if (p_edge_1(employment_index)<=0) then
                     log_y_edge(employment_index)=-12.d0
                 else if (p_edge_1(employment_index)>=1) then
@@ -30206,7 +30313,7 @@
                 end if
             end do
 
-            do employment_index=1,employment_grid_size+1
+            do employment_index=1,employment_base_size+1
 
                 tail_mean_1(employment_index)=&
                     lognormal_tail_mean(p_edge_1(employment_index),sd_permanent_productivity)
@@ -30232,7 +30339,7 @@
 
                 newborn_parent_share=0
 
-                do employment_index=1,employment_grid_size
+                do employment_index=1,employment_base_size
 
                     newborn_parent_share(employment_index,0,1)=&
                         p_edge_1(employment_index+1)-p_edge_1(employment_index)
@@ -30241,7 +30348,14 @@
 
             end if
 
-            do employment_index=1,employment_grid_size
+            ! ZEROED FIRST, because the loop below fills the BASE nodes only
+            ! and the class blocks above them are never written. The array has
+            ! no declaration initialiser, so what is left there is whatever the
+            ! allocation held -- a signalling NaN under the standing
+            ! -finit-real=snan build, and silently arbitrary under -O3.
+            unconditional_employment_probability=0
+
+            do employment_index=1,employment_base_size
 
                 unconditional_employment_probability(employment_index)=&
                     p_edge_1(employment_index+1)-p_edge_1(employment_index)
@@ -30278,8 +30392,8 @@
             ! than one dial with two names.
             if (bottom_productivity_level>0.d0) then
 
-                merge_lo_1=max(1,min(int(merge_from_node+0.5d0),employment_grid_size-1))
-                merged_n_1=max(merge_lo_1,min(int(merge_bottom_nodes+0.5d0),employment_grid_size-1))
+                merge_lo_1=max(1,min(int(merge_from_node+0.5d0),employment_base_size-1))
+                merged_n_1=max(merge_lo_1,min(int(merge_bottom_nodes+0.5d0),employment_base_size-1))
                 bottom_mass_1=sum(unconditional_employment_probability(merge_lo_1:merged_n_1))
                 bottom_old_1=sum(unconditional_employment_probability(merge_lo_1:merged_n_1)*&
                     employment_grid(1,merge_lo_1:merged_n_1))/max(bottom_mass_1,10.d0**(-14))
@@ -30294,18 +30408,47 @@
                     max(1.d0-low_sum_1-bottom_mass_1*bottom_old_1,10.d0**(-14))
 
                 employment_grid(1,merge_lo_1:merged_n_1)=bottom_productivity_level
-                employment_grid(1,merged_n_1+1:employment_grid_size)=&
-                    employment_grid(1,merged_n_1+1:employment_grid_size)*bottom_rescale_1
+                employment_grid(1,merged_n_1+1:employment_base_size)=&
+                    employment_grid(1,merged_n_1+1:employment_base_size)*bottom_rescale_1
 
                 write(*,*) "merged nodes", merge_lo_1, "to", merged_n_1, ": level",&
                     bottom_old_1, "->", bottom_productivity_level
                 write(*,*) "merged mass=", bottom_mass_1, " held below=", low_sum_1,&
                     " upper rescale=", bottom_rescale_1
                 write(*,*) "mean productivity after override=",&
-                    sum(unconditional_employment_probability(1:employment_grid_size)*&
-                    employment_grid(1,1:employment_grid_size))
+                    sum(unconditional_employment_probability(1:employment_base_size)*&
+                    employment_grid(1,1:employment_base_size))
 
             end if
+
+            ! THE CLASS BLOCKS OF THE PRODUCTIVITY GRID. Node (c-1)*base+k is
+            ! base node k scaled by that class's factor, so every one of the
+            ! four hundred odd sites that reads employment_grid(age,index) gets
+            ! the penalised productivity with no edit of its own. The factors
+            ! are set here rather than read from recompute_derived_parameters,
+            ! which is called AFTER this routine: on the first pass they would
+            ! still be at their declaration value of one and the grid would be
+            ! built without the penalty in it.
+            call set_child_penalty_factors()
+
+            do class_index_1=1,child_penalty_classes-1
+
+                employment_grid(1,class_index_1*employment_base_size+1:&
+                    (class_index_1+1)*employment_base_size)=&
+                    employment_grid(1,1:employment_base_size)*&
+                    child_penalty_factor(class_index_1)
+
+                ! NO ERGODIC MASS ON THE PENALISED BLOCKS. This array is the
+                ! PROCESS's stationary distribution and is read only by the
+                ! grid-based statistics -- sigma_y's bottom half share above
+                ! all. The share of children actually born into each class is
+                ! an equilibrium outcome, not a property of the process, and
+                ! putting it here would make sigma_y's target move with the
+                ! disorder rate. The realised class shares are printed instead.
+                unconditional_employment_probability(class_index_1*employment_base_size+1:&
+                    (class_index_1+1)*employment_base_size)=0
+
+            end do
 
             do age_index=1,life_span
             
@@ -30497,6 +30640,14 @@
         ! large fall is the thing that would put a middle-aged household with
         ! savings onto the street, and it needs a mixture innovation rather than a
         ! normal one. That is a second step and it is deliberately not in this one.
+        ! ZEROED BEFORE ANYTHING WRITES A ROW. The AR(1) below fills the base
+        ! block and the replication fills the rest, so every cell that is meant
+        ! to be a cross-class zero has to BE zero rather than whatever the
+        ! allocation left. It also matters for the row sums: the normalisation
+        ! divides by sum over the WHOLE row, and an unwritten tail would scale
+        ! every base transition by an arbitrary number.
+        if (fixed_productivity==1) employment_process=0
+
         if ((persistent_income_risk==1) .AND. (fixed_productivity==1)) then
 
             mu_prod_1=-sd_permanent_productivity**2/2
@@ -30505,12 +30656,12 @@
 
             do age_index=1,life_span-retirement_span-1
 
-                do employment_index=1,employment_grid_size
+                do employment_index=1,employment_base_size
 
                     mean_prod_1=mu_prod_1+rho_productivity*&
                         (log(employment_grid(1,employment_index))-mu_prod_1)
 
-                    do future_employment_index=1,employment_grid_size
+                    do future_employment_index=1,employment_base_size
 
                         employment_process(age_index,employment_index,future_employment_index)=&
                             normal_cdf((log_y_edge(future_employment_index+1)-mean_prod_1)/sigma_prod_1)-&
@@ -30540,6 +30691,25 @@
             end do
 
         end if
+
+        ! THE CLASS BLOCKS OF THE TRANSITION, block diagonal because the class
+        ! is fixed at birth: a household born to a parent with a substance use
+        ! disorder (SUD) carries that class to the grave. The base block is
+        ! copied unchanged, which is the author's *"the productivity process is
+        ! the exact same, but there is an indicator"* -- a penalised household
+        ! faces the same transition over its own scaled nodes.
+        do class_index_1=1,child_penalty_classes-1
+
+            do age_index=1,life_span
+
+                employment_process(age_index,&
+                    class_index_1*employment_base_size+1:(class_index_1+1)*employment_base_size,&
+                    class_index_1*employment_base_size+1:(class_index_1+1)*employment_base_size)=&
+                    employment_process(age_index,1:employment_base_size,1:employment_base_size)
+
+            end do
+
+        end do
 
         ! The identity transition. With persistent_income_risk it covers
         ! retirement only, which is what makes social security depend on the type
@@ -31711,7 +31881,7 @@
         ! reports. The model compiles, runs, and passes all sixteen invariants.
         !
         ! The same file already carries the scar: relative_endowments is a NINE
-        ! node SCF profile with min(9,employment_grid_size) guards bolted on after
+        ! node SCF profile with min(9,employment_base_size) guards bolted on after
         ! the grid was cut to seven, so three distinct levels collapsed onto one.
         !
         ! So the method in data/UNEMPLOYMENT_BY_PRODUCTIVITY.md is implemented
@@ -31737,8 +31907,23 @@
                 edu_hi_1(j_edu_1)=edu_hi_1(j_edu_1-1)+edu_share_1(j_edu_1)
             end do
 
+            ! WALKED OVER THE BASE NODES, NOT THE PACKED ONES. This maps
+            ! education onto the productivity distribution by walking its
+            ! cumulative mass, and the ergodic masses are carried entirely by the
+            ! base block -- the child classes' share of the population is an
+            ! equilibrium outcome and is deliberately not in that array. Walked
+            ! over all packed nodes the cumulative sum would stop advancing after
+            ! node employment_base_size, every penalised node would find zero
+            ! overlap with every education group, and the else branch would hand
+            ! all of them a separation multiplier of exactly one -- so the
+            ! children of addicts, who are the POOREST households in the economy,
+            ! would face the AVERAGE job-loss rate while their unpenalised twins
+            ! at the same base node faced 2.57 times it. The profile is built on
+            ! the base block and copied, which is also the right economics: the
+            ! author asked for a productivity penalty, not for a second channel
+            ! through unemployment.
             cum_lo_1=0.d0
-            do i_edu_1=1,employment_grid_size
+            do i_edu_1=1,employment_base_size
                 cum_hi_1=cum_lo_1+unconditional_employment_probability(i_edu_1)
                 acc_1=0.d0
                 w_1=0.d0
@@ -31755,6 +31940,12 @@
                     adjusted_probability_1(i_edu_1)=1.d0
                 end if
                 cum_lo_1=cum_hi_1
+            end do
+
+            do j_edu_1=1,child_penalty_classes-1
+                adjusted_probability_1(j_edu_1*employment_base_size+1:&
+                    (j_edu_1+1)*employment_base_size)=&
+                    adjusted_probability_1(1:employment_base_size)
             end do
 
             ! RENORMALISED ON THE LIVE MASSES, not on the ones this vector was
@@ -31778,8 +31969,8 @@
             ! on a different model hash for no gain. On the KKK grid the masses
             ! are genuinely different -- the bottom three nodes carry 24 per cent
             ! rather than 6.6 -- and the renormalisation is doing real work.
-            mean_tilt_1=sum(unconditional_employment_probability(1:employment_grid_size)*&
-                adjusted_probability_1(1:employment_grid_size))
+            mean_tilt_1=sum(unconditional_employment_probability(1:employment_base_size)*&
+                adjusted_probability_1(1:employment_base_size))
 
             if ((mean_tilt_1>10.d0**(-10)) .AND. (fixed_productivity==0)) then
 
@@ -32878,7 +33069,15 @@
     
         end do
                                 
-        financial_grid(financial_grid_size)=max_times_labour_income_saved*employment_grid(1,employment_grid_size)
+        ! THE TOP OF THE ASSET GRID IS THE TOP OF THE UNPENALISED BLOCK, and
+        ! employment_base_size is what names it. Written as employment_grid_size
+        ! this reads the top node of the LAST child class, whose factor is
+        ! (1-delta_d)(1-delta_h) -- so switching the classes on would have
+        ! quietly cut the highest asset a household may hold by about half,
+        ! which is a change to the wealth distribution and to beta and has
+        ! nothing whatever to do with the child penalty. At one class the two
+        ! names are the same number and this is identical.
+        financial_grid(financial_grid_size)=max_times_labour_income_saved*employment_grid(1,employment_base_size)
                            
         do i=negative_financial_grid_size+1,financial_grid_size
         
@@ -32918,7 +33117,7 @@
             
         open(unit=3,file="financial_grid_points"//trim(file_number)//".txt",action="write",status="replace")
         do i=1,financial_grid_size
-            write(3,*) financial_grid(i)/employment_grid(1,employment_grid_size)
+            write(3,*) financial_grid(i)/employment_grid(1,employment_base_size)
         end do
         close(3)
         open(unit=3,file="financial_grid"//trim(file_number)//".txt",action="write",status="replace")
@@ -36346,7 +36545,8 @@
             
                 do i=1,3
                         
-                    write(4,*) 100*(mass_by_employment_and_tenure(j,k,i)/mass_by_employment(j,k))
+                    write(4,*) 100*(mass_by_employment_and_tenure(j,k,i)/&
+                        max(mass_by_employment(j,k),10.d0**(-14)))
                         
                 end do
                    
@@ -37558,6 +37758,31 @@
 
     end subroutine
 
+    subroutine set_child_penalty_factors()
+
+        ! THE FOUR CHILD CLASSES' PRODUCTIVITY FACTORS, in one place because
+        ! two routines need them at different moments: the grid construction,
+        ! which runs BEFORE recompute_derived_parameters and would otherwise
+        ! build the blocks at the declaration value of one, and
+        ! recompute_derived_parameters itself, which is what picks up a
+        ! calibration step in either penalty.
+        !
+        ! Same two penalties and the same include_child_penalty switch the birth
+        ! shift used, so at include_child_penalty = 0 every factor is one and the
+        ! four classes are four identical copies of one economy. That is the
+        ! replication null this construction is checked against.
+
+        use Global_Vars
+
+        implicit none
+
+        child_penalty_factor(0)=1.d0
+        child_penalty_factor(1)=(1.d0-penalty_child_addicted)**include_child_penalty
+        child_penalty_factor(2)=(1.d0-penalty_child_homeless)**include_child_penalty
+        child_penalty_factor(3)=child_penalty_factor(1)*child_penalty_factor(2)
+
+    end subroutine
+
     subroutine recompute_derived_parameters()
 
         ! EVERY QUANTITY DERIVED FROM A CALIBRATED ONE, REBUILT IN ONE PLACE.
@@ -37587,6 +37812,8 @@
             (size_of_penalty*((0.39-relative_share_of_addiction_1))+relative_share_of_addiction_1)
 
         relative_share_of_addiction=relative_share_of_addiction_1
+
+        call set_child_penalty_factors()
 
         ! GAMMA IS THE HOUSING WEIGHT AND HAS TO BE THE ONE THE UTILITY READS.
         ! These four lines built the weights from relative_share_of_housing_0, a
@@ -42828,8 +43055,8 @@
             write(*,*) "consumption by node          =", clean_consumption_by_employment(1,:)
             write(*,*) "DRUG BUDGET SHARE by node    =", drug_quantity_by_employment(1,:)*&
                 price_of_addictive_good/max(clean_consumption_by_employment(1,:),10.d0**(-12))
-            write(*,*) "newborn prob, clean parent, median node =", newborn_employment_probability(:,(employment_grid_size+1)/2,0,1)
-            write(*,*) "newborn prob, disordered, median node   =", newborn_employment_probability(:,(employment_grid_size+1)/2,1,1)
+            write(*,*) "newborn prob, clean parent, median node =", newborn_employment_probability(:,(employment_base_size+1)/2,0,1)
+            write(*,*) "newborn prob, disordered, median node   =", newborn_employment_probability(:,(employment_base_size+1)/2,1,1)
             write(*,*) "employment_grid               =", employment_grid(1,:)
             write(*,*) "penalty_child_addicted=", penalty_child_addicted
             child_sud_num_1=0
