@@ -198,3 +198,68 @@ homelessness odds ratio is reported at about 2.89 against Bassuk's 2.10 with
 delta_h at zero, or the excess comes out of `rho_intergenerational`, the
 income-persistence channel that transmits homeless parents' poverty on its own
 and is not a child-penalty parameter. That is the author's call.
+
+
+# WHY NEITHER TARGET IS REACHABLE: two structural ceilings, found on the author's pushback
+
+The author, 10 September: *"it cant be that delta h should be 2%.....homelessness
+is an extreme outcome, 2% hit on income cannot be the cause of double the odds
+ratio"*, and *"i also find it strange that omega_c at 0.17 delivers such a small
+change in behaviour"*. Both instincts were right that something was odd. Neither
+is a coding bug; both are structural, and naming them changes what the open
+questions are.
+
+## 1. delta_h: the 2 per cent penalty is NOT what produces 2.889
+
+Fitting the four measured points, the odds ratio goes as `(1-delta_h)^-1.5121`.
+At delta_h = 0.02 the penalty therefore multiplies the ratio by only **1.031**:
+
+| | |
+| --- | --- |
+| odds ratio measured at delta_h = 0.02 | 2.8890 |
+| what the 2 per cent penalty contributes | x1.031 |
+| **odds ratio at delta_h = 0 exactly** | **2.802** |
+
+So 2.80 of the 2.889 is present with NO homelessness child penalty at all. It is
+`rho_intergenerational` transmitting homeless parents' poverty: they sit at the
+bottom of the productivity grid, the child is drawn around rho times the
+parent's log productivity, and homelessness is steep in productivity. **The
+quantity to interrogate is the persistence channel, not delta_h.** The 0.02 run
+was a probe to strip the penalty away, never a proposed value.
+
+## 2. omega: the child term is multiplied by the probability of DYING
+
+    future_utility += discount_factor
+                    * (1 - survival_probability(...))      <- dies this period
+                    * weight_on_child
+                    * expected_child_value(...)
+
+A newborn replaces a household that dies, so the parent internalises the child's
+loss only in proportion to how likely it is to die right now. The source states
+this deliberately: *"weighted by the chance the child is actually born, which is
+what omega is the weight on"*.
+
+`expected_child_value` reaches **112 utils** -- the term is not small. But the
+death hazard is well under one per cent a period for a working-age household, so
+what enters any given decision is about
+
+    0.93 * 0.005 * 0.17 * 112  ~  0.09 utils
+
+against a per-period marginal utility of consumption near 13. **One part in a
+hundred and fifty of a period's consumption.** That is why omega_c = 0.17 moves
+behaviour by two per cent, and why omega saturates near 0.037 even at the
+parameter's ceiling of 1.0.
+
+**So the fix for omega is not a bigger omega_c.** No admissible weight can make
+a term large when it is multiplied by a sub-one-per-cent hazard. Either the term
+should not be scaled by the death probability alone, or the channel needs a
+different structure. That is a modelling decision.
+
+## A correction made in reaching this
+
+I reported `expected_child_value` as identically zero and implied the channel
+might be dead. It was the LAST of six prints, taken inside the counterfactual
+where the term is switched off by design, and the OMEGA_DIAG lines show only the
+first two of 112 values, both in the clean-housed slice that is zero by
+construction. The live term is 112 utils. **Read the print that follows
+`compute_expected_child_value`, not the one inside the omega counterfactual.**
