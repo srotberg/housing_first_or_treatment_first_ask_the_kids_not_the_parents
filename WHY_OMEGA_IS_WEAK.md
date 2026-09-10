@@ -469,3 +469,54 @@ internalised is a SUBSTANTIAL interior response rather than a puzzle.
 WHAT NEEDS EXPLAINING IS THEREFORE THE STYLIZED MODEL, not the quantitative one:
 a deterrent one twentieth the size wipes out three quarters of use there. That is
 the number to distrust.
+
+## THE DECISIVE ARM: arm0_utf_lowfp at p_fp = 0.0005 returns +29.8176
+
+Run because the 8.584 point false positive term rested on an interpolation across
+[0, 0.005] in a region where the curve's slope is steeper than it is further out.
+It was the test of whether the threshold framing survives. IT DOES, and it comes
+out slightly tighter than the interpolation said.
+
+    HF is FLAT in p_fp (it does no testing)      29.9734%
+    p_fp = 0        universal TF   30.7701%      TF ahead by  +0.797
+    p_fp = 0.0005   universal TF   29.8176%      TF behind by -0.156
+    p_fp = 0.005    universal TF   22.1857%      TF behind by -7.788
+
+    slope [0, 0.0005]        -1905.0 points per unit p_fp
+    slope [0.0005, 0.005]    -1696.0     CONCAVE, steepest at zero, as predicted
+
+    MEASURED CROSSING   p_fp = 0.000418 = 0.0418 per cent a year, about 1 in 2391
+
+My interpolation predicted 29.9117 at this point against a measured 29.8176, an
+error of 0.094 points and OPTIMISTIC FOR TREATMENT FIRST -- which is exactly the
+sign concavity implies, so the curve is behaving as described rather than doing
+something unexplained near zero. The earlier estimate of the crossing, 0.0464 per
+cent, becomes 0.0418.
+
+### What that means for the author's HIV question
+
+Reading the accuracy off the measured slope near zero:
+
+    p_fp = 4e-6    HIV-grade full algorithm, order 1 in 250,000   TF +0.789
+    p_fp = 1e-4    1 in 10,000                                    TF +0.606
+    p_fp = 4.18e-4 THE CROSSING, 1 in 2,391                        dead heat
+    p_fp = 5e-4    1 in 2,000                                     HF +0.156
+    p_fp = 5e-3    the calibrated value                           HF +7.788
+
+SO THE AUTHOR'S POINT CARRIES. If a confirmed programme can reach anything like
+the specificity of the HIV testing algorithm, or even one wrongful exclusion in
+ten thousand household-years, TREATMENT FIRST WINS. The requirement is stringent
+but it is not absurd: better than one in roughly two thousand four hundred a
+year.
+
+That is the form the result should take in the paper. Not "Housing First wins",
+and not a point value of `probability_of_false_positive`, but a THRESHOLD ON
+ENFORCEMENT ACCURACY with the policy ranking on either side of it -- because the
+calibrated 0.005 is itself a round conservative stand-in rather than a measured
+post-confirmation rate, and the answer moves either side of 1 in 2,400.
+
+STILL UNRESOLVED, and it should not be forgotten because the threshold is now
+sharp: `probability_of_false_positive` in this model is not assay error. It is
+the chance a COMPLIANT household loses the voucher, which includes a missed
+appointment scored as a positive. No improvement in the assay touches that
+channel, and nothing here has pinned its size.
