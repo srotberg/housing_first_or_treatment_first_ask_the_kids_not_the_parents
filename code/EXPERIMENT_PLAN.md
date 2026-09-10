@@ -868,3 +868,96 @@ THE STANDING LESSON, now visible in all five arms: the early-loop deterrent is
 always far larger than the converged one, because the price has not yet fallen
 to absorb the drop in demand. Mid-solve numbers are not results and reading a
 mechanism off them produced a wrong story three times tonight.
+
+
+# THE PLAN, as of 10 September 03:55. Supersedes everything above it.
+
+## THE LIVE STATE, 10 September 03:45. Read this first; the sections below are the design.
+
+Everything above the 8 September queue is superseded. What changed since:
+
+* the child's inherited penalty is a STATE, not a one-off shift at birth. Four
+  classes -- neither, a parent with a substance use disorder (SUD), a homeless
+  parent, both -- packed into the productivity index, block-diagonal transitions,
+  permanent for life including retirement. `child_penalty_classes=4`.
+* both child ratios are ODDS ratios now, not ratios of rates, on the author's
+  instruction of 10 September. The two underlying rates print beside each.
+* the channel-shutdown ladder's three rungs -- `kappa_x`, `child_penalty_off`,
+  `adjust_taxes` -- are handover parameters at last. None could be set before.
+* `voucher_exclusion_states=1` again: the arms need the third voucher slice and
+  the benchmark must carry it, because it dimensions the arrays the arms read.
+
+**The saved four-class benchmark** is `variant_save_20260910T024704Z`,
+FROZEN CONVERGED in 2 passes at 3.38e-5. Against the one-class benchmark it
+replaces, `lambda_d` went from 2.4 per cent below target to 0.06 per cent below
+and `sigma_y` to 0.1 per cent; `b` halved its gap; `h_1` went from +8.0 to
++12.7 per cent and `delta_h` from 3.73 to 4.73, both because 31 per cent is far
+too large a homelessness penalty once it lasts a lifetime.
+
+### The queue, in order, ON THE AUTHOR'S SEQUENCING OF 10 SEPTEMBER
+
+*"find out what delta d, delta h and omega c should be in the current
+benchmark. Then test what happens in the tf and hf simulations. Then if it's
+ready, we hold them fixed and recalibrate the other parameters using the faster
+method with no permanent impact on the child and then at the end run the
+benchmark with the delta h and delta d and omega c that should give moments
+close to the data with the model with full permanence and then run the other
+simulations"*.
+
+**STEP 1. FIT THE THREE CHILD PARAMETERS, at four classes.** Four points, each
+differing from the anchor in exactly ONE parameter, all on ONE build. A secant
+across two points that differ in anything else is not a secant.
+
+| point | moves | to | log |
+| --- | --- | --- | --- |
+| anchor | -- | 0.24, 0.31, 0.007 | `arm_benchmark.log` |
+| B | `penalty_child_addicted` | 0.36 | `fit_delta_d.log` |
+| C | `penalty_child_homeless` | 0.15 | `fit_delta_h.log` |
+| D | `weight_on_child` | 0.05 | `fit_omega_c.log` |
+
+Targets: SUD odds ratio 2.00, homelessness odds ratio 2.10, `omega` 0.18343.
+Then ONE verification run at the interpolated triple. Read the ratios with
+`bash /tmp/claude-0/read_probes.sh` or by grepping `UNTARGETED delta_` and
+`MOMENT omega` from the last block of each log -- **the LAST block, after
+`FROZEN CONVERGED`**. omega prints twice and the pre-frozen print is off a state
+that is not an equilibrium; quoting it once already produced a wrong number in
+this session, 0.0613 against a true 0.000252.
+
+**STEP 2. THE TF AND HF ARMS** on that fitted benchmark. `/tmp/claude-0/arms.sh`
+holds the four commands. The switches, from the model's own `file_number` block:
+
+| arm | offer | homeless-with-SUD eligible | conditional | 3-year bar |
+| --- | --- | --- | --- | --- |
+| benchmark | 0.0433 | yes | no | -- |
+| rationed TF | 0.0433 | no | yes | yes |
+| universal TF | 1 | no | yes | yes |
+| universal HF | 1 | yes | no | -- |
+
+The question being asked: does Treatment First gain more now that it eliminates
+a bigger externality? The old flat-supply table had -2.14, +26.41 and +40.74 per
+cent. Note before reading the answer that `omega` is still about 4 per cent of
+what the data implies, so a 43-point gap closing would be a result to CHECK.
+
+**STEP 3. THE FAST RECALIBRATION,** at ONE class, with the three child
+parameters HELD at their step 1 values. The efficient settings, and why:
+
+* `child_penalty_classes=1` -- 28 min a point becomes about 7;
+* `voucher_exclusion_states=0` -- the benchmark has no conditionality and
+  nothing to exclude, so the third slice is dead weight HERE. It goes back on
+  for the arms, and the two must never disagree within one comparison;
+* `measure_child_gap=0` -- it buys a whole extra solve-converge-statistics pass
+  to measure `omega`, which is fitted at four classes anyway.
+
+**WHAT IS NOT CUT: the frozen-equilibrium loop.** It looks like the obvious
+saving, three extra full solves a point. Today's benchmark reported `b` = 0.0795
+before it and 0.0849 after, a 6.4 per cent difference, so a search scored on
+pre-frozen moments is steered by that bias -- which is what the banner at the
+top of ENGINE.md is the record of.
+
+The three child parameters CANNOT be fitted here and must not be: `delta_d`
+pins near 1.11 at any penalty with the classes off, and `omega_c` is clamped at
+1.0 while the target needs about 5.1, so it would park at the ceiling and report
+a fitted parameter that was never fitted.
+
+**STEP 4.** The benchmark at four classes with the step 1 values, then the arms
+again. This is the number that goes in the paper.
