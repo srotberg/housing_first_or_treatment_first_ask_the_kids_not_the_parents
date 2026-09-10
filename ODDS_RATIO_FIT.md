@@ -28,7 +28,7 @@ same night.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | A anchor | 0.24 | 0.31 | 0.007 | **1.5505** | **4.9109** | **0.0075517** | `variant_save_20260910T032800Z` |
 | B | 0.36 | 0.31 | 0.007 | **2.0518** | 4.9824 | 0.000242 (noise) | `variant_save_20260910T040639Z` |
-| C | 0.24 | 0.15 | 0.007 | | | | `fit_delta_h.log` |
+| C | 0.24 | **0.15** | 0.007 | 1.5470 | **3.6497** | 0.0074958 | `variant_save_20260910T044518Z` |
 | D | 0.24 | 0.31 | 0.05 | | | | `fit_omega_c.log` |
 
 Anchor underlying rates: SUD exposed 0.053417 against unexposed 0.035118;
@@ -84,3 +84,34 @@ almost nothing about the child term.
 observable. The combined point at 0.17 should put it about 24 times higher and
 comfortably above the floor, so the fit can proceed -- but no slope estimated
 from the current pair means anything.
+
+
+## C: delta_h CANNOT REACH 2.10. Its floor is about 2.5.
+
+| | anchor | C | target |
+| --- | --- | --- | --- |
+| `delta_h` | 0.31 | 0.15 | -- |
+| homelessness odds ratio | 4.9109 | **3.6497** | 2.10 |
+| child of a homeless parent, rate | 0.046770 | 0.035136 | -- |
+| child of a housed parent, rate | 0.0098922 | 0.0098793 | -- |
+| SUD odds ratio | 1.5505 | 1.5470 | -- |
+
+The unexposed rate does not move at all -- 0.0098922 against 0.0098793 -- while
+the exposed rate falls roughly linearly in the penalty. Extrapolated to
+`delta_h` = 0, meaning NO homelessness penalty on the child whatsoever, the odds
+ratio is still about **2.5**: 2.49 reading the rates linearly, 2.90 reading the
+ratio in logs. The target of 2.10 is BELOW the model's floor.
+
+The reason is the channel the author asked to keep: homeless parents are poor,
+`rho_intergenerational` is 0.35, and the child inherits that productivity
+whether or not a penalty is applied on top. Income persistence ALONE
+over-explains Bassuk et al.'s odds ratio.
+
+So `delta_h` is not a dial that reaches 2.10 from above. Either the ratio is
+accepted at about 2.5 with `delta_h` near zero -- a 19 per cent overshoot,
+outside the author's 10 per cent rule -- or the excess has to come out of the
+persistence channel, which is not a child parameter and is the author's call.
+
+The `delta_d` secant across B and C is well behaved by contrast: elasticity
+-1.64 in log(1-delta), pointing at delta_d = 0.350 against the 0.36 already
+measured at 2.0518.
