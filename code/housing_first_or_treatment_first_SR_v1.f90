@@ -30629,6 +30629,24 @@
         
         else
         
+            ! ZERO EVERY ROUTE INTO EXCLUSION BEFORE ANY IS SET. The rows that
+            ! send a household to state 2 are written only inside the
+            ! voucher_conditional_on_clean block, because only a drug test can
+            ! put anyone there. But the integration range is
+            ! include_vouchers+include_voucher_exclusion, so the combination
+            ! exclusion=1 with conditionality=0 -- which is exactly universal
+            ! HOUSING first, where there is no test at all -- would read those
+            ! rows uninitialised and integrate over garbage. It would not crash;
+            ! it would return an economy.
+            !
+            ! Zeroing them here makes that combination safe and inert rather than
+            ! merely unused, so nobody has to remember not to ask for it.
+            if (include_voucher_exclusion==1) then
+
+                voucher_probabilities(:,2,:,:)=0
+
+            end if
+
             ! from getting a voucher to not when income goes above the threshold
             voucher_probabilities(1,0,0,:)=1
             
