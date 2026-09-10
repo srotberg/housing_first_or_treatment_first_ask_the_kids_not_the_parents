@@ -5042,6 +5042,17 @@
         real(8), dimension(0:voucher_state_max,0:voucher_state_max,0:include_vouchers,1:3) :: &
             voucher_probabilities,voucher_probabilities_benchmark
                     
+        ! DIAGNOSTIC ONLY: how the population splits across no voucher, holding
+        ! one, and excluded. Written and printed; read by nothing.
+        !
+        ! It exists because the model reported no way to see how many households
+        ! sit in the EXCLUDED state, which left the three-year exclusion
+        ! decomposition uninterpretable -- the harsher sanction returned MORE
+        ! drug use, MORE homelessness and HIGHER coverage than the one-period
+        ! one, and both explanations tested for that were rejected by their own
+        ! predictions.
+        real(8), dimension(0:2) :: model_mass_by_voucher_state=0
+
         real(8), dimension(0:2) :: probability_of_voucher_benchmark=0
 
         real(8), dimension(0:2) :: probability_of_voucher=0
@@ -7270,6 +7281,9 @@
                 model_smi_share_of_homeless(1), " target=", smi_share_of_homeless_data
             write(*,*) "MOMENT pi_V      eligibles with a voucher    model=",&
                 model_eligibles_getting_voucher(1), " target=", voucher_coverage_data
+            write(*,*) "DIAG voucher-state mass: none=", model_mass_by_voucher_state(0), &
+                " holding=", model_mass_by_voucher_state(1), &
+                " excluded=", model_mass_by_voucher_state(2)
             ! AGGREGATE FOOD STAMP SPENDING IS A CHECK NOW, NOT A TARGET.
             ! SNAP is implemented as the programme runs -- allotment by
             ! household size, gross income eligibility at 130 per cent of the
@@ -14074,6 +14088,15 @@
         if (accumulating_beta_types==0) employment_mass(time_period,:)=0
         if (accumulating_beta_types==0) govt_spending_on_housing_vouchers(time_period)=0
         if (accumulating_beta_types==0) govt_spending_on_housing_vouchers_2(time_period)=0
+        ! MASS BY VOUCHER STATE, a pure diagnostic. Nothing reads it; it exists
+        ! because the model reported no way to see how many households sit in the
+        ! EXCLUDED state, which left the three-year-exclusion decomposition
+        ! uninterpretable: the harsher sanction returned more drug use, more
+        ! homelessness AND higher coverage than the one-period one, and the two
+        ! explanations tested for that were both rejected by their own
+        ! predictions. This says directly whether the bar traps a large group
+        ! with nothing left to lose or barely binds at all.
+        if (accumulating_beta_types==0) model_mass_by_voucher_state=0
         if (accumulating_beta_types==0) model_eligibles_getting_voucher(time_period)=0
         if (accumulating_beta_types==0) model_eligibles_getting_voucher_relative_to_pop(time_period)=0
         if (accumulating_beta_types==0) model_addicts_getting_voucher(time_period)=0
@@ -14303,6 +14326,13 @@
                                     distribution_mass_used=distribution_stationary(years_left_on_mortgage_index)%&
                                         vector_transition_real(time_period_used,age_index,financial_index,&
                                         unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                    ! Voucher-state mass, counted here for the same
+                                    ! reason the comment below gives: every
+                                    ! household passes this point exactly once.
+                                    model_mass_by_voucher_state(min(max(voucher_index,0),2))=&
+                                        model_mass_by_voucher_state(min(max(voucher_index,0),2))+&
+                                        distribution_mass_used
 
                                     ! THE DENOMINATOR OF THE DISORDER RATE BY PRODUCTIVITY, and it has
                                     ! to be counted here, where every household passes, rather than
