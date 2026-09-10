@@ -327,8 +327,31 @@
         ! the flag at zero state 2 carries zero mass and the model is
         ! behaviourally what it was; the cost is a state space half again as
         ! large, which is the right price for not having to trust the optimiser.
+        ! THE BOUND IS COMPILE-TIME AND OFF BY DEFAULT; THE BEHAVIOUR IS RUNTIME.
+        !
+        ! Splitting these two is what stops the benchmark paying for a slice it
+        ! never uses. voucher_state_max was include_vouchers*2 unconditionally,
+        ! so EVERY build carried three voucher states -- and the benchmark, where
+        ! include_voucher_exclusion is 0 and the diagnostic prints
+        ! "excluded= 0.0000000000", swept an always-empty slice for it. Measured:
+        ! 5 minutes with two states against 7 with three.
+        !
+        ! voucher_exclusion_states is set per EXPERIMENT, so the benchmark and
+        ! the arms of one experiment are always built with the same shape --
+        ! which they must be, because an arm reads the benchmark's saved
+        ! distribution and value function off disk and the ranks have to agree.
+        !
+        ! AND THE INDEX BELOW IS min()'d FOR A REASON. Writing a literal 2 into
+        ! the exclusion transitions when the bound is 1 is out of bounds even
+        ! inside a branch that never executes, which is what produced eleven
+        ! compiler warnings and rests correctness on dead-code elimination --
+        ! the assumption that already cost this file a calibration. voucher_excl
+        ! is the top of the state space, so it is in bounds in both builds and
+        ! the runtime flag alone decides whether anyone goes there.
         integer :: include_voucher_exclusion=0
-        integer, parameter :: voucher_state_max=include_vouchers*2
+        integer, parameter :: voucher_exclusion_states=0
+        integer, parameter :: voucher_state_max=include_vouchers*(1+voucher_exclusion_states)
+        integer, parameter :: voucher_excl=min(2,voucher_state_max)
         real(8), parameter :: voucher_exclusion_release=1.d0/3.d0
         integer, parameter :: use_cobb_douglas=0
         integer, parameter :: use_cobb_douglas_2=0
@@ -26628,7 +26651,7 @@
             ! (2 -> 0) and the stay row (2 -> 2) are both reachable; the (2 -> 1)
             ! row is zero, so the middle contributes nothing.
             if ((has_house==0) .AND. (choose_to_own_1==0) .AND. &
-                (voucher_index==2) .AND. (include_voucher_exclusion==1)) then
+                (voucher_index==voucher_excl) .AND. (include_voucher_exclusion==1)) then
 
                 has_opportunity=1
                 first_voucher_index=0
@@ -30673,7 +30696,7 @@
             ! merely unused, so nobody has to remember not to ask for it.
             if (include_voucher_exclusion==1) then
 
-                voucher_probabilities(:,2,:,:)=0
+                voucher_probabilities(:,voucher_excl,:,:)=0
 
             end if
 
@@ -30771,9 +30794,9 @@
 
                     ! A HOLDER who is caught, or wrongly flagged, is excluded
                     ! rather than merely dropped back into the lottery.
-                    voucher_probabilities(1,2,1,3)=probability_of_detection
+                    voucher_probabilities(1,voucher_excl,1,3)=probability_of_detection
                     voucher_probabilities(1,0,1,3)=0
-                    voucher_probabilities(1,2,1,1:2)=probability_of_false_positive
+                    voucher_probabilities(1,voucher_excl,1,1:2)=probability_of_false_positive
                     voucher_probabilities(1,0,1,1:2)=0
 
                     ! AN APPLICANT is offered with the offer probability and
@@ -30781,19 +30804,19 @@
                     ! simply stays out. The three destinations must sum to one,
                     ! which is why (0,0,1,.) is written as the remainder of both
                     ! rather than of (0,1,1,.) alone.
-                    voucher_probabilities(0,2,1,3)=probability_of_detection*&
+                    voucher_probabilities(0,voucher_excl,1,3)=probability_of_detection*&
                         min(real(probability_of_voucher_benchmark_used_1*&
                         increased_prob_of_voucher_if_homeless_and_addicted),1.0)
                     voucher_probabilities(0,0,1,3)=1-voucher_probabilities(0,1,1,3)-&
-                        voucher_probabilities(0,2,1,3)
+                        voucher_probabilities(0,voucher_excl,1,3)
 
-                    voucher_probabilities(0,2,1,1)=probability_of_false_positive*&
+                    voucher_probabilities(0,voucher_excl,1,1)=probability_of_false_positive*&
                         real(probability_of_voucher_benchmark_used_1)
-                    voucher_probabilities(0,2,1,2)=probability_of_false_positive*&
+                    voucher_probabilities(0,voucher_excl,1,2)=probability_of_false_positive*&
                         min(real(probability_of_voucher_benchmark_used_1*&
                         increased_prob_of_voucher_if_homeless_1),1.0)
                     voucher_probabilities(0,0,1,1:2)=1-voucher_probabilities(0,1,1,1:2)-&
-                        voucher_probabilities(0,2,1,1:2)
+                        voucher_probabilities(0,voucher_excl,1,1:2)
 
                 end if
 
@@ -30814,9 +30837,9 @@
             ! exclusion returns you to the queue, not to the front of it.
             if (include_voucher_exclusion==1) then
 
-                voucher_probabilities(2,0,:,:)=voucher_exclusion_release
-                voucher_probabilities(2,1,:,:)=0
-                voucher_probabilities(2,2,:,:)=1-voucher_exclusion_release
+                voucher_probabilities(voucher_excl,0,:,:)=voucher_exclusion_release
+                voucher_probabilities(voucher_excl,1,:,:)=0
+                voucher_probabilities(voucher_excl,voucher_excl,:,:)=1-voucher_exclusion_release
 
             end if
             
