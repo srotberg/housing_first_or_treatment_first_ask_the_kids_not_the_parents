@@ -580,3 +580,75 @@ from the response, not measured. A diagnostic that accumulates that gap over the
 distribution at the benchmark would give it directly, and would say whether the
 implied density near indifference is what the response requires. It is a small
 addition to the Fortran and cannot go in while a solve is running.
+
+## THE 18 PER CENT TARGET, RE-DERIVED FROM THE MICRODATA
+
+The author, 10 September: *"I also want you to double check whether the 18%
+change in use is correct from the data... Maybe your data point is wrong"*.
+
+`data/make_altruism_moment.py` was re-run against the full NSDUH 2024 public use
+file, 390 MB, not against any summary. IT REPRODUCES EXACTLY:
+
+    past month illicit use, ages 26+, weighted
+      raw          with a child 16.34%   without 16.63%   ratio 0.983
+      reweighted   with a child 14.11%   without 16.71%   ratio 0.845
+      implied rise with altruism off                      18.4%
+      234 cells, 97.2% of non parent weight
+
+So the number is right and the conversion is right: the model's moment is
+(users with the term off)/(users with it on) - 1, based on use WITH the term on,
+and 1/0.845 - 1 = 0.1834 is the same gap on the same base. That denominator was
+already caught and fixed once in the declaration, and it is the mirror image of
+the error I made in the ladder.
+
+### But three things the re-run makes visible
+
+**THE RAW GAP IS NOTHING: 0.983.** All of the moment is created by the
+reweighting. That is legitimate rather than artefactual -- it is Simpson's
+paradox, and every within-age-band ratio is far below the pooled one -- but the
+moment is entirely a composition-adjusted object, and it inherits whatever the
+adjustment gets wrong.
+
+**THE WINDOW MATTERS AS MUCH AS THE ADJUSTMENT.** Past year gives 0.809 and a
+23.6 per cent rise, not 18.4. There is no stated reason in the file for
+preferring past month.
+
+    reading                          ratio   target   implied omega_c
+    past month, reweighted           0.845   0.1834       1.057
+    past year, reweighted            0.809   0.2361       1.344
+    past month, RAW                  0.983   0.0177       0.156
+
+**THE FILE'S OWN CREDIBILITY ARGUMENT DOES NOT SURVIVE ITS OWN TABLE.** It says
+the age pattern makes the gap credible because it is widest in the child rearing
+window and "narrows at 50 to 64 when children have left". The table:
+
+      26-29  0.805     30-34  0.713     35-49  0.600
+      50-64  0.855     65+    0.478
+
+65+ IS THE WIDEST RATIO OF ALL, wider than 35 to 49, in the group where a
+concern for a child's inherited productivity is least plausible and where the
+children in the household are as likely to be grandchildren. The rates there are
+small, 7.93 against 3.79 per cent, so the ratio is noisy. But the stated pattern
+is not the pattern, and that weakens the case that the gap is altruism rather
+than household structure.
+
+### What this does to omega_c
+
+The source file already says the measured gap is an UPPER BOUND, because heavy
+users lose custody and so their children are absent from the household rather
+than their use being lower. The model's channel is narrower still: it is only the
+parent's valuation of a child's inherited productivity penalty, realised at the
+parent's death, where a real parent's lower use also reflects custody risk,
+supervision, a child in the house, and time and money constraints.
+
+omega_c is close to PROPORTIONAL to whatever share of the gap is attributed to
+the model's channel:
+
+      share attributed    1.00    0.75    0.50    0.33    0.25    0.10
+      implied omega_c     1.06    0.81    0.56    0.39    0.31    0.16
+
+SO omega_c = 1.06 IS NOT A MEASUREMENT, it is the top of a range whose bottom is
+zero, and the file itself prescribes the discipline: report omega_c across the
+range with the threshold at which a conclusion changes. That has not been done
+yet and it should be, because the false positive threshold is now sharp enough
+that the two ranges have to be read together.
