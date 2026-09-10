@@ -520,3 +520,63 @@ sharp: `probability_of_false_positive` in this model is not assay error. It is
 the chance a COMPLIANT household loses the voucher, which includes a missed
 appointment scored as a positive. No improvement in the assay touches that
 channel, and nothing here has pinned its size.
+
+## WHY omega HAS TO BE NEAR ONE HERE AND NEAR 0.05 THERE
+
+The author, 10 September: *"we need to understand why omega needs to be so high
+in the quant model and not in the stylized model? Did you try to compute the data
+again to make sure it is correct?"*
+
+### First, the re-computation they asked for
+
+Re-derived from the raw `OMEGA_DIAG` counts in the logs rather than from any
+earlier summary. The moment is (users with the child term off) / (users with it
+on) - 1, at the same omega_c:
+
+    omega_c = 0     on 0.087846607   off 0.087862326   ->  0.000179
+    omega_c = 0.17  on 0.085920614   off 0.087660630   ->  0.020251
+    omega_c = 1.0   on 0.073181764   off 0.085833231   ->  0.172877
+    target                                                 0.183432
+    linear in omega_c, the target needs                    omega_c = 1.057
+
+TWO INDEPENDENT COMPUTATIONS AGREE. The internal moment is a PARTIAL equilibrium
+object, 17.29 per cent at omega_c = 1; the ladder across fully re-solved
+equilibria gives 16.69 per cent. They differ only by the general equilibrium
+terms and land within 0.6 points of each other, which is the cross-check that
+matters.
+
+### And the answer: THE DETERRENTS ARE THE SAME SIZE, THE MARGINS ARE NOT
+
+Putting both models on the one comparable scale, the deterrent as a share of
+lifetime consumption, against the fall in drug use it produces:
+
+          model    omega    deterrent    fall in use
+          quant     0.17        4.20%          2.19%
+          quant     1.00       24.73%         16.69%
+       stylized     0.05        2.72%         40.55%
+       stylized     0.10        5.43%         53.01%
+       stylized     0.20       10.87%         64.34%
+       stylized     0.30       16.30%         90.12%
+
+AT A DETERRENT NEAR FOUR OR FIVE PER CENT OF LIFETIME CONSUMPTION THE STYLIZED
+MODEL REMOVES ABOUT HALF OF ALL DRUG USE AND THE QUANTITATIVE MODEL REMOVES 2.2
+PER CENT. That is a factor of about twenty, and it is NOT a difference in how
+much the parent is made to care -- the two deterrents are the same size in the
+same units. It is the elasticity of the drug-use margin.
+
+So omega_c does not have to be near one here because the child is worth little.
+At omega_c = 1.057 the deterrent is a QUARTER OF LIFETIME CONSUMPTION, which is
+enormous. It has to be near one because the distribution of the gap between using
+and not using is WIDE in a model with sixty periods, a productivity grid, assets,
+employment and health states, so a deterrent moves only the households lying
+within it. In the stylized model that distribution is close to a point mass: two
+periods, one continuous choice, one margin, so almost everyone crosses at once
+and the response saturates by omega = 0.3.
+
+### What has NOT been measured, and what would settle it
+
+The dispersion of V(use) - V(do not use) across the state space is INFERRED here
+from the response, not measured. A diagnostic that accumulates that gap over the
+distribution at the benchmark would give it directly, and would say whether the
+implied density near indifference is what the response requires. It is a small
+addition to the Fortran and cannot go in while a solve is running.
