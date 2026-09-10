@@ -886,3 +886,60 @@ better assay.
     TF, no false positives                30.770%   false positives       -8.584
     TF, p_fp = 0.0005                     29.818%   the crossing, 1 in 2391
     TF, perfect enforcement               30.770%   false negatives        0.000
+
+## THE EXTENSIVE MARGIN PASSES: the model is not missing children
+
+The author, 10 September: *"So what is the solution to the parent child issue?"*
+The measurement that decides it, computed on the NSDUH microdata:
+
+    children under 18 living with an adult 26+ who has
+      ANY past-year drug use disorder                        8.50%
+      a MODERATE or SEVERE drug use disorder                 3.52%
+    MODEL, newborns born to a parent who died with the disorder
+                                                             5.31%
+
+THE MODEL SITS BETWEEN THE TWO DATA CUTS. It is not missing children. The eight
+fold death hazard on the disordered over-represents them among the dying, and
+that happens to compensate for transmission occurring only at death, so the share
+of the next generation carrying the penalty is right to within about sixty per
+cent either way depending on which severity cut the model's `d` state is taken to
+be. THIS IS A VALIDATION THE PAPER SHOULD CLAIM, and it retires the speculation
+earlier in this file that the model under-transmits by a factor of two.
+
+### So what the parent-child issue actually is, and is not
+
+It is NOT a bug: the term is implemented correctly, audited above. It is NOT a
+mis-sizing: the extensive margin passes. What remains is a limitation of the
+DEMOGRAPHIC STRUCTURE. The model's child is BORN at the parent's death; the
+data's child is HARMED DURING THE PARENT'S LIFE. So the model damages the right
+number of children and dates the damage twenty to forty years too late, then
+discounts it -- on the parent's incentive and on the social calculation ALIKE, by
+about a factor of four. Fixing that means real overlapping generations with a
+child alive beside the parent, which is a rewrite of the demographics and not a
+patch.
+
+### THE SOLUTION: report a threshold, not a verdict
+
+The same discipline the false positive result already forced. Both thresholds are
+measured rather than argued:
+
+    Treatment First wins once wrongful exclusion falls below
+      about 1 in 2,400 per year          (bracketed by arm0_utf_lowfp and nofp)
+    Treatment First wins once the child's inherited harm exceeds
+      about TWICE the calibrated value   (from the delta_d = 0 and 0.36 arms;
+                                          a FLOOR, the relation being concave)
+
+The dating limitation is worth about four times on the harm, comfortably past the
+second threshold, so the sensitivity is likely to flip the ranking. THAT IS THE
+REASON TO PRINT THE THRESHOLD RATHER THAN THE VERDICT.
+
+The claim that survives is narrower and solid: at the calibrated parameters
+Housing First wins by 7.8 points, and the margin rests on two quantities the
+model does not pin down -- enforcement accuracy and the dating of intergenerational
+harm -- with the flip point stated for each.
+
+TO TURN THE SECOND THRESHOLD FROM A FLOOR INTO A MEASUREMENT: universal HF and TF
+at omega_c = 0 with delta_d at 0.6 and 0.8. Four solves, no code change and no
+refitting, because at omega_c = 0 the parent ignores delta_d entirely and `b`
+stays on target; only the newborn's productivity draw moves. Not queued; the
+author's call.
