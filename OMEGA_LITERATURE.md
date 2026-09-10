@@ -37,13 +37,26 @@ THIS MODEL'S discount_factor IS 0.934317, against Nishiyama's 0.934. The two
 calibrations are in the same world, which is the case for treating his altruism
 estimate as the same parameter.
 
-## Which number
+## Which number: RESOLVED, it is 0.686
 
-The model has ONE newborn replacing ONE dying household, so the single child is
-the parent's whole next generation. Matching the TOTAL gives omega_c = 0.686;
-matching the per child weight gives 0.509. Both are defensible and the range is
+Nishiyama's own reading of his estimate is the TOTAL, not the per child figure:
 
-    omega_c = 0.51 to 0.69
+    "the degree of parental altruism is 0.509, and since a parent household is
+     assumed to have 1.35 child households in the calibration, the degree of
+     parental altruism toward its child households is 0.686 in total. This means
+     that a parent household cares about its child households 31 per cent less
+     than it cares about itself."
+
+So the structural statement is about the next GENERATION, not about a child
+taken one at a time. This model has one newborn replacing one dying household,
+so the newborn IS the next generation and the analogue is unambiguous:
+
+    omega_c = 0.686        externality 1 - omega = 31 per cent
+
+AND THE COMPARABILITY IS BETTER THAN IT LOOKED. His agents live four periods of
+fifteen years -- a SIXTY YEAR LIFE, the same as this model's sixty annual
+periods -- at an annual discount factor of 0.934 against this model's 0.934317.
+Altruism is calibrated to aggregate bequest and inter vivos transfer statistics.
 
 ## What that buys, against the measured ladder
 
