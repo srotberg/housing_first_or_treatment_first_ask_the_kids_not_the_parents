@@ -496,6 +496,15 @@ declare -A P=(
     # archive() enforcing only one switch out of the table -- are fixed and stay
     # fixed, so when omega_c is taken up at the end it will work first time.
     [measure_child_gap]=0
+    # THE CHANNEL SHUTDOWN LADDER'S THREE MISSING RUNGS. The ladder is
+    # documented in the Fortran beside child_penalty_off and none of these
+    # three could be set from a point vector: two had no handover case and
+    # adjust_taxes was a compile-time parameter. kappa_x=0 switches the
+    # aggregate externality off, child_penalty_off=1 the child externality,
+    # adjust_taxes=0 holds the tax at its benchmark value.
+    [kappa_x]=0.002
+    [child_penalty_off]=0
+    [adjust_taxes]=1
     # HOLD BAGGETT'S RELATIVE RISK FLAT ABOVE DATA AGE 70, on the author's
     # instruction of 4 September: "we just hold it after age 70, let's see if
     # it works".

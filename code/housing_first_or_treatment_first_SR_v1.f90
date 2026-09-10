@@ -128,7 +128,14 @@
         integer, parameter :: fixed_labor_supply_at_benchmark=test_elasticity
         integer, parameter :: adjust_house_prices=1-partial_equilibrium
         integer, parameter :: adjust_rents=1-partial_equilibrium
-        integer, parameter :: adjust_taxes=1-partial_equilibrium
+        ! NOT A PARAMETER ANY MORE, so the tax can be HELD at its benchmark
+        ! value in a counterfactual without recompiling. The author: *"then, i
+        ! want you to hold the tax constant too to see the impact of the tax"*.
+        ! At 0 the government budget's distance is identically zero, so the loop
+        ! declares it converged and the residual is an unfunded deficit -- which
+        ! is the experiment, not a bug, and the residual is reported beside it.
+        ! Its four uses are all executable and none is a parameter initialiser.
+        integer :: adjust_taxes=1-partial_equilibrium
         integer, parameter :: adjust_labor_supply=1-test_elasticity
         integer, parameter :: adjust_inheritance=1-partial_equilibrium
         integer, parameter :: use_revenues_to_increase_voucher_probability=0
@@ -7449,8 +7456,25 @@
             ! say how much of the intergenerational correlation income carries,
             ! and the prefix keeps them out of the loss: score_points reads
             ! MOMENT lines.
-            write(*,*) "UNTARGETED delta_d child SUD ratio           model=",&
-                csud_n_1/max(csud_d_1,10.d0**(-12)), " observed=", child_sud_ratio_data
+            ! AN ODDS RATIO, NOT A RATIO OF RATES, on the author's instruction
+            ! of 10 September: *"yes, change it to the odds ratio"*.
+            !
+            ! Both targets ARE odds ratios and always were -- 2.0 for the
+            ! disorder, and 2.10 as the midpoint of Bassuk et al.'s 1.80 and
+            ! 2.41 -- while this reported p_exposed/p_unexposed, which is a RISK
+            ! ratio. The two agree only in the limit of a rare outcome and the
+            ! odds ratio is always the larger, so the model was being scored
+            ! against a target slightly above the quantity it computed and the
+            ! gap was understated in the direction that flattered it.
+            !
+            ! odds(p) = p/(1-p), and the two rates are the ones accumulated
+            ! above. They are printed beside the ratio so the transform is
+            ! auditable from the log rather than taken on trust.
+            write(*,*) "DIAG delta_d rates: exposed=", csud_n_1, " unexposed=", csud_d_1
+            write(*,*) "UNTARGETED delta_d child SUD odds ratio      model=",&
+                (csud_n_1/max(1.d0-csud_n_1,10.d0**(-12)))/&
+                max(csud_d_1/max(1.d0-csud_d_1,10.d0**(-12)),10.d0**(-12)),&
+                " observed=", child_sud_ratio_data
             ! THE BOTTOM OF BOTH DISTRIBUTIONS, UNTARGETED. SCF 2022, ALL
             ! HOUSEHOLDS, no age restriction, on the author's instruction of
             ! 8 September: "i think also for wealth the share should be relative
@@ -7544,8 +7568,12 @@
                     k_1=k_1+1
                 end if
             end do
-            write(*,*) "UNTARGETED delta_h child homelessness ratio  model=",&
-                chom_n_1/max(chom_d_1,10.d0**(-12)), " observed=", child_homeless_ratio_data
+            ! The same transform, for the same reason, on the same instruction.
+            write(*,*) "DIAG delta_h rates: exposed=", chom_n_1, " unexposed=", chom_d_1
+            write(*,*) "UNTARGETED delta_h child homeless odds ratio model=",&
+                (chom_n_1/max(1.d0-chom_n_1,10.d0**(-12)))/&
+                max(chom_d_1/max(1.d0-chom_d_1,10.d0**(-12)),10.d0**(-12)),&
+                " observed=", child_homeless_ratio_data
 
             ! ============================================================
             ! THE VALIDATION SECTION, tab:untargeted, WITH THE MODEL BESIDE
@@ -30756,6 +30784,24 @@
 
         end if
 
+        if ((loop_count<1) .AND. (child_penalty_classes>1)) then
+
+            write(*,*) "PACKED GRID, base block then one block per child class"
+
+            do class_index_1=0,child_penalty_classes-1
+
+                write(*,*) "  class", class_index_1, " factor",&
+                    child_penalty_factor(class_index_1), ":",&
+                    employment_grid(1,class_index_1*employment_base_size+1:&
+                    (class_index_1+1)*employment_base_size)
+
+            end do
+
+            write(*,*) "  ergodic mass, base block:",&
+                unconditional_employment_probability(1:employment_base_size)
+
+        end if
+
         call load_mortality_profiles()
 
         ! Before recompute_derived_parameters, which builds the onset from this
@@ -39270,6 +39316,25 @@
                 ! testing all eligibles, and the Arkansas figure the default comes
                 ! from is one point in a wide range, so an upper bound here would
                 ! be a guess constraining the very thing the experiment varies.
+                ! THE AGGREGATE EXTERNALITY'S PRICE. Zero switches it off, in the
+                ! benchmark and in the arms alike, which is the only way to run
+                ! the comparison: switched off in the arms alone it would price
+                ! two economies on two different criteria.
+                case ("kappa_x")
+                    write(*,*) "HANDOVER kappa_x:", kappa_x, "->", handover_value
+                    kappa_x=max(handover_value,0.d0)
+
+                ! THE CHILD EXTERNALITY'S SWITCH. It already exists and is
+                ! already used for omega's own counterfactual; it simply had no
+                ! way in from a point vector.
+                case ("child_penalty_off")
+                    write(*,*) "HANDOVER child_penalty_off:", child_penalty_off, "->", handover_value
+                    child_penalty_off=max(min(nint(handover_value),1),0)
+
+                case ("adjust_taxes")
+                    write(*,*) "HANDOVER adjust_taxes:", adjust_taxes, "->", handover_value
+                    adjust_taxes=max(min(nint(handover_value),1),0)
+
                 case ("cost_per_drug_test")
                     write(*,*) "HANDOVER cost_per_drug_test:",&
                         cost_per_drug_test, "->", handover_value

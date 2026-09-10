@@ -59,8 +59,8 @@ ORDER = [
     "users aged",
     "price elasticity, participation",
     "price elasticity, intensive",
-    "delta_h child homelessness ratio",
-    "delta_d child SUD ratio",
+    "delta_h child homeless odds ratio",
+    "delta_d child SUD odds ratio",
 ]
 
 # Printed by the model and deliberately not shown. Kept by name so the drop is
