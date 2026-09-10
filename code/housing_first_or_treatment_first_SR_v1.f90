@@ -30016,6 +30016,17 @@
             ! numbers and the scale reads as what it is: a separate, calibrated
             ! statement about how much dispersion one productivity type has to
             ! carry in a model with no other permanent heterogeneity.
+            ! ZEROED BEFORE THE PROCESS IS BUILT. KKK_process and
+            ! get_probabilities_KKK_process now fill the BASE block only, so
+            ! everything above it is memory neither of them writes -- a
+            ! signalling NaN under the standing -finit-real=snan build, and the
+            ! mean normalisation below subtracts a constant from the WHOLE grid,
+            ! which would touch it. The class blocks are built from the base one
+            ! a few lines further down.
+            employment_grid=0
+            employment_process=0
+            unconditional_employment_probability=0
+
             call KKK_process(persistence_fixed_employment_newborn,&
                 kkk_sigma_scale*sd_fixed_employment_newborn,persistence_employment_surviving,&
                 kkk_sigma_scale*sd_employment_surviving,kkk_s_deviation_top,kkk_s_deviation_bottom,&
@@ -30086,7 +30097,7 @@
             ! profile of mean earnings on top of it.
             mean_prod_1=0
 
-            do employment_index=1,employment_grid_size
+            do employment_index=1,employment_base_size
 
                 mean_prod_1=mean_prod_1+unconditional_employment_probability(employment_index)*&
                     exp(employment_grid(1,employment_index))
@@ -30243,22 +30254,6 @@
                 employment_grid_size, " nodes placed by quantile."
             write(*,*) "   Recalibrate the benchmark and write the new profile in",&
                 " before running a counterfactual."
-            stop
-
-        end if
-
-        ! THE CHILD PENALTY CLASSES ARE BUILT ON THE QUANTILE GRID AND ONLY ON
-        ! IT. Everything the packing needs -- the base node masses, the log edges
-        ! the newborn draw integrates over, the AR(1) the class blocks replicate
-        ! -- is constructed inside `if (fixed_productivity==1)`. With the flag
-        ! off the grid comes from KKK_process, which would build a single AR(1)
-        ! over all child_penalty_classes*employment_base_size nodes and hand back
-        ! a productivity process that has nothing to do with the classes, with
-        ! nothing in the output to say so.
-        if ((child_penalty_classes>1) .AND. (fixed_productivity==0)) then
-
-            write(*,*) "STOP: child_penalty_classes=", child_penalty_classes,&
-                " needs fixed_productivity=1 and this run has 0."
             stop
 
         end if
@@ -30420,35 +30415,6 @@
                     employment_grid(1,1:employment_base_size))
 
             end if
-
-            ! THE CLASS BLOCKS OF THE PRODUCTIVITY GRID. Node (c-1)*base+k is
-            ! base node k scaled by that class's factor, so every one of the
-            ! four hundred odd sites that reads employment_grid(age,index) gets
-            ! the penalised productivity with no edit of its own. The factors
-            ! are set here rather than read from recompute_derived_parameters,
-            ! which is called AFTER this routine: on the first pass they would
-            ! still be at their declaration value of one and the grid would be
-            ! built without the penalty in it.
-            call set_child_penalty_factors()
-
-            do class_index_1=1,child_penalty_classes-1
-
-                employment_grid(1,class_index_1*employment_base_size+1:&
-                    (class_index_1+1)*employment_base_size)=&
-                    employment_grid(1,1:employment_base_size)*&
-                    child_penalty_factor(class_index_1)
-
-                ! NO ERGODIC MASS ON THE PENALISED BLOCKS. This array is the
-                ! PROCESS's stationary distribution and is read only by the
-                ! grid-based statistics -- sigma_y's bottom half share above
-                ! all. The share of children actually born into each class is
-                ! an equilibrium outcome, not a property of the process, and
-                ! putting it here would make sigma_y's target move with the
-                ! disorder rate. The realised class shares are printed instead.
-                unconditional_employment_probability(class_index_1*employment_base_size+1:&
-                    (class_index_1+1)*employment_base_size)=0
-
-            end do
 
             do age_index=1,life_span
             
@@ -30692,25 +30658,6 @@
 
         end if
 
-        ! THE CLASS BLOCKS OF THE TRANSITION, block diagonal because the class
-        ! is fixed at birth: a household born to a parent with a substance use
-        ! disorder (SUD) carries that class to the grave. The base block is
-        ! copied unchanged, which is the author's *"the productivity process is
-        ! the exact same, but there is an indicator"* -- a penalised household
-        ! faces the same transition over its own scaled nodes.
-        do class_index_1=1,child_penalty_classes-1
-
-            do age_index=1,life_span
-
-                employment_process(age_index,&
-                    class_index_1*employment_base_size+1:(class_index_1+1)*employment_base_size,&
-                    class_index_1*employment_base_size+1:(class_index_1+1)*employment_base_size)=&
-                    employment_process(age_index,1:employment_base_size,1:employment_base_size)
-
-            end do
-
-        end do
-
         ! The identity transition. With persistent_income_risk it covers
         ! retirement only, which is what makes social security depend on the type
         ! the household RETIRES as -- income_1=model_ss_benefits(employment_index_1)
@@ -30740,6 +30687,75 @@
             
         end do
         
+        ! ====================================================================
+        ! THE CHILD PENALTY CLASSES. ONE PLACE, FOR BOTH GRIDS, EVERY CALL.
+        !
+        ! Node (c-1)*employment_base_size + k is base node k scaled by class c's
+        ! factor, and the transition is BLOCK DIAGONAL, so a household never
+        ! changes class. That is the author's design: *"you dont need move
+        ! productivity grids....you have 7 like before. and then you multiple the
+        ! actual productivity by the penalty for each case (1/2/3)"*, and *"the
+        ! productivity process is the exact same, but there is an indicator"*.
+        !
+        ! WHY HERE AND NOT INSIDE EITHER GRID'S CONSTRUCTION. There are two
+        ! grids -- the KKK process at fixed_productivity=0, which is what the
+        ! live vector runs, and the quantile grid at 1 -- and each builds the
+        ! base block in its own place and its own units. Written into both, the
+        ! penalty would be applied twice wherever the two overlap and not at all
+        ! wherever a branch is skipped. Written once here, in LEVELS, after both
+        ! branches and after the retirement identity, it rebuilds the class
+        ! blocks from whatever the base block currently holds. That also makes it
+        ! IDEMPOTENT and safe to run on every call, which is what a calibrated
+        ! penalty needs: the KKK grid is built only at loop_count<1, so a
+        ! replication living inside it would freeze the factors at their loop
+        ! zero values and silently ignore every later calibration step.
+        !
+        ! THE ERGODIC MASS STAYS ON THE BASE BLOCK. It is the PROCESS's
+        ! stationary distribution and is read by the grid-based statistics --
+        ! sigma_y's bottom half earnings share above all. The share of children
+        ! actually born into each class is an equilibrium outcome, so putting it
+        ! here would make sigma_y's own moment a function of the disorder rate.
+        ! The realised shares are printed as DIAG child-class mass instead.
+        ! ====================================================================
+        call set_child_penalty_factors()
+
+        do class_index_1=1,child_penalty_classes-1
+
+            employment_grid(:,class_index_1*employment_base_size+1:&
+                (class_index_1+1)*employment_base_size)=&
+                employment_grid(:,1:employment_base_size)*&
+                child_penalty_factor(class_index_1)
+
+            unconditional_employment_probability(class_index_1*employment_base_size+1:&
+                (class_index_1+1)*employment_base_size)=0
+
+            do age_index=1,life_span
+
+                employment_process(age_index,&
+                    class_index_1*employment_base_size+1:(class_index_1+1)*employment_base_size,:)=0
+
+                employment_process(age_index,&
+                    class_index_1*employment_base_size+1:(class_index_1+1)*employment_base_size,&
+                    class_index_1*employment_base_size+1:(class_index_1+1)*employment_base_size)=&
+                    employment_process(age_index,1:employment_base_size,1:employment_base_size)
+
+            end do
+
+        end do
+
+        ! The base block leaves no mass on the class blocks either, so a child
+        ! born clean to a clean parent cannot drift into a penalised state.
+        if (child_penalty_classes>1) then
+
+            do age_index=1,life_span
+
+                employment_process(age_index,1:employment_base_size,&
+                    employment_base_size+1:employment_grid_size)=0
+
+            end do
+
+        end if
+
         call load_mortality_profiles()
 
         ! Before recompute_derived_parameters, which builds the onset from this
@@ -32155,11 +32171,11 @@
         do i=1,life_span-retirement_span
         
             z_grid_by_age(i,1)=-s_deviation_bottom*sqrt(variance_by_age(i))
-            z_grid_by_age(i,employment_grid_size)=s_deviation_top*sqrt(variance_by_age(i))
+            z_grid_by_age(i,employment_base_size)=s_deviation_top*sqrt(variance_by_age(i))
             
-            width(i)=(z_grid_by_age(i,employment_grid_size)-z_grid_by_age(i,1))/(employment_grid_size-1)
+            width(i)=(z_grid_by_age(i,employment_base_size)-z_grid_by_age(i,1))/(employment_base_size-1)
             
-            do j=2,employment_grid_size-1
+            do j=2,employment_base_size-1
             
                 z_grid_by_age(i,j)=z_grid_by_age(i,1)+width(i)*(j-1)
                 
@@ -32169,12 +32185,12 @@
         
         do i=1,life_span-retirement_span-1
         
-            do j=1,employment_grid_size
+            do j=1,employment_base_size
             
                 transition_prob_by_age(i,j,1)=&
                     (1+erf(((z_grid_by_age(i+1,1)+0.5*width(i+1)-rho_shock*z_grid_by_age(i,j))/sqrt(variance_eta))/sqrt(2.d0)))/2
                 
-                do k=2,employment_grid_size-1
+                do k=2,employment_base_size-1
                
                     temp_upper=(1+erf(((z_grid_by_age(i+1,k)+0.5*width(i+1)-rho_shock*z_grid_by_age(i,j))/&
                         sqrt(variance_eta))/sqrt(2.d0)))/2                    
@@ -32185,11 +32201,13 @@
                     
                 end do
                 
-                transition_prob_by_age(i,j,employment_grid_size)=&
-                    1-(1+erf(((z_grid_by_age(i+1,employment_grid_size)-0.5*width(i+1)-rho_shock*z_grid_by_age(i,j))/&
+                transition_prob_by_age(i,j,employment_base_size)=&
+                    1-(1+erf(((z_grid_by_age(i+1,employment_base_size)-0.5*width(i+1)-rho_shock*z_grid_by_age(i,j))/&
                     sqrt(variance_eta))/sqrt(2.d0)))/2
                 
-                transition_prob_by_age(i,j,:)=transition_prob_by_age(i,j,:)/sum(transition_prob_by_age(i,j,:))
+                transition_prob_by_age(i,j,1:employment_base_size)=&
+                    transition_prob_by_age(i,j,1:employment_base_size)/&
+                    sum(transition_prob_by_age(i,j,1:employment_base_size))
                     
             end do
             
@@ -32197,7 +32215,7 @@
                 
         transition_prob_by_age(life_span-retirement_span,:,:)=0
         
-        do i=1,employment_grid_size
+        do i=1,employment_base_size
                 
             transition_prob_by_age(life_span-retirement_span,i,i)=1
             
@@ -32211,7 +32229,7 @@
                 
         probability_distribution(1,1)=(1+erf(((z_grid_by_age(1,1)+0.5*width(1))/sqrt(variance_by_age(1)))/sqrt(2.d0)))/2
         
-        do j=2,employment_grid_size-1
+        do j=2,employment_base_size-1
         
             temp_upper=(1+erf(((z_grid_by_age(1,j)+0.5*width(1))/sqrt(variance_by_age(1)))/sqrt(2.d0)))/2
             temp_lower=(1+erf(((z_grid_by_age(1,j)-0.5*width(1))/sqrt(variance_by_age(1)))/sqrt(2.d0)))/2
@@ -32219,13 +32237,21 @@
             
         end do
         
-        probability_distribution(1,employment_grid_size)=&
-            1-(1+erf(((z_grid_by_age(1,employment_grid_size)-&
+        probability_distribution(1,employment_base_size)=&
+            1-(1+erf(((z_grid_by_age(1,employment_base_size)-&
             0.5*width(1))/sqrt(variance_by_age(1)))/sqrt(2.d0)))/2
             
-        probability_distribution(1,:)=probability_distribution(1,:)/sum(probability_distribution(1,:))
-        
-        unconditional_employment_probability=probability_distribution(1,:)
+        probability_distribution(1,1:employment_base_size)=&
+            probability_distribution(1,1:employment_base_size)/&
+            sum(probability_distribution(1,1:employment_base_size))
+
+        ! THE BASE BLOCK CARRIES THE WHOLE ERGODIC MASS. Elements above it
+        ! belong to the child penalty classes, whose share of the population is
+        ! an equilibrium outcome and not a property of this process, and reading
+        ! them here would read memory this routine never wrote.
+        unconditional_employment_probability=0
+        unconditional_employment_probability(1:employment_base_size)=&
+            probability_distribution(1,1:employment_base_size)
                 
     end subroutine
     
@@ -32297,19 +32323,19 @@
         ! routine was not given.
         do i=1,life_span-retirement_span
 
-            width(i)=(z_grid_by_age(i,employment_grid_size)-z_grid_by_age(i,1))/&
-                real(employment_grid_size-1,8)
+            width(i)=(z_grid_by_age(i,employment_base_size)-z_grid_by_age(i,1))/&
+                real(employment_base_size-1,8)
 
         end do
 
         do i=1,life_span-retirement_span-1
         
-            do j=1,employment_grid_size
+            do j=1,employment_base_size
             
                 transition_prob_by_age(i,j,1)=&
                     (1+erf(((z_grid_by_age(i+1,1)+0.5*width(i+1)-rho_shock*z_grid_by_age(i,j))/sqrt(variance_eta))/sqrt(2.d0)))/2
                 
-                do k=2,employment_grid_size-1
+                do k=2,employment_base_size-1
                
                     temp_upper=(1+erf(((z_grid_by_age(i+1,k)+0.5*width(i+1)-rho_shock*z_grid_by_age(i,j))/&
                         sqrt(variance_eta))/sqrt(2.d0)))/2                    
@@ -32320,11 +32346,13 @@
                     
                 end do
                 
-                transition_prob_by_age(i,j,employment_grid_size)=&
-                    1-(1+erf(((z_grid_by_age(i+1,employment_grid_size)-0.5*width(i+1)-rho_shock*z_grid_by_age(i,j))/&
+                transition_prob_by_age(i,j,employment_base_size)=&
+                    1-(1+erf(((z_grid_by_age(i+1,employment_base_size)-0.5*width(i+1)-rho_shock*z_grid_by_age(i,j))/&
                     sqrt(variance_eta))/sqrt(2.d0)))/2
                 
-                transition_prob_by_age(i,j,:)=transition_prob_by_age(i,j,:)/sum(transition_prob_by_age(i,j,:))
+                transition_prob_by_age(i,j,1:employment_base_size)=&
+                    transition_prob_by_age(i,j,1:employment_base_size)/&
+                    sum(transition_prob_by_age(i,j,1:employment_base_size))
                     
             end do
             
@@ -32332,7 +32360,7 @@
                 
         transition_prob_by_age(life_span-retirement_span,:,:)=0
         
-        do i=1,employment_grid_size
+        do i=1,employment_base_size
                 
             transition_prob_by_age(life_span-retirement_span,i,i)=1
             
@@ -32346,7 +32374,7 @@
                 
         probability_distribution(1,1)=(1+erf(((z_grid_by_age(1,1)+0.5*width(1))/sqrt(variance_by_age(1)))/sqrt(2.d0)))/2
         
-        do j=2,employment_grid_size-1
+        do j=2,employment_base_size-1
         
             temp_upper=(1+erf(((z_grid_by_age(1,j)+0.5*width(1))/sqrt(variance_by_age(1)))/sqrt(2.d0)))/2
             temp_lower=(1+erf(((z_grid_by_age(1,j)-0.5*width(1))/sqrt(variance_by_age(1)))/sqrt(2.d0)))/2
@@ -32354,13 +32382,21 @@
             
         end do
         
-        probability_distribution(1,employment_grid_size)=&
-            1-(1+erf(((z_grid_by_age(1,employment_grid_size)-&
+        probability_distribution(1,employment_base_size)=&
+            1-(1+erf(((z_grid_by_age(1,employment_base_size)-&
             0.5*width(1))/sqrt(variance_by_age(1)))/sqrt(2.d0)))/2
             
-        probability_distribution(1,:)=probability_distribution(1,:)/sum(probability_distribution(1,:))
-        
-        unconditional_employment_probability=probability_distribution(1,:)
+        probability_distribution(1,1:employment_base_size)=&
+            probability_distribution(1,1:employment_base_size)/&
+            sum(probability_distribution(1,1:employment_base_size))
+
+        ! THE BASE BLOCK CARRIES THE WHOLE ERGODIC MASS. Elements above it
+        ! belong to the child penalty classes, whose share of the population is
+        ! an equilibrium outcome and not a property of this process, and reading
+        ! them here would read memory this routine never wrote.
+        unconditional_employment_probability=0
+        unconditional_employment_probability(1:employment_base_size)=&
+            probability_distribution(1,1:employment_base_size)
                 
     end subroutine
     
