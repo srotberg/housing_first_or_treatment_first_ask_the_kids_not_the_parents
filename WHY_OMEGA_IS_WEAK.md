@@ -225,3 +225,67 @@ An arm at `probability_of_false_positive = 0.0005` -- just above the implied
 crossing -- would confirm the threshold directly rather than by interpolation.
 Not run, and not queued without the author, because it is an experiment rather
 than a fix.
+
+## "What about two false positives? Maybe the government can do two tests?"
+
+The author, 10 September. The arithmetic is below, but the first thing to say is
+that THE SECOND TEST IS ALREADY SPENT.
+
+### 0.005 is already the two-test number
+
+Urine testing is two stage and the calibration already reflects it: the
+immunoassay screen is the 0.05 that was in the file before 9 September, and
+GC-MS or LC-MS/MS confirmation is what took it to 0.005. So "run a second test"
+is not an unused lever; it is the lever that has already been pulled, and the
+question is what a THIRD stage would add.
+
+### If a third stage were independent, Treatment First wins
+
+    p^2 = 2.50e-05   ->  universal TF ~ 30.727%   against HF 29.973%
+                         TF ahead by 0.754, and 19x below the crossing
+
+### But the residual is exactly the part that is NOT independent
+
+Confirmation has already removed the random analytical error. What survives it
+is systematic, and systematic errors RECUR ON A RETEST:
+
+* a legitimate prescription produces a TRUE analytical positive every time, and
+  only a Medical Review Officer step catches it, not another assay;
+* chronic cross-reactivity from a daily medication recurs by construction;
+* a household that missed the first appointment for want of transport, or
+  because its shift could not be moved, is disproportionately likely to miss the
+  second -- and a missed test scored as a positive is not a test error at all;
+* specimen mix-up is the one channel a genuinely fresh draw does catch.
+
+Let rho be the share of residual false positives that are systematic. Then two
+tests give p_2 = p (rho + (1 - rho) p), and
+
+       rho        p_2         TF        vs HF
+      0.00%    2.50e-05    30.727%     +0.754
+      5.00%    2.74e-04    30.300%     +0.327
+      8.83%    4.64e-04    29.974%     +0.001   <- BREAK EVEN
+     10.00%    5.23e-04    29.873%     -0.100
+     25.00%    1.27e-03    28.592%     -1.381
+    100.00%    5.00e-03    22.186%     -7.787
+
+IF MORE THAN ABOUT NINE PER CENT OF THE RESIDUAL FALSE POSITIVES RECUR ON A
+RETEST, TWO TESTS STILL LEAVE HOUSING FIRST AHEAD. rho is not measured here and
+no value is asserted; the break-even is the object, and it is low.
+
+### And testing twice cuts deterrence, unless it is done the right way
+
+If exclusion requires BOTH tests positive, a user escapes when either misses:
+detection goes from 0.95 to 0.9025, a five per cent loss of deterrence, which
+pushes the other way. The design that avoids it is to RETEST ONLY THE POSITIVES
+-- which is, again, exactly what the confirmatory stage already is.
+
+So the lever that would actually move rho is not a further assay. It is a
+Medical Review Officer step and an appeals process, because those are what
+address prescriptions and missed appointments, and those are the channels
+another test cannot see.
+
+### One caveat, and it runs against Treatment First
+
+Every TF figure in this section is a LINEAR reading of a chord that is strongly
+concave near zero, so the true values are if anything lower and the break-even
+rho lower still.
