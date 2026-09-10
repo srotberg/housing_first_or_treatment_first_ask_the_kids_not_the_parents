@@ -997,10 +997,15 @@ three years: universal TF read -3.18 per cent instead of +30.39. **Check every
 counterfactual-only parameter against the ARM it is being compared with, never
 against the benchmark.**
 
-**IN FLIGHT.** `delta_h` = 0.02 with `delta_d` 0.36 and `omega_c` 0.17, to
-MEASURE the floor rather than extrapolate it. Three linear extrapolations were
-wrong tonight by factors of nine, thirty and a thousand, and one of the author's
-two decisions rests on that number.
+**THE FLOOR IS MEASURED, and it corrected my own number.** At `delta_h` = 0.02
+the homelessness odds ratio is **2.8890**, against a target of 2.10. I had
+reported the floor as "about 2.5" from the LINEAR reading of two points; the
+log-log reading gave 2.90 and was right. The target is 37.6 per cent below what
+the model can produce, not 19. At the floor `delta_d` = 0.36 overshoots slightly
+at 2.0969 and wants trimming to about 0.35.
+
+Both of the author's decisions now rest on measurements rather than on
+arithmetic of mine, which is why this run was worth its forty minutes.
 
 **STEP 3 IS BLOCKED** on those two decisions. Starting a calibration loop is
 also a phase change this file forbids, so it needs the author either way.
