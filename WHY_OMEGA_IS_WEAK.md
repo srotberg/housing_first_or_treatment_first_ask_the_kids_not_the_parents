@@ -30,9 +30,17 @@ are not otherwise commensurable.
       weight it is applied with              0.2333   (see below)
       DETERRENT                              1.11 per cent of a life
 
-    RATIO                                    9.69 / 1.11 = 8.7
+    RATIO                                    9.69 / 1.11 = 8.7   <- WITHDRAWN, see
+                                             the aleph correction below; it is 2.1
 
-## Factor one: the child's loss is half the size, 4.75 against 9.69
+## Factor one: WITHDRAWN -- IT IS TWICE THE SIZE, NOT HALF
+
+**The section below is WRONG and is kept only so the error is legible. See
+"THE ALEPH CORRECTION" at the end of this file.** It divides the child's loss by
+a lifetime value that is dominated by an additive constant, which is not a
+denominator any behavioural comparison can use.
+
+## (superseded) Factor one: the child's loss is half the size, 4.75 against 9.69
 
 This is despite the QUANTITATIVE model's income penalty being LARGER --
 `penalty_child_addicted` is 0.36 against the stylized `DEL_D` of 0.24. The
@@ -289,3 +297,77 @@ another test cannot see.
 Every TF figure in this section is a LINEAR reading of a chord that is strongly
 concave near zero, so the true values are if anything lower and the break-even
 rho lower still.
+
+## THE ALEPH CORRECTION, and it answers both of the author's questions at once
+
+The author, 10 September: *"I just don't see why the fp is so large in its
+effect. And I also don't understand why the omega_c effect even at 1 is so
+small"*. Both are the same fact about the value function, measured below.
+
+### What the value function is actually made of
+
+`flow_utility_1 = flow_utility_goods_only + value_of_life`, the goods term is
+CRRA at sigma = 2, and `value_of_life` -- aleph -- is 177.77, added EVERY period.
+The model's own diagnostics give the scale:
+
+    aleph                                       177.77
+    average period of life, non-users           161.11    -> u_goods = -16.66
+    worst cell, Treatment First                  10.39    -> u_goods = -167.38
+    worst cell, universal Housing First          73.62    -> u_goods = -104.15
+    share with a NEGATIVE value of life           0.0000  -- the pathology the
+                                                             declaration warns
+                                                             about does NOT fire
+
+So CONSUMPTION IS ONLY 9.4 PER CENT OF THE VALUE OF A PERIOD OF LIFE, and
+marginal utility at the worst cell is TEN TIMES the average, because at sigma = 2
+u_goods = -1/c is unbounded below.
+
+### Why the false positives cost so much: sigma = 2 at the bottom
+
+The consumption-equivalent metric divides by dV/dx = 98.3 utils per unit, so one
+util is 1.02 per cent of lifetime consumption. That leverage is not special to
+the false positives -- the whole universal programme is 43.3 utils, and it reads
+as 44 per cent on the same scale -- so it inflates every welfare number equally
+and CANCELS in a Housing First against Treatment First comparison. It is not the
+explanation, it is only the reason the headline reads 8.58 rather than 0.385 per
+cent of lifetime UTILITY.
+
+The explanation is the tail. The earlier risk-neutral envelope, 0.63 to 1.58
+utils, valued the lost voucher-years at the AVERAGE. At sigma = 2 the loss lands
+on households whose marginal utility is up to ten times the mean, which puts the
+envelope at 6.3 to 15.9 utils. THE MEASURED 8.44 SITS INSIDE THAT BRACKET. The
+cost is not the expected loss; it is the expected loss weighted by a marginal
+utility that explodes at the bottom, and wrongful exclusion is precisely the
+event that sends a household there.
+
+### Why omega_c = 1 is weak: the timing, and ONLY the timing
+
+FACTOR ONE ABOVE IS WITHDRAWN. It divided the child's loss by V, and V is nine
+tenths aleph. On the denominator a behavioural comparison can actually use:
+
+    quantitative   104.2 utils / 98.3 = 106.0 per cent of lifetime consumption
+    stylized       per_case            =  50.86 per cent
+
+THE QUANTITATIVE MODEL'S CHILD PENALTY IS TWICE THE STYLIZED MODEL'S, NOT HALF.
+The insurance story told above for why it might be smaller is not needed and is
+not supported. What remains is the death-contingent weight alone:
+
+    quantitative deterrent, omega_c = 1   106.0% x W_SUD 0.2333 = 24.7%
+    stylized deterrent,     omega   = 1    50.86% x 1.0         = 50.86%
+    RATIO                                                          2.06
+
+not the 8.7 reported earlier. So the ONE structural difference between the two
+models is that the quantitative parent collects the child's loss only when it
+dies, and that is worth a factor of four; the child's loss itself is twice as
+big here, which claws half of it back.
+
+### Which leaves a real question, sharper than before
+
+A deterrent worth a quarter of lifetime consumption moves drug use by only 20
+per cent. The only direct evidence on what it is up against is the same
+diagnostic: under Housing First a drug user's period of life is worth 165.48
+against 161.26 for everyone else, a surplus of 4.22 utils per period, or roughly
+55 utils over a discounted life, against a deterrent of 24 utils. That is the
+right order to explain a partial response. IT IS CROSS-SECTIONAL AND THEREFORE
+SELECTION, NOT A TREATMENT EFFECT, and it is offered as a scale check and
+nothing more.
