@@ -161,3 +161,40 @@ child parameters were fitted, and it is flagged rather than quietly acted on.
 | `delta_d` | **0.36** | 1.9857 | 2.00 | **solved** |
 | `delta_h` | -- | floor ~2.5 | 2.10 | target below the model's floor; the author's call |
 | `omega_c` | -- | 0.0209 at 0.17 | 0.18343 | unreachable with b held; needs a joint fit |
+
+
+## MEASURED: the delta_h floor is 2.889, not the 2.5 I extrapolated
+
+`variant_save_20260910T121922Z`, at delta_d 0.36, delta_h **0.02**, omega_c 0.17.
+FROZEN CONVERGED.
+
+| `delta_h` | homelessness odds ratio |
+| --- | --- |
+| 0.31 | 4.9109 |
+| 0.15 | 3.6497 |
+| 0.14 | 3.5344 |
+| **0.02** | **2.8890** |
+
+I reported the floor as "about 2.5", quoting the LINEAR reading of two points.
+The log-log reading gave 2.90 and was the right one. Measured, with the
+homelessness child penalty effectively off, the odds ratio is **2.889** against
+a target of 2.10 -- the target is **37.6 per cent below** what the model can
+produce, not 19 per cent. The correction goes the wrong way for the target.
+
+Other moments at the floor:
+
+| | model | target |
+| --- | --- | --- |
+| SUD odds ratio | 2.0969 | 2.00 |
+| `lambda_d` | 0.036973 | 0.0368 (+0.5%) |
+| `b` | 0.086084 | 0.0890 (-3.3%) |
+| `h_1` | 0.013202 | 0.0116 (+13.8%) |
+
+With delta_h at its floor delta_d = 0.36 overshoots slightly, so it wants
+trimming to about 0.35 -- a small joint adjustment once delta_h is settled.
+
+**THE CHOICE, unchanged in kind and sharper in degree.** Either the child
+homelessness odds ratio is reported at about 2.89 against Bassuk's 2.10 with
+delta_h at zero, or the excess comes out of `rho_intergenerational`, the
+income-persistence channel that transmits homeless parents' poverty on its own
+and is not a child-penalty parameter. That is the author's call.
