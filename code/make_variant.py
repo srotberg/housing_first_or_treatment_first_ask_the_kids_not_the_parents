@@ -127,17 +127,22 @@ POINT1 = list(ONE_CLASS)
 # outer do while; at 1 the run is a fixed-parameter measurement and no parameter
 # moves.
 #
-# THE TWO CHILD PENALTIES ARE HELD BY THEIR calibrate_ SWITCHES, not by their
-# adjusters. An adjuster at zero is the documented trap: the damping branch
-# resurrects it on the first sign flip. With the switch at zero the update block
-# is skipped and the distance is set to 0, so the parameter cannot move AND the
-# outer do while is not held open by a moment nobody is fitting.
+# delta_d IS HELD BY ITS calibrate_ SWITCH, not by its adjuster. An adjuster at
+# zero is the documented trap: the damping branch resurrects it on the first sign
+# flip. With the switch at zero the update block is skipped AND the distance is
+# set to 0, which matters as much -- delta_d pins near 1.11 against a target of
+# 2.00 with the classes off, so a live distance on a moment nobody is fitting
+# would hold the outer do while open for ever.
 #
-# delta_d is held at 0.36, which hits the SUD odds ratio at 1.9857 against 2.00.
-# delta_h is held at 0.14 PROVISIONALLY: its target of 2.10 is below the model's
-# measured floor of 2.889, and 2.80 of that floor is rho_intergenerational
-# transmitting homeless parents' poverty rather than the penalty. Neither is
-# fittable here in any case -- delta_d pins near 1.11 with the classes off.
+# THE CHILD HOMELESSNESS BLOCK IS DELIBERATELY LEFT LIVE. From 10 September its
+# instrument is rho_intergenerational, on the author's instruction, and the swap
+# happens INSIDE that block: it computes the odds ratio, maintains the distance,
+# and steps whichever of the two adjusters is positive. Switching it off would
+# take the moment out of the loop along with the instrument.
+#
+# So the two child penalties are held HERE by their values, not by switches:
+# delta_d = 0.36 and delta_h = 0.24 ride in on the vector, and only
+# rho_intergenerational_adjuster is non-zero.
 CALIB1 = list(ONE_CLASS) + [
     ("        integer, parameter :: sweep_addiction_scalar=1",
      "        integer, parameter :: sweep_addiction_scalar=0",
@@ -145,11 +150,7 @@ CALIB1 = list(ONE_CLASS) + [
 
     ("        integer, parameter :: calibrate_penalty_child_addicted=1",
      "        integer, parameter :: calibrate_penalty_child_addicted=0",
-     "delta_d held"),
-
-    ("        integer, parameter :: calibrate_penalty_child_homeless=1",
-     "        integer, parameter :: calibrate_penalty_child_homeless=0",
-     "delta_h held"),
+     "delta_d held, and its moment out of the convergence test"),
 
     # THE ADJUSTER, AND WHY IT HAD TO BE RAISED BEFORE THE LOOP WAS STARTED.
     #

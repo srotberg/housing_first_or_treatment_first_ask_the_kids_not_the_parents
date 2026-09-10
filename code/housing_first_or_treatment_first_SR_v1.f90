@@ -4891,7 +4891,58 @@
         ! that ratio at 2.82 with penalty_child_homeless at zero, above the 2.10
         ! in the data with no penalty left to remove. It is a variable so the
         ! ratio can be read at a rho the literature also supports.
+        !
+        ! 0.30 IS THE AUTHOR'S ASSIGNED VALUE and it is the default, so the
+        ! instrument below is OFF unless a vector asks for it.
         real(8) :: rho_intergenerational=0.30d0
+        !
+        ! AND IT CAN ALSO BE CALIBRATED, WHICH IS A SEPARATE INSTRUCTION FROM A
+        ! SEPARATE MOMENT IN THE SAME DAY. The author, 10 September: *"my
+        ! suggestion is to use the one class calibration with delta_d=0.36, and
+        ! rho_intergenerational to target the odds ratio of the homeless, you
+        ! probably need about 0.1-0.15? and calibrate omega_c at the same time."*
+        ! They later assigned 0.30 instead. BOTH readings are kept because the
+        ! machinery costs nothing when it is off and rebuilding it would cost a
+        ! round: the adjuster defaults to ZERO, which is held, so the assigned
+        ! 0.30 above is what every run gets unless the adjuster is handed in.
+        !
+        ! WHY IT IS THE INSTRUMENT delta_h COULD NEVER BE. The target is 2.10 and
+        ! the model produces 2.802 with the homelessness child penalty switched
+        ! off ENTIRELY, measured. To reach 2.10 delta_h would have to be -0.2164,
+        ! a twenty-two per cent productivity BONUS for the child of a homeless
+        ! parent. The excess is this persistence, so the quantity that has to
+        ! move is the one transmitting the poverty, not a penalty on top of it.
+        !
+        ! ONE MOMENT, ONE INSTRUMENT. The update below REPLACES
+        ! penalty_child_homeless on that moment rather than joining it: it steps
+        ! whichever of the two adjusters is positive and stops if both are,
+        ! because two instruments on one target is one object with two names and
+        ! neither is identified.
+        !
+        ! THE CAVEAT TRAVELS WITH THE NUMBER. The literature runs 0.3 to 0.5, and
+        ! the frontier says this moment wants roughly 0.11 -- a factor of three
+        ! below that range. That departure is a finding rather than a fit, and it
+        ! may be fixing the symptom in the wrong place: the excess could be rho,
+        ! or the model's homeless being 7.1x less productive than its housed, or
+        ! homelessness being too steep in income. rho is not free either -- it
+        ! feeds delta_d's channel and the dispersion sigma_y is calibrated on.
+        !
+        ! ITS ONLY TWO USES ARE IN create_newborn_employment_probability, the
+        ! innovation variance and the AR(1) mean, and both are executable. That
+        ! is why it can stop being a `parameter` at all, and why the update below
+        ! rebuilds the newborn draw exactly as delta_d's and delta_h's do.
+        real(8) :: rho_intergenerational_adjuster=0.d0
+        real(8), parameter :: rho_intergenerational_adjuster_start=5*10.d0**(-2)
+        ! THE BOUNDS MATCH THE HANDOVER'S CLAMP, deliberately, so a value the
+        ! handover accepts is a value the search can also reach. In particular
+        ! the floor is ZERO and not a small positive number: at rho = 0 a child
+        ! of a household at the top node and a child of one at the bottom draw
+        ! the SAME distribution, which is the behaviour this parameter was
+        ! introduced to remove, and the comment above says that case is what
+        ! makes the whole channel testable. Barring it would bar the null test.
+        real(8), parameter :: rho_intergenerational_floor=0.d0
+        real(8), parameter :: rho_intergenerational_cap=0.999d0
+        real(8) :: rho_intergenerational_step_1=0
 
         ! The node boundaries in LOG productivity, filled where the grid is
         ! built. Needed because the child's conditional distribution is
@@ -38406,6 +38457,14 @@
             write(71,'(I10)') have_gap_penalty_child_homeless
             ! AT THE TAIL, for the reason the comment above gives.
             write(71,'(F30.15)') kkk_sigma_scale
+            ! AND SO IS RHO, for the same reason. It is wired into the update
+            ! block from 10 September, and V2's lesson is that a parameter in the
+            ! update block and NOT in this file is worse than not resuming at
+            ! all: the parameters that do resume are the ones it has to be
+            ! consistent with. Its adjuster goes with it, or a resumed run rings
+            ! again from a full step.
+            write(71,'(F30.15)') rho_intergenerational
+            write(71,'(F30.15)') rho_intergenerational_adjuster
 
         close(71)
 
@@ -38731,6 +38790,24 @@
                 read(72,'(F30.15)',iostat=state_ios_1) previous_gap_penalty_child_homeless
                 read(72,'(I10)',iostat=state_ios_1) have_gap_penalty_child_homeless
                 read(72,'(F30.15)',iostat=state_ios_1) kkk_sigma_scale
+                read(72,'(F30.15)',iostat=state_ios_1) rho_intergenerational
+                read(72,'(F30.15)',iostat=state_ios_1) rho_intergenerational_adjuster
+
+                ! A CHECKPOINT WRITTEN BEFORE RHO WAS CALIBRATED RUNS OUT HERE,
+                ! and the iostat guard turns that into "leave it at its declared
+                ! value" rather than into a misread. That is the whole reason new
+                ! fields go at the tail.
+                !
+                ! AND THE DIRECTION OF THAT FAILURE IS THE SAFE ONE. A short read
+                ! leaves the declarations standing: rho at 0.35, which is the
+                ! assigned literature value and correct, and the adjuster at 0,
+                ! which is HELD. So an old checkpoint resumes with the instrument
+                ! OFF rather than with a garbage step.
+                if (state_ios_1/=0) then
+                    write(*,*) "calibration_state.dat predates rho_intergenerational;",&
+                        " it starts at its declared", rho_intergenerational,&
+                        " with the instrument held"
+                end if
 
             end if
 
@@ -38845,6 +38922,26 @@
 
                 select case (trim(handover_name))
 
+                ! THE PERSISTENCE CHANNEL, AND THE SWITCH THAT OPENS IT. Both
+                ! are handover parameters so that turning the instrument on
+                ! costs no rebuild -- the same reason measure_child_gap was made
+                ! one. The adjuster defaults to zero, which is HELD, so a run
+                ! that does not ask for this is the model exactly as it was.
+                case ("rho_intergenerational")
+                    write(*,*) "HANDOVER rho_intergenerational:", rho_intergenerational, "->", handover_value
+                    rho_intergenerational=max(min(handover_value,&
+                        rho_intergenerational_cap),rho_intergenerational_floor)
+                    if (rho_intergenerational .NE. handover_value) then
+                        write(*,*) "HANDOVER CLAMPED rho_intergenerational: requested",&
+                            handover_value, "outside [", rho_intergenerational_floor, ",",&
+                            rho_intergenerational_cap, "]"
+                    end if
+
+                case ("rho_intergenerational_adjuster")
+                    write(*,*) "HANDOVER rho_intergenerational_adjuster:",&
+                        rho_intergenerational_adjuster, "->", handover_value
+                    rho_intergenerational_adjuster=max(handover_value,0.d0)
+
                 case ("addiction_scalar_1")
                     write(*,*) "HANDOVER addiction_scalar_1:", addiction_scalar_1, "->", handover_value
                     ! A SILENT CLAMP MISLABELS A POINT. The point's identity is
@@ -38866,9 +38963,12 @@
                     write(*,*) "HANDOVER rho_productivity:", rho_productivity, "->", handover_value
                     rho_productivity=max(min(handover_value,0.999d0),0.d0)
 
-                case ("rho_intergenerational")
-                    write(*,*) "HANDOVER rho_intergenerational:", rho_intergenerational, "->", handover_value
-                    rho_intergenerational=max(min(handover_value,0.999d0),0.d0)
+                ! rho_intergenerational's case is NOT here. Two sessions added
+                ! one on 10 September, a few minutes apart, and git merged both
+                ! without complaint -- two `case` labels for one string in one
+                ! `select case`, which gfortran rejects outright. The surviving
+                ! copy is beside the persistence block above, where it sits next
+                ! to its own adjuster's case; the clamp is identical, [0, 0.999].
                 case ("endowment_is_a_transfer")
                     write(*,*) "HANDOVER endowment_is_a_transfer:", endowment_is_a_transfer, "->", handover_value
                     endowment_is_a_transfer=nint(max(min(handover_value,1.d0),0.d0))
@@ -41810,28 +41910,92 @@
                             gap_penalty_child_homeless_1=&
                                 child_homeless_ratio_model_1-child_homeless_ratio_data
 
-                            call damp_on_flip(penalty_child_homeless_adjuster,&
-                                gap_penalty_child_homeless_1,&
-                                previous_gap_penalty_child_homeless,&
-                                have_gap_penalty_child_homeless,&
-                                penalty_child_homeless_adjuster_start,damp_adjuster_floor)
+                            ! ONE MOMENT, ONE INSTRUMENT, AND THE MODEL REFUSES
+                            ! RATHER THAN AVERAGING. Two adjusters positive on
+                            ! one target is one object with two names: the pair
+                            ! is not identified, and the search would walk a
+                            ! ridge while both distances fell. Stopping is the
+                            ! honest failure; a warning that the run then ignores
+                            ! is how a mis-specified calibration produces numbers.
+                            if ((rho_intergenerational_adjuster>0.d0) .AND. &
+                                (penalty_child_homeless_adjuster>0.d0)) then
 
-                            ! SIGN, STATED RATHER THAN INFERRED. The penalty
-                            ! shifts the child DOWN the productivity grid, since
-                            ! shifted_log adds log(penalty) and the penalty is
-                            ! below one, and homelessness FALLS in productivity.
-                            ! So the child's homelessness rate, and the ratio with
-                            ! it, RISES in the penalty: a model ratio below target
-                            ! calls for a larger penalty, which is what
-                            ! subtracting the gap does.
-                            penalty_child_homeless_step_1=penalty_child_homeless-&
-                                penalty_child_homeless_adjuster*gap_penalty_child_homeless_1
-                            call trust_step(penalty_child_homeless_step_1,&
-                                penalty_child_homeless,&
-                                move_factor(child_homeless_ratio_model_1,&
-                                child_homeless_ratio_data,escape_factor),10.d0**(-3))
-                            penalty_child_homeless=&
-                                max(min(penalty_child_homeless_step_1,0.4d0),0.d0)
+                                write(*,*) "TWO INSTRUMENTS ON ONE MOMENT: both",&
+                                    " rho_intergenerational_adjuster and",&
+                                    " penalty_child_homeless_adjuster are positive",&
+                                    " and both step the child homelessness odds",&
+                                    " ratio. Set exactly one of them."
+                                stop
+
+                            end if
+
+                            if (rho_intergenerational_adjuster>0.d0) then
+
+                                ! RHO IS THE INSTRUMENT, on the author's
+                                ! instruction of 10 September.
+                                !
+                                ! SIGN. A larger rho transmits MORE of the
+                                ! homeless parent's low productivity to the
+                                ! child, so the exposed child is poorer,
+                                ! homelessness falls in productivity, and the
+                                ! ratio RISES in rho. Same sign as the penalty
+                                ! below it, so the update has the same form: a
+                                ! model ratio ABOVE target calls for a SMALLER
+                                ! rho, which is what subtracting the gap does.
+                                call damp_on_flip(rho_intergenerational_adjuster,&
+                                    gap_penalty_child_homeless_1,&
+                                    previous_gap_penalty_child_homeless,&
+                                    have_gap_penalty_child_homeless,&
+                                    rho_intergenerational_adjuster_start,damp_adjuster_floor)
+
+                                rho_intergenerational_step_1=rho_intergenerational-&
+                                    rho_intergenerational_adjuster*gap_penalty_child_homeless_1
+                                call trust_step(rho_intergenerational_step_1,&
+                                    rho_intergenerational,&
+                                    move_factor(child_homeless_ratio_model_1,&
+                                    child_homeless_ratio_data,escape_factor),10.d0**(-3))
+                                rho_intergenerational=&
+                                    max(min(rho_intergenerational_step_1,&
+                                    rho_intergenerational_cap),rho_intergenerational_floor)
+
+                                write(*,*) "rho_intergenerational=", rho_intergenerational
+
+                                if ((rho_intergenerational<=rho_intergenerational_floor+10.d0**(-8))&
+                                    .OR. (rho_intergenerational>=rho_intergenerational_cap-10.d0**(-8))) then
+
+                                    write(*,*) "rho_intergenerational IS PINNED AT A BOUND",&
+                                        rho_intergenerational, " and the child homelessness odds",&
+                                        " ratio is ", child_homeless_ratio_model_1,&
+                                        " against ", child_homeless_ratio_data
+
+                                end if
+
+                            else
+
+                                call damp_on_flip(penalty_child_homeless_adjuster,&
+                                    gap_penalty_child_homeless_1,&
+                                    previous_gap_penalty_child_homeless,&
+                                    have_gap_penalty_child_homeless,&
+                                    penalty_child_homeless_adjuster_start,damp_adjuster_floor)
+
+                                ! SIGN, STATED RATHER THAN INFERRED. The penalty
+                                ! shifts the child DOWN the productivity grid, since
+                                ! shifted_log adds log(penalty) and the penalty is
+                                ! below one, and homelessness FALLS in productivity.
+                                ! So the child's homelessness rate, and the ratio with
+                                ! it, RISES in the penalty: a model ratio below target
+                                ! calls for a larger penalty, which is what
+                                ! subtracting the gap does.
+                                penalty_child_homeless_step_1=penalty_child_homeless-&
+                                    penalty_child_homeless_adjuster*gap_penalty_child_homeless_1
+                                call trust_step(penalty_child_homeless_step_1,&
+                                    penalty_child_homeless,&
+                                    move_factor(child_homeless_ratio_model_1,&
+                                    child_homeless_ratio_data,escape_factor),10.d0**(-3))
+                                penalty_child_homeless=&
+                                    max(min(penalty_child_homeless_step_1,0.4d0),0.d0)
+
+                            end if
 
                             distance_penalty_child_homeless=&
                                 abs(gap_penalty_child_homeless_1)

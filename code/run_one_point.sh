@@ -140,6 +140,16 @@ declare -A P=(
     # the arms alone and the price is pegged at the wrong level.
     [drug_supply_elasticity]=1.46
     [penalty_child_homeless]=0.31
+    # THE SWITCH THAT OPENS THE PERSISTENCE CHANNEL AS AN INSTRUMENT. Zero is
+    # HELD, and it is the default, so rho_intergenerational stays at the value
+    # assigned further down this list unless a vector asks for the search.
+    #
+    # rho_intergenerational ITSELF IS NOT HERE. It is set once, beside
+    # rho_productivity at its own entry below; two entries for one key in a bash
+    # associative array is not an error, it is a silent last-one-wins, so the
+    # duplicate that the 10 September merge produced had to go rather than be
+    # left to be discovered from a point that ran at the wrong persistence.
+    [rho_intergenerational_adjuster]=0.0
     [probability_becoming_unemployed]=0.0294178
     [probability_of_voucher_benchmark_used]=0.0121367
     # ONE DISCOUNT FACTOR BY DEFAULT. Two is reachable by passing 2 here, but
