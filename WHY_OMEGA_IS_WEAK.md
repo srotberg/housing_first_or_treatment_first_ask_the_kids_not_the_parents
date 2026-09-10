@@ -130,11 +130,13 @@ A HALF PER CENT FALSE POSITIVE RATE COSTS 8.58 CEV POINTS, which is more than
 the whole 7.79 point gap between the two policies. With perfect testing
 Treatment First WINS, by 0.80 points.
 
-The magnitude is large but it is not a puzzle: 0.005 per period compounds over a
-sixty period life to 1 - 0.995^60 = 26.0 per cent, so a newborn behind the veil
-faces roughly a one in four chance of being wrongly stripped of a voucher at
-some point, and `include_voucher_exclusion = 1` means being stripped is not a
-one period event.
+The magnitude is large but it is not a puzzle. It compounds: 0.005 per year is
+1 - 0.995^40 = 18.2 per cent over a forty year working life and 26.0 per cent
+over the full sixty period life, so a newborn behind the veil faces something
+between a one in five and a one in four chance of being wrongly stripped of a
+voucher at some point. And being stripped is not a one period event:
+`voucher_exclusion_release = 1/3` bars the household for three years in
+expectation and then returns it to the BACK OF THE QUEUE, not to the voucher.
 
 ## Putting the two together
 
@@ -153,3 +155,73 @@ strongest in the bound the author asked for. So the ranking in this model is
 NOT a statement about drug utility. It is a statement about TESTING, and it says
 the policy comparison turns on enforcement accuracy rather than on how much the
 externality is worth.
+
+## IS 0.5 PER CENT A REASONABLE FALSE POSITIVE RATE?
+
+The author asked, 10 September, and it is the right question to ask of a
+parameter that has just turned out to carry 8.58 CEV points.
+
+### Where the number came from
+
+The author set it on 9 September, replacing 0.05, and the reasoning is in the
+declaration: urine testing is two stage, an immunoassay screen then GC-MS or
+LC-MS/MS confirmation, federal programmes require the confirmation before a
+positive is reported, screens alone run false positives from the low single
+digits to about ten per cent depending on the analyte, and confirmation drives
+the reported rate well under one per cent. On that reading 0.005 IS REASONABLE
+AND IF ANYTHING CONSERVATIVELY HIGH -- confirmed analytical false positives are
+usually quoted below it.
+
+### But the model's parameter is not analytical error
+
+What `probability_of_false_positive` multiplies is the probability that a
+household WHICH MEETS THE CONDITION loses the voucher anyway, and that has
+routes a confirmatory assay never touches:
+
+* a missed or refused test scored as a positive -- transport, work, illness,
+  childcare -- which is plausibly the largest channel in a real programme and is
+  not a test error at all;
+* specimen mix-ups and chain of custody or clerical error, where confirmation
+  correctly confirms the WRONG sample;
+* a legitimate prescription with no Medical Review Officer step, which federal
+  workplace testing has and public assistance programmes often do not;
+* recertification and paperwork failures, to which a testing requirement adds a
+  fresh occasion.
+
+Read as a programme outcome rather than an assay statistic, 0.5 per cent per
+year is more likely TOO LOW than too high. NO NUMBER IS ASSERTED HERE: the size
+of those channels has not been pinned to a source and should be before anything
+is claimed in print.
+
+### Why it very nearly does not matter
+
+Housing First does no testing, so its welfare is FLAT in this parameter. Treatment
+First is not, and the two measured points bracket the crossing:
+
+    p_fp = 0.000    universal TF  +30.770%     TF ahead by 0.797
+    p_fp = 0.005    universal TF  +22.186%     TF behind by 7.787
+    Housing First   +29.973%, at every p_fp
+
+    chord slope        -1716.8 CEV points per unit p_fp
+    CROSSING           p_fp = 0.000464, i.e. 0.046 per cent per year,
+                       about ONE IN TWO THOUSAND
+
+The crossing sits 9.3 per cent of the way along a chord between two measured
+points, so it is an INTERPOLATION, not an extrapolation. And the curve is
+strongly concave -- the older vintage's slope over [0.005, 0.05] is -657.6
+against -1716.8 here -- so the true crossing is if anything BELOW the linear one.
+
+SO TREATMENT FIRST WINS ONLY IF WRONGFUL EXCLUSION IS HELD BELOW ROUGHLY ONE IN
+TWO THOUSAND PER YEAR, which is an order of magnitude tighter than the author's
+already conservative calibration and tighter than any real programme plausibly
+achieves. The interesting object for the paper is therefore the THRESHOLD, not a
+point value: the ranking is a statement about enforcement accuracy, and the
+threshold is small enough that the answer is robust to the whole plausible range
+of the parameter.
+
+### The one solve that would settle it
+
+An arm at `probability_of_false_positive = 0.0005` -- just above the implied
+crossing -- would confirm the threshold directly rather than by interpolation.
+Not run, and not queued without the author, because it is an experiment rather
+than a fix.
