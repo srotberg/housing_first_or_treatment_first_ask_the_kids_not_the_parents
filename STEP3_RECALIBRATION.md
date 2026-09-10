@@ -287,3 +287,173 @@ one-class internal recalibration does not converge: `b` oscillates 0.0153 to
 0.0910 against 0.0890 over 45 loops with no narrowing, and it is the omega gap's
 denominator, which is why the gap's spread is what it is. Both findings are the
 same fact seen twice.
+
+
+# THE RESULT: THE FULL GAP TABLE, AND THE RECALIBRATION MADE THINGS WORSE
+
+Two `point1` runs, BOTH on source `e1d609a8`, both `FROZEN CONVERGED`, both in
+this one container -- which is the project's standing requirement for a
+controlled pair, because the cross-container spread on `w_bot` alone is 1.8e-2.
+
+    start       variant_point1_20260910T184514Z.log   FROZEN CONVERGED, 2 passes, 1.29e-5
+    45 loops    variant_point1_20260910T185405Z.log   FROZEN CONVERGED, 2 passes, 5.89e-5
+
+Read after `FROZEN CONVERGED`, and scored by `gaps.py`'s own `load()` and
+`gap()` rather than by any logic of mine, so this table and the author's own
+report cannot disagree about what is in the loss.
+
+## A CORRECTION I HAVE TO MAKE FIRST: THE LOSS IS NOT A MINIMAX
+
+I reported a minimax earlier in this session. It is not the objective. The
+author, 4 September: *"i want you to use a better measure than minmax. use sum
+of squared residuals"*, and `gaps.py`'s live promotion test is
+`improved = _sq < old_sq`.
+
+Two things in that file still say otherwise and both are stale:
+
+* its module docstring -- *"THE LOSS IS THE AUTHOR'S OWN ... A MINIMAX over the
+  scored moments"*;
+* `_better_vec`, the lexicographic comparator, which is **defined at line 618 and
+  never called**.
+
+That matters here rather than being a tidiness point, because the two objectives
+give OPPOSITE answers on this pair, and I nearly reported the wrong one.
+
+## THE BASELINE, one class, delta_d 0.36, delta_h 0, rho 0.30, omega_c 0.17
+
+| moment | instrument | model | target | gap | in the loss |
+| --- | --- | --- | --- | --- | --- |
+| `kappa_uem` | `kappa_uem` | 0.82134 | 0.3 | +173.8% | yes |
+| `h_3` | none: h_3 = 2 x h_2 by the ladder ruling | 0.0671208 | 0.626723 | -89.3% | **no** |
+| `omega_c` | `weight_on_child` | 0.0206389 | 0.183432 | -88.7% | yes |
+| `w_bot` | none: `discount_factor_impatient` retired with the second beta | 0.0917651 | 0.025 | +267.1% | **no** |
+| `h_share5` | `rr_homeless_old_level` | 0.0133001 | 0.075 | -82.3% | yes |
+| `y_h` | `homeless_job_penalty_pp` | 0.0596907 | 0.191 | -68.7% | yes |
+| `kappa_ued` | `multiple_of_probabilities_of_employment_if_addicted` | 0.206796 | 0.1625 | +27.3% | **no** |
+| `y_u` | none: mortality pinned at 8 by the author | 0.55066 | 0.74 | -25.6% | yes |
+| `lambda_m` | `lambda_m` -- Fortran update, no `gaps.OWN` row | 0.19152 | 0.25 | -23.4% | yes |
+| `h_2` | `smallest_rental_relative_to_lowest_income` | 0.0976233 | 0.08 | +22.0% | yes |
+| `h_share1` | `newborn_endowment_scale` | 0.213237 | 0.26 | -18.0% | **no** |
+| `sud_homeless` | `lambda_addiction` | 0.253612 | 0.217 | +16.9% | yes |
+| `beta` | `discount_factor` | 3.49573 | 3 | +16.5% | yes |
+| `tau_u` | `utility_cost_of_treatment` | 0.224843 | 0.245 | -8.2% | yes |
+| `h_1` | `size_homelessness` | 0.012529 | 0.0116 | +8.0% | yes |
+| `tau_l` | `labor_income_tax_rate` | 0.207809 | 0.224 | -7.2% | yes |
+| `theta` | `relative_share_of_addiction_1` | 0.131066 | 0.14098 | -7.0% | yes |
+| `aleph` | `value_of_life` | 74.7899 | 80 | -6.5% | yes |
+| `b` | `addiction_scalar_1` | 0.0833427 | 0.089 | -6.4% | yes |
+| `pi_V` | `probability_of_voucher_benchmark_used` | 0.252134 | 0.266 | -5.2% | yes |
+| `omega_l` | `relative_share_of_leisure` | 0.412999 | 0.4 | +3.2% | yes |
+| `mu_H` | `mu_homeless` | 1.43064 | 1.47321 | -2.9% | yes |
+| `lambda_d` | `addiction_onset_base` | 0.0357809 | 0.0368 | -2.8% | yes |
+| `pi_eu` | `probability_becoming_unemployed` | 0.0500456 | 0.049 | +2.1% | yes |
+| `burden50` | none: reported, not targeted | 0.177862 | 0.175 | +1.6% | yes |
+| `emp_homeless` | `homeless_job_penalty_pp` | 0.453939 | 0.46 | -1.3% | yes |
+| `cbar` | `max_food_cost` | 0.00424153 | 0.0042 | +1.0% | yes |
+| `p_m` | `smi_onset_level` | 0.0489272 | 0.048453 | +1.0% | yes |
+| `gamma` | `relative_share_of_housing` | 0.266161 | 0.268 | -0.7% | yes |
+| `sigma_y` | `kkk_sigma_scale` | 0.172199 | 0.172 | +0.1% | yes |
+
+Scored moments: 26. Outside ten per cent: 9. Worst 173.8% on `kappa_uem`. Median 7.0%. Sum of squared residuals 5.2196.
+
+## THE CONTROLLED PAIR
+
+| moment | start | after 45 loops | target | gap start | gap after |
+| --- | --- | --- | --- | --- | --- |
+| `kappa_uem` | 0.82134 | 0.306047 | 0.3 | 173.8% | 2.0% |
+| `omega_c` | 0.0206389 | 0.0861065 | 0.183432 | 88.7% | 53.1% |
+| `beta` | 3.49573 | 2.90427 | 3 | 16.5% | 3.2% |
+| `tau_l` | 0.207809 | 0.226978 | 0.224 | 7.2% | 1.3% |
+| `y_h` | 0.0596907 | 0.0674221 | 0.191 | 68.7% | 64.7% |
+| `mu_H` | 1.43064 | 1.46536 | 1.47321 | 2.9% | 0.5% |
+| `aleph` | 74.7899 | 75.602 | 80 | 6.5% | 5.5% |
+| `pi_V` | 0.252134 | 0.279448 | 0.266 | 5.2% | 5.1% |
+| `omega_l` | 0.412999 | 0.419569 | 0.4 | 3.2% | 4.9% |
+| `p_m` | 0.0489272 | 0.0466309 | 0.048453 | 1.0% | 3.3% |
+| `sigma_y` | 0.172199 | 0.16327 | 0.172 | 0.1% | 5.1% |
+| `h_share5` | 0.0133001 | 0.00609148 | 0.075 | 82.3% | 91.9% |
+| `cbar` | 0.00424153 | 0.00477891 | 0.0042 | 1.0% | 13.8% |
+| `h_1` | 0.012529 | 0.0148832 | 0.0116 | 8.0% | 28.3% |
+| `pi_eu` | 0.0500456 | 0.0684996 | 0.049 | 2.1% | 39.8% |
+| `gamma` | 0.266161 | 0.150423 | 0.268 | 0.7% | 43.9% |
+| `y_u` | 0.55066 | 0.22107 | 0.74 | 25.6% | 70.1% |
+| `emp_homeless` | 0.453939 | 0.226938 | 0.46 | 1.3% | 50.7% |
+| `lambda_d` | 0.0357809 | 0.0169641 | 0.0368 | 2.8% | 53.9% |
+| `theta` | 0.131066 | 0.0509121 | 0.14098 | 7.0% | 63.9% |
+| `b` | 0.0833427 | 0.0294229 | 0.089 | 6.4% | 66.9% |
+| `h_2` | 0.0976233 | 0.000247792 | 0.08 | 22.0% | 99.7% |
+| `burden50` | 0.177862 | 0.0127488 | 0.175 | 1.6% | 92.7% |
+| `sud_homeless` | 0.253612 | 0.456649 | 0.217 | 16.9% | 110.4% |
+| `lambda_m` | 0.19152 | 0.548032 | 0.25 | 23.4% | 119.2% |
+| `tau_u` | 0.224843 | 0.644732 | 0.245 | 8.2% | 163.2% |
+
+| objective | start | after 45 loops | winner |
+| --- | --- | --- | --- |
+| **sum of squared residuals -- the live objective** | **5.2196** | **11.0590** | **the start, by 2.1x** |
+| worst scored gap, printed beside it | 173.8% | 163.2% | the 45-loop point |
+| moments outside ten per cent | 9 of 26 | 17 of 26 | the start |
+| median scored gap | 7.0% | 50.7% | the start |
+| moments improved / worsened | -- | 7 / 18 | the start |
+
+## THE VERDICT: 45 LOOPS PRODUCED A WRECKED ECONOMY
+
+Under the live objective the starting point wins by a factor of **2.1**. The
+economy after 45 loops is not a worse calibration, it is a broken one:
+
+    b        0.0294 against 0.0890   -- drug use a third of target
+    h_2      0.000248 against 0.08   -- the cost burden essentially emptied
+    tau_u    0.645 against 0.245     -- treatment take-up nearly tripled
+    gamma    0.150 against 0.268     -- the housing share collapsed
+    theta    0.0509 against 0.141
+
+Eighteen of twenty-six scored moments got worse, seven improved, and the median
+scored gap went from 7.0 per cent to 50.7.
+
+**AND THE RETIRED OBJECTIVE WOULD HAVE PROMOTED IT.** The worst scored gap FELL,
+173.8 per cent to 163.2, because the update repaired the one moment that was
+binding -- `kappa_uem`, 173.8 per cent to 2.0 -- while eighteen others
+deteriorated and the new worst, `tau_u` at 163.2, happened to land just under the
+old one. `_better_vec` returns "better" on this pair.
+
+That is precisely the failure the author's own instruction of 4 September was
+aimed at, and `gaps.py` records the evidence that prompted it: *"Under a minimax
+one bad moment sets the score and everything behind it is invisible."* It is also
+the same shape as the `point_b2969f8ebb` case in `ENGINE.md` -- a wrecked
+equilibrium whose one moment improved as a side effect -- except that there the
+minimax rejected it and here it would not have. **So this pair is a second,
+independent argument for the change the author already made**, and a reason to
+delete the stale docstring and the dead comparator rather than leave them to be
+read as live.
+
+## THE BRIEF'S LIST OF EIGHT IS WRONG IN BOTH DIRECTIONS
+
+Five of the eight are confirmed almost exactly, which is a real consistency check
+-- those gaps were quoted off the FOUR-class benchmark and they survive at one
+class with delta_h = 0 and rho = 0.30:
+
+    kappa_uem  +174 brief, +173.8 measured
+    h_2         +25 brief, +22.0
+    lambda_m    -24 brief, -23.4
+    y_u         -23 brief, -25.6
+    beta        +17 brief, +16.5
+
+**THREE OF THE EIGHT ARE NOT IN THE LOSS AT ALL**, so no recalibration can be
+asked for them: `w_bot` (+267.1, `UNSCORED`, its instrument retired with the
+second beta), `h_3` (-89.3, `SKIP`, it IS 2 x h_2 by the ladder ruling and has no
+instrument), `kappa_ued` (+27.3, `UNSCORED`).
+
+**AND IT OMITS FOUR SCORED MOMENTS THAT ARE BADLY OUT:**
+
+| moment | gap | why it matters |
+| --- | --- | --- |
+| `omega_c` | -88.7% | the moment this session was sent to fit |
+| `h_share5` | -82.3% | the 65+ share of the homeless, restored to the loss on 4 September |
+| `y_h` | -68.7% | see below |
+| `sud_homeless` | +16.9% | the untargeted half of the Gutwinski meta-regression |
+
+**`y_h` HAS CROSSED OVER AND NOBODY HAS SAID SO.** `gaps.py` describes it as
+*"the moment that says the model's homeless are the WRONG HOUSEHOLDS"*, sitting at
+0.709 against 0.191 -- **271 per cent too HIGH**. It now reads 0.0597, **68.7 per
+cent too LOW**. The composition fault has not been repaired; it has reversed
+sign, and its instrument `homeless_job_penalty_pp` also owns `emp_homeless`,
+which is at -1.3 per cent and would be given up to fix it.
