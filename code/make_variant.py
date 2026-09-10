@@ -72,6 +72,17 @@ SAVE = [
                 call save_vars_and_functions(1)
                 write(*,*) "SAVE VARIANT: benchmark state written"
 
+                ! AND THE WELFARE CURVE, which has to be built HERE and nowhere
+                ! else. It is the benchmark's own welfare as a function of the
+                ! compensation, and the benchmark run is the only place where the
+                ! prices, taxes, transfers and voucher rule the walk reads are the
+                ! benchmark's without having to be restored. It asserts that the
+                ! curve at x = 0 reproduces average_welfare_of_youngest_cohort and
+                ! stops the run if it does not.
+                write(*,*) "SAVE VARIANT: building the welfare curve"
+                call save_welfare_curve(1)
+                write(*,*) "SAVE VARIANT: welfare curve written"
+
                 stop""",
      "save the benchmark state after the frozen equilibrium converges"),
 ]

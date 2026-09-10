@@ -6167,6 +6167,37 @@
         real(8), dimension(2) :: welfare_by_addiction_youngest_calibrated
             
         real(8), dimension(3) :: welfare_of_gains_by_addiction
+
+        ! THE BENCHMARK'S WELFARE AS A FUNCTION OF THE COMPENSATION, COMPUTED IN
+        ! THE BENCHMARK RUN AND SAVED.
+        !
+        ! It used to be computed inside the counterfactual, by bisection, and it
+        ! was wrong there. A counterfactual sets use_old_results and calls
+        ! upload_vars to SEED prices from the benchmark; it then solves to its
+        ! own equilibrium and overwrites risk_free_rate, rent, housing_price,
+        ! lump_sum_transfer and labor_income_tax_rate. Nothing restored them, so
+        ! compute_value_function_comparison walked the benchmark's policies
+        ! through the ARM'S prices and x = 0 did not reproduce the benchmark's
+        ! own welfare. Every reported number carried that offset.
+        !
+        ! Computing the curve in the benchmark run removes the question: there is
+        ! no other environment for it to pick up. The alternative -- restoring
+        ! the benchmark's environment around the comparison -- needs every global
+        ! the comparison touches enumerated, and upload_vars covers neither
+        ! lump_sum_transfer nor voucher_probabilities_benchmark nor
+        ! price_of_addictive_good nor the survival arrays. A missed one is silent.
+        integer, parameter :: welfare_curve_points=21
+        real(8), parameter :: welfare_curve_low=-0.5d0
+        real(8), parameter :: welfare_curve_high=0.5d0
+        ! Relative, on the level of the value function, which is order 2200, so
+        ! this is about two utils. Loose enough that a legitimate reproduction
+        ! difference between the model's own value function and the walk over its
+        ! policies does not fire it, and twenty-five times tighter than the 55
+        ! util error it exists to catch. The measured difference is printed
+        ! whether or not it fires, so the real reproduction error is on the record
+        ! from the first run rather than inferred.
+        real(8), parameter :: welfare_curve_identity_tolerance=10.d0**(-3)
+        real(8), dimension(welfare_curve_points) :: welfare_curve_x=0, welfare_curve_w=0
             
         real(8), dimension(transition_length,unemployment_grid_size) :: &
             welfare_by_unemployment,mass_by_unemployment
@@ -17919,6 +17950,155 @@
         
     end subroutine
     
+    ! LOADS THE BENCHMARK'S POLICIES AND WRITES ITS WELFARE CURVE.
+    !
+    ! Runs in the BENCHMARK, immediately after the benchmark state is written, so
+    ! every price, tax, transfer and voucher rule the walk reads is the
+    ! benchmark's by construction rather than by restoration.
+    !
+    ! THE IDENTITY CHECK IS PART OF IT AND RUNS EVERY TIME. The curve at x = 0 is
+    ! the benchmark's own newborn welfare with nothing scaled, so it must equal
+    ! average_welfare_of_youngest_cohort. It never had been checked, and it was
+    ! off by 55 utils -- 0.295 of consumption, which is most of the size of the
+    ! numbers the arms were reporting. If it fails now the run stops.
+    subroutine save_welfare_curve(time_period)
+
+        use Global_Vars
+        use, intrinsic :: ieee_arithmetic
+        implicit none
+
+        integer, intent(in) :: time_period
+        integer :: i_x_1
+        real(8) :: x_1, w_1, w_at_zero_1, target_1
+        character*1 :: string_used
+
+        vf_simulation='baseline_benchmark'
+
+        write(*,*) "WELFARE CURVE: loading the benchmark's own policies"
+
+        do i=1,2
+            write(string_used,'(i1)') i
+
+            open(unit=10,file="distribution_stationary"//trim(string_used)//trim(vf_simulation)//".dat", &
+                 action='read')
+                read(10,'(F30.28)') distribution_stationary_benchmark(i)%vector_real(:,:,:,:,:,:)
+            close(10)
+
+            open(unit=10,file="value_function"//trim(string_used)//trim(vf_simulation)//".dat", &
+                 action='read')
+                read(10,'(F35.13)') value_function_benchmark(i)%vector_real(:,:,:,:,:,:)
+            close(10)
+
+            open(unit=10,file="policy_function_frac_spent_on_addiction"//&
+                trim(string_used)//trim(vf_simulation)//".dat", &
+                 action='read')
+                read(10,'(F25.20)') policy_function_frac_spent_on_addiction_benchmark(i)%vector_real(:,:,:,:,:,:)
+            close(10)
+
+            open(unit=10,file="policy_function_total_consumption"//trim(string_used)//trim(vf_simulation)//".dat", &
+                 action='read')
+                read(10,'(F26.20)') policy_function_total_consumption_benchmark(i)%vector_real(:,:,:,:,:,:)
+            close(10)
+
+            open(unit=10,file="policy_function_labor_supply"//trim(string_used)//trim(vf_simulation)//".dat", &
+                 action='read')
+                read(10,'(F22.20)') policy_function_labor_supply_benchmark(i)%vector_real(:,:,:,:,:,:)
+            close(10)
+
+            open(unit=10,file="policy_function_housing_status_index"//trim(string_used)//trim(vf_simulation)//".dat", &
+                 action='read')
+                read(10,'(I2)') policy_function_housing_status_index_benchmark(i)%vector_integer(:,:,:,:,:,:)
+            close(10)
+
+            open(unit=10,file="policy_function_years_of_amortization_index"//&
+                trim(string_used)//trim(vf_simulation)//".dat", action='read')
+                read(10,'(I2)') policy_function_years_of_amortization_index_benchmark(i)%vector_integer(:,:,:,:,:,:)
+            close(10)
+
+            open(unit=10,file="policy_function_addiction"//trim(string_used)//trim(vf_simulation)//".dat", &
+                 action='read')
+                read(10,'(I1)') policy_function_addiction_benchmark(i)%vector_integer(:,:,:,:,:,:)
+            close(10)
+
+            open(unit=10,file="policy_function_financial_index"//trim(string_used)//trim(vf_simulation)//".dat", &
+                 action='read')
+                read(10,'(I3)') policy_function_financial_index_benchmark(i)%vector_integer(:,:,:,:,:,:)
+            close(10)
+
+            open(unit=10,file="fin_index_frac_mov_to_optimal"//trim(string_used)//trim(vf_simulation)//".dat", &
+                 action='read')
+                read(10,'(I3)') fin_index_frac_mov_to_optimal_benchmark(i)%vector_integer(:,:,:,:,:,:)
+            close(10)
+
+            open(unit=10,file="frac_mov_optimal_1"//trim(string_used)//trim(vf_simulation)//".dat", &
+                 action='read')
+                read(10,'(F22.20)') frac_mov_optimal_1_benchmark(i)%vector_real(:,:,:,:,:,:)
+            close(10)
+
+        end do
+        already_uploaded_benchmark=1
+
+        w_at_zero_1=ieee_value(w_at_zero_1, ieee_quiet_nan)
+
+        do i_x_1=1,welfare_curve_points
+
+            x_1=welfare_curve_low+(welfare_curve_high-welfare_curve_low)*&
+                dble(i_x_1-1)/dble(welfare_curve_points-1)
+
+            call compute_value_function_comparison(time_period,x_1)
+            call compute_value_of_comparison(w_1,1)
+
+            if (ieee_is_nan(w_1)) then
+                write(*,*) "NaN on the welfare curve at x=", x_1
+                stop
+            end if
+
+            welfare_curve_x(i_x_1)=x_1
+            welfare_curve_w(i_x_1)=w_1
+
+            ! The grid has an odd number of points on a symmetric interval, so
+            ! x = 0 is on it exactly rather than nearly.
+            if (abs(x_1)<10.d0**(-12)) w_at_zero_1=w_1
+
+            write(*,*) "WELFARE CURVE point", i_x_1, " x=", x_1, " w=", w_1
+
+        end do
+
+        if (ieee_is_nan(w_at_zero_1)) then
+            write(*,*) "the welfare curve grid does not contain x = 0."
+            stop
+        end if
+
+        target_1=average_welfare_of_youngest_cohort(time_period)
+
+        write(*,*) "WELFARE CURVE identity check: w(0)=", w_at_zero_1,&
+            " against average_welfare_of_youngest_cohort=", target_1,&
+            " relative difference=", abs(w_at_zero_1-target_1)/max(abs(target_1),1.d0)
+
+        if (abs(w_at_zero_1-target_1) > &
+            welfare_curve_identity_tolerance*max(abs(target_1),1.d0)) then
+
+            write(*,*) "THE WELFARE CURVE DOES NOT REPRODUCE THE BENCHMARK AT x = 0."
+            write(*,*) "compute_value_function_comparison is not walking the"
+            write(*,*) "benchmark's own allocation. Every consumption equivalent"
+            write(*,*) "computed from this curve would carry the difference."
+            stop
+
+        end if
+
+        open(unit=1,file="welfare_curve"//trim(vf_simulation)//".dat",status='replace')
+            do i_x_1=1,welfare_curve_points
+                write(1,'(2F35.13)') welfare_curve_x(i_x_1), welfare_curve_w(i_x_1)
+            end do
+        close(1)
+
+        write(*,*) "WELFARE CURVE: written, identity check passed"
+
+    end subroutine
+
+    ! INVERTS THE SAVED CURVE. No environment is read here at all, which is the
+    ! point: the counterfactual contributes its own welfare number and nothing
+    ! else.
     subroutine calculate_welfare_gains(time_period,welfare_to_compare_1,type_1,x_1)
 
         use Global_Vars
@@ -17930,125 +18110,66 @@
         real(8), intent(in) :: welfare_to_compare_1
         real(8), intent(inout) :: x_1
 
-        real(8) :: stopping_rule_1, x_0, x_2, distance_1
-        real(8) :: welfare_adjusted_1, w0, w2
-        character*1 :: string_used
-               
+        integer :: i_x_1, j_1
+        real(8) :: target_1, d0_1, d1_1, d2_1, l0_1, l1_1, l2_1
+
+        if (type_1/=1) then
+            write(*,*) "only the whole cohort's curve is saved; type_1=", type_1
+            stop
+        end if
+
+        ! Held in a local because the caller passes
+        ! average_welfare_of_youngest_cohort(1) itself and nothing here may write
+        ! through that argument.
+        target_1=welfare_to_compare_1
+
         vf_simulation='baseline_benchmark'
-                   
-        write(*,*) "vf_simulation=", vf_simulation
 
-        stopping_rule_1 = 10.d0**(-4)
-
-        if (already_uploaded_benchmark==0) then
-            do i=1,2
-                write(string_used,'(i1)') i
-
-                open(unit=10,file="distribution_stationary"//trim(string_used)//trim(vf_simulation)//".dat", &
-                     action='read')
-                    read(10,'(F30.28)') distribution_stationary_benchmark(i)%vector_real(:,:,:,:,:,:)
-                close(10)
-
-                open(unit=10,file="value_function"//trim(string_used)//trim(vf_simulation)//".dat", &
-                     action='read')
-                    read(10,'(F35.13)') value_function_benchmark(i)%vector_real(:,:,:,:,:,:)
-                close(10)
-
-                open(unit=10,file="policy_function_frac_spent_on_addiction"//&
-                    trim(string_used)//trim(vf_simulation)//".dat", &
-                     action='read')
-                    read(10,'(F25.20)') policy_function_frac_spent_on_addiction_benchmark(i)%vector_real(:,:,:,:,:,:)
-                close(10)
-
-                open(unit=10,file="policy_function_total_consumption"//trim(string_used)//trim(vf_simulation)//".dat", &
-                     action='read')
-                    read(10,'(F26.20)') policy_function_total_consumption_benchmark(i)%vector_real(:,:,:,:,:,:)
-                close(10)
-
-                open(unit=10,file="policy_function_labor_supply"//trim(string_used)//trim(vf_simulation)//".dat", &
-                     action='read')
-                    read(10,'(F22.20)') policy_function_labor_supply_benchmark(i)%vector_real(:,:,:,:,:,:)
-                close(10)
-
-                open(unit=10,file="policy_function_housing_status_index"//trim(string_used)//trim(vf_simulation)//".dat", &
-                     action='read')
-                    read(10,'(I2)') policy_function_housing_status_index_benchmark(i)%vector_integer(:,:,:,:,:,:)
-                close(10)
-
-                open(unit=10,file="policy_function_years_of_amortization_index"//&
-                    trim(string_used)//trim(vf_simulation)//".dat", action='read')
-                    read(10,'(I2)') policy_function_years_of_amortization_index_benchmark(i)%vector_integer(:,:,:,:,:,:)
-                close(10)
-
-                open(unit=10,file="policy_function_addiction"//trim(string_used)//trim(vf_simulation)//".dat", &
-                     action='read')
-                    read(10,'(I1)') policy_function_addiction_benchmark(i)%vector_integer(:,:,:,:,:,:)
-                close(10)
-
-                open(unit=10,file="policy_function_financial_index"//trim(string_used)//trim(vf_simulation)//".dat", &
-                     action='read')
-                    read(10,'(I3)') policy_function_financial_index_benchmark(i)%vector_integer(:,:,:,:,:,:)
-                close(10)
-
-                open(unit=10,file="fin_index_frac_mov_to_optimal"//trim(string_used)//trim(vf_simulation)//".dat", &
-                     action='read')
-                    read(10,'(I3)') fin_index_frac_mov_to_optimal_benchmark(i)%vector_integer(:,:,:,:,:,:)
-                close(10)
-
-                open(unit=10,file="frac_mov_optimal_1"//trim(string_used)//trim(vf_simulation)//".dat", &
-                     action='read')
-                    read(10,'(F22.20)') frac_mov_optimal_1_benchmark(i)%vector_real(:,:,:,:,:,:)
-                close(10)
-
+        open(unit=10,file="welfare_curve"//trim(vf_simulation)//".dat",action='read')
+            do i_x_1=1,welfare_curve_points
+                read(10,'(2F35.13)') welfare_curve_x(i_x_1), welfare_curve_w(i_x_1)
             end do
-            already_uploaded_benchmark=1
-        end if
+        close(10)
 
-        x_0 = -0.5d0
-        x_2 =  0.5d0
-
-        call compute_value_function_comparison(time_period, x_0)
-        call compute_value_of_comparison(w0, type_1)
-
-        call compute_value_function_comparison(time_period, x_2)
-        call compute_value_of_comparison(w2, type_1)
-
-        if (ieee_is_nan(w0) .or. ieee_is_nan(w2)) then
-            write(*,*) "NaN welfare at bracket endpoints."
-            stop
-        end if
-
-        if ( (welfare_to_compare_1 < min(w0,w2)) .or. (welfare_to_compare_1 > max(w0,w2)) ) then
-            write(*,*) "target welfare not bracketed by x in [-1,1]."
-            write(*,*) "w0=", w0, " w2=", w2, " target=", welfare_to_compare_1
-            stop
-        end if
-
-        x_1 = 0.5d0*(x_0 + x_2)
-        distance_1 = abs(x_2 - x_0)
-        
-        do while (distance_1 > stopping_rule_1)
-
-            call compute_value_function_comparison(time_period, x_1)
-            call compute_value_of_comparison(welfare_adjusted_1, type_1)
-
-            if (ieee_is_nan(welfare_adjusted_1)) then
-                write(*,*) "NaN welfare at x=", x_1
+        do i_x_1=2,welfare_curve_points
+            if (welfare_curve_w(i_x_1)<=welfare_curve_w(i_x_1-1)) then
+                write(*,*) "the saved welfare curve is not increasing in x, at x=",&
+                    welfare_curve_x(i_x_1)
                 stop
             end if
-
-            if (welfare_adjusted_1 < welfare_to_compare_1) then
-                x_0 = x_1
-            else
-                x_2 = x_1
-            end if
-
-            x_1 = 0.5d0*(x_0 + x_2)
-            distance_1 = abs(x_2 - x_0)
-
-            write(*,*) "x_1=", x_1, " distance_1=", distance_1, " welfare_adjusted_1=", welfare_adjusted_1
-
         end do
+
+        if ((target_1<welfare_curve_w(1)) .OR. &
+            (target_1>welfare_curve_w(welfare_curve_points))) then
+            write(*,*) "target welfare is off the saved curve. low=",&
+                welfare_curve_w(1), " high=", welfare_curve_w(welfare_curve_points),&
+                " target=", target_1
+            stop
+        end if
+
+        do i_x_1=2,welfare_curve_points
+            if (welfare_curve_w(i_x_1)>=target_1) exit
+        end do
+        i_x_1=min(i_x_1,welfare_curve_points)
+
+        ! Quadratic in w, on the bracketing pair and whichever neighbour exists,
+        ! because the curve is A + B(1+x)^k and a straight line across a step of
+        ! 0.05 leaves an error of the order the old bisection was targeting.
+        j_1=max(2,min(i_x_1,welfare_curve_points-1))
+
+        l0_1=welfare_curve_w(j_1-1)
+        l1_1=welfare_curve_w(j_1)
+        l2_1=welfare_curve_w(j_1+1)
+
+        d0_1=((target_1-l1_1)*(target_1-l2_1))/((l0_1-l1_1)*(l0_1-l2_1))
+        d1_1=((target_1-l0_1)*(target_1-l2_1))/((l1_1-l0_1)*(l1_1-l2_1))
+        d2_1=((target_1-l0_1)*(target_1-l1_1))/((l2_1-l0_1)*(l2_1-l1_1))
+
+        x_1=d0_1*welfare_curve_x(j_1-1)+d1_1*welfare_curve_x(j_1)+&
+            d2_1*welfare_curve_x(j_1+1)
+
+        write(*,*) "CEV from the saved benchmark curve: target=", target_1,&
+            " x=", x_1
 
     end subroutine
 
