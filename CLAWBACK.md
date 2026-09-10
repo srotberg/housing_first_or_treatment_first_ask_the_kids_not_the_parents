@@ -72,3 +72,91 @@ which is a sensible 1.6 fold behavioural amplification, and it AGREES with the
 quantitative model's 50 per cent. The two models do not disagree about the child
 at all. The whole disagreement is the private loss, 0.051 per cent against
 several points, and the reason is the persistence of addiction.
+
+## The author's test, at RATIONED generosity
+
+The author, 10 September: *"In the stylized model I want you to do it for
+rationed tf. ... It would be interesting to first estimate the excess drug use
+with it (comparing omega_c = 0 and = 1). And then see if the optimal policy
+indeed reduces drug use by the same amount"*.
+
+Both halves were run at the calibrated coverage rate, pi_V = 0.266, with `b`
+HELD at its calibrated value in every cell. Holding it is deliberate and unlike
+`internalise.py`'s `row`, which refits `b` at every omega: refitting would put
+participation back on target and so destroy the very quantity being measured.
+
+### Half one: the excess
+
+    pi_V = 0.266,  Housing First      use        disorder
+      omega = 0  (pure externality)   8.9010%     3.7139%
+      omega = 1  (fully internalised) 0.0000%     0.0000%
+      EXCESS                          8.9010 pp   3.7139 pp
+
+Every point of drug use at rationed generosity is excess: a parent who valued
+the child at par would not use at all. DELTA, the child's loss in lifetime
+utility, is 0.332192 utils there against 0.287770 at universal cover, and the
+per-case consumption equivalent is 54.33 per cent against 50.86.
+
+### Half two: the answer is NO
+
+    clawback   kappa_c     use     disorder   private   extern    TOTAL
+       0 pp      0.30    8.9010%    3.7139%   0.0000%   0.0000%   0.0000%  <- HF
+       2 pp      0.32    7.5588%    3.1099%   0.0100%   0.3281%   0.3182%
+       4 pp      0.34    6.4193%    2.4105%   0.0169%   0.7081%   0.6912%
+       6 pp      0.36    5.7309%    1.7462%   0.0199%   1.0690%   1.0491%
+       8 pp      0.38    5.1891%    1.2217%   0.0218%   1.3539%   1.3321%
+      10 pp      0.40    4.6760%    0.7267%   0.0232%   1.6229%   1.5997%
+      15 pp      0.45    4.6223%    0.6667%   0.0252%   1.6554%   1.6303%
+      20 pp      0.50    4.5666%    0.6499%   0.0271%   1.6646%   1.6375%
+      30 pp      0.60    4.4488%    0.5756%   0.0308%   1.7049%   1.6741%
+      40 pp      0.70    4.3202%    0.5174%   0.0337%   1.7366%   1.7028%
+      55 pp      0.85    3.8558%    0.4440%   0.0372%   1.7764%   1.7392%
+      70 pp      1.00    3.5727%    0.3793%   0.0408%   1.8116%   1.7708%  <- TF
+
+THE OPTIMAL CLAWBACK AT RATIONED GENEROSITY IS FULL WITHDRAWAL, AND IT STILL
+DOES NOT REACH THE SOCIAL OPTIMUM. Use falls from 8.9010 to 3.5727 per cent, so
+the instrument closes 5.33 of the 8.90 points of excess, three fifths of it. The
+schedule is still RISING at its own endpoint: there is no interior optimum to
+find, because the constraint is not the severity of the penalty.
+
+### Why, and why it reverses the design lesson
+
+Only 26.6 per cent of eligible households hold a voucher. For the other 73.4 per
+cent the clawback threatens nothing they have, so no severity reaches them. The
+instrument's grip is bounded above by COVERAGE, not by how hard it bites, and
+the bound is close to binding: 3.7139 - 0.3793 is most of what the threat can
+take, and the residual 3.5727 per cent of use is in households the policy cannot
+touch.
+
+That runs OPPOSITE to the universal case in the same model:
+
+    generosity      optimal clawback        does it reach the social optimum?
+    pi_V = 1.000    8 pp, and 62 further    YES, exactly: use 0, and the extra
+                    points buy nothing      62 points are pure unexercised risk
+    pi_V = 0.266    70 pp, the maximum      NO: 3.5727% of use survives it
+
+SO THE OPTIMAL DEGREE OF CONDITIONALITY DEPENDS ON GENEROSITY, AND IN THE
+DIRECTION THAT MAKES THE TWO POLICIES ARGUE PAST EACH OTHER. Where the
+programme is universal, Treatment First is far more severe than it needs to be
+and the surplus severity is a pure risk with no deterrence value. Where the
+programme is rationed, Treatment First is not severe enough and cannot be made
+so, and the binding margin is GENEROSITY: enrolling more households is what
+gives the threat something to hold.
+
+One observation recorded rather than explained: at rationed coverage Housing
+First produces MORE use than at universal (8.9010 against 7.1076) but LESS
+disorder (3.7139 against 5.6633). The mechanism has not been traced and no
+claim is made about it here.
+
+### Reproduction
+
+`code/stylized/clawback_sweep.py`, which uses the paper's own accounting from
+`children.verdict`: `priv` and `per_case` are both mass-weighted means of node
+by node consumption equivalents, so their ratio is like for like, and
+`gain = dsud * per_case`. It reproduces the universal endpoint exactly,
+2.8801 - 0.0513 = 2.8289 at 8 pp.
+
+An earlier pass through this used `internalise.py`'s scalar
+`cev(mean) * PV_INCOME` instead and reported 3.06 per cent at the rationed
+optimum. THAT PAIRING IS WITHDRAWN: it mixes the two conventions, and it does
+not reproduce the universal endpoint. The rationed optimum is 1.7708 per cent.
