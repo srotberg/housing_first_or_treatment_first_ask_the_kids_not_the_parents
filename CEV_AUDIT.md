@@ -137,3 +137,84 @@ the discrepancy: walk BOTH sides, so a uniform re-discretisation loss cancels.
 That is a bigger change than the one just made, because
 compute_value_function_comparison reads the *_benchmark arrays and would have to
 be pointed at an arm's own policies.
+
+## The walk diagnostic ran, and the defect is not in the walk
+
+10 September, 17:5x, the omega_c = 0 benchmark. The age profile of
+(comparison - benchmark), mass weighted:
+
+    age  1   +0.994
+    age  6   +1.389
+    age 11   +1.725
+    age 16   +1.980
+    age 21   +2.077
+    age 26   +2.102      <- peak
+    age 31   +1.441
+    age 36   +0.523
+    age 41   +0.038
+    age 46   -0.025
+    age 51   -0.0042
+    age 56   -0.00024
+    age 60   -0.000026
+
+Zero at the terminal age and growing backward, so it is a CONTINUATION effect
+rather than a missing flow term -- and it is SMALL, about a util where it
+matters for the consumption equivalent, which is age one.
+
+Meanwhile the identity check on the same run:
+
+    w(0) = 2195.9489   against average_welfare_of_youngest_cohort = 2203.7556
+    shift applied 7.8067 utils, 4.54 per cent of consumption
+
+Both routines cover the SAME mass at age one, 0.99999999999999989 to the last
+digit -- compute_value_of_comparison's own mass_1 and the diagnostic's full
+array sum agree -- so the two averages are over the same population and can be
+subtracted. Therefore
+
+    mean(V_comparison) at age 1 = w(0)              = 2195.949
+    mean(V_comparison) - mean(V_benchmark)          = +0.994
+    mean(V_benchmark)  at age 1                     = 2194.955
+    the model reports                                 2203.756
+    GAP                                               8.80 utils
+
+THE MODEL'S REPORTED NEWBORN WELFARE IS 8.80 UTILS ABOVE THE MASS WEIGHTED
+AVERAGE OF THE VALUE FUNCTION IT SAVED. The consumption equivalent was being
+solved against a target that does not match the value function the target is an
+average of.
+
+## Ruled out, each with evidence
+
+THE ENVIRONMENT. Fixed; the curve is built inside the benchmark now and this
+measurement is from there.
+
+A survival_sud_of MISMATCH. The comparison uses is_addicted_1 and the model
+uses survival_sud_of(addiction_index,treatment_choice_now). Since treatment
+stopped suspending the mortality penalty the function returns d_1 unchanged, so
+they are the same. Looked promising and was not it.
+
+large_negative_num CONTAMINATION. The model's welfare loop prints "stuck" for
+any newborn cell with positive mass holding it. It never fires. And at
+-1.7977e10 a mass of 1e-9 would be worth -18 utils, so any contamination would
+present as a catastrophe rather than as 7.81.
+
+THE FILE ROUND TRIP. value_function is written as rank 7
+(vector_transition_real, time first) and read into rank 6 (vector_real). The
+allocations match dimension for dimension and transition_length is 1, so the
+leading extent is a singleton and the layout is identical. Fragile, not wrong.
+
+## What is left, and the one number that separates them
+
+  - the welfare loop's index bounds against the array's own: it starts
+    financial_index at renter_floor_by_age(age) and stops housing at
+    housing_status_grid_size-1, while the array runs from renter_array_floor;
+  - stale timing: calculate_welfare runs during a pass and
+    save_vars_and_functions after the frozen loop, whose 4e-5 convergence is on
+    MOMENTS and not on the value function.
+
+THE TEST, five lines: compute the mass weighted average of
+value_function_benchmark at age one inside the run and print it beside
+average_welfare_of_youngest_cohort. Agreement puts the defect back in the walk;
+a difference of 8.80 puts it in the reporting.
+
+The arms are unaffected either way. The curve is normalised at x = 0, so levels
+are right to first order and every difference between arms is untouched.
