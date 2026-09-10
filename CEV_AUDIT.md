@@ -99,3 +99,41 @@ The identity check becomes a permanent assert rather than a one-off: the curve's
 value at x = 0 must equal `average_welfare_of_youngest_cohort`, or the run stops.
 Defect two is fixed by giving the counterfactual path the same frozen moment
 loop the benchmark has, so the two are the same kind of object.
+
+## The assert fired on its first run, and it is NOT the environment
+
+10 September, 17:06. The welfare curve now runs inside the benchmark, so the
+prices, taxes and transfers the walk reads are the benchmark's by construction.
+It still does not reproduce the benchmark:
+
+    WELFARE CURVE identity check: w(0) = 2195.9485
+        against average_welfare_of_youngest_cohort = 2203.7556
+        relative difference = 3.54e-3
+    THE WELFARE CURVE DOES NOT REPRODUCE THE BENCHMARK AT x = 0.
+
+7.81 utils, which at ~172 utils per unit of x is 4.5 CONSUMPTION EQUIVALENT
+POINTS, in every number the project has ever computed. The run stopped, as it is
+meant to.
+
+THE AUTHOR WAS RIGHT AND I WAS WRONG. The identity run returned -0.894 per cent
+and I read that as the routine being very nearly right. They said: *"i think
+your CEV calculations being wrong and accidentally cancelling out is no proof of
+the signs being right"*. This is that, demonstrated -- the -0.894 was two errors
+of 4.30 and -5.05 points cancelling, and with the environment one removed the
+remaining 4.5 points stands exposed.
+
+So there are TWO defects, not one, and the second is inside
+compute_value_function_comparison rather than around it.
+
+LEADING SUSPICION, to be checked: the two sides are not the same object. The
+benchmark side is a POLICY-FIXED WALK; the arm side is the model's own value
+function, which is a max over choices. Any point where the saved policies are
+re-discretised inside the walk loses value, and loses it DOWNWARD, which is the
+sign observed. 0.35 per cent is the right order for a grid or interpolation
+mismatch.
+
+If that is the cause, the fix is to compare like with like rather than to hunt
+the discrepancy: walk BOTH sides, so a uniform re-discretisation loss cancels.
+That is a bigger change than the one just made, because
+compute_value_function_comparison reads the *_benchmark arrays and would have to
+be pointed at an arm's own policies.

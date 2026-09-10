@@ -82,3 +82,51 @@ placed in the penalised class and carries a lower value function for life,
 whatever omega_c is. So a small omega_c means the externality is almost entirely
 EXTERNAL, which is what the paper's argument wants. Failing this moment is a
 calibration blemish, not a threat to the result.
+
+## CORRECTION, 10 September evening: the elasticity was never measured
+
+Everything above that rests on an elasticity of 0.32 is withdrawn, including the
+claim that reaching 0.18343 would need omega_c of order 166. That elasticity was
+fitted to a saturation point that had been INFERRED rather than run. It is the
+same extrapolation method that failed on the delta_h floor, on the rho frontier
+and on the consumption equivalent, and it should have been discarded hours
+earlier.
+
+TWO MEASURED POINTS, on the author's cleaner cross-run statistic -- b at
+omega_c = 0 against b at omega_c = X, rather than the model's internal moment:
+
+    omega_c = 0      b = 0.087846     difference  0
+    omega_c = 0.17   b = 0.085921     difference  2.24 per cent
+
+(The model's own internal moment read 2.03 per cent at omega_c = 0.17. The two
+differ because the internal version holds some general equilibrium objects fixed
+while separate runs re-solve everything. The cross-run statistic is the cleaner
+one and is what the ladder reports.)
+
+A straight line through those two has slope 13.2 per cent per unit of omega_c,
+so the 18.34 per cent target sits at
+
+    omega_c  ~  1.39
+
+just above the cap of 1 that was standing in the way. The linear reading is an
+UPPER bound on the response -- at small omega the child term is a first order
+perturbation, and it must flatten as the marginal households run out -- so 1.39
+is a LOWER bound on the omega_c required.
+
+## The cap of one had no reason behind it
+
+The author, *"wait, why cant omega_c be larger than 1?"*. In the specification
+the model runs, the child term is ADDED:
+
+    V = u + beta*[ phi*V' + (1-phi)*omega*X ]
+
+so omega is a MULTIPLIER, not a share, and nothing makes it improper above one.
+The bound belongs to a weighted average form, which this is not. It was capping
+the parameter at a tenth of the range needed.
+
+What does bound it is the recursion: X is proportional to the value function,
+about 0.045 of it, so a fixed point exists only while omega*0.045*E[beta^T] < 1,
+of the order of fifty. The cap is now a named parameter set at 25.
+
+THE LADDER: 0, 0.17, 1 measured, then 5 and 20 if needed. Reported as
+b(0)/b(omega) - 1 against the 18.34 per cent target.
