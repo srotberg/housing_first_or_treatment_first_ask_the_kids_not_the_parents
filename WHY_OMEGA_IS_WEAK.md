@@ -348,6 +348,10 @@ tenths aleph. On the denominator a behavioural comparison can actually use:
     quantitative   104.2 utils / 98.3 = 106.0 per cent of lifetime consumption
     stylized       per_case            =  50.86 per cent
 
+**THE 106.0 IS WRONG AND IS WITHDRAWN. See "THE CURVE, NOT THE SLOPE" below:
+the right figure is 45.8 per cent, and the two models then value the child almost
+identically.**
+
 THE QUANTITATIVE MODEL'S CHILD PENALTY IS TWICE THE STYLIZED MODEL'S, NOT HALF.
 The insurance story told above for why it might be smaller is not needed and is
 not supported. What remains is the death-contingent weight alone:
@@ -769,3 +773,78 @@ use is computed on a population three times larger than the one `b` measures.
 ARE WRONG. 0.0368 is exactly `svyrdudany in (2,3)` at ages 26 and over; 0.0443 is
 the same cut at ALL ages, which is presumably where 0.0454 came from. The
 declaration is right and its comment is wrong.
+
+## IS THE CHILD TERM IMPLEMENTED CORRECTLY? An audit, and an error of mine
+
+The author, 10 September: *"I am not sure I understand why parents are barely
+affected by the impact on their children in the model... Is it possible we are
+not doing it exactly right?"*
+
+### The code is right at the site that matters
+
+Checked, all in `solve_value_function_and_policy_functions`:
+
+* `include_child_in_continuation = 1`, and there is NO age guard on the block;
+* the term is indexed on `future_addiction_index`, the CHOICE, not on
+  `addiction_index`, the arrived state -- that was a real bug once and the fix is
+  documented at the site, so a household can weigh "if I use, my child is worse
+  off";
+* it is added ONCE, and there is no double counting of survival: the branch ends
+  `value_function_renter_renter = flow_utility_vector + future_utility_vector`,
+  with no outer survival multiplication, so the term's own
+  `discount_factor*(1-survival)` is the whole weight;
+* it sits in the same nest as the bequest term, which is the right place.
+
+### One LATENT bug, not live
+
+`future_utility_vector` is built in THREE places. The child term is in only ONE
+of them; the other two are the mortgage and ownership branches. They are DEAD in
+this configuration -- `include_ownership = 0` and `max_amortization_years = 1`,
+so their loops read `do future_years_of_amortization_index = 2, 1` and never
+execute -- so nothing in any result today is affected. BUT IF OWNERSHIP IS EVER
+SWITCHED ON, HOMEOWNERS WILL SILENTLY HAVE NO CHILD TERM. Worth fixing when the
+file is next open.
+
+### THE CURVE, NOT THE SLOPE: my figure was 2.3 times too big
+
+`expected_child_value` is 104.2 utils at the low productivity nodes. I converted
+that to consumption by dividing by the LOCAL slope, 98.3 utils per unit, and
+reported 106.0 per cent of lifetime consumption. THE CURVE IS CONCAVE AND A
+104 UTIL MOVE IS NOT LOCAL. Read off the model's own saved 21-point curve,
+`welfare_curvebaseline_benchmark.dat`, which is the instrument the CEV routine
+itself inverts:
+
+    104.2 utils  ->  x = -0.4579,  i.e. 45.8 PER CENT of lifetime consumption
+
+THIS IS THE THIRD FIGURE I HAVE GIVEN FOR THIS COMPARISON and the first computed
+with the right instrument. The first divided by V, which is nine tenths aleph and
+is no denominator at all. The second divided by the local slope. This one inverts
+the curve, which is what a consumption equivalent is.
+
+### The corrected picture, and it is simpler than either earlier version
+
+    child's loss      quantitative  45.8%      stylized  50.86%     ratio 1.11
+    deterrent at 1    45.8% x 0.2333 = 10.68%  50.86% x 1 = 50.86%  ratio 4.76
+
+THE TWO MODELS VALUE THE CHILD ALMOST IDENTICALLY. Essentially ALL of the
+difference in the deterrent is the death-contingent timing, a factor of 4.29.
+There is no second factor; the "1.7 to 2.0" and the "twice as large" are both
+gone.
+
+### Which leaves the responsiveness result standing, and stronger
+
+          model    omega    deterrent    fall in use
+          quant     0.17        1.82%          2.19%
+          quant     1.00       10.68%         16.69%
+       stylized     0.05        2.54%         40.55%
+       stylized     0.10        5.09%         53.01%
+       stylized     0.20       10.17%         64.34%
+
+At a deterrent near two per cent of lifetime consumption the stylized model
+removes forty per cent of drug use and the quantitative model removes 2.2 per
+cent. THE ANSWER TO THE AUTHOR'S QUESTION IS THEREFORE THAT THE CODE IS RIGHT AND
+THE ECONOMICS IS THE OPEN QUESTION: the child's loss is collected only when the
+parent dies, which costs a factor of 4.3 on its own, and beyond that the
+quantitative model's drug-use margin is genuinely far less elastic than the
+stylized model's because the gap between using and not using is dispersed across
+sixty periods and several state dimensions rather than concentrated at one point.
