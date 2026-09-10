@@ -1006,3 +1006,73 @@ THE OBSTACLE IS chi, AND NO VALUE IS PROPOSED HERE. Candidates worth checking
 before any code is written: foster care entry attributable to parental drug use,
 and child maltreatment rates. Both are real literatures and neither converts into
 utils without an assumption that would have to be argued.
+
+## CAPTURING THE CHILDHOOD: resources diverted, not a new disutility
+
+The author, 10 September: *"How would you capture contemporaneous childhood harm?
+Like less resources consumed that the parent does value as much?"* This is a
+better construction than the `chi` flow term proposed above, and it replaces it,
+because every ingredient is already calibrated and it needs NO NEW PARAMETER.
+
+### The equivalence scale is already in the file, switched off
+
+    integer, parameter :: include_varying_household_size=0
+
+and `actual_household_size` ends `+(1-include_varying_household_size)*1`, so every
+household is currently ONE PERSON -- the logs print `scaled_household_size =
+1.0000000000000000` at every age. The real profile is sitting there unused: 2.38
+at age 26, rising to 3.37 through the child-rearing years, falling to 1.60 by the
+end of life.
+
+### A BUG WAITS THE MOMENT IT IS SWITCHED ON
+
+The addictive good is currently deflated by household size along with everything
+else:
+
+    relative_share_of_addiction*(((frac_spent_on_addiction_1*total_consumption_choice_1)&
+        /price_of_addictive_good_to_use)/sqrt_household_size(age_index))**(power_3)
+
+That treats DRUGS AS SHARED WITH THE CHILDREN. Left in place with the scale
+switched on, the mechanism runs BACKWARDS: a parent with more dependents would
+get LESS pleasure per dollar of drugs. The deflator has to come off the addiction
+term, and taking it off is precisely what makes drugs private and the rest shared.
+
+### Then the externality falls out, with nothing new to calibrate
+
+Drugs private to the parent; all other consumption shared over sqrt(n) equivalent
+persons; the parent weights the others at omega_c in its own objective and the
+planner weights them at one. Household size comes from data already in the file,
+the drug share is already a targeted moment, and omega_c already exists. That is
+the advantage over `chi`, which would have needed a target invented for it.
+
+### Magnitude, as an ENVELOPE and not a measurement
+
+    drug spending share, target                      0.1410
+    household size at child-rearing ages             2.90  -> 1.70 equivalent persons
+    non-parent share of equivalent persons          41.3%
+    sigma = 2: a 14.1% consumption cut raises |u_goods| by 16.4%
+
+    using household |u_goods|   per period   non-parent   over 20 yrs
+             16.7 (pop. avg)         2.73         1.13         12.8
+             30.0                    4.92         2.03         23.0
+             40.0                    6.56         2.71         30.7
+
+    against the WAGE channel                                    24.3
+
+Using households are poorer than average, so the lower rows are not the relevant
+ones. THIS CHANNEL WOULD ROUGHLY DOUBLE THE INTERGENERATIONAL EXTERNALITY, which
+is the same order as the two-fold increase the measured arms say is needed to
+flip the ranking. It is therefore decision relevant rather than cosmetic.
+
+### The price, and it is real
+
+Switching on household size RESCALES CONSUMPTION EVERYWHERE, so every
+consumption-denominated moment moves and it needs a recalibration pass rather
+than a switch flip. The order that keeps the risk visible:
+
+1. switch on household size and recalibrate, drugs still shared, and see what moves;
+2. take the deflator off the drug term;
+3. split the parent's weight from the planner's at omega_c.
+
+Each step is separately checkable and the calibration risk is all in step one.
+NOTHING HAS BEEN BUILT; this is the author's call.
