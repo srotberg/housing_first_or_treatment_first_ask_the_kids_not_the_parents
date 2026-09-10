@@ -507,6 +507,23 @@ class P:
                       # calibrate.py asserts that this equals 0.5*exp(-SIG^2/2),
                       # so it cannot drift away from SIG unnoticed.
     kappa_r = 0.30    # tenant's share of the rent when covered
+    # THE CLAWBACK. The tenant's share of the rent when the household carries the
+    # disorder, on the author's question of 10 September: *"instead of giving a
+    # voucher up to 30% of income you can say that if you have sud it covers only
+    # up to 50%"*.
+    #
+    # It makes conditionality a ONE PARAMETER FAMILY with both policies as
+    # endpoints, rather than a switch:
+    #
+    #     kappa_c = kappa_r = 0.30   no penalty at all, identical to Housing First
+    #     kappa_c = 1.00             the whole voucher withdrawn, identical to
+    #                                Treatment First, which is why it defaults here
+    #     in between                 a graduated clawback
+    #
+    # The point of it is that Treatment First's implicit penalty is the VALUE OF
+    # THE VOUCHER rather than the value of the externality, so nothing sets its
+    # strength to the damage it corrects. kappa_c can be set to the damage.
+    kappa_c = 1.00
     policy = 'HF'
 
     p_v   = 1.0       # price of drugs
@@ -589,7 +606,11 @@ def _states(par, d, policy, y, used=0):
     the history at the call, but it no longer enters the condition.
     """
     pu = par.u1 if d == 1 else par.u0
-    covered = (policy == 'HF') or (d == 0)
+    # THE RENT SHARE A COVERED HOUSEHOLD PAYS, which under a clawback depends on
+    # d rather than being all or nothing. At kappa_c = 1 a household with the
+    # disorder pays the market rent, the government pays nothing, and this is
+    # Treatment First exactly.
+    rate = par.kappa_r if ((policy == 'HF') or (d == 0)) else par.kappa_c
     out = []
     for e, pe in ((0, 1.0 - pu), (1, pu)):
         # Lose your job and income support replaces the fraction repl of what
@@ -600,8 +621,8 @@ def _states(par, d, policy, y, used=0):
         # MEANS TEST. A voucher can only reach a household whose income in that
         # state is below the mean. Every unemployed household passes the test;
         # employed households pass only in the bottom part of the distribution.
-        pv = par.pV if (covered and inc <= par.yV) else 0.0
-        for rmul, prb in ((par.kappa_r, pv), (1.0, 1.0 - pv)):
+        pv = par.pV if (inc <= par.yV) else 0.0
+        for rmul, prb in ((rate, pv), (1.0, 1.0 - pv)):
             out.append((pe * prb, inc, rmul))
     return out
 
@@ -617,7 +638,14 @@ def _p1_rmul(par, policy, rmul):
     household is clean on arrival, so conditionality operates here as a
     consequence of the drug decision rather than as a screen on entry.
     """
-    return rmul if policy == 'HF' else 1.0
+    if policy == 'HF':
+        return rmul
+    # A household that never drew a voucher pays the market rent either way; one
+    # that did keeps it at the clawback rate. At kappa_c = 1 that is the whole
+    # voucher withdrawn, which is the original rule.
+    if rmul >= 1.0:
+        return 1.0
+    return par.kappa_c
 
 
 def _options(par, rmul):
