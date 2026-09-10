@@ -371,3 +371,46 @@ against 161.26 for everyone else, a surplus of 4.22 utils per period, or roughly
 right order to explain a partial response. IT IS CROSS-SECTIONAL AND THEREFORE
 SELECTION, NOT A TREATMENT EFFECT, and it is offered as a scale check and
 nothing more.
+
+## THE DECOMPOSITION, closed with measured terms
+
+`arm0_utf_nochild` returned +22.262 per cent, which is the term that lets the
+account close on measurement rather than on a residual assumption.
+
+    MEASURED, universal, omega_c = 0
+      Housing First                       29.973%
+      HF, no child penalty                36.826%   -> externality under HF  +6.852
+      Treatment First                     22.186%
+      TF, no child penalty                22.262%   -> externality under TF  +0.076
+      TF, no false positives              30.770%   -> false positives       -8.584
+      TF, no treatment cost               21.526%   -> treatment cost        +0.659
+
+THE EXTERNALITY UNDER TREATMENT FIRST IS 0.076 POINTS, essentially zero, which is
+what it has to be: its disorder rate is 0.03 per cent, so there is almost no
+child harm left for the counterfactual to remove. That confirms the earlier
+derivation rather than assuming it.
+
+    THE ACCOUNT, Treatment First against Housing First
+      externality Treatment First removes      +6.776
+      drug utility and everything else         -5.979   (the only derived term)
+      --------------------------------------------------
+      net at perfect testing                   +0.797   = TF(no fp) - HF
+      false positives                          -8.584
+      --------------------------------------------------
+      TOTAL                                    -7.788   = TF - HF
+
+THE TWO LARGE TERMS VERY NEARLY CANCEL. Treatment First buys back 6.776 points of
+externality and pays 5.979 for it in drug utility, netting +0.797. The false
+positives, at 1.27 times the externality they buy back, are what turn that into
+a 7.788 point loss.
+
+So false positives are DECISIVE WITHOUT BEING DOMINANT. An earlier note in this
+file said the ranking is a statement about testing accuracy rather than about the
+size of the externality. THAT IS WITHDRAWN: the three terms are 8.584, 6.852 and
+5.979, all the same order, and the result is a near cancellation broken by the
+smallest well understood of them.
+
+Which is also why the ranking is fragile in three directions at once. Raise
+omega_c, or re-key the child transmission off the instant of death, and the
+externality term grows. Value drug utility less and the second term shrinks.
+Lower the false positive rate and the third shrinks. Any one of them flips it.
