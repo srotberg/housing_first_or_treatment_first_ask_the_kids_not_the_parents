@@ -961,3 +961,46 @@ a fitted parameter that was never fitted.
 
 **STEP 4.** The benchmark at four classes with the step 1 values, then the arms
 again. This is the number that goes in the paper.
+
+
+# STEPS 1 AND 2 ARE DONE, 10 September 12:20
+
+**STEP 1.** `delta_d` = 0.36 hits the SUD odds ratio at 1.9857 against 2.00.
+The other two hit limits that are the author's to rule on, not mine to fit
+around, and both are recorded with their evidence in `ODDS_RATIO_FIT.md`:
+
+* `delta_h` floors near 2.5 against a 2.10 target, because homeless parents are
+  poor and `rho_intergenerational` transmits that with no penalty at all;
+* `omega` cannot reach 0.18343 while `b` is held. Use with the child term off is
+  0.088117 and is pinned by `addiction_scalar_1`, so omega = 0.18343 needs the
+  BASELINE at 0.0745 against b's own target of 0.0890. `omega_c` and
+  `addiction_scalar_1` have to be fitted jointly, which amends the sequencing.
+
+**STEP 2.** All three arms, in `LIFETIME_PENALTY_ARMS.md`. The author's
+hypothesis is confirmed and the arms order by how much drug use they cut:
+
+| arm | one class | lifetime penalty | change |
+| --- | --- | --- | --- |
+| rationed TF | -2.14% | +0.235% | +2.37 pts |
+| universal TF | +26.41% | **+30.39%** | **+3.98 pts** |
+| universal HF | +40.74% | +40.28% | -0.46 pts |
+
+The Housing First advantage over universal Treatment First fell from 14.33
+points to 9.89 -- the externality closed 31 per cent of it -- at a channel
+strength about a NINTH of what the data implies.
+
+**A TRAP THAT COST TWO ARMS.** `probability_of_false_positive` is 0.05 in the
+benchmark's vector and 0.005 in the arms the one-class table came from. It does
+nothing in the benchmark, so lifting the vector from a benchmark log carried the
+wrong value in silently. Under the exclusion it bars innocent households for
+three years: universal TF read -3.18 per cent instead of +30.39. **Check every
+counterfactual-only parameter against the ARM it is being compared with, never
+against the benchmark.**
+
+**IN FLIGHT.** `delta_h` = 0.02 with `delta_d` 0.36 and `omega_c` 0.17, to
+MEASURE the floor rather than extrapolate it. Three linear extrapolations were
+wrong tonight by factors of nine, thirty and a thousand, and one of the author's
+two decisions rests on that number.
+
+**STEP 3 IS BLOCKED** on those two decisions. Starting a calibration loop is
+also a phase change this file forbids, so it needs the author either way.
