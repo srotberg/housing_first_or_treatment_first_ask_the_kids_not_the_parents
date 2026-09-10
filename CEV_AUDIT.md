@@ -271,3 +271,50 @@ Divide by the mass the numerator actually covers rather than by a separately
 accumulated pooled_mass_youngest that can fall out of step with it. Staged with
 the child term patch; neither is safe to apply mid chain, because run_variant.sh
 rebuilds from master between arms.
+
+## The arms at omega_c = 0, on the corrected metric
+
+                             universal HF     universal TF
+    CEV                        +29.97%          +22.19%
+    drug users                  15.16%            0.13%
+    disorder rate                6.57%            0.03%
+    homelessness                 0.031%           0.114%
+    voucher coverage            85.1%            83.0%
+    treatment take up           18.1%            52.4%
+    SUD-parent class mass        4.098            0.050
+    share of children penalised  8.29%            0.10%
+
+HOUSING FIRST WINS BY 7.79 POINTS with the externality at its MAXIMUM -- omega_c
+= 0 means nothing is internalised, and Housing First leaves 8.2 percentage
+points more of the population permanently 36 per cent poorer. By the bound the
+author and I agreed, HF therefore wins at EVERY omega_c and the parameter is
+moot for the ranking.
+
+Both numbers come from the new machinery: "CEV from the saved benchmark curve",
+one curve built inside the benchmark and inverted by each arm, rather than a
+bisection per arm through that arm's own prices.
+
+The old arms read +40.28 and +30.39. About 4.5 points of the fall is the welfare
+denominator correction; the rest is the new benchmark -- two classes, delta_h =
+0, rho = 0.30, omega_c = 0.
+
+## Why the stylized model values a child five times higher
+
+Its consumption equivalent divides by
+
+    periods(par) = (1 - gam - th) * (1 + beta*phi0)
+
+which at gam = 0.3248 and th = 0.235 is 0.858 -- the consumption weight times a
+TWO PERIOD horizon. So cev = exp(dv/0.858) - 1 and a value difference of only
+1.11 utils reports 264 per cent.
+
+A proportional consumption cut of 24 per cent would give exp(0.2744) - 1 = 31.6
+per cent. The stylized dv is about 4.7 times that, because a 24 per cent income
+cut pushes children across the VOUCHER MEANS TEST NOTCH and into homelessness
+risk -- welfare.py says so itself, "V1 jumps down as income crosses the
+threshold" -- and per_case then averages a CONVEX transform of dv across the
+income distribution, so the children at the cliff dominate the mean.
+
+In two periods a child has no time to recover from a notch. In sixty, with
+saving, transfers and a large value of life term, the same penalty at delta_d =
+0.36 costs 50 per cent. The sixty period number is the one to believe.
