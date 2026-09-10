@@ -356,7 +356,7 @@
         ! is the top of the state space, so it is in bounds in both builds and
         ! the runtime flag alone decides whether anyone goes there.
         integer :: include_voucher_exclusion=0
-        integer, parameter :: voucher_exclusion_states=0
+        integer, parameter :: voucher_exclusion_states=1
         integer, parameter :: voucher_state_max=include_vouchers*(1+voucher_exclusion_states)
         integer, parameter :: voucher_excl=min(2,voucher_state_max)
         real(8), parameter :: voucher_exclusion_release=1.d0/3.d0
