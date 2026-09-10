@@ -414,3 +414,58 @@ Which is also why the ranking is fragile in three directions at once. Raise
 omega_c, or re-key the child transmission off the instant of death, and the
 externality term grows. Value drug utility less and the second term shrinks.
 Lower the false positive rate and the third shrinks. Any one of them flips it.
+
+## CORRECTION: the omega_c response is 16.69 per cent, not 20.04
+
+The author, 10 September: *"it might be that you analyzed the data wrong for the
+change in drug use of parents? Maybe it is a smaller difference and you made a
+mistake in the computations?"*
+
+THEY ARE RIGHT. Re-derived from the logs, taking only POST-FROZEN prints and only
+runs that report `FROZEN CONVERGED`:
+
+    omega_c = 0      b = 0.087845639  and  0.087846607   two runs, agreeing to 6 digits
+    omega_c = 0.17   b = 0.085920614
+    omega_c = 1.0    b = 0.073181764
+    omega_c = 0.6    EXCLUDED -- FROZEN CONVERGED = 0, its only print is pre-frozen
+
+    omega_c = 0.17   fall from the omega_c = 0 base   2.192%   (I said 2.24)
+    omega_c = 1.0    fall from the omega_c = 0 base  16.694%   (I said 20.04)
+
+The error was the DENOMINATOR: I divided the difference by the omega_c level
+instead of by the omega_c = 0 base, which measures the RISE from internalised to
+not, not the FALL the sentence claimed. Every earlier statement of "20 per cent"
+in this file and in chat is wrong by that amount and is corrected here.
+
+## AND THE PUZZLE DISSOLVES THE OTHER WAY: the stylized model is the degenerate one
+
+Sweeping omega finely in the stylized model, with `b` held, shows its response is
+not strong -- it is SATURATED almost immediately:
+
+    UNIVERSAL pi_V = 1.0            RATIONED pi_V = 0.266
+      omega   use      fall           omega   use      fall
+       0.00   7.1076%    0.0%          0.00   8.9010%    0.0%
+       0.05   1.6615%   76.6%          0.05   5.2914%   40.6%
+       0.10   1.6475%   76.8%          0.10   4.1824%   53.0%
+       0.20   1.0191%   85.7%          0.20   3.1744%   64.3%
+       0.25   0.0154%   99.8%          0.30   0.8794%   90.1%
+       0.30   0.0000%  100.0%          0.50   0.0000%  100.0%
+       1.00   0.0000%  100.0%          1.00   0.0000%  100.0%
+
+AT UNIVERSAL COVER A WEIGHT OF 0.05 ALREADY REMOVES THREE QUARTERS OF DRUG USE,
+and everything from 0.30 up is a flat corner. The flat steps in between -- 1.6615
+to 1.6475 to 1.6399 across omega 0.05 to 0.15 -- are the means test notch: a
+discrete margin, not a distribution being eaten into.
+
+So "100 per cent against 16.7 per cent" is not a strong response against a weak
+one. It is a CORNER, reached at omega around 0.3, against an INTERIOR response
+that is still moving at omega = 1. The stylized model has one continuous choice
+and essentially one margin, so a small deterrent flips nearly everyone at once.
+The quantitative model has sixty periods, a productivity grid, assets, employment
+and health states, so a deterrent moves the fraction of the distribution that
+lies within it, and 16.7 per cent of users quitting when the child is fully
+internalised is a SUBSTANTIAL interior response rather than a puzzle.
+
+WHAT NEEDS EXPLAINING IS THEREFORE THE STYLIZED MODEL, not the quantitative one:
+a deterrent one twentieth the size wipes out three quarters of use there. That is
+the number to distrust.
