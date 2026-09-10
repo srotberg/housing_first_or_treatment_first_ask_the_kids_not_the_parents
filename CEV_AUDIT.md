@@ -218,3 +218,56 @@ a difference of 8.80 puts it in the reporting.
 
 The arms are unaffected either way. The curve is normalised at x = 0, so levels
 are right to first order and every difference between arms is untouched.
+
+## FOUND. The welfare denominator is 0.4 per cent short.
+
+Computed OFFLINE from the saved benchmark files, so no source edit and no risk
+to the six arms in flight. Age one is every 61st record of the rank 7 array --
+time is fastest and age next, and transition_length is 1 -- and the value and
+distribution files have identical shapes, so they pair element for element
+without needing the inner extents:
+
+    age-1 mass                                = 1.000000000000000  exactly
+    mass weighted mean of the SAVED value fn  = 2194.954665
+    model reports average_welfare_of_youngest = 2203.755553
+    GAP                                       = -8.800888
+    cells with mass and NEGATIVE value        = 0
+
+That last line kills the index bounds candidate: with no negative cells,
+excluding cells from the numerator could only push the reported number DOWN,
+and it is UP. Which leaves the denominator, and the arithmetic reconstructs the
+reported number exactly:
+
+    numerator   sum V*mass over age one, at full unit mass = 2194.954665
+    denominator sum_of_distribution_youngest               = 0.996006414
+    quotient                                               = 2203.755553
+
+THE NUMERATOR IS SUMMED OVER THE FULL UNIT MASS AND THE DENOMINATOR IS 0.3994
+PER CENT SHORT OF IT. Every average_welfare_of_youngest_cohort the model has
+printed is inflated by 0.4 per cent. That is the whole of the 7.81, and it is
+NOT in the comparison walk -- the age profile showed the walk accurate to about
+a util at age one.
+
+The saved distribution sums to exactly one at age one, so the IN MEMORY
+distribution_stationary that calculate_welfare reads is short at the moment it
+reads it. sum_of_distribution_youngest is assigned from pooled_mass_youngest,
+accumulated pass by pass, and it falls out of step. This is the stale timing
+candidate rather than the index bounds one.
+
+FALSIFIABLE: print sum_of_distribution_youngest and it will read 0.996006414.
+
+## Why the arms in flight are still sound
+
+compute_value_of_comparison's own mass is exactly 1.0, so the CURVE is right.
+The TARGET is the arm's inflated welfare, which is the 4.5 point bias. But the
+normalisation already applied shifts the curve up by exactly the benchmark's own
+inflation, and both arms and benchmark are inflated by the same 0.4 per cent, so
+the residual across arms is 0.004*(W_arm - W_bench), about 0.14 utils. The six
+arms do not need redoing.
+
+## The fix
+
+Divide by the mass the numerator actually covers rather than by a separately
+accumulated pooled_mass_youngest that can fall out of step with it. Staged with
+the child term patch; neither is safe to apply mid chain, because run_variant.sh
+rebuilds from master between arms.
