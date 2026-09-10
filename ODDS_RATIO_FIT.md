@@ -29,7 +29,7 @@ same night.
 | A anchor | 0.24 | 0.31 | 0.007 | **1.5505** | **4.9109** | **0.0075517** | `variant_save_20260910T032800Z` |
 | B | 0.36 | 0.31 | 0.007 | **2.0518** | 4.9824 | 0.000242 (noise) | `variant_save_20260910T040639Z` |
 | C | 0.24 | **0.15** | 0.007 | 1.5470 | **3.6497** | 0.0074958 | `variant_save_20260910T044518Z` |
-| D | 0.24 | 0.31 | 0.05 | | | | `fit_omega_c.log` |
+| E | **0.36** | **0.14** | **0.17** | **1.9857** | 3.5344 | **0.020909** | `variant_save_20260910T052352Z` |
 
 Anchor underlying rates: SUD exposed 0.053417 against unexposed 0.035118;
 homelessness exposed 0.046770 against unexposed 0.0098922.
@@ -115,3 +115,49 @@ persistence channel, which is not a child parameter and is the author's call.
 The `delta_d` secant across B and C is well behaved by contrast: elasticity
 -1.64 in log(1-delta), pointing at delta_d = 0.350 against the 0.36 already
 measured at 2.0518.
+
+
+## E, the author's combined point: delta_d IS SOLVED, and omega has a ceiling
+
+| | model | target | gap |
+| --- | --- | --- | --- |
+| SUD odds ratio | **1.9857** | 2.00 | **-0.7%** |
+| homelessness odds ratio | 3.5344 | 2.10 | +68% |
+| `lambda_d` | 0.037097 | 0.0368 | +0.8% |
+| `b` | 0.086312 | 0.0890 | -3.0% |
+| `h_1` | 0.013270 | 0.0116 | +14.4% |
+| `omega` | 0.020909 | 0.18343 | -89% |
+
+**delta_d = 0.36 is the answer.** It hits the SUD odds ratio at 1.9857 against
+2.00 and holds `lambda_d` within 0.8 per cent at the same time.
+
+**omega IS STRONGLY CONCAVE IN omega_c AND CANNOT REACH ITS TARGET WITH b HELD.**
+The anchor and C both sit at omega_c = 0.007 and both give omega about 0.0075;
+E at 0.17 gives 0.0209. A TWENTY-FOUR fold rise in the weight bought a 2.8 fold
+rise in omega, an elasticity of about 0.32. A linear reading -- which is what
+produced the 0.17 guess -- was wrong by an order of magnitude.
+
+The reason is visible in the counterfactual's own numbers:
+
+    baseline users        0.086312
+    counterfactual users  0.088117   <- the child term switched off
+
+The counterfactual level is what use would be with no child concern at all, and
+it is pinned by `addiction_scalar_1`. So omega = 0.18343 requires the BASELINE
+to sit at 0.088117/1.18343 = **0.0745**, sixteen per cent below b's own target of
+0.0890. omega and b cannot both be hit while addiction_scalar_1 is held: getting
+the child externality to the size the data implies means the child term must
+suppress use by sixteen per cent, and having that AND b = 0.0890 requires
+addiction_scalar_1 to rise to compensate.
+
+**So omega_c and b's parameter have to be fitted jointly.** That is an amendment
+to the author's sequencing of 10 September, which held b fixed while the three
+child parameters were fitted, and it is flagged rather than quietly acted on.
+
+## Where step 1 ends
+
+| | value | moment | target | verdict |
+| --- | --- | --- | --- | --- |
+| `delta_d` | **0.36** | 1.9857 | 2.00 | **solved** |
+| `delta_h` | -- | floor ~2.5 | 2.10 | target below the model's floor; the author's call |
+| `omega_c` | -- | 0.0209 at 0.17 | 0.18343 | unreachable with b held; needs a joint fit |
