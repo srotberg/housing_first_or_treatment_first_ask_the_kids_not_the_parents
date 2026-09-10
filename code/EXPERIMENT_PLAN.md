@@ -1009,3 +1009,86 @@ arithmetic of mine, which is why this run was worth its forty minutes.
 
 **STEP 3 IS BLOCKED** on those two decisions. Starting a calibration loop is
 also a phase change this file forbids, so it needs the author either way.
+
+## SUPERSEDING BLOCK, 10 September: two classes, rho = 0.30, delta_h = 0
+
+The author fixed the three child parameters and the transmission elasticity:
+
+    delta_d (penalty_child_addicted) = 0.36
+    delta_h (penalty_child_homeless) = 0      -- no longer calibrated
+    rho_intergenerational            = 0.30   -- assigned, was a parameter at 0.35
+    child_penalty_classes            = 2      -- was 4
+
+With delta_h at zero the four child classes were two: classes 2 and 3 carried
+grids identical to 0 and 1. The class is now the parent's disorder at death and
+nothing else. rho_intergenerational is settable, with a handover case.
+
+MEASURED at those values, two classes, omega_c = 0.17, read after
+FROZEN CONVERGED (the earlier print in the same log is off a non-equilibrium
+state and reads 2.09 / 1.78 / 0.2374):
+
+    child SUD odds ratio           2.090   against 2.00     +4.5%
+    child homelessness odds ratio  1.878   against 2.10    -10.5%
+    omega, use rise child term off 0.0203  against 0.18343  -89%
+    mass in the SUD-parent class   2.434 of 50.13, 4.86%
+    wall clock                     17 min with measure_child_gap, 9-10 without
+    backward induction pass        2.10 min, against 1.05 at one class
+
+The homelessness ratio is UNTARGETED and the author has accepted 1.878: Bassuk
+et al. report 1.80 and 2.41, and 2.10 is only their midpoint, so 1.878 is inside
+the evidence rather than short of it.
+
+TWO MEASURED POINTS IN RHO, which replace the elasticity that failed:
+
+    rho = 0.30  ->  homelessness odds 1.878
+    rho = 0.35  ->  homelessness odds 2.821 (fitted at delta_h = 0 from four
+                    measured delta_h points, R^2 = 0.9984)
+
+Interpolating log odds linearly gives rho = 0.314 for exactly 2.10. Not run,
+because the author accepted 1.878.
+
+The class collapse did NOT move the statistic: the SUD odds ratio reads 2.090 at
+two classes against 2.097 at four, rho = 0.35, delta_h = 0.02.
+
+### The arms were already at these parameters
+
+The lifetime-penalty arms were run at delta_d = 0.36, delta_h = 0.14,
+omega_c = 0.17 -- the handovers in all four logs say so. So the new benchmark
+changes almost nothing for them: rho falls slightly, and delta_h -> 0 is worth
+little because the homeless-parent class carried 0.4% of the population.
+
+    universal HF  +40.28%   disorder 6.52%   SUD-parent class mass 3.88 (7.7%)
+    universal TF  +30.39%   disorder 0.03%   SUD-parent class mass 0.034 (0.07%)
+    rationed TF   +0.235%   disorder 0.40%   SUD-parent class mass 0.62
+
+Universal HF RAISES drug use by 72% and nearly doubles the disorder rate, leaves
+7.7% of the population permanently 36% poorer against TF's 0.07%, and still wins
+by ten points. Both arms hand out nearly the same number of vouchers, pi_V 0.851
+against 0.830, so this is not HF buying a bigger transfer.
+
+### Where the quantitative and stylized models part company
+
+                              stylized     quantitative
+    disorder cases prevented   5.663 pp      6.49 pp
+    weight on the child        ~0.19         0.17
+    private loss (CEV)         0.051%        ~7%
+    externality gain (CEV)     2.880%        ~2.5% implied
+    verdict                    TF wins 56x   HF wins
+
+The externality gains agree. The private losses differ by ~140x and that is the
+whole disagreement. Two candidates, both open:
+
+  - the stylized per-case child cost is 264.3% CEV for a del_d earnings penalty.
+    A permanent 24% income cut cannot be worth more than about 32% of
+    consumption in compensating variation. children.py has already chased this
+    number once, from 231.8 to 264.3, but the question asked there was
+    averaging order, not whether the level is attainable.
+  - the stylized private loss of 0.051% is small in the other direction. The
+    dominance argument in welfare.py is right that the loss must be positive,
+    but 0.051% means households give up almost nothing when participation goes
+    from 7.11% to zero.
+
+TO MEASURE RATHER THAN ARGUE: child_penalty_off is wired as a handover. Universal
+HF and universal TF with the child channel off give the quantitative model's priv
+directly; the residual against the arms already run gives its gain. Like for like
+against the stylized 0.051% and 2.880%. Not yet started.
