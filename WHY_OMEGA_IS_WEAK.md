@@ -1076,3 +1076,22 @@ than a switch flip. The order that keeps the risk visible:
 
 Each step is separately checkable and the calibration risk is all in step one.
 NOTHING HAS BEEN BUILT; this is the author's call.
+
+## arm1_utf AT p_fp = 0.0001: TREATMENT FIRST WINS BY 0.61
+
+The author, 10 September: *"set p_fp to 0.0001 and rerun the arms"*. It returns
+30.5810 per cent against Housing First's 29.9734.
+
+    p_fp = 0        TF  30.7701%   vs HF  +0.7967
+    p_fp = 0.0001   TF  30.5810%   vs HF  +0.6076   <- TREATMENT FIRST AHEAD
+    p_fp = 0.0005   TF  29.8176%   vs HF  -0.1558
+    p_fp = 0.005    TF  22.1857%   vs HF  -7.7877
+
+THE SLOPE-BASED PREDICTION WAS 30.580 AND THE MEASURED VALUE IS 30.5810, an error
+of one thousandth of a point. The near-zero region is behaving exactly as
+described, so the crossing at p_fp = 0.000418 is now bracketed by measured points
+on both sides rather than resting on an interpolation.
+
+At one wrongful exclusion in ten thousand household-years, Treatment First wins.
+At one in two thousand it loses. The whole policy ranking turns inside that
+range, which is the case for reporting the threshold rather than either verdict.
