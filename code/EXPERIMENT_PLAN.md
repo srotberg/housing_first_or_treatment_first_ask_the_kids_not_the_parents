@@ -1092,3 +1092,45 @@ TO MEASURE RATHER THAN ARGUE: child_penalty_off is wired as a handover. Universa
 HF and universal TF with the child channel off give the quantitative model's priv
 directly; the residual against the arms already run gives its gain. Like for like
 against the stylized 0.051% and 2.880%. Not yet started.
+
+---
+
+## DONE, 10 September: the decomposition, at omega_c = 0
+
+The step above ("TO MEASURE RATHER THAN ARGUE ... Not yet started") is now
+finished, and two things in the section above it are superseded.
+
+**The switch was wrong in the plan.** `child_penalty_off=1` zeroes the PARENT'S
+INTERNALISATION, not the harm; the arm that isolates the externality is
+`penalty_child_addicted=0`, which is what was run.
+
+**The 264.3 per cent per-case figure quoted above is withdrawn.** It was a
+historical number inside a `children.py` comment. The current stylized value is
+50.86 per cent against an income-only bound of 31.58, and the two models do not
+disagree about the child at all -- see `WHY_OMEGA_IS_WEAK.md`, where the
+quantitative penalty comes out at 106.0 per cent of lifetime consumption, TWICE
+the stylized model's rather than a fraction of it.
+
+    MEASURED, universal, omega_c = 0
+      Housing First                       29.973%
+      HF, no child penalty                36.826%   -> externality under HF  +6.852
+      Treatment First                     22.186%
+      TF, no child penalty                22.262%   -> externality under TF  +0.076
+      TF, no false positives              30.770%   -> false positives       -8.584
+      TF, no treatment cost               21.526%   -> treatment cost        +0.659
+
+      externality Treatment First removes      +6.776
+      drug utility and everything else         -5.979   (derived remainder)
+      net at perfect testing                   +0.797   = TF(no fp) - HF
+      false positives                          -8.584
+      TOTAL                                    -7.788   = TF - HF
+
+So the private loss is 5.979 points, not the "~7%" guessed above, and the
+externality gain is 6.776 rather than the "~2.5% implied". THE TWO NEARLY CANCEL,
+and the ranking is settled by the false positive term.
+
+STILL IN FLIGHT: `arm0_utf_perfect` (p_fp = 0, p_det = 1) and `arm0_utf_lowfp`
+(p_fp = 0.0005). The second is the one that matters, because the 8.584 rests on
+an interpolation across [0, 0.005] and the curve's slope there is 2.6 times its
+slope further out. Until it reports, the false positive term is the least secure
+number in the table and it is the one deciding the ranking.
