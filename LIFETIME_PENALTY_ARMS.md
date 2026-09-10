@@ -102,3 +102,39 @@ This is the same class of fault `CLAUDE.md` already records: a parameter that
 binds only in a counterfactual does not belong with the calibration, and is
 exactly the kind that travels unnoticed when a vector is lifted from a
 benchmark log.
+
+
+## Rationed Treatment First, CORRECTED to p_fp = 0.005: +0.235 per cent
+
+Converged: budget 2.09e-2 inside 2.5e-2, drug market 1.66e-9.
+
+| | benchmark | rationed TF | ONE-CLASS TABLE |
+| --- | --- | --- | --- |
+| `b` | 0.086312 | 0.011898 (-86.2%) | -85.7% |
+| `lambda_d` | 0.037097 | 0.0039620 (-89.3%) | -89.3% |
+| `h_1` | 0.013270 | 0.012667 (**-4.5%**) | -0.1% |
+| `pi_V` | 0.24750 | 0.21783 | 0.22489 |
+| `tau_l` | 0.20637 | 0.20319 | 0.20658 |
+| **welfare** | -- | **+0.235%** | **-2.14%** |
+
+With the false-positive rate matching the one-class table, the child penalty is
+the ONLY thing that differs, and rationed Treatment First goes from **-2.14 per
+cent to +0.235** -- it stops destroying welfare and starts, barely, creating it.
+A swing of +2.37 points. Homelessness also falls 4.5 per cent under the policy
+where before it was flat.
+
+### The two comparable arms move in OPPOSITE directions
+
+| | one class | lifetime penalty | change |
+| --- | --- | --- | --- |
+| rationed TF | -2.14% | **+0.235%** | **+2.37 pts** |
+| universal HF | +40.74% | **+40.28%** | -0.46 pts |
+
+Treatment First GAINS from the bigger externality and Housing First, which
+RAISES drug use by 72 per cent, does not. That is the direction the author
+predicted.
+
+**The magnitudes are the caveat.** 2.4 points against a Housing First advantage
+of forty. The externality is still about a ninth of what the data implies --
+omega 0.021 against 0.183 -- and it has not moved the ranking at all. The
+earlier -4.82 per cent for this arm, run at p_fp = 0.05, is VOID.
