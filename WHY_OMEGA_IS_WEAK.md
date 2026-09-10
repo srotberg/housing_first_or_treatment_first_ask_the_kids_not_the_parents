@@ -943,3 +943,66 @@ at omega_c = 0 with delta_d at 0.6 and 0.8. Four solves, no code change and no
 refitting, because at omega_c = 0 the parent ignores delta_d entirely and `b`
 stays on target; only the newborn's productivity draw moves. Not queued; the
 author's call.
+
+## CORRECTION: THE DATING IS NOT LATE. THE "FACTOR OF FOUR" IS WITHDRAWN
+
+The author, 10 September: *"How would you capture it another way? Add the child
+directly into the flow utility of the parents while it growing up? But the wage
+impact is only applied when they are 26 year old and older"*. Working that through
+overturns what this file has been saying about the timing.
+
+W is the discounted probability of dying while addicted, so `ln(W)/ln(beta)` is
+the lag at which the model actually delivers the child's harm:
+
+    parent age      W_SUD    effective lag
+        25         0.1934      24.2 yrs
+        30         0.2333      21.4 yrs
+        35         0.2854      18.5 yrs
+        45         0.4249      12.6 yrs
+
+    ALTERNATIVE, child born now and the wage harm from child-age 26:
+        lag 26 yrs, delivered with certainty          weight 0.1709
+
+THE CURRENT SCHEME IS 1.36 TIMES LARGER THAN THE CHILDBEARING ONE, not smaller,
+because the eightfold death hazard on the disordered pulls the transmission date
+FORWARD to about twenty-one years rather than twenty-six. Re-dating the wage
+channel the way the author describes would make the deterrent SMALLER.
+
+**SO EVERY STATEMENT IN THIS FILE THAT THE TIMING COSTS A FACTOR OF ABOUT FOUR IS
+WITHDRAWN.** That factor was measured against a weight of 1.0, which is the
+stylized model's TWO PERIOD ARTEFACT -- "next period" there is the whole future,
+undiscounted -- and was never a correct benchmark. A harm landing twenty-one
+years away SHOULD be discounted by roughly that much. With it goes the
+expectation, recorded in the section above, that a delta_d sensitivity would
+likely flip the ranking; there is no longer a reason to expect that.
+
+### The wage channel is right on all three checkable dimensions
+
+    count   5.31% of newborns          against 3.52-8.50% of children exposed
+    size    46% of lifetime consumption against the stylized model's 51%
+    date    about 21 years             against 26 for a childbearing scheme
+
+### WHAT IS ACTUALLY MISSING: the childhood, not the dating
+
+The author's instinct is right and for a reason neither of us gave first. The
+model has NO CONTEMPORANEOUS HARM AT ALL. A child growing up with an addicted
+parent suffers NOW -- instability, neglect, removal -- and Nilsson prices only the
+earnings consequence twenty years later. The wage term cannot be repurposed for
+it, exactly as the author says, because the wage impact does not exist before
+child-age 26.
+
+THE CONSTRUCTION IS A NEW TERM, NOT A RE-DATING. While the household is in
+`d = 1`, subtract `omega_c * chi` from the parent's flow utility and the same
+`chi` at weight one from social welfare. It needs no child in the state space --
+it is a flow externality, like pollution -- and being symmetric on both sides it
+leaves the externality at `(1 - omega_c) * chi`, which is the right form. Roughly
+ten lines.
+
+Because it is contemporaneous it is barely discounted, so per unit of harm it is
+about four times as potent as the wage channel. THAT is the thing that could move
+the result, not the wage channel's timing.
+
+THE OBSTACLE IS chi, AND NO VALUE IS PROPOSED HERE. Candidates worth checking
+before any code is written: foster care entry attributable to parental drug use,
+and child maltreatment rates. Both are real literatures and neither converts into
+utils without an assumption that would have to be argued.
