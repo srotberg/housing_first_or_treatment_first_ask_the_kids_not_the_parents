@@ -229,3 +229,61 @@ stood at 682 times its rule, `largest_house_size` at 491, `value_of_life` at 233
 -- which is the "days of wall clock" the Fortran's own resume comment describes.
 Nothing in 45 loops suggests it is heading for that, the question the brief
 actually asked about omega_c is already answered, and the container is ephemeral.
+
+
+# CORRECTION: THE CEILING OF 1.0 WAS A CAP THE AUTHOR HAS SINCE REJECTED
+
+Written immediately on reading the other session's work, because the section
+above would otherwise be read as "omega_c = 1.0 is the answer", and it is not.
+
+`weight_on_child_cap` is now **25**, raised on the author's own question --
+*"wait, why cant omega_c be larger than 1?"* -- with the reason recorded in
+`OMEGA_STRUCTURE.md`: in the specification this model runs the child term is
+ADDED, `V = u + beta*[phi*V' + (1-phi)*omega*X]`, so omega is a MULTIPLIER and
+not a share, and nothing makes it improper above one. The bound belonged to a
+weighted-average form the model does not use.
+
+My `calib1` run was built before that change and carried the old hard cap of 1.0.
+So **"omega_c walks to its ceiling" is a statement about a cap that no longer
+exists**, and the fitted 1.0000 in `step3_fitted_vector.txt` is a bound artefact,
+not an estimate. Anyone reading that vector should know it.
+
+## WHAT THE RUN STILL SHOWS, AND IT CORROBORATES THE OTHER SESSION
+
+Two things survive the correction, and the first is an independent confirmation
+from a direction that session did not use.
+
+**1. THE CAP WAS BINDING, MEASURED BY A SEARCH RATHER THAN BY AN ARGUMENT.** An
+internal calibration loop, free to move omega_c and given an adjuster 250 times
+the declared one, walked it from 0.17 to the top of its admissible range in
+twelve loops and then held it there for 21 of the next 25 updates. A parameter
+that wanted to stop below 1.0 would have stopped. That is consistent with
+`OMEGA_STRUCTURE.md`'s measured ladder, which puts the target at
+
+    omega_c ~ 1.39, itself a LOWER bound
+
+and it was reached without using their cross-run statistic at all.
+
+**2. AND THE INTERNAL MOMENT CANNOT DISCIPLINE omega_c, WHICH IS INDEPENDENT OF
+THE CAP.** This is the part that is new and that still stands. With omega_c
+pinned at exactly 1.0, the model's own internal gap ranged +0.01385 to +0.17365
+-- a spread of 0.87 times its target -- while the BASELINE it is divided by
+ranged 0.01532 to 0.09104, a factor of six. The readings near omega_c = 1
+straddle the 0.18343 target rather than sitting below it.
+
+That is the quantitative case for the choice the other session made on other
+grounds. `OMEGA_STRUCTURE.md` notes the internal moment read 2.03 per cent where
+the cross-run statistic read 2.24 and calls the cross-run one "the cleaner", the
+difference being that the internal version holds some general equilibrium objects
+fixed. Measured inside the loop, the difference is not 0.2 percentage points of
+bias; it is a spread comparable to the whole target, because the denominator is
+moving. **So the ladder of separate runs is not merely cleaner, it is the only
+one of the two that can identify the parameter** -- and the Fortran's internal
+omega_c update should not be used for this moment until it carries the noise
+guard `fit_child_parameters.py` already has.
+
+**3. AND b IS STILL THE BINDING PROBLEM.** Nothing above touches it. The
+one-class internal recalibration does not converge: `b` oscillates 0.0153 to
+0.0910 against 0.0890 over 45 loops with no narrowing, and it is the omega gap's
+denominator, which is why the gap's spread is what it is. Both findings are the
+same fact seen twice.
