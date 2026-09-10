@@ -698,3 +698,74 @@ range, not a point, and the range is now bracketed by the data itself at roughly
 0.66 to 1.49 before any allowance for the selection the source file warns about
 or for the narrowness of the model's channel, both of which push the honest
 number DOWN from there.
+
+## THE MOMENT IS COMPUTED ON A DIFFERENT POPULATION FROM THE ONE b MEASURES
+
+The author, 10 September: *"When you consider use I think you should remove those
+with Sud... They are addicted already."* Following that leads somewhere larger
+than the suggestion.
+
+### First, the suggestion as put: it widens the gap
+
+    sample                                     raw   rewtd    rise   omega_c
+    26+   ALL (the moment in use)            0.983   0.845   18.4%     1.060
+    26+   EXCLUDING any drug use disorder    0.972   0.819   22.0%     1.258
+    26-64 ALL                                0.787   0.859   16.4%     0.950
+    26-64 EXCLUDING any drug use disorder    0.811   0.823   21.6%     1.232
+
+Removing the already-dependent RAISES omega_c, because among people with a
+disorder parents and non-parents use at similar rates -- they cannot respond,
+exactly as the author's reasoning says -- so including them pulls the ratio
+toward one. The mechanism is the one described; it just runs the other way.
+
+### But the model has no non-disordered users at all
+
+Verified against the extract, ages 26 and over, weighted:
+
+    svyrdudany in (1,2,3)  ANY disorder incl. mild   0.0890  = participation_rate_data
+    svyrdudany in (2,3)    MODERATE or SEVERE        0.0368  = sud_rate_data
+    svyrdudany == 3        SEVERE only               0.0170
+
+BOTH TARGETS REPRODUCE EXACTLY. So `b` IS the any-disorder population and
+`lambda_d` is the moderate-or-severe subset of it. In this model "uses" and "has
+at least a mild disorder" are THE SAME EVENT, and there is no non-disordered user
+to remove.
+
+That also means the note's own description of `b` -- "the share who use at all,
+with or without a SUD" -- does not match its target. The share who use at all is
+16.5 per cent past month and 24.5 past year; 8.90 per cent is the share with a
+disorder.
+
+### So the altruism moment is on the wrong variable, and it matters by a factor of six
+
+The model's moment is a proportional change in `model_total_drug_users`, which
+targets 0.0890. Its empirical counterpart is the parent against non-parent gap in
+THAT variable, not in past-month use:
+
+    outcome                                       level    raw   rewtd    rise  omega_c
+    ILLMON past-month use (the moment in use)    0.1654  0.983   0.845   18.4%    1.060
+    ANYSUD  = what b is calibrated to            0.0890  0.944   0.978    2.2%    0.181
+    MODSEV  = what lambda_d targets              0.0368  0.918   0.843   18.6%    1.071
+    ANYSUD, ages 26-64                           0.1076  0.723   0.909   10.0%    0.605
+
+PUT THE MOMENT ON THE POPULATION THE MODEL ACTUALLY MEASURES AND omega_c FALLS
+FROM 1.06 TO 0.18.
+
+### The caveat, and it is a real one
+
+The answer is not robust across cuts of the same variable: moderate or severe
+alone gives 0.843 and omega_c = 1.07, almost exactly what past-month use gives.
+Any-disorder nets two offsetting components -- backing them out, parents are
+about 7 per cent MORE likely to carry a mild-only disorder and 16 per cent less
+likely to carry a moderate or severe one. Whether the model's user is the mild
+group, the severe group or both is a modelling question, not a data one, and it
+is the author's to settle. What is not in doubt is that the moment currently in
+use is computed on a population three times larger than the one `b` measures.
+
+### A side finding in the declaration
+
+`sud_rate_data`'s comment says the right value is 0.0454 and that 0.0368
+"matched no cut of that variable", and `AUDIT_A_declarations.md` repeats it. BOTH
+ARE WRONG. 0.0368 is exactly `svyrdudany in (2,3)` at ages 26 and over; 0.0443 is
+the same cut at ALL ages, which is presumably where 0.0454 came from. The
+declaration is right and its comment is wrong.
