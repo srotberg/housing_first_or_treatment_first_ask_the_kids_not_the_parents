@@ -1,3 +1,32 @@
+## 11 September 03:43 UTC -- THE LOOP IS 1.5 MINUTES, NOT 12. MY ARITHMETIC ON
+## THE CAP WAS WRONG BY A FACTOR OF EIGHT.
+
+The author: *"why is one loop 6-8 minutes? shouldnt the model take 2.5 minutes to
+solve?"* Measured from the 02:46 run's own record:
+
+    loop 8   ~03:02
+    loop 14  ~03:12
+    loop 20  ~03:21
+    loop 22  ~03:23        14 loops in 21 minutes = 1.5 min/loop
+
+The COLD first solve is 3 to 4 minutes -- about the author's 2.5 plus the
+distribution pass -- and every loop after it warm starts from the converged value
+function and distribution, so it is far cheaper. I took the cold solve and
+generalised it to every loop, then put that estimate in two files twice without
+ever measuring it.
+
+**WHAT THE 0.5 PER CENT CAP ACTUALLY COSTS**, corrected:
+
+    double a parameter        139 loops    3.5 hours     (I said four days)
+    move it by a factor of 10 462 loops   11.5 hours
+    endowment 0.4645 -> 1.0   153 loops    3.8 hours
+
+So the governor the author asked for is affordable -- a night, not a week -- and
+the "it will cost the whole night" warnings written against it were overstated by
+a factor of eight. The rule against needless restarts still stands, but for the
+right reason: a restart discards the loop's accumulated progress, not because a
+loop is expensive.
+
 ## 11 September 03:36 UTC -- ALL 19 PARAMETERS ARE NOW BRACKETED IN THE LOOP
 
 The author: *"shouldnt you be able to update them exactly like every other
