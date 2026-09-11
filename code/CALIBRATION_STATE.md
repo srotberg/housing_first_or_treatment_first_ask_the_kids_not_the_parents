@@ -1,3 +1,41 @@
+## 11 September 04:20 UTC -- CHILDREN 25 AND UNDER IS NOT CONSTRUCTIBLE FROM THE
+## DATA IN HAND. Three methods, three diagnosable failures.
+
+The author: *"i think you should cpnsider all children 25 and under...."*, and on
+being told the sources were thin, *"dont you have the full SCF?? we have it in th
+repo"*. The repo has `data/SCF_2022.dta`, which is the SUMMARY EXTRACT: 22,975
+rows by 357 variables, five implicates of 4,595 households. Its only child
+variable is `kids`, children of ANY age at home, and it carries no household
+member records and no child ages. `data/NSDUH_2024.dta` is a 17-variable extract
+with no child variable at all; the raw tab file in the scratchpad has
+`IRKI17_2`, children UNDER 18, plus `IRHHSIZ2` and `IRHH65_2` and nothing for
+18 to 25.
+
+So neither source gives the concept directly. It can in principle be built, since
+children under 26 is the same BIRTH FLOW as children under 18 accumulated over a
+longer residence window. That was tried three ways and all three fail:
+
+    exact deconvolution      23 to 29 NEGATIVE births, at every span 14 to 26
+    unconstrained NNLS       fits the under-18 stock well (RMS 0.023) but the
+                             26-year accumulation EXCEEDS the any-age upper
+                             bound at 35 of 60 ages, worst excess 0.524
+    bound-constrained NNLS   infeasible: under-18 fit 7x worse (RMS 0.165),
+                             still violates at 11 ages, and implies fewer
+                             children <=25 than under 18 at young ages, which
+                             cannot be
+
+**THE DIAGNOSIS IS THE POINT.** The two sources are mutually inconsistent under
+ANY single birth flow, because `n(a)` is a smoothed blend of NSDUH under-18
+LEVELS with SCF any-age SHAPE. It is not a cohort-consistent object, and nothing
+recovers a birth flow from it that respects both surveys at once.
+
+**WHAT WOULD SETTLE IT** is the full SCF public file, p22i6, with household
+member records and their ages. It is not in the repo and returns 403 through the
+proxy. With that file the profile is a short job.
+
+**MEANWHILE** the under-18 profile stands, and with it T = 18 and the eight years
+from 18 to 26 are neither childhood in a household nor adult life in the model.
+
 ## 11 September 03:55 UTC -- THE CHILD USE GAP AT omega_c = 0.05 IS +2.81 PER CENT,
 ## AND A CORRECTION TO MY OWN READING OF IT
 
