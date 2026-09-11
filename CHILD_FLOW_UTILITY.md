@@ -55,20 +55,39 @@ time. And xi varies with age, so that factor does not merely rescale utility, it
 REWEIGHTS IT ACROSS THE LIFE CYCLE. The scale and the count must be the same xi
 for the published form to survive.
 
-## The one decision still open: kappa
+## kappa IS SETTLED: kappa = xi - 1
 
-    kappa = xi - 1    household has xi members in total, and the whole thing
-                      collapses back to xi^sigma u(X) when q is shared.
-                      NESTS THE PUBLISHED FORM.
+Author, 11 September: *"i think you should just divide by xi inside the utility
+and multiple by xi, not xi^2"*, and then *"this is how you get what i have in the
+JME paper, right?"* -- yes, exactly:
 
-    kappa = n         whole children, household has 1 + n members. Defensible --
-                      a child is a person and xi is about needs, not headcount --
-                      but a departure that does not nest.
+    xi * u(X/xi) = xi * (X/xi)^(1-sigma)/(1-sigma) = xi^sigma * X^(1-sigma)/(1-sigma)
 
-The author chose whole people on 11 September, BEFORE it was established that the
-published specification is the xi^sigma form. The two are in tension and the
-choice is worth revisiting. My recommendation is kappa = xi - 1, for consistency
-with the JME paper, unless the departure is wanted deliberately.
+which with X = c^(1-gamma) h^gamma IS equation (1). Verified at sigma = 1.5, 2
+and 3 and four values of xi, identical to machine precision. So the household has
+xi members in total, one parent and kappa = xi - 1 children, and when q is shared
+the whole thing collapses back to the published expression.
+
+THIS REVERSES THE EARLIER "WHOLE PEOPLE" DECISION, which was taken on 11
+September before the xi^sigma form had been established. Consistency with the
+published specification wins.
+
+### The consequence, recorded because it is large
+
+The child term scales linearly with kappa, and at age forty xi - 1 = 0.565
+against n = 1.45, SO THE CONTEMPORANEOUS CHANNEL IS 61 PER CENT SMALLER than
+under whole people:
+
+                       children carry   marginal: parent  children     net
+    whole people, 1.45    -10.085            +0.074        -0.197    -0.123
+    xi - 1 = 0.565         -3.931            +0.074        -0.077    -0.003
+
+The per-child amplification does NOT move -- it is a ratio between two
+individuals, still 3.09 -- but the aggregate externality is about two fifths of
+what it was. The earlier envelope put this channel at 1.6 to 2.2 times the wage
+channel; at this count it is nearer 0.6 to 0.9, COMPARABLE RATHER THAN DOMINANT.
+So it is unlikely on its own to move the Housing First against Treatment First
+ranking, which was the question it was built to answer.
 
 ## Decisions already taken
 
