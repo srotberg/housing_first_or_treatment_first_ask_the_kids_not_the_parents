@@ -1,3 +1,37 @@
+## 11 September 07:49 UTC -- BENCHMARK AT value_of_life = 162.2. Six core moments
+## inside five per cent. This is the night's final point.
+
+    moment      162.6      162.2
+    b           -6.0%      +4.2%
+    lambda_d    -7.4%      +3.4%
+    theta       -1.1%      -2.3%
+    tau_u       -1.6%      -4.6%
+    pi_eu       -1.7%      -0.4%
+    p_m         +0.3%      +0.4%
+    aleph      -33.6%     -33.8%
+    median      13.3%      12.9%   twelve of 26 inside ten either way
+
+**THE RESPONSE IS STRONGLY CONVEX AND MY LINEAR EXTRAPOLATION FAILED ONCE.** From
+163.5 to 162.6 the drug moments moved 3.3 points per unit of value_of_life; from
+162.6 to 161.0 they moved 13.6 per unit, and 161.0 overshot to plus sixteen per
+cent, worse overall at nine of 26 inside ten. The crossing sits near 162.2. Read
+the slope locally; do not extrapolate it.
+
+**ALEPH IS UNMOVED THROUGHOUT**, 53.46, 53.10, 53.09 across 163.5, 162.6 and
+162.2, which is the fourth independent confirmation that the level shift is free
+in aleph terms and the 33 per cent gap is not purchasable.
+
+**WHAT THE BENCHMARK NOW IS:**
+
+    value_of_life                 162.2
+    utility_cost_of_treatment      14.4
+    everything else as inherited
+
+Drug block on target, treatment take up within five per cent, unemployment and
+the SMI share within half a per cent. What remains badly off is h_1 at +26 per
+cent, whose instrument is weak and coupled; kappa_uem and lambda_m, whose
+instruments the author pinned; h_3 and w_bot, conceded; and aleph.
+
 ## 11 September 07:39 UTC -- BENCHMARK MOVED TO value_of_life = 162.6. The level
 ## shift cost 0.35 points of aleph, which prices the trade-off exactly.
 
