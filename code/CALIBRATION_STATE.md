@@ -1,3 +1,40 @@
+## 11 September 03:13 UTC -- LOOP 14: b OVERSHOOTS, AND THE 0.5 PER CENT CAP
+## CANNOT STOP IT. This is a LIMIT OF THE GOVERNOR, written down before anyone
+## reads the cap as a guarantee.
+
+    moment                          loop 8    loop 14   target
+    b        total drug users       ~0.170    0.0658    0.0890
+    lambda_d disorder rate          0.0716    0.0251    0.0368
+    theta    drug spending share    0.1462    0.1584    0.1410
+    omega_c  child use gap          0.3228    ~1.37     0.1834
+    aleph    value of life / income 57.8      57.9      80.0
+
+Participation and the disorder rate have crashed THROUGH their targets from
+above and now sit 26 and 32 per cent BELOW. They did it on a b that moved from
+0.0020302 to 0.0020608: **a 1.5 per cent change in b cut participation by 61 per
+cent.**
+
+**THE CAP BOUNDS THE PARAMETER'S MOVE, NOT THE MOMENT'S.** That is the lesson and
+it is not a fault in the cap. `max_rel_step_all` does exactly what the author
+asked -- no parameter moves more than half a per cent a loop -- but for b half a
+per cent of PARAMETER is a very large step in OUTCOME space, because
+participation is hyper-elastic in it. The source already carries the measurement:
+"b rose 48.7 per cent and participation fell from 0.176 to 0.0136, past a target
+of 0.0513 and by a factor of thirteen". Anyone reading `max_rel_step_all` as a
+guarantee against overshoot will be wrong about b specifically.
+
+**b's OWN DAMPER IS WORKING AND SHOULD BE LET WORK.** The sequence is
+0.0020302 -> 0.0020403 -> 0.0020608 -> 0.0020505: it rose, overshot, and has
+turned back. The sign flip halves `addiction_scalar_adjuster`, which is the
+bisection this parameter has always needed. DO NOT intervene on b. An
+intervention now would replace a converging bisection with a fresh excursion.
+
+**THE TWO THAT GOT WORSE ARE DOWNSTREAM, NOT INDEPENDENT.** theta's share went
++3.7 to +12.4 per cent and the child gap 0.32 to 1.37. Both follow from
+participation collapsing: a smaller and poorer user pool spends a larger share of
+its income on the drug, and the child channel bites harder per user. Expect both
+to recover as b settles, and do NOT read either as its own instrument failing.
+
 ## 11 September 03:05 UTC -- THE OVERNIGHT RUN IS HEALTHY AT LOOP 8
 
 Launched 02:46, one `run_one_point.sh`, b = 0.002 and omega_c = 0.3 on the
