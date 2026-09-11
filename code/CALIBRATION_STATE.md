@@ -1,3 +1,89 @@
+## 11 September 16:15 UTC -- WHERE THIS STANDS. Read this section and skip the
+## rest; everything below it was written before the V(1) bug was found and most
+## of its conclusions were drawn on a model that could not be measured.
+
+**THE BUG THAT INVALIDATED THE MORNING.** `compute_expected_child_value` reads
+whatever value function is in memory. A calibration loop solved the omega
+counterfactual FIRST and the benchmark second, both into the same array, so the
+benchmark's child penalty was built from a world where parents place no weight on
+children, and the next counterfactual's from the benchmark. One variable, two
+writers. It was not merely biased but UNSTABLE: two runs a quarter of one per
+cent apart in value_of_life agreed for four loops and then separated, with the
+implied elasticity of participation going -8, -8, -63, -80.
+
+**THE FIX, ON THE AUTHOR'S DESIGN.** Two slots, one per economy, neither visible
+to the other. The child value is computed at the END of a solve from that solve's
+own V(1) and read back at the start of the next one, and the loop is iterated at
+FIXED parameters until the guess and the computed value agree to 1e-3 relative,
+before the distribution converges. It reconciles in 2 passes at about 5e-6 every
+loop. The priming solve is gone, subsumed by pass one.
+
+**THE POINT.** `code/THREE_BLOCK_VECTOR.txt`: value_of_life 262,
+addiction_scalar_1 8.75e-04, omega_c pinned at 0.1.
+
+    aleph            79.140      80        -1.1%
+    lambda_d          0.037535   0.0368     +2.0%
+    theta             0.13740    0.14098   -2.5%
+    participation     0.09955    0.089     +11.9%
+    h_1               0.014920   0.0116    +28.6%
+
+Eight solves, from a bracket rather than a search. lambda_d and theta came free:
+lambda_d rides on participation at the ratio the model reproduces, and theta was
+never touched.
+
+**THE MEASURED ELASTICITIES**, single-parameter, read at loop 1 on the fixed
+model. Loop 1 is trustworthy now BECAUSE of the fix -- the child value converges
+inside it -- which is what made these cheap.
+
+                          participation   aleph    h_1
+    value_of_life            -10.73       +0.37   -1.12
+    addiction_scalar_1        -1.96       -0.05   -0.37
+
+The system is nearly TRIANGULAR: addiction_scalar_1 moves participation without
+touching aleph, so aleph can be set first and participation walked in along it.
+
+**BUT THE ELASTICITIES DO NOT EXTRAPOLATE.** Three failed over factors of two:
+aleph on value_of_life is +0.37 locally and +0.87 wide; addiction_scalar_1 on
+participation is -1.96 at 2.1e-3 and -0.75 at 3e-4; its cross-effect on aleph is
+-0.05 at one point and +0.075 at another. Use them for DIRECTION and relative
+strength. Search by bisection.
+
+**AND ALEPH AND PARTICIPATION ARE COUPLED THROUGH THE DENOMINATOR.** aleph is
+value_of_life over average labour income, and users earn less, so cutting
+participation toward target raises average income and pulls aleph DOWN. Raising
+value_of_life 262 -> 267 still lost 2.4 points of aleph once participation fell
+20 per cent. The last per cent of each may have to be split rather than both
+landed exactly.
+
+**h_2 CONCEDED TO 5 PER CENT**, on the author's instruction, and hash-inert:
+severe_cost_burden_data is in model_hash's TARGET_CONSTANTS and the semantic hash
+is 97448db7bc at 0.08 and at 0.05. 0.101 is the data (SCF 2022; CEX agrees at
+0.1013), so eight was already a modelling choice and five is a second step along
+the same path. THE PAPER MUST STATE IT AS A CHOICE, 0.101 observed against 0.05
+imposed. size_homelessness is live again so h_1 has two instruments: the rung,
+which the lower target pushes down, and that one directly.
+
+**WHAT IS NOT READY FOR THE FULL CALIBRATION, and it is one thing.** A single
+global step cap cannot serve elasticities spanning 0.37 to 10.73 -- a factor of
+thirty, so one number gives some instruments thirty times too much travel and
+others thirty times too little. That is exactly what produced the nine-loop walk
+where aleph gained four per cent while participation lost eighty. When
+`freeze_to_three_block` goes to 0 the caps revert automatically to 0.5 and 1 per
+cent, straight back into it. Per-parameter sizing from the measured elasticities
+is the prerequisite.
+
+**AND THE NINETEEN FROZEN PARAMETERS ARE STALE.** They carry values calibrated at
+value_of_life 160 and the economy is now at 262 -- different prices, different
+average income. utility_cost_of_treatment, max_food_cost,
+relative_share_of_leisure, mu_homeless and discount_factor are all set for an
+economy that no longer exists and will move a long way when released, disturbing
+the three just landed.
+
+**FILES.** THREE_BLOCK_VECTOR.txt is the point. three_block_table.py prints
+aleph, participation, the onset and h_1 with the parameter beside each and the
+value the loop actually solved at. loop_trace.py --block N prints every moment of
+one named loop. evidence_*.log are the runs behind each number above.
+
 ## 11 September 10:25 UTC -- TWO DEFECTS IN THE REPORTING CHAIN, AND A QUESTION
 ## ABOUT WHICH LOOP IS THE BENCHMARK. The second one moves every number I have
 ## reported.
