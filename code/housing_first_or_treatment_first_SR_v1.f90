@@ -5657,6 +5657,37 @@
         ! wants the old economy passes multiple_find_if_addicted equal to
         ! multiple_of_probabilities_of_employment_if_addicted.
         real(8) :: multiple_find_if_addicted=1.0
+        ! OPENED 11 September, REVERSING AN INSTRUCTION FROM EARLIER THE SAME DAY.
+        ! The author had said "keep multiple_find_if_addicted to the current value
+        ! (about 28), and score it, but dont adjust it", and the comment at the
+        ! sud_homeless print still recorded that the moment deliberately had no
+        ! instrument. They have now said: "I think you should open the job finding
+        ! rate for those with Sud who are unemployed. It should hit the target of
+        ! homeless with Sud. The finding rate should rise I think, since we have
+        ! too many homeless with Sud". So it is opened, and that comment is
+        ! corrected rather than left to be read as still in force.
+        !
+        ! THE SIGN, AND IT IS A TRAP. This parameter is a DIVISOR:
+        !     probability_becoming_employed_if_addicted =
+        !         probability_becoming_employed / multiple_find_if_addicted
+        ! so at 28.54 the addicted find work 28.5 times LESS easily, and RAISING it
+        ! LOWERS the finding rate. The author's intent -- the finding rate should
+        ! rise -- therefore calls for this parameter to FALL. The instrument moves
+        ! opposite to the rate it is named after.
+        !
+        ! So sud_homeless ABOVE target wants a LOWER multiple, and the step is
+        ! multiple - adjuster*(model - target), which is negative-going exactly
+        ! then.
+        !
+        ! BOUNDS [1,100] are this parameter's own handover clamp. At 1.0 the
+        ! finding margin is unpenalised -- the addicted find work as easily as
+        ! anyone -- so 1.0 is a genuine floor: if the moment is still above target
+        ! there, no value of this parameter closes it.
+        real(8) :: multiple_find_adjuster=(1-freeze_to_three_block)*(2.d1)
+        real(8) :: distance_multiple_find=1
+        real(8) :: stopping_rule_multiple_find=10.d0**(-2)
+        real(8), parameter :: multiple_find_lo=1.d0
+        real(8), parameter :: multiple_find_hi=100.d0
         real(8), dimension(0:include_addiction,0:include_addiction,&
             0:include_addiction+include_heavy_vs_light_use_transitions,1:2) :: &
             addiction_probabilities,addiction_probabilities_percieved
@@ -8458,10 +8489,13 @@
             ! that file parses "MOMENT <key> ... model= ... target=" and nothing
             ! else. A MOMENT line puts the distance in the table.
             !
-            ! IT HAS NO INSTRUMENT AND THAT IS DELIBERATE. multiple_find_if_addicted
-            ! is held at 28.54 by the author, so this gap is a READING, not
-            ! something the loop can close. The same is true of lambda_m at
-            ! kappa_find_smi = 60.
+            ! IT HAS AN INSTRUMENT FROM 11 September: multiple_find_if_addicted,
+            ! opened on the author's instruction "I think you should open the job
+            ! finding rate for those with Sud who are unemployed". This comment
+            ! previously said it had none and that this was deliberate, which was
+            ! true of the earlier instruction on the same day and is no longer.
+            ! lambda_m at kappa_find_smi = 60 IS still held, and that half of the
+            ! old comment stands.
             !
             ! The 0.217 was written here as a literal beside a parameter that
             ! already holds it; it now reads sud_share_of_homeless, so the number
@@ -41074,6 +41108,7 @@
             (distance_employment_multiplier>stopping_rule_employment_multiplier) .OR. &
             (distance_utility_cost_of_treatment>stopping_rule_utility_cost_of_treatment) .OR. &
             (distance_kappa_phi_d_level>stopping_rule_kappa_phi_d_level) .OR. &
+            (distance_multiple_find>stopping_rule_multiple_find) .OR. &
             (distance_rent_to_price>stopping_rule_rent_to_price) .OR. &
             (distance_smallest_house_size>stopping_rule_smallest_house_size) .OR. &
             (distance_fixed_cost_to_moving>stopping_rule_fixed_cost_to_moving) .OR. &
@@ -42922,6 +42957,67 @@
                     else
 
                         distance_kappa_phi_d_level=0
+
+                    end if
+
+                    ! ===== sud_homeless, THE SUD SHARE OF THE HOMELESS =========
+                    ! multiple_find_if_addicted, TWO-SIDED, bounded [1,100].
+                    !
+                    ! OPENED 11 September on the author's instruction, reversing
+                    ! their earlier "score it, but dont adjust it" of the same day.
+                    !
+                    ! THE SIGN IS INVERTED RELATIVE TO THE PARAMETER'S NAME, which
+                    ! is why it is spelled out at both the declaration and here. The
+                    ! parameter DIVIDES the finding probability, so raising it makes
+                    ! the addicted find work LESS easily and puts MORE of them on the
+                    ! street. The author wants the finding rate to RISE because there
+                    ! are too many homeless with a disorder, and that means this
+                    ! parameter FALLS. The step is
+                    ! multiple - adjuster*(model - target), negative-going exactly
+                    ! when the model is above target, which is the current case:
+                    ! 0.2698 against 0.217.
+                    if (multiple_find_adjuster>0) then
+
+                        write(*,*) "model SUD share of the homeless =",&
+                            model_fraction_homeless_and_addicted(1),&
+                            " target =", sud_share_of_homeless
+                        write(*,*) "multiple_find_if_addicted=", multiple_find_if_addicted
+
+                        cap_old_1=multiple_find_if_addicted
+                        multiple_find_if_addicted=max(min(multiple_find_if_addicted-&
+                            multiple_find_adjuster*&
+                            (model_fraction_homeless_and_addicted(1)-&
+                            sud_share_of_homeless),&
+                            multiple_find_hi),multiple_find_lo)
+                        multiple_find_if_addicted=&
+                            cap_step(multiple_find_if_addicted,cap_old_1)
+
+                        distance_multiple_find=&
+                            abs(model_fraction_homeless_and_addicted(1)-&
+                            sud_share_of_homeless)
+
+                        write(*,*) "multiple_find_if_addicted=", multiple_find_if_addicted,&
+                            " distance_multiple_find=", distance_multiple_find,&
+                            merge(" LOWERED: finding rate RISES ",&
+                                  " RAISED:  finding rate FALLS ",&
+                                  model_fraction_homeless_and_addicted(1)>&
+                                  sud_share_of_homeless)
+
+                        ! THE FLOOR IS ECONOMIC, NOT NUMERICAL. At 1.0 the addicted
+                        ! find work as easily as anyone, so there is no penalty left
+                        ! to remove and the remaining gap belongs to something else.
+                        if (multiple_find_if_addicted<=multiple_find_lo) then
+                            write(*,*) "multiple_find_if_addicted IS AT ITS FLOOR 1.0:",&
+                                " the addicted already find work as easily as anyone",&
+                                " and the SUD share of the homeless is still",&
+                                model_fraction_homeless_and_addicted(1),&
+                                " against", sud_share_of_homeless,&
+                                ". The rest of the gap is not the finding margin's."
+                        end if
+
+                    else
+
+                        distance_multiple_find=0
 
                     end if
 
