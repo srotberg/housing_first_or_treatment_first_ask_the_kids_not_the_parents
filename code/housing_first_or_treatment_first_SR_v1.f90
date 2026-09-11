@@ -8091,8 +8091,23 @@
 
             ! THE SUD SHARE OF THE HOMELESS, the untargeted half of the same
             ! Gutwinski meta regression lambda_m is calibrated to.
-            write(*,*) "UNTARGETED SUD share of the homeless         model=",&
-                model_fraction_homeless_and_addicted(1), " observed=", 0.217d0
+            ! SCORED FROM 11 September, ON THE AUTHOR'S INSTRUCTION: "keep
+            ! multiple_find_if_addicted to the current value (about 28), and score
+            ! it, but dont adjust it". It printed as UNTARGETED, so the value and
+            ! the observed figure were visible but gaps.py never showed a GAP --
+            ! that file parses "MOMENT <key> ... model= ... target=" and nothing
+            ! else. A MOMENT line puts the distance in the table.
+            !
+            ! IT HAS NO INSTRUMENT AND THAT IS DELIBERATE. multiple_find_if_addicted
+            ! is held at 28.54 by the author, so this gap is a READING, not
+            ! something the loop can close. The same is true of lambda_m at
+            ! kappa_find_smi = 60.
+            !
+            ! The 0.217 was written here as a literal beside a parameter that
+            ! already holds it; it now reads sud_share_of_homeless, so the number
+            ! lives in one place.
+            write(*,*) "MOMENT sud_homeless SUD share of the homeless model=",&
+                model_fraction_homeless_and_addicted(1), " target=", sud_share_of_homeless
 
             ! DRUG POISONINGS AS A SHARE OF DEATHS AT 25 TO 44. The model
             ! has no cause of death; what it has is a survival probability
@@ -41360,9 +41375,16 @@
                             previous_gap_relative_share_of_housing,have_gap_relative_share_of_housing,&
                             relative_share_of_housing_adjuster_start,damp_adjuster_floor)
                         write(*,*) "relative_share_of_housing_adjuster=", relative_share_of_housing_adjuster
+                        ! THE GLOBAL CAP APPLIES HERE TOO. This assignment sits on
+                        ! an `if (...) X=&` line, so the pass that wrapped the other
+                        ! parameters in cap_step could not match it and gamma was
+                        ! left as the ONE calibrated parameter with no per loop cap.
+                        cap_old_1=relative_share_of_housing
                         if (tie_gamma_to_theta==0) relative_share_of_housing=&
                             min(max(relative_share_of_housing-relative_share_of_housing_adjuster*&
                             (model_avg_housing_spending_renters(1)-avg_rent_to_income_data),0.01),0.9) 
+                        relative_share_of_housing=&
+                            cap_step(relative_share_of_housing,cap_old_1)
                                                                      
                         ! WHILE THE TIE IS ON, gamma is not being calibrated and its
                         ! moment is not a miss: it is whatever 0.28*(1-theta)
@@ -42743,8 +42765,16 @@
                                     theta_proposed_1, " and the per loop cap of",&
                                     theta_max_rel_step, " allows", theta_capped_1
                             end if
+                            cap_old_1=relative_share_of_addiction_1
                             relative_share_of_addiction_1=&
                                 max(min(theta_capped_1,theta_hi),theta_lo)
+                            ! theta_max_rel_step is 0.001 and max_rel_step_all is
+                            ! 0.005, so this never binds while theta's own cap is
+                            ! the tighter of the two. It is here so that raising
+                            ! theta_max_rel_step by handover cannot silently put
+                            ! theta outside the global rule.
+                            relative_share_of_addiction_1=&
+                                cap_step(relative_share_of_addiction_1,cap_old_1)
 
                         end if
 
