@@ -43806,10 +43806,30 @@
                     end if
 
                     ! ========= h_share1, THE YOUNG'S SHARE OF THE HOMELESS ======
-                    ! newborn_endowment_scale, ONE-SIDED. Raising it takes the
-                    ! youngest off the street, so the share falls in it and a model
-                    ! ABOVE target calls for a LARGER endowment. Below target it can
-                    ! only make things worse, so it is HELD and says so.
+                    ! newborn_endowment_scale, NOW TWO-SIDED. Raising it takes the
+                    ! youngest off the street, so the share falls in it: a model
+                    ! ABOVE target calls for a LARGER endowment and one BELOW target
+                    ! for a SMALLER one.
+                    !
+                    ! IT USED TO BE ONE-SIDED and that is why this moment never moved.
+                    ! The rule of 3 September held the endowment whenever the share
+                    ! was BELOW target, on the reasoning that the instrument only
+                    ! pushes the share DOWN. That is half the instrument: it pushes
+                    ! the share down when it RISES, and up when it FALLS, and nothing
+                    ! stopped it falling. With band 1 sitting at 0.1885 against a
+                    ! target of 0.260 the gate was true at every loop of the full
+                    ! calibration, so "ENDOWMENT HELD" printed every loop, the scale
+                    ! stayed at 0.464544 from the first loop to the ninth, and h_1
+                    ! drifted to +10.9 per cent with its composition uncorrected.
+                    !
+                    ! The author, 11 September: "Just adjust the newborn endowment
+                    ! down to match the hshare1."
+                    !
+                    ! The update below is UNCHANGED and needs no sign work. The step
+                    ! is adjuster*(band1 - target), which is already negative when the
+                    ! share is below target, so removing the gate lowers the scale by
+                    ! exactly the symmetric amount. cap_step and the 0-to-50 bounds
+                    ! still apply in both directions.
                     if (newborn_endowment_adjuster>0) then
 
                         write(*,*) "share of the homeless in band 1 =",&
@@ -43817,33 +43837,22 @@
                             " target =", val_hud_share_1(1)
                         write(*,*) "newborn_endowment_scale=", newborn_endowment_scale
 
-                        if (homelessness_by_age_group(1,1)>val_hud_share_1(1)) then
+                        cap_old_1=newborn_endowment_scale
+                        newborn_endowment_scale=max(min(newborn_endowment_scale+&
+                            newborn_endowment_adjuster*&
+                            (homelessness_by_age_group(1,1)-val_hud_share_1(1)),&
+                            50.d0),0.d0)
+                        newborn_endowment_scale=&
+                            cap_step(newborn_endowment_scale,cap_old_1)
 
-                            cap_old_1=newborn_endowment_scale
-                            newborn_endowment_scale=max(min(newborn_endowment_scale+&
-                                newborn_endowment_adjuster*&
-                                (homelessness_by_age_group(1,1)-val_hud_share_1(1)),&
-                                50.d0),0.d0)
-                            newborn_endowment_scale=&
-                                cap_step(newborn_endowment_scale,cap_old_1)
+                        distance_newborn_endowment=&
+                            abs(homelessness_by_age_group(1,1)-val_hud_share_1(1))
 
-                            distance_newborn_endowment=&
-                                abs(homelessness_by_age_group(1,1)-val_hud_share_1(1))
-
-                            write(*,*) "newborn_endowment_scale=", newborn_endowment_scale,&
-                                " distance_newborn_endowment=", distance_newborn_endowment
-
-                        else
-
-                            write(*,*) "ENDOWMENT HELD: band 1 is",&
-                                homelessness_by_age_group(1,1), " against a target of",&
-                                val_hud_share_1(1), " so it is BELOW target. The",&
-                                " endowment only pushes the share DOWN, so moving it",&
-                                " here walks away from the target. Author's rule of",&
-                                " 3 September."
-                            distance_newborn_endowment=0
-
-                        end if
+                        write(*,*) "newborn_endowment_scale=", newborn_endowment_scale,&
+                            " distance_newborn_endowment=", distance_newborn_endowment,&
+                            merge(" LOWERED: band 1 is below target ",&
+                                  " RAISED:  band 1 is above target ",&
+                                  homelessness_by_age_group(1,1)<val_hud_share_1(1))
 
                     else
 
