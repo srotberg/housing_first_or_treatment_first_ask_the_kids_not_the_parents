@@ -52,6 +52,46 @@
 > worry about the odds ratio in the main calibration. worry about omega_c and the
 > other parameters. delta_d can be done later again"*.
 >
+> ## WHAT THE NIGHT OF 11 September BOUGHT. Four rules, each paid for.
+>
+> **1. ONE PARAMETER PER DIAGNOSTIC POINT, AND READ IT AT LOOP 0.** Three
+> conclusions were drawn and retracted in one night because a multi-parameter
+> trace was read as though it isolated one parameter: b was credited with
+> value_of_life's work, aleph's bracket was called a runaway on an eight-loop
+> window where eighteen brackets moved beside it, and a deliberate
+> two-parameter point blamed treatment cost for what the vouchers did. A loop-0
+> point costs four minutes and settles in one shot what a contaminated trace
+> argues about for an hour. **The wide, single-parameter test comes FIRST, not
+> after the theory.**
+>
+> **2. TEST SEPARABILITY, DO NOT ASSUME IT.** A list of moments was written down
+> as "not fighting value_of_life" without testing. Measured afterwards: only
+> utility_cost_of_treatment is separable. Both housing-side instruments drive
+> drug use HARDER than their own moments -- vouchers took b to +66 per cent,
+> size_homelessness to -30 while closing a third of its own gap. That coupling
+> is the model's mechanism, not a defect, and it was foreseeable.
+>
+> **3. COMPUTE HAPPENS ONLY WHILE A TURN IS OPEN.** The container boots at each
+> firing -- uptime 1.0 minutes, boot time identical to the trigger time -- and
+> dies when the turn ends. A backgrounded run gets the life of the turn and no
+> more. Launch-and-return produces one loop; holding the turn open for nine
+> minutes produced three. **Hold the turn.** `code/resume.sh` carries the live
+> parameter values forward from the newest worker log so a kill costs the loops
+> since the last resume rather than the whole run.
+>
+> **4. AN ADJUSTER SIZED FOR THE WRONG INSTRUMENT HIDES A SOLVED MOMENT.**
+> utility_cost_of_treatment moved treatment take up SEVENFOLD on a 14 per cent
+> change, while the 0.5 per cent per loop cap would have needed about forty loops
+> to travel that far. tau_u sat at +58 per cent all night and was one point away
+> from +1.6. Before concluding a moment is hard, measure its instrument's
+> strength once.
+>
+> **THE BENCHMARK THIS PRODUCED** is `code/BENCHMARK_VECTOR.txt`: value_of_life
+> 163.5, utility_cost_of_treatment 14.4, median |gap| 11.8 per cent, eleven of 26
+> moments inside ten, drug block solved. It is the limit of one-parameter tuning;
+> everything past it is simultaneous and needs the joint loop, which needs the
+> aleph decision.
+>
 > ## OVERNIGHT RUN, 11 September 02:46. LEAVE IT ALONE.
 >
 > The author: *"let it calibrate at night...."*. A calibration is running as a
