@@ -1,3 +1,37 @@
+## 11 September 08:05 UTC -- FOUR OF FIVE INSTRUMENTS TESTED, ONE SEPARABLE. The
+## drug margin is the most elastic thing in the model.
+
+relative_share_of_leisure 4.411 -> 5.2, plus 17.9 per cent, one parameter, loop 0:
+
+    omega_l   +16.3% -> +11.9%   a quarter of its own gap closed
+    b          +4.2% -> +19.4%
+    lambda_d   +3.4% -> +19.8%
+    theta      -2.3% ->  -5.9%
+    median     12.9% ->  16.9%, twelve of 26 inside ten down to eleven
+
+Discarded. Weak on its own moment, strong on the drug block, same shape as
+size_homelessness.
+
+**THE TALLY SO FAR**
+
+    utility_cost_of_treatment   SEPARABLE    tau_u +58 -> +1.6, drug block still
+    probability_of_voucher...   coupled      pi_V lands, b to +66
+    size_homelessness           coupled      a third of its gap, drug use -30
+    relative_share_of_leisure   coupled      a quarter of its gap, drug use +19
+    max_food_cost               untested
+
+**SO IT IS A PROPERTY OF THE MODEL, NOT A RUN OF BAD LUCK.** Almost anything that
+changes the household's budget or its time allocation changes drug use MORE than
+it changes its own target, because the decision to use is the most elastic margin
+here. The one exception, the treatment cost, acts on a decision taken only by
+households that ALREADY have the disorder, so it cannot feed back to the
+extensive margin.
+
+**WHAT THAT MEANS FOR THE REMAINING WORK.** One-parameter tuning is finished: it
+cannot improve pi_V, h_1 or omega_l without breaking the drug block that four
+measured points were spent landing. Those three need the joint loop, which needs
+the aleph decision. The benchmark at 162.2 stands as the night's result.
+
 ## 11 September 07:52 UTC -- THE MORNING SUMMARY. Benchmark, full table, and the
 ## five decisions. Everything below is measured, committed and reproducible.
 
