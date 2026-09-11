@@ -89,6 +89,69 @@ channel; at this count it is nearer 0.6 to 0.9, COMPARABLE RATHER THAN DOMINANT.
 So it is unlikely on its own to move the Housing First against Treatment First
 ranking, which was the question it was built to answer.
 
+## THE TWO CHILD TERMS ARE CONSECUTIVE, NOT ALTERNATIVES
+
+Author, 11 September: *"in the utility we still need to include the weight on the
+newborn (which we can explain is when the child actually becomes a member of
+society)"*. Both terms stay, and together they cover one child's life once:
+
+    CHILDHOOD    the contemporaneous term specified above. The child lives in
+                 the household, consumes (c/xi) and (h/xi), and gets no drugs.
+                 Weighted omega_c, counted kappa = xi - 1 times.
+
+    ADULTHOOD    the existing newborn term, expected_child_value, which is the
+                 child's VALUE FUNCTION at model age 1 -- its whole adult life
+                 from 26 on. Weighted omega_c, collected when the parent dies,
+                 which is the moment the child becomes a member of society.
+
+NO DOUBLE COUNTING: the first is flow utility during childhood, the second is
+lifetime value from adulthood. Back to back, not overlapping.
+
+ONE omega_c MULTIPLIES BOTH, so calibrating it on the 18 per cent moment pins the
+weight on childhood and on adulthood at once, and omega_c = 1 internalises both.
+That is what makes the optimal SUD the optimum for the whole child life rather
+than half of it.
+
+### THE LEVEL IS TREATED OPPOSITELY IN THE TWO, AND THIS IS A TRAP
+
+The NEWBORN term is multiplied by the probability of dying this period, so it
+MUST STAY DIFFERENCED. The level version pays a household more the likelier it is
+to die, measured at 0.058 utils REWARDING the disorder, which is why the
+differencing at line 30158 exists.
+
+The CONTEMPORANEOUS term carries no death probability at all, so its level is
+correct and it MUST NOT BE DIFFERENCED.
+
+Same omega_c, opposite handling. Getting it backwards would be invisible in the
+output.
+
+### A stock and a flow, which need not match
+
+The flow-utility children are a STOCK -- xi - 1 = 0.565 equivalent children
+present at age forty. The newborn is a FLOW -- exactly one replacement per death.
+They are different objects and the model's demographics do not target fertility
+anyway. Worth a sentence in the paper so it is not read as an inconsistency.
+
+## WHAT THE MODEL CAN THEN SAY: THE OPTIMAL DRUG USE
+
+Author: *"the nice thing about this paper is that i can say something about what
+the optimal drug use is"*, and *"by raising omega_c=1 we know what the optimal
+SUD is"*. The wedge is (1 - omega_c) times the child terms, so the social optimum
+is the omega_c = 1 allocation, which the model computes directly.
+
+CALIBRATING omega_c IS WHAT MAKES THE OPTIMUM A MEASUREMENT RATHER THAN AN
+ASSUMPTION. Assume omega_c and the optimum is assumed with it; fit it to the
+parent against non-parent gap and the optimum inherits that moment's discipline.
+That is the argument for this calibration strategy.
+
+On the CURRENT specification, wage channel only, omega_c = 1 gives b = 0.0732
+against 0.0878 at omega_c = 0 -- the optimum is about a sixth below laissez
+faire, NOT ZERO. Against that, universal Housing First takes use to 15.16 per
+cent and universal Treatment First to 0.13. BOTH MISS, IN OPPOSITE DIRECTIONS,
+and the optimum lies between them. The graduated clawback is the instrument that
+lands between the two corners. These figures will move once the contemporaneous
+channel is in, since it widens the wedge.
+
 ## Decisions already taken
 
 **CHILDREN ARE EXOGENOUS TO THE DRUG CHOICE.** n must not depend on the addiction
