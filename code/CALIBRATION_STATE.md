@@ -86,6 +86,42 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+## 11 September 10:52 UTC -- LOOPS 7 TO 9, AND THE MATCHED ARM IS NOW RUNNING.
+
+    loop    value_of_life   aleph      b         lambda_d
+    2         163.011      56.680    6.7567%    2.5495%
+    5         165.468      55.585    6.1582%    2.3625%
+    7         167.127      55.517    5.5882%    2.1500%
+    8         167.963      55.588    5.4124%    2.0802%
+    9         168.803      55.237    5.4977%    2.1236%
+
+Eight loops. The instrument rose 4.1 per cent, every loop at its cap and every
+loop in the direction its own bracket wants. Aleph went 56.680 -> 55.237, DOWN
+2.5 per cent, against a target of 80. Participation went from -24 per cent off
+target to -38, disorder from -31 to -42.
+
+**ALEPH IS PINNED AT ABOUT 55.5 WHATEVER THE INSTRUMENT DOES.** Six of the eight
+readings sit between 55.2 and 55.6. That is not a slow instrument, it is a flat
+one, and the bracket is spending the whole per-loop budget on it.
+
+**SO THE HIGH ARM WAS STOPPED AND A MATCHED LOW ARM STARTED**, tag 5e62b2fe3a:
+the benchmark vector with value_of_life = 140 and NOTHING else changed, to be
+read at loop 5 against the high arm's loop 5. The high arm's evidence was made
+by loop 9 and further loops add nothing; the matched pair is what the aleph
+decision actually needs, and it is the wide single-parameter test ENGINE rule 1
+asks for. The high arm's log is preserved as
+`code/evidence_high_aleph_arm.log`.
+
+**WHY LOOP 5 AND NOT LOOP 0.** Rule 1's usual "read it at loop 0" cannot be used
+any more: loop 1 is the leg whose child penalty comes off the priming solve.
+Both arms are therefore read at the same late loop, which is a matched
+comparison whatever the alternating map is doing to the level.
+
+**WHAT THE PAIR WILL SAY.** If aleph at ~142 is near 55 as well, value_of_life
+buys no aleph anywhere in this range and the gap is not purchasable with it --
+pin it. If b at ~142 is much closer to 8.9 per cent, that also prices what the
+aleph bracket has been costing the drug block.
+
 ## 11 September 10:34 UTC -- LOOP 6. FIVE LOOPS OF THE SAME PATTERN NOW, MONOTONE
 ## IN BOTH DIRECTIONS.
 
