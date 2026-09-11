@@ -22,7 +22,22 @@
         ! market adjuster the drug market, and the inheritance amount the
         ! bequests. Freezing those would not hold the model still, it would stop
         ! it being an equilibrium.
-        integer, parameter :: freeze_to_three_block=1
+        ! THE FULL CALIBRATION IS ON, 11 September, on the author's word.
+        ! Setting this to 0 releases sixteen adjusters, unpins omega_c so the
+        ! child use gap is measured again (two solves a loop), restores the
+        ! eleven distances neutralised in the do-while, and returns the step caps
+        ! to the author's original half a per cent and one per cent.
+        !
+        ! theta is NOT released: hold_theta is independent of this switch, for
+        ! the reason recorded there.
+        !
+        ! AUDITED BEFORE FLIPPING, because theta taught us the declared adjuster
+        ! is not always the one the update reads. Sixteen of the nineteen have an
+        ! adjuster used in code and genuinely release. The three that do not are
+        ! intended: money_cost_of_treatment and discount_factor_impatient have
+        ! adjusters declared and never used, so nothing was held and nothing is
+        ! freed, and relative_share_of_addiction is theta.
+        integer, parameter :: freeze_to_three_block=0
 
         ! THETA IS HELD INDEPENDENTLY OF THE THREE-BLOCK SWITCH. The author,
         ! 11 September: *"I think we can hold theta constant in the full
