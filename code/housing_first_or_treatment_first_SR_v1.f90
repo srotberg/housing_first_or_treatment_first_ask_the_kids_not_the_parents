@@ -24,6 +24,17 @@
         ! it being an equilibrium.
         integer, parameter :: freeze_to_three_block=1
 
+        ! THETA IS HELD INDEPENDENTLY OF THE THREE-BLOCK SWITCH. The author,
+        ! 11 September: *"I think we can hold theta constant in the full
+        ! calibration"*. Tying it to freeze_to_three_block would release it at
+        ! exactly the moment it is meant to stay put, since that switch goes to
+        ! zero when the full set is calibrated.
+        !
+        ! The drug spending share sat at 13.74 per cent against a 14.098 target
+        ! when it was last measured at a settled vector, which is -2.5 per cent
+        ! and close enough to hold.
+        integer, parameter :: hold_theta=1
+
         integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
         real(8) :: probability_of_voucher_benchmark_used=0.06
@@ -3095,7 +3106,7 @@
         !
         ! Held now on the author's instruction: *"I think we can hold theta
         ! constant in the full calibration"*.
-        real(8) :: relative_share_of_addiction_adj=(1-freeze_to_three_block)*(5*10.d0**(-2))
+        real(8) :: relative_share_of_addiction_adj=(1-hold_theta)*(5*10.d0**(-2))
         real(8) :: distance_relative_share_of_addiction_1
         real(8) :: stopping_rule_relative_share_of_addiction_1=10.d0**(-3)
 
@@ -40928,7 +40939,7 @@
              stopping_rule_probability_of_becoming_addicted) .OR. &
             ((freeze_to_three_block==0) .AND. (distance_lambda_addiction>stopping_rule_lambda_addiction)) .OR. &
             (distance_drug_market>stopping_rule_drug_market) .OR. &
-            ((freeze_to_three_block==0) .AND. (distance_relative_share_of_addiction_1>stopping_rule_relative_share_of_addiction_1)) .OR. &
+            ((hold_theta==0) .AND. (distance_relative_share_of_addiction_1>stopping_rule_relative_share_of_addiction_1)) .OR. &
             (distance_addiction_scalar>stopping_rule_addiction_scalar) .OR. &
             (distance_value_of_life>stopping_rule_value_of_life) .OR. &
             ((freeze_to_three_block==0) .AND. (distance_max_food_cost>stopping_rule_max_food_cost)) .OR. &
