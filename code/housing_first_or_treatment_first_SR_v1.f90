@@ -2388,7 +2388,13 @@
         ! 0.0116 implied. It buys the homelessness rate by moving the target to
         ! the model rather than the model to the target, and THE PAPER MUST SAY
         ! SO wherever this number appears, as it must for severe_cost_burden_data.
-        real(8), parameter :: fraction_homeless_data=0.01300
+        ! 0.01160 -> 0.01200 -> 0.01300 -> 0.01000, on the author's instruction of
+        ! 11 September: "1% homelessness rate for a real h1". "Real" is the point:
+        ! until bottom_productivity_level was raised, homelessness was arithmetic
+        ! -- 95.5 per cent of the homeless could not afford the smallest unit at
+        ! any price -- so size_homelessness had nothing to act on and h_1 did not
+        ! control its own target.
+        real(8), parameter :: fraction_homeless_data=0.01000
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe
@@ -2500,7 +2506,13 @@
         ! CEX); 0.05 is an imposed modelling choice and the paper has to say so. In
         ! model_hash's TARGET_CONSTANTS, so moving it leaves the semantic hash alone
         ! and the archive survives.
-        real(8), parameter :: severe_cost_burden_data=0.05d0
+        ! 0.08 -> 0.05 -> 0.065 -> 0.05 -> 0.101, THE DATA VALUE. The author,
+        ! 11 September: "I need the bottom productivities to be such that you hit
+        ! both 1% homelessness rate for a real h1 and 10.1% spending over 50% of
+        ! their expenditures on rent for h2". 0.101 is SCF 2022 (CEX gives
+        ! 0.1013), so this target is no longer an imposed modelling choice and the
+        ! caveat the paper was to carry for it is retired.
+        real(8), parameter :: severe_cost_burden_data=0.101d0
         real(8), parameter :: fraction_light_users=0.731
         
         integer, parameter :: target_HO_of_old=1
