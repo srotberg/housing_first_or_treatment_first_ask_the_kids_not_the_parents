@@ -86,6 +86,40 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+**THE MECHANISM, MEASURED. THE CHILD PENALTY ALTERNATES BETWEEN TWO ECONOMIES
+AND NEVER SETTLES IN EITHER.**
+
+`compute_expected_child_value` is called 42 lines into
+`solve_value_function_and_policy_functions`, BEFORE the backward induction, and
+it reads whatever `value_function` currently holds. So the child penalty is an
+INPUT to a solve, computed from the PREVIOUS solve, and it is never iterated to
+a fixed point.
+
+The previous solve alternates. From loop 2 the omega counterfactual runs first
+and restores `weight_on_child` but not `value_function`, so the benchmark's
+child penalty is computed off a world in which parents place NO weight on
+children -- and the next counterfactual's is computed off the benchmark. The
+run's own prints, node 1 of `expected_child_value`:
+
+    solve 1   priming              0.000    value function still the sentinel
+    solve 2   loop 1, benchmark  -69.162    read off the PRIMING solve
+    solve 3   loop 2, omega cf   -69.203    read off solve 2
+    solve 4   loop 2, benchmark  -64.009    read off the COUNTERFACTUAL
+    solve 5   loop 3, omega cf   -67.088    read off solve 4
+
+It is a two-cycle, not a convergence: 69.16, 69.20, 64.01, 67.09. Neither leg
+ever sees its own child term.
+
+That is why the moment omega_c is bracketed on moves a hundred times further
+than omega_c does. The child use gap is a ratio of two legs, each solved with
+the OTHER leg's child penalty.
+
+**AND IT EXPLAINS LOOP 1 TOO.** Loop 1 is not the clean leg either -- its child
+penalty is read off the PRIMING solve, whose value function was solved with no
+child term at all. There is no loop in the run whose child term is consistent
+with its own solve. Loop 1 is simply the one whose inconsistency happens to land
+near the targets.
+
 **THE CAP CANNOT EXPLAIN IT, CHECKED RATHER THAN ASSERTED.** 57 parameters own
 a distance and 23 assignments go through `cap_step`. Every name that owns a
 distance and is never capped is either a handover assignment, an equilibrium
