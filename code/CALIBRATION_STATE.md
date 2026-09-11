@@ -87,6 +87,43 @@ at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
 
+## 11 September 12:05 UTC -- RETRACTION: THERE IS NO EVIDENCE OF A CLIFF. THE
+## 160.8 TO 161.6 DROP IS THE SAME SIZE AS THE RUN'S OWN OSCILLATION.
+
+The entry below says the 160.80 -> 161.60 step is a cliff and fits the
+abstention corner. Checked against the log, neither half holds.
+
+**THE THREE DRUG MOMENTS FELL IN PROPORTION**, which is not what a corner does:
+
+    loop 7 -> 8    b            -11.6%
+                   experimenters -11.4%   (0.055274 -> 0.048949)
+                   lambda_d      -11.8%
+
+An abstention corner would take a band of households out of ONE margin and show
+up as experimenters falling faster than disorder, or the reverse. A uniform
+-11.5 per cent across all three is the ordinary extensive-margin response that
+has been documented since last night, only larger.
+
+**AND -11.6 PER CENT IS INSIDE THIS RUN'S OWN LOOP-TO-LOOP NOISE.** The child use
+gap, on the same loops and essentially fixed parameters, moves
+
+    -10.8%  +8.6%  -14.1%  +8.0%  -1.6%  -11.2%
+
+so a single-loop move of eleven per cent is the amplitude of the alternating map,
+not a signal above it. b itself oscillated +7.4, +8.1, +4.9, +6.8 across loops 2
+to 5 with value_of_life climbing monotonically the whole time.
+
+**WHAT STILL STANDS.** The readings stand: loop 7 at value_of_life 160.80 gave b
++1.3 per cent, which is the best the model has produced, and the four-point map
+is four readings. What does NOT stand is the structural story told about the last
+step, and with it the claim that the workable interval is half a per cent wide.
+The interval may be wider; one loop cannot say.
+
+**WHAT WOULD SETTLE IT** is a point at 161.2 read at the SAME loop index, which
+costs about half an hour. It is worth having before the pin is chosen, but it is
+not worth having before the alternating map is fixed, because the map is what
+makes a single-loop reading ambiguous in the first place.
+
 **CORRECTION AND THE MAP IT GIVES.** The loop-6 row above was first written as
 159.20; it is 160.00. The prints are POST-update, so loop k solved at print k-1
 and loop 1 solved at the handover. With that fixed the arm is a clean map of b
