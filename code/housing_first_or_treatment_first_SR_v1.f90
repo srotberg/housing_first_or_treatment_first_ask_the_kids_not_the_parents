@@ -1282,7 +1282,30 @@
         ! it is absorbed where it belongs.
         !
         ! The default is the file's own level at age 26.
+        ! THE HUD AGE PROFILE OF THE HOMELESS, five bands, moved here from inside
+        ! print_all_moments on 11 September so that the newborn endowment's
+        ! bracket can read the same numbers the report prints against.
+        real(8), parameter, dimension(5) :: val_hud_share_1=&
+            (/0.260d0,0.272d0,0.210d0,0.184d0,0.075d0/)
+
+        ! SMI ONSET, BRACKETED AT LAST. The author, 11 September: "why are
+        ! smi_onset_level (p_m), newborn_endowment_scale (h_share1) frozen this
+        ! round? shouldnt they be part of the calibration?" and then "shouldnt
+        ! you be able to update them exactly like every other parameter?!"
+        !
+        ! Yes. Nothing was ever special about them: they simply never had a
+        ! bracket written, and were moved by the OUTER search instead -- git
+        ! records zero commits ever containing smi_onset_level_adjuster. The
+        ! outer search exists to hunt across VECTORS, not because these two
+        ! resist a bracket.
+        !
+        ! Sign: a higher onset means more of the population acquires serious
+        ! mental illness, so prevalence RISES in it and the update subtracts the
+        ! gap. directions_table agrees: p_m -> smi_onset_level, 'lower'.
         real(8) :: smi_onset_level=0.003306
+        real(8) :: smi_onset_level_adjuster=5*10.d0**(-3)
+        real(8) :: distance_smi_onset_level=1
+        real(8) :: stopping_rule_smi_onset_level=10.d0**(-3)
 
         ! 1 uses the shape and level, 0 restores the prevalence identity. Both
         ! are coherent; code/simple has always done it the first way.
@@ -3629,7 +3652,26 @@
         ! compensate for a ladder. The author's reading, and it is the right one.
         real(8) :: rung_ratio_h3=2.d0
         real(8) :: rung_ratio_h4=3.d0
+        ! THE NEWBORN ENDOWMENT, BRACKETED, AND ONE-SIDED.
+        !
+        ! Its moment is band 1's share of the homeless against
+        ! val_hud_share_1(1) = 0.260. Raising the endowment gives the youngest --
+        ! who are almost all employed -- the liquidity to rent, which takes them
+        ! off the street, so the share FALLS in this parameter and a model ABOVE
+        ! target calls for a LARGER endowment.
+        !
+        ! ONE-SIDED, on the author's rule of 3 September: "If you see that you
+        ! need to bring up the youngest endowment since their share is too high,
+        ! then you can turn on that instrument. Keep it off if the share of young
+        ! is below the data". Below target the endowment can only push the share
+        ! further down, so the guard HOLDS it rather than moving it the wrong
+        ! way. Same shape as the THETA HELD guard, and it announces itself for
+        ! the same reason: a parameter that is held has to be distinguishable
+        ! from one that has converged.
         real(8) :: newborn_endowment_scale=1.d0
+        real(8) :: newborn_endowment_adjuster=2*10.d0**(-1)
+        real(8) :: distance_newborn_endowment=1
+        real(8) :: stopping_rule_newborn_endowment=10.d0**(-2)
         ! THE ENDOWMENT ENTERS THE BUDGET CONSTRAINT, NOT THE INITIAL
         ! DISTRIBUTION, on the author's instruction of 1 September: "instead of
         ! pegging them to a financial grid, just give them an endowment only in
@@ -7228,8 +7270,9 @@
             real(8) :: val_earn_total_1,val_earn_bottom_1,val_earn_top_1
             real(8), dimension(5) :: val_hud_rate_1=(/0.003161d0,0.003378d0,&
                 0.002912d0,0.002496d0,0.000770d0/)
-            real(8), dimension(5) :: val_hud_share_1=(/0.260d0,0.272d0,&
-                0.210d0,0.184d0,0.075d0/)
+            ! val_hud_share_1 is now MODULE level, beside the other targets, so
+            ! the newborn endowment's bracket can read the same array this block
+            ! prints against. One number in one place.
 
             w2o_1=model_total_net_wealth(1)/max(model_GDP_incl_imput_rent(1),10.d0**(-12))
             vsl_1=model_value_of_life(1)/max(model_average_labour_income(1),10.d0**(-12))
@@ -40631,7 +40674,9 @@
             (distance_penalty_child_addicted>stopping_rule_penalty_child_addicted) .OR. &
             (distance_penalty_child_homeless>stopping_rule_penalty_child_homeless) .OR. &
             (distance_labor_income_tax_rate>stopping_rule_labor_income_tax_rate) .OR. &
-            (distance_sd_permanent_productivity>stopping_rule_sd_permanent_productivity) .OR. (loop_count<1))
+            (distance_sd_permanent_productivity>stopping_rule_sd_permanent_productivity) .OR. &
+            (distance_smi_onset_level>stopping_rule_smi_onset_level) .OR. &
+            (distance_newborn_endowment>stopping_rule_newborn_endowment) .OR. (loop_count<1))
                         
             ! SIGMA_Y, on the share of productivity held by the bottom half.
             ! The share FALLS in sigma_y, so a model share above target means
@@ -43250,6 +43295,81 @@
                     else
 
                         distance_kappa_uem=0
+
+                    end if
+
+                    ! ================= p_m, THE SMI POPULATION SHARE ============
+                    ! smi_onset_level, on the author's instruction of 11 September
+                    ! that this be calibrated like every other parameter. Prevalence
+                    ! RISES in the onset, so the update subtracts the gap.
+                    if (smi_onset_level_adjuster>0) then
+
+                        write(*,*) "model_smi_prevalence(1)=", model_smi_prevalence(1),&
+                            " target=", model_smi_prevalence_target(1)
+                        write(*,*) "smi_onset_level=", smi_onset_level
+
+                        cap_old_1=smi_onset_level
+                        smi_onset_level=max(min(smi_onset_level-&
+                            smi_onset_level_adjuster*&
+                            (model_smi_prevalence(1)-model_smi_prevalence_target(1)),&
+                            1.d0),10.d0**(-8))
+                        smi_onset_level=cap_step(smi_onset_level,cap_old_1)
+
+                        distance_smi_onset_level=&
+                            abs(model_smi_prevalence(1)-model_smi_prevalence_target(1))
+
+                        write(*,*) "smi_onset_level=", smi_onset_level,&
+                            " distance_smi_onset_level=", distance_smi_onset_level
+
+                    else
+
+                        distance_smi_onset_level=0
+
+                    end if
+
+                    ! ========= h_share1, THE YOUNG'S SHARE OF THE HOMELESS ======
+                    ! newborn_endowment_scale, ONE-SIDED. Raising it takes the
+                    ! youngest off the street, so the share falls in it and a model
+                    ! ABOVE target calls for a LARGER endowment. Below target it can
+                    ! only make things worse, so it is HELD and says so.
+                    if (newborn_endowment_adjuster>0) then
+
+                        write(*,*) "share of the homeless in band 1 =",&
+                            homelessness_by_age_group(1,1),&
+                            " target =", val_hud_share_1(1)
+                        write(*,*) "newborn_endowment_scale=", newborn_endowment_scale
+
+                        if (homelessness_by_age_group(1,1)>val_hud_share_1(1)) then
+
+                            cap_old_1=newborn_endowment_scale
+                            newborn_endowment_scale=max(min(newborn_endowment_scale+&
+                                newborn_endowment_adjuster*&
+                                (homelessness_by_age_group(1,1)-val_hud_share_1(1)),&
+                                50.d0),0.d0)
+                            newborn_endowment_scale=&
+                                cap_step(newborn_endowment_scale,cap_old_1)
+
+                            distance_newborn_endowment=&
+                                abs(homelessness_by_age_group(1,1)-val_hud_share_1(1))
+
+                            write(*,*) "newborn_endowment_scale=", newborn_endowment_scale,&
+                                " distance_newborn_endowment=", distance_newborn_endowment
+
+                        else
+
+                            write(*,*) "ENDOWMENT HELD: band 1 is",&
+                                homelessness_by_age_group(1,1), " against a target of",&
+                                val_hud_share_1(1), " so it is BELOW target. The",&
+                                " endowment only pushes the share DOWN, so moving it",&
+                                " here walks away from the target. Author's rule of",&
+                                " 3 September."
+                            distance_newborn_endowment=0
+
+                        end if
+
+                    else
+
+                        distance_newborn_endowment=0
 
                     end if
 

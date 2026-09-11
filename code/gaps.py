@@ -239,6 +239,15 @@ OWN = [
     # not this economy's parameter.
     ('sd_permanent_productivity', 'sigma_y'),
     ('kkk_sigma_scale', 'sigma_y'),
+    # BOTH OF THESE ARE FORTRAN BRACKETS FROM 11 September, not outer-search
+    # mappings any more. The author: "shouldnt you be able to update them
+    # exactly like every other parameter?!" -- and the answer was yes, nothing
+    # was special about them. git records ZERO commits ever containing
+    # smi_onset_level_adjuster or newborn_endowment_scale_adjuster: they never
+    # had brackets, they were moved by the outer search, and a single
+    # run_one_point therefore left them frozen. They now update inside the
+    # loop like the rest, with the endowment's one-sided rule ported as a
+    # guard that announces itself (ENDOWMENT HELD).
     ('smi_onset_level', 'p_m'),
     # BOTH ADDED ON THE AUTHOR'S INSTRUCTION AND BOTH MISSED HERE. next_batch
     # gained them and gaps.py did not, which is the third time these two files
