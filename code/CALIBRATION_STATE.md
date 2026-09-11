@@ -1,3 +1,38 @@
+## 11 September 04:30 UTC -- T = 26 FOR WELFARE, UNDER-18 FOR THE MODEL. The
+## author's resolution of the mismatch, and why it costs the calibration nothing.
+
+The author: *"or we can just use the number of children below age 18 and just
+apply it in the computation untilk age 25"*.
+
+**n(a) HAS TWO ROLES AND ONLY ONE OF THEM CHANGES.**
+
+    THE PARENT'S PROBLEM -- xi = sqrt(1+n(a)) and the externality
+    omega_c*(xi-1)*u(X_K) -- STAYS ON THE MEASURED UNDER-18 COUNT. These are
+    calibrated objects. Extending them to 25 would move xi by 0.65 per cent and
+    would badly distort ages 44 and over, where the extra "children" are adults
+    living at home who should not carry a child externality in a model whose
+    child harm is consumption dilution during childhood.
+
+    THE CHILDHOOD VALUE FUNCTION -- pure welfare accounting, not yet built --
+    RUNS TO 26, using the same per-child flow u(X_K(s)) that the under-18 xi
+    implies.
+
+**THE ERROR THIS BUYS IS SMALL AND ITS SIGN IS KNOWN.** For the last eight years
+the child consumes at a standard computed for a household that no longer counts
+it, so those years are valued slightly generously. The alternative is dropping
+eight of twenty-six childhood years, 31 per cent of the childhood, entirely.
+The second error is far larger than the first.
+
+**AND IT COSTS THE RUNNING CALIBRATION NOTHING**, because the parent's problem is
+untouched. The specification:
+
+    V_K(k,s) = u(X_K(s)) + beta*[ phi(s)*E[V_K(k+1,s')|s] + (1-phi(s))*V_adult(s) ]
+    V_K(26,s) = V_adult(s)
+
+with X_K built from the under-18 xi throughout. Childhood ends at 26 or at the
+parent's death, whichever is first, which is already the model's own rule for
+when a child enters adult life with an inherited draw.
+
 ## 11 September 04:25 UTC -- CHILDREN STAY UNDER 18. THE DECISION, AND THE
 ## MEASUREMENT THAT SETTLED IT.
 
