@@ -3083,7 +3083,19 @@
         real(8), parameter :: unemployment_rate_data=0.049
         real(8), parameter :: unemployment_rate_sud_data=0.1625
 
-        real(8) :: relative_share_of_addiction_adj=5*10.d0**(-2)
+        ! THETA'S OPERATIVE ADJUSTER, AND THE ONE THE FREEZE HAS TO NAME.
+        !
+        ! relative_share_of_addiction_ADJUSTER is a different variable, declared
+        ! elsewhere and not used in theta's update. Freezing that one held
+        ! nothing: theta ran live through every run of 11 September while being
+        ! reported as held, moving 0.267182 to 0.26656 and taking the drug
+        ! spending share from -2.5 per cent to +8.2. Two names one syllable
+        ! apart, and the only way to tell them apart is to follow the one the
+        ! update actually reads.
+        !
+        ! Held now on the author's instruction: *"I think we can hold theta
+        ! constant in the full calibration"*.
+        real(8) :: relative_share_of_addiction_adj=(1-freeze_to_three_block)*(5*10.d0**(-2))
         real(8) :: distance_relative_share_of_addiction_1
         real(8) :: stopping_rule_relative_share_of_addiction_1=10.d0**(-3)
 
