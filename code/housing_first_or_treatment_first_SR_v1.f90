@@ -5355,11 +5355,19 @@
         ! of b on value_of_life going -8, -8, -63, -80. The first two are the
         ! model; the last two are no slope this model has.
         !
-        ! So each economy keeps its OWN previous child penalty and reads that
-        ! back, which is an ordinary fixed point iteration per economy. Twenty
-        ! eight reals each and no extra solve.
+        ! So ONE slot holds the CALIBRATED economy's child penalty, computed at
+        ! the end of each calibrated solve from that solve's own value function
+        ! and read back at the start of the next one -- an ordinary fixed point
+        ! iteration, riding along with the calibration.
+        !
+        ! The counterfactual neither reads it meaningfully nor writes it. The
+        ! author, 11 September: *"when you solve with omega_c=0 you just use the
+        ! V(1) from the calibrated omega_c"*, then *"well, actually when
+        ! omega_c=0 you dont need v(1)"* -- both true, and the second is why a
+        ! second slot was removed again: omega_c multiplies the child term and
+        ! nothing else, so at omega_c=0 the term is zero whatever V(1) says. All
+        ! that matters is that the counterfactual does not overwrite the slot.
         real(8), dimension(employment_grid_size,0:1,1:2) :: expected_child_value_own=0
-        real(8), dimension(employment_grid_size,0:1,1:2) :: expected_child_value_cf=0
         integer :: solving_omega_counterfactual=0
 
         ! WHETHER expected_child_value HAS EVER BEEN COMPUTED FOR REAL.
@@ -20414,15 +20422,7 @@
         ! slot belonging to the economy that was solved. See the declaration.
         if (include_child_in_continuation==1) then
 
-            if (solving_omega_counterfactual==1) then
-
-                expected_child_value=expected_child_value_cf
-
-            else
-
-                expected_child_value=expected_child_value_own
-
-            end if
+            expected_child_value=expected_child_value_own
 
             write(*,*) "expected_child_value=", expected_child_value
 
@@ -20987,19 +20987,19 @@
         ! PRODUCED and store it where only this economy reads it back. Computing
         ! here rather than at the top is what makes it this economy's own
         ! previous pass instead of whatever happened to be solved last.
-        if (include_child_in_continuation==1) then
+        ! ONLY THE CALIBRATED ECONOMY WRITES THE SLOT.
+        !
+        ! The omega counterfactual sets weight_on_child to zero, and omega_c
+        ! multiplies the child term and nothing else, so that solve does not need
+        ! V(1) at all -- the term is zero whatever is in the array. What it must
+        ! NOT do is leave its own value function's child penalty behind, which is
+        ! exactly what it used to do: the benchmark then read a penalty built in
+        ! a world where parents place no weight on children.
+        if ((include_child_in_continuation==1) .AND. (solving_omega_counterfactual==0)) then
 
             call compute_expected_child_value(time_period)
 
-            if (solving_omega_counterfactual==1) then
-
-                expected_child_value_cf=expected_child_value
-
-            else
-
-                expected_child_value_own=expected_child_value
-
-            end if
+            expected_child_value_own=expected_child_value
 
         end if
     
