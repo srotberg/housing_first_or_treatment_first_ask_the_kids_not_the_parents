@@ -23386,20 +23386,32 @@
             
                 if (unemployment_index>threshold_addiction_index) then
                         
-                    flow_utility_1=scaled_household_size(age_index)*&
+                    flow_utility_1=(sqrt_household_size(age_index)**&
+                        ((risk_aversion_consumption-1)*(1-relative_share_of_addiction_2)))*&
                         ((housing_status_utility_function(future_housing_status_index_1,age_index,ownership_status_index_1,1)*&
                         c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
                         ((b_shifter(1,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
                         price_of_addictive_good_to_use))**&
+                        ((1-risk_aversion_consumption)*relative_share_of_addiction_2))&
+                        +weight_on_child*(sqrt_household_size(age_index)-1)*&
+                        (housing_status_utility_function(future_housing_status_index_1,age_index,ownership_status_index_1,1)*&
+                        c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
+                        (b_shifter(1,housing_size(future_housing_status_index_1)))**&
                         ((1-risk_aversion_consumption)*relative_share_of_addiction_2)))/(1-risk_aversion_consumption)
                         
                 else
                 
-                    flow_utility_1=scaled_household_size(age_index)*&
+                    flow_utility_1=(sqrt_household_size(age_index)**&
+                        ((risk_aversion_consumption-1)*(1-relative_share_of_addiction_1)))*&
                         ((housing_status_utility_function(future_housing_status_index_1,age_index,ownership_status_index_1,0)*&
                         c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_1)*&
                         ((b_shifter(0,housing_size(future_housing_status_index_1))+(frac_spent_on_addiction_1*total_consumption_choice_1)/&
                         price_of_addictive_good_to_use))**&
+                        ((1-risk_aversion_consumption)*relative_share_of_addiction_1))&
+                        +weight_on_child*(sqrt_household_size(age_index)-1)*&
+                        (housing_status_utility_function(future_housing_status_index_1,age_index,ownership_status_index_1,0)*&
+                        c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_1)*&
+                        (b_shifter(0,housing_size(future_housing_status_index_1)))**&
                         ((1-risk_aversion_consumption)*relative_share_of_addiction_1)))/(1-risk_aversion_consumption)
                 
                 end if
