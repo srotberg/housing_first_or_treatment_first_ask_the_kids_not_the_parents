@@ -1,3 +1,37 @@
+## 11 September 05:26 UTC -- CORRECTION: ALEPH'S BRACKET IS NOT A RUNAWAY. The
+## sign is RIGHT. The real problem is that two moments share one instrument.
+
+**I GOT THIS WRONG AT 05:21 AND COMMITTED IT.** The entry below claims aleph's
+bracket has the wrong sign in equilibrium, on an eight-loop trace where
+value_of_life rose monotonically and its moment fell monotonically. A wide-range
+measurement, the only clean way to separate value_of_life from the eighteen other
+parameters moving at half a per cent a loop beside it, says the opposite:
+
+    value_of_life    aleph moment    disorder rate
+        150.8            51.66          0.07325
+        195.4            65.50          0.00519
+
+Raising value_of_life RAISES its moment, 51.7 to 65.5, which is what the bracket
+assumes. The local decline across those eight loops belonged to the other
+parameters, not to this one. I read a 3.5 per cent window as though it isolated a
+single parameter and it did not. THE WIDE TEST SHOULD HAVE COME FIRST.
+
+**WHAT IS REAL, AND IT IS WORSE THAN A SIGN ERROR.** The two moments are in
+direct conflict through the one parameter:
+
+    to hit the disorder rate of 0.0368, value_of_life lands near 162, where
+        aleph is about 55 against a target of 80 -- a 31 per cent miss
+    to hit aleph = 80, value_of_life must go well above 195, where the disorder
+        rate is 0.005, seven times too low
+
+value_of_life cannot serve both, and b cannot separate them: it moved plus or
+minus four per cent across the entire trace and did essentially nothing. That
+half of the earlier finding stands.
+
+**SO IT IS AN IDENTIFICATION PROBLEM, NOT A BUG.** Two targeted moments, one
+effective instrument. Either aleph is pinned and reported as a miss, or something
+other than value_of_life has to carry the disorder rate. For the author.
+
 ## 11 September 05:21 UTC -- ALEPH'S BRACKET IS A RUNAWAY. Eight loops of clean
 ## evidence: the parameter rises monotonically and its own moment falls away.
 
