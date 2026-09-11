@@ -86,6 +86,27 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+
+**CORRECTION AND THE MAP IT GIVES.** The loop-6 row above was first written as
+159.20; it is 160.00. The prints are POST-update, so loop k solved at print k-1
+and loop 1 solved at the handover. With that fixed the arm is a clean map of b
+against value_of_life, at 0.8-unit spacing, all other parameters moving only at
+their own caps:
+
+    value_of_life   159.20   160.00   160.80   161.60
+    b gap           +6.8%    +3.6%    +1.3%   -10.4%
+
+**THE STEPS ARE NOT THE SAME SIZE.** 159.20 to 160.80 costs 5.5 points of b over
+two steps; 160.80 to 161.60 costs 11.7 in one. The model has a cliff between
+160.8 and 161.6, not a smooth slope, which fits the Fortran's own note that b
+sets the ABSTENTION CORNER -- below a threshold the static split buys nothing and
+a band of households leaves the drug entirely.
+
+**SO THE NUMBER TO PIN AT IS ABOUT 160.9**, and pinning matters more than the
+exact value: anywhere in 160.0 to 160.8 keeps b inside four per cent, and one
+capped step past 160.8 loses ten. The interval that works is about half a per
+cent wide and the cap is half a per cent.
+
 ## 11 September 11:45 UTC -- OPEN QUESTION 2 ANSWERED FROM THE ARM'S OWN LOG:
 ## MAKING THE ENDOWMENT TWO-SIDED TRADES ONE GAP FOR THE OTHER.
 
@@ -125,7 +146,7 @@ own bracket wants aleph, and it took the economy through the answer:
 
     loop   value_of_life     b        lambda_d    theta     tau_u
       5       159.20      +6.8%      +0.1%      +12.2%    -20.7%
-      6       159.20*     +3.6%      -3.4%      +13.3%    -19.0%
+      6       160.00      +3.6%      -3.4%      +13.3%    -19.0%
       7       160.80      +1.3%      -5.2%      +12.3%    -17.7%
       8       161.60     -10.4%     -16.4%      +22.3%    -12.4%
 
