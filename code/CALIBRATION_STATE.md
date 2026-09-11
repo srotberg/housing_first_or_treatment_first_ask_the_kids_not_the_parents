@@ -1,3 +1,42 @@
+## 11 September 03:36 UTC -- ALL 19 PARAMETERS ARE NOW BRACKETED IN THE LOOP
+
+The author: *"shouldnt you be able to update them exactly like every other
+parameter?!"* and *"what is speacial here that you need an outer loop"*.
+
+**Nothing was special, and I overcomplicated it.** git records ZERO commits ever
+containing `smi_onset_level_adjuster`, `distance_smi_onset_level`,
+`newborn_endowment_scale_adjuster` or `distance_newborn_endowment`. Neither
+parameter ever had a bracket. They were moved by the OUTER search -- which exists
+to hunt across VECTORS, not because these two resist a bracket -- so a single
+`run_one_point` left them frozen. That was the METHOD, not anything done to them,
+and their vector values are the outer search's own fitted output.
+
+Both now update in the loop:
+
+    p_m       smi_onset_level          model_smi_prevalence(1) vs
+                                       model_smi_prevalence_target(1), two-sided
+    h_share1  newborn_endowment_scale  homelessness_by_age_group(1,1) vs
+                                       val_hud_share_1(1) = 0.260, ONE-SIDED
+
+**NOTHING WAS INVENTED.** Both moments and both targets already existed.
+`val_hud_share_1`, the HUD age profile, was declared INSIDE print_all_moments, so
+it MOVED to module scope rather than being copied -- one number in one place.
+
+The endowment's rule is the author's own, 3 September: *"Keep it off if the share
+of young is below the data"*. Raising it gives the youngest, who are almost all
+employed, the liquidity to rent, so the share falls in it; below target it can
+only walk away, so the guard holds it and prints ENDOWMENT HELD. Same shape as
+THETA HELD, and it announces itself for the same reason.
+
+Both are wrapped in `cap_step` and both distances are in the convergence test
+with retirement guards, so a zero adjuster cannot hang the uncapped do-while.
+
+**READ BEFORE THE RESTART, loop 2 at omega_c = 0.05:** participation jumped to
+0.306, plus 244 per cent, the exact mirror of the previous run's collapse to
+0.027. That settles what omega_c was doing: at 0.29 it was carrying most of the
+deterrence. **b will now have to RISE, not fall.** Median |gap| over all 23
+printed moments was 19.1 per cent.
+
 ## 11 September 03:27 UTC -- RELAUNCH AT omega_c = 0.05, AND A SECOND SILENT DROP
 
 The author: "ok, i think you should reset omega_c=0.05". Relaunched 03:27 with
