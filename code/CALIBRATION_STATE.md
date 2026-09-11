@@ -1,3 +1,32 @@
+## 11 September 16:30 UTC -- OPEN: THE BRACKET'S ALEPH AND THE REPORTED ALEPH ARE
+## DIFFERENT NUMBERS.
+
+Both are model_value_of_life(1) over model_average_labour_income(1) -- the
+bracket computes it at line 43358 in the update block, print_all_moments at line
+7476 -- and they disagree:
+
+    loop     bracket    MOMENT print
+      1      73.127        79.14
+      2      77.642        80.90
+      3      79.310        80.82
+      4      80.303        81.05
+      5      79.543        79.92
+
+Eight per cent apart early, half a per cent by loop 5. Something recomputes
+model_value_of_life or model_average_labour_income between the update block and
+print_all_moments, and it has not been identified.
+
+THE BRACKET IS BEHAVING CORRECTLY AGAINST ITS OWN NUMBER. Gaps of -6.87, -2.36,
+-0.69, +0.30, -0.46 produced raise, raise, raise, lower, raise. An earlier note
+in this file puzzled over value_of_life rising while aleph was above target; that
+was comparing the bracket's action against the WRONG aleph.
+
+WHAT IT MEANS FOR REPORTING. The search converges on the BRACKET's aleph and
+every table in this file quotes the MOMENT print. They agree at convergence, so
+the landed values stand, but any mid-run aleph reading is ambiguous until this is
+resolved, and the apparent oscillation of aleph around target in the loop tables
+is partly this rather than the search.
+
 ## 11 September 16:15 UTC -- WHERE THIS STANDS. Read this section and skip the
 ## rest; everything below it was written before the V(1) bug was found and most
 ## of its conclusions were drawn on a model that could not be measured.
