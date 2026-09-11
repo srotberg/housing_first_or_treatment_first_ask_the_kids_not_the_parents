@@ -468,6 +468,30 @@ untracked and the tag is the md5 of the vector, so re-measuring a vector
 truncates the log of the measurement it is being compared against. The
 benchmark's own log was lost that way the same morning.
 
+## KILLING run_one_point.sh DOES NOT KILL THE SOLVER, AND THE ORPHAN HOLDS THE LOCK
+
+Found 11 September. `run_one_point.sh` takes a `flock` on
+`code/.run_one_point.lock` through fd 9, and the solver it execs -- `./hftf` --
+INHERITS that descriptor. Kill the script and the solver is reparented to init,
+keeps all four cores, keeps writing its log, and keeps the lock. The next point
+then prints
+
+    run_one_point: another point is running in this checkout, waiting for it
+
+and blocks forever, which reads exactly like a hung launch.
+
+So a stop is two steps, and the second is the one that matters:
+
+    ps -eo pid,args | awk '{for(i=2;i<=NF;i++) if ($i ~ /run_one_point\.sh/) {print $1; break}}'
+    kill <that pid> $(pgrep -P <that pid>)
+    ps -eo pid,pcpu,args --sort=-pcpu | head -3      # ./hftf still there?
+    fuser -v code/.run_one_point.lock                # who holds it
+    kill <the hftf pid>
+
+`pgrep -P` on the script's pid is not enough: once the script is gone the solver
+has no parent to be found by. Identify it by its own name in the CPU list or
+through the lock, and never `pkill -f`.
+
 ## Each firing, in order
 
 **0. Verify the checkout.**

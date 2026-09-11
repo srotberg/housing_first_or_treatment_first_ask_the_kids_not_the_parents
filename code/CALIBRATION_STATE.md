@@ -86,6 +86,46 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+## 11 September 11:07 UTC -- THE PAIR AT LOOP 5, AND THE POINT THAT SPLITS IT IS
+## RUNNING. The ratio held, and lambda_d comes free with b.
+
+Both arms at loop 5, one parameter apart:
+
+                         value_of_life 165.468   value_of_life 143.535
+    b                        6.1582%                 23.916%
+    lambda_d                 2.3625%                  9.770%
+    theta                    0.177149                 0.148784
+    aleph                   55.585                   49.798
+
+    elasticity   b  -9.54     aleph +0.77     theta +1.23     |b|/aleph = 12.3
+
+**THE RATIO HELD.** At loop 2 it was -8.50 and +0.76; at loop 5, -9.54 and +0.77.
+The transient moves the levels and not the slopes, which is what the caveat at
+10:58 said would probably happen and now does not have to be assumed.
+
+**THE LOW ARM IS STABLE AND THE HIGH ARM WAS NOT.** b moves -2.7, +1.5, +0.5,
+-0.7 per cent across the low arm's five loops; the high arm was still walking
+-3 per cent a loop at loop 9. The high arm's instability was the search fighting
+itself near a corner, not the model.
+
+**lambda_d IS NOT A SECOND TARGET.** Its ratio to b is 0.4085 in the low arm and
+0.3836 in the high arm against 0.4135 in the data, so whatever lands b lands
+lambda_d. That is the standing finding, now measured on two widely separated
+economies rather than four nearby ones.
+
+**THE POINT THAT SPLITS THE BRACKET IS RUNNING**, tag 16da70b64e. Log-interpolating
+b on value_of_life puts the 8.9 per cent target at 159.20 AT LOOP 5, so the arm
+starts at 156.06 and the bracket's own 0.5 per cent a loop carries it there. That
+correction matters: at an elasticity of -9.5 the four loops of drift are worth
+19 per cent on b, which is most of the distance being measured.
+
+**WHAT IT IS FOR, AND WHAT IT IS NOT.** It is the economy the author would
+calibrate from if aleph is conceded, measured rather than extrapolated -- the
+standing rule is to prefer a measured bracket to an elasticity, and the last
+linear extrapolation in this model overshot by 16 per cent. The extrapolated
+numbers at 159.20 are aleph 53.9 and theta 0.169; if the point comes back near
+those, the concession is aleph at -33 per cent and theta at +20.
+
 ## 11 September 10:58 UTC -- THE MATCHED PAIR ANSWERS THE ALEPH QUESTION AT LOOP 2
 ## ALREADY, AND THE ANSWER IS THAT ONE INSTRUMENT CANNOT HIT BOTH.
 
