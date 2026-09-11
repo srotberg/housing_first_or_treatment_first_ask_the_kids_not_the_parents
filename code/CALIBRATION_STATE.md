@@ -86,6 +86,40 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+## 11 September 10:33 UTC -- LOOP 4. THE SEQUENCE HAS SETTLED ENOUGH TO READ,
+## AND THE SETTLED ECONOMY IS NOT THE ONE THAT WAS BEING REPORTED.
+
+    loop      b       move     lambda_d   move     theta     move     tau_u    move
+    1       9.2696%            3.8051%            0.137797           0.23374
+    2       6.7567%  -27.1%    2.5495%  -33.0%    0.174682  +26.8%   0.26350  +12.7%
+    3       6.4754%   -4.2%    2.5137%   -1.4%    0.178678   +2.3%   0.26939   +2.2%
+    4       6.3861%   -1.4%    2.4602%   -2.1%    0.178211   -0.3%   0.26484   -1.7%
+
+b damps at about a third a loop, so it is heading for roughly 6.34 per cent.
+Against the targets the settled economy is
+
+    b        -29%      lambda_d  -33%      theta  +26%      tau_u  +8%
+
+**THE DRUG BLOCK IS NOT SOLVED. IT NEVER WAS.** Every report that said it was
+read loop 1, whose child penalty comes off the priming solve and whose numbers
+are +4.2, +3.4, -2.3 and -4.6. Loop 1 is the outlier in its own run.
+
+**THE CHILD USE GAP OSCILLATES AND DAMPS**, which is the alternating map showing
+itself directly:
+
+    0.207647  ->  0.264530  +27.4%  ->  0.227109  -14.1%
+
+amplitude halving each time, so it converges -- to something near 0.24 against a
+target of 0.1834, about +30 per cent. It converges to the fixed point of the
+alternating map, not to either economy's own.
+
+**SO THERE ARE TWO PROBLEMS AND THEY ARE SEPARATE.** The alternating map is a
+correctness question and it is the author's call. Even with it settled, the
+settled economy sits 29 per cent below target on participation with the
+parameters capped at half a per cent a loop, which is a search question: at that
+cap the instruments cannot travel 29 per cent in any reasonable number of loops.
+The cap was set on the author's instruction and is theirs to relax.
+
 ## 11 September 10:25 UTC -- LOOP 3 LANDED. EACH LEG CONVERGES; THEY CONVERGE TO
 ## EACH OTHER'S FIXED POINT, WHICH IS THE PROBLEM.
 
