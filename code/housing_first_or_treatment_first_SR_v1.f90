@@ -4380,6 +4380,32 @@
         ! the drug price participation elasticity; that elasticity is now an
         ! untargeted validation moment instead.
         real(8) :: kappa_phi_d_level=8.0
+        ! y_u's INSTRUMENT, WIRED 11 September. Until now the comment at the y_u
+        ! print called kappa_phi_d_level "its instrument" and nothing connected the
+        ! two: there was no adjuster, no distance and no update block, so y_u was a
+        ! target with a target value that nothing in the loop ever moved toward,
+        ! and the level was set by hand from the vector.
+        !
+        ! The author: "I also wonder if we need to start adjusting the probability
+        ! of death to match the average income of a user... It is way too low",
+        ! then "take the death probability to 5", then "after that let it adjust
+        ! slowly, not more than 0.5% per iteration".
+        !
+        ! THE SIGN. The mortality penalty is the price of using, so a high one
+        ! leaves only the most desperate willing to pay it and the users are poor.
+        ! y_u BELOW target therefore calls for a LOWER level. The step is
+        ! kappa - adjuster*(target - model), which is negative-going when the model
+        ! is below target, so it needs no sign work. Measured across 8.0 -> 6.5,
+        ! y_u went 0.333 -> 0.533, confirming the direction.
+        !
+        ! THE BOUNDS ARE THE LITERATURE'S. The author: "There are more studies thag
+        ! find anywhere between 2-9", which widens the six-to-ten of Hjorthoj et al.
+        ! (2023) that the hand-set 8.0 came from.
+        real(8) :: kappa_phi_d_level_adjuster=(1-freeze_to_three_block)*(2.d0)
+        real(8) :: distance_kappa_phi_d_level=1
+        real(8) :: stopping_rule_kappa_phi_d_level=10.d0**(-2)
+        real(8), parameter :: kappa_phi_d_level_lo=2.d0
+        real(8), parameter :: kappa_phi_d_level_hi=9.d0
         real(8), parameter :: sud_share_of_homeless=0.217
 
         ! FLAT EXCESS DEATH RISK FROM HOMELESSNESS. See build_kappa_phi.
@@ -41047,6 +41073,7 @@
             ((freeze_to_three_block==0) .AND. (distance_separation_rate>stopping_rule_separation_rate)) .OR. &
             (distance_employment_multiplier>stopping_rule_employment_multiplier) .OR. &
             (distance_utility_cost_of_treatment>stopping_rule_utility_cost_of_treatment) .OR. &
+            (distance_kappa_phi_d_level>stopping_rule_kappa_phi_d_level) .OR. &
             (distance_rent_to_price>stopping_rule_rent_to_price) .OR. &
             (distance_smallest_house_size>stopping_rule_smallest_house_size) .OR. &
             (distance_fixed_cost_to_moving>stopping_rule_fixed_cost_to_moving) .OR. &
@@ -42811,6 +42838,92 @@
                                 " reach on the benefit side, not on the cost."
 
                         end if
+
+                    ! ========= y_u, THE INCOME OF DRUG USERS ===================
+                    ! kappa_phi_d_level, TWO-SIDED, bounded 2 to 9 and capped at
+                    ! half a per cent a loop.
+                    !
+                    ! WIRED 11 September. y_u carried a data value and a comment
+                    ! naming kappa_phi_d_level as its instrument, and nothing
+                    ! connected them: no adjuster, no distance, no update. The level
+                    ! was set by hand from the vector, so y_u was a target the loop
+                    ! never moved toward.
+                    !
+                    ! THE SIGN, and it is measured rather than argued. The mortality
+                    ! penalty is the price of using, so a high one leaves only the
+                    ! most desperate willing to pay it. Taking the level 8.0 -> 6.5
+                    ! moved y_u 0.333 -> 0.533. y_u below target therefore calls for
+                    ! a LOWER level, and the step kappa - adjuster*(target - model)
+                    ! is negative-going exactly then.
+                    !
+                    ! HALF A PER CENT A LOOP, on the author's instruction: "after
+                    ! that let it adjust slowly, not more than 0.5% per iteration".
+                    ! That is what plain cap_step gives, since max_rel_step_all is
+                    ! 5e-3 whenever freeze_to_three_block is 0, so this bracket uses
+                    ! cap_step and NOT the cap_step_rel that the treatment cost
+                    ! needed. The reason for going slowly is in the measurement
+                    ! above: one step of 8.0 -> 6.5, nineteen per cent, doubled
+                    ! participation and the disorder rate in a single loop.
+                    !
+                    ! READ THE MOMENT ONLY WHERE b IS NEAR TARGET. The author: "you
+                    ! first have to get the users right". y_u is the users' income
+                    ! over average income, so when nearly everyone uses, the users
+                    ! ARE the population and the ratio approaches one for reasons
+                    ! that have nothing to do with the composition this parameter
+                    ! acts on. No gate on b is imposed here, because none was asked
+                    ! for and the half-per-cent cap is the author's chosen answer to
+                    ! it -- the bracket moves slowly enough for b's own instrument to
+                    ! keep up. If it turns out to chase a contaminated ratio anyway,
+                    ! the fix is a gate like the one omega_c already has, which
+                    ! refuses to PIN while the economy around the ratio is wrong.
+                    if (kappa_phi_d_level_adjuster>0) then
+
+                        write(*,*) "model y_u income of drug users =",&
+                            model_avg_income_drug_users(1)/&
+                            max(model_average_income(1),10.d0**(-14)),&
+                            " target =", drug_user_income_data
+                        write(*,*) "kappa_phi_d_level=", kappa_phi_d_level
+
+                        cap_old_1=kappa_phi_d_level
+                        kappa_phi_d_level=max(min(kappa_phi_d_level-&
+                            kappa_phi_d_level_adjuster*&
+                            (drug_user_income_data-model_avg_income_drug_users(1)/&
+                            max(model_average_income(1),10.d0**(-14))),&
+                            kappa_phi_d_level_hi),kappa_phi_d_level_lo)
+                        kappa_phi_d_level=cap_step(kappa_phi_d_level,cap_old_1)
+
+                        distance_kappa_phi_d_level=&
+                            abs(model_avg_income_drug_users(1)/&
+                            max(model_average_income(1),10.d0**(-14))-&
+                            drug_user_income_data)
+
+                        write(*,*) "kappa_phi_d_level=", kappa_phi_d_level,&
+                            " distance_kappa_phi_d_level=", distance_kappa_phi_d_level,&
+                            merge(" LOWERED: y_u is below target ",&
+                                  " RAISED:  y_u is above target ",&
+                                  model_avg_income_drug_users(1)/&
+                                  max(model_average_income(1),10.d0**(-14))<&
+                                  drug_user_income_data)
+
+                        ! SAY SO AT EITHER BOUND, rather than letting a railed
+                        ! parameter look like a converging one.
+                        if ((kappa_phi_d_level<=kappa_phi_d_level_lo) .OR.&
+                            (kappa_phi_d_level>=kappa_phi_d_level_hi)) then
+                            write(*,*) "kappa_phi_d_level IS AT A BOUND:",&
+                                kappa_phi_d_level, " in [", kappa_phi_d_level_lo,&
+                                ",", kappa_phi_d_level_hi, "]. y_u is",&
+                                model_avg_income_drug_users(1)/&
+                                max(model_average_income(1),10.d0**(-14)),&
+                                " against", drug_user_income_data,&
+                                ". The literature range cannot reach the target and",&
+                                " the shortfall is not this parameter's to close."
+                        end if
+
+                    else
+
+                        distance_kappa_phi_d_level=0
+
+                    end if
 
                     ! MU_H, on the model's own increase in recovery from housing.
                     ! The ratio FALLS in mu_H, since mu_H is how good recovery on
