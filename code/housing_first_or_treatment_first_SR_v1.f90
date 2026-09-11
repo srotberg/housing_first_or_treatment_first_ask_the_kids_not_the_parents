@@ -2416,14 +2416,24 @@
         !
         ! WHAT IS BEING GIVEN UP: 0.101 is the SCF 2022 figure for all households,
         ! owners and renters together, and the CEX severe cost burden agrees at
-        ! 0.1013. Eight per cent is a modelling choice, not a measurement, and the
-        ! paper must state it as one wherever this target appears.
+        ! 0.1013. Eight per cent was already a modelling choice, not a
+        ! measurement, and the paper must state it as one wherever this target
+        ! appears.
+        !
+        ! CONCEDED AGAIN, 11 September, on the author's instruction: *"I think we
+        ! need to concede h2 and set it lower to 5% or so. And get h1 to match"*.
+        ! Five per cent continues the same trade in the same direction and for the
+        ! same reason -- a lower target forces the rung down, more households can
+        ! afford it, and the ones that reaches are the involuntarily homeless. It
+        ! is a second step away from the data, so the paper's statement of this
+        ! target as a modelling choice matters more now, not less: the note must
+        ! say 0.101 in the data against 0.05 imposed, and why.
         !
         ! HASH-INERT, verified rather than assumed: severe_cost_burden_data was
         ! added to model_hash's TARGET_CONSTANTS first, and the semantic hash of
         ! the source at 0.101 and at 0.08 is a3cc3f2a9b either way, so the 102
         ! points already solved in this economy remain valid bases.
-        real(8), parameter :: severe_cost_burden_data=0.08d0
+        real(8), parameter :: severe_cost_burden_data=0.05d0
         real(8), parameter :: fraction_light_users=0.731
         
         integer, parameter :: target_HO_of_old=1
@@ -3840,7 +3850,11 @@
         ! the adjuster times (model minus data), which rises when the model is
         ! below target. 20 moves it about 0.08 per iteration at the current gap,
         ! which crosses the [0,1] range in roughly a dozen equilibrium solves.
-        real(8) :: size_homelessness_adjuster=(1-freeze_to_three_block)*(20)
+        ! LIVE AGAIN WHILE THE THREE-BLOCK RUNS. The author, 11 September:
+        ! *"concede h2 and set it lower to 5% or so. And get h1 to match"*. h_1
+        ! now has two instruments pointed at it -- the rung, which the lower
+        ! severe_cost_burden_data target pushes down, and this one directly.
+        real(8) :: size_homelessness_adjuster=20
 
         ! AND THE TRAVERSE HAS TO DAMP, for aleph's reason. The adjuster is
         ! twenty and the gap is a rate, so a gap of 0.031 moves the parameter by
@@ -40915,7 +40929,7 @@
             (distance_fixed_cost_to_moving>stopping_rule_fixed_cost_to_moving) .OR. &
             (distance_standard_deduction>stopping_rule_standard_deduction) .OR. &
             (distance_inheritance_amount>stopping_rule_inheritance_amount) .OR. &
-            ((freeze_to_three_block==0) .AND. (distance_size_homelessness>stopping_rule_size_homelessness)) .OR. &
+            (distance_size_homelessness>stopping_rule_size_homelessness) .OR. &
             (distance_average_labor_income>stopping_rule_average_labor_income) .OR. &
             (distance_median_income>stopping_rule_median_income) .OR. &
             (distance_average_net_wealth>stopping_rule_average_net_wealth) .OR. &
