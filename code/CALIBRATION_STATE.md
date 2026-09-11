@@ -1,3 +1,46 @@
+## 11 September 05:02 UTC -- VALUE_OF_LIFE DOMINATES B BY ABOUT TWENTY TO ONE ON
+## DRUG USE, AND THE CALIBRATION CANNOT CONVERGE AS CONFIGURED.
+
+Measured on one run, with b moving in the OPPOSITE direction to the outcome, so
+the two are separated rather than confounded:
+
+    b           value_of_life    disorder rate
+    0.002010       178.659          0.12416
+    0.002081       185.006          0.04679
+    0.002050       187.795          0.00821
+    0.002000       192.538          0.00479
+
+b moves plus or minus four per cent across the whole range and does essentially
+nothing. value_of_life rises 7.8 per cent and the disorder rate falls
+TWENTY-SIX FOLD. In the last step b FELL, which should raise use, and use fell
+anyway.
+
+**THIS CORRECTS A CLAIM I MADE EARLIER TODAY.** I reported that "a 1.5 per cent
+change in b cut participation by 61 per cent" and wrote it into a commit message.
+That was wrong: value_of_life was rising over the same loops and I attributed its
+work to b. The trace above isolates them.
+
+**WHY IT CANNOT CONVERGE.** aleph's moment is 66.6 against a target of 80, so
+value_of_life must keep rising, and every increment crushes drug use further
+toward zero. b is the instrument meant to offset that and is roughly twenty times
+too weak, capped at half a per cent a loop. Two moments chase each other through
+one dominant channel and the Jacobian is near singular. The restart cycle earlier
+tonight is what walked the economy into this corner, but the corner is structural
+and would have been reached anyway.
+
+**THREE WAYS OUT, FOR THE AUTHOR.**
+
+  1. PIN value_of_life. aleph = 80 times income is an external target, not
+     something the model should search for. Pinning it removes the near
+     singularity entirely and leaves b owning participation alone. RECOMMENDED.
+  2. Give b a much larger allowance than 0.5 per cent, on the ground that the
+     0.5 per cent rule was imposed when b was wrongly believed to be the
+     hyper-elastic one.
+  3. Swap the assignment so value_of_life targets participation. Nothing obvious
+     then carries aleph.
+
+NOT ACTED ON. The assignment of instruments to moments is the author's.
+
 ## 11 September 04:30 UTC -- T = 26 FOR WELFARE, UNDER-18 FOR THE MODEL. The
 ## author's resolution of the mismatch, and why it costs the calibration nothing.
 
