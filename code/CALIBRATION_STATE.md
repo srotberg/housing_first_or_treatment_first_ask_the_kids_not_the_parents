@@ -86,6 +86,51 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+## 11 September 11:35 UTC -- LOOP 7 PUT b ON TARGET AND LOOP 8 WALKED STRAIGHT
+## PAST IT. THE 0.5 PER CENT CAP IS FAR TOO COARSE FOR value_of_life.
+
+The arm ran to loop 8. value_of_life rises 0.5 per cent every loop because its
+own bracket wants aleph, and it took the economy through the answer:
+
+    loop   value_of_life     b        lambda_d    theta     tau_u
+      5       159.20      +6.8%      +0.1%      +12.2%    -20.7%
+      6       159.20*     +3.6%      -3.4%      +13.3%    -19.0%
+      7       160.80      +1.3%      -5.2%      +12.3%    -17.7%
+      8       161.60     -10.4%     -16.4%      +22.3%    -12.4%
+
+LOOP 7 IS THE POINT: b within 1.3 per cent of target, lambda_d within 5.2,
+theta +12.3, tau_u -17.7, aleph -34.5.
+
+**AND THE STEP FROM 7 TO 8 IS ONE CAPPED MOVE.** value_of_life 160.80 -> 161.60,
+half of one per cent, and b falls 11.6 per cent:
+
+    local elasticity of b on value_of_life = -24.8
+
+**THAT IS THE CAP QUESTION ANSWERED, AND THE ANSWER IS THE OPPOSITE OF WHAT WAS
+RECORDED THIS MORNING.** The morning's note said the 0.5 per cent cap is
+MIS-SIZED because it is too SMALL for strong instruments -- true of
+utility_cost_of_treatment. For value_of_life it is far too LARGE: one capped step
+moves b by twelve per cent, so the search cannot stand still near the target. It
+does not converge on the point, it steps over it. Loops 5, 6, 7, 8 read +6.8,
++3.6, +1.3, -10.4 and the whole traverse takes four loops.
+
+**SO THE ARM WAS STOPPED AT LOOP 8** rather than left to walk further down, which
+is what the original high arm did for nine loops. Evidence in
+`code/evidence_mid_arm_159.log`.
+
+**WHAT THIS MAKES CONCRETE FOR THE AUTHOR**
+
+  1. value_of_life wants PINNING near 160.8, not calibrating. Its own moment is
+     conceded anyway at -34 per cent, and while it is live it destroys the drug
+     block one capped step at a time.
+  2. If it is to stay live, its cap needs to be per-parameter and about twenty
+     times smaller -- 0.025 per cent a loop would make one step worth half a per
+     cent on b. A single global `max_rel_step_all` cannot serve an instrument
+     with elasticity -25 and one with elasticity 1 at the same time.
+  3. tau_u improved monotonically the whole way, -29.8 to -12.4, on its own
+     bracket at the cap. It is the one instrument that is behaving, and it
+     confirms the separability measured last night.
+
 ## 11 September 11:20 UTC -- THE SPLITTING POINT LANDED. lambda_d IS ON TARGET,
 ## b IS WITHIN SEVEN, AND THIS IS THE BEST POINT THE MODEL HAS PRODUCED.
 
