@@ -1,3 +1,47 @@
+## 11 September 03:23 UTC -- LOOP 22 GAPS, AND HALF THE TABLE CANNOT BE READ
+
+    parameter                          moment     value        model     target      gap
+    weight_on_child                    omega_c    0.292135     1.2879    0.1834    +602%
+    utility_cost_of_treatment          tau_u      12.7022      0.61271   0.245     +150%
+    addiction_onset_base               lambda_d   not traced   0.010803  0.0368     -71%
+    addiction_scalar_1                 b          0.00200975   0.026774  0.0890     -70%
+    relative_share_of_addiction_1      theta      0.267741     0.21229   0.141      +51%
+    value_of_life                      aleph      187.795      62.027    80.0     -22.5%
+    size_homelessness                  h_1        2.60484e-05  0.012884  0.0116   +11.1%
+    probability_becoming_unemployed    pi_eu      0.0195923    0.04488   0.049     -8.4%
+    probability_of_voucher_benchmark   pi_V       0.0427268    0.26586   0.266     -0.1%
+    mu_homeless                        mu_H       0.560833     NOT TRACED
+    smallest_rental_relative_to_low    h_2        0.103762     NOT TRACED
+    relative_share_of_housing          gamma      0.209316     NOT TRACED
+    relative_share_of_leisure          omega_l    4.47792      NOT TRACED
+    discount_factor                    beta       0.94568      NOT TRACED
+    max_food_cost                      cbar       0.0415134    NOT TRACED
+    labor_income_tax_rate              tau_l      NOT TRACED   NOT TRACED
+    kkk_sigma_scale                    sigma_y    NOT TRACED   NOT TRACED
+
+Median |gap| over the nine measurable rows: 51 per cent, and RISING.
+
+**EIGHT OF SEVENTEEN ROWS CANNOT BE READ FROM THE LOG.** The model value is not
+echoed each loop for mu_H, h_2, gamma, omega_l, beta, cbar, tau_l or sigma_y, and
+three parameters do not echo their VALUE either. The full moments block prints
+only when the do-while exits, so on a long run half the table is invisible until
+the end. That is the first thing to fix at the next legitimate rebuild: one
+`write` per bracket, beside the ones that already exist. It is not worth
+interrupting a running calibration for, and it IS worth doing before the next
+long run, because calibrating blind is how a fault survives a night.
+
+**WHY IT IS GETTING WORSE, AND IT IS NOT b's FAULT.** Participation has gone
+0.170, 0.0658, 0.0326, 0.0268 across loops 8, 14, 20, 22 while b moved 1 per
+cent. aleph is 22.5 per cent short of 80 and CLIMBING -- 177.77 to 187.80, plus
+5.6 per cent -- and a higher value of life makes the drug's mortality cost bite
+harder. So the deterrent is rising under b's feet every loop. theta's share and
+the child gap are both inflated by the same collapse: a smaller, poorer user pool
+spends a larger share, and the child channel bites harder per user.
+
+Expect the gaps to widen further while aleph climbs its remaining quarter, then
+turn. b will have to end up well below 0.002. DO NOT intervene on b: its damper
+is mid-bisection.
+
 ## 11 September 03:13 UTC -- LOOP 14: b OVERSHOOTS, AND THE 0.5 PER CENT CAP
 ## CANNOT STOP IT. This is a LIMIT OF THE GOVERNOR, written down before anyone
 ## reads the cap as a guarantee.
