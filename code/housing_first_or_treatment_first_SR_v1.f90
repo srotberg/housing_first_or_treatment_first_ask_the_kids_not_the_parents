@@ -3031,13 +3031,19 @@
         ! coefficient: 0.05 times the gap, which is 1.5 per cent of theta at a
         ! gap of 0.08 and 0.4 per cent at a gap of 0.02.
         !
-        ! 0.01 RATHER THAN 0.001, WITH THE ARITHMETIC SAID OUT LOUD. At 0.001
-        ! theta moves 0.00027 a loop from 0.27, so 0.27 to 0.40 is 480 loops,
-        ! four days at twelve minutes a loop, with the rest of the vector
-        ! converged and waiting on it. At 0.01 the same journey is 40 loops.
-        ! It is a HANDOVER parameter so the author can set 0.001 without a
-        ! rebuild if the trace still looks jumpy.
-        real(8) :: theta_max_rel_step=0.01d0
+        ! 0.001, ON THE AUTHOR'S INSTRUCTION OF 11 September: "i think the
+        ! adjuster on theta should only move it by 0.1% between iterations at
+        ! most". Asked once with the arithmetic attached -- at 0.001 theta moves
+        ! 0.00027 a loop from 0.27, so 0.27 to 0.40 is 480 loops, four days at
+        ! twelve minutes a loop, with the rest of the vector converged and
+        ! waiting on it -- and reaffirmed. So it stands at 0.001.
+        !
+        ! WHAT TO WATCH, since the cost of the choice is real: if the trace
+        ! shows THETA CAPPED on every loop in the same direction for tens of
+        ! iterations, theta is not converging slowly, it is travelling, and the
+        ! loop's other parameters are settling against a theta that has not
+        ! arrived. It is a HANDOVER parameter, so raising it costs no rebuild.
+        real(8) :: theta_max_rel_step=0.001d0
         real(8) :: theta_proposed_1
         real(8) :: theta_capped_1
 
