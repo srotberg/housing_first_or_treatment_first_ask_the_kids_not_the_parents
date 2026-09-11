@@ -1,124 +1,171 @@
 # The child in the parent's flow utility
 
-The design settled with the author on 10 and 11 September, after the
-death-contingent wage channel was audited and found correct but incapable of
-carrying a contemporaneous harm. This file is the specification; nothing is built.
+The specification settled with the author on 10 and 11 September. Approved
+11 September: *"ok, i think the utility you have in mind makes sense"*.
+Nothing is built.
+
+The typeset version is `scratchpad/household_split.tex`, revision 2.
+
+## REVISION 2 SUPERSEDES REVISION 1 OF THIS FILE
+
+The first version specified the channel against an ADDITIVE CES aggregator in
+which housing entered undeflated as a household public good. BOTH OF THOSE WERE
+WRONG, and the author's question -- why should housing not be divided? -- is what
+exposed it.
+
+`calculate_flow_utility` has several branches and the live one is selected by
+`include_probability_of_becoming_addicted`, which is 1. That branch is
+MULTIPLICATIVE: a Cobb-Douglas bundle inside a CRRA, not a CES sum. The additive
+expression revision 1 was written against is the `else` branch, and it is dead.
+In the live branch housing is deflated by household size along with everything
+else, through the prefactor rather than term by term. So housing IS divided, and
+should be.
 
 ## Why a second channel at all
 
-The existing channel is right on every dimension that can be checked:
+The existing death-contingent wage channel is right on every dimension that can
+be checked: it penalises 5.31 per cent of newborns against 3.52-8.50 per cent of
+children actually exposed; the penalty is worth 46 per cent of the child's
+lifetime consumption against the stylized model's 50.86; and the eightfold death
+hazard delivers it at an effective lag of about twenty-one years, EARLIER than a
+childbearing-plus-26 scheme's twenty-six.
 
-    count   5.31% of newborns penalised   against 3.52-8.50% of children exposed
-    size    46% of lifetime consumption   against the stylized model's 50.86%
-    date    about 21 years out            against 26 for a childbearing scheme
+What it cannot do is price the childhood. Nilsson measures the earnings
+consequence twenty years on, and nothing prices the years in between. The wage
+term cannot be repurposed, because the wage impact does not exist before the
+child is 26 -- which is the author's own objection, 10 September.
 
-What it cannot do is price the CHILDHOOD. A child living with an addicted parent
-suffers now, and Nilsson measures only the earnings consequence twenty years
-later. The author, 10 September: *"How would you capture contemporaneous
-childhood harm? Like less resources consumed that the parent does value as
-much?"* -- and *"it's not just that the drugs take resources away, but they also
-cause unemployment which takes more resources away"*.
+## Notation, with the live values
 
-## The symbols, with the file's own values
+    n(a)            children under 18 at parent-age a; n(40) = 1.45
+    m(a) = sqrt(1+n(a))   the equivalence scale
+    s               housing size, the rung chosen
+    c               non-drug consumption
+    q               drug quantity
+    b_bar           addiction_scalar, a shifter so q = 0 is finite
+    omega_c         the parent's weight on a child; the planner's is one
+    aleph           value of life, 177.77, once per household
 
-    sigma = 2, rho = 1.25, eta = 1.07    ->  power_1 = 0.2, power_2 = -5,
-                                             power_3 = 0.144
-    phi_c = (1 - 0.278)(1 - 0.27) = 0.527     relative_share_of_consumption
-    phi_a = 0.27                              relative_share_of_addiction
-    aleph = 177.77                            value_of_life
+    sigma = 2, and the live Cobb-Douglas shares are
+        phi_s = 0.203 housing, phi_c = 0.527 consumption, phi_q = 0.270 drugs
 
-    n(a)   children under 18 at parent-age a, the profile in
-           data/make_children_by_age.py; n(40) = 1.45
-    m(a)   = sqrt(1 + n(a))                   equivalence scale, NEEDS
-    c      non-drug consumption
-    q      drug quantity, frac_spent * C / price
-    H      housing utility, a household PUBLIC good, already undeflated
+They sum to one, so the bundle is homogeneous of degree one and the CRRA is well
+defined.
 
 ## What the code does now
 
-    flow(a) = aleph - m * [ H + phi_c*(c/m)^0.2 + phi_a*(q/m)^0.144 ]^(-5)
+    X        = s^phi_s * c^phi_c * (b_bar + q)^phi_q
+    flow(a)  = aleph + m^sigma * X^(1-sigma)/(1-sigma)
+             = aleph - m^2 / X                              (sigma = 2)
 
-m identical people each consuming c/m AND q/m: the household shares the drugs.
-And m = 1 today, because include_varying_household_size is 0.
+THE PREFACTOR IS THE EQUIVALENCE SCALE. For any homogeneous bundle,
+
+    m * (X/m)^(1-sigma)/(1-sigma)  ==  m^sigma * X^(1-sigma)/(1-sigma)
+
+so multiplying by m^sigma is IDENTICAL to dividing the whole bundle by m and
+summing over m members. Housing sits inside X, so housing is deflated. In every
+run to date m = 1, because include_varying_household_size is 0.
 
 ## What replaces it
 
-    A    = H + phi_c*(c/m)^0.2                 shared bundle, everyone gets this
-    u_P  = -[ A + phi_a*q^0.144 ]^(-5)         parent, drugs UNDIVIDED
-    u_K  = -[ A ]^(-5)                         child: consumption and housing only
+Everyone has the same housing and consumption, each divided by the scale.
+Drugs are private to the parent. CHILDREN HAVE THE SAME UTILITY FUNCTION WITH
+q = 0 -- not renormalised shares, which would put parent and child on different
+scales and make adding them meaningless.
 
-    social  W(a) = aleph + u_P +          n(a)*u_K
+    X_P = (s/m)^phi_s * (c/m)^phi_c * (b_bar + q)^phi_q     u_P = -1/X_P
+    X_K = (s/m)^phi_s * (c/m)^phi_c * b_bar^phi_q           u_K = -1/X_K
+
+    social  W(a) = aleph + u_P +           n(a)*u_K
     parent  V(a) = aleph + u_P + omega_c * n(a)*u_K
 
-THE EXTERNALITY IS ONE LINE:
+b_bar enters the child's bundle as a constant factor, so it scales u_K and moves
+no margin.
+
+## The externality
 
     W - V = (1 - omega_c) * n(a) * u_K
 
-and the marginal externality of a dollar spent on drugs, which comes out of c:
+Under Cobb-Douglas the marginal utility of consumption is phi_c/(c*X), so a
+dollar of drug spending, which comes straight out of c, carries
 
-    d(W-V)/d(drug spending) = (1-omega_c) * n(a) * phi_c * A^(-6) * c^(-0.8) * m^(-0.2)
+    d(W-V)/d(drug spending) = (1 - omega_c) * n(a) * phi_c / (c * X_K)
 
-THREE CHANGES AND NO MORE: q loses its /m; the children become a separate
-additive term; m = sqrt(1+n(a)) replaces m = 1.
+NESTING. At omega_c = 1 and n = 0, m = 1 and the child term vanishes, leaving
+W = V = aleph - 1/[ s^phi_s c^phi_c (b_bar+q)^phi_q ], the live expression
+exactly. The present model is the childless, fully-internalising corner of this
+one, WHICH IS THE HARD TEST ON STEP ONE OF THE BUILD.
 
-NESTING. At omega_c = 1 and n = 0, m = 1 and W = V = today's expression exactly.
-The current model is the childless, fully-internalising corner.
+## A household at age forty
 
-## Decisions taken, so they are not re-litigated
+s = 1.0, c = 1.0, q = 0.164 (the 14.1 per cent share the model already targets),
+n = 1.45 so m = 1.565 and every member has s/m = c/m = 0.639.
 
-**CHILDREN COUNT AS WHOLE PEOPLE.** The weight is n(a), not m - 1. The square
-root scale is a statement about consumption NEEDS, not about how many people
-there are. Author, 11 September: *"Let's go with counting children as whole
-people."* This does NOT nest the current code's "equivalent adults" convention,
-which is the price.
+    X_P = 0.4444    u_P = -2.250
+    X_K = 0.1438    u_K = -6.955
+    W = -12.335                     V = -2.250 + omega_c*(-10.084)
 
-**CHILDREN ARE EXOGENOUS TO THE DRUG CHOICE.** n(a) does not depend on the
-addiction state. Making it depend would mean using REMOVES people from the social
-welfare sum and mechanically raises measured welfare -- the same perverse
-incentive that forced the child-value differencing at line 30158, where the level
-version "REWARDED the disorder".
+Raising drug spending, q 0.164 -> 0.200 and c 1.000 -> 0.964:
 
-**THE POPULATION PROFILE IS USED FOR EVERYONE.** Measured, households with a
-disorder have 0.95 times as many children overall and 0.886 composition-adjusted,
-but only 0.639 at ages 35-49, the peak child-rearing years. Author, 11 September:
-*"I think we can say that those with Sud have roughly the same number of children
-in the house. It is not a big difference."* SO THE CHANNEL IS AN UPPER BOUND AT
-THE PEAK AGES, and this is the reading in which the missing children are
-themselves a harm -- removal -- rather than a reason to count fewer of them.
+                        before    after    change
+    parent              -2.250   -2.176    +0.074
+    each child          -6.955   -7.091    -0.136
+    all 1.45 children                      -0.197
+    NET SOCIAL                             -0.123
 
-**ALEPH STAYS ON THE PARENT.** value_of_life is added once per household, not per
-person. Adding it per child would inflate every welfare level by a constant
-without changing any margin.
+## The amplification is exact, and it is 3.09
+
+From the same consumption cut with drugs held, the parent loses 0.044 and each
+child 0.136. Cobb-Douglas makes the reason exact: marginal utility is
+phi_c/(c*X), and parent and child share phi_c and c, so the ratio is the ratio
+of the bundles:
+
+    (du_K/dc) / (du_P/dc) = X_P / X_K = ((b_bar + q)/b_bar)^phi_q = 3.09
+
+The parent's bundle is larger only because it holds the drugs, and a larger
+bundle has lower marginal utility. The drug partly insulates the parent from the
+consumption it gives up; nothing insulates the child. THE AMPLIFICATION IS
+GOVERNED ENTIRELY BY phi_q AND BY HOW MUCH THE HOUSEHOLD USES, both already
+calibrated.
+
+(Revision 1 of this file reported 4.94 from the additive form. Withdrawn.)
 
 ## Where the unemployment channel enters: nowhere new
 
 Through c. The disorder already raises unemployment in the calibrated model --
-`kappa_ued` is 0.2059 against a population rate of 0.0503, with a separation
-multiplier of 2.7 and `multiple_find_if_addicted` at 28.5 making spells long. So
-a using household has less income AND spends 14 per cent of what remains on
-drugs. Both lower c, both lower A, both lower u_K. No extra term.
+`kappa_ued` is 0.2059 against a population 0.0503, with a separation multiplier
+of 2.7 and `multiple_find_if_addicted` at 28.5 making spells long. A using
+household has less income AND spends a seventh of what remains on drugs. Both
+lower c, hence X_K. No extra term.
 
-## Size, as an envelope
+## Decisions taken, so they are not re-litigated
 
-Combined diversion takes c down about 22 per cent:
+**CHILDREN COUNT AS WHOLE PEOPLE.** The weight is n(a), not m - 1. The square
+root scale is about consumption NEEDS, not headcount. Author, 11 September:
+*"Let's go with counting children as whole people."* It does not nest the code's
+"equivalent adults" convention, which is the price.
 
-    (c/m)^0.2 falls by 1 - 0.78^0.2                        4.9%
-    if the consumption term is ~60% of A, A falls          2.9%
-    u_K = -A^(-5), so |u_K| rises by 1.029^5 - 1          15.9%
+**CHILDREN ARE EXOGENOUS TO THE DRUG CHOICE.** n(a) must not depend on the
+addiction state, or using would remove people from the welfare sum and
+mechanically raise measured welfare -- the perverse incentive that forced the
+differencing of the existing child term.
 
-carried by n(a) = 1.45 children at age 40, of which the parent internalises
-omega_c. Against the wage channel's 24.3 utils this is of the order of 1.6 to 2.2
-times as large, which would put the omega_c matching the parent against non-parent
-moment nearer 0.3-0.4 than the 1.06 it takes today. THIS IS AN ENVELOPE.
+**THE POPULATION PROFILE APPLIES TO EVERY HOUSEHOLD.** Measured, households with
+a disorder have 0.95 times as many children overall, 0.886 composition-adjusted,
+but only 0.639 at ages 35-49. Author, 11 September: *"I think we can say that
+those with Sud have roughly the same number of children in the house."* So the
+channel is an UPPER BOUND at the peak ages, under the reading in which the
+missing children are themselves a harm rather than a reason to count fewer.
 
-## Build order, when it is built
+**ALEPH STAYS ON THE PARENT.** Once per household. Per child it would inflate
+every welfare level by a constant without changing any margin.
 
-1. install the children profile and recalibrate, drugs still shared -- ALL THE
-   CALIBRATION RISK IS HERE, since m stops being 1 and every consumption
-   denominated moment moves;
-2. take the /m off the drug term, and refit relative_share_of_addiction, which
-   must move because the drug now enters one bracket at q instead of m brackets
-   at q/m;
+## Build order
+
+1. install the children profile and recalibrate -- ALL THE CALIBRATION RISK IS
+   HERE, since m stops being 1 and every consumption-denominated moment moves.
+   The n = 0 nesting test above is the check;
+2. take the drugs out of the shared bundle, refitting phi_q, which must move
+   because the drug goes from being deflated with everything else to entering
+   the parent's bundle alone;
 3. split the parent's weight from the planner's at omega_c.
-
-Each step is separately checkable.
