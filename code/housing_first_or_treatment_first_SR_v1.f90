@@ -42390,7 +42390,40 @@
                             if ((have_lambda_secant==1) .AND. &
                                 (abs(model_fraction_addicted(1)-previous_sud_rate)>10.d0**(-6)) .AND. &
                                 (abs(onset_at_mean_1-previous_onset_at_mean)>10.d0**(-12)) .AND. &
-                                (lambda_secant_slope_1>0)) then
+                            ! A NEGATIVE SLOPE IS THE TRUTH HERE, NOT CONTAMINATION.
+                            !
+                            ! This required lambda_secant_slope_1>0 and fell back to a
+                            ! proportional rule otherwise, on the reasoning -- written
+                            ! in an earlier round, and wrong -- that prevalence moving
+                            ! against the hazard meant another instrument had moved
+                            ! more. Measured single-parameter at loop 1 on 11 September
+                            ! with nothing else moving:
+                            !
+                            !     onset 0.0428 -> 0.0550   lambda_d -49.0%   e = -2.68
+                            !     onset 0.0428 -> 0.0350   lambda_d +74.3%   e = -2.76
+                            !
+                            ! Monotone, negative both sides, same slope either way.
+                            ! RAISING THE ONSET HAZARD LOWERS THE DISORDER RATE: making
+                            ! use riskier deters people from using at all, and the
+                            ! extensive margin dominates, so fewer users means fewer
+                            ! disorders and deterrence beats conversion. That is the
+                            ! model's central mechanism appearing in its own
+                            ! calibration, as it does for value_of_life and
+                            ! size_homelessness.
+                            !
+                            ! So the rejection clause overrode a true reading with a
+                            ! guess, and the fallback raised the onset whenever lambda_d
+                            ! was low, which lowered it further. Over nineteen loops on
+                            ! 11 September that took lambda_d from +2.0 per cent to -33
+                            ! and dragged participation from -0.9 to -34 with it.
+                            !
+                            ! The secant is signed correctly by construction -- it is
+                            ! d(onset)/d(lambda_d), so a negative slope with a negative
+                            ! gap gives a step that LOWERS the onset -- and its magnitude
+                            ! is already bounded by the trust clamp below, so admitting
+                            ! negative slopes cannot run away. Only a degenerate slope
+                            ! falls back now.
+                                (abs(lambda_secant_slope_1)>10.d0**(-12))) then
 
                                 onset_step_1=onset_at_mean_1-&
                                     (model_fraction_addicted(1)-sud_rate_data)*&
@@ -42398,12 +42431,18 @@
 
                             elseif (model_fraction_addicted(1)>10.d0**(-8)) then
 
-                                if ((have_lambda_secant==1) .AND. (lambda_secant_slope_1<=0) .AND. &
-                                    (abs(model_fraction_addicted(1)-previous_sud_rate)>10.d0**(-6))) then
+                                ! REACHED ONLY WITHOUT A USABLE SECANT NOW -- the first
+                                ! pass, or a degenerate slope. The proportional rule
+                                ! below assumes raising the onset raises lambda_d, the
+                                ! WRONG sign as measured above, so it takes one step the
+                                ! wrong way before a secant exists to correct it. Left
+                                ! rather than reversed: baking in the opposite sign
+                                ! would be the same mistake with the opposite prejudice,
+                                ! and the secant measures the sign and should decide it.
+                                if (have_lambda_secant==0) then
 
-                                    write(*,*) "lambda secant REJECTED, slope=", lambda_secant_slope_1, &
-                                        ": prevalence moved against the hazard, so another instrument",&
-                                        " moved more than this one. Falling back to the proportional rule."
+                                    write(*,*) "lambda secant NOT YET AVAILABLE: one proportional step,",&
+                                        " which assumes the wrong sign; the secant will correct it."
 
                                 end if
 
