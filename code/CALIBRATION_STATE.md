@@ -1,3 +1,39 @@
+## 11 September 06:35 UTC -- pi_V IS NOT SEPARABLE FROM THE DRUG BLOCK, and my
+## "separable" list at 06:00 was wrong about it.
+
+probability_of_voucher_benchmark_used 0.0430 -> 0.095, one parameter, off the
+14.4 benchmark:
+
+    pi_V        0.13787 -> 0.25484   target 0.266     -4.2%   LANDS
+    h_1        0.014547 -> 0.010891  target 0.0116    -6.1%   improves
+    theta                   0.14266  target 0.14098   +1.2%
+    tau_u                   0.22773  target 0.245     -7.0%
+    b          0.081015 -> 0.14750   target 0.089    +65.7%   BLOWS OUT
+    lambda_d   0.032913 -> 0.062133  target 0.0368   +68.8%   BLOWS OUT
+
+median |gap| 10.8 per cent against the benchmark's 11.8, and twelve of 26 inside
+ten -- but the drug block is destroyed.
+
+**THE CORRECTION.** The 06:00 entry listed tau_u, pi_V, y_u and burden50 as
+"ordinary unconverged moments with live instruments that do not fight
+value_of_life". tau_u genuinely does not: raising the treatment cost left theta,
+aleph and b almost untouched. pi_V is the opposite. More vouchers means more
+households housed, and housed households use MORE, so the voucher probability is
+a strong driver of drug use.
+
+That is also the interaction that contaminated the two-parameter point at 06:18.
+I attributed it there to the treatment cost and vouchers jointly; it was the
+vouchers alone.
+
+**SO THIS IS NOT SAVED AS THE BENCHMARK** despite the better median. b at +66 per
+cent and lambda_d at +69 are far worse than the -9.0 and -10.6 the 14.4 vector
+carries, and the drug block is what the paper is about.
+
+**WHAT IT MEANS FOR THE CALIBRATION.** pi_V and the drug moments are genuinely
+simultaneous, so they cannot both be fixed by tuning one parameter at a time.
+That is what a JOINT loop is for -- and the joint loop can only run once aleph is
+settled, because value_of_life is the instrument it would otherwise fight.
+
 ## 11 September 06:31 UTC -- BENCHMARK IMPROVED. tau_u landed at +1.6 per cent,
 ## median gap 11.8. utility_cost_of_treatment = 14.4.
 
