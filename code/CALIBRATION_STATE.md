@@ -86,6 +86,45 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+## 11 September 10:58 UTC -- THE MATCHED PAIR ANSWERS THE ALEPH QUESTION AT LOOP 2
+## ALREADY, AND THE ANSWER IS THAT ONE INSTRUMENT CANNOT HIT BOTH.
+
+Same vector, value_of_life alone changed, both arms read at the same loop:
+
+    loop 1        value_of_life 162.2      value_of_life 140
+      b               9.2696%                 24.27%
+      aleph          52.975                  48.578
+
+    loop 2        value_of_life 163.0      value_of_life 140.7
+      b               6.7567%                 23.61%
+      aleph          56.680                  50.711
+
+**SO value_of_life IS NOT FLAT ON ALEPH AFTER ALL** -- over a wide range it moves
+it the right way, and the local flatness at 163 to 169 recorded this morning is a
+local feature, not the instrument being dead. The wide elasticity at loop 2 is
+
+    d ln aleph / d ln value_of_life = +0.76
+    d ln b     / d ln value_of_life = -8.50
+
+**AND THAT RATIO IS THE WHOLE PROBLEM: ELEVEN TO ONE AGAINST.** The instrument
+moves participation eleven times harder, in elasticity, than it moves the moment
+it is bracketed on. Reading the pair the other way: b's target of 8.9 per cent
+sits between the two arms and close to the high one, near value_of_life 159, and
+aleph there is about 56 -- still thirty per cent short of 80. Driving aleph to 80
+wants value_of_life up something like 57 per cent, to about 255, and b would be
+nowhere near a target it already undershoots at 162.
+
+**THE DECISION THIS SETTLES.** Aleph is not purchasable with value_of_life while
+b is also targeted, and it is not because the instrument is weak on aleph -- it
+is because the same instrument is overwhelming on b. Either aleph is conceded and
+value_of_life is pinned at whatever hits the drug block, or aleph needs an
+instrument that does not run through the value of dying.
+
+**CAVEAT, STATED PLAINLY.** Loops 1 and 2 are the transient-contaminated legs.
+The comparison is still matched -- same loop on both sides, one parameter apart --
+but the LEVELS carry the alternating map in them. The arm continues to loop 5 for
+the level, and the ratio above is not expected to move much.
+
 ## 11 September 10:52 UTC -- LOOPS 7 TO 9, AND THE MATCHED ARM IS NOW RUNNING.
 
     loop    value_of_life   aleph      b         lambda_d
