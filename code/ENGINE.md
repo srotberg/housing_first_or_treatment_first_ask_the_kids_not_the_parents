@@ -52,6 +52,41 @@
 > worry about the odds ratio in the main calibration. worry about omega_c and the
 > other parameters. delta_d can be done later again"*.
 >
+> ## OVERNIGHT RUN, 11 September 02:46. LEAVE IT ALONE.
+>
+> The author: *"let it calibrate at night...."*. A calibration is running as a
+> single `run_one_point.sh` on the vector with b = 0.002 and omega_c = 0.3. A
+> firing's whole job until it finishes is:
+>
+> 1. the stale-checkout guard;
+> 2. report its age and the latest `MOMENT b`, `MOMENT theta`, `MOMENT omega`,
+>    `weight_on_child`, any `THETA CAPPED`, and `DIAG share with a NEGATIVE value
+>    of life`, in one line;
+> 3. stop.
+>
+> **DO NOT restart it, do not edit `code/*.f90`, do not start a second run, do
+> not start `three_loop.sh` or the fleet.** Every source edit forces a four
+> minute rebuild AND throws away the loop's progress, because run_one_point.sh
+> rebuilds from the working tree and the internal loop starts from the handover
+> again. Four restarts were spent that way between 02:08 and 02:46 -- each one
+> justified at the time, and the cumulative cost was that not one loop completed.
+> Overnight that cost is the whole night.
+>
+> If something looks wrong, WRITE IT DOWN in CALIBRATION_STATE.md and leave the
+> run going. The only reasons to stop it are: the author says so, the process has
+> died, or it is provably in a state that cannot produce a usable point (zero
+> participation persisting over many loops, a NaN in a targeted moment).
+>
+> **EXPECT IT TO BE SLOW AND DO NOT READ SLOW AS STUCK.** Every parameter is
+> capped at 0.5 per cent a loop by `max_rel_step_all`, and theta at 0.1 per cent
+> by `theta_max_rel_step`, both on the author's instruction. 139 loops to double
+> a parameter, 462 to move one by a factor of ten. A moment that has barely moved
+> after twenty loops is the cap working, not a fault.
+>
+> **COMMIT THE LOG PERIODICALLY.** The container is reclaimed on inactivity and
+> the run's evidence lives in `code/worker_<tag>.log`. The firings keep the
+> container alive; committing the log keeps the evidence if they stop.
+
 > **STEP 2 IS BUILT AND THE LOOP IS RUNNING, 11 September 02:08.** The child is
 > in the parent's FLOW utility, not only the continuation:
 >
