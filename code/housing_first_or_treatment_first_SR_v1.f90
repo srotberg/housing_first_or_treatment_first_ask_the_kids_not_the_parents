@@ -4421,6 +4421,34 @@
         real(8), parameter :: corner_high=5.d0
         real(8), parameter :: escape_factor=2.d0
         real(8), parameter :: escape_factor_b=10.d0
+
+        ! THE GLOBAL GOVERNOR ON EVERY PARAMETER STEP, 11 September.
+        !
+        ! The author, after watching b go from 0.00255 to 0.2537 in two loops
+        ! and take participation to exactly zero: "b is moving too fast", then
+        ! "make sure no parameter moves more than 0.5% between runs".
+        !
+        ! Each bracket already has its own trust region, and b's is the reason
+        ! this is needed rather than a reason it is not: escape_factor_b is 10,
+        ! so the moment participation falls outside a tenth of its target the
+        ! clamp permits a TENFOLD move per loop, and the corner b had just
+        ! created is exactly the state that triggers it. A per-bracket fix would
+        ! have to be made once per bracket and would miss the next one.
+        !
+        ! WHAT IT COSTS, SAID ONCE. At half a per cent a loop a parameter needs
+        ! 139 loops to double and 462 to move by a factor of ten. If b has to
+        ! travel an order of magnitude that is of the order of two days at six
+        ! minutes a loop. That is the price of never again spending a night on a
+        ! run that walked into a corner on iteration one.
+        !
+        ! A PARAMETER SITTING AT EXACTLY ZERO IS EXEMPT FOR ONE STEP, because a
+        ! RELATIVE cap around zero is zero and would trap it there for ever.
+        ! weight_on_child starts at 0 and must climb; so does
+        ! penalty_child_homeless. After the first step off zero the cap binds
+        ! normally.
+        !
+        ! Handable, so it can be loosened mid calibration without a rebuild.
+        real(8) :: max_rel_step_all=0.005d0
         ! THE STOPPING RULE EXISTED AND THE DISTANCE DID NOT.
         !
         ! The retention scale is updated every loop against an average labour
@@ -8704,7 +8732,22 @@
 
         end function
 
-        subroutine trust_step(step_1,current_1,factor_1,allowance_1)
+        ! THE GLOBAL STEP CAP. Applied to every calibrated parameter's new value,
+    ! after its own bracket and its own trust region have had their say, so it
+    ! can only ever make a step SMALLER. See max_rel_step_all for why.
+    real(8) function cap_step(new_1,old_1) result(out_1)
+        implicit none
+        real(8), intent(in) :: new_1,old_1
+        real(8) :: room_1
+        if (abs(old_1)<=10.d0**(-30)) then
+            out_1=new_1
+        else
+            room_1=max_rel_step_all*abs(old_1)
+            out_1=max(min(new_1,old_1+room_1),old_1-room_1)
+        end if
+    end function
+
+    subroutine trust_step(step_1,current_1,factor_1,allowance_1)
 
             ! A NEWTON OR SECANT STEP NEEDS A TRUST REGION, and three of them did
             ! not have one. Measured over a single loop, with the report finally
@@ -39652,6 +39695,12 @@
                             " path, where the price is the normalisation:", handover_value
                     end if
 
+                ! THE GLOBAL PER LOOP CAP ON EVERY PARAMETER.
+                case ("max_rel_step_all")
+                    write(*,*) "HANDOVER max_rel_step_all:", &
+                        max_rel_step_all, "->", handover_value
+                    max_rel_step_all=max(min(handover_value,1.d0),10.d0**(-5))
+
                 ! HOW FAR THETA MAY MOVE IN ONE LOOP. Settable so the cap can
                 ! be tightened mid calibration without a rebuild.
                 case ("theta_max_rel_step")
@@ -40125,6 +40174,9 @@
         logical :: file_exists
         
         real(8) :: mass_at_top_financial,a,b,c,d
+        ! The value a parameter held before its bracket moved it, so the
+        ! global governor can cap the relative step. See max_rel_step_all.
+        real(8) :: cap_old_1
         real(8) :: mean_drug_quantity_1,onset_at_mean_1,onset_step_1,treatment_step_1,&
             separation_step_1,b_move_1,lambda_move_1
         character*1 :: string_used
@@ -40891,7 +40943,9 @@
             ! Back to the patient value, which is the one the calibration owns,
             ! and back to resetting accumulators so nothing downstream inherits
             ! the suppression.
+            cap_old_1=discount_factor
             discount_factor=discount_factor_patient_saved
+            discount_factor=cap_step(discount_factor,cap_old_1)
             mass_passes=number_of_beta_types
             accumulating_beta_types=0
             current_beta_type=1
@@ -41357,11 +41411,13 @@
                         previous_gap_relative_share_of_leisure,have_gap_relative_share_of_leisure,&
                         relative_share_of_leisure_adjuster_start,damp_adjuster_floor)
                     write(*,*) "relative_share_of_leisure_adjuster=", relative_share_of_leisure_adjuster
+                    cap_old_1=relative_share_of_leisure
                     relative_share_of_leisure=&
                         min(max(relative_share_of_leisure*&
                         (1+relative_share_of_leisure_adjuster*&
                         (model_labor_supply(1)/model_total_hours(1)-avg_labor_supply_data)/&
                         max(avg_labor_supply_data,10.d0**(-12))),0.01),1000.d0) 
+                    relative_share_of_leisure=cap_step(relative_share_of_leisure,cap_old_1)
                                                                  
                     distance_relative_share_of_leisure=&
                         (1-freeze_relative_share_of_leisure)*&
@@ -41436,9 +41492,11 @@
 
                         write(*,*) "largest_house_size_adjuster=", largest_house_size_adjuster
 
+                        cap_old_1=largest_house_size
                         largest_house_size=&
                             min(max(largest_house_size+largest_house_size_adjuster*&
                             gap_house_size_1,0.02d0),1.d0)
+                        largest_house_size=cap_step(largest_house_size,cap_old_1)
 
                         distance_largest_house_size=&
                             abs(model_housing_size_dist(1,housing_status_grid_size-1)-&
@@ -41635,9 +41693,11 @@
 
                         write(*,*) "smallest_house_size_adjuster=", smallest_house_size_adjuster
 
+                        cap_old_1=smallest_rental_relative_to_lowest_income
                         smallest_rental_relative_to_lowest_income=&
                             min(max(smallest_rental_relative_to_lowest_income-smallest_house_size_adjuster*&
                             gap_house_size_1,smallest_rental_floor),10.d0) 
+                        smallest_rental_relative_to_lowest_income=cap_step(smallest_rental_relative_to_lowest_income,cap_old_1)
                                                                      
                         distance_smallest_house_size=&
                             abs(model_housing_size_dist(1,0)-housing_size_dist_data(0))
@@ -41673,8 +41733,10 @@
                         previous_gap_labor_income_tax_rate,have_gap_labor_income_tax_rate,&
                         labor_income_tax_rate_adjuster_start,damp_adjuster_floor)
                     write(*,*) "labor_income_tax_rate_adjuster=", labor_income_tax_rate_adjuster
+                    cap_old_1=labor_income_tax_rate
                     labor_income_tax_rate=max(min(labor_income_tax_rate+labor_income_tax_rate_adjuster*&
                         (model_average_labour_income_tax(1)-average_labor_income_tax_data),2.d0),0.d0)
+                    labor_income_tax_rate=cap_step(labor_income_tax_rate,cap_old_1)
 
                     distance_labor_income_tax_rate=&
                         abs(model_average_labour_income_tax(1)-average_labor_income_tax_data)
@@ -41949,7 +42011,9 @@
                             ! disorder risk sits on the extensive margin. A household
                             ! deciding how MUCH to use weighs no health risk at all;
                             ! only the decision to use at all carries one.
+                            cap_old_1=addiction_onset_base
                             addiction_onset_base=onset_at_mean_1
+                            addiction_onset_base=cap_step(addiction_onset_base,cap_old_1)
 
                             lambda_addiction=0.d0
 
@@ -41977,10 +42041,12 @@
 
                     else
 
+                        cap_old_1=probability_of_becoming_addicted_if_experiment
                         probability_of_becoming_addicted_if_experiment=&
                             max(min(probability_of_becoming_addicted_if_experiment-&
                             probability_of_becoming_addicted_adjuster*&
                             (model_fraction_addicted(1)-sud_rate_data),0.2d0),1.d0*10.d0**(-5))
+                        probability_of_becoming_addicted_if_experiment=cap_step(probability_of_becoming_addicted_if_experiment,cap_old_1)
 
                         distance_probability_of_becoming_addicted=&
                             abs(model_fraction_addicted(1)-sud_rate_data)
@@ -42057,7 +42123,9 @@
                         ! the parameter from outside -- but a dormant ceiling that
                         ! contradicts the live one is exactly how the live one
                         ! came to be missed.
+                        cap_old_1=utility_cost_of_treatment
                         utility_cost_of_treatment=max(min(treatment_step_1,20.d0),0.d0)
+                        utility_cost_of_treatment=cap_step(utility_cost_of_treatment,cap_old_1)
 
                         ! ZEROED WHEN THE ADJUSTER IS ZERO, OR THE LOOP CANNOT EXIT.
                         ! utility_cost_of_treatment_adjuster is 0, so the step below
@@ -42112,9 +42180,11 @@
                             " target =", milby_recovery_ratio_data
                         write(*,*) "mu_homeless=", mu_homeless
 
+                        cap_old_1=mu_homeless
                         mu_homeless=max(min(mu_homeless+mu_homeless_adjuster*&
                             (model_recovery_housed(1)/model_recovery_homeless(1)-&
                             milby_recovery_ratio_data),1.d0),10.d0**(-3))
+                        mu_homeless=cap_step(mu_homeless,cap_old_1)
 
                         distance_mu_homeless=&
                             abs(model_recovery_housed(1)/model_recovery_homeless(1)-&
@@ -42159,9 +42229,11 @@
                         ! The step is taken on a clamped gap for the same reason
                         ! theta's is: the sign is informative long before the
                         ! magnitude is.
+                        cap_old_1=weight_on_child
                         weight_on_child=max(min(weight_on_child-weight_on_child_adjuster*&
                             max(min(child_use_gap_1-child_use_gap_data,1.d0),-1.d0),&
                             weight_on_child_cap),0.d0)
+                        weight_on_child=cap_step(weight_on_child,cap_old_1)
 
                         distance_weight_on_child=abs(child_use_gap_1-child_use_gap_data)
 
@@ -42730,12 +42802,14 @@
                     b_move_1=move_factor(model_exprimenters(1),&
                         participation_rate_data,escape_factor_b)
                     write(*,*) "MOVE MODE addiction_scalar_1=", b_move_1
+                    cap_old_1=addiction_scalar_1
                     addiction_scalar_1=max(min(addiction_scalar_1*&
                         (1+addiction_scalar_adjuster*&
                         gap_addiction_scalar_1/&
                         max(participation_rate_data,10.d0**(-12))),&
                         min(b_hi,b_move_1*addiction_scalar_1)),&
                         max(b_lo,addiction_scalar_1/b_move_1))
+                    addiction_scalar_1=cap_step(addiction_scalar_1,cap_old_1)
                     distance_addiction_scalar=abs(gap_addiction_scalar_1)
                     write(*,*) "addiction_scalar_adjuster=", addiction_scalar_adjuster
                     write(*,*) "addiction_scalar_1=", addiction_scalar_1
@@ -42792,7 +42866,9 @@
                         value_of_life_step_1=max(min(value_of_life_step_1,&
                             (1+value_of_life_trust)*value_of_life),&
                             value_of_life/(1+value_of_life_trust))
+                        cap_old_1=value_of_life
                         value_of_life=max(min(value_of_life_step_1,10.d0**(4)),10.d0**(-2))
+                        value_of_life=cap_step(value_of_life,cap_old_1)
                         distance_value_of_life=abs(model_vsl_ratio_1-vsl_data)
 
                     else
@@ -42819,9 +42895,11 @@
                     ! at the moment; if one changes the other has to.
                     if (model_output(1)>0) then
                         write(*,*) "max_food_cost=", max_food_cost
+                        cap_old_1=max_food_cost
                         max_food_cost=max(min(max_food_cost-max_food_cost_adjuster*&
                             (govt_spending_on_food_stamps(1)/model_output(1)-&
                             food_stamps_share_data),1.d0),10.d0**(-4))
+                        max_food_cost=cap_step(max_food_cost,cap_old_1)
                         ! PRINT THE RATIO THIS UPDATE COMPARES, which is now the
                         ! same ratio the moments block prints.
                         write(*,*) "govt_spending_on_food_stamps/model_output=", &
@@ -42841,9 +42919,11 @@
                         previous_gap_voucher_probability,have_gap_voucher_probability,&
                         voucher_probability_adjuster_start,damp_adjuster_floor)
                     write(*,*) "voucher_probability_adjuster=", voucher_probability_adjuster
+                    cap_old_1=probability_of_voucher_benchmark_used
                     probability_of_voucher_benchmark_used=&
                         max(min(probability_of_voucher_benchmark_used-voucher_probability_adjuster*&
                         (model_eligibles_getting_voucher(1)-voucher_coverage_data),1.d0),10.d0**(-5))
+                    probability_of_voucher_benchmark_used=cap_step(probability_of_voucher_benchmark_used,cap_old_1)
                     distance_voucher_probability=&
                         abs(model_eligibles_getting_voucher(1)-voucher_coverage_data)
                     write(*,*) "probability_of_voucher_benchmark_used=", probability_of_voucher_benchmark_used
@@ -42866,8 +42946,10 @@
                     write(*,*) "MOVE MODE separation_rate=",&
                         move_factor(model_fraction_unemployed(1),&
                         unemployment_rate_data,escape_factor)
+                    cap_old_1=probability_becoming_unemployed
                     probability_becoming_unemployed=&
                         max(min(separation_step_1,1.d0),10.d0**(-6))
+                    probability_becoming_unemployed=cap_step(probability_becoming_unemployed,cap_old_1)
                     distance_separation_rate=abs(model_fraction_unemployed(1)-unemployment_rate_data)
                     write(*,*) "probability_becoming_unemployed=", probability_becoming_unemployed
                     write(*,*) "distance_separation_rate=", distance_separation_rate
@@ -42883,11 +42965,13 @@
                         previous_gap_employment_multiplier,have_gap_employment_multiplier,&
                         employment_multiplier_adjuster_start,damp_adjuster_floor)
                     write(*,*) "employment_multiplier_adjuster=", employment_multiplier_adjuster
+                    cap_old_1=multiple_of_probabilities_of_employment_if_addicted
                     multiple_of_probabilities_of_employment_if_addicted=&
                         max(min(multiple_of_probabilities_of_employment_if_addicted-&
                         employment_multiplier_adjuster*&
                         (model_fraction_addicted_and_unemployed(1)-unemployment_rate_sud_data),&
                         20.d0),1.d0)
+                    multiple_of_probabilities_of_employment_if_addicted=cap_step(multiple_of_probabilities_of_employment_if_addicted,cap_old_1)
                     distance_employment_multiplier=&
                         abs(model_fraction_addicted_and_unemployed(1)-unemployment_rate_sud_data)
                     write(*,*) "multiple_of_probabilities_of_employment_if_addicted=", &
@@ -43043,9 +43127,11 @@
                         ! rate keeps falling to zero, so the ceiling remains a
                         ! ceiling and not a wall, but the log-odds line bends
                         ! there and a fit taken across it should not be believed.
+                        cap_old_1=kappa_uem
                         kappa_uem=min(max(kappa_uem+kappa_uem_adjuster*&
                             (model_employment_rate_given_smi(1)-employment_rate_given_smi_data),&
                             1.0d0),100.d0)
+                        kappa_uem=cap_step(kappa_uem,cap_old_1)
 
                         distance_kappa_uem=&
                             abs(model_employment_rate_given_smi(1)-employment_rate_given_smi_data)
@@ -43185,8 +43271,10 @@
                         ! Bisect. This halves the window every equilibrium solve,
                         ! so a window of 0.08 is down to the stopping rule in about
                         ! seven of them however wide the initial bracket was.
+                        cap_old_1=size_homelessness
                         size_homelessness=&
                             0.5d0*(size_homelessness_lo+size_homelessness_hi)
+                        size_homelessness=cap_step(size_homelessness,cap_old_1)
 
                         write(*,*) "size_homelessness bisecting in [",&
                             size_homelessness_lo, ",", size_homelessness_hi, "]"
@@ -43264,8 +43352,10 @@
                         write(*,*) "MOVE MODE size_homelessness=",&
                             move_factor(model_fraction_homeless(1),&
                             fraction_homeless_data,escape_factor)
+                        cap_old_1=size_homelessness
                         size_homelessness=max(min(size_homelessness_step_1,0.9d0),&
                             size_homelessness_floor)
+                        size_homelessness=cap_step(size_homelessness,cap_old_1)
 
                         ! Say so if the traverse has run out of room. At a street
                         ! worth as much as housing_size(0) and free, a model still

@@ -938,11 +938,28 @@ fi
 # keyed to the distribution the previous vector produced.
 rm -f calibration_state.dat calibration_distribution*.dat
 
-# b reaches the model through the sweep grid; everything else through the handover.
+# B REACHES THE MODEL THROUGH BOTH PATHS NOW, AND IT HAS TO.
+#
+# It used to go through the sweep grid ALONE, excluded from the handover by the
+# `continue` that used to be below. That was correct only while
+# sweep_addiction_scalar was 1, because the sweep is what reads B_SWEEP_GRID.txt.
+#
+# THE DAY THE SWEEP WAS TURNED OFF IT BECAME A SILENT DROP. Nothing read the
+# grid file, no handover carried b, and the model fell back to b's DECLARED
+# value of 0.2537 -- a hundred times the 0.00255 the vector asked for. The run
+# of 11 September 02:09 spent three loops at a b that large, which makes the
+# marginal value of the first unit theta/b negligible, and reported
+# participation of exactly zero. Nothing in the log said the request had been
+# ignored: the point was still named for the md5 of the vector REQUESTED, so
+# the archive would have carried a point labelled b = 0.00255 that ran at
+# b = 0.2537.
+#
+# Writing it to both is safe in either mode: in sweep mode the Fortran assigns
+# addiction_scalar_1 = sweep_b_grid(1) AFTER the handover has been applied, so
+# the grid still wins there.
 printf '%s\n' "${P[addiction_scalar_1]}" > B_SWEEP_GRID.txt
 : > PARAM_HANDOVER.txt
 for k in "${!P[@]}"; do
-    [ "$k" = addiction_scalar_1 ] && continue
     printf '"%s" %s\n' "$k" "${P[$k]}" >> PARAM_HANDOVER.txt
 done
 WANT=$(wc -l < PARAM_HANDOVER.txt)
