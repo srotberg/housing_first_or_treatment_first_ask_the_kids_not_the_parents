@@ -1,3 +1,139 @@
+## 11 September 23:45 UTC -- CONVERGED POINT, AND b CANNOT BE CALIBRATED BY ITS
+## OWN INSTRUMENT. Read this section first.
+
+**THE HEADLINE. b converges to about 0.178 whatever addiction_scalar_1 is.**
+
+    addiction_scalar_1 = 2.0e-3   b reached 0.17578   (run stopped there)
+    addiction_scalar_1 = 2.4e-3   b converged 0.17771, then hovers 0.178-0.185
+
+Twenty per cent apart in the instrument, ten loops apart in timing, and within
+one per cent of each other in b. The scalar sets HOW LONG b takes to arrive, not
+WHERE it arrives. Target is 0.089, so b lands at roughly DOUBLE it and the
+calibration has no working instrument for b's level.
+
+Convergence was verified by the increments, not by eye:
++0.0132, +0.0013, +0.0014, +0.00048.
+
+**THIS IS THE OPEN QUESTION FOR THE AUTHOR.** The drug block needs a different
+instrument or damping. Another scalar value will not help and should not be
+tried.
+
+### The converged point, loop 24
+
+bottom_productivity_level=0.11, addiction_scalar_1=2.4e-3,
+kappa_phi_d_level bracketed on y_u at half a per cent a loop, theta held.
+
+    LANDED INSIDE FIVE PER CENT
+    tau_l        -0.2%    p_m          +1.7%
+    emp_homeless -0.6%    theta        -1.9%
+    pi_V         +0.8%    burden50     -3.4%
+    beta         +0.9%    cbar         +3.6%
+    mu_H         +1.1%    sigma_y      +4.5%
+
+    OPEN
+    aleph        -7.0%    sud_homeless +39.9%
+    gamma       -11.7%    lambda_m     -42.8%
+    tau_u       -12.1%    b            +99.7%
+    y_u         -18.3%    lambda_d    +115.4%
+    h_2         +20.1%    h_1         +149.2%
+    pi_eu       +20.6%    w_bot       +156.0%  no instrument
+    kappa_ued   +33.7%    kappa_uem   +173.0%  no instrument
+                          h_3         -96.7%   no instrument
+
+Evidence: `code/evidence_converged_24loops.log`.
+
+### THE DRUG BLOCK FAILS AS ONE OBJECT
+
+b +99.7, lambda_d +115.4 and h_1 +149.2 are not three problems. h_1 tracks b
+every loop of every run because users are disproportionately homeless, so h_1
+follows wherever b lands. y_grid_kappa was therefore never spent on h_1, which
+was correct: tuning mass against a number b is still pushing means tuning twice.
+
+### WHAT WAS FIXED ON 11 SEPTEMBER
+
+**Three moments gained instruments that did not exist that morning.**
+
+- `y_u` had a data value of 0.740 and a comment naming kappa_phi_d_level as its
+  instrument, and NOTHING connecting them -- no adjuster, no distance, no update
+  block. Now bracketed, bounds [2,9] (the author: "more studies thag find
+  anywhere between 2-9"), half a per cent a loop. y_u went -55 per cent to -17.5
+  and is still improving.
+- `sud_homeless` was scored but deliberately uninstrumented. Now bracketed on
+  multiple_find_if_addicted, bounds [1,100]. NOTE THE SIGN TRAP: the parameter
+  DIVIDES the finding probability, so raising it LOWERS the finding rate. The
+  author's "the finding rate should rise" means the parameter FALLS.
+- `h_share1` had an adjuster, a distance and a stopping rule and was never
+  calibrated, because the bracket held the endowment whenever the share was
+  BELOW target -- half an instrument. Now two-sided.
+
+**The homelessness diagnosis.** 95.5 per cent of the model's homeless could not
+afford the smallest unit at any price: the ratio
+smallest_house_size*rent/net_income_lowest was 1.5574. Homelessness was
+arithmetic and size_homelessness had nothing to act on. Raising
+bottom_productivity_level to 0.11 took that ratio to 0.8503, which put the rent
+threshold inside the income distribution. emp_homeless went from EXACTLY ZERO to
+-0.6 per cent of target.
+
+A NOTE CARRIED IN THE OLD STATE FILE WAS WRONG: "99.3 per cent of this model's
+homeless can pay rent from current income" described a different economy and is
+the opposite of what was measured.
+
+**utility_cost_of_treatment.** tau_u went +192 to -12.1 per cent. The binding
+constraint was the ADJUSTER (5e-2 against a take-up gap of order 0.45, giving
+0.022 on a parameter of 14.3), NOT cap_step, which would have allowed 0.0716.
+Raised to 2.0, with cap_step_rel giving it a five per cent cap.
+
+### THE AUTHOR'S BANDS, as of 11 September
+
+    h_1            1.0-1.2 per cent, preferably 1.0
+    h_2            >= 7 per cent (relaxed from 8; data is 0.101)
+    emp_homeless   35-50 per cent, 46 the original target
+    theta          frozen via hold_theta; at -1.9 per cent it costs nothing
+
+### DEFECTS OF ONE SHAPE, FOUND FOUR TIMES IN ONE DAY
+
+A calibrated value defeated by a second writer, or an adjuster that is not the
+one the update reads. Worth a systematic sweep rather than finding them singly.
+
+1. `theta` -- the freeze zeroed relative_share_of_addiction_adjuster while the
+   update reads relative_share_of_addiction_adj. Theta ran live all day while
+   reported held.
+2. `discount_factor_impatient_adjuster`, `money_cost_of_treatment_adjuster` and
+   `relative_share_of_addiction_adjuster` are DECLARED AND NEVER READ -- each
+   appears exactly once, in its own declaration.
+3. `smallest_house_size` is overwritten from
+   smallest_rental_relative_to_lowest_income every loop, in BOTH branches of the
+   grid setup, so h_2's bracket cannot act. Its effective instrument is the
+   vector parameter.
+4. `calibration_report.py` lists smallest_house_size as calibrated and omits six
+   parameters that do move, so every gaps table from it is wrong in those rows.
+
+### HELD DELIBERATELY
+
+    bottom_productivity_level  0.11, fixed once the three housing moments were
+                               in band
+    y_grid_kappa               3.2, the mass instrument, reserved for h_1 AFTER
+                               b settles -- the author's sequencing
+    theta                      hold_theta=1
+    smr_d in stylized.py       8.0, left alone; 6.5 and 8.0 both sit inside the
+                               author's 2-9 range so the two models need not
+                               agree on one cited point
+
+### PROCESS LESSONS FROM THE DAY
+
+- **Relaunching resets vector-carried parameters.** omega_c moves 0.15 per cent
+  a loop and the run was restarted six times, each time resetting it to 0.1. Slow
+  parameters cannot converge under frequent restarts.
+- **Copy a log before re-running its vector.** The tag is the md5 of the VECTOR,
+  not the source, so a re-run truncates the log it would be compared against.
+  Nine loops of evidence were lost that way.
+- **Short series were over-read four times** -- omega_c "diverging", cap_step as
+  the treatment constraint, b "cannot recover", b "decelerating". All four were
+  withdrawn. Decision rules set BEFORE the data are the remedy that worked.
+- **Three times the right action on a moment heading out of band was NONE**:
+  h_2's fall to 7.03, emp_homeless nearing 50, h_2 again at 7.34. Each turned
+  without intervention.
+
 ## 11 September 16:30 UTC -- OPEN: THE BRACKET'S ALEPH AND THE REPORTED ALEPH ARE
 ## DIFFERENT NUMBERS.
 
