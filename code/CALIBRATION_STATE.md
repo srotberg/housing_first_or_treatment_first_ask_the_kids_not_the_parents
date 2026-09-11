@@ -86,6 +86,53 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+## 11 September 11:20 UTC -- THE SPLITTING POINT LANDED. lambda_d IS ON TARGET,
+## b IS WITHIN SEVEN, AND THIS IS THE BEST POINT THE MODEL HAS PRODUCED.
+
+Arm 16da70b64e, the benchmark vector with value_of_life started at 156.06 so the
+bracket's own drift carries it to 159.2 by loop 5. Read at loop 5:
+
+    lambda_d   3.6773%   target 3.68     +0.1%   ON TARGET
+    pi_eu      4.8603%   target 4.9      +0.8%   ON TARGET
+    pi_V      26.649%    target 26.6     +0.2%   ON TARGET
+    b          9.5032%   target 8.9      +6.8%
+    mu_H       1.41437   target 1.47321  +4.0%
+    tau_l     22.226%    target 22.4     +0.8%
+    theta      0.158221  target 0.14098 +12.2%
+    cbar       0.0036684 target 0.0042  +12.7%
+    tau_u      0.19430   target 0.245   -20.7%
+    h_1        1.5047%   target 1.16    +29.7%
+    aleph     52.591     target 80      -34.3%
+    child gap  0.42436   target 0.18343 +131.3%
+
+**THREE MOMENTS ON TARGET AND SEVEN INSIDE THIRTEEN PER CENT.** The old
+"benchmark" at 162.2 had none on target once it was read at a settled loop; it
+only looked good at loop 1.
+
+**b STILL CYCLES IN A BAND.** Across loops 3, 4 and 5 it reads +8.1, +4.9, +6.8
+per cent. That is not noise and it is not convergence: value_of_life's bracket
+adds 0.5 per cent a loop and b-bar's pushes the other way, and at an elasticity
+of -9.5 the two capped steps are worth several per cent on b each loop. The point
+wants PINNING, not more loops.
+
+**WHAT IS LEFT, AND WHAT EACH NEEDS**
+
+    aleph      -34%   conceded on the measured pair; no instrument can close it
+                      while b is targeted
+    child gap +131%   the alternating map, not an instrument
+    h_1        +30%   size_homelessness is weak AND coupled (measured last night)
+    tau_u      -21%   the one SEPARABLE instrument; moved +58 -> +1.6 in one step
+    theta      +12%   relative_share_of_addiction_1 is live
+    cbar       +13%   max_food_cost is live but coupled to the drug block
+
+tau_u is the cheapest real gain on the list and it is separable, so it is the one
+thing that can be moved without disturbing what has just been landed.
+
+**FILES.** `code/RESUME_VECTOR_159.txt` is the state the search reached -- the
+POST-update values, so it is what loop 6 would start from, not a re-solvable
+snapshot of loop 5. A reproducible benchmark needs the frozen pass, which is the
+author's call. `code/evidence_mid_arm_159.log` is the run.
+
 ## 11 September 11:07 UTC -- THE PAIR AT LOOP 5, AND THE POINT THAT SPLITS IT IS
 ## RUNNING. The ratio held, and lambda_d comes free with b.
 
