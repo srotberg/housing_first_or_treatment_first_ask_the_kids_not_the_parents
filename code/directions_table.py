@@ -147,7 +147,11 @@ RULES = {
     # DIRECTION. A bigger weight on housing means more spent on it: parameter and
     # moment move together, which is 'lower'.
     'gamma': ('relative_share_of_housing', 'lower', 'un-pinned 5 Sept; discreteness error is large'),
-    'h_3': ('largest_house_size', 'raise', 'crossover at ratio ~4.5, measured'),
+    # RETIRED 11 September: largest_house_size does not set h_4 at all: housing_size(grid-1) is
+    # rung_ratio_h4*housing_size(0), at 3. The author, 11 September:
+    # "largest_house_size should not be targeted. h3=2*h2 and h4=3*h2....i
+    # told you this many times!" gaps.py already lists h_3 as conceded.
+    # 'h_3': ('largest_house_size', 'raise', 'crossover at ratio ~4.5, measured'),
     # gamma HAS NO INSTRUMENT while this holds, and that is stated rather than
     # hidden. With relative_share_of_housing pinned at 0.268 as data, h3 taken by
     # h_3 and h2 by burden50, nothing is left aimed at the aggregate housing share.
@@ -176,6 +180,19 @@ RULES = {
     # disorder, so parameter and moment move together. Measured 8-point ray agrees
     # and it is the STRONGEST own-slope in the table: +5.635.
     'theta': ('relative_share_of_addiction_1', 'lower', 'agrees'),
+
+    # omega_c, the parent's weight on a child, target 0.18343: use is 18.34 per
+    # cent higher with the child priced at zero than at the calibrated omega_c.
+    #
+    # ADDED 11 September. It was never in this table, and it is the parameter the
+    # whole pass exists to calibrate, so the outer walk had no ruling for it.
+    #
+    # A LARGER omega_c means the parent cares MORE about what its drug spending
+    # costs the child, so switching the child off is a bigger relief and use
+    # jumps FURTHER: the gap RISES in omega_c. A model gap above target therefore
+    # calls for a SMALLER omega_c. The Fortran agrees -- its update is
+    # weight_on_child - adjuster*(gap - target).
+    'omega_c': ('weight_on_child', 'lower', 'Fortran agrees; no ray yet'),
     # aleph, the model's implied value of a statistical life, target 80.
     # The author: *"lower if higher than data"*. value_of_life is the flow utility
     # of being alive traded against mortality risk, so it sets the scale the moment
@@ -244,7 +261,20 @@ RULES = {
     # scalar together drove b to 8.9e-08 because BOTH lower participation. The
     # working pair is base UP for the disorder rate among users, scalar DOWN to pay
     # back the level on b.
-    'lambda_d': ('addiction_onset_base', 'raise', 'measured pair: base +19% -> lambda_d -33%'),
+    # DIRECTION CORRECTED 11 September. The author: "if model too high on
+    # addiction_onset_base, lower!" -- and the FORTRAN has always done that.
+    # All three step forms subtract the gap: the secant
+    # onset-(model-data)*slope, the analytic onset*(data/model), and the
+    # fallback onset-adj*(model-data). A higher onset means more of the people
+    # who use acquire the disorder, so prevalence RISES in it.
+    #
+    # THIS FILE SAID THE OPPOSITE, and gaps.py records that the walk reads THIS
+    # file, so the outer search was driven the wrong way on lambda_d. The
+    # 'measured pair: base +19% -> lambda_d -33%' behind it is a CONTAMINATED
+    # ray, not a refutation of the mechanism: it was measured while the same
+    # bracket was also moving lambda_addiction, so the base and the hazard
+    # changed together and the slope belongs to neither.
+    'lambda_d': ('addiction_onset_base', 'lower', 'author 11 Sept; Fortran agrees'),
     # b, total drug users as a share of the population, target 0.089.
     # The author: *"raise if higher than data"* -- so parameter and moment move in
     # OPPOSITE directions, which the name does not suggest.
@@ -439,7 +469,11 @@ RULES = {
   # was measured under mode 0 mortality and rr_homeless_hold_age=65. At the SAME
   # floor of 0.1774 today the model gives h_share5 = 2.2e-06. The floor's handle
   # in THIS economy is unmeasured, and a bracket is being run rather than assumed.
-  'h_share5': ('ssi_floor_level', 'raise', 'sign agrees; magnitude stale, bracket pending'),
+  # RETIRED 11 September: not calibrated. The author: "rr_homeless_old_level we
+  # did not calibrate that....we just have 1.6 multiply all ages!" This file
+  # named ssi_floor_level and gaps.py named rr_homeless_old_level, so the two
+  # never agreed on the instrument. Both retired.
+  # 'h_share5': ('ssi_floor_level', 'raise', 'sign agrees; magnitude stale, bracket pending'),
   #
   # THE INCOME OF THE HOMELESS, from 4 September, on the author's instruction:
   # *"if you have an income too high for the homeless, you raise the probability
@@ -625,8 +659,12 @@ RULES = {
   # which is what the sign-flip damping is for; and a measured elasticity from
   # archive pairs is a valid reading of a full GE solve but will not be constant
   # across the space.
-    'sud_homeless': ('lambda_addiction', 'raise',
-                     "the author's ruling; works through GE, so the sign is local"),
+    # RETIRED 11 September: HELD FIXED. lambda_addiction is pinned at 0 so the disorder hazard is flat
+    # above zero use, which removes it as an instrument. The author names
+    # multiple_find_if_addicted as the real one and holds it fixed for now:
+    # "we can hodl them fixed for now!" So sud_homeless is an OUTPUT this pass.
+    # 'sud_homeless': ('lambda_addiction', 'raise',
+    # "the author's ruling; works through GE, so the sign is local"),
     # emp_homeless, the employed share of the homeless, target 0.46.
     # The author: *"raise it if higher than data"*, so parameter and moment move in
     # OPPOSITE directions: raising the bottom productivity level lifts the poorest
@@ -671,9 +709,12 @@ RULES = {
     # ZERO at and above 0.55 and delta only raises separations after that. That
     # dead ground above 0.55 is where the walk ran to when this parameter was
     # pointed at y_h.
-    'emp_homeless': ('homeless_job_penalty_pp', 'raise',
-                     'measured bracket: delta 0 -> 0.9965, delta 1 -> 0.0473, '
-                     'target 0.46 strictly inside; live range [0, 0.55]'),
+    # RETIRED 11 September: homeless_job_penalty_pp is 0 and is not calibrated. The author, 11
+    # September: "we just set it to 0 and we only apply 20% fixed to losing a
+    # job and 20% lower chance of finding a job when homeless".
+    # 'emp_homeless': ('homeless_job_penalty_pp', 'raise',
+    # 'measured bracket: delta 0 -> 0.9965, delta 1 -> 0.0473, '
+    # 'target 0.46 strictly inside; live range [0, 0.55]'),
     # SUPERSEDED, kept as a comment rather than a dead dict key:
     # '_emp_homeless_superseded': ('bottom_productivity_level', 'raise',
     #                  'ray reverses and is near-flat; parameter sits ON its lower bound'),
@@ -727,8 +768,12 @@ RULES = {
   # The parameter is the SMI employment penalty, sep*kappa and find/kappa, so a
   # higher kappa LOWERS employment: parameter and moment move in opposite
   # directions, hence 'raise'.
-    'kappa_uem': ('kappa_uem', 'raise',
-                         "the SMI employment rate, the moment the parameter is named for"),
+    # RETIRED 11 September: the instrument is kappa_find_smi, the JOB FINDING probability, and it is
+    # held fixed for now. The author, 11 September: "i think only the
+    # probability of find job while addicted is calibrated....same with
+    # kappa_uem! i told you thisa twice befreo too".
+    # 'kappa_uem': ('kappa_uem', 'raise',
+    # "the SMI employment rate, the moment the parameter is named for"),
   # lambda_m, the SMI share of the homeless, HAS NO INSTRUMENT. It becomes an
   # outcome of the SMI employment rate and the housing choice, in the same way
   # sud_homeless and emp_homeless now are. Nothing measured tonight moves it in

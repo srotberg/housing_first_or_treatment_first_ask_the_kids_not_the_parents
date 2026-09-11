@@ -1514,7 +1514,11 @@
         ! 17.6 per cent needed forty loops to close and the bracket read as
         ! frozen rather than slow. At twenty the same gap moves it 4.5 per
         ! cent a loop, and the largest gap a rate can produce moves it 15.
-        real(8) :: kappa_uem_adjuster=2*10.d0**(1)
+        ! RETIRED, 11 September, with the employment multiplier above and for
+        ! the same reason -- the author named both in one sentence. Its own
+        ! else branch already zeroes distance_kappa_uem when the adjuster is
+        ! not positive, so the term retires with it.
+        real(8) :: kappa_uem_adjuster=0.d0
         real(8), parameter :: employment_rate_given_smi_data=0.30
 
         real(8) :: distance_rho_m
@@ -3180,7 +3184,17 @@
         real(8) :: distance_separation_rate
         real(8) :: stopping_rule_separation_rate=10.d0**(-3)
 
-        real(8) :: employment_multiplier_adjuster=2*10.d0**(0)
+        ! RETIRED, 11 September. The author: "multiple_of_probabilities_of_
+        ! employment_if_addicted this is not adjusted, i think only the
+        ! probability of find job while addicted is calibrated....same with
+        ! kappa_uem! i told you thisa twice befreo too".
+        !
+        ! The instruments on the SUD and SMI shares of the homeless are the
+        ! JOB FINDING probabilities, multiple_find_if_addicted and
+        ! kappa_find_smi, not these multipliers on the probability of being
+        ! employed. Both find probabilities are held fixed for now on the
+        ! author's instruction, so those two moments are OUTPUTS this pass.
+        real(8) :: employment_multiplier_adjuster=0.d0
         real(8), parameter :: employment_multiplier_adjuster_start=2*10.d0**(0)
         real(8) :: previous_gap_employment_multiplier=0
         integer :: have_gap_employment_multiplier=0
@@ -4595,7 +4609,16 @@
         ! Sign: a larger top unit is a more expensive one, so fewer households
         ! take it and the largest share FALLS. The update adds the gap.
         real(8) :: largest_house_size=(1-perceived_probability_lower)*0.0762+perceived_probability_lower*0.285
-        real(8) :: largest_house_size_adjuster=0.05
+        ! RETIRED, 11 September. The author: "largest_house_size should not be
+        ! targeted. h3=2*h2 and h4=3*h2....i told you this many times!"
+        !
+        ! And the code already does exactly that: housing_size(1) is
+        ! rung_ratio_h3*housing_size(0) and housing_size(grid-1) is
+        ! rung_ratio_h4*housing_size(0), at 2 and 3. So this parameter does
+        ! not set the largest unit at all -- the ratio overwrites it -- and
+        ! its bracket was moving a number with no effect while keeping a LIVE
+        ! distance in the uncapped do-while. Same hang class as gamma's.
+        real(8) :: largest_house_size_adjuster=0.d0
         real(8) :: distance_largest_house_size
         real(8) :: stopping_rule_largest_house_size=10.d0**(-3)
         
@@ -41498,9 +41521,11 @@
                             gap_house_size_1,0.02d0),1.d0)
                         largest_house_size=cap_step(largest_house_size,cap_old_1)
 
-                        distance_largest_house_size=&
+                        ! A RETIRED BRACKET MUST RETIRE ITS DISTANCE TOO.
+                        distance_largest_house_size=merge(0.d0,&
                             abs(model_housing_size_dist(1,housing_status_grid_size-1)-&
-                            housing_size_dist_data(2))
+                            housing_size_dist_data(2)),&
+                            largest_house_size_adjuster<=0.d0)
 
                         write(*,*) "largest_house_size=", largest_house_size
                         write(*,*) "distance_largest_house_size=", distance_largest_house_size
@@ -41667,8 +41692,32 @@
                         write(*,*) "smallest_rental_relative_to_lowest_income=", &
                             smallest_rental_relative_to_lowest_income
 
+                        ! THE COST BURDEN, NOT THE SMALLEST UNIT'S SHARE.
+                        !
+                        ! The author, 11 September: "smallest_rental_relative_to_
+                        ! lowest_income should target the 8% spending over 50% of
+                        ! their expendigures on rent....not share in smallest unit",
+                        ! which restates the instruction of 30 August already
+                        ! recorded beside severe_cost_burden_data: "the smallest
+                        ! unit's share is a statement about a grid the model chose,
+                        ! so matching it disciplines the grid rather than the
+                        ! economy; the share of households paying more than half
+                        ! their income for shelter is a fact about the world".
+                        !
+                        ! The target moved then and the BRACKET did not, so h_2's
+                        ! 0.08 was printed as a moment with nothing driving it while
+                        ! this parameter chased housing_size_dist_data(0) = 0.132065,
+                        ! the very grid statistic the instruction retired.
+                        !
+                        ! SIGN IS UNCHANGED AND directions_table AGREES: a bigger
+                        ! cheapest rental costs more, so more households pay over
+                        ! half of their outlays for it, so the model share RISES in
+                        ! this parameter and a model above target calls for a
+                        ! SMALLER rung. The update subtracts the gap, as before.
                         gap_house_size_1=&
-                            model_housing_size_dist(1,0)-housing_size_dist_data(0)
+                            val_burden50_expend_all(1)/&
+                            max(val_mass_expend_all(1),10.d0**(-14))-&
+                            severe_cost_burden_data
 
                         if (have_gap_smallest_house_size==1) then
 
@@ -41700,7 +41749,9 @@
                         smallest_rental_relative_to_lowest_income=cap_step(smallest_rental_relative_to_lowest_income,cap_old_1)
                                                                      
                         distance_smallest_house_size=&
-                            abs(model_housing_size_dist(1,0)-housing_size_dist_data(0))
+                            abs(val_burden50_expend_all(1)/&
+                            max(val_mass_expend_all(1),10.d0**(-14))-&
+                            severe_cost_burden_data)
 
 8801                    continue
                                                          
@@ -42972,8 +43023,10 @@
                         (model_fraction_addicted_and_unemployed(1)-unemployment_rate_sud_data),&
                         20.d0),1.d0)
                     multiple_of_probabilities_of_employment_if_addicted=cap_step(multiple_of_probabilities_of_employment_if_addicted,cap_old_1)
-                    distance_employment_multiplier=&
-                        abs(model_fraction_addicted_and_unemployed(1)-unemployment_rate_sud_data)
+                    ! A RETIRED BRACKET MUST RETIRE ITS DISTANCE TOO.
+                    distance_employment_multiplier=merge(0.d0,&
+                        abs(model_fraction_addicted_and_unemployed(1)-unemployment_rate_sud_data),&
+                        employment_multiplier_adjuster<=0.d0)
                     write(*,*) "multiple_of_probabilities_of_employment_if_addicted=", &
                         multiple_of_probabilities_of_employment_if_addicted
                     write(*,*) "distance_employment_multiplier=", distance_employment_multiplier

@@ -180,7 +180,12 @@ OWN = [
     # as the y_h row above: the REPORT named one parameter and the WALK moved
     # another. The author, 5 September: *"i thought that ssi_floor_level was
     # disabled!"* -- it is, and the table was the only thing saying otherwise.
-    ('rr_homeless_old_level', 'h_share5'),
+    # RETIRED 11 September. The author: "rr_homeless_old_level we did not
+    # calibrate that....we just have 1.6 multiply all ages!" Note also that this
+    # file and directions_table.py named DIFFERENT instruments for h_share5 --
+    # rr_homeless_old_level here, ssi_floor_level there -- so one of them was
+    # wrong whichever way it went. Both are retired now.
+    # ('rr_homeless_old_level', 'h_share5'),
     # y_h's instrument is homeless_job_penalty_pp, the author's separation-only
     # delta, NOT increased_prob_if_homeless. The two disagreed: this table paired
     # y_h with the symmetric multiplier while directions_table paired it with the
@@ -188,7 +193,10 @@ OWN = [
     # below, so y_h had no live instrument at all and sat at +275 per cent while
     # nothing moved. The author, 5 September: *"use delta to match the average
     # income of the homeless"*.
-    ('homeless_job_penalty_pp', 'y_h'),
+    # RETIRED 11 September. The author: "homeless_job_penalty_pp is not calibrated
+    # to anything. we just set it to 0 and we only apply 20% fixed to losing a job
+    # and 20% lower chance of finding a job when homeless".
+    # ('homeless_job_penalty_pp', 'y_h'),
     # THE ENDOWMENT NO LONGER OWNS h_share1 and h_share1 keeps its row as
     # "(no instrument)". The author, 3 September: *"If you don't need an
     # endowment for the youngest to get the right share of homeless young,
@@ -199,7 +207,10 @@ OWN = [
 
     ('relative_share_of_housing', 'gamma'), ('max_food_cost', 'cbar'),
     ('relative_share_of_addiction_1', 'theta'),     ('value_of_life', 'aleph'), ('mu_homeless', 'mu_H'),
-    ('utility_cost_of_treatment', 'tau_u'), ('kappa_uem', 'kappa_uem'),
+    ('utility_cost_of_treatment', 'tau_u'),     # RETIRED 11 September. The instrument is kappa_find_smi, the JOB FINDING
+    # probability, and it is held fixed for now. The author: "i think only the
+    # probability of find job while addicted is calibrated....same with kappa_uem!"
+    # ('kappa_uem', 'kappa_uem'),
     ('probability_of_voucher_benchmark_used', 'pi_V'),
     # increased_prob_if_homeless is EXOGENOUS at 0.2 on the author's
     # instruction -- twenty per cent each way -- so it owns nothing. The
@@ -208,7 +219,8 @@ OWN = [
     # The bottom productivity node owns emp_homeless from 3 September; the rung
     # went back to the cost burden. Income of the homeless stays untargeted and
     # belongs to validation, on the author's instruction.
-    ('homeless_job_penalty_pp', 'emp_homeless'),
+    # RETIRED 11 September with the y_h row above, same instruction, same parameter.
+    # ('homeless_job_penalty_pp', 'emp_homeless'),
     # b AND lambda_d WERE SWAPPED HERE against directions_table's rulings, so
     # every table printed since attributed each to the other's instrument.
     # b is the total drug users and its threshold is C > (phi/theta) p b, which
@@ -232,7 +244,14 @@ OWN = [
     # gained them and gaps.py did not, which is the third time these two files
     # have drifted apart on the scored set in one evening -- rent50, then h_2,
     # now these. The cross-check at the top is what caught it each time.
-    ('lambda_addiction', 'sud_homeless'),
+    # HELD FIXED 11 September. lambda_addiction is pinned at 0 so the disorder
+    # hazard is flat above zero use, on the author's instruction, which removes it
+    # as an instrument. The author names multiple_find_if_addicted as the real one
+    # for this moment and holds it fixed for now: "this multiple_find_if_addicted,
+    # and this kappa_find_smi were trying to match the SMI and SUD share of
+    # homeless. But we can hodl them fixed for now!" So sud_homeless is an OUTPUT
+    # this pass, with no instrument, and must not be scored as if it had one.
+    # ('lambda_addiction', 'sud_homeless'),
     ('weight_on_child', 'omega_c'),
 ]
 
