@@ -73,10 +73,42 @@ def read(path):
     return loops, extras
 
 
+def block_table(path, n):
+    """EVERY moment of ONE loop, which is the only honest way to quote a point.
+
+    calibration_report.py reads the last value in the log, and a run that walks
+    THROUGH its target -- which is what value_of_life does at a local elasticity
+    near -25 -- leaves the last loop on the far side of it. Loop 7 of arm
+    16da70b64e put b within 1.3 per cent of target and loop 8, one capped step
+    later, was at -10.4. Quoting the run means quoting loop 8; quoting the point
+    means asking for loop 7 by name.
+    """
+    loops, _ = read(path)
+    if not 1 <= n <= len(loops):
+        sys.exit(f'{path} has {len(loops)} moment block(s); asked for {n}')
+    rows = []
+    for name, (model, target) in loops[n - 1].items():
+        gap = (model - target) / target * 100 if target else float('nan')
+        rows.append((abs(gap), name, model, target, gap))
+    rows.sort(reverse=True)
+    print(f'{path}, loop {n} of {len(loops)}: every moment it printed\n')
+    print(f'{"moment":18s} {"model":>14s} {"target":>14s} {"gap":>9s}')
+    print('-' * 58)
+    for _, name, model, target, gap in rows:
+        mark = '  ON TARGET' if abs(gap) <= 3 else ''
+        print(f'{name:18s} {model:>14.6g} {target:>14.6g} {gap:>+8.1f}%{mark}')
+    print('-' * 58)
+    inside = [r for r in rows if r[0] <= 10]
+    med = sorted(r[0] for r in rows)[len(rows) // 2]
+    print(f'{len(inside)} of {len(rows)} inside ten per cent; median |gap| {med:.1f}%')
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit(__doc__)
     path = sys.argv[1]
+    if len(sys.argv) > 2 and sys.argv[2] == '--block':
+        return block_table(path, int(sys.argv[3]))
     want = sys.argv[2:] or DEFAULT
     loops, extras = read(path)
     if not loops:
