@@ -1,3 +1,30 @@
+## 11 September 06:18 UTC -- tau_u AND pi_V ARE BOTH REACHABLE, and both brackets
+## are far stronger than the adjusters assume.
+
+Measured off the benchmark, loop 0:
+
+    parameter                             from      to      moment      benchmark  test    target
+    utility_cost_of_treatment             12.67  -> 18.0    tau_u        0.38725   0.05404  0.245
+    probability_of_voucher_benchmark_used 0.0430 -> 0.085   pi_V         0.13787   0.23691  0.266
+
+**utility_cost_of_treatment IS VERY POWERFUL.** A 42 per cent rise cut treatment
+take up by a factor of SEVEN and straight through the target. The right value is
+near 14, not 18. Its adjuster of 0.05 and the secant that follows it are sized for
+a far weaker instrument.
+
+**pi_V IS NEARLY LINEAR** and needs about 0.095 to land 0.266.
+
+**AND THE POINT IS CONTAMINATED, WHICH IS MY FAULT.** Moving both at once pushed
+the drug block off: b 0.0846 -> 0.1272 and lambda_d 0.0338 -> 0.0544. Cheaper
+treatment and more vouchers both change who uses, so these are NOT independent of
+the drug moments. The point measures the two brackets' strength and CANNOT be
+used as a benchmark.
+
+That is the same multi-parameter contamination that cost two retractions earlier
+tonight, done deliberately this time to save a solve. It did not save anything:
+two clean points would have cost eight minutes and given an uncontaminated
+benchmark as well. **ONE PARAMETER PER DIAGNOSTIC POINT.**
+
 ## 11 September 06:00 UTC -- BENCHMARK MEASURED AT value_of_life = 163.5. The
 ## drug block is solved. Saved as code/BENCHMARK_VECTOR.txt.
 
