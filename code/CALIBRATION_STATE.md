@@ -1,3 +1,55 @@
+## 11 September 07:52 UTC -- THE MORNING SUMMARY. Benchmark, full table, and the
+## five decisions. Everything below is measured, committed and reproducible.
+
+**THE BENCHMARK** is `code/BENCHMARK_VECTOR.txt`: value_of_life = 162.2,
+utility_cost_of_treatment = 14.4, everything else inherited. Twelve of 26 moments
+inside ten per cent, median gap 12.9, and the model's six core behavioural
+moments all inside five:
+
+    b +4.2   lambda_d +3.4   theta -2.3   tau_u -4.6   pi_eu -0.4   p_m +0.4
+
+**ONLY FIVE MOMENTS ARE OFF TARGET WITH A LIVE INSTRUMENT:**
+
+    pi_V     -48%   instrument measured and strong (0.095 lands it) but NOT
+                    separable: it drove b to +66 per cent
+    h_1      +26%   instrument weak AND coupled: a 24 per cent cut closed a
+                    third of its gap and moved drug use thirty per cent
+    omega_l  +16%   untested
+    cbar     -16%   untested
+    h_2      +10%   shares its instrument with burden50
+
+Everything else is landed, pinned by the author, conceded, or aleph.
+
+**THE FIVE THINGS WAITING ON THE AUTHOR**
+
+  1. ALEPH at -33.8 per cent. Four measured points show value_of_life buys
+     essentially no aleph near the drug targets -- 53.46, 53.10, 53.09 across
+     163.5, 162.6 and 162.2 -- so the gap is not purchasable. Accept it as a
+     reported miss, or find an instrument outside value_of_life.
+  2. THE NEWBORN ENDOWMENT is held every loop: band 1 is 0.161 against 0.260 and
+     the author's own rule is one-sided. Make it two-sided or leave it.
+  3. THE CONTEMPORANEOUS CHILD TERM is not differenced, while
+     expected_child_value is. The four-point omega_c curve went NEGATIVE below
+     about 0.07, which is the undifferenced level effect weakening the mortality
+     deterrent.
+  4. THE CHILDHOOD WELFARE RECURSION is fully specified at T = 26 and not built.
+  5. THE 0.5 PER CENT CAP is mis-sized for the strong instruments: a 14 per cent
+     move of utility_cost_of_treatment shifted treatment take up sevenfold, which
+     the cap would have needed forty loops to reach.
+
+**WHAT IS KNOWN NOW THAT WAS NOT LAST NIGHT**
+
+  lambda_d and b are ONE margin, not two. Their ratio is 0.40 across four
+  instruments and the data's own ratio is 0.4135, so the two targets are one
+  target and were never in conflict.
+
+  Every instrument that makes drugs riskier LOWERS measured disorder, because
+  households respond by not using. The extensive margin dominates everywhere.
+  That is the paper's mechanism appearing in its own calibration.
+
+  Only utility_cost_of_treatment is separable from the drug block. Both
+  housing-side instruments drive drug use harder than their own moments.
+
 ## 11 September 07:49 UTC -- BENCHMARK AT value_of_life = 162.2. Six core moments
 ## inside five per cent. This is the night's final point.
 
