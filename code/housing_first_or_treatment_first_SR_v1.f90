@@ -545,6 +545,21 @@
         ! "not measured" against omega_c every round. Making it settable lets the
         ! final round turn it on without a rebuild, and at its default of zero
         ! every existing point is unaffected.
+        ! WHETHER THIS CALL OF print_all_moments MAY RUN THE OMEGA
+        ! COUNTERFACTUAL. 1 only for the end-of-run report.
+        !
+        ! print_all_moments is NOT writes-only, which a commit of mine on 11
+        ! September wrongly asserted: it carries the omega counterfactual,
+        ! which calls solve_value_function_and_policy_functions,
+        ! converge_to_stationary_equilibrium, stationary_equilibrium_statistics
+        ! and govt_revenues_calc -- a FULL EXTRA SOLVE. Calling it every loop
+        ! to get the moment table therefore made every loop do TWO solves and
+        ! roughly halved overnight throughput.
+        !
+        ! The per-loop call sets this to 0 and gets every moment except omega.
+        ! Nothing is lost: the calibration block measures the child gap itself
+        ! every loop for the update, and prints it as 'model child use gap'.
+        integer :: omega_cf_allowed=1
         integer :: measure_child_gap=0
 
         ! WHETHER A POINT MEASURES THE TWO DRUG PRICE ELASTICITIES. They are
@@ -8213,7 +8228,7 @@
             ! counterfactual was fixed, which reported an exact zero, and those
             ! must stay out of the search. So the skip announces itself, inside
             ! the block run_one_point.sh keeps, and simplex.py reads that line.
-            if (measure_child_gap==0) then
+            if ((measure_child_gap==0) .OR. (omega_cf_allowed==0)) then
 
                 write(*,*) "OMEGA SKIPPED    child counterfactual off by measure_child_gap"
 
@@ -44313,7 +44328,12 @@
             ! IT IS WRITES ONLY. print_all_moments reads aggregates the
             ! distribution pass has already built and computes nothing, so it
             ! costs output and not time.
+            ! THE MOMENT TABLE EVERY LOOP, WITHOUT THE COUNTERFACTUAL. See
+            ! omega_cf_allowed: this call would otherwise run a second full
+            ! solve per loop.
+            omega_cf_allowed=0
             call print_all_moments()
+            omega_cf_allowed=1
 
         end do
 
