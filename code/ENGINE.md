@@ -488,6 +488,18 @@ So a stop is two steps, and the second is the one that matters:
     fuser -v code/.run_one_point.lock                # who holds it
     kill <the hftf pid>
 
+**THIS WAS HIT THREE TIMES ON 11 SEPTEMBER ALONE**, each time by killing the
+script, seeing no `run_one_point.sh` in the process list, and concluding the
+point was stopped. It never is: the solver outlives its parent and the NEXT
+launch sits on "another point is running in this checkout, waiting for it" while
+its log stays empty, which reads as a slow build rather than a block. Two tells
+distinguish them -- that line in the launch log, and a `./hftf` whose start time
+predates the launch.
+
+The kill is not done until `ps -eo pid,pcpu,args --sort=-pcpu | head -2` shows
+something other than `./hftf`. Check it every time rather than assuming, because
+the failure is silent and costs a whole solve of wall clock before it is noticed.
+
 `pgrep -P` on the script's pid is not enough: once the script is gone the solver
 has no parent to be found by. Identify it by its own name in the CPU list or
 through the lock, and never `pkill -f`.
