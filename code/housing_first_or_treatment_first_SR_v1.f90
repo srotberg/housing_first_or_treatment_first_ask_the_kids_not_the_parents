@@ -39905,6 +39905,30 @@
                     write(*,*) "HANDOVER max_food_cost:", max_food_cost, "->", handover_value
                     max_food_cost=max(handover_value,0.d0)
 
+                ! THE BASE RECOVERY HAZARD, MADE SETTABLE 11 September so that the
+                ! disorder rate can be moved without moving the decision to use.
+                !
+                ! Three measured points show every instrument that makes drugs
+                ! RISKIER -- value_of_life, addiction_onset_base -- lowers the
+                ! MEASURED disorder rate, because households respond by not using
+                ! at all. lambda_d and b are nearly collinear as a result, ratio
+                ! 0.406, 0.400, 0.411 across those points, so two targets on them
+                ! cannot both be hit from the extensive margin.
+                !
+                ! Recovery is the other side of the flow balance: in steady state
+                ! onset*users = recovery*disordered, so this sets the STOCK of
+                ! disordered given the FLOW of users. It is the natural candidate
+                ! for the missing instrument.
+                !
+                ! The homeless rate follows automatically: it is computed at run
+                ! time as mu_homeless times this, so the calibrated ratio is
+                ! preserved. Behaviour-neutral at its declared 0.025.
+                case ("probability_of_stopping_addiction")
+                    write(*,*) "HANDOVER probability_of_stopping_addiction:",&
+                        probability_of_stopping_addiction, "->", handover_value
+                    probability_of_stopping_addiction=&
+                        max(min(handover_value,1.d0),10.d0**(-6))
+
                 case ("mu_homeless")
                     write(*,*) "HANDOVER mu_homeless:", mu_homeless, "->", handover_value
                     mu_homeless=max(min(handover_value,1.d0),0.d0)

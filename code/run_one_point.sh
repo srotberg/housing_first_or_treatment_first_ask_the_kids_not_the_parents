@@ -230,6 +230,11 @@ declare -A P=(
     [weight_on_child]=0.007
     [max_food_cost]=0.00498294
     [mu_homeless]=0.708003
+    # THE BASE RECOVERY HAZARD, added 11 September. Teaching the Fortran a
+    # handover case is NOT enough: this script keeps its own allowlist and
+    # rejects anything not in it with 'unknown parameter'. Both places, always.
+    # The homeless rate follows at run time as mu_homeless times this.
+    [probability_of_stopping_addiction]=0.025
     # THE TWO THAT MADE A POINT UNDER-SPECIFIED. Both are internally calibrated,
     # both are handover cases the model has accepted all along, and neither was
     # in the vector, so their values rode in on whatever calibration_state.dat

@@ -1,3 +1,37 @@
+## 11 September 07:34 UTC -- lambda_d / b IS A STRUCTURAL CONSTANT NEAR 0.40, AND
+## IT MATCHES THE DATA. The two drug targets are ONE target.
+
+The recovery hazard was made settable and tested, as the last candidate for an
+instrument acting on CONVERSION GIVEN USE rather than on the attractiveness of
+using. It is not one:
+
+    probability_of_stopping_addiction 0.025 -> 0.020   (-20 per cent)
+        lambda_d   0.032912 -> 0.017208   (-48 per cent)
+        b          0.081014 -> 0.043411   (-46 per cent)
+        lambda_d/b 0.4063   -> 0.3964     (-2.4 per cent)
+
+Lowering recovery should MECHANICALLY raise the stock of disordered, since people
+stay disordered longer. Both fell instead, because lower recovery makes using
+more dangerous and households respond by not using. The extensive margin wins
+again.
+
+**SO THE RATIO IS STRUCTURAL.** Four instruments now -- value_of_life,
+addiction_onset_base, the recovery hazard, and b itself -- move lambda_d and b
+almost exactly proportionally, leaving lambda_d/b within a few per cent of 0.40.
+The model has ONE drug margin, not two.
+
+**AND THAT IS GOOD NEWS.** The data's own ratio is 0.0368/0.0890 = 0.4135. The
+model's structural 0.4063 matches it to within two per cent. The two drug targets
+were never in conflict; they are one target, and at the benchmark both sit about
+ten per cent low TOGETHER, which is what a single-margin model should do.
+
+**WHICH REDUCES EVERYTHING TO THE ALEPH DECISION.** What remains is a pure LEVEL
+shift -- raise lambda_d and b by about ten per cent together -- and the
+instrument that does that cleanly is value_of_life, lowered slightly from 163.5.
+That is exactly the parameter that trades against aleph. There is no third way
+round it: the search for an independent instrument for the disorder rate is now
+closed, with four measured negatives.
+
 ## 11 September 07:21 UTC -- addiction_onset_base MOVES THE DISORDER RATE THE
 ## WRONG WAY, and lambda_d is nearly collinear with b.
 
