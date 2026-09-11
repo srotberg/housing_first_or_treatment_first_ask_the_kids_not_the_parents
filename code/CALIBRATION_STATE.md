@@ -1,3 +1,34 @@
+## 11 September 06:31 UTC -- BENCHMARK IMPROVED. tau_u landed at +1.6 per cent,
+## median gap 11.8. utility_cost_of_treatment = 14.4.
+
+Four single-parameter points, following the rule written an hour earlier:
+
+    utility_cost_of_treatment   tau_u      note
+        12.67 (benchmark)       0.38725    +58%
+        18.0                    0.05404    overshot by a factor of seven
+        14.0                    0.29268    +19%
+        14.8                    0.21705    -11%
+        14.4                    0.24899    +1.6%   <- kept
+
+BENCHMARK_VECTOR.txt now carries it. The drug block held throughout, which is
+what the single-parameter discipline bought: theta -1.4 per cent, b -9.0,
+lambda_d -10.6, and aleph unmoved at 53.5.
+
+    median |gap|   51%  loop, when stopped
+                 16.4%  value_of_life = 163.5
+                 11.8%  plus utility_cost_of_treatment = 14.4
+    within ten per cent: 11 of 26
+
+**THE INSTRUMENT IS FAR STRONGER THAN ITS ADJUSTER ASSUMES.** A 14 per cent rise
+in the cost moved take up by a factor of seven. utility_cost_of_treatment_adjuster
+is 0.05 and the secant that follows it was sized for something much weaker; under
+the 0.5 per cent per loop cap this parameter would have taken roughly forty loops
+to travel the 14 per cent it needed, and the loop never got near it.
+
+**NEXT, AND IT IS ONE POINT EACH:** pi_V at about 0.095, measured nearly linear;
+then h_1, kappa_ued and burden50. y_u is conceded on mortality. aleph stays the
+open decision.
+
 ## 11 September 06:18 UTC -- tau_u AND pi_V ARE BOTH REACHABLE, and both brackets
 ## are far stronger than the adjusters assume.
 
