@@ -1,3 +1,37 @@
+## 11 September 05:35 UTC -- THE ALEPH / DISORDER TRADE-OFF, MEASURED AT THREE
+## POINTS. value_of_life = 160 is the best benchmark available tonight.
+
+The 05:26 entry inferred the conflict by interpolating between two points. The
+middle point has now been MEASURED, and the interpolation held:
+
+    value_of_life   disorder rate (0.0368)   aleph moment (80)
+       150.8              0.07325                 51.66
+       162.8              0.04146                 56.44      <- measured
+       195.4              0.00519                 65.50
+
+Predicted at 162 were 0.0368 and about 55; measured 0.0415 and 56.4. So the
+trade-off curve is real and smooth rather than an artefact of two points.
+
+**WHAT IT PINS DOWN.**
+
+  The disorder rate CAN be hit. value_of_life near 160 does it, and two or three
+  per cent lower would close the remaining thirteen per cent.
+
+  Aleph CANNOT be hit alongside it. Reaching 80 needs value_of_life far above
+  195, where drug use collapses to 0.005, seven times too low.
+
+  The exchange rate is about ONE POINT OF ALEPH PER 0.9 PER CENT of
+  value_of_life, against a required gain of 24 points -- roughly a doubling of
+  the parameter, which empties the drug market.
+
+**THE BEST BENCHMARK AVAILABLE TONIGHT is value_of_life near 160**: every drug
+moment close to target and aleph reported as a 29 per cent miss. That is a far
+better place to leave the model than where the loop had wandered to, a disorder
+rate of 0.0052.
+
+NOT SET. Choosing which moment to miss is the author's. The measurement is done
+and the change is one line either way.
+
 ## 11 September 05:26 UTC -- CORRECTION: ALEPH'S BRACKET IS NOT A RUNAWAY. The
 ## sign is RIGHT. The real problem is that two moments share one instrument.
 
