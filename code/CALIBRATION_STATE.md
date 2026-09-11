@@ -1,3 +1,54 @@
+## 11 September 03:27 UTC -- RELAUNCH AT omega_c = 0.05, AND A SECOND SILENT DROP
+
+The author: "ok, i think you should reset omega_c=0.05". Relaunched 03:27 with
+omega_c = 0.05, b = 0.002, theta = 0.27, onset base = 0.0428. The previous run
+reached loop 22 with the child use gap at 1.29 against a target of 0.1834, which
+at half a per cent a loop would have taken hundreds of loops to walk down.
+
+**THE FULL MOMENT TABLE NOW PRINTS EVERY LOOP**, so from here the gaps table has
+all seventeen rows rather than eight blanks.
+
+**EXPECT omega_c = 0.05 TO RAISE PARTICIPATION ON ITS OWN.** omega_c was a large
+deterrent in its own right -- at age forty the child term carries about 1.75
+times the parent's own marginal cost of consumption -- so much of the 70 per cent
+participation shortfall may close without b moving. The b of the first loops is
+therefore NOT comparable with the last run's.
+
+**aleph RESTARTS AT 177.77**, not the 187.8 it had climbed to, so it begins its
+climb again from 22 per cent below target. It is still the parameter with the
+furthest to travel and the one that pushed use down under b's feet. Watch whether
+it recreates the same collapse now that omega_c is small.
+
+### THE COUNT, because it was asked and my earlier answer was the wrong one
+
+    calibrated in the Fortran loop, moving now          17
+    calibrated by the outer search only, frozen here     2   smi_onset_level,
+                                                             newborn_endowment_scale
+    TOTAL CALIBRATED PARAMETERS                         19
+    scored moments with no instrument, by instruction    2   lambda_m, sud_homeless
+    TOTAL SCORED MOMENTS                                21
+
+The 17 is the earlier 16 plus kkk_sigma_scale, which became live only when the
+author asked for sigma_y to be calibrated. Reporting 17 as "the number of
+calibrated parameters" was wrong: it is the number that MOVE IN THIS RUN.
+
+### A SECOND SILENT DROP, FOUND BY DIFFING THE VECTOR AGAINST THE CASES
+
+`zeta_DI` is in the vector and has NO handover case, so it is discarded without a
+word. Harmless today -- the vector asks for 0.0, the declared value is 0.0 and
+the adjuster is 0 -- but it is EXACTLY the failure that cost the 02:09 and 02:20
+runs, where addiction_scalar_1 was requested, silently ignored, and the point was
+still named for the md5 of the vector REQUESTED. A future vector setting zeta_DI
+non-zero would put a lie in the archive.
+
+**PUT TO THE AUTHOR, NOT ACTED ON:** add the missing case, or make an
+unrecognised handover key a HARD ERROR so the next one cannot pass in silence.
+The second is the stronger fix and it is a scope change.
+
+`max_rel_step_all` and `theta_max_rel_step` also have no vector entry. That is
+deliberate: they hold their declared defaults of 0.005 and 0.001 and exist so
+either cap can be loosened mid-run without a rebuild.
+
 ## 11 September 03:23 UTC -- LOOP 22 GAPS, AND HALF THE TABLE CANNOT BE READ
 
     parameter                          moment     value        model     target      gap
