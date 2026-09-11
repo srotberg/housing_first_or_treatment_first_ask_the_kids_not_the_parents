@@ -1,3 +1,41 @@
+## 11 September 08:16 UTC -- THE MAP IS COMPLETE. Five instruments, one separable,
+## and the exception has a structural reason.
+
+max_food_cost 0.04137 -> 0.048, plus 16 per cent, one parameter, loop 0:
+
+    cbar      -15.6% -> +15.6%   lands cleanly; about 0.0446 hits it exactly
+    b          +4.2% -> +19.4%
+    lambda_d   +3.4% -> +20.1%
+    median     12.9% -> 17.7%, twelve of 26 inside ten down to nine
+
+Discarded. STRONG on its own moment and equally strong on the drug block.
+
+**THE COMPLETE MAP**
+
+    instrument                     own moment        drug block
+    utility_cost_of_treatment      +58 -> +1.6       UNTOUCHED
+    probability_of_voucher_...     lands             b to +66
+    max_food_cost                  lands             b to +19
+    size_homelessness              a third of it     b to -30
+    relative_share_of_leisure      a quarter of it   b to +19
+
+**ONE SEPARABLE INSTRUMENT OUT OF FIVE, AND THE EXCEPTION IS NOT LUCK.** Every
+transfer or budget instrument moves resources, and moving resources moves the
+decision to use, which is the most elastic margin in the model. The treatment
+cost escapes because it prices a choice made ONLY by households that already
+carry the disorder, so it cannot reach the extensive margin at all.
+
+**THAT IS A RESULT ABOUT THE MODEL AND PROBABLY BELONGS IN THE PAPER.** A model
+whose central mechanism is that housing and transfers change drug use will, of
+necessity, have a calibration in which housing and transfer instruments change
+drug use. The near-singular Jacobian is the mechanism, not a defect in the
+search.
+
+**AND IT CLOSES THE AUTONOMOUS WORK.** Every instrument with a live bracket has
+now been measured one at a time off the benchmark. None of the remaining
+off-target moments -- pi_V, h_1, omega_l, cbar -- can be improved without
+breaking the drug block. They need the joint loop; the joint loop needs aleph.
+
 ## 11 September 08:05 UTC -- FOUR OF FIVE INSTRUMENTS TESTED, ONE SEPARABLE. The
 ## drug margin is the most elastic thing in the model.
 
