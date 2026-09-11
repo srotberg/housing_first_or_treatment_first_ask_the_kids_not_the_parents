@@ -474,6 +474,11 @@
         ! minutes. Setting this to zero disabled the first step AND retired the
         ! distance through the merge below, so take up left the loss entirely.
         real(8) :: utility_cost_of_treatment_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-2))
+        ! THIS PARAMETER'S OWN STEP CAP, five per cent a loop, on the author's
+        ! instruction of 11 September. It replaces max_rel_step_all (5e-3) for
+        ! utility_cost_of_treatment ALONE, through cap_step_rel at the one call
+        ! site. Every other parameter still goes through cap_step and is unchanged.
+        real(8) :: treatment_cost_max_rel_step=5*10.d0**(-2)
 
         ! THE PRICE OF A PERIOD OF TREATMENT, in the model's consumption units,
         ! calibrated on take up among those carrying the disorder. Calibrated
@@ -9105,6 +9110,35 @@
             out_1=new_1
         else
             room_1=max_rel_step_all*abs(old_1)
+            out_1=max(min(new_1,old_1+room_1),old_1-room_1)
+        end if
+    end function
+
+    ! THE SAME CAP AT A RATE THE CALLER NAMES, for a parameter the global cap is
+    ! too slow for. It is cap_step with max_rel_step_all replaced by rel_1 and is
+    ! otherwise identical, so it still only ever makes a step SMALLER.
+    !
+    ! WHY IT EXISTS. The author, 11 September: "The utility cost of treatment has
+    ! to be adjusted much faster. Maybe 5% each iteration". The obstacle was not
+    ! utility_cost_of_treatment_adjuster, which is 0.05 and is applied before this
+    ! point; it was cap_step, which allowed 0.5 per cent a loop because
+    ! max_rel_step_all is 5e-3 whenever freeze_to_three_block is 0. The parameter
+    ! moved 14.31 -> 14.41 across nine loops while its moment sat 192 per cent out,
+    ! and raising its adjuster alone would have changed nothing.
+    !
+    ! WHY NOT RAISE max_rel_step_all. It is GLOBAL: every calibrated parameter
+    ! passes through cap_step, so taking it to 5e-2 would let all twenty move ten
+    ! times faster and would unsettle the ones that have landed -- aleph, h_2,
+    ! p_m, tau_l and pi_eu were all inside half a per cent. One parameter needed
+    ! to move faster, so one parameter gets a faster cap.
+    real(8) function cap_step_rel(new_1,old_1,rel_1) result(out_1)
+        implicit none
+        real(8), intent(in) :: new_1,old_1,rel_1
+        real(8) :: room_1
+        if (abs(old_1)<=10.d0**(-30)) then
+            out_1=new_1
+        else
+            room_1=rel_1*abs(old_1)
             out_1=max(min(new_1,old_1+room_1),old_1-room_1)
         end if
     end function
@@ -42687,14 +42721,29 @@
                             move_factor(model_treatment_take_up(1),&
                             treatment_take_up_data,escape_factor)
                         ! RAISED 10 -> 20 WITH THE HANDOVER CLAMP, so the two
-                        ! ceilings on this parameter cannot disagree. This one is
-                        ! dormant -- the adjuster is zero and three_step drives
-                        ! the parameter from outside -- but a dormant ceiling that
-                        ! contradicts the live one is exactly how the live one
-                        ! came to be missed.
+                        ! ceilings on this parameter cannot disagree.
+                        !
+                        ! THE COMMENT HERE USED TO SAY THIS BRACKET WAS DORMANT,
+                        ! "the adjuster is zero and three_step drives the parameter
+                        ! from outside". That stopped being true when
+                        ! freeze_to_three_block went to 0:
+                        ! utility_cost_of_treatment_adjuster is
+                        ! (1-freeze_to_three_block)*5e-2, so the bracket is live and
+                        ! has been running every loop of the full calibration.
+                        !
+                        ! FIVE PER CENT A LOOP, NOT THE GLOBAL HALF A PER CENT. The
+                        ! author, 11 September: "The utility cost of treatment has to
+                        ! be adjusted much faster. Maybe 5% each iteration". cap_step
+                        ! was the binding constraint, not the adjuster -- it allows
+                        ! max_rel_step_all, which is 5e-3 here -- so the parameter
+                        ! crawled 14.31 -> 14.41 over nine loops against a take up
+                        ! 192 per cent out. cap_step_rel applies the identical cap at
+                        ! the rate named, and it is named only here, so no other
+                        ! parameter's step changes.
                         cap_old_1=utility_cost_of_treatment
                         utility_cost_of_treatment=max(min(treatment_step_1,20.d0),0.d0)
-                        utility_cost_of_treatment=cap_step(utility_cost_of_treatment,cap_old_1)
+                        utility_cost_of_treatment=cap_step_rel(utility_cost_of_treatment,&
+                            cap_old_1,treatment_cost_max_rel_step)
 
                         ! ZEROED WHEN THE ADJUSTER IS ZERO, OR THE LOOP CANNOT EXIT.
                         ! utility_cost_of_treatment_adjuster is 0, so the step below
