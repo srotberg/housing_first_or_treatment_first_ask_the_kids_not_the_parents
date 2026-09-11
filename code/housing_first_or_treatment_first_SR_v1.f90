@@ -44175,6 +44175,26 @@
             call write_calibration_state()
             call write_calibration_distribution()
 
+            ! THE WHOLE MOMENT TABLE, EVERY LOOP.
+            !
+            ! The author, reading a gaps table with eight of seventeen rows
+            ! blank: "why are so many untraced?". Because each bracket prints
+            ! whatever its author needed at the time -- most print their own
+            ! PARAMETER and not their model MOMENT -- while every moment is
+            ! computed in print_all_moments(), which ran only when this do-while
+            ! EXITED. On a long run that is the whole run: the 02:46 calibration
+            ! reached loop 22 with the block never once printed.
+            !
+            ! One call here beats adding eleven writes scattered through the
+            ! update block, and it cannot drift out of step with the moments it
+            ! reports, which is how addiction_onset_base came to be traced under
+            ! the stale name onset_at_the_mean_quantity.
+            !
+            ! IT IS WRITES ONLY. print_all_moments reads aggregates the
+            ! distribution pass has already built and computes nothing, so it
+            ! costs output and not time.
+            call print_all_moments()
+
         end do
 
         simulation_ended=0

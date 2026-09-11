@@ -21,6 +21,14 @@
 
 Median |gap| over the nine measurable rows: 51 per cent, and RISING.
 
+**CORRECTION, and it matters: "NOT TRACED" MEANS I COULD NOT READ IT, NOT THAT
+THE LOOP COULD NOT USE IT.** Every bracket reads its moment straight out of the
+aggregates the distribution pass builds -- `model_avg_housing_spending_renters(1)`
+and the rest -- and steps on it. The `write` is an echo to the log and nothing
+else. The calibration was never adjusting blind; the READER was. The sentence
+below about "calibrating blind" overstated it and is left standing only so the
+correction has something to point at.
+
 **EIGHT OF SEVENTEEN ROWS CANNOT BE READ FROM THE LOG.** The model value is not
 echoed each loop for mu_H, h_2, gamma, omega_l, beta, cbar, tau_l or sigma_y, and
 three parameters do not echo their VALUE either. The full moments block prints
