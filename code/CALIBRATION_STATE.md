@@ -1,3 +1,34 @@
+## 11 September 03:55 UTC -- THE CHILD USE GAP AT omega_c = 0.05 IS +2.81 PER CENT,
+## AND A CORRECTION TO MY OWN READING OF IT
+
+    omega_c = 0.05     child use gap  +2.81 per cent
+    TARGET                            +18.34
+    omega_c = 0.29     child use gap  +129
+
+So **omega_c = 0.05 is TOO SMALL** and the answer lies between the two measured
+points, much nearer 0.05. A linear read puts it near 0.08, but the relationship is
+convex -- a factor of 5.8 in omega_c gave a factor of 46 in the gap -- so the true
+value is probably below that.
+
+**CORRECTION, AND IT MATTERS BECAUSE I REPORTED A BUG THAT DOES NOT EXIST.** I
+first computed this gap by hand as MINUS 8.2 per cent, by pairing the
+counterfactual's 0.28063 with a baseline of 0.30581 read from a DIFFERENT LOOP,
+and then built a whole argument on the wrong sign: that the child term is negative
+in levels, lowers V, weakens the mortality deterrent and so encourages use -- the
+same pathology the author already fixed once by differencing
+expected_child_value.
+
+**That hypothesis is an artefact of my arithmetic and should be discarded.** The
+source says plainly why the pairing was invalid, in the comment above the block:
+omega's moment is "measured before the baseline so that every statistic the rest
+of this loop reads describes the baseline and not this". The counterfactual runs
+BEFORE the loop's own baseline solve. The model's own gap pairs them correctly
+and reports +2.81 per cent.
+
+**THE RULE THIS BUYS: read the model's own gap, never difference two numbers
+scraped from a log.** The two prints are not from the same solve and nothing in
+the log says so.
+
 ## 11 September 03:51 UTC -- BOTH NEW BRACKETS WORK ON LOOP 1, AND THE ENDOWMENT
 ## IS INACTIVE BY THE AUTHOR'S OWN RULE
 
