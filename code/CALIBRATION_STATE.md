@@ -86,6 +86,51 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+## 11 September 10:25 UTC -- LOOP 3 LANDED. EACH LEG CONVERGES; THEY CONVERGE TO
+## EACH OTHER'S FIXED POINT, WHICH IS THE PROBLEM.
+
+The re-run reproduces the lost log at every loop -- b 0.0926957 / 0.0675671 /
+0.0647536 against 0.0926955 / 0.0675265 / 0.0647706 -- so the sequence is the
+model's, not a run's.
+
+    loop      b        move      lambda_d    move      theta      move
+    1       9.2696%             3.8051%             0.137797
+    2       6.7567%   -27.1%    2.5495%   -33.0%    0.174682   +26.8%
+    3       6.4754%    -4.2%    2.5137%    -1.4%    0.178678    +2.3%
+
+**THE MOMENTS ARE SETTLING.** The step from loop 2 to loop 3 is a sixth of the
+step before it, so b is heading for something near 6.45 per cent, a gap of -27
+against the 8.9 target. The calibration does converge; it converges to the wrong
+economy.
+
+**WHY. Write B for the benchmark solve and C for the omega counterfactual. The
+order in a loop is C then B, and each takes its child penalty from the value
+function the OTHER one left behind.** So in the limit B uses the penalty implied
+by C's value function -- the world where parents weight children at zero -- and
+C uses the penalty implied by B's. Each subsequence settles:
+
+    penalty read by            loop 2     loop 3     heading for
+    B, taken from C's VF      -64.009    -63.321     about -63
+    C, taken from B's VF      -69.203    -67.088     about -66
+
+A self-consistent benchmark would use the second column, not the first. The two
+are 3.8 apart out of about 65, so the calibrated economy carries a child penalty
+roughly six per cent weaker than its own value function implies. It is closing
+slowly -- 5.19 then 3.77 -- but it cannot close to zero, because the two
+economies genuinely differ and so do their value functions. That difference is
+the point of the moment omega_c is bracketed on.
+
+**WHAT THIS IS NOT.** It is not a runaway and it is not non-determinism. Both
+legs converge, the run reproduces to six figures, and nothing is diverging. It
+is a fixed point of the alternating map rather than of either economy.
+
+**WHAT IT COSTS, NOT ESTIMATED.** The obvious next sentence is an elasticity --
+the penalty moved 7.5 per cent between loops 1 and 2 and b moved 27, so a six
+per cent error is worth about twenty on b. That is a mechanism, not a
+measurement: the loop-1 to loop-2 step also carries the distribution warm start
+and two capped parameter updates. The measured statement is the leg difference
+above; what it is worth on b needs its own point.
+
 **THE MECHANISM, MEASURED. THE CHILD PENALTY ALTERNATES BETWEEN TWO ECONOMIES
 AND NEVER SETTLES IN EITHER.**
 
