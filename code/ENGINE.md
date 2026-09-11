@@ -42,6 +42,50 @@
 > reproduces it. Restarting a search against a moving target is how the archive
 > filled with points whose moments cannot be reproduced by re-solving them.
 
+> ## PHASE 3. THE CALIBRATION IS REOPENED, 11 September. THIS SUPERSEDES PHASE 2.
+>
+> The author, 11 September: *"new calibration strategy: 1. add the child utility
+> the way we discussed. and calibrate omega_c, such that drug use declines by 18%
+> when omega_c=0 rather than the calibrated omega_c. 2. calibrate delta_d so that
+> the SUD odds ratio for the child is 2"*, then *"you can just use delta_d=0.36
+> and calibrate with the one class model....let's see what we get"* and *"don't
+> worry about the odds ratio in the main calibration. worry about omega_c and the
+> other parameters. delta_d can be done later again"*.
+>
+> **PHASE 2'S BAN ON STARTING A CALIBRATION LOOP IS LIFTED.** A firing may now
+> start and supervise `three_loop.sh` again. The phase 2 rule below is kept for
+> the record but no longer governs.
+>
+> **WHAT IS BEING CALIBRATED IN THIS PASS**
+>
+>     omega_c        on the moment: use is 18.34 per cent higher with the child
+>                    term off than at the calibrated omega_c. Already wired,
+>                    calibrate_weight_on_child = 1, adjuster 2e-3.
+>     everything     the core loop, because xi stops being 1 and every
+>     else           consumption-denominated moment moves.
+>
+> **WHAT IS PINNED IN THIS PASS, ON THE AUTHOR'S INSTRUCTION**
+>
+>     delta_d = 0.36        revisited later, on the child SUD odds ratio = 2
+>     delta_h = 0           and the homelessness odds ratio is an OUTPUT, not a
+>                           target: anywhere in 1.8 to 2.4 is fine, and only if
+>                           it falls BELOW 1.8 is delta_h reconsidered
+>     rho    = 0.30         adjuster 0.0
+>     child_penalty_classes = 1   the cheap one-class model for this pass
+>
+> **WHAT CHANGED IN THE SOURCE, 11 September**
+>
+>     include_varying_household_size  0 -> 1
+>     actual_household_size           1 everywhere -> 1 + n(a), children under 18
+>                                     by age, from data/make_children_by_age.py
+>     child_penalty_classes           2 -> 1
+>
+> So `xi = sqrt(1+n(a))` is live and `scaled_household_size = xi^sigma` stops
+> being one. This is STEP 1 of the three-step build in `CHILD_FLOW_UTILITY.md`;
+> drugs are still inside the shared bundle, so the flow utility is still exactly
+> equation (1) of Rotberg and Steinberg (2024) and the code was not restructured.
+> Both standing builds are clean.
+
 > ## PHASE 2. THE CALIBRATION IS STOPPED. READ THIS BEFORE THE FIRING SEQUENCE.
 >
 > The author, 8 September: *"and i think you can stop the calibration and test

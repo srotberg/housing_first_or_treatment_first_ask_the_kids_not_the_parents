@@ -728,7 +728,7 @@
         ! held 79 per cent of homelessness. The spike follows the cap.
         integer :: max_age_to_choose_homelessness=59
         
-        integer, parameter :: include_varying_household_size=0
+        integer, parameter :: include_varying_household_size=1
         ! Renter model: homeownership, mortgages and negative assets are out.
         ! Setting this to 1 restores the owner branch, and the three switches it
         ! governs are marked FIRST, SECOND and THIRD.
@@ -3862,7 +3862,7 @@
         ! child_penalty_classes times bigger. At 1 the model is exactly the one
         ! that came before -- one class, factor one, no expansion -- which is the
         ! null this was built against.
-        integer, parameter :: child_penalty_classes=2
+        integer, parameter :: child_penalty_classes=1
         integer, parameter :: employment_grid_size=employment_base_size*child_penalty_classes
         integer :: use_unemployment_by_productivity=1
         ! Persistent income risk over working life. See the block beside
@@ -5297,14 +5297,19 @@
             0.938727524131536000,0.932235985994338000,0.924182154238224000,0.000000000000000000/)
                     
         real(8), dimension(life_span) :: actual_household_size=include_varying_household_size*&
-            (/2.3787293,2.3831589,2.5131222,2.6573369,&
-            2.7439302,2.8492878,2.939628,2.9549821,3.0925854,2.9528197,3.2866955,3.1913625,3.3052627,&
-            3.2847357,3.1969402,3.2621908,3.2081295,3.3683722,3.2301562,3.0603161,2.9865213,2.9223446,&
-            3.0224219,2.954807,2.7902247,2.6784589,2.6505436,2.4317628,2.4304172,2.4165407,2.2693952,&
-            2.3565881,2.1626853,2.1362974,2.0396215,2.0327433,1.971406,1.9693229,1.9238235,1.8855543,&
-            1.8520651,1.8431792,1.8775815,1.822047,1.7928155,1.7562793,1.8370098,1.7640014,1.7846039,&
-            1.7548529,1.715324,1.705349,1.7067496,1.6960866,1.6380913,1.5753125,1.5810592,1.5874657,&
-            1.5940832,1.6004317/)+(1-include_varying_household_size)*1
+            (/&
+            1.4448766,1.6009153,1.6595768,1.7047721,1.8193630,&
+            1.8635393,1.9299464,2.0617050,2.1389762,2.1771039,&
+            2.2308243,2.3241314,2.3190651,2.3783667,2.4513526,&
+            2.4487915,2.3918235,2.3251210,2.2123582,2.0540625,&
+            1.9800220,1.8733168,1.8259258,1.7228857,1.6693224,&
+            1.5572374,1.4923160,1.3718947,1.3118304,1.2486368,&
+            1.2229223,1.1772729,1.1952302,1.1846395,1.1878238,&
+            1.1725286,1.1618766,1.1538806,1.1430864,1.1294504,&
+            1.1174894,1.1067105,1.0986467,1.1130859,1.1280939,&
+            1.1300166,1.1309383,1.1250932,1.1173449,1.0966102,&
+            1.0964064,1.0859450,1.0684492,1.0769711,1.0823029,&
+            1.0869273,1.0715130,1.0935202,1.0712740,1.0616088/)+(1-include_varying_household_size)*1
                     
         real(8), dimension(life_span) :: scaled_household_size,sqrt_household_size
                                                 
