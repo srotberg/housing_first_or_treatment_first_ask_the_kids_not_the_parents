@@ -99,10 +99,21 @@ society)"*. Both terms stay, and together they cover one child's life once:
                  the household, consumes (c/xi) and (h/xi), and gets no drugs.
                  Weighted omega_c, counted kappa = xi - 1 times.
 
-    ADULTHOOD    the existing newborn term, expected_child_value, which is the
-                 child's VALUE FUNCTION at model age 1 -- its whole adult life
-                 from 26 on. Weighted omega_c, collected when the parent dies,
-                 which is the moment the child becomes a member of society.
+    AS A WORKER  the existing entrant term, expected_child_value, which is the
+                 child's VALUE FUNCTION at model age 1 -- its whole working and
+                 retired life from 26 on. Weighted omega_c.
+
+THE MODEL CONTAINS NO INFANTS, and "newborn" is a misnomer that should not reach
+the paper. The entering agent appears at model age 1, which is age 26, already a
+worker: working life runs 26 to 65. Author, 11 September: *"so it's not when it
+is born, but when it becomes viable... like leaves the household... the parents
+have them until they become workers"*. That is literally what the object is.
+
+The handover is therefore LEAVES THE HOUSEHOLD AND STARTS WORKING, not "is
+born", and it also makes the inherited penalty the right object: the child
+arrives in the labour market with lower productivity because of what it grew up
+with, which is exactly what Nilsson measures -- adult earnings conditional on
+childhood exposure.
 
 NO DOUBLE COUNTING: the first is flow utility during childhood, the second is
 lifetime value from adulthood. Back to back, not overlapping.
@@ -128,9 +139,13 @@ output.
 ### A stock and a flow, which need not match
 
 The flow-utility children are a STOCK -- xi - 1 = 0.565 equivalent children
-present at age forty. The newborn is a FLOW -- exactly one replacement per death.
-They are different objects and the model's demographics do not target fertility
-anyway. Worth a sentence in the paper so it is not read as an inconsistency.
+present at age forty. The entrant is a FLOW -- exactly one replacement per death.
+They are different objects and the model's demographics do not target fertility.
+
+The looseness that remains, and it is a sentence in the paper rather than a fix:
+the handover happens AT THE PARENT'S DEATH, not at a fixed child age, so a
+household with children still present also produces its entrant when it dies.
+That is the standard overlapping-generations replacement simplification.
 
 ## WHAT THE MODEL CAN THEN SAY: THE OPTIMAL DRUG USE
 
