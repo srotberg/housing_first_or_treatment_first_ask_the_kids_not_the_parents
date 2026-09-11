@@ -289,6 +289,38 @@ TARGET_IN_LOG = {
 }
 
 
+
+def settled_note(log):
+    """Say how many loops the log holds and whether the last one moved."""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from loop_trace import read as read_loops
+        loops, _ = read_loops(log)
+    except Exception:
+        return
+    n = len(loops)
+    if n <= 1:
+        print(f'ONE moment block in this log: nothing here says whether the run '
+              f'settled, and a single loop is an iterate, not an equilibrium.\n')
+        return
+    moved = []
+    for name in ('b', 'lambda_d', 'theta'):
+        a, bb = loops[-2].get(name), loops[-1].get(name)
+        if a and bb and a[0]:
+            moved.append((name, (bb[0] - a[0]) / a[0] * 100))
+    worst = max((abs(m) for _, m in moved), default=0.0)
+    tail = '   '.join(f'{k} {v:+.1f}%' for k, v in moved)
+    if worst > 1.0:
+        print(f'{n} moment blocks; this is loop {n}, and it MOVED from loop {n-1}: '
+              f'{tail}.')
+        print('   The parameters are capped at 0.5 per cent a loop, so a moment '
+              'moving further than\n   that is the map still settling. Do not '
+              'quote this table as the benchmark.\n')
+    else:
+        print(f'{n} moment blocks; this is loop {n}, and it is within one per cent '
+              f'of loop {n-1}: {tail}.\n')
+
+
 def main():
     if len(sys.argv) < 2:
         print(__doc__)
@@ -426,6 +458,22 @@ def main():
     # the pairing is the intended one -- which is how h_2 was found chasing the
     # employed share of the homeless while the ladder's curvature ran on the
     # smallest size share.
+    # WHICH LOOP THIS TABLE IS, BEFORE THE TABLE ITSELF.
+    #
+    # This report reads the LAST value the log printed for each quantity, which
+    # is right once a run has settled and wrong while it is still settling. On
+    # 11 September the benchmark's log held three different economies -- b at
+    # 9.27, 6.75 and 6.48 per cent -- because compute_expected_child_value reads
+    # the current value function, so the child term is iterated once per loop
+    # with no convergence test on it. Every benchmark figure reported up to that
+    # morning had been read off loop 1 and none of them said so.
+    #
+    # A table that does not say which loop it is cannot be checked, so the count
+    # and the last loop's movement go above it. The threshold is one per cent
+    # because the parameters themselves are capped at half of one per cent a
+    # loop: a moment moving further than its instruments possibly could is the
+    # map still settling, not the search working.
+    settled_note(sys.argv[1])
     w = max(len(r[1]) for r in rows) + 2
     mw = max([len(r[7]) for r in rows if r[7]] + [len('moment')]) + 2
     print(f'{"parameter":{w}s} {"value":>12s} {"-> after":>12s} {"moment":{mw}s} '
