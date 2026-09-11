@@ -2578,7 +2578,11 @@
         ! width the KKK process happened to leave on the frozen grid, and it
         ! gave a bottom half share of 33 percent, an almost equal society.
         real(8) :: sd_permanent_productivity=1.00d0
-        real(8) :: sd_permanent_productivity_adjuster=(1-freeze_sd_permanent_productivity)*(2.d0)
+        ! HELD AT ZERO, and not by the freeze flag: this is the DEAD instrument
+        ! for sigma_y under the KKK grid the model actually runs. See
+        ! kkk_sigma_scale_adjuster above. If fixed_productivity ever goes to 1
+        ! the two swap roles and this is the one to wake.
+        real(8) :: sd_permanent_productivity_adjuster=0.d0
         real(8) :: distance_sd_permanent_productivity=1
         real(8) :: stopping_rule_sd_permanent_productivity=10.d0**(-3)
         integer, parameter :: calibrate_sd_permanent_productivity=1
@@ -2657,7 +2661,17 @@
         ! from d(share)/d(scale) = -phi(sigma)*sigma_base, about -0.16 near the
         ! target, so a step of 5 covers roughly three quarters of the gap in one
         ! pass and does not overshoot.
-        real(8) :: kkk_sigma_scale_adjuster=(1-freeze_sd_permanent_productivity)*(5.d0)
+        ! UNFROZEN 11 September. The author: "sigma_y should match the share of
+        ! income at the bottom 50%" -- so it is calibrated, not held.
+        !
+        ! kkk_sigma_scale is the LIVE instrument and sd_permanent_productivity is
+        ! the dead one, not the other way round. gaps.py decides it from the grid
+        ! actually in use: _DEAD_SIGMA is kkk_sigma_scale when fixed_productivity
+        ! is 1 and sd_permanent_productivity otherwise, and run_one_point.sh's
+        ! default is fixed_productivity=0. Both were gated on the SAME freeze
+        ! flag, so unfreezing that flag would have put TWO instruments on one
+        ! moment and had them fight. They are split here instead.
+        real(8) :: kkk_sigma_scale_adjuster=5.d0
         ! WHAT kkk_s_deviation_bottom BUYS, and why it is the KKK grid's version of
         ! y_grid_kappa. The bottom node's mass is the normal mass below
         ! -kkk_s_deviation_bottom + half a spacing, so widening the grid pushes
@@ -40642,13 +40656,20 @@
                 write(*,*) "kkk_sigma_scale=", kkk_sigma_scale,&
                     " sd of log y at age 1 =", sd_log_y_newborn
 
+                cap_old_1=kkk_sigma_scale
                 kkk_sigma_scale=max(min(kkk_sigma_scale+kkk_sigma_scale_adjuster*&
                     (model_bottom_half_earnings_share-bottom_half_earnings_share_data),&
                     10.d0),0.1d0)
+                kkk_sigma_scale=cap_step(kkk_sigma_scale,cap_old_1)
 
+                ! LIVE AGAIN, and retired only if BOTH sigma_y instruments are
+                ! off -- the freeze flag no longer decides it, because the two
+                ! adjusters are split.
                 distance_sd_permanent_productivity=&
-                    (1-freeze_sd_permanent_productivity)*&
-                    abs(model_bottom_half_earnings_share-bottom_half_earnings_share_data)
+                    merge(0.d0,&
+                    abs(model_bottom_half_earnings_share-bottom_half_earnings_share_data),&
+                    (kkk_sigma_scale_adjuster<=0.d0) .AND.&
+                    (sd_permanent_productivity_adjuster<=0.d0))
 
                 write(*,*) "kkk_sigma_scale=", kkk_sigma_scale,&
                     " distance=", distance_sd_permanent_productivity
@@ -40668,9 +40689,14 @@
                     (model_bottom_half_earnings_share-bottom_half_earnings_share_data),&
                     3.d0),10.d0**(-2))
 
+                ! LIVE AGAIN, and retired only if BOTH sigma_y instruments are
+                ! off -- the freeze flag no longer decides it, because the two
+                ! adjusters are split.
                 distance_sd_permanent_productivity=&
-                    (1-freeze_sd_permanent_productivity)*&
-                    abs(model_bottom_half_earnings_share-bottom_half_earnings_share_data)
+                    merge(0.d0,&
+                    abs(model_bottom_half_earnings_share-bottom_half_earnings_share_data),&
+                    (kkk_sigma_scale_adjuster<=0.d0) .AND.&
+                    (sd_permanent_productivity_adjuster<=0.d0))
 
                 write(*,*) "sd_permanent_productivity=", sd_permanent_productivity,&
                     " distance_sd_permanent_productivity=", distance_sd_permanent_productivity
