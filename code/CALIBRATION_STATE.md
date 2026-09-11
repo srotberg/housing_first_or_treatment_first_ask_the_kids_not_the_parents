@@ -1,3 +1,31 @@
+## 11 September 05:21 UTC -- ALEPH'S BRACKET IS A RUNAWAY. Eight loops of clean
+## evidence: the parameter rises monotonically and its own moment falls away.
+
+    value_of_life parameter : 188.7 189.7 190.6 191.6 192.5 193.5 194.5 195.4
+    aleph MOMENT (target 80):  66.6  66.6  66.1  66.1  65.8  65.8  65.5  65.5
+
+The bracket's sign is wrong IN EQUILIBRIUM. value_of_life raises the numerator of
+model_value_of_life/model_average_labour_income, but it raises the DENOMINATOR
+faster: deterring drug use raises employment and earnings. So the ratio falls,
+the loop reads that as "not enough", and pushes harder -- crushing drug use
+further on every pass. The disorder rate is 0.0052 against a target of 0.0368 and
+falling.
+
+THIS IS A RECURRENCE, NOT A DISCOVERY. CALIBRATION_STATE carries an entry from
+8 September: *"value_of_life is climbing to chase an aleph that is moving away
+from it"*. It was put to the author then and not settled. It is now confirmed
+with a monotone eight-loop trace rather than a suspicion.
+
+**THE CALIBRATION IS DIVERGING, NOT MERELY SLOW**, and b cannot offset it: b is
+about twenty times weaker on drug use and capped at half a per cent a loop.
+
+**RECOMMENDATION, FIRMED UP.** Pin value_of_life. aleph = 80 times income is an
+external target; a parameter whose own moment moves AWAY from target under its
+own bracket has no business being searched. Two lines:
+value_of_life_adjuster = 0 and its distance retired. NOT ACTED ON -- assigning
+instruments to moments is the author's, and they have corrected me on it
+repeatedly tonight.
+
 ## 11 September 05:02 UTC -- VALUE_OF_LIFE DOMINATES B BY ABOUT TWENTY TO ONE ON
 ## DRUG USE, AND THE CALIBRATION CANNOT CONVERGE AS CONFIGURED.
 
