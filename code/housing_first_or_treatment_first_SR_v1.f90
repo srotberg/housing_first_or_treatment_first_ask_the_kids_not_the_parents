@@ -412,7 +412,20 @@
         ! it at all and a household at twice average income barely notices --
         ! which is the income gradient the utility cost never had.
         real(8) :: utility_cost_of_treatment=0
-        real(8) :: utility_cost_of_treatment_adjuster=0
+        ! RESTORED TO 0.05, THE VALUE IT WAS BUILT WITH, 11 September. The
+        ! author: "what is utility_cost_of_treatment pinned? it should target a
+        ! 25% treatment". treatment_take_up_data is 0.245 and this is the ONLY
+        ! instrument on it: money_cost_of_treatment carries an adjuster, a
+        ! distance and a stopping rule but has no update statement anywhere and
+        ! its distance is read nowhere, so it is a stub, not an alternative.
+        !
+        ! The adjuster only sets the FIRST step. After one iteration the update
+        ! is a secant through the last two take-up readings, clamped by
+        ! trust_step and move_factor -- the machinery the record of 8 September
+        ! measured at three per cent a step, tau_u +44.9 to +21.1 in twenty
+        ! minutes. Setting this to zero disabled the first step AND retired the
+        ! distance through the merge below, so take up left the loss entirely.
+        real(8) :: utility_cost_of_treatment_adjuster=5*10.d0**(-2)
 
         ! THE PRICE OF A PERIOD OF TREATMENT, in the model's consumption units,
         ! calibrated on take up among those carrying the disorder. Calibrated
@@ -1054,7 +1067,16 @@
         ! street -- and because the SUD stock accumulates with age while onset
         ! does not, that lands disproportionately on the old. The older homeless
         ! are already 18 to 36 per cent SUD against 2 per cent for the young.
-        integer, parameter :: include_rho_d=1
+        ! RETIRED, 11 September, the same way include_rho_m already was. The
+        ! author: "no, we dont have rho_m or rho_d anymore. also we use the
+        ! probability of regaining employment with SUD or SMI to get their
+        ! shares of homeless". This restates 2 September -- both rho parameters
+        ! sit at one and are not lowered -- and rho_m was retired then while
+        ! rho_d was not, so the handover set rho_d to 1.0 on every run and the
+        ! loop then walked it back down its own bracket every iteration. The
+        ! else branch below already zeroes its distance, so the term retires
+        ! with it and the uncapped do-while is unaffected.
+        integer, parameter :: include_rho_d=0
         integer, parameter :: include_rho_m=0
 
         ! TWO SMI STATES. This doubles the unemployment grid from 6 to 12 and
@@ -2493,7 +2515,32 @@
         ! renters spending over X. Freeing the tie without this would have let
         ! that stale path drive the parameter against the wrong target.
         ! next_batch.py owns it across points instead, like the other sixteen.
-        real(8) :: relative_share_of_housing_adjuster=0
+        ! RESTORED TO ITS OWN START VALUE, 11 September. THE FREEING WAS
+        ! NEVER COMPLETED.
+        !
+        ! tie_gamma_to_theta was set to 0 on the author's instruction,
+        ! recorded beside it: "gamma was the one targeted moment with no
+        ! instrument: this parameter was pinned at 0.28*(1-theta), so nothing
+        ! could move housing's share of expenditure." Releasing the tie is
+        ! half of that. The adjuster was left at zero, so gamma still could
+        ! not move and the moment still had no instrument.
+        !
+        ! AND WITH THE SWEEP OFF IT STOPS BEING ONLY A MISSING BRACKET. The
+        ! joint loop's do-while has no iteration cap; it runs until every
+        ! distance is under its stopping rule. Every other dead adjuster in
+        ! that test carries an 'if (adjuster==0) distance=0' guard, so its
+        ! term retires. gamma's only reachable zeroing is gated on
+        ! tie_gamma_to_theta==1, which is false, so its distance stays live
+        ! against an adjuster that cannot move it: THE LOOP NEVER TERMINATES.
+        ! This was masked while sweep_addiction_scalar was 1, because
+        ! re_do_simulation_with_fixed_parameters zeroes every distance and
+        ! the loop exits after one pass.
+        !
+        ! 5e-2 is relative_share_of_housing_adjuster_start, the value
+        ! damp_on_flip already grows it back toward, so nothing else changes.
+        ! The guard below is added anyway, so pinning gamma again retires its
+        ! term instead of hanging the loop.
+        real(8) :: relative_share_of_housing_adjuster=5*10.d0**(-2)
         real(8), parameter :: relative_share_of_housing_adjuster_start=5*10.d0**(-2)
         real(8) :: previous_gap_relative_share_of_housing=0
         integer :: have_gap_relative_share_of_housing=0
@@ -41239,8 +41286,15 @@
                         ! gives. A live distance would keep the joint loop running
                         ! on a bracket that is switched off.
                         if (tie_gamma_to_theta==1) distance_relative_share_of_housing=0
+                        ! AND A PINNED GAMMA RETIRES ITS TERM, the same way
+                        ! every other zero adjuster in the convergence test
+                        ! does. Without this a zero adjuster leaves a live
+                        ! distance against a parameter that cannot move, and
+                        ! the uncapped do-while never exits.
                         if (tie_gamma_to_theta==0) distance_relative_share_of_housing=&
-                            abs(model_avg_housing_spending_renters(1)-avg_rent_to_income_data)
+                            merge(0.d0,&
+                            abs(model_avg_housing_spending_renters(1)-avg_rent_to_income_data),&
+                            relative_share_of_housing_adjuster<=0.d0)
                                     
                         ! THE LABEL SAID "all" AND THE VARIABLE IS THE RENTERS
                         ! SERIES, and the other print of that label further down
