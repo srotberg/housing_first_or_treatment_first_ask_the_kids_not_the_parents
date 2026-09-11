@@ -52,6 +52,37 @@
 > worry about the odds ratio in the main calibration. worry about omega_c and the
 > other parameters. delta_d can be done later again"*.
 >
+> **STEP 2 IS BUILT AND THE LOOP IS RUNNING, 11 September 02:08.** The child is
+> in the parent's FLOW utility, not only the continuation:
+>
+>     u(X_P) + omega_c * (xi-1) * u(X_K),   X_P, X_K share c/xi and h/xi,
+>     X_P carries (bbar+q) and X_K carries bbar alone
+>
+> verified against that specification to 2.6e-16 by `code/check_flow_utility.f90`,
+> which is a STANDING test: re-run it after any change to the flow utility.
+>
+> **A RUN IS NOW THE WHOLE CALIBRATION, NOT ONE SOLVE.** With
+> `sweep_addiction_scalar` back to 0, `re_do_simulation_with_fixed_parameters` is
+> 0, so `run_one_point.sh` updates parameters and its internal do-while runs until
+> every distance clears its stopping rule. That loop has NO iteration cap and the
+> script has no timeout. **Do not start `three_loop.sh` beside it** -- its outer
+> iteration is redundant in this mode and both take all four cores.
+>
+> **WHAT A FIRING DOES WHILE IT RUNS:** the stale-checkout guard, then report the
+> run's age and its latest `MOMENT b`, `MOMENT theta`, `weight_on_child` and any
+> `THETA CAPPED` line, in one line. Never edit `code/*.f90` while it runs. Editing
+> the `.md` files is safe -- the source hash `run_one_point.sh` guards on is over
+> the Fortran alone.
+>
+> **THE ONE THING THAT COULD HANG IT WAS FOUND AND FIXED**, and the class of bug
+> is worth keeping: a bracket with a ZERO adjuster and a LIVE distance cannot
+> converge, and the do-while has no cap to save it. Every other zero adjuster in
+> that test retires its own term through `if (adjuster==0) distance=0`; gamma's
+> only guard was on `tie_gamma_to_theta==1`, which is false. It was invisible
+> while the sweep was on, because the fixed-parameters path zeroes every distance.
+> **Before turning any bracket off, zero its distance too. Before turning the
+> sweep off, check every bracket for this.**
+>
 > **PHASE 2'S BAN ON STARTING A CALIBRATION LOOP IS LIFTED.** A firing may now
 > start and supervise `three_loop.sh` again. The phase 2 rule below is kept for
 > the record but no longer governs.

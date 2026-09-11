@@ -1,3 +1,115 @@
+## 11 September 02:08 UTC -- PHASE 3 CALIBRATION LAUNCHED. Six source fixes first,
+## four of them the author's corrections to a plan I had wrong.
+
+**The run.** `run_one_point.sh` on the seed vector, launched 02:08:06. NOTE THAT
+THIS IS NOW THE WHOLE CALIBRATION IN ONE PROCESS, not one solve: with
+`sweep_addiction_scalar` back to 0, `re_do_simulation_with_fixed_parameters` is
+0, parameters update, and the internal do-while runs until every distance clears
+its stopping rule. It has NO iteration cap and `run_one_point.sh` has no timeout.
+`three_loop.sh`'s outer iteration is redundant in this mode and should not be
+started beside it.
+
+**What step 2 measured**, same vector, new economy, before any of this:
+
+    total drug users      0.4608 -> 0.2160   target 0.0890
+    disorder rate         0.1880 -> 0.0911   target 0.0368
+    drug spending share   0.1603 -> 0.1497   target 0.1410
+    value of life/income    50.8 -> 59.3     target 80.0
+    income of drug users   0.861 -> 0.649    target 0.740
+
+The xi^2 explosion moderates as predicted once the parent's term scales by
+xi^0.73. And **use fell while users got POORER**, which corrects a story taken
+from a b sweep on the pre-child economy: mortality deters the rich hardest, so
+the marginal quitter is rich and the pool left behind is poor. Use rate by band,
+poorest to richest: 0.681, 0.246, 0.132, 0.065, 0.020.
+
+**THE SIX FIXES.**
+
+1. *omega_c's counterfactual priced half the parameter.* It set
+   `child_penalty_off=1`, which zeroes `expected_child_value` -- the inherited
+   penalty alone -- while the step 2 flow term kept running at the calibrated
+   omega_c. Now sets `weight_on_child=0`, which removes both, because omega_c
+   multiplies both and nothing else. The author: *"omega_c should price both at
+   once"*.
+
+2. *theta gets a per-loop cap of 0.1 per cent*, `theta_max_rel_step`, handable.
+   The existing trust region never bound: it caps at halving or doubling, which
+   at theta = 0.27 needs a gap of 5.4 while the gap is clamped to 1. The author
+   asked for 0.1 per cent, was given the arithmetic -- 480 loops from 0.27 to
+   0.40 -- and reaffirmed. **WATCH FOR `THETA CAPPED` printing every loop in the
+   same direction for tens of iterations: that is theta travelling, not
+   converging, and the rest of the vector is settling against a theta that has
+   not arrived.**
+
+3. *GAMMA WOULD HAVE HUNG THE LOOP.* `tie_gamma_to_theta` was set to 0 to free
+   gamma but its adjuster was left at 0, so nothing could move it -- and unlike
+   every other zero adjuster in the convergence test it had no
+   `if (adjuster==0) distance=0` guard, only one gated on `tie_gamma_to_theta==1`.
+   Live distance, dead instrument, uncapped do-while. **This was invisible while
+   the sweep was on, because the fixed-parameters path zeroes every distance.**
+   All 39 distances were checked one at a time; gamma was the only one. Adjuster
+   restored to 5e-2, retirement guard added. The author confirmed independently:
+   *"relative_share_of_housing should be allowed to move to match the share spent
+   on housing. 26.8% i think"* -- which is exactly `avg_rent_to_income_data`.
+
+4. *tau_u had no instrument.* `utility_cost_of_treatment_adjuster` was 0, which
+   disabled the first step AND retired the distance through its merge, so
+   treatment take up was out of the loss entirely. `money_cost_of_treatment` is
+   a STUB -- adjuster, distance and stopping rule declared, no update statement
+   anywhere, distance read nowhere -- so it is not an alternative. Restored to
+   0.05. The author: *"what is utility_cost_of_treatment pinned? it should target
+   a 25% treatment"*.
+
+5. *rho_d was pinned by the vector and unpinned by the loop.* `include_rho_m` was
+   already 0; `include_rho_d` was 1 with a live 5e-2 adjuster, so the handover
+   set rho_d to 1.0 every run and the loop walked it back down every iteration.
+   Retired. The author: *"no, we dont have rho_m or rho_d anymore"*.
+
+6. *THE DISORDER HAZARD IS FLAT ABOVE ZERO USE.* The author: *"lambda_d should be
+   0, only the base changes, so the probability of SUD is flat for any v>0"*. The
+   hazard is `base + (1-exp(-lambda_d v))` above v=0. The vector hands
+   `lambda_addiction=0` in, so a run starts at the specification -- and the
+   bracket then set `lambda_addiction = -log(1-onset_at_mean)/mean_quantity` on
+   the first update, undoing it every loop and leaving the base inert. The
+   bracket now moves `addiction_onset_base` and holds lambda_d at zero; the
+   analytic first step, secant and clamp are unchanged because `onset_at_mean_1`
+   is read through `addiction_onset_hazard()` and IS the base at lambda_d = 0.
+   **CONSEQUENCE, and it is a modelling choice the paper owes the reader: the
+   slope is lambda_d exp(-lambda_d v), so at lambda_d = 0 the marginal risk of
+   one more unit is ZERO. All disorder risk is on the extensive margin.**
+
+**THE FLOW UTILITY IS VERIFIED.** The author: *"make sure it is correct, because
+everything builds on it later"*. `code/check_flow_utility.f90` compiles the live
+expression verbatim and compares it to the specification; agreement is 0 to
+2.6e-16 relative across five cases. It also confirms kappa = xi-1 reproduces JME
+equation (1) exactly while kappa = n misses by a factor that GROWS with xi.
+
+**OPEN, PUT TO THE AUTHOR, NOT ACTED ON.**
+
+- *kappa is xi-1 in the code and n(a) in CHILD_FLOW_UTILITY.md revision 4.* At age
+  forty that is 0.565 against 1.45, a factor of 2.57 on the whole channel. The
+  live choice reproduces the published specification; the earlier note has not
+  been withdrawn.
+- *h_2 has no instrument.* `severe_cost_burden_data = 0.08` is printed as MOMENT
+  h_2 and bracketed by nothing;
+  `smallest_rental_relative_to_lowest_income` brackets on the smallest unit's
+  SHARE, 0.132065, which is the grid statistic the 30 August instruction
+  replaced. The author asked for 10.1 per cent and then withdrew it, *"its fine,
+  you can use 0.08 instead of 0.101"*, so the target stands -- but nothing moves
+  toward it.
+- *The find probabilities are not calibrated.* The author: *"we use the
+  probability of regaining employment with SUD or SMI to get their shares of
+  homeless"*. `multiple_find_if_addicted` (28.54) and `kappa_find_smi` (60) are
+  handover-only: no adjuster, no distance, no bracket. `lambda_m`'s 0.25 target
+  has no instrument either.
+- *`DIAG share with a NEGATIVE value of life = 0.90 per cent`*, measured at
+  omega_c = 0 where the child term contributes nothing. It will GROW as omega_c
+  rises, since the child's term is negative. The author's suggested remedy is
+  `bottom_productivity_level`.
+
+**22 parameters target data in this pass**, 17 brackets are retired. The full
+table is in the session transcript and in the source beside each adjuster.
+
 # THIS FILE IS NOT THE LIVE STATE. READ `code/EXPERIMENT_PLAN.md`.
 
 Everything below predates the night of 8-9 September and is kept as a record of
