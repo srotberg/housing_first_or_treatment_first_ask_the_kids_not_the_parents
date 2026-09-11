@@ -86,6 +86,36 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+**THE CAP CANNOT EXPLAIN IT, CHECKED RATHER THAN ASSERTED.** 57 parameters own
+a distance and 23 assignments go through `cap_step`. Every name that owns a
+distance and is never capped is either a handover assignment, an equilibrium
+object recomputed each solve (`smallest_house_size`, `standard_deduction`,
+`cutoff_housing_investment`, `inheritance_amount`), or a bracket whose adjuster
+is zero (`discount_factor_on_child`, `minimum_inheritance`,
+`penalty_child_addicted`). The one live-looking exception,
+`advantage_to_owning`, is 0 in the declaration and 0 in every log line of the
+run. So no calibrated parameter moves more than 0.5 per cent a loop, and the
+strongest measured elasticity on b is about 5 (value_of_life). That bounds the
+explainable move at roughly 5 per cent against an observed 28.
+
+**THE FRESH RUN REPRODUCES THE OLD ONE EXACTLY.** Loop 1 came back at
+b = 0.0926957 against the lost log's 0.0926955, and the counterfactual at
+8.159722e-2 against 8.159733e-2 -- six significant figures on both. The solver
+is deterministic and the sequence is a property of the model, not of a run.
+
+**THE FROZEN PASS, WHICH IS THE REMEDY, IS GATED ON THE b-SWEEP.** It iterates
+the equilibrium map at frozen parameters -- and it calls
+`solve_value_function_and_policy_functions`, so it settles the child term too --
+until b, lambda_d, h_1 and average labour income all move less than
+`stopping_rule_frozen_moments`. It sits inside `if (sweep_addiction_scalar==1)`,
+which is a compile-time `parameter` currently 0, so it has never run in any
+calibration log. Note also that the declaration is 5e-4, not the 1e-6 the header
+of ENGINE.md says the remedy uses; on the observed convergence it would want
+something like four to eight passes, fifteen to twenty five minutes.
+
+**NOT FIXED HERE.** The model is frozen and this is the author's call, however
+much it looks like the one exception the freeze allows.
+
 **IN FLIGHT:** the benchmark vector is running again to take the loop sequence
 past three and see where b settles and whether `expected_child_value` settles
 with it. Nothing else should be started beside it.
