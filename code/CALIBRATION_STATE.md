@@ -1,3 +1,35 @@
+## 11 September 06:00 UTC -- BENCHMARK MEASURED AT value_of_life = 163.5. The
+## drug block is solved. Saved as code/BENCHMARK_VECTOR.txt.
+
+Loop 0, so it isolates value_of_life. The interpolation held: predicted both drug
+moments within a few per cent, measured -4.9 and -8.1.
+
+    b        0.084643  vs 0.0890    -4.9%
+    lambda_d 0.033802  vs 0.0368    -8.1%
+    theta    0.138740  vs 0.14098   -1.6%
+    p_m      +0.3%   pi_eu -1.8%   mu_H +1.5%   sigma_y +3.5%
+    tau_l    +5.0%   emp_homeless +5.1%
+
+ELEVEN OF 26 MOMENTS WITHIN TEN PER CENT, median |gap| 16.4 per cent, against the
+loop's 51 per cent median when it was stopped.
+
+**WHAT IS LEFT IS SEPARABLE FROM THE DRUG BLOCK**, which is the useful part:
+
+    DELIBERATELY PINNED, expected misses rather than failures
+      kappa_uem +176%, lambda_m -24%   -- the find probabilities are held fixed
+                                          on the author's instruction
+    CONCEDED
+      h_3 -90%   -- the rung ratio sets it, h3 = 2*h2
+      w_bot +155% -- a band, set by beta
+    IMMOVABLE
+      aleph -33% -- four measured points show value_of_life buys no aleph here
+    ORDINARY UNCONVERGED, with live instruments and no conflict with the drug block
+      tau_u +58%, pi_V -48%, y_u -47%, burden50 -37%, kappa_ued +25%, h_1 +25%
+
+So a loop STARTED FROM HERE has real work to do on the last group and does not
+have to fight value_of_life to do it. That is a far better starting point than
+anything the overnight loop reached on its own.
+
 ## 11 September 05:58 UTC -- FOUR CLEAN POINTS. value_of_life ~163.5 puts BOTH
 ## drug moments on target, and aleph is IMMOVABLE there, not merely expensive.
 
