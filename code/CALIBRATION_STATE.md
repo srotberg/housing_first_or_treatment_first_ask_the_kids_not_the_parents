@@ -12,9 +12,28 @@ bracket computes it at line 43358 in the update block, print_all_moments at line
       4      80.303        81.05
       5      79.543        79.92
 
-Eight per cent apart early, half a per cent by loop 5. Something recomputes
-model_value_of_life or model_average_labour_income between the update block and
-print_all_moments, and it has not been identified.
+Eight per cent apart early, half a per cent by loop 5.
+
+**RESOLVED 11 September 17:45: model_average_labour_income takes THREE different
+values inside a single loop and the two readings sample it at different moments.**
+
+    printed early                     0.66786
+    implied by the bracket's ratio    0.78754   (57.590 / 73.127)
+    printed in print_all_moments      0.72770   (57.590 / 79.14, exact match)
+
+The numerator is the same throughout -- model_value_of_life(1) = 57.590 -- so the
+whole discrepancy is the denominator, and the moment print's value matches the
+log's own "model average labour income = 0.7276990282" to the last digit.
+
+So THE BRACKET DIVIDES BY AN AVERAGE LABOUR INCOME ABOUT EIGHT PER CENT TOO HIGH,
+which makes its aleph about eight per cent too low. It was chasing a number
+depressed by an unsettled denominator, which is why it kept raising value_of_life
+while the reported aleph sat at or above 80 -- 79.14, 80.90, 80.82, 81.05.
+
+The direction is systematic: the bracket's aleph is always the lower of the two,
+and the gap shrinks to half a per cent as the run settles and the three values of
+average labour income converge. So the bracket reaches the right answer in the
+limit and over-drives value_of_life on the way.
 
 THE BRACKET IS BEHAVING CORRECTLY AGAINST ITS OWN NUMBER. Gaps of -6.87, -2.36,
 -0.69, +0.30, -0.46 produced raise, raise, raise, lower, raise. An earlier note
