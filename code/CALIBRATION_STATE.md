@@ -87,6 +87,59 @@ at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
 
+## 11 September 12:45 UTC -- THE 161.2 TEST CANNOT ANSWER THE CLIFF QUESTION, AND
+## WHY IT CANNOT IS MORE IMPORTANT THAN THE ANSWER. TWO TRAJECTORIES 0.25 PER CENT
+## APART SEPARATE AFTER FOUR LOOPS.
+
+Arm d966518806 is the benchmark vector with value_of_life started at 156.4467
+instead of 156.06 -- one parameter, a quarter of one per cent apart. Every other
+parameter tracks: addiction_scalar_1 and relative_share_of_addiction_1 are
+IDENTICAL loop for loop, weight_on_child agrees to 0.03 per cent.
+
+Lined up by the value_of_life each loop actually solved at:
+
+    loop   arm A            arm B            implied elasticity
+      3    157.625 +8.1%    158.015 +6.0%          -8
+      4    158.413 +4.9%    158.805 +2.9%          -8
+      5    159.205 +6.8%    159.599 -8.6%         -63
+      6    160.001 +3.6%    160.397 -15.0%        -80
+
+**THEY AGREE FOR FOUR LOOPS AND THEN SEPARATE.** At loops 3 and 4 the implied
+elasticity is -8, which is the wide matched pair's -9.5 and is the model. At
+loops 5 and 6 it is -63 and -80, which is nothing -- no slope in this model is
+that steep, and the same arms produced -25 as their own steepest within-arm step.
+
+**THE CHILD TERM IS WHERE IT STARTS.** The two arms' child use gaps diverge from
+the first reading, 0.5100 against 0.4216, and their counterfactual legs go
+
+    arm A   0.14435  0.14001  0.13942  0.13536  0.13446  0.13086
+    arm B   0.13533  0.13915  0.13568  0.11323  0.09824  0.11114
+
+A 0.25 per cent change in one parameter moves the counterfactual leg 27 per cent
+by the fifth reading. The alternating map is not merely biased, it is unstable.
+
+**WHAT THIS INVALIDATES, INCLUDING THINGS SAID EARLIER TODAY**
+
+  * The four-point "map" of b against value_of_life was ONE TRAJECTORY, not a
+    function. A second trajectory through the same values reads +6.0, +2.9, -8.6,
+    -15.0 where the first read +8.1, +4.9, +6.8, +3.6.
+  * "Pin at about 160.9" is not supported. b crossing its target near 160-161 is
+    a property of the path arm A took, not of value_of_life.
+  * The loop-7 point -- b +1.3 per cent, seven moments on target -- is a real
+    reading of a real solve, but it is a point on a trajectory and there is no
+    reason to think re-solving at value_of_life 160.80 lands there.
+
+**WHAT SURVIVES.** The wide matched pair, 140 against 162.2. Its signal is b a
+factor of 3.9 apart, far above this divergence, and it read -8.50 at loop 2 and
+-9.54 at loop 5 -- the two loops where the arms here still agree. The aleph
+conclusion stands: the instrument moves participation about ten times harder
+than it moves its own moment.
+
+**AND IT MAKES THE FROZEN PASS URGENT RATHER THAN OPTIONAL.** Until the child
+term is iterated to its own fixed point, a loop's moments are not a measurement
+of anything, and every further diagnostic costs a matched pair and still cannot
+resolve differences below about ten per cent.
+
 ## 11 September 12:05 UTC -- RETRACTION: THERE IS NO EVIDENCE OF A CLIFF. THE
 ## 160.8 TO 161.6 DROP IS THE SAME SIZE AS THE RUN'S OWN OSCILLATION.
 
