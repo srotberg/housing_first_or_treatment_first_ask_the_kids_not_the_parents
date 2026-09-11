@@ -4557,7 +4557,30 @@
         ! per cent a loop it could not cross a single decade in five hundred
         ! loops. It is bounded to a factor of ten a loop and, while the sweep is
         ! running, is not moved by the loop at all.
-        real(8), parameter :: max_move_per_loop=1.d0*10.d0**(-2)
+        ! SIX PER CENT A LOOP WHILE THE THREE-BLOCK IS ON, ONE PER CENT OTHERWISE.
+        !
+        ! trust_factor is 1+max_move_per_loop, and move_factor hands it to a
+        ! bracket whenever the model is inside a corner band of 0.1 to 5 times
+        ! target -- which is nearly always. It is applied BEFORE cap_step, so it
+        ! is the binding limit, not the cap.
+        !
+        ! Measured 11 September, loops 1 to 3 of the three-block run:
+        !
+        !     value_of_life        +5.0 per cent a loop   (the global cap)
+        !     addiction_scalar_1   +-1.0 per cent a loop  (this, via trust_factor)
+        !
+        ! and the two have COMPARABLE elasticities on participation, -9.5 against
+        ! an implied -8. So the value of life won five to one every loop and
+        ! participation went +14.5, -33.7, -57.1 per cent while aleph gained only
+        ! four points a loop. b-bar was correctly signed the whole way and simply
+        ! could not move.
+        !
+        ! Six per cent is the MATCHED value: offsetting a 5 per cent step of
+        ! value_of_life at elasticity -9.5 needs b-bar to move 5*9.5/8 = 5.9 per
+        ! cent at elasticity -8. The author's plan -- push aleph up hard and bring
+        ! b down to match -- needs the two steps sized against each other, not
+        ! set independently.
+        real(8), parameter :: max_move_per_loop=merge(6.d0*10.d0**(-2),1.d0*10.d0**(-2),freeze_to_three_block==1)
         real(8), parameter :: trust_factor=1.d0+max_move_per_loop
 
         ! ESCAPE AND REFINE ARE DIFFERENT PROBLEMS AND NEED DIFFERENT STEPS.
