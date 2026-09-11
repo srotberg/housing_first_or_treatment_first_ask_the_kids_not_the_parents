@@ -86,6 +86,37 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+## 11 September 11:45 UTC -- OPEN QUESTION 2 ANSWERED FROM THE ARM'S OWN LOG:
+## MAKING THE ENDOWMENT TWO-SIDED TRADES ONE GAP FOR THE OTHER.
+
+`newborn_endowment_scale` sat at 0.464544 for all eight loops of arm 16da70b64e
+and printed ENDOWMENT HELD every one of them:
+
+    band 1 (share of the homeless who are young)   0.188 - 0.190
+    target                                         0.260          so -27%
+
+so the one-sided rule never fires, exactly as recorded this morning. The level
+has improved with the new economy -- it was 0.161 at the 162.2 point -- but the
+gap is still a quarter.
+
+**AND THE OTHER SIDE OF IT IS THAT h_1 IS ALREADY +33 PER CENT.** The model has
+TOO LITTLE homelessness among the young and TOO MUCH homelessness overall. A
+lower endowment makes newborns poorer, which raises young homelessness toward
+0.26 AND raises the overall rate, which is the moment that is already a third
+above target.
+
+So the answer to "make it two-sided or leave it" is that two-sided does not buy
+a free gap: it moves band 1 the right way and h_1 the wrong way, and the two
+share the instrument. Whether that trade is worth taking is a judgement about
+which moment the paper leans on, which is the author's. What can be said from the
+run is that it IS a trade, not an improvement, and the morning's framing did not
+know that.
+
+**NOTHING ELSE IS MEASURABLE WITHOUT A SOURCE EDIT.** value_of_life wants
+pinning, the caps want to be per-parameter, and the alternating map wants the
+frozen pass. All three are the author's, and the autonomous work is at its limit
+until one of them is decided.
+
 ## 11 September 11:35 UTC -- LOOP 7 PUT b ON TARGET AND LOOP 8 WALKED STRAIGHT
 ## PAST IT. THE 0.5 PER CENT CAP IS FAR TOO COARSE FOR value_of_life.
 
