@@ -1,3 +1,25 @@
+## 11 September 03:51 UTC -- BOTH NEW BRACKETS WORK ON LOOP 1, AND THE ENDOWMENT
+## IS INACTIVE BY THE AUTHOR'S OWN RULE
+
+    smi_onset_level   0.0038043 -> 0.0037983, distance 0.0012   two-sided, stepping
+    ENDOWMENT HELD    band 1 = 0.16106 against a target of 0.260
+
+So `smi_onset_level` is calibrating normally. `newborn_endowment_scale` is NOT
+moving and will not move in this run: band 1 is a long way BELOW 0.260, and the
+author's rule of 3 September makes the instrument one-sided -- *"Keep it off if
+the share of young is below the data"*. The guard holds it and prints
+ENDOWMENT HELD every loop, which is the design working, not a fault.
+
+**THIS SETTLES THE CLAMP QUESTION.** The author asked for the endowment not to be
+clamped at 0.5; it never was -- its bounds are [0, 50] in both the handover and
+the bracket, and the 0.5 in play is the per-loop STEP cap, not a level. But
+neither bound nor cap matters while the guard holds it. **The live question is
+whether the author wants it two-sided**, not whether its ceiling is high enough.
+
+At omega_c = 0.05 participation is high, which if anything pushes more of the
+homeless into the older bands and takes band 1 further below target, so the
+endowment is unlikely to activate on its own this run.
+
 ## 11 September 03:43 UTC -- THE LOOP IS 1.5 MINUTES, NOT 12. MY ARITHMETIC ON
 ## THE CAP WAS WRONG BY A FACTOR OF EIGHT.
 
