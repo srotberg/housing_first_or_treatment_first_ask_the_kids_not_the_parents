@@ -86,6 +86,37 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+## 11 September 10:34 UTC -- LOOP 6. FIVE LOOPS OF THE SAME PATTERN NOW, MONOTONE
+## IN BOTH DIRECTIONS.
+
+    loop    value_of_life   aleph      b         lambda_d
+    2         163.011      56.680    6.7567%    2.5495%
+    3         163.826      56.006    6.4754%    2.5137%
+    4         164.645      55.715    6.3861%    2.4602%
+    5         165.468      55.585    6.1582%    2.3625%
+    6         166.296      55.521    5.9685%    2.2980%
+    (7)       167.127
+
+Over those five loops the instrument rose 2.0 per cent, ALWAYS at its cap and
+always in the direction its own bracket wants, and the moment it is bracketed on
+fell 2.0 per cent, monotonically, away from a target of 80. Participation fell
+11.7 per cent over the same window and disorder 9.9.
+
+The other movers in that window are small -- b-bar down 1.5 per cent,
+relative_share_of_addiction_1 down 0.3, weight_on_child down 0.4 -- so this is
+no longer a two-point window with an ambiguous story. It is five monotone loops.
+
+**IT STILL IS NOT AN ATTRIBUTION, AND THERE IS NOW A REASON THE USUAL TEST
+CANNOT SETTLE IT.** ENGINE rule 1 says take a wide single-parameter point and
+read it at loop 0. But loop 1 is precisely the leg whose child penalty comes off
+the priming solve, so a loop-0 read is the contaminated leg. **The finding of
+this morning has broken the diagnostic method that would confirm it.** Any
+single-parameter point from here has to be read at loop 4 or later, which costs
+five solves rather than one.
+
+**NOT STARTED.** A second solve beside the running one takes the same four
+cores, and ENGINE is explicit that nothing runs beside it.
+
 ## 11 September 10:41 UTC -- LOOP 5, AND A CORRECTION. b IS NOT SETTLING. THE
 ## TRANSIENT DAMPED AND THEN THE SEARCH TOOK OVER, MOVING b AWAY FROM TARGET.
 
