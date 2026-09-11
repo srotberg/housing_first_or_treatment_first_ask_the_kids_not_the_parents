@@ -4580,7 +4580,7 @@
         ! cent at elasticity -8. The author's plan -- push aleph up hard and bring
         ! b down to match -- needs the two steps sized against each other, not
         ! set independently.
-        real(8), parameter :: max_move_per_loop=merge(6.d0*10.d0**(-2),1.d0*10.d0**(-2),freeze_to_three_block==1)
+        real(8), parameter :: max_move_per_loop=merge(2.d0*10.d0**(-2),1.d0*10.d0**(-2),freeze_to_three_block==1)
         real(8), parameter :: trust_factor=1.d0+max_move_per_loop
 
         ! ESCAPE AND REFINE ARE DIFFERENT PROBLEMS AND NEED DIFFERENT STEPS.
@@ -4642,7 +4642,7 @@
         ! measured on 11 September, one capped step of value_of_life was worth
         ! twelve per cent on participation, so the cap was simultaneously too
         ! slow for the distance to travel and too coarse to stop on.
-        real(8) :: max_rel_step_all=merge(5.d0*10.d0**(-2),5.d0*10.d0**(-3),freeze_to_three_block==1)
+        real(8) :: max_rel_step_all=merge(1.d0*10.d0**(-2),5.d0*10.d0**(-3),freeze_to_three_block==1)
         ! THE STOPPING RULE EXISTED AND THE DISTANCE DID NOT.
         !
         ! The retention scale is updated every loop against an average labour
