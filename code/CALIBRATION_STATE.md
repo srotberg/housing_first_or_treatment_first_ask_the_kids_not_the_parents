@@ -1,3 +1,95 @@
+## 11 September 10:25 UTC -- TWO DEFECTS IN THE REPORTING CHAIN, AND A QUESTION
+## ABOUT WHICH LOOP IS THE BENCHMARK. The second one moves every number I have
+## reported.
+
+**1. THE GAP TABLE WAS SCORING AGAINST TARGETS FROM 27 AUGUST.** Fixed and
+committed. `paper/fortran_numbers.json` is generated from the Fortran
+declarations by `paper/export_consts.py`, and `calibration_report.py` reads its
+TARGETS from that cache rather than from the source. The checked-in copy
+predated all of phase 3, so three rows of every table shown since were wrong:
+
+    h_1      target 0.00399 -> 0.01160   gap 265.1% -> 25.6%
+    theta    target 0.162   -> 0.14098   gap   6.4% -> 22.3%
+    pi_eu    target 0.0485  -> 0.049     gap   3.2% ->  4.1%
+
+The model's own MOMENT print had the RIGHT targets all along -- it reads the
+declarations -- so the table and the model's output disagreed on two rows and
+nothing caught it. The cache also gained 181 constants declared since 27 August,
+and `calibration_report.py` silently DROPS a parameter whose target constant is
+missing from the cache. That is a candidate explanation for the rows the author
+kept asking about and I kept failing to produce.
+
+**2. WORKER LOGS ARE UNTRACKED AND A RE-RUN OF THE SAME VECTOR OVERWRITES THEM.**
+Re-running the benchmark reuses its md5 tag, so `worker_056db1e441.log` was
+truncated the moment the new run started and the old benchmark log is gone.
+Its numbers had already been read out and are recorded below, but nothing else
+survives. COPY A LOG BEFORE RE-RUNNING ITS VECTOR.
+
+**3. THE ONE THAT MATTERS: LOOP 1 AND THE SETTLED LOOPS ARE DIFFERENT ECONOMIES,
+AND EVERY BENCHMARK NUMBER I HAVE REPORTED IS FROM LOOP 1.**
+
+A run prints a MOMENT block per loop. The benchmark log had three:
+
+    loop      b        lambda_d   theta      tau_u
+    1       9.2695%    3.8051%    0.13780    0.23374     <- what I reported
+    2       6.7526%    2.5451%    0.17467    0.26262
+    3       6.4771%    2.5159%    0.17870    0.26928
+
+Against the targets, loop 1 is b +4.2, lambda_d +3.4, theta -2.3, tau_u -4.6 --
+the six-moments-inside-five benchmark in every report I have written. Loop 3 is
+b -27.2, lambda_d -31.6, theta +26.8, tau_u +9.9.
+
+Between loop 1 and loop 2 no parameter may move more than 0.5 per cent, and
+b moves -27. The drop is the same size in every run that got two loops, on four
+different vectors:
+
+    d200ce8a2f  10.624 -> 6.942   -34.7%
+    32884eeaee  10.627 -> 7.665   -27.9%
+    056db1e441   9.270 -> 6.753   -27.2%,  then -> 6.477   -4.1%
+    c827382da9   8.101 -> 5.981   -26.2%
+
+So it is structural, not a parameter move, and it is a ONE-TIME step: loop 2 to
+loop 3 is -4.1 per cent, six times smaller.
+
+**TWO CANDIDATES, AND THE TURN IS BUYING THE ANSWER.**
+
+  (a) THE CHILD TERM'S OWN FIXED POINT. `compute_expected_child_value` runs at
+      the top of a solve off the CURRENT value function, so the child term is
+      itself an equilibrium object being iterated. Loop 1 computes it from the
+      PRIMING solve's value function, which had a zero child term; loop 2
+      computes it from loop 1's, which did not. On this reading the settled
+      economy is the right one, loop 1 is one iterate in, and the benchmark I
+      have been quoting is an unconverged iterate -- exactly what the header of
+      ENGINE.md warns about.
+
+  (b) THE COUNTERFACTUAL'S WARM START. From loop 2 the omega counterfactual
+      solves FIRST and leaves its converged distribution behind for the main
+      solve, which the Fortran's own comment at the block says is a known path
+      dependence. On this reading loop 1 is the clean leg and the settled loops
+      carry the counterfactual with them.
+
+Against (b): the value function is solved by backward induction from the
+terminal age, which has no warm start at all, and the distribution is iterated
+to 6e-4 from whatever it is handed. A warm start should not move a fixed point
+by 27 per cent. That argues for (a), but it is an argument, not a measurement.
+
+**IF (a) IS RIGHT, THE CHILD USE GAP IS MEASURED CORRECTLY** -- the gap compares
+the counterfactual against the same loop's main solve, both settled -- and the
+benchmark's real position is far worse than reported: the drug block is not
+solved, it is -27 on participation and -32 on disorder.
+
+**IF (b) IS RIGHT, THE GAP IS MEASURED AGAINST A CONTAMINATED DENOMINATOR.**
+Loop 1's gap would be (8.1597-9.2695)/9.2695 = -12.0 per cent, which is the
+WRONG SIGN for the moment omega_c is calibrated on.
+
+Either way the separability map stands, because every diagnostic point was read
+at loop 1 and compared against the benchmark's loop 1. The comparisons are
+apples to apples; only the level is in question.
+
+**IN FLIGHT:** the benchmark vector is running again to take the loop sequence
+past three and see where b settles and whether `expected_child_value` settles
+with it. Nothing else should be started beside it.
+
 ## 11 September 08:16 UTC -- THE MAP IS COMPLETE. Five instruments, one separable,
 ## and the exception has a structural reason.
 
