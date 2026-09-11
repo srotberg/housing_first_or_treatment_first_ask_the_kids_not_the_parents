@@ -41922,7 +41922,36 @@
 
                             onset_at_mean_1=max(min(onset_step_1,0.2d0),1.d0*10.d0**(-5))
 
-                            lambda_addiction=-log(1-onset_at_mean_1)/mean_drug_quantity_1
+                            ! THE BASE MOVES AND LAMBDA_D STAYS AT ZERO. The author,
+                            ! 11 September: "lambda_d should be 0, only the base
+                            ! changes, so the probability of SUD is flat for any v>0".
+                            !
+                            ! The hazard is base + (1 - exp(-lambda_d v)) above v=0 and
+                            ! zero at v=0, so lambda_d = 0 makes it exactly flat: a
+                            ! household that uses at all faces the base, and using MORE
+                            ! carries no extra risk. The vector already hands
+                            ! lambda_addiction in at 0, so that is where a run starts --
+                            ! and this line then drove it off zero on the first update,
+                            ! turning the hazard into a dose-response every loop and
+                            ! leaving the base doing nothing. The specification was the
+                            ! starting point and the loop undid it.
+                            !
+                            ! Everything above is unchanged and needs no change: the
+                            ! secant, the clamp and the analytic first step all work on
+                            ! onset_at_mean_1, which is read through
+                            ! addiction_onset_hazard() and therefore IS the base once
+                            ! lambda_d is zero. So this is a secant on the base.
+                            !
+                            ! THE CONSEQUENCE, STATED BECAUSE IT IS A MODELLING CHOICE
+                            ! AND NOT A DETAIL: addiction_onset_hazard_slope is
+                            ! lambda_d exp(-lambda_d v), so at lambda_d = 0 the marginal
+                            ! risk of one more unit of the drug is ZERO. All of the
+                            ! disorder risk sits on the extensive margin. A household
+                            ! deciding how MUCH to use weighs no health risk at all;
+                            ! only the decision to use at all carries one.
+                            addiction_onset_base=onset_at_mean_1
+
+                            lambda_addiction=0.d0
 
                             write(*,*) "model_drugs_used_by_users_on_average(1)=", mean_drug_quantity_1
                             write(*,*) "onset_at_the_mean_quantity=", onset_at_mean_1
