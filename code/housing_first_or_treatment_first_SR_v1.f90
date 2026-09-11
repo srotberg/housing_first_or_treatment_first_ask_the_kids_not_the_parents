@@ -2344,7 +2344,18 @@
         ! stated defensible range was 0.5 to 1 per cent, and this is above it. The
         ! honest framing is that the model produces 1.16 and the data supports
         ! anything from about 0.5 to 1, not that 1.16 was targeted.
-        real(8), parameter :: fraction_homeless_data=0.01160
+        ! 0.0130 on the author's instruction of 11 September: *"the target for
+        ! the homelessness rate can be 1.2%"*, then *"I think you can make the
+        ! homelessness rate target 1.3% I don't want h1 to drift too much"*. It
+        ! was 0.01160.
+        !
+        ! The reason is explicit and worth keeping: the model reads 1.291 per
+        ! cent at the settled vector, so 1.3 leaves size_homelessness with almost
+        ! nothing to do -- a gap of -0.7 per cent rather than the +11.3 that
+        ! 0.0116 implied. It buys the homelessness rate by moving the target to
+        ! the model rather than the model to the target, and THE PAPER MUST SAY
+        ! SO wherever this number appears, as it must for severe_cost_burden_data.
+        real(8), parameter :: fraction_homeless_data=0.01300
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe
@@ -2444,7 +2455,13 @@
         ! added to model_hash's TARGET_CONSTANTS first, and the semantic hash of
         ! the source at 0.101 and at 0.08 is a3cc3f2a9b either way, so the 102
         ! points already solved in this economy remain valid bases.
-        real(8), parameter :: severe_cost_burden_data=0.05d0
+        ! RETARGETED AGAIN 11 September, on the author's instruction: *"we can
+        ! retarget h2 to a target of 6.5% for % of households spending over 50%
+        ! of their expenditures on rent"*. The model reads 6.75 per cent at the
+        ! settled vector, so 6.5 is 3.8 per cent away rather than the 35 the 0.05
+        ! target implied, and it moves BACK toward the 0.101 in the data rather
+        ! than further from it.
+        real(8), parameter :: severe_cost_burden_data=0.065d0
         real(8), parameter :: fraction_light_users=0.731
         
         integer, parameter :: target_HO_of_old=1
@@ -8434,9 +8451,16 @@
             ! counterfactual was fixed, which reported an exact zero, and those
             ! must stay out of the search. So the skip announces itself, inside
             ! the block run_one_point.sh keeps, and simplex.py reads that line.
+            ! NAME THE CONDITION THAT ACTUALLY FIRED. This printed "off by
+            ! measure_child_gap" for either cause, and on 11 September that cost
+            ! a wasted solve and a quarter of an hour: measure_child_gap was
+            ! handed over as 1 and the real blocker was omega_cf_allowed, which
+            ! the per-loop call sets to zero on purpose so the counterfactual
+            ! does not run every loop. A skip message naming the wrong cause is
+            ! worse than none, because it is believed.
             if ((measure_child_gap==0) .OR. (omega_cf_allowed==0)) then
-
-                write(*,*) "OMEGA SKIPPED    child counterfactual off by measure_child_gap"
+                write(*,*) "OMEGA SKIPPED    child counterfactual off by",&
+                    merge(" measure_child_gap"," omega_cf_allowed ",measure_child_gap==0)
 
             elseif ((include_child_in_continuation==1)&
                 .AND. (model_total_drug_users(1)>&
