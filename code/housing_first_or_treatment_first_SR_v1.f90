@@ -1879,7 +1879,24 @@
         ! the grid in B_SWEEP_GRID.txt, one value a line. Parameter updating is
         ! switched off with it, which is what re_do_simulation_with_fixed_
         ! parameters is for, so nothing else moves while the curve is measured.
-        integer, parameter :: sweep_addiction_scalar=1
+        ! BACK TO 0 FOR THE CHILD CALIBRATION, 11 September. The sweep was
+        ! left on from the b curve of 9 September, and while it is on the
+        ! whole parameter update block is skipped -- so nothing calibrates,
+        ! and omega_c in particular is refused outright at its own guard,
+        ! which tests sweep_addiction_scalar==0. A run in this mode reports
+        ! moments and moves nothing.
+        !
+        ! AND B IS NOT THE PARAMETER TO SWEEP IN THIS PASS ANYWAY. On the
+        ! author's point of 11 September: *"if b is high and they also care
+        ! about their children, they should only use if b is low"*. omega_c
+        ! is itself a deterrent -- the child's bundle carries c but not the
+        ! drug, so drug spending reaches the child through c at 3.09 times
+        ! the parent's own marginal loss -- so omega_c and b are substitutes
+        ! on participation. A b curve measured at omega_c = 0 locates b too
+        ! HIGH, the loop would then have to walk omega_c down to undo it,
+        ! and the two would fight over one moment. They are calibrated
+        ! together, on their own two moments, instead.
+        integer, parameter :: sweep_addiction_scalar=0
 
         ! THE HANDOVER FROM THE SWEEP, AND IT CONSUMES ITSELF.
         !
@@ -2949,6 +2966,33 @@
         ! headroom is deliberate -- a ceiling exactly at the value being tried
         ! cannot tell a converged parameter from a pinned one.
         real(8), parameter :: theta_hi=0.70d0
+
+        ! HOW FAR THETA MAY MOVE IN ONE LOOP, AS A FRACTION OF ITSELF.
+        !
+        ! On the author's instruction of 11 September: *"we might need to
+        ! adjust theta together with the rest of the parameters, but probably
+        ! very very slowly, like 0.1% each time"*, and the reason is the trap
+        ! documented at theta's update. The spending share is drug spending
+        ! over INCOME, so as b rises and participation falls the users who are
+        ! left are rich, the share falls for that reason alone, and the update
+        ! reads it as a call to raise theta. Theta then chases b instead of
+        ! settling, and the pair can walk together for a long time.
+        !
+        ! THE TRUST REGION ALREADY IN THE UPDATE DOES NOT BIND. It caps the
+        ! step at halving or doubling, which at theta = 0.27 needs a gap of
+        ! 5.4 while the gap is clamped to 1. So the only limit was the
+        ! coefficient: 0.05 times the gap, which is 1.5 per cent of theta at a
+        ! gap of 0.08 and 0.4 per cent at a gap of 0.02.
+        !
+        ! 0.01 RATHER THAN 0.001, WITH THE ARITHMETIC SAID OUT LOUD. At 0.001
+        ! theta moves 0.00027 a loop from 0.27, so 0.27 to 0.40 is 480 loops,
+        ! four days at twelve minutes a loop, with the rest of the vector
+        ! converged and waiting on it. At 0.01 the same journey is 40 loops.
+        ! It is a HANDOVER parameter so the author can set 0.001 without a
+        ! rebuild if the trace still looks jumpy.
+        real(8) :: theta_max_rel_step=0.01d0
+        real(8) :: theta_proposed_1
+        real(8) :: theta_capped_1
 
         ! GAMMA IS TIED TO THETA FOR NOW, on the author's instruction:
         ! gamma = 0.28*(1-theta), so housing takes 28 per cent of whatever the
@@ -8013,7 +8057,22 @@
                 write(*,*) "OMEGA_DIAG baseline users=", baseline_users_for_gap,&
                     " child value=", expected_child_value
 
-                child_penalty_off=1
+                ! OMEGA_C IS THE SWITCH, NOT child_penalty_off.
+                !
+                ! child_penalty_off zeroes expected_child_value, which is the
+                ! INHERITED PENALTY alone. Since the child entered the parent's
+                ! FLOW utility as well -- the (xi-1) term carrying the child's
+                ! own bundle, which omega_c also multiplies -- that switch now
+                ! prices half the parameter: the counterfactual left the flow
+                ! term live and reported only the continuation channel.
+                !
+                ! On the author's instruction of 11 September, *"omega_c should
+                ! price both at once"*. Setting weight_on_child to zero does
+                ! exactly that, because omega_c multiplies both terms and
+                ! nothing else. child_penalty_off keeps its own meaning as a
+                ! rung of the channel shutdown ladder and is untouched here.
+                weight_on_child_saved=weight_on_child
+                weight_on_child=0.d0
 
                 call solve_value_function_and_policy_functions(1)
                 call converge_to_stationary_equilibrium(1)
@@ -8034,7 +8093,7 @@
                 write(*,*) "OMEGA_DIAG counterfactual users=", drug_users_without_child,&
                     " child value=", expected_child_value
 
-                child_penalty_off=0
+                weight_on_child=weight_on_child_saved
 
                 write(*,*) "MOMENT omega     use rise, child term off    model=",&
                     drug_users_without_child/baseline_users_for_gap-1.d0,&
@@ -39540,6 +39599,13 @@
                             " path, where the price is the normalisation:", handover_value
                     end if
 
+                ! HOW FAR THETA MAY MOVE IN ONE LOOP. Settable so the cap can
+                ! be tightened mid calibration without a rebuild.
+                case ("theta_max_rel_step")
+                    write(*,*) "HANDOVER theta_max_rel_step:", &
+                        theta_max_rel_step, "->", handover_value
+                    theta_max_rel_step=max(min(handover_value,1.d0),10.d0**(-5))
+
                 ! THE CHILD GAP SWITCH, for omega_c in the final round.
                 case ("measure_child_gap")
                     write(*,*) "HANDOVER measure_child_gap:", &
@@ -40483,7 +40549,22 @@
             if ((calibrate_weight_on_child==1) .AND. (include_child_in_continuation==1)&
                 .AND. (loop_count>=1) .AND. (sweep_addiction_scalar==0)) then
 
-                child_penalty_off=1
+                ! OMEGA_C IS THE SWITCH, NOT child_penalty_off.
+                !
+                ! child_penalty_off zeroes expected_child_value, which is the
+                ! INHERITED PENALTY alone. Since the child entered the parent's
+                ! FLOW utility as well -- the (xi-1) term carrying the child's
+                ! own bundle, which omega_c also multiplies -- that switch now
+                ! prices half the parameter: the counterfactual left the flow
+                ! term live and reported only the continuation channel.
+                !
+                ! On the author's instruction of 11 September, *"omega_c should
+                ! price both at once"*. Setting weight_on_child to zero does
+                ! exactly that, because omega_c multiplies both terms and
+                ! nothing else. child_penalty_off keeps its own meaning as a
+                ! rung of the channel shutdown ladder and is untouched here.
+                weight_on_child_saved=weight_on_child
+                weight_on_child=0.d0
 
                 call solve_value_function_and_policy_functions(1)
                 call converge_to_stationary_equilibrium(1)
@@ -40501,7 +40582,7 @@
 
                 drug_users_without_child=model_total_drug_users(1)
 
-                child_penalty_off=0
+                weight_on_child=weight_on_child_saved
 
                 ! WHETHER THE COUNTERFACTUAL'S OWN DISTRIBUTION SETTLED, which
                 ! decides whether its sign can be read at all. The counterfactual
@@ -42435,11 +42516,23 @@
 
                         else
 
+                            ! The proposed step, then the relative cap, then the
+                            ! absolute band. In that order: capping first and
+                            ! clamping second means a theta pressed against
+                            ! theta_hi still reports pinned rather than capped.
+                            theta_proposed_1=relative_share_of_addiction_1-&
+                                relative_share_of_addiction_adj*drug_share_gap_1
+                            theta_capped_1=max(min(theta_proposed_1,&
+                                relative_share_of_addiction_1*(1+theta_max_rel_step)),&
+                                relative_share_of_addiction_1*(1-theta_max_rel_step))
+                            if (abs(theta_capped_1-theta_proposed_1)>&
+                                10.d0**(-12)*max(abs(theta_proposed_1),1.d0)) then
+                                write(*,*) "THETA CAPPED: the share asked for",&
+                                    theta_proposed_1, " and the per loop cap of",&
+                                    theta_max_rel_step, " allows", theta_capped_1
+                            end if
                             relative_share_of_addiction_1=&
-                                max(min(relative_share_of_addiction_1-&
-                                relative_share_of_addiction_adj*drug_share_gap_1,&
-                                min(theta_hi,2*relative_share_of_addiction_1)),&
-                                max(theta_lo,relative_share_of_addiction_1/2))
+                                max(min(theta_capped_1,theta_hi),theta_lo)
 
                         end if
 
