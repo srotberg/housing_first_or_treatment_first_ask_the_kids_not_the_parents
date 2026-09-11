@@ -1,3 +1,39 @@
+## 11 September 06:40 UTC -- THE SEPARABILITY MAP. Only tau_u is separable, and
+## the benchmark at 11.8 per cent is the limit of one-parameter tuning.
+
+Three instruments tested one at a time off the 14.4 benchmark, each read at loop
+0. What matters is not only whether each moves its own moment but what it does to
+the drug block.
+
+    instrument                      own moment          drug block
+    utility_cost_of_treatment       tau_u +58 -> +1.6   UNTOUCHED: theta -1.4,
+                                    STRONG              aleph flat, b -9.0
+    probability_of_voucher_...      pi_V -48 -> -4.2    DESTROYED: b +65.7,
+                                    STRONG              lambda_d +68.8
+    size_homelessness               h_1 +25 -> +16.9    DESTROYED: b -30.0,
+                                    WEAK                lambda_d -33.4, theta +19.3
+
+size_homelessness is the worst of the three: a 24 per cent cut in the parameter
+closed only a third of its own gap while moving drug use by thirty per cent. It
+is a weak instrument for homelessness and a strong one for addiction. Median gap
+went 11.8 -> 18.1, so the point was discarded.
+
+**THE PATTERN IS NOT AN ACCIDENT.** Both housing-side instruments drive drug use
+harder than they drive their own moments, because homelessness and addiction
+interacting IS the model's mechanism. Separability was never likely there, and my
+06:00 list assumed it without testing.
+
+**SO THE LIMIT IS REACHED.** The benchmark -- value_of_life 163.5,
+utility_cost_of_treatment 14.4, median |gap| 11.8 per cent, eleven of 26 inside
+ten -- is as far as one-parameter-at-a-time tuning goes. Everything left is
+genuinely simultaneous and belongs to the joint loop.
+
+**AND THE JOINT LOOP NEEDS ONE DECISION.** value_of_life is the instrument it
+would spend every loop fighting, and four measured points show it buys no aleph
+near the drug targets. Pin it and the loop has nineteen instruments and no
+internal conflict; leave it live and the loop walks back to where it was at 05:00,
+a disorder rate of 0.005.
+
 ## 11 September 06:35 UTC -- pi_V IS NOT SEPARABLE FROM THE DRUG BLOCK, and my
 ## "separable" list at 06:00 was wrong about it.
 
