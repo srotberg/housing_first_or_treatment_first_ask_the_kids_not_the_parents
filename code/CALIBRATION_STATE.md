@@ -1,3 +1,37 @@
+## 11 September 03:05 UTC -- THE OVERNIGHT RUN IS HEALTHY AT LOOP 8
+
+Launched 02:46, one `run_one_point.sh`, b = 0.002 and omega_c = 0.3 on the
+author's instruction. Recorded here because the worker log is gitignored and the
+container is reclaimed on inactivity, so this file is the only durable record.
+
+    moment                            model     target    gap
+    theta   drug spending share       0.1462    0.1410    +3.7 per cent
+    b       total drug users          ~0.170    0.0890    +91
+    lambda_d disorder rate            0.0716    0.0368    +94
+    omega_c child use gap             0.3228    0.1834    +76
+    h_1     homelessness              0.0150    0.0116    +29
+    aleph   value of life / income    57.8      80.0      -28
+
+**Every instrument is moving the right way and none is at a bound.** omega_c
+down from 0.3 to 0.29955, theta down from 0.27 to 0.26893, b up from 0.0020302
+to 0.0020403 with MOVE MODE 1.01, which means participation is inside the corner
+band and b is NOT in escape mode. Participation is about 17 per cent against the
+0 per cent of the 02:09 run and the 46 per cent of the step-2 diagnostic, so
+b = 0.002 was the right start and the handover fix is what made it reachable.
+
+**THETA CAPPED prints every loop, always downward.** That is precisely the
+signal recorded beside `theta_max_rel_step` as the one to watch. It is NOT
+actionable at eight loops: theta's own gap is 3.7 per cent, so it has very
+little distance left to cover and the cap will likely retire itself. The signal
+means something only if it is still printing in the same direction after tens of
+loops with the gap not closing. Watch, do not act.
+
+**Still unread:** `DIAG share with a NEGATIVE value of life`. It prints in the
+full moments block, which has not run yet. It was 0.90 per cent at omega_c = 0
+and the child's term is negative, so it must be larger at omega_c = 0.3. This is
+the author's `bottom_productivity_level` question and it needs the first moments
+block to answer.
+
 ## 11 September 02:08 UTC -- PHASE 3 CALIBRATION LAUNCHED. Six source fixes first,
 ## four of them the author's corrections to a plan I had wrong.
 
