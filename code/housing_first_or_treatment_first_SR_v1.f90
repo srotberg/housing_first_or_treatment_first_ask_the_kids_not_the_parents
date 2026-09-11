@@ -528,6 +528,39 @@
         real(8) :: stopping_rule_weight_on_child=10.d0**(-2)
         real(8) :: drug_users_without_child=0
         real(8) :: weight_on_child_saved=0
+        ! OMEGA_C IS PINNED ONCE IT LANDS WITHIN 3 PER CENT OF ITS TARGET.
+        !
+        ! The author, 11 September: "i think that once omega_c lands 3% of the
+        ! target, just pin it and do the rest of the calibration?"
+        !
+        ! IT ALSO BUYS SPEED, WHICH IS THE REASON TO DO IT AUTOMATICALLY RATHER
+        ! THAN BY HAND. omega_c's moment is a SECOND full value function solve
+        ! and distribution convergence every loop -- about a third of a loop's
+        ! running time. Pinning the parameter stops the counterfactual too, so
+        ! every remaining loop gets that time back for the other eighteen
+        ! brackets, which are the ones still far from target.
+        !
+        ! The tolerance is RELATIVE to the target, so 3 per cent of 0.18343 is a
+        ! gap of 0.0055. Once pinned it stays pinned: the distance is held at
+        ! zero so the uncapped do-while cannot wait on a moment nothing is
+        ! measuring any more.
+        real(8), parameter :: omega_c_pin_tol=0.03d0
+        ! AND THE ECONOMY IT LANDS IN HAS TO BE THE RIGHT ONE. The author, 11
+        ! September: "but it also needs to be close to 18% child gap around the
+        ! right SUD and drug ue ... they have to be captured properly too".
+        !
+        ! omega_c's moment is a RATIO of two user counts, so it can sit on target
+        ! in an economy where the user counts themselves are far wrong -- and
+        ! this run has already seen participation at 0.027 and at 0.306 against a
+        ! target of 0.089. Pinning omega_c there would freeze it at whatever
+        ! value happened to produce the right RATIO in the wrong economy, and
+        ! every later loop would calibrate around that mistake with the
+        ! counterfactual switched off and no way to see it.
+        !
+        ! 10 per cent, because that is the author's own stopping rule for the
+        ! whole calibration: "once we get below 10%% for everything we can stop".
+        real(8), parameter :: omega_c_pin_econ_tol=0.10d0
+        integer :: omega_c_is_pinned=0
         integer, parameter :: calibrate_weight_on_child=1
 
         ! WHETHER A POINT MEASURES OMEGA_C'S MOMENT. It costs a second
@@ -40787,7 +40820,8 @@
             ! counterfactual's path in it. That path dependence is the fault
             ! already recorded against omega's own moment; there is no reason to
             ! feed it into a curve meant to isolate b.
-            if ((calibrate_weight_on_child==1) .AND. (include_child_in_continuation==1)&
+            if ((calibrate_weight_on_child==1) .AND. (omega_c_is_pinned==0)&
+                .AND. (include_child_in_continuation==1)&
                 .AND. (loop_count>=1) .AND. (sweep_addiction_scalar==0)) then
 
                 ! OMEGA_C IS THE SWITCH, NOT child_penalty_off.
@@ -42410,6 +42444,59 @@
 
                         write(*,*) "weight_on_child=", weight_on_child,&
                             " distance_weight_on_child=", distance_weight_on_child
+
+                        ! LANDED. Pin it, stop the counterfactual, and say so
+                        ! loudly: a pinned parameter has to be distinguishable
+                        ! from one that is still searching, and this one takes a
+                        ! whole solve a loop with it when it goes.
+                        if ((distance_weight_on_child<&
+                            omega_c_pin_tol*abs(child_use_gap_data)) .AND.&
+                            (abs(model_total_drug_users(1)/&
+                            max(participation_rate_data,10.d0**(-12))-1.d0)<&
+                            omega_c_pin_econ_tol) .AND.&
+                            (abs(model_fraction_addicted(1)/&
+                            max(sud_rate_data,10.d0**(-12))-1.d0)<&
+                            omega_c_pin_econ_tol)) then
+
+                            omega_c_is_pinned=1
+                            distance_weight_on_child=0
+
+                            write(*,*) "OMEGA_C PINNED: the child use gap is",&
+                                child_use_gap_1, " against a target of",&
+                                child_use_gap_data, ", inside the 3 per cent the",&
+                                " author asked for. omega_c is held at",&
+                                weight_on_child, " for the rest of the run and the",&
+                                " counterfactual stops, which returns a full solve",&
+                                " a loop to the other brackets. Drug use is",&
+                                model_total_drug_users(1), " against",&
+                                participation_rate_data, " and the disorder rate",&
+                                model_fraction_addicted(1), " against",&
+                                sud_rate_data, ", both inside ten per cent, so the",&
+                                " ratio was measured in the right economy."
+
+                        else if (distance_weight_on_child<&
+                            omega_c_pin_tol*abs(child_use_gap_data)) then
+
+                            ! THE RATIO IS RIGHT AND THE ECONOMY IS NOT. Say so
+                            ! rather than pinning: omega_c's moment is a ratio of
+                            ! two user counts and can sit on target while the
+                            ! counts themselves are far wrong.
+                            write(*,*) "OMEGA_C NOT PINNED: the child use gap is",&
+                                child_use_gap_1, " and inside three per cent of",&
+                                child_use_gap_data, ", BUT drug use is",&
+                                model_total_drug_users(1), " against",&
+                                participation_rate_data, " and the disorder rate",&
+                                model_fraction_addicted(1), " against",&
+                                sud_rate_data, ". The ratio is right in the wrong",&
+                                " economy, so omega_c keeps searching."
+
+                        end if
+
+                    else if ((calibrate_weight_on_child==1) .AND. (omega_c_is_pinned==1)) then
+
+                        write(*,*) "omega_c is PINNED at", weight_on_child,&
+                            " and its counterfactual is off, so no gap is measured."
+                        distance_weight_on_child=0
 
                     else if (calibrate_weight_on_child==1) then
 
