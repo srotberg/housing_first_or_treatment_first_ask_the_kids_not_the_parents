@@ -415,6 +415,59 @@ loop's line -- best vertex, worst vertex, evaluations -- and that is the firing.
 loop is stopped for good, delete this section rather than leaving it to be read
 as still in force.
 
+## A LOOP'S MOMENT PRINT IS ONE ITERATE, NOT AN EQUILIBRIUM, AND THE FROZEN PASS
+## THAT WOULD FIX IT ONLY RUNS UNDER THE b-SWEEP
+
+Found 11 September. `compute_expected_child_value` is called at the top of every
+solve and reads the CURRENT value function, so the child term is an equilibrium
+object in its own right, iterated once per calibration loop with no convergence
+test on it. The first solve of a run faces the sentinel and returns zero; the
+priming solve fills age one; loop 1 then computes the term off a value function
+that was solved WITHOUT it. So loop 1 is one iterate into a map that has not
+settled, and the loops after it are still settling.
+
+The size of it, on the benchmark vector:
+
+    loop      b        lambda_d   theta      tau_u
+    1       9.2695%    3.8051%    0.13780    0.23374
+    2       6.7526%    2.5451%    0.17467    0.26262
+    3       6.4771%    2.5159%    0.17870    0.26928
+
+and the same one-time step of about -27 per cent appears on four different
+vectors. Every benchmark figure reported before 11 September 10:00 was read off
+loop 1.
+
+**THE MOMENT omega_c IS CALIBRATED ON IS THE WORST AFFECTED**, because it is a
+ratio of two single iterates that warm-start off each other. In one run at
+essentially fixed parameters:
+
+    model child use gap   0.20838 -> 0.26831     +28.8 per cent
+    weight_on_child       0.10091 -> 0.10069      -0.2 per cent
+
+The moment moved a hundred times further than its own instrument. A bracket
+cannot find a fixed point against that.
+
+**THE MACHINERY TO FIX IT ALREADY EXISTS AND IS GATED OFF.** The frozen pass at
+the save path iterates the equilibrium map -- value function, distribution,
+statistics, budget -- at frozen parameters until b, lambda_d, h_1 and average
+labour income all move less than the stopping rule, and it re-enters
+`solve_value_function_and_policy_functions`, so it settles the child term too.
+It sits inside `if (sweep_addiction_scalar==1)`, and `sweep_addiction_scalar` is
+a compile-time `parameter` currently 0. It has therefore never run in any
+calibration log. The ENGINE header's standing rule -- *"CALIBRATION MUST NOT
+RESUME until a benchmark has been produced this way"* -- is wired only into the
+b-sweep path, which is off.
+
+**WHAT A FIRING MUST NOT DO ABOUT IT.** The model is frozen and this is not a
+firing's call, however much it looks like the one exception. Write it down, put
+it to the author, and quote the loop the number came from whenever a benchmark
+figure is reported.
+
+**AND COPY A LOG BEFORE RE-RUNNING ITS VECTOR.** `code/worker_<tag>.log` is
+untracked and the tag is the md5 of the vector, so re-measuring a vector
+truncates the log of the measurement it is being compared against. The
+benchmark's own log was lost that way the same morning.
+
 ## Each firing, in order
 
 **0. Verify the checkout.**
