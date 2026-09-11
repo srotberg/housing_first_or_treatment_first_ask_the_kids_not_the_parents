@@ -1,3 +1,43 @@
+## 11 September 07:21 UTC -- addiction_onset_base MOVES THE DISORDER RATE THE
+## WRONG WAY, and lambda_d is nearly collinear with b.
+
+Three single-parameter loop-0 points off the benchmark, strictly monotone:
+
+    addiction_onset_base   lambda_d      b        theta
+        0.0428 (bench)      0.03291   0.08101   0.13894
+        0.046               0.01870   0.04677   0.18339
+        0.055               0.00696   0.01693   0.26229
+        TARGET              0.03680   0.08900   0.14098
+
+**RAISING THE ONSET HAZARD LOWERS THE DISORDER RATE.** It deters use faster than
+it converts users: b falls in lockstep, 0.081 to 0.017. The mechanical effect --
+more of those who use convert -- is swamped by the extensive margin, fewer people
+using at all.
+
+**SO THE BRACKET'S SIGN IS WRONG IN EQUILIBRIUM.** At the benchmark lambda_d is
+0.0329, BELOW its 0.0368 target, so the Fortran's subtract-the-gap rule RAISES
+the base, which drives lambda_d further down. The loop has been pushing the
+disorder rate away from its target.
+
+This one is safe to state. It is three single-parameter points read at loop 0,
+which is the standard set after the aleph retraction, not a window off a
+multi-parameter trace.
+
+**IT ALSO CLOSES THE ESCAPE ROUTE.** The test was run to see whether
+addiction_onset_base could carry lambda_d and so free value_of_life to chase
+aleph. It cannot: it does not independently control lambda_d either.
+
+**AND IT IS A STATEMENT ABOUT THE MODEL, NOT ONLY THE CALIBRATION.** Every
+instrument that makes drugs riskier -- the value of life, the onset hazard --
+reduces MEASURED disorder, because households respond by not using. Across all
+three points lambda_d and b move almost exactly proportionally: 0.406, 0.400,
+0.411 as a ratio. They are close to collinear, which is why two targets on them
+cannot both be hit by instruments acting through the extensive margin.
+
+That is arguably the paper's own mechanism appearing in the calibration. It may
+mean the disorder rate needs an instrument acting on CONVERSION GIVEN USE rather
+than on the attractiveness of using -- for the author.
+
 ## 11 September 06:40 UTC -- THE SEPARABILITY MAP. Only tau_u is separable, and
 ## the benchmark at 11.8 per cent is the limit of one-parameter tuning.
 
