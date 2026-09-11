@@ -108,9 +108,18 @@ def main():
     if conv:
         last = conv[-1].split()
         print(f'child V(1): {len(conv)} loop(s) reconciled, last {" ".join(last[2:])}')
+    # SAY WHETHER IT MOVED, NOT WHETHER IT EXISTS. This printed "HELD" while
+    # size_homelessness was walking 2.553e-05 down to 2.477e-05, about one per
+    # cent a loop, because it only checked that the parameter appeared in the
+    # log. A table that calls a moving instrument frozen credits its moment's
+    # progress to the wrong cause.
     held = parameter(lines, 'size_homelessness')
-    if held:
+    if len(held) == 1:
         print(f'size_homelessness HELD at {held[0]:.6g}: h_1 moves only as a side effect')
+    elif len(held) > 1:
+        mv = (held[-1] - held[0]) / held[0] * 100
+        print(f'size_homelessness LIVE: {held[0]:.6g} -> {held[-1]:.6g} ({mv:+.1f}% over '
+              f'{len(held)-1} update(s)), so h_1 has both the rung and this one')
 
 
 if __name__ == '__main__':
