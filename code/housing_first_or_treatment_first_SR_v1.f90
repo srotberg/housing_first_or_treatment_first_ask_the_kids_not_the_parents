@@ -473,11 +473,24 @@
         ! measured at three per cent a step, tau_u +44.9 to +21.1 in twenty
         ! minutes. Setting this to zero disabled the first step AND retired the
         ! distance through the merge below, so take up left the loss entirely.
-        real(8) :: utility_cost_of_treatment_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-2))
+        ! RAISED 5e-2 -> 2.0 ON MEASUREMENT, not on reasoning. The fallback step is
+        ! adjuster*(model take up - target), an ABSOLUTE step on a take up gap of
+        ! order 0.45, so at 5e-2 it moved a parameter of magnitude 14.3 by 0.022 --
+        ! 0.156 per cent a loop. Measured on the first loop after the cap change:
+        ! 14.313709795108050 -> 14.336045489025555, which is
+        ! 14.3137 + 0.05*(0.69171-0.245) to ten figures.
+        !
+        ! At 2.0 the fallback asks for 2.0*0.447 = 0.89, which is more than five per
+        ! cent of 14.3, so treatment_cost_max_rel_step below binds and the step IS
+        ! five per cent while the gap is wide. Once the gap falls under about 0.36
+        ! the adjuster's own step drops below the cap and the bracket decelerates on
+        ! its own, which is the behaviour wanted near the target.
+        real(8) :: utility_cost_of_treatment_adjuster=(1-freeze_to_three_block)*(2.d0)
         ! THIS PARAMETER'S OWN STEP CAP, five per cent a loop, on the author's
         ! instruction of 11 September. It replaces max_rel_step_all (5e-3) for
         ! utility_cost_of_treatment ALONE, through cap_step_rel at the one call
         ! site. Every other parameter still goes through cap_step and is unchanged.
+        ! It is the CEILING; the adjuster above is what drives the step up to it.
         real(8) :: treatment_cost_max_rel_step=5*10.d0**(-2)
 
         ! THE PRICE OF A PERIOD OF TREATMENT, in the model's consumption units,
@@ -2481,7 +2494,13 @@
         ! settled vector, so 6.5 is 3.8 per cent away rather than the 35 the 0.05
         ! target implied, and it moves BACK toward the 0.101 in the data rather
         ! than further from it.
-        real(8), parameter :: severe_cost_burden_data=0.065d0
+        ! 0.08 -> 0.05 -> 0.065 -> 0.05. The author, 11 September: "H2 needs to come
+        ! down to a target of 5%. Too many can't afford the smallest rental and then
+        ! you have too much homelessness." The data figure is 0.101 (SCF 2022, 0.1013
+        ! CEX); 0.05 is an imposed modelling choice and the paper has to say so. In
+        ! model_hash's TARGET_CONSTANTS, so moving it leaves the semantic hash alone
+        ! and the archive survives.
+        real(8), parameter :: severe_cost_burden_data=0.05d0
         real(8), parameter :: fraction_light_users=0.731
         
         integer, parameter :: target_HO_of_old=1
@@ -9119,12 +9138,20 @@
     ! otherwise identical, so it still only ever makes a step SMALLER.
     !
     ! WHY IT EXISTS. The author, 11 September: "The utility cost of treatment has
-    ! to be adjusted much faster. Maybe 5% each iteration". The obstacle was not
-    ! utility_cost_of_treatment_adjuster, which is 0.05 and is applied before this
-    ! point; it was cap_step, which allowed 0.5 per cent a loop because
-    ! max_rel_step_all is 5e-3 whenever freeze_to_three_block is 0. The parameter
-    ! moved 14.31 -> 14.41 across nine loops while its moment sat 192 per cent out,
-    ! and raising its adjuster alone would have changed nothing.
+    ! to be adjusted much faster. Maybe 5% each iteration".
+    !
+    ! A FIRST ATTEMPT BLAMED cap_step AND WAS WRONG. The measurement is kept here
+    ! because the wrong answer is the plausible one. cap_step does allow only
+    ! max_rel_step_all = 5e-3, so it LOOKS like the constraint. It was not. The
+    ! fallback step is adjuster*(take up gap), an ABSOLUTE step on a gap of order
+    ! 0.45, which at an adjuster of 5e-2 asked for 0.022 on a parameter of 14.3.
+    ! cap_step would have allowed 0.0716, so the step never reached the cap, and
+    ! raising the cap alone moved the first measured step from 0.156 per cent to
+    ! 0.156 per cent: 14.313709795108050 -> 14.336045489025555, which is
+    ! 14.3137 + 0.05*(0.69171-0.245) to ten figures.
+    !
+    ! BOTH PIECES ARE NEEDED AND THEY DO DIFFERENT JOBS. The adjuster, now 2.0,
+    ! drives the step up to five per cent; this cap stops it going past.
     !
     ! WHY NOT RAISE max_rel_step_all. It is GLOBAL: every calibrated parameter
     ! passes through cap_step, so taking it to 5e-2 would let all twenty move ten
