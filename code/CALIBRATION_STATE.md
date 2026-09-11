@@ -1,3 +1,41 @@
+## 11 September 04:25 UTC -- CHILDREN STAY UNDER 18. THE DECISION, AND THE
+## MEASUREMENT THAT SETTLED IT.
+
+The author, after the three failed reconstructions: *"ok, so adjust as needed"*,
+and separately *"i am pretty sure i have the pumfs in the repo for scf ... isnt
+that how you comptued evrything from scf ... the wealt share etc"*.
+
+**THE FILE IS THE SUMMARY EXTRACT AND IT IS THE RIGHT FILE FOR EVERYTHING IT HAS
+BEEN USED FOR.** `data/SCF_2022.dta` carries ZERO X-coded variables and does
+carry `networth`, `kids`, `famstruct`, `wgt`, `norminc`, so it is SCFP, not the
+PUMF. Those are household-level aggregates, which is all the wealth shares,
+income shares and rent burdens ever needed. Git history shows no other SCF file
+has ever been in the repo. What it lacks is the PUMF's member records and their
+AGES, which is the only thing the children question needs.
+
+**AND THE CHANGE IS NOT WORTH A RESTART. MEASURED:**
+
+    ages 26-43, mean children under 18      1.0706
+    ages 26-43, mean children <=25          1.1508      +7.5 per cent
+    mean xi = sqrt(1+n) now                 1.2194
+    mean xi with <=25 over those ages       1.2274      +0.65 PER CENT
+
+Over ages 26 to 43 a parent can have a child at most a-18 years old, so every
+child at home is 25 or under and SCF `kids` IS the <=25 count there, with no
+modelling at all. Across those ages -- where essentially all the children are --
+the switch moves the equivalence scale by 0.65 per cent. Participation is
+currently 163 per cent from target. The refinement is an order of magnitude
+below the things actually wrong.
+
+The gap between the two concepts is concentrated at ages 44 and over, 0.496
+against 0.286, and those extra "children" are ADULTS living at home. In a model
+whose child harm is consumption dilution during childhood, they arguably should
+not carry the externality at all.
+
+**SO: under 18 stands, T = 18, and the running calibration was not disturbed.**
+If the PUMF reaches the machine the profile is a short job; it is not worth a
+restart for 0.65 per cent of xi.
+
 ## 11 September 04:20 UTC -- CHILDREN 25 AND UNDER IS NOT CONSTRUCTIBLE FROM THE
 ## DATA IN HAND. Three methods, three diagnosable failures.
 
