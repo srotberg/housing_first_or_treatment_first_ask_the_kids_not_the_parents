@@ -86,6 +86,54 @@ Either way the separability map stands, because every diagnostic point was read
 at loop 1 and compared against the benchmark's loop 1. The comparisons are
 apples to apples; only the level is in question.
 
+## 11 September 10:41 UTC -- LOOP 5, AND A CORRECTION. b IS NOT SETTLING. THE
+## TRANSIENT DAMPED AND THEN THE SEARCH TOOK OVER, MOVING b AWAY FROM TARGET.
+
+**CORRECTION TO THE 10:33 ENTRY.** It said b damps at about a third a loop and
+was heading for roughly 6.34 per cent. Loop 5 is 6.158 and the move re-ACCELERATED:
+
+    move on b     -27.1%   -4.2%   -1.4%   -3.6%
+    move on lambda_d  -33.0%   -1.4%   -2.1%   -4.0%
+
+so there is no limit to extrapolate to. There are two regimes, not one. Loops 1
+to 3 are the child-term transient damping. Loops 3 to 5 are the parameter search,
+and it is walking b DOWN, away from a target it is already 31 per cent below.
+
+    loop      b        lambda_d    theta      aleph
+    1       9.2696%    3.8051%    0.137797    52.975
+    2       6.7567%    2.5495%    0.174682    56.680
+    3       6.4754%    2.5137%    0.178678    56.006
+    4       6.3861%    2.4602%    0.178211    55.715
+    5       6.1582%    2.3625%    0.177149    55.585
+
+**WHAT THE SEARCH IS DOING, FROM THE PARAMETER PRINTS.** value_of_life takes its
+full 0.5 per cent every loop, 163.011 -> 166.296, plus 2.02 per cent over four
+loops. addiction_scalar_1 takes its full 0.5 per cent the other way,
+2.0710e-3 -> 2.0298e-3, which is the CORRECT direction: b-bar shifts the drug
+bundle, so a LOWER b-bar makes the drug more valuable at the margin and raises
+use. The two brackets are pulling against each other at the same capped rate and
+value_of_life is winning.
+
+**AND ALEPH IS NOT BEING BOUGHT.** Over the same four loops aleph went 56.680 ->
+55.585, DOWN 1.9 per cent, while its own instrument rose 2.0 per cent. Its
+target is 80.
+
+**THAT IS AN OBSERVATION, NOT AN ATTRIBUTION.** Four parameters moved over that
+window -- value_of_life up 2.0, b-bar down 1.5, relative_share_of_addiction_1
+down 0.3, weight_on_child down 0.4 -- so ENGINE rule 1 applies and this window
+cannot say value_of_life caused it. What the single-parameter points from last
+night DO say is that the local slope is about +0.87 in elasticity: 163.5 ->
+162.2 moved aleph 53.46 -> 53.09. At that slope, closing aleph from 55.6 to 80
+wants value_of_life up about half again, which is a hundred loops at the cap,
+with the drug block moving the whole way.
+
+**SO THE ALEPH DECISION IS NOT COSMETIC ANY MORE.** It was framed this morning
+as accept the miss or find another instrument. The run says a third thing: while
+value_of_life stays live, its bracket spends every loop at the cap, buys no
+aleph, and walks participation further from target. Pinning it is two lines --
+`value_of_life_adjuster = 0` with `distance_value_of_life` retired beside it, or
+the do-while cannot converge.
+
 ## 11 September 10:33 UTC -- LOOP 4. THE SEQUENCE HAS SETTLED ENOUGH TO READ,
 ## AND THE SETTLED ECONOMY IS NOT THE ONE THAT WAS BEING REPORTED.
 
