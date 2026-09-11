@@ -1,3 +1,30 @@
+## 11 September 07:39 UTC -- BENCHMARK MOVED TO value_of_life = 162.6. The level
+## shift cost 0.35 points of aleph, which prices the trade-off exactly.
+
+                        163.5        162.6      target
+    b                  -9.0%        -6.0%
+    lambda_d          -10.6%        -7.4%
+    theta              -1.4%        -1.1%
+    tau_u              +1.6%        -1.6%
+    aleph              53.456       53.103       80
+    within ten per cent  11 of 26    12 of 26
+    median |gap|         11.8%        13.3%
+
+**0.9 UNITS OF value_of_life BOUGHT THREE POINTS ON BOTH DRUG MOMENTS AND COST
+0.35 OF ALEPH.** That is the trade-off priced at the margin that matters, and it
+is essentially free. It also settles that the 33 per cent aleph gap is not
+purchasable: closing it needs a parameter move of a wholly different order, which
+the four-point curve already showed empties the drug market.
+
+ADOPTED on the author's own objective, "once we get below 10% for everything we
+can stop" -- twelve moments inside ten beats eleven -- and because the drug block
+is what the paper is about.
+
+**THE HONEST CAVEAT:** the MEDIAN rose, 11.8 to 13.3, so a mid-ranked moment moved
+against us. This point is better by COUNT and by core-moment accuracy, not by
+every summary. A different objective would prefer 163.5, and BENCHMARK_VECTOR.txt
+is one sed away from it.
+
 ## 11 September 07:34 UTC -- lambda_d / b IS A STRUCTURAL CONSTANT NEAR 0.40, AND
 ## IT MATCHES THE DATA. The two drug targets are ONE target.
 
