@@ -5370,6 +5370,30 @@
         real(8), dimension(employment_grid_size,0:1,1:2) :: expected_child_value_cf=0
         integer :: solving_omega_counterfactual=0
 
+        ! GUESS AND VERIFY ON V(1). The author, 11 September: *"you need to
+        ! converge on v(1)...guess and verify"* and *"you have to make sure that
+        ! the V(1) computed and the one guessed converge"*.
+        !
+        ! A solve is HANDED a child penalty and PRODUCES one, and the two are the
+        ! same object. One update a calibration loop is a guess that is never
+        ! verified: the parameters move underneath it, so it chases a target that
+        ! is itself moving and never actually reaches a fixed point. The main
+        ! solve is now iterated at FIXED parameters until the penalty it is given
+        ! and the penalty it returns agree.
+        !
+        ! Only the calibrated economy needs this. At omega_c=0 the term is
+        ! multiplied by omega_c in the Bellman, so it is exactly zero whatever
+        ! V(1) says, and there is nothing to converge.
+        !
+        ! The test is RELATIVE because the penalty is order 60 to 70 in
+        ! magnitude, and the cap exists because an uncapped inner loop inside an
+        ! uncapped outer loop is two ways to hang instead of one.
+        real(8), dimension(employment_grid_size,0:1,1:2) :: expected_child_value_guessed=0
+        real(8) :: child_value_distance=1
+        real(8), parameter :: stopping_rule_child_value=1.d0*10.d0**(-3)
+        integer :: child_value_pass=0
+        integer, parameter :: max_child_value_passes=12
+
         ! WHETHER expected_child_value HAS EVER BEEN COMPUTED FOR REAL.
         ! compute_expected_child_value returns zero while age one is still
         ! the sentinel, and it is the sentinel on the first solve, so the
@@ -41060,13 +41084,17 @@
             ! So solve once to fill age one, which lets the next call compute the
             ! term for real, then solve again with it live. It costs one extra
             ! solve on the first pass of a run and nothing after that.
-            if ((include_child_in_continuation==1) .AND. (child_value_ready==0)) then
-
-                write(*,*) "PRIMING SOLVE: filling age one so the child term can be computed"
-
-                call solve_value_function_and_policy_functions(1)
-
-            end if
+            ! THE PRIMING SOLVE IS GONE, SUBSUMED BY GUESS AND VERIFY.
+            !
+            ! It existed because the child penalty used to be computed at the TOP
+            ! of a solve, when age one was still the sentinel, so a throwaway
+            ! solve was needed to fill it. The author's algorithm removes the
+            ! need: *"you start with V(1)=0 as a guess, and compute the VF and
+            ! check if they agree. if not, you update the guess to the solved
+            ! v(1), and continue"*. expected_child_value_own is zero at
+            ! declaration, so the first pass of the loop below IS the priming
+            ! solve and its output is the second pass's guess. One solve saved
+            ! per run and the code now says what the algorithm is.
 
             ! ================= THE TWO TYPES =================
             ! Half the households are patient and half impatient, and a
@@ -41149,7 +41177,50 @@
 
             end if
 
-            call solve_value_function_and_policy_functions(1)
+            ! GUESS AND VERIFY: solve, recompute the child penalty from the V(1)
+            ! this solve produced, and solve again until the guess and the
+            ! computed value agree. At fixed parameters this is an ordinary
+            ! contraction; across calibration loops the previous loop's converged
+            ! penalty is the next one's guess, so it costs several passes on the
+            ! first loop and one or two afterwards.
+            child_value_pass=0
+
+            do
+
+                child_value_pass=child_value_pass+1
+                expected_child_value_guessed=expected_child_value_own
+
+                call solve_value_function_and_policy_functions(1)
+
+                if (include_child_in_continuation==0) exit
+
+                child_value_distance=maxval(abs(expected_child_value_own-&
+                    expected_child_value_guessed))/&
+                    max(maxval(abs(expected_child_value_own)),1.d0)
+
+                write(*,*) "CHILD V PASS", child_value_pass,&
+                    " guessed vs computed, relative =", child_value_distance,&
+                    " rule =", stopping_rule_child_value
+
+                if (child_value_distance<=stopping_rule_child_value) then
+
+                    write(*,*) "CHILD V CONVERGED after", child_value_pass,&
+                        "passes, relative =", child_value_distance
+                    exit
+
+                end if
+
+                if (child_value_pass>=max_child_value_passes) then
+
+                    write(*,*) "CHILD V DID NOT CONVERGE in", max_child_value_passes,&
+                        "passes, relative =", child_value_distance,&
+                        " -- the penalty handed to the household is NOT the one its own",&
+                        " value function implies, and nothing downstream of it is a fixed point"
+                    exit
+
+                end if
+
+            end do
                             
             ! A LOADED WARM START MUST NOT BE OVERWRITTEN. The initialisation
             ! puts everyone at age one with no assets, which is the right guess
