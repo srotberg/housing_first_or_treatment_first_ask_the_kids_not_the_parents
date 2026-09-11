@@ -3090,9 +3090,16 @@
         ! 0.001, ON THE AUTHOR'S INSTRUCTION OF 11 September: "i think the
         ! adjuster on theta should only move it by 0.1% between iterations at
         ! most". Asked once with the arithmetic attached -- at 0.001 theta moves
-        ! 0.00027 a loop from 0.27, so 0.27 to 0.40 is 480 loops, four days at
-        ! twelve minutes a loop, with the rest of the vector converged and
-        ! waiting on it -- and reaffirmed. So it stands at 0.001.
+        ! 0.00027 a loop from 0.27, so 0.27 to 0.40 is 480 loops -- and
+        ! reaffirmed. So it stands at 0.001.
+        !
+        ! THE WALL CLOCK WAS MEASURED ON 11 September AND MY ESTIMATE WAS WRONG
+        ! BY A FACTOR OF EIGHT. A loop is 1.5 minutes, not twelve: the COLD first
+        ! solve is 3 to 4 minutes and every loop after it warm starts from the
+        ! converged value function and distribution. Measured on the 02:46 run,
+        ! loops 8, 14, 20 and 22 at 03:02, 03:12, 03:21 and 03:23 -- fourteen
+        ! loops in twenty-one minutes. So 480 loops is TWELVE HOURS, not four
+        ! days, and the author's 0.1 per cent is affordable overnight.
         !
         ! WHAT TO WATCH, since the cost of the choice is real: if the trace
         ! shows THETA CAPPED on every loop in the same direction for tens of
@@ -4476,8 +4483,9 @@
         ! WHAT THIS COSTS, because the number is a judgement and the arithmetic
         ! should be visible when it is changed. A cap of one per cent closes a
         ! gap of forty per cent in about thirty five loops and one of eighty in
-        ! about sixty; at roughly twenty minutes a loop that is twelve to twenty
-        ! hours. A cap of five per cent closes the same gaps in seven and twelve
+        ! about sixty; at the MEASURED 1.5 minutes a loop that is one to two
+        ! hours, not the twelve to twenty this comment used to claim on an
+        ! unmeasured twenty-minute loop. A cap of five per cent closes the same gaps in seven and twelve
         ! loops, and on the measured data it would still bind on nothing except
         ! the four that were slamming, since the healthy instruments move
         ! between nought and seven per cent unaided.
@@ -4520,11 +4528,15 @@
         ! created is exactly the state that triggers it. A per-bracket fix would
         ! have to be made once per bracket and would miss the next one.
         !
-        ! WHAT IT COSTS, SAID ONCE. At half a per cent a loop a parameter needs
-        ! 139 loops to double and 462 to move by a factor of ten. If b has to
-        ! travel an order of magnitude that is of the order of two days at six
-        ! minutes a loop. That is the price of never again spending a night on a
-        ! run that walked into a corner on iteration one.
+        ! WHAT IT COSTS, SAID ONCE AND THEN MEASURED. At half a per cent a loop
+        ! a parameter needs 139 loops to double and 462 to move by a factor of
+        ! ten. A loop is 1.5 MINUTES -- measured 11 September, fourteen loops in
+        ! twenty-one minutes, after a cold first solve of 3 to 4 minutes -- so
+        ! that is 3.5 HOURS to double and 11.5 to move an order of magnitude.
+        !
+        ! An earlier version of this comment said 'two days at six minutes a
+        ! loop'. That was the cold solve generalised to every loop and never
+        ! checked. The governor is a night's work, not a week's.
         !
         ! A PARAMETER SITTING AT EXACTLY ZERO IS EXEMPT FOR ONE STEP, because a
         ! RELATIVE cap around zero is zero and would trap it there for ever.
