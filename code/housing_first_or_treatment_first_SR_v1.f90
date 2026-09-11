@@ -2,6 +2,28 @@
 
 		implicit none
         
+        ! ONLY THREE BRACKETS ARE LIVE, ON THE AUTHOR'S INSTRUCTION OF 11 SEPTEMBER:
+        ! *"hold everything fixed. and only adjust aleph, b, and onset of sud"*,
+        ! *"you can also hold omega_c constant for now at 0.1"*, and *"aleph is
+        ! very important ... you need to adjust it up a lot ... and then you have
+        ! to bring b down"*.
+        !
+        !     value_of_life                     -> aleph
+        !     addiction_scalar_1                -> participation
+        !     addiction_onset_base              -> the disorder rate
+        !
+        ! b-bar comes DOWN as the value of life goes UP, which is the author's
+        ! ordering and is the right sign: b-bar shifts the drug bundle, so a
+        ! LOWER b-bar makes the drug more valuable at the margin and raises use,
+        ! offsetting the deterrence a higher value of life buys.
+        !
+        ! MARKET CLEARING IS NOT CALIBRATION and is NOT frozen here. The tax rate
+        ! clears the government budget, rent to price the rental market, the drug
+        ! market adjuster the drug market, and the inheritance amount the
+        ! bequests. Freezing those would not hold the model still, it would stop
+        ! it being an equilibrium.
+        integer, parameter :: freeze_to_three_block=1
+
         integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
         real(8) :: probability_of_voucher_benchmark_used=0.06
@@ -117,7 +139,7 @@
         ! carries no independent information about lambda.
         real(8) :: addiction_onset_base=0.d0
         real(8) :: lambda_addiction=0.027364
-        real(8) :: lambda_addiction_adjuster=5*10.d0**(-3)
+        real(8) :: lambda_addiction_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-3))
         real(8) :: previous_onset_at_mean=0
         real(8) :: previous_sud_rate=0
         integer :: have_lambda_secant=0
@@ -425,7 +447,7 @@
         ! measured at three per cent a step, tau_u +44.9 to +21.1 in twenty
         ! minutes. Setting this to zero disabled the first step AND retired the
         ! distance through the merge below, so take up left the loss entirely.
-        real(8) :: utility_cost_of_treatment_adjuster=5*10.d0**(-2)
+        real(8) :: utility_cost_of_treatment_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-2))
 
         ! THE PRICE OF A PERIOD OF TREATMENT, in the model's consumption units,
         ! calibrated on take up among those carrying the disorder. Calibrated
@@ -436,7 +458,7 @@
         ! block reports it as a fraction of average labour income so it can be
         ! read against that range.
         real(8) :: money_cost_of_treatment=0.02
-        real(8) :: money_cost_of_treatment_adjuster=0.05
+        real(8) :: money_cost_of_treatment_adjuster=(1-freeze_to_three_block)*(0.05)
         real(8) :: distance_money_cost_of_treatment
         real(8) :: stopping_rule_money_cost_of_treatment=10.d0**(-3)
         real(8) :: distance_utility_cost_of_treatment
@@ -468,7 +490,7 @@
         ! 0.7. At 0.05 the step was 0.002, three tenths of one per cent a
         ! loop, which cannot move the parameter anywhere it is not already.
         ! At 0.5 a gap of 0.04 moves it three per cent a loop.
-        real(8) :: mu_homeless_adjuster=5*10.d0**(-1)
+        real(8) :: mu_homeless_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-1))
         real(8) :: distance_mu_homeless=1
         real(8) :: stopping_rule_mu_homeless=10.d0**(-2)
 
@@ -523,7 +545,7 @@
         ! reaches it will say so rather than diverging quietly.
         real(8), parameter :: weight_on_child_cap=25.d0
 
-        real(8) :: weight_on_child_adjuster=2*10.d0**(-3)
+        real(8) :: weight_on_child_adjuster=(1-freeze_to_three_block)*(2*10.d0**(-3))
         real(8) :: distance_weight_on_child=1
         real(8) :: stopping_rule_weight_on_child=10.d0**(-2)
         real(8) :: drug_users_without_child=0
@@ -560,7 +582,14 @@
         ! 10 per cent, because that is the author's own stopping rule for the
         ! whole calibration: "once we get below 10%% for everything we can stop".
         real(8), parameter :: omega_c_pin_econ_tol=0.10d0
-        integer :: omega_c_is_pinned=0
+
+        ! PINNED FROM THE START WHILE THE THREE-BLOCK IS BEING CALIBRATED. The
+        ! author, 11 September: *"you can also hold omega_c constant for now at
+        ! 0.1"* and *"you can skip the omega_c=0 calculation for now. do it only
+        ! once the other ones are close"*. The counterfactual's own guard already
+        ! tests omega_c_is_pinned==0, so pinning it here skips that solve and a
+        ! calibration loop becomes ONE solve instead of two.
+        integer :: omega_c_is_pinned=freeze_to_three_block
         integer, parameter :: calibrate_weight_on_child=1
 
         ! WHETHER A POINT MEASURES OMEGA_C'S MOMENT. It costs a second
@@ -1351,7 +1380,7 @@
         ! mental illness, so prevalence RISES in it and the update subtracts the
         ! gap. directions_table agrees: p_m -> smi_onset_level, 'lower'.
         real(8) :: smi_onset_level=0.003306
-        real(8) :: smi_onset_level_adjuster=5*10.d0**(-3)
+        real(8) :: smi_onset_level_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-3))
         real(8) :: distance_smi_onset_level=1
         real(8) :: stopping_rule_smi_onset_level=10.d0**(-3)
 
@@ -1594,7 +1623,7 @@
 
         real(8) :: distance_rho_m
         real(8) :: stopping_rule_rho_m=10.d0**(-3)
-        real(8) :: rho_m_adjuster=5*10.d0**(-2)
+        real(8) :: rho_m_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-2))
         real(8), parameter :: homeless_income_share_data=0.191
 
         ! THE SUD WAGE PENALTY, CONDITIONAL ON WORKING.
@@ -1706,7 +1735,7 @@
 
         real(8) :: distance_rho_d
         real(8) :: stopping_rule_rho_d=10.d0**(-3)
-        real(8) :: rho_d_adjuster=5*10.d0**(-2)
+        real(8) :: rho_d_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-2))
         real(8), parameter :: employed_share_of_homeless_data=0.50
 
         ! THE SMALLEST RENTAL MUST STAY A DWELLING. Its bracket used to be
@@ -2615,7 +2644,7 @@
         ! damp_on_flip already grows it back toward, so nothing else changes.
         ! The guard below is added anyway, so pinning gamma again retires its
         ! term instead of hanging the loop.
-        real(8) :: relative_share_of_housing_adjuster=5*10.d0**(-2)
+        real(8) :: relative_share_of_housing_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-2))
         real(8), parameter :: relative_share_of_housing_adjuster_start=5*10.d0**(-2)
         real(8) :: previous_gap_relative_share_of_housing=0
         integer :: have_gap_relative_share_of_housing=0
@@ -2742,7 +2771,7 @@
         ! default is fixed_productivity=0. Both were gated on the SAME freeze
         ! flag, so unfreezing that flag would have put TWO instruments on one
         ! moment and had them fight. They are split here instead.
-        real(8) :: kkk_sigma_scale_adjuster=5.d0
+        real(8) :: kkk_sigma_scale_adjuster=(1-freeze_to_three_block)*(5.d0)
         ! WHAT kkk_s_deviation_bottom BUYS, and why it is the KKK grid's version of
         ! y_grid_kappa. The bottom node's mass is the normal mass below
         ! -kkk_s_deviation_bottom + half a spacing, so widening the grid pushes
@@ -2763,7 +2792,7 @@
         real(8) :: relative_share_of_leisure=(1-perceived_probability_lower)*8.5+perceived_probability_lower*3.1
         
         real(8) :: distance_relative_share_of_leisure
-        real(8) :: relative_share_of_leisure_adjuster=(1-freeze_relative_share_of_leisure)*(5*10.d0**(-1))
+        real(8) :: relative_share_of_leisure_adjuster=(1-freeze_to_three_block)*((1-freeze_relative_share_of_leisure)*(5*10.d0**(-1)))
         real(8), parameter :: relative_share_of_leisure_adjuster_start=5*10.d0**(-1)
         real(8) :: previous_gap_relative_share_of_leisure=0
         integer :: have_gap_relative_share_of_leisure=0
@@ -2771,7 +2800,7 @@
         
         real(8) :: relative_share_of_addiction=0.13
         real(8) :: distance_relative_share_of_addiction
-        real(8) :: relative_share_of_addiction_adjuster=5*10.d0**(-1)
+        real(8) :: relative_share_of_addiction_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-1))
         real(8) :: stopping_rule_relative_share_of_addiction=10.d0**(-3)
                 
         ! LAMBDA, THE ADDICTION HAZARD, AND IT IS CALIBRATED NOW. This is the
@@ -3258,18 +3287,18 @@
         ! LIVE AGAIN. max_food_cost is the allotment once more, so it is
         ! calibrated on aggregate food stamp spending over labour income, which
         ! is what food_stamps_share_data measures.
-        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
+        real(8) :: max_food_cost_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-2))
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
-        real(8) :: voucher_probability_adjuster=1*10.d0**(-1)
+        real(8) :: voucher_probability_adjuster=(1-freeze_to_three_block)*(1*10.d0**(-1))
         real(8), parameter :: voucher_probability_adjuster_start=1*10.d0**(-1)
         real(8) :: previous_gap_voucher_probability=0
         integer :: have_gap_voucher_probability=0
         real(8) :: distance_voucher_probability
         real(8) :: stopping_rule_voucher_probability=10.d0**(-3)
 
-        real(8) :: separation_rate_adjuster=1*10.d0**(-1)
+        real(8) :: separation_rate_adjuster=(1-freeze_to_three_block)*(1*10.d0**(-1))
         real(8), parameter :: separation_rate_adjuster_start=1*10.d0**(-1)
         real(8) :: previous_gap_separation_rate=0
         integer :: have_gap_separation_rate=0
@@ -3567,12 +3596,12 @@
         ! The impatient type. Started well below the patient one so the two are
         ! distinct from the first solve; it is calibrated from there.
         real(8) :: discount_factor_impatient=(1-perceived_probability_lower)*0.900+perceived_probability_lower*0.907
-        real(8) :: discount_factor_impatient_adjuster=5*10.d0**(-3)
+        real(8) :: discount_factor_impatient_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-3))
         real(8) :: distance_discount_factor_impatient
         real(8) :: stopping_rule_discount_factor_impatient=10.d0**(-3)
         ! The target the author set for it.
         real(8), parameter :: bottom_half_wealth_share_data=0.025d0
-        real(8) :: discount_factor_adjuster=5*10.d0**(-3)
+        real(8) :: discount_factor_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-3))
         real(8) :: distance_discount_factor
         ! A RATIO OF THREE CANNOT BE HIT TO ONE PART IN THIRTY THOUSAND. The old
         ! tolerance of 1e-4 was written against a mortgage share between zero and
@@ -3724,7 +3753,7 @@
         ! the same reason: a parameter that is held has to be distinguishable
         ! from one that has converged.
         real(8) :: newborn_endowment_scale=1.d0
-        real(8) :: newborn_endowment_adjuster=2*10.d0**(-1)
+        real(8) :: newborn_endowment_adjuster=(1-freeze_to_three_block)*(2*10.d0**(-1))
         real(8) :: distance_newborn_endowment=1
         real(8) :: stopping_rule_newborn_endowment=10.d0**(-2)
         ! THE ENDOWMENT ENTERS THE BUDGET CONSTRAINT, NOT THE INITIAL
@@ -3811,7 +3840,7 @@
         ! the adjuster times (model minus data), which rises when the model is
         ! below target. 20 moves it about 0.08 per iteration at the current gap,
         ! which crosses the [0,1] range in roughly a dozen equilibrium solves.
-        real(8) :: size_homelessness_adjuster=20
+        real(8) :: size_homelessness_adjuster=(1-freeze_to_three_block)*(20)
 
         ! AND THE TRAVERSE HAS TO DAMP, for aleph's reason. The adjuster is
         ! twenty and the gap is a rate, so a gap of 0.031 moves the parameter by
@@ -4578,7 +4607,19 @@
         ! normally.
         !
         ! Handable, so it can be loosened mid calibration without a rebuild.
-        real(8) :: max_rel_step_all=0.005d0
+! FIVE PER CENT A LOOP WHILE ONLY THREE BRACKETS ARE LIVE, HALF OF ONE OTHERWISE.
+        !
+        ! The author set half a per cent on 11 September when twenty parameters
+        ! moved together and a trace could not be read. With three live and an
+        ! instruction to move the value of life *"up a lot"* -- aleph wants it
+        ! somewhere near 280 against 160 today -- half a per cent is 110 loops
+        ! for that one parameter, which is not a search, it is a wait.
+        !
+        ! It is also the cap that made the search step OVER its own answer:
+        ! measured on 11 September, one capped step of value_of_life was worth
+        ! twelve per cent on participation, so the cap was simultaneously too
+        ! slow for the distance to travel and too coarse to stop on.
+        real(8) :: max_rel_step_all=merge(5.d0*10.d0**(-2),5.d0*10.d0**(-3),freeze_to_three_block==1)
         ! THE STOPPING RULE EXISTED AND THE DISTANCE DID NOT.
         !
         ! The retention scale is updated every loop against an average labour
@@ -5291,7 +5332,35 @@
         ! A parent at the top node and one at the bottom no longer face the same
         ! loss from passing a penalty on, because the child's whole distribution
         ! differs and the value function is concave.
+
         real(8), dimension(employment_grid_size,0:1,1:2) :: expected_child_value=0
+
+        ! ONE COPY PER ECONOMY, BECAUSE THE TWO WERE FEEDING EACH OTHER.
+        !
+        ! compute_expected_child_value reads whatever value function is in
+        ! memory. A calibration loop solves the omega counterfactual FIRST and
+        ! the benchmark second, so the benchmark's child penalty was built from
+        ! the COUNTERFACTUAL's value function -- a world in which parents place
+        ! no weight on children -- and the next counterfactual's from the
+        ! benchmark's. Neither leg ever iterated against itself.
+        !
+        ! Measured, node 1, on the benchmark vector: 0 (priming), -69.162
+        ! (benchmark, off the priming solve), -69.203 (counterfactual, off the
+        ! benchmark), -64.009 (benchmark, off the counterfactual), -67.088
+        ! (counterfactual, off the benchmark). A two-cycle, not a convergence.
+        !
+        ! And not merely biased but UNSTABLE: two runs a quarter of one per cent
+        ! apart in value_of_life, every other parameter tracking to 0.03 per
+        ! cent, agreed for four loops and then separated, the implied elasticity
+        ! of b on value_of_life going -8, -8, -63, -80. The first two are the
+        ! model; the last two are no slope this model has.
+        !
+        ! So each economy keeps its OWN previous child penalty and reads that
+        ! back, which is an ordinary fixed point iteration per economy. Twenty
+        ! eight reals each and no extra solve.
+        real(8), dimension(employment_grid_size,0:1,1:2) :: expected_child_value_own=0
+        real(8), dimension(employment_grid_size,0:1,1:2) :: expected_child_value_cf=0
+        integer :: solving_omega_counterfactual=0
 
         ! WHETHER expected_child_value HAS EVER BEEN COMPUTED FOR REAL.
         ! compute_expected_child_value returns zero while age one is still
@@ -8310,6 +8379,11 @@
                 weight_on_child_saved=weight_on_child
                 weight_on_child=0.d0
 
+                ! SAYS WHICH SLOT THE CHILD PENALTY COMES FROM AND GOES BACK TO.
+                ! Without it this solve reads the benchmark's penalty and leaves
+                ! its own behind for the benchmark to pick up.
+                solving_omega_counterfactual=1
+
                 call solve_value_function_and_policy_functions(1)
                 call converge_to_stationary_equilibrium(1)
                 call stationary_equilibrium_statistics(1)
@@ -8328,6 +8402,8 @@
 
                 write(*,*) "OMEGA_DIAG counterfactual users=", drug_users_without_child,&
                     " child value=", expected_child_value
+
+                solving_omega_counterfactual=0
 
                 weight_on_child=weight_on_child_saved
 
@@ -20333,9 +20409,20 @@
         ! functions, optionally read a labour supply file, and set the thread
         ! count, and newborn_employment_probability is built outside this
         ! routine, in GKKOC_intergenerational_employment_process.
+        ! LOAD THIS ECONOMY'S OWN PREVIOUS CHILD PENALTY. It is computed at the
+        ! END of a solve, from that solve's own value function, and stored in the
+        ! slot belonging to the economy that was solved. See the declaration.
         if (include_child_in_continuation==1) then
 
-            call compute_expected_child_value(time_period)
+            if (solving_omega_counterfactual==1) then
+
+                expected_child_value=expected_child_value_cf
+
+            else
+
+                expected_child_value=expected_child_value_own
+
+            end if
 
             write(*,*) "expected_child_value=", expected_child_value
 
@@ -20894,6 +20981,26 @@
         
             write(*,*) "time_period=", time_period
             
+        end if
+
+        ! COMPUTE THE CHILD PENALTY FROM THE VALUE FUNCTION THIS SOLVE JUST
+        ! PRODUCED and store it where only this economy reads it back. Computing
+        ! here rather than at the top is what makes it this economy's own
+        ! previous pass instead of whatever happened to be solved last.
+        if (include_child_in_continuation==1) then
+
+            call compute_expected_child_value(time_period)
+
+            if (solving_omega_counterfactual==1) then
+
+                expected_child_value_cf=expected_child_value
+
+            else
+
+                expected_child_value_own=expected_child_value
+
+            end if
+
         end if
     
     end subroutine
@@ -40718,25 +40825,25 @@
         end if
 
         do while((distance_rental_market(1)>stopping_rule_rental_market) .OR. &
-            (distance_discount_factor>stopping_rule_discount_factor) .OR. &
-            (distance_discount_factor_on_child>stopping_rule_discount_factor_on_child) .OR. &
+            ((freeze_to_three_block==0) .AND. (distance_discount_factor>stopping_rule_discount_factor)) .OR. &
+            ((freeze_to_three_block==0) .AND. (distance_discount_factor_on_child>stopping_rule_discount_factor_on_child)) .OR. &
             (distance_minimum_inheritance>stopping_rule_minimum_inheritance) .OR. &
             (distance_advantage_to_owning>stopping_rule_advantage_to_owning) .OR. &
             (distance_relative_share_of_housing>stopping_rule_relative_share_of_housing) .OR. &
-            (distance_relative_share_of_leisure>stopping_rule_relative_share_of_leisure) .OR. &
+            ((freeze_to_three_block==0) .AND. (distance_relative_share_of_leisure>stopping_rule_relative_share_of_leisure)) .OR. &
             (distance_convexity_of_rental_company>stopping_rule_convexity_of_rental_company) .OR. &
             (distance_housing_status_grid_expander>stopping_rule_housing_status_grid_expander) .OR. &
             (distance_largest_house_size>stopping_rule_largest_house_size) .OR. &
             (distance_probability_of_becoming_addicted>&
              stopping_rule_probability_of_becoming_addicted) .OR. &
-            (distance_lambda_addiction>stopping_rule_lambda_addiction) .OR. &
+            ((freeze_to_three_block==0) .AND. (distance_lambda_addiction>stopping_rule_lambda_addiction)) .OR. &
             (distance_drug_market>stopping_rule_drug_market) .OR. &
-            (distance_relative_share_of_addiction_1>stopping_rule_relative_share_of_addiction_1) .OR. &
+            ((freeze_to_three_block==0) .AND. (distance_relative_share_of_addiction_1>stopping_rule_relative_share_of_addiction_1)) .OR. &
             (distance_addiction_scalar>stopping_rule_addiction_scalar) .OR. &
             (distance_value_of_life>stopping_rule_value_of_life) .OR. &
-            (distance_max_food_cost>stopping_rule_max_food_cost) .OR. &
-            (distance_voucher_probability>stopping_rule_voucher_probability) .OR. &
-            (distance_separation_rate>stopping_rule_separation_rate) .OR. &
+            ((freeze_to_three_block==0) .AND. (distance_max_food_cost>stopping_rule_max_food_cost)) .OR. &
+            ((freeze_to_three_block==0) .AND. (distance_voucher_probability>stopping_rule_voucher_probability)) .OR. &
+            ((freeze_to_three_block==0) .AND. (distance_separation_rate>stopping_rule_separation_rate)) .OR. &
             (distance_employment_multiplier>stopping_rule_employment_multiplier) .OR. &
             (distance_utility_cost_of_treatment>stopping_rule_utility_cost_of_treatment) .OR. &
             (distance_rent_to_price>stopping_rule_rent_to_price) .OR. &
@@ -40744,7 +40851,7 @@
             (distance_fixed_cost_to_moving>stopping_rule_fixed_cost_to_moving) .OR. &
             (distance_standard_deduction>stopping_rule_standard_deduction) .OR. &
             (distance_inheritance_amount>stopping_rule_inheritance_amount) .OR. &
-            (distance_size_homelessness>stopping_rule_size_homelessness) .OR. &
+            ((freeze_to_three_block==0) .AND. (distance_size_homelessness>stopping_rule_size_homelessness)) .OR. &
             (distance_average_labor_income>stopping_rule_average_labor_income) .OR. &
             (distance_median_income>stopping_rule_median_income) .OR. &
             (distance_average_net_wealth>stopping_rule_average_net_wealth) .OR. &
@@ -40753,8 +40860,8 @@
             (distance_kappa_uem>stopping_rule_kappa_uem) .OR. &
             (distance_rho_m>stopping_rule_rho_m) .OR. &
             (distance_rho_d>stopping_rule_rho_d) .OR. &
-            (distance_mu_homeless>stopping_rule_mu_homeless) .OR. &
-            (distance_weight_on_child>stopping_rule_weight_on_child) .OR. &
+            ((freeze_to_three_block==0) .AND. (distance_mu_homeless>stopping_rule_mu_homeless)) .OR. &
+            ((freeze_to_three_block==0) .AND. (distance_weight_on_child>stopping_rule_weight_on_child)) .OR. &
             (distance_penalty_child_addicted>stopping_rule_penalty_child_addicted) .OR. &
             (distance_penalty_child_homeless>stopping_rule_penalty_child_homeless) .OR. &
             (distance_labor_income_tax_rate>stopping_rule_labor_income_tax_rate) .OR. &
@@ -40865,6 +40972,11 @@
                 weight_on_child_saved=weight_on_child
                 weight_on_child=0.d0
 
+                ! SAYS WHICH SLOT THE CHILD PENALTY COMES FROM AND GOES BACK TO.
+                ! Without it this solve reads the benchmark's penalty and leaves
+                ! its own behind for the benchmark to pick up.
+                solving_omega_counterfactual=1
+
                 call solve_value_function_and_policy_functions(1)
                 call converge_to_stationary_equilibrium(1)
                 call stationary_equilibrium_statistics(1)
@@ -40880,6 +40992,8 @@
                 call govt_revenues_calc(1)
 
                 drug_users_without_child=model_total_drug_users(1)
+
+                solving_omega_counterfactual=0
 
                 weight_on_child=weight_on_child_saved
 
