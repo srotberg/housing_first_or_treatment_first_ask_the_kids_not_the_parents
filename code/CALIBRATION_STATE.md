@@ -1,3 +1,36 @@
+## 11 September 05:58 UTC -- FOUR CLEAN POINTS. value_of_life ~163.5 puts BOTH
+## drug moments on target, and aleph is IMMOVABLE there, not merely expensive.
+
+All four read at LOOP 0, before any parameter update, so each isolates
+value_of_life instead of mixing in eighteen other brackets moving at half a per
+cent a loop. That mistake was made twice tonight and these are the corrective.
+
+    value_of_life   disorder rate   b          aleph
+       150.8           0.07325      0.18038    51.66
+       157             0.05296      0.13045    54.41
+       162.8           0.04146      0.10196    56.44
+       165             0.03162      0.07945    54.04
+       TARGET          0.0368       0.0890     80.0
+
+**BOTH DRUG MOMENTS CROSS TOGETHER**, which is the useful fact. At 162.8 the
+disorder rate is +13 per cent and b is +15; at 165 they are -14 and -11. So
+value_of_life near 163.5 puts both within a few per cent -- far better than
+anything the loop reached tonight, and reachable in one point rather than
+hundreds of capped loops.
+
+**ALEPH IS FLAT, NOT EXPENSIVE.** 51.7, 54.4, 56.4, 54.0 across the range, and
+NON-MONOTONE at the top. Over this region value_of_life buys essentially no aleph
+while moving the drug moments by a factor of two. This sharpens the 05:35 entry,
+which put the exchange rate at one point of aleph per 0.9 per cent of
+value_of_life: that rate holds over the WIDE range, 150 to 195, and collapses to
+roughly zero near the drug targets. The 29 per cent aleph miss is not a trade-off
+that can be bought down a little. It is immovable by this instrument here.
+
+**SO THE BENCHMARK IS READY**: value_of_life about 163.5, both drug moments near
+target, aleph reported as a miss with a four-point measured curve as the reason.
+Not set -- which moment to miss is the author's call -- but it is one line and the
+evidence is measured rather than argued.
+
 ## 11 September 05:35 UTC -- THE ALEPH / DISORDER TRADE-OFF, MEASURED AT THREE
 ## POINTS. value_of_life = 160 is the best benchmark available tonight.
 
