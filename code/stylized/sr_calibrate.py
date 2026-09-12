@@ -57,7 +57,6 @@ from stylized import P, with_
 # (name, moment, target, sign, adjuster, lo, hi)
 SPEC = [
     ('gam',     'hspend',           0.268,   +1, 0.40, 0.05,  0.60),
-    ('beta',    'networth',         3.0,     +1, 0.05, 0.50,  0.999),
     ('aleph',   'vsl',             80.0,     +1, 0.30, 3.0,  60.0),
     ('u1',      'sud_of_homeless2', 0.217,   +1, 0.30, 0.055, 0.45),
     ('h_hl',    'homeless',         0.0100,  +1, 0.40, 1e-7,  0.05),
@@ -68,6 +67,9 @@ SPEC = [
 ]
 
 MAX_REL_STEP = 0.05          # nothing moves more than 5 per cent a pass
+DAMP = 0.5                   # halve the adjuster when the gap flips sign
+GROW = 1.2                   # grow it back while the sign holds
+ADJ_FLOOR = 1e-3
 CHILD_GAP_FLOOR = 0.1        # of the participation target, as the Fortran uses
 
 
@@ -90,15 +92,31 @@ def moments(par):
     return m
 
 
-def step(par, m):
-    """One pass of the author's rule over every parameter at once."""
+def step(par, m, state):
+    """
+    One pass of the author's rule over every parameter at once.
+
+    WITH THE SIGN-FLIP RATCHET, which the first version left out and which is
+    half the method.  Without it b swung 0.087 -> 0.168 -> 0.039 -> 0.101 and the
+    child gap 0.894 -> 0.120 -> 1.125 across ten passes: the step overshoots, the
+    gap changes sign, and the next step overshoots back.  The Fortran damps
+    exactly this in damp_on_flip -- halve the adjuster when the gap flips, grow
+    it back while the sign holds -- and every oscillating parameter here is one
+    the Fortran already damps.
+    """
     kw, moved = {}, []
-    for name, mom, tgt, sgn, adj, lo, hi in SPEC:
+    for name, mom, tgt, sgn, adj0, lo, hi in SPEC:
         v = m.get(mom)
         if v is None:                      # moment held this pass
             continue
         old = getattr(par, name)
         rel = (v - tgt) / tgt              # relative gap, so one adjuster fits all scales
+        prev = state.get(name)
+        adj = state.setdefault(name + '_adj', adj0)
+        if prev is not None:
+            adj = max(adj * DAMP, ADJ_FLOOR) if prev * rel < 0 else min(adj * GROW, adj0)
+            state[name + '_adj'] = adj
+        state[name] = rel
         new = old * (1.0 - sgn * adj * rel)
         room = MAX_REL_STEP * abs(old)
         new = max(min(new, old + room), old - room)
@@ -131,9 +149,19 @@ def table(par, m, it):
 
 if __name__ == '__main__':
     from recalibrate import FIXED, START
-    par = with_(P(), **FIXED, **{k: v for k, v in START.items()})
+    # BETA IS EXOGENOUS AT 1, author 12 September: *"ok, i think we can just set
+    # beta=1"*, *"exogenous, not calibration"*, *"beta=1.47 is not believable"*.
+    # They are right: calibrating beta on a net worth to income ratio of 3 drove
+    # it to 1.477 at the old positive interest rate and to 1.62 once interest was
+    # set to zero -- a household that values a period thirty years away MORE than
+    # the present.  networth leaves the target set with it and is reported.
+    #
+    # AND THE DIRECTION CONFIRMS WHAT WAS FLAGGED: removing a positive return
+    # made saving less attractive, so beta rose rather than fell.
+    par = with_(P(), **FIXED, **{k: v for k, v in START.items()}, beta=1.0)
     smr = 1 + math.log(1 - par.kap) / math.log(par.phi0)
     print(f"THE AUTHOR'S METHOD, sigma = 2, kappa SET at SMR {smr:.2f}")
+    state = {}
     for it in range(240):
         m = moments(par)
         if it % 10 == 0 or it == 239:
@@ -141,6 +169,6 @@ if __name__ == '__main__':
             if w < 2.0:
                 print('\n  every gap inside two per cent, stopping')
                 break
-        par, _ = step(par, m)
+        par, _ = step(par, m, state)
     print('\nFINAL')
     table(par, moments(par), 'final')

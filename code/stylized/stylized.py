@@ -327,7 +327,17 @@ class P:
     # its own life.
     beta_ann = 0.995
     beta  = 0.995 ** 30
-    R     = 1.0 / (0.995 ** 30)
+    # ZERO INTEREST ON SAVING, author 12 September: *"i suppose we can assume
+    # that savings get 0 interest instead of negative interest"*, *"what you save
+    # is just kept for the next period with no interest"*.  R was 1/0.995^30 =
+    # 1.1621, a POSITIVE thirty-year return; at R = 1 a unit saved is a unit
+    # carried, and beta alone drives saving.
+    #
+    # NOTE THE DIRECTION.  The author expected beta to come out LOWER.  Removing
+    # a positive return makes saving less attractive, so beta has to work HARDER
+    # for the same stock and should come out HIGHER.  Measured rather than
+    # argued: see the run in the commit that made this change.
+    R     = 1.0
     years = 30.0      # years in a period, used to put the VSL in annual units
     phi0  = 0.91      # survival over one period, clean: ages 26 to 55, SSA
     # THE SOURCE AND THE AGES BOTH SAID SOMETHING THE PACKAGE DOES NOT HOLD.
