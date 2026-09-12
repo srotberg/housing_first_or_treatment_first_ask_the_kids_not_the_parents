@@ -209,7 +209,18 @@ MAX_REL_STEP = 0.005
 # h_hl ALSO GETS A FASTER STEP.  It is the parameter with the furthest to travel
 # in relative terms and the one whose moment is least coupled to the others, so
 # it can afford to move faster than the block that fights over the drug margin.
-PER_PARAM_STEP = {'omega': 0.0025, 'th': 0.001, 'h_hl': 0.02}
+# KAPPA AT 0.1 PER CENT, on the author's instruction of 12 September.  It had
+# NO entry here, so it ran at the global 0.5 -- five times theta's rate and
+# twice omega_c's -- for no reason beyond having been overlooked when those two
+# were slowed.  Measured before the change, its mean net move was 0.043 per cent
+# an iteration, already inside the new cap, because the sign-flip ratchet keeps
+# halving its adjuster toward the floor while r_use alternates.  So this binds
+# only on the occasional large step and is not expected to stop kappa's drift:
+# the correlation over 28 interior-branch tables puts kap NINTH of eleven on
+# r_use and with the WRONG SIGN, +0.108 where the mechanism says negative, with
+# pi_base at -0.726 and b at +0.566.  What it does buy is a readable table --
+# r_use has been swinging plus or minus 32 points reading to reading.
+PER_PARAM_STEP = {'omega': 0.0025, 'th': 0.001, 'h_hl': 0.02, 'kap': 0.001}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
 ADJ_FLOOR = 1e-3
@@ -473,9 +484,9 @@ if __name__ == '__main__':
     smr = 1 + math.log(1 - par.kap) / math.log(par.phi0)
     print(f"THE AUTHOR'S METHOD, sigma = 2, kappa SET at SMR {smr:.2f}")
     state = {}
-    for it in range(2500):
+    for it in range(50000):
         m = moments(par, it)
-        if it % 50 == 0 or it == 2499:
+        if it % 50 == 0 or it == 49999:
             w = table(par, m, it)
             if w < 2.0:
                 print('\n  every gap inside two per cent, stopping')
