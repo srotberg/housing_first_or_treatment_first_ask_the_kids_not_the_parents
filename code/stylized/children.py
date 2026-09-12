@@ -312,7 +312,6 @@ def solve_del_d(par, target=RATIO_TARGET, lo=0.0, hi=0.95, iters=44):
 
 import os as _os
 _HERE = _os.path.dirname(_os.path.abspath(__file__))
-_BASE = with_(P(), **json.load(open(_os.path.join(_HERE, 'calibrated.json'))))
 # SET EXTERNALLY, NOT SOLVED, exactly as the quantitative model now sets them.
 # These are earnings penalties, and the transmission ratios are not reachable
 # through an income channel at any earnings penalty the evidence supports: the
@@ -328,8 +327,30 @@ DEL_D = 0.24
 DEL_H = 0.31
 
 # What the externally set penalties actually deliver, for the untargeted table.
-RATIO_D_MODEL = ratio_d(_BASE)
-RATIO_H_MODEL = ratio_h(_BASE)
+#
+# LAZY, AND AT THE CALLER'S VECTOR.  These were computed AT IMPORT from
+# `_BASE = with_(P(), **json.load(open('calibrated.json')))`, so importing this
+# module solved a model straight off disk.  That file is dated 27 August and is
+# a DIFFERENT MODEL: it carries lam = 106.8, the susceptibility parameter from
+# before the hazard was flattened and which this module's own docstring records
+# as a rejected channel; aleph 2.86 against a current 10.62; and no pi_base,
+# omega, kap, u0 or u1 at all.  It is gitignored, so its contents are not even
+# in the repository.
+#
+# transition.py imports this module, so the whole cohort chain inherited that
+# vector.  A transition table was reported to the author on numbers computed
+# there rather than at the vector passed in, and had to be withdrawn.
+#
+# Both were computed at import and read by NOTHING -- no other module in the
+# package references either name -- so the stale solve was pure dead weight.
+# They are functions now, they take the vector they are asked about, and
+# importing this module no longer solves anything.
+def ratio_d_model(par):
+    return ratio_d(par)
+
+
+def ratio_h_model(par):
+    return ratio_h(par)
 
 
 def tab_children(par, pV=1.0):

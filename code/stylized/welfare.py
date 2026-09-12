@@ -81,15 +81,41 @@ def v1_pop(par, policy, pV):
 # weight on consumption carried in K. Two periods, the second reached only on
 # survival.
 def periods(par):
+    """The LOG-utility coefficient, kept only so cev_log_old can reproduce what
+    this module used to return.  It is wrong twice at sigma = 2: it is the log
+    formula, and it uses 1 - gam - th where the consumption share is
+    phi_c = (1 - gam)(1 - th).  Those differ by gam*th, 17 per cent at the
+    calibrated values."""
     return (1.0 - par.gam - par.th) * (1.0 + par.beta * par.phi0)
 
 
-def cev(par, dv):
+def cev(par, dv, v_level=None, pi=0.0):
     """
     Consumption equivalent of a difference in lifetime value: the proportional
     change in consumption, in every period and state, worth the same as dv.
 
-    A compensating variation in PERMANENT INCOME was tried first and abandoned.
+    v_level IS REQUIRED AT SIGMA != 1 AND THE FUNCTION RAISES WITHOUT IT.  Under
+    CRRA, scaling consumption by (1+lam) scales BOTH bundles by (1+lam)^phi_c --
+    X_P and X_K each carry c/xi with exponent phi_c -- so every
+    X^(1-sigma)/(1-sigma) term scales by (1+lam)^(phi_c(1-sigma)) while the
+    aleph terms do not move:
+
+        V(lam) = (1+lam)^(phi_c(1-sigma)) * U + A ,   U = V - A
+        lam    = (1 + dv/U)^(1/(phi_c(1-sigma))) - 1
+
+    The answer depends on the LEVEL of V through U, which the log formula never
+    did, and aleph at 10.6 per period is most of V.  So a caller that has only a
+    difference cannot get a right answer, and RAISING is the point: this
+    function returned a silently wrong number -- always too large, by an order
+    of magnitude at small differences and by two at large ones -- at seventeen
+    call sites for as long as sigma has been 2.  Measured, on identical dv:
+    1.52 against 16.37 per cent, 7.57 against 106.46, 15.11 against 296.03,
+    37.61 against 1906.47.
+
+    Verified against _flow itself in child_welfare.py: the scaling property
+    holds to 2.7e-16 and an applied lambda is recovered to 1e-14.
+
+    A COMPENSATING VARIATION IN PERMANENT INCOME was tried first and abandoned.
     The voucher is means tested at y_V, so V1 jumps down as income crosses the
     threshold and a household just above it is worse off than one just below.
     V1 is therefore not monotone in y, and bisecting on income lands on spurious
@@ -98,6 +124,26 @@ def cev(par, dv):
     of a means tested benefit and it stays in the model; it just cannot be used
     as a measuring rod.
     """
+    if abs(par.sigma - 1.0) < 1e-12:
+        return np.exp(dv / periods(par)) - 1.0
+    if v_level is None:
+        raise TypeError(
+            "cev() needs the LEVEL of lifetime value as well as the difference "
+            "when sigma != 1: the CRRA answer depends on where you start. "
+            "Pass v_level (and pi, the onset probability, if it is not zero). "
+            "See child_welfare.cev for the derivation and its verification.")
+    phc = (1.0 - par.gam) * (1.0 - par.th)
+    e = phc * (1.0 - par.sigma)
+    s0 = par.phi0
+    s1 = par.phi0 * (1.0 - par.kap)
+    A = par.aleph * (1.0 + par.beta * ((1.0 - pi) * s0 + pi * s1))
+    U = np.asarray(v_level, dtype=float) - A
+    return np.power(1.0 + np.asarray(dv, dtype=float) / U, 1.0 / e) - 1.0
+
+
+def cev_log_old(par, dv):
+    """What this module returned before the sigma = 2 correction, kept so the
+    two can be compared rather than the old numbers quietly vanishing."""
     return np.exp(dv / periods(par)) - 1.0
 
 
