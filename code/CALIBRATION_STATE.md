@@ -1,3 +1,94 @@
+## 12 September 21:00 UTC -- CORRECTION TO THE ENTRY BELOW: THE TIME IS THE COLD
+## DISTRIBUTION, NOT THE SECANT, AND LOOPS 3 ONWARD SHOULD BE FAR CHEAPER.
+
+The 20:25 entry below measured the diagnostic flood correctly and then reached
+for the wrong explanation of the slowness. Both halves are corrected here rather
+than edited there, because the reasoning is the useful part.
+
+**WHAT THE STACK SAMPLES ACTUALLY SHOW.** Four samples of the live process over
+forty minutes, and it moves through distinct phases in order:
+
+    54 min   solve_value_function_and_policy_functions   21251  (loop 1's own pass)
+    70 min   calibrating_model                           41831 -> 41888
+    80 min   converge_to_stationary_equilibrium          41870
+    90 min   stationary_equilibrium_statistics           12141
+
+That is a loop advancing normally, not a stuck one, and it puts most of the hour
+in `converge_to_stationary_equilibrium` rather than in the value function.
+
+**SO THE SECANT HYPOTHESIS IN THE ENTRY BELOW IS NOT THE LEADING ONE.** It was
+built on a single stack sample that happened to catch four threads in `secant`,
+and on the fact that the filtered spam is one line per secant iteration. Both
+observations are real; the inference was too quick, and it is exactly the
+"conclusion drawn from a contaminated trace" the one-parameter rule exists to
+stop. The flood is still worth explaining -- 98 MB a minute at its peak, 447 MB
+by 70 minutes -- but it is a symptom to account for, not the established cause of
+the wall clock.
+
+**WHAT THE SOURCE SAYS, AND IT CHANGES THE PROJECTION.** At line 41839 the
+distribution is re-initialised cold whenever `loop_count < 3`:
+
+    if (((loop_count<3) .OR. (re_do_simulation_with_fixed_parameters==1)...
+        call initialize_feasible_distribution(1)
+
+and the comment above `converge_to_stationary_equilibrium` states the cost of a
+cold start in terms: **"the 655 sweeps a loop takes are what reaching 2e-4
+costs"**, against a warm start that reuses the previous loop's converged
+distribution, and "forty eight minutes without a single completed pass, against
+seven for a calibration loop" for the cold case.
+
+So loops 1 and 2 are COLD BY CONSTRUCTION and expensive by construction, and from
+loop 3 the distribution is warm-started off `distribution_stationary`. **The
+hour-plus that loop 1 has taken is very largely a one-time cost, and the brief's
+four to five minutes a loop is a statement about warm loops.** The six-day
+projection in the entry below is therefore wrong, and it was wrong because it
+annualised a cold loop.
+
+**WHAT THAT MEANS FOR THE DECISION.** Nothing needs to be put to the author yet
+and nothing needs restarting. The run is left alone, exactly as the standing rule
+says, and the real per-loop cost is READ OFF LOOPS 3, 4 AND 5 rather than
+estimated off loop 1. If warm loops come in near five minutes the brief's
+arithmetic stands; if they come in near thirty, that is the point at which the
+author has a choice to make, and it will be backed by a measurement instead of an
+extrapolation from the most expensive loop in the run.
+
+**WHY THE LOG LOOKS FROZEN, AND IT IS NOT EVIDENCE OF ANYTHING.** `worker_
+e12c3d0657.log` has been at 53248 bytes -- exactly thirteen 4096-byte blocks --
+for over an hour. Both stages buffer: the solver writes to a pipe, and the
+`grep -a -Ev "$SPAM"` that filters it is writing to a FILE rather than a
+terminal, so grep block-buffers its own output too. Under 4 KB of non-spam has
+been produced in an hour, which is what a distribution iteration and a statistics
+sweep look like. **A frozen log in this pipeline is not a stalled run and must
+not be read as one.** The instruments that do work are `/proc/<pid>/io` for the
+write rate and `gdb -p` for the phase.
+
+### THE PARALLEL SESSION CHANGED THE QUANTITATIVE SOURCE UNDER THIS RUN
+
+Commit `c345ce3c`, "The child gap: the stylized model's bug DID carry across".
+It is a real fix and it lands on omega_c, which is what this pass is calibrating:
+the omega_c counterfactual's own distribution could leave on the 200-sweep cap,
+and the update stepped omega_c on it anyway as though it had converged. The flag
+was already computed and printed and simply never tested. It now gates the step,
+and the HELD message distinguishes a capped counterfactual from an empty one.
+
+**THIS RUN'S BINARY PREDATES THAT FIX**, so whatever omega_c does in this run is
+ungated. Two things follow and both are settled:
+
+  - The merge was safe to take while the solve runs. `MODEL_HASH` is captured at
+    `run_one_point.sh` line 674, BEFORE the build and before the solve, so the
+    point this run writes will be stamped with the source it was actually built
+    from. The incoming commit does not touch `run_one_point.sh`, which is the one
+    file that must not change under a running shell.
+  - Whether this run's omega_c numbers are usable is decided by ITS OWN LOG, not
+    by argument: the old code prints `omega counterfactual: ... capped = 0/1`
+    every loop. If loop 1 reports `capped = 0` the fix would not have bitten and
+    the run stands. That line has not been reached yet.
+
+A merge rather than a rebase, because a running solve keeps
+`calibration_state.dat` and `newborn_parent_share.dat` permanently modified and
+git will not rebase over unstaged changes. Stashing them is the one thing that
+could actually corrupt the run in flight.
+
 ## 12 September 20:25 UTC -- LOOP 1 HAS RUN AN HOUR AND THE SOLVER IS WRITING
 ## 98 MB A MINUTE OF FILTERED DIAGNOSTICS. Read this before reading the gaps.
 
