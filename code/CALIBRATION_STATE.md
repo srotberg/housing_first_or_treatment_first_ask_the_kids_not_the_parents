@@ -1,3 +1,45 @@
+## 12 September 23:20 UTC -- CORRECTION TO THE ENTRY BELOW. THE "HOLE" WAS MY
+## SWEEP RESOLUTION, NOT THE MODEL. THE REAL OBSTRUCTION IS A TWO-TARGET
+## CONFLICT ALONG ONE CURVE.
+
+The entry below says the target `dshare = 0.141` lies in a hole between the
+interior drug branch and the corner branch and is unattainable. That was read
+off sweeps with a step of 5e-4 in `th`. At 5e-5, at `kap = 0.130`, the descent
+is smooth and passes straight through the target:
+
+    th 0.180500   dshare 0.1634   r_use 0.7041
+    th 0.180450   dshare 0.1548   r_use 0.5937
+    th 0.180400   dshare 0.1330   r_use 0.4121
+
+**There is no hole above the corner.** The only genuine discontinuity is the
+last one, from about 0.133 to exactly 0.0000, where the population crosses to
+the corner branch. Everything above it is continuous and `dshare = 0.141` is
+attainable.
+
+**WHAT IS ACTUALLY BINDING IS THAT `th` MOVES BOTH TARGETED MOMENTS TOGETHER.**
+Read the same three rows as a curve in (`dshare`, `r_use`) space:
+
+    r_use = 0.74 sits at dshare about 0.162
+    dshare = 0.141 sits at r_use about 0.47
+
+The two targets are 0.141 and 0.740 and they are not both on the curve. `kap`
+shifts the curve -- that is why lowering it from 0.166 to 0.114 moved the
+attainable range -- but it does not rotate it enough to put both targets on it
+at once. The live run is now trading them off exactly as that implies: at
+iteration 2600, `dshare` +4.5 per cent against `r_use` -22.3; at 2700, +6.2
+against -16.9. Opposite signs, every pass.
+
+So the run is not failing. It is finding the best compromise available to two
+instruments that are close to collinear over this region, and the compromise is
+median gap 3.7 per cent with eight of eleven brackets inside ten. Whether to
+accept it, drop one of the two moments, or find a third instrument that
+separates them is the author's call, and the measurement above is what that call
+should be made on.
+
+**`delta_d` HAS LANDED.** The child SUD odds ratio reads 2.0010, 2.0086, 2.0045
+at iterations 2400, 2600 and 2700, at `delta_d` about 0.570 -- the target the
+author asked for, and the value the rationed-TF transition was measured at.
+
 ## 12 September 22:50 UTC -- FIRING: NO QUANTITATIVE LOOP STARTED, AND THE REASON
 ## IS THAT ALL FOUR CORES ARE THE AUTHOR'S STYLIZED CALIBRATION.
 
