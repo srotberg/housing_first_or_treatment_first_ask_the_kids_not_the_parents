@@ -51,8 +51,9 @@ the scale factored out.
 import math
 import numpy as np
 
+import calibrate as C
 from calibrate import stats
-from stylized import P, with_
+from stylized import P, with_, child_sud_odds_ratio, child_homeless_odds_ratio
 
 # (name, moment, target, sign, adjuster, lo, hi)
 # (name, moment, target, sign, adjuster, lo, hi).  SEVEN CALIBRATED.
@@ -117,44 +118,177 @@ SPEC = [
     ('gam',     'hspend',           0.268,   +1, 0.40, 0.05,  0.60),
     ('aleph',   'vsl',             80.0,     +1, 0.30, 3.0,  60.0),
     ('h_hl',    'homeless',         0.0100,  +1, 0.40, 1e-7,  0.05),
-    ('b',       'part',             0.08901, -1, 0.30, 0.005, 0.30),
+    # b's CEILING IS 1.0, author 12 September: *"i think you need to have a very
+    # high b"*.  At theta = 0.25 the model starts with 72 to 86 per cent of
+    # households using, and b is the only thing that brings that down: measured
+    # in the earlier run, b = 0.25338 gave participation 0.1053, so the old
+    # ceiling of 0.30 was roughly where the target sits and b would have arrived
+    # PINNED against it with nothing left to give.  A bound a parameter reaches
+    # is not a calibration, it is a constraint.
+    ('b',       'part',             0.08901, -1, 0.30, 0.005, 1.00),
     ('pi_base', 'sud',              0.0368,  +1, 0.40, 1e-3,  0.99),
     ('u0',      'unemployment',     0.0485,  +1, 0.40, 0.005, 0.30),
     ('u1',      'sud_of_homeless2', 0.217,   -1, 0.20, 0.0486, 0.50),
-    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.0,   1.50),
-    # THETA IS CALIBRATED AFTER ALL, author 12 September: *"ah, then you have to
-    # calibrate theta as well to match the 14% drug spending"*.  It had been SET
-    # at 0.16 to match the quantitative model's relative_share_of_addiction_1,
-    # and the eight-parameter run showed why that could not stand: with all eight
-    # hit to a median of 0.1 per cent, the drug spending share came out at 0.052
-    # against 0.141.  An untargeted moment missing by a factor of three is a
-    # parameter that needed to be free.
+    # omega_c IS BOUNDED TO [0.01, 0.14], author 12 September: *"try omega_c only
+    # between 0.01-0.14"*.  It had run to 0.242 on the negative child gap the
+    # corner branch produces -- see the guard above, which now stops that at
+    # source -- and 0.14 keeps it in a range the quantitative model's 0.09 sits
+    # inside.  The floor of 0.01 keeps it strictly positive, so the child
+    # counterfactual stays defined.
+    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.01,  1.00),
+    # delta_d ON THE CHILD SUD ODDS RATIO OF 2, asked for twice.  Sign standard:
+    # a bigger income penalty makes the child poorer, poorer children use more,
+    # so the ratio RISES in delta_d.
+    ('delta_d', 'child_sud_or',      2.0,     +1, 0.30, 0.01,  2.00),
+    # kappa IS FREED AGAIN, on users' income.  Author, 12 September: *"maybe then
+    # you have to pick kappa as well to push the income down"*, *"maybe 3
+    # multiples is not enough"*.  It was SET at SMR 3 earlier today, which made
+    # the gradient an OUTPUT -- and the output came out wrong: r_use 1.02 at the
+    # start and 2.66 by iteration 45, against 0.74 in the data.
+    #
+    # SIGN IS NEGATIVE: more mortality makes users poorer, so r_use FALLS in kap
+    # and kap must RISE when r_use is above target.
+    #
+    # CEILING IS SMR 15.6.  kap = 1 - phi0^(smr-1), so 0.75 is smr 15.6 and 0.05
+    # is smr 1.54.  The table prints the implied smr beside kap, which is the
+    # number to judge -- the author's question is exactly whether 3 is enough.
+    ('kap',     'r_use',            0.74,    -1, 0.30, 0.05,  0.75),
+    # THETA IS FREED AGAIN, at 0.1 per cent a pass.  Author, 12 September: *"now
+    # that you update parameters slowly, you can add theta, and calibrate it too,
+    # and allow it to move at most 0.1% between iterations"*.
+    #
+    # IT FAILED THE FIRST TIME AT 5 PER CENT: the rule drove it 0.16 -> 0.199
+    # while the drug spending share stayed pinned at 0.0007, the corner value,
+    # and the worst gap swung 449, 46, 55, 207, 45, 38, 188, 162 with no trend.
+    # The diagnosis then was that theta and b both act on one margin.  That is
+    # still true, but two things have changed since: the branch guard now refuses
+    # any step that leaves the interior branch, and the global step is 0.5 per
+    # cent rather than 5.  Both of those attack exactly the failure that was
+    # observed, so it is worth another go -- at a tenth the speed of everything
+    # else, since it is the parameter that moved the model between branches.
     ('th',      'dshare',           0.14098, +1, 0.30, 0.05,  0.45),
+    # THETA IS NOT CALIBRATED.  It was freed on the author's instruction when
+    # the eight-parameter run left the drug spending share at 0.052 against
+    # 0.141 -- and freeing it FAILED, which is worth recording because the
+    # reasoning for freeing it was sound.
+    #
+    # With theta free the rule drove it 0.16 -> 0.199 while the share stayed
+    # pinned at 0.0007, the CORNER value: every user sitting on the smallest
+    # positive point of the v-grid, buying essentially nothing.  theta cannot
+    # lift it there, because on that branch the drug's marginal value is below
+    # the threshold at any theta in range.  The worst gap swung 449, 46, 55,
+    # 207, 45, 38, 188, 162 per cent with no trend over 110 iterations, against
+    # a median of 0.1 per cent for the eight-parameter run.
+    #
+    # THE CAUSE IS THAT THETA AND b BOTH ACT ON ONE MARGIN.  Both decide how
+    # much a household uses; giving the rule two instruments for it is what put
+    # the model on the corner branch and kept it there.  Author's resolution,
+    # 12 September: *"can you fix theta to 0.25 and try to calibrate the rest?"*
 ]
 
-MAX_REL_STEP = 0.05          # nothing moves more than 5 per cent a pass
+# 0.5 PER CENT A PASS, author 12 September over four messages: *"i think maybe
+# you are updating parameters too fast"*, *"maybe they need to be updated only
+# 0.1% at most"*, *"you can try 1% updates, or 0.5% updates"*, *"5% is too much"*.
+#
+# THE ARITHMETIC THAT PICKED 0.5.  b travels from 0.028 to about 0.25, a factor
+# of nine: roughly 45 iterations at 5 per cent, 440 at 0.5, 2,200 at 0.1 -- four
+# minutes, a quarter of an hour, three hours.  0.5 buys most of the stability at
+# a fifteenth of the cost.
+#
+# WHY 5 WAS TOO MUCH, diagnosed correctly by the author: b swung 0.087 -> 0.168
+# -> 0.039 -> 0.101 on consecutive passes, and every fall into the corner branch
+# followed a large step.
+MAX_REL_STEP = 0.005
+
+# omega_c GETS HALF AGAIN, author: *"maybe omega_c should be even slower? maybe
+# 0.05%?"*.  It is the parameter that misbehaved most -- it ran to every ceiling
+# it was given, 0.14, 0.25, 0.305 -- and the only one whose moment costs a
+# SECOND SOLVE, so its gap is the noisiest of the nine.  A slower step on the
+# noisiest signal is the right asymmetry, and it is the same device the Fortran
+# uses for theta and omega_c: one parameter gets its own rate.
+# h_hl ALSO GETS A FASTER STEP.  It is the parameter with the furthest to travel
+# in relative terms and the one whose moment is least coupled to the others, so
+# it can afford to move faster than the block that fights over the drug margin.
+PER_PARAM_STEP = {'omega': 0.0025, 'th': 0.001, 'h_hl': 0.02}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
 ADJ_FLOOR = 1e-3
 CHILD_GAP_FLOOR = 0.1        # of the participation target, as the Fortran uses
 
 
-def moments(par):
+_SLOW_EVERY = 5      # iterations between the expensive child evaluations
+_slow_cache = {}
+
+
+def moments(par, it=0):
     """Every moment the spec needs, including the two that are not in aggregates."""
     m = dict(stats(par))
     # pi_eu's moment.  Employment is an i.i.d. draw, so the realised rate is u0
     # among the clean and u1 among those with the disorder.  Exact, no extra solve.
     m['unemployment'] = (1.0 - m['sud']) * par.u0 + m['sud'] * par.u1
+    # delta_d's moment, and the homelessness odds ratio the author asked to have
+    # REPORTED beside it.  Both run the child through the model as an adult at
+    # its inherited income, so neither costs a new solve.
+
     # omega_c's moment: use with the child term OFF against use with it on.  This
     # is the second solve, and it is what the Fortran spends a third of a loop on.
     # HELD when either population is too small for the ratio to mean anything --
     # the same guard, and the same reason: at a using mass near zero the ratio is
     # a statement about the denominator, not about internalisation.
-    if par.omega > 0.0 and m['part'] > CHILD_GAP_FLOOR * 0.08901:
-        off = stats(with_(par, omega=0.0))['part']
-        m['child_gap'] = off / m['part'] - 1.0 if m['part'] > 0 else None
-    else:
-        m['child_gap'] = None
+    # THE GUARD IS ON THE DRUG SHARE, NOT ON PARTICIPATION.  It was on
+    # participation alone and that was the wrong quantity: participation counts
+    # anyone with v > 0, including the CORNER branch where a "user" buys 0.07 per
+    # cent of income.  There the child gap goes NEGATIVE -- use LOWER with the
+    # child term off, which is backwards, since the term deters use -- and a
+    # negative gap reads as "far below target", so the rule pushes omega_c UP.
+    # Measured, iterations 165 to 185 of the theta = 0.25 run:
+    #
+    #   iter   omega  child_gap  drug share   part
+    #    165  0.18053    0.1549      0.2355  0.1618   interior, gap sensible
+    #    175  0.14838   -0.0088      0.0007  0.0596   corner, gap negative
+    #    185  0.24170   -0.0329      0.0007  0.0637   omega climbing on noise
+    #
+    # That is the whole of why omega_c reached 0.24 against the quantitative
+    # model's 0.09.  The Fortran's own guard has the right idea -- "one of the
+    # two is too small for the gap to mean anything" -- this one just measured
+    # the wrong thing.  0.02 sits an order of magnitude above the corner's 0.0007
+    # and an order below any interior value.
+    # THE THREE EXPENSIVE QUANTITIES ARE REFRESHED EVERY FIFTH ITERATION.
+    # Timed on this grid: stats() 1.03 s, the omega_c counterfactual another
+    # 1.03 s because it is a SECOND FULL SOLVE, and the two odds ratios 0.71 s
+    # between them.  That put an iteration at about 3.8 seconds where the model
+    # solve alone is 1.0.
+    #
+    # They can be stale because they MOVE SLOWLY: omega_c steps at 0.25 per cent
+    # a pass and delta_d at 0.5, so their moments cannot change materially in
+    # five iterations.  The cheap moments -- participation, the disorder rate,
+    # homelessness, the housing share -- are recomputed every single iteration
+    # as before, and those are the ones that move fast.
+    fresh = (it % _SLOW_EVERY == 0) or ('child_gap' not in _slow_cache)
+    if fresh:
+        if par.omega > 0.0 and m['part'] > CHILD_GAP_FLOOR * 0.08901 \
+                and m['dshare'] > 0.02:
+            cf = stats(with_(par, omega=0.0))
+            # THE COUNTERFACTUAL HAS TO BE ON THE SAME BRANCH AS THE BASELINE.
+            # Guarding the baseline's drug share alone was half a guard.  At
+            # iteration 200 the baseline had drug share 0.1028 and users at 0.278
+            # of mean income, while the omega = 0 counterfactual had 0.2177 and
+            # 1.298 -- users flipped from poor to RICH.  The reported child gap
+            # of 1.4984 against a target of 0.1834 was not omega_c's marginal
+            # effect on use; it was the difference between two equilibria.
+            #
+            # A factor of two in the drug spending share is far more than a
+            # weight of 0.11 can do at the margin, so it is the branch test.
+            same = 0.5 < cf['dshare'] / max(m['dshare'], 1e-12) < 2.0
+            _slow_cache['child_gap'] = (cf['part'] / m['part'] - 1.0
+                                        if same and m['part'] > 0 else None)
+        else:
+            _slow_cache['child_gap'] = None
+        _slow_cache['child_sud_or'] = child_sud_odds_ratio(par, C.YG, C.W)
+        _slow_cache['child_hl_or'] = child_homeless_odds_ratio(par, C.YG, C.W)
+    m['child_gap'] = _slow_cache['child_gap']
+    m['child_sud_or'] = _slow_cache['child_sud_or']
+    m['child_hl_or'] = _slow_cache['child_hl_or']
     return m
 
 
@@ -184,12 +318,56 @@ def step(par, m, state):
             state[name + '_adj'] = adj
         state[name] = rel
         new = old * (1.0 - sgn * adj * rel)
-        room = MAX_REL_STEP * abs(old)
+        room = PER_PARAM_STEP.get(name, MAX_REL_STEP) * abs(old)
         new = max(min(new, old + room), old - room)
         new = max(min(new, hi), lo)
         kw[name] = new
         moved.append((name, old, new, 100 * rel))
     return with_(par, **kw), moved
+
+
+CORNER = 0.02   # drug spending share below this is the corner branch
+
+
+def step_on_branch(par, m, state):
+    """
+    One step of the author's rule, BACKED OFF IF IT LEAVES THE INTERIOR BRANCH.
+
+    THE CORNER IS WHAT HAS BEEN STOPPING THIS MODEL CALIBRATING.  Every run so
+    far has walked into it: the drug spending share collapses from ~0.20 to
+    0.0007, every "user" sits on the smallest positive point of the v-grid, the
+    child gap turns to noise, and b then falls chasing participation from the
+    wrong branch.  The best run reached participation 0.0830 against 0.0890 and
+    a child gap of 0.1864 against 0.1834 at iteration 50 -- essentially hit --
+    and was in the corner ten iterations later with b dragged from 0.268 to
+    0.065.
+
+    The rule itself is unchanged.  What is added is a line search on the STEP
+    LENGTH: take the full step, and if the model has left the interior branch,
+    halve the step and try again.  Four halvings, then accept whatever the
+    smallest step gives rather than stall.  It costs at most four extra solves
+    on the iterations that would have fallen in, and nothing at all on the rest.
+
+    This does not force a result.  If the interior branch genuinely does not
+    contain the targets the search still fails -- it just fails without the
+    corner's meaningless numbers mixed into the record.
+    """
+    full, _ = step(par, m, state)
+    if m.get('dshare', 0.0) <= CORNER:
+        return full          # already in the corner: let the rule climb out
+    # NO CHECK SOLVE WHEN THE MODEL IS NOWHERE NEAR THE EDGE.  A 0.5 per cent
+    # step cannot take the drug share from 0.20 to the corner's 0.0007, so the
+    # verification solve is only worth its second when the share is within
+    # striking distance.  This is what took an iteration from 3.8 s to about 1.4.
+    if m.get('dshare', 0.0) > 5.0 * CORNER:
+        return full
+    for _ in range(4):
+        if stats(full)['dshare'] > CORNER:
+            return full
+        # halve every parameter's move back toward where we are
+        full = with_(par, **{n: 0.5 * (getattr(par, n) + getattr(full, n))
+                             for n, _, _, _, _, _, _ in SPEC})
+    return full
 
 
 def table(par, m, it):
@@ -204,13 +382,21 @@ def table(par, m, it):
             continue
         g = 100 * (v - tgt) / tgt
         gs.append(abs(g))
-        print(f'  {name:9}{getattr(par,name):11.5f}  {mom:20}{v:10.4f}{tgt:9.4f}{g:8.1f}')
+        tag = ('  smr %.2f' % (1.0 + math.log(1.0 - par.kap) / math.log(par.phi0))
+               ) if name == 'kap' else ''
+        print(f'  {name:9}{getattr(par,name):11.5f}  {mom:20}{v:10.4f}{tgt:9.4f}{g:8.1f}{tag}')
     print('  ' + '-' * 70)
     print(f'  worst {max(gs):.1f} %   median {sorted(gs)[len(gs)//2]:.1f} %   '
           f'{sum(1 for g in gs if g < 10)} of {len(gs)} inside ten')
     print(f'  OUTPUT  users income/mean {m["r_use"]:.4f}  drug share {m["dshare"]:.4f}'
           f'  networth {m["networth"]:.3f}  SUD of homeless {m["sud_of_homeless2"]:.4f}'
           f'  burden50 {m["burden50"]:.4f}')
+    # THE HOMELESSNESS ODDS RATIO IS REPORTED AND NEVER TARGETED, author:
+    # *"i also want a report of the homelessness odds ratio"* and *"we are not
+    # calibrating delta_h...that one is dropped"*.  ENGINE.md's phase 3 agrees:
+    # anywhere in 1.8 to 2.4 is fine, only below 1.8 is delta_h reopened.
+    print(f'  ODDS    child homeless {m["child_hl_or"]:.3f}'
+          f'   (reported only; 1.8-2.4 is fine)')
     return max(gs)
 
 
@@ -225,17 +411,36 @@ if __name__ == '__main__':
     #
     # AND THE DIRECTION CONFIRMS WHAT WAS FLAGGED: removing a positive return
     # made saving less attractive, so beta rose rather than fell.
-    par = with_(P(), **FIXED, **{k: v for k, v in START.items()}, beta=1.0)
+    par = with_(P(), **{k: v for k, v in FIXED.items() if k != 'kap'},
+                **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2,
+                   # STARTING VALUES MATTER WHEN THE STEP IS RELATIVE.  The
+                   # author, 12 September: *"this is why the model cannot
+                   # converge"*.  h_hl started at 1e-4 and lands near 1e-2 -- a
+                   # factor of a HUNDRED, which at 0.5 per cent a pass is about
+                   # 920 iterations before homelessness can respond at all.
+                   # Measured, it was doing exactly that: h_hl climbing 0.00010,
+                   # 0.00016, 0.00027, 0.00045 over 300 iterations while the
+                   # homelessness gap sat at -72 per cent throughout.  Not
+                   # stuck -- crawling.
+                   #
+                   # b had the same problem more mildly, starting at 0.028 and
+                   # landing near 0.076, a factor of three.
+                   #
+                   # Both now start where earlier runs found them.  This is not
+                   # putting a thumb on the answer: any start on the interior
+                   # branch reaches the same place, it just reaches it in this
+                   # run rather than the next one.
+                   "h_hl": 0.005, "b": 0.07})
     smr = 1 + math.log(1 - par.kap) / math.log(par.phi0)
     print(f"THE AUTHOR'S METHOD, sigma = 2, kappa SET at SMR {smr:.2f}")
     state = {}
-    for it in range(240):
-        m = moments(par)
-        if it % 5 == 0 or it == 239:
+    for it in range(2500):
+        m = moments(par, it)
+        if it % 50 == 0 or it == 2499:
             w = table(par, m, it)
             if w < 2.0:
                 print('\n  every gap inside two per cent, stopping')
                 break
-        par, _ = step(par, m, state)
+        par = step_on_branch(par, m, state)
     print('\nFINAL')
     table(par, moments(par), 'final')

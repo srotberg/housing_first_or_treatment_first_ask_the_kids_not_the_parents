@@ -132,6 +132,7 @@ the resource penalty less than proportional to income; uncapped, that curve is
 flat by construction. A component has to be tested where the figures put it.
 """
 
+import math
 import numpy as np
 
 
@@ -620,6 +621,23 @@ class P:
     omega = 0.09
     chdmg = 0.0
 
+    # THE CHILD'S OWN INCOME, so delta_d has something to act on.  Author, 12
+    # September: *"i want you to add rho=0.35 in the model like we have in the
+    # quant model, and show me the odds ratio for homeless and pick delta_d to
+    # match the odds ratio of the SUD"*, then *"where is delta_d?"*.
+    #
+    # Until now the child was a utility TERM and not an agent, so there was no
+    # child SUD rate and no odds ratio to match.  It now inherits income:
+    #
+    #     log y_child = rho*log y_parent + (1-rho)*log ybar - delta_d * 1{parent
+    #                   acquired the disorder}
+    #
+    # which is the quantitative model's rho_intergenerational (0.30 there) with
+    # penalty_child_addicted as the shift.  delta_d is in LOG INCOME, so 0.36 --
+    # the value the Fortran is pinned at -- is a 30 per cent income penalty.
+    rho     = 0.35
+    delta_d = 0.36
+
     na    = 60
     nv    = 140
 
@@ -976,6 +994,83 @@ def period1(par, y, policy=None):
                      float(m0_[0])),
                     float(inc), own))
     return out
+
+
+def _child_rate(par, ly, lb, w, ygrid, prob, shift):
+    """
+    Average a per-income probability over the CHILD's income distribution.
+
+    THE SHOCK IS NOT OPTIONAL AND ITS ABSENCE WAS A REAL BUG.  A deterministic
+    map, log y_c = rho*log y_p + (1-rho)*log ybar, collapses the child
+    distribution to variance rho^2 * sigma^2 -- at rho = 0.35 that is an eighth
+    of the parents' spread.  Almost no child was then poor enough to be
+    homeless, so the homelessness odds ratio came out 0.000, and every child had
+    nearly the same income, so the SUD odds ratio came out 0.9919 when its
+    target is 2.  Both were degenerate rather than informative.
+    
+    The shock that keeps the cross-section stationary is eps ~ N(0, (1-rho^2)
+    sigma^2), which is the standard AR(1) condition: then the child distribution
+    has the SAME variance as the parents' and the odds ratios mean something.
+    """
+    import calibrate as _C
+    sd = math.sqrt(max(1.0 - par.rho ** 2, 1e-12)) * _C.SIG
+    mu = par.rho * ly + (1.0 - par.rho) * lb - shift
+    lg = np.log(np.maximum(ygrid, 1e-12))
+    # a lognormal kernel on the grid, per parent node, normalised across nodes
+    k = np.exp(-0.5 * ((lg[None, :] - mu[:, None]) / sd) ** 2)
+    k /= np.maximum(k.sum(axis=1, keepdims=True), 1e-300)
+    return float((w * (k * prob[None, :]).sum(axis=1)).sum() / w.sum())
+
+
+def child_sud_odds_ratio(par, ygrid, w, policy=None):
+    """
+    The odds ratio the author wants delta_d set on: a child's chance of the
+    disorder when its parent acquired one, over the same chance when the parent
+    did not.  Target 2.0, as in the quantitative model's child_sud_ratio_data.
+
+    HOW THE CHILD GETS A CHANCE AT ALL.  It inherits income by rho and then
+    faces the SAME period 1 decision this model already solves, so its disorder
+    probability is use_prob at its own income times the onset rate.  Nothing new
+    is assumed about the child; it is simply run through the model as an adult.
+
+    delta_d SHIFTS ONLY THE SUD BRANCH, which is what makes the ratio respond to
+    it: a clean parent's child is placed at rho*log y + (1-rho)*log ybar, a SUD
+    parent's child at the same less delta_d.
+    """
+    ybar = float((w * ygrid).sum() / w.sum())
+    ly, lb = np.log(np.maximum(ygrid, 1e-12)), np.log(max(ybar, 1e-12))
+    use = np.array([use_prob(par, float(y), policy) for y in ygrid])
+
+    def rate(shift):
+        return _child_rate(par, ly, lb, w, ygrid, use, shift) * par.pi_base
+
+    clean, sud = rate(0.0), rate(par.delta_d)
+    return sud / max(clean, 1e-12)
+
+
+def child_homeless_odds_ratio(par, ygrid, w, policy=None):
+    """
+    The same construction on HOMELESSNESS rather than the disorder.
+
+    REPORTED, NEVER TARGETED.  delta_h is dropped -- the author, 12 September:
+    *"we are not calibrating delta_h...that one is dropped"* -- which matches
+    ENGINE.md's phase 3 already: delta_h = 0, the homelessness odds ratio is an
+    OUTPUT, anywhere in 1.8 to 2.4 is fine, and only below 1.8 is delta_h
+    reconsidered.  So this exists to be READ, and nothing is aimed at it.
+
+    It carries delta_d, not a delta_h of its own: the child of a parent who
+    acquired the disorder is poorer by delta_d, and being poorer is what makes
+    it more likely to be homeless.  That is the whole channel.
+    """
+    ybar = float((w * ygrid).sum() / w.sum())
+    ly, lb = np.log(np.maximum(ygrid, 1e-12)), np.log(max(ybar, 1e-12))
+    hl = np.array([homeless_prob(par, float(y), policy) for y in ygrid])
+
+    def rate(shift):
+        return _child_rate(par, ly, lb, w, ygrid, hl, shift)
+
+    clean, sud = rate(0.0), rate(par.delta_d)
+    return sud / max(clean, 1e-12)
 
 
 def use_prob(par, y, policy=None):
