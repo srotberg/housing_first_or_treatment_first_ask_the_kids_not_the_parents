@@ -1,3 +1,155 @@
+## 12 September 21:30 UTC -- labor_income_tax_rate = 0 IS A 100 PER CENT TAX, NOT
+## NO TAX. IT ZEROED LABOUR SUPPLY AND EVERY MOMENT IN THE RUN FOLLOWS FROM THAT.
+## THIS IS THE SESSION'S FINDING. Read it before anything below.
+
+**THE PARAMETER IS NOT A TAX RATE. IT IS THE RETENTION SCALE OF AN HSV/BENABOU
+TAX FUNCTION**, and the file calls it a rate. Line 25320:
+
+    wage_income_tax_paid_1 = max( taxable_income
+                                  - labor_income_tax_rate * taxable_income**curvature , 0 )
+
+with `curvature_of_labor_income_taxes = 0.85`. So the object is the standard
+`T(y) = y - lambda*y^kappa`, and `labor_income_tax_rate` IS LAMBDA -- the share
+of income the household KEEPS, not the share the government takes. That is why
+its calibrated value is 0.78 and its declaration is 0.75, neither of which is a
+believable marginal tax rate, and it is why nobody questioned the number.
+
+**SETTING IT TO ZERO THEREFORE SETS THE TAX TO 100 PER CENT OF ALL TAXABLE
+INCOME.** T(y) = y - 0 = y. The household keeps the personal exemption and not
+one cent above it. The instruction was to remove labour income taxes and the
+change implemented the exact opposite of it.
+
+**AND THE FIRST ORDER CONDITION GOES TO ZERO WITH IT**, which is what actually
+breaks the solve. Line 25555, the marginal value of an hour worked:
+
+    MU_2 = MU_2 * ( curvature * (labor_income_tax_rate + increase) *
+                    max_gross_wage_income * taxable_income**(curvature-1) )
+                  / (1 + consumption_tax)
+
+That bracket is d/dh of the retained term `lambda*y^kappa`, so at lambda = 0 it
+is identically zero at every state with positive taxable income. **Working has no
+marginal return anywhere in the state space.** The labour supply secant then never
+sees a sign change, runs to its floor, and returns the corner.
+
+### WHAT THE RUN ACTUALLY REPORTED, and every line of it is this one cause
+
+    MOMENT omega_l  labour supply / total hours   model = 7.4505806e-09   target = 0.47
+
+7.45e-09 is 2^-27: a bisection that has halved twenty-seven times and hit its
+floor. **Every one of the twenty-five prior runs on disk reports omega_l between
+0.29 and 0.43. This run is seven orders of magnitude below all of them.**
+
+With nobody working, the rest is forced:
+
+    model_fraction_homeless          0.8745  against 0.0116     +7439 per cent
+    b, total drug users              0.3030  against 0.0890      +240
+    y_u, income of drug users        0.2541  against 0.7400       -66
+    emp_homeless                     0.9450  against 0.4600      +105
+    tau_u, treatment take up         0.0000  against 0.2450      -100
+    theta, drug spending share      -1.0000  -- the empty-population sentinel
+    aleph, value of life / income    1.5543  against 80
+
+Eighty-seven per cent of households are on the street because no household has
+labour income to pay rent with. It is not a housing result and it must not be
+read as one.
+
+**AND IT IS WHY omega_c COULD NOT BE CALIBRATED AT ALL**, which is the thing this
+pass exists to do. Every loop:
+
+    omega HELD: baseline users 0.30464 and users with the child term off 0.00000
+              : one of the two is too small for the gap to mean anything
+
+`drug_users_without_child` is EXACTLY zero on all sixteen loops, so the child use
+gap has no denominator, omega_c never steps, and `distance_weight_on_child` stays
+pinned at 1 -- which keeps the do-while term live for ever. Sixteen loops of
+compute moved `addiction_scalar_1` and nothing else that was asked for.
+
+### THE ISOLATION IS CLEAN, so this is not an inference from a trace
+
+The best recent control is `worker_792f1b26ae.log`, 26 loops, omega_l = 0.4319.
+Both runs hand over the SAME 89 names and only twelve values differ, of which
+nine are calibrated parameters that moved during search. The deliberate changes
+are exactly three:
+
+    adjust_taxes            1        -> 0
+    labor_income_tax_rate   0.78202  -> 0
+    max_food_cost           0.04150  -> 0
+
+`kappa_phi_d_level` and `weight_on_child` do NOT appear in the diff: the control
+already ran at 3.0 and 0.09. So the tax removal and the food stamp removal are
+the whole of the deliberate difference, and only one of them can zero a marginal
+condition.
+
+### REMOVING THE TAX IS NOT REACHABLE FROM THE VECTOR. THIS IS THE AUTHOR'S CALL.
+
+`T(y) = y - lambda*y^kappa` is identically zero only when **lambda = 1 AND
+kappa = 1**. `curvature_of_labor_income_taxes` is fixed at 0.85 in the source, is
+NOT in either vector, and has no handover case, so no vector can switch the tax
+off. The options, with their arithmetic:
+
+  - **lambda = 1, kappa = 0.85 (vector only).** T(y) = y - y^0.85, which is
+    NEGATIVE for y < 1 and is clamped to zero by the `max(...,0)`. So: zero
+    labour income tax for every household with taxable income below 1.0, and a
+    mild progressive tax above it. Reachable today, and much closer to the
+    intent than anything else that is.
+  - **lambda = 1, kappa = 1 (needs a source edit).** The true removal, and a
+    model edit, so it needs the author's words and it resets the archive.
+  - **lambda back to 0.78202.** Taxes not removed at all; the known-healthy
+    economy the control ran in.
+
+**A SECOND, SMALLER DEFECT FOUND ON THE WAY, and it predates today.** The level
+clamps the tax at zero with `max(...,0)` and the derivative in MU_2 does not, so
+wherever the clamp binds -- any household whose taxable income makes
+`y - lambda*y^kappa` negative -- the first order condition is being solved against
+a marginal tax the household does not actually pay. At lambda = 0.78 that region
+is small; at lambda = 1 it is everybody below y = 1. Whoever sets lambda = 1
+should fix the derivative in the same change.
+
+**THE CLASS OF BUG IS ALREADY IN TRANSITION_LESSONS SECTION 7** and this is a
+second instance of it. The row reads: the drug first order condition was scaled
+wrongly, "the condition was then negative at every point of its bracket, the
+bisection never saw a sign change, and every household the risk term applied to
+abstained completely." Identical shape, different margin: a first order condition
+whose scale is destroyed, a bisection that converges to a corner, and a complete
+set of moments that look like economics. Section 7's own rule is the remedy --
+**where the model replaces a search with a first order condition for speed, the
+two must be checked against each other at least once at a real state.**
+
+### THE RUN IS STOPPED
+
+Sixteen loops, about seven and a half minutes each, which is the normal cost and
+NOT the hour-a-loop the 20:25 entry feared -- that entry was wrong for a separate
+reason recorded below. It is stopped under the standing exception: it is provably
+in a state that cannot produce a usable point, on two counts at once -- omega_c
+held on every loop, and labour supply at 2^-27.
+
+It was NOT relaunched, because the relaunch needs a decision on lambda that is
+the author's, and because the environment declined the process commands needed to
+confirm the old solver had actually exited. ENGINE.md is explicit that a killed
+`run_one_point.sh` leaves `./hftf` holding the flock, and that the next launch
+then blocks for ever on "another point is running in this checkout". Launching
+without being able to check that is how a whole firing gets lost.
+
+### AND A PROCESS LESSON THAT COST TWO HOURS OF BLINDNESS
+
+**NEVER `git add -f` THE LIVE WORKER LOG AND THEN REBASE OR MERGE.** The pipeline
+is `./hftf | grep -v SPAM | head -c ... > worker_<tag>.log`, and `head` holds that
+file open. A git checkout of that path REPLACES THE INODE, so `head` goes on
+writing to an unlinked file and the on-disk log freezes at whatever git restored.
+That is exactly what happened here: the log sat at 53248 bytes -- thirteen 4096
+byte blocks, which reads like clean block buffering -- for two hours, while the
+run was completing sixteen loops into an inode with no directory entry. Two
+diagnoses were built on that frozen log and both were wrong.
+
+It was recovered in full, 3.2 MB and 26239 lines, by reading the still-open
+descriptor:
+
+    cat /proc/<head pid>/fd/1 > recovered.log
+
+which works only while the process is alive. **Commit a COPY under a different
+name, never the live path.** And when a log looks frozen, check
+`ls -l /proc/<pid>/fd/1` for "(deleted)" before believing anything about buffering.
+
 ## 12 September 21:00 UTC -- CORRECTION TO THE ENTRY BELOW: THE TIME IS THE COLD
 ## DISTRIBUTION, NOT THE SECANT, AND LOOPS 3 ONWARD SHOULD BE FAR CHEAPER.
 

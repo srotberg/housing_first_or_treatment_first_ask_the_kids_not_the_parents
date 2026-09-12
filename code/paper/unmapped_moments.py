@@ -28,10 +28,13 @@ ROWS = [
      re.compile(r'^\s*MOMENT y_u\s+income of drug users\s+model=\s*(\S+)\s+target=\s*(\S+)')),
     ('kappa_ued',    'unemployment given SUD',
      re.compile(r'^\s*MOMENT kappa_ued\s+unemployment given SUD\s+model=\s*(\S+)\s+target=\s*(\S+)')),
+    # EITHER SPELLING. These two print as UNTARGETED in some configurations and
+    # as a MOMENT line in others, and a reader that knows only one of the two
+    # reports "not printed yet" for a moment the run printed every loop.
     ('sud_homeless', 'SUD share of the homeless',
-     re.compile(r'^\s*UNTARGETED SUD share of the homeless\s+model=\s*(\S+)\s+observed=\s*(\S+)')),
+     re.compile(r'^\s*(?:UNTARGETED|MOMENT sud_homeless)\s+SUD share of the homeless\s+model=\s*(\S+)\s+(?:target|observed)=\s*(\S+)')),
     ('emp_homeless', 'employed share of the homeless',
-     re.compile(r'^\s*UNTARGETED employed share of the homeless\s+model=\s*(\S+)\s+observed=\s*(\S+)')),
+     re.compile(r'^\s*(?:UNTARGETED employed share of the homeless|MOMENT emp_homeless\s+employed share of homeless)\s+model=\s*(\S+)\s+(?:target|observed)=\s*(\S+)')),
 ]
 
 
