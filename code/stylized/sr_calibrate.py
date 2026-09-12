@@ -206,7 +206,10 @@ MAX_REL_STEP = 0.005
 # SECOND SOLVE, so its gap is the noisiest of the nine.  A slower step on the
 # noisiest signal is the right asymmetry, and it is the same device the Fortran
 # uses for theta and omega_c: one parameter gets its own rate.
-PER_PARAM_STEP = {'omega': 0.0025, 'th': 0.001}
+# h_hl ALSO GETS A FASTER STEP.  It is the parameter with the furthest to travel
+# in relative terms and the one whose moment is least coupled to the others, so
+# it can afford to move faster than the block that fights over the drug margin.
+PER_PARAM_STEP = {'omega': 0.0025, 'th': 0.001, 'h_hl': 0.02}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
 ADJ_FLOOR = 1e-3
@@ -265,8 +268,20 @@ def moments(par, it=0):
     if fresh:
         if par.omega > 0.0 and m['part'] > CHILD_GAP_FLOOR * 0.08901 \
                 and m['dshare'] > 0.02:
-            off = stats(with_(par, omega=0.0))['part']
-            _slow_cache['child_gap'] = off / m['part'] - 1.0 if m['part'] > 0 else None
+            cf = stats(with_(par, omega=0.0))
+            # THE COUNTERFACTUAL HAS TO BE ON THE SAME BRANCH AS THE BASELINE.
+            # Guarding the baseline's drug share alone was half a guard.  At
+            # iteration 200 the baseline had drug share 0.1028 and users at 0.278
+            # of mean income, while the omega = 0 counterfactual had 0.2177 and
+            # 1.298 -- users flipped from poor to RICH.  The reported child gap
+            # of 1.4984 against a target of 0.1834 was not omega_c's marginal
+            # effect on use; it was the difference between two equilibria.
+            #
+            # A factor of two in the drug spending share is far more than a
+            # weight of 0.11 can do at the margin, so it is the branch test.
+            same = 0.5 < cf['dshare'] / max(m['dshare'], 1e-12) < 2.0
+            _slow_cache['child_gap'] = (cf['part'] / m['part'] - 1.0
+                                        if same and m['part'] > 0 else None)
         else:
             _slow_cache['child_gap'] = None
         _slow_cache['child_sud_or'] = child_sud_odds_ratio(par, C.YG, C.W)
@@ -397,7 +412,25 @@ if __name__ == '__main__':
     # AND THE DIRECTION CONFIRMS WHAT WAS FLAGGED: removing a positive return
     # made saving less attractive, so beta rose rather than fell.
     par = with_(P(), **{k: v for k, v in FIXED.items() if k != 'kap'},
-                **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2})
+                **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2,
+                   # STARTING VALUES MATTER WHEN THE STEP IS RELATIVE.  The
+                   # author, 12 September: *"this is why the model cannot
+                   # converge"*.  h_hl started at 1e-4 and lands near 1e-2 -- a
+                   # factor of a HUNDRED, which at 0.5 per cent a pass is about
+                   # 920 iterations before homelessness can respond at all.
+                   # Measured, it was doing exactly that: h_hl climbing 0.00010,
+                   # 0.00016, 0.00027, 0.00045 over 300 iterations while the
+                   # homelessness gap sat at -72 per cent throughout.  Not
+                   # stuck -- crawling.
+                   #
+                   # b had the same problem more mildly, starting at 0.028 and
+                   # landing near 0.076, a factor of three.
+                   #
+                   # Both now start where earlier runs found them.  This is not
+                   # putting a thumb on the answer: any start on the interior
+                   # branch reaches the same place, it just reaches it in this
+                   # run rather than the next one.
+                   "h_hl": 0.005, "b": 0.07})
     smr = 1 + math.log(1 - par.kap) / math.log(par.phi0)
     print(f"THE AUTHOR'S METHOD, sigma = 2, kappa SET at SMR {smr:.2f}")
     state = {}
