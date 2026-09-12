@@ -37,7 +37,26 @@
         ! intended: money_cost_of_treatment and discount_factor_impatient have
         ! adjusters declared and never used, so nothing was held and nothing is
         ! freed, and relative_share_of_addiction is theta.
-        integer, parameter :: freeze_to_three_block=0
+        ! BACK TO 1 ON 12 September, THE AUTHOR: "You need a new strategy".
+        ! STAGE 1 OF A STAGED RELEASE, replacing the all-at-once release that
+        ! destabilised the model. The evidence is this session's own history:
+        !
+        !     live parameters   result
+        !          3            aleph -1.1%, lambda_d +2.0%, b +11.9%, h_1 -0.7%
+        !                       stable and close
+        !         20            b diverges to +200 per cent, everything follows
+        !
+        ! Nineteen adjusters were released in one step and b has had no stable
+        ! equilibrium since. Releasing them in small groups instead identifies
+        ! WHICH group destabilises b; releasing all twenty told us only that
+        ! something does.
+        !
+        ! This also switches off the three brackets wired on 11 September --
+        ! kappa_phi_d_level on y_u, multiple_find_if_addicted on sud_homeless and
+        ! newborn_endowment on h_share1 -- because each multiplies
+        ! (1-freeze_to_three_block). That is intended: stage 1 is the original
+        ! three instruments and nothing else. They come back in a later stage.
+        integer, parameter :: freeze_to_three_block=1
 
         ! THETA IS HELD INDEPENDENTLY OF THE THREE-BLOCK SWITCH. The author,
         ! 11 September: *"I think we can hold theta constant in the full
