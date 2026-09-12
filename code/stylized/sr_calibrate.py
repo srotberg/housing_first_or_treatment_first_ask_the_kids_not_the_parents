@@ -439,7 +439,32 @@ def step(par, m, state):
     return with_(par, **kw), moved
 
 
-CORNER = 0.02   # drug spending share below this is the corner branch
+# THE THRESHOLD IS MEASURED, NOT CHOSEN.  It was 0.02, and at 0.02 it
+# misclassified four of the sixty-eight tables the 12 September run produced.
+# Every drug spending share that run reported, sorted:
+#
+#   corner    0.0000 (x16)  0.0196 0.0198 0.0199 0.0200 0.0202
+#             0.0367 0.0383 0.0397 0.0432
+#                    <-- nothing at all between 0.0432 and 0.1381 -->
+#   interior  0.1381 0.1409 0.1473 ... 0.2071 0.2147
+#
+# The two branches were separated by an interval 0.095 wide with nothing in it,
+# so any threshold inside it classified all sixty-eight correctly and 0.10 is
+# the middle of it.
+#
+# THE INTERVAL IS SPARSE, NOT EMPTY, and it took fifty passes of the next run to
+# show it: iteration 50 of sr_run_231918.log reads a drug share of 0.0546, with
+# the income of users at 0.2229, which is the corner branch beyond any doubt.
+# So do not read the gap as a property of the model -- it is where the corner
+# branch is merely RARE -- and do not narrow the threshold back toward it on the
+# strength of a finite sample.  0.10 holds that pass correctly; 0.05 would not
+# have.  At 0.02 the four passes at 0.0367 to 0.0432 read as interior
+# and fed about -74 per cent into BOTH th and kap -- iteration 3300 is one, and
+# iterations 2200 and 2400 are two more.  That is the single largest source of
+# the +/- 28 point swing r_use showed over the run, and it is exactly the cost
+# the comment in moments() describes: the corner does not merely waste
+# iterations, it undoes converged ones.
+CORNER = 0.10   # drug spending share below this is the corner branch
 
 
 def step_on_branch(par, m, state):
@@ -585,8 +610,19 @@ if __name__ == '__main__':
     #
     # AND THE DIRECTION CONFIRMS WHAT WAS FLAGGED: removing a positive return
     # made saving less attractive, so beta rose rather than fell.
-    par = with_(P(), **{k: v for k, v in FIXED.items() if k != 'kap'},
-                **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2,
+    # SEEDED FROM ITERATION 3400 of sr_run_224426.log, the best point that run
+    # reached: median gap 1.8 per cent, ten of eleven brackets inside ten, with
+    # the income of users at +8.3 and the drug spending share at +5.8 TOGETHER,
+    # and the child SUD odds ratio exact at 2.0023.  The one row outside ten is
+    # the child gap at -36.2, which is what this run is for.  Seeding is not
+    # putting a thumb on the answer -- every start on the interior branch has
+    # reached the same region -- it is starting this run where the last one got
+    # to instead of walking the same three thousand passes again.
+    SEED = dict(gam=0.43813, aleph=10.98104, h_hl=0.00969, b=0.06063,
+                pi_base=0.41372, u0=0.04824, u1=0.05508, omega=0.00905,
+                delta_d=0.57074, kap=0.10589, th=0.15242)
+    _start = {**{k: v for k, v in FIXED.items() if k != 'kap'},
+              **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2,
                    # A STARTING VALUE AGAIN, not a pin: delta_d is back in SPEC
                    # and is stepped, from the 0.24 the author pinned it at.
                    "delta_d": 0.24,
@@ -638,7 +674,9 @@ if __name__ == '__main__':
                    # putting a thumb on the answer: any start on the interior
                    # branch reaches the same place, it just reaches it in this
                    # run rather than the next one.
-                   "h_hl": 0.005, "b": 0.07})
+                 "h_hl": 0.005, "b": 0.07}}
+    _start.update(SEED)                       # SEED WINS: it is applied last
+    par = with_(P(), **_start)
     smr = 1 + math.log(1 - par.kap) / math.log(par.phi0)
     print(f"THE AUTHOR'S METHOD, sigma = 2, kappa SET at SMR {smr:.2f}")
     state = {}
