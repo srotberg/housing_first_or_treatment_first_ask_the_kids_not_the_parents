@@ -82,7 +82,25 @@
         ! relative_share_of_addiction_adjuster, which is declared and never read.
         ! That distinction is why theta ran live for a day while being reported
         ! held.
-        integer, parameter :: hold_theta=0
+        ! HELD AGAIN, 12 September, on the author's "I also think we need to set
+        ! theta to 0.16. And pin it".  This reverses the release made earlier
+        ! the same day on their own instruction, and the reason is the drug
+        ! block: theta sets the ABSTENTION CORNER along with b -- the static
+        ! split buys nothing when x <= b*(w_c/w_v) -- so a moving theta moves
+        ! the corner under b's feet while b's bracket is trying to find it.
+        ! With kappa_phi_d_level and omega_c already pinned, this leaves
+        ! addiction_scalar_1 and addiction_onset_base as the only things acting
+        ! on the drug block, which is the point.
+        !
+        ! 0.16 is the author's number and sits between the model's own settled
+        ! 0.2672 and the 0.14098 target its moment is scored against.  It is a
+        ! choice, not a measurement, and the paper must say so where it appears.
+        !
+        ! Setting this to 1 is the complete pin and needs nothing else: it
+        ! zeroes relative_share_of_addiction_adj at 3308 and drops the
+        ! distance_relative_share_of_addiction_1 term from the do-while at
+        ! 41313, so no orphaned distance is left behind.
+        integer, parameter :: hold_theta=1
 
         integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
