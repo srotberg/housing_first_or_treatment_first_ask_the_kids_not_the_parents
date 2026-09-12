@@ -159,7 +159,26 @@ def moments(par):
     # HELD when either population is too small for the ratio to mean anything --
     # the same guard, and the same reason: at a using mass near zero the ratio is
     # a statement about the denominator, not about internalisation.
-    if par.omega > 0.0 and m['part'] > CHILD_GAP_FLOOR * 0.08901:
+    # THE GUARD IS ON THE DRUG SHARE, NOT ON PARTICIPATION.  It was on
+    # participation alone and that was the wrong quantity: participation counts
+    # anyone with v > 0, including the CORNER branch where a "user" buys 0.07 per
+    # cent of income.  There the child gap goes NEGATIVE -- use LOWER with the
+    # child term off, which is backwards, since the term deters use -- and a
+    # negative gap reads as "far below target", so the rule pushes omega_c UP.
+    # Measured, iterations 165 to 185 of the theta = 0.25 run:
+    #
+    #   iter   omega  child_gap  drug share   part
+    #    165  0.18053    0.1549      0.2355  0.1618   interior, gap sensible
+    #    175  0.14838   -0.0088      0.0007  0.0596   corner, gap negative
+    #    185  0.24170   -0.0329      0.0007  0.0637   omega climbing on noise
+    #
+    # That is the whole of why omega_c reached 0.24 against the quantitative
+    # model's 0.09.  The Fortran's own guard has the right idea -- "one of the
+    # two is too small for the gap to mean anything" -- this one just measured
+    # the wrong thing.  0.02 sits an order of magnitude above the corner's 0.0007
+    # and an order below any interior value.
+    if par.omega > 0.0 and m['part'] > CHILD_GAP_FLOOR * 0.08901 \
+            and m['dshare'] > 0.02:
         off = stats(with_(par, omega=0.0))['part']
         m['child_gap'] = off / m['part'] - 1.0 if m['part'] > 0 else None
     else:
