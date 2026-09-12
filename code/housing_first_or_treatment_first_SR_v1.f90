@@ -4441,7 +4441,18 @@
         ! THE BOUNDS ARE THE LITERATURE'S. The author: "There are more studies thag
         ! find anywhere between 2-9", which widens the six-to-ten of Hjorthoj et al.
         ! (2023) that the hand-set 8.0 came from.
-        real(8) :: kappa_phi_d_level_adjuster=(1-freeze_to_three_block)*(2.d0)
+        ! NO LONGER TIED TO THE FREEZE, 12 September. The author: "i think you
+        ! need to include kappa_phi_d". It was (1-freeze_to_three_block)*2.0,
+        ! which is zero under stage 1, so the bracket never fired and y_u drifted
+        ! unsteered from 0.2706 to 0.3489 over five loops.
+        !
+        ! This makes the first block SEVEN moments: h_1, h_2, b, lambda_d, aleph,
+        ! omega_c and now y_u. Same one-line detachment already applied to
+        ! weight_on_child_adjuster for the same reason.
+        !
+        ! The half-a-per-cent-a-loop cap still comes from plain cap_step, so the
+        ! author's "not more than 0.5% per iteration" continues to hold.
+        real(8) :: kappa_phi_d_level_adjuster=2.d0
         real(8) :: distance_kappa_phi_d_level=1
         real(8) :: stopping_rule_kappa_phi_d_level=10.d0**(-2)
         real(8), parameter :: kappa_phi_d_level_lo=2.d0
