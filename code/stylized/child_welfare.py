@@ -278,3 +278,48 @@ def solve_pv_scale(par, target_cov=None, iters=24, tol=1e-6):
         scale = min(scale * (1.0 + 0.6 * (cov0 / max(cov, 1e-12) - 1.0)),
                     1.0 / max(par.pV, 1e-12))
     return scale, cov0, cov
+
+
+def childhood_level(par, policy=None, pV=None):
+    """Expected childhood utility under a policy -- a LEVEL, not a difference.
+
+    THIS IS WHAT THE TRANSITION NEEDS AND DOES NOT HAVE.  transition.py's
+    _welfare is `expected lifetime value of a cohort born into the mixture p`,
+    and that value is V1 -- the ADULT value at the income the cohort is born
+    with.  A cohort's childhood is nowhere in it.
+
+    THE TIMING IS THE WHOLE POINT, and it is what makes the author's hypothesis
+    testable: *"when you remove vouchers for parents with Sud, it hurts some of
+    them and their kids, but it helps other kids since their parents don't use
+    and they have better life prospects... So even in transition welfare may
+    rise"*.  A cohort's childhood is lived under the policy in force while its
+    PARENTS were adults, and its own adulthood under the policy in force later:
+
+        welfare(cohort t) = childhood(policy at t-1) + adult(policy at t)
+
+    So the cohort the reform lands on pays in full -- its childhood is already
+    over, under the old regime, and conditionality costs it as an adult -- while
+    every cohort after it is raised by parents who used less.  That is the
+    asymmetry a static comparison sums away and a transition can separate.
+
+    Averaged over ALL children, using each household's realised allocation, so
+    a parent who uses contributes its using allocation and one who abstains its
+    abstaining one.  Compare with childhood_loss_within, which is the
+    counterfactual difference WITHIN a household and answers a different
+    question.
+    """
+    q = with_(par, policy=policy) if policy is not None else par
+    q = with_(q, pV=(par.pV if pV is None else pV))
+    tot = mass = 0.0
+    for j, y in enumerate(C.YG):
+        for p, gain, v, bu, bn, inc, _own in S.period1(q, y, q.policy):
+            if p <= 1e-14:
+                continue
+            uses = gain > 0.0
+            a, street, rent, _vs, small = (bu if uses else bn)
+            c = inc - rent - q.p_v * (v if uses else 0.0) - a
+            h = _hpick(q, street, small)
+            m = C.W[j] * p
+            tot += m * _childhood_u(q, c, h)
+            mass += m
+    return tot / mass
