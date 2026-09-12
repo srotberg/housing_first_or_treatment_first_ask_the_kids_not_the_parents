@@ -1471,6 +1471,10 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                 homeless=float(hl / max(mass, 1e-12)),
                 sud_of_homeless=float(hl_sud / max(hl, 1e-12)),
                 sud_of_homeless2=float(hl_sud / max(hl2, 1e-12)),
+                # THE TWO ACCUMULATORS BEHIND THAT RATIO, exported because it
+                # read exactly 0.0000 during a calibration run and a ratio of
+                # zero does not say WHICH of its parts vanished.
+                hl2=float(hl2), hl_sud=float(hl_sud),
                 housing_share=float(hcost / max(hinc, 1e-12)),
                 # SHARE OF THE HOUSED IN THE SMALLER RENTAL. The American
                 # Community Survey table B25042, occupied units, puts 13.2 per
