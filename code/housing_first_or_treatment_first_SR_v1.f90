@@ -3598,7 +3598,24 @@
         ! kappa_find_smi, not these multipliers on the probability of being
         ! employed. Both find probabilities are held fixed for now on the
         ! author's instruction, so those two moments are OUTPUTS this pass.
-        real(8) :: employment_multiplier_adjuster=0.d0
+        ! LIVE, AND AIMED AT THE SUD SHARE OF THE HOMELESS.  Author, 12
+        ! September: *"kappa_ued should be chosen to match the share of homeless
+        ! with SUD"*.  It was 0.d0 -- the channel was off entirely, with
+        ! multiple_of_probabilities_of_employment_if_addicted parked at its floor
+        ! of 1 -- and it used to be aimed at unemployment GIVEN a SUD.
+        !
+        ! TWO INSTRUMENTS CANNOT CHASE ONE MOMENT, so multiple_find_if_addicted
+        ! is retired in the same change: it held sud_homeless and was missing it
+        ! badly, 0.0814 against 0.217 while sitting at 28.54 in bounds of [1,100]
+        ! rather than on a bound, which is a weak instrument rather than a
+        ! constrained one.  The employment margin is the stronger channel.
+        !
+        ! WHAT THIS COSTS: kappa_ued, unemployment given a SUD, loses its
+        ! instrument and becomes an OUTPUT.  It was at 0.2755 against 0.1625,
+        ! already 70 per cent above target with this channel switched OFF, so
+        ! turning the channel on moves it further away.  That trade is the
+        ! author's and it is stated here rather than discovered later.
+        real(8) :: employment_multiplier_adjuster=5.d0*10.d0**(-1)
         real(8), parameter :: employment_multiplier_adjuster_start=2*10.d0**(0)
         real(8) :: previous_gap_employment_multiplier=0
         integer :: have_gap_employment_multiplier=0
@@ -5945,7 +5962,12 @@
         ! finding margin is unpenalised -- the addicted find work as easily as
         ! anyone -- so 1.0 is a genuine floor: if the moment is still above target
         ! there, no value of this parameter closes it.
-        real(8) :: multiple_find_adjuster=(1-freeze_to_three_block)*(2.d1)
+        ! RETIRED 12 September.  The employment multiplier takes sud_homeless on
+        ! the author's instruction, and two instruments cannot chase one moment.
+        ! Its distance is zeroed with it at 43264, which is the standing rule:
+        ! a bracket with a zero adjuster and a LIVE distance cannot converge and
+        ! the do-while has no cap to save it.
+        real(8) :: multiple_find_adjuster=0.d0
         real(8) :: distance_multiple_find=1
         real(8) :: stopping_rule_multiple_find=10.d0**(-2)
         real(8), parameter :: multiple_find_lo=1.d0
@@ -44163,8 +44185,15 @@
                     ! unemployment among those with the disorder rises in it.
                     write(*,*) "multiple_of_probabilities_of_employment_if_addicted=", &
                         multiple_of_probabilities_of_employment_if_addicted
+                    ! THE GAP IS sud_homeless NOW, NOT unemployment given a SUD.
+                    ! Sign: raising the multiplier costs the addicted more jobs,
+                    ! which makes them poorer and puts MORE of them on the street,
+                    ! so sud_homeless RISES in it.  The step is
+                    ! multiple - adjuster*(model - target), which is positive-going
+                    ! exactly when the model is BELOW target, the current case:
+                    ! 0.0814 against 0.217.
                     call damp_on_flip(employment_multiplier_adjuster,&
-                        model_fraction_addicted_and_unemployed(1)-unemployment_rate_sud_data,&
+                        model_fraction_homeless_and_addicted(1)-sud_share_of_homeless,&
                         previous_gap_employment_multiplier,have_gap_employment_multiplier,&
                         employment_multiplier_adjuster_start,damp_adjuster_floor)
                     write(*,*) "employment_multiplier_adjuster=", employment_multiplier_adjuster
@@ -44172,12 +44201,12 @@
                     multiple_of_probabilities_of_employment_if_addicted=&
                         max(min(multiple_of_probabilities_of_employment_if_addicted-&
                         employment_multiplier_adjuster*&
-                        (model_fraction_addicted_and_unemployed(1)-unemployment_rate_sud_data),&
+                        (model_fraction_homeless_and_addicted(1)-sud_share_of_homeless),&
                         20.d0),1.d0)
                     multiple_of_probabilities_of_employment_if_addicted=cap_step(multiple_of_probabilities_of_employment_if_addicted,cap_old_1)
                     ! A RETIRED BRACKET MUST RETIRE ITS DISTANCE TOO.
                     distance_employment_multiplier=merge(0.d0,&
-                        abs(model_fraction_addicted_and_unemployed(1)-unemployment_rate_sud_data),&
+                        abs(model_fraction_homeless_and_addicted(1)-sud_share_of_homeless),&
                         employment_multiplier_adjuster<=0.d0)
                     write(*,*) "multiple_of_probabilities_of_employment_if_addicted=", &
                         multiple_of_probabilities_of_employment_if_addicted
