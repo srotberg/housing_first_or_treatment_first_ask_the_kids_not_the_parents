@@ -3502,7 +3502,11 @@
         real(8) :: distance_voucher_probability
         real(8) :: stopping_rule_voucher_probability=10.d0**(-3)
 
-        real(8) :: separation_rate_adjuster=(1-freeze_to_three_block)*(1*10.d0**(-1))
+        ! RELEASED 12 September with beta, same instruction.  Was
+        ! (1-freeze_to_three_block)*(1e-1), zero under the stage-1 freeze, so the
+        ! unemployment rate sat at -13.5 per cent unmanaged.  Its do-while term is
+        ! released with it.
+        real(8) :: separation_rate_adjuster=1*10.d0**(-1)
         real(8), parameter :: separation_rate_adjuster_start=1*10.d0**(-1)
         real(8) :: previous_gap_separation_rate=0
         integer :: have_gap_separation_rate=0
@@ -3805,7 +3809,14 @@
         real(8) :: stopping_rule_discount_factor_impatient=10.d0**(-3)
         ! The target the author set for it.
         real(8), parameter :: bottom_half_wealth_share_data=0.025d0
-        real(8) :: discount_factor_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-3))
+        ! RELEASED 12 September on the author's "would you be able to include also
+        ! pi_eu? beta? tau_l?".  Was (1-freeze_to_three_block)*(5e-3), zero under
+        ! the stage-1 freeze, so beta sat at +5.7 per cent with nothing acting on
+        ! it.  The do-while term below is released with it: an adjuster that steps
+        ! a parameter whose distance cannot hold the loop open is only half a
+        ! release, which is the mistake made on mu_homeless, weight_on_child and
+        ! max_food_cost earlier in this session.
+        real(8) :: discount_factor_adjuster=5*10.d0**(-3)
         real(8) :: distance_discount_factor
         ! A RATIO OF THREE CANNOT BE HIT TO ONE PART IN THIRTY THOUSAND. The old
         ! tolerance of 1e-4 was written against a mortgage share between zero and
@@ -41230,7 +41241,7 @@
         end if
 
         do while((distance_rental_market(1)>stopping_rule_rental_market) .OR. &
-            ((freeze_to_three_block==0) .AND. (distance_discount_factor>stopping_rule_discount_factor)) .OR. &
+            (distance_discount_factor>stopping_rule_discount_factor) .OR. &
             ((freeze_to_three_block==0) .AND. (distance_discount_factor_on_child>stopping_rule_discount_factor_on_child)) .OR. &
             (distance_minimum_inheritance>stopping_rule_minimum_inheritance) .OR. &
             (distance_advantage_to_owning>stopping_rule_advantage_to_owning) .OR. &
@@ -41241,14 +41252,14 @@
             (distance_largest_house_size>stopping_rule_largest_house_size) .OR. &
             (distance_probability_of_becoming_addicted>&
              stopping_rule_probability_of_becoming_addicted) .OR. &
-            ((freeze_to_three_block==0) .AND. (distance_lambda_addiction>stopping_rule_lambda_addiction)) .OR. &
+            (distance_lambda_addiction>stopping_rule_lambda_addiction) .OR. &
             (distance_drug_market>stopping_rule_drug_market) .OR. &
             ((hold_theta==0) .AND. (distance_relative_share_of_addiction_1>stopping_rule_relative_share_of_addiction_1)) .OR. &
             (distance_addiction_scalar>stopping_rule_addiction_scalar) .OR. &
             (distance_value_of_life>stopping_rule_value_of_life) .OR. &
-            ((freeze_to_three_block==0) .AND. (distance_max_food_cost>stopping_rule_max_food_cost)) .OR. &
+            (distance_max_food_cost>stopping_rule_max_food_cost) .OR. &
             ((freeze_to_three_block==0) .AND. (distance_voucher_probability>stopping_rule_voucher_probability)) .OR. &
-            ((freeze_to_three_block==0) .AND. (distance_separation_rate>stopping_rule_separation_rate)) .OR. &
+            (distance_separation_rate>stopping_rule_separation_rate) .OR. &
             (distance_employment_multiplier>stopping_rule_employment_multiplier) .OR. &
             (distance_utility_cost_of_treatment>stopping_rule_utility_cost_of_treatment) .OR. &
             (distance_kappa_phi_d_level>stopping_rule_kappa_phi_d_level) .OR. &
@@ -41267,8 +41278,8 @@
             (distance_kappa_uem>stopping_rule_kappa_uem) .OR. &
             (distance_rho_m>stopping_rule_rho_m) .OR. &
             (distance_rho_d>stopping_rule_rho_d) .OR. &
-            ((freeze_to_three_block==0) .AND. (distance_mu_homeless>stopping_rule_mu_homeless)) .OR. &
-            ((freeze_to_three_block==0) .AND. (distance_weight_on_child>stopping_rule_weight_on_child)) .OR. &
+            (distance_mu_homeless>stopping_rule_mu_homeless) .OR. &
+            (distance_weight_on_child>stopping_rule_weight_on_child) .OR. &
             (distance_penalty_child_addicted>stopping_rule_penalty_child_addicted) .OR. &
             (distance_penalty_child_homeless>stopping_rule_penalty_child_homeless) .OR. &
             (distance_labor_income_tax_rate>stopping_rule_labor_income_tax_rate) .OR. &
