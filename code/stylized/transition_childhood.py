@@ -52,7 +52,7 @@ def path_with_childhood(par, policy, pV, p0, v1_base, w0, n=None):
 
     out, p = [], p0.copy()
     for t in range(1, n + 1):
-        adult = T._welfare(p, v1)
+        adult = T._welfare(p, v1, par)
         kid = kid_old if t == 1 else kid_new    # childhood is lived a period EARLIER
         total = adult + kid
         out.append(dict(cohort=t,
@@ -60,8 +60,8 @@ def path_with_childhood(par, policy, pV, p0, v1_base, w0, n=None):
                         total=float(total),
                         cev=float(cev(par, total - level0, level0)),
                         cev_adult_only=float(cev(par, adult - w0, w0)),
-                        homeless=T._outcome(p, hl), sud=T._outcome(p, sud)))
-        p = T._step(p, sud_b, ev_b) if t == 1 else T._step(p, sud, ev_s)
+                        homeless=T._outcome(p, hl, par), sud=T._outcome(p, sud, par)))
+        p = T._step(p, sud_b, ev_b, par) if t == 1 else T._step(p, sud, ev_s, par)
     return out, kid_old, kid_new, level0
 
 
@@ -75,7 +75,7 @@ def run(par=None, n=None):
         par = with_(P(), **kw)
 
     v1b, sudb, hlb, evb = T._policy_grids(par, T.BASE_POLICY, par.pV)
-    p0 = T._rest_point(sudb, T._hl_by_shift(par, T.BASE_POLICY, par.pV))
+    p0 = T._rest_point(sudb, T._hl_by_shift(par, T.BASE_POLICY, par.pV), par)
     w0 = T._welfare(p0, v1b)
 
     scale, cov0, cov = solve_pv_scale(par)

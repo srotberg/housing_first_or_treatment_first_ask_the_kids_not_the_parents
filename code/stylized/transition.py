@@ -36,6 +36,7 @@ Run:  python3 transition.py
 
 import json
 import os
+import math
 import numpy as np
 
 from stylized import P, with_, value1, use_prob, homeless_prob, terminal_homeless_prob
@@ -132,7 +133,7 @@ def _hl_by_shift(par, policy, pV):
     q = with_(par, policy=policy, pV=pV)
     return {float(s): np.clip(
         _solve_at(lambda y: terminal_homeless_prob(q, y, policy), s), 0.0, 1.0)
-        for s in _shifts()}
+        for s in _shifts(par)}
 
 
 def _bridge_hl_by_shift(par, new_policy, pv_new):
@@ -157,7 +158,7 @@ def _bridge_hl_by_shift(par, new_policy, pv_new):
                            for d, pd in ((1, pid), (0, 1.0 - pid)))
         return tot
 
-    return {float(s): np.clip(_solve_at(one, s), 0.0, 1.0) for s in _shifts()}
+    return {float(s): np.clip(_solve_at(one, s), 0.0, 1.0) for s in _shifts(par)}
 
 
 def _bridge_grids(par, new_policy, pv_new):
@@ -215,12 +216,33 @@ def _bridge_grids(par, new_policy, pv_new):
     return np.clip(sud, 0.0, 1.0), np.clip(ev, 0.0, 1.0)
 
 
-def _shifts():
-    return np.array([1.0, 1.0 - DEL_D, 1.0 - DEL_H,
-                     (1.0 - DEL_D) * (1.0 - DEL_H)])
+def _shifts(par=None):
+    """The four penalty types, as MULTIPLIERS on the child's income.
+
+    READS par.delta_d WHEN GIVEN ONE.  The author, 12 September: *"calibrate the
+    child's Sud penalty to match the Sud ratio"*.  Until now this used the
+    module constant DEL_D, so the transition's penalty mixture did not move when
+    the calibration moved the penalty: the cohort CEV read 1.773 per cent at
+    delta_d of 0.24, 0.40, 0.57 AND 0.75 while the child SUD odds ratio moved
+    1.36 to 2.47.  A transition table was reported on that and withdrawn.
+
+    THE TWO ARE IN DIFFERENT UNITS AND THE CONVERSION IS NOT OPTIONAL.
+    par.delta_d is a LOG income shift -- stylized.py sets
+    log y_child = rho log y_parent + (1-rho) log ybar - delta_d -- so it enters
+    as exp(-delta_d).  DEL_D is a FRACTIONAL cut and enters as (1 - DEL_D).
+    Substituting one for the other unconverted changes the penalty by 19 per
+    cent at the current values: 0.36 in logs is a 30.2 per cent cut, while 0.24
+    as a fraction is a 0.274 log shift.
+
+    delta_h is NOT a parameter -- the author dropped it -- so the homelessness
+    leg keeps the external DEL_H it has always had.
+    """
+    dd = DEL_D if par is None else 1.0 - math.exp(-par.delta_d)
+    return np.array([1.0, 1.0 - dd, 1.0 - DEL_H,
+                     (1.0 - dd) * (1.0 - DEL_H)])
 
 
-def _step(p, sud, hl):
+def _step(p, sud, hl, par=None):
     """One generation. p is the mixture over the four penalty types; the return
     is the mixture the CHILDREN of that cohort are born into.
 
@@ -228,7 +250,7 @@ def _step(p, sud, hl):
     is the same reduced form children.py uses: both are functions of the income
     the household was born with, and nothing else links them."""
     out = np.zeros(4)
-    for s, ps in zip(_shifts(), p):
+    for s, ps in zip(_shifts(par), p):
         if ps <= 0.0:
             continue
         d = _at(sud, s)
@@ -241,18 +263,22 @@ def _step(p, sud, hl):
     return out / out.sum()
 
 
-def _welfare(p, v1):
-    """Expected lifetime value of a cohort born into the mixture p."""
+def _welfare(p, v1, par=None):
+    """Expected lifetime value of a cohort born into the mixture p.
+
+    par is threaded through only so _shifts can read par.delta_d; omitting it
+    falls back to the module constant, which is what every caller did before
+    the penalty became a calibrated parameter."""
     return sum(ps * float((WW * _at(v1, s)).sum())
-               for s, ps in zip(_shifts(), p))
+               for s, ps in zip(_shifts(par), p))
 
 
-def _outcome(p, g):
+def _outcome(p, g, par=None):
     """A cohort's own realised rate of something, given the mixture it is born
     into: its homelessness, or its disorder rate. The welfare path says what the
     reform is worth; these say through what."""
     return sum(ps * float((WW * _at(g, s)).sum())
-               for s, ps in zip(_shifts(), p))
+               for s, ps in zip(_shifts(par), p))
 
 
 def caught(par, pv_new=PV_OPT):
@@ -280,9 +306,9 @@ def caught(par, pv_new=PV_OPT):
     # treated them as richer than they are, and they are the households the
     # answer is about.
     v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
-    p_mix = _rest_point(sudb, _hl_by_shift(par, BASE_POLICY, par.pV))
+    p_mix = _rest_point(sudb, _hl_by_shift(par, BASE_POLICY, par.pV), par)
     dv = dv_h = dv_t = mass = hl_h = hl_t = hl_o = 0.0
-    for sft, psft in zip(_shifts(), p_mix):
+    for sft, psft in zip(_shifts(par), p_mix):
         if psft <= 0.0:
             continue
         for i, y0 in enumerate(YG):
@@ -346,13 +372,13 @@ def caught_coverage(par, pv_new=PV_OPT):
     from stylized import period1, _states
     old = with_(par, pV=par.pV, policy=BASE_POLICY)
     v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
-    p_mix = _rest_point(sudb, _hl_by_shift(par, BASE_POLICY, par.pV))
+    p_mix = _rest_point(sudb, _hl_by_shift(par, BASE_POLICY, par.pV), par)
     out = {}
     for lab, pol, pv in (('old', BASE_POLICY, par.pV),
                          ('hf', 'HF', pv_new), ('tf', 'TF', pv_new)):
         new = with_(par, pV=pv, policy=pol)
         cov = mass = 0.0
-        for sft, psft in zip(_shifts(), p_mix):
+        for sft, psft in zip(_shifts(par), p_mix):
             if psft <= 0.0:
                 continue
             for i, y0 in enumerate(YG):
@@ -373,10 +399,10 @@ def caught_coverage(par, pv_new=PV_OPT):
     return out
 
 
-def _rest_point(sud, hl, iters=400, tol=1e-14):
+def _rest_point(sud, hl, par=None, iters=400, tol=1e-14):
     p = np.array([1.0, 0.0, 0.0, 0.0])
     for _ in range(iters):
-        q = _step(p, sud, hl)
+        q = _step(p, sud, hl, par)
         if np.abs(q - p).max() < tol:
             return q
         p = q
@@ -418,7 +444,7 @@ def path(par, policy, pV, p0, v1_base, w0, n=GENERATIONS):
         w = _welfare(p, v1)
         out.append((t, float(cev(par, w - w0)), p.copy(),
                     _outcome(p, hl), _outcome(p, sud)))
-        p = _step(p, sud_b, ev_b) if t == 1 else _step(p, sud, ev_s)
+        p = _step(p, sud_b, ev_b, par) if t == 1 else _step(p, sud, ev_s, par)
     return out
 
 
@@ -427,7 +453,7 @@ def run(par=None, n=GENERATIONS):
     par = par or with_(P(), **json.load(open(os.path.join(here, 'calibrated.json'))))
 
     v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
-    p0 = _rest_point(sudb, _hl_by_shift(par, BASE_POLICY, par.pV))
+    p0 = _rest_point(sudb, _hl_by_shift(par, BASE_POLICY, par.pV), par)
     w0 = _welfare(p0, v1b)
     print(f'PRE REFORM REST POINT, {BASE_POLICY} at pi_V = {par.pV}')
     print(f'   share of children born to a parent with the disorder : '
