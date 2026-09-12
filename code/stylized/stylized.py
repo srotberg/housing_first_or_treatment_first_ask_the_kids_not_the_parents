@@ -640,6 +640,59 @@ class P:
 
     na    = 60
     nv    = 140
+    v_lo  = 1e-5      # the smallest positive drug purchase, AS A FRACTION OF
+                      # INCOME.  See _vgrid for why it is a fraction and why
+                      # the grid above it is geometric.
+
+
+_VGRID_CACHE = {}
+
+
+def _vgrid(par, inc):
+    """The drug quantity grid at income `inc`: abstention, then a geometric
+    ladder from v_lo * inc up to half of income.
+
+    IT WAS LINEAR AND THAT PUT A HOLE IN IT.  The grid read
+
+        [0.0] + linspace(1e-4, 0.5 * inc, nv - 1)
+
+    which at mean income gives 0, 0.00010, 0.00372, 0.00734, ...  So between
+    SPENDING NOTHING and SPENDING 0.37 PER CENT OF INCOME the only available
+    choice was 0.01 per cent: one isolated point, thirty-six times below the
+    next rung, with nothing in between.
+
+    THAT HOLE IS THE "CORNER BRANCH".  Every run of this model has alternated
+    between an interior equilibrium at a drug share near 0.21 and a "corner" at
+    0.0007 -- which is 0.07 per cent of income, i.e. mass sitting in exactly
+    that gap, every user pinned on the lone small point because the grid gave
+    them nowhere else to go.  It was read as an economic multiplicity for most
+    of a day and it is a discretisation artefact.  The evidence that settled it:
+    reconstructing the live vector from a printed table, to the five decimals
+    the table shows, put the model on the OTHER branch from the run reporting
+    it -- the two equilibria are within rounding of each other, which is what a
+    grid artefact looks like and not what a genuine multiplicity looks like.
+
+    A LADDER RATHER THAN A RULER.  Geometric spacing puts roughly eight per cent
+    between neighbouring rungs everywhere, so the choice set is as well resolved
+    at a tenth of a per cent of income as it is at ten per cent, and there is no
+    rung that is an order of magnitude away from its neighbour.
+
+    AND A FRACTION OF INCOME RATHER THAN AN ABSOLUTE FLOOR.  1e-4 was the same
+    absolute quantity for every household, so the poorest faced a coarser grid
+    in proportional terms than the richest -- and the drug, housing and
+    homelessness margins all sit at the bottom of the distribution.
+    """
+    # BUILT ONCE AND SCALED.  geomspace is scale-equivariant --
+    # geomspace(a*x, a*y, n) == a * geomspace(x, y, n) to 2e-16 -- so the ladder
+    # does not depend on income at all, only the multiplier does.  It was being
+    # rebuilt on every state: 1250 geomspace calls a solve at 35.6 us each,
+    # against 0.6 us to scale a cached one.  Nine per cent of the solve.
+    key = (par.v_lo, par.nv)
+    unit = _VGRID_CACHE.get(key)
+    if unit is None:
+        unit = np.concatenate(([0.0], np.geomspace(par.v_lo, 0.5, par.nv - 1)))
+        _VGRID_CACHE[key] = unit
+    return unit * inc
 
 
 def clone(**kw):
@@ -802,16 +855,28 @@ def _flow(par, c, h, q=0.0, child=True):
     child=False is period 2, where the child has grown: xi is 1 and the second
     term is absent.
     """
+    # ALGEBRAICALLY THE SAME, ONE PASS OVER THE BIG ARRAY INSTEAD OF THREE.
+    #
+    #   S = exp((1-s)(base + phq*log(b+q))) + w*exp((1-s)(base + phq*log(b)))
+    #     = exp((1-s)*base) * [ (b+q)^((1-s)phq) + w*b^((1-s)phq) ]
+    #
+    # and exp((1-s)*base) is just (c/xi)^((1-s)phc) * (h/xi)^((1-s)phh).  The
+    # bracket depends on q alone, which is (nv,1), while c is (nv,na): so the
+    # child term costs a small array rather than a second full exponential, and
+    # the parent's bundle costs ONE power rather than a log and an exp.
+    #
+    # _flow was 15,530 calls and forty per cent of a solve, on (140,60) arrays.
     phc, phh, phq = _shares(par)
     xi = par.xi if child else 1.0
     kch = (xi - 1.0) if child else 0.0
     s = par.sigma
-    base = (phc * np.log(np.maximum(c, 1e-12) / xi)
-            + phh * np.log(np.asarray(h, dtype=float) / xi))
-    S = np.exp((1.0 - s) * (base + phq * np.log(par.b + q)))
+    e = 1.0 - s
+    big = np.maximum(c, 1e-12) / xi
+    E = big ** (e * phc) * (float(h) / xi) ** (e * phh)
+    bracket = (par.b + q) ** (e * phq)
     if kch > 0.0 and par.omega != 0.0:
-        S = S + par.omega * kch * np.exp((1.0 - s) * (base + phq * np.log(par.b)))
-    return S / (1.0 - s) + par.aleph
+        bracket = bracket + par.omega * kch * par.b ** (e * phq)
+    return E * bracket / e + par.aleph
 
 
 def _options(par, rmul):
@@ -964,7 +1029,7 @@ def period1(par, y, policy=None):
 
     out = []
     for p, inc, rmul in _states(par, 0, policy, y, used=0):
-        vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * inc, par.nv - 1)))
+        vg = _vgrid(par, inc)
         pid = _pid(par, vg)[:, None]
         # SURVIVAL INSIDE THE EXPECTATION over the realised disorder. Not
         # phi * E W2: see the note at the head of this file.
@@ -1620,7 +1685,7 @@ def vsl(par, y=1.0, policy=None):
     for p, inc, rmul in _states(par, 0, policy, y, used=0):
         if p <= 1e-14:
             continue
-        vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * inc, par.nv - 1)))
+        vg = _vgrid(par, inc)
         pid = _pid(par, vg)[:, None]
         cont = (1.0 - pid) * s0 * W2u[None, :, 0] + pid * s1 * W2u[None, :, 1]
         rm = _p1_rmul(par, policy, rmul)

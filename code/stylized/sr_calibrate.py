@@ -135,7 +135,19 @@ SPEC = [
     # source -- and 0.14 keeps it in a range the quantitative model's 0.09 sits
     # inside.  The floor of 0.01 keeps it strictly positive, so the child
     # counterfactual stays defined.
-    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.01,  1.00),
+    # LOWER BOUND 0.001, NOT 0.01, on the author's suggestion of 12 September:
+    # *"You can allow omega_c to have a lower bound at 0.001 if that helps"*.
+    #
+    # It is insurance rather than a fix, and it is not binding today -- omega_c
+    # has sat between 0.081 and 0.090 all run.  It matters because a CLAMPED
+    # parameter with a LIVE DISTANCE cannot converge, which is ENGINE.md's rule
+    # for retiring a bracket read the other way round: the rule keeps proposing
+    # a move the clamp keeps refusing, the gap never closes, and the table shows
+    # a parameter sitting exactly on a round number with a large gap beside it.
+    # Earlier runs did drive omega_c down to 0.0146, within a factor of 1.5 of
+    # the old floor, so the clamp was close to binding and nothing was gained by
+    # its being where it was.
+    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.001, 1.00),
     # delta_d ON THE CHILD SUD ODDS RATIO OF 2, asked for twice.  Sign standard:
     # a bigger income penalty makes the child poorer, poorer children use more,
     # so the ratio RISES in delta_d.
@@ -545,7 +557,27 @@ if __name__ == '__main__':
             if w < 2.0:
                 print('\n  every gap inside two per cent, stopping')
                 break
-        par = step_on_branch(par, m, state)
+        # THE BRANCH GUARD IS OFF, on the author's instruction of 12 September:
+        # *"yes, remove the guard and use 4 workers"*.
+        #
+        # It was built this afternoon to keep the search off the corner branch,
+        # and by the end of the day it was the thing stopping the search.  The
+        # log says so plainly: the corner never appeared in this run -- the drug
+        # share sat between 0.17 and 0.23 throughout -- while FROZEN fired at 25
+        # and then 50 consecutive passes with the vector refusing to move,
+        # because the guard rejected every proposed step and the damping shrank
+        # the adjusters toward the floor.  A guard against a hazard that is not
+        # occurring, which blocks the search that is.
+        #
+        # The moments were checked before the guard was blamed: check_moments.py
+        # puts aggregates() within 1.6 per cent of a brute-force sum over 960
+        # incomes with no bisection at all, converged.  So the machinery below
+        # the guard is sound and it was the guard on top that was the problem.
+        #
+        # step() is the author's rule with nothing wrapped round it, which is
+        # how this ran before the guard existed.  The freeze detector stays --
+        # it costs nothing and it is what caught the guard in the first place.
+        par, _ = step(par, m, state)
         vec = tuple(round(getattr(par, n), 12) for n, *_ in SPEC)
         frozen = frozen + 1 if vec == prev_vec else 0
         prev_vec = vec
