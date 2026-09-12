@@ -57,6 +57,22 @@ from stylized import P, with_
 
 FIXED = dict(h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0)
 
+# THE STARTING POINT IS NOT A DETAIL, IT PICKS THE BRANCH.  Started from the log
+# model's calibrated values the first sweep failed outright: the housing block
+# runs first, it was bracketed at drug parameters that put every household on
+# drugs, so gam and aleph were fitted to a nonsense economy and the whole model
+# came to rest on the WRONG BRANCH -- participation 66 per cent, users RICHER
+# than average at r_use 1.36 -- with four of the eight parameters cornered on
+# their bounds trying to climb back.  Worst gap 645 per cent.
+#
+# These values come from the scans in the commit that built this file and they
+# are on the interior branch: r_use 0.7406 against 0.740 and the SUD share of
+# the homeless 0.2150 against 0.217 before a single bracket has run, with
+# participation, the disorder rate, the housing share and the VSL the four that
+# still need closing.
+START = dict(gam=0.2144, h_hl=1e-4, aleph=8.3, th=0.16,
+             kap=0.175, u1=0.127, pi_base=0.40, b=0.045)
+
 # u1's BOUNDS KEEP IT ON THE INTERIOR BRANCH, like kap's.  Measured at
 # b = 0.045, kap = 0.175: participation is 0.425 at u1 = 0.05, 0.170 at 0.12,
 # 0.077 at 0.1625 and 0.0069 at 0.20, where r_use has already collapsed to 0.116
@@ -65,9 +81,9 @@ FIXED = dict(h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0)
 # (parameter, moment, lo, hi).  Order is the sweep order and it matters: the
 # housing block settles before the drug block, and b runs LAST so participation
 # is the moment that is actually hit.
-HOUSING = [('gam', 'hspend', 0.02, 0.70),
-           ('h_hl', 'homeless', 1e-7, 0.05),
-           ('aleph', 'vsl', 1.0, 40.0)]
+HOUSING = [('gam', 'hspend', 0.05, 0.60),
+           ('h_hl', 'homeless', 1e-7, 0.02),
+           ('aleph', 'vsl', 3.0, 60.0)]
 DRUG = [('th', 'dshare', 0.05, 0.40),
         ('kap', 'r_use', 0.03, 0.185),
         ('u1', 'sud_of_homeless2', 0.06, 0.19),
@@ -119,10 +135,14 @@ MOMENT_NAME = {
     'prog': 'use that becomes SUD'}
 
 
-def calibrate(par, sweeps=6, verbose=True):
+def calibrate(par, sweeps=8, verbose=True, iters=16):
+    # 16 BISECTIONS, NOT 34.  Geometric bisection narrows the interval by 2^n, so
+    # 16 is a factor of 65536 on every bracket, far finer than any moment's
+    # tolerance, and it halves the wall clock of a sweep.  34 was inherited and
+    # was buying nothing.
     for s in range(sweeps):
         for name, mom, lo, hi in HOUSING:
-            par = with_(par, **{name: bracket(par, name, mom, lo, hi)})
+            par = with_(par, **{name: bracket(par, name, mom, lo, hi, iters=iters)})
         # The drug block is alternated to a fixed point, as the old sweep did
         # for (lam, b): theta sets how much a user buys, kap decides who is
         # willing to buy at all and therefore their income, pi_base turns use
@@ -130,10 +150,11 @@ def calibrate(par, sweeps=6, verbose=True):
         # other's moments.
         for _ in range(4):
             for name, mom, lo, hi in DRUG:
-                par = with_(par, **{name: bracket(par, name, mom, lo, hi)})
+                par = with_(par, **{name: bracket(par, name, mom, lo, hi, iters=iters)})
         m = stats(par)
         worst = max(abs(m[k] - TARGET[k]) / TARGET[k] for _, k, _, _ in HOUSING + DRUG)
         if verbose:
+            table(par, note=f'\nAFTER SWEEP {s}')
             print(f'  sweep {s}: worst gap {100*worst:6.2f} %   '
                   f'gam {par.gam:.4f} h_hl {par.h_hl:.2e} aleph {par.aleph:.3f} '
                   f'th {par.th:.4f} kap {par.kap:.4f} u1 {par.u1:.4f} '
@@ -144,8 +165,8 @@ def calibrate(par, sweeps=6, verbose=True):
 
 
 if __name__ == '__main__':
-    par = with_(P(), **FIXED)
-    print('CALIBRATING at sigma = 2')
+    par = with_(P(), **FIXED, **START)
+    print('CALIBRATING at sigma = 2, from the interior-branch start')
     par = calibrate(par)
     print()
     print('BASELINE')
