@@ -590,24 +590,37 @@ if __name__ == '__main__':
                    # A STARTING VALUE AGAIN, not a pin: delta_d is back in SPEC
                    # and is stepped, from the 0.24 the author pinned it at.
                    "delta_d": 0.24,
-                   # THE INCOME FLOOR IS ON, at the level that clears the
-                   # negative value of life completely.  The author asked for a
-                   # floor "so no one has negative value of life", and measured
-                   # that is 0.19: at 0.16 the share is still 0.55 per cent, at
-                   # 0.19 it is zero and the lowest value of a period of life
-                   # goes from -9.61 to +0.78.
+                   # THE INCOME FLOOR IS OFF, and the reason is that it and the
+                   # author's own instruction cannot both stand.  They asked for
+                   # a floor "so no one has negative value of life", and then
+                   # for the child's SUD penalty to be calibrated to the odds
+                   # ratio.  Measured, the floor makes the second impossible:
                    #
-                   # IT COSTS TWO TARGETS AND THAT IS EXPECTED, not a surprise
-                   # to be discovered later.  Homelessness goes to zero, because
-                   # homelessness in this model IS the households who cannot
-                   # afford the cheapest unit and the floor is what lets them;
-                   # and participation falls towards 1.4 per cent from 8.4,
-                   # because the households that used were the ones at the
-                   # bottom.  h_hl and b are therefore being asked to hit
-                   # targets that may no longer be attainable, and the gaps
-                   # table is where that will show.  This is a NEW calibration
-                   # rather than the old one patched.
-                   "y_floor": 0.19,
+                   #   delta_d   OR, no floor   OR, floor 0.19
+                   #      0.24         1.3600           0.6184
+                   #      0.60         2.0967           0.2795
+                   #      2.00         6.2929           0.0059
+                   #
+                   # The floor does not merely blunt delta_d, it REVERSES ITS
+                   # SIGN.  A child pushed down by the penalty lands on the
+                   # floor, and at 0.19 it is housed and fed, which is a
+                   # lower-use state than being just above the floor paying rent
+                   # out of a thin income.  So the harder the penalty pushes the
+                   # more protected the child becomes, and a ratio of 2 is
+                   # unreachable at any delta_d.  The live run demonstrated it:
+                   # delta_d walked to 1.249, past the 0.57 the target needs,
+                   # with the ratio down at 0.718 and still falling.
+                   #
+                   # It also killed two other brackets outright -- homelessness
+                   # went to zero because the floor is what lets the priced-out
+                   # afford the cheapest unit, and sud_of_homeless2 had no
+                   # homeless population to form a ratio from.
+                   #
+                   # The negative value of life therefore stands at 1.43 per
+                   # cent of period-2 states, which is the same order as the
+                   # quantitative model's 0.45 per cent, and that model runs
+                   # with it rather than eliminating it.
+                   "y_floor": 0.0,
                    # STARTING VALUES MATTER WHEN THE STEP IS RELATIVE.  The
                    # author, 12 September: *"this is why the model cannot
                    # converge"*.  h_hl started at 1e-4 and lands near 1e-2 -- a
