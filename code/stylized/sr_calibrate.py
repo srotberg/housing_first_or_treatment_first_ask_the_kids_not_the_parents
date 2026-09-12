@@ -424,19 +424,35 @@ def step_on_branch(par, m, state):
         # halve every parameter's move back toward where we are
         full = with_(par, **{n: 0.5 * (getattr(par, n) + getattr(full, n))
                              for n, _, _, _, _, _, _ in SPEC})
-    # A SIXTEENTH OF THE STEP STILL LEAVES THE BRANCH: TAKE NONE OF IT.
+    # A SIXTEENTH OF THE STEP STILL LEAVES THE BRANCH: TAKE NONE OF IT, AND
+    # SHRINK THE ADJUSTERS SO THE NEXT PASS PROPOSES A SMALLER ONE.
     #
-    # This used to "accept whatever the smallest step gives rather than stall",
-    # which is how the corner was entered even on the iterations where the check
-    # did run: four halvings, still in the corner, step taken anyway.  Stalling
-    # was the right fear and the wrong remedy.  Returning par unchanged cannot
-    # stall the search here, because the step is recomputed next pass from a
-    # fresh solve and the sign-flip ratchet shrinks the adjusters meanwhile, so
-    # the rule approaches the boundary in ever smaller steps instead of hopping
-    # over it.  What it CAN do is pin a parameter against the boundary, which is
-    # a result and not a failure: it says the target is on the other side of a
-    # jump, and the gap table then says so in the open rather than by alternating
-    # between two economies every fifty iterations.
+    # The refusal used to "accept whatever the smallest step gives rather than
+    # stall", which is how the corner was entered even on iterations where the
+    # check ran.  Refusing is right.  Refusing ALONE is a deterministic freeze,
+    # and it was one: iterations 200, 250 and 300 of the 50000 run came out
+    # byte-identical, every parameter and every moment, for a hundred passes.
+    #
+    # The reasoning that shipped it said the search could not stall "because the
+    # step is recomputed next pass from a fresh solve and the sign-flip ratchet
+    # shrinks the adjusters meanwhile".  That is wrong, and wrong in a way worth
+    # keeping: if the parameters do not move, the moments do not move, the gaps
+    # do not change, the sign never flips, so the ratchet NEVER FIRES and the
+    # identical step is proposed and refused forever.  The ratchet is driven by
+    # the gap changing sign, and a frozen model is precisely one whose gaps have
+    # stopped changing.  A guard that depends on the system evolving cannot be
+    # relied on to rescue a state in which the system has stopped evolving.
+    #
+    # So the refusal damps the adjusters itself rather than waiting for a
+    # mechanism that cannot fire.  Each refused pass halves every adjuster, so
+    # the proposed step shrinks geometrically and either finds a size that stays
+    # on the branch or converges onto the boundary -- which is a result, and the
+    # gap table then says so in the open instead of alternating between two
+    # economies every fifty iterations.
+    for name, *_ in SPEC:
+        k = name + '_adj'
+        if k in state:
+            state[k] = max(state[k] * DAMP, ADJ_FLOOR)
     return par
 
 
@@ -513,6 +529,15 @@ if __name__ == '__main__':
     smr = 1 + math.log(1 - par.kap) / math.log(par.phi0)
     print(f"THE AUTHOR'S METHOD, sigma = 2, kappa SET at SMR {smr:.2f}")
     state = {}
+    # A FROZEN RUN MUST ANNOUNCE ITSELF.  The branch guard's refusal path can
+    # return the vector unchanged, and when it fired every pass the run printed
+    # iterations 200, 250 and 300 byte-identical -- every parameter, every
+    # moment -- for a hundred passes.  Nothing in the output said so: a table
+    # that has not moved looks exactly like a table that is converging slowly,
+    # and it was caught only by someone noticing two tables were the same.
+    # That is not a thing to leave to eyesight at fifty-iteration intervals.
+    frozen = 0
+    prev_vec = None
     for it in range(50000):
         m = moments(par, it)
         if it % 50 == 0 or it == 49999:
@@ -521,5 +546,18 @@ if __name__ == '__main__':
                 print('\n  every gap inside two per cent, stopping')
                 break
         par = step_on_branch(par, m, state)
+        vec = tuple(round(getattr(par, n), 12) for n, *_ in SPEC)
+        frozen = frozen + 1 if vec == prev_vec else 0
+        prev_vec = vec
+        if frozen and frozen % 25 == 0:
+            print(f'  FROZEN: the parameter vector has not moved in {frozen} '
+                  f'passes.  The branch guard is refusing every step, so every '
+                  f'proposed move leaves the interior branch.  Adjusters are '
+                  f'being damped each refusal; if this does not clear, the '
+                  f'search is against a boundary and the vector is the answer.')
+        if frozen >= 500:
+            print(f'\n  STOPPING: frozen for {frozen} passes at iteration {it}.')
+            table(par, moments(par), f'{it} frozen')
+            break
     print('\nFINAL')
     table(par, moments(par), 'final')
