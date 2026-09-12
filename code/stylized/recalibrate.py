@@ -74,21 +74,49 @@ DRUG = [('th', 'dshare', 0.05, 0.40),
         ('pi_base', 'sud', 1e-3, 0.99),
         ('b', 'part', 0.020, 0.090)]
 
-SHOW = ['hspend', 'homeless', 'vsl', 'dshare', 'r_use', 'sud_of_homeless2',
-        'sud', 'part', 'burden50', 'sud_of_homeless', 'hsmall',
-        'housing_share', 'prog']
+# REPORTED BESIDE THE TABLE, NEVER IN IT.  The author, 12 September: *"when I
+# ask for the gaps table I am referring to the calibration gaps table on
+# parameters we actually choose to target the moments of interest"*.  So the
+# table is one row per CALIBRATED PARAMETER and nothing else; a moment with no
+# instrument is a diagnostic and goes underneath, where it cannot be mistaken
+# for something the calibration is trying to hit.
+DIAGNOSTIC = ['burden50', 'sud_of_homeless', 'hsmall', 'housing_share', 'prog']
 
 
 def table(par, note=''):
+    """The calibration gaps table: one row per parameter we actually calibrate."""
     m = stats(par)
-    print(f'  {"moment":14s}{"model":>10}{"target":>10}{"gap %":>9}   {note}')
-    for k in SHOW:
-        t = TARGET.get(k)
-        if t is None:
-            print(f'  {k:14s}{m[k]:10.4f}{"-":>10}{"-":>9}   not targeted')
-        else:
-            print(f'  {k:14s}{m[k]:10.4f}{t:10.4f}{100*(m[k]-t)/t:9.1f}')
+    if note:
+        print(note)
+    print(f'  {"parameter":10s}{"value":>11}  {"moment":22s}'
+          f'{"model":>10}{"target":>10}{"gap %":>9}')
+    print('  ' + '-' * 72)
+    worst = 0.0
+    for name, mom, _, _ in HOUSING + DRUG:
+        t, v = TARGET[mom], m[mom]
+        g = 100 * (v - t) / t
+        worst = max(worst, abs(g))
+        print(f'  {name:10s}{getattr(par, name):11.5f}  {MOMENT_NAME[mom]:22s}'
+              f'{v:10.4f}{t:10.4f}{g:9.1f}')
+    print('  ' + '-' * 72)
+    hit = sum(1 for _, k, _, _ in HOUSING + DRUG
+              if abs(m[k] - TARGET[k]) / TARGET[k] < 0.02)
+    print(f'  worst gap {worst:.1f} %,  {hit} of {len(HOUSING) + len(DRUG)}'
+          f' within two per cent')
+    print('\n  not targeted, reported only:')
+    for k in DIAGNOSTIC:
+        print(f'  {"":10s}{"":11s}  {MOMENT_NAME.get(k, k):22s}{m[k]:10.4f}')
     return m
+
+
+MOMENT_NAME = {
+    'hspend': 'housing / expenditure', 'homeless': 'homelessness rate',
+    'vsl': 'VSL / annual income', 'dshare': 'drug spending share',
+    'r_use': "users' income / mean", 'sud_of_homeless2': 'SUD share of homeless',
+    'sud': 'disorder rate', 'part': 'participation',
+    'burden50': 'rent over half income', 'sud_of_homeless': 'SUD of homeless, both',
+    'hsmall': 'housed in small unit', 'housing_share': 'housing / income',
+    'prog': 'use that becomes SUD'}
 
 
 def calibrate(par, sweeps=6, verbose=True):
