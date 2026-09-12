@@ -96,7 +96,7 @@ FIXED = dict(gam=0.268, h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0)
 # participation, the disorder rate, the housing share and the VSL the four that
 # still need closing.
 START = dict(h_hl=1e-4, aleph=15.4, th=0.16,
-             kap=0.09, u1=0.127, pi_base=0.40, b=0.035)
+             kap=0.115, u1=0.127, pi_base=0.40, b=0.035)
 # THE START MOVED AGAIN, IN (aleph, kap) JOINTLY, and the first version of this
 # note blamed the wrong thing.  Two sweeps cornered from aleph 8.3 with kap
 # 0.175, and the diagnosis offered at the time -- that a near-worthless street
@@ -134,7 +134,22 @@ START = dict(h_hl=1e-4, aleph=15.4, th=0.16,
 HOUSING = [('h_hl', 'homeless', 1e-7, 0.02),
            ('aleph', 'vsl', 3.0, 60.0)]
 DRUG = [('th', 'dshare', 0.05, 0.40),
-        ('kap', 'r_use', 0.03, 0.185),
+        # kap's INTERVAL HOLDS ONE ROOT, NOT TWO.  r_use is NON-MONOTONE in kap
+        # at the aleph the VSL requires, and bracket() reads its direction from
+        # the endpoints, so on the old interval it found neither root and ran to
+        # a bound on three consecutive sweeps.  Measured at aleph 15.4:
+        #
+        #   kap    0.060 0.075 0.085 0.090 0.100 0.110 0.115 0.125 0.130 0.135
+        #   r_use  1.391 1.223 0.884 0.689 0.703 0.724 0.747 0.789 0.808 0.111
+        #   part   0.646 0.582 0.369 0.245 0.208 0.166 0.131 0.071 0.032 0.001
+        #
+        # It falls to 0.689, TURNS ROUND and rises to 0.808, then collapses to
+        # the corner branch past 0.130.  0.74 therefore has two roots, at about
+        # 0.087 going down and 0.1145 coming back up.  [0.095, 0.133] contains
+        # only the second, on which r_use rises monotonically, and it is the one
+        # where participation and the drug spending share are also near their
+        # targets.
+        ('kap', 'r_use', 0.095, 0.133),
         ('u1', 'sud_of_homeless2', 0.06, 0.19),
         ('pi_base', 'sud', 1e-3, 0.99),
         ('b', 'part', 0.020, 0.090)]
