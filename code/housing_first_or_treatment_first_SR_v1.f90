@@ -672,6 +672,32 @@
         real(8) :: stopping_rule_weight_on_child=10.d0**(-2)
         real(8) :: drug_users_without_child=0
         real(8) :: weight_on_child_saved=0
+        ! DID THE COUNTERFACTUAL'S OWN DISTRIBUTION ACTUALLY SETTLE?
+        !
+        ! This was ALREADY COMPUTED AND PRINTED beside the counterfactual, with a
+        ! comment saying in terms that a solve which leaves on the sweep cap "has
+        ! moved part of the way to the counterfactual and the gap it reports is a
+        ! partial adjustment rather than the moment". It was then not tested
+        ! anywhere: loop_count_dist appears in that write statement and nowhere
+        ! else in the update, so a capped counterfactual stepped omega_c exactly
+        ! as if it were converged.
+        !
+        ! FOUND BY CHECKING THE STYLIZED MODEL'S BUG AGAINST THIS ONE, which is
+        ! the standing rule in TRANSITION_LESSONS.md section 7. There the child
+        ! gap read 1.4984 against a target of 0.1834 because the baseline and the
+        ! omega_c=0 counterfactual had settled on DIFFERENT BRANCHES -- drug share
+        ! 0.1028 against 0.2177 -- so the ratio measured the branch rather than
+        ! what the parent internalises. The same class of error is available here
+        ! and by a shorter route: the counterfactual need not have settled at all.
+        !
+        ! It also leaves the one unexplained observation in this block explained.
+        ! The comment records that at loop 3 of a cold run, removing the penalty
+        ! CUT use by 75 per cent, where the mechanism says it must RAISE it, and
+        ! rejects the capped-distribution explanation by exhibiting a DIFFERENT
+        ! loop that converged in 61 sweeps with the right sign. That shows the
+        ! block can work; it does not show loop 3 was converged. The flag from
+        ! loop 3 would have settled it and it was never read.
+        integer :: omega_counterfactual_capped=0
         ! OMEGA_C IS PINNED ONCE IT LANDS WITHIN 3 PER CENT OF ITS TARGET.
         !
         ! The author, 11 September: "i think that once omega_c lands 3% of the
@@ -8935,6 +8961,14 @@
                 solving_omega_counterfactual=0
 
                 weight_on_child=weight_on_child_saved
+
+                ! THE SAME CONVERGENCE INFORMATION AS THE CALIBRATION PATH. This
+                ! copy printed the moment with nothing beside it, so a MOMENT
+                ! omega line read out of a diagnostic run could not be judged:
+                ! a capped counterfactual and a settled one look identical here.
+                write(*,*) "OMEGA_DIAG counterfactual sweeps =", loop_count_dist,&
+                    " reached =", distance_distribution_reached, " capped =",&
+                    merge(1,0,loop_count_dist>=max_distribution_sweeps)
 
                 write(*,*) "MOMENT omega     use rise, child term off    model=",&
                     drug_users_without_child/baseline_users_for_gap-1.d0,&
@@ -41621,10 +41655,15 @@
                 ! omega, so the update lowers it, which is the documented
                 ! direction. The print stays: it is two numbers a loop and it is
                 ! the difference between reading that gap and guessing at it.
+                ! RECORDED, NOT ONLY PRINTED. The update block runs later and in
+                ! another scope, so the flag has to be carried rather than
+                ! recomputed: loop_count_dist belongs to whatever solved last.
+                omega_counterfactual_capped=merge(1,0,loop_count_dist>=max_distribution_sweeps)
+
                 write(*,*) "omega counterfactual: drug users with the child penalty off =",&
                     drug_users_without_child, " counterfactual distribution sweeps =",&
                     loop_count_dist, " reached =", distance_distribution_reached,&
-                    " capped =", merge(1,0,loop_count_dist>=max_distribution_sweeps)
+                    " capped =", omega_counterfactual_capped
 
             end if
 
@@ -43415,12 +43454,33 @@
                     ! which is a statement about the denominator rather than about
                     ! how much a parent internalises. A tenth of the participation
                     ! rate the model is trying to reproduce is the floor.
+                    ! AND THE COUNTERFACTUAL HAS TO HAVE SETTLED. A solve that
+                    ! left on the sweep cap is a partial adjustment towards the
+                    ! counterfactual, so the ratio it gives is somewhere between
+                    ! the baseline's own count and the moment, with no way to
+                    ! tell how far along. Stepping omega_c on it moves the
+                    ! parameter by an amount that depends on the sweep cap.
                     if ((calibrate_weight_on_child==1) .AND. (drug_users_without_child>0)&
                         .AND. (model_total_drug_users(1)>&
-                        10.d0**(-1)*participation_rate_data)) then
+                        10.d0**(-1)*participation_rate_data)&
+                        .AND. (omega_counterfactual_capped==0)) then
 
+                        ! THE RATIO IS PRINTED BECAUSE COMPARABILITY IS THE OTHER
+                        ! HALF OF THIS QUESTION AND IT IS NOT YET GUARDED. In the
+                        ! stylized model the baseline and the counterfactual
+                        ! settled on different branches and the gap became a
+                        ! statement about the branch: participation 0.0956 against
+                        ! 0.2390, a factor of 2.5. A window would catch that -- but
+                        ! this block has a RECORDED legitimate reading of +0.93,
+                        ! which is a factor of 1.93, so any window tight enough to
+                        ! be useful is close enough to a real measurement to risk
+                        ! rejecting it. That is a threshold to MEASURE rather than
+                        ! to pick, so for now the number is put where it can be
+                        ! read and the bracket is left alone.
                         write(*,*) "drug users, baseline and child term off =",&
-                            model_total_drug_users(1), drug_users_without_child
+                            model_total_drug_users(1), drug_users_without_child,&
+                            " ratio =", drug_users_without_child/&
+                            max(model_total_drug_users(1),10.d0**(-14))
 
                         child_use_gap_1=drug_users_without_child/model_total_drug_users(1)-1
 
@@ -43500,9 +43560,27 @@
 
                     else if (calibrate_weight_on_child==1) then
 
-                        write(*,*) "omega HELD: baseline users ", model_total_drug_users(1),&
-                            " and users with the child term off ", drug_users_without_child,&
-                            ": one of the two is too small for the gap to mean anything"
+                        ! WHICH GUARD HELD IT. One message for three causes made
+                        ! a capped counterfactual indistinguishable from an empty
+                        ! one in the log, and they call for opposite responses: an
+                        ! empty baseline means the economy is wrong, a capped
+                        ! counterfactual means the SOLVE is unfinished and the
+                        ! economy may be fine.
+                        if (omega_counterfactual_capped==1) then
+                            write(*,*) "omega HELD: the counterfactual left on the",&
+                                " distribution sweep cap of ", max_distribution_sweeps,&
+                                ", so its user count ", drug_users_without_child,&
+                                " is a partial adjustment rather than the moment.",&
+                                " No step is taken and the bracket stays live."
+                        else
+                            write(*,*) "omega HELD: baseline users ", model_total_drug_users(1),&
+                                " and users with the child term off ", drug_users_without_child,&
+                                ": one of the two is too small for the gap to mean anything"
+                        end if
+                        ! THE DISTANCE STAYS AT ONE, which keeps the do-while term
+                        ! live. Zeroing it here would retire the bracket on a loop
+                        ! where the moment could not be measured, which reads as
+                        ! convergence.
                         distance_weight_on_child=1
 
                     end if
