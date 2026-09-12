@@ -4538,7 +4538,33 @@
         !
         ! The half-a-per-cent-a-loop cap still comes from plain cap_step, so the
         ! author's "not more than 0.5% per iteration" continues to hold.
-        real(8) :: kappa_phi_d_level_adjuster=2.d0
+        ! PINNED 12 September on the author's "let's set the mortality risk to
+        ! 3.5 and pin it", after "it seems to make it hard to converge no b".
+        !
+        ! Their diagnosis, and the trace carries it.  This parameter is the
+        ! excess mortality of drug users, and while it was bracketed on y_u it
+        ! fell every loop -- 4.6137, 4.5676, 4.5219, 4.4767, 4.4319, 4.3876 --
+        ! because y_u was below target and the step is
+        ! kappa - adjuster*(data - model).  A falling death risk keeps more
+        ! addicts alive, so the STOCK rises, and lambda_d rose monotonically
+        ! over the same twelve loops to +179 per cent while its own instrument,
+        ! addiction_scalar_1, was pinned to one per cent a loop by
+        ! max_rel_step_all and moved a total of +5.1 per cent.  Two brackets
+        ! were pushing the addict stock in opposite directions through the
+        ! economy and the mortality one was winning.
+        !
+        ! Pinning it costs y_u its instrument.  y_u was the best-converging
+        ! moment in the run -- -63.4 per cent at loop 1 to -11.7 at loop 13,
+        ! monotone for ten loops -- so this is a real cost, knowingly paid: a
+        ! moment cannot be chased while its driver is being moved by another
+        ! bracket.  3.5 sits inside the range the author cited from the
+        ! literature, "anywhere between 2-9".
+        !
+        ! The update block at 43069 is guarded by
+        ! if (kappa_phi_d_level_adjuster>0), and its else branch at 43114 sets
+        ! distance_kappa_phi_d_level to zero, so pinning it here also takes it
+        ! out of the do-while cleanly.  No orphaned distance, no infinite loop.
+        real(8) :: kappa_phi_d_level_adjuster=0.d0
         real(8) :: distance_kappa_phi_d_level=1
         real(8) :: stopping_rule_kappa_phi_d_level=10.d0**(-2)
         real(8), parameter :: kappa_phi_d_level_lo=2.d0
