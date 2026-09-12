@@ -1,3 +1,29 @@
+## 12 September 21:40 UTC -- A KILLED SOLVE'S .dat FILES ARE REVERTED, NOT
+## COMMITTED, AND THE TWO ARE NOT ALIKE.
+
+ENGINE.md says to check `git status` for a partial `.dat` after a kill. It does
+not say what to do with one, and the answer differs between the two files the
+stopped run left modified:
+
+    calibration_state.dat      DELETED at run_one_point.sh line 944 at the head
+                               of every run, so the committed copy can never seed
+                               anything. Harmless either way.
+    newborn_parent_share.dat   READ BACK at line 39927 as a warm start, and NOT
+                               deleted by run_one_point.sh. The committed copy
+                               DOES seed the next run.
+
+So the second one matters. Committing the copy this run left behind would have
+seeded the next calibration with the newborn parent composition of an economy in
+which nobody works and 87 per cent of households are on the street -- and it
+would have done it silently, because the file is a bare list of numbers that
+records nothing about the configuration it came from. That is the trap
+TRANSITION_LESSONS section 7 sets out at length: a persisted artefact that does
+not stamp what it was made from will be reused under something else.
+
+Both were reverted with `git checkout --`. The rule: after a kill, revert every
+modified `.dat` rather than committing it, and never reason about them as a
+group -- check whether each is deleted at run start or read back as a warm start.
+
 ## 12 September 21:30 UTC -- labor_income_tax_rate = 0 IS A 100 PER CENT TAX, NOT
 ## NO TAX. IT ZEROED LABOUR SUPPLY AND EVERY MOMENT IN THE RUN FOLLOWS FROM THAT.
 ## THIS IS THE SESSION'S FINDING. Read it before anything below.
