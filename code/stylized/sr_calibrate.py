@@ -252,7 +252,30 @@ MAX_REL_STEP = 0.005
 # r_use and with the WRONG SIGN, +0.108 where the mechanism says negative, with
 # pi_base at -0.726 and b at +0.566.  What it does buy is a readable table --
 # r_use has been swinging plus or minus 32 points reading to reading.
-PER_PARAM_STEP = {'omega': 0.0025, 'th': 0.001, 'h_hl': 0.02, 'kap': 0.001}
+# b AND pi_base TO 0.1 PER CENT, the last two substantive parameters still
+# running at the global 0.5.  Every parameter the author has asked to be slowed
+# is at 0.1 to 0.25, and these two were simply never named.
+#
+# THEY ARE THE PAIR YOU WOULD EXPECT TO RING.  b is bracketed on participation
+# and pi_base on the disorder rate, but BOTH move BOTH -- either can deliver a
+# given SUD rate -- so they can trade a large amount of parameter space against
+# each other while their own moments still look reasonable.  Measured over the
+# 50000 run, peak-to-peak as a share of the mean:
+#
+#                iters ~2650-3000   iters ~3050-3400
+#     b                 21.6%             39.4%
+#     pi_base           34.1%             50.2%
+#     omega             22.7%             33.1%
+#     th                 5.0%             10.1%
+#
+# Widening, not damping, and at iteration 3500 the swing carried participation
+# to -52.3 per cent, the worst since iteration 200, with b at 0.0669 against
+# 0.0942 one block earlier.
+#
+# theta is the evidence that slowing works: it went from +50 per cent and
+# swinging to +5.4 per cent once it was capped at 0.1 and given the iterations.
+PER_PARAM_STEP = {'omega': 0.0025, 'th': 0.001, 'h_hl': 0.02, 'kap': 0.001,
+                  'b': 0.001, 'pi_base': 0.001}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
 ADJ_FLOOR = 1e-3
