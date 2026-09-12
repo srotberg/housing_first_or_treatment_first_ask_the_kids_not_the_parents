@@ -95,8 +95,33 @@ FIXED = dict(gam=0.268, h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0)
 # the homeless 0.2150 against 0.217 before a single bracket has run, with
 # participation, the disorder rate, the housing share and the VSL the four that
 # still need closing.
-START = dict(h_hl=1e-4, aleph=8.3, th=0.16,
-             kap=0.175, u1=0.127, pi_base=0.40, b=0.045)
+START = dict(h_hl=1e-4, aleph=15.4, th=0.16,
+             kap=0.09, u1=0.127, pi_base=0.40, b=0.035)
+# THE START MOVED AGAIN, IN (aleph, kap) JOINTLY, and the first version of this
+# note blamed the wrong thing.  Two sweeps cornered from aleph 8.3 with kap
+# 0.175, and the diagnosis offered at the time -- that a near-worthless street
+# was the cause -- is WITHDRAWN: flooring h_hl was measured and does nothing.
+# The share of households with a NEGATIVE value of life stays between 19 and 36
+# per cent over h_hl from 0.01 to 0.06, while homelessness runs to 23 per cent
+# at h_hl = 0.04 and 49 at 0.06, so the floor destroys the homelessness target
+# without touching the pathology.  A consumption floor was measured too: it
+# lifts the minimum lifetime value from -68 to -9 and moves the SHARE only from
+# 26.7 to 25.0 per cent.
+#
+# It is aleph and kap together.  share V1<0 / participation / users' income:
+#
+#              kap=0.020        kap=0.090        kap=0.175
+#   aleph  8.3  0.267/0.661/1.38  0.267/0.609/1.41  0.267/0.204/0.67
+#   aleph 15.4  0.090/0.631/1.42  0.090/0.031/0.83  0.090/0.004/0.11
+#   aleph 25.0  0.025/0.579/1.47  0.025/0.000/0.00  0.025/0.000/0.00
+#
+# At aleph 15.4, kap 0.09 the pathology is 9.0 per cent, users are at 0.83 of
+# average income and the VSL is 79.8 against its target of 80.  kap 0.175 at
+# that aleph is deep in the corner branch, which is what both sweeps found.
+#
+# NINE PER CENT IS STILL HIGH and the note says so rather than declaring it
+# solved: the quantitative model reports 0.227 per cent.  aleph 25 takes it to
+# 2.5 per cent but puts the VSL at 141.
 
 # u1's BOUNDS KEEP IT ON THE INTERIOR BRANCH, like kap's.  Measured at
 # b = 0.045, kap = 0.175: participation is 0.425 at u1 = 0.05, 0.170 at 0.12,
