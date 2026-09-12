@@ -736,7 +736,7 @@
         ! once the gap is inside three per cent AND b and lambda_d are both
         ! close, which is the condition for pinning on evidence rather than by
         ! hand.
-        integer :: omega_c_is_pinned=0
+        integer :: omega_c_is_pinned=1
         integer, parameter :: calibrate_weight_on_child=1
 
         ! WHETHER A POINT MEASURES OMEGA_C'S MOMENT. It costs a second
