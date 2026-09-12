@@ -121,7 +121,13 @@ SPEC = [
     ('pi_base', 'sud',              0.0368,  +1, 0.40, 1e-3,  0.99),
     ('u0',      'unemployment',     0.0485,  +1, 0.40, 0.005, 0.30),
     ('u1',      'sud_of_homeless2', 0.217,   -1, 0.20, 0.0486, 0.50),
-    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.0,   1.50),
+    # omega_c IS BOUNDED TO [0.01, 0.14], author 12 September: *"try omega_c only
+    # between 0.01-0.14"*.  It had run to 0.242 on the negative child gap the
+    # corner branch produces -- see the guard above, which now stops that at
+    # source -- and 0.14 keeps it in a range the quantitative model's 0.09 sits
+    # inside.  The floor of 0.01 keeps it strictly positive, so the child
+    # counterfactual stays defined.
+    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.01,  0.25),
     # THETA IS NOT CALIBRATED.  It was freed on the author's instruction when
     # the eight-parameter run left the drug spending share at 0.052 against
     # 0.141 -- and freeing it FAILED, which is worth recording because the
