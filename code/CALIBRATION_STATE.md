@@ -1,3 +1,88 @@
+## 12 September 11:11 UTC -- THE SECTION BELOW IS SUPERSEDED ON ITS HEADLINE.
+## Read this first.
+
+**THE 23:45 HEADLINE IS WRONG. b RESPONDS TO ITS INSTRUMENT.** That section says
+b converges to about 0.178 whatever addiction_scalar_1 is, and that the
+calibration has no working instrument for b's level. Tonight's run, tag
+7303e4b6ca, refutes it: b started at 0.0024 (-97 per cent), climbed to 0.151
+(+70), and is at 0.0375 (-58) at loop 127, tracking addiction_scalar_1
+throughout. The instrument works. What was read as "b's level is pinned" was
+b sitting in one part of a wide cycle for the length of a short window.
+
+**WHAT ACTUALLY HAPPENED TONIGHT, in order.**
+
+Three parameters were pinned on the author's instruction, each because it was
+moving the drug block underneath b's own bracket:
+
+    kappa_phi_d_level   3.5    was bracketed on y_u and FELL every loop
+                               (4.6137 -> 4.3876), lowering the death risk,
+                               keeping addicts alive, raising the stock
+    weight_on_child     0.09   slow, noisy, and cost a FULL EXTRA SOLVE a loop
+    theta               0.16   sets the abstention corner with b, so a moving
+                               theta moved the corner under b's feet
+
+The pins WORKED on their own terms: the drug block stopped diverging. Previous
+run peaked at b +176 per cent by loop 14; this run's peaks are
++58.5, +19.5, +36.0, +28.3, +39.5, +69.7 across loops 48 to 99 -- bounded, but
+NOT contracting, and by loop 101 the band was wider than at loop 48.
+
+**THE THETA TEST CAME BACK NEGATIVE.** The author's argument was that at a low
+addiction scalar users would spend 14-16 per cent on drugs, so theta could be
+pinned at 0.16 without a bracket. The spending share held 14 per cent exactly
+while users were SCARCE, then broke as they arrived: at loop 41, the loop b
+first reached target, it read 0.07766 against 0.14098, -44.9 per cent, and it
+stayed near there. theta's own bracket, when free, chose 0.2672 and hit the
+target within 0.2 per cent.
+
+**THE HOMELESSNESS BLOCK DIVERGED FOR THE WHOLE RUN AND STILL IS.** h_1 rose
+essentially every loop from -24 per cent to 23.3 per cent OF THE POPULATION;
+emp_homeless from -13 per cent to 0.894. Neither responds to the drug block.
+The cause is the affordability channel: at loop 44, with b and lambda_d both
+ON target, sud_homeless read 12.6 per cent against 21.7, so the model had the
+right number of users and about three times too many non-user homeless.
+
+size_homelessness pushes the right way and loses: it steps EXACTLY -1.0 per
+cent a loop, the max_rel_step_all cap under the stage-1 freeze, while the h_1
+gap grows several times faster. Thirty-four loops of pushing moved the
+instrument twelve per cent while h_1 went from -24 to +133. emp_homeless has
+no instrument at all -- rho_d was retired on 11 September and
+increased_prob_if_homeless, which a comment claims is its instrument, has no
+adjuster anywhere in the file.
+
+**A SCORED TARGET IS INVISIBLE TO EVERY TABLE.** homeownership_rate_of_old_data
+is 0.804 and model_homeownership_by_age_group(1,5) is exactly 0.000. The branch
+that would compute the gap sits behind
+`if (discount_factor_on_child_adjuster==0) then distance=0`, and that adjuster
+is hardcoded zero, so the guard fires first: the gap is never computed, the
+distance is FORCED TO ZERO, and the print never runs. The do-while therefore
+sees a satisfied condition rather than a total miss, and no MOMENT line exists
+for it, so calibration_report.py cannot see it either. An audit found exactly
+two such cases in the file -- this and minimum_inheritance -- so the
+convergence test is not broadly unreliable, but these two are.
+
+model_homeownership_rate is 0.000000 in EVERY log on disk, including last
+night's, so zero ownership predates tonight's changes.
+
+**FOUR CHARACTERISATIONS OF b WERE MADE AND WITHDRAWN TONIGHT** -- settled at
+loop 44, a crawl at loop 20, damped at loop 56, and the 23:45 fixed point
+above. Every one was fitted to a window shorter than the behaviour it claimed
+to describe. The rule that came out of it: report the measured peak sequence
+and let the author read it.
+
+**WHAT IS OPEN, all the author's.**
+
+    theta        0.16 leaves the spending share at about -45 per cent once
+                 users arrive; its bracket's own answer was 0.2672
+    max_rel_step_all  1e-2 under the freeze, which caps size_homelessness at
+                 one per cent a loop against an h_1 gap moving several times
+                 faster
+    two-node bottom productivity  node 1 below the rent line at any employment
+                 status, node 2 barely above it when employed. The arithmetic
+                 wants masses near 0.4 and 7 per cent; no single y_grid_kappa
+                 delivers both, because the power law ties them
+    homeownership  a scored target at 0.804 sitting at 0.000 with a dead
+                 adjuster and no print
+
 ## 11 September 23:45 UTC -- CONVERGED POINT, AND b CANNOT BE CALIBRATED BY ITS
 ## OWN INSTRUMENT. Read this section first.
 
