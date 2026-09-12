@@ -1,3 +1,49 @@
+## 12 September 14:41 UTC -- THE 32 PER CENT HOMELESS IS CHOICE, NOT
+## AFFORDABILITY. This is the session's main finding. Read it before the rest.
+
+The model's own invariant block, at loop 206:
+
+    homeless by choice, share of the homeless  =  0.7412
+    homeless who could afford it on income     =  0.4587
+    employed share of the homeless             =  0.9124
+    homelessness rate                          =  0.3243
+    homeownership rate                         =  0.0000
+
+SEVENTY-FOUR PER CENT OF THE HOMELESS ARE HOMELESS BY CHOICE and 46 per cent
+could afford the cheapest unit out of current income. h_2's bracket, which
+doubled the cheapest rung from 0.1023 to 0.2104 chasing its own target,
+explains at most a quarter of it. And the choice share is what moved: it was
+0.1121 at loop 1 and is 0.7412 now.
+
+WHY THE STREET IS CHEAP. Two things, and they compound.
+
+  1. PREFERENCES ARE CES, NOT COBB-DOUGLAS. power_1 = 1 - 1/rho_1 at line
+     2793, housing entering as (share*(housing/sqrt_hh_size)**power_1 + ...).
+     Under Cobb-Douglas, housing at zero gives zero utility and the street is
+     never chosen. Under CES the loss from housing -> 0 is FINITE, so the
+     street becomes a live option as soon as rent is expensive enough.
+
+  2. consumption_penalty_homeless = 0. Line 24236 is
+     c_util_1 = consumption_choice_1*(1 - consumption_penalty_homeless).
+     The parameter is wired into utility and has a handover case at 40323.
+     It is exactly zero, so homelessness costs a household NOTHING beyond the
+     housing services it gives up.
+
+size_homelessness is at 4.07e-06, about 2e-5 of the cheapest unit, so it has
+no traction left: the bracket drove it down 84 per cent across the run and
+h_1 rose forty-fold anyway.
+
+WHAT THIS MEANS FOR THE PAPER, and it is not a bug report. A housing-first
+model in which sleeping rough is nearly costless cannot speak to the benefit
+of housing people: the counterfactual's whole force is that homelessness is
+bad for the household, and here it is close to free. consumption_penalty_homeless
+is the lever and it has never been set above zero.
+
+It also explains the shape of everything else tonight. The homeless are 91 per
+cent EMPLOYED because employment is what gives a household rent worth saving,
+and only 3.6 per cent have a substance disorder, so sud_homeless reads -83 per
+cent while b and lambda_d sit near target. The drug block is not what is wrong.
+
 ## 12 September 11:11 UTC -- THE SECTION BELOW IS SUPERSEDED ON ITS HEADLINE.
 ## Read this first.
 
