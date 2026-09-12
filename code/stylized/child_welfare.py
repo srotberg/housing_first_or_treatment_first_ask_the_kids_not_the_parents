@@ -227,3 +227,54 @@ def child_lifetime_loss(par, policy=None, pV=None):
                 adult_loss=adult_clean - adult_dis,
                 childhood_loss=kidloss, user_mass=kidmass,
                 total_loss=(adult_clean - adult_dis) + kidloss)
+
+
+# ---------------------------------------------------------------------------
+# RATIONED TREATMENT FIRST: fixed supply, reallocated away from users
+# ---------------------------------------------------------------------------
+
+def voucher_coverage(par, policy=None):
+    """Share of households that ACTUALLY hold a voucher in period 1.
+
+    Not the share that draws one: under any conditional policy a household can
+    draw a voucher and then lose it by using, and what the programme spends is
+    on the ones that keep it.  period1's records carry the voucher saving in
+    slot 3 of each branch, which is positive exactly when a voucher is held.
+    """
+    got = mass = 0.0
+    for j, y in enumerate(C.YG):
+        for p, gain, v, bu, bn, inc, _own in S.period1(par, y, par.policy):
+            if p <= 1e-14:
+                continue
+            vs = (bu if gain > 0.0 else bn)[3]
+            m = C.W[j] * p
+            mass += m
+            got += m * (1.0 if vs > 1e-12 else 0.0)
+    return got / mass
+
+
+def solve_pv_scale(par, target_cov=None, iters=24, tol=1e-6):
+    """Find the reallocation factor that holds voucher SUPPLY fixed.
+
+    The author's rationed Treatment First houses the same fraction of eligible
+    households as the benchmark, while refusing anyone with the disorder or
+    with v > 0.  The vouchers that refusal frees are reissued, so the clean draw
+    against a larger pool -- and how many are freed depends on how many use,
+    which depends on the voucher.  That is a fixed point, not a parameter.
+
+    Solved by damped iteration on the ratio of realised coverage to target,
+    which is monotone in the scale and converges in a handful of passes.  The
+    scale is capped so that pV * scale cannot exceed one.
+    """
+    base = with_(par, policy='HF')
+    cov0 = voucher_coverage(base) if target_cov is None else target_cov
+    scale = 1.0
+    for _ in range(iters):
+        q = with_(par, policy='RTF', pv_scale=scale)
+        cov = voucher_coverage(q)
+        if abs(cov - cov0) < tol:
+            break
+        # damped, because coverage responds to the scale through behaviour too
+        scale = min(scale * (1.0 + 0.6 * (cov0 / max(cov, 1e-12) - 1.0)),
+                    1.0 / max(par.pV, 1e-12))
+    return scale, cov0, cov

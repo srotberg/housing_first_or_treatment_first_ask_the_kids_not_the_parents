@@ -555,6 +555,25 @@ class P:
                       # been since the share became its moment.
     h_hl  = 0.05      # the street. CALIBRATED to the homelessness rate
     pr    = 1.00      # rent per unit of housing services: the numeraire
+    # RATIONED TREATMENT FIRST reallocates the vouchers it withholds.  The
+    # author, 12 September: *"Rationed tf means that only the same fraction of
+    # eligible households get vouchers but those with Sud or v>0 cannot get a
+    # voucher in that period"*.
+    #
+    # THIS IS NOT THE SAME POLICY AS 'TF'.  Under TF a household that fails the
+    # sobriety condition loses its voucher and the voucher goes UNISSUED, so
+    # total coverage falls and the programme spends less.  Under rationed TF the
+    # SUPPLY is fixed: the same fraction of eligible households is housed, and
+    # the vouchers freed by excluding users are handed to eligible non-users, so
+    # coverage among the clean RISES.  That difference is the whole reason the
+    # transition question is interesting -- some children gain a roof precisely
+    # because other children's parents lost one.
+    #
+    # pv_scale is that reallocation factor and it is an EQUILIBRIUM OBJECT, not
+    # a parameter: how many vouchers are freed depends on how many households
+    # use, which depends on the voucher.  solve_pv_scale below finds its fixed
+    # point.  At 1.0 the policy is ordinary TF.
+    pv_scale = 1.0
     pV    = 0.266     # probability a voucher arrives, conditional on eligibility.
                       # HUD 2023, recipients over the income eligible population,
                       # the same 26.6 per cent the quantitative model targets. It
@@ -802,6 +821,11 @@ def _states(par, d, policy, y, used=0):
         # state is below the mean. Every unemployed household passes the test;
         # employed households pass only in the bottom part of the distribution.
         pv = par.pV if (inc <= par.yV) else 0.0
+        # RATIONED TF: the clean draw against a LARGER pool, because the
+        # vouchers withheld from users are reissued rather than surrendered.
+        # Capped at one -- a programme cannot house more than everyone.
+        if policy == 'RTF':
+            pv = min(pv * par.pv_scale, 1.0)
         for rmul, prb in ((rate, pv), (1.0, 1.0 - pv)):
             out.append((pe * prb, inc, rmul))
     return out
