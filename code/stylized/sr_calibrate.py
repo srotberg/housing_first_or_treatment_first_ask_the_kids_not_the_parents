@@ -590,6 +590,24 @@ if __name__ == '__main__':
                    # A STARTING VALUE AGAIN, not a pin: delta_d is back in SPEC
                    # and is stepped, from the 0.24 the author pinned it at.
                    "delta_d": 0.24,
+                   # THE INCOME FLOOR IS ON, at the level that clears the
+                   # negative value of life completely.  The author asked for a
+                   # floor "so no one has negative value of life", and measured
+                   # that is 0.19: at 0.16 the share is still 0.55 per cent, at
+                   # 0.19 it is zero and the lowest value of a period of life
+                   # goes from -9.61 to +0.78.
+                   #
+                   # IT COSTS TWO TARGETS AND THAT IS EXPECTED, not a surprise
+                   # to be discovered later.  Homelessness goes to zero, because
+                   # homelessness in this model IS the households who cannot
+                   # afford the cheapest unit and the floor is what lets them;
+                   # and participation falls towards 1.4 per cent from 8.4,
+                   # because the households that used were the ones at the
+                   # bottom.  h_hl and b are therefore being asked to hit
+                   # targets that may no longer be attainable, and the gaps
+                   # table is where that will show.  This is a NEW calibration
+                   # rather than the old one patched.
+                   "y_floor": 0.19,
                    # STARTING VALUES MATTER WHEN THE STEP IS RELATIVE.  The
                    # author, 12 September: *"this is why the model cannot
                    # converge"*.  h_hl started at 1e-4 and lands near 1e-2 -- a

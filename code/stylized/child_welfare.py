@@ -131,7 +131,7 @@ if __name__ == '__main__':
 # THE CHILD'S LIFETIME UTILITY, CHILDHOOD INCLUDED
 # ---------------------------------------------------------------------------
 
-def _childhood_u(par, c, h, aleph_for_child=False):
+def _childhood_u(par, c, h, aleph_for_child=True):
     """The child's OWN experienced utility during childhood.
 
     X_K = (c/xi)^phi_c (h/xi)^phi_h (bbar)^phi_q -- the child's bundle, carrying
@@ -144,7 +144,10 @@ def _childhood_u(par, c, h, aleph_for_child=False):
     child's share of what the household consumes, and it is the same factor the
     parent's flow utility carries.
 
-    ALEPH IS EXCLUDED BY DEFAULT and the switch is deliberate.  aleph is added
+    ALEPH IS INCLUDED, on the author's instruction of 12 September: *"Yes for
+    welfare the child's utility growing up counts"*.  A childhood is a period of
+    life and is valued as one.  The switch is kept because the argument the
+    other way is real and is recorded here.  aleph is added
     ONCE PER HOUSEHOLD, not per member -- the Fortran adds value_of_life to the
     assembled flow rather than inside the bracket the child weight multiplies --
     so the parent's flow already carries it for the household.  Counting it
