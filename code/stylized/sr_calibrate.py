@@ -134,7 +134,7 @@ SPEC = [
     # source -- and 0.14 keeps it in a range the quantitative model's 0.09 sits
     # inside.  The floor of 0.01 keeps it strictly positive, so the child
     # counterfactual stays defined.
-    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.01,  0.25),
+    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.01,  1.00),
     # THETA IS NOT CALIBRATED.  It was freed on the author's instruction when
     # the eight-parameter run left the drug spending share at 0.052 against
     # 0.141 -- and freeing it FAILED, which is worth recording because the
@@ -233,6 +233,44 @@ def step(par, m, state):
     return with_(par, **kw), moved
 
 
+CORNER = 0.02   # drug spending share below this is the corner branch
+
+
+def step_on_branch(par, m, state):
+    """
+    One step of the author's rule, BACKED OFF IF IT LEAVES THE INTERIOR BRANCH.
+
+    THE CORNER IS WHAT HAS BEEN STOPPING THIS MODEL CALIBRATING.  Every run so
+    far has walked into it: the drug spending share collapses from ~0.20 to
+    0.0007, every "user" sits on the smallest positive point of the v-grid, the
+    child gap turns to noise, and b then falls chasing participation from the
+    wrong branch.  The best run reached participation 0.0830 against 0.0890 and
+    a child gap of 0.1864 against 0.1834 at iteration 50 -- essentially hit --
+    and was in the corner ten iterations later with b dragged from 0.268 to
+    0.065.
+
+    The rule itself is unchanged.  What is added is a line search on the STEP
+    LENGTH: take the full step, and if the model has left the interior branch,
+    halve the step and try again.  Four halvings, then accept whatever the
+    smallest step gives rather than stall.  It costs at most four extra solves
+    on the iterations that would have fallen in, and nothing at all on the rest.
+
+    This does not force a result.  If the interior branch genuinely does not
+    contain the targets the search still fails -- it just fails without the
+    corner's meaningless numbers mixed into the record.
+    """
+    full, _ = step(par, m, state)
+    if m.get('dshare', 0.0) <= CORNER:
+        return full          # already in the corner: let the rule climb out
+    for _ in range(4):
+        if stats(full)['dshare'] > CORNER:
+            return full
+        # halve every parameter's move back toward where we are
+        full = with_(par, **{n: 0.5 * (getattr(par, n) + getattr(full, n))
+                             for n, _, _, _, _, _, _ in SPEC})
+    return full
+
+
 def table(par, m, it):
     print(f'\n  ITERATION {it}')
     print(f'  {"param":9}{"value":>11}  {"moment":20}{"model":>10}{"target":>9}{"gap %":>8}')
@@ -277,6 +315,6 @@ if __name__ == '__main__':
             if w < 2.0:
                 print('\n  every gap inside two per cent, stopping')
                 break
-        par, _ = step(par, m, state)
+        par = step_on_branch(par, m, state)
     print('\nFINAL')
     table(par, moments(par), 'final')
