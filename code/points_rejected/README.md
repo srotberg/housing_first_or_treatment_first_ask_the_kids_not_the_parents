@@ -22,3 +22,13 @@ parameters, so three structural ones came through wrong:
 
 It also reports "solved in 0 min" because it was stopped after three seconds,
 so it is not a solution of anything.  resume.sh is fixed in the same commit.
+
+## point_e12c3d0657.txt -- 12 September
+
+"solved in 0 min".  Written by the launch that was killed within seconds when
+the quantitative calibration was handed to a parallel session.  Its vector is
+CORRECT -- taxes and food stamps both removed, kappa_phi_d_level 3.0,
+bottom_productivity_level 0.0905 -- so this is not the wrong-model case above;
+it simply is not a solution of anything and must not be scored.
+
+The tell is the first line.  A point that reports 0 min did not solve.
