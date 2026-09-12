@@ -608,7 +608,11 @@
         ! reaches it will say so rather than diverging quietly.
         real(8), parameter :: weight_on_child_cap=25.d0
 
-        real(8) :: weight_on_child_adjuster=(1-freeze_to_three_block)*(2*10.d0**(-3))
+        ! NO LONGER TIED TO THE FREEZE, 12 September. The author's block that must
+        ! converge first is h_1, h_2, b, lambda_d, aleph and omega_c, so omega_c
+        ! has to be live in stage 1. It was (1-freeze_to_three_block)*2e-3, which
+        ! is zero under the freeze.
+        real(8) :: weight_on_child_adjuster=2*10.d0**(-3)
         real(8) :: distance_weight_on_child=1
         real(8) :: stopping_rule_weight_on_child=10.d0**(-2)
         real(8) :: drug_users_without_child=0
@@ -652,7 +656,12 @@
         ! once the other ones are close"*. The counterfactual's own guard already
         ! tests omega_c_is_pinned==0, so pinning it here skips that solve and a
         ! calibration loop becomes ONE solve instead of two.
-        integer :: omega_c_is_pinned=freeze_to_three_block
+        ! UNPINNED, 12 September, for the same reason. It was
+        ! freeze_to_three_block, which pinned omega_c and skipped its
+        ! counterfactual to save a solve a loop during the three-block phase.
+        ! omega_c is in the author's first block now, so the counterfactual must
+        ! run and the cost is accepted.
+        integer :: omega_c_is_pinned=0
         integer, parameter :: calibrate_weight_on_child=1
 
         ! WHETHER A POINT MEASURES OMEGA_C'S MOMENT. It costs a second
@@ -34081,23 +34090,26 @@
                     
             else
             
-                if (housing_status_grid_size>8) then
-            
-                    smallest_house_size=smallest_rental_relative_to_lowest_income
-                        
-                    write(*,*) "smallest_house_size=", smallest_house_size
-                    write(*,*) "smallest_house_size*rent(1)/net_income_lowest=", &
-                        (smallest_house_size*rent(1,0))/net_income_lowest    
-                        
-                else
-                
-                    smallest_house_size=smallest_rental_relative_to_lowest_income !net_income_lowest*smallest_rental_relative_to_lowest_income/rent(1,0)
-                        
-                    write(*,*) "smallest_house_size=", smallest_house_size
-                    write(*,*) "smallest_house_size*rent(1)/net_income_lowest=", &
-                        (smallest_house_size*rent(1,0))/net_income_lowest   
-                
-                end if
+                ! THE OVERWRITE IS GONE FROM loop_count>=1, 12 September.
+                ! Both branches used to reassign
+                !     smallest_house_size = smallest_rental_relative_to_lowest_income
+                ! every loop, which discarded whatever h_2's bracket had just
+                ! computed. smallest_house_size_adjuster is 0.05 and has never been
+                ! able to act; the parameter printed a constant
+                ! 0.10231966665328487 through every loop of every run measured on
+                ! 11 September, and h_2 fell from 10.02 to 7.03 per cent with
+                ! nothing to arrest it.
+                !
+                ! The grid size never mattered -- BOTH branches did the same thing,
+                ! so housing_status_grid_size at 3 or at 9 made no difference.
+                !
+                ! The author, 12 September, asks for h_2 in the block that must
+                ! converge first, which it cannot do without an instrument. The
+                ! initialisation at loop_count<1 above still seeds it from the
+                ! vector; from loop 1 onward the bracket owns it.
+                write(*,*) "smallest_house_size=", smallest_house_size
+                write(*,*) "smallest_house_size*rent(1)/net_income_lowest=", &
+                    (smallest_house_size*rent(1,0))/net_income_lowest
             
             end if
             
