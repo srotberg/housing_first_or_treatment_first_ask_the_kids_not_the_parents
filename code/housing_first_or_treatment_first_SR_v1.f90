@@ -34090,26 +34090,41 @@
                     
             else
             
-                ! THE OVERWRITE IS GONE FROM loop_count>=1, 12 September.
-                ! Both branches used to reassign
-                !     smallest_house_size = smallest_rental_relative_to_lowest_income
-                ! every loop, which discarded whatever h_2's bracket had just
-                ! computed. smallest_house_size_adjuster is 0.05 and has never been
-                ! able to act; the parameter printed a constant
-                ! 0.10231966665328487 through every loop of every run measured on
-                ! 11 September, and h_2 fell from 10.02 to 7.03 per cent with
-                ! nothing to arrest it.
+                ! REVERTED 12 September. This assignment was removed and then put
+                ! back within the hour, and the reason is recorded so it is not
+                ! removed a second time.
                 !
-                ! The grid size never mattered -- BOTH branches did the same thing,
-                ! so housing_status_grid_size at 3 or at 9 made no difference.
+                ! IT IS NOT AN OVERWRITE. h_2's bracket does not compute
+                ! smallest_house_size; it computes
+                ! smallest_rental_relative_to_lowest_income, at line 42392, on the
+                ! cost-burden gap with cap_step and a floor. This line is what
+                ! PROPAGATES that result into smallest_house_size. Deleting it does
+                ! not free the instrument, it disconnects it: the bracket goes on
+                ! updating the rental parameter and the house size never follows.
                 !
-                ! The author, 12 September, asks for h_2 in the block that must
-                ! converge first, which it cannot do without an instrument. The
-                ! initialisation at loop_count<1 above still seeds it from the
-                ! vector; from loop 1 onward the bracket owns it.
-                write(*,*) "smallest_house_size=", smallest_house_size
-                write(*,*) "smallest_house_size*rent(1)/net_income_lowest=", &
-                    (smallest_house_size*rent(1,0))/net_income_lowest
+                ! The 11 September claim that "smallest_house_size is overwritten
+                ! every loop so h_2's bracket cannot act" was therefore WRONG, and
+                ! so was the inference that this was a fourth defect of the
+                ! second-writer shape. The parameter sat at 0.10231966665328487
+                ! because smallest_rental_relative_to_lowest_income was not moving,
+                ! which is a different question and is still open.
+                if (housing_status_grid_size>8) then
+
+                    smallest_house_size=smallest_rental_relative_to_lowest_income
+
+                    write(*,*) "smallest_house_size=", smallest_house_size
+                    write(*,*) "smallest_house_size*rent(1)/net_income_lowest=", &
+                        (smallest_house_size*rent(1,0))/net_income_lowest
+
+                else
+
+                    smallest_house_size=smallest_rental_relative_to_lowest_income
+
+                    write(*,*) "smallest_house_size=", smallest_house_size
+                    write(*,*) "smallest_house_size*rent(1)/net_income_lowest=", &
+                        (smallest_house_size*rent(1,0))/net_income_lowest
+
+                end if
             
             end if
             
