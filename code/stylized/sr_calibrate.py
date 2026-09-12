@@ -122,14 +122,23 @@ SPEC = [
     ('u0',      'unemployment',     0.0485,  +1, 0.40, 0.005, 0.30),
     ('u1',      'sud_of_homeless2', 0.217,   -1, 0.20, 0.0486, 0.50),
     ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.0,   1.50),
-    # THETA IS CALIBRATED AFTER ALL, author 12 September: *"ah, then you have to
-    # calibrate theta as well to match the 14% drug spending"*.  It had been SET
-    # at 0.16 to match the quantitative model's relative_share_of_addiction_1,
-    # and the eight-parameter run showed why that could not stand: with all eight
-    # hit to a median of 0.1 per cent, the drug spending share came out at 0.052
-    # against 0.141.  An untargeted moment missing by a factor of three is a
-    # parameter that needed to be free.
-    ('th',      'dshare',           0.14098, +1, 0.30, 0.05,  0.45),
+    # THETA IS NOT CALIBRATED.  It was freed on the author's instruction when
+    # the eight-parameter run left the drug spending share at 0.052 against
+    # 0.141 -- and freeing it FAILED, which is worth recording because the
+    # reasoning for freeing it was sound.
+    #
+    # With theta free the rule drove it 0.16 -> 0.199 while the share stayed
+    # pinned at 0.0007, the CORNER value: every user sitting on the smallest
+    # positive point of the v-grid, buying essentially nothing.  theta cannot
+    # lift it there, because on that branch the drug's marginal value is below
+    # the threshold at any theta in range.  The worst gap swung 449, 46, 55,
+    # 207, 45, 38, 188, 162 per cent with no trend over 110 iterations, against
+    # a median of 0.1 per cent for the eight-parameter run.
+    #
+    # THE CAUSE IS THAT THETA AND b BOTH ACT ON ONE MARGIN.  Both decide how
+    # much a household uses; giving the rule two instruments for it is what put
+    # the model on the corner branch and kept it there.  Author's resolution,
+    # 12 September: *"can you fix theta to 0.25 and try to calibrate the rest?"*
 ]
 
 MAX_REL_STEP = 0.05          # nothing moves more than 5 per cent a pass
@@ -225,7 +234,7 @@ if __name__ == '__main__':
     #
     # AND THE DIRECTION CONFIRMS WHAT WAS FLAGGED: removing a positive return
     # made saving less attractive, so beta rose rather than fell.
-    par = with_(P(), **FIXED, **{k: v for k, v in START.items()}, beta=1.0)
+    par = with_(P(), **FIXED, **{**START, "th": 0.25, "beta": 1.0})
     smr = 1 + math.log(1 - par.kap) / math.log(par.phi0)
     print(f"THE AUTHOR'S METHOD, sigma = 2, kappa SET at SMR {smr:.2f}")
     state = {}
