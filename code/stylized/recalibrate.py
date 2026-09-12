@@ -49,6 +49,8 @@ only spans r_use in [0.66, 0.85] before it falls away, so the calibration is on
 a narrow ridge and the note says so rather than hiding it.
 """
 import json
+import math as _math
+
 import numpy as np
 
 from calibrate import stats, bracket, TARGET
@@ -133,6 +135,23 @@ START = dict(h_hl=1e-4, aleph=15.4, th=0.16,
 # is the moment that is actually hit.
 HOUSING = [('h_hl', 'homeless', 1e-7, 0.02),
            ('aleph', 'vsl', 3.0, 60.0)]
+# THE DRUG BLOCK IS SPLIT AND b AND pi_base GO FIRST.  Author, 12 September:
+# *"I think you first have to match b and sud and only then start adjusting
+# kappa and omegac"*.  b decides who uses and pi_base turns use into the
+# disorder; they are a pair and they settle against each other in a few passes.
+# kap, u1 and th are read AFTER that pair is at a fixed point, so each is
+# bracketed on a user population that is the right SIZE, instead of one the next
+# b move will change underneath it.
+#
+# KAPPA CANNOT IMPLY AN SMR BELOW ONE, and it never could: kap is the
+# proportional fall in thirty-year survival, kap = 1 - phi0^(smr-1), so kap = 0
+# IS smr = 1 and the parameter only rises from there.  The interval below is smr
+# 2.06 to 2.51, and even the cornered values of the failed sweeps, kap 0.020 to
+# 0.030, were smr 1.21 to 1.32.  The table now prints the implied smr beside kap
+# so this does not have to be done in the reader's head.
+DRUG_FIRST = [('b', 'part', 0.020, 0.090),
+              ('pi_base', 'sud', 1e-3, 0.99)]
+
 DRUG = [('th', 'dshare', 0.05, 0.40),
         # kap's INTERVAL HOLDS ONE ROOT, NOT TWO.  r_use is NON-MONOTONE in kap
         # at the aleph the VSL requires, and bracket() reads its direction from
@@ -150,9 +169,7 @@ DRUG = [('th', 'dshare', 0.05, 0.40),
         # where participation and the drug spending share are also near their
         # targets.
         ('kap', 'r_use', 0.095, 0.133),
-        ('u1', 'sud_of_homeless2', 0.06, 0.19),
-        ('pi_base', 'sud', 1e-3, 0.99),
-        ('b', 'part', 0.020, 0.090)]
+        ('u1', 'sud_of_homeless2', 0.06, 0.19)]
 
 # REPORTED BESIDE THE TABLE, NEVER IN IT.  The author, 12 September: *"when I
 # ask for the gaps table I am referring to the calibration gaps table on
@@ -173,17 +190,22 @@ def table(par, note=''):
           f'{"model":>10}{"target":>10}{"gap %":>9}')
     print('  ' + '-' * 72)
     worst = 0.0
-    for name, mom, _, _ in HOUSING + DRUG:
+    for name, mom, _, _ in HOUSING + DRUG_FIRST + DRUG:
         t, v = TARGET[mom], m[mom]
         g = 100 * (v - t) / t
         worst = max(worst, abs(g))
+        # kap = 1 - phi0^(smr-1), so the mortality rate ratio it implies is
+        # smr = 1 + ln(1-kap)/ln(phi0).  kap = 0 is smr = 1 exactly and the
+        # parameter cannot imply a ratio below one.
+        tag = (f'   smr {1.0 + _math.log(1.0 - par.kap) / _math.log(par.phi0):.2f}'
+               if name == 'kap' else '')
         print(f'  {name:10s}{getattr(par, name):11.5f}  {MOMENT_NAME[mom]:22s}'
-              f'{v:10.4f}{t:10.4f}{g:9.1f}')
+              f'{v:10.4f}{t:10.4f}{g:9.1f}{tag}')
     print('  ' + '-' * 72)
-    hit = sum(1 for _, k, _, _ in HOUSING + DRUG
+    hit = sum(1 for _, k, _, _ in HOUSING + DRUG_FIRST + DRUG
               if abs(m[k] - TARGET[k]) / TARGET[k] < 0.02)
-    print(f'  worst gap {worst:.1f} %,  {hit} of {len(HOUSING) + len(DRUG)}'
-          f' within two per cent')
+    n = len(HOUSING) + len(DRUG_FIRST) + len(DRUG)
+    print(f'  worst gap {worst:.1f} %,  {hit} of {n} within two per cent')
     print('\n  not targeted, reported only:')
     for k in DIAGNOSTIC:
         print(f'  {"":10s}{"":11s}  {MOMENT_NAME.get(k, k):22s}{m[k]:10.4f}')
@@ -213,11 +235,19 @@ def calibrate(par, sweeps=8, verbose=True, iters=16):
         # willing to buy at all and therefore their income, pi_base turns use
         # into the disorder, and b decides participation.  All four move each
         # other's moments.
+        # b and pi_base to a fixed point BEFORE anything else in the drug block.
         for _ in range(4):
+            for name, mom, lo, hi in DRUG_FIRST:
+                par = with_(par, **{name: bracket(par, name, mom, lo, hi, iters=iters)})
+        for _ in range(3):
             for name, mom, lo, hi in DRUG:
                 par = with_(par, **{name: bracket(par, name, mom, lo, hi, iters=iters)})
+            # and re-settle the pair against whatever kap, th and u1 just did
+            for name, mom, lo, hi in DRUG_FIRST:
+                par = with_(par, **{name: bracket(par, name, mom, lo, hi, iters=iters)})
         m = stats(par)
-        worst = max(abs(m[k] - TARGET[k]) / TARGET[k] for _, k, _, _ in HOUSING + DRUG)
+        worst = max(abs(m[k] - TARGET[k]) / TARGET[k]
+                    for _, k, _, _ in HOUSING + DRUG_FIRST + DRUG)
         if verbose:
             table(par, note=f'\nAFTER SWEEP {s}')
             print(f'  sweep {s}: worst gap {100*worst:6.2f} %   '
