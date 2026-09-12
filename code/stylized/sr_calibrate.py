@@ -67,6 +67,52 @@ from stylized import P, with_
 #     FALLS in u1, because a bigger job-loss penalty deters use so hard the
 #     disorder disappears and the numerator goes to zero.  sud_of_homeless2
 #     becomes an OUTPUT; its ceiling is 0.084 against a target of 0.217.
+# (name, moment, target, sign, adjuster, lo, hi).  EIGHT CALIBRATED.
+#
+# beta IS SET AT 1, not calibrated.  Author: *"exogenous, not calibration"*,
+# *"beta=1.47 is not believable"*.  On net worth over income of 3 it went to
+# 1.477, and 1.621 at zero interest -- a household valuing a period thirty years
+# out MORE than the present.  networth becomes an OUTPUT.
+#
+# u1's SIGN IS NEGATIVE, and it took two measurements to get right.  The rule
+# said "unemployment with SUD should rise if too few homeless with SUD", but the
+# SUD share of the homeless FALLS in u1.  The author supplied the mechanism --
+# *"when u1 rises, b has to fall"*, *"if b is low enough people will eventually
+# use"* -- and the numbers show it, with b refit at every u1 to hold
+# participation at 8.9 per cent:
+#
+#   u1       b*       r_use    hl_sud     ratio
+#   0.0485  0.02695   0.300   0.000704   0.2394
+#   0.0550  0.02674   0.379   0.000656   0.2158
+#   0.1625  0.02351   0.751   0.000079   0.0252
+#   0.8000  0.01175   0.774   0.000000   0.0000
+#
+# b falls to hold participation, so use is recruited from the TOP of the
+# distribution -- r_use runs 0.300 to 0.774 -- and rich users do not sleep rough.
+# The target of 0.217 sits at u1 about 0.0545, just above u0.
+# (name, moment, target, sign, adjuster, lo, hi).  EIGHT CALIBRATED.
+#
+# beta IS SET AT 1.  Author: *"exogenous, not calibration"*, *"beta=1.47 is not
+# believable"*.  On net worth over income of 3 it went to 1.477, and 1.621 at
+# zero interest -- a household valuing a period thirty years out MORE than the
+# present.  networth becomes an OUTPUT.
+#
+# u1's SIGN IS NEGATIVE, and it took two measurements to get right.  The spec
+# said "unemployment with SUD should rise if too few homeless with SUD", but the
+# share FALLS in u1.  The author supplied the mechanism -- *"when u1 rises, b has
+# to fall"*, *"if b is low enough people will eventually use"* -- and the numbers
+# show it, with b refit at every u1 to hold participation at 8.9 per cent:
+#
+#   u1       b*       r_use    hl_sud     ratio
+#   0.0485  0.02695   0.300   0.000704   0.2394
+#   0.0550  0.02674   0.379   0.000656   0.2158
+#   0.1625  0.02351   0.751   0.000079   0.0252
+#   0.8000  0.01175   0.774   0.000000   0.0000
+#
+# b falls to hold participation, so use is recruited from the TOP of the
+# distribution -- r_use runs 0.300 to 0.774 -- and rich users do not sleep rough.
+# 0.217 sits at u1 about 0.0545, just above u0.  NOTE THE TENSION this creates:
+# at that u1 users sit at 0.38 of average income against the data's 0.74.
 SPEC = [
     ('gam',     'hspend',           0.268,   +1, 0.40, 0.05,  0.60),
     ('aleph',   'vsl',             80.0,     +1, 0.30, 3.0,  60.0),
@@ -74,6 +120,7 @@ SPEC = [
     ('b',       'part',             0.08901, -1, 0.30, 0.005, 0.30),
     ('pi_base', 'sud',              0.0368,  +1, 0.40, 1e-3,  0.99),
     ('u0',      'unemployment',     0.0485,  +1, 0.40, 0.005, 0.30),
+    ('u1',      'sud_of_homeless2', 0.217,   -1, 0.20, 0.0486, 0.50),
     ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.0,   1.50),
 ]
 
@@ -176,7 +223,7 @@ if __name__ == '__main__':
     state = {}
     for it in range(240):
         m = moments(par)
-        if it % 10 == 0 or it == 239:
+        if it % 5 == 0 or it == 239:
             w = table(par, m, it)
             if w < 2.0:
                 print('\n  every gap inside two per cent, stopping')
