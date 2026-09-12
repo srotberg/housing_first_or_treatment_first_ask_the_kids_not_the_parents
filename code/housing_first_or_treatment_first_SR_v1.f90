@@ -235,7 +235,17 @@
         ! declares it converged and the residual is an unfunded deficit -- which
         ! is the experiment, not a bug, and the residual is reported beside it.
         ! Its four uses are all executable and none is a parameter initialiser.
-        integer :: adjust_taxes=1-partial_equilibrium
+        ! LABOUR INCOME TAXES ARE REMOVED, 12 September, author: *"we also dont
+        ! need labor income taxes"*, *"please remove the labor income tax too"*.
+        !
+        ! adjust_taxes GOES TO 0 AND IT HAS TO.  distance_govt_budget is
+        ! adjust_taxes*(1-partial_equilibrium)*..., so government budget balance
+        ! is a CONVERGENCE CONDITION and labor_income_tax_rate is the instrument
+        ! that clears it.  Zeroing the tax while leaving adjust_taxes at 1 hands
+        ! the do-while a budget it can never balance, and the loop would never
+        ! terminate however well everything else fits.  That is the same failure
+        ! ENGINE.md records as having cost a whole calibration once.
+        integer :: adjust_taxes=0
         integer, parameter :: adjust_labor_supply=1-test_elasticity
         integer, parameter :: adjust_inheritance=1-partial_equilibrium
         integer, parameter :: use_revenues_to_increase_voucher_probability=0
@@ -4918,7 +4928,9 @@
         real(8), dimension(0:have_two_rental_markets) :: rental_management_costs=5.8601218979210445E-002
                  
         real(8) :: labor_income_tax_rate=(1-perceived_probability_lower)*0.75+perceived_probability_lower*0.69
-        real(8) :: labor_income_tax_rate_adjuster=5*10.d0**(-1)
+        ! RETIRED with the tax.  Its distance is retired with it below: a zero
+        ! adjuster with a LIVE distance cannot converge.
+        real(8) :: labor_income_tax_rate_adjuster=0.d0
         real(8), parameter :: labor_income_tax_rate_adjuster_start=5*10.d0**(-1)
         real(8) :: previous_gap_labor_income_tax_rate=0
         integer :: have_gap_labor_income_tax_rate=0
@@ -42706,6 +42718,14 @@
                     ! marginal rate it would be absurd. Anyone auditing signs from
                     ! the variable names will read this one as inverted and be
                     ! wrong, which is why the note is here rather than nowhere.
+                    ! GUARDED ON THE ADJUSTER.  With the tax removed this block
+                    ! must not compute a live distance from a moment whose
+                    ! parameter cannot move.
+                    if (labor_income_tax_rate_adjuster<=0.d0) then
+
+                        distance_labor_income_tax_rate=0
+
+                    else
                     call damp_on_flip(labor_income_tax_rate_adjuster,&
                         model_average_labour_income_tax(1)-average_labor_income_tax_data,&
                         previous_gap_labor_income_tax_rate,have_gap_labor_income_tax_rate,&
@@ -42723,7 +42743,10 @@
                         " against ", average_labor_income_tax_data,&
                         " distance_labor_income_tax_rate=", distance_labor_income_tax_rate
 
-                    if ((labor_income_tax_rate<=10.d0**(-8)) .OR. (labor_income_tax_rate>=2.d0-10.d0**(-8))) then
+                    end if
+
+                    if ((labor_income_tax_rate_adjuster>0.d0) .AND.&
+                        ((labor_income_tax_rate<=10.d0**(-8)) .OR. (labor_income_tax_rate>=2.d0-10.d0**(-8)))) then
 
                         write(*,*) "the retention scale IS PINNED AT A BOUND", labor_income_tax_rate,&
                             " and the average labour income tax rate is ", model_average_labour_income_tax(1),&

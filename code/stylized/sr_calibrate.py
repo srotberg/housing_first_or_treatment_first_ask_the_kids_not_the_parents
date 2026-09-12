@@ -55,10 +55,21 @@ from calibrate import stats
 from stylized import P, with_
 
 # (name, moment, target, sign, adjuster, lo, hi)
+# (name, moment, target, sign, adjuster, lo, hi).  SEVEN CALIBRATED.
+#
+# beta AND u1 ARE SET, not calibrated, and both for reasons measured today.
+#   beta = 1, author: *"exogenous, not calibration"*, *"beta=1.47 is not
+#     believable"*.  Calibrated on net worth over income of 3 it went to 1.477,
+#     and to 1.621 at zero interest.  networth becomes an OUTPUT.
+#   u1 = 0.1625, its MEASURED value.  It was never a free parameter -- the
+#     declaration reads "RESOURCE: the disorder costs you a job. Measured." --
+#     and aiming it at the SUD share of the homeless was a sign error: the ratio
+#     FALLS in u1, because a bigger job-loss penalty deters use so hard the
+#     disorder disappears and the numerator goes to zero.  sud_of_homeless2
+#     becomes an OUTPUT; its ceiling is 0.084 against a target of 0.217.
 SPEC = [
     ('gam',     'hspend',           0.268,   +1, 0.40, 0.05,  0.60),
     ('aleph',   'vsl',             80.0,     +1, 0.30, 3.0,  60.0),
-    ('u1',      'sud_of_homeless2', 0.217,   +1, 0.30, 0.055, 0.45),
     ('h_hl',    'homeless',         0.0100,  +1, 0.40, 1e-7,  0.05),
     ('b',       'part',             0.08901, -1, 0.30, 0.005, 0.30),
     ('pi_base', 'sud',              0.0368,  +1, 0.40, 1e-3,  0.99),
@@ -142,8 +153,9 @@ def table(par, m, it):
     print('  ' + '-' * 70)
     print(f'  worst {max(gs):.1f} %   median {sorted(gs)[len(gs)//2]:.1f} %   '
           f'{sum(1 for g in gs if g < 10)} of {len(gs)} inside ten')
-    print(f'  OUTPUT  users income/mean {m["r_use"]:.4f}   drug share {m["dshare"]:.4f}'
-          f'   burden50 {m["burden50"]:.4f}')
+    print(f'  OUTPUT  users income/mean {m["r_use"]:.4f}  drug share {m["dshare"]:.4f}'
+          f'  networth {m["networth"]:.3f}  SUD of homeless {m["sud_of_homeless2"]:.4f}'
+          f'  burden50 {m["burden50"]:.4f}')
     return max(gs)
 
 
