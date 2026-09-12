@@ -125,3 +125,102 @@ if __name__ == '__main__':
     print("if pr moves with it; where it does not, the test measures a real")
     print("income effect and not a pure consumption scaling.  Read the columns")
     print("as a comparison between the two formulas on the SAME dv.")
+
+
+# ---------------------------------------------------------------------------
+# THE CHILD'S LIFETIME UTILITY, CHILDHOOD INCLUDED
+# ---------------------------------------------------------------------------
+
+def _childhood_u(par, c, h, aleph_for_child=False):
+    """The child's OWN experienced utility during childhood.
+
+    X_K = (c/xi)^phi_c (h/xi)^phi_h (bbar)^phi_q -- the child's bundle, carrying
+    the Stone-Geary shifter ALONE because the child consumes none of the drug.
+    That asymmetry is the whole contemporaneous channel.
+
+    THE WEIGHT IS (xi - 1) AND NOT omega_c (xi - 1).  omega_c is how much the
+    PARENT cares; the child experiences its own childhood in full.  (xi - 1) is
+    the equivalence-scale weight of a child in the household, which is the
+    child's share of what the household consumes, and it is the same factor the
+    parent's flow utility carries.
+
+    ALEPH IS EXCLUDED BY DEFAULT and the switch is deliberate.  aleph is added
+    ONCE PER HOUSEHOLD, not per member -- the Fortran adds value_of_life to the
+    assembled flow rather than inside the bracket the child weight multiplies --
+    so the parent's flow already carries it for the household.  Counting it
+    again for the child double counts; omitting it values a childhood at its
+    goods alone.  There is no neutral answer, so it is a switch, it is off by
+    default, and any number computed from it has to say which way it was set.
+    """
+    phc, phh, phq = _shares(par)
+    s = par.sigma
+    XK = ((max(c, 1e-12) / par.xi) ** phc
+          * (h / par.xi) ** phh
+          * par.b ** phq)
+    u = XK ** (1.0 - s) / (1.0 - s)
+    if aleph_for_child:
+        u = u + par.aleph
+    return (par.xi - 1.0) * u
+
+
+def childhood_loss_within(par, policy=None, pV=None):
+    """The childhood loss from the parent's drug purchase, WITHIN the household.
+
+    THE FIRST VERSION COMPARED CHILDREN OF USERS WITH CHILDREN OF ABSTAINERS
+    AND GOT THE SIGN BACKWARDS: -0.868 against -3.009, i.e. children of users
+    apparently BETTER off.  That is selection, not causation.  Who uses is an
+    equilibrium object -- at this calibration users are a small, particular
+    slice of the distribution -- so a cross-household difference measures which
+    households use, on top of what using does to them.  It is the same error as
+    comparing the child gap across two branches, which cost most of a day.
+
+    The right comparison is WITHIN the household: the same state, the same
+    income, the child's bundle when the parent buys the drug against the same
+    child's bundle when it does not.  period1 returns BOTH branches for every
+    state -- bu is the using allocation and bn the abstaining one -- so the
+    counterfactual needs no extra solve and no reweighting.
+
+    Averaged over the states that actually use, weighted by their mass.
+    """
+    q = with_(par, policy=policy) if policy is not None else par
+    pv = par.pV if pV is None else pV
+    q = with_(q, pV=pv)
+    loss = mass = 0.0
+    for j, y in enumerate(C.YG):
+        for p, gain, v, bu, bn, inc, _own in S.period1(q, y, q.policy):
+            if p <= 1e-14 or gain <= 0.0:
+                continue
+            au, su, ru, _vsu, mu = bu
+            an, sn, rn, _vsn, mn = bn
+            c_use = inc - ru - q.p_v * v - au
+            c_abs = inc - rn - an
+            h_use = _hpick(q, su, mu)
+            h_abs = _hpick(q, sn, mn)
+            m = C.W[j] * p
+            loss += m * (_childhood_u(q, c_abs, h_abs)
+                         - _childhood_u(q, c_use, h_use))
+            mass += m
+    return (loss / mass if mass > 1e-14 else float('nan')), mass
+
+
+def child_lifetime_loss(par, policy=None, pV=None):
+    """The child's expected lifetime loss from a parent who acquired the
+    disorder: the CHILDHOOD loss plus the ADULT loss.  This is what chdmg
+    should be, and chdmg is currently zero.
+    """
+    import math
+    q = with_(par, policy=policy) if policy is not None else par
+    q = with_(q, pV=(par.pV if pV is None else pV))
+    # ADULT: the child's own value1 at its inherited income, averaged over the
+    # child's income distribution, with and without the delta_d shift.
+    v1 = np.array([S.value1(q, y, q.policy) for y in C.YG])
+    ly = np.log(C.YG)
+    lb = math.log(1.0)                       # ybar, the mean, is one
+    adult_clean = S._child_rate(q, ly, lb, C.W, C.YG, v1, 0.0)
+    adult_dis = S._child_rate(q, ly, lb, C.W, C.YG, v1, q.delta_d)
+    # CHILDHOOD: children of using parents against children of abstainers.
+    kidloss, kidmass = childhood_loss_within(q, policy, pV)
+    return dict(adult_clean=adult_clean, adult_dis=adult_dis,
+                adult_loss=adult_clean - adult_dis,
+                childhood_loss=kidloss, user_mass=kidmass,
+                total_loss=(adult_clean - adult_dis) + kidloss)
