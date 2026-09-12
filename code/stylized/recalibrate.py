@@ -82,7 +82,31 @@ from stylized import P, with_
 # not calibrated, and the realised share is reported as a diagnostic.  That is
 # the file's original "BOTH SET" arrangement for gam, restored on purpose, and
 # it drops the one parameter that was dragging the model off its branch.
-FIXED = dict(gam=0.268, h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0)
+# KAPPA IS SET FROM THE QUANTITATIVE MODEL, author 12 September: *"Maybe just
+# set kappa to give a death risk of 3 like we will have in the quant model"*.
+# kap = 1 - phi0^(smr-1) with smr = 3 and phi0 = 0.91 is 1 - 0.91^2 = 0.1719,
+# the same mortality ratio as kappa_phi_d_level = 3.0 in the Fortran.
+#
+# THIS IS THE BEST CHANGE MADE TO THIS FILE TODAY and it is worth saying why.
+# It removes the bracket that defeated four sweeps -- r_use is non-monotone in
+# kap and has two roots -- and, far more importantly, it turns the income of
+# users from a TARGET into an OUTPUT.  The model is no longer told to reproduce
+# the gradient; it either does or it does not.  Measured at aleph 15, kap 0.1719:
+#
+#     b       0.0260  0.0270  0.0280  0.0290
+#     part    0.2285  0.1800  0.1022  0.0054
+#     r_use    0.656   0.682   0.727   0.114
+#     dshare  0.1378  0.1390  0.1417  0.0009
+#     sud     0.0914  0.0720  0.0409  0.0022
+#
+# At b about 0.0282, where participation is the data's 8.9 per cent, users come
+# out at 0.73 of average income against 0.74 in Table 7, and the drug spending
+# share at 0.142 against 0.141.  NEITHER IS TARGETED.
+#
+# The cliff at b = 0.029 is the corner branch and it is close, so b's bracket is
+# bounded below it.
+FIXED = dict(gam=0.268, h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0,
+             kap=1.0 - 0.91 ** 2)
 
 # THE STARTING POINT IS NOT A DETAIL, IT PICKS THE BRANCH.  Started from the log
 # model's calibrated values the first sweep failed outright: the housing block
@@ -97,8 +121,8 @@ FIXED = dict(gam=0.268, h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0)
 # the homeless 0.2150 against 0.217 before a single bracket has run, with
 # participation, the disorder rate, the housing share and the VSL the four that
 # still need closing.
-START = dict(h_hl=1e-4, aleph=15.4, th=0.16,
-             kap=0.115, u1=0.127, pi_base=0.40, b=0.035)
+START = dict(h_hl=1e-4, aleph=15.0, th=0.16,
+             u1=0.127, pi_base=0.40, b=0.0282)
 # THE START MOVED AGAIN, IN (aleph, kap) JOINTLY, and the first version of this
 # note blamed the wrong thing.  Two sweeps cornered from aleph 8.3 with kap
 # 0.175, and the diagnosis offered at the time -- that a near-worthless street
@@ -149,27 +173,17 @@ HOUSING = [('h_hl', 'homeless', 1e-7, 0.02),
 # 2.06 to 2.51, and even the cornered values of the failed sweeps, kap 0.020 to
 # 0.030, were smr 1.21 to 1.32.  The table now prints the implied smr beside kap
 # so this does not have to be done in the reader's head.
-DRUG_FIRST = [('b', 'part', 0.020, 0.090),
+DRUG_FIRST = [('b', 'part', 0.018, 0.0288),
               ('pi_base', 'sud', 1e-3, 0.99)]
 
-DRUG = [('th', 'dshare', 0.05, 0.40),
-        # kap's INTERVAL HOLDS ONE ROOT, NOT TWO.  r_use is NON-MONOTONE in kap
-        # at the aleph the VSL requires, and bracket() reads its direction from
-        # the endpoints, so on the old interval it found neither root and ran to
-        # a bound on three consecutive sweeps.  Measured at aleph 15.4:
-        #
-        #   kap    0.060 0.075 0.085 0.090 0.100 0.110 0.115 0.125 0.130 0.135
-        #   r_use  1.391 1.223 0.884 0.689 0.703 0.724 0.747 0.789 0.808 0.111
-        #   part   0.646 0.582 0.369 0.245 0.208 0.166 0.131 0.071 0.032 0.001
-        #
-        # It falls to 0.689, TURNS ROUND and rises to 0.808, then collapses to
-        # the corner branch past 0.130.  0.74 therefore has two roots, at about
-        # 0.087 going down and 0.1145 coming back up.  [0.095, 0.133] contains
-        # only the second, on which r_use rises monotonically, and it is the one
-        # where participation and the drug spending share are also near their
-        # targets.
-        ('kap', 'r_use', 0.095, 0.133),
-        ('u1', 'sud_of_homeless2', 0.06, 0.19)]
+# THETA RUNS LAST.  It has the largest single-bracket move of any parameter
+# here -- 0.16 to 0.1919 in one pass -- and that twenty per cent jump changes
+# the surface every parameter read AFTER it is bracketed on, which is what put
+# b on its bound with a clean monotone root available.  Run last it perturbs
+# nothing downstream, and its own gap is small: at th = 0.16 the drug share is
+# already 0.142 against 0.141.
+DRUG = [('u1', 'sud_of_homeless2', 0.06, 0.19),
+        ('th', 'dshare', 0.05, 0.40)]
 
 # REPORTED BESIDE THE TABLE, NEVER IN IT.  The author, 12 September: *"when I
 # ask for the gaps table I am referring to the calibration gaps table on
@@ -177,7 +191,10 @@ DRUG = [('th', 'dshare', 0.05, 0.40),
 # table is one row per CALIBRATED PARAMETER and nothing else; a moment with no
 # instrument is a diagnostic and goes underneath, where it cannot be mistaken
 # for something the calibration is trying to hit.
-DIAGNOSTIC = ['hspend', 'burden50', 'sud_of_homeless', 'hsmall',
+# r_use IS NOW A DIAGNOSTIC, NOT A TARGET.  Nothing is aimed at it; kap is set
+# from the quantitative model's SMR and whatever gradient the model produces is
+# the result.
+DIAGNOSTIC = ['r_use', 'hspend', 'burden50', 'sud_of_homeless', 'hsmall',
               'housing_share', 'prog']
 
 
@@ -252,7 +269,7 @@ def calibrate(par, sweeps=8, verbose=True, iters=16):
             table(par, note=f'\nAFTER SWEEP {s}')
             print(f'  sweep {s}: worst gap {100*worst:6.2f} %   '
                   f'h_hl {par.h_hl:.2e} aleph {par.aleph:.3f} '
-                  f'th {par.th:.4f} kap {par.kap:.4f} u1 {par.u1:.4f} '
+                  f'th {par.th:.4f} u1 {par.u1:.4f} '
                   f'pi {par.pi_base:.4f} b {par.b:.5f}')
         if worst < 0.02:
             break
@@ -267,7 +284,7 @@ if __name__ == '__main__':
     print('BASELINE')
     table(par)
     json.dump({k: getattr(par, k) for k in
-               ('h_hl', 'aleph', 'th', 'kap', 'u1', 'pi_base', 'b',
-                'gam', 'h_sm', 'h_lg', 'omega', 'sigma')},
+               ('h_hl', 'aleph', 'th', 'u1', 'pi_base', 'b',
+                'kap', 'gam', 'h_sm', 'h_lg', 'omega', 'sigma')},
               open('calibrated_sigma2.json', 'w'), indent=1)
     print('\nwritten to calibrated_sigma2.json')
