@@ -355,19 +355,58 @@ def step_on_branch(par, m, state):
     full, _ = step(par, m, state)
     if m.get('dshare', 0.0) <= CORNER:
         return full          # already in the corner: let the rule climb out
-    # NO CHECK SOLVE WHEN THE MODEL IS NOWHERE NEAR THE EDGE.  A 0.5 per cent
-    # step cannot take the drug share from 0.20 to the corner's 0.0007, so the
-    # verification solve is only worth its second when the share is within
-    # striking distance.  This is what took an iteration from 3.8 s to about 1.4.
-    if m.get('dshare', 0.0) > 5.0 * CORNER:
-        return full
+    # THE SKIP WAS THE BUG, AND ITS PREMISE WAS MEASURED FALSE.
+    #
+    # It read: "a 0.5 per cent step cannot take the drug share from 0.20 to the
+    # corner's 0.0007, so the verification solve is only worth its second when
+    # the share is within striking distance", and skipped the check above
+    # 5 * CORNER = 0.10.  That premise assumes the drug share moves CONTINUOUSLY
+    # in the parameters.  It does not: the two branches are separated by a jump,
+    # and the model steps across it in one pass from the far side of the skip.
+    #
+    # MEASURED at the iteration 1300 vector, sweeping omega_c alone with every
+    # other parameter at its calibrated value:
+    #
+    #     omega      dshare      child gap    cf/base dshare
+    #     0.01463    0.0007        0.4174        306.4        corner
+    #     0.00500    0.2105        0.0551          1.03       interior
+    #     0.00100    0.2135        0.0160          1.01       interior
+    #     0.00010    0.2158        0.0015          1.00       interior
+    #
+    # So the branch boundary in omega_c sits between 0.005 and 0.0146, and the
+    # share on either side of it is 0.21 or 0.0007 with nothing in between.  A
+    # step that begins at 0.21 -- comfortably above the skip -- lands in the
+    # corner, and the check that would have caught it was skipped precisely
+    # because the share was healthy.
+    #
+    # WHAT IT COST: a limit cycle.  Every other printed table from iteration 450
+    # to 1300 reads dshare 0.0007, worst 99.5 per cent, median about 15, and the
+    # ones between read dshare 0.21 with the worst gap falling 449, 317, 286,
+    # 167, 248, 109, 110, 54.6, 54.0, 48.0.  The interior branch was converging
+    # the whole time and half the record is the corner.
+    #
+    # The check now runs on every step.  It costs a second an iteration, which
+    # is what the skip was buying, and the second is worth it.
     for _ in range(4):
         if stats(full)['dshare'] > CORNER:
             return full
         # halve every parameter's move back toward where we are
         full = with_(par, **{n: 0.5 * (getattr(par, n) + getattr(full, n))
                              for n, _, _, _, _, _, _ in SPEC})
-    return full
+    # A SIXTEENTH OF THE STEP STILL LEAVES THE BRANCH: TAKE NONE OF IT.
+    #
+    # This used to "accept whatever the smallest step gives rather than stall",
+    # which is how the corner was entered even on the iterations where the check
+    # did run: four halvings, still in the corner, step taken anyway.  Stalling
+    # was the right fear and the wrong remedy.  Returning par unchanged cannot
+    # stall the search here, because the step is recomputed next pass from a
+    # fresh solve and the sign-flip ratchet shrinks the adjusters meanwhile, so
+    # the rule approaches the boundary in ever smaller steps instead of hopping
+    # over it.  What it CAN do is pin a parameter against the boundary, which is
+    # a result and not a failure: it says the target is on the other side of a
+    # jump, and the gap table then says so in the open rather than by alternating
+    # between two economies every fifty iterations.
+    return par
 
 
 def table(par, m, it):
