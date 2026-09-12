@@ -135,7 +135,19 @@ SPEC = [
     # source -- and 0.14 keeps it in a range the quantitative model's 0.09 sits
     # inside.  The floor of 0.01 keeps it strictly positive, so the child
     # counterfactual stays defined.
-    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.01,  1.00),
+    # LOWER BOUND 0.001, NOT 0.01, on the author's suggestion of 12 September:
+    # *"You can allow omega_c to have a lower bound at 0.001 if that helps"*.
+    #
+    # It is insurance rather than a fix, and it is not binding today -- omega_c
+    # has sat between 0.081 and 0.090 all run.  It matters because a CLAMPED
+    # parameter with a LIVE DISTANCE cannot converge, which is ENGINE.md's rule
+    # for retiring a bracket read the other way round: the rule keeps proposing
+    # a move the clamp keeps refusing, the gap never closes, and the table shows
+    # a parameter sitting exactly on a round number with a large gap beside it.
+    # Earlier runs did drive omega_c down to 0.0146, within a factor of 1.5 of
+    # the old floor, so the clamp was close to binding and nothing was gained by
+    # its being where it was.
+    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.001, 1.00),
     # delta_d ON THE CHILD SUD ODDS RATIO OF 2, asked for twice.  Sign standard:
     # a bigger income penalty makes the child poorer, poorer children use more,
     # so the ratio RISES in delta_d.
