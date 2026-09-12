@@ -1,3 +1,134 @@
+## 12 September 20:25 UTC -- LOOP 1 HAS RUN AN HOUR AND THE SOLVER IS WRITING
+## 98 MB A MINUTE OF FILTERED DIAGNOSTICS. Read this before reading the gaps.
+
+The run is tag `e12c3d0657`, launched from `RESUME_VECTOR.txt` after a cold
+container. It is ALIVE and COMPUTING -- this is not a hang, and it should not be
+restarted -- but it has not produced a first moment block in sixty minutes
+against a briefed expectation of four to five minutes a loop, and the reason is
+measured below rather than guessed at.
+
+**THE CONTAINER CAME UP EMPTY.** No clone, and no gfortran. The repository had to
+be re-attached and cloned, and gfortran installed, before anything could run.
+`run_one_point.sh` already self-heals the compiler at line 900; nothing self-heals
+the missing checkout. Budget five minutes for this at the start of any session
+that finds `/home/user` bare.
+
+**HANDOVER VERIFIED BY READING IT BACK OUT OF THE LOG.** All 88 names in the
+vector are echoed and applied. The ones that matter today:
+
+    kappa_phi_d_level        8.0     -> 3.0      source declaration is STILL 8.0
+    labor_income_tax_rate    0.75    -> 0.0      source declaration is NOT zero
+    max_food_cost            0.0     -> 0.0      zero in both
+    weight_on_child          0.0137  -> 0.09
+    multiple_of_prob_emp     2.7     -> 1.0
+    multiple_find_if_addicted 1.0    -> 28.5416  bracket retired
+
+Two of those are exactly the trap the rule names: the source declaration is not
+the value the model runs, and only the vector's is. **And three parameters echo
+under a label that is not their name** -- `HANDOVER employment multiplier`,
+`HANDOVER voucher probability`, `HANDOVER smallest_rental` -- so a verification
+that greps `HANDOVER <name>` reports those three MISSING when they are applied
+correctly. That looks exactly like the failure it is not, and it cost a detour
+here.
+
+**THE RULE-4 AUDIT IS CLEAN.** All 44 distance terms in the calibration do-while
+were checked against their adjusters. Every bracket whose adjuster is zero
+reaches its distance through an `else` that sets it to zero:
+`kappa_phi_d_level` and `multiple_find` (both retired today),
+`newborn_endowment` and `smi_onset_level` (adjusters zero because
+`freeze_to_three_block` is 1), and `penalty_child_homeless`. No zero-adjuster,
+live-distance pair is open, so the do-while can still terminate.
+
+I read this wrong first and should say so: the retirement `distance = 0` lines
+sit a few lines BELOW the guarded block that also assigns the distance, so a
+line-number listing of assignment sites makes them look like they are inside the
+guard. They are in its `else`. Check the `else`, not the line numbers.
+
+### THE MEASUREMENT: 98 MB A MINUTE, AND 400 MB INTO THE FIRST LOOP
+
+`run_one_point.sh` line 1065 runs
+
+    ./hftf 2>&1 | grep -a -Ev "$SPAM" | head -c 2000000000 > worker_<tag>.log
+
+so the solver's per-state diagnostics are stripped before they reach the log.
+That filter is working, and it is why the log looks frozen at 53 KB while the
+process burns 2.8 cores. What the log cannot show, `/proc/<pid>/io` can:
+
+    wchar total, 60 minutes in        397 MB
+    wchar delta over a 30 s window     49 MB   =  98 MB / minute
+    log on disk                        53 KB   =  the filter drops >99.99 per cent
+
+**ENGINE.md's recorded pathological case was 87 MB in five minutes, 17 MB a
+minute, and that was a gigabyte-scale diagnostic that turned 13-minute solves
+into 55-minute ones. This run is at nearly six times that rate.** The section
+"THE SLOW BORROWING-ON SOLVES WERE THE BUG, NOT THE GRID" is the precedent, and
+its general rule -- when a run is unexpectedly slow, READ ITS LOG before
+modelling its cost -- is what found this, except that here the log is the one
+thing that cannot show it, because the flood is filtered out by design.
+
+The cost is paid twice: `hftf` formats about 100 MB a minute of list-directed
+reals, which is expensive, and a single-threaded `grep -Ev` has to scan all of
+it.
+
+### WHERE THE SOLVER ACTUALLY IS, from a stack sample rather than a guess
+
+`gdb -p` on the live process, four threads, all in the same place:
+
+    calibrating_model                      41752
+      solve_value_function_and_policy_functions   21251
+        GOMP_parallel                      21268 / 21372
+          renters_problem / renter_to_renter_problem
+            secant                         24863
+              objective                    25300
+                calculate_addiction_spending / optimize_frac_spent_on_addiciton
+                  solve_drug_split_with_risk        26466
+                    calculate_flow_utility          24407  -> pow()
+
+So it is inside loop 1's own value function pass, in the innermost choice
+evaluation. Nothing is spinning on a broken termination test: the distribution
+loop's 200-sweep cap at line 29418 exists as ENGINE.md claims, and every secant
+carries its `loop_1<max_loop_count` guard.
+
+**THE ONE THING IN THE SAMPLE WORTH FOLLOWING UP** is that the sampled
+`labor_supply_1` values are tiny dyadic numbers -- 2^-19, 2^-27, 0.0009765625,
+3.05e-05 -- which is what a bisection looks like when it has halved twenty-odd
+times. The spam the filter strips is exactly `labor_supply_1=`,
+`distance_secant=`, `loop_1=`, `MU_1=`, `MU_2=`, `x_0=`, `x_1=`, `x_2=`, i.e.
+one line per secant iteration. A secant running to its iteration cap at every
+state would produce both the flood and the slowness, from one cause.
+
+**THAT IS A HYPOTHESIS AND IT IS NOT MEASURED.** The candidate causes are
+today's two removals -- `labor_income_tax_rate = 0` and `max_food_cost = 0` --
+either of which changes the budget the labour-supply condition is solved
+against, and a root that has moved to a corner is where a secant burns its
+whole iteration budget. Per the one-parameter rule this needs a loop-0 point
+with the taxes restored and nothing else moved, which is four minutes and
+settles it; it must NOT be argued from the trace.
+
+**WHAT IS NOT THE EXPLANATION.** The first two value function passes in this
+run were FASTER than the previous run's, 1.58 s a age against 2.16 s, so the
+model is not uniformly slower. Whatever this is began after those two passes,
+which is where loop 1's own solve -- the first with the child term live at
+`weight_on_child = 0.09` -- starts.
+
+### WHAT THIS DOES TO THE PLAN, and it is the author's call
+
+The brief's arithmetic was b at roughly 0.9 per cent against a target of 8.9,
+climbing about 1.7 per cent a loop at the `max_rel_step_all` cap, so of order
+140 loops at four to five minutes -- ten to twelve hours. **At an hour a loop
+that is closer to six days.** Nothing in the search is wrong; there is simply
+not enough wall clock in it, and the honest options are the author's to pick:
+
+  - find and stop the flood, if the secant hypothesis holds -- it is the only
+    one of these that costs nothing else;
+  - re-pin `weight_on_child`, which the 11 September note already records as
+    costing a full extra solve a loop, and give omega_c its own pass later;
+  - raise `max_rel_step_all` for `addiction_scalar_1` alone, which buys loops
+    at the price of the stability the cap was imposed for.
+
+The run is being LEFT ALONE meanwhile, per the standing rule. It is progressing,
+it is bounded, and a restart costs everything it has done.
+
 ## 12 September 14:41 UTC -- THE 32 PER CENT HOMELESS IS CHOICE, NOT
 ## AFFORDABILITY. This is the session's main finding. Read it before the rest.
 
