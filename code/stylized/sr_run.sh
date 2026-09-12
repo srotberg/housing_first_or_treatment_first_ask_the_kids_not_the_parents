@@ -32,8 +32,14 @@ if [ -n "$LIVE" ]; then
     echo "sr_run: --force given, starting anyway"
 fi
 
+# THE TIMEOUT HAS TO OUTLAST THE ITERATION CAP OR IT SILENTLY TRUNCATES THE RUN.
+# The cap is 50000 iterations on the author's instruction of 12 September.  At
+# the measured 1.25 s an iteration that is 17 hours, and about 35 with the
+# branch check running on every step, so the old 3 hour default would have
+# stopped it near iteration 4300 and the log would simply end -- no message, no
+# FINAL table, nothing saying the run was cut rather than finished.  48 hours.
 LOG="${SR_LOG:-sr_run_$(date -u +%H%M%S).log}"
 echo "sr_run: starting, log $LOG"
 STYLIZED_WORKERS=${STYLIZED_WORKERS:-3} OMP_NUM_THREADS=1 \
-    timeout "${SR_TIMEOUT:-10800}" nice -n 5 python3 -u sr_calibrate.py > "$LOG" 2>&1
+    timeout "${SR_TIMEOUT:-172800}" nice -n 5 python3 -u sr_calibrate.py > "$LOG" 2>&1
 echo "sr_run: finished, EXIT=$? log $LOG"

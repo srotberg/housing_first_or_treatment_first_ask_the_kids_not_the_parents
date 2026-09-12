@@ -139,7 +139,27 @@ SPEC = [
     # delta_d ON THE CHILD SUD ODDS RATIO OF 2, asked for twice.  Sign standard:
     # a bigger income penalty makes the child poorer, poorer children use more,
     # so the ratio RISES in delta_d.
-    ('delta_d', 'child_sud_or',      2.0,     +1, 0.30, 0.01,  2.00),
+    # DELTA_D IS PINNED AT 0.24 AND IS NO LONGER A BRACKET.  The author, 12
+    # September: *"Maybe set delta d to 0.24 and pin it?"*, *"I think it is
+    # creating some problems"*.
+    #
+    # It was.  Over the 2500-cap run it went 0.36, 0.46, 0.59, 0.72, 0.57, 0.55,
+    # 0.56, 0.62, 0.55 -- a factor of two, wandering, and never settling, while
+    # its moment is a ratio of two conditional disorder rates that is noisy in
+    # its own right.  Worse, it is the SAME ECONOMICS as the income gradient:
+    # the child odds ratio exceeds one only when poorer people use more, which
+    # is what r_use measures, so delta_d and kappa were pulling on one margin
+    # from two directions.  Retiring it removes one of the two.
+    #
+    # ENGINE.md's rule for turning a bracket off is to zero its DISTANCE as
+    # well, because a zero adjuster with a live distance cannot converge.  Here
+    # the spec IS the distance -- worst, median and the count inside ten are all
+    # built from SPEC in table() -- so removing the row retires the term too,
+    # and nothing is left scoring a parameter that cannot move.
+    #
+    # The odds ratio is still COMPUTED and still REPORTED, on the ODDS line
+    # beside the homelessness one, because it is the number the pin has to be
+    # judged by.  It is just no longer targeted.
     # kappa IS FREED AGAIN, on users' income.  Author, 12 September: *"maybe then
     # you have to pick kappa as well to push the income down"*, *"maybe 3
     # multiples is not enough"*.  It was SET at SMR 3 earlier today, which made
@@ -209,7 +229,18 @@ MAX_REL_STEP = 0.005
 # h_hl ALSO GETS A FASTER STEP.  It is the parameter with the furthest to travel
 # in relative terms and the one whose moment is least coupled to the others, so
 # it can afford to move faster than the block that fights over the drug margin.
-PER_PARAM_STEP = {'omega': 0.0025, 'th': 0.001, 'h_hl': 0.02}
+# KAPPA AT 0.1 PER CENT, on the author's instruction of 12 September.  It had
+# NO entry here, so it ran at the global 0.5 -- five times theta's rate and
+# twice omega_c's -- for no reason beyond having been overlooked when those two
+# were slowed.  Measured before the change, its mean net move was 0.043 per cent
+# an iteration, already inside the new cap, because the sign-flip ratchet keeps
+# halving its adjuster toward the floor while r_use alternates.  So this binds
+# only on the occasional large step and is not expected to stop kappa's drift:
+# the correlation over 28 interior-branch tables puts kap NINTH of eleven on
+# r_use and with the WRONG SIGN, +0.108 where the mechanism says negative, with
+# pi_base at -0.726 and b at +0.566.  What it does buy is a readable table --
+# r_use has been swinging plus or minus 32 points reading to reading.
+PER_PARAM_STEP = {'omega': 0.0025, 'th': 0.001, 'h_hl': 0.02, 'kap': 0.001}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
 ADJ_FLOOR = 1e-3
@@ -355,19 +386,74 @@ def step_on_branch(par, m, state):
     full, _ = step(par, m, state)
     if m.get('dshare', 0.0) <= CORNER:
         return full          # already in the corner: let the rule climb out
-    # NO CHECK SOLVE WHEN THE MODEL IS NOWHERE NEAR THE EDGE.  A 0.5 per cent
-    # step cannot take the drug share from 0.20 to the corner's 0.0007, so the
-    # verification solve is only worth its second when the share is within
-    # striking distance.  This is what took an iteration from 3.8 s to about 1.4.
-    if m.get('dshare', 0.0) > 5.0 * CORNER:
-        return full
+    # THE SKIP WAS THE BUG, AND ITS PREMISE WAS MEASURED FALSE.
+    #
+    # It read: "a 0.5 per cent step cannot take the drug share from 0.20 to the
+    # corner's 0.0007, so the verification solve is only worth its second when
+    # the share is within striking distance", and skipped the check above
+    # 5 * CORNER = 0.10.  That premise assumes the drug share moves CONTINUOUSLY
+    # in the parameters.  It does not: the two branches are separated by a jump,
+    # and the model steps across it in one pass from the far side of the skip.
+    #
+    # MEASURED at the iteration 1300 vector, sweeping omega_c alone with every
+    # other parameter at its calibrated value:
+    #
+    #     omega      dshare      child gap    cf/base dshare
+    #     0.01463    0.0007        0.4174        306.4        corner
+    #     0.00500    0.2105        0.0551          1.03       interior
+    #     0.00100    0.2135        0.0160          1.01       interior
+    #     0.00010    0.2158        0.0015          1.00       interior
+    #
+    # So the branch boundary in omega_c sits between 0.005 and 0.0146, and the
+    # share on either side of it is 0.21 or 0.0007 with nothing in between.  A
+    # step that begins at 0.21 -- comfortably above the skip -- lands in the
+    # corner, and the check that would have caught it was skipped precisely
+    # because the share was healthy.
+    #
+    # WHAT IT COST: a limit cycle.  Every other printed table from iteration 450
+    # to 1300 reads dshare 0.0007, worst 99.5 per cent, median about 15, and the
+    # ones between read dshare 0.21 with the worst gap falling 449, 317, 286,
+    # 167, 248, 109, 110, 54.6, 54.0, 48.0.  The interior branch was converging
+    # the whole time and half the record is the corner.
+    #
+    # The check now runs on every step.  It costs a second an iteration, which
+    # is what the skip was buying, and the second is worth it.
     for _ in range(4):
         if stats(full)['dshare'] > CORNER:
             return full
         # halve every parameter's move back toward where we are
         full = with_(par, **{n: 0.5 * (getattr(par, n) + getattr(full, n))
                              for n, _, _, _, _, _, _ in SPEC})
-    return full
+    # A SIXTEENTH OF THE STEP STILL LEAVES THE BRANCH: TAKE NONE OF IT, AND
+    # SHRINK THE ADJUSTERS SO THE NEXT PASS PROPOSES A SMALLER ONE.
+    #
+    # The refusal used to "accept whatever the smallest step gives rather than
+    # stall", which is how the corner was entered even on iterations where the
+    # check ran.  Refusing is right.  Refusing ALONE is a deterministic freeze,
+    # and it was one: iterations 200, 250 and 300 of the 50000 run came out
+    # byte-identical, every parameter and every moment, for a hundred passes.
+    #
+    # The reasoning that shipped it said the search could not stall "because the
+    # step is recomputed next pass from a fresh solve and the sign-flip ratchet
+    # shrinks the adjusters meanwhile".  That is wrong, and wrong in a way worth
+    # keeping: if the parameters do not move, the moments do not move, the gaps
+    # do not change, the sign never flips, so the ratchet NEVER FIRES and the
+    # identical step is proposed and refused forever.  The ratchet is driven by
+    # the gap changing sign, and a frozen model is precisely one whose gaps have
+    # stopped changing.  A guard that depends on the system evolving cannot be
+    # relied on to rescue a state in which the system has stopped evolving.
+    #
+    # So the refusal damps the adjusters itself rather than waiting for a
+    # mechanism that cannot fire.  Each refused pass halves every adjuster, so
+    # the proposed step shrinks geometrically and either finds a size that stays
+    # on the branch or converges onto the boundary -- which is a result, and the
+    # gap table then says so in the open instead of alternating between two
+    # economies every fifty iterations.
+    for name, *_ in SPEC:
+        k = name + '_adj'
+        if k in state:
+            state[k] = max(state[k] * DAMP, ADJ_FLOOR)
+    return par
 
 
 def table(par, m, it):
@@ -395,8 +481,14 @@ def table(par, m, it):
     # *"i also want a report of the homelessness odds ratio"* and *"we are not
     # calibrating delta_h...that one is dropped"*.  ENGINE.md's phase 3 agrees:
     # anywhere in 1.8 to 2.4 is fine, only below 1.8 is delta_h reopened.
+    # BOTH ODDS RATIOS ARE REPORTED AND NEITHER IS TARGETED NOW.  delta_h was
+    # dropped by the author on 12 September and delta_d pinned at 0.24 the same
+    # day, so this line is how the pin is judged: if the SUD ratio sits far from
+    # 2 at delta_d = 0.24, that is the thing to look at, and it will be visible
+    # rather than buried in a bracket that was quietly chasing it.
     print(f'  ODDS    child homeless {m["child_hl_or"]:.3f}'
-          f'   (reported only; 1.8-2.4 is fine)')
+          f'   child SUD {m["child_sud_or"]:.3f}  at delta_d {par.delta_d:.2f}'
+          f'   (both reported only)')
     return max(gs)
 
 
@@ -413,6 +505,9 @@ if __name__ == '__main__':
     # made saving less attractive, so beta rose rather than fell.
     par = with_(P(), **{k: v for k, v in FIXED.items() if k != 'kap'},
                 **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2,
+                   # PINNED, not a starting value: delta_d is out of SPEC, so
+                   # nothing steps it and it holds here for the whole run.
+                   "delta_d": 0.24,
                    # STARTING VALUES MATTER WHEN THE STEP IS RELATIVE.  The
                    # author, 12 September: *"this is why the model cannot
                    # converge"*.  h_hl started at 1e-4 and lands near 1e-2 -- a
@@ -434,13 +529,35 @@ if __name__ == '__main__':
     smr = 1 + math.log(1 - par.kap) / math.log(par.phi0)
     print(f"THE AUTHOR'S METHOD, sigma = 2, kappa SET at SMR {smr:.2f}")
     state = {}
-    for it in range(2500):
+    # A FROZEN RUN MUST ANNOUNCE ITSELF.  The branch guard's refusal path can
+    # return the vector unchanged, and when it fired every pass the run printed
+    # iterations 200, 250 and 300 byte-identical -- every parameter, every
+    # moment -- for a hundred passes.  Nothing in the output said so: a table
+    # that has not moved looks exactly like a table that is converging slowly,
+    # and it was caught only by someone noticing two tables were the same.
+    # That is not a thing to leave to eyesight at fifty-iteration intervals.
+    frozen = 0
+    prev_vec = None
+    for it in range(50000):
         m = moments(par, it)
-        if it % 50 == 0 or it == 2499:
+        if it % 50 == 0 or it == 49999:
             w = table(par, m, it)
             if w < 2.0:
                 print('\n  every gap inside two per cent, stopping')
                 break
         par = step_on_branch(par, m, state)
+        vec = tuple(round(getattr(par, n), 12) for n, *_ in SPEC)
+        frozen = frozen + 1 if vec == prev_vec else 0
+        prev_vec = vec
+        if frozen and frozen % 25 == 0:
+            print(f'  FROZEN: the parameter vector has not moved in {frozen} '
+                  f'passes.  The branch guard is refusing every step, so every '
+                  f'proposed move leaves the interior branch.  Adjusters are '
+                  f'being damped each refusal; if this does not clear, the '
+                  f'search is against a boundary and the vector is the answer.')
+        if frozen >= 500:
+            print(f'\n  STOPPING: frozen for {frozen} passes at iteration {it}.')
+            table(par, moments(par), f'{it} frozen')
+            break
     print('\nFINAL')
     table(par, moments(par), 'final')
