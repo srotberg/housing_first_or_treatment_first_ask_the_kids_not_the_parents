@@ -645,6 +645,9 @@ class P:
                       # the grid above it is geometric.
 
 
+_VGRID_CACHE = {}
+
+
 def _vgrid(par, inc):
     """The drug quantity grid at income `inc`: abstention, then a geometric
     ladder from v_lo * inc up to half of income.
@@ -679,8 +682,17 @@ def _vgrid(par, inc):
     in proportional terms than the richest -- and the drug, housing and
     homelessness margins all sit at the bottom of the distribution.
     """
-    return np.concatenate(([0.0],
-                           np.geomspace(par.v_lo * inc, 0.5 * inc, par.nv - 1)))
+    # BUILT ONCE AND SCALED.  geomspace is scale-equivariant --
+    # geomspace(a*x, a*y, n) == a * geomspace(x, y, n) to 2e-16 -- so the ladder
+    # does not depend on income at all, only the multiplier does.  It was being
+    # rebuilt on every state: 1250 geomspace calls a solve at 35.6 us each,
+    # against 0.6 us to scale a cached one.  Nine per cent of the solve.
+    key = (par.v_lo, par.nv)
+    unit = _VGRID_CACHE.get(key)
+    if unit is None:
+        unit = np.concatenate(([0.0], np.geomspace(par.v_lo, 0.5, par.nv - 1)))
+        _VGRID_CACHE[key] = unit
+    return unit * inc
 
 
 def clone(**kw):
@@ -843,16 +855,28 @@ def _flow(par, c, h, q=0.0, child=True):
     child=False is period 2, where the child has grown: xi is 1 and the second
     term is absent.
     """
+    # ALGEBRAICALLY THE SAME, ONE PASS OVER THE BIG ARRAY INSTEAD OF THREE.
+    #
+    #   S = exp((1-s)(base + phq*log(b+q))) + w*exp((1-s)(base + phq*log(b)))
+    #     = exp((1-s)*base) * [ (b+q)^((1-s)phq) + w*b^((1-s)phq) ]
+    #
+    # and exp((1-s)*base) is just (c/xi)^((1-s)phc) * (h/xi)^((1-s)phh).  The
+    # bracket depends on q alone, which is (nv,1), while c is (nv,na): so the
+    # child term costs a small array rather than a second full exponential, and
+    # the parent's bundle costs ONE power rather than a log and an exp.
+    #
+    # _flow was 15,530 calls and forty per cent of a solve, on (140,60) arrays.
     phc, phh, phq = _shares(par)
     xi = par.xi if child else 1.0
     kch = (xi - 1.0) if child else 0.0
     s = par.sigma
-    base = (phc * np.log(np.maximum(c, 1e-12) / xi)
-            + phh * np.log(np.asarray(h, dtype=float) / xi))
-    S = np.exp((1.0 - s) * (base + phq * np.log(par.b + q)))
+    e = 1.0 - s
+    big = np.maximum(c, 1e-12) / xi
+    E = big ** (e * phc) * (float(h) / xi) ** (e * phh)
+    bracket = (par.b + q) ** (e * phq)
     if kch > 0.0 and par.omega != 0.0:
-        S = S + par.omega * kch * np.exp((1.0 - s) * (base + phq * np.log(par.b)))
-    return S / (1.0 - s) + par.aleph
+        bracket = bracket + par.omega * kch * par.b ** (e * phq)
+    return E * bracket / e + par.aleph
 
 
 def _options(par, rmul):
