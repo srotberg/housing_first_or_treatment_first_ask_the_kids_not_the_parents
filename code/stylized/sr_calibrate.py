@@ -153,6 +153,20 @@ SPEC = [
     # is smr 1.54.  The table prints the implied smr beside kap, which is the
     # number to judge -- the author's question is exactly whether 3 is enough.
     ('kap',     'r_use',            0.74,    -1, 0.30, 0.05,  0.75),
+    # THETA IS FREED AGAIN, at 0.1 per cent a pass.  Author, 12 September: *"now
+    # that you update parameters slowly, you can add theta, and calibrate it too,
+    # and allow it to move at most 0.1% between iterations"*.
+    #
+    # IT FAILED THE FIRST TIME AT 5 PER CENT: the rule drove it 0.16 -> 0.199
+    # while the drug spending share stayed pinned at 0.0007, the corner value,
+    # and the worst gap swung 449, 46, 55, 207, 45, 38, 188, 162 with no trend.
+    # The diagnosis then was that theta and b both act on one margin.  That is
+    # still true, but two things have changed since: the branch guard now refuses
+    # any step that leaves the interior branch, and the global step is 0.5 per
+    # cent rather than 5.  Both of those attack exactly the failure that was
+    # observed, so it is worth another go -- at a tenth the speed of everything
+    # else, since it is the parameter that moved the model between branches.
+    ('th',      'dshare',           0.14098, +1, 0.30, 0.05,  0.45),
     # THETA IS NOT CALIBRATED.  It was freed on the author's instruction when
     # the eight-parameter run left the drug spending share at 0.052 against
     # 0.141 -- and freeing it FAILED, which is worth recording because the
@@ -192,14 +206,18 @@ MAX_REL_STEP = 0.005
 # SECOND SOLVE, so its gap is the noisiest of the nine.  A slower step on the
 # noisiest signal is the right asymmetry, and it is the same device the Fortran
 # uses for theta and omega_c: one parameter gets its own rate.
-PER_PARAM_STEP = {'omega': 0.0025}
+PER_PARAM_STEP = {'omega': 0.0025, 'th': 0.001}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
 ADJ_FLOOR = 1e-3
 CHILD_GAP_FLOOR = 0.1        # of the participation target, as the Fortran uses
 
 
-def moments(par):
+_SLOW_EVERY = 5      # iterations between the expensive child evaluations
+_slow_cache = {}
+
+
+def moments(par, it=0):
     """Every moment the spec needs, including the two that are not in aggregates."""
     m = dict(stats(par))
     # pi_eu's moment.  Employment is an i.i.d. draw, so the realised rate is u0
@@ -208,8 +226,7 @@ def moments(par):
     # delta_d's moment, and the homelessness odds ratio the author asked to have
     # REPORTED beside it.  Both run the child through the model as an adult at
     # its inherited income, so neither costs a new solve.
-    m['child_sud_or'] = child_sud_odds_ratio(par, C.YG, C.W)
-    m['child_hl_or'] = child_homeless_odds_ratio(par, C.YG, C.W)
+
     # omega_c's moment: use with the child term OFF against use with it on.  This
     # is the second solve, and it is what the Fortran spends a third of a loop on.
     # HELD when either population is too small for the ratio to mean anything --
@@ -233,12 +250,30 @@ def moments(par):
     # two is too small for the gap to mean anything" -- this one just measured
     # the wrong thing.  0.02 sits an order of magnitude above the corner's 0.0007
     # and an order below any interior value.
-    if par.omega > 0.0 and m['part'] > CHILD_GAP_FLOOR * 0.08901 \
-            and m['dshare'] > 0.02:
-        off = stats(with_(par, omega=0.0))['part']
-        m['child_gap'] = off / m['part'] - 1.0 if m['part'] > 0 else None
-    else:
-        m['child_gap'] = None
+    # THE THREE EXPENSIVE QUANTITIES ARE REFRESHED EVERY FIFTH ITERATION.
+    # Timed on this grid: stats() 1.03 s, the omega_c counterfactual another
+    # 1.03 s because it is a SECOND FULL SOLVE, and the two odds ratios 0.71 s
+    # between them.  That put an iteration at about 3.8 seconds where the model
+    # solve alone is 1.0.
+    #
+    # They can be stale because they MOVE SLOWLY: omega_c steps at 0.25 per cent
+    # a pass and delta_d at 0.5, so their moments cannot change materially in
+    # five iterations.  The cheap moments -- participation, the disorder rate,
+    # homelessness, the housing share -- are recomputed every single iteration
+    # as before, and those are the ones that move fast.
+    fresh = (it % _SLOW_EVERY == 0) or ('child_gap' not in _slow_cache)
+    if fresh:
+        if par.omega > 0.0 and m['part'] > CHILD_GAP_FLOOR * 0.08901 \
+                and m['dshare'] > 0.02:
+            off = stats(with_(par, omega=0.0))['part']
+            _slow_cache['child_gap'] = off / m['part'] - 1.0 if m['part'] > 0 else None
+        else:
+            _slow_cache['child_gap'] = None
+        _slow_cache['child_sud_or'] = child_sud_odds_ratio(par, C.YG, C.W)
+        _slow_cache['child_hl_or'] = child_homeless_odds_ratio(par, C.YG, C.W)
+    m['child_gap'] = _slow_cache['child_gap']
+    m['child_sud_or'] = _slow_cache['child_sud_or']
+    m['child_hl_or'] = _slow_cache['child_hl_or']
     return m
 
 
@@ -305,6 +340,12 @@ def step_on_branch(par, m, state):
     full, _ = step(par, m, state)
     if m.get('dshare', 0.0) <= CORNER:
         return full          # already in the corner: let the rule climb out
+    # NO CHECK SOLVE WHEN THE MODEL IS NOWHERE NEAR THE EDGE.  A 0.5 per cent
+    # step cannot take the drug share from 0.20 to the corner's 0.0007, so the
+    # verification solve is only worth its second when the share is within
+    # striking distance.  This is what took an iteration from 3.8 s to about 1.4.
+    if m.get('dshare', 0.0) > 5.0 * CORNER:
+        return full
     for _ in range(4):
         if stats(full)['dshare'] > CORNER:
             return full
@@ -361,7 +402,7 @@ if __name__ == '__main__':
     print(f"THE AUTHOR'S METHOD, sigma = 2, kappa SET at SMR {smr:.2f}")
     state = {}
     for it in range(2500):
-        m = moments(par)
+        m = moments(par, it)
         if it % 50 == 0 or it == 2499:
             w = table(par, m, it)
             if w < 2.0:
