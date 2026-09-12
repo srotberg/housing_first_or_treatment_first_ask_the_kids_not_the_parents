@@ -5066,7 +5066,31 @@
         ! compete: this one sets where the affordability floor is and that one
         ! sets how bad the alternative to it is. Running them at the same speed
         ! lets them chase each other.
-        real(8) :: smallest_house_size_adjuster=0.05
+        ! h_2 IS CONCEDED ENTIRELY, 12 September, on the author's "Lets just
+        ! concede h2 entirety until we actually can get h1 to 1% and emp
+        ! homeless to around 46%".
+        !
+        ! WHY.  This bracket chases the severe cost burden target by moving the
+        ! cheapest rental rung, and over the 209-loop run 7303e4b6ca it walked
+        ! the rung from 0.10189 to 0.21030 -- it doubled.  The rung is what
+        ! sets the price of the only housing a poor household can reach, and
+        ! the measured mapping from that run is brutal:
+        !
+        !     rung 0.10189  ->  h_1  0.63 per cent
+        !     rung 0.10384  ->  h_1  1.16
+        !     rung 0.11165  ->  h_1  4.28
+        !     rung 0.13661  ->  h_1 10.89
+        !     rung 0.21132  ->  h_1 32.49
+        !
+        ! A four per cent rise in the rung takes homelessness from 0.6 to about
+        ! three per cent, and four per cent is four loops at the step cap.  So
+        ! h_2 and h_1 cannot both be chased on the same rung, and the author has
+        ! chosen h_1.
+        !
+        ! The do-while term for distance_smallest_house_size is gated on this
+        ! adjuster below, so zeroing it here concedes the moment completely
+        ! rather than leaving an unclosable distance holding the loop open.
+        real(8) :: smallest_house_size_adjuster=0.d0
 
         ! DAMPING THE TWO HOUSING ADJUSTERS. Both were fixed steps and both
         ! oscillated: the size distribution responds sharply to the size
@@ -41339,7 +41363,7 @@
             (distance_kappa_phi_d_level>stopping_rule_kappa_phi_d_level) .OR. &
             (distance_multiple_find>stopping_rule_multiple_find) .OR. &
             (distance_rent_to_price>stopping_rule_rent_to_price) .OR. &
-            (distance_smallest_house_size>stopping_rule_smallest_house_size) .OR. &
+            ((smallest_house_size_adjuster>0) .AND. (distance_smallest_house_size>stopping_rule_smallest_house_size)) .OR. &
             (distance_fixed_cost_to_moving>stopping_rule_fixed_cost_to_moving) .OR. &
             (distance_standard_deduction>stopping_rule_standard_deduction) .OR. &
             (distance_inheritance_amount>stopping_rule_inheritance_amount) .OR. &
