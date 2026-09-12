@@ -736,7 +736,19 @@
         ! once the gap is inside three per cent AND b and lambda_d are both
         ! close, which is the condition for pinning on evidence rather than by
         ! hand.
-        integer :: omega_c_is_pinned=1
+        ! UNPINNED 12 September, on the author's instruction: *"Can't you
+        ! calibrate omegac?"*.  It was pinned at 0.09 while b was far from its
+        ! target, on the reasoning that a child gap measured over a one per cent
+        ! user population is measured over almost nobody.  That reasoning has a
+        ! hole in it: if omega_c is wrong then b is being chased on the wrong
+        ! model, and every loop spent climbing to 8.9 per cent is spent twice.
+        ! The two are calibrated jointly instead.
+        !
+        ! The cost is the second solve documented below, about a third again per
+        ! loop.  The auto-pin at 43291 is unaffected and will set this back to 1
+        ! on its own once the gap is inside three per cent with b and lambda_d
+        ! both close, which is pinning on evidence rather than by hand.
+        integer :: omega_c_is_pinned=0
         integer, parameter :: calibrate_weight_on_child=1
 
         ! WHETHER A POINT MEASURES OMEGA_C'S MOMENT. It costs a second
