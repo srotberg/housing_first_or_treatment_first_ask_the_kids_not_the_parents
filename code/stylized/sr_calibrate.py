@@ -51,8 +51,9 @@ the scale factored out.
 import math
 import numpy as np
 
+import calibrate as C
 from calibrate import stats
-from stylized import P, with_
+from stylized import P, with_, child_sud_odds_ratio, child_homeless_odds_ratio
 
 # (name, moment, target, sign, adjuster, lo, hi)
 # (name, moment, target, sign, adjuster, lo, hi).  SEVEN CALIBRATED.
@@ -135,6 +136,10 @@ SPEC = [
     # inside.  The floor of 0.01 keeps it strictly positive, so the child
     # counterfactual stays defined.
     ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.01,  1.00),
+    # delta_d ON THE CHILD SUD ODDS RATIO OF 2, asked for twice.  Sign standard:
+    # a bigger income penalty makes the child poorer, poorer children use more,
+    # so the ratio RISES in delta_d.
+    ('delta_d', 'child_sud_or',      2.0,     +1, 0.30, 0.01,  2.00),
     # THETA IS NOT CALIBRATED.  It was freed on the author's instruction when
     # the eight-parameter run left the drug spending share at 0.052 against
     # 0.141 -- and freeing it FAILED, which is worth recording because the
@@ -154,7 +159,27 @@ SPEC = [
     # 12 September: *"can you fix theta to 0.25 and try to calibrate the rest?"*
 ]
 
-MAX_REL_STEP = 0.05          # nothing moves more than 5 per cent a pass
+# 0.5 PER CENT A PASS, author 12 September over four messages: *"i think maybe
+# you are updating parameters too fast"*, *"maybe they need to be updated only
+# 0.1% at most"*, *"you can try 1% updates, or 0.5% updates"*, *"5% is too much"*.
+#
+# THE ARITHMETIC THAT PICKED 0.5.  b travels from 0.028 to about 0.25, a factor
+# of nine: roughly 45 iterations at 5 per cent, 440 at 0.5, 2,200 at 0.1 -- four
+# minutes, a quarter of an hour, three hours.  0.5 buys most of the stability at
+# a fifteenth of the cost.
+#
+# WHY 5 WAS TOO MUCH, diagnosed correctly by the author: b swung 0.087 -> 0.168
+# -> 0.039 -> 0.101 on consecutive passes, and every fall into the corner branch
+# followed a large step.
+MAX_REL_STEP = 0.005
+
+# omega_c GETS HALF AGAIN, author: *"maybe omega_c should be even slower? maybe
+# 0.05%?"*.  It is the parameter that misbehaved most -- it ran to every ceiling
+# it was given, 0.14, 0.25, 0.305 -- and the only one whose moment costs a
+# SECOND SOLVE, so its gap is the noisiest of the nine.  A slower step on the
+# noisiest signal is the right asymmetry, and it is the same device the Fortran
+# uses for theta and omega_c: one parameter gets its own rate.
+PER_PARAM_STEP = {'omega': 0.0025}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
 ADJ_FLOOR = 1e-3
@@ -167,6 +192,11 @@ def moments(par):
     # pi_eu's moment.  Employment is an i.i.d. draw, so the realised rate is u0
     # among the clean and u1 among those with the disorder.  Exact, no extra solve.
     m['unemployment'] = (1.0 - m['sud']) * par.u0 + m['sud'] * par.u1
+    # delta_d's moment, and the homelessness odds ratio the author asked to have
+    # REPORTED beside it.  Both run the child through the model as an adult at
+    # its inherited income, so neither costs a new solve.
+    m['child_sud_or'] = child_sud_odds_ratio(par, C.YG, C.W)
+    m['child_hl_or'] = child_homeless_odds_ratio(par, C.YG, C.W)
     # omega_c's moment: use with the child term OFF against use with it on.  This
     # is the second solve, and it is what the Fortran spends a third of a loop on.
     # HELD when either population is too small for the ratio to mean anything --
@@ -225,7 +255,7 @@ def step(par, m, state):
             state[name + '_adj'] = adj
         state[name] = rel
         new = old * (1.0 - sgn * adj * rel)
-        room = MAX_REL_STEP * abs(old)
+        room = PER_PARAM_STEP.get(name, MAX_REL_STEP) * abs(old)
         new = max(min(new, old + room), old - room)
         new = max(min(new, hi), lo)
         kw[name] = new
@@ -290,6 +320,12 @@ def table(par, m, it):
     print(f'  OUTPUT  users income/mean {m["r_use"]:.4f}  drug share {m["dshare"]:.4f}'
           f'  networth {m["networth"]:.3f}  SUD of homeless {m["sud_of_homeless2"]:.4f}'
           f'  burden50 {m["burden50"]:.4f}')
+    # THE HOMELESSNESS ODDS RATIO IS REPORTED AND NEVER TARGETED, author:
+    # *"i also want a report of the homelessness odds ratio"* and *"we are not
+    # calibrating delta_h...that one is dropped"*.  ENGINE.md's phase 3 agrees:
+    # anywhere in 1.8 to 2.4 is fine, only below 1.8 is delta_h reopened.
+    print(f'  ODDS    child homeless {m["child_hl_or"]:.3f}'
+          f'   (reported only; 1.8-2.4 is fine)')
     return max(gs)
 
 
@@ -308,9 +344,9 @@ if __name__ == '__main__':
     smr = 1 + math.log(1 - par.kap) / math.log(par.phi0)
     print(f"THE AUTHOR'S METHOD, sigma = 2, kappa SET at SMR {smr:.2f}")
     state = {}
-    for it in range(240):
+    for it in range(2500):
         m = moments(par)
-        if it % 5 == 0 or it == 239:
+        if it % 50 == 0 or it == 2499:
             w = table(par, m, it)
             if w < 2.0:
                 print('\n  every gap inside two per cent, stopping')
