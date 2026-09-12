@@ -139,7 +139,27 @@ SPEC = [
     # delta_d ON THE CHILD SUD ODDS RATIO OF 2, asked for twice.  Sign standard:
     # a bigger income penalty makes the child poorer, poorer children use more,
     # so the ratio RISES in delta_d.
-    ('delta_d', 'child_sud_or',      2.0,     +1, 0.30, 0.01,  2.00),
+    # DELTA_D IS PINNED AT 0.24 AND IS NO LONGER A BRACKET.  The author, 12
+    # September: *"Maybe set delta d to 0.24 and pin it?"*, *"I think it is
+    # creating some problems"*.
+    #
+    # It was.  Over the 2500-cap run it went 0.36, 0.46, 0.59, 0.72, 0.57, 0.55,
+    # 0.56, 0.62, 0.55 -- a factor of two, wandering, and never settling, while
+    # its moment is a ratio of two conditional disorder rates that is noisy in
+    # its own right.  Worse, it is the SAME ECONOMICS as the income gradient:
+    # the child odds ratio exceeds one only when poorer people use more, which
+    # is what r_use measures, so delta_d and kappa were pulling on one margin
+    # from two directions.  Retiring it removes one of the two.
+    #
+    # ENGINE.md's rule for turning a bracket off is to zero its DISTANCE as
+    # well, because a zero adjuster with a live distance cannot converge.  Here
+    # the spec IS the distance -- worst, median and the count inside ten are all
+    # built from SPEC in table() -- so removing the row retires the term too,
+    # and nothing is left scoring a parameter that cannot move.
+    #
+    # The odds ratio is still COMPUTED and still REPORTED, on the ODDS line
+    # beside the homelessness one, because it is the number the pin has to be
+    # judged by.  It is just no longer targeted.
     # kappa IS FREED AGAIN, on users' income.  Author, 12 September: *"maybe then
     # you have to pick kappa as well to push the income down"*, *"maybe 3
     # multiples is not enough"*.  It was SET at SMR 3 earlier today, which made
@@ -445,8 +465,14 @@ def table(par, m, it):
     # *"i also want a report of the homelessness odds ratio"* and *"we are not
     # calibrating delta_h...that one is dropped"*.  ENGINE.md's phase 3 agrees:
     # anywhere in 1.8 to 2.4 is fine, only below 1.8 is delta_h reopened.
+    # BOTH ODDS RATIOS ARE REPORTED AND NEITHER IS TARGETED NOW.  delta_h was
+    # dropped by the author on 12 September and delta_d pinned at 0.24 the same
+    # day, so this line is how the pin is judged: if the SUD ratio sits far from
+    # 2 at delta_d = 0.24, that is the thing to look at, and it will be visible
+    # rather than buried in a bracket that was quietly chasing it.
     print(f'  ODDS    child homeless {m["child_hl_or"]:.3f}'
-          f'   (reported only; 1.8-2.4 is fine)')
+          f'   child SUD {m["child_sud_or"]:.3f}  at delta_d {par.delta_d:.2f}'
+          f'   (both reported only)')
     return max(gs)
 
 
@@ -463,6 +489,9 @@ if __name__ == '__main__':
     # made saving less attractive, so beta rose rather than fell.
     par = with_(P(), **{k: v for k, v in FIXED.items() if k != 'kap'},
                 **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2,
+                   # PINNED, not a starting value: delta_d is out of SPEC, so
+                   # nothing steps it and it holds here for the whole run.
+                   "delta_d": 0.24,
                    # STARTING VALUES MATTER WHEN THE STEP IS RELATIVE.  The
                    # author, 12 September: *"this is why the model cannot
                    # converge"*.  h_hl started at 1e-4 and lands near 1e-2 -- a
