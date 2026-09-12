@@ -1,3 +1,97 @@
+## 12 September 22:50 UTC -- FIRING: NO QUANTITATIVE LOOP STARTED, AND THE REASON
+## IS THAT ALL FOUR CORES ARE THE AUTHOR'S STYLIZED CALIBRATION.
+
+Stale-checkout guard: behind 0, ahead 0, working tree clean. Nothing matching
+`hftf|run_one_point|three_loop|sweep_b` is alive. Phase 3 lifts the ban on a
+firing starting `three_loop.sh`, so the default action would be to start it.
+
+It was NOT started. Four `sr_calibrate.py` workers have been running the
+stylized calibration since 22:44, the author is reading its gap table every
+hundred iterations in the live session, and ENGINE.md's own standing rule is
+that a search is not run beside a measurement. Starting the quantitative fleet
+now halves both. The next firing should start it if the stylized run has
+finished or the author has moved off it.
+
+## THE STYLIZED FINDING THIS FIRING PRODUCED, AND IT IS A TRANSITION_LESSONS
+## SECTION 7 ITEM: `th` -> `dshare` IS NEARLY VERTICAL AT HIGH MORTALITY.
+
+The calibration kept falling off the interior drug branch and back on, five
+times between iterations 500 and 1500 -- `dshare` 0.1929, then 0.0199, then
+0.1893, then 0.0000, then 0.1755. It was read at first as drift. It is not.
+
+Holding the iteration-500 vector and moving ONLY `th`:
+
+    th 0.20500   dshare 0.2024   r_use 0.9369
+    th 0.20484   dshare 0.1925   r_use 0.7418     <- iteration 500 sat here
+    th 0.20472   dshare 0.0200   r_use 0.1619
+    th 0.20450   dshare 0.0000   r_use 0.1459
+
+Ninety per cent of the drug share disappears over six hundredths of a per cent
+of `th`. Below the edge every user buys the smallest grid quantity and nothing
+else -- the negative value of life corner, already documented.
+
+**THE WIDTH OF THE INTERIOR BRANCH IS SET BY MORTALITY.** Bisecting for the
+lowest `th` still interior, at each `kap`:
+
+    kap     smr    th*       lowest interior dshare   r_use there
+    0.100   2.11   0.15725          0.1512             0.7393
+    0.130   2.44   0.18039          0.1020             0.2877
+    0.166   2.84   0.20472          0.0200             0.1619
+    0.200   3.22   0.21530          0.0200             0.1607
+    0.300   4.33   0.24210          0.0200             0.1588
+
+**READ THAT TABLE WITH ONE CAVEAT AND IT IS MINE, NOT THE MODEL'S.** The
+bisection's predicate was `dshare > 0.02`, so at `kap` 0.166 and above it
+converged on the CORNER side of the jump, at 0.0200, rather than on the interior
+bottom. A dense sweep at `kap = 0.16590` gives the true shape:
+
+    th 0.204840   dshare 0.1925      th 0.204760   dshare 0.1809
+    th 0.204830   dshare 0.1916      th 0.204740   dshare 0.0205
+    th 0.204820   dshare 0.1906      th 0.204720   dshare 0.0199
+    th 0.204800   dshare 0.1882
+
+`dshare` falls SMOOTHLY from 0.1925 to 0.1809 and then JUMPS to 0.0205. Nothing
+in between exists, so at this mortality the attainable set is
+`[0, 0.021] u [0.181, 0.22]` and the target 0.141 is in the hole -- unattainable
+at any `th`, not merely hard to land on. The two rows at `kap` 0.100 and 0.130
+are on the interior side and therefore uncontaminated, but whether the branch
+bottom moves MONOTONELY in `kap` is not established by them and must not be read
+off that table. **The dense sweep at several `kap` is the open measurement.**
+
+The calibration found this unaided: it walked `kap` from 0.1659 down to 0.1370
+(SMR 2.84 -> 2.56) and at iteration 1500 every one of the eleven brackets is
+live again, median gap 4.3 per cent, seven of eleven inside ten. So this is a
+property of the model to know about, not a defect to fix, and no driver change
+was made.
+
+**THE SECTION 7 CHECK AGAINST THE QUANTITATIVE MODEL IS OPEN.** That model has
+the same negative value of life instrumented -- `DIAG share with a NEGATIVE
+value of life`, 0.45 per cent healthy -- so it has the same two branches. The
+test is the cheap one-parameter loop-0 sweep ENGINE.md rule 1 asks for: hold the
+benchmark vector, move `theta` alone across a range, and read the drug spending
+share. If it is as steep there, `theta_max_rel_step = 1e-3` has the same problem
+and the moment will oscillate rather than converge. **Run it on the next firing
+that owns the cores.** Do not close this item by assuming it carried across, and
+do not close it by assuming it did not.
+
+## `delta_d` IS ORTHOGONAL TO THE ADULT BLOCK, MEASURED, NOT ASSUMED.
+
+From the same vector, moving only `delta_d`:
+
+    delta_d   dshare   r_use    part     sud   child_sud_or
+     0.308    0.1925  0.7418  0.0990  0.0367      1.4055
+     0.400    0.1925  0.7418  0.0990  0.0367      1.5528
+     0.570    0.1925  0.7418  0.0990  0.0367      1.8564
+     0.700    0.1925  0.7418  0.0990  0.0367      2.1140
+
+Identical to four decimals across every adult moment. In the stylized model
+`delta_d` is the child's inherited income penalty and touches nothing else, so
+the odds ratio of 2 costs nothing and does not need to be inside the joint loop
+at all -- it can be set afterwards by a one-dimensional solve. This is the
+stylized counterpart of the author's 11 September instruction for the
+quantitative model, *"don't worry about the odds ratio in the main
+calibration"*, and it says that instruction was the right one.
+
 ## 12 September 21:40 UTC -- A KILLED SOLVE'S .dat FILES ARE REVERTED, NOT
 ## COMMITTED, AND THE TWO ARE NOT ALIKE.
 
