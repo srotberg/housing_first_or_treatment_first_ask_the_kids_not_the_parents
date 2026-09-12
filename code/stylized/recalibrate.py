@@ -9,7 +9,6 @@ is the reason the income of users declines"*.
 SEVEN PARAMETERS ON SEVEN TARGETS, exactly identified, and each one is the
 quantitative model's own moment aimed at the quantitative model's own number:
 
-    gam      housing over expenditure net of drugs        0.268
     h_hl     homelessness rate                            0.0100
     aleph    value of a statistical life / annual income  80
     th       drug spending over users' income             0.14098
@@ -55,7 +54,33 @@ import numpy as np
 from calibrate import stats, bracket, TARGET
 from stylized import P, with_
 
-FIXED = dict(h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0)
+# gam IS SET AT ITS DATA VALUE AND hspend IS NOT A TARGET.  The author, 12
+# September: *"I want the stylized model to be super simple.  And just include
+# the least things needed to make the points"*.  The housing expenditure share
+# is not one of the points, and it is also NOT REACHABLE.  Measured, with the
+# drug block held at START:
+#
+#   gam     0.2144  0.2800  0.3400  0.3600  0.3900
+#   hspend  0.1843  0.2130  0.2361  0.2465  0.2644
+#   r_use    0.741   0.645   0.554   0.902   1.275
+#
+#   h_lg      0.40    0.60    0.85    1.00
+#   hspend  0.1843  0.2002  0.2042  0.2047
+#   r_use    0.741   0.916   1.056   1.054
+#
+# gam tops out at 0.236 on the interior branch and crosses to the WRONG branch
+# between 0.34 and 0.36; h_lg saturates at 0.205 and ruins the gradient getting
+# there.  Housing here is a discrete menu of two units and the street, and the
+# aggregate rent share is bounded by that menu.  Two sweeps were spent finding
+# this the hard way: both hit hspend = 0.268 exactly and both did it by crossing
+# the branch, after which kap, u1 and b all cornered on their bounds and
+# participation sat near 60 per cent.
+#
+# So gam = 0.268 is the Cobb-Douglas weight FROM the expenditure survey, set and
+# not calibrated, and the realised share is reported as a diagnostic.  That is
+# the file's original "BOTH SET" arrangement for gam, restored on purpose, and
+# it drops the one parameter that was dragging the model off its branch.
+FIXED = dict(gam=0.268, h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0)
 
 # THE STARTING POINT IS NOT A DETAIL, IT PICKS THE BRANCH.  Started from the log
 # model's calibrated values the first sweep failed outright: the housing block
@@ -70,7 +95,7 @@ FIXED = dict(h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0)
 # the homeless 0.2150 against 0.217 before a single bracket has run, with
 # participation, the disorder rate, the housing share and the VSL the four that
 # still need closing.
-START = dict(gam=0.2144, h_hl=1e-4, aleph=8.3, th=0.16,
+START = dict(h_hl=1e-4, aleph=8.3, th=0.16,
              kap=0.175, u1=0.127, pi_base=0.40, b=0.045)
 
 # u1's BOUNDS KEEP IT ON THE INTERIOR BRANCH, like kap's.  Measured at
@@ -81,8 +106,7 @@ START = dict(gam=0.2144, h_hl=1e-4, aleph=8.3, th=0.16,
 # (parameter, moment, lo, hi).  Order is the sweep order and it matters: the
 # housing block settles before the drug block, and b runs LAST so participation
 # is the moment that is actually hit.
-HOUSING = [('gam', 'hspend', 0.05, 0.60),
-           ('h_hl', 'homeless', 1e-7, 0.02),
+HOUSING = [('h_hl', 'homeless', 1e-7, 0.02),
            ('aleph', 'vsl', 3.0, 60.0)]
 DRUG = [('th', 'dshare', 0.05, 0.40),
         ('kap', 'r_use', 0.03, 0.185),
@@ -96,7 +120,8 @@ DRUG = [('th', 'dshare', 0.05, 0.40),
 # table is one row per CALIBRATED PARAMETER and nothing else; a moment with no
 # instrument is a diagnostic and goes underneath, where it cannot be mistaken
 # for something the calibration is trying to hit.
-DIAGNOSTIC = ['burden50', 'sud_of_homeless', 'hsmall', 'housing_share', 'prog']
+DIAGNOSTIC = ['hspend', 'burden50', 'sud_of_homeless', 'hsmall',
+              'housing_share', 'prog']
 
 
 def table(par, note=''):
@@ -156,7 +181,7 @@ def calibrate(par, sweeps=8, verbose=True, iters=16):
         if verbose:
             table(par, note=f'\nAFTER SWEEP {s}')
             print(f'  sweep {s}: worst gap {100*worst:6.2f} %   '
-                  f'gam {par.gam:.4f} h_hl {par.h_hl:.2e} aleph {par.aleph:.3f} '
+                  f'h_hl {par.h_hl:.2e} aleph {par.aleph:.3f} '
                   f'th {par.th:.4f} kap {par.kap:.4f} u1 {par.u1:.4f} '
                   f'pi {par.pi_base:.4f} b {par.b:.5f}')
         if worst < 0.02:
@@ -172,7 +197,7 @@ if __name__ == '__main__':
     print('BASELINE')
     table(par)
     json.dump({k: getattr(par, k) for k in
-               ('gam', 'h_hl', 'aleph', 'th', 'kap', 'u1', 'pi_base', 'b',
-                'h_sm', 'h_lg', 'omega', 'sigma')},
+               ('h_hl', 'aleph', 'th', 'kap', 'u1', 'pi_base', 'b',
+                'gam', 'h_sm', 'h_lg', 'omega', 'sigma')},
               open('calibrated_sigma2.json', 'w'), indent=1)
     print('\nwritten to calibrated_sigma2.json')
