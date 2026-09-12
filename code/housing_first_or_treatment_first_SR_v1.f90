@@ -67,7 +67,22 @@
         ! The drug spending share sat at 13.74 per cent against a 14.098 target
         ! when it was last measured at a settled vector, which is -2.5 per cent
         ! and close enough to hold.
-        integer, parameter :: hold_theta=1
+        ! THETA RELEASED 12 September. The author named theta among the
+        ! parameters that have to be adjusted, which reverses their own freeze of
+        ! 11 September ("I think we can freeze theta since it gives about 14%
+        ! spending on drugs").
+        !
+        ! The freeze's premise had expired: theta gave 0.13740 when it was frozen,
+        ! was -1.9 per cent at the converged point, and reached +37.8 per cent at
+        ! loop 7 of the six-moment block. It was flagged twice as costless and
+        ! overtaken both times.
+        !
+        ! Releasing this restores relative_share_of_addiction_adj, which is
+        ! (1-hold_theta)*5e-2 -- the adjuster the update actually READS, not
+        ! relative_share_of_addiction_adjuster, which is declared and never read.
+        ! That distinction is why theta ran live for a day while being reported
+        ! held.
+        integer, parameter :: hold_theta=0
 
         integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
@@ -553,7 +568,10 @@
         ! 0.7. At 0.05 the step was 0.002, three tenths of one per cent a
         ! loop, which cannot move the parameter anywhere it is not already.
         ! At 0.5 a gap of 0.04 moves it three per cent a loop.
-        real(8) :: mu_homeless_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-1))
+        ! RELEASED 12 September: the author named mu_H among the parameters that
+        ! have to be adjusted. Was (1-freeze_to_three_block)*5e-1, zero under the
+        ! stage-1 freeze.
+        real(8) :: mu_homeless_adjuster=5*10.d0**(-1)
         real(8) :: distance_mu_homeless=1
         real(8) :: stopping_rule_mu_homeless=10.d0**(-2)
 
@@ -2761,7 +2779,9 @@
         ! damp_on_flip already grows it back toward, so nothing else changes.
         ! The guard below is added anyway, so pinning gamma again retires its
         ! term instead of hanging the loop.
-        real(8) :: relative_share_of_housing_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-2))
+        ! RELEASED 12 September: the author named gamma. Was
+        ! (1-freeze_to_three_block)*5e-2, zero under the stage-1 freeze.
+        real(8) :: relative_share_of_housing_adjuster=5*10.d0**(-2)
         real(8), parameter :: relative_share_of_housing_adjuster_start=5*10.d0**(-2)
         real(8) :: previous_gap_relative_share_of_housing=0
         integer :: have_gap_relative_share_of_housing=0
@@ -3416,7 +3436,9 @@
         ! LIVE AGAIN. max_food_cost is the allotment once more, so it is
         ! calibrated on aggregate food stamp spending over labour income, which
         ! is what food_stamps_share_data measures.
-        real(8) :: max_food_cost_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-2))
+        ! RELEASED 12 September: the author named c_bar. Was
+        ! (1-freeze_to_three_block)*5e-2, zero under the stage-1 freeze.
+        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
