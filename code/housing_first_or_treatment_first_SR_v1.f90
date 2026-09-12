@@ -2272,7 +2272,51 @@
         ! share absorbed anything that moved the spread: the rental grid, the
         ! voucher, the food stamp floor.
         integer, parameter :: target_renters_rent_to_income=1
-        real(8), parameter :: avg_labor_supply_data=0.4
+        ! AVERAGE HOURS OF THE EMPLOYED AS A SHARE OF THE TIME ENDOWMENT, and
+        ! the endowment is DISCRETIONARY TIME NET OF HOME PRODUCTION, which is
+        ! what fixes the number. Raised from 0.40 to 0.47 on 12 September on the
+        ! author's instruction, after 0.40 was found to be unreachable without
+        ! relative_share_of_leisure running away: it moved 0.573 to 3.051 one way
+        ! over twenty-two loops and sits at 4.568 with the model still at 0.465.
+        !
+        ! The arithmetic, all of it from data and none of it from the model:
+        !
+        !   American Time Use Survey 2024 puts personal care at 9.80 hours a day,
+        !   so discretionary time is 14.20 a day, 99.4 a week -- which is where
+        !   the textbook hundred-hour week comes from, and it still holds.
+        !
+        !   Gomme and Rupert, Journal of Monetary Economics 54(2), 2007, measure
+        !   home production at 24 per cent of discretionary time for the 16 plus
+        !   population and 25.1 per cent for 16 to 64. THIS MODEL HAS NO HOME
+        !   PRODUCTION SECTOR: the time not worked is max_labor_supply minus
+        !   labor_supply and it enters utility directly as leisure, so the
+        !   endowment is discretionary time NET of housework, about 74.5 hours.
+        !
+        !   ATUS 2024 again, for the numerator: employed people work 7.95 hours
+        !   on a weekday and 5.51 on a weekend day when they work, and 80 and 30
+        !   per cent of them work on those days, which is 35.1 hours a week.
+        !
+        !   35.1 / 74.5 = 0.471.
+        !
+        ! WHY THE EMPLOYED AND NOT THE WORKING-AGE POPULATION. The denominator
+        ! here is model_total_hours, accumulated at line 11231 under
+        ! (in_retirement==0) .AND. (emp_of(unemployment_index)==1), so it holds
+        ! the employed only -- part-timers and the households that choose zero
+        ! hours included, the unemployed and the retired excluded. That is why
+        ! this is 0.47 and not 0.54, which is the same arithmetic on full-time
+        ! hours and would say the employed are all full-time.
+        !
+        ! THIS CONSTANT IS NOT ONLY A TARGET, which is why moving it is a model
+        ! change and not a target change. At 33877 it is the constant hours level
+        ! that builds model_lifetime_income_conditional_on_last_period_shock, the
+        ! lifetime income index behind the PIA formula, so it sets Social
+        ! Security entitlements. model_hash.py names it for exactly this reason
+        ! and refuses it a place in TARGET_CONSTANTS. Moving it therefore moves
+        ! the model hash and empties the archive, which is correct: the economy
+        ! is different. It also REMOVES an inconsistency that was already there,
+        ! because at 0.40 the model computed entitlements on hours fourteen per
+        ! cent below what its own households supply.
+        real(8), parameter :: avg_labor_supply_data=0.47
         real(8), parameter :: perc_higher_rent_in_free_market=0.137
         real(8), parameter :: himmelberg_etal_rent_to_price=0.083
         real(8), parameter :: free_market_rent_to_house_price=0.083
