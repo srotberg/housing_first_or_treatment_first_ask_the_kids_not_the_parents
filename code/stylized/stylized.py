@@ -253,6 +253,38 @@ class P:
     th    = 0.2350    # weight on drug use, SET; see above
     b     = 0.009     # Stone Geary subsistence; th/b is the pull of the first unit
     gam   = 0.2144    # CALIBRATED to the housing share. Starting value only
+    # SIGMA IS 2 AND THE NESTING IS THE QUANTITATIVE MODEL'S, on the author's
+    # instruction of 12 September: *"let's use sigma=2 to match the quant
+    # model"*.  risk_aversion_consumption is a hard parameter there
+    # (housing_first_or_treatment_first_SR_v1.f90:2785) and the three
+    # Cobb-Douglas weights are built at :39177-39181 as
+    #
+    #     phi_h = gam*(1-th)     phi_c = (1-gam)*(1-th)     phi_q = th
+    #
+    # so gam is the housing share of the NON-DRUG bundle, which is exactly what
+    # its target -- 26.8 per cent of expenditure net of drugs -- measures.  The
+    # old weights here were (1-gam-th), gam, th, a different nesting under which
+    # gam was the share of the whole bundle and the housing share of non-drug
+    # spending was gam/(1-th).
+    #
+    # LOG WAS ASKED FOR AND MEASURED DOWN.  Under sigma = 1 the child's bundle
+    # differs from the parent's only by the constant bbar^phi_q, so the pair
+    # collapses to the omega_c = 0 model at theta/A and aleph/A with
+    # A = 1 + omega_c*(xi-1): the contemporaneous child term is a
+    # reparameterisation of two CALIBRATED parameters and its ablation row is
+    # empty by construction.  omega_c_under_log.py measures it -- the drug
+    # quantity ratio is flat at 1.0056 across a 25-fold range of income under
+    # log and swings 1.0138 to 0.9838, crossing one, at sigma = 2.  There are no
+    # derivatives anywhere in this file to trade against that: every choice is a
+    # grid argmax.
+    sigma = 2.0
+    # THE EQUIVALENCE SCALE, xi = sqrt(household size), and a stylized household
+    # is a parent and one child through period 1, so xi = sqrt(2) there and 1 in
+    # period 2, where the child has grown.  That is the quantitative model's own
+    # age profile collapsed to two periods: actual_household_size = 1 + n(a) with
+    # n from children under 18 by age.  kappa_child = xi - 1 is settled --
+    # CHILD_FLOW_UTILITY.md, approved 11 September.
+    xi    = 2.0 ** 0.5
     # A PERIOD IS THIRTY YEARS, so the discount factor and the interest rate are
     # the annual values COMPOUNDED, not the annual values used raw. The interest
     # rate is set to 1/beta so that beta*R = 1 and nothing in the results comes
@@ -315,7 +347,21 @@ class P:
     aleph = 4.00      # flow value of being alive. CALIBRATED
 
     # the disorder
-    lam   = 25.0      # SUD hazard per unit of use. CALIBRATED
+    lam   = 25.0      # RETIRED. Kept so ablate.py and frontier.py still import,
+                      # and so a robustness run can put the quantity back.
+    # THE ONSET IS FLAT AND CONDITIONAL ON USING, author 12 September: *"there is
+    # only a flat SUD risk when using that is independent of use"*.  This is
+    # exactly the quantitative model's addiction_onset_hazard at
+    # lambda_addiction = 0 (:9713-9734): the base rate if v > 0 and precisely
+    # zero if v = 0, so abstainers stay clean.
+    #
+    # IT COSTS THE INTENSIVE-MARGIN MORAL HAZARD AND BUYS IDENTIFICATION.
+    # d pi/d v is now zero, so TWO_PERIOD_SPEC.md's stated reason for two periods
+    # -- *"the marginal cost of using is lambda*exp(-lambda v)*dV"* -- no longer
+    # holds, and the whole mortality cost sits on the discrete decision to use at
+    # all.  In exchange theta alone sets how much is used and pi_base alone sets
+    # the disorder rate, where before they were jointly determined.
+    pi_base = 0.40    # CALIBRATED to the disorder rate. Starting value only
     # MORTALITY: the SUD kills you. kap is the proportional fall in survival over
     # a THIRTY YEAR period, and it is derived from the annual mortality rate
     # ratio rather than assumed, because a period this long is not forgiving
@@ -352,7 +398,21 @@ class P:
     # one is: 0.4876 against 0.4832, nine tenths of a per cent apart. The change
     # is made for consistency with the full model rather than because it moves
     # anything here.
-    smr_d = 8.0       # mortality rate ratio with a SUD. Hjorthoj et al. (2023)
+    # KAPPA IS CALIBRATED ON THE INCOME OF USERS, author 12 September: *"i think
+    # you should also calibrate kappa so that the average income of a user is
+    # 0.74"*.  0.74 is the quantitative model's own y_u target, users' mean
+    # income over the population mean, from Table 7.  smr_d and the construction
+    # below are kept as the STARTING VALUE and as the record of where the
+    # mortality ratio came from when it was set rather than calibrated; the
+    # implied SMR of whatever kap the bracket lands on is reported beside it, so
+    # the calibrated mortality can be read against the literature.
+    #
+    # THE GRADIENT IS A TARGET IN THE BASELINE AND THAT IS DELIBERATE.  The
+    # baseline matches the data on all seven moments, y_u among them, and the
+    # ablations below are what decompose the reversal.  So the claim this model
+    # supports is "at the mortality the data imply, channel X carries this much
+    # of the gradient", not "the model produces the gradient unprompted".
+    smr_d = 3.0       # the quantitative model's kappa_phi_d_level, for the start
     kap   = 1.0 - 0.91 ** (smr_d - 1.0)
     u1    = 0.1625    # RESOURCE: the disorder costs you a job. Measured.
 
@@ -535,7 +595,19 @@ class P:
     # a parent who acquired the disorder. It depends only on v, so it acts as an
     # extra deterrent that rises with use, which is the right economics: a
     # parent who cares about the child uses less. See internalise.py.
-    omega = 0.0
+    # OMEGA IS THE QUANTITATIVE MODEL'S weight_on_child, 0.09, and it is SET
+    # rather than calibrated here: the ablation of omega_c is the experiment, and
+    # an omega_c fitted inside this model would not be the one the quantitative
+    # model carries.  It now acts in TWO places, as it does there:
+    #
+    #   the FLOW, through the child's own bundle X_K -- see _flow below;
+    #   the CONTINUATION, through chdmg, the child's expected loss.
+    #
+    # chdmg stays zero until the child's value function is built with delta_d on
+    # the SUD odds ratio of 2, which the author has asked for and which follows
+    # the same order the quantitative model took: *"delta_d can be done later
+    # again"*.
+    omega = 0.09
     chdmg = 0.0
 
     na    = 60
@@ -648,6 +720,72 @@ def _p1_rmul(par, policy, rmul):
     return par.kappa_c
 
 
+def _shares(par):
+    """
+    (phi_c, phi_h, phi_q), the quantitative model's nesting at
+    housing_first_or_treatment_first_SR_v1.f90:39177-39181.  They sum to one, so
+    gam is the housing share of the non-drug bundle and th the drug share of the
+    whole.
+    """
+    return (1.0 - par.gam) * (1.0 - par.th), par.gam * (1.0 - par.th), par.th
+
+
+def _pid(par, v):
+    """
+    The onset hazard.  FLAT AND CONDITIONAL ON USING, which is the quantitative
+    model's addiction_onset_hazard at lambda_addiction = 0 (:9713-9734): the base
+    rate at any positive quantity and exactly zero at v = 0, so an abstainer is
+    never at risk.  d pi / d v is zero everywhere it is defined.
+    """
+    return par.pi_base * (np.asarray(v, dtype=float) > 0.0)
+
+
+def _hpick(par, street, small):
+    """The housing size behind a (street, small) record from _branch."""
+    if street > 0.5:
+        return par.h_hl
+    return par.h_sm if small > 0.5 else par.h_lg
+
+
+def _flow(par, c, h, q=0.0, child=True):
+    """
+    THE FLOW UTILITY, which is the quantitative model's, not a stylized stand-in.
+
+    CHILD_FLOW_UTILITY.md, approved 11 September and built into the Fortran at
+    :24317-24327 with aleph added at :24450:
+
+        X_P = (c/xi)^phi_c (h/xi)^phi_h (bbar+q)^phi_q      the parent
+        X_K = (c/xi)^phi_c (h/xi)^phi_h  bbar^phi_q         the child
+        V   = u(X_P) + omega_c*(xi-1)*u(X_K) + aleph,   u(x) = x^(1-s)/(1-s)
+
+    THE CHILD DOES NOT GET THE DRUG.  Its bundle carries the Stone-Geary shifter
+    alone, so buying drugs reaches the child only by taking consumption out of
+    the shared c.  That asymmetry is the whole of the contemporaneous channel:
+    under log it would collapse into a constant multiple of the parent's bundle
+    and vanish into theta and aleph, which is measured in omega_c_under_log.py
+    and is why sigma is 2.
+
+    c AND h ARE DIVIDED BY xi, q IS NOT, because children consume none of it.
+
+    ALEPH IS ADDED ONCE, NOT PER MEMBER, matching the Fortran, where
+    value_of_life is added to the assembled flow utility rather than inside the
+    bracket the child weight multiplies.
+
+    child=False is period 2, where the child has grown: xi is 1 and the second
+    term is absent.
+    """
+    phc, phh, phq = _shares(par)
+    xi = par.xi if child else 1.0
+    kch = (xi - 1.0) if child else 0.0
+    s = par.sigma
+    base = (phc * np.log(np.maximum(c, 1e-12) / xi)
+            + phh * np.log(np.asarray(h, dtype=float) / xi))
+    S = np.exp((1.0 - s) * (base + phq * np.log(par.b + q)))
+    if kch > 0.0 and par.omega != 0.0:
+        S = S + par.omega * kch * np.exp((1.0 - s) * (base + phq * np.log(par.b)))
+    return S / (1.0 - s) + par.aleph
+
+
 def _options(par, rmul):
     """(housing services, rent, on the street) for the three choices."""
     return ((par.h_hl, 0.0, 1),
@@ -687,9 +825,8 @@ def solve_period2(par, y, policy, used=0):
             sml = np.zeros(par.na)
             for h, rent, street in _options(par, rmul):
                 c = cash - rent
-                v = np.where(c > 1e-9,
-                             (1.0 - par.gam - par.th) * np.log(np.maximum(c, 1e-12))
-                             + par.gam * np.log(h) + par.aleph, -np.inf)
+                v = np.where(c > 1e-9, _flow(par, c, h, 0.0, child=False),
+                             -np.inf)
                 # what the voucher pays on this option: the rest of the market
                 # rent. Zero on the street, which is free to begin with.
                 s = 0.0 if street else par.pr * h * (1.0 - rmul)
@@ -735,9 +872,12 @@ def _branch(par, ag, inc, rmul, vg, cont):
     idx = np.zeros(cash.shape, dtype=np.intp)
     for o, (h, rent, street) in enumerate(opts):
         c = cash - rent
+        # THE DRUG IS INSIDE THE BUNDLE NOW.  Under log it was additively
+        # separable and period1 added it after the fact; at sigma = 2 it
+        # multiplies, so it has to be here, where housing and saving are chosen
+        # against it.
         u = np.where(c > 1e-9,
-                     (1.0 - par.gam - par.th) * np.log(np.maximum(c, 1e-12))
-                     + par.gam * np.log(h) + par.aleph + par.beta * cont,
+                     _flow(par, c, h, vg[:, None]) + par.beta * cont,
                      -np.inf)
         better = u > val
         idx = np.where(better, o, idx)
@@ -797,7 +937,7 @@ def period1(par, y, policy=None):
     out = []
     for p, inc, rmul in _states(par, 0, policy, y, used=0):
         vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * inc, par.nv - 1)))
-        pid = (1.0 - np.exp(-par.lam * vg))[:, None]
+        pid = _pid(par, vg)[:, None]
         # SURVIVAL INSIDE THE EXPECTATION over the realised disorder. Not
         # phi * E W2: see the note at the head of this file.
         cont = (1.0 - pid) * s0 * W2u[None, :, 0] + pid * s1 * W2u[None, :, 1]
@@ -807,8 +947,11 @@ def period1(par, y, policy=None):
         # voucher it drew and faces the clean continuation.
         v0, a0, s_0, r0, g0, m0_ = _branch(par, ag, inc, rmul, np.zeros(1), cont0)
 
-        pen = par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg))
-        tot = vu + par.th * (np.log(par.b + vg) - np.log(par.b)) - pen
+        # The drug term is no longer added here: _branch carries it inside the
+        # bundle.  pen is the CONTINUATION half of omega_c, the child's expected
+        # loss, and is flat in v now that the hazard is.
+        pen = par.omega * par.chdmg * _pid(par, vg)
+        tot = vu - pen
         k = int(np.argmax(tot[1:])) + 1
         gain = float(tot[k] - v0[0])
         # V1 is the PARENT'S OWN lifetime value, which is what a planner counts
@@ -875,7 +1018,7 @@ def terminal_homeless_prob(par, y, policy=None):
     for p, g, v, bu, bn, *_ in period1(par, y, policy):
         uses = g > 0.0
         a = (bu if uses else bn)[0]
-        pid = (1.0 - float(np.exp(-par.lam * v))) if uses else 0.0
+        pid = float(_pid(par, v)) if uses else 0.0
         Hx = H2u if uses else H2c
         tot += p * sum(pd * float(np.interp(a, ag, Hx[:, d]))
                        for d, pd in ((1, pid), (0, 1.0 - pid)))
@@ -916,7 +1059,7 @@ def ever_homeless_prob(par, y, policy=None):
     for p, g, v, bu, bn, *_ in period1(par, y, policy):
         uses = g > 0.0
         a, street1 = (bu if uses else bn)[0], (bu if uses else bn)[1]
-        pid = (1.0 - float(np.exp(-par.lam * v))) if uses else 0.0
+        pid = float(_pid(par, v)) if uses else 0.0
         Hx = H2u if uses else H2c
         street2 = sum(pd * float(np.interp(a, ag, Hx[:, d]))
                       for d, pd in ((1, pid), (0, 1.0 - pid)))
@@ -1227,6 +1370,15 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
     # Survey's universe for it is occupied units, so the street is not in the
     # denominator, exactly as in the quantitative model's counterpart.
     smallmass = housedmass = 0.0
+    # RENT OVER HALF OF INCOME, the moment h_sm is JUDGED on rather than
+    # calibrated to.  The author, 12 September: *"for h_sm you can set it
+    # exogenously to something that gives decent % of households spending over
+    # 50 per cent on rent and still be able to choose h_hl to match 1 per cent
+    # homelessness rate"*.  It is the quantitative model's burden50, which sits
+    # at 17.5 per cent in the data, and it is REPORTED AND NOT TARGETED: nothing
+    # brackets on it.  Period 1 only and over the period 1 population, because
+    # that is the age range the survey statistic is built on.
+    burden = mass1 = 0.0
     # NON DRUG EXPENDITURE, which is what the Consumer Expenditure Survey share
     # is a share OF. In period 1 it is income less drug spending less saving; in
     # period 2, which is terminal, it is the whole of cash. Rent here is what the
@@ -1247,12 +1399,15 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                 if mm <= 0.0:
                     continue
                 a, street, rent, sub, small1 = br
-                pid = (1.0 - np.exp(-par.lam * VV[i, s])) if uu else 0.0
+                pid = float(_pid(par, VV[i, s])) if uu else 0.0
                 if uu:
                     part += mm; spend += mm * par.p_v * VV[i, s]
                     uinc += mm * INC[i, s]; sud += mm * pid
                 # period 1: everyone alive, mass one
                 mass += mm
+                mass1 += mm
+                if street < 0.5 and rent > 0.5 * INC[i, s]:
+                    burden += mm
                 hl += mm * street
                 smallmass += mm * small1; housedmass += mm * (1.0 - street)
                 hcost += mm * rent; hinc += mm * INC[i, s]; cost += mm * sub
@@ -1297,8 +1452,10 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                 # the small cell of this model's two. It is what h_sm is
                 # calibrated on; h_lg stays set at its market value.
                 hsmall=float(smallmass / max(housedmass, 1e-12)),
+                burden50=float(burden / max(mass1, 1e-12)),
                 # RENT OVER NON DRUG EXPENDITURE. The frictionless Cobb-Douglas
-                # benchmark for it is gam/(1-th), so this is the moment that
+                # benchmark for it is gam itself under the quantitative model's
+                # nesting, so this is the moment that
                 # says whether the discrete housing grid, the street and the
                 # voucher deliver the survey share the weight was set from. It
                 # is what h_lg is calibrated on.
@@ -1331,24 +1488,30 @@ def vsl(par, y=1.0, policy=None):
         if p <= 1e-14:
             continue
         vg = np.concatenate(([0.0], np.linspace(1e-4, 0.5 * inc, par.nv - 1)))
-        pid = (1.0 - np.exp(-par.lam * vg))[:, None]
+        pid = _pid(par, vg)[:, None]
         cont = (1.0 - pid) * s0 * W2u[None, :, 0] + pid * s1 * W2u[None, :, 1]
         rm = _p1_rmul(par, policy, rmul)
-        val, aa, _, rr, _, _ = _branch(par, ag, inc, rm, vg, cont)
+        val, aa, ss, rr, _, mm = _branch(par, ag, inc, rm, vg, cont)
         cont0 = np.repeat((s0 * W2c[:, 0])[None, :], 2, axis=0)
-        v0, a0, _, r0, _, _ = _branch(par, ag, inc, rmul, np.zeros(2), cont0)
-        tot_v = (val + par.th * (np.log(par.b + vg) - np.log(par.b))
-                 - par.omega * par.chdmg * (1.0 - np.exp(-par.lam * vg)))
+        v0, a0, ss0, r0, _, mm0 = _branch(par, ag, inc, rmul, np.zeros(2), cont0)
+        tot_v = val - par.omega * par.chdmg * _pid(par, vg)
         k = int(np.argmax(tot_v[1:])) + 1
         if tot_v[k] > v0[0]:
-            a, rent, pi = aa[k], rr[k], float(1.0 - np.exp(-par.lam * vg[k]))
+            a, rent, pi = aa[k], rr[k], float(_pid(par, vg[k]))
             c1 = inc - rent - par.p_v * vg[k] - a
+            h1, q1 = _hpick(par, ss[k], mm[k]), float(vg[k])
         else:
             a, rent, pi = a0[0], r0[0], 0.0
             c1 = inc - rent - a
+            h1, q1 = _hpick(par, ss0[0], mm0[0]), 0.0
         i2 = int(np.argmin(np.abs(ag - a)))
         # d(objective)/d(phi0), which is the continuation per unit of survival
         ew = (1.0 - pi) * W2c[i2, 0] + pi * (1.0 - par.kap) * W2u[i2, 1]
-        u_c = (1.0 - par.gam - par.th) / max(c1, 1e-12)
+        # d(flow)/dc at the chosen allocation.  With V = S/(1-sigma) + aleph and
+        # S the parent's and the child's bundles each to the power 1-sigma, both
+        # carry c with the same exponent phi_c, so dV/dc = phi_c * S / c.
+        phc = (1.0 - par.gam) * (1.0 - par.th)
+        S = (1.0 - par.sigma) * (_flow(par, c1, h1, q1) - par.aleph)
+        u_c = phc * S / max(c1, 1e-12)
         tot += p * par.beta * ew / u_c * par.years
     return float(tot)

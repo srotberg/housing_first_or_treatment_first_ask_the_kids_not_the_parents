@@ -475,7 +475,15 @@ def _hsmall_target():
 
 _HSMALL = _hsmall_target()
 
-TARGET = dict(part=_DRUG['participation'], homeless=0.00399, sud=_DRUG['sud_rate'], vsl=80.0,
+# HOMELESSNESS IS 1.0 PER CENT AND r_use IS ADDED, author 12 September.  The
+# rate moves off the 0.399 per cent point-in-time count and onto the
+# quantitative model's own h_1 target of 1 per cent, so the two models are
+# aimed at the same number; and the income of users, which used to be read as
+# a diagnostic under the name r_use, becomes a TARGET at 0.74, the Table 7
+# figure the quantitative model's y_u is aimed at: *"i think you should also
+# calibrate kappa so that the average income of a user is 0.74"*.
+TARGET = dict(part=_DRUG['participation'], homeless=0.0100, r_use=0.74,
+              sud=_DRUG['sud_rate'], vsl=80.0,
               dshare=_DRUG['drug_spending_share'],
               housing_share=0.30, hspend=0.268,
               bot50=BOT50_TARGET,
