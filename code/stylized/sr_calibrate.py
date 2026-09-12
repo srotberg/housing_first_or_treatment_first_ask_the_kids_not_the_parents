@@ -122,6 +122,14 @@ SPEC = [
     ('u0',      'unemployment',     0.0485,  +1, 0.40, 0.005, 0.30),
     ('u1',      'sud_of_homeless2', 0.217,   -1, 0.20, 0.0486, 0.50),
     ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.0,   1.50),
+    # THETA IS CALIBRATED AFTER ALL, author 12 September: *"ah, then you have to
+    # calibrate theta as well to match the 14% drug spending"*.  It had been SET
+    # at 0.16 to match the quantitative model's relative_share_of_addiction_1,
+    # and the eight-parameter run showed why that could not stand: with all eight
+    # hit to a median of 0.1 per cent, the drug spending share came out at 0.052
+    # against 0.141.  An untargeted moment missing by a factor of three is a
+    # parameter that needed to be free.
+    ('th',      'dshare',           0.14098, +1, 0.30, 0.05,  0.45),
 ]
 
 MAX_REL_STEP = 0.05          # nothing moves more than 5 per cent a pass
