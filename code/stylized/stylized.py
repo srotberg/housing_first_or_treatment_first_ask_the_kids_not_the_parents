@@ -1385,6 +1385,12 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
     # brackets on it.  Period 1 only and over the period 1 population, because
     # that is the age range the survey statistic is built on.
     burden = mass1 = 0.0
+    # NET WORTH OVER INCOME, for beta.  Author, 12 September: *"you should also
+    # calibrate beta to match a net worth to income ratio of 3"*, which is the
+    # quantitative model's wealth_to_output_data.  Period 1 assets over period 1
+    # income: period 2 is terminal and runs assets down to nothing, so the stock
+    # a household holds is the one it chose in period 1.
+    wealth = winc = 0.0
     # NON DRUG EXPENDITURE, which is what the Consumer Expenditure Survey share
     # is a share OF. In period 1 it is income less drug spending less saving; in
     # period 2, which is terminal, it is the whole of cash. Rent here is what the
@@ -1412,6 +1418,8 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                 # period 1: everyone alive, mass one
                 mass += mm
                 mass1 += mm
+                wealth += mm * a
+                winc += mm * INC[i, s]
                 if street < 0.5 and rent > 0.5 * INC[i, s]:
                     burden += mm
                 hl += mm * street
@@ -1461,6 +1469,14 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                 # calibrated on; h_lg stays set at its market value.
                 hsmall=float(smallmass / max(housedmass, 1e-12)),
                 burden50=float(burden / max(mass1, 1e-12)),
+                # IN ANNUAL INCOME, NOT PER-PERIOD INCOME.  A period here is
+                # thirty years, so wealth over period income is wealth over
+                # thirty years of it and comes out a factor of `years` too
+                # small against a target -- 3.0 -- that is stated in ANNUAL
+                # income, as the quantitative model's wealth_to_output_data is.
+                # Without the multiply this read 0.0293 against 3.0 and looked
+                # like a factor of a hundred rather than a factor of three.
+                networth=float(wealth * par.years / max(winc, 1e-12)),
                 # RENT OVER NON DRUG EXPENDITURE. The frictionless Cobb-Douglas
                 # benchmark for it is gam itself under the quantitative model's
                 # nesting, so this is the moment that
