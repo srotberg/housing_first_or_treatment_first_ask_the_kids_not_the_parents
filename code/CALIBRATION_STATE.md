@@ -1,3 +1,76 @@
+## 13 September 00:05 UTC -- THE INCOME FLOOR IS ON AND NINE OF ELEVEN BRACKETS
+## CLOSE UNDER IT.  THE TWO THAT DO NOT FAIL FOR ONE REASON, AND THE AUTHOR
+## NAMED IT: y_u IS TOO HIGH.
+
+The author, 12 September: *"You need to keep raising the lowest income then
+until no household has negative value of life"*, then *"change the floor or
+ceiling if you need to"*, then *"It's because yu is too high..."*.
+
+**THE FLOOR IS IN AND IT WORKS.** It rises by 0.002 a pass while any household
+has a negative value of life and stops when none does.  It lands at 0.1820 by
+iteration 150 and the share is 0.00 per cent with the lowest value of life at
++0.16.  Every table now carries a FLOOR line.
+
+**NINE BRACKETS CLOSE UNDER IT.**  Iteration 1500: median gap 4.7 per cent,
+hspend 0.0, vsl 0.0, homeless -12.0, part +5.4, sud +2.6, unemployment 0.0,
+child_gap +0.2, r_use +10.8, dshare +4.7.  The claim made earlier today that the
+floor takes homelessness to zero irrecoverably was WRONG and was read off two
+consecutive tables of a quantity that moves between 0.000 and 0.031; h_hl finds
+its target.
+
+**THE TWO THAT DO NOT CLOSE ARE sud_of_homeless2 AND child_sud_or, AND BOTH FAIL
+THROUGH INCOME.**
+
+sud_of_homeless2 reads 0.0000 against 0.2170 and no setting of u1 moves it:
+
+    u1       sud_hl2   homeless   unemp     sud
+    0.0486    0.0000    0.0010   0.0485   0.0304
+    0.1000    0.0000    0.0010   0.0490   0.0093
+    0.2000    0.0000    0.0010   0.0485   0.0000
+    0.7000    0.0000    0.0010   0.0485   0.0000
+
+Past u1 = 0.20 the disorder itself disappears.  The mechanism is the one already
+recorded in sr_calibrate.py's own header and the author restated it in three
+words: rich users do not sleep rough.  That table gives the exchange rate --
+sud_of_homeless2 = 0.217 sits at y_u about 0.38, and y_u = 0.74 sits at
+sud_of_homeless2 about 0.025 -- so THE TWO TARGETS WERE ALREADY INCOMPATIBLE
+BEFORE THE FLOOR.  The floor pushes y_u from 0.53 to 0.82 and drives the ratio
+to exactly zero.
+
+child_sud_or runs BACKWARDS under the floor: delta_d has walked 0.57, 0.65,
+0.76, 0.83, 0.92, 1.02, 1.07, 1.18 while the odds ratio fell 0.94, 0.88, 0.75,
+0.70.  This is not a coding error.  The child's income is
+rho*log y_p + (1-rho)*log ybar - delta_d and is then floored, so a harder
+penalty pushes more children ONTO the floor, where they are identical, housed
+and fed.  A floor and a penalty that acts through income fight each other by
+construction.
+
+## AND THERE IS A REAL MEASUREMENT ERROR IN r_use, FOUND LOOKING FOR THE ABOVE.
+
+stylized.py:1585 and :1681 compute both ybar and the numerator of r_use from the
+RAW income grid.  The floor is applied inside _states, at
+`inc = max(inc, par.y_floor)`.  So with the floor on, behaviour is driven by
+post-transfer income and the moment reports PRE-transfer income.
+
+Measured, the denominator barely moves -- realised over raw ybar is 0.9668 with
+no floor and 0.9703 with it -- because few households sit at the floor.  The
+NUMERATOR is where it bites, since users are drawn from the poor, and it has not
+been isolated yet.  The direction is not in doubt: the true y_u is HIGHER than
+the 0.82 reported, which makes the author's diagnosis stronger rather than
+weaker.  **Fixing this is a change to what a targeted moment MEANS, so it is the
+author's call, and it is open.**
+
+## THE DECISION THAT IS THE AUTHOR'S, STATED AS A CHOICE OF THREE
+
+Only two of these three can hold at once, and the third has to be dropped or
+retargeted:
+
+ 1. no household has a negative value of life  -- needs a floor at 0.182;
+ 2. the SUD rate among the homeless is 0.217   -- needs y_u about 0.38;
+ 3. the income of drug users is 0.74           -- Table 7's number.
+
+2 and 3 conflicted before the floor existed.  1 makes the conflict absolute.
+
 ## 12 September 23:20 UTC -- CORRECTION TO THE ENTRY BELOW. THE "HOLE" WAS MY
 ## SWEEP RESOLUTION, NOT THE MODEL. THE REAL OBSTRUCTION IS A TWO-TARGET
 ## CONFLICT ALONG ONE CURVE.
