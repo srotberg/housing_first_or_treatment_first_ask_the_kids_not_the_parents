@@ -40,6 +40,10 @@ fi
 # FINAL table, nothing saying the run was cut rather than finished.  48 hours.
 LOG="${SR_LOG:-sr_run_$(date -u +%H%M%S).log}"
 echo "sr_run: starting, log $LOG"
-STYLIZED_WORKERS=${STYLIZED_WORKERS:-3} OMP_NUM_THREADS=1 \
+# FOUR WORKERS, NOT THREE.  The 3 was set by hand while three stale runs were
+# competing for a four-core box, and it outlived the reason for it: measured
+# afterwards the run was using 223 per cent of 400.  stylized.py's own default
+# is min(4, cpu_count), so this just stops overriding it downwards.
+STYLIZED_WORKERS=${STYLIZED_WORKERS:-4} OMP_NUM_THREADS=1 \
     timeout "${SR_TIMEOUT:-172800}" nice -n 5 python3 -u sr_calibrate.py > "$LOG" 2>&1
 echo "sr_run: finished, EXIT=$? log $LOG"
