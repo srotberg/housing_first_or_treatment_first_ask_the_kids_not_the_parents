@@ -482,7 +482,28 @@ _HSMALL = _hsmall_target()
 # a diagnostic under the name r_use, becomes a TARGET at 0.74, the Table 7
 # figure the quantitative model's y_u is aimed at: *"i think you should also
 # calibrate kappa so that the average income of a user is 0.74"*.
+# u1 IS CALIBRATED ON THE SUD SHARE OF THE HOMELESS, author 12 September: *"i
+# mean to include the risk of unemployment with Sud to match the share of
+# homeless with Sud"*.  0.217 is the quantitative model's sud_homeless target.
+#
+# THE DENOMINATOR IS PERIOD 2 ALONE AND THAT IS NOT A CHOICE.  Every period 1
+# household in this model is CLEAN by construction -- the disorder is realised
+# at the transition -- so period 1 homelessness cannot contain a single case and
+# including it is pure dilution.  Measured over both periods the moment tops out
+# at 10.1 per cent, less than half the target, and only there at a participation
+# rate of 29 per cent; over period 2 alone it runs 0.361 at u1 = 0.05 down to
+# 0.023 at 0.25 and crosses 0.217 at about u1 = 0.127, where participation and
+# the income of users are both near their own targets.  So the both-period
+# version is unreachable for reasons of TIMING rather than economics, and it is
+# the period 2 share that is the analogue of a survey cross-section of adults
+# who have had a lifetime to acquire the disorder.
+#
+# IT FALLS IN u1, WHICH IS THE RIGHT SIGN.  A larger unemployment risk from the
+# disorder deters use, so fewer households carry it and fewer of the homeless
+# have it.  bracket() reads its direction from the endpoints, so a falling
+# moment is bisected correctly.
 TARGET = dict(part=_DRUG['participation'], homeless=0.0100, r_use=0.74,
+              sud_of_homeless2=0.217,
               sud=_DRUG['sud_rate'], vsl=80.0,
               dshare=_DRUG['drug_spending_share'],
               housing_share=0.30, hspend=0.268,

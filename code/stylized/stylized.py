@@ -1366,6 +1366,12 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
 
     part = spend = uinc = sud = 0.0
     hl = hl_sud = hcost = hinc = cost = mass = 0.0
+    # PERIOD 2 HOMELESSNESS ON ITS OWN, as the denominator for the SUD share of
+    # the homeless.  EVERY PERIOD 1 HOUSEHOLD IS CLEAN BY CONSTRUCTION -- the
+    # disorder is realised at the transition -- so period 1 homelessness is pure
+    # dilution in that ratio and carrying it makes the moment unreachable for
+    # reasons of timing rather than of economics.
+    hl2 = 0.0
     # THE SIZE DISTRIBUTION, over the HOUSED only. The American Community
     # Survey's universe for it is occupied units, so the street is not in the
     # denominator, exactly as in the quantitative model's counterpart.
@@ -1425,6 +1431,7 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                     hl += m2 * street2
                     smallmass += m2 * float(np.interp(a, ag, Sx[:, d]))
                     housedmass += m2 * (1.0 - street2)
+                    hl2 += m2 * street2
                     if d == 1:
                         hl_sud += m2 * street2
                     hcost += m2 * float(np.interp(a, ag, Rx[:, d]))
@@ -1445,6 +1452,7 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                 r_use=float((ww * use * ygrid).sum() / max(part, 1e-12) / ybar),
                 homeless=float(hl / max(mass, 1e-12)),
                 sud_of_homeless=float(hl_sud / max(hl, 1e-12)),
+                sud_of_homeless2=float(hl_sud / max(hl2, 1e-12)),
                 housing_share=float(hcost / max(hinc, 1e-12)),
                 # SHARE OF THE HOUSED IN THE SMALLER RENTAL. The American
                 # Community Survey table B25042, occupied units, puts 13.2 per

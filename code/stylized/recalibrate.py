@@ -15,6 +15,7 @@ quantitative model's own moment aimed at the quantitative model's own number:
     th       drug spending over users' income             0.14098
     kap      users' mean income / population mean         0.74
     pi_base  adult disorder rate                          0.0368
+    u1       SUD share of the homeless, period 2          0.217
     b        participation                                0.08901
 
 SET, NOT CALIBRATED:
@@ -56,6 +57,11 @@ from stylized import P, with_
 
 FIXED = dict(h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0)
 
+# u1's BOUNDS KEEP IT ON THE INTERIOR BRANCH, like kap's.  Measured at
+# b = 0.045, kap = 0.175: participation is 0.425 at u1 = 0.05, 0.170 at 0.12,
+# 0.077 at 0.1625 and 0.0069 at 0.20, where r_use has already collapsed to 0.116
+# and the model is on the corner branch.  0.19 is the ceiling.
+
 # (parameter, moment, lo, hi).  Order is the sweep order and it matters: the
 # housing block settles before the drug block, and b runs LAST so participation
 # is the moment that is actually hit.
@@ -64,11 +70,13 @@ HOUSING = [('gam', 'hspend', 0.02, 0.70),
            ('aleph', 'vsl', 1.0, 40.0)]
 DRUG = [('th', 'dshare', 0.05, 0.40),
         ('kap', 'r_use', 0.03, 0.185),
+        ('u1', 'sud_of_homeless2', 0.06, 0.19),
         ('pi_base', 'sud', 1e-3, 0.99),
         ('b', 'part', 0.020, 0.090)]
 
-SHOW = ['hspend', 'homeless', 'vsl', 'dshare', 'r_use', 'sud', 'part',
-        'burden50', 'hsmall', 'housing_share', 'prog']
+SHOW = ['hspend', 'homeless', 'vsl', 'dshare', 'r_use', 'sud_of_homeless2',
+        'sud', 'part', 'burden50', 'sud_of_homeless', 'hsmall',
+        'housing_share', 'prog']
 
 
 def table(par, note=''):
@@ -100,7 +108,8 @@ def calibrate(par, sweeps=6, verbose=True):
         if verbose:
             print(f'  sweep {s}: worst gap {100*worst:6.2f} %   '
                   f'gam {par.gam:.4f} h_hl {par.h_hl:.2e} aleph {par.aleph:.3f} '
-                  f'th {par.th:.4f} kap {par.kap:.4f} pi {par.pi_base:.4f} b {par.b:.5f}')
+                  f'th {par.th:.4f} kap {par.kap:.4f} u1 {par.u1:.4f} '
+                  f'pi {par.pi_base:.4f} b {par.b:.5f}')
         if worst < 0.02:
             break
     return par
@@ -114,7 +123,7 @@ if __name__ == '__main__':
     print('BASELINE')
     table(par)
     json.dump({k: getattr(par, k) for k in
-               ('gam', 'h_hl', 'aleph', 'th', 'kap', 'pi_base', 'b',
+               ('gam', 'h_hl', 'aleph', 'th', 'kap', 'u1', 'pi_base', 'b',
                 'h_sm', 'h_lg', 'omega', 'sigma')},
               open('calibrated_sigma2.json', 'w'), indent=1)
     print('\nwritten to calibrated_sigma2.json')
