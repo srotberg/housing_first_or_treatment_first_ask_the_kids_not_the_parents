@@ -227,3 +227,22 @@ THE AUTHOR'S METHOD, sigma = 2, kappa SET at SMR 3.00
   worst 166.7 %   median 12.7 %   4 of 11 inside ten
   OUTPUT  users income/mean 1.0387  drug share 0.2203  networth 1.279  SUD of homeless 0.1815  burden50 0.2169
   ODDS    child homeless 2.319   (reported only; 1.8-2.4 is fine)
+
+  ITERATION 600
+  param          value  moment                   model   target   gap %
+  ----------------------------------------------------------------------
+  gam          0.43813  hspend                  0.2668   0.2680    -0.5
+  aleph       10.85267  vsl                    80.0234  80.0000     0.0
+  h_hl         0.00966  homeless                0.0100   0.0100     0.5
+  b            0.08954  part                    0.0720   0.0890   -19.1
+  pi_base      0.39034  sud                     0.0281   0.0368   -23.6
+  u0           0.04850  unemployment            0.0485   0.0485    -0.0
+  u1           0.04860  sud_of_homeless2        0.1829   0.2170   -15.7
+  omega        0.03842  child_gap                 HELD   0.1834      --
+  delta_d      0.58406  child_sud_or            2.2048   2.0000    10.2
+  kap          0.18030  r_use                   0.1444   0.7400   -80.5  smr 3.11
+  th           0.22380  dshare                  0.0007   0.1410   -99.5
+  ----------------------------------------------------------------------
+  worst 99.5 %   median 15.7 %   4 of 10 inside ten
+  OUTPUT  users income/mean 0.1444  drug share 0.0007  networth 1.300  SUD of homeless 0.1829  burden50 0.2169
+  ODDS    child homeless 2.362   (reported only; 1.8-2.4 is fine)
