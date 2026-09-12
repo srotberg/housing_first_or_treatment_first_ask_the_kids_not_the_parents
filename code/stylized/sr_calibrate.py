@@ -140,6 +140,19 @@ SPEC = [
     # a bigger income penalty makes the child poorer, poorer children use more,
     # so the ratio RISES in delta_d.
     ('delta_d', 'child_sud_or',      2.0,     +1, 0.30, 0.01,  2.00),
+    # kappa IS FREED AGAIN, on users' income.  Author, 12 September: *"maybe then
+    # you have to pick kappa as well to push the income down"*, *"maybe 3
+    # multiples is not enough"*.  It was SET at SMR 3 earlier today, which made
+    # the gradient an OUTPUT -- and the output came out wrong: r_use 1.02 at the
+    # start and 2.66 by iteration 45, against 0.74 in the data.
+    #
+    # SIGN IS NEGATIVE: more mortality makes users poorer, so r_use FALLS in kap
+    # and kap must RISE when r_use is above target.
+    #
+    # CEILING IS SMR 15.6.  kap = 1 - phi0^(smr-1), so 0.75 is smr 15.6 and 0.05
+    # is smr 1.54.  The table prints the implied smr beside kap, which is the
+    # number to judge -- the author's question is exactly whether 3 is enough.
+    ('kap',     'r_use',            0.74,    -1, 0.30, 0.05,  0.75),
     # THETA IS NOT CALIBRATED.  It was freed on the author's instruction when
     # the eight-parameter run left the drug spending share at 0.052 against
     # 0.141 -- and freeing it FAILED, which is worth recording because the
@@ -313,7 +326,9 @@ def table(par, m, it):
             continue
         g = 100 * (v - tgt) / tgt
         gs.append(abs(g))
-        print(f'  {name:9}{getattr(par,name):11.5f}  {mom:20}{v:10.4f}{tgt:9.4f}{g:8.1f}')
+        tag = ('  smr %.2f' % (1.0 + math.log(1.0 - par.kap) / math.log(par.phi0))
+               ) if name == 'kap' else ''
+        print(f'  {name:9}{getattr(par,name):11.5f}  {mom:20}{v:10.4f}{tgt:9.4f}{g:8.1f}{tag}')
     print('  ' + '-' * 70)
     print(f'  worst {max(gs):.1f} %   median {sorted(gs)[len(gs)//2]:.1f} %   '
           f'{sum(1 for g in gs if g < 10)} of {len(gs)} inside ten')
@@ -340,7 +355,8 @@ if __name__ == '__main__':
     #
     # AND THE DIRECTION CONFIRMS WHAT WAS FLAGGED: removing a positive return
     # made saving less attractive, so beta rose rather than fell.
-    par = with_(P(), **FIXED, **{**START, "th": 0.25, "beta": 1.0})
+    par = with_(P(), **{k: v for k, v in FIXED.items() if k != 'kap'},
+                **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2})
     smr = 1 + math.log(1 - par.kap) / math.log(par.phi0)
     print(f"THE AUTHOR'S METHOD, sigma = 2, kappa SET at SMR {smr:.2f}")
     state = {}
