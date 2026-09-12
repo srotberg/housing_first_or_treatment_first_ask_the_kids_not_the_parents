@@ -402,6 +402,15 @@ def moments(par, it=0):
     if m['dshare'] <= CORNER:
         m['dshare'] = None
         m['r_use'] = None
+        # AND THE CHILD GAP GOES WITH THEM.  Its own guard compares the
+        # baseline's drug share with the omega = 0 counterfactual's and holds
+        # when they are on different branches -- but when BOTH sit on the
+        # corner that test passes and the gap is read anyway.  It passed 18 of
+        # 33 tables that way in sr_run_231918.log and drove omega from 0.01105
+        # to 0.07837, a factor of seven, on the difference between two corner
+        # economies.  omega_c's effect on drug use is not defined where nobody
+        # is choosing a drug quantity.
+        m['child_gap'] = None
     return m
 
 
@@ -436,6 +445,33 @@ def step(par, m, state):
         new = max(min(new, hi), lo)
         kw[name] = new
         moved.append((name, old, new, 100 * rel))
+
+    # THE ESCAPE FROM THE CORNER HAS TO BE EXPLICIT, BECAUSE HOLDING ALONE
+    # PARKS THE RUN THERE.  This was learned by breaking it.  At CORNER = 0.02
+    # the passes at a drug share of 0.037 to 0.043 were scored as interior and
+    # fed about -74 per cent into th and kap.  That was a garbage signal -- and
+    # it was ALSO the only thing that ever pulled the model back onto the
+    # interior branch, which it did five times in the 12 September run.
+    # Raising the threshold to 0.10 removed the noise AND the escape with it:
+    # sr_run_231918.log then sat at a drug share of 0.0482, unchanged to four
+    # decimals, from iteration 1050 to 1600, with the other eight brackets
+    # converging onto an economy whose drug block was dead.
+    #
+    # So the escape is now a rule rather than a side effect.  th is what moves
+    # the model across the branch -- measured, every sweep in the 12 September
+    # logs: th 0.2045 gives a drug share of 0.0000 and th 0.2100 gives 0.2181 --
+    # so while the drug share is held, th steps UP by its cap and nothing else
+    # about the pass changes.  This is not the branch guard the author had
+    # removed: that one refused to move the WHOLE vector and froze the search.
+    # This moves exactly one parameter, in a direction that is measured, and
+    # only while the moment that would otherwise set it cannot be read.
+    if m.get('dshare') is None:
+        room = PER_PARAM_STEP.get('th', MAX_REL_STEP)
+        th_hi = next(r[6] for r in SPEC if r[0] == 'th')   # its own upper bound
+        th_old = kw.get('th', par.th)
+        kw['th'] = min(th_old * (1.0 + room), th_hi)
+        moved.append(('th', th_old, kw['th'], float('nan')))
+
     return with_(par, **kw), moved
 
 
@@ -584,6 +620,15 @@ def table(par, m, it):
     print(f'  OUTPUT  users income/mean {m["r_use_raw"]:.4f}  drug share {m["dshare_raw"]:.4f}'
           f'  networth {m["networth"]:.3f}  SUD of homeless {m["sud_of_homeless2"]:.4f}'
           f'  burden50 {m["burden50"]:.4f}')
+    # THE FLOOR AND WHAT IT HAS LEFT BEHIND, ON EVERY TABLE.  The author asked
+    # for the floor to rise until no household has a negative value of life, so
+    # the table has to say where the floor is and whether the condition is met
+    # -- otherwise the rule is invisible and there is no way to see it working
+    # or stalling.
+    from negative_value_of_life import negative_value_share
+    _nv = negative_value_share(par)
+    print(f'  FLOOR   y_floor {par.y_floor:.4f}   negative value of life '
+          f'{100 * _nv["share"]:.2f} %   lowest V {_nv["lowest"]:.2f}')
     # THE HOMELESSNESS ODDS RATIO IS REPORTED AND NEVER TARGETED, author:
     # *"i also want a report of the homelessness odds ratio"* and *"we are not
     # calibrating delta_h...that one is dropped"*.  ENGINE.md's phase 3 agrees:
@@ -601,6 +646,7 @@ def table(par, m, it):
 
 if __name__ == '__main__':
     from recalibrate import FIXED, START
+    from negative_value_of_life import negative_value_share
     # BETA IS EXOGENOUS AT 1, author 12 September: *"ok, i think we can just set
     # beta=1"*, *"exogenous, not calibration"*, *"beta=1.47 is not believable"*.
     # They are right: calibrating beta on a net worth to income ratio of 3 drove
@@ -689,8 +735,38 @@ if __name__ == '__main__':
     # That is not a thing to leave to eyesight at fifty-iteration intervals.
     frozen = 0
     prev_vec = None
+    # THE INCOME FLOOR RISES UNTIL NOBODY HAS A NEGATIVE VALUE OF LIFE.
+    #
+    # The author, 12 September: *"You need to keep raising the lowest income
+    # then until no household has negative value of life."*  So it is a RULE,
+    # not a pinned number.  A fixed floor would be wrong twice over: the share
+    # with a negative value depends on the whole vector, which moves every pass,
+    # and a floor set once can be undone later by aleph or kappa drifting.
+    #
+    # The rule is one-directional, which is what "keep raising" means: raise
+    # while any household has a negative value of life, stop when none does,
+    # never lower.  It therefore converges to the SMALLEST floor that clears the
+    # condition on the vector the search actually ends at, and re-raises if a
+    # later pass re-opens it.
+    #
+    # THE STEP IS ABSOLUTE, NOT RELATIVE, because the floor starts at zero and a
+    # relative step from zero never moves.
+    #
+    # WHAT THIS COSTS, MEASURED, AND THE AUTHOR HAS BEEN TOLD.  Imposing a floor
+    # on the vector calibrated WITHOUT one takes homelessness to zero at 0.12
+    # and above, and sud_of_homeless2 with it, and at 0.19 it reverses delta_d's
+    # sign on the child SUD odds ratio.  Those tests held every other parameter
+    # fixed.  Here the brackets are free to answer -- h_hl is exactly the
+    # instrument for homelessness -- and whether they do is the open question
+    # this run settles.
+    FLOOR_STEP = 0.002
+    par = with_(par, y_floor=0.15)     # measured start: 0.88 per cent left at 0.15
     for it in range(50000):
         m = moments(par, it)
+        if it % 10 == 0:
+            nv = negative_value_share(par)['share']
+            if nv > 0.0:
+                par = with_(par, y_floor=par.y_floor + FLOOR_STEP)
         if it % 50 == 0 or it == 49999:
             w = table(par, m, it)
             if w < 2.0:

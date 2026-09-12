@@ -22,7 +22,18 @@
 set -u
 cd "$(dirname "$0")" || exit 1
 
-LIVE=$(ps -eo pid=,etime=,args= | awk '/[s]r_calibrate\.py/ && !/timeout/ {print; exit}')
+# THE GUARD MUST NOT MATCH THE CALLER'S OWN SHELL, and on 12 September it did.
+# A launch was refused because the bash command that patched the driver and then
+# ran this script carried the driver's name inside a heredoc, so the pattern
+# found it and reported the caller as an already-live calibration.  This is the
+# same self-match the kill rule in ENGINE.md warns about, in the test rather
+# than in the kill.
+#
+# So the test is now on the COMMAND, not on a substring anywhere in the line: it
+# matches only a command line that BEGINS with a python invocation of the
+# driver.  A shell running -c, an editor, a grep and this script itself all
+# carry the name somewhere in their arguments and none of them begins with it.
+LIVE=$(ps -eo pid=,etime=,args= | awk '$3 ~ /^python3?$/ && /-u [s]r_calibrate\.py$/ {print; exit}')
 if [ -n "$LIVE" ]; then
     echo "sr_run: a calibration is ALREADY ALIVE, refusing to start a second one"
     echo "sr_run:   $LIVE"
