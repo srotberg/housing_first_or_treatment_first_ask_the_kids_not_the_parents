@@ -519,7 +519,16 @@
         ! five per cent while the gap is wide. Once the gap falls under about 0.36
         ! the adjuster's own step drops below the cap and the bracket decelerates on
         ! its own, which is the behaviour wanted near the target.
-        real(8) :: utility_cost_of_treatment_adjuster=(1-freeze_to_three_block)*(2.d0)
+        ! RELEASED 12 September on the author's "right, i think you can include
+        ! also tauu". Was (1-freeze_to_three_block)*2.0, zero under the stage-1
+        ! freeze, so tau_u sat at +108.8 per cent with nothing acting on it -- the
+        ! largest fixable gap outside their named eight.
+        !
+        ! The 2.0 itself dates from 11 September: at 0.05 the fallback step was
+        ! adjuster*(take up gap), an absolute 0.022 on a parameter of magnitude
+        ! 14.3, which moved it 0.156 per cent a loop. cap_step_rel gives it a five
+        ! per cent ceiling.
+        real(8) :: utility_cost_of_treatment_adjuster=2.d0
         ! THIS PARAMETER'S OWN STEP CAP, five per cent a loop, on the author's
         ! instruction of 11 September. It replaces max_rel_step_all (5e-3) for
         ! utility_cost_of_treatment ALONE, through cap_step_rel at the one call
