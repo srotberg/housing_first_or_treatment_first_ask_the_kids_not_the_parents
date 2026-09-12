@@ -688,7 +688,37 @@
         ! counterfactual to save a solve a loop during the three-block phase.
         ! omega_c is in the author's first block now, so the counterfactual must
         ! run and the cost is accepted.
-        integer :: omega_c_is_pinned=0
+        ! PINNED FROM THE START, 12 September, on the author's "maybe we should
+        ! use omega_c=0.09 and pin it there?" and "we need to calibrate it
+        ! first".  That restates their own instruction already recorded above --
+        ! "omega_c comes at the very end in stage 5" -- so the rest of the model
+        ! calibrates against a fixed child term and omega_c is opened last.
+        !
+        ! 0.09 IS AN INTERPOLATION, NOT A MEASUREMENT, and the paper must not
+        ! quote it as one.  At 0.1 the child use gap read above its 0.18343
+        ! target in eight of nine readings; at 0.08 it fell to 0.05225, -71.5
+        ! per cent.  Neither economy was this one -- the first had a collapsed
+        ! drug block and the second a drug block at +179 per cent -- so 0.09 is
+        ! the midpoint of two readings taken somewhere else.
+        !
+        ! THE REASON THIS IS WORTH DOING NOW IS THROUGHPUT, not the level.  The
+        ! branch at 41398 measures the child gap by running the omega
+        ! counterfactual, which calls solve_value_function_and_policy_functions,
+        ! converge_to_stationary_equilibrium, stationary_equilibrium_statistics
+        ! and govt_revenues_calc -- A FULL EXTRA SOLVE EVERY LOOP.  Pinning
+        ! takes the else-if branch at 43325 instead, which prints the held value
+        ! and sets distance_weight_on_child to zero, so the do-while term
+        ! retires with it and a loop costs one solve rather than two.
+        !
+        ! The bracket's own update at 43231 sits inside the measuring branch, so
+        ! pinning also stops weight_on_child being stepped.  Its adjuster is
+        ! left at 2e-3 rather than zeroed, so re-opening this is one flag.
+        !
+        ! The auto-pin at 43291 still works and is unaffected: it sets this to 1
+        ! once the gap is inside three per cent AND b and lambda_d are both
+        ! close, which is the condition for pinning on evidence rather than by
+        ! hand.
+        integer :: omega_c_is_pinned=1
         integer, parameter :: calibrate_weight_on_child=1
 
         ! WHETHER A POINT MEASURES OMEGA_C'S MOMENT. It costs a second
