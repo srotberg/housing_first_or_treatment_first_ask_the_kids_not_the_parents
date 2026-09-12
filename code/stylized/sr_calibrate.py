@@ -117,7 +117,14 @@ SPEC = [
     ('gam',     'hspend',           0.268,   +1, 0.40, 0.05,  0.60),
     ('aleph',   'vsl',             80.0,     +1, 0.30, 3.0,  60.0),
     ('h_hl',    'homeless',         0.0100,  +1, 0.40, 1e-7,  0.05),
-    ('b',       'part',             0.08901, -1, 0.30, 0.005, 0.30),
+    # b's CEILING IS 1.0, author 12 September: *"i think you need to have a very
+    # high b"*.  At theta = 0.25 the model starts with 72 to 86 per cent of
+    # households using, and b is the only thing that brings that down: measured
+    # in the earlier run, b = 0.25338 gave participation 0.1053, so the old
+    # ceiling of 0.30 was roughly where the target sits and b would have arrived
+    # PINNED against it with nothing left to give.  A bound a parameter reaches
+    # is not a calibration, it is a constraint.
+    ('b',       'part',             0.08901, -1, 0.30, 0.005, 1.00),
     ('pi_base', 'sud',              0.0368,  +1, 0.40, 1e-3,  0.99),
     ('u0',      'unemployment',     0.0485,  +1, 0.40, 0.005, 0.30),
     ('u1',      'sud_of_homeless2', 0.217,   -1, 0.20, 0.0486, 0.50),
