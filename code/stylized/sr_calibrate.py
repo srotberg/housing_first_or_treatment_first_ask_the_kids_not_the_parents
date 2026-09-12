@@ -332,6 +332,36 @@ def moments(par, it=0):
     m['child_gap'] = _slow_cache['child_gap']
     m['child_sud_or'] = _slow_cache['child_sud_or']
     m['child_hl_or'] = _slow_cache['child_hl_or']
+
+    # IN THE CORNER, dshare AND r_use ARE ARTEFACTS AND ARE HELD.
+    #
+    # This is a hold on a MEASUREMENT, not a guard on a step.  The branch guard
+    # that was removed today blocked the whole vector from moving and froze the
+    # search; this blocks nothing.  Eight brackets step exactly as before.  Two
+    # decline to step on a reading that has been measured to carry no
+    # information, the same way child_gap already declines.
+    #
+    # THE EVIDENCE.  drug_grid_floor_test.py sweeps the grid's smallest positive
+    # point over three orders of magnitude and gets dshare / v_lo = 1.000 at
+    # every one: in the corner every user sits exactly on the floor, so the drug
+    # share is a property of the grid.  Move the floor and the "moment" moves
+    # with it one for one.  r_use sits at 0.142 to 0.147 across every corner
+    # table on record regardless of what kappa is doing.
+    #
+    # WHAT IT COSTS TO LEAVE THEM IN.  Iteration 1300 of the 50000 run: median
+    # 0.6 per cent, eight of ten inside ten, the child gap at -0.2 and the
+    # disorder rate at -0.1.  Iteration 1400, one block later and in the corner:
+    # theta walked 0.20847 to 0.20217 on a constant -100 per cent signal and
+    # kappa's implied SMR fell 2.77 to 2.66 on a constant -80 per cent one, the
+    # largest single move it made all day.  The corner does not merely waste
+    # iterations, it undoes converged ones.
+    #
+    # The raw values are kept for the OUTPUT line, because the drug share is how
+    # the branch is READ even when it cannot be targeted.
+    m['dshare_raw'], m['r_use_raw'] = m['dshare'], m['r_use']
+    if m['dshare'] <= CORNER:
+        m['dshare'] = None
+        m['r_use'] = None
     return m
 
 
@@ -486,7 +516,7 @@ def table(par, m, it):
     print('  ' + '-' * 70)
     print(f'  worst {max(gs):.1f} %   median {sorted(gs)[len(gs)//2]:.1f} %   '
           f'{sum(1 for g in gs if g < 10)} of {len(gs)} inside ten')
-    print(f'  OUTPUT  users income/mean {m["r_use"]:.4f}  drug share {m["dshare"]:.4f}'
+    print(f'  OUTPUT  users income/mean {m["r_use_raw"]:.4f}  drug share {m["dshare_raw"]:.4f}'
           f'  networth {m["networth"]:.3f}  SUD of homeless {m["sud_of_homeless2"]:.4f}'
           f'  burden50 {m["burden50"]:.4f}')
     # THE HOMELESSNESS ODDS RATIO IS REPORTED AND NEVER TARGETED, author:
