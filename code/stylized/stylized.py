@@ -640,6 +640,9 @@ class P:
 
     na    = 60
     nv    = 140
+    y_floor = 0.0     # guaranteed minimum realised income; 0 is off.  See
+                      # _states for what it is for and what value clears the
+                      # negative value of life.
     v_lo  = 1e-5      # the smallest positive drug purchase, AS A FRACTION OF
                       # INCOME.  See _vgrid for why it is a fraction and why
                       # the grid above it is geometric.
@@ -771,6 +774,30 @@ def _states(par, d, policy, y, used=0):
         # household that is well below the rent on the smallest unit, so the
         # disorder can put the roof at risk, which is what the voucher insures.
         inc = y if e == 0 else par.repl * min(y, par.ycap)
+        # A FLOOR UNDER REALISED INCOME.  The author, 12 September: *"you need
+        # to limit the lowest income from below so no one has negative value of
+        # life"*.
+        #
+        # WHY IT IS NEEDED.  At the calibrated vector 1.43 per cent of period-2
+        # states have a NEGATIVE value of life: the cheapest rental costs 0.10
+        # and the poorest household earns 0.108, so it either pays the rent and
+        # consumes nothing or takes the street at h = 0.0095, and with sigma = 2
+        # a tiny bundle sends X^(1-sigma)/(1-sigma) to a large negative number
+        # that aleph = 10.62 cannot lift.  A negative continuation makes the
+        # mortality penalty a BENEFIT -- multiplying a negative number by a
+        # smaller survival probability raises it -- so those households buy the
+        # smallest sliver of drug the grid sells purely to acquire the disorder
+        # and die sooner.  That is the whole of the "corner branch".
+        #
+        # MEASURED: the value of life is negative at some asset level for every
+        # income below 0.18614, which is 1.86 times the rent on the small unit.
+        # A floor at or above that clears it.
+        #
+        # DEFAULT ZERO, i.e. OFF, so that every existing result is unchanged
+        # until the floor is deliberately switched on.  It is a transfer and it
+        # moves homelessness, participation and the housing share, so a run with
+        # it on is a different calibration and has to be re-run, not compared.
+        inc = max(inc, par.y_floor)
         # MEANS TEST. A voucher can only reach a household whose income in that
         # state is below the mean. Every unemployed household passes the test;
         # employed households pass only in the bottom part of the distribution.

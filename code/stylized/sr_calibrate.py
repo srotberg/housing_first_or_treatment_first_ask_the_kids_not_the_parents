@@ -169,9 +169,26 @@ SPEC = [
     # built from SPEC in table() -- so removing the row retires the term too,
     # and nothing is left scoring a parameter that cannot move.
     #
-    # The odds ratio is still COMPUTED and still REPORTED, on the ODDS line
-    # beside the homelessness one, because it is the number the pin has to be
-    # judged by.  It is just no longer targeted.
+    # UNPINNED AGAIN, 12 September, and calibrated at the SLOWEST rate in the
+    # model.  The author: *"But I also want you to calibrate delta d now to
+    # match the odds ratio of 2, but update it very very slowly..."*.
+    #
+    # It was pinned at 0.24 a few hours ago because it wandered by a factor of
+    # two -- 0.36, 0.46, 0.59, 0.72, 0.57, 0.55, 0.56, 0.62, 0.55 -- against a
+    # noisy moment, while fighting kappa over the same margin.  Two things have
+    # changed since: kappa, b and pi_base are all at 0.1 per cent a pass now
+    # rather than 0.5, so the margin is no longer being yanked from the other
+    # side; and 0.24 leaves the odds ratio at 1.26 to 1.42 against a target of
+    # 2, so the pin was not delivering the moment either.
+    #
+    # 0.05 PER CENT A PASS, half the slowest of the others, which is what "very
+    # very slowly" has to mean if it is to mean anything beyond what th, kap, b
+    # and pi_base already do.  From 0.24 to the 0.55-0.6 region earlier runs
+    # found is about 1700 passes; the budget is 50000.
+    #
+    # SIGN IS POSITIVE: a bigger income penalty makes the child poorer, poorer
+    # children use more, so the odds ratio RISES in delta_d.
+    ('delta_d', 'child_sud_or',      2.0,     +1, 0.30, 0.01,  2.00),
     # kappa IS FREED AGAIN, on users' income.  Author, 12 September: *"maybe then
     # you have to pick kappa as well to push the income down"*, *"maybe 3
     # multiples is not enough"*.  It was SET at SMR 3 earlier today, which made
@@ -275,7 +292,7 @@ MAX_REL_STEP = 0.005
 # theta is the evidence that slowing works: it went from +50 per cent and
 # swinging to +5.4 per cent once it was capped at 0.1 and given the iterations.
 PER_PARAM_STEP = {'omega': 0.0025, 'th': 0.001, 'h_hl': 0.02, 'kap': 0.001,
-                  'b': 0.001, 'pi_base': 0.001}
+                  'b': 0.001, 'pi_base': 0.001, 'delta_d': 0.0005}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
 ADJ_FLOOR = 1e-3
@@ -570,8 +587,8 @@ if __name__ == '__main__':
     # made saving less attractive, so beta rose rather than fell.
     par = with_(P(), **{k: v for k, v in FIXED.items() if k != 'kap'},
                 **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2,
-                   # PINNED, not a starting value: delta_d is out of SPEC, so
-                   # nothing steps it and it holds here for the whole run.
+                   # A STARTING VALUE AGAIN, not a pin: delta_d is back in SPEC
+                   # and is stepped, from the 0.24 the author pinned it at.
                    "delta_d": 0.24,
                    # STARTING VALUES MATTER WHEN THE STEP IS RELATIVE.  The
                    # author, 12 September: *"this is why the model cannot
