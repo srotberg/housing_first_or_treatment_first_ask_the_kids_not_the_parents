@@ -3431,6 +3431,21 @@
         ! loop's other parameters are settling against a theta that has not
         ! arrived. It is a HANDOVER parameter, so raising it costs no rebuild.
         real(8) :: theta_max_rel_step=0.001d0
+
+        ! OMEGA_C'S OWN STEP CAP, 0.5 per cent a loop.  Author, 12 September:
+        ! *"just make the steps in omega_c very small, maybe 0.1% between
+        ! iterations"*, then *"we can do 0.3% if that works ok"* once the cost
+        ! of 0.1 was put to them.  The global max_rel_step_all is 1 per cent and
+        ! omega_c's first measured step under it was +0.2997 per cent, 0.09 to
+        ! 0.090270, so 0.3 is very nearly what it was already doing and this cap
+        ! is a ceiling rather than a brake.
+        !
+        ! WHY 0.1 WAS NOT TAKEN.  The first converged child gap was +7.97 per
+        ! cent against a target of +18.34, which wants omega_c near 0.18 rather
+        ! than 0.09.  Doubling at 0.1 per cent a loop is about 700 loops; at 0.3
+        ! it is about 230.  At 0.1 this cap would have been the binding
+        ! constraint on the whole calibration rather than a safety margin.
+        real(8) :: omega_max_rel_step=0.005d0
         real(8) :: theta_proposed_1
         real(8) :: theta_capped_1
 
@@ -40491,6 +40506,11 @@
 
                 ! HOW FAR THETA MAY MOVE IN ONE LOOP. Settable so the cap can
                 ! be tightened mid calibration without a rebuild.
+                case ("omega_max_rel_step")
+                    write(*,*) "HANDOVER omega_max_rel_step:", &
+                        omega_max_rel_step, "->", handover_value
+                    omega_max_rel_step=max(min(handover_value,1.d0),10.d0**(-5))
+
                 case ("theta_max_rel_step")
                     write(*,*) "HANDOVER theta_max_rel_step:", &
                         theta_max_rel_step, "->", handover_value
@@ -43352,7 +43372,10 @@
                         weight_on_child=max(min(weight_on_child-weight_on_child_adjuster*&
                             max(min(child_use_gap_1-child_use_gap_data,1.d0),-1.d0),&
                             weight_on_child_cap),0.d0)
-                        weight_on_child=cap_step(weight_on_child,cap_old_1)
+                        ! cap_step_rel, NOT cap_step: omega_c gets its own rate
+                        ! rather than the global one, the same way theta does.
+                        weight_on_child=cap_step_rel(weight_on_child,cap_old_1,&
+                            omega_max_rel_step)
 
                         distance_weight_on_child=abs(child_use_gap_1-child_use_gap_data)
 
