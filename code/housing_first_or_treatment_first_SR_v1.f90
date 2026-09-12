@@ -3566,7 +3566,10 @@
         ! is what food_stamps_share_data measures.
         ! RELEASED 12 September: the author named c_bar. Was
         ! (1-freeze_to_three_block)*5e-2, zero under the stage-1 freeze.
-        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
+        ! RETIRED with the programme itself.  Its distance is retired too, at
+        ! the update block: a zero adjuster with a LIVE distance cannot converge
+        ! and the do-while has no cap to save it.
+        real(8) :: max_food_cost_adjuster=0.d0
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
@@ -4824,8 +4827,23 @@
         ! expressions and threading it out of all of them risks more than it
         ! gains. Anything that reads it reads a hard zero.
         real(8), parameter :: consumption_tax=0
-        real(8) :: max_food_cost=&
-            ((1-perceived_probability_lower)*0.126+perceived_probability_lower*0.132)/(1+consumption_tax)
+        ! FOOD STAMPS ARE REMOVED FROM THE MODEL, 12 September, on the author's
+        ! instruction: *"i dont need food stamps in this model"*.  At zero,
+        ! snap_benefit = max(0, max_food_cost - taper*net_income) is zero for
+        ! every household and the programme is gone rather than merely uncalibrated.
+        !
+        ! WHAT IT CHANGES.  This was a MEANS-TESTED CONSUMPTION FLOOR, so removing
+        ! it takes consumption away from the poorest households -- which is exactly
+        ! the margin that decides drug use, homelessness, and whether a household's
+        ! value of life is positive.  b, h_1, y_u and the VSL all move, and the
+        ! point archive resets.  The moment it was calibrated on was ON TARGET when
+        ! it was removed, 0.0042438 against 0.0042, so this is a modelling choice
+        ! and not a repair.
+        !
+        ! The author was asked on this once before today and said to KEEP food
+        ! stamps; this reverses that, and the reversal is recorded rather than the
+        ! earlier answer being quietly overwritten.
+        real(8) :: max_food_cost=0.d0
         ! THE BENEFIT REDUCTION RATE, the statutory SNAP taper. The benefit is
         ! the maximum allotment less thirty cents per dollar of net income
         ! rather than a top up to a hard floor. It used to be a hard floor,
@@ -44118,7 +44136,17 @@
                     ! last would move max_food_cost to satisfy the one the report
                     ! does not score. The denominator is named once here and once
                     ! at the moment; if one changes the other has to.
-                    if (model_output(1)>0) then
+                    ! GUARDED ON THE ADJUSTER NOW.  Unguarded, a retired
+                    ! max_food_cost still had its distance computed from a live
+                    ! moment while the parameter could not move, which is the
+                    ! failure mode ENGINE.md records as having cost a whole
+                    ! calibration.  Note also the inner floor of 1e-4 below: the
+                    ! update could never have reached zero on its own.
+                    if ((max_food_cost_adjuster<=0.d0) .OR. (model_output(1)<=0)) then
+
+                        distance_max_food_cost=0
+
+                    else
                         write(*,*) "max_food_cost=", max_food_cost
                         cap_old_1=max_food_cost
                         max_food_cost=max(min(max_food_cost-max_food_cost_adjuster*&
