@@ -23,8 +23,8 @@ comparable with each other, and it means the two mortality and unemployment
 curves here are NOT the ones in the paper -- they are drawn against a different
 baseline.  Anything read off this figure has to say which.
 
-h_hl TRAVELS WITH UNEMPLOYMENT, as run.py records: the street's housing
-services are a resource consequence, and an earlier version that put h_hl in the
+h1 TRAVELS WITH UNEMPLOYMENT, as run.py records: the street's housing
+services are a resource consequence, and an earlier version that put h1 in the
 mortality group quietly placed an unemployment consequence inside the mortality
 curve.
 """
@@ -51,7 +51,7 @@ base = with_(P(), **kw)
 def _off(b):
     """Every channel off: no excess mortality, no employment penalty, the
     street no worse than the small unit, and no weight on the child."""
-    return dict(kap=0.0, u1=b.u0, h_hl=b.h_sm, omega=0.0)
+    return dict(kap=0.0, u1=b.u0, h1=b.h2, omega=0.0)
 
 
 def _scaled(b, which, s):
@@ -60,7 +60,7 @@ def _scaled(b, which, s):
         kw.update(kap=s * b.kap)
     elif which == 'unemployment':
         kw.update(u1=b.u0 + s * (b.u1 - b.u0),
-                  h_hl=b.h_sm * (b.h_hl / b.h_sm) ** s)
+                  h1=b.h2 * (b.h1 / b.h2) ** s)
     else:
         kw.update(omega=s * b.omega)
     par = with_(b, **kw)

@@ -71,7 +71,7 @@ from stylized import P, with_
 from recalibrate import FIXED, START, table
 
 # (name, lo, hi).  The bounds are the union of what the scans visited.
-PARAMS = [('h_hl', 1e-7, 0.02),
+PARAMS = [('h1', 1e-7, 0.02),
           ('aleph', 3.0, 60.0),
           ('b', 0.010, 0.30),
           ('pi_base', 1e-3, 0.99),
@@ -147,6 +147,6 @@ if __name__ == '__main__':
     print()
     table(par, note='JOINT FIT')
     json.dump({n: getattr(par, n) for n, _, _ in PARAMS}
-              | {k: getattr(par, k) for k in ('gam', 'h_sm', 'h_lg', 'omega', 'sigma')},
+              | {k: getattr(par, k) for k in ('gam', 'h2', 'h3', 'omega', 'sigma')},
               open('calibrated_sigma2.json', 'w'), indent=1)
     print('\nwritten to calibrated_sigma2.json')

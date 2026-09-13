@@ -49,14 +49,14 @@ THE ENVIRONMENT
             bequeathed.
 
   housing   a large unit, a small unit, or the street. The street is free but
-            supplies only h_hl of housing services. A voucher is means tested at
+            supplies only h1 of housing services. A voucher is means tested at
             yV, arrives with probability pV, and cuts the tenant's rent to
             kappa_r of the market rent.
 
             Two rental sizes rather than one, because with a single size a
             household whose cash falls below the rent cannot be housed at all.
-            Collapsing h_sm into h_lg takes homelessness far above its target
-            and NO value of h_hl brings it back: making the street arbitrarily
+            Collapsing h2 into h3 takes homelessness far above its target
+            and NO value of h1 brings it back: making the street arbitrarily
             bad does not help a household that cannot afford the rent at any
             level of misery. That row of the ablation is a model that failed to
             calibrate, not a recalibrated model, which is the strongest case any
@@ -96,7 +96,7 @@ THE CHANNELS THAT SURVIVED
 
     MORTALITY  kap    the disorder kills you
     UNEMPLOYMENT  u1     it costs you a job, and income support cannot cover rent
-               h_hl   so you may end up on the street, where housing services
+               h1   so you may end up on the street, where housing services
                       fall from a whole unit to almost nothing
 
 Two channels were built and then removed because, after the model was FULLY
@@ -491,14 +491,14 @@ class P:
     # THE GRID IS SET AND GAMMA IS CALIBRATED, which is the conventional order and
     # the third arrangement tried here. The two before it are worth recording.
     #
-    #   BOTH SET. gamma from the expenditure survey and h_lg from an SCF housing
+    #   BOTH SET. gamma from the expenditure survey and h3 from an SCF housing
     #   cost to income ratio. Two external numbers aimed at one object with
     #   nothing making them agree: the model delivered a 16 per cent housing
     #   share against the survey's 26.8.
     #
-    #   h_lg CALIBRATED ON THE SHARE. It hits 26.8 exactly and puts homelessness
+    #   h3 CALIBRATED ON THE SHARE. It hits 26.8 exactly and puts homelessness
     #   at 3.2 per cent against a target of 0.399, because the aggregate share is
-    #   bounded above by h_lg and matching it needs a unit so large that the
+    #   bounded above by h3 and matching it needs a unit so large that the
     #   small unit prices the bottom of the distribution out of housing
     #   altogether. See the frontier below.
     #
@@ -511,34 +511,34 @@ class P:
     #
     # THE SMALL UNIT IS A QUARTER OF THE STANDARD ONE because it is the
     # affordability floor: a household whose cash falls below its rent has no
-    # housed option at all and is homeless BY FORCE, which no value of h_hl
+    # housed option at all and is homeless BY FORCE, which no value of h1
     # undoes. At a half the floor is high enough that forced homelessness alone
-    # exceeds the 0.399 per cent target and the h_hl bracket loses its interior
-    # solution. At a quarter, with h_lg at 0.40, the floor is 0.10 and h_hl does
+    # exceeds the 0.399 per cent target and the h1 bracket loses its interior
+    # solution. At a quarter, with h3 at 0.40, the floor is 0.10 and h1 does
     # the work it is supposed to do.
     #
-    # The frontier, measured with h_sm = h_lg/2 and h_hl refitted at every point,
-    # which is what rules out calibrating h_lg on the share:
+    # The frontier, measured with h2 = h3/2 and h1 refitted at every point,
+    # which is what rules out calibrating h3 on the share:
     #
-    #     h_lg    h_sm     h_hl     housing share   homelessness
+    #     h3    h2     h1     housing share   homelessness
     #     0.212   0.106   4.2e-04       0.163          0.00395
     #     0.240   0.120   7.7e-05       0.177          0.00593
     #     0.270   0.135   1.0e-07       0.195          0.00594
     #     0.340   0.170   1.0e-07       0.231          0.01091
     #     0.450   0.225   1.0e-07       0.267          0.03160
     #
-    # CALIBRATING h_lg ON THE REALISED HOUSING SHARE WAS TRIED AND FAILS, and the
+    # CALIBRATING h3 ON THE REALISED HOUSING SHARE WAS TRIED AND FAILS, and the
     # reason is structural rather than a matter of tuning. Every household
     # consumes at most ONE standard unit however rich it is, so the aggregate
-    # share is bounded above by h_lg in units of mean income and the rich drag it
-    # down. Matching 26.8 per cent needs h_lg near 0.45, hence a small unit at
+    # share is bounded above by h3 in units of mean income and the rich drag it
+    # down. Matching 26.8 per cent needs h3 near 0.45, hence a small unit at
     # 0.225, and every household whose cash falls below that is homeless BY
-    # FORCE, which no value of h_hl undoes. That sweep hit the share exactly and
-    # put homelessness at 3.2 per cent against a target of 0.399, with h_hl
+    # FORCE, which no value of h1 undoes. That sweep hit the share exactly and
+    # put homelessness at 3.2 per cent against a target of 0.399, with h1
     # pinned at its lower bound and the SUD share of the homeless down at 8 per
-    # cent. The frontier, with h_hl refitted at every point:
+    # cent. The frontier, with h1 refitted at every point:
     #
-    #     h_lg    h_sm     h_hl     housing share   homelessness
+    #     h3    h2     h1     housing share   homelessness
     #     0.212   0.106   4.2e-04       0.163          0.00395   <- on target
     #     0.240   0.120   7.7e-05       0.177          0.00593
     #     0.270   0.135   1.0e-07       0.195          0.00594
@@ -548,12 +548,12 @@ class P:
     # So the realised share is an untargeted moment this model misses, for the
     # same kind of reason it misses the drug spending share, and it is reported
     # as one.
-    h_lg  = 0.40      # SET: the standard unit, 40 per cent of mean income
-    h_sm  = 0.10      # CALIBRATED, on the share of the housed in the small
+    h3  = 0.40      # SET: the standard unit, 40 per cent of mean income
+    h2  = 0.10      # CALIBRATED, on the share of the housed in the small
                       # unit. This is the class default and calibrated.json
                       # overrides it; the comment said SET, which it has not
                       # been since the share became its moment.
-    h_hl  = 0.05      # the street. CALIBRATED to the homelessness rate
+    h1  = 0.05      # the street. CALIBRATED to the homelessness rate
     pr    = 1.00      # rent per unit of housing services: the numeraire
     # RATIONED TREATMENT FIRST reallocates the vouchers it withholds.  The
     # author, 12 September: *"Rationed tf means that only the same fraction of
@@ -779,10 +779,22 @@ def _vgrid(par, inc):
     return unit * inc
 
 
+# THE HOUSING NAMES MATCH THE QUANTITATIVE MODEL NOW.  The author, 13 September:
+# *"in the model you should call h_hl, h1 like in the quant miodel, h_sml as h2,
+# and h_lg as h3"*.  h1 is the street, h2 the small rental, h3 the large one.
+#
+# EIGHTEEN SAVED VECTORS STILL CARRY THE OLD KEYS, and clone() sets attributes
+# by name, so a JSON loaded without translation would quietly create a stray
+# par.h_hl and leave h1 at its DEFAULT -- a silent wrong model, which is the
+# failure mode this file spends most of its comments on.  The map below is the
+# translation, applied wherever a par is built.
+_LEGACY_NAMES = {'h_hl': 'h1', 'h_sm': 'h2', 'h_lg': 'h3'}
+
+
 def clone(**kw):
     q = P()
     for k, v in kw.items():
-        setattr(q, k, v)
+        setattr(q, _LEGACY_NAMES.get(k, k), v)
     return q
 
 
@@ -798,15 +810,15 @@ H_RATIO = 0.25    # the small unit as a fraction of the standard one
 
 def with_(par, **kw):
     f = fields(par); f.update(kw)
-    # THIS TIE IS DORMANT AND IT IS ALSO A TRAP. h_sm is CALIBRATED now, on the
-    # share of the housed in the small unit, so a quarter of h_lg is no longer
+    # THIS TIE IS DORMANT AND IT IS ALSO A TRAP. h2 is CALIBRATED now, on the
+    # share of the housed in the small unit, so a quarter of h3 is no longer
     # what it is; nothing in the calibration, the tables, the figures or the
-    # ablation moves h_lg through with_(), which is the only reason the tie has
+    # ablation moves h3 through with_(), which is the only reason the tie has
     # not already clobbered a calibrated value with a ratio nobody measured. If
-    # a diagnostic is ever written that does move h_lg, it has to pass h_sm
+    # a diagnostic is ever written that does move h3, it has to pass h2
     # explicitly or re-bracket it, not inherit the quarter.
-    # THE h_sm TIE IS GONE WITH THE SECOND RENTAL.  h_sm is no longer in the
-    # choice set -- see _options -- so nothing reads it, and tying it to h_lg
+    # THE h2 TIE IS GONE WITH THE SECOND RENTAL.  h2 is no longer in the
+    # choice set -- see _options -- so nothing reads it, and tying it to h3
     # would only leave a value that looks meaningful and is not.
     # chdmg IS DERIVED FROM EVERY OTHER PARAMETER, so any change to any of them
     # invalidates it.  Clearing it to the None sentinel turns what would be a
@@ -945,8 +957,8 @@ def _pid(par, v):
 def _hpick(par, street, small):
     """The housing size behind a (street, small) record from _branch."""
     if street > 0.5:
-        return par.h_hl
-    return par.h_sm if small > 0.5 else par.h_lg
+        return par.h1
+    return par.h2 if small > 0.5 else par.h3
 
 
 def _flow(par, c, h, q=0.0, child=True):
@@ -1024,9 +1036,9 @@ def _options(par, rmul):
     overruled -- a household whose cash falls below the rent cannot be housed at
     all -- and the income floor does not rescue it, it sharpens it.
     """
-    return ((par.h_hl, 0.0, 1),
-            (par.h_sm, par.pr * par.h_sm * rmul, 0),
-            (par.h_lg, par.pr * par.h_lg * rmul, 0))
+    return ((par.h1, 0.0, 1),
+            (par.h2, par.pr * par.h2 * rmul, 0),
+            (par.h3, par.pr * par.h3 * rmul, 0))
 
 
 def solve_period2(par, y, policy, used=0):
@@ -1066,7 +1078,7 @@ def solve_period2(par, y, policy, used=0):
                 # what the voucher pays on this option: the rest of the market
                 # rent. Zero on the street, which is free to begin with.
                 s = 0.0 if street else par.pr * h * (1.0 - rmul)
-                is_small = 0.0 if street else float(h == par.h_sm)
+                is_small = 0.0 if street else float(h == par.h2)
                 onst = np.where(v > best, street, onst)
                 rnt = np.where(v > best, rent, rnt)
                 out = np.where(v > best, s, out)
@@ -1123,7 +1135,7 @@ def _branch(par, ag, inc, rmul, vg, cont):
     rent_o = np.array([r for _, r, _ in opts])
     st_o = np.array([float(s) for _, _, s in opts])
     sb_o = np.where(st_o > 0.0, 0.0, par.pr * h_o * (1.0 - rmul))
-    sm_o = np.where(st_o > 0.0, 0.0, (h_o == par.h_sm).astype(float))
+    sm_o = np.where(st_o > 0.0, 0.0, (h_o == par.h2).astype(float))
 
     ia = np.argmax(val, axis=1)
     k = np.arange(n)
@@ -1389,15 +1401,15 @@ def priced_out_share(par, ygrid, w, policy=None):
 
     The author, 13 September: *"you have to raise it until only 0.5% of
     households cannot afford to rent h2"*, after seeing homelessness stuck at
-    ten per cent with h_hl on its lower bound.
+    ten per cent with h1 on its lower bound.
 
     WHY THIS AND NOT HOMELESSNESS.  Homelessness mixes two populations that
     respond to different instruments: households that CHOOSE the street, which
-    h_hl moves, and households that cannot pay the rent at any level of misery,
+    h1 moves, and households that cannot pay the rent at any level of misery,
     which only income can reach.  With one rental the second group dominates and
-    h_hl is powerless over it -- measured, it sat on its bound at zero with
+    h1 is powerless over it -- measured, it sat on its bound at zero with
     homelessness still 0.1085.  This statistic isolates the second group, so the
-    income floor has a moment of its own rather than fighting h_hl over a shared
+    income floor has a moment of its own rather than fighting h1 over a shared
     one.
 
     A household is priced out when its realised income does not cover the rent
@@ -1414,7 +1426,14 @@ def priced_out_share(par, ygrid, w, policy=None):
                 continue
             m = w[i] * p
             mass += m
-            if inc <= par.pr * par.h_lg * rmul:
+            # KEYED ON h2, THE CHEAPEST RENTAL.  The author, 13 September: *"the
+            # lowest income should be such that 0.5% cannot afford to rent
+            # h2"*.  A household that cannot afford h2 cannot be housed AT ALL,
+            # which is the quantity that has to be small; being priced out of
+            # the large unit h3 is not homelessness, it is renting the small
+            # one.  This read h3 while there was only one rental, where the two
+            # coincided.
+            if inc <= par.pr * par.h2 * rmul:
                 out += m
     return float(out / max(mass, 1e-300))
 
@@ -1827,10 +1846,10 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
     # Survey's universe for it is occupied units, so the street is not in the
     # denominator, exactly as in the quantitative model's counterpart.
     smallmass = housedmass = 0.0
-    # RENT OVER HALF OF INCOME, the moment h_sm is JUDGED on rather than
-    # calibrated to.  The author, 12 September: *"for h_sm you can set it
+    # RENT OVER HALF OF INCOME, the moment h2 is JUDGED on rather than
+    # calibrated to.  The author, 12 September: *"for h2 you can set it
     # exogenously to something that gives decent % of households spending over
-    # 50 per cent on rent and still be able to choose h_hl to match 1 per cent
+    # 50 per cent on rent and still be able to choose h1 to match 1 per cent
     # homelessness rate"*.  It is the quantitative model's burden50, which sits
     # at 17.5 per cent in the data, and it is REPORTED AND NOT TARGETED: nothing
     # brackets on it.  Period 1 only and over the period 1 population, because
@@ -1920,8 +1939,8 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                 # SHARE OF THE HOUSED IN THE SMALLER RENTAL. The American
                 # Community Survey table B25042, occupied units, puts 13.2 per
                 # cent of households in a unit of no bedroom or one, which is
-                # the small cell of this model's two. It is what h_sm is
-                # calibrated on; h_lg stays set at its market value.
+                # the small cell of this model's two. It is what h2 is
+                # calibrated on; h3 stays set at its market value.
                 hsmall=float(smallmass / max(housedmass, 1e-12)),
                 burden50=float(burden / max(mass1, 1e-12)),
                 # IN ANNUAL INCOME, NOT PER-PERIOD INCOME.  A period here is
@@ -1937,7 +1956,7 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                 # nesting, so this is the moment that
                 # says whether the discrete housing grid, the street and the
                 # voucher deliver the survey share the weight was set from. It
-                # is what h_lg is calibrated on.
+                # is what h3 is calibrated on.
                 hspend=float(hcost / max(hexp, 1e-12)),
                 cost=float(cost),
                 use=use, v=(PR * frac * VV).sum(axis=1) / np.maximum(use, 1e-12))

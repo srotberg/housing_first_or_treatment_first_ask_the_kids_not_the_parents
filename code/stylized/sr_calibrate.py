@@ -45,7 +45,7 @@ MORE households into use.  A mechanical reading would have got this one backward
 THE STEP IS RELATIVE, not absolute.  The Fortran carries the scale in each
 parameter's own adjuster because each has been tuned by hand over months.  Here
 the gap is divided by the target first, so one adjuster is meaningful across
-parameters that range from 1e-4 (h_hl) to 15 (aleph).  It is the same rule with
+parameters that range from 1e-4 (h1) to 15 (aleph).  It is the same rule with
 the scale factored out.
 """
 import math
@@ -125,7 +125,7 @@ SPEC = [
     # and gam ran to its bound.  With two sizes the household chooses BETWEEN
     # them, the share responds to the weight again, and gam is identified.
     # aleph WAS DROPPED FROM THIS LIST BY A BAD EDIT AND IS RESTORED.  A
-    # replacement that ran from the gamma comment to the h_lg line swallowed the
+    # replacement that ran from the gamma comment to the h3 line swallowed the
     # aleph entry that sat between them, so the two-rental run calibrated NINE
     # parameters and left the value of life untargeted for its whole length.  It
     # showed up as the vsl column vanishing from the gap table, which is exactly
@@ -134,7 +134,7 @@ SPEC = [
     ('aleph',   'vsl',             80.0,     +1, 0.30, 3.0,  60.0),
     ('gam',     'hspend',           0.268,   +1, 0.40, 0.05,  0.60),
     # h2 = 0.4 AND h1_rental = 0.1 ARE SET, on the author's instruction.  Neither
-    # carries a moment: gam has the housing share and h_hl has homelessness.
+    # carries a moment: gam has the housing share and h1 has homelessness.
     # y_floor IS SET, NOT BRACKETED.  It was put on the priced-out share when
     # there was one rental and that share was the binding margin.  With a 0.1
     # unit available the floor already covers the cheapest rent, so the priced-
@@ -148,7 +148,7 @@ SPEC = [
     # That is the separation the last two runs lacked.  Once the floor has cut
     # the priced-out group to half a per cent, everyone else CAN pay the rent,
     # so whoever is still on the street is there by CHOICE -- and choice is the
-    # one margin street quality governs.  h_hl was powerless before only because
+    # one margin street quality governs.  h1 was powerless before only because
     # it was being asked to move a population that had no choice to make.
     #
     # THE LOWER BOUND IS 0.001 AND NOT 1e-7.  The author: *"raise h1 to be above
@@ -156,7 +156,7 @@ SPEC = [
     # over: a bracket sitting on a bound has stopped being a parameter, and at
     # exactly zero the flow utility raises 0 to a negative power and the solve
     # dies -- which is how the last scan crashed.
-    ('h_hl',    'homeless',         0.0100,  +1, 0.40, 0.001, 0.05),
+    ('h1',    'homeless',         0.0100,  +1, 0.40, 0.001, 0.05),
     # b's CEILING IS 1.0, author 12 September: *"i think you need to have a very
     # high b"*.  At theta = 0.25 the model starts with 72 to 86 per cent of
     # households using, and b is the only thing that brings that down: measured
@@ -392,7 +392,7 @@ MAX_REL_STEP = 0.005
 # SECOND SOLVE, so its gap is the noisiest of the nine.  A slower step on the
 # noisiest signal is the right asymmetry, and it is the same device the Fortran
 # uses for theta and omega_c: one parameter gets its own rate.
-# h_hl ALSO GETS A FASTER STEP.  It is the parameter with the furthest to travel
+# h1 ALSO GETS A FASTER STEP.  It is the parameter with the furthest to travel
 # in relative terms and the one whose moment is least coupled to the others, so
 # it can afford to move faster than the block that fights over the drug margin.
 # KAPPA AT 0.1 PER CENT, on the author's instruction of 12 September.  It had
@@ -434,7 +434,7 @@ MAX_REL_STEP = 0.005
 # 0.02.  These are the three that were not converging from their start:
 # omega fell 0.00905 to 0.00163 and delta_d climbed 0.57 to 1.45 over
 # nineteen hundred passes, neither settling.
-PER_PARAM_STEP = {'omega': 0.0005, 'th': 0.0003, 'h_hl': 0.02, 'kap': 0.001,
+PER_PARAM_STEP = {'omega': 0.0005, 'th': 0.0003, 'h1': 0.02, 'kap': 0.001,
                   'b': 0.001, 'pi_base': 0.001, 'delta_d': 0.0002}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
@@ -907,7 +907,7 @@ if __name__ == '__main__':
     # putting a thumb on the answer -- every start on the interior branch has
     # reached the same region -- it is starting this run where the last one got
     # to instead of walking the same three thousand passes again.
-    SEED = dict(gam=0.43813, aleph=10.98104, h_hl=0.00969, b=0.06063,
+    SEED = dict(gam=0.43813, aleph=10.98104, h1=0.00969, b=0.06063,
                 pi_base=0.41372, u0=0.04824, u1=0.05508, omega=0.00905,
                 # delta_d SOLVED, not guessed.  The author, 13 September:
                 # *"you should scan the incomes and see which ones give an odds
@@ -925,7 +925,7 @@ if __name__ == '__main__':
     # gam IS NOT SEEDED.  It is SET at its data value of 0.268 -- see the note in
     # SPEC -- and SEED is applied LAST, so leaving it here would put 0.437 back
     # and silently undo the decision.
-    SEED = dict(aleph=10.99573, h_hl=0.00960, b=0.05774,
+    SEED = dict(aleph=10.99573, h1=0.00960, b=0.05774,
                 # 0.0368/0.089, the value the identity sets, not a start
                 pi_base=0.0368 / 0.089, u0=0.04824, u1=0.05484, omega=0.00853,
                 delta_d=0.56972, kap=0.10067, th=0.14599)
@@ -967,10 +967,10 @@ if __name__ == '__main__':
                    "y_floor": 0.0,
                    # STARTING VALUES MATTER WHEN THE STEP IS RELATIVE.  The
                    # author, 12 September: *"this is why the model cannot
-                   # converge"*.  h_hl started at 1e-4 and lands near 1e-2 -- a
+                   # converge"*.  h1 started at 1e-4 and lands near 1e-2 -- a
                    # factor of a HUNDRED, which at 0.5 per cent a pass is about
                    # 920 iterations before homelessness can respond at all.
-                   # Measured, it was doing exactly that: h_hl climbing 0.00010,
+                   # Measured, it was doing exactly that: h1 climbing 0.00010,
                    # 0.00016, 0.00027, 0.00045 over 300 iterations while the
                    # homelessness gap sat at -72 per cent throughout.  Not
                    # stuck -- crawling.
@@ -982,7 +982,7 @@ if __name__ == '__main__':
                    # putting a thumb on the answer: any start on the interior
                    # branch reaches the same place, it just reaches it in this
                    # run rather than the next one.
-                 "h_hl": 0.005, "b": 0.07}}
+                 "h1": 0.005, "b": 0.07}}
     _start.update(SEED)                       # SEED WINS: it is applied last
     par = with_(P(), **_start)
     smr = 1 + math.log(1 - par.kap) / math.log(par.phi0)
@@ -1018,7 +1018,7 @@ if __name__ == '__main__':
     # on the vector calibrated WITHOUT one takes homelessness to zero at 0.12
     # and above, and sud_of_homeless2 with it, and at 0.19 it reverses delta_d's
     # sign on the child SUD odds ratio.  Those tests held every other parameter
-    # fixed.  Here the brackets are free to answer -- h_hl is exactly the
+    # fixed.  Here the brackets are free to answer -- h1 is exactly the
     # instrument for homelessness -- and whether they do is the open question
     # this run settles.
     FLOOR_STEP = 0.002
@@ -1061,14 +1061,33 @@ if __name__ == '__main__':
     #
     # WHAT IS GENUINELY OPEN, and it is why this run is worth making rather than
     # refusing.  Every one of those measurements HELD THE OTHER PARAMETERS
-    # FIXED.  Here the brackets are free: h_hl is exactly the instrument for
+    # FIXED.  Here the brackets are free: h1 is exactly the instrument for
     # homelessness, and whether the free brackets can answer the floor is the
     # question this run settles.  If the child SUD odds ratio walks away from 2
     # while delta_d climbs past 0.6, that is the reversal and the run should be
     # stopped rather than left to grind.
     FLOOR_ON = True
     if FLOOR_ON:
-        par = with_(par, y_floor=0.18614)
+        # 0.099, NOT 0.18614.  The author, 13 September: *"the lowest income
+        # should be such that 0.5% cannot afford to rent h2"*.  Measured with
+        # the priced-out share keyed on h2, the cheapest rental: at a floor of
+        # 0.099 it is 0.00357, which is the half a per cent asked for; at 0.12
+        # and above it is exactly zero and nobody can be unhoused for want of
+        # money at all.
+        #
+        # AND IT CHANGES WHICH WAY h1 HAS TO MOVE.  At this floor 0.36 per cent
+        # are priced out and 6.6 per cent are homeless, so the other 6.3 per
+        # cent are CHOOSING the street.  h1 has to fall from 0.0371 to thin them
+        # out, not rise.  The earlier reading that h1 had to rise came from a
+        # priced-out measure keyed on h3, the LARGE unit, where being priced out
+        # means renting the small one rather than being unhoused.
+        #
+        # THE COST IS THE PATHOLOGY, and it is reported rather than hidden: at a
+        # floor near 0.10 the negative value of life runs about 0.4 per cent,
+        # against 0.00 at 0.186.  The author asked for no negative value of life
+        # AND for half a per cent priced out, and those two want the floor on
+        # opposite sides of 0.12.  The FLOOR line on every table carries it.
+        par = with_(par, y_floor=0.099)
     for it in range(50000):
         m = moments(par, it)
         if FLOOR_ON and it % 10 == 0:

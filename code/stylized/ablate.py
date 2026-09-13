@@ -33,14 +33,14 @@ CHANNELS = [
     ('nothing removed', {}),
     ('the disorder kills you', dict(kap=0.0)),
     ('the disorder costs you a job', dict(u1=P.u0)),
-    # h_hl is CALIBRATED, so setting it here and then recalibrating simply
+    # h1 is CALIBRATED, so setting it here and then recalibrating simply
     # resets it and the row measures nothing. It is structural in any case:
     # without the street being worse than a home there is no homelessness to
     # explain and no voucher worth having.
     # recovery used to be a row here. rho is gone from the model: period 2 is
     # terminal, so there is no period to recover into and nothing to switch off.
-    # h_sm is READ OFF THE BASE at evaluation time, because the standard unit
-    # is now calibrated and P.h_lg is a stale starting value. Marked with a
+    # h2 is READ OFF THE BASE at evaluation time, because the standard unit
+    # is now calibrated and P.h3 is a stale starting value. Marked with a
     # sentinel and resolved in the loop.
     ('a small unit exists', 'collapse_h_sm'),
     ('income support is only half as generous', dict(repl=0.25)),
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     print('   then both counterfactuals are rerun')
     print('=' * 80)
     # part and homeless are printed BECAUSE a row can fail to calibrate. The
-    # single rental size row does: no value of h_hl delivers the homelessness
+    # single rental size row does: no value of h1 delivers the homelessness
     # rate once the small unit is gone, so its policy numbers come from a model
     # that missed its targets, and that has to be visible here.
     print(f"{'removed':36s}{'part':>7s}{'homeless':>10s}{'r_use':>8s}"
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     ref = None
     for name, kw in CHANNELS:
         if kw == 'collapse_h_sm':
-            kw = dict(h_sm=base.h_lg)
+            kw = dict(h2=base.h3)
         try:
             r = evaluate(with_(base, **kw))
         except Exception as exc:

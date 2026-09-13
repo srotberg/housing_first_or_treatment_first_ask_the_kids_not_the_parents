@@ -169,9 +169,9 @@ def numbers(base, fig):
     # AS A MULTIPLE OF AVERAGE INCOME, which is the convention Table 1 prints it
     # in. Average income is one by construction, so the two agree today; they
     # would stop agreeing silently if the grid ever moved off that normalisation.
-    out['h3'] = f'{base.h_lg / float((WW * YG).sum()):.2f}'
-    # h2frac IS GONE. It printed H_RATIO, the fixed quarter h_sm used to be set
-    # at, and h_sm is bracketed now on the share of the housed in the small
+    out['h3'] = f'{base.h3 / float((WW * YG).sum()):.2f}'
+    # h2frac IS GONE. It printed H_RATIO, the fixed quarter h2 used to be set
+    # at, and h2 is bracketed now on the share of the housed in the small
     # unit, so the ratio is an outcome of the calibration rather than a choice.
     # Its value is in Table 2 with the other calibrated parameters and the prose
     # no longer quotes it.
@@ -241,7 +241,7 @@ def numbers(base, fig):
     out['lam'] = f'{base.lam:.0f}'
 
     # one rental size only: the model that fails to calibrate
-    out['homeless1'] = pc(stats(with_(base, h_sm=base.h_lg))['homeless'])
+    out['homeless1'] = pc(stats(with_(base, h2=base.h3))['homeless'])
 
     # THE TWO CHANNELS AND THE POLICY EXPERIMENT ARE NOT COMPUTED HERE. Every
     # one of those numbers appears on Figure 1 or Figure 2, so run.py computes

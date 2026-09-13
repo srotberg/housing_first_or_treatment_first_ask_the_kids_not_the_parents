@@ -9,7 +9,7 @@ is the reason the income of users declines"*.
 SEVEN PARAMETERS ON SEVEN TARGETS, exactly identified, and each one is the
 quantitative model's own moment aimed at the quantitative model's own number:
 
-    h_hl     homelessness rate                            0.0100
+    h1     homelessness rate                            0.0100
     aleph    value of a statistical life / annual income  80
     th       drug spending over users' income             0.14098
     kap      users' mean income / population mean         0.74
@@ -19,18 +19,18 @@ quantitative model's own moment aimed at the quantitative model's own number:
 
 SET, NOT CALIBRATED:
 
-    h_sm = 0.10   CONCEDED.  It is judged on the share paying over half of
+    h2 = 0.10   CONCEDED.  It is judged on the share paying over half of
                   income in rent and not bracketed on it.  It CANNOT be raised
-                  to reach the data's 17.5 per cent: homelessness at h_hl -> 0
-                  is already 2.4 per cent at h_sm = 0.12 and 9.4 at 0.20, so
+                  to reach the data's 17.5 per cent: homelessness at h1 -> 0
+                  is already 2.4 per cent at h2 = 0.12 and 9.4 at 0.20, so
                   above about 0.10 the forced floor exceeds the 1 per cent
-                  target and h_hl has nothing left to do.  At 0.10 the model
+                  target and h1 has nothing left to do.  At 0.10 the model
                   gives about 7 per cent.  The quantitative model, with three
                   rungs instead of one, reaches 14.8 against the same 17.5.
     omega = 0.09  the quantitative model's weight_on_child.  SET because the
                   ablation of omega_c is the experiment: an omega_c fitted
                   inside this model would not be the one the big model carries.
-    h_lg = 0.40, sigma = 2, xi = sqrt(2).
+    h3 = 0.40, sigma = 2, xi = sqrt(2).
 
 BOUNDS ARE NOT DEFAULTS.  kap is bounded at 0.185 because the model has TWO
 BRANCHES in it and the bracket must stay on the interior one.  Measured, at
@@ -66,12 +66,12 @@ from stylized import P, with_
 #   hspend  0.1843  0.2130  0.2361  0.2465  0.2644
 #   r_use    0.741   0.645   0.554   0.902   1.275
 #
-#   h_lg      0.40    0.60    0.85    1.00
+#   h3      0.40    0.60    0.85    1.00
 #   hspend  0.1843  0.2002  0.2042  0.2047
 #   r_use    0.741   0.916   1.056   1.054
 #
 # gam tops out at 0.236 on the interior branch and crosses to the WRONG branch
-# between 0.34 and 0.36; h_lg saturates at 0.205 and ruins the gradient getting
+# between 0.34 and 0.36; h3 saturates at 0.205 and ruins the gradient getting
 # there.  Housing here is a discrete menu of two units and the street, and the
 # aggregate rent share is bounded by that menu.  Two sweeps were spent finding
 # this the hard way: both hit hspend = 0.268 exactly and both did it by crossing
@@ -105,7 +105,7 @@ from stylized import P, with_
 #
 # The cliff at b = 0.029 is the corner branch and it is close, so b's bracket is
 # bounded below it.
-FIXED = dict(gam=0.268, h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0,
+FIXED = dict(gam=0.268, h2=0.10, h3=0.40, omega=0.09, sigma=2.0,
              kap=1.0 - 0.91 ** 2)
 
 # THE STARTING POINT IS NOT A DETAIL, IT PICKS THE BRANCH.  Started from the log
@@ -121,15 +121,15 @@ FIXED = dict(gam=0.268, h_sm=0.10, h_lg=0.40, omega=0.09, sigma=2.0,
 # the homeless 0.2150 against 0.217 before a single bracket has run, with
 # participation, the disorder rate, the housing share and the VSL the four that
 # still need closing.
-START = dict(h_hl=1e-4, aleph=15.0, th=0.16,
+START = dict(h1=1e-4, aleph=15.0, th=0.16,
              u1=0.127, pi_base=0.40, b=0.0282)
 # THE START MOVED AGAIN, IN (aleph, kap) JOINTLY, and the first version of this
 # note blamed the wrong thing.  Two sweeps cornered from aleph 8.3 with kap
 # 0.175, and the diagnosis offered at the time -- that a near-worthless street
-# was the cause -- is WITHDRAWN: flooring h_hl was measured and does nothing.
+# was the cause -- is WITHDRAWN: flooring h1 was measured and does nothing.
 # The share of households with a NEGATIVE value of life stays between 19 and 36
-# per cent over h_hl from 0.01 to 0.06, while homelessness runs to 23 per cent
-# at h_hl = 0.04 and 49 at 0.06, so the floor destroys the homelessness target
+# per cent over h1 from 0.01 to 0.06, while homelessness runs to 23 per cent
+# at h1 = 0.04 and 49 at 0.06, so the floor destroys the homelessness target
 # without touching the pathology.  A consumption floor was measured too: it
 # lifts the minimum lifetime value from -68 to -9 and moves the SHARE only from
 # 26.7 to 25.0 per cent.
@@ -157,7 +157,7 @@ START = dict(h_hl=1e-4, aleph=15.0, th=0.16,
 # (parameter, moment, lo, hi).  Order is the sweep order and it matters: the
 # housing block settles before the drug block, and b runs LAST so participation
 # is the moment that is actually hit.
-HOUSING = [('h_hl', 'homeless', 1e-7, 0.02),
+HOUSING = [('h1', 'homeless', 1e-7, 0.02),
            ('aleph', 'vsl', 3.0, 60.0)]
 # THE DRUG BLOCK IS SPLIT AND b AND pi_base GO FIRST.  Author, 12 September:
 # *"I think you first have to match b and sud and only then start adjusting
@@ -268,7 +268,7 @@ def calibrate(par, sweeps=8, verbose=True, iters=16):
         if verbose:
             table(par, note=f'\nAFTER SWEEP {s}')
             print(f'  sweep {s}: worst gap {100*worst:6.2f} %   '
-                  f'h_hl {par.h_hl:.2e} aleph {par.aleph:.3f} '
+                  f'h1 {par.h1:.2e} aleph {par.aleph:.3f} '
                   f'th {par.th:.4f} u1 {par.u1:.4f} '
                   f'pi {par.pi_base:.4f} b {par.b:.5f}')
         if worst < 0.02:
@@ -284,7 +284,7 @@ if __name__ == '__main__':
     print('BASELINE')
     table(par)
     json.dump({k: getattr(par, k) for k in
-               ('h_hl', 'aleph', 'th', 'u1', 'pi_base', 'b',
-                'kap', 'gam', 'h_sm', 'h_lg', 'omega', 'sigma')},
+               ('h1', 'aleph', 'th', 'u1', 'pi_base', 'b',
+                'kap', 'gam', 'h2', 'h3', 'omega', 'sigma')},
               open('calibrated_sigma2.json', 'w'), indent=1)
     print('\nwritten to calibrated_sigma2.json')

@@ -12,7 +12,7 @@ from stylized import with_, P
 from calibrate import stats
 from recalibrate import FIXED
 
-V = dict(gam=0.43696, aleph=10.70306, h_hl=0.00949, b=0.09103, pi_base=0.39839,
+V = dict(gam=0.43696, aleph=10.70306, h1=0.00949, b=0.09103, pi_base=0.39839,
          u0=0.04850, u1=0.04860, delta_d=0.24, kap=0.16470, th=0.21520, beta=1.0)
 base = with_(P(), **{k: v for k, v in FIXED.items()
                      if k not in ('kap','gam','omega')}, **V)

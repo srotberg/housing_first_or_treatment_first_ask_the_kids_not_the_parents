@@ -63,7 +63,7 @@ EXTERNAL = [
         # no-op the moment the grid moves off that normalisation, which is the
         # only reason to keep it. It was written when average income was 0.978
         # and the table printed 0.40 beside a source line saying 0.41.
-        ('h_lg', r'h_3', 'Standard rental unit', 'Set', '{:.2f}'),
+        ('h3', r'h_3', 'Standard rental unit', 'Set', '{:.2f}'),
         # h_2 IS NOT HERE ANY MORE. It used to be Set, at exactly a quarter of
         # h_3, and printed as the ratio rather than as a decimal so that a
         # reader could not multiply 0.10 by four, get 0.40 against h_3's 0.41,
@@ -116,7 +116,7 @@ INTERNAL = [
     ('th', r'\theta', 'Weight on drugs in utility',
      'Drug spending over income among users, RAND 2016',
      'dshare', '{:.1%}', '{:.4f}'),
-    ('h_hl', 'h_1', 'Service flow of homelessness', 'Homelessness rate, HUD 2023',
+    ('h1', 'h_1', 'Service flow of homelessness', 'Homelessness rate, HUD 2023',
      'homeless', '{:.3%}', '{:.5f}'),
     # h_2 IS CALIBRATED, NOT SET, and its target is the same American Community
     # Survey size distribution the quantitative model matches: B25042, occupied
@@ -124,7 +124,7 @@ INTERNAL = [
     # households are in a unit of no bedroom or one. h_3 stays at its market
     # value and h_2 is bracketed on the share, which is the arrangement the
     # quantitative model uses and the reason the fixed quarter was dropped.
-    ('h_sm', r'h_2', 'Small rental unit',
+    ('h2', r'h_2', 'Small rental unit',
      'Share of the housed in the small unit, ACS 2023', 'hsmall',
      '{:.1%}', '{:.3f}'),
     # THE MOMENT IS THE ADULT SUD RATE, not the share of users who progress, and
@@ -146,7 +146,7 @@ def tab_external(base):
          r'\midrule']
     from calibrate import YG, W
     ww = W / W.sum(); ybar = float((ww * YG).sum())
-    PER_YBAR = {'h_lg'}             # quoted as a multiple of average income
+    PER_YBAR = {'h3'}             # quoted as a multiple of average income
     for k, (head, rows) in enumerate(EXTERNAL):
         if k:
             L.append(r'\addlinespace')
@@ -186,7 +186,7 @@ def tab_internal(base):
     # h_2 is a housing service flow and the only other one the reader sees is
     # scaled that way, so leaving this in model units would put 0.10 beside a
     # 0.41 that is measured differently.
-    PER_YBAR = {'h_sm'}
+    PER_YBAR = {'h2'}
     for attr, sym, desc, mom, key, mfmt, vfmt in INTERNAL:
         val = SIG if attr is None else getattr(base, attr)
         if attr in PER_YBAR:

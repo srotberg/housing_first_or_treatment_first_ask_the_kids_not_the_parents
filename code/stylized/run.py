@@ -50,11 +50,11 @@ def save(fig, name):
 # Everything the disorder does to you, switched off. Scaling a channel means
 # moving its members from these values to their calibrated ones together.
 # READ OFF THE BASE, NOT OFF THE CLASS DEFAULT. The small unit is now tied to a
-# calibrated standard unit, so P.h_sm is a stale starting value rather than the
+# calibrated standard unit, so P.h2 is a stale starting value rather than the
 # size the model was solved at, and taking the endpoint from it would put the
 # street somewhere other than "as good as the small unit".
 def _off(base):
-    return dict(kap=0.0, u1=base.u0, h_hl=base.h_sm)
+    return dict(kap=0.0, u1=base.u0, h1=base.h2)
 
 
 def _scaled(base, which, s):
@@ -63,10 +63,10 @@ def _scaled(base, which, s):
         kw.update(kap=s * base.kap)
     else:
         # the street's housing services belong HERE, not with mortality. An
-        # earlier version had h_hl in the mortality group, which quietly put an
+        # earlier version had h1 in the mortality group, which quietly put an
         # unemployment consequence inside the mortality curve.
         kw.update(u1=base.u0 + s * (base.u1 - base.u0),
-                  h_hl=base.h_sm * (base.h_hl / base.h_sm) ** s)
+                  h1=base.h2 * (base.h1 / base.h2) ** s)
     par = with_(base, **kw)
     # b is recalibrated at EVERY point, so participation is 5.13 percent all
     # along both curves and the only thing moving is WHO uses.

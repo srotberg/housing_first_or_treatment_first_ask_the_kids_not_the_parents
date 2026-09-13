@@ -3,22 +3,22 @@ A rough calibration of the stylized two period model. Seven parameters, seven
 targets.
 
     gam     housing over non drug spending             26.8 %
-    h_hl    homelessness rate                          0.399 %
+    h1    homelessness rate                          0.399 %
     aleph   value of a statistical life                80 annual incomes
     lam     adult SUD rate, moderate or severe         4.54 %
     th      drug spending / income among users         20 %
-    h_sm    share of the housed in the small unit      13.2 %
+    h2    share of the housed in the small unit      13.2 %
     b       drug participation rate                    10.13 %
 
 THE STANDARD UNIT IS SET AND GAMMA IS CALIBRATED, which is the conventional
-order and the third arrangement tried. h_lg = 0.40 of mean income is a market
+order and the third arrangement tried. h3 = 0.40 of mean income is a market
 fact quoted to the reader; the weight on housing is a preference, and a
 preference is what a model is entitled to infer. Working backwards recovers the
 same object, since a gamma and a grid that reproduce the share are two
 descriptions of one calibration.
 
-THE SMALL UNIT IS NO LONGER A FIXED QUARTER OF IT. h_sm used to be set at
-h_lg/4, a ratio chosen in advance rather than measured, and the model then said
+THE SMALL UNIT IS NO LONGER A FIXED QUARTER OF IT. h2 used to be set at
+h3/4, a ratio chosen in advance rather than measured, and the model then said
 whatever that implied about how households sort across the two units: 45.7 per
 cent of the housed in the small one against 13.2 in the data. It is bracketed
 now, on that share, which is the arrangement the quantitative model already uses
@@ -26,27 +26,27 @@ for its three-way size distribution. One rental size is a market fact and the
 other is inferred from how many households live in it.
 
 WHAT WAS TRIED BEFORE, both of which failed. Setting BOTH, gamma from the
-expenditure survey and h_lg from an SCF housing cost to income ratio, aims two
+expenditure survey and h3 from an SCF housing cost to income ratio, aims two
 external numbers at one object with nothing making them agree, and the model
-delivered a 16 per cent share against the survey's 26.8. Calibrating h_lg on the
+delivered a 16 per cent share against the survey's 26.8. Calibrating h3 on the
 share instead hits 26.8 exactly and puts homelessness at 3.2 per cent, because
-the aggregate share is bounded above by h_lg and matching it needs a unit so
+the aggregate share is bounded above by h3 and matching it needs a unit so
 large that the small unit prices the bottom of the distribution out of housing.
 The frontier is tabulated in stylized.py.
 
 FREEING GAMMA HAS ITS OWN HISTORY AND IT IS A BAD ONE, so this arrangement is on
 probation until the sweep is read. Twice before, gamma was freed jointly with
 theta in a scan, and it collapsed both times: gamma couples the housing weight to
-the homelessness margin through the value of the street, the h_hl bracket lost
-its interior solution, and the sweep walked to h_hl = 0.055 with homelessness at
+the homelessness margin through the value of the street, the h1 bracket lost
+its interior solution, and the sweep walked to h1 = 0.055 with homelessness at
 25 per cent. Two things differ now. theta stays SET, so only one preference is
 moving. And the rental sizes are SET, so the affordability floor cannot drift
-while gamma moves, which is what removed h_hl's interior solution before. If the
-h_hl bracket corners again, this arrangement is wrong too and the note should say
+while gamma moves, which is what removed h1's interior solution before. If the
+h1 bracket corners again, this arrangement is wrong too and the note should say
 so rather than report a corner as a calibration.
 
 THE VALUE OF LIFE IS BRACKETED AFTER THE STREET. aleph is additive in flow
-utility so it barely touches the housing choice, whereas h_hl moves the
+utility so it barely touches the housing choice, whereas h1 moves the
 continuation and hence the VSL, so the dependence runs one way. With aleph first
 the sweep reported a VSL of 129 against a target of 80.
 
@@ -196,7 +196,7 @@ GRID_KAPPA = 2.0      # above one packs the nodes toward the bottom
 # matching the bottom half's 17.2 per cent leaves 10.7 per cent of households
 # below y = 0.20, and 0.20 is where half of income stops covering the 0.10 rent
 # on the small unit. Resolved finely, every one of them is FORCED onto the
-# street and h_hl has no interior solution. Pooling the bottom was measured and
+# street and h1 has no interior solution. Pooling the bottom was measured and
 # does not fix it: a pool sits at its own conditional mean, so it is either
 # wholly below the affordability floor or wholly above it, and the first pool
 # that clears 0.20 is the bottom 23 per cent. Pooling the bottom five per cent
@@ -208,7 +208,7 @@ GRID_KAPPA = 2.0      # above one packs the nodes toward the bottom
 # the stylized model was given one to match, on the statutory SNAP rule and paid
 # in kind so it could not cover rent. It was then ablated and it does not earn
 # its place: with the bottom pooled the model passes through the 0.399 target
-# without it, at h_hl near 0.00055, and the FORCED share of homelessness is
+# without it, at h1 near 0.00055, and the FORCED share of homelessness is
 # 0.305 per cent against 0.288 with the transfer. The pool does that work, not
 # the transfer, and a model whose purpose is to be easy to follow should not
 # carry a parameter, a moment, a taper and an in kind restriction that change
@@ -259,10 +259,10 @@ def _pool(sig, floor, hi=0.60):
     THE FLOOR IS THE RENT ON THE SMALLEST UNIT, and it is a real threshold
     rather than a numerical one. Food assistance is paid in kind, so rent comes
     out of the household's own income: a household whose income in a state falls
-    below p_r*h_sm cannot rent at all, employed or not, and is on the street
+    below p_r*h2 cannot rent at all, employed or not, and is on the street
     whatever the street is worth. In a lognormal matching the bottom half's 17.2
     per cent that is 2.5 per cent of households, which puts homelessness at 1.25
-    per cent against a target of 0.399 and leaves h_hl with nothing to decide.
+    per cent against a target of 0.399 and leaves h1 with nothing to decide.
     Those households are an artefact of resolving the very bottom of a lognormal
     node by node: a household at the third percentile of PERMANENT income for a
     thirty year period is not a household the data contains, it is the tail of a
@@ -325,7 +325,7 @@ def _grid(sig, n=GRID_N, kappa=GRID_KAPPA):
     households at a single income and pretending they are one type.
     """
     par = P()
-    t = _trunc_level(sig, TRUNC_FLOOR * par.pr * par.h_sm)
+    t = _trunc_level(sig, TRUNC_FLOOR * par.pr * par.h2)
     q_f = _ndtr((math.log(t) + 0.5 * sig * sig) / sig)
     u = np.arange(n + 1) / float(n)
     p = q_f + (1.0 - q_f) * u ** kappa
@@ -402,7 +402,7 @@ assert abs(P().yV - YV_HALF_MEDIAN) < 5e-4, (
 # Comparing them put the threshold in the wrong cell, so a cell could be handed
 # a fraction of a third when it should have been whole, and participation moved
 # in jumps of a cell's mass with the calibration target inside one of them.
-Q_F = _ndtr((math.log(_trunc_level(SIG, TRUNC_FLOOR * P().pr * P().h_sm))
+Q_F = _ndtr((math.log(_trunc_level(SIG, TRUNC_FLOOR * P().pr * P().h2))
              + 0.5 * SIG * SIG) / SIG)
 GRID_MEAN = (1.0 - _tail_mean(SIG, Q_F)) / max(1.0 - Q_F, 1e-14)
 
@@ -521,16 +521,16 @@ TARGET = dict(part=_DRUG['participation'], homeless=0.0100, r_use=0.74,
               # its h_2 is everything below the standard family unit, not the
               # studio-and-one-bedroom bin alone. Targeting that bin, 13.2 per
               # cent, was a mistake of exactly one bin: the share is INCREASING
-              # in h_sm over the whole admissible range and bottoms out near 24
+              # in h2 over the whole admissible range and bottoms out near 24
               # per cent as the small unit goes to nothing, so 13.2 sits below
               # anything the model can produce and the bracket ran to its lower
               # bound. Sizes 1 and 2 together, 37.3 per cent, are what h_2
               # stands for here, and they are interior: the model gives 32.0 per
-              # cent at h_sm = 0.05 and 41.7 at 0.10.
+              # cent at h2 = 0.05 and 41.7 at 0.10.
               )
 
 # ORDER MATTERS, and participation goes LAST. Every one of these parameters
-# moves participation: lam makes drugs riskier, h_hl changes what is at stake in
+# moves participation: lam makes drugs riskier, h1 changes what is at stake in
 # losing your home. So whichever bracket runs last is the one whose moment is
 # actually hit, and the others are only hit to the extent the sweep has
 # converged. Participation is the moment the model exists to reproduce, so b
@@ -582,8 +582,8 @@ TARGET = dict(part=_DRUG['participation'], homeless=0.0100, r_use=0.74,
 # that collapsed, and it is kept because the tie is the thing not to reinstate.
 # THETA AND GAMMA WERE SET, NOT BRACKETED. Freeing them was tried twice and it
 # collapses: gamma couples the housing weight to the homelessness margin through
-# the value of the street, the h_hl bracket loses its interior solution, and the
-# sweep walks to h_hl = 0.055 with homelessness at 25 per cent. They are chosen
+# the value of the street, the h1 bracket loses its interior solution, and the
+# sweep walks to h1 = 0.055 with homelessness at 25 per cent. They are chosen
 # instead by a scan over (theta, gamma) that refits the three below at every
 # point and screens on the two things that must not break: users poorer than
 # average, and no household with a negative ex ante value of life. theta = 0.20
@@ -630,10 +630,10 @@ LAM_LO, LAM_HI = 0.05, 20000.0
 # stayed an untargeted moment the model missed. It is targeted now.
 # THE SMALL UNIT CANNOT OUTGROW THE GRID IT IS PART OF. _grid truncates the
 # income distribution below TRUNC_FLOOR times the rent on the small unit, and it
-# does so ONCE, at import, from the class value of h_sm. So a trial h_sm above
+# does so ONCE, at import, from the class value of h2. So a trial h2 above
 # that value prices the poorest households on the grid out of the only unit they
 # could afford: they cannot rent at all, they are homeless whatever the street
-# is worth, and homelessness runs from 0.4 per cent at h_sm = 0.10 to 3.0 at
+# is worth, and homelessness runs from 0.4 per cent at h2 = 0.10 to 3.0 at
 # 0.15 and 20 at 0.39. None of that is the model answering a question about unit
 # sizes; it is the grid and the parameter disagreeing about what the small unit
 # is. Capping the bracket at the floor keeps every trial on a grid that matches
@@ -644,10 +644,10 @@ LAM_LO, LAM_HI = 0.05, 20000.0
 # smallest_rental_relative_to_lowest_income, a RATIO to the lowest income on the
 # grid rather than an absolute size, so the unit moves with the grid by
 # construction and cannot outrun it. See TRANSITION_LESSONS.md section 7.
-H_SM_HI = float(YG[0]) / (TRUNC_FLOOR * P().pr)
+H2_HI = float(YG[0]) / (TRUNC_FLOOR * P().pr)
 
 PAIRS = [('gam', 'hspend', 0.02, 0.70),
-         ('h_hl', 'homeless', 1e-7, 0.49),
+         ('h1', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
          ('lam', 'sud', LAM_LO, LAM_HI),
          ('b', 'part', 1e-5, 0.30)]
@@ -785,15 +785,15 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # one that has to be.
         if 'gam' not in fix:
             par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
-        # h_sm BEFORE h_hl, for the reason gamma runs before the street: both
+        # h2 BEFORE h1, for the reason gamma runs before the street: both
         # move homelessness, a cheaper small unit takes households off it, and
         # whichever runs last is the one whose moment is actually hit. The
         # homelessness rate is the one that has to be, so the street runs last.
-        # h_sm IS NOT BRACKETED ANY MORE.  There is one rental -- see _options in
+        # h2 IS NOT BRACKETED ANY MORE.  There is one rental -- see _options in
         # stylized.py -- so the small unit is out of the choice set and the
         # share of the housed in it is not a moment the model can produce.
-        if 'h_hl' not in fix:
-            par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
+        if 'h1' not in fix:
+            par = with_(par, h1=bracket(par, 'h1', 'homeless', 1e-7, 0.49))
         if 'aleph' not in fix:
             par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
         # THETA BEFORE THE DRUG PAIR. lam and b are bracketed on the disorder
@@ -809,7 +809,7 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # plain bracket it would also have made the sweep's own convergence test
         # unreachable, because b is refit LAST every sweep and would move dshare
         # off the target theta had just been set to, every sweep, forever --
-        # which is the residual the note above h_hl and aleph describes, and
+        # which is the residual the note above h1 and aleph describes, and
         # there is no reason to add a third one on purpose.
 
         # LAM AND B ARE SOLVED JOINTLY, not once each. prog is very nearly a
@@ -879,14 +879,14 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
                     default=0.0)
         if verbose:
             # EVERY BRACKETED PARAMETER, and the moment that is worst. The line
-            # named four of them, which predated gamma, theta and h_sm being
+            # named four of them, which predated gamma, theta and h2 being
             # bracketed, so the three most recently added were the three a
             # reader could not see.
             wmom = max(live, key=lambda P_: abs(m[P_[1]] / TARGET[P_[1]] - 1.0),
                        default=(None, 'nothing free'))[1]
             print(f'  sweep {s+1}  worst {worst:7.3f} on {wmom:9s} '
-                  f'gam={par.gam:.4g} th={par.th:.4g} h_sm={par.h_sm:.4g} '
-                  f'h_hl={par.h_hl:.4g} aleph={par.aleph:.4g} '
+                  f'gam={par.gam:.4g} th={par.th:.4g} h2={par.h2:.4g} '
+                  f'h1={par.h1:.4g} aleph={par.aleph:.4g} '
                   f'lam={par.lam:.4g} b={par.b:.4g}', flush=True)
         # STOP WHEN EVERY TARGETED MOMENT IS HIT. Each bracket restarts from its
         # own bounds every sweep, so a converged sweep reproduces itself: the
@@ -898,13 +898,13 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # property of the sweep order rather than of the bisections. b runs LAST
         # so that participation is the moment actually hit, and it is: the gap
         # there is zero to four decimals. But aleph and the lambda-b loop both
-        # run AFTER h_hl and both move homelessness a little, so the street is
+        # run AFTER h1 and both move homelessness a little, so the street is
         # fitted and then moved off by half a per cent, every sweep, forever.
         # Two successive sweeps agreed to five significant figures on lambda and
         # on b while reporting the same 0.006, which is what a structural
         # residual looks like: a tolerance below it does not buy accuracy, it
-        # just runs the remaining sweeps. Reordering to put h_hl last would
-        # close it and open a worse one, because h_hl moves the value of being
+        # just runs the remaining sweeps. Reordering to put h1 last would
+        # close it and open a worse one, because h1 moves the value of being
         # unhoused and so moves participation.
         if s >= 1 and worst < tol:
             if verbose:
@@ -941,8 +941,8 @@ def polish(par, verbose=True):
     if verbose:
         print(f'\npolishing at theta = {par.th:.4f}')
     par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
-    # h_sm is out of the choice set with the second rental; see above.
-    par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
+    # h2 is out of the choice set with the second rental; see above.
+    par = with_(par, h1=bracket(par, 'h1', 'homeless', 1e-7, 0.49))
     par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
     for _ in range(2):
         par = with_(par, lam=bracket_sud(par, LAM_LO, LAM_HI))

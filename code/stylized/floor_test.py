@@ -5,7 +5,7 @@ calibration routine?
 The sweep that flooded lam to its lower bound is not evidence that the gradient
 is gone: the same degeneracy appears whenever the bracketing lands on a branch
 where nobody acquires the disorder, and then prog is 0/0 and every bracket is
-meaningless. This isolates the economics by HOLDING lam and h_hl at their
+meaningless. This isolates the economics by HOLDING lam and h1 at their
 baseline values and bracketing only b on participation, so the only thing the
 floor can do is move who uses.
 

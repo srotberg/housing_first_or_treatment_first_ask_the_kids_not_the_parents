@@ -20,7 +20,7 @@ ablation of omega_c under log returns an empty row by construction and not by
 economics.
 
 MEASURED, optimal q at five incomes, omega_c = 0.09 against omega_c = 0 with
-theta refit.  Housing held at h_lg, static allocation, no continuation:
+theta refit.  Housing held at h3, static allocation, no continuation:
 
     LOG (sigma = 1)              SIGMA = 2
     income   ratio               income   ratio

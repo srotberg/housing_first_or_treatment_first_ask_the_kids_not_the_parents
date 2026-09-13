@@ -25,7 +25,7 @@ from stylized import with_, P
 import calibrate as C
 from recalibrate import FIXED
 
-V = dict(gam=0.43679, aleph=10.45448, h_hl=0.00951, b=0.10990, pi_base=0.29801,
+V = dict(gam=0.43679, aleph=10.45448, h1=0.00951, b=0.10990, pi_base=0.29801,
          u0=0.04831, u1=0.05679, delta_d=0.24, kap=0.18241, th=0.20990,
          beta=1.0, omega=0.08164)
 par = with_(P(), **{k: v for k, v in FIXED.items()

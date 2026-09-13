@@ -31,7 +31,7 @@ and only then is the drug spending share worth reading.
 
 gamma is tied to 0.268(1-theta) throughout. Freeing it has been tried twice and
 collapses: it couples the housing weight to the homelessness margin through the
-value of the street, the h_hl bracket loses its interior solution, and the sweep
+value of the street, the h1 bracket loses its interior solution, and the sweep
 walks to homelessness of 25 per cent against a target of 0.4.
 
 Run:  python3 scan_theta.py 0.20
@@ -53,7 +53,7 @@ def point(th, sweeps=4):
     # fixed here or the scan would calibrate away the thing it is scanning
     par = calibrate(par, sweeps=sweeps, verbose=False, fix=('th',))
     m = stats(par)
-    row = dict(th=th, gam=par.gam, aleph=par.aleph, h_hl=par.h_hl,
+    row = dict(th=th, gam=par.gam, aleph=par.aleph, h1=par.h1,
                lam=par.lam, b=par.b, secs=time.time() - t)
     row |= {k: m[k] for k in ('part', 'prog', 'dshare', 'r_use', 'homeless',
                               'sud_of_homeless', 'housing_share', 'vsl')}

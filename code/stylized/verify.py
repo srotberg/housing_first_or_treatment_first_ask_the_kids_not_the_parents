@@ -63,8 +63,8 @@ chk('income strictly increasing', bool(np.all(np.diff(YG) > 0)))
 chk('bottom half share hits its target',
     abs(_bottom_half_share(SIG) - TARGET['bot50']) < 5e-4,
     f'{_bottom_half_share(SIG):.5f} vs {TARGET["bot50"]}')
-chk('no node below the small rent', YG[0] >= BASE.pr * BASE.h_sm,
-    f'lowest node {YG[0]:.4f} vs rent {BASE.pr*BASE.h_sm:.4f}')
+chk('no node below the small rent', YG[0] >= BASE.pr * BASE.h2,
+    f'lowest node {YG[0]:.4f} vs rent {BASE.pr*BASE.h2:.4f}')
 
 print('\n=== 2. Table 2, every internally calibrated moment ===')
 m = stats(BASE)
