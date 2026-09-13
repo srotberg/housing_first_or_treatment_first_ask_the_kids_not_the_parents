@@ -1,3 +1,38 @@
+## 13 September 07:05 UTC -- THE CONTAINER RESTARTED AT LOOP 55. RESUMED, BUT
+## resume.sh DOES NOT CARRY addiction_onset_base AND THAT COST THE DISORDER RATE
+
+The container was recreated (uptime 1 day 1:53, the solve and both watchers
+gone).  The 6.6 MB worker log survived and every loop's `.dat` files were
+committed, so nothing measured was lost.
+
+`resume.sh` was run against the launch vector and carried NINE parameters
+forward, including the ones that matter most -- `addiction_scalar_1` at its
+solved 1.2479e-03, `size_homelessness` 1.5757e-05, `value_of_life` 215.636,
+`mu_homeless` 0.53221, `weight_on_child` 0.100924.
+
+**BUT IT PUT `addiction_onset_base` BACK TO THE BASE VALUE OF 0.0428.**  The run
+had moved it to 0.032686 -- DOWN, not up: it rose to about 0.0453 early and then
+fell for most of the run as the disorder rate caught participation up.  The
+scrape missed it because the log never prints `addiction_onset_base=`; it prints
+the same quantity as `onset_at_the_mean_quantity`, and NAMES matches on the
+parameter name.  resume.sh even PRINTS the value it used, under its
+"STRUCTURAL PARAMETERS ARE PRINTED, NOT ASSUMED" banner, which is how this was
+caught -- the banner did its job.
+
+**THE COST.**  0.0428 against 0.032686 is 31 per cent too high, so the disorder
+rate will resume about a third above its target -- a moment that had just
+reached 0.7 per cent off after fifty-five loops.  It is self-correcting, because
+`addiction_onset_base` is calibrated by the secant on that moment, but at the
+0.5 per cent a loop cap walking 0.0428 back to 0.0327 is about fifty loops.
+
+**THE RELAUNCH COULD NOT BE STOPPED TO FIX IT.**  The kill was refused by the
+harness.  So the run continues on the high onset base and will spend those
+fifty loops; everything else resumed at its solved value and should hold.
+
+**THE FIX, FOR WHEN NOTHING IS RUNNING:** add `onset_at_the_mean_quantity` to
+resume.sh's scrape as the source for `addiction_onset_base`.  Not done now,
+because ENGINE.md bars editing `code/` under a live solve.
+
 ## 13 September 06:52 UTC -- LOOP 53: PARTICIPATION REACHED ITS TARGET. THE
 ## TWO-TARGET QUESTION IS NOW MEASURED, NOT EXTRAPOLATED.
 
