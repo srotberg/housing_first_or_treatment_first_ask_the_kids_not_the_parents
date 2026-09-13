@@ -20,6 +20,23 @@
 #
 # The point file records the vector on a VECTOR line, machine readable, so the
 # coordinator reads what was actually run rather than parsing a filename.
+# fail() IS DEFINED HERE, AT THE TOP, AND IT USED TO BE DEFINED AT LINE 763.
+# Bash resolves a function at call time, so every guard above that line called an
+# undefined command: the inverted-ladder check fired on 13 September and instead
+# of its message the run printed "run_one_point.sh: line 711: fail: command not
+# found" and exited 127.  A guard that cannot print its own diagnosis is worse
+# than no guard, because the failure it reports is its own.
+fail () {
+    mkdir -p points
+    {
+        echo "point $TAG FAILED: $1"
+        echo "FAILEDVECTOR (deliberately not a VECTOR line, so nothing treats"
+        echo "this as a measured point and skips re-running it)"
+        for k in $(echo "${!P[@]}" | tr ' ' '\n' | sort); do printf '  %s=%s\n' "$k" "${P[$k]}"; done
+    } > "points/point_${TAG}.FAILED.txt"
+    echo "run_one_point: $1" >&2
+    exit 1
+}
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -760,17 +777,6 @@ done | sort | md5sum | cut -c1-10)
 # way to tell whether it had skipped its line, failed to build, or never run --
 # and the health check's "has the point count moved" test reads a silent failure
 # as a point still solving. Every exit below now leaves a file behind.
-fail () {
-    mkdir -p points
-    {
-        echo "point $TAG FAILED: $1"
-        echo "FAILEDVECTOR (deliberately not a VECTOR line, so nothing treats"
-        echo "this as a measured point and skips re-running it)"
-        for k in $(echo "${!P[@]}" | tr ' ' '\n' | sort); do printf '  %s=%s\n' "$k" "${P[$k]}"; done
-    } > "points/point_${TAG}.FAILED.txt"
-    echo "run_one_point: $1" >&2
-    exit 1
-}
 
 # ALREADY MEASURED? THE SCRIPT DECIDES, NOT THE WORKER. The worker prompt used
 # to ask each worker to compare the parameter vector on its ROUND.txt line with
