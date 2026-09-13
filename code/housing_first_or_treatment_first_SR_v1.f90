@@ -569,11 +569,14 @@
         ! 14.313709795108050 -> 14.336045489025555, which is
         ! 14.3137 + 0.05*(0.69171-0.245) to ten figures.
         !
-        ! At 2.0 the fallback asks for 2.0*0.447 = 0.89, which is more than five per
-        ! cent of 14.3, so treatment_cost_max_rel_step below binds and the step IS
-        ! five per cent while the gap is wide. Once the gap falls under about 0.36
-        ! the adjuster's own step drops below the cap and the bracket decelerates on
-        ! its own, which is the behaviour wanted near the target.
+        ! At 2.0 the fallback asks for 2.0*0.447 = 0.89, which is far more than
+        ! treatment_cost_max_rel_step of 14.3, so that cap binds and the step IS
+        ! the cap while the gap is wide. Once the gap falls far enough the
+        ! adjuster's own step drops below the cap and the bracket decelerates on
+        ! its own, which is the behaviour wanted near the target. The threshold at
+        ! which that happens moves with the cap, so no number is quoted here: it
+        ! was written as "about 0.36" against a five per cent cap and the cap is
+        ! one per cent now.
         ! RELEASED 12 September on the author's "right, i think you can include
         ! also tauu". Was (1-freeze_to_three_block)*2.0, zero under the stage-1
         ! freeze, so tau_u sat at +108.8 per cent with nothing acting on it -- the
@@ -581,15 +584,30 @@
         !
         ! The 2.0 itself dates from 11 September: at 0.05 the fallback step was
         ! adjuster*(take up gap), an absolute 0.022 on a parameter of magnitude
-        ! 14.3, which moved it 0.156 per cent a loop. cap_step_rel gives it a five
-        ! per cent ceiling.
+        ! 14.3, which moved it 0.156 per cent a loop. cap_step_rel gives it a
+        ! ceiling of its own, declared just below -- read the number there rather
+        ! than here, because quoting it in two places is how the two came apart.
         real(8) :: utility_cost_of_treatment_adjuster=2.d0
-        ! THIS PARAMETER'S OWN STEP CAP, five per cent a loop, on the author's
-        ! instruction of 11 September. It replaces max_rel_step_all (5e-3) for
-        ! utility_cost_of_treatment ALONE, through cap_step_rel at the one call
-        ! site. Every other parameter still goes through cap_step and is unchanged.
-        ! It is the CEILING; the adjuster above is what drives the step up to it.
-        real(8) :: treatment_cost_max_rel_step=5*10.d0**(-2)
+        ! THIS PARAMETER'S OWN STEP CAP, through cap_step_rel at the one call
+        ! site. It replaces max_rel_step_all for utility_cost_of_treatment ALONE;
+        ! every other parameter still goes through cap_step and is unchanged. It
+        ! is the CEILING; the adjuster above is what drives the step up to it.
+        !
+        ! ONE PER CENT A LOOP, on the author's instruction of 13 September:
+        ! *"set the update on tau_u to 1%"*, and then *"not 5%"*. It was five,
+        ! from their instruction of 11 September that treatment cost *"has to be
+        ! adjusted much faster"*.
+        !
+        ! WHY IT CAN COME BACK DOWN WITHOUT UNDOING THAT. The five per cent was
+        ! asked for when the measured problem was that tau_u sat at +58 per cent
+        ! all night; the note above cap_step_rel records that the binding
+        ! constraint then was the ADJUSTER, not this ceiling -- raising the
+        ! ceiling alone moved the first measured step from 0.156 per cent to
+        ! 0.156 per cent. The adjuster is still 2.0, which is what does the
+        ! driving, so what changes here is only how far a single loop may travel.
+        ! At one per cent it now matches the global cap rather than sitting ten
+        ! times above it.
+        real(8) :: treatment_cost_max_rel_step=1*10.d0**(-2)
 
         ! THE PRICE OF A PERIOD OF TREATMENT, in the model's consumption units,
         ! calibrated on take up among those carrying the disorder. Calibrated
@@ -1908,11 +1926,28 @@
         ! 17.6 per cent needed forty loops to close and the bracket read as
         ! frozen rather than slow. At twenty the same gap moves it 4.5 per
         ! cent a loop, and the largest gap a rate can produce moves it 15.
-        ! RETIRED, 11 September, with the employment multiplier above and for
-        ! the same reason -- the author named both in one sentence. Its own
-        ! else branch already zeroes distance_kappa_uem when the adjuster is
-        ! not positive, so the term retires with it.
-        real(8) :: kappa_uem_adjuster=0.d0
+        ! LIVE AGAIN AND ON A DIFFERENT MOMENT, on the author's instruction of
+        ! 13 September: *"the instrument that decides what the job finding rate
+        ! is for someone with SMI is chosen to match the share of homeless with
+        ! SMI"*.
+        !
+        ! THIS IS THE SMI MIRROR OF WHAT kappa_ued ALREADY IS. The SUD side was
+        ! repointed from "unemployment given a SUD" onto the SUD share of the
+        ! homeless; this puts the SMI side on the SMI share of the homeless by
+        ! the same argument. The employment rate given SMI (0.30) becomes a
+        ! REPORTED moment with no instrument, exactly as unemployment given a
+        ! SUD now is -- which is the honest outcome and is why neither has a
+        ! seat in the convergence test.
+        !
+        ! IT ALSO GIVES THE SMI SHARE OF THE HOMELESS ITS FIRST LIVE INSTRUMENT.
+        ! zeta_DI owned that moment on paper and is zero by choice -- *"DI
+        ! replacement is 0"* -- and lambda_m was externally set, so the moment
+        ! was reported and fitted by nothing.
+        !
+        ! THE TWENTY IS UNCHANGED and the reasoning above still applies: the
+        ! parameter runs in the tens and the moment is a share that cannot
+        ! exceed one, so a two would move it four tenths of a per cent a loop.
+        real(8) :: kappa_uem_adjuster=2.d1
         real(8), parameter :: employment_rate_given_smi_data=0.30
 
         real(8) :: distance_rho_m
@@ -4256,7 +4291,15 @@
         ! the same reason: a parameter that is held has to be distinguishable
         ! from one that has converged.
         real(8) :: newborn_endowment_scale=1.d0
-        real(8) :: newborn_endowment_adjuster=(1-freeze_to_three_block)*(2*10.d0**(-1))
+        ! OFF THE FREEZE, on the author's instruction of 13 September: *"newborn
+        ! endowment should be used to match the amount of young homeless"*, which
+        ! is the moment its bracket already carries -- the share of the homeless
+        ! in the youngest HUD age band, homelessness_by_age_group(1,1) against
+        ! val_hud_share_1(1). The bracket was written and then frozen, so the
+        ! moment has been reported with nothing acting on it. Same one-line
+        ! detachment applied to weight_on_child, kappa_phi_d_level, smi_onset_level
+        ! and voucher_probability.
+        real(8) :: newborn_endowment_adjuster=2*10.d0**(-1)
         real(8) :: distance_newborn_endowment=1
         real(8) :: stopping_rule_newborn_endowment=10.d0**(-2)
         ! THE ENDOWMENT ENTERS THE BUDGET CONSTRAINT, NOT THE INITIAL
@@ -46350,14 +46393,39 @@
                         ! rate keeps falling to zero, so the ceiling remains a
                         ! ceiling and not a wall, but the log-odds line bends
                         ! there and a fit taken across it should not be believed.
+                        ! THE EMPTY SET PROBLEM, THE SAME ONE lambda_m GUARDS.
+                        ! With no homeless mass model_smi_share_of_homeless is set
+                        ! to zero by the branch that guards its division, so the
+                        ! gap against 0.25 is a fabricated -0.25 and kappa_uem is
+                        ! driven by a moment that does not exist.
+                        if (model_mass_homeless_raw(1)<=10.d0**(-12)) then
+
+                            write(*,*) "kappa_uem HELD: no homeless mass, so the SMI share"
+                            write(*,*) "   of the homeless is not measurable this loop"
+
+                            distance_kappa_uem=1
+
+                        else
+
+                        ! THE GAP IS THE SMI SHARE OF THE HOMELESS NOW, NOT THE
+                        ! EMPLOYMENT RATE GIVEN SMI, AND THAT FLIPS THE SIGN.
+                        ! The long note above explains why the old sign was a PLUS:
+                        ! an employment rate FALLS in this parameter, so closing a
+                        ! gap on it means adding. The share of the homeless does
+                        ! the opposite -- a bigger penalty costs the ill more jobs,
+                        ! which makes them poorer and puts MORE of them on the
+                        ! street -- so the share RISES in kappa_uem and the update
+                        ! SUBTRACTS, which is what kappa_ued does on the SUD side.
                         cap_old_1=kappa_uem
-                        kappa_uem=min(max(kappa_uem+kappa_uem_adjuster*&
-                            (model_employment_rate_given_smi(1)-employment_rate_given_smi_data),&
+                        kappa_uem=min(max(kappa_uem-kappa_uem_adjuster*&
+                            (model_smi_share_of_homeless(1)-smi_share_of_homeless_data),&
                             1.0d0),100.d0)
                         kappa_uem=cap_step(kappa_uem,cap_old_1)
 
                         distance_kappa_uem=&
-                            abs(model_employment_rate_given_smi(1)-employment_rate_given_smi_data)
+                            abs(model_smi_share_of_homeless(1)-smi_share_of_homeless_data)
+
+                        end if
 
                         write(*,*) "kappa_uem=", kappa_uem, " distance_kappa_uem=", distance_kappa_uem
 
