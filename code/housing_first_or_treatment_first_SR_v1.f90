@@ -1177,7 +1177,13 @@
         ! table and typed again in the prose with nothing declaring it, so it was
         ! the one target in that table with no source of truth behind it.
         real(8), parameter :: child_homeless_ratio_data=2.10d0
-        real(8) :: penalty_child_addicted_adjuster=0.d0
+        ! LIVE, on the author's instruction of 13 September: *"delta_d should
+        ! also be part of the live instrument"*.  Back to its own
+        ! penalty_child_adjuster_start.  The scan at scan_penalty_child still
+        ! runs and still gives it a starting value good to first order; this is
+        ! what walks it the rest of the way inside the joint loop rather than
+        ! leaving it where the scan put it.
+        real(8) :: penalty_child_addicted_adjuster=5*10.d0**(-2)
         real(8), parameter :: penalty_child_adjuster_start=5*10.d0**(-2)
         real(8), parameter :: penalty_child_adjuster_damping=0.5
         real(8), parameter :: penalty_child_adjuster_growth=1.2
@@ -1654,7 +1660,10 @@
         ! mental illness, so prevalence RISES in it and the update subtracts the
         ! gap. directions_table agrees: p_m -> smi_onset_level, 'lower'.
         real(8) :: smi_onset_level=0.003306
-        real(8) :: smi_onset_level_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-3))
+        ! OFF THE FREEZE, on the author's instruction of 13 September naming it
+        ! a live instrument.  Same one-line detachment already applied to
+        ! weight_on_child_adjuster and kappa_phi_d_level_adjuster.
+        real(8) :: smi_onset_level_adjuster=5*10.d0**(-3)
         real(8) :: distance_smi_onset_level=1
         real(8) :: stopping_rule_smi_onset_level=10.d0**(-3)
 
@@ -1813,7 +1822,18 @@
         ! extra state above, which is why it is written down here rather than
         ! built.
         real(8) :: zeta_DI=0.d0
-        ! EXTERNALLY SET, so the adjuster is zero and nothing brackets on it.
+        ! EXTERNALLY SET AND ZERO, ON THE AUTHOR'S WORD: *"DI replacement is
+        ! 0"*, 13 September. Not an oversight and not an instrument -- the
+        ! households with serious mental illness (SMI) in this model draw no
+        ! disability insurance, which is the modelling choice the long note above
+        ! is about. It was briefly made live in this session on a misreading and
+        ! put straight back.
+        !
+        ! SO THE SMI SHARE OF THE HOMELESS IS REPORTED, NOT TARGETED. Its 0.25
+        ! stays declared and stays printed beside the model's value; nothing
+        ! brackets on it and distance_zeta_DI has no seat in the convergence
+        ! test, which is correct for a moment with no live instrument and is the
+        ! rule the rest of this file follows.
         real(8) :: zeta_DI_adjuster=0.d0
         real(8) :: distance_zeta_DI
         real(8) :: stopping_rule_zeta_DI=10.d0**(-3)
@@ -3715,14 +3735,19 @@
         ! is what food_stamps_share_data measures.
         ! RELEASED 12 September: the author named c_bar. Was
         ! (1-freeze_to_three_block)*5e-2, zero under the stage-1 freeze.
-        ! RETIRED with the programme itself.  Its distance is retired too, at
-        ! the update block: a zero adjuster with a LIVE distance cannot converge
-        ! and the do-while has no cap to save it.
-        real(8) :: max_food_cost_adjuster=0.d0
+        ! LIVE AGAIN, same instruction of 13 September.  It was retired with the
+        ! no-food-stamp variant, and the vectors we calibrate carry max_food_cost
+        ! near 0.026, so the programme is on and its moment had no instrument.
+        ! Back to the 5e-2 it carried before the stage-1 freeze.
+        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
-        real(8) :: voucher_probability_adjuster=(1-freeze_to_three_block)*(1*10.d0**(-1))
+        ! OFF THE FREEZE, on the same instruction.  Its do while term loses the
+        ! freeze guard with it, so the parameter and its distance go live
+        ! together -- see the update block, which is now guarded on the adjuster
+        ! for the reason max_food_cost's is.
+        real(8) :: voucher_probability_adjuster=1*10.d0**(-1)
         real(8), parameter :: voucher_probability_adjuster_start=1*10.d0**(-1)
         real(8) :: previous_gap_voucher_probability=0
         integer :: have_gap_voucher_probability=0
@@ -5120,9 +5145,12 @@
         real(8), dimension(0:have_two_rental_markets) :: rental_management_costs=5.8601218979210445E-002
                  
         real(8) :: labor_income_tax_rate=(1-perceived_probability_lower)*0.75+perceived_probability_lower*0.69
-        ! RETIRED with the tax.  Its distance is retired with it below: a zero
-        ! adjuster with a LIVE distance cannot converge.
-        real(8) :: labor_income_tax_rate_adjuster=0.d0
+        ! LIVE AGAIN, on the author's instruction of 13 September: *"tau_ell, smi
+        ! onset, voucher probability, food stamps can be part of the live
+        ! instrument"*.  It was retired when the author ran a no-tax variant; the
+        ! vectors we calibrate carry adjust_taxes=1 and a tax rate near 0.75, so
+        ! the moment tau_l is live and had no instrument.
+        real(8) :: labor_income_tax_rate_adjuster=5*10.d0**(-1)
         real(8), parameter :: labor_income_tax_rate_adjuster_start=5*10.d0**(-1)
         real(8) :: previous_gap_labor_income_tax_rate=0
         integer :: have_gap_labor_income_tax_rate=0
@@ -7596,6 +7624,24 @@
         ! distribution, using the same expression as the live branch of
         ! flow_utility, so it is the utility households actually got and not the
         ! utility of a candidate choice.
+        ! THE STRICT MINIMUM, OVER EVERY CELL THAT CARRIES ANY MASS AT ALL.
+        !
+        ! val_life_min is taken over cells above 1e-12 of mass, which is the
+        ! right thing to REPORT -- it is the minimum a reader would recognise --
+        ! and the wrong thing to ENFORCE on. The author's instruction of 13
+        ! September is *"you also need to make sure that no one has a negative
+        ! value of life"*, and no one means no one: a household sitting on
+        ! 1e-13 of mass is still a household in this model, and
+        ! val_neg_life_mass already counts it. Enforcing on the reportable
+        ! minimum would leave exactly those households negative while the log
+        ! said the floor was satisfied.
+        real(8), dimension(transition_length) :: val_life_min_any
+        ! HOW FAR ABOVE ZERO THE FLOOR PUTS THE WORST-OFF HOUSEHOLD. Zero would
+        ! make "not worth being alive" a boundary case decided by rounding, so
+        ! the floor buys a little room. It is small against an aleph of 80 to
+        ! 163, so the cost in the value-of-life moment is negligible unless the
+        ! floor is binding hard, and that is reported when it happens.
+        real(8), parameter :: value_of_life_floor_margin=10.d0**(-3)
         real(8), dimension(transition_length) :: val_neg_life_mass,val_life_min,&
             val_ugoods_users,val_umass_users,val_ugoods_others,val_umass_others
 
@@ -8666,6 +8712,8 @@
                 " raw mass=", val_neg_life_mass(1), " of ", pooled_mass_all
             write(*,*) "DIAG lowest value of a period of life            =",&
                 val_life_min(1)
+            write(*,*) "DIAG lowest over ANY mass, which is what is floored=",&
+                val_life_min_any(1)
             write(*,*) "DIAG value of life, drug users                   =",&
                 val_ugoods_users(1)/max(val_umass_users(1),10.d0**(-14))
             write(*,*) "DIAG value of life, everyone else                =",&
@@ -34233,7 +34281,7 @@
             1, open_1)
         call one_convergence_term("voucher_probability",&
             distance_voucher_probability, stopping_rule_voucher_probability,&
-            merge(1,0,freeze_to_three_block==0), open_1)
+            1, open_1)
         call one_convergence_term("separation_rate",&
             distance_separation_rate, stopping_rule_separation_rate,&
             1, open_1)
@@ -36319,6 +36367,7 @@
         ! this one was not, which is what makes it an oversight rather than a
         ! decision. Guarded, so the minimum is taken over both types.
         if (accumulating_beta_types==0) val_life_min(time_period)=10.d0**(10)
+        if (accumulating_beta_types==0) val_life_min_any(time_period)=10.d0**(10)
         if (accumulating_beta_types==0) val_ugoods_users(time_period)=0
         if (accumulating_beta_types==0) val_umass_users(time_period)=0
         if (accumulating_beta_types==0) val_ugoods_others(time_period)=0
@@ -36479,6 +36528,11 @@
                                     if ((distribution_mass_used>10.d0**(-12)) .AND. &
                                         (val_life_1<val_life_min(time_period))) then
                                         val_life_min(time_period)=val_life_1
+                                    end if
+                                    ! ANY mass, however small. See the declaration.
+                                    if ((distribution_mass_used>0.d0) .AND. &
+                                        (val_life_1<val_life_min_any(time_period))) then
+                                        val_life_min_any(time_period)=val_life_1
                                     end if
 
                                     if (drug_spending_used>0) then
@@ -43071,7 +43125,7 @@
             (distance_addiction_scalar>stopping_rule_addiction_scalar) .OR. &
             (distance_value_of_life>stopping_rule_value_of_life) .OR. &
             (distance_max_food_cost>stopping_rule_max_food_cost) .OR. &
-            ((freeze_to_three_block==0) .AND. (distance_voucher_probability>stopping_rule_voucher_probability)) .OR. &
+            (distance_voucher_probability>stopping_rule_voucher_probability) .OR. &
             (distance_separation_rate>stopping_rule_separation_rate) .OR. &
             (distance_employment_multiplier>stopping_rule_employment_multiplier) .OR. &
             (distance_utility_cost_of_treatment>stopping_rule_utility_cost_of_treatment) .OR. &
@@ -44920,7 +44974,11 @@
                             max(model_average_income(1),10.d0**(-14))),&
                             kappa_phi_d_level_hi),kappa_phi_d_level_lo)
                         ! cap_step_rel, NOT cap_step: the death risk gets its
-                        ! own 0.1 per cent a loop rather than the global rate.
+                        ! own rate rather than the global one. It is 0.05 per
+                        ! cent a loop, from the author's instruction of 13
+                        ! September; the rate itself lives at
+                        ! kappa_phi_d_max_rel_step and this comment names no
+                        ! number so the two cannot drift apart again.
                         kappa_phi_d_level=cap_step_rel(kappa_phi_d_level,cap_old_1,&
                             kappa_phi_d_max_rel_step)
 
@@ -45954,6 +46012,61 @@
                     write(*,*) "value_of_life=", value_of_life
                     write(*,*) "distance_value_of_life=", distance_value_of_life
 
+                    ! NOBODY MAY PREFER TO BE DEAD, and this is a CONSTRAINT, not
+                    ! a moment. The author, 13 September: *"you also need to make
+                    ! sure that no one has a negative value of life"*.
+                    !
+                    ! WHY IT MATTERS FOR THIS PAPER IN PARTICULAR, and it is not
+                    ! a tidiness point. aleph is added to a CRRA goods term that
+                    ! is negative and unbounded below, so the value of a period
+                    ! of life FALLS with consumption. If any mass sits below
+                    ! zero, those households prefer not to be alive -- and then
+                    ! an eightfold mortality multiplier on drug use is a BENEFIT
+                    ! to exactly the poorest households, which are the ones the
+                    ! model selects into use. The selection into drug use would
+                    ! be a defect of the utility function rather than the
+                    ! mechanism the paper is about.
+                    !
+                    ! THE CORRECTION IS EXACT AND THAT IS WHY IT IS DONE THIS WAY.
+                    ! val_life_1 = val_ugoods_1 + value_of_life, one for one, so
+                    ! raising aleph by (margin - the minimum) puts the worst-off
+                    ! household exactly at the margin, holding behaviour fixed.
+                    ! Behaviour does move, so it is re-checked every loop and
+                    ! converges from above in a pass or two.
+                    !
+                    ! IT IS NOT PUT THROUGH cap_step. A step cap is for a SEARCH,
+                    ! and this is a constraint the model has to satisfy at every
+                    ! iterate rather than approach at half a per cent a loop. A
+                    ! capped floor would leave households preferring death for as
+                    ! many loops as it took to walk there.
+                    !
+                    ! AND WHEN IT BINDS, aleph IS NOT FREE, so its moment must
+                    ! not be scored. This is the rule kappa_phi_d's history
+                    ! records -- a moment cannot be chased while its driver is
+                    ! being moved by something else -- and leaving
+                    ! distance_value_of_life live under a binding floor is the
+                    ! documented way for the outer do while never to terminate.
+                    if (val_life_min_any(1)<value_of_life_floor_margin) then
+
+                        write(*,*) "VALUE OF LIFE FLOOR BINDS: the worst-off household",&
+                            " values a period of life at", val_life_min_any(1),&
+                            " and", val_neg_life_mass(1), " of mass is below zero"
+                        write(*,*) "VALUE OF LIFE FLOOR: aleph", value_of_life, " ->",&
+                            value_of_life+(value_of_life_floor_margin-val_life_min_any(1))
+
+                        value_of_life=min(value_of_life+&
+                            (value_of_life_floor_margin-val_life_min_any(1)),10.d0**(4))
+
+                        ! aleph is pinned by the constraint this loop, so the VSL
+                        ! moment has no instrument and is not scored. Said out
+                        ! loud, because a moment silently dropped from the test
+                        ! is indistinguishable from a moment that converged.
+                        write(*,*) "VALUE OF LIFE FLOOR: the VSL moment is NOT scored this",&
+                            " loop -- aleph is pinned by the floor, not by its own bracket"
+                        distance_value_of_life=0
+
+                    end if
+
                     ! cbar, the food stamp floor, on food stamps over OUTPUT.
                     ! A higher floor pays more out, so the share rises in it and
                     ! the update subtracts the gap.
@@ -45996,6 +46109,22 @@
 
                     ! pi_V, the voucher lottery, on recipients over the income
                     ! eligible. Coverage rises in it, so subtract the gap.
+                    !
+                    ! GUARDED ON THE ADJUSTER, like max_food_cost's.  This block
+                    ! was unguarded: it wrote a LIVE distance every loop while a
+                    ! zero adjuster meant the parameter could not move, and the
+                    ! only thing standing between that and a calibration that
+                    ! never terminates was the freeze guard on its do while term.
+                    ! Now that the term is scored unconditionally, the guard has
+                    ! to be here instead, and it is the better place for it: the
+                    ! rule is that a distance is written exactly when its
+                    ! parameter can move.
+                    if (voucher_probability_adjuster<=0.d0) then
+
+                        distance_voucher_probability=0
+
+                    else
+
                     write(*,*) "probability_of_voucher_benchmark_used=", probability_of_voucher_benchmark_used
                     call damp_on_flip(voucher_probability_adjuster,&
                         model_eligibles_getting_voucher(1)-voucher_coverage_data,&
@@ -46011,6 +46140,8 @@
                         abs(model_eligibles_getting_voucher(1)-voucher_coverage_data)
                     write(*,*) "probability_of_voucher_benchmark_used=", probability_of_voucher_benchmark_used
                     write(*,*) "distance_voucher_probability=", distance_voucher_probability
+
+                    end if
 
                     ! bar pi^eu, the separation rate, on the unemployment rate.
                     ! Unemployment rises in it, so subtract the gap.
