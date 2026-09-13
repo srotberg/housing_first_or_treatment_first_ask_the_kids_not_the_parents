@@ -1,3 +1,51 @@
+## 13 September 03:40 UTC -- HOMELESSNESS IS WALKING AWAY FROM ITS TARGET AS
+## PARTICIPATION RISES, AND size_homelessness IS NOT OFFSETTING IT
+
+Eight loops of `worker_236f6b3ab5.log`, against the LIVE targets (the gap table
+was reading a target for homelessness that commit 3b966e6d retired two days ago;
+`paper/fortran_numbers.json` refreshed this firing):
+
+    loop      part  homeless       sud      vsl      homeless gap
+       1   0.00892   0.00972   0.00400   69.21            -2.8%
+       2   0.00887   0.00977   0.00403   71.02            -2.3%
+       3   0.00906   0.01005   0.00410   71.30            +0.5%
+       4   0.01000   0.01065   0.00446   71.83            +6.5%
+       5   0.00991   0.01078   0.00452   72.47            +7.8%
+       6   0.01018   0.01108   0.00460   73.15           +10.8%
+       7   0.01063   0.01145   0.00483   71.48           +14.5%
+       8   0.01122   0.01179   0.00510   70.34           +17.9%
+    target  0.08900   0.01000   0.03680   80.00
+
+**HOMELESSNESS STARTED ON TARGET AND HAS WALKED OFF IT MONOTONICALLY.**  Over
+the eight loops participation rose 25.8 per cent and homelessness rose 21.3, so
+the two move very nearly one for one in logs, while `size_homelessness` was
+pushed DOWN every loop from 2.64e-05 to 2.53e-05 and did not arrest it.
+
+**WHAT THIS DOES AND DOES NOT ESTABLISH.**  It establishes the co-movement over
+the range actually travelled: a 26 per cent rise in participation, and the
+instrument losing to it throughout.  It does NOT establish where homelessness
+ends up when participation completes the remaining factor of eight, and the
+standing rule is to prefer a measured bracket to an elasticity, so the
+extrapolation is not written down here as a number.  What can be said without
+extrapolating: the instrument is moving the wrong way relative to its moment
+already, at 1 per cent a loop, from a value the 02:45 entry records as having
+essentially nothing left to give.
+
+**THE CHILD USE GAP AND THE VALUE OF LIFE ARE ALSO DRIFTING.**  The child gap is
+0.318, 0.232, 0.191, 0.0919, 0.0796, 0.0653 across loops 3 to 8 against a target
+of 0.183 -- it crossed the target at loop 5 and is now 64 per cent off on the far
+side, all of it participation's motion.  The value of life ratio improved to
+73.15 at loop 6 and has fallen back to 70.34.
+
+So at loop 8: participation improving slowly, three other moments moving AWAY.
+This is not one of ENGINE.md's three stop conditions -- participation is not
+zero, there is no NaN, and the author has not said stop -- so THE RUN IS LEFT
+ALIVE.  But it is the substance of "cannot produce a usable point", and the
+decision in front of the author is unchanged and now better evidenced: let it
+run about 64 more loops, or stop it and scan `addiction_scalar_1` once at
+everything else fixed, which is the only thing that can say whether
+participation is continuous in it.
+
 ## 13 September 03:20 UTC -- THE QUANTITATIVE RUN TURNED THE CORNER AT LOOP 4
 
 The author: *"is the quant model getting closer? are we able to converge on that
