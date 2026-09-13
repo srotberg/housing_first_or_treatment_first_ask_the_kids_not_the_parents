@@ -1,3 +1,44 @@
+## 13 September 05:05 UTC -- THIRTY LOOPS. THREE SOLVED, TWO STUCK, AND THE
+## AUTHOR'S OWN IDENTITY HAS ARRIVED BY ITSELF
+
+    moment           start      now       target   off by
+    participation   0.00892   0.01959    0.08900    78.0%
+    homelessness    0.00972   0.01509    0.01000    50.9%
+    disorder rate   0.00400   0.00806    0.03680    78.1%
+    vsl ratio         69.21     80.25      80.00     0.3%
+    drug share      0.16048   0.15391    0.14098     9.2%
+
+    solved and stable:  value_of_life 0.3%, mu_homeless 1.1%, separation_rate 0.5%
+    still jumping:      child use gap, range 0.0653-0.3810 over thirty loops
+    addiction_scalar_1: 0.00206065 -> 0.00153966, -25.3 per cent
+    average elasticity: -2.70   ->  56 loops still to run at 1 per cent a loop
+
+**THE pi_base IDENTITY HAS ARRIVED WITHOUT BEING IMPOSED.**  The disorder rate
+over participation now reads 0.4114 against the author's 0.0368/0.089 = 0.4135 --
+half a per cent apart.  It was 0.448 at loop 1 and has walked onto the identity
+on its own as the onset base moved.  So `addiction_onset_base` is DONE in the
+only sense that matters: the ratio is right, and the 78 per cent gap on
+`model_fraction_addicted` is entirely participation's.  This is the quantitative
+counterpart of the author's stylized insight -- *"shouldnt pi_base just be
+0.0368/0.089?"* -- and it says the same thing: that parameter should be SET from
+the identity, not searched, and the 56 remaining loops it is being given are
+loops spent on a number already known.
+
+**WHAT THIRTY LOOPS HAVE SETTLED AND WHAT THEY HAVE NOT.**  Every moment that
+does NOT depend on the size of the using population has landed: the value of
+life went 69.21 -> 80.25 and the parameter has now turned DOWN to hold it there,
+which is a solved bracket regulating rather than a trend running; recovery and
+unemployment are inside one per cent.  Every moment that DOES depend on the
+using population is either stuck (participation, the disorder rate) or still
+jumping on a population of 2 per cent (the child use gap).
+
+**HOMELESSNESS IS PAST HALF AGAIN ITS TARGET** -- 0.01509 against 0.0100, twenty
+four loops without one reversal, with `size_homelessness` cut 23 per cent over
+the same span.  Nothing in thirty loops suggests its own instrument will catch
+it.
+
+Still no ENGINE.md stop condition.  THE RUN IS LEFT ALIVE.
+
 ## 13 September 04:15 UTC -- TWO THINGS REPORTED AS STABLE ARE NOT, AND BOTH
 ## CORRECTIONS POINT THE SAME WAY
 
