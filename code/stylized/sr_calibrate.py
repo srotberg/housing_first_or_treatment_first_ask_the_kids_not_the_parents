@@ -462,6 +462,44 @@ def step(par, m, state):
         kw[name] = new
         moved.append((name, old, new, 100 * rel))
 
+        # A PARAMETER THAT MOVES ONE WAY WHILE ITS GAP WIDENS IS NOT CONVERGING
+        # SLOWLY, IT IS RUNNING AWAY, AND NOTHING USED TO NOTICE.
+        #
+        # The author, 13 September: *"That should not diverge...."*.  They are
+        # right, and the case that produced this is exact.  delta_d's sign in
+        # SPEC is +1, which is correct: with no income floor the odds ratio is
+        # smooth and monotone in it, 1.13 at 0.10 rising to 3.11 at 1.00, and
+        # 0.56972 hits the target of 2.0000 to four decimals.  WITH the floor
+        # the same scan runs the other way, 0.837 down to 0.124, so the true
+        # sign is -1.  The bracket then pushed delta_d up every pass, the ratio
+        # fell, the gap widened, and it pushed harder: 0.57 to 1.45 over
+        # nineteen hundred passes with only the bound to stop it, dragging omega
+        # and the rest of the vector along.
+        #
+        # So: count consecutive moves in one direction, and if the gap has not
+        # shrunk over a long run of them, the bracket's sign is wrong for the
+        # configuration it is in.  Freeze the adjuster and SAY SO on the table.
+        # Freezing rather than flipping the sign is deliberate -- a sign that is
+        # wrong in one configuration and right in another is a fact about the
+        # model that the author has to see, not something for the search to
+        # paper over.
+        runs = state.setdefault('_runaway', {})
+        d = runs.setdefault(name, {'n': 0, 'dir': 0, 'rel0': abs(rel)})
+        mv = 1 if new > old else (-1 if new < old else 0)
+        if mv != 0 and mv == d['dir']:
+            d['n'] += 1
+        else:
+            d['dir'], d['n'], d['rel0'] = mv, 1, abs(rel)
+        if d['n'] >= RUNAWAY_PASSES and abs(rel) >= 0.98 * d['rel0']:
+            state[name + '_adj'] = 0.0
+            state.setdefault('_frozen', set()).add(name)
+            print(f'  RUNAWAY {name} has moved {"up" if mv > 0 else "down"} for '
+                  f'{d["n"]} passes and its gap has not shrunk '
+                  f'({100 * d["rel0"]:+.1f} % to {100 * rel:+.1f} %).  Its sign '
+                  f'is wrong for this configuration.  Adjuster set to zero; the '
+                  f'gap is still reported.')
+            d['n'] = 0
+
     # THE ESCAPE FROM THE CORNER HAS TO BE EXPLICIT, BECAUSE HOLDING ALONE
     # PARKS THE RUN THERE.  This was learned by breaking it.  At CORNER = 0.02
     # the passes at a drug share of 0.037 to 0.043 were scored as interior and
@@ -517,6 +555,13 @@ def step(par, m, state):
 # the comment in moments() describes: the corner does not merely waste
 # iterations, it undoes converged ones.
 CORNER = 0.10   # drug spending share below this is the corner branch
+
+# HOW LONG A ONE-WAY RUN HAS TO BE BEFORE IT COUNTS AS A RUNAWAY.  Long enough
+# that a genuinely slow bracket is never caught: at the slowest step in
+# PER_PARAM_STEP, 0.02 per cent a pass, 400 passes moves a parameter by 8 per
+# cent, and any bracket whose gap is closing will have shrunk it measurably over
+# that.  delta_d's actual runaway ran for nineteen hundred.
+RUNAWAY_PASSES = 400
 
 
 def step_on_branch(par, m, state):
@@ -684,7 +729,15 @@ if __name__ == '__main__':
     # to instead of walking the same three thousand passes again.
     SEED = dict(gam=0.43813, aleph=10.98104, h_hl=0.00969, b=0.06063,
                 pi_base=0.41372, u0=0.04824, u1=0.05508, omega=0.00905,
-                delta_d=0.57074, kap=0.10589, th=0.15242)
+                # delta_d SOLVED, not guessed.  The author, 13 September:
+                # *"you should scan the incomes and see which ones give an odds
+                # ratio of 2 and pick that"*.  Scanned on this vector with no
+                # floor: 0.10 gives 1.1331, 0.24 gives 1.3500, 0.40 gives
+                # 1.6414, 0.55 gives 1.9558, 0.66 gives 2.2103, 1.00 gives
+                # 3.1083 -- smooth and monotone throughout -- and bisecting on
+                # it lands at 0.56972, which returns 2.0000 to four decimals.
+                # That is a child income cut of 43.4 per cent.
+                delta_d=0.56972, kap=0.10589, th=0.15242)
     _start = {**{k: v for k, v in FIXED.items() if k != 'kap'},
               **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2,
                    # A STARTING VALUE AGAIN, not a pin: delta_d is back in SPEC
