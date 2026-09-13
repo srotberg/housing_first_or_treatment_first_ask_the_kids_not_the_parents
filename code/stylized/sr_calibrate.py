@@ -466,8 +466,20 @@ MAX_REL_STEP = 0.005
 # participation drifted from +4 per cent to -32.  Every one of those iterations
 # was spent in a thinned-out economy, which is the fixed-b regime the author
 # ruled out as a way of measuring this.
+# u1 AT 0.1 PER CENT AND b AT 0.25, on the author's instruction of 13 September:
+# *"reset u1, update it at 0.1% and update b at 0.25%"*.  b is now two and a
+# half times FASTER than u1, which is the ratio the experiment needs: b has to
+# hold participation while u1 climbs, so the instrument doing the holding must
+# outrun the one doing the pushing.
+#
+# IT WAS THE OTHER WAY ROUND AND THAT IS WHAT BROKE THE TEST.  u1 ran at 0.5 per
+# cent and b at 0.1, five times slower.  Over three hundred and fifty iterations
+# u1 rose 473 per cent while b fell 23, and participation drifted from +4 to -32
+# per cent -- so every iteration was spent in a thinned-out economy, which is
+# the fixed-b regime the author had already ruled out as a way of measuring
+# this.  The sweep was reproducing a bad experiment slowly.
 PER_PARAM_STEP = {'omega': 0.0005, 'th': 0.0003, 'h1': 0.005, 'kap': 0.001,
-                  'b': 0.02, 'pi_base': 0.001, 'delta_d': 0.0002}
+                  'u1': 0.001, 'b': 0.0025, 'pi_base': 0.001, 'delta_d': 0.0002}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
 ADJ_FLOOR = 1e-3
@@ -976,14 +988,13 @@ if __name__ == '__main__':
     # iteration 550 and then ROSE every table to +624: delta_d was widening it
     # faster than omega could narrow it.  Starting omega at the crossing gives it
     # a chance to settle before delta_d moves much further.
-    # BACK TO THE START OF THE u1 EXPERIMENT, not to where it has drifted.  u1
-    # was pushed to 0.4584 with b unable to follow, so the current vector is a
-    # record of the speed mismatch rather than of the mechanism.  This restarts
-    # at u1 = 0.08, where eight of ten moments were inside ten per cent, and
-    # lets b run at twenty times its old speed.
+    # u1 IS RESET to 0.04860, where the experiment began, rather than left at the
+    # 0.4584 it drifted to: that vector records the speed mismatch, not the
+    # mechanism.  Everything else is the point where eight of ten moments were
+    # inside ten per cent.
     SEED = dict(aleph=12.4338, gam=0.4425, h1=0.01010, b=0.05140,
                 # 0.0368/0.089, the value the identity sets, not a start
-                pi_base=0.0368 / 0.089, u0=0.04740, u1=0.08000, omega=0.0024,
+                pi_base=0.0368 / 0.089, u0=0.04740, u1=0.04860, omega=0.0024,
                 delta_d=0.71710, kap=0.10740, th=0.14670)
     _start = {**{k: v for k, v in FIXED.items() if k != 'kap'},
               **{**START, "th": 0.25, "beta": 0.995 ** 30, "kap": 1.0 - 0.91 ** 2,
