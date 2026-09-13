@@ -6687,6 +6687,13 @@
         ! that does not set it.
         integer :: treatment_choice_now=0
 
+        ! THE CHILD'S OWN FLOW UTILITY, AND THE SWITCH THAT ASKS FOR IT.
+        ! calculate_flow_utility fills child_flow_out only when want_child_flow
+        ! is set, which is only inside calculate_childhood_utility. Both are
+        ! threadprivate, so the solve's threads cannot see one another's.
+        real(8) :: child_flow_out=0
+        logical :: want_child_flow=.FALSE.
+
         ! WARM STARTING THE HOURS BISECTION ON THE SECOND PASS.
         !
         ! The second pass re-solves a node the first pass already solved, with
@@ -7543,6 +7550,28 @@
         
         real(8), dimension(transition_length) :: average_welfare_of_youngest_cohort,average_welfare_of_all_cohorts,&
             average_welfare_of_winners,average_welfare_of_winners_benchmark
+
+        ! LIFETIME UTILITY WITH THE CHILDHOOD IN IT.
+        !
+        ! average_welfare_of_youngest_cohort starts the clock at data age 26. A
+        ! person's life does not: the twenty five years before that are spent as
+        ! a child in a household aged 26 to 50, consuming what that household
+        ! chose. The author, 13 September, on the childhood half: *"the
+        ! childhood utility is basically the weighted average of age 1 (from the
+        ! choices of age 26), age 2 (from choices of age 27)...age 25 (from
+        ! choices of age 50)"* -- and then *"computing the lifetime utility
+        ! accounting for all the childhood of everyone"*.
+        !
+        ! So childhood_utility_by_age(t,a) is the average over the cross section
+        ! of households at model age a of the child's own flow utility from what
+        ! that household consumes, average_childhood_utility discounts those
+        ! twenty five numbers back to birth, and
+        ! average_welfare_with_childhood adds the adult half discounted by
+        ! twenty five periods. These are REPORTED and feed nothing: no moment is
+        ! bracketed on them and no adjuster reads them.
+        real(8), dimension(transition_length) :: average_childhood_utility,&
+            average_welfare_with_childhood
+        real(8), dimension(transition_length,child_at_home_last_index) :: childhood_utility_by_age
             
         real(8) :: average_welfare_of_youngest_cohort_calibrated
             
@@ -7642,6 +7671,8 @@
         !$omp threadprivate(drug_risk_active)
         !$omp threadprivate(flow_utility_goods_only)
         !$omp threadprivate(treatment_choice_now)
+        !$omp threadprivate(child_flow_out)
+        !$omp threadprivate(want_child_flow)
         !$omp threadprivate(secant_guess)
         !$omp threadprivate(have_secant_guess)
         !$omp threadprivate(drug_risk_housing_index)
@@ -18380,6 +18411,195 @@
         
     end subroutine
     
+    subroutine calculate_childhood_utility(time_period)
+
+        ! THE TWENTY FIVE YEARS BEFORE THE MODEL STARTS COUNTING.
+        !
+        ! Every person in this economy is a child for twenty five years before
+        ! becoming the household at model age one, and spends them in a
+        ! household at model ages one to twenty five. What that person consumed
+        ! then is not in average_welfare_of_youngest_cohort, which begins at the
+        ! value function at age one. This adds it.
+        !
+        ! HOW THE CHILDHOOD IS PUT TOGETHER, in the author's own words: *"the
+        ! childhood utility is basically the weighted average of age 1 (from the
+        ! choices of age 26), age 2 (from choices of age 27)...age 25 (from
+        ! choices of age 50)."*  So the child at its own age a consumes what a
+        ! household at model age a chose, and the average is taken over the
+        ! cross section of households at that age -- which is also what handles
+        ! the parent who dies: the surviving distribution at age a is the
+        ! distribution of households a child of that age can be living in, the
+        ! same replacement the model already makes when a dead household is
+        ! succeeded by a newborn.
+        !
+        ! WHAT IS NOT IN IT, and is the one judgement here worth naming. The
+        ! child's flow is its own -- the household's consumption and housing,
+        ! the addictive good excluded, scaled by household size. The parent's
+        ! altruism weight and the parent's counting of the child are the
+        ! PARENT'S valuation and have no business in the child's welfare, so
+        ! neither appears. See child_flow_1 in calculate_flow_utility.
+        !
+        ! IT IS REPORTED AND FEEDS NOTHING. No moment is bracketed on it and no
+        ! adjuster reads it.
+
+        use Global_Vars
+
+        implicit none
+
+        integer, intent(in) :: time_period
+        integer :: financial_index,has_house,time_period_used,age_index_1
+        integer :: years_1,choose_to_own_1,housing_1,addiction_used_1
+        real(8) :: mass_1,flow_discard_1,mass_at_age_1,utility_at_age_1
+        real(8) :: total_consumption_1,consumption_1,frac_spent_1,space_1
+
+        time_period_used=time_period-solve_transition_dynamics
+
+        childhood_utility_by_age(time_period,:)=0
+        average_childhood_utility(time_period)=0
+
+        ! Asked for here and nowhere else, and cleared again below so the solve
+        ! never pays for it.
+        want_child_flow=.TRUE.
+
+        do age_index_1=1,child_at_home_last_index
+
+            age_index=age_index_1
+
+            if (age_index>(life_span-retirement_span)) then
+
+                in_retirement=1
+
+            else
+
+                in_retirement=0
+
+            end if
+
+            mass_at_age_1=0
+            utility_at_age_1=0
+
+            do years_left_on_mortgage_index=1,max_amortization_years
+
+                if (years_left_on_mortgage_index>1) then
+
+                    has_house=1
+
+                else
+
+                    has_house=0
+
+                end if
+
+                do unemployment_index=1,unemployment_grid_size
+
+                    do employment_index=1,employment_grid_size
+
+                        do voucher_index=0,(1-has_house)*voucher_state_max
+
+                            do financial_index=has_house*1+(1-has_house)*&
+                                renter_floor_by_age(min(max(age_index,1),life_span)),financial_grid_size
+
+                                do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
+                                    has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
+
+                                    mass_1=distribution_stationary(years_left_on_mortgage_index)%&
+                                        vector_transition_real(time_period_used,age_index,financial_index,&
+                                        unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                    if (mass_1<=0.d0) cycle
+
+                                    years_1=policy_function_years_of_amortization_index(years_left_on_mortgage_index)%&
+                                        vector_transition_integer(time_period,age_index,financial_index,&
+                                        unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                    if (years_1>1) then
+
+                                        choose_to_own_1=1
+
+                                    else
+
+                                        choose_to_own_1=0
+
+                                    end if
+
+                                    housing_1=policy_function_housing_status_index(years_left_on_mortgage_index)%&
+                                        vector_transition_integer(time_period,age_index,financial_index,&
+                                        unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                    addiction_used_1=policy_function_addiction(years_left_on_mortgage_index)%&
+                                        vector_transition_integer(time_period,age_index,financial_index,&
+                                        unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                    total_consumption_1=policy_function_total_consumption(years_left_on_mortgage_index)%&
+                                        vector_transition_real(time_period,age_index,financial_index,&
+                                        unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                    consumption_1=policy_function_consumption(years_left_on_mortgage_index)%&
+                                        vector_transition_real(time_period,age_index,financial_index,&
+                                        unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                    frac_spent_1=policy_function_frac_spent_on_addiction(years_left_on_mortgage_index)%&
+                                        vector_transition_real(time_period,age_index,financial_index,&
+                                        unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                    space_1=policy_function_space_lived_in_size(years_left_on_mortgage_index)%&
+                                        vector_transition_real(time_period,age_index,financial_index,&
+                                        unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                    ! An unsolved cell carries no policy to read.
+                                    if (consumption_1<=0.d0) cycle
+
+                                    flow_discard_1=0
+                                    child_flow_out=0
+
+                                    call calculate_flow_utility(0,housing_1,space_1,&
+                                        frac_spent_1,total_consumption_1,consumption_1,&
+                                        choose_to_own_1,addiction_used_1,flow_discard_1,0)
+
+                                    utility_at_age_1=utility_at_age_1+mass_1*child_flow_out
+                                    mass_at_age_1=mass_at_age_1+mass_1
+
+                                end do
+
+                            end do
+
+                        end do
+
+                    end do
+
+                end do
+
+            end do
+
+            if (mass_at_age_1>0.d0) then
+
+                childhood_utility_by_age(time_period,age_index_1)=utility_at_age_1/mass_at_age_1
+
+            end if
+
+            ! Discounted back to birth: the child's own age a is a-1 periods
+            ! after it was born.
+            average_childhood_utility(time_period)=average_childhood_utility(time_period)+&
+                (discount_factor**(age_index_1-1))*childhood_utility_by_age(time_period,age_index_1)
+
+        end do
+
+        want_child_flow=.FALSE.
+
+        ! The adult half starts twenty five periods after birth.
+        average_welfare_with_childhood(time_period)=average_childhood_utility(time_period)+&
+            (discount_factor**child_at_home_last_index)*average_welfare_of_youngest_cohort(time_period)
+
+        if (solve_transition_dynamics==0) then
+
+            write(*,*) "average_childhood_utility=", average_childhood_utility(time_period)
+            write(*,*) "average_welfare_with_childhood=", average_welfare_with_childhood(time_period)
+            write(*,*) "childhood_utility_by_age=", childhood_utility_by_age(time_period,:)
+
+        end if
+
+    end subroutine
+
     subroutine calculate_welfare_by_characteristics(time_period)
     
         use Global_Vars
@@ -24729,6 +24949,28 @@
         real(8) :: c_util_1
             
         real(8), intent(inout) :: flow_utility_1
+
+        ! THE CHILD'S OWN FLOW UTILITY, FOR WELFARE AND NOTHING ELSE.
+        !
+        ! The household's flow already contains the child, at omega_c times the
+        ! equivalence scale increment, because that is what the PARENT is
+        ! willing to pay for it. A welfare number for the child is a different
+        ! object: it is the utility the child itself gets out of what the
+        ! household consumes, and neither the parent's altruism nor the parent's
+        ! counting of the child belongs in it. So this returns the bracket
+        ! alone -- the same consumption, the same housing, the same scaling by
+        ! household size, and the addictive good excluded, which is what makes
+        ! it the child's bundle rather than the parent's.
+        !
+        ! RETURNED THROUGH A MODULE VARIABLE BEHIND A SWITCH, not through the
+        ! argument list. calculate_flow_utility is an external procedure called
+        ! from twenty odd sites with no explicit interface, so an optional
+        ! argument is not available without writing one; and the twenty sites
+        ! are the solve's innermost loop, which should not pay for a power it
+        ! never reads. want_child_flow is off everywhere except inside
+        ! calculate_childhood_utility, and is threadprivate so it cannot leak
+        ! across the OpenMP threads that run the solve.
+        if (want_child_flow) child_flow_out=0.d0
         
         if (is_benchmark==1) then
         
@@ -24798,6 +25040,16 @@
                         c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
                         (b_shifter(1,housing_size(future_housing_status_index_1)))**&
                         ((1-risk_aversion_consumption)*relative_share_of_addiction_2)))/(1-risk_aversion_consumption)
+
+                    ! The same bracket the parent weighs at omega_c times the
+                    ! scale increment, taken on its own.
+                    if (want_child_flow) child_flow_out=&
+                        (sqrt_household_size(age_index)**&
+                        ((risk_aversion_consumption-1)*(1-relative_share_of_addiction_2)))*&
+                        (housing_status_utility_function(future_housing_status_index_1,age_index,ownership_status_index_1,1)*&
+                        c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_2)*&
+                        (b_shifter(1,housing_size(future_housing_status_index_1)))**&
+                        ((1-risk_aversion_consumption)*relative_share_of_addiction_2))/(1-risk_aversion_consumption)
                         
                 else
                 
@@ -24813,6 +25065,14 @@
                         c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_1)*&
                         (b_shifter(0,housing_size(future_housing_status_index_1)))**&
                         ((1-risk_aversion_consumption)*relative_share_of_addiction_1)))/(1-risk_aversion_consumption)
+
+                    if (want_child_flow) child_flow_out=&
+                        (sqrt_household_size(age_index)**&
+                        ((risk_aversion_consumption-1)*(1-relative_share_of_addiction_1)))*&
+                        (housing_status_utility_function(future_housing_status_index_1,age_index,ownership_status_index_1,0)*&
+                        c_util_1**((1-risk_aversion_consumption)*relative_share_of_consumption_1)*&
+                        (b_shifter(0,housing_size(future_housing_status_index_1)))**&
+                        ((1-risk_aversion_consumption)*relative_share_of_addiction_1))/(1-risk_aversion_consumption)
                 
                 end if
                 
@@ -42457,6 +42717,9 @@
             call govt_revenues_calc(1)
             call calculate_aggregate_consumption(1)
             call calculate_welfare(1)
+
+            ! The childhood half, which needs the adult half already averaged.
+            call calculate_childhood_utility(1)
             call calculate_household_housing_spending(1)
             call calculate_welfare_by_characteristics(1)
                         
@@ -46949,6 +47212,8 @@
                     
             call govt_revenues_calc(transition_length)
             call calculate_welfare(transition_length)
+
+            call calculate_childhood_utility(transition_length)
             call calculate_household_housing_spending(transition_length)
             call frac_of_households_in_support_of_policy(transition_length)
                                     
@@ -48093,6 +48358,8 @@
             do time_index=1,max(transition_length-1,1)
         
                 call calculate_welfare(time_index)
+
+                call calculate_childhood_utility(time_index)
                 call frac_of_households_in_support_of_policy(time_index)
             
             end do
