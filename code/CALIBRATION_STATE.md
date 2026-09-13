@@ -1,3 +1,36 @@
+## 13 September 05:55 UTC -- LOOP 40: A DISCONTINUITY IN THE VALUE-OF-LIFE
+## DENOMINATOR. WATCH THE NEXT LOOP.
+
+The vsl ratio had been stable to better than one per cent for eight loops and
+jumped 28 per cent in one:
+
+    vsl ratio      79.80 80.44 79.36 79.96 80.01 79.79 79.88 102.67
+    value_of_life 215.40 213.25 214.92 215.34 215.24 215.75 216.36 216.05
+    implied denom 2.6995 2.6512 2.7080 2.6930 2.6903 2.7041 2.7085 2.1044
+
+`value_of_life` did NOT move -- it fell 0.14 per cent.  The DENOMINATOR fell 22.3
+per cent in a single loop.  And it is not the quantity the log prints as
+`model_average_labour_income`, which went UP over the same step, 0.07187 to
+0.07238; the two are different income objects and only the first enters this
+moment.
+
+**WHY THIS MATTERS IMMEDIATELY.**  The moment was solved.  The next update will
+read a 28 per cent gap and drive `value_of_life` down hard to chase it, so a
+bracket that has been landed for a dozen loops is about to be pushed off by a
+denominator event rather than by anything about the value of life.  If the
+denominator reverts next loop, the parameter will have been moved for nothing
+and will have to come back.
+
+**WHAT IS NOT YET KNOWN.**  Whether this is a genuine break in the economy -- a
+mass of households crossing a threshold as participation passes three per cent
+-- or a numerical event.  One loop is not a trend and this is not being called.
+The next loop settles it: a revert to ~80 means a one-loop anomaly, a stay near
+100 means the income aggregate has shifted and every moment normalised by it
+moves with it.
+
+Recorded now rather than after, so that the reading is on the record before the
+answer is known.
+
 ## 13 September 05:30 UTC -- THE RUN CANNOT HIT BOTH TARGETS, AND THE
 ## EXTRAPOLATION IS NOW SHORT ENOUGH TO SAY SO
 
