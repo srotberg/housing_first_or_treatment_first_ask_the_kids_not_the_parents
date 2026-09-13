@@ -192,7 +192,25 @@ SPEC = [
     # with it, which is the standing rule.
     # ('pi_base', 'sud',              0.0368,  +1, 0.40, 1e-3,  0.99),
     ('u0',      'unemployment',     0.0485,  +1, 0.40, 0.005, 0.30),
-    ('u1',      'sud_of_homeless2', 0.217,   -1, 0.20, 0.0486, 0.50),
+    # THE SIGN IS POSITIVE NOW, AND THE NEGATIVE ONE WAS THE BUG.  The author,
+    # 13 September: *"if you raise u1 and push b down, then youll have enough
+    # users with sud"*, *"you are measuring it wrong"*, *"because you are not
+    # adjusting b"*.
+    #
+    # THE EARLIER MEASUREMENT HELD b FIXED AND IS WORTHLESS.  Sweeping u1 alone,
+    # the SUD share of the homeless falls 0.198 -> 0.121 -- but only because the
+    # population SUD rate collapses from 3.70 to 0.16 per cent, so the ratio is
+    # being read off an economy with no users left.  That is not the calibration's
+    # experiment: b is bracketed on participation and re-fits at every u1, which
+    # holds the using population at 8.9 per cent while the disorder gets more
+    # costly.  The record's own note that the ratio 'FALLS in u1' rests on the
+    # same fixed-b reading.
+    #
+    # WITH THE NEGATIVE SIGN THE DRIVER DROVE u1 TO ITS LOWER BOUND and parked
+    # it: the moment sat 8.3 per cent below target for nine hundred iterations
+    # with u1 at 0.04860 against u0 at 0.04850, so the disorder cost no job at
+    # all, which cannot be right.  A parameter on its bound is not calibrated.
+    ('u1',      'sud_of_homeless2', 0.217,   +1, 0.20, 0.0486, 0.50),
     # omega_c IS BOUNDED TO [0.01, 0.14], author 12 September: *"try omega_c only
     # between 0.01-0.14"*.  It had run to 0.242 on the negative child gap the
     # corner branch produces -- see the guard above, which now stops that at
@@ -944,10 +962,10 @@ if __name__ == '__main__':
     # iteration 550 and then ROSE every table to +624: delta_d was widening it
     # faster than omega could narrow it.  Starting omega at the crossing gives it
     # a chance to settle before delta_d moves much further.
-    SEED = dict(aleph=12.3701, gam=0.4407, h1=0.00993, b=0.05430,
+    SEED = dict(aleph=12.3250, gam=0.4404, h1=0.00993, b=0.05550,
                 # 0.0368/0.089, the value the identity sets, not a start
-                pi_base=0.0368 / 0.089, u0=0.04850, u1=0.04860, omega=0.003,
-                delta_d=0.66060, kap=0.10620, th=0.14530)
+                pi_base=0.0368 / 0.089, u0=0.04850, u1=0.04860, omega=0.0025,
+                delta_d=0.71420, kap=0.10750, th=0.14590)
     _start = {**{k: v for k, v in FIXED.items() if k != 'kap'},
               **{**START, "th": 0.25, "beta": 0.995 ** 30, "kap": 1.0 - 0.91 ** 2,
                    # A STARTING VALUE AGAIN, not a pin: delta_d is back in SPEC
