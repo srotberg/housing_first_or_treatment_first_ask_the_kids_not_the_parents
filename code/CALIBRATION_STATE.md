@@ -1,3 +1,42 @@
+## 13 September 03:50 UTC -- THE CALIBRATION IS BEING RUN IN THE WRONG ORDER,
+## AND THAT IS ONE STATEMENT ABOUT ALL THREE DRIFTING MOMENTS
+
+Loop 9 supplies the third instance and they are the same mechanism.
+
+**value_of_life IS NOT MOVING THE WRONG WAY, IT IS BEING OUTRUN.**  The
+parameter rose monotonically 163.82, 165.46, 167.11, 168.79, 170.47, 172.18,
+173.90, 175.64, 177.40 -- 8.3 per cent over nine loops -- while its moment, the
+ratio to average labour income, rose to 73.15 at loop 6 and then FELL to 71.48,
+70.34, 69.71.  The denominator implied by parameter over moment reads 2.3538,
+2.4329, 2.4971, 2.5448 across loops 6 to 9: it grew 8.4 per cent in three loops
+while the numerator grew 3.0.  The instrument is not inverted; it is losing to
+its own denominator, and the denominator is moving because participation is.
+
+**SO THREE MOMENTS ARE ALL BEING DRAGGED BY PARTICIPATION, NOT BY THEIR OWN
+INSTRUMENTS.**
+
+    moment              its instrument        what is actually moving it
+    homelessness        size_homelessness     participation (1-for-1 in logs)
+    child use gap       weight_on_child       participation (weight moved 0.05%)
+    value of life       value_of_life         participation, through the income
+                                              denominator
+
+And participation is 13 per cent of the way to its target.  Every one of the
+three will keep being dragged for the remaining 87 per cent, so tuning any of
+them now is tuning against a moving denominator -- which is the same error as
+the "benchmark of record is not a fixed point" note at the head of ENGINE.md,
+one level down: not a moving benchmark, a moving MOMENT.
+
+**THE RECOMMENDATION CHANGES SHAPE.**  It is no longer only "scan
+addiction_scalar_1 to test continuity".  It is: SOLVE PARTICIPATION FIRST, WITH
+EVERY OTHER ADJUSTER AT ZERO, and only then release the rest.  That is what the
+stylized model does and why it calibrates -- its monotone parameters are scanned
+and set, its identities are solved rather than searched, and only the genuinely
+simultaneous block is iterated.  Running all six adjusters against a moment that
+is 87 per cent away puts five of them to work cancelling the sixth.
+
+Still not one of ENGINE.md's three stop conditions.  THE RUN IS LEFT ALIVE.
+
 ## 13 September 03:40 UTC -- HOMELESSNESS IS WALKING AWAY FROM ITS TARGET AS
 ## PARTICIPATION RISES, AND size_homelessness IS NOT OFFSETTING IT
 
