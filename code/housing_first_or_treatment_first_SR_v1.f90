@@ -7572,6 +7572,25 @@
         real(8), dimension(transition_length) :: average_childhood_utility,&
             average_welfare_with_childhood
         real(8), dimension(transition_length,child_at_home_last_index) :: childhood_utility_by_age
+
+        ! THE RUNNING SUMS ACROSS THE BETA TYPES, and they are not decoration.
+        !
+        ! The solve runs once per type and the moment accumulators are NOT reset
+        ! on the second pass, which is how every ratio in this model comes out
+        ! as the fifty-fifty mixture. The childhood routine OVERWROTE instead of
+        ! accumulating, so the childhood it reported was the LAST type's alone
+        ! while the adult half beside it was the mixture -- two different
+        ! populations in one sum. Measured: the patient pass returned a
+        ! childhood of 82.60 and the impatient pass 59.30, and the second simply
+        ! replaced the first.
+        !
+        ! THE DISCOUNT FACTOR IS THE OTHER HALF OF IT. discount_factor IS the
+        ! type's own -- 0.944 patient, 0.900 impatient -- so the twenty five
+        ! years of childhood and the beta^25 that carries the adult value back
+        ! to birth have to be summed INSIDE the type and pooled after, not
+        ! pooled and then discounted at whichever beta happened to be live.
+        real(8), dimension(child_at_home_last_index) :: childhood_age_num,childhood_age_den
+        real(8) :: childhood_num,childhood_den,lifetime_num,lifetime_den
             
         real(8) :: average_welfare_of_youngest_cohort_calibrated
             
@@ -18450,12 +18469,26 @@
         integer :: financial_index,has_house,time_period_used,age_index_1
         integer :: years_1,choose_to_own_1,housing_1,addiction_used_1
         real(8) :: mass_1,flow_discard_1,mass_at_age_1,utility_at_age_1
+        real(8) :: own_childhood_1,adult_num_1,adult_den_1
         real(8) :: total_consumption_1,consumption_1,frac_spent_1,space_1
 
         time_period_used=time_period-solve_transition_dynamics
 
-        childhood_utility_by_age(time_period,:)=0
-        average_childhood_utility(time_period)=0
+        ! RESET ON THE FIRST TYPE ONLY, so the second pass adds to the first
+        ! rather than replacing it. Same rule every other accumulator in this
+        ! model follows.
+        if (accumulating_beta_types==0) then
+
+            childhood_age_num=0
+            childhood_age_den=0
+            childhood_num=0
+            childhood_den=0
+            lifetime_num=0
+            lifetime_den=0
+
+        end if
+
+        own_childhood_1=0
 
         ! Asked for here and nowhere else, and cleared again below so the solve
         ! never pays for it.
@@ -18571,30 +18604,130 @@
 
             end do
 
+            ! Pooled across the types for the REPORTED profile.
+            childhood_age_num(age_index_1)=childhood_age_num(age_index_1)+utility_at_age_1
+            childhood_age_den(age_index_1)=childhood_age_den(age_index_1)+mass_at_age_1
+
+            ! And summed INSIDE this type, at THIS type's discount factor,
+            ! because the two types do not share one. Discounted back to birth:
+            ! the child's own age a is a-1 periods after it was born.
             if (mass_at_age_1>0.d0) then
 
-                childhood_utility_by_age(time_period,age_index_1)=utility_at_age_1/mass_at_age_1
+                own_childhood_1=own_childhood_1+&
+                    (discount_factor**(age_index_1-1))*(utility_at_age_1/mass_at_age_1)
 
             end if
-
-            ! Discounted back to birth: the child's own age a is a-1 periods
-            ! after it was born.
-            average_childhood_utility(time_period)=average_childhood_utility(time_period)+&
-                (discount_factor**(age_index_1-1))*childhood_utility_by_age(time_period,age_index_1)
 
         end do
 
         want_child_flow=.FALSE.
 
-        ! The adult half starts twenty five periods after birth.
-        average_welfare_with_childhood(time_period)=average_childhood_utility(time_period)+&
-            (discount_factor**child_at_home_last_index)*average_welfare_of_youngest_cohort(time_period)
+        ! THE ADULT HALF, FOR THIS TYPE, READ HERE RATHER THAN FROM
+        ! calculate_welfare.
+        !
+        ! average_welfare_of_youngest_cohort is not normalised until the LAST
+        ! type, so reading it on the first pass reads an unnormalised partial
+        ! sum, and reading it on the last pass gives the mixture -- which then
+        ! has to be carried back to birth by a single beta that neither type
+        ! actually has. Both are wrong in the same way. So the age one value is
+        ! summed here, inside the type, and discounted by the type's own beta.
+        adult_num_1=0
+        adult_den_1=0
 
-        if (solve_transition_dynamics==0) then
+        do years_left_on_mortgage_index=1,max_amortization_years
 
-            write(*,*) "average_childhood_utility=", average_childhood_utility(time_period)
-            write(*,*) "average_welfare_with_childhood=", average_welfare_with_childhood(time_period)
-            write(*,*) "childhood_utility_by_age=", childhood_utility_by_age(time_period,:)
+            if (years_left_on_mortgage_index>1) then
+
+                has_house=1
+
+            else
+
+                has_house=0
+
+            end if
+
+            do unemployment_index=1,unemployment_grid_size
+
+                do employment_index=1,employment_grid_size
+
+                    do voucher_index=0,(1-has_house)*voucher_state_max
+
+                        do financial_index=has_house*1+(1-has_house)*&
+                            renter_floor_by_age(1),financial_grid_size
+
+                            do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
+                                has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
+
+                                mass_1=distribution_stationary(years_left_on_mortgage_index)%&
+                                    vector_transition_real(time_period_used,1,financial_index,&
+                                    unemployment_index,employment_index,housing_status_index,voucher_index)
+
+                                if (mass_1<=0.d0) cycle
+
+                                adult_num_1=adult_num_1+mass_1*&
+                                    value_function(years_left_on_mortgage_index)%&
+                                    vector_transition_real(time_period,1,financial_index,&
+                                    unemployment_index,employment_index,housing_status_index,voucher_index)
+                                adult_den_1=adult_den_1+mass_1
+
+                            end do
+
+                        end do
+
+                    end do
+
+                end do
+
+            end do
+
+        end do
+
+        ! EACH TYPE CARRIES UNIT MASS, so pooling is a plain average over the
+        ! types and no weight is needed. Same argument the two-type block makes
+        ! for every other moment in this model.
+        childhood_num=childhood_num+own_childhood_1
+        childhood_den=childhood_den+1.d0
+
+        if (adult_den_1>0.d0) then
+
+            lifetime_num=lifetime_num+own_childhood_1+&
+                (discount_factor**child_at_home_last_index)*(adult_num_1/adult_den_1)
+            lifetime_den=lifetime_den+1.d0
+
+        end if
+
+        ! REPORTED ONLY AFTER THE LAST TYPE HAS CONTRIBUTED, so a printed number
+        ! is always the mixture and never one pass of it.
+        if (current_beta_type==number_of_beta_types) then
+
+            do age_index_1=1,child_at_home_last_index
+
+                if (childhood_age_den(age_index_1)>0.d0) then
+
+                    childhood_utility_by_age(time_period,age_index_1)=&
+                        childhood_age_num(age_index_1)/childhood_age_den(age_index_1)
+
+                else
+
+                    childhood_utility_by_age(time_period,age_index_1)=0
+
+                end if
+
+            end do
+
+            average_childhood_utility(time_period)=childhood_num/max(childhood_den,1.d0)
+            average_welfare_with_childhood(time_period)=lifetime_num/max(lifetime_den,1.d0)
+
+            if (solve_transition_dynamics==0) then
+
+                write(*,*) "average_childhood_utility=", average_childhood_utility(time_period)
+                write(*,*) "average_welfare_with_childhood=", average_welfare_with_childhood(time_period)
+                write(*,*) "childhood_share_of_lifetime=", &
+                    average_childhood_utility(time_period)/&
+                    max(abs(average_welfare_with_childhood(time_period)),10.d0**(-12))
+                write(*,*) "childhood_utility_by_age=", childhood_utility_by_age(time_period,:)
+
+            end if
 
         end if
 
