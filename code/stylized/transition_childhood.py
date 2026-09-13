@@ -50,7 +50,25 @@ def path_with_childhood(par, policy, pV, p0, v1_base, w0, n=None):
     kid_new = childhood_level(par, policy, pV)
     level0 = w0 + kid_old                      # pre-reform lifetime, childhood in
 
-    out, p = [], p0.copy()
+    # COHORT 1'S PARENTS HAVE ALREADY RESPONDED WHEN COHORT 1 IS SCORED.
+    #
+    # The author, 13 September, setting out the timing in full: *"in period 1,
+    # TF applies, but the young at the point can still make choices since the
+    # policy is implemented at the beginning before they make decisions.  The
+    # old who are addicted cant do anything.  the children are affected by their
+    # own parents' decisions and the TF where some young will not get vouchers
+    # and will become homeless which harms the children"*.
+    #
+    # So the reform lands at the START of the young's period 1, before their
+    # choices.  Cohort 1's parents are those young: they face the rule, and most
+    # of them stop using.  The mixture cohort 1 is born into is therefore ONE
+    # STEP of the pre-reform rest point under the NEW policy, not the rest point
+    # itself.
+    #
+    # The loop used to record cohort 1 on p0 and step afterwards, which scored
+    # the first cohort as though its parents had never seen the rule.  Stepping
+    # first is the whole of the author's timing.
+    out, p = [], T._step(p0, sud, ev_s, par)
     for t in range(1, n + 1):
         adult = T._welfare(p, v1, par)
         # COHORT 1 IS THE CHILDREN ALIVE WHEN THE POLICY CHANGES, SO ITS
@@ -79,7 +97,34 @@ def path_with_childhood(par, policy, pV, p0, v1_base, w0, n=None):
                         cev=float(cev(par, total - level0, level0)),
                         cev_adult_only=float(cev(par, adult - w0, w0)),
                         homeless=T._outcome(p, hl, par), sud=T._outcome(p, sud, par)))
-        p = T._step(p, sud_b, ev_b, par) if t == 1 else T._step(p, sud, ev_s, par)
+        # EVERY CHILD ALIVE AT THE REFORM HAS A PARENT WHO CAN RESPOND TO IT.
+        #
+        # The author, 13 September: *"their parents are the ones who stop using
+        # in the first period of implementation"*, and *"the only cohort who
+        # cant change anything is the old"*.
+        #
+        # Those two settle the timing, because children only live with the
+        # YOUNG: _flow carries the child term and the equivalence scale in
+        # period 1 and drops both in period 2, so by the time a parent is old
+        # its child has grown.  Every child in the household at the reform
+        # therefore has a period-1 parent, and a period-1 parent faces the new
+        # rule and stops using.  Cohort 1 inherits THAT, not the pre-reform
+        # mixture.
+        #
+        # WHAT THE CODE DID INSTEAD.  transition.py's path() asserts that
+        # cohort 1's "income draw was settled by a parent who completed BOTH
+        # periods before the condition existed", and stepped it with the BRIDGE
+        # grids -- period 1 under the old rule, period 2 under the new.  That
+        # describes the generation caught mid-life, which is the one the author
+        # names as unable to change: old at the reform, its period-1 choice
+        # already made.  But that generation's children have already grown and
+        # are not in this path, so the bridge was being applied to a cohort it
+        # does not describe.
+        #
+        # The consequence was not small.  Cohort 1 was inheriting a disorder
+        # rate of 3.86 per cent from parents who had never faced the rule, when
+        # its actual parents face it and land at 0.61.
+        p = T._step(p, sud, ev_s, par)
     return out, kid_old, kid_new, level0
 
 
