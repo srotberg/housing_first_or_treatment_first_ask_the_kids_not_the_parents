@@ -7032,6 +7032,13 @@
             fin_index_frac_mov_to_optimal_benchmark,policy_function_addiction_benchmark
             
         integer :: already_uploaded_benchmark
+        ! ONCE-ONLY FLAG FOR THE LATCH INVARIANTS, and it needs its own rather
+        ! than borrowing loop_count. loop_count is incremented inside the value
+        ! function solve, once per STATE, so it is in the millions within a
+        ! second of the run starting: a guard of loop_count<2 never fires after
+        ! the first few microseconds, and the check silently never ran. Caught
+        ! because five calibration loops went by with no line in the log.
+        integer :: recovered_block_checked=0
             
         type(jagged_matrix_youngest), dimension(1:2) :: value_function_guess
         
@@ -7308,6 +7315,26 @@
         ! from the first run rather than inferred.
         real(8), parameter :: welfare_curve_identity_tolerance=5*10.d0**(-2)
         real(8), dimension(welfare_curve_points) :: welfare_curve_x=0, welfare_curve_w=0
+        ! THE ADULT HALF OF THE CURVE, KEPT BESIDE THE WHOLE.
+        !
+        ! welfare_curve_w is the LIFETIME now -- childhood plus the adult value
+        ! carried back twenty five periods -- because a consumption equivalent
+        ! that prices only the adult half prices a life beginning at 26, and
+        ! childhood is half of lifetime utility here. This keeps the old object
+        ! so the two can be read against each other rather than one silently
+        ! replacing the other.
+        real(8), dimension(welfare_curve_points) :: welfare_curve_w_adult=0
+        real(8), dimension(welfare_curve_points) :: welfare_curve_w_child=0
+
+        ! THE CHILDHOOD OF THE SCALED ECONOMY, accumulated by
+        ! compute_value_function_comparison as it walks the benchmark policies
+        ! at consumption scaled by (1+x). It does not need a routine of its own:
+        ! calculate_flow_utility already returns the child's flow when asked,
+        ! and it is asked there at exactly the scaled consumption the adult side
+        ! uses, so the two halves of the curve are built from one pass over one
+        ! set of policies and cannot disagree about what x did.
+        real(8), dimension(child_at_home_last_index) :: kid_cmp_num,kid_cmp_den
+        real(8) :: childhood_comparison=0
         real(8) :: welfare_curve_shift=0
             
         real(8), dimension(transition_length,unemployment_grid_size) :: &
@@ -19800,13 +19827,52 @@
             end if
 
             welfare_curve_x(i_x_1)=x_1
-            welfare_curve_w(i_x_1)=w_1
+            ! THE CURVE IS THE WHOLE LIFETIME NOW, NOT THE ADULT HALF.
+            !
+            ! It was compute_value_of_comparison alone, which is the value
+            ! function at age one -- a life that begins at data age 26. Every
+            ! consumption equivalent in this model was therefore priced on
+            ! roughly half of lifetime utility, and on the half the child
+            ! channels do NOT run through: a policy reaching children through
+            ! their parents' consumption showed up only through the inherited
+            ! productivity draw, and the twenty five years of shared
+            ! consumption were invisible to it.
+            !
+            ! The adult half is kept beside it rather than replaced, so the two
+            ! can be read against each other.
+            welfare_curve_w_adult(i_x_1)=w_1
+            welfare_curve_w_child(i_x_1)=childhood_comparison
+            welfare_curve_w(i_x_1)=childhood_comparison+&
+                (discount_factor**child_at_home_last_index)*w_1
 
             ! The grid has an odd number of points on a symmetric interval, so
             ! x = 0 is on it exactly rather than nearly.
             if (abs(x_1)<10.d0**(-12)) then
-                w_at_zero_1=w_1
+                w_at_zero_1=welfare_curve_w(i_x_1)
                 call report_walk_discrepancy()
+
+                ! THE NULL ON THE CURVE ITSELF. At x = 0 nothing is scaled, so
+                ! the curve must reproduce the welfare the model just reported.
+                ! Both halves are checked, because a curve that matches on the
+                ! total while both halves are wrong is a curve that will move
+                ! the wrong way off zero.
+                write(*,*) "CEV NULL at x=0: adult curve", w_1, &
+                    " reported", average_welfare_of_youngest_cohort(time_period)
+                write(*,*) "CEV NULL at x=0: childhood curve", childhood_comparison, &
+                    " reported", average_childhood_utility(time_period)
+                write(*,*) "CEV NULL at x=0: lifetime curve", welfare_curve_w(i_x_1), &
+                    " reported", average_welfare_with_childhood(time_period)
+
+                if (abs(childhood_comparison-average_childhood_utility(time_period))>&
+                    10.d0**(-6)*max(abs(average_childhood_utility(time_period)),1.d0)) then
+
+                    write(*,*) "CEV NULL FAILED on the childhood half. The curve at x=0 is"
+                    write(*,*) "built from the benchmark policies at unscaled consumption, so it"
+                    write(*,*) "must equal what calculate_childhood_utility reported. It does not."
+                    stop
+
+                end if
+
             end if
 
             write(*,*) "WELFARE CURVE point", i_x_1, " x=", x_1, " w=", w_1
@@ -19976,6 +20042,13 @@
         do i=1,2
             value_function_comparison(i)%vector_real(:,:,:,:,:,:)=0.d0
         end do
+
+        ! The childhood of THIS x, rebuilt from scratch on every call, because
+        ! the curve calls this once per point and a carried-over accumulator
+        ! would add one x's childhood to the next.
+        kid_cmp_num=0
+        kid_cmp_den=0
+        childhood_comparison=0
 
         do age_index=life_span,1,-1
 
@@ -20149,9 +20222,28 @@
 
                                     if (consumption_1>0.d0) then
 
+                                        ! THE CHILD'S FLOW AT THE SCALED CONSUMPTION, taken from the
+                                        ! SAME call the adult side uses. calculate_flow_utility already
+                                        ! returns it when asked and it is asked here, so the two halves
+                                        ! of the welfare curve are built from one pass over one set of
+                                        ! policies and cannot disagree about what x did. The scaling
+                                        ! reaches the child correctly because its bundle is formed from
+                                        ! c_util_1, which is consumption_1.
+                                        want_child_flow=(age_index<=child_at_home_last_index)
+
                                         call calculate_flow_utility(0,housing_1,housing_size(housing_1),&
                                             fraction_spent_on_addiction_1,total_consumption_1,consumption_1,&
                                             choose_to_own,addiction_used_1,flow_utility_1,1)
+
+                                        if (want_child_flow) then
+
+                                            kid_cmp_num(age_index)=kid_cmp_num(age_index)+&
+                                                distribution_1*child_flow_out
+                                            kid_cmp_den(age_index)=kid_cmp_den(age_index)+distribution_1
+
+                                        end if
+
+                                        want_child_flow=.FALSE.
 
                                         flow_utility_1=flow_utility_1+leisure_utility(labor_supply_1)&
                                             -kappa_x*model_fraction_homeless(1)
@@ -20239,6 +20331,20 @@
                 end do
 
             end do
+        end do
+
+
+        ! DISCOUNTED BACK TO BIRTH, exactly as calculate_childhood_utility does
+        ! it: the child's own age a is a-1 periods after it was born.
+        do i=1,child_at_home_last_index
+
+            if (kid_cmp_den(i)>0.d0) then
+
+                childhood_comparison=childhood_comparison+&
+                    (discount_factor**(i-1))*(kid_cmp_num(i)/kid_cmp_den(i))
+
+            end if
+
         end do
 
     end subroutine
@@ -33977,6 +34083,131 @@
 
     end subroutine
 
+    subroutine verify_recovered_block(time_period)
+
+        ! TWO INVARIANTS THAT FOLLOW FROM THE CONSTRUCTION AND WOULD CATCH A
+        ! WRONG LATCH. Neither was checked, and the builds and the other three
+        ! verifiers cannot see either.
+        !
+        ! 1. ABOVE THE CHILD'S LAST AGE THE RECOVERED BLOCK IS THE NEVER-HAD-IT
+        !    BLOCK. Their flow is identical there -- the child term carries
+        !    (sqrt_household_size - 1), which is zero past age 50 -- their
+        !    transitions are isomorphic under relabelling the two, and there is
+        !    no child continuation. So by backward induction from the last age
+        !    the two value functions are EQUAL at every age above 50, and they
+        !    may differ only at 50 and below, where the child term reads the
+        !    latch. If they differ above 50 then the latch, the transition or
+        !    the age gate is wrong.
+        !
+        ! 2. WITH THE CHILD SWITCHED OFF THEY ARE EQUAL AT EVERY AGE, because
+        !    then nothing in the model reads the bit at all. This one is only
+        !    checked when weight_on_child is zero, which is a run the author can
+        !    ask for; it is the sharper test of the two because it covers the
+        !    ages where the blocks are allowed to differ.
+        !
+        ! Reported rather than stopped for invariant 1 at ages at or below the
+        ! gate, because there they are SUPPOSED to differ and the size of the
+        ! difference is the child term's own size, which is worth seeing.
+
+        use Global_Vars
+
+        implicit none
+
+        integer, intent(in) :: time_period
+        integer :: a_1,f_1,e_1,h_1,v_1,y_1,i_0,i_1,bad_1,emp_1,smi_1
+        real(8) :: d_1,worst_above_1,worst_below_1
+
+        if (include_addiction==0) return
+
+        bad_1=0
+        worst_above_1=0
+        worst_below_1=0
+
+        do y_1=1,max_amortization_years
+
+            do a_1=1,life_span
+
+                do emp_1=1,3
+
+                    do smi_1=0,number_of_smi_states-1
+
+                        ! The same (employment, SMI) cell in the never-had-it
+                        ! block and in the recovered block.
+                        i_0=idx_of(emp_1,smi_1,0,0)
+                        i_1=idx_of(emp_1,smi_1,0,1)
+
+                        do e_1=1,employment_grid_size
+
+                            do v_1=0,voucher_state_max
+
+                                do h_1=lowest_housing_grid_point,housing_status_grid_size-1
+
+                                    do f_1=1,financial_grid_size
+
+                                        d_1=abs(value_function(y_1)%vector_transition_real&
+                                            (time_period,a_1,f_1,i_0,e_1,h_1,v_1)-&
+                                            value_function(y_1)%vector_transition_real&
+                                            (time_period,a_1,f_1,i_1,e_1,h_1,v_1))
+
+                                        if (a_1>child_at_home_last_index) then
+
+                                            worst_above_1=max(worst_above_1,d_1)
+                                            if (d_1>10.d0**(-8)) bad_1=bad_1+1
+
+                                        else
+
+                                            worst_below_1=max(worst_below_1,d_1)
+
+                                        end if
+
+                                    end do
+
+                                end do
+
+                            end do
+
+                        end do
+
+                    end do
+
+                end do
+
+            end do
+
+        end do
+
+        write(*,*) "recovered block: worst |V(never) - V(recovered)| above age", &
+            child_at_home_last_index, "=", worst_above_1
+        write(*,*) "recovered block: worst |V(never) - V(recovered)| at or below =", &
+            worst_below_1
+
+        if (bad_1>0) then
+
+            write(*,*) "RECOVERED BLOCK INVARIANT FAILED:", bad_1, "cells above the child's"
+            write(*,*) "last age where the never-had-it and recovered blocks disagree. Above"
+            write(*,*) "that age nothing in the model reads the latch, so they must be equal."
+            stop
+
+        end if
+
+        ! The sharper test, available only on a run with the child switched off.
+        if (abs(weight_on_child)<10.d0**(-14)) then
+
+            if (worst_below_1>10.d0**(-8)) then
+
+                write(*,*) "RECOVERED BLOCK INVARIANT FAILED at weight_on_child=0: the two"
+                write(*,*) "blocks differ by", worst_below_1, "at or below the child's last age,"
+                write(*,*) "where with no child term nothing reads the latch either."
+                stop
+
+            end if
+
+            write(*,*) "recovered block: equal at EVERY age with weight_on_child=0, as it must be"
+
+        end if
+
+    end subroutine
+
     subroutine verify_unemployment_rows()
 
         ! The transition is read as P(current -> future | homelessness, the drug
@@ -42919,6 +43150,13 @@
 
             ! The childhood half, which needs the adult half already averaged.
             call calculate_childhood_utility(1)
+
+            ! THE LATCH'S OWN INVARIANTS, checked on the solved value function.
+            ! See verify_recovered_block for why these two and not others.
+            if (recovered_block_checked==0) then
+                call verify_recovered_block(1)
+                recovered_block_checked=1
+            end if
             call calculate_household_housing_spending(1)
             call calculate_welfare_by_characteristics(1)
                         
@@ -47684,7 +47922,7 @@
                             
                     if (j==1) then
                 
-                        call calculate_welfare_gains(transition_length,average_welfare_of_youngest_cohort(1),j,&
+                        call calculate_welfare_gains(transition_length,average_welfare_with_childhood(1),j,&
                             welfare_of_gains_by_addiction(j))
                             
                     elseif (j>1) then
@@ -47741,7 +47979,7 @@
                         
             if (j==1) then
         
-                call calculate_welfare_gains(transition_length,average_welfare_of_youngest_cohort(1),j,&
+                call calculate_welfare_gains(transition_length,average_welfare_with_childhood(1),j,&
                     welfare_of_gains_by_addiction(j))
                     
             elseif (j>1) then
