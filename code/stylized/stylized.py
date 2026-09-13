@@ -638,7 +638,35 @@ class P:
     # the same order the quantitative model took: *"delta_d can be done later
     # again"*.
     omega = 0.09
-    chdmg = 0.0
+    # chdmg IS DERIVED, NOT A PARAMETER, AND IT IS NO LONGER ZERO.
+    #
+    # It is the child's expected LOSS in lifetime value from the parent
+    # acquiring the disorder, and the parent subtracts
+    #
+    #     beta * omega_c * chdmg(y) * pi(v)
+    #
+    # from its objective.  The author, 13 September: *"the value function of the
+    # child should be on the loss on the child's addiction"*, *"i mean it has to
+    # be beta*omega(V(1,0)-V(1,1))"*, *"ie, the difference between the child
+    # with no penalty and the child with the penalty."*
+    #
+    # THE DIFFERENCE, NOT THE LEVEL, AND THAT IS WHAT MAKES IT TRACTABLE.  The
+    # level of V1 is dominated by aleph and a dynastic sum of levels would not
+    # converge at a discount factor near one.  Only V(1,0) - V(1,1) enters, the
+    # levels cancel, and what is left is a small well conditioned object.
+    #
+    # IT IS A VECTOR OVER THE PARENT'S INCOME GRID, not a scalar, because the
+    # child's income inherits from the parent's by rho and the loss is therefore
+    # bigger for some parents than others.
+    #
+    # None MEANS NOT SOLVED AND IS AN ERROR TO SOLVE ON.  It was 0.0 for months,
+    # which switched the whole continuation channel of omega_c off in every
+    # calibration run without anything failing -- child_welfare.py's header
+    # records that discovery.  A sentinel that raises is the only way that
+    # cannot happen twice.  with_() clears it on ANY parameter change, so a
+    # stale chdmg computed at other parameters is impossible too; the rule is
+    # that solve_child_damage is the LAST thing called before a solve.
+    chdmg = None
 
     # THE CHILD'S OWN INCOME, so delta_d has something to act on.  Author, 12
     # September: *"i want you to add rho=0.35 in the model like we have in the
@@ -764,6 +792,13 @@ def with_(par, **kw):
     # explicitly or re-bracket it, not inherit the quarter.
     if 'h_lg' in kw and 'h_sm' not in kw:
         f['h_sm'] = H_RATIO * f['h_lg']
+    # chdmg IS DERIVED FROM EVERY OTHER PARAMETER, so any change to any of them
+    # invalidates it.  Clearing it to the None sentinel turns what would be a
+    # SILENT wrong answer -- a child damage computed at somebody else's
+    # parameters -- into a loud failure at the next solve.  A call that sets
+    # chdmg and nothing else is the solver itself and is left alone.
+    if kw and not set(kw) <= {'chdmg'}:
+        f['chdmg'] = None
     return clone(**f)
 
 
@@ -1113,7 +1148,21 @@ def period1(par, y, policy=None):
         # The drug term is no longer added here: _branch carries it inside the
         # bundle.  pen is the CONTINUATION half of omega_c, the child's expected
         # loss, and is flat in v now that the hazard is.
-        pen = par.omega * par.chdmg * _pid(par, vg)
+        #
+        # BETA IS ON IT AND IT USED TO BE MISSING.  The author, 13 September:
+        # *"it has to be beta*omega(V(1,0)-V(1,1))"*.  The child's loss lands a
+        # period after the decision -- the child becomes an adult when the
+        # parent becomes old -- so it is discounted like every other
+        # continuation.  Without beta the parent weighed its child's future at
+        # face value and its own at 0.86 of it.
+        #
+        # THERE IS NO SURVIVAL FACTOR, and that is deliberate.  The child
+        # becomes an adult whether or not the parent lives, so phi(d') belongs
+        # on W2 and on nothing else.  The author's quantitative-model timing is
+        # the same statement: beta*(1-survival)*omega*V(1) at ages 26 to 49,
+        # where the child leaves only because the parent died, and plain
+        # beta*omega*V(1) at 50, where it leaves for certain.
+        pen = par.beta * par.omega * _chdmg_at(par, y) * _pid(par, vg)
         tot = vu - pen
         k = int(np.argmax(tot[1:])) + 1
         gain = float(tot[k] - v0[0])
@@ -1147,6 +1196,19 @@ def _child_rate(par, ly, lb, w, ygrid, prob, shift):
     sigma^2), which is the standard AR(1) condition: then the child distribution
     has the SAME variance as the parents' and the odds ratios mean something.
     """
+    k = _child_kernel(par, ly, lb, ygrid, shift)
+    return float((w * (k * prob[None, :]).sum(axis=1)).sum() / w.sum())
+
+
+def _child_kernel(par, ly, lb, ygrid, shift):
+    """The child's income distribution over ygrid, ONE ROW PER PARENT NODE.
+
+    Factored out of _child_rate so that the odds ratios and the child damage
+    cannot drift apart.  They are the same kernel read two ways -- averaged
+    against a probability for an odds ratio, against a value function for a
+    damage -- and if one were rewritten without the other the calibration would
+    be setting delta_d on one object and the household reacting to another.
+    """
     import calibrate as _C
     sd = math.sqrt(max(1.0 - par.rho ** 2, 1e-12)) * _C.SIG
     mu = par.rho * ly + (1.0 - par.rho) * lb - shift
@@ -1154,7 +1216,83 @@ def _child_rate(par, ly, lb, w, ygrid, prob, shift):
     # a lognormal kernel on the grid, per parent node, normalised across nodes
     k = np.exp(-0.5 * ((lg[None, :] - mu[:, None]) / sd) ** 2)
     k /= np.maximum(k.sum(axis=1, keepdims=True), 1e-300)
-    return float((w * (k * prob[None, :]).sum(axis=1)).sum() / w.sum())
+    return k
+
+
+def child_damage(par, ygrid, w, v1):
+    """V(1,0) - V(1,1): what the parent's disorder costs the CHILD, in the
+    child's own lifetime value, one number per PARENT income node.
+
+    Both terms are expectations over the child's income draw, which is the same
+    lognormal kernel the odds ratios use: a clean parent's child is placed at
+    rho log y + (1-rho) log ybar, a disordered parent's at the same less
+    delta_d.  So the damage is (k_clean - k_penalised) @ V1, and the levels --
+    aleph above all -- cancel between the two rows.
+
+    IT IS NON-NEGATIVE WHEREVER V1 RISES IN INCOME, which is everywhere here,
+    because the penalised kernel is the clean one shifted DOWN in income.  A
+    negative entry means either delta_d has gone negative or V1 is falling in
+    income, and both are bugs rather than economics; verify() checks it.
+    """
+    ybar = float((w * ygrid).sum() / w.sum())
+    ly, lb = np.log(np.maximum(ygrid, 1e-12)), np.log(max(ybar, 1e-12))
+    k0 = _child_kernel(par, ly, lb, ygrid, 0.0)
+    k1 = _child_kernel(par, ly, lb, ygrid, par.delta_d)
+    return (k0 - k1) @ np.asarray(v1, dtype=float)
+
+
+def _chdmg_at(par, y):
+    """The child damage at ONE parent income, interpolated in LOG income.
+
+    Keyed on the household's PERMANENT income y and not on its realised state
+    income, because that is what the child inherits: stylized.py's map is
+    log y_child = rho log y_parent + (1-rho) log ybar, and y_parent there is the
+    permanent draw.  So the damage is constant across a household's period 1
+    employment and voucher states, and is computed once per period1 call.
+    """
+    c = par.chdmg
+    if c is None:
+        raise RuntimeError(
+            'chdmg is None: the child damage has not been solved for these '
+            'parameters.  Call stylized.solve_child_damage(par) LAST, after '
+            'every with_() that changes a parameter, and solve on what it '
+            'returns.  See the note at the chdmg declaration for why this '
+            'raises instead of defaulting to zero.')
+    if np.isscalar(c):
+        return float(c)
+    import calibrate as _C
+    return float(np.interp(math.log(max(float(y), 1e-12)),
+                           np.log(np.maximum(_C.YG, 1e-12)),
+                           np.asarray(c, dtype=float)))
+
+
+def solve_child_damage(par, policy=None, iters=40, tol=1e-10):
+    """Solve the child damage to its fixed point and return par carrying it.
+
+    V1 depends on chdmg through the parent's objective and chdmg depends on V1
+    through the child's, so this is a fixed point.  It is a well behaved one:
+    only the DIFFERENCE V(1,0) - V(1,1) feeds back, the term it enters through
+    is multiplied by beta * omega_c * pi(v), and at the calibrated omega_c that
+    product is of order a hundredth.  A handful of passes is enough and the
+    iteration count is a guard, not a plan.
+
+    THE FIRST PASS RUNS WITH THE CHANNEL OFF, chdmg = 0.0, which is the model as
+    it stood before this existed.  So the first iterate is exactly the old
+    model's V1 and every later one is a correction to it, which is what makes
+    the size of the channel readable from the iteration itself.
+    """
+    import calibrate as _C
+    q, prev = with_(par, chdmg=0.0), None
+    for _ in range(iters):
+        v1 = np.array([float(sum(p * own for p, _g, _v, _bu, _bn, _i, own, *_
+                                 in st))
+                       for st in _map_period1(q, _C.YG, policy)])
+        d = child_damage(q, _C.YG, _C.W, v1)
+        q = with_(q, chdmg=d)
+        if prev is not None and float(np.abs(d - prev).max()) < tol:
+            return q
+        prev = d
+    return q
 
 
 def child_sud_odds_ratio(par, ygrid, w, policy=None):
@@ -1762,7 +1900,7 @@ def vsl(par, y=1.0, policy=None):
         val, aa, ss, rr, _, mm = _branch(par, ag, inc, rm, vg, cont)
         cont0 = np.repeat((s0 * W2c[:, 0])[None, :], 2, axis=0)
         v0, a0, ss0, r0, _, mm0 = _branch(par, ag, inc, rmul, np.zeros(2), cont0)
-        tot_v = val - par.omega * par.chdmg * _pid(par, vg)
+        tot_v = val - par.beta * par.omega * _chdmg_at(par, y) * _pid(par, vg)
         k = int(np.argmax(tot_v[1:])) + 1
         if tot_v[k] > v0[0]:
             a, rent, pi = aa[k], rr[k], float(_pid(par, vg[k]))

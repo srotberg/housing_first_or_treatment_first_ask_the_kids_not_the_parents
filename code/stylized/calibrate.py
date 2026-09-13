@@ -71,7 +71,7 @@ sequence, which cannot leave the band.
 import math
 import os
 import numpy as np
-from stylized import P, with_, aggregates, vsl
+from stylized import solve_child_damage, P, with_, aggregates, vsl
 
 # THE VALUE OF LIFE, and how it was fixed.
 #
@@ -670,6 +670,14 @@ def stats(par):
     # spans a region where users spend a fifth of income on drugs and are still
     # poorer than average: at theta = 0.20, gamma = 0.10 the model gives a drug
     # share of 0.20 with users at 0.29 of average income.
+    # THE CHILD DAMAGE IS AN EQUILIBRIUM OBJECT AND IS SOLVED HERE, LAST.
+    #
+    # chdmg is V(1,0) - V(1,1), the child's loss from the parent's disorder, and
+    # it depends on V1, which depends on it.  with_() clears it on any parameter
+    # change, so every bracket step arrives here with it unset and every solve
+    # below runs on a damage computed at THESE parameters.  Solving it anywhere
+    # earlier would be solving it at the previous ones.
+    par = solve_child_damage(par)
     m = aggregates(par, YG, W, edges=EDGES, cdf=CDF)
     m['vsl'] = vsl(par)
     # the grid is built from SIG, so this moment does not depend on par at

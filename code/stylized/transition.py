@@ -39,7 +39,8 @@ import os
 import math
 import numpy as np
 
-from stylized import P, with_, value1, use_prob, homeless_prob, terminal_homeless_prob
+from stylized import (P, with_, value1, use_prob, homeless_prob,
+                      terminal_homeless_prob, solve_child_damage)
 from calibrate import YG, W, stats
 from welfare import cev
 from children import DEL_D, DEL_H
@@ -104,7 +105,12 @@ def _solve_at(fn, s):
 def _policy_grids(par, policy, pV):
     """V1, the probability of ending with the disorder, and the probability of
     being unhoused, at every income node under one policy."""
-    q = with_(par, policy=policy, pV=pV)
+    # SOLVED LAST, AFTER THE with_.  with_() clears chdmg on any parameter
+    # change, so the child damage has to be re-solved at THIS policy and this
+    # pi_V rather than inherited: a policy that changes how much people use
+    # changes what a child stands to lose, which is the whole point of the
+    # channel.
+    q = solve_child_damage(with_(par, policy=policy, pV=pV), policy)
     v1 = np.array([value1(q, y, policy) for y in YG])
     use = np.array([use_prob(q, y, policy) for y in YG], dtype=float)
     # TWO HOMELESSNESS OBJECTS, and they are not the same one. What a cohort
