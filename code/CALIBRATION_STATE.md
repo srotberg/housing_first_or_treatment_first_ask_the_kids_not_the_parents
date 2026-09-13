@@ -25,6 +25,18 @@ one? because this model is the key to the paper"*.
 > atom is still in this model.  So the open question is not the step rate; it is
 > whether participation is continuous in `addiction_scalar_1` at all, and that
 > needs a one-parameter scan, not more loops.
+>
+> **LOOP 6 CONFIRMS BOTH HALVES.**  Elasticities now +0.53, -2.02, -9.84, +0.92,
+> -2.70 on six identical steps; the average is -2.62, which puts the remaining
+> distance at 83 loops, about six hours.
+>
+> And the CHILD USE GAP OVERSHOT.  It read 0.318, 0.232, 0.191, 0.0919 across
+> loops 3 to 6 while `weight_on_child` moved 0.05 per cent in total, so its whole
+> motion is participation's.  The target is 0.183: loop 5's "ON TARGET" at 4.1
+> per cent was the moment CROSSING the target, not landing on it, and by loop 6
+> it is at half the target and 49.9 per cent off on the other side.  A moment
+> that a parameter is not moving cannot be read as calibrated at the instant it
+> crosses.
 
 **THE FIRST THREE LOOPS WERE MISLEADING.**  Participation's instrument
 is `addiction_scalar_1` (line 12 of the Fortran: *addiction_scalar_1 ->
