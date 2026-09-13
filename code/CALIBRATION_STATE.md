@@ -1,3 +1,39 @@
+## 13 September 06:00 UTC -- LOOP 41 CORRECTS THE ENTRY BELOW, AND CONFIRMS THE
+## BREAK IS IN model_value_of_life ALONE
+
+**THE ENTRY BELOW HAS THE DIRECTION WRONG.**  It inferred the denominator from
+`value_of_life / vsl_ratio`, but `value_of_life` is the PARAMETER, an input,
+while the moment is
+
+    vsl_1 = model_value_of_life(1) / model_average_labour_income(1)     :8026
+
+whose numerator is a MODEL OUTPUT.  Taking the numerator as ratio times the
+printed income instead:
+
+    vsl ratio      79.96    80.01    79.79    79.88   102.67   102.48
+    avg lab inc   0.06996  0.07043  0.07102  0.07187  0.07238  0.07359
+    numerator      5.5946   5.6349   5.6662   5.7411   7.4307   7.5411
+
+The denominator did NOT fall 22 per cent -- it ROSE, smoothly, every loop.
+**`model_value_of_life` rose 29 per cent in one step** and has stayed there.
+
+**AND NOTHING ELSE MOVED.**  All twenty-six printed moments at the 39 -> 40 step:
+labour income tax +0.0 per cent, labour supply +0.0, wealth over output -0.5,
+unemployment +0.1, the SMI population share +0.0, food stamps -0.1, the cost
+burden -0.2, income of drug users +0.5.  The largest move anywhere other than
+the drug block's own drift is h_3 at -1.3 per cent.  A real break in the economy
+cannot move the value of life by 29 per cent and leave labour supply, the tax
+rate and the wealth ratio untouched.
+
+**SO THIS IS A BREAK IN ONE COMPUTED QUANTITY, NOT AN ECONOMIC EVENT**, and it
+is now driving a solved bracket: `value_of_life` is being pushed down against a
+28 per cent gap that the model did not earn, at the 0.17 per cent a loop the cap
+allows, which is about 150 loops of a parameter moving the wrong way for the
+wrong reason.  `model_value_of_life` is not printed anywhere in the log, so
+naming the cause needs the source, not the log.
+
+Two loops, both at ~102.5, so this is not a one-loop anomaly.
+
 ## 13 September 05:55 UTC -- LOOP 40: A DISCONTINUITY IN THE VALUE-OF-LIFE
 ## DENOMINATOR. WATCH THE NEXT LOOP.
 
