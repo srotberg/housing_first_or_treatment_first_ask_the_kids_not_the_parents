@@ -48,6 +48,26 @@ and a bracketing calibration cannot land a target that sits inside the jump.
 Here the participation target of 0.089 sits ABOVE the high regime's 0.083, which
 is why the first run only touched it by overshooting.
 
+**THE REGIME IS NOT A FUNCTION OF THE PARAMETER.**  Four flips, with the scalar
+falling monotonically throughout:
+
+    loop  7 ->  8   LOW -> HIGH   scalar 0.0011749 -> 0.0011631
+    loop 12 -> 13   HIGH -> LOW   scalar 0.0011173 -> 0.0011061
+    loop 13 -> 14   LOW -> HIGH   scalar 0.0011061 -> 0.0010951
+    loop 15 -> 16   HIGH -> LOW   scalar 0.0010841 -> 0.0010733
+
+A single threshold would be crossed ONCE on a monotone path.  Hysteresis would
+give two thresholds and still cross once each way.  This crosses four times, and
+the down-flip at 0.001106 and the up-flip at 0.001095 are adjacent values in
+opposite directions.  So the state the solve lands in is not determined by the
+parameter it is given -- it alternates.
+
+That is a stronger and more uncomfortable statement than "two regimes", and it
+is the one the data support.  Whether it is genuine multiplicity in the model or
+the warm start carrying the alternation cannot be told from inside the loop; it
+needs the same vector solved twice from different starts, which is a
+one-parameter point and cannot be taken while this runs.
+
 **THE HEADLINE RESULT SURVIVES, AND IS STRONGER FOR IT.**  Homelessness reads
 0.021-0.024 in BOTH regimes -- 2.1 to 2.4 times its target throughout, with no
 jump at either flip.  So the 2.35x measured at the participation target does not
