@@ -1,3 +1,74 @@
+## 13 September 02:45 UTC -- WHY THE STYLIZED MODEL CALIBRATES AND THIS ONE DOES
+## NOT. IT IS ONE IDEA, NOT A LIST.
+
+The author: *"i think you need to understand why the stylized model works well
+and the qunt doesnt"*.  They are right that the session has been fixing symptoms.
+
+**THE STYLIZED MODEL WAS ENGINEERED SO THAT EACH MOMENT IS CONTINUOUS IN ITS
+INSTRUMENT, and every time one was not, the MODEL was changed until it was.**
+This one has never had that treatment.  calibrate.py's `_grid` docstring is the
+clearest statement of the method anywhere in the repository:
+
+> POOLING the bottom 6.68 per cent into one mass point ... the cell used or did
+> not as a block and no b delivered the target.  FLOORING the distribution at
+> the rent instead was better and still not enough ... it moved participation
+> from 5.93 to 3.17 per cent as b crossed the value that flips it.  The target
+> of 5.13 sits inside that jump, so b still could not reach it.  TRUNCATION
+> removes the atom rather than shrinking it.  The distribution is conditional on
+> being able to rent, every cell carries a small mass, and PARTICIPATION IS
+> CONTINUOUS IN B, WHICH IS WHAT A BRACKETING CALIBRATION NEEDS.
+
+So the stylized income distribution is TRUNCATED below the rent on the cheapest
+unit.  Nobody is priced out, by construction.  Two things follow and both are
+why it calibrates:
+
+  * there is NO INVOLUNTARY HOMELESSNESS, so every homeless household is
+    choosing the street and h_hl prices exactly the population it is meant to --
+    hence h_hl = 0.0096, a sane 9.6 per cent of the small unit, with the
+    homelessness moment landing on target;
+  * participation is CONTINUOUS in b, so b's bracket works.
+
+**THIS MODEL STILL HAS THE ATOM THE STYLIZED ONE DELETED.**  Households below
+the cheapest rent exist here, they are involuntarily homeless at about 1.37 per
+cent, and size_homelessness cannot reach them -- it only prices the one fifth
+who CHOOSE the street.  So it runs to 2.4e-05, where the street is worth
+essentially nothing and there is no further reduction to make, while the moment
+stays at +34.8 per cent.  The author, exactly: *"because if h1=2.4e-05 there is
+nothing to reduce it to"*.  It is a DEAD INSTRUMENT, not a slow one, and the
+same runaway shape omega_c had in the stylized model before it was bounded.
+
+## THE SAME PATTERN, FIVE TIMES
+
+    what                        stylized                  this model
+    the income atom             truncated away            still there; the
+                                                          homelessness floor
+    identities                  solved, pi_base=sud/part  still searched
+    monotone parameters         scanned and set           scanned as of tonight
+    step rates                  per parameter             mostly one global cap
+    a moment's guard            tested and narrowed       child gap unchecked,
+                                                          reads +120.5 per cent
+
+## AND THE AUTHOR'S INCOME FLOOR IS THIS MODEL'S VERSION OF THE TRUNCATION
+
+They asked for it so that no household has a negative value of life.  It does
+the same job as the truncation by the other route: the stylized model DELETED
+the below-rent households, a floor LIFTS them above the rent.  Both make "priced
+out" an empty set.  That is why the floor took stylized homelessness to exactly
+zero at 0.182 -- it did the truncation's work twice over.
+
+**SO THE DECISION IS NOT WHAT h_1 SHOULD BE.**  It is how much of the below-rent
+population to remove and by which instrument -- truncation, the income floor, or
+a cheaper h_2 -- and the two jobs pull against each other:
+
+    floor too low    households keep negative values of life AND the involuntary
+                     floor stays at 1.37 per cent, above the 1.16 target
+    floor too high   homelessness goes to zero and the margin is lost entirely,
+                     which is what happened in the stylized model
+
+Whether a window exists between them is ONE SWEEP: vary ssi_floor_level and read
+the negative-value share and involuntary homelessness together.  That measurement
+decides both of the author's instructions at once and it has not been run.
+
 ## 13 September 02:00 UTC -- THE CHILD GAP TRAVERSED CLEANLY FOR THE FIRST TIME.
 ## THE CLIFF IS REAL; THE CEILINGS I REPORTED WERE NOT.
 
