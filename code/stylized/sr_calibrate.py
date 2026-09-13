@@ -115,7 +115,22 @@ from stylized import solve_child_damage, P, with_, child_sud_odds_ratio, child_h
 # 0.217 sits at u1 about 0.0545, just above u0.  NOTE THE TENSION this creates:
 # at that u1 users sit at 0.38 of average income against the data's 0.74.
 SPEC = [
-    ('gam',     'hspend',           0.268,   +1, 0.40, 0.05,  0.60),
+    # GAMMA IS SET AT ITS DATA VALUE AND IS NOT CALIBRATED.  The author, 13
+    # September: *"pick gamma=0.268 and choose h2 such that spending is exactly
+    # 26.8%"*, *"because when you have just one rental, gamma is not pinned by
+    # anything."*
+    #
+    # THEY ARE RIGHT AND IT IS THE SHARP VERSION OF A CORNER THIS RUN HIT.  With
+    # a single fixed-size unit the household cannot choose how much housing to
+    # buy, so the expenditure share carries no information about the preference
+    # weight: it is set by the rent relative to income.  Measured at iteration
+    # 200, hspend moved only 0.209 -> 0.239 as gam went 0.20 -> 0.60, and
+    # reaching the 0.268 target needed gam near 0.85 -- a housing weight of 0.73
+    # with consumption at 0.13.  gam ran to its bound and sat there.
+    #
+    # So gam takes its data counterpart, 0.268, the housing share of non-drug
+    # spending, and h2 is what makes the model's REALISED share match it.
+
     ('aleph',   'vsl',             80.0,     +1, 0.30, 3.0,  60.0),
     # THE RENT IS THE HOMELESSNESS INSTRUMENT NOW, NOT THE STREET.  With one
     # rental -- the author's instruction of 13 September -- homelessness is who
@@ -137,7 +152,19 @@ SPEC = [
     #
     # crossing 0.0100 near 0.18.  h_hl becomes a SET parameter, the quality of
     # the street, and stops carrying a moment.
-    ('h_lg',    'homeless',         0.0100,  +1, 0.40, 0.05,  0.60),
+    # h2 CARRIES THE HOUSING SHARE NOW, NOT HOMELESSNESS.  With gam set, the one
+    # rental's SIZE is the only thing left that moves what a housed household
+    # spends on rent, so it is the instrument for hspend.  Homelessness goes
+    # back to h_hl below.
+    ('h_lg',    'hspend',           0.268,   +1, 0.40, 0.05,  0.60),
+    # h_hl RETURNS AS THE HOMELESSNESS INSTRUMENT.  It was swapped out earlier
+    # today because at a rent FIXED at 0.40 it could not reach the target from
+    # either side -- at its lower bound homelessness was already 0.270.  That
+    # measurement was taken at a rent it no longer has: h2 is now free and is
+    # pinned by hspend, so the affordability margin moves with it and h_hl works
+    # on who CHOOSES the street rather than on who is priced out.  Whether it
+    # can reach 0.0100 from there is what this run settles.
+    ('h_hl',    'homeless',         0.0100,  +1, 0.40, 1e-7,  0.05),
     # b's CEILING IS 1.0, author 12 September: *"i think you need to have a very
     # high b"*.  At theta = 0.25 the model starts with 72 to 86 per cent of
     # households using, and b is the only thing that brings that down: measured
@@ -896,7 +923,10 @@ if __name__ == '__main__':
     # median gap 0.3 per cent with ten of eleven brackets inside ten and all ten
     # of those inside 3.1.  omega there is 0.00853, below the cliff, so the run
     # starts on the right side of it and the new bound keeps it there.
-    SEED = dict(gam=0.43717, aleph=10.99573, h_hl=0.00960, b=0.05774,
+    # gam IS NOT SEEDED.  It is SET at its data value of 0.268 -- see the note in
+    # SPEC -- and SEED is applied LAST, so leaving it here would put 0.437 back
+    # and silently undo the decision.
+    SEED = dict(aleph=10.99573, h_hl=0.00960, b=0.05774,
                 # 0.0368/0.089, the value the identity sets, not a start
                 pi_base=0.0368 / 0.089, u0=0.04824, u1=0.05484, omega=0.00853,
                 delta_d=0.56972, kap=0.10067, th=0.14599)
@@ -1044,8 +1074,25 @@ if __name__ == '__main__':
         m = moments(par, it)
         if FLOOR_ON and it % 10 == 0:
             nv = negative_value_share(par)['share']
-            if nv > 0.0:
-                par = with_(par, y_floor=par.y_floor + FLOOR_STEP)
+            # THE FLOOR MAY NEVER REACH THE RENT, AND THE LAST RUN SHOWS WHY.
+            #
+            # The step fires whenever any negative value of life remains, and
+            # over six hundred iterations it walked y_floor from 0.186 to 0.274
+            # while the rent sat at 0.266.  Once the floor passes the rent EVERY
+            # household can afford the unit, homelessness is identically zero,
+            # and its instrument loses all grip: the gap sat at -100 per cent
+            # from iteration 500 to the end while the floor kept climbing.  The
+            # pathology was still 1.00 per cent, so it would have climbed for
+            # ever.
+            #
+            # Capped just below the rent, the floor can still clear the poorest
+            # households' negative value of life -- which is what it is for --
+            # but it can never house the whole distribution, so homelessness
+            # stays a live margin.  If the pathology survives at the cap, that
+            # is a fact to report rather than something to outrun.
+            cap = 0.98 * par.pr * par.h_lg
+            if nv > 0.0 and par.y_floor < cap:
+                par = with_(par, y_floor=min(par.y_floor + FLOOR_STEP, cap))
         if it % 50 == 0 or it == 49999:
             w = table(par, m, it)
             if w < 2.0:
