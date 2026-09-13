@@ -13110,46 +13110,50 @@ penalty distribution rather than the cohort's own.  `transition_childhood.py`
 gives every cohort one fixed childhood number, which would have shown cohort 1
 and cohort 2 as identical and hidden the only dynamics the optimal reform has.
 
-### MEASURED: a calibration loop is about three minutes now, not eleven
+### MEASURED, OLD AGAINST NEW ON THE SAME MACHINE: the new model is 20 % FASTER
 
-**THE FIRST VERSION OF THIS NOTE SAID NINETY-FIVE SECONDS AND WAS WRONG.** The
-marker it timed on -- `average_childhood_utility` -- printed once per BETA TYPE
-before the pooling fix, so what was recorded as two loops was the two beta
-types of ONE loop. The two passes print different adult values, 102.51 patient
-and 82.74 impatient, which is what settles it. Corrected here rather than
-edited away, because the wrong figure was used to argue the firing cadence is
-too slow.
+**BOTH EARLIER VERSIONS OF THIS NOTE COMPARED AGAINST ENGINE.md's SIX AND
+ELEVEN MINUTES, AND THAT COMPARISON IS WORTHLESS HERE.** Those figures came
+from another container whose thread count is not recorded. Measured on THIS
+machine the OLD model takes about three minutes a loop, not six, so the
+"2.4 times faster" claimed earlier was comparing this box against a slower
+one. The only comparison worth making is old against new under identical
+conditions, and that is what this is.
 
-Timed 13 September, on the model with inelastic labour supply and the three SUD
-blocks, `-O3 -funroll-loops`, `OMP_NUM_THREADS=4`:
+Both built `-O3 -funroll-loops`, run with `OMP_NUM_THREADS=4` on an idle
+machine, one beta type, from a clean directory, each resolving the same
+`../data/us_mortality_multipliers.csv`:
 
-    start           20:08:56
-    beta type 1 ->  20:10:22     86 s   (startup, grids and the three verifiers in it)
-    beta type 2 ->  20:11:55     93 s
-    ONE FULL LOOP                179 s  = about three minutes
+    OLD  (endogenous labour, 12 unemployment states, no ever-SUD indicator)
+      start        20:28:45
+      loop 1 ->    20:30:41     116 s
+      loop 2 ->    20:33:38     177 s
 
-Against ENGINE.md's standing figure of about eleven minutes for a solve at two
-beta types, so roughly 3.7 times faster. **TREAT THE RATIO AS INDICATIVE, NOT AS
-A CONTROLLED COMPARISON:**
-the eleven minutes was taken on a different container and its thread count is
-not recorded. The direction is not in doubt and the reason is structural --
-removing endogenous labour supply removed a SECANT ROOT-FIND that ran per
-state, per housing branch, inside the innermost loop. The fifty per cent larger
-unemployment grid is more than paid for by that plus the zero-probability skip
-in the continuation nests.
+    NEW  (inelastic labour, 18 states WITH the indicator, childhood welfare)
+      start        20:21:54
+      loop 1 ->    20:23:20      86 s
+      loop 2 ->    20:25:44     144 s
 
-**WHAT THIS MEANS FOR THE ENGINE'S CADENCE.** The firing routines are set at
-roughly ten minutes because a solve took eleven. At three minutes a worker can
-turn three lines inside one firing rather than needing three, so the fleet's
-throughput per firing is about three times what the schedule assumes. Worth
-re-reading before the calibration reopens; nothing has been changed here.
+**Loop 1 is 26 per cent faster and loop 2 is 19 per cent faster.** Loop 1 is
+the priming pass in both -- expected_child_value is zero there by
+construction -- so loop 2 is the steady-state figure: about two and a half
+minutes against about three.
 
-**AND THE FIRST END-TO-END RUN FOUND A DEFECT IN THE CHILDHOOD WELFARE.** It is
-recorded in the commit: the child's own flow carried no value of life, so with
-sigma above one a childhood was worth less than not existing and
-average_childhood_utility came out at -67.32 against an adult half of +102.51.
-Fixed, and the model hash moved with it, so the timing above is the hash
-BEFORE the fix; the fix is one addition and does not change it materially.
+THE NEW MODEL IS FASTER DESPITE CARRYING FIFTY PER CENT MORE STATES. Three
+things net out:
+
+- removing endogenous labour supply removed a SECANT ROOT-FIND that ran per
+  state, per housing branch, in the innermost loop -- this is the whole of
+  the gain;
+- the zero-probability skip in the continuation nests pays for most of the
+  third SUD block, because a household can only land in one of the two clean
+  blocks and the other half of the range carries exactly zero;
+- against those, fifty per cent more states to solve.
+
+Net, about minus twenty per cent.
+
+**A FURTHER 19 PER CENT IS AVAILABLE AND HAS NOT BEEN TAKEN** -- see the next
+section.
 
 ### The ever-had-the-disorder indicator, and what it costs
 
