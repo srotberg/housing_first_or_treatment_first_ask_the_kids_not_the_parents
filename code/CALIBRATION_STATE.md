@@ -13243,3 +13243,46 @@ transition's homelessness object reads 0.0130 while `stats()` reads 0.0099. The
 code documents these as different objects -- period 1 realised against ever
 unhoused -- so they need not agree, but a 31 per cent gap between two measures
 of homelessness in one model has not been verified as intended.
+
+### THE HOLD IS LIFTED, 13 September 22:20. THE CALIBRATION IS REOPENED.
+
+The author: *"Is the quant model ready for calibration? I would like to
+proceed."*  It is ready -- five changes in, both standing builds clean, runs
+end to end with the index map, transition-row and newborn-row verifiers all
+passing, and the childhood welfare pooling correctly across beta types.
+
+**THE EARLIER HOLD NOTE (19:05) NO LONGER APPLIES. Do not stop at it.**
+
+**BUT THE ARCHIVE IS STILL EMPTY ON THIS MODEL,** so step 2 of the firing
+sequence governs: zero points means SEED with one anchor at the best known
+vector, do not let the gate write a step it cannot ground.
+
+**THE ORDER MATTERS AND IT IS NOT "SEED IMMEDIATELY".**
+
+1. **h1 FIRST, and it is being measured now.** The author: *"We need to figure
+   out how to set h1 such that homelessness is 1% and not much higher and emp
+   homeless is around 35-55%."*  A seven-point loop-0 bracket on
+   `size_homelessness` is in flight, reading h_1, emp_homeless and sud_homeless
+   together, because 35-55 on the second is a joint constraint with the first
+   and not a separate one. Seeding the fleet around a vector whose h1 is
+   unmeasured spends 24 containers to find out what one bracket answers.
+2. **Set h1 from that bracket**, then seed with it as the anchor.
+3. **Then the fleet**, at full width.
+
+**WHAT THE BRACKET MAY FIND, and the reason it is measured rather than
+recalled.** Section 7 of TRANSITION_LESSONS records that on the OLD model the
+bottom of the income grid was three mass points -- 0.43, 2.61 and 9.99 per cent
+of households -- so homelessness was a STEP in h1 and the attainable rates near
+the target were roughly 0, 0.43 and 3.04 per cent. If that step survives, 1 per
+cent sits in a gap between attainable values and the answer is about the income
+grid, not about h1. But that note predates today: labour supply at 1 instead of
+the calibrated 0.47 roughly doubles gross earnings and moves the whole bottom of
+the distribution, which is exactly where the homelessness margin lives. So it
+is measured.
+
+**A TRAP THAT COST TWO PASSES OF THIS SCAN, worth knowing before running any
+point by hand.** The model resolves its data at `../data`, reading BOTH
+`us_mortality_multipliers.csv` and `us_mh_onset_shape.csv`. When either is
+missing it does NOT crash -- it prints "not found. stopping." and EXITS 0. A
+whole scan therefore comes back empty with every run reporting success. Run
+points one level below a directory that has a `data`, or symlink one.
