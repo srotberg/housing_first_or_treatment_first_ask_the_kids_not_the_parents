@@ -15,6 +15,18 @@ five per cent of target and the alternation stopped since loop 27:
 
     penalty_child_addicted: scan out of range, stuck at its 0.6 ceiling
 
+> **CORRECTED AT LOOP 58.**  "The alternation stopped since loop 27" is wrong.
+> It resumed at loop 58, after THIRTY-ONE quiet loops: participation fell 18.1
+> per cent to 0.0730, the drug share rose 20.4 to 0.1093 and the vsl ratio went
+> 79.84 to 97.42 -- the low regime again.  So a quiet stretch of thirty-one
+> loops is still not evidence of settling in this model, which is the same
+> lesson loop 26 taught at four loops and it was not learned hard enough.  The
+> table below is one phase of an oscillation, not a resting point.
+>
+> What it does NOT change: the homelessness reading.  Loop 57 put participation
+> at 0.08912, ON target, with homelessness at 2.79x -- a THIRD measurement at
+> the target, after 2.35x and 2.5x, from a third distinct path.
+
 **THIS IS THE CONFIGURATION'S ANSWER.**  Three moments land exactly; the rest do
 not, and the pattern is the one established all night -- every moment that
 depends on the size of the using population misses, and misses in a direction no
