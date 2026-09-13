@@ -126,7 +126,32 @@ SPEC = [
     # PINNED against it with nothing left to give.  A bound a parameter reaches
     # is not a calibration, it is a constraint.
     ('b',       'part',             0.08901, -1, 0.30, 0.005, 1.00),
-    ('pi_base', 'sud',              0.0368,  +1, 0.40, 1e-3,  0.99),
+    # pi_base IS NOT CALIBRATED.  IT IS 0.0368/0.089 BY CONSTRUCTION.
+    #
+    # The author, 13 September: *"shouldnt pi_base just be 0.0368/0.089?"*  Yes.
+    # Onset is a FLAT rate on anyone who buys -- stylized.py:872 is
+    # `par.pi_base * (v > 0)` and nothing else -- so
+    #
+    #     sud = part * pi_base     identically
+    #
+    # and the log confirms it to the printed digits: at iterations 450, 550 and
+    # 600 the model's sud/part read 0.3723, 0.3695 and 0.3750 against pi_base of
+    # 0.37212, 0.36911 and 0.37501.
+    #
+    # So with participation at its target of 0.089, the disorder rate of 0.0368
+    # pins pi_base at 0.41348 exactly and there is nothing to search for.
+    #
+    # AND SEARCHING FOR IT WAS DOING HARM, because the identity makes the sud
+    # bracket read b's error rather than pi_base's.  Iteration 600: part -7.4
+    # per cent and sud -16.0, so pi_base was being pushed down to repair a
+    # shortfall b had caused.  Iteration 650: part -10.4 and sud -15.5, the same
+    # thing again.  Two brackets pulling on one identity.
+    #
+    # sud is now a CHECK rather than a target: it is on target whenever
+    # participation is, and if it ever is not, the identity above is broken and
+    # something else is wrong.  The bracket is retired with its distance retired
+    # with it, which is the standing rule.
+    # ('pi_base', 'sud',              0.0368,  +1, 0.40, 1e-3,  0.99),
     ('u0',      'unemployment',     0.0485,  +1, 0.40, 0.005, 0.30),
     ('u1',      'sud_of_homeless2', 0.217,   -1, 0.20, 0.0486, 0.50),
     # omega_c IS BOUNDED TO [0.01, 0.14], author 12 September: *"try omega_c only
@@ -825,7 +850,8 @@ if __name__ == '__main__':
     # of those inside 3.1.  omega there is 0.00853, below the cliff, so the run
     # starts on the right side of it and the new bound keeps it there.
     SEED = dict(gam=0.43717, aleph=10.99573, h_hl=0.00960, b=0.05774,
-                pi_base=0.41361, u0=0.04824, u1=0.05484, omega=0.00853,
+                # 0.0368/0.089, the value the identity sets, not a start
+                pi_base=0.0368 / 0.089, u0=0.04824, u1=0.05484, omega=0.00853,
                 delta_d=0.56972, kap=0.10067, th=0.14599)
     _start = {**{k: v for k, v in FIXED.items() if k != 'kap'},
               **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2,
