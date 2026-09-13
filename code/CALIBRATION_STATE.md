@@ -13183,3 +13183,29 @@ answers. Copying instead of solving there is exact, not an approximation, and
 saves 35/60 x 1/3 = 19.4 per cent of the value function work. NOT DONE: it is an
 optimisation rather than a correctness fix, and the author should see the
 measured time first.
+
+### RATIONED TREATMENT FIRST IS TREATMENT FIRST AT THIS CALIBRATION
+
+`solve_pv_scale` returns a reallocation factor of exactly 1.0000, and RTF
+differs from TF only through `pv = min(pv * pv_scale, 1.0)`, so at a scale of
+one the two are the same policy. That is not a solver failure. Measured:
+
+    policy   coverage   particip   particip | voucher   voucher mass
+        HF    0.06128    0.09057              0.05362        0.06128
+        TF    0.06128    0.03610              0.00000        0.06128
+
+**NOT ONE VOUCHER HOLDER USES UNDER TREATMENT FIRST.** Conditionality is
+completely effective on exactly the households it binds on, so no voucher is
+ever revoked, none is freed, and the rationing has nothing to reissue. Coverage
+is identical under the two policies for the same reason.
+
+The 3.6 per cent who still use under TF are households that never drew a
+voucher, and conditionality does not reach them. So TF's entire effect runs
+through the 6.1 per cent who hold one.
+
+**THE RATIONING MARGIN IS EMPTY, which is the mirror of section 2 of
+TRANSITION_LESSONS** -- check whether the deterred margin is empty before
+believing a small cost. Here it is the opposite failure to guard against:
+the margin is FULL, every household on it is deterred, and the second
+instrument the rationed variant was built to price has nothing to price.
+Worth stating in the paper rather than reporting two identical columns.

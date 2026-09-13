@@ -252,6 +252,12 @@ def voucher_coverage(par, policy=None):
     on the ones that keep it.  period1's records carry the voucher saving in
     slot 3 of each branch, which is positive exactly when a voucher is held.
     """
+    # SOLVED BEFORE period1 IS TOUCHED. with_() clears chdmg and _chdmg_at
+    # RAISES rather than defaulting to zero, so every caller that builds a par
+    # with with_() and hands it here has to re-solve. Both of them did not --
+    # the same defect found in transition.py the same day, where one of seven
+    # sites solved and six did not.
+    par = S.solve_child_damage(par, par.policy)
     got = mass = 0.0
     for j, y in enumerate(C.YG):
         for p, gain, v, bu, bn, inc, _own in S.period1(par, y, par.policy):

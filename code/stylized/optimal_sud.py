@@ -56,7 +56,7 @@ from stylized import P, with_, solve_child_damage, _hpick, value1
 from recalibrate import FIXED, START
 import calibrate as C
 from calibrate import stats
-from child_welfare import _childhood_u, cev
+from child_welfare import _childhood_u, cev, solve_pv_scale
 
 # ---------------------------------------------------------------------------
 # THE BASE VECTOR, WRITTEN OUT AND CHECKED RATHER THAN LOADED FROM A CACHE.
@@ -316,7 +316,8 @@ def _fmt_collapse(rows):
 # THE TRANSITION
 # ---------------------------------------------------------------------------
 
-def transition(par_new, n=8, par_old=None, label='reform'):
+def transition(par_new, n=8, par_old=None, label='reform',
+               policy_new=None, policy_old=None):
     """Cohort by cohort from the calibrated rest point to the reformed one.
 
     THE TIMING IS THE AUTHOR'S, and transition_childhood.py established it.
@@ -338,12 +339,14 @@ def transition(par_new, n=8, par_old=None, label='reform'):
     half of the dynamics the author asked to see.
     """
     par_old = base() if par_old is None else par_old
+    policy_old = BASE_POLICY if policy_old is None else policy_old
+    policy_new = BASE_POLICY if policy_new is None else policy_new
 
     # The pre-reform world.
-    _qo, a_old, _k_old = grids(par_old, BASE_POLICY, par_old.pV)
-    v1o, sud_o, hl_o, ev_o = T._policy_grids(par_old, BASE_POLICY, par_old.pV)
-    kbs_old = _kid_by_shift(par_old, BASE_POLICY, par_old.pV)
-    p0 = T._rest_point(sud_o, T._hl_by_shift(par_old, BASE_POLICY, par_old.pV), par_old)
+    _qo, a_old, _k_old = grids(par_old, policy_old, par_old.pV)
+    v1o, sud_o, hl_o, ev_o = T._policy_grids(par_old, policy_old, par_old.pV)
+    kbs_old = _kid_by_shift(par_old, policy_old, par_old.pV)
+    p0 = T._rest_point(sud_o, T._hl_by_shift(par_old, policy_old, par_old.pV), par_old)
 
     def kid_at(p, kbs, q):
         return sum(ps * float((WW * kbs[float(s)]).sum())
@@ -354,10 +357,10 @@ def transition(par_new, n=8, par_old=None, label='reform'):
     level0 = adult0 + kid0
 
     # The reformed world.
-    _qn, a_new, _k_new = grids(par_new, BASE_POLICY, par_new.pV)
-    v1n, sud_n, hl_n, ev_n = T._policy_grids(par_new, BASE_POLICY, par_new.pV)
-    kbs_new = _kid_by_shift(par_new, BASE_POLICY, par_new.pV)
-    hls_n = T._hl_by_shift(par_new, BASE_POLICY, par_new.pV)
+    _qn, a_new, _k_new = grids(par_new, policy_new, par_new.pV)
+    v1n, sud_n, hl_n, ev_n = T._policy_grids(par_new, policy_new, par_new.pV)
+    kbs_new = _kid_by_shift(par_new, policy_new, par_new.pV)
+    hls_n = T._hl_by_shift(par_new, policy_new, par_new.pV)
 
     rows = []
     p_par, p = p0.copy(), T._step(p0, sud_n, hls_n, par_new)
@@ -392,6 +395,60 @@ def _fmt_transition(rows, b, label):
               f"{100*r['cev_adult']:10.3f}%{r['sud']:9.4f}{r['homeless']:10.4f}")
 
 
+# ---------------------------------------------------------------------------
+# THE POLICY EXPERIMENTS, AT THE BENCHMARK omega_c
+# ---------------------------------------------------------------------------
+
+def rationed_scale(par):
+    """The reallocation factor that holds voucher SUPPLY fixed under RTF.
+
+    The author's rationed Treatment First houses the same fraction of eligible
+    households as the benchmark while refusing anyone with the disorder, and
+    the vouchers that refusal frees are reissued. How many are freed depends on
+    how many use, which depends on the voucher, so it is a fixed point rather
+    than a parameter. solve_pv_scale iterates it.
+    """
+    return solve_pv_scale(par)
+
+
+def policy_experiments(n=8):
+    """Housing First against Treatment First and rationed Treatment First, at
+    the CALIBRATED omega_c -- the paper's own experiment -- with the same
+    childhood and adult split as the planner's.
+
+    THE COMPARISON IS AGAINST HOUSING FIRST, which is the benchmark: the world
+    as it is, rationed vouchers with no condition attached.
+    """
+    par = base()
+    scale, cov0, cov = rationed_scale(par)
+    print(f"\n  rationed TF reallocation factor {scale:.4f}   "
+          f"coverage target {cov0:.4f}, achieved {cov:.4f}")
+
+    rows = []
+    for pol, lab in (('HF', 'Housing First (benchmark)'),
+                     ('TF', 'Treatment First'),
+                     ('RTF', 'rationed Treatment First')):
+        q = with_(par, pv_scale=scale) if pol == 'RTF' else par
+        rows.append(economy(q, lab, policy=pol))
+    return par, scale, rows
+
+
+def _fmt_policies(par, rows):
+    hf = rows[0]
+    print('\nLONG RUN, THE POLICY EXPERIMENT AT THE CALIBRATED omega_c')
+    h = (f"  {'policy':>26}{'SUD':>9}{'homeless':>10}{'childhood':>12}"
+         f"{'adult':>11}{'lifetime':>11}{'CEV':>10}{'CEV kid':>10}{'CEV adult':>11}")
+    print(h); print('  ' + '-' * (len(h) - 2))
+    for r in rows:
+        ct = cev(par, r['total'] - hf['total'], hf['total'])
+        ck = cev(par, r['kid'] - hf['kid'], hf['total'])
+        ca = cev(par, r['adult'] - hf['adult'], hf['total'])
+        print(f"  {r['label']:>26}{r['sud_stat']:9.4f}{r['homeless_stat']:10.4f}"
+              f"{r['kid']:12.5f}{r['adult']:11.5f}{r['total']:11.5f}"
+              f"{100*ct:9.3f}%{100*ck:9.3f}%{100*ca:10.3f}%")
+    print('  SUD and homeless are at the stationary mixture over penalty types.')
+
+
 if __name__ == '__main__':
     # SELECTABLE, because the long-run block is several hundred model solves and
     # iterating on the transition should not pay for it every time.
@@ -421,6 +478,17 @@ if __name__ == '__main__':
     if what in ('all', 'longrun'):
         _fmt_collapse(collapse_scan())
         _fmt_long_run(long_run())
+
+    if what in ('all', 'policies'):
+        par, scale, prows = policy_experiments()
+        _fmt_policies(par, prows)
+
+        # THE TRANSITIONS THE PAPER ACTUALLY RUNS, at the calibrated omega_c.
+        for pol, lab in (('TF', 'Treatment First'),
+                         ('RTF', 'rationed Treatment First')):
+            q = with_(par, pv_scale=scale) if pol == 'RTF' else par
+            rows, b = transition(q, n=8, par_old=par, policy_new=pol)
+            _fmt_transition(rows, b, f'{lab}, at the calibrated omega_c')
 
     if what not in ('all', 'transition'):
         raise SystemExit(0)
