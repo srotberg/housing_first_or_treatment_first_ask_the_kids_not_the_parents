@@ -1,3 +1,79 @@
+## 13 September 15:13 UTC -- THE STYLIZED MODEL IS RECODED.  THE FULL
+## RECALIBRATION IS BLOCKED ON ONE DECISION, AND IT IS NOT A SMALL ONE.
+
+The author asked for the stylized model to be recoded to the new set-up and then
+fully recalibrated.  The recode is DONE and pushed.  The recalibration has NOT
+been started, and the reason is measured below rather than argued.
+
+**WHAT WAS BUILT.**  Four changes, all on the author's instruction of 13
+September.
+
+  1. NO HOMELESSNESS TRANSMISSION.  _shifts drops from four penalty types to
+     two, _step ignores its hl argument, _rest_point starts from a two-vector,
+     DEL_H is dead.  Author: the quantitative model already delivers a
+     homelessness odds ratio near two on income persistence alone.
+  2. RHO = 0.50 IN BOTH MODELS, the upper end of the literature, so the SUD
+     penalty comes out as small as the model can manage.
+  3. BETA = 0.995 ANNUAL = 0.86038 over a period, replacing the 1.0 the author
+     set exogenously on 12 September.  It was never calibrated; an earlier note
+     of mine called it a parameter at its upper bound and that was WRONG.
+  4. chdmg IS SOLVED, NOT ZERO.  It is V(1,0) - V(1,1), a VECTOR over the
+     parent's income grid, and the parent subtracts
+     beta * omega_c * chdmg(y) * pi(v).  Only the DIFFERENCE enters, so the
+     aleph levels cancel and there is no divergent dynastic sum.  beta is on it
+     and was missing.  No survival factor: the child becomes an adult whether or
+     not the parent lives.
+
+A SILENTLY ZERO OR STALE chdmg IS NOW IMPOSSIBLE, and that mattered: it was 0.0
+for months, which switched the whole continuation half of omega_c off in every
+calibration run with nothing failing.  The default is a None sentinel that
+RAISES on solve, and with_() clears it on any parameter change, so the standing
+rule is **solve_child_damage runs LAST, after every with_**.  It is wired into
+calibrate.stats and transition._policy_grids; any other site that solves and has
+not been wired will raise rather than quietly run the channel off.
+
+**THE REFACTOR IS EXACT WITH THE CHANNEL OFF.**  At chdmg = 0 it reproduces the
+13 September vector to six figures: participation 0.088712, drug share 0.141320,
+users' income 0.7353.  So what follows is the channel, not a coding error.
+
+**AND THE CHANNEL COLLAPSES THE MODEL ONTO A PRE-EXISTING PATHOLOGY.**
+Switching it on at the calibrated omega_c of 0.01518:
+
+    participation      0.088712 -> 0.055413
+    drug spending share 0.141320 -> 0.000010
+    users' mean income   0.6235 -> 0.1335
+
+The surviving users buy the SMALLEST POSITIVE quantity on the grid while taking
+the full 41.3 per cent onset risk.  That is not economics, and the cause was
+checked directly rather than inferred.  W2 is NEGATIVE at the poorest nodes, so
+lower survival RAISES the expected continuation and the disorder is strictly
+preferred:
+
+       y      W2(clean)   W2(sud)    s0*W2c    s1*W2u   disorder preferred
+    0.1080    -11.1084   -11.1680  -10.1086   -9.1629        YES
+    0.1256     -7.7655    -7.8300   -7.0666   -6.4242        YES
+    0.1703     -1.4090    -1.4862   -1.2822   -1.2194        YES
+    0.3368      3.6274     3.5980    3.3010    2.9520         no
+
+THE PATHOLOGY IS PRE-EXISTING and is recorded in calibrated_sep13.json's own
+_floor note at 1.56 per cent of period-2 states with y_floor = 0.  The child
+channel did not create it; it DETERRED EVERY GENUINE USER AND LEFT ONLY THE
+PATHOLOGICAL ONES.  Calibrating on this would fit omega_c and delta_d to a
+population of households seeking death.
+
+**THE DECISION THE CALIBRATION IS WAITING ON: THE INCOME FLOOR.**  y_floor is
+off.  recalibrate.py records that a consumption floor was measured and lifts the
+minimum lifetime value from -68 to -9 while moving the share with a negative
+value of life only from 26.7 to 25.0 per cent.  That is the existing instrument
+and it has not been turned on.  DO NOT start a sweep before the author rules on
+it.
+
+**A STRUCTURAL POINT THAT HOLDS WHATEVER THEY DECIDE.**  _pid is flat in
+quantity -- pi_base * (v > 0) -- so the child damage is a pure FIXED COST OF
+USING.  It can move participation and it CANNOT move how much a user buys.  If
+the child is meant to discipline the intensive margin, the hazard has to depend
+on v again.  Reported to the author, not acted on.
+
 ## 13 September 14:52 UTC -- THREE INSTRUCTIONS THAT CHANGE THE QUANTITATIVE
 ## MODEL BEFORE IT IS CALIBRATED AGAIN.  MEASURED, NOT ARGUED.
 
