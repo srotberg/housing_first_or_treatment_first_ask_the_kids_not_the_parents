@@ -65,6 +65,19 @@ if live:
 # THE PARAMETERS MOVE TOO, AND THE GAPS ALONE DO NOT SHOW IT.  A moment that
 # will not close because its instrument is pinned looks exactly like one that is
 # converging slowly, until you put the parameter beside it.
+# THE HOMELESSNESS ODDS RATIO IS REPORTED, NEVER TARGETED, so it has no row in
+# the spec and never appeared on this table.  The author asked for it: it is the
+# other half of what the child inherits, and delta_d drives BOTH -- a child
+# pushed down by the penalty is likelier to be unhoused as well as to use.  The
+# model's own ODDS line carries it, and ENGINE.md's rule is that anywhere from
+# 1.8 to 2.4 is fine and only below 1.8 is a delta_h reconsidered.
+tail = [l for l in T if l.strip().startswith('ODDS')]
+if tail:
+    m = re.search(r'child homeless\s+([\d.]+).*?child SUD\s+([\d.]+)', tail[-1])
+    if m:
+        print('\n  ODDS RATIOS   child homeless %s  (reported only, 1.8-2.4 is fine)'
+              '   child SUD %s  (target 2.0)' % (m.group(1), m.group(2)))
+
 print('\n  PARAMETER HISTORY')
 pnames = [r[0] for r in max((b[1] for b in blocks), key=len)]
 print('    it  ' + ''.join('%9s' % n[:8] for n in pnames))
