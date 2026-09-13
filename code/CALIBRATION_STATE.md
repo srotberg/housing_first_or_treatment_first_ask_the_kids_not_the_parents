@@ -13008,3 +13008,40 @@ went from twelve states to eighteen. The benchmark does not read them
 (`use_old_results` is `is_counterfactual`, zero there) so a calibration run is
 unaffected; a counterfactual or transition reads them and needs a fresh
 benchmark first. Nothing was deleted.
+
+### The stylized model's calibration is FINISHED, and two targets cannot be reached
+
+Iteration 850 of the run started 19:26 on 13 September, with `u1` held:
+
+    param          value  moment                   model   target   gap %
+    aleph       12.45630  vsl                    80.0003  80.0000     0.0
+    gam          0.44351  hspend                  0.2683   0.2680     0.1
+    h1           0.01017  homeless                0.0099   0.0100    -0.6
+    b            0.05111  part                    0.0891   0.0890     0.1
+    u0           0.04622  unemployment            0.0485   0.0485     0.0
+    u1  (HELD)   0.10814  sud_of_homeless2        0.1927   0.2170   -11.2
+    omega        0.00055  child_gap               0.1830   0.1834    -0.2
+    delta_d      1.00000  child_sud_or            1.8261   2.0000    -8.7
+    kap          0.10747  r_use                   0.7426   0.7400     0.4
+    th           0.14962  dshare                  0.1396   0.1410    -1.0
+
+Eight of the ten are inside ONE per cent. The other two are blocked, and
+neither is a search problem, so "keep going until nothing is outside five per
+cent" cannot be met by running longer:
+
+**`child_sud_or` is blocked by delta_d's BOUND.** delta_d walked cleanly from
+0.8598 to 1.00000 and stopped there because the author set that bound -- *"Delta
+d cannot be over 100%!!"* -- and 1.00 in log income is already a 63.2 per cent
+permanent cut to the child's income. The odds ratio reaches 1.8261 there. Raising
+it further is not a calibration decision, it is a decision about how large a
+penalty the model is allowed to transmit.
+
+**`sud_of_homeless2` has no working instrument.** u1's sign is measured wrong by
+both tests that once disagreed about it -- see the SPEC comment -- so it is held
+at 0.10814 and its gap is reported rather than chased.
+
+**A reported-only number that moved with delta_d and is worth watching:** the
+child HOMELESSNESS odds ratio is 4.155 at delta_d = 1.00, against a literature
+band of roughly 1.8 to 2.4. It was 3.52 at delta_d = 0.86. Nothing is calibrated
+on it, but it is the same penalty driving both, and the value that makes the SUD
+ratio least wrong makes the homelessness ratio most wrong.
