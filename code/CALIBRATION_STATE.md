@@ -1,3 +1,35 @@
+## 13 September 07:15 UTC -- THE FULL LIST OF WHAT THE RESUME DID AND DID NOT
+## CARRY. I READ THE BANNER AND ACTED ON ONLY ONE LINE OF IT.
+
+Compared directly, last value in the dead run against first in the resumed one:
+
+    parameter                 loop 55 (old)      resumed loop 1
+    addiction_scalar_1        1.2478931e-03      1.2478931e-03     carried
+    size_homelessness         1.5757078e-05      1.5757078e-05     carried
+    mu_homeless               0.53220567         0.53220567        carried
+    weight_on_child           0.10092383         0.10092383        carried
+    value_of_life             215.63560          213.47924         -1.0%
+    kappa_phi_d_level         2.8422195          3.0000000         RESET
+    addiction_onset_base      0.032686           0.0428            RESET
+
+**TWO PARAMETERS WERE RESET, NOT ONE.**  `kappa_phi_d_level` went back to the
+base 3.0 from the 2.8422 the run had reached, a 5.6 per cent jump on a parameter
+that was being calibrated at 0.1 per cent a loop -- so about fifty-five loops of
+its own travel, undone.
+
+resume.sh PRINTED BOTH, side by side, under its "STRUCTURAL PARAMETERS ARE
+PRINTED, NOT ASSUMED -- if they are not what the run is meant to be at, the base
+is wrong" banner.  That banner exists for exactly this check.  I read it, caught
+`addiction_onset_base`, reported that one to the author as the cost, and did not
+check the line above it.  The banner did its job; the reader did not.
+
+**SO THE FIX TO resume.sh IS BIGGER THAN ONE LINE.**  Its NAMES list carries
+what the log prints under the parameter's own name and silently drops everything
+else.  `addiction_onset_base` is printed as `onset_at_the_mean_quantity`;
+`kappa_phi_d_level` needs checking the same way.  The right fix is to make the
+banner an ASSERTION rather than a print: refuse to relaunch when a structural
+parameter in the base differs from the newest log's live value, and say which.
+
 ## 13 September 07:10 UTC -- WHAT THE RESUME ACTUALLY COST, MEASURED
 
 The first moment block of the resumed run (`worker_3110c0fab1.log`):
