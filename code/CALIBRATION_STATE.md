@@ -3,7 +3,30 @@
 The author: *"is the quant model getting closer? are we able to converge on that
 one? because this model is the key to the paper"*.
 
-**YES, AND THE FIRST THREE LOOPS WERE MISLEADING.**  Participation's instrument
+> **CORRECTED AT LOOP 5, 03:30.**  The elasticity below is NOT a trend.  Loop 5
+> ran the scalar down another 1.01 per cent and participation FELL 0.93 per cent,
+> for an elasticity of +0.92.  The four measured values are +0.53, -2.02, -9.84,
+> +0.92: loop 4's jump was a single step, not the start of a descent, and reading
+> it as one was wrong.
+>
+> What the four loops establish is the AVERAGE: participation 0.00892 -> 0.00991,
+> +11 per cent, on a 4.9 per cent fall in the scalar, an average elasticity of
+> about -2.1.  At that average the remaining 219 log per cent needs the scalar to
+> fall by a factor of 2.8, which at 1 per cent a loop is about 105 loops, or nine
+> hours -- not two.
+>
+> **AND THE JUMPINESS IS THE STYLIZED MODEL'S OWN DIAGNOSIS, AGAIN.**  An
+> elasticity that reads +0.53, -2.02, -9.84, +0.92 on four identical 1 per cent
+> steps is participation moving in DISCRETE JUMPS as income cells flip across the
+> use threshold, which is exactly what `calibrate.py:_grid` records for the
+> stylized model before the distribution was truncated: *"it moved participation
+> from 5.93 to 3.17 per cent as b crossed the value that flips it.  The target of
+> 5.13 sits inside that jump, so b still could not reach it."*  The below-rent
+> atom is still in this model.  So the open question is not the step rate; it is
+> whether participation is continuous in `addiction_scalar_1` at all, and that
+> needs a one-parameter scan, not more loops.
+
+**THE FIRST THREE LOOPS WERE MISLEADING.**  Participation's instrument
 is `addiction_scalar_1` (line 12 of the Fortran: *addiction_scalar_1 ->
 participation*), capped at 1.0 per cent a loop by `trust_factor`.  Measured over
 the four loops of `worker_236f6b3ab5.log`:
