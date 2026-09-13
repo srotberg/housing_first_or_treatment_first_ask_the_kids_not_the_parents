@@ -403,6 +403,15 @@ if __name__ == '__main__':
     print('  ' + '  '.join(f'{k}={v:.5f}' for k, v in CALIBRATED.items()))
     print(f"  beta={par.beta:.6f}  rho={par.rho}  sigma={par.sigma}  "
           f"y_floor={par.y_floor}  h2={par.h2}  h3={par.h3}")
+    # THE PENALTY THE TRANSITION ACTUALLY USES, printed rather than trusted.
+    # transition.py imports children.DEL_D, a module constant built from a
+    # cached JSON at import, and falls back to it whenever _shifts is called
+    # WITHOUT a par.  Every call on this path passes one, so the penalty is
+    # par.delta_d -- but that is the exact substitution that cost a withdrawn
+    # transition table once, so it is shown here beside the shifts it produces.
+    import children as _ch
+    print(f"  penalty shifts in force = {T._shifts(par)}   "
+          f"from par.delta_d={par.delta_d:.5f}, NOT children.DEL_D={_ch.DEL_D:.5f}")
     print(f"\n  {'moment':>10}{'here':>10}{'iter 1350':>11}{'gap %':>8}")
     for k, v in TABLE_1350.items():
         print(f"  {k:>10}{m[k]:10.4f}{v:11.4f}{100*(m[k]-v)/v:7.1f}%")

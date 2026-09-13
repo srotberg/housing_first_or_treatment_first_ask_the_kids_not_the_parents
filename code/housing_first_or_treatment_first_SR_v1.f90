@@ -25195,6 +25195,30 @@
         ! same, which is what a condition means once it no longer conditions on
         ! anything.
         flow_utility_1=flow_utility_1+value_of_life
+
+        ! AND THE CHILD CARRIES IT TOO, IN ITS OWN WELFARE AND NOWHERE ELSE.
+        !
+        ! A childhood is a period of life and is valued as one. The author, 12
+        ! September, on the stylized model's identical question: *"Yes for
+        ! welfare the child's utility growing up counts"*, and its
+        ! _childhood_u has carried the value of life ever since, with the note
+        ! that dropping it TURNS CHILDHOOD WELFARE NEGATIVE.
+        !
+        ! It did exactly that here. Measured on the first two loops before this
+        ! line existed, average_childhood_utility read -67.32 and -42.80 while
+        ! the adult half read +102.51 and +82.74, so a lifetime that is mostly
+        ! childhood came out negative and the whole measure was unusable.
+        !
+        ! THE PARENT STILL DOES NOT WEIGH IT, and that is the author's decision
+        ! of 13 September -- *"ok, then exclude it"*, *"just put it in the
+        ! child's utility function"* -- not an accident of where the line sits.
+        ! value_of_life is added to the ASSEMBLED flow above, outside the
+        ! bracket the child weight multiplies, so the parent's objective carries
+        ! omega_c*(xi-1)*u(X_K) with no value of life in it. Nothing is lost by
+        ! that: omega_c*(xi-1)*value_of_life is a CONSTANT, so it moves no
+        ! choice and cancels out of the child's inherited penalty. It would have
+        ! changed only the level of the value function.
+        if (want_child_flow) child_flow_out=child_flow_out+value_of_life
         
         ! bar_tau^u, charged wherever flow utility is evaluated so that the
         ! value function, the comparison routine and the welfare calculations
