@@ -992,10 +992,22 @@ if __name__ == '__main__':
     # 0.4584 it drifted to: that vector records the speed mismatch, not the
     # mechanism.  Everything else is the point where eight of ten moments were
     # inside ten per cent.
-    SEED = dict(aleph=12.4338, gam=0.4425, h1=0.01010, b=0.05140,
+    # RESEEDED FROM ITERATION 900, which is where the previous run converged:
+    # eight of ten moments inside ten per cent, median gap 0.3, nothing held,
+    # VSL exactly 80.0000 and the housing share exactly 0.2680.  It had stopped
+    # moving -- u1 frozen at 0.0725 since iteration 450 and omega at 0.0020 --
+    # with the two composition moments capped.
+    #
+    # omega STARTS AT 0.0005, on the author's instruction of 13 September:
+    # *"maybe move omega_c=0.0005?"*.  At 0.0020 the child gap sat at 0.5144
+    # against a target of 0.1834 and would not move: omega's step cap is 0.05
+    # per cent, the slowest in the spec, so closing a gap that size from there
+    # takes thousands of iterations.  Starting below the crossing lets the
+    # bracket approach it from the other side instead.
+    SEED = dict(aleph=12.4055, gam=0.4429, h1=0.01010, b=0.05310,
                 # 0.0368/0.089, the value the identity sets, not a start
-                pi_base=0.0368 / 0.089, u0=0.04740, u1=0.04860, omega=0.0024,
-                delta_d=0.71710, kap=0.10740, th=0.14670)
+                pi_base=0.0368 / 0.089, u0=0.04760, u1=0.07250, omega=0.0005,
+                delta_d=0.79370, kap=0.11060, th=0.14930)
     _start = {**{k: v for k, v in FIXED.items() if k != 'kap'},
               **{**START, "th": 0.25, "beta": 0.995 ** 30, "kap": 1.0 - 0.91 ** 2,
                    # A STARTING VALUE AGAIN, not a pin: delta_d is back in SPEC
