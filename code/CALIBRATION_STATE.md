@@ -1,3 +1,36 @@
+## 13 September 04:15 UTC -- TWO THINGS REPORTED AS STABLE ARE NOT, AND BOTH
+## CORRECTIONS POINT THE SAME WAY
+
+**THE PENALTY SCAN IS DRIFTING WITH PARTICIPATION.**  At loop 11 it was reported
+here and to the author as identified: eleven scans, mean 0.402, spread 5.9 per
+cent, holding while the economy moved.  Six loops later that is no longer true:
+
+    0.4151 0.4111 0.4000 0.3999 0.4005 0.3920 0.3947 0.4006 0.4053 0.4015
+    0.4029 0.4074 0.4173 0.4303 0.4393 0.4385 0.4457
+
+It sat in 0.392-0.415 for twelve loops and has climbed on each of the last five.
+Full spread is now 13.7 per cent.  It happens to be climbing TOWARD the stylized
+model's translated 0.434 and currently sits 2.7 per cent above it, but that is
+not evidence of anything: what the series shows is that
+`penalty_child_addicted` moves with participation, so it is not pinned until
+participation is.  The loop-11 reading was true of loops 1 to 12 and was
+generalised too early.
+
+**THE CHILD USE GAP IS NOT IDENTIFIED AT THIS PARTICIPATION LEVEL.**
+
+    0.3181 0.2323 0.1910 0.0919 0.0796 0.0653 0.0964 0.0882 0.1051 0.1200
+    0.0849 0.1917 0.1919 0.1671 0.3810
+
+Target 0.1834, range 0.0653 to 0.3810 -- a factor of 5.8, and loop 17's 0.3810
+is the widest value of the run, wider than where it started.  The oscillation is
+not damping.  It printed ON TARGET at loops 5, 13, 14 and 15 and those were
+crossings.
+
+**BOTH CORRECTIONS SAY THE SAME THING** and it is the 03:50 entry again: every
+moment that depends on the using population is being measured on 1.4 per cent of
+households instead of 8.9, and nothing measured there is stable.  The order
+matters more than the step rate.
+
 ## 13 September 03:50 UTC -- THE CALIBRATION IS BEING RUN IN THE WRONG ORDER,
 ## AND THAT IS ONE STATEMENT ABOUT ALL THREE DRIFTING MOMENTS
 
