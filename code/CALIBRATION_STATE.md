@@ -1,3 +1,77 @@
+## 13 September 01:00 UTC -- THE QUANTITATIVE PENALTY SCAN RAN, THE TECHNIQUE
+## CARRIES, AND THE STYLIZED MODEL'S ANSWER DOES NOT.  SECTION 7 ITEM CLOSED.
+
+The author asked whether the scan that solved the stylized penalty could be done
+in the quantitative model or whether the compute forbids it.  It is cheap there,
+it ran, and it printed inside the solve at each calibration update:
+
+    PENALTY SCAN target ratio 2.0000, current penalty 0.36
+
+    penalty  child SUD ratio        penalty  child SUD ratio
+      0.00       1.0525               0.36       1.2843   <- pinned here
+      0.12       1.1142               0.42       1.3414
+      0.18       1.1499               0.48       1.4070
+      0.24       1.1896               0.54       1.4834
+      0.30       1.2341               0.60       1.5735
+    PENALTY SCAN restored penalty = 0.36
+
+**THE MECHANISM CARRIES.**  Smooth and monotone in the penalty, exactly as in the
+stylized model, and the placement array is restored correctly -- the restore line
+prints and the NEXT loop's scan starts from the same intercept, so nothing was
+left corrupted.  One solve buys twenty-one values at microseconds each.
+
+**THE INTERCEPT DIFFERS AND IT SHOULD HAVE BEEN EXPECTED.**  At a penalty of ZERO
+the quantitative ratio is 1.0525, not 1.  That is rho_intergenerational = 0.30
+producing a five per cent excess with no penalty at all.  The stylized
+construction returns exactly 1.0 at delta_d = 0 because it draws both branches
+from the SAME parent distribution and differences them.  They are not the same
+object.
+
+**AND THE STYLIZED ANSWER DOES NOT CARRY.**  The prediction written here earlier
+was that the stylized delta_d = 0.56972, translated from log to fractional units,
+would cross the target near penalty_child_addicted = 0.434.  Measured, 0.434
+gives about 1.36.  The scan's range tops out at 1.5735 at 0.60, so 2.0 needs a
+penalty ABOVE 0.60 -- extrapolating the slope, near 0.85, an 85 per cent child
+income cut.  **The stylized model understates what the quantitative model needs
+by roughly a factor of two.**  That is the section 7 answer and it is the useful
+kind: it did not carry, and now the size of the discrepancy is known rather than
+assumed.
+
+**WHAT IS STILL WRONG WITH THE SCAN:** its range, 0 to 0.60, does not bracket the
+target.  It needs to run to about 0.95.  Widening it means editing the Fortran,
+which cannot be done while the solve is running, so it is the first thing to do
+on the next solve -- and then the crossing is measured rather than extrapolated.
+
+## AND omega_c IS NOT CALIBRATED.  THE AUTHOR IS RIGHT AND THE ENTRY BELOW
+## OVERSTATED IT.
+
+*"But omegac is not calibrated!"* -- and describing the stylized model as
+"calibrated" on ten of eleven brackets glossed over the one parameter the child
+channel of the paper rests on.
+
+The claim that the ceiling is 0.1230 was measured at ONE vector, which did not
+establish whether the ceiling is a property of the model or of that point.
+Measured across the vector, at nv = 560, taking the maximum over omega:
+
+    variant          max child_gap   at omega      target 0.1834
+    as calibrated        0.1315       0.01231
+    b   -30%             0.0102       0.01872
+    b   +30%          not measurable
+    th  -10%          not measurable
+    th  +10%             0.0178       0.01872
+    kap -30%             0.0154       0.01872
+    kap +30%          not measurable
+
+**Every perturbation makes it WORSE.**  The calibrated point is already the best
+place in this neighbourhood for this moment, its ceiling is 0.1315, and the
+target of 0.1834 is forty per cent above it.  "Not measurable" means the omega = 0
+counterfactual crosses onto the other drug branch at every omega, so the moment
+does not exist there at all.
+
+Note also that child_gap is NOT single-peaked in omega, which an earlier entry
+claimed: there is a local maximum near 0.0088 at 0.1230 and another near 0.0123
+at 0.1315, with a cliff between them.  It is multi-peaked with discontinuities.
+
 ## 13 September 00:45 UTC -- child_gap IS SINGLE-PEAKED IN omega AND ITS PEAK IS
 ## 0.1230 AGAINST A TARGET OF 0.1834.  THE BRACKET CANNOT CONVERGE BECAUSE THE
 ## TARGET IS ABOVE THE CEILING.
