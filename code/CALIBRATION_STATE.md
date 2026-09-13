@@ -1,3 +1,37 @@
+## 13 September 07:35 UTC -- THE CHILD USE GAP IS FIVE TO SEVEN TIMES HIGHER
+## AFTER THE RESTART AT THE SAME PARTICIPATION. THE COMPARISON IS CONFOUNDED.
+
+Matched on participation across the two runs:
+
+    run        participation   child use gap   homeless    weight_on_child
+    old          0.05302          0.1433       0.02035       0.100917
+    old          0.05520          0.1062       0.02077       0.100925
+    resumed      0.05148          0.7359       0.02275       0.100927
+    resumed      0.05105          0.6147       0.02275       0.100927
+    resumed      0.05491          0.7467       0.02315       0.100877
+
+Same participation to three decimals, same `weight_on_child` to four, and the
+child use gap is five to seven times larger.  Homelessness is 11 per cent higher
+at the same participation too.
+
+**THE OBVIOUS READING IS PATH DEPENDENCE AND IT IS NOT SUPPORTED.**  The two
+runs do NOT share their parameters: the restart put `kappa_phi_d_level` back at
+2.985 against about 2.873 in the old run at those loops, and
+`addiction_onset_base` at 0.0428 against about 0.039.  `kappa_phi_d_level`
+governs the curvature of the child's drug penalty, which is the child use gap's
+own mechanism, so a 3.9 per cent difference in it is a live explanation and the
+comparison cannot separate the two.  ENGINE.md rule 1 -- one parameter per
+diagnostic point -- applies to this exactly, and reading it as path dependence
+would be the mistake that rule exists to prevent.
+
+**WHAT IT DOES SUGGEST, AND IT IS USEFUL.**  If `kappa_phi_d_level` IS the
+cause, then a 3.9 per cent change in it moves the child use gap by a factor of
+five to seven.  That would make it far and away the strongest instrument for
+that moment -- `weight_on_child` moved 0.05 per cent across fifty-five loops and
+moved the gap not at all -- and would explain why the gap has never looked
+identified: it is being calibrated with the wrong instrument.  That is a
+one-parameter point and it is worth taking when the box is free.
+
 ## 13 September 07:15 UTC -- THE FULL LIST OF WHAT THE RESUME DID AND DID NOT
 ## CARRY. I READ THE BANNER AND ACTED ON ONLY ONE LINE OF IT.
 
