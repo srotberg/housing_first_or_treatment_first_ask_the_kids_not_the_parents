@@ -118,6 +118,30 @@ def _alloc(q, y):
     return out
 
 
+# A CHILDHOOD IS A PERIOD OF A PERSON'S LIFE, COUNTED ONCE.
+#
+# The author, 13 September: *"The childhood utility should just be counted as
+# regular utility... It has the consumption and housing during childhood and
+# there is the adult utility too... If that means that childhood utility is a
+# big chunk it does make sense since age 1-25 is part of life too."*
+#
+# child_welfare._childhood_u returns (xi - 1) * [u(X_K) + aleph], and the
+# (xi - 1) is the equivalence-scale INCREMENT, about 0.414. That is the right
+# factor for the term the PARENT carries in its own flow -- the parent values
+# the child at omega_c times its share -- and it is the wrong factor for the
+# CHILD'S OWN lifetime, where a childhood period is one period of one person's
+# life. The scaling of resources is already in the bundle: c and h are divided
+# by xi before the utility is taken, exactly as they are for the parent, so
+# multiplying again by (xi - 1) counts the child at 41 per cent of a person.
+#
+# The quantitative model was built the other way -- its child_flow_out carries
+# no such factor -- so this also brings the two into line.
+#
+# Set to False to recover the old weighting; the parent's term is unaffected
+# either way, because adult_node multiplies by (xi - 1) itself.
+CHILD_COUNTS_AS_A_PERSON = True
+
+
 def kid_node(q, y):
     """The child's OWN childhood utility, in a household at income y.
 
@@ -125,9 +149,10 @@ def kid_node(q, y):
     welfare the child's utility growing up counts"* -- because a childhood is a
     period of life and is valued as one.  See _childhood_u.
     """
+    w = 1.0 / (q.xi - 1.0) if CHILD_COUNTS_AS_A_PERSON else 1.0
     tot = m = 0.0
     for p, c, h, _own in _alloc(q, y):
-        tot += p * _childhood_u(q, c, h)
+        tot += p * w * _childhood_u(q, c, h)
         m += p
     return tot / m if m > 1e-14 else float('nan')
 
