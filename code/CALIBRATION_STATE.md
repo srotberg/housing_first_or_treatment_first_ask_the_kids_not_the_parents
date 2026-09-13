@@ -1,3 +1,39 @@
+## 13 September 05:20 UTC -- HOMELESSNESS RISES ALMOST UNCONDITIONALLY, AND
+## PARTICIPATION EXPLAINS ONLY ABOUT HALF OF IT
+
+Thirty-two loops.  **Homelessness fell on exactly ONE of thirty-one steps** --
+loop 17, by 0.03 per cent.  Participation fell on six steps (2, 5, 10, 17, 18,
+32) and on five of those homelessness ROSE anyway:
+
+    loop  2: part  -0.53%   homeless  +0.57%
+    loop  5: part  -0.93%   homeless  +1.22%
+    loop 10: part  -1.68%   homeless  +1.12%
+    loop 17: part  -4.48%   homeless  -0.03%
+    loop 18: part  -1.99%   homeless  +0.57%
+    loop 32: part  -5.48%   homeless  +1.50%
+
+So the earlier entries here, which attributed homelessness wholly to
+participation, were too strong.  Measured properly over the thirty-one steps:
+
+    loop-to-loop dlog correlation, homeless vs participation   +0.540
+    loop-to-loop dlog correlation, homeless vs value_of_life   +0.129
+    whole run: participation +122.9%, homelessness +60.5%, ratio 0.49
+
+**A HYPOTHESIS TESTED AND REJECTED.**  value_of_life rose 30.3 per cent over the
+run while its own moment converged, and the obvious guess was that IT was
+pushing homelessness -- a higher value of life makes the street preferable to
+dying.  The correlation is +0.13.  It is not the driver.
+
+**WHAT THE NUMBERS ACTUALLY SUPPORT.**  Participation is the main loop-to-loop
+driver at +0.54, and it accounts for roughly half the rise in logs (0.49), with
+`size_homelessness` cut about a quarter over the run and clearly doing SOMETHING
+-- without it the ratio would be nearer one.  The rest is a monotone drift that
+neither participation nor value_of_life explains and that no instrument in this
+configuration is arresting.  Naming it needs a one-parameter point, which cannot
+be taken while the joint loop is running.
+
+THE RUN IS LEFT ALIVE.  No ENGINE.md stop condition.
+
 ## 13 September 05:05 UTC -- THIRTY LOOPS. THREE SOLVED, TWO STUCK, AND THE
 ## AUTHOR'S OWN IDENTITY HAS ARRIVED BY ITSELF
 
