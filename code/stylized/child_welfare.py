@@ -144,16 +144,27 @@ def _childhood_u(par, c, h, aleph_for_child=True):
     child's share of what the household consumes, and it is the same factor the
     parent's flow utility carries.
 
-    ALEPH IS INCLUDED, on the author's instruction of 12 September: *"Yes for
-    welfare the child's utility growing up counts"*.  A childhood is a period of
-    life and is valued as one.  The switch is kept because the argument the
-    other way is real and is recorded here.  aleph is added
-    ONCE PER HOUSEHOLD, not per member -- the Fortran adds value_of_life to the
-    assembled flow rather than inside the bracket the child weight multiplies --
-    so the parent's flow already carries it for the household.  Counting it
-    again for the child double counts; omitting it values a childhood at its
-    goods alone.  There is no neutral answer, so it is a switch, it is off by
-    default, and any number computed from it has to say which way it was set.
+    ALEPH IS INCLUDED, AND THE DEFAULT IS ON.  The author, 12 September: *"Yes
+    for welfare the child's utility growing up counts"*, and 13 September, on
+    whether the PARENT should weigh it too: *"ok, then exclude it"*, *"just put
+    it in the child's utility function"*.  A childhood is a period of life and is
+    valued as one, in the child's OWN lifetime and nowhere else.
+
+    THIS DOCSTRING USED TO SAY THE SWITCH WAS OFF BY DEFAULT.  It was not: the
+    signature has read aleph_for_child=True throughout, so every childhood number
+    reported has carried aleph while the note beside it claimed the opposite.  It
+    matters because aleph is the LARGER PART of the measured childhood -- at the
+    13 September vector the split was goods -3.125 and aleph +4.558 for a total
+    of +1.433, so dropping it turns childhood welfare negative.  Corrected rather
+    than left as a switch whose stated default was wrong.
+
+    THE PARENT DOES NOT WEIGH IT, and that is the author's decision above rather
+    than an accident of the code.  _flow adds aleph ONCE to the assembled flow,
+    outside the bracket the child weight multiplies, matching the Fortran, so the
+    parent's objective carries omega_c*(xi-1)*u(X_K) with no aleph in it.
+    Nothing is lost by that: omega_c*(xi-1)*aleph is a CONSTANT, so it moves no
+    choice, cancels out of Delta(y), and is absent from the continuation the VSL
+    derivative reads.  It would have changed only the level of W_1.
     """
     phc, phh, phq = _shares(par)
     s = par.sigma
