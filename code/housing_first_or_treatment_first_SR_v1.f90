@@ -407,6 +407,18 @@
             
         integer, parameter :: life_span=60
         integer, parameter :: retirement_span=20
+
+        ! THE LAST AGE AT WHICH THE CHILD IS IN THE HOME, as an index.
+        !
+        ! The author's rule of 13 September: *"children aged 1 receive their
+        ! consumption from households aged 26, and so on until age 50. then they
+        ! become adults."*  Model age one is data age 26, so the child is one
+        ! when the parent is at index 1 and twenty five when the parent is at
+        ! index 25, which is data age 50. Everything about the child keys on
+        ! this single number: the equivalence scale, the contemporaneous term in
+        ! the flow utility, the age gate on the inherited penalty, and the
+        ! window over which the disorder is tracked.
+        integer, parameter :: child_at_home_last_index=25
         integer, parameter :: include_addiction=1                           
         integer, parameter :: include_vouchers=1
 
@@ -6292,20 +6304,40 @@
             0.958864040672779000,0.954589251428842000,0.949853785336017000,0.944555081427097000,&
             0.938727524131536000,0.932235985994338000,0.924182154238224000,0.000000000000000000/)
                     
+        ! ONE CHILD, IN THE HOME FROM THE PARENT'S AGE 26 TO 50 AND NOT AFTER.
+        !
+        ! This was the empirical age profile of household size, a smooth hump
+        ! from 1.44 at age 26 to 2.45 in the mid forties and back to 1.06 in old
+        ! age. It has been replaced by a step, and the step is the model's
+        ! statement of who is in the household rather than a simplification of
+        ! it: exactly one child, present for the twenty five years the child is
+        ! a child and gone afterwards.
+        !
+        ! THE STEP IS WHAT MAKES THE CHILD'S ACCOUNTING ADD UP. The child is
+        ! born when the parent is 26 and leaves at 50, so the parent's utility
+        ! carries a second person for exactly those years and the child's own
+        ! twenty five years of consumption are the twenty five years the parent
+        ! is between those ages. A hump shaped profile would have the parent
+        ! sharing with 2.45 people at 45 and with 1.07 at 70, which is a
+        ! household that never stops having children and cannot be matched to a
+        ! child who grows up.
+        !
+        ! The magnitude is the author's, from the NSDUH: households with and
+        ! without the disorder have about the same number of children in the
+        ! home, and about one. Because the scale enters as its square root, this
+        ! is the stylized model's xi = sqrt(2) while the child is at home and 1
+        ! after, which is what makes the two models comparable.
+        ! Written out rather than built with an implied do, because this is an
+        ! initialisation expression and the twenty five is stated once above.
         real(8), dimension(life_span) :: actual_household_size=include_varying_household_size*&
             (/&
-            1.4448766,1.6009153,1.6595768,1.7047721,1.8193630,&
-            1.8635393,1.9299464,2.0617050,2.1389762,2.1771039,&
-            2.2308243,2.3241314,2.3190651,2.3783667,2.4513526,&
-            2.4487915,2.3918235,2.3251210,2.2123582,2.0540625,&
-            1.9800220,1.8733168,1.8259258,1.7228857,1.6693224,&
-            1.5572374,1.4923160,1.3718947,1.3118304,1.2486368,&
-            1.2229223,1.1772729,1.1952302,1.1846395,1.1878238,&
-            1.1725286,1.1618766,1.1538806,1.1430864,1.1294504,&
-            1.1174894,1.1067105,1.0986467,1.1130859,1.1280939,&
-            1.1300166,1.1309383,1.1250932,1.1173449,1.0966102,&
-            1.0964064,1.0859450,1.0684492,1.0769711,1.0823029,&
-            1.0869273,1.0715130,1.0935202,1.0712740,1.0616088/)+(1-include_varying_household_size)*1
+            2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,&
+            2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,&
+            2.0,2.0,2.0,2.0,2.0,1.0,1.0,1.0,1.0,1.0,&
+            1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,&
+            1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,&
+            1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0/)+&
+            (1-include_varying_household_size)*1
                     
         real(8), dimension(life_span) :: scaled_household_size,sqrt_household_size
                                                 
@@ -7912,6 +7944,64 @@
                     (max_labor_supply-labor_supply_in)**(-leisure_curvature)
             end if
         end function leisure_marginal_utility
+
+        ! THE CHILD'S INHERITED PENALTY, IN ONE PLACE AND WITH ITS AGE GATE.
+        !
+        ! It was written out at ONE site, renter_to_renter_problem, and the five
+        ! other housing branches did not carry it at all. That is not a small
+        ! omission: expected_child_value is zero for a clean housed parent and
+        ! negative otherwise, so a parent with the disorder paid the child's
+        ! penalty when it rented and did not pay it when it owned or moved into
+        ! ownership. The rent-versus-own margin was therefore tilted towards
+        ! owning by exactly the size of the externality, for exactly the
+        ! households the paper is about, and omega_c's own moment was measured
+        ! on an economy where five of the six branches ignored omega_c.
+        !
+        ! THE AGE GATE, which is the author's rule of 13 September. The child is
+        ! born when the parent is 26 and leaves home at 50. Before 50 the
+        ! penalty is transmitted only if the parent DIES, so it carries the
+        ! death probability. AT 50 it is transmitted for certain, because the
+        ! child becomes an adult and takes its productivity draw whether the
+        ! parent is alive or not, so the weight is one. After 50 there is no
+        ! child left to penalise and the term is zero -- which is what the old
+        ! code got wrong in the other direction, applying it at every age to age
+        ! eighty five.
+        !
+        ! The two pieces add up to one transmission per household and no more:
+        ! a parent pays the penalty weighted by the chance of dying at each age
+        ! up to 49, and the whole of it at 50 if it is still alive. Summed over
+        ! the survival tree those weights are P(die before 50) + P(reach 50),
+        ! which is one.
+        real(8) function child_continuation_value(age_1,homeless_1,addiction_index_1,&
+            treatment_1,unemployment_index_1,employment_index_1,future_addiction_index_1)
+
+            implicit none
+
+            integer, intent(in) :: age_1,homeless_1,addiction_index_1,treatment_1,&
+                unemployment_index_1,employment_index_1,future_addiction_index_1
+
+            child_continuation_value=0.d0
+
+            if (include_child_in_continuation==0) return
+            if (age_1>child_at_home_last_index) return
+
+            if (age_1==child_at_home_last_index) then
+
+                child_continuation_value=discount_factor*weight_on_child*&
+                    expected_child_value(employment_index_1,future_addiction_index_1,homeless_1)
+
+            else
+
+                child_continuation_value=discount_factor*&
+                    (1-survival_probability(age_1,homeless_1,&
+                    survival_sud_of(addiction_index_1,treatment_1),&
+                    smi_of(unemployment_index_1)))*&
+                    weight_on_child*&
+                    expected_child_value(employment_index_1,future_addiction_index_1,homeless_1)
+
+            end if
+
+        end function child_continuation_value
 
 
         integer function smi_of(i_1)
@@ -22491,15 +22581,11 @@
                         ! worse off", which is the whole content of omega's moment.
                         ! The second index was already the choice: is_homeless_1 is
                         ! set from future_housing_status_index_to_use above.
-                        if (include_child_in_continuation==1) then
-                        
-                            future_utility_vector(future_financial_index)=&
-                                future_utility_vector(future_financial_index)+&
-                                discount_factor*&
-                                (1-survival_probability(age_index,is_homeless_1,survival_sud_of(addiction_index,treatment_choice_now),smi_of(unemployment_index)))*&
-                                weight_on_child*expected_child_value(employment_index,future_addiction_index,is_homeless_1)
-                        
-                        end if
+                        future_utility_vector(future_financial_index)=&
+                            future_utility_vector(future_financial_index)+&
+                            child_continuation_value(age_index,is_homeless_1,addiction_index,&
+                            treatment_choice_now,unemployment_index,employment_index,&
+                            future_addiction_index)
                         
                         ! THE TABULATED PATH. The sum below depends on a' only
                         ! through the value function lookup, so it is computed
@@ -23008,6 +23094,14 @@
                                         end if
                                         
                                     end if
+
+                                    ! An owner is housed, so the child's penalty
+                                    ! here is the disorder's alone.
+                                    future_utility_vector(future_mortgage_index)=&
+                                        future_utility_vector(future_mortgage_index)+&
+                                        child_continuation_value(age_index,1,addiction_index,&
+                                        treatment_choice_now,unemployment_index,employment_index,&
+                                        future_addiction_index)
                                         
                                     do future_addiction_index_2=&
                                         (1-loop_over_addiction_1)*future_addiction_index+loop_over_addiction_1*0,&
@@ -23566,6 +23660,14 @@
                                 end if
                                 
                             end if
+
+                            ! An owner is housed, so the child's penalty here is
+                            ! the disorder's alone.
+                            future_utility_vector(future_mortgage_index)=&
+                                future_utility_vector(future_mortgage_index)+&
+                                child_continuation_value(age_index,1,addiction_index,&
+                                treatment_choice_now,unemployment_index,employment_index,&
+                                future_addiction_index)
                                 
                             do future_addiction_index_2=&
                                 (1-loop_over_addiction_1)*future_addiction_index+loop_over_addiction_1*0,&
@@ -23983,6 +24085,14 @@
                                             end if
                                             
                                         end if
+
+                                        ! An owner is housed, so the child's
+                                        ! penalty here is the disorder's alone.
+                                        future_utility_vector(future_mortgage_index)=&
+                                            future_utility_vector(future_mortgage_index)+&
+                                            child_continuation_value(age_index,1,addiction_index,&
+                                            treatment_choice_now,unemployment_index,&
+                                            employment_index,future_addiction_index)
                                         
                                         do future_addiction_index_2=&
                                             (1-loop_over_addiction_1)*future_addiction_index+loop_over_addiction_1*0,&
@@ -24351,6 +24461,14 @@
                             end if
                             
                         end if
+
+                        ! An owner who sells can take the street, so the child's
+                        ! penalty here carries the housing status as well.
+                        future_utility_vector(future_financial_index)=&
+                            future_utility_vector(future_financial_index)+&
+                            child_continuation_value(age_index,is_homeless_1,addiction_index,&
+                            treatment_choice_now,unemployment_index,employment_index,&
+                            future_addiction_index)
                         
                         do future_addiction_index_2=&
                             (1-loop_over_addiction_1)*future_addiction_index+loop_over_addiction_1*0,&
@@ -30717,6 +30835,39 @@
         
         implicit none
                                         
+        ! THE STEP IS WRITTEN OUT AND THE AGE IT STEPS AT IS A PARAMETER, so
+        ! they can drift apart in a later edit and nothing downstream would
+        ! notice: the child's contemporaneous term would run to a different age
+        ! than its inherited penalty and the two halves of the same rule would
+        ! disagree silently. Checked once, at the only place both are in scope.
+        do i=1,life_span
+
+            if (include_varying_household_size==1) then
+
+                if (i<=child_at_home_last_index) then
+
+                    if (abs(actual_household_size(i)-2.d0)>10.d0**(-10)) then
+
+                        write(*,*) "actual_household_size disagrees with child_at_home_last_index at age", i
+                        stop
+
+                    end if
+
+                else
+
+                    if (abs(actual_household_size(i)-1.d0)>10.d0**(-10)) then
+
+                        write(*,*) "actual_household_size disagrees with child_at_home_last_index at age", i
+                        stop
+
+                    end if
+
+                end if
+
+            end if
+
+        end do
+
         do i=1,life_span
         
             scaled_household_size(i)=(sqrt(actual_household_size(i)))**risk_aversion_consumption
