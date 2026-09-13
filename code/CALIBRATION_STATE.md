@@ -13150,3 +13150,32 @@ sigma above one a childhood was worth less than not existing and
 average_childhood_utility came out at -67.32 against an adult half of +102.51.
 Fixed, and the model hash moved with it, so the timing above is the hash
 BEFORE the fix; the fix is one addition and does not change it materially.
+
+### The ever-had-the-disorder indicator, and what it costs
+
+**THE INDICATOR EXISTS AND IT IS THE THIRD SUD BLOCK.** The folded unemployment
+index carries three blocks -- never had it, had it and clean now, has it -- and
+`ever_sud_of()` returns 1 for the last two. The child's penalty reads
+`max(ever_sud_of(unemployment_index), future_addiction_index)`, so a parent who
+used at 30 and recovered at 35 still transmits `delta_d`, and a parent still
+clean who chooses to use turns the penalty on inside its own comparison, which
+is what keeps the deterrence.
+
+The bit is carried at every age because the array is rectangular, but it is only
+ever READ by the child continuation term, and that term is gated to ages 26-50.
+So what it answers, everywhere it matters, is exactly "did this household have
+the disorder at any point between 26 and 50".
+
+**A 19 PER CENT SAVING IS AVAILABLE AND HAS NOT BEEN TAKEN.** For every age
+ABOVE 50 the "had it, clean now" block is an EXACT duplicate of the "never had
+it" block: the flow is identical because the child term is zero there, the
+transitions are isomorphic under relabelling the two blocks, and there is no
+child continuation. By backward induction from the last age they are equal for
+every age above 50, and they diverge only at 50 and below, where the child term
+reads the indicator.
+
+So 35 of the 60 ages currently solve one third of the grid twice for identical
+answers. Copying instead of solving there is exact, not an approximation, and
+saves 35/60 x 1/3 = 19.4 per cent of the value function work. NOT DONE: it is an
+optimisation rather than a correctness fix, and the author should see the
+measured time first.
