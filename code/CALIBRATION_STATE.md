@@ -1,3 +1,64 @@
+## 13 September 03:20 UTC -- THE QUANTITATIVE RUN TURNED THE CORNER AT LOOP 4
+
+The author: *"is the quant model getting closer? are we able to converge on that
+one? because this model is the key to the paper"*.
+
+**YES, AND THE FIRST THREE LOOPS WERE MISLEADING.**  Participation's instrument
+is `addiction_scalar_1` (line 12 of the Fortran: *addiction_scalar_1 ->
+participation*), capped at 1.0 per cent a loop by `trust_factor`.  Measured over
+the four loops of `worker_236f6b3ab5.log`:
+
+    loop   scalar   participation   elasticity
+       2   -1.01%         -0.53%        +0.53
+       3   -1.01%         +2.03%        -2.02
+       4   -1.01%         +9.89%        -9.84
+
+The response is not flat, it was flat NEAR THE CORNER and is now steep.  At the
+loop-4 elasticity participation needs a further 22 per cent move in the scalar,
+which is about 22 loops or two hours.  Expect an overshoot rather than a clean
+landing: an elasticity of -10 against a 1 per cent step is the regime the clamp
+exists for, and the sign-flip halving will have to pull it back.  Three to five
+hours is the honest figure.
+
+**WHAT LOOP 4 ALREADY FIXED BY ITSELF.**  Homelessness went ON TARGET (8.2 per
+cent, model 0.01065 against 0.0116) with `size_homelessness` at 2.63e-05 -- so
+the dead-instrument diagnosis of 02:45 was a statement about the CORNER, not
+about the instrument.  The recovery ratio is 1.0 per cent off.
+
+**THE CHILD USE GAP WAS A CORNER ARTEFACT, which closes the Section 7 check.**
+TRANSITION_LESSONS Section 7 requires a bug found in the stylized model to be
+checked against this one.  The stylized bug was a guard on the child gap that
+was too broad, so the gap was read on states where almost nobody used.  Here the
+same reading: `model_child_use_gap` was 73.4 per cent off at loop 3 with
+participation at 0.91 per cent, and 26.6 per cent off at loop 4 with
+participation at 1.00 per cent -- it moved two thirds of the way on a ten per
+cent move in participation because it was being measured on almost nobody.  It
+carried across in the sense that the number is unreliable at the corner; it does
+not need the stylized model's code fix, because it corrects itself as
+participation recovers.  **Do not tune `weight_on_child` against it until
+participation is on target.**
+
+**THE pi_base IDENTITY ALREADY HOLDS HERE.**  The author's stylized insight --
+*"shouldnt pi_base just be 0.0368/0.089?"* -- has a counterpart in this model and
+it is nearly satisfied already: the disorder rate over participation reads 0.448,
+0.454, 0.453, 0.446 across the four loops against the identity's 0.4135, so
+`addiction_onset_base` is within eight per cent and will land once participation
+does.  It is chasing `model_fraction_addicted` at 0.5 per cent a loop and should
+not be blamed for the 88 per cent gap on that row: that gap is participation's.
+
+**TWO REPORTING DEFECTS IN `calibration_report.py`, NOT IN THE MODEL.**
+
+  * `addiction_scalar` prints as `no scalar moment`.  It is the parameter that
+    owns the LARGEST gap in the model -- participation, `MOMENT b` -- and the
+    table says it has no moment.  Map it to `model_total_drug_users`.
+  * `probability_of_becoming_addicted` prints value 0.  That is
+    `lambda_addiction`, which the author pinned at zero on 11 September so the
+    hazard is flat in the quantity; the live onset parameter is
+    `addiction_onset_base` (0.0428 -> 0.04453 over four loops).  The row is
+    reading the wrong variable's print.
+
+Neither touches the solve.  Fix them when nothing is running.
+
 ## 13 September 02:45 UTC -- WHY THE STYLIZED MODEL CALIBRATES AND THIS ONE DOES
 ## NOT. IT IS ONE IDEA, NOT A LIST.
 
