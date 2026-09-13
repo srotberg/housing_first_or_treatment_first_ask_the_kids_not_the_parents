@@ -1,3 +1,66 @@
+## 13 September 17:00 UTC -- THE STYLIZED MODEL IS RECALIBRATED ON THE NEW
+## SET-UP.  NINE OF TEN MOMENTS INSIDE TEN PER CENT.
+
+The author asked for the model recoded and fully recalibrated.  Both are done.
+The quantitative loop is still paused; the 14:25 entry below still governs what
+an engine firing does.
+
+**THE FIT**, sr_run_164330.log iteration 300, and it has been stable for 150
+iterations:
+
+    aleph  12.3261  vsl                80.0007   80.0000    +0.0%
+    gam     0.4404  hspend              0.2680    0.2680    -0.0%
+    h1      0.0099  homeless            0.0100    0.0100    -0.0%
+    b       0.0554  part                0.0889    0.0890    -0.1%
+    u0      0.0485  unemployment        0.0485    0.0485    -0.0%
+    u1      0.0486  sud_of_homeless2    0.1990    0.2170    -8.3%
+    omega   0.0026  child_gap           0.8567    0.1834  +367.1%
+    delta_d 0.7071  child_sud_or        1.9424    2.0000    -2.9%
+    kap     0.1074  r_use               0.7385    0.7400    -0.2%
+    th      0.1458  dshare              0.1408    0.1410    -0.2%
+
+Median gap 0.2 per cent, nothing held, r_use ON its target rather than merely
+below one.
+
+**WHAT GOT IT THERE**, all on the author's instructions today: two rental sizes
+restored at 0.1 and 0.4 with gamma calibrated on the housing share; the housing
+names changed to h1/h2/h3 to match the quantitative model; rho back to 0.35;
+beta at 0.995 annual; the income floor at 0.099, which is where 0.36 per cent
+cannot afford h2; and chdmg solved as V(1,0)-V(1,1) rather than held at zero.
+
+**THE ONE MOMENT THAT IS NOT MATCHED IS child_gap, AND THE AUTHOR HAS RULED
+THAT ACCEPTABLE**: *"This is just the stylized model.  We don't have to be
+accurate there.  The quant model will give a higher weight."*  It is an OUTPUT
+now in everything but name.
+
+WHY IT CANNOT BE MATCHED HERE, recorded because the next person will try.
+child_gap and part are not separately identified at these parameters.  Seeded at
+omega = 0.003 the gap opened at -10.7 per cent, but participation was then 100
+per cent too high; b rose to pull it back, a higher b deepens the use margin,
+and the same omega bites far harder -- the gap jumped to +387 and sat there
+while omega fell 0.0030 to 0.0026 with no effect.  Any omega that matches the
+child gap leaves participation double its target; any b that fixes participation
+blows the gap out.
+
+THE UNDERLYING REASON IS A KNIFE-EDGE MARGIN, and it is worth knowing before any
+channel is added to this model.  Measured at the iteration-900 vector: the child
+penalty is beta*omega*Delta*pi_base = 0.0118 at the median, Delta runs 3.02 to
+5.01, and 68.5 PER CENT OF THE USING MASS has a gain from using below 0.0118.
+Most users are within a hundredth of a utility point of not bothering, so any
+channel that moves the margin by that much moves participation by tens of per
+cent.  That is why omega comes out at 0.003 here and near 0.18 in the
+quantitative model on the SAME NSDUH moment -- the two models' margins have very
+different slopes, and that gap needs an explanation before both numbers appear
+in the paper.
+
+**omega_c IS AN ALTRUISM WEIGHT AND ITS SCALE IS [0,1].**  At omega = 1 the
+household's weights sum to xi, the same equivalence scale that deflates its
+bundle, so the parent maximises HOUSEHOLD welfare and the child is fully
+internalised; at 0 the damage is a pure externality.  The target is a data
+moment, not a preference: NSDUH 2024 puts parent to non-parent drug use at
+0.845, and 1/0.845 - 1 = 0.1834 is the proportional rise when the child term is
+switched off.
+
 ## 13 September 15:13 UTC -- THE STYLIZED MODEL IS RECODED.  THE FULL
 ## RECALIBRATION IS BLOCKED ON ONE DECISION, AND IT IS NOT A SMALL ONE.
 
