@@ -13286,3 +13286,111 @@ point by hand.** The model resolves its data at `../data`, reading BOTH
 missing it does NOT crash -- it prints "not found. stopping." and EXITS 0. A
 whole scan therefore comes back empty with every run reporting success. Run
 points one level below a directory that has a `data`, or symlink one.
+
+## The recovered-block invariant: the model was right, the check was reading off the end of the array
+
+**13 September.** `verify_recovered_block` reported 3090 mismatched cells, then
+2740 after the sentinel screen, then nothing at all. Nothing about the model
+changed between the second and the third number.
+
+The check loops over the renter's financial index and compares the
+never-had-it block with the recovered block. It started at index 1. **Index 1
+is not allocated.** `renter_array_floor` is set once, before any allocation, to
+
+```
+include_unsecured_borrowing*1 + (1-include_unsecured_borrowing)*negative_financial_grid_size
+```
+
+and `include_unsecured_borrowing` is 0 in every vector we run, so it is
+`negative_financial_grid_size` -- 3, the ZERO-asset index. Financial indices 1
+and 2 exist in `financial_grid` (they are the borrowing points, both pinned at
+-0.0 with borrowing off) but they do **not** exist in the value function, whose
+renter component is bounded `renter_array_floor:financial_grid_size`.
+`set_renter_floor` leaves `renter_floor_by_age` at the same 3, so the solve's
+floor and the array's floor coincide.
+
+Every one of the first eight reported mismatches was at financial index 1 or 2,
+and `V(never)` sat at **exactly 0.0** -- neither a solved value nor the
+`large_negative_num` sentinel the check screens for, because it was not a cell
+of the value function at all but whatever lay in front of it in memory. That is
+also why screening the sentinel MOVED the count instead of clearing it: it
+reclassified some of the garbage rather than stopping the read.
+
+**Three wrong hypotheses were entertained before this one**, all of them about
+the model: that the warm start is keyed per state, that the `ev` table's key
+carries the unemployment index, and that `calculate_income` reads `sud_of`
+rather than the raw index. All three were checked and all three were symmetric
+across the two blocks. The tell that should have been read earlier is the exact
+0.0, which no branch of this model ever writes into a value function.
+
+**What it looks like now**, at the source defaults, one pass, four threads:
+
+```
+recovered block: worst |V(never) - V(recovered)| above age 25 = 0.0000000000000000
+recovered block: worst |V(never) - V(recovered)| at or below  = 1.5737616879461847
+recovered block: cells solved in ONE block only, above = 0   at or below = 0
+```
+
+and with `weight_on_child 0` handed over:
+
+```
+recovered block: worst |V(never) - V(recovered)| above age 25 = 0.0000000000000000
+recovered block: worst |V(never) - V(recovered)| at or below  = 0.0000000000000000
+recovered block: equal at EVERY age with weight_on_child=0, as it must be
+```
+
+The second is the sharper of the two: it says the ONLY thing that ever
+separates the two blocks is the child term. `average_childhood_utility` and
+`childhood_share_of_lifetime` are unchanged to the last printed digit between
+the failing build and the passing one, which is the proof that the model's
+arithmetic was never involved.
+
+**THE GENERAL LESSON, because this class will recur.** The renter arrays do not
+start at 1 and the owner arrays do. Any loop written over a renter array must
+take its lower bound from `renter_floor_by_age` or `renter_array_floor` and
+never from a literal -- there are twenty-odd state loops in the file that
+already do, and they are the pattern to copy. A diagnostic that reads outside
+the state space reports the model as broken when it is the diagnostic, and it
+does so with numbers that look like measurements.
+
+The `-fcheck=bounds,pointer` build in the standing two-build check is what
+catches this class, and it should have been run on the diagnostic before its
+output was believed.
+
+## The childhood/adult/lifetime split reconciles three ways
+
+Measured on the same pass, at the source defaults (beta = 0.944):
+
+| identity | value |
+| --- | --- |
+| `childhood_share_of_lifetime` | 34.214797060 / 58.485429088 = 0.585014038 |
+| reported share | 0.58501403843335320 |
+| lifetime - childhood | 24.270632028 |
+| that over the adult value | 24.270632028 / 102.513523894 = 0.236755416 |
+| implied beta | 0.236755416^(1/25) = **0.9440000057** |
+| sum of `childhood_utility_by_age` discounted at 0.944 | 34.214795175 |
+| against reported `average_childhood_utility` | residual 1.9e-6, which is the printed digits |
+
+So `lifetime = childhood + beta^25 x adult` and
+`childhood = sum_{i=1}^{25} beta^(i-1) u_i` both hold to the precision the log
+prints. The childhood half is 58.5 per cent of lifetime utility at the
+benchmark weight of (xi-1).
+
+## Step sizes, on the author's instruction of 13 September
+
+*"move omegac and death rate from drug at maybe 0.05% per iteration, but allow
+b to move at 0.5% between iterations"*.
+
+| parameter | rate before | rate now | how |
+| --- | --- | --- | --- |
+| `weight_on_child` (omega_c) | 0.05% | 0.05% | `omega_max_rel_step`, already there |
+| `kappa_phi_d_level` (drug death rate) | 0.1% | **0.05%** | `kappa_phi_d_max_rel_step` |
+| `addiction_scalar_1` (b) | 1% | **0.5%** | new `addiction_scalar_max_rel_step`, through `cap_step_rel` |
+
+b was on plain `cap_step`, which reads `max_rel_step_all` -- **one** per cent
+under `freeze_to_three_block`, not the half a per cent the comment on
+`kappa_phi_d_level_adjuster` claimed. So b was the FASTEST of the three and is
+now the fastest by design rather than by accident: it is the instrument for the
+participation rate, and the two brackets that were outrunning it now move an
+order of magnitude slower. All three caps are handover-settable now; two of
+them were not, so two thirds of a single instruction needed a rebuild to apply.

@@ -3648,6 +3648,20 @@
         real(8), parameter :: b_hi=1.0d0
 
         real(8) :: gap_addiction_scalar_1=0,previous_gap_addiction_scalar=0
+        ! b'S OWN RATE, ten times the two slow brackets and half the global cap.
+        !
+        ! The author, 13 September: *"allow b to move at 0.5% between
+        ! iterations"*.  b went through plain cap_step, which reads
+        ! max_rel_step_all -- one per cent under freeze_to_three_block, not the
+        ! half a per cent the comment on kappa_phi_d_level_adjuster claimed --
+        ! so b was the FASTEST of the three, not the slowest.  That is the wrong
+        ! way round: b is the instrument for the drug participation rate and the
+        ! two slow brackets are the ones that were outrunning it.
+        !
+        ! Naming the rate here rather than moving max_rel_step_all keeps it off
+        ! the other nineteen calibrated parameters, for the reason set out at
+        ! cap_step_rel.
+        real(8) :: addiction_scalar_max_rel_step=0.005d0
         integer :: have_gap_addiction_scalar=0
         real(8) :: lambda_secant_slope_1=0
 
@@ -4836,7 +4850,18 @@
         ! own instrument.
         real(8) :: kappa_phi_d_level_adjuster=2.d0
         ! ITS OWN RATE, the way theta and omega_c have theirs.
-        real(8) :: kappa_phi_d_max_rel_step=0.001d0
+        ! HALVED AGAIN, on the author's instruction of 13 September: *"move
+        ! omegac and death rate from drug at maybe 0.05% per iteration, but
+        ! allow b to move at 0.5% between iterations"*.  It was 0.1 per cent
+        ! from that morning's instruction; this puts the mortality bracket at
+        ! the same rate as omega_c's and a tenth of b's.
+        !
+        ! THE ORDERING IS THE POINT, not the absolute size.  The history above
+        ! is a fight between this bracket and lambda_d's over the addict stock,
+        ! and the stock's own instrument is addiction_scalar_1.  At 0.05 against
+        ! b's 0.5 the mortality bracket moves an order of magnitude slower than
+        ! the instrument it was outrunning, which is what the ranking is for.
+        real(8) :: kappa_phi_d_max_rel_step=0.0005d0
         real(8) :: distance_kappa_phi_d_level=1
         real(8) :: stopping_rule_kappa_phi_d_level=10.d0**(-2)
         real(8), parameter :: kappa_phi_d_level_lo=2.d0
@@ -34145,7 +34170,34 @@
 
                                 do h_1=lowest_housing_grid_point,housing_status_grid_size-1
 
-                                    do f_1=1,financial_grid_size
+                                    ! FROM THE SOLVE'S OWN FLOOR, NOT FROM ONE.
+                                    !
+                                    ! WITH BORROWING OFF INDEX 1 IS NOT ALLOCATED. The
+                                    ! renter's arrays are bounded below at
+                                    ! renter_array_floor, which is set once, before any
+                                    ! allocation, to
+                                    !
+                                    !   include_unsecured_borrowing*1 +
+                                    !   (1-include_unsecured_borrowing)*negative_financial_grid_size
+                                    !
+                                    ! so with borrowing off it is negative_financial_grid_size
+                                    ! -- the ZERO-asset index, 3 -- and financial indices 1
+                                    ! and 2 exist in financial_grid but NOT in the value
+                                    ! function. set_renter_floor leaves renter_floor_by_age
+                                    ! at the same value in that case, so this bound is the
+                                    ! array's own lower bound as well as the solve's.
+                                    !
+                                    ! Reading below it is what made this check report first
+                                    ! 3090 and then 2740 mismatches. Every one of the first
+                                    ! eight was at financial index 1 or 2, and V(never) sat
+                                    ! at exactly 0.0 -- neither a solved value nor the
+                                    ! large_negative_num sentinel the check screens for,
+                                    ! because it was not a cell of the value function at all
+                                    ! but whatever lay in front of it in memory. THE MODEL
+                                    ! WAS NEVER WRONG HERE; the check was reading off the
+                                    ! end of the array, which is also why screening the
+                                    ! sentinel moved the count instead of clearing it.
+                                    do f_1=renter_floor_by_age(a_1),financial_grid_size
 
                                         v_0_1=value_function(y_1)%vector_transition_real&
                                             (time_period,a_1,f_1,i_0,e_1,h_1,v_1)
@@ -34186,7 +34238,29 @@
                                         if (a_1>child_at_home_last_index) then
 
                                             worst_above_1=max(worst_above_1,d_1)
-                                            if (d_1>10.d0**(-8)) bad_1=bad_1+1
+                                            if (d_1>10.d0**(-8)) then
+
+                                                bad_1=bad_1+1
+
+                                                ! THE COORDINATES OF THE FIRST FEW, because a
+                                                ! count says a symmetry is broken and only the
+                                                ! coordinates say WHERE. Theorising about the
+                                                ! cause from the count alone has already cost
+                                                ! three wrong guesses: the warm start is keyed
+                                                ! per state, the ev table key carries the
+                                                ! unemployment index, and calculate_income goes
+                                                ! through sud_of and emp_of. All symmetric.
+                                                if (bad_1<=8) then
+
+                                                    write(*,*) "BLOCK MISMATCH age", a_1, &
+                                                        " fin", f_1, " emp", emp_1, " smi", smi_1, &
+                                                        " prod", e_1, " house", h_1, " vouch", v_1
+                                                    write(*,*) "   V(never)=", v_0_1, &
+                                                        " V(recovered)=", v_r_1, " diff=", d_1
+
+                                                end if
+
+                                            end if
 
                                         else
 
@@ -41841,6 +41915,25 @@
                             " path, where the price is the normalisation:", handover_value
                     end if
 
+                ! THE TWO PER PARAMETER CAPS THAT HAD NO HANDOVER, added on
+                ! the author's instruction of 13 September naming three rates at
+                ! once -- omega_c and the drug death rate at 0.05 per cent a
+                ! loop, b at 0.5.  omega_max_rel_step was already settable and
+                ! these two were not, so two thirds of a single instruction
+                ! needed a rebuild to apply.  The floor of 1e-5 and ceiling of 1
+                ! are max_rel_step_all's, for the same reason: a cap of zero
+                ! freezes a parameter silently, and a cap above one lets a step
+                ! change a parameter's sign.
+                case ("kappa_phi_d_max_rel_step")
+                    write(*,*) "HANDOVER kappa_phi_d_max_rel_step:", &
+                        kappa_phi_d_max_rel_step, "->", handover_value
+                    kappa_phi_d_max_rel_step=max(min(handover_value,1.d0),10.d0**(-5))
+
+                case ("addiction_scalar_max_rel_step")
+                    write(*,*) "HANDOVER addiction_scalar_max_rel_step:", &
+                        addiction_scalar_max_rel_step, "->", handover_value
+                    addiction_scalar_max_rel_step=max(min(handover_value,1.d0),10.d0**(-5))
+
                 ! THE GLOBAL PER LOOP CAP ON EVERY PARAMETER.
                 case ("max_rel_step_all")
                     write(*,*) "HANDOVER max_rel_step_all:", &
@@ -45538,7 +45631,11 @@
                         max(participation_rate_data,10.d0**(-12))),&
                         min(b_hi,b_move_1*addiction_scalar_1)),&
                         max(b_lo,addiction_scalar_1/b_move_1))
-                    addiction_scalar_1=cap_step(addiction_scalar_1,cap_old_1)
+                    ! cap_step_rel, NOT cap_step: b gets its own half a per
+                    ! cent rather than the global one per cent, the same way
+                    ! theta, omega_c and kappa_phi_d get theirs.
+                    addiction_scalar_1=cap_step_rel(addiction_scalar_1,cap_old_1,&
+                        addiction_scalar_max_rel_step)
                     distance_addiction_scalar=abs(gap_addiction_scalar_1)
                     write(*,*) "addiction_scalar_adjuster=", addiction_scalar_adjuster
                     write(*,*) "addiction_scalar_1=", addiction_scalar_1
