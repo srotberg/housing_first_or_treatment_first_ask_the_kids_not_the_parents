@@ -34115,13 +34115,16 @@
 
         integer, intent(in) :: time_period
         integer :: a_1,f_1,e_1,h_1,v_1,y_1,i_0,i_1,bad_1,emp_1,smi_1
-        real(8) :: d_1,worst_above_1,worst_below_1
+        integer :: sent_0_1,sent_r_1,half_above_1,half_below_1
+        real(8) :: d_1,worst_above_1,worst_below_1,v_0_1,v_r_1
 
         if (include_addiction==0) return
 
         bad_1=0
         worst_above_1=0
         worst_below_1=0
+        half_above_1=0
+        half_below_1=0
 
         do y_1=1,max_amortization_years
 
@@ -34144,10 +34147,41 @@
 
                                     do f_1=1,financial_grid_size
 
-                                        d_1=abs(value_function(y_1)%vector_transition_real&
-                                            (time_period,a_1,f_1,i_0,e_1,h_1,v_1)-&
-                                            value_function(y_1)%vector_transition_real&
-                                            (time_period,a_1,f_1,i_1,e_1,h_1,v_1))
+                                        v_0_1=value_function(y_1)%vector_transition_real&
+                                            (time_period,a_1,f_1,i_0,e_1,h_1,v_1)
+                                        v_r_1=value_function(y_1)%vector_transition_real&
+                                            (time_period,a_1,f_1,i_1,e_1,h_1,v_1)
+
+                                        ! AN UNSOLVED CELL IS NOT A DISAGREEMENT. The value
+                                        ! function is initialised to large_negative_num and a
+                                        ! cell the solve never reaches keeps it, so a cell where
+                                        ! ONE block is a sentinel and the other is a real value
+                                        ! is a statement about REACHABILITY, not about the two
+                                        ! value functions differing. Counted separately, because
+                                        ! the two have completely different diagnoses: a genuine
+                                        ! mismatch means the latch or the transition is wrong,
+                                        ! while a one-sided sentinel means the solve covers the
+                                        ! two blocks differently.
+                                        sent_0_1=0
+                                        sent_r_1=0
+                                        if (v_0_1<=large_negative_num/2) sent_0_1=1
+                                        if (v_r_1<=large_negative_num/2) sent_r_1=1
+
+                                        if (sent_0_1+sent_r_1==2) cycle
+
+                                        if (sent_0_1+sent_r_1==1) then
+
+                                            if (a_1>child_at_home_last_index) then
+                                                half_above_1=half_above_1+1
+                                            else
+                                                half_below_1=half_below_1+1
+                                            end if
+
+                                            cycle
+
+                                        end if
+
+                                        d_1=abs(v_0_1-v_r_1)
 
                                         if (a_1>child_at_home_last_index) then
 
@@ -34180,6 +34214,8 @@
             child_at_home_last_index, "=", worst_above_1
         write(*,*) "recovered block: worst |V(never) - V(recovered)| at or below =", &
             worst_below_1
+        write(*,*) "recovered block: cells solved in ONE block only, above =", half_above_1, &
+            " at or below =", half_below_1
 
         if (bad_1>0) then
 
