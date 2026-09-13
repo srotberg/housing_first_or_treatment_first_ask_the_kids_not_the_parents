@@ -1403,11 +1403,38 @@
         integer, parameter :: include_rho_d=0
         integer, parameter :: include_rho_m=0
 
-        ! TWO SMI STATES. This doubles the unemployment grid from 6 to 12 and
-        ! switches unemployment_process from the hand written block to the
-        ! generic builder, which was verified against it at one state.
+        ! TWO SMI STATES. This doubles the unemployment grid and switches
+        ! unemployment_process from the hand written block to the generic
+        ! builder, which was verified against it at one state.
         integer, parameter :: number_of_smi_states=2
-        integer, parameter :: threshold_addiction_index=3*number_of_smi_states
+
+        ! THREE SUD BLOCKS, NOT TWO, AND THE ORDER OF THEM IS THE WHOLE TRICK.
+        !
+        ! The child inherits the penalty if the parent EVER carried the disorder
+        ! between 26 and 50, not only if it carried it at the moment the child
+        ! left or the parent died. The author, 13 September: *"the child is
+        ! penalized with delta_d if the household ever had SUD, not just if it
+        ! had sud when it died or reached age 50....so there is a state var
+        ! there."*  Recovery is a live margin here -- it carries a calibrated
+        ! moment of its own -- so "ever had it" and "has it" are genuinely
+        ! different states and the second cannot stand in for the first.
+        !
+        ! The folded index therefore carries three blocks rather than two:
+        !
+        !   block 0, indices 1 to 3*number_of_smi_states : never had it
+        !   block 1, the next 3*number_of_smi_states     : had it, clean now
+        !   block 2, the last 3*number_of_smi_states     : has it
+        !
+        ! ORDERING RECOVERED IN THE MIDDLE IS WHAT KEEPS THE REST OF THE FILE
+        ! WORKING. There are 138 sites that test unemployment_index against
+        ! threshold_addiction_index to ask "does this household have the
+        ! disorder". With the new block last, every one of them still reads
+        ! correctly once the threshold moves up by one block -- and every loop
+        ! that runs 1 to threshold as "the clean states" picks up the recovered
+        ! block for free, which is exactly where the recovered households now
+        ! live. Putting the recovered block last instead would have made all 138
+        ! of them wrong and silent.
+        integer, parameter :: threshold_addiction_index=2*3*number_of_smi_states
 
         ! ====================================================================
         ! SERIOUS MENTAL ILLNESS. Section 2.9 of the note, eq:fonsetage and
@@ -5753,8 +5780,11 @@
         real(8), parameter :: life_cycle_component_a=real(0.38)/((real(life_span)-real(retirement_span)-11))
         real(8), parameter :: life_cycle_component_b=(real(0.38)-real(0.38))/(10)
         
+        ! Three SUD blocks of three employment states each, crossed with SMI.
+        ! Without the disorder there is no ever-had-it state to carry and the
+        ! grid is the three employment states alone.
         integer, parameter :: unemployment_grid_size=&
-            include_addiction*6*number_of_smi_states+(1-include_addiction)*3
+            include_addiction*9*number_of_smi_states+(1-include_addiction)*3
                                                
         real(8), dimension(unemployment_grid_size) :: unemployment_grid
         real(8), dimension(life_span,employment_grid_size) :: employment_grid
@@ -7980,15 +8010,33 @@
             integer, intent(in) :: age_1,homeless_1,addiction_index_1,treatment_1,&
                 unemployment_index_1,employment_index_1,future_addiction_index_1
 
+            integer :: transmitted_1
+
             child_continuation_value=0.d0
 
             if (include_child_in_continuation==0) return
             if (age_1>child_at_home_last_index) return
 
+            ! WHAT THE CHILD INHERITS IS THE HISTORY, NOT THE MOMENT. The author,
+            ! 13 September: *"the child is penalized with delta_d if the household
+            ! ever had SUD, not just if it had sud when it died or reached age
+            ! 50."*  So this reads the latched bit rather than the current SUD
+            ! state -- a parent who carried the disorder at 30 and recovered at 35
+            ! still transmits it.
+            !
+            ! THE DRUG CHOICE STAYS IN IT, and that is what keeps the deterrence.
+            ! future_addiction_index is the choice being maximised over, so for a
+            ! household whose bit is still off, choosing the disorder turns the
+            ! penalty on inside its own comparison -- which is the entire content
+            ! of omega_c's moment. For a household whose bit is already on the max
+            ! is 1 either way and there is nothing left to deter, which is the
+            ! author's point: the damage is done and cannot be undone by quitting.
+            transmitted_1=max(ever_sud_of(unemployment_index_1),future_addiction_index_1)
+
             if (age_1==child_at_home_last_index) then
 
                 child_continuation_value=discount_factor*weight_on_child*&
-                    expected_child_value(employment_index_1,future_addiction_index_1,homeless_1)
+                    expected_child_value(employment_index_1,transmitted_1,homeless_1)
 
             else
 
@@ -7997,7 +8045,7 @@
                     survival_sud_of(addiction_index_1,treatment_1),&
                     smi_of(unemployment_index_1)))*&
                     weight_on_child*&
-                    expected_child_value(employment_index_1,future_addiction_index_1,homeless_1)
+                    expected_child_value(employment_index_1,transmitted_1,homeless_1)
 
             end if
 
@@ -8060,10 +8108,22 @@
 
         end function
 
+        ! HAS THE DISORDER NOW: block 2 only. Blocks 0 and 1 are both clean --
+        ! one has never had it and one has recovered -- which is why the divisor
+        ! is the threshold rather than one block.
         integer function sud_of(i_1)
             implicit none
             integer, intent(in) :: i_1
-            sud_of=(i_1-1)/(3*number_of_smi_states)
+            sud_of=(i_1-1)/(2*3*number_of_smi_states)
+        end function
+
+        ! HAS EVER HAD THE DISORDER: blocks 1 and 2. This is the state the
+        ! child's inherited penalty keys on, and the only thing that separates
+        ! block 1 from block 0.
+        integer function ever_sud_of(i_1)
+            implicit none
+            integer, intent(in) :: i_1
+            ever_sud_of=min((i_1-1)/(3*number_of_smi_states),1)
         end function
 
         ! WHAT A WORKING AGE HOUSEHOLD OUT OF WORK RECEIVES, IN ONE PLACE.
@@ -9921,10 +9981,13 @@
 
         end subroutine
 
-        integer function idx_of(e_1,m_1,d_1)
+        ! THE BLOCK IS d + ever, WHICH IS ONLY WELL DEFINED BECAUSE ever >= d.
+        ! A household that has the disorder has had it, so (d=1, ever=0) is not
+        ! a state and the sum never reaches 3.
+        integer function idx_of(e_1,m_1,d_1,ever_1)
             implicit none
-            integer, intent(in) :: e_1,m_1,d_1
-            idx_of=3*number_of_smi_states*d_1+3*m_1+e_1
+            integer, intent(in) :: e_1,m_1,d_1,ever_1
+            idx_of=3*number_of_smi_states*(d_1+ever_1)+3*m_1+e_1
         end function
 
         ! WHICH SUD INDEX THE MORTALITY MULTIPLIER IS READ AT.
@@ -22124,6 +22187,13 @@
                         (1-one_period_before_death)*unemployment_index)+&
                         (1-at_least_one_period_before_retirement)*unemployment_grid_size)
 
+                        ! THE THIRD SUD BLOCK COSTS NOTHING HERE. The clean range runs over both
+                        ! the never-had-it and the recovered block, but a household can only
+                        ! land in one of them, so half the range carries exactly zero
+                        ! probability. Skipping it is arithmetic, not approximation.
+                        if (unemployment_process(age_index,unemployment_index,&
+                            fui_1,evx_homeless,fai_1,employment_index)<=0.d0) cycle
+
                         do fvi_1=evx_fv,evx_sv
 
                             acc=acc+discount_factor*&
@@ -22673,6 +22743,15 @@
                                     (1-one_period_before_death)*unemployment_index)+&
                                     (1-at_least_one_period_before_retirement)*unemployment_grid_size)
                                     
+                                    ! THE THIRD SUD BLOCK COSTS NOTHING HERE. The clean range runs over
+                                    ! both the never-had-it and the recovered block, but a household can
+                                    ! only land in one of them, so half the range carries exactly zero
+                                    ! probability. Skipping it is arithmetic, not approximation -- the
+                                    ! same idiom the employment loop above already uses.
+                                    if (unemployment_process(age_index,unemployment_index,&
+                                        future_unemployment_index,is_homeless_1,future_addiction_index_2,&
+                                        employment_index)<=0.d0) cycle
+
                                     do future_voucher_index=first_voucher_index,second_voucher_index
                                                                                                                       
                                         future_utility_vector(future_financial_index)=&
@@ -23139,7 +23218,14 @@
                                                 ! the Tauchen matrix when productivity is stochastic.
                                                 if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
 
-                                                                     
+                                                ! THE THIRD SUD BLOCK COSTS NOTHING HERE. The clean range runs over both
+                                                ! the never-had-it and the recovered block, but a household can only
+                                                ! land in one of them, so half the range carries exactly zero
+                                                ! probability. Skipping it is arithmetic, not approximation.
+                                                if (unemployment_process(age_index,unemployment_index,&
+                                                    future_unemployment_index,1,future_addiction_index_2,&
+                                                    employment_index)<=0.d0) cycle
+
                                                 future_utility_vector(future_mortgage_index)=&
                                                     future_utility_vector(future_mortgage_index)+discount_factor*&
                                                     survival_probability(age_index,1,survival_sud_of(addiction_index,treatment_choice_now),smi_of(unemployment_index))*&
@@ -23705,7 +23791,14 @@
                                         ! the Tauchen matrix when productivity is stochastic.
                                         if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
 
-                                                                                                                                                                                                                                           
+                                        ! THE THIRD SUD BLOCK COSTS NOTHING HERE. The clean range runs over both
+                                        ! the never-had-it and the recovered block, but a household can only
+                                        ! land in one of them, so half the range carries exactly zero
+                                        ! probability. Skipping it is arithmetic, not approximation.
+                                        if (unemployment_process(age_index,unemployment_index,&
+                                            future_unemployment_index,1,future_addiction_index_2,&
+                                            employment_index)<=0.d0) cycle
+
                                         future_utility_vector(future_mortgage_index)=&
                                             future_utility_vector(future_mortgage_index)+&
                                             discount_factor*survival_probability(age_index,1,survival_sud_of(addiction_index,treatment_choice_now),smi_of(unemployment_index))*&
@@ -24130,7 +24223,14 @@
                                                     ! the Tauchen matrix when productivity is stochastic.
                                                     if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
 
-                                                                                                                                                                                                                                                                                                 
+                                                    ! THE THIRD SUD BLOCK COSTS NOTHING HERE. The clean range runs over both
+                                                    ! the never-had-it and the recovered block, but a household can only
+                                                    ! land in one of them, so half the range carries exactly zero
+                                                    ! probability. Skipping it is arithmetic, not approximation.
+                                                    if (unemployment_process(age_index,unemployment_index,&
+                                                        future_unemployment_index,1,future_addiction_index_2,&
+                                                        employment_index)<=0.d0) cycle
+
                                                     future_utility_vector(future_mortgage_index)=&
                                                         future_utility_vector(future_mortgage_index)+&
                                                         discount_factor*survival_probability(age_index,1,survival_sud_of(addiction_index,treatment_choice_now),smi_of(unemployment_index))*&
@@ -24506,6 +24606,15 @@
                                     if (employment_process(age_index,employment_index,future_employment_index)<=0.d0) cycle
 
                                     
+                                    ! THE THIRD SUD BLOCK COSTS NOTHING HERE. The clean range runs over
+                                    ! both the never-had-it and the recovered block, but a household can
+                                    ! only land in one of them, so half the range carries exactly zero
+                                    ! probability. Skipping it is arithmetic, not approximation -- the
+                                    ! same idiom the employment loop above already uses.
+                                    if (unemployment_process(age_index,unemployment_index,&
+                                        future_unemployment_index,is_homeless_1,future_addiction_index_2,&
+                                        employment_index)<=0.d0) cycle
+
                                     do future_voucher_index=first_voucher_index,second_voucher_index
                                                                                                                                                                                                    
                                         future_utility_vector(future_financial_index)=&
@@ -27552,6 +27661,15 @@
                                 at_least_one_period_before_retirement*employment_index+&
                                 (1-at_least_one_period_before_retirement)*employment_grid_size
 
+                                ! THE THIRD SUD BLOCK COSTS NOTHING HERE. The clean range runs over
+                                ! both the never-had-it and the recovered block, but a household can
+                                ! only land in one of them, so half the range carries exactly zero
+                                ! probability. Skipping it is arithmetic, not approximation -- the
+                                ! same idiom the employment loop above already uses.
+                                if (unemployment_process(age_index,unemployment_index,&
+                                    future_unemployment_index,is_homeless_1,future_addiction_index_2,&
+                                    employment_index)<=0.d0) cycle
+
                                 do future_voucher_index=first_voucher_index,second_voucher_index
                                                                                                                                                                                                                                            
                                     future_utility_internal=future_utility_internal+discount_factor*&
@@ -29035,11 +29153,11 @@
                 ! at which every household has zero wealth and also the only age
                 ! with exactly zero homelessness.
                 newborn_state_draw(:)=0
-                newborn_state_draw(idx_of(1,0,0))=1-newborn_smi_at_birth
+                newborn_state_draw(idx_of(1,0,0,0))=1-newborn_smi_at_birth
 
                 if (number_of_smi_states>1) then
 
-                    newborn_state_draw(idx_of(1,1,0))=newborn_smi_at_birth
+                    newborn_state_draw(idx_of(1,1,0,0))=newborn_smi_at_birth
 
                 end if
 
@@ -31316,7 +31434,7 @@
 
         implicit none
 
-        integer :: i_1,bad_1,count_emp_1,count_ui_1,count_out_1,count_smi_1,count_sud_1
+        integer :: i_1,bad_1,count_emp_1,count_ui_1,count_out_1,count_smi_1,count_sud_1,count_ever_1
         integer :: expected_block_1
 
         bad_1=0
@@ -31326,6 +31444,7 @@
         count_out_1=0
         count_smi_1=0
         count_sud_1=0
+        count_ever_1=0
 
         do i_1=1,unemployment_grid_size
 
@@ -31334,10 +31453,11 @@
             if (emp_of(i_1)>1) count_out_1=count_out_1+1
             if (smi_of(i_1)==1) count_smi_1=count_smi_1+1
             if (sud_of(i_1)==1) count_sud_1=count_sud_1+1
+            if (ever_sud_of(i_1)==1) count_ever_1=count_ever_1+1
 
             ! The round trip, which is the one identity that has to hold at
             ! every grid size.
-            if (idx_of(emp_of(i_1),smi_of(i_1),sud_of(i_1))/=i_1) bad_1=bad_1+1
+            if (idx_of(emp_of(i_1),smi_of(i_1),sud_of(i_1),ever_sud_of(i_1))/=i_1) bad_1=bad_1+1
 
             ! Every accessor in range.
             if ((emp_of(i_1)<1) .OR. (emp_of(i_1)>3)) bad_1=bad_1+1
@@ -31358,15 +31478,41 @@
         ! include_addiction = 0 the grid is three states and carries neither,
         ! whatever number_of_smi_states happens to say. Checking them
         ! unconditionally would abort a configuration that is in fact correct.
+        !
+        ! THE COUNTS ARE THIRDS NOW, NOT HALVES. One block of three carries the
+        ! disorder and two of three have ever carried it, which is the arithmetic
+        ! that separates the recovered block from the never-had-it one.
         if (include_addiction==1) then
 
             if (count_smi_1/=((number_of_smi_states-1)*unemployment_grid_size/number_of_smi_states)) bad_1=bad_1+1
-            if (count_sud_1/=(unemployment_grid_size/2)) bad_1=bad_1+1
+            if (count_sud_1/=(unemployment_grid_size/3)) bad_1=bad_1+1
+            if (count_ever_1/=(2*unemployment_grid_size/3)) bad_1=bad_1+1
+
+            ! THE ONE INVARIANT THE WHOLE LAYOUT RESTS ON. idx_of adds the two
+            ! bits to pick a block, so a state that has the disorder without
+            ! ever having had it would land in block 3, which does not exist.
+            ! The loops that fill the transition are written never to produce
+            ! one; this is the check that they did not.
+            do i_1=1,unemployment_grid_size
+
+                if (sud_of(i_1)>ever_sud_of(i_1)) bad_1=bad_1+1
+
+            end do
+
+            ! AND THE THRESHOLD HAS TO AGREE WITH sud_of, at every grid size,
+            ! because 138 sites in this file ask which side of it they are on
+            ! instead of calling sud_of.
+            do i_1=1,unemployment_grid_size
+
+                if ((sud_of(i_1)==1) .NEQV. (i_1>threshold_addiction_index)) bad_1=bad_1+1
+
+            end do
 
         else
 
             if (count_smi_1/=0) bad_1=bad_1+1
             if (count_sud_1/=0) bad_1=bad_1+1
+            if (count_ever_1/=0) bad_1=bad_1+1
 
         end if
 
@@ -31376,7 +31522,8 @@
             write(*,*) "mismatches:", bad_1
             write(*,*) "employed=", count_emp_1, " on UI=", count_ui_1, &
                 " not employed=", count_out_1, " expected block=", expected_block_1
-            write(*,*) "with SMI=", count_smi_1, " with SUD=", count_sud_1
+            write(*,*) "with SMI=", count_smi_1, " with SUD=", count_sud_1, &
+                " ever with SUD=", count_ever_1
 
             stop
 
@@ -31385,45 +31532,15 @@
         write(*,*) "index map: accessors consistent at number_of_smi_states=", &
             number_of_smi_states, " employed block=", count_emp_1
 
-        if (number_of_smi_states/=1) then
-
-            write(*,*) "index map: threshold comparison not made, number_of_smi_states=", number_of_smi_states
-
-            return
-
-        end if
-
-        bad_1=0
-
-        do i_1=1,unemployment_grid_size
-        
-            if ((sud_of(i_1)==1) .NEQV. (i_1>threshold_addiction_index)) bad_1=bad_1+1
-            if ((sud_of(i_1)==0) .NEQV. (i_1<=threshold_addiction_index)) bad_1=bad_1+1
-            if (((sud_of(i_1)==0) .AND. (emp_of(i_1)==3)) .NEQV. &
-                (i_1==threshold_addiction_index)) bad_1=bad_1+1
-            if (((sud_of(i_1)==0) .AND. (emp_of(i_1)==2)) .NEQV. &
-                (i_1==threshold_addiction_index-1)) bad_1=bad_1+1
-            if (((sud_of(i_1)==1) .AND. (emp_of(i_1)==1)) .NEQV. &
-                (i_1==threshold_addiction_index+1)) bad_1=bad_1+1
-            if (((sud_of(i_1)==1) .AND. (emp_of(i_1)==2)) .NEQV. &
-                (i_1==threshold_addiction_index+2)) bad_1=bad_1+1
-            if (((sud_of(i_1)==1) .AND. (emp_of(i_1)==3)) .NEQV. &
-                (i_1==unemployment_grid_size)) bad_1=bad_1+1
-            if (((sud_of(i_1)==1) .AND. (emp_of(i_1)>1)) .NEQV. &
-                (i_1>threshold_addiction_index+1)) bad_1=bad_1+1
-            if (idx_of(emp_of(i_1),smi_of(i_1),sud_of(i_1))/=i_1) bad_1=bad_1+1
-            
-        end do
-        
-        if (bad_1>0) then
-        
-            write(*,*) "INDEX MAP IS WRONG, mismatches:", bad_1
-            
-            stop
-            
-        end if
-        
-        write(*,*) "index map verified against the old thresholds, grid=", unemployment_grid_size
+        ! THE HAND WRITTEN THRESHOLD COMPARISON HAS GONE. It enumerated a two
+        ! block grid of six states one index at a time -- "the first addicted
+        ! index is threshold+1, the last is unemployment_grid_size" -- which
+        ! cannot express three blocks and was already dead code at two SMI
+        ! states, where it returned before running. What it was protecting, that
+        ! sud_of and threshold_addiction_index agree, is checked above at every
+        ! grid size instead of at one.
+        write(*,*) "index map: three SUD blocks, threshold=", threshold_addiction_index, &
+            " grid=", unemployment_grid_size
     
     end subroutine
     
@@ -33121,7 +33238,14 @@
         ! block cannot express the layout at all, so the generic builder becomes
         ! the live one. Flipping number_of_smi_states is therefore the whole
         ! switch, and the run says out loud which path it took.
-        if (number_of_smi_states==1) then
+        ! THE HAND WRITTEN ARRAY CANNOT EXPRESS THREE SUD BLOCKS. It writes
+        ! indices 1 to 6 by hand and stops, so with the ever-had-it block in the
+        ! grid it would leave two thirds of the transition at zero and the
+        ! households in them with nowhere to go. The generic builder is
+        ! therefore live whenever the disorder is in the model, at one SMI state
+        ! as well as two, and the comparison against the hand written block --
+        ! which was what one state bought -- retires with it.
+        if ((number_of_smi_states==1) .AND. (include_addiction==0)) then
 
             if (loop_count<1) then
 
@@ -33136,6 +33260,14 @@
             write(*,*) "unemployment_process: generic builder, number_of_smi_states=", number_of_smi_states
 
             call build_unemployment_process_smi(increased_prob_if_homeless)
+
+            ! EVERY ROW A DISTRIBUTION, CHECKED RATHER THAN ARGUED. The third
+            ! SUD block splits the clean states in two and the builder decides
+            ! which half a household lands in from a latch; get the latch wrong
+            ! and a row sums to zero or to two, mass is created or destroyed in
+            ! the continuation, and nothing else in the model says so. The
+            ! newborn leg is already checked this way for the same reason.
+            if (loop_count<1) call verify_unemployment_rows()
 
             ! The onset entry itself: index 1 is (employed, no SMI, no SUD) and
             ! index 4 is (employed, SMI, no SUD), so this is the probability of
@@ -33291,7 +33423,7 @@
         implicit none
 
         real(8), intent(in) :: iph_1
-        integer :: a_1,p_1,h_1,d_c_1,d_f_1,m_c_1,m_f_1,e_c_1,e_f_1,i_1,j_1
+        integer :: a_1,p_1,h_1,d_c_1,d_f_1,m_c_1,m_f_1,e_c_1,e_f_1,i_1,j_1,ever_c_1,ever_f_1
         real(8) :: smi_1,newborn_smi_1
 
         unemployment_process=0
@@ -33310,7 +33442,24 @@
 
                     do d_c_1=0,include_addiction
 
+                        ! THE EVER-HAD-IT BIT, LOOPED OVER THE STATES IT CAN
+                        ! ACTUALLY TAKE. A household that has the disorder has
+                        ! had it, so the current pair (d_c, ever_c) runs over
+                        ! (0,0), (0,1) and (1,1) and never (1,0) -- which is
+                        ! what the lower bound d_c_1 says.
+                        do ever_c_1=d_c_1,include_addiction
+
                         do d_f_1=0,include_addiction
+
+                            ! THE LATCH. Once the disorder has been carried the
+                            ! bit never clears, so the future block is set by
+                            ! whether it has EVER been on, which is the current
+                            ! bit or the disorder arriving this period. This one
+                            ! line is the whole of the state variable: recovery
+                            ! moves a household from block 2 to block 1 rather
+                            ! than back to block 0, and block 1 is where the
+                            ! child's penalty is still owed.
+                            ever_f_1=max(ever_c_1,d_f_1)
 
                             do m_c_1=0,number_of_smi_states-1
 
@@ -33327,18 +33476,23 @@
 
                                     do e_c_1=1,3
 
-                                        i_1=idx_of(e_c_1,m_c_1,d_c_1)
+                                        i_1=idx_of(e_c_1,m_c_1,d_c_1,ever_c_1)
 
                                         do e_f_1=1,3
 
-                                            j_1=idx_of(e_f_1,m_f_1,d_f_1)
+                                            j_1=idx_of(e_f_1,m_f_1,d_f_1,ever_f_1)
 
                                             unemployment_process(a_1,i_1,j_1,h_1,d_f_1,p_1)=&
                                                 employment_transition(e_c_1,e_f_1,d_f_1,m_f_1,h_1,p_1,iph_1)*smi_1
 
                                             ! Same employment leg, SMI drawn from
                                             ! p(1) rather than from the parent.
-                                            newborn_unemployment_process(a_1,i_1,j_1,h_1,d_f_1,p_1)=&
+                                            ! A NEWBORN HAS NO HISTORY, so its
+                                            ! ever-had-it bit is whatever it
+                                            ! arrives with and nothing carries
+                                            ! over from the parent it replaces.
+                                            newborn_unemployment_process(a_1,i_1,&
+                                                idx_of(e_f_1,m_f_1,d_f_1,d_f_1),h_1,d_f_1,p_1)=&
                                                 employment_transition(e_c_1,e_f_1,d_f_1,m_f_1,h_1,p_1,iph_1)*&
                                                 (m_f_1*newborn_smi_1+(1-m_f_1)*(1-newborn_smi_1))
 
@@ -33352,6 +33506,8 @@
 
                         end do
 
+                        end do
+
                     end do
 
                 end do
@@ -33359,6 +33515,66 @@
             end do
 
         end do
+
+    end subroutine
+
+    subroutine verify_unemployment_rows()
+
+        ! The transition is read as P(current -> future | homelessness, the drug
+        ! choice, productivity), so for every one of those it has to sum to one
+        ! over the future state. It is built as an employment leg times an SMI
+        ! leg and placed in the block the latch picks, and a mistake in the
+        ! latch shows up here and only here.
+
+        use Global_Vars
+
+        implicit none
+
+        integer :: a_1,i_1,h_1,d_f_1,p_1,bad_1
+        real(8) :: sum_1,worst_1
+
+        bad_1=0
+        worst_1=0
+
+        do a_1=1,life_span
+
+            do i_1=1,unemployment_grid_size
+
+                do h_1=1,2
+
+                    do d_f_1=0,include_addiction
+
+                        do p_1=1,employment_grid_size
+
+                            sum_1=sum(unemployment_process(a_1,i_1,:,h_1,d_f_1,p_1))
+
+                            if (abs(sum_1-1.d0)>10.d0**(-8)) then
+
+                                bad_1=bad_1+1
+                                worst_1=max(worst_1,abs(sum_1-1.d0))
+
+                            end if
+
+                        end do
+
+                    end do
+
+                end do
+
+            end do
+
+        end do
+
+        if (bad_1>0) then
+
+            write(*,*) "unemployment_process: rows not summing to one=", bad_1, &
+                " worst=", worst_1
+
+            stop
+
+        end if
+
+        write(*,*) "unemployment_process: every row a distribution, grid=", unemployment_grid_size
 
     end subroutine
 
