@@ -138,7 +138,7 @@ def _hl_by_shift(par, policy, pV):
 
 def _bridge_hl_by_shift(par, new_policy, pv_new):
     """The same, for the generation the reform catches mid life."""
-    from stylized import period1, solve_period2
+    from stylized import period1, solve_period2, _pid
     old = with_(par, pV=par.pV, policy=BASE_POLICY)
     new = with_(par, pV=pv_new, policy=new_policy)
 
@@ -152,7 +152,22 @@ def _bridge_hl_by_shift(par, new_policy, pv_new):
         for p, gain, v, bu, bn, _inc, _own in period1(old, y, BASE_POLICY):
             uses = gain > 0.0
             a = (bu if uses else bn)[0]
-            pid = (1.0 - float(np.exp(-old.lam * v))) if uses else 0.0
+            # THE MODEL'S OWN ONSET, NOT A STALE ONE.  This read
+            # 1 - exp(-lam*v), a dose-response in the quantity bought, which is
+            # what the model used before the onset became flat.  stylized.py's
+            # _pid is now `pi_base * (v > 0)` -- the base rate at any positive
+            # quantity and exactly zero at v = 0 -- and the bridge was the last
+            # place still carrying the old form.
+            #
+            # IT IS WHAT BROKE THE NULL TEST.  Under a reform that changes
+            # nothing the bridge must reproduce the steady grids, and these two
+            # functions cannot agree: measured under Housing First against
+            # Housing First, the steady disorder grid has mass-weighted 0.035951
+            # and the bridge 0.015402, with the worst node putting 95.2 per cent
+            # of high-income users into disorder where the model puts 39.4.  The
+            # null then read +3.303 per cent at cohort 2 -- the one cohort the
+            # bridge touches -- while cohort 1 and the long run were exact.
+            pid = float(_pid(old, v)) if uses else 0.0
             Hx = H2u if uses else H2c
             tot += p * sum(pd * float(np.interp(a, ag, Hx[:, d]))
                            for d, pd in ((1, pid), (0, 1.0 - pid)))
@@ -184,7 +199,7 @@ def _bridge_grids(par, new_policy, pv_new):
     The disorder is settled in period 1 and so does not depend on the new
     policy; being unhoused can happen in either period and so does.
     """
-    from stylized import period1, solve_period2
+    from stylized import period1, solve_period2, _pid
     old = with_(par, pV=par.pV, policy=BASE_POLICY)
     new = with_(par, pV=pv_new, policy=new_policy)
     sud = np.zeros(len(YG))
@@ -199,7 +214,14 @@ def _bridge_grids(par, new_policy, pv_new):
         for p, gain, v, bu, bn, _inc, _own in period1(old, y, BASE_POLICY):
             uses = gain > 0.0
             a = (bu if uses else bn)[0]
-            pid = (1.0 - float(np.exp(-old.lam * v))) if uses else 0.0
+            # THE MODEL'S OWN ONSET, NOT A STALE ONE.  See _bridge_hl_by_shift
+            # for the full note: this read 1 - exp(-lam*v), a dose-response in
+            # the quantity, which is what the model used before onset became
+            # flat.  stylized.py's _pid is `pi_base * (v > 0)`.  FOUR code paths
+            # carried the old form and the grep that found them is the lesson:
+            # when a specification changes, the same expression is usually
+            # written out in more than one place.
+            pid = float(_pid(old, v)) if uses else 0.0
             Hx = H2u if uses else H2c
             street2 = sum(pd * float(np.interp(a, ag, Hx[:, d]))
                           for d, pd in ((1, pid), (0, 1.0 - pid)))
@@ -296,7 +318,7 @@ def caught(par, pv_new=PV_OPT):
     Returns the consumption equivalent they lose and the homelessness the
     revocation itself creates, integrating over the assets they actually saved
     and the disorder they actually drew under the old programme."""
-    from stylized import period1, solve_period2
+    from stylized import period1, solve_period2, _pid
     old = with_(par, pV=par.pV, policy=BASE_POLICY)
     new_h = with_(par, pV=pv_new, policy='HF')
     new_t = with_(par, pV=pv_new, policy='TF')
@@ -316,7 +338,8 @@ def caught(par, pv_new=PV_OPT):
             for p, gain, v, bu, bn, inc, _own in period1(old, y, BASE_POLICY):
                 uses = gain > 0.0
                 a = (bu if uses else bn)[0]
-                pid = (1.0 - np.exp(-old.lam * v)) if uses else 0.0
+                # the model's own onset; see _bridge_hl_by_shift
+                pid = float(_pid(old, v)) if uses else 0.0
                 # solved ONCE per (income, use) pair, not once per disorder
                 # draw: the period 2 problem does not depend on d, which only
                 # selects a column of the answer.
@@ -385,7 +408,14 @@ def caught_coverage(par, pv_new=PV_OPT):
                 y = y0 * sft
                 for p, gain, v, bu, bn, inc, _own in period1(old, y, BASE_POLICY):
                     uses = gain > 0.0
-                    pid = (1.0 - float(np.exp(-old.lam * v))) if uses else 0.0
+                            # THE MODEL'S OWN ONSET, NOT A STALE ONE.  See _bridge_hl_by_shift
+                    # for the full note: this read 1 - exp(-lam*v), a dose-response in
+                    # the quantity, which is what the model used before onset became
+                    # flat.  stylized.py's _pid is `pi_base * (v > 0)`.  FOUR code paths
+                    # carried the old form and the grep that found them is the lesson:
+                    # when a specification changes, the same expression is usually
+                    # written out in more than one place.
+                    pid = float(_pid(old, v)) if uses else 0.0
                     for d, pd in ((1, pid), (0, 1.0 - pid)):
                         m = psft * WW[i] * p * pd
                         if m <= 0.0:
