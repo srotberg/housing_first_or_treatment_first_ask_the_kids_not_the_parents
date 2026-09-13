@@ -1,3 +1,60 @@
+## 13 September 00:15 UTC -- THE INCOME FLOOR AND THE PAPER'S MECHANISM ARE THE
+## SAME OBJECT.  THE FLOOR REMOVES THIRTY-FOUR OF THE FORTY-THREE USING INCOME
+## LEVELS, ALL OF THEM POOR.  THE AUTHOR SAW IT FIRST.
+
+The author, 13 September, twice: *"It's because yu is too high..."* and then
+*"Or it means the income of users are too high!"*.  Both were right and both
+were upstream of everything the previous entry recorded as separate failures.
+
+Measured on the model's own 120-point income grid, at the same vector:
+
+                users     y_u     using grid points   lowest using income
+    no floor    0.1667   0.5327         43 of 120           0.108
+    floor 0.182 0.0959   0.8203          9 of 120           0.449
+
+Without the floor the using population starts at the BOTTOM of the distribution
+-- 0.108, 0.109, 0.110, 0.111 -- and with it the poorest user in the economy
+earns 0.449, half the mean.  One of the nine survivors sits at 2.530, the top of
+the grid.
+
+**THIS IS NOT A BUG AND IT IS WORSE THAN ONE.**  The paper's argument is that
+the income gradient in use REVERSES at the bottom because life is worth little
+there.  The floor is an instrument for making life worth having at the bottom.
+They are the same object.  Every failure in the entry below is a consequence:
+
+  * y_u = 0.82 because the poor users are gone -- cause, not symptom;
+  * sud_of_homeless2 = 0 because no user is poor enough to sleep rough, which
+    is why no u1 in a fifteen-fold range moved it;
+  * child_sud_or < 1 because delta_d makes a child poorer and poorer now means
+    FURTHER FROM the using band rather than into it, which is why the bracket
+    ran delta_d to its bound instead of converging.
+
+The use probability is also bang-bang, 0 or 1 at almost every income, so there
+is no smooth gradient for a bracket to climb even where use exists.
+
+## THE DECISION IS THE AUTHOR'S AND THE TWO OPTIONS ARE EXCLUSIVE
+
+ 1. NO FLOOR.  The negative value of life stands at 1.56 per cent of period-2
+    states, the poor use drugs, and the model calibrates -- iteration 3400 of
+    sr_run_224426.log, median gap 1.8 per cent, ten of eleven brackets inside
+    ten, banked at code/stylized/best_vector_it3400 in the SEED block.
+ 2. FLOOR AT 0.182.  No household has a negative value of life, and y_u,
+    sud_of_homeless2 and child_sud_or have to be dropped or retargeted, because
+    the households they describe do not exist any more.
+
+## WHAT WAS CHANGED THIS ROUND, AND IT STANDS EITHER WAY
+
+  * delta_d's upper bound is 1.00, not 2.00.  The author: *"Delta d cannot be
+    over 100%!!"*, seeing it read 1.45.  It is a shift in LOG income, so 1.45 is
+    a cut of 76.5 per cent rather than 145, and a cut of 100 per cent is
+    delta_d = infinity -- which is why a bound of 2.0 never caught anything.
+    Every table now prints the implied percentage beside the value.
+  * omega, delta_d and th step slower, at 0.05, 0.02 and 0.03 per cent a pass
+    against 0.25, 0.05 and 0.1.  The author: *"maybe slower updates on omegac,
+    deltad, and theta"*.
+  * The run is STOPPED rather than left chasing three targets whose populations
+    the floor has emptied.
+
 ## 13 September 00:05 UTC -- THE INCOME FLOOR IS ON AND NINE OF ELEVEN BRACKETS
 ## CLOSE UNDER IT.  THE TWO THAT DO NOT FAIL FOR ONE REASON, AND THE AUTHOR
 ## NAMED IT: y_u IS TOO HIGH.

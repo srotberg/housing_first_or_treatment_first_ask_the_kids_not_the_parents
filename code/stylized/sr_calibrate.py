@@ -188,7 +188,17 @@ SPEC = [
     #
     # SIGN IS POSITIVE: a bigger income penalty makes the child poorer, poorer
     # children use more, so the odds ratio RISES in delta_d.
-    ('delta_d', 'child_sud_or',      2.0,     +1, 0.30, 0.01,  2.00),
+    # THE UPPER BOUND IS 1.0 AND IT IS IN LOG INCOME, NOT PER CENT.  The author,
+    # 13 September: *"Delta d cannot be over 100%!!"*, seeing delta_d read 1.45
+    # in the tables.  The parameter is a shift in LOG income --
+    # log y_child = rho*log y_p + (1-rho)*log ybar - delta_d*1{parent SUD} --
+    # so the value is not a percentage and 1.45 is a cut of 76.5 per cent, not
+    # 145.  A cut of 100 per cent is delta_d = infinity, which is why a bound of
+    # 2.0 never caught anything.  The bound is now 1.0, a cut of 63.2 per cent,
+    # and the table prints the implied percentage beside the value so the unit
+    # cannot be misread again.  For scale: the author's own pin of 0.24 is a cut
+    # of 21.3 per cent and Nilsson (2017) is 24 per cent, i.e. delta_d = 0.274.
+    ('delta_d', 'child_sud_or',      2.0,     +1, 0.30, 0.01,  1.00),
     # kappa IS FREED AGAIN, on users' income.  Author, 12 September: *"maybe then
     # you have to pick kappa as well to push the income down"*, *"maybe 3
     # multiples is not enough"*.  It was SET at SMR 3 earlier today, which made
@@ -291,8 +301,14 @@ MAX_REL_STEP = 0.005
 #
 # theta is the evidence that slowing works: it went from +50 per cent and
 # swinging to +5.4 per cent once it was capped at 0.1 and given the iterations.
-PER_PARAM_STEP = {'omega': 0.0025, 'th': 0.001, 'h_hl': 0.02, 'kap': 0.001,
-                  'b': 0.001, 'pi_base': 0.001, 'delta_d': 0.0005}
+# SLOWER ON omega, delta_d AND th, on the author's instruction of 13
+# September: *"maybe slower updates on omegac, deltad, and theta"*.
+# omega 0.25 -> 0.05 per cent a pass, th 0.1 -> 0.03, delta_d 0.05 ->
+# 0.02.  These are the three that were not converging from their start:
+# omega fell 0.00905 to 0.00163 and delta_d climbed 0.57 to 1.45 over
+# nineteen hundred passes, neither settling.
+PER_PARAM_STEP = {'omega': 0.0005, 'th': 0.0003, 'h_hl': 0.02, 'kap': 0.001,
+                  'b': 0.001, 'pi_base': 0.001, 'delta_d': 0.0002}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
 ADJ_FLOOR = 1e-3
@@ -638,6 +654,8 @@ def table(par, m, it):
     # day, so this line is how the pin is judged: if the SUD ratio sits far from
     # 2 at delta_d = 0.24, that is the thing to look at, and it will be visible
     # rather than buried in a bracket that was quietly chasing it.
+    print(f'  PENALTY delta_d {par.delta_d:.4f} in log income, which is a child'
+          f' income cut of {100 * (1 - math.exp(-par.delta_d)):.1f} per cent')
     print(f'  ODDS    child homeless {m["child_hl_or"]:.3f}'
           f'   child SUD {m["child_sud_or"]:.3f}  at delta_d {par.delta_d:.2f}'
           f'   (both reported only)')
