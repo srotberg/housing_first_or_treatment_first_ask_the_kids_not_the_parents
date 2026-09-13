@@ -1,3 +1,84 @@
+## 13 September 00:45 UTC -- child_gap IS SINGLE-PEAKED IN omega AND ITS PEAK IS
+## 0.1230 AGAINST A TARGET OF 0.1834.  THE BRACKET CANNOT CONVERGE BECAUSE THE
+## TARGET IS ABOVE THE CEILING.
+
+The author, 13 September: *"Are you sure the child weight is correct? It seems
+really low to produce such large effects..."*.  The instinct was right and the
+answer is not the one either of us expected.
+
+**THE WEIGHT REALLY IS TINY AND THE EFFECT REALLY IS LARGE.**  At omega 0.00811
+and xi 1.4142, omega*(xi-1) = 0.003359, and in the flow utility bracket at
+q = 0.02 the child term is 0.005096 against the parent's 1.452357 -- **0.35 per
+cent of the bracket**.  Removing it moves participation from 0.0885 to 0.0982,
+eleven per cent.  An amplification of about thirty-one times, and the reason is
+the bang-bang use decision: use_prob is 0 or 1 at almost every income, so a
+sliver of utility flips whole cells at once.
+
+**THE GRID TEST THE AUTHOR ASKED FOR, AND THE CORRECTION IT FORCED.**  Refining
+the drug grid does NOT reduce the amplification.  At nv 140 and 280 a five per
+cent rise in omega reads as raising child_gap slightly; at 560 and 1120 the same
+step CUTS it by more than half.  That was first written up here as the coarse
+grid getting the SLOPE wrong.  It is not.  Swept finely at nv 560:
+
+    omega     child_gap    part
+    0.00853     0.1176    0.0894
+    0.00862     0.1193    0.0893
+    0.00870     0.1210    0.0892
+    0.00879     0.1228    0.0890
+    0.00896     0.0447    0.0957   <- a cliff, not a slope
+    0.00938     0.0537    0.0949
+
+The local slope is about +1.4 and the coarse grid reported it correctly.  What
+the fine grid reveals is a CLIFF at omega about 0.0089, where a block of
+households flips into using and child_gap loses sixty-four per cent in one step.
+The -12.4 "elasticity" was a difference measured ACROSS that cliff.  **Check
+whether a step crosses a discontinuity before calling a slope wrong.**
+
+**AND THE TARGET IS ABOVE THE CEILING.**  Swept across the whole range at
+nv 560:
+
+    omega     child_gap    part
+    0.00400     0.0458    0.0956
+    0.00600     0.0737    0.0931
+    0.00800     0.1073    0.0903
+    0.00880     0.1230    0.0890   <- THE MAXIMUM
+    0.01000     0.0677    0.0936
+    0.01400       HELD    0.0764
+    0.08000       HELD    0.0706
+    target      0.1834
+
+child_gap is single-peaked in omega and peaks at 0.1230, **thirty-three per cent
+below the target**.  No weight on the child delivers 0.1834.  Above the peak the
+omega = 0 counterfactual crosses onto the other drug branch and the moment
+cannot be measured at all, which is what the HELD rows are.
+
+**THIS IS WHAT DESTABILISED THE RUN TONIGHT.**  omega crossed the cliff at about
+iteration 1300 -- 0.00853, 0.00896, 0.00942, 0.00991, 0.01026, 0.01051 over
+iterations 1200 to 1700 -- and child_gap fell from -37 per cent to -50, -63,
+-52, -67, -64 and stayed there.  It is the only bracket still moving materially,
+so its thrashing propagates: part went to +14.4 and +11.5, and iteration 1900
+fell to the corner outright.
+
+## WHAT IS PROPOSED AND IT IS THE AUTHOR'S CALL, BECAUSE IT CHANGES THE TARGETS
+
+Pin omega at 0.0088, the peak, and ZERO ITS DISTANCE -- the standing rule that a
+retired bracket has its distance retired with it.  child_gap becomes an OUTPUT
+reported at 0.123 against 0.1834, the way networth and the homelessness odds
+ratio already are.  The remaining ten brackets were every one inside ten before
+omega began thrashing.
+
+Keeping it as a target means one row reads -33 per cent permanently AND the
+bracket goes on destabilising its neighbours, which is strictly worse.
+
+## THE REST OF THE STYLIZED MODEL IS CALIBRATED
+
+Iteration 1000 to 1800, median gap between 0.1 and 1.5 per cent with ten of
+eleven brackets inside ten: hspend, vsl, homeless, part, sud, unemployment,
+sud_of_homeless2, r_use and dshare all inside four for long stretches,
+sud_of_homeless2 exact, and child_sud_or holding at 2.0000 on the solved
+delta_d.  The income floor is OFF and the negative value of life is reported on
+every table at 1.56 to 1.58 per cent.
+
 ## 13 September 00:15 UTC -- THE INCOME FLOOR AND THE PAPER'S MECHANISM ARE THE
 ## SAME OBJECT.  THE FLOOR REMOVES THIRTY-FOUR OF THE FORTY-THREE USING INCOME
 ## LEVELS, ALL OF THEM POOR.  THE AUTHOR SAW IT FIRST.
