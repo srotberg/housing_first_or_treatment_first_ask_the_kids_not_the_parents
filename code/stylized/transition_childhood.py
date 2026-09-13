@@ -53,7 +53,25 @@ def path_with_childhood(par, policy, pV, p0, v1_base, w0, n=None):
     out, p = [], p0.copy()
     for t in range(1, n + 1):
         adult = T._welfare(p, v1, par)
-        kid = kid_old if t == 1 else kid_new    # childhood is lived a period EARLIER
+        # COHORT 1 IS THE CHILDREN ALIVE WHEN THE POLICY CHANGES, SO ITS
+        # CHILDHOOD IS UNDER THE NEW POLICY.
+        #
+        # The author, 13 September: *"welfare should be measured for the
+        # lifetime utility of cohort 1, which is the children at the time the
+        # policy change is made"*, and *"they are still living with their
+        # parents"*.
+        #
+        # Those children are in the household when the reform lands, so the
+        # whole of their childhood is lived under the new regime -- their
+        # parents face it while they are being raised.  What they carry from the
+        # old world is not their childhood but their PARENTS' disorder status,
+        # which was settled before the reform; that is p0, and the adult term
+        # already uses it.  So the two halves of cohort 1 are: adult value born
+        # into the pre-reform mixture, childhood under the new policy.
+        #
+        # The line was kid_old for t == 1, which gave cohort 1 a childhood the
+        # reform never touched and charged the policy for it.
+        kid = kid_new
         total = adult + kid
         out.append(dict(cohort=t,
                         adult=float(adult), childhood=float(kid),
