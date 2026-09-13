@@ -1,3 +1,34 @@
+## 13 September 06:35 UTC -- LOOP 50: THE PENALTY SCAN HAS RUN OUT OF RANGE
+
+    PENALTY SCAN did NOT bracket 2.0 over [0.0, 0.6] -- penalty left at 0.59843
+    child SUD ratio model = 1.8742   target = 2.0
+    PENALTY SCAN did NOT bracket 2.0 over [0.0, 0.6] -- penalty left at 0.59843
+    child SUD ratio model = 1.8341   target = 2.0
+
+The scan's ceiling is 0.6 and `penalty_child_addicted` has reached it.  At the
+ceiling the model delivers a child SUD odds ratio of 1.87, then 1.83 on the next
+loop at the SAME penalty -- so the shortfall is widening, and an odds ratio of
+two now needs a penalty the scan cannot reach.
+
+**THIS IS THE END OF A TRAJECTORY, NOT A SURPRISE.**  The scan solved at 0.402
+for the first dozen loops, drifted to a 0.437 band, then climbed 0.4693, 0.4917,
+0.5036, 0.5147, 0.5861, 0.5984 as participation accelerated.  Three readings
+here were reported to the author as stability and two of them had to be
+withdrawn; the series says plainly that the penalty required for a fixed odds
+ratio is a FUNCTION OF THE PARTICIPATION RATE, and at participation 0.0637 that
+function has passed 0.6.
+
+**WHAT IT MEANS FOR THE PAPER.**  `penalty_child_addicted` is not calibrated by
+an adjuster -- the report lists it under "its adjuster is zero" -- so the scan is
+the only thing setting it, and the scan has stopped working.  Every number
+downstream of the child's inherited penalty is now pinned at a ceiling rather
+than at the author's target of two, and the gap will grow as participation
+completes its remaining third.
+
+Its agreement with the stylized model's translated 0.434 around loops 20 to 40
+was a coincidence of passage, not a cross-model confirmation, and should not be
+cited as one.
+
 ## 13 September 06:05 UTC -- THE LOOP-40 BREAK, LOCALISED WITH THE MODEL'S OWN
 ## DIAGNOSTICS. IT IS THE NUMERATOR AND IT IS NOT THE TYPE-COUNT DIVISOR.
 
