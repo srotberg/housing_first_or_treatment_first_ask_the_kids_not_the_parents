@@ -1,3 +1,21 @@
+## 13 September 13:00 UTC -- ONE HUNDRED LOOPS ON THE RESUMED RUN
+
+Homelessness crossed THREE TIMES its target at loop 99 (0.029985 against 0.0100)
+and sits at 2.98x at loop 100, while `size_homelessness` has been cut from
+1.2479e-05 at the resume to 5.77e-06 -- a factor of 2.2 -- and never once
+arrested it.  Over the same hundred loops the six readings taken AT the
+participation target ran 2.35x, 2.5x, 2.79x, 2.79x, 2.80x, 2.92x: the figure is
+not a constant the model is converging to, it RISES as the instrument is spent.
+
+That is the clearest statement of the night's result.  The instrument is not
+slow, and it is not merely losing a race with participation: it is being
+exhausted, and homelessness goes on rising after it is spent.
+
+Everything else is where it was.  Twenty-eight regime flips; the three moments
+independent of the using population keep landing (disorder rate 0.1 per cent at
+loop 100, mu_homeless 0.9, separation rate 1.2); the drug share is 28.6 per cent
+under with theta pinned; the penalty scan has been out of range since loop 50.
+
 ## 13 September 10:05 UTC -- THE RESUMED RUN'S SETTLED STATE, FIFTY LOOPS
 
 Twenty-four consecutive loops in the high regime, with participation within
