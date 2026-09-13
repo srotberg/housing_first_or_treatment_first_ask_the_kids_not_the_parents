@@ -1,3 +1,39 @@
+## 13 September 07:10 UTC -- WHAT THE RESUME ACTUALLY COST, MEASURED
+
+The first moment block of the resumed run (`worker_3110c0fab1.log`):
+
+    participation      0.04037   target 0.0890    -54.6%
+    homelessness       0.02125   target 0.0100   +112.5%
+    disorder rate      0.01759   target 0.0368    -52.2%
+    drug share         0.13557   target 0.1410     -3.8%
+    vsl ratio        100.85      target 80.00     +26.1%
+
+**THE COST WAS NOT WHAT THE 07:05 ENTRY SAID.**  That entry put it at about
+fifty loops on the disorder rate, from the onset base alone.  Measured, the
+resume came back at participation 0.0404 against the 0.0979 it died at -- rather
+than at the value its carried `addiction_scalar_1` produced before.  That is
+roughly the economy of loop 45, so about TEN loops were lost, not fifty, and
+they were lost on participation rather than on the onset base.
+
+**AND THAT IS ITSELF THE FINDING.**  `addiction_scalar_1` was carried forward
+EXACTLY, at 1.2479e-03, and it produced participation 0.098 at loop 55 and 0.040
+now.  So participation is not a function of that parameter at all; it is a
+function of the whole state -- the value function, the distribution, and every
+other parameter jointly.  Which is the same thing the elasticity series said all
+night (+0.53, -2.02, -9.84, +0.92, -2.70 on identical steps) stated a different
+way, and it is why a one-parameter scan of the scalar would NOT have answered
+the continuity question cleanly either.
+
+**A SECOND THING WORTH HAVING.**  The vsl ratio is at 100.85 -- the same ~101
+level as the loop-40 break, reached here from a cold start rather than by
+drifting into it.  So that state is an attractor of the solve rather than a
+one-off transient, which supports reading it as a corner in the V over
+marginal-utility sum rather than as an economic event.
+
+The drug share is 3.8 per cent off at this participation, against 39 per cent at
+participation 0.09.  That is the theta pin's dependence on participation again,
+in the other direction and from a different starting point.
+
 ## 13 September 07:05 UTC -- THE CONTAINER RESTARTED AT LOOP 55. RESUMED, BUT
 ## resume.sh DOES NOT CARRY addiction_onset_base AND THAT COST THE DISORDER RATE
 
