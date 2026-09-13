@@ -54,6 +54,17 @@ if live:
           % (len(live), live[-1], live[len(live) // 2],
              sum(1 for x in live if x <= 10), held))
 
+# THE PARAMETERS MOVE TOO, AND THE GAPS ALONE DO NOT SHOW IT.  A moment that
+# will not close because its instrument is pinned looks exactly like one that is
+# converging slowly, until you put the parameter beside it.
+print('\n  PARAMETER HISTORY')
+pnames = [r[0] for r in max((b[1] for b in blocks), key=len)]
+print('    it  ' + ''.join('%9s' % n[:8] for n in pnames))
+for bit, brows in blocks:
+    d = {r[0]: float(r[1]) for r in brows}
+    print('  %4d  ' % bit + ''.join(
+        ('%9.4f' % d[n]) if n in d else '%9s' % '-' for n in pnames))
+
 print('\n  GAP HISTORY, per cent   (h = held)')
 # the widest block, so a moment that was held out of the LAST table still
 # gets a column and its history stays visible
