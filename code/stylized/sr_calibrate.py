@@ -1051,10 +1051,18 @@ if __name__ == '__main__':
     # per cent, the slowest in the spec, so closing a gap that size from there
     # takes thousands of iterations.  Starting below the crossing lets the
     # bracket approach it from the other side instead.
-    SEED = dict(aleph=12.4055, gam=0.4429, h1=0.01010, b=0.05310,
+    # RESEEDED AGAIN FROM ITERATION 3350 of the run that ended at 18:59 on 13
+    # September, which is where the previous run stopped moving: aleph, gam, h1,
+    # b, u0, omega, kap and th all inside 1.2 per cent, median gap 0.4, and the
+    # only two outside five per cent -- sud_of_homeless2 and child_sud_or --
+    # both on parameters the runaway detector had frozen. delta_d's freeze was
+    # measured and found wrong and the detector now measures before it freezes,
+    # so restarting from here is restarting the bracket that was stopped, not
+    # re-walking the ground it already covered.
+    SEED = dict(aleph=12.45683, gam=0.44351, h1=0.01017, b=0.05110,
                 # 0.0368/0.089, the value the identity sets, not a start
-                pi_base=0.0368 / 0.089, u0=0.04760, u1=0.07250, omega=0.0005,
-                delta_d=0.79370, kap=0.11060, th=0.14930)
+                pi_base=0.0368 / 0.089, u0=0.04622, u1=0.10814, omega=0.00065,
+                delta_d=0.85980, kap=0.10748, th=0.14962)
     _start = {**{k: v for k, v in FIXED.items() if k != 'kap'},
               **{**START, "th": 0.25, "beta": 0.995 ** 30, "kap": 1.0 - 0.91 ** 2,
                    # A STARTING VALUE AGAIN, not a pin: delta_d is back in SPEC
