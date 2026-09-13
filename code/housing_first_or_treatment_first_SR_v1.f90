@@ -247,6 +247,21 @@
         ! ENGINE.md records as having cost a whole calibration once.
         integer :: adjust_taxes=0
         integer, parameter :: adjust_labor_supply=1-test_elasticity
+        ! INELASTIC LABOUR SUPPLY, on the author's instruction of 13 September:
+        ! *"you need to remove endogenous labor supply.  Make it exogenously
+        ! equal to 1"*, and earlier *"income just equals to productivity plus the
+        ! age deterministic profile"*.  This is the stylized model's assumption,
+        ! which has no leisure term at all.
+        !
+        ! IT DOES TWO THINGS AND BOTH ARE NECESSARY.  Labour supply is solved by
+        ! a SECANT ROOT-FIND on the intratemporal first order condition, per
+        ! state, so switching it off also removes that search -- the model gets
+        ! materially faster.  And the leisure term must go with it: leisure
+        ! enters as (max_labor_supply - L)**(1-leisure_curvature)/(1-leisure_
+        ! curvature) with leisure_curvature = 3, so at L = max_labor_supply it is
+        ! 0**(-2)/(-2), which is minus infinity.  Pinning labour without removing
+        ! the term would make every working state worthless.
+        integer, parameter :: inelastic_labor_supply=1
         integer, parameter :: adjust_inheritance=1-partial_equilibrium
         integer, parameter :: use_revenues_to_increase_voucher_probability=0
         
@@ -2320,7 +2335,15 @@
         ! So the leisure share is calibrated again and sigma_y stays frozen,
         ! which is the whole point of splitting the flag rather than clearing it.
         integer, parameter :: freeze_sd_permanent_productivity=freeze_fitted_internals
-        integer, parameter :: freeze_relative_share_of_leisure=0
+        !
+        ! AND IT IS FROZEN AGAIN WHEN LABOUR SUPPLY IS INELASTIC, for the
+        ! opposite reason to the one above. The leisure weight prices an hours
+        ! margin; with hours pinned at max_labor_supply there is no such margin,
+        ! leisure_utility returns zero at every state, and the moment the weight
+        ! used to be bracketed on -- hours over total hours -- is no longer a
+        ! choice the household makes, it is the employment rate. Leaving the
+        ! bisection on would chase a number the parameter cannot move.
+        integer, parameter :: freeze_relative_share_of_leisure=inelastic_labor_supply
 
         ! FREEZES THE BISECTION ON beta, FOR THE EQUAL-BETA VALIDATION ONLY.
         ! discount_factor is internally calibrated on wealth over output and
@@ -7854,6 +7877,42 @@
             integer, intent(in) :: i_1
             emp_of=mod(i_1-1,3)+1
         end function
+
+        ! THE LEISURE TERM AND ITS DERIVATIVE, IN ONE PLACE. They used to be
+        ! written out at eight sites, which is why inelastic labour supply could
+        ! not be imposed by a single switch: at L = max_labor_supply the term is
+        ! 0**(1-leisure_curvature), an overflow the floating point traps catch
+        ! and a minus infinity the value function would carry everywhere.
+        ! Routing every site through these two functions means the switch is
+        ! read once and the dangerous expression is never evaluated when labour
+        ! supply is pinned.
+        real(8) function leisure_utility(labor_supply_in)
+            implicit none
+            real(8), intent(in) :: labor_supply_in
+            if (inelastic_labor_supply==1) then
+                leisure_utility=0.d0
+            else
+                leisure_utility=relative_share_of_leisure*&
+                    ((max_labor_supply-labor_supply_in)**&
+                    (1-leisure_curvature))/(1-leisure_curvature)
+            end if
+        end function leisure_utility
+
+        ! The marginal utility of leisure, which is the left hand side of the
+        ! intratemporal first order condition the secant search roots out. With
+        ! labour pinned there is no root to find and the bracket is collapsed
+        ! before the search starts, so what this returns only has to be finite.
+        real(8) function leisure_marginal_utility(labor_supply_in)
+            implicit none
+            real(8), intent(in) :: labor_supply_in
+            if (inelastic_labor_supply==1) then
+                leisure_marginal_utility=0.d0
+            else
+                leisure_marginal_utility=relative_share_of_leisure*&
+                    (max_labor_supply-labor_supply_in)**(-leisure_curvature)
+            end if
+        end function leisure_marginal_utility
+
 
         integer function smi_of(i_1)
             implicit none
@@ -19569,9 +19628,7 @@
                                             fraction_spent_on_addiction_1,total_consumption_1,consumption_1,&
                                             choose_to_own,addiction_used_1,flow_utility_1,1)
 
-                                        flow_utility_1=flow_utility_1+relative_share_of_leisure*&
-                                            ((max_labor_supply-labor_supply_1)**&
-                                            (1-leisure_curvature))/(1-leisure_curvature)&
+                                        flow_utility_1=flow_utility_1+leisure_utility(labor_supply_1)&
                                             -kappa_x*model_fraction_homeless(1)
 
                                         value_function_comparison(years_left_on_mortgage_index)%&
@@ -22389,8 +22446,7 @@
                         
                         end if
                                                         
-                        future_leisure_vector(future_financial_index)=relative_share_of_leisure*&
-                            ((max_labor_supply-labor_supply_1)**(1-leisure_curvature))/(1-leisure_curvature)
+                        future_leisure_vector(future_financial_index)=leisure_utility(labor_supply_1)
                            
                         call calculate_flow_utility(0,future_housing_status_index,&
                             housing_size(future_housing_status_index),frac_spent_on_addiction,&
@@ -22917,8 +22973,7 @@
                                     end if
                                                                                                                                 
                                     future_leisure_vector(future_mortgage_index)=&
-                                        relative_share_of_leisure*((max_labor_supply-labor_supply_1)**&
-                                        (1-leisure_curvature))/(1-leisure_curvature)
+                                        leisure_utility(labor_supply_1)
                                                                             
                                     call calculate_flow_utility(0,space_lived_in_index_feasible,&
                                         housing_size(space_lived_in_index_feasible),frac_spent_on_addiction,&
@@ -23476,8 +23531,7 @@
                             
                             end if
                                                                             
-                            future_leisure_vector(future_mortgage_index)=relative_share_of_leisure*&
-                                ((max_labor_supply-labor_supply_1)**(1-leisure_curvature))/(1-leisure_curvature)
+                            future_leisure_vector(future_mortgage_index)=leisure_utility(labor_supply_1)
                                                             
                             call calculate_flow_utility(0,space_lived_in_index_feasible,&
                                 housing_size(space_lived_in_index_feasible),frac_spent_on_addiction,&
@@ -23893,8 +23947,7 @@
                                         end if
                                                                                                                 
                                         future_leisure_vector(future_mortgage_index)=&
-                                            relative_share_of_leisure*((max_labor_supply-labor_supply_1)**&
-                                            (1-leisure_curvature))/(1-leisure_curvature)
+                                            leisure_utility(labor_supply_1)
                                                                                     
                                         call calculate_flow_utility(0,space_lived_in_index_feasible,&
                                             housing_size(space_lived_in_index_feasible),frac_spent_on_addiction,&
@@ -24270,8 +24323,7 @@
                         
                         end if
                                                                             
-                        future_leisure_vector(future_financial_index)=relative_share_of_leisure*&
-                            ((max_labor_supply-labor_supply_1)**(1-leisure_curvature))/(1-leisure_curvature)
+                        future_leisure_vector(future_financial_index)=leisure_utility(labor_supply_1)
                                                 
                         call calculate_flow_utility(0,future_housing_status_index,&
                             housing_size(future_housing_status_index),frac_spent_on_addiction,&
@@ -24985,6 +25037,19 @@
 
         end if
 
+        ! THE BRACKET IS COLLAPSED ONTO max_labor_supply, which is how inelastic
+        ! labour supply is imposed without touching the rest of this routine.
+        ! One pass of the loop then evaluates objective() at L = max_labor_supply
+        ! and leaves distance_secant = abs(x_0-x_2) = 0, so it exits immediately
+        ! with every downstream quantity -- taxes, food stamps, vouchers,
+        ! mortgage deductions -- filled by the same tested code path as before.
+        if (inelastic_labor_supply==1) then
+
+            x_0=max_labor_supply
+            x_2=max_labor_supply
+
+        end if
+
         x_1=(x_0+x_2)/2
                     
         loop_1=1
@@ -25079,7 +25144,11 @@
         ! The warm bracket is only a guess. If the answer sits on one of its
         ! edges the root was outside it, so the bracket is discarded and the
         ! whole interval bisected.
-        if ((have_secant_guess==1) .AND. (can_consume_1==1) .AND. &
+        ! inelastic_labor_supply==0 GUARDS THIS.  With the bracket collapsed to a
+        ! point, labor_supply_1 sits on both its edges by construction and x_0>0,
+        ! so this test would fire every time and re-bisect the whole interval --
+        ! undoing the pin.
+        if ((have_secant_guess==1) .AND. (can_consume_1==1) .AND. (inelastic_labor_supply==0) .AND. &
             ((labor_supply_1<=x_0+10.d0**(-6)) .OR. (labor_supply_1>=x_2-10.d0**(-6))) .AND. &
             ((x_0>0) .OR. (x_2<1))) then
 
@@ -25440,7 +25509,7 @@
         if ((consumption_choice>=(food_stamps_1/(1+consumption_tax))) .AND. &
            (consumption_choice>0)) then 
                   
-            MU_1=relative_share_of_leisure*(max_labor_supply-labor_supply_1)**(-leisure_curvature)
+            MU_1=leisure_marginal_utility(labor_supply_1)
                 
             if (use_cobb_douglas==1) then
         
@@ -27298,8 +27367,7 @@
                                     
                     financial_index_copy_1=fin_index_frac_mov_to
                                                                     
-                    future_leisure_internal=relative_share_of_leisure*&
-                        ((max_labor_supply-labor_supply_2)**(1-leisure_curvature))/(1-leisure_curvature)
+                    future_leisure_internal=leisure_utility(labor_supply_2)
                                                    
                     call calculate_flow_utility(1,housing_status_index_1,&
                         space_lived_in_internal,frac_spent_on_addiction_2,total_consumption_choice_1,&
@@ -34235,7 +34303,8 @@
                             model_lifetime_income_conditional_on_last_period_shock(employment_index)=&
                                 model_lifetime_income_conditional_on_last_period_shock(employment_index)+&
                                 probability_came_from_past_employment_index_1(past_employment_index_2,past_employment_index_1)*&
-                                avg_labor_supply_data*max_labor_supply*employment_grid(age_index,past_employment_index_1)*&
+                                ((1-inelastic_labor_supply)*avg_labor_supply_data+inelastic_labor_supply)*&
+                                max_labor_supply*employment_grid(age_index,past_employment_index_1)*&
                                 labour_deterministic_efficiency(age_index)
                         
                             do past_employment_index_3=1,employment_grid_size
