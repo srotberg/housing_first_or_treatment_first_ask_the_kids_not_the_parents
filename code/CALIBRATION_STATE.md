@@ -1,3 +1,37 @@
+## 13 September 06:05 UTC -- THE LOOP-40 BREAK, LOCALISED WITH THE MODEL'S OWN
+## DIAGNOSTICS. IT IS THE NUMERATOR AND IT IS NOT THE TYPE-COUNT DIVISOR.
+
+The log does print the pieces, under `DIAG aleph`, so this needed no inference:
+
+    numerator model_value_of_life   54.138  53.971  54.041  69.463  69.366  69.240
+    denominator avg lab income      0.6767  0.6765  0.6765  0.6766  0.6769  0.6770
+    workers behind that average    36.1888 36.1820 36.1822 36.1802 36.1768 36.1817
+    implied TOTAL labour income    24.4879 24.4755 24.4781 24.4786 24.4873 24.4966
+    value of life per household     1.0579  1.0549  1.0564  1.3579  1.3562  1.3539
+
+**The denominator is flat to four decimals across the break and the worker count
+is flat to three.**  `model_value_of_life` jumped 28.5 per cent in one step, and
+so did the per-household figure, which rules out a mass or normalisation effect.
+
+**THE TYPE-COUNT DIVISOR IS NOT THE CAUSE.**  Line 12929 divides by
+`pooled_mass_all/mass_by_beta_type(1)`, and the long comment above it records
+that this ratio is exactly one at a single beta type -- which is what this run
+has, `number_of_beta_types=1`.  So the known hazard in that block is not firing.
+
+What jumped is the accumulated mass-weighted sum of V over the marginal utility
+of consumption (:11520).  A 28.5 per cent step in that sum, with every other
+moment in the model moving less than 1.3 per cent and the whole labour block
+flat to four decimals, is the signature of a small mass reaching a state where
+the DENOMINATOR inside the sum -- the marginal utility of consumption -- is
+near zero, not of the economy changing.  That is the same class as the stylized
+model's corner branch.  Confirming it needs a print of the sum's extremes, which
+does not exist, so it needs a source change and cannot be done under a live
+solve.
+
+**THE COST WHILE IT STANDS** is that `value_of_life` is being driven down
+against a 28 per cent gap the model did not earn, at 0.17 per cent a loop.  It
+has gone 216.36, 216.05, 215.69, 215.25 since the break.
+
 ## 13 September 06:00 UTC -- LOOP 41 CORRECTS THE ENTRY BELOW, AND CONFIRMS THE
 ## BREAK IS IN model_value_of_life ALONE
 
