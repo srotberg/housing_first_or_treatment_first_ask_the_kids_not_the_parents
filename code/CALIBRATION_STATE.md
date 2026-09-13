@@ -12924,3 +12924,46 @@ earlier today.
 ## OPEN WITH THE AUTHOR
 
 Nothing is blocking. The loop runs to 400 iterations and commits every twelfth.
+
+---
+
+## 13 September: the quantitative model's child accounting, and inelastic labour
+
+The author's specification, in full: labour supply exogenously one; the child in
+the home from the parent's age 26 to 50 and not after; the inherited penalty
+weighted by the death probability at 26-49, at weight one at 50, zero after; the
+penalty keyed on whether the household EVER had the disorder inside that window;
+and lifetime utility computed with the twenty five years of childhood in it.
+
+**THE MODEL CANNOT READ ITS OWN OLD `.dat` FILES AFTER THIS.** The unemployment
+grid went from twelve states to eighteen, so every array with an unemployment
+dimension changed shape. The benchmark does not read them -- `use_old_results` is
+`is_counterfactual`, which is zero there -- so a calibration run is unaffected and
+starts cold as it always does. A counterfactual or a transition reads them and
+needs a fresh benchmark first. Nothing was deleted.
+
+**WHAT THIS DOES TO THE CALIBRATION, stated rather than discovered later.** Three
+of the four changes move every moment in the model, so the whole vector is off
+its targets and the old gap table means nothing:
+
+- labour supply at one instead of the calibrated average of about 0.47 roughly
+  doubles gross earnings for every employed household, and the social security
+  formula's imputed hours moved with it;
+- the equivalence scale is 2 to age 50 and 1 after, instead of a hump from 1.44
+  to 2.45 and back to 1.06, which changes the level of flow utility at every age
+  and the shape of the life cycle in it;
+- the child's penalty is paid in all six housing branches instead of one, which
+  moves the rent-versus-own margin for households with the disorder, and it now
+  runs to age 50 instead of age 85, which lowers its present value.
+
+`relative_share_of_leisure` is frozen: it prices an hours margin that no longer
+exists, and the moment it was bracketed on -- hours over total hours -- is now
+the employment rate rather than a choice.
+
+**THE ONE JUDGEMENT IN THE WELFARE NUMBER.** The child's own flow utility is the
+household's consumption and housing with the addictive good excluded, scaled by
+household size, and WITHOUT the parent's altruism weight and without the parent's
+counting of the child. Both of those are the parent's valuation of the child and
+do not belong in the child's welfare. The household's own flow keeps both,
+unchanged. `average_childhood_utility`, `childhood_utility_by_age` and
+`average_welfare_with_childhood` are printed and feed nothing.
