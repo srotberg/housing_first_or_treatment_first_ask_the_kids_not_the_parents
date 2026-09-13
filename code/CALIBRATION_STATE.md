@@ -1,3 +1,34 @@
+## 13 September 10:05 UTC -- THE RESUMED RUN'S SETTLED STATE, FIFTY LOOPS
+
+Twenty-four consecutive loops in the high regime, with participation within
+five per cent of target and the alternation stopped since loop 27:
+
+    moment              model     target    off by
+    participation      0.08566    0.0890      3.8%
+    homelessness       0.02752    0.0100    175.2%
+    disorder rate      0.03742    0.0368      1.7%   ON TARGET
+    recovery ratio     1.47692    1.47321     0.3%   ON TARGET
+    value of life      79.979     80.00       0.0%   ON TARGET
+    drug share         0.09066    0.14098    35.7%   theta PINNED at 0.16
+    child use gap      0.23927    0.18343    30.4%
+    unemployment       0.05297    0.0490      8.1%
+
+    penalty_child_addicted: scan out of range, stuck at its 0.6 ceiling
+
+**THIS IS THE CONFIGURATION'S ANSWER.**  Three moments land exactly; the rest do
+not, and the pattern is the one established all night -- every moment that
+depends on the size of the using population misses, and misses in a direction no
+live instrument is closing.  Homelessness is 2.75 times target with
+`size_homelessness` down to 9.5e-06, a quarter of where the run started.
+
+**TWO INDEPENDENT ARRIVALS AGREE.**  The first run overshot to participation
+0.090 and measured homelessness at 2.35x; this one settles at participation
+0.0857 and reads 2.75x.  Neither approaches 1.0 per cent.  That is the finding
+the night produced, and it is a measurement rather than an extrapolation.
+
+The run is left alive but it is no longer producing new information: the state
+has not changed materially in twenty-four loops.
+
 ## 13 September 08:00 UTC -- THE MODEL HAS TWO REGIMES AND THE LOOP BOUNCES
 ## BETWEEN THEM ON A MONOTONE PARAMETER PATH. THIS IS THE UNIFYING FINDING.
 
