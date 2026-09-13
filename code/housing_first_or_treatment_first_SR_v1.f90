@@ -1182,6 +1182,8 @@
         real(8), parameter :: scan_lo=0.0d0, scan_hi=0.60d0
         integer :: scan_index=0
         real(8) :: penalty_saved=0, scan_num=0, scan_den=0, scan_ratio=0
+        real(8) :: scan_prev=-1, scan_pen_prev=0, scan_solved=0
+        integer :: scan_found=0
         real(8) :: gap_penalty_child_1=0,previous_gap_penalty_child=0
         integer :: have_gap_penalty_child=0
         integer, parameter :: calibrate_penalty_child_addicted=1
@@ -2858,8 +2860,14 @@
         real(8), parameter :: eta_1=1.07
         ! Seeded at the calibrated value. Starting at 0.13 when the answer is
         ! near 0.43 is why this one looked stuck: it was traversing, not stalling.
-        real(8) :: relative_share_of_addiction_1=&
-            (1-perceived_probability_lower)*0.42652988349555548+perceived_probability_lower*0.16
+        ! SET AT 0.16 AND PINNED, on the author's instruction of 13 September:
+        ! *"set theta=0.16 and pin it"*.  The value 0.16 was already the
+        ! perceived_probability_lower branch of this declaration, so it is not a
+        ! new number.  Pinned means relative_share_of_addiction_adjuster is zero
+        ! below, and its distance is zeroed with it -- the standing rule that a
+        ! retired bracket takes its distance with it, or the do-while never
+        ! clears.
+        real(8) :: relative_share_of_addiction_1=0.16d0
         real(8) :: relative_share_of_addiction_2=0.13
         real(8), parameter :: power_1=1-(1/rho_1)
         real(8), parameter :: power_2=(1-risk_aversion_consumption)/power_1
@@ -3109,7 +3117,8 @@
         
         real(8) :: relative_share_of_addiction=0.13
         real(8) :: distance_relative_share_of_addiction
-        real(8) :: relative_share_of_addiction_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-1))
+        ! ZERO: theta is pinned at 0.16.  See its declaration.
+        real(8) :: relative_share_of_addiction_adjuster=0.d0
         real(8) :: stopping_rule_relative_share_of_addiction=10.d0**(-3)
                 
         ! LAMBDA, THE ADDICTION HAZARD, AND IT IS CALIBRATED NOW. This is the
@@ -3504,7 +3513,12 @@
         ! than 0.09.  Doubling at 0.1 per cent a loop is about 700 loops; at 0.3
         ! it is about 230.  At 0.1 this cap would have been the binding
         ! constraint on the whole calibration rather than a safety margin.
-        real(8) :: omega_max_rel_step=0.005d0
+        ! 0.05 PER CENT A LOOP, on the author's instruction of 13 September:
+        ! *"if we adjust omega_c at about 0.05% per iteration"*.  It was 0.005.
+        ! This is the rate that worked in the stylized model, where the same
+        ! parameter on the same moment converged from -36.6 per cent to exact
+        ! over about twelve hundred passes without disturbing anything else.
+        real(8) :: omega_max_rel_step=0.0005d0
         real(8) :: theta_proposed_1
         real(8) :: theta_capped_1
 
@@ -4718,7 +4732,19 @@
         ! if (kappa_phi_d_level_adjuster>0), and its else branch at 43114 sets
         ! distance_kappa_phi_d_level to zero, so pinning it here also takes it
         ! out of the do-while cleanly.  No orphaned distance, no infinite loop.
-        real(8) :: kappa_phi_d_level_adjuster=0.d0
+        ! UN-PINNED, on the author's instruction of 13 September: *"calibrate the
+        ! death risk to match yu but move it at no more than 0.1% per
+        ! iteration"*.  It was pinned on 12 September because it fought
+        ! lambda_d: a falling death risk keeps more addicts alive so the stock
+        ! rises, and the two brackets pushed the addict stock in opposite
+        ! directions with the mortality one winning.  That history is above and
+        ! it has not been repealed by measurement -- watch lambda_d.  What is
+        ! different now is the RATE: 0.1 per cent a loop against the global half
+        ! a per cent, so the mortality bracket can no longer outrun the stock's
+        ! own instrument.
+        real(8) :: kappa_phi_d_level_adjuster=2.d0
+        ! ITS OWN RATE, the way theta and omega_c have theirs.
+        real(8) :: kappa_phi_d_max_rel_step=0.001d0
         real(8) :: distance_kappa_phi_d_level=1
         real(8) :: stopping_rule_kappa_phi_d_level=10.d0**(-2)
         real(8), parameter :: kappa_phi_d_level_lo=2.d0
@@ -43335,7 +43361,10 @@
                             (drug_user_income_data-model_avg_income_drug_users(1)/&
                             max(model_average_income(1),10.d0**(-14))),&
                             kappa_phi_d_level_hi),kappa_phi_d_level_lo)
-                        kappa_phi_d_level=cap_step(kappa_phi_d_level,cap_old_1)
+                        ! cap_step_rel, NOT cap_step: the death risk gets its
+                        ! own 0.1 per cent a loop rather than the global rate.
+                        kappa_phi_d_level=cap_step_rel(kappa_phi_d_level,cap_old_1,&
+                            kappa_phi_d_max_rel_step)
 
                         distance_kappa_phi_d_level=&
                             abs(model_avg_income_drug_users(1)/&
@@ -43645,6 +43674,10 @@
                             if (scan_penalty_child==1) then
 
                                 penalty_saved=penalty_child_addicted
+                                scan_found=0
+                                scan_prev=-1
+                                scan_pen_prev=0
+                                scan_solved=penalty_child_addicted
 
                                 write(*,*) "PENALTY SCAN target ratio =",&
                                     child_sud_ratio_data, " current penalty =",&
@@ -43681,12 +43714,62 @@
                                     write(*,*) "PENALTY SCAN penalty=",&
                                         penalty_child_addicted, " ratio=", scan_ratio
 
+                                    ! the crossing, by linear interpolation
+                                    ! between this point and the last
+                                    if ((scan_index>0) .AND. (scan_found==0) .AND.&
+                                        (scan_ratio>0) .AND. (scan_prev>0)) then
+                                        if (((scan_prev-child_sud_ratio_data)*&
+                                             (scan_ratio-child_sud_ratio_data))<=0) then
+                                            scan_solved=scan_pen_prev+&
+                                                (penalty_child_addicted-scan_pen_prev)*&
+                                                (child_sud_ratio_data-scan_prev)/&
+                                                max(scan_ratio-scan_prev,10.d0**(-12))
+                                            scan_found=1
+                                        end if
+                                    end if
+                                    scan_prev=scan_ratio
+                                    scan_pen_prev=penalty_child_addicted
+
                                 end do
 
-                                penalty_child_addicted=penalty_saved
+                                ! SOLVE FOR THE CROSSING AND SET THE PENALTY.
+                                !
+                                ! The author, 13 September: *"you can also
+                                ! calibrate delta_d exactly the same as we did in
+                                ! the stylized model"*.  There the penalty was
+                                ! not searched for at all -- the odds ratio is
+                                ! smooth and monotone in it, so the curve was
+                                ! scanned once and the crossing read off, and
+                                ! 0.56972 returned 2.0000 to four decimals.
+                                !
+                                ! The same holds here: the eleven scan blocks of
+                                ! the 13 September run are monotone throughout,
+                                ! 1.05 at a penalty of zero rising to 1.85 at
+                                ! 0.60.  So the crossing is interpolated between
+                                ! the two adjacent scan points that bracket the
+                                ! target and the penalty is SET to it, rather
+                                ! than crawled toward at half a per cent a loop.
+                                !
+                                ! IF THE SCAN DOES NOT BRACKET THE TARGET the
+                                ! penalty is left where it was and a line says
+                                ! so.  Silently clamping to the end of the range
+                                ! would report a solved penalty that is nothing
+                                ! of the kind.
+                                if (scan_found==1) then
+                                    penalty_child_addicted=scan_solved
+                                    write(*,*) "PENALTY SCAN SOLVED: penalty=",&
+                                        scan_solved, " gives ratio=",&
+                                        child_sud_ratio_data
+                                else
+                                    penalty_child_addicted=penalty_saved
+                                    write(*,*) "PENALTY SCAN did NOT bracket",&
+                                        child_sud_ratio_data, " over [",&
+                                        scan_lo, ",", scan_hi,&
+                                        "] -- penalty left at", penalty_saved
+                                end if
                                 call create_newborn_employment_probability()
 
-                                write(*,*) "PENALTY SCAN restored penalty =",&
+                                write(*,*) "PENALTY SCAN penalty now =",&
                                     penalty_child_addicted
 
                             end if
