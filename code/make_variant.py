@@ -62,6 +62,27 @@ def patch(text, old, new, label, expect=1):
 # the moments stop moving, and saves after that. No calibrated parameter can
 # move, because the calibration update block is never re-entered.
 SAVE = [
+    # THE SWEEP, WITHOUT WHICH THE WHOLE VARIANT IS A NO-OP, and it was one.
+    #
+    # The block this variant patches sits inside `if (sweep_addiction_scalar==1)`,
+    # and the master went to 0 on 11 September ("BACK TO 0 FOR THE CHILD
+    # CALIBRATION"). From that day `make_variant.py save` matched its text, wrote
+    # variant_save.f90, printed a fresh md5 and produced a binary that never
+    # reached save_vars_and_functions or save_welfare_curve at all -- exactly the
+    # "unmodified model wearing a new name" this file's header is about. The
+    # patch-count assertion cannot see it, because the text DID match; what was
+    # missing was reachability.
+    #
+    # The sweep is also the right setting on its own terms: it switches parameter
+    # updating off, so the state saved is the state the reported moments came
+    # from, which is what the note below on the frozen equilibrium is about.
+    #
+    # ASSERT_CONTAINS at the foot of this file now fails any variant whose sweep
+    # is not what the variant needs, so this class cannot come back silently.
+    ("        integer, parameter :: sweep_addiction_scalar=0",
+     "        integer, parameter :: sweep_addiction_scalar=1",
+     "sweep_addiction_scalar to one, which is what reaches the patch below"),
+
     ("""                call print_all_moments()
 
                 stop""",
@@ -125,11 +146,13 @@ CF = [
 # employment grid from 28 nodes to 14; one class halves it again to 7. The
 # benchmark that goes in the paper is the two-class one and step 4 re-measures
 # there, so nothing fitted here transfers without being re-measured.
+#
+# child_penalty_classes IS NO LONGER PATCHED HERE. The master went to one class
+# itself, so the 2 -> 1 patch matched nothing and both step-3 variants refused to
+# build. Same class as the sweep above and the same remedy: the REQUIREMENT is
+# unchanged and is asserted at the foot of the file, where a master that goes
+# back to two classes fails the variant instead of silently un-doing it.
 ONE_CLASS = [
-    ("        integer, parameter :: child_penalty_classes=2",
-     "        integer, parameter :: child_penalty_classes=1",
-     "child_penalty_classes to one"),
-
     ("        integer, parameter :: voucher_exclusion_states=1",
      "        integer, parameter :: voucher_exclusion_states=0",
      "voucher_exclusion_states to zero"),
@@ -141,7 +164,17 @@ ONE_CLASS = [
 # master's own point run at one class. The gap table is read from the block
 # AFTER `FROZEN CONVERGED`: b read 0.0795 before the frozen loop and 0.0849
 # after on the four-class benchmark, a 6.4 per cent difference.
-POINT1 = list(ONE_CLASS)
+#
+# THE SWEEP IS FLIPPED HERE TOO, for the same reason and by the same history: the
+# comment above has said "stays at 1" since the master carried 1, and the master
+# has carried 0 since 11 September. Without it there is no frozen-equilibrium
+# loop and no FROZEN CONVERGED block, so the gap table this variant exists to
+# produce was being read off a calibration iterate instead.
+POINT1 = list(ONE_CLASS) + [
+    ("        integer, parameter :: sweep_addiction_scalar=0",
+     "        integer, parameter :: sweep_addiction_scalar=1",
+     "sweep_addiction_scalar to one: a point measurement, not a search"),
+]
 
 # ------------------------------------------------------------- calib1
 # The search half. sweep_addiction_scalar=0 is what opens the calibration's
@@ -167,11 +200,13 @@ POINT1 = list(ONE_CLASS)
 # twice because it is invisible in a log: the loop does not fail, it simply never
 # terminates, and every other parameter goes on being stepped around a distance
 # that is pinned.
+# THE SWEEP IS NOT PATCHED HERE ANY MORE. It used to be flipped 1 -> 0, and the
+# master has been 0 since 11 September, so this patch matched NOTHING and
+# make_variant.py refused to build calib1 at all -- loudly, which is why it is
+# the least damaging of the three. The requirement is unchanged and is asserted
+# at the foot of the file instead: the calibration's outer do while opens only
+# at sweep_addiction_scalar==0.
 CALIB1 = list(ONE_CLASS) + [
-    ("        integer, parameter :: sweep_addiction_scalar=1",
-     "        integer, parameter :: sweep_addiction_scalar=0",
-     "sweep_addiction_scalar to zero, which opens the calibration loop"),
-
     ("        integer, parameter :: calibrate_penalty_child_addicted=1",
      "        integer, parameter :: calibrate_penalty_child_addicted=0",
      "delta_d held, and its moment out of the convergence test"),
@@ -237,6 +272,22 @@ CALIB1 = list(ONE_CLASS) + [
 
 VARIANTS = {"save": SAVE, "cf": CF, "calib1": CALIB1, "point1": POINT1}
 
+# WHAT EACH VARIANT MUST STILL BE TRUE OF AFTER PATCHING, because a patch count
+# says the text was found and says nothing about whether the branch it sits in
+# can ever run. `save` lost a whole day to that distinction: it patched cleanly,
+# reported a new md5 and wrote neither the benchmark state nor the welfare curve,
+# because the block it patches is guarded by a switch the master had turned off
+# underneath it.
+#
+# One line each, and each is a line the source either has or does not.
+ONE = "        integer, parameter :: child_penalty_classes=1"
+ASSERT_CONTAINS = {
+    "save":   ["        integer, parameter :: sweep_addiction_scalar=1"],
+    "point1": ["        integer, parameter :: sweep_addiction_scalar=1", ONE],
+    "calib1": ["        integer, parameter :: sweep_addiction_scalar=0", ONE],
+    "cf":     ["        integer, parameter :: is_counterfactual=1"],
+}
+
 
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in VARIANTS:
@@ -247,6 +298,13 @@ def main():
     for old, new, label in VARIANTS[name]:
         src = patch(src, old, new, label)
         print(f"  patched: {label}")
+    for needed in ASSERT_CONTAINS.get(name, []):
+        if src.count(needed) != 1:
+            raise SystemExit(
+                f"VARIANT {name} FAILED ITS REACHABILITY ASSERTION: the variant "
+                f"source contains {src.count(needed)} copies of\n  {needed.strip()}\n"
+                f"and needs exactly one. A variant whose switches are wrong "
+                f"patches cleanly and then does nothing.")
     out = os.path.join(HERE, f"variant_{name}.f90")
     io.open(out, "w", encoding="utf-8", errors="surrogateescape").write(src)
     var_md5 = hashlib.md5(src.encode("utf-8", "surrogateescape")).hexdigest()
