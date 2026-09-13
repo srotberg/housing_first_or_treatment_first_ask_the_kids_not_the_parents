@@ -3974,7 +3974,26 @@
         !
         ! Its only other use is the loop bound in the benchmark driver, so
         ! nothing dimensions on it and a variable is safe here.
-        integer :: number_of_beta_types=2
+        ! ONE BETA TYPE. The author retired the second on 3 September: *"We can
+        ! use just one beta.  Ignore the second beta."*  gaps.py retired the
+        ! impatient row the same day and run_one_point.sh has handed over
+        ! number_of_beta_types=1 on every point since, so the archive, the gate
+        ! and the reports have all been one-type for ten days.
+        !
+        ! THIS DECLARATION WAS STILL 2 AND THAT IS A TRAP, NOT A HARMLESS
+        ! LEFTOVER. Every point that goes through run_one_point.sh is overridden
+        ! to 1 and never sees it, so nothing in the fleet ever noticed. A run
+        ! WITHOUT a handover file -- which is what a bare ./hftf is -- takes the
+        ! declaration, and on 13 September a timing measurement did exactly
+        ! that: it reported 179 and 229 seconds a loop for an economy nobody
+        ! runs, and the figure went to the author before the two-type prints
+        ! gave it away.
+        !
+        ! ENGINE.md's standing rule is that a structural parameter set in the
+        ! SOURCE is worthless if the vector also names it. This is the same rule
+        ! read the other way: a default that every vector overrides is not
+        ! harmless, it is what an un-vectored run silently becomes.
+        integer :: number_of_beta_types=1
         real(8), parameter :: beta_type_weight=0.5d0
         ! Which type is being solved and measured right now. Read by the value
         ! function recursion in place of a single discount factor.
