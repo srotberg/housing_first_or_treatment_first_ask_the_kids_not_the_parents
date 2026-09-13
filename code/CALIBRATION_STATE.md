@@ -61,8 +61,14 @@ Measured across the vector, at nv = 560, taking the maximum over omega:
     th  +10%             0.0178       0.01872
     kap -30%             0.0154       0.01872
     kap +30%          not measurable
+    xi   1.20         not measurable
+    xi   1.70            0.0812       0.01872
 
-**Every perturbation makes it WORSE.**  The calibrated point is already the best
+**Every perturbation makes it WORSE, including the one that should have helped.**
+xi = 1.70 nearly doubles the child's equivalence weight (xi - 1) from 0.414 to
+0.70 and so scales the entire child channel up; it gives 0.0812, LOWER than the
+calibrated 0.1315.  So the ceiling is not a matter of the channel being too weak
+and it cannot be bought by strengthening it.  The calibrated point is already the best
 place in this neighbourhood for this moment, its ceiling is 0.1315, and the
 target of 0.1834 is forty per cent above it.  "Not measurable" means the omega = 0
 counterfactual crosses onto the other drug branch at every omega, so the moment
