@@ -1,3 +1,59 @@
+## 13 September 08:00 UTC -- THE MODEL HAS TWO REGIMES AND THE LOOP BOUNCES
+## BETWEEN THEM ON A MONOTONE PARAMETER PATH. THIS IS THE UNIFYING FINDING.
+
+    loop      part  drugshare      vsl  homeless      scalar  kappa_phi_d
+       1   0.04037     0.1356   100.85   0.02125   0.0012479      3.00000
+       2   0.03638     0.1349   102.35   0.02101   0.0012354      2.99700
+       3   0.04287     0.1317    99.30   0.02162   0.0012231      2.99400
+       4   0.05148     0.1297    96.87   0.02275   0.0012108      2.99101
+       5   0.05105     0.1266    95.50   0.02275   0.0011987      2.98802
+       6   0.05491     0.1246    94.34   0.02315   0.0011867      2.98503
+       7   0.05151     0.1273    93.16   0.02307   0.0011749      2.98204
+       8   0.08324     0.0891    74.52   0.02431   0.0011631      2.97906   <- jump
+       9   0.07886     0.0884    75.00   0.02432   0.0011515      2.97608
+      10   0.07829     0.0885    75.83   0.02430   0.0011400      2.97311
+      11   0.07683     0.0891    76.62   0.02428   0.0011286      2.97013
+      12   0.07633     0.0887    77.42   0.02433   0.0011173      2.96716
+      13   0.05545     0.1249    96.44   0.02396   0.0011061      2.96420   <- back
+
+**THE PARAMETER PATH IS MONOTONE THROUGHOUT.**  `addiction_scalar_1` falls one
+per cent every single loop, 0.0012479 to 0.0011061, and never reverses;
+`kappa_phi_d_level` falls 0.1 per cent a loop.  Across the 12 to 13 flip those
+are the ONLY two parameters that move, by -1.00 and -0.10 per cent, and the
+economy moves participation -27.4, the drug share +40.8 and the vsl ratio +24.6.
+
+So the model has TWO REGIMES:
+
+    LOW   participation 0.036-0.055   drug share 0.125-0.136   vsl  93-102
+    HIGH  participation 0.076-0.083   drug share 0.088-0.089   vsl  74- 77
+
+and a one per cent step in the instrument moves the economy between them.  This
+was refused as a reading at 07:35 because that comparison was confounded by
+kappa_phi_d_level; here it is not -- the flip happens twice, in both directions,
+on a monotone path, with the confound moving 0.1 per cent.
+
+**THIS EXPLAINS ESSENTIALLY EVERY ODDITY OF THE LAST TEN HOURS.**  The
+elasticity series that read +0.53, -2.02, -9.84, +0.92, -2.70 on identical
+steps.  The child use gap's range of 0.065 to 0.746, a factor of eleven.  The
+value-of-life "break" at old loop 40 and its "revert" at 47 -- those were regime
+changes, and the corner-in-the-sum hypothesis of 06:05 is not needed.  Moments
+that look identified for twenty loops and then do not.  It is one phenomenon.
+
+**AND IT IS THE STYLIZED MODEL'S LESSON, EXACTLY.**  calibrate.py's `_grid`:
+*"it moved participation from 5.93 to 3.17 per cent as b crossed the value that
+flips it.  The target of 5.13 sits inside that jump, so b still could not reach
+it."*  The stylized model was REBUILT -- the income distribution truncated --
+until participation was continuous in its instrument.  This model still jumps,
+and a bracketing calibration cannot land a target that sits inside the jump.
+Here the participation target of 0.089 sits ABOVE the high regime's 0.083, which
+is why the first run only touched it by overshooting.
+
+**THE HEADLINE RESULT SURVIVES, AND IS STRONGER FOR IT.**  Homelessness reads
+0.021-0.024 in BOTH regimes -- 2.1 to 2.4 times its target throughout, with no
+jump at either flip.  So the 2.35x measured at the participation target does not
+depend on which regime the model is in, which is the best thing that could be
+said about it.
+
 ## 13 September 07:45 UTC -- THE RESUMED RUN JUMPED REGIME AT LOOP 8, AND THE
 ## TWO vsl TRANSITIONS ARE NOT THE SAME EVENT
 
