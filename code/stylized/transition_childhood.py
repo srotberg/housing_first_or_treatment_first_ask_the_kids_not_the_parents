@@ -94,7 +94,20 @@ def run(par=None, n=None):
 
     v1b, sudb, hlb, evb = T._policy_grids(par, T.BASE_POLICY, par.pV)
     p0 = T._rest_point(sudb, T._hl_by_shift(par, T.BASE_POLICY, par.pV), par)
-    w0 = T._welfare(p0, v1b)
+    # par MUST BE PASSED, and leaving it off is what broke the null test.
+    #
+    # _welfare(p, v1, par=None) falls back to the MODULE CONSTANT DEL_D when par
+    # is omitted, and the path passes par.delta_d.  The two are in different
+    # units -- DEL_D is a fractional cut, par.delta_d a log shift -- so the
+    # baseline was built on a different child penalty from the path built
+    # against it.  Measured: w0 read 8.358651 without par and the identical
+    # object read 8.199404 with it, a gap of 0.159, and that gap IS the -2.881
+    # per cent the Housing First null was reporting when it must report zero.
+    #
+    # transition.py's _shifts docstring records this exact trap -- "a transition
+    # table was reported on that and withdrawn" -- and the fix went into _shifts
+    # while this call was missed.
+    w0 = T._welfare(p0, v1b, par)
 
     scale, cov0, cov = solve_pv_scale(par)
     print(f"rationed TF reallocation factor {scale:.4f}   "
