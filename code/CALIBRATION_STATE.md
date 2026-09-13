@@ -13045,3 +13045,67 @@ child HOMELESSNESS odds ratio is 4.155 at delta_d = 1.00, against a literature
 band of roughly 1.8 to 2.4. It was 3.52 at delta_d = 0.86. Nothing is calibrated
 on it, but it is the same penalty driving both, and the value that makes the SUD
 ratio least wrong makes the homelessness ratio most wrong.
+
+### The stylized model's optimal disorder rate, long-run welfare and transition
+
+`optimal_sud.py`, at the 13 September converged vector.  The planner is
+omega = 1 and NOTHING else changes: the household counts the child exactly as
+the equivalence scale says a member counts, in the flow and in the continuation
+both, and the programme is the benchmark one on both sides.
+
+**THE OPTIMAL DISORDER RATE IS ZERO, and it does not take much internalisation
+to get there.**
+
+    omega    particip     SUD   drug sh   r_use
+    0.00000    0.1052  0.0435    0.1576  1.0292
+    0.00055    0.0886  0.0366    0.1389  0.7316   <- calibrated
+    0.00200    0.0692  0.0286    0.1030  0.3797
+    0.00500    0.0534  0.0221    0.0994  0.3466
+    0.01000    0.0364  0.0151    0.0907  0.2893
+    0.02000    0.0180  0.0075    0.0000  0.1192   <- grid floor from here
+    0.10000    0.0000  0.0000    0.0000  0.0000
+    1.00000    0.0000  0.0000    0.0000  0.0000
+
+Counting ONE PER CENT of the child ends two thirds of drug use.  **From
+omega = 0.02 the drug share prints zero while participation is still positive:
+those households are on the grid's smallest positive rung, the corner
+`drug_corner_is_dominated.py` documents, so the last economically meaningful
+interior point is omega = 0.01.**
+
+**LONG-RUN WELFARE, and the gain is mostly in the ADULT half.**
+
+    economy        childhood     adult  lifetime  CEV tot  CEV kid  CEV adult
+    calibrated       1.83349   9.68907  11.52256   0.000%   0.000%     0.000%
+    omega = 0          1.80806   9.60273  11.41078  -2.175%  -0.501%    -1.686%
+    omega = 1          2.00763  10.20646  12.21409  15.185%   3.533%    11.057%
+
+11.1 of the 15.2 points are adult, not childhood, and that is NOT a
+contradiction of the parent optimising.  The adult figure is read at the NEW
+stationary mixture: with nobody using, no child inherits delta_d, the whole
+income distribution shifts up, and the next generation's adults are richer.
+The parent collects none of that when it chooses, which is the externality.
+
+**THE TRANSITION TAKES ONE GENERATION, because no-use is absorbing.**  Cohort 1
+differs from the rest in its CHILDHOOD ALONE -- 0.602 per cent against 3.533 --
+because it was raised by parents still carrying the penalty their own parents
+handed them.  At an interior reform the dynamics are visible:
+
+    omega_c -> 0.005     cohort 1   2      3      4      5+
+    CEV total             3.992  5.503  5.659  5.675  5.677 %
+    CEV childhood         0.124  1.162  1.269  1.280  1.281 %
+    CEV adult             3.861  4.267  4.309  4.313  4.313 %
+
+**TWO THINGS THE WELFARE MEASURE HAD TO GET RIGHT.**  value1 is the household's
+OBJECTIVE and at omega = 1 that objective contains the child, so counting the
+child again in its own cohort counts it twice and makes welfare rise with omega
+by ACCOUNTING.  period1 already adds the CONTINUATION penalty back after the
+choice of v; the FLOW half, omega*(xi-1)*u(X_K), sits inside `_flow` and was
+netted nowhere.  It is worth 0.007 utils at omega_c and 12.2 at omega = 1,
+against a lifetime level of 11.5.  Both are netted now, and the null test at
+omega = 0 reproduces value1 to 3.6e-15.  The reform-that-changes-nothing test
+returns a CEV of 1e-13 per cent.
+
+Childhood is also solved AT EACH SHIFTED INCOME and mixed over the PARENTS'
+penalty distribution rather than the cohort's own.  `transition_childhood.py`
+gives every cohort one fixed childhood number, which would have shown cohort 1
+and cohort 2 as identical and hidden the only dynamics the optimal reform has.
