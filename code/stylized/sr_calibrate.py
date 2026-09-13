@@ -147,7 +147,37 @@ SPEC = [
     # Earlier runs did drive omega_c down to 0.0146, within a factor of 1.5 of
     # the old floor, so the clamp was close to binding and nothing was gained by
     # its being where it was.
-    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.001, 1.00),
+    # THE UPPER BOUND IS 0.0125 AND IT IS MEASURED, and it is a BOUND rather than
+    # a pin so the bracket stays live and child_gap keeps reporting its gap.
+    #
+    # child_gap is NOT monotone in omega and it is not single-peaked either.  It
+    # has a local maximum near 0.0088 at 0.1230, a cliff, a second maximum near
+    # 0.0123 at 0.1315, and beyond that the omega = 0 counterfactual crosses onto
+    # the other drug branch and the moment cannot be measured at all.  Swept at
+    # nv = 560:
+    #
+    #   omega    0.0040  0.0060  0.0080  0.0088  0.0100  0.0123  0.0140  0.0800
+    #   gap      0.0458  0.0737  0.1073  0.1230  0.0677  0.1315   HELD    HELD
+    #   target                           0.1834
+    #
+    # The target is above every one of those, so the bracket pushes omega up for
+    # ever.  Unbounded it did exactly that on 13 September: omega crossed the
+    # cliff at about iteration 1300 and eight of the next nineteen sampled passes
+    # were on the corner branch, with participation and the disorder rate being
+    # adjusted on readings from an economy with no drug use.  By iteration 2500
+    # participation read -42.6 per cent.
+    #
+    # AND THE CEILING IS NOT A PROPERTY OF THIS VECTOR.  Every thirty per cent
+    # perturbation of b, th or kap either drops the maximum by an order of
+    # magnitude or makes the moment unmeasurable, and xi = 1.70 -- which nearly
+    # doubles the child's weight (xi-1) and so scales the whole child channel up
+    # -- gives 0.0812, LOWER than the calibrated point's 0.1315.
+    #
+    # So omega is SET at the maximum of its own moment, not identified by it, and
+    # the table will go on showing child_gap about -28 per cent.  That is the
+    # honest reading and it is why this is a bound and not a retirement: hiding
+    # the gap would be worse than showing one that cannot close.
+    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.001, 0.0125),
     # delta_d ON THE CHILD SUD ODDS RATIO OF 2, asked for twice.  Sign standard:
     # a bigger income penalty makes the child poorer, poorer children use more,
     # so the ratio RISES in delta_d.
@@ -738,6 +768,13 @@ if __name__ == '__main__':
                 # it lands at 0.56972, which returns 2.0000 to four decimals.
                 # That is a child income cut of 43.4 per cent.
                 delta_d=0.56972, kap=0.10589, th=0.15242)
+    # RESEED FROM THE BANKED PRE-CLIFF POINT, sr_run_002132.log iteration 1200:
+    # median gap 0.3 per cent with ten of eleven brackets inside ten and all ten
+    # of those inside 3.1.  omega there is 0.00853, below the cliff, so the run
+    # starts on the right side of it and the new bound keeps it there.
+    SEED = dict(gam=0.43717, aleph=10.99573, h_hl=0.00960, b=0.05774,
+                pi_base=0.41361, u0=0.04824, u1=0.05484, omega=0.00853,
+                delta_d=0.56972, kap=0.10067, th=0.14599)
     _start = {**{k: v for k, v in FIXED.items() if k != 'kap'},
               **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2,
                    # A STARTING VALUE AGAIN, not a pin: delta_d is back in SPEC
