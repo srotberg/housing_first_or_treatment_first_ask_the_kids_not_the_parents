@@ -16,7 +16,7 @@ T = open(log, errors='replace').read().split('\n')
 # held parameter -- the ones whose guard has fired and which are therefore the
 # ones actually stuck -- vanished from the table without a word.  A reporter
 # that drops rows is worse than no reporter.
-ROW = re.compile(r'^\s{2}(\w+)\s+([\d.]+)\s+(\w+)\s+(HELD|[\d.]+)\s+([\d.]+)\s+(-?[\d.]+|--)')
+ROW = re.compile(r'^\s{2}(\w+)\s+([\d.]+)\s+(\w+)\s+(HELD|[\d.]+)\s+([\d.]+)\s+(-?[\d.]+|--)\s*(smr\s+[\d.]+)?')
 blocks, cur, it = [], None, None
 for l in T:
     m = re.match(r'\s*ITERATION\s+(\d+)', l)
@@ -37,7 +37,7 @@ print()
 print('  %-9s %10s   %-18s %9s %9s %9s' %
       ('parameter', 'value', 'moment', 'model', 'target', 'gap'))
 print('  ' + '-' * 70)
-for p, v, mom, mod, tgt, gap in rows:
+for p, v, mom, mod, tgt, gap, smr in rows:
     held = (mod == 'HELD') or gap == '--'
     mod = '     held' if held else '%9.4f' % float(mod)
     g = '    --' if held else '%+.1f%%' % float(gap)
@@ -49,9 +49,19 @@ for p, v, mom, mod, tgt, gap in rows:
     note = ''
     if p == 'delta_d':
         note = '   = %.1f%% income cut' % (100.0 * (1.0 - math.exp(-float(v))))
-    print('  %-9s %10.4f   %-18s %9s %9.4f %9s%s'
+    elif smr:
+        # THE IMPLIED SMR, which is what kappa actually means.  kappa is a
+        # proportional fall in thirty-year survival; the standardised mortality
+        # ratio it implies is how the literature states the same thing, and the
+        # solver prints it beside r_use.
+        note = '   implied %s' % smr.replace('smr', 'SMR')
+    # SMALL PARAMETERS NEED MORE DIGITS.  omega is of order 1e-3 and steps at
+    # 0.05 per cent of itself, so at four decimals it looks frozen when it is
+    # moving -- which is exactly what it looked like.
+    fmt = '%10.6f' if abs(float(v)) < 0.01 else '%10.4f'
+    print(('  %-9s ' + fmt + '   %-18s %9s %9.4f %9s%s')
           % (p, float(v), mom, mod, float(tgt), g, note))
-live = [float(g) for _, _, _, mo, _, g in rows
+live = [float(g) for _, _, _, mo, _, g, _s in rows
         if mo != 'HELD' and g != '--']
 if live:
     live = sorted(abs(x) for x in live)
