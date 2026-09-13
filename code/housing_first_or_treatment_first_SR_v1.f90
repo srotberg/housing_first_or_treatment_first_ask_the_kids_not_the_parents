@@ -1159,6 +1159,29 @@
         real(8) :: stopping_rule_penalty_child_addicted=5*10.d0**(-2)
         real(8) :: child_sud_ratio_model_1=0
         real(8) :: child_sud_num_1=0,child_sud_den_1=0
+
+        ! THE PENALTY SCAN.  The author, 13 September: *"scan the incomes and
+        ! see which ones give an odds ratio of 2 and pick that"*, and then *"can
+        ! you do the same technique with the quant model?"*.  It is cheap here
+        ! for the same reason it is cheap in the stylized model, and the reason
+        ! is structural: penalty_child_addicted enters in exactly ONE place, the
+        ! level shift inside create_newborn_employment_probability, and the odds
+        ! ratio is the child PLACEMENT integrated against
+        ! percent_addicted_by_employment.  The penalty moves the placement and
+        ! nothing else -- no value function, no price, no distribution -- so a
+        ! candidate value costs one call to that subroutine, a loop over the
+        ! employment grid, instead of a solve.
+        !
+        ! WHAT IT IS NOT.  It holds percent_addicted_by_employment at its solved
+        ! values, so it is the PARTIAL equilibrium answer: changing the penalty
+        ! does move children's incomes and hence the distribution.  It is a
+        ! starting value good to first order, which the loop then confirms in a
+        ! few passes rather than walking there from 0.24.
+        integer, parameter :: scan_penalty_child=1
+        integer, parameter :: scan_points=20
+        real(8), parameter :: scan_lo=0.0d0, scan_hi=0.60d0
+        integer :: scan_index=0
+        real(8) :: penalty_saved=0, scan_num=0, scan_den=0, scan_ratio=0
         real(8) :: gap_penalty_child_1=0,previous_gap_penalty_child=0
         integer :: have_gap_penalty_child=0
         integer, parameter :: calibrate_penalty_child_addicted=1
@@ -43606,6 +43629,67 @@
                         if (child_sud_den_1>10.d0**(-10)) then
 
                             child_sud_ratio_model_1=child_sud_num_1/child_sud_den_1
+
+                            ! SCAN THE PENALTY AND PRINT THE RATIO AT EACH VALUE.
+                            !
+                            ! THE ARRAY IS RESTORED BY REGENERATING IT AT THE
+                            ! ORIGINAL PENALTY, not by copying it.  The
+                            ! subroutine is deterministic in the penalty and the
+                            ! grid, so the regenerated array is identical to the
+                            ! one that was there, and no second copy of a large
+                            ! array has to be carried.  Getting this wrong would
+                            ! leave the solve running on a placement built at
+                            ! whatever the last scan value happened to be, which
+                            ! is exactly the class of silent corruption
+                            ! TRANSITION_LESSONS section 7 is about.
+                            if (scan_penalty_child==1) then
+
+                                penalty_saved=penalty_child_addicted
+
+                                write(*,*) "PENALTY SCAN target ratio =",&
+                                    child_sud_ratio_data, " current penalty =",&
+                                    penalty_saved
+
+                                do scan_index=0,scan_points
+
+                                    penalty_child_addicted=scan_lo+&
+                                        (scan_hi-scan_lo)*dble(scan_index)/dble(scan_points)
+
+                                    call create_newborn_employment_probability()
+
+                                    scan_num=0
+                                    scan_den=0
+
+                                    do child_node_index_1=1,employment_grid_size
+
+                                        scan_num=scan_num+&
+                                            sum(newborn_parent_share(:,1,1)*newborn_employment_probability(child_node_index_1,:,1,1))/max(sum(newborn_parent_share(:,1,1)),10.d0**(-14))*&
+                                            percent_addicted_by_employment(1,child_node_index_1)
+
+                                        scan_den=scan_den+&
+                                            sum(newborn_parent_share(:,0,1)*newborn_employment_probability(child_node_index_1,:,0,1))/max(sum(newborn_parent_share(:,0,1)),10.d0**(-14))*&
+                                            percent_addicted_by_employment(1,child_node_index_1)
+
+                                    end do
+
+                                    if (scan_den>10.d0**(-10)) then
+                                        scan_ratio=scan_num/scan_den
+                                    else
+                                        scan_ratio=-1
+                                    end if
+
+                                    write(*,*) "PENALTY SCAN penalty=",&
+                                        penalty_child_addicted, " ratio=", scan_ratio
+
+                                end do
+
+                                penalty_child_addicted=penalty_saved
+                                call create_newborn_employment_probability()
+
+                                write(*,*) "PENALTY SCAN restored penalty =",&
+                                    penalty_child_addicted
+
+                            end if
 
                             gap_penalty_child_1=child_sud_ratio_model_1-child_sud_ratio_data
 
