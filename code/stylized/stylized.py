@@ -581,7 +581,7 @@ class P:
     kV    = 0.50      # MEANS TEST, the share of MEDIAN income below which a
                       # household is eligible. This is the quantitative model's
                       # kappa_V and the paper uses the same symbol for both.
-    yV    = 0.3061    # the level kV implies, kV times median income. It has moved
+    yV    = 0.2508    # the level kV implies, kV times median income. It has moved
                       # twice with the grid: 0.2591 at 30 log spaced nodes, 0.2477
                       # at 120, and 0.3172 once the nodes were placed by quantile
                       # and the top tail stopped being truncated. The last move is
@@ -790,8 +790,9 @@ def with_(par, **kw):
     # not already clobbered a calibrated value with a ratio nobody measured. If
     # a diagnostic is ever written that does move h_lg, it has to pass h_sm
     # explicitly or re-bracket it, not inherit the quarter.
-    if 'h_lg' in kw and 'h_sm' not in kw:
-        f['h_sm'] = H_RATIO * f['h_lg']
+    # THE h_sm TIE IS GONE WITH THE SECOND RENTAL.  h_sm is no longer in the
+    # choice set -- see _options -- so nothing reads it, and tying it to h_lg
+    # would only leave a value that looks meaningful and is not.
     # chdmg IS DERIVED FROM EVERY OTHER PARAMETER, so any change to any of them
     # invalidates it.  Clearing it to the None sentinel turns what would be a
     # SILENT wrong answer -- a child damage computed at somebody else's
@@ -930,7 +931,10 @@ def _hpick(par, street, small):
     """The housing size behind a (street, small) record from _branch."""
     if street > 0.5:
         return par.h_hl
-    return par.h_sm if small > 0.5 else par.h_lg
+    # ONE RENTAL: the housed are all in it.  small is retained in the branch
+    # records so every caller and every saved tuple still unpacks, and it is
+    # now always zero.
+    return par.h_lg
 
 
 def _flow(par, c, h, q=0.0, child=True):
@@ -985,9 +989,24 @@ def _flow(par, c, h, q=0.0, child=True):
 
 
 def _options(par, rmul):
-    """(housing services, rent, on the street) for the three choices."""
+    """(housing services, rent, on the street) for the TWO choices.
+
+    ONE RENTAL, NOT TWO, ON THE AUTHOR'S INSTRUCTION OF 13 SEPTEMBER: *"in the
+    model there should only be h1 (for homeless) and h2 (for the one rental
+    option)"*, and *"we literaally just calibrated the stylized model with just
+    1 rental option."*  h_sm is out of the choice set; h_lg is the rental.
+
+    THE OLD WARNING AT THE HEAD OF THIS FILE IS STALE.  It says two sizes are
+    needed because with one a household whose cash falls below the rent cannot
+    be housed at all, and that collapsing them takes homelessness far above
+    target with no h_hl able to bring it back.  That was measured WITHOUT the
+    income floor.  With the floor on, the poorest household has 0.18614 against
+    a rent of 0.40, so it is still priced out -- and that is now the POINT
+    rather than the problem: the floor had driven homelessness to exactly zero,
+    because every household could afford the 0.10 unit.  One rental restores a
+    priced-out population for h_hl to work on.
+    """
     return ((par.h_hl, 0.0, 1),
-            (par.h_sm, par.pr * par.h_sm * rmul, 0),
             (par.h_lg, par.pr * par.h_lg * rmul, 0))
 
 
@@ -1028,7 +1047,7 @@ def solve_period2(par, y, policy, used=0):
                 # what the voucher pays on this option: the rest of the market
                 # rent. Zero on the street, which is free to begin with.
                 s = 0.0 if street else par.pr * h * (1.0 - rmul)
-                is_small = 0.0 if street else float(h == par.h_sm)
+                is_small = 0.0          # one rental: never the small unit
                 onst = np.where(v > best, street, onst)
                 rnt = np.where(v > best, rent, rnt)
                 out = np.where(v > best, s, out)
@@ -1085,7 +1104,7 @@ def _branch(par, ag, inc, rmul, vg, cont):
     rent_o = np.array([r for _, r, _ in opts])
     st_o = np.array([float(s) for _, _, s in opts])
     sb_o = np.where(st_o > 0.0, 0.0, par.pr * h_o * (1.0 - rmul))
-    sm_o = np.where(st_o > 0.0, 0.0, (h_o == par.h_sm).astype(float))
+    sm_o = np.zeros_like(h_o)   # one rental: the small-unit share is dead
 
     ia = np.argmax(val, axis=1)
     k = np.arange(n)

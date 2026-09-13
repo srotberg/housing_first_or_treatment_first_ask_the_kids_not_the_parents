@@ -117,7 +117,27 @@ from stylized import solve_child_damage, P, with_, child_sud_odds_ratio, child_h
 SPEC = [
     ('gam',     'hspend',           0.268,   +1, 0.40, 0.05,  0.60),
     ('aleph',   'vsl',             80.0,     +1, 0.30, 3.0,  60.0),
-    ('h_hl',    'homeless',         0.0100,  +1, 0.40, 1e-7,  0.05),
+    # THE RENT IS THE HOMELESSNESS INSTRUMENT NOW, NOT THE STREET.  With one
+    # rental -- the author's instruction of 13 September -- homelessness is who
+    # is PRICED OUT, not who prefers the street, and h_hl cannot reach it:
+    # measured at the start vector with the floor on, h_hl runs
+    #
+    #     h_hl  1e-7 -> homeless 0.270      h_hl 0.01 -> 0.523
+    #     h_hl  1e-3 -> homeless 0.394      h_hl 0.05 -> 0.669
+    #
+    # so at its LOWER bound homelessness is already twenty-seven times its
+    # target and rises from there.  The bracket corners on the first pass.  That
+    # is exactly the failure the old note at the head of stylized.py describes:
+    # making the street arbitrarily bad does not help a household that cannot
+    # afford the rent at any level of misery.
+    #
+    # h_lg is monotone and spans the target cleanly:
+    #
+    #     h2  0.40 -> 0.341    0.30 -> 0.160    0.22 -> 0.017    0.15 -> 0.000
+    #
+    # crossing 0.0100 near 0.18.  h_hl becomes a SET parameter, the quality of
+    # the street, and stops carrying a moment.
+    ('h_lg',    'homeless',         0.0100,  +1, 0.40, 0.05,  0.60),
     # b's CEILING IS 1.0, author 12 September: *"i think you need to have a very
     # high b"*.  At theta = 0.25 the model starts with 72 to 86 per cent of
     # households using, and b is the only thing that brings that down: measured

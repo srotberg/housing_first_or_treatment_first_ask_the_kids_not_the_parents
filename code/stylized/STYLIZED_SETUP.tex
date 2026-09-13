@@ -27,8 +27,9 @@ arrives with probability $\pi_V$, and cuts the tenant's rent to $\kappa_r$ of th
 market rent.
 
 \textbf{Choices.} Drug purchase $v\ge0$ at price $p_v$, housing
-$h\in\{h_{lg},h_{sm},h_{hl}\}$ --- a large unit, a small unit, or the street,
-which is free and supplies $h_{hl}$ --- and saving $a'\ge0$, subject to
+$h\in\{h_1,h_2\}$ --- the street, which is free and supplies $h_1$, or the one
+rental unit, which supplies $h_2$ at rent $p_r h_2$ --- and saving $a'\ge0$,
+subject to
 \[
   c=\text{inc}-p_v v-\text{rent}(h,r)-a'>0 .
 \]
@@ -45,35 +46,51 @@ $u(x)=x^{1-\sigma}/(1-\sigma)$,
   \text{flow}=u(X_P)+\omega_c(\xi-1)\,u(X_K)+\aleph .
 \]
 $c$ and $h$ are divided by $\xi$ and $v$ is not, because the child consumes none
-of it: the child's bundle carries the Stone--Geary shifter $\bar b$ alone, so the
-drug reaches the child only by taking consumption out of the shared $c$. The
-child's weight is $\xi-1$, so the household's weights sum to $\xi$ --- the same
-$\xi$ that deflates its bundle. $\aleph$ is added once per household, not once
-per member.
+of the drug: the child's bundle carries the Stone--Geary shifter $\bar b$ alone.
+The drug still reaches the child, through the \emph{budget}. It is bought out of
+the same resources as consumption and rent, so it lowers the child's $c$ and can
+also tip the household out of the rental and onto the street --- and both $c$ and
+$h$ are in $X_K$. The child's weight is $\xi-1$, so the household's weights sum
+to $\xi$, the same $\xi$ that deflates its bundle. $\aleph$ is added once per
+household, not once per member.
 
-\textbf{Onset and mortality.} The disorder arrives at the transition with
-probability $\pi(v)$, positive at any positive purchase and zero at $v=0$.
-Survival is $s_0$ when clean and $s_1<s_0$ with the disorder.
+\textbf{Onset and mortality.} Onset is a \emph{flat} rate, not a function of how
+much is bought: the disorder arrives at the transition with probability $\pi$ if
+$v>0$ and with probability zero if $v=0$. Survival is $s_0$ when clean and
+$s_1<s_0$ with the disorder. So the drug decision has an extensive margin that
+carries all of the risk, and an intensive margin that carries none.
 
-\textbf{The problem.} Choose $(v,h,a')$ to maximise
+\textbf{The problem.} Write $\mathbf 1_v=\mathbf 1\{v>0\}$, so the onset
+probability is $\pi\mathbf 1_v$. Choose $(v,h,a')$ to maximise
 \[
   \boxed{\;
   \mathcal V=u(X_P)+\omega_c(\xi-1)u(X_K)+\aleph
-  +\beta\Big[(1-\pi(v))s_0W_2(a',y,0)+\pi(v)s_1W_2(a',y,1)\Big]
-  -\beta\,\omega_c\,\Delta(y)\,\pi(v)\;}
+  +\beta\Big[(1-\pi\mathbf 1_v)\,s_0W_2(a',y,0)+\pi\mathbf 1_v\,s_1W_2(a',y,1)\Big]
+  +\beta\,\omega_c\,\mathbb E\big[V(1,d')\big]\;}
 \]
+where $V(1,d')$ is the child's own value as a young adult, $d'$ the disorder the
+parent ends with, and
+\[
+  \mathbb E\big[V(1,d')\big]=(1-\pi\mathbf 1_v)V(1,0)+\pi\mathbf 1_v V(1,1)
+  \;=\;V(1,0)-\pi\mathbf 1_v\,\Delta(y),
+  \qquad \Delta(y)\equiv V(1,0)-V(1,1).
+\]
+Only the second piece moves with the household's choice, so the drug decision
+faces exactly $-\beta\omega_c\pi\mathbf 1_v\Delta(y)$: the child's loss, weighted
+by how likely the parent is to acquire the disorder at all.
+
 Survival sits \emph{inside} the expectation over the realised disorder, not
 outside it: written as $\phi\,\mathbb{E}W_2$, the disorder becomes something the
 household wants wherever $W_2<0$. The $v=0$ branch is solved on its own, with the
 clean continuation and the voucher unrevoked, and the household uses if the best
-$v>0$ beats it. The final term is the child's expected loss.
+$v>0$ beats it.
 
 \section*{Period 2 --- terminal}
 Employment is redrawn, at a worse rate with the disorder, and the voucher is
 redrawn subject to the policy rule. Assets are run down and nothing is
 bequeathed, so with $\text{cash}=Ra+\text{inc}$ and $\xi=1$,
 \[
-  W_2(a,y,d)=\max_{h}\;u\big(c^{\varphi_c}h^{\varphi_h}\bar b^{\,\varphi_q}\big)+\aleph,
+  W_2(a,y,d)=\max_{h\in\{h_1,h_2\}}\;u\big(c^{\varphi_c}h^{\varphi_h}\bar b^{\,\varphi_q}\big)+\aleph,
   \qquad c=\text{cash}-\text{rent}(h,r).
 \]
 No drug choice, no child term, no recovery.
@@ -95,21 +112,22 @@ homelessness odds ratio, so there is no separate homelessness penalty and the
 mixture has two types. The child is then run through the model as an adult at its
 own income, which is what gives it a disorder probability at all.
 
-The parent internalises the \emph{loss}, not the level:
+So the two branches of the child's value are
 \[
-  \Delta(y)=\mathbb E\big[V_1(y_c)\,\big|\,\text{no penalty}\big]
-           -\mathbb E\big[V_1(y_c)\,\big|\,\text{penalty}\big],
+  V(1,0)=\mathbb E\big[V_1(y_c)\,\big|\,\text{no penalty}\big],
+  \qquad
+  V(1,1)=\mathbb E\big[V_1(y_c)\,\big|\,\text{penalty}\big],
 \]
-both expectations over the same kernel. $V_1$ appears on both sides, so this is a
-fixed point. It is a well behaved one: the $\aleph$ levels cancel in the
-difference, and what survives enters multiplied by $\beta\,\omega_c\,\pi(v)$.
-There is no survival factor on it --- the child becomes an adult whether or not
-the parent lives, so $s_d$ belongs on $W_2$ and on nothing else.
+both expectations over the same kernel, and $\Delta(y)=V(1,0)-V(1,1)$. $V_1$
+appears on both sides, so this is a fixed point. It is a well behaved one: the
+$\aleph$ levels cancel in the difference. There is no survival factor on it ---
+the child becomes an adult whether or not the parent lives, so $s_d$ belongs on
+$W_2$ and on nothing else.
 
 \section*{Lifetime utility}
 $V_1(y)$ is the household's \emph{own} value: the maximised $\mathcal V$ with the
-internalised term $\beta\omega_c\Delta(y)\pi(v)$ added back, so that a planner
-counts the child once rather than once in full and again at $\omega_c$. The
+internalised child term netted out, so that a planner counts the child once
+rather than once in full and again at $\omega_c$. The
 childhood a cohort actually lives, at its parent's realised allocation, is
 \[
   W_{\text{child}}=(\xi-1)\big[u(X_K)+\aleph\big],
@@ -134,7 +152,7 @@ which depends on the \emph{level} through $U$, as the log formula never did.
 \toprule
 $\gamma$ & housing share of non-drug spending & $\theta$ & drug spending share among users\\
 $\aleph$ & value of a statistical life & $\pi_{\text{base}}$ & disorder rate\\
-$h_{hl}$ & homelessness rate & $\omega_c$ & the child use gap\\
+$h_1$ or $p_rh_2$ & homelessness rate & $\omega_c$ & the child use gap\\
 $\bar b$ & drug participation & $\delta_d$ & the child's SUD odds ratio\\
 \bottomrule
 \end{tabular}

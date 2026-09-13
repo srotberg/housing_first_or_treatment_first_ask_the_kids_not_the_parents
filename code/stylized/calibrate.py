@@ -324,7 +324,7 @@ def _grid(sig, n=GRID_N, kappa=GRID_KAPPA):
     households at a single income and pretending they are one type.
     """
     par = P()
-    t = _trunc_level(sig, TRUNC_FLOOR * par.pr * par.h_sm)
+    t = _trunc_level(sig, TRUNC_FLOOR * par.pr * par.h_lg)
     q_f = _ndtr((math.log(t) + 0.5 * sig * sig) / sig)
     u = np.arange(n + 1) / float(n)
     p = q_f + (1.0 - q_f) * u ** kappa
@@ -401,7 +401,7 @@ assert abs(P().yV - YV_HALF_MEDIAN) < 5e-4, (
 # Comparing them put the threshold in the wrong cell, so a cell could be handed
 # a fraction of a third when it should have been whole, and participation moved
 # in jumps of a cell's mass with the calibration target inside one of them.
-Q_F = _ndtr((math.log(_trunc_level(SIG, TRUNC_FLOOR * P().pr * P().h_sm))
+Q_F = _ndtr((math.log(_trunc_level(SIG, TRUNC_FLOOR * P().pr * P().h_lg))
              + 0.5 * SIG * SIG) / SIG)
 GRID_MEAN = (1.0 - _tail_mean(SIG, Q_F)) / max(1.0 - Q_F, 1e-14)
 
@@ -523,7 +523,7 @@ TARGET = dict(part=_DRUG['participation'], homeless=0.0100, r_use=0.74,
               # bound. Sizes 1 and 2 together, 37.3 per cent, are what h_2
               # stands for here, and they are interior: the model gives 32.0 per
               # cent at h_sm = 0.05 and 41.7 at 0.10.
-              hsmall=_HSMALL)
+              )
 
 # ORDER MATTERS, and participation goes LAST. Every one of these parameters
 # moves participation: lam makes drugs riskier, h_hl changes what is at stake in
@@ -643,7 +643,6 @@ LAM_LO, LAM_HI = 0.05, 20000.0
 H_SM_HI = float(YG[0]) / (TRUNC_FLOOR * P().pr)
 
 PAIRS = [('gam', 'hspend', 0.02, 0.70),
-         ('h_sm', 'hsmall', 0.01, H_SM_HI),
          ('h_hl', 'homeless', 1e-7, 0.49),
          ('aleph', 'vsl', 0.20, 24.0),
          ('lam', 'sud', LAM_LO, LAM_HI),
@@ -781,8 +780,9 @@ def calibrate(par=None, sweeps=5, verbose=True, checkpoint=None, fix=(), tol=0.0
         # move homelessness, a cheaper small unit takes households off it, and
         # whichever runs last is the one whose moment is actually hit. The
         # homelessness rate is the one that has to be, so the street runs last.
-        if 'h_sm' not in fix:
-            par = with_(par, h_sm=bracket(par, 'h_sm', 'hsmall', 0.01, H_SM_HI))
+        # h_sm IS NOT BRACKETED ANY MORE.  There is one rental -- see _options in
+        # stylized.py -- so the small unit is out of the choice set and the
+        # share of the housed in it is not a moment the model can produce.
         if 'h_hl' not in fix:
             par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
         if 'aleph' not in fix:
@@ -932,7 +932,7 @@ def polish(par, verbose=True):
     if verbose:
         print(f'\npolishing at theta = {par.th:.4f}')
     par = with_(par, gam=bracket(par, 'gam', 'hspend', 0.02, 0.70))
-    par = with_(par, h_sm=bracket(par, 'h_sm', 'hsmall', 0.01, H_SM_HI))
+    # h_sm is out of the choice set with the second rental; see above.
     par = with_(par, h_hl=bracket(par, 'h_hl', 'homeless', 1e-7, 0.49))
     par = with_(par, aleph=bracket(par, 'aleph', 'vsl', 0.20, 24.0, iters=26))
     for _ in range(2):
