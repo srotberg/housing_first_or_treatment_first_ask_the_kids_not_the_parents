@@ -697,15 +697,62 @@ def step(par, m, state):
             d['n'] += 1
         else:
             d['dir'], d['n'], d['rel0'] = mv, 1, abs(rel)
+        # AND THE TRIP IS A SUSPICION, NOT A VERDICT.  MEASURE BEFORE FREEZING.
+        #
+        # The counter above cannot tell "this parameter's sign is wrong" from
+        # "another parameter moved the moment away while this one walked
+        # correctly towards it", and it froze delta_d on the second.  Measured
+        # at the vector it froze at, with the income floor on, child_sud_or is
+        # MONOTONE RISING in delta_d -- 1.04 at 0.10, 1.25 at 0.40, 1.50 at
+        # 0.70, 1.67 at 0.8598, 1.96 at 1.00 -- so the sign of +1 was right and
+        # the bracket only needed to reach its bound.  It was frozen at 0.8598
+        # with a gap of -16.7 per cent, and 1500 further passes changed nothing.
+        # What tripped the counter was rel0 being captured at +0.4 per cent, the
+        # pass the direction last changed, after which the gap crossed zero and
+        # grew the other way as the rest of the vector moved: |rel| >= 0.98*|rel0|
+        # is then true for any gap at all.
+        #
+        # So when the counter trips, probe: move the parameter a VISIBLE step in
+        # the direction the bracket wants, re-solve, and see whether the gap
+        # shrinks.  One extra solve, once, at the moment of firing.  If it
+        # shrinks the sign is right and the run counter resets; if it does not,
+        # freeze, and say the freeze was measured.  A parameter pinned at a
+        # bound is not running away and is never frozen.
         if d['n'] >= RUNAWAY_PASSES and abs(rel) >= 0.98 * d['rel0']:
-            state[name + '_adj'] = 0.0
-            state.setdefault('_frozen', set()).add(name)
-            print(f'  RUNAWAY {name} has moved {"up" if mv > 0 else "down"} for '
-                  f'{d["n"]} passes and its gap has not shrunk '
-                  f'({100 * d["rel0"]:+.1f} % to {100 * rel:+.1f} %).  Its sign '
-                  f'is wrong for this configuration.  Adjuster set to zero; the '
-                  f'gap is still reported.')
-            d['n'] = 0
+            direction = -sgn * (1.0 if rel > 0 else -1.0)
+            probe = max(min(old * (1.0 + direction * 0.15), hi), lo)
+            if abs(probe - old) <= 1e-12 * max(abs(old), 1.0):
+                # At a bound. It cannot run anywhere.
+                d['n'] = 0
+            else:
+                v2 = moments(with_(par, **{name: probe})).get(mom)
+                if v2 is None:
+                    # The moment is held at the probe, so nothing was measured.
+                    d['n'] = 0
+                else:
+                    rel2 = (v2 - tgt) / tgt
+                    if abs(rel2) < abs(rel):
+                        print(f'  RUNAWAY SUSPECTED on {name} after {d["n"]} passes '
+                              f'({100 * d["rel0"]:+.1f} % to {100 * rel:+.1f} %), '
+                              f'and MEASURED CLEAR: moving it to {probe:.5f} takes '
+                              f'{mom} to {v2:.4f}, a gap of {100 * rel2:+.1f} %.  '
+                              f'The sign is right; the counter is reset and the '
+                              f'bracket keeps going.')
+                        # rel0 is refreshed too, or the next four hundred passes
+                        # trip on the same stale baseline.
+                        d['n'], d['rel0'] = 0, abs(rel)
+                    else:
+                        state[name + '_adj'] = 0.0
+                        state.setdefault('_frozen', set()).add(name)
+                        print(f'  RUNAWAY {name} has moved '
+                              f'{"up" if mv > 0 else "down"} for {d["n"]} passes '
+                              f'and its gap has not shrunk '
+                              f'({100 * d["rel0"]:+.1f} % to {100 * rel:+.1f} %).  '
+                              f'MEASURED: moving it to {probe:.5f} takes {mom} to '
+                              f'{v2:.4f}, a gap of {100 * rel2:+.1f} %, which is no '
+                              f'better.  Its sign is wrong for this configuration.  '
+                              f'Adjuster set to zero; the gap is still reported.')
+                        d['n'] = 0
 
     # THE ESCAPE FROM THE CORNER HAS TO BE EXPLICIT, BECAUSE HOLDING ALONE
     # PARKS THE RUN THERE.  This was learned by breaking it.  At CORNER = 0.02
