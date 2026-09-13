@@ -12967,3 +12967,44 @@ counting of the child. Both of those are the parent's valuation of the child and
 do not belong in the child's welfare. The household's own flow keeps both,
 unchanged. `average_childhood_utility`, `childhood_utility_by_age` and
 `average_welfare_with_childhood` are printed and feed nothing.
+
+### THE ENGINE IS HELD, 13 September 19:05. READ THIS BEFORE FIRING.
+
+`next_batch.py` was NOT run and no fleet was launched, and the next firing
+should stop at this note in one line rather than re-deriving it.
+
+Two independent reasons, either of which is sufficient:
+
+**1. The author stopped it.** On 13 September they said *"you can stop
+calibrating the quant model for now"*, and then commissioned the five model
+changes that are now in: inelastic labour supply, the child in the home from 26
+to 50, the age gate on the inherited penalty, the ever-had-the-disorder state,
+and lifetime utility with the childhood in it. They did not ask for the
+calibration to resume afterwards. A standing autonomous authorisation does not
+outrank a later, specific instruction.
+
+**2. The archive is empty on this model.** Step 2 of the firing sequence:
+
+    hash = 8dad04306d
+    points on this model: 0      points total: 2908
+
+All 2908 are on dead economies. The gate has nothing to interpolate from, and
+three of the five changes move every moment in the model -- earnings roughly
+double at L = 1, the equivalence scale is a step instead of a hump, and the
+child's penalty is now paid in six housing branches instead of one and stops at
+age 50 instead of 85. `gaps.py` was deliberately NOT run and NOT reported: with
+zero points on this hash the table it would print comes from an economy that no
+longer exists, which is exactly the failure 4a records.
+
+**WHAT TO DO WHEN IT REOPENS, and the order matters.** Solve ONE anchor point at
+the best known vector and read its gap table before spending the fleet. Twenty
+four containers measuring a model whose first equilibrium nobody has looked at
+is how the archive filled with points that cannot be reproduced. One anchor
+costs one container and settles whether the new model solves to a sane economy
+at all.
+
+**AND THE `.dat` FILES IN THE TREE ARE THE WRONG SHAPE.** The unemployment grid
+went from twelve states to eighteen. The benchmark does not read them
+(`use_old_results` is `is_counterfactual`, zero there) so a calibration run is
+unaffected; a counterfactual or transition reads them and needs a fresh
+benchmark first. Nothing was deleted.
