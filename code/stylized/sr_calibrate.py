@@ -925,10 +925,29 @@ if __name__ == '__main__':
     # gam IS NOT SEEDED.  It is SET at its data value of 0.268 -- see the note in
     # SPEC -- and SEED is applied LAST, so leaving it here would put 0.437 back
     # and silently undo the decision.
-    SEED = dict(aleph=10.99573, h1=0.00960, b=0.05774,
+    # RESEEDED FROM ITERATION 900 of the two-rental run at rho = 0.35, which is
+    # the best fit of the session: eight of ten moments inside ten per cent,
+    # seven of them exact, median gap 0.1 per cent, nothing held, and r_use at
+    # 0.7373 against 0.74 on the interior branch.
+    #
+    # omega STARTS AT 0.003 AND IS STILL CALIBRATED, on the author's instruction
+    # of 13 September: *"you can make it 0.003"*, then *"i mean, calibrate it
+    # but start it from 0.003"*.  Measured at the iteration-900 vector, the
+    # child gap crosses its 0.1834 target between omega 0.003 (0.1605) and 0.004
+    # (0.2341), so this starts the bracket AT the crossing instead of a long way
+    # above it.
+    #
+    # WHY IT COULD NOT GET THERE ON ITS OWN.  From 0.00853 the bracket crawled to
+    # 0.0070 over nine hundred iterations while delta_d climbed 0.5697 -> 0.6606
+    # closing its own moment.  A larger delta_d is a larger Delta(y), which is a
+    # larger deterrent at ANY omega, so the gap bottomed at +592 per cent near
+    # iteration 550 and then ROSE every table to +624: delta_d was widening it
+    # faster than omega could narrow it.  Starting omega at the crossing gives it
+    # a chance to settle before delta_d moves much further.
+    SEED = dict(aleph=12.3701, gam=0.4407, h1=0.00993, b=0.05430,
                 # 0.0368/0.089, the value the identity sets, not a start
-                pi_base=0.0368 / 0.089, u0=0.04824, u1=0.05484, omega=0.00853,
-                delta_d=0.56972, kap=0.10067, th=0.14599)
+                pi_base=0.0368 / 0.089, u0=0.04850, u1=0.04860, omega=0.003,
+                delta_d=0.66060, kap=0.10620, th=0.14530)
     _start = {**{k: v for k, v in FIXED.items() if k != 'kap'},
               **{**START, "th": 0.25, "beta": 0.995 ** 30, "kap": 1.0 - 0.91 ** 2,
                    # A STARTING VALUE AGAIN, not a pin: delta_d is back in SPEC
