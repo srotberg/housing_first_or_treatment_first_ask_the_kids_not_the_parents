@@ -1,3 +1,43 @@
+## 13 September 06:52 UTC -- LOOP 53: PARTICIPATION REACHED ITS TARGET. THE
+## TWO-TARGET QUESTION IS NOW MEASURED, NOT EXTRAPOLATED.
+
+    participation  0.09002   target 0.0890    +1.2%     REACHED
+    homelessness   0.02349   target 0.0100    2.35x     +135%
+    disorder rate  0.03382   target 0.0368    -8.1%
+    drug share     0.08558   target 0.1410   -39.3%
+    sud/part       0.3757    identity 0.4135
+
+`addiction_scalar_1` reversed on this loop -- 0.0012219 to 0.0012233, the first
+rise of the run -- so the participation bracket has turned and this is the
+overshoot, not a passage.
+
+**RESULT ONE: HOMELESSNESS IS 2.35 TIMES ITS TARGET AT THE PARTICIPATION
+TARGET.**  This is the measurement the projections were reaching for, and it is
+the right way round: the coupling extrapolations said 3.5x at loop 35, 2.5x at
+loop 37, 2.6-2.8x at loop 45 and about 2.35x at loop 52, each correcting the
+last downward.  The model says 2.35.  Quote the measurement, not any of the
+projections.
+
+So the 02:45 diagnosis holds and now has a number on it: with the below-rent
+atom in place and `size_homelessness` the only housing instrument, this
+parameterisation delivers 2.35 per cent homelessness where the data say 1.0.
+
+**RESULT TWO, AND IT IS A TEST OF THE AUTHOR'S PIN.**  theta was pinned at 0.16
+on the author's instruction.  At the participation target it delivers a drug
+spending share of 0.0856 against a target of 0.1410 -- 39 per cent too LOW.
+Early in the run, at participation 0.9 per cent, the same pin delivered 0.16,
+14 per cent too HIGH.  So the pin is not a fixed property of the model: the
+share it produces falls by a factor of nearly two as participation rises from
+0.9 to 9.0 per cent, and 0.16 is the right pin at neither end.  This is worth
+the author's attention before the next configuration is chosen.
+
+**RESULT THREE.**  The disorder rate came back to within 8.1 per cent on its
+own, and sud/part is 0.3757 against the identity's 0.4135 -- closer than the
+0.3489 of loop 44 but still 9 per cent under, so the onset base is still
+trailing rather than pinned.  Set it from the identity.
+
+The penalty scan is still out of range: three loops of `did NOT bracket`.
+
 ## 13 September 06:35 UTC -- LOOP 50: THE PENALTY SCAN HAS RUN OUT OF RANGE
 
     PENALTY SCAN did NOT bracket 2.0 over [0.0, 0.6] -- penalty left at 0.59843
