@@ -1,3 +1,79 @@
+## 13 September 14:25 UTC -- THE AUTHOR HAS PAUSED THE QUANTITATIVE CALIBRATION.
+## THE ENGINE LOOP DOES NOT RELAUNCH IT. READ THIS BEFORE FIRING.
+
+The author, 13 September: *"you can stop calibrating the quant model for now"*
+and *"we need to figure out these things first"*.  The run was stopped at loop
+118 -- participation 0.13357 against a target of 0.089 and homelessness 3.16
+times its target, so the run was deep in the divergence recorded at 14:00 and
+nothing was lost by stopping it.  Its half-written `calibration_state.dat` and
+`newborn_parent_share.dat` were reverted, not committed, which is the rule after
+a kill.
+
+**WHAT A FIRING SHOULD DO WHILE THIS ENTRY IS AT THE TOP.**  Run the
+stale-checkout guard, confirm no `run_one_point.sh` or `hftf` is alive, and stop
+with one line saying the loop is paused.  DO NOT launch a point, do not run
+`resume.sh`, and do not manufacture work.  The cadence is cheap and the routine
+is left enabled on purpose, so that the loop restarts the moment the author says
+to rather than needing a trigger rebuilt.
+
+**WHY IT IS PAUSED, WHICH IS ALSO WHY RESUMING BEFORE THE ANSWER IS WASTED.**
+Three model changes are open and two of them change the Fortran:
+
+  1. ENDOGENOUS LABOUR SUPPLY IS TO BE CUT.  The author: *"in the quant model we
+     should make labor supply inelastic also.  income just equals to
+     productivity plus the age deterministic profile."*  That is surgery on the
+     household problem, so it must happen with no solve running, and every
+     calibrated vector on this branch is measured on the model that still has
+     it.
+
+  2. xi AND THE CHILD'S WEIGHT ARE SETTLED AND NEED NO CHANGE.  The author:
+     *"it should be sqrt(2)-1 for the child utility."*  The stylized model
+     already carries xi = sqrt(2) with weight xi - 1; nothing to do.
+
+  3. THE CHILD LIVES WITH THE YOUNG ONLY, and the transmission rule that
+     follows.  The author: *"the parent to have a child only when they are young
+     and have no kids when they are old ... the young transmit the SUD penalty
+     only if they get it in the transition to being old ... if the old die with
+     SUD, that does not transmit to the child, since the child is already young
+     at that time."*  Written up in
+     `code/stylized/CHILD_WITH_THE_YOUNG.pdf`.
+
+**THE ONE OPEN CONTRADICTION, WHICH IS THE AUTHOR'S CALL AND IS NOT TO BE
+CLOSED HERE.**  Three of the four parts of (3) are already built -- `_flow` at
+`stylized.py:882` carries xi = sqrt(2) then 1, period 2 calls it with
+`child=False` at `:972`, and the SUD leg of the child's penalty is
+`use_prob x prog` at `transition.py:119`, which is period-1 use times the chance
+a user acquires the disorder at the transition.  The HOMELESSNESS leg is not:
+it keys on `terminal_homeless_prob`, the parent's period-2 street probability,
+which under the author's rule is exactly the state that cannot reach a child who
+has already left.  `TRANSITION_LESSONS.md` carries period-2 keying as a standing
+instruction, put there so that conditionality's own revocations could reach a
+child.  Both cannot hold.  Nothing has been changed.  Note for whoever picks
+this up: keying the leg on period 1 does NOT switch conditionality off, because
+Treatment First still reaches the child through the SUD leg by moving how much
+people use; what is lost is the homelessness half of the revocation.
+
+**AND THE SAME QUESTION AGAINST THE QUANTITATIVE MODEL** -- TRANSITION_LESSONS
+section 7, a bug or a rule found in the stylized model is checked against the
+quantitative model before it is closed.  In the stylized model the rule costs
+nothing, because drugs are chosen in period 1 only and the disorder is realised
+at the transition, so the transmitted object already IS the period-1 one and the
+share of children behind the SUD penalty stays at 3.86 per cent.  In the
+quantitative model use is chosen at every age and a parent can acquire the
+disorder long after its children have left, so the rule genuinely cuts the
+transmitting population.  Expect delta_d to rise when it does: the penalty is
+calibrated to the child's SUD odds ratio, so a smaller transmitting share is met
+by a larger fitted penalty and the product stays pinned by the target.  This has
+NOT been measured.
+
+**TWO THINGS FOUND WHILE MEASURING THE STYLIZED MODEL, FLAGGED NOT ACTED ON.**
+`transition_childhood.py` forms a cohort's lifetime as `adult + kid` with no
+beta between childhood and adulthood; it has never shown up in a number because
+the calibrated beta is 1.0.  And that beta = 1.0 sits at its upper bound, which
+`stylized.py` records as having been TRIED AND REJECTED on an earlier
+calibration -- the drug spending share fell to 3.2 per cent and the minimum ex
+ante value of life went negative.  Neither is touched.
+
 ## 13 September 14:00 UTC -- A READING DEFECT IN MY OWN TOOLING, AND WHAT IT HID:
 ## THE RUN HAS BEEN DIVERGING SINCE ABOUT LOOP 100
 
