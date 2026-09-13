@@ -458,8 +458,16 @@ MAX_REL_STEP = 0.005
 # target within fifty iterations while every other moment crawled.  A single
 # instrument moving that much faster than the rest lands its own moment and then
 # keeps re-landing it on top of everyone else's adjustments.
+# b IS 0.02 NOW, WAS 0.001, on the author's instruction of 13 September: *"it
+# should move very fast"*.  It is the instrument that has to hold participation
+# while u1 climbs, and at 0.001 against u1's 0.005 it was five times too slow to
+# do it: over three hundred and fifty iterations u1 went 0.0800 -> 0.4584, a
+# rise of 473 per cent, while b managed 0.0514 -> 0.0396, a fall of 23, and
+# participation drifted from +4 per cent to -32.  Every one of those iterations
+# was spent in a thinned-out economy, which is the fixed-b regime the author
+# ruled out as a way of measuring this.
 PER_PARAM_STEP = {'omega': 0.0005, 'th': 0.0003, 'h1': 0.005, 'kap': 0.001,
-                  'b': 0.001, 'pi_base': 0.001, 'delta_d': 0.0002}
+                  'b': 0.02, 'pi_base': 0.001, 'delta_d': 0.0002}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
 ADJ_FLOOR = 1e-3
@@ -968,6 +976,11 @@ if __name__ == '__main__':
     # iteration 550 and then ROSE every table to +624: delta_d was widening it
     # faster than omega could narrow it.  Starting omega at the crossing gives it
     # a chance to settle before delta_d moves much further.
+    # BACK TO THE START OF THE u1 EXPERIMENT, not to where it has drifted.  u1
+    # was pushed to 0.4584 with b unable to follow, so the current vector is a
+    # record of the speed mismatch rather than of the mechanism.  This restarts
+    # at u1 = 0.08, where eight of ten moments were inside ten per cent, and
+    # lets b run at twenty times its old speed.
     SEED = dict(aleph=12.4338, gam=0.4425, h1=0.01010, b=0.05140,
                 # 0.0368/0.089, the value the identity sets, not a start
                 pi_base=0.0368 / 0.089, u0=0.04740, u1=0.08000, omega=0.0024,
