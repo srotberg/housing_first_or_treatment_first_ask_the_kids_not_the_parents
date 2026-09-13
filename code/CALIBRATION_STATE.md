@@ -1,3 +1,39 @@
+## 13 September 05:30 UTC -- THE RUN CANNOT HIT BOTH TARGETS, AND THE
+## EXTRAPOLATION IS NOW SHORT ENOUGH TO SAY SO
+
+Earlier entries here refused to extrapolate homelessness to the target
+participation, on the standing rule that a measured bracket beats an elasticity.
+At loop 6 that refusal was right: the extrapolation was six times the span
+actually travelled.  At loop 35 it is not, and the arithmetic is:
+
+    travelled   dlog(participation)  0.942   (a factor of 2.56)
+    remaining   dlog(participation)  1.359   (a factor of 3.89)
+    the extrapolation is 1.44 times the span already measured
+
+    measured coupling over the whole run, dlog(homeless)/dlog(part):  0.553
+    homelessness now 0.01635
+    implied at participation 0.089:  0.0347, which is 3.5x the target of 0.0100
+
+An extrapolation 1.44 times the measured span, on a coupling estimated from
+thirty-four steps, is a statement worth making.  **THIS CONFIGURATION CANNOT
+REACH participation 0.089 AND homelessness 0.0100 TOGETHER.**  It is heading for
+roughly three and a half times the homelessness target, and the gap is
+ACCELERATING: the last eight loops read +48, +49, +51, +54, +56, +58, +60, +64
+per cent.
+
+What this does NOT say: that the model cannot be calibrated.  It says this
+PARAMETERISATION cannot, with `size_homelessness` the only housing instrument
+live and already cut a quarter.  The separating instrument is the one the 02:45
+entry named -- the below-rent atom, which the stylized model removed by
+truncating its income distribution and which the author's income floor
+(`ssi_floor_level`, already in the vector at 0.1774) is this model's version of.
+That is the thing to move, and it cannot be moved from inside a running joint
+loop.
+
+THE RUN IS STILL LEFT ALIVE -- it is producing a clean measurement of exactly
+this, and none of ENGINE.md's three stop conditions is met.  But the decision in
+front of the author is now evidenced rather than argued.
+
 ## 13 September 05:20 UTC -- HOMELESSNESS RISES ALMOST UNCONDITIONALLY, AND
 ## PARTICIPATION EXPLAINS ONLY ABOUT HALF OF IT
 
