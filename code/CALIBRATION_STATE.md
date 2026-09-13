@@ -1,3 +1,40 @@
+## 13 September 14:00 UTC -- A READING DEFECT IN MY OWN TOOLING, AND WHAT IT HID:
+## THE RUN HAS BEEN DIVERGING SINCE ABOUT LOOP 100
+
+**THE DEFECT.**  Every participation figure I scraped used the regex
+`([0-9.]+E[-+][0-9]+)`, which REQUIRES scientific notation.  The Fortran prints
+`model=` in plain decimal once the value exceeds 0.1, so from loop 82 -- the
+first loop above 0.10 -- every reading was silently dropped and the scrape
+returned the last sub-0.1 value instead.  The watcher's own PARTICIPATION line
+carried the same regex, which is why it stopped printing.  Both are fixed; the
+pattern is now `([0-9.]+(?:E[-+][0-9]+)?)`.
+
+This is the same shape as the stale `fortran_numbers.json` found at 05:42: a
+reading tool that drops data instead of erroring, so the number still looks like
+a number.  Two in one night, both mine, both caught only by cross-checking
+against the raw log.
+
+**WHAT IT HID.**  The true series:
+
+    loop  50: 0.08693   (-2% vs target)
+    loop  80: 0.08354   (-6%)
+    loop 100: 0.09864   (+11%)
+    loop 110: 0.12766   (+43%)
+    loop 114: 0.16133   (+81%)
+
+The run is NOT oscillating around the target, as the last dozen reports here and
+to the author said.  It has been DIVERGING since about loop 100, and
+participation is now 81 per cent above target with the disorder rate 74.6 per
+cent over, the value of life back out to 17.5 and unemployment to 13.6.
+
+**WHAT SURVIVES.**  The 13:00 hundred-loop entry quotes participation 0.09315 at
+loop 100 against a true 0.09864 -- wrong, and corrected here, but close enough
+that its substance stands.  So does the homelessness result: the readings taken
+at or near the participation target between loops 53 and 93 were taken when
+participation genuinely was near target, and they are the 2.35x to 2.92x
+sequence.  What is NOT usable is anything after about loop 100, because the
+economy is no longer near the target the readings are supposed to describe.
+
 ## 13 September 13:00 UTC -- ONE HUNDRED LOOPS ON THE RESUMED RUN
 
 Homelessness crossed THREE TIMES its target at loop 99 (0.029985 against 0.0100)
