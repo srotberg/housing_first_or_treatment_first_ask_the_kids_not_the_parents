@@ -716,7 +716,23 @@ class P:
     # the WIDTH of the child's income kernel, sqrt(1-rho^2)*sigma, which narrows
     # by 7.6 per cent between 0.35 and 0.50.  That is a small lever, not a large
     # one.
-    rho     = 0.35
+    # 0.50 AGAIN, on the author's instruction of 13 September: *"so raise
+    # rho=0.5"*, *"and run the calibration with 0.5"*.  It was raised to 0.50
+    # earlier today, put back to 0.35 when the run it was in looked bad, and the
+    # reason that run looked bad turned out to be a step-size mismatch rather
+    # than rho.
+    #
+    # WHAT IT IS EXPECTED TO BUY, so the measurement can be read against a
+    # prediction rather than after the fact.  Both branches of the child SUD
+    # odds ratio carry the SAME rho -- a clean parent's child and a disordered
+    # parent's child are placed at rho*log y + (1-rho)*log ybar and differ only
+    # by delta_d -- so rho reaches the moment through one channel only, the
+    # WIDTH of the child's income kernel, sqrt(1-rho^2)*sigma.  That is 0.927 at
+    # 0.35 and 0.857 at 0.50, 7.6 per cent narrower, which should make delta_d
+    # about 7.6 per cent more potent: roughly 0.79 instead of 0.86, an income
+    # cut of 55 per cent instead of 58.  If the measured fall is much larger
+    # than that, the scaling argument is wrong and worth understanding.
+    rho     = 0.50
     delta_d = 0.36
 
     na    = 60
