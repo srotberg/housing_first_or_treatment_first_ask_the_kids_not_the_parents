@@ -25370,7 +25370,30 @@
         ! that: omega_c*(xi-1)*value_of_life is a CONSTANT, so it moves no
         ! choice and cancels out of the child's inherited penalty. It would have
         ! changed only the level of the value function.
-        if (want_child_flow) child_flow_out=child_flow_out+value_of_life
+        ! AND THE CHILD IS WEIGHTED AT (xi - 1), NOT AT ONE.
+        !
+        ! The author, 13 September, settling it: *"If I give the child a weight
+        ! of 1 in their utility I am creating extra utility that the parent
+        ! doesn't take into account. I think that would be wrong."*
+        !
+        ! omega_c is DEFINED as the share of the child's equivalence-scaled
+        ! utility the parent internalises -- the parent's own flow carries
+        ! omega_c*(xi-1)*u(X_K) -- so with the same (xi-1) on the welfare side
+        ! omega_c = 1 is full internalisation and the wedge is exactly
+        ! (1 - omega_c). Count the child at one and even a perfectly altruistic
+        ! parent leaves a residual externality of 1 - (xi-1) = 0.586 that no
+        ! preference parameter explains, and omega_c's own calibration is
+        ! measured on the (xi-1) scale in the first place.
+        !
+        ! sqrt_household_size is xi while the child is at home and 1 after, so
+        ! this factor is 0.414 to age 50 and ZERO beyond it. The age gate is
+        ! therefore doubly enforced: calculate_childhood_utility never asks past
+        ! age 50, and if it ever did the weight would be zero.
+        !
+        ! THE VALUE OF LIFE IS INSIDE THE FACTOR, matching the stylized model's
+        ! _childhood_u, which returns (xi-1)*(u + aleph).
+        if (want_child_flow) child_flow_out=(sqrt_household_size(age_index)-1.d0)*&
+            (child_flow_out+value_of_life)
         
         ! bar_tau^u, charged wherever flow utility is evaluated so that the
         ! value function, the comparison routine and the welfare calculations

@@ -137,9 +137,23 @@ def _alloc(q, y):
 # The quantitative model was built the other way -- its child_flow_out carries
 # no such factor -- so this also brings the two into line.
 #
-# Set to False to recover the old weighting; the parent's term is unaffected
-# either way, because adult_node multiplies by (xi - 1) itself.
-CHILD_COUNTS_AS_A_PERSON = True
+# SETTLED AT (xi - 1), ON THE AUTHOR'S ARGUMENT OF 13 September: *"If I give
+# the child a weight of 1 in their utility I am creating extra utility that the
+# parent doesn't take into account. I think that would be wrong."*
+#
+# That is decisive and it is better than either argument above. omega_c is
+# DEFINED as the share of the child's equivalence-scaled utility the parent
+# internalises, so with (xi - 1) on both sides omega_c = 1 is full
+# internalisation and the wedge is exactly (1 - omega_c). Count the child at 1
+# and even a perfectly altruistic parent leaves a residual externality of
+# 1 - (xi - 1) = 0.586 that no preference parameter explains. omega_c's own
+# calibration -- the use difference when omega_c is set to zero -- is measured
+# on the (xi - 1) scale, so the welfare weight has to be read on it too.
+#
+# The quantitative model's child flow carries the same factor now, so the two
+# agree. Set to True to recover headcount weighting; the parent's term is
+# unaffected either way, because adult_node multiplies by (xi - 1) itself.
+CHILD_COUNTS_AS_A_PERSON = False
 
 
 def kid_node(q, y):
