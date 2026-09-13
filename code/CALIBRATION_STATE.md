@@ -1,3 +1,39 @@
+## 13 September 07:45 UTC -- THE RESUMED RUN JUMPED REGIME AT LOOP 8, AND THE
+## TWO vsl TRANSITIONS ARE NOT THE SAME EVENT
+
+    loop  participation  drug share  vsl ratio  child gap
+       1      0.04037      0.1356     100.85     0.2068
+       2      0.03638      0.1349     102.35     0.1540
+       3      0.04287      0.1317      99.30     0.3806
+       4      0.05148      0.1297      96.87     0.7359
+       5      0.05105      0.1266      95.50     0.6147
+       6      0.05491      0.1246      94.34     0.7467
+       7      0.05151      0.1273      93.16     0.2016
+       8      0.08324      0.0891      74.52        --
+
+Loop 8 moved participation 62 per cent in ONE step, the drug share down 30 per
+cent and the vsl ratio from 93 to 75.  That is the same shape as the old run's
+loop 47 (participation +20, drug share -17, vsl -23) and it is now reproducible,
+which makes it a feature of the model rather than an accident of one run.
+
+**BUT IT IS NOT THE SAME EVENT AS THE OLD RUN'S LOOP 40, AND THE TIDY STORY
+SHOULD NOT BE TOLD.**  At old loop 40 the vsl ratio jumped 28 per cent with
+participation moving 3.6 and the drug share 0.1 -- every one of the twenty-six
+printed moments under 1.3 per cent.  Here at loop 8 all three move together.  A
+two-regime reading would want the vsl level to track participation, and the old
+run's first thirty-nine loops refute that directly: vsl sat at 70-80 there with
+participation between 0.009 and 0.032, which is the LOW participation range
+paired with the LOW vsl level.
+
+So: the vsl ratio takes two distinct levels, roughly 75-80 and 93-102, it moves
+between them abruptly, and the transitions do NOT have a single explanation yet.
+The corner-in-the-sum hypothesis from 06:05 remains the best candidate for the
+old loop 40 and is untested.  What loop 8 adds is that at least one of these
+transitions carries the whole economy with it.
+
+Participation is 0.08324, 6.5 per cent from target, so a second independent
+reading of homelessness-at-target is one or two loops away.
+
 ## 13 September 07:35 UTC -- THE CHILD USE GAP IS FIVE TO SEVEN TIMES HIGHER
 ## AFTER THE RESTART AT THE SAME PARTICIPATION. THE COMPARISON IS CONFOUNDED.
 
