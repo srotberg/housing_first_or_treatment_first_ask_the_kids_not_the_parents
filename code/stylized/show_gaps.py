@@ -5,7 +5,7 @@ The raw log table is fine to read one at a time and useless to compare across
 iterations, which is what the author asked for: the point of a calibration table
 is whether a gap is CLOSING, and that only shows up beside its own past.
 """
-import re, sys, glob, os
+import re, sys, glob, os, math
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 log = sys.argv[1] if len(sys.argv) > 1 else max(
@@ -41,8 +41,16 @@ for p, v, mom, mod, tgt, gap in rows:
     held = (mod == 'HELD') or gap == '--'
     mod = '     held' if held else '%9.4f' % float(mod)
     g = '    --' if held else '%+.1f%%' % float(gap)
-    print('  %-9s %10.4f   %-18s %9s %9.4f %9s'
-          % (p, float(v), mom, mod, float(tgt), g))
+    # WHAT delta_d MEANS IN INCOME, printed beside it.  It is a LOG shift, so
+    # the number in the value column says nothing about the size of the penalty
+    # until it is exponentiated: 0.86 reads small and is a 58 per cent permanent
+    # cut to the child's productivity.  The author asked for it on the table
+    # rather than only on the log's PENALTY line.
+    note = ''
+    if p == 'delta_d':
+        note = '   = %.1f%% income cut' % (100.0 * (1.0 - math.exp(-float(v))))
+    print('  %-9s %10.4f   %-18s %9s %9.4f %9s%s'
+          % (p, float(v), mom, mod, float(tgt), g, note))
 live = [float(g) for _, _, _, mo, _, g in rows
         if mo != 'HELD' and g != '--']
 if live:
