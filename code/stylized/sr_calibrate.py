@@ -115,74 +115,40 @@ from stylized import solve_child_damage, P, with_, child_sud_odds_ratio, child_h
 # 0.217 sits at u1 about 0.0545, just above u0.  NOTE THE TENSION this creates:
 # at that u1 users sit at 0.38 of average income against the data's 0.74.
 SPEC = [
-    # GAMMA IS SET AT ITS DATA VALUE AND IS NOT CALIBRATED.  The author, 13
-    # September: *"pick gamma=0.268 and choose h2 such that spending is exactly
-    # 26.8%"*, *"because when you have just one rental, gamma is not pinned by
-    # anything."*
+    # GAMMA IS CALIBRATED AGAIN, ON THE HOUSING SHARE.  The author, 13
+    # September: *"ok, then maybe you need to rental sizes...one is 0.1 and one
+    # 0.4"*, *"and choose gamma to match 26.8% spending on housing"*.
     #
-    # THEY ARE RIGHT AND IT IS THE SHARP VERSION OF A CORNER THIS RUN HIT.  With
-    # a single fixed-size unit the household cannot choose how much housing to
-    # buy, so the expenditure share carries no information about the preference
-    # weight: it is set by the rent relative to income.  Measured at iteration
-    # 200, hspend moved only 0.209 -> 0.239 as gam went 0.20 -> 0.60, and
-    # reaching the 0.268 target needed gam near 0.85 -- a housing weight of 0.73
-    # with consumption at 0.13.  gam ran to its bound and sat there.
+    # It was SET at 0.268 earlier today, for the good reason that with a single
+    # fixed-size rental a household cannot choose how much housing to buy, so
+    # the expenditure share carried no information about the preference weight
+    # and gam ran to its bound.  With two sizes the household chooses BETWEEN
+    # them, the share responds to the weight again, and gam is identified.
+    ('gam',     'hspend',           0.268,   +1, 0.40, 0.05,  0.60),
+    # h2 = 0.4 AND h1_rental = 0.1 ARE SET, on the author's instruction.  Neither
+    # carries a moment: gam has the housing share and h_hl has homelessness.
+    # y_floor IS SET, NOT BRACKETED.  It was put on the priced-out share when
+    # there was one rental and that share was the binding margin.  With a 0.1
+    # unit available the floor already covers the cheapest rent, so the priced-
+    # out share is near zero at any floor and has nothing left to identify.  It
+    # goes back to its own job, clearing the negative value of life, and is
+    # reported on every table.
+    # AND h1 MATCHES HOMELESSNESS ON WHAT IS LEFT.  The author, 13 September:
+    # *"you need to put the lowest income such that it cannot afford h2, but the
+    # rest can, and then choose h1 to match the homelessness rate"*.
     #
-    # So gam takes its data counterpart, 0.268, the housing share of non-drug
-    # spending, and h2 is what makes the model's REALISED share match it.
-
-    ('aleph',   'vsl',             80.0,     +1, 0.30, 3.0,  60.0),
-    # THE RENT IS THE HOMELESSNESS INSTRUMENT NOW, NOT THE STREET.  With one
-    # rental -- the author's instruction of 13 September -- homelessness is who
-    # is PRICED OUT, not who prefers the street, and h_hl cannot reach it:
-    # measured at the start vector with the floor on, h_hl runs
+    # That is the separation the last two runs lacked.  Once the floor has cut
+    # the priced-out group to half a per cent, everyone else CAN pay the rent,
+    # so whoever is still on the street is there by CHOICE -- and choice is the
+    # one margin street quality governs.  h_hl was powerless before only because
+    # it was being asked to move a population that had no choice to make.
     #
-    #     h_hl  1e-7 -> homeless 0.270      h_hl 0.01 -> 0.523
-    #     h_hl  1e-3 -> homeless 0.394      h_hl 0.05 -> 0.669
-    #
-    # so at its LOWER bound homelessness is already twenty-seven times its
-    # target and rises from there.  The bracket corners on the first pass.  That
-    # is exactly the failure the old note at the head of stylized.py describes:
-    # making the street arbitrarily bad does not help a household that cannot
-    # afford the rent at any level of misery.
-    #
-    # h_lg is monotone and spans the target cleanly:
-    #
-    #     h2  0.40 -> 0.341    0.30 -> 0.160    0.22 -> 0.017    0.15 -> 0.000
-    #
-    # crossing 0.0100 near 0.18.  h_hl becomes a SET parameter, the quality of
-    # the street, and stops carrying a moment.
-    # h2 CARRIES THE HOUSING SHARE NOW, NOT HOMELESSNESS.  With gam set, the one
-    # rental's SIZE is the only thing left that moves what a housed household
-    # spends on rent, so it is the instrument for hspend.  Homelessness goes
-    # back to h_hl below.
-    ('h_lg',    'hspend',           0.268,   +1, 0.40, 0.05,  0.60),
-    # h_hl RETURNS AS THE HOMELESSNESS INSTRUMENT.  It was swapped out earlier
-    # today because at a rent FIXED at 0.40 it could not reach the target from
-    # either side -- at its lower bound homelessness was already 0.270.  That
-    # measurement was taken at a rent it no longer has: h2 is now free and is
-    # pinned by hspend, so the affordability margin moves with it and h_hl works
-    # on who CHOOSES the street rather than on who is priced out.  Whether it
-    # can reach 0.0100 from there is what this run settles.
-    # THE INCOME FLOOR CARRIES HOMELESSNESS, NOT THE STREET.  The author, 13
-    # September: *"h1 is 0 and still you have 10% homelessness? it means you
-    # have to raise the lowest income."*
-    #
-    # THE DIAGNOSIS IS EXACT AND THE LOG SHOWS IT.  By iteration 300 h_hl was on
-    # its lower bound of ZERO -- a street worth nothing at all -- and
-    # homelessness was still 0.1085 against a target of 0.0100.  Nobody there is
-    # CHOOSING the street; they cannot afford the rent at any level of misery,
-    # which is the one thing street quality can never reach.  h_hl was retired
-    # once today for this reason and put back on the argument that a free rent
-    # would restore its grip.  It did not: the rent settled at 0.295 and the
-    # priced-out population survived it.
-    #
-    # y_floor is exactly the margin: it sets who can afford the rent, which is
-    # independent of what the rent buys.  The sign is NEGATIVE -- a higher floor
-    # houses more people -- and the moment bounds it on its own, since a floor
-    # above the rent gives homelessness of zero and the bisection is pulled
-    # back.  h_hl becomes a SET parameter, the quality of the street.
-    ('y_floor', 'homeless',         0.0100,  -1, 0.40, 0.01,  0.50),
+    # THE LOWER BOUND IS 0.001 AND NOT 1e-7.  The author: *"raise h1 to be above
+    # 0"*, *"because when it is 0 you cannot adjust it"*.  They are right twice
+    # over: a bracket sitting on a bound has stopped being a parameter, and at
+    # exactly zero the flow utility raises 0 to a negative power and the solve
+    # dies -- which is how the last scan crashed.
+    ('h_hl',    'homeless',         0.0100,  +1, 0.40, 0.001, 0.05),
     # b's CEILING IS 1.0, author 12 September: *"i think you need to have a very
     # high b"*.  At theta = 0.25 the model starts with 72 to 86 per cent of
     # households using, and b is the only thing that brings that down: measured

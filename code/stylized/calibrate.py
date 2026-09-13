@@ -71,7 +71,8 @@ sequence, which cannot leave the band.
 import math
 import os
 import numpy as np
-from stylized import solve_child_damage, P, with_, aggregates, vsl
+from stylized import (solve_child_damage, P, with_, aggregates, vsl,
+                      priced_out_share)
 
 # THE VALUE OF LIFE, and how it was fixed.
 #
@@ -324,7 +325,7 @@ def _grid(sig, n=GRID_N, kappa=GRID_KAPPA):
     households at a single income and pretending they are one type.
     """
     par = P()
-    t = _trunc_level(sig, TRUNC_FLOOR * par.pr * par.h_lg)
+    t = _trunc_level(sig, TRUNC_FLOOR * par.pr * par.h_sm)
     q_f = _ndtr((math.log(t) + 0.5 * sig * sig) / sig)
     u = np.arange(n + 1) / float(n)
     p = q_f + (1.0 - q_f) * u ** kappa
@@ -401,7 +402,7 @@ assert abs(P().yV - YV_HALF_MEDIAN) < 5e-4, (
 # Comparing them put the threshold in the wrong cell, so a cell could be handed
 # a fraction of a third when it should have been whole, and participation moved
 # in jumps of a cell's mass with the calibration target inside one of them.
-Q_F = _ndtr((math.log(_trunc_level(SIG, TRUNC_FLOOR * P().pr * P().h_lg))
+Q_F = _ndtr((math.log(_trunc_level(SIG, TRUNC_FLOOR * P().pr * P().h_sm))
              + 0.5 * SIG * SIG) / SIG)
 GRID_MEAN = (1.0 - _tail_mean(SIG, Q_F)) / max(1.0 - Q_F, 1e-14)
 
@@ -503,6 +504,9 @@ _HSMALL = _hsmall_target()
 # have it.  bracket() reads its direction from the endpoints, so a falling
 # moment is bisected correctly.
 TARGET = dict(part=_DRUG['participation'], homeless=0.0100, r_use=0.74,
+              # the author, 13 September: raise the lowest income until only
+              # half a per cent of households cannot afford the rental
+              priced_out=0.005,
               sud_of_homeless2=0.217,
               sud=_DRUG['sud_rate'], vsl=80.0,
               dshare=_DRUG['drug_spending_share'],
@@ -653,6 +657,7 @@ LABEL = {'part': 'drug participation rate',
          'hspend': 'housing spending / non drug spending',
          'housing_share': 'housing spending / income',
          'homeless': 'homelessness rate',
+         'priced_out': 'share who cannot afford the rental',
          'dshare': 'drug spending / income among users',
          'hsmall': 'share of the housed in the small unit',
          'vsl': 'value of a statistical life, annual incomes',
@@ -683,6 +688,10 @@ def stats(par):
     # all; it is reported here so it passes through the same convergence
     # test and the same table generator as the moments that do.
     m['bot50'] = _bottom_half_share(SIG)
+    # THE PRICED-OUT SHARE, which is the income floor's own moment.  See
+    # priced_out_share in stylized.py for why homelessness cannot serve as one
+    # when there is a single rental.
+    m['priced_out'] = priced_out_share(par, YG, W)
     return m
 
 
