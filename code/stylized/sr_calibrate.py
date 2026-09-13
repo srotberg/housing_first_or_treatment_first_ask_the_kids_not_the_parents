@@ -452,7 +452,13 @@ MAX_REL_STEP = 0.005
 # 0.02.  These are the three that were not converging from their start:
 # omega fell 0.00905 to 0.00163 and delta_d climbed 0.57 to 1.45 over
 # nineteen hundred passes, neither settling.
-PER_PARAM_STEP = {'omega': 0.0005, 'th': 0.0003, 'h1': 0.02, 'kap': 0.001,
+# h1 IS 0.005, WAS 0.02, on the author's instruction of 13 September: *"h1
+# should get also 0.5%"* -- the same cap u1 runs at.  At 0.02 it was the fastest
+# instrument in the spec, twenty times b's, which is why homelessness snapped to
+# target within fifty iterations while every other moment crawled.  A single
+# instrument moving that much faster than the rest lands its own moment and then
+# keeps re-landing it on top of everyone else's adjustments.
+PER_PARAM_STEP = {'omega': 0.0005, 'th': 0.0003, 'h1': 0.005, 'kap': 0.001,
                   'b': 0.001, 'pi_base': 0.001, 'delta_d': 0.0002}
 DAMP = 0.5                   # halve the adjuster when the gap flips sign
 GROW = 1.2                   # grow it back while the sign holds
@@ -962,10 +968,10 @@ if __name__ == '__main__':
     # iteration 550 and then ROSE every table to +624: delta_d was widening it
     # faster than omega could narrow it.  Starting omega at the crossing gives it
     # a chance to settle before delta_d moves much further.
-    SEED = dict(aleph=12.3250, gam=0.4404, h1=0.00993, b=0.05550,
+    SEED = dict(aleph=12.4338, gam=0.4425, h1=0.01010, b=0.05140,
                 # 0.0368/0.089, the value the identity sets, not a start
-                pi_base=0.0368 / 0.089, u0=0.04850, u1=0.04860, omega=0.0025,
-                delta_d=0.71420, kap=0.10750, th=0.14590)
+                pi_base=0.0368 / 0.089, u0=0.04740, u1=0.08000, omega=0.0024,
+                delta_d=0.71710, kap=0.10740, th=0.14670)
     _start = {**{k: v for k, v in FIXED.items() if k != 'kap'},
               **{**START, "th": 0.25, "beta": 0.995 ** 30, "kap": 1.0 - 0.91 ** 2,
                    # A STARTING VALUE AGAIN, not a pin: delta_d is back in SPEC
