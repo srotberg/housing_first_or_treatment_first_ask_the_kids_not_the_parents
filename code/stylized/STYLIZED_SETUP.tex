@@ -70,21 +70,23 @@ maximise
   \boxed{\;
   W_1(y)=u(X_P)+\omega_c(\xi-1)u(X_K)+\aleph
   +\beta\Big[(1-\pi\mathbf 1_v)\,s_0W_2(a',y,0)+\pi\mathbf 1_v\,s_1W_2(a',y,1)\Big]
-  +\beta\,\omega_c\,\mathbb E\big[W_1(y_c)\big]\;}
-\]
-The last term is the child's own value as a young adult, at its inherited income
-$y_c$, which depends on the disorder $d'$ the parent ends with:
-\[
-  \mathbb E\big[W_1(y_c)\big]=(1-\pi\mathbf 1_v)\,W_1(y_c\,|\,d'=0)+\pi\mathbf 1_v\,W_1(y_c\,|\,d'=1)
-  \;=\;W_1(y_c\,|\,0)-\pi\mathbf 1_v\,\Delta(y),
+  -\beta\,\omega_c\,\pi\mathbf 1_v\,\Delta(y)\;}
 \]
 \[
-  \Delta(y)\;\equiv\;W_1(y_c\,|\,d'=0)-W_1(y_c\,|\,d'=1).
+  \Delta(y)\;\equiv\;W_1(y_c\,|\,d'=0)\;-\;W_1(y_c\,|\,d'=1)
 \]
-Only the second piece moves with the household's choice, so the drug decision
-faces exactly $-\beta\omega_c\pi\mathbf 1_v\Delta(y)$: the child's loss, weighted
-by how likely the parent is to acquire the disorder at all. $W_1$ is on both
-sides of its own definition, which is what makes it a fixed point.
+is the \emph{difference} in the child's own value as a young adult, at its
+inherited income $y_c$, between the parent ending clean and ending with the
+disorder. Difference and level are the same problem: the child's expected value
+is
+\[
+  \mathbb E\big[W_1(y_c)\big]=(1-\pi\mathbf 1_v)W_1(y_c\,|\,0)+\pi\mathbf 1_v W_1(y_c\,|\,1)
+  \;=\;\underbrace{W_1(y_c\,|\,0)}_{\text{constant}}-\;\pi\mathbf 1_v\,\Delta(y),
+\]
+whose first piece moves with no choice the household makes. Dropping it leaves
+the boxed term, so the drug decision is identical and only the level of $W_1$
+differs. $W_1$ is on both sides of its own definition through $\Delta$, which is
+what makes it a fixed point.
 
 Survival sits \emph{inside} the expectation over the realised disorder, not
 outside it: written as $\phi\,\mathbb{E}W_2$, the disorder becomes something the
@@ -125,11 +127,10 @@ mixture has two types. The child is then run through the model as an adult at it
 own income, which is what gives it a disorder probability at all.
 
 Both branches of $\Delta(y)$ are expectations of $W_1$ over the child's income
-draw, taken with the same kernel and differing only by whether $\delta_d$ is
-subtracted from its mean. The fixed point is a well behaved one: the $\aleph$
-levels cancel in the difference. There is no survival factor on it --- the child
-becomes young whether or not the parent lives, so $s_d$ belongs on $W_2$ and on
-nothing else.
+draw, with the same kernel, differing only by whether $\delta_d$ is subtracted
+from its mean. The fixed point is well behaved: the $\aleph$ levels cancel in the
+difference. There is no survival factor on it --- the child becomes young whether
+or not the parent lives, so $s_d$ belongs on $W_2$ alone.
 
 \section*{Lifetime utility}
 For welfare, $W_1$ is taken as the household's \emph{own} value, with the
