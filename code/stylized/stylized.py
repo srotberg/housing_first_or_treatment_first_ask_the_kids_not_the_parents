@@ -701,7 +701,22 @@ class P:
     # sqrt(0.8775) = 0.937 at 0.35.  The cross-section variance is unchanged by
     # construction; what changes is how much of a child's position is its
     # parent's.  See _child_rate for why the shock is not optional.
-    rho     = 0.50
+    # BACK TO 0.35, ON THE AUTHOR'S INSTRUCTION OF 13 SEPTEMBER: *"if rho=0.5 is
+    # a problem, then bring it down to 0.35"*.  It was raised to 0.50 earlier
+    # today so that delta_d could be as small as possible.
+    #
+    # WHAT THE RAISE ACTUALLY BOUGHT IS NOT MEASURED, and the note says so rather
+    # than guessing.  The scan meant to settle it returned 0/0 in every cell:
+    # child_sud_odds_ratio places children at rho*log y + (1-rho)*log ybar, which
+    # concentrates them near the mean, and at the vector being scanned nobody
+    # near the mean used, so both branches of the ratio were zero.  The claim
+    # that a higher rho lets delta_d be lower is therefore UNTESTED here.  What
+    # can be said from the construction alone is that both branches carry the
+    # same rho and differ only by delta_d, so rho reaches the ratio only through
+    # the WIDTH of the child's income kernel, sqrt(1-rho^2)*sigma, which narrows
+    # by 7.6 per cent between 0.35 and 0.50.  That is a small lever, not a large
+    # one.
+    rho     = 0.35
     delta_d = 0.36
 
     na    = 60

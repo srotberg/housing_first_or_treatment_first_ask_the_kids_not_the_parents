@@ -124,6 +124,14 @@ SPEC = [
     # the expenditure share carried no information about the preference weight
     # and gam ran to its bound.  With two sizes the household chooses BETWEEN
     # them, the share responds to the weight again, and gam is identified.
+    # aleph WAS DROPPED FROM THIS LIST BY A BAD EDIT AND IS RESTORED.  A
+    # replacement that ran from the gamma comment to the h_lg line swallowed the
+    # aleph entry that sat between them, so the two-rental run calibrated NINE
+    # parameters and left the value of life untargeted for its whole length.  It
+    # showed up as the vsl column vanishing from the gap table, which is exactly
+    # what a reporter that silently drops rows would have hidden -- and this one
+    # did not hide it, it was simply not read.
+    ('aleph',   'vsl',             80.0,     +1, 0.30, 3.0,  60.0),
     ('gam',     'hspend',           0.268,   +1, 0.40, 0.05,  0.60),
     # h2 = 0.4 AND h1_rental = 0.1 ARE SET, on the author's instruction.  Neither
     # carries a moment: gam has the housing share and h_hl has homelessness.
@@ -259,7 +267,14 @@ SPEC = [
     # the step.  What protects the run now is the right thing: the moment is held
     # only when the BASELINE is degenerate, and the corner escape then steps th
     # up until the baseline is a drug economy again.
-    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.001, 1.00),
+    # THE LOWER BOUND COMES DOWN TO 1e-6, on the author's instruction of 13
+    # September: *"lower the bound on omega_c and let it go further down"*.  At
+    # 0.001 it was a bound the run was heading for rather than a range: the
+    # child gap read +788 per cent with omega already at 0.0076 and falling,
+    # because Delta(y) is of order 5 and participation is a threshold, so even a
+    # tiny weight removes a lot of marginal users.  A parameter sitting on its
+    # bound has stopped being calibrated.
+    ('omega',   'child_gap',        0.1834,  +1, 0.30, 1e-6,  1.00),
     # delta_d ON THE CHILD SUD ODDS RATIO OF 2, asked for twice.  Sign standard:
     # a bigger income penalty makes the child poorer, poorer children use more,
     # so the ratio RISES in delta_d.

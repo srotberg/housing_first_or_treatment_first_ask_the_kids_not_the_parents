@@ -5771,7 +5771,7 @@
         !
         ! 0.30 IS THE AUTHOR'S ASSIGNED VALUE and it is the default, so the
         ! instrument below is OFF unless a vector asks for it.
-        real(8) :: rho_intergenerational=0.50d0
+        real(8) :: rho_intergenerational=0.35d0
         !
         ! IT IS 0.50, THE UPPER END OF THE LITERATURE, ON THE AUTHOR'S
         ! INSTRUCTION OF 13 SEPTEMBER: *"i think we should set rho=0.5 so that it
