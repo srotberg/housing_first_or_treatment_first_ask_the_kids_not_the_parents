@@ -53,7 +53,7 @@ import numpy as np
 
 import calibrate as C
 from calibrate import stats
-from stylized import P, with_, child_sud_odds_ratio, child_homeless_odds_ratio
+from stylized import solve_child_damage, P, with_, child_sud_odds_ratio, child_homeless_odds_ratio
 
 # (name, moment, target, sign, adjuster, lo, hi)
 # (name, moment, target, sign, adjuster, lo, hi).  SEVEN CALIBRATED.
@@ -401,7 +401,17 @@ _slow_cache = {}
 
 
 def moments(par, it=0):
-    """Every moment the spec needs, including the two that are not in aggregates."""
+    """Every moment the spec needs, including the two that are not in aggregates.
+
+    THE CHILD DAMAGE IS SOLVED ONCE, HERE, AND EVERYTHING BELOW USES THE SOLVED
+    par.  chdmg is V(1,0) - V(1,1) and it depends on every other parameter, so
+    with_() clears it on any change and stylized raises rather than defaulting
+    to zero.  stats() solves it for its own use, but the odds ratios and the
+    child gap below call period1 DIRECTLY, so they need a par that carries it.
+    Solving here rather than in each of them also means one fixed point per
+    loop rather than four.
+    """
+    par = solve_child_damage(par)
     m = dict(stats(par))
     # pi_eu's moment.  Employment is an i.i.d. draw, so the realised rate is u0
     # among the clean and u1 among those with the disorder.  Exact, no extra solve.
@@ -972,9 +982,44 @@ if __name__ == '__main__':
     # penalty for the ratio and then to calibrate, and only one configuration
     # admits both.  The negative value of life therefore stands at 1.56 per cent
     # of period-2 states and the FLOOR line on every table reports it.
-    FLOOR_ON = False
+    # THE FLOOR IS ON, ON THE AUTHOR'S INSTRUCTION OF 13 SEPTEMBER: *"turn on
+    # y_floor and start the full calibration."*  It was off, for the reasons
+    # measured above, and those reasons have NOT gone away -- they are restated
+    # here so the run is read with them in view rather than discovered again.
+    #
+    # WHY IT WAS ASKED FOR.  chdmg is now solved rather than held at zero, and
+    # switching that channel on at the old vector took the drug share to 0.00001
+    # and users' mean income to 0.13: it deterred every genuine user and left
+    # only the households whose value of life is negative, which buy the
+    # smallest sliver the grid sells purely to acquire the disorder and die
+    # sooner.  The floor is the existing instrument for exactly that.
+    #
+    # THE START IS 0.18614, NOT 0.15, because 0.18614 is the MEASURED value that
+    # clears the negative value of life -- see _states in stylized.py, where it
+    # is 1.86 times the rent on the small unit -- and the whole point of turning
+    # the floor on is to clear it.  Starting below it and stepping up leaves the
+    # pathology live for the early loops, which are the ones that pick the
+    # branch.
+    #
+    # AND THE CONFLICT IS UNRESOLVED AND IS THE WHOLE RISK OF THIS RUN.  The
+    # floor that clears the pathology and the floor that breaks the child SUD
+    # odds ratio are the SAME FLOOR.  At 0.19 the measured scan has delta_d's
+    # sign REVERSED -- a child pushed down by the penalty lands on the floor,
+    # where it is housed and fed, which is a lower-use state than being just
+    # above the floor paying rent out of a thin income -- so the ratio of 2 is
+    # unreachable at any penalty and delta_d walks away to 1.249 with the ratio
+    # at 0.718 and falling.  0.18614 is not meaningfully below 0.19.
+    #
+    # WHAT IS GENUINELY OPEN, and it is why this run is worth making rather than
+    # refusing.  Every one of those measurements HELD THE OTHER PARAMETERS
+    # FIXED.  Here the brackets are free: h_hl is exactly the instrument for
+    # homelessness, and whether the free brackets can answer the floor is the
+    # question this run settles.  If the child SUD odds ratio walks away from 2
+    # while delta_d climbs past 0.6, that is the reversal and the run should be
+    # stopped rather than left to grind.
+    FLOOR_ON = True
     if FLOOR_ON:
-        par = with_(par, y_floor=0.15)
+        par = with_(par, y_floor=0.18614)
     for it in range(50000):
         m = moments(par, it)
         if FLOOR_ON and it % 10 == 0:

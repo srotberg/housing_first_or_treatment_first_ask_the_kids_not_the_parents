@@ -1,0 +1,148 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,microtype,titlesec}
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\setlength{\parskip}{3pt}
+\title{\vspace{-1.3cm}\textbf{The stylized model}}
+\author{}\date{}
+\begin{document}\maketitle\vspace{-3.2em}
+
+\section*{Demography and timing}
+Overlapping generations. A household lives two periods, young then old, and each
+cohort has unit mass. It has one child \emph{while young}; the child leaves at
+the end of that period and enters the model as a young adult, so this period's
+children are next period's young and the cohort entering is unit mass forever.
+The equivalence scale is therefore $\xi$ while young and $1$ when old: the old
+carry no child, in the scale or in the objective.
+
+The disorder is realised at the \emph{transition} between the two periods, and
+survival over that transition depends on it. It cannot be realised inside the
+final period, where death costs nothing because nothing follows it.
+
+\section*{Period 1}
+\textbf{State.} Permanent income $y$. An employment draw and, if income-eligible,
+a voucher draw give realised income and a rent multiplier $(\text{inc},r)$.
+Realised income is floored at $\underline y$. A voucher is means tested at $y_V$,
+arrives with probability $\pi_V$, and cuts the tenant's rent to $\kappa_r$ of the
+market rent.
+
+\textbf{Choices.} Drug purchase $v\ge0$ at price $p_v$, housing
+$h\in\{h_{lg},h_{sm},h_{hl}\}$ --- a large unit, a small unit, or the street,
+which is free and supplies $h_{hl}$ --- and saving $a'\ge0$, subject to
+\[
+  c=\text{inc}-p_v v-\text{rent}(h,r)-a'>0 .
+\]
+
+\textbf{Flow utility.} With $\varphi_h=\gamma(1-\theta)$,
+$\varphi_c=(1-\gamma)(1-\theta)$, $\varphi_q=\theta$ and
+$u(x)=x^{1-\sigma}/(1-\sigma)$,
+\[
+  X_P=\Big(\tfrac{c}{\xi}\Big)^{\varphi_c}\Big(\tfrac{h}{\xi}\Big)^{\varphi_h}(\bar b+v)^{\varphi_q},
+  \qquad
+  X_K=\Big(\tfrac{c}{\xi}\Big)^{\varphi_c}\Big(\tfrac{h}{\xi}\Big)^{\varphi_h}\;\bar b^{\,\varphi_q},
+\]
+\[
+  \text{flow}=u(X_P)+\omega_c(\xi-1)\,u(X_K)+\aleph .
+\]
+$c$ and $h$ are divided by $\xi$ and $v$ is not, because the child consumes none
+of it: the child's bundle carries the Stone--Geary shifter $\bar b$ alone, so the
+drug reaches the child only by taking consumption out of the shared $c$. The
+child's weight is $\xi-1$, so the household's weights sum to $\xi$ --- the same
+$\xi$ that deflates its bundle. $\aleph$ is added once per household, not once
+per member.
+
+\textbf{Onset and mortality.} The disorder arrives at the transition with
+probability $\pi(v)$, positive at any positive purchase and zero at $v=0$.
+Survival is $s_0$ when clean and $s_1<s_0$ with the disorder.
+
+\textbf{The problem.} Choose $(v,h,a')$ to maximise
+\[
+  \boxed{\;
+  \mathcal V=u(X_P)+\omega_c(\xi-1)u(X_K)+\aleph
+  +\beta\Big[(1-\pi(v))s_0W_2(a',y,0)+\pi(v)s_1W_2(a',y,1)\Big]
+  -\beta\,\omega_c\,\Delta(y)\,\pi(v)\;}
+\]
+Survival sits \emph{inside} the expectation over the realised disorder, not
+outside it: written as $\phi\,\mathbb{E}W_2$, the disorder becomes something the
+household wants wherever $W_2<0$. The $v=0$ branch is solved on its own, with the
+clean continuation and the voucher unrevoked, and the household uses if the best
+$v>0$ beats it. The final term is the child's expected loss.
+
+\section*{Period 2 --- terminal}
+Employment is redrawn, at a worse rate with the disorder, and the voucher is
+redrawn subject to the policy rule. Assets are run down and nothing is
+bequeathed, so with $\text{cash}=Ra+\text{inc}$ and $\xi=1$,
+\[
+  W_2(a,y,d)=\max_{h}\;u\big(c^{\varphi_c}h^{\varphi_h}\bar b^{\,\varphi_q}\big)+\aleph,
+  \qquad c=\text{cash}-\text{rent}(h,r).
+\]
+No drug choice, no child term, no recovery.
+
+\textbf{Policy.} Housing First pays the voucher to every eligible household.
+Treatment First withdraws it from any household failing the sobriety condition
+\emph{in the period the voucher is paid} --- current use, or a current disorder.
+That single difference is the whole experiment.
+
+\section*{The child}
+Income is inherited with persistence $\rho$, with the innovation that keeps the
+cross-section stationary:
+\[
+  \log y_c=\rho\log y+(1-\rho)\log\bar y-\delta_d\mathbf 1\{d'=1\}+\varepsilon,
+  \qquad \varepsilon\sim N\!\big(0,(1-\rho^2)\sigma_y^2\big).
+\]
+$\delta_d$ is the only inherited penalty: persistence alone delivers the
+homelessness odds ratio, so there is no separate homelessness penalty and the
+mixture has two types. The child is then run through the model as an adult at its
+own income, which is what gives it a disorder probability at all.
+
+The parent internalises the \emph{loss}, not the level:
+\[
+  \Delta(y)=\mathbb E\big[V_1(y_c)\,\big|\,\text{no penalty}\big]
+           -\mathbb E\big[V_1(y_c)\,\big|\,\text{penalty}\big],
+\]
+both expectations over the same kernel. $V_1$ appears on both sides, so this is a
+fixed point. It is a well behaved one: the $\aleph$ levels cancel in the
+difference, and what survives enters multiplied by $\beta\,\omega_c\,\pi(v)$.
+There is no survival factor on it --- the child becomes an adult whether or not
+the parent lives, so $s_d$ belongs on $W_2$ and on nothing else.
+
+\section*{Lifetime utility}
+$V_1(y)$ is the household's \emph{own} value: the maximised $\mathcal V$ with the
+internalised term $\beta\omega_c\Delta(y)\pi(v)$ added back, so that a planner
+counts the child once rather than once in full and again at $\omega_c$. The
+childhood a cohort actually lives, at its parent's realised allocation, is
+\[
+  W_{\text{child}}=(\xi-1)\big[u(X_K)+\aleph\big],
+  \qquad\text{and}\qquad
+  W=W_{\text{child}}+\beta V_1 ,
+\]
+with childhood lived under the policy in force one period earlier and adulthood
+under the policy in force now. That asymmetry is what a static comparison sums
+away: the cohort the reform lands on has its childhood already behind it.
+
+Consumption equivalents are CRRA, not log. Scaling $c$ by $(1+\lambda)$ in every
+state scales both bundles by $(1+\lambda)^{\varphi_c}$, so every $u$ term scales
+by $(1+\lambda)^{\varphi_c(1-\sigma)}$ while the $\aleph$ terms do not move:
+\[
+  \lambda=\Big(1+\tfrac{dV}{U}\Big)^{\frac{1}{\varphi_c(1-\sigma)}}-1,
+  \qquad U=V-A,\qquad A=\aleph\Big(1+\beta\big[(1-\pi)s_0+\pi s_1\big]\Big),
+\]
+which depends on the \emph{level} through $U$, as the log formula never did.
+
+\section*{What identifies what}
+\begin{tabular}{@{}ll@{\hskip 3em}ll@{}}
+\toprule
+$\gamma$ & housing share of non-drug spending & $\theta$ & drug spending share among users\\
+$\aleph$ & value of a statistical life & $\pi_{\text{base}}$ & disorder rate\\
+$h_{hl}$ & homelessness rate & $\omega_c$ & the child use gap\\
+$\bar b$ & drug participation & $\delta_d$ & the child's SUD odds ratio\\
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent$\sigma$, $\beta$, $\rho$, $s_0$, the unemployment rates, the unit sizes
+and the voucher rule are set rather than calibrated. Participation and the
+disorder rate are tied by $\text{sud}=\text{participation}\times\pi_{\text{base}}$,
+so they cannot be hit independently. $\omega_c$ acts in two places, the flow and
+the continuation, and the continuation half is $\Delta(y)$.
+\end{document}
