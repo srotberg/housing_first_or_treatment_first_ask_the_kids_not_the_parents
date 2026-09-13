@@ -75,11 +75,25 @@ exit" it stays live throughout.  The alternative that keeps a deterrent
 throughout is a GRADED measure, the fraction of childhood exposed, at the cost of
 a continuous state rather than a binary.
 
-**THE STYLIZED MODEL CANNOT CHECK THIS ONE** -- TRANSITION_LESSONS section 7 in
-reverse.  It has no recovery at all, because period 2 is terminal and there is
-nothing to recover into, so there exposure and onset-at-the-transition are the
-same object.  This is a quantitative-model-only issue and it does not inherit a
-stylized search.
+**THE STYLIZED MODEL CANNOT CHECK THIS ONE, AND THE AUTHOR HAS CONFIRMED IT
+DOES NOT HAVE TO** -- TRANSITION_LESSONS section 7 in reverse.  Author, 13
+September: *"here, you dont need to track whether the parent had SUD during
+their life or not because there is only 1 period of parenthood.  but in the full
+model, you will need to include it."*
+
+There are two reasons and either is sufficient.  Parenthood lasts ONE period, so
+there is no earlier childhood period for an exposure to have happened in; and
+the stylized model has no recovery at all, because period 2 is terminal and
+there is nothing to recover into.  Exposure and onset-at-the-transition are the
+same object there.  So the exposure state is a QUANTITATIVE-MODEL-ONLY build, it
+does not inherit a stylized search, and no stylized check is owed before it is
+closed.
+
+STILL OPEN, and it is the only part of this the author has not settled: BINARY
+or GRADED.  A binary "ever exposed" removes the child-penalty deterrent for the
+rest of a childhood once a parent has used; the fraction of childhood exposed
+keeps a deterrent throughout, at the cost of a continuous state rather than a
+binary.
 
 ## 13 September 14:25 UTC -- THE AUTHOR HAS PAUSED THE QUANTITATIVE CALIBRATION.
 ## THE ENGINE LOOP DOES NOT RELAUNCH IT. READ THIS BEFORE FIRING.
