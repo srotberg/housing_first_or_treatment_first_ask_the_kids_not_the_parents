@@ -1,10 +1,10 @@
 \documentclass[11pt]{article}
-\usepackage[margin=1.1in]{geometry}
+\usepackage[margin=1.05in]{geometry}
 \usepackage{amsmath,amssymb,booktabs,microtype}
 \usepackage[colorlinks=true,linkcolor=black,urlcolor=black]{hyperref}
 \setlength{\parskip}{4pt}
 \title{\textbf{A child lives with the young}\\[2pt]
-\large The author's rule, what it settles, and the one place the code disagrees with it}
+\large The rule, the two periods written out, and what full weight on the child costs}
 \author{}
 \date{13 September 2026 \quad\textbullet\quad stylized model}
 \begin{document}\maketitle\vspace{-2.5em}
@@ -22,72 +22,174 @@ so they only care about their own consumption and not the child's.''}
 child is already young at that time.''}
 \end{quote}
 
-\noindent Three statements, and they are one statement. A child is in the
-household for exactly one period, the parent's period~1. It leaves at the end of
-it, and it leaves as a young adult, which is why the cohort arriving each period
-has mass one. Everything that happens to the parent after that happens to
-somebody the child no longer lives with. So:
+\noindent A child is in the household for exactly one period, the parent's
+period~1. It leaves at the end of it, and it leaves as a young adult, which is
+why the cohort arriving each period has mass one. Everything that happens to the
+parent after that happens to somebody the child no longer lives with. So the
+equivalence scale is $\xi=\sqrt2$ in period~1 and $1$ in period~2; the old carry
+no child term; and the last moment that can transmit anything to the child is
+the \emph{transition} out of period~1, where the disorder is realised.
 
-\begin{enumerate}\itemsep2pt
-\item the equivalence scale is $\xi=\sqrt2$ in period~1 and $1$ in period~2;
-\item the old carry no child term --- they value their own consumption alone;
-\item the last moment that can transmit anything to the child is the
-\emph{transition} out of period~1, where the disorder is realised. A parent who
-dies in period~2 with the disorder transmits nothing, because the child was
-already an adult when it happened.
-\end{enumerate}
-
-\section{The demography closes exactly}
-
-Each young household has one child. At a date there is mass $1$ of children,
-mass $1$ of young, and mass $\bar s = \phi_0(1-\kappa\bar\pi) = 0.9067$ of old.
+\paragraph{The demography closes exactly.} At a date there is mass $1$ of
+children, mass $1$ of young, and mass $\bar s=\phi_0(1-\kappa\bar\pi)$ of old.
 This period's children are next period's young, so the cohort entering is mass
-$1$ forever: no child is ever unhoused between households, and no period of a
-person's life is spent in nobody's household. That is the accounting the rule
-buys, and it is what fails if a child straddles the transition --- then a
-parent's death truncates a childhood and the childhood flow has to be
-survival-weighted.
+$1$ forever: no child is ever between households, and no period of a life is
+spent in nobody's household. That is what fails if a child straddles the
+transition --- then a parent's death truncates a childhood and the childhood
+flow has to be survival-weighted.
 
-\section{The weights add up, which is why the child's weight is $\sqrt2-1$}
-
+\paragraph{The weights add up, which is why the child's weight is $\sqrt2-1$.}
 A household of two counts as $\xi=\sqrt2$ adult equivalents and reaches the
-utility of a single person holding $1/\xi$ of its resources. Give the parent
-weight $1$ and the child weight $\xi-1$ and the household's weights sum to
-$\xi$ exactly: with no drugs, $X_P=X_K=X$ and
-\[
-  u(X_P) \;+\; (\xi-1)\,u(X_K) \;=\; \xi\,u\!\left(\tfrac{c}{\xi},\tfrac{h}{\xi}\right),
-\]
-so nothing is created or lost by the household having a child rather than not.
-A weight of $1$ for the child would break that identity: it would count two
-people at full weight while deflating their bundle as though there were only
-$\sqrt2$ of them. $\xi-1=0.41421$ is the weight the scale already implies.
+utility of one person holding $1/\xi$ of its resources. Give the parent weight
+$1$ and the child $\xi-1$ and the weights sum to $\xi$ exactly: with no drugs
+$X_P=X_K=X$ and $u(X_P)+(\xi-1)u(X_K)=\xi\,u(c/\xi,h/\xi)$, so nothing is
+created or lost by the household having a child. A weight of $1$ would count two
+people in full while deflating their bundle as though there were $\sqrt2$.
 
-\section{The childhood welfare formula that follows}
+\section{The two periods, written out}
 
-The child's bundle in the parent's household, with the Stone--Geary shifter
-alone because the child consumes none of the drug:
+\paragraph{Period 2 --- terminal, no child.} State: assets $a$, income $y$,
+disorder $d'\in\{0,1\}$. Employment is drawn ($u_0$ clean, $u_1$ with the
+disorder), a voucher is drawn subject to the policy rule, housing is chosen from
+$\{$large rental, small rental, street$\}$. Assets are run down and nothing is
+bequeathed, so $c=Ra+\text{inc}-\text{rent}$. There is no drug choice.
 \[
-  X_K \;=\; \Big(\tfrac{c}{\xi}\Big)^{\varphi_c}\Big(\tfrac{h}{\xi}\Big)^{\varphi_h}\,\bar b^{\,\varphi_q},
+  X_{P2}=c^{\varphi_c}h^{\varphi_h}\bar b^{\,\varphi_q},
+  \qquad
+  W_2(a,y,d')=\max_{h}\; u(X_{P2})+\aleph,
   \qquad u(x)=\tfrac{x^{1-\sigma}}{1-\sigma}.
 \]
-Childhood lasts one period and ends before any mortality is realised, so it
-carries no survival weight. A cohort's lifetime utility is
-\[
-  \boxed{\;W_t \;=\; (\xi-1)\big[u(X_{K,t-1}) + \aleph\big] \;+\; \beta\, V_1(y_t)\;}
-\]
-where $X_{K,t-1}$ is averaged over the period-1 distribution of parents at each
-household's \emph{realised} allocation --- a parent who buys drugs contributes
-its using allocation --- and $V_1$ is the child's own adult value at the income
-its inherited penalty leaves it. The childhood is lived under the policy in
-force at $t-1$ and the adulthood under the policy at $t$; that asymmetry is the
-whole of the transition. Two notes on the boxed line. The $\aleph$ term is a
-switch: a childhood is a period of life, but $\aleph$ is added once per
-household in the Fortran rather than once per member, so counting it for the
-child too is arguable in both directions. And the $\beta$ is currently absent
-from the code, which adds \texttt{adult + kid}; at this calibration
-$\beta=1.0$, so the omission has never shown up in a number.
+$\xi=1$ and the child term is absent. This is already the rule.
 
-\section{Three of the four parts are already built}
+\paragraph{Period 1 --- the child is present.} State: income $y$, an employment
+draw and a voucher draw, giving $(\text{inc},r_{\text{mul}})$. The household
+chooses $v\ge0$, housing and saving $a'$, with
+$c=\text{inc}-p_v v-\text{rent}-a'$ and $\xi=\sqrt2$:
+\[
+  X_P=\Big(\tfrac{c}{\xi}\Big)^{\varphi_c}\Big(\tfrac{h}{\xi}\Big)^{\varphi_h}(\bar b+v)^{\varphi_q},
+  \qquad
+  X_K=\Big(\tfrac{c}{\xi}\Big)^{\varphi_c}\Big(\tfrac{h}{\xi}\Big)^{\varphi_h}\ \bar b^{\,\varphi_q}.
+\]
+The child's bundle carries the Stone--Geary shifter alone: it consumes none of
+the drug, so the drug reaches it only by taking consumption out of the shared
+$c$. Onset at the transition is $\pi(v)=1-e^{-\lambda v}$, and survival is
+$s_0=\phi_0$ clean, $s_1=\phi_0(1-\kappa)$ with the disorder, \emph{inside} the
+expectation. The household maximises
+\[
+  V \;=\; \underbrace{u(X_P)+\omega_c(\xi-1)u(X_K)+\aleph}_{\text{flow}}
+  \;+\;\beta\big[(1-\pi(v))s_0W_2(a',y,0)+\pi(v)s_1W_2(a',y,1)\big]
+  \;-\;\underbrace{\omega_c\cdot\texttt{chdmg}\cdot\pi(v)}_{\text{continuation half}} .
+\]
+
+\noindent So $\omega_c$ acts in \textbf{two} places, and only one of them is
+switched on. \texttt{chdmg} is the child's expected lifetime loss, it is
+declared $0.0$ at \texttt{stylized.py:641} and nothing sets it. The continuation
+half has never been live in any calibration; the reduced form was a placeholder
+for a child value function that was never built.
+
+\section{Full weight on the child}
+
+\begin{quote}
+\emph{``the young household should put the full weight on their child both in
+contemporaneous consumption and the future value of their life because they
+become adults right after.''}
+\end{quote}
+
+\noindent That is $\omega_c=1$ in the flow, and \texttt{chdmg} replaced by the
+child's actual value function. The child becomes an adult exactly when the
+parent becomes old, so both arrive one period later and take the same $\beta$:
+\[
+  \boxed{\;
+  V_1(y)=u(X_P)+(\xi-1)u(X_K)+\aleph
+  \;+\;\beta\,\mathbb{E}_{d'}\big[\phi(d')W_2(a',y,d')\big]
+  \;+\;\beta\,\mathbb{E}_{d'}\big[V_1(y'(y,d'))\big]\;}
+\]
+\[
+  \log y' = \rho\log y + (1-\rho)\log\bar y - \delta_d\mathbf{1}\{d'=1\},
+  \qquad \rho=0.35 .
+\]
+The child's survival is not the parent's --- the child lives whether or not the
+parent dies --- so $V_1(y')$ carries no $\phi(d')$; only $W_2$ does. And
+\texttt{chdmg} falls out as what it always meant,
+$V_1(y'_{\text{clean}})-V_1(y'_{\text{pen}})$.
+
+\paragraph{Four things it forces.}
+\begin{enumerate}\itemsep3pt
+\item \textbf{It becomes a fixed point.} $V_1$ is on both sides, so period~1 is
+no longer a backward solve: it needs iteration to a fixed point over the income
+grid. At $\beta=0.86038$ the dynastic multiplier is $1/(1-\beta)=7.16$, so the
+level of $V_1$ rises by roughly seven-fold and the CEV, which needs a level, has
+to be recomputed against it. The mortality trade-off is unaffected: the dynastic
+term does not contain $\phi_0$, so it drops out of the VSL derivative.
+\item \textbf{$\omega_c$ is not a free dial.} It is calibrated, identified on
+the child use gap, and came out at $0.01518$. Setting it to $1$ overrides a
+moment the model currently matches to $+0.3$ per cent.
+\item \textbf{Full internalisation removes the externality.} At
+$\omega_c\approx0$ the damage to the child is a pure externality and there is a
+child-based case for policy. At $\omega_c=1$ the parent already weighs the
+child's loss in full when choosing $v$. That may be the benchmark you want, but
+it is the mechanism, not a detail.
+\item \textbf{Welfare then double-counts.} If the parent internalises the child
+fully, $V_1$ already contains the child's whole lifetime, so summing $V_1$ over
+cohorts counts each generation repeatedly. The code half-handles this and
+handles it imperfectly: \texttt{own = tot + pen} adds the continuation penalty
+back but leaves $\omega_c(\xi-1)u(X_K)$ inside $V_1$, so childhood is counted
+$1+\omega_c$ times --- a $0.5$ per cent overcount today, a full double count at
+$\omega_c=1$.
+\end{enumerate}
+
+\paragraph{The argument in its favour.} $\omega_c=1$ is the only value
+consistent with the equivalence scale. The household's weights then sum to
+$1+(\xi-1)=\xi=\sqrt2$, the same $\sqrt2$ that deflates its bundle. Any
+$\omega_c<1$ means the household spends as $\sqrt2$ people and is counted as
+fewer.
+
+\section{$\beta=0.995$ annual, and what it costs before recalibration}
+
+$0.995^{30}=0.86038$ over a thirty-year period. That is what
+\texttt{stylized.py} carries as its default and what the September~13 sweep
+overrode to $\beta=1.0$, at its upper bound. Setting it back is necessary for
+the dynastic term --- at $\beta=1$ the sum $V_1=\text{flow}+V_1(\text{child})
++V_1(\text{grandchild})+\dots$ adds about $9.6$ per generation forever and does
+not converge.
+
+\textbf{It cannot simply be substituted in.} Holding every other parameter at
+the calibrated vector and moving $\beta$ alone:
+
+\medskip
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+moment & target & $\beta=1.0$ & $\beta=0.86038$ & gap at $0.86038$\\
+\midrule
+drug participation            & 0.08901 & 0.08871 & 0.32387 & $+264\%$\\
+population SUD rate           & 0.03680 & 0.03668 & 0.13392 & $+264\%$\\
+users' income / average, $r_{\text{use}}$ & 0.74000 & 0.73526 & \textbf{1.77923} & $+140\%$\\
+drug spending / income, users & 0.14098 & 0.14132 & 0.15855 & $+12.5\%$\\
+value of a statistical life   & 80.000  & 79.999  & 68.829  & $-14.0\%$\\
+SUD share of the homeless     & 0.21700 & 0.21701 & 0.24871 & $+14.6\%$\\
+housing / non-drug spending   & 0.26800 & 0.26686 & 0.28077 & $+4.8\%$\\
+homelessness rate             & 0.01000 & 0.00962 & 0.01026 & $+2.6\%$\\
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent The direction is the model's own logic --- a less patient household
+weighs a thirty-year consequence less and uses more --- but the size of it
+matters, and $r_{\text{use}}=1.78$ is the tell. \textbf{Users richer than
+average is the corner branch}, the one \texttt{recalibrate.py} records a failed
+sweep on: \emph{``participation 66 per cent, users RICHER than average at
+$r_{\text{use}}$ 1.36, with four of the eight parameters cornered on their
+bounds trying to climb back.''} So $\beta=0.86038$ needs a full recalibration,
+and it must not be started from the $\beta=1$ vector, because the same file
+records that the starting point is what picks the branch. Its interior-branch
+start is $h_{hl}=10^{-4}$, $\aleph=15.0$, $\theta=0.16$, $u_1=0.127$,
+$\pi_{\text{base}}=0.40$, $\bar b=0.0282$.
+
+The childhood level barely moves ($1.43349\to1.41912$), because a childhood is
+period-1 flow and carries almost no discounting. The adult value falls
+$8.19940\to6.77100$, which is the continuation being discounted.
+
+\section{Three of the four parts are already built; one is contradicted}
 
 \begin{tabular}{@{}p{0.40\textwidth}p{0.30\textwidth}p{0.24\textwidth}@{}}
 \toprule
@@ -101,51 +203,40 @@ nothing after the child leaves transmits & \texttt{transition.py:119}, \verb|ev|
 \end{tabular}
 
 \medskip
-\noindent The last row is the substance. The child's penalty has two legs, and
-they key on different periods:
+\noindent The child's penalty has two legs and they key on different periods.
+The \textbf{SUD leg} is \verb|use_prob|$\times$\verb|prog|: the chance the parent
+uses in period~1 times the chance a user acquires the disorder at the
+transition. That is the rule already. The \textbf{homelessness leg} is
+\verb|terminal_homeless_prob|, the parent's chance of being on the street
+\emph{in period~2} --- under the rule, exactly the state that cannot reach a
+child who has left.
 
-\begin{itemize}\itemsep2pt
-\item \textbf{the SUD leg} is \verb|use_prob|$\,\times\,$\verb|prog|: the chance the
-parent uses in period~1 times the chance a user acquires the disorder at the
-transition. That is exactly the rule, already.
-\item \textbf{the homelessness leg} is \verb|terminal_homeless_prob|, which is the
-parent's chance of being on the street \emph{in period~2}. Its docstring says
-so in as many words: ``THIS IS WHAT THE CHILD'S PENALTY KEYS ON \dots\ It is
-when the household dies.'' Under the rule above, that is precisely the state
-that cannot reach the child.
-\end{itemize}
-
-\noindent This is a live contradiction with a standing instruction. Period-2
-keying was not an accident: it was put there so that Treatment First's own
+Period-2 keying was deliberate: it was put there so Treatment First's own
 revocations could reach a child, since the voucher is withdrawn at the
-transition and period-1 homelessness therefore cannot register it. Keying the
-leg on period~1 gives that up.
-
-It does not, however, switch conditionality off. Treatment First still reaches
-the child through the SUD leg, because it changes how much people use and hence
-$\verb|use|\times\verb|prog|$. What is lost is only the homelessness half of the
-revocation. \textbf{This is a modelling call, not a bug to be closed, so nothing
-has been changed.}
+transition and period-1 homelessness cannot register it.
+\texttt{TRANSITION\_LESSONS.md} carries it as a standing instruction. Both
+cannot hold, so \textbf{nothing has been changed}. Note that keying on period~1
+does not switch conditionality off: it still reaches the child through the SUD
+leg by moving how much people use. What is lost is the homelessness half of the
+revocation.
 
 \section{``SUD transmission is smaller'' --- where that bites}
 
-It does not bite in the stylized model. Drugs are chosen in period~1 only and
-the disorder is realised at the transition, so there is no old-acquired SUD to
-remove: the transmitted object is already the period-1 one. The share of
-children born behind the SUD penalty stays at $3.86$ per cent.
+Not in the stylized model. Drugs are chosen in period~1 only and the disorder is
+realised at the transition, so there is no old-acquired SUD to remove: the
+transmitted object already \emph{is} the period-1 one, and the share of children
+born behind the SUD penalty stays at $3.86$ per cent.
 
-It bites in the \emph{quantitative} model, where drug use is chosen at every age
-and a parent can acquire the disorder long after its children have left. There
-the rule genuinely cuts the transmitting population, and by construction it cuts
-it to the parents who acquired the disorder while the children were still at
-home. One consequence to expect rather than to be surprised by: $\delta_d$, the
-size of the penalty, is calibrated to match the child's SUD odds ratio, so a
-smaller transmitting share is met by a \emph{larger} fitted penalty. The share
-falls; the product is pinned by the target.
+It bites in the \emph{quantitative} model, where use is chosen at every age and
+a parent can acquire the disorder long after its children have left. There the
+rule genuinely cuts the transmitting population. Expect $\delta_d$ to rise when
+it does: the penalty is calibrated to the child's SUD odds ratio, so a smaller
+transmitting share is met by a larger fitted penalty and the product stays
+pinned by the target. This has not been measured.
 
-\section{The numbers this rests on}
+\section{The numbers, at the calibrated $\beta=1$ vector}
 
-\begin{tabular}{@{}lr@{\hskip 2.2em}lr@{}}
+\begin{tabular}{@{}lr@{\hskip 2.0em}lr@{}}
 \toprule
 \multicolumn{2}{@{}l}{\textbf{the child in the household}} & \multicolumn{2}{l}{\textbf{what the child inherits}}\\
 equivalence scale $\xi$                & 1.41421 & participation                   & 0.08871 \\
@@ -164,24 +255,21 @@ $u(X_P)$                               & $-7.53432$ & childhood, $(\xi-1)\aleph$
 \multicolumn{2}{@{}l}{\textbf{masses at a date}}           & adult value $V_1$               & $8.19940$\\
 children                               & 1.00000 & lifetime                        & $9.63289$\\
 young                                  & 1.00000 & childhood's share               & $14.88\%$\\
-old                                    & 0.90672 & what the parent itself books, $\omega_c(\xi-1)u(X_K)$ & $-0.04743$\\
+old                                    & 0.90672 & parent books, $\omega_c(\xi-1)u(X_K)$ & $-0.04743$\\
 \bottomrule
 \end{tabular}
 
 \medskip
-\noindent For scale: one per cent of consumption in every state is worth
-$0.0613$ in these units at the adult value. The parent's own valuation of its
-child, $\omega_c(\xi-1)u(X_K)=-0.047$, is therefore below one per cent of
-consumption --- $\omega_c$ calibrated to $0.0152$ is what makes the damage to
-the child close to a pure externality, which is the point of the parameter.
+\noindent For scale, one per cent of consumption in every state is worth
+$0.0613$ in these units at the adult value, so the parent's own valuation of its
+child, $-0.047$, is below one per cent of consumption --- which is what makes
+the damage close to a pure externality at the fitted $\omega_c$.
 
 \medskip
 \noindent Parameters: $\varphi_c=0.48189$, $\varphi_h=0.37355$,
 $\varphi_q=\theta=0.14456$, $\sigma=2$, $\aleph=11.00431$, $\bar b=0.05785$,
-$\omega_c=0.01518$, $\beta=1.0$, $\phi_0=0.91$, $\kappa=0.09839$,
-$\delta_d=0.57906$. Calibrated vector \texttt{calibrated\_sep13.json},
-iteration 1350. \emph{$\beta$ came to rest at $1.0$, which is its upper bound
-and which \texttt{stylized.py} records as having been tried and rejected on an
-earlier calibration; flagged, not acted on.}
+$\omega_c=0.01518$, $\phi_0=0.91$, $\kappa=0.09839$, $\delta_d=0.57906$,
+$\rho=0.35$. Vector \texttt{calibrated\_sep13.json}, iteration 1350, which
+carries $\beta=1.0$.
 
 \end{document}
