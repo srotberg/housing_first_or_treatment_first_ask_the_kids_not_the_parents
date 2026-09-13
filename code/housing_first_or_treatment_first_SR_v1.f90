@@ -4176,7 +4176,18 @@
         ! a file at the end of each loop and read them at startup, so a killed run
         ! resumes instead of beginning again; that is not done yet, and this run
         ! having been killed once is what made it worth doing at all.
-        real(8) :: size_homelessness=(1-perceived_probability_lower)*0.304+perceived_probability_lower*0.3
+        ! h_1, AND IT IS WHAT CARRIES HOMELESSNESS.  The author, 13 September:
+        ! *"pick h1 so that you have the right homelessness rate"*.  That is
+        ! already the wiring -- size_homelessness is bracketed on
+        ! model_fraction_homeless -- so nothing changes about the bracket.
+        !
+        ! WHAT CHANGES IS THE DECLARATION, which read 0.304 while the parameter
+        ! calibrates to about 2.4e-05, four orders of magnitude away.  It is a
+        ! starting value for a calibrated parameter, so it never mattered while a
+        ! vector file was supplied, and it mattered the moment one was not: the
+        ! declared ladder put the street ABOVE the cheapest rental and the run
+        ! script refused to start.  It now starts where the parameter lives.
+        real(8) :: size_homelessness=2.4d-5
 
         ! THE NON-HOUSING CONSUMPTION PENALTY OF THE STREET, psi. Consumption is
         ! worth (1-psi) of itself to a homeless household: no storage, no cooking,
@@ -5203,7 +5214,21 @@
         real(8) :: previous_gap_housing_status_grid_expander=0
         integer :: have_gap_housing_status_grid_expander=0
         
-        real(8) :: smallest_rental_relative_to_lowest_income=(1-perceived_probability_lower)*0.0361+perceived_probability_lower*0.19
+        ! PINNED AT 0.1, on the author's instruction of 13 September: *"you can
+        ! also pin h2 to some reasonable number, say 0.05 or 0.1"*.  It was
+        ! ALREADY pinned -- smallest_house_size_adjuster is zero and the
+        ! do-while term is gated on that -- but only because the vector file
+        ! carried 0.10133; the DECLARATION read 0.0361, and that is the number
+        ! that made run_one_point.sh's inverted-ladder guard refuse to start on
+        ! 13 September, because it sits below the declared street size.  A
+        ! declaration four times away from where the parameter lives is a trap
+        ! whatever the vector file says.
+        !
+        ! Pinning costs emp_homeless its instrument -- h_2 is what was set on the
+        ! employed share of the homeless -- which is the same knowing cost paid
+        ! when the death risk was pinned and y_u lost its own.  The author's
+        ! range for it, 0.35 to 0.5, is now a CHECK rather than a target.
+        real(8) :: smallest_rental_relative_to_lowest_income=0.1d0
         ! ON, and the sign is the same story as the expander. A larger smallest
         ! unit is a more expensive smallest unit, and the households that took it
         ! have nothing cheaper to move to except the street, so raising it pushes
