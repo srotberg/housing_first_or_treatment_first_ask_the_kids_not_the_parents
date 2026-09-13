@@ -102,6 +102,27 @@ def _solve_at(fn, s):
     return np.array([fn(float(y) * float(s)) for y in YG], dtype=float)
 
 
+def _ready(par, policy, pV):
+    """A par at (policy, pV) WITH THE CHILD DAMAGE SOLVED ON IT.
+
+    with_() clears chdmg on any parameter change and _chdmg_at now RAISES
+    rather than defaulting to zero, so every with_() in this file that is
+    followed by a period1 call has to re-solve.  Exactly one of the seven did
+    -- _policy_grids -- and the other six raised the moment the sentinel
+    replaced the silent zero.
+
+    It is the same shape as the bug found in the quantitative model the same
+    day: a term written out at one site and missing at the five others that
+    needed it.  The fix is the same one -- put it in a function and let every
+    site call it -- because a rule that lives at one call site is a rule that
+    is already broken at the others.
+    """
+    q = with_(par, policy=policy)
+    if pV is not None:
+        q = with_(q, pV=pV)
+    return solve_child_damage(q, policy)
+
+
 def _policy_grids(par, policy, pV):
     """V1, the probability of ending with the disorder, and the probability of
     being unhoused, at every income node under one policy."""
@@ -110,7 +131,7 @@ def _policy_grids(par, policy, pV):
     # pi_V rather than inherited: a policy that changes how much people use
     # changes what a child stands to lose, which is the whole point of the
     # channel.
-    q = solve_child_damage(with_(par, policy=policy, pV=pV), policy)
+    q = _ready(par, policy, pV)
     v1 = np.array([value1(q, y, policy) for y in YG])
     use = np.array([use_prob(q, y, policy) for y in YG], dtype=float)
     # TWO HOMELESSNESS OBJECTS, and they are not the same one. What a cohort
@@ -145,7 +166,7 @@ def _hl_by_shift(par, policy, pV):
     homelessness PATH is still reported, and a cohort's rate has to be read at
     the shifted incomes its penalty type puts it at.
     """
-    q = with_(par, policy=policy, pV=pV)
+    q = _ready(par, policy, pV)
     return {float(s): np.clip(
         _solve_at(lambda y: homeless_prob(q, y, policy), s), 0.0, 1.0)
         for s in _shifts(par)}
@@ -154,8 +175,8 @@ def _hl_by_shift(par, policy, pV):
 def _bridge_hl_by_shift(par, new_policy, pv_new):
     """The same, for the generation the reform catches mid life."""
     from stylized import period1, solve_period2, _pid
-    old = with_(par, pV=par.pV, policy=BASE_POLICY)
-    new = with_(par, pV=pv_new, policy=new_policy)
+    old = _ready(par, BASE_POLICY, par.pV)
+    new = _ready(par, new_policy, pv_new)
 
     def one(y):
         ag, _, H2c, _, _, _ = solve_period2(new, y, new_policy, used=0)
@@ -215,8 +236,8 @@ def _bridge_grids(par, new_policy, pv_new):
     policy; being unhoused can happen in either period and so does.
     """
     from stylized import period1, solve_period2, _pid
-    old = with_(par, pV=par.pV, policy=BASE_POLICY)
-    new = with_(par, pV=pv_new, policy=new_policy)
+    old = _ready(par, BASE_POLICY, par.pV)
+    new = _ready(par, new_policy, pv_new)
     sud = np.zeros(len(YG))
     ev = np.zeros(len(YG))
     for i, y in enumerate(YG):
@@ -342,9 +363,9 @@ def caught(par, pv_new=PV_OPT):
     revocation itself creates, integrating over the assets they actually saved
     and the disorder they actually drew under the old programme."""
     from stylized import period1, solve_period2, _pid
-    old = with_(par, pV=par.pV, policy=BASE_POLICY)
-    new_h = with_(par, pV=pv_new, policy='HF')
-    new_t = with_(par, pV=pv_new, policy='TF')
+    old = _ready(par, BASE_POLICY, par.pV)
+    new_h = _ready(par, 'HF', pv_new)
+    new_t = _ready(par, 'TF', pv_new)
     # THEY ARE NOT DRAWN FROM THE BASE DISTRIBUTION. This generation was itself
     # born into the pre reform rest point, so its income carries whatever
     # penalty its own parent handed it. Iterating over the unshifted grid
@@ -416,13 +437,13 @@ def caught_coverage(par, pv_new=PV_OPT):
     section.
     """
     from stylized import period1, _states
-    old = with_(par, pV=par.pV, policy=BASE_POLICY)
+    old = _ready(par, BASE_POLICY, par.pV)
     v1b, sudb, hlb, evb = _policy_grids(par, BASE_POLICY, par.pV)
     p_mix = _rest_point(sudb, _hl_by_shift(par, BASE_POLICY, par.pV), par)
     out = {}
     for lab, pol, pv in (('old', BASE_POLICY, par.pV),
                          ('hf', 'HF', pv_new), ('tf', 'TF', pv_new)):
-        new = with_(par, pV=pv, policy=pol)
+        new = _ready(par, pol, pv)
         cov = mass = 0.0
         for sft, psft in zip(_shifts(par), p_mix):
             if psft <= 0.0:
