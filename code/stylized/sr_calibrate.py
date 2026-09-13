@@ -164,7 +164,25 @@ SPEC = [
     # pinned by hspend, so the affordability margin moves with it and h_hl works
     # on who CHOOSES the street rather than on who is priced out.  Whether it
     # can reach 0.0100 from there is what this run settles.
-    ('h_hl',    'homeless',         0.0100,  +1, 0.40, 1e-7,  0.05),
+    # THE INCOME FLOOR CARRIES HOMELESSNESS, NOT THE STREET.  The author, 13
+    # September: *"h1 is 0 and still you have 10% homelessness? it means you
+    # have to raise the lowest income."*
+    #
+    # THE DIAGNOSIS IS EXACT AND THE LOG SHOWS IT.  By iteration 300 h_hl was on
+    # its lower bound of ZERO -- a street worth nothing at all -- and
+    # homelessness was still 0.1085 against a target of 0.0100.  Nobody there is
+    # CHOOSING the street; they cannot afford the rent at any level of misery,
+    # which is the one thing street quality can never reach.  h_hl was retired
+    # once today for this reason and put back on the argument that a free rent
+    # would restore its grip.  It did not: the rent settled at 0.295 and the
+    # priced-out population survived it.
+    #
+    # y_floor is exactly the margin: it sets who can afford the rent, which is
+    # independent of what the rent buys.  The sign is NEGATIVE -- a higher floor
+    # houses more people -- and the moment bounds it on its own, since a floor
+    # above the rent gives homelessness of zero and the bisection is pulled
+    # back.  h_hl becomes a SET parameter, the quality of the street.
+    ('y_floor', 'homeless',         0.0100,  -1, 0.40, 0.01,  0.50),
     # b's CEILING IS 1.0, author 12 September: *"i think you need to have a very
     # high b"*.  At theta = 0.25 the model starts with 72 to 86 per cent of
     # households using, and b is the only thing that brings that down: measured
@@ -1090,9 +1108,16 @@ if __name__ == '__main__':
             # but it can never house the whole distribution, so homelessness
             # stays a live margin.  If the pathology survives at the cap, that
             # is a fact to report rather than something to outrun.
-            cap = 0.98 * par.pr * par.h_lg
-            if nv > 0.0 and par.y_floor < cap:
-                par = with_(par, y_floor=min(par.y_floor + FLOOR_STEP, cap))
+            # THE AUTO-STEP IS OFF: y_floor IS BRACKETED NOW.
+            #
+            # It is in SPEC, on homelessness, so a stepper that also moved it
+            # every ten iterations would be a second controller fighting the
+            # first -- and the step is blind, which is how the previous run
+            # walked the floor past the rent and killed homelessness outright.
+            # The pathology is still REPORTED on every table, and if it survives
+            # at the floor the bracket chooses, that is a fact to report rather
+            # than something to outrun.
+            pass
         if it % 50 == 0 or it == 49999:
             w = table(par, m, it)
             if w < 2.0:
