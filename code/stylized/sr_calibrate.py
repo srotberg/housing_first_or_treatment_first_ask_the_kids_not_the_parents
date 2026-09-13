@@ -194,7 +194,16 @@ SPEC = [
     # comparison between two DIFFERENT economies, the baseline on the corner and
     # the counterfactual on the interior branch, which is the artefact the branch
     # guard exists to reject and which once read 1.4984 against the same target.
-    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.001, 0.0088),
+    # THE BOUND IS BACK OFF.  It was put at 0.0125 and then 0.0088 to keep omega
+    # on the interior side of its cliff, and the justification was the branch
+    # test above, which does not survive.  Crossing the cliff is a real response.
+    # The step is 0.05 per cent a pass, on the author's instruction of 13
+    # September -- *"you just have to move omega_c maybe by 0.05% each
+    # iteration"* -- and it was already there; the bound was what stopped it, not
+    # the step.  What protects the run now is the right thing: the moment is held
+    # only when the BASELINE is degenerate, and the corner escape then steps th
+    # up until the baseline is a drug economy again.
+    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.001, 1.00),
     # delta_d ON THE CHILD SUD ODDS RATIO OF 2, asked for twice.  Sign standard:
     # a bigger income penalty makes the child poorer, poorer children use more,
     # so the ratio RISES in delta_d.
@@ -425,9 +434,35 @@ def moments(par, it=0):
             #
             # A factor of two in the drug spending share is far more than a
             # weight of 0.11 can do at the margin, so it is the branch test.
-            same = 0.5 < cf['dshare'] / max(m['dshare'], 1e-12) < 2.0
+            # THE TEST IS ON THE BASELINE ALONE.  The author, 13 September:
+            # *"i dont understand why moving omegac=0 and keeping everything
+            # else constant measures a different economy that is not suitable
+            # for comparison?"*  They are right and the old test could not be
+            # defended.
+            #
+            # Setting omega to zero with everything else held IS the comparative
+            # static this moment is defined as.  If the economy answers by a
+            # block of households flipping onto the other drug branch, that is
+            # omega_c's effect -- large and discontinuous, but the model's real
+            # answer.  "The response was big" is not a reason to throw the
+            # measurement away, and the old test threw away every such case by
+            # requiring the two sides to have drug shares within a factor of two
+            # of each other.
+            #
+            # WHAT IS ACTUALLY INVALID is a degenerate BASELINE: when the
+            # baseline sits on the corner, its "users" are buying the smallest
+            # grid quantity purely to shorten their lives, so baseline
+            # participation is not measuring drug use and the ratio has a
+            # meaningless denominator.  That is the one case that was ever
+            # verified -- at omega 0.05 the baseline drug share was 0.0000 and
+            # the raw gap read 0.4436 -- and it is a statement about the
+            # baseline, not about the two sides resembling each other.
+            #
+            # The corner test below already holds child_gap whenever the
+            # baseline is on the corner, so this is the same rule stated once.
+            ok = m['dshare'] > CORNER and m['part'] > 0
             _slow_cache['child_gap'] = (cf['part'] / m['part'] - 1.0
-                                        if same and m['part'] > 0 else None)
+                                        if ok else None)
         else:
             _slow_cache['child_gap'] = None
         _slow_cache['child_sud_or'] = child_sud_odds_ratio(par, C.YG, C.W)
