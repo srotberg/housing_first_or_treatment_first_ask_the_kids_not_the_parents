@@ -177,7 +177,24 @@ SPEC = [
     # the table will go on showing child_gap about -28 per cent.  That is the
     # honest reading and it is why this is a bound and not a retirement: hiding
     # the gap would be worse than showing one that cannot close.
-    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.001, 0.0125),
+    # THE BOUND IS 0.0088, BELOW THE CLIFF, NOT 0.0125 ABOVE IT.  The first
+    # attempt bounded omega at 0.0125 because that is where its moment reaches
+    # its largest measurable value, 0.1315.  That was the wrong side.  The cliff
+    # is at about 0.0089: below it the model is on the INTERIOR drug branch,
+    # above it a block of households flips and the economy sits on the corner,
+    # where dshare, r_use and child_gap are all artefacts and three brackets go
+    # HELD.  Bounded at 0.0125 the run went to the corner and stayed: iterations
+    # 500 and 600 both read drug share 0.0000, and the runaway detector froze
+    # omega at 0.01042, correctly but on the far side, leaving the other ten
+    # brackets nothing to work with.
+    #
+    # So the bound is the last omega on the interior side.  child_gap will read
+    # about 0.123 against 0.1834, a gap near -33 per cent, permanently.  That is
+    # the honest number: every value of this moment that reaches the target is a
+    # comparison between two DIFFERENT economies, the baseline on the corner and
+    # the counterfactual on the interior branch, which is the artefact the branch
+    # guard exists to reject and which once read 1.4984 against the same target.
+    ('omega',   'child_gap',        0.1834,  +1, 0.30, 0.001, 0.0088),
     # delta_d ON THE CHILD SUD ODDS RATIO OF 2, asked for twice.  Sign standard:
     # a bigger income penalty makes the child poorer, poorer children use more,
     # so the ratio RISES in delta_d.
