@@ -13209,3 +13209,37 @@ believing a small cost. Here it is the opposite failure to guard against:
 the margin is FULL, every household on it is deterred, and the second
 instrument the rationed variant was built to price has nothing to price.
 Worth stating in the paper rather than reporting two identical columns.
+
+### THE CALIBRATION TARGETS A DISTRIBUTION THE MODEL DOES NOT PRODUCE
+
+The benchmark's homelessness reads 1.0 per cent in the gap table and 2.03 per
+cent in the long-run tables, and the difference is not a reporting choice.
+Decomposed at the stationary rest point:
+
+    penalty type   income x   stationary mass   homeless
+    no penalty      1.00000            0.9585     0.0130
+    delta_d         0.36788            0.0415     0.1881
+    ------------------------------------------------------
+    mixture                                       0.0203
+
+**4.15 per cent of households inherit delta_d, which at its bound is a 63 per
+cent income cut, and those households are homeless at 18.8 per cent.** They are
+what doubles the aggregate.
+
+The calibration's own moments are computed on the UNSHIFTED income grid, i.e.
+as though nobody had inherited anything, so every target is hit on a population
+the model's own steady state does not contain. That is not a small gap on
+homelessness -- a factor of two -- and it grows with delta_d, which is pinned at
+its bound precisely because the child SUD odds ratio needs it there.
+
+**SO THE TWO OPEN QUESTIONS ARE ONE QUESTION.** Raising delta_d's ceiling to
+reach an odds ratio of 2 makes the inherited-penalty group poorer still and
+widens this gap further; lowering it closes the gap and abandons the odds ratio.
+Nothing here is decided -- it is the author's call -- but it should be decided
+knowing the two move together.
+
+A SEPARATE THING TO CHECK, NOT YET ESTABLISHED: on the unshifted grid the
+transition's homelessness object reads 0.0130 while `stats()` reads 0.0099. The
+code documents these as different objects -- period 1 realised against ever
+unhoused -- so they need not agree, but a 31 per cent gap between two measures
+of homelessness in one model has not been verified as intended.
