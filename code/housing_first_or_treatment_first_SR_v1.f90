@@ -20343,10 +20343,33 @@
                                         end if
 
                                     else
-                                    
+
+                                        ! THE MODEL'S OWN SENTINEL, NOT -1.d300, AND THE
+                                        ! DIFFERENCE IS THE WHOLE CEV.
+                                        !
+                                        ! This marks a cell the walk cannot evaluate --
+                                        ! consumption at or below zero -- and
+                                        ! compute_value_of_comparison then takes a MASS
+                                        ! WEIGHTED MEAN over these cells. -1.d300 does not
+                                        ! survive that: the benchmark distribution carries
+                                        ! 2.18e-13 of newborn mass on such a cell, and
+                                        ! 2.18e-13 x 1e300 is -2.18e287, which is what the
+                                        ! whole welfare curve read at EVERY x. The curve was
+                                        ! flat at -2.1812510691072386E+287 from end to end,
+                                        ! so the CEV inverted a constant.
+                                        !
+                                        ! large_negative_num is -1.7976932352e10 and is what
+                                        ! the model's own value function uses for exactly
+                                        ! this. It is small enough that a sliver of mass
+                                        ! cannot swamp a mean and large enough that no
+                                        ! household chooses the cell, which is the property
+                                        ! the sentinel needs and the property -1.d300 threw
+                                        ! away. It also lets compute_value_of_comparison
+                                        ! SCREEN for it, on the same test
+                                        ! verify_recovered_block uses.
                                         value_function_comparison(years_left_on_mortgage_index)%&
                                             vector_real(age_index,financial_index,unemployment_index,&
-                                            employment_index,housing_status_index,voucher_index) = -1.d300
+                                            employment_index,housing_status_index,voucher_index) = large_negative_num
                                     end if
 
                                 end do
@@ -20383,13 +20406,14 @@
 
         integer :: financial_index,has_house,track_housing_1
         integer, intent(in) :: type_1
-        real(8) :: distribution_1,value_function_1,mass_1
+        real(8) :: distribution_1,value_function_1,mass_1,dropped_mass_1
         real(8), intent(inout) :: welfare_adjusted_1
 
         write(*,*) "type_1 loop=", type_1
 
         welfare_adjusted_1=0.d0
         mass_1=0.d0
+        dropped_mass_1=0.d0
 
         do age_index=1,1
 
@@ -20436,6 +20460,20 @@
                                         (age_index,financial_index,unemployment_index,&
                                         employment_index,housing_status_index,voucher_index)
 
+                                    ! A CELL THE WALK COULD NOT EVALUATE IS NOT A
+                                    ! WELFARE NUMBER, and averaging one in is how the
+                                    ! curve became a constant. The walk marks such a cell
+                                    ! with large_negative_num, this screens on the same
+                                    ! test verify_recovered_block uses, and the mass that
+                                    ! is dropped is accumulated and printed rather than
+                                    ! discarded silently -- a sliver is arithmetic dust,
+                                    ! and anything more is a statement about the state
+                                    ! space that has to be visible.
+                                    if (value_function_1<=large_negative_num/2) then
+                                        dropped_mass_1=dropped_mass_1+distribution_1
+                                        cycle
+                                    end if
+
                                     if (distribution_1>0.d0) then
                                         select case (type_1)
                                         case (1)
@@ -20471,6 +20509,7 @@
 
         write(*,*) "welfare_adjusted_1=", welfare_adjusted_1
         write(*,*) "mass_1=", mass_1
+        write(*,*) "mass dropped on cells the walk could not evaluate=", dropped_mass_1
 
     end subroutine
 
@@ -34105,6 +34144,214 @@
             end do
 
         end do
+
+    end subroutine
+
+
+    ! EVERY TERM OF THE CALIBRATION'S CONVERGENCE TEST, ONCE A LOOP, IN ONE
+    ! PLACE.
+    !
+    ! WHY. The outer do while is forty five .OR.'d terms long and a term whose
+    ! parameter is HELD is the documented way for this calibration to run for
+    ! ever: the update block is skipped, nothing writes the distance, it keeps
+    ! the 1 its declaration gave it, and the loop cannot close no matter what
+    ! the other forty four do. make_variant.py's own notes describe the trap
+    ! twice -- "the loop does not fail, it simply never terminates" -- and the
+    ! reason it is hard to see is that it is INVISIBLE IN A LOG: twenty one of
+    ! the forty five terms never printed a value at all, so a reader could not
+    ! tell a term sitting at 1 from a term nobody prints.
+    !
+    ! This prints all of them, scored or not, with the rule beside the value, so
+    ! a held term shows as OPEN at exactly 1.000000 and is unmistakable.
+    !
+    ! IT IS PRINT ONLY. Nothing here changes a distance, a parameter or the
+    ! test; the do while above is still the authority, and
+    ! check_convergence_report.py fails the build if this list and that test
+    ! stop naming the same terms.
+    subroutine report_convergence_terms()
+
+        use Global_Vars
+
+        implicit none
+
+        integer :: open_1
+
+        open_1=0
+
+        write(*,*) "===== CONVERGENCE TERMS ====="
+
+        call one_convergence_term("rental_market",&
+            distance_rental_market(1), stopping_rule_rental_market,&
+            1, open_1)
+        call one_convergence_term("discount_factor",&
+            distance_discount_factor, stopping_rule_discount_factor,&
+            1, open_1)
+        call one_convergence_term("discount_factor_on_child",&
+            distance_discount_factor_on_child, stopping_rule_discount_factor_on_child,&
+            merge(1,0,freeze_to_three_block==0), open_1)
+        call one_convergence_term("minimum_inheritance",&
+            distance_minimum_inheritance, stopping_rule_minimum_inheritance,&
+            1, open_1)
+        call one_convergence_term("advantage_to_owning",&
+            distance_advantage_to_owning, stopping_rule_advantage_to_owning,&
+            1, open_1)
+        call one_convergence_term("relative_share_of_housing",&
+            distance_relative_share_of_housing, stopping_rule_relative_share_of_housing,&
+            1, open_1)
+        call one_convergence_term("relative_share_of_leisure",&
+            distance_relative_share_of_leisure, stopping_rule_relative_share_of_leisure,&
+            merge(1,0,freeze_to_three_block==0), open_1)
+        call one_convergence_term("convexity_of_rental_company",&
+            distance_convexity_of_rental_company, stopping_rule_convexity_of_rental_company,&
+            1, open_1)
+        call one_convergence_term("housing_status_grid_expander",&
+            distance_housing_status_grid_expander, stopping_rule_housing_status_grid_expander,&
+            1, open_1)
+        call one_convergence_term("largest_house_size",&
+            distance_largest_house_size, stopping_rule_largest_house_size,&
+            1, open_1)
+        call one_convergence_term("probability_of_becoming_addicted",&
+            distance_probability_of_becoming_addicted, stopping_rule_probability_of_becoming_addicted,&
+            1, open_1)
+        call one_convergence_term("lambda_addiction",&
+            distance_lambda_addiction, stopping_rule_lambda_addiction,&
+            1, open_1)
+        call one_convergence_term("drug_market",&
+            distance_drug_market, stopping_rule_drug_market,&
+            1, open_1)
+        call one_convergence_term("relative_share_of_addiction_1",&
+            distance_relative_share_of_addiction_1, stopping_rule_relative_share_of_addiction_1,&
+            merge(1,0,hold_theta==0), open_1)
+        call one_convergence_term("addiction_scalar",&
+            distance_addiction_scalar, stopping_rule_addiction_scalar,&
+            1, open_1)
+        call one_convergence_term("value_of_life",&
+            distance_value_of_life, stopping_rule_value_of_life,&
+            1, open_1)
+        call one_convergence_term("max_food_cost",&
+            distance_max_food_cost, stopping_rule_max_food_cost,&
+            1, open_1)
+        call one_convergence_term("voucher_probability",&
+            distance_voucher_probability, stopping_rule_voucher_probability,&
+            merge(1,0,freeze_to_three_block==0), open_1)
+        call one_convergence_term("separation_rate",&
+            distance_separation_rate, stopping_rule_separation_rate,&
+            1, open_1)
+        call one_convergence_term("employment_multiplier",&
+            distance_employment_multiplier, stopping_rule_employment_multiplier,&
+            1, open_1)
+        call one_convergence_term("utility_cost_of_treatment",&
+            distance_utility_cost_of_treatment, stopping_rule_utility_cost_of_treatment,&
+            1, open_1)
+        call one_convergence_term("kappa_phi_d_level",&
+            distance_kappa_phi_d_level, stopping_rule_kappa_phi_d_level,&
+            1, open_1)
+        call one_convergence_term("multiple_find",&
+            distance_multiple_find, stopping_rule_multiple_find,&
+            1, open_1)
+        call one_convergence_term("rent_to_price",&
+            distance_rent_to_price, stopping_rule_rent_to_price,&
+            1, open_1)
+        call one_convergence_term("smallest_house_size",&
+            distance_smallest_house_size, stopping_rule_smallest_house_size,&
+            merge(1,0,smallest_house_size_adjuster>0), open_1)
+        call one_convergence_term("fixed_cost_to_moving",&
+            distance_fixed_cost_to_moving, stopping_rule_fixed_cost_to_moving,&
+            1, open_1)
+        call one_convergence_term("standard_deduction",&
+            distance_standard_deduction, stopping_rule_standard_deduction,&
+            1, open_1)
+        call one_convergence_term("inheritance_amount",&
+            distance_inheritance_amount, stopping_rule_inheritance_amount,&
+            1, open_1)
+        call one_convergence_term("size_homelessness",&
+            distance_size_homelessness, stopping_rule_size_homelessness,&
+            1, open_1)
+        call one_convergence_term("average_labor_income",&
+            distance_average_labor_income, stopping_rule_average_labor_income,&
+            1, open_1)
+        call one_convergence_term("median_income",&
+            distance_median_income, stopping_rule_median_income,&
+            1, open_1)
+        call one_convergence_term("average_net_wealth",&
+            distance_average_net_wealth, stopping_rule_average_net_wealth,&
+            1, open_1)
+        call one_convergence_term("drug_threshold",&
+            distance_drug_threshold, stopping_rule_drug_threshold,&
+            1, open_1)
+        call one_convergence_term("lambda_m",&
+            distance_lambda_m, stopping_rule_lambda_m,&
+            1, open_1)
+        call one_convergence_term("kappa_uem",&
+            distance_kappa_uem, stopping_rule_kappa_uem,&
+            1, open_1)
+        call one_convergence_term("rho_m",&
+            distance_rho_m, stopping_rule_rho_m,&
+            1, open_1)
+        call one_convergence_term("rho_d",&
+            distance_rho_d, stopping_rule_rho_d,&
+            1, open_1)
+        call one_convergence_term("mu_homeless",&
+            distance_mu_homeless, stopping_rule_mu_homeless,&
+            1, open_1)
+        call one_convergence_term("weight_on_child",&
+            distance_weight_on_child, stopping_rule_weight_on_child,&
+            1, open_1)
+        call one_convergence_term("penalty_child_addicted",&
+            distance_penalty_child_addicted, stopping_rule_penalty_child_addicted,&
+            1, open_1)
+        call one_convergence_term("penalty_child_homeless",&
+            distance_penalty_child_homeless, stopping_rule_penalty_child_homeless,&
+            1, open_1)
+        call one_convergence_term("labor_income_tax_rate",&
+            distance_labor_income_tax_rate, stopping_rule_labor_income_tax_rate,&
+            1, open_1)
+        call one_convergence_term("sd_permanent_productivity",&
+            distance_sd_permanent_productivity, stopping_rule_sd_permanent_productivity,&
+            1, open_1)
+        call one_convergence_term("smi_onset_level",&
+            distance_smi_onset_level, stopping_rule_smi_onset_level,&
+            1, open_1)
+        call one_convergence_term("newborn_endowment",&
+            distance_newborn_endowment, stopping_rule_newborn_endowment,&
+            1, open_1)
+
+        write(*,*) "CONVERGENCE OPEN TERMS", open_1
+        write(*,*) "===== END OF CONVERGENCE TERMS ====="
+
+    end subroutine
+
+    ! ONE LINE OF THE REPORT. scored_1 carries the term's own guard from the do
+    ! while, so a term the test does not score this run says so rather than
+    ! being silently dropped -- a dropped term is how the list and the test come
+    ! apart.
+    subroutine one_convergence_term(name_1,d_1,r_1,scored_1,open_1)
+
+        implicit none
+
+        character(len=*), intent(in) :: name_1
+        real(8), intent(in) :: d_1,r_1
+        integer, intent(in) :: scored_1
+        integer, intent(inout) :: open_1
+        character(len=10) :: verdict_1
+
+        if (scored_1==0) then
+
+            verdict_1="not scored"
+
+        elseif (d_1>r_1) then
+
+            verdict_1="OPEN"
+            open_1=open_1+1
+
+        else
+
+            verdict_1="closed"
+
+        end if
+
+        write(*,*) "CONVERGENCE ", name_1, " distance=", d_1,&
+            " rule=", r_1, " ", verdict_1
 
     end subroutine
 
@@ -48911,6 +49158,11 @@
                 write(*,*) "NaN DISTANCE: distance_labor_income_tax_rate, forced to 1 so the sweep cannot mistake it for convergence"
                 distance_labor_income_tax_rate=1
             end if
+            ! WHICH TERMS ARE STILL HOLDING THE LOOP OPEN. See
+            ! report_convergence_terms: print only, and the one place a held
+            ! parameter's distance is visible.
+            call report_convergence_terms()
+
             ! Everything the update block moved this loop, on disk before the
             ! next one starts.
             call write_calibration_state()
