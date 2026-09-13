@@ -1,23 +1,27 @@
 \documentclass[11pt]{article}
-\usepackage[margin=0.8in]{geometry}
+\usepackage[margin=0.7in]{geometry}
 \usepackage{amsmath,amssymb,booktabs,microtype,titlesec}
 \titlespacing*{\section}{0pt}{6pt}{3pt}
-\setlength{\parskip}{3pt}
+\setlength{\parskip}{2pt}
+\renewcommand{\baselinestretch}{0.96}
 \title{\vspace{-1.3cm}\textbf{The stylized model}}
 \author{}\date{}
 \begin{document}\maketitle\vspace{-3.2em}
 
 \section*{Demography and timing}
-Overlapping generations. A household lives two periods, young then old, and each
-cohort has unit mass. It has one child \emph{while young}; the child leaves at
-the end of that period and enters the model as a young adult, so this period's
-children are next period's young and the cohort entering is unit mass forever.
-The equivalence scale is therefore $\xi$ while young and $1$ when old: the old
-carry no child, in the scale or in the objective.
+Overlapping generations. A household lives three periods --- \textbf{child},
+\textbf{young}, \textbf{old} --- with value functions $W_0$, $W_1$ and $W_2$. Each
+cohort has unit mass. The child period is spent in the parent's household and
+carries no choices: the child consumes what the parent's allocation gives it.
+A household has one child \emph{while young}; the child leaves at the end of that
+period and becomes young itself, so this period's children are next period's
+young and the cohort entering is unit mass forever. The equivalence scale is
+therefore $\xi$ while young and $1$ when old: the old carry no child, in the
+scale or in the objective.
 
-The disorder is realised at the \emph{transition} between the two periods, and
-survival over that transition depends on it. It cannot be realised inside the
-final period, where death costs nothing because nothing follows it.
+The disorder is realised at the \emph{transition} from young to old, and survival
+over that transition depends on it. It cannot be realised inside the final
+period, where death costs nothing because nothing follows it.
 
 \section*{Period 1}
 \textbf{State.} Permanent income $y$. An employment draw and, if income-eligible,
@@ -57,27 +61,30 @@ household, not once per member.
 \textbf{Onset and mortality.} Onset is a \emph{flat} rate, not a function of how
 much is bought: the disorder arrives at the transition with probability $\pi$ if
 $v>0$ and with probability zero if $v=0$. Survival is $s_0$ when clean and
-$s_1<s_0$ with the disorder. So the drug decision has an extensive margin that
-carries all of the risk, and an intensive margin that carries none.
+$s_1<s_0$ with the disorder. The extensive margin carries all of the risk and the intensive margin none.
 
 \textbf{The problem.} Write $\mathbf 1_v=\mathbf 1\{v>0\}$, so the onset
-probability is $\pi\mathbf 1_v$. Choose $(v,h,a')$ to maximise
+probability is $\pi\mathbf 1_v$. The young household chooses $(v,h,a')$ to
+maximise
 \[
   \boxed{\;
-  \mathcal V=u(X_P)+\omega_c(\xi-1)u(X_K)+\aleph
+  W_1(y)=u(X_P)+\omega_c(\xi-1)u(X_K)+\aleph
   +\beta\Big[(1-\pi\mathbf 1_v)\,s_0W_2(a',y,0)+\pi\mathbf 1_v\,s_1W_2(a',y,1)\Big]
-  +\beta\,\omega_c\,\mathbb E\big[V(1,d')\big]\;}
+  +\beta\,\omega_c\,\mathbb E\big[W_1(y_c)\big]\;}
 \]
-where $V(1,d')$ is the child's own value as a young adult, $d'$ the disorder the
-parent ends with, and
+The last term is the child's own value as a young adult, at its inherited income
+$y_c$, which depends on the disorder $d'$ the parent ends with:
 \[
-  \mathbb E\big[V(1,d')\big]=(1-\pi\mathbf 1_v)V(1,0)+\pi\mathbf 1_v V(1,1)
-  \;=\;V(1,0)-\pi\mathbf 1_v\,\Delta(y),
-  \qquad \Delta(y)\equiv V(1,0)-V(1,1).
+  \mathbb E\big[W_1(y_c)\big]=(1-\pi\mathbf 1_v)\,W_1(y_c\,|\,d'=0)+\pi\mathbf 1_v\,W_1(y_c\,|\,d'=1)
+  \;=\;W_1(y_c\,|\,0)-\pi\mathbf 1_v\,\Delta(y),
+\]
+\[
+  \Delta(y)\;\equiv\;W_1(y_c\,|\,d'=0)-W_1(y_c\,|\,d'=1).
 \]
 Only the second piece moves with the household's choice, so the drug decision
 faces exactly $-\beta\omega_c\pi\mathbf 1_v\Delta(y)$: the child's loss, weighted
-by how likely the parent is to acquire the disorder at all.
+by how likely the parent is to acquire the disorder at all. $W_1$ is on both
+sides of its own definition, which is what makes it a fixed point.
 
 Survival sits \emph{inside} the expectation over the realised disorder, not
 outside it: written as $\phi\,\mathbb{E}W_2$, the disorder becomes something the
@@ -90,10 +97,15 @@ Employment is redrawn, at a worse rate with the disorder, and the voucher is
 redrawn subject to the policy rule. Assets are run down and nothing is
 bequeathed, so with $\text{cash}=Ra+\text{inc}$ and $\xi=1$,
 \[
-  W_2(a,y,d)=\max_{h\in\{h_1,h_2\}}\;u\big(c^{\varphi_c}h^{\varphi_h}\bar b^{\,\varphi_q}\big)+\aleph,
+  X_2=c^{\varphi_c}\,h^{\varphi_h}\,\bar b^{\,\varphi_q},
+  \qquad
+  W_2(a,y,d)=\max_{h\in\{h_1,h_2\}}\;u(X_2)+\aleph,
   \qquad c=\text{cash}-\text{rent}(h,r).
 \]
-No drug choice, no child term, no recovery.
+The same $u(x)=x^{1-\sigma}/(1-\sigma)$ over the same Cobb--Douglas bundle as
+period~1, with only two differences, both because the child has left and there
+is no drug: $\xi=1$, so nothing is deflated, and the drug shifter enters at
+$\bar b$ rather than $\bar b+v$. No drug choice, no child term, no recovery.
 
 \textbf{Policy.} Housing First pays the voucher to every eligible household.
 Treatment First withdraws it from any household failing the sobriety condition
@@ -112,38 +124,33 @@ homelessness odds ratio, so there is no separate homelessness penalty and the
 mixture has two types. The child is then run through the model as an adult at its
 own income, which is what gives it a disorder probability at all.
 
-So the two branches of the child's value are
-\[
-  V(1,0)=\mathbb E\big[V_1(y_c)\,\big|\,\text{no penalty}\big],
-  \qquad
-  V(1,1)=\mathbb E\big[V_1(y_c)\,\big|\,\text{penalty}\big],
-\]
-both expectations over the same kernel, and $\Delta(y)=V(1,0)-V(1,1)$. $V_1$
-appears on both sides, so this is a fixed point. It is a well behaved one: the
-$\aleph$ levels cancel in the difference. There is no survival factor on it ---
-the child becomes an adult whether or not the parent lives, so $s_d$ belongs on
-$W_2$ and on nothing else.
+Both branches of $\Delta(y)$ are expectations of $W_1$ over the child's income
+draw, taken with the same kernel and differing only by whether $\delta_d$ is
+subtracted from its mean. The fixed point is a well behaved one: the $\aleph$
+levels cancel in the difference. There is no survival factor on it --- the child
+becomes young whether or not the parent lives, so $s_d$ belongs on $W_2$ and on
+nothing else.
 
 \section*{Lifetime utility}
-$V_1(y)$ is the household's \emph{own} value: the maximised $\mathcal V$ with the
+For welfare, $W_1$ is taken as the household's \emph{own} value, with the
 internalised child term netted out, so that a planner counts the child once
-rather than once in full and again at $\omega_c$. The
-childhood a cohort actually lives, at its parent's realised allocation, is
+rather than once in full and again at $\omega_c$. The childhood a cohort actually
+lives, at its parent's realised allocation, is
 \[
-  W_{\text{child}}=(\xi-1)\big[u(X_K)+\aleph\big],
-  \qquad\text{and}\qquad
-  W=W_{\text{child}}+\beta V_1 ,
+  W_0=(\xi-1)\big[u(X_K)+\aleph\big],
+  \qquad\text{and lifetime utility is}\qquad
+  W=W_0+\beta W_1 ,
 \]
-with childhood lived under the policy in force one period earlier and adulthood
-under the policy in force now. That asymmetry is what a static comparison sums
-away: the cohort the reform lands on has its childhood already behind it.
+with childhood lived under the policy one period earlier and adulthood under the
+policy now --- the asymmetry a static comparison sums away, since the cohort the
+reform lands on has its childhood already behind it.
 
 Consumption equivalents are CRRA, not log. Scaling $c$ by $(1+\lambda)$ in every
 state scales both bundles by $(1+\lambda)^{\varphi_c}$, so every $u$ term scales
 by $(1+\lambda)^{\varphi_c(1-\sigma)}$ while the $\aleph$ terms do not move:
 \[
-  \lambda=\Big(1+\tfrac{dV}{U}\Big)^{\frac{1}{\varphi_c(1-\sigma)}}-1,
-  \qquad U=V-A,\qquad A=\aleph\Big(1+\beta\big[(1-\pi)s_0+\pi s_1\big]\Big),
+  \lambda=\Big(1+\tfrac{dW}{U}\Big)^{\frac{1}{\varphi_c(1-\sigma)}}-1,
+  \qquad U=W-A,\qquad A=\aleph\Big(1+\beta\big[(1-\pi)s_0+\pi s_1\big]\Big),
 \]
 which depends on the \emph{level} through $U$, as the log formula never did.
 
