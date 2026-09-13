@@ -13109,3 +13109,34 @@ Childhood is also solved AT EACH SHIFTED INCOME and mixed over the PARENTS'
 penalty distribution rather than the cohort's own.  `transition_childhood.py`
 gives every cohort one fixed childhood number, which would have shown cohort 1
 and cohort 2 as identical and hidden the only dynamics the optimal reform has.
+
+### MEASURED: a calibration loop is about 95 seconds now, not eleven minutes
+
+Timed 13 September, on the model with inelastic labour supply and the three SUD
+blocks, `-O3 -funroll-loops`, `OMP_NUM_THREADS=4`, two beta types:
+
+    start      19:56:34
+    loop 1 ->  19:57:58     84 s   (startup, grids and the three verifiers in it)
+    loop 2 ->  19:59:33     95 s
+
+Against ENGINE.md's standing figure of about eleven minutes for a solve at two
+beta types. **TREAT THE RATIO AS INDICATIVE, NOT AS A CONTROLLED COMPARISON:**
+the eleven minutes was taken on a different container and its thread count is
+not recorded. The direction is not in doubt and the reason is structural --
+removing endogenous labour supply removed a SECANT ROOT-FIND that ran per
+state, per housing branch, inside the innermost loop. The fifty per cent larger
+unemployment grid is more than paid for by that plus the zero-probability skip
+in the continuation nests.
+
+**WHAT THIS MEANS FOR THE ENGINE'S CADENCE.** The firing routines are set at
+roughly ten minutes because a solve took eleven. At ninety-five seconds a
+worker can turn three lines in five minutes rather than thirty, so the fleet's
+throughput per firing is several times what the schedule assumes. Worth
+re-reading before the calibration reopens; nothing has been changed here.
+
+**AND THE FIRST END-TO-END RUN FOUND A DEFECT IN THE CHILDHOOD WELFARE.** It is
+recorded in the commit: the child's own flow carried no value of life, so with
+sigma above one a childhood was worth less than not existing and
+average_childhood_utility came out at -67.32 against an adult half of +102.51.
+Fixed, and the model hash moved with it, so the timing above is the hash
+BEFORE the fix; the fix is one addition and does not change it materially.
