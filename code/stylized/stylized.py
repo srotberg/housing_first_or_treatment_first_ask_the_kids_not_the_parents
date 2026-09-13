@@ -654,7 +654,26 @@ class P:
     # which is the quantitative model's rho_intergenerational (0.30 there) with
     # penalty_child_addicted as the shift.  delta_d is in LOG INCOME, so 0.36 --
     # the value the Fortran is pinned at -- is a 30 per cent income penalty.
-    rho     = 0.35
+    # RHO IS 0.5, THE UPPER END OF THE LITERATURE, ON THE AUTHOR'S INSTRUCTION
+    # OF 13 SEPTEMBER: *"we can even set rho=0.5 to be at the upper end of the
+    # literature so that delta_d is the lowest."*  It was 0.35, the quantitative
+    # model's rho_intergenerational of 0.30 rounded up.
+    #
+    # WHY THE UPPER END HELPS.  delta_d is calibrated on the child's SUD odds
+    # ratio of 2.  Income persistence and the penalty are two ways of getting a
+    # child of a disordered parent to a low income, so the more of the odds
+    # ratio rho delivers on its own, the less delta_d has to.  Choosing rho at
+    # the top of the defensible range therefore makes the penalty the SMALLEST
+    # the model can get away with, which is the conservative direction for
+    # every result that runs through it.
+    #
+    # IT ALSO NARROWS THE CHILD'S OWN SPREAD, and that is the cost.  The
+    # stationary shock is eps ~ N(0, (1-rho^2) sigma^2), so at rho = 0.5 the
+    # innovation carries sqrt(0.75) = 0.866 of the parents' dispersion against
+    # sqrt(0.8775) = 0.937 at 0.35.  The cross-section variance is unchanged by
+    # construction; what changes is how much of a child's position is its
+    # parent's.  See _child_rate for why the shock is not optional.
+    rho     = 0.50
     delta_d = 0.36
 
     na    = 60

@@ -817,12 +817,29 @@ def table(par, m, it):
 if __name__ == '__main__':
     from recalibrate import FIXED, START
     from negative_value_of_life import negative_value_share
-    # BETA IS EXOGENOUS AT 1, author 12 September: *"ok, i think we can just set
-    # beta=1"*, *"exogenous, not calibration"*, *"beta=1.47 is not believable"*.
-    # They are right: calibrating beta on a net worth to income ratio of 3 drove
-    # it to 1.477 at the old positive interest rate and to 1.62 once interest was
-    # set to zero -- a household that values a period thirty years away MORE than
-    # the present.  networth leaves the target set with it and is reported.
+    # BETA IS EXOGENOUS AT 0.995 ANNUAL, WHICH IS 0.995**30 = 0.86038 OVER A
+    # THIRTY-YEAR PERIOD.  Author, 13 September: *"ok, use beta=0.995."*  It was
+    # exogenous at 1.0 on their earlier instruction of 12 September -- *"ok, i
+    # think we can just set beta=1"*, *"exogenous, not calibration"*,
+    # *"beta=1.47 is not believable"* -- so this is a change of an exogenous
+    # value, NOT a parameter coming off a bound.  It was never calibrated here.
+    #
+    # WHY IT WAS 1 AND WHY THAT REASONING STILL HOLDS.  Calibrating beta on a net
+    # worth to income ratio of 3 drove it to 1.477 at the old positive interest
+    # rate and to 1.62 once interest was set to zero -- a household valuing a
+    # period thirty years away MORE than the present.  That is why networth is an
+    # OUTPUT and not a target, and it stays one.  Expect networth to fall further
+    # below 3 at the lower beta; it is reported, not aimed at.
+    #
+    # THE COST IS MEASURED AND IT IS NOT SMALL.  Substituting 0.86038 into the
+    # 13 September calibrated vector with every other parameter held puts
+    # participation at 0.324 against 0.089 and users' income at 1.78 of average
+    # -- above one, which is the corner branch recalibrate.py records a failed
+    # sweep on.  The direction is the model's own logic, since a less patient
+    # household weighs a thirty-year consequence less and uses more, but it means
+    # this calibration MUST start from the interior-branch point and not from the
+    # beta = 1 vector.  See recalibrate.py's START for why the start picks the
+    # branch.
     #
     # AND THE DIRECTION CONFIRMS WHAT WAS FLAGGED: removing a positive return
     # made saving less attractive, so beta rose rather than fell.
@@ -854,7 +871,7 @@ if __name__ == '__main__':
                 pi_base=0.0368 / 0.089, u0=0.04824, u1=0.05484, omega=0.00853,
                 delta_d=0.56972, kap=0.10067, th=0.14599)
     _start = {**{k: v for k, v in FIXED.items() if k != 'kap'},
-              **{**START, "th": 0.25, "beta": 1.0, "kap": 1.0 - 0.91 ** 2,
+              **{**START, "th": 0.25, "beta": 0.995 ** 30, "kap": 1.0 - 0.91 ** 2,
                    # A STARTING VALUE AGAIN, not a pin: delta_d is back in SPEC
                    # and is stepped, from the 0.24 the author pinned it at.
                    "delta_d": 0.24,

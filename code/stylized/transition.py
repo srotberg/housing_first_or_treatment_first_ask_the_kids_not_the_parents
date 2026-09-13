@@ -116,6 +116,9 @@ def _policy_grids(par, policy, pV):
     # switch off the channel by which conditionality's own revocations reach a
     # child.
     hl = np.array([homeless_prob(q, y, policy) for y in YG], dtype=float)
+    # ev IS NO LONGER A TRANSMISSION OBJECT.  The homelessness penalty leg is
+    # gone -- see _shifts -- so _step ignores it.  It is still returned, and
+    # still period 2, because terminal homelessness is REPORTED.
     ev = np.array([terminal_homeless_prob(q, y, policy) for y in YG], dtype=float)
     prog = stats(q)['prog']
     return (v1, np.clip(use * prog, 0.0, 1.0), np.clip(hl, 0.0, 1.0),
@@ -125,14 +128,20 @@ def _policy_grids(par, policy, pV):
 
 def _hl_by_shift(par, policy, pV):
     """
-    Terminal homelessness SOLVED at each shifted income, one array per penalty
+    PERIOD 1 homelessness SOLVED at each shifted income, one array per penalty
     type. See the note on _at: this quantity is a step in income and cannot be
     interpolated from a grid solved at unshifted incomes without losing more
     than half of it.
+
+    NOTHING TRANSMITS THROUGH THIS ANY MORE.  _step ignores its hl argument;
+    the homelessness penalty leg is gone from the stylized model entirely.  See
+    _shifts for the author's reason.  This is kept because the cohort
+    homelessness PATH is still reported, and a cohort's rate has to be read at
+    the shifted incomes its penalty type puts it at.
     """
     q = with_(par, policy=policy, pV=pV)
     return {float(s): np.clip(
-        _solve_at(lambda y: terminal_homeless_prob(q, y, policy), s), 0.0, 1.0)
+        _solve_at(lambda y: homeless_prob(q, y, policy), s), 0.0, 1.0)
         for s in _shifts(par)}
 
 
@@ -256,32 +265,40 @@ def _shifts(par=None):
     cent at the current values: 0.36 in logs is a 30.2 per cent cut, while 0.24
     as a fraction is a 0.274 log shift.
 
-    delta_h is NOT a parameter -- the author dropped it -- so the homelessness
-    leg keeps the external DEL_H it has always had.
+    TWO TYPES, NOT FOUR: THERE IS NO HOMELESSNESS PENALTY.  The author, 13
+    September: *"in the stylized model we dont have homelessness transmission at
+    all since we know that the odds ratio of homelessness in the quant model is
+    about 2 anyways when rho=0.35."*  The odds ratio the homelessness leg was
+    there to deliver is ALREADY produced by income persistence on its own, so a
+    separate penalty buys nothing and costs a parameter and half the state.
+    DEL_H is therefore dead; child_homeless_odds_ratio in stylized.py remains as
+    the diagnostic that checks rho alone still delivers it.
+
+    delta_d stays, and it is the only penalty left.  It is a LOG income shift --
+    stylized.py sets log y_child = rho log y_parent + (1-rho) log ybar - delta_d
+    -- so it enters as exp(-delta_d).  DEL_D was a FRACTIONAL cut and entered as
+    (1 - DEL_D); substituting one for the other unconverted changes the penalty
+    by 19 per cent, which is why the conversion is written out.
     """
     dd = DEL_D if par is None else 1.0 - math.exp(-par.delta_d)
-    return np.array([1.0, 1.0 - dd, 1.0 - DEL_H,
-                     (1.0 - dd) * (1.0 - DEL_H)])
+    return np.array([1.0, 1.0 - dd])
 
 
-def _step(p, sud, hl, par=None):
-    """One generation. p is the mixture over the four penalty types; the return
+def _step(p, sud, hl=None, par=None):
+    """One generation. p is the mixture over the TWO penalty types; the return
     is the mixture the CHILDREN of that cohort are born into.
 
-    The disorder and homelessness are taken as independent given income, which
-    is the same reduced form children.py uses: both are functions of the income
-    the household was born with, and nothing else links them."""
-    out = np.zeros(4)
+    hl IS ACCEPTED AND IGNORED.  There is no homelessness penalty any more --
+    see _shifts -- so the only thing that transmits is the disorder.  The
+    argument is kept so that every caller, and every saved call site, still
+    works; passing one has no effect and passing None is fine."""
+    out = np.zeros(2)
     for s, ps in zip(_shifts(par), p):
         if ps <= 0.0:
             continue
         d = _at(sud, s)
-        # SOLVED at the shifted income, not interpolated: see _at.
-        h = hl[float(s)] if isinstance(hl, dict) else _at(hl, s)
-        out[0] += ps * float((WW * (1 - d) * (1 - h)).sum())
-        out[1] += ps * float((WW * d * (1 - h)).sum())
-        out[2] += ps * float((WW * (1 - d) * h).sum())
-        out[3] += ps * float((WW * d * h).sum())
+        out[0] += ps * float((WW * (1 - d)).sum())
+        out[1] += ps * float((WW * d).sum())
     return out / out.sum()
 
 
@@ -430,7 +447,7 @@ def caught_coverage(par, pv_new=PV_OPT):
 
 
 def _rest_point(sud, hl, par=None, iters=400, tol=1e-14):
-    p = np.array([1.0, 0.0, 0.0, 0.0])
+    p = np.array([1.0, 0.0])
     for _ in range(iters):
         q = _step(p, sud, hl, par)
         if np.abs(q - p).max() < tol:
@@ -487,20 +504,21 @@ def run(par=None, n=GENERATIONS):
     w0 = _welfare(p0, v1b)
     print(f'PRE REFORM REST POINT, {BASE_POLICY} at pi_V = {par.pV}')
     print(f'   share of children born to a parent with the disorder : '
-          f'{100*(p0[1]+p0[3]):.3f}%')
-    print(f'   share born to a parent who was unhoused              : '
-          f'{100*(p0[2]+p0[3]):.3f}%')
-    print(f'   del_d = {DEL_D:.4f}   del_h = {DEL_H:.4f}')
+          f'{100*p0[1]:.3f}%')
+    # NO UNHOUSED PENALTY TYPE ANY MORE.  There are two types, not four: see
+    # _shifts.  The homelessness a cohort experiences is still reported, from
+    # its own realised rate, but it is not something a child inherits.
+    print(f'   del_d = {DEL_D:.4f}   (no homelessness penalty)')
 
     paths = {}
     for lab, pol in (('TF', 'TF'), ('HF', 'HF')):
         paths[lab] = path(par, pol, PV_OPT, p0, v1b, w0, n)
         print(f'\n{lab} at pi_V = {PV_OPT}')
         print(f'   {"cohort":>7s}{"cons equiv":>13s}{"born to SUD":>14s}'
-              f'{"born unhoused":>16s}{"homeless":>11s}{"has a SUD":>12s}')
+              f'{"homeless":>11s}{"has a SUD":>12s}')
         for t, c, p, hl, sud in paths[lab]:
-            print(f'   {t:7d}{100*c:12.4f}%{100*(p[1]+p[3]):13.3f}%'
-                  f'{100*(p[2]+p[3]):15.3f}%{100*hl:10.3f}%{100*sud:11.3f}%')
+            print(f'   {t:7d}{100*c:12.4f}%{100*p[1]:13.3f}%'
+                  f'{100*hl:10.3f}%{100*sud:11.3f}%')
     return paths
 
 
@@ -698,9 +716,9 @@ def numbers(paths, par=None, cg=None):
          'tr_t1_hf': f'{100*hf[1][1]:.2f}',
          'tr_inf_tf': f'{100*tf[-1][1]:.2f}',
          'tr_inf_hf': f'{100*hf[-1][1]:.2f}',
-         'tr_sud0': f'{100*(tf[0][2][1]+tf[0][2][3]):.2f}',
-         'tr_sudtf': f'{100*(tf[-1][2][1]+tf[-1][2][3]):.2f}',
-         'tr_sudhf': f'{100*(hf[-1][2][1]+hf[-1][2][3]):.2f}'}
+         'tr_sud0': f'{100*tf[0][2][1]:.2f}',
+         'tr_sudtf': f'{100*tf[-1][2][1]:.2f}',
+         'tr_sudhf': f'{100*hf[-1][2][1]:.2f}'}
     # THE DIRECTION WORDS, so the two sentences in Section 3.7 that assert which
     # way the parent generation's disorder rate moves turn when the numbers do.
     # Both are results, and the Housing First one in particular is the sign of a
@@ -715,9 +733,9 @@ def numbers(paths, par=None, cg=None):
     d['tr_hlhf_dir'] = _dir(hf[-1][3], hf[0][3], 'rises', 'falls')
     d['tr_hl_cmp'] = _dir(tf[-1][3], hf[-1][3], 'above', 'below',
                           tol=5e-5, same='level with')
-    s0 = tf[0][2][1] + tf[0][2][3]
-    d['tr_sudtf_dir'] = _dir(tf[-1][2][1] + tf[-1][2][3], s0, 'rises', 'falls')
-    d['tr_sudhf_dir'] = _dir(hf[-1][2][1] + hf[-1][2][3], s0, 'rises', 'falls')
+    s0 = tf[0][2][1]
+    d['tr_sudtf_dir'] = _dir(tf[-1][2][1], s0, 'rises', 'falls')
+    d['tr_sudhf_dir'] = _dir(hf[-1][2][1], s0, 'rises', 'falls')
     # WHICH COHORT THE PATHS HAVE SETTLED BY, to a tenth of a point of the rest
     # point, rather than the "two or three" the text used to assert.
     d['tr_settle'] = _settle(tf, hf)
@@ -747,9 +765,23 @@ def numbers(paths, par=None, cg=None):
     # parent completed both periods before the condition existed, which is why
     # the two policies hand cohort 1 the SAME mixture and its gap is the private
     # loss alone.
-    d['tr_c2_hl_tf'] = f'{100*(tf[2][2][2]+tf[2][2][3]):.3f}'
-    d['tr_c2_hl_hf'] = f'{100*(hf[2][2][2]+hf[2][2][3]):.3f}'
-    d['tr_c2_hl_dir'] = _dir(tf[2][2][2]+tf[2][2][3], hf[2][2][2]+hf[2][2][3],
+    # THESE THREE CHANGED WHAT THEY MEASURE AND THE PAPER READS THEM.
+    #
+    # They used to be the share of cohort 2 born behind a HOMELESSNESS PENALTY,
+    # p[2] + p[3] in the four-type mixture.  There is no such type any more --
+    # see _shifts, the author removed the homelessness penalty leg -- so the
+    # quantity does not exist and cannot be reported.
+    #
+    # They are now the cohort's OWN REALISED homelessness rate, index 3 of the
+    # path tuple, which is the rate that cohort actually experiences.  That is
+    # what a reader takes "homelessness of cohort 2" to mean, and it is the same
+    # object tr_hl0 / tr_hltf / tr_hlhf already report for the endpoints, so the
+    # table is internally consistent for the first time.  The NUMBERS MOVE, and
+    # any sentence in the note quoting them has to be re-read rather than
+    # assumed to still hold.
+    d['tr_c2_hl_tf'] = f'{100*tf[2][3]:.3f}'
+    d['tr_c2_hl_hf'] = f'{100*hf[2][3]:.3f}'
+    d['tr_c2_hl_dir'] = _dir(tf[2][3], hf[2][3],
                              'more', 'fewer', tol=1e-6, same='as many')
     d['tr_c1_gap'] = f'{100*abs(tf[1][1]-hf[1][1]):.3f}'
     d['tr_c2_gap'] = f'{100*abs(tf[2][1]-hf[2][1]):.3f}'

@@ -5771,7 +5771,28 @@
         !
         ! 0.30 IS THE AUTHOR'S ASSIGNED VALUE and it is the default, so the
         ! instrument below is OFF unless a vector asks for it.
-        real(8) :: rho_intergenerational=0.30d0
+        real(8) :: rho_intergenerational=0.50d0
+        !
+        ! IT IS 0.50, THE UPPER END OF THE LITERATURE, ON THE AUTHOR'S
+        ! INSTRUCTION OF 13 SEPTEMBER: *"i think we should set rho=0.5 so that it
+        ! is at an upper bound and delta_d can be lower"*, and *"same with the
+        ! quant model"*.  It was 0.30.  The stylized model moved with it.
+        !
+        ! WHY THE UPPER END.  penalty_child_addicted is aimed at the child's SUD
+        ! odds ratio.  Income persistence and the penalty are two routes to the
+        ! same place, so the more of the odds ratio rho carries, the less the
+        ! penalty has to, and choosing rho at the top of the defensible range
+        ! makes the penalty the SMALLEST the model can get away with.  That is
+        ! the conservative direction for every result that runs through it.
+        !
+        ! AND IT CUTS THE OTHER WAY ON THE HOMELESSNESS ODDS RATIO, WHICH IS THE
+        ! SAME PARAMETER DOING DOUBLE DUTY.  The note below records that with the
+        ! homelessness child penalty off entirely the model produces 2.802
+        ! against a target of 2.10 -- ALREADY ABOVE IT at rho = 0.30.  Raising
+        ! rho raises persistence and pushes that further above target, so the
+        ! homelessness odds ratio gets worse in exchange for a smaller SUD
+        ! penalty.  It is a trade, it was made deliberately, and it has NOT been
+        ! remeasured at 0.50: the number above is at 0.30.
         !
         ! AND IT CAN ALSO BE CALIBRATED, WHICH IS A SEPARATE INSTRUCTION FROM A
         ! SEPARATE MOMENT IN THE SAME DAY. The author, 10 September: *"my
