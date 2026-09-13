@@ -1,3 +1,42 @@
+## 13 September 02:00 UTC -- THE CHILD GAP TRAVERSED CLEANLY FOR THE FIRST TIME.
+## THE CLIFF IS REAL; THE CEILINGS I REPORTED WERE NOT.
+
+With the guard narrowed to test only the baseline, and the weight free at 0.05
+per cent a pass, the moment was walked across its range with nothing else
+disturbed.  The whole traverse:
+
+    omega    0.00872  0.00917  0.00964  0.01013  0.01039  0.01065  0.01092
+    gap      0.1163   0.1204   0.1257   0.1308   0.1330   0.0803   0.0863
+                                          ^        ^        ^
+                                       passes    passes   CLIFF
+                                       0.1230    0.1315
+
+**BOTH CEILINGS I REPORTED WERE THE GUARD, NOT THE MODEL.**  0.1230 and 0.1315
+were the largest values the old branch test would ACCEPT; the moment climbs
+straight through both of them -- 0.1308 at iteration 350 and 0.1330 at 400 --
+once the test stops rejecting measurements for the two sides differing.
+
+**THE CLIFF AT ABOUT omega 0.0105 IS REAL.**  This one is not a guard artefact
+and it is not a resolution artefact: the weight moves 2.5 per cent between
+iterations 400 and 450 and the moment loses two fifths of its value, with
+participation jumping from -0.2 to +4.8 per cent as a block of households flips.
+Beyond it the moment climbs again from 0.0803, the same shape as the first
+branch.
+
+**WHAT IS STILL OPEN** is whether the second branch rises past 0.1330 and on to
+the target of 0.1834, or tops out lower.  At the observed rate that takes a few
+hundred more passes to answer.  What is NOT open any more is that the target is
+unreachable -- that claim rested on ceilings that were the guard's, and it is
+withdrawn.
+
+**AND THE REST OF THE MODEL IS UNDISTURBED THROUGHOUT**, which is what makes
+this traverse worth trusting where the earlier ones were not.  Across the whole
+range above, median gap 0.1 to 1.9 per cent with nine of ten brackets inside
+ten: the child SUD odds ratio exact at 2.0000 or within 0.2, the SUD rate among
+the homeless at -0.0, unemployment at -0.0, the value of life at -0.0,
+participation between -0.3 and +4.8, the income of users between -0.1 and -1.9,
+the drug spending share between -0.6 and +0.5.
+
 ## 13 September 01:00 UTC -- THE QUANTITATIVE PENALTY SCAN RAN, THE TECHNIQUE
 ## CARRIES, AND THE STYLIZED MODEL'S ANSWER DOES NOT.  SECTION 7 ITEM CLOSED.
 
