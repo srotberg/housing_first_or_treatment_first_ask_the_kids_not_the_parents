@@ -210,7 +210,40 @@ SPEC = [
     # it: the moment sat 8.3 per cent below target for nine hundred iterations
     # with u1 at 0.04860 against u0 at 0.04850, so the disorder cost no job at
     # all, which cannot be right.  A parameter on its bound is not calibrated.
-    ('u1',      'sud_of_homeless2', 0.217,   +1, 0.20, 0.0486, 0.50),
+    # u1 IS HELD, AND THE ADJUSTER OF ZERO IS THE HOLD.  Its sign is measured
+    # wrong, by BOTH of the tests that disagreed about it before.
+    #
+    # The author's objection to the first measurement stands and was right:
+    # *"you are measuring it wrong"*, *"because you are not adjsut b"*.  A
+    # ceteris-paribus sweep of u1 reads the ratio off economies that are not
+    # this one -- at u1 = 0.02 participation is 0.5015 against a target of
+    # 0.089 -- so it cannot settle the sign on its own.  That is what flipped
+    # the sign to +1.
+    #
+    # THE JOINT DYNAMICS HAVE NOW ANSWERED IT, with b free, which is the test
+    # the objection asked for.  Over the four hundred passes from 19:03 on 13
+    # September u1 rose 0.10814 -> 0.16129 while sud_of_homeless2 FELL 0.1927
+    # -> 0.1692 and b fell with it, 0.05110 -> 0.04849.  The gap widened from
+    # -11.2 per cent to -22.0.  The probe agrees: moving u1 to 0.18530 takes
+    # the moment to 0.1591, a gap of -26.7 per cent, worse again.  Both tests
+    # now say the same thing, so +1 is wrong.
+    #
+    # IT IS HELD RATHER THAN FLIPPED, deliberately, and the reason is in the
+    # runaway block: a sign that is wrong in one configuration and right in
+    # another is a fact about the model for the author to see, not something
+    # for the search to paper over.  Flipping it to -1 walks u1 DOWN, and the
+    # sweep says the target of 0.217 then sits between u1 = 0.02 and 0.05,
+    # where participation is 0.36 to 0.50.  That is not a calibration, it is a
+    # different economy, so the instrument is the question and not the sign.
+    #
+    # WHAT THE HOLD COSTS AND WHAT IT BUYS.  sud_of_homeless2 stays outside
+    # five per cent and is still reported.  What it buys is delta_d: u1's
+    # runaway collapsed the population with the disorder and dragged the child
+    # odds ratio down with it, so that delta_d's own probe at 1.00 returned
+    # 1.4986 where the same probe at the pre-runaway vector returns 1.9598.
+    # With u1 still, delta_d's bracket is measured monotone and reaches its
+    # target at its bound.
+    ('u1',      'sud_of_homeless2', 0.217,   +1, 0.00, 0.0486, 0.50),
     # omega_c IS BOUNDED TO [0.01, 0.14], author 12 September: *"try omega_c only
     # between 0.01-0.14"*.  It had run to 0.242 on the negative child gap the
     # corner branch produces -- see the guard above, which now stops that at
@@ -1061,6 +1094,10 @@ if __name__ == '__main__':
     # re-walking the ground it already covered.
     SEED = dict(aleph=12.45683, gam=0.44351, h1=0.01017, b=0.05110,
                 # 0.0368/0.089, the value the identity sets, not a start
+                # u1 AT ITS PRE-RUNAWAY VALUE, not the 0.16129 it ran to. That
+                # 0.16129 records four hundred passes of a bracket with the
+                # wrong sign, not a calibration, and anchoring the held
+                # parameter there would anchor the whole vector to it.
                 pi_base=0.0368 / 0.089, u0=0.04622, u1=0.10814, omega=0.00065,
                 delta_d=0.85980, kap=0.10748, th=0.14962)
     _start = {**{k: v for k, v in FIXED.items() if k != 'kap'},
