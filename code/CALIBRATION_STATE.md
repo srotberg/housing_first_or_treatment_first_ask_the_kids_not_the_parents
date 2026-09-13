@@ -1,3 +1,86 @@
+## 13 September 14:52 UTC -- THREE INSTRUCTIONS THAT CHANGE THE QUANTITATIVE
+## MODEL BEFORE IT IS CALIBRATED AGAIN.  MEASURED, NOT ARGUED.
+
+Still paused.  These are what the pause is now for; the 14:25 entry below still
+governs what a firing does.
+
+**1. BETA IS 0.995 ANNUAL, WHICH IS 0.86038 OVER A THIRTY-YEAR PERIOD.**  Author:
+*"ok, use beta=0.995."*  That is `stylized.py`'s own default and it is what the
+13 September sweep overrode to beta = 1.0, at its upper bound.
+
+IT CANNOT BE SUBSTITUTED IN.  Measured on the calibrated vector with every other
+parameter held, moving beta alone:
+
+                             target    beta=1.0   beta=0.86038   gap
+    participation            0.08901    0.08871      0.32387    +264%
+    population SUD rate      0.03680    0.03668      0.13392    +264%
+    users' income / average  0.74000    0.73526      1.77923    +140%
+    drug spending share      0.14098    0.14132      0.15855    +12.5%
+    value of a statistical life  80.0    79.999      68.829     -14.0%
+    SUD share of the homeless 0.21700   0.21701      0.24871    +14.6%
+    housing / non-drug spend  0.26800   0.26686      0.28077     +4.8%
+    homelessness rate         0.01000   0.00962      0.01026     +2.6%
+
+r_use = 1.78 IS THE TELL.  Users richer than average is the corner branch, the
+one `recalibrate.py` records a failed sweep on at r_use 1.36 with four of eight
+parameters cornered.  The direction is the model's own logic -- a less patient
+household weighs a thirty-year consequence less and uses more -- but a
+recalibration at this beta MUST NOT be started from the beta = 1 vector, because
+that file's own note says the starting point is what picks the branch.  Its
+interior-branch start is h_hl = 1e-4, aleph = 15.0, th = 0.16, u1 = 0.127,
+pi_base = 0.40, b = 0.0282.
+
+**2. WHEN THE CHILD'S VALUE IS BOOKED.**  Author: *"the value function v(1) in
+the quant model should be counted for every age from 26 until 50, but at age 50,
+instead of multiplying beta*(1-survival)*omega_c*v(1), it is just
+beta*omega_c*v(1) since the child then becomes an adult for sure."*
+
+THE STRUCTURE IS ALREADY THERE, at
+`housing_first_or_treatment_first_SR_v1.f90:22417`:
+
+    future_utility_vector(...) += discount_factor
+        * (1 - survival_probability(age_index, is_homeless_1, ...))
+        * weight_on_child
+        * expected_child_value(employment_index, future_addiction_index, is_homeless_1)
+
+That is the ages 26-49 term, built and live.  TWO THINGS ARE WRONG AGAINST THE
+RULE.  At age 50 the weight must be 1, not (1 - survival).  And AFTER 50 the term
+must be zero, which it is NOT -- there is no age gate on that block, so a parent
+dying at 75 books a child value for a child that left twenty-five years earlier.
+Booked once per path is what makes this consistent: the (1-s) branches are death
+branches and the age-50 branch is certain, so the three are mutually exclusive
+along any path.
+
+**3. WHAT THE CHILD'S PENALTY KEYS ON -- EXPOSURE, NOT STATUS AT EXIT.**  Author:
+*"it is not enough if the parent had SUD just at age 50 ... it also matters if
+they had SUD before that"*, and *"we need to somehow know if the child was
+exposed to drugs during their lifetime."*
+
+It currently keys on `future_addiction_index`, the SUD state the parent moves
+into at that instant.  THIS MATTERS BECAUSE THE QUANTITATIVE MODEL HAS RECOVERY:
+there is a recovery hazard and `treatment_effect_on_recovery = 2.0`, so the
+disorder is NOT absorbing and a parent who used at 32, was treated, and is clean
+at 50 transmits nothing today.
+
+The fix needs a NEW STATE: a binary "has had a SUD at any point since the child
+arrived", evolving flag' = max(flag, sud'), carried over ages 26-50 and
+discarded after.  It cannot be post-processed, because the parent's CHOICES have
+to depend on it.
+
+AND IT CHANGES BEHAVIOUR, NOT ONLY ACCOUNTING, which is a design question put to
+the author and not yet answered.  Under "ever exposed" the child-penalty
+deterrent VANISHES for the rest of the childhood once a parent has used with a
+child at home -- there is nothing more to lose on that margin.  Under "status at
+exit" it stays live throughout.  The alternative that keeps a deterrent
+throughout is a GRADED measure, the fraction of childhood exposed, at the cost of
+a continuous state rather than a binary.
+
+**THE STYLIZED MODEL CANNOT CHECK THIS ONE** -- TRANSITION_LESSONS section 7 in
+reverse.  It has no recovery at all, because period 2 is terminal and there is
+nothing to recover into, so there exposure and onset-at-the-transition are the
+same object.  This is a quantitative-model-only issue and it does not inherit a
+stylized search.
+
 ## 13 September 14:25 UTC -- THE AUTHOR HAS PAUSED THE QUANTITATIVE CALIBRATION.
 ## THE ENGINE LOOP DOES NOT RELAUNCH IT. READ THIS BEFORE FIRING.
 
