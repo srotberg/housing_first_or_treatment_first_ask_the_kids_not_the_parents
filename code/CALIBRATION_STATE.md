@@ -1,3 +1,62 @@
+## 14 September 22:45 UTC -- THE BEST POINT OF THE DAY: kappa_phi_d 1.5 WITH
+## theta 0.079, AND THE TWO HAD TO MOVE TOGETHER
+
+**THE SETTLED POINT.**  t079_run, 27 loops, b flat to four digits for four loops:
+
+    parameter            moment          model    target     gap
+    labor_income_tax     tau_l         0.22398   0.2240    -0.0%
+    smi_onset_level      p_m           0.04798   0.04800   -0.0%
+    discount_factor      beta          2.9919    3         -0.3%
+    value_of_life        aleph        79.615    80         -0.5%
+    utility_cost_treat   tau_u         0.23332   0.245     -4.8%
+    addiction_scalar_1   b             0.0957    0.089     +7.6%
+    kappa_phi_d 1.5      y_u           0.7003    0.740     -5.4%
+    theta 0.079          drug spend    0.1319    0.14-0.16 -6%
+
+y_u at 0.700 with b within 8 per cent of target, corrected to b = 0.089 it is
+0.684.  It had been stuck near 0.497 in five consecutive runs.
+
+**NEITHER PARAMETER DID THIS ALONE, AND THAT IS THE FINDING.**  kappa_phi_d was
+walked from 1.97 to 1.71 with theta at 0.095 and corrected y_u moved 0.49 -> 0.58.
+theta was cut to 0.060 with kappa at 1.5 and participation collapsed to 0.0147.
+Together at 1.5 and 0.079 they give y_u 0.70 at b on target.  **The mortality
+price and the preference weight are complements here**: lowering kappa makes use
+worth trying further up the income distribution, and lowering theta stops the
+users who do try from spending so much that the spending moment blows out.
+
+**I CALLED THE kappa CHANNEL DEAD TWICE AND WAS WRONG BOTH TIMES.**  The first
+eight gated steps, all above kappa 1.8, showed no movement in corrected y_u and
+were reported as a settled negative.  The lever was simply dormant in that range.
+The rule already in this file covers it and cuts both ways: **a result measured at
+one value of a parameter is a result about that value until it is measured at
+another -- and a null measured in a dead region is not a null.**
+
+**FOUR TIMES TODAY I READ A SHORT FLAT WINDOW AS AN EQUILIBRIUM.**  Loop 42 of an
+earlier run; the damping "stall"; b's apparent weakness under tau_u; and in this
+run b sat at 0.071 for six loops, was reported as settled, and then rose to 0.096.
+The correct test is the one used for the point above -- flat to four digits across
+several loops AND the parameters driving it no longer moving -- not simply a few
+similar numbers in a row.
+
+**cbar's SECOND PASS, computed at the settled point:** the identity dS/dcbar =
+mass * recipient share gives **cbar in [0.1341, 0.1389], midpoint 0.1365**,
+against 0.105 pinned.  The unit check passes at 46.4 per cent of cbar.  The answer
+has moved 0.105 -> 0.117 -> 0.137 across the day because the recipient share fell
+from 0.102 to 0.061 as theta and kappa reshaped incomes: a thinner eligible
+population needs a larger allotment for the same spending.  NOT APPLIED -- it
+costs a restart and the author should spend the settled point deliberately.
+
+**WHAT THE theta CUT COST.**  pi_V went from -0.6 per cent to -30, and
+sud_homeless from +19 to -51.  Both are drug-block-adjacent and both moved when
+the stock shrank.  band 1 (-68), mu_H (-28), pi_eu (-26), lambda_d (-22) and h_1
+(-22) remain, the middle three still limited by the 0.1 per cent global cap.
+
+**REMAINING SIZING, IF THE AUTHOR WANTS THE SPENDING RATIO EXACTLY.**  At the
+measured theta^2.5 sensitivity, 0.14 wants theta near 0.081 and 0.16 near 0.085.
+But theta and y_u move oppositely through participation, so buying the spending
+ratio sells y_u back.  At theta 0.079 both sit about 5 to 6 per cent short, which
+may be a better place to stand than either target exactly.
+
 ## 14 September 21:15 UTC -- y_u IS PARTICIPATION. b=0.089 AND y_u=0.74 ARE NOT
 ## JOINTLY REACHABLE IN THIS MODEL, AND NO SETTING OF kappa_phi_d CHANGES THAT
 
