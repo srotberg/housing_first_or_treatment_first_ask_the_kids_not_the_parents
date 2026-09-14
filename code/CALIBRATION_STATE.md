@@ -1,3 +1,45 @@
+## 14 September 10:05 UTC -- THE DRUG SHARE DRIFT IS REAL, MEASURED OVER NINE
+## WINDOWS, AND theta IS PUSHING THE OTHER WAY THE WHOLE TIME
+
+At 09:05 I called a drift on seven loops and had to withdraw it at 09:14 because
+the readings were single iterates inside an eight-loop cycle.  The fix is to
+smooth over the cycle rather than sample it.  Loop 83, cycle centre in
+NON-OVERLAPPING WINDOWS OF SEVEN:
+
+    loops 21-27   0.35356      loops 56-62   0.37606
+    loops 28-34   0.35862      loops 63-69   0.38384
+    loops 35-41   0.36361      loops 70-76   0.38262
+    loops 42-48   0.36731      loops 77-83   0.38584
+    loops 49-55   0.37207
+
+**UP IN EIGHT OF THE NINE STEPS**, 0.35356 to 0.38584, +9.1 per cent over 63
+loops, against a target of 0.14098.  The within-window spread is roughly constant
+at 0.004 to 0.011, so the oscillation is NOT growing -- the centre is walking.
+This is the same claim I withdrew at 09:14, but it is now carried by nine windows
+each wider than the cycle instead of by seven raw iterates inside one.
+
+**theta is at its cap the entire time and in the opposite direction.**  0.095000
+to 0.087517 over 83 loops, -7.9 per cent, every loop of it lowering the share it
+is bracketed on.  The moment rose 9.1 per cent while its instrument spent 83 loops
+pushing it down.
+
+**THE SUD RATE IS NOT DRIFTING, and I nearly said it was.**  Its raw readings ran
+7.9, 10.1 and 15.6 per cent off across three firings, which looks like the same
+shape.  It is not: `model_fraction_addicted` is printed TWICE per loop, so that
+series has 168 entries over 83 loops and a window of seven spans three and a half
+loops rather than seven.  Smoothed properly it oscillates within about ten per
+cent of target with no trend, and the 15.6 at loop 83 is one iterate of a spike
+loop -- the header said so, b +50.1 per cent and lambda_d +57.5 against loop 82.
+**Check a series' cadence before smoothing it**; two prints a loop turns a window
+into half a window and manufactures exactly the trend one is looking for.
+
+Everything else in the block is on target or walking toward it: unemployment and
+voucher coverage ON TARGET, the SMI share at 0.4 per cent, food stamps and VSL
+both down monotonically over four firings (30.5-27.4-26.3-25.3-23.7 and
+58.9-28.5-27.8-27.0-25.1).  The drug share is the only term going the wrong way,
+and the bound of 08:40 says why: the mean of s/y is at least the zero-income share
+whatever theta does.
+
 ## 14 September 09:14 UTC -- WITHDRAWN: THE RUN WAS NOT DEGRADING. LOOP 42 WAS A
 ## SPIKE AND I READ IT AS A TREND
 
