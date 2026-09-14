@@ -1,3 +1,57 @@
+## 14 September 03:40 UTC -- SCAN LEG 1, aleph HELD AT 80. THE DRUG BLOCK IS
+## SOLVABLE, AND THERE IS NO SUCH THING AS "THE" ELASTICITY OF USE IN b
+
+Four loop-0 points, aleph fixed at 80, b alone moving.  One parameter per point,
+the wide test first, which is ENGINE.md rule 1 and was skipped before block 1.
+
+         b     users    lambda_d    VSL/income    y_u    elasticity
+    0.00020    33.1%     0.1308        59.5      0.606
+    0.00035    23.8%     0.0959        48.3      0.563     -0.59
+    0.00050    16.0%     0.0642        48.4      0.497     -1.12
+    0.00080     7.81%    0.0316        56.7      0.426     -1.52
+    TARGET      8.9%     0.0368        80.0      0.740
+
+**b = 0.0008 PUTS USE WITHIN TWELVE PER CENT OF TARGET**, and the disorder rate
+within fourteen.  On the local elasticity b = 0.00073 hits both.  This is the
+first point on the current model where the drug block is close, and it is the
+margin the calibration has been failing on for weeks.
+
+**THE ELASTICITY IS NOT A NUMBER, IT IS A FUNCTION.**  It runs -0.59, -1.12,
+-1.52 across a factor of four in b, and the -1.64 recorded at 02:35 was measured
+at a different aleph entirely.  Two projections were made tonight off a single
+segment -- b = 0.0019 off the flattest, b = 0.00045 off the -1.64 -- and both
+were wrong by more than a factor of two.  THE STANDING RULE IS RIGHT AND IT
+EARNED IT AGAIN: prefer a measured bracket to an elasticity.
+
+**VSL IS NOW THE BINDING MOMENT AND b CANNOT MOVE IT.**  At aleph = 80 the ratio
+reads 48 to 60 and is U-SHAPED in b, with a minimum near b = 0.0004, against a
+target of 80.  So the earlier story -- that fewer users dying pulls the average
+up, monotonically -- is WRONG, and the aleph = 104 figure extrapolated from it
+at 03:33 should be ignored.  Both the numerator and the denominator of
+VSL/income are equilibrium objects and they do not move together with use.
+
+What survives is a bracket.  Ratio over aleph, at every point now on the current
+model:
+
+    aleph   users    ratio/aleph
+     56.7   44.9%       0.720      cand1
+     80     33.1%       0.744
+     80     23.8%       0.603
+     80     16.0%       0.605
+     80      7.81%      0.709
+    111.3    0.61%      0.847      block1 loop 1
+
+Between 0.60 and 0.85, so a ratio of 80 wants aleph somewhere in 95 to 130.
+Leg 2 holds aleph at 110 and scans b DOWNWARD -- 1e-4 to 5e-4 -- because
+aleph 111.3 at b = 8.05e-4 gave 0.61 per cent use.  That closes the 2x2: the
+users = 8.9 per cent locus is known at aleph 80, and leg 2 gives it at aleph
+110 together with the VSL there.
+
+**AND y_u FALLS IN b** -- 0.606, 0.563, 0.497, 0.426 against a target of 0.74 --
+so it wants LOW b while use wants high b.  y_u is kappa_phi_d's moment, not b's,
+but the conflict is real and kappa_phi_d will be pulling against b in the block.
+Worth watching rather than acting on yet.
+
 ## 14 September 03:25 UTC -- BLOCK 1, LOOP 1. TEN INSTRUMENTS LIVE AND MOVING,
 ## AND DRUG USE COLLAPSED BECAUSE TWO CORRECTIONS WERE TAKEN AT ONCE
 
