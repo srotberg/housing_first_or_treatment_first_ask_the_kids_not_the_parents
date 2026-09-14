@@ -5130,7 +5130,19 @@
         ! and the stock's own instrument is addiction_scalar_1.  At 0.05 against
         ! b's 0.5 the mortality bracket moves an order of magnitude slower than
         ! the instrument it was outrunning, which is what the ranking is for.
-        real(8) :: kappa_phi_d_max_rel_step=drug_block_max_rel_step
+        ! NOT ON THE DRUG BLOCK'S RATE.  The author, 14 September: *"thats why
+        ! the model collpses! keep it fixed at 2 and if you do update it, it
+        ! cannot be updated faster than 0.1% per iteration!"*
+        !
+        ! kappa_phi_d is the mortality multiplier and participation in this
+        ! model is a mortality phenomenon -- measured on 14 September, at
+        ! kappa_phi_d = 1 drug use runs 95 to 97 per cent and no b over a
+        ! twenty-four fold range moves it two points, while at 2 it is single
+        ! digits.  So this parameter has more leverage over the drug block than
+        ! anything else in the file and it does not belong at the block's rate.
+        ! It is pinned by its adjuster in apply_first_block_freeze; this cap is
+        ! the second line of defence if it is ever released again.
+        real(8) :: kappa_phi_d_max_rel_step=0.001d0
         real(8) :: distance_kappa_phi_d_level=1
         real(8) :: stopping_rule_kappa_phi_d_level=10.d0**(-2)
         ! FLOOR AT ONE, ON THE AUTHOR'S INSTRUCTION: *"you should allow
@@ -34915,6 +34927,16 @@
         ! AND h_1 IS UNTIED, so that homelessness has an instrument. See
         ! first_block_only.
         size_homelessness_adjuster=20.d0
+
+        ! kappa_phi_d PINNED AT 2, 14 September, on the author's "pinned" in answer
+        ! to whether kappa_phi_d_level=2 was being held.  It had been released on
+        ! their earlier "Don't hold parameters", and over stage 2 its bracket walked
+        ! it 2.00000 -> 1.97218 against y_u.
+        !
+        ! Its adjuster is declared 2.d0, so this zeroing is what actually holds it;
+        ! the declaration alone does not.  The update block zeroes its own distance
+        ! when the adjuster is zero, so no orphaned term is left in the do-while.
+        kappa_phi_d_level_adjuster=0.d0
 
         ! kappa_phi_d IS LIVE, not pinned: *"Don't hold parameters"*, and kappa
         ! is named among the targets to hit.  It is bracketed on y_u, the income
