@@ -1,3 +1,60 @@
+## 14 September 06:45 UTC -- THE FLOOR BUG IS FIXED AND BOTH CONFLICTS SURVIVE IT.
+## THE TRADE-OFF, MEASURED
+
+**FIRST, THE BUG AND WHAT IT COST.**  The value-of-life floor tested
+val_life_min_any alone -- the worst value anywhere in the state space, however
+little mass sat on it -- while val_neg_life_mass was computed, printed and never
+read.  At aleph 100, 110 and 120 the mass below zero is 2.0e-9, 1.9e-9 and
+3.9e-9 out of 51.4, about four parts in a hundred billion, the same unreachable
+grid corner each time with only the DEPTH of the deficit shrinking.  The floor
+chased it to aleph 123 and overrode its own 0.1 per cent cap.
+
+That produced the 06:20 and 06:25 entries claiming aleph had a hard lower bound
+near 123 and that VSL was unreachable by a factor of two.  BOTH OVERSTATED THE
+CASE.  The test now also requires the mass to exceed one in a million of the
+population, and aleph holds where it is set at 96, 100, 110 and 120.
+
+**SECOND, THE CONFLICTS ARE REAL ANYWAY.**  At aleph 60, b 1.4e-3:
+
+    moment                     model     target     gap
+    y_u                       0.7448     0.7400    +0.6%
+    c_bar food stamps/output  0.004330   0.004200  +3.1%
+    VSL / income             88.6       80.0      +10.8%
+    h_1 homelessness          0.01103    0.01000  +10.3%
+    pi_eu unemployment        0.05443    0.04900  +11.1%
+    theta drug share          0.1688     0.14098  +19.7%
+    lambda_m SMI of homeless  0.1468     0.2500    -41%
+    drug users                0.3636     0.0890   +309%
+    sud_homeless              0.6746     0.2170   +211%
+
+    AND 0.514 PER CENT OF HOUSEHOLDS HAVE A NEGATIVE VALUE OF LIFE.
+
+That is genuine mass, five thousand times the tolerance, and the floor fires
+legitimately.  So:
+
+  1. VSL = 80 needs aleph near 59, which puts about half a per cent of
+     households below zero value of life.  The author's constraint correctly
+     rejects the point.
+  2. y_u = 0.74 needs about 36 per cent participation.  It reads 0.7448 here at
+     36.4 per cent use, exactly as the participation relationship predicts.
+     Bring use to 8.9 and y_u falls to about 0.45 whatever aleph does.
+
+**THE TWO ARE THE PRICE OF EACH OTHER.**  The participation that makes y_u right
+is the participation that needs an aleph low enough to push half a per cent of
+households below zero.  Six moments sit within eleven per cent at this point --
+y_u, c_bar, VSL, h_1, pi_eu, and theta at twenty -- and it fails on
+participation and the constraint together.
+
+**WHAT IS ACTUALLY BEING CHOSEN**, with the bug removed from the picture:
+
+  - accept roughly half a per cent of households valuing life negatively, and
+    take aleph near 59 with y_u, c_bar, h_1 and pi_eu all close; or
+  - enforce the constraint strictly, and accept VSL well above 80 with y_u near
+    0.45 at the participation target; or
+  - change what makes users poor at low participation, which is the job-finding
+    penalty multiple_find_if_addicted dividing the addicted's finding rate by
+    about 22 -- the only route that relaxes the y_u/participation link itself.
+
 ## 14 September 06:25 UTC -- THE FLOOR BINDS AT EVERY ALEPH SCANNED. THE VSL
 ## TARGET IS UNREACHABLE BY A FACTOR OF TWO, NOT BY A MARGIN
 
