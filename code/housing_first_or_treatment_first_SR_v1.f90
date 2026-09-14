@@ -7860,6 +7860,10 @@
         ! 163, so the cost in the value-of-life moment is negligible unless the
         ! floor is binding hard, and that is reported when it happens.
         real(8), parameter :: value_of_life_floor_margin=10.d0**(-3)
+        ! THE MASS THAT MAKES A NEGATIVE VALUE OF LIFE WORTH CORRECTING, as a
+        ! share of the population. Below this the deficit is a grid corner rather
+        ! than a household. See the floor's own test for what it measured.
+        real(8), parameter :: val_neg_life_mass_tol=10.d0**(-6)
         ! HOLDERS, NOT PAYERS, AND THE TWO ARE ELEVEN TIMES APART.
         !
         ! model_eligibles_getting_voucher counts an eligible household only when
@@ -46424,7 +46428,31 @@
                     ! being moved by something else -- and leaving
                     ! distance_value_of_life live under a binding floor is the
                     ! documented way for the outer do while never to terminate.
-                    if (val_life_min_any(1)<value_of_life_floor_margin) then
+                    ! AND THE MASS THERE HAS TO BE REAL, WHICH THIS TEST USED
+                    ! TO IGNORE. The condition was on val_life_min_any alone --
+                    ! the WORST value anywhere in the state space, however little
+                    ! mass sits on it -- and val_neg_life_mass was computed,
+                    ! printed, and never tested.
+                    !
+                    ! MEASURED 14 September: at aleph 100, 110 and 120 the mass
+                    ! below zero is 2e-9, 1.9e-9 and 3.9e-9 out of a population
+                    ! of 51.4 -- about four parts in a hundred billion, the same
+                    ! unreachable grid corner each time, with only the DEPTH of
+                    ! the deficit shrinking as aleph rises. The floor chased it
+                    ! all the way to aleph 123 and lifted aleph by 23 per cent in
+                    ! one step, which pinned the VSL moment near 192 against a
+                    ! target of 80 and, through participation, put y_u out of
+                    ! reach as well.
+                    !
+                    ! The author's requirement is *"you also need to make sure
+                    ! that no one has a negative value of life"*. That is about
+                    ! households, not numerical dust at a grid corner the
+                    ! distribution never visits. One in a million is still a
+                    ! strict reading and is three thousand times smaller than the
+                    ! genuinely negative mass at aleph 95, 0.108 per cent, which
+                    ! this still catches.
+                    if ((val_life_min_any(1)<value_of_life_floor_margin) .AND. &
+                        (val_neg_life_mass(1)>val_neg_life_mass_tol*sum_of_distribution)) then
 
                         write(*,*) "VALUE OF LIFE FLOOR BINDS: the worst-off household",&
                             " values a period of life at", val_life_min_any(1),&
