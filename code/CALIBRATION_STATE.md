@@ -1,3 +1,82 @@
+## 14 September 18:45 UTC -- kappa_phi_d AND cbar PINNED; AND I MIS-MAPPED FOUR
+## INSTRUMENTS TO THEIR MOMENTS BY WRITING THE MAP BY HAND
+
+**THE TWO PINS, both on the author's instruction** (*"yes, pin kappa_phid=2...dont
+update it"* and *"yes pin it"*).  `kappa_phi_d_level_adjuster` and
+`max_food_cost_adjuster` are both zero, and the seed
+`code/SEED_PINNED.txt` carries kappa_phi_d_level at exactly 2 and cbar at 0.105.
+
+**WHY THE 0.1 PER CENT CAP ON kappa_phi_d WAS NEVER GOING TO HOLD IT.**  The cap
+was put in on 14 September after the author said *"it cannot be updated faster
+than 0.1% per iteration"*, and it was read here as though it amounted to a pin.
+It does not.  kappa_phi_d_level is bracketed on **y_u**, the income of drug
+users, and y_u sat at 0.333 against a target of 0.74.  A gap that one-sided makes
+the update one-signed: the log printed `LOWERED: y_u is below target` on every
+loop without exception and walked the parameter monotonically off the pin, 2 ->
+1.978 in twenty loops, with `kappa_phi_d_level_lo = 1` waiting underneath and the
+file's own measurement saying drug use runs 95 to 97 per cent there.  **A rate
+limit on a one-signed update sets the speed of a collapse, not whether it
+happens.**  Only a zero adjuster stops it.  This generalises: before trusting a
+cap to hold a parameter, check whether the gap that drives it can change sign.
+
+y_u is unbracketed while this block runs.  Its instrument is
+`multiple_of_probabilities_of_employment_if_addicted`, held at 1, which opens in
+the next block.
+
+**FOUR INSTRUMENTS WERE MAPPED TO THE WRONG MOMENTS, AND THE AUTHOR CAUGHT THREE
+OF THEM.**  A full live/held instrument table was reported with a
+parameter-to-moment map WRITTEN BY HAND from the names.  Wrong rows:
+
+    relative_share_of_leisure   reported as omega_l at +112.8 per cent.  DEAD:
+                                inelastic_labor_supply=1 makes leisure_utility and
+                                leisure_marginal_utility both return a hard 0.d0,
+                                so the parameter is never evaluated and omega_l
+                                reads 1.0 by construction.  Not a gap at all.
+    newborn_endowment_scale     reported as w_bot at +229 per cent.  It is on
+                                homelessness_by_age_group(1,1), the young's share
+                                of the homeless: 0.082 against HUD's 0.260.
+    kappa_phi_d_level           reported as kappa_ued at +10 per cent.  It is on
+                                y_u: 0.333 against 0.74.
+    kappa_uem                   reported as "employment given SMI" at +201 per
+                                cent.  It is on smi_share_of_homeless_data:
+                                0.2635 against 0.25, +5.4 per cent.
+
+**kappa_uem IS THE INSTRUCTIVE ONE.**  The moment PRINTED under the label
+`MOMENT kappa_uem` is not the moment `kappa_uem` is BRACKETED on.  A print label
+and a bracket can name different things, and reading the label gave a parameter
+sitting at +201 per cent that is in fact within 6 per cent of its target.  This is
+the same family as the `smallest_rental` print-label-versus-case-key failure of
+this afternoon, and it is the third time today that reading a label instead of
+the code produced a wrong number.
+
+**THE FIX IS TO STOP WRITING THE MAP.**  Each instrument's own
+`distance_<param> =` assignment names the `_data` target it is computed against;
+each `MOMENT` print names the target it displays; matching on the shared target
+token derives the map from the file.  `code/plan_table.py` does this.  Two things
+it turned up that were not visible by hand: **`kappa_uem`, `lambda_m` and
+`zeta_DI` are all bracketed on the same target**, `smi_share_of_homeless_data`, so
+opening `lambda_m` puts two live instruments on one moment; and
+`smallest_house_size` is bracketed on `severe_cost_burden_data` rather than on the
+housing size distribution.
+
+**pi_V IS SETTLED AND WAS NEVER THE BUG.**  Across the stopped run, eligibles
+holding a voucher: 0.0492, 0.1143, 0.1536, 0.1806, 0.2432, 0.2639, 0.2695, 0.2741,
+0.2742, 0.2723, 0.2708, 0.2705, 0.2712, 0.2724, against a target of 0.266.  The
+0.0492 the author asked about is loop 1 of a stock filling from empty; it settles
+at +2.3 per cent in about seven loops.  The real voucher defect was the three
+unassigned transition rows, fixed in a117d118.  The second one proposed here,
+b4806489, was REVERTED in 78d0f051 -- it introduced an unguarded divide by zero at
+three rent-burden tests, and the control that appeared to support it was void,
+because the `smallest_rental` key bug meant it compared two economies rather than
+two code paths.
+
+**COMPUTE ONLY HAPPENS WHILE A TURN IS OPEN, AND IT IS MEASURABLE.**  The run held
+at 11 loops across the ten minutes between the 18:21 and 18:31 engine firings and
+advanced as soon as a turn was working; the process's own elapsed clock grew 47
+seconds over ten minutes of wall clock.  ENGINE.md rule 3 already says this; it is
+recorded here with a measurement because the elapsed-versus-wall-clock gap was
+twice mistaken in this session for a solver that had stalled or restarted.
+
 ## 14 September 18:40 UTC -- cbar SOLVED EXACTLY, NOT SEARCHED, AND THREE
 ## INSTRUMENTS ARE LIVE THAT THE AUTHOR'S STAGING SAYS SHOULD BE HELD
 
