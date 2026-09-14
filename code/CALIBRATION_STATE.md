@@ -1,3 +1,56 @@
+## 14 September 16:05 UTC -- pi_V IS A TRANSIENT, NOT A BUG, AND MY SEED HAD BEEN
+## SILENTLY DROPPING A PARAMETER ALL AFTERNOON
+
+Two findings, and the second invalidates a measurement I reported an hour ago.
+
+**pi_V CLIMBS TOWARD ITS TARGET ACROSS LOOPS. THE 0.0492 WAS LOOP 1.**  Holders
+among eligibles in the restarted run: **0.0574, 0.0994, 0.1511** over loops 1 to 3,
+against a target of 0.266.  This is the stationary stock building up, exactly as
+recorded earlier in the session -- 4.2 per cent at loop 2 of cand1, 23.2 per cent
+by loop 11.
+
+So the number the author asked about is a loop-1 reading of a stock that needs ten
+loops to fill.  **The 0.885 exit hazard I derived from it is void**, because it was
+computed from a non-stationary holder share.  There is no missing bug here; the
+bug in the voucher chain was the one already fixed this session, the three
+transition rows that were never assigned.
+
+**AND THE SEED WAS NOT THE SEED.**  Every run I set up from a reconstructed
+handover this afternoon carried the line
+
+    HANDOVER IGNORED, unknown name: smallest_rental
+
+one line in a hundred-thousand-line log.  The Fortran PRINTS the label
+`smallest_rental` and PARSES the case key
+`smallest_rental_relative_to_lowest_income`, so a handover rebuilt from the printed
+labels is silently rejected on that one parameter and the run keeps the default
+0.10 instead of 0.11958.  It is the third print-label-versus-case-key mismatch
+found today, after `voucher probability` and `employment multiplier`, and the only
+one that fails SILENTLY -- run_one_point.sh errors on it.
+
+**WHAT IT INVALIDATES.**  h_1 is tied to h_2 at setup, so the wrong rental rung
+gives a different street, a different economy and a different everything: the
+restarted run opened at 17.5 per cent drug use where Branch A opened at 8.96.
+**The voucher pre/post control of 15:45 is void with it** -- the pre-fix reading
+came from Branch A's own correct handover and the post-fix reading from the
+reconstruction, so it compared two economies and not two code paths.  The
+conclusion that the fix lowered coverage is withdrawn; it was never measured.
+
+The revert itself stands on its own ground, which is independent of that control:
+the change zeroed a variable that three unguarded rent-burden divisions read
+further down the same routine, so it would have divided by zero for every
+non-employed household.
+
+**THE REMEDY, applied.**  Handover keys are now validated against the parser's own
+`case ("...")` list before a run starts, not against the printed labels.  95 keys
+accepted; the rebuilt seed checks clean.  A run is restarted on it.
+
+**THE PATTERN, seventh instance today.**  A loop-1 reading taken for a state sent
+me to edit a frozen model, introduce a division by zero, and report a false finding
+to the author as their bug found.  The rule already written at 14:25 -- take every
+moment from a window centre, never a single loop -- would have stopped it at the
+first step.
+
 ## 14 September 15:45 UTC -- THE VOUCHER "FIX" WAS WRONG AND IS REVERTED. THE
 ## STALE READ IS REAL; IT IS NOT WHAT HOLDS pi_V DOWN.
 
