@@ -42522,6 +42522,25 @@
                     write(*,*) "HANDOVER size_homelessness:", size_homelessness, "->", handover_value
                     size_homelessness=max(min(handover_value,0.9d0),size_homelessness_floor)
 
+                ! EXPOSED SO h_1 CAN BE SCANNED, 14 September.  The author:
+                ! *"if you raise h1 towards 1% you will be able to get 46% of
+                ! homeless being employed... You can raise it until you hit the
+                ! 46% employed homeless"*.
+                !
+                ! h_1 could not be scanned at all before this.  tie_h1_to_h2 is a
+                ! compile-time 1, so the tie OVERWRITES anything the handover puts
+                ! in size_homelessness, and h1_share_of_h2 -- the multiplier the
+                ! tie actually uses -- had no case here and was a hard-coded 0.01.
+                ! Every run in the archive therefore sits at the same h_1, which is
+                ! why the slope this bracket would rely on has never been measured.
+                !
+                ! Exposing the multiplier rather than untying is the smaller change:
+                ! the ladder stays monotone by construction, since h_1 remains a
+                ! fraction of the bottom rung.
+                case ("h1_share_of_h2")
+                    write(*,*) "HANDOVER h1_share_of_h2:", h1_share_of_h2, "->", handover_value
+                    h1_share_of_h2=max(min(handover_value,0.9d0),10.d0**(-6))
+
                 case ("smallest_rental_relative_to_lowest_income")
                     ! BOTH, because the ratio is what the bracket moves and the
                     ! size is what the model prices, and the size is only rebuilt
