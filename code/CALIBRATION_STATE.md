@@ -1,76 +1,62 @@
-## 14 September 02:30 UTC -- THE FIRST PARAMETER IS SOLVED, NOT SEARCHED, AND
-## INELASTIC LABOUR IS WHY
+## 14 September 02:35 UTC -- THE FIRST LIVE ECONOMY. SIX MOMENTS ON TARGET,
+## AND THE TWO THAT HAVE BEEN FIGHTING US ARE AMONG THEM
 
-**tau_ell = 0.871398.**  Measured, not walked, and it landed to 0.13 per cent.
+`cand1`: the 7 September vector with tau_ell solved at 0.871398, theta pinned at
+0.16, aleph at 56.7, b at 0.0003, h_1 tied to h_2, child gap measured.  73 of 73
+parameters applied.  THE FIRST POINT TONIGHT WITH A LIVE DRUG ECONOMY, so the
+first whose moments mean anything.
 
-The author, 14 September: *"you will need to also raise tau_ell to reduce the
-taxes.  tau_ell is going to be a pretty stable number because labor supply is
-inelastic for workers"*.  That is exactly right and it is stronger than a
-bracket.  T(y) = y - lambda*y^kappa, so the average rate is
+    ON TARGET            model      data      gap
+    tau_l               0.22264   0.22400    -0.6%
+    pi_eu               0.05002   0.04900    +2.1%
+    sigma_y             0.17645   0.17200    +2.6%
+    beta                3.10267   3.00000    +3.4%
+    p_m                 0.05308   0.05130    +3.5%
+    y_u                 0.67261   0.74000    -9.1%
 
-    1 - lambda * E[y^kappa]/E[y]
+**UNEMPLOYMENT IS ON TARGET.** 5.00 per cent against 4.9, where it read 0.094
+per cent at source defaults -- a factor of fifty-three -- and where every
+emp_homeless reading tonight was worthless because of it.
 
-which is LINEAR in lambda, and under inelastic labour that expectation is a
-constant because earnings do not respond.  One measured point pins it:
+**AND THE TAX SOLVE HELD.** -0.6 per cent with every other parameter moved,
+which is the real test of the claim that inelastic labour makes it algebra.
 
-    lambda 0.767599  ->  average labour income tax 0.31644
-    implied E[y^kappa]/E[y] = 0.890523
-    to hit 0.224:  lambda = 0.776 / 0.890523 = 0.871398
+    STILL WRONG         model      data      gap
+    b (users)           0.4494    0.0890   +405%
+    lambda_d            0.1737    0.0368   +372%
+    aleph              40.80     80.00      -49%
+    sud_homeless        0.5831    0.2170   +169%
+    emp_homeless        0.3004    0.4600    -35%
+    h_1                 0.01225   0.00700   +75%
+    pi_V                0.0420    0.2660    -84%
+    cbar                0.00046   0.00420   -89%
+    tau_u               0.0506    0.2450    -79%
+    theta               0.1029    0.1410    -27%
 
-MEASURED AT THAT VALUE: 0.223717 against a target of 0.224000, off by 0.13 per
-cent.  The deduction, the transfers and the employment composition together
-move it by a tenth of a per cent and nothing more.
+**THE AUTHOR PREDICTED THE CENTRAL RESULT AND THE MODEL DELIVERED IT.** Their
+words: *"you will have to lower aleph quite a bit and then b will have to
+rise"*.  Halving the value of life took drug use to 45 PER CENT of the
+population.  A lower value of life makes the drug's mortality matter less, use
+rises, and b has to rise to pull it back.  That is the model's own central
+mechanism showing up in its own calibration.
 
-WHAT IT WOULD HAVE COST OTHERWISE.  A +13.5 per cent move at the one per cent
-per loop cap is FOURTEEN LOOPS, about half an hour of solving, to find a number
-that falls out of one equation.
+**ALEPH IS NOT PROPORTIONAL AND THE TWO POINTS PROVE IT:**
 
-**THE GENERAL RULE THIS ESTABLISHES, AND IT IS NEW WITH INELASTIC LABOUR.**  Any
-moment that is a deterministic function of the frozen earnings distribution is
-now ALGEBRA rather than iteration.  The test is whether the moment feeds back
-into behaviour.  For the tax it plainly does not.  Ask the question of every
-instrument before spending loops on it.
+    parameter 117.28  ->  VSL ratio 165.43   at  0% users
+    parameter  56.70  ->  VSL ratio  40.80   at 45% users
 
-**AND ONE THAT IS NOT SUCH A CASE, recorded because the mistake was made here
-first.**  Voucher coverage is a STOCK, not a flow.  The retention rule is
-probability ONE -- voucher_probabilities(1,1,1,:)=1, keep it while income is
-below the threshold -- so a small entry rate accumulates.  A one-point linear
-extrapolation gave pi_V = 0.283 to reach coverage of 0.266, which is eight
-times its current value and wrong: it treated the stock as a flow.  The author
-caught it: *"i think pi_v=0.283 is way too high because someone who gets it
-keeps it until it's income rises above the median income"*.
+The map moves with use, because drug users dying pulls the average down.  So
+aleph and b are coupled in BOTH directions and neither can be solved alone.
+56.7 overshot; scaling from the second point gives 111 as the next ITERATE.
 
-The moment's own arithmetic checks out -- it IS normalised by model_eligibles at
-17531, so it is a rate among eligibles and not a population share, and
-coverage_relative_to_pop of 0.00832 against 0.0339 implies about 24.5 per cent
-of the population is income-eligible, consistent with a threshold at half the
-median.  So the low coverage is the stock failing to build, not a denominator
-error, and pi_V must not be fitted to it until that is understood.
+**THETA IS ANSWERABLE AT LAST.** With use real, the drug spending share reads
+0.1029 against 0.14098 -- 27 per cent low at theta = 0.16, and no longer the -1
+empty-population sentinel.  Whether 0.16 can close it depends on how the share
+moves when b cuts use from 45 per cent to 9.  That is the author's question from
+02:00 and it now has a number attached.
 
-**THE SEED IS SAVED AS code/SEED_VECTOR_14SEP.txt**, 75 parameters, derived from
-point_16398ec68f (7 September, MODEL 211b867a51, the OLD model) with three
-changes: tau_ell to the solved 0.871398, theta pinned to the author's 0.16, and
-size_homelessness dropped because h_1 is tied to h_2 now.  Its VALUES are a
-starting point only; its MOMENTS were measured on a model with endogenous labour
-and no childhood and do not carry across.
-
-**WHAT b IS, AND WHY IT IS NOT SETTLED.**  Measured on the current model at the
-seed, drug use is violently non-linear in b and the elasticity is -1.64:
-
-    b        0.0020   0.0010   0.0005   0.0002   0.0001
-    users    0.19%    0.43%    3.71%    16.60%   26.82%
-    SUD      0.08%    0.15%    1.44%     6.45%   10.24%
-
-Interpolating, b = 0.000293 gives 8.9 per cent users with SUD at 3.45 against
-3.68.  BUT that is conditional on aleph = 118, which is 48 per cent above its
-target of 80.  The author: *"you will have to lower aleph quite a bit and then b
-will have to rise"*.  They are right and the mechanism is the model's own -- a
-lower value of life makes the drug's mortality risk matter less, use rises, and
-b must rise to pull it back.  So 0.000293 is a waypoint, not a seed value.
-
-THE DISORDERED SHARE OF USERS IS ALREADY RIGHT, which is the good news in that
-table: SUD/users sits at 0.38-0.39 across a fifteen-fold range of b, against
-0.41 in the data.  The onset at 0.0428 is producing very nearly the right
-conversion rate, so b and the onset are NOT fighting over participation the way
-they appeared to.
+**CORRECTIONS TAKEN, both from measured elasticities rather than guesses:**
+b 0.0003 -> 0.000805 (elasticity of users in b is -1.64, so a 5.05x cut in use
+needs 2.68x on b -- and 0.0008 is what the author guessed by eye two hours
+earlier), aleph 56.7 -> 111.2.  Running as `cand2`.
 
