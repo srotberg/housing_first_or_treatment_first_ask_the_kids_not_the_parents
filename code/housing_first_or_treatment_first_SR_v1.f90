@@ -9000,6 +9000,18 @@
             write(*,*) "DIAG max allotment / avg labour income           =",&
                 max_food_cost/max(model_average_labour_income(1),10.d0**(-12)),&
                 " data=", 0.039586d0
+            ! BOTH ESTIMATORS OF THE DRUG SHARE, side by side, because they
+            ! disagree by a factor of four and the calibration now uses the
+            ! first. The author, 14 September: *"it means that some people spend
+            ! over like 100% of their income on drugs"* -- they do, and the
+            ! accumulation caps nothing, so a user with income_2 of 0.001 and
+            ! drug spending of 0.01 contributes TEN to the mean.
+            write(*,*) "DIAG drug share, mean of s/y  (CALIBRATED)   =",&
+                model_fraction_spent_on_addiction(1),&
+                model_fraction_spent_on_addiction_experimenters(1)
+            write(*,*) "DIAG drug share, sum spend / sum income      =",&
+                model_addicted_total_addiction_spending_to_total_income(1),&
+                model_experimenters_total_drug_spending_to_total_income(1)
             write(*,*) "DIAG voucher HOLDERS among eligibles          =",&
                 model_eligible_voucher_holders(1)
             write(*,*) "DIAG voucher PAYERS among eligibles           =",&
@@ -10179,42 +10191,49 @@
             ok_a_1=(model_mass_addicts(1)>0) .AND. (share_a_1>=0) .AND. &
                 (model_addicted_total_income(1)>floor_1*model_mass_addicts(1))
 
-            ! POOLED AS AVERAGE SPENDING OVER AVERAGE INCOME, WHICH IS WHAT
-            ! THE TARGET MEASURES. The author, 14 September: *"it is about
-            ! average spending to average income"*, and *"which is different
-            ! than sum of all spending to sum of all income"* -- different, that
-            ! is, from what a MASS-weighted average of the two subgroup ratios
-            ! gives, which is what stood here.
+            ! THE MEAN OF HOUSEHOLD RATIOS, on the author's instruction of 14
+            ! September: *"i think we should use the mean of drug spending to
+            ! income ratio"*, and then *"i think you have to lower theta to
+            ! 0.075"*, which is the level that estimator implies.
             !
-            ! data/make_drug_spending_target.py builds the target as
-            ! spend24 / (n_users * mean family income): one pooled numerator over
-            ! one pooled denominator across every user. Over the same population
-            ! that is identical to average spending over average income, and it
-            ! is NOT the mass-weighted mean of the experimenter and addict
-            ! ratios, because the two groups have different mean incomes.
-            ! Addicts are the poorer group and carry the higher ratio, so mass
-            ! weights give them a larger share of the answer than their income
-            ! does.
+            ! THE TWO ESTIMATORS DIFFER BY A FACTOR OF FOUR AND THEY MOVE THETA
+            ! IN OPPOSITE DIRECTIONS, so which one this returns is not a detail.
+            ! Measured at theta = 0.16:
             !
-            ! Each subgroup variable already holds spending over income for its
-            ! own group, so multiplying back by that group's total income
-            ! recovers the spending and the pooled ratio follows. The totals are
-            ! still live at this point; only the spending accumulators were
-            ! overwritten by their own normalisation.
+            !                       addicts   experimenters   vs 0.14098
+            !   sum spend/sum inc    0.1061      0.0587          -45%
+            !   mean of s/y          0.3387      0.2722         +100%
+            !
+            ! So the sum over sum wants theta near 0.29 and the mean of ratios
+            ! wants it near 0.075. The author chose the mean of ratios.
+            !
+            ! THREE THINGS LIFT THE MEAN ABOVE THE COBB-DOUGLAS WEIGHT, and the
+            ! first is a defect rather than economics: model_fraction_spent_on_
+            ! addiction adds 1*mass for any user whose income_2 is at or below
+            ! zero, a constant and not a ratio; drug spending is theta of the
+            ! CONSUMPTION BUNDLE while the denominator is income, so a household
+            ! running down assets has s/y above theta mechanically; and s/y is
+            ! convex in y, so the mean of ratios exceeds the ratio of means
+            ! across the model's income spread in any case.
+            !
+            ! THETA = 0.075 IS TIED TO THIS ESTIMATOR AS IT STANDS, sentinel
+            ! included. If that 1*mass is ever removed the mean falls and theta
+            ! has to be solved again; the two cannot be changed independently.
             if (ok_e_1 .AND. ok_a_1) then
 
-                share_1=(share_e_1*model_experimenters_total_income(1)+&
-                    share_a_1*model_addicted_total_income(1))/&
-                    max(model_experimenters_total_income(1)+&
-                    model_addicted_total_income(1),10.d0**(-14))
+                share_1=(model_mass_experimenters(1)*&
+                    model_fraction_spent_on_addiction_experimenters(1)+&
+                    model_mass_addicts(1)*model_fraction_spent_on_addiction(1))/&
+                    max(model_mass_experimenters(1)+model_mass_addicts(1),&
+                    10.d0**(-14))
 
             elseif (ok_e_1) then
 
-                share_1=share_e_1
+                share_1=model_fraction_spent_on_addiction_experimenters(1)
 
             elseif (ok_a_1) then
 
-                share_1=share_a_1
+                share_1=model_fraction_spent_on_addiction(1)
 
             else
 
