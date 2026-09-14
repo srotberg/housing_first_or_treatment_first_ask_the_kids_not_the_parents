@@ -5179,7 +5179,29 @@
         ! that is already well into the range where the drug block degrades.  The
         ! adjuster is 2 so that the step saturates the cap; the cap is what
         ! governs.
-        real(8) :: kappa_phi_d_level_adjuster=2.d0
+        ! PINNED AT 1.7, on the author's instruction of 14 September: *"Try kappa
+        ! 1.7"*.  The descent had reached 1.70819 and the next gated step would
+        ! have carried it past; this holds it there so every other instrument
+        ! settles AROUND kappa = 1.7 and y_u can be read at b on target rather
+        ! than mid-descent.
+        !
+        ! WHAT THE DESCENT ESTABLISHED, and it corrects two calls made here
+        ! earlier today.  Correcting each gated y_u to b = 0.089 with the fitted
+        ! slope of 2.585:
+        !
+        !     kappa >= 1.80   eight steps, mean corrected y_u 0.4903
+        !     kappa <  1.80   six steps,   mean corrected y_u 0.5317
+        !
+        ! The lever is DORMANT above about 1.8 and bites below it, harder the
+        ! lower it goes -- the last two steps took corrected y_u from 0.524 to
+        ! 0.585.  The fitted elasticity went 0 -> -0.53 -> -1.06 as the parameter
+        ! travelled.  "The lever is spent" was reported here twice from the flat
+        ! stretch above 1.8, before the informative range had been reached, and
+        ! both times it was wrong.  The rule it breaks is already in this file: a
+        ! result measured at one value of a parameter is a result about that value
+        ! until it is measured at another -- which cuts BOTH ways, and a null
+        ! measured in a dead region is not a null.
+        real(8) :: kappa_phi_d_level_adjuster=0.d0
         ! ITS OWN RATE, the way theta and omega_c have theirs.
         ! HALVED AGAIN, on the author's instruction of 13 September: *"move
         ! omegac and death rate from drug at maybe 0.05% per iteration, but
