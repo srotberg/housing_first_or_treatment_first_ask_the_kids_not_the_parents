@@ -5155,7 +5155,31 @@
         ! y_u's instrument is multiple_of_probabilities_of_employment_if_addicted,
         ! which is what it is for.  It is held at 1 in the current block and opens
         ! in the next one.
-        real(8) :: kappa_phi_d_level_adjuster=0.d0
+        ! MOVING AGAIN, DOWN AND SLOWLY, on the author's instruction of 14
+        ! September: *"I guess we need to allow kappa_phid to move down slowly....
+        ! At maybe 0.1% between iterations"*.  This reverses the pin made earlier
+        ! the same day at their instruction, and the reversal is recorded rather
+        ! than the earlier answer being quietly overwritten.
+        !
+        ! WHY IT IS THE RIGHT LEVER NOW.  y_u decomposes: 38 per cent of users
+        ! have the disorder and earn 0.734 of average income against a datum of
+        ! 0.711, which is ON TARGET, while the 62 per cent who are experimenters
+        ! earn 0.343 -- less than half as much -- and the blend is y_u = 0.490
+        ! against 0.740.  So the failure is the EXPERIMENTATION MARGIN, not the
+        ! addicted.  kappa_phi_d is the mortality multiplier and so the price of
+        ! using: lowering it makes use worth trying to households further up the
+        ! income distribution, which is exactly the margin that is broken.
+        !
+        ! WHAT HAS NOT CHANGED.  The update is still ONE-SIGNED while y_u is below
+        ! target -- the step is kappa - adj*(target - y_u), so every loop lowers
+        ! it -- and kappa_phi_d_level_lo is 1, where the file's own measurement
+        ! puts drug use at 95 to 97 per cent.  The 0.1 per cent cap in
+        ! kappa_phi_d_max_rel_step sets the SPEED, not whether it arrives: 2 -> 1
+        ! is about seven hundred loops, but 2 -> 1.64 is only two hundred, and
+        ! that is already well into the range where the drug block degrades.  The
+        ! adjuster is 2 so that the step saturates the cap; the cap is what
+        ! governs.
+        real(8) :: kappa_phi_d_level_adjuster=2.d0
         ! ITS OWN RATE, the way theta and omega_c have theirs.
         ! HALVED AGAIN, on the author's instruction of 13 September: *"move
         ! omegac and death rate from drug at maybe 0.05% per iteration, but
