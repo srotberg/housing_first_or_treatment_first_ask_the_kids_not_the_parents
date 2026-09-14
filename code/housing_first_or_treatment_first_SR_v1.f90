@@ -5204,7 +5204,47 @@
         ! anything else in the file and it does not belong at the block's rate.
         ! It is pinned by its adjuster in apply_first_block_freeze; this cap is
         ! the second line of defence if it is ever released again.
-        real(8) :: kappa_phi_d_max_rel_step=0.001d0
+        ! ONE PER CENT, NOT 0.1, NOW THAT THE STEP IS GATED.  The author, 14
+        ! September: *"and I think when you do this you can move kappa a bit
+        ! faster. Maybe 1%"*.
+        !
+        ! The two changes belong together.  0.1 per cent was the right rate for an
+        ! UNGATED update, where most steps were taken on a y_u contaminated by the
+        ! refill and the rate's job was to limit the damage each misreading did.
+        ! Gated, a step is only ever taken when b is within ten per cent of target
+        ! and y_u is a composition at a near-fixed count, so the steps are
+        ! informative and there is no reason to crawl.
+        !
+        ! WHAT IT COSTS.  Ten times the speed toward the floor as well.  The file's
+        ! own measurement, kappa 8.0 -> 6.5 moving y_u 0.333 -> 0.533, is an
+        ! elasticity of -2.26; carried down to kappa 2 it says y_u = 0.740 wants
+        ! kappa near 1.62, which is BELOW the 1.85 this run is watched at and
+        ! inside the range where the drug block degrades.  That extrapolation is
+        ! from a measurement taken at kappa 8 and is not to be trusted at 2 -- it
+        ! is a reason to watch, not a prediction.
+        real(8) :: kappa_phi_d_max_rel_step=0.01d0
+        ! THE GATE: kappa_phi_d ONLY MOVES WHEN b IS NEAR ITS TARGET.
+        !
+        ! The author, 14 September: *"What you need to check is whether yu is high
+        ! when kappa is lower when b is on target. I think maybe the best way to
+        ! adjust kappa is only when b is close to target, not when it's far"*.
+        !
+        ! WHY. kappa_phi_d is bracketed on y_u, the income of drug users, and y_u
+        ! is a COMPOSITION statistic: it says who the users are, not how many.
+        ! While the drug stock is refilling, the composition changes for reasons
+        ! that have nothing to do with kappa -- measured across a restart, y_u
+        ! swung 0.20 -> 0.49 -> 0.40 -> 0.48 purely as b climbed from 0.023 to
+        ! 0.086. A kappa step taken anywhere in that swing is reading the refill
+        ! and calling it a signal, and because the step is ONE-SIGNED while y_u is
+        ! below target, every such misreading pushes the same way.
+        !
+        ! So the gate is not a refinement, it is what makes the bracket mean
+        ! anything: only when b sits inside kappa_gate_b_tolerance of its own
+        ! target is y_u a statement about composition at a fixed count.
+        !
+        ! TEN PER CENT, matching the tolerance the author's staged plan uses
+        ! elsewhere for "close enough".
+        real(8), parameter :: kappa_gate_b_tolerance=0.10d0
         real(8) :: distance_kappa_phi_d_level=1
         real(8) :: stopping_rule_kappa_phi_d_level=10.d0**(-2)
         ! FLOOR AT ONE, ON THE AUTHOR'S INSTRUCTION: *"you should allow
@@ -45589,8 +45629,13 @@
                     ! keep up. If it turns out to chase a contaminated ratio anyway,
                     ! the fix is a gate like the one omega_c already has, which
                     ! refuses to PIN while the economy around the ratio is wrong.
-                    if (kappa_phi_d_level_adjuster>0) then
+                    if ((kappa_phi_d_level_adjuster>0) .AND. &
+                        (abs(model_total_drug_users(1)-participation_rate_data)<=&
+                        kappa_gate_b_tolerance*participation_rate_data)) then
 
+                        write(*,*) "KAPPA GATE OPEN: b=", model_total_drug_users(1),&
+                            " is within", kappa_gate_b_tolerance,&
+                            " of", participation_rate_data, "-- y_u is a composition"
                         write(*,*) "model y_u income of drug users =",&
                             model_avg_income_drug_users(1)/&
                             max(model_average_income(1),10.d0**(-14)),&
@@ -45638,6 +45683,28 @@
                                 ". The literature range cannot reach the target and",&
                                 " the shortfall is not this parameter's to close."
                         end if
+
+                    elseif (kappa_phi_d_level_adjuster>0) then
+
+                        ! LIVE BUT WAITING: the adjuster is on and the gate is
+                        ! shut because b is outside its tolerance. The parameter
+                        ! must NOT step -- y_u is not a composition at a fixed
+                        ! count right now -- but it must also NOT read as
+                        ! converged, so the distance is still computed from the
+                        ! moment. Setting it to zero here would be the defect
+                        ! ENGINE.md records as having cost a whole calibration: a
+                        ! parameter that cannot move reporting distance 0 lets the
+                        ! outer do-while exit on a target nobody is hitting.
+                        distance_kappa_phi_d_level=&
+                            abs(model_avg_income_drug_users(1)/&
+                            max(model_average_income(1),10.d0**(-14))-&
+                            drug_user_income_data)
+
+                        write(*,*) "KAPPA GATE SHUT: b=", model_total_drug_users(1),&
+                            " is outside", kappa_gate_b_tolerance, " of",&
+                            participation_rate_data, "-- kappa_phi_d HELD at",&
+                            kappa_phi_d_level, ", distance still",&
+                            distance_kappa_phi_d_level
 
                     else
 
