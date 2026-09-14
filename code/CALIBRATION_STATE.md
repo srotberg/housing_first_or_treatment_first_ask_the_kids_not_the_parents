@@ -1,3 +1,76 @@
+## 14 September 03:25 UTC -- BLOCK 1, LOOP 1. TEN INSTRUMENTS LIVE AND MOVING,
+## AND DRUG USE COLLAPSED BECAUSE TWO CORRECTIONS WERE TAKEN AT ONCE
+
+The first block ran with the ten instruments the author named -- aleph, b,
+onset, kappa_ued, h_1, pi_eu, kappa_phi_d, omega_c, tau_u, pi_V.  All ten moved
+on loop 1: h_1 1.19585e-3 -> 1.20183e-3, b 8.050e-4 -> 8.0098e-4,
+utility_cost_of_treatment 8 -> 8.08, kappa_phi_d 8 -> 7.992, and
+voucher_probability 0.0443 -> 0.04452.  75 of 75 handover parameters applied,
+no clamps.  Loop time about four minutes at one beta type.
+
+    ON OR NEAR TARGET     model      target     gap
+    p_m                 0.04797    0.04797    +0.0%
+    tau_l               0.22380    0.22400    -0.1%
+    theta               0.14215    0.14098    +0.8%
+    beta                3.03752    3.00000    +1.3%
+    kappa_ued           0.16583    0.16250    +2.0%
+    mu_H                1.43822    1.47321    -2.4%
+    sigma_y             0.17677    0.17200    +2.8%
+    lambda_m            0.23143    0.25000    -7.4%
+    emp_homeless        0.51560    0.46000   +12.1%
+
+    THE BLOCK'S OWN     model      target     gap
+    aleph              94.31242   80.00000   +17.9%
+    h_1                 0.00664    0.01000   -33.6%
+    pi_eu               0.02972    0.04900   -39.4%
+    sud_homeless        0.06177    0.21700   -71.5%
+    y_u                 0.19035    0.74000   -74.3%
+    pi_V                0.03976    0.26600   -85.1%   (cold start, see 03:20)
+    b                   0.00611    0.08900   -93.1%
+    lambda_d            0.00193    0.03680   -94.8%
+    tau_u               0.51774    0.24500  +111.3%
+
+**DRUG USE COLLAPSED, AND IT WAS AN ERROR OF METHOD, NOT OF THE MODEL.**  Both
+of the corrections taken from cand1 were applied at the same time:
+
+    aleph  56.7   -> 111.2    measured holding b at 0.0003
+    b      0.0003 -> 0.000805 measured holding aleph at 56.7
+
+Each was measured with the OTHER held fixed, and BOTH PUSH USE THE SAME WAY --
+a higher value of life makes the drug's mortality matter more, and a higher b
+prices use directly.  Applied together they compound: cand1 had 44.9 per cent of
+the population using, this has 0.61, an overshoot of a factor of fifteen.  This
+is the same mistake ENGINE.md rule 1 was written about, in the other direction:
+a correction read off a one-parameter measurement is only valid one at a time.
+
+**THE CAPS CANNOT UNDO IT, AND THAT IS THE REASON THE RUN WAS STOPPED.**  At the
+author's caps -- 0.1 per cent a loop for aleph, 0.5 for b -- b needs a factor of
+5.4 (338 loops) and aleph about 12 per cent once use is right (120 loops).  At
+four minutes a loop that is twenty-two hours to return to a point a twenty
+minute scan locates.  The run was killed at loop 1; no repo .dat was touched,
+the run lived entirely in the scratchpad.
+
+**THE TWO POINTS DO BRACKET THE TARGET ON BOTH MOMENTS**, which is worth
+keeping:
+
+    point          aleph        b       users    VSL/income
+    cand1           56.7   0.000300     0.4494     40.80
+    block1 L1      111.3   0.000805     0.0061     94.31
+    TARGET                              0.0890     80.00
+
+They lie on a line, so they identify one degree of freedom and not the 2x2.
+Balanced log interpolation along it puts both moments about twenty per cent off
+at aleph 80, b 4.6e-4, which is the neighbourhood the scan is searching.
+
+**AND THE COUPLING RUNS THE OTHER WAY TOO, WHICH HELPS.**  VSL ratio over aleph
+is 0.72 at 45 per cent use and 0.85 at 0.6 per cent, because users dying pull
+the average down.  So aleph does not have to travel the full 18 per cent: once b
+puts use back at 8.9 per cent the ratio falls on its own.
+
+**THE SCAN RUNNING NOW** holds aleph at 80 and moves b alone over
+2e-4, 3.5e-4, 5e-4, 8e-4, reading each at loop 0.  One parameter per point, the
+wide test first.
+
 ## 14 September 03:20 UTC -- THE 4.2 PER CENT WAS LOOP 2, NOT THE ANSWER.
 ## PI_V IS TWENTY PER CENT LOW, NOT EIGHTY-FOUR
 
