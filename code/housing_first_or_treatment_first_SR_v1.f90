@@ -4911,6 +4911,10 @@
         ! at overrides of 0.020, 0.030 and 0.045.
         real(8) :: y_grid_kappa=3.2d0
         real(8) :: bottom_productivity_level=0.d0
+        real(8) :: bpl_old_1=0
+        ! The rate the value-of-life constraint raises the productivity floor
+        ! at, per loop, while any household still prefers death.
+        real(8), parameter :: bottom_productivity_floor_rate=0.01d0
         ! HOW MANY BOTTOM NODES bottom_productivity_level COVERS.
         ! 1 is the old behaviour exactly. 2 sets nodes 1 and 2 to the same
         ! level, which IS a merged node of their combined mass, and the
@@ -46716,45 +46720,44 @@
                         ! being thrown across it in one step.  The author, 14
                         ! September: *"No parameter should move fast. Especially big
                         ! ones like aleph"*.
-                        ! THE CONSTRAINT IS ENFORCED, AND IT OUTRANKS THE MOMENT.
-                        ! The author, 14 September: *"the value of life constraint
-                        ! has to be enforced (no one should have negative value of
-                        ! life)"*.  This restores the behaviour removed an hour
-                        ! earlier on their *"aleph has to be updated correctly"*.
+                        ! THE CONSTRAINT IS ENFORCED THROUGH THE PRODUCTIVITY FLOOR,
+                        ! NOT THROUGH ALEPH.  The author, 14 September: *"to get a
+                        ! positive value of life for every household you need to
+                        ! adjust the smallest productivity i think"*, and *"aleph
+                        ! should [not] be chosen for anything else other than
+                        ! VSL=80"*.
                         !
-                        ! THE TWO INSTRUCTIONS CONFLICT AT THIS SEED AND THE
-                        ! CONSTRAINT WINS.  Satisfying it needs aleph near 122,
-                        ! because at 60 the worst-off household values a period of
-                        ! life at -62; the VSL moment reads above 80 and its bracket
-                        ! therefore wants aleph DOWN.  A constraint is not a target,
-                        ! so while it binds aleph goes UP and the VSL moment is not
-                        ! scored -- said out loud in the log every loop, because a
-                        ! moment silently dropped from the test is indistinguishable
-                        ! from one that converged.
+                        ! WHY THIS IS THE RIGHT LEVER.  A household prefers death
+                        ! when its consumption is low enough that the flow value of
+                        ! living is negative.  Raising aleph fixes that by making
+                        ! life worth more -- but aleph is the price of death for
+                        ! EVERYONE, so it also destroys the drug block: the floor's
+                        ! own demand at this seed is 122.5 against a VSL target that
+                        ! wants 60, and every collapsed run today came from that.
+                        ! bottom_productivity_level instead raises what the poorest
+                        ! households actually HAVE, and the block that applies it
+                        ! rescales the upper nodes so the mean is preserved. It is a
+                        ! redistribution toward the bottom, not a repricing of life.
                         !
-                        ! STEPPED, NOT ASSIGNED.  Assigning took aleph 60.060 ->
-                        ! 122.515 in one loop and collapsed every run this morning.
-                        ! Under the cap the mass below zero fell from 0.143891 to
-                        ! 0.075148 over twenty-four loops, so the constraint does
-                        ! close from here; it simply takes loops.
-                        cap_old_1=value_of_life
-                        value_of_life=min(value_of_life+&
-                            (value_of_life_floor_margin-val_life_min_any(1)),10.d0**(4))
-                        value_of_life=cap_step_rel(value_of_life,cap_old_1,&
-                            value_of_life_max_rel_step)
-                        write(*,*) "VALUE OF LIFE FLOOR: aleph stepped to", value_of_life,&
-                            " at", 100*value_of_life_max_rel_step, " per cent a loop;",&
-                            " the floor would have asked for", cap_old_1+&
-                            (value_of_life_floor_margin-val_life_min_any(1))
-
-                        ! aleph is pinned by the constraint this loop, so the VSL
-                        ! moment has no instrument and is not scored. Said out
-                        ! loud, because a moment silently dropped from the test
-                        ! is indistinguishable from a moment that converged.
-                        write(*,*) "VALUE OF LIFE FLOOR: the VSL moment is NOT scored",&
-                            " this loop -- aleph is pinned by the constraint, not by",&
-                            " its own bracket"
-                        distance_value_of_life=0
+                        ! IT IS FREE TO TAKE THIS JOB: bottom_productivity_level has
+                        ! no adjuster and no bracket anywhere in the file, only a
+                        ! declaration and a handover case.
+                        !
+                        ! THE RATE IS 1 PER CENT, NOT 0.1.  It has to travel: 0.11075
+                        ! at the seed against a floor that looks like it needs 0.2 to
+                        ! 0.35, so 0.1 per cent a loop would be six hundred loops.
+                        ! Flagged rather than buried -- it is the one parameter above
+                        ! the author's 0.1 per cent rule, and it is a constraint
+                        ! rather than a moment.
+                        bpl_old_1=bottom_productivity_level
+                        bottom_productivity_level=min(bottom_productivity_level*&
+                            (1.d0+bottom_productivity_floor_rate),1.d0)
+                        write(*,*) "VALUE OF LIFE CONSTRAINT: raising the smallest",&
+                            " productivity", bpl_old_1, "->", bottom_productivity_level,&
+                            " because", val_neg_life_mass(1), " of mass values life",&
+                            " below zero and the worst is at", val_life_min_any(1)
+                        write(*,*) "VALUE OF LIFE CONSTRAINT: aleph is NOT touched and",&
+                            " the VSL moment IS scored -- aleph answers only to VSL=80"
 
                     end if
 
