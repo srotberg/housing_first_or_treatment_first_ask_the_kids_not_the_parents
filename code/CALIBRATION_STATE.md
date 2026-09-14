@@ -1,3 +1,33 @@
+## 14 September 08:52 UTC -- ADDENDUM: THE DRUG SHARE TERM IS IN A LIMIT CYCLE,
+## AND theta's SIGN IS SWAMPED
+
+Branch B is at loop 34 and the drug share moment is not converging, not diverging
+and not drifting: it is ALTERNATING.  Loops 21 to 34, odd against even:
+
+    odd loops   mean 0.35235   sd 0.00268
+    even loops  mean 0.35983   sd 0.00464
+    overall     mean 0.35609   sd 0.00532   range 0.01813
+
+A stable two-cycle about 0.356, with a slow upward drift on top of it -- the
+first seven of those loops average 0.35356 and the last seven 0.35862.
+
+**The cleanest single statement of the problem.**  Over 34 loops theta fell from
+0.095000 to 0.091815, -3.35 per cent, pressed against its 1e-3 cap the whole way
+and in the direction that LOWERS the share.  The share rose 98 per cent.  theta's
+effect is not merely too slow to matter, it is swamped in sign by whatever else
+is moving the moment.
+
+The other moments cycle with it rather than settling -- VSL over income read
+104.97 at loop 26, 127.09 at 29 and 104.46 at 34, and the report's own header has
+said "the map is still settling; do not quote this table as the benchmark" at
+every reading.  Loop 34's header reports b +41.5 per cent and lambda_d +39.4 per
+cent against loop 33, on parameters capped at half a per cent.
+
+This does not change the bound recorded at 08:40 -- the mean of s/y is at least
+the zero-income share z whatever theta does -- it shows the block behaving
+exactly as that bound predicts: an instrument with no grip, and a moment held up
+by a headcount.
+
 ## 14 September 08:40 UTC -- THE DRUG SHARE MOMENT IS NOT A SPENDING SHARE, AND
 ## theta CANNOT REACH IT. NEITHER INSTRUMENT DIVERGED.
 
