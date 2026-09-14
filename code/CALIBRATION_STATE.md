@@ -1,3 +1,55 @@
+## 14 September 05:35 UTC -- PARTICIPATION IS A MORTALITY PHENOMENON. b CANNOT
+## CONTROL IT AT SMR = 1, AND THE SMR = 1 EXPERIMENT HAS NO SOLUTION
+
+The author asked to see y_u at SMR = 1 with b set right, holding users constant.
+There is no such point.  Four b values at kappa_phi_d = 1, theta 0.095, c_bar
+0.087:
+
+    b          drug users    y_u      VSL/income
+    1.25e-4      97.1%      1.023       169
+    5e-4         97.0%      1.025       170
+    1.2e-3       96.9%      1.026       170
+    3e-3         95.0%      1.043       171
+    TARGET        8.9%      0.740        80
+
+A TWENTY-FOUR FOLD increase in b moves participation by two points.  The
+elasticity of use in b at SMR = 1 is effectively zero.
+
+**THAT IS THE FINDING.**  b is the Stone-Geary shifter and changes the static
+utility of buying the drug; mortality changes whether the household survives to
+consume anything at all.  With the disorder nearly consequence free almost
+everyone uses, whatever b does to the marginal utility.  b bites ONLY when
+kappa_phi_d is above one: it modulates a mortality channel rather than acting as
+an independent deterrent.
+
+**IT EXPLAINS THE REST OF THE NIGHT.**  b's measured elasticity ran -0.24,
+-0.68, -1.52, -1.73, -2.02 across different scans because it varies with how
+much mortality there is to modulate.  The b-to-use map was non-monotone at
+theta = 0.075 for the same reason.  And kappa_phi_d moved use from 97 to 10 per
+cent across SMR 1 to 2 while b needed order-of-magnitude changes to do less.
+
+**SO y_u = 1.02 AT SMR = 1 IS NOT A BRACKET ENDPOINT.**  It is the value in a 97
+per cent use economy and there is no 8.9 per cent version of SMR = 1 to set
+against the SMR = 2 point.  y_u has to be read where participation is
+controllable, SMR 1.5 to 2.
+
+**THE LIVE HYPOTHESIS IS ALEPH**, on the author's *"it could be also that aleph
+is too high....and that's why only the poor use"* and *"you have to also keep
+the value of life constant"*.  At every SMR that can reach 8.9 per cent use, VSL
+over income reads 147 to 170 against a target of 80.  A value of life that far
+above target makes death enormously costly and selects use toward households
+with little to lose -- which is a mechanism for exactly the steep income
+gradient the model shows.  It also means kappa_phi_d has been multiplied by an
+inflated aleph throughout, so the mortality channel has been over-priced.
+
+**NEXT: TWO CONSTRAINTS PER POINT, NOT ONE.**  Solve b AND aleph jointly at a
+fixed SMR so that users are 8.9 per cent and VSL over income is 80, then read
+y_u.  The one-constraint version cannot answer the question because it varies
+mortality and the price the model puts on mortality at the same time.
+
+**AND THETA IS NEARLY THERE at 0.095**: the drug spending share reads 0.1504
+against 0.14098, +6.7 per cent, under the mean-of-ratios estimator.
+
 ## 14 September 04:45 UTC -- THREE MOMENTS HAD NO INSTRUMENT, AND THE DEATH
 ## PENALTY AT 2 FIXED y_u
 
