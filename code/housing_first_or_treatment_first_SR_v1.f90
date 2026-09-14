@@ -7801,6 +7801,26 @@
         ! 163, so the cost in the value-of-life moment is negligible unless the
         ! floor is binding hard, and that is reported when it happens.
         real(8), parameter :: value_of_life_floor_margin=10.d0**(-3)
+        ! HOLDERS, NOT PAYERS, AND THE TWO ARE ELEVEN TIMES APART.
+        !
+        ! model_eligibles_getting_voucher counts an eligible household only when
+        ! housing_voucher_2 is POSITIVE, and the voucher pays
+        ! max(rent - 0.3*income, 0). So a holder who rents cheaply -- or is on
+        ! the street paying no rent -- is a holder and not a payer.
+        !
+        ! COMPUTED DETERMINISTICALLY FROM THE MODEL'S OWN GRIDS: eligibility is
+        ! income below half the median, which is nodes 1 to 3 of the seven-node
+        ! productivity grid; persistence is 0.98, so the expected spell at a node
+        ! is fifty years and eligibility is effectively permanent; retention is
+        ! probability one. The voucher is then a one-way chain from age 26 and
+        ! the cross-section holder share is 1-(1-piV)^(age-26) averaged over the
+        ! working ages -- 46.7 PER CENT at piV = 0.0361. The model reports 4.2.
+        !
+        ! This counter says which explanation it is. Near 46.7 and the chain is
+        ! right, the payment condition removes them, and the coverage MOMENT is a
+        ! different object from the 26.6 per cent target. Near 4.2 and the stock
+        ! is not building, so the entry side is at fault.
+        real(8), dimension(transition_length) :: model_eligible_voucher_holders
         real(8), dimension(transition_length) :: val_neg_life_mass,val_life_min,&
             val_ugoods_users,val_umass_users,val_ugoods_others,val_umass_others
 
@@ -8921,6 +8941,14 @@
             write(*,*) "DIAG max allotment / avg labour income           =",&
                 max_food_cost/max(model_average_labour_income(1),10.d0**(-12)),&
                 " data=", 0.039586d0
+            write(*,*) "DIAG voucher HOLDERS among eligibles          =",&
+                model_eligible_voucher_holders(1)
+            write(*,*) "DIAG voucher PAYERS among eligibles           =",&
+                model_eligibles_getting_voucher(1),&
+                " target=", voucher_coverage_data
+            write(*,*) "DIAG share of holders the payment test removes=",&
+                1.d0-model_eligibles_getting_voucher(1)/&
+                max(model_eligible_voucher_holders(1),10.d0**(-14))
             write(*,*) "DIAG gross eligibility cutoff                     =",&
                 (max_food_cost/food_stamp_taper)/&
                 max(model_average_labour_income(1),10.d0**(-12)), " data=", 0.214872d0
@@ -9603,7 +9631,7 @@
                     merge(1,0,loop_count_dist>=max_distribution_sweeps)
 
                 write(*,*) "MOMENT omega     use rise, child term off    model=",&
-                    drug_users_without_child/baseline_users_for_gap-1.d0,&
+                    drug_users_without_child/max(baseline_users_for_gap,10.d0**(-14))-1.d0,&
                     " target=", child_use_gap_data
 
             else
@@ -9710,7 +9738,7 @@
                 if ((model_total_drug_users(1)>10.d0**(-12)) .AND. &
                     (val_users_base_1>10.d0**(-12))) then
                     write(*,*) "UNTARGETED price elasticity, participation   model=",&
-                        log(model_total_drug_users(1)/val_users_base_1)/&
+                        log(model_total_drug_users(1)/max(val_users_base_1,10.d0**(-14)))/&
                         log(1+elasticity_price_step), " observed=", -0.63d0
                 else
                     write(*,*) "ELASTICITY HELD     participation went to zero at the higher price"
@@ -9727,7 +9755,7 @@
                 if ((model_drugs_used_by_addicts_on_average(1)>10.d0**(-12)) .AND. &
                     (val_qty_addict_base_1>10.d0**(-12))) then
                     write(*,*) "UNTARGETED price elasticity, intensive       model=",&
-                        log(model_drugs_used_by_addicts_on_average(1)/val_qty_addict_base_1)/&
+                        log(model_drugs_used_by_addicts_on_average(1)/max(val_qty_addict_base_1,10.d0**(-14)))/&
                         log(1+elasticity_price_step), " observed=", -0.55d0
                 else
                     write(*,*) "ELASTICITY HELD     quantity per addict went to zero at the higher price"
@@ -9738,7 +9766,7 @@
                 if ((model_drugs_used_by_users_on_average(1)>10.d0**(-12)) .AND. &
                     (val_qty_base_1>10.d0**(-12))) then
                     write(*,*) "DIAG elasticity, quantity per USER (mixed)      =",&
-                        log(model_drugs_used_by_users_on_average(1)/val_qty_base_1)/&
+                        log(model_drugs_used_by_users_on_average(1)/max(val_qty_base_1,10.d0**(-14)))/&
                         log(1+elasticity_price_step)
                 end if
 
@@ -9752,20 +9780,20 @@
                 if ((model_drugs_used_by_addicts_on_average(1)>10.d0**(-12)) .AND. &
                     (val_qty_addict_base_1>10.d0**(-12))) then
                     write(*,*) "DIAG elasticity, quantity per ADDICT            =",&
-                        log(model_drugs_used_by_addicts_on_average(1)/val_qty_addict_base_1)/&
+                        log(model_drugs_used_by_addicts_on_average(1)/max(val_qty_addict_base_1,10.d0**(-14)))/&
                         log(1+elasticity_price_step)
                 end if
                 if ((model_drugs_used_by_experimenters_on_average(1)>10.d0**(-12)) .AND. &
                     (val_qty_exper_base_1>10.d0**(-12))) then
                     write(*,*) "DIAG elasticity, quantity per EXPERIMENTER      =",&
-                        log(model_drugs_used_by_experimenters_on_average(1)/val_qty_exper_base_1)/&
+                        log(model_drugs_used_by_experimenters_on_average(1)/max(val_qty_exper_base_1,10.d0**(-14)))/&
                         log(1+elasticity_price_step)
                 end if
                 if ((val_addict_share_base_1>10.d0**(-12)) .AND. &
                     (model_mass_addicts(1)+model_mass_experimenters(1)>10.d0**(-14))) then
                     write(*,*) "DIAG elasticity, ADDICT SHARE of users          =",&
                         log((model_mass_addicts(1)/(model_mass_addicts(1)+&
-                        model_mass_experimenters(1)))/val_addict_share_base_1)/&
+                        model_mass_experimenters(1)))/max(val_addict_share_base_1,10.d0**(-14)))/&
                         log(1+elasticity_price_step)
                 end if
 
@@ -10758,7 +10786,7 @@
 
         end if
 
-        vertex_1=0.5d0*(x0_1+x1_1)-0.5d0*d1_1*(x2_1-x0_1)/denom_1
+        vertex_1=0.5d0*(x0_1+x1_1)-0.5d0*d1_1*(x2_1-x0_1)/max(denom_1,10.d0**(-14))
 
         if ((vertex_1<x0_1) .OR. (vertex_1>x2_1)) then
 
@@ -11652,8 +11680,8 @@
                         mass_of_quintile(quintile)=mass_of_quintile(quintile)+&
                             model_mass_of_households_by_income_earned(time_period,min_income_earned_index(1))
                     
-                        if (floor(model_cdf_of_income_earned(time_period,min_income_earned_index(1))/size_of_quintile)>&
-                            floor(model_cdf_of_income_earned(time_period,previous_index)/size_of_quintile) .AND. &
+                        if (floor(model_cdf_of_income_earned(time_period,min_income_earned_index(1))/max(size_of_quintile,10.d0**(-14)))>&
+                            floor(model_cdf_of_income_earned(time_period,previous_index)/max(size_of_quintile,10.d0**(-14))) .AND. &
                             (model_cdf_of_income_earned(time_period,previous_index)<0.999)) then
                                             
                             income_cutoffs_of_quintiles(quintile)=model_incomes_earned(time_period,min_income_earned_index(1))
@@ -12431,7 +12459,7 @@
                                     
                                     if (use_income_or_income_plus_assets==1) then
                                     
-                                        income_to_avg_income=(total_income+bequest_2)/model_average_income_previous
+                                        income_to_avg_income=(total_income+bequest_2)/max(model_average_income_previous,10.d0**(-14))
                                         
                                     elseif (use_income_or_income_plus_assets==2) then
                                     
@@ -13339,8 +13367,8 @@
         end do
         
         if (current_beta_type==number_of_beta_types) then
-            profile_of_chronic_homeless(time_period,:)=profile_of_chronic_homeless(time_period,:)/&
-                mass_profile_of_chornic_homeless(time_period,:)
+            profile_of_chronic_homeless(time_period,:)=profile_of_chronic_homeless(time_period,:)/max(&
+                mass_profile_of_chornic_homeless(time_period,:),10.d0**(-14))
         end if
 
         do j=1,number_of_wide_grids_income_to_avg_income_cdf
@@ -13734,9 +13762,9 @@
             (model_mass_total_raw(time_period)>10.d0**(-12))) then
 
             model_homeless_income_share(time_period)=&
-                (model_homeless_labour_income(time_period)/&
-                model_mass_homeless_working_age(time_period))/&
-                (model_all_labour_income(time_period)/model_mass_total_raw(time_period))
+                (model_homeless_labour_income(time_period)/max(&
+                model_mass_homeless_working_age(time_period),10.d0**(-14)))/&
+                (model_all_labour_income(time_period)/max(model_mass_total_raw(time_period),10.d0**(-14)))
 
         else
 
@@ -13916,7 +13944,7 @@
         if (current_beta_type==number_of_beta_types) then
                 average_rent_by_age(age_index)=average_rent_by_age(age_index)/max(mass_of_renters_by_age(age_index),10.d0**(-14))
         end if
-            if (current_beta_type==number_of_beta_types) value_of_bequests_by_age(age_index)=value_of_bequests_by_age(age_index)/bequests_mass_by_age(age_index)
+            if (current_beta_type==number_of_beta_types) value_of_bequests_by_age(age_index)=value_of_bequests_by_age(age_index)/max(bequests_mass_by_age(age_index),10.d0**(-14))
         
         end do
                 
@@ -15960,6 +15988,7 @@
         if (accumulating_beta_types==0) model_mass_by_voucher_state=0
         if (accumulating_beta_types==0) model_mass_by_child_class=0
         if (accumulating_beta_types==0) model_eligibles_getting_voucher(time_period)=0
+        if (accumulating_beta_types==0) model_eligible_voucher_holders(time_period)=0
         if (accumulating_beta_types==0) model_eligibles_getting_voucher_relative_to_pop(time_period)=0
         if (accumulating_beta_types==0) model_addicts_getting_voucher(time_period)=0
         if (accumulating_beta_types==0) model_homeowners_experimenting(time_period)=0
@@ -16458,6 +16487,10 @@
 
                                         if ((years_left_on_mortgage_index==1) .AND. (amortization_used==1) .AND. &
                                             (voucher_index==1)) then
+
+                                            ! EVERY HOLDER, counted before the payment test below.
+                                            model_eligible_voucher_holders(time_period)=&
+                                                model_eligible_voucher_holders(time_period)+distribution_mass_used
                                                                                                             
                                             call calculate_housing_voucher_2(housing_voucher_2,addiction_choice_2,income_2,&
                                                 rent(time_period,low_quality_market)*housing_size(housing_status_index_used),&
@@ -17577,6 +17610,10 @@
         if (current_beta_type==number_of_beta_types) then
             model_eligibles_getting_voucher(time_period)=&  
                 model_eligibles_getting_voucher(time_period)/max(model_eligibles(time_period),10.d0**(-14))
+            ! Same denominator, so the two are directly comparable and their
+            ! ratio is the share of holders the payment condition removes.
+            model_eligible_voucher_holders(time_period)=&
+                model_eligible_voucher_holders(time_period)/max(model_eligibles(time_period),10.d0**(-14))
         end if
         
         if (current_beta_type==number_of_beta_types) then
@@ -17620,8 +17657,19 @@
         end if
         
         if (current_beta_type==number_of_beta_types) then
+            ! GUARDED, LIKE EVERY DIVISION AROUND IT. total_addited_1 is the
+            ! mass of households carrying the disorder, and it is ZERO whenever
+            ! the drug block is empty -- which is not an exotic state, it is
+            ! where the model sits at the source defaults and where it lands
+            ! repeatedly during a calibration when b or the onset overshoot.
+            !
+            ! Found by the standing -ffpe-trap build on 14 September: SIGFPE in
+            ! govt_revenues_calc at this line, on a vector whose SUD population
+            ! had collapsed. Without the trap it produces a NaN that propagates
+            ! silently into the moments.
             model_average_spent_on_addiction_by_addicted(time_period)=&
-                model_average_spent_on_addiction_by_addicted(time_period)/total_addited_1
+                model_average_spent_on_addiction_by_addicted(time_period)/&
+                max(total_addited_1,10.d0**(-14))
         end if
         
         do employment_index=1,employment_grid_size
@@ -17724,12 +17772,12 @@
             
         if (current_beta_type==number_of_beta_types) then
             model_average_income_addicted(time_period)=&
-                model_average_income_addicted(time_period)/total_addited_1
+                model_average_income_addicted(time_period)/max(total_addited_1,10.d0**(-14))
         end if
                                         
         if (current_beta_type==number_of_beta_types) then
             model_average_assets_addicted(time_period)=&
-                model_average_assets_addicted(time_period)/total_addited_1
+                model_average_assets_addicted(time_period)/max(total_addited_1,10.d0**(-14))
         end if
             
         if (current_beta_type==number_of_beta_types) then
@@ -17744,12 +17792,12 @@
                 
         if (current_beta_type==number_of_beta_types) then
             model_fraction_addicted_homeless_no_vouchers(time_period)=&
-                model_fraction_addicted_homeless_no_vouchers(time_period)/total_homeless_1
+                model_fraction_addicted_homeless_no_vouchers(time_period)/max(total_homeless_1,10.d0**(-14))
         end if
         
         if (current_beta_type==number_of_beta_types) then
             model_fraction_spent_on_addiction(time_period)=&
-                model_fraction_spent_on_addiction(time_period)/total_addited_1
+                model_fraction_spent_on_addiction(time_period)/max(total_addited_1,10.d0**(-14))
         end if
             
         if (current_beta_type==number_of_beta_types) then
@@ -17759,7 +17807,7 @@
                         
         if (current_beta_type==number_of_beta_types) then
             model_fraction_homeless_by_choice(time_period)=&
-                model_fraction_homeless_by_choice(time_period)/total_homeless_1
+                model_fraction_homeless_by_choice(time_period)/max(total_homeless_1,10.d0**(-14))
         end if
 
         if (current_beta_type==number_of_beta_types) then
@@ -17769,37 +17817,37 @@
             
         if (current_beta_type==number_of_beta_types) then
             model_addicted_and_homeless_by_choice(time_period)=&
-                model_addicted_and_homeless_by_choice(time_period)/total_addicted_and_homeless_1
+                model_addicted_and_homeless_by_choice(time_period)/max(total_addicted_and_homeless_1,10.d0**(-14))
         end if
             
         if (current_beta_type==number_of_beta_types) then
             model_average_income_of_homeless_addicted(time_period)=&
-                model_average_income_of_homeless_addicted(time_period)/total_addicted_and_homeless_1
+                model_average_income_of_homeless_addicted(time_period)/max(total_addicted_and_homeless_1,10.d0**(-14))
         end if
             
         if (current_beta_type==number_of_beta_types) then
             model_avg_homeless_income(time_period)=&
-                model_avg_homeless_income(time_period)/total_homeless_1
+                model_avg_homeless_income(time_period)/max(total_homeless_1,10.d0**(-14))
         end if
             
         if (current_beta_type==number_of_beta_types) then
             model_avg_homeless_after_tax_income(time_period)=&
-                model_avg_homeless_after_tax_income(time_period)/total_homeless_1
+                model_avg_homeless_after_tax_income(time_period)/max(total_homeless_1,10.d0**(-14))
         end if
             
         if (current_beta_type==number_of_beta_types) then
             model_avg_homeless_tax_to_income(time_period)=&
-                model_avg_homeless_tax_to_income(time_period)/total_homeless_1
+                model_avg_homeless_tax_to_income(time_period)/max(total_homeless_1,10.d0**(-14))
         end if
             
         if (current_beta_type==number_of_beta_types) then
             model_avg_homeless_assets(time_period)=&
-                model_avg_homeless_assets(time_period)/total_homeless_1
+                model_avg_homeless_assets(time_period)/max(total_homeless_1,10.d0**(-14))
         end if
             
         if (current_beta_type==number_of_beta_types) then
             model_average_assets_addicted_and_homeless(time_period)=&
-                model_average_assets_addicted_and_homeless(time_period)/total_addicted_and_homeless_1
+                model_average_assets_addicted_and_homeless(time_period)/max(total_addicted_and_homeless_1,10.d0**(-14))
         end if
                     
         if ((time_period==1) .AND. (solve_transition_dynamics==1)) then
@@ -18434,7 +18482,7 @@
         
                 if (current_beta_type==number_of_beta_types) then
                     model_rent_burden_by_age(time_period,age_index,i)=&
-                        model_rent_burden_by_age(time_period,age_index,i)/mass_renters_by_age(time_period,age_index)
+                        model_rent_burden_by_age(time_period,age_index,i)/max(mass_renters_by_age(time_period,age_index),10.d0**(-14))
                 end if
                     
             end do
@@ -18455,12 +18503,12 @@
         
             if (current_beta_type==number_of_beta_types) then
                 mass_of_renters_at_housing_spending(time_period,i)=&
-                    mass_of_renters_at_housing_spending(time_period,i)/mass_of_renters_1
+                    mass_of_renters_at_housing_spending(time_period,i)/max(mass_of_renters_1,10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
                 mass_of_homeowners_at_housing_spending(time_period,i)=&
-                    mass_of_homeowners_at_housing_spending(time_period,i)/mass_of_owners_with_mortgage(time_period)
+                    mass_of_homeowners_at_housing_spending(time_period,i)/max(mass_of_owners_with_mortgage(time_period),10.d0**(-14))
             end if
                 
             if (solve_transition_dynamics==0) then
@@ -18904,7 +18952,7 @@
             if (mass_at_age_1>0.d0) then
 
                 own_childhood_1=own_childhood_1+&
-                    (discount_factor**(age_index_1-1))*(utility_at_age_1/mass_at_age_1)
+                    (discount_factor**(age_index_1-1))*(utility_at_age_1/max(mass_at_age_1,10.d0**(-14)))
 
             end if
 
@@ -18981,7 +19029,7 @@
         if (adult_den_1>0.d0) then
 
             lifetime_num=lifetime_num+own_childhood_1+&
-                (discount_factor**child_at_home_last_index)*(adult_num_1/adult_den_1)
+                (discount_factor**child_at_home_last_index)*(adult_num_1/max(adult_den_1,10.d0**(-14)))
             lifetime_den=lifetime_den+1.d0
 
         end if
@@ -18995,7 +19043,7 @@
                 if (childhood_age_den(age_index_1)>0.d0) then
 
                     childhood_utility_by_age(time_period,age_index_1)=&
-                        childhood_age_num(age_index_1)/childhood_age_den(age_index_1)
+                        childhood_age_num(age_index_1)/max(childhood_age_den(age_index_1),10.d0**(-14))
 
                 else
 
@@ -19637,19 +19685,19 @@
         
         if (current_beta_type==number_of_beta_types) then
             welfare_by_homelessness(time_period,:)=&
-                welfare_by_homelessness(time_period,:)/mass_by_homelessness(time_period,:)
+                welfare_by_homelessness(time_period,:)/max(mass_by_homelessness(time_period,:),10.d0**(-14))
         end if
         
         do age_index=1,life_span
                 
             if (current_beta_type==number_of_beta_types) then
-                welfare_by_age(time_period,age_index)=welfare_by_age(time_period,age_index)/&
-                    mass_by_age(time_period,age_index)
+                welfare_by_age(time_period,age_index)=welfare_by_age(time_period,age_index)/max(&
+                    mass_by_age(time_period,age_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
                 welfare_by_age_and_addiction(time_period,age_index,:)=&
-                    welfare_by_age_and_addiction(time_period,age_index,:)/mass_by_age_and_addiciton(time_period,age_index,:)
+                    welfare_by_age_and_addiction(time_period,age_index,:)/max(mass_by_age_and_addiciton(time_period,age_index,:),10.d0**(-14))
             end if
                                     
         end do
@@ -19660,8 +19708,8 @@
                 
                 if (current_beta_type==number_of_beta_types) then
                     welfare_by_employment_and_age(time_period,employment_index,age_index)=&
-                        welfare_by_employment_and_age(time_period,employment_index,age_index)/&
-                        mass_by_employment_and_age(time_period,employment_index,age_index)
+                        welfare_by_employment_and_age(time_period,employment_index,age_index)/max(&
+                        mass_by_employment_and_age(time_period,employment_index,age_index),10.d0**(-14))
                 end if
                     
             end do
@@ -19670,10 +19718,10 @@
         
         do i=1,2
         
-            if (current_beta_type==number_of_beta_types) welfare_by_addiction(time_period,i)=welfare_by_addiction(time_period,i)/mass_by_addiction(time_period,i)
+            if (current_beta_type==number_of_beta_types) welfare_by_addiction(time_period,i)=welfare_by_addiction(time_period,i)/max(mass_by_addiction(time_period,i),10.d0**(-14))
             if (current_beta_type==number_of_beta_types) then
-                welfare_by_addiction_youngest(time_period,i)=welfare_by_addiction_youngest(time_period,i)/&
-                    mass_by_addiction_youngest(time_period,i)
+                welfare_by_addiction_youngest(time_period,i)=welfare_by_addiction_youngest(time_period,i)/max(&
+                    mass_by_addiction_youngest(time_period,i),10.d0**(-14))
             end if
             
         end do
@@ -19707,8 +19755,8 @@
         
             if (current_beta_type==number_of_beta_types) then
                 mortgage_to_house_value_ratio_of_owners_by_age(time_period,age_index)=&
-                    mortgage_to_house_value_ratio_of_owners_by_age(time_period,age_index)/&
-                    mass_mortgage_to_house_value_ratio_of_owners_by_age(time_period,age_index)
+                    mortgage_to_house_value_ratio_of_owners_by_age(time_period,age_index)/max(&
+                    mass_mortgage_to_house_value_ratio_of_owners_by_age(time_period,age_index),10.d0**(-14))
             end if
         
         end do
@@ -19731,13 +19779,13 @@
         ! divided value again and adds the second type on top of a finished
         ! average. Nothing at one type moves: the condition is 1==1 there.
         if (current_beta_type==number_of_beta_types) then
-                model_LTV_by_age_group(time_period,i)=model_LTV_by_age_group(time_period,i)/&
-                    mass_LTV_by_age_group(time_period,i)
+                model_LTV_by_age_group(time_period,i)=model_LTV_by_age_group(time_period,i)/max(&
+                    mass_LTV_by_age_group(time_period,i),10.d0**(-14))
         end if
                 
             if (current_beta_type==number_of_beta_types) then
                 model_homeownership_by_age_group(time_period,i)=&
-                    model_homeownership_by_age_group(time_period,i)/mass_by_age_group(time_period,i)
+                    model_homeownership_by_age_group(time_period,i)/max(mass_by_age_group(time_period,i),10.d0**(-14))
             end if
         
         end do
@@ -19745,20 +19793,20 @@
         do employment_index=1,employment_grid_size
                 
             if (current_beta_type==number_of_beta_types) then
-                welfare_by_employment(time_period,employment_index)=welfare_by_employment(time_period,employment_index)/&
-                    mass_by_employment(time_period,employment_index)
+                welfare_by_employment(time_period,employment_index)=welfare_by_employment(time_period,employment_index)/max(&
+                    mass_by_employment(time_period,employment_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
                 welfare_by_employment_youngest_old_dist(time_period,employment_index)=&
-                    welfare_by_employment_youngest_old_dist(time_period,employment_index)/&
-                    mass_by_employment_and_age(time_period,employment_index,1)
+                    welfare_by_employment_youngest_old_dist(time_period,employment_index)/max(&
+                    mass_by_employment_and_age(time_period,employment_index,1),10.d0**(-14))
             end if
                                 
             if (current_beta_type==number_of_beta_types) then
                 welfare_by_employment_youngest(time_period,employment_index)=&
-                    welfare_by_employment_youngest(time_period,employment_index)/&
-                    mass_by_employment_youngest(time_period,employment_index)
+                    welfare_by_employment_youngest(time_period,employment_index)/max(&
+                    mass_by_employment_youngest(time_period,employment_index),10.d0**(-14))
             end if
                 
         ! NORMALISE ONLY ON THE LAST PASS. This division puts its result back
@@ -19767,55 +19815,55 @@
         ! divided value again and adds the second type on top of a finished
         ! average. Nothing at one type moves: the condition is 1==1 there.
         if (current_beta_type==number_of_beta_types) then
-                MID_share_by_employment(time_period,employment_index)=MID_share_by_employment(time_period,employment_index)/&
-                    govt_spending_on_mortgage_interest_deductions(time_period)
+                MID_share_by_employment(time_period,employment_index)=MID_share_by_employment(time_period,employment_index)/max(&
+                    govt_spending_on_mortgage_interest_deductions(time_period),10.d0**(-14))
         end if
                 
             if (current_beta_type==number_of_beta_types) then
-                wealth_by_employment(time_period,employment_index)=wealth_by_employment(time_period,employment_index)/&
-                    mass_by_employment(time_period,employment_index)
+                wealth_by_employment(time_period,employment_index)=wealth_by_employment(time_period,employment_index)/max(&
+                    mass_by_employment(time_period,employment_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
-                fraction_with_mortgage(time_period,employment_index)=fraction_with_mortgage(time_period,employment_index)/&
-                    mass_by_employment(time_period,employment_index)
+                fraction_with_mortgage(time_period,employment_index)=fraction_with_mortgage(time_period,employment_index)/max(&
+                    mass_by_employment(time_period,employment_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
                 fraction_renters_by_employment(time_period,employment_index)=&
-                    fraction_renters_by_employment(time_period,employment_index)/&
-                    mass_by_employment(time_period,employment_index)
+                    fraction_renters_by_employment(time_period,employment_index)/max(&
+                    mass_by_employment(time_period,employment_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
-                average_age_of_homeowner(time_period,employment_index)=average_age_of_homeowner(time_period,employment_index)/&
-                    mass_by_employment(time_period,employment_index)
+                average_age_of_homeowner(time_period,employment_index)=average_age_of_homeowner(time_period,employment_index)/max(&
+                    mass_by_employment(time_period,employment_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
-                average_income(time_period,employment_index)=average_income(time_period,employment_index)/&
-                    mass_by_employment(time_period,employment_index)
+                average_income(time_period,employment_index)=average_income(time_period,employment_index)/max(&
+                    mass_by_employment(time_period,employment_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
-                average_housing_costs(time_period,employment_index)=average_housing_costs(time_period,employment_index)/&
-                    mass_by_employment(time_period,employment_index)
+                average_housing_costs(time_period,employment_index)=average_housing_costs(time_period,employment_index)/max(&
+                    mass_by_employment(time_period,employment_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
-                average_consumption(time_period,employment_index)=average_consumption(time_period,employment_index)/&
-                    mass_by_employment(time_period,employment_index)
+                average_consumption(time_period,employment_index)=average_consumption(time_period,employment_index)/max(&
+                    mass_by_employment(time_period,employment_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
-                average_house_inheritance(time_period,employment_index)=average_house_inheritance(time_period,employment_index)/&
-                    mass_inheritance(time_period,employment_index)
+                average_house_inheritance(time_period,employment_index)=average_house_inheritance(time_period,employment_index)/max(&
+                    mass_inheritance(time_period,employment_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
                 average_house_non_inheritance(time_period,employment_index)=&
-                    average_house_non_inheritance(time_period,employment_index)/&
-                    mass_non_inheritance(time_period,employment_index)
+                    average_house_non_inheritance(time_period,employment_index)/max(&
+                    mass_non_inheritance(time_period,employment_index),10.d0**(-14))
             end if
                                                 
         end do
@@ -19823,40 +19871,40 @@
         do employment_index=1,employment_grid_size
         
             if (current_beta_type==number_of_beta_types) then
-                mortgage_by_employment(time_period,employment_index)=mortgage_by_employment(time_period,employment_index)/&
-                    mass_by_mortgage_and_employment(time_period,employment_index)
+                mortgage_by_employment(time_period,employment_index)=mortgage_by_employment(time_period,employment_index)/max(&
+                    mass_by_mortgage_and_employment(time_period,employment_index),10.d0**(-14))
             end if
         
             do years_left_on_mortgage_index=1,3
             
                 if (current_beta_type==number_of_beta_types) then
                     welfare_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)=&
-                        welfare_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)/&
-                        mass_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)
+                        welfare_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)/max(&
+                        mass_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index),10.d0**(-14))
                 end if
                     
                 if (current_beta_type==number_of_beta_types) then
                     wealth_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)=&
-                        wealth_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)/&
-                        mass_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)
+                        wealth_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)/max(&
+                        mass_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index),10.d0**(-14))
                 end if
                     
                 if (current_beta_type==number_of_beta_types) then
                     consumption_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)=&
-                        consumption_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)/&
-                        mass_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)
+                        consumption_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)/max(&
+                        mass_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index),10.d0**(-14))
                 end if
                     
                 if (current_beta_type==number_of_beta_types) then
                     housing_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)=&
-                        housing_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)/&
-                        mass_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)
+                        housing_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)/max(&
+                        mass_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index),10.d0**(-14))
                 end if
                     
                 if (current_beta_type==number_of_beta_types) then
                     mortgage_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)=&
-                        mortgage_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)/&
-                        mass_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)
+                        mortgage_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)/max(&
+                        mass_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index),10.d0**(-14))
                 end if
             
             end do
@@ -19871,14 +19919,14 @@
                                 
                     if (current_beta_type==number_of_beta_types) then
                         welfare_by_employment_tenure_and_age(time_period,employment_index,years_left_on_mortgage_index,age_index)=&
-                            welfare_by_employment_tenure_and_age(time_period,employment_index,years_left_on_mortgage_index,age_index)/&
-                            mass_by_employment_tenure_and_age(time_period,employment_index,years_left_on_mortgage_index,age_index)
+                            welfare_by_employment_tenure_and_age(time_period,employment_index,years_left_on_mortgage_index,age_index)/max(&
+                            mass_by_employment_tenure_and_age(time_period,employment_index,years_left_on_mortgage_index,age_index),10.d0**(-14))
                     end if
                         
                     if (current_beta_type==number_of_beta_types) then
                         mortgage_by_employment_tenure_and_age(time_period,employment_index,years_left_on_mortgage_index,age_index)=&
-                            mortgage_by_employment_tenure_and_age(time_period,employment_index,years_left_on_mortgage_index,age_index)/&
-                            mass_by_employment_tenure_and_age(time_period,employment_index,years_left_on_mortgage_index,age_index)
+                            mortgage_by_employment_tenure_and_age(time_period,employment_index,years_left_on_mortgage_index,age_index)/max(&
+                            mass_by_employment_tenure_and_age(time_period,employment_index,years_left_on_mortgage_index,age_index),10.d0**(-14))
                     end if
                                         
                 end do
@@ -19893,8 +19941,8 @@
                     
                 if (current_beta_type==number_of_beta_types) then
                     welfare_by_ownership_status(time_period,k,employment_index)=&
-                        welfare_by_ownership_status(time_period,k,employment_index)/&
-                        mass_by_ownership_status(time_period,k,employment_index)
+                        welfare_by_ownership_status(time_period,k,employment_index)/max(&
+                        mass_by_ownership_status(time_period,k,employment_index),10.d0**(-14))
                 end if
                                                                         
             end do
@@ -19905,8 +19953,8 @@
         
             if (current_beta_type==number_of_beta_types) then
                 welfare_by_unemployment(time_period,unemployment_index)=&
-                    welfare_by_unemployment(time_period,unemployment_index)/&
-                    mass_by_unemployment(time_period,unemployment_index)    
+                    welfare_by_unemployment(time_period,unemployment_index)/max(&
+                    mass_by_unemployment(time_period,unemployment_index),10.d0**(-14))    
             end if
         
         end do
@@ -19960,7 +20008,7 @@
 
             if (mass_1>10.d0**(-14)) then
                 write(*,*) "WALK DIAG age", age_1, " mass=", mass_1,&
-                    " mean difference=", acc_1/mass_1
+                    " mean difference=", acc_1/max(mass_1,10.d0**(-14))
             end if
 
         end do
@@ -20608,7 +20656,7 @@
             if (kid_cmp_den(i)>0.d0) then
 
                 childhood_comparison=childhood_comparison+&
-                    (discount_factor**(i-1))*(kid_cmp_num(i)/kid_cmp_den(i))
+                    (discount_factor**(i-1))*(kid_cmp_num(i)/max(kid_cmp_den(i),10.d0**(-14)))
 
             end if
 
@@ -20721,7 +20769,7 @@
         end do
 
         if (mass_1 > 0.d0) then
-            welfare_adjusted_1 = welfare_adjusted_1 / mass_1
+            welfare_adjusted_1 = welfare_adjusted_1 /max( mass_1,10.d0**(-14))
         else
             welfare_adjusted_1 = ieee_value(welfare_adjusted_1, ieee_quiet_nan)
         end if
@@ -21570,8 +21618,8 @@
 
                     if (current_beta_type==number_of_beta_types) then
                         profile_by_income_quintile(time_period,k,j,i)=&
-                            profile_by_income_quintile(time_period,k,j,i)/&
-                            mass_by_income_quintile_2(time_period,k,j)
+                            profile_by_income_quintile(time_period,k,j,i)/max(&
+                            mass_by_income_quintile_2(time_period,k,j),10.d0**(-14))
                     end if
 
                 end do
@@ -21582,8 +21630,8 @@
                                                 
         if (current_beta_type==number_of_beta_types) then
             model_drug_use_by_income_quintile(time_period,:)=&
-                model_drug_use_by_income_quintile(time_period,:)/&
-                mass_by_income_quintile_1(time_period,:)
+                model_drug_use_by_income_quintile(time_period,:)/max(&
+                mass_by_income_quintile_1(time_period,:),10.d0**(-14))
         end if
         
         if (current_beta_type==number_of_beta_types) then
@@ -21595,22 +21643,22 @@
         
             if (current_beta_type==number_of_beta_types) then
                 wealth_by_age_renter(time_period,age_index)=&
-                    wealth_by_age_renter(time_period,age_index)/mass_by_age_and_renter(time_period,age_index)
+                    wealth_by_age_renter(time_period,age_index)/max(mass_by_age_and_renter(time_period,age_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
                 income_by_age_renter(time_period,age_index)=&
-                    income_by_age_renter(time_period,age_index)/mass_by_age_and_renter(time_period,age_index)
+                    income_by_age_renter(time_period,age_index)/max(mass_by_age_and_renter(time_period,age_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
                 consumption_by_age_renter(time_period,age_index)=&
-                    consumption_by_age_renter(time_period,age_index)/mass_by_age_and_renter(time_period,age_index)
+                    consumption_by_age_renter(time_period,age_index)/max(mass_by_age_and_renter(time_period,age_index),10.d0**(-14))
             end if
             
             if (current_beta_type==number_of_beta_types) then
                 housing_consumption_by_age_renter(time_period,age_index)=&
-                    housing_consumption_by_age_renter(time_period,age_index)/mass_by_age_and_renter(time_period,age_index)
+                    housing_consumption_by_age_renter(time_period,age_index)/max(mass_by_age_and_renter(time_period,age_index),10.d0**(-14))
             end if
             
         end do
@@ -21621,8 +21669,8 @@
             
                 if (current_beta_type==number_of_beta_types) then
                     housing_size_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)=&
-                        housing_size_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)/&
-                        mass_by_tenure_and_employment(time_period,employment_index,years_left_on_mortgage_index)
+                        housing_size_by_employment_and_tenure(time_period,employment_index,years_left_on_mortgage_index)/max(&
+                        mass_by_tenure_and_employment(time_period,employment_index,years_left_on_mortgage_index),10.d0**(-14))
                 end if
             
             end do
@@ -21651,25 +21699,25 @@
         
                 if (current_beta_type==number_of_beta_types) then
                     housing_size_by_employment_and_age(time_period,employment_index,age_index)=&
-                        housing_size_by_employment_and_age(time_period,employment_index,age_index)/&
-                        mass_by_employment_and_age(time_period,employment_index,age_index)
+                        housing_size_by_employment_and_age(time_period,employment_index,age_index)/max(&
+                        mass_by_employment_and_age(time_period,employment_index,age_index),10.d0**(-14))
                 end if
             
                 if (current_beta_type==number_of_beta_types) then
                     consumption_by_employment_and_age(time_period,employment_index,age_index)=&
-                        consumption_by_employment_and_age(time_period,employment_index,age_index)/&
-                        mass_by_employment_and_age(time_period,employment_index,age_index)
+                        consumption_by_employment_and_age(time_period,employment_index,age_index)/max(&
+                        mass_by_employment_and_age(time_period,employment_index,age_index),10.d0**(-14))
                 end if
                     
                 if (current_beta_type==number_of_beta_types) then
                     wealth_by_employment_and_age(time_period,employment_index,age_index)=&
-                        wealth_by_employment_and_age(time_period,employment_index,age_index)/&
-                        mass_by_employment_and_age(time_period,employment_index,age_index)
+                        wealth_by_employment_and_age(time_period,employment_index,age_index)/max(&
+                        mass_by_employment_and_age(time_period,employment_index,age_index),10.d0**(-14))
                 end if
                     
                 if (current_beta_type==number_of_beta_types) then
-                    consumption_by_age(time_period,age_index)=consumption_by_age(time_period,age_index)/&
-                        mass_by_age(time_period,age_index)
+                    consumption_by_age(time_period,age_index)=consumption_by_age(time_period,age_index)/max(&
+                        mass_by_age(time_period,age_index),10.d0**(-14))
                 end if
                                         
             end do
@@ -21679,23 +21727,23 @@
         do age_index=1,life_span
                 
             if (current_beta_type==number_of_beta_types) then
-                homeownership_by_age(time_period,age_index)=homeownership_by_age(time_period,age_index)/&
-                    mass_by_age(time_period,age_index)
+                homeownership_by_age(time_period,age_index)=homeownership_by_age(time_period,age_index)/max(&
+                    mass_by_age(time_period,age_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
-                model_assets_by_age(time_period,age_index)=model_assets_by_age(time_period,age_index)/&
-                    mass_by_age(time_period,age_index)
+                model_assets_by_age(time_period,age_index)=model_assets_by_age(time_period,age_index)/max(&
+                    mass_by_age(time_period,age_index),10.d0**(-14))
             end if
           
             if (current_beta_type==number_of_beta_types) then
-                housing_size_by_age(time_period,age_index)=housing_size_by_age(time_period,age_index)/&
-                    mass_by_age(time_period,age_index)
+                housing_size_by_age(time_period,age_index)=housing_size_by_age(time_period,age_index)/max(&
+                    mass_by_age(time_period,age_index),10.d0**(-14))
             end if
                 
             if (current_beta_type==number_of_beta_types) then
-                homelessness_by_age(time_period,age_index)=homelessness_by_age(time_period,age_index)/&
-                    mass_by_age(time_period,age_index)
+                homelessness_by_age(time_period,age_index)=homelessness_by_age(time_period,age_index)/max(&
+                    mass_by_age(time_period,age_index),10.d0**(-14))
             end if
                                         
         end do
@@ -21707,7 +21755,7 @@
         ! average. Nothing at one type moves: the condition is 1==1 there.
         if (current_beta_type==number_of_beta_types) then
             MID_share_by_income_quintile(time_period,:)=&
-                MID_share_by_income_quintile(time_period,:)/total_MID_value
+                MID_share_by_income_quintile(time_period,:)/max(total_MID_value,10.d0**(-14))
         end if
             
         ! NORMALISE ONLY ON THE LAST PASS. This division puts its result back
@@ -21717,7 +21765,7 @@
         ! average. Nothing at one type moves: the condition is 1==1 there.
         if (current_beta_type==number_of_beta_types) then
             MID_itemizers_by_income_quintile(time_period,:)=&
-                MID_itemizers_by_income_quintile(time_period,:)/mass_by_income_quintile(time_period,:)
+                MID_itemizers_by_income_quintile(time_period,:)/max(mass_by_income_quintile(time_period,:),10.d0**(-14))
         end if
         
         if (simulation_ended==(compute_income_cdf+(1-compute_income_cdf)*1))  then
@@ -21734,12 +21782,12 @@
         
         if (current_beta_type==number_of_beta_types) then
             rent_burden_by_income_quintile(time_period,:)=&
-                rent_burden_by_income_quintile(time_period,:)/mass_renters_by_income_quintile(time_period,:)
+                rent_burden_by_income_quintile(time_period,:)/max(mass_renters_by_income_quintile(time_period,:),10.d0**(-14))
         end if
                                                     
         if (current_beta_type==number_of_beta_types) then
             model_addicts_consuming_no_drugs(time_period)=&
-                model_addicts_consuming_no_drugs(time_period)/mass_of_addicts
+                model_addicts_consuming_no_drugs(time_period)/max(mass_of_addicts,10.d0**(-14))
         end if
             
     end subroutine
@@ -21912,15 +21960,15 @@
         end do
         
         frac_in_support_addicted_youngest(time_period)=&
-            frac_in_support_addicted_youngest(time_period)/total_addicted_youngest_1
+            frac_in_support_addicted_youngest(time_period)/max(total_addicted_youngest_1,10.d0**(-14))
             
         frac_in_support_addicted(time_period)=&
-            frac_in_support_addicted(time_period)/total_addicted_1
+            frac_in_support_addicted(time_period)/max(total_addicted_1,10.d0**(-14))
         
-        average_welfare_of_winners(time_period)=average_welfare_of_winners(time_period)/frac_in_support(time_period)
+        average_welfare_of_winners(time_period)=average_welfare_of_winners(time_period)/max(frac_in_support(time_period),10.d0**(-14))
             
         average_welfare_of_winners_benchmark(time_period)=&
-            average_welfare_of_winners_benchmark(time_period)/frac_in_support(time_period)
+            average_welfare_of_winners_benchmark(time_period)/max(frac_in_support(time_period),10.d0**(-14))
 
         sum_of_distribution=0
         
@@ -21945,8 +21993,8 @@
             do j=1,employment_grid_size
                             
                 frac_in_support_by_tenure_and_employment(time_period,j,i)=&
-                    frac_in_support_by_tenure_and_employment(time_period,j,i)/&
-                    mass_by_tenure_and_employment(time_period,j,i)
+                    frac_in_support_by_tenure_and_employment(time_period,j,i)/max(&
+                    mass_by_tenure_and_employment(time_period,j,i),10.d0**(-14))
                                     
             end do
             
@@ -31245,8 +31293,8 @@
             
                 ! computes the average duration for each addiction case
                 homelessness_duration_everyone(time_period,addiction_index_1)=&
-                    homelessness_duration_everyone(time_period,addiction_index_1)/&
-                    total_homeless_count(addiction_index_1)
+                    homelessness_duration_everyone(time_period,addiction_index_1)/max(&
+                    total_homeless_count(addiction_index_1),10.d0**(-14))
                     
             end if
             
@@ -32621,7 +32669,7 @@
                     if (mass_1>10.d0**(-14)) then
 
                         newborn_employment_probability(:,parent_index,d_index,h_index)=&
-                            newborn_employment_probability(:,parent_index,d_index,h_index)/mass_1
+                            newborn_employment_probability(:,parent_index,d_index,h_index)/max(mass_1,10.d0**(-14))
 
                     else
 
@@ -33540,6 +33588,22 @@
         ! manufacturing a class of workers too poor for any room. That is capped
         ! at 0.4 now, and this stays where the evidence put it.
         real(8), parameter :: increased_prob_to_be_addicted=0
+        
+        ! ZERO THE WHOLE TRANSITION BEFORE ANY ROW IS WRITTEN. Three rows are
+        ! never assigned on the benchmark path -- (1,0,1,:), a holder losing the
+        ! voucher while still eligible; (1,1,0,:), a holder keeping it with
+        ! income above the threshold; and (0,1,0,:), a non-holder acquiring one
+        ! with income above the threshold. All three are complements of rows
+        ! that are set to one, so zero is the right value, and zero is what they
+        ! have been reading: the array is module scope, so it lands in static
+        ! storage and the loader clears it.
+        !
+        ! That is an accident of storage class, not a statement of the model.
+        ! The block below already zeroes the exclusion rows by hand for exactly
+        ! this reason; this does the same for the rest of the array in one line,
+        ! so the transition is defined by what this routine writes rather than
+        ! by where the linker put it.
+        voucher_probabilities=0
         
         if (include_vouchers==0) then
         
@@ -34591,14 +34655,12 @@
 
         if (first_block_only==0) return
 
-        write(*,*) "FIRST BLOCK: eight instruments live, every other adjuster zeroed"
+        write(*,*) "FIRST BLOCK: ten instruments live, every other adjuster zeroed"
 
         relative_share_of_housing_adjuster=0.d0
         discount_factor_adjuster=0.d0
-        utility_cost_of_treatment_adjuster=0.d0
         labor_income_tax_rate_adjuster=0.d0
         max_food_cost_adjuster=0.d0
-        voucher_probability_adjuster=0.d0
         smi_onset_level_adjuster=0.d0
         kappa_uem_adjuster=0.d0
         mu_homeless_adjuster=0.d0
@@ -34612,8 +34674,19 @@
         ! first_block_only.
         size_homelessness_adjuster=20.d0
 
+        ! TAU_U AND PI_V JOIN THE BLOCK ON THE AUTHOR'S INSTRUCTION.
+        ! utility_cost_of_treatment carries tau_u -- *"you also have to include
+        ! tau_u in the calibration of the parameters above"* -- and it cannot be
+        ! held here in any case, because its distance sits in the do while and a
+        ! held adjuster zeroes the distance rather than closing it.
+        !
+        ! voucher_probability carries pi_V -- *"just make it give about 26.6% of
+        ! eligibles getting vouchers and then pin it"*. It is LIVE rather than
+        ! set to a computed value because the number that gets pinned should be
+        ! measured. The chain says 0.0443 (see CALIBRATION_STATE.md); the block
+        ! is where that gets checked rather than assumed.
         write(*,*) "FIRST BLOCK: live = aleph, b, onset, kappa_ued, h_1,",&
-            " pi_eu, kappa_phi_d, omega_c"
+            " pi_eu, kappa_phi_d, omega_c, tau_u, pi_V"
 
     end subroutine
 
@@ -36704,7 +36777,7 @@
                                         
                                     if ((drug_spending_used>0) .AND. (unemployment_index<=threshold_addiction_index)) then
                                         
-                                        ratio_1=drug_spending_used/model_average_drug_spending_experimenters(time_period)
+                                        ratio_1=drug_spending_used/max(model_average_drug_spending_experimenters(time_period),10.d0**(-14))
                                         
                                         index_drug_1(1)=min(max(minloc(drug_spending_relative_to_average(:)-ratio_1,1,&
                                             mask=drug_spending_relative_to_average(:)-ratio_1>0),1),&
@@ -38025,7 +38098,7 @@
             write(2,*) "aggregate_consumption/sum_of_distribution,", aggregate_consumption(time_period)/sum_of_distribution
             write(2,*) "model_drug_threshold,", model_drug_threshold(time_period)
             write(2,*) "model_drug_threshold/model_average_drug_spending_experimenters=", &
-                model_drug_threshold(time_period)/model_average_drug_spending_experimenters(time_period)
+                model_drug_threshold(time_period)/max(model_average_drug_spending_experimenters(time_period),10.d0**(-14))
             write(2,*) "sum_of_distribution,", sum_of_distribution
             write(2,*) "sum_of_retirees,", sum_of_retirees
             write(2,*) "sum_of_retirees/sum_of_distribution,", sum_of_retirees/sum_of_distribution
@@ -38083,8 +38156,8 @@
             write(2,*) "model_exprimenters,", model_exprimenters(time_period)
             write(2,*) "model_exprimenters+model_fraction_addicted,", &
                 model_exprimenters(time_period)+model_fraction_addicted(time_period)
-            write(2,*) "model_exprimenters/model_total_drug_users,", model_exprimenters(time_period)/&
-                model_total_drug_users(time_period)
+            write(2,*) "model_exprimenters/model_total_drug_users,", model_exprimenters(time_period)/max(&
+                model_total_drug_users(time_period),10.d0**(-14))
             write(2,*) "model_addicted_total_addiction_spending_to_total_income,", &
                 model_addicted_total_addiction_spending_to_total_income(time_period) 
             write(2,*) "model_experimenters_total_drug_spending_to_total_income", &
@@ -38125,8 +38198,8 @@
             write(2,*) "housing_size(0)/model_average_owner_occupied_unit_size,",  &
                 housing_size(0)/max(model_average_owner_occupied_unit_size(time_period),10.d0**(-14))
             write(2,*) "rent of smallest_rental,", rent(time_period,0)*housing_size(0)
-            write(2,*) "rent to income of homeless,", rent(time_period,0)*housing_size(0)/&
-                model_avg_homeless_after_tax_income(time_period)
+            write(2,*) "rent to income of homeless,", rent(time_period,0)*housing_size(0)/max(&
+                model_avg_homeless_after_tax_income(time_period),10.d0**(-14))
             write(2,*) "median_income,", median_income(time_period)
             write(2,*) "percentiles_homeless_income,", percentiles_homeless_income(time_period,:)
             write(2,*) "percentiles_homeless_income/median_income,", &
@@ -38173,7 +38246,7 @@
             write(2,*) "refinanced_mortgages_to_total_mortgage,", &
                 100*(refinanced_mortgages(time_period)/model_mortgages(time_period))
             write(2,*) "homeowners_refinancing_relative_to_all_originations,", &
-                100*(homeowners_refinancing_own_home(time_period)/homeowners_originating_mortgage(time_period))
+                100*(homeowners_refinancing_own_home(time_period)/max(homeowners_originating_mortgage(time_period),10.d0**(-14)))
             write(2,*) "model_average_LTV_at_orgination,", model_average_LTV_at_orgination(time_period)
             write(2,*) "model_average_LTV_at_orgination_home_switchers,", model_average_LTV_at_orgination_2(time_period)
             if (check_tax_incidence==1) then
@@ -38666,7 +38739,7 @@
             write(2,*) "model total_wages=", model_total_efficiency_units(j)
             write(2,*) "wage to output=", model_total_efficiency_units(j)/model_output(j)
             write(2,*) "model_GDP_incl_imput_rent=", model_GDP_incl_imput_rent(j)
-            write(2,*) "total_rent_paid/total_renters_income=", (total_rent_paid(j)/total_renters_income(j))
+            write(2,*) "total_rent_paid/total_renters_income=", (total_rent_paid(j)/max(total_renters_income(j),10.d0**(-14)))
             do i=1,employment_grid_size
                 write(2,*) "distribution_stationary(",j,":,:,",i,")=", &
                     sum_of_distribution_employment(i)/sum_of_non_retired
@@ -38760,7 +38833,7 @@
                 model_avg_homeless_income(j)/model_average_labour_income(j)
             write(2,*) "model_avg_homeless_after_tax_income,", model_avg_homeless_after_tax_income(j)
             write(2,*) "rent of smallest_rental=", rent(j,:)*housing_size(0)
-            write(2,*) "rent to income of homeless=", rent(j,:)*housing_size(0)/model_avg_homeless_after_tax_income(j)
+            write(2,*) "rent to income of homeless=", rent(j,:)*housing_size(0)/max(model_avg_homeless_after_tax_income(j),10.d0**(-14))
             write(2,*) "govt_lump_sum_transfers=", govt_lump_sum_transfers(j)
             write(2,*) "fraction_using_MID(j)=", fraction_using_MID(j)
             write(2,*) "standard_deduction=", standard_deduction
@@ -39953,7 +40026,7 @@
                 
                 do k=1,employment_grid_size
                             
-                    write(8,*) 100*tenure_by_employment(j,k,i)/sum_of_distribution_employment(k)
+                    write(8,*) 100*tenure_by_employment(j,k,i)/max(sum_of_distribution_employment(k),10.d0**(-14))
                 
                 end do
                 
@@ -39972,7 +40045,7 @@
                 
                 do k=1,number_of_quintiles
                             
-                    write(8,*) 100*(tenure_by_income_quintile(j,k,i)/mass_of_quintile(k))
+                    write(8,*) 100*(tenure_by_income_quintile(j,k,i)/max(mass_of_quintile(k),10.d0**(-14)))
                 
                 end do
                 
@@ -40777,7 +40850,7 @@
             if (smi_prevalence_by_age(i_1)>10.d0**(-12)) then
 
                 lambda_m_floor=max(lambda_m_floor,&
-                    1.d0-smi_prevalence_by_age(i_1+1)/smi_prevalence_by_age(i_1))
+                    1.d0-smi_prevalence_by_age(i_1+1)/max(smi_prevalence_by_age(i_1),10.d0**(-14)))
 
             end if
 
@@ -45259,18 +45332,18 @@
                         write(*,*) "model recovery housed, homeless =",&
                             model_recovery_housed(1), model_recovery_homeless(1)
                         write(*,*) "model recovery ratio =",&
-                            model_recovery_housed(1)/model_recovery_homeless(1),&
+                            model_recovery_housed(1)/max(model_recovery_homeless(1),10.d0**(-14)),&
                             " target =", milby_recovery_ratio_data
                         write(*,*) "mu_homeless=", mu_homeless
 
                         cap_old_1=mu_homeless
                         mu_homeless=max(min(mu_homeless+mu_homeless_adjuster*&
-                            (model_recovery_housed(1)/model_recovery_homeless(1)-&
+                            (model_recovery_housed(1)/max(model_recovery_homeless(1),10.d0**(-14))-&
                             milby_recovery_ratio_data),1.d0),10.d0**(-3))
                         mu_homeless=cap_step(mu_homeless,cap_old_1)
 
                         distance_mu_homeless=&
-                            abs(model_recovery_housed(1)/model_recovery_homeless(1)-&
+                            abs(model_recovery_housed(1)/max(model_recovery_homeless(1),10.d0**(-14))-&
                             milby_recovery_ratio_data)
 
                         write(*,*) "mu_homeless=", mu_homeless,&
@@ -45324,7 +45397,7 @@
                             " ratio =", drug_users_without_child/&
                             max(model_total_drug_users(1),10.d0**(-14))
 
-                        child_use_gap_1=drug_users_without_child/model_total_drug_users(1)-1
+                        child_use_gap_1=drug_users_without_child/max(model_total_drug_users(1),10.d0**(-14))-1
 
                         write(*,*) "model child use gap =",&
                             child_use_gap_1, " target =", child_use_gap_data
@@ -45447,7 +45520,7 @@
 
                         if (child_sud_den_1>10.d0**(-10)) then
 
-                            child_sud_ratio_model_1=child_sud_num_1/child_sud_den_1
+                            child_sud_ratio_model_1=child_sud_num_1/max(child_sud_den_1,10.d0**(-14))
 
                             ! SCAN THE PENALTY AND PRINT THE RATIO AT EACH VALUE.
                             !
@@ -45496,7 +45569,7 @@
                                     end do
 
                                     if (scan_den>10.d0**(-10)) then
-                                        scan_ratio=scan_num/scan_den
+                                        scan_ratio=scan_num/max(scan_den,10.d0**(-14))
                                     else
                                         scan_ratio=-1
                                     end if
@@ -45688,7 +45761,7 @@
                         if (child_homeless_den_1>10.d0**(-10)) then
 
                             child_homeless_ratio_model_1=&
-                                child_homeless_num_1/child_homeless_den_1
+                                child_homeless_num_1/max(child_homeless_den_1,10.d0**(-14))
 
                             gap_penalty_child_homeless_1=&
                                 child_homeless_ratio_model_1-child_homeless_ratio_data
@@ -47141,7 +47214,7 @@
             write(*,*) "model_avg_housing_spending_owners=", model_avg_housing_spending_owners(1)
             write(*,*) "model_avg_housing_spending_all=", model_avg_housing_spending_all(1)
             write(*,*) "model_avg_housing_spending_renters=", model_avg_housing_spending_renters(1)
-            write(*,*) "total_rent_paid/total_renters_income=", 100*(total_rent_paid(1)/total_renters_income(1))
+            write(*,*) "total_rent_paid/total_renters_income=", 100*(total_rent_paid(1)/max(total_renters_income(1),10.d0**(-14)))
 !            write(*,*) "inheritance_amount=", inheritance_amount
             write(*,*) "distance_inheritance_amount=", distance_inheritance_amount
             write(*,*) "average_welfare_of_youngest_cohort=", average_welfare_of_youngest_cohort(1)
@@ -47189,7 +47262,7 @@
             write(*,*) "use rate by single age, model age 1 = data age 26:"
             do i=1,life_span
                 if (model_alive_by_age(i)>10.d0**(-14)) then
-                    write(*,*) "USE_BY_AGE", i, i+25, model_users_by_age(i)/model_alive_by_age(i)
+                    write(*,*) "USE_BY_AGE", i, i+25, model_users_by_age(i)/max(model_alive_by_age(i),10.d0**(-14))
                 else
                     write(*,*) "USE_BY_AGE", i, i+25, 0.d0
                 end if
@@ -47351,7 +47424,7 @@
             end if
 
             write(*,*) "model_fraction_addicted+model_exprimenters=", model_fraction_addicted(1)+model_exprimenters(1)
-            write(*,*) "model_exprimenters/model_total_drug_users=", model_exprimenters(1)/model_total_drug_users(1)
+            write(*,*) "model_exprimenters/model_total_drug_users=", model_exprimenters(1)/max(model_total_drug_users(1),10.d0**(-14))
             write(*,*) "model_fraction_addicted_who_are_homeless,", model_fraction_addicted_who_are_homeless(1)
             write(*,*) "model_addicted_total_addiction_spending_to_total_income=", &
                 model_addicted_total_addiction_spending_to_total_income(1)      
@@ -47381,7 +47454,7 @@
             write(*,*) "model_average_income_of_homeless_addicted=", model_average_income_of_homeless_addicted(1)
             write(*,*) "model_avg_homeless_after_tax_income,", model_avg_homeless_after_tax_income(1)
             write(*,*) "rent to income of homeless=", &
-                (model_average_rent(1)*model_average_rental_unit_size(1))/model_avg_homeless_after_tax_income(1)
+                (model_average_rent(1)*model_average_rental_unit_size(1))/max(model_avg_homeless_after_tax_income(1),10.d0**(-14))
             write(*,*) "model_avg_homeless_assets=", model_avg_homeless_assets(1)
             write(*,*) "model_average_assets_addicted_and_homeless=", model_average_assets_addicted_and_homeless(1)
             write(*,*) "relative_share_of_addiction=", relative_share_of_addiction    
@@ -47505,7 +47578,7 @@
             write(*,*) "model_fraction_addicted=", model_fraction_addicted(1)
             write(*,*) "model_exprimenters=", model_exprimenters(1)
             write(*,*) "model_fraction_addicted+model_exprimenters=", model_fraction_addicted(1)+model_exprimenters(1)
-            write(*,*) "model_exprimenters/model_total_drug_users=", model_exprimenters(1)/model_total_drug_users(1)
+            write(*,*) "model_exprimenters/model_total_drug_users=", model_exprimenters(1)/max(model_total_drug_users(1),10.d0**(-14))
             write(*,*) "model_fraction_addicted_who_are_homeless,", model_fraction_addicted_who_are_homeless(1)
             write(*,*) "model_youngest_net_wealth_share=", model_youngest_net_wealth_share(1)
             write(*,*) "inheritance_amount=", inheritance_amount(1)
@@ -47577,7 +47650,7 @@
             write(*,*) "model_drug_threshold=", model_drug_threshold(1)
             write(*,*) "model_average_drug_spending_experimenters=", model_average_drug_spending_experimenters(1)
             write(*,*) "model_drug_threshold/model_average_drug_spending_experimenters=", &
-                model_drug_threshold(1)/model_average_drug_spending_experimenters(1)
+                model_drug_threshold(1)/max(model_average_drug_spending_experimenters(1),10.d0**(-14))
             write(*,*) "model_fraction_light_users=", model_fraction_light_users(1)
         
 !            write(*,*) "model_bequests/model_net_wealth=", model_bequests(1)/model_total_net_wealth(1)
