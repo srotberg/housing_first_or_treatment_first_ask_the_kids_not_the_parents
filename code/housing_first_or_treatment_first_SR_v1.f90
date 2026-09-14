@@ -7884,6 +7884,8 @@
         ! different object from the 26.6 per cent target. Near 4.2 and the stock
         ! is not building, so the entry side is at fault.
         real(8), dimension(transition_length) :: model_eligible_voucher_holders
+        ! THE COMPOSITION OF THE NEGATIVE-VALUE-OF-LIFE MASS, diagnostic only.
+        real(8), dimension(transition_length) :: val_neg_homeless,val_neg_sud,val_neg_nowage
         real(8), dimension(transition_length) :: val_neg_life_mass,val_life_min,&
             val_ugoods_users,val_umass_users,val_ugoods_others,val_umass_others
 
@@ -8949,6 +8951,10 @@
             ! question is whether that is thirty per cent or a third of one per
             ! cent. It is the latter. The raw mass is kept beside it so the
             ! divisor is auditable, exactly as the food stamp line below does.
+            write(*,*) "DIAG negative value of life: homeless / SUD / no wage =",&
+                val_neg_homeless(1)/max(val_neg_life_mass(1),10.d0**(-14)),&
+                val_neg_sud(1)/max(val_neg_life_mass(1),10.d0**(-14)),&
+                val_neg_nowage(1)/max(val_neg_life_mass(1),10.d0**(-14))
             write(*,*) "DIAG share with a NEGATIVE value of life         =",&
                 val_neg_life_mass(1)/max(pooled_mass_all,10.d0**(-12)),&
                 " raw mass=", val_neg_life_mass(1), " of ", pooled_mass_all
@@ -36784,6 +36790,9 @@
         if (accumulating_beta_types==0) val_nowage_working(time_period)=0
         if (accumulating_beta_types==0) val_mass_working(time_period)=0
         if (accumulating_beta_types==0) val_neg_life_mass(time_period)=0
+        if (accumulating_beta_types==0) val_neg_homeless(time_period)=0
+        if (accumulating_beta_types==0) val_neg_sud(time_period)=0
+        if (accumulating_beta_types==0) val_neg_nowage(time_period)=0
         ! A MINIMUM TRACKER, AND IT HAS THE BUG ITS TWIN WAS FIXED FOR. The note
         ! on model_largest_negative_value_of_life says it in full: resetting on
         ! the second pass discards the first type's minimum entirely, so the
@@ -36949,6 +36958,21 @@
                                     if (val_life_1<0) then
                                         val_neg_life_mass(time_period)=val_neg_life_mass(time_period)+&
                                             distribution_mass_used
+
+                                        ! WHO THEY ARE. The floor's cost is decided
+                                        ! by whether a negative value of life is an
+                                        ! economic statement about homeless
+                                        ! households with the disorder, or a corner
+                                        ! of the grid. Diagnostic only; read by
+                                        ! nothing in the calibration.
+                                        if (housing_status_index_used<second_lowest_housing_grid_point) &
+                                            val_neg_homeless(time_period)=&
+                                            val_neg_homeless(time_period)+distribution_mass_used
+                                        if (unemployment_index>threshold_addiction_index) &
+                                            val_neg_sud(time_period)=&
+                                            val_neg_sud(time_period)+distribution_mass_used
+                                        if (emp_of(unemployment_index)/=1) val_neg_nowage(time_period)=&
+                                            val_neg_nowage(time_period)+distribution_mass_used
                                     end if
                                     if ((distribution_mass_used>10.d0**(-12)) .AND. &
                                         (val_life_1<val_life_min(time_period))) then
