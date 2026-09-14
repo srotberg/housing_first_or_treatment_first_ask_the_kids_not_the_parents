@@ -1,3 +1,48 @@
+## 14 September 12:20 UTC -- CORRECTION: THE DAMPING STALLED AT ABOUT LOOP 150,
+## AND MY MEASURE OF IT WAS THE WRONG INSTRUMENT
+
+I reported the orbit "monotonically decreasing across all seven" at 11:15, then
+"11 of 12 decreases, 66 per cent of the first" at 11:41.  Both were measured by
+picking out loops with a drug share above 0.40 and subtracting a baseline.  **That
+threshold is the wrong instrument** and it flattered the result in both
+directions: it misses a spike that peaks below 0.40, and it counts a near-baseline
+loop as a spike when the baseline itself drifts up to meet it -- loop 183 reads
+0.400682, barely over the line, and my series recorded it as an amplitude of
+0.00855 as though the orbit had collapsed.
+
+**Threshold-free, peak-to-trough spread in non-overlapping windows of ten:**
+
+    loops 111-120   spread 0.02876   centre 0.40014
+    loops 121-130   spread 0.02480   centre 0.39789
+    loops 131-140   spread 0.02424   centre 0.39941
+    loops 141-150   spread 0.02232   centre 0.39761
+    loops 151-160   spread 0.02274   centre 0.39478
+    loops 161-170   spread 0.02552   centre 0.39460
+    loops 171-180   spread 0.02549   centre 0.39309
+
+The orbit DID damp from loop 114 to about 150, 0.0288 down to 0.0223.  It then
+**stopped and widened back to 0.0255**, where it has sat for thirty loops.  So the
+run is in a persistent limit cycle of roughly constant amplitude, not a decaying
+excursion, and my "66 per cent and falling" was an artefact of the cutoff.
+
+**WHAT THIS DOES AND DOES NOT CHANGE.**  The 11:15 conclusion that loop 114 was an
+OVERSHOOT in b's bracket rather than a crossing of the abstention corner still
+stands: a corner crossing would give jumps of constant size tied to b's crossings
+from the first one, and the first thirty-five loops of decay are not that.  What is
+withdrawn is the stronger claim that the search was recovering on its own.  It
+recovered partway and then settled into a cycle it has not left in eighty loops.
+
+**The centre is drifting DOWN**, 0.40014 to 0.39309 over seventy loops, which is
+the right direction and is worth about 1.8 per cent against a gap of 184 per cent.
+At that rate the drug share target is not reachable in this run by any margin that
+matters, which is the 08:40 bound restating itself.
+
+**THE LESSON, and it is the third time today.**  A measure with a hand-picked
+cutoff in it will track the cutoff once the series drifts across it.  Prefer a
+statistic that does not name a level -- a spread, a variance, a window mean.  The
+same mistake in different clothes as reading single iterates at 09:05 and smoothing
+a twice-a-loop series on a once-a-loop window at 10:05.
+
 ## 14 September 11:15 UTC -- THE ORBIT IS DAMPING. THAT CLOSES THE 10:55 QUESTION
 ## IN FAVOUR OF OVERSHOOT, NOT A CORNER
 
