@@ -1,3 +1,34 @@
+## 14 September 07:15 UTC -- EVERY HOUSEHOLD WITH A NEGATIVE VALUE OF LIFE IS
+## HOMELESS. THE CONSTRAINT IS SUPPRESSING A RESULT, NOT CORRECTING AN ERROR
+
+Measured at the best point -- aleph 60, b 2.0e-3 -- the composition of the 0.281
+per cent whose value of life is below zero:
+
+    homeless                     100.00%
+    no wage income                99.99%
+    carries a substance use disorder  20.4%
+
+Not a grid corner and not scattered across the distribution.  It is exactly one
+population: households on the street with no wage income, one in five of whom
+also carry the disorder.  The model is saying that such a household values a
+period of life negatively, and it says so at the aleph where the value of life
+matches its external target and six moments sit inside five per cent.
+
+**SO THE CHOICE IS BETWEEN TWO SUBSTANTIVE POSITIONS, NOT BETWEEN A CALIBRATION
+AND A BUG.**  Forcing aleph up to suppress it does not correct an error; it
+removes the model's own statement about the worst-off households -- the ones the
+paper is about -- and costs six moments to do it.  Against that, 0.28 per cent of
+households preferring non-existence is a strong claim to put in print whatever
+it does for fit, and a reader may reject the mechanism on it.
+
+That is the author's call.  What has changed is that it is now made against
+evidence: 100 per cent homeless, 99.99 per cent without wage income.
+
+**AND THE POINT ITSELF REPRODUCES.**  Re-run at aleph 60, b 2.0e-3 with the
+diagnostic build: drug users 0.089568 against 0.089, y_u 0.75337 against 0.74.
+The same numbers as the earlier run, so the six-inside-five-per-cent reading is
+not a fluke of one solve.
+
 ## 14 September 07:10 UTC -- THE BEST POINT OF THE SESSION.
 ## SIX MOMENTS INSIDE FIVE PER CENT AT aleph = 60, b = 2.0e-3
 
