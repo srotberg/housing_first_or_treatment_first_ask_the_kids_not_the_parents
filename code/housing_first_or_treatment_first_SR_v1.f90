@@ -5213,6 +5213,34 @@
         real(8) :: previous_gap_labor_income_tax_rate=0
         integer :: have_gap_labor_income_tax_rate=0
         real(8), parameter :: damp_adjuster_floor=10.d0**(-4)
+        ! HOW MANY SIGN FLIPS IN A ROW BEFORE THE ADJUSTER IS DAMPED.
+        !
+        ! The author, 14 September: *"Use the flip sign dampening only if it
+        ! happens more than 3 times in a row."*  Damping on the FIRST flip turns
+        ! the rule into a bisection, which is what they have ruled out; a single
+        ! flip is also the normal way a bracket crosses its target and is no
+        ! evidence of ringing. Four in a row is.
+        !
+        ! Tested with > rather than >=, which is what "more than 3" says: the
+        ! fourth consecutive flip is the first one that damps.
+        integer, parameter :: damp_flip_threshold=3
+        ! ONE COUNTER PER INSTRUMENT, because "in a row" is per instrument and a
+        ! shared counter would let one parameter's ringing damp another's.
+        !
+        ! NOT PERSISTED IN calibration_state.dat, deliberately. That file is
+        ! positional, so adding nine entries would make every existing state file
+        ! unreadable. A resumed run therefore starts each counter at zero, which
+        ! costs at most three extra flips before damping begins -- a far smaller
+        ! price than an archive of unreadable checkpoints.
+        integer :: flips_relative_share_of_housing=0
+        integer :: flips_relative_share_of_leisure=0
+        integer :: flips_housing_status_grid_expander=0
+        integer :: flips_labor_income_tax_rate=0
+        integer :: flips_rho_intergenerational=0
+        integer :: flips_penalty_child_homeless=0
+        integer :: flips_voucher_probability=0
+        integer :: flips_separation_rate=0
+        integer :: flips_employment_multiplier=0
 
         ! THE MOST ANY PARAMETER MAY MOVE IN ONE LOOP, on the author's
         ! instruction, and ONE constant so it is changed in one place.
@@ -10146,7 +10174,7 @@
 
         end subroutine
 
-        subroutine damp_on_flip(adj_1,gap_1,prev_gap_1,have_gap_1,start_1,floor_1)
+        subroutine damp_on_flip(adj_1,gap_1,prev_gap_1,have_gap_1,start_1,floor_1,flips_1)
 
             ! THE PATTERN, ONCE. A fixed adjuster on an elastic moment overshoots,
             ! the gap changes sign, and the parameter rings for ever without
@@ -10167,7 +10195,7 @@
             implicit none
 
             real(8), intent(inout) :: adj_1,prev_gap_1
-            integer, intent(inout) :: have_gap_1
+            integer, intent(inout) :: have_gap_1,flips_1
             real(8), intent(in) :: gap_1,start_1,floor_1
 
             ! AN ADJUSTER AT ZERO IS PINNED AND MUST STAY PINNED.
@@ -10191,12 +10219,24 @@
 
             if (have_gap_1==1) then
 
+                ! MORE THAN THREE FLIPS IN A ROW, NOT ONE. See
+                ! damp_flip_threshold. A single crossing is how a bracket reaches
+                ! its target and damping on it makes the rule a bisection, which
+                ! the author has ruled out. The counter resets the moment the sign
+                ! holds, so "in a row" means what it says.
                 if ((gap_1*prev_gap_1)<0) then
 
-                    adj_1=max(adj_1*0.5d0,floor_1)
+                    flips_1=flips_1+1
+
+                    if (flips_1>damp_flip_threshold) then
+
+                        adj_1=max(adj_1*0.5d0,floor_1)
+
+                    end if
 
                 else
 
+                    flips_1=0
                     adj_1=min(adj_1*1.2d0,start_1)
 
                 end if
@@ -34286,9 +34326,6 @@
 
         write(*,*) "===== CONVERGENCE TERMS ====="
 
-        call one_convergence_term("rental_market",&
-            distance_rental_market(1), stopping_rule_rental_market,&
-            1, open_1)
         call one_convergence_term("discount_factor",&
             distance_discount_factor, stopping_rule_discount_factor,&
             1, open_1)
@@ -43165,8 +43202,24 @@
 
         end if
 
-        do while((distance_rental_market(1)>stopping_rule_rental_market) .OR. &
-            (distance_discount_factor>stopping_rule_discount_factor) .OR. &
+        ! THE RENTAL MARKET IS NOT SCORED, on the author's instruction of 14
+        ! September: *"Rental market can be in the model, but the rent is pinned
+        ! at 1 and does not need to clear the market at all. You can ignore the
+        ! rental price clearing the market."*
+        !
+        ! IT WAS THE FIRST TERM OF THIS TEST AND IT HAD NO INSTRUMENT. fix_rent
+        ! is 1 and rent_calibrated is 1.0, so the rent never moves; but
+        ! distance_rental_market went on being computed as
+        ! maxval|rental demand - rental supply| and scored against a rule of 2e-2,
+        ! which nothing in the model could close. That is the exact failure this
+        ! file documents elsewhere -- a live distance whose parameter cannot move
+        ! -- sitting in the first line of the convergence test.
+        !
+        ! IT IS STILL COMPUTED AND STILL PRINTED, because how far the rental
+        ! market is from clearing at a pinned rent is worth seeing. It simply no
+        ! longer holds the loop open. distance_rent_to_price needs no change: it
+        ! is already (1-fix_rent)*abs(...), which is zero.
+        do while((distance_discount_factor>stopping_rule_discount_factor) .OR. &
             ((freeze_to_three_block==0) .AND. (distance_discount_factor_on_child>stopping_rule_discount_factor_on_child)) .OR. &
             (distance_minimum_inheritance>stopping_rule_minimum_inheritance) .OR. &
             (distance_advantage_to_owning>stopping_rule_advantage_to_owning) .OR. &
@@ -44041,7 +44094,8 @@
                         call damp_on_flip(relative_share_of_housing_adjuster,&
                             model_avg_housing_spending_renters(1)-avg_rent_to_income_data,&
                             previous_gap_relative_share_of_housing,have_gap_relative_share_of_housing,&
-                            relative_share_of_housing_adjuster_start,damp_adjuster_floor)
+                            relative_share_of_housing_adjuster_start,damp_adjuster_floor,&
+                                flips_relative_share_of_housing)
                         write(*,*) "relative_share_of_housing_adjuster=", relative_share_of_housing_adjuster
                         ! THE GLOBAL CAP APPLIES HERE TOO. This assignment sits on
                         ! an `if (...) X=&` line, so the pass that wrapped the other
@@ -44122,7 +44176,8 @@
                     call damp_on_flip(relative_share_of_leisure_adjuster,&
                         model_labor_supply(1)/model_total_hours(1)-avg_labor_supply_data,&
                         previous_gap_relative_share_of_leisure,have_gap_relative_share_of_leisure,&
-                        relative_share_of_leisure_adjuster_start,damp_adjuster_floor)
+                        relative_share_of_leisure_adjuster_start,damp_adjuster_floor,&
+                            flips_relative_share_of_leisure)
                     write(*,*) "relative_share_of_leisure_adjuster=", relative_share_of_leisure_adjuster
                     cap_old_1=relative_share_of_leisure
                     relative_share_of_leisure=&
@@ -44260,7 +44315,8 @@
                             previous_gap_housing_status_grid_expander,&
                             have_gap_housing_status_grid_expander,&
                             housing_status_grid_expander_adjuster_start,&
-                            housing_status_grid_expander_floor)
+                            housing_status_grid_expander_floor,&
+                                flips_housing_status_grid_expander)
 
                         housing_status_grid_expander=&
                             min(max(housing_status_grid_expander-&
@@ -44480,7 +44536,8 @@
                     call damp_on_flip(labor_income_tax_rate_adjuster,&
                         model_average_labour_income_tax(1)-average_labor_income_tax_data,&
                         previous_gap_labor_income_tax_rate,have_gap_labor_income_tax_rate,&
-                        labor_income_tax_rate_adjuster_start,damp_adjuster_floor)
+                        labor_income_tax_rate_adjuster_start,damp_adjuster_floor,&
+                            flips_labor_income_tax_rate)
                     write(*,*) "labor_income_tax_rate_adjuster=", labor_income_tax_rate_adjuster
                     cap_old_1=labor_income_tax_rate
                     labor_income_tax_rate=max(min(labor_income_tax_rate+labor_income_tax_rate_adjuster*&
@@ -44817,27 +44874,17 @@
                             utility_cost_of_treatment_adjuster*&
                             (treatment_take_up_data-model_treatment_take_up(1))
 
-                        if ((have_treatment_secant==1) .AND. &
-                            (abs(model_treatment_take_up(1)-previous_treatment_take_up)>10.d0**(-6)) .AND. &
-                            (abs(utility_cost_of_treatment-previous_utility_cost_of_treatment)>10.d0**(-10))) then
-
-                            treatment_step_1=utility_cost_of_treatment-&
-                                (model_treatment_take_up(1)-treatment_take_up_data)*&
-                                (utility_cost_of_treatment-previous_utility_cost_of_treatment)/&
-                                (model_treatment_take_up(1)-previous_treatment_take_up)
-
-                        end if
-
+                        ! THE SECANT AND THE TRUST STEP ARE BOTH GONE, on the
+                        ! author's instruction of 13 and 14 September: no secants,
+                        ! and every internally calibrated parameter moves by the
+                        ! gap step with a per-cent ceiling. The step above is that
+                        ! rule; treatment_cost_max_rel_step is the ceiling, one per
+                        ! cent. previous_utility_cost_of_treatment and
+                        ! previous_treatment_take_up are still maintained so the
+                        ! checkpoint format does not change.
                         previous_utility_cost_of_treatment=utility_cost_of_treatment
                         previous_treatment_take_up=model_treatment_take_up(1)
                         have_treatment_secant=1
-
-                        call trust_step(treatment_step_1,utility_cost_of_treatment,&
-                            move_factor(model_treatment_take_up(1),&
-                            treatment_take_up_data,escape_factor),10.d0**(-2))
-                        write(*,*) "MOVE MODE utility_cost_of_treatment=",&
-                            move_factor(model_treatment_take_up(1),&
-                            treatment_take_up_data,escape_factor)
                         ! RAISED 10 -> 20 WITH THE HANDOVER CLAMP, so the two
                         ! ceilings on this parameter cannot disagree.
                         !
@@ -45536,10 +45583,16 @@
                                     gap_penalty_child_homeless_1,&
                                     previous_gap_penalty_child_homeless,&
                                     have_gap_penalty_child_homeless,&
-                                    rho_intergenerational_adjuster_start,damp_adjuster_floor)
+                                    rho_intergenerational_adjuster_start,damp_adjuster_floor,&
+                                        flips_rho_intergenerational)
 
                                 rho_intergenerational_step_1=rho_intergenerational-&
                                     rho_intergenerational_adjuster*gap_penalty_child_homeless_1
+                                ! LEFT AS THE ONLY trust_step CALLS, and only
+                                ! because both parameters are HELD today. If either
+                                ! is ever given an adjuster it must take the plain
+                                ! gap step with a per-cent cap like everything else
+                                ! -- see the note at value_of_life.
                                 call trust_step(rho_intergenerational_step_1,&
                                     rho_intergenerational,&
                                     move_factor(child_homeless_ratio_model_1,&
@@ -45566,7 +45619,8 @@
                                     gap_penalty_child_homeless_1,&
                                     previous_gap_penalty_child_homeless,&
                                     have_gap_penalty_child_homeless,&
-                                    penalty_child_homeless_adjuster_start,damp_adjuster_floor)
+                                    penalty_child_homeless_adjuster_start,damp_adjuster_floor,&
+                                        flips_penalty_child_homeless)
 
                                 ! SIGN, STATED RATHER THAN INFERRED. The penalty
                                 ! shifts the child DOWN the productivity grid, since
@@ -45962,39 +46016,33 @@
                             " over average labour income =", model_vsl_ratio_1,&
                             " target =", vsl_data
 
-                        ! A TRUST REGION. The adjuster is ten and the gap is measured
-                        ! in the same units as the parameter, so an early gap of 88
-                        ! moves it by 885 and any starting value below that lands on a
-                        ! clamp. Halving or one and a half times per iteration is
-                        ! still fast and cannot overshoot into a bound.
+                        ! NO TRUST REGION. The author, 14 September: *"Make all the
+                        ! updates of internally calibrated parameters follow my
+                        ! method of updating it up or down by some %."*  A trust
+                        ! region is a SECOND ceiling, multiplicative and moving, on
+                        ! top of cap_step's flat one, and two ceilings mean the log
+                        ! cannot say which bound a step.
+                        !
+                        ! WHAT IT WAS FOR, AND WHY cap_step COVERS IT. The worry was
+                        ! scale: the adjuster is ten and the gap is in the same
+                        ! units as the parameter, so an early gap of 88 asks for a
+                        ! move of 885 and any starting value below that lands on a
+                        ! clamp. cap_step already refuses that -- it allows one per
+                        ! cent of the current value and nothing more -- so the
+                        ! overshoot the trust region existed to prevent cannot
+                        ! happen either way. The trust machinery is left declared
+                        ! and still read from and written to the state file, so no
+                        ! checkpoint format changes; nothing reads it now.
+                        !
+                        ! DIRECTION. The value of life RISES in aleph, so a ratio
+                        ! above target wants aleph DOWN, which is the minus here.
                         gap_value_of_life_1=model_vsl_ratio_1-vsl_data
-
-                        if (have_gap_value_of_life==1) then
-
-                            if ((gap_value_of_life_1*previous_gap_value_of_life)<0) then
-
-                                value_of_life_trust=max(value_of_life_trust*&
-                                    value_of_life_trust_damping,value_of_life_trust_floor)
-
-                            else
-
-                                value_of_life_trust=min(value_of_life_trust*&
-                                    value_of_life_trust_growth,value_of_life_trust_start)
-
-                            end if
-
-                        end if
 
                         previous_gap_value_of_life=gap_value_of_life_1
                         have_gap_value_of_life=1
 
-                        write(*,*) "value_of_life_trust=", value_of_life_trust
-
                         value_of_life_step_1=value_of_life-value_of_life_adjuster*&
                             gap_value_of_life_1
-                        value_of_life_step_1=max(min(value_of_life_step_1,&
-                            (1+value_of_life_trust)*value_of_life),&
-                            value_of_life/(1+value_of_life_trust))
                         cap_old_1=value_of_life
                         value_of_life=max(min(value_of_life_step_1,10.d0**(4)),10.d0**(-2))
                         value_of_life=cap_step(value_of_life,cap_old_1)
@@ -46127,7 +46175,8 @@
                     call damp_on_flip(voucher_probability_adjuster,&
                         model_eligibles_getting_voucher(1)-voucher_coverage_data,&
                         previous_gap_voucher_probability,have_gap_voucher_probability,&
-                        voucher_probability_adjuster_start,damp_adjuster_floor)
+                        voucher_probability_adjuster_start,damp_adjuster_floor,&
+                            flips_voucher_probability)
                     write(*,*) "voucher_probability_adjuster=", voucher_probability_adjuster
                     cap_old_1=probability_of_voucher_benchmark_used
                     probability_of_voucher_benchmark_used=&
@@ -46147,17 +46196,17 @@
                     call damp_on_flip(separation_rate_adjuster,&
                         model_fraction_unemployed(1)-unemployment_rate_data,&
                         previous_gap_separation_rate,have_gap_separation_rate,&
-                        separation_rate_adjuster_start,damp_adjuster_floor)
+                        separation_rate_adjuster_start,damp_adjuster_floor,&
+                            flips_separation_rate)
                     write(*,*) "separation_rate_adjuster=", separation_rate_adjuster
                     separation_step_1=probability_becoming_unemployed-&
                         separation_rate_adjuster*&
                         (model_fraction_unemployed(1)-unemployment_rate_data)
-                    call trust_step(separation_step_1,probability_becoming_unemployed,&
-                        move_factor(model_fraction_unemployed(1),&
-                        unemployment_rate_data,escape_factor),10.d0**(-5))
-                    write(*,*) "MOVE MODE separation_rate=",&
-                        move_factor(model_fraction_unemployed(1),&
-                        unemployment_rate_data,escape_factor)
+                    ! NO TRUST STEP. See the note at value_of_life: cap_step is
+                    ! the one ceiling now, and a second moving one only obscures
+                    ! which bound a step. Unemployment RISES in the separation
+                    ! rate, so a rate above target wants it down -- the minus
+                    ! above.
                     cap_old_1=probability_becoming_unemployed
                     probability_becoming_unemployed=&
                         max(min(separation_step_1,1.d0),10.d0**(-6))
@@ -46182,7 +46231,8 @@
                     call damp_on_flip(employment_multiplier_adjuster,&
                         model_fraction_homeless_and_addicted(1)-sud_share_of_homeless,&
                         previous_gap_employment_multiplier,have_gap_employment_multiplier,&
-                        employment_multiplier_adjuster_start,damp_adjuster_floor)
+                        employment_multiplier_adjuster_start,damp_adjuster_floor,&
+                            flips_employment_multiplier)
                     write(*,*) "employment_multiplier_adjuster=", employment_multiplier_adjuster
                     cap_old_1=multiple_of_probabilities_of_employment_if_addicted
                     multiple_of_probabilities_of_employment_if_addicted=&
@@ -46675,13 +46725,10 @@
                         ! stops the degenerate case if the update ever runs.
                         size_homelessness_step_1=size_homelessness-&
                             size_homelessness_adjuster*gap_size_homelessness_1
-                        call trust_step(size_homelessness_step_1,size_homelessness,&
-                            move_factor(model_fraction_homeless(1),&
-                            fraction_homeless_data,escape_factor),&
-                            size_homelessness_max_step)
-                        write(*,*) "MOVE MODE size_homelessness=",&
-                            move_factor(model_fraction_homeless(1),&
-                            fraction_homeless_data,escape_factor)
+                        ! NO TRUST STEP. See the note at value_of_life.
+                        ! Homelessness RISES in h_1, so a rate above target wants
+                        ! h_1 down -- the minus above -- and cap_step is the
+                        ! ceiling.
                         cap_old_1=size_homelessness
                         size_homelessness=max(min(size_homelessness_step_1,0.9d0),&
                             size_homelessness_floor)
@@ -48110,8 +48157,27 @@
                 previous_excess_demand=excess_demand_1
                 have_rent_secant=1
 
-                rent(transition_length,:)=(1-partial_equilibrium)*rent_step_1+&
-                    partial_equilibrium*rent(transition_length,:)
+                ! fix_rent GUARDS THIS TOO, AND IT DID NOT. The benchmark pins
+                ! the rent -- fix_rent is 1 and rent_calibrated is 1.0 -- but this
+                ! line is on the COUNTERFACTUAL path and was guarded only by
+                ! loop_count and partial_equilibrium, so a policy experiment moved
+                ! its rent by a secant on excess demand while the benchmark it is
+                ! compared against could not move its own.
+                !
+                ! That difference would have entered every welfare number as if it
+                ! were policy: a rental price response present in the experiment
+                ! and absent from the baseline is not a result of Treatment First,
+                ! it is a result of the two paths solving different models.
+                !
+                ! The author, 14 September: *"the rent is pinned at 1 and does not
+                ! need to clear the market at all"*. Pinned means pinned on both
+                ! paths.
+                if (fix_rent==0) then
+
+                    rent(transition_length,:)=(1-partial_equilibrium)*rent_step_1+&
+                        partial_equilibrium*rent(transition_length,:)
+
+                end if
                     
             end if
                                  

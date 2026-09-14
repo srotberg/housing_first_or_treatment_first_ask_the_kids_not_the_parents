@@ -35,12 +35,12 @@ def do_while_terms(src):
     lines = src.split("\n")
     start = None
     for i, l in enumerate(lines):
-        if l.strip().startswith("do while((distance_rental_market(1)"):
+        if l.strip().startswith("do while((distance_discount_factor"):
             start = i
             break
     if start is None:
         raise SystemExit("check_convergence_report: the calibration's do while was not "
-                         "found. Its first term is distance_rental_market(1); if that "
+                         "found. Its first term is distance_discount_factor; if that "
                          "changed, change this line with it.")
     blk = []
     i = start
