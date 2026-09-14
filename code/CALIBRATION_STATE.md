@@ -1,3 +1,46 @@
+## 14 September 03:55 UTC -- BEST POINT ON THE CURRENT MODEL.
+## aleph = 110, b = 0.00035. DRUG USE IS 2.6 PER CENT OFF.
+
+    moment                       model      target     gap
+    b      total drug users     0.08670    0.08900    -2.6%
+    lambda_d disorder rate      0.03424    0.03680    -6.9%
+    aleph  VSL / income        71.65      80.00     -10.4%
+    y_u    income of drug users 0.4094     0.7400    -44.7%
+
+Three of the four drug-block moments inside eleven per cent, from a margin that
+read 0.61 per cent at 03:25 and 44.9 at 02:35.  Found by two loop-0 scan legs,
+one parameter per point, which is the method the block skipped.
+
+**VSL DEPENDS ON USE FAR MORE THAN ON aleph, and that is what made the point
+findable.**  At aleph held at 110:
+
+    users     VSL/income
+    26.8%       63.6
+    16.1%       64.4
+     8.67%      71.65
+     0.61%      94.3     (block1, aleph 111.3)
+
+Flat between 27 and 16 per cent, then climbing steeply below 16.  So the earlier
+readings -- 48 to 60 at aleph 80, flat in b -- were taken on the FLAT part of
+this curve and the aleph = 137 they implied was an artefact of reading a flat
+segment.  The target of 80 sits inside the climbing part, at single-digit use,
+which is where the b target is too.  The two moments are far closer to
+compatible than any point tonight suggested.
+
+**WHAT CLOSES THE REMAINING TEN PER CENT.**  Ratio over aleph is 71.65/110 =
+0.651 at the target use level.  Holding that, VSL = 80 wants aleph = 123, and at
+aleph 123 use falls so b must come down with it -- roughly b = 2.5e-4 to 3e-4 on
+the local elasticity.  That is leg 3.  It is an extrapolation and it is written
+here as one; the scan measures it.
+
+**y_u IS THE ODD ONE OUT AND IT IS NOT b's TO FIX.**  It falls monotonically in
+b -- 0.606, 0.563, 0.497, 0.426 at aleph 80, and 0.409 here -- so it wants low b
+while use wants high b.  kappa_phi_d owns it, and the author's rule is that y_u
+below target means kappa_phi_d comes DOWN.  Block 1 loop 1 did exactly that
+(8 -> 7.992, "LOWERED: y_u is below target").  At 0.1 per cent a loop a 45 per
+cent gap is out of reach, so kappa_phi_d needs the same treatment aleph and b
+just had: a measured bracket before the block, not a capped walk inside it.
+
 ## 14 September 03:40 UTC -- SCAN LEG 1, aleph HELD AT 80. THE DRUG BLOCK IS
 ## SOLVABLE, AND THERE IS NO SUCH THING AS "THE" ELASTICITY OF USE IN b
 
