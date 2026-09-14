@@ -1,3 +1,44 @@
+## 14 September 09:05 UTC -- LOOP 42: THE RUN IS DEGRADING, NOT CYCLING, AND THE
+## 84 NaNs ARE NOT A TARGETED MOMENT
+
+**The two-cycle recorded at 08:52 has a rising centre, and every moment is now
+worse than it was at loop 29.**
+
+    drug share             loop 29  153.2%   loop 34  153.2%   loop 42  170.5%
+    VSL over income                  58.9%             30.6%             57.5%
+    SUD rate                          1.9% ON TARGET    1.9% ON TARGET   33.2%
+    voucher coverage                  0.2% ON TARGET    0.2% ON TARGET    3.0%
+    SMI share of the homeless         6.9%              2.9%              5.9%
+
+TWO moments were on target at loop 29.  NONE is at loop 42.  The cycle centre of
+the drug share has moved from 0.35609 over loops 21-34 to 0.36323 over the last
+fourteen, and the latest reading, 0.38134, is the highest of the run.  theta is
+down 4.12 per cent from loop 1, still at its cap, still in the direction that
+lowers the share.
+
+**THE 84 NaNs ARE NOT A STOP CONDITION, and that was checked rather than assumed.**
+ENGINE.md stops a run on "NaN in a targeted moment".  Every one of the 84 is the
+same quantity, twice a loop over 42 loops:
+
+    model_mortgages(1)/model_gross_housing_wealth(1) = NaN
+
+at lines 38395, 44379 and 47246.  ALL THREE ARE INSIDE `write` STATEMENTS.  The
+ratio is never scored, never assigned, and never fed back, and nothing in
+`writing/` or the paper pipeline reads `mortgage_debt_to_housing_wealth`, which is
+the name it is written under.  It is 0/0: no mortgages and no gross housing
+wealth.  So the stop condition is NOT met and the run is not stopped on it.
+
+**WHAT IT DOES BREAK IS THE STANDING BUILD CHECK, and that is worth the author's
+attention.**  Check 2 is `-ffpe-trap=invalid`, and 0.0/0.0 raises exactly that.
+Those three lines execute every loop, so the trapping build SIGFPEs on the first
+one -- the second half of the standing check cannot complete a run on this
+configuration at all.  It compiles, which is what I verified at 08:18; it cannot
+RUN to a finding here.
+
+NOT FIXED.  Guarding three divisions is a Fortran change, the freeze forbids one
+mid-search, and it would move the hash a second time in an hour.  Recorded and put
+to the author, which is what the freeze asks for instead.
+
 ## 14 September 08:52 UTC -- ADDENDUM: THE DRUG SHARE TERM IS IN A LIMIT CYCLE,
 ## AND theta's SIGN IS SWAMPED
 
