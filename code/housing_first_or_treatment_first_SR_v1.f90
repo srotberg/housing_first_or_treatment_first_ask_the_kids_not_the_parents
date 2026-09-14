@@ -135,7 +135,13 @@
         ! every run and nothing could move it. Its moment was still printed, so
         ! the gap was visible and unattached -- the same shape as the SUD share
         ! of the homeless, whose two instruments were both out of action.
-        integer, parameter :: hold_theta=0
+        ! PINNED AGAIN, 14 September: *"kappa=2, theta=.095 with the last two
+        ! pinned"*, *"Theta=.095 is the right number"*.  hold_theta=1 zeroes
+        ! relative_share_of_addiction_adj AND drops the drug spending share
+        ! from the do-while, so no orphaned distance is left behind.  That is
+        ! what this block needs: theta cannot close that moment at all, by the
+        ! zero-income bound recorded at 08:40 on 14 September.
+        integer, parameter :: hold_theta=1
 
         integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
@@ -34826,11 +34832,30 @@
         newborn_endowment_adjuster=0.d0
         kkk_sigma_scale_adjuster=0.d0
         rent_to_price_adjuster=0.d0
-        probability_of_becoming_addicted_adjuster=0.d0
+        ! RELEASED, 14 September: the author's live list is *"aleph, b, Sud,
+        ! Sud homeless, homelessness"*.  Held, the SUD rate drifted to +70 per
+        ! cent over blkB88's 290 loops with nothing able to touch it.
 
         ! AND h_1 IS UNTIED, so that homelessness has an instrument. See
         ! first_block_only.
         size_homelessness_adjuster=20.d0
+
+        ! kappa_phi_d PINNED AT 2 on the author's instruction.  Its adjuster
+        ! is declared 2.d0, so without this the run walks it -- blkB88 took it
+        ! from 2.0 to 1.86 over 290 loops while it was meant to be fixed.
+        kappa_phi_d_level_adjuster=0.d0
+
+        ! NOT FROZEN, AND THAT IS A DELIBERATE READING OF A SHORT INSTRUCTION.
+        ! The author named five live and pinned two; they did not say what to do
+        ! with voucher_probability, kappa_uem and separation_rate, which were
+        ! live in blkB88 and all finished inside one per cent.  Freezing them
+        ! was the obvious inference and it is NOT taken, for one measured
+        ! reason: their blkB88 values were calibrated at aleph 88 and b 1.2e-3,
+        ! and this block runs at aleph 60 and b 2.0e-3.  Pinning a parameter at
+        ! a value verified in a different economy is how a moment ends up
+        ! adrift with no instrument -- which is exactly what the SUD rate did in
+        ! blkB88, reaching +70 per cent while frozen.  They stay live and cost
+        ! little; they converged fast before.
 
         ! TAU_U AND PI_V JOIN THE BLOCK ON THE AUTHOR'S INSTRUCTION.
         ! utility_cost_of_treatment carries tau_u -- *"you also have to include
@@ -34843,8 +34868,9 @@
         ! set to a computed value because the number that gets pinned should be
         ! measured. The chain says 0.0443 (see CALIBRATION_STATE.md); the block
         ! is where that gets checked rather than assumed.
-        write(*,*) "FIRST BLOCK: live = aleph, b, onset, kappa_ued, h_1,",&
-            " pi_eu, kappa_phi_d, omega_c, tau_u, pi_V"
+        write(*,*) "FIRST BLOCK: live = aleph, b, SUD onset, SUD share of",&
+            " the homeless, h_1, and pi_V, kappa_uem, pi_eu carried over.",&
+            "  PINNED: kappa_phi_d=2, theta=0.095, c_bar, tau_l, omega_c."
 
     end subroutine
 
