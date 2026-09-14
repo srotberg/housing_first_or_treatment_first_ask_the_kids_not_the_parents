@@ -218,6 +218,21 @@
         real(8) :: addiction_onset_base=0.d0
         real(8) :: lambda_addiction=0.027364
         real(8) :: lambda_addiction_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-3))
+        ! THE ONSET BASE'S OWN ADJUSTER, POSITIVE, ON THE AUTHOR'S RULE.
+        !
+        ! SIGN: the disorder rate FALLS in the onset -- measured, see the update
+        ! block -- so a rate above target wants the onset UP and the step ADDS
+        ! the gap. This is the one instrument in the model whose direction is the
+        ! opposite of the obvious one, and an earlier round lost nineteen loops
+        ! to assuming otherwise.
+        !
+        ! MAGNITUDE, so that a typical gap uses roughly the per-loop ceiling
+        ! rather than a hundredth of it. The onset sits near 0.043 and a typical
+        ! gap is of order 0.003, so 0.2 asks for about 0.0006 -- near the one per
+        ! cent cap_step allows. Smaller and the bracket would crawl; larger and
+        ! the cap would bind every loop, which hides how big the step wanted to
+        ! be.
+        real(8) :: onset_base_adjuster=2*10.d0**(-1)
         real(8) :: previous_onset_at_mean=0
         real(8) :: previous_sud_rate=0
         integer :: have_lambda_secant=0
@@ -44647,116 +44662,46 @@
                             ! calibrating lambda directly, which is deliberate and is
                             ! explained above, but it means the secant is an approximation
                             ! and should be read as one.
-                            lambda_secant_slope_1=0
-
-                            if (abs(model_fraction_addicted(1)-previous_sud_rate)>10.d0**(-12)) then
-
-                                lambda_secant_slope_1=(onset_at_mean_1-previous_onset_at_mean)/&
-                                    (model_fraction_addicted(1)-previous_sud_rate)
-
-                            end if
-
-                            if ((have_lambda_secant==1) .AND. &
-                                (abs(model_fraction_addicted(1)-previous_sud_rate)>10.d0**(-6)) .AND. &
-                                (abs(onset_at_mean_1-previous_onset_at_mean)>10.d0**(-12)) .AND. &
-                            ! A NEGATIVE SLOPE IS THE TRUTH HERE, NOT CONTAMINATION.
+                            ! THE AUTHOR'S RULE, AND NO SECANT. Their instruction of
+                            ! 13 September: *"i dont want any bisections and any
+                            ! secants"*, then the rule -- parameter + adjuster times
+                            ! (model moment - data moment), capped per loop.
                             !
-                            ! This required lambda_secant_slope_1>0 and fell back to a
-                            ! proportional rule otherwise, on the reasoning -- written
-                            ! in an earlier round, and wrong -- that prevalence moving
-                            ! against the hazard meant another instrument had moved
-                            ! more. Measured single-parameter at loop 1 on 11 September
-                            ! with nothing else moving:
+                            ! THE DIRECTION IS MEASURED AND IT IS THE OPPOSITE OF THE
+                            ! OBVIOUS ONE. Single parameter, loop 1, 11 September, with
+                            ! nothing else moving:
                             !
                             !     onset 0.0428 -> 0.0550   lambda_d -49.0%   e = -2.68
                             !     onset 0.0428 -> 0.0350   lambda_d +74.3%   e = -2.76
                             !
-                            ! Monotone, negative both sides, same slope either way.
+                            ! Monotone, negative both sides, the same slope either way.
                             ! RAISING THE ONSET HAZARD LOWERS THE DISORDER RATE: making
                             ! use riskier deters people from using at all, and the
-                            ! extensive margin dominates, so fewer users means fewer
-                            ! disorders and deterrence beats conversion. That is the
-                            ! model's central mechanism appearing in its own
-                            ! calibration, as it does for value_of_life and
-                            ! size_homelessness.
+                            ! extensive margin beats the conversion margin. So the
+                            ! disorder rate FALLS in the onset, the adjuster is POSITIVE
+                            ! in the author's form, and the step ADDS the gap -- a
+                            ! disorder rate above target raises the onset.
                             !
-                            ! So the rejection clause overrode a true reading with a
-                            ! guess, and the fallback raised the onset whenever lambda_d
-                            ! was low, which lowered it further. Over nineteen loops on
-                            ! 11 September that took lambda_d from +2.0 per cent to -33
-                            ! and dragged participation from -0.9 to -34 with it.
+                            ! Getting this backwards is not hypothetical. An earlier
+                            ! round assumed the naive sign, rejected negative secant
+                            ! slopes as contamination, and fell back to a proportional
+                            ! rule that raised the onset whenever the disorder rate was
+                            ! low -- which lowered it further. Over nineteen loops that
+                            ! took lambda_d from +2.0 per cent to -33 and dragged
+                            ! participation from -0.9 to -34 with it.
                             !
-                            ! The secant is signed correctly by construction -- it is
-                            ! d(onset)/d(lambda_d), so a negative slope with a negative
-                            ! gap gives a step that LOWERS the onset -- and its magnitude
-                            ! is already bounded by the trust clamp below, so admitting
-                            ! negative slopes cannot run away. Only a degenerate slope
-                            ! falls back now.
-                                (abs(lambda_secant_slope_1)>10.d0**(-12))) then
-
-                                onset_step_1=onset_at_mean_1-&
-                                    (model_fraction_addicted(1)-sud_rate_data)*&
-                                    lambda_secant_slope_1
-
-                            elseif (model_fraction_addicted(1)>10.d0**(-8)) then
-
-                                ! REACHED ONLY WITHOUT A USABLE SECANT NOW -- the first
-                                ! pass, or a degenerate slope. The proportional rule
-                                ! below assumes raising the onset raises lambda_d, the
-                                ! WRONG sign as measured above, so it takes one step the
-                                ! wrong way before a secant exists to correct it. Left
-                                ! rather than reversed: baking in the opposite sign
-                                ! would be the same mistake with the opposite prejudice,
-                                ! and the secant measures the sign and should decide it.
-                                if (have_lambda_secant==0) then
-
-                                    write(*,*) "lambda secant NOT YET AVAILABLE: one proportional step,",&
-                                        " which assumes the wrong sign; the secant will correct it."
-
-                                end if
-
-                                onset_step_1=onset_at_mean_1*&
-                                    (sud_rate_data/model_fraction_addicted(1))
-
-                            else
-
-                                onset_step_1=onset_at_mean_1-&
-                                    lambda_addiction_adjuster*&
-                                    (model_fraction_addicted(1)-sud_rate_data)
-
-                            end if
-
-                            gap_lambda_addiction_1=model_fraction_addicted(1)-sud_rate_data
-
-                            if (have_gap_lambda_addiction==1) then
-
-                                if ((gap_lambda_addiction_1*previous_gap_lambda_addiction)<0) then
-
-                                    lambda_clamp=max(1+(lambda_clamp-1)*0.5d0,lambda_clamp_floor)
-
-                                else
-
-                                    lambda_clamp=min(1+(lambda_clamp-1)*1.2d0,lambda_clamp_start)
-
-                                end if
-
-                            end if
-
-                            previous_gap_lambda_addiction=gap_lambda_addiction_1
-                            have_gap_lambda_addiction=1
-
-                            write(*,*) "lambda_clamp=", lambda_clamp
-
-                            lambda_move_1=max(lambda_clamp,&
-                                move_factor(model_fraction_addicted(1),&
-                                sud_rate_data,escape_factor))
-                            write(*,*) "MOVE MODE lambda_addiction=", lambda_move_1
-                            onset_step_1=max(min(onset_step_1,lambda_move_1*onset_at_mean_1),&
-                                onset_at_mean_1/lambda_move_1)
-
+                            ! WHAT GOES WITH THE SECANT. The slope estimate, the
+                            ! proportional first step, the lambda_clamp trust region and
+                            ! the move_factor bound all go: the per-loop ceiling is
+                            ! cap_step now, which is what the rule asks for.
+                            ! previous_onset_at_mean and previous_sud_rate are still
+                            ! maintained so the calibration state file is unchanged.
                             previous_onset_at_mean=onset_at_mean_1
                             previous_sud_rate=model_fraction_addicted(1)
                             have_lambda_secant=1
+
+                            onset_step_1=onset_at_mean_1+onset_base_adjuster*&
+                                (model_fraction_addicted(1)-sud_rate_data)
 
                             onset_at_mean_1=max(min(onset_step_1,0.2d0),1.d0*10.d0**(-5))
 
@@ -45962,16 +45907,33 @@
                     ! being priced out of the drug entirely. At theta of 0.2 the
                     ! same b would put the corner at about 4b, which is above
                     ! every household in the model. The stylized model uses 0.009.
-                    b_move_1=move_factor(model_exprimenters(1),&
-                        participation_rate_data,escape_factor_b)
-                    write(*,*) "MOVE MODE addiction_scalar_1=", b_move_1
+                    ! THE AUTHOR'S RULE, ADDITIVE, AND NO MOVE FACTOR. Their
+                    ! instruction of 13 September: parameter + adjuster times
+                    ! (model moment - data moment), capped per loop.
+                    !
+                    ! WHAT THIS REPLACES. b used to move MULTIPLICATIVELY, by
+                    ! b*(1 + a*gap/target), and was bounded by move_factor rather
+                    ! than by a flat per cent. Both are gone: the step is now
+                    ! additive in the gap and the only ceiling is cap_step_rel's
+                    ! half a per cent below.
+                    !
+                    ! DIRECTION. b is the curvature of the drug bundle and sets
+                    ! the abstention corner, so a larger b prices more households
+                    ! out and PARTICIPATION FALLS IN b. Too many users therefore
+                    ! wants b UP, which is the plus here -- a positive adjuster in
+                    ! the author's form. The old multiplicative rule had the same
+                    ! sign, so this changes the size of the step and not its
+                    ! direction.
+                    !
+                    ! MAGNITUDE. b sits near 0.02 and a typical participation gap
+                    ! is of order 0.01, so an adjuster of 0.2 asks for 0.002 --
+                    ! about a tenth of b, which the half a per cent cap then
+                    ! trims. The cap is expected to bind while the gap is wide and
+                    ! to stop binding as it closes, which is the behaviour wanted.
                     cap_old_1=addiction_scalar_1
-                    addiction_scalar_1=max(min(addiction_scalar_1*&
-                        (1+addiction_scalar_adjuster*&
-                        gap_addiction_scalar_1/&
-                        max(participation_rate_data,10.d0**(-12))),&
-                        min(b_hi,b_move_1*addiction_scalar_1)),&
-                        max(b_lo,addiction_scalar_1/b_move_1))
+                    addiction_scalar_1=max(min(addiction_scalar_1+&
+                        addiction_scalar_adjuster*gap_addiction_scalar_1,&
+                        b_hi),b_lo)
                     ! cap_step_rel, NOT cap_step: b gets its own half a per
                     ! cent rather than the global one per cent, the same way
                     ! theta, omega_c and kappa_phi_d get theirs.
