@@ -1,3 +1,42 @@
+## 14 September 07:10 UTC -- THE BEST POINT OF THE SESSION.
+## SIX MOMENTS INSIDE FIVE PER CENT AT aleph = 60, b = 2.0e-3
+
+    moment                      model      target     gap
+    drug users                 0.08957    0.08900    +0.6%
+    SUD share of the homeless  0.21496    0.21700    -0.9%
+    y_u income of drug users   0.75329    0.74000    +1.8%
+    SMI share of the homeless  0.24077    0.25000    -3.7%
+    VSL / income              83.28      80.00       +4.1%
+    theta drug share           0.14787    0.14098    +4.9%
+    c_bar food stamps/output   0.00345    0.00420   -17.8%
+    pi_eu unemployment         0.03473    0.04900   -29.1%
+    h_1 homelessness           0.00598    0.01000   -40.2%
+
+    AND 0.281 per cent of households have a negative value of life.
+
+**SIX MOMENTS INSIDE FIVE PER CENT**, including both homelessness shares -- which
+had NO working instrument when the night began -- and y_u, which was twice
+declared unreachable in this file and twice wrongly.
+
+This is a LOOP-0 READ, not a calibrated point.  The three moments still out all
+have live instruments that have not moved yet: h_1 on size_homelessness, pi_eu on
+the separation rate, and c_bar which is currently pinned and may not deserve to
+be, since it moves drug use threefold.
+
+**AND A CORRECTION TO THE 07:00 ENTRY.**  y_u is flat in participation only over
+PART of the range.  At b = 2.8e-3, where use is 1.50 per cent, y_u collapses to
+0.2096.  So it is stable from roughly five to thirty-six per cent use and falls
+off a cliff below that.  The target at 8.9 per cent sits comfortably inside the
+stable region, which is why this point works, but the flatness is local and the
+07:00 entry implied it was general.
+
+**THE CONSTRAINT IS NOW THE WHOLE OF WHAT STANDS IN THE WAY.**  0.281 per cent of
+households value life negatively here, so the floor fires and lifts aleph, and
+the point is destroyed.  Everything else about it is right.  The decision is a
+single number: whether about a quarter of a per cent of households valuing life
+negatively is an acceptable price for a drug block with six moments inside five
+per cent.
+
 ## 14 September 07:00 UTC -- CORRECTION: y_u IS SET BY ALEPH, NOT BY
 ## PARTICIPATION. THE DRUG BLOCK IS ESSENTIALLY SOLVED AT ALEPH = 60
 
