@@ -1,3 +1,64 @@
+## 14 September 21:15 UTC -- y_u IS PARTICIPATION. b=0.089 AND y_u=0.74 ARE NOT
+## JOINTLY REACHABLE IN THIS MODEL, AND NO SETTING OF kappa_phi_d CHANGES THAT
+
+**THE AUTHOR'S QUESTION**, 14 September: *"Really? Even though b is close to
+target yu is so low?"*  It has an answer, and it is structural rather than a
+calibration failure.
+
+**THE RELATION.**  Over twenty loops of gate_run after the restart transient:
+
+    y_u = 0.2668 + 2.585 * b        R^2 = 0.948
+
+y_u is very nearly a deterministic function of PARTICIPATION.  Out of sample it
+predicted the next six loops within 0.013 -- (b 0.0862, y_u 0.4900) against a fit
+of 0.4896, (0.1200, 0.5827) against 0.5771, (0.0858, 0.4763) against 0.4886.
+Over the same twenty loops kappa_phi_d fell 6.8 per cent and contributed nothing
+detectable beyond its effect through b.
+
+**WHAT IT IMPLIES.**  At b on target, 0.089, the relation gives **y_u = 0.497** --
+which is exactly the plateau observed in five separate runs today, every time b
+returned to target.  For y_u = 0.740 it wants **b = 0.183, twice the target.**
+
+**THE ECONOMICS.**  In this model users are recruited strictly bottom-up: the
+poorest find it worth using first, and average user income rises only as
+participation expands into richer households.  So reaching users at 74 per cent of
+mean income requires reaching 18 per cent of the population.  In the data 8.9 per
+cent use AND they earn 74 per cent of average, which means real drug use is far
+less bottom-concentrated than the model makes it.  **THE PARTICIPATION GRADIENT IS
+TOO STEEP.**
+
+Note what this is NOT.  The SUD gradient across income bands is close to the data
+-- model 0.0707 at the bottom band to 0.0270 at the top, a 2.6 fold tilt against
+the data's 2.8 -- and households WITH the disorder earn 0.734 against a datum of
+0.711, on target.  It is the EXPERIMENTATION margin that is wrong: the 62 per cent
+of users without the disorder earn 0.343.  So the lever is whatever governs the
+utility of trying drugs, which is theta's territory, pinned at 0.095 by the author.
+
+**THIS CLOSES THE kappa_phi_d QUESTION THREE WAYS.**  The gated series was flat
+over seven steps; a log-log fit over ten gated steps gives the wrong sign; and the
+y_u-on-b relation explains 95 per cent of y_u's variance with kappa moving
+throughout.  kappa_phi_d at 8.0 -> 6.5 really did move y_u 0.333 -> 0.533, but that
+lever is spent by kappa = 2.  **RECOMMENDED: re-pin kappa_phi_d**, at 1.78 where it
+now stands or at 2.0.  Not done unilaterally; the author set it moving.
+
+**A READING ERROR TO AVOID, WHICH I MADE AND CAUGHT.**  At loop 22 y_u printed
+0.5699, the best of the day, and it was tempting to report it as progress.  b was
+27 per cent above target at that loop.  When b came back to 0.0858 y_u fell to
+0.4763.  **A y_u reading is meaningless without the b that goes with it** -- which
+is exactly why the author's gate was the right instruction, and why the gate should
+stay even though the parameter it gates is spent.
+
+**WHAT ELSE LANDED.**  aleph touched 80.0665 against 80 at loop 29, from 105 five
+hours earlier; it has since drifted to 82.9, so that was a CROSSING and not a
+settle, and the same caution applies to it as to sud_homeless.  At loop 29: tau_l
++0.0 per cent, aleph +0.1, p_m +0.3, pi_V -0.6, beta -0.9, b -3.6 -- six inside one
+per cent.
+
+**STILL OUT OF REACH ON THE 0.1 PER CENT CAP.**  band 1, the young's share of the
+homeless, -70 per cent; mu_H -33; pi_eu -24.  Their instruments move 0.1 per cent a
+loop and mu_H alone needs about 450 loops.  The drug block settling does not fix
+this; the cap does.
+
 ## 14 September 20:45 UTC -- THE GATE ANSWERED IN FIVE STEPS WHAT WOULD HAVE
 ## TAKEN TWO HUNDRED: kappa_phi_d NO LONGER MOVES y_u AT kappa NEAR 2
 
