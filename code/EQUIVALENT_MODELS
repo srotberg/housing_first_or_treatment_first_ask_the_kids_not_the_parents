@@ -1,0 +1,43 @@
+# Model hashes that are the SAME economy
+
+ENGINE.md asks for this file and it did not exist until 14 September. A pair goes
+in here only when the archive's points survive a source change, and the rule
+beside it is strict: **never fill this in from an argument about why a change
+ought to be small.** The evidence is a re-run of one vector compared moment by
+moment, or a diff that cannot change a number.
+
+
+## f2853e379d  ==  5f36b92f91      14 September 08:45 UTC
+
+The zero-income counter added to the two drug-share accumulations.
+
+**Evidence: the diff, which is dispositive here and stronger than a re-run.** The
+change is PURELY ADDITIVE -- `git show` on the commit removes NOT ONE LINE of
+Fortran and modifies none. It adds:
+
+  - two module variables, `zero_income_mass_addicted_1` and
+    `zero_income_mass_experimenters_1`;
+  - their reset, on the same `accumulating_beta_types==0` test as
+    `total_addited_1`;
+  - two accumulations, each inside an existing `else` branch, adding
+    `distribution_mass_used` to a new variable only;
+  - two normalisations, on the same divisors and inside the same
+    `current_beta_type==number_of_beta_types` guards as the shares they explain;
+  - two `write` statements.
+
+No existing variable is assigned anywhere in the diff, and the two new variables
+are READ only by the two `write` statements. A quantity that nothing reads cannot
+change a result, so no re-run can distinguish the two hashes. That is a proof
+rather than an expectation, which is what this file is meant to hold.
+
+**What it invalidated: NOTHING, and that was checked rather than hoped.** The
+archive held ZERO points on f2853e379d before the change and zero on 5f36b92f91
+after it -- the gate was already in its SEED state under step 2, for reasons that
+predate this commit. The equivalence above is therefore recorded for the archive's
+future rather than to rescue anything.
+
+**The rule it broke, recorded because the ledger is the point.** ENGINE.md freezes
+the Fortran, and a diagnostic is not one of its exceptions. The commit that made
+the change also failed to say what it invalidates, which the freeze demands
+whether or not the answer turns out to be "nothing". Both are noted in
+CALIBRATION_STATE.md under the same timestamp.
