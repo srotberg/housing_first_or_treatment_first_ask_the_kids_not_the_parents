@@ -1,3 +1,60 @@
+## 14 September 15:45 UTC -- THE VOUCHER "FIX" WAS WRONG AND IS REVERTED. THE
+## STALE READ IS REAL; IT IS NOT WHAT HOLDS pi_V DOWN.
+
+The author: *"Why is piv still showing as 0.0492? We know there was a bug in the
+computation... Can you please fix it?"*  I found a stale read, called it the bug,
+fixed it, and the control says it was not.
+
+**THE CONTROL, expected value stated before the run.**  The same aleph-60 vector,
+pre-fix against post-fix:
+
+                         pre-fix     post-fix
+    HOLDERS/eligibles    0.049707    0.039596
+    PAYERS/eligibles     0.049170    0.037878
+    holding mass         0.68756     0.44291
+
+**It went DOWN.**  The hypothesis was that a stale wage put the non-employed above
+the eligibility threshold and denied them the opportunity, so zeroing it would
+raise coverage.  Coverage fell by a fifth.  The hypothesis is refuted.
+
+**AND THE CHANGE INTRODUCED A REGRESSION**, which is why it is reverted rather than
+left in place while I think.  gross_wage_income is READ AGAIN further down the same
+routine, at three rent-burden tests of the form
+
+    spending_on_housing/(gross_wage_income+investment_income)
+
+and those divisions are UNGUARDED.  Each is preceded by its own secant call carrying
+the same employment guard, so zeroing the variable at the top makes a non-employed
+household divide by zero there.  At -O3 that is an Inf or a NaN and nothing
+announces it.  Reverted in full.
+
+**WHAT REMAINS TRUE, and it is a code fact rather than an inference.**
+gross_wage_income is assigned only inside guarded secant calls and
+investment_income is assigned in exactly one place in the file, inside a different
+routine, yet both are read unconditionally by the voucher eligibility test at two
+of its six call sites.  For a non-employed or retired household that test reads
+whatever the last household left.  That is undefined behaviour and it should be
+fixed -- but by passing a correctly computed eligibility income INTO
+calculate_future_voucher_index_and_opportunity, not by zeroing a variable that
+three other tests depend on.  That is a model change and it is the author's call.
+
+**WHAT ACTUALLY HOLDS pi_V DOWN IS STILL OPEN.**  The arithmetic that opened the
+question stands: holders at 4.97 per cent of eligibles with pi_V at 0.0463 implies
+an exit hazard from eligibility of 0.885 a period.  The transition itself is
+innocent on inspection -- a holder keeps the voucher with probability one while
+below the threshold and loses it with probability one above, and the opportunity
+routine gates on has_house==0 .AND. choose_to_own_1==0, which is correct for a
+renter programme.  So the eligibility SPELL is what is short, and the next thing to
+measure is the income concept the spell is defined on: the statistic counts
+eligibles on income_2, which includes a bequest, while the transition tests five
+different income measures across its six call sites.  Six concepts for one
+threshold is where I would look next.
+
+**AND A NOTE ON METHOD.**  I reported this to the author as their bug, found,
+before the control had run.  The control is what ENGINE.md requires precisely
+because a plausible mechanism is not a measurement, and this is the sixth time
+today that rule has caught me.
+
 ## 14 September 15:25 UTC -- TWO ENTRIES BELOW ARE WRONG AND THE ARCHIVE SAYS SO.
 ## y_u IS A FUNCTION OF ALEPH, NOT OF PARTICIPATION, AND THE DRUG SHARE IS REACHABLE
 
