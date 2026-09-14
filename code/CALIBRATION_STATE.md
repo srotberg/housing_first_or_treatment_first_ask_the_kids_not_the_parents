@@ -1,3 +1,52 @@
+## 14 September 06:25 UTC -- THE FLOOR BINDS AT EVERY ALEPH SCANNED. THE VSL
+## TARGET IS UNREACHABLE BY A FACTOR OF TWO, NOT BY A MARGIN
+
+The negative-value-of-life mass at each aleph measured tonight:
+
+    aleph    mass below zero    floor fires?
+      57         0.442%          yes, lifts to 123
+      60         0.604%          yes
+      80         0.203%          yes
+      95         0.108%          yes
+    ~123         0.000%          no
+
+**SO EVERY POINT IN THE ALEPH SCAN WAS UNSUSTAINABLE.**  The scan at 60, 80 and
+95 produced the "aleph was why only the poor use" reading recorded at 05:50.
+Those numbers are valid as measurements of what the model does AT that aleph,
+but none of them is a point the calibration can occupy: the floor lifts every
+one of them on the next iteration.  The same applies to the loop-1 point at
+aleph 83.4 with y_u 0.751, which looked like the best of the night and was a
+transient on the way to the floor.
+
+The minimum sustainable aleph is between 95 and 123.  Over that range VSL over
+income reads 143 to 192 against a target of 80.
+
+**THE VSL TARGET IS THEREFORE UNREACHABLE BY ABOUT A FACTOR OF TWO**, and the
+binding constraint is the author's own requirement that no household values life
+negatively.
+
+**AND BOTH DRUG-BLOCK FAILURES HAVE ONE CAUSE.**  The floor pins aleph high; b's
+leverage over participation scales with aleph times kappa_phi_d, so a floored
+aleph pins participation; y_u is a function of participation; so y_u cannot
+reach 0.74 either.  VSL and y_u do not fail independently -- they fail for the
+same single reason.
+
+**THE BLOCK WAS STOPPED** at 17 loops with participation at 0.14 per cent, which
+is ENGINE.md's own stated condition for a run that cannot produce a usable
+point.  Nothing in the repository was touched; the run lived in the scratchpad.
+
+**WHAT IS ACTUALLY IN CONFLICT**, stated precisely so the choice can be made:
+
+  1. VSL over income = 80
+  2. no household with a negative value of life
+  3. drug use at 8.9 per cent, users at 0.74 of average income
+
+Constraint 2 alone forces aleph above 95, which forces VSL above 143 and
+participation above the level where y_u = 0.74.  Dropping 2 makes 1 and 3
+nearly compatible -- the loop-1 point had aleph 83.4, y_u 0.751, pi_eu -3.6 per
+cent, c_bar -4.5 and h_1 -10, the best combination measured tonight.  This is a
+modelling decision and no amount of searching dissolves it.
+
 ## 14 September 06:20 UTC -- THE VALUE OF LIFE FLOOR IS THE BINDING CONSTRAINT.
 ## VSL = 80 IS UNREACHABLE, AND IT HAS BEEN GOVERNING ALEPH ALL NIGHT
 
