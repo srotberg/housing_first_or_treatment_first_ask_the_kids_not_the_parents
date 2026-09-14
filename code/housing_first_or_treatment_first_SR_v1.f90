@@ -4416,7 +4416,22 @@
         ! *"concede h2 and set it lower to 5% or so. And get h1 to match"*. h_1
         ! now has two instruments pointed at it -- the rung, which the lower
         ! severe_cost_burden_data target pushes down, and this one directly.
-        real(8) :: size_homelessness_adjuster=20
+        ! HELD, BECAUSE h_1 IS NOW TIED TO h_2. The author, 14 September: *"I
+        ! want h1 to be set to 1% of h2."*  A tied parameter is not a calibrated
+        ! one, and leaving the adjuster live would have the bracket push h_1 away
+        ! from the tie every loop while set_h1_from_h2 pulled it back.
+        !
+        ! WHAT THIS COSTS, AND IT HAS TO BE SAID. h_1 was the instrument for the
+        ! homelessness RATE. With it tied and h_2 externally set, NOTHING
+        ! brackets on homelessness any more -- it is hit by choosing h_2 by hand,
+        ! which is what the author asked for ("h2 should be set externally to
+        ! some value to allow homelessness to be 0.4%"). distance_size_homeless-
+        ! ness is zeroed with the adjuster so the loop cannot be held open by a
+        ! moment nothing moves.
+        real(8) :: size_homelessness_adjuster=0.d0
+        ! h_1 AS A FRACTION OF h_2. One per cent, on the author's instruction.
+        real(8) :: h1_share_of_h2=0.01d0
+        integer, parameter :: tie_h1_to_h2=1
 
         ! AND THE TRAVERSE HAS TO DAMP, for aleph's reason. The adjuster is
         ! twenty and the gap is a rate, so a gap of 0.031 moves the parameter by
@@ -36111,7 +36126,29 @@
             if (loop_count<1) then
         
                 smallest_house_size=smallest_rental_relative_to_lowest_income !net_income_lowest*smallest_rental_relative_to_lowest_income/1.079
-                    
+
+                ! h_1 IS ONE PER CENT OF h_2, on the author's instruction of 14
+                ! September. Set HERE, beside h_2 itself, so the two cannot get
+                ! out of step: any path that changes the smallest rental changes
+                ! the street option with it.
+                !
+                ! THIS IS A LARGE CHANGE AND IT SHOULD NOT SURPRISE ANYONE READING
+                ! THE FIRST RESULTS. size_homelessness was declared 2.4e-5; at an
+                ! h_2 of 0.13 the tie puts it at 1.3e-3, FIFTY FOUR TIMES bigger.
+                ! The street becomes a small dwelling rather than very nearly
+                ! nothing, so homelessness is a great deal less unattractive and
+                ! the rate will rise sharply at any given h_2. The h_2 that
+                ! delivers 0.4 per cent has to be re-measured against the tie; the
+                ! scan of 14 September 00:50 was taken at the old h_1 and its
+                ! numbers do not carry over.
+                if (tie_h1_to_h2==1) then
+
+                    size_homelessness=h1_share_of_h2*smallest_house_size
+                    write(*,*) "h_1 TIED TO h_2:", size_homelessness, "=",&
+                        h1_share_of_h2, "x", smallest_house_size
+
+                end if
+
                 write(*,*) "smallest_house_size=", smallest_house_size
                 write(*,*) "smallest_house_size*free_market_rent_to_house_price*&
                     housing_price(1)/net_income_lowest=", &
@@ -46751,8 +46788,27 @@
 
                     end if
 
-                    distance_size_homelessness=&
-                        abs(model_fraction_homeless(1)-fraction_homeless_data)
+                    ! GUARDED ON THE ADJUSTER, like every other distance in this
+                    ! file. It was written unconditionally, which was harmless
+                    ! only while h_1 was calibrated. With h_1 tied to h_2 the
+                    ! adjuster is zero, and an unguarded distance on a moment
+                    ! nothing can move is the documented way for this loop never
+                    ! to terminate -- it would have held the convergence test open
+                    ! for ever on the homelessness rate.
+                    !
+                    ! The homelessness rate is still PRINTED every loop and is
+                    ! still the thing h_2 is chosen by hand to hit; it is simply
+                    ! not scored, because no parameter in the loop moves it.
+                    if (size_homelessness_adjuster>0.d0) then
+
+                        distance_size_homelessness=&
+                            abs(model_fraction_homeless(1)-fraction_homeless_data)
+
+                    else
+
+                        distance_size_homelessness=0
+
+                    end if
 
                     write(*,*) "size_homelessness=", size_homelessness
                                  
