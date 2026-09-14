@@ -57,6 +57,32 @@
         ! (1-freeze_to_three_block). That is intended: stage 1 is the original
         ! three instruments and nothing else. They come back in a later stage.
         integer, parameter :: freeze_to_three_block=1
+        ! THE FIRST BLOCK, on the author's instruction of 13-14 September:
+        ! *"the first thing is to calibate only aleph, b, onset of SUD, homeless
+        ! with SUD, homelessness, unemployment, kappa_phid, omega_c"*, and
+        ! before that *"pin everything down first ... and then open the rest of
+        ! the loop"*.
+        !
+        ! EIGHT INSTRUMENTS LIVE, EVERY OTHER ADJUSTER ZEROED, applied in one
+        ! place by apply_first_block_freeze so the set is readable and
+        ! reversible rather than spread over thirteen declarations:
+        !
+        !   value_of_life           aleph, on the value of life over income
+        !   addiction_scalar_1      b, on total drug users
+        !   addiction_onset_base    the SUD onset, on the disorder rate
+        !   employment_multiplier   kappa_ued, on the SUD share of the homeless
+        !   size_homelessness       h_1, on the homelessness rate
+        !   separation_rate         pi_eu, on the unemployment rate
+        !   kappa_phi_d_level       the drug death risk, on the income of users
+        !   weight_on_child         omega_c, on the child use gap
+        !
+        ! h_1 IS UNTIED WHILE THIS IS ON. The author asked for h_1 = 1 per cent
+        ! of h_2 AND for homelessness to be in this block, and those cannot both
+        ! hold: a tied parameter is not an instrument. The tie is therefore
+        ! suspended here and h_1 calibrates on the homelessness rate, which is
+        ! what "calibrate homelessness" has to mean if the loop is to do it.
+        ! Turning the block off restores the tie.
+        integer :: first_block_only=1
 
         ! THETA IS HELD INDEPENDENTLY OF THE THREE-BLOCK SWITCH. The author,
         ! 11 September: *"I think we can hold theta constant in the full
@@ -3661,7 +3687,11 @@
         ! This is the rate that worked in the stylized model, where the same
         ! parameter on the same moment converged from -36.6 per cent to exact
         ! over about twelve hundred passes without disturbing anything else.
-        real(8) :: omega_max_rel_step=0.0005d0
+        ! A TENTH OF A PER CENT, on the author's instruction of 14 September.
+        ! It was 0.05 from their instruction of 13 September; they have doubled
+        ! the three slow instruments and halved the global rate, so the ordering
+        ! is now 0.1 for the three and 0.5 for everything else.
+        real(8) :: omega_max_rel_step=0.001d0
         real(8) :: theta_proposed_1
         real(8) :: theta_capped_1
 
@@ -3742,6 +3772,9 @@
         ! Naming the rate here rather than moving max_rel_step_all keeps it off
         ! the other nineteen calibrated parameters, for the reason set out at
         ! cap_step_rel.
+        ! HALF A PER CENT, which the author's 14 September rule gives it as one
+        ! of "the rest".  Unchanged from their 13 September instruction, and now
+        ! equal to the global rate rather than five times it.
         real(8) :: addiction_scalar_max_rel_step=0.005d0
         integer :: have_gap_addiction_scalar=0
         real(8) :: lambda_secant_slope_1=0
@@ -3781,6 +3814,16 @@
         ! and 0.889, and aleph pins down geometrically instead of ringing.
         ! Growing it back when the sign holds keeps it from creeping once the
         ! ringing has stopped. Same idiom as b's and delta_d's.
+        ! ALEPH'S OWN RATE, a tenth of a per cent, on the author's instruction
+        ! of 14 September.  It had NO rate of its own and went through cap_step
+        ! at the global one, so naming the three slow instruments required
+        ! giving this one a cap to be slow with.
+        !
+        ! NOTE WHAT THIS DOES NOT BOUND: the value-of-life FLOOR is deliberately
+        ! uncapped and stays so.  A constraint that stops households preferring
+        ! to be dead has to hold at every iterate, not be approached at a tenth
+        ! of a per cent a loop, and it announces itself in the log when it binds.
+        real(8) :: value_of_life_max_rel_step=0.001d0
         real(8) :: value_of_life_trust=0.5
         real(8), parameter :: value_of_life_trust_start=0.5
         real(8), parameter :: value_of_life_trust_damping=0.5
@@ -4970,7 +5013,7 @@
         ! and the stock's own instrument is addiction_scalar_1.  At 0.05 against
         ! b's 0.5 the mortality bracket moves an order of magnitude slower than
         ! the instrument it was outrunning, which is what the ranking is for.
-        real(8) :: kappa_phi_d_max_rel_step=0.0005d0
+        real(8) :: kappa_phi_d_max_rel_step=0.001d0
         real(8) :: distance_kappa_phi_d_level=1
         real(8) :: stopping_rule_kappa_phi_d_level=10.d0**(-2)
         real(8), parameter :: kappa_phi_d_level_lo=2.d0
@@ -5378,7 +5421,11 @@
         ! measured on 11 September, one capped step of value_of_life was worth
         ! twelve per cent on participation, so the cap was simultaneously too
         ! slow for the distance to travel and too coarse to stop on.
-        real(8) :: max_rel_step_all=merge(1.d0*10.d0**(-2),5.d0*10.d0**(-3),freeze_to_three_block==1)
+        ! HALF A PER CENT FOR EVERYTHING THAT HAS NO RATE OF ITS OWN, on the
+        ! author's instruction of 14 September: *"you adjust kappa_phid, aleph,
+        ! and omega_c very slowly, around 0.1%. the rest can move at 0.5% per
+        ! iteration"*.  It was one per cent under the stage-1 freeze.
+        real(8) :: max_rel_step_all=5.d0*10.d0**(-3)
         ! THE STOPPING RULE EXISTED AND THE DISTANCE DID NOT.
         !
         ! The retention scale is updated every loop against an average labour
@@ -34524,6 +34571,52 @@
 
     end subroutine
 
+    ! EVERY ADJUSTER OUTSIDE THE FIRST BLOCK, SET TO ZERO IN ONE PLACE.
+    !
+    ! Called after the handover, so a point file can still hand a value in for a
+    ! frozen parameter -- it just will not MOVE. That is the distinction the
+    ! author's *"pin everything down first"* asks for: the vector is free, the
+    ! search is not.
+    !
+    ! EVERY ONE OF THESE ZEROES ITS OWN DISTANCE, in its own update block's else
+    ! branch, which is the standing rule in this file and is what stops a frozen
+    ! parameter holding the convergence test open for ever. That was checked
+    ! parameter by parameter when the five instruments were released on 13
+    ! September; the same guards do the work here in reverse.
+    subroutine apply_first_block_freeze()
+
+        use Global_Vars
+
+        implicit none
+
+        if (first_block_only==0) return
+
+        write(*,*) "FIRST BLOCK: eight instruments live, every other adjuster zeroed"
+
+        relative_share_of_housing_adjuster=0.d0
+        discount_factor_adjuster=0.d0
+        utility_cost_of_treatment_adjuster=0.d0
+        labor_income_tax_rate_adjuster=0.d0
+        max_food_cost_adjuster=0.d0
+        voucher_probability_adjuster=0.d0
+        smi_onset_level_adjuster=0.d0
+        kappa_uem_adjuster=0.d0
+        mu_homeless_adjuster=0.d0
+        penalty_child_addicted_adjuster=0.d0
+        newborn_endowment_adjuster=0.d0
+        kkk_sigma_scale_adjuster=0.d0
+        rent_to_price_adjuster=0.d0
+        probability_of_becoming_addicted_adjuster=0.d0
+
+        ! AND h_1 IS UNTIED, so that homelessness has an instrument. See
+        ! first_block_only.
+        size_homelessness_adjuster=20.d0
+
+        write(*,*) "FIRST BLOCK: live = aleph, b, onset, kappa_ued, h_1,",&
+            " pi_eu, kappa_phi_d, omega_c"
+
+    end subroutine
+
     subroutine verify_recovered_block(time_period)
 
         ! TWO INVARIANTS THAT FOLLOW FROM THE CONSTRUCTION AND WOULD CATCH A
@@ -42933,7 +43026,12 @@
         model_average_rental_unit_size(1)=0.116
 
         loop_count=0  
-        
+
+        ! THE FIRST BLOCK'S FREEZE, AFTER THE HANDOVER AND BEFORE THE FIRST
+        ! LOOP. After, so a point file can still hand a value in for a frozen
+        ! parameter; before, so nothing has moved yet when it is applied.
+        call apply_first_block_freeze()
+
         model_bequests(1)=2.5238247842094039
         
         model_drug_threshold(1)=drug_threshold_guess
@@ -46093,7 +46191,8 @@
                             gap_value_of_life_1
                         cap_old_1=value_of_life
                         value_of_life=max(min(value_of_life_step_1,10.d0**(4)),10.d0**(-2))
-                        value_of_life=cap_step(value_of_life,cap_old_1)
+                        value_of_life=cap_step_rel(value_of_life,cap_old_1,&
+                            value_of_life_max_rel_step)
                         distance_value_of_life=abs(model_vsl_ratio_1-vsl_data)
 
                     else
