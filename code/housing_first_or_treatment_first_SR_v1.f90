@@ -3867,7 +3867,19 @@
         ! 0.1 PER CENT, 14 September: *"No parameter should move fast"*.  Was
         ! 0.005, and b was measured stepping the full +0.50 per cent a loop in
         ! run60b, the fastest of any ordinary instrument there.
-        real(8) :: addiction_scalar_max_rel_step=0.001d0
+        ! THE DRUG BLOCK MOVES AT 0.5 PER CENT, 14 September, on the author's
+        ! *"ok raise the drug block instruments back to 0.5%"*.
+        !
+        ! WHY THE BLOCK AND NOT EVERYTHING.  What exploded this morning was the
+        ! value-of-life floor, which assigned aleph +104 per cent in one step;
+        ! that is fixed separately and the floor no longer touches aleph at all.
+        ! The 0.1 per cent cap then became the binding constraint on the search
+        ! instead of a safety measure: over nineteen loops of stage 1 the drug
+        ! users moment fell 83.8 per cent while its instrument moved 0.70, about
+        ! one hundred and twentieth of the speed.  aleph, h_1, kappa_uem and
+        ! everything else on the global cap stay at 0.1 per cent.
+        real(8), parameter :: drug_block_max_rel_step=0.005d0
+        real(8) :: addiction_scalar_max_rel_step=drug_block_max_rel_step
         integer :: have_gap_addiction_scalar=0
         real(8) :: lambda_secant_slope_1=0
 
@@ -5118,7 +5130,7 @@
         ! and the stock's own instrument is addiction_scalar_1.  At 0.05 against
         ! b's 0.5 the mortality bracket moves an order of magnitude slower than
         ! the instrument it was outrunning, which is what the ranking is for.
-        real(8) :: kappa_phi_d_max_rel_step=0.001d0
+        real(8) :: kappa_phi_d_max_rel_step=drug_block_max_rel_step
         real(8) :: distance_kappa_phi_d_level=1
         real(8) :: stopping_rule_kappa_phi_d_level=10.d0**(-2)
         ! FLOOR AT ONE, ON THE AUTHOR'S INSTRUCTION: *"you should allow
@@ -45294,7 +45306,10 @@
                             ! only the decision to use at all carries one.
                             cap_old_1=addiction_onset_base
                             addiction_onset_base=onset_at_mean_1
-                            addiction_onset_base=cap_step(addiction_onset_base,cap_old_1)
+                            ! ON THE DRUG BLOCK'S RATE. It owns the disorder rate,
+                            ! which sat at -91 per cent on the global cap.
+                            addiction_onset_base=cap_step_rel(addiction_onset_base,&
+                                cap_old_1,drug_block_max_rel_step)
 
                             lambda_addiction=0.d0
 
@@ -45575,8 +45590,12 @@
                             (model_fraction_homeless_and_addicted(1)-&
                             sud_share_of_homeless),&
                             multiple_find_hi),multiple_find_lo)
+                        ! ON THE DRUG BLOCK'S RATE, not the global one.  It owns the
+                        ! SUD share of the homeless, which sat at -82 per cent while
+                        ! the global cap let this move 0.1 per cent a loop.
                         multiple_find_if_addicted=&
-                            cap_step(multiple_find_if_addicted,cap_old_1)
+                            cap_step_rel(multiple_find_if_addicted,cap_old_1,&
+                            drug_block_max_rel_step)
 
                         distance_multiple_find=&
                             abs(model_fraction_homeless_and_addicted(1)-&
