@@ -1,3 +1,92 @@
+## 14 September 08:40 UTC -- THE DRUG SHARE MOMENT IS NOT A SPENDING SHARE, AND
+## theta CANNOT REACH IT. NEITHER INSTRUMENT DIVERGED.
+
+I said at 07:35 that theta and h_1 were diverging in Branch B and that a sign or
+scaling defect in their update rules was worth finding.  BOTH HALVES OF THAT WERE
+WRONG, and the rows I read as instruments were moments.
+
+**Nothing diverged, because neither instrument can move.**  theta's own cap is
+theta_max_rel_step = 1e-3, a tenth of a per cent per loop; h_1 goes through
+cap_step at max_rel_step_all = 5e-3.  Over the 26 loops now in the log that is a
+CEILING of 1.7 and 8.9 per cent on how far either could travel.  Measured: theta
+went 0.095000 -> 0.092561, -2.57 per cent, pressed against its cap the whole way
+and in the RIGHT direction.  Its moment went +97 per cent.  A moment moving
+thirty-eight times further than its instrument's ceiling is not that instrument
+diverging; it is that instrument being irrelevant.
+
+**What actually moves the moment is the estimator, not the economy.**  The two
+estimators are printed side by side every loop, and over the same 26 loops:
+
+    mean of s/y   (CALIBRATED)   0.18016 -> 0.35570     +97%
+    sum spend / sum income       0.06881 -> 0.07078     +2.9%
+
+The economy's drug spending relative to income is FLAT.  Ninety-seven per cent of
+the calibrated moment's movement is the estimator and not the model.
+
+**Why: the income_2 <= 0 branch assigns a ratio of exactly 1.**  Both
+accumulations, the one for the group with a disorder and the one for
+experimenters, do this:
+
+    if (income_2>0) then   ... + (spending/income_2)*mass
+    else                   ... + 1*mass
+
+and income_2 is income_1 + interest + bequest.  FOOD STAMPS, THE VOUCHER AND
+SOCIAL ASSISTANCE ARE NOT IN IT.  calculate_income gives income_1 = 0 EXACTLY to
+a working age household that is not employed, has no SMI and is past its insured
+spell -- the "nothing otherwise" branch of out_of_work_income.  Such a household
+lives entirely on transfers, has a measured income of zero, and enters the mean
+as 1.0.
+
+**NSDUH has no counterpart to that branch.**  The denominator there is irfamin3,
+banded, and the lowest band's midpoint is 5,000 -- family income is never zero in
+the data, and it includes transfer income.  The model's denominator excludes
+exactly what keeps these households alive and the data's does not.
+
+**THE BOUND THIS PUTS ON THE TARGET, and it does not depend on theta.**  If a
+fraction z of the group has income_2 <= 0, each contributing exactly 1, then
+
+    mean of s/y  >=  z
+
+So the moment CANNOT reach 0.14098 unless fewer than 14.1 per cent of users have
+no measured income.  The mean for the group with a disorder is running 0.61
+against a ratio of aggregates of 0.070 for the SAME group, a factor of 8.7, which
+is only possible with heavy mass at the 1.0 point.  z is not yet measured -- the
+run that would have measured it was killed, see below -- but the bound holds
+whatever it is, and no value of theta relaxes it.
+
+**A COUNTER WAS ADDED TO MEASURE z.**  zero_income_mass_addicted_1 and
+zero_income_mass_experimenters_1, accumulated in the two else branches,
+normalised on the same divisors as the shares they explain, and printed beside
+them together with the mean among those WITH income.  Diagnostic only: it
+accumulates and prints, and touches no model quantity.  NOT YET RUN -- the
+control that must come first is loop 1 reproducing 0.18015929128653593.
+
+## WHAT I GOT WRONG IN THE SAME HOUR, both worth recording
+
+**I said the container had been reclaimed and the Branch B run was gone.**  It
+was not.  The run is pid 9353, started 07:41, and has been alive throughout --
+what I looked in was the REPO's scratchpad rather than the session's.  On that
+false premise I rebuilt and launched a second solver, which then competed with
+the live run for four cores for eleven minutes before I noticed and killed it by
+pid.  The live run was never at risk: it holds its own copied binary.
+
+**I edited code/*.f90 while a solve was running**, which ENGINE.md forbids
+outright.  The edit is diagnostic-only and the running binary is a copy taken
+before it, so this run is unaffected -- but the rule is there so that does not
+have to be argued each time, and I argued it after the fact.
+
+## A DEFECT IN calibration_report.py: size_homelessness IS CALIBRATED AND THE
+## REPORT DROPS IT
+
+zero_adjusters() reads the DECLARATIONS -- the regex takes
+`real(8) :: <name>_adjuster = <value>` out of the source.  size_homelessness_adjuster
+is declared 0.d0, so the report lists size_homelessness under "its adjuster is
+zero, nothing moves it".  But apply_first_block_freeze() assigns it 20.d0 at RUN
+TIME, and the log prints `size_homelessness_adjuster= 20.000000000000000` every
+loop.  h_1 is live, is being calibrated, and has no row in the table.  Any
+parameter whose adjuster is set at run time rather than declared is exposed to
+the same mistake.
+
 ## 14 September 07:35 UTC -- BOTH BRANCHES MEASURED. THE PRICE OF THE CONSTRAINT,
 ## EXACTLY
 

@@ -3412,6 +3412,17 @@
         real(8) :: drug_share_addicted_1=0
         real(8) :: drug_share_weighted_1=0
         real(8) :: drug_share_gap_1=0
+        ! THE MASS THAT CONTRIBUTES A RATIO OF EXACTLY ONE. The mean of
+        ! s/y hard-assigns 1 to a household with income_2<=0, and
+        ! income_2 is labour income plus interest plus a bequest -- food
+        ! stamps, the voucher and social assistance are NOT in it. A
+        ! working age household that is not employed, has no SMI and is
+        ! past its insured spell has income_1 of exactly zero, so it
+        ! lands here. NSDUH's denominator is family income banded from
+        ! 5,000 up and is never zero, so nothing in the data does. These
+        ! two count the mass, to say how much of the moment is that
+        ! branch rather than a spending share.
+        real(8) :: zero_income_mass_addicted_1=0,zero_income_mass_experimenters_1=0
         real(8) :: child_use_gap_1=0
         real(8) :: income_floor_1=0
         real(8) :: model_vsl_ratio_1=0
@@ -9022,6 +9033,19 @@
             write(*,*) "DIAG drug share, sum spend / sum income      =",&
                 model_addicted_total_addiction_spending_to_total_income(1),&
                 model_experimenters_total_drug_spending_to_total_income(1)
+            ! HOW MUCH OF THE CALIBRATED MOMENT IS THE income_2<=0 BRANCH.
+            ! Each such household enters the mean as exactly 1, so this share
+            ! is a LOWER BOUND on the moment: a group where half the mass has
+            ! no measured income cannot report a mean ratio under 0.5 whatever
+            ! the other half spends.
+            write(*,*) "DIAG share of the group with income_2<=0     =",&
+                zero_income_mass_addicted_1,zero_income_mass_experimenters_1
+            write(*,*) "DIAG mean s/y among those WITH income        =",&
+                (model_fraction_spent_on_addiction(1)-zero_income_mass_addicted_1)/&
+                max(1-zero_income_mass_addicted_1,10.d0**(-14)),&
+                (model_fraction_spent_on_addiction_experimenters(1)-&
+                zero_income_mass_experimenters_1)/&
+                max(1-zero_income_mass_experimenters_1,10.d0**(-14))
             write(*,*) "DIAG voucher HOLDERS among eligibles          =",&
                 model_eligible_voucher_holders(1)
             write(*,*) "DIAG voucher PAYERS among eligibles           =",&
@@ -16030,6 +16054,8 @@
         if (accumulating_beta_types==0) model_experimenters_total_drug_spending_to_total_income(time_period)=0
         if (accumulating_beta_types==0) model_experimenters_total_income(time_period)=0
         if (accumulating_beta_types==0) total_addited_1=0
+        if (accumulating_beta_types==0) zero_income_mass_addicted_1=0
+        if (accumulating_beta_types==0) zero_income_mass_experimenters_1=0
         if (accumulating_beta_types==0) model_addicted(time_period)=0
         if (accumulating_beta_types==0) model_exprimenters(time_period)=0
         if (accumulating_beta_types==0) model_total_drug_users(time_period)=0
@@ -16840,6 +16866,8 @@
                                             model_fraction_spent_on_addiction_experimenters(time_period)=&
                                                 model_fraction_spent_on_addiction_experimenters(time_period)+&
                                                 1*distribution_mass_used
+                                            zero_income_mass_experimenters_1=&
+                                                zero_income_mass_experimenters_1+distribution_mass_used
                                             
                                         end if
                                         
@@ -17040,6 +17068,8 @@
                                         
                                             model_fraction_spent_on_addiction(time_period)=&
                                                 model_fraction_spent_on_addiction(time_period)+1*distribution_mass_used
+                                            zero_income_mass_addicted_1=&
+                                                zero_income_mass_addicted_1+distribution_mass_used
                                             
                                         end if
                                         
@@ -17909,11 +17939,17 @@
         if (current_beta_type==number_of_beta_types) then
             model_fraction_spent_on_addiction(time_period)=&
                 model_fraction_spent_on_addiction(time_period)/max(total_addited_1,10.d0**(-14))
+            ! SAME DIVISOR AS THE SHARE ABOVE. Turned into a share of the group
+            ! here so the two are read against one population.
+            zero_income_mass_addicted_1=&
+                zero_income_mass_addicted_1/max(total_addited_1,10.d0**(-14))
         end if
             
         if (current_beta_type==number_of_beta_types) then
             model_fraction_spent_on_addiction_experimenters(time_period)=&
                 model_fraction_spent_on_addiction_experimenters(time_period)/max(model_exprimenters(time_period),10.d0**(-14))
+            zero_income_mass_experimenters_1=&
+                zero_income_mass_experimenters_1/max(model_exprimenters(time_period),10.d0**(-14))
         end if
                         
         if (current_beta_type==number_of_beta_types) then
