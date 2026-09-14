@@ -10179,11 +10179,34 @@
             ok_a_1=(model_mass_addicts(1)>0) .AND. (share_a_1>=0) .AND. &
                 (model_addicted_total_income(1)>floor_1*model_mass_addicts(1))
 
+            ! POOLED AS AVERAGE SPENDING OVER AVERAGE INCOME, WHICH IS WHAT
+            ! THE TARGET MEASURES. The author, 14 September: *"it is about
+            ! average spending to average income"*, and *"which is different
+            ! than sum of all spending to sum of all income"* -- different, that
+            ! is, from what a MASS-weighted average of the two subgroup ratios
+            ! gives, which is what stood here.
+            !
+            ! data/make_drug_spending_target.py builds the target as
+            ! spend24 / (n_users * mean family income): one pooled numerator over
+            ! one pooled denominator across every user. Over the same population
+            ! that is identical to average spending over average income, and it
+            ! is NOT the mass-weighted mean of the experimenter and addict
+            ! ratios, because the two groups have different mean incomes.
+            ! Addicts are the poorer group and carry the higher ratio, so mass
+            ! weights give them a larger share of the answer than their income
+            ! does.
+            !
+            ! Each subgroup variable already holds spending over income for its
+            ! own group, so multiplying back by that group's total income
+            ! recovers the spending and the pooled ratio follows. The totals are
+            ! still live at this point; only the spending accumulators were
+            ! overwritten by their own normalisation.
             if (ok_e_1 .AND. ok_a_1) then
 
-                share_1=(model_mass_experimenters(1)*share_e_1+&
-                    model_mass_addicts(1)*share_a_1)/&
-                    (model_mass_experimenters(1)+model_mass_addicts(1))
+                share_1=(share_e_1*model_experimenters_total_income(1)+&
+                    share_a_1*model_addicted_total_income(1))/&
+                    max(model_experimenters_total_income(1)+&
+                    model_addicted_total_income(1),10.d0**(-14))
 
             elseif (ok_e_1) then
 
