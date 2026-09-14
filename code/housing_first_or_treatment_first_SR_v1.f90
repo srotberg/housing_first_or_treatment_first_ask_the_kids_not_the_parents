@@ -3896,7 +3896,11 @@
         ! already 70 per cent above target with this channel switched OFF, so
         ! turning the channel on moves it further away.  That trade is the
         ! author's and it is stated here rather than discovered later.
-        real(8) :: employment_multiplier_adjuster=5.d0*10.d0**(-1)
+        ! HELD AT ZERO so the parameter stays at 1, on the author's *"this
+        ! multiple_of_probabilities_of_employment_if_addicted should stay at
+        ! 1"*. Its distance is already guarded by a merge() on this adjuster, so
+        ! retiring the bracket retires the do-while term with it.
+        real(8) :: employment_multiplier_adjuster=0.d0
         real(8), parameter :: employment_multiplier_adjuster_start=2*10.d0**(0)
         real(8) :: previous_gap_employment_multiplier=0
         integer :: have_gap_employment_multiplier=0
@@ -5016,7 +5020,18 @@
         real(8) :: kappa_phi_d_max_rel_step=0.001d0
         real(8) :: distance_kappa_phi_d_level=1
         real(8) :: stopping_rule_kappa_phi_d_level=10.d0**(-2)
-        real(8), parameter :: kappa_phi_d_level_lo=2.d0
+        ! FLOOR AT ONE, ON THE AUTHOR'S INSTRUCTION: *"you should allow
+        ! kappa_phid to be as low as 1"*. It was 2, and being a parameter rather
+        ! than a variable it could not be reached by the handover either -- the
+        ! handover's own clamp already floors at 1, so the two disagreed and the
+        ! tighter one won silently inside the update.
+        !
+        ! The floor matters now because y_u reads 0.41 against a target of 0.74
+        ! at the best point, and the author's rule is that y_u below target
+        ! means the death risk comes DOWN. A floor of 2 would have stopped the
+        ! instrument before its moment, and the log would have shown it stepping
+        ! every loop and never arriving.
+        real(8), parameter :: kappa_phi_d_level_lo=1.d0
         real(8), parameter :: kappa_phi_d_level_hi=9.d0
         real(8), parameter :: sud_share_of_homeless=0.217
 
@@ -6414,7 +6429,26 @@
         ! Its distance is zeroed with it at 43264, which is the standing rule:
         ! a bracket with a zero adjuster and a LIVE distance cannot converge and
         ! the do-while has no cap to save it.
-        real(8) :: multiple_find_adjuster=0.d0
+        ! LIVE, ON THE AUTHOR'S INSTRUCTION: *"this should move to match the SUD
+        ! homeless multiple_find_if_addicted"*. It was held at zero, and the
+        ! consequence was that THE SUD SHARE OF THE HOMELESS HAD NO WORKING
+        ! INSTRUMENT AT ALL. Both parameters bracketed on that moment were out
+        ! of action at once and in different ways, which is why it sat 56 per
+        ! cent above target across every point of 14 September without moving:
+        !
+        !   multiple_of_probabilities_of_employment_if_addicted -- adjuster live
+        !     at 0.5, but the parameter sits at 1, which is its floor, and the
+        !     moment is now ABOVE target so the step asks it to go lower. The
+        !     code comment beside it was written when the moment was BELOW
+        !     target (0.0814 against 0.217); the sign has flipped since;
+        !   multiple_find_if_addicted -- room from 21.98 down to a floor of 1,
+        !     and an adjuster of zero.
+        !
+        ! The live one could not move and the movable one was not live. This
+        ! makes the second live; the first is pinned at 1 on the author's
+        ! *"this multiple_of_probabilities_of_employment_if_addicted should stay
+        ! at 1"*, which its own merge() already retires the distance for.
+        real(8) :: multiple_find_adjuster=2.d0
         real(8) :: distance_multiple_find=1
         real(8) :: stopping_rule_multiple_find=10.d0**(-2)
         real(8), parameter :: multiple_find_lo=1.d0
