@@ -151,7 +151,18 @@
         ! aleph 88, where the drug share reads 0.39; at aleph 60 the same theta
         ! gives 0.1479 against 0.14098, so the moment is reachable and theta
         ! should be free to find it.
-        integer, parameter :: hold_theta=0
+        ! PINNED AT 0.095, 14 September: *"if theta=0.095 gives the right drug
+        ! spending, just keep it fixed there"*.  It does: at aleph 60 the drug
+        ! spending share reads 0.1479 against 0.14098, +4.9 per cent, measured
+        ! at loop 1 of the Branch A vector.
+        !
+        ! hold_theta=1 zeroes relative_share_of_addiction_adj AND drops the
+        ! drug spending share from the do-while, so no orphaned distance is
+        ! left behind.  Note that theta's live adjuster is
+        ! relative_share_of_addiction_ADJ and not the _ADJUSTER of the same
+        ! stem, which is declared zero and never read -- that distinction is
+        ! why theta once ran live for a day while being reported as held.
+        integer, parameter :: hold_theta=1
 
         integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
