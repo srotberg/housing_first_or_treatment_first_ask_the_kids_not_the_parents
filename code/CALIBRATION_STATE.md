@@ -1,3 +1,78 @@
+## 14 September 04:45 UTC -- THREE MOMENTS HAD NO INSTRUMENT, AND THE DEATH
+## PENALTY AT 2 FIXED y_u
+
+**THE PATTERN OF THE NIGHT.** Three of the moments on the author's first-block
+list were reporting a visible gap with nothing behind them, each for a different
+reason, and none of it was detectable from the gap table:
+
+    moment                    instrument                  why it could not move
+    SUD share of homeless     multiple_find_if_addicted   adjuster held at 0
+                              mult_of_probs_emp_if_add    live, but AT ITS FLOOR
+                                                          and the moment is above
+                                                          target, so the step asks
+                                                          it to go lower
+    drug spending share       relative_share_of_addiction hold_theta=1, a PARAMETER
+    SMI share of homeless     zeta_DI                     adjuster 0, and the
+                                                          author set zeta_DI=0
+                              lambda_m                    retired bracket, 0
+                              kappa_uem                   zeroed by the FIRST
+                                                          BLOCK FREEZE
+
+A gap table cannot show this: every one of them prints a model value, a target
+and a per cent, and looks exactly like a parameter that is trying and failing.
+**A moment is only being calibrated if something with room is moving it**, and
+that has to be checked separately from the gap.
+
+kappa_uem also did NOT need rewiring, contrary to what was said in chat at
+04:30: its update already scores model_smi_share_of_homeless against
+smi_share_of_homeless_data. Only the MOMENT print beside it is still labelled
+"employment given SMI", which is what caused the misreading.
+
+**THE DEATH PENALTY AT 2 FIXED y_u**, on the author's *"i think you need to
+lower the death penalty to maybe 2"* and *"you should allow kappa_phid to be as
+low as 1"*. Measured at aleph 110, theta 0.075, b 3e-5:
+
+    y_u   income of drug users   0.6879   target 0.7400    -7%
+
+against 0.4094 and -45 per cent at kappa_phi_d = 8. It was the worst-behaved
+moment in the block and it is now the second best. kappa_phi_d_level_lo was a
+PARAMETER fixed at 2 while the handover's own clamp floored at 1, so the two
+disagreed and the tighter one won silently inside the update.
+
+**C BAR IS REACHABLE AND THE EARLIER CLAIM THAT IT IS NOT WAS WRONG.**
+Eligibility is y < cbar/taper with taper 0.3, so the question is only which
+groups clear the bar:
+
+    group                       income    cbar needed to admit them
+    homeless                    0.017          0.005
+    unemployed, bottom node     0.055          0.017
+    employed, bottom node       0.111          0.033
+    unemployed, average worker  0.334          0.100
+
+At cbar = 0.0276 the cutoff is 0.092, 13.8 per cent of average labour income,
+which admits the homeless and the bottom-node unemployed and nobody else -- one
+to two per cent of households against SNAP's twelve. Carrying 0.42 per cent of
+output on the 4.9 per cent unemployed needs an allotment of 0.100 each and their
+eligibility only begins at 0.100, so **cbar is about 0.20**.
+
+That is four times the 0.047 the max-allotment diagnostic implies -- but that
+diagnostic is NOT a scored target, it is a line added to the moment print. The
+only scored moment is food stamps over output against 0.0042, and 0.20 hits it.
+What it buys is the right aggregate with the wrong distribution: an allotment
+near 30 per cent of average labour income where SNAP's is 4, paid to a sixth as
+many households. **The binding cause is the 50 per cent UI replacement**, which
+leaves an unemployed worker at 0.334 and therefore ineligible at any plausible
+cutoff. That is a fact for the paper, not a reason to refuse the number.
+
+**PI_EU CANNOT BE SOLVED BEFORE THE OTHER TWO.** The author's block is *"pi_eu
+should be chosen so that about 25% of the homeless have SUD and 25% have SMI and
+the unemployment rate is 4.9%"* -- three moments, three instruments, and they do
+not separate, because the homelessness shares depend on who loses work and the
+unemployment rate depends on who is disabled by SUD and SMI. Total unemployment
+is not a clean signal for separation_rate on its own: it read 39 per cent LOW at
+kappa_phi_d 8 and 26 per cent HIGH two hours later, entirely from the drug block
+moving underneath it.
+
 ## 14 September 03:55 UTC -- BEST POINT ON THE CURRENT MODEL.
 ## aleph = 110, b = 0.00035. DRUG USE IS 2.6 PER CENT OFF.
 
