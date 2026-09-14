@@ -1,3 +1,62 @@
+## 14 September 13:18 UTC -- b NEVER TURNED. IT BOUNCED FOR TEN LOOPS AND HAS
+## FALLEN FOR A HUNDRED SINCE, AND THE ORBIT IS WIDENING AGAIN
+
+Two entries above are wrong and both are withdrawn here.
+
+**WITHDRAWN, from 10:55 and 11:15: "b's bracket has found a turning point at about
+8.4e-4 and is now hunting around it", and "b has stopped trending".**  b by loop:
+
+    110  0.00085192     170  0.000833336
+    120  0.000851813    180  0.000825424
+    130  0.000851039    190  0.000818889
+    140  0.000847498    200  0.000805964
+    150  0.000842057    210  0.000798802
+    160  0.000838416    220  0.000782738
+                        225  0.00078189   <- the run's minimum
+
+It dipped to 0.000839205 at loop 113, bounced to 0.000854124 at loop 123, and has
+fallen ever since -- through the old minimum at about loop 160 and on down.  **b is
+now at the lowest value of the whole run and still going**, and the decline is
+ACCELERATING: about 1e-6 per ten loops around loop 130 against 16e-6 per ten loops
+around loop 220.  What I called a turning point was a ten-loop excursion inside a
+decline that has now run a hundred loops past it.
+
+**WITHDRAWN, from 12:20: the orbit "has sat at a roughly constant spread for thirty
+loops".**  Spread by window of ten:
+
+    loops 166-175  0.02637      loops 196-205  0.02349
+    loops 176-185  0.02472      loops 206-215  0.02537
+    loops 186-195  0.02256      loops 216-225  0.02763
+
+It bottomed at 0.02256 around loop 190 and has WIDENED for three consecutive
+windows since, to the largest spread since the excursion began.  The orbit is not
+settling; it is opening up as b falls.
+
+**WHAT THE TWO FACTS ARE TOGETHER.**  b is in a sustained accelerating decline and
+the oscillation around the drug share grows as it goes.  That is what a bracket
+looks like when it is chasing a target it cannot reach and the step is growing
+relative to the local curvature -- and it is the same story the 08:40 bound tells
+from the other end: b is being asked to deliver a spending share that is really a
+zero-income headcount, so it keeps pushing.  The author's own instinct on 14
+September, *"b may have to be around 0.00001"*, now looks less far off than the
+8.4e-4 I quoted at 10:55: the search has moved 35 per cent of the way there in
+distance and is speeding up, not stopping.
+
+**THE PATTERN IN MY OWN ERRORS, third time, and it is worth naming once.**  09:05 a
+trend called on seven iterates inside an eight-loop cycle; 11:15 damping called on
+a threshold-picked amplitude; 10:55 a turning point called on ten loops of a
+hundred-loop decline.  Each time the window was shorter than the phenomenon.  The
+standing fix is the one written at 12:20 -- prefer a statistic that names no level
+-- plus its twin: **a window has to be longer than the slowest thing in the series,
+and b moves on a scale of a hundred loops.**
+
+**THE LIVE BLOCK AT LOOP 225, a settled loop** (within one per cent of 224): voucher
+coverage ON TARGET at 0.1 per cent, the SMI share at 1.3, unemployment at 2.9, VSL
+at 36.2 and the drug share at 191.3.  The frozen rows -- penalty_child_addicted
+39.2, probability_of_becoming_addicted 12.7, max_food_cost 25.3,
+labor_income_tax_rate 6.0 -- are not being calibrated and are listed only so the
+table is not misread, per the 10:35 entry.
+
 ## 14 September 12:20 UTC -- CORRECTION: THE DAMPING STALLED AT ABOUT LOOP 150,
 ## AND MY MEASURE OF IT WAS THE WRONG INSTRUMENT
 
