@@ -1334,7 +1334,10 @@
         ! few passes rather than walking there from 0.24.
         integer, parameter :: scan_penalty_child=1
         integer, parameter :: scan_points=20
-        real(8), parameter :: scan_lo=0.0d0, scan_hi=0.60d0
+        ! scan_hi RAISED TO THE CAP, 14 September.  delta_d reached 0.614 by
+        ! loop 8 of stage 1 and kept climbing, so the scan was reporting on a
+        ! window the parameter had already left.  penalty_child_cap is 0.99.
+        real(8), parameter :: scan_lo=0.0d0, scan_hi=0.99d0
         integer :: scan_index=0
         real(8) :: penalty_saved=0, scan_num=0, scan_den=0, scan_ratio=0
         real(8) :: scan_prev=-1, scan_pen_prev=0, scan_solved=0
@@ -1365,7 +1368,10 @@
         ! because homelessness is a threshold at the bottom of the productivity
         ! distribution -- but delta_h still needs about 54 per cent to reach
         ! 2.1, which the earnings evidence does not support either.
-        real(8) :: penalty_child_homeless=0.31
+        ! ZERO, 14 September, on the author's *"no, delta_h needs to be 0"*.
+        ! It was 0.31 and was never moved -- its adjuster is zero -- so the
+        ! child homelessness penalty had been on at 0.31 throughout.
+        real(8) :: penalty_child_homeless=0.0d0
         real(8) :: penalty_child_homeless_adjuster=0.d0
         real(8), parameter :: penalty_child_homeless_adjuster_start=5*10.d0**(-2)
         real(8) :: distance_penalty_child_homeless=1
@@ -46112,6 +46118,24 @@
 
                             else
 
+                                ! delta_h IS PINNED AT ZERO AND NOTHING MAY TOUCH IT.
+                                ! The author, 14 September: *"delta_h should be 0 and
+                                ! pinned at 0, not adjusted at all"*.
+                                !
+                                ! A DECLARED ZERO ADJUSTER IS NOT ENOUGH HERE, which
+                                ! is why this guard wraps the whole update and not
+                                ! just the step. damp_on_flip takes the adjuster by
+                                ! reference and resets it toward
+                                ! penalty_child_homeless_adjuster_start, which is
+                                ! 5e-2 -- so a sign flip in the gap could revive a
+                                ! parameter that is meant to be frozen, and nothing
+                                ! would say so.
+                                if (penalty_child_homeless_adjuster<=0.d0) then
+
+                                    penalty_child_homeless_step_1=penalty_child_homeless
+
+                                else
+
                                 call damp_on_flip(penalty_child_homeless_adjuster,&
                                     gap_penalty_child_homeless_1,&
                                     previous_gap_penalty_child_homeless,&
@@ -46136,10 +46160,26 @@
                                 penalty_child_homeless=&
                                     max(min(penalty_child_homeless_step_1,0.4d0),0.d0)
 
+                                end if
+
                             end if
 
-                            distance_penalty_child_homeless=&
-                                abs(gap_penalty_child_homeless_1)
+                            ! GUARDED ON THE ADJUSTER, which is the standing rule
+                            ! in this file and which this block was breaking.
+                            ! penalty_child_homeless_adjuster is zero, so nothing
+                            ! moves delta_h, yet the distance was written anyway and
+                            ! it sits in the do-while at the convergence test. It
+                            ! read 4.4995 against its stopping rule for the whole of
+                            ! stage 1, so THAT RUN COULD NEVER HAVE CONVERGED however
+                            ! well every other moment did. A frozen parameter holding
+                            ! the loop open for ever is the exact failure the rule
+                            ! exists to prevent.
+                            if (penalty_child_homeless_adjuster>0.d0) then
+                                distance_penalty_child_homeless=&
+                                    abs(gap_penalty_child_homeless_1)
+                            else
+                                distance_penalty_child_homeless=0
+                            end if
 
                             write(*,*) "child homelessness ratio model =",&
                                 child_homeless_ratio_model_1,&
@@ -46639,21 +46679,45 @@
                         ! being thrown across it in one step.  The author, 14
                         ! September: *"No parameter should move fast. Especially big
                         ! ones like aleph"*.
-                        cap_old_1=value_of_life
-                        value_of_life=min(value_of_life+&
-                            (value_of_life_floor_margin-val_life_min_any(1)),10.d0**(4))
-                        value_of_life=cap_step_rel(value_of_life,cap_old_1,&
-                            value_of_life_max_rel_step)
-                        write(*,*) "VALUE OF LIFE FLOOR: capped to", value_of_life,&
-                            " at", 100*value_of_life_max_rel_step, " per cent a loop"
+                        ! THE FLOOR NO LONGER MOVES ALEPH.  The author, 14
+                        ! September: *"aleph has to be updated correctly.....if VSL
+                        ! is above 80, aleph has to decline and vice versa"*.
+                        !
+                        ! WHAT IT WAS DOING.  The floor pushed aleph UP 0.1 per cent
+                        ! while the bracket pulled it DOWN 0.1 per cent, and the two
+                        ! cancelled: over loops 3 to 24 of stage 1 aleph moved from
+                        ! 60.3006 to 60.3597 and then stopped dead, changing only in
+                        ! the fourth decimal, while VSL over income sat at 106.7
+                        ! against a target of 80.  Aleph was not being calibrated at
+                        ! all; it was parked by a standoff.
+                        !
+                        ! SO THE CONSTRAINT IS NOW REPORTED, NOT ENFORCED, and that
+                        ! is a real change to a requirement the author set on 13
+                        ! September -- *"you also need to make sure that no one has a
+                        ! negative value of life"*.  It is made because the later
+                        ! instruction is explicit about the update rule and the two
+                        ! cannot both hold: the floor's own target for aleph at this
+                        ! seed is 122.5, which is where every collapsed run of the
+                        ! day came from.  The mass below zero is still measured and
+                        ! still printed every loop, so the violation is visible and
+                        ! the author can weigh it; it simply no longer overrides the
+                        ! moment.
+                        write(*,*) "VALUE OF LIFE FLOOR: NOT enforced -- aleph",&
+                            " follows its own moment.  The floor would have asked",&
+                            " for", value_of_life+&
+                            (value_of_life_floor_margin-val_life_min_any(1)),&
+                            " and aleph stays at", value_of_life
 
                         ! aleph is pinned by the constraint this loop, so the VSL
                         ! moment has no instrument and is not scored. Said out
                         ! loud, because a moment silently dropped from the test
                         ! is indistinguishable from a moment that converged.
-                        write(*,*) "VALUE OF LIFE FLOOR: the VSL moment is NOT scored this",&
-                            " loop -- aleph is pinned by the floor, not by its own bracket"
-                        distance_value_of_life=0
+                        ! THE VSL MOMENT IS SCORED EVERY LOOP NOW.  It used to be
+                        ! dropped whenever the floor bound, which meant aleph's own
+                        ! target was inert for as long as any household preferred
+                        ! death -- in stage 1 that was every loop from the first.
+                        write(*,*) "VALUE OF LIFE: the VSL moment IS scored this loop;",&
+                            " aleph is set by its own bracket"
 
                     end if
 
