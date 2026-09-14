@@ -23513,6 +23513,35 @@
 
                     if (labor_supply_2>0.4) then
 
+                    ! THE VOUCHER ELIGIBILITY TEST WAS READING A STALE WAGE.
+                    ! Found 14 September on the author's *"Why is piv still showing
+                    ! as 0.0492? We know there was a bug in the computation"*.
+                    !
+                    ! gross_wage_income is assigned ONLY inside the guarded secant
+                    ! call below -- employed, not retired, labour supply not fixed.
+                    ! investment_income is assigned in ONE place in the whole file,
+                    ! inside a different routine. Both are then read unconditionally
+                    ! by calculate_future_voucher_index_and_opportunity, so for
+                    ! every household that is NOT employed, or is retired, the
+                    ! eligibility income was whatever a previously processed
+                    ! household left in those variables.
+                    !
+                    ! IT BITES EXACTLY THE POPULATION THE VOUCHER IS FOR. The
+                    ! non-employed are the poorest and the most likely to qualify,
+                    ! and a stale wage from an employed household puts them ABOVE
+                    ! the threshold, so they are denied the opportunity. Measured:
+                    ! holders among eligibles 4.97 per cent against a target of
+                    ! 26.6, which needs an exit hazard from eligibility of 0.885 a
+                    ! period -- 88.5 per cent of eligible households leaving
+                    ! eligibility every period, which is not a model.
+                    !
+                    ! ZERO IS THE RIGHT VALUE, not a patch. A household that does
+                    ! not work has no wage income, so its eligibility income is its
+                    ! investment income alone, and both are set here so the test
+                    ! reads this household rather than the last one.
+                    gross_wage_income=0
+                    investment_income=0
+
                     if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0) .AND. &
                         (emp_of(unemployment_index)==1)) then
 
@@ -25460,6 +25489,12 @@
                         tenure_2,tenure_2,time_period,labor_supply_2,cutoff_taxable_income,future_addiction_index)
                         ! owner_to_owner_move_1,owner_to_renter_1,renter_to_owner_1,owner_to_owner_stay_1,renter_to_renter_1
                       
+                    ! THE SAME STALE READ AS THE RENTER SITE, and this one has an
+                    ! extra guard on labour supply above it, so it skips the secant
+                    ! for MORE households still.  See the note at the other site.
+                    gross_wage_income=0
+                    investment_income=0
+
                     if (labor_supply_2>0.4) then
                     if ((in_retirement==0) .AND. (fixed_labor_supply_at_benchmark==0) .AND. &
                         ((emp_of(unemployment_index)==1))) then
