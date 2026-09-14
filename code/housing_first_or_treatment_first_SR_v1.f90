@@ -34763,7 +34763,18 @@
         labor_income_tax_rate_adjuster=0.d0
         max_food_cost_adjuster=0.d0
         smi_onset_level_adjuster=0.d0
-        kappa_uem_adjuster=0.d0
+        ! KAPPA_UEM STAYS LIVE -- it is the SMI SHARE OF THE HOMELESS bracket,
+        ! and the author's block needs that moment, the SUD share and the
+        ! unemployment rate together: *"pi_eu should be chosen so that about 25%
+        ! of the homeless have SUD and 25% have SMI and the unemployment rate is
+        ! 4.9%"*.
+        !
+        ! Zeroed here, the moment had NO instrument: zeta_DI owns it on paper but
+        ! its adjuster is zero and the author set zeta_DI itself to zero, and
+        ! lambda_m is a retired bracket kept at zero for readability. Its update
+        ! already scores model_smi_share_of_homeless, so only this line was
+        ! holding it; the MOMENT print beside it still carries the old
+        ! "employment given SMI" label, which is not what the update uses.
         mu_homeless_adjuster=0.d0
         penalty_child_addicted_adjuster=0.d0
         newborn_endowment_adjuster=0.d0
