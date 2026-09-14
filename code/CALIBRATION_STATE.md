@@ -1,3 +1,46 @@
+## 14 September 14:25 UTC -- "SETTLED LOOP" CERTIFIES THREE PARAMETERS, NOT THE
+## MOMENTS, AND I HAVE BEEN READING IT AS THOUGH IT CERTIFIED BOTH
+
+Loops 266 and 273 are BOTH "within one per cent" by the report's header.  VSL over
+income reads 86.81 at one and 104.96 at the other -- 8.5 per cent off against 31.2.
+Two loops that the convergence line calls settled, on opposite sides of a
+twenty-point gap.
+
+**The header tests b, lambda_d and theta.  It does not test the moments.**  Those
+three can be within a per cent of the previous loop while the economy they imply
+sits at either end of an orbit.  I have quoted "a settled loop" a dozen times today
+as though it licensed reading the table as a state.  It does not.
+
+**WITHDRAWN, from 14:11: "VSL is 8.5 per cent off, down from 36.2, and has fallen
+monotonically across every settled loop I have checked: 58.9, 36.2, 8.5."**  VSL
+alternates between two branches every five or six loops:
+
+    #259-263   about 106      (+32%)
+    #264-268   about  87      (+9%)
+    #269-273   about 105      (+31%)
+
+The 8.5 was the bottom of that oscillation, not a level.  **The trend is real but
+far smaller than I reported.**  Centres of ten: 101.06, 100.27, 99.45, 98.64,
+95.97 -- monotone, +26.3 per cent down to +20.0, with a spread of about 19 points
+inside every window.  So VSL is improving at roughly a point of gap per ten loops,
+not approaching target.
+
+**THE SUD RATE HAS THE SAME TWO-BRANCH SHAPE and its trend is the other way.**
+Branches at about 0.047 (+29 per cent) and 0.063 (+70), and centres of ten running
+0.04816, 0.04902, 0.05274, 0.05571 -- +30.9, +33.2, +43.3, +51.4.  So the 70.3 I
+quoted at 14:11 was also a branch reading, but the underlying drift is genuine and
+upward, which is the part that matters for a moment with no instrument.
+
+**THE RULE THIS ADDS**, alongside "prefer a statistic that names no level" (12:20)
+and "make the window longer than the slowest thing in the series" (13:18):
+
+**A CONVERGENCE FLAG IS ABOUT WHATEVER IT TESTS.  READ WHAT IT TESTS BEFORE
+QUOTING IT.**  Every moment in this run should be read from a window centre, never
+from a single loop, settled or not.  The five corrections I have made today --
+09:14, 12:20, 13:18, and this one twice over -- are all the same error wearing
+different clothes, and four of them were caught only because the run kept going
+long enough to contradict me.
+
 ## 14 September 13:18 UTC -- b NEVER TURNED. IT BOUNCED FOR TEN LOOPS AND HAS
 ## FALLEN FOR A HUNDRED SINCE, AND THE ORBIT IS WIDENING AGAIN
 
