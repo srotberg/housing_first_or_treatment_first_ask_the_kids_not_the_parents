@@ -684,18 +684,14 @@
         ! driving, so what changes here is only how far a single loop may travel.
         ! At one per cent it now matches the global cap rather than sitting ten
         ! times above it.
-        ! 0.1 PER CENT, 14 September: *"No parameter should move fast... They
-        ! should move at 0.1% maybe between iterations."*  Was 1e-2.
-        !
-        ! THIS REVERSES AN EARLIER AND MORE SPECIFIC INSTRUCTION, which is why
-        ! it is flagged rather than quietly applied.  The author, 11 September:
-        ! *"The utility cost of treatment has to be adjusted much faster. Maybe
-        ! 5% each iteration"* -- cap_step_rel exists ONLY because of that
-        ! request.  tau_u is not among the parameters named on 14 September
-        ! (*"aleph, omegac, kappa_phid, h1, kappa_ued"*), but the sentence
-        ! before that list is categorical.  If treatment take up stalls, this
-        ! is the line to put back.
-        real(8) :: treatment_cost_max_rel_step=1*10.d0**(-3)
+        ! FIVE PER CENT, 14 September: *"tau_u should move faster, maybe be set
+        ! much lower to get 25% in treatment"*.  This puts back the rate the
+        ! author asked for on 11 September -- *"The utility cost of treatment has
+        ! to be adjusted much faster. Maybe 5% each iteration"* -- which
+        ! cap_step_rel exists for, and which I had slowed to 1e-3 an hour ago on
+        ! the categorical "no parameter should move fast".  Treatment take up did
+        ! stall, reading 0.00008 against 0.245, which is what that line predicted.
+        real(8) :: treatment_cost_max_rel_step=5*10.d0**(-2)
 
         ! THE PRICE OF A PERIOD OF TREATMENT, in the model's consumption units,
         ! calibrated on take up among those carrying the disorder. Calibrated
@@ -46720,45 +46716,45 @@
                         ! being thrown across it in one step.  The author, 14
                         ! September: *"No parameter should move fast. Especially big
                         ! ones like aleph"*.
-                        ! THE FLOOR NO LONGER MOVES ALEPH.  The author, 14
-                        ! September: *"aleph has to be updated correctly.....if VSL
-                        ! is above 80, aleph has to decline and vice versa"*.
+                        ! THE CONSTRAINT IS ENFORCED, AND IT OUTRANKS THE MOMENT.
+                        ! The author, 14 September: *"the value of life constraint
+                        ! has to be enforced (no one should have negative value of
+                        ! life)"*.  This restores the behaviour removed an hour
+                        ! earlier on their *"aleph has to be updated correctly"*.
                         !
-                        ! WHAT IT WAS DOING.  The floor pushed aleph UP 0.1 per cent
-                        ! while the bracket pulled it DOWN 0.1 per cent, and the two
-                        ! cancelled: over loops 3 to 24 of stage 1 aleph moved from
-                        ! 60.3006 to 60.3597 and then stopped dead, changing only in
-                        ! the fourth decimal, while VSL over income sat at 106.7
-                        ! against a target of 80.  Aleph was not being calibrated at
-                        ! all; it was parked by a standoff.
+                        ! THE TWO INSTRUCTIONS CONFLICT AT THIS SEED AND THE
+                        ! CONSTRAINT WINS.  Satisfying it needs aleph near 122,
+                        ! because at 60 the worst-off household values a period of
+                        ! life at -62; the VSL moment reads above 80 and its bracket
+                        ! therefore wants aleph DOWN.  A constraint is not a target,
+                        ! so while it binds aleph goes UP and the VSL moment is not
+                        ! scored -- said out loud in the log every loop, because a
+                        ! moment silently dropped from the test is indistinguishable
+                        ! from one that converged.
                         !
-                        ! SO THE CONSTRAINT IS NOW REPORTED, NOT ENFORCED, and that
-                        ! is a real change to a requirement the author set on 13
-                        ! September -- *"you also need to make sure that no one has a
-                        ! negative value of life"*.  It is made because the later
-                        ! instruction is explicit about the update rule and the two
-                        ! cannot both hold: the floor's own target for aleph at this
-                        ! seed is 122.5, which is where every collapsed run of the
-                        ! day came from.  The mass below zero is still measured and
-                        ! still printed every loop, so the violation is visible and
-                        ! the author can weigh it; it simply no longer overrides the
-                        ! moment.
-                        write(*,*) "VALUE OF LIFE FLOOR: NOT enforced -- aleph",&
-                            " follows its own moment.  The floor would have asked",&
-                            " for", value_of_life+&
-                            (value_of_life_floor_margin-val_life_min_any(1)),&
-                            " and aleph stays at", value_of_life
+                        ! STEPPED, NOT ASSIGNED.  Assigning took aleph 60.060 ->
+                        ! 122.515 in one loop and collapsed every run this morning.
+                        ! Under the cap the mass below zero fell from 0.143891 to
+                        ! 0.075148 over twenty-four loops, so the constraint does
+                        ! close from here; it simply takes loops.
+                        cap_old_1=value_of_life
+                        value_of_life=min(value_of_life+&
+                            (value_of_life_floor_margin-val_life_min_any(1)),10.d0**(4))
+                        value_of_life=cap_step_rel(value_of_life,cap_old_1,&
+                            value_of_life_max_rel_step)
+                        write(*,*) "VALUE OF LIFE FLOOR: aleph stepped to", value_of_life,&
+                            " at", 100*value_of_life_max_rel_step, " per cent a loop;",&
+                            " the floor would have asked for", cap_old_1+&
+                            (value_of_life_floor_margin-val_life_min_any(1))
 
                         ! aleph is pinned by the constraint this loop, so the VSL
                         ! moment has no instrument and is not scored. Said out
                         ! loud, because a moment silently dropped from the test
                         ! is indistinguishable from a moment that converged.
-                        ! THE VSL MOMENT IS SCORED EVERY LOOP NOW.  It used to be
-                        ! dropped whenever the floor bound, which meant aleph's own
-                        ! target was inert for as long as any household preferred
-                        ! death -- in stage 1 that was every loop from the first.
-                        write(*,*) "VALUE OF LIFE: the VSL moment IS scored this loop;",&
-                            " aleph is set by its own bracket"
+                        write(*,*) "VALUE OF LIFE FLOOR: the VSL moment is NOT scored",&
+                            " this loop -- aleph is pinned by the constraint, not by",&
+                            " its own bracket"
+                        distance_value_of_life=0
 
                     end if
 
