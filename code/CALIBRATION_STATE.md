@@ -1,3 +1,72 @@
+## 14 September 00:15 UTC -- THE PAUSE IS LIFTED AND THE UPDATE RULE IS THE
+## AUTHOR'S. THIS SUPERSEDES THE 14:25 ENTRY BELOW.
+
+The author, 13 September: *"ok, then we need to start working on calibrating the
+model"*, and then *"while you work on the code for the CEV later"* -- so the
+quantitative loop is reopened and the CEV's two remaining defects are explicitly
+deferred.
+
+**THE THREE THINGS THE 14:25 ENTRY PAUSED FOR ARE ALL DONE.** Labour supply is
+inelastic; xi and the child's weight are settled at (xi-1); and the child lives
+with the young only, with the age gate and the ever-SUD latch both built and
+both invariants passing exactly -- zero above the gate, and equal at EVERY age
+with weight_on_child handed over at zero.
+
+**THE UPDATE RULE IS NOW ONE RULE.** The author, 13 September: *"i dont want any
+bisections and any secants ... parameter = parameter + adjuster*(model_moment -
+data_moment), where adjuster is such that it updates in the right direction, and
+does not update too fast (at most 0.05%, 0.5% or 1%)"*. Three updates were not
+that and all three are converted:
+
+  beta         was a bisection on a bracket in discount_factor_lo/hi
+  onset base   was a secant, with an analytic first step and a trust clamp
+  b            was multiplicative, b*(1+a*gap/target), bounded by move_factor
+
+**THE ONSET'S DIRECTION IS THE OPPOSITE OF THE OBVIOUS ONE AND IT IS MEASURED.**
+Single parameter, loop 1, 11 September, nothing else moving: onset 0.0428 ->
+0.0550 gave lambda_d -49.0 per cent, and 0.0428 -> 0.0350 gave +74.3, an
+elasticity near -2.7 both sides. RAISING THE ONSET HAZARD LOWERS THE DISORDER
+RATE -- making use riskier deters people from using at all, and the extensive
+margin beats the conversion margin. Its adjuster is therefore POSITIVE. An
+earlier round assumed the naive sign and spent nineteen loops driving lambda_d
+from +2.0 per cent to -33.
+
+**TWENTY LIVE INSTRUMENTS.** Five were released on the author's instruction of 13
+September -- tau_l, cbar, pi_V, p_m and delta_d -- plus the newborn endowment on
+young homelessness and kappa_uem, which was both retired AND bracketed on the
+wrong moment and now takes the SMI share of the homeless as the mirror of what
+kappa_ued does on the SUD side.
+
+**WHAT A FIRING SHOULD DO UNTIL THE AUTHOR SAYS OTHERWISE.** Stale-checkout
+guard, confirm nothing is solving, report one line. **DO NOT SEED THE FLEET
+YET**, and the reason is not caution: the model hash has moved five times in the
+last two hours as these instructions landed, points/ carries ZERO points on the
+current hash, and a round launched now would measure a model that changes again
+before it lands. ENGINE.md step 2 says seed rather than gate when the archive is
+empty on the current hash; the seeding itself waits on the source settling.
+
+**TWO SETTINGS LIVE IN THE VECTORS, NOT THE SOURCE, AND THE SEED MUST CARRY
+THEM.** The handover wins over the declaration, so a point run off the current
+batch executes at the old values however the source reads:
+
+  theta            source 0.16   batch_ca_02 0.4740724
+  rung_ratio_h3    source 2.0    batch_ca_02 1.5
+  rung_ratio_h4    source 3.0    batch_ca_02 2.0
+
+**OPEN, AND THE AUTHOR'S CALL.** Whether the trust regions on value_of_life,
+separation_rate and size_homelessness go -- they bound the step by a
+multiplicative factor rather than the flat per cent the rule names -- and
+whether the sign-flip damping on b, pi_V, separation_rate and kappa_ued goes
+with them. Fourteen call sites. Neither is a secant or a bisection.
+
+**ALSO OPEN, AND NOT A CALIBRATION SETTING.** The author: *"there is no rental
+market clearing in the paper"*. The model clears one -- distance_rental_market
+is maxval|rental demand - rental supply| with rent adjusting against a rental
+company of convexity 2.35 and an empirical supply elasticity -- and the paper
+describes the drug market clearing and the government budget balancing but
+nothing for rentals. That is a model-paper mismatch and which side moves is the
+author's decision.
+
 ## 13 September 17:00 UTC -- THE STYLIZED MODEL IS RECALIBRATED ON THE NEW
 ## SET-UP.  NINE OF TEN MOMENTS INSIDE TEN PER CENT.
 
