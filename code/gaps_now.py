@@ -177,6 +177,23 @@ def main():
             gs = f"{gap:+8.1f}%" if gap is not None else f"{'--':>9}"
             print(f"{p:<42}{vs} {mn:<13}{ms}{gs}")
         print()
+    # Moments no live instrument is fitting. They still move, as a by-product of
+    # whatever changes the composition behind them, so they are worth reading --
+    # but a gap here is not something the search is working on. emp_homeless is
+    # the standing example: the author chose h_1 to hit the homelessness rate and
+    # accepted whatever employed share fell out of it.
+    live_moments = {r[2] for r in rows if r[0]}
+    watched = sorted(set(mom) - live_moments)
+    if watched:
+        print(f"WATCHED -- no live instrument is fitting these   ({len(watched)})")
+        print(f"{'moment':<14}{'model':>12}{'target':>12}{'gap':>9}")
+        print("-" * 47)
+        for k in sorted(watched, key=lambda k: -abs((mom[k][0] - mom[k][1]) / mom[k][1])
+                        if mom[k][1] else 1e9):
+            md, tg = mom[k]
+            gs = f"{(md - tg) / tg * 100:+8.1f}%" if tg else f"{'--':>9}"
+            print(f"{k:<14}{md:12.6g}{tg:12.6g}{gs}")
+        print()
     for d, why in DEAD.items():
         print(f"DROPPED {d}: {why}")
 
