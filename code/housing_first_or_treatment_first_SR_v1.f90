@@ -43859,41 +43859,34 @@
 
                         distance_discount_factor=(1-freeze_beta_bisection)*abs(gap_discount_factor_1)
 
-                        if ((discount_factor_lo>=0) .AND. &
-                            (discount_factor_hi>discount_factor_lo)) then
-
-                            if ((discount_factor_hi-discount_factor_lo)<bracket_discount_factor_floor) then
-
-                                ! A WINDOW THIS NARROW IS THE ANSWER. The moment
-                                ! jumps across it, so no beta reproduces the target
-                                ! more closely and iterating further only burns
-                                ! solves. Report the two sides and stop asking.
-                                write(*,*) "beta BRACKET IS AT ITS FLOOR [", discount_factor_lo, &
-                                    ",", discount_factor_hi, "] with the moment jumping from ", &
-                                    discount_factor_lo_moment, " to ", discount_factor_hi_moment, &
-                                    " across it, against a target of ", wealth_to_output_data
-                                write(*,*) "   wealth over output is a step in beta here, so this is",&
-                                    " as close as the moment can be brought."
-                                distance_discount_factor=0
-
-                            else
-
-                                if (freeze_beta_bisection==0) &
-                                    discount_factor=0.5d0*(discount_factor_lo+discount_factor_hi)
-
-                                write(*,*) "beta bisecting in [", discount_factor_lo, &
-                                    ",", discount_factor_hi, "]"
-
-                            end if
-
-                        else
-
-                            ! No bracket yet, so traverse.
-                            if (freeze_beta_bisection==0) &
-                                discount_factor=min(max(discount_factor-discount_factor_adjuster*&
-                                gap_discount_factor_1,0.5d0),1.05d0)
-
-                        end if
+                        ! THE AUTHOR'S RULE, AND NO BISECTION. Their instruction of
+                        ! 13 September: *"i dont want any bisections and any
+                        ! secants ... parameter = parameter + adjuster*(model_moment
+                        ! - data_moment), where adjuster is such that it updates in
+                        ! the right direction, and does not update too fast"*.
+                        !
+                        ! DIRECTION. A more patient household saves more, so wealth
+                        ! over output RISES in beta. The moment above target
+                        ! therefore wants beta DOWN, which is the minus here --
+                        ! equivalently a negative adjuster in the author's form.
+                        !
+                        ! The bisection this replaces kept a bracket in
+                        ! discount_factor_lo/hi and halved it. Those two are still
+                        ! written and restored with the calibration state, so a
+                        ! resumed run is unaffected; nothing reads them now.
+                        !
+                        ! WHAT IS LOST, STATED PLAINLY. The bracket could report
+                        ! "the moment jumps across this window, so no beta gets
+                        ! closer" and zero its own distance. A gap step cannot say
+                        ! that, so if wealth over output is a STEP in beta here, the
+                        ! loop will keep pushing at the discontinuity instead of
+                        ! declaring it. That is visible -- beta will sit against a
+                        ! bound with the gap not closing -- and the bound warning
+                        ! below still fires.
+                        cap_old_1=discount_factor
+                        discount_factor=min(max(discount_factor-discount_factor_adjuster*&
+                            gap_discount_factor_1,0.5d0),1.05d0)
+                        discount_factor=cap_step(discount_factor,cap_old_1)
 
                         write(*,*) "wealth_to_output_model=", wealth_to_output_model_1, &
                             " against ", wealth_to_output_data
