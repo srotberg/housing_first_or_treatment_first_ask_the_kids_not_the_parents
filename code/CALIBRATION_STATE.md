@@ -1,3 +1,55 @@
+## 14 September 15:25 UTC -- TWO ENTRIES BELOW ARE WRONG AND THE ARCHIVE SAYS SO.
+## y_u IS A FUNCTION OF ALEPH, NOT OF PARTICIPATION, AND THE DRUG SHARE IS REACHABLE
+
+ENGINE.md's firing rule is that when the archive disagrees with this file the
+archive wins.  It disagrees twice, and both are entries I wrote.
+
+**WITHDRAWN, the 06:05 entry "y_u IS A FUNCTION OF PARTICIPATION, AND y_u = 0.74
+IS INCOMPATIBLE WITH DRUG USE AT 8.9 PER CENT".**  Every solved point at
+kappa_phi_d = 2, read off the run logs rather than off my notes:
+
+    aleph    b         users     y_u     VSL
+     110    1.5e-4     6.20%    0.396   111.3
+     110    3.5e-4     6.54%    0.414   147.0
+      88    1.2e-3     8.08%    0.489   115.0
+      60    2.0e-3     8.96%    0.753    83.3
+      60    2.2e-3     5.71%    0.760    83.8
+
+At 6 to 9 per cent use, dropping aleph from 110 to 60 takes y_u from 0.40 to 0.76.
+**y_u is a function of ALEPH.**  At aleph 60 it is nearly FLAT in participation --
+0.760 at 5.7 per cent, 0.753 at 9.0, 0.728 at 19.7, 0.745 at 36.4, 0.753 at 42.9.
+
+How the error was made: the "43 per cent gives 0.753" point anchoring that curve is
+aleph 60 with b 1.2e-3, and the aleph 60 b 2.0e-3 run gives the SAME y_u at 8.96
+per cent.  I pooled aleph 110 points (low y_u) with aleph 60 points (high y_u) into
+one scatter and read it as a function of participation, because in that sample
+aleph and participation happened to be correlated.  The 05:50 entry, which credited
+aleph on the author's own *"it could be also that aleph is too high....and that's
+why only the poor use"*, was right; the 06:05 retraction of it is itself retracted.
+
+**WITHDRAWN IN PART, the 08:40 zero-income bound as a verdict on the target.**  The
+arithmetic stands -- the mean of s/y is at least the share of users with income_2
+<= 0, so the target needs that share below 14.1 per cent -- but I presented it as
+condemning the drug spending share.  It condemns it AT ALEPH 88, where the moment
+reads 0.39.  At aleph 60 the same theta = 0.095 gives **0.1479 against 0.14098,
++4.9 per cent**.  The moment is reachable and theta was pinned for an hour on the
+strength of a bound read too widely.
+
+**BOTH ERRORS HAVE ONE SHAPE**: a conclusion drawn in an economy whose aleph was
+wrong, then stated generally.  It is the same shape as the five window-length
+errors recorded between 09:14 and 14:25.  The standing rules from those entries
+gain a third: **a result measured at one value of a parameter is a result about
+that value until it is measured at another.**
+
+**THE POINT THE AUTHOR HAS BEEN ASKING FOR EXISTS AND WAS MEASURED AT 07:35.**
+aleph 60, kappa_phi_d 2, b 2.0e-3, theta 0.095: users 8.96 per cent, y_u 0.753,
+VSL 83.3, SUD share of the homeless 0.215, disorder rate 0.0377, drug share
+0.1479.  Six of the author's eight targets inside five per cent.  The two that are
+not are homelessness at -40.2 per cent and unemployment at -29.1.  It violates the
+no-negative-value-of-life constraint at 0.281 per cent, which remains the author's
+call and is now the ONLY thing standing against it -- the compatibility argument I
+raised against it was wrong.
+
 ## 14 September 14:25 UTC -- "SETTLED LOOP" CERTIFIES THREE PARAMETERS, NOT THE
 ## MOMENTS, AND I HAVE BEEN READING IT AS THOUGH IT CERTIFIED BOTH
 
