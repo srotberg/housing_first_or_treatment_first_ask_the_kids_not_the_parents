@@ -349,7 +349,7 @@ RULES = {
     # sd_permanent_productivity was inert, and silently. Twice the floor keeps it
     # strictly live and still gives about 584 iterations of room.
     'size_homelessness':                        ('h_1',          +0.30, 2e-6, 0.20, 0.55, 0.25),
-    'smallest_rental_relative_to_lowest_income': ('h_2',          +5.36, 5e-3, 0.40, 0.30, 0.08),
+    # PARKED 14 Sep (author: key parameters first)  'smallest_rental_relative_to_lowest_income': ('h_2',          +5.36, 5e-3, 0.40, 0.30, 0.08),
     # THE SECOND NODE'S LEVEL, NOT THE BOTTOM NODE'S MASS. The author,
     # 6 September: *"instead of choosing the bottom mass, fix it to 0.2% and
     # adjust the second productivity level"*, and *"If emp homeless is too low,
@@ -429,7 +429,7 @@ RULES = {
     # to +0.71. WELL BELOW ONE, so the moment is far less than proportional to
     # the parameter and the step has to be large -- which is why its cap is the
     # loosest of the four.
-    'probability_becoming_unemployed':           ('pi_eu',        +0.42, 0.002, 0.50, 0.70, 0.70),
+    # PARKED 14 Sep (author: key parameters first)  'probability_becoming_unemployed':           ('pi_eu',        +0.42, 0.002, 0.50, 0.70, 0.70),
     # THE TWO AGE MOMENTS, 6 September, with the author's own directions.
     #
     #   *"newborn endowment should rise when young homelessness is too high"*
@@ -587,14 +587,14 @@ RULES = {
     # their handovers ranged up to 14.74. The fit was reading scatter across
     # points that shared an identical value of the regressor. A slope measured
     # over many points is not therefore a measured slope.
-    'utility_cost_of_treatment':                 ('tau_u',         -3.174, 0.0, 20.0, 0.25, 0.20),
+    # PARKED 14 Sep (author: key parameters first)  'utility_cost_of_treatment':                 ('tau_u',         -3.174, 0.0, 20.0, 0.25, 0.20),
     # tau_l. NEGATIVE, on the author's instruction of 6 September: *"tau_l should
     # be lowered when the model is low relative to the data"*. The source agrees
     # and explains why a value of 0.79 yields an average tax of 0.21 --
     # net_income = labor_income_tax_rate * y**curvature, so the parameter is a
     # RETENTION scale, not a rate. Higher means more income kept and a LOWER
     # average tax.
-    'labor_income_tax_rate':                     ('tau_l',        -7.40, 0.3, 0.95, 0.35, 0.20),
+    # PARKED 14 Sep (author: key parameters first)  'labor_income_tax_rate':                     ('tau_l',        -7.40, 0.3, 0.95, 0.35, 0.20),
     # sigma_y. NEGATIVE, on the author's instruction of 6 September: *"sigma_y
     # should decline if the share of income at the bottom is too low. raising it
     # will reduce the share even more"*. sd_permanent_productivity is the
@@ -609,7 +609,7 @@ RULES = {
     # declaration with no max or min -- so the handover cannot silently truncate
     # a value above 1.3, which is the risk ENGINE.md warns about when a bound is
     # raised.
-    'sd_permanent_productivity':                 ('sigma_y',      -1.00, 0.6, 2.0, 0.35, 0.20),
+    # PARKED 14 Sep (author: key parameters first)  'sd_permanent_productivity':                 ('sigma_y',      -1.00, 0.6, 2.0, 0.35, 0.20),
     # THE LAST FIVE SIGNS, each read off the code rather than the parameter's
     # name. Four of the seven signs written from names on 6 September were wrong,
     # so every one of these was checked at its point of use:
@@ -730,7 +730,7 @@ RULES = {
     # author's to make; the sign fix below is not, since a diverging rule is a bug
     # whichever way the trade goes.
     'multiple_find_if_addicted':                 ('sud_homeless', -0.244, 1.0, 100.0, 0.25, 0.20),
-    'smi_onset_level':                           ('p_m',          +1.00, 1e-08, 0.5, 0.35, 0.20),
+    # PARKED 14 Sep (author: key parameters first)  'smi_onset_level':                           ('p_m',          +1.00, 1e-08, 0.5, 0.35, 0.20),
     # +9.0, MEASURED, not assumed. It was +1.00, and that single wrong number
     # is why beta moved too much: across the 81bf69176d archive the discount
     # factor runs 0.90986 to 0.93907 and wealth over output runs 2.05 to 2.73,
@@ -743,7 +743,7 @@ RULES = {
     # 26 of 26 solves, because patience sets saving, saving sets current
     # consumption, and drug quantity is a share of consumption. b was never
     # discontinuous in its own instrument; it was bimodal in this one.
-    'discount_factor':                           ('beta',         +9.00, 0.9, 1.02, 0.35, 0.10),
+    # PARKED 14 Sep (author: key parameters first)  'discount_factor':                           ('beta',         +9.00, 0.9, 1.02, 0.35, 0.10),
     # THE SLOPE IS -1.00 AND IT IS MEASURED, not assumed. The author, 7 September,
     # on being shown that the instrument works but steps a thirty-second of what
     # it should: *"sure"*.
@@ -764,8 +764,8 @@ RULES = {
     # because the gap-scaled cap binds instead of the slope. The other three are
     # named here because they have the same defect and only this one has been
     # measured yet.
-    'mu_homeless':                               ('mu_H',          -1.00, 0.0, 1.0, 0.35, 0.20),
-    'probability_of_voucher_benchmark_used':     ('pi_V',         +1.00, 1e-05, 1.0, 0.35, 0.20),
+    # PARKED 14 Sep (author: key parameters first)  'mu_homeless':                               ('mu_H',          -1.00, 0.0, 1.0, 0.35, 0.20),
+    # PARKED 14 Sep (author: key parameters first)  'probability_of_voucher_benchmark_used':     ('pi_V',         +1.00, 1e-05, 1.0, 0.35, 0.20),
     # THE SLOPE IS -0.37 AND IT IS MEASURED. h_1's target was pinned to where h_1
     # actually sat, which is what finally made this measurable: every earlier
     # reading of h_age1 was contaminated by the aggregate moving underneath it,
@@ -808,7 +808,14 @@ RULES = {
     # +0.129, so the endowment's 28.6 per cent fall accounts for about -3.6 per
     # cent of b against the -13.4 observed. The endowment is not what is pushing
     # b away from its target and the search for what is continues elsewhere.
-    'newborn_endowment_scale':                   ('h_age1',       -1.056, 0.0, 3.0, 0.35, 0.20),
+    # PARKED 14 Sep (author: key parameters first)  'newborn_endowment_scale':                   ('h_age1',       -1.056, 0.0, 3.0, 0.35, 0.20),
+    # SUD ONSET IS LIVE, 14 September: the author's key list is *"aleph, b,
+    # Sud, Sud homeless, homelessness"*, and earlier *"for such we need not
+    # lambda_d, but base onset of sud"*.  Moment and bounds are next_batch's
+    # own ('lambda_d', 1e-06, 0.95), not a second copy.  The slope is 1.0
+    # because no controlled pair in this coordinate exists yet; the loop
+    # refits from its own iterates, which is the point of the method.
+    'addiction_onset_base':                      ('lambda_d',    1.0, 1e-06, 0.95, 0.25, 0.005),
 }
 
 # THE BOTTOM NODE'S MASS IS FIXED AT 0.2 PER CENT, on the author's instruction.
@@ -856,7 +863,7 @@ FIXED = {# PINNED AT 60 ON THE AUTHOR'S INSTRUCTION OF 8 September: "pin it at 6
          # author: *"if b gives you a higher share of users, they are richer,
          # which is why theta is high"* -- so the pin sits ABOVE 0.248, and
          # theta is then hit by construction rather than chased.
-         'relative_share_of_addiction_1': 0.27,
+         'relative_share_of_addiction_1': 0.095,
          # HELD AT ZERO on the author's instruction of 6 September: *"i think for
          # now let's keep lambda_addiction=0 and only adjust the base"*. It is
          # written into every iterate rather than merely left unstepped, so a
@@ -880,7 +887,6 @@ FIXED = {# PINNED AT 60 ON THE AUTHOR'S INSTRUCTION OF 8 September: "pin it at 6
          # than the 1.0 a naive scaling assumes. Both then agree:
          #   base 0.035291, lambda_d/b 0.3695  ->  0.042840
          #   base 0.044755, lambda_d/b 0.4241  ->  0.042841
-         'addiction_onset_base': 0.0428,
          # PINNED, on the author's instruction of 7 September: *"so you pin
          # theta, and the base ... and lambda_d is 0 ... and let the rest run
          # through my method"*.
@@ -973,7 +979,7 @@ FIXED = {# PINNED AT 60 ON THE AUTHOR'S INSTRUCTION OF 8 September: "pin it at 6
          # feeding each other.
          #
          # y_u loses its instrument again and goes untargeted.
-         'kappa_phi_d_level': 8.0,
+         'kappa_phi_d_level': 2.0,
          # THE DISORDER DOES NOT COST YOU YOUR JOB EITHER, the same concession
          # the author made for SMI and for the same reason. At 1.0 a household
          # with the disorder loses its job at exactly the rate everyone else
@@ -1033,6 +1039,16 @@ CONFIG = {
     # per cent and emp_homeless by 50 while h_2 stayed at 0.0983 -> 0.0985, which
     # is the decoupling the merged grid never gave.
     'merge_bottom_nodes':         2.0,
+    'probability_becoming_unemployed':              0.0145207,
+    'utility_cost_of_treatment':                    8.0,
+    'labor_income_tax_rate':                        0.871398,
+    'sd_permanent_productivity':                    1.3,
+    'smi_onset_level':                              0.003865,
+    'discount_factor':                              0.938709,
+    'mu_homeless':                                  0.700696,
+    'probability_of_voucher_benchmark_used':        0.0463,
+    'newborn_endowment_scale':                      0.839332,
+
 }
 # THE ENDOWMENT IS AN INSTRUMENT AGAIN, on the author's instruction of 6
 # September: *"i think we need to add an endowment for the newborns so that
@@ -1402,6 +1418,25 @@ else:
 
 for _p, (_m, _fb, _lo, _hi, _d, _e) in list(RULES.items()):
     RULES[_p] = (_m, _fb, _lo, _hi, min(_d, SLOW_DAMPING), min(_e, SLOW_CAP))
+
+# THE KEY-PARAMETER BLOCK, 14 September.  The author: *"just let the model run
+# with the following targets live: aleph, b, Sud, Sud homeless, homelessness,
+# kappa=2, theta=.095 with the last two pinned"*, and *"use my method of updating
+# for a while on those key parameters first"*.
+#
+# THIS PRUNE IS LAST ON PURPOSE.  Commenting entries out of the RULES literal does
+# NOT hold them: the loop above at "if _p in RULES or _p in FIXED ..." adds back
+# any assigned parameter that is in none of RULES, FIXED, CONFIG or HELD, so a
+# parameter removed from the literal is simply re-added with a theory slope.  The
+# restriction has to run after every mutation of RULES, which is here.
+#
+# A parameter dropped here is not reset: it is absent from the step, so it keeps
+# whatever the base point carries, which is the aleph-60 seed.
+KEY_BLOCK = ('value_of_life', 'addiction_scalar_1', 'addiction_onset_base',
+             'multiple_find_if_addicted', 'size_homelessness')
+for _p in [k for k in RULES if k not in KEY_BLOCK]:
+    RULES.pop(_p)
+assert set(RULES) == set(KEY_BLOCK), sorted(set(KEY_BLOCK) ^ set(RULES))
 
 
 def model_hash():
