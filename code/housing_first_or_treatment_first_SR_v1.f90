@@ -673,7 +673,18 @@
         ! driving, so what changes here is only how far a single loop may travel.
         ! At one per cent it now matches the global cap rather than sitting ten
         ! times above it.
-        real(8) :: treatment_cost_max_rel_step=1*10.d0**(-2)
+        ! 0.1 PER CENT, 14 September: *"No parameter should move fast... They
+        ! should move at 0.1% maybe between iterations."*  Was 1e-2.
+        !
+        ! THIS REVERSES AN EARLIER AND MORE SPECIFIC INSTRUCTION, which is why
+        ! it is flagged rather than quietly applied.  The author, 11 September:
+        ! *"The utility cost of treatment has to be adjusted much faster. Maybe
+        ! 5% each iteration"* -- cap_step_rel exists ONLY because of that
+        ! request.  tau_u is not among the parameters named on 14 September
+        ! (*"aleph, omegac, kappa_phid, h1, kappa_ued"*), but the sentence
+        ! before that list is categorical.  If treatment take up stalls, this
+        ! is the line to put back.
+        real(8) :: treatment_cost_max_rel_step=1*10.d0**(-3)
 
         ! THE PRICE OF A PERIOD OF TREATMENT, in the model's consumption units,
         ! calibrated on take up among those carrying the disorder. Calibrated
@@ -2824,7 +2835,16 @@
         ! -- 95.5 per cent of the homeless could not afford the smallest unit at
         ! any price -- so size_homelessness had nothing to act on and h_1 did not
         ! control its own target.
-        real(8), parameter :: fraction_homeless_data=0.01000
+        ! 0.4 PER CENT, 14 September: *"lower h1 until you hit 0.4%
+        ! homelessness and accept whatever emp homeless is at that point"*,
+        ! and earlier *"The homelessness being off is ok. We just need a number
+        ! between 0.4-1%"*.  0.4 is the bottom of that band, chosen because
+        ! the measured slope runs the wrong way for emp_homeless: at loop 1,
+        ! same vector, only h_1 moving, h_1 1.196e-3 gave a rate of 0.598 per
+        ! cent with 24.5 per cent of the homeless employed, and h_1 3.588e-3
+        ! gave 1.066 per cent with 19.4.  A LOWER rate carries a HIGHER
+        ! employed share, so the bottom of the band is the best available.
+        real(8), parameter :: fraction_homeless_data=0.00400
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe
@@ -3827,7 +3847,10 @@
         ! HALF A PER CENT, which the author's 14 September rule gives it as one
         ! of "the rest".  Unchanged from their 13 September instruction, and now
         ! equal to the global rate rather than five times it.
-        real(8) :: addiction_scalar_max_rel_step=0.005d0
+        ! 0.1 PER CENT, 14 September: *"No parameter should move fast"*.  Was
+        ! 0.005, and b was measured stepping the full +0.50 per cent a loop in
+        ! run60b, the fastest of any ordinary instrument there.
+        real(8) :: addiction_scalar_max_rel_step=0.001d0
         integer :: have_gap_addiction_scalar=0
         real(8) :: lambda_secant_slope_1=0
 
@@ -4545,7 +4568,12 @@
         real(8) :: size_homelessness_adjuster=20.d0
         ! h_1 AS A FRACTION OF h_2. One per cent, on the author's instruction.
         real(8) :: h1_share_of_h2=0.01d0
-        integer, parameter :: tie_h1_to_h2=1
+        ! UNTIED, 14 September: *"don't pin h1 to 1% of h2. Let h1 move
+        ! freely"*.  At 1 the tie overwrote size_homelessness at setup with
+        ! h1_share_of_h2*smallest_house_size, so the handover value was
+        ! discarded and every run in the archive sat at the same h_1.  At 0
+        ! the handover value stands and the bracket moves it.
+        integer, parameter :: tie_h1_to_h2=0
 
         ! AND THE TRAVERSE HAS TO DAMP, for aleph's reason. The adjuster is
         ! twenty and the gap is a rate, so a gap of 0.031 moves the parameter by
@@ -5496,7 +5524,12 @@
         ! author's instruction of 14 September: *"you adjust kappa_phid, aleph,
         ! and omega_c very slowly, around 0.1%. the rest can move at 0.5% per
         ! iteration"*.  It was one per cent under the stage-1 freeze.
-        real(8) :: max_rel_step_all=5.d0*10.d0**(-3)
+        ! 0.1 PER CENT, 14 September, on the author's *"No parameter should
+        ! move fast. Especially big ones like aleph, omegac, kappa_phid, h1,
+        ! kappa_ued. They should move at 0.1% maybe between iterations."*
+        ! Was 5e-3.  Every parameter that goes through cap_step now moves at
+        ! the same rate aleph and theta already had.
+        real(8) :: max_rel_step_all=1.d0*10.d0**(-3)
         ! THE STOPPING RULE EXISTED AND THE DISTANCE DID NOT.
         !
         ! The retention scale is updated every loop against an average labour
@@ -46578,8 +46611,30 @@
                         write(*,*) "VALUE OF LIFE FLOOR: aleph", value_of_life, " ->",&
                             value_of_life+(value_of_life_floor_margin-val_life_min_any(1))
 
+                        ! THE FLOOR STEPS NOW; IT USED TO ASSIGN, and that is what
+                        ! collapsed every run seeded at aleph 60 today.  Measured in
+                        ! run60b: the floor took aleph 60.060 -> 122.515 in ONE
+                        ! assignment, +104 per cent, while every ordinary instrument
+                        ! in the same loop obeyed its cap -- b +0.50, theta -0.10,
+                        ! kappa_phi_d +0.10, gamma +0.22.  Aleph at 122 doubles the
+                        ! price of death, drug use fell 98 per cent by loop 4 and the
+                        ! VSL moment overshot to 225, which its own bracket can then
+                        ! only claw back at 0.1 per cent a loop.
+                        !
+                        ! The constraint is unchanged -- a household that prefers
+                        ! death still raises aleph, and it still pins the VSL moment
+                        ! for the loop.  What changes is that it APPROACHES the
+                        ! constraint at the same rate as everything else instead of
+                        ! being thrown across it in one step.  The author, 14
+                        ! September: *"No parameter should move fast. Especially big
+                        ! ones like aleph"*.
+                        cap_old_1=value_of_life
                         value_of_life=min(value_of_life+&
                             (value_of_life_floor_margin-val_life_min_any(1)),10.d0**(4))
+                        value_of_life=cap_step_rel(value_of_life,cap_old_1,&
+                            value_of_life_max_rel_step)
+                        write(*,*) "VALUE OF LIFE FLOOR: capped to", value_of_life,&
+                            " at", 100*value_of_life_max_rel_step, " per cent a loop"
 
                         ! aleph is pinned by the constraint this loop, so the VSL
                         ! moment has no instrument and is not scored. Said out
