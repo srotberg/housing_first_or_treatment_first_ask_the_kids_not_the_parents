@@ -165,7 +165,12 @@ def main():
         rows.append((rate, p, mn, val.get(p), mm, gap))
 
     loops = log.count("MOMENT cbar")
-    print(f"loop {loops} of the pinned run; gaps are relative, in per cent\n")
+    # Name the log, not a run this script cannot know it is reading. The header
+    # said "the pinned run" from the day it was written, and went on saying it
+    # after the run was replaced -- a label that is right once and wrong after.
+    import os
+    which = os.path.basename(os.path.dirname(os.path.abspath(sys.argv[1]))) or sys.argv[1]
+    print(f"loop {loops} of {which}; gaps are relative, in per cent\n")
     for live, head in ((True, "LIVE"), (False, "HELD -- opens later")):
         sel = [r for r in rows if bool(r[0]) == live]
         print(f"{head}   ({len(sel)})")
