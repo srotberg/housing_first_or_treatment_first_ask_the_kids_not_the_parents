@@ -1,3 +1,61 @@
+## 14 September 19:05 UTC -- TWO INSTRUMENTS ON ONE STOCK AT A TEN TO ONE RATE,
+## AND THE FASTER ONE IS UNDOING THE SLOWER ONE
+
+**THE DRUG BLOCK IS GOING BACKWARDS WHILE EVERYTHING ELSE CONVERGES.**  Eleven
+loops of the pinned run:
+
+    moment          loop 1     loop 6     loop 11    target
+    b, users        0.02035    0.03010    0.02121    0.089
+    lambda_d        0.00384    0.00989    0.00530    0.0368
+    sud_homeless    0.04072    0.06626    0.04193    0.217
+    treatment take  0.01920    0.03742    0.06035    0.245
+
+b peaked at loop 5 and has lost more ground than it gained.  Meanwhile beta is at
+-1.4 per cent, tau_l at -0.1, p_m at +0.2 and pi_V at +2.2, so the run is not
+broken -- one block of it is being actively undone.
+
+**THE MECHANISM, MEASURED RATHER THAN INFERRED.**  utility_cost_of_treatment
+moves at 5 per cent a loop and addiction_scalar_1 at 0.5 per cent.  Over the same
+eleven loops tau_u fell 43 per cent while b's parameter fell 5 per cent, and
+treatment take up more than tripled.  Both instruments act on THE SAME STOCK in
+OPPOSITE DIRECTIONS: b lowers the price of the addictive good to put households
+into use, tau_u lowers the utility cost of treatment to take them out.  At ten to
+one the slower instrument cannot lead, and every further cut in tau_u drains the
+stock harder -- take up is at 0.060 against a target of 0.245, so five sixths of
+that descent is still to come.
+
+**WHY THIS IS NOT THE SPIKE-READ-AS-TREND MISTAKE OF THIS AFTERNOON.**  The
+downturn in b is only a few loops old, and a short window was misread twice today
+already.  What makes it real is that the DRIVER is monotone across all eleven
+loops and independently measured: take up rises every single loop, 0.0192, 0.0237,
+0.0321, 0.0345, 0.0345, 0.0374, 0.0400 ... 0.0604.  The conclusion rests on the
+driver's series, not on the series it is supposed to explain.
+
+**THE RATE MISMATCH IS THE LEVER, NOT EITHER LEVEL.**  Both rates came from the
+author: *"tau_u should move faster"* on 14 September, and *"ok raise the drug
+block instruments back to 0.5%"* earlier the same day.  Each is right on its own
+and they were never compared against each other.  Three ways out, and the choice
+is the author's:
+
+  1. let tau_u land first -- it needs roughly ten more loops to reach 2.42 -- and
+     let b work afterwards in a stationary treatment environment.  This is what
+     "let it run" does, and its cost is that the drug block is FURTHER from target
+     at loop 11 than at loop 1;
+  2. raise the drug block to tau_u's rate so the two settle together;
+  3. slow tau_u to the drug block's rate.
+
+**AND b's STRENGTH IS NOT MEASURABLE UNTIL ONE OF THEM STOPS.**  Any elasticity of
+users on b computed from this run is contaminated by tau_u moving ten times
+faster underneath it.  So the conclusion "b is too weak to close its gap" must
+NOT be drawn from these loops; it is exactly the one-parameter-per-diagnostic-point
+rule of ENGINE.md, and the contaminating parameter is known by name this time.
+
+**ALEPH IS THE OTHER STALLED BRACKET.**  105.2 against 80, +31 per cent, and it
+has not moved in five loops.  It now answers only to VSL, so it should come down;
+it is likely stuck because the drug block underneath it keeps moving.  Do not
+conclude anything about aleph's bracket until the drug block is still, for the
+same reason as b.
+
 ## 14 September 18:45 UTC -- kappa_phi_d AND cbar PINNED; AND I MIS-MAPPED FOUR
 ## INSTRUMENTS TO THEIR MOMENTS BY WRITING THE MAP BY HAND
 
