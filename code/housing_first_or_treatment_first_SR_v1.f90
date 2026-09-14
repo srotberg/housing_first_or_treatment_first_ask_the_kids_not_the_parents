@@ -2080,7 +2080,18 @@
         real(8) :: distance_rho_d
         real(8) :: stopping_rule_rho_d=10.d0**(-3)
         real(8) :: rho_d_adjuster=(1-freeze_to_three_block)*(5*10.d0**(-2))
-        real(8), parameter :: employed_share_of_homeless_data=0.50
+        ! 0.46, ON THE AUTHOR'S INSTRUCTION OF 14 SEPTEMBER: *"target 1% and 46%
+        ! then"*, so a little over half the homeless are out of work.
+        !
+        ! IT WAS 0.50 HERE AND 0.460 IN THE MOMENT PRINT, WHICH IS TWO TARGETS FOR
+        ! ONE MOMENT. The print hard-coded 0.460d0 while rho_d's bracket read this
+        ! declaration at 0.50, so the log reported a gap against one number while
+        ! the loop closed on another. Nothing was fitted to it -- rho_d's adjuster
+        ! is zero -- so no measured point moves, but a reader checking emp_homeless
+        ! against the printed target was checking the wrong one. The print now
+        ! reads this constant, which is the rule the rest of the file follows and
+        ! is exactly what NUMBERS.md exists to enforce on the paper side.
+        real(8), parameter :: employed_share_of_homeless_data=0.46
 
         ! THE SMALLEST RENTAL MUST STAY A DWELLING. Its bracket used to be
         ! bounded below at zero and run 2 got there, at which point
@@ -9754,7 +9765,7 @@
             ! score_points only reads MOMENT lines. The instrument had a target
             ! it could not see. It is a MOMENT now.
             write(*,*) "MOMENT emp_homeless employed share of homeless model=",&
-                model_employed_share_of_homeless(1), " target=", 0.460d0
+                model_employed_share_of_homeless(1), " target=", employed_share_of_homeless_data
             write(*,*) "DIAG homeless who could afford it on INCOME ALONE=",&
                 val_homeless_afford_on_income(1)
             write(*,*) "DIAG homeless by choice, share of the homeless   =",&
