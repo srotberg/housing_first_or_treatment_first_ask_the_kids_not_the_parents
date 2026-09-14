@@ -126,7 +126,16 @@
         ! zeroes relative_share_of_addiction_adj at 3308 and drops the
         ! distance_relative_share_of_addiction_1 term from the do-while at
         ! 41313, so no orphaned distance is left behind.
-        integer, parameter :: hold_theta=1
+        ! THETA IS LIVE, on the author's first-block list of 14 September:
+        ! *"we first need: omegac=0 and b, aleph, SUD, homelessness, homeless
+        ! SUD, pi_v, theta, kappa_phid, and pi_eu"*.
+        !
+        ! Held at 1 it zeroed relative_share_of_addiction_adj and dropped the
+        ! drug-spending-share term from the do-while, so theta sat at 0.16 in
+        ! every run and nothing could move it. Its moment was still printed, so
+        ! the gap was visible and unattached -- the same shape as the SUD share
+        ! of the homeless, whose two instruments were both out of action.
+        integer, parameter :: hold_theta=0
 
         integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
@@ -870,7 +879,23 @@
         ! loop.  The auto-pin at 43291 is unaffected and will set this back to 1
         ! on its own once the gap is inside three per cent with b and lambda_d
         ! both close, which is pinning on evidence rather than by hand.
-        integer :: omega_c_is_pinned=0
+        ! PINNED, AND THE PIN IS THE AUTHOR'S PROCEDURE RATHER THAN A SHORTCUT.
+        ! 14 September: *"set omega_c=0 and calibrate"*, *"then we just adjsut
+        ! omega_c up until we get the decline in drug use we need"*, *"and then
+        ! we pin omega_c to that and adjust the rest of the parameters a until
+        ! we hit the targets again"*, with the ordering *"we adjust omegac after
+        ! we have b, aleph, SUD, homelessness, homeless SUD"*.
+        !
+        ! So omega_c is NOT calibrated inside the block. It is HELD at whatever
+        ! the handover supplies -- zero on the first pass -- and found afterwards
+        ! by raising it until drug use falls by the child gap, which is
+        ! 1 - 0.845 = 15.5 per cent below the omega_c=0 baseline.
+        !
+        ! THIS ALSO TAKES A FULL SOLVE OFF EVERY LOOP. The in-loop moment ran an
+        ! omega_c=0 counterfactual, a second value function solve and
+        ! distribution convergence, and the pin skips it -- about a third of a
+        ! loop given back to the nine brackets actually being calibrated.
+        integer :: omega_c_is_pinned=1
         integer, parameter :: calibrate_weight_on_child=1
 
         ! WHETHER A POINT MEASURES OMEGA_C'S MOMENT. It costs a second
