@@ -1,3 +1,49 @@
+## 14 September 06:05 UTC -- y_u IS A FUNCTION OF PARTICIPATION, AND y_u = 0.74
+## IS INCOMPATIBLE WITH DRUG USE AT 8.9 PER CENT
+
+Pooling every point measured tonight -- aleph in {60, 80, 95, 110}, SMR in
+{1, 2}, c_bar in {0.0276, 0.047, 0.087, 0.2}, theta in {0.075, 0.095} and b over
+two orders of magnitude -- y_u is a tight monotone function of the participation
+rate and of nothing else:
+
+    drug users   2.1%  6.2%  6.5%   9%   15%   17%   22%   29%   43%   46%   55%   70%   97%
+    y_u         0.264 0.396 0.414 ~0.45 0.484 0.516 0.579 0.646 0.753 0.734 0.779 0.792 1.023
+
+aleph = 60 at 43 per cent use gives y_u = 0.753; aleph = 95 at 46 per cent gives
+0.734.  The same y_u with aleph differing by 58 per cent.
+
+**SO THE ALEPH RESULT AT 05:50 WAS ALEPH ACTING THROUGH PARTICIPATION.**  Lowering
+aleph raised use and higher use raised y_u; aleph has no independent grip on the
+income of drug users.  The entry above should be read with that correction.  The
+finding that aleph was mis-calibrated STANDS -- VSL over income read 147 against
+80 -- but it is not the reason y_u was low.
+
+**y_u = 0.74 REQUIRES ABOUT 43 PER CENT PARTICIPATION.  THE TARGET IS 8.9.**  At
+8.9 per cent use y_u is 0.45 to 0.50 whatever the instruments do.  The two
+moments cannot both be matched, by any parameter in the model.
+
+The mechanism is not a defect and is probably right: when few people use, users
+are a selected tail -- poor, unemployed, disproportionately homeless.  Widen
+participation and the user population reaches up into the middle of the income
+distribution.  The DATA says 8.9 per cent use and users at 0.74 of average
+income.  The model cannot produce both, which is a statement about the model's
+selection mechanism rather than about its calibration.
+
+**WHAT THIS MEANS FOR kappa_phi_d.**  It owns y_u as its bracket.  Since y_u is
+pinned by participation, kappa_phi_d cannot close that gap and will walk to a
+bound trying.  Either y_u comes out of the scored set, or it is scored knowing it
+will read -35 per cent or so at the calibrated point, or the selection mechanism
+that makes users poor at low participation is revisited -- the job-finding
+penalty multiple_find_if_addicted, which divides the finding rate by about 22 for
+the addicted, is the obvious candidate.  That is the author's call.
+
+**AND b's LEVERAGE IS PROPORTIONAL TO THE PRICE OF DEATH.**  At aleph 110 b held
+use near 9 per cent at 2.9e-4; at aleph 60 it took 1.76e-3, six times more; at
+SMR 1 no b worked at all across a 24-fold range.  b deters by making the drug
+less attractive at the margin, mortality by removing the future, so b's grip
+scales with aleph times kappa_phi_d.  They are not independent instruments on
+participation.
+
 ## 14 September 05:50 UTC -- ALEPH WAS WHY ONLY THE POOR USED. THE AUTHOR CALLED
 ## IT, AND IT OVERTURNS MOST OF TONIGHT'S CONCLUSIONS ABOUT kappa_phi_d
 
