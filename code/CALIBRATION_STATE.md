@@ -1,3 +1,49 @@
+## 14 September 07:35 UTC -- BOTH BRANCHES MEASURED. THE PRICE OF THE CONSTRAINT,
+## EXACTLY
+
+The constraint and the drug use target ARE compatible -- the claim a few minutes
+earlier that they were directly incompatible is withdrawn, it was made before the
+b = 1.2e-3 point landed.  At aleph 88 with b 1.2e-3 the negative mass is 7.7e-7,
+below tolerance, with drug use at 8.08 per cent.
+
+    moment                     A: aleph 60   B: aleph 88    target
+                                 b 2.0e-3      b 1.2e-3
+    drug users                    +0.6%         -9.2%       0.0890
+    SUD share of the homeless     -0.9%        +56.3%       0.2170
+    y_u                           +1.8%        -33.9%       0.7400
+    SMI share of the homeless     -3.7%        -10.1%       0.2500
+    VSL / income                  +4.1%        +43.8%      80.0
+    theta drug share              +4.9%        +27.8%       0.14098
+    c_bar food stamps            -17.8%        -17.1%       0.00420
+    pi_eu unemployment           -29.1%        -27.9%       0.0490
+    h_1 homelessness             -40.2%        -33.7%       0.0100
+    NEGATIVE VALUE OF LIFE        0.281%      0.00008%
+
+**BRANCH A HAS SIX MOMENTS INSIDE FIVE PER CENT.  BRANCH B HAS NONE INSIDE TEN.**
+
+The two are near-identical on c_bar, pi_eu and h_1 -- the three whose instruments
+have not moved yet -- so the block should close those either way.  The whole
+difference is in the six that carry the drug and homelessness story, and A wins
+all six, several by an order of magnitude.
+
+**THE PRICE OF THE CONSTRAINT, EXACTLY:** enforcing it costs VSL (4 per cent off
+to 44), y_u (2 to 34), the SUD share of the homeless (1 to 56) and theta (5 to
+28).  What it buys is that NO household, rather than 0.281 per cent of them,
+values life negatively -- and those 0.281 per cent are 100 per cent homeless,
+99.99 per cent without wage income, and only 20 per cent disordered.
+
+**WHAT DRIVES THE NEGATIVE MASS IS PARTICIPATION, NOT aleph.**  At aleph 88 the
+mass is 1e-7 at b 2.0e-3 (use 0.71 per cent), 7.7e-7 at b 1.2e-3 (use 8.08) and
+0.138 per cent at b 8e-4 (use 29.3).  More users means more households on the
+street with no income, which is what puts them below zero.  aleph matters only
+because it changes the b needed for a given participation rate.
+
+**BOTH VECTORS ARE RECORDED** so either can be run without re-deriving it:
+
+    A: value_of_life 60, addiction_scalar_1 0.0020
+    B: value_of_life 88, addiction_scalar_1 0.0012
+    both: theta 0.095, kappa_phi_d 2, c_bar 0.087, pi_V 0.0463, omega_c 0 pinned
+
 ## 14 September 07:15 UTC -- EVERY HOUSEHOLD WITH A NEGATIVE VALUE OF LIFE IS
 ## HOMELESS. THE CONSTRAINT IS SUPPRESSING A RESULT, NOT CORRECTING AN ERROR
 
