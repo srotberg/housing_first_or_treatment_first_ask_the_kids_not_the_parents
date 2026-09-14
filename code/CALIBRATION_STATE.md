@@ -1,3 +1,93 @@
+## 14 September 18:40 UTC -- cbar SOLVED EXACTLY, NOT SEARCHED, AND THREE
+## INSTRUMENTS ARE LIVE THAT THE AUTHOR'S STAGING SAYS SHOULD BE HELD
+
+**cbar HAS A CLOSED FORM DERIVATIVE AND DOES NOT NEED A SEARCH.**  The programme
+is `snap = max(0, cbar - 0.3y)`, so aggregate spending is
+
+    S(cbar) = int_0^{cbar/tau} (cbar - tau*y) f(y) dy
+
+and differentiating under the integral kills the boundary term, because the
+integrand is zero at the eligibility limit.  What is left is exact:
+
+    dS/dcbar = mass * recipient share
+
+Both factors are already printed every loop.  At the bpl_run point: mass 50.889,
+recipient share 0.079280, S = 0.179823, output 61.667, so dS/dcbar = 4.0345 and
+the local exponent is k = 1.952.  **The units check out**: average benefit per
+recipient is S/(mass*share) = 0.04457, which is 51.2 per cent of cbar, exactly
+what a 30 per cent taper on a near-uniform bottom gives.  A first attempt at this
+divided S by the recipient SHARE without the mass and got an average benefit of
+2.27 against a maximum allotment of 0.087 -- twenty-six times the legal maximum.
+That absurdity is what caught the missing mass, so the ratio is worth computing
+every time this is redone.
+
+Spending must rise by 1.4403 to reach 0.0042 of output, which brackets cbar:
+
+    linear step, ignores convexity, UPPER bound   0.10663
+    power law at the measured k=1.952, LOWER      0.10488
+
+so **cbar* = 0.105**, a 21 per cent rise from 0.087.  This is a measured bracket
+and not an elasticity: k is computed from this economy's own printed mass and
+share, not assumed.
+
+**THE ARCHIVE CANNOT SHORTCUT IT.**  1174 archived points sit within 10 per cent
+of the cbar target, at cbar between 0.008 and 0.043, median 0.031.  Every one of
+them is a different economy -- output near 30 against 61.7 now -- so their cbar is
+not transferable.  cbar is economy-specific and only the local derivative from the
+current point is a valid instrument.  The old 2.52 exponent quoted earlier in the
+session was measured in one of those economies and does not apply here.
+
+**WHY cbar MUST BE PINNED BEFORE THE PRODUCTIVITY FLOOR SETTLES.**  The author,
+14 September: *"c bar affects the value of life and if it's too high, you'll
+choose the lowest income too low"*.  cbar is a means-tested consumption floor, so
+it sets what the poorest household consumes, which is what decides whether its
+value of life is positive.  The value-of-life constraint now clears negative mass
+by raising `bottom_productivity_level`.  Run the two together and they are one
+equation in two unknowns: at a cbar 21 per cent too low the floor does work that
+belongs to cbar and lands bottom productivity too HIGH; at a cbar too high it
+lands too low.  **Order: pin cbar, then let the floor run.**  The live run is
+doing both at once, and cbar moves 0.16 per cent a loop, so it needs about 115
+loops to reach 0.105 -- every one of them at the wrong consumption floor.
+
+**THREE INSTRUMENTS ARE LIVE THAT THE STAGING SAYS SHOULD BE HELD.**  Reading the
+adjusters rather than the intent:
+
+    kappa_uem              adjuster 20     MOVING, 1.00000 -> 1.00702
+    newborn_endowment      adjuster 0.2    MOVING, scale 0.83933 -> 0.83181
+    kappa_phi_d_level      adjuster 2      DRIFTING off the pin, 2 -> 1.98803
+
+kappa_phi_d_level is the one that matters.  The author, 14 September: *"keep it
+fixed at 2 and if you do update it, it cannot be updated faster than 0.1 per cent
+per iteration"*, after *"because you allowed kappaphid to be so low! that explains
+why we had such a bad equilibrium"*.  It is obeying the 0.1 per cent cap but it is
+not pinned, and it is falling monotonically: five loops have taken it to 1.98803,
+which extrapolates to 1.81 in a hundred loops.  Flagged for the author rather than
+pinned unilaterally, because the instruction permits a slow update.
+
+`weight_on_child` (omega_c) carries a live adjuster of 0.002 but CANNOT move:
+`measure_child_gap=0` switches off the child counterfactual, the log says `OMEGA
+SKIPPED child counterfactual off by measure_child_gap` every loop, and the update
+never runs.  So omega_c is at 0 as the author requires, held by the gate rather
+than by its adjuster.  **The switch to flip in stage 3 is `measure_child_gap`, not
+the adjuster.**
+
+**A CHECKER FOR THE HANDOVER, AND THE CHECKER'S OWN BUG.**  `code/check_handover.py`
+validates every seeded name against the Fortran's `case` keys, because an
+unrecognised name is SILENTLY ignored and the run keeps the compiled default --
+the `smallest_rental` failure of this afternoon.  Writing it reproduced the same
+class of error one level up: a character class of `[a-z0-9_]` dropped `zeta_DI`,
+the only key in the file with capitals, and reported a good key as unknown.  Worse
+than the false positive is the false negative it implies: an unknown key
+containing a capital would have read as fine.  The committed version uses
+`[A-Za-z0-9_]` and prints the parser-key count so a sudden drop is visible.
+
+**A STALE PRINT THAT MISREAD AS A BUG.**  The floor still prints `VALUE OF LIFE
+FLOOR: aleph 59.99 -> 83.39` from the rule it replaced.  Nothing is assigned --
+aleph only answers to VSL now, and the line below it, `VALUE OF LIFE CONSTRAINT:
+raising the smallest productivity`, is the one that acts.  I read the stale line
+first and was thirty seconds from reporting that the author's instruction had not
+taken.  It should be deleted the next time the Fortran is open.
+
 ## 14 September 16:05 UTC -- pi_V IS A TRANSIENT, NOT A BUG, AND MY SEED HAD BEEN
 ## SILENTLY DROPPING A PARAMETER ALL AFTERNOON
 
