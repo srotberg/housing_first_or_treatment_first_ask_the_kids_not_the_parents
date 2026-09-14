@@ -1,3 +1,54 @@
+## 14 September 10:55 UTC -- b TURNED AT LOOP 113 AND THE RUN DESTABILISED ON THE
+## SAME LOOP. A PERIOD-3 ORBIT SINCE.
+
+For about twenty loops the drug share was very nearly a constant, and then it was
+not.  Window centres of seven, with the spread:
+
+    loops  89- 95   0.38610   sd 0.00103
+    loops  96-102   0.38598   sd 0.00065
+    loops 103-109   0.38900   sd 0.00103
+    loops 110-116   0.39542   sd 0.00962
+    loops 117-123   0.40381   sd 0.01178
+
+**The spread rises eighteenfold between the second window and the last.**  The
+flattening I reported at 10:11 and 10:21 was real -- sd 0.00065 over loops 96-102
+is as close to a fixed point as this run has come -- and it ENDED at loop 114.
+
+**WHAT HAPPENED AT 114: b TURNED.**  It had fallen monotonically for 113 loops,
+0.0012 at the handover down to 0.000839205, and then reversed:
+
+    loop 111  b=0.00084766    share 0.39033
+    loop 112  b=0.000843422   share 0.38993
+    loop 113  b=0.000839205   share 0.39141     <- b's minimum
+    loop 114  b=0.000843401   share 0.41869     <- share jumps 0.027 in one loop
+    loop 115  b=0.000839184   share 0.39395
+    loop 116  b=0.00084338    share 0.39358
+    loop 117  b=0.000847597   share 0.41786
+    loop 120  b=0.000851813   share 0.41760
+    loop 123  b=0.000854124   share 0.41673
+
+Since then b oscillates and trends back UP, and the share runs a PERIOD-3 ORBIT:
+spikes at 114, 117, 120 and 123, amplitude about 0.024, with roughly 0.394 in
+between.  The report's own header sees the same thing from the other side --
+loops 117 and 123 are near-identical spike readings six apart, b -32.9 and -32.8
+per cent, lambda_d -36.2 and -36.1, theta +6.2 and +6.2 -- and those magnitudes
+are the OPPOSITE SIGN to the 74/83 pair, which read b +50.4 and +50.1.  So this is
+a different orbit, not the old one continuing.
+
+**WHAT IT MEANS AND WHAT IT DOES NOT.**  b's bracket has found a turning point at
+about 8.4e-4 and is now hunting around it rather than converging to it.  Two
+readings of that are open and I am not choosing between them without measuring:
+the step may simply be too large for the local curvature, or b may have crossed
+the ABSTENTION CORNER, which the file's own comment at hold_theta puts at
+x <= b*(w_c/w_v) and which moves with b.  The second would make the jump a genuine
+discontinuity rather than an overshoot, and the two want different fixes.
+
+**FOR THE b QUESTION THE AUTHOR ASKED ON 14 September** -- *"b may have to be
+around 0.00001"* -- the search's own answer after 123 loops is 8.4e-4, two orders
+of magnitude above that, and it reached it monotonically before turning.  That is
+the search's opinion, not a converged value, and the orbit above is why the
+distinction matters.
+
 ## 14 September 10:35 UTC -- MOST OF THE GAPS I HAVE BEEN REPORTING ARE FROZEN
 ## PARAMETERS, NOT CALIBRATION FAILURES
 
