@@ -1,3 +1,57 @@
+## 14 September 06:20 UTC -- THE VALUE OF LIFE FLOOR IS THE BINDING CONSTRAINT.
+## VSL = 80 IS UNREACHABLE, AND IT HAS BEEN GOVERNING ALEPH ALL NIGHT
+
+The block started at aleph = 57, the value the measured VSL map says delivers 80
+at the target participation rate.  Loop 1 was the best point of the night:
+
+    loop   users    aleph    y_u    theta    h_1      c_bar
+      1   25.27%    83.37   0.751   0.163   0.901%   0.00401
+      2    0.17%   220.54   0.212   0.650   0.410%   0.00289
+      7    0.14%   191.72   0.214   0.693   0.345%   0.00239
+    TGT     8.90%   80.00   0.740   0.141   1.000%   0.00420
+
+aleph, y_u, pi_eu, c_bar and h_1 were ALL inside ten per cent at loop 1.  Then
+value_of_life jumped 57.1 -> 123 in a single step, and the log says why:
+
+    VALUE OF LIFE FLOOR BINDS: the worst-off household values a period of life
+    at -65.93 and 0.2237 of mass is below zero
+    VALUE OF LIFE FLOOR: aleph 57.057 -> 122.986
+    VALUE OF LIFE FLOOR: the VSL moment is NOT scored this loop
+
+**SO ALEPH HAS A HARD LOWER BOUND NEAR 123**, set by the author's own
+requirement that no household values life negatively -- *"you also need to make
+sure that no one has a negative value of life"*.  At aleph 57 that constraint
+fails for 0.44 per cent of households, the floor overrides the 0.1 per cent cap,
+and the calibration settles at aleph 122 with the VSL moment near 192.
+
+**VSL OVER INCOME = 80 IS THEREFORE UNREACHABLE.**  Not weakly identified, not
+badly bracketed: the aleph it needs is below the floor.
+
+**AND IT EXPLAINS THE WHOLE NIGHT.**  Read with the 06:05 finding that y_u is a
+function of participation alone:
+
+  - aleph was never "too high by 84 per cent" in any fixable sense.  It was AT
+    ITS FLOOR, and the floor is an economic constraint rather than a bound;
+  - b's leverage scales with aleph times kappa_phi_d, so the floor on aleph puts
+    a floor on how much control b has over participation;
+  - y_u tracks participation; participation is controlled by aleph times
+    kappa_phi_d; aleph cannot fall below the floor; so y_u cannot reach 0.74.
+
+The chain runs from the no-negative-value-of-life constraint all the way to the
+income of drug users, and every intermediate conclusion drawn tonight about
+kappa_phi_d, b and aleph was a measurement of where that chain binds.
+
+**THREE TARGETS AND A CONSTRAINT, AND THEY DO NOT ALL FIT:**
+
+  1. VSL over income = 80
+  2. no household with a negative value of life
+  3. drug use at 8.9 per cent with users at 0.74 of average income
+
+Loop 1 shows 1 and 3 are nearly compatible with each other -- aleph 83, y_u
+0.751 -- and it is 2 that rules the point out.  Which of the three gives is the
+author's call.  It is a modelling decision and not a calibration one, and no
+amount of searching will dissolve it.
+
 ## 14 September 06:05 UTC -- y_u IS A FUNCTION OF PARTICIPATION, AND y_u = 0.74
 ## IS INCOMPATIBLE WITH DRUG USE AT 8.9 PER CENT
 
