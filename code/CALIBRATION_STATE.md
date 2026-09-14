@@ -1,3 +1,45 @@
+## 14 September 11:15 UTC -- THE ORBIT IS DAMPING. THAT CLOSES THE 10:55 QUESTION
+## IN FAVOUR OF OVERSHOOT, NOT A CORNER
+
+At 10:55 I left two readings of the loop-114 destabilisation open: b's step too
+large for the local curvature, or b crossing the abstention corner.  The orbit has
+since run long enough to separate them.  Baseline is 0.39373, the median of the
+non-spike loops since 114:
+
+    spike loop   level      amplitude
+        114     0.41869     0.02496
+        117     0.41786     0.02413
+        120     0.41760     0.02387
+        123     0.41673     0.02300
+        126     0.41603     0.02230
+        131     0.41521     0.02147
+        135     0.41463     0.02089
+
+**Monotonically decreasing across all seven, to 84 per cent of the first over 21
+loops.**  The interval between spikes has also lengthened, 3-3-3-3-5-4.
+
+**A corner crossing does not damp.**  If b had crossed the abstention threshold the
+jump would recur at full size every time b came back across it, and the amplitude
+would track b's oscillation rather than decay monotonically through it.  It
+decays.  So this is an OVERSHOOT in b's bracket, and the search is recovering from
+it on its own.  The reading that b crossed a discontinuity is withdrawn.
+
+b itself has stopped trending: it peaked at 0.000854124 on loop 123 and has come
+back to 0.000846012 by 137, oscillating in a band of about 8e-6.  Loop 137's
+header reads "within one per cent of loop 136", b -0.2 per cent.
+
+**VSL is the best it has been all run**, 95.57 against 80, 19.5 per cent off and
+down from 58.9 at loop 29.  Unemployment is ON TARGET at 0.9 per cent and the SMI
+share at 0.8.
+
+**THE ONE THING GETTING WORSE IS A FROZEN MOMENT.**  The SUD rate is 42.3 per cent
+off, 0.0524 against 0.0368, up from 27.7 at loop 111.  Its adjuster is one of the
+eleven apply_first_block_freeze() zeroes, so nothing in this block is holding it
+and it drifts as b moves.  It will need `probability_of_becoming_addicted` released
+-- or the composition pinned some other way -- whenever the block is reopened, and
+the longer b hunts the further it goes.  Recorded rather than acted on: releasing a
+frozen adjuster mid-search is a scope change and the author's call.
+
 ## 14 September 10:55 UTC -- b TURNED AT LOOP 113 AND THE RUN DESTABILISED ON THE
 ## SAME LOOP. A PERIOD-3 ORBIT SINCE.
 
