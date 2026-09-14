@@ -1,3 +1,51 @@
+## 14 September 23:35 UTC -- TWO SETTLED POINTS, AND RAISING theta COST MORE y_u
+## THAN LOWERING kappa BOUGHT BACK
+
+**THE PAIR.**  Both settled: b at target, and the reported figures flat to three
+digits across four or more loops.
+
+                            theta 0.079      theta 0.081
+                            kappa 1.50       kappa 1.45
+    y_u corrected to b=.089    0.684            0.649
+    drug spending moment       0.132            0.126
+    b                          0.096  (+7.6%)   0.092  (+3.4%)
+
+The author asked for *"raise theta just a bit. And lower kappa just a bit"*.  Both
+were sized from measured sensitivities -- theta from the theta^2.5 fit, kappa from
+the descent slope of -1.00 per unit on corrected y_u, less the -1.73 elasticity of
+y_u on theta.  The result went BACKWARDS on both scored moments.
+
+**WHY, AND IT IS THE USEFUL PART.**  y_u and the drug spending moment move
+OPPOSITELY through theta, because theta works on y_u only through participation:
+a higher weight makes drugs worth using further down the income distribution, which
+lowers the average income of users.  The exchange rate measured across these two
+points is about TEN TO ONE AGAINST THE SPENDING MOMENT -- 0.006 of spending ratio
+cost 0.035 of y_u.  Buying the spending ratio into the author's 0.14-0.16 band
+from 0.132 would cost roughly 0.08 of y_u, which is the whole of the remaining
+gap.
+
+**SO THE TWO TARGETS TRADE OFF AND BOTH CANNOT BE HIT.**  This is the same shape
+as the earlier finding that b and y_u trade off, and it has the same root: in this
+model the only thing that moves the composition of users is who finds drugs worth
+using, so every instrument that touches y_u touches participation and spending
+too.  RECOMMENDED to the author: theta 0.079, kappa near 1.40, accepting a
+spending moment near 0.132 at about 6 per cent under the band.  Not done -- the
+last restart made on my own sizing moved backwards, and the choice between two
+targets that cannot both be met is the author's.
+
+**FIVE TIMES TODAY A SHORT FLAT WINDOW WAS CALLED AN EQUILIBRIUM.**  The latest:
+corrected y_u was reported as "settling near 0.60" while b was still 12 per cent
+light; with b back at target it settled at 0.649.  The test that works is the one
+used for both points above -- flat to three digits across four or more loops AND
+b inside its own target band -- and it should be applied before any number is
+quoted, not after the author queries it.
+
+**WHAT IS NOW MEASURED AND ON DISK.**  SEED_BEST_T079_K15.txt and
+SEED_T081_K145.txt are the two settled points.  cbar's second pass at the first of
+them gives [0.1341, 0.1389] against 0.105 pinned.  Both runs kept aleph, beta,
+tau_l, p_m and tau_u inside about 4 per cent throughout, so the trade being
+argued over is confined to the drug block.
+
 ## 14 September 22:45 UTC -- THE BEST POINT OF THE DAY: kappa_phi_d 1.5 WITH
 ## theta 0.079, AND THE TWO HAD TO MOVE TOGETHER
 
