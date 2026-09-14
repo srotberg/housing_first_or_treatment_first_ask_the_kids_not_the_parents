@@ -1419,24 +1419,9 @@ else:
 for _p, (_m, _fb, _lo, _hi, _d, _e) in list(RULES.items()):
     RULES[_p] = (_m, _fb, _lo, _hi, min(_d, SLOW_DAMPING), min(_e, SLOW_CAP))
 
-# THE KEY-PARAMETER BLOCK, 14 September.  The author: *"just let the model run
-# with the following targets live: aleph, b, Sud, Sud homeless, homelessness,
-# kappa=2, theta=.095 with the last two pinned"*, and *"use my method of updating
-# for a while on those key parameters first"*.
-#
-# THIS PRUNE IS LAST ON PURPOSE.  Commenting entries out of the RULES literal does
-# NOT hold them: the loop above at "if _p in RULES or _p in FIXED ..." adds back
-# any assigned parameter that is in none of RULES, FIXED, CONFIG or HELD, so a
-# parameter removed from the literal is simply re-added with a theory slope.  The
-# restriction has to run after every mutation of RULES, which is here.
-#
-# A parameter dropped here is not reset: it is absent from the step, so it keeps
-# whatever the base point carries, which is the aleph-60 seed.
-KEY_BLOCK = ('value_of_life', 'addiction_scalar_1', 'addiction_onset_base',
-             'multiple_find_if_addicted', 'size_homelessness')
-for _p in [k for k in RULES if k not in KEY_BLOCK]:
-    RULES.pop(_p)
-assert set(RULES) == set(KEY_BLOCK), sorted(set(KEY_BLOCK) ^ set(RULES))
+# THE PRUNE IS REMOVED, 14 September: *"Don't hold parameters. Let them move
+# still if needed"*.  It restricted RULES to five for about twenty minutes,
+# on the earlier and narrower instruction.  The full assignment is live.
 
 
 def model_hash():

@@ -82,7 +82,13 @@
         ! suspended here and h_1 calibrates on the homelessness rate, which is
         ! what "calibrate homelessness" has to mean if the loop is to do it.
         ! Turning the block off restores the tie.
-        integer :: first_block_only=1
+        ! RELEASED, 14 September: *"Don't hold parameters. Let them move still
+        ! if needed"*.  At 0 apply_first_block_freeze returns immediately and
+        ! the ten adjusters it zeroed are live again -- tau_l, c_bar, gamma,
+        ! beta, p_m, mu_H, the child penalty, the newborn endowment, sigma_y
+        ! and rent-to-price.  Their moments were adrift with no instrument:
+        ! w_bot +236 per cent, h_2 -76, gamma -21, c_bar -18 at the seed.
+        integer :: first_block_only=0
 
         ! THETA IS HELD INDEPENDENTLY OF THE THREE-BLOCK SWITCH. The author,
         ! 11 September: *"I think we can hold theta constant in the full
@@ -135,13 +141,17 @@
         ! every run and nothing could move it. Its moment was still printed, so
         ! the gap was visible and unattached -- the same shape as the SUD share
         ! of the homeless, whose two instruments were both out of action.
-        ! PINNED AGAIN, 14 September: *"kappa=2, theta=.095 with the last two
-        ! pinned"*, *"Theta=.095 is the right number"*.  hold_theta=1 zeroes
-        ! relative_share_of_addiction_adj AND drops the drug spending share
-        ! from the do-while, so no orphaned distance is left behind.  That is
-        ! what this block needs: theta cannot close that moment at all, by the
-        ! zero-income bound recorded at 08:40 on 14 September.
-        integer, parameter :: hold_theta=1
+        ! LIVE AGAIN, 14 September, on the author's *"Don't hold parameters. Let
+        ! them move still if needed"*, with theta named among the targets to hit.
+        ! This reverses the pin made an hour earlier on their own *"theta=.095
+        ! with the last two pinned"*: the later instruction is the operative one,
+        ! and hitting a target requires the instrument to move.
+        !
+        ! The 08:40 bound is NOT a reason to hold it.  That bound was measured at
+        ! aleph 88, where the drug share reads 0.39; at aleph 60 the same theta
+        ! gives 0.1479 against 0.14098, so the moment is reachable and theta
+        ! should be free to find it.
+        integer, parameter :: hold_theta=0
 
         integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
@@ -4528,7 +4538,11 @@
         ! some value to allow homelessness to be 0.4%"). distance_size_homeless-
         ! ness is zeroed with the adjuster so the loop cannot be held open by a
         ! moment nothing moves.
-        real(8) :: size_homelessness_adjuster=0.d0
+        ! DECLARED LIVE, 14 September.  This was 0.d0 and h_1 got its 20 from
+        ! apply_first_block_freeze alone, so releasing the freeze would have
+        ! silently left homelessness with no instrument -- and homelessness is
+        ! one of the eight targets the author asked to hit.
+        real(8) :: size_homelessness_adjuster=20.d0
         ! h_1 AS A FRACTION OF h_2. One per cent, on the author's instruction.
         real(8) :: h1_share_of_h2=0.01d0
         integer, parameter :: tie_h1_to_h2=1
@@ -34840,10 +34854,9 @@
         ! first_block_only.
         size_homelessness_adjuster=20.d0
 
-        ! kappa_phi_d PINNED AT 2 on the author's instruction.  Its adjuster
-        ! is declared 2.d0, so without this the run walks it -- blkB88 took it
-        ! from 2.0 to 1.86 over 290 loops while it was meant to be fixed.
-        kappa_phi_d_level_adjuster=0.d0
+        ! kappa_phi_d IS LIVE, not pinned: *"Don't hold parameters"*, and kappa
+        ! is named among the targets to hit.  It is bracketed on y_u, the income
+        ! of drug users, which reads 0.753 against 0.740 at the aleph-60 seed.
 
         ! NOT FROZEN, AND THAT IS A DELIBERATE READING OF A SHORT INSTRUCTION.
         ! The author named five live and pinned two; they did not say what to do
