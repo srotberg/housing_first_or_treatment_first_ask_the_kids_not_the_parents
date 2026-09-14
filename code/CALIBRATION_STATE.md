@@ -1,3 +1,54 @@
+## 14 September 10:35 UTC -- MOST OF THE GAPS I HAVE BEEN REPORTING ARE FROZEN
+## PARAMETERS, NOT CALIBRATION FAILURES
+
+`calibration_report.py` reads ADJUSTER DECLARATIONS, and `apply_first_block_freeze()`
+sets adjusters at RUN TIME.  I found one half of this at 09:01 -- size_homelessness
+dropped from the table although the freeze makes it live at 20.  The other half is
+larger and I have been quoting it at every firing since.
+
+**The freeze zeroes ELEVEN adjusters**: relative_share_of_housing, discount_factor,
+labor_income_tax_rate, max_food_cost, smi_onset_level, mu_homeless,
+penalty_child_addicted, newborn_endowment, kkk_sigma_scale, rent_to_price and
+probability_of_becoming_addicted.  Their DECLARATIONS are non-zero, so the report
+keeps a row for each and prints a gap.  Nothing is moving any of them.
+
+**The tell was in the table the whole time**: a frozen row prints `=` in the
+"-> after" column, because the value does not change.  Loop 111, sorted by gap:
+
+    parameter                          gap     live?
+    relative_share_of_addiction_1    176.9%    LIVE
+    penalty_child_addicted            42.6%    frozen, prints "="
+    probability_of_becoming_addicted  30.1%    frozen, prints "="
+    max_food_cost                     23.6%    frozen
+    value_of_life                     21.3%    LIVE
+    labor_income_tax_rate              5.9%    frozen, prints "="
+    kappa_uem                          1.0%    LIVE
+    separation_rate                    0.5%    LIVE, ON TARGET
+    voucher_probability                0.0%    LIVE, ON TARGET
+
+**FOUR of the five worst gaps are frozen parameters.**  The live block is five
+moments, and it reads: drug share 176.9 per cent, VSL 21.3, SMI share 1.0,
+unemployment 0.5 ON TARGET, voucher 0.0 ON TARGET -- plus size_homelessness, which
+is live and has no row at all.  That is a considerably better first block than
+every table I have sent this morning implies, and the difference is entirely my
+reading.
+
+**WHAT THIS SETTLES ABOUT THE SUD RATE.**  Its smoothed series rises monotonically
+over six windows of seven loops -- +3.7, +6.6, +16.9, +19.3, +22.9, +27.7 per cent
+-- which is a real trend on the right cadence, not the artefact I warned about at
+10:05.  But `probability_of_becoming_addicted_adjuster` is one of the eleven the
+freeze zeroes, so the SUD rate is a HELD moment drifting under other parameters,
+not a bracket failing.  Participation, which b IS bracketed on, sits at 0.0882
+against 0.0890, -0.9 per cent.  So b falls (0.0012 -> 0.000843, -29.7 per cent over
+the run) chasing a participation gap that is nearly closed, total use holds, and
+the composition shifts from mild toward severe with nothing holding it.  Mild is
+4.12 per cent in the model against 5.22 in the data and severe 4.70 against 3.68.
+
+**THE FIX IS TO THE REPORT, NOT THE MODEL**: zero_adjusters() must read the
+runtime assignments in apply_first_block_freeze() as well as the declarations, in
+both directions.  Not done -- it is the author's tool and the freeze list will
+change with the block; putting it to them rather than patching it mid-search.
+
 ## 14 September 10:05 UTC -- THE DRUG SHARE DRIFT IS REAL, MEASURED OVER NINE
 ## WINDOWS, AND theta IS PUSHING THE OTHER WAY THE WHOLE TIME
 
