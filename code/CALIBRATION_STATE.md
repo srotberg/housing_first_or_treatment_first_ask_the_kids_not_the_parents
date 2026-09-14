@@ -1,3 +1,66 @@
+## 14 September 20:45 UTC -- THE GATE ANSWERED IN FIVE STEPS WHAT WOULD HAVE
+## TAKEN TWO HUNDRED: kappa_phi_d NO LONGER MOVES y_u AT kappa NEAR 2
+
+**THE AUTHOR'S EXPERIMENT.**  14 September: *"What you need to check is whether yu
+is high when kappa is lower when b is on target. I think maybe the best way to
+adjust kappa is only when b is close to target, not when it's far"*, then *"you
+can move kappa a bit faster. Maybe 1%"*.  Both are now in the file: kappa_phi_d
+steps only when b is within `kappa_gate_b_tolerance` (ten per cent) of its target,
+and then at one per cent a loop.
+
+**WHY THE GATE WAS NECESSARY, MEASURED.**  y_u is a COMPOSITION statistic -- who
+the users are, not how many -- so while the drug stock refills it moves for
+reasons that have nothing to do with kappa.  Across the restart before the gate
+existed, y_u ran 0.2026, 0.2776, 0.3485, 0.4800, 0.4928, 0.4914, 0.4888, 0.4863,
+0.4769, 0.4115, 0.3979, 0.4611 -- a swing of two and a half fold -- purely as b
+climbed from 0.023 to 0.086.  Every kappa step taken in that swing read the refill
+as signal, and since the step is one-signed while y_u is below target, every
+misreading pushed the same way.  With the gate on, the first three loops of the
+new run were `KAPPA GATE SHUT` and kappa did not move at all.
+
+**THE RESULT, FIVE CLEAN STEPS WITH b HELD AT TARGET.**
+
+    b        0.09569  0.09502  0.09137  0.09011  (all within 10 per cent of 0.089)
+    kappa    1.9466   1.9271   1.9079   1.8888   1.8699
+    y_u      0.5032   0.5041   0.5066   0.5023   0.4913
+
+kappa fell 4.9 per cent and **y_u did not rise**.  The file's own measurement,
+taken at kappa 8.0 -> 6.5 moving y_u 0.333 -> 0.533, is an elasticity of -2.26,
+which predicts y_u near 0.55 after a cut this size.  The observed spread over the
+first four steps is 0.0044, ten times smaller than the predicted move, and the
+fifth step went the wrong way.  A log-log fit over the five gives **+0.51**.
+
+**WHAT IS AND IS NOT ESTABLISHED.**  Five points is a short window and +0.51 is
+small enough to be noise around zero, with the last point doing most of the work,
+so the SIGN reversal is not established.  What is established is the thing that
+matters: **at kappa near 1.9, lowering kappa_phi_d does not raise y_u.** The
+lever measured at kappa 8 is spent by the time the parameter reaches 2.  This is
+the second elasticity today to collapse when the parameter actually travelled --
+tau_u's went from a quoted -5.48 to a measured -1.92 -- and the standing rule
+covers both: **a result measured at one value of a parameter is a result about
+that value until it is measured at another.**
+
+**SO THE DESCENT IS NOW PURE COST.**  kappa_phi_d is the mortality multiplier and
+the only thing holding participation in single digits; this file records drug use
+at 95 to 97 per cent at kappa = 1.  Continuing to spend it buys nothing on y_u.
+RECOMMENDED to the author: re-pin at 1.87 where it stands, or at 2.0.  Not done
+unilaterally -- the author set it moving.
+
+**AND y_u's GAP WAS NEVER kappa's TO CLOSE.**  The decomposition at loop 30 of
+the previous run: 38 per cent of users have the disorder and earn 0.734 of average
+against a datum of 0.711, ON TARGET, while the 62 per cent who are experimenters
+earn 0.343.  The blend is y_u.  The broken margin is who tries drugs, not what
+happens to the addicted -- which also means the instrument earmarked for y_u in
+the later block, `multiple_of_probabilities_of_employment_if_addicted`, is aimed
+at the group that is already right and can only close y_u by pushing 0.734
+further above 0.711.
+
+**WHAT ELSE THE RUN HAS DONE.**  tau_u has landed: 0.2460 against 0.245.  aleph
+has come from 105 to 86.7, +8.4 per cent and still falling -- it was reported as a
+stalled bracket four hours ago and was in fact waiting on the drug block, which is
+the same lesson as b's apparent weakness under tau_u.  tau_l, p_m, beta and pi_V
+are all inside two per cent.
+
 ## 14 September 19:05 UTC -- TWO INSTRUMENTS ON ONE STOCK AT A TEN TO ONE RATE,
 ## AND THE FASTER ONE IS UNDOING THE SLOWER ONE
 
