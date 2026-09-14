@@ -1,3 +1,43 @@
+## 14 September 09:14 UTC -- WITHDRAWN: THE RUN WAS NOT DEGRADING. LOOP 42 WAS A
+## SPIKE AND I READ IT AS A TREND
+
+**The 09:05 entry above is wrong on its main claim and the recommendation that
+followed it is withdrawn.**  I said every moment was worse than at loop 29, that
+the run was "degrading, not cycling", and that Branch B should be stopped.  Seven
+loops later:
+
+    moment                     loop 29   loop 42   loop 49    target
+    drug share                  153.2%    170.5%    158.8%
+    VSL over income              58.9%     57.5%     29.2%
+    SUD rate                      1.9%     33.2%      6.1%
+    unemployment                 14.9%     16.3%      8.9%
+    SMI share of the homeless     6.9%      5.9%      0.8%
+    voucher coverage              0.2%      3.0%      0.4%
+    food stamps                  30.5%     31.9%     28.2%
+
+FIVE of the nine are now inside ten per cent, which is the best the run has been.
+Loop 49's header reports b -0.3 per cent, lambda_d -0.2 and theta +0.1 against
+loop 48, and it no longer prints "the map is still settling; do not quote this
+table as the benchmark".  The last three readings of the drug share are 0.36343,
+0.36442 and 0.36482 -- a range of 0.0014, against 0.024 over the preceding seven.
+
+**What I did wrong is a rule already in ENGINE.md.**  "A LOOP'S MOMENT PRINT IS
+ONE ITERATE, NOT AN EQUILIBRIUM."  Loop 42's drug share of 0.38134 was the top of
+an oscillation, and loop 46's 0.38161 was the next one; I took the first as the
+end of a trend and wrote a table of one-iterate readings as though each column
+were a state.  The cycle centre did rise -- 0.35609 over loops 21-34, 0.36582 over
+35-42 -- but it then FLATTENED at 0.36494 over 43-49 rather than continuing, and
+the per-loop spread has collapsed in the last three.
+
+**WHAT SURVIVES UNCHANGED, and it is the part that matters.**  The drug share sits
+at 0.365 against a target of 0.14098, 159 per cent off, and theta has now spent 49
+loops at its cap moving 4.8 per cent in the direction that lowers it.  The bound
+recorded at 08:40 is structural and none of this touches it: the mean of s/y is at
+least the zero-income share whatever theta does.  The block still cannot close
+this term.  What is NOT true is that the rest of the block is falling apart, and I
+should not have said it was on seven loops of evidence when the cycle it sits in
+is eight loops long.
+
 ## 14 September 09:05 UTC -- LOOP 42: THE RUN IS DEGRADING, NOT CYCLING, AND THE
 ## 84 NaNs ARE NOT A TARGETED MOMENT
 
