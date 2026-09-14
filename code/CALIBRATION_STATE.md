@@ -1,3 +1,51 @@
+## 14 September 05:50 UTC -- ALEPH WAS WHY ONLY THE POOR USED. THE AUTHOR CALLED
+## IT, AND IT OVERTURNS MOST OF TONIGHT'S CONCLUSIONS ABOUT kappa_phi_d
+
+The author: *"but it could be also that aleph is too high....and that's why only
+the poor use"*, and *"you have to also keep the value of life constant"*.
+
+Measured, at b = 2.9e-4, theta = 0.095, SMR = 2, sweeping aleph alone:
+
+    aleph   VSL/income   ratio   y_u     drug users
+     60        88.2      1.471   0.822     69.9%
+     80       119.9      1.499   0.779     55.5%
+     95       143.5      1.510   0.734     46.2%
+    110       147        1.336   ~0.45      ~9%
+    TARGET     80                0.740      8.9%
+
+**y_u IS NOT STUCK AND NEVER WAS.**  At aleph 110 it reads about 0.45; at aleph
+60 it reads 0.822, OVERSHOOTING the target from above.  The value of life was
+nearly twice its own target, which makes death enormously costly and leaves only
+households with nothing to lose willing to use.  That is the whole income
+gradient among users.
+
+**AND IT INVALIDATES THE NIGHT'S kappa_phi_d REASONING.**  Every conclusion drawn
+about the SMR was taken at aleph = 110, where the value of life inflated every
+mortality effect by roughly eighty per cent:
+
+  - *"kappa_phi_d 2 to 1.5 will not close a -40 per cent y_u gap"* -- arithmetic
+    done on an over-priced mortality channel;
+  - *"y_u may not be reachable"* -- wrong, and wrong for this reason;
+  - *"the mortality channel is the dominant force on participation"* -- it is
+    dominant partly because it was mis-priced;
+  - the b-to-use non-monotonicity and the elasticity wandering from -0.24 to
+    -2.02 are most likely the same artefact, b modulating a mortality channel
+    whose price was wrong.
+
+With aleph near 60, SMR = 2 may need no adjustment at all.
+
+**THE RATIO COLUMN IS THE USEFUL PART.**  VSL over aleph runs 1.47 to 1.51 at
+high use but 1.34 at nine per cent, because fewer users dying means the average
+value of life is dragged down less.  So the aleph that delivers VSL = 80 depends
+on the participation rate it is measured at: about 54 at seventy per cent use,
+about 60 at the target's 8.9.  aleph is set to 60 and b is being bracketed there
+over 6e-4, 1.2e-3 and 2.5e-3 -- far above the 2.9e-4 that worked at aleph 110,
+because a cheaper death means much more use to claw back.
+
+**y_u SHOULD LAND INSIDE.**  It is 0.822 at aleph 60 with seventy per cent use
+and falls as b rises, so 0.74 sits between that and the 0.45 at the old aleph.
+Measured at the crossing, not predicted.
+
 ## 14 September 05:35 UTC -- PARTICIPATION IS A MORTALITY PHENOMENON. b CANNOT
 ## CONTROL IT AT SMR = 1, AND THE SMR = 1 EXPERIMENT HAS NO SOLUTION
 
