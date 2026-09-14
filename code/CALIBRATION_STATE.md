@@ -1,3 +1,47 @@
+## 14 September 07:00 UTC -- CORRECTION: y_u IS SET BY ALEPH, NOT BY
+## PARTICIPATION. THE DRUG BLOCK IS ESSENTIALLY SOLVED AT ALEPH = 60
+
+**THE 06:05 FINDING WAS A COMPOSITION ARTEFACT AND IS WITHDRAWN.**  It said y_u
+was a tight monotone function of the participation rate and of nothing else,
+built by pooling points that varied aleph, kappa_phi_d, c_bar, theta and b all
+at once.  Every low-aleph point in that pool happened to be a high-use point, so
+aleph's effect on y_u was read as participation's.
+
+Holding aleph at 60 and moving b alone separates them:
+
+    b          drug users   y_u     theta     VSL/income   neg value of life
+    1.4e-3       36.4%     0.745    0.169        88.6          0.514%
+    1.76e-3      19.7%     0.728      --         90.3          0.396%
+    2.2e-3        5.71%    0.760    0.1422       83.8          0.252%
+    TARGET        8.90%    0.740    0.14098      80.0
+
+**y_u IS FLAT IN PARTICIPATION** -- 0.73 to 0.76 across a six-fold change in
+use, where the pooled curve predicted 0.40 at 5.7 per cent.  y_u is set by
+ALEPH.  The claim that y_u = 0.74 requires 43 per cent participation is wrong
+and the commit recording it is superseded.
+
+**AND WITH THAT CORRECTED THE DRUG BLOCK IS ESSENTIALLY SOLVED AT ALEPH = 60:**
+
+    y_u        +2.7%
+    theta      +0.9%
+    VSL        +4.7%
+    drug users  5.71 against 8.90, one small step in b
+
+**THE SOLE REMAINING OBSTACLE IS THE CONSTRAINT.**  0.252 per cent of households
+have a negative value of life at this point, so the floor fires and lifts aleph.
+There is no longer a three-way conflict and no y_u/participation tension.  The
+question is single: is a quarter of a per cent of households valuing life
+negatively acceptable, in exchange for a drug block with y_u, theta and VSL all
+inside five per cent?
+
+**THE PATTERN BEHIND EVERY ERROR TONIGHT.**  This is the fourth time a conclusion
+drawn from points that moved more than one thing was overturned by holding the
+others fixed: b's crossing moved when c_bar moved and again when theta moved;
+y_u's response to kappa_phi_d was aleph's error; aleph's effect on y_u was
+participation's; and now participation's effect on y_u was aleph's.  A scan is
+only interpretable against the base it ran on, and pooling scans with different
+bases produces relationships that do not exist.
+
 ## 14 September 06:45 UTC -- THE FLOOR BUG IS FIXED AND BOTH CONFLICTS SURVIVE IT.
 ## THE TRADE-OFF, MEASURED
 
