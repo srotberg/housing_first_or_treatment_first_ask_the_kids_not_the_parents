@@ -3943,7 +3943,28 @@
         ! no-food-stamp variant, and the vectors we calibrate carry max_food_cost
         ! near 0.026, so the programme is on and its moment had no instrument.
         ! Back to the 5e-2 it carried before the stage-1 freeze.
-        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
+        ! PINNED, on the author's instruction of 14 September: *"you should
+        ! probably also update c bar to get the right food stamps to income
+        ! ratio....i think you can almost deterministically find it and then pin
+        ! it"*, and then *"yes pin it"*.
+        !
+        ! SOLVED, NOT SEARCHED.  snap = max(0, cbar - 0.3y), so spending is
+        ! S(cbar) = int_0^{cbar/tau} (cbar - tau*y) f(y) dy and the boundary term
+        ! vanishes at the eligibility limit, leaving dS/dcbar = mass * recipient
+        ! share EXACTLY.  Both factors print every loop.  At the point this was
+        ! solved from: mass 50.889, share 0.079280, S 0.179823, output 61.667, so
+        ! dS/dcbar = 4.0345 and the local exponent is 1.952.  Spending must rise
+        ! x1.4403, which brackets cbar in [0.10488, 0.10663] -- the linear step is
+        ! the upper end because S is convex in cbar.  cbar = 0.105 is seeded.
+        !
+        ! WHY IT MUST BE PINNED RATHER THAN LEFT LIVE.  The author: *"c bar
+        ! affects the value of life and if it's too high, you'll choose the
+        ! lowest income too low"*.  cbar is a means-tested consumption floor and
+        ! the value-of-life constraint clears negative mass by raising
+        ! bottom_productivity_level, so the two set the same thing -- what the
+        ! poorest household consumes.  Left live they are one equation in two
+        ! unknowns and neither is identified.
+        real(8) :: max_food_cost_adjuster=0.d0
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
@@ -5117,7 +5138,24 @@
         ! different now is the RATE: 0.1 per cent a loop against the global half
         ! a per cent, so the mortality bracket can no longer outrun the stock's
         ! own instrument.
-        real(8) :: kappa_phi_d_level_adjuster=2.d0
+        ! PINNED AT 2 AND NOT UPDATED AT ALL, on the author's instruction of
+        ! 14 September: *"yes, pin kappa_phid=2...dont update it"*, after
+        ! *"thats why the model collpses! keep it fixed at 2"* and *"because you
+        ! allowed kappaphid to be so low! that explains why we had such a bad
+        ! equilibirum"*.
+        !
+        ! WHY THE 0.1 PER CENT CAP WAS NOT ENOUGH.  kappa_phi_d_level is
+        ! bracketed on y_u, the income of drug users, and y_u sat at 0.333
+        ! against a target of 0.74 -- 55 per cent below.  So the update printed
+        ! "LOWERED: y_u is below target" every single loop and walked the
+        ! parameter monotonically off the pin, 2 -> 1.978 in twenty loops, with
+        ! kappa_phi_d_level_lo = 1 waiting underneath.  The cap set the SPEED of
+        ! the collapse, not whether it happened; only a zero adjuster stops it.
+        !
+        ! y_u's instrument is multiple_of_probabilities_of_employment_if_addicted,
+        ! which is what it is for.  It is held at 1 in the current block and opens
+        ! in the next one.
+        real(8) :: kappa_phi_d_level_adjuster=0.d0
         ! ITS OWN RATE, the way theta and omega_c have theirs.
         ! HALVED AGAIN, on the author's instruction of 13 September: *"move
         ! omegac and death rate from drug at maybe 0.05% per iteration, but
@@ -46700,8 +46738,12 @@
                         write(*,*) "VALUE OF LIFE FLOOR BINDS: the worst-off household",&
                             " values a period of life at", val_life_min_any(1),&
                             " and", val_neg_life_mass(1), " of mass is below zero"
-                        write(*,*) "VALUE OF LIFE FLOOR: aleph", value_of_life, " ->",&
-                            value_of_life+(value_of_life_floor_margin-val_life_min_any(1))
+                        ! THE PRINT THAT SAID "aleph X -> Y" IS GONE.  It
+                        ! described the rule this block replaced and assigned
+                        ! nothing, but it reported an aleph of 83 beside an aleph
+                        ! that was actually 60, and it was read as evidence that
+                        ! the author's instruction had not taken.  The line below,
+                        ! VALUE OF LIFE CONSTRAINT, is the one that acts.
 
                         ! THE FLOOR STEPS NOW; IT USED TO ASSIGN, and that is what
                         ! collapsed every run seeded at aleph 60 today.  Measured in
