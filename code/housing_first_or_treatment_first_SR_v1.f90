@@ -2861,7 +2861,20 @@
         ! cent with 24.5 per cent of the homeless employed, and h_1 3.588e-3
         ! gave 1.066 per cent with 19.4.  A LOWER rate carries a HIGHER
         ! employed share, so the bottom of the band is the best available.
-        real(8), parameter :: fraction_homeless_data=0.00400
+        ! ONE PER CENT, the top of the author's band rather than the bottom.
+        ! 15 September: *"you can set h1 to 1% if you need to when you raise
+        ! h2"*, and *"raise h2 such that for a reasonable h1 you can still get 1%
+        ! homelessness and about 40-50% emp homeless"*.
+        !
+        ! WHY THE BAND'S TOP IS NOW THE RIGHT END.  0.4 was chosen because, with
+        ! h_2 FIXED, a lower homelessness rate carried a higher employed share --
+        ! h_1 1.196e-3 gave 0.598 per cent homeless with 24.5 per cent employed,
+        ! h_1 3.588e-3 gave 1.066 per cent with 19.4.  That measurement varied
+        ! h_1 alone.  Raising h_2 moves a DIFFERENT margin: it prices households
+        ! that HAVE income out of the cheapest rung, so the households added to
+        ! homelessness are employed ones.  The old trade does not bind on this
+        ! margin, which is why the author asked for the top of the band.
+        real(8), parameter :: fraction_homeless_data=0.01000
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe
@@ -5205,7 +5218,16 @@
         ! result measured at one value of a parameter is a result about that value
         ! until it is measured at another -- which cuts BOTH ways, and a null
         ! measured in a dead region is not a null.
-        real(8) :: kappa_phi_d_level_adjuster=0.d0
+        ! LIVE AGAIN AND GATED.  The author, 15 September: *"you need to keep
+        ! lowering kappa to match yu"*.  It is the y_u instrument and it chases
+        ! y_u on its own, so theta and h_2 can move underneath it without y_u
+        ! being left behind.
+        !
+        ! The gate is what makes this safe: a step is taken only when b is within
+        ! kappa_gate_b_tolerance of its target, so kappa never reads a refill as
+        ! signal.  Without it, every step during a transient pushed the same way,
+        ! because the update is one-signed while y_u is below target.
+        real(8) :: kappa_phi_d_level_adjuster=2.d0
         ! ITS OWN RATE, the way theta and omega_c have theirs.
         ! HALVED AGAIN, on the author's instruction of 13 September: *"move
         ! omegac and death rate from drug at maybe 0.05% per iteration, but
