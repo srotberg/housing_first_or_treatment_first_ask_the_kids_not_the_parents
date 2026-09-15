@@ -1,3 +1,35 @@
+## REPRODUCED: kappa = 2.4 is an attractor, and here is its error bar
+
+`k24long` was started cold from `SEED_K24_SETTLED.txt` with nothing changed. It
+opened at b = 0.16 (a cold start, see the section on that) and came back. Twelve
+loops after re-convergence, against the run the seed was taken from:
+
+| moment   | k24long | k24th110 | sd/mean | range (k24long) |
+|----------|---------|----------|---------|-----------------|
+| b        | 0.0807  | 0.0844   | 5.4%%     | 0.0758-0.0862 |
+| lambda_d | 0.0352  | 0.0362   | 5.0%%     | 0.0329-0.0374 |
+| y_u      | 0.4778  | 0.4871   | 1.2%%     | 0.4720-0.4863 |
+| theta    | 0.3000  | 0.2948   | 0.9%%     | 0.2957-0.3047 |
+
+**Two independent cold starts land in the same place**, each mean within about
+4%% of the other on b and lambda_d and within 2%% on y_u and theta. So the
+kappa = 2.4 table is a real equilibrium the model returns to, not a point it was
+passing through.
+
+**And this is the honest precision of every number in the bracket.** b and
+lambda_d carry roughly 5%% loop-to-loop variation around the point, and two runs'
+means differ by about as much. The four-digit figures in these tables are good to
+a few per cent. The bracket's conclusions survive easily -- kappa 1.9 vs 2.4 is
+12 points of y_u and 0.47 of odds ratio, far outside this noise -- but a
+difference of a few per cent between two rows here means nothing.
+
+**This also softens the 05:21 verdict on k24th110.** It was stopped as "provably
+degrading" on the strength of b and lambda_d wobbling while sud_homeless widened.
+The wobble is now identified as this same oscillation around the attractor. What
+stands from that firing is the wrong-signed instrument on sud_homeless, which was
+measured separately over ten consecutive loops against a working control; the
+"degrading" characterisation of the run as a whole was too strong.
+
 ## A SEED IS PARAMETERS. AN EQUILIBRIUM IS PARAMETERS PLUS STATE.
 
 `k24long` was started from `SEED_K24_SETTLED.txt` with nothing changed, to test
