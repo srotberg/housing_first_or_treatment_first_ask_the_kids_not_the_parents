@@ -5319,7 +5319,24 @@
         ! The two odds ratios want kappa high and y_u wants it low, and there is
         ! no value satisfying both.  Choosing kappa = 2 buys both odds ratios and
         ! makes y_u a reported gap rather than a target.
-        real(8) :: kappa_phi_d_level_adjuster=0.d0
+        ! LIVE AGAIN 15 September, on the author's instruction: "we need to start
+        ! updating kappa to match yu now when b and SUD are close to their
+        ! targets". y_u reads 0.94 against 0.74, 27 per cent high, and kappa is
+        ! the instrument that owns it.
+        !
+        ! THE b GATE BELOW IS EXACTLY THE 'WHEN b IS CLOSE' CONDITION. kappa only
+        ! steps while |b - target| <= kappa_gate_b_tolerance * target, so it
+        ! cannot read a refill as signal. Nothing extra is needed to honour the
+        ! instruction; releasing the adjuster is enough.
+        !
+        ! MEASURED WARNING, and it was taken at a DIFFERENT theta. The kappa
+        ! bracket of this morning, at theta 0.108 with b at target, has y_u
+        ! NON-MONOTONE in kappa with a minimum near 2.4: 0.572 at 1.9, 0.483 at
+        ! 2.4, 0.504 at 3.0. If that survives at theta 0.21 then raising kappa
+        ! RAISES y_u, the opposite of what is wanted. It may well not survive --
+        ! the drug block is three times the size here -- but read the first few
+        ! gated steps before trusting the direction.
+        real(8) :: kappa_phi_d_level_adjuster=2.d0
         ! ITS OWN RATE, the way theta and omega_c have theirs.
         ! HALVED AGAIN, on the author's instruction of 13 September: *"move
         ! omegac and death rate from drug at maybe 0.05% per iteration, but
