@@ -1337,6 +1337,10 @@
         integer :: scan_index=0
         real(8) :: penalty_saved=0, scan_num=0, scan_den=0, scan_ratio=0
         real(8) :: scan_prev=-1, scan_pen_prev=0, scan_solved=0
+        ! THE BEST POINT IN THE SCAN, not just the crossing.  The author, 15
+        ! September: *"you also have scan the full delta_d to get the best odds
+        ! ratio"*, and *"it cannot be 0.99"*.
+        real(8) :: scan_best=-1, scan_best_pen=0
         integer :: scan_found=0
         real(8) :: gap_penalty_child_1=0,previous_gap_penalty_child=0
         integer :: have_gap_penalty_child=0
@@ -46033,6 +46037,8 @@
                                 scan_prev=-1
                                 scan_pen_prev=0
                                 scan_solved=penalty_child_addicted
+                                scan_best=-1
+                                scan_best_pen=penalty_child_addicted
 
                                 write(*,*) "PENALTY SCAN target ratio =",&
                                     child_sud_ratio_data, " current penalty =",&
@@ -46082,6 +46088,12 @@
                                             scan_found=1
                                         end if
                                     end if
+                                    ! THE ARGMAX, TRACKED ON EVERY POINT.
+                                    if (scan_ratio>scan_best) then
+                                        scan_best=scan_ratio
+                                        scan_best_pen=penalty_child_addicted
+                                    end if
+
                                     scan_prev=scan_ratio
                                     scan_pen_prev=penalty_child_addicted
 
@@ -46116,11 +46128,31 @@
                                         scan_solved, " gives ratio=",&
                                         child_sud_ratio_data
                                 else
-                                    penalty_child_addicted=penalty_saved
+
+                                    ! NO CROSSING: TAKE THE BEST POINT IN RANGE.
+                                    !
+                                    ! Leaving the penalty where it was is what
+                                    ! stranded delta_d at 0.99 -- a value meaning
+                                    ! the child of an addicted parent keeps one
+                                    ! hundredth of their productivity draw, which
+                                    ! is not a credible parameter and was never
+                                    ! chosen: it was seeded there and the fallback
+                                    ! declined to move it.  The author, 15
+                                    ! September: *"it cannot be 0.99"*, and *"you
+                                    ! also have scan the full delta_d to get the
+                                    ! best odds ratio"*.
+                                    !
+                                    ! The scan still reports honestly that it did
+                                    ! not reach the target.  What changes is that
+                                    ! it now returns the best available point
+                                    ! rather than an arbitrary one.
+                                    penalty_child_addicted=scan_best_pen
                                     write(*,*) "PENALTY SCAN did NOT bracket",&
                                         child_sud_ratio_data, " over [",&
                                         scan_lo, ",", scan_hi,&
-                                        "] -- penalty left at", penalty_saved
+                                        "] -- BEST IN RANGE: penalty=",&
+                                        scan_best_pen, " ratio=", scan_best,&
+                                        " (was", penalty_saved, ")"
                                 end if
                                 call create_newborn_employment_probability()
 
