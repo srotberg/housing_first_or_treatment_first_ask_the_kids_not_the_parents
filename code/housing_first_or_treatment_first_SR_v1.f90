@@ -1351,7 +1351,17 @@
         ! reason not to let a scan choose it.  0.24 is a value the author has used
         ! before and gives an odds ratio of 1.58 at kappa 2, reported rather than
         ! targeted.
-        integer, parameter :: calibrate_penalty_child_addicted=0
+        ! THE SCAN IS BACK ON, over the whole range, at kappa = 2.4.  The
+        ! author, 15 September: *"we can search the whole delta_d space to get
+        ! the odds ratio of 2, and i hope we can get it around 2 for delta_d
+        ! around 0.24"*.
+        !
+        ! It searches [scan_lo, scan_hi] = [0, 0.99] in scan_points steps, which
+        ! IS the whole space -- 0 is no penalty and 0.99 is the cap.  If it
+        ! brackets 2.0 it interpolates the crossing and SETS delta_d to it; if it
+        ! does not, it now returns the argmax rather than leaving delta_d
+        ! wherever it happened to be, which is what stranded it at 0.99 before.
+        integer, parameter :: calibrate_penalty_child_addicted=1
         integer :: child_node_index_1
         ! DELTA_H, AND IT IS CALIBRATED, WHICH IT SAYS IT IS AND WAS NOT.
         !
