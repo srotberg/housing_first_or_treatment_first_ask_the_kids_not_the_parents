@@ -2936,7 +2936,14 @@
         ! this run does not raise h_2.  Moving the target and kappa together would
         ! make this point incomparable with every other measured today.  One line
         ! to change back when h_2 is raised.
-        real(8), parameter :: fraction_homeless_data=0.00400
+        ! ONE PER CENT, on the author's instruction of 15 September: *"It's ok
+        ! if h1 needs to hit 1%"*. It was 0.004, the floor of the 0.4-1.0 band.
+        !
+        ! IT PULLS AGAINST emp_homeless AND THE AUTHOR HAS BEEN TOLD SO. Measured
+        ! across six runs, emp_homeless RISES as h_1 falls -- 0.271 at h_1 =
+        ! 0.0040 against 0.154 at 0.0085 -- so accepting 1 per cent costs about
+        ! 0.11 on a moment already 67 per cent short of its 0.46 target.
+        real(8), parameter :: fraction_homeless_data=0.01000
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe
@@ -3063,6 +3070,29 @@
         real(8), parameter :: fraction_leaving_bequests_data=0.57
         real(8), parameter :: free_market_unit_to_controlled_market_unit=0.24
         integer, parameter :: aftr_how_mny_lps_start_update=partial_equilibrium*0+(1-partial_equilibrium)*0
+
+        ! THE FROZEN PASS. Zero is off and everything behaves as before. Set to
+        ! N and every parameter update stops after loop N, so the model iterates
+        ! at FIXED parameters from there on.
+        !
+        ! WHAT IT IS FOR, and it is a measurement rather than a change to the
+        ! model. Three runs -- j03 at a 2 per cent b_SG step, j05 and j06 at 0.3
+        ! -- all took participation through the 0.089 target and down to about
+        ! 0.006. A step-size problem gets better as the step shrinks and this one
+        ! did not, which says the target is an unstable fixed point. But of WHAT?
+        ! Everything measured so far is the model AND the update rule iterated
+        ! together, and those are different objects:
+        !
+        !   settles at 0.0876 -> the MODEL is fine and the UPDATE RULE cannot
+        !                        stop there, which is a small thing to fix;
+        !   slides           -> the equilibrium itself is unstable, which is
+        !                        structural and the author's call.
+        !
+        ! Loop 13 is where j05 and j06 both read 0.0876, 1.6 per cent from
+        ! target, so freeze_updates_after_loop=13 reproduces that vector and then
+        ! holds it. The descent is deterministic -- j04 reproduced j03 to six
+        ! digits -- so the frozen run passes through exactly the same point.
+        integer :: freeze_updates_after_loop=0
        
         real(8) :: stopping_rule_housing_market=2*10.d0**(-2)                                                           
         real(8) :: stopping_rule_rental_market=is_counterfactual*(1*10.d0**(-2))+(1-is_counterfactual)*2*10.d0**(-2)
@@ -43171,6 +43201,14 @@
                     write(*,*) "HANDOVER merge_bottom_nodes:", &
                         merge_bottom_nodes, "->", handover_value
                     merge_bottom_nodes=max(min(handover_value,4.d0),1.d0)
+                ! THE FROZEN PASS, settable per run so one binary serves both
+                ! the ordinary descent and the diagnostic.
+                case ("freeze_updates_after_loop")
+                    write(*,*) "HANDOVER freeze_updates_after_loop:",&
+                        freeze_updates_after_loop, "->", handover_value
+                    freeze_updates_after_loop=&
+                        int(max(min(handover_value,100000.d0),0.d0))
+
                 case ("kappa_find_smi")
 
                     write(*,*) "HANDOVER kappa_find_smi:", &
@@ -44817,7 +44855,16 @@
                         
             else
             
-                if (loop_count>aftr_how_mny_lps_start_update) then
+                if ((freeze_updates_after_loop>0) .AND. &
+                    (loop_count>freeze_updates_after_loop)) then
+                    write(*,*) "FROZEN PASS: every parameter update is held from",&
+                        " loop", freeze_updates_after_loop,&
+                        " -- the model is now iterating at FIXED parameters"
+                end if
+
+                if ((loop_count>aftr_how_mny_lps_start_update) .AND. &
+                    ((freeze_updates_after_loop<=0) .OR. &
+                    (loop_count<=freeze_updates_after_loop))) then
             
                     write(*,*) "discount_factor=", discount_factor
                                             
