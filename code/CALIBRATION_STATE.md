@@ -1,3 +1,35 @@
+## CONTAINER RESTART, 15 September 14:55: what broke and what saved it
+
+The container restarted mid-session. The repo was untouched -- every Fortran edit
+was committed, which is the whole reason the day's work survived. **The scratchpad
+was wiped completely**: the binary, every run directory, and all four run logs from
+the price ladder. Three things then failed in a row, all avoidable.
+
+**1. gfortran was gone.** The toolchain is not part of the image that comes back.
+`apt-get install -y gfortran` restores it; the build then works unchanged.
+
+**2. The data symlink belongs ONE LEVEL ABOVE the run directory.** The Fortran
+opens `"../data/us_mortality_multipliers.csv"`, so a run in `<scratch>/<run>/`
+needs `<scratch>/data`, not `<run>/data`. Getting this wrong kills the run after
+it has already printed several hundred lines, with
+`us_mortality_multipliers.csv not found. stopping.` at the very end -- easy to
+miss if only the head of the log is read.
+
+**3. THE FAILED RUN STILL ATE THE HANDOVER.** The binary reads and deletes
+`PARAM_HANDOVER.txt` BEFORE it checks for the data file. So the run that died on
+the missing CSV consumed the seed, and the next start silently used the Fortran's
+DECLARED values instead: b came out at 0.95, lambda_d at 0, and the drug-share
+moment at -1, its no-users sentinel.
+
+**What caught it: zero HANDOVER lines in the log.** That is the check -- a run
+whose log has no `HANDOVER` lines did not read a seed, whatever is in the
+directory.
+
+**What saved it: the base copy.** The rule recorded at 08:01 -- "copy the run's
+handover somewhere before it is consumed" -- was followed, so `hb15_base.txt`
+still held the seed and the run was restored exactly. Keep doing that; it is two
+seconds and it is the difference between a restart and a reconstruction.
+
 ## WRONG TITLE BELOW: the aggregate extrapolation HELD. I read the wrong number.
 
 The section below says the aggregate fit was refuted at theta = 0.189. It was not.
