@@ -1,3 +1,41 @@
+## MEASURED: the drug-spending moment barely responds to theta. It is NOT theta^2.5.
+
+Two settled points at kappa_phi_d = 2.4, each averaged over several loops rather
+than read off one:
+
+| theta  | theta moment | b      | run       |
+|--------|--------------|--------|-----------|
+| 0.1177 | 0.3088       | 0.0828 | k24t12 33-44 |
+| 0.1101 | 0.2980       | 0.0653 | k24th110 5-9 |
+
+A **6.5%** cut in theta bought a **3.5%** fall in the moment. That is an
+elasticity of **0.53**, so the moment goes as theta^0.53 here -- not theta^2.5,
+which is recorded earlier in this file and was measured at kappa = 1.4. The
+exponent is kappa-dependent and the old figure must not be reused at this kappa.
+
+Extrapolating the measured elasticity, the theta that would deliver the 0.16
+target is about **0.034** -- a third of its current value. Measured separately,
+theta = 0.095 already put b at 0.0076. So the 0.16 drug-spending target and the
+0.089 participation target are a long way from jointly reachable through theta at
+this kappa, and the gap is not a matter of letting the solver run longer.
+
+**Caveat, and it is not a small one.** b differs between the two points (0.0828
+against 0.0653), so part of the moment's move is composition from b rather than
+theta acting directly. A clean elasticity needs b held while theta moves, and
+nothing here does that. Treat the 0.53 as an upper bound on how responsive the
+moment is, because the b move should if anything have helped it fall.
+
+## The theta solver's REQUEST is not a measurement, and I seeded on it
+
+theta's update block asked for 0.1101 for fifteen consecutive loops and I seeded
+there, calling it "the measured value, not an extrapolation". That was wrong in a
+way worth keeping: what was measured is that the solver KEPT ASKING for it. The
+request is itself the solver's secant extrapolation, and the secant was badly off
+-- it expected the moment to fall from 0.30 to 0.16 and the moment went to 0.298.
+
+A parameter's own requested value is a prediction. Only the moment that comes
+back after it is applied is a measurement.
+
 ## WHICH SEARCH IS LIVE: the serial calibration run `k24t12`, as a bare `./hftf`
 
 ENGINE.md's suspension section says this file names the live search. It did not,
