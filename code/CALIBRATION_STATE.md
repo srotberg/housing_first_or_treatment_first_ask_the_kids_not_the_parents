@@ -1,3 +1,56 @@
+## 15 September 00:15 UTC -- BEST POINT OF THE SESSION: theta 0.079, kappa 1.40.
+## y_u 0.706 WITH b EXACT, FROM 0.497 THIS AFTERNOON
+
+**THE SETTLED POINT**, t079_k140 at loop 17, b inside one per cent and corrected
+y_u flat to two digits across five loops:
+
+    tau_l        0.224032  vs 0.224     +0.0%
+    p_m          0.047809  vs 0.047992  -0.4%
+    beta         2.9793    vs 3         -0.7%
+    b            0.088074  vs 0.089     -1.0%
+    aleph       77.903     vs 80        -2.6%
+    y_u          0.706     vs 0.740     -4.6%
+    drug spend   0.125     vs 0.14-0.16 -11%
+    tau_u        0.21524   vs 0.245    -12.1%
+
+**THREE SETTLED POINTS NOW, AND kappa KEPT PAYING PAST 1.5.**
+
+                       theta .079   theta .081   theta .079
+                       kappa 1.50   kappa 1.45   kappa 1.40
+    y_u at b=0.089        0.684        0.649        0.708
+    b                    +7.6%        +3.4%        -0.7%
+    drug spending moment  0.132        0.126        0.125
+
+The kappa channel did not turn over below 1.5; it pays less per step than the
+secant promised, which is the ordinary difference between a two-point
+extrapolation and an equilibrium.  The secant said 1.44 would reach 0.740; 1.40
+reached 0.708.
+
+**AND THE "FREE LUNCH" AT LOOP 10 WAS THE OVERSHOOT, AS ALWAYS.**  The drug
+spending moment was reported here as sitting INSIDE the author's 0.14-0.16 band at
+0.142-0.147.  b was 60 per cent hot at those loops.  With b at target the moment
+is 0.125.  That is the sixth time today a reading taken off target was read as
+progress, and the first where I had already written the warning in the same
+message and then half-believed the number anyway.
+
+**WHAT IT COST, AND THIS IS THE LEDGER THE AUTHOR NEEDS.**  Against the theta
+0.095 economy of this afternoon: sud_homeless +19 per cent -> -63, pi_V -0.6 ->
+-28.6, lambda_d -22 -> -28.2, tau_u +0.4 -> -12.1.  All four are the price of a
+smaller and poorer drug stock.  Unchanged and still out of reach on the 0.1 per
+cent global cap: band 1 -65.7, mu_H -30.2, pi_eu -27.1.
+
+**THE STANDING TRADE.**  y_u and the drug spending moment move oppositely through
+theta at about ten to one against the spending moment.  At this point y_u is -4.6
+per cent and the spending ratio -11 per cent; buying the spending ratio into the
+band would cost roughly the whole y_u gap.  The author's call, not the
+calibration's.
+
+**DIMINISHING RETURNS ON kappa.**  1.50 -> 1.40 bought 0.023 of y_u.  A further
+step to 1.35 would be expected to buy less than 0.01, and 1.40 is already well
+inside the range this file records as degrading the drug block -- drug use at 95
+to 97 per cent by kappa = 1.  Recommended: stop here rather than chase the last
+4.6 per cent of y_u with the parameter that holds participation together.
+
 ## 14 September 23:35 UTC -- TWO SETTLED POINTS, AND RAISING theta COST MORE y_u
 ## THAN LOWERING kappa BOUGHT BACK
 
