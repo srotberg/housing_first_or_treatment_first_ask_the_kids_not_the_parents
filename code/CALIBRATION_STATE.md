@@ -1,3 +1,76 @@
+## I nearly flipped a MEASURED sign on addiction_onset_base. Read the comment first.
+
+15 September. The log showed the onset rising 0.5 per cent a loop while printing
+"LOWERED: lambda_d is above target", with the disorder rate at 0.099 against a
+target of 0.0368. I called it a sign bug and reasoned: the stock of addicts is
+monotonically increasing in the onset hazard, "certain", so a model above target
+must want the hazard lower.
+
+That is wrong, and the code already said so, twenty lines above the step:
+
+```
+onset 0.0428 -> 0.0550   lambda_d -49.0%   e = -2.68
+onset 0.0428 -> 0.0350   lambda_d +74.3%   e = -2.76
+```
+
+Monotone, negative both sides, the same slope either way. **RAISING THE ONSET
+HAZARD LOWERS THE DISORDER RATE**: making use riskier deters people from using
+at all, and the extensive margin beats the conversion margin. The step adds the
+gap on purpose. directions_table.py agrees -- `'lambda_d':
+('addiction_onset_base', 'lower', 'author 11 Sept; Fortran agrees')` -- and the
+comment records that an earlier round assumed exactly my naive sign and it cost
+nineteen loops, taking lambda_d from +2 per cent to -33 and dragging
+participation from -0.9 to -34 with it.
+
+The print label is fine on a second reading: "[the disorder rate will be]
+LOWERED [because] lambda_d is above target".
+
+**The rule this leaves: a sign that looks backwards is a comment to read, not a
+bug to fix.** Every instrument in this file has its direction recorded next to
+it and a second copy in directions_table.py. Checking took two minutes; the
+"fix" would have cost a day.
+
+AND IT IS GOOD NEWS FOR b. The onset and the price act on the SAME extensive
+margin and both push participation down, so b has two instruments on it, not
+one, and the onset is already moving the right way on its own.
+
+## b has never settled between 0.02 and 0.15, and the target sits in that gap
+
+Seven runs, every one landing high or dead, nothing in between:
+
+| run  | price | kappa | loops | settles at |
+|------|-------|-------|-------|------------|
+| k55  | 0.001 | 5.5   | 9     | 0.514      |
+| k42  | 0.003 | 4.2   | 3     | 0.449      |
+| j03  | 0.006 | 4.2   | 4     | 0.228 (falling) |
+| hb15 | 0.015 | 2.4   | 3     | 0.237      |
+| hb18 | 0.018 | 2.4   | 4     | 0.103 IN TRANSIT |
+| hk   | 0.018 | 2.4   | 16    | 0.0042     |
+| k52  | 0.012 | 5.2   | 9     | 0.0003     |
+
+Target is 0.089. hk is the only run that entered the gap and it fell out the
+bottom, then held 0.0042 for twelve loops.
+
+**The price elasticity, measured across runs and not within one.** Two loop-1
+readings from seeds differing only in the price: 0.003 -> b 0.4516, 0.006 -> b
+0.2347. Doubling the price halves participation, e = -0.95. The WITHIN-run
+slope at 2 per cent a loop reads -0.17, which is the map relaxing and not the
+price response; do not use it.
+
+**NOT the drug market.** In the benchmark clear_drug_market does not feed back
+at all -- it normalises drug_supply_shifter to put the price at one, sets
+price_of_addictive_good to its benchmark value and sets distance_drug_market=0.
+The endogenous clearing runs only on the counterfactual path. So whatever
+generates the gap, it is not a price-quantity loop.
+
+**What is suggestive, and is a mechanism rather than a measurement.** With
+lambda_addiction pinned at 0 on the author's instruction, the onset hazard is
+`base` for any v>0 and exactly 0 at v=0 -- a step function in WHETHER you use,
+with no intensive margin at all. addiction_scalar_1 is what sets that abstention
+corner. So participation responds to the price only by moving households across
+a discrete threshold. Stated because it is testable, not because it is
+established.
+
 ## b is BIMODAL, and the "good" point I reported at b=0.103 was a run in transit
 
 Correcting something I told the author. I reported hb18 as the best point I
