@@ -1,3 +1,36 @@
+## SEED-BUILDING TRAP: 49 of 75 names are NEVER printed, so the BASE decides them
+
+Building the kappa = 1.9 seed produced a file reading `kappa_phi_d_level 2.4` --
+for a run whose own handover line says `8.0 -> 1.9`. Caught on inspection, not by
+any check.
+
+**The mechanism.** The extractor takes the LAST value the log prints for each
+name and falls back to the base file when the log never prints it. Of the 75
+names in the seed, **49 are never printed at all** -- every pinned or held
+parameter, `kappa_phi_d_level` among them, plus rho_d, rho_m, lambda_m, zeta_DI,
+max_food_cost, sd_permanent_productivity, weight_on_child and the rest of the
+list. For those 49 the base file is not a fallback, it IS the answer.
+
+**So the base must be the run's OWN starting vector, never another run's.** That
+held for SEED_K24_BSUD_HIT (base: k24t12's own handover) and SEED_K24_SETTLED
+(base: k24th110's own). It did NOT hold here, because k19cmp consumes and deletes
+its `PARAM_HANDOVER.txt`, so the run's own seed was gone and SEED_K24_SETTLED was
+used instead -- a file identical to it in 74 places and wrong in the one that
+mattered.
+
+**Why the damage stopped at one line, verified rather than assumed.** k19cmp's
+handover was built as
+`sed 's|^kappa_phi_d_level .*|kappa_phi_d_level 1.9|' SEED_K24_SETTLED.txt`,
+one line changed, so every unprinted name legitimately still carries its
+SEED_K24_SETTLED value. Fixing kappa alone therefore makes the file correct. Had
+the two runs differed in more than kappa, every difference in those 49 names
+would have been silently discarded.
+
+**The failure mode is the one this file keeps recording**: every name present,
+every value plausible, nothing complaining, and the contents describing a
+different economy. Copy the run's handover somewhere before it is consumed, or
+regenerate the base from the same recipe the run used.
+
 ## SETTLED: the kappa = 1.9 row. The kappa bracket, measured at two points.
 
 `k19cmp` loops 69-76, all four moments passing the settling test over 8 loops:
