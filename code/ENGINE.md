@@ -385,6 +385,33 @@ ps -eo pid=,args= | awk '$3 ~ /stage_night/ {print "STILL UP", $1}'
 Wait for `ps -eo args= | awk '/run_one_point/ && !/awk/'` to come back empty
 before editing anything under `code/`.
 
+## ensure_loop.sh IS NOT SAFE AS STEP 0 WHEN A DIFFERENT SERIAL SEARCH OWNS THE BOX
+
+Found 15 September. Two sections of this file disagree and following both starts
+a second solver:
+
+* the container section says **"Step 0 of every firing is `bash code/ensure_loop.sh`"**;
+* the section below says the round is suspended while the serial search is alive.
+
+`ensure_loop.sh` starts `loop_watch.sh`, which starts **`three_loop.sh`**. Its only
+test is whether `loop_watch.sh` itself is running. It does not ask whether some
+OTHER serial search already owns the machine, so when the live search is a bare
+`./hftf` -- as it was all of 15 September -- the test passes, `three_loop.sh`
+starts, and two solvers share four cores. That mistake was made once already this
+session, by hand, and the orphan was found writing into a deleted directory.
+
+**So step 0 is conditional.** Run `ensure_loop.sh` only when `three_loop.sh` is
+the intended search. When anything else serial is alive, skip it and say in the
+firing line that you did:
+
+    ps -eo pid,args= | awk '$3=="./hftf" || $2=="./hftf" {print "hftf owns the box"}'
+
+The watchdog reasoning behind `ensure_loop.sh` is still right -- a container
+restart kills everything and only the firings outlive it. What is wrong is the
+unconditional call. A restart that takes a bare `./hftf` with it needs the FIRING
+to notice and reseed from `CALIBRATION_STATE.md`, not `loop_watch` to start a
+different search on top of it.
+
 ## THE PARALLEL ROUND IS SUSPENDED WHILE THE SERIAL SEARCH IS ALIVE
 
 On 4 September the author replaced the batch-and-fleet search with sequential
