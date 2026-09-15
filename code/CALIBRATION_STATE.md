@@ -1,3 +1,38 @@
+## kappa = 1.7 IS A PIN FROM A DIFFERENT THETA. Do not quote it as a target.
+
+I told the author kappa "settles around 1.7" on the strength of a comment beside
+kappa_phi_d_level. The comment says no such thing. It says:
+
+> PINNED AT 1.7, on the author's instruction of 14 September: *"Try kappa 1.7"*.
+> The descent had reached 1.70819 and the next gated step would have carried it
+> past; this holds it there so every other instrument settles AROUND kappa = 1.7.
+
+A pin the author asked for, not a converged value -- and from the theta ~ 0.10
+era. At today's theta = 0.21 the entry at the top of this file is the opposite
+finding: kappa 5.5 put y_u ON TARGET.
+
+**Measured at theta = 0.21:**
+
+| run | kappa | participation | y_u   |
+|-----|-------|---------------|-------|
+| k42 | 4.2   | 0.45          | 0.749 |
+| k55 | 5.5   | 0.51          | 0.729 |
+| j03 | 4.2   | 0.11          | 0.638 |
+| j03 | 4.2   | 0.046         | 0.506 |
+
+Across the first two, kappa +1.3 moves y_u by -0.020: dy_u/dkappa ~ -0.015, a
+WEAK lever. Across the last two, at kappa fixed, y_u tracks participation
+hard. Most of y_u's movement today has been participation, not kappa.
+
+If that -0.015 held, closing a 0.12 gap in y_u would need kappa to fall by
+eight, which is below zero, and y_u would be unreachable. **DO NOT CONCLUDE
+THAT.** Both kappa points differ in b_SG and in participation as well as in
+kappa, so -0.015 is not a partial derivative of anything.
+
+**The clean measurement arrives on its own.** Once participation is inside the
+gate band, b_SG holds it there while kappa moves, which is the first time
+dy_u/dkappa is measured at fixed participation. Wait for it.
+
 ## THE DESCENT DOES NOT RETRACE. b is hysteretic, and you get ONE pass at the target.
 
 j03, 15 September, seeded at b_SG = 0.006, kappa 4.2, everything live.
