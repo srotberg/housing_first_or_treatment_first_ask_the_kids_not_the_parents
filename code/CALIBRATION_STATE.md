@@ -1,3 +1,61 @@
+## 15 September 01:05 UTC -- THE CHILD SUD ODDS RATIO CANNOT MOVE, AND THE REASON
+## IS THAT ADDICTION ONSET IGNORES HOW MUCH ANYONE USES
+
+**THE MECHANISM.**  addiction_onset_hazard is
+
+    min(addiction_onset_base + (1 - exp(-lambda_addiction*quantity)), 1)
+
+and **lambda_addiction is overwritten to 0 at line 45460 on every loop**, so the
+exponential term vanishes and the hazard is `addiction_onset_base` -- a CONSTANT,
+identical for every household that uses.  How much anyone uses has no bearing on
+whether they become addicted.  Its declared value is 0.027364; it is being
+overwritten, not configured off.
+
+**WHAT THAT COSTS.**  A child's SUD risk can then differ from another's only
+through selection into USING at all, never through how heavily.  Measured:
+percent_addicted_by_employment across the seven productivity nodes is
+
+    0.0302  0.0287  0.0328  0.0272  0.0228  0.0245  0.0265
+
+a range of 1.44 and NOT MONOTONE -- the highest rate is at node 3, the lowest at
+node 5.  So pushing a child down the productivity grid does not reliably raise
+their SUD risk, and the odds ratio is a weighted average of those numbers over one
+child distribution divided by the same over another.  The settled scans give
+1.0 to 1.13 whatever delta_d does.
+
+**delta_d = 0.99 WAS NEVER CHOSEN.**  The penalty enters as
+(1-delta_d)**d_index multiplying the child's productivity draw, so 0.99 leaves the
+child of an addicted parent a draw centred at ONE PER CENT of an otherwise
+identical child's.  The author, 15 September: *"it cannot be 0.99"*.  It was there
+because the scan looks for a CROSSING of 2.0, never finds one, and its fallback
+was to leave the penalty where it was -- at the cap it had been seeded to.  The
+scan now returns the argmax instead, which lands near 0.25 to 0.50.
+
+**FOUR TIMES IN ONE EVENING I QUOTED A LOOP-1 SCAN AS A RESULT.**  2.4775, the
+2.0287 crossing, "the model reached 2.48", and "yes at kappa 1.50" all came from
+scan pass ONE, taken on the seeded state before the model re-solves.  Settled
+passes in the SAME runs give 1.0 to 1.13, and the ceiling does not depend on kappa
+the way I claimed twice.  Sequence of claims made and withdrawn on this one
+question: unreachable by construction -> reachable, I was wrong -> reachable at
+1.50 but not 1.40 -> not reachable in any settled economy.  **A scan pass at loop
+1 is not a measurement, exactly like a moment print at loop 1.**  The rule was
+already in this file for moments and was not applied to scans.
+
+**WHAT WOULD MAKE IT REACHABLE** is restoring lambda_addiction, so onset depends
+on quantity and heavier use carries more risk.  That is a MODELLING decision and
+is left to the author.  Nothing else measured tonight moves this moment.
+
+**ALSO ANSWERED TONIGHT.**  emp_homeless (-55 per cent) is not explained by the
+SUD channel: within-run correlation with sud_homeless is -0.07, and the
+cross-run slope puts emp_homeless at only 0.27 with sud_homeless on target.  The
+better-supported cause is the housing margin: the cheapest rent is 12 per cent of
+the LOWEST income, so anyone with any income can afford housing and homelessness
+is a zero-income phenomenon -- which is why the homeless are not employed.
+burden50 is -89 per cent and h_2 -99 per cent for the same reason, while the
+AVERAGE renter burden is +31 per cent too high.  The distribution is too
+compressed, not too cheap.  Raising h_2 is the indicated fix, and the author has
+said h_1 may go to 1 per cent to pay for it.
+
 ## 15 September 00:15 UTC -- BEST POINT OF THE SESSION: theta 0.079, kappa 1.40.
 ## y_u 0.706 WITH b EXACT, FROM 0.497 THIS AFTERNOON
 
