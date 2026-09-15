@@ -1,3 +1,65 @@
+## THREE STEP SIZES, THREE CROSSINGS, THREE COLLAPSES. It is not a step-size problem.
+
+| run | b_SG step | crossed at | in the band for | settled at |
+|-----|-----------|------------|-----------------|------------|
+| j03 | 2.0 %     | loop 10    | 0 loops         | 0.046 and falling |
+| j05 | 0.3 %     | loop 13    | 2 loops         | ~0.006 |
+| j06 | 0.3 %     | loop 13    | 2 loops (gate open 2 of 50) | 0.0065, flat 25 loops |
+
+Making the step SEVEN TIMES FINER bought one extra loop before the crossing
+and two loops inside the band. It did not buy stability. j06's participation:
+
+```
+loop 12  0.1252
+loop 13  0.0876   <- 1.6 per cent from target, KAPPA GATE OPEN
+loop 17  0.0503
+loop 21  0.0093
+loop 25+ 0.0065   flat for twenty-five loops
+```
+
+**That is the signature of an UNSTABLE FIXED POINT, not a coarse instrument.**
+A step-size problem gets better as the step shrinks. This does not.
+
+**DO NOT TUNE THE STEP A FOURTH TIME.** Each attempt costs two hours and the
+three points above already say what a fourth would say. The open question is
+still the one the frozen pass answers -- unstable MODEL or unstable UPDATE RULE
+-- and that has to be settled before any more step arithmetic.
+
+## What the SAME run got RIGHT, which is most of the model
+
+At loop 50, nine moments landed or nearly:
+
+| moment | model | target | gap |
+|--------|-------|--------|-----|
+| tau_l  | 0.22405 | 0.224   | 0.0 % |
+| mu_H   | 1.4721  | 1.4732  | 0.1 % |
+| pi_V   | 0.26499 | 0.266   | 0.4 % |
+| pi_eu  | 0.04879 | 0.049   | 0.4 % |
+| beta   | 2.9791  | 3.000   | 0.7 % |
+| p_m    | 0.04763 | 0.04796 | 0.7 % |
+| lambda_m | 0.25880 | 0.250 | 3.5 % |
+| gamma  | 0.25513 | 0.268   | 4.8 % |
+| tau_u  | 0.26069 | 0.245   | 6.4 % |
+
+tau_u was 90 per cent off this morning. And h_2 climbed 0.0102 -> 0.0498 against
+0.101 with burden50 0.038 -> 0.105, both still moving, exactly as the in-regime
+elasticity of +5.4 predicted -- NOT the +0.79 from directions_table.py, which
+was measured when burden50 was 0.72 and does not transfer.
+
+**So the housing and government blocks calibrate themselves. The drug block is
+the whole of the remaining problem**, and it takes h_1, emp_homeless, y_u,
+sud_homeless and lambda_d down with it when it collapses.
+
+## h_1 REVERSED, and it is not the instrument's fault
+
+h_1 fell to 0.00525 by loop 21, then climbed back to 0.00805 -- away from the
+0.4 per cent it targets. emp_homeless tracked it: 0.251 at the trough, 0.186 by
+loop 50. Nothing changed in the instrument. What changed is that the drug
+population collapsed, and with it what generates homelessness at all.
+
+**Reading a housing moment while the drug block is collapsing measures the
+collapse, not the housing.** The same warning as the confounded kappa pairs.
+
 ## PARTICIPATION 0.089 IS ATTAINABLE. It was measured. It does not STAY.
 
 j05, loop 13: participation **0.08758** against a target of 0.089 -- 1.6 per
