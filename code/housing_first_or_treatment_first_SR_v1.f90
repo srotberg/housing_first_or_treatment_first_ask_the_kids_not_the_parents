@@ -3964,7 +3964,22 @@
         ! one hundred and twentieth of the speed.  aleph, h_1, kappa_uem and
         ! everything else on the global cap stay at 0.1 per cent.
         real(8), parameter :: drug_block_max_rel_step=0.005d0
-        real(8) :: addiction_scalar_max_rel_step=drug_block_max_rel_step
+        ! ITS OWN CAP, 2 PER CENT, NOT THE DRUG BLOCK'S HALF A PER CENT.
+        ! Measured 15 September across six runs: with b five times its target
+        ! (0.449 against 0.089) this instrument crept 3.000e-3 -> 3.045e-3 in
+        ! three loops, half a per cent a loop, the cap binding every loop. At
+        ! that rate it needs about 280 loops merely to cross its own measured
+        ! bracket, 0.003 to 0.012, and 140 to double.
+        !
+        ! AND IT IS BEING OUTRUN BY THE EQUILIBRIUM IT IS STEERING. In the
+        ! 16-loop run at 0.018 the price moved 3 per cent in total while b fell
+        ! by a factor of 25, from 0.103 to 0.0042, and settled on the dead
+        ! branch. An instrument that slow is not steering b, it is watching it.
+        !
+        ! Two per cent is the rate the author set for pi_V ("allow pi_v to move
+        ! much faster ... or 2%") and it closes b's present gap in about 80
+        ! loops, inside the 500 to 1000 the author asked the run to work within.
+        real(8) :: addiction_scalar_max_rel_step=0.02d0
         integer :: have_gap_addiction_scalar=0
         real(8) :: lambda_secant_slope_1=0
 
@@ -6045,6 +6060,20 @@
         integer :: have_warm_distribution=0
         real(8) :: distance_smallest_house_size
         real(8) :: stopping_rule_smallest_house_size=10.d0**(-3) 
+
+        ! ITS OWN CAP RATHER THAN THE GLOBAL TENTH OF A PER CENT. burden50 sat
+        ! at 0.028 against its target of 0.101 at the end of the 16-loop run
+        ! while this parameter moved 0.11959 -> 0.12151, 1.6 per cent in total,
+        ! the global cap binding throughout. Closing a gap of that size at a
+        ! tenth of a per cent a loop takes something like 700 loops.
+        !
+        ! ONE PER CENT, NOT THE TWO THE DRUG PRICE GETS, because h_3 and h_4 are
+        ! pegged at twice and three times h_2, so every step here moves the whole
+        ! housing ladder and a compounding two per cent risks walking the grid
+        ! out from under the distribution. One per cent closes the present gap in
+        ! about 130 loops. The adjuster's own damping on a sign flip
+        ! (house_size_adjuster_damping) is what guards against overshoot.
+        real(8) :: smallest_rental_max_rel_step=0.01d0
         
         ! Purchase is unreachable, but this index is still read in places that
         ! compile whether or not it is reachable, so it is kept inside the new
@@ -45383,7 +45412,9 @@
                         smallest_rental_relative_to_lowest_income=&
                             min(max(smallest_rental_relative_to_lowest_income-smallest_house_size_adjuster*&
                             gap_house_size_1,smallest_rental_floor),10.d0) 
-                        smallest_rental_relative_to_lowest_income=cap_step(smallest_rental_relative_to_lowest_income,cap_old_1)
+                        smallest_rental_relative_to_lowest_income=&
+                            cap_step_rel(smallest_rental_relative_to_lowest_income,&
+                            cap_old_1,smallest_rental_max_rel_step)
                                                                      
                         distance_smallest_house_size=&
                             abs(val_burden50_expend_all(1)/&

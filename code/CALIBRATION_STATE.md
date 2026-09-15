@@ -1,3 +1,100 @@
+## b is BIMODAL, and the "good" point I reported at b=0.103 was a run in transit
+
+Correcting something I told the author. I reported hb18 as the best point I
+had: b = 0.103 against a target of 0.089, SUD share of the homeless 0.204
+against 0.217. Both close. It was four loops long.
+
+**hk is the SAME SEED run to 16 loops.** Byte-identical handover files. Its b:
+
+```
+loop  1    2      3      4      5      6      7      8     9-16
+b   0.016 0.103  0.105  0.103  0.091  0.041  0.021  0.005  0.0042 (flat)
+```
+
+hb18 stopped at loop 4. The run does not settle at 0.103; it passes through
+0.103 on its way to 0.0042, and the settled value is on the dead branch. Had I
+seeded from it -- which I had already staged and started -- I would have spent
+an hour rediscovering hk.
+
+This is the loop-count rule for the third time today, and the first two times
+it was a single stale print. This one was four consecutive loops flat to three
+digits, which is most of the settling test, and it was still a run in transit.
+**The settling test needs the DRIVING PARAMETER to have stopped moving too, and
+here it had not: the price was still walking and b followed it down.**
+
+### The two branches
+
+Every run so far lands on one of two branches and nothing has settled between:
+
+| run  | price | kappa | loops | b       | y_u   | verdict          |
+|------|-------|-------|-------|---------|-------|------------------|
+| k55  | 0.001 | 5.5   | 9     | 0.514   | 0.729 | live, still falling |
+| k42  | 0.003 | 4.2   | 3     | 0.449   | 0.749 | live, flat       |
+| hb15 | 0.015 | 2.4   | 3     | 0.237   | 0.894 | rising           |
+| hb18 | 0.018 | 2.4   | 4     | 0.103   | 0.929 | IN TRANSIT       |
+| hk   | 0.018 | 2.4   | 16    | 0.0042  | 0.337 | dead, settled    |
+| k52  | 0.012 | 5.2   | 9     | 0.0003  | 0.203 | dead from loop 1 |
+
+Target is b = 0.089, y_u = 0.74.
+
+y_u TRACKS b rather than kappa: every live-branch run reads 0.73-0.75 and
+every dead-branch run reads 0.20-0.34. When the drug population collapses the
+survivors are the poorest, and y_u collapses with it. So the earlier reading
+that "kappa sets y_u" was picking up the branch, not the parameter -- k42 at
+kappa 4.2 and k55 at kappa 5.5 give the same y_u because both are live.
+
+Whether b = 0.089 is reachable at all, or sits in an unstable region between
+two basins, is NOT established. Six runs, four of them short, cannot decide it,
+and declaring the model incapable is exactly as premature as declaring it
+converged. It is the open question.
+
+## The instruments could not have hit their targets, at any number of loops
+
+The author, 15 September: *"Do you think that if you let the program work on its
+own all the parameters can hit their targets after 500-1000 iterations? Just
+make sure all the instruments with targets are live and updated at rates that
+make sense."*
+
+Two of them were not.
+
+**The drug price.** In k42, with b five times its target, the instrument moved
+3.000e-3 -> 3.015e-3 -> 3.030e-3 -> 3.045e-3. Half a per cent a loop, the cap
+binding every single loop. That needs ~140 loops to double and ~280 to cross
+its own measured bracket. And it is outrun by the equilibrium it steers: over
+hk's 16 loops the price moved 3 per cent in total while b fell by a factor of
+25. It was not steering b, it was watching it.
+
+**h_2.** burden50 ended hk at 0.028 against a target of 0.101 -- and it moved
+AWAY, 0.078 -> 0.028, across the run. Meanwhile
+smallest_rental_relative_to_lowest_income moved 0.11959 -> 0.12151, 1.6 per
+cent in total, on the global tenth of a per cent. ~700 loops to close a gap
+that size.
+
+Raised: the price to 2 per cent (the rate the author set for pi_V), h_2 to 1
+per cent rather than 2, because h_3 and h_4 are pegged at twice and three times
+h_2 so every step moves the whole ladder.
+
+**Left slow deliberately:** h_1 is INSIDE its 0.4-1.0 per cent band, where the
+author's instruction is not to adjust it at all; beta is 3 per cent from target
+and is violently sensitive; the tax rate is a fast-equilibrating residual.
+
+## kappa_find_smi had no update block
+
+It could be seeded and never calibrated -- no adjuster, no distance, no gap, no
+convergence term. kappa_uem owned the SMI share of the homeless and is now held.
+
+Two errors in my first draft, both caught before building, neither of which any
+compiler would have reported:
+
+- the new block was nested INSIDE the kappa_uem guard that the same change sets
+  to zero. It would have compiled clean and never once executed.
+- distance_kappa_find_smi was read by nothing: not the do-while, not the NaN
+  guard, not the state file. An instrument whose distance nobody reads lets the
+  loop declare convergence with its moment still off target.
+
+Checkpointed at the TAIL of calibration_state.dat behind the iostat guard, per
+the rule already written there.
+
 ## kappa = 5.5 puts y_u ON TARGET. My warning against raising kappa was wrong here.
 
 The author, 15 September: *"Then maybe we need to bring kappa to 5-6? And set
