@@ -1,3 +1,46 @@
+## A SEED IS PARAMETERS. AN EQUILIBRIUM IS PARAMETERS PLUS STATE.
+
+`k24long` was started from `SEED_K24_SETTLED.txt` with nothing changed, to test
+whether the recommended point is stable. It did not restart near that point: b
+went to 0.160 against the seeded 0.0844, lambda_d to 0.072 against 0.0362 --
+roughly double both -- before turning back down.
+
+First read: the seed is defective. **That was wrong.** The log says why, in its
+own words at startup:
+
+    no calibration_state.dat, starting from the declared values
+    handover banked into calibration_state.dat before the first solve
+
+Every run in this session is started in a FRESH directory, so every run is COLD.
+The numbers:
+
+| carrier | holds |
+|---------|-------|
+| `calibration_state.dat` | **165 values** |
+| a SEED_*.txt file       | 75 names |
+| handover `case` keys in the Fortran | 96 |
+
+So a seed cannot carry the converged state even in principle: the state file has
+165 values, more than the parser has keys for. What a seed carries is the
+parameter vector; what it cannot carry is everything else the converged run had
+accumulated -- the warm starts the next solve begins from.
+
+**Consequence for the three bracket seeds.** SEED_K19_SETTLED, SEED_K24_SETTLED
+and SEED_K30_SETTLED are correct as parameter vectors and were each verified by
+`seed_provenance.py`. They are STARTING POINTS, not reproductions: a run from any
+of them re-converges over tens of loops rather than resuming. The measured
+equilibria are the tables in this file, not whatever a fresh run reads at loop 5.
+
+**Do not read a cold restart's early loops as a failure of the point it was
+seeded from.** That is what nearly happened here, and the previous note in this
+file -- a bouncing series means not converged YET -- applies to the same run from
+the other end.
+
+**If a run ever needs to actually RESUME rather than re-converge**, copy
+`calibration_state.dat` into the new directory alongside the handover. Note the
+ordering ENGINE.md records: `read_calibration_state` runs BEFORE
+`apply_param_handover`, so the handover still wins on any name it carries.
+
 ## delta_h IS NOT DRIFTING -- its channel has been pinned OFF the whole time
 
 Recorded at 04:41 as "delta_h has drifted, not investigated". It has not drifted.
