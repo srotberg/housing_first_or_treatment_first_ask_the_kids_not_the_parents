@@ -1,3 +1,58 @@
+## THE MODEL IS NOT UNSTABLE. The UPDATE DYNAMICS were, and h_1's target drove them.
+
+The frozen pass, f13, 15 September. It was meant to reproduce j06's descent and
+freeze at loop 13, where j05 and j06 both read participation 0.0876.
+
+**IT DID NOT REPRODUCE IT, AND THAT IS MY ERROR.** I claimed the descent was
+deterministic and the freeze would land on 0.0876. The determinism claim was
+about an UNCHANGED model, and the same commit that added the freeze switch also
+moved h_1's target from 0.004 to 0.010 on the author's instruction. f13 reached
+0.2058 at loop 13, not 0.0876. **A determinism argument is void across a model
+change, however small the change looks.**
+
+The result is better than the one planned.
+
+```
+loop   particip   b_SG        disorder   y_u
+ 9     0.20608    0.006072    0.09159    0.65263
+11     0.20583    0.006091    0.09137    0.65300
+13     0.20580    0.006109    0.09134    0.65303   <- freeze engages
+14     0.20579    frozen      0.09133    0.65305
+15     0.20571    frozen      0.09127    0.65292
+16     0.20571    frozen      0.09127    0.65293
+17     0.20571    frozen      0.09127    0.65294
+```
+
+**IT CONVERGED ON ITS OWN, BEFORE THE FREEZE.** Flat to five digits from loop 11
+with the instruments still live, and rock steady through four frozen loops.
+
+So the model has a stable equilibrium and converges cleanly to it. Every
+collapse recorded above this entry came out of the UPDATE DYNAMICS, not out of
+the model refusing to sit still. That retires the reading that 0.089 sits on an
+unstable branch of the model.
+
+## h_1's TARGET IS COUPLED TO PARTICIPATION, and coupled hard
+
+It is the ONLY model difference between j06 and f13:
+
+| h_1 target | what participation did |
+|------------|------------------------|
+| 0.004      | descended through 0.089 and collapsed to 0.006 |
+| 0.010      | **settled at 0.206 and stayed** |
+
+Same seed, same everything else. Plausible mechanism: h_1 sets how bad the
+street is, which is what makes a drug user's outside option bite -- but that is
+a mechanism and the two runs are the measurement.
+
+**THIS CUTS AGAINST THE AUTHOR'S CONFIRMED 0.4 PER CENT** and they have been
+told. 0.4 is the setting that collapses the drug block; 1.0 is the one that
+holds it. One run each, so it is not settled, but the contrast is stark.
+
+Participation at 0.206 is 2.3 times the 0.089 target. A STABLE point that is too
+high is a far better place to start than an unstable one that collapses, because
+b_SG can be walked up against it. j07 is that walk, at h_1 = 1.0 per cent with
+no freeze.
+
 ## THREE STEP SIZES, THREE CROSSINGS, THREE COLLAPSES. It is not a step-size problem.
 
 | run | b_SG step | crossed at | in the band for | settled at |
