@@ -1,3 +1,47 @@
+## theta = 0.189 FLOODS the drug block. The aggregate extrapolation is refuted.
+
+The aggregate drug share was fitted as 0.729*theta + 0.002, R-squared 0.962, over
+454 loops spanning theta 0.070 to 0.120, and a 14 per cent aggregate was
+predicted to want theta near 0.189. Seeded there (`hfix`, kappa 2.4), loop 5:
+
+| moment | model | target | gap |
+|--------|-------|--------|-----|
+| b            | 0.8016 | 0.089  | **+801%%** |
+| lambda_d     | 0.3414 | 0.0368 | +828%% |
+| theta moment | 0.3783 | 0.16   | +136%% |
+| y_u          | 0.8697 | 0.74   | +17.5%% |
+| sud_homeless | 0.6623 | 0.217  | +205%% |
+
+**The linear fit does not survive outside its range.** Instead of an aggregate near
+0.14, theta = 0.189 puts EIGHTY PER CENT of the population on drugs. The R-squared
+of 0.962 measured how well a line fits inside 0.070-0.120; it said nothing about
+0.189, and the warning recorded with the prediction was not strong enough.
+
+**Both directions on theta now have a measured wall:**
+
+| theta | b      | drug block |
+|-------|--------|------------|
+| 0.095 | 0.015  | dead       |
+| 0.105-0.120 | 0.08-0.09 | at target |
+| 0.189 | 0.80   | flooded    |
+
+So the band of theta that keeps b near its target is roughly **0.105 to 0.120**,
+and the mean-of-ratios moment there is 0.30. Neither reading of the 0.14-0.16
+drug-spending target is reachable while b is at target: 0.095 for the mean of
+ratios kills participation, 0.189 for the aggregate floods it.
+
+**y_u goes ABOVE target for the first time** (+17.5%%) at theta = 0.189, because
+with 80 per cent of the population using, drug users are no longer a selected
+low-income group. That is worth remembering: y_u's deficit at the calibrated
+point is partly a selection effect, not only kappa.
+
+### What DID work in the same run
+
+Newly live and newly uncapped instruments are all pulling correctly at loop 5:
+cbar -5.7%% (from -49.4%% pinned), tau_u +1.6%%, tau_l -1.2%%, beta +3.0%%. The h_1
+band guard fired on loop 1 and held the rate under 1 per cent. The delta_d scan
+over [0, 0.4] returns 0.4, the argmax, as predicted.
+
 ## REPRODUCED: kappa = 2.4 is an attractor, and here is its error bar
 
 `k24long` was started cold from `SEED_K24_SETTLED.txt` with nothing changed. It
