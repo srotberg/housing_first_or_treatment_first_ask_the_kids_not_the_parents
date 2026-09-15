@@ -1,3 +1,33 @@
+## WHICH SEARCH IS LIVE: the serial calibration run `k24t12`, as a bare `./hftf`
+
+ENGINE.md's suspension section says this file names the live search. It did not,
+so the 15 September firings had to rediscover it from `ps`. It does now.
+
+The live search is the model's OWN internal calibration loop, launched directly
+as `./hftf` in a scratchpad directory, not `nm_loop.sh` and not `three_loop.sh`.
+Test for it the same way, positionally:
+
+    ps -eo pid,args= | awk '$3=="./hftf" || $2=="./hftf"'
+
+**It suspends the parallel round for the same reason the others do**, plus one of
+its own: it is a serial search that owns the box, and this container has four
+cores. Two solvers at once was run by mistake earlier in this session and the
+orphan was found writing into a deleted directory.
+
+While it is alive a firing does steps 0, 1 and 2 and then STOPS -- no
+`next_batch.py`, no workers.
+
+## THE ARCHIVE HAS ZERO POINTS ON THE CURRENT MODEL, so the gate is blind anyway
+
+    MODEL 275b430da2  ->  0 files in code/points/
+
+The Fortran has moved since anything was scored: the kappa_phi_d gate on b, the
+theta gate, the penalty-scan argmax fallback. By ENGINE.md step 2 this on its own
+forbids a batch -- "any batch it writes is a guess dressed as a step" -- so the
+two stop conditions are independent and both hold. The way back in is to SEED
+from the best known vector once the serial run settles, not to fire the gate.
+`code/SEED_K24_BSUD_HIT.txt` is the current anchor: b and lambda_d both at target.
+
 ## kappa_phi_d = 2.4: the delta_d scan does not reach an odds ratio of 2
 
 Measured in `k24t12` over loops 16-21, with b inside its band and the scan
