@@ -1,3 +1,41 @@
+## delta_h IS NOT DRIFTING -- its channel has been pinned OFF the whole time
+
+Recorded at 04:41 as "delta_h has drifted, not investigated". It has not drifted.
+
+    real(8) :: penalty_child_homeless=0.0d0
+    real(8) :: penalty_child_homeless_adjuster=0.d0
+    real(8), parameter :: penalty_child_homeless_adjuster_start=5*10.d0**(-2)
+
+The parameter is pinned at zero and its adjuster is zero, so it never moves --
+while `calibrate_penalty_child_homeless=1` says it should be calibrated and a
+start value of 5e-2 sits unused beside it. That is why `gaps_now.py` files it
+under HELD with no print.
+
+**And the child-homeless odds ratio does not respond to kappa:**
+
+| run       | kappa | delta_h | vs 2.1 |
+|-----------|-------|---------|--------|
+| k19cmp    | 1.9   | 1.434   | -31.7%% |
+| k24th110  | 2.4   | 1.465   | -30.3%% |
+| k30cmp    | 3.0   | 1.425   | -32.1%% |
+
+Three runs, three kappas, all within 3%% of each other. Unlike the SUD odds ratio,
+delta_h is invariant to kappa. It sits at about **1.43 from intergenerational
+transmission alone**, with its own penalty at zero.
+
+**This is a better starting position than delta_d's.** delta_d needs a penalty of
+0.99 to drag the SUD odds ratio from 1.06 to about 2.0 -- the author has ruled
+that value out. delta_h is already at 1.43 with zero penalty, so 2.1 may be
+reachable at a modest value rather than at the boundary.
+
+**`penalty_child_homeless` IS a handover key**, so this can be measured by seed
+alone, with no thaw. Nothing else in the live set points at the -30%% delta_h gap.
+
+NOT ACTED ON. Switching on a channel that is pinned off is a scope decision and
+belongs to the author -- the same class as the direct parent-to-child SUD channel
+that was built and then removed on their instruction. Recorded here so the next
+firing does not rediscover it as a drift.
+
 ## kappa = 3.0: a RANGE, not a point. The run does not settle.
 
 `k30cmp`, 30 loops since b first reached target. Reported with spread because
