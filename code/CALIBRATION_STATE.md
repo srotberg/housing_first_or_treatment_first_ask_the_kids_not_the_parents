@@ -36,6 +36,55 @@ belongs to the author -- the same class as the direct parent-to-child SUD channe
 that was built and then removed on their instruction. Recorded here so the next
 firing does not rediscover it as a drift.
 
+## SUPERSEDED -- kappa = 3.0 DID settle, and the section below is wrong
+
+Written at 10:50, when 30 loops of bouncing looked like a run that would not
+converge. It converged about 40 minutes later. All four moments now pass the
+settling test over 20 loops:
+
+| moment | kappa = 3.0 | target | gap |
+|--------|-------------|--------|-----|
+| b            | 0.1064 | 0.089  | **+19.6%** |
+| lambda_d     | 0.0341 | 0.0368 | -7.3%  |
+| y_u          | 0.5038 | 0.74   | -31.9% |
+| theta moment | 0.3018 | 0.16   | +88.6% |
+| odds ratio   | **1.701** | 2.0 | -15.0% |
+
+sd/mean: b 1.92%%, lambda_d 1.65%%, y_u 0.49%%, theta 0.91%%, odds ratio 1.77%%.
+
+**Two things the range section got wrong.**
+
+1. **b settles ABOVE target and stays there.** 0.1064 against 0.089, while the
+price instrument keeps rising (which lowers b) with its distance flat at 0.017.
+At kappa = 3.0 the instrument cannot pull participation back down. Neither
+kappa = 1.9 (b -9.4%%) nor kappa = 2.4 (b -4.3%%) has this problem.
+
+2. **The odds ratio is 1.70, not "indeterminate around 2.0".** The recorded range
+1.727-2.076 was measured across the approach; the converged value sits BELOW it.
+So kappa = 3.0 is not merely indistinguishable from kappa = 2.4's 2.04 -- it is
+**decisively worse**, by 0.34, at 1.8%% variation.
+
+**The odds ratio is therefore NON-MONOTONE in kappa, peaking at or near 2.4:**
+
+| kappa | odds ratio | y_u vs 0.74 | theta vs 0.16 | b gap |
+|-------|------------|-------------|---------------|-------|
+| 1.9   | 1.570      | -22.7%%      | +61.2%%        | -9.4%% |
+| 2.4   | **2.04**   | -34.7%%      | +85.3%%        | -4.3%% |
+| 3.0   | 1.701      | -31.9%%      | +88.6%%        | +19.6%% |
+
+kappa = 2.4 is the top of the useful range, on firmer ground than before: going
+past it loses odds ratio AND loses control of b.
+
+### The lesson, AGAIN, in the opposite direction
+
+The 10:50 section's own closing advice was "widen the window and report the
+spread, or stop and say the run will not answer the question". Taking that advice
+produced a confident negative -- "does not settle" -- about a run that settled
+shortly after. **A bouncing series is not evidence that a run will never
+converge; it is evidence that it has not converged YET.** The correct statement
+at 10:50 was "not converged after 30 loops", which says nothing about loop 50.
+Declaring a run incapable is as premature as declaring it finished.
+
 ## kappa = 3.0: a RANGE, not a point. The run does not settle.
 
 `k30cmp`, 30 loops since b first reached target. Reported with spread because
