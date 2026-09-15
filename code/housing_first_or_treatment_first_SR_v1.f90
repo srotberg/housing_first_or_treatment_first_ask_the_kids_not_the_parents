@@ -5834,6 +5834,13 @@
         real(8) :: newborn_endowment_max_rel_step=0.01d0
         real(8) :: pi_eu_max_rel_step=0.01d0
         real(8) :: mu_homeless_max_rel_step=0.01d0
+
+        ! pi_V ON ITS OWN CAP TOO, 15 September: "you need to fix pi_v". The
+        ! voucher lottery ran on the global 0.1 per cent and the moment needs to
+        ! nearly TRIPLE -- 0.093 against 0.266 -- which is about eleven hundred
+        ! loops. Its instrument moved 0.044375 to 0.044508 across three loops,
+        ! which is the cap and not the economics.
+        real(8) :: pi_V_max_rel_step=0.02d0
         ! THE STOPPING RULE EXISTED AND THE DISTANCE DID NOT.
         !
         ! The retention scale is updated every loop against an average labour
@@ -47206,7 +47213,7 @@
                     probability_of_voucher_benchmark_used=&
                         max(min(probability_of_voucher_benchmark_used-voucher_probability_adjuster*&
                         (model_eligibles_getting_voucher(1)-voucher_coverage_data),1.d0),10.d0**(-5))
-                    probability_of_voucher_benchmark_used=cap_step(probability_of_voucher_benchmark_used,cap_old_1)
+                    probability_of_voucher_benchmark_used=cap_step_rel(probability_of_voucher_benchmark_used,cap_old_1,pi_V_max_rel_step)
                     distance_voucher_probability=&
                         abs(model_eligibles_getting_voucher(1)-voucher_coverage_data)
                     write(*,*) "probability_of_voucher_benchmark_used=", probability_of_voucher_benchmark_used
