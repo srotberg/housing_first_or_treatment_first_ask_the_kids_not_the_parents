@@ -45461,6 +45461,22 @@
 
                             write(*,*) "model_drugs_used_by_users_on_average(1)=", mean_drug_quantity_1
                             write(*,*) "onset_at_the_mean_quantity=", onset_at_mean_1
+                            ! LAMBDA_D'S INSTRUMENT, PRINTED AT LAST.  This is the
+                            ! parameter that actually moves the disorder rate --
+                            ! probability_of_becoming_addicted_if_experiment sits in
+                            ! the else branch below and never executes, which is why
+                            ! it is frozen at its seed in every log.  Before this
+                            ! line, addiction_onset_base appeared exactly ONCE in a
+                            ! thirty-loop log, on the handover, so there was no way
+                            ! to tell whether it was stuck, crawling or against its
+                            ! [0,1] bounds.  Every claim made about lambda_d today
+                            ! was guesswork for want of one write statement.
+                            write(*,*) "addiction_onset_base=", addiction_onset_base,&
+                                " distance_lambda_addiction=",&
+                                abs(model_fraction_addicted(1)-sud_rate_data),&
+                                merge(" RAISED: lambda_d is below target ",&
+                                      " LOWERED: lambda_d is above target",&
+                                      model_fraction_addicted(1)<sud_rate_data)
 
                         else
 
