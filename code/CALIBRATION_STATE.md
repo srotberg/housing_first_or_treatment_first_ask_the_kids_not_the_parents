@@ -1,3 +1,37 @@
+## MEASURED: y_u's gap is kappa_phi_d's doing, and kappa = 1.9 recovers it in full
+
+`k19cmp` is `SEED_K24_SETTLED.txt` with exactly ONE line changed -- kappa_phi_d_level
+2.4 -> 1.9. Every other parameter identical; the diff is one line.
+
+| kappa | y_u vs 0.74 target |
+|-------|--------------------|
+| 1.4   | approx 0.74 (t079_k140, this session) |
+| 1.9   | **0.7330, -0.9%** (mean over 12 loops, sd 0.0089) |
+| 2.4   | 0.483, -34.7% (mean over 20 settled loops) |
+
+y_u held at 0.73-0.75 from loop 1 onward while b fell from 0.47 to 0.39, so it
+tracks kappa and not participation. That is as clean an attribution as this
+model gives: **the -35%% y_u gap at kappa = 2.4 is the price of kappa, nothing
+else.**
+
+Against that price, what kappa = 2.4 buys: the child-SUD odds ratio reaches 2.0
+only at penalty_child_addicted = 0.99, which the author has ruled out. Nothing
+else has been identified that it buys.
+
+**The other two rows of the bracket are NOT measured yet and must not be quoted.**
+At loop 22 the kappa = 1.9 run still has b = 0.393 against 0.089 and lambda_d =
+0.191 against 0.0368 -- a drug block five times its calibrated size -- so the
+theta moment and any odds ratio read there describe a different economy. b is
+falling at -0.0046/loop and DECELERATING (it was -0.0072 ten loops earlier);
+linear projection to target is 66 loops, over two hours, and the true figure is
+worse.
+
+**Why the run starts so far out.** Seeding kappa = 1.9 beside a b instrument
+fitted at kappa = 2.4 blows participation wide open: b went to 0.45 within two
+loops. kappa_phi_d does far more work holding participation down than its name
+suggests. A future kappa comparison should expect to re-fit the b instrument
+from scratch rather than inherit it.
+
 ## SYSTEMATIC: which instruments are closing their own distance, and which are not
 
 Applied to every `distance_*` the log prints, over the last 30 loops of
