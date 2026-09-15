@@ -1939,6 +1939,24 @@
         ! the old economy passes kappa_find_smi equal to kappa_uem.
         real(8) :: kappa_find_smi=1.0
 
+        ! CALIBRATED ON THE SMI SHARE OF THE HOMELESS, 15 September: "Kappa_find_smi
+        ! should match the share of homeless with smi", and with it "lambdam also
+        ! should be held since Kappa_find_smi is controlling that target".
+        !
+        ! IT HAD NO UPDATE BLOCK AT ALL -- no adjuster, no distance, no gap -- so
+        ! it could be seeded and never calibrated. kappa_uem owned this moment and
+        ! is held below: one moment, one instrument.
+        !
+        ! THE SIGN. It DIVIDES job finding (find_1=find_1/kappa_find_smi), so a
+        ! larger value means the ill find work less easily, more end up on the
+        ! street, and the SMI share of the homeless RISES. A model above target
+        ! wants this SMALLER, so the update subtracts the gap -- the same
+        ! convention as the kappa_uem block it replaces.
+        real(8) :: kappa_find_smi_adjuster=2.d0
+        real(8) :: kappa_find_smi_max_rel_step=0.02d0
+        real(8) :: distance_kappa_find_smi=1
+        real(8) :: stopping_rule_kappa_find_smi=10.d0**(-3)
+
         ! Assigned. Standardised mortality ratios for SMI run 2 to 3.
         real(8), parameter :: kappa_phi_m=2.50
 
@@ -2093,7 +2111,10 @@
         ! THE TWENTY IS UNCHANGED and the reasoning above still applies: the
         ! parameter runs in the tens and the moment is a share that cannot
         ! exceed one, so a two would move it four tenths of a per cent a loop.
-        real(8) :: kappa_uem_adjuster=2.d1
+        ! HELD 15 September: kappa_find_smi now owns the SMI share of the homeless.
+        ! Both computed the same gap -- two instruments on one moment, the failure
+        ! ENGINE.md records for smallest_house_size when it carried two targets.
+        real(8) :: kappa_uem_adjuster=0.d0
         real(8), parameter :: employment_rate_given_smi_data=0.30
 
         real(8) :: distance_rho_m
@@ -35109,6 +35130,9 @@
         call one_convergence_term("kappa_uem",&
             distance_kappa_uem, stopping_rule_kappa_uem,&
             1, open_1)
+        call one_convergence_term("kappa_find_smi",&
+            distance_kappa_find_smi, stopping_rule_kappa_find_smi,&
+            1, open_1)
         call one_convergence_term("rho_m",&
             distance_rho_m, stopping_rule_rho_m,&
             1, open_1)
@@ -42300,6 +42324,12 @@
             ! again from a full step.
             write(71,'(F30.15)') rho_intergenerational
             write(71,'(F30.15)') rho_intergenerational_adjuster
+            ! AT THE TAIL, for the reason the comment above gives. Until today
+            ! kappa_find_smi had no update block, so there was nothing to
+            ! checkpoint; now that it is calibrated on the SMI share of the
+            ! homeless, a resume that reset it to its declared 1.0 would throw
+            ! away every loop spent moving it.
+            write(71,'(F30.15)') kappa_find_smi
 
         close(71)
 
@@ -42643,6 +42673,24 @@
                         " it starts at its declared", rho_intergenerational,&
                         " with the instrument held"
                 end if
+
+                if (state_ios_1==0) then
+
+                    read(72,'(F30.15)',iostat=state_ios_1) kappa_find_smi
+
+                    ! AND THE SAME SAFE DIRECTION. A checkpoint written before
+                    ! kappa_find_smi was calibrated runs out here and leaves it
+                    ! at its declared 1.0, which is no SMI finding penalty at
+                    ! all -- the value every such checkpoint was solved under.
+                    if (state_ios_1/=0) then
+                        write(*,*) "calibration_state.dat predates kappa_find_smi;",&
+                            " it starts at its declared", kappa_find_smi
+                    else
+                        kappa_find_smi=max(min(kappa_find_smi,100.d0),1.d0)
+                    end if
+
+                end if
+
 
             end if
 
@@ -43789,6 +43837,7 @@
         distance_value_function=1
         distance_lambda_m=1
         distance_kappa_uem=1
+        distance_kappa_find_smi=1
         distance_rho_m=1
         distance_rho_d=1
         distance_discount_factor=1
@@ -44094,6 +44143,7 @@
             (distance_drug_threshold>stopping_rule_drug_threshold) .OR. &
             (distance_lambda_m>stopping_rule_lambda_m) .OR. &
             (distance_kappa_uem>stopping_rule_kappa_uem) .OR. &
+            (distance_kappa_find_smi>stopping_rule_kappa_find_smi) .OR. &
             (distance_rho_m>stopping_rule_rho_m) .OR. &
             (distance_rho_d>stopping_rule_rho_d) .OR. &
             (distance_mu_homeless>stopping_rule_mu_homeless) .OR. &
@@ -44625,6 +44675,7 @@
                 distance_size_homelessness=0
                 distance_lambda_m=0
                 distance_kappa_uem=0
+                distance_kappa_find_smi=0
                 distance_rho_m=0
                 distance_rho_d=0
                         
@@ -47487,6 +47538,63 @@
                         distance_kappa_uem=0
 
                     end if
+
+                    ! ===== kappa_find_smi, THE SMI JOB-FINDING PENALTY =========
+                    ! Author, 15 September: "adjust kappa_find_smi to match the
+                    ! share of homeless with SMI", and with it "lambdam also
+                    ! should be held since Kappa_find_smi is controlling that
+                    ! target".
+                    !
+                    ! IT HAD NO UPDATE BLOCK AT ALL until now -- no adjuster, no
+                    ! distance, no gap -- so it could be seeded and never
+                    ! calibrated. kappa_uem used to own this moment and is held
+                    ! above: ONE MOMENT, ONE INSTRUMENT.
+                    !
+                    ! THE SIGN. It DIVIDES job finding (find_1=find_1/kappa_find_smi),
+                    ! so a larger value means the ill find work less easily, more
+                    ! end up on the street, and the SMI share of the homeless
+                    ! RISES. A model above target wants this SMALLER, so the
+                    ! update SUBTRACTS the gap -- the same convention kappa_uem
+                    ! used on this moment and kappa_ued uses on the SUD side.
+                    if ((kappa_find_smi_adjuster>0) .AND. (number_of_smi_states>1)) then
+
+                        ! With no homeless mass model_smi_share_of_homeless is
+                        ! set to zero by the branch that guards its division, so
+                        ! the gap against the target is a fabricated one and the
+                        ! parameter would be driven by a moment that does not
+                        ! exist. Same guard kappa_uem carries above.
+                        if (model_mass_homeless_raw(1)<=10.d0**(-12)) then
+
+                            write(*,*) "kappa_find_smi HELD: no homeless mass, so the"
+                            write(*,*) "   SMI share of the homeless is not measurable this loop"
+
+                            distance_kappa_find_smi=1
+
+                        else
+
+                            cap_old_1=kappa_find_smi
+                            kappa_find_smi=min(max(kappa_find_smi-kappa_find_smi_adjuster*&
+                                (model_smi_share_of_homeless(1)-smi_share_of_homeless_data),&
+                                1.0d0),100.d0)
+                            kappa_find_smi=cap_step_rel(kappa_find_smi,cap_old_1,&
+                                kappa_find_smi_max_rel_step)
+
+                            distance_kappa_find_smi=&
+                                abs(model_smi_share_of_homeless(1)-smi_share_of_homeless_data)
+
+                        end if
+
+                        write(*,*) "kappa_find_smi=", kappa_find_smi,&
+                            " distance_kappa_find_smi=", distance_kappa_find_smi,&
+                            " SMI share of homeless=", model_smi_share_of_homeless(1),&
+                            " target=", smi_share_of_homeless_data
+
+                    else
+
+                        distance_kappa_find_smi=0
+
+                    end if
+
 
                     ! ================= p_m, THE SMI POPULATION SHARE ============
                     ! smi_onset_level, on the author's instruction of 11 September
@@ -50376,6 +50484,11 @@
                 write(*,*) "NaN DISTANCE: distance_inheritance_amount, forced to 1 so the sweep cannot mistake it for convergence"
                 distance_inheritance_amount=1
             end if
+            if (distance_kappa_find_smi .NE. distance_kappa_find_smi) then
+                write(*,*) "NaN DISTANCE: distance_kappa_find_smi, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_kappa_find_smi=1
+            end if
+
             if (distance_kappa_uem .NE. distance_kappa_uem) then
                 write(*,*) "NaN DISTANCE: distance_kappa_uem, forced to 1 so the sweep cannot mistake it for convergence"
                 distance_kappa_uem=1
