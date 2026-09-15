@@ -1344,7 +1344,14 @@
         integer :: scan_found=0
         real(8) :: gap_penalty_child_1=0,previous_gap_penalty_child=0
         integer :: have_gap_penalty_child=0
-        integer, parameter :: calibrate_penalty_child_addicted=1
+        ! THE SCAN IS OFF AND delta_d IS SET BY HAND AT 0.24, on the author's
+        ! instruction of 15 September.  At kappa near 2 the scan's own crossing of
+        ! the 2.0 target sat at delta_d 0.44 in bpl_run and 0.86 to 0.97 in
+        ! gate_run -- not stable across runs at the same kappa, which is itself a
+        ! reason not to let a scan choose it.  0.24 is a value the author has used
+        ! before and gives an odds ratio of 1.58 at kappa 2, reported rather than
+        ! targeted.
+        integer, parameter :: calibrate_penalty_child_addicted=0
         integer :: child_node_index_1
         ! DELTA_H, AND IT IS CALIBRATED, WHICH IT SAYS IT IS AND WAS NOT.
         !
@@ -2874,7 +2881,12 @@
         ! that HAVE income out of the cheapest rung, so the households added to
         ! homelessness are employed ones.  The old trade does not bind on this
         ! margin, which is why the author asked for the top of the band.
-        real(8), parameter :: fraction_homeless_data=0.01000
+        ! BACK TO 0.4 PER CENT.  The 1 per cent was set for the run that RAISES
+        ! h_2 -- the author allowed it *"if you need to when you raise h2"* -- and
+        ! this run does not raise h_2.  Moving the target and kappa together would
+        ! make this point incomparable with every other measured today.  One line
+        ! to change back when h_2 is raised.
+        real(8), parameter :: fraction_homeless_data=0.00400
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe
@@ -5227,7 +5239,22 @@
         ! kappa_gate_b_tolerance of its target, so kappa never reads a refill as
         ! signal.  Without it, every step during a transient pushed the same way,
         ! because the update is one-signed while y_u is below target.
-        real(8) :: kappa_phi_d_level_adjuster=2.d0
+        ! PINNED, AND y_u IS UNTARGETED.  The author, 15 September: *"i guess we
+        ! can set kappa=2 and let yu be untargeted"*, then *"yes, set kappa=2 and
+        ! delta_d=0.24"*.
+        !
+        ! WHY THIS IS A COHERENT CHOICE RATHER THAN A RETREAT.  Every moment that
+        ! depends on how concentrated drug use is among the poor runs through
+        ! kappa, and they disagree with y_u about which end of it they want.
+        ! Measured tonight, settled:
+        !
+        !     kappa 2.0    SUD odds 7.2, homeless odds 3.03, y_u 0.497
+        !     kappa 1.4    SUD odds 1.1, homeless odds 1.46, y_u 0.706
+        !
+        ! The two odds ratios want kappa high and y_u wants it low, and there is
+        ! no value satisfying both.  Choosing kappa = 2 buys both odds ratios and
+        ! makes y_u a reported gap rather than a target.
+        real(8) :: kappa_phi_d_level_adjuster=0.d0
         ! ITS OWN RATE, the way theta and omega_c have theirs.
         ! HALVED AGAIN, on the author's instruction of 13 September: *"move
         ! omegac and death rate from drug at maybe 0.05% per iteration, but
