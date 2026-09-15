@@ -1,3 +1,42 @@
+## CORRECTION: the model DOES reach a child-SUD odds ratio of 2. The scan reads low.
+
+Reported four firings running that the odds ratio "does not reach 2.0" and "tops
+out at 1.90". That was the SCAN's number. The scan is a partial-equilibrium
+re-evaluation -- it moves penalty_child_addicted and re-reads the ratio with the
+rest of the equilibrium held -- and it is systematically low.
+
+Measured against the full-equilibrium `UNTARGETED delta_d` print at the same
+delta_d, over every loop of both runs:
+
+* k24t12, 46 loops: mean gap **+0.067**, equilibrium >= 2.0 on 6 of 46
+* k24th110, last 5 settled loops: gap **+0.071 to +0.075**, equilibrium >= 2.0 on
+  **24 of 32** loops
+
+At the settled point (b flat and -4.3%, lambda_d exact) the scan says 1.968 at
+delta_d = 0.99 and the equilibrium says **2.042**. Stable across five loops.
+
+**So at kappa_phi_d = 2.4 the model produces an odds ratio of 2.04, at
+delta_d = 0.99.** The author has already ruled that value out ("it cannot be
+0.99"), so the practical conclusion is unchanged -- but the reason is different
+and the earlier statement was wrong. It is not that the model cannot reach 2; it
+is that it reaches 2 only at a delta_d the author rejects.
+
+What survives unchanged: **delta_d = 0.2475 gives 1.194 on the scan, so about
+1.26 in equilibrium.** Nowhere near 2, which was the thing actually asked.
+
+**The lesson is the general one.** The scan is the instrument that searches for
+delta_d, and it is biased against its own target by an amount larger than the
+tolerance it is searching to. Any instrument that evaluates a moment WITHOUT
+re-solving needs its bias measured against the equilibrium print before its
+answer is quoted -- the scan's "did NOT bracket 2.0" line is true of the scan and
+false of the model.
+
+## delta_h has drifted: child homeless odds ratio 1.73 against a 2.1 target
+
+It read 2.17-2.22 through k24t12 and 1.73 at the settled point of k24th110. Not
+investigated, not targeted by any live instrument, recorded so it is not
+rediscovered as new.
+
 ## MEASURED: the drug-spending moment barely responds to theta. It is NOT theta^2.5.
 
 Two settled points at kappa_phi_d = 2.4, each averaged over several loops rather
