@@ -1,3 +1,39 @@
+## THE SETTLED POINT AT kappa_phi_d = 2.4 -- seed SEED_K24_SETTLED.txt
+
+`k24th110` loop 37. b flat to three digits across several loops, inside its band,
+instruments no longer moving it. This is one equilibrium, not a best-of across
+points. Ten live instruments inside 5.2%:
+
+| moment   | model    | target  | gap    |
+|----------|----------|---------|--------|
+| tau_l    | 0.22395  | 0.224   | -0.0%  |
+| pi_V     | 0.26661  | 0.266   | +0.2%  |
+| beta     | 2.9946   | 3       | -0.2%  |
+| p_m      | 0.04821  | 0.04809 | +0.3%  |
+| h_1      | 0.004042 | 0.004   | +1.0%  |
+| tau_u    | 0.24741  | 0.245   | +1.0%  |
+| lambda_d | 0.036164 | 0.0368  | -1.7%  |
+| aleph    | 77.02    | 80      | -3.7%  |
+| lambda_m | 0.26028  | 0.25    | +4.1%  |
+| b        | 0.084415 | 0.089   | -5.2%  |
+
+Child-SUD odds ratio in full equilibrium: **2.04** at penalty_child_addicted =
+0.99. Child homeless odds ratio: 1.73 against 2.1.
+
+Still far out, and each is a known open question rather than calibration slack:
+
+| moment       | gap    | why                                        |
+|--------------|--------|--------------------------------------------|
+| band1        | -67.6% | newborn_endowment held by the 0.1%/loop cap |
+| sud_homeless | +38.7% | multiple_find_if_addicted at 15.99          |
+| mu_H         | -31.0% | 0.1%/loop cap                               |
+| pi_eu        | -23.0% | 0.1%/loop cap                               |
+| theta        | +84.2% | measured unreachable through theta at this kappa |
+| y_u          | -34.2% | untargeted on the author's instruction      |
+| h_2, burden50| -96%, -86% | the h_2 raise, authorised but not done  |
+
+**h_1 is now ON TARGET at +1.0%**, having been +9.8% at the last settled point.
+
 ## CORRECTION: the model DOES reach a child-SUD odds ratio of 2. The scan reads low.
 
 Reported four firings running that the odds ratio "does not reach 2.0" and "tops
