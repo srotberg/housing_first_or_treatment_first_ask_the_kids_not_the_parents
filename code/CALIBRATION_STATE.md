@@ -1,3 +1,52 @@
+## SYSTEMATIC: which instruments are closing their own distance, and which are not
+
+Applied to every `distance_*` the log prints, over the last 30 loops of
+`k24th110`, with the point settled. Slope is relative to the distance's own size,
+so a tiny distance and a large one can be compared -- but a relative slope on a
+distance already at 1e-5 is noise, so read the CURRENT column beside it.
+
+**Closing, and it matters** (large distance, moving the right way):
+
+| instrument distance | current | rel slope |
+|---------------------|---------|-----------|
+| mu_homeless         | 0.443   | -0.20%    |
+| relative_share_of_addiction_1 (theta) | 0.135 | -0.07% |
+
+Both are closing at a rate that will not arrive: mu_H reads -31.0% and theta
++84.2%, and at 0.2% and 0.07% of the distance per loop neither closes in any
+useful number of loops. This is the stuck theta traverse showing up again from a
+different direction, and it says mu_homeless is in the same condition.
+
+**GROWING, with a distance large enough for it to mean something:**
+
+| instrument distance | current | rel slope | its moment    | gap    |
+|---------------------|---------|-----------|---------------|--------|
+| value_of_life       | 3.818   | +1.42%    | aleph         | -3.7%  |
+| newborn_endowment   | 0.185   | +0.53%    | band1         | -67.6% |
+| housing_status_grid_expander | 0.148 | +0.15% | h_3      | -35.2% |
+| multiple_find       | 0.090   | +2.20%    | sud_homeless  | +38.7% |
+
+**newborn_endowment is the largest gap in the whole table and its instrument is
+going the wrong way.** So is the instrument for h_3, and so is the one for
+sud_homeless, which was diagnosed separately over ten consecutive loops against
+a working control.
+
+**Eleven instruments ARE closing properly**, led by utility_cost_of_treatment
+(-5.4%), penalty_child_addicted (-4.5%), labor_income_tax_rate, voucher
+probability, smi_onset_level and addiction_scalar. The loop is not broken; a
+specific set of instruments is.
+
+**So the remaining gaps will not close by running longer.** Every moment still
+far out is served either by an instrument moving the wrong way or by one moving
+too slowly to arrive. That is now measured across the whole live set rather than
+argued one instrument at a time.
+
+**What this does NOT establish** is why any individual instrument has the wrong
+sign. Observational loop data from a joint search cannot isolate one instrument:
+the pooled regression of sud_homeless on its own instrument gave R-squared 0.22
+across 90 readings. Each suspect needs a controlled one-at-a-time perturbation
+with everything else held, which is a run, not a regression.
+
 ## THE SETTLED POINT AT kappa_phi_d = 2.4 -- seed SEED_K24_SETTLED.txt
 
 `k24th110` loop 37. b flat to three digits across several loops, inside its band,
