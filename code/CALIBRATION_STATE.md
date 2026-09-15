@@ -1,3 +1,45 @@
+## kappa = 3.0: a RANGE, not a point. The run does not settle.
+
+`k30cmp`, 30 loops since b first reached target. Reported with spread because
+nothing here passes the settling test and averaging a longer window is the honest
+response to a series that bounces rather than converges:
+
+| moment | mean | sd/mean | range |
+|--------|------|---------|-------|
+| b            | 0.0930 | 8.4%% | 0.0819 - 0.1106 |
+| lambda_d     | 0.0325 | 7.3%% | 0.0291 - 0.0373 |
+| y_u          | 0.4804 | 4.8%% | 0.4344 - 0.5098 |
+| theta moment | 0.3270 | 4.3%% | 0.3054 - 0.3532 |
+| odds ratio   | 1.985  | sd 0.127 | 1.727 - 2.076 |
+
+**The odds ratio at kappa = 3.0 CANNOT be separated from kappa = 2.4's 2.04.**
+Its range spans that value. Across four firings I characterised it three
+different ways -- saturated, rising, indeterminate -- each from a ten-loop window
+sampled at a different point in b's excursion. Only the last is right.
+
+**y_u and theta are both WORSE than at kappa = 2.4**, and those differences are
+larger than the spread: y_u 0.480 against 0.483 is a wash, but theta's moment is
+0.327 against 0.292, and both are far worse than kappa = 1.9's 0.572 and 0.258.
+
+**So the bracket's conclusion stands and kappa = 3.0 adds nothing to it.** Raising
+kappa above 2.4 buys no measurable odds ratio and costs drug-spending fit. The
+useful range ends at or below 2.4.
+
+### The methodological point, which cost four firings
+
+A series that bounces does not become settled by being sampled more often. Each
+firing I read a 6-to-10 loop window, found it flat or tight, and reported it;
+each next firing b had moved and the number was different. **Sampling an
+unconverged series at intervals produces a sequence of confident wrong answers,
+one per interval.** The fix is to widen the window to cover several excursions
+and report the spread -- which is what this section does -- or to stop and say
+the run will not answer the question.
+
+**A moment is not settled while its driver moves.** y_u and theta both read
+"settled" on a 6-loop test at 09:41 and 09:50 while b was still travelling. That
+rule is already in this file from the kappa = 1.9 run; it was written down and
+then not applied, twice.
+
 ## SEED-BUILDING TRAP: 49 of 75 names are NEVER printed, so the BASE decides them
 
 Building the kappa = 1.9 seed produced a file reading `kappa_phi_d_level 2.4` --
