@@ -1,3 +1,46 @@
+## SETTLED: the kappa = 1.9 row. The kappa bracket, measured at two points.
+
+`k19cmp` loops 69-76, all four moments passing the settling test over 8 loops:
+b 1.54%% variation, lambda_d 1.10%%, y_u 0.67%%, theta 0.50%%.
+
+| moment | kappa = 1.9 | target | gap |
+|--------|-------------|--------|-----|
+| b        | 0.0806 | 0.089  | -9.4%  |
+| lambda_d | 0.0363 | 0.0368 | -1.4%  |
+| y_u      | 0.5720 | 0.74   | -22.7% |
+| theta moment | 0.2579 | 0.16 | +61.2% |
+| child-SUD odds ratio, equilibrium, delta_d=0.99 | 1.570 | 2.0 | -21.5% |
+
+**The bracket:**
+
+| | kappa = 1.4 | kappa = 1.9 | kappa = 2.4 |
+|-|-------------|-------------|-------------|
+| y_u vs 0.74         | approx 0    | **-22.7%**  | -34.7% |
+| odds ratio at 0.99  | --          | **1.57**    | 2.04   |
+| theta moment vs 0.16| approx +125%| **+61.2%**  | +85.3% |
+
+Note b sits 9.4%% light here against -4.3%% at the kappa = 2.4 point, so the y_u
+figure is measured slightly below target participation. Regressing y_u on b over
+the 25-loop settled window gives y_u = 0.327 + 3.345*b (R2 = 0.61), which puts
+y_u at about **0.62, -16%%**, at b = 0.089. Both numbers are in this table
+deliberately: 0.572 is what was measured, 0.62 is what the interpolation implies
+at target b, and the truth is between them.
+
+**Neither kappa delivers both y_u and the odds ratio.** kappa = 1.9 halves the
+y_u gap and gives up about half a point of odds ratio; kappa = 2.4 reaches 2.04
+but only at delta_d = 0.99 and at a 35%% y_u gap. The theta moment is least bad at
+kappa = 1.9 and bad everywhere.
+
+**The theta traverse is stuck at kappa = 1.9 too.** Twelve capped loops, gap
+between asked and allowed 0.0048, slope +0.000037/loop -- flat to widening, the
+same condition measured at kappa = 2.4. So the drug-spending target is out of
+theta's reach at BOTH kappas, and that is now a two-point finding rather than a
+one-point one.
+
+**Scan grid at kappa = 1.9** (partial equilibrium, reads about 0.07 low -- see the
+correction section): delta_d 0 -> 1.058, 0.2475 -> 1.147, 0.495 -> 1.277,
+0.7425 -> 1.456, 0.99 -> 1.506.
+
 ## OVERSTATED -- the y_u claim below is under revision, read this first
 
 The section below says y_u "tracks kappa and not participation" because it held
