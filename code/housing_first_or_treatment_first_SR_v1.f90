@@ -3061,7 +3061,35 @@
         ! their expenditures on rent for h2". 0.101 is SCF 2022 (CEX gives
         ! 0.1013), so this target is no longer an imposed modelling choice and the
         ! caveat the paper was to carry for it is retired.
-        real(8), parameter :: severe_cost_burden_data=0.101d0
+        ! SIX PER CENT, NOT 10.1, on the author's instruction of 15 September:
+        ! *"I think it's ok if h2 hits 5-7% cost burdened households... As long
+        ! as h1 is inside the band and emp homeless is as high as we can get
+        ! it"*.
+        !
+        ! 10.1 IS NOT REACHABLE WITHOUT BREAKING THE HOMELESSNESS BAND, and that
+        ! is measured rather than feared. Loops 24 to 57 of j06 held
+        ! participation flat at 0.0064, so they are a controlled h_2 sweep:
+        !
+        !   h_2 param  h_2 moment  h_3     h_1
+        !   0.12694    0.0144      0.298   0.0059
+        !   0.13079    0.0305      0.253   0.0069
+        !   0.13475    0.0469      0.202   0.0079
+        !   0.13746    0.0618      0.144   0.0096
+        !
+        ! An 8.3 per cent rise in the parameter quadrupled the moment, HALVED
+        ! h_3 and drove h_1 up 62 per cent to the top of its band. On those
+        ! elasticities -- moment +18 per log unit, h_3 -9.1, h_1 +6.1 -- reaching
+        ! 0.101 needs another 2.7 per cent, which puts h_1 at 1.13 per cent,
+        ! OUTSIDE the 0.4 to 1.0 band the author requires.
+        !
+        ! RETARGETED RATHER THAN PINNED, which the author's earlier wording
+        ! ("pin it") would also have allowed. The moment is a share of total
+        ! EXPENDITURE, so it moves with drug spending: a pinned parameter
+        ! delivers a different moment at every participation level, and the
+        ! frontier above was measured at participation 0.0064. A target lets the
+        ! instrument find the parameter that actually delivers six per cent
+        ! whatever the drug block is doing.
+        real(8), parameter :: severe_cost_burden_data=0.060d0
         real(8), parameter :: fraction_light_users=0.731
         
         integer, parameter :: target_HO_of_old=1
