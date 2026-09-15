@@ -465,6 +465,49 @@ It read 2.17-2.22 through k24t12 and 1.73 at the settled point of k24th110. Not
 investigated, not targeted by any live instrument, recorded so it is not
 rediscovered as new.
 
+## CORRECTION to the section below: theta REACHES 0.16, at theta = 0.095. b dies.
+
+The section below extrapolates a 0.53 elasticity and concludes the theta that
+would deliver the 0.16 target is "about 0.034". **The extrapolation is wrong.**
+The archive already held the answer, converged, at kappa = 2.0:
+
+| run, loop   | theta | theta moment | b      | lambda_d | y_u   |
+|-------------|-------|--------------|--------|----------|-------|
+| stage1, 24  | 0.095 | 0.165        | 0.0149 | 0.0028   | 0.280 |
+| stage1, 26  | 0.095 | 0.170        | 0.0152 | 0.0029   | 0.284 |
+| stage2, 17  | 0.095 | 0.181        | 0.0156 | 0.0034   | 0.288 |
+
+**theta = 0.095 hits the drug-spending target and kills the drug block doing it.**
+b falls to 0.015 against 0.089 and lambda_d to 0.003 against 0.0368, so the 0.16
+is a mean over almost nobody.
+
+So the CONCLUSION of the section below survives -- 0.16 and b = 0.089 are not
+jointly reachable through theta -- but its REASON was wrong. It is not that theta
+cannot reach 0.16; it is that the theta which reaches it destroys participation.
+
+The converged relationship, as measured:
+
+| theta       | theta moment | b           | drug block |
+|-------------|--------------|-------------|------------|
+| 0.095       | 0.16         | 0.015       | dead       |
+| 0.106-0.108 | 0.30         | 0.080-0.084 | alive      |
+
+**UNMEASURED: nothing in the archive sits at theta between 0.098 and 0.104.**
+That window is where the trade might be tolerable, and it is the only theta
+question left worth a run.
+
+### How this was got wrong TWICE, in opposite directions
+
+First by extrapolating a 0.53 elasticity measured across a 6.5%% window (theta
+0.1177 to 0.1101) out to theta = 0.034, across a cliff that sits just below the
+window.
+
+Then, correcting that, by reading `theta moment = 0.1479` off **loop 1** of seven
+runs and reporting them as seven independent measurements agreeing to four
+decimals. They agreed because they shared a seed and it was the same cold-start
+loop-1 value in each. **The rule "a moment print at loop 1 is not a measurement"
+is already in this file.** Check the loop number before the value.
+
 ## MEASURED: the drug-spending moment barely responds to theta. It is NOT theta^2.5.
 
 Two settled points at kappa_phi_d = 2.4, each averaged over several loops rather
