@@ -1,3 +1,47 @@
+## kappa_phi_d = 2.4: the delta_d scan does not reach an odds ratio of 2
+
+Measured in `k24t12` over loops 16-21, with b inside its band and the scan
+sweeping the WHOLE range [0, 0.99] each loop. The child-SUD odds ratio against
+delta_d:
+
+| delta_d | odds ratio |
+|---------|------------|
+| 0.00    | 1.07       |
+| 0.2475  | 1.17       |
+| 0.495   | 1.31       |
+| 0.99    | 1.90       |
+
+It brackets 2.0 in 2 of 21 scans, both on loops where b had undershot to 0.073,
+and only at the top grid point. Everywhere else the maximum over the whole
+range is below 2. So delta_d near 0.24 gives 1.17, not 2, and the entire
+delta_d channel -- from no inherited penalty to a 99% productivity penalty --
+is worth 0.83 of odds ratio at this kappa.
+
+Stable to two digits across six consecutive loops, so this is a settled
+reading and not a single-loop artefact.
+
+NOT a null in a dead region: b was 0.073-0.088 against a target of 0.089 and
+lambda_d was within 2% of target throughout, so the drug block was live and
+near its calibrated size while these were taken. It IS a reading at one kappa;
+the same scan at another kappa is a different measurement.
+
+## theta and b want nearly the same value at kappa = 2.4
+
+The worry that theta (drug-spending ratio) and b (participation) were fighting
+over the same margin did not survive measurement. b's price instrument settles
+b at 0.081-0.084 with theta at 0.119, and theta's own solver, once its gate
+opened and stayed open, asked for 0.1121 consistently across five loops. The
+log-interpolated theta for b = 0.089 was 0.109. The two moments want theta
+within about 3% of each other, so there is no deadlock to design around.
+
+## A story I had wrong: kappa does NOT drive the drug-spending ratio through y_u
+
+I was about to report that the drug-spending moment sits at 0.30 against a 0.16
+target because kappa = 2.4 depresses drug users' income and the moment is a mean
+of s/y ratios. Pooled over all 714 loop-readings in this session's run
+directories, log(theta moment) on log(y_u) has slope 0.029 and R-squared 0.000.
+There is no relationship. The mechanism was plausible and wrong.
+
 ## 15 September 01:05 UTC -- THE CHILD SUD ODDS RATIO CANNOT MOVE, AND THE REASON
 ## IS THAT ADDICTION ONSET IGNORES HOW MUCH ANYONE USES
 
