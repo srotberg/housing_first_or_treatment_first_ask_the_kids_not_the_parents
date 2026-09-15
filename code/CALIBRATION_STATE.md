@@ -1,3 +1,35 @@
+## WRONG TITLE BELOW: the aggregate extrapolation HELD. I read the wrong number.
+
+The section below says the aggregate fit was refuted at theta = 0.189. It was not.
+The fit predicted 0.729*0.189 + 0.0023 = **0.1401**. Measured:
+
+| estimator | addicts | experimenters |
+|-----------|---------|---------------|
+| **aggregate, sum spend / sum income** | **0.1432** | 0.1348 |
+| mean of s/y (what `MOMENT theta` prints) | 0.5396 | 0.2586 |
+
+**Predicted 0.1401, measured 0.1432 -- within 2.2 per cent, extrapolating 60 per
+cent outside the fitted range.** The relationship held.
+
+What went wrong: I read `MOMENT theta` = 0.378 and called the fit broken. That
+moment is `weighted_drug_share_now()`, the MEAN OF RATIOS, not the aggregate --
+which is documented in this very file two sections down, and which I had measured
+myself earlier the same day. The aggregate prints separately as
+`DIAG drug share, sum spend / sum income`.
+
+**THE RULE: the theta moment print and the theta target are the mean of ratios.
+The aggregate is a DIAG. They differ by a factor of three to four and they move
+theta in OPPOSITE directions. Name which one before quoting a number.**
+
+**What survives from the section below** is the participation wall, which no
+choice of estimator touches: at theta = 0.189, b = 0.8016 against 0.089. So the
+model DOES deliver a 14 per cent aggregate drug-spending ratio -- it just puts
+eighty per cent of the population on drugs to do it.
+
+**The author, 15 September: "good, just keep reporting the aggregate over
+aggregate."** Report `DIAG drug share, sum spend / sum income` from here, not
+`MOMENT theta`.
+
 ## theta = 0.189 FLOODS the drug block. The aggregate extrapolation is refuted.
 
 The aggregate drug share was fitted as 0.729*theta + 0.002, R-squared 0.962, over
