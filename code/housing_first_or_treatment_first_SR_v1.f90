@@ -162,7 +162,18 @@
         ! relative_share_of_addiction_ADJ and not the _ADJUSTER of the same
         ! stem, which is declared zero and never read -- that distinction is
         ! why theta once ran live for a day while being reported as held.
-        integer, parameter :: hold_theta=1
+        ! THETA IS LIVE AGAIN.  The author, 15 September: *"since kappa is
+        ! pinned, i think you can adjust theta to match the 0.16 average drug to
+        ! income ratio"*.
+        !
+        ! It does double duty here.  theta is the only instrument on the drug
+        ! spending moment, and it is also what makes drugs worth using at all --
+        ! so putting it live to raise the spending ratio also raises
+        ! participation, which is what collapsed at kappa 2.4: b sat at 0.0067
+        ! against 0.089 with theta pinned at 0.095.  Low theta and high kappa
+        ! together do not support a drug block, because drugs are both less
+        ! valued and more lethal.
+        integer, parameter :: hold_theta=0
 
         integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
@@ -3495,7 +3506,17 @@
         ! code/paper/drug_spending_target.py is SUPERSEDED by
         ! data/make_drug_spending_target.py and its header still describes a 0.35
         ! target and a 5.13 per cent participation rate. Do not read it as current.
-        real(8), parameter :: drug_spending_share_data=0.14098
+        ! 0.16, WHICH THE AUTHOR HAS ACCEPTED TWICE.  14 September: *"It needs to
+        ! be around 0.14-0.16. I can accept 0.16 average drug spending ratio"*,
+        ! and 15 September: *"adjust theta to match the 0.16 average drug to
+        ! income ratio"*.
+        !
+        ! It is inside the datum's own uncertainty rather than a departure from
+        ! it.  The 0.14098 rests on NSDUH's open top income band, 75,000 and over,
+        ! whose midpoint was set at 100,000; the comment above records that moving
+        ! that assumption from 75,000 to 125,000 takes the share between 0.141 and
+        ! 0.191.  0.16 sits inside that interval.
+        real(8), parameter :: drug_spending_share_data=0.16000
         real(8) :: drug_share_experimenters_1=0
         real(8) :: drug_share_addicted_1=0
         real(8) :: drug_share_weighted_1=0
@@ -46664,6 +46685,28 @@
                                 " the break point where mortality stops reversing the",&
                                 " gradient, so raising theta chases a share that cannot be",&
                                 " reached from above it."
+
+                        elseif (abs(model_total_drug_users(1)-participation_rate_data)>&
+                                kappa_gate_b_tolerance*participation_rate_data) then
+
+                            ! THE SAME GATE kappa_phi_d HAS, AND FOR THE SAME
+                            ! REASON.  The author, 15 September: *"when b is close
+                            ! to 0.089, then you can adjust theta to match 0.16"*.
+                            !
+                            ! The drug spending moment is a MASS-WEIGHTED MEAN OF
+                            ! HOUSEHOLD RATIOS over the addicted and the
+                            ! experimenters, so it moves with the MIX of those two
+                            ! groups as well as with theta.  While b refills the mix
+                            ! swings hard: measured on 15 September, at b = 0.0147
+                            ! the addicts were 16 per cent of users against about 40
+                            ! per cent at b on target, and since addicts carry a mean
+                            ! ratio near 0.47 against the experimenters' 0.10, the
+                            ! mix alone moved the moment further than theta does.  A
+                            ! theta step taken there is reading the refill.
+                            write(*,*) "THETA GATE SHUT: b=", model_total_drug_users(1),&
+                                " is outside", kappa_gate_b_tolerance, " of",&
+                                participation_rate_data, "-- theta HELD at",&
+                                relative_share_of_addiction_1
 
                         else
 
