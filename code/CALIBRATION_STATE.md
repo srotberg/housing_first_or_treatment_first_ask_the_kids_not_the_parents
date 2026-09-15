@@ -1,3 +1,38 @@
+## kappa = 5.5 puts y_u ON TARGET. My warning against raising kappa was wrong here.
+
+The author, 15 September: *"Then maybe we need to bring kappa to 5-6? And set
+b=0.001?"* -- kappa to crush drug users' income, a cheap drug to offset the
+participation loss. Seeded at kappa 5.5, price 0.001, theta 0.21:
+
+| moment | model | target | gap |
+|--------|-------|--------|-----|
+| **y_u** | **0.735-0.745** | 0.74 | **within 1%%** |
+| drug spending, aggregate | 0.146-0.148 | 0.140 | +5%% |
+| gamma over income | 0.279-0.280 | 0.268 | +4%% |
+| b | 0.579 | 0.089 | +550%% |
+
+**Three moments hit at once**, and y_u for the first time in the session.
+
+**I ARGUED AGAINST THIS AND I WAS WRONG.** The kappa bracket of this morning had
+y_u non-monotone with a minimum near 2.4 -- 0.572 at 1.9, 0.483 at 2.4, 0.504 at
+3.0 -- and I warned that raising kappa might push y_u UP. That bracket was taken
+at theta = 0.108. At theta = 0.21 it does not hold: kappa 2.4 -> 5.5 moved y_u
+from 0.95 straight onto 0.74. The non-monotonicity was a theta-specific artefact,
+exactly the possibility I flagged and then leaned against.
+
+**Why raising b was never going to fix y_u**, measured over 17 loop-readings at
+theta 0.21 and kappa 2.4: y_u sits at 0.93-1.08 for EVERY b from 0.016 to 0.105,
+including b at target. It falls below 0.74 only when b collapses under 0.006,
+i.e. when the drug block is dead. y_u = 0.74 does not exist on the viable part of
+the b axis at kappa 2.4; it needed kappa.
+
+**What is left is participation.** b = 0.579 at price 0.001. The price is the
+instrument and the direction is clear, but the whole price-to-b relation shifts
+at kappa 5.5 -- drugs now cost far more in lost employment -- so today's ladder
+at kappa 2.4 (0.013 -> 0.244, 0.015 -> 0.105, 0.018 -> collapse) does not carry.
+Step and measure rather than jump: the 0.018 jump collapsed the block to 0.004
+and cost twelve loops.
+
 ## CONTAINER RESTART, 15 September 14:55: what broke and what saved it
 
 The container restarted mid-session. The repo was untouched -- every Fortran edit
