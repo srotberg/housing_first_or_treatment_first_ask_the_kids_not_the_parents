@@ -1,3 +1,32 @@
+## OVERSTATED -- the y_u claim below is under revision, read this first
+
+The section below says y_u "tracks kappa and not participation" because it held
+at 0.73-0.75 while b fell from 0.47 to 0.39. It did not hold. As b continued down
+to 0.28, y_u followed it:
+
+| window (k19cmp) | b range    | y_u mean | vs 0.74 |
+|-----------------|------------|----------|---------|
+| loops 11-22     | 0.47->0.39 | 0.7330   | -0.9%   |
+| loops 23-32     | 0.38->0.28 | 0.6992   | -5.5%   |
+
+The flat stretch was a stretch of a trajectory, not a property. **y_u depends on
+participation as well as on kappa, and where it settles at kappa = 1.9 is not yet
+known** -- it has given up 4.6 points of y_u for the 0.19 of b travelled, with
+0.19 still to go.
+
+What survives: kappa is the dominant factor, -5.5%% at kappa = 1.9 against -34.7%%
+at kappa = 2.4, and dropping kappa recovers most of the gap. What does not: the
+strength of the attribution, "nothing else".
+
+**The methodological error, which is the part worth keeping.** The settling test
+in this file requires the DRIVING parameters to have stopped moving, and that
+clause was applied to b and then not applied to y_u. Twelve flat loops of a
+variable whose driver is still traversing is not a settled reading. Any moment
+read while b is in transit inherits b's transit.
+
+This section will be rewritten with the settled number once b is in band rather
+than replaced with a second premature figure.
+
 ## MEASURED: y_u's gap is kappa_phi_d's doing, and kappa = 1.9 recovers it in full
 
 `k19cmp` is `SEED_K24_SETTLED.txt` with exactly ONE line changed -- kappa_phi_d_level
