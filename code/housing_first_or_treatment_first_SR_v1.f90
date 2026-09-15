@@ -1344,7 +1344,15 @@
         ! scan_hi RAISED TO THE CAP, 14 September.  delta_d reached 0.614 by
         ! loop 8 of stage 1 and kept climbing, so the scan was reporting on a
         ! window the parameter had already left.  penalty_child_cap is 0.99.
-        real(8), parameter :: scan_lo=0.0d0, scan_hi=0.99d0
+        ! SCAN_HI CUT TO 0.4, 15 September: "i want you to pick delta_d at most
+        ! 0.4 to get the highest SUD odds ratio".
+        !
+        ! The scan is strictly monotone increasing in delta_d -- measured at the
+        ! settled kappa 2.4 point, 1.077 at 0, 1.167 at 0.198, 1.289 at 0.396,
+        ! 1.366 at 0.495, 1.968 at 0.99 -- so the argmax on [0, 0.4] is the cap
+        ! itself. Expect delta_d = 0.4 and an odds ratio near 1.29 on the scan,
+        ! about 1.36 in equilibrium once the scan's measured +0.07 bias is added.
+        real(8), parameter :: scan_lo=0.0d0, scan_hi=0.4d0
         integer :: scan_index=0
         real(8) :: penalty_saved=0, scan_num=0, scan_den=0, scan_ratio=0
         real(8) :: scan_prev=-1, scan_pen_prev=0, scan_solved=0
@@ -6837,6 +6845,19 @@
         ! *"this multiple_of_probabilities_of_employment_if_addicted should stay
         ! at 1"*, which its own merge() already retires the distance for.
         real(8) :: multiple_find_adjuster=2.d0
+
+        ! ITS OWN CAP, 15 September: "multiple_find_if_addicted should be lower
+        ! ....you need to update it faster to match the share of homeless with
+        ! SUD". It ran on drug_block_max_rel_step, 0.5 per cent a loop, which it
+        ! shares with addiction_scalar; raising that would speed b's instrument
+        ! too, so this gets its own.
+        !
+        ! The direction was never wrong. This parameter DIVIDES the finding
+        ! rate, so a fall raises it, fewer addicts end up on the street and the
+        ! SUD share falls -- and it has fallen, 19.5 to 13.4 across the session.
+        ! The moment still rose, from +27 to +34 per cent, so something else is
+        ! pushing it up faster than 0.5 per cent a loop can pull it down.
+        real(8) :: multiple_find_max_rel_step=0.02d0
         real(8) :: distance_multiple_find=1
         real(8) :: stopping_rule_multiple_find=10.d0**(-2)
         real(8), parameter :: multiple_find_lo=1.d0
@@ -45918,7 +45939,7 @@
                         ! the global cap let this move 0.1 per cent a loop.
                         multiple_find_if_addicted=&
                             cap_step_rel(multiple_find_if_addicted,cap_old_1,&
-                            drug_block_max_rel_step)
+                            multiple_find_max_rel_step)
 
                         distance_multiple_find=&
                             abs(model_fraction_homeless_and_addicted(1)-&
