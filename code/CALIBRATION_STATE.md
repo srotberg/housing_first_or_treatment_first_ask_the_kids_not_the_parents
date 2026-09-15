@@ -1,3 +1,66 @@
+## THE DESCENT DOES NOT RETRACE. b is hysteretic, and you get ONE pass at the target.
+
+j03, 15 September, seeded at b_SG = 0.006, kappa 4.2, everything live.
+
+```
+lp  particip  b_SG       bSG%   onset    on%    disorder  y_u
+1   0.23473   0.006120   -      0.04271  -      0.09483   0.690
+9   0.11049   0.007171   +2.00  0.04445  +0.50  0.05137   0.638
+10  0.07053   0.007027   -2.00  0.04423  -0.50  0.03276   0.557
+11  0.05649   0.006887   -2.00  0.04401  -0.50  0.02583   0.542
+12  0.05678   0.006749   -2.00  0.04379  -0.50  0.02540   0.531
+13  0.05483   0.006614   -2.00  0.04357  -0.50  0.02483   0.538
+14  0.04629   -           -     -        -      -         0.506
+```
+
+ASCENT, loops 1-9: b_SG +17.2 per cent, participation 0.235 -> 0.110. e = -4.8.
+DESCENT, loops 9-14: b_SG -7.8 per cent, participation 0.110 -> 0.046. e = +8.7.
+
+**The same parameter moving the other way moves the moment the SAME way.** Both
+instruments reversed at loop 10 and pushed for five loops; participation never
+came back. The disorder rate did the same -- still falling at loop 13 after four
+loops of a falling onset, which should have raised it.
+
+That is consistent with the structure rather than mysterious: participation is
+mostly the STOCK of users. Push b_SG past the threshold and the stock is gone;
+bring b_SG back and it has to rebuild through onset, and with lambda_addiction
+pinned at 0 the onset is a flat hazard with no dose-response to rebuild it
+quickly.
+
+**THE OPERATIONAL CONSEQUENCE: the target is reachable on the way DOWN and only
+then.** j03 crossed from 0.110 to 0.071 in one loop, straight over 0.089 and
+over the kappa gate's +/-10 per cent band. There is no second attempt.
+
+## The b damping was dead code, defeated by its own cap
+
+The damping is well built and was already written for exactly this: halve
+addiction_scalar_adjuster on a sign flip, grow it 1.2 when the sign holds, floor
+1e-4, and the comment records the oscillation it was written for. It has never
+been able to act.
+
+At b_SG = 0.007 with a gap of 0.0185 the raw step is 0.2 x 0.0185 = 0.00185, a
+26 PER CENT move, against a per-loop ceiling of 2 per cent. The cap binds, so
+the adjuster's value is irrelevant. Halving it to 0.1 still asks for 13 per
+cent -- still capped. It takes about seven sign flips before the raw step falls
+under the ceiling, and each flip costs an overshoot.
+
+Under hysteresis it is worse: the gap stops flipping sign, so the growth rule
+walks the adjuster back UP to 0.2 at 1.2 a loop.
+
+The 0.2 was correct once. The update's own comment says why -- "b sits near 0.02
+and a typical participation gap is of order 0.01, so an adjuster of 0.2 asks for
+0.002, about a tenth of b". b is now 0.007, thirty times smaller, and the
+adjuster was never rescaled with it.
+
+Set to 0.008, both the live value and the start the growth rule restores. The
+raw step is then about 2 per cent at j03's gap, so the ceiling binds only at the
+widest gaps and the damping owns the approach -- which is what the update's
+comment says is wanted.
+
+**The rule: a damping rule that sits behind a cap does nothing until the raw
+step is smaller than the cap. Check which of the two is binding before believing
+a damping mechanism exists.**
+
 ## I nearly flipped a MEASURED sign on addiction_onset_base. Read the comment first.
 
 15 September. The log showed the onset rising 0.5 per cent a loop while printing

@@ -3750,7 +3750,26 @@
         real(8) :: distance_relative_share_of_addiction_1
         real(8) :: stopping_rule_relative_share_of_addiction_1=10.d0**(-3)
 
-        real(8) :: addiction_scalar_adjuster=2*10.d0**(-1)
+        ! SIZED TO b's CURRENT SCALE, 15 September, so that the damping below
+        ! can actually engage. The 0.2 was written when b sat near 0.02 to 0.25
+        ! -- the comment beside the update says so, "an adjuster of 0.2 asks for
+        ! 0.002, about a tenth of b". b is now 0.007, and at that scale 0.2
+        ! asks for a step of 26 per cent where the per-loop ceiling is 2.
+        !
+        ! THE CAP THEN BINDS EVERY LOOP AND THE DAMPING IS DEAD CODE. Halving
+        ! the adjuster on a sign flip does nothing while the raw step is ten
+        ! times the ceiling: it takes about seven flips before the step drops
+        ! under the cap, and every flip costs an overshoot. Measured in j03 --
+        ! participation went 0.110 -> 0.071 in ONE loop, straight over a target
+        ! of 0.089 and a gate band of +/-10 per cent, because 2 per cent of b
+        ! is about 15 per cent of participation at an elasticity of -4.8.
+        !
+        ! 0.008 makes the raw step about 2 per cent at the gap j03 had, so the
+        ! ceiling binds only at the widest gaps and the damping owns everything
+        ! near the target -- which is the behaviour the update's own comment
+        ! says is wanted, "the cap is expected to bind while the gap is wide and
+        ! to stop binding as it closes".
+        real(8) :: addiction_scalar_adjuster=8*10.d0**(-3)
         real(8) :: distance_addiction_scalar
         real(8) :: stopping_rule_addiction_scalar=10.d0**(-3)
 
@@ -3765,7 +3784,10 @@
         ! bisection, which converges on any monotone response however steep.
         ! Growing it back slowly when the sign holds keeps it from creeping once
         ! the oscillation has been squeezed out. Same idiom as delta_d's.
-        real(8), parameter :: addiction_scalar_adjuster_start=2*10.d0**(-1)
+        ! AND THE CEILING THE GROWTH RULE RESTORES IT TO, for the same reason:
+        ! left at 0.2 the adjuster climbs back at 1.2 a loop to a value the cap
+        ! swallows whole, undoing the damping every time the gap holds its sign.
+        real(8), parameter :: addiction_scalar_adjuster_start=8*10.d0**(-3)
         real(8), parameter :: addiction_scalar_damping=0.5
         real(8), parameter :: addiction_scalar_growth=1.2
         real(8), parameter :: addiction_scalar_floor=10.d0**(-4)
