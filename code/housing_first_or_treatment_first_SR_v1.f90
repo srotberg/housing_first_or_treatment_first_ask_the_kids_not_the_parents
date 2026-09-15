@@ -3983,7 +3983,10 @@
         ! uncapped and stays so.  A constraint that stops households preferring
         ! to be dead has to hold at every iterate, not be approached at a tenth
         ! of a per cent a loop, and it announces itself in the log when it binds.
-        real(8) :: value_of_life_max_rel_step=0.001d0
+        ! ALEPH AT 0.5 PER CENT, not 1: the author, 15 September, "i think aleph
+        ! can go to 0.5%%", "not 1%%". Its gap is -10.7 per cent, so this is about
+        ! 23 loops rather than 11.
+        real(8) :: value_of_life_max_rel_step=0.005d0
         real(8) :: value_of_life_trust=0.5
         real(8), parameter :: value_of_life_trust_start=0.5
         real(8), parameter :: value_of_life_trust_damping=0.5
@@ -4024,7 +4027,11 @@
         ! bottom_productivity_level, so the two set the same thing -- what the
         ! poorest household consumes.  Left live they are one equation in two
         ! unknowns and neither is identified.
-        real(8) :: max_food_cost_adjuster=0.d0
+        ! LIVE AGAIN 15 September: "i think you should include c bar in the live
+        ! ones". cbar sat at -49.4 per cent with its only instrument pinned.
+        ! The runtime re-zero at apply_first_block_freeze does not reach it:
+        ! first_block_only is 0, so that subroutine returns before the assignment.
+        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
@@ -4680,6 +4687,25 @@
         ! discarded and every run in the archive sat at the same h_1.  At 0
         ! the handover value stands and the bracket moves it.
         integer, parameter :: tie_h1_to_h2=0
+
+        ! H_1 TARGETS THE EMPLOYED SHARE OF THE HOMELESS, 15 September, on
+        ! the author's instruction: "h1 show target emphomeless=46% as long as
+        ! it's in the 0.4-1% homelessness", and "h1 has to rise if emp homeless
+        ! is low, and decline if its high".
+        !
+        ! THE SIGN NEEDS NO CHANGE. The step is size_homelessness - adjuster*gap,
+        ! so a gap below zero raises h_1. With gap = model - target on the
+        ! employed share, an employed share BELOW target raises h_1, which is
+        ! what was asked.
+        !
+        ! THE BAND IS A GUARD, NOT A TARGET. h_1 is no longer fitted to
+        ! fraction_homeless_data, so nothing stops it wandering; the guard below
+        ! holds the homelessness rate inside [0.004, 0.01] and says so when it
+        ! binds. A run that sits on a band edge is reporting that the employed
+        ! share cannot be had inside the band, which is a finding and not a bug.
+        integer, parameter :: h1_targets_emp_homeless=1
+        real(8), parameter :: h1_band_lo=0.004d0
+        real(8), parameter :: h1_band_hi=0.010d0
 
         ! AND THE TRAVERSE HAS TO DAMP, for aleph's reason. The adjuster is
         ! twenty and the gap is a rate, so a gap of 0.031 moves the parameter by
@@ -5779,6 +5805,27 @@
         ! Was 5e-3.  Every parameter that goes through cap_step now moves at
         ! the same rate aleph and theta already had.
         real(8) :: max_rel_step_all=1.d0*10.d0**(-3)
+
+        ! PER-INSTRUMENT STEP CAPS, 15 September: "you need to then fix the
+        ! updates on c bar and band1", "pieu should be faster", "and mu_H too".
+        !
+        ! These four ran on the GLOBAL cap of 0.1 per cent a loop, which is not
+        ! slow so much as unreachable. Measured against their gaps at the
+        ! kappa 2.4 point, the loops each needed to close at 0.1 per cent:
+        !
+        !   aleph   -10.7%%     113 loops    ~3.8 hours
+        !   pi_eu   -22.1%%     250 loops    ~8.3 hours
+        !   mu_H    -26.9%%     313 loops   ~10.4 hours
+        !   cbar    -49.4%%     681 loops   ~22.7 hours
+        !   band1   -66.5%%    1094 loops   ~36.5 hours
+        !
+        ! At 1 per cent they are 11, 25, 31, 68 and 109 loops. The global cap is
+        ! left alone so the instruments already AT target -- tau_l, pi_V, p_m,
+        ! beta -- keep their small steps and are not shaken loose.
+        real(8) :: max_food_cost_max_rel_step=0.01d0
+        real(8) :: newborn_endowment_max_rel_step=0.01d0
+        real(8) :: pi_eu_max_rel_step=0.01d0
+        real(8) :: mu_homeless_max_rel_step=0.01d0
         ! THE STOPPING RULE EXISTED AND THE DISTANCE DID NOT.
         !
         ! The retention scale is updated every loop against an average labour
@@ -5910,7 +5957,10 @@
         ! The do-while term for distance_smallest_house_size is gated on this
         ! adjuster below, so zeroing it here concedes the moment completely
         ! rather than leaving an unclosable distance holding the loop open.
-        real(8) :: smallest_house_size_adjuster=0.d0
+        ! UN-PINNED 15 September: "lets target h2 to get 10.1% of households
+        ! spending over 50%". The rung is the only instrument on burden50, which
+        ! sat at -95.9 per cent with nothing pushing it.
+        real(8) :: smallest_house_size_adjuster=0.05d0
 
         ! DAMPING THE TWO HOUSING ADJUSTERS. Both were fixed steps and both
         ! oscillated: the size distribution responds sharply to the size
@@ -45916,7 +45966,7 @@
                         mu_homeless=max(min(mu_homeless+mu_homeless_adjuster*&
                             (model_recovery_housed(1)/max(model_recovery_homeless(1),10.d0**(-14))-&
                             milby_recovery_ratio_data),1.d0),10.d0**(-3))
-                        mu_homeless=cap_step(mu_homeless,cap_old_1)
+                        mu_homeless=cap_step_rel(mu_homeless,cap_old_1,mu_homeless_max_rel_step)
 
                         distance_mu_homeless=&
                             abs(model_recovery_housed(1)/max(model_recovery_homeless(1),10.d0**(-14))-&
@@ -47094,7 +47144,7 @@
                         max_food_cost=max(min(max_food_cost-max_food_cost_adjuster*&
                             (govt_spending_on_food_stamps(1)/model_output(1)-&
                             food_stamps_share_data),1.d0),10.d0**(-4))
-                        max_food_cost=cap_step(max_food_cost,cap_old_1)
+                        max_food_cost=cap_step_rel(max_food_cost,cap_old_1,max_food_cost_max_rel_step)
                         ! PRINT THE RATIO THIS UPDATE COMPARES, which is now the
                         ! same ratio the moments block prints.
                         write(*,*) "govt_spending_on_food_stamps/model_output=", &
@@ -47163,7 +47213,7 @@
                     cap_old_1=probability_becoming_unemployed
                     probability_becoming_unemployed=&
                         max(min(separation_step_1,1.d0),10.d0**(-6))
-                    probability_becoming_unemployed=cap_step(probability_becoming_unemployed,cap_old_1)
+                    probability_becoming_unemployed=cap_step_rel(probability_becoming_unemployed,cap_old_1,pi_eu_max_rel_step)
                     distance_separation_rate=abs(model_fraction_unemployed(1)-unemployment_rate_data)
                     write(*,*) "probability_becoming_unemployed=", probability_becoming_unemployed
                     write(*,*) "distance_separation_rate=", distance_separation_rate
@@ -47460,7 +47510,8 @@
                             (homelessness_by_age_group(1,1)-val_hud_share_1(1)),&
                             50.d0),0.d0)
                         newborn_endowment_scale=&
-                            cap_step(newborn_endowment_scale,cap_old_1)
+                            cap_step_rel(newborn_endowment_scale,cap_old_1,&
+                            newborn_endowment_max_rel_step)
 
                         distance_newborn_endowment=&
                             abs(homelessness_by_age_group(1,1)-val_hud_share_1(1))
@@ -47517,6 +47568,19 @@
 
                     ! A bracket whose endpoints were priced under different values
                     ! of life is not a bracket. Test for that before using it.
+                    ! THE BISECTION BRACKETS ON THE HOMELESSNESS RATE, in a dozen
+                    ! places, and h_1 no longer targets that. Re-pointing every one
+                    ! of them is a larger edit than this experiment justifies and a
+                    ! half-re-pointed bisection would bracket on one moment and step
+                    ! on another. Discarding the bracket each loop leaves the
+                    ! traverse, which is re-pointed cleanly above.
+                    if (h1_targets_emp_homeless==1) then
+                        size_homelessness_lo=-1
+                        size_homelessness_hi=-1
+                        size_homelessness_lo_moment=-1
+                        size_homelessness_hi_moment=-1
+                    end if
+
                     if ((size_homelessness_lo>=0) .OR. (size_homelessness_hi>=0)) then
 
                         if ((value_of_life_at_bracket>0) .AND. &
@@ -47616,7 +47680,12 @@
 
                         ! No bracket yet, so traverse, which is what the adjuster
                         ! is good at.
-                        gap_size_homelessness_1=model_fraction_homeless(1)-fraction_homeless_data
+                        if (h1_targets_emp_homeless==1) then
+                            gap_size_homelessness_1=&
+                                model_employed_share_of_homeless(1)-employed_share_of_homeless_data
+                        else
+                            gap_size_homelessness_1=model_fraction_homeless(1)-fraction_homeless_data
+                        end if
 
                         if (have_gap_size_homelessness==1) then
 
@@ -47686,6 +47755,23 @@
                         size_homelessness=max(min(size_homelessness_step_1,0.9d0),&
                             size_homelessness_floor)
                         size_homelessness=cap_step(size_homelessness,cap_old_1)
+
+                        ! THE BAND GUARD. h_1 is no longer fitted to the homelessness
+                        ! rate, so nothing else holds it. Nudge 2 per cent a loop when
+                        ! it leaves [0.004, 0.01] and SAY SO -- a run that sits on an
+                        ! edge is reporting that 46 per cent employed cannot be had
+                        ! inside the band.
+                        if (h1_targets_emp_homeless==1) then
+                            if (model_fraction_homeless(1)<h1_band_lo) then
+                                size_homelessness=max(size_homelessness,cap_old_1*1.02d0)
+                                write(*,*) "H_1 BAND: rate ", model_fraction_homeless(1),&
+                                    " below ", h1_band_lo, " -- raising h_1 to ", size_homelessness
+                            else if (model_fraction_homeless(1)>h1_band_hi) then
+                                size_homelessness=min(size_homelessness,cap_old_1*0.98d0)
+                                write(*,*) "H_1 BAND: rate ", model_fraction_homeless(1),&
+                                    " above ", h1_band_hi, " -- lowering h_1 to ", size_homelessness
+                            end if
+                        end if
 
                         ! Say so if the traverse has run out of room. At a street
                         ! worth as much as housing_size(0) and free, a model still
