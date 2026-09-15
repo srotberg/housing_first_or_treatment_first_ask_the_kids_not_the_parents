@@ -1,3 +1,70 @@
+## PARTICIPATION 0.089 IS ATTAINABLE. It was measured. It does not STAY.
+
+j05, loop 13: participation **0.08758** against a target of 0.089 -- 1.6 per
+cent off, inside the kappa gate's band. Loop 14: 0.08426, also inside.
+
+That settles the earlier worry in this file that b never settles between 0.02
+and 0.15 and that the target might sit in an unreachable gap. **The gap is not
+unreachable.** The run went through it and sat in it for two loops.
+
+```
+lp  particip  b_SG        bSG%      kappa    y_u
+12  0.12530   0.006220    +0.300%   4.2000   0.6480   GATE SHUT
+13  0.08758   0.006218    -0.023%   4.1580   0.5435   GATE OPEN
+14  0.08426   0.006212    -0.091%   4.1164   0.5509   GATE OPEN
+15  0.06831   0.006194    -0.300%   4.1164   0.5361   GATE SHUT
+16  0.06455   -           -         4.1164   0.5343   GATE SHUT
+```
+
+**THE ELASTICITY AT THE CROSSING IS ABOUT -119.** Loop 12 to 13, b_SG moved
++0.300 per cent and participation fell 30 per cent. In j03 the steepest reading
+was -22.6. It keeps steepening as the threshold is approached and there is no
+reason yet to think -119 is the end of it. A step fine enough to stop on the
+target at -22 is five times too coarse at -119.
+
+**AND THE DAMPING WORKED.** At loops 13 and 14 the raw step finally fell under
+the cap -- -0.023 and -0.091 per cent, not the 0.300 ceiling -- which is the
+first time this instrument has ever taken a step of its own choosing. The
+adjuster rescaling did what it was meant to do.
+
+## THE FIRST CLEAN dy_u/dkappa, measured with the gate open
+
+Loop 13 to 14: kappa 4.1580 -> 4.1164, -1 per cent, and y_u 0.5435 -> 0.5509.
+
+    dy_u/dkappa = +0.0074 / -0.042 = **-0.176**
+
+Twelve times steeper than the -0.015 implied by the k42/k55 pair, which this
+file already warned was not a partial derivative of anything. Closing y_u from
+0.55 to 0.74 needs delta kappa = -1.1, so **kappa around 3.0** -- attainable,
+and neither the negative number the confounded estimate implied nor the 1.7
+pinned in the theta ~ 0.10 era.
+
+CAVEAT, AND IT IS NOT SMALL: one loop, and participation fell 3.8 per cent over
+the same step, which pushes y_u down on its own. So -0.176 is a LOWER BOUND on
+kappa's own effect and kappa = 3.0 is an upper bound on how far it must fall.
+
+## The question this run cannot answer: unstable MODEL or unstable RULE?
+
+Everything called instability here is a property of the model AND the update
+rule iterated together. At FIXED parameters the equilibrium at b_SG = 0.006220
+may be perfectly stable, and the sliding may be the parameters still moving
+underneath it.
+
+**The test is a frozen pass**: take the loop-13 vector, hold every parameter,
+solve to convergence. `re_do_simulation_with_fixed_parameters` exists for it.
+
+- settles at 0.0876 -> the model is fine and this is a STOPPING problem, which
+  is a much smaller thing to fix;
+- slides -> the equilibrium is genuinely unstable and that is structural.
+
+The frozen pass needs loop 13's distribution, which is overwritten each loop.
+The descent is deterministic -- j04 reproduced j03 to six digits -- so
+re-running to loop 13 and freezing there reproduces it exactly.
+
+**DO NOT tune the step further before running this.** If the equilibrium is
+unstable no step size lands it, and a finer step is another 70 loops to find
+that out.
+
 ## kappa = 1.7 IS A PIN FROM A DIFFERENT THETA. Do not quote it as a target.
 
 I told the author kappa "settles around 1.7" on the strength of a comment beside
