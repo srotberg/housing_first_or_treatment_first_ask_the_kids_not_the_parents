@@ -4790,7 +4790,22 @@
         ! holds the homelessness rate inside [0.004, 0.01] and says so when it
         ! binds. A run that sits on a band edge is reporting that the employed
         ! share cannot be had inside the band, which is a finding and not a bug.
-        integer, parameter :: h1_targets_emp_homeless=1
+        ! BACK ONTO THE HOMELESSNESS RATE, on the author's instruction of
+        ! 15 September: *"if emp homeless gets higher when h1 is closer to 0.4%
+        ! then target h1 to 0.4% so that emp homeless is closer to 46%"*.
+        !
+        ! THE CONDITIONAL HOLDS, measured across six runs -- h_1 0.0040 gives
+        ! emp_homeless 0.271, 0.0041 gives 0.247, 0.0052 gives 0.224, 0.0060
+        ! gives 0.178, 0.0080 gives 0.158, 0.0085 gives 0.154. Monotone.
+        !
+        ! fraction_homeless_data IS ALREADY 0.004, so pointing h_1 back at the
+        ! homelessness rate targets exactly the 0.4 per cent asked for, and the
+        ! band guard becomes redundant rather than wrong.
+        !
+        ! AND IT WILL NOT BE ENOUGH ON ITS OWN. The best emp_homeless measured at
+        ! h_1 = 0.0040 is 0.271 against a target of 0.46, so this closes part of
+        ! the gap and something else has to carry the rest.
+        integer, parameter :: h1_targets_emp_homeless=0
         real(8), parameter :: h1_band_lo=0.004d0
         real(8), parameter :: h1_band_hi=0.010d0
 
@@ -8130,6 +8145,22 @@
             
         real(8), dimension(transition_length,life_span) :: welfare_by_age,homelessness_by_age
         real(8), dimension(transition_length,5) :: homelessness_by_age_group
+        ! SUD BY AGE GROUP, on the author's request of 15 September, in the same
+        ! five HUD bands homelessness_by_age_group uses. TWO arrays because the
+        ! useful statistic is ambiguous and both are cheap: sud_by_age_group is
+        ! the MASS carrying the disorder in each band, sud_denom_by_age_group
+        ! the total mass, so the report can print the SUD RATE within a band
+        ! (sud/mass) as well as the age COMPOSITION of those with SUD
+        ! (sud/sum(sud)). homelessness_by_age_group is a composition and sums to
+        ! one, which is easy to misread as a rate, so the rate is printed here
+        ! explicitly rather than left to be worked out.
+        ! ITS OWN DENOMINATOR, NOT mass_by_age_group. That array already exists,
+        ! is zeroed and accumulated in another subroutine, and feeds
+        ! model_homeownership_by_age_group. Zeroing it here would have wiped that
+        ! subroutine's accumulation and corrupted homeownership by age silently.
+        ! The bounds build caught the name clash; the double-count it would have
+        ! caused was the real bug behind it.
+        real(8), dimension(transition_length,5) :: sud_by_age_group,sud_denom_by_age_group
         
         real(8), dimension(transition_length,life_span,0:include_addiction) :: &
             welfare_by_age_and_addiction,mass_by_age_and_addiciton
@@ -21525,6 +21556,8 @@
         ! if (accumulating_beta_types==0) mass_by_age(time_period,:)=0
         if (accumulating_beta_types==0) homelessness_by_age(time_period,:)=0
         if (accumulating_beta_types==0) homelessness_by_age_group(time_period,:)=0
+        if (accumulating_beta_types==0) sud_by_age_group(time_period,:)=0
+        if (accumulating_beta_types==0) sud_denom_by_age_group(time_period,:)=0
         if (accumulating_beta_types==0) val_homeless_band(time_period,:)=0
         if (accumulating_beta_types==0) val_mass_band(time_period,:)=0
         if (accumulating_beta_types==0) val_sud_band(time_period,:)=0
@@ -22072,6 +22105,37 @@
 
                                     val_mass_band(time_period,val_band_1)=&
                                         val_mass_band(time_period,val_band_1)+distribution_mass_used
+
+                                    ! SUD BY AGE GROUP. The band logic is the
+                                    ! same one the homeless branch below uses;
+                                    ! it is computed HERE because this path sees
+                                    ! every household and that one sees only the
+                                    ! homeless. The homeless branch recomputes
+                                    ! age_group_1 identically, so nothing there
+                                    ! changes.
+                                    if (age_index<=9) then
+                                        age_group_1=1
+                                    elseif (age_index<=19) then
+                                        age_group_1=2
+                                    elseif (age_index<=29) then
+                                        age_group_1=3
+                                    elseif (age_index<=39) then
+                                        age_group_1=4
+                                    else
+                                        age_group_1=5
+                                    end if
+
+                                    sud_denom_by_age_group(time_period,age_group_1)=&
+                                        sud_denom_by_age_group(time_period,age_group_1)+distribution_mass_used
+
+                                    ! THE SAME TEST val_sud_band USES, which is
+                                    ! the unemployment index and NOT is_addicted:
+                                    ! is_addicted means consumes drugs, this means
+                                    ! carries the disorder.
+                                    if (unemployment_index>threshold_addiction_index) then
+                                        sud_by_age_group(time_period,age_group_1)=&
+                                            sud_by_age_group(time_period,age_group_1)+distribution_mass_used
+                                    end if
 
                                     if (housing_status_index_used==lowest_housing_grid_point) then
                                         val_homeless_band(time_period,val_band_1)=&
@@ -48619,6 +48683,17 @@
             write(*,*) "increase_in_newborns_bequests=", increase_in_newborns_bequests
             do i=1,5
                 write(*,*) "homelessness_by_age_group=", homelessness_by_age_group(1,i)
+            end do
+            ! SUD BY AGE GROUP, both ways. The RATE is the share of that band
+            ! carrying the disorder; the SHARE is that band's part of everyone
+            ! who carries it and sums to one, the way the homelessness profile
+            ! above does.
+            do i=1,5
+                write(*,*) "sud_by_age_group band", i, " rate=",&
+                    sud_by_age_group(1,i)/max(sud_denom_by_age_group(1,i),10.d0**(-14)),&
+                    " share=", sud_by_age_group(1,i)/&
+                    max(sum(sud_by_age_group(1,:)),10.d0**(-14)),&
+                    " mass=", sud_denom_by_age_group(1,i)
             end do
             write(*,*) "model_fraction_homeless=", model_fraction_homeless(1)
             write(*,*) "model_fraction_addicted=", model_fraction_addicted(1)
