@@ -3769,7 +3769,7 @@
         ! near the target -- which is the behaviour the update's own comment
         ! says is wanted, "the cap is expected to bind while the gap is wide and
         ! to stop binding as it closes".
-        real(8) :: addiction_scalar_adjuster=8*10.d0**(-3)
+        real(8) :: addiction_scalar_adjuster=2*10.d0**(-3)
         real(8) :: distance_addiction_scalar
         real(8) :: stopping_rule_addiction_scalar=10.d0**(-3)
 
@@ -3787,7 +3787,7 @@
         ! AND THE CEILING THE GROWTH RULE RESTORES IT TO, for the same reason:
         ! left at 0.2 the adjuster climbs back at 1.2 a loop to a value the cap
         ! swallows whole, undoing the damping every time the gap holds its sign.
-        real(8), parameter :: addiction_scalar_adjuster_start=8*10.d0**(-3)
+        real(8), parameter :: addiction_scalar_adjuster_start=2*10.d0**(-3)
         real(8), parameter :: addiction_scalar_damping=0.5
         real(8), parameter :: addiction_scalar_growth=1.2
         real(8), parameter :: addiction_scalar_floor=10.d0**(-4)
@@ -3998,10 +3998,31 @@
         ! by a factor of 25, from 0.103 to 0.0042, and settled on the dead
         ! branch. An instrument that slow is not steering b, it is watching it.
         !
-        ! Two per cent is the rate the author set for pi_V ("allow pi_v to move
-        ! much faster ... or 2%") and it closes b's present gap in about 80
-        ! loops, inside the 500 to 1000 the author asked the run to work within.
-        real(8) :: addiction_scalar_max_rel_step=0.02d0
+        ! THREE TENTHS OF A PER CENT, AND THE TWO PER CENT ABOVE WAS WRONG.
+        ! Two per cent was set from the FAR-FIELD elasticity, about -1 across
+        ! runs and -4.8 over the early loops of j03. The elasticity near the
+        ! abstention threshold is nothing like that, and it ACCELERATES:
+        !
+        !     loop 7->8    b_SG +2.0%   participation 0.168 -> 0.142   e = -8.5
+        !     loop 8->9    b_SG +2.0%   participation 0.142 -> 0.110   e = -12.5
+        !     loop 9->10   b_SG +2.0%   participation 0.110 -> 0.070   e = -22.6
+        !
+        ! At -22.6 a two per cent step moves participation THIRTY-SIX per cent
+        ! while the kappa gate's band is twenty per cent wide, so a single step
+        ! clears the band from either side and the run can never be inside it.
+        ! j03 and j04 both crossed 0.110 -> 0.070 in one loop, and j04 did it
+        ! with the adjuster already reduced, because at a gap of 0.0215 the raw
+        ! step was still 2.4 per cent and the CAP bound one last time.
+        !
+        ! THE CONDITION THE CAP MUST MEET: one step may not cross the band. At
+        ! e = -22.6 that is 20/22.6 = 0.9 per cent, and the elasticity was still
+        ! steepening at the last measurement, so three tenths leaves room for it
+        ! to reach -60 before a single step can jump the band again.
+        !
+        ! AND THE DESCENT IS ONE-WAY, which is why this matters more than speed.
+        ! Participation is hysteretic: j03 reversed both instruments for five
+        ! loops and it kept falling. There is one pass at the target.
+        real(8) :: addiction_scalar_max_rel_step=0.003d0
         integer :: have_gap_addiction_scalar=0
         real(8) :: lambda_secant_slope_1=0
 
