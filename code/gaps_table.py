@@ -249,7 +249,25 @@ def main():
     print(hdr)
     print("-" * len(hdr))
 
-    for name, param, stem, key in ROWS:
+    # ORDERED WORST FIT FIRST, on the author's instruction of 16 September:
+    # "when you show me the gaps table, i want it to be ordered from worst fit
+    # to best fit". Rows with no moment in the log have no gap to sort on and
+    # are printed last, after the ranked rows, rather than being given a
+    # position they have not earned.
+    ranked, unranked = [], []
+    for row in ROWS:
+        name, param, stem, key = row
+        kind, _, arg = key.partition(":")
+        got = moms.get(arg) if kind == "MOMENT" else (
+            special(arg, loglines) if arg != "none" else None)
+        if got is None:
+            unranked.append(row)
+            continue
+        model, data = got
+        ranked.append((abs(model - data) / abs(data) * 100 if data else -1.0, row))
+    ranked.sort(key=lambda t: t[0], reverse=True)
+
+    for name, param, stem, key in [r for _, r in ranked] + unranked:
         kind, _, arg = key.partition(":")
         if kind == "MOMENT":
             got = moms.get(arg)
