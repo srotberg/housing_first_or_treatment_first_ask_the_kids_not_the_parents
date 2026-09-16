@@ -2943,7 +2943,17 @@
         ! across six runs, emp_homeless RISES as h_1 falls -- 0.271 at h_1 =
         ! 0.0040 against 0.154 at 0.0085 -- so accepting 1 per cent costs about
         ! 0.11 on a moment already 67 per cent short of its 0.46 target.
-        real(8), parameter :: fraction_homeless_data=0.01000
+        ! BACK TO 0.4 PER CENT, the author's confirmation of 15 September:
+        ! *"And yes, 0.4% is fine for homelessness"*. I had moved it to 1.0 on
+        ! their earlier *"It's ok if h1 needs to hit 1%"*, said I would move it
+        ! back once the frozen pass finished, and then ran five more solves
+        ! without doing it. The author caught it in the gap table.
+        !
+        ! 0.4 IS ALSO WHAT emp_homeless WANTS, which is why they asked for it:
+        ! measured across six runs emp_homeless RISES as h_1 falls, 0.271 at
+        ! h_1 = 0.0040 against 0.154 at 0.0085, so the band floor is worth about
+        ! 0.11 on a moment that is 60 per cent short of its 0.46 target.
+        real(8), parameter :: fraction_homeless_data=0.00400
 
         ! THE DISTRIBUTION OF HOUSEHOLDS ACROSS UNIT SIZES, from the American
         ! Community Survey 2023 table B25042, tenure by bedrooms, universe

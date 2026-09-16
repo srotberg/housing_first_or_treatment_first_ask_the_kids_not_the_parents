@@ -1,3 +1,47 @@
+## ALEPH IS A CONSTRUCTION PROBLEM, NOT A PARAMETER ONE, and the numerator is already on target
+
+The author, 16 September: *"aleph is way too low"*. It reads 39 against a target
+of 80. Pushing value_of_life harder will not fix it.
+
+`vsl_1 = model_value_of_life(1) / model_average_labour_income(1)`, and the
+numerator is a MODEL OUTPUT, not the value_of_life parameter the instrument
+moves. From j11:
+
+```
+block   model_value_of_life   aleph
+  1          80.60            47.76
+  8          76.35            45.20
+  9          66.41            39.29
+ 10          66.14            39.10
+```
+
+**THE NUMERATOR IS AT THE TARGET.** 80.60 against 80. The ratio is low because
+of the DENOMINATOR: average labour income is about double what a ratio of 80
+implies. aleph at 39 is not saying the value of life is too low.
+
+**AND IT MOVES AGAINST ITS OWN INSTRUMENT.** The numerator falls 80.6 -> 66.1
+while the value_of_life parameter is pushed UP half a per cent a block.
+
+**THE NEGATIVE VALUE OF LIFE.** The log's own diagnostics: 0.39 per cent of
+households have a NEGATIVE value of life, and within groups it is 99.998 per
+cent of the homeless, 97.9 per cent of those with no wage, 42.6 per cent of
+those with SUD. So for essentially every homeless household the model says life
+has negative value, and the aggregate numerator therefore swings with the
+homeless population -- which is exactly what happens as participation falls.
+
+The code's own note beside the construction already reached this conclusion for
+a different reason: the moment has read 58, 119, 121, 5.06 and 2.61 across
+builds against a target of 80, and *"a parameter that needs moving does not do
+that; a construction that keeps changing does."*
+
+**THREE CANDIDATES, NOT DISTINGUISHED.** The denominator is the wrong income
+concept; the negative-value-of-life households corrupt the aggregate; or the
+target of 80 is stated against a construction the model does not compute. This
+is the author's call and it is not a calibration question.
+
+**DO NOT RAISE value_of_life's STEP TO CHASE THIS.** The instrument is already
+moving the numerator the wrong way relative to the moment.
+
 ## THE MODEL IS STABLE AT PARTICIPATION 0.076. The update rule steps faster than it settles.
 
 f26, 16 September. Descended to the target and froze every parameter at
