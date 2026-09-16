@@ -161,7 +161,17 @@ def adjuster_is_live(src_text, stem):
     """True when <stem>_adjuster is declared non-zero."""
     if stem is None:
         return False
-    m = re.search(r"real\(8\)(?:, parameter)? *:: *" + re.escape(stem) + r"_adjuster *=\s*([^\n!]+)", src_text)
+    # PREFER THE NAME THE UPDATE USES, NOT THE ONE THAT MERELY EXISTS.
+    # theta declares BOTH relative_share_of_addiction_adjuster (0.d0, a decoy
+    # nothing reads) and relative_share_of_addiction_adj ((1-hold_theta)*0.05,
+    # which line 47435 actually multiplies). Checking _adjuster first found the
+    # decoy, reported HELD, and hid the fact that theta had been stepping every
+    # block -- the author caught it from the value drifting 0.21 -> 0.20461.
+    # So: if the source multiplies <stem>_adj anywhere, that is the live one.
+    if re.search(re.escape(stem) + r"_adj\s*\*", src_text):
+        m = re.search(r"real\(8\)(?:, parameter)? *:: *" + re.escape(stem) + r"_adj *=\s*([^\n!]+)", src_text)
+    else:
+        m = re.search(r"real\(8\)(?:, parameter)? *:: *" + re.escape(stem) + r"_adjuster *=\s*([^\n!]+)", src_text)
     if not m:
         m = re.search(r"real\(8\)(?:, parameter)? *:: *" + re.escape(stem) + r"_adj *=\s*([^\n!]+)", src_text)
     if not m:

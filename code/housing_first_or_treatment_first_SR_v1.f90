@@ -173,7 +173,18 @@
         ! against 0.089 with theta pinned at 0.095.  Low theta and high kappa
         ! together do not support a drug block, because drugs are both less
         ! valued and more lethal.
-        integer, parameter :: hold_theta=0
+        ! THETA IS HELD, 16 September, on the author's *"also, theta should be
+        ! held, dont move it"*.
+        !
+        ! IT WAS NOT HELD, AND EVERY REPORT SAID IT WAS. There are two names one
+        ! letter apart: relative_share_of_addiction_ADJUSTER, which is 0.d0 and
+        ! is what a reader checks, and relative_share_of_addiction_ADJ, which is
+        ! (1-hold_theta)*0.05 and is what the update at line 47435 actually
+        ! multiplies. With hold_theta=0 theta stepped every block at its 0.1 per
+        ! cent cap, and its value drifted 0.21 -> 0.20461 across n03 while the
+        ! gaps table printed HELD, because that table tests the _adjuster name,
+        ! finds it, sees zero, and never looks at _adj.
+        integer, parameter :: hold_theta=1
 
         integer, parameter :: is_counterfactual=0
         integer, parameter :: partial_equilibrium=0
