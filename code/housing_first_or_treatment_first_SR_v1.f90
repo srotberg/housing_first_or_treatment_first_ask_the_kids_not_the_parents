@@ -748,7 +748,11 @@
         ! RELEASED 12 September: the author named mu_H among the parameters that
         ! have to be adjusted. Was (1-freeze_to_three_block)*5e-1, zero under the
         ! stage-1 freeze.
-        real(8) :: mu_homeless_adjuster=5*10.d0**(-1)
+        ! HELD 16 September. The author: *"i think we have to go back....and
+        ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
+        ! homeless, SUD"*. Seven moments, seven instruments, everything else
+        ! frozen where it stands.
+        real(8) :: mu_homeless_adjuster=0.d0
         real(8) :: distance_mu_homeless=1
         real(8) :: stopping_rule_mu_homeless=10.d0**(-2)
 
@@ -807,7 +811,11 @@
         ! converge first is h_1, h_2, b, lambda_d, aleph and omega_c, so omega_c
         ! has to be live in stage 1. It was (1-freeze_to_three_block)*2e-3, which
         ! is zero under the freeze.
-        real(8) :: weight_on_child_adjuster=2*10.d0**(-3)
+        ! HELD 16 September. The author: *"i think we have to go back....and
+        ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
+        ! homeless, SUD"*. Seven moments, seven instruments, everything else
+        ! frozen where it stands.
+        real(8) :: weight_on_child_adjuster=0.d0
         real(8) :: distance_weight_on_child=1
         real(8) :: stopping_rule_weight_on_child=10.d0**(-2)
         real(8) :: drug_users_without_child=0
@@ -1312,7 +1320,11 @@
         ! runs and still gives it a starting value good to first order; this is
         ! what walks it the rest of the way inside the joint loop rather than
         ! leaving it where the scan put it.
-        real(8) :: penalty_child_addicted_adjuster=5*10.d0**(-2)
+        ! HELD 16 September. The author: *"i think we have to go back....and
+        ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
+        ! homeless, SUD"*. Seven moments, seven instruments, everything else
+        ! frozen where it stands.
+        real(8) :: penalty_child_addicted_adjuster=0.d0
         real(8), parameter :: penalty_child_adjuster_start=5*10.d0**(-2)
         real(8), parameter :: penalty_child_adjuster_damping=0.5
         real(8), parameter :: penalty_child_adjuster_growth=1.2
@@ -1827,7 +1839,11 @@
         ! OFF THE FREEZE, on the author's instruction of 13 September naming it
         ! a live instrument.  Same one-line detachment already applied to
         ! weight_on_child_adjuster and kappa_phi_d_level_adjuster.
-        real(8) :: smi_onset_level_adjuster=5*10.d0**(-3)
+        ! HELD 16 September. The author: *"i think we have to go back....and
+        ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
+        ! homeless, SUD"*. Seven moments, seven instruments, everything else
+        ! frozen where it stands.
+        real(8) :: smi_onset_level_adjuster=0.d0
         real(8) :: distance_smi_onset_level=1
         real(8) :: stopping_rule_smi_onset_level=10.d0**(-3)
 
@@ -1952,7 +1968,11 @@
         ! street, and the SMI share of the homeless RISES. A model above target
         ! wants this SMALLER, so the update subtracts the gap -- the same
         ! convention as the kappa_uem block it replaces.
-        real(8) :: kappa_find_smi_adjuster=2.d0
+        ! HELD 16 September. The author: *"i think we have to go back....and
+        ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
+        ! homeless, SUD"*. Seven moments, seven instruments, everything else
+        ! frozen where it stands.
+        real(8) :: kappa_find_smi_adjuster=0.d0
         real(8) :: kappa_find_smi_max_rel_step=0.02d0
         real(8) :: distance_kappa_find_smi=1
         real(8) :: stopping_rule_kappa_find_smi=10.d0**(-3)
@@ -3351,7 +3371,11 @@
         ! term instead of hanging the loop.
         ! RELEASED 12 September: the author named gamma. Was
         ! (1-freeze_to_three_block)*5e-2, zero under the stage-1 freeze.
-        real(8) :: relative_share_of_housing_adjuster=5*10.d0**(-2)
+        ! HELD 16 September. The author: *"i think we have to go back....and
+        ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
+        ! homeless, SUD"*. Seven moments, seven instruments, everything else
+        ! frozen where it stands.
+        real(8) :: relative_share_of_housing_adjuster=0.d0
         real(8), parameter :: relative_share_of_housing_adjuster_start=5*10.d0**(-2)
         real(8) :: previous_gap_relative_share_of_housing=0
         integer :: have_gap_relative_share_of_housing=0
@@ -4239,7 +4263,11 @@
         ! ones". cbar sat at -49.4 per cent with its only instrument pinned.
         ! The runtime re-zero at apply_first_block_freeze does not reach it:
         ! first_block_only is 0, so that subroutine returns before the assignment.
-        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
+        ! HELD 16 September. The author: *"i think we have to go back....and
+        ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
+        ! homeless, SUD"*. Seven moments, seven instruments, everything else
+        ! frozen where it stands.
+        real(8) :: max_food_cost_adjuster=0.d0
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
@@ -4247,7 +4275,11 @@
         ! freeze guard with it, so the parameter and its distance go live
         ! together -- see the update block, which is now guarded on the adjuster
         ! for the reason max_food_cost's is.
-        real(8) :: voucher_probability_adjuster=1*10.d0**(-1)
+        ! HELD 16 September. The author: *"i think we have to go back....and
+        ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
+        ! homeless, SUD"*. Seven moments, seven instruments, everything else
+        ! frozen where it stands.
+        real(8) :: voucher_probability_adjuster=0.d0
         real(8), parameter :: voucher_probability_adjuster_start=1*10.d0**(-1)
         real(8) :: previous_gap_voucher_probability=0
         integer :: have_gap_voucher_probability=0
@@ -4258,7 +4290,11 @@
         ! (1-freeze_to_three_block)*(1e-1), zero under the stage-1 freeze, so the
         ! unemployment rate sat at -13.5 per cent unmanaged.  Its do-while term is
         ! released with it.
-        real(8) :: separation_rate_adjuster=1*10.d0**(-1)
+        ! HELD 16 September. The author: *"i think we have to go back....and
+        ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
+        ! homeless, SUD"*. Seven moments, seven instruments, everything else
+        ! frozen where it stands.
+        real(8) :: separation_rate_adjuster=0.d0
         real(8), parameter :: separation_rate_adjuster_start=1*10.d0**(-1)
         real(8) :: previous_gap_separation_rate=0
         integer :: have_gap_separation_rate=0
@@ -4608,7 +4644,11 @@
         ! a parameter whose distance cannot hold the loop open is only half a
         ! release, which is the mistake made on mu_homeless, weight_on_child and
         ! max_food_cost earlier in this session.
-        real(8) :: discount_factor_adjuster=5*10.d0**(-3)
+        ! HELD 16 September. The author: *"i think we have to go back....and
+        ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
+        ! homeless, SUD"*. Seven moments, seven instruments, everything else
+        ! frozen where it stands.
+        real(8) :: discount_factor_adjuster=0.d0
         real(8) :: distance_discount_factor
         ! A RATIO OF THREE CANNOT BE HIT TO ONE PART IN THIRTY THOUSAND. The old
         ! tolerance of 1e-4 was written against a mortgage share between zero and
@@ -4768,7 +4808,11 @@
         ! moment has been reported with nothing acting on it. Same one-line
         ! detachment applied to weight_on_child, kappa_phi_d_level, smi_onset_level
         ! and voucher_probability.
-        real(8) :: newborn_endowment_adjuster=2*10.d0**(-1)
+        ! HELD 16 September. The author: *"i think we have to go back....and
+        ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
+        ! homeless, SUD"*. Seven moments, seven instruments, everything else
+        ! frozen where it stands.
+        real(8) :: newborn_endowment_adjuster=0.d0
         real(8) :: distance_newborn_endowment=1
         real(8) :: stopping_rule_newborn_endowment=10.d0**(-2)
         ! THE ENDOWMENT ENTERS THE BUDGET CONSTRAINT, NOT THE INITIAL
@@ -5891,7 +5935,11 @@
         ! instrument"*.  It was retired when the author ran a no-tax variant; the
         ! vectors we calibrate carry adjust_taxes=1 and a tax rate near 0.75, so
         ! the moment tau_l is live and had no instrument.
-        real(8) :: labor_income_tax_rate_adjuster=5*10.d0**(-1)
+        ! HELD 16 September. The author: *"i think we have to go back....and
+        ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
+        ! homeless, SUD"*. Seven moments, seven instruments, everything else
+        ! frozen where it stands.
+        real(8) :: labor_income_tax_rate_adjuster=0.d0
         real(8), parameter :: labor_income_tax_rate_adjuster_start=5*10.d0**(-1)
         real(8) :: previous_gap_labor_income_tax_rate=0
         integer :: have_gap_labor_income_tax_rate=0
@@ -6207,7 +6255,35 @@
         ! UN-PINNED 15 September: "lets target h2 to get 10.1% of households
         ! spending over 50%". The rung is the only instrument on burden50, which
         ! sat at -95.9 per cent with nothing pushing it.
-        real(8) :: smallest_house_size_adjuster=0.05d0
+        ! PINNED, on the author's instruction of 16 September: *"cant we set h2
+        ! to some number that likely gives a decent cost burdened households and
+        ! pin it?"*.
+        !
+        ! THE NUMBER IS 0.137, from the one controlled sweep of this parameter
+        ! that exists. Loops 24 to 57 of j06 held participation flat at 0.0064,
+        ! so they vary h_2 and nothing else:
+        !
+        !   h_2 param  h_2 moment  burden50  h_3     h_1
+        !   0.12694    0.0144      0.045     0.298   0.0059
+        !   0.13079    0.0305      0.069     0.253   0.0069
+        !   0.13475    0.0469      0.101     0.202   0.0079
+        !   0.13746    0.0618      0.120     0.144   0.0096
+        !
+        ! 0.137 sits at an h_2 moment near 0.060, the middle of the author's
+        ! "5-7% cost burdened households".
+        !
+        ! IT WILL READ LOWER AT HEALTHY PARTICIPATION, and that is the moment's
+        ! nature rather than a fault in the pin: it is a share of total
+        ! EXPENDITURE, so it falls when drug spending returns to the
+        ! denominator. The sweep above was measured with the drug block dead.
+        !
+        ! PINNING ALSO BUYS emp_homeless. h_2 pushes h_1 UP -- the sweep shows
+        ! h_1 going 0.0059 to 0.0096 across it -- and emp_homeless rises as h_1
+        ! falls. A pinned h_2 stops that push, so h_1 can sit at the 0.4 per
+        ! cent the author wants instead of being driven off it. It also removes
+        ! one moving instrument from a system whose instability has been the
+        ! whole problem.
+        real(8) :: smallest_house_size_adjuster=0.d0
 
         ! DAMPING THE TWO HOUSING ADJUSTERS. Both were fixed steps and both
         ! oscillated: the size distribution responds sharply to the size
