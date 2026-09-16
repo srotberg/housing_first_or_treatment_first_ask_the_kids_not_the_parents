@@ -46739,7 +46739,42 @@
                     ! multiple - adjuster*(model - target), negative-going exactly
                     ! when the model is above target, which is the current case:
                     ! 0.2698 against 0.217.
-                    if (multiple_find_adjuster>0) then
+                    ! GATED ON b, 16 September, on the author's *"Let's find get b
+                    ! right, and only then move find if addicted"*.
+                    !
+                    ! WITHOUT THE GATE IT RUNS AWAY, and n12 showed it doing so. The
+                    ! SUD share of the homeless is a COMPOSITION, and composition is
+                    ! meaningless when the population it is composed of has nearly
+                    ! vanished. Raising this parameter cuts the addicted's job-finding
+                    ! rate, which drives people out of use; fewer users means fewer
+                    ! addicted among the homeless; so the rule raises it again. In n12
+                    ! it climbed 3.53 -> 5.56 in 22 blocks at its 2 per cent cap every
+                    ! single block, participation fell 0.094 -> 0.013, and its OWN
+                    ! moment went the wrong way, 0.217 target against 0.052 model and
+                    ! widening. A positive feedback, not a search.
+                    !
+                    ! THE SPEEDS MADE IT WORSE AND THAT WAS MINE. This runs at 2 per
+                    ! cent a block with no cooldown; b's instrument runs at 0.6 per
+                    ! cent behind a five-block cooldown, so 0.12 per cent a block. b
+                    ! moves SEVENTEEN TIMES SLOWER and cannot correct what this does.
+                    ! The 2 per cent was set on 15 September at the author's request to
+                    ! update it faster, when b ran at 0.5 per cent with no cooldown and
+                    ! the ratio was four-fold; slowing b after n02's collapse is what
+                    ! opened the gap to seventeen, and I did not check it against the
+                    ! other instruments.
+                    !
+                    ! SAME GATE, SAME TOLERANCE AS kappa's, which exists for the mirror
+                    ! image of this: read a composition only where b is near target.
+                    if ((multiple_find_adjuster>0) .AND. &
+                        (abs(model_total_drug_users(1)-participation_rate_data)>&
+                        kappa_gate_b_tolerance*participation_rate_data)) then
+
+                        write(*,*) "MULTIPLE_FIND GATE SHUT: b=", model_total_drug_users(1),&
+                            " is outside", kappa_gate_b_tolerance, " of",&
+                            participation_rate_data, " -- multiple_find_if_addicted HELD at",&
+                            multiple_find_if_addicted
+
+                    else if (multiple_find_adjuster>0) then
 
                         write(*,*) "model SUD share of the homeless =",&
                             model_fraction_homeless_and_addicted(1),&
