@@ -1,3 +1,57 @@
+## n03 AT BLOCK 150: ALEPH IS HIT, AND emp_homeless IS NOW THE WORST ROW BUT ONE
+
+Median |gap| 14.1 per cent, down from 17.4 at block 100 and 20.9 at block 50.
+Eight moments inside ten, eleven inside fifteen.
+
+    moment              block 100   block 150   target    gap now
+    aleph                 67.1        76.96      80          3.8%
+    treatment (tau_u)      0.2534      0.2437     0.245      0.5%
+    find_if_addicted       0.161       0.2198     0.217      1.3%
+    homelessness (h_1)     0.00386     0.00387    0.004      3.1%
+    kappa                  0.669       0.685      0.74       7.4%
+    participation (b)      0.0983      0.0998     0.089     12.1%
+
+**Aleph is done.** value_of_life 58.69 -> 85.36 carried the moment 47.3 -> 77.0
+against a target of 80, over a hundred and fifty blocks and without a single
+discontinuity. The author said twice that it should be reachable and pushed
+back when I claimed otherwise; they were right and my evidence was confounded
+by collapsing participation.
+
+**Participation is oscillating, not converging.** Forty blocks in a band of
+0.0925 to 0.1076 around the target, both sides, no trend. The bracket found the
+neighbourhood and is now hunting inside it. That is a tolerance question, not a
+failure: 12 per cent off on a moment that was 308 per cent off at the cold start.
+
+### emp_homeless is now 80.5 per cent off, and it got there BY SUCCEEDING
+
+    h_1        0.0208  ->  0.00479  ->  0.00386  ->  0.00387   (target 0.004)
+    emp_homeless 0.988 ->  0.182    ->  0.152    ->  0.0896    (target 0.46)
+
+Every block that moved homelessness toward its target moved employment among
+the homeless away from its own. The model gives 9 per cent employed against 46
+in the data. This is the third report in which it is flagged and it is now the
+second-worst row in the table. It has NO INSTRUMENT, so the loop cannot address
+it and will keep making it worse for as long as h_1 is held at 0.4 per cent.
+
+**The choice is the author's and it is a real one:** homelessness at 0.4 per
+cent with almost no employed homeless, or homelessness higher with a
+recognisable employed share. The measured slope is about -22 in emp_homeless
+per unit h_1, so the 0.4-to-1.0 band the author named spans roughly 0.09 to
+0.22 in emp_homeless -- which does not reach 0.46 anywhere inside the band.
+Reaching 0.46 needs an instrument, not a retarget.
+
+### h_2 is still pinned and still the worst row
+
+0.0043 severely cost burdened against 0.06. It has now drifted from 0.69 to
+0.50 to 0.43 per cent across the three reports while everything else improved,
+because it is pinned at 0.137 and the economy keeps moving around it.
+
+### The held parameters keep drifting, as expected
+
+mu_H 2.6 -> 32.0, pi_v 26.1 -> 34.0, kappa_find_smi 24.1 -> 28.7, sigma_y
+7.1 -> 11.5. All HELD under the seven-instrument restriction. mu_H in
+particular passed THROUGH its target between the two reports and kept going.
+
 ## n03 AT BLOCK 100 IS THE BEST POINT OF THE NIGHT, AND IT CAME FROM THE SEED
 
 One change from n02 -- `addiction_scalar_1` 0.00616 -> 0.0075, nothing else --
