@@ -1,3 +1,36 @@
+## THE AUTHOR'S STANDING INSTRUCTIONS, 16 September, so they are not dropped again
+
+**CALIBRATE ONLY SEVEN.** *"i think we have to go back....and just calibrate the
+following: aleph, b, kappa, tau_u, SUD homeless, homeless, SUD"*. Live:
+value_of_life, addiction_scalar_1, kappa_phi_d_level, utility_cost_of_treatment,
+multiple_find_if_addicted, size_homelessness, addiction_onset_base. Twelve
+others held.
+
+**HOMELESSNESS 0.4 PER CENT, FALLING BACK TO 0.5.** *"if you cant hit 0.4%
+homelessness, then go for 0.5%"*. fraction_homeless_data is 0.004. If a settled
+run cannot reach it, set 0.005 -- do not leave it at 0.004 failing. The cost of
+the fallback is small: emp_homeless falls about 0.022 on the measured slope of
+roughly -22 per unit h_1.
+
+**KAPPA SEEDED AT 3.0.** *"you can try kappa=3"*, and it matches the one clean
+dy_u/dkappa of -0.176 measured with the gate open. It is an UPPER bound on how
+far kappa must fall, because participation was moving over that loop and pushes
+y_u the same way, so -0.176 understates kappa's own effect. Watch for overshoot.
+
+**AND IT PUSHES PARTICIPATION UP.** A lower kappa kills fewer drug users, so b_SG
+has to offset it. That is the collinearity this file has circled all day.
+
+**h_2 IS PINNED**, smallest_house_size_adjuster at zero, which is the author's
+*"cant we set h2 to some number that likely gives a decent cost burdened
+households and pin it?"* reached by holding rather than by assigning a value.
+
+### Why this section exists
+
+The author had to remind me that h_1 targets 0.4 per cent after I said I would
+change it back, then ran five solves without doing it. An instruction given in
+chat and not written down did not survive an hour of debugging. **Write the
+author's instructions here when they arrive, not when they are finished.**
+
 ## ALEPH IS A CONSTRUCTION PROBLEM, NOT A PARAMETER ONE, and the numerator is already on target
 
 The author, 16 September: *"aleph is way too low"*. It reads 39 against a target
