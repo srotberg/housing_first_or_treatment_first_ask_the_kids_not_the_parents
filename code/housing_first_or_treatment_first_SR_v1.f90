@@ -6363,7 +6363,29 @@
         ! employed share of the homeless -- which is the same knowing cost paid
         ! when the death risk was pinned and y_u lost its own.  The author's
         ! range for it, 0.35 to 0.5, is now a CHECK rather than a target.
-        real(8) :: smallest_rental_relative_to_lowest_income=0.1d0
+        ! PINNED AT 0.142 on 16 September, on the author's "The 30% of spending is
+        ! great. Pin it". h_2 is SET, not calibrated -- "i dont think h2 should be
+        ! adjusted" -- so its adjuster stays zero and this is the value.
+        !
+        ! WHAT IT WAS CHOSEN ON. The fraction of households spending over 30 per
+        ! cent of INCOME on housing, which is the conventional measure and the
+        ! one the data gives as 40.6 per cent. Every household rents here
+        ! (include_ownership=0), so the "renters" row is all households:
+        !
+        !     h_2 0.137 -> 30.3 per cent   (25 per cent low)
+        !     h_2 0.142 -> 43.1 per cent   (6 per cent high)
+        !
+        ! NOT chosen on the moment h_2's own bracket targets, housing over TOTAL
+        ! EXPENDITURE above 50 per cent, which reads 2.4 against a 6 per cent
+        ! target at this value. That row ranked h_2 the worst moment in the table
+        ! in every report for a day; the gap was the denominator, not the rent.
+        !
+        ! AND IT IS A NARROW WINDOW. h_2 is violently powerful: 0.18 and 0.30
+        ! both tipped the economy into the 95-per-cent-participation corner, and
+        ! this 3.6 per cent step from 0.137 moved the spending-based burden
+        ! nearly six-fold and emp_homeless from 0.087 to 0.300. Do not step it
+        ! without checking participation afterwards.
+        real(8) :: smallest_rental_relative_to_lowest_income=0.142d0
         ! ON, and the sign is the same story as the expander. A larger smallest
         ! unit is a more expensive smallest unit, and the households that took it
         ! have nothing cheaper to move to except the street, so raising it pushes
