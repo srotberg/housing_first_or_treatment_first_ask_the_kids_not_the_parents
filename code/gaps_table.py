@@ -285,7 +285,23 @@ def main():
         gap = abs(model - data) / abs(data) * 100 if data else float("nan")
         live = adjuster_is_live(src_text, stem)
 
-        if param is None:
+        # A SCAN-DRIVEN PARAMETER HAS NO ADJUSTER, AND "HELD" IS A LIE ABOUT IT.
+        # delta_d is chosen by the PENALTY SCAN over [scan_lo, scan_hi], not by
+        # a bracket, so adjuster_is_live() reads zero and the row used to print
+        # HELD while the scan ran twenty-one points every block. This is the
+        # same class of error as the find_if_addicted row the author caught on
+        # 16 September: the direction column described the machinery it expected
+        # rather than the machinery that is running.
+        if stem == "penalty_child_addicted":
+            verdict = [l for l in loglines if "PENALTY SCAN did NOT bracket" in l
+                       or "PENALTY SCAN SOLVED" in l]
+            if verdict and "did NOT bracket" in verdict[-1]:
+                direction = "SCAN [0,0.4]: BEST IN RANGE, target not reachable"
+            elif verdict:
+                direction = "SCAN [0,0.4]: solved"
+            else:
+                direction = "SCAN (no verdict in this log)"
+        elif param is None:
             direction = "NO INSTRUMENT (follows h_1)"
         elif live is False:
             direction = "HELD"

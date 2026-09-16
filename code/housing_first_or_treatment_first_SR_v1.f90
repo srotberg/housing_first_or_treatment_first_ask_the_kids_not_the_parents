@@ -43633,6 +43633,26 @@
                         kappa_phi_d_max_rel_step, "->", handover_value
                     kappa_phi_d_max_rel_step=max(min(handover_value,1.d0),10.d0**(-5))
 
+                ! FIVE ADJUSTERS ARE READ FROM calibration_state.dat WITHOUT AN
+                ! IOSTAT GUARD, so a resume OVERWRITES whatever the source sets
+                ! and the run is calibrating with an adjuster nobody chose. On
+                ! 16 September smallest_house_size_adjuster was set to 0.05 in
+                ! the source to open h_2 on the author's *"set h2 to get 5-7%
+                ! cost burdened"*; the resume handed back 0 from line 27 of the
+                ! state file and a re-arm lifted it to 0.001, forty times slower
+                ! than h_2's own 1 per cent cap allows, so h_2 could not travel
+                ! from 0.41 per cent toward 6 in any tractable number of blocks.
+                !
+                ! A HANDOVER IS THE ONLY WAY TO SET THESE, because the handover
+                ! is applied AFTER the state file is read. This case closes that
+                ! trap for h_2's adjuster; the other four are left alone because
+                ! nothing currently needs them and an unused case is one more
+                ! thing to keep true.
+                case ("smallest_house_size_adjuster")
+                    write(*,*) "HANDOVER smallest_house_size_adjuster:",&
+                        smallest_house_size_adjuster, "->", handover_value
+                    smallest_house_size_adjuster=max(handover_value,0.d0)
+
                 case ("addiction_scalar_max_rel_step")
                     write(*,*) "HANDOVER addiction_scalar_max_rel_step:", &
                         addiction_scalar_max_rel_step, "->", handover_value
