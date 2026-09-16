@@ -1,3 +1,61 @@
+## n03 AT BLOCK 200: THREE MOMENTS EXACT, AND kappa IS NOW FIGHTING b
+
+    moment                model      target     gap
+    wealth/output (beta)   2.9992     3          0.0%
+    aleph                 80.141     80          0.2%
+    homelessness (h_1)     0.0039784  0.004      0.5%
+    treatment (tau_u)      0.24664    0.245      0.7%
+    labour tax (tau_ell)   0.22211    0.224      0.8%
+    p_m                    0.048762   0.048125   1.3%
+    find_if_addicted       0.22602    0.217      4.2%
+    kappa                  0.68276    0.74       7.7%
+
+**Aleph is done: 80.141 against 80.** value_of_life 58.84 -> 86.92 over two
+hundred blocks, monotone throughout, and the rule has now flipped to LOWER,
+which is what a converged bracket looks like.
+
+**Homelessness is done: 0.398 per cent against 0.4.**
+
+Eight moments inside ten per cent. But the median went the wrong way,
+14.1 -> 21.4, because two rows turned around.
+
+### participation and the SUD rate both reversed, and kappa is the candidate
+
+    block          130      150      200
+    participation  0.0925   0.0998   0.1153    (target 0.089)
+    SUD rate       --       0.0464   0.0540    (target 0.0368)
+    b              --       0.008627 0.009021  (RISING, correct direction)
+    kappa          --       2.4292   2.3570    (FALLING, -21% over the run)
+
+b has been raised the whole time and participation still rose 15 per cent over
+the last fifty blocks. Something is pushing harder than b can pull, and
+CALIBRATION_STATE.md already names the mechanism:
+
+> **AND IT PUSHES PARTICIPATION UP.** A lower kappa kills fewer drug users, so
+> b_SG [has to rise to compensate].
+
+kappa is being lowered to close its own gap -- drug user income 0.683 against
+0.74 -- and it has fallen from 3.0 to 2.357 without stopping. Every step down
+adds drug users; b at its 0.6 per cent cap cannot outrun it.
+
+**This is a co-movement, not a proven cause.** value_of_life also rose 1.8 per
+cent over the same blocks and its effect on participation has never been
+measured cleanly. The clean test is a one-parameter point on kappa with b
+frozen, which is ENGINE.md rule 1 and has not been run for this pair.
+
+**It may resolve itself.** kappa's own gap is down to 7.7 per cent and
+narrowing, so its push on participation should fade as it converges. Two
+hundred more blocks will say. If participation is still climbing at block 250
+with kappa inside five per cent, the coupling is not the explanation and the
+one-parameter point has to be run.
+
+### Unchanged and still the author's
+
+- **emp_homeless 0.0871 against 0.46, 81.1 per cent off.** Fourth report. No
+  instrument. It cannot be fixed inside the h_1 band.
+- **h_2 pinned at 0.137, cost burden 0.42 per cent against 6, 93.0 per cent
+  off.** Fourth report. The worst row in the table every time.
+
 ## n03 AT BLOCK 150: ALEPH IS HIT, AND emp_homeless IS NOW THE WORST ROW BUT ONE
 
 Median |gap| 14.1 per cent, down from 17.4 at block 100 and 20.9 at block 50.
