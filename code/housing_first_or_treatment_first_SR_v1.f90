@@ -3887,7 +3887,20 @@
         ! block 13 and participation took four blocks to come to rest. A cooldown
         ! implements that. A test on the moment's own movement does not, because
         ! the moment moves for reasons that have nothing to do with b.
-        integer :: blocks_since_b_step=0
+        ! SHARED BETWEEN b AND THE ONSET, because they act on the SAME margin.
+        ! j10 gave b the cooldown and left the onset alone: the onset then
+        ! stepped +0.5 per cent every block for fourteen blocks in a row, +6.8
+        ! per cent in total, while b took three steps, and participation went
+        ! 0.226 -> 0.088 -> 0.036 anyway. Raising the onset DETERS USE -- that is
+        ! the measured negative-elasticity channel recorded above -- so it pushes
+        ! participation down on exactly the extensive margin b is trying to hold.
+        ! Throttling one instrument while the other pushes unchecked buys
+        ! nothing.
+        !
+        ! So the counter is shared: neither steps unless the margin has had
+        ! blocks_since_drug_step blocks to settle since EITHER of them last
+        ! moved.
+        integer :: blocks_since_drug_step=0
         integer, parameter :: b_step_cooldown=5
         ! The band theta and b are held in. See the two update rules for why
         ! they are absolute rather than only trust regions.
@@ -45933,6 +45946,21 @@
                             ! disorder risk sits on the extensive margin. A household
                             ! deciding how MUCH to use weighs no health risk at all;
                             ! only the decision to use at all carries one.
+                            ! THE SAME SHARED COOLDOWN b USES. See its
+                            ! declaration: these two act on one margin, and
+                            ! throttling only one of them buys nothing.
+                            if (blocks_since_drug_step<b_step_cooldown) then
+
+                                write(*,*) "onset HELD: ", blocks_since_drug_step,&
+                                    " of", b_step_cooldown, " cooldown blocks since",&
+                                    " the last drug-block step. The disorder rate reads",&
+                                    model_fraction_addicted(1)
+                                lambda_addiction=0.d0
+
+                            else
+
+                            blocks_since_drug_step=0
+
                             cap_old_1=addiction_onset_base
                             addiction_onset_base=onset_at_mean_1
                             ! ON THE DRUG BLOCK'S RATE. It owns the disorder rate,
@@ -45960,6 +45988,9 @@
                                 merge(" RAISED: lambda_d is below target ",&
                                       " LOWERED: lambda_d is above target",&
                                       model_fraction_addicted(1)<sud_rate_data)
+
+                            ! closes the shared cooldown gate opened above
+                            end if
 
                         else
 
@@ -47214,19 +47245,19 @@
                     ! COOLDOWN. b steps at most once every b_step_cooldown
                     ! blocks, because the model needs about four to settle after
                     ! a step. See the note beside the declaration.
-                    blocks_since_b_step=blocks_since_b_step+1
+                    blocks_since_drug_step=blocks_since_drug_step+1
 
-                    if (blocks_since_b_step<b_step_cooldown) then
+                    if (blocks_since_drug_step<b_step_cooldown) then
 
-                        write(*,*) "b HELD: ", blocks_since_b_step, " of",&
-                            b_step_cooldown, " cooldown blocks since the last step",&
-                            " -- letting participation settle. It reads",&
-                            model_total_drug_users(1)
+                        write(*,*) "b HELD: ", blocks_since_drug_step, " of",&
+                            b_step_cooldown, " cooldown blocks since the last drug-block",&
+                            " step -- letting the extensive margin settle.",&
+                            " Participation reads", model_total_drug_users(1)
                         distance_addiction_scalar=abs(gap_addiction_scalar_1)
 
                     else
 
-                    blocks_since_b_step=0
+                    blocks_since_drug_step=0
 
                     if (have_gap_addiction_scalar==1) then
 
