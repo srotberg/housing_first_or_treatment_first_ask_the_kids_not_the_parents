@@ -6474,7 +6474,24 @@
         ! you can also adjust kappa_find_smi to hit its target?". Held at zero
         ! for the seven-instrument restriction of 15 September; the value
         ! restored here is the one it carried before that restriction.
-        real(8) :: smallest_house_size_adjuster=0.05
+        ! ZERO, AND THIS IS WHAT "PINNED" ACTUALLY REQUIRES. The author, 16
+        ! September: "i dont think h2 should be adjusted", then "The 30% of
+        ! spending is great. Pin it".
+        !
+        ! I PINNED THE VALUE AND LEFT THE ADJUSTER LIVE, so h_2 walked away from
+        ! 0.142 the moment each run started. n13 took it 0.142 -> 0.16486 in
+        ! fifteen blocks, a 16 per cent drift, while every report called it
+        ! pinned. Measured earlier the same day: h_2 = 0.18 tips the economy into
+        ! the 95-per-cent-participation corner, so a run left to drift arrives
+        ! there on its own.
+        !
+        ! The author found it by refusing to accept the explanation: "all you did
+        ! was move h2 a bit higher but nothing to collapse the model". Nobody had
+        ! moved it. It moved itself.
+        !
+        ! Stopping the handover for an adjuster is NOT the same as zeroing it,
+        ! because the source value is what the run starts from.
+        real(8) :: smallest_house_size_adjuster=0.d0
 
         ! DAMPING THE TWO HOUSING ADJUSTERS. Both were fixed steps and both
         ! oscillated: the size distribution responds sharply to the size
