@@ -3963,6 +3963,10 @@
         ! blocks_since_drug_step blocks to settle since EITHER of them last
         ! moved.
         integer :: blocks_since_drug_step=0
+        ! THE ONSET'S OWN COOLDOWN COUNTER. See the gate for why it cannot share
+        ! b's: b increments and resets the shared one after the onset has already
+        ! read it, so the onset never saw it expire and never stepped once.
+        integer :: blocks_since_onset_step=0
         integer, parameter :: b_step_cooldown=5
         ! The band theta and b are held in. See the two update rules for why
         ! they are absolute rather than only trust regions.
@@ -5354,7 +5358,23 @@
         ! WHAT IT COSTS: the state space doubles, so the solve is slower, and
         ! every moment in the table moves. The scan's answer of "2 is not
         ! reachable" was measured under ONE class and does not carry over.
-        integer, parameter :: child_penalty_classes=2
+        ! BACK TO ONE, on the author's *"revert to 1 class and pin delta_d until
+        ! the rest of the calibration is over ... because the two classes is
+        ! expensive"*. The two-class run it was set for could NOT answer: cold
+        ! started, the SUD-parent class stayed at exactly 0.0 mass for two blocks,
+        ! so the odds ratio had an empty denominator and the scan never ran. The
+        ! class fills generationally and a cold start does not reach that quickly.
+        !
+        ! SO delta_d IS NOT "SET THERE" -- nothing was measured, and delta_d stays
+        ! where it was. The permanent measurement still has to be taken, and it
+        ! needs a warm distribution BUILT AT TWO CLASSES, not a cold start.
+        !
+        ! AND THE ONE-CLASS CHILD PENALTY IS STILL TRANSITORY. Everything in the
+        ! block below about the birth shift eroding at 0.9 remains true, so the
+        ! child SUD row will read near 1.0 for the rest of the calibration and
+        ! should be IGNORED rather than chased. Two classes has to come back
+        ! before the final model is believed.
+        integer, parameter :: child_penalty_classes=1
         integer, parameter :: employment_grid_size=employment_base_size*child_penalty_classes
         integer :: use_unemployment_by_productivity=1
         ! Persistent income risk over working life. See the block beside
@@ -46136,8 +46156,37 @@
                             previous_sud_rate=model_fraction_addicted(1)
                             have_lambda_secant=1
 
-                            onset_step_1=onset_at_mean_1+onset_base_adjuster*&
-                                (model_fraction_addicted(1)-sud_rate_data)
+                            ! THE ONSET TARGETS SUD PER USER, NOT SUD PER HEAD, AND IT
+                            ! FALLS WHEN THAT RATIO IS TOO HIGH. The author, 16
+                            ! September: *"SUD has to be about 41% of b"*, then *"so the
+                            ! onset show be lower if you have SUD over 41.3% of drug
+                            ! users"*. 0.0368/0.0890 = 0.4135, so the 41 per cent is the
+                            ! ratio of the two targets and is computed from them here
+                            ! rather than typed, so it follows if either target moves.
+                            !
+                            ! WHY THE SIGN WAS WRONG BEFORE. This line read
+                            ! onset + adjuster*(model_fraction_addicted - sud_rate_data),
+                            ! a PLUS on the LEVEL, which raised the onset whenever the
+                            ! disorder rate was high. That implements "raising the onset
+                            ! deters use, and the extensive margin beats the conversion
+                            ! margin", measured as an elasticity near -2.7 and recorded
+                            ! above. The comment immediately below that measurement
+                            ! already says why it cannot be trusted: prevalence is a two
+                            ! state flow balance, so at a given share who use it RISES in
+                            ! the onset, and a negative measured slope "is not news about
+                            ! the model, it is a reading taken through another
+                            ! instrument's move" -- b moved in the same Gauss-Seidel pass.
+                            ! The code and its own comments had been contradicting each
+                            ! other in this block.
+                            !
+                            ! ON THE RATIO THE AMBIGUITY DISAPPEARS. The extensive margin
+                            ! cancels out of SUD-per-user, so only the conversion margin
+                            ! is left and the sign is the intuitive one: too many users
+                            ! converting means the hazard is too high.
+                            onset_step_1=onset_at_mean_1-onset_base_adjuster*&
+                                (model_fraction_addicted(1)/&
+                                max(model_total_drug_users(1),10.d0**(-14))-&
+                                sud_rate_data/participation_rate_data)
 
                             onset_at_mean_1=max(min(onset_step_1,0.2d0),1.d0*10.d0**(-5))
 
@@ -46171,9 +46220,25 @@
                             ! THE SAME SHARED COOLDOWN b USES. See its
                             ! declaration: these two act on one margin, and
                             ! throttling only one of them buys nothing.
-                            if (blocks_since_drug_step<b_step_cooldown) then
+                            ! ITS OWN COUNTER, 16 September. THE SHARED ONE MADE THIS
+                            ! BRACKET UNREACHABLE. The counter is incremented and reset
+                            ! inside b's section at lines 47470 and 47482, which run
+                            ! AFTER this check, so the onset saw 0,1,2,3,4 and then b
+                            ! stepped and reset it to 0. It never observed the cooldown
+                            ! expiring and could not fire, ever. n03 proves it: across
+                            ! 277 blocks "DIAG onset at the mean quantity" printed
+                            ! exactly ONE distinct value, and every cooldown line in the
+                            ! log reads "b HELD", never "onset HELD".
+                            !
+                            ! The disorder rate's 36 per cent gap was therefore not a
+                            ! hard moment, it was a dead instrument. The shared counter
+                            ! was added to stop the onset stepping every block while the
+                            ! model needed four to settle; it overshot to never.
+                            blocks_since_onset_step=blocks_since_onset_step+1
 
-                                write(*,*) "onset HELD: ", blocks_since_drug_step,&
+                            if (blocks_since_onset_step<b_step_cooldown) then
+
+                                write(*,*) "onset HELD: ", blocks_since_onset_step,&
                                     " of", b_step_cooldown, " cooldown blocks since",&
                                     " the last drug-block step. The disorder rate reads",&
                                     model_fraction_addicted(1)
@@ -46181,7 +46246,7 @@
 
                             else
 
-                            blocks_since_drug_step=0
+                            blocks_since_onset_step=0
 
                             cap_old_1=addiction_onset_base
                             addiction_onset_base=onset_at_mean_1
