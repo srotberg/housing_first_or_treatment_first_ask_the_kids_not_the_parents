@@ -1,3 +1,61 @@
+## THE MODEL IS STABLE AT PARTICIPATION 0.076. The update rule steps faster than it settles.
+
+f26, 16 September. Descended to the target and froze every parameter at
+b_SG = 0.006218, where participation read 0.0878.
+
+```
+block  particip  disorder  y_u      emp_hom  sud_hom
+12     0.12396   0.05787   0.64277  0.20358  0.30865
+13     0.08781   0.04081   0.54570  0.21729  0.26017   <- freeze
+14     0.07668   0.03554   0.53767  0.22090  0.23793
+15     0.07599   0.03496   0.53379  0.22149  0.23526
+16     0.07582   0.03483   0.53382  0.22118  0.23577
+17     0.07572   0.03475   0.53373  0.22122  0.23575
+targets 0.089    0.0368    0.740    0.460    0.217
+```
+
+**It came to rest.** Steps of -13, -0.9, -0.26, -0.13 per cent: a geometric
+settling to about 0.0756. Every unfrozen run from this same point ran to 0.006.
+
+AND TWO DRUG MOMENTS LAND THERE. The disorder rate is 0.0348 against 0.0368,
+-5.5 per cent, and the SUD share of the homeless 0.2358 against 0.217, +8.7.
+Both have been ninety per cent off all day. Participation is 15 per cent low,
+which on the near-threshold elasticity is about 0.9 per cent off b_SG:
+**b_SG = 0.00616 rather than 0.006218.**
+
+## THE DEFECT: the rule steps EVERY block, the model needs FOUR to settle
+
+That is the whole of it. After one step participation took four blocks to come
+to rest. The rule steps every block, so it reads a moment still in transit and
+steps again on it, each step compounding into a map that has not finished
+responding to the last one. Four runs went from 0.235 to 0.006 that way with the
+instrument trying to stop them.
+
+**It is the same error these notes already warn about in the human reader** -- a
+moment read mid-transit is not a measurement, and the settling test needs it
+flat across several blocks. The update rule was never held to that standard.
+
+THE FIX, and it changes WHEN the rule fires and nothing else. b does not step
+while participation has moved more than participation_settle_tol (2 per cent)
+since the previous block. The author's additive form is untouched.
+
+**A HAZARD CAUGHT IN THE WRITING.** The first draft used `go to 8802` to skip
+the update. Label 8802 already exists five hundred lines later, past several
+other instruments, so the jump would have skipped THEIR updates too and
+compiled clean doing it. Replaced with a plain if/else. **Check that a label is
+free before jumping to it; a duplicate is legal Fortran and silently wrong.**
+
+## CORRECTIONS, both from over-reading a log
+
+**h_1's target does NOT govern the collapse.** I reported 0.4 per cent collapses
+and 1.0 is stable, from f13 against j06. j08 ran at 1.0 and collapsed anyway.
+What actually stabilised f13 was its own freeze.
+
+**And the freeze fired earlier than reported.** loop_count advances TWICE per
+moment block -- it prints 2, 4, 6 -- so freeze_updates_after_loop=13 engaged at
+block 7, not 13. That is why f13 held at 0.206 rather than at the 0.0876 aimed
+for. **loop_count is not the block count. Check what a counter counts.**
+
 ## THE MODEL IS NOT UNSTABLE. The UPDATE DYNAMICS were, and h_1's target drove them.
 
 The frozen pass, f13, 15 September. It was meant to reproduce j06's descent and

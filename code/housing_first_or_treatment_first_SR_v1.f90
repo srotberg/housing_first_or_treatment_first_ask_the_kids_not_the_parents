@@ -3849,6 +3849,35 @@
         real(8), parameter :: addiction_scalar_damping=0.5
         real(8), parameter :: addiction_scalar_growth=1.2
         real(8), parameter :: addiction_scalar_floor=10.d0**(-4)
+
+        ! WAIT FOR PARTICIPATION TO SETTLE BEFORE STEPPING b AGAIN.
+        !
+        ! THE DEFECT, MEASURED. f26 froze every parameter at block 13 and
+        ! watched participation come to rest:
+        !
+        !     block 13  0.0878   <- the step is taken here
+        !     block 14  0.0767      -13 per cent, still moving
+        !     block 15  0.0760      -0.9
+        !     block 16  0.0758      -0.26
+        !     block 17  0.0757      -0.13, at rest
+        !
+        ! FOUR BLOCKS to settle after one step. The rule steps EVERY block, so
+        ! it reads a moment still in transit and steps again on it, and again,
+        ! each step compounding into a map that has not finished responding to
+        ! the last one. That is how participation ran from 0.235 to 0.006 in
+        ! four separate runs while the instrument was trying to stop it.
+        !
+        ! It is also exactly the error this calibration's own notes warn about
+        ! in the human reader -- a moment read mid-transit is not a measurement,
+        ! and the settling test needs the moment flat across several blocks. The
+        ! update rule was never held to the standard the notes hold me to.
+        !
+        ! THE FIX, and it changes WHEN the rule fires and nothing else. The
+        ! author's additive form is untouched: parameter + adjuster times gap,
+        ! capped. It simply does not fire while the moment is still moving.
+        real(8) :: previous_participation=-1
+        real(8), parameter :: participation_settle_tol=0.02d0
+        integer :: participation_held_count=0
         ! The band theta and b are held in. See the two update rules for why
         ! they are absolute rather than only trust regions.
         ! THE CEILING IS SET BY THE BREAK POINT, not by taste. The stylized
@@ -47171,6 +47200,29 @@
                     ! the two agree to the last digit.
                     gap_addiction_scalar_1=model_total_drug_users(1)-participation_rate_data
 
+                    ! HOLD WHILE PARTICIPATION IS STILL MOVING. See the long note
+                    ! beside participation_settle_tol for the measurement behind
+                    ! this. A first block has nothing to compare against and is
+                    ! allowed through.
+                    if ((previous_participation>0) .AND. &
+                        (abs(model_total_drug_users(1)-previous_participation)>&
+                        participation_settle_tol*&
+                        max(abs(model_total_drug_users(1)),10.d0**(-14)))) then
+
+                        participation_held_count=participation_held_count+1
+                        write(*,*) "b HELD: participation moved from",&
+                            previous_participation, " to", model_total_drug_users(1),&
+                            " which is more than", participation_settle_tol,&
+                            " -- the moment is still in transit, so b does not step.",&
+                            " Held", participation_held_count, " blocks in a row."
+                        previous_participation=model_total_drug_users(1)
+                        distance_addiction_scalar=abs(gap_addiction_scalar_1)
+
+                    else
+
+                    participation_held_count=0
+                    previous_participation=model_total_drug_users(1)
+
                     if (have_gap_addiction_scalar==1) then
 
                         if ((gap_addiction_scalar_1*previous_gap_addiction_scalar)<0) then
@@ -47235,6 +47287,9 @@
                     write(*,*) "addiction_scalar_adjuster=", addiction_scalar_adjuster
                     write(*,*) "addiction_scalar_1=", addiction_scalar_1
                     write(*,*) "distance_addiction_scalar=", distance_addiction_scalar
+
+                    ! closes the settle gate opened above
+                    end if
 
                     ! aleph, on the model implied value of a statistical life.
                     ! A larger aleph makes life worth more, so the VSL rises in
