@@ -53,6 +53,31 @@ parameter.** `p_det`, `p_fp` and `c_test` do nothing in the benchmark, where
 `voucher_conditional_on_clean = 0`, so they belong with the experiment rather
 than in Table 5. Check what a parameter multiplies before giving it a row.
 
+## The gaps table is `code/gaps_table.py`, and it is the table
+
+The author, 16 September: *"i want you to remember this table, because it is
+key!"*. Twenty-three parameters, five columns -- the parameter's value, the
+model's moment, the data target, the gap in per cent, and which way the update
+rule moves the parameter at that gap. `/gaps` runs it. Do not hand-assemble a
+different table; if a row is missing, add it to the script.
+
+**The direction column is parsed out of the Fortran, never remembered.** Two
+things that parsing caught, both of which I had wrong:
+
+- `kappa_phi_d_level`'s rule is `kappa - adjuster*(drug_user_income_data -
+  model_avg_income...)`. The bracket is DATA MINUS MODEL, reversed from every
+  other instrument, so reading the operator alone gives the opposite direction.
+- Five updates assign through an intermediate -- the onset writes
+  `onset_step_1` before it lands in `addiction_onset_base` -- so keying on the
+  parameter name finds no rule at all. Key on the adjuster.
+
+**Three rows mislead at face value** and the script labels them: `theta` is the
+AGGREGATE, not the mean-of-ratios `MOMENT` row that runs three to four times
+higher; `emp_homeless` has NO INSTRUMENT and only follows h_1; and "not
+printed" means the update was gated that block, not that the value is missing.
+
+**A block is not a loop.** `loop_count` advances twice per moment block.
+
 ## Prose conventions
 
 `writing/NUMBERS.md` carries three standing rules with a checker each, and
