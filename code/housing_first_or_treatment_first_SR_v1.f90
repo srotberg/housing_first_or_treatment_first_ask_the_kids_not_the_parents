@@ -3375,7 +3375,16 @@
         ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
         ! homeless, SUD"*. Seven moments, seven instruments, everything else
         ! frozen where it stands.
-        real(8) :: relative_share_of_housing_adjuster=0.d0
+        ! BACK IN THE CALIBRATION, on the author's instruction of 16 September:
+        ! *"i think we also have to get gamma also into the calibration....it is
+        ! not close enough"*. It was 17.8 per cent off when I held it.
+        real(8) :: relative_share_of_housing_adjuster=5*10.d0**(-2)
+
+        ! ITS OWN CAP. gamma's update was on the GLOBAL tenth of a per cent, the
+        ! same thing that made h_1 immobile: at 17.8 per cent off it needs about
+        ! two hundred blocks at that rate. Half a per cent is the middle of the
+        ! rates the author has been setting and brings it to about forty.
+        real(8) :: relative_share_of_housing_max_rel_step=0.005d0
         real(8), parameter :: relative_share_of_housing_adjuster_start=5*10.d0**(-2)
         real(8) :: previous_gap_relative_share_of_housing=0
         integer :: have_gap_relative_share_of_housing=0
@@ -45373,7 +45382,8 @@
                             min(max(relative_share_of_housing-relative_share_of_housing_adjuster*&
                             (model_avg_housing_spending_renters(1)-avg_rent_to_income_data),0.01),0.9) 
                         relative_share_of_housing=&
-                            cap_step(relative_share_of_housing,cap_old_1)
+                            cap_step_rel(relative_share_of_housing,cap_old_1,&
+                            relative_share_of_housing_max_rel_step)
                                                                      
                         ! WHILE THE TIE IS ON, gamma is not being calibrated and its
                         ! moment is not a miss: it is whatever 0.28*(1-theta)
