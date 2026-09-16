@@ -1,3 +1,60 @@
+## THE OSCILLATION IS THE KAPPA GATE, AND THE RUN PERFORMED ITS OWN EXPERIMENT
+
+At block 200 I told the author that kappa was "fighting" b and called it a
+co-movement that needed a one-parameter point to confirm. The run supplied one
+by itself, and the mechanism is cleaner and more specific than what I said.
+
+**There is a gate on kappa's update.** `kappa_gate_b_tolerance` is 10 per cent:
+kappa only moves when participation is within 10 per cent of 0.089, that is
+below 0.0979. The log prints it either way:
+
+    KAPPA GATE SHUT: b= 0.1042 is outside 0.10 of 0.089
+      -- kappa_phi_d HELD at 2.3570, distance still 0.0548
+
+**The natural experiment.** kappa stepped for two hundred and twelve blocks,
+3.0 down to 2.3570, one update per block. At block 212 its update line printed
+for the LAST time -- every earlier value printed twice, that one printed once
+-- and only DIAG lines have appeared since. Participation peaked eight blocks
+later at 0.1202 and has fallen every reading since: 0.1155, 0.1144, 0.1081,
+0.1042, 0.1014.
+
+kappa froze; participation turned. That is the one-parameter point, run by the
+loop rather than by me, and it settles the direction: **lowering kappa raises
+participation**, as CALIBRATION_STATE.md already claimed.
+
+**So the oscillation since block 107 is a limit cycle around the gate.**
+Participation falls under b alone, crosses 0.0979, the gate opens, kappa
+resumes lowering, participation is pushed back above 0.0979, the gate shuts.
+The band I have been reporting -- 0.0925 to 0.1202 -- straddles the gate
+boundary at 0.0979. It is not a bracket hunting; it is two instruments taking
+turns, by design.
+
+**The gate is doing exactly its job.** Its comment says to read y_u only where
+b is near target, because when nearly everyone uses, the users ARE the
+population and the ratio means nothing. Without it, kappa would have gone on
+calibrating against a contaminated ratio all the way up.
+
+### What this implies for convergence, and the choice it leaves
+
+kappa converges only if its own step is small enough that the participation
+excursion it causes stays inside the gate's 10 per cent. At the current step it
+is not: one pass of kappa updates knocks participation from roughly 0.093 to
+0.120, which is 35 per cent off, so the gate shuts and kappa waits.
+
+The remedy is to narrow kappa's step, and it needs no rebuild: there is a
+`case ("kappa_phi_d_max_rel_step")` handover at line 43582. But a handover is
+consumed at STARTUP, so using it costs the 250-block descent. **Not worth
+spending n03 on** -- it is the seed for the next run, not a change to make now.
+
+### Block 250 table, median back to 14.6 from 21.4
+
+    beta    0.0%   aleph   0.2%   tau_u   0.5%   h_1   0.7%
+    tau_ell 0.8%   p_m     1.1%   find_if_addicted 6.1%   kappa 7.8%
+    b      13.9%   (was 29.5 at block 200, recovering)
+    onset  31.9%   (was 46.8 at block 200, recovering)
+
+Six moments inside 1.2 per cent, eight inside ten, eleven inside fifteen.
+
 ## n03 AT BLOCK 200: THREE MOMENTS EXACT, AND kappa IS NOW FIGHTING b
 
     moment                model      target     gap
