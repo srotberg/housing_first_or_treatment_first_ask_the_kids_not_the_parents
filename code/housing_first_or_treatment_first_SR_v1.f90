@@ -48700,11 +48700,41 @@
 
                         ! No bracket yet, so traverse, which is what the adjuster
                         ! is good at.
+                        ! h_1 IS A BAND, NOT A POINT. The author, 16 September: "I think
+                        ! that as long as h1 is in the 0.4-1% band we should not adjust it
+                        ! unless it improves emp homeless", after earlier saying "if it
+                        ! raises homelessness closer to 1% it is ok if emphomlees is
+                        ! better too".
+                        !
+                        ! WHY IT MATTERS. Driving h_1 to the 0.4 per cent POINT drags
+                        ! emp_homeless down with it: measured across n03, h_1 went
+                        ! 0.0208 -> 0.00386 and emp_homeless fell 0.988 -> 0.087 over
+                        ! exactly those blocks, a slope near -22 per unit h_1. The two
+                        ! goals are in direct conflict at a point target and are not in
+                        ! conflict at a band, because anywhere in [0.004, 0.010] is
+                        ! acceptable and the higher end buys a better emp_homeless.
+                        !
+                        ! INSIDE THE BAND THE GAP IS ZERO, so the bracket holds and h_1
+                        ! stops fighting b and emp_homeless. Outside it, the gap is
+                        ! measured to the NEARER EDGE rather than to 0.004, so a run
+                        ! above the band returns to 1 per cent rather than being driven
+                        ! through the band to its floor.
+                        !
+                        ! h1_band_lo AND h1_band_hi ALREADY EXISTED at their declaration
+                        ! and were never read by anything. The band was written down and
+                        ! then not implemented; this is the code that uses it.
                         if (h1_targets_emp_homeless==1) then
                             gap_size_homelessness_1=&
                                 model_employed_share_of_homeless(1)-employed_share_of_homeless_data
+                        else if (model_fraction_homeless(1)>h1_band_hi) then
+                            gap_size_homelessness_1=model_fraction_homeless(1)-h1_band_hi
+                        else if (model_fraction_homeless(1)<h1_band_lo) then
+                            gap_size_homelessness_1=model_fraction_homeless(1)-h1_band_lo
                         else
-                            gap_size_homelessness_1=model_fraction_homeless(1)-fraction_homeless_data
+                            gap_size_homelessness_1=0.d0
+                            write(*,*) "h_1 IN BAND: ", model_fraction_homeless(1),&
+                                " is inside [", h1_band_lo, ",", h1_band_hi,&
+                                "] -- size_homelessness HELD at", size_homelessness
                         end if
 
                         if (have_gap_size_homelessness==1) then
