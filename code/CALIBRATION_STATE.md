@@ -1,3 +1,89 @@
+## n02 DIED IN A SECOND EQUILIBRIUM, AND THE SEED WAS 22 PER CENT TOO LOW IN b
+
+n02 ran 50 blocks over 2h21m and produced nothing usable. What happened is
+worth more than the run was.
+
+**Blocks 1-11.** Participation drifted down 0.4388 -> 0.4207 while
+addiction_scalar_1 crawled 0.0061600 -> 0.0061785. Everything smooth.
+
+**Block 12.** With every live parameter moving less than half a per cent -- b
+by +0.30, value_of_life by -0.50 -- the economy jumped:
+
+    participation   0.4207  ->  0.9532
+    aleph              46   ->     284
+    tau_u            0.248  ->   0.000   (exactly zero, and it stayed there)
+    h_1             0.0080  ->  0.0208
+
+**Blocks 13-50.** Participation sat at 0.95314 +/- 0.00002 for thirty-eight
+blocks. That is not a slow descent, it is a different attractor, and the run
+was inside it for three quarters of its life.
+
+### It was not the update dynamics this time
+
+The earlier collapses were update dynamics and the remedy was smaller steps.
+That remedy is what killed this one. Three defences were stacked on b --
+`addiction_scalar_max_rel_step` cut 0.02 -> 0.003, the adjuster 0.008 -> 0.002,
+and a five-block shared cooldown -- so b moves 0.3 per cent once every five
+blocks. Over the whole 50-block run it travelled **2.7 per cent**, from
+0.0061600 to 0.0063283, against a participation gap of 971 per cent.
+
+**Smaller steps did not prevent the jump.** A 0.3 per cent step tipped the
+economy from 0.42 to 0.95. Shrinking the step further only means arriving at
+the same cliff more slowly with less ability to leave.
+
+### The seed was the fault, and it was already written down
+
+`code/checkpoints/README.md` records, from an earlier measurement:
+
+> b_SG around 0.0075 sits at participation 0.089 on the way DOWN, but a COLD
+> start at the same b_SG lands near 0.19.
+
+n02 was seeded at **0.00616**. That is 22 per cent below the value the archive
+already knew corresponds to the target, on the far side of a fold at roughly
+0.0062, in the basin of the 0.42-and-rising branch. At 0.3 per cent per five
+blocks, closing 22 per cent needs about 330 blocks -- **fifteen hours** -- and
+the fold sits in the middle of that path. The run never had the time.
+
+### What the three numbers mean together
+
+- participation 0.0042 is where hk settled (low branch),
+- participation 0.089 is the target,
+- participation 0.42 and 0.95 are the branch n02 was on.
+
+The target is between two attractors, which is why a search that starts on the
+wrong side of the fold cannot walk to it: it has to be seeded inside the right
+basin and kept there.
+
+### n03, started 06:18, one change
+
+Cold start, n02's seed with **`addiction_scalar_1` 0.00616 -> 0.0075** and
+nothing else touched, per ENGINE.md's one-parameter rule -- value_of_life stays
+at 58.69 and works through its own instrument. The step cap is raised
+0.003 -> 0.006 through the **handover**, not the Fortran: there is a
+`case ("addiction_scalar_max_rel_step")` at line 43587, so the speed is
+settable without a rebuild and without touching the freeze.
+
+Expected at cold start: participation near 0.19, then a rise in b of roughly
+7 or 8 per cent to reach 0.089, which at 0.6 per cent per five blocks is about
+65 blocks, three hours.
+
+### Two things to check before believing n03
+
+- **h_1's instrument inverts at the corner.** n02 printed
+  `size_homelessness BRACKET DISCARDED: lowered to X and homelessness rose`.
+  If that line appears in n03, n03 is in the same basin and the seed did not
+  work.
+- **theta prints -1 at the corner** and `tau_u` prints exactly 0. Either is a
+  corner tell, not a moment.
+
+### Housekeeping, and a cost worth knowing
+
+n02's log reached **3.1 GB in 50 blocks** -- about 62 MB a block. It was
+deleted after `n02_moments.log.gz` (133 KB) was carved from it with the MOMENT,
+DIAG, parameter and bracket lines. `code/gaps_table.py` takes over two minutes
+on a log that size; carve the tail before running it, or run it against the
+compact extract.
+
 ## THE AUTHOR'S STANDING INSTRUCTIONS, 16 September, so they are not dropped again
 
 **CALIBRATE ONLY SEVEN.** *"i think we have to go back....and just calibrate the
