@@ -1,3 +1,53 @@
+## n03 AT BLOCK 100 IS THE BEST POINT OF THE NIGHT, AND IT CAME FROM THE SEED
+
+One change from n02 -- `addiction_scalar_1` 0.00616 -> 0.0075, nothing else --
+and a cold start. A hundred blocks, three hours forty.
+
+    moment                 block 50     block 100    target     gap now
+    participation (b)        0.2446       0.0983      0.089       10.4%
+    homelessness (h_1)       0.00479      0.00386     0.004        3.4%
+    SUD rate (lambda_d)      0.1145       0.0466      0.0368      26.7%
+    treatment (tau_u)        0.2509       0.2534      0.245        3.4%
+    aleph                    59.9         67.1        80          16.1%
+    wealth/output (beta)     2.982        2.996       3            0.1%
+    mu_H                     1.086        1.435       1.473        2.6%
+
+**Nine moments inside ten per cent, twelve inside twenty, median |gap| 17.4.**
+At block 50 the median was 20.9 and participation was 175 per cent off.
+
+### What this settles
+
+- **Participation is reachable by its own instrument.** 0.3634 -> 0.0983 over a
+  hundred blocks, monotone, no tip, no corner. b went 0.0075 -> 0.0084213, a
+  rise of 12 per cent, at the 0.6 per cent cap. The night's failure was the
+  seed and the starved step, not the method and not the model.
+- **h_1 hits 0.4 per cent.** 0.00386 against 0.004. The author's first choice,
+  not the 0.5 fallback.
+- **Aleph is reachable, as the author said twice.** value_of_life 58.69 -> 75.34
+  took the moment 47.3 -> 67.1 on the way to 80, working through its own
+  bracket the whole way.
+
+### The two conflicts this exposes, both for the author
+
+**emp_homeless moves AGAINST h_1, and h_1 winning means emp_homeless losing.**
+It went 0.182 -> 0.152 (target 0.46) over exactly the blocks in which h_1 came
+down to target. It has NO INSTRUMENT. The author wants homelessness in the band
+AND emp_homeless as high as possible; at h_1 = 0.39 per cent the model gives
+0.15. Those two cannot both be had without an instrument that separates them.
+
+**h_2 at 0.137 gives 0.50 per cent severely cost burdened, target 6.** It got
+worse as the economy improved (0.69 -> 0.50 per cent) because h_2 is PINNED and
+everything around it moved. This is now 91.7 per cent off and it is the single
+largest gap in the table. It needs a value from the author or permission to
+bracket it.
+
+### The held parameters drifted, and that is the restriction working as asked
+
+pi_v 2.5 -> 26.1, kappa_find_smi 4.9 -> 24.1, pi_eu 21.4 -> 29.6, c_bar
+55.7 -> 64.1. All HELD under the author's seven-instrument restriction. They
+moved because the economy moved around them, not because anything is wrong.
+Re-opening them is a decision, not a fix.
+
 ## n02 DIED IN A SECOND EQUILIBRIUM, AND THE SEED WAS 22 PER CENT TOO LOW IN b
 
 n02 ran 50 blocks over 2h21m and produced nothing usable. What happened is
