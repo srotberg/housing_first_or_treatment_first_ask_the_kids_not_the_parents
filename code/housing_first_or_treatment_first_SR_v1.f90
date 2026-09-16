@@ -3875,9 +3875,20 @@
         ! THE FIX, and it changes WHEN the rule fires and nothing else. The
         ! author's additive form is untouched: parameter + adjuster times gap,
         ! capped. It simply does not fire while the moment is still moving.
-        real(8) :: previous_participation=-1
-        real(8), parameter :: participation_settle_tol=0.02d0
-        integer :: participation_held_count=0
+        ! A COOLDOWN, NOT A TEST ON THE MOMENT. The first draft held b whenever
+        ! participation had moved more than two per cent since the last block,
+        ! and that was wrong for a reason j09 showed in eight blocks: during the
+        ! cold-start transient participation moves three to nine per cent a block
+        ! ON ITS OWN, so the gate held forever and b stepped twice in eight
+        ! blocks while participation fell 0.235 -> 0.193 regardless. It did not
+        ! prevent anything; it disarmed the instrument.
+        !
+        ! The measurement was about what happens AFTER A STEP -- f26 froze at
+        ! block 13 and participation took four blocks to come to rest. A cooldown
+        ! implements that. A test on the moment's own movement does not, because
+        ! the moment moves for reasons that have nothing to do with b.
+        integer :: blocks_since_b_step=0
+        integer, parameter :: b_step_cooldown=5
         ! The band theta and b are held in. See the two update rules for why
         ! they are absolute rather than only trust regions.
         ! THE CEILING IS SET BY THE BREAK POINT, not by taste. The stylized
@@ -47200,28 +47211,22 @@
                     ! the two agree to the last digit.
                     gap_addiction_scalar_1=model_total_drug_users(1)-participation_rate_data
 
-                    ! HOLD WHILE PARTICIPATION IS STILL MOVING. See the long note
-                    ! beside participation_settle_tol for the measurement behind
-                    ! this. A first block has nothing to compare against and is
-                    ! allowed through.
-                    if ((previous_participation>0) .AND. &
-                        (abs(model_total_drug_users(1)-previous_participation)>&
-                        participation_settle_tol*&
-                        max(abs(model_total_drug_users(1)),10.d0**(-14)))) then
+                    ! COOLDOWN. b steps at most once every b_step_cooldown
+                    ! blocks, because the model needs about four to settle after
+                    ! a step. See the note beside the declaration.
+                    blocks_since_b_step=blocks_since_b_step+1
 
-                        participation_held_count=participation_held_count+1
-                        write(*,*) "b HELD: participation moved from",&
-                            previous_participation, " to", model_total_drug_users(1),&
-                            " which is more than", participation_settle_tol,&
-                            " -- the moment is still in transit, so b does not step.",&
-                            " Held", participation_held_count, " blocks in a row."
-                        previous_participation=model_total_drug_users(1)
+                    if (blocks_since_b_step<b_step_cooldown) then
+
+                        write(*,*) "b HELD: ", blocks_since_b_step, " of",&
+                            b_step_cooldown, " cooldown blocks since the last step",&
+                            " -- letting participation settle. It reads",&
+                            model_total_drug_users(1)
                         distance_addiction_scalar=abs(gap_addiction_scalar_1)
 
                     else
 
-                    participation_held_count=0
-                    previous_participation=model_total_drug_users(1)
+                    blocks_since_b_step=0
 
                     if (have_gap_addiction_scalar==1) then
 
