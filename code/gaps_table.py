@@ -49,7 +49,14 @@ ROWS = [
     ("sigma_y",              "kkk_sigma_scale",                  "kkk_sigma_scale",            "MOMENT:sigma_y"),
     ("theta",                "relative_share_of_addiction_1",    "relative_share_of_addiction","SPECIAL:theta_aggregate"),
     ("gamma",                "relative_share_of_housing",        "relative_share_of_housing",  "MOMENT:gamma"),
-    ("find_if_addicted",     "multiple_of_probabilities_of_employment_if_addicted",
+    # THE VALUE COLUMN MUST NAME THE LIVE INSTRUMENT, NOT THE RETIRED ONE.
+    # Until 16 September this row read multiple_of_probabilities_of_employment_
+    # if_addicted, which is PINNED AT 1 on the author's instruction with
+    # employment_multiplier_adjuster=0. The table therefore printed a constant 1
+    # beside a moment that was moving, and the author spotted it: "find_if_
+    # addicted=1 and it gives the right share of homeless with SUD? it makes no
+    # sense". The live instrument is multiple_find_if_addicted, adjuster 2.0.
+    ("find_if_addicted",     "multiple_find_if_addicted",
                                                                  "multiple_find",              "MOMENT:sud_homeless"),
     ("mu_H",                 "mu_homeless",                      "mu_homeless",                "MOMENT:mu_H"),
     ("pi_eu",                "probability_becoming_unemployed",  "separation_rate",            "MOMENT:pi_eu"),

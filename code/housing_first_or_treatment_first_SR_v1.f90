@@ -752,7 +752,13 @@
         ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
         ! homeless, SUD"*. Seven moments, seven instruments, everything else
         ! frozen where it stands.
-        real(8) :: mu_homeless_adjuster=0.d0
+        ! REOPENED 16 September on the author's instruction: "i need you to now
+        ! add mu_H, pi_eu, newborn_endowment, pi_v, and cbar", plus "can you
+        ! also fix sigma_y?", "set h2 to get 5-7%% cost burdened" and "maybe
+        ! you can also adjust kappa_find_smi to hit its target?". Held at zero
+        ! for the seven-instrument restriction of 15 September; the value
+        ! restored here is the one it carried before that restriction.
+        real(8) :: mu_homeless_adjuster=5*10.d0**(-1)
         real(8) :: distance_mu_homeless=1
         real(8) :: stopping_rule_mu_homeless=10.d0**(-2)
 
@@ -1972,7 +1978,13 @@
         ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
         ! homeless, SUD"*. Seven moments, seven instruments, everything else
         ! frozen where it stands.
-        real(8) :: kappa_find_smi_adjuster=0.d0
+        ! REOPENED 16 September on the author's instruction: "i need you to now
+        ! add mu_H, pi_eu, newborn_endowment, pi_v, and cbar", plus "can you
+        ! also fix sigma_y?", "set h2 to get 5-7%% cost burdened" and "maybe
+        ! you can also adjust kappa_find_smi to hit its target?". Held at zero
+        ! for the seven-instrument restriction of 15 September; the value
+        ! restored here is the one it carried before that restriction.
+        real(8) :: kappa_find_smi_adjuster=2.d0
         real(8) :: kappa_find_smi_max_rel_step=0.02d0
         real(8) :: distance_kappa_find_smi=1
         real(8) :: stopping_rule_kappa_find_smi=10.d0**(-3)
@@ -3511,7 +3523,14 @@
         ! default is fixed_productivity=0. Both were gated on the SAME freeze
         ! flag, so unfreezing that flag would have put TWO instruments on one
         ! moment and had them fight. They are split here instead.
-        real(8) :: kkk_sigma_scale_adjuster=(1-freeze_to_three_block)*(5.d0)
+        ! SIGMA_Y FREED WITHOUT TOUCHING THE FREEZE FLAG, 16 September. The
+        ! author: "can you also fix sigma_y?". It was gated by
+        ! (1-freeze_to_three_block), and freeze_to_three_block is 1, so the
+        ! adjuster was zero. The FLAG IS NOT FLIPPED, because it also sets
+        ! max_move_per_loop (line 6059) and a merge at line 35404; flipping it
+        ! would change two unrelated behaviours. The gate is removed here for
+        ! this parameter alone.
+        real(8) :: kkk_sigma_scale_adjuster=5.d0
         ! WHAT kkk_s_deviation_bottom BUYS, and why it is the KKK grid's version of
         ! y_grid_kappa. The bottom node's mass is the normal mass below
         ! -kkk_s_deviation_bottom + half a spacing, so widening the grid pushes
@@ -4291,7 +4310,13 @@
         ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
         ! homeless, SUD"*. Seven moments, seven instruments, everything else
         ! frozen where it stands.
-        real(8) :: max_food_cost_adjuster=0.d0
+        ! REOPENED 16 September on the author's instruction: "i need you to now
+        ! add mu_H, pi_eu, newborn_endowment, pi_v, and cbar", plus "can you
+        ! also fix sigma_y?", "set h2 to get 5-7%% cost burdened" and "maybe
+        ! you can also adjust kappa_find_smi to hit its target?". Held at zero
+        ! for the seven-instrument restriction of 15 September; the value
+        ! restored here is the one it carried before that restriction.
+        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
@@ -4303,7 +4328,13 @@
         ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
         ! homeless, SUD"*. Seven moments, seven instruments, everything else
         ! frozen where it stands.
-        real(8) :: voucher_probability_adjuster=0.d0
+        ! REOPENED 16 September on the author's instruction: "i need you to now
+        ! add mu_H, pi_eu, newborn_endowment, pi_v, and cbar", plus "can you
+        ! also fix sigma_y?", "set h2 to get 5-7%% cost burdened" and "maybe
+        ! you can also adjust kappa_find_smi to hit its target?". Held at zero
+        ! for the seven-instrument restriction of 15 September; the value
+        ! restored here is the one it carried before that restriction.
+        real(8) :: voucher_probability_adjuster=1*10.d0**(-1)
         real(8), parameter :: voucher_probability_adjuster_start=1*10.d0**(-1)
         real(8) :: previous_gap_voucher_probability=0
         integer :: have_gap_voucher_probability=0
@@ -4318,7 +4349,13 @@
         ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
         ! homeless, SUD"*. Seven moments, seven instruments, everything else
         ! frozen where it stands.
-        real(8) :: separation_rate_adjuster=0.d0
+        ! REOPENED 16 September on the author's instruction: "i need you to now
+        ! add mu_H, pi_eu, newborn_endowment, pi_v, and cbar", plus "can you
+        ! also fix sigma_y?", "set h2 to get 5-7%% cost burdened" and "maybe
+        ! you can also adjust kappa_find_smi to hit its target?". Held at zero
+        ! for the seven-instrument restriction of 15 September; the value
+        ! restored here is the one it carried before that restriction.
+        real(8) :: separation_rate_adjuster=1*10.d0**(-1)
         real(8), parameter :: separation_rate_adjuster_start=1*10.d0**(-1)
         real(8) :: previous_gap_separation_rate=0
         integer :: have_gap_separation_rate=0
@@ -4836,7 +4873,13 @@
         ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
         ! homeless, SUD"*. Seven moments, seven instruments, everything else
         ! frozen where it stands.
-        real(8) :: newborn_endowment_adjuster=0.d0
+        ! REOPENED 16 September on the author's instruction: "i need you to now
+        ! add mu_H, pi_eu, newborn_endowment, pi_v, and cbar", plus "can you
+        ! also fix sigma_y?", "set h2 to get 5-7%% cost burdened" and "maybe
+        ! you can also adjust kappa_find_smi to hit its target?". Held at zero
+        ! for the seven-instrument restriction of 15 September; the value
+        ! restored here is the one it carried before that restriction.
+        real(8) :: newborn_endowment_adjuster=2*10.d0**(-1)
         real(8) :: distance_newborn_endowment=1
         real(8) :: stopping_rule_newborn_endowment=10.d0**(-2)
         ! THE ENDOWMENT ENTERS THE BUDGET CONSTRAINT, NOT THE INITIAL
@@ -6318,7 +6361,13 @@
         ! cent the author wants instead of being driven off it. It also removes
         ! one moving instrument from a system whose instability has been the
         ! whole problem.
-        real(8) :: smallest_house_size_adjuster=0.d0
+        ! REOPENED 16 September on the author's instruction: "i need you to now
+        ! add mu_H, pi_eu, newborn_endowment, pi_v, and cbar", plus "can you
+        ! also fix sigma_y?", "set h2 to get 5-7%% cost burdened" and "maybe
+        ! you can also adjust kappa_find_smi to hit its target?". Held at zero
+        ! for the seven-instrument restriction of 15 September; the value
+        ! restored here is the one it carried before that restriction.
+        real(8) :: smallest_house_size_adjuster=0.05
 
         ! DAMPING THE TWO HOUSING ADJUSTERS. Both were fixed steps and both
         ! oscillated: the size distribution responds sharply to the size
