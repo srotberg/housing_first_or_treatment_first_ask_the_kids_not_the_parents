@@ -5323,7 +5323,38 @@
         ! child_penalty_classes times bigger. At 1 the model is exactly the one
         ! that came before -- one class, factor one, no expansion -- which is the
         ! null this was built against.
-        integer, parameter :: child_penalty_classes=1
+        ! TWO CLASSES FROM 16 September, on the author's instruction "yes, set
+        ! child_penalty_classes to 2 and rebuild", after they asked why the child
+        ! SUD odds ratio was so low and whether the code was wrong.
+        !
+        ! IT WAS, FOR THIS PURPOSE. At ONE class the else-branch below puts
+        ! delta_d in the BIRTH SHIFT, which erodes at
+        ! persistence_employment_surviving = 0.9 -- a half-life of about seven
+        ! periods, so the penalty has largely decayed before the child is old
+        ! enough to be at risk. child_penalty_factor(1) = (1-delta_d), the
+        ! PERMANENT form, was computed every loop and never used, because with
+        ! one class only child_penalty_factor(0) = 1 is in play.
+        !
+        ! That is why the scan over the author's full [0, 0.4] range returned a
+        ! straight line from 1.00995 to 1.06042 against a target of 2.0, and why
+        ! it contradicted the declaration comment on penalty_child_addicted,
+        ! which computes what a PERMANENT 61 per cent earnings cut would do and
+        ! gets a ratio of 2. Both were right about different objects: the comment
+        ! about a permanent cut, the scan about a decaying one.
+        !
+        ! At TWO classes class_1 = d_index, so the parent's disorder at death is
+        ! a permanent class carrying (1-delta_d) on the child's productivity,
+        ! which is what delta_d is meant to be.
+        !
+        ! NOTHING IS LOST. The two-class branch keeps the housing term
+        ! (1-penalty_child_homeless)**((h_index-1)*include_child_penalty)
+        ! unchanged, and penalty_child_homeless is 0.0, so that term is one
+        ! either way.
+        !
+        ! WHAT IT COSTS: the state space doubles, so the solve is slower, and
+        ! every moment in the table moves. The scan's answer of "2 is not
+        ! reachable" was measured under ONE class and does not carry over.
+        integer, parameter :: child_penalty_classes=2
         integer, parameter :: employment_grid_size=employment_base_size*child_penalty_classes
         integer :: use_unemployment_by_productivity=1
         ! Persistent income risk over working life. See the block beside
