@@ -2730,7 +2730,25 @@
         ! divided housing by EXPENDITURE while the calibrating loop at 35847
         ! compared `model_avg_housing_spending_renters` -- housing over INCOME --
         ! against this same constant. Moment and update now measure one thing.
-        real(8), parameter :: avg_rent_to_income_data=0.268
+        ! THE AGGREGATE HOUSING SHARE OF EXPENDITURE, and the name now says so.
+        ! The author, 16 September: "use the aggregate housing share of
+        ! expenditure, since that is what 26.8% is in the data, right?" -- and the
+        ! comment above confirms it, calling 0.268 "a CEX expenditure share".
+        !
+        ! IT HAD BEEN REINTERPRETED AS AN INCOME RATIO. An earlier round switched
+        ! gamma's UPDATE to model_avg_housing_spending_renters, housing over
+        ! INCOME, against this same 0.268, and renamed the constant to match.
+        ! The printed MOMENT gamma was never switched, so it went on dividing
+        ! housing by EXPENDITURE against a constant that had become an income
+        ! target. The comment there declares "Moment and update now measure one
+        ! thing"; they did not, and that is why the gaps table showed gamma at
+        ! 0.2255 wanting to RISE while the instrument, reading 0.2830 on the other
+        ! denominator, correctly drove it DOWN for forty-five prints.
+        !
+        ! BOTH NOW READ THE AGGREGATE, sum of housing over sum of expenditure --
+        ! not a mean of ratios, which is the same distinction the author insisted
+        ! on for theta.
+        real(8), parameter :: housing_share_of_expenditure_data=0.268
         ! GAMMA TARGETS THE AVERAGE RENT TO INCOME RATIO, which is the moment the
         ! stylized model of Section 2 uses and the one a Cobb-Douglas housing
         ! share moves most directly. It used to target the SHARE OF RENTERS above
@@ -3369,7 +3387,7 @@
         real(8) :: distance_relative_share_of_housing
         ! ZERO, AND DELIBERATELY. The internal update for this parameter is
         ! STALE: it steps on model_avg_housing_spending_renters against
-        ! avg_rent_to_income_data, which is the INCOME-denominator object from
+        ! housing_share_of_expenditure_data, which is the INCOME-denominator object from
         ! before gamma was moved to expenditure, and it is then overwritten by a
         ! second update aimed at a different moment entirely, the mass of
         ! renters spending over X. Freeing the tie without this would have let
@@ -3691,7 +3709,12 @@
         ! whose midpoint was set at 100,000; the comment above records that moving
         ! that assumption from 75,000 to 125,000 takes the share between 0.141 and
         ! 0.191.  0.16 sits inside that interval.
-        real(8), parameter :: drug_spending_share_data=0.16000
+        ! 0.14 FROM 16 September, on the author's "You can set the theta target to
+        ! 0.14 not 0.16". theta is HELD, so this changes what the gaps table
+        ! reports against rather than what any instrument chases: at the model's
+        ! 0.14006 the aggregate drug share is then essentially exact rather than
+        ! 12.5 per cent off.
+        real(8), parameter :: drug_spending_share_data=0.14000
         real(8) :: drug_share_experimenters_1=0
         real(8) :: drug_share_addicted_1=0
         real(8) :: drug_share_weighted_1=0
@@ -10031,7 +10054,7 @@
             ! UNTARGETED row against its own 0.202 so nothing is lost.
             write(*,*) "MOMENT gamma     housing over expenditure    model=",&
                 val_hous_expend_num(1)/max(val_hous_expend_den(1),10.d0**(-14)),&
-                " target=", avg_rent_to_income_data
+                " target=", housing_share_of_expenditure_data
             write(*,*) "UNTARGETED housing over income, renters      model=",&
                 model_avg_housing_spending_renters(1), " observed=", 0.202d0
             write(*,*) "MOMENT h_1       homelessness rate           model=",&
@@ -42404,7 +42427,7 @@
         ! It is a wiring error and not a modelling choice. The note defines gamma
         ! as the Cobb-Douglas share of the bundle that goes on housing, targeted
         ! at 26.8 per cent of expenditure net of drugs from the 2024 CEX, which is
-        ! exactly avg_rent_to_income_data. Same object, same target; the utility
+        ! exactly housing_share_of_expenditure_data. Same object, same target; the utility
         ! was simply reading a different variable.
         !
         ! The nesting is unchanged, so the weights still sum to one: within the
@@ -45728,7 +45751,7 @@
                         ! was that its adjuster never appeared in the log beside
                         ! the other eight.
                         call damp_on_flip(relative_share_of_housing_adjuster,&
-                            model_avg_housing_spending_renters(1)-avg_rent_to_income_data,&
+                            val_hous_expend_num(1)/max(val_hous_expend_den(1),10.d0**(-14))-housing_share_of_expenditure_data,&
                             previous_gap_relative_share_of_housing,have_gap_relative_share_of_housing,&
                             relative_share_of_housing_adjuster_start,damp_adjuster_floor,&
                                 flips_relative_share_of_housing)
@@ -45740,7 +45763,7 @@
                         cap_old_1=relative_share_of_housing
                         if (tie_gamma_to_theta==0) relative_share_of_housing=&
                             min(max(relative_share_of_housing-relative_share_of_housing_adjuster*&
-                            (model_avg_housing_spending_renters(1)-avg_rent_to_income_data),0.01),0.9) 
+                            (val_hous_expend_num(1)/max(val_hous_expend_den(1),10.d0**(-14))-housing_share_of_expenditure_data),0.01),0.9) 
                         relative_share_of_housing=&
                             cap_step_rel(relative_share_of_housing,cap_old_1,&
                             relative_share_of_housing_max_rel_step)
@@ -45757,7 +45780,7 @@
                         ! the uncapped do-while never exits.
                         if (tie_gamma_to_theta==0) distance_relative_share_of_housing=&
                             merge(0.d0,&
-                            abs(model_avg_housing_spending_renters(1)-avg_rent_to_income_data),&
+                            abs(val_hous_expend_num(1)/max(val_hous_expend_den(1),10.d0**(-14))-housing_share_of_expenditure_data),&
                             relative_share_of_housing_adjuster<=0.d0)
                                     
                         ! THE LABEL SAID "all" AND THE VARIABLE IS THE RENTERS

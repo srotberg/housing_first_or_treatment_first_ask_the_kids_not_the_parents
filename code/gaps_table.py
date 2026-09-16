@@ -226,7 +226,12 @@ def special(kind, loglines):
         if not hits:
             return None
         nums = re.findall(r"([-\d.]+(?:[EeDd][-+]?\d+)?)", hits[-1])
-        return (float(nums[0].replace("E", "e")), 0.16) if nums else None
+        # 0.14 from 16 September: "You can set the theta target to 0.14 not
+        # 0.16". Typed here AND in the Fortran as drug_spending_share_data,
+        # which is a duplication this script cannot avoid -- theta prints as a
+        # DIAG line carrying no target, so the number has to come from
+        # somewhere. If the Fortran target moves again, move it here too.
+        return (float(nums[0].replace("E", "e")), 0.14) if nums else None
     if kind == "young_homeless":
         hits = [l for l in loglines if "homelessness_by_age_group=" in l]
         if len(hits) < 5:
