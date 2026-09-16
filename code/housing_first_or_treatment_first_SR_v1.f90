@@ -42768,6 +42768,41 @@
         write(81,'(A,1X,ES24.16)') "weight_on_child", weight_on_child
         write(81,'(A,1X,ES24.16)') "y_grid_kappa", y_grid_kappa
 
+
+        ! THE SWITCHES TOO, AND LEAVING THEM OUT WAS THE SAME BUG AGAIN.
+        ! When this routine was written on 16 September it emitted only real(8)
+        ! scalars, on the reasoning that integer switches do not change during a
+        ! calibration. They do not -- but they are not at their SOURCE DEFAULTS
+        ! either, and the hand-written seed had been setting them. Dropping them
+        ! let use_pia_formula, restrict_borrowing_to_impatient,
+        ! number_of_beta_types and ten others fall back to defaults, and n14 ran
+        ! a different model: wealth over output read 0.711 at block 1 where the
+        ! two runs before it read 3.661 from an identical cold start.
+        ! The author spotted it -- "How can beta go so low all of a sudden??" --
+        ! after I had twice explained it away as a cold-start transient.
+        !
+        ! A RESUME SEED IS ONLY SAFE IF IT IS COMPLETE. That is the whole point of
+        ! the routine, and a filter on declared type is exactly the kind of
+        ! plausible narrowing that reopens the hole.
+        write(81,'(A,1X,ES24.16)') "adjust_taxes", dble(adjust_taxes)
+        write(81,'(A,1X,ES24.16)') "child_penalty_off", dble(child_penalty_off)
+        write(81,'(A,1X,ES24.16)') "endowment_is_a_transfer", dble(endowment_is_a_transfer)
+        write(81,'(A,1X,ES24.16)') "fixed_productivity", dble(fixed_productivity)
+        write(81,'(A,1X,ES24.16)') "freeze_updates_after_loop", dble(freeze_updates_after_loop)
+        write(81,'(A,1X,ES24.16)') "homeless_death_risk_flat_in_age", dble(homeless_death_risk_flat_in_age)
+        write(81,'(A,1X,ES24.16)') "include_unsecured_borrowing", dble(include_unsecured_borrowing)
+        write(81,'(A,1X,ES24.16)') "include_voucher_exclusion", dble(include_voucher_exclusion)
+        write(81,'(A,1X,ES24.16)') "max_age_to_choose_homelessness", dble(max_age_to_choose_homelessness)
+        write(81,'(A,1X,ES24.16)') "measure_child_gap", dble(measure_child_gap)
+        write(81,'(A,1X,ES24.16)') "number_of_beta_types", dble(number_of_beta_types)
+        write(81,'(A,1X,ES24.16)') "persistent_income_risk", dble(persistent_income_risk)
+        write(81,'(A,1X,ES24.16)') "restrict_borrowing_to_impatient", dble(restrict_borrowing_to_impatient)
+        write(81,'(A,1X,ES24.16)') "rr_homeless_hold_age", dble(rr_homeless_hold_age)
+        write(81,'(A,1X,ES24.16)') "use_pia_formula", dble(use_pia_formula)
+        write(81,'(A,1X,ES24.16)') "use_unemployment_by_productivity", dble(use_unemployment_by_productivity)
+        write(81,'(A,1X,ES24.16)') "voucher_conditional_on_clean", dble(voucher_conditional_on_clean)
+        write(81,'(A,1X,ES24.16)') "voucher_conditional_on_clean_just_addicts", dble(voucher_conditional_on_clean_just_addicts)
+
         close(81)
 
         call rename("resume_seed.tmp","resume_seed.dat")
