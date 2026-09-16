@@ -832,6 +832,10 @@
         ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
         ! homeless, SUD"*. Seven moments, seven instruments, everything else
         ! frozen where it stands.
+        ! OMEGA_C STAYS HELD, explicitly excluded by the author on 16 September:
+        ! "the rest of the parameters in the calibration plan, EXCEPT omegac".
+        ! It is the one plan parameter deliberately left out, so a future reader
+        ! does not restore it thinking it was an oversight.
         real(8) :: weight_on_child_adjuster=0.d0
         real(8) :: distance_weight_on_child=1
         real(8) :: stopping_rule_weight_on_child=10.d0**(-2)
@@ -1860,7 +1864,11 @@
         ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
         ! homeless, SUD"*. Seven moments, seven instruments, everything else
         ! frozen where it stands.
-        real(8) :: smi_onset_level_adjuster=0.d0
+        ! RESTORED 16 September to complete the author's calibration plan:
+        ! "You should try to get the rest of the parameters in the calibration
+        ! plan, except omegac". Held at zero for the seven-instrument
+        ! restriction of 15 September; this is the value it carried before that.
+        real(8) :: smi_onset_level_adjuster=5*10.d0**(-3)
         real(8) :: distance_smi_onset_level=1
         real(8) :: stopping_rule_smi_onset_level=10.d0**(-3)
 
@@ -4731,7 +4739,11 @@
         ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
         ! homeless, SUD"*. Seven moments, seven instruments, everything else
         ! frozen where it stands.
-        real(8) :: discount_factor_adjuster=0.d0
+        ! RESTORED 16 September to complete the author's calibration plan:
+        ! "You should try to get the rest of the parameters in the calibration
+        ! plan, except omegac". Held at zero for the seven-instrument
+        ! restriction of 15 September; this is the value it carried before that.
+        real(8) :: discount_factor_adjuster=5*10.d0**(-3)
         real(8) :: distance_discount_factor
         ! A RATIO OF THREE CANNOT BE HIT TO ONE PART IN THIRTY THOUSAND. The old
         ! tolerance of 1e-4 was written against a mortgage share between zero and
@@ -6086,7 +6098,11 @@
         ! just calibrate the following: aleph, b, kappa, tau_u, SUD homeless,
         ! homeless, SUD"*. Seven moments, seven instruments, everything else
         ! frozen where it stands.
-        real(8) :: labor_income_tax_rate_adjuster=0.d0
+        ! RESTORED 16 September to complete the author's calibration plan:
+        ! "You should try to get the rest of the parameters in the calibration
+        ! plan, except omegac". Held at zero for the seven-instrument
+        ! restriction of 15 September; this is the value it carried before that.
+        real(8) :: labor_income_tax_rate_adjuster=5*10.d0**(-1)
         real(8), parameter :: labor_income_tax_rate_adjuster_start=5*10.d0**(-1)
         real(8) :: previous_gap_labor_income_tax_rate=0
         integer :: have_gap_labor_income_tax_rate=0
