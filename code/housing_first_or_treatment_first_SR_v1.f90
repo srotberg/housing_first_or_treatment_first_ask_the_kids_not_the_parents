@@ -3571,7 +3571,14 @@
         real(8) :: relative_share_of_addiction=0.13
         real(8) :: distance_relative_share_of_addiction
         ! ZERO: theta is pinned at 0.16.  See its declaration.
-        real(8) :: relative_share_of_addiction_adjuster=0.d0
+        ! REMOVED 16 September: this was a DECOY. It was declared and never
+        ! read -- the update at line 47435 multiplies
+        ! relative_share_of_addiction_ADJ, one letter different -- so every
+        ! reader and the gaps table checked this, saw zero, and reported theta
+        ! HELD while it stepped every block and drifted 0.21 -> 0.20461 across
+        ! n03's 277 blocks. The author caught it from the value moving. Deleting
+        ! it rather than leaving it to trap the next reader; theta is held by
+        ! hold_theta=1, which zeroes the _adj that is actually used.
         real(8) :: stopping_rule_relative_share_of_addiction=10.d0**(-3)
                 
         ! LAMBDA, THE ADDICTION HAZARD, AND IT IS CALIBRATED NOW. This is the
@@ -8645,6 +8652,13 @@
         ! rather than argued about: the headcount above half of expenditure over
         ! ALL households and over housed ones, and the aggregate ratio, which is
         ! the direct analogue of the 26.8.
+        ! THE 30 PER CENT OF SPENDING COUNTERPART, added 16 September on the
+        ! author's request. The targeted moment is housing over TOTAL
+        ! EXPENDITURE above 50 per cent; the conventional measure is housing
+        ! over INCOME above 30, which the model already reports untargeted.
+        ! This is the third corner of that square, so the two denominators can
+        ! be compared at the same threshold.
+        real(8), dimension(transition_length) :: val_burden30_expend_all
         real(8), dimension(transition_length) :: val_burden50_expend_all,val_mass_expend_all,&
             val_burden50_expend_housed,val_mass_expend_housed,val_hous_expend_num,val_hous_expend_den
 
@@ -9664,6 +9678,8 @@
             write(*,*) "MOMENT h_2       above half of spending      model=",&
                 val_burden50_expend_all(1)/max(val_mass_expend_all(1),10.d0**(-14)),&
                 " target=", severe_cost_burden_data
+            write(*,*) "UNTARGETED above 30 pct of spending          model=",&
+                val_burden30_expend_all(1)/max(val_mass_expend_all(1),10.d0**(-14))
             write(*,*) "MOMENT h_3       share in the largest unit   model=",&
                 model_housing_size_dist(1,housing_status_grid_size-1),&
                 " target=", housing_size_dist_data(2)
@@ -19126,6 +19142,7 @@
         if (accumulating_beta_types==0) val_mass_by_unit(time_period,:)=0
 
         if (accumulating_beta_types==0) val_burden50_expend_all(time_period)=0
+        if (accumulating_beta_types==0) val_burden30_expend_all(time_period)=0
         if (accumulating_beta_types==0) val_mass_expend_all(time_period)=0
         if (accumulating_beta_types==0) val_burden50_expend_housed(time_period)=0
         if (accumulating_beta_types==0) val_mass_expend_housed(time_period)=0
@@ -19390,6 +19407,11 @@
                                     if (val_hous_outlay_1>0.5d0*max(val_total_expend_1,10.d0**(-14))) then
                                         val_burden50_expend_all(time_period)=&
                                             val_burden50_expend_all(time_period)+distribution_mass_used
+                                    end if
+
+                                    if (val_hous_outlay_1>0.3d0*max(val_total_expend_1,10.d0**(-14))) then
+                                        val_burden30_expend_all(time_period)=&
+                                            val_burden30_expend_all(time_period)+distribution_mass_used
                                     end if
 
                                     if (housing_status_index_used>=second_lowest_housing_grid_point) then
@@ -42600,6 +42622,120 @@
 
     end subroutine
 
+
+    ! A NAMED RESUME SEED, WRITTEN BESIDE THE POSITIONAL STATE FILE.
+    !
+    ! WHY THIS EXISTS. calibration_state.dat is written POSITIONALLY and does
+    ! not carry every calibrated parameter. A resume therefore silently leaves
+    ! the missing ones at their compile-time defaults, and the run continues
+    ! against a model nobody chose. On 16 September that reset
+    ! multiple_find_if_addicted from 3.5264 to its floor of 1.0 and put the run
+    ! in the 95-per-cent-participation corner within one block; kappa_find_smi
+    ! was reset from 7.96 to 1.0 the same way, and three further runs tipped
+    ! before the cause was found. Nothing in the log says a parameter was not
+    ! restored, which is what makes it expensive: the run looks fine and is not.
+    !
+    ! WHAT THIS DOES. Every parameter that has a PARAM_HANDOVER case -- 78 real
+    ! scalars -- is written by NAME on each save. Because the handover is
+    ! applied AFTER the state file is read, copying resume_seed.txt to
+    ! PARAM_HANDOVER.txt makes a resume exact regardless of what the positional
+    ! file does or does not carry.
+    !
+    ! It is deliberately a SUPERSET of what the state file holds. Writing a
+    ! parameter twice is harmless; omitting one is what caused the bug.
+    subroutine write_resume_seed()
+
+        use Global_Vars
+
+        implicit none
+
+        open(unit=81,file="resume_seed.tmp",action='write',status='replace')
+
+        write(81,'(A,1X,ES24.16)') "addiction_onset_base", addiction_onset_base
+        write(81,'(A,1X,ES24.16)') "addiction_scalar_1", addiction_scalar_1
+        write(81,'(A,1X,ES24.16)') "addiction_scalar_max_rel_step", addiction_scalar_max_rel_step
+        write(81,'(A,1X,ES24.16)') "bottom_productivity_level", bottom_productivity_level
+        write(81,'(A,1X,ES24.16)') "consumption_penalty_homeless", consumption_penalty_homeless
+        write(81,'(A,1X,ES24.16)') "cost_per_drug_test", cost_per_drug_test
+        write(81,'(A,1X,ES24.16)') "discount_factor", discount_factor
+        write(81,'(A,1X,ES24.16)') "discount_factor_impatient", discount_factor_impatient
+        write(81,'(A,1X,ES24.16)') "drug_supply_elasticity", drug_supply_elasticity
+        write(81,'(A,1X,ES24.16)') "extra_job_loss_if_homeless", extra_job_loss_if_homeless
+        write(81,'(A,1X,ES24.16)') "financial_grid_expander_negative", financial_grid_expander_negative
+        write(81,'(A,1X,ES24.16)') "financial_grid_expander_positive", financial_grid_expander_positive
+        write(81,'(A,1X,ES24.16)') "h1_share_of_h2", h1_share_of_h2
+        write(81,'(A,1X,ES24.16)') "homeless_excess_death_risk", homeless_excess_death_risk
+        write(81,'(A,1X,ES24.16)') "homeless_job_penalty_pp", homeless_job_penalty_pp
+        write(81,'(A,1X,ES24.16)') "housing_status_grid_expander", housing_status_grid_expander
+        write(81,'(A,1X,ES24.16)') "increased_prob_if_homeless", increased_prob_if_homeless
+        write(81,'(A,1X,ES24.16)') "increased_prob_of_voucher_if_homeless_and_addicted", increased_prob_of_voucher_if_homeless_and_addicted
+        write(81,'(A,1X,ES24.16)') "kappa_find_smi", kappa_find_smi
+        write(81,'(A,1X,ES24.16)') "kappa_phi_d_level", kappa_phi_d_level
+        write(81,'(A,1X,ES24.16)') "kappa_phi_d_max_rel_step", kappa_phi_d_max_rel_step
+        write(81,'(A,1X,ES24.16)') "kappa_uem", kappa_uem
+        write(81,'(A,1X,ES24.16)') "kappa_x", kappa_x
+        write(81,'(A,1X,ES24.16)') "kkk_s_deviation_bottom", kkk_s_deviation_bottom
+        write(81,'(A,1X,ES24.16)') "kkk_s_deviation_top", kkk_s_deviation_top
+        write(81,'(A,1X,ES24.16)') "kkk_sigma_scale", kkk_sigma_scale
+        write(81,'(A,1X,ES24.16)') "labor_income_tax_rate", labor_income_tax_rate
+        write(81,'(A,1X,ES24.16)') "lambda_addiction", lambda_addiction
+        write(81,'(A,1X,ES24.16)') "lambda_m", lambda_m
+        write(81,'(A,1X,ES24.16)') "largest_house_size", largest_house_size
+        write(81,'(A,1X,ES24.16)') "max_food_cost", max_food_cost
+        write(81,'(A,1X,ES24.16)') "max_rel_step_all", max_rel_step_all
+        write(81,'(A,1X,ES24.16)') "max_ui_as_perc_of_avg_inc", max_ui_as_perc_of_avg_inc
+        write(81,'(A,1X,ES24.16)') "merge_bottom_nodes", merge_bottom_nodes
+        write(81,'(A,1X,ES24.16)') "merge_from_node", merge_from_node
+        write(81,'(A,1X,ES24.16)') "money_cost_of_treatment", money_cost_of_treatment
+        write(81,'(A,1X,ES24.16)') "mu_homeless", mu_homeless
+        write(81,'(A,1X,ES24.16)') "multiple_find_if_addicted", multiple_find_if_addicted
+        write(81,'(A,1X,ES24.16)') "multiple_of_probabilities_of_employment_if_addicted", multiple_of_probabilities_of_employment_if_addicted
+        write(81,'(A,1X,ES24.16)') "newborn_endowment_scale", newborn_endowment_scale
+        write(81,'(A,1X,ES24.16)') "omega_max_rel_step", omega_max_rel_step
+        write(81,'(A,1X,ES24.16)') "penalty_child_addicted", penalty_child_addicted
+        write(81,'(A,1X,ES24.16)') "penalty_child_homeless", penalty_child_homeless
+        write(81,'(A,1X,ES24.16)') "persistence_employment_surviving", persistence_employment_surviving
+        write(81,'(A,1X,ES24.16)') "persistence_fixed_employment_newborn", persistence_fixed_employment_newborn
+        write(81,'(A,1X,ES24.16)') "probability_becoming_unemployed", probability_becoming_unemployed
+        write(81,'(A,1X,ES24.16)') "probability_of_detection", probability_of_detection
+        write(81,'(A,1X,ES24.16)') "probability_of_false_positive", probability_of_false_positive
+        write(81,'(A,1X,ES24.16)') "probability_of_stopping_addiction", probability_of_stopping_addiction
+        write(81,'(A,1X,ES24.16)') "probability_of_voucher_benchmark_used", probability_of_voucher_benchmark_used
+        write(81,'(A,1X,ES24.16)') "relative_share_of_addiction_1", relative_share_of_addiction_1
+        write(81,'(A,1X,ES24.16)') "relative_share_of_housing", relative_share_of_housing
+        write(81,'(A,1X,ES24.16)') "relative_share_of_leisure", relative_share_of_leisure
+        write(81,'(A,1X,ES24.16)') "replacement_rate_ui", replacement_rate_ui
+        write(81,'(A,1X,ES24.16)') "rho_d", rho_d
+        write(81,'(A,1X,ES24.16)') "rho_intergenerational", rho_intergenerational
+        write(81,'(A,1X,ES24.16)') "rho_intergenerational_adjuster", rho_intergenerational_adjuster
+        write(81,'(A,1X,ES24.16)') "rho_m", rho_m
+        write(81,'(A,1X,ES24.16)') "rho_productivity", rho_productivity
+        write(81,'(A,1X,ES24.16)') "rr_homeless_old_level", rr_homeless_old_level
+        write(81,'(A,1X,ES24.16)') "rung_ratio_h3", rung_ratio_h3
+        write(81,'(A,1X,ES24.16)') "rung_ratio_h4", rung_ratio_h4
+        write(81,'(A,1X,ES24.16)') "sd_employment_surviving", sd_employment_surviving
+        write(81,'(A,1X,ES24.16)') "sd_fixed_employment_newborn", sd_fixed_employment_newborn
+        write(81,'(A,1X,ES24.16)') "sd_permanent_productivity", sd_permanent_productivity
+        write(81,'(A,1X,ES24.16)') "size_homelessness", size_homelessness
+        write(81,'(A,1X,ES24.16)') "smallest_house_size_adjuster", smallest_house_size_adjuster
+        write(81,'(A,1X,ES24.16)') "smallest_rental_relative_to_lowest_income", smallest_rental_relative_to_lowest_income
+        write(81,'(A,1X,ES24.16)') "smi_onset_level", smi_onset_level
+        write(81,'(A,1X,ES24.16)') "ssi_floor_level", ssi_floor_level
+        write(81,'(A,1X,ES24.16)') "ssi_floor_takeup", ssi_floor_takeup
+        write(81,'(A,1X,ES24.16)') "theta_max_rel_step", theta_max_rel_step
+        write(81,'(A,1X,ES24.16)') "unsecured_borrowing_limit", unsecured_borrowing_limit
+        write(81,'(A,1X,ES24.16)') "unsecured_borrowing_rate", unsecured_borrowing_rate
+        write(81,'(A,1X,ES24.16)') "utility_cost_of_treatment", utility_cost_of_treatment
+        write(81,'(A,1X,ES24.16)') "value_of_life", value_of_life
+        write(81,'(A,1X,ES24.16)') "weight_on_child", weight_on_child
+        write(81,'(A,1X,ES24.16)') "y_grid_kappa", y_grid_kappa
+
+        close(81)
+
+        call rename("resume_seed.tmp","resume_seed.dat")
+
+    end subroutine
+
     subroutine write_calibration_state()
 
         ! RESUMING AFTER A KILL. A calibration is days of wall clock and it used
@@ -42813,6 +42949,9 @@
         close(71)
 
         call rename("calibration_state.tmp","calibration_state.dat")
+
+        ! The named companion, so a resume never depends on positional coverage.
+        call write_resume_seed()
 
     end subroutine
 
