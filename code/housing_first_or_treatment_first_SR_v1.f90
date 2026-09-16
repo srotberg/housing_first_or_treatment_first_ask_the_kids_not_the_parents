@@ -4218,7 +4218,22 @@
         ! ALEPH AT 0.5 PER CENT, not 1: the author, 15 September, "i think aleph
         ! can go to 0.5%%", "not 1%%". Its gap is -10.7 per cent, so this is about
         ! 23 loops rather than 11.
-        real(8) :: value_of_life_max_rel_step=0.005d0
+        ! A QUARTER OF A PER CENT, on the author's instruction of 16 September:
+        ! *"aleph should not be updated so fast i think....maybe around 0.25%"*.
+        ! It was half a per cent, which they set earlier.
+        !
+        ! WHY IT MATTERS MORE THAN THE NUMBER SUGGESTS: aleph is SUPERLINEAR in
+        ! this parameter. Measured 16 September, value_of_life 58.7 -> 126 took
+        ! VSL 39 -> 148, so the elasticity is about 1.9 and a step here lands
+        ! nearly twice as hard on the moment. Half a per cent on the parameter is
+        ! about one per cent on aleph; a quarter is about a half.
+        !
+        ! And the parameter is not only a statistic, it is a FLOW UTILITY term --
+        ! flow_utility_1 = flow_utility_1 + value_of_life -- so it changes
+        ! behaviour as well as the moment. Jumping it from 58.7 to 126 in one
+        ! seed put aleph at 148 and knocked b to 0.010, tau_u to 0.999 and the
+        ! disorder rate to 0.004 on the way.
+        real(8) :: value_of_life_max_rel_step=0.0025d0
         real(8) :: value_of_life_trust=0.5
         real(8), parameter :: value_of_life_trust_start=0.5
         real(8), parameter :: value_of_life_trust_damping=0.5
@@ -5046,6 +5061,17 @@
         integer :: have_gap_size_homelessness=0
         real(8) :: distance_size_homelessness
         real(8) :: stopping_rule_size_homelessness=10.d0**(-3)
+
+        ! ITS OWN CAP AT ONE PER CENT, on the author's instruction of 16
+        ! September: *"h1 could be updated faster. maybe at 1%"*.
+        !
+        ! IT WAS THE ONLY ONE OF THE SEVEN STILL ON THE GLOBAL TENTH OF A PER
+        ! CENT. Every other live instrument was given its own cap at some point
+        ! and this one never was. To take h_1 from 0.0065 to its 0.004 target at
+        ! a tenth of a per cent a block needs about 476 blocks -- not slow,
+        ! immobile -- which is why h_1 has drifted with the drug block all night
+        ! instead of being driven anywhere. At one per cent it is about 48.
+        real(8) :: size_homelessness_max_rel_step=0.01d0
 
         ! A BRACKET, BECAUSE THE LINEAR STEP CANNOT LAND ON THE TARGET.
         !
@@ -48214,7 +48240,8 @@
                         cap_old_1=size_homelessness
                         size_homelessness=&
                             0.5d0*(size_homelessness_lo+size_homelessness_hi)
-                        size_homelessness=cap_step(size_homelessness,cap_old_1)
+                        size_homelessness=cap_step_rel(size_homelessness,cap_old_1,&
+                            size_homelessness_max_rel_step)
 
                         write(*,*) "size_homelessness bisecting in [",&
                             size_homelessness_lo, ",", size_homelessness_hi, "]"
@@ -48297,7 +48324,8 @@
                         cap_old_1=size_homelessness
                         size_homelessness=max(min(size_homelessness_step_1,0.9d0),&
                             size_homelessness_floor)
-                        size_homelessness=cap_step(size_homelessness,cap_old_1)
+                        size_homelessness=cap_step_rel(size_homelessness,cap_old_1,&
+                            size_homelessness_max_rel_step)
 
                         ! THE BAND GUARD. h_1 is no longer fitted to the homelessness
                         ! rate, so nothing else holds it. Nudge 2 per cent a loop when
