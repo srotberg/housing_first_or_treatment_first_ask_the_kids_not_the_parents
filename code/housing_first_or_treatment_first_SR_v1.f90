@@ -45496,7 +45496,13 @@
                         ! overshoots and then oscillates.
                         if (have_gap_discount_factor==1) then
 
-                            if ((gap_discount_factor_1*previous_gap_discount_factor)<0) then
+                            ! GUARDED AS AT 47275 AND IN damp_on_flip. The damping
+                            ! branch is max(adj*damping,floor), which at adj=0 is the
+                            ! FLOOR, so a pinned adjuster comes back to life on the
+                            ! first sign flip and then grows to its start value. The
+                            ! growth branch, min(0*growth,start)=0, is harmless.
+                            if ((gap_discount_factor_1*previous_gap_discount_factor)<0 &
+                                .AND. (discount_factor_adjuster>0.d0)) then
 
                                 discount_factor_adjuster=&
                                     max(discount_factor_adjuster*discount_factor_damping,&
@@ -45899,7 +45905,10 @@
 
                         if (have_gap_largest_house_size==1) then
 
-                            if ((gap_house_size_1*previous_gap_largest_house_size)<0) then
+                            ! GUARDED AS AT 47275 AND IN damp_on_flip; see the note
+                            ! on the discount factor's copy of this ratchet.
+                            if ((gap_house_size_1*previous_gap_largest_house_size)<0 &
+                                .AND. (largest_house_size_adjuster>0.d0)) then
 
                                 largest_house_size_adjuster=&
                                     max(largest_house_size_adjuster*house_size_adjuster_damping,&
@@ -46127,7 +46136,16 @@
 
                         if (have_gap_smallest_house_size==1) then
 
-                            if ((gap_house_size_1*previous_gap_smallest_house_size)<0) then
+                            ! GUARDED, AND THIS IS THE ONE THAT BIT. h_2 is pinned
+                            ! on the author's instruction -- *"i dont think h2 should
+                            ! be adjusted"*, *"just set h2=0.142 and pin it"* -- with
+                            ! the adjuster at zero. n20 held it for 119 blocks because
+                            ! its burden-50 gap never changed sign. n22's arc flipped
+                            ! it, max(0*damping,1e-3) returned the floor, growth took
+                            ! the adjuster to 4.6e-2 in twenty-three blocks and
+                            ! smallest_rental drifted 0.142 to 0.1422 and climbing.
+                            if ((gap_house_size_1*previous_gap_smallest_house_size)<0 &
+                                .AND. (smallest_house_size_adjuster>0.d0)) then
 
                                 smallest_house_size_adjuster=&
                                     max(smallest_house_size_adjuster*house_size_adjuster_damping,&
