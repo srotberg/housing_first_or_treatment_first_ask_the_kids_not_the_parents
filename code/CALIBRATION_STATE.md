@@ -1,3 +1,95 @@
+## h_1 WAS THE BOTTOM NODE'S MASS, AND THE INSTRUMENT FOR IT WAS SET TO A DESIGN TARGET THAT PREDATES THE BAND
+
+17 September, 20:20. h_1 had sat at 0.2 per cent for a dozen runs against a
+band of 0.55 to 1.0, and `smallest_house_size` moving on it changed nothing.
+It was never an instrument-strength problem.
+
+n43's live grid, read off the log:
+
+    grid age 1 : 0.04652  0.95008  0.24875  0.58347  1.36859  3.21021  7.52995
+    masses     : 0.00201  0.03326  0.19441  0.39911  0.29004  0.07434  0.00684
+
+Node 2 is held at 0.95 by `bottom_productivity_level`, so it is not priced
+out. The only households poor enough to be homeless are node 1, mass
+0.2007 per cent. Measured h_1 was 0.214. **h_1 is the bottom node's mass
+plus a sliver, and no price lever can move it.**
+
+### The instrument is named in the file already
+
+Line 3680: *"the bottom node's mass is the normal mass below
+-kkk_s_deviation_bottom + half a spacing, so widening the grid pushes mass
+off the bottom node: 3.00 gives 0.621 per cent, 3.25 gives 0.318, 3.50
+gives 0.155. The design target from the bands is 0.198."*
+
+It was at 3.4113, hitting 0.198 -- the h_1 target from BEFORE `h1_band_lo`
+was raised from 0.004 to 0.0055. The parameter was still serving a target
+that had been retired.
+
+### The grid replica, and why this was solved rather than searched
+
+`KKK_process` is reproducible in closed form: variance recursion, equally
+spaced in logs from -s_b*sd(a) to +s_t*sd(a), Tauchen midpoint masses, the
+mean normalisation, then the bottom override. A Python replica reproduces
+the live run to every digit the log prints -- masses, levels, and the
+bottom half's share of productivity at 0.20131. So the two numbers below
+were SOLVED, not swept:
+
+    kkk_s_deviation_bottom  3.4113 -> 2.953378   bottom node 0.201% -> 0.700%
+    kkk_sigma_scale         1.9506 -> 2.131197   holds the share at 0.20131
+
+The bottom node's mass is SCALE-FREE in sigma -- it is
+Phi(-s_b + (s_b+s_t)/(2(n-1))), with no sd in it -- so the two separate
+exactly: s_b sets the mass, kkk_sigma_scale sets the dispersion. Narrowing
+the bottom alone would have taken the bottom half's share from 0.2013 to
+0.2231, further from 0.172, and the joint move holds it. n45 built the grid
+and printed 0.20130806 against 0.20130806. sigma_y does not move.
+
+n45, block 1: h_1 0.214% -> 0.340% and climbing, emp_homeless 0.070.
+Block-1 stock readings are meaningless; this is the grid print, which is not.
+
+### THE NODE COUNT DECIDES THREE THINGS, MEASURED ON THE REPLICA
+
+Bottom node held at 0.700 per cent, kkk_sigma_scale held, so this is grid
+shape alone:
+
+     n    s_b     step   node 1   next rung   mass lifted to 0.95
+     7   2.9534  121 pc  0.0673    7.15 pc         6.45 pc
+     9   2.8211   79 pc  0.0757    4.18 pc         3.48 pc
+    11   2.7445   58 pc  0.0809    2.99 pc         2.29 pc
+    13   2.6945   46 pc  0.0845    2.37 pc         1.67 pc
+    15   2.6594   38 pc  0.0870    2.00 pc         1.30 pc
+    17   2.6333   32 pc  0.0889    1.76 pc         1.06 pc
+
+**The grid increase is not what h_1 needed.** At 15 nodes and the old s_b
+the reachable ladder is 0.073 / 0.32 / 1.17 / 3.5 per cent -- it still does
+not contain the band. What more nodes buy is the last two columns: a
+smaller artificial lump at 0.95, and a bottom node that earns more at the
+same 0.70 per cent priced out, which is headroom on emp_homeless.
+
+Cost of any node count other than 7 is a COLD START -- the distribution
+files are dimensioned by the node count -- plus block time somewhere between
+n/7 and (n/7)^2. That bracket is a guess and should be replaced by one timed
+block at each candidate before committing.
+
+### TWO THINGS ABOUT bottom_productivity_level = 0.95008
+
+It has no adjuster. It is a RATCHET: +1 per cent a loop while any mass
+values life below zero, capped at 1.0 (48386). It is at 0.95008, so it
+nearly hit the cap, and it is no longer firing in n43.
+
+It is applied to node 2 (`merge_from_node=2`, `merge_bottom_nodes=2`), which
+makes the grid NON-MONOTONE -- node 2 at 0.95 sits above node 3 at 0.249 and
+node 4 at 0.583 -- and node 2 is not homeless, so the lever registered
+against emp_homeless acts on a node with no homeless in it. The file records
+the author's 6 September instruction as *"add the second lowest to the 3rd
+lowest"* and says `merge_from_node=2` with `merge_bottom_nodes=3` is that
+operation. It is set to 2. Not touched: this is a mechanism, not a
+measurement, and it is the author's call.
+
+After the s_b change node 2 carries 6.4 per cent rather than 3.3, so the
+lump parked at 0.95 has doubled. That is the cost of the fix on a 7-node
+grid and it is the strongest argument for more nodes.
+
 ## gamma IS IN THE PARTICIPATION THRESHOLD, AND I HAD ITS SIGN BACKWARDS
 
 17 September, 19:00. I told the author that lowering gamma would help b,
