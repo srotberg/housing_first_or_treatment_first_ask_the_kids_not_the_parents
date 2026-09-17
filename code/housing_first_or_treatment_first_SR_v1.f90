@@ -4015,7 +4015,24 @@
         ! near the target -- which is the behaviour the update's own comment
         ! says is wanted, "the cap is expected to bind while the gap is wide and
         ! to stop binding as it closes".
-        real(8) :: addiction_scalar_adjuster=2*10.d0**(-3)
+        ! RAISED 17 September, from 2e-3. The author: *"And b seems way too
+        ! low"*, on a run where b sat at 0.026 against 0.089.
+        !
+        ! WHY NOW AND NOT BEFORE. The cooldown windows in n32 measured this
+        ! bracket as a passenger -- b tripled and halved with the parameter
+        ! frozen -- and the honest reading then was that no step size closes a
+        ! ratio that large. What changed is the rest of the table. Eleven
+        ! moments are now inside eight per cent, including sigma_y pinned, h_2
+        ! at 4.3 and c_bar, pi_v, pi_eu, beta and tau_ell at or under one, so
+        ! the general-equilibrium churn that was swamping b is much smaller
+        ! than it was. A stronger bracket has a chance it did not have this
+        ! morning.
+        !
+        ! It is still not a fix for the seven-node grid, which is what makes
+        ! participation knife-edge -- adjacent productivity nodes are 135 per
+        ! cent apart and three of them hold 88 per cent of the mass. That
+        ! remains the author's call.
+        real(8) :: addiction_scalar_adjuster=1*10.d0**(-2)
         real(8) :: distance_addiction_scalar
         real(8) :: stopping_rule_addiction_scalar=10.d0**(-3)
 
@@ -4093,7 +4110,12 @@
         ! b's: b increments and resets the shared one after the onset has already
         ! read it, so the onset never saw it expire and never stepped once.
         integer :: blocks_since_onset_step=0
-        integer, parameter :: b_step_cooldown=5
+        ! TWO, NOT FIVE, for the same reason the adjuster was raised. Five
+        ! blocks of waiting made sense while every step was read through a
+        ! refilling drug stock; with the rest of the table settled the bracket
+        ! needs to be able to answer a swing inside the swing's own timescale,
+        ! which n32 measured at three to four blocks.
+        integer, parameter :: b_step_cooldown=2
         ! The band theta and b are held in. See the two update rules for why
         ! they are absolute rather than only trust regions.
         ! THE CEILING IS SET BY THE BREAK POINT, not by taste. The stylized
