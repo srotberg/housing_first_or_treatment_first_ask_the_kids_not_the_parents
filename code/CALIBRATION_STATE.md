@@ -1,3 +1,88 @@
+## THIRTEEN NODES: BOTH STANDING CHECKS PASS, AND THE TRAP THEY FOUND WAS NOT THE CHANGE
+
+17 September, 21:05. `employment_base_size` 7 -> 13 on the author's *"Ok,
+let's do 13 and see what happens"*, with the three numbers solved on the
+replica rather than swept:
+
+    kkk_s_deviation_bottom  2.694536   bottom node holds 0.700 per cent
+    kkk_sigma_scale         1.921876   holds the bottom half's share of
+                                       productivity at 0.2013081
+    merge_bottom_nodes      2          unchanged -- at thirteen nodes only
+                                       node 2 is still below the level
+                                       seven was lifting
+
+The model built the grid it was told to, to the digit:
+
+                        7 nodes       13 nodes
+    bottom node mass    0.00700       0.00700
+    bottom node level   0.050669      0.088012
+    mass parked at 0.95 6.446 pc      1.670 pc
+    bottom-half share   0.20130806    0.20130815
+    node-to-node step   121 pc        46 pc
+
+### THE SNAN BUILD TRAPPED, AND THE REFERENCE VALUE SAVED A DAY OF CHASING IT
+
+`-O1 -finit-real=snan -ffpe-trap=invalid,zero,overflow` solved the 13-node
+economy end to end -- grid construction, the newborn draw integrated over
+the new node intervals, all sixty ages of backward induction, the
+distribution, the aggregation, the housing spending moments -- and then took
+SIGFPE at 45922, exactly where the backtrace said.
+
+It is `model_mortgages(1)/model_gross_housing_wealth(1)`, which is 0/0
+whenever nobody owns. **The homeownership rate in this calibration is
+exactly zero and the invariant PASSES at zero.** The reference value settled
+it in seconds: at seven nodes under -O3 the same three prints already read
+NaN in n43 AND in n45, and both runs carried on. -O3 prints NaN;
+-ffpe-trap=invalid must kill it by construction.
+
+This is ENGINE.md's corollary for controls doing its job -- *"re-measure the
+vector it should not move and state the reference value BEFORE the run"*.
+Without it the obvious move was to hunt the node change for a bug it did not
+have.
+
+All three sites are inside write statements. Guarded with the file's own
+max(x,1e-14) idiom; no economics touched.
+
+### THE BOUNDS BUILD CLEARED A WHOLE BLOCK
+
+`-O1 -fcheck=bounds,pointer` ran the full first block at thirteen nodes with
+no violation, which is the check that specifically covers this change: 414
+uses of the parameter dimension most of the model's arrays, and they all
+resize together because it is a `parameter`.
+
+The two dead nine-value SCF profiles are still keyed on
+`min(9,employment_base_size)`. At thirteen that guard clamps NOTHING --
+indices 1 to 9 are written and 10 to 13 keep the declaration initialiser, so
+the top four productivity types would start with a ZERO endowment if
+`uniform_newborn_endowment` were ever switched off. The comment beside them
+now says so. The live path is `relative_endowments(:)=1.d0`, so nothing is
+wrong today.
+
+### WHAT IS NOT YET KNOWN
+
+n46 is the first production run on the 13-node economy, warm from the
+distribution the bounds run built. Every stock moment is still filling --
+pi_V opened at 0.027 on its way to about 0.27, b at 1.2 per cent, and
+emp_homeless at zero with a homeless population that has barely formed. None
+of those is readable before roughly block eight, and the three false
+breakout calls earlier in this session all came from reading one.
+
+The one thing already comparable is that at SEVEN nodes, n45 against n43 at
+equal block numbers, emp_homeless went 3.04 -> 7.05 per cent off a 9 per cent
+rise in the bottom node's level. Thirteen nodes raises that level 74 per cent
+instead of 9. That is the prediction to check, and it is not yet checked.
+
+### AND THE CONFOUND I CREATED
+
+n45 moved theta to 0.19 AND both grid numbers in one run, and b collapsed
+from 6.2 per cent at n43's block 1 to 0.013. I cannot attribute it. On the
+threshold R > p_v*b_SG*(alp/gam) theta is the drug weight in the
+denominator, so cutting it raises the bar, which makes theta the suspect
+rather than the grid -- but that is a mechanism and not a measurement. The
+file's own warning at the node-size declaration says seven nodes *"turned a
+two per cent step into a sixty-fold jump in drug use"*, so thirteen should
+make b better behaved whichever it was.
+
 ## h_1 WAS THE BOTTOM NODE'S MASS, AND THE INSTRUMENT FOR IT WAS SET TO A DESIGN TARGET THAT PREDATES THE BAND
 
 17 September, 20:20. h_1 had sat at 0.2 per cent for a dozen runs against a
