@@ -1,3 +1,43 @@
+## gamma IS IN THE PARTICIPATION THRESHOLD, AND I HAD ITS SIGN BACKWARDS
+
+17 September, 19:00. I told the author that lowering gamma would help b,
+on the reasoning that a smaller housing weight means less spent on
+housing, more resources left over and therefore more participation. They
+authorised 0.45131 on that basis. It is wrong.
+
+    gamma 0.53560 (n39)  ->  b 0.05845  (-34.3%)
+    gamma 0.45131 (n40)  ->  b 0.00778  (-91.3%)
+
+### The reason
+
+The participation condition derived from the optimal purchase at 4609 is
+
+    R > b_SG * p_v * (alp/gam)
+
+and gam is in the DENOMINATOR. Lowering it raises alp/gam and therefore
+raises the threshold. A sixteen per cent cut in gamma raises the bar about
+nineteen per cent, which at this knife edge empties the drug block.
+
+So gamma at 0.53560 was HELPING b, and the direction to explore if b needs
+resources is gamma HIGHER, not lower. The resource channel I reasoned
+from is real but is dominated by the threshold channel, and I ignored the
+one that dominates.
+
+### The error pattern, fourth time today
+
+0.45131 did coexist with b on target in n32, but at h_2 = 0.1185 and a
+different state everywhere else. Reading one number out of a converged
+point and transplanting it is the same mistake as the kappa elasticity
+off a contaminated block, the h_1 against emp_homeless correlation across
+four runs, and the b_SG "non-monotonicity" that turned out to be gamma
+and h_2 both moving. **A value that worked in a state is not a value that
+works.**
+
+### What is restored
+
+n41 puts gamma back to 0.53560, the value the author pinned twice. That is
+restoring their instruction rather than making a new choice, and it is
+where the best available b sits, -34.3 per cent.
 ## THE HANDOVER RECIPE HAS A STALE EXCLUSION, AND IT RESET h_2
 
 Recorded 17 September 18:40, and it is a note about MY RUN RECIPE rather
