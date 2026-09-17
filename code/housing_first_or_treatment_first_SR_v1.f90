@@ -3168,7 +3168,16 @@
         ! frontier above was measured at participation 0.0064. A target lets the
         ! instrument find the parameter that actually delivers six per cent
         ! whatever the drug block is doing.
-        real(8), parameter :: severe_cost_burden_data=0.060d0
+        ! 10.1 per cent, the author's number of 17 September: *"You should
+        ! change h2's target to 9-10% of households spending over 50% on
+        ! housing. You can use 10.1%"*. It was 0.060 before that.
+        !
+        ! THIS IS THE SHARE OVER HALF OF SPENDING, not over half of income.
+        ! burden50 is the income version and keeps its own target of 0.175.
+        ! The two denominators have been confused before -- it is the same
+        ! split that caught h_2, gamma and theta -- so the distinction is
+        ! written here rather than left to the variable name.
+        real(8), parameter :: severe_cost_burden_data=0.101d0
         real(8), parameter :: fraction_light_users=0.731
         
         integer, parameter :: target_HO_of_old=1
