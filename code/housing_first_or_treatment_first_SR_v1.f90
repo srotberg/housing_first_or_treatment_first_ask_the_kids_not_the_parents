@@ -5987,7 +5987,24 @@
         ! chasing, which is what stops a parameter walking away from a value
         ! that is already acceptable.
         real(8), parameter :: yu_band_lo=0.60d0
-        real(8), parameter :: yu_band_hi=0.75d0
+        ! TOP RAISED 17 September, from 0.75. The author: *"if you think that
+        ! yu will be close to 0.74 even from above, like 0.78, we should not
+        ! move kappa_phid"*, then *"I can accept all yu between 0.6-0.8"*.
+        !
+        ! IT WAS LEAVING kappa TO CREEP. n32's two gated blocks read y_u at
+        ! 0.78692 and 0.77713, both above the old 0.75 top, so the hold branch
+        ! never fired and the rule raised kappa on each one -- 2.8280 to 2.8563
+        ! to 2.8848. Not moving kappa at 0.78 REQUIRES the band to contain 0.78;
+        ! saying so is not enough.
+        !
+        ! And 0.78 is where b on target puts it. Sorting every n32 block by b:
+        ! above six per cent y_u is stable and FALLING in b -- 0.808 at 0.062,
+        ! 0.790 at 0.078, 0.787 at 0.093 -- while below three per cent it ranges
+        ! 0.31 to 1.81 on a few hundred households and means nothing. The
+        ! selection reading explains it: participation needs R above a resource
+        ! threshold, so the fewer users there are the more selected and the
+        ! richer they are.
+        real(8), parameter :: yu_band_hi=0.80d0
         real(8), parameter :: sud_share_of_homeless=0.217
 
         ! FLAT EXCESS DEATH RISK FROM HOMELESSNESS. See build_kappa_phi.
