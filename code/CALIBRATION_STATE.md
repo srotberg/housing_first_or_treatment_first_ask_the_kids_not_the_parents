@@ -1,3 +1,74 @@
+## THREE ROWS LEFT, AND c_bar CANNOT CLOSE IN THIS RUN
+
+The author, 17 September, on the block-116 table: *"All we need is find if
+Addicted, cbar and b.... The rest are ok. Then we adjust omegac only to find
+when drug use declines by the 18% we need to match"*. That settles the scope.
+Everything else on the table is accepted where it stands, including
+`emp_homeless` at 58 per cent and `h2` at 68, both of which had been open
+questions, and `aleph`, `kappa_find_smi` and `mu_H`, which drifted when b swung
+through target.
+
+### b overshot and has turned back
+
+b crossed 0.089 at block 114 going down, bottomed at 0.07649 at block 116, and
+has climbed three blocks since to 0.07995 at 119, which is 10.2 per cent below
+target and one block from re-entering the ten per cent gate window. The
+instrument did not drive the crossing -- `addiction_scalar_1` moved a tenth of
+a per cent while the moment moved eighteen -- so the swing is general
+equilibrium and the 0.006 step cap is not what steers it.
+
+### find_if_addicted is downstream of b and has had almost no live blocks
+
+Its gate is the same ten per cent band as kappa's. Across 119 blocks it has
+been open for about two, during the crossing, and it took one step in them:
+3.5969 to 3.6688, RAISED. Its moment is 0.138 against 0.217. It cannot be
+judged yet, because it has not been given a run of live blocks. If b settles
+inside the band it gets them.
+
+### c_bar is moving the right way and is far too slow to arrive
+
+This one is not downstream of b and does not fix itself. The numbers:
+
+    max_food_cost      0.094138 -> 0.094184 -> 0.094231   +0.05 per cent a block
+    distance           9.359e-4 -> 9.300e-4 -> 9.236e-4   -0.65 per cent a block
+
+The direction is right -- the moment is below target and the rule raises the
+parameter. The rate is the problem. At 0.65 per cent a block the distance needs
+something like 150 to 370 blocks to close, which is half a day, and this run
+will end long before that.
+
+The cause is the adjuster. `max_food_cost_adjuster` is declared 5e-2 at line
+4372, and 0.05 times the distance of 9.36e-4 is 4.68e-5, which is exactly the
+observed step. The local response of the moment to the parameter is about
+0.126, so the per-block distance reduction is 0.05 x 0.126 = 0.63 per cent,
+which is what the log shows. Raising the adjuster to 1.0 gives 12.6 per cent a
+block and closes it in under twenty, with a loop coefficient of 0.126 that is
+nowhere near the oscillation boundary.
+
+**A REGRESSION ACROSS THE RUN IS NOT A MEASURED SLOPE, AND THIS ONE PROVED IT.**
+Fitting the moment on the parameter over all 118 blocks gives a slope of
+0.0915 and a seed of 0.1028 for the target. Fitting the last 30 gives a slope
+of MINUS 0.0114 and a seed of 0.0126. The two disagree in sign because b was
+swinging through target over those 30 blocks and dragging the moment with it.
+Neither is a slope; both are readings of one path with twenty parameters moving
+on it. No seed value is recorded here for that reason. Raise the adjuster and
+let the loop find the value, or bracket c_bar properly with everything else
+held.
+
+### The plan this leaves
+
+Let n20 run. It is making progress on b and it is the only way find_if_addicted
+gets live blocks. c_bar will not arrive in it. When it ends, raise
+`max_food_cost_adjuster` from 5e-2 to 1.0 and resume from n20's resume seed so
+the twelve moments already inside three per cent are not paid for twice.
+`max_food_cost_adjuster` is not a handover case, so this needs a rebuild;
+`apply_param_handover` is called at startup and at counterfactual init only,
+never inside the calibration loop, so nothing can be injected into a live run.
+
+omega_c stays out of the calibration. It is the instrument for the 18 per cent
+decline in drug use, and that is an experiment to run once the three rows above
+are closed, not a twenty-fourth bracket.
+
 ## THE OSCILLATION IS THE KAPPA GATE, AND THE RUN PERFORMED ITS OWN EXPERIMENT
 
 At block 200 I told the author that kappa was "fighting" b and called it a
