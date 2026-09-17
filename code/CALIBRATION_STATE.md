@@ -1,3 +1,56 @@
+## sigma_y HAS A CLOSED FORM, AND THE AUTHOR WAS RIGHT TO INSIST
+
+17 September. Asked why sigma_y could not be computed deterministically,
+I gave the reasons it is not analytically exact -- the employed set is
+endogenous, the grid is discretised -- and reached for an elasticity
+instead. The author pushed back: *"Shouldn't that be possible? You just
+need that of the employed, the bottom 50% earn 17% of income roughly"*.
+They were right, and the elasticity seed of 1.80 was wrong.
+
+### The form
+
+For a lognormal, the share of total income held by the bottom p fraction
+is S(p) = Phi(Phi^-1(p) - sigma). At p = 0.5 the inverse is zero, so
+
+    bottom-half income share = Phi(-sigma)
+
+and sigma is EXACTLY linear in the instrument, since the file computes
+sd_log_y_newborn = kkk_sigma_scale*sqrt(...).
+
+### The offset is the only thing that has to be measured
+
+          sd   Phi(-sd)    model   offset
+     0.90795    0.18195  0.13900  0.04295
+     0.64678    0.25889  0.22043  0.03846
+
+The closed form over-predicts by 0.041, with a spread of 0.0045 across a
+forty per cent range of sigma. That gap is the discretisation, the age
+fanning and the employed-only conditioning, and it behaves like a
+CONSTANT, which is what makes the calculation usable. Two model readings
+pin it; nothing else needs a run.
+
+### Inverting it
+
+    model share 0.172 -> lognormal share 0.2127 -> sigma 0.79707
+    sigma/kkk = 0.408624
+    kkk = 1.9506
+
+n31 is seeded there. n30, seeded at 1.80 off the elasticity, was stopped
+after one minute without completing a block.
+
+### The lesson, which is the same one twice today
+
+PREFER A MEASURED BRACKET TO AN ELASTICITY is in the standing rules, and
+this is the third time in one session that an elasticity has been the
+wrong tool: once on kappa_phi_d, where the slope came from an ungated
+contaminated point; once on h_1 and emp_homeless, where four cross-run
+pairs suggested a relationship the first controlled block contradicted;
+and here, where a closed form existed the whole time and the elasticity
+would have missed by eight per cent in the parameter.
+
+When a moment is a statistic of a distribution the model states
+analytically, look for the analytic answer BEFORE fitting a slope to the
+run's own path.
 ## sigma_y's INSTRUMENT IS INERT INSIDE A RUN, AND h_2's BURDEN IS GAMMA
 
 The author, 17 September: *"Sigma_y is too high also... And I think h2
