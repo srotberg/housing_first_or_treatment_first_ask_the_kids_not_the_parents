@@ -1,3 +1,58 @@
+## THE HANDOVER RECIPE HAS A STALE EXCLUSION, AND IT RESET h_2
+
+Recorded 17 September 18:40, and it is a note about MY RUN RECIPE rather
+than about the model.
+
+Every handover built today carried
+
+    grep -v '^smallest_rental_relative_to_lowest_income '
+
+which was added this morning when h_2 was PINNED, to stop the seed
+overwriting the pinned 0.142. That was right then. The moment h_2 became
+a live instrument in the afternoon the same line inverted its meaning:
+it discards whatever the instrument found and falls back to the Fortran
+declaration.
+
+### Why it did not bite until n37
+
+h_2 chained correctly through five runs because each was started from the
+previous run's `calibration_state.dat`, which carries
+smallest_rental_relative_to_lowest_income positionally:
+
+    n28  first 0.14200 -> last 0.13640
+    n29  first 0.13640 -> last 0.12461
+    n31  first 0.12461 -> last 0.11850
+    n32  first 0.11850 -> last 0.08481
+    n34  first 0.08312 -> last 0.08292
+    n37  first 0.14200 -> last 0.13369   <- RESET
+
+n37 was the first run started WITHOUT the state file, dropped deliberately
+to protect gamma's new pin, and with nothing left to carry h_2 it fell
+back to the declaration and began re-cutting from 0.142. Thirty-two
+blocks of instrument work discarded.
+
+**Dropping the state file and excluding h_2 from the handover are each
+defensible and jointly destructive.** That is the shape of the bug.
+
+### The rule
+
+A parameter is excluded from the handover ONLY while it is pinned. When a
+pin is released the exclusion must be released with it, in the same edit.
+Anything else leaves the value's provenance split between the state file
+and the declaration, and which one wins depends on a flag set for an
+unrelated reason.
+
+### Also recorded: the b_SG non-monotonicity was mine, not the model's
+
+n37 seeded addiction_scalar_1 at 0.0141483, the value that gave b=0.09346
+in n32, and got b=0.0068. I reported that as the mapping being
+non-monotone. It was not. gamma was 0.53560 against 0.45131 and h_2 was
+0.142 against 0.11850 at that block -- both nineteen to twenty per cent
+higher, both making housing more expensive, both draining the resources
+the participation threshold reads. Two parameters different, one
+conclusion drawn. Third time today.
+
+n38 seeds h_2 at 0.0829 with the exclusion removed.
 ## b IS NOT DRIVEN BY ITS INSTRUMENT, AND n32 MEASURES IT CLEANLY
 
 The five-block cooldown holds addiction_scalar_1 EXACTLY constant for
