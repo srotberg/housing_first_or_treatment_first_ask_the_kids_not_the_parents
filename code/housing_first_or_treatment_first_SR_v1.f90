@@ -7670,7 +7670,16 @@
         ! SUD share falls -- and it has fallen, 19.5 to 13.4 across the session.
         ! The moment still rose, from +27 to +34 per cent, so something else is
         ! pushing it up faster than 0.5 per cent a loop can pull it down.
-        real(8) :: multiple_find_max_rel_step=0.02d0
+        ! RAISED TO A TENTH, 17 September, on the author's *"Find if addicted has
+        ! to rise a lot"*. It has to TRAVEL, which is the same argument the file
+        ! already made for bottom_productivity_floor_rate. The moment is now 68
+        ! per cent BELOW target rather than above it -- 0.070 against 0.217 -- and
+        ! the parameter sits at 4.167 where the comment above records it at 19.5
+        ! and 13.4 earlier in the project. At two per cent a step that is 59
+        ! updates, and the b gate is shut for most of them; at a tenth it is
+        ! twelve. This is a speed limit on the SEARCH and not a model parameter,
+        ! so it invalidates nothing about any point already solved.
+        real(8) :: multiple_find_max_rel_step=0.10d0
         real(8) :: distance_multiple_find=1
         real(8) :: stopping_rule_multiple_find=10.d0**(-2)
         real(8), parameter :: multiple_find_lo=1.d0
@@ -44231,6 +44240,10 @@
                 ! trap for h_2's adjuster; the other four are left alone because
                 ! nothing currently needs them and an unused case is one more
                 ! thing to keep true.
+                case ("multiple_find_max_rel_step")
+
+                    multiple_find_max_rel_step=max(min(handover_value,1.d0),10.d0**(-5))
+
                 case ("smallest_house_size_adjuster")
                     write(*,*) "HANDOVER smallest_house_size_adjuster:",&
                         smallest_house_size_adjuster, "->", handover_value
