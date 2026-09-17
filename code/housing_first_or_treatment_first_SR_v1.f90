@@ -3823,7 +3823,18 @@
         ! reports against rather than what any instrument chases: at the model's
         ! 0.14006 the aggregate drug share is then essentially exact rather than
         ! 12.5 per cent off.
-        real(8), parameter :: drug_spending_share_data=0.14000
+        ! 0.16 FROM 17 September, on the author's *"I suggest to target Theta to
+        ! 0.16. So let's set theta to 0.165"*, replacing the 0.14 of 16
+        ! September. The aggregate drug share tracks theta one for one --
+        ! measured at 0.990, 0.992, 0.997 and 0.999 across n43, n46, n47 and
+        ! n48, through a seven-to-thirteen node change and b from 0.026 to
+        ! 0.070 -- so theta 0.165 lands the moment within three per cent and
+        ! there is nothing to search for.
+        !
+        ! THE SAME NUMBER IS TYPED IN code/gaps_table.py and has to move with
+        ! this one, or the table reports a gap against a target the model is no
+        ! longer fitting.
+        real(8), parameter :: drug_spending_share_data=0.16000
         real(8) :: drug_share_experimenters_1=0
         real(8) :: drug_share_addicted_1=0
         real(8) :: drug_share_weighted_1=0
