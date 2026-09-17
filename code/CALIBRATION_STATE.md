@@ -1,3 +1,52 @@
+## THE DESCENT STALLED AT b=0.213 WITH THE INSTRUMENT SATURATED
+
+n23, blocks 64 to 77, 04:45 on 17 September.
+
+    b        0.213035  ->  0.212661     -0.18 per cent over 13 blocks
+    scalar   1.1428e-2 ->  1.1917e-2    +4.3 per cent over the same 13
+
+`addiction_scalar_1` is stepping by exactly 0.6 per cent a block, which
+is `addiction_scalar_max_rel_step` -- the cap is BINDING, so the bracket
+is pushing as hard as it is allowed to and b is not answering. Before
+this stretch b had fallen from 0.25893 at block 29 to 0.21304 at 64,
+eighteen per cent in thirty-five blocks. It is now flat at +139 per cent.
+
+### This is the opposite of n20's problem and needs saying carefully
+
+Across n20's descent the instrument moved a TENTH of a per cent while the
+moment moved eighteen: b was carried entirely by general-equilibrium
+feedback and the bracket was a passenger. Here the feedback has stopped
+and the bracket is alone, at its maximum step, achieving nothing. The
+same parameter is doing the same thing in both runs; what changed is
+whether anything else was moving b.
+
+The mechanism is not mysterious. The abstention rule is C > (phi/theta)
+p b, so raising the shift only converts households near that margin. At
+b=0.21 the mass sitting near the margin is evidently thin, and 4.3 per
+cent of extra threshold walks through very few of them.
+
+### Not stopped, and why
+
+ENGINE.md permits stopping only if the author says so, the process died,
+or the run is PROVABLY unable to produce a usable point. Thirteen flat
+blocks do not prove that. The scalar is up 9.4 per cent from the seed and
+still climbing 0.6 a block; if the thin region is narrow it will cross it.
+The run continues.
+
+### The lever, if the stall is still there in the morning
+
+`addiction_scalar_max_rel_step` is a handover parameter and is currently
+0.006. Raising it is the one move that addresses a saturated cap, and it
+cannot be injected live -- `apply_param_handover` runs at startup and at
+counterfactual init only. So it means another restart and another
+re-convergence arc, which is the AUTHOR'S CALL and not one to make for
+them at five in the morning, particularly after three restarts already.
+
+What the morning report should carry: how many blocks the stall ran, how
+far the scalar travelled during it, and whether b ever broke out. Those
+three numbers decide whether the cap is the problem or whether b has
+found a second equilibrium at 0.21 -- which is the other reading, and the
+one n02 died of.
 ## OVERNIGHT ON n23, 17 SEPTEMBER 03:30
 
 The author, going to bed: *"Ok, I'll see where things are in the morning.
