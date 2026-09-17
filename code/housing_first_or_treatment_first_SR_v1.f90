@@ -5133,7 +5133,26 @@
         ! h_1 = 0.0040 is 0.271 against a target of 0.46, so this closes part of
         ! the gap and something else has to carry the rest.
         integer, parameter :: h1_targets_emp_homeless=0
-        real(8), parameter :: h1_band_lo=0.004d0
+        ! FLOOR RAISED 17 September, from 0.004. The author: *"We want to get
+        ! emp homeless as high as possible while still having h1 between
+        ! 0.4%-1%"*, then *"try to get h1 higher until you get emp homeless
+        ! closer"*.
+        !
+        ! WHY THE FLOOR AND NOT A TARGET. Inside the band the gap is zero and
+        ! h_1 stops, so a floor of 0.004 parked h_1 at the WORST end of the
+        ! author's range for their own objective. End-of-run pairs put
+        ! emp_homeless far higher in the middle of the range than at its
+        ! bottom: h_1 0.00319 gave 0.0198, 0.00396 gave 0.0621, 0.00557 gave
+        ! 0.1934 and 0.00741 gave 0.1609. Those are four different runs with
+        ! different dispersions and different b, so the shape is a correlation
+        ! and NOT a controlled bracket -- note 0.00741 sits above 0.00557 in
+        ! h_1 and below it in emp, which a clean monotone curve would not do.
+        !
+        ! 0.0055 is therefore a step in the direction the author asked for, not
+        ! a claim about the argmax. It stays inside the approved 0.4 to 1 per
+        ! cent and n23 ran at 0.0074 without trouble, so there is room to go
+        ! further if emp_homeless is still climbing when h_1 arrives.
+        real(8), parameter :: h1_band_lo=0.0055d0
         real(8), parameter :: h1_band_hi=0.010d0
 
         ! AND THE TRAVERSE HAS TO DAMP, for aleph's reason. The adjuster is
