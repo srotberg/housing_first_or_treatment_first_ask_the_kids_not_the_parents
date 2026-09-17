@@ -4369,7 +4369,7 @@
         ! you can also adjust kappa_find_smi to hit its target?". Held at zero
         ! for the seven-instrument restriction of 15 September; the value
         ! restored here is the one it carried before that restriction.
-        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
+        real(8) :: max_food_cost_adjuster=1.d0
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
