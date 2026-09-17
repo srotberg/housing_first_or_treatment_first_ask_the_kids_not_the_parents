@@ -1,3 +1,73 @@
+## WHY y_u IS OVER ONE: b AND y_u ARE THE SAME PARAMETER
+
+The author, 17 September, on the block-345 table: *"Why is yu over 1?"*
+It is not drift and it is not a bug. It is forced by the functional form.
+
+### The arithmetic
+
+The declaration at 4609 states the household's optimal purchase:
+
+    intake = (gam/(alp+gam)) * (R + p_v*b) / p_v  -  b
+
+A household participates only where that is positive, and rearranging
+gives the participation condition:
+
+    (gam/(alp+gam)) * (R/p_v + b) > b
+    (gam/(alp+gam)) * R/p_v       > b * (1 - gam/(alp+gam))
+    R > b * p_v * (alp/gam)
+
+**The participation threshold is a threshold on RESOURCES, and it is
+LINEAR IN b_SG.** Raising the Stone-Geary shifter raises the resource
+cutoff proportionally, so the marginal participant is a richer household
+every time, and the mean income of those who remain must rise. Lowering
+participation through this parameter and raising drug-user income are not
+two effects, they are one.
+
+### The measurement
+
+n24 drove b from 0.270 down to 0.098 the only way it can, by raising
+b_SG from 1.2426e-2 to 2.0003e-2, a rise of 61 per cent. y_u followed it
+the whole way and crossed one at about b_SG = 1.63e-2:
+
+    b_SG 1.2426e-2   y_u 0.9394
+    b_SG 1.4850e-2   y_u 0.9742
+    b_SG 1.6265e-2   y_u 1.0032   <- crosses one
+    b_SG 1.7639e-2   y_u 1.1277
+    b_SG 1.8386e-2   y_u 1.1625
+    b_SG 1.9426e-2   y_u 1.1406
+    b_SG 2.0003e-2   y_u 1.1357
+
+Table 7 puts y_u at 0.74 in the data. The gaps skill's standing note says
+a rise toward 0.74 is the model improving and only a ratio above one is a
+problem. It is 1.1357.
+
+### And the corrective instrument was switched off for the whole run
+
+`kappa_phi_d_level` is the instrument bracketed on y_u. In n24 it printed
+"kappa_phi_d HELD" on all 346 blocks and never once printed an update.
+Its gate is `kappa_gate_b_tolerance`, which requires b within ten per cent
+of target -- and b first got inside ten per cent at block 344, two blocks
+before this table.
+
+The gate's own reasoning is sound and was the author's: when b is far from
+target the drug-user income ratio is not measuring composition. But the
+consequence, unnoticed until now, is that **the one instrument that could
+have answered the selection was disabled for exactly as long as the
+selection was being created.** b climbing out of its ring and y_u passing
+one are the same eighty blocks.
+
+### What this means for the calibration
+
+b at target and y_u at 0.74 cannot both be reached by moving b_SG. The
+model's own comment calls b_SG *"the ONLY channel through which the
+disorder changes what a household wants to consume"*, and that channel
+carries participation and selection together. Something else has to give:
+either kappa_phi_d runs while b is still far out (which the gate exists to
+prevent), or participation gets a second instrument that is not a
+resource threshold, or y_u's target is accepted as unreachable jointly
+with b.
+
+That is a modelling question and it is the author's.
 ## THE BEST POINT OF THE NIGHT IS n24 BLOCK 143, AND IT IS PRESERVED
 
 b reached 0.10634 at block 143, 19.5 per cent above target and the
