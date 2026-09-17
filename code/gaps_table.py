@@ -76,7 +76,7 @@ ROWS = [
     ("b",                    "addiction_scalar_1",               "addiction_scalar",           "MOMENT:b"),
     ("delta_d",              "penalty_child_addicted",           "penalty_child_addicted",     "SPECIAL:child_sud"),
     ("h2",                   "smallest_rental_relative_to_lowest_income",
-                                                                 "smallest_house_size",        "MOMENT:h_2"),
+                                                                 "smallest_house_size",        "SPECIAL:renter_burden_30"),
     ("emp_homeless",         None,                               None,                         "MOMENT:emp_homeless"),
 ]
 
@@ -278,6 +278,34 @@ def special(kind, loglines):
         # Both targets are read off the log's own MOMENT lines rather than
         # typed here, so this row cannot drift from the Fortran.
         return (num / b_model, lam_target / b_target)
+    if kind == "renter_burden_30":
+        # h_2 IS BRACKETED ON THE RENTERS' 30 PER CENT CUT, SO THE ROW REPORTS
+        # THAT.
+        #
+        # It was retargeted on 17 September -- the author: *"I want you to
+        # retarget h2 to the % spending over 30% on housing. I think it's
+        # around 40.6%"* -- and this row went on scoring "MOMENT h_2 above half
+        # of spending" against severe_cost_burden_data, which is a different
+        # universe (all households, not renters) and a different denominator
+        # (spending, not income). At n29 block 7 that printed h_2 as 30.6 per
+        # cent off and moving the WRONG WAY: the row said 0.0701 against 0.101,
+        # too low, RAISE, while the moment the rule actually reads was 0.6310
+        # against 0.406, too high, LOWER.
+        #
+        # Same fault as the onset row carried this morning. A table that scores
+        # a parameter on a moment its update cannot see is worse than no row.
+        hits = [l for l in loglines if "renters above 30 pct of income" in l]
+        if not hits:
+            return None
+        # ANCHOR ON THE LABELS, NOT ON POSITION. A bare number sweep picks up
+        # the "30" in "30 pct of income" as the model value and prints a gap of
+        # 4694 per cent, which is how this was caught.
+        m = re.search(r"model=\s*([-\d.]+(?:[EeDd][-+]?\d+)?)"
+                      r".*?observed=\s*([-\d.]+(?:[EeDd][-+]?\d+)?)", hits[-1])
+        if not m:
+            return None
+        return (float(m.group(1).replace("E", "e").replace("D", "e")),
+                float(m.group(2).replace("E", "e").replace("D", "e")))
     if kind == "child_sud":
         hits = [l for l in loglines if "child SUD ratio model" in l]
         if not hits:
