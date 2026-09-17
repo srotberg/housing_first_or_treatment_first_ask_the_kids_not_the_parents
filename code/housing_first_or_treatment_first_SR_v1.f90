@@ -5874,6 +5874,18 @@
         ! every loop and never arriving.
         real(8), parameter :: kappa_phi_d_level_lo=1.d0
         real(8), parameter :: kappa_phi_d_level_hi=9.d0
+
+        ! THE AUTHOR'S ACCEPTANCE BAND ON y_u, 17 September: *"if yu is close
+        ! to target when b is close to target just keep it there and don't
+        ! touch it. If yu is around 0.6-0.75 that's ok"*. The target of 0.74
+        ! sits near the top of it, so the band is deliberately asymmetric: it
+        ! buys room BELOW the target and almost none above.
+        !
+        ! Same idiom as the h_1 band. Inside it the bracket holds rather than
+        ! chasing, which is what stops a parameter walking away from a value
+        ! that is already acceptable.
+        real(8), parameter :: yu_band_lo=0.60d0
+        real(8), parameter :: yu_band_hi=0.75d0
         real(8), parameter :: sud_share_of_homeless=0.217
 
         ! FLAT EXCESS DEATH RISK FROM HOMELESSNESS. See build_kappa_phi.
@@ -46789,6 +46801,29 @@
                             " target =", drug_user_income_data
                         write(*,*) "kappa_phi_d_level=", kappa_phi_d_level
 
+                        ! HOLD INSIDE THE BAND. b being near target is what makes
+                        ! y_u a composition at all, so this test only runs with the
+                        ! gate already open; inside the band the parameter keeps its
+                        ! value and the distance still reports the real gap, for the
+                        ! same reason the gate-shut branch below does.
+                        if ((model_avg_income_drug_users(1)/&
+                            max(model_average_income(1),10.d0**(-14))>=yu_band_lo)&
+                            .AND. (model_avg_income_drug_users(1)/&
+                            max(model_average_income(1),10.d0**(-14))<=yu_band_hi)) then
+
+                            distance_kappa_phi_d_level=&
+                                abs(model_avg_income_drug_users(1)/&
+                                max(model_average_income(1),10.d0**(-14))-&
+                                drug_user_income_data)
+
+                            write(*,*) "Y_U IN BAND: y_u=",&
+                                model_avg_income_drug_users(1)/&
+                                max(model_average_income(1),10.d0**(-14)),&
+                                " within [", yu_band_lo, ",", yu_band_hi,&
+                                "] -- kappa_phi_d HELD at", kappa_phi_d_level
+
+                        else
+
                         cap_old_1=kappa_phi_d_level
                         kappa_phi_d_level=max(min(kappa_phi_d_level-&
                             kappa_phi_d_level_adjuster*&
@@ -46829,6 +46864,8 @@
                                 " against", drug_user_income_data,&
                                 ". The literature range cannot reach the target and",&
                                 " the shortfall is not this parameter's to close."
+                        end if
+
                         end if
 
                     elseif (kappa_phi_d_level_adjuster>0) then
