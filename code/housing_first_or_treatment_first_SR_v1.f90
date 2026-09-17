@@ -686,7 +686,8 @@
         ! 14.3, which moved it 0.156 per cent a loop. cap_step_rel gives it a
         ! ceiling of its own, declared just below -- read the number there rather
         ! than here, because quoting it in two places is how the two came apart.
-        real(8) :: utility_cost_of_treatment_adjuster=2.d0
+        ! PINNED 17 September with the set of six; see discount_factor_adjuster.
+        real(8) :: utility_cost_of_treatment_adjuster=0.d0
         ! THIS PARAMETER'S OWN STEP CAP, through cap_step_rel at the one call
         ! site. It replaces max_rel_step_all for utility_cost_of_treatment ALONE;
         ! every other parameter still goes through cap_step and is unchanged. It
@@ -1868,7 +1869,8 @@
         ! "You should try to get the rest of the parameters in the calibration
         ! plan, except omegac". Held at zero for the seven-instrument
         ! restriction of 15 September; this is the value it carried before that.
-        real(8) :: smi_onset_level_adjuster=5*10.d0**(-3)
+        ! PINNED 17 September with the set of six; see discount_factor_adjuster.
+        real(8) :: smi_onset_level_adjuster=0.d0
         real(8) :: distance_smi_onset_level=1
         real(8) :: stopping_rule_smi_onset_level=10.d0**(-3)
 
@@ -4498,7 +4500,11 @@
         ! you can also adjust kappa_find_smi to hit its target?". Held at zero
         ! for the seven-instrument restriction of 15 September; the value
         ! restored here is the one it carried before that restriction.
-        real(8) :: max_food_cost_adjuster=1.d0
+        ! PINNED 17 September with the set of six; see discount_factor_adjuster.
+        ! It was raised to 1.0 this morning to let c_bar move at all, and it
+        ! worked -- c_bar went from 22 per cent off to 0.2 -- so it is pinned at
+        ! the value that arrived rather than reverted to the old rate.
+        real(8) :: max_food_cost_adjuster=0.d0
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
@@ -4516,7 +4522,21 @@
         ! you can also adjust kappa_find_smi to hit its target?". Held at zero
         ! for the seven-instrument restriction of 15 September; the value
         ! restored here is the one it carried before that restriction.
-        real(8) :: voucher_probability_adjuster=1*10.d0**(-1)
+        ! PINNED 17 September, on the author's question *"I think piv too is
+        ! stable, no?"*. They were right and my caution was overdone.
+        !
+        ! I had held pi_v back because it overshoots to about 0.29 mid-run. The
+        ! full n32 path shows that is only the refill and it settles on target:
+        !
+        !     blk 1  0.01943   blk 8  0.29110   blk 24  0.26610
+        !     blk 2  0.11663   blk 16 0.26956   blk 31  0.26542
+        !     blk 3  0.24749                    blk 34  0.26329
+        !
+        ! On 0.266 from block 16 onward, and -0.1 per cent at the end of n24 as
+        ! well. The overshoot is a stock filling from empty, not the parameter
+        ! being wrong, and it will still happen with the parameter pinned --
+        ! it simply will not be chased.
+        real(8) :: voucher_probability_adjuster=0.d0
         real(8), parameter :: voucher_probability_adjuster_start=1*10.d0**(-1)
         real(8) :: previous_gap_voucher_probability=0
         integer :: have_gap_voucher_probability=0
@@ -4537,7 +4557,8 @@
         ! you can also adjust kappa_find_smi to hit its target?". Held at zero
         ! for the seven-instrument restriction of 15 September; the value
         ! restored here is the one it carried before that restriction.
-        real(8) :: separation_rate_adjuster=1*10.d0**(-1)
+        ! PINNED 17 September with the set of six; see discount_factor_adjuster.
+        real(8) :: separation_rate_adjuster=0.d0
         real(8), parameter :: separation_rate_adjuster_start=1*10.d0**(-1)
         real(8) :: previous_gap_separation_rate=0
         integer :: have_gap_separation_rate=0
@@ -4895,7 +4916,25 @@
         ! "You should try to get the rest of the parameters in the calibration
         ! plan, except omegac". Held at zero for the seven-instrument
         ! restriction of 15 September; this is the value it carried before that.
-        real(8) :: discount_factor_adjuster=5*10.d0**(-3)
+        ! PINNED 17 September. The author asked which parameters were stable
+        ! enough to pin and approved this set of six. The evidence is the END of
+        ! the two settled runs, n24 at 345 blocks and n32 at 32; n29 is excluded
+        ! because it ran eight blocks and every number in it is a refill
+        ! transient.
+        !
+        !     tau_ell   0.0%  both        p_m    -0.5%  -0.6%
+        !     beta     -0.3%  -0.6%       c_bar  -0.7%  -0.2%
+        !     tau_u    -1.5%  -1.5%       pi_eu  -1.7%  +0.2%
+        !
+        ! tau_u is the striking one: minus one and a half per cent in both runs,
+        ! hundreds of blocks apart. Values are seeded from n32's resume seed.
+        !
+        ! NOT PINNED, AND WHY: mu_H went +3.6 then -16.4, so it swings sign;
+        ! w_bot reads +130 and +214 per cent and is nowhere near its target.
+        ! pi_v ends well, -0.1 and -1.0, but OVERSHOOTS to about 0.29 mid-run
+        ! before settling, so pinning it anywhere but an end-of-run value would
+        ! freeze the wrong number; left live for that reason.
+        real(8) :: discount_factor_adjuster=0.d0
         real(8) :: distance_discount_factor
         ! A RATIO OF THREE CANNOT BE HIT TO ONE PART IN THIRTY THOUSAND. The old
         ! tolerance of 1e-4 was written against a mortgage share between zero and
@@ -6302,7 +6341,8 @@
         ! "You should try to get the rest of the parameters in the calibration
         ! plan, except omegac". Held at zero for the seven-instrument
         ! restriction of 15 September; this is the value it carried before that.
-        real(8) :: labor_income_tax_rate_adjuster=5*10.d0**(-1)
+        ! PINNED 17 September with the set of six; see discount_factor_adjuster.
+        real(8) :: labor_income_tax_rate_adjuster=0.d0
         real(8), parameter :: labor_income_tax_rate_adjuster_start=5*10.d0**(-1)
         real(8) :: previous_gap_labor_income_tax_rate=0
         integer :: have_gap_labor_income_tax_rate=0
