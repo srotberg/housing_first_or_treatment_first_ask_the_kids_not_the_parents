@@ -1,3 +1,115 @@
+## WHY ALMOST NONE OF THE HOMELESS WORKED, AND THE FOUR THINGS MEASURED GETTING THERE
+
+17 September, 22:35. The author: *"we need to understand why so few of the
+homeless are employed... Is it because we have too few low income
+households? Maybe we need more"*. It is not, and more made it worse.
+
+### 1. THE AFFORDABILITY RATIO IS THE WHOLE STORY, AND IT IS ONE NUMBER
+
+Three runs differing only in how rich the bottom node is:
+
+    run  bottom level  rent/bottom income  emp_homeless  income of homeless
+    n45  0.0507        1.136               0.0742        0.00267
+    n47  0.0718        0.780               0.0138        0.00099
+    n48  0.0923        0.624               0.0000        0.00039
+
+emp_homeless is monotone in that ratio and hits EXACTLY zero below it.
+When the cheapest rental is affordable to anyone with a job, the only
+households on the street are the ones with no income at all -- the
+unemployed. `DIAG homeless who could afford it on INCOME ALONE` = 0 and
+`homeless by choice` = 0 confirm it from the other side.
+
+**The model's homeless earned 0.00039 of average income against 0.191 in
+the data, a factor of 490.** Homelessness here was an UNEMPLOYMENT
+phenomenon; in the data it is a LOW WAGE one.
+
+And the ratio is not a free parameter: across those three runs and a
+seven-to-thirteen node change, ratio TIMES bottom node level is constant at
+0.057. The cheapest rental costs 0.057 of average income, so
+
+    ratio = 0.057 / bottom node level
+
+### 2. MY OWN h_1 FIX CAUSED IT
+
+Raising the bottom node's mass to lift h_1's ceiling also raised its LEVEL,
+0.0718 -> 0.0923, which dropped the ratio 0.780 -> 0.624 and took
+emp_homeless from 1.4 per cent to zero. h_1 did not rise either: I gave it a
+bigger ceiling and simultaneously made housing affordable to the households
+it needed to price out. h_1 and emp_homeless are ONE problem.
+
+### 3. THE INSTRUMENT EXISTED AND WAS POINTED AT A NODE WITH NO HOMELESS IN IT
+
+`bottom_productivity_level` sets a node's level independently of its mass --
+the author's 3 September *"choose the point on the y grid such that it gives
+the right productivity and the right mass"*. It was parked at 0.95008 on
+node 2 by the value-of-life ratchet, and node 2 is not homeless, so the
+lever registered against emp_homeless could not reach the moment.
+
+    merge_from_node            2 -> 1
+    merge_bottom_nodes         2 -> 1
+    bottom_productivity_level  0.95008 -> 0.030    ratio 1.58 measured
+    kkk_s_deviation_bottom     2.397820 -> 2.694536   mass back to 0.700 pc
+
+Result, n50 blocks 1 to 3:
+
+    emp_homeless  0.0000 -> 0.1331 0.1478 0.1535   monotone, target 0.46
+    h_1           0.0036 -> 0.0046 0.0040 0.0040   on the 0.004 target
+    income of hmls 0.00039 -> 0.00442 0.00484 0.00494
+
+The value-of-life ratchet did NOT fire at 0.030, so that level is viable.
+It also retires the 0.95 lump that 6.4 per cent of the population sat at,
+and node 2 returns to its natural 0.107 with mean productivity exactly 1.
+
+### 4. THETA IS THE DRUG SPENDING SHARE, ONE FOR ONE
+
+    run  theta    aggregate drug share   ratio
+    n43  0.20461  0.20264                0.990
+    n46  0.19000  0.18858                0.992
+    n47  0.19000  0.18950                0.997
+    n48  0.19000  0.18974                0.999
+
+Through a node change and b from 0.026 to 0.070. So there is nothing to
+search for on that moment: the target is 0.16 from 17 September and theta is
+0.165. **The same number is typed in gaps_table.py and has to move with the
+Fortran or the table scores against a retired target.**
+
+### AND WHAT IT COSTS: b, WITH AN ALGEBRAIC REMEDY
+
+theta is the drug weight in the participation threshold
+R > p_v*b_SG*(alp/gam), so cutting it raises the bar. b fell 0.0582 ->
+0.0004, a corner. The weights RENORMALISE, which I got wrong once: alp/gam
+goes 0.8100/0.19 = 4.263 to 0.8350/0.165 = 5.061, up 18.7 per cent, not the
+15.2 per cent that treating alp as fixed gives. So b_SG must fall 15.7 per
+cent:
+
+    addiction_scalar_1  0.011717 * 0.843 = 0.009878
+
+n51 is that single change, so the formula gets tested. If b returns to
+about 0.058, theta can be moved freely in future by carrying b_SG with it.
+
+### KAPPA 3.5 IS NOT AFFORDABLE
+
+The author's *"pin it and see what happens"*, answered by a clean control --
+only kappa changed between n48 and n49:
+
+    n48 block 1  kappa 2.9428  b 0.0582
+    n49 block 1  kappa 3.5000  b 0.0136   a 77 per cent collapse
+
+and y_u no better at the matched b, which is what the file's "minimum near
+2.4" bracket predicted. Reverted to 2.9428, still pinned.
+
+### STILL OPEN
+
+- b at a corner pending the offset above.
+- sigma_y 5.4 per cent off (0.1628 against 0.172). Removing the node-2
+  override moved the bottom half's share; the correction is a kkk_sigma_scale
+  step and it is NOT bundled with anything.
+- aleph: value_of_life fell 79.82 -> 78.04 over ten blocks while the moment
+  went 99.60 -> 100.72, the WRONG WAY. Not a speed problem. Undiagnosed.
+- `income of the homeless` is UNTARGETED at 0.0049 against 0.191. It is the
+  moment that would discipline the ratio and the level together, and nothing
+  is fitting it. Proposed to the author; their call.
+
 ## THIRTEEN NODES: BOTH STANDING CHECKS PASS, AND THE TRAP THEY FOUND WAS NOT THE CHANGE
 
 17 September, 21:05. `employment_base_size` 7 -> 13 on the author's *"Ok,
