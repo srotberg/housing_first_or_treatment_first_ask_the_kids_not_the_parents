@@ -1,3 +1,53 @@
+## THE BEST POINT OF THE NIGHT IS n24 BLOCK 143, AND IT IS PRESERVED
+
+b reached 0.10634 at block 143, 19.5 per cent above target and the
+closest either run came. It did not stay. From block 178 b has climbed
+every few blocks and reads 0.14973 at 216, a rise of 41 per cent off the
+floor, so the run is now giving back ground rather than holding.
+
+Because the rolling checkpoint overwrites itself every ten blocks, that
+point would have survived only inside git history. It is now saved under
+its own name so it cannot be lost or confused with the live run:
+
+    code/checkpoints/BEST_n24_block144_calibration_state.dat   166 lines
+    code/checkpoints/BEST_n24_block144_resume_seed.txt          96 params
+
+Its parameters at that point:
+
+    addiction_scalar_1          1.7872e-2
+    addiction_onset_base        3.0870e-2
+    max_food_cost               9.7170e-2
+    multiple_find_if_addicted   3.6688      (never live, gate shut all run)
+    smallest_house_size_adjuster 0.0        (h_2 pin intact)
+
+### What the night establishes about b
+
+Three rings, at three levels, under two settings of the step cap:
+
+    n23   0.20735 - 0.22275   46 blocks   cap 0.006
+    n24   0.22940 - 0.23786   21 blocks   cap 0.02
+    n24   0.10634 - 0.11818   65 blocks   cap 0.02, and then upward
+
+Every one of them ends the same way: the band's mean creeps UP while
+`addiction_scalar_1` climbs monotonically against it. The instrument
+never reverses and never stops; b absorbs the travel and then drifts
+back. Raising the cap moved where the ring sits and how fast it is
+reached, and changed nothing about the pattern.
+
+The lowest b of the night came with the SUD ratio at 0.4170, eight
+tenths of a per cent off the author's 0.4135, which is the tightest that
+ratio has ever been. So the onset is not the problem; b is.
+
+### What has never been tested
+
+`find_if_addicted` has had ZERO live blocks in n24's 216 and about two
+in n23's 110. Its gate needs b inside ten per cent of target, and b has
+not been inside ten per cent since the crossing in n20. The author's
+*"find if addicted has to rise"* cannot begin until b does.
+
+The remaining lever on b is `addiction_scalar_adjuster` at 2.0e-3, not
+the cap, and that changes the instrument rather than releasing it.
+Author's call.
 ## THE CAP TEST HAS ANSWERED: THE CAP WAS NOT THE CONSTRAINT
 
 n24, block 64, 07:45. The override
