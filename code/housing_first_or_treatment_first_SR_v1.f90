@@ -3178,6 +3178,19 @@
         ! split that caught h_2, gamma and theta -- so the distinction is
         ! written here rather than left to the variable name.
         real(8), parameter :: severe_cost_burden_data=0.101d0
+
+        ! h_2's MOMENT FROM 17 September. The author: *"I want you to retarget
+        ! h2 to the % spending over 30% on housing. I think it's around 40.6%"*.
+        !
+        ! THE UNIVERSE IS RENTERS AND THE CUT IS INCOME. The print at 10437
+        ! already carried 0.406 inline and its comment names the provenance:
+        ! *"the SCF universe the appendix derives 40.6 and 17.5 on"*. So 0.406
+        ! and burden50's 0.175 are a matched pair, renters above 30 and above
+        ! 50 per cent of INCOME, and neither is severe_cost_burden_data, which
+        ! is all households above half of SPENDING. Three objects, two
+        ! denominators and two universes; naming the constant is what stops the
+        ! next reader picking the wrong one.
+        real(8), parameter :: renter_burden_30_data=0.406d0
         real(8), parameter :: fraction_light_users=0.731
         
         integer, parameter :: target_HO_of_old=1
@@ -6551,7 +6564,20 @@
         !
         ! Stopping the handover for an adjuster is NOT the same as zeroing it,
         ! because the source value is what the run starts from.
-        real(8) :: smallest_house_size_adjuster=0.d0
+        ! LIVE AGAIN FROM 17 September, at its start value. The author:
+        ! *"And make h2 a live instrument for it so it doesn't explode"*, on a
+        ! run where the burden moment had reached three and a half times its
+        ! target while h_2 itself sat pinned and could do nothing about it.
+        !
+        ! This reverses the pin of 16 September -- *"i dont think h2 should be
+        ! adjusted"*, *"just set h2=0.142 and pin it"* -- which was right while
+        ! h_2 was bracketed on a moment it could not reach. It is now bracketed
+        ! on the renters' 30 per cent cut, which the file's own sweep shows it
+        ! moves monotonically, so the instrument has something to do.
+        !
+        ! The zero-adjuster floor guard stays exactly as it is: it is what makes
+        ! a future pin hold, and it costs nothing while the adjuster is live.
+        real(8) :: smallest_house_size_adjuster=0.05d0
 
         ! DAMPING THE TWO HOUSING ADJUSTERS. Both were fixed steps and both
         ! oscillated: the size distribution responds sharply to the size
@@ -10435,7 +10461,8 @@
             ! income. The universe is renters, which is the SCF universe the
             ! appendix derives 40.6 and 17.5 on.
             write(*,*) "UNTARGETED renters above 30 pct of income    model=",&
-                mass_of_renters_at_housing_spending(1,1), " observed=", 0.406d0
+                mass_of_renters_at_housing_spending(1,1), " observed=",&
+                renter_burden_30_data
             ! SCORED FROM 5 September, on the author's instruction: *"is there a
             ! way to set h2 so that the share of spending over 50% of their income
             ! on housing is like in the data?"*. It was printed and never read.
@@ -46177,10 +46204,15 @@
                         ! half of their outlays for it, so the model share RISES in
                         ! this parameter and a model above target calls for a
                         ! SMALLER rung. The update subtracts the gap, as before.
+                        ! RETARGETED 17 September to the renters' 30 per cent
+                        ! cut. The sign is unchanged and the reasoning above
+                        ! carries over unaltered: a bigger cheapest rental costs
+                        ! more, so more renters pay over 30 per cent of income
+                        ! for it, so the model share RISES in h_2 and a model
+                        ! above target calls for a SMALLER rung.
                         gap_house_size_1=&
-                            val_burden50_expend_all(1)/&
-                            max(val_mass_expend_all(1),10.d0**(-14))-&
-                            severe_cost_burden_data
+                            mass_of_renters_at_housing_spending(1,1)-&
+                            renter_burden_30_data
 
                         if (have_gap_smallest_house_size==1) then
 
