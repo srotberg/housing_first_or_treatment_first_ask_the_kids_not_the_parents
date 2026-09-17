@@ -39689,7 +39689,8 @@
                 model_GDP_incl_imput_rent(time_period))
             write(2,*) "model_youngest_net_wealth_share,", model_youngest_net_wealth_share(time_period)
             write(2,*) "mortgage_debt_to_housing_wealth,", &
-                100*(model_mortgages(time_period)/model_gross_housing_wealth(time_period))
+                100*(model_mortgages(time_period)/&
+                max(model_gross_housing_wealth(time_period),10.d0**(-14)))
             write(2,*) "model_total_net_wealth/model_GDP_incl_imput_rent,", &
                 model_total_net_wealth(time_period)/model_GDP_incl_imput_rent(time_period)
             write(2,*) "standard_deduction/avg_labor_income,", 100*(standard_deduction/model_average_labour_income(time_period))
@@ -45919,7 +45920,8 @@
                     write(*,*) "model_fraction_of_homeowners_with_mortgage(1)=", &
                         model_fraction_of_homeowners_with_mortgage(1)
                     write(*,*) "(model_mortgages(1)/model_gross_housing_wealth(1))=", &
-                        (model_mortgages(1)/model_gross_housing_wealth(1))
+                        (model_mortgages(1)/&
+                        max(model_gross_housing_wealth(1),10.d0**(-14)))
                                             
                     write(*,*) "discount_factor_on_child=", discount_factor_on_child
 
@@ -49256,7 +49258,16 @@
                                                
             write(*,*) "rent(1)=", rent(1,:)
             write(*,*) "rental_market_adjuster=", rental_market_adjuster
-            write(*,*) "model_mortgages(1)/model_gross_housing_wealth(1)=", model_mortgages(1)/model_gross_housing_wealth(1)
+            ! GUARDED 17 September. This is 0/0 whenever nobody owns, which is
+            ! the whole of the present calibration -- the homeownership rate is
+            ! exactly zero and the invariant PASSES at zero. Under -O3 all three
+            ! of these prints read NaN and the run carries on; under the standing
+            ! -ffpe-trap=invalid build the first of them is a SIGFPE, which is
+            ! where the 13-node verification run died after a clean solve. The
+            ! divisions are inside write statements, so the guard changes no
+            ! economics and nothing that any moment is computed from.
+            write(*,*) "model_mortgages(1)/model_gross_housing_wealth(1)=",&
+                model_mortgages(1)/max(model_gross_housing_wealth(1),10.d0**(-14))
             write(*,*) "model_average_rental_unit_size(1)=", model_average_rental_unit_size(1)
             write(*,*) "model_average_owner_occupied_unit_size(1)=", model_average_owner_occupied_unit_size(1)
             write(*,*) "model_average_rental_unit_size(1)/model_average_owner_occupied_unit_size(1)=", &
