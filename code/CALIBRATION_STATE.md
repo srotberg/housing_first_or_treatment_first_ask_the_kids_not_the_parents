@@ -1,3 +1,58 @@
+## sigma_y's INSTRUMENT IS INERT INSIDE A RUN, AND h_2's BURDEN IS GAMMA
+
+The author, 17 September: *"Sigma_y is too high also... And I think h2
+seems to be huge...."* Both are right, and they have different causes.
+
+### sigma_y: the parameter moves, the dispersion never does
+
+    n23   kkk_sigma_scale 1.9886 -> 2.2220     sd of log y: ONE value, 0.81342
+    n24   kkk_sigma_scale 2.2198 -> 1.5671     sd of log y: ONE value, 0.90795
+
+349 distinct values of the parameter in n24 and a single value of the
+dispersion it controls. But the two runs have DIFFERENT frozen values,
+and each matches the kkk the run STARTED with -- n23 opened at 1.9886 and
+froze 0.81342, n24 opened at 2.2198 and froze the higher 0.90795.
+
+**The income grid is built once at startup from kkk_sigma_scale and never
+rebuilt.** Moving the parameter inside a run changes nothing the model can
+see, so the rule integrates against a target it cannot affect: n24 has
+driven kkk down 29 per cent, against a dispersion still set by the value
+it began with. That is why sigma_y never converges and why it reads "too
+high" -- the run is living with the dispersion of its own opening value.
+
+This has a sting in it. kkk is now 1.5671 while the live sd belongs to
+2.2198, so the NEXT restart will apply a 29 per cent jump in one step,
+having accumulated it blind. Any restart from n24's seed should expect
+the dispersion to move sharply and should not read that as a new problem.
+
+### h_2's burden: gamma is doing it, and gamma is at its own target
+
+    gamma           0.35812 (n23 start) -> 0.47065 (now)   +31 per cent
+    h_2 burden      0.02810 (n23 blk 16) -> 0.20497        about seven times
+    gamma's OWN moment   0.27088 against 0.268             1.1 per cent off
+
+The h_2 parameter never moved: `smallest_rental_relative_to_lowest_income`
+is pinned at 0.142 and the floor guard held it there all run. The burden
+share rose because gamma rose, and gamma rose because the AGGREGATE
+housing share of expenditure -- the moment the author chose for it on 16
+September -- was below 0.268 and is now on it.
+
+So gamma hits its target and delivers 20.5 per cent of households
+spending over half of expenditure on housing against a 6 per cent target,
+three and a half times too many. One parameter, two moments, pulling
+apart, exactly as with b and y_u.
+
+### The pattern in all three
+
+y_u, the h_2 burden and sigma_y are not three separate misses. Two of
+them are the same shape -- a parameter that hits the moment it is
+bracketed on while a second moment that depends on it goes badly wrong,
+with no free instrument left because the natural one is pinned or gated.
+The third is a parameter that cannot see its own moment at all.
+
+CHECK AGAINST THE STYLIZED MODEL. Section 7 of TRANSITION_LESSONS.md
+requires it, and the startup-only grid build is exactly the kind of bug
+that carries across.
 ## WHY y_u IS OVER ONE: b AND y_u ARE THE SAME PARAMETER
 
 The author, 17 September, on the block-345 table: *"Why is yu over 1?"*
