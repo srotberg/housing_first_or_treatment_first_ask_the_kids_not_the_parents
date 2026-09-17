@@ -1,3 +1,60 @@
+## THE CAP TEST HAS ANSWERED: THE CAP WAS NOT THE CONSTRAINT
+
+n24, block 64, 07:45. The override
+`addiction_scalar_max_rel_step` 0.006 -> 0.02 was started at 05:47 to test
+whether a binding step cap was holding b up. It is now answered, and the
+answer is no.
+
+### The cap stopped binding four blocks in, and b rings anyway
+
+    step  +2.000%  <- cap binding
+    step  +2.000%  <- cap binding
+    step  +1.935%
+    step  +1.915%
+    step  +1.897%
+    step  +1.818%
+    step  +1.619%  <- raw step, cap not reached
+
+The rule is `addiction_scalar_adjuster * gap`, with the adjuster at
+2.0e-3 and the gap at 0.1439, so the raw step is 2.877e-4, which is 1.77
+per cent of a b_SG of 0.0163. The cap of 2.00 per cent is above that and
+no longer trims anything. **The instrument has been moving at its own
+unconstrained rate for a dozen blocks and b has not left its band.**
+
+    ring, blocks 44 to 64: 0.22940 to 0.23786, mean 0.23296, 21 blocks
+
+### Four hypotheses tested and eliminated tonight
+
+- **The drug price offsets the shift.** No. `price_of_addictive_good` is
+  1.0 for the whole run, one distinct value.
+- **The parameter has hit a ceiling.** No. `b_hi` is 1.0 and b_SG is
+  0.0163, three orders below it.
+- **The ring damps the adjuster into the floor.** No. The damp-on-flip
+  machinery never fired: `addiction_scalar_adjuster` reads exactly
+  2.000e-3, its start value, in both n23 and n24, never reduced.
+- **The step cap is binding.** It WAS at 0.006, and is not at 0.02, and
+  b rings either way.
+
+### What is left, and what it means
+
+The response of participation to the Stone-Geary shift is near zero in
+this region, and that is a property of the model here, not of the
+tuning. The absolute step is steady at 2.9e-4 a block, so b_SG is
+climbing linearly and would take about fifty-seven blocks to double, with
+no sign the ring cares.
+
+The remaining lever is `addiction_scalar_adjuster` itself, 2.0e-3,
+declared at 3959. Its own comment sizes it for *"b sits near 0.02 and a
+typical participation gap is of order 0.01"*; the gap here is 0.144,
+fourteen times the design point, and the step it produces is still not
+moving the moment. Raising the adjuster is the next test, and it is a
+bigger intervention than the cap was -- it changes the instrument rather
+than releasing it.
+
+**THAT IS THE AUTHOR'S CALL AND IT IS NOT URGENT.** n24 is stable, not
+diverging, not at a corner, and everything else in the table is where it
+was: h_2 pinned, c_bar converged, the SUD ratio in its band. Nothing is
+being lost by leaving it ringing until they read this.
 ## THE CONTAINER RESTARTED AND KILLED n23 AT BLOCK 110
 
 05:46 on 17 September. Not a decision, and not a crash in the model --
