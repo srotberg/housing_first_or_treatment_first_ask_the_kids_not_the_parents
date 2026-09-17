@@ -25,6 +25,34 @@ p b, so raising the shift only converts households near that margin. At
 b=0.21 the mass sitting near the margin is evidently thin, and 4.3 per
 cent of extra threshold walks through very few of them.
 
+### IT DID NOT BREAK OUT. TWENTY-FIVE BLOCKS IN A 4 PER CENT BAND
+
+Recorded at 05:05 after the stall was called broken at 04:55 on four
+blocks of descent. That call was wrong. b fell to 0.20735 at block 81 and
+went straight back up, and the full picture over blocks 64 to 88 is a
+ring, not a plateau and not a descent:
+
+    64  0.21304   72  0.21299   80  0.20991
+    65  0.21340   73  0.21379   81  0.20735   <- low
+    66  0.21341   74  0.21345   82  0.20907
+    67  0.21403   75  0.21310   83  0.21035
+    68  0.21594   76  0.21237   84  0.21122
+    69  0.21553   77  0.21266   85  0.21137
+    70  0.21511   78  0.21250   86  0.21202
+    71  0.21370   79  0.21167   87  0.21267
+                                88  0.21369
+
+    band 0.20735 to 0.21594, 4.1 per cent wide, mean 0.21257, 25 blocks
+
+Through all twenty-five the scalar climbed monotonically at its 0.6 per
+cent cap, 1.1428e-2 to 1.2060e-2, another 5.5 per cent of threshold. The
+instrument has now travelled 10.7 per cent from the seed and b is where
+it was twenty-five blocks ago.
+
+**A four-block move is not a trend and should not have been reported as
+one.** The ring's own half-period is about eight blocks, so any four
+consecutive blocks in it can be read as a breakout in either direction.
+
 ### Not stopped, and why
 
 ENGINE.md permits stopping only if the author says so, the process died,
