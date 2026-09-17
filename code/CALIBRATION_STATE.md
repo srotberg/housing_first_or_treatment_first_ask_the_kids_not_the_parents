@@ -40,10 +40,38 @@ size_homelessness, smallest_house_size and voucher_probability.
 silently undo the author's *"Allow cbar to move"*. The fifteen it does
 carry all match what n20 itself ran with, so none of them regresses.
 
-### n22
+### n22 TESTED IT, AND THE STATE FILE WAS NOT THE CAUSE
 
-Same seed, same distribution, plus `calibration_state.dat`. The handover
-is applied after the state read, so the 96 parameters still land exactly.
+n22 was given the same seed, the same distribution AND
+`calibration_state.dat`. The log confirms it was read -- *"resumed from
+calibration_state.dat, written after loop 221"* -- and the arc did not
+move at all:
+
+    n21 blocks 1-3   0.05036 0.10045 0.11550   beta 3.7846 3.5674
+    n22 blocks 1-3   0.05036 0.10044 0.11551   beta 3.7846 3.5676
+
+Identical to five figures. c_bar's first three blocks are identical too.
+**The diagnosis above was wrong.** The missing secant state is not what
+makes a resumed run walk the arc again.
+
+What is left is the value functions, which are not saved by anything.
+The distribution is restored, the 96 parameters are restored, and the
+block-1 solve still starts its value function iteration from a fresh
+guess, so the policy differs, so participation differs, and the economy
+re-converges from there. n20's own block 119 read b=0.07995 only because
+119 blocks of iteration had got it there.
+
+**THE RE-CONVERGENCE ARC IS THE PRICE OF ANY REBUILD.** It cannot be
+seeded away with the files this code writes. n20 peaked at 0.2399 at
+block 35 and spent eighty blocks coming down; expect the same shape.
+Budget it into the decision to stop a run, rather than expecting a warm
+resume to avoid it.
+
+The state file is kept in n22 anyway. It is not harmful, it carries the
+secant flags for later blocks, and the handover still lands the 96
+parameters after it -- which matters more than it looks: the state file
+held `multiple_find_if_addicted` at 1.0 and the handover put it back to
+3.6688, exactly the reset the resume seed was built to stop.
 
 ### c_bar, separately, is fixed
 
