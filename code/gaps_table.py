@@ -60,7 +60,7 @@ ROWS = [
                                                                  "multiple_find",              "MOMENT:sud_homeless"),
     ("mu_H",                 "mu_homeless",                      "mu_homeless",                "MOMENT:mu_H"),
     ("pi_eu",                "probability_becoming_unemployed",  "separation_rate",            "MOMENT:pi_eu"),
-    ("addiction_onset_base", "addiction_onset_base",             "onset_base",                 "MOMENT:lambda_d"),
+    ("addiction_onset_base", "addiction_onset_base",             "onset_base",                 "SPECIAL:sud_per_user"),
     ("h1",                   "size_homelessness",                "size_homelessness",          "MOMENT:h_1"),
     ("newborn_endowment",    "newborn_endowment_scale",          "newborn_endowment",          "SPECIAL:young_homeless"),
     ("omega_c",              "weight_on_child",                  "weight_on_child",            "SPECIAL:none"),
@@ -238,6 +238,46 @@ def special(kind, loglines):
             return None
         m = re.search(r"=\s*([-\d.]+(?:[EeDd][-+]?\d+)?)", hits[-5])
         return (float(m.group(1).replace("E", "e")), 0.260) if m else None
+    if kind == "sud_per_user":
+        # THE ONSET IS BRACKETED ON THE RATIO, SO THE ROW REPORTS THE RATIO.
+        #
+        # Its update at 46449 is
+        #     onset_step_1 = onset_at_mean_1 - adjuster *
+        #         (model_fraction_addicted/model_total_drug_users
+        #          - sud_rate_data/participation_rate_data)
+        # which is the author's *"SUD has to be about 41% of b"*. The row used
+        # to score the UNCONDITIONAL lambda_d against 0.0368 instead, and that
+        # is not the quantity the instrument can see.
+        #
+        # It is not a cosmetic difference. With the ratio held at r, the two
+        # gaps are b/0.089-1 and r*b/0.0368-1, so whenever b is far from target
+        # the onset's gap is arithmetically the larger of the two and the pair
+        # SPREADS AS b MOVES. At block 36 of n23 that printed as b +184.2 per
+        # cent against the onset +207.6, which reads as b and SUD diverging
+        # when the ratio behind both had been flat at 0.443 to 0.452 for
+        # thirty-five blocks. The author read the table that way and asked.
+        # One error reported twice is not two errors.
+        num = last_param_value(loglines, "model_fraction_addicted")
+        hits = [l for l in loglines if "MOMENT b  " in l]
+        if num is None or not hits:
+            return None
+        nums = re.findall(r"([-\d.]+(?:[EeDd][-+]?\d+)?)", hits[-1])
+        if len(nums) < 2:
+            return None
+        b_model = float(nums[0].replace("E", "e").replace("D", "e"))
+        b_target = float(nums[1].replace("E", "e").replace("D", "e"))
+        lam = [l for l in loglines if "MOMENT lambda_d" in l]
+        if not lam:
+            return None
+        lnums = re.findall(r"([-\d.]+(?:[EeDd][-+]?\d+)?)", lam[-1])
+        if len(lnums) < 2:
+            return None
+        lam_target = float(lnums[1].replace("E", "e").replace("D", "e"))
+        if b_model <= 0 or b_target <= 0:
+            return None
+        # Both targets are read off the log's own MOMENT lines rather than
+        # typed here, so this row cannot drift from the Fortran.
+        return (num / b_model, lam_target / b_target)
     if kind == "child_sud":
         hits = [l for l in loglines if "child SUD ratio model" in l]
         if not hits:
