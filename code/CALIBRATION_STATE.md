@@ -1,3 +1,56 @@
+## b IS NOT DRIVEN BY ITS INSTRUMENT, AND n32 MEASURES IT CLEANLY
+
+The five-block cooldown holds addiction_scalar_1 EXACTLY constant for
+stretches at a time, which turns every cooldown window into a controlled
+experiment: the instrument is frozen by construction, so whatever b does
+in that window is everything else. n32 gives three windows.
+
+    blk  1-4   b_SG = 0.0141483 (constant)   b  0.03014 -> 0.09346 -> 0.09179
+    blk  5-7   b_SG = 0.0141450 (constant)   b  0.07804 -> 0.07885
+    blk 11-13  b_SG = 0.0141033 (constant)   b  0.06178 -> 0.05518 -> 0.02647
+
+b TRIPLES in the first window and falls by more than half in the third,
+with the parameter that is supposed to control it not moving at all.
+Across the whole run b_SG travelled 1.41483e-2 to 1.40611e-2, six tenths
+of one per cent, while b went from 0.09346 to 0.00095 -- a factor of
+ninety-eight.
+
+### What that settles and what it does not
+
+It settles that the b bracket cannot stabilise b in this region. It is
+not a matter of the adjuster being small or the cooldown being long: the
+moment moves two orders of magnitude further than the instrument in the
+same blocks, so no feasible step size closes that ratio.
+
+It does NOT settle why. The participation condition is R > b_SG*p_v*
+(alp/gam), a resource threshold, and what the windows show is that the
+mass sitting at that threshold is enormous relative to the distance the
+threshold moves -- a knife edge. Whether that is a property of the model
+or of the discretised productivity grid is the open question, and the
+grid is the obvious suspect now that sigma_y is pinned at a sd of 0.797.
+
+### The point that existed
+
+Block 3 of n32 reached b=0.09346, five per cent above target, with y_u
+0.78692, sigma_y 0.17049 pinned and h_2's moment grinding down through
+0.60298. That point was reachable and the run did not stay there for a
+single further block.
+
+### Put to the author, 17:20
+
+Either b_SG gets a much larger adjuster and a shorter cooldown so the
+bracket can chase the swing, or the swing itself needs damping, which is
+a question about the model rather than a calibration setting. The second
+is where the measurement points, but it is a model change and therefore
+the author's to choose.
+
+### A note on the reading
+
+The first version of this table showed b_SG dropping to 0.0000000 from
+block 16. That was an extraction artefact -- 29 prints against 23 blocks,
+so taking every other line lost alignment. The parameter is 1.40611e-2.
+Checked before reporting, which is the third bad grep caught this way
+today.
 ## sigma_y HAS A CLOSED FORM, AND THE AUTHOR WAS RIGHT TO INSIST
 
 17 September. Asked why sigma_y could not be computed deterministically,
