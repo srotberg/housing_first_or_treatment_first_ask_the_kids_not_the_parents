@@ -3544,6 +3544,22 @@
         ! rent out of income, so the process as published does not merely miss an
         ! inequality statistic -- it deletes the population that becomes homeless.
         real(8) :: kkk_sigma_scale=1.0
+
+        ! THE VALUE THE PRODUCTIVITY GRID WAS LAST BUILT AT.
+        !
+        ! The grid in GKKOC_intergenerational_employment_process sat behind
+        ! "if (loop_count<1)", so it was built on the first loop and never
+        ! again, and kkk_sigma_scale is read nowhere else that reaches the
+        ! household. The instrument therefore moved and its own moment could
+        ! not answer: in n24 the parameter took 349 distinct values between
+        ! 2.2198 and 1.5671 while "sd of log y at age 1" printed one value,
+        ! 0.90795, for all 347 blocks -- the value implied by the kkk the run
+        ! STARTED with. n23 showed the same thing at its own opening value,
+        ! 0.81342. The rule was integrating against a dispersion it could not
+        ! affect, which is why sigma_y never converged in any run.
+        !
+        ! The sentinel is negative so the first pass always builds.
+        real(8) :: kkk_sigma_scale_built=-1.d0
         ! ITS ADJUSTER. The share falls in sigma, so a model share above target
         ! means the economy is too equal and the scale has to rise, which is the
         ! same sign the sd_permanent_productivity step uses. The magnitude is set
@@ -33861,7 +33877,13 @@
         real(8) :: low_sum_1
         integer, intent(in) :: time_period
          
-        if (loop_count<1) then
+        ! REBUILD WHEN THE SCALE HAS MOVED, not only on the first loop. See
+        ! kkk_sigma_scale_built at its declaration for what the old condition
+        ! cost. The three other loop_count<1 blocks in this subroutine are two
+        ! diagnostic writes and the unconditional unemployment vector, none of
+        ! which reads kkk_sigma_scale, so they are left alone.
+        if ((loop_count<1) .OR. &
+            (abs(kkk_sigma_scale-kkk_sigma_scale_built)>10.d0**(-12))) then
 
             ! BOTH SDS CARRY kkk_sigma_scale. It is applied here rather than to
             ! the declarations so that the point file's sd_fixed_employment_newborn
@@ -33995,6 +34017,11 @@
                     sum(unconditional_employment_probability*employment_grid(1,:))
 
             end if
+
+            ! STAMP THE VALUE THIS BUILD USED. The next pass rebuilds only if
+            ! the scale has moved away from it, so a loop that leaves sigma_y
+            ! alone costs nothing and one that moves it is seen.
+            kkk_sigma_scale_built=kkk_sigma_scale
 
         end if
                                                                                     
