@@ -5533,7 +5533,30 @@
         ! WHAT IT COSTS: this is a parameter with 414 uses dimensioning most of
         ! the model's arrays. The model hash moves, all 305 points on the previous
         ! economy are orphaned, and the loop must SEED rather than iterate.
-        integer, parameter :: employment_base_size=7
+        ! THIRTEEN FROM 17 SEPTEMBER, on the author's *"Ok, let's do 13 and see
+        ! what happens"*. Seven put 121 per cent between adjacent nodes, which is
+        ! what the warning above about a two per cent step becoming a sixty-fold
+        ! jump in b was describing, and it made h_1 uncontrollable: the only
+        ! households poor enough to be homeless were the bottom node, so h_1 WAS
+        ! that node's mass and no price lever could move it.
+        !
+        ! The three numbers that come with the size, solved on a replica of
+        ! KKK_process that reproduces the live grid to every printed digit:
+        !
+        !   kkk_s_deviation_bottom  2.694536   bottom node holds 0.700 per cent
+        !   kkk_sigma_scale         1.921876   holds the bottom half's share of
+        !                                      productivity at 0.2013081, where
+        !                                      seven nodes left it
+        !   merge_bottom_nodes      2          unchanged: at thirteen nodes only
+        !                                      node 2 is still below the level
+        !                                      seven nodes was lifting
+        !
+        ! WHAT IT BUYS, at the same 0.700 per cent priced out: the step between
+        ! nodes falls 121 -> 46 per cent, the mass parked at
+        ! bottom_productivity_level falls 6.45 -> 1.67 per cent, and the bottom
+        ! node earns 0.0880 rather than 0.0507 against a food stamp floor that
+        ! does not move, which is the only handle emp_homeless has.
+        integer, parameter :: employment_base_size=13
         ! THE CHILD'S INHERITED PENALTY AS A STATE, on the author's instruction:
         ! *"you can basically have another state var: 1,2,3, where 1 is a child
         ! of a parent with SUD, 2 is for a child with parent who was homeless,
@@ -30305,7 +30328,7 @@
 
                 else
 
-                    ! THESE ARE A NINE NODE PROFILE AND THE GRID IS NOW SEVEN.
+                    ! THESE ARE A NINE NODE PROFILE AND THE GRID IS NOW THIRTEEN.
                     ! The levels come from the 2019 SCF at nine productivity bins
                     ! and were written as literal indices 1..9. Cutting the grid
                     ! to seven made every index above seven an out of bounds
@@ -30318,7 +30341,10 @@
                     ! the code is safe at any grid size and IDENTICAL at nine.
                     ! That is a guard and NOT a re-mapping: at seven nodes the
                     ! top three levels collapse onto the top node and the profile
-                    ! is no longer the SCF's. If uniform_newborn_endowment is
+                    ! is no longer the SCF's, and at THIRTEEN it clamps nothing --
+                    ! indices 1 to 9 are written and 10 to 13 keep the declaration
+                    ! initialiser, so the top four types would start with a ZERO
+                    ! endowment. If uniform_newborn_endowment is
                     ! ever switched back off, these nine numbers have to be
                     ! re-read onto the grid actually in use before the branch
                     ! means anything.
