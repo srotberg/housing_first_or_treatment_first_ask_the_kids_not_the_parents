@@ -1,3 +1,50 @@
+## OVERNIGHT ON n23, 17 SEPTEMBER 03:30
+
+The author, going to bed: *"Ok, I'll see where things are in the morning.
+I hope it converges"*. What is running, and what the morning report has to
+answer.
+
+### State at block 37
+
+b peaked at 0.25893 at block 29 and has fallen every block since, to
+0.25240, which is 183.6 per cent above target. SUD peaked one block later
+and is falling with it. The SUD-per-user ratio has sat in a 0.443 to 0.452
+band for thirty-five blocks against the author's 0.4135, so the onset is
+holding its bracket through the whole arc rather than drifting behind b.
+In n20 the same band sat at 0.465 to 0.470, four points worse.
+
+c_bar is converged at -0.8 per cent. h_2 has exactly one distinct value,
+0.142, across all thirty-seven blocks, which is the floor guard working.
+
+### What the descent has to do, and the honest odds
+
+n20's descent from its peak took about eighty blocks at roughly two and a
+quarter minutes each, three hours, and it OVERSHOT: it crossed 0.089 at
+block 114 and bottomed 13.3 per cent below before turning. The instrument
+did not drive that crossing and cannot prevent the next one -- across the
+whole of n20's descent `addiction_scalar_1` moved a tenth of a per cent
+while the b moment moved eighteen. So the expected outcome overnight is
+b arriving somewhere near target and ringing around it, not settling on it.
+
+What would make this run better than n20 rather than a repeat:
+
+- the ratio is four points closer and flat, so if b lands the onset lands
+  with it rather than needing its own descent afterwards;
+- c_bar and h_2 are no longer moving, which removes two sources of the
+  general-equilibrium feedback that drove both of n20's crossings;
+- `find_if_addicted` gets live blocks for the first time when b enters the
+  ten per cent gate. It has had about two live blocks in two hundred and
+  fifty across n20 and n23 combined, and its moment is the SUD share of
+  the homeless, 0.315 against 0.217. Whether it converges in the blocks
+  the gate gives it is genuinely unknown and is the open question of the
+  night.
+
+### What the morning report must not do
+
+Report a best-of across blocks. The point is whatever block the run is on,
+and if b is ringing then the honest answer is the ring and its amplitude,
+not the block nearest target.
+
 ## A WARM RESUME WITHOUT calibration_state.dat IS A COLD START WEARING ITS CLOTHES
 
 n21 was started from n20's 96-parameter resume seed and n20's three
