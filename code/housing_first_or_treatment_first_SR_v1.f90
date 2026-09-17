@@ -3606,6 +3606,23 @@
         ! would change two unrelated behaviours. The gate is removed here for
         ! this parameter alone.
         real(8) :: kkk_sigma_scale_adjuster=5.d0
+
+        ! ITS OWN STEP RATE, 17 September, in the same idiom as b, theta,
+        ! omega_c and kappa_phi_d. The author: *"I don't understand why it's so
+        ! hard to get it deterministically? It's the share of income in the
+        ! bottom 50% of the employed"*.
+        !
+        ! It was not hard, it was throttled. Every step in n29 was exactly
+        ! +0.100 per cent, which is max_rel_step_all=1e-3 binding on every
+        ! single block while an adjuster of 5.0 asked for far more. The moment
+        ! moved 0.02 per cent a block against a 22 per cent gap: 110 blocks,
+        ! five hours, for something the response itself can do quickly.
+        !
+        ! AND THE RESPONSE IS STRONG. When the grid rebuild first landed, sd of
+        ! log y fell 29 per cent, 0.908 to 0.640, and the moment moved 60 per
+        ! cent, 0.139 to 0.223. An elasticity near two. The parameter was never
+        ! the weak link.
+        real(8) :: kkk_sigma_scale_max_rel_step=0.02d0
         ! WHAT kkk_s_deviation_bottom BUYS, and why it is the KKK grid's version of
         ! y_grid_kappa. The bottom node's mass is the normal mass below
         ! -kkk_s_deviation_bottom + half a spacing, so widening the grid pushes
@@ -45035,7 +45052,11 @@
                 kkk_sigma_scale=max(min(kkk_sigma_scale+kkk_sigma_scale_adjuster*&
                     (model_bottom_half_earnings_share-bottom_half_earnings_share_data),&
                     10.d0),0.1d0)
-                kkk_sigma_scale=cap_step(kkk_sigma_scale,cap_old_1)
+                ! cap_step_rel, NOT cap_step: sigma_y gets its own two per cent
+                ! rather than the global tenth of one, for the reason recorded
+                ! at kkk_sigma_scale_max_rel_step.
+                kkk_sigma_scale=cap_step_rel(kkk_sigma_scale,cap_old_1,&
+                    kkk_sigma_scale_max_rel_step)
 
                 ! LIVE AGAIN, and retired only if BOTH sigma_y instruments are
                 ! off -- the freeze flag no longer decides it, because the two
