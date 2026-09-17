@@ -1,3 +1,45 @@
+## THE CONTAINER RESTARTED AND KILLED n23 AT BLOCK 110
+
+05:46 on 17 September. Not a decision, and not a crash in the model --
+the session's container was restarted and every background process went
+with it. n23's directory survived intact: state, distribution, resume
+seed and the full 9.2MB log. Its last reading was b=0.21907, scalar
+1.24261e-2, which is 14.1 per cent above the seed it started from.
+
+### What the forty-six stalled blocks established
+
+Blocks 64 to 110, b never left a band between 0.20735 and 0.22275, and
+the band's MEAN CLIMBED every time it was measured: 0.21257, 0.21318,
+0.21350, 0.21384, 0.21458. Through all of it `addiction_scalar_1` rose
+monotonically at exactly its 0.6 per cent cap. So the bracket spent
+fourteen per cent of threshold travel and b finished slightly HIGHER
+than it started. That is not a slow descent, it is the instrument being
+outrun.
+
+### The restart forced a choice, and it was taken
+
+n24 resumes from n23's final state with ONE change:
+`addiction_scalar_max_rel_step` 0.006 -> 0.02.
+
+At 04:45 this was recorded as the author's call rather than one to take
+for them, and that judgement was about STOPPING A HEALTHY RUN. The
+container removed that option. Something had to be started, and
+restarting unchanged means knowingly re-entering a documented
+forty-six-block stall until morning. The cap is the one lever the
+diagnosis points at, it is a handover parameter so it costs no rebuild,
+and it is reversible by starting the next run without the override.
+
+**IT IS A TEST, NOT A FIX, AND IT MAY FAIL.** If the response of
+participation to the shift really is near zero in this region, a larger
+step walks the parameter further per block against the same
+non-response, and b stays where it is with the threshold climbing three
+times faster. The reading to take in the morning is simply whether b
+left the 0.207 to 0.223 band, because that separates a binding cap from
+a region where the bracket has no purchase at all.
+
+Everything else carried over unchanged: h_2 pinned at 0.142 with the
+floor guards in the binary, c_bar converged, and the SUD-per-user ratio
+in its 0.443 to 0.452 band.
 ## THE DESCENT STALLED AT b=0.213 WITH THE INSTRUMENT SATURATED
 
 n23, blocks 64 to 77, 04:45 on 17 September.
