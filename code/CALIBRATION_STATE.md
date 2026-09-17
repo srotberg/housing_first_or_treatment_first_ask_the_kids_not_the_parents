@@ -1,3 +1,58 @@
+## A WARM RESUME WITHOUT calibration_state.dat IS A COLD START WEARING ITS CLOTHES
+
+n21 was started from n20's 96-parameter resume seed and n20's three
+distribution files, and it retraced n20's opening arc almost exactly:
+
+    n20 blocks 1-8   0.07436 0.11489 0.12948 0.14489 0.16084 0.16916 0.17049 0.17067
+    n21 blocks 1-8   0.05036 0.10045 0.11550 0.13445 0.14693 0.17268 0.18204 0.19564
+
+beta opened at 3.785 against n20's 3.653, the same transient. The
+instruments were not doing it: across those eight blocks
+`addiction_scalar_1` moved from 1.0893810e-2 to 1.0959172e-2, one step
+of 0.6 per cent, in the direction that LOWERS b, while b nearly
+quadrupled. n20 ran its arc to a peak of 0.2399 at block 35 and then
+spent eighty blocks coming down. n21 was about to buy that same four
+hours a second time.
+
+### The cause
+
+The run reads `calibration_state.dat` at startup, at 43085. Neither n20
+nor n21 was given one. The distribution files carry the distribution;
+they do not carry the rest of the state, and in particular they do not
+carry `previous_utility_cost_of_treatment`, `previous_treatment_take_up`,
+`previous_onset_at_mean`, `previous_sud_rate` or the `have_treatment_secant`
+and `have_lambda_secant` flags, which are what make a secant continue
+instead of restarting. Without them the loop re-derives its own footing
+and the economy walks the same path again.
+
+### The check that had to come first
+
+The state file is positional and it overwrites fifteen adjusters. Handing
+n20's file to a binary built with a DIFFERENT adjuster is exactly how
+`multiple_find_if_addicted` went 3.53 to 1.0 and `kappa_find_smi` 7.96 to
+1.0 in an earlier round. So before copying it in: the fifteen it carries
+are addiction_scalar, discount_factor, employment_multiplier,
+housing_status_grid_expander, labor_income_tax_rate, largest_house_size,
+penalty_child_addicted, penalty_child_homeless, relative_share_of_housing,
+relative_share_of_leisure, rho_intergenerational, separation_rate,
+size_homelessness, smallest_house_size and voucher_probability.
+**`max_food_cost_adjuster` is not among them**, so n20's state cannot
+silently undo the author's *"Allow cbar to move"*. The fifteen it does
+carry all match what n20 itself ran with, so none of them regresses.
+
+### n22
+
+Same seed, same distribution, plus `calibration_state.dat`. The handover
+is applied after the state read, so the 96 parameters still land exactly.
+
+### c_bar, separately, is fixed
+
+In n21's eight blocks the moment went +10.1, +3.4, -10.1, -13.0, -12.5,
+-10.2, -8.6, -6.3 per cent: it crossed its target and began converging
+instead of crawling 0.65 per cent a block. The adjuster at 1.0 does what
+it was meant to do, and that result carries into n22 independently of the
+resume question.
+
 ## THREE ROWS LEFT, AND c_bar CANNOT CLOSE IN THIS RUN
 
 The author, 17 September, on the block-116 table: *"All we need is find if
