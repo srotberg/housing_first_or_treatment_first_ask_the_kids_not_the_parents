@@ -3449,7 +3449,37 @@
         ! BACK IN THE CALIBRATION, on the author's instruction of 16 September:
         ! *"i think we also have to get gamma also into the calibration....it is
         ! not close enough"*. It was 17.8 per cent off when I held it.
-        real(8) :: relative_share_of_housing_adjuster=5*10.d0**(-2)
+        ! PINNED 17 September. The author: *"Then gamma should give, keep h2 on
+        ! the 30% target"*, then *"pin gamma to what it is now and accept being
+        ! off"*.
+        !
+        ! WHY IT HAD TO GIVE. h_2 and gamma were fighting over the same price.
+        ! h_2 hits the renters' 30 per cent burden by making the cheapest rental
+        ! CHEAP; gamma hits the aggregate housing share of expenditure by making
+        ! housing EXPENSIVE. Measured within n32, monotonically:
+        !
+        !     h_2 0.11850 -> gamma's moment 0.26501   (on the 0.268 target)
+        !     h_2 0.11269                    0.24511
+        !     h_2 0.10610                    0.23580
+        !     h_2 0.09989                    0.22630
+        !     h_2 0.09404                    0.21523
+        !     h_2 0.08854                    0.20443
+        !
+        ! h_2 fell 25 per cent and gamma's moment fell from ON target to 24 per
+        ! cent below it. That is joint identification, not slow convergence, and
+        ! the author chose which one gives.
+        !
+        ! THE INCOME DENOMINATOR IS NOT AN ESCAPE. The author asked whether
+        ! gamma could target housing over income at 0.202 instead. The model
+        ! reads 0.29472 there, 46 per cent high against gamma's 25, and it would
+        ! point gamma the same way as h_2 rather than against it. Also that
+        ! statistic is model_avg_housing_spending_renters, a MEAN OF RATIOS over
+        ! renters -- the very object that caught gamma on 16 September -- not the
+        ! total-to-total aggregate the 20 per cent describes.
+        !
+        ! Safe to pin: damp_on_flip returns early at adj<=0, and this is one of
+        ! the four parameters its comment names as deliberately fixed.
+        real(8) :: relative_share_of_housing_adjuster=0.d0
 
         ! ITS OWN CAP. gamma's update was on the GLOBAL tenth of a per cent, the
         ! same thing that made h_1 immobile: at 17.8 per cent off it needs about
