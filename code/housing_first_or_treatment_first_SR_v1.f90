@@ -4945,7 +4945,17 @@
         ! pi_v ends well, -0.1 and -1.0, but OVERSHOOTS to about 0.29 mid-run
         ! before settling, so pinning it anywhere but an end-of-run value would
         ! freeze the wrong number; left live for that reason.
-        real(8) :: discount_factor_adjuster=0.d0
+        ! RELEASED 17 September, on the author's *"Beta seems to be too high, I
+        ! think we need to open it again"* and *"We need to get beta back to 3"*.
+        ! Restored to the 5*10^-3 it carried before it was pinned, taken from git
+        ! rather than chosen, so the step size is the one it was calibrated with.
+        !
+        ! WHAT PINNING IT COST. Wealth over output read 3.21 when beta was pinned
+        ! and 4.01 after the housing ladder went to 1/3/5, because a dearer ladder
+        ! moves the wealth side and beta could not answer. A pinned parameter is
+        ! only safe while the economy around it is the one it was pinned in, and
+        ! this economy is not.
+        real(8) :: discount_factor_adjuster=5*10.d0**(-3)
         real(8) :: distance_discount_factor
         ! A RATIO OF THREE CANNOT BE HIT TO ONE PART IN THIRTY THOUSAND. The old
         ! tolerance of 1e-4 was written against a mortgage share between zero and
