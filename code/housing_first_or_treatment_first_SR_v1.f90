@@ -5987,7 +5987,32 @@
         ! RAISES y_u, the opposite of what is wanted. It may well not survive --
         ! the drug block is three times the size here -- but read the first few
         ! gated steps before trusting the direction.
-        real(8) :: kappa_phi_d_level_adjuster=2.d0
+        ! PINNED 17 September, on the author's *"Should we move kappa_phid to
+        ! about 3.5? And pin it and see what happens?"*, with the level set to
+        ! 3.5 from the handover.
+        !
+        ! IT WAS ALREADY PINNED, BY ACCIDENT. The b gate has been shut for
+        ! nearly the whole session -- every block of n47 printed "KAPPA GATE
+        ! SHUT" -- so 2.9428 was not a value the bracket chose, it was a value
+        ! the gate froze. Pinning deliberately at a level the author has a view
+        ! on is strictly better than pinning at an accident.
+        !
+        ! WHY IT IS A TEST AND NOT A CALIBRATION. The direction is unknown. The
+        ! bracket above says y_u is non-monotone in kappa with a minimum near
+        ! 2.4, which would mean raising kappa from 2.9428 RAISES y_u -- but that
+        ! was measured at theta 0.108 with y_u under 0.6 throughout, and this
+        ! economy runs theta 0.19 with y_u at 1.10, so neither its levels nor
+        ! its shape can be assumed to carry.
+        !
+        ! HOW TO READ IT, and this matters more than the result. n47 held kappa
+        ! at 2.9428 for ten blocks while b rose 0.0280 -> 0.0639 on its own, and
+        ! y_u fell 1.1753 -> 1.1010 and LEVELLED there. So y_u depends on b and
+        ! the comparison must be taken at MATCHED b, not at a matched block
+        ! number. The reference is y_u = 1.1010 at b = 0.0639, kappa 2.9428. If
+        ! y_u at 3.5 comes in below that at the same b, the minimum is below
+        ! 2.9428 and kappa should keep rising; if above, the minimum is between
+        ! and the next point to take is 2.4.
+        real(8) :: kappa_phi_d_level_adjuster=0.d0
         ! ITS OWN RATE, the way theta and omega_c have theirs.
         ! HALVED AGAIN, on the author's instruction of 13 September: *"move
         ! omegac and death rate from drug at maybe 0.05% per iteration, but
