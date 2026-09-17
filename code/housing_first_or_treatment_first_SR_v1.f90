@@ -3605,7 +3605,29 @@
         ! max_move_per_loop (line 6059) and a merge at line 35404; flipping it
         ! would change two unrelated behaviours. The gate is removed here for
         ! this parameter alone.
-        real(8) :: kkk_sigma_scale_adjuster=5.d0
+        ! PINNED 17 September. The author: *"I suggest to just pin sigma_y
+        ! since its close enough"*.
+        !
+        ! kkk_sigma_scale is set to the value the closed form gives, 1.9506,
+        ! and held there. For a lognormal the bottom-half income share is
+        ! Phi(-sigma), sigma is exactly linear in this scale, and the model
+        ! sits a stable 0.041 above the closed form -- 0.043 at sd 0.908 and
+        ! 0.038 at sd 0.647. Inverting for the 0.172 target gives sigma 0.797
+        ! and this scale. Block 1 of n31 read 0.17049, nine tenths of a per
+        ! cent off, from arithmetic rather than search.
+        !
+        ! WHY PIN RATHER THAN LEAVE IT LIVE. With its own two per cent step the
+        ! rule walked AWAY from that value: kkk went 1.9506, 1.9896, 2.0294,
+        ! 2.0700, 2.1114 over four blocks and the share went 0.17049, 0.17013,
+        ! 0.16509, 0.16080 -- from 0.9 per cent off to 6.5. A closed form got
+        ! there in one block and the instrument spent four undoing it.
+        !
+        ! The pin is safe: this adjuster does not pass through damp_on_flip and
+        ! has no inline floor, so zero times the gap is zero and nothing
+        ! resurrects it. The distance at 45067 already merges to zero when both
+        ! sigma adjusters are off, so a pinned parameter will not hold the loop
+        ! open on a target it is not chasing.
+        real(8) :: kkk_sigma_scale_adjuster=0.d0
 
         ! ITS OWN STEP RATE, 17 September, in the same idiom as b, theta,
         ! omega_c and kappa_phi_d. The author: *"I don't understand why it's so
