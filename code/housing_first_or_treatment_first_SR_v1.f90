@@ -687,7 +687,18 @@
         ! ceiling of its own, declared just below -- read the number there rather
         ! than here, because quoting it in two places is how the two came apart.
         ! PINNED 17 September with the set of six; see discount_factor_adjuster.
-        real(8) :: utility_cost_of_treatment_adjuster=0.d0
+        ! RELEASED 18 September, on the author's *"Tauu seems so be too high.. We
+        ! need to unpin it I think"* and *"Ok, do all three and restart"*.
+        ! Restored to the 0.05 it carried before it was pinned, taken from git.
+        !
+        ! RELEASED WITH b FIXED IN THE SAME RUN, DELIBERATELY. tau_u is a share
+        ! OF drug users, so it is a mirror of b rather than a statement about
+        ! treatment: at b = 0.081 it read 0.3054, twenty-five per cent ABOVE its
+        ! 0.245 target, and by b = 0.184 it had collapsed to 0.0371. Releasing it
+        ! while b ran at twice target would have had the rule slash the utility
+        ! cost to chase a take-up rate that was low only because the denominator
+        ! was too big, and overshoot when b came back.
+        real(8) :: utility_cost_of_treatment_adjuster=0.05
         ! THIS PARAMETER'S OWN STEP CAP, through cap_step_rel at the one call
         ! site. It replaces max_rel_step_all for utility_cost_of_treatment ALONE;
         ! every other parameter still goes through cap_step and is unchanged. It
