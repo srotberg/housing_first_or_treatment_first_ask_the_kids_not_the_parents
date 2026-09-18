@@ -1,3 +1,60 @@
+## IN FLIGHT: THE TWO-CLASS RUN, THEN delta_d, THEN omega_c. THE AUTHOR'S ORDER, 18 September
+
+*"first run the model with omega_c=0 and two classes, and find what delta_d is
+to maximize the odds ratio unless it can hit 2. then we will fix delta_d and
+scan omega_c to get the 18 per cent reduction in drug use relative to
+omega_c=0"*, confirmed.
+
+THE ORDER IS NOT ARBITRARY. The 18 per cent reduction is measured RELATIVE to
+the omega_c = 0 economy, so delta_d has to be fixed before that baseline means
+anything; a delta_d moving during the omega_c scan would move the thing being
+measured against.
+
+    1. freeze the current calibration        waiting on four settled blocks
+    2. one edit, one rebuild                 child_penalty_classes 1 -> 2,
+                                             scan_hi 0.4 -> 0.5, stale comments
+    3. run at omega_c = 0, two classes       the penalty scan finds delta_d;
+                                             report the curve above 0.5 too,
+                                             calibration stays near 0.4
+    4. fix delta_d, scan omega_c             18 per cent against that baseline
+    5. final pass at 1e-8                    see the next entry
+
+## delta_d CANNOT REACH 2 AT ONE CLASS, BY CONSTRUCTION, AND THE FILE SAYS SO
+
+At child_penalty_classes = 1 the penalty goes into the BIRTH SHIFT and erodes
+at persistence_employment_surviving = 0.9, a half-life of about seven periods,
+so it has largely decayed before the child is at risk. That is why the scan
+over [0, 0.4] returns a straight line from 1.00995 to 1.06042 against a target
+of 2.0 and reports "target not reachable". At two classes class_1 = d_index and
+the child is born into a block whose nodes are already scaled, so the penalty
+is PERMANENT. The classes are the precondition for delta_d, not a refinement.
+
+AND THE SCAN BOUNDS CONTRADICT THEIR OWN COMMENTS. The code says
+scan_lo=0.0, scan_hi=0.4; one comment above says "scan_hi RAISED TO THE CAP"
+and another says the scan searches "[scan_lo, scan_hi] = [0, 0.99]". Going to
+0.5 on the author's instruction, and the comments get corrected with it.
+
+## THE DISTRIBUTION IS CONVERGED TO 6e-4, NOT THE DECLARED 1e-8, AND THE FINAL POINT NEEDS A TIGHT PASS
+
+The author asked whether more distribution convergence is needed at the end.
+It is. stopping_rule_stationary_distribution is DECLARED 1e-8 and then
+overwritten to 6*10^-4 at line 45913 whenever include_addiction = 1, which is
+always. The declared value never reaches the iteration. The file states the
+position plainly: "there is no speed left in this number. The 655 sweeps a loop
+takes are what reaching 2e-4 costs, not what reaching 1e-8 would cost."
+
+So every moment read all day, including the settled ones, comes off a
+distribution converged to 6e-4 while the moments themselves are shares read to
+three and four decimals. Some of the block-to-block jitter treated as economics
+is plausibly this.
+
+THE CLOSE IS diagnostic_simulation = 1, which takes parameters in through
+PARAM_HANDOVER.txt, solves, aggregates and prints every moment exactly as a
+calibration loop would, and leaves them alone. Run it from the frozen seed at
+1e-8 and report BOTH tables -- the 6e-4 one the calibration was fitted against
+and the 1e-8 one -- so any moment that moves between them is visible rather
+than assumed away.
+
 ## CONVERGED. n71 AT BLOCK 85 IS THE POINT, AND IT SUPERSEDES THE BLOCK-12 SNAPSHOT BELOW
 
 18 September, 13:10. 85 blocks, kappa_phi_d_level pinned at 4 throughout.
