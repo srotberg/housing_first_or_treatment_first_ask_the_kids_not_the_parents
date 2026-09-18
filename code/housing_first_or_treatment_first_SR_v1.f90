@@ -1442,7 +1442,23 @@
         ! brackets 2.0 it interpolates the crossing and SETS delta_d to it; if it
         ! does not, it now returns the argmax rather than leaving delta_d
         ! wherever it happened to be, which is what stranded it at 0.99 before.
-        integer, parameter :: calibrate_penalty_child_addicted=1
+        ! PINNED OFF, 18 September, so delta_d can be iterated to a FIXED POINT
+        ! by hand. The author: *"you have to continue to iterate on delta_d
+        ! until it is a fixed point and the productivity grid is consistent
+        ! with it"*.
+        !
+        ! WHY THE IN-LOOP SCAN CANNOT DO THIS. delta_d scales the class-1 block
+        ! of employment_grid -- nodes 14 to 26 are the class-0 nodes times
+        ! (1-delta_d) -- so changing it MOVES THE GRID, not just the weights on
+        ! it. The scan re-picks delta_d every block, which re-scales the grid
+        ! before the distribution has settled on the previous one, so nothing it
+        ! measures corresponds to any grid. That is why it kept collapsing to
+        ! zero rather than converging.
+        !
+        ! The cycle has to be closed one turn at a time: fix delta_d, let the
+        ! grid and the distribution settle on it, read the ratio, then move
+        ! delta_d and repeat until what goes in equals what comes out.
+        integer, parameter :: calibrate_penalty_child_addicted=0
         integer :: child_node_index_1
         ! DELTA_H, AND IT IS CALIBRATED, WHICH IT SAYS IT IS AND WAS NOT.
         !
