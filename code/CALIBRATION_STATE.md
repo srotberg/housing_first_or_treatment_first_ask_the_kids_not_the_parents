@@ -1,3 +1,84 @@
+## delta_d IS BEING ITERATED BY HAND TO A FIXED POINT. THE IN-LOOP SCAN CANNOT DO IT
+
+The author, 18 September: *"what you can do is choose delta_d, and iterate until
+it converges"*, *"because delta_d determines the productivity grid"*, *"so you
+have to continue to iterate on delta_d until it is a fixed point and the
+productivity grid is consistent with it"*.
+
+WHY THE SCAN FAILED, which is the substance of this entry. delta_d does not
+weight the grid, it SCALES it: at child_penalty_classes = 2 the class-1 nodes
+14 to 26 are the class-0 nodes times child_penalty_factor(1) =
+(1-delta_d)**include_child_penalty. Re-picking delta_d inside the calibration
+block therefore re-scales the productivity grid every block, before the
+distribution has settled on the previous one, so no ratio the scan reads
+corresponds to any grid the model actually ran to convergence on. That is why
+n73's scan reported ratio = 0.0 at every trial penalty and collapsed delta_d
+back to zero -- not a bracketing failure, a measurement of nothing.
+
+`calibrate_penalty_child_addicted` is now 0 (commit eb7b03b6). The cycle is
+closed one turn at a time instead: fix delta_d, let the grid AND the
+distribution settle on it, read the odds ratio, move delta_d, repeat until what
+goes in equals what comes out.
+
+THE FIRST REAL ODDS RATIO, from n73 at delta_d = 0, two classes, omega_c = 0:
+
+    child SUD | parent ever SUD        7.4027 per cent
+    child SUD | parent never SUD       4.5639 per cent
+    rate ratio                         1.6220
+    odds ratio                         1.6717
+
+That is PERSISTENCE ALONE -- rho_intergenerational = 0.50 carrying the parent's
+lower productivity into the child's draw -- with no inherited penalty at all.
+The author asked how that is possible and it is the right question to have
+asked: the answer is that the child of a SUD parent is born poorer in
+expectation, and the model's implied elasticity of SUD risk to log productivity
+is 0.73, so a productivity gap alone buys most of the way to 2.
+
+THE BRACKET
+
+    delta_d = 0.00   odds ratio 1.6717   n73 (class still filling; provisional)
+    delta_d = 0.25   running as n75
+    target            2.0000
+
+0.25 is not a guess dressed up: closing 1.62 to 2.00 needs 0.289 in logs at an
+elasticity of 0.73, so (1-delta_d) = e^-0.289 = 0.749. It also lands on the
+declaration's own 0.24, from Nilsson's Swedish in-utero estimate.
+
+WHAT TO READ, IN ORDER, and the order is the lesson from n73:
+  1. DIAG child-class mass -- the class-1 share must be positive and STOP
+     GROWING. n73's 1.622 was read off a half-filled class and had to be
+     withdrawn when the author asked how I knew it.
+  2. DIAG delta_d rates -- exposed and unexposed, both plausible in levels.
+  3. the implied ratio, and only once 1 and 2 are both settled.
+
+COST. Two classes is 26 productivity nodes against 13, and a block is 17 to 20
+minutes, not the 5.3 that 13 nodes cost -- about 3.5 times, not 2, because the
+grid enters the solve more than linearly. Budget hours per delta_d trial, not
+the one hour I projected four times over.
+
+## THE FROZEN CALIBRATION delta_d IS BEING SEARCHED AGAINST, n72, 11 blocks
+
+Every parameter below is HELD for the whole delta_d search and the omega_c scan
+after it. This is the point the author accepted.
+
+    b            0.10376  vs 0.10502     1.2%      p_m       0.04866 vs 0.04833  0.7%
+    beta         2.9589   vs 3           1.4%      mu_H      1.4928  vs 1.4732   1.3%
+    c_bar        0.0041243 vs 0.0042     1.8%      theta     0.15592 vs 0.16     2.5%
+    kappa_find_smi 0.25601 vs 0.25       2.4%      find_if_addicted 0.22253 vs 0.217  2.5%
+    newborn_endow 0.25174 vs 0.26        3.2%      gamma     0.25903 vs 0.268    3.3%
+    aleph        77.087   vs 80          3.6%      pi_v      0.27815 vs 0.266    4.6%
+    onset_base   0.43366  vs 0.41348     4.9%      sigma_y   0.16233 vs 0.172    5.6%
+    tau_ell      0.21117  vs 0.224       5.7%      tau_u     0.25912 vs 0.245    5.8%
+    kappa_phi_d  0.66102  vs 0.74       10.7%      pi_eu     0.059865 vs 0.049  22.2%
+    h2           0.58724  vs 0.406      44.6%      h1 rate   0.0066157 inside band [0.004,0.01]
+    emp_homeless 0.19788  vs 0.46       57.0%      NO INSTRUMENT, follows h_1
+
+The two that do not close are known and were accepted: emp_homeless has no
+instrument of its own -- three separate levers were measured against it and
+none moved it -- and h2's moment is the cost burden, which the housing ladder
+pins. kappa_phi_d_level is pinned at 4 on the author's instruction and its gap
+is a consequence of that pin, not a failure to search.
+
 ## IN FLIGHT: THE TWO-CLASS RUN, THEN delta_d, THEN omega_c. THE AUTHOR'S ORDER, 18 September
 
 *"first run the model with omega_c=0 and two classes, and find what delta_d is
