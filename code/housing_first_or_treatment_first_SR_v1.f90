@@ -2670,12 +2670,23 @@
         ! stop: set diagnostic_simulation to 1, hand the parameters in through
         ! PARAM_HANDOVER.txt, and the run solves, aggregates and prints every
         ! moment exactly as a calibration loop would, then leaves them alone.
-        ! STAYS 0 FOR THE TWO-CLASS CALIBRATION. It was briefly set to 1 for a
-        ! one-class fixed-parameter pass on 18 September; the author redirected
-        ! to the two-class model before that ran, and an exact equilibrium for a
-        ! model about to change is not worth solving. It goes to 1 after delta_d
-        ! lands, which is the "converge on the equilibrium" step.
-        integer, parameter :: diagnostic_simulation=0
+        ! SET TO 1 TO MEASURE delta_d ALONE, 18 September, on the author's
+        ! instruction: *"run the two class model with the parameters we found
+        ! before..... And then just find delta d"*.
+        !
+        ! WHY THIS IS THE RIGHT TOOL AND THE FULL LOOP IS NOT. The penalty scan
+        ! does not need the CALIBRATION to converge, it needs the DISTRIBUTION
+        ! to converge -- it reports the child disorder ratio at 21 candidate
+        ! penalties given whatever distribution it is handed. Fixed-parameter
+        ! mode converges that distribution properly in ONE pass, at 1e-8 rather
+        ! than the loop's 6e-4, with every parameter held at the values handed
+        ! in. The scan is gated only on calibrate_penalty_child_addicted and so
+        ! still runs.
+        !
+        ! The full two-class loop was doing something else: re-fitting twenty
+        ! instruments jointly over 15-20 blocks at 17-20 minutes each, which is
+        ! five to six hours to answer a question that one pass answers.
+        integer, parameter :: diagnostic_simulation=1
 
         ! FREEZE THE INTERNALS THAT ARE ALREADY FITTED, on the author's
         ! instruction to stop moving what does not need to move and focus on the
