@@ -1,3 +1,75 @@
+## OMEGA_C AND delta_d ARE BEING SOLVED JOINTLY. THE AUTHOR'S INSTRUCTION, 18 September
+
+*"So scan omegac and pick deltad to match the odds ratio and the reduction in
+drug use"*, confirming *"Use 0.166 and maybe now calibrate it in conjunction
+with omegac?"*.
+
+TWO TARGETS, TWO INSTRUMENTS, AND THE MODEL OWNS ONE OF THEM:
+
+    odds ratio, child SUD given parent ever SUD     2.0      <- delta_d, by hand
+    child use gap, omega_c=0 against benchmark      0.18343  <- omega_c, in-loop
+
+THE 18 PER CENT WAS ALREADY A TARGET IN THE FORTRAN and did not need scanning.
+child_use_gap_data = 1/0.845 - 1 = 0.18343, from NSDUH 2024's reweighted parent
+to non-parent use ratio. The moment is
+drug_users_without_child/model_total_drug_users - 1, and the branch at 45782
+computes it by solving the omega_c = 0 economy INSIDE the same run.
+
+THAT IS THE REASON NOT TO SCAN BY HAND. A scan sets omega_c in run A and
+compares it with omega_c = 0 in run B. Those two economies converge along
+different paths, and the difference between them contains the path as well as
+the child term. The in-run counterfactual shares a distribution and a
+convergence path with its own baseline, so the difference is the child term and
+nothing else. The code already carries this as a known fault against omega's
+moment; there was no reason to reintroduce it.
+
+TWO SWITCHES OPENED IT, commit efc16550, and nothing else in the model moved:
+
+    omega_c_is_pinned         1 -> 0    gates the counterfactual AND the update
+    weight_on_child_adjuster  0 -> 0.5  2e-3 was sized for an overnight loop; at
+                                        two solves a block it would move omega_c
+                                        under a fifth of a per cent a block
+
+omega_max_rel_step is what actually bounds the step, handed over at 0.15. The
+adjuster only has to be large enough that the cap binds rather than the gain.
+
+WHY THE ITERATION SHOULD BE SHORT. The system is nearly triangular: delta_d
+moves the odds ratio hard and drug use barely, omega_c moves drug use hard and
+the odds ratio only through composition. So the outer loop is delta_d and the
+inner loop is the model's own omega_c bracket, and two or three outer passes
+should do it. The cross-term is real, though, and it has a sign: omega_c raises
+the cost of using to a parent, so it cuts use most among exactly the parents
+whose children are the exposed arm. Expect the odds ratio to come DOWN a little
+when omega_c lands, which means delta_d ends at or above 0.166 rather than
+below.
+
+n76 IS THE FIRST OUTER PASS: delta_d 0.166 held, omega_c seeded at 0.10 and
+climbing to the gap. Read, in order, the class-1 share settling, then the odds
+ratio against 2.0, then the child use gap against 0.18343, then what the pair
+costs the frozen moments.
+
+## THE delta_d BRACKET IS MEASURED AT BOTH ENDS, AND 0.166 IS THE INTERPOLATION
+
+    delta_d 0.00    odds ratio 1.6717264546   n73, measured
+    delta_d 0.166   odds ratio 2.0            TARGET, interpolated in logs
+    delta_d 0.25    odds ratio 2.2220285534   n75, measured
+
+Both endpoints are the MODEL'S OWN PRINT, "UNTARGETED delta_d child SUD odds
+ratio", not a transform applied to the rates afterwards; the hand computation
+from the printed rates agreed to every digit, which is what makes the two
+readings comparable.
+
+THE CONTROL HELD. Between those two runs the unexposed arm moved 4.5639 to
+4.5652 per cent -- thirteen ten-thousandths of a point -- while the exposed arm
+went 7.4027 to 9.6080. delta_d scales only the class-1 nodes, so children of
+never-SUD parents should not move, and they did not. The whole response is in
+the arm the parameter acts on.
+
+BOTH READINGS ARE AT BLOCK 2, with the class-1 share at 1.49 per cent and still
+filling, so the LEVELS are not settled even though the COMPARISON is
+matched-stage. 0.166 is therefore a starting point for the joint solve, not an
+answer. It is below Nilsson's 0.24, which the author had already called too much.
+
 ## delta_d IS BEING ITERATED BY HAND TO A FIXED POINT. THE IN-LOOP SCAN CANNOT DO IT
 
 The author, 18 September: *"what you can do is choose delta_d, and iterate until
