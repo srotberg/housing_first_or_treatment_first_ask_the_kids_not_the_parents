@@ -44971,6 +44971,23 @@
                         internalise_homelessness_cost, "->", nint(handover_value)
                     internalise_homelessness_cost=max(min(nint(handover_value),1),0)
 
+                ! PIN OR RELEASE OMEGA_C WITHOUT A REBUILD. This flag gates
+                ! BOTH the omega_c = 0 counterfactual and the bracket's update,
+                ! so at 1 omega_c stays exactly where the handover put it.
+                !
+                ! Needed for the author's own sequence, 18 September: *"run the
+                ! whole model with the pinned parameters and just choose deltad
+                ! to match the odds ratio. That would be then pinned when we
+                ! look for omegac"*. The delta_d stage runs at omega_c = 0, and
+                ! at omega_c = 0 the measured gap is zero by construction, so a
+                ! live bracket reads a gap of 0 against a target of 0.18343 and
+                ! steps omega_c straight off zero. Pinning is the only way to
+                ! hold that stage at the economy it is supposed to measure.
+                case ("omega_c_is_pinned")
+                    write(*,*) "HANDOVER omega_c_is_pinned:",&
+                        omega_c_is_pinned, "->", nint(handover_value)
+                    omega_c_is_pinned=max(min(nint(handover_value),1),0)
+
                 case ("freeze_all_but_omega_c")
                     write(*,*) "HANDOVER freeze_all_but_omega_c:",&
                         freeze_all_but_omega_c, "->", nint(handover_value)
