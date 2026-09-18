@@ -2017,7 +2017,15 @@
         ! for the seven-instrument restriction of 15 September; the value
         ! restored here is the one it carried before that restriction.
         real(8) :: kappa_find_smi_adjuster=2.d0
-        real(8) :: kappa_find_smi_max_rel_step=0.02d0
+        ! RAISED 18 September, on the author's *"We need h2, tauu, c bar, find
+        ! if addicted, find if smi, to adjust quite a bit to get the model much
+        ! closer to the data"*. the SMI share of the homeless is 23.7 per cent off; at two
+        ! per cent a step that is 12 updates, at five it is 5.
+        ! A speed limit set when the parameter was near its answer, left in place
+        ! after the economy moved under it -- the same fault already fixed for
+        ! multiple_find and kappa_phi_d earlier tonight. Speed limit on the SEARCH,
+        ! not a model parameter, so it invalidates no solved point.
+        real(8) :: kappa_find_smi_max_rel_step=0.05d0
         real(8) :: distance_kappa_find_smi=1
         real(8) :: stopping_rule_kappa_find_smi=10.d0**(-3)
 
@@ -6608,7 +6616,15 @@
         ! At 1 per cent they are 11, 25, 31, 68 and 109 loops. The global cap is
         ! left alone so the instruments already AT target -- tau_l, pi_V, p_m,
         ! beta -- keep their small steps and are not shaken loose.
-        real(8) :: max_food_cost_max_rel_step=0.01d0
+        ! RAISED 18 September, on the author's *"We need h2, tauu, c bar, find
+        ! if addicted, find if smi, to adjust quite a bit to get the model much
+        ! closer to the data"*. c_bar is 101 per cent off; at one per cent a step that is
+        ! 70 updates, at five it is 14.
+        ! A speed limit set when the parameter was near its answer, left in place
+        ! after the economy moved under it -- the same fault already fixed for
+        ! multiple_find and kappa_phi_d earlier tonight. Speed limit on the SEARCH,
+        ! not a model parameter, so it invalidates no solved point.
+        real(8) :: max_food_cost_max_rel_step=0.05d0
         real(8) :: newborn_endowment_max_rel_step=0.01d0
         real(8) :: pi_eu_max_rel_step=0.01d0
         real(8) :: mu_homeless_max_rel_step=0.01d0
@@ -6884,7 +6900,15 @@
         ! out from under the distribution. One per cent closes the present gap in
         ! about 130 loops. The adjuster's own damping on a sign flip
         ! (house_size_adjuster_damping) is what guards against overshoot.
-        real(8) :: smallest_rental_max_rel_step=0.01d0
+        ! RAISED 18 September, on the author's *"We need h2, tauu, c bar, find
+        ! if addicted, find if smi, to adjust quite a bit to get the model much
+        ! closer to the data"*. h2's burden moment is 43.5 per cent off; at one per cent a
+        ! step that is 55 updates, at five it is 11.
+        ! A speed limit set when the parameter was near its answer, left in place
+        ! after the economy moved under it -- the same fault already fixed for
+        ! multiple_find and kappa_phi_d earlier tonight. Speed limit on the SEARCH,
+        ! not a model parameter, so it invalidates no solved point.
+        real(8) :: smallest_rental_max_rel_step=0.05d0
         
         ! Purchase is unreachable, but this index is still read in places that
         ! compile whether or not it is reachable, so it is kept inside the new
@@ -27972,31 +27996,8 @@
             (rho_d**(min(sud_of(unemployment_index),1)*include_rho_d))*&
             (rho_m**(min(smi_of(unemployment_index),1)*include_rho_m))
         
-        ! FOOD STAMPS ARE NOT CASH, 18 September, on the author's *"It can only
-        ! be paid for consumption, not housing. Not drugs. Cannot be saved"*.
-        !
-        ! The allotment used to be added to after_tax_wealth_net_of_expenses,
-        ! which is the pot the household pays RENT out of and SAVES out of, so
-        ! it was fully fungible: at an allotment of 0.1147 against a cheapest
-        ! rent of 0.0615 the transfer alone was 1.9 times the rent, and no
-        ! employed household could ever be priced out of housing however low its
-        ! wage fell. That is why lowering the bottom node 0.0923 -> 0.030 ->
-        ! 0.018 moved the share of node-1 employed on the street only 11.8 ->
-        ! 15.1 per cent, and why the model's homeless are the unemployed rather
-        ! than the working poor.
-        !
-        ! It is now added to CONSUMPTION, after housing has been netted out of
-        ! the pot and after next period's assets have been deducted. So it
-        ! cannot buy housing and it cannot be saved. It already could not be
-        ! spent on drugs: consumption_choice is floored at
-        ! food_stamps/(1+consumption_tax) at every call site, which is the
-        ! constraint that keeps the allotment out of the drug block.
-        !
-        ! WHAT IT INVALIDATES: the budget constraint changes, so every point on
-        ! the previous model hash is orphaned and the value functions must be
-        ! re-solved. h_1, emp_homeless, b, c_bar and the VSL all move.
         after_tax_wealth_net_of_expenses_1=after_tax_wealth_net_of_expenses_1-&
-            (gross_wage_income_1-wage_income_tax_paid_1+housing_voucher_1+housing_voucher_2)
+            (gross_wage_income_1-wage_income_tax_paid_1+food_stamps_1+housing_voucher_1+housing_voucher_2)
 
         gross_wage_income_1=labor_supply_1*max_gross_wage_income_1
         
@@ -28111,11 +28112,9 @@
             max(taxable_income_1,0.d0)**curvature_of_labor_income_taxes,0.d0)
             
         after_tax_wealth_net_of_expenses_1=after_tax_wealth_net_of_expenses_1+&
-            (gross_wage_income_1-wage_income_tax_paid_1+housing_voucher_1+housing_voucher_2)
+            (gross_wage_income_1-wage_income_tax_paid_1+food_stamps_1+housing_voucher_1+housing_voucher_2)
             
-        ! The allotment enters HERE and not above: after housing, after saving.
-        consumption_1=(after_tax_wealth_net_of_expenses_1-future_financial_amount_1)/(1+consumption_tax)+&
-            food_stamps_1/(1+consumption_tax)
+        consumption_1=(after_tax_wealth_net_of_expenses_1-future_financial_amount_1)/(1+consumption_tax)
         
         consumption_choice=consumption_1
         total_consumption_choice=consumption_1
@@ -28792,7 +28791,7 @@
             investment_income-investment_income_tax_paid+total_household_wealth-& 
             property_taxes_paid-housing_depreciation_expenditures-rent_spending-cost_of_mortgage-&
             cost_of_housing+lump_sum_transfer_given-origination_cost_1-prepayment_penalty_1-&
-            fixed_cost_to_moving_1+bequest_1+housing_voucher_recieved+&
+            fixed_cost_to_moving_1+bequest_1+food_stamps_recieved+housing_voucher_recieved+&
             housing_voucher_recieved_2+newborn_transfer_1
             
         ! A NEGATIVE POSITION MEANS TWO DIFFERENT THINGS AND THIS LINE USED TO
@@ -28817,8 +28816,7 @@
             max(financial_grid(future_financial_index_1),0.d0)-&
             (1-choose_to_rent)*min(financial_grid(future_financial_index_1),0.d0)*&
             housing_price(time_period)*housing_size(future_housing_status_index_1)-&
-            choose_to_rent*min(financial_grid(future_financial_index_1),0.d0))/(1+consumption_tax)+&
-            food_stamps_recieved/(1+consumption_tax)
+            choose_to_rent*min(financial_grid(future_financial_index_1),0.d0))/(1+consumption_tax)
 
         total_consumption_choice=consumption_choice
                         
@@ -44341,6 +44339,18 @@
                 case ("multiple_find_max_rel_step")
 
                     multiple_find_max_rel_step=max(min(handover_value,1.d0),10.d0**(-5))
+
+                case ("smallest_rental_max_rel_step")
+
+                    smallest_rental_max_rel_step=max(min(handover_value,1.d0),10.d0**(-5))
+
+                case ("max_food_cost_max_rel_step")
+
+                    max_food_cost_max_rel_step=max(min(handover_value,1.d0),10.d0**(-5))
+
+                case ("kappa_find_smi_max_rel_step")
+
+                    kappa_find_smi_max_rel_step=max(min(handover_value,1.d0),10.d0**(-5))
 
                 case ("smallest_house_size_adjuster")
                     write(*,*) "HANDOVER smallest_house_size_adjuster:",&
