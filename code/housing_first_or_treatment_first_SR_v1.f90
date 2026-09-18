@@ -698,7 +698,15 @@
         ! while b ran at twice target would have had the rule slash the utility
         ! cost to chase a take-up rate that was low only because the denominator
         ! was too big, and overshoot when b came back.
-        real(8) :: utility_cost_of_treatment_adjuster=0.05
+        ! GAIN RAISED 18 September, on the author's *"we need to move those
+        ! parameters I wrote above much faster so they converge in 15 iterations"*.
+        ! Realised step was 0.29 per cent with tau_u 88 per cent off;
+        ! 1.74 gives ten per cent.
+        ! Raising the STEP CAP did nothing for it: the cap was not binding, the
+        ! GAIN was. The gap is measured on one scale and the parameter lives on
+        ! another, so the product was a fraction of a per cent a step. Set so the
+        ! ten per cent cap governs and the existing damping handles sign flips.
+        real(8) :: utility_cost_of_treatment_adjuster=2.6d0
         ! THIS PARAMETER'S OWN STEP CAP, through cap_step_rel at the one call
         ! site. It replaces max_rel_step_all for utility_cost_of_treatment ALONE;
         ! every other parameter still goes through cap_step and is unchanged. It
@@ -2016,7 +2024,15 @@
         ! you can also adjust kappa_find_smi to hit its target?". Held at zero
         ! for the seven-instrument restriction of 15 September; the value
         ! restored here is the one it carried before that restriction.
-        real(8) :: kappa_find_smi_adjuster=2.d0
+        ! GAIN RAISED 18 September, on the author's *"we need to move those
+        ! parameters I wrote above much faster so they converge in 15 iterations"*.
+        ! Realised step was 2.49 per cent with find_smi 24 per cent off;
+        ! 8.03 gives ten per cent.
+        ! Raising the STEP CAP did nothing for it: the cap was not binding, the
+        ! GAIN was. The gap is measured on one scale and the parameter lives on
+        ! another, so the product was a fraction of a per cent a step. Set so the
+        ! ten per cent cap governs and the existing damping handles sign flips.
+        real(8) :: kappa_find_smi_adjuster=12.d0
         ! RAISED 18 September, on the author's *"We need h2, tauu, c bar, find
         ! if addicted, find if smi, to adjust quite a bit to get the model much
         ! closer to the data"*. the SMI share of the homeless is 23.7 per cent off; at two
@@ -4549,7 +4565,15 @@
         ! parameter was holding a badly missed moment AND a structurally stuck
         ! one, which is the same lesson beta taught two hours earlier: a pin is
         ! only safe while the economy it was made in is the economy you are in.
-        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
+        ! GAIN RAISED 18 September, on the author's *"we need to move those
+        ! parameters I wrote above much faster so they converge in 15 iterations"*.
+        ! Realised step was 0.21 per cent with c_bar 101 per cent off;
+        ! 2.40 gives ten per cent.
+        ! Raising the STEP CAP did nothing for it: the cap was not binding, the
+        ! GAIN was. The gap is measured on one scale and the parameter lives on
+        ! another, so the product was a fraction of a per cent a step. Set so the
+        ! ten per cent cap governs and the existing damping handles sign flips.
+        real(8) :: max_food_cost_adjuster=3.6d0
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
@@ -7753,7 +7777,15 @@
         ! makes the second live; the first is pinned at 1 on the author's
         ! *"this multiple_of_probabilities_of_employment_if_addicted should stay
         ! at 1"*, which its own merge() already retires the distance for.
-        real(8) :: multiple_find_adjuster=2.d0
+        ! GAIN RAISED 18 September, on the author's *"we need to move those
+        ! parameters I wrote above much faster so they converge in 15 iterations"*.
+        ! Realised step was 3.48 per cent with the SUD share of the
+        ! homeless 33 per cent off; 5.74 gives ten per cent.
+        ! Raising the STEP CAP did nothing for it: the cap was not binding, the
+        ! GAIN was. The gap is measured on one scale and the parameter lives on
+        ! another, so the product was a fraction of a per cent a step. Set so the
+        ! ten per cent cap governs and the existing damping handles sign flips.
+        real(8) :: multiple_find_adjuster=8.6d0
 
         ! ITS OWN CAP, 15 September: "multiple_find_if_addicted should be lower
         ! ....you need to update it faster to match the share of homeless with
@@ -44413,6 +44445,22 @@
                 case ("kappa_find_smi_max_rel_step")
 
                     kappa_find_smi_max_rel_step=max(min(handover_value,1.d0),10.d0**(-5))
+
+                case ("max_food_cost_adjuster")
+
+                    max_food_cost_adjuster=max(min(handover_value,100.d0),0.d0)
+
+                case ("utility_cost_of_treatment_adjuster")
+
+                    utility_cost_of_treatment_adjuster=max(min(handover_value,100.d0),0.d0)
+
+                case ("kappa_find_smi_adjuster")
+
+                    kappa_find_smi_adjuster=max(min(handover_value,100.d0),0.d0)
+
+                case ("multiple_find_adjuster")
+
+                    multiple_find_adjuster=max(min(handover_value,100.d0),0.d0)
 
                 case ("smallest_house_size_adjuster")
                     write(*,*) "HANDOVER smallest_house_size_adjuster:",&
