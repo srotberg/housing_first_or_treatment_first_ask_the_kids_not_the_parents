@@ -27972,8 +27972,31 @@
             (rho_d**(min(sud_of(unemployment_index),1)*include_rho_d))*&
             (rho_m**(min(smi_of(unemployment_index),1)*include_rho_m))
         
+        ! FOOD STAMPS ARE NOT CASH, 18 September, on the author's *"It can only
+        ! be paid for consumption, not housing. Not drugs. Cannot be saved"*.
+        !
+        ! The allotment used to be added to after_tax_wealth_net_of_expenses,
+        ! which is the pot the household pays RENT out of and SAVES out of, so
+        ! it was fully fungible: at an allotment of 0.1147 against a cheapest
+        ! rent of 0.0615 the transfer alone was 1.9 times the rent, and no
+        ! employed household could ever be priced out of housing however low its
+        ! wage fell. That is why lowering the bottom node 0.0923 -> 0.030 ->
+        ! 0.018 moved the share of node-1 employed on the street only 11.8 ->
+        ! 15.1 per cent, and why the model's homeless are the unemployed rather
+        ! than the working poor.
+        !
+        ! It is now added to CONSUMPTION, after housing has been netted out of
+        ! the pot and after next period's assets have been deducted. So it
+        ! cannot buy housing and it cannot be saved. It already could not be
+        ! spent on drugs: consumption_choice is floored at
+        ! food_stamps/(1+consumption_tax) at every call site, which is the
+        ! constraint that keeps the allotment out of the drug block.
+        !
+        ! WHAT IT INVALIDATES: the budget constraint changes, so every point on
+        ! the previous model hash is orphaned and the value functions must be
+        ! re-solved. h_1, emp_homeless, b, c_bar and the VSL all move.
         after_tax_wealth_net_of_expenses_1=after_tax_wealth_net_of_expenses_1-&
-            (gross_wage_income_1-wage_income_tax_paid_1+food_stamps_1+housing_voucher_1+housing_voucher_2)
+            (gross_wage_income_1-wage_income_tax_paid_1+housing_voucher_1+housing_voucher_2)
 
         gross_wage_income_1=labor_supply_1*max_gross_wage_income_1
         
@@ -28088,9 +28111,11 @@
             max(taxable_income_1,0.d0)**curvature_of_labor_income_taxes,0.d0)
             
         after_tax_wealth_net_of_expenses_1=after_tax_wealth_net_of_expenses_1+&
-            (gross_wage_income_1-wage_income_tax_paid_1+food_stamps_1+housing_voucher_1+housing_voucher_2)
+            (gross_wage_income_1-wage_income_tax_paid_1+housing_voucher_1+housing_voucher_2)
             
-        consumption_1=(after_tax_wealth_net_of_expenses_1-future_financial_amount_1)/(1+consumption_tax)
+        ! The allotment enters HERE and not above: after housing, after saving.
+        consumption_1=(after_tax_wealth_net_of_expenses_1-future_financial_amount_1)/(1+consumption_tax)+&
+            food_stamps_1/(1+consumption_tax)
         
         consumption_choice=consumption_1
         total_consumption_choice=consumption_1
@@ -28767,7 +28792,7 @@
             investment_income-investment_income_tax_paid+total_household_wealth-& 
             property_taxes_paid-housing_depreciation_expenditures-rent_spending-cost_of_mortgage-&
             cost_of_housing+lump_sum_transfer_given-origination_cost_1-prepayment_penalty_1-&
-            fixed_cost_to_moving_1+bequest_1+food_stamps_recieved+housing_voucher_recieved+&
+            fixed_cost_to_moving_1+bequest_1+housing_voucher_recieved+&
             housing_voucher_recieved_2+newborn_transfer_1
             
         ! A NEGATIVE POSITION MEANS TWO DIFFERENT THINGS AND THIS LINE USED TO
@@ -28792,7 +28817,8 @@
             max(financial_grid(future_financial_index_1),0.d0)-&
             (1-choose_to_rent)*min(financial_grid(future_financial_index_1),0.d0)*&
             housing_price(time_period)*housing_size(future_housing_status_index_1)-&
-            choose_to_rent*min(financial_grid(future_financial_index_1),0.d0))/(1+consumption_tax)
+            choose_to_rent*min(financial_grid(future_financial_index_1),0.d0))/(1+consumption_tax)+&
+            food_stamps_recieved/(1+consumption_tax)
 
         total_consumption_choice=consumption_choice
                         
