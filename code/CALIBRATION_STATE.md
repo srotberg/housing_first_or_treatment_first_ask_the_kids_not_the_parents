@@ -1,3 +1,75 @@
+## kappa_phi_d_level 4 AND b AT TARGET ARE NOT JOINTLY AVAILABLE. THREE MEASURED FACTORS SETTLE IT
+
+18 September, 05:00. The author, twice: *"I don't want kappa_phid to move from
+that 4...i want it to stay there pinned. And I want the same good outcomes like
+we have just before this change!"* and *"Let's see how things look when b hits
+the target and sud too"*. n70 ran kappa pinned at 4 from the n66 seed for
+eleven blocks with b's step cap raised to ten per cent. b does not arrive, and
+the reason is arithmetic rather than patience:
+
+    kappa 2.9428 -> 4.0 took b from 0.0974 to 0.00305     a factor of 32 DOWN
+    b needs 0.00305 -> 0.10502                            a factor of 34 UP
+    addiction_scalar_1, 18.3 per cent of travel            NOTHING measurable
+    the housing ladder, 3/5 -> 4/8, took b 0.238 -> 0.058  a factor of 4
+
+The largest lever available is worth four and the hole is thirty-four. And the
+ladder is the parameter that sets gamma, which has no instrument of its own, so
+spending it costs the 3.1 per cent gamma row and buys a sixth of what is
+needed.
+
+b's eleven blocks, threshold falling every second block:
+
+    0.00606 0.00164 0.00297 0.00290 0.00311 0.00306 0.00313 0.00305 0.00312
+    0.00297 0.00313
+
+Nine blocks flat. **A STATIC THRESHOLD ON THE SPLIT CANNOT OFFSET A LIFETIME
+INCOME PENALTY**, because participation is a value comparison and b_SG only
+moves the static bar. The archive already said this in the other direction and
+I should have read it as the general statement it is: three successive steps
+plus a cap raise "could not bring b down; it climbed through every one of them
+to 0.288".
+
+## AND THE CAP RAISE I MADE FOR IT WAS INEFFECTIVE, FOR A REASON WORTH KEEPING
+
+addiction_scalar_max_rel_step 0.01 -> 0.10 bought nothing. Two constants I had
+wrong:
+
+- `addiction_scalar_adjuster_start = 2*10.d0**(-3)`. The adjuster's GROWTH
+  ceiling is 0.002, not the 0.01 at its declaration. One damping step took it
+  to 0.002 and it can never climb back, so the gain is permanently 0.002 and
+  the step is 0.002 x 0.102 = 2.35 per cent -- the cap at ten per cent never
+  binds. I told the author it would grow back toward 0.01. It cannot.
+- `b_step_cooldown = 2`. b steps every SECOND block, so 2.35 per cent per step
+  is about 1.2 per cent a block.
+
+The gain-against-cap lesson has a second half: check which of the two is
+actually binding BEFORE raising either, and check the growth ceiling rather
+than the declaration when reading an adjuster.
+
+## kappa RAISES emp_homeless, AND IT IS THE FIRST LEVER THAT DOES
+
+    n66, kappa 2.9428    emp_homeless 0.2138
+    n70, kappa 4.0       emp_homeless 0.2679 0.2634 0.2526 0.2519 0.2512
+                                      0.2497 0.2507 0.2506 0.2508 0.2521 0.2533
+
+Stable at 0.253 across eleven blocks, not a transient. The bottom node's
+productivity did not move this moment and h_1 did not move it; kappa moves it
+by four points. It is the wrong size to close a 0.30 floor on its own and it
+arrives attached to a dead drug block, but the mechanism is worth knowing:
+crushing users' income changes WHO is homeless, not just how many.
+
+## y_u AT 0.74 IS ATTAINABLE, AND NOT AT kappa 4
+
+    kappa 2.9428  ->  y_u 0.981   (above target)
+    kappa 4.0000  ->  y_u 0.240   (below target)
+    target            0.74
+
+The target is INSIDE the bracket, so raising kappa to fix y_u overshoots it
+rather than approaching it: crushing users' income means only the poorest use,
+and the ratio falls straight past 0.74. Log-linear between the endpoints puts
+0.74 at kappa 3.14 and 0.80 at 3.09. n69 was that run and had one block in when
+the author pinned kappa at 4.
+
 ## THE h_1 BRACKET IS IN, AND THE ANSWER IS FLAT -- NEITHER SIGN ON RECORD
 
 18 September, 03:30. n67, seeded from n66 block 6 verbatim, one constant moved
