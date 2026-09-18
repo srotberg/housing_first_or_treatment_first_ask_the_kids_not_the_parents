@@ -1,3 +1,61 @@
+## OMEGA_C IS BRACKETED AT 0.135, FROM BOTH SIDES
+
+    omega_c 0.100   gap 0.150794   -17.8 per cent   n76, bracket stepped UP
+    omega_c 0.135   gap 0.18343    THE CROSSING     interpolated between the two
+    omega_c 0.150   gap 0.197521   + 7.7 per cent   n77, bracket stepped DOWN
+
+At 0.15 the child term cuts drug use by 16.49 per cent -- benchmark users
+0.122096 against 0.146213 with the term off -- where 15.5 is wanted. Both
+brackets walk toward the same place from opposite sides, which is what the
+two-sided seeding was for: n76 climbed 0.10 -> 0.115, n77 fell 0.150 -> 0.1430.
+
+THE GAP IS CONCAVE IN OMEGA_C, and the earlier estimate said otherwise. A line
+through the origin -- the gap is zero at omega_c = 0 by construction -- gave a
+slope of 1.508 and a crossing at 0.122. The MEASURED slope between 0.10 and 0.15
+is 0.935, and the crossing is 0.135. The origin construction was 10 per cent
+low. Two measured points beat one measured point and a construction.
+
+## THE SUD ODDS RATIO FALLS AS THE CLASS FILLS, AND IT BREAKS THE delta_d ANCHOR
+
+THE CLEAN TEST, inside n77, with delta_d PINNED at 0.30 and omega_c moving only
+0.150 -> 0.1430:
+
+    block 1   class-1 share 0.03149   odds 1.6870
+    block 2   class-1 share 0.04061   odds 1.4460
+
+Same penalty, more fill, ratio down 14 per cent. Across runs the same pattern
+holds and is now known not to be a confound:
+
+    n75  delta_d 0.250  omega_c 0.00   share 0.01492   odds 2.2220
+    n76  delta_d 0.166  omega_c 0.10   share 0.02025   odds 1.7204
+    n77  delta_d 0.300  omega_c 0.15   share 0.03149   odds 1.6870
+    n77  delta_d 0.300  omega_c 0.15   share 0.04061   odds 1.4460
+
+WHAT THIS INVALIDATES, and it is my own arithmetic. The log-linear slope of
+0.9882 was fitted to n75's 2.2220 against n73's 1.6717, BOTH READ AT A CLASS-1
+SHARE NEAR 0.0149. That slope produced delta_d = 0.166 and then delta_d = 0.30,
+and both were presented with more confidence than the anchor could carry. A
+ratio measured on a class that is 1.5 per cent full is not the ratio.
+
+THE RULE, which is the one already written for b and was not applied here: a
+moment fed by a slow stock has no readable level until the STOCK has been still
+for longer than its own adjustment time. The class-1 share IS that stock, and it
+has grown at every reading ever taken -- 0.0149, 0.0203, 0.0315, 0.0406 -- so no
+odds ratio in this file has been measured at rest.
+
+WHAT TO DO, and it is what the author asked for at the start: stop proposing
+delta_d and let n77 run with delta_d pinned until the share stops growing, then
+read the ratio THERE. Only then is a delta_d step a measurement rather than an
+extrapolation.
+
+THE DIRECTION IS ALREADY KNOWN AND IT IS UNCOMFORTABLE. Every reading at higher
+fill is lower, so the settled ratio at delta_d = 0.30 is at most 1.45 and
+probably less. Reaching 2.0 from there needs a penalty far above the 0.30 now
+running and far above Nilsson's 0.24. If it lands somewhere the author will not
+accept, the honest outcome is to report the ratio untargeted -- which is how the
+paper already treats it, with the 1.5 to 2.5 range stated beside the model's
+number -- rather than to buy it with a penalty the evidence does not support.
+
 ## n76 MEASURED omega_c = 0.10 IN THIS ECONOMY, AND THE CROSS-EFFECT ON delta_d IS REAL
 
     omega_c 0.10  ->  child use gap 0.150794   against target 0.18343, 17.8 per cent SHORT
