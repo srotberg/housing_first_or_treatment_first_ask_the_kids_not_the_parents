@@ -1,3 +1,70 @@
+## SUPERSEDED, BY THE ARCHIVE: kappa 4 DOES HOLD. b AND SUD BOTH ARRIVE
+
+18 September, 08:15. The entry below headed "kappa_phi_d_level 4 AND b AT
+TARGET ARE NOT JOINTLY AVAILABLE" IS WRONG and this entry supersedes it. The
+archive wins, which is the standing rule, and here is what the archive says:
+
+    block   b        lambda_d   y_u       as_1
+      t     0.00297  0.00126    0.24824   0.008669    (the plateau)
+      +21   0.00665  0.00202    0.25181   0.006844    first step
+      +25   0.01116  0.00314    0.27173   0.006648    second
+      +30   0.01801  0.00395    0.32905   0.006105
+      +37   0.03048  0.01164    0.37730   0.005626
+      +50   0.04155  0.01719    0.40359   0.004665    container restart here
+      n71 1 0.04851  0.01996    0.44643   0.004665
+      n71 3 0.08892  0.03695    0.59873   0.004595
+      n71 5 0.10980  0.04496    0.64282   0.004588
+      n71 6 0.11160  0.04720    0.65418   0.004594    b's rule now turning it back
+
+    targets      b 0.10502    lambda_d 0.043424    y_u 0.74
+
+b is 6.3 per cent over target and its instrument has turned; lambda_d is 8.7
+per cent over and arrived on its own; y_u has come from a trough of 0.205 to
+0.654 WITH KAPPA NEVER MOVING, which is the author's own selection reading and
+it is correct: crush drug users' income and only the poorest use, so the ratio
+collapses; broaden participation again and the composition walks back up the
+distribution.
+
+## TWO WRONG CALLS, AND WHAT EACH ONE MISTOOK
+
+I told the author twice that kappa 4 could not work.
+
+**FIRST, ON A PLATEAU.** Fourteen blocks of b reading 0.00297 to 0.00313 while
+the threshold fell 18 per cent, and I read it as an instrument with no purchase.
+It was the flat part of a STEP FUNCTION. The source already says this about the
+other discrete margin -- "Homelessness is very nearly a step function of
+size_homelessness, since the housing choice is discrete and the marginal
+households jump together" -- and participation is discrete in exactly the same
+way. A flat stretch in a discrete-choice moment is not evidence of a dead
+instrument; it is the gap between two jumps, and the only way to tell them
+apart is to keep going.
+
+**SECOND, ON ARITHMETIC THAT ASSUMED SMOOTHNESS.** I set out three measured
+factors -- kappa worth 32 down, the hole worth 34 up, the ladder worth 4 -- and
+concluded the largest lever could not close it. Every one of those numbers was
+right and the conclusion was wrong, because they were end-to-end ratios on a
+response that arrives in jumps, and arithmetic on ratios silently assumes you
+can interpolate between them. THE INSTRUMENT DELIVERED THE FACTOR OF 34 ON ITS
+OWN, in about twelve steps, with the threshold moving only from 0.008669 to
+0.004588.
+
+The rule that comes out of it: **a lever is not exhausted until the parameter
+is at its bound.** addiction_scalar_1's floor is 10^-4 and it was at 0.0087
+when I called it dead, a factor of 87 of travel still in hand. Neither call
+should have been made with that much room left, and the author's instruction --
+*"Let it recover after the warm start"* -- was right against both of them.
+
+## AND THE emp_homeless GAIN WAS NEVER kappa's
+
+The entry below records kappa raising emp_homeless from 0.2138 to a stable
+0.253 over eleven blocks and calls it the first lever found to move that
+moment. It is an artefact. The 0.253 held only while the drug block was dead,
+and as b recovered it fell straight back: 0.2387, 0.2184, 0.2067, 0.2016,
+0.2004, 0.1983. At b on target emp_homeless is 0.198, WORSE than n66's 0.2138.
+
+So the open condition is unchanged and the count of levers measured to move it
+is still zero: not bottom_productivity_level, not h_1, not kappa.
+
 ## kappa_phi_d_level 4 AND b AT TARGET ARE NOT JOINTLY AVAILABLE. THREE MEASURED FACTORS SETTLE IT
 
 18 September, 05:00. The author, twice: *"I don't want kappa_phid to move from
