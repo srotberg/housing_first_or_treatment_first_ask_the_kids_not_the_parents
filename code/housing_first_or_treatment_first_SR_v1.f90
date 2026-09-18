@@ -1405,7 +1405,16 @@
         ! 1.366 at 0.495, 1.968 at 0.99 -- so the argmax on [0, 0.4] is the cap
         ! itself. Expect delta_d = 0.4 and an odds ratio near 1.29 on the scan,
         ! about 1.36 in equilibrium once the scan's measured +0.07 bias is added.
-        real(8), parameter :: scan_lo=0.0d0, scan_hi=0.4d0
+        ! scan_hi 0.4 -> 0.5, 18 September, on the author's instruction, with
+        ! *"you can look at higher numbers too and let me know if one hits, but
+        ! i prefer to keep it around 0.4"*. The scan SELECTS inside [0, 0.5] and
+        ! the curve above it is reported separately rather than chosen from.
+        !
+        ! AND THE TWO COMMENTS ABOVE CONTRADICTED THIS LINE. One said scan_hi had
+        ! been "RAISED TO THE CAP", another that the scan searches
+        ! "[scan_lo, scan_hi] = [0, 0.99]", while the code said 0.4. The value is
+        ! authoritative and the prose was stale.
+        real(8), parameter :: scan_lo=0.0d0, scan_hi=0.5d0
         integer :: scan_index=0
         real(8) :: penalty_saved=0, scan_num=0, scan_den=0, scan_ratio=0
         real(8) :: scan_prev=-1, scan_pen_prev=0, scan_solved=0
@@ -2661,6 +2670,11 @@
         ! stop: set diagnostic_simulation to 1, hand the parameters in through
         ! PARAM_HANDOVER.txt, and the run solves, aggregates and prints every
         ! moment exactly as a calibration loop would, then leaves them alone.
+        ! STAYS 0 FOR THE TWO-CLASS CALIBRATION. It was briefly set to 1 for a
+        ! one-class fixed-parameter pass on 18 September; the author redirected
+        ! to the two-class model before that ran, and an exact equilibrium for a
+        ! model about to change is not worth solving. It goes to 1 after delta_d
+        ! lands, which is the "converge on the equilibrium" step.
         integer, parameter :: diagnostic_simulation=0
 
         ! FREEZE THE INTERNALS THAT ARE ALREADY FITTED, on the author's
@@ -5824,7 +5838,21 @@
         ! child SUD row will read near 1.0 for the rest of the calibration and
         ! should be IGNORED rather than chased. Two classes has to come back
         ! before the final model is believed.
-        integer, parameter :: child_penalty_classes=1
+        ! TWO CLASSES, 18 September, on the author's instruction to move to the
+        ! two-class model, calibrate delta_d, converge the equilibrium and then
+        ! scan omega_c. This is the change the delta_d target needs: at one
+        ! class the penalty sits in the birth shift and erodes at
+        ! persistence_employment_surviving = 0.9, so the scan over [0, 0.4]
+        ! returned a straight line from 1.00995 to 1.06042 against a target of
+        ! 2.0. At two classes class_1 = d_index, the child is born into a block
+        ! whose nodes are already scaled, and the penalty is permanent.
+        !
+        ! IT DOUBLES THE STATE SPACE. employment_grid_size becomes
+        ! employment_base_size*2 = 26, blocks go from about four minutes to
+        ! somewhere between twelve and thirty, and the distribution file goes to
+        ! roughly 265 MB. The economy moves, so b, pi_V and the rest have to
+        ! re-converge before the odds ratio is readable.
+        integer, parameter :: child_penalty_classes=2
         integer, parameter :: employment_grid_size=employment_base_size*child_penalty_classes
         integer :: use_unemployment_by_productivity=1
         ! Persistent income risk over working life. See the block beside
@@ -45908,9 +45936,29 @@
             ! reaching 2e-4 costs, not what reaching 1e-8 would cost. Loosening
             ! it further trades directly against the moments, which are shares
             ! read to three and four decimals.
+            ! AND THE FIXED-PARAMETER PASS GETS THE TIGHT ONE. 6e-4 is the
+            ! right trade inside a calibration loop that runs it hundreds of
+            ! times; it is the wrong one for a single re-run whose whole purpose
+            ! is to read the equilibrium exactly.
+            !
+            ! IT ALSO EXPLAINS SOMETHING WE WATCHED ALL DAY. At 6e-4 each block
+            ! stops short and carries the residual into the next, so the
+            ! distribution converges ACROSS blocks rather than within them --
+            ! pi_V reading 0.087, 0.184, 0.252, 0.293 at nearly fixed parameters
+            ! is that residual unwinding, not economics. A fixed-parameter pass
+            ! at 1e-8 converges it in one go and there is no transient to read
+            ! through.
             if (include_addiction==1) then
 
-                stopping_rule_stationary_distribution=6*10.d0**(-4)
+                if (re_do_simulation_with_fixed_parameters==1) then
+
+                    stopping_rule_stationary_distribution=10.d0**(-8)
+
+                else
+
+                    stopping_rule_stationary_distribution=6*10.d0**(-4)
+
+                end if
 
             end if
             
