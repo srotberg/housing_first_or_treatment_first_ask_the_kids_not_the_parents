@@ -1,3 +1,69 @@
+## THE CURRENT BEST POINT IS n71, kappa PINNED AT 4, AND IT BEATS n66 ON ALMOST EVERY ROW
+
+18 September, 08:45. Preserved reproducibly in the scratchpad at n71_keep --
+resume_seed.dat, calibration_state.dat and all three distribution files -- so
+this point can be restarted exactly whatever happens next.
+
+    parameter            value        model        data            gap     n66
+    emp_homeless         -            0.20348      0.46           55.8%   53.5%
+    delta_d              0.4          1.1053       2              44.7%   scan
+    h2                   0.040674     0.58536      0.406          44.2%   pinned
+    h1                   0.021587     0.005687     0.004          42.2%   HELD in band
+    pi_eu                0.026783     0.058375     0.049          19.1%   17.6%
+    pi_v                 -            0.30437      0.266          14.4%    0.4%
+    kappa_phi_d / y_u    -            0.63579      0.74           14.1%   32.1%
+    addiction_onset_base 0.035688     0.43923      0.41348         6.2%    0.2%
+    tau_ell              0.89353      0.21132      0.224           5.7%    6.0%
+    sigma_y              2.0635       0.16237      0.172           5.6%    5.4%
+    tau_u                4.7151       0.25606      0.245           4.5%    7.1%
+    gamma                0.5356       0.25792      0.268           3.8%    3.1%
+    newborn_endowment    0.13918      0.25097      0.26            3.5%    8.5%
+    theta                0.165        0.15462      0.16            3.4%    2.6%
+    b                    0.0045991    0.10239      0.10502         2.5%    1.5%
+    beta                 0.94698      2.9532       3               1.6%    0.1%
+    p_m                  -            0.048621     0.048275        0.7%    0.7%
+    c_bar                0.087687     0.0041699    0.0042          0.7%    4.5%
+    kappa_find_smi       9.1252       0.24893      0.25            0.4%    1.8%
+    find_if_addicted     4.0894       0.21784      0.217           0.4%   20.8%
+    mu_H                 0.69317      1.4781       1.4732          0.3%    9.0%
+    aleph                87.676       79.834       80              0.2%    2.7%
+
+SUD is 0.04497 against 0.043424, 3.6 per cent. Eleven rows inside four per
+cent, fifteen inside six. find_if_addicted came from 20.8 to 0.4 and mu_H from
+9.0 to 0.3, both because the drug block is populated again.
+
+THE KEY PARAMETERS, all carried in n71_keep/resume_seed.dat:
+    kappa_phi_d_level          4.0        pinned by the author
+    addiction_scalar_1         0.0045991
+    size_homelessness          0.021587   held, rate 0.00569 inside [0.004,0.01]
+    smallest_rental (h2)       0.040674   pinned
+    relative_share_of_housing  0.5356
+    rung_ratio_h3 / h4         4.0 / 8.0
+    bottom_productivity_level  0.009
+    kkk_s_deviation_bottom     2.694536
+    kkk_sigma_scale            2.063510
+
+## TWO ROWS THAT WILL NOT CLOSE ON THEIR OWN, AND ONE THAT NEVER HAS
+
+**pi_v went 0.4 per cent to 14.4 and its adjuster is zero.** Nothing in the
+loop pulls it back. It is a cost of kappa 4 that was not visible until the
+drug block repopulated.
+
+**y_u has STOPPED climbing and turned.** 0.660, 0.658, 0.656, 0.651, 0.646,
+0.636 across the last six blocks as b settled onto target. So 0.63 is where it
+RESTS at kappa 4, not a waypoint to 0.74, and its instrument is pinned. The
+selection effect carried it from 0.205 to 0.66 and then gave a little back; it
+does not reach the target from here without kappa moving.
+
+**emp_homeless is at 0.20348 and three levers are now measured not to move
+it**: bottom_productivity_level (halving it bought one point), h_1 (recruits
+both sides of the ratio equally), and kappa (the 0.253 was an artefact of a
+dead drug block and fell back to 0.198 as b returned). The decomposition still
+holds -- every employed homeless household is in node 1, and three quarters of
+the homeless are unemployed from the middle -- so the lever has to act on one
+side. pi_eu remains the first candidate: 19.1 per cent above its own data
+target with its adjuster at zero.
+
 ## SUPERSEDED, BY THE ARCHIVE: kappa 4 DOES HOLD. b AND SUD BOTH ARRIVE
 
 18 September, 08:15. The entry below headed "kappa_phi_d_level 4 AND b AT
