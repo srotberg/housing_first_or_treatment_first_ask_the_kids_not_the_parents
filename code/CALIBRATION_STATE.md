@@ -1,3 +1,118 @@
+## THE INSTRUMENTS COULD NOT TRAVEL, AND FIVE OF SIX WOULD NEVER HAVE CONVERGED
+
+18 September, 02:00. The author: *"We need h2, tauu, c bar, find if addicted,
+find if smi, to adjust quite a bit"* and *"move those parameters much faster
+so they converge in 15 iterations"*. They were right, and the reason was not
+the update rules -- every direction column has been correct all night. The
+REALISED STEPS were a fraction of a per cent:
+
+    parameter                  cap/gain    realised step    gap it faced
+    max_food_cost              gain 0.05       0.21 pc          101 pc
+    utility_cost_of_treatment  gain 0.05       0.29 pc           88 pc
+    kappa_find_smi             gain 2.0        2.49 pc           24 pc
+    multiple_find              gain 2.0        3.48 pc           33 pc
+    addiction_scalar_1         cap 0.003       2.0  pc          185 pc
+    smallest_house_size        gain 0.05      14.66 pc           43 pc
+
+RAISING THE CAPS DID NOTHING for four of them: the cap was not binding, the
+GAIN was. The gap is measured on one scale and the parameter lives on
+another, so adjuster times gap came out tiny. c_bar moved 0.11469 ->
+0.11442 -> 0.11419 over three updates with 101 per cent to close.
+
+Gains set to about 1.5x what delivers ten per cent, so the CAP governs and
+the existing damping handles sign flips. Result, six blocks later:
+
+    h2          43.5 -> 2.8 pc      c_bar     101.4 -> 2.4 pc
+    tau_u       87.9 -> 9.5 pc      find_smi   23.7 -> 2.0 pc
+
+Handover cases added for every cap and gain, so none of this needs another
+rebuild. b is the exception: its cap went 0.003 -> 0.01 and NO FURTHER,
+because the bracket has b_SG 0.0092 giving b 0.25 and 0.009878 giving
+0.0013 -- the drug block empties across a seven per cent change in the
+parameter, and a ten per cent step would jump clean over it.
+
+## THE HOMELESS BY PRODUCTIVITY NODE, WHICH ENDED THREE WRONG EXPLANATIONS
+
+    node  level     mass      homeless  hom/mass  employed  hom AND emp
+      1   0.018000  0.276494  0.066228  0.239529  0.250584    0.054688
+      2   0.107218  0.717321  0.023757  0.033119  0.653024    0.000000
+      3   0.160037  1.704565  0.042281  0.024805  1.564381    0.000000
+      ...        every node above 1 has 0.000000 in the last column
+
+**EVERY EMPLOYED HOMELESS HOUSEHOLD IS IN NODE 1.** Nodes 2 to 13 produce
+exactly zero, because node 2 reaches 0.177 at its peak age against a rent of
+0.060. Only node 1 can fail the test, and 22 per cent of its employed do.
+
+THE CEILING IS ARITHMETIC: node 1's employed are 0.2506 of the pooled mass.
+All of them on the street gives
+
+    employed homeless  0.0547 -> 0.2506
+    total homeless     0.3568 -> 0.5527
+    emp_homeless       0.153  -> 0.453      against 0.46
+
+So the author's instruction to make the bottom node poorer was right all
+along, and it is the ONLY lever: nothing else in the model produces an
+employed homeless household.
+
+### WHAT WAS RULED OUT, AND EACH OF THESE WAS A WRONG EXPLANATION OF MINE
+
+1. **"h_1 is the bottom node's mass."** No. 88.6 per cent of the homeless are
+   UNEMPLOYED, drawn from across the distribution; node 1's unemployed could
+   supply a thirteenth of them. Checked back to n43 -- it was never true.
+2. **"Food stamps pay the rent."** No, and there was NO BUG in the author's
+   code. The constraint `consumption_choice >= food_stamps/(1+tau)` with
+   `can_consume_1 = 0` on failure reduces to R >= S: own resources must cover
+   housing AND saving, so the allotment funds neither, and consumption_choice
+   is non-drug consumption so it cannot go to drugs. All three restrictions
+   were already enforced. My reformulation was ALGEBRAICALLY IDENTICAL and was
+   reverted.
+3. **"Vouchers house them."** At most a third. Even assuming every voucher in
+   the economy went to node 1, 58 per cent of its employed are housed without
+   one. The voucher IS max(0, rent - 0.3*income), so it grows as income falls
+   -- a full guarantee for holders and a real cap on the lever, but not the
+   story.
+4. **"The newborn endowment houses them for eight years."** Weakened. Ages 26
+   to 32 are 17.5 per cent of the working span and 21.6 per cent of node 1's
+   homeless -- roughly uniform, slightly tilted YOUNG. The endowment delays
+   homelessness about two years, not eight.
+
+### AND THE ONE THAT WAS TRUE: h2 WAS CHASING THE HOUSEHOLD DOWN
+
+                          when the cuts began     after
+    h2, cheapest rung          0.0602            0.0397   -34 pc
+    bottom node level          0.030             0.018    -40 pc
+    affordability ratio         1.58              1.35     WORSE
+
+h2's instrument, chasing the 30 per cent burden, was cutting the rent out
+from under the bottom node faster than the node was being cut. Every
+reduction was partly cancelled before it could bite. ONE PARAMETER, THREE
+TARGETS -- burden30 wants the rung cheap, emp_homeless wants it dear
+relative to the poor, gamma wants the ladder tall.
+
+## THE AUTHOR'S RESOLUTION, 02:10
+
+*"pin h2 at a value we know works ok, and adjust the bottom productivity to
+get the emp homeless"*, *"h1 can be free around 0.4-1%"*, *"I accept being
+off on the burden 30"*, and the ladder to 4 and 8.
+
+    smallest_house_size_adjuster  0.05 -> 0    h2 PINNED at 0.040674
+    rung_ratio_h3                 3 -> 4
+    rung_ratio_h4                 5 -> 8       top rung 0.325
+    bottom_productivity_level     0.018 -> 0.009
+
+GAMMA IS A CONSTANT 0.82 OF THE TOP RUNG, measured across three runs:
+
+    n54  top rung 0.33641 -> gamma 0.27427    ratio 0.815
+    n56  top rung 0.30120 -> gamma 0.24792    ratio 0.823
+    n61  top rung 0.20337 -> gamma 0.17122    ratio 0.842
+
+which is why gamma collapsed to 38 per cent off when h2 fell: h4 = 5*h2 held
+its RATIO while its BASE lost a third. At 8*h2 on the pinned base the
+relation predicts 0.267 against a target of 0.268.
+
+ACCEPTED OFF BY DECISION: gamma was, until the ladder fixed it; burden30 now
+is; delta_d is not reachable; h_1 free in 0.4 to 1.0 per cent.
+
 ## WHY ALMOST NONE OF THE HOMELESS WORKED, AND THE FOUR THINGS MEASURED GETTING THERE
 
 17 September, 22:35. The author: *"we need to understand why so few of the
