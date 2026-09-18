@@ -3894,7 +3894,26 @@
         ! svyrdudany in (1,2,3). Weighted share 0.1013. Mild counts as using and
         ! moderate or severe counts as carrying the disorder, which is the split
         ! the extraction code in data/ already uses.
-        real(8), parameter :: participation_rate_data=0.0890
+        ! RAISED 18 PER CENT, 18 September, on the author's *"I want you to target
+        ! b to 18% higher than the current target, because we are going to try to
+        ! get omegac later to give us an 18% reduction... So that would give us the
+        ! actual target"*.
+        !
+        ! THIS CHANGES WHAT THE BENCHMARK IS. 0.089 is the drug use rate in the
+        ! data. The counterfactual is meant to cut drug use by 18 per cent, so the
+        ! PRE-reform economy has to sit 18 per cent above the data for the
+        ! POST-reform economy to land on it: 0.089*1.18 = 0.10502. The benchmark
+        ! is therefore no longer matching 0.089 and the paper must not claim it
+        ! does -- it matches the pre-reform level implied by an 18 per cent
+        ! decline, and 0.089 is what the experiment has to reproduce.
+        !
+        ! WHAT IT MOVES WITH IT. The kappa gate opens on
+        ! abs(b - participation_rate_data) <= 0.10*participation_rate_data, so the
+        ! window is now b in [0.0945, 0.1155] rather than [0.0801, 0.0979]. And
+        ! the onset is bracketed on sud_rate_data/participation_rate_data, which
+        ! falls from 0.0368/0.089 = 0.4135 to 0.0368/0.10502 = 0.3504 -- see the
+        ! note at sud_rate_data, which is the open question this raises.
+        real(8), parameter :: participation_rate_data=0.10502
         ! THE VALUE OF A STATISTICAL LIFE, AS A MULTIPLE OF AVERAGE LABOUR
         ! INCOME. It used to be 7.5, the figure in millions of dollars, compared
         ! against a model quantity that is a sum of V/MU_c and so is denominated
