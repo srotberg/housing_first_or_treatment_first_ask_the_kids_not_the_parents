@@ -157,6 +157,24 @@ def update_rule(src_text, stem):
     return (None, None)
 
 
+def band_edge(src_text, name):
+    """The value of a Fortran real parameter declared as <name>=<number>d0.
+
+    PARSED, NOT REMEMBERED, like the update operator. h1_band_lo was 0.004,
+    then 0.0055 on 17 September, then 0.0080 on 18 September; a copy of it in
+    this script is a copy that goes stale silently and prints a direction the
+    model does not take.
+    """
+    m = re.search(r"real\(8\)(?:, parameter)? *:: *" + re.escape(name) +
+                  r" *= *([0-9.eEdD+-]+)", src_text)
+    if not m:
+        return None
+    try:
+        return float(m.group(1).replace("d", "e").replace("D", "e"))
+    except ValueError:
+        return None
+
+
 def adjuster_is_live(src_text, stem):
     """True when <stem>_adjuster is declared non-zero."""
     if stem is None:
@@ -385,6 +403,40 @@ def main():
                 direction = "SCAN [0,0.4]: solved"
             else:
                 direction = "SCAN (no verdict in this log)"
+        # h_1 IS SCORED AGAINST A BAND, NOT AGAINST ITS TARGET, and reading the
+        # operator alone gives the wrong direction whenever the rate sits
+        # between fraction_homeless_data and the band floor -- which is exactly
+        # where it has sat all of n61 to n66. The Fortran's gap is
+        #
+        #   rate > h1_band_hi  ->  rate - h1_band_hi
+        #   rate < h1_band_lo  ->  rate - h1_band_lo
+        #   otherwise          ->  0, and size_homelessness is HELD
+        #
+        # so at a rate of 0.0053 against a floor of 0.0080 the gap is NEGATIVE
+        # and the rule RAISES h_1, while the gap to the 0.004 target is positive
+        # and this table printed LOWER. Same class of error as the onset sign:
+        # a direction taken from the operator without the bracket it multiplies.
+        # The band edges are PARSED, for the same reason the operator is.
+        elif stem == "size_homelessness":
+            lo = band_edge(src_text, "h1_band_lo")
+            hi = band_edge(src_text, "h1_band_hi")
+            if lo is None or hi is None:
+                direction = "band edges not found in source"
+            elif live is False:
+                direction = "HELD"
+            else:
+                band_gap = (model - hi) if model > hi else \
+                           ((model - lo) if model < lo else 0.0)
+                op, order = update_rule(src_text, stem)
+                if op is None:
+                    direction = "rule not found in source"
+                elif band_gap == 0.0:
+                    direction = "HELD (rate inside the band)"
+                else:
+                    delta = (1 if op == "+" else -1) * order * band_gap
+                    direction = "RAISE" if delta > 0 else "LOWER"
+                direction += "  [scored on band [%.4g,%.4g], band gap %+.5f]" \
+                             % (lo, hi, band_gap)
         elif param is None:
             direction = "NO INSTRUMENT (follows h_1)"
         elif live is False:

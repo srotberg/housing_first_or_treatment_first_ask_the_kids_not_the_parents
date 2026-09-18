@@ -1,3 +1,117 @@
+## EVERY EMPLOYED HOMELESS HOUSEHOLD IN THE MODEL IS IN NODE 1, AND THREE QUARTERS OF THE HOMELESS ARE UNEMPLOYED FROM THE MIDDLE
+
+18 September, 03:00. n66's per-node diagnostic, at bottom_productivity_level
+0.009, thirteen nodes, ladder 1/4/8 on a pinned h_2:
+
+    node  level     mass      homeless  employed  homeless AND employed
+       1  0.009000  0.281142  0.066500  0.255082  0.058386
+       2  0.107225  0.722161  0.014832  0.657520  0.000000
+       3  0.160047  1.710964  0.025993  1.569738  0.000000
+       4  0.238890  3.289560  0.034280  3.045832  0.000000
+       5  0.356573  5.154681  0.036593  4.810658  0.000000
+       6  0.532230  6.573970  0.033584  6.174823  0.000000
+       7  0.794420  6.820690  0.026401  6.449518  0.000000
+       8  1.185772  5.755878  0.017393  5.480254  0.000000
+       9  1.769913  3.950771  0.009550  3.779569  0.000000
+      10  2.641816  2.205517  0.004368  2.114563  0.000000
+      11  3.943242  1.001710  0.001661  0.961261  0.000000
+      12  5.885782  0.368322  0.000525  0.353591  0.000000
+      13  8.785266  0.121997  0.000153  0.117157  0.000000
+
+**THE LAST COLUMN IS ZERO FOR EVERY NODE ABOVE THE FIRST.** Total homeless
+0.271833; node 1 supplies 0.066500 of it and every other node's 0.205333 is
+unemployed to the last household. So
+
+    emp_homeless = 0.058386 / 0.271833 = 0.2148
+
+is one node's employed over a denominator three quarters of which nothing in
+node 1 touches. The arithmetic of the acceptance band follows directly:
+
+    emp_homeless = X / (X + 0.213447),  X = node 1's employed on the street
+    0.30 needs X = 0.0915 = 35.9 per cent of node 1's 0.2551 employed
+    0.40 needs X = 0.1423 = 55.8 per cent
+    ceiling, all of node 1's employed homeless, is 0.5445
+
+So the band IS reachable inside node 1. It is at 22.9 per cent today.
+
+## AND bottom_productivity_level IS NOT THE LEVER FOR IT. I SAID IT WAS; IT IS NOT
+
+Same diagnostic against n59's, which ran the same count of nodes at
+bottom_productivity_level 0.018 -- twice the level:
+
+    level 0.018:  employed 0.250584, homeless AND employed 0.054688 -> 21.82%
+    level 0.009:  employed 0.255082, homeless AND employed 0.058386 -> 22.89%
+
+HALVING the bottom node's productivity moved its own employed onto the street
+by ONE POINT. I told the author the lever for emp_homeless was
+bottom_productivity_level below 0.009 and gave the node arithmetic as support.
+The arithmetic was right and the lever was wrong: it prices node 1's income
+against the rent, and something income-INDEPENDENT is what houses node 1's
+employed -- the voucher covers max(0, p_r*h' - kappa_r*y_gross) exactly, so it
+GROWS as productivity falls and a voucher holder is housed at any level.
+
+What actually raised emp_homeless from 0.1533 (n59) to 0.2148 (n66) was the
+DENOMINATOR: non-node-1 homeless fell 0.290566 -> 0.205333, minus 29 per cent,
+while the numerator moved 0.054688 -> 0.058386, plus 7 per cent. The ladder
+and the pinned h_2 did that, not the bottom node.
+
+## h_1 HAS NEVER BEEN MOVED FAR ENOUGH IN THIS CONFIGURATION TO MEASURE ITS EFFECT
+
+18 September, 03:05. size_homelessness across the runs that produced every
+emp_homeless figure quoted in the source comments:
+
+    n55 0.018780   n56 0.018780   n59 0.018780-0.019157
+    n60 0.019157   n61 0.019543   n65/n66 0.020539-0.021587
+
+Eleven per cent, end to end, over eleven runs. Within n61 the parameter is
+CONSTANT for nine blocks while emp_homeless runs 0.1645, 0.1216, 0.1289,
+0.1258, 0.1319, 0.1303, 0.1376, 0.1499, 0.1665; within n66 it is constant for
+six while emp_homeless falls 0.2494 to 0.2138. The across-run spread in
+emp_homeless, 0.11 to 0.25, is larger than anything h_1 did in any of them.
+
+**THE TWO MEASUREMENTS IN THE SOURCE DISAGREE ABOUT THE SIGN AND NEITHER IS A
+BRACKET.** The six-run set at h1_targets_emp_homeless -- rate 0.0040 gives
+0.271, 0.0052 gives 0.224, 0.0085 gives 0.154, monotone -- is rate against
+employed share across six different economies, and the rate IS the denominator
+of the employed share, so a run whose rate is high because more unemployed
+reached the street reports a lower employed share with no causal content. The
+four end-of-run pairs at h1_band_lo -- 0.00319 gives 0.0198, 0.00557 gives
+0.1934 -- run the other way and the note already admits they are not a
+controlled bracket.
+
+n67 is the bracket: h1_band_lo 0.0055 -> 0.0080 and
+size_homelessness_max_rel_step 0.01 -> 0.05, seeded from n66 block 6 verbatim,
+nothing else touched. Reference values are in n67/CONTROL.md.
+
+**AND h1_targets_emp_homeless MUST STAY OFF.** Its gap is
+model_employed_share_of_homeless - 0.46, which is negative, and the rule is
+param - adjuster*gap, so it RAISES h_1 when the employed share is short. That
+is the right sign only if raising h_1 raises the employed share, which is the
+very thing in dispute. Turning it on before the bracket is read would point an
+instrument at a moment with a sign nobody has measured.
+
+## THE GAPS TABLE PRINTED THE WRONG DIRECTION FOR h_1, FOR THE WHOLE OF n61 TO n66
+
+The Fortran scores h_1 on the band, not on fraction_homeless_data: the gap is
+rate - h1_band_hi above the band, rate - h1_band_lo below it, and zero inside.
+gaps_table.py read the operator off `size_homelessness -
+size_homelessness_adjuster*gap_size_homelessness_1`, found no parenthesised
+difference to inspect, and defaulted to (model - data) against 0.004. At a
+rate of 0.0053 with a floor of 0.0055 the table printed LOWER and the model
+did RAISE. Fixed by parsing h1_band_lo and h1_band_hi out of the source -- not
+copying them, because that floor has been 0.004, then 0.0055, then 0.0080 in
+three days -- and printing the band gap beside the direction.
+
+## THE TRANSITION WRITER INDEXES FROM ZERO INTO ONE-BASED ARRAYS
+
+Noted in passing, NOT fixed, pre-existing: the bounds-check build warns at
+lines 51903-51931, `do i=0,transition_length` writing housing_stock(i),
+total_housing_demand(i) and lump_sum_transfer(i). Three warnings, all in the
+transition's output writer. It is the quantitative model's transition, which
+TRANSITION_LESSONS.md governs, so it belongs in that audit rather than in a
+calibration round -- but it is a real out-of-bounds read the moment that writer
+runs.
+
 ## b's DOMINANT LEVER IS THE HOUSING LADDER, NOT addiction_scalar_1
 
 18 September, 02:45. Four successive steps to addiction_scalar_1 -- 0.006251,

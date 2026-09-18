@@ -5401,7 +5401,39 @@
         ! a claim about the argmax. It stays inside the approved 0.4 to 1 per
         ! cent and n23 ran at 0.0074 without trouble, so there is room to go
         ! further if emp_homeless is still climbing when h_1 arrives.
-        real(8), parameter :: h1_band_lo=0.0055d0
+        ! FLOOR RAISED AGAIN 18 September, 0.0055 -> 0.0080, and this time
+        ! against a CONTROLLED reading rather than a cross-run correlation.
+        !
+        ! WHAT n66 MEASURED. Five blocks at size_homelessness HELD constant at
+        ! 0.020539 -- the band floor of 0.0055 was pushing it up by the one per
+        ! cent cap, so the printed value was flat to four digits -- gave a
+        ! homelessness rate of 0.00597, 0.00531, 0.00533, 0.00529, 0.00533 and
+        ! an employed share of 0.2494, 0.2343, 0.2259, 0.2190, 0.2148. The rate
+        ! is flat and the employed share falls in every single block. That is
+        ! the converged level of emp_homeless at a rate of 0.53 per cent, near
+        ! the bottom of the author's range, and it is 0.215 against a target of
+        ! 0.46 and an acceptance floor of 0.30.
+        !
+        ! WHY THE BAND AND NOT A POINT. Homelessness is very nearly a step
+        ! function of size_homelessness -- the note at the step cap below says
+        ! so and measured it -- so a point target at 0.0100 has no resting place
+        ! and would oscillate across it. A band of [0.0080, 0.0100] has the gap
+        ! go to zero the moment the rate reaches 0.8 per cent, which parks h_1
+        ! in the top half of the author's approved 0.4 to 1.0 per cent with the
+        ! 1.0 per cent ceiling still guarding the other side.
+        !
+        ! AND IT IS A TEST, NOT A FIX. The two bodies of evidence on record
+        ! disagree about the sign. The six-run set quoted above has the rate and
+        ! the employed share moving OPPOSITE ways, which is also what a pure
+        ! accounting confound would give, since the rate IS the denominator of
+        ! the employed share: a run whose rate is high because more unemployed
+        ! reached the street reports a lower employed share with no causal
+        ! content at all. The four end-of-run pairs quoted below have them
+        ! moving TOGETHER. Neither is a bracket. This run moves h_1 and nothing
+        ! else, from a rate of 0.53 per cent to 0.80, and reads the answer off
+        ! the same economy. If emp_homeless falls, the confound was not a
+        ! confound and the next move is a point target at 0.004.
+        real(8), parameter :: h1_band_lo=0.0080d0
         real(8), parameter :: h1_band_hi=0.010d0
 
         ! AND THE TRAVERSE HAS TO DAMP, for aleph's reason. The adjuster is
@@ -5486,7 +5518,16 @@
         ! a tenth of a per cent a block needs about 476 blocks -- not slow,
         ! immobile -- which is why h_1 has drifted with the drug block all night
         ! instead of being driven anywhere. At one per cent it is about 48.
-        real(8) :: size_homelessness_max_rel_step=0.01d0
+        !
+        ! RAISED TO FIVE PER CENT 18 September. With the floor moved to 0.0080
+        ! the rate has to travel from 0.0053, and at one per cent a block h_1
+        ! drifts rather than arrives -- n66 spent five blocks moving the
+        ! parameter 0.021162 to 0.021587, one per cent in total, while the gap
+        ! it was closing stayed where it was. Five per cent is deliberately not
+        ! the tenth the other four instruments were given: the bracket note
+        ! directly below measures homelessness as very nearly a STEP function of
+        ! this parameter, so the risk here is overshoot, not immobility.
+        real(8) :: size_homelessness_max_rel_step=0.05d0
 
         ! A BRACKET, BECAUSE THE LINEAR STEP CANNOT LAND ON THE TARGET.
         !
