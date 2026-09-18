@@ -4526,7 +4526,22 @@
         ! It was raised to 1.0 this morning to let c_bar move at all, and it
         ! worked -- c_bar went from 22 per cent off to 0.2 -- so it is pinned at
         ! the value that arrived rather than reverted to the old rate.
-        real(8) :: max_food_cost_adjuster=0.d0
+        ! RELEASED 18 September, on the author's *"C bar is too high...."*.
+        ! Restored to the 5*10^-2 it carried before it was pinned, from git.
+        !
+        ! IT WAS THE WORST ROW IN THE TABLE AND IT WAS HELD. Food stamps over
+        ! income read 0.00943 against 0.0042, 125 per cent over, with nothing
+        ! chasing it because I pinned this adjuster earlier in the session.
+        !
+        ! AND IT IS THE REASON emp_homeless CANNOT MOVE. The allotment is 0.1147
+        ! against a cheapest rent of 0.0615, so the benefit ALONE is 1.9 times
+        ! the rent and the taper only removes thirty cents per dollar of income.
+        ! No level of bottom-node productivity prices out a household that is
+        ! handed nearly twice the rent before it earns anything. One pinned
+        ! parameter was holding a badly missed moment AND a structurally stuck
+        ! one, which is the same lesson beta taught two hours earlier: a pin is
+        ! only safe while the economy it was made in is the economy you are in.
+        real(8) :: max_food_cost_adjuster=5*10.d0**(-2)
         real(8) :: distance_max_food_cost
         real(8) :: stopping_rule_max_food_cost=10.d0**(-4)
 
