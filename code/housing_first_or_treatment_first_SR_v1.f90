@@ -8220,6 +8220,15 @@
         ! rental, housing_status_grid_size-1 the largest; homelessness, which
         ! sits at lowest_housing_grid_point, is excluded from the denominator.
         real(8), dimension(transition_length,0:housing_status_grid_size-1) :: model_housing_size_dist
+        ! THE HOMELESS BY PRODUCTIVITY NODE, 18 September, on the author's
+        ! *"we need to understand why bottom node doesnt create more emp
+        ! homeless"*. Every homelessness diagnostic in this file is aggregated
+        ! -- by age, by SUD, by choice, by income -- and none of them says WHO
+        ! the homeless are in productivity terms, which is the one thing three
+        ! wrong explanations tonight all turned on. Pure accounting: no
+        ! behaviour, no effect on any solve, no point invalidated.
+        real(8), dimension(employment_grid_size) :: diag_node_mass=0,diag_node_employed=0,&
+            diag_node_homeless=0,diag_node_hom_emp=0,diag_node_hom_young=0
                     
         real(8) :: consumption_choice,total_consumption_choice
 
@@ -11383,6 +11392,21 @@
             ! renter of that age holds and earns. If homelessness tracks renter
             ! wealth it is a buffer story; if it tracks the ownership rate it is
             ! a tenure story; if it tracks neither it is preferences.
+            write(*,*) "DIAG --- the homeless by productivity node ---"
+            write(*,*) "DIAG node  level      mass       homeless   hom/mass  employed   homeless&
+& AND employed   of them young"
+            do employment_index=1,employment_base_size
+                write(*,'(A,I4,6F12.6,F14.6)') " DIAG ", employment_index,&
+                    employment_grid(1,employment_index),&
+                    diag_node_mass(employment_index),&
+                    diag_node_homeless(employment_index),&
+                    diag_node_homeless(employment_index)/&
+                        max(diag_node_mass(employment_index),10.d0**(-14)),&
+                    diag_node_employed(employment_index),&
+                    diag_node_hom_emp(employment_index),&
+                    diag_node_hom_young(employment_index)
+            end do
+
             write(*,*) "DIAG --- the age profile of the housing margin ---"
             ! EVERY AGE, NOT EVERY THIRD. The stride of 3 printed 26, 29, 32 and
             ! hid 27 and 28 -- which is exactly where the age profile is decided:
@@ -13298,6 +13322,11 @@
         if (accumulating_beta_types==0) model_fraction_of_unemployed_homeless(time_period)=0
         if (accumulating_beta_types==0) model_fraction_of_homeless_and_addicted_unemployed(time_period)=0
         if (accumulating_beta_types==0) model_mass_homeless_raw(time_period)=0
+        if (accumulating_beta_types==0) diag_node_mass=0
+        if (accumulating_beta_types==0) diag_node_employed=0
+        if (accumulating_beta_types==0) diag_node_homeless=0
+        if (accumulating_beta_types==0) diag_node_hom_emp=0
+        if (accumulating_beta_types==0) diag_node_hom_young=0
         if (accumulating_beta_types==0) model_mass_homeless_working_age(time_period)=0
         if (accumulating_beta_types==0) model_mass_total_raw(time_period)=0
         if (accumulating_beta_types==0) model_mass_smi(time_period)=0
@@ -13648,6 +13677,39 @@
                                     ! the EMPLOYED share of the homeless as employed, and
                                     ! about thirty per cent of the model's homeless are
                                     ! retired.
+                                    if (in_retirement==0) then
+
+                                        diag_node_mass(employment_index)=&
+                                            diag_node_mass(employment_index)+distribution_mass_used
+
+                                        if (emp_of(unemployment_index)==1) then
+                                            diag_node_employed(employment_index)=&
+                                                diag_node_employed(employment_index)+distribution_mass_used
+                                        end if
+
+                                        if (housing_status_index_used==lowest_housing_grid_point) then
+
+                                            diag_node_homeless(employment_index)=&
+                                                diag_node_homeless(employment_index)+distribution_mass_used
+
+                                            if (emp_of(unemployment_index)==1) then
+                                                diag_node_hom_emp(employment_index)=&
+                                                    diag_node_hom_emp(employment_index)+distribution_mass_used
+                                            end if
+
+                                            ! Ages 26 to 32, which is before the newborn
+                                            ! endowment can have been run down. If node 1's
+                                            ! homeless are all OLD, assets are what house
+                                            ! the young and the endowment is the lever.
+                                            if (age_index<=7) then
+                                                diag_node_hom_young(employment_index)=&
+                                                    diag_node_hom_young(employment_index)+distribution_mass_used
+                                            end if
+
+                                        end if
+
+                                    end if
+
                                     if ((emp_of(unemployment_index)>1) .AND. (in_retirement==0)) then
                                     
                                         model_fraction_unemployed(time_period)=&
