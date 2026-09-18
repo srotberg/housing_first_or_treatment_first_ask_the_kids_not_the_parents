@@ -6766,7 +6766,13 @@
         ! nearly TRIPLE -- 0.093 against 0.266 -- which is about eleven hundred
         ! loops. Its instrument moved 0.044375 to 0.044508 across three loops,
         ! which is the cap and not the economics.
-        real(8) :: pi_V_max_rel_step=0.02d0
+        ! RAISED 0.02 -> 0.05 with the adjuster's release, because the two
+        ! have to be matched. The gain asks for 0.1 times a gap of 0.0387 on a
+        ! parameter of 0.0797, which is 4.9 per cent, and a two per cent cap
+        ! would swallow more than half of every step -- the same
+        ! gain-against-cap trap that held h2, c_bar, tau_u and kappa_find_smi.
+        ! Five per cent lets the gain be what binds.
+        real(8) :: pi_V_max_rel_step=0.05d0
         ! THE STOPPING RULE EXISTED AND THE DISTANCE DID NOT.
         !
         ! The retention scale is updated every loop against an average labour
@@ -44553,6 +44559,26 @@
                 case ("kappa_find_smi_max_rel_step")
 
                     kappa_find_smi_max_rel_step=max(min(handover_value,1.d0),10.d0**(-5))
+
+                ! RELEASED 18 September, on the author's instruction: *"you can
+                ! adjust pi_v a bit more to hit to the target"*. It needs a
+                ! handover case rather than an edit to its declaration because
+                ! voucher_probability_adjuster IS WRITTEN TO AND READ FROM
+                ! calibration_state.dat, so a resume restores the pinned zero
+                ! whatever the declaration says. The handover is applied AFTER
+                ! the state is read, which is the only place a release takes.
+                !
+                ! WHY THE PIN NO LONGER HOLDS. It was pinned on 17 September on
+                ! the author's own reading that pi_V is stable, and the n32 path
+                ! quoted at its declaration backs that up -- overshoot to 0.291
+                ! at block 8, then 0.266 from block 16 onward. That was the stock
+                ! refilling. At kappa 4 it is NOT refilling: n71 reads 0.30474 at
+                ! block 113, flat, 14.6 per cent over target. The reason for the
+                ! pin was that the moment settles on its own, and in this economy
+                ! it does not.
+                case ("voucher_probability_adjuster")
+
+                    voucher_probability_adjuster=max(min(handover_value,100.d0),0.d0)
 
                 case ("max_food_cost_adjuster")
 
