@@ -1,3 +1,26 @@
+## b's DOMINANT LEVER IS THE HOUSING LADDER, NOT addiction_scalar_1
+
+18 September, 02:45. Four successive steps to addiction_scalar_1 -- 0.006251,
+0.0075, 0.0092, then the cap raised 0.003 -> 0.01 -- could not bring b down;
+it climbed through every one of them to 0.288. ONE change to the housing
+ladder, rung ratios 3/5 -> 4/8, took b from 0.238 to 0.058 in a single block.
+
+Expensive housing crowds out drug spending directly: the participation
+condition is R > p_v*b_SG*(alp/gam) and R is resources NET OF HOUSING, so
+raising the ladder cuts R for everyone. The threshold parameter and the
+housing ladder act on opposite sides of the same inequality, and the ladder
+moves R by far more than b_SG moves the bar.
+
+**THAT IS WHY EVERY BRACKET I FITTED ON b_SG MISPREDICTED.** The three-point
+quantile bracket, the "steep vs shallow slope" interpolation, the 0.0075 and
+0.0092 steps: all of them were fitted to a lever that is not the one setting
+b, in an economy whose ladder was moving underneath them. A measured bracket
+is only as good as the assumption that the other side of the inequality is
+still.
+
+b now approaches from BELOW -- 0.058, 0.071 -- which is the safer side, since
+the knife edge that empties the drug block is above.
+
 ## THE INSTRUMENTS COULD NOT TRAVEL, AND FIVE OF SIX WOULD NEVER HAVE CONVERGED
 
 18 September, 02:00. The author: *"We need h2, tauu, c bar, find if addicted,
