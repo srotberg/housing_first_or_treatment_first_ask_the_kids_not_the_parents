@@ -1,3 +1,74 @@
+## n76 MEASURED omega_c = 0.10 IN THIS ECONOMY, AND THE CROSS-EFFECT ON delta_d IS REAL
+
+    omega_c 0.10  ->  child use gap 0.150794   against target 0.18343, 17.8 per cent SHORT
+                      drug users 0.095547 benchmark against 0.109955 at omega_c = 0
+                      so the child term cuts use by 13.10 per cent, target 15.5
+                      the bracket stepped omega_c UP to 0.115, the 15 per cent cap binding
+    SUD odds ratio at delta_d 0.166, omega_c 0.10  ->  1.7204   against 2.0
+    homelessness odds ratio                        ->  5.3861   against 2.10, untargeted
+
+THE STALE READINGS WERE WRONG IN THE DIRECTION THAT MATTERED. The comments in
+the Fortran record the gap reading ABOVE target at omega_c = 0.1 in eight of
+nine earlier readings. Measured here it reads BELOW, by 17.8 per cent. The
+author called it: *"I think those readings of omegac were of an old model"*.
+They were, and they should not have been quoted as indicative.
+
+THE CROSSING, extrapolated properly. The gap is zero at omega_c = 0 by
+construction, so a line through the origin gives 0.18343 at omega_c = 0.122.
+The author's 0.2 would overshoot; their instinct to bracket 0.2 and 0.4 would
+have put both ends above target.
+
+THE CROSS-EFFECT WAS PREDICTED BEFORE THE RUN AND IT HELD. Recorded in the
+previous entry: omega_c raises the cost of using to a PARENT, so it cuts use
+most among exactly the parents whose children are the exposed arm, and the odds
+ratio should come DOWN when omega_c lands. Fit the omega_c = 0 bracket in logs
+-- slope 0.9882 per unit of -log(1-delta_d), intercept log(1.6717) = 0.5140 --
+and delta_d = 0.166 predicts odds 2.000 at omega_c = 0. Measured at omega_c =
+0.10 it is 1.7204, so omega_c cost 0.1507 in log odds.
+
+## n77: omega_c 0.15 AND delta_d 0.30, APPROACHING FROM THE OTHER SIDE
+
+The author: *"Ok, go to 0.15. And you also have to update deltad"*.
+
+0.15 is above the 0.122 crossing where 0.10 was below it, so n77's bracket walks
+DOWN where n76's walked up. Converging on the same omega_c from opposite sides
+is convergence; extending n76's climb could not have been told from a slow
+drift.
+
+delta_d 0.30 prices the cross-effect at where omega_c will SETTLE, not where it
+starts:
+
+    needed -log(1-delta_d) = (log 2.0 - 0.5140 + 1.507*0.122)/0.9882 = 0.3675
+    delta_d = 1 - e^-0.3675 = 0.308, rounded to 0.30
+
+It is ABOVE Nilsson's 0.24 and above the 0.25 already run, and that is not a
+drift: the penalty has to do more work once omega_c is on, because omega_c
+removes some of the same use the penalty is being asked to generate.
+
+SOFT, AND HERE IS WHY. n75 and n76 were compared at the same block number but
+NOT the same class fill -- class-1 share 0.01492 against 0.02025 -- so the
+0.9882 slope is fitted across points that are not quite matched. 0.30 is a step,
+not an answer.
+
+WARM STARTED. n76's distribution, calibration state and newborn_parent_share
+carry over, so the class-1 share starts near 0.02 rather than 0 and the odds
+ratio is readable in the FIRST block. PARAM_HANDOVER is read AFTER
+calibration_state (43808 then 44248), so both parameters override cleanly; the
+log confirms "resumed from calibration_state.dat, written after loop 5" and
+both handover lines.
+
+## THREE AWK FIELD-OFFSET BUGS IN ONE DAY, AND THE FIX THAT ENDS THEM
+
+The Fortran labels are different lengths line by line, so counting awk fields is
+guesswork: the odds ratio is field 8 and was read as 6, printing 0.0000; the
+mass line is 5 and 8, read as 4 and 6; and `sed 's/.*weight_on_child=//'` is
+GREEDY, so on the line that also carries `distance_weight_on_child=` it returned
+the distance and reported omega_c stepping DOWN to 0.0326 when it had stepped UP
+to 0.115.
+
+`scratchpad/omega_trace.sh` now strips labels with an ANCHORED sed and reads what
+is left. Anchor the strip, never count the fields.
+
 ## OMEGA_C AND delta_d ARE BEING SOLVED JOINTLY. THE AUTHOR'S INSTRUCTION, 18 September
 
 *"So scan omegac and pick deltad to match the odds ratio and the reduction in
