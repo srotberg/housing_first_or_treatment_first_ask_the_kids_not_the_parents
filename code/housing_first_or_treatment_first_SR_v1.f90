@@ -868,6 +868,23 @@
         ! actually limits it, so the adjuster only has to be big enough that the
         ! relative cap is the binding constraint rather than the gain.
         real(8) :: weight_on_child_adjuster=5*10.d0**(-1)
+        ! FREEZE EVERYTHING EXCEPT OMEGA_C. The author, 18 September: *"We are
+        ! not calibrating anything aside from omegac and deltad"*.
+        !
+        ! WHY THIS IS NEEDED AND A HANDOVER FLAG WAS NOT ENOUGH. Only seven
+        ! adjusters have a handover case, and none of the ones that matter --
+        ! addiction_scalar, the onset, the ladder -- so a run seeded from a
+        ! frozen vector still had its full loop live and walked away from it.
+        ! In n77 that showed up as b climbing 0.09773 -> 0.12210 against a
+        ! target of 0.10502 while the odds ratio was being read, which put a
+        ! RISING BASE RATE under the ratio's denominator and made it fall for
+        ! reasons that had nothing to do with delta_d.
+        !
+        ! At 1 every adjuster is set to zero except weight_on_child's, so every
+        ! update step is exactly zero and the parameters stay where the handover
+        ! put them. delta_d is held by hand already (the scan is off), so this
+        ! leaves precisely the two the author named.
+        integer :: freeze_all_but_omega_c=0
         real(8) :: distance_weight_on_child=1
         real(8) :: stopping_rule_weight_on_child=10.d0**(-2)
         real(8) :: drug_users_without_child=0
@@ -44954,6 +44971,11 @@
                         internalise_homelessness_cost, "->", nint(handover_value)
                     internalise_homelessness_cost=max(min(nint(handover_value),1),0)
 
+                case ("freeze_all_but_omega_c")
+                    write(*,*) "HANDOVER freeze_all_but_omega_c:",&
+                        freeze_all_but_omega_c, "->", nint(handover_value)
+                    freeze_all_but_omega_c=max(min(nint(handover_value),1),0)
+
                 case ("kappa_x")
                     write(*,*) "HANDOVER kappa_x:", kappa_x, "->", handover_value
                     kappa_x=max(handover_value,0.d0)
@@ -45102,6 +45124,65 @@
             ! 0.0015, killed mid solve, and came back at 0.0048.
             call write_calibration_state()
             write(*,*) "handover banked into calibration_state.dat before the first solve"
+
+        end if
+
+        ! APPLIED LAST, AFTER THE STATE FILE AND AFTER THE HANDOVER, so neither
+        ! can put an adjuster back. The state file is read first, the handover
+        ! second, and this third; anything else would leave a resumed run with
+        ! live instruments it was launched to hold still.
+        if (freeze_all_but_omega_c==1) then
+
+            addiction_scalar_adjuster=0.d0
+            advantage_to_owning_adjuster=0.d0
+            convexity_of_rental_company_adjuster=0.d0
+            discount_factor_adjuster=0.d0
+            discount_factor_impatient_adjuster=0.d0
+            discount_factor_on_child_adjuster=0.d0
+            drug_market_adjuster=0.d0
+            employment_multiplier_adjuster=0.d0
+            fixed_cost_to_moving_adjuster=0.d0
+            housing_status_grid_expander_adjuster=0.d0
+            inheritance_amount_adjuster=0.d0
+            kappa_find_smi_adjuster=0.d0
+            kappa_phi_d_level_adjuster=0.d0
+            kappa_uem_adjuster=0.d0
+            kkk_sigma_scale_adjuster=0.d0
+            labor_income_tax_rate_adjuster=0.d0
+            lambda_addiction_adjuster=0.d0
+            lambda_m_adjuster=0.d0
+            largest_house_size_adjuster=0.d0
+            max_food_cost_adjuster=0.d0
+            max_initial_endowment_adjuster=0.d0
+            minimum_inheritance_adjuster=0.d0
+            money_cost_of_treatment_adjuster=0.d0
+            mu_homeless_adjuster=0.d0
+            multiple_find_adjuster=0.d0
+            newborn_endowment_adjuster=0.d0
+            onset_base_adjuster=0.d0
+            penalty_child_addicted_adjuster=0.d0
+            penalty_child_homeless_adjuster=0.d0
+            probability_of_becoming_addicted_adjuster=0.d0
+            relative_share_of_housing_adjuster=0.d0
+            relative_share_of_leisure_adjuster=0.d0
+            rent_to_price_adjuster=0.d0
+            rho_d_adjuster=0.d0
+            rho_intergenerational_adjuster=0.d0
+            rho_m_adjuster=0.d0
+            scaling_of_ss_adjuster=0.d0
+            sd_permanent_productivity_adjuster=0.d0
+            separation_rate_adjuster=0.d0
+            size_homelessness_adjuster=0.d0
+            smallest_house_size_adjuster=0.d0
+            smi_onset_level_adjuster=0.d0
+            standard_deduction_adjuster=0.d0
+            utility_cost_of_treatment_adjuster=0.d0
+            utility_improvement_adjuster=0.d0
+            value_of_life_adjuster=0.d0
+            voucher_probability_adjuster=0.d0
+
+            write(*,*) "FROZEN: every adjuster zeroed except weight_on_child's.",&
+                " Only omega_c is calibrated; delta_d is held by hand."
 
         end if
 
