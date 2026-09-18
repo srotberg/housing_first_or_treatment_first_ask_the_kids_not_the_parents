@@ -1,3 +1,87 @@
+## CONVERGED. n71 AT BLOCK 85 IS THE POINT, AND IT SUPERSEDES THE BLOCK-12 SNAPSHOT BELOW
+
+18 September, 13:10. 85 blocks, kappa_phi_d_level pinned at 4 throughout.
+Preserved in the scratchpad at n71_keep: resume_seed.dat, calibration_state.dat
+and all three distribution files.
+
+    parameter            value        model        data            gap
+    emp_homeless         -            0.20204      0.46           56.1%
+    delta_d              0.4          1.0978       2              45.1%  scan
+    h1                   0.021587     0.00579      0.004          44.8%  HELD in band
+    h2                   0.040674     0.58664      0.406          44.5%  pinned
+    pi_eu                0.026783     0.058642     0.049          19.7%  HELD
+    pi_v                 -            0.30414      0.266          14.3%  HELD
+    kappa_phi_d / y_u    -            0.6488       0.74           12.3%  HELD
+    tau_ell              0.89353      0.21108      0.224           5.8%  HELD
+    sigma_y              2.0635       0.16238      0.172           5.6%  HELD
+    theta                0.165        0.15375      0.16            3.9%  HELD
+    gamma                0.5356       0.25813      0.268           3.7%  HELD
+    mu_H                 0.68061      1.4374       1.4732          2.4%
+    find_if_addicted     4.502        0.21175      0.217           2.4%
+    tau_u                4.6707       0.25073      0.245           2.3%
+    p_m                  -            0.048573     0.048257        0.7%  HELD
+    newborn_endowment    0.12997      0.26136      0.26            0.5%
+    addiction_onset_base 0.033248     0.41187      0.41348         0.4%
+    aleph                84.209       80.287       80              0.4%
+    kappa_find_smi       9.7265       0.24926      0.25            0.3%
+    beta                 0.94787      2.9985       3               0.1%
+    b                    0.0049784    0.10498      0.10502         0.0%
+    c_bar                0.087803     0.0041985    0.0042          0.0%
+
+Fifteen rows inside 5.8 per cent, eight inside 0.7. emp_homeless, gamma and
+h_1 are flat to four digits over the last five blocks, so this is a resting
+point. SUD reads 0.04324 against 0.043424, 0.4 per cent.
+
+THE PARAMETERS
+    kappa_phi_d_level          4.0        pinned by the author
+    addiction_scalar_1         0.0049784
+    size_homelessness          0.021587   held, rate 0.00579 in [0.004,0.010]
+    smallest_rental (h2)       0.040674   pinned
+    relative_share_of_housing  0.5356
+    rung_ratio_h3 / h4         4.0 / 8.0
+    bottom_productivity_level  0.009
+    kkk_s_deviation_bottom     2.694536
+    kkk_sigma_scale            2.063510
+    discount_factor            0.94786928
+    max_food_cost              0.087802884
+    utility_cost_of_treatment  4.6706878
+
+## AND THE ROAD TO IT IS A LESSON ABOUT READING A TRACE
+
+b's path from the resume: 0.0485 up to 0.1124, down to 0.0883, up to 0.1272,
+down to 0.1114, and finally flat at 0.105. FIVE turning points over 85 blocks.
+I called a level off that trace THREE times and was wrong each time -- at block
+5 ("b has arrived"), at block 12 (a gaps table off a mid-flight snapshot), and
+at block 34 ("a cycle centred on the target", which was actually a 25-block
+monotone climb).
+
+WHAT THE TRACE ACTUALLY CONTAINS, and it took all three mistakes to separate:
+a STOCK that needs 20-plus blocks to reach its long-run level at any given
+threshold, and an INSTRUMENT whose gain is capped at 0.002 and which steps
+every second block. Move the threshold and the stock takes twenty blocks to
+answer; read it before then and you are reading the stock's transit, not the
+instrument's effect.
+
+THE RULE: a moment fed by a slow stock has no readable level until the
+PARAMETER has been still for longer than the stock's own adjustment time. Ten
+flat blocks is the minimum here, and the only clean elasticity measured all day
+-- b to the threshold, about -0.9 -- came from a stretch where that held.
+
+## WHAT WILL NOT CLOSE, AND WHY EACH IS THE AUTHOR'S CALL
+
+    emp_homeless 56.1%   three levers measured not to move it: the bottom
+                         node's productivity, h_1, and kappa. Every employed
+                         homeless household is in node 1; three quarters of the
+                         homeless are unemployed from the middle. pi_eu is the
+                         first untried lever that acts on one side only, and it
+                         is 19.7 per cent above its own data target with its
+                         adjuster at zero.
+    y_u          12.3%   rests at 0.649. The selection effect carried it from
+                         0.205 and stopped there. kappa is pinned.
+    pi_v         14.3%   adjuster zero, a cost of kappa 4.
+    h1, h2               held and pinned by design, both accepted.
+    delta_d              the penalty scan, after omega_c.
+
 ## THE CURRENT BEST POINT IS n71, kappa PINNED AT 4, AND IT BEATS n66 ON ALMOST EVERY ROW
 
 18 September, 08:45. Preserved reproducibly in the scratchpad at n71_keep --
