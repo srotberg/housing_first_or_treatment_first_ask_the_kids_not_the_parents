@@ -2686,7 +2686,22 @@
         ! The full two-class loop was doing something else: re-fitting twenty
         ! instruments jointly over 15-20 blocks at 17-20 minutes each, which is
         ! five to six hours to answer a question that one pass answers.
-        integer, parameter :: diagnostic_simulation=1
+        ! BACK TO 0. The fixed-parameter pass CANNOT measure delta_d, for two
+        ! reasons found by running it (n74):
+        !
+        ! ONE BLOCK OF LAG. newborn_parent_share is accumulated during a pass and
+        ! feeds the NEXT pass's newborn draw, so a single pass always reports
+        ! SUD parent = 0.0 however tightly the distribution converges. n73 shows
+        ! the lag directly: block 1 = 0.0, block 2 = 0.758.
+        !
+        ! AND THE SCAN DOES NOT RUN IN THAT MODE. Not one PENALTY SCAN line
+        ! printed, not even the target line -- the scan sits inside the update
+        ! machinery that fixed-parameter mode skips, so pinning the parameters
+        ! pins the scan with them.
+        !
+        ! delta_d therefore needs the LOOP, with enough blocks for the class to
+        ! populate and the ratio to settle.
+        integer, parameter :: diagnostic_simulation=0
 
         ! FREEZE THE INTERNALS THAT ARE ALREADY FITTED, on the author's
         ! instruction to stop moving what does not need to move and focus on the
