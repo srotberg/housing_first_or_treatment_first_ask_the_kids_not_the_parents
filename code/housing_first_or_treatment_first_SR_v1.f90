@@ -3445,6 +3445,34 @@
         ! it can be added to a calibration already in flight.
         real(8) :: kappa_x=0.002d0
 
+        ! ---- INTERNALISING THE HOMELESSNESS EXTERNALITY ----------------------
+        ! The author, 18 September: *"i want to have an option to allow the code
+        ! to include a cost to each household who becomes homeless, that captures
+        ! their full cost to the economy from their own personal homelessness"*,
+        ! so that the OPTIMAL homelessness can be read the way omega_c = 1 gives
+        ! the optimal drug use -- both make the chooser face the whole social
+        ! cost of their own choice and then report what survives.
+        !
+        ! THE CHARGE IS kappa_x, FLAT, AND THE ARITHMETIC IS WHY. H here is
+        ! model_fraction_homeless, a SHARE. A household of mass dm moving to the
+        ! street raises H by dm/M, every one of the M units of mass loses
+        ! kappa_x*dm/M, and the total is kappa_x*dm. Per unit of own mass that is
+        ! kappa_x, with the population size cancelling and NO dependence on how
+        ! many others are already homeless -- the H in kappa_x*H is what makes
+        ! that term a constant to each household, and the MARGINAL damage has no
+        ! H in it at all.
+        !
+        ! IT IS NOT SCALED BY THE CHOOSER'S HOUSEHOLD SIZE, unlike flow utility
+        ! itself, because what a household owes depends on whom it harms and not
+        ! on how many people live with it.
+        !
+        ! UNLIKE kappa_x*H, THIS MOVES POLICY FUNCTIONS. That is the point: it is
+        ! the Pigouvian charge on the housing choice. It therefore belongs to a
+        ! counterfactual arm and cannot be switched on inside the benchmark
+        ! calibration. At 0 the model is the one that came before, which is the
+        ! no-op this is built against.
+        integer :: internalise_homelessness_cost=0
+
         ! The CURVATURE on leisure, sigma_ell in the note, not the Frisch
         ! elasticity itself. With hours at 0.40 the implied Frisch elasticity is
         ! (1/sigma_ell)*(1-n)/n = (1/3)*(0.6/0.4) = 0.5, which is the number the
@@ -27518,6 +27546,19 @@
         ! declaration of flow_utility_goods_only.
         flow_utility_goods_only=flow_utility_1
 
+        ! APPENDED HERE, AND DELIBERATELY AFTER flow_utility_goods_only. The
+        ! comment above says additive terms go after that record because the drug
+        ! first order condition needs the goods aggregate and not the level; a
+        ! Pigouvian charge on the HOUSING choice has no business inside the drug
+        ! margin's derivative. See the declaration of
+        ! internalise_homelessness_cost for why the charge is a flat kappa_x.
+        if ((internalise_homelessness_cost==1) .AND. &
+            (future_housing_status_index_1==lowest_housing_grid_point)) then
+
+            flow_utility_1=flow_utility_1-kappa_x
+
+        end if
+
         ! The value of life is charged whether or not the household uses: the
         ! two arms of the test this replaces were character for character the
         ! same, which is what a condition means once it no longer conditions on
@@ -44837,6 +44878,14 @@
                 ! benchmark and in the arms alike, which is the only way to run
                 ! the comparison: switched off in the arms alone it would price
                 ! two economies on two different criteria.
+                ! A HANDOVER CASE SO THE ARM COSTS NO REBUILD, for the same
+                ! reason kappa_x and rho_intergenerational have one. It is an
+                ! integer switch, so anything non-zero reads as on.
+                case ("internalise_homelessness_cost")
+                    write(*,*) "HANDOVER internalise_homelessness_cost:",&
+                        internalise_homelessness_cost, "->", nint(handover_value)
+                    internalise_homelessness_cost=max(min(nint(handover_value),1),0)
+
                 case ("kappa_x")
                     write(*,*) "HANDOVER kappa_x:", kappa_x, "->", handover_value
                     kappa_x=max(handover_value,0.d0)
