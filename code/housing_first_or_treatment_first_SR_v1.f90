@@ -856,7 +856,18 @@
         ! "the rest of the parameters in the calibration plan, EXCEPT omegac".
         ! It is the one plan parameter deliberately left out, so a future reader
         ! does not restore it thinking it was an oversight.
-        real(8) :: weight_on_child_adjuster=0.d0
+        ! RELEASED, 18 September, on the author's *"Use 0.166 and maybe now
+        ! calibrate it in conjunction with omegac?"*. omega_c is the last
+        ! parameter in the plan and this is the round that opens it.
+        !
+        ! 0.5 RATHER THAN THE 2e-3 IT CARRIED. That 2e-3 was sized for an
+        ! overnight loop that could afford hundreds of blocks; at two classes a
+        ! block is two full solves and 35 minutes, so the same adjuster would
+        ! move omega_c by under a fifth of a per cent a block and never arrive.
+        ! The step is bounded by omega_max_rel_step instead, which is what
+        ! actually limits it, so the adjuster only has to be big enough that the
+        ! relative cap is the binding constraint rather than the gain.
+        real(8) :: weight_on_child_adjuster=5*10.d0**(-1)
         real(8) :: distance_weight_on_child=1
         real(8) :: stopping_rule_weight_on_child=10.d0**(-2)
         real(8) :: drug_users_without_child=0
@@ -989,7 +1000,22 @@
         ! omega_c=0 counterfactual, a second value function solve and
         ! distribution convergence, and the pin skips it -- about a third of a
         ! loop given back to the nine brackets actually being calibrated.
-        integer :: omega_c_is_pinned=1
+        ! UNPINNED, 18 September. This flag gates BOTH the omega_c=0
+        ! counterfactual and the bracket's update, so it is the one switch that
+        ! opens the child use gap at all. With it at 1 nothing measures the gap
+        ! and gaps.py has printed "not measured" against omega_c every round.
+        !
+        ! THE COUNTERFACTUAL IS WHY THIS IS NOT A HAND SCAN. The 18 per cent is
+        ! defined against the omega_c=0 economy, and the branch below solves
+        ! that economy INSIDE the same run, so baseline and counterfactual share
+        ! a distribution and a convergence path. Scanning omega_c across
+        ! separate runs would compare two economies that converged differently
+        ! and call the difference the child term.
+        !
+        ! The auto-pin at 47853 still closes it once the gap is inside three per
+        ! cent AND the economy is inside ten, so the second solve is given back
+        ! as soon as it has done its job.
+        integer :: omega_c_is_pinned=0
         integer, parameter :: calibrate_weight_on_child=1
 
         ! WHETHER A POINT MEASURES OMEGA_C'S MOMENT. It costs a second
