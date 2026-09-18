@@ -1,3 +1,58 @@
+## THE h_1 BRACKET IS IN, AND THE ANSWER IS FLAT -- NEITHER SIGN ON RECORD
+
+18 September, 03:30. n67, seeded from n66 block 6 verbatim, one constant moved
+(h1_band_lo 0.0055 -> 0.0080) plus the step cap so h_1 could travel. Five
+blocks. size_homelessness went 0.021587 -> 0.026239 at the new five per cent
+cap and the rate went 0.00533 -> 0.00623.
+
+    node 1                    n66 block 6      n67 block 5
+    mass                        0.280957         0.280681
+    employed                    0.254856         0.253678
+    homeless                    0.066137         0.075720
+    homeless AND employed       0.058076         0.066598    +14.7%
+      share of its employed       22.79%           26.25%
+    all homeless                0.271833         0.317 (rate x pooled mass)
+    emp_homeless                 0.2138           0.2103     -1.6%
+
+**h_1 RECRUITS BOTH SIDES OF THE RATIO AT THE SAME RATE.** Node 1's employed
+onto the street, plus 14.7 per cent; the middle distribution's unemployed, plus
+about 16. emp_homeless is the one over the other, so it does not move. The
+six-run set predicted a fall, the four end-of-run pairs predicted a rise, and
+the controlled reading says neither -- which is why the confound argument in
+the note above was right about the six-run set being accounting rather than
+causation, and wrong to assume the causal effect would then show up positive.
+
+**AND IT COSTS b.** 0.10340 at n66 against a target of 0.10502; 0.13066 then
+0.12803 at n67, past n66's own refill peak of 0.1085 and still there at block
+5. A cheaper street frees resources and the participation condition prices
+resources NET OF HOUSING, so this is the ladder-b mechanism running in reverse.
+b was one of the three acceptance conditions that were MET. Paying it for a
+moment h_1 cannot move is not a trade worth making.
+
+h1_band_lo therefore goes to the author's own 0.0040, which puts the rate of
+0.0053 INSIDE the band, the gap at zero and size_homelessness HELD at the
+seeded 0.021587. h_1 is now a frozen parameter rather than a drifting one.
+
+## SO emp_homeless NEEDS A LEVER THAT ACTS ON ONE SIDE OF THE RATIO ONLY
+
+Two levers tried, both failed, and BOTH FOR THE SAME REASON:
+
+    bottom_productivity_level 0.018 -> 0.009   node 1's employed on the street
+                                               21.82% -> 22.89%, and the
+                                               voucher makes the level nearly
+                                               irrelevant to a holder
+    h_1 0.021587 -> 026239, rate +17%          numerator +14.7%,
+                                               denominator +16%, ratio flat
+
+The quantity that has to change is the SPLIT, and the shortest list of things
+that move the unemployed homeless without moving node 1's employed starts with
+the unemployment rate itself: pi_eu's moment is 0.057638 against a target of
+0.049, 17.6 per cent too high, and its adjuster is zero. At its own data target
+the denominator loses about a sixth and emp_homeless reads about 0.25 with
+nothing else changed -- short of 0.30, but the first lever measured to act on
+one side. Releasing it is the author's call. The other half of the list is what
+an unemployed household can fall back on: kappa_uem, the food floor, savings.
+
 ## EVERY EMPLOYED HOMELESS HOUSEHOLD IN THE MODEL IS IN NODE 1, AND THREE QUARTERS OF THE HOMELESS ARE UNEMPLOYED FROM THE MIDDLE
 
 18 September, 03:00. n66's per-node diagnostic, at bottom_productivity_level

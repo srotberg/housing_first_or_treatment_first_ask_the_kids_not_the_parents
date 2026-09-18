@@ -5433,7 +5433,34 @@
         ! else, from a rate of 0.53 per cent to 0.80, and reads the answer off
         ! the same economy. If emp_homeless falls, the confound was not a
         ! confound and the next move is a point target at 0.004.
-        real(8), parameter :: h1_band_lo=0.0080d0
+        ! FLOOR TO 0.0040, 18 September 03:30, AND THE BRACKET IS WHY.
+        !
+        ! n67 ran the test the note above designed, one constant moved, seeded
+        ! from n66 verbatim. The answer is FLAT, which is neither of the two
+        ! signs on record:
+        !
+        !                       n66 rate 0.00533   n67 rate 0.00623
+        !   node 1 employed         0.254856           0.253678
+        !   node 1 on the street    0.058076           0.066598   +14.7%
+        !     share of its employed  22.79%             26.25%
+        !   all homeless            0.271833           0.317         +16%
+        !   emp_homeless             0.2138             0.2103     -1.6%
+        !
+        ! h_1 DOES recruit node 1's employed onto the street. It recruits the
+        ! middle distribution's unemployed at the same rate, and emp_homeless is
+        ! the ratio of the one to the other, so the ratio does not move. AND IT
+        ! COSTS b: 0.1034 at n66 against a target of 0.10502, 0.128 at n67 and
+        ! still climbing. A cheaper street frees resources, and the b
+        ! participation condition is R > p_v*b_SG*(alp/gam) with R net of
+        ! housing -- the same inequality that made the ladder b's dominant lever.
+        !
+        ! SO THE FLOOR GOES TO THE AUTHOR'S OWN 0.004 AND h_1 STOPS MOVING. At a
+        ! rate of 0.0053 the band [0.0040, 0.0100] has the gap at zero and
+        ! size_homelessness HELD, which parks h_1 at the value that gave three of
+        ! the author's four acceptance conditions. It is not a claim that 0.0053
+        ! is optimal; it is a refusal to keep paying b for a moment h_1 cannot
+        ! move.
+        real(8), parameter :: h1_band_lo=0.0040d0
         real(8), parameter :: h1_band_hi=0.010d0
 
         ! AND THE TRAVERSE HAS TO DAMP, for aleph's reason. The adjuster is
