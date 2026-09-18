@@ -1,3 +1,75 @@
+## THE ECONOMY WAS NEVER DRIFTING. EVERY READING TODAY CAME FROM AN ELEVEN-BLOCK TRANSIENT
+
+The author, 18 September: *"I don't understand how drug use can rise when omegac
+goes up?? Somethjng is wrong"*, and *"Even if you have deltad>0 it should not
+raise b that much"*. Both instincts were right and the explanation I gave for
+the rise -- a delta_d feedback loop -- was wrong.
+
+THE DECISIVE COMPARISON, from logs already on disk. b, block by block:
+
+    n72 ONE class,  oc=0.00   0.08034 0.11166 0.13192 0.14269 0.13847 0.13412
+                              0.12814 0.12042 0.11518 0.10707 0.10376
+    n73 TWO class,  oc=0.00   0.08916 0.11416
+    n75 TWO class,  oc=0.00   0.08917 0.11515
+    n76 TWO class,  oc=0.10   0.06539 0.09555
+    n77 TWO class,  oc=0.15   0.09773 0.12210 0.13814
+
+THE ONE-CLASS ECONOMY MAKES THE SAME HUMP. Same frozen parameters, no second
+class at all: it climbs to 0.14269 at block 4 and returns to 0.10376 by block
+11, against a target of 0.10502. The two-class runs at blocks 1 to 3 sit on top
+of it -- 0.089 against 0.080, 0.114 against 0.112, 0.138 against 0.132.
+
+So b = 0.138 was never evidence of anything. It is the ordinary overshoot, and
+the alarm was raised on block 3 of a hump that peaks at block 4. lambda_d does
+the same: n72 peaked at 0.05777 and came back to 0.04500.
+
+OMEGA_C REDUCES USE, AT MATCHED BLOCKS, exactly as the author said it must:
+
+    block 1    oc=0.00  0.0892     oc=0.10  0.0654    27 per cent lower
+    block 2    oc=0.00  0.1142     oc=0.10  0.0956    16 per cent lower
+
+plus the within-run counterfactual, 13.10 and 16.49 per cent. The sign was never
+wrong. The error was comparing runs at DIFFERENT BLOCK NUMBERS, which compares
+different points on the hump and reads the hump as a parameter effect.
+
+## THE RULE THIS SESSION KEPT BREAKING, IN THREE FORMS
+
+The file already carries it for b: *a moment fed by a slow stock has no readable
+level until the PARAMETER has been still for longer than the stock's own
+adjustment time*. Today it was broken three ways at once, and each one produced
+a confident wrong answer:
+
+  1. READING A LEVEL MID-HUMP. b at block 3 of an 11-block transient, reported
+     as though the economy were drifting.
+  2. COMPARING ACROSS UNMATCHED BLOCKS. n76 block 2 against n75 block 2 looks
+     matched and is not, because the two runs sit at different class fills and
+     different points on the hump.
+  3. QUOTING AN INTERPOLATION AS A MEASUREMENT. delta_d = 0.166 giving an odds
+     ratio of 2.0 was NEVER MEASURED. It was read off a line fitted to two
+     points, both at a class-1 share near 0.0149, and then repeated often enough
+     that the author reasonably took it for a result. It is not one.
+
+WHAT IS AND IS NOT KNOWN, as of now:
+
+    KNOWN     omega_c lowers drug use, sign and rough magnitude
+    KNOWN     delta_d raises the exposed arm; at delta_d 0.30 it reached
+              0.079697 against the delta_d = 0 run's 0.074027
+    KNOWN     the two-class machinery tracks the one-class economy
+    NOT KNOWN the omega_c crossing. 0.135 came from two points inside the
+              transient AND at different delta_d, so it is not a measurement
+    NOT KNOWN any odds ratio. Every one on record is from blocks 1 to 3
+    NOT KNOWN delta_d
+
+## n78 IS THE FIRST RUN THAT CAN MEASURE ANYTHING, AND IT NEEDS ELEVEN BLOCKS
+
+Parameters are frozen for the first time (freeze_all_but_omega_c = 1, commit
+56ad2056), so only the distribution and the class fill have to settle, not the
+calibration as well. n72 needed 11 blocks from a warm state; at roughly 23
+minutes a block that is four to six hours.
+
+DO NOT STEP delta_d OR omega_c ON A BLOCK BEFORE THE HUMP HAS COME DOWN. Every
+step taken today was taken on the way up.
+
 ## OMEGA_C IS BRACKETED AT 0.135, FROM BOTH SIDES
 
     omega_c 0.100   gap 0.150794   -17.8 per cent   n76, bracket stepped UP
