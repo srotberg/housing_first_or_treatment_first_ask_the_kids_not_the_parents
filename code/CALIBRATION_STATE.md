@@ -1,3 +1,84 @@
+## THE FIRST CONVERGED MEASUREMENT OF THE SESSION: delta_d 0.25 -> ODDS RATIO 1.4320
+
+n79. Two classes, omega_c = 0 AND PINNED, all 47 adjusters zeroed, parameters
+from n72's frozen vector.
+
+    blk    b         lambda_d  cls1 shr   exposed    unexpos    odds     d(b)      d(shr)
+    1      0.09028   0.03674   0.00000    0.000000   0.036747   0.0000   +0.00000  +0.00000
+    2      0.10240   0.04165   0.01848    0.087849   0.040793   2.2646   +0.01212  +0.01848
+    3      0.10177   0.04199   0.03073    0.066860   0.041232   1.6661   -0.00063  +0.01225
+    4      0.10142   0.04184   0.03661    0.057972   0.041280   1.4293   -0.00035  +0.00588
+    5      0.10040   0.04159   0.03702    0.057725   0.041024   1.4320   -0.00102  +0.00041
+
+CONVERGED ON EVERY COUNT. The class share is flat at +0.00041; the ratio has
+stopped falling and ticked UP, 1.4293 to 1.4320, so it has found its floor
+rather than still sliding; b is steady at 0.10040 against 0.10502 and lambda_d
+at 0.04159 against 0.04342; the frozen vector landed where it should -- y_u
+0.64471 against 0.64900, gamma 0.26008 against 0.25903, emp_homeless 0.19641
+against 0.19788, h_1 0.00672 against 0.00662; and the grid factor checked
+0.750000 against 1-delta_d on all five blocks.
+
+ITS OWN BLOCK-2 READING WAS 2.2646. Converged it is 1.4320, 63 per cent of it.
+That single pair is the whole explanation for why every number quoted earlier in
+the session moved: they were all block-2 readings.
+
+## THE SESSION'S REAL FINDING: THE INCOME CHANNEL CANNOT REACH 2.0 ALONE
+
+The Fortran comment beside the declaration said this before any run today:
+
+    "a ratio of 2 needs a 61 per cent earnings cut; the data's own gradient is
+     0.23 to 0.39, which needs 90 per cent. At 24 per cent income delivers a
+     ratio near 1.1 ... so income carries about a tenth to a fifth of the
+     intergenerational correlation and genes, environment and behaviour carry
+     the rest."
+
+The measurement agrees with it. 0.25 delivers 1.4320, and the fit puts 2.0 at
+delta_d = 0.4551 -- the same message as the comment's 61 per cent.
+
+THE CLAIM THAT PERSISTENCE ALONE GIVES 1.67 WAS WRONG AND WAS REPEATED OFTEN.
+The author asked *"persistence alone delivers 1.6 odds ratio for the SUD? how is
+that possible?"* and the scepticism was right. 1.6717 is block 2 of n73. Applying
+n79's own block-2-to-converged factor gives about 1.06, which is the comment's
+"near 1.1". The converged persistence-only number has still not been MEASURED --
+n80 was staged to do it and was stopped to prioritise the delta_d search. It is
+worth running for the paper, because it is the decomposition: how much of the
+intergenerational correlation income carries on its own.
+
+## delta_d IS NOW A CALIBRATED PARAMETER, ON THE AUTHOR'S INSTRUCTION, AND SECTION 4 CONTRADICTS THAT
+
+The author, 18 September: *"Ok, pick the delta needed to get 1.8-2. Keep going
+until it is done"*, after the concern was put to them in full. Their call, and
+the work proceeds. But the paper says the opposite, at src.tex:245:
+
+    "the disorder and homelessness penalties are set from the earnings estimates
+     just quoted ... and the transmission ratios are then left untargeted"
+
+and fill.py says it again -- *"the penalties are set from the earnings
+literature, so what the model delivers on each ratio is a validation number
+rather than a matched moment"*. DEL_D = 0.24 in the stylized model and
+penalty_child_addicted = 0.24 in the Fortran, both from Nilsson.
+
+WHEN THE NUMBER LANDS, THAT SENTENCE HAS TO BE REWRITTEN. delta_d will be
+roughly 0.40, not 0.24, and it will be chosen to match transmission rather than
+set from earnings. The Chetty and Nilsson discipline goes with it. Do not let
+this be discovered at the writing stage.
+
+## THE SEARCH, AND HOW TO READ THE NEXT TRIAL
+
+    delta_d 0.2500  ->  1.4320   CONVERGED
+    delta_d 0.3974  ->  n81, running; the author chose it over 0.4277
+    band 1.8 to 2.0
+
+The fit is log(odds) = log(r0) + s * -log(1-delta_d) with r0 = 1.06 INFERRED and
+s = 1.0456, giving 0.3974 for 1.8, 0.4277 for 1.9 and 0.4551 for 2.0. The author
+took the bottom edge, which is the smallest penalty that can land in band and
+keeps delta_d nearest the evidence, at the cost of aiming at an edge with a
+slope whose intercept is not measured.
+
+NOTHING IS READ UNTIL d(b) AND d(class share) ARE BOTH FLAT. n79 took five
+blocks. If n81 misses it is still a second CONVERGED point and trial 3
+interpolates between two measured readings.
+
 ## THE ECONOMY WAS NEVER DRIFTING. EVERY READING TODAY CAME FROM AN ELEVEN-BLOCK TRANSIENT
 
 The author, 18 September: *"I don't understand how drug use can rise when omegac
