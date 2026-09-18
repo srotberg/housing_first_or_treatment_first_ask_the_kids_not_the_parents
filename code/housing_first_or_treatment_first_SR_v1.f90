@@ -3787,7 +3787,28 @@
         ! disorder; the survey's own split of mild against moderate-or-severe
         ! puts that at 45 per cent, and the two rates have to come from the same
         ! variable or the weights built from them mean nothing.
-        real(8), parameter :: sud_rate_data=0.0368
+        ! RAISED 18 PER CENT WITH b, 18 September, on the author's *"The Sud to
+        ! user ratio stays the same so that too moves at 18% up"*.
+        !
+        ! 0.0368*1.18 = 0.043424, and the ratio the onset is bracketed on is
+        ! unchanged: 0.043424/0.10502 = 0.4135, the same as 0.0368/0.089, which
+        ! is the author's *"SUD has to be about 41% of b"*.
+        !
+        ! WHY BOTH HAD TO MOVE. The benchmark is now the PRE-reform economy, so
+        ! every LEVEL target that scales with drug use sits 18 per cent above its
+        ! data value and the omega_c search brings the whole drug block down onto
+        ! the data at once. Left at 0.0368, the onset would have been fitted to a
+        ! post-reform disorder rate inside a pre-reform economy, and lambda_d
+        ! would have landed 18 per cent BELOW the data after the search -- which
+        ! is the recalibration the scheme exists to avoid.
+        !
+        ! THE RATIO TARGETS ARE NOT SCALED and should not be: tau_u and the SUD
+        ! share of the homeless are both shares OF users, so they are
+        ! approximately invariant when the level moves. Approximately: the
+        ! homeless population does not fall by 18 per cent when drug use does, so
+        ! sud_homeless will drift, and that drift is a prediction of the
+        ! experiment rather than a calibration error.
+        real(8), parameter :: sud_rate_data=0.043424
 
         ! THE ELEVEN THE NOTE CALLS CALIBRATED AND THE CODE HELD FIXED.
         ! Each with the moment its table row names. Where the moment is a first
