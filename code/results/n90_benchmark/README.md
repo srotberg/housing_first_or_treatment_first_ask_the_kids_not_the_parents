@@ -19,8 +19,16 @@ opens them. So everything an arm depends on is about 6 KB, and there was never
 a reason for it to be perishable.
 
 What is here: all 184 benchmark files under 100 KB (a deliberately generous cut
--- it avoids guessing which 54 matter, and costs 1.1 MB), plus
-`resume_seed.dat`, the named parameter seed the calibration resumes from.
+-- it avoids guessing which 54 matter), plus the three that sit between 100 KB
+and 2 MB, plus `resume_seed.dat`, the named parameter seed the calibration
+resumes from. About 4 MB in total.
+
+The three mid-size ones -- `baseline_benchmark.txt` and the two
+`policy_function_*2` arrays -- are almost certainly not read by an arm either.
+They are here because a cloud session, given the 100 KB cut, decided on its own
+to RE-RUN the whole benchmark rather than use this directory, which is hours of
+work and produces a benchmark that is not the one the other arms read. Four
+megabytes is a cheap way to remove the temptation.
 
 ## What is NOT here, and what it costs
 
