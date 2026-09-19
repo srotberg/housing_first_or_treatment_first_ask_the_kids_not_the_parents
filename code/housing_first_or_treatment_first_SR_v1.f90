@@ -13169,6 +13169,32 @@
                 file_number='counter_TF'
                 old_results='baseline_benchmark'  
             
+            else
+            
+                ! THIS CHAIN HAD NO FALLBACK, AND AN ARM THAT MISSES EVERY
+                ! BRANCH RAN WITH file_number BLANK UNTIL IT CRASHED.
+                !
+                ! The three branches above cover pi_v==1 with the HF switch on or
+                ! off, and pi_v<1 with the switch OFF. They do not cover pi_v<1
+                ! with the switch ON, which is what the omega_c=1 arms are: they
+                ! change preferences, not the voucher rule, so pi_v clears the
+                ! budget somewhere below 1 and the HF switch stays at its
+                ! benchmark value of 1.
+                !
+                ! file_number is a character*400 with no initialiser, so it stayed
+                ! blank and the post-loop dump at 40223 did
+                ! open(unit=2,file=trim(file_number)//".txt") and died with
+                ! "Cannot open file ''". MEASURED on the omega_c=1 plus
+                ! internalisation arm, 19 September: it converged on all three
+                ! live rules at block 9 and THEN crashed here, so the equilibrium
+                ! was reached and every result written after this point was lost,
+                ! including the CEV from calculate_welfare_gains at 52017.
+                !
+                ! Naming only. No equation is touched and no numeric path runs
+                ! through this branch.
+                file_number='counter_arm'
+                old_results='baseline_benchmark'
+            
             end if
             
             if (partial_equilibrium==1) then
