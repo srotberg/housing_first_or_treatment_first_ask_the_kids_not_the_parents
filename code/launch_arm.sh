@@ -7,8 +7,24 @@
 set -e
 ARM=$1; KX=$2; BM=$3; P0=${4:-0.8720}; PIV=${5:-}
 S=$(cd "$(dirname "$0")" && pwd)
+
+# The binary: $HFTF if set, else the conventional spot beside this script.
+# build_cf.sh puts it wherever you told it to, so from a fresh checkout set
+# HFTF rather than moving files around.
+BIN=${HFTF:-$S/cf/hftf_cf_prod}
+[ -x "$BIN" ] || { echo "REFUSING: no counterfactual binary at $BIN."; \
+                   echo "  build one with  bash code/build_cf.sh <dir>  and set HFTF=<dir>/hftf_cf_prod"; exit 1; }
+
+# The resume seed: beside this script if a working copy is around, otherwise
+# the one committed with the benchmark.
+SEED=$S/n72_params/resume_seed.dat
+[ -f "$SEED" ] || SEED=$BM/resume_seed.dat
+[ -f "$SEED" ] || { echo "REFUSING: no resume_seed.dat in $S/n72_params or $BM"; exit 1; }
+
 N=$S/arm$ARM; rm -rf $N; mkdir -p $N
-cp $S/cf/hftf_cf_prod $N/hftf; chmod +x $N/hftf
+cp "$BIN" $N/hftf; chmod +x $N/hftf
+echo "binary $BIN"
+echo "seed   $SEED"
 
 # every benchmark file the counterfactual opens for reading
 cp $BM/*baseline_benchmark.dat $N/ 2>/dev/null || true
@@ -18,12 +34,17 @@ echo "copied $n baseline_benchmark files from $BM"
 [ "$n" -lt 60 ] && { echo "REFUSING: expected at least 60, got $n"; exit 1; }
 
 # the warm start, so the arm does not solve from a cold distribution
+# Optional. Absent, the arm solves block 1 from a cold distribution as well as
+# a cold value function -- slower by a few blocks, identical answer. The
+# committed benchmark carries the two small ones only; the 265 MB distribution
+# is not in git.
 for f in calibration_distribution1.dat calibration_distribution2.dat \
          calibration_distribution_shape.dat newborn_parent_share.dat; do
-  cp $BM/$f $N/$f
+  [ -f "$BM/$f" ] && cp $BM/$f $N/$f
 done
+true
 
-python3 - "$S/n72_params/resume_seed.dat" "$N/PARAM_HANDOVER.txt" "$ARM" "$KX" "$P0" "$PIV" <<'PY'
+python3 - "$SEED" "$N/PARAM_HANDOVER.txt" "$ARM" "$KX" "$P0" "$PIV" <<'PY'
 import sys
 src,dst,arm,kx,p0,piv = sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6]
 common = {
