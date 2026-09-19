@@ -49,8 +49,10 @@ CORRECTNESS, not speed. No arm can run past its first loop without them.
 
 ## WHAT IS ACTUALLY MISSING
 
-Present in `code/results/n90_benchmark/`: 184 small files + `resume_seed.dat`
-(the launcher staged 184, comfortably over its 60-file guard).
+Present in `code/results/n90_benchmark/`: 191 files, about 4 MB, including
+`resume_seed.dat` (the launcher staged 184 at the commit this ran against,
+comfortably over its 60-file guard; three mid-size files were added in 37e528f
+and do not affect this).
 
 Absent from the repository entirely -- `find` over the whole tree returns no
 `value_function*`, and there is no git-lfs:
@@ -128,20 +130,26 @@ flagged only so it is not a surprise later.
 
 ## WHAT IS NEEDED TO RUN THIS ARM
 
-One of:
+**Run the arm where a converged benchmark's full output already exists** -- the
+container arm 2 is running in, or any box that still holds the 2.2 GB n90 run.
+The four files must sit in the arm's run directory beside the staged small ones.
 
-1. Re-run the n90 benchmark to regenerate the four files and keep them on disk
-   beside the arm. `resume_seed.dat` in the benchmark directory is the seed;
-   the procedure is `CALIBRATION_RECIPE.md`. The README's own escape hatch
-   ("if the transition needs the large files, the benchmark must be re-run")
-   turns out to apply to the arms as well.
-2. Run the arm in a container that already holds a converged benchmark's full
-   output -- e.g. wherever arm 2 is running locally.
+**Re-running the benchmark here is the wrong fix, and the README now says so in
+its own words.** The paragraph added in 37e528f records that a cloud session,
+given the 100 KB cut, "decided on its own to RE-RUN the whole benchmark rather
+than use this directory, which is hours of work and produces a benchmark that is
+not the one the other arms read." An arm 1 built on a freshly re-run benchmark
+would not be comparable with arm 2 or arm 3, which is the whole point of the
+three arms. So it was not started here, and it should not be: this needs the
+n90 files themselves, not an equivalent benchmark.
 
-This was not started here: it is hours of additional compute and a scope change
-the brief did not authorise ("the benchmark is COMMITTED ... so you do NOT need
-to run a benchmark first"). Per the brief's own precedent for environment
-blockers, stopping and saying so is the useful answer.
+That also means the arm cannot be completed in this container. Per the brief's
+own precedent for environment blockers, stopping and saying so is the useful
+answer.
 
 Whichever route is taken, `README.md` in `code/results/n90_benchmark/` should be
-corrected: "no arm opens them" is what caused this.
+corrected: "no arm opens them" is what caused this, and the claim that their
+absence "costs SPEED, not correctness" is the opposite of what happens. If the
+four files are too large for git, the README should say plainly that an arm
+cannot be run from a fresh checkout alone -- the current text promises that it
+can.
