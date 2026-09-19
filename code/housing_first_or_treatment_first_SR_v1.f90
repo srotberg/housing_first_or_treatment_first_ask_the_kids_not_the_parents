@@ -5090,6 +5090,12 @@
         real(8), dimension(1-solve_transition_dynamics:transition_length) :: price_of_addictive_good_path=1
         real(8), dimension(1-solve_transition_dynamics:transition_length) :: previous_price_of_addictive_good_path=0
         real(8) :: largest_distance_drug_market=1
+        ! PI_V ALONG THE PATH. In the arms pi_v is what clears the government
+        ! budget; the transition measured distance_govt_budget, put its maximum
+        ! across periods in the do-while, and moved NOTHING in response -- a
+        ! convergence test with no instrument behind it, which no amount of
+        ! looping can satisfy.
+        real(8), dimension(1-solve_transition_dynamics:transition_length) :: probability_of_voucher_path=0.06
         real(8) :: price_of_addictive_good=include_addiction*&
             (partial_equilibrium*price_of_addictive_good_benchmark*(1+relative_price_change)+&
             (1-partial_equilibrium)*(is_counterfactual*price_of_addictive_good_benchmark*(1+relative_price_change)+&
@@ -35907,52 +35913,30 @@
     
     end subroutine
     
-    subroutine create_unemployment_process()
-    
-        use global_vars
-        
-        ! THE LOSS-SIDE MULTIPLIER, CLAMPED SO THE SEPARATION PROBABILITY CANNOT
-        ! EXCEED ONE. The two branches below split the separation probability by
-        ! whether unemployment insurance is received, so they must be scaled by the
-        ! SAME factor or they stop summing to it; clamping the factor rather than
-        ! each branch is what preserves that.
-        real(8) :: loss_mult_homeless_1,find_mult_homeless_1
-        
-        integer :: cutoff_age_1,cutoff_age_2
-        ! THIS IS AN EXTERNALLY SET PENALTY AND IT IS NOT A DIAL. 0.2 means the
-        ! separation rate times 1.2 and the job finding rate divided by 1.2: a
-        ! twenty per cent penalty on each margin.
+
+    subroutine build_voucher_probabilities()
+
+        ! THE VOUCHER LOTTERY. Lifted verbatim out of
+        ! create_unemployment_process so it can also be called once per period
+        ! by the transition, which moves pi_v to clear the government budget
+        ! and would otherwise leave voucher_probabilities holding the rate from
+        ! whenever the process was last built -- in the transition, setup.
         !
-        ! IT WAS RAISED TO 8.0 AND THAT WAS WRONG. The employed share of the
-        ! homeless read 0.94 against a target of 0.50, and the arithmetic said a
-        ! steady state of 0.50 needs a penalty near 6, so it went to 8. A steady
-        ! state that needs an eight hundred per cent penalty is not evidence
-        ! about the penalty, it is evidence that the moment is being asked of the
-        ! wrong parameter: every parameter here is disciplined either by a moment
-        ! or by an estimate from outside the model, and moving an external
-        ! estimate by a factor of forty to close a moment abandons both.
+        ! NOT ONE LINE OF THE BLOCK IS CHANGED. The only thing that moved is
+        ! where it lives, so the benchmark and the arms must be bit for bit
+        ! unaffected; that is checkable by diffing the compiled object code.
         !
-        ! What the moment was actually reporting was the child's penalty at 0.9
-        ! manufacturing a class of workers too poor for any room. That is capped
-        ! at 0.4 now, and this stays where the evidence put it.
-        real(8), parameter :: increased_prob_to_be_addicted=0
-        
-        ! ZERO THE WHOLE TRANSITION BEFORE ANY ROW IS WRITTEN. Three rows are
-        ! never assigned on the benchmark path -- (1,0,1,:), a holder losing the
-        ! voucher while still eligible; (1,1,0,:), a holder keeping it with
-        ! income above the threshold; and (0,1,0,:), a non-holder acquiring one
-        ! with income above the threshold. All three are complements of rows
-        ! that are set to one, so zero is the right value, and zero is what they
-        ! have been reading: the array is module scope, so it lands in static
-        ! storage and the loader clears it.
-        !
-        ! That is an accident of storage class, not a statement of the model.
-        ! The block below already zeroes the exclusion rows by hand for exactly
-        ! this reason; this does the same for the rest of the array in one line,
-        ! so the transition is defined by what this routine writes rather than
-        ! by where the linker put it.
-        voucher_probabilities=0
-        
+        ! CALLERS MUST SET BOTH probability_of_voucher_benchmark_used AND ITS
+        ! _1 COPY before calling. recompute_derived_parameters assigns
+        !     probability_of_voucher_benchmark_used_1 = probability_of_voucher_benchmark_used
+        ! and in create_unemployment_process it runs AFTER this block, so a
+        ! caller that sets only one of them gets whichever the ordering happens
+        ! to favour. Setting both removes the dependence entirely.
+
+        use Global_Vars
+
+        implicit none
+
         if (include_vouchers==0) then
         
             voucher_probabilities(0,0,0,:)=1
@@ -36142,6 +36126,61 @@
             voucher_probabilities_benchmark(0,0,1,:)=(1-voucher_probabilities_benchmark(0,1,1,:))
             
         end if
+
+    end subroutine
+
+    subroutine create_unemployment_process()
+    
+        use global_vars
+        
+        ! THE LOSS-SIDE MULTIPLIER, CLAMPED SO THE SEPARATION PROBABILITY CANNOT
+        ! EXCEED ONE. The two branches below split the separation probability by
+        ! whether unemployment insurance is received, so they must be scaled by the
+        ! SAME factor or they stop summing to it; clamping the factor rather than
+        ! each branch is what preserves that.
+        real(8) :: loss_mult_homeless_1,find_mult_homeless_1
+        
+        integer :: cutoff_age_1,cutoff_age_2
+        ! THIS IS AN EXTERNALLY SET PENALTY AND IT IS NOT A DIAL. 0.2 means the
+        ! separation rate times 1.2 and the job finding rate divided by 1.2: a
+        ! twenty per cent penalty on each margin.
+        !
+        ! IT WAS RAISED TO 8.0 AND THAT WAS WRONG. The employed share of the
+        ! homeless read 0.94 against a target of 0.50, and the arithmetic said a
+        ! steady state of 0.50 needs a penalty near 6, so it went to 8. A steady
+        ! state that needs an eight hundred per cent penalty is not evidence
+        ! about the penalty, it is evidence that the moment is being asked of the
+        ! wrong parameter: every parameter here is disciplined either by a moment
+        ! or by an estimate from outside the model, and moving an external
+        ! estimate by a factor of forty to close a moment abandons both.
+        !
+        ! What the moment was actually reporting was the child's penalty at 0.9
+        ! manufacturing a class of workers too poor for any room. That is capped
+        ! at 0.4 now, and this stays where the evidence put it.
+        real(8), parameter :: increased_prob_to_be_addicted=0
+        
+        ! ZERO THE WHOLE TRANSITION BEFORE ANY ROW IS WRITTEN. Three rows are
+        ! never assigned on the benchmark path -- (1,0,1,:), a holder losing the
+        ! voucher while still eligible; (1,1,0,:), a holder keeping it with
+        ! income above the threshold; and (0,1,0,:), a non-holder acquiring one
+        ! with income above the threshold. All three are complements of rows
+        ! that are set to one, so zero is the right value, and zero is what they
+        ! have been reading: the array is module scope, so it lands in static
+        ! storage and the loader clears it.
+        !
+        ! That is an accident of storage class, not a statement of the model.
+        ! The block below already zeroes the exclusion rows by hand for exactly
+        ! this reason; this does the same for the rest of the array in one line,
+        ! so the transition is defined by what this routine writes rather than
+        ! by where the linker put it.
+        voucher_probabilities=0
+        
+        ! THE VOUCHER LOTTERY, EXTRACTED SO THE TRANSITION CAN REBUILD IT
+        ! PER PERIOD. It is built from probability_of_voucher_benchmark_used_1,
+        ! and a transition that moves pi_v every period must rebuild it every
+        ! period or the instrument moves on paper and the households face the
+        ! old lottery -- the failure the arm's own pi_v update comments record.
+        call build_voucher_probabilities()
             
         ! Every quantity built from a calibrated parameter, rebuilt before the
         ! hazards that read them.
@@ -53089,6 +53128,12 @@
 
         previous_price_of_addictive_good_path=price_of_addictive_good_path
 
+        ! PI_V's path starts flat at the value the handover supplied, which is
+        ! the terminal steady state's. It is an INSTRUMENT, not a schedule, so
+        ! the seed sets only how fast the budget clears, not where it clears --
+        ! every period's value is driven by its own budget residual below.
+        probability_of_voucher_path=probability_of_voucher_benchmark_used
+
         write(*,*) "DRUG PRICE PATH seeded: t=0", price_of_addictive_good_path(1-solve_transition_dynamics), &
             " t=1", price_of_addictive_good_path(1), &
             " t=T", price_of_addictive_good_path(transition_length)
@@ -53143,6 +53188,22 @@
                 ! priced the terminal economy from the moment of reform.
                 price_of_addictive_good=price_of_addictive_good_path(time_index)
 
+                ! AND RE-POINT PI_V, then REBUILD THE LOTTERY FROM IT.
+                !
+                ! Both scalars are set, not just one: recompute_derived_parameters
+                ! assigns _1 from the module value, and in
+                ! create_unemployment_process it runs AFTER the voucher block, so
+                ! setting only one leaves the result depending on call ordering.
+                ! Setting both removes the dependence.
+                !
+                ! The rebuild is the part that is easy to omit. voucher_probabilities
+                ! is what households actually face, and without rebuilding it the
+                ! instrument moves and the lottery does not -- which is exactly the
+                ! failure the arm's own pi_v update warns about.
+                probability_of_voucher_benchmark_used=probability_of_voucher_path(time_index)
+                probability_of_voucher_benchmark_used_1=probability_of_voucher_path(time_index)
+                call build_voucher_probabilities()
+
                 call solve_value_function_and_policy_functions(time_index)
                 
                 do i=1,2
@@ -53184,6 +53245,22 @@
                 ! reproduce and the forward pass would silently be solving a
                 ! different economy from the backward one.
                 price_of_addictive_good=price_of_addictive_good_path(time_index)
+
+                ! AND RE-POINT PI_V, then REBUILD THE LOTTERY FROM IT.
+                !
+                ! Both scalars are set, not just one: recompute_derived_parameters
+                ! assigns _1 from the module value, and in
+                ! create_unemployment_process it runs AFTER the voucher block, so
+                ! setting only one leaves the result depending on call ordering.
+                ! Setting both removes the dependence.
+                !
+                ! The rebuild is the part that is easy to omit. voucher_probabilities
+                ! is what households actually face, and without rebuilding it the
+                ! instrument moves and the lottery does not -- which is exactly the
+                ! failure the arm's own pi_v update warns about.
+                probability_of_voucher_benchmark_used=probability_of_voucher_path(time_index)
+                probability_of_voucher_benchmark_used_1=probability_of_voucher_path(time_index)
+                call build_voucher_probabilities()
 
                 call solve_value_function_and_policy_functions(time_index)
 
@@ -53309,6 +53386,35 @@
                         largest_distance_govt_budget=distance_govt_budget
                         
                     end if
+
+                    ! MOVE PI_V AT THIS PERIOD ON THIS PERIOD'S BUDGET RESIDUAL.
+                    !
+                    ! Until now the residual was measured, its maximum was put in
+                    ! the do-while, and NOTHING moved -- a convergence test with no
+                    ! instrument behind it. The author's rule, 19 September: pi_v
+                    ! is the instrument clearing the budget each period, which is
+                    ! also what long_run_counter_factual does, so both ends of the
+                    ! transition now use one fiscal rule instead of two.
+                    !
+                    ! GAIN 0.05, the arm's, and not chosen freshly. Its comment
+                    ! records the measurement behind it: at 0.3 the budget
+                    ! iteration DIVERGED once an arm moved the economy far enough,
+                    ! with dResidual/dpi_v = -16.9 giving a stability bound of
+                    ! 2/16.9 = 0.118, and 0.05 giving a multiplier of 0.155. The
+                    ! same comment warns the gain was tuned in a region the
+                    ! optimal policy arms leave, so it is worth re-measuring along
+                    ! a path the way it was re-measured for arm 3 -- pair each
+                    ! step with the printed distance that drove it.
+                    !
+                    ! Bounds at 0 and 1 as in the arm. There is no relative step
+                    ! clip on pi_v, so the gain is what governs.
+                    probability_of_voucher_path(time_index)=&
+                        max(min(probability_of_voucher_path(time_index)+&
+                        0.05*(net_govt_revenues(time_index)-net_govt_revenue_constraint),1.d0),10.d0**(-5))
+
+                    write(*,*) "TRANSITION PI_V loop=", loop_count, " t=", time_index, &
+                        " pi_v=", probability_of_voucher_path(time_index), &
+                        " budget_residual=", net_govt_revenues(time_index)-net_govt_revenue_constraint
                     
                 end if
 
