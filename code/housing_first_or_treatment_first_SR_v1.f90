@@ -45331,7 +45331,29 @@
             discount_factor_adjuster=0.d0
             discount_factor_impatient_adjuster=0.d0
             discount_factor_on_child_adjuster=0.d0
-            drug_market_adjuster=0.d0
+            ! drug_market_adjuster IS NOT FROZEN, AND IT USED TO BE. It is a
+            ! MARKET CLEARING instrument, not a calibration adjuster: in
+            ! clear_drug_market the counterfactual's price step is
+            !     step_1 = price_of_addictive_good + drug_market_adjuster*gap_1
+            ! so zeroing it pins the drug price and the market can never clear.
+            !
+            ! MEASURED, 19 September, on the omega_c = 1 plus internalisation
+            ! arm: price_of_addictive_good printed 1.00000000 on all nineteen
+            ! loops while distance_drug_market sat at 0.634 against a rule of
+            ! 5e-3. The secant branch cannot rescue it either -- it needs two
+            ! distinct prices and there is only ever one. The arm would have run
+            ! to its 80 loop cap without converging.
+            !
+            ! THE BENCHMARK IS UNAFFECTED EITHER WAY. With is_counterfactual = 0
+            ! clear_drug_market normalises the shifter, sets the price to the
+            ! benchmark's own and sets distance_drug_market to zero without ever
+            ! reading the adjuster -- n90 printed "drug_supply_shifter
+            ! (normalised)=" on all twenty seven blocks. So this changes no
+            ! calibration result and n90 stands.
+            !
+            ! rent_to_price_adjuster below stays frozen: distance_rent_to_price
+            ! is a calibration target on the data's rent to price ratio, which
+            ! is a different object from distance_rental_market.
             employment_multiplier_adjuster=0.d0
             fixed_cost_to_moving_adjuster=0.d0
             housing_status_grid_expander_adjuster=0.d0
