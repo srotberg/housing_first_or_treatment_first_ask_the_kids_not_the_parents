@@ -51698,6 +51698,30 @@
                             probability_of_voucher_benchmark_used_1=max(min(probability_of_voucher_benchmark_used_1+&
                                 0.3*(net_govt_revenues(transition_length)-net_govt_revenue_constraint),1.d0),0.d0)
 
+                            ! PERSIST IT, OR recompute_derived_parameters UNDOES IT ON THE
+                            ! NEXT LINE AND THE BUDGET NEVER CLEARS.
+                            !
+                            ! The call to create_unemployment_process a few lines below reaches
+                            ! recompute_derived_parameters, which opens its voucher block with
+                            !     probability_of_voucher_benchmark_used_1 = probability_of_voucher_benchmark_used
+                            ! and then rebuilds probability_of_voucher_benchmark from the MODULE
+                            ! value. So the step computed just above was overwritten before the
+                            ! economy ever saw it, and the lottery array was rebuilt from the
+                            ! unchanged number. The instrument moved on paper and nowhere else.
+                            !
+                            ! MEASURED, 19 September, on the omega_c = 1 plus internalisation arm:
+                            ! the "before" print read 0.06753386 on every block while
+                            ! distance_govt_budget GREW, 0.054063 then 0.099053. pi_v took the same
+                            ! first step from the same place forever.
+                            !
+                            ! Writing the module value makes the reset REPRODUCE the new pi_v
+                            ! instead of undoing it. Safe against the calibration, which also writes
+                            ! this name: this block runs only when
+                            ! use_revenues_to_increase_voucher_probability is 1, a compile-time
+                            ! parameter set only in a counterfactual build, and an arm freezes every
+                            ! adjuster in any case.
+                            probability_of_voucher_benchmark_used=probability_of_voucher_benchmark_used_1
+
                             write(*,*) "probability_of_voucher_benchmark_used=", probability_of_voucher_benchmark_used_1
                                                     
                         end if
