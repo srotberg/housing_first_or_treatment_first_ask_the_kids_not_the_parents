@@ -68,16 +68,24 @@ on everyone but is not internalised privately.
 
 ### CONVERTING WELFARE TO SOMETHING READABLE
 
-Utils are not interpretable on their own -- lifetime utility of 789.381 is a
-difference of two large numbers, value of life +1595.65 and the consumption
-bundle -805.20, so a ratio to it is a ratio to a level normalisation. Convert:
+Utils are not interpretable on their own, so convert. THESE NUMBERS ARE
+MEASURED BY n90's PROBE, not fitted -- an earlier version of this section
+carried a figure that was wrong by a factor of 8.9, so use these:
 
-    dW/dx at x = 0 = B_total * k = 312.237 utils per unit of x on c
-    1 util  = 0.3203 per cent of c = 0.2334 per cent of total expenditure
-    1 per cent of expenditure = 4.285 utils
+    35.2283 utils per unit of x on c          (probe: 0.0704567 utils at x = 0.0020)
+    1 per cent of c                = 0.35228 utils
+    1 per cent of TOTAL expenditure = 0.48096 utils
+    1 util                          = 2.0792 per cent of expenditure
 
-So a welfare change of DW utils is DW / 4.285 per cent of expenditure. Report
+So a welfare change of DW utils is DW * 2.0792 per cent of expenditure. Report
 both the utils and the per cent; the per cent is what goes in the paper.
+
+DO NOT RE-DERIVE THIS FROM A DECOMPOSITION OF THE CURVE. That is exactly how
+the 8.9 error happened: the childhood half was reconstructed as
+B_child = W_child(0) - value_of_life*D_child, and THE CHILD'S FLOW DOES NOT
+CARRY value_of_life -- child_flow_out is set inside calculate_flow_utility at
+lines 27652 and 27675, and value_of_life is added at 27816, after them. The
+probe measures the walk directly and needs no decomposition.
 
 Prefer the model's own CEV from `calculate_welfare_gains` where it is printed,
 and say so when the two disagree -- that routine inverts the saved curve

@@ -220,6 +220,21 @@ D_adult = A / (value_of_life - kappa_x*H) = 17.107
 `value_of_life` is CALIBRATED (87.198, not the 11.0 in the declaration) -- read
 it from `value_of_lifebaseline_benchmark.dat`, never from the source.
 
+**THE CHILD'S FLOW DOES NOT CARRY value_of_life, AND ASSUMING IT DOES COSTS A
+FACTOR OF 8.5 ON kappa_x.** `child_flow_out` is set inside
+calculate_flow_utility at lines 27652 and 27675; `value_of_life` is added to
+`flow_utility_1` at 27816, AFTER both. So the childhood curve is not
+`B_child + value_of_life*D_child`, and reconstructing `B_child` that way put
+kappa_x at 6.94 where the measured value is 0.81. The adult decomposition IS
+right -- `A = value_of_life*D_adult` gives D_adult = 17.107, which the probe's
+own `D_total` confirms to 0.004 per cent -- which is what made the wrong answer
+look well-checked.
+
+**SO USE THE PROBE, NOT A DECOMPOSITION.** The probe evaluates the actual walk
+at the actual x and needs no assumption about what is in which flow. Its two x
+points are a built-in check: their costs must be in the same ratio as the x
+(measured 2.50209 against 2.50000, 0.08 per cent).
+
 The childhood half is the same shape: `W_child(0) = B_child + value_of_life*D_child`
 with `D_child = sum_{i=1..25} beta^(i-1)`.
 
