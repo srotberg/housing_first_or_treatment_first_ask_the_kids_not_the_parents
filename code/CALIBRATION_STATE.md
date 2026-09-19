@@ -1,3 +1,76 @@
+## ARM 2 IS CONVERGED. THE FIRST ARM RESULT IN THIS PROJECT. 19 September
+
+Omega_c = 1 plus full internalisation of the homelessness externality,
+kappa_x = 0.8139. All three LIVE rules held together at block 9:
+
+    CF moments   1.26e-4   (rule 5e-4)
+    budget       1.54e-2   (rule 2.5e-2)
+    drug gap    +1.090e-3  (rule 5e-3)
+
+    price 0.869094   V 0.403146   b 0.051953   lambda_d 0.021215
+    h_1 0.005245     homeless&addicted 0.109102   pi_v 0.068857
+    welfare 780.95182   (NOT comparable to the benchmark -- see below)
+
+Against the n90 benchmark (b 0.081813, lambda_d 0.033609, h_1 0.0064583,
+V 0.494427, price 1.0, welfare 791.39464):
+
+    b        -36.5%
+    lambda_d -36.9%
+    h_1      -18.8%
+    V        -18.5%
+    price    -13.1%
+
+Preserved in `code/results/arm2/run.log.gz`. Read any arm with
+`code/collect_arm.py`, never by hand.
+
+### IT CONVERGED AND THEN CRASHED, AND THAT WAS AN OUTRIGHT BUG
+
+    At line 40223 ... open(unit=2,file=trim(file_number)//".txt")
+    Fortran runtime error: Cannot open file ''
+
+The `file_number` chain at 13142 has three branches -- pi_v==1 with the HF
+switch on, pi_v==1 with it off, pi_v<1 with it OFF -- and no fallback `else`.
+The omega_c=1 arms are none of those: they change PREFERENCES, not the voucher
+rule, so pi_v clears the budget below 1 while
+`increased_prob_of_voucher_if_homeless_and_addicted` stays at its benchmark 1.
+Measured on arm 2: pi_v 0.068857, flag 1. `file_number` is a `character*400`
+with no initialiser, so it stayed blank for forty thousand lines and then died.
+
+Everything after that point was lost, including the CEV from
+`calculate_welfare_gains` at 52017. **Arm 3 would NOT have hit this** -- it sets
+the flag to 0 and matches branch three. Fixed with a fallback. It assigns a
+character variable and touches no equation; all three builds clean with the same
+seven pre-existing warnings, compared as sets and not just counted.
+
+### pi_v: I SCORED A PREDICTION ON A TRANSIENT, AGAIN
+
+I predicted pi_v would converge near 0.0740 and announced it CONFIRMED at
+0.073872. It had not landed, it was passing through a peak:
+
+    0.066397 0.067846 0.071475 0.073664 0.073872 0.072645 0.071053 0.069627 0.068857
+
+The converged value is 0.068857, seven per cent below the prediction and below
+the probe's 0.073955. **Third time in one session** that an early reading was
+taken for a settled one, after the block-1 drug gap and the value-function
+access times -- and the only one of the three I announced as a success.
+
+A real caveat comes with it: pi_v's steps at exit were -0.00123, -0.00159,
+-0.00143, -0.00077, decelerating but not zero. The loop stopped because the
+BUDGET residual fell inside 2.5e-2, which is loose next to the precision pi_v
+moves at. So 0.068857 is inside tolerance, not settled, and its distance from
+the probe's 0.073955 at a nearly identical price is the tolerance rather than
+two different equilibria.
+
+### WHAT IS RUNNING, AND WHY IT IS SERIAL
+
+Arm 1 (omega_c=1, no internalisation) started 13:14 from price 0.8750 and
+pi_v 0.0689, both guesses off arm 2's answer. Arm 3 follows it. They are serial
+because an arm reads 596 MB of benchmark value functions that are not in git,
+so they can only run where n90's full output is on disk, and the box has four
+CPUs.
+
+---
+
 ## AN ARM CANNOT RUN FROM A FRESH CHECKOUT, AND I HAD THAT BACKWARDS, 19 September
 
 The cloud parallelism is OFF. Arms 1 and 3 must run on the box that holds a
