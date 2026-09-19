@@ -585,3 +585,123 @@ model but has no caller is invisible in the output. `clear_drug_market`'s
 long as it had existed, and no log line said so, because
 `distance_drug_market` sits at its declared zero and zero is what a cleared
 market also reports.
+
+## 13. THE TRANSITION DRIVER HAD NO PROLOGUE, AND THE TERMINAL STEADY STATE WAS THE BENCHMARK
+
+Found 19 September, by building the transition and running it rather than by
+reading it. Three defects, in the order the run reaches them. All three are in
+setup; none of them is in the path loop, which had still not been reached when
+they were found.
+
+### The shape of it
+
+`main_program` branches three ways on the two compile-time switches and calls
+EXACTLY ONE driver:
+
+    is_counterfactual=0                              -> calibrating_model
+    is_counterfactual=1, solve_transition_dynamics=0 -> long_run_counter_factual
+    is_counterfactual=1, solve_transition_dynamics=1 -> transition_simulation
+
+So with the transition switched on `long_run_counter_factual` never runs, and
+every line of setup it does has to be repeated in `transition_simulation`.
+None of it was. `transition_simulation` began at `loop_count=0` and went
+straight to `initialize_variables_and_grids`.
+
+The single worst consequence: **`apply_param_handover` was never called.** A
+run launched as Treatment First would not have been Treatment First. It would
+not even have been the calibrated benchmark -- every parameter would have sat
+at its declared default, which is the failure mode already recorded for a
+deleted `PARAM_HANDOVER.txt` (b near 0.95, lambda_d at zero) and which looks
+perfectly healthy in the log.
+
+Also missing: `set_files_names` after the handover (the main program's own call
+runs before any handover value exists, so it keys the names off the defaults),
+`apply_gamma_tie`, `set_smallest_house_size`, `set_newborn_age_transfer`,
+`set_renter_floor`, the voucher-rule block and `tax_system_type`.
+
+### Defect 1: long_run_simulation named the benchmark
+
+`set_files_names` ended with
+
+    benchmark_simulation=old_results
+    long_run_simulation=old_results
+    old_transition_resuls=old_results
+
+and `old_results` is `'baseline_benchmark'`. But `long_run_simulation` names
+every file the transition reads for period `transition_length`: the value
+function that TERMINATES THE BACKWARD PASS (`upload_functions`), and the price,
+rent, housing stock, rental supply, profits and transfer that `upload_vars`
+reads inside its own `solve_transition_dynamics` block.
+
+**The path would therefore have been solved from the benchmark TO the
+benchmark, and would have reported a reform that does nothing.** It would have
+converged, and every convergence rule would have held.
+
+This is section 7's lesson again in a third form: the thing that was wrong
+produced no error and no diagnostic. `long_run_simulation` is only ever used
+inside `solve_transition_dynamics==1` blocks, so the line was dead in every run
+that has ever been made and correct-looking in every reading of the file.
+
+The fix keys on the compile-time switch, so the arm and benchmark builds are
+untouched: at `solve_transition_dynamics==1`, `long_run_simulation=file_number`
+(the reform's own arm) and the transition's own outputs take `'_transition'`,
+or `write_outputs` would overwrite the arm files the loop is still reading its
+terminal condition from.
+
+### Defect 2: the distribution was initialised before the grids existed
+
+`initialize_feasible_distribution` ran before `initialize_financial_grid`, and
+with `renter_floor_by_age` still at its DECLARED 0. The renter array's
+financial dimension starts at `renter_array_floor`, which is
+`negative_financial_grid_size` = 3 when unsecured borrowing is off.
+
+    Index '0' of dimension 3 of array
+    'distribution_guess%vector_transition_real' below lower bound of 3
+
+Both working drivers build the grid and then re-set the transfer and the floor
+before initialising the distribution. The transition did neither. Note that
+`set_renter_floor` does not depend on the grid -- it assigns a parameter -- so
+the ordering that matters is only that it be called AT ALL; the grid ordering
+matters because the routine reads `financial_grid` when it places the exogenous
+endowment.
+
+### Defect 3: the transfer and the floor after the second grid build
+
+`long_run_counter_factual` re-sets both after `initialize_financial_grid`,
+"AGAIN AFTER THE GRIDS". The transition now does too.
+
+### THE CONTROL, AND HOW TO DO IT WITHOUT RE-RUNNING AN ARM
+
+The standing rule is that a change meant to be a no-op somewhere has its
+reference value stated BEFORE the run. Re-running an arm to prove it costs two
+hours. It can be proved in ninety seconds instead, and this is worth keeping:
+
+    build the cf configuration from the previous commit and from the working
+    copy with identical flags, disassemble both, split by function, normalise
+    addresses, and diff function by function.
+
+Measured, 19 September, over 202 functions: six differ, and five of the six are
+cosmetic --
+
+  - `set_files_names_`: 125 instructions before and after, with two IDENTICAL
+    `rep movsq` string copies swapped in order (the source now assigns
+    `old_transition_resuls` before `long_run_simulation` instead of after);
+  - `main`: an internal symbol number, `options.7950` -> `options.7961`;
+  - `apply_param_handover_`: a jumptable symbol number;
+  - `calculate_household_housing_spending_` and its constprop clone: a static's
+    name suffix, `mass_of_renters_1.11` -> `.10`, same instruction counts.
+
+The sixth is `transition_simulation_`, which the main program does not call in
+that build. That is the whole control, and it is stronger than a re-run: it
+covers every input, not the one that was tried.
+
+### WHAT THIS COSTS: THE TERMINAL STEADY STATE MUST EXIST ON DISK
+
+With `long_run_simulation` pointing at the reform's arm, the transition needs
+that arm's FULL output -- `value_function{1,2}counter_TF.dat` above all, plus
+`total_rental_supply`, `total_profits`, `housing_stock`, `risk_free_rate`,
+`housing_price`, `rent` and `lump_sum_transfer`. Those are not in git and do
+not survive a container. **An arm's results file is not enough to run a
+transition from it; the arm has to be re-solved, or its .dat output kept.**
+Warm started at the converged price and pi_v it is much cheaper than the first
+solve, but it is not free.
