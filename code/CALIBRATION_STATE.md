@@ -1,3 +1,38 @@
+## A 75-PERIOD TRANSITION DOES NOT FIT ON THIS MACHINE, 19 September
+
+Measured before building anything, which is what `TRANSITION_LESSONS.md` asks
+for. **It needs about 220 GB. The box has 15 GB.**
+
+Every one of the 38 large structures carries `transition_length` as its LEADING
+dimension, so memory is linear in it:
+
+    allocate(value_function(i)%vector_transition_real(transition_length, &
+        life_span+1, renter_array_floor:financial_grid_size, &
+        unemployment_grid_size, employment_grid_size, ... , 0:voucher_state_max))
+
+One array, one period: 61 x 30 x 18 x 26 x 4 x 3 = 10,277,280 elements = 78 MB
+at real(8). Thirty-eight of them is about **3 GB PER PERIOD**, which checks
+against the 4.8 GB this process actually holds at `transition_length = 1`, and
+against the on-disk benchmark file (308 MB of formatted text at ~36 bytes a
+number is ~68 MB in memory).
+
+    75 periods  ~220 GB      the machine has 15 GB
+    what fits at ~3 GB/period: about THREE periods
+
+**Trimming does not rescue it.** 16 of the 38 are `_benchmark`, `_guess`,
+`_saved` or `_to_fetch` copies that only ever hold a steady state and do not
+need the transition dimension at all. Fixing that gives 22 arrays, ~1.7 GB per
+period -- still ~128 GB for 75 periods, and about six periods on this box.
+
+So the transition needs EITHER a much larger machine, OR the standard
+restructure in which policy functions are written to disk period by period and
+streamed back, rather than all held in core. That is a design decision to take
+BEFORE the transition is built, not after: `TRANSITION_LESSONS.md` is explicit
+that retrofitting this model's transition is far more expensive than building it
+right, and it is the author's call which way to go.
+
+---
+
 ## ARM 2 IS CONVERGED. THE FIRST ARM RESULT IN THIS PROJECT. 19 September
 
 Omega_c = 1 plus full internalisation of the homelessness externality,

@@ -54,14 +54,19 @@ of its own drug use to its child, so what survives is the optimum.
 
 | | benchmark (n90) | arm 1, omega_c = 1 | change |
 |---|---|---|---|
-| b, total drug users | 0.081813 | | |
-| lambda_d, SUD | 0.033609 | | |
-| lambda_d / b, SUD per user | 0.41080 | | |
-| drug quantity V | 0.494427 | | |
-| price of the addictive good | 1.000000 | | |
+| b, total drug users | 0.081813 | **0.052083** | **-36.3%** |
+| lambda_d, SUD | 0.033609 | **0.021257** | **-36.8%** |
+| lambda_d / b, SUD per user | 0.41080 | 0.40814 | -0.6% |
+| drug quantity V | 0.494427 | 0.403503 | -18.4% |
+| price of the addictive good | 1.000000 | 0.870124 | -13.0% |
 
-Benchmark column filled from n90's converged log (`ECONOMY IS STILL`, block move
-8.646e-5). Arm 1 column pending.
+ANSWERED. Arm 1 converged at block 9 (CF moments 3.60e-4, budget 1.66e-2, drug
+gap -7.7e-5), `code/results/arm1/`.
+
+**SUD per user barely moves.** 0.41080 to 0.40814, six tenths of a per cent. The
+entire fall in SUD is the EXTENSIVE margin -- fewer users -- and not users
+becoming less likely to develop a disorder. Worth saying in the paper, because
+the two readings of a 37 per cent SUD fall are very different mechanisms.
 
 **READ ALL THREE OFF THE `CF MOMENTS distance=` LINE, not from separate prints.**
 `MOMENT b` does NOT exist in an arm's log -- it is a calibration-loop print and
@@ -88,12 +93,34 @@ arm 1 is the control and the difference isolates the externality alone.
 
 | | arm 1, omega_c = 1 | arm 2, + internalisation | change |
 |---|---|---|---|
-| H, homelessness | | 0.0052454 | |
-| b | | 0.051953 | |
-| lambda_d | | 0.021215 | |
-| pi_v, the clearing instrument | | 0.068857 | |
-| price of the addictive good | | 0.869094 | |
-| drug quantity V | | 0.403146 | |
+| H, homelessness | 0.0053099 | 0.0052454 | -6.5e-5 -- BELOW TOLERANCE |
+| b | 0.052083 | 0.051953 | -1.3e-4 -- BELOW TOLERANCE |
+| lambda_d | 0.021257 | 0.021215 | -4.2e-5 -- BELOW TOLERANCE |
+| pi_v, the clearing instrument | 0.068989 | 0.068857 | -1.3e-4 |
+| price of the addictive good | 0.870124 | 0.869094 | -1.0e-3 |
+| drug quantity V | 0.403503 | 0.403146 | -3.6e-4 |
+
+## THE ANSWER TO Q2 IS A BOUND, NOT A POINT ESTIMATE
+
+**Arm 1 and arm 2 are indistinguishable at the tolerance they were solved to.**
+`distance_counterfactual_moments` is an ABSOLUTE 5e-4 bound on each of b,
+lambda_d, h_1 and y. Every difference above is smaller than that -- the largest,
+b, is 1.3e-4 -- and arm 1 itself stopped at a CF distance of 3.60e-4, nearly
+three times the b gap.
+
+So the finding is: **internalising the homelessness externality changes nothing
+the solver can resolve, once omega_c = 1 has already cut drug use by 36 per
+cent.** The Pigouvian charge on choosing the street does essentially no work on
+top of the preference change. That is a real and reportable result, but it is an
+UPPER BOUND on the effect, not a measurement of it.
+
+An earlier version of this file reported "H falls 1.2 per cent" off these same
+numbers. That was iteration noise quoted as a result. Do not repeat it.
+
+**To resolve it** rather than bound it, both arms need rerunning at
+`stopping_rule_frozen_moments` about 5e-5 -- an order of magnitude of headroom,
+at perhaps three to four times the blocks. Not done: changing a solver tolerance
+is the author's call.
 
 Arm 2 column from its converged run, `code/results/arm2/run.log.gz`: all three
 LIVE rules held together at block 9 (CF moments 1.26e-4, budget 1.54e-2, drug
