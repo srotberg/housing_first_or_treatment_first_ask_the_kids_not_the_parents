@@ -237,3 +237,8 @@ code/data/
 code/trans_bench_to_tf/
 code/trans_*/
 code/tr/
+# build output directories: three binaries, a generated source copy and the
+# compiler's .err files, all reproduced by build_transition.sh in 90 seconds.
+# tr75/ holds the windowed build used to validate the T=75 memory fix.
+code/tr75/
+code/tr[0-9]*/
