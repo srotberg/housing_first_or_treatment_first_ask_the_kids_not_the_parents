@@ -299,6 +299,60 @@ welfare BY ADDICTION STATUS, which does not exist.
 
 ---
 
+## 6a. THE DRUG MARKET IS THE HARD PART OF ANY ARM
+
+The benchmark never exercises this: with `is_counterfactual = 0`
+`clear_drug_market` normalises the supply shifter, takes the price as given and
+sets `distance_drug_market` to zero. Everything below bites only in an arm.
+
+**The price moves 0.5 per cent a loop and no faster.** `max_drug_price_move =
+0.005`, and it is LOAD BEARING -- the iteration's gain is
+|eps_d|/eps_s = 3.14/1.46 = 2.15 and the secant diverged on universal Treatment
+First. Its own declaration says: *"Loosening this alone hides the problem; it
+does not fix it."* Do not loosen it. If an arm needs a big price move, give it
+LOOPS, not a bigger step. `max_counterfactual_loops` is 250 for that reason.
+
+**Warm start the price, and the handover name is `drug_price_start`.** NOT
+`price_of_addictive_good` -- that is reported as `HANDOVER IGNORED, unknown
+name` and silently leaves the price at 1.0, which costs about sixty loops of
+pure walking. `drug_price_start` is gated on `is_counterfactual == 1`, so it
+exists for exactly this.
+
+**BRACKET THE PRICE, DO NOT ESTIMATE IT.** The supply side is exact and can be
+checked: recovering the exponent from the benchmark's own normalisation,
+1 = shifter*V^k, gave k = 0.684931 against 1/eps_s = 0.684932, six digits. The
+DEMAND side is not -- `stopping_rule_drug_market`'s comment ties the
+convergence difficulty and the failed elasticity validation together as one
+defect. So an equilibrium price computed from a remembered elasticity is not
+trustworthy: measured at 0.727 that way, and the bracket put it near 0.886.
+
+Two runs at different starting prices give the bracket for free, because
+`distance_drug_market` is |gap| and the gap changes sign across the fixed
+point. Measured on the omega_c = 1 plus internalisation arm:
+
+    p = 1.00   gap -0.620   implied 0.381   the price must FALL
+    p = 0.75   gap +0.737   implied 1.487   the price must RISE
+
+so the answer is in [0.75, 1.00], near 0.886 by interpolation. Warm start
+INSIDE the bracket and let the walk finish; it is self-correcting, since a
+rising price cuts demand and pulls the implied price down to meet it.
+
+**WHAT AN ARM'S CONVERGENCE ACTUALLY REQUIRES**, all at once, capped at
+`max_counterfactual_loops`:
+
+    distance_counterfactual_moments <= 5e-4   b, lambda_d, h_1, y between iterates
+    rental market      <= 1e-2
+    housing market     <= 2e-2
+    government budget  <= 2.5e-2
+    drug market        <= 5e-3
+    inheritance        <= 2e-3
+
+An arm prints `CF MOMENTS distance=`, NOT `BLOCK MOVE`, and
+`frozen_stop_tolerance` does not apply to it at all -- that flag is wired into
+the CALIBRATION loop, which an arm never enters.
+
+---
+
 ## 7. THE ARMS
 
 See `ARMS.md`. All three need a counterfactual BUILD, because `is_counterfactual`
