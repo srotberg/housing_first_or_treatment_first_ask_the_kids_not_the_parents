@@ -885,6 +885,23 @@
         ! put them. delta_d is held by hand already (the scan is off), so this
         ! leaves precisely the two the author named.
         integer :: freeze_all_but_omega_c=0
+
+        ! HOW MANY BLOCKS A FROZEN RUN IS ALLOWED BEFORE IT STOPS CALIBRATING.
+        !
+        ! The calibration loop's exit needs every distance inside its stopping
+        ! rule. Frozen, no parameter moves and no distance shrinks, so the loop
+        ! never ends and the run never reaches save_vars_and_functions -- which
+        ! is what writes the policy functions save_welfare_curve reads. No run
+        ! in this line has ever got past that loop.
+        !
+        ! At 0 the loop condition is exactly what it was and this is a no-op.
+        ! Above 0 the run leaves the loop after that many blocks and goes on to
+        ! the statistics, the save and the welfare curve. It does NOT decide
+        ! that the economy converged: the trace still does that, by hand, and
+        ! the number is set only once d(b) and d(class share) are flat.
+        !
+        ! loop_count advances by TWO per block, which is why the test doubles.
+        integer :: frozen_stop_after_blocks=0
         real(8) :: distance_weight_on_child=1
         real(8) :: stopping_rule_weight_on_child=10.d0**(-2)
         real(8) :: drug_users_without_child=0
@@ -21852,9 +21869,13 @@
         implicit none
 
         integer, intent(in) :: time_period
-        integer :: i_x_1
+        integer :: i_x_1, i_probe_1
         real(8) :: x_1, w_1, w_at_zero_1, target_1
         character*1 :: string_used
+
+        ! The kappa_x probe. See the block at the foot of this routine.
+        real(8) :: kappa_x_saved_1, w_no_disamenity_1, w_with_disamenity_1
+        real(8) :: w_cut_1, hd_1, loss_1, cev_target_1
 
         vf_simulation='baseline_benchmark'
 
@@ -22050,6 +22071,66 @@
         close(1)
 
         write(*,*) "WELFARE CURVE: written, identity check passed"
+
+        ! ---- WHAT kappa_x IS WORTH, MEASURED -------------------------------
+        !
+        ! kappa_x is deducted as -kappa_x*model_fraction_homeless from every
+        ! ADULT flow and from no child flow, so the lifetime welfare it costs is
+        ! exactly kappa_x*H*beta^K*D_adult. Linear in kappa_x, so two
+        ! evaluations at x = 0 pin the product with no fit and no derivative.
+        ! Both are differences of walks, so welfare_curve_shift cancels.
+        kappa_x_saved_1=kappa_x
+
+        call compute_value_function_comparison(time_period,0.d0)
+        call compute_value_of_comparison(w_1,1)
+        w_with_disamenity_1=childhood_comparison+&
+            (discount_factor**child_at_home_last_index)*w_1
+
+        kappa_x=0.d0
+        call compute_value_function_comparison(time_period,0.d0)
+        call compute_value_of_comparison(w_1,1)
+        w_no_disamenity_1=childhood_comparison+&
+            (discount_factor**child_at_home_last_index)*w_1
+
+        kappa_x=kappa_x_saved_1
+
+        hd_1=(w_no_disamenity_1-w_with_disamenity_1)/&
+            max(kappa_x_saved_1,10.d0**(-12))
+
+        write(*,*) "KAPPA_X PROBE: H*beta^K*D_adult=", hd_1,&
+            " measured at kappa_x=", kappa_x_saved_1
+        write(*,*) "KAPPA_X PROBE: H=", model_fraction_homeless(time_period),&
+            " so beta^K*D_adult=",&
+            hd_1/max(model_fraction_homeless(time_period),10.d0**(-12))
+
+        ! The other side: what 0.20 per cent of non-housing consumption, given
+        ! up for life, costs. Evaluated AT that x rather than read off a grid
+        ! whose step is 0.05.
+        do i_probe_1=1,2
+
+            if (i_probe_1==1) then
+                cev_target_1=0.0020d0
+            else
+                cev_target_1=0.0008d0
+            end if
+
+            call compute_value_function_comparison(time_period,-cev_target_1)
+            call compute_value_of_comparison(w_1,1)
+            w_cut_1=childhood_comparison+&
+                (discount_factor**child_at_home_last_index)*w_1
+
+            loss_1=w_with_disamenity_1-w_cut_1
+
+            write(*,*) "KAPPA_X PROBE: giving up x=", cev_target_1,&
+                " of consumption for life costs", loss_1, " utils"
+            write(*,*) "KAPPA_X PROBE: IMPLIED kappa_x=",&
+                loss_1/max(hd_1,10.d0**(-30)),&
+                " against the coded", kappa_x_saved_1
+
+        end do
+
+        ! The curve on disk was built at the coded kappa_x, which shifts it by a
+        ! constant and cannot bend it, so nothing written above is stale.
 
     end subroutine
 
@@ -44988,6 +45069,11 @@
                         omega_c_is_pinned, "->", nint(handover_value)
                     omega_c_is_pinned=max(min(nint(handover_value),1),0)
 
+                case ("frozen_stop_after_blocks")
+                    write(*,*) "HANDOVER frozen_stop_after_blocks:",&
+                        frozen_stop_after_blocks, "->", nint(handover_value)
+                    frozen_stop_after_blocks=max(nint(handover_value),0)
+
                 case ("freeze_all_but_omega_c")
                     write(*,*) "HANDOVER freeze_all_but_omega_c:",&
                         freeze_all_but_omega_c, "->", nint(handover_value)
@@ -45744,7 +45830,7 @@
         ! market is from clearing at a pinned rent is worth seeing. It simply no
         ! longer holds the loop open. distance_rent_to_price needs no change: it
         ! is already (1-fix_rent)*abs(...), which is zero.
-        do while((distance_discount_factor>stopping_rule_discount_factor) .OR. &
+        do while(((distance_discount_factor>stopping_rule_discount_factor) .OR. &
             ((freeze_to_three_block==0) .AND. (distance_discount_factor_on_child>stopping_rule_discount_factor_on_child)) .OR. &
             (distance_minimum_inheritance>stopping_rule_minimum_inheritance) .OR. &
             (distance_advantage_to_owning>stopping_rule_advantage_to_owning) .OR. &
@@ -45789,7 +45875,9 @@
             (distance_labor_income_tax_rate>stopping_rule_labor_income_tax_rate) .OR. &
             (distance_sd_permanent_productivity>stopping_rule_sd_permanent_productivity) .OR. &
             (distance_smi_onset_level>stopping_rule_smi_onset_level) .OR. &
-            (distance_newborn_endowment>stopping_rule_newborn_endowment) .OR. (loop_count<1))
+            (distance_newborn_endowment>stopping_rule_newborn_endowment) .OR. (loop_count<1)) &
+            .AND. ((frozen_stop_after_blocks==0) .OR. &
+                   (loop_count<2*frozen_stop_after_blocks)))
                         
             ! SIGMA_Y, on the share of productivity held by the bottom half.
             ! The share FALLS in sigma_y, so a model share above target means
@@ -50599,7 +50687,16 @@
         end if
                     
         call save_vars_and_functions(1)
-        
+
+        ! THE CURVE IS BUILT HERE AND NOWHERE ELSE, and AFTER
+        ! save_vars_and_functions, because it reads the benchmark policy
+        ! functions that call has just written. It evaluates saved policies and
+        ! changes nothing the equilibrium saw. calculate_welfare_gains, which
+        ! the transition calls, reads the file this writes.
+        if (use_old_results==0) then
+            call save_welfare_curve(1)
+        end if
+
         write(*,*) "simulation ended"
         write(*,*) "rental_management_costs=", rental_management_costs
         write(*,*) "model_drug_use_by_income_quintile", model_drug_use_by_income_quintile(1,:)
