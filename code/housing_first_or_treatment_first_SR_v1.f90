@@ -53029,6 +53029,38 @@
                 call stationary_equilibirum_homeownership_rate(time_index)
                 call calculate_homeownership_by_characteristics(time_index)
                 call govt_revenues_calc(time_index)
+
+                ! THE WELFARE PATH, EVERY LOOP, NOT ONLY AFTER CONVERGENCE.
+                !
+                ! calculate_welfare was called only in the block AFTER the
+                ! convergence do-while, so the one number the transition exists
+                ! to produce -- what the cohort alive at the reform gets -- was
+                ! invisible until the whole run finished, which is days. It is
+                ! also the number whose own convergence is worth watching: a
+                ! welfare path still moving between loops means the price and
+                ! budget paths underneath it have not settled.
+                !
+                ! HERE IS THE ONLY PLACE IT CAN GO. calculate_welfare(t) reads
+                ! policy_function_labor_supply at t, which is WINDOWED to one
+                ! slice, so reslot_policies(t) must already have run; it reads
+                ! value_function at t, which the backward pass filled; and it
+                ! reads distribution_stationary at t-1, which the previous
+                ! iteration wrote and which at t=1 is slot 0, the benchmark
+                ! distribution the instant before the reform. All three hold at
+                ! this line and nowhere earlier.
+                !
+                ! t=1 IS THE FIRST THING THE FORWARD PASS COMPUTES, so the
+                ! implementation cohort's welfare prints minutes after the
+                ! backward pass rather than days after convergence.
+                !
+                ! Called once per period, not once per beta type, matching how
+                ! calibrating_model and long_run_counter_factual call it.
+                call calculate_welfare(time_index)
+
+                write(*,*) "TRANSITION WELFARE loop=", loop_count, " t=", time_index, &
+                    " youngest=", average_welfare_of_youngest_cohort(time_index), &
+                    " all=", average_welfare_of_all_cohorts(time_index), &
+                    " benchmark_youngest=", average_welfare_of_youngest_cohort_calibrated
                             
 !                write(*,*) "time_index=", time_index
 !                write(*,*) "homeownership_rate=", model_homeownership_rate(time_index)
