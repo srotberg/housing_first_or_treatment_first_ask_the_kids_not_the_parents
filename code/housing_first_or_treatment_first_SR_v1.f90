@@ -13233,9 +13233,39 @@
             end if
                 
             benchmark_simulation=old_results
-            long_run_simulation=old_results
             old_transition_resuls=old_results
-                        
+
+            if (solve_transition_dynamics==0) then
+
+                long_run_simulation=old_results
+
+            else
+
+                ! THE TERMINAL STEADY STATE OF A TRANSITION IS THE REFORM'S OWN
+                ! ARM, NOT THE BENCHMARK.
+                !
+                ! long_run_simulation names every file the transition reads for
+                ! period transition_length: the value function that terminates
+                ! the backward pass (upload_functions), and the price, rent,
+                ! housing stock, rental supply, profits and transfer that
+                ! upload_vars reads inside its own solve_transition_dynamics
+                ! block. Set to old_results it named 'baseline_benchmark', so
+                ! the path would have been solved from the benchmark TO the
+                ! benchmark and would have reported a reform that does nothing.
+                ! benchmark_simulation keeps naming the initial steady state,
+                ! which is what the distribution at t=0 is read from.
+                !
+                ! The transition's own outputs then need a name of their own, or
+                ! write_outputs would overwrite the arm files it is reading the
+                ! terminal condition from while the loop is still running.
+                !
+                ! Guarded on a compile-time parameter, so nothing in an arm or in
+                ! the benchmark binary reaches either branch's new line.
+                long_run_simulation=file_number
+                file_number=trim(file_number)//'_transition'
+
+            end if
+
         end if
             
     end subroutine
@@ -52477,7 +52507,80 @@
         loop_count=0
         
         lump_sum_transfer=0
-        
+
+        ! THE TRANSITION DRIVER HAD NO PROLOGUE AT ALL.
+        !
+        ! The main program branches three ways on the two compile-time switches
+        ! and calls exactly one driver, so with solve_transition_dynamics=1
+        ! long_run_counter_factual NEVER RUNS and every line of setup it does
+        ! has to be done here instead. None of it was. In particular
+        ! apply_param_handover was never called, so a run launched as Treatment
+        ! First was not Treatment First and was not even the calibrated
+        ! benchmark: it went with each parameter's declared default.
+        !
+        ! ORDER MIRRORS long_run_counter_factual: handover, names, the tie, the
+        ! house size, the transfer, the floor. set_files_names is called AGAIN
+        ! here, after the handover, because the main program's own call at the
+        ! top ran before any handover value existed and keyed the names off the
+        ! declared defaults.
+        call apply_param_handover()
+        call set_files_names()
+        call apply_gamma_tie()
+        call set_smallest_house_size()
+        call set_newborn_age_transfer(1)
+        call set_renter_floor(1)
+
+        write(*,*) "TRANSITION INIT: file_number=", trim(file_number)
+        write(*,*) "TRANSITION INIT: old_results=", trim(old_results)
+        write(*,*) "TRANSITION INIT: benchmark_simulation=", trim(benchmark_simulation)
+        write(*,*) "TRANSITION INIT: long_run_simulation=", trim(long_run_simulation)
+        write(*,*) "TRANSITION INIT: transition_length=", transition_length
+        write(*,*) "TRANSITION INIT: renter_floor_by_age(1:5)=", renter_floor_by_age(1:5)
+        write(*,*) "TRANSITION INIT: smallest_house_size=", smallest_house_size
+
+        ! THE VOUCHER RULE AND THE TAX INSTRUMENT, copied from
+        ! long_run_counter_factual. Without these the transition would run the
+        ! benchmark's rationed voucher with tax_system_type at its default, so
+        ! the reform the path converges to would not be the reform the terminal
+        ! steady state was solved under.
+        if (probability_of_voucher_benchmark_used==1) then
+
+            probability_of_voucher=1
+
+        end if
+
+        if (use_revenues_to_increase_voucher_probability==1) then
+
+            if (increased_prob_of_voucher_if_homeless_and_addicted==0) then
+
+                increased_prob_of_voucher_if_homeless_1=1
+
+                tax_system_type=3
+
+            else
+
+                tax_system_type=1
+
+            end if
+
+        elseif (double_voucher_program==1) then
+
+            probability_of_voucher=probability_of_voucher_benchmark*2
+
+            tax_system_type=1
+
+        else
+
+            tax_system_type=1
+
+        end if
+
+        simulation_ended=0
+
+        call cpu_time(simulation_start_time)
+
+        increase_in_labour_income_tax=0
+
         call initialize_variables_and_grids()
                                 
         if (use_old_results==1) then
@@ -52487,6 +52590,24 @@
             
             call allocate_matrix() 
             call upload_functions()
+
+            ! THE GRIDS AND THE FLOOR BEFORE THE DISTRIBUTION, as both working
+            ! drivers do it (calibrating_model, long_run_counter_factual).
+            !
+            ! initialize_feasible_distribution reads financial_grid when it
+            ! places the exogenous endowment, and every state loop in it starts
+            ! at renter_floor_by_age. Neither existed here: the grid had not
+            ! been built and renter_floor_by_age was still at its DECLARED 0,
+            ! while the renter array's financial dimension starts at
+            ! renter_array_floor, which is negative_financial_grid_size=3 when
+            ! unsecured borrowing is off. MEASURED, 19 September: index 0 of
+            ! dimension 3 below lower bound 3, in the slot-0 accumulation the
+            ! transition branch does.
+            call GKKOC_intergenerational_employment_process(1)
+            call initialize_financial_grid(1)
+            call set_newborn_age_transfer(1)
+            call set_renter_floor(1)
+
             call initialize_feasible_distribution(transition_length)
                     
         else
@@ -52636,6 +52757,12 @@
         end if
         
         call initialize_financial_grid(1)
+
+        ! AGAIN AFTER THE GRIDS, as long_run_counter_factual does: both are
+        ! read by every state loop of the path and the grid has just been
+        ! rebuilt under them.
+        call set_newborn_age_transfer(1)
+        call set_renter_floor(1)
 
         if (use_old_transition_results==1) then
                                 
