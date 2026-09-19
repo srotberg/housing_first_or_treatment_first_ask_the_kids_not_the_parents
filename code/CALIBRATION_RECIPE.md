@@ -328,14 +328,68 @@ trustworthy: measured at 0.727 that way, and the bracket put it near 0.886.
 
 Two runs at different starting prices give the bracket for free, because
 `distance_drug_market` is |gap| and the gap changes sign across the fixed
-point. Measured on the omega_c = 1 plus internalisation arm:
+point. But **interpolate only between CONVERGED gaps.** The first bracket taken
+here was read off two unconverged runs:
 
     p = 1.00   gap -0.620   implied 0.381   the price must FALL
     p = 0.75   gap +0.737   implied 1.487   the price must RISE
 
-so the answer is in [0.75, 1.00], near 0.886 by interpolation. Warm start
-INSIDE the bracket and let the walk finish; it is self-correcting, since a
-rising price cuts demand and pulls the implied price down to meet it.
+and it put the crossing at 0.886. The converged measurement puts it at 0.871.
+That looks like a small miss and is not: the gap function's slope is about
+-7.4, so being 0.015 out in the price is 0.11 in the gap, twenty-two times the
+5e-3 tolerance. An arm warm started at 0.886 is not near the answer.
+
+**THE CONVERGED GAP FUNCTION**, measured on the omega_c = 1 plus
+internalisation arm. The second point costs a run with
+`drug_market_adjuster = 0` handed over, which PINS the price and lets
+everything else -- pi_v, the budget, the distribution -- converge around it, so
+the gap that is finally printed is a property of the price and not of an
+unfinished solve:
+
+    p = 1.00   V 0.1139   implied 0.3659   gap -0.634087   (CF dist 4.9e-5)
+    p = 0.87   V 0.4122   implied 0.8829   gap +0.012910   (CF dist 2.2e-4)
+    ---------------------------------------------------------------
+    crossing   p* = 0.8717 (local slope) to 0.8726 (secant)
+
+Take the CONVERGED gap and no earlier one. The same probe read +0.008977 four
+loops before it finished, while the budget residual was still at 5.5e-2 -- a
+number that looks settled and is not. Both readings happen to give nearly the
+same crossing here, which is luck and not a reason to trust the early read.
+
+The sign is NOT in the log -- `distance_drug_market = abs(gap_1)`. Recover it
+from `drug quantity V=`, which IS printed, and the benchmark's own shifter in
+`drug_supply_shifterbaseline_benchmark.dat`:
+
+    implied = shifter * V**(1/eps_s)        shifter = 1.6200147899, V_bench = 0.494427
+    gap     = implied - price
+
+That reproduces the Fortran's printed `distance_drug_market` to six digits, so
+it is a reconstruction and not a guess.
+
+**THE DEMAND ELASTICITY IS ABOUT -9, NOT -3.14.** From the two converged
+points, dlnV/dlnp over [0.87, 1.00] is -9.23. The 3.14 quoted above is the
+remembered number and it understates the gain by a factor of three. This is the
+whole reason the arms would not solve, and it is checkable by the same
+arithmetic used on the three other unstable loops in this solver:
+
+    d(implied)/dp = (1/eps_s)*(dlnV/dlnp)*implied/p = -6.41
+    d(gap)/dp     = -7.41
+    the update is p' = p + a*gap, so dp'/dp = 1 - 7.41*a
+
+    a = 0.5  ->  -2.70   DIVERGENT   (this was the setting, and it oscillated)
+    a = 0.2  ->  -0.48   stable
+    a < 0.270 required.
+
+`drug_market_adjuster` is therefore 0.2, not 0.5. Note that changing it proved
+INERT in the run that first tested it, because the 0.5 per cent clip was
+binding on every loop and both settings clipped to the same step -- two runs
+agreed to seven digits. The clip converts divergence into a slow crawl; it does
+not cure it. The setting only becomes operative once the price is warm started
+close enough that the clip stops binding, which at p* = 0.872 it does: the
+clip spans [0.86764, 0.87636] and contains the root.
+
+So: bracket with a pinned-price probe, warm start INSIDE the bracket with
+`drug_price_start`, and keep the adjuster at 0.2.
 
 **WHAT AN ARM'S CONVERGENCE ACTUALLY REQUIRES**, all at once, capped at
 `max_counterfactual_loops`:
