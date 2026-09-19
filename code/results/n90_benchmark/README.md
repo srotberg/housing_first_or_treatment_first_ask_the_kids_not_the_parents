@@ -11,24 +11,55 @@ The run that produced it wrote 213 `*baseline_benchmark.*` files totalling
 2.2 GB, in a container that is reclaimed after a period of inactivity. Losing
 it means redoing the whole calibration.
 
-An arm does not need 2.2 GB of it. Measured by access time against a running
-arm, a counterfactual READS 54 of those files and the largest is 1944 bytes.
-The 29 large ones -- value functions, stationary distributions, policy
-functions -- are written for the transition and for diagnostics, and no arm
-opens them. So everything an arm depends on is about 6 KB, and there was never
-a reason for it to be perishable.
+An arm does not need all 2.2 GB of it, but it needs more than is here, and the
+next section says exactly what.
 
-What is here: all 184 benchmark files under 100 KB (a deliberately generous cut
--- it avoids guessing which 54 matter), plus the three that sit between 100 KB
-and 2 MB, plus `resume_seed.dat`, the named parameter seed the calibration
-resumes from. About 4 MB in total.
+## CORRECTION, 19 September: THIS DIRECTORY IS NOT SUFFICIENT TO RUN AN ARM
 
-The three mid-size ones -- `baseline_benchmark.txt` and the two
-`policy_function_*2` arrays -- are almost certainly not read by an arm either.
-They are here because a cloud session, given the 100 KB cut, decided on its own
-to RE-RUN the whole benchmark rather than use this directory, which is hours of
-work and produces a benchmark that is not the one the other arms read. Four
-megabytes is a cheap way to remove the temptation.
+An earlier version of this file said the 29 large files are "written for the
+transition and for diagnostics" and that "no arm opens them", so their absence
+"costs SPEED, not correctness". **That is false.** A cloud session running arm 1
+hit it within four minutes:
+
+    block 1 solved            CF MOMENTS distance= 1.6282888
+    loop_count= 1
+    Fortran runtime error: Cannot open file 'value_function1baseline_benchmark.dat'
+    Error termination.
+
+`frac_of_households_in_support_of_policy` reads, for i = 1 and 2,
+`value_function<i>baseline_benchmark.dat` (line 23895) and
+`distribution_stationary<i>baseline_benchmark.dat` (23898). It is called
+UNCONDITIONALLY in the counterfactual loop at 51689, with no flag guarding it.
+Their absence costs CORRECTNESS: no arm gets past its first loop.
+
+**HOW THE WRONG CLAIM WAS MADE, because the method was sound and the timing was
+not.** It was measured by access time against a running arm -- which is the
+right instrument -- but the snapshot was taken while that arm was still in
+block 1, and the routine sits after the moment block, so it had not yet been
+reached. The arm being measured had the files in its container, so it never
+failed and never revealed the dependency. Re-measured against the same arm an
+hour later, all four files show as READ at 12:26:36 to 12:26:42, about seven
+minutes in. An early reading taken for a settled one, which is the error this
+project keeps paying for.
+
+## WHAT IS MISSING, AND WHY IT CANNOT BE FIXED BY COMMITTING MORE
+
+Four files, 596 MB:
+
+    value_function1baseline_benchmark.dat            294 MB
+    value_function2baseline_benchmark.dat             26 MB
+    distribution_stationary1baseline_benchmark.dat   253 MB
+    distribution_stationary2baseline_benchmark.dat    22 MB
+
+That is past what belongs in git, and there is no LFS here. **So an arm cannot
+be run from a fresh checkout of this repository**, and a container that has only
+this directory cannot run one either. An arm has to run where a converged
+benchmark's full output is on disk, or after re-running the benchmark -- and
+re-running it gives a benchmark that is NOT the one the other arms read, which
+breaks the cross-arm comparisons the questions are built on.
+
+What this directory IS still good for: the 54 small scalars an arm reads, the
+parameter seed, and reading the benchmark's numbers without a run.
 
 ## What is NOT here, and what it costs
 

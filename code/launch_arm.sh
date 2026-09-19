@@ -94,5 +94,40 @@ open(dst,"w").writelines(out)
 print("  handover for arm %s:" % arm)
 for k in sorted(over): print("    %-50s %s" % (k, over[k]))
 PY
+# THE TWO CSVs THE MODEL OPENS AS "../data/<f>.csv".
+#
+# Relative to the ARM DIRECTORY, so $N/../data, i.e. $S/data. In the scratchpad
+# this happened to exist and the dependency was invisible; run from the repo,
+# $S is code/ and code/data/ does not exist, so the arm dies -- and it dies
+# AFTER the binary has read and DELETED PARAM_HANDOVER.txt, so the seed is gone
+# and a naive restart silently runs the Fortran's declared values (b ~ 0.95,
+# lambda_d = 0) while looking perfectly healthy. Found by the arm 1 worker.
+REPO_DATA=$(cd "$S/.." && pwd)/data
+mkdir -p "$S/data"
+for f in us_mortality_multipliers.csv us_mh_onset_shape.csv; do
+  if [ ! -f "$S/data/$f" ]; then
+    if [ -f "$REPO_DATA/$f" ]; then cp "$REPO_DATA/$f" "$S/data/$f"
+    else echo "REFUSING: $f not found in $REPO_DATA and not already in $S/data"; exit 1; fi
+  fi
+done
+echo "data   $S/data (us_mortality_multipliers.csv, us_mh_onset_shape.csv)"
+
+# THE FOUR LARGE BENCHMARK FILES. An arm reads these every loop in
+# frac_of_households_in_support_of_policy (cf 23895/23898, called
+# unconditionally at 51689). They are 596 MB and are NOT in git, so check for
+# them HERE rather than letting the run die at the end of block 1 with the
+# handover already eaten.
+missing=""
+for f in value_function1 value_function2 distribution_stationary1 distribution_stationary2; do
+  [ -f "$N/${f}baseline_benchmark.dat" ] || missing="$missing ${f}baseline_benchmark.dat"
+done
+if [ -n "$missing" ]; then
+  echo "REFUSING: the benchmark directory is missing files an arm reads every loop:"
+  for f in $missing; do echo "    $f"; done
+  echo "  These are 596 MB and are not in git. Point BM at a directory holding a"
+  echo "  converged benchmark's FULL output. See code/results/n90_benchmark/README.md."
+  exit 1
+fi
+
 cd $N && date +%s > START_EPOCH
 echo "arm$ARM staged at $N -- start with: cd $N && ./hftf > run.log 2>&1"
