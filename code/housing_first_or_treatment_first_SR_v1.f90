@@ -902,6 +902,31 @@
         !
         ! loop_count advances by TWO per block, which is why the test doubles.
         integer :: frozen_stop_after_blocks=0
+
+        ! STOP WHEN THE ECONOMY IS STILL, WHICH IS THE TEST THAT SHOULD HAVE
+        ! GOVERNED THIS ALL ALONG.
+        !
+        ! ENGINE.md carries the author's instruction of 9 September -- *"you
+        ! have to converge on the actual calibrated model's stationary
+        ! equilibrium"* -- and the loop that enforces it, FROZEN PASS, iterating
+        ! the equilibrium map at fixed parameters until the largest move across
+        ! b, lambda_d, h_1 and average labour income is inside tolerance. That
+        ! loop is gated on sweep_addiction_scalar and ends in a stop, so it is
+        ! on the B SWEEP PATH ONLY. The benchmark's save writes whatever iterate
+        ! the calibration loop last produced. Nobody saw it because no benchmark
+        ! run had ever reached the save.
+        !
+        ! With every adjuster frozen a calibration block IS an iteration of that
+        ! same map, so the fix is not new machinery -- it is the right stopping
+        ! test. At 0 this is off and frozen_stop_after_blocks alone decides, so
+        ! the default is the behaviour that was there.
+        !
+        ! MEASURED, so the tolerance can be chosen rather than guessed: n86 was
+        ! at 1.7e-3 on b after seven blocks and still falling by about a quarter
+        ! per block.
+        real(8) :: frozen_stop_tolerance=0.d0
+        real(8) :: prev_block_b=-1, prev_block_d=-1, prev_block_h=-1, prev_block_y=-1
+        real(8) :: block_move=1
         real(8) :: distance_weight_on_child=1
         real(8) :: stopping_rule_weight_on_child=10.d0**(-2)
         real(8) :: drug_users_without_child=0
@@ -22016,7 +22041,24 @@
             stop
         end if
 
-        target_1=average_welfare_of_youngest_cohort(time_period)
+        ! THE TARGET IS THE LIFETIME WELFARE, BECAUSE THE CURVE IS THE LIFETIME
+        ! CURVE. This read average_welfare_of_youngest_cohort, which is the
+        ! ADULT half -- the value function at age one. The comment forty lines
+        ! up records the day the curve was changed to
+        ! childhood + beta^K * adult; the target it is checked against was left
+        ! behind, and nobody saw it because save_welfare_curve had no caller.
+        !
+        ! The first run that reached it, 19 September, printed
+        !     w(0) = 790.45022   against 1350.22717   relative difference 0.4146
+        ! and stopped on a 5 per cent tolerance. The run's OWN null test proves
+        ! the walk was right and only the comparison was wrong:
+        !     adult      1351.07140  against reported 1350.22717   6.3e-4
+        !     childhood   448.41166  against reported  448.41166   EXACT
+        !     lifetime    790.45022  against reported  790.23649   2.7e-4
+        ! average_welfare_with_childhood is the object the curve builds, and
+        ! against it the residual is 0.21 utils -- a discretisation loss of the
+        ! size the shift below exists to absorb, not a broken walk.
+        target_1=average_welfare_with_childhood(time_period)
 
         write(*,*) "WELFARE CURVE identity check: w(0)=", w_at_zero_1,&
             " against average_welfare_of_youngest_cohort=", target_1,&
@@ -22137,6 +22179,21 @@
     ! INVERTS THE SAVED CURVE. No environment is read here at all, which is the
     ! point: the counterfactual contributes its own welfare number and nothing
     ! else.
+    !
+    ! WHAT IT IS PASSED MUST BE A LIFETIME WELFARE, and two of its four callers
+    ! pass an adult one. The curve on disk is childhood + beta^K * adult and
+    ! runs near 790; welfare_by_addiction_youngest accumulates the value
+    ! function at age_index == 1 alone and runs near 1350. The two calls that
+    ! pass it therefore hand this routine a target off the top of its own
+    ! curve, and it stops with "target welfare is off the saved curve" rather
+    ! than returning a wrong number -- which is the good failure, but it is
+    ! still a failure and it is latent until the transition runs.
+    !
+    ! Fixing it properly needs a childhood-inclusive welfare BY ADDICTION
+    ! STATUS, which does not exist: calculate_childhood_utility produces one
+    ! number for the cohort. That is new work and the author's call, so this is
+    ! recorded rather than papered over. The two calls that pass
+    ! average_welfare_with_childhood are correct as they stand.
     subroutine calculate_welfare_gains(time_period,welfare_to_compare_1,type_1,x_1)
 
         use Global_Vars
@@ -45069,6 +45126,11 @@
                         omega_c_is_pinned, "->", nint(handover_value)
                     omega_c_is_pinned=max(min(nint(handover_value),1),0)
 
+                case ("frozen_stop_tolerance")
+                    write(*,*) "HANDOVER frozen_stop_tolerance:",&
+                        frozen_stop_tolerance, "->", handover_value
+                    frozen_stop_tolerance=max(handover_value,0.d0)
+
                 case ("frozen_stop_after_blocks")
                     write(*,*) "HANDOVER frozen_stop_after_blocks:",&
                         frozen_stop_after_blocks, "->", nint(handover_value)
@@ -45877,7 +45939,9 @@
             (distance_smi_onset_level>stopping_rule_smi_onset_level) .OR. &
             (distance_newborn_endowment>stopping_rule_newborn_endowment) .OR. (loop_count<1)) &
             .AND. ((frozen_stop_after_blocks==0) .OR. &
-                   (loop_count<2*frozen_stop_after_blocks)))
+                   (loop_count<2*frozen_stop_after_blocks)) &
+            .AND. ((frozen_stop_tolerance<=0.d0) .OR. &
+                   (block_move>=frozen_stop_tolerance)))
                         
             ! SIGMA_Y, on the share of productivity held by the bottom half.
             ! The share FALLS in sigma_y, so a model share above target means
@@ -50657,6 +50721,50 @@
             omega_cf_allowed=0
             call print_all_moments()
             omega_cf_allowed=1
+
+            ! HOW FAR THE ECONOMY MOVED THIS BLOCK, on the four ENGINE.md names.
+            ! Relative, because b near 0.08 and welfare near 790 cannot share an
+            ! absolute rule. The first block has nothing to compare against and
+            ! is reported as 1 so that it can never satisfy the test.
+            if (prev_block_b>=0.d0) then
+
+                block_move=max(max(&
+                    abs(model_total_drug_users(1)-prev_block_b)/&
+                        max(abs(prev_block_b),10.d0**(-12)),&
+                    abs(model_fraction_addicted(1)-prev_block_d)/&
+                        max(abs(prev_block_d),10.d0**(-12))),max(&
+                    abs(model_fraction_homeless(1)-prev_block_h)/&
+                        max(abs(prev_block_h),10.d0**(-12)),&
+                    abs(model_average_labour_income(1)-prev_block_y)/&
+                        max(abs(prev_block_y),10.d0**(-12))))
+
+            else
+
+                block_move=1.d0
+
+            end if
+
+            prev_block_b=model_total_drug_users(1)
+            prev_block_d=model_fraction_addicted(1)
+            prev_block_h=model_fraction_homeless(1)
+            prev_block_y=model_average_labour_income(1)
+
+            write(*,*) "BLOCK MOVE", block_move, " against a rule of",&
+                frozen_stop_tolerance, " -- b", model_total_drug_users(1),&
+                " lambda_d", model_fraction_addicted(1),&
+                " h_1", model_fraction_homeless(1),&
+                " y", model_average_labour_income(1)
+
+            if ((frozen_stop_tolerance>0.d0) .AND. &
+                (block_move<frozen_stop_tolerance)) then
+
+                write(*,*) "ECONOMY IS STILL: the largest relative move across",&
+                    " b, lambda_d, h_1 and average labour income is", block_move,&
+                    " which is inside", frozen_stop_tolerance, ". Leaving the",&
+                    " calibration loop so the state that gets saved is a fixed",&
+                    " point rather than an iterate."
+
+            end if
 
         end do
 
