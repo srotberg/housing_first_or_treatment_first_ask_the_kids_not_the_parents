@@ -411,8 +411,16 @@ the CALIBRATION loop, which an arm never enters.
 
 See `ARMS.md`. All three need a counterfactual BUILD, because `is_counterfactual`
 and `use_revenues_to_increase_voucher_probability` are compile-time parameters;
-one binary serves all three. All read the `baseline_benchmark` files, so the
-benchmark has to be converged and saved first.
+one binary serves all three. `code/build_cf.sh` makes it -- the counterfactual
+source differs from the benchmark's in exactly those two lines, and the script
+REFUSES if the diff is not exactly two, which is the guard against the
+parameters being renamed underneath it.
+
+All read the `baseline_benchmark` files, so the benchmark has to be converged
+and saved first. **`code/results/n90_benchmark/` is a saved one**, so an arm can
+be run from a fresh checkout with no benchmark run in front of it. What that
+directory leaves out is the warm-start distribution, which costs an arm a few
+blocks and changes nothing.
 
 Before running any of them, check the benchmark files exist -- 62 of them, 3 per
 beta type and 59 scalars. A missing one kills an arm an hour in.
