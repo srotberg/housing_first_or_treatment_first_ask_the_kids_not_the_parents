@@ -52,11 +52,16 @@ exercise and it is not what any of these three arms produce.
 Arm 1, omega_c = 1, against the benchmark. Every household faces the whole cost
 of its own drug use to its child, so what survives is the optimum.
 
-| | benchmark | arm 1, omega_c = 1 | change |
+| | benchmark (n90) | arm 1, omega_c = 1 | change |
 |---|---|---|---|
-| b, total drug users | | | |
-| lambda_d, SUD | | | |
-| lambda_d / b, SUD per user | | | |
+| b, total drug users | 0.081813 | | |
+| lambda_d, SUD | 0.033609 | | |
+| lambda_d / b, SUD per user | 0.41080 | | |
+| drug quantity V | 0.494427 | | |
+| price of the addictive good | 1.000000 | | |
+
+Benchmark column filled from n90's converged log (`ECONOMY IS STILL`, block move
+8.646e-5). Arm 1 column pending.
 
 **READ ALL THREE OFF THE `CF MOMENTS distance=` LINE, not from separate prints.**
 `MOMENT b` does NOT exist in an arm's log -- it is a calibration-loop print and
@@ -83,10 +88,22 @@ arm 1 is the control and the difference isolates the externality alone.
 
 | | arm 1, omega_c = 1 | arm 2, + internalisation | change |
 |---|---|---|---|
-| H, homelessness (`model_fraction_homeless=`) | | | |
-| b | | | |
-| lambda_d | | | |
-| pi_v, the clearing instrument | | | |
+| H, homelessness | | 0.0052454 | |
+| b | | 0.051953 | |
+| lambda_d | | 0.021215 | |
+| pi_v, the clearing instrument | | 0.068857 | |
+| price of the addictive good | | 0.869094 | |
+| drug quantity V | | 0.403146 | |
+
+Arm 2 column from its converged run, `code/results/arm2/run.log.gz`: all three
+LIVE rules held together at block 9 (CF moments 1.26e-4, budget 1.54e-2, drug
+gap +1.090e-3). Arm 1 column pending.
+
+Arm 2 against the BENCHMARK, the secondary line this section asks for:
+H 0.0064583 -> 0.0052454, **-18.8%**; b 0.081813 -> 0.051953, -36.5%;
+lambda_d 0.033609 -> 0.021215, -36.9%; price 1.0 -> 0.869094, -13.1%. That
+mixes the omega_c channel with the internalisation channel, which is exactly why
+the primary comparison is against arm 1.
 
 Arm 2 is the ONLY arm where kappa_x moves policy functions: the flat Pigouvian
 charge on choosing the street. **H should fall.** If it does not, that is the
@@ -102,16 +119,21 @@ channels -- omega_c and internalisation -- can be separated.
 Arm 3 against the benchmark. omega_c stays at 0.055; kappa_x is an externality
 on everyone but is not internalised privately.
 
-| | benchmark | arm 3, Treatment First | change |
+| | benchmark (n90) | arm 3, Treatment First | change |
 |---|---|---|---|
-| b, total drug users | | | |
-| lambda_d, SUD | | | |
-| H, homelessness | | | |
+| b, total drug users | 0.081813 | | |
+| lambda_d, SUD | 0.033609 | | |
+| H, homelessness | 0.0064583 | | |
 | pi_v | | | |
-| welfare (`average_welfare_with_childhood=`) | | | |
-| welfare, in consumption-equivalent terms | | | |
+| welfare (`average_welfare_with_childhood=`) | 791.39464 | | |
+| welfare, in consumption-equivalent terms | 0 by construction | | |
 | govt_spending_on_drug_tests | 0 by construction | | |
 | mass in the excluded voucher state | 0 by construction | | |
+
+This is the ONE arm whose welfare is comparable to the benchmark's, because
+omega_c stays at 0.055. The benchmark's 791.39464 agrees to five decimals with
+W(x=0) on the saved welfare curve, which is a check that the curve and the run
+describe the same economy.
 
 ### CONVERTING WELFARE TO SOMETHING READABLE
 
