@@ -20812,8 +20812,30 @@
             ! the child's own age a is a-1 periods after it was born.
             if (mass_at_age_1>0.d0) then
 
+                ! THE CHILD BEARS THE DISAMENITY TOO. The author, 19
+                ! September: *"i think kappa_x should fall on everyone
+                ! including children"*.
+                !
+                ! It used to fall on adults alone -- kappa_x*H was subtracted
+                ! in the adult flow, after child_flow_out had already been
+                ! recorded -- and that asymmetry was not a small thing. The
+                ! consumption response of the LIFETIME welfare object is
+                ! 95.6 per cent childhood, because a child's twenty five years
+                ! are undiscounted while the adult's sixty sit behind
+                ! beta^25 = 0.2532. Compensating everyone while charging only
+                ! adults therefore priced kappa_x at 29.31 where charging
+                ! everyone gives 6.94, a factor of 22 on nothing but who the
+                ! sum ran over.
+                !
+                ! IT CANNOT MOVE AN ALLOCATION. H is the aggregate headcount,
+                ! taken as given, so this is a constant subtracted from a
+                ! welfare statistic that no policy function reads -- the same
+                ! argument the kappa_x declaration makes for the adult side.
+                ! It DOES change welfare across steady states, which is the
+                ! point, because H differs across them.
                 own_childhood_1=own_childhood_1+&
-                    (discount_factor**(age_index_1-1))*(utility_at_age_1/max(mass_at_age_1,10.d0**(-14)))
+                    (discount_factor**(age_index_1-1))*(utility_at_age_1/max(mass_at_age_1,10.d0**(-14))-&
+                    kappa_x*model_fraction_homeless(time_period))
 
             end if
 
@@ -22612,8 +22634,13 @@
 
             if (kid_cmp_den(i)>0.d0) then
 
+                ! THE SAME SUBTRACTION AS calculate_childhood_utility, and it
+                ! has to be: the CEV null test compares these two to 1e-6 and
+                ! stops if they disagree. See the comment there for why the
+                ! child carries it.
                 childhood_comparison=childhood_comparison+&
-                    (discount_factor**(i-1))*(kid_cmp_num(i)/max(kid_cmp_den(i),10.d0**(-14)))
+                    (discount_factor**(i-1))*(kid_cmp_num(i)/max(kid_cmp_den(i),10.d0**(-14))-&
+                    kappa_x*model_fraction_homeless(time_period))
 
             end if
 
