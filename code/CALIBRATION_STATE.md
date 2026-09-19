@@ -1,3 +1,140 @@
+## THE CALIBRATION IS DONE AND THE WELFARE MACHINERY WAS NEVER WIRED, 19 September
+
+omega_c = 0.055 and delta_d = 0.24 are PINNED. The author, asked whether the
+converged gap changes anything: *"i think it's fine, keep omega_c as is. 0.2233
+doesnt change anything"*.
+
+### n86 CONVERGED, AND IT LANDS ABOVE THE BAND
+
+n86 is the benchmark at omega_c = 0.055 warm-started from n83, everything
+frozen. Seven blocks:
+
+    blk   b            gap      d(b)        class share   SUD odds
+    1     0.07570209   0.34052  --          0.01678       0.7667
+    2     0.08615216   0.17792  +0.01045    0.02135       2.2916
+    3     0.08568373   0.18436  -0.00047    0.03285       1.4880
+    4     0.08477343   0.19707  -0.00091    0.03241       1.5102
+    5     0.08374225   0.21181  -0.00103    0.03214       1.5407
+    6     0.08309455   0.22126  -0.00065    0.03202       1.5552
+    7     0.08295455   0.22333  -0.00014    --            --
+
+Converged at gap 0.2233 against a target of 0.18343 and a band of
+[0.17790, 0.18890]. The slope through the origin is 0.2233/0.055 = 4.06, which
+puts the target at omega_c = 0.045.
+
+THE TRAP THAT MAKES 0.055 LOOK RIGHT, and it caught both of us. 0.055 DOES
+deliver "18 per cent" -- an 18.3 per cent FALL in drug use. But the model's
+0.18343 is the RISE when the child term is off, which is a 15.5 per cent fall.
+Two different eighteens. The blocks that read IN BAND were blocks 2 and 3, and
+the series had not flattened. Read the band on the GAP, never on the fall.
+
+Untargeted, in this benchmark: SUD odds 1.5552 (data 1.5 to 2.5, rising through
+the blocks), homelessness odds 4.3163 (data 1.8 to 2.4, delta_h = 0).
+
+### THREE THINGS WERE BROKEN AND ARE NOW FIXED (commit cc64c93e)
+
+**1. save_welfare_curve was never called.** Complete, correct, and with no
+caller anywhere in 52,000 lines. So welfare_curvebaseline_benchmark.dat was
+never written -- and calculate_welfare_gains, which the transition calls four
+times, opens that same file with action='read'. Every consumption equivalent in
+the transition would have stopped on a missing file.
+
+**2. NO RUN HAS EVER REACHED "simulation ended".** Not n71 at eighty-five
+blocks, not any of them. The calibration loop exits only when every one of
+forty-odd distances is inside its stopping rule; frozen, no parameter moves, so
+no distance shrinks. save_vars_and_functions sits after that loop and writes
+the policy functions the curve reads, so the curve had nothing to read even had
+it been called. frozen_stop_after_blocks now ends the loop after a stated
+number of blocks. At its default of 0 the condition is character for character
+the one that was there.
+
+**3. kappa_x = 0.002 cannot be the 0.20 per cent its comment claims.** It is
+deducted as kappa_x*H with H = 0.0065, so the whole aggregate disamenity was
+worth 1.3e-5 utils a period -- 153 times smaller than the number named, before
+asking what a util is worth in consumption at all.
+
+THE AUTHOR'S DEFINITION, 19 September:
+
+    kappa_x * H = E[W(c*(1+x))] - E[W(c)],   x = 0.002 / (1 - s_h - s_b)
+
+c is the RESIDUAL expenditure category -- housing and the addictive good are
+held fixed in the walk -- so it carries the whole 0.2 per cent. Measured from
+the benchmark's own log: s_h = 0.25973 (MOMENT gamma), s_b = 0.00798 (drug
+spending 0.50213 at price 1 over total expenditure 62.898), s_c = 0.73229, so
+x = 0.0027312.
+
+*"yes, it should be intergarated overalll households"*, *"you should do the
+expected utilities"* -- and that is what the probe computes: the stationary
+distribution at age one over every state a household can be born into, each
+life carried forward with its own survival, plus the twenty five childhood
+years. NOT u evaluated at mean consumption: with sigma = 2 that understates
+what 0.2 per cent is worth, because marginal utility is far higher for the poor
+and the homeless, who are the households this model is about.
+
+The denominator H*beta^K*D_adult is MEASURED, not assembled -- survival depends
+on homelessness, addiction and SMI and so on the distribution. Two evaluations
+at x = 0, one at the coded kappa_x and one at zero, differ by exactly it.
+
+### THE MODEL IS NOT BIT-REPRODUCIBLE, AND THE CONTROL HAS TO ALLOW FOR IT
+
+n87 re-ran n86 with the new flag set to 8. Blocks 1 and 2 came back at 2.6e-5
+and 1.5e-5 RELATIVE, not zero -- while average labour income was identical to
+all seventeen digits. The moments that move are the small-mass ones
+(homelessness 1.1e-5, lambda_d 6.1e-5), which is thread-order accumulation over
+tiny mass, and a rebuild that only moves declarations is enough to trigger it.
+ENGINE.md already records the descent as deterministic "to six digits". Score a
+no-op control at 1e-4 RELATIVE, never on exact equality.
+
+### IN FLIGHT: n88
+
+n88 is the benchmark warm-started from n86's OWN CONVERGED DISTRIBUTION rather
+than n83's -- n86 wrote it whole at 04:11:16, two minutes before it was
+stopped, at sizes identical to n83's. The economy therefore starts at its fixed
+point instead of walking to it, and frozen_stop_after_blocks = 3 suffices where
+n87 needed 8. Block 1 must land on n86's ending values or the warm start did
+not carry.
+
+At block 3 it writes the baseline_benchmark policy functions -- files this
+project has never produced -- builds the welfare curve, and prints the probe.
+
+### NEXT: THE THREE ARMS, specified 19 September
+
+Settings are in the scratchpad's ARMS.md. All three need a counterfactual
+BUILD, because is_counterfactual and use_revenues_to_increase_voucher_
+probability are compile-time parameters; one binary serves all three. All three
+clear the government budget with pi_v (tax_system_type 3, which
+use_revenues_to_increase_voucher_probability selects) and clear the drug price
+at supply elasticity 1.46. adjust_taxes must be handed over as 1 or
+distance_govt_budget is identically zero and the budget never clears.
+
+  1. OPTIMAL DRUG USE -- omega_c = 1.
+  2. OPTIMAL HOMELESSNESS -- omega_c = 1 and internalise_homelessness_cost = 1.
+     Unlike kappa_x*H this MOVES POLICY FUNCTIONS; it is the Pigouvian charge.
+  3. TREATMENT FIRST -- omega_c = 0.055, kappa_x an externality but NOT
+     internalised privately, voucher_conditional_on_clean = 1,
+     include_voucher_exclusion = 1, detection 0.70 (*"we can set the false
+     negative to about 30%"*), false positive 0 (*"labs have a 5% CI....so you
+     cannot get a false positive"*), exclusion release 1/3 for three years.
+
+     ALL OF ARM 3 WAS ALREADY BUILT. Only the two test rates move.
+
+     WHY THE EXCLUSION AND NOT A ONE-PERIOD REMOVAL, from the code's own
+     comment: a homeless household's voucher pays ZERO, because the payment is
+     capped by actual rent spending and a homeless household spends none. Taking
+     this period's voucher from the targeted household costs it nothing. The
+     thing of value is the OPTION to draw on it once housed, and only a bar on
+     future offers destroys that.
+
+     AT false positive = 0 the wrongly-sanctioned group disappears and every
+     exclusion is a true positive. The code calls false positives half of the
+     empirical case for Housing First, so the write-up must say this was
+     deliberate. The literature supports the asymmetry structurally, not just
+     empirically: GC-MS/LC-MS confirmation only adjudicates specimens that
+     already screened positive, so it removes false positives almost entirely,
+     while every route to a false negative -- dilution, adulteration, a drug off
+     the panel, use outside the one-to-three-day window -- happens before the
+     lab sees anything worth confirming.
+
 ## OMEGA_C = 0.055. THE CALIBRATION IS DONE
 
 The author, 19 September: *"ok, we omega_c=0.055 gives something close to 18% we
