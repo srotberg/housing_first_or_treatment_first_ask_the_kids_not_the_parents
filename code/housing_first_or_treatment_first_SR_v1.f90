@@ -44878,6 +44878,30 @@
                 ! against the wrong supply curve. is_counterfactual is a
                 ! compile-time parameter, so the benchmark build cannot reach
                 ! the assignment at all.
+                ! PINNING THE DRUG PRICE ON PURPOSE, which is how the
+                ! market's fixed point gets found when the joint iteration
+                ! cannot find it.
+                !
+                ! At 0 the price never moves, so the economy converges to ITS
+                ! OWN fixed point at whatever drug_price_start set -- measured
+                ! at nine loops to CF MOMENTS distance 4.9e-5. The
+                ! distance_drug_market printed once it has settled is then the
+                ! TRUE gap at that price, not a transient. Two such probes
+                ! bracket the crossing and a third lands on it.
+                !
+                ! That is the quasi-static route round the deadlock recorded in
+                ! CALIBRATION_STATE.md: the economy needs about nine loops to
+                ! settle at a price and the joint solver gives it one, so the
+                ! gap never stops being a transient and the 0.5 per cent clip
+                ! keeps binding. Pinning removes the moving target.
+                !
+                ! A handover rather than a rebuild because each probe needs a
+                ! different price and the same binary should serve them all.
+                case ("drug_market_adjuster")
+                    write(*,*) "HANDOVER drug_market_adjuster:",&
+                        drug_market_adjuster, "->", handover_value
+                    drug_market_adjuster=max(min(handover_value,2.d0),0.d0)
+
                 case ("drug_price_start")
                     if (is_counterfactual==1) then
                         write(*,*) "HANDOVER drug_price_start:", &
