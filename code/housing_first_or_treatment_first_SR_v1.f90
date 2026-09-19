@@ -2863,7 +2863,7 @@
         
         integer, parameter :: solve_transition_dynamics=is_counterfactual*0+(1-is_counterfactual)*0                                                                                                             
         integer, parameter :: use_old_transition_results=0
-        integer, parameter :: transition_length=(1-solve_transition_dynamics)*1+solve_transition_dynamics*75
+        integer, parameter :: transition_length=(1-solve_transition_dynamics)*1+solve_transition_dynamics*30
                                                                                                                                                     
         integer :: negative_consumption
         
@@ -8867,6 +8867,21 @@
              optimal_owner_owner_move_indeces,optimal_owner_owner_stay_indeces,&
              optimal_owner_renter_indeces,optimal_renter_renter_indeces,optimal_renter_owner_indeces
                                     
+        ! THE TRANSITION MEMORY WINDOW. See code/stylized/TRANSITION_LESSONS.md.
+        !
+        ! Every large structure used to carry transition_length as its leading
+        ! dimension, which is 195 GB at 75 periods against 15 GB of RAM. Only
+        ! value_function is ever read away from the current index (at t+1), so it
+        ! keeps the whole path; the distributions are read at t-1 and keep two
+        ! slices; everything else is touched ONLY at the current index and keeps
+        ! one. The arrays are re-allocated with bounds (t:t) as t advances, which
+        ! is why every existing (time_period,...) index expression is unchanged.
+        !
+        ! In a steady state transition_length is 1 and these are (1:1), so the
+        ! allocation is bit-for-bit what it was before.
+        integer :: tslot_lo=1,tslot_hi=1
+        integer :: dslot_lo=1-solve_transition_dynamics,dslot_hi=1
+
         integer :: time_index,age_index,unemployment_index,employment_index,years_left_on_mortgage_index,&
            housing_status_index,space_lived_in_index,space_lived_in_index_feasible,frac_spent_on_addiction_index,&
            voucher_index
@@ -13651,6 +13666,17 @@
         ! same population into one divisor.
         save :: total_homeless_1, total_renters_to_consider, total_owners_to_consider
                 
+
+        ! SLOT THIS PERIOD IN. The transition windows the policy and distribution
+        ! arrays onto the period being worked on (see TRANSITION_LESSONS.md).
+        ! Callers reach this routine at t=1..T-1 in the path loop AND at
+        ! t=transition_length for the terminal steady state, so the window has to
+        ! FOLLOW the caller rather than be set by the loop -- the terminal solve is
+        ! what put index 75 into a (0:1) array and corrupted the heap.
+        ! Both routines return immediately in a steady state.
+        call reslot_policies(time_period)
+        call reslot_distributions(time_period)
+
         avg_income_to_use_1=is_counterfactual*average_labor_income_calibrated+&
             (1-is_counterfactual)*model_average_labour_income(time_period)
             
@@ -24195,6 +24221,17 @@
         character*1 :: string_used
 
         ! Cleared here so the shares describe THIS backward induction.
+
+        ! SLOT THIS PERIOD IN. The transition windows the policy and distribution
+        ! arrays onto the period being worked on (see TRANSITION_LESSONS.md).
+        ! Callers reach this routine at t=1..T-1 in the path loop AND at
+        ! t=transition_length for the terminal steady state, so the window has to
+        ! FOLLOW the caller rather than be set by the loop -- the terminal solve is
+        ! what put index 75 into a (0:1) array and corrupted the heap.
+        ! Both routines return immediately in a steady state.
+        call reslot_policies(time_period)
+        call reslot_distributions(time_period)
+
         if (report_lottery_diagnostics==1) then
 
             call reset_asset_lottery_counters()
@@ -30987,6 +31024,17 @@
         integer, parameter :: only_26_year_olds=1
         character*1 :: string_used
                         
+
+        ! SLOT THIS PERIOD IN. The transition windows the policy and distribution
+        ! arrays onto the period being worked on (see TRANSITION_LESSONS.md).
+        ! Callers reach this routine at t=1..T-1 in the path loop AND at
+        ! t=transition_length for the terminal steady state, so the window has to
+        ! FOLLOW the caller rather than be set by the loop -- the terminal solve is
+        ! what put index 75 into a (0:1) array and corrupted the heap.
+        ! Both routines return immediately in a steady state.
+        call reslot_policies(time_period)
+        call reslot_distributions(time_period)
+
         do i=1,2
                 
             distribution_guess(i)%vector_transition_real(time_period,:,:,:,:,:,:)=0
@@ -31567,6 +31615,17 @@
 
         ! Negative rather than zero, so a DIST_DONE printed without a sweep
         ! having run says so instead of claiming perfect convergence.
+
+        ! SLOT THIS PERIOD IN. The transition windows the policy and distribution
+        ! arrays onto the period being worked on (see TRANSITION_LESSONS.md).
+        ! Callers reach this routine at t=1..T-1 in the path loop AND at
+        ! t=transition_length for the terminal steady state, so the window has to
+        ! FOLLOW the caller rather than be set by the loop -- the terminal solve is
+        ! what put index 75 into a (0:1) array and corrupted the heap.
+        ! Both routines return immediately in a steady state.
+        call reslot_policies(time_period)
+        call reslot_distributions(time_period)
+
         distance_distribution_reached=-1.d0
                 
         if (partial_equilibrium==1) then
@@ -39795,7 +39854,14 @@
         close(19)
             
         open(unit=19,file="model_bequests"//trim(old_results)//".dat",action='read')
-            read(19,'(F15.12)') model_bequests
+            ! INDEXED, 19 September. model_bequests is dimensioned
+            ! (transition_length). Unindexed this reads the WHOLE array, which is
+            ! 1 element in a steady state and 75 in a transition -- against a file
+            ! the benchmark wrote with ONE value, because the benchmark is solved
+            ! at transition_length=1. So every arm worked and the transition died
+            ! on 'End of file'. The read at 40030 already had the index; this is the
+            ! only unindexed read of a transition-dimensioned array in the file.
+            read(19,'(F15.12)') model_bequests(time_period)
         close(19)
                     
         open(unit=20,file="c_1"//trim(old_results)//".dat",action='read')
@@ -42442,57 +42508,57 @@
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                     
             allocate(policy_function_wage_income_tax_paid(i)%&
-                vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                         
             allocate(policy_function_mortgage_interest_deductions(i)%&
-                vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                         
             allocate(policy_function_consumption(i)%&
-                vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                         
             allocate(policy_function_space_lived_in_size(i)%&
-                vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                                                 
             allocate(policy_function_labor_supply(i)%&
-                vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_cutoff_taxable_income(i)%&
-                vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_frac_spent_on_addiction(i)%&
-                vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_total_consumption(i)%&
-                vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(policy_function_addiction(i)%&
-                vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                         
             allocate(policy_function_treatment(i)%&
-                vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                         
             allocate(frac_mov_optimal_1(i)%&
-                vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                        
@@ -42503,13 +42569,13 @@
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
 
             allocate(dist_prev_1(i)%&
-                vector_transition_real((1-solve_transition_dynamics):transition_length,&
+                vector_transition_real(dslot_lo:dslot_hi,&
                 life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
 
             allocate(dist_prev_2(i)%&
-                vector_transition_real((1-solve_transition_dynamics):transition_length,&
+                vector_transition_real(dslot_lo:dslot_hi,&
                 life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
@@ -42521,7 +42587,7 @@
             dist_prev_2(i)%vector_transition_real=0
 
             allocate(distribution_implied(i)%&
-                vector_transition_real(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_real(dslot_lo:dslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                         
@@ -42532,33 +42598,33 @@
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                 
             allocate(distribution_forward(i)%&
-                vector_transition_real((1-solve_transition_dynamics):transition_length,life_span+1,&
+                vector_transition_real(dslot_lo:dslot_hi,life_span+1,&
                 is_owner*1+(1-is_owner)*renter_array_floor:financial_grid_size,&
                 unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
             
             allocate(policy_function_financial_index(i)%&
-                vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                        
             allocate(policy_function_housing_status_index(i)%&
-                vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                         
             allocate(policy_function_space_lived_in_index(i)%&
-                vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                         
             allocate(policy_function_years_of_amortization_index(i)%&
-                vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                                                 
             allocate(fin_index_frac_mov_to_optimal(i)%&
-                vector_transition_integer(transition_length,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                        
@@ -42687,6 +42753,244 @@
             0:include_addiction,employment_grid_size))
                     
     end subroutine
+
+    ! ==================================================================
+    ! THE TRANSITION MEMORY WINDOW
+    !
+    ! Why these exist: see code/stylized/TRANSITION_LESSONS.md. Every large
+    ! structure used to carry transition_length as its leading dimension, which
+    ! is 195 GB at 75 periods against 15 GB of RAM. Verified against the source:
+    ! ONLY value_function is read away from the current index (at t+1), so it
+    ! alone keeps the whole path. The distributions are read at t-1 and keep two
+    ! slices. Everything else is touched only at the current index and keeps one.
+    !
+    ! The arrays are re-allocated with bounds (t:t) as t advances, so every
+    ! existing (time_period,...) index expression in the file is UNCHANGED --
+    ! which is the whole point, because rewriting hundreds of index expressions
+    ! is where the silent bugs would have come from.
+    !
+    ! In a steady state solve_transition_dynamics is 0 and both routines return
+    ! immediately, so nothing about the arms or the calibration changes.
+    ! ==================================================================
+    subroutine reslot_policies(t_new)
+
+        use Global_Vars
+
+        implicit none
+
+        integer :: t_new,is_owner
+
+        if (solve_transition_dynamics==0) return
+        if ((tslot_lo==t_new) .AND. (tslot_hi==t_new)) return
+
+        tslot_lo=t_new
+        tslot_hi=t_new
+
+        do i=1,2
+
+            if (i==2) then
+                is_owner=1
+            else
+                is_owner=0
+            end if
+
+            deallocate(policy_function_wage_income_tax_paid(i)%vector_transition_real)
+            allocate(policy_function_wage_income_tax_paid(i)%&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_mortgage_interest_deductions(i)%vector_transition_real)
+            allocate(policy_function_mortgage_interest_deductions(i)%&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_consumption(i)%vector_transition_real)
+            allocate(policy_function_consumption(i)%&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_space_lived_in_size(i)%vector_transition_real)
+            allocate(policy_function_space_lived_in_size(i)%&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_labor_supply(i)%vector_transition_real)
+            allocate(policy_function_labor_supply(i)%&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_cutoff_taxable_income(i)%vector_transition_real)
+            allocate(policy_function_cutoff_taxable_income(i)%&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_frac_spent_on_addiction(i)%vector_transition_real)
+            allocate(policy_function_frac_spent_on_addiction(i)%&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_total_consumption(i)%vector_transition_real)
+            allocate(policy_function_total_consumption(i)%&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_addiction(i)%vector_transition_integer)
+            allocate(policy_function_addiction(i)%&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_treatment(i)%vector_transition_integer)
+            allocate(policy_function_treatment(i)%&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(frac_mov_optimal_1(i)%vector_transition_real)
+            allocate(frac_mov_optimal_1(i)%&
+                vector_transition_real(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_financial_index(i)%vector_transition_integer)
+            allocate(policy_function_financial_index(i)%&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_housing_status_index(i)%vector_transition_integer)
+            allocate(policy_function_housing_status_index(i)%&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_space_lived_in_index(i)%vector_transition_integer)
+            allocate(policy_function_space_lived_in_index(i)%&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(policy_function_years_of_amortization_index(i)%vector_transition_integer)
+            allocate(policy_function_years_of_amortization_index(i)%&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+            deallocate(fin_index_frac_mov_to_optimal(i)%vector_transition_integer)
+            allocate(fin_index_frac_mov_to_optimal(i)%&
+                vector_transition_integer(tslot_lo:tslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+
+        end do
+
+    end subroutine
+
+
+    ! The distributions carry state forward, so the slot that is about to become
+    ! t-1 must survive the re-allocation. It is copied out, the array is
+    ! re-slotted, and it is copied back into the new lower slot. If the caller
+    ! ever jumps rather than advancing by one, the old content cannot be the new
+    ! t-1 and the window is zeroed instead -- silently keeping stale mass would
+    ! be far worse than starting the period empty.
+    subroutine reslot_distributions(t_new)
+
+        use Global_Vars
+
+        implicit none
+
+        integer :: t_new,is_owner,old_hi
+        logical :: advancing
+        real(8), allocatable :: buf_real(:,:,:,:,:,:)
+
+        if (solve_transition_dynamics==0) return
+        if ((dslot_lo==t_new-1) .AND. (dslot_hi==t_new)) return
+
+        old_hi=dslot_hi
+        advancing=(t_new==old_hi+1)
+
+        dslot_lo=t_new-1
+        dslot_hi=t_new
+
+        do i=1,2
+
+            if (i==2) then
+                is_owner=1
+            else
+                is_owner=0
+            end if
+
+            if (advancing) then
+                allocate(buf_real,source=dist_prev_1(i)%vector_transition_real(old_hi,:,:,:,:,:,:))
+            end if
+            deallocate(dist_prev_1(i)%vector_transition_real)
+            allocate(dist_prev_1(i)%&
+                vector_transition_real(dslot_lo:dslot_hi,&
+                life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+            dist_prev_1(i)%vector_transition_real=0
+            if (advancing) then
+                dist_prev_1(i)%vector_transition_real(dslot_lo,:,:,:,:,:,:)=buf_real
+                deallocate(buf_real)
+            end if
+
+            if (advancing) then
+                allocate(buf_real,source=dist_prev_2(i)%vector_transition_real(old_hi,:,:,:,:,:,:))
+            end if
+            deallocate(dist_prev_2(i)%vector_transition_real)
+            allocate(dist_prev_2(i)%&
+                vector_transition_real(dslot_lo:dslot_hi,&
+                life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+            dist_prev_2(i)%vector_transition_real=0
+            if (advancing) then
+                dist_prev_2(i)%vector_transition_real(dslot_lo,:,:,:,:,:,:)=buf_real
+                deallocate(buf_real)
+            end if
+
+            if (advancing) then
+                allocate(buf_real,source=distribution_implied(i)%vector_transition_real(old_hi,:,:,:,:,:,:))
+            end if
+            deallocate(distribution_implied(i)%vector_transition_real)
+            allocate(distribution_implied(i)%&
+                vector_transition_real(dslot_lo:dslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+            distribution_implied(i)%vector_transition_real=0
+            if (advancing) then
+                distribution_implied(i)%vector_transition_real(dslot_lo,:,:,:,:,:,:)=buf_real
+                deallocate(buf_real)
+            end if
+
+            if (advancing) then
+                allocate(buf_real,source=distribution_forward(i)%vector_transition_real(old_hi,:,:,:,:,:,:))
+            end if
+            deallocate(distribution_forward(i)%vector_transition_real)
+            allocate(distribution_forward(i)%&
+                vector_transition_real(dslot_lo:dslot_hi,life_span+1,&
+                is_owner*1+(1-is_owner)*renter_array_floor:financial_grid_size,&
+                unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+            distribution_forward(i)%vector_transition_real=0
+            if (advancing) then
+                distribution_forward(i)%vector_transition_real(dslot_lo,:,:,:,:,:,:)=buf_real
+                deallocate(buf_real)
+            end if
+
+        end do
+
+    end subroutine
+
     
     subroutine cleanup_matrix()
         
@@ -52175,7 +52479,6 @@
         lump_sum_transfer=0
         
         call initialize_variables_and_grids()
-        call GKKOC_intergenerational_employment_process(1)
                                 
         if (use_old_results==1) then
         
@@ -52200,6 +52503,20 @@
             housing_price(transition_length)=long_run_stationary_housing_price
                 
         end if
+
+        ! MOVED FROM ABOVE upload_vars, 19 September. The employment process
+        ! routine carries a guard that stops the run when
+        ! average_labor_income_by_employment_calibrated is empty, and that array
+        ! is filled by upload_vars. Called before the upload it is ALWAYS empty,
+        ! so the transition stopped on its own guard the first time it was ever
+        ! run:
+        !
+        !   STOP: average_labor_income_by_employment_calibrated is empty.
+        !
+        ! The counterfactual driver has the right order already -- upload_vars at
+        ! 51367, then this routine at 51410 -- which is why every arm runs and
+        ! only the transition stopped. Ordering only; no equation is touched.
+        call GKKOC_intergenerational_employment_process(1)
         
         housing_price(1-solve_transition_dynamics)=calibrated_stationary_housing_price
                 
@@ -52453,6 +52770,9 @@
                         
             do time_index=max(transition_length-1,1),1,-1
             
+                ! Re-slot the single-slice policy arrays onto this period before
+                ! solving into them. A no-op in a steady state.
+                call reslot_policies(time_index)
                 call solve_value_function_and_policy_functions(time_index)
                 
                 do i=1,2
@@ -52464,23 +52784,34 @@
                             
             end do
             
-            write(*,*) "computing distributions"
-            
-            do time_index=1,max(transition_length-1,1)
-            
-                call converge_to_stationary_equilibrium(time_index)
-                                                            
-            end do
-            
-            write(*,*) "computing statistics, government revenues, and solving the lump sum transfer"
-            
+            ! THE DISTRIBUTION AND STATISTICS PASSES ARE ONE LOOP.
+            !
+            ! They used to be two, which forced distribution_stationary to hold
+            ! every period at once -- 5.85 GB for one array. Merging them lets it
+            ! keep two slices, and it halves the recomputation below, since the
+            ! policies at t are rebuilt once rather than twice.
+            ! See code/stylized/TRANSITION_LESSONS.md.
+            write(*,*) "computing distributions and statistics"
+
             net_govt_revenues(1)=net_govt_revenue_constraint
             net_govt_revenues(transition_length)=net_govt_revenue_constraint
-            
             largest_distance_govt_budget=0
-            
+
             do time_index=1,max(transition_length-1,1)
-                                        
+
+                ! REBUILD THIS PERIOD'S POLICIES. The backward pass threw them
+                ! away -- only one slice exists -- but it kept the whole value
+                ! function path, and the solver's continuation read is
+                ! value_function(min(time_period+solve_transition_dynamics,
+                ! transition_length),...), so re-solving at t reproduces exactly
+                ! the policies the backward pass computed. Deterministic, not an
+                ! approximation.
+                call reslot_policies(time_index)
+                call solve_value_function_and_policy_functions(time_index)
+
+                call reslot_distributions(time_index)
+                call converge_to_stationary_equilibrium(time_index)
+
                 call stationary_equilibrium_statistics(time_index)
                 call stationary_equilibirum_homeownership_rate(time_index)
                 call calculate_homeownership_by_characteristics(time_index)
@@ -52505,7 +52836,7 @@
                     end if
                     
                 end if
-                                
+
             end do
             
             largest_housing_market_distance=0
