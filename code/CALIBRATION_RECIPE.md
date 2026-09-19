@@ -417,6 +417,32 @@ benchmark has to be converged and saved first.
 Before running any of them, check the benchmark files exist -- 62 of them, 3 per
 beta type and 59 scalars. A missing one kills an arm an hour in.
 
+**`code/launch_arm.sh` stages one**, and it is the script that was actually
+used, not a tidied-up version:
+
+    launch_arm.sh <arm: 1|2|3> <kappa_x> <benchmark run dir> [price] [pi_v]
+    launch_arm.sh 2 0.8139 /path/to/n90 0.8720 0.073955
+
+It copies every `baseline_benchmark` file out of the benchmark run and REFUSES
+to continue if fewer than 60 arrive, copies the four distribution files for the
+warm start, and writes `PARAM_HANDOVER.txt` from the resume seed with the arm's
+own overrides on top. Then start it in the foreground of a background task:
+`cd <dir> && ./hftf > run.log 2>&1`.
+
+The two optional arguments are the warm starts that decide whether an arm
+converges in twenty blocks or not at all: the drug price from section 6a's
+bracket, and pi_v from wherever the probe left it. Neither is a result; both
+are starting points the solver is free to move.
+
+**Check the handover took.** `grep -c "HANDOVER IGNORED" run.log` must return 0,
+and the arm's own defining names must appear with the values you meant:
+
+    kappa_x, weight_on_child, internalise_homelessness_cost,
+    adjust_taxes, drug_price_start, voucher probability
+
+A misspelt name is not an error -- it prints `HANDOVER IGNORED, unknown name`
+and the run continues against a model nobody chose.
+
 ---
 
 ## 8. OPERATIONAL RULES THAT WERE PAID FOR
