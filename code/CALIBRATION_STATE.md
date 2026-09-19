@@ -64,10 +64,40 @@ kappa_x = 0.8139) is running from the crossing, `drug_price_start = 0.8720`,
 `drug_market_adjuster = 0.2`, pi_v warm started at 0.073955. All six defining
 handovers verified in the log and zero `HANDOVER IGNORED`.
 
-PREDICTION STATED BEFORE THE RUN, so it can be scored: the first gap should be
-about -0.0019, already inside the 5e-3 rule, and b should sit just under the
-probe's 0.053741. I have mispredicted trip points in this solver twice, so this
-is to be scored and not relied on.
+PREDICTION STATED BEFORE THE RUN, AND NOW SCORED.
+
+**WRONG on the first gap.** Predicted about -0.0019, inside the rule
+immediately; measured +0.081713. The error was not about the economics -- I
+scored a CONVERGED prediction against a BLOCK-1 reading. Block 1 always solves
+from a cold value function, so its policies and its V are meaningless. The
+probe had shown exactly this and I did not apply it: block-1 gap 0.0756 against
+a converged 0.0129, a factor of six. Arm 2's block 1 (gap 0.081713, b 0.058632,
+CF distance 1.6282265) is within noise of the probe's block 1 (0.075554,
+0.057441, 1.6282201), as it must be, because block 1 is dominated by the cold
+start and not by the price.
+
+**RIGHT on pi_v, and it is the useful one.** Predicted it would converge to
+about 0.0740; it landed at 0.073872 with a step of 2.1e-4, against the pinned
+probe's independently measured 0.073955. Two different routes -- a pinned-price
+probe and a live joint solve -- agreeing to four digits is a real check on the
+budget instrument, which was broken twice this week.
+
+**THE GAP FUNCTION IS JOINT IN p AND pi_v, which I stated too confidently.**
+The probe's crossing, 0.8717 to 0.8726, is the crossing CONDITIONAL on pi_v
+held at its probe value. It is not the equilibrium price. The realised slopes
+in the arm while it settled were -14.4, -21.6, +3.2, -0.05, none of which
+measure the demand curve: V was still drifting from the cold start
+(0.4022, 0.4009, 0.3995) while pi_v climbed underneath it. The bracket did its
+job -- it landed the arm within 0.6 per cent of the root instead of 13 -- but
+it carries less precision than I quoted.
+
+**THREE OF THE SIX RULES ARE VACUOUS**, found while writing collect_arm.py and
+measured rather than assumed: distance_rental_market, distance_housing_market
+and distance_inheritance_amount are identically 0.0 on every loop. The rent is
+pinned at 1 on the author's instruction and rental supply is set equal to
+demand -- both print 15.403145377173294, all sixteen digits. Convergence rests
+on three live rules: counterfactual moments, government budget, drug market.
+Never report "all six rules held".
 
 Arms 1 and 3 each need their OWN bracket -- the equilibrium price is a property
 of the arm. One pinned probe per arm is enough now that the slope is known:
