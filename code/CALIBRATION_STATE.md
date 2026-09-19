@@ -1,3 +1,88 @@
+## THE ARMS ARE BLOCKED ON THE DRUG MARKET, AND IT IS STRUCTURAL, 19 September
+
+No arm result exists. The blocker is the counterfactual's drug market solver,
+and it is not a bug I can patch -- it is the defect the code already names.
+
+### WHAT HAPPENS
+
+An arm cuts drug use a long way (the omega_c = 1 plus internalisation arm cuts
+b by about 72 per cent), so the drug price must fall a long way. It does not
+get there:
+
+    gap sequence, four loops   0.0756  0.1636  0.1174  0.3488
+    the rule                   5e-3
+
+Growing, not shrinking. The same shape stopping_rule_drug_market's comment
+records for universal Treatment First: "0.0198 at loop 32, 0.165, 0.346,
+0.520 -- growing, not shrinking".
+
+### THREE HYPOTHESES, TWO KILLED BY MEASUREMENT
+
+**1. V is noisy** -- the standing hypothesis, written in the code: "tighten the
+DISTRIBUTION rule first so V stops being noisy". TESTED AND FALSE for this
+path. With the price held fixed, the same economy at the same 6e-4
+distribution tolerance converged cleanly:
+
+    CF MOMENTS distance  1.628  3.9e-3  2.9e-3  6.6e-4  8.2e-4  1.2e-3
+                         3.1e-4  5.9e-5  4.9e-5
+
+The economy is fine. I nearly tightened the distribution rule on the strength
+of that comment; checking first saved a wasted run. The comment was written for
+the CALIBRATION path and does not transfer.
+
+**2. The price map is unstable** -- multiplier 1 + a*(d(implied)/dp - 1), and
+with the elasticity measured from this run's own points (b 0.0935 at p = 0.75,
+0.0227 at p = 1.00, so eps_d = -4.92) that is -1.185 at drug_market_adjuster =
+0.5, which diverges. TRUE IN THE LIMIT but NOT WHAT IS HAPPENING NOW, because
+
+**3. THE STEP IS CLIPPED, SO THE DAMPING DOES NOT BIND.** max_drug_price_move
+caps the move at 0.5 per cent of the price. At gap 0.0756 and p 0.87 the raw
+step is 0.0378 at a = 0.5 and 0.0151 at a = 0.2, and the cap is 0.00435 --
+both exceed it, so both take the SAME step. Verified: the two runs are
+identical to seven digits, price 0.870000 -> 0.874350 and gap 0.16358 on loop
+2 in each. The damping only binds once the gap is under 0.0218.
+
+### SO WHAT IS ACTUALLY WRONG
+
+While the cap binds the price is a bang-bang controller taking fixed 0.5 per
+cent steps. A 0.5 per cent price move cannot swing the gap by 0.23, so the gap
+sequence is NOT the price map oscillating -- it is THE ECONOMY, which is
+nowhere near settled at each new price.
+
+Each outer loop is one value function solve plus one distribution pass, not a
+re-convergence. The pinned-price run shows the economy needs about NINE loops
+to settle at a given price. The solver gives it one, then moves the price
+again. The economy never catches up, the gap stays large, the cap keeps
+binding, and the damping never gets its chance. That is the deadlock.
+
+### WHAT WOULD BREAK IT, AND WHY IT IS THE AUTHOR'S CALL
+
+  a. RE-EXAMINE THE DEMAND ELASTICITY. The code already says it: "none of this
+     instability would arise at the ESTIMATED demand elasticity: at -0.63 the
+     gain is 0.43 and the market clears in a handful of loops. The convergence
+     difficulty and the failed elasticity validation are one defect." The
+     measured -4.92 here is far outside anything estimated. This is the honest
+     root and it is a modelling question, not a solver one.
+  b. LET THE ECONOMY SETTLE BETWEEN PRICE STEPS -- step the price every Nth
+     loop rather than every loop. Costs roughly nine times the loops per price
+     level but each step lands on a settled economy.
+  c. SMALLER PRICE STEPS so the perturbation per loop is below what one loop
+     of convergence removes. More steps, but quasi-static.
+  d. RUN THE ARMS AT A FIXED DRUG PRICE and say so in the paper. Changes the
+     experiment the author asked for -- they explicitly wanted "the price of
+     drugs (where the supply elasticity is 1.46)" to clear.
+
+### WHAT IS COMMITTED AND STANDS
+
+    drug_market_adjuster 0.5 -> 0.2   correct for the endgame, verified inert now
+    max_counterfactual_loops 80 -> 250
+    drug_market_adjuster un-frozen    it is market clearing, not calibration
+    pi_v persistence fix              the budget now clears, residual 7.5e-4
+
+n90 and kappa_x = 0.8139 are untouched by all of this: the drug market takes
+the is_counterfactual == 0 branch in a benchmark, which normalises the shifter
+and sets the distance to zero without ever reading the adjuster.
+
 ## THE pi_v BUDGET CLEARING WAS A NO-OP, AND THE ARMS RUN A DIFFERENT LOOP
 
 Two things found on 19 September while the first arm ran, both of which change
