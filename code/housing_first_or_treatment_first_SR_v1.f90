@@ -9138,6 +9138,7 @@
             model_fraction_homeless_with_negative_value_of_life,model_fraction_addicted_with_negative_value_of_life,&
             model_largest_negative_value_of_life,model_total_income,model_eligibles_getting_voucher,model_addicts_getting_voucher,&
             model_eligibles,model_addicted,model_exprimenters,model_total_drug_users,&
+            model_drug_tests,&
             model_addicted_total_income,model_addicted_total_addiction_spending_to_total_income,&
             model_experimenters_total_drug_spending_to_total_income,model_experimenters_total_income,&
             model_treatment_take_up,model_mass_with_sud,&
@@ -10924,6 +10925,12 @@
             ! it can sit beside food stamps in the same units.
             write(*,*) "DIAG drug testing, aggregate spending            =",&
                 govt_spending_on_drug_tests
+            ! THE BASE, so the cost can be checked against a mass rather than
+            ! taken on trust. tests/eligibles is the share of the eligible pool
+            ! screened in a period: holders, who are all tested, plus the
+            ! offered share of everyone else.
+            write(*,*) "DIAG drug tests, mass tested                     =",&
+                model_drug_tests(1), " of eligibles=", model_eligibles(1)
             write(*,*) "DIAG drug testing / output                       =",&
                 govt_spending_on_drug_tests/max(model_output(1),10.d0**(-12))
             write(*,*) "DIAG food stamps, aggregate spending             =",&
@@ -17847,6 +17854,12 @@
             total_homeless_1,after_tax_income_1,after_tax_income_2,frac_spent_on_addiction_used,housing_voucher_2,&
             total_addited_1,income_2,frac_getting_vouchers,homeowner_spending,total_addicted_and_homeless_1,bequest_1,&
             addiction_consumption_1
+        ! THE TESTING BASE. voucher_category_for_test is the model's own voucher
+        ! category, obtained from compute_voucher_index_1 rather than rebuilt
+        ! here, so a change to what counts as failing the condition reaches the
+        ! cost of testing as well as the eligibility for a voucher.
+        integer :: voucher_category_for_test
+        real(8) :: offer_rate_for_test
 
         ! STATIC STORAGE, BECAUSE THESE ACCUMULATE ACROSS THE TWO PASSES.
         !
@@ -17992,6 +18005,7 @@
         if (accumulating_beta_types==0) val_nobuy_income(time_period)=0
         if (accumulating_beta_types==0) model_avg_assets_experimenters(time_period)=0
         if (accumulating_beta_types==0) model_eligibles(time_period)=0
+        if (accumulating_beta_types==0) model_drug_tests(time_period)=0
         if (accumulating_beta_types==0) model_fraction_recieving_food_stamps(time_period)=0
         if (accumulating_beta_types==0) model_fraction_homeless_recieving_food_stamps(time_period)=0
         if (accumulating_beta_types==0) model_food_stamps_share_to_homeless(time_period)=0
@@ -18463,6 +18477,72 @@
                                         if ((amortization_used==1) .AND. (years_left_on_mortgage_index==1)) then
 
                                             model_eligibles(time_period)=model_eligibles(time_period)+distribution_mass_used
+
+                                            ! WHO IS TESTED, COUNTED RATHER THAN INFERRED FROM A RATE.
+                                            !
+                                            ! The model's own timing is stated at the voucher
+                                            ! transition: "AN APPLICANT is offered with the offer
+                                            ! probability and THEN tested. Offered-and-caught is
+                                            ! excluded; never offered simply stays out." So the set
+                                            ! tested in a period is every income-eligible HOLDER,
+                                            ! who must pass to keep the voucher, plus the
+                                            ! income-eligible non-holders who DRAW AN OFFER and must
+                                            ! pass to receive it. The excluded are barred from
+                                            ! offers and are not tested, which is why voucher_excl
+                                            ! is not counted.
+                                            !
+                                            ! THE OFFER RATE IS THE RAW ONE, per category, exactly
+                                            ! as voucher_probabilities is built from it at the
+                                            ! enforcement block. Reading voucher_probabilities here
+                                            ! instead would be wrong: those have already been
+                                            ! multiplied by (1-p_det) or (1-p_fp), which is the
+                                            ! TEST OUTCOME, and a household that fails is still a
+                                            ! household that was tested.
+                                            !
+                                            ! WHAT THIS REPLACES. The budget charged
+                                            !   c_test * model_eligibles_getting_voucher / pi_v
+                                            ! and by that line model_eligibles_getting_voucher has
+                                            ! been divided by model_eligibles, so it is a COVERAGE
+                                            ! RATE and the expression carries no household mass at
+                                            ! all. It came to c_test*3.69 -- the cost of 3.69 tests
+                                            ! in an economy of mass 51 -- and landed near the truth
+                                            ! only because 1/pi_v happened to sit near the eligible
+                                            ! mass. Along a transition pi_v moves every period and
+                                            ! the two come apart at once.
+                                            if (voucher_conditional_on_clean==1) then
+
+                                                if (voucher_index==1) then
+
+                                                    model_drug_tests(time_period)=&
+                                                        model_drug_tests(time_period)+distribution_mass_used
+
+                                                elseif (voucher_index==0) then
+
+                                                    call compute_voucher_index_1(val_is_homeless_1,&
+                                                        frac_spent_on_addiction_used,voucher_category_for_test)
+
+                                                    if (voucher_category_for_test==1) then
+
+                                                        offer_rate_for_test=probability_of_voucher_benchmark_used_1
+
+                                                    elseif (voucher_category_for_test==2) then
+
+                                                        offer_rate_for_test=min(probability_of_voucher_benchmark_used_1*&
+                                                            increased_prob_of_voucher_if_homeless_1,1.d0)
+
+                                                    else
+
+                                                        offer_rate_for_test=min(probability_of_voucher_benchmark_used_1*&
+                                                            increased_prob_of_voucher_if_homeless_and_addicted,1.d0)
+
+                                                    end if
+
+                                                    model_drug_tests(time_period)=model_drug_tests(time_period)+&
+                                                        offer_rate_for_test*distribution_mass_used
+
+                                                end if
+
+                                            end if
 
                                         end if
 
@@ -19982,16 +20062,22 @@
             include_property_taxes_in_govt_constraint*govt_revenues_from_property_tax(time_period)-&
             govt_lump_sum_transfers(time_period)
             
-        ! WHAT THE TESTING COSTS THE BUDGET. Under Treatment First every income
-        ! eligible household has to be screened for the condition to mean
-        ! anything, so the government pays cost_per_drug_test for each of them,
-        ! once per period. Zero in the benchmark, where voucher_conditional_on_clean
-        ! is zero, nothing is conditional and nobody is tested, so this term
-        ! cannot move the calibration; it is what makes the counterfactual pay
-        ! for its own enforcement rather than getting it free.
+        ! WHAT THE TESTING COSTS THE BUDGET, over the mass actually tested.
+        !
+        ! The author's rule, 19 September: the cost falls on "voucher recipients
+        ! and those who could get a voucher and need to pass the test to get
+        ! it". That is the model's own timing rather than an extra assumption --
+        ! the voucher transition says an applicant is offered first and tested
+        ! only if offered -- so model_drug_tests counts every income-eligible
+        ! holder plus the offered share of income-eligible non-holders, and
+        ! leaves out the excluded, who are barred from offers and not tested.
+        !
+        ! Zero in the benchmark, where voucher_conditional_on_clean is zero,
+        ! nothing is conditional and nobody is tested, so this term cannot move
+        ! the calibration; it is what makes the counterfactual pay for its own
+        ! enforcement rather than getting it free.
         govt_spending_on_drug_tests=voucher_conditional_on_clean*cost_per_drug_test*&
-            model_eligibles_getting_voucher(time_period)/&
-            max(probability_of_voucher_benchmark_used_1,10.d0**(-10))
+            model_drug_tests(time_period)
 
         govt_revenues_to_use_in_tests(time_period)=&
             total_govt_revenues(time_period)-govt_spending_on_ss(time_period)-&
