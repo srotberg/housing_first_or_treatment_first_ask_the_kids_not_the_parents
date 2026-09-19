@@ -1,3 +1,81 @@
+## THE DRUG MARKET IS UNBLOCKED, AND THE CAUSE WAS A REMEMBERED ELASTICITY, 19 September
+
+The previous entry said the arms were blocked on the drug market and that it
+was structural. The first half was right and the second was wrong. It is an
+unstable fixed-point iteration, it is the FOURTH one in this solver with the
+same shape, and the same arithmetic that fixed the other three fixes it.
+
+### THE MEASUREMENT
+
+The gap function is now measured on both sides instead of interpolated from
+unconverged readings. The instrument is a PINNED-PRICE PROBE: hand over
+`drug_market_adjuster = 0`, which freezes the price and lets pi_v, the budget
+and the distribution converge around it, so the printed gap is a property of
+the price and not of an unfinished solve.
+
+    p = 1.00   V 0.1139   implied 0.3659   gap -0.634087   CF dist 4.9e-5
+    p = 0.87   V 0.4122   implied 0.8829   gap +0.012910   CF dist 2.2e-4
+    crossing   p* = 0.8717 (local slope) to 0.8726 (secant)
+
+The sign is NOT in the log -- `distance_drug_market` is `abs(gap_1)`. It is
+reconstructed from the printed `drug quantity V=` and the benchmark's own
+shifter, `implied = 1.6200147899 * V**(1/1.46)`, and the reconstruction
+reproduces the Fortran's printed distance to six digits.
+
+### WHY IT WOULD NOT SOLVE
+
+**The demand elasticity is -9.23, not the 3.14 in the comment.** Everything
+follows from that one number being wrong by a factor of three:
+
+    d(gap)/dp = -7.41,   p' = p + a*gap,   dp'/dp = 1 - 7.41*a
+    a = 0.5 -> -2.70  DIVERGENT  (the setting that was in the file)
+    a = 0.2 -> -0.48  stable     (a < 0.270 required)
+
+`drug_market_adjuster` is now 0.2. Two things worth keeping about how this was
+found, because both misled me first:
+
+- **Changing the adjuster measured as INERT.** Two runs at 0.5 and 0.2 agreed
+  to seven digits, because `max_drug_price_move = 0.005` was clipping every
+  loop and both settings clipped to the same step. The clip converts divergence
+  into a crawl; it does not cure it, and it hides which setting you are in. The
+  setting only becomes operative once the price is warm started close enough
+  that the clip stops binding.
+- **The earlier bracket was interpolated between two UNCONVERGED gaps** and put
+  the crossing at 0.886 against a true 0.872. With slope -7.4 that 0.015 error
+  is 0.11 in the gap, twenty-two times the tolerance. An arm warm started at
+  0.886 is nowhere near the answer, and the number looks respectable.
+
+### WHAT ELSE THE PROBE SETTLED
+
+Both other unstable loops in an arm are now closed and CONFIRMED by the same
+probe, which converged everything except the pinned price:
+
+    CF MOMENTS distance   2.19e-4   (rule 5e-4)
+    government budget     1.68e-3   (rule 2.5e-2)
+
+pi_v needed two fixes, a persistence bug and a gain. It now walks
+0.067534 -> 0.063027 -> 0.066229 -> 0.070730 -> 0.073488 -> 0.073871 ->
+0.073955, steps decaying to 8.4e-5.
+
+### WHERE IT STANDS
+
+Arm 2 (omega_c = 1 plus full internalisation of the homelessness externality,
+kappa_x = 0.8139) is running from the crossing, `drug_price_start = 0.8720`,
+`drug_market_adjuster = 0.2`, pi_v warm started at 0.073955. All six defining
+handovers verified in the log and zero `HANDOVER IGNORED`.
+
+PREDICTION STATED BEFORE THE RUN, so it can be scored: the first gap should be
+about -0.0019, already inside the 5e-3 rule, and b should sit just under the
+probe's 0.053741. I have mispredicted trip points in this solver twice, so this
+is to be scored and not relied on.
+
+Arms 1 and 3 each need their OWN bracket -- the equilibrium price is a property
+of the arm. One pinned probe per arm is enough now that the slope is known:
+probe, take the converged gap, jump by the local slope, then run with adjuster
+0.2 and let the code's own secant finish.
+
+---
+
 ## THE ARMS ARE BLOCKED ON THE DRUG MARKET, AND IT IS STRUCTURAL, 19 September
 
 No arm result exists. The blocker is the counterfactual's drug market solver,
