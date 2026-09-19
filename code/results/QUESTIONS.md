@@ -122,7 +122,21 @@ line is at 50888, inside the CALIBRATION loop, and the arm loop is a separate
 wired into the calibration loop too, so it cannot force an arm to exit early
 either.
 
-1. **ALL SIX RULES HELD AT ONCE, on the same loop.** An arm has converged only
+0. **THREE OF THE SIX RULES ARE VACUOUS HERE, so do not report "all six held".**
+   MEASURED on the running arm, not assumed: `distance_rental_market`,
+   `distance_housing_market` and `distance_inheritance_amount` are identically
+   0.0 on every loop. The rent is pinned at 1 on the author's own instruction
+   (*"the rent is pinned at 1 and does not need to clear the market at all"*),
+   and rental supply is set equal to demand -- the two print the same sixteen
+   digits, 15.403145377173294. Nothing is being cleared, so nothing is being
+   checked.
+
+   The LIVE rules are `distance_counterfactual_moments`, `distance_govt_budget`
+   and `distance_drug_market`. Convergence rests on those three. Say three, not
+   six. `code/collect_arm.py` detects this automatically -- it labels a series
+   that is identically zero on every loop VACUOUS rather than scoring it "ok".
+
+1. **THE LIVE RULES HELD AT ONCE, on the same loop.** An arm has converged only
    when every one of these is inside its rule simultaneously:
 
         distance_counterfactual_moments <= 5e-4
