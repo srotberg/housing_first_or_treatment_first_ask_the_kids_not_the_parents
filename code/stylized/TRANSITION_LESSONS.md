@@ -415,6 +415,76 @@ Before committing an overnight run, set transition_length to three or five and
 time one solve. The passes are near linear in the period count, so it
 extrapolates, and it costs half an hour on a spare container.
 
+## THE TRANSITION WILL NOT FIT IN MEMORY AS THE CODE STANDS. THE FIX IS DECIDED.
+
+Author approved, 19 September. Measured before building anything, which is what
+section 6 asks for.
+
+### THE PROBLEM
+
+All 38 large structures carry `transition_length` as their LEADING dimension,
+so memory is linear in the horizon. One slice is
+61 x 30 x 18 x 26 x 4 x 3 = 10,277,280 elements: 78 MB at real(8), 39 MB at
+integer(4). Checked three ways -- against the 4.8 GB the process actually holds
+at `transition_length = 1`, and against the on-disk benchmark file (308 MB of
+formatted text at ~36 bytes a number is ~68 MB in memory).
+
+                                        T = 30      T = 75
+    as the code stands (38 x T)          78.1 GB    195.3 GB
+    machine has                          15 GB
+
+### WHAT DOES NOT WORK, AND WHY -- THE MISTAKE IS RECORDED BECAUSE IT IS TEMPTING
+
+The obvious saving is to store only the policies that PROPAGATE STATE
+(`financial_index`, `housing_status_index`, `space_lived_in_index`, `addiction`,
+`treatment`, `years_of_amortization_index`) and to accumulate everything else --
+consumption, taxes, deductions -- into scalars on the fly.
+
+**That is wrong.** During the FORWARD pass at time t you need the aggregation
+policies at that SAME t, and aggregates cannot be accumulated during the
+backward pass because the distribution is not known yet. All sixteen
+time-varying policies are needed at every period. Storing them is 30.5 GB at
+T = 30 and 71.8 GB at T = 75, which is why that route ends in a bigger machine
+or in one-byte integers and their silent overflows.
+
+### WHAT WORKS: STORE THE VALUE FUNCTION PATH, RECOMPUTE POLICIES FORWARD
+
+The backward pass computes `V_t` from `V_{t+1}`. Keep that whole path -- ONE
+array, T+1 slices -- and in the forward pass recompute each period's policies
+from `V_{t+1}` as you reach it.
+
+    value function path, T+1 slices      2.37 GB   (T = 30)
+    steady-state copies (16 x 1 slice)   1.23 GB
+    distributions (4 x 2 slices)         0.61 GB
+    one working slice of each policy     0.92 GB
+    value_function_comparison (x2)       0.15 GB
+    -----------------------------------------
+    TOTAL                                5.3 GB    at T = 30
+                                         8.7 GB    at T = 75
+
+real(8) throughout. **No bigger machine, no narrow integers, no real(4), no
+coarse time grid, no approximation of any kind.**
+
+Do this alongside the bookkeeping fix: 22 of the 38 structures do not need a
+transition dimension at all -- 16 are `_benchmark`/`_guess`/`_saved`/`_to_fetch`
+copies holding a steady state, 4 are distributions (a forward pass needs 2
+slices), 2 are value functions (a backward pass needs 2). They are dimensioned
+`transition_length` today only because one `allocate` block serves both modes.
+
+### WHAT IT COSTS, AND THE ONE REASON TO RECONSIDER
+
+Recomputing policies in the forward pass roughly DOUBLES the compute per path
+iteration. Against the 8 to 15 hours this file already quotes for thirty
+periods, that is 16 to 30 hours. It is the right side of the trade here --
+there is CPU headroom (the solver averages 2.4 of 4 cores, measured) and there
+is not 30 GB of RAM -- but if a 32 GB machine ever becomes available, storing
+the sixteen policies instead removes the doubling.
+
+**Time a T = 3 or T = 5 run before committing to an overnight one**, exactly as
+the section above says. It now also checks the memory model: peak RSS should
+come out near 2.91 GB + 0.079*T GB, and if it does not, the allocation fix did
+not do what this section claims.
+
 ## 12. p_v MUST CLEAR ALONG THE PATH, AND IT CANNOT UNTIL IT IS TIME-INDEXED
 
 The author asked on 8 September for the drug market to be cleared in the
