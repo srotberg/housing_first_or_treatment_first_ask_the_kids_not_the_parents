@@ -101,6 +101,38 @@ Anchor every `sed`. **Four separate field bugs** have come from greedy patterns:
 Nothing is a result until `d(b)` and `d(class share)` are both flat. The series
 decelerates and has been called converged early at least three times.
 
+### The stopping test is a MAX over four series that decay at different rates
+
+Do not read the name that is binding now as a guide to when the test trips.
+Measured on n90:
+
+    blk  d(b)        d(lambda_d) d(h_1)      d(y)        max        binding
+    2    +1.519e-01  +1.474e-01  -7.405e-02  +2.059e-01  2.059e-01  y
+    3    -4.710e-03  +3.818e-03  -2.385e-02  +8.497e-02  8.497e-02  y
+    4    -1.064e-02  -7.125e-03  -1.876e-02  +3.885e-02  3.885e-02  y
+    5    -1.213e-02  -7.596e-03  -4.824e-03  +1.859e-02  1.859e-02  y
+    6    -7.761e-03  -6.165e-03  -8.046e-03  +9.079e-03  9.079e-03  y
+    7    -1.660e-03  -8.973e-03  -4.982e-03  +4.442e-03  8.973e-03  lambda_d
+
+`y` decayed by a clean factor of 0.47 a block and an estimate built on it said
+the test would trip at block 12. It was an estimate of the wrong series: at
+block 7 `y` handed over to `lambda_d`, which is a SLOW MONOTONE DRIFT and not a
+geometric decay at all -- in levels it falls -2.51e-4, -2.66e-4, -2.14e-4,
+-3.09e-4 a block with no deceleration, 700 times above the 1e-5 noise floor, so
+it is a real mode rather than chatter. **At that rate lambda_d never reaches
+1e-4 and the run ends at its cap.**
+
+IT IS NOT THE CLASS SHARE. That settled by block 4 (0.03178, 0.03186, 0.03191,
+0.03203) and is already at the noise floor, so the newborn-share fixed point is
+not what is holding lambda_d up.
+
+WHAT TO DO ABOUT IT. Set the cap deliberately and treat "stopped at the cap" as
+a REPORTABLE OUTCOME, not a failure: a run that ends with lambda_d moving 0.7
+per cent a block is still far closer to a fixed point than one stopped at block
+3, and the caveat belongs in the result rather than in the decision to run. Do
+not loosen the tolerance to manufacture an `ECONOMY IS STILL` line -- the line
+is what tells a later reader which of the two happened.
+
 ---
 
 ## 4. THE CALIBRATION, IN ORDER
