@@ -1,3 +1,75 @@
+## THE THREE LIVE RULES DO NOT PIN THE EQUILIBRIUM. TWO ARM 3 RUNS, CEV 1.65% vs 3.29%. 19 September
+
+**Every counterfactual number reported before this entry carries an uncertainty
+that was not stated, because nobody had run the same arm twice.**
+
+Arm 3 was re-solved (its .dat output had not survived a container, and the
+transition needs it as a terminal steady state). Same model, same parameters,
+same seed, same binary bar a budget term worth 0.008 per cent of revenues.
+Both runs report CONVERGED: YES on all three live rules. They are not the same
+equilibrium:
+
+                        original, 22 loops   re-solve, 8 loops    rule
+    CF moments             2.3197e-04           4.0504e-04        5.0e-04
+    budget                 7.1691e-03           1.9100e-02        2.5e-02
+    drug gap              -4.3699e-03          -2.1209e-03        5.0e-03
+    b                      0.047121             0.045209          -4.1%
+    lambda_d               0.019133             0.018363          -4.0%
+    h_1                    0.0067903            0.0065046         -4.2%
+    pi_v                   0.070288             0.076023          +8.2%
+    drug price             0.842217             0.830199          -1.4%
+    welfare              791.96771            792.52720
+    CEV                    +1.646%              +3.291%           DOUBLE
+
+### WHY, AND IT IS THREE THINGS COMPOUNDING
+
+1. **frozen_stop_tolerance=1e-4 stops on MOVEMENT, not on distance.** A run
+   halts wherever the descent is slow. The 8-loop run stopped on the shoulder
+   just past the pi_v peak with pi_v still walking down about 0.001 a loop; the
+   original happened to carry on to loop 22. BOTH stopped on this same test, in
+   different places, so it is path dependent by construction.
+
+2. **The CF-moments rule is 5e-4 ABSOLUTE across moments of very different
+   size.** b is about 0.046, lambda_d about 0.019, h_1 about 0.0065, so one
+   absolute bound is 1.1 per cent of b, 2.6 per cent of lambda_d and **7.7 per
+   cent of h_1**. It barely constrains the small moments at all -- which are
+   exactly the ones the paper reports.
+
+3. **Nothing constrains pi_v or the drug price directly.** They are instruments;
+   only their own distances are tested, and those are loose enough to admit an
+   8 per cent range in pi_v.
+
+### WHAT IT INVALIDATES
+
+- The TF CEV of +1.646 per cent is not pinned to better than about a factor of
+  two. Neither is +3.291 per cent.
+- **Arms 1 and 2 were run under the same stopping rules** and carry the same
+  uncertainty. Their reported numbers have not been re-checked.
+- Any transition built on either point inherits that point's terminal steady
+  state, so this had to be settled BEFORE the transition, not after.
+
+### WHAT IS BEING DONE
+
+Re-solving arm 3 with frozen_stop_tolerance at 1e-6 (two orders tighter) and
+the cap raised to 30 blocks, so the tolerance rather than the cap ends it, and
+watching pi_v and the drug price FLATTEN rather than trusting the flag.
+
+Seeded from the 8-loop point. With a tight stop the seed should set only the
+speed and not the fixed point, and that is itself checkable afterwards: if the
+tight run from 0.8302/0.076023 lands on the original's 0.842217/0.070288, the
+fixed point is pinned and the loose stop was the whole story. If it lands
+somewhere else again, the next question is genuine multiplicity, and that is a
+different and worse problem.
+
+### THE RULE THIS SHOULD HAVE BEEN CAUGHT BY
+
+`TRANSITION_LESSONS.md` section 7 -- a bug found in one model is checked
+against the other before it is closed. There is no equivalent standing rule for
+"a converged result is reproduced once before it is reported", and there should
+be. **An arm that has been solved once has not been shown to be solved.**
+
+---
+
 ## SUPERSEDED: THE 220 GB FIGURE BELOW. THE TRANSITION FITS AT T=30. 19 September
 
 The entry immediately below this one says a transition needs about 3 GB per

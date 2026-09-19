@@ -1,3 +1,15 @@
+> **NOT REPRODUCED. THE NUMBERS BELOW ARE NOT PINNED TO BETTER THAN ABOUT A
+> FACTOR OF TWO ON WELFARE.** 19 September. Arm 3 was solved a second time from
+> the same seed with the same parameters, and the two runs both reported
+> CONVERGED on all three live rules while landing 4 per cent apart on b,
+> lambda_d and h_1, 8 per cent apart on pi_v, and giving a CEV of +1.646 per
+> cent against +3.291 per cent. The cause is the stopping rules, not the model:
+> frozen_stop_tolerance halts on block-to-block MOVEMENT so a run stops wherever
+> the descent is slow, the CF-moments rule is 5e-4 ABSOLUTE across moments whose
+> sizes differ by an order of magnitude (7.7 per cent of h_1), and nothing
+> constrains pi_v or the drug price directly. See CALIBRATION_STATE.md, top
+> entry. Arms 1 and 2 ran under the same rules and have not been re-checked.
+
 # ARM 3 -- TREATMENT FIRST
 
 **CONVERGED**, block 22, run completed cleanly (exit 0, `simulation_ended`).
