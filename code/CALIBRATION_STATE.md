@@ -1,3 +1,117 @@
+## kappa_x IS PINNED AT 6.9361, AND THE THREE ARMS ARE IN FLIGHT, 19 September
+
+### THE CALIBRATION IS CLOSED
+
+    delta_d   0.24     Nilsson, pinned, a deliberate lower bound
+    omega_c   0.055    pinned; converged gap 0.2233 against a target of
+                       0.18343, accepted -- *"keep omega_c as is"*
+    kappa_x   6.9361   solved, see below
+
+### kappa_x DID NOT NEED A RUN, AND THE AUTHOR SAW IT BEFORE I DID
+
+*"why can't you compute welfare without rerunning the whole thing... you can
+just compute the welfare by adding the externality of the homelessness to each
+value function"*, and *"it is very straightforward, you dont have to churn the
+whole thing again"*. Correct. kappa_x*H is a CONSTANT in every value function,
+so it shifts welfare and cannot move a policy. The whole repricing is
+
+    W_new = W_old - kappa_x*H*D_total,   D_total = D_child + beta^25*D_adult
+
+I had queued a benchmark re-run for it. That was unnecessary and the arithmetic
+below replaces it.
+
+THE SOLVE, by bisection on n88's own 21 welfare-curve points. The curve is
+exactly A + B(1+x)^k, and because inelastic_labor_supply = 1 leaves leisure
+identically zero, A is purely (value_of_life - kappa_x*H)*D_adult -- which hands
+over D_adult with no extra run at all:
+
+    k fitted           -0.387775   against -alpha_c = -0.387770, 0.001% apart
+    rms residual        1.4e-5 utils over 21 points
+    A                1491.72585
+    B_adult          -140.65444
+    B_child          -769.59258
+    D_adult            17.10738   (no-mortality cap 18.011, survival costs 5.0%)
+    D_child            13.96829
+    beta^25             0.253161
+    value_of_life      87.197825   CALIBRATED. The 11.0 in the declaration is
+                                   the default and is not what runs. Read it
+                                   from value_of_lifebaseline_benchmark.dat.
+
+The compensation, with c the residual expenditure category:
+
+    s_h 0.26341   s_b 0.00807   s_c 0.72852   x = 0.002/s_c = 0.0027453
+
+WHO BEARS IT WAS WORTH A FACTOR OF 22, and the author chose:
+
+    (a) lifetime compensation, adult-only charge   29.31   the code as written
+    (b) adult compensation, adult-only charge       1.296
+    (c) lifetime compensation, EVERYONE charged     6.94   *"i think kappa_x
+                                                           should fall on
+                                                           everyone including
+                                                           children"*
+
+because B_child is 95.6 per cent of the whole consumption response: a child's
+twenty five years are undiscounted while an adult's sixty sit behind beta^25.
+The subtraction now sits in BOTH childhood sums.
+
+### LIFETIME UTILITY AT THE BENCHMARK
+
+    childhood   bundle -769.593  value of life 1218.004  disamenity -0.653  =  447.759
+    adult       bundle -140.654  value of life 1491.726  disamenity -0.800  = 1349.428
+    lifetime = childhood + beta^25*adult                                    =  789.381
+
+DO NOT QUOTE 0.856 / 789.381 = 0.108% AS "THE COST OF HOMELESSNESS". 789.381 is
+a difference of two large numbers -- value of life +1595.65, bundle -805.20 --
+so a ratio to it is a ratio to a level normalisation. The interpretable figure
+is the consumption equivalent:
+
+    dW/dx at x=0 = B_total * k = 312.237 utils per unit of x
+    the disamenity, 0.8555 utils, is 0.2740% of c = 0.1996% of expenditure
+
+which is the 0.20 per cent it was calibrated to. The identity closing is the
+check that the arithmetic replaced the run correctly.
+
+### IN FLIGHT
+
+n90, locally: the reference benchmark, stopping on the equilibrium test
+(1e-4) rather than a block count. NOT needed for kappa_x -- it is the converged
+economy the ARMS are measured against, which n88 at block 3 was not. Moves
+1.000, 0.206, 0.085, 0.039, 0.019, shrinking by ~0.47 a block, so the trip is
+around block 12.
+
+THREE ARMS, in parallel cloud containers, each solving its own benchmark first
+because it cannot reach this box's saved policy functions:
+
+    session_01MmaZ1u   arm 1   optimal drug use, omega_c = 1
+    session_01HYEs83   arm 2   optimal homelessness, omega_c = 1 + internalise
+    session_01BSmdcV   arm 3   Treatment First, detection 0.70, false positive 0
+
+Four to five hours. They report by committing code/results/arm{1,2,3}_result.md
+to this branch. If a report does not appear, their transcripts are readable with
+get_session and list_events -- cloud sessions cannot be messaged.
+
+### WHAT TO CHECK IN EACH ARM REPORT, IN THIS ORDER
+
+1. Did `ECONOMY IS STILL` fire, or did it stop at the cap of 25 blocks? The cap
+   is a weaker result and must be labelled one.
+2. THE GOVERNMENT BUDGET RESIDUAL. frozen_stop_tolerance is appended to the loop
+   condition with .AND., so it CAN force an exit before distance_govt_budget is
+   inside its own rule -- an arm could stop with pi_v not fully cleared. Unlikely,
+   because a moving pi_v moves homelessness and income and the test watches
+   those, but a large residual has this cause and not an economic one.
+3. b from `MOMENT b`, never model_fraction_addicted. A parallel worker has
+   already reported lambda_d while calling it b, on an unconverged run.
+4. Arm 2 only: homelessness should FALL against arm 1. It is the only arm where
+   kappa_x moves policy functions.
+5. Arm 3 only: govt_spending_on_drug_tests must be positive, and with
+   probability_of_false_positive = 0 every exclusion must be a true positive.
+
+### WHAT IS NEXT AFTER THE ARMS
+
+The transition, against TRANSITION_LESSONS.md, which is a standing instruction.
+Note its section 12: p_v must clear along the path and cannot until it is
+time-indexed, which may be unbuilt work.
+
 ## THE CALIBRATION IS DONE AND THE WELFARE MACHINERY WAS NEVER WIRED, 19 September
 
 omega_c = 0.055 and delta_d = 0.24 are PINNED. The author, asked whether the
