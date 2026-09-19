@@ -3413,7 +3413,30 @@
         ! THE MOST LOOPS A COUNTERFACTUAL MAY TAKE. Reached only by a run that is
         ! not converging, and a run that reaches it must be reported as NOT
         ! converged -- the cap is a diagnostic, never a result.
-        integer, parameter :: max_counterfactual_loops=80
+        ! RAISED FROM 80 TO 250, 19 September, because 80 cannot reach the
+        ! drug market's fixed point when a counterfactual moves drug use a long
+        ! way.
+        !
+        ! THE ARITHMETIC. max_drug_price_move caps the drug price at 0.5 per
+        ! cent a loop -- deliberately, see its declaration: the iteration's gain
+        ! is |eps_d|/eps_s = 3.14/1.46 = 2.15 and the secant diverged on
+        ! universal Treatment First, so the cap is load bearing and must NOT be
+        ! loosened. But 80 loops of 0.5 per cent only reaches 0.995^80 = 0.670,
+        ! and the omega_c = 1 plus internalisation arm cuts drug use by about
+        ! 72 per cent, which implies a supply price of 0.381 at unchanged demand
+        ! and an equilibrium somewhere above that. The loop ran out of room, not
+        ! out of stability.
+        !
+        ! 250 loops reaches 0.995^250 = 0.287, which covers even the inelastic
+        ! extreme. It costs nothing when the market clears early: the loop exits
+        ! on its conditions, and the cap is only a backstop.
+        !
+        ! THE SUPPLY SIDE IS CLEAN AND WAS CHECKED. Recovering the exponent from
+        ! n90's own normalisation, 1 = shifter*V^k with shifter = 1.6200147899
+        ! and V = 0.4944271173, gives k = 0.684931 against 1/1.46 = 0.684932.
+        ! Six digits. What is not clean is the demand side, and the comment on
+        ! stopping_rule_drug_market says why.
+        integer, parameter :: max_counterfactual_loops=250
         real(8) :: stopping_rule_inheritance_amount=(1-is_counterfactual)*2*10.d0**(-3)+is_counterfactual*2*10.d0**(-3)
                                                            
         real(8), parameter :: stopping_rule_value_function=5*10.d0**(-8)
