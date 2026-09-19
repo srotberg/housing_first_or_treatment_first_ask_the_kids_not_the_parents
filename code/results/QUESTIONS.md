@@ -12,6 +12,41 @@ committed arm results; do not substitute a different comparison.
 
 ---
 
+## A WELFARE LEVEL FROM ARM 1 OR ARM 2 IS NOT COMPARABLE TO THE BENCHMARK'S
+
+**Do not compute a CEV for arm 1 or arm 2 against the benchmark. The number is
+meaningless and it is large enough to look like a headline result.**
+
+`weight_on_child` (omega_c) is not a policy instrument, it is a term in the
+OBJECTIVE. In `calculate_flow_utility` at line 27698 the flow is
+
+    flow = [ A_parent + omega_c * A_child ] / (1 - sigma),     sigma = 2
+
+so the bracket is divided by -1. A_child is positive, so raising omega_c from
+the benchmark's 0.055 to 1 adds 0.945 times more of a NEGATIVE quantity and
+drives the measured welfare level down mechanically, whether or not anybody is
+worse off. omega_c also scales `child_continuation_value` at 10166 and 10175,
+the same way.
+
+MEASURED, on arm 2 before it converged: `average_welfare_with_childhood` 781.20
+against the benchmark curve's W(x=0) = 791.39. Inverting the saved curve turns
+that into a CEV of **-24 per cent of consumption and housing** -- for the arm
+that is supposed to be the social OPTIMUM. It is an artefact of comparing two
+different objective functions, not a policy evaluation.
+
+**THE AUTHOR'S THREE QUESTIONS AVOID THIS, and that is why they are phrased as
+they are.** Q1 and Q2 ask for RATES -- use, SUD, homelessness -- and never for
+welfare. Q2 compares arm 2 to ARM 1, and both carry omega_c = 1, so their
+objectives match and the comparison is clean. Q3 is the only welfare question,
+and arm 3 keeps omega_c at the benchmark's 0.055, so it alone is comparable to
+the benchmark. Answer the questions as asked and the trap never comes up.
+
+If a welfare statement about arm 1 or arm 2 is ever wanted, it has to be
+computed by evaluating BOTH allocations under ONE objective. That is a separate
+exercise and it is not what any of these three arms produce.
+
+---
+
 ## Q1. THE OPTIMAL DRUG USE RATE AND SUD RATE
 
 Arm 1, omega_c = 1, against the benchmark. Every household faces the whole cost
