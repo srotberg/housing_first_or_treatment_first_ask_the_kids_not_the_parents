@@ -9012,6 +9012,9 @@
             fin_index_frac_mov_to_optimal_benchmark,policy_function_addiction_benchmark
             
         integer :: already_uploaded_benchmark
+        ! Set once the benchmark's value function and distribution have been
+        ! read into value_function_benchmark / distribution_stationary_benchmark.
+        integer :: benchmark_welfare_files_loaded=0
         ! ONCE-ONLY FLAG FOR THE LATCH INVARIANTS, and it needs its own rather
         ! than borrowing loop_count. loop_count is incremented inside the value
         ! function solve, once per STATE, so it is in the millions within a
@@ -24056,18 +24059,38 @@
         average_welfare_of_winners(time_period)=0
         average_welfare_of_winners_benchmark(time_period)=0
                 
-        do i=1,2
-        
-            write(string_used,'(i1)') i
-    
-            open(unit=9,file="value_function"//trim(string_used)//trim(benchmark_simulation)//".dat",action='read')
-                read(9,'(F35.13)') value_function_benchmark(i)%vector_real(:,:,:,:,:,:)
-            close(9)
-            open(unit=10,file="distribution_stationary"//trim(string_used)//trim(benchmark_simulation)//".dat",action='read')
-                read(10,'(F30.28)') distribution_stationary_benchmark(i)%vector_real(:,:,:,:,:,:)
-            close(10)
-            
-        end do
+        ! READ ONCE, NOT ON EVERY CALL.
+        !
+        ! These are 596 MB between them and they were re-read every time this
+        ! routine ran. In a steady state that is once a loop and merely wasteful;
+        ! in the transition this routine now runs once per PERIOD inside the
+        ! forward pass, so it would be 29 re-reads a loop, about 17 GB of file
+        ! I/O per loop for data that cannot have changed.
+        !
+        ! CACHING IS PROVABLY A NO-OP. Both files are the BENCHMARK's, written
+        ! before any counterfactual starts and never rewritten by a
+        ! counterfactual -- a run writes under file_number and reads these under
+        ! benchmark_simulation, which are different names in every branch of
+        ! set_files_names. So every read returned identical bytes and the first
+        ! one is as good as the last.
+        if (benchmark_welfare_files_loaded==0) then
+
+            do i=1,2
+
+                write(string_used,'(i1)') i
+
+                open(unit=9,file="value_function"//trim(string_used)//trim(benchmark_simulation)//".dat",action='read')
+                    read(9,'(F35.13)') value_function_benchmark(i)%vector_real(:,:,:,:,:,:)
+                close(9)
+                open(unit=10,file="distribution_stationary"//trim(string_used)//trim(benchmark_simulation)//".dat",action='read')
+                    read(10,'(F30.28)') distribution_stationary_benchmark(i)%vector_real(:,:,:,:,:,:)
+                close(10)
+
+            end do
+
+            benchmark_welfare_files_loaded=1
+
+        end if
                             
         do age_index=1,life_span
                             
@@ -42678,8 +42701,14 @@
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                        
+            ! WINDOWED. Was (1-solve_transition_dynamics):transition_length,
+            ! which is 76 slices at T=75 and 5.7 GB on its own. It is read at
+            ! t-1 and written at t in the forward pass, and at the literals 0
+            ! and 1 in setup -- and a (t-1:t) window IS 0:1 when setup runs at
+            ! t=1, which is why initialize_feasible_distribution is now called
+            ! with 1 rather than transition_length.
             allocate(distribution_guess(i)%&
-                vector_transition_real((1-solve_transition_dynamics):transition_length,&
+                vector_transition_real(dslot_lo:dslot_hi,&
                 life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
@@ -42707,8 +42736,12 @@
                 financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
                         
+            ! WINDOWED, for the same reason. Written at t by
+            ! converge_to_stationary_equilibrium and read at t or t-1 by the
+            ! statistics, welfare, childhood and support routines -- all of
+            ! which now run inside the forward pass at the period they read.
             allocate(distribution_stationary(i)%&
-                vector_transition_real((1-solve_transition_dynamics):transition_length,life_span+1,&
+                vector_transition_real(dslot_lo:dslot_hi,life_span+1,&
                 is_owner*1+(1-is_owner)*renter_array_floor:financial_grid_size,&
                 unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
                 is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
@@ -43071,6 +43104,45 @@
             dist_prev_2(i)%vector_transition_real=0
             if (advancing) then
                 dist_prev_2(i)%vector_transition_real(dslot_lo,:,:,:,:,:,:)=buf_real
+                deallocate(buf_real)
+            end if
+
+            ! THE TWO THAT USED TO CARRY THE WHOLE PATH.
+            !
+            ! distribution_guess is read at t-1 and written at t; the carry
+            ! forward is what makes that work, because the slice written as t
+            ! last period becomes t-1 this period. distribution_stationary is
+            ! written at t and read at t and t-1 by the statistics, welfare,
+            ! childhood and support routines, all of which now run inside the
+            ! forward pass at the period they read.
+            !
+            ! Between them they were 152 slices at T=75, 11.1 GB, and the whole
+            ! reason a 75-period transition did not fit in 15 GB.
+            if (advancing) then
+                allocate(buf_real,source=distribution_guess(i)%vector_transition_real(old_hi,:,:,:,:,:,:))
+            end if
+            deallocate(distribution_guess(i)%vector_transition_real)
+            allocate(distribution_guess(i)%&
+                vector_transition_real(dslot_lo:dslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+            distribution_guess(i)%vector_transition_real=0
+            if (advancing) then
+                distribution_guess(i)%vector_transition_real(dslot_lo,:,:,:,:,:,:)=buf_real
+                deallocate(buf_real)
+            end if
+
+            if (advancing) then
+                allocate(buf_real,source=distribution_stationary(i)%vector_transition_real(old_hi,:,:,:,:,:,:))
+            end if
+            deallocate(distribution_stationary(i)%vector_transition_real)
+            allocate(distribution_stationary(i)%&
+                vector_transition_real(dslot_lo:dslot_hi,life_span+1,is_owner*1+(1-is_owner)*renter_array_floor:&
+                financial_grid_size,unemployment_grid_size,employment_grid_size,(1-is_owner)*lowest_housing_grid_point+&
+                is_owner*index_of_smallest_house_hhld_can_buy:housing_status_grid_size-1,0:(1-is_owner)*voucher_state_max))
+            distribution_stationary(i)%vector_transition_real=0
+            if (advancing) then
+                distribution_stationary(i)%vector_transition_real(dslot_lo,:,:,:,:,:,:)=buf_real
                 deallocate(buf_real)
             end if
 
@@ -52694,7 +52766,21 @@
             call set_newborn_age_transfer(1)
             call set_renter_floor(1)
 
-            call initialize_feasible_distribution(transition_length)
+            ! CALLED AT 1, NOT AT transition_length.
+            !
+            ! This routine writes distribution_guess at BOTH time_period and at
+            ! the LITERALS 0 and 1 -- the literals are the transition's initial
+            ! condition, slot 0 accumulated from distribution_to_fetch and slot
+            ! 1 read from the benchmark's file. Called at transition_length it
+            ! would slot a windowed distribution to (T-1:T) and then write 0 and
+            ! 1 out of bounds.
+            !
+            ! At 1 the window is (0:1), every literal write lands in range, and
+            ! the time_period writes go to slot 1 -- which is exactly what
+            ! long_run_counter_factual does, since transition_length is 1 there.
+            ! The two drivers become consistent rather than accidentally
+            ! different.
+            call initialize_feasible_distribution(1)
                     
         else
         
@@ -53056,6 +53142,22 @@
                 ! Called once per period, not once per beta type, matching how
                 ! calibrating_model and long_run_counter_factual call it.
                 call calculate_welfare(time_index)
+
+                ! AND THE OTHER TWO PER-PERIOD ROUTINES, MOVED HERE FROM THE
+                ! BLOCK AFTER THE CONVERGENCE LOOP.
+                !
+                ! This is what lets distribution_stationary be WINDOWED. Both
+                ! read it: calculate_childhood_utility at t-1, and
+                ! frac_of_households_in_support_of_policy at t. Left in a
+                ! trailing loop over t=1..T-1 they would need every period of it
+                ! alive at once, which is 5.7 GB at T=75 and the reason the
+                ! array could not be windowed before.
+                !
+                ! Here each period's distribution is live exactly when it is
+                ! read, so a two-slot window suffices -- the same argument that
+                ! merged the distribution and statistics passes.
+                call calculate_childhood_utility(time_index)
+                call frac_of_households_in_support_of_policy(time_index)
 
                 write(*,*) "TRANSITION WELFARE loop=", loop_count, " t=", time_index, &
                     " youngest=", average_welfare_of_youngest_cohort(time_index), &
@@ -53496,14 +53598,12 @@
 
             end if
 
-            do time_index=1,max(transition_length-1,1)
-        
-                call calculate_welfare(time_index)
-
-                call calculate_childhood_utility(time_index)
-                call frac_of_households_in_support_of_policy(time_index)
-            
-            end do
+            ! THE TRAILING PER-PERIOD LOOP IS GONE. All three routines now
+            ! run inside the forward pass, where each period's distribution is
+            ! live as it is read. Keeping them here would hold
+            ! distribution_stationary open across the whole path and defeat the
+            ! windowing. The series they fill are small time-vectors and survive
+            ! the loop, so the write below is unchanged.
             
             open(unit=1,file="welfare_in_transition_youngest"//trim(file_number)//".txt",action="write",status="replace")
                 write(1,'(F19.12)') average_welfare_of_youngest_cohort(1:transition_length-1)
