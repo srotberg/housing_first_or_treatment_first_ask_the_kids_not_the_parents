@@ -5064,6 +5064,32 @@
 
         real(8), parameter :: price_of_addictive_good_benchmark=1
         
+        ! THE DRUG PRICE ALONG A TRANSITION PATH.
+        !
+        ! price_of_addictive_good stays a SCALAR. Every other market in the
+        ! transition carries a time index, and TRANSITION_LESSONS section 12
+        ! concluded the price had to be dimensioned like them -- about a hundred
+        ! read sites, two of which (calculate_utility's local copy and the
+        ! elasticity test's save/restore) have no time argument at all.
+        !
+        ! THAT IS NOT NECESSARY. The path loop visits ONE PERIOD AT A TIME, and
+        ! the value function is already time indexed, so the scalar only ever
+        ! needs to hold the current period's price. Re-pointing it from a path
+        ! array at the top of each period -- the same trick as reslot_policies --
+        ! makes every one of those hundred sites correct without touching them.
+        !
+        ! Checked before relying on it: price_of_addictive_good appears in
+        ! exactly two OpenMP clauses and BOTH are shared(), not private(), so a
+        ! scalar read inside the parallel regions stays correct.
+        !
+        ! previous_price IS PER PERIOD TOO, and that is the part that is easy to
+        ! get wrong. clear_drug_market takes a secant step against the price it
+        ! last saw; with one scalar, period t's secant would use period t-1's
+        ! price from THIS loop rather than period t's price from the LAST loop,
+        ! which is not the derivative it thinks it is measuring.
+        real(8), dimension(1-solve_transition_dynamics:transition_length) :: price_of_addictive_good_path=1
+        real(8), dimension(1-solve_transition_dynamics:transition_length) :: previous_price_of_addictive_good_path=0
+        real(8) :: largest_distance_drug_market=1
         real(8) :: price_of_addictive_good=include_addiction*&
             (partial_equilibrium*price_of_addictive_good_benchmark*(1+relative_price_change)+&
             (1-partial_equilibrium)*(is_counterfactual*price_of_addictive_good_benchmark*(1+relative_price_change)+&
@@ -53038,9 +53064,35 @@
         
         end do
                 
+        ! THE DRUG PRICE PATH'S INITIAL GUESS, ramped like the housing price
+        ! and the rent above it: the benchmark's normalised price the instant
+        ! before the reform, the terminal steady state's price at T, linear
+        ! between. Before this the scalar simply held the terminal price for
+        ! every period, so the reform's whole general-equilibrium price effect
+        ! landed at t=1 instead of building as drug use fell -- which biases
+        ! exactly the early-period welfare the transition exists to measure.
+        price_of_addictive_good_path(1-solve_transition_dynamics)=price_of_addictive_good_benchmark
+        price_of_addictive_good_path(transition_length)=price_of_addictive_good
+
+        do time_index=1,max(transition_length-1,1)
+
+            price_of_addictive_good_path(time_index)=&
+                price_of_addictive_good_benchmark+&
+                (price_of_addictive_good-price_of_addictive_good_benchmark)*&
+                real(time_index)/real(max(transition_length-1,1))
+
+        end do
+
+        previous_price_of_addictive_good_path=price_of_addictive_good_path
+
+        write(*,*) "DRUG PRICE PATH seeded: t=0", price_of_addictive_good_path(1-solve_transition_dynamics), &
+            " t=1", price_of_addictive_good_path(1), &
+            " t=T", price_of_addictive_good_path(transition_length)
+
         largest_housing_market_distance=1
         largest_rental_market_distance=1
         largest_distance_govt_budget=1
+        largest_distance_drug_market=1
         
         simulation_ended=0
         
@@ -53061,9 +53113,17 @@
         write(*,*) "total_rental_demand(transition_length)=", &
             total_rental_demand(transition_length,:) 
                                                              
+        ! THE DRUG MARKET IS NOW ONE OF THE TESTS. The author asked on
+        ! 8 September for it to clear in the counterfactuals "and also the
+        ! transition when we run it"; long_run_counter_factual was done that
+        ! day and this loop was not. Note that housing and rental are the same
+        ! VACUOUS series they are in the arms -- identically zero every loop --
+        ! so before this line the do-while was testing the government budget
+        ! and nothing else.
         do while ((largest_housing_market_distance>stopping_rule_housing_market) .OR. &
             (largest_rental_market_distance>stopping_rule_rental_market) .OR. &
-            (largest_distance_govt_budget>stopping_rule_govt_budget) .OR. (loop_count<1))
+            (largest_distance_govt_budget>stopping_rule_govt_budget) .OR. &
+            (largest_distance_drug_market>stopping_rule_drug_market) .OR. (loop_count<1))
             
             write(*,*) "solving value functions"
                         
@@ -53072,6 +53132,13 @@
                 ! Re-slot the single-slice policy arrays onto this period before
                 ! solving into them. A no-op in a steady state.
                 call reslot_policies(time_index)
+
+                ! AND RE-POINT THE DRUG PRICE, which is the same idea applied to
+                ! a scalar: the household solving at t must face the price at t.
+                ! Held at one value for the whole path, as it was, every cohort
+                ! priced the terminal economy from the moment of reform.
+                price_of_addictive_good=price_of_addictive_good_path(time_index)
+
                 call solve_value_function_and_policy_functions(time_index)
                 
                 do i=1,2
@@ -53095,6 +53162,7 @@
             net_govt_revenues(1)=net_govt_revenue_constraint
             net_govt_revenues(transition_length)=net_govt_revenue_constraint
             largest_distance_govt_budget=0
+            largest_distance_drug_market=0
 
             do time_index=1,max(transition_length-1,1)
 
@@ -53106,6 +53174,13 @@
                 ! the policies the backward pass computed. Deterministic, not an
                 ! approximation.
                 call reslot_policies(time_index)
+
+                ! THE SAME PRICE THE BACKWARD PASS USED AT THIS PERIOD, or the
+                ! recompute would not reproduce the policies it is supposed to
+                ! reproduce and the forward pass would silently be solving a
+                ! different economy from the backward one.
+                price_of_addictive_good=price_of_addictive_good_path(time_index)
+
                 call solve_value_function_and_policy_functions(time_index)
 
                 call reslot_distributions(time_index)
@@ -53163,6 +53238,31 @@
                     " youngest=", average_welfare_of_youngest_cohort(time_index), &
                     " all=", average_welfare_of_all_cohorts(time_index), &
                     " benchmark_youngest=", average_welfare_of_youngest_cohort_calibrated
+
+                ! CLEAR THE DRUG MARKET AT THIS PERIOD.
+                !
+                ! LAST in the period, deliberately: clear_drug_market OVERWRITES
+                ! the scalar, so anything after it in this period would be
+                ! reading next loop's price against this loop's allocation. The
+                ! update lands in the path and takes effect when the backward
+                ! pass re-points from it next loop, which is the same lag every
+                ! other price in this loop already has.
+                !
+                ! The previous price is carried per period, not as one scalar,
+                ! so the secant inside clear_drug_market compares this period
+                ! across LOOPS rather than across periods within a loop.
+                previous_price_of_addictive_good=previous_price_of_addictive_good_path(time_index)
+
+                call clear_drug_market(time_index)
+
+                previous_price_of_addictive_good_path(time_index)=previous_price_of_addictive_good
+                price_of_addictive_good_path(time_index)=price_of_addictive_good
+
+                if (distance_drug_market>largest_distance_drug_market) then
+
+                    largest_distance_drug_market=distance_drug_market
+
+                end if
                             
 !                write(*,*) "time_index=", time_index
 !                write(*,*) "homeownership_rate=", model_homeownership_rate(time_index)
