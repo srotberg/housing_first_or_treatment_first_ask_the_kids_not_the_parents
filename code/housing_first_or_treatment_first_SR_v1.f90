@@ -51795,8 +51795,42 @@
                     
                             write(*,*) "probability_of_voucher_benchmark_used_1=", probability_of_voucher_benchmark_used_1
 
+                            ! GAIN 0.3 -> 0.05. At 0.3 the budget iteration
+                            ! DIVERGES once an arm moves the economy far enough,
+                            ! and it did.
+                            !
+                            ! MEASURED on the omega_c = 1 plus internalisation
+                            ! arm with the drug price pinned at 0.87, so nothing
+                            ! else was moving:
+                            !   pi_v 0.067534 -> 0.040506  step -0.027028  residual -0.09009
+                            !        0.040506 -> 0.150433  step +0.109927  residual +0.36642
+                            !        0.150433 -> 0.000000  (clamped)       residual -0.53540
+                            ! The residual alternates sign and grows by about
+                            ! four a loop, and pi_v hit its floor at zero, where
+                            ! the budget cannot clear at all.
+                            !
+                            ! From those two steps dResidual/dpi_v = 0.45651 /
+                            ! (-0.027028) = -16.9, so the multiplier is
+                            ! 1 + 0.3*(-16.9) = -4.07 -- magnitude above one,
+                            ! sign alternating, which is what was observed.
+                            ! Stability needs the gain below 2/16.9 = 0.118.
+                            !
+                            ! At 0.05 the multiplier is 0.155, contracting fast,
+                            ! and it holds even if the sensitivity were twice
+                            ! what was measured.
+                            !
+                            ! WHY IT NEVER SHOWED BEFORE: at the benchmark's own
+                            ! drug price the economy is far less budget
+                            ! sensitive and 0.3 converged -- the same probe at
+                            ! p = 1.00 went 5.4e-2, 9.9e-2, 3.0e-2, 1.7e-2,
+                            ! 1.8e-2, 2.8e-4 and settled. The gain was tuned in
+                            ! a region the optimal policy arms leave.
+                            !
+                            ! Unlike the drug price there is no relative step
+                            ! clip here, only the bounds at 0 and 1, so the gain
+                            ! is what actually governs.
                             probability_of_voucher_benchmark_used_1=max(min(probability_of_voucher_benchmark_used_1+&
-                                0.3*(net_govt_revenues(transition_length)-net_govt_revenue_constraint),1.d0),0.d0)
+                                0.05*(net_govt_revenues(transition_length)-net_govt_revenue_constraint),1.d0),0.d0)
 
                             ! PERSIST IT, OR recompute_derived_parameters UNDOES IT ON THE
                             ! NEXT LINE AND THE BUDGET NEVER CLEARS.
