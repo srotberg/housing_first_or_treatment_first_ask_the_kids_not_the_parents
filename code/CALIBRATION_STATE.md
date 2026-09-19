@@ -1,3 +1,85 @@
+## SUPERSEDED: THE 220 GB FIGURE BELOW. THE TRANSITION FITS AT T=30. 19 September
+
+The entry immediately below this one says a transition needs about 3 GB per
+period, 220 GB at T=75, and that about three periods fit on this box. **That
+was measured before the memory redesign and is no longer true.** It is kept
+rather than deleted because it is what motivated the redesign, but do not quote
+it: a T=30 transition has since been built and RUN on this 15 GB box.
+
+### WHAT CHANGED
+
+The old figure counted all 38 large structures as carrying the whole path. They
+no longer do. After the redesign only THREE are full-path:
+
+    value_function          (1:T)    -- must persist: the forward pass re-solves
+                                        at t reading value_function(t+1), so the
+                                        whole backward path has to survive
+    distribution_guess      (0:T)    -- indexed at t-1 and t, and at 0 and 1
+    distribution_stationary (0:T)    -- written at t, read at t
+
+Everything else is windowed: the 16 policy arrays plus frac_mov_optimal_1 hold
+ONE slice (`reslot_policies`), and dist_prev_1, dist_prev_2,
+distribution_implied and distribution_forward hold TWO (`reslot_distributions`).
+
+### THE SLICE SIZE, COMPUTED FROM THE DECLARED DIMENSIONS
+
+Renter (i=1): 61 x 25 x 18 x 26 x 4 x 3 = 8,564,400 cells.
+Owner  (i=2): 61 x 27 x 18 x 26 x 1 x 1 =   770,796 cells.
+Together **74.7 MB at real(8)** per array per period.
+
+Cross-checked against the on-disk file rather than trusted:
+`value_function1baseline_benchmark.dat` is 308,318,400 bytes of `F35.13` text
+at 36 bytes a number = 8,564,400 numbers, exactly the renter cell count.
+
+### THE NUMBERS THAT REPLACE THE 220 GB
+
+                                    T=30        T=75
+    value_function                  2.2 GB      5.6 GB
+    distribution_guess              2.3 GB      5.7 GB
+    distribution_stationary         2.3 GB      5.7 GB
+    windowed + per-thread + to_fetch ~2 GB      ~2 GB
+    TOTAL                          ~8.8 GB     ~19 GB
+
+MEASURED at T=30: peak RSS **5.54 GB**. That is a LOWER BOUND, not the peak --
+the run it was taken from died in `initialize_feasible_distribution`, and Linux
+counts only pages actually touched. Treat ~8.8 GB as the figure to plan against.
+
+### T=75 STILL DOES NOT FIT, AND THE FIX IS KNOWN AND SMALL
+
+~19 GB against 15 GB. The two distributions are what overflow it, and they can
+be windowed exactly as the other four already are. The audit that has to be
+right is which sites index them at a LITERAL time rather than at t -- that is
+the mistake that was made once before, by checking for t+-1 and not for 0 and 1.
+Enumerated, 19 September:
+
+    7 sites   initialize_feasible_distribution        SETUP, slots 0 and 1
+    3 sites   converge_to_stationary_equilibrium      inside partial_equilibrium==1, OFF
+    11 sites  write/read_calibration_distribution,
+              calibrating_model, long_run_counter_factual   other drivers, dead here
+
+So in the transition the only live literal uses are slots 0 and 1, in setup. A
+2-slot rolling window (t-1:t) covers setup exactly -- at t=1 that IS 0:1 -- and
+every path period after it. `reslot_distributions` already implements that
+window with carry-forward; the two arrays just need adding to it. **~40 lines,
+and T=75 goes from ~19 GB to ~8 GB.**
+
+### BUT MEMORY IS NOT WHAT BINDS AT T=30. TIME IS.
+
+This is a finite-horizon life-cycle model, so ONE backward sweep over the ages
+IS the complete value-function solve -- there is no iteration to convergence.
+Measured from the arm's own `AGE_TIME` lines: ~1.4 s an age, 55 ages, so **~77 s
+a sweep**. A transition loop at T=30 is 29 backward steps plus 29 forward steps
+that re-solve the policies, because the policy arrays hold one slice:
+
+    ~80-90 minutes per path loop, and clearing price, rent and budget takes tens
+
+which puts T=30 at ONE TO TWO DAYS of wall clock and T=75 at several. That is an
+extrapolation from the arm's per-age timing; no transition loop has been timed
+yet. The author was told this before being asked to choose a horizon, and chose
+30.
+
+---
+
 ## A 75-PERIOD TRANSITION DOES NOT FIT ON THIS MACHINE, 19 September
 
 Measured before building anything, which is what `TRANSITION_LESSONS.md` asks
