@@ -1,3 +1,70 @@
+## AN ARM CANNOT RUN FROM A FRESH CHECKOUT, AND I HAD THAT BACKWARDS, 19 September
+
+The cloud parallelism is OFF. Arms 1 and 3 must run on the box that holds a
+converged benchmark's full output, serially, after arm 2.
+
+### THE FINDING, WHICH CAME FROM THE ARM 1 WORKER
+
+It died in four minutes:
+
+    block 1 solved            CF MOMENTS distance= 1.6282888
+    loop_count= 1
+    Fortran runtime error: Cannot open file 'value_function1baseline_benchmark.dat'
+
+`frac_of_households_in_support_of_policy` reads `value_function<i>` and
+`distribution_stationary<i>` for i=1,2 (23895, 23898), and it is called
+UNCONDITIONALLY in the counterfactual loop at 51689. Those four files are
+596 MB. They are not in git, there is no LFS, and they cannot be synthesised --
+only a converged benchmark writes them.
+
+I had written the opposite in the benchmark README: "no arm opens them", their
+absence "costs SPEED, not correctness". Both halves were wrong.
+
+**HOW.** The instrument was right -- access time against a running arm -- and
+the timing was not. The snapshot was taken while that arm was still in block 1,
+and the routine sits after the moment block, so it had not been reached. The arm
+I measured had the files present, so it never failed and never showed the
+dependency. Re-measured against the same arm an hour later: all four READ at
+12:26:36-12:26:42, seven minutes in. **An early reading taken for a settled
+one -- the second time in one session**, after predicting a converged drug gap
+and scoring it against block 1.
+
+### A SECOND DEFECT, SAME SOURCE, ALSO MINE
+
+`launch_arm.sh` did not stage the two CSVs the model opens as
+`"../data/<f>.csv"`. Relative to the arm directory that is `$S/data`, which
+existed by luck in the scratchpad the script grew up in and does not exist when
+it runs from the repo. Worse than a missing file: the binary reads and DELETES
+`PARAM_HANDOVER.txt` before it opens the CSV, so a failed run EATS THE SEED and
+a naive restart runs the Fortran's declared values, b about 0.95 and lambda_d 0,
+while looking healthy.
+
+Both are fixed. The launcher stages the CSVs and refuses up front if the four
+large files are absent, naming them, instead of dying at the end of block 1 with
+the handover already gone.
+
+### WHERE ARM 2 IS, AND THE ELASTICITY CONFIRMED
+
+Running, seven blocks, price oscillating tightly around the root:
+
+    gap path  +0.08171 +0.01902 -0.00956 -0.01097 -0.01086 +0.00366 -0.00403
+    price in   0.872000 ... 0.870671 0.871774
+
+The realised slope between the last two blocks is **-6.97**, against the pinned
+probe's -7.41. That is the demand curve finally being measured rather than
+cold-start drift, and it confirms the elasticity the whole drug-market fix rests
+on. The secant on those two points puts the root at 0.871196 -- within 0.0005 of
+the probe's local-slope estimate of 0.8717.
+
+So the probe's bracket was good. I said earlier in the day that the live arm was
+heading for 0.8772 and the probe's number was conditional-only; 0.8772 was a
+transient and that correction was itself an over-correction.
+
+Live rules: drug 4.03e-3 ok, CF moments 1.20e-3 against 5e-4, budget 3.19e-2
+against 2.5e-2. Not converged.
+
+---
+
 ## THE DRUG MARKET IS UNBLOCKED, AND THE CAUSE WAS A REMEMBERED ELASTICITY, 19 September
 
 The previous entry said the arms were blocked on the drug market and that it
