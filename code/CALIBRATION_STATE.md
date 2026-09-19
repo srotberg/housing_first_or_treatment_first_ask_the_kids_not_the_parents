@@ -1,3 +1,66 @@
+## OMEGA_C = 0.055. THE CALIBRATION IS DONE
+
+The author, 19 September: *"ok, we omega_c=0.055 gives something close to 18% we
+can stop"*.
+
+THE MEASUREMENTS, all at delta_d = 0.24 with every other adjuster zeroed and
+omega_c PINNED, each scored against the converged benchmark D0 = 0.10148:
+
+    omega_c 0.000   gap 0.0000    by construction
+    omega_c 0.100   gap ~0.335    n85, seven blocks, d(b) -0.00055 and shrinking
+    omega_c 0.135   gap 0.4530    n84, b 0.06984
+    target          gap 0.18343   band [0.17790, 0.18890]
+
+THE RESPONSE IS LINEAR AND BOTH POINTS AGREE ON THE SLOPE:
+
+    from 0.135:  0.4530 / 0.135 = 3.356
+    from 0.100:  0.335  / 0.100 = 3.35
+    crossing:    0.18343 / 3.355 = 0.0547
+    band:        omega_c in [0.0530, 0.0563]
+
+0.055 sits almost exactly in the middle of the band.
+
+I CALLED CONVEXITY AT BLOCK 4 OF n85 AND IT WAS WRONG. The gap read 0.2907
+there and I concluded the response bent, which would have put the crossing near
+0.070. Blocks 5, 6 and 7 walked it back to 0.331 -- straight toward the LINEAR
+prediction of 0.3356 I had registered before the run. The error is the one this
+file already records twice: calling convergence on a decelerating series before
+it flattens. d(b) was -0.00163 at block 4 and was still -0.00055 at block 7.
+
+## THE OMEGA_C CURVE WAS MAPPED IN PARALLEL, AND HOW TO DO THAT AGAIN
+
+The author: *"You can spawn maybe 10-20 independent ones"*. Nine sessions were
+spawned against env_01XJWRaQeK2Z3GoW6SFXob5D -- omega_c at 0.020, 0.035, 0.045,
+0.055, 0.065, 0.075, 0.090, plus delta_d = 0 for the persistence-only
+decomposition. This works because a steady state is independent of every other
+steady state. A TRANSITION IS NOT -- TRANSITION_LESSONS.md says so explicitly:
+"a transition is one sequential fixed point in time, so a fleet of containers
+cannot be thrown at it".
+
+WHAT A PARALLEL SESSION NEEDS, and the trap in it. It cannot reach the
+coordinator's scratchpad, so `code/seeds/n72_frozen_seed.dat` was committed for
+it (commit e24ce9a2). The 265 MB distribution cannot be committed, so a worker
+starts COLD and pays a few extra blocks while the class-1 stock fills.
+
+AND THERE IS NO CHANNEL BACK. SendMessage cannot reach a cloud session --
+ListAgents sees no peers -- and the claude-code-remote MCP server has no send
+tool. The workers were briefed to "report back" with nowhere to report to. Their
+numbers have to be read out of get_session, or the brief has to tell them to
+commit their results to their own branch. FIX THE BRIEF NEXT TIME: tell the
+worker to write its numbers to a file and commit it to a named branch.
+
+## NEXT: kappa_x, THE UTILITY COST OF HOMELESSNESS
+
+The author: *"Then you move to estimate the utility cost of homelessness after
+you finish calibrating omegac"*.
+
+    kappa_x* = DeltaW / (H * D)
+
+DeltaW read off the benchmark welfare curve at x = 0.2 per cent of consumption,
+H the benchmark homelessness rate, D the survival- and beta-weighted present
+value of a unit flow. It needs the FINAL benchmark, with omega_c = 0.055 pinned,
+because the curve is a property of that economy.
+
 ## THE BENCHMARK IS CONVERGED. delta_d = 0.24, omega_c = 0, AND D0 = 0.10148
 
 n83. Two classes, omega_c = 0 AND PINNED, all 47 adjusters zeroed, parameters
