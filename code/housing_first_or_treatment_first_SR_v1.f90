@@ -52687,6 +52687,10 @@
         real(8) :: rent_upon_implementation=0.92
         real(8), dimension(0:have_two_rental_markets) :: slope_of_log_rent=-0.1
         real(8) :: slope_of_lump_sum_transfer=0.2,alpha_1         
+        ! The exact consumption equivalent for the cohort born at each period,
+        ! interpolated off the benchmark's saved welfare curve rather than
+        ! converted by hand from utils.
+        real(8) :: cev_this_period=0
                 
         loop_count=0
         
@@ -53234,9 +53238,33 @@
                 call calculate_childhood_utility(time_index)
                 call frac_of_households_in_support_of_policy(time_index)
 
+                ! THE NUMBER THE CEV IS ACTUALLY COMPUTED ON.
+                !
+                ! average_welfare_of_youngest_cohort is the value function at
+                ! age 1 -- ADULT life only. On the converged Treatment First
+                ! arm that measure carries just 0.51 of the 3.25 per cent CEV;
+                ! the other 2.74 lives in CHILDHOOD, which it does not contain.
+                ! Reporting the transition on it alone answers a narrower
+                ! question than the one asked, and invites comparing it against
+                ! a steady-state CEV measured on a different object.
+                !
+                ! average_welfare_with_childhood is childhood flow plus
+                ! beta^25 times that adult value, and it is what
+                ! calculate_welfare_gains interpolates the benchmark's saved
+                ! curve against. calculate_childhood_utility has just filled it
+                ! for this period.
+                !
+                ! type_1 must be 1: only the whole cohort's curve is saved, and
+                ! the routine stops on anything else. time_period is declared
+                ! but unused inside it, so the period index is passed for
+                ! readability only.
+                cev_this_period=0
+                call calculate_welfare_gains(time_index,average_welfare_with_childhood(time_index),1,cev_this_period)
+
                 write(*,*) "TRANSITION WELFARE loop=", loop_count, " t=", time_index, &
+                    " with_childhood=", average_welfare_with_childhood(time_index), &
+                    " CEV=", cev_this_period, &
                     " youngest=", average_welfare_of_youngest_cohort(time_index), &
-                    " all=", average_welfare_of_all_cohorts(time_index), &
                     " benchmark_youngest=", average_welfare_of_youngest_cohort_calibrated
 
                 ! CLEAR THE DRUG MARKET AT THIS PERIOD.
