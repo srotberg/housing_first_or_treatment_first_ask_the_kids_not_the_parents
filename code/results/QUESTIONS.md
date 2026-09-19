@@ -19,12 +19,24 @@ of its own drug use to its child, so what survives is the optimum.
 
 | | benchmark | arm 1, omega_c = 1 | change |
 |---|---|---|---|
-| b, total drug users (`MOMENT b`) | | | |
-| lambda_d, SUD (`model_fraction_addicted=`) | | | |
+| b, total drug users | | | |
+| lambda_d, SUD | | | |
 | lambda_d / b, SUD per user | | | |
 
-NOT `model_fraction_addicted` for b. A parallel worker has already made that
-exact substitution and reported it as b.
+**READ ALL THREE OFF THE `CF MOMENTS distance=` LINE, not from separate prints.**
+`MOMENT b` does NOT exist in an arm's log -- it is a calibration-loop print and
+an arm freezes the calibration, so an instruction to read b from it cannot be
+followed. The arm loop prints, at line 51518 and from one iterate:
+
+    CF MOMENTS distance=<d>  b=<model_total_drug_users>  lambda_d=<model_fraction_addicted>  h_1=<model_fraction_homeless>
+
+Taking them from this one line also guarantees they belong to the SAME loop,
+which reading three separate prints does not -- they are written at different
+points and a tail of each can straddle iterates.
+
+Still true, and the reason the warning was there: b is
+`model_total_drug_users`, NOT `model_fraction_addicted`. A parallel worker has
+already made that exact substitution and reported it as b.
 
 ---
 
