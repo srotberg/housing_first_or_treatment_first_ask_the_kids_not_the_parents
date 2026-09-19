@@ -1,3 +1,111 @@
+## kappa_x IS 0.813, NOT 6.94. n90 IS THE FIRST CONVERGED BENCHMARK. 19 September
+
+### THE CORRECTION, FIRST
+
+I reported kappa_x = 6.9361 from an analytic solve. It was wrong by a factor of
+8.5. The measured value is 0.8139, and the arms were briefed on the wrong one
+before this was caught.
+
+WHAT I DID WRONG. I reconstructed the childhood half of the welfare curve as
+B_child = W_child(0) - value_of_life*D_child. THE CHILD'S FLOW DOES NOT CARRY
+value_of_life: child_flow_out is set inside calculate_flow_utility at lines
+27652 and 27675, and value_of_life is added to flow_utility_1 at 27816, after
+both. Childhood is most of the consumption response, so that term dominated.
+
+WHAT MADE IT LOOK SOUND. The ADULT decomposition is correct -- A =
+value_of_life*D_adult gives D_adult = 17.107, and the probe's own D_total
+confirms it to 0.004 per cent. One half checking out is not the other half
+checking out, and I treated it as though it were.
+
+THE FIX, AND IT IS A RULE NOW: **use the probe, not a decomposition.** The
+probe evaluates the actual walk at the actual x and assumes nothing about what
+sits in which flow.
+
+### kappa_x, PINNED BY TWO INDEPENDENT ROUTES
+
+    probe, evaluated at x            0.8139
+    fit of the saved 21-point curve  0.8112      0.33 per cent apart
+
+The probe's own internal checks:
+
+    D_total measured        18.299985
+    D_total from beta/lives 18.299210      0.0042 per cent
+    two x points linear     2.50209 against 2.50000, 0.083 per cent
+    implied kappa_x from each point agree to 0.08 per cent
+
+The curve fit, on welfare_curvebaseline_benchmark.dat (copied into
+code/results/n90_welfare_curve.dat so it survives the container):
+
+    k  -0.387775   against -alpha_c = -0.387770
+    A   882.11583  B  -90.72118   rms residual 8.9e-06 utils over 21 points
+
+B_total is -90.72, NOT the -805.20 my decomposition gave. A is 882.12, where
+value of life on both halves would be 1595.65; the adult part of A is
+beta^25*87.198*17.107 = 377.65, so the childhood constant is 504.47 -- real,
+but not value_of_life*D_child.
+
+    kappa_x = 0.8139   at 0.20 per cent of expenditure (Loubiere high)
+    kappa_x = 0.3256   at 0.08 per cent (Loubiere low)
+    x on c  = 0.0027305 = 0.002/s_c, s_h 0.25967, s_b 0.00787, s_c 0.73246
+
+THE UTILS CONVERSION, MEASURED, replacing the 4.285 that carried the same error:
+
+    1 per cent of TOTAL expenditure = 0.48096 utils
+    1 util = 2.0792 per cent of expenditure
+
+### n90: THE FIRST BENCHMARK THAT EVER CONVERGED AND SAVED
+
+`ECONOMY IS STILL` at block 27, move 8.646e-5 inside the 1e-4 rule -- the
+tolerance, not the cap.
+
+    b         0.08181287
+    lambda_d  0.03360948
+    h_1       0.00645828
+    welfare   791.39464     average_welfare_with_childhood
+
+The curve's null test, which n88 failed at 41 per cent for comparing the wrong
+two objects:
+
+    adult      1352.4859065  vs reported 1352.0465724   3.25e-4
+    childhood   449.10920561228494  vs  449.10920561228494   EXACT
+    lifetime    791.5058657  vs reported  791.3946434   1.41e-4
+    shift applied -0.111 utils
+
+The childhood half matching to seventeen digits is the check that the
+child-bears-kappa_x change is consistent between calculate_childhood_utility
+and the walk; they are separate code paths and the test stops hard at 1e-6.
+
+### frozen_stop_after_blocks IS MISNAMED AND THE CAP IS MUCH LOOSER THAN IT LOOKS
+
+loop_count advances by TWO per block only for the first eleven blocks and by
+ONE thereafter:
+
+    blk   1  2  3  4  5  6  7  8  9 10 11 12 13 14
+    lc    2  4  6  8 10 12 14 16 18 20 22 23 24 25
+
+CLAUDE.md's standing note -- "A block is not a loop. loop_count advances twice
+per moment block" -- is true early and false later. The cap is implemented as
+`loop_count < 2*N`, so N = 25 does not bite until about block 39. I predicted
+the cap would bind twice and was wrong both times; the tolerance governs.
+
+### IN FLIGHT
+
+    arm 1    session_01MmaZ1u   optimal drug use, omega_c = 1        kappa_x 6.9361
+    arm 3    session_01BSmdcV   Treatment First                      kappa_x 6.9361
+    arm 2    session_01HYEs83   UNVERIFIED REPO, high kappa_x -- its sources field
+                                reads housing_first_children_later, not this repo
+    arm 2c   session_011ri9KR   optimal homelessness                 kappa_x 0.8139
+
+ARMS 1 AND 3 DO NOT NEED RESTARTING. internalise_homelessness_cost = 0 there,
+so kappa_x is a constant subtracted from welfare and cannot move an allocation.
+Their allocations are right; their welfare is re-priced afterwards by
+    Delta = (6.9361 - 0.8139) * H_arm * D_total_arm
+and D_total differs by arm because survival does, which is why arm 2c was asked
+to report its arm's own KAPPA_X PROBE H*D_total line.
+
+ARM 2b WAS RETIRED for carrying 6.9361 into the one arm where kappa_x moves
+policy functions.
+
 ## kappa_x IS PINNED AT 6.9361, AND THE THREE ARMS ARE IN FLIGHT, 19 September
 
 ### THE CALIBRATION IS CLOSED
