@@ -79,6 +79,19 @@
 > parameter values forward from the newest worker log so a kill costs the loops
 > since the last resume rather than the whole run.
 >
+> > **MEASURED FALSE IN THE PRESENT ENVIRONMENT, 19 September.** Rule 3's
+> > premise is that the container boots at each firing. It does not here:
+> > boot time 01:23:47 against a 12:43 firing, uptime 11h19m, no reboot at any
+> > firing in between. A backgrounded solve survives turn boundaries -- arm 2
+> > ran 23 minutes continuously across a dozen turns, with its etime climbing
+> > monotonically each time it was checked.
+> >
+> > So in THIS environment a turn need not be held open to keep compute alive,
+> > and a monitor or a completion notification is the right way to be woken.
+> > The rule is kept rather than deleted because it was true when written and
+> > may be true again in another environment; the test is one line --
+> > `uptime -s` against the firing time. Hold the turn only if they match.
+>
 > **4. AN ADJUSTER SIZED FOR THE WRONG INSTRUMENT HIDES A SOLVED MOMENT.**
 > utility_cost_of_treatment moved treatment take up SEVENFOLD on a 14 per cent
 > change, while the 0.5 per cent per loop cap would have needed about forty loops
