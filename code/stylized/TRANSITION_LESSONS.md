@@ -471,6 +471,57 @@ copies holding a steady state, 4 are distributions (a forward pass needs 2
 slices), 2 are value functions (a backward pass needs 2). They are dimensioned
 `transition_length` today only because one `allocate` block serves both modes.
 
+### VERIFIED AGAINST THE SOURCE, 19 September -- WHAT NEEDS HOW MANY SLICES
+
+Grepped rather than assumed. Only these are ever read at a time other than the
+one being processed:
+
+    value_function            at time_index+1          -> needs the FULL path, T+1 slices
+    distribution_guess        at time_period-1         -> 2 slices
+    distribution_forward      at time_period-1         -> 2 slices
+    distribution_stationary   at time_period-1         -> 2 slices (in set_SS_benefits)
+
+**Everything else -- all sixteen policy functions and the rest -- is touched
+only at the current index.** That is what makes this cheap: the arrays can be
+allocated with bounds `(t:t)` and re-allocated as t advances, which leaves every
+existing `(time_period, ...)` indexing expression UNTOUCHED. No rewriting of
+hundreds of index expressions, which is where the bugs would have come from.
+
+### THE MERGE IS REQUIRED, NOT AN OPTIMISATION
+
+`transition_simulation` currently makes THREE passes over time inside the path
+loop (52447 onward):
+
+    do time_index = T-1, 1, -1     solve_value_function_and_policy_functions(t)
+    do time_index = 1, T-1         converge_to_stationary_equilibrium(t)
+    do time_index = 1, T-1         stationary_equilibrium_statistics(t), govt_revenues_calc(t), ...
+
+`stationary_equilibrium_statistics` reads `distribution_stationary` at its own t.
+If the statistics pass runs AFTER the whole forward pass, that array must hold
+all T slices -- 5.85 GB for one array, pushing the total to ~14.3 GB on a 15 GB
+box with no swap.
+
+So the second and third loops MUST be merged into one pass over t. That is not a
+tuning choice; single-slice distributions depend on it. It also halves the
+recomputation: policies are rebuilt once per t rather than twice, so the cost is
+2x the policy solves, not 3x.
+
+### THE RESULTING LOOP
+
+    do while (path not converged)
+        do t = T-1, 1, -1
+            value_function_guess <- value_function(t+1)
+            solve_value_function_and_policy_functions(t)      ! keeps V(t); policies discarded
+        end do
+        do t = 1, T-1
+            value_function_guess <- value_function(t+1)
+            solve_value_function_and_policy_functions(t)      ! RECOMPUTE policies at t
+            converge_to_stationary_equilibrium(t)
+            stationary_equilibrium_statistics(t) ; govt_revenues_calc(t) ; ...
+        end do
+        update the price path
+    end do
+
 ### WHAT IT COSTS, AND THE ONE REASON TO RECONSIDER
 
 Recomputing policies in the forward pass roughly DOUBLES the compute per path
