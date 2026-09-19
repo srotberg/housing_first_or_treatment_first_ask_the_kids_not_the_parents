@@ -1,3 +1,85 @@
+## THE pi_v BUDGET CLEARING WAS A NO-OP, AND THE ARMS RUN A DIFFERENT LOOP
+
+Two things found on 19 September while the first arm ran, both of which change
+what earlier runs mean.
+
+### 1. pi_v NEVER REACHED THE ECONOMY
+
+The budget update wrote `probability_of_voucher_benchmark_used_1`, and the call
+to `create_unemployment_process` a few lines below reached
+`recompute_derived_parameters`, whose voucher block opens with
+
+    probability_of_voucher_benchmark_used_1 = probability_of_voucher_benchmark_used
+
+and then rebuilds `probability_of_voucher_benchmark` from the MODULE value. The
+step was overwritten before the economy saw it. The instrument moved on paper
+and nowhere else.
+
+CAUGHT BY WATCHING THE PRINTS. The update prints the value BEFORE and AFTER
+itself. Before the fix the "before" read 0.06753386 on every block while
+distance_govt_budget GREW, 0.054063 then 0.099053. After the fix:
+
+    blk 1  0.06753386 -> 0.05130991      residual 5.4080e-02
+    blk 2  0.05130991 -> 0.08101710               9.9024e-02
+    blk 3  0.08101710 -> 0.07199605               3.0070e-02
+    blk 4  0.07199605 -> 0.07698256               1.6622e-02
+    blk 5  0.07698256 -> 0.07154500               1.8125e-02
+    blk 6  0.07154500 -> 0.07145991               2.8361e-04
+    blk 7  0.07145991 -> 0.07073632               2.4120e-03
+
+Block N's "before" now equals block N-1's "after". THAT IS THE TEST: if the
+"before" value repeats, the fix is not in the binary and nothing in the run is
+worth reading. pi_v settles near 0.0715 against the benchmark's 0.0675.
+
+It oscillates before it settles -- amplitudes -0.0162, +0.0297, -0.0090,
++0.0050 -- and I called it divergent at block 2 and was wrong. Blocks 1 and 2
+are where the economy is least settled and the budget target is still moving.
+
+WHAT IT INVALIDATED: every counterfactual run with adjust_taxes = 1 and
+use_revenues_to_increase_voucher_probability = 1. Five cloud sessions were
+archived over it. THE BENCHMARK IS UNTOUCHED -- the block sits inside a
+compile-time counterfactual parameter -- so n90 and every calibration run
+stand.
+
+### 2. AN ARM DOES NOT RUN THE CALIBRATION LOOP, AND frozen_stop_tolerance DOES
+### NOT APPLY TO IT
+
+I twice warned that `frozen_stop_tolerance`, appended to the calibration loop's
+condition with .AND., could force an arm to exit before the budget cleared.
+**It cannot.** A counterfactual runs its own loop, and that loop requires ALL of
+
+    distance_counterfactual_moments <= 5e-4   b, lambda_d, h_1, y between iterates
+    rental market cleared
+    housing market cleared
+    government budget cleared                 stopping_rule_govt_budget 2.5e-2
+    drug market cleared
+    inheritance converged
+
+capped at max_counterfactual_loops = 80. So an arm has a STRICTER and more
+complete convergence test than the benchmark, and the budget is part of it by
+construction.
+
+A consequence for reading logs: an arm prints `CF MOMENTS distance=`, NOT
+`BLOCK MOVE`. BLOCK MOVE missing from an arm log is expected, not a fault.
+
+### FIRST ARM READING, NOT YET CONVERGED
+
+arm2 local -- omega_c = 1 AND internalisation, kappa_x = 0.8139, run against
+n90 directly so it skipped the two-hour benchmark solve every cloud arm repeats:
+
+                        benchmark      arm 2        change
+    b                   0.08181287     0.02268454   -72.3%
+    lambda_d            0.03360948     0.00908215   -73.0%
+    h_1                 0.00645828     0.00505924   -21.7%
+
+CF MOMENTS distance 5.856e-5, budget residual 7.529e-4. NOT yet converged --
+the markets must clear too and the run has not printed COUNTERFACTUAL MOMENTS.
+
+AND THIS IS NOT THE ANSWER TO EITHER OF THE FIRST TWO QUESTIONS. Arm 2 carries
+BOTH changes. The drug fall is mostly omega_c, not the homelessness
+externality, and the author's optimal-homelessness question is arm 2 against
+ARM 1, which holds omega_c at 1 and isolates internalisation.
+
 ## kappa_x IS 0.813, NOT 6.94. n90 IS THE FIRST CONVERGED BENCHMARK. 19 September
 
 ### THE CORRECTION, FIRST
