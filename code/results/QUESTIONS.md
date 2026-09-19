@@ -102,15 +102,48 @@ which of those moved rather than reporting a net number alone.
 
 ## BEFORE ANY OF THE ABOVE IS BELIEVED
 
-1. `ECONOMY IS STILL` fired, rather than the run stopping at the 25-block cap.
-   The cap is a weaker result and must be labelled one.
-2. The government budget residual is small and pi_v cleared.
-   `frozen_stop_tolerance` is appended to the loop condition with `.AND.`, so it
-   CAN force an exit before `distance_govt_budget` is inside its own rule. A
-   large residual has that cause, not an economic one.
-3. Each arm's own benchmark reproduces the reference benchmark. Each cloud
-   session solved its own, from the same `code/seeds/n72_frozen_seed.dat`, so
-   they should agree with each other and with n90 to about 1e-4 relative -- the
-   model reproduces to roughly five digits, not bit-for-bit. A larger spread
-   between the three benchmarks means something other than noise moved, and the
-   arms are not comparable until that is understood.
+These three checks replace an earlier set that was written for the BENCHMARK's
+stopping rule and does not apply to an arm. The two mistakes in it were worth
+correcting rather than leaving: an arm does NOT print `ECONOMY IS STILL` -- that
+line is at 50888, inside the CALIBRATION loop, and the arm loop is a separate
+`do while` at 51432 on the six market rules -- and `frozen_stop_tolerance` is
+wired into the calibration loop too, so it cannot force an arm to exit early
+either.
+
+1. **ALL SIX RULES HELD AT ONCE, on the same loop.** An arm has converged only
+   when every one of these is inside its rule simultaneously:
+
+        distance_counterfactual_moments <= 5e-4
+        rental market      <= 1e-2
+        housing market     <= 2e-2
+        government budget  <= 2.5e-2
+        drug market        <= 5e-3
+        inheritance        <= 2e-3
+
+   A run that stopped at `max_counterfactual_loops` = 250 has NOT converged,
+   whatever its last loop says. Label it as unconverged and report which rules
+   were still open.
+
+2. **THE DRUG MARKET IS THE ONE THAT FAILS, AND IT FAILS QUIETLY.** Check it by
+   name rather than trusting the loop to have exited for the right reason, and
+   check the SIGNED gap, not the printed `distance_drug_market`, which is
+   `abs(gap)`:
+
+        implied = 1.6200147899 * V**(1/1.46)      gap = implied - price
+
+   A converged arm has |gap| <= 5e-3. See CALIBRATION_RECIPE.md section 6a.
+
+3. **ALL THREE ARMS READ THE SAME BENCHMARK, so there is nothing to reconcile.**
+   An earlier version of this check asked whether each session's own benchmark
+   reproduced the reference to 1e-4, because each was solving its own from
+   `code/seeds/n72_frozen_seed.dat`. That is no longer how it works: the
+   benchmark is COMMITTED at `code/results/n90_benchmark/` and every arm copies
+   the same files, so the arms are comparable by construction rather than by
+   agreement. Verify it cheaply -- the benchmark scalars in each arm's directory
+   should be byte-identical to the committed ones.
+
+   The model is still not bit-reproducible between REBUILDS (about 1e-5
+   relative, thread-order accumulation), so score any no-op control at 1e-4
+   relative and never on exact equality.
+
+4. **REPORT ONE EQUILIBRIUM.** Never a best-of across loops or across points.
