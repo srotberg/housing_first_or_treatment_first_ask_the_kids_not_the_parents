@@ -5023,7 +5023,38 @@
         ! 0.43 and the market clears in a handful of loops. The convergence
         ! difficulty and the failed elasticity validation are one defect.
         real(8) :: stopping_rule_drug_market=5*10.d0**(-3)
-        real(8) :: drug_market_adjuster=0.5
+        ! 0.5 -> 0.2, 19 September, because 0.5 is ABOVE the stability
+        ! threshold at this model's demand elasticity and the price iteration
+        ! diverges.
+        !
+        ! THE ARITHMETIC, from this model's own measured response. The map is
+        ! p' = p + a*(implied(p) - p) with implied = shifter*V(p)^(1/eps_s), so
+        !     d(implied)/dp = (1/eps_s)*eps_d          near the fixed point
+        !     multiplier    = 1 + a*(d(implied)/dp - 1)
+        ! Measured on the omega_c = 1 plus internalisation arm, b was 0.0935 at
+        ! p = 0.75 and 0.0227 at p = 1.00, so eps_d = -4.92 and
+        ! d(implied)/dp = 0.685*(-4.92) = -3.37. At a = 0.5 the multiplier is
+        ! 1 - 2.185 = -1.185: magnitude above one, sign alternating, which is
+        ! divergent oscillation. Observed as exactly that -- distance_drug_market
+        ! 0.0756, 0.164, 0.117, 0.349 across four loops, the same shape
+        ! stopping_rule_drug_market's comment records for universal Treatment
+        ! First.
+        !
+        ! Stability needs a < 2/4.37 = 0.458. The older comment put the
+        ! threshold at 0.635, but it used |eps_d| = 3.14; at the measured 4.92
+        ! the threshold falls below 0.5 and the default no longer clears it.
+        !
+        ! At 0.2 the multiplier is 1 - 0.874 = 0.126, contracting an order a
+        ! loop, and it stays stable even if the true elasticity were as large as
+        ! 12. The cost is a slower approach from far away, which is what
+        ! drug_price_start is for.
+        !
+        ! IT IS NOT V NOISE, WHICH WAS THE STANDING HYPOTHESIS AND WAS TESTED.
+        ! With the price held fixed the same economy at the same 6e-4
+        ! distribution tolerance converged cleanly: CF MOMENTS distance 1.628,
+        ! 3.9e-3, 2.9e-3, 6.6e-4, 8.2e-4, 1.2e-3, 3.1e-4, 5.9e-5, 4.9e-5. The
+        ! economy is fine; the price map was the unstable part.
+        real(8) :: drug_market_adjuster=0.2
         ! THE MOST THE DRUG PRICE MAY MOVE IN ONE LOOP, as a share of itself.
         ! See the cap in clear_drug_market for what it replaces and why.
         real(8), parameter :: max_drug_price_move=0.005
