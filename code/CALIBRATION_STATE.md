@@ -1,89 +1,77 @@
-# THE SECOND SEED FAILED ITS OWN TEST, AND THE THIRD IS A REAL SECANT
+# THE SECANT SEED WORKED. FIRST TRANSITION LOOP NEAR AN EQUILIBRIUM
 
-20 September, later. The supply-curve reseed was launched with a stated test:
-`distance_drug_market` at t=1 must fall from 0.21730 toward zero. **It rose to
-0.48885 and the gap changed sign.** The seed was worse than the ramp it
-replaced.
+20 September. T=30, third seed, one complete loop. The test set before the run
+was that `distance_drug_market` at t=1 fall well below 0.21730. It came in at
+**0.031346**, and across all 29 periods:
 
-    run A (ramp)    t=1   p_faced 0.98929   p_implied 0.77695   gap -0.21233
-    run B (reseed)  t=1   p_faced 0.77695   p_implied 1.26580   gap +0.48885
+    mean distance_drug_market    ramp 0.2027   supply curve 0.4878   SECANT 0.01351
 
-## THE ERROR, WHICH IS THE ONE THE STANDING RULE NAMES
+**Fifteen times better than the ramp**, with seven of 29 periods already inside
+the 5e-3 rule (0.00029 at t=20, 0.00107 at t=23, 0.00258 at t=16).
 
-I claimed the fixed-point map was a contraction and called that measured. It
-was not measured. I compared implied prices ACROSS PERIODS inside a single
-loop -- different distributions, different economies -- and read the near
-flatness as a price response. **It is not a price experiment at all.**
+## NO FOURTH RESEED. THE CAP IS NO LONGER BINDING
 
-From two prices in the SAME period the slope is d(implied)/dp = -2.25 at t=1,
-steepening to -7.8 by t=28. The map is EXPANSIVE in every period, so the
-undamped step I took was the worst move available. My estimate had been -0.19,
-off by more than a factor of ten, and it implied a drug demand elasticity near
--0.2 where the truth is nearer -2.8.
+Three points in period 1 put the root at 0.9183 (bracketing pair) and 0.9167
+(two nearest) against a seed of 0.92739 -- about 1.2 per cent, which is three
+loops at the half-a-per-cent cap rather than forty. The reseeding was only ever
+justified by the cap being the binding constraint. It is not any more, so the
+run walks in on its own machinery.
 
-**PREFER A MEASURED BRACKET TO AN ELASTICITY** is in the standing rules. I
-wrote the rule into the commit message of the change that broke it.
+## THE MECHANISM, WHICH IS NOW READABLE PERIOD BY PERIOD
 
-## WHAT RUN B BOUGHT, WHICH IS NOT NOTHING
+                  benchmark      t=1           t=29          TF steady state
+    h_1            0.006458   0.007714 +19.4%  0.010585 +63.9%  0.006542 +1.3%
+    b              0.081740   0.059749 -26.9%  0.047540 -41.8%  0.045287 -44.6%
+    lambda_d       0.033625   0.033610  flat   0.020800         0.018460
+    lifetime       791.3946   787.9067         790.6010         792.5130
+    CEV                  --    -9.272%          -2.223%           +3.249%
 
-Two genuine (price, implied) pairs in all 29 periods, hence a real secant.
-**Every one of the 29 roots lies strictly inside its own bracket -- none
-clamped** -- which is the check that the two prices really straddle the
-crossing rather than sitting on one side of it.
+**Participation falls at once; disorder does not.** b drops 26.9 per cent in
+the FIRST period and grinds to -41.8 per cent by t=29. lambda_d is completely
+unmoved at t=1 -- 0.033610 against the benchmark's 0.033625 -- and only decays
+later. That is the right shape: a household can stop USING the day the policy
+starts, but the stock of people WITH disorder turns over only as the cohort
+does. The author's reading of 19 September, that drug use would stop
+immediately for many, is confirmed; what is slow is recovery from disorder.
 
-    t=1  0.92739    t=10 0.90769    t=20 0.87289    t=28 0.83402
-                                                    t=29 0.83349 (pinned)
+**The welfare trough is at t=3 and shallow**: -9.27%, -11.46%, -12.15%, then
+monotone recovery to -2.22% at t=29. A dip and a slow climb, not exponential
+decay -- again the author's reading rather than mine.
 
-## THE SHAPE IS AN OVERSHOOT, NOT AN UNDERSHOOT
+**Homelessness rises and stays up.** +19.4 per cent at t=1, peaking at +76.5
+per cent, still +63.9 per cent at t=29 against +1.3 per cent in the long run.
+That is where the welfare loss is.
 
-The price starts near 0.927 and decays to the terminal 0.83349. It does not
-dip below and climb back. The earlier note in this file said the opposite and
-was written from run A alone, where the implied price sat below the terminal
-for a reason that is NOT the equilibrium price being low: quantity was low
-because the price faced was high.
+## THE CONTROL HELD, AND IT IS A RESULT IN ITSELF
 
-The ramp was closer to the truth than the reseed that replaced it. 0.98929 is
-7.0 per cent above p*(1) and on the correct side; 0.77695 is 16.0 per cent
-below and on the wrong side. The ramp was converging, slowly and from the
-right direction, and the "about forty loops" arithmetic that justified
-replacing it assumed a target of 0.78 that does not exist.
+h_1 at t=1 was 0.0077265 at p=0.777 and 0.0077137 at p=0.927: **a 0.17 per cent
+move in homelessness across a 19 per cent move in the drug price.** Homelessness
+at implementation is the conditionality revoking housing from people still
+using, and the price is not a competing explanation.
 
-## WHAT IS NOW KNOWN ABOUT THE ECONOMICS
+Participation is the opposite -- violently price-sensitive. b was 0.092053 at
+p=0.777 and 0.059749 at p=0.927, a 35 per cent fall for a 19 per cent price
+rise, an implied demand elasticity near -1.8 consistent with the -2.3 slope
+measured on the supply side. **This model's drug market clears through
+participation, not through homelessness.**
 
-The mechanism print earns its place immediately. At t=1, under run B's cheap
-price:
+## T=30 IS TOO SHORT, AND THE RIGHT RUN NOW SAYS SO
 
-    h_1 = 0.0077265   (+19.6% on the benchmark)
-    b   = 0.0920529   (+12.6% on the benchmark)
-    lambda_d = 0.0336098  (flat)
+At t=29 the price IS the boundary condition, 0.83349, so the seed can no longer
+be blamed. And yet h_1 is 0.010585, **+63.9 per cent on the benchmark where the
+terminal steady state is +1.3 per cent**, and lambda_d is 0.0208 against
+0.0185. The terminal condition is being imposed on a period nowhere near the
+terminal steady state.
 
-Two results follow, and they matter for the paper.
-
-**Homelessness at implementation is not price-driven.** t=1 homelessness is
-+19.6 per cent at p=0.777 and +19.2 per cent at p=0.989 -- the same number
-across a twenty-one per cent price swing. It is the conditionality revoking
-housing from people who are still using. The author's hypothesis of 19
-September stands, and the drug price is not a competing explanation.
-
-**A cheap drug raises participation sharply at implementation.** b is 12.6 per
-cent ABOVE the benchmark at p=0.777, against 44.6 per cent below it in the
-terminal steady state. That is why the implied price shot to 1.266, and why
-lifetime welfare was WORSE under the cheap seed (786.281, CEV -13.19%) than
-under the dear one (788.151, CEV -8.66%).
-
-## THE TEST FOR THE THIRD SEED, SET BEFORE IT RUNS
-
-`distance_drug_market` at t=1 must fall well below 0.21730, the better of the
-two runs so far. The root is a LINEAR secant on a curve that is not linear, so
-it will not be zero. **At or above 0.21730 the secant is not locating the
-crossing, and the next move is bisection on [0.77695, 0.98929], which cannot
-fail but costs a loop per halving.**
+The reported result should be T=75, which fits memory at about 10.5 GB of 15
+since the windowing. That is a scope decision and it is the author's. The T=30
+run continues meanwhile: it is close on the drug market and will show how pi_v
+behaves as the fiscal instrument, which no transition has yet exercised.
 
 ## STILL OPEN
 
-- No loop has converged. Nothing here is a result.
-- T=30 still looks short: t=29 homelessness was 60 per cent above benchmark
-  where the terminal steady state is 1.3 per cent above it.
+- Nothing has converged. No number here is a result.
+- pi_v's budget update switches on at loop 1 and has never run on a path.
 - The windowing has not been compared bit-for-bit against an unwindowed run.
 - The child's inherited penalty must key on the period the parent DIES in.
   Read, not verified.
