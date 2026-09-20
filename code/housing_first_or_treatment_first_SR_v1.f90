@@ -53335,14 +53335,54 @@
                 ! the routine stops on anything else. time_period is declared
                 ! but unused inside it, so the period index is passed for
                 ! readability only.
-                cev_this_period=0
-                call calculate_welfare_gains(time_index,average_welfare_with_childhood(time_index),1,cev_this_period)
-
+                ! PRINT FIRST, THEN THE CEV. calculate_welfare_gains STOPS the
+                ! program when the target is off the saved curve, so placed
+                ! ahead of the print it kills the run without ever saying what
+                ! the numbers were. MEASURED, 20 September: an 85 minute run
+                ! ended on "target welfare is off the saved curve ... target=
+                ! 0.000" having printed no welfare line at all, so the zero
+                ! itself could not be diagnosed. A routine that can stop must
+                ! never sit in front of the diagnostic that would explain it.
+                !
+                ! The two diagnostics are here to separate the candidates for
+                ! that zero in ONE run rather than three:
+                !   current_beta_type -- average_welfare_with_childhood is
+                !     assigned only under current_beta_type==number_of_beta_types,
+                !     so a call site where that does not hold leaves it at zero;
+                !   the mass at t-1 -- calculate_childhood_utility skips on
+                !     mass_1<=0, so an empty distribution_stationary slot gives
+                !     zero too, and that slot is what the windowing touched.
                 write(*,*) "TRANSITION WELFARE loop=", loop_count, " t=", time_index, &
                     " with_childhood=", average_welfare_with_childhood(time_index), &
-                    " CEV=", cev_this_period, &
                     " youngest=", average_welfare_of_youngest_cohort(time_index), &
                     " benchmark_youngest=", average_welfare_of_youngest_cohort_calibrated
+
+                write(*,*) "TRANSITION WELFARE DIAG t=", time_index, &
+                    " current_beta_type=", current_beta_type, &
+                    " number_of_beta_types=", number_of_beta_types, &
+                    " mass at t-1=", &
+                    sum(distribution_stationary(1)%vector_transition_real(time_index-solve_transition_dynamics,:,:,:,:,:,:))+&
+                    sum(distribution_stationary(2)%vector_transition_real(time_index-solve_transition_dynamics,:,:,:,:,:,:))
+
+                ! GUARDED. Off the curve it reports rather than halting, so one
+                ! bad period cannot destroy a run that has spent an hour and a
+                ! half getting there.
+                cev_this_period=0
+
+                if ((average_welfare_with_childhood(time_index)>welfare_curve_w(1)) .AND. &
+                    (average_welfare_with_childhood(time_index)<welfare_curve_w(welfare_curve_points))) then
+
+                    call calculate_welfare_gains(time_index,average_welfare_with_childhood(time_index),1,cev_this_period)
+
+                    write(*,*) "TRANSITION CEV t=", time_index, " CEV=", cev_this_period
+
+                else
+
+                    write(*,*) "TRANSITION CEV t=", time_index, " OFF THE CURVE, not computed. target=", &
+                        average_welfare_with_childhood(time_index), " curve spans", welfare_curve_w(1), &
+                        welfare_curve_w(welfare_curve_points)
+
+                end if
 
                 ! CLEAR THE DRUG MARKET AT THIS PERIOD.
                 !
