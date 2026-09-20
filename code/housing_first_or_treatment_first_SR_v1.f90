@@ -52771,6 +52771,8 @@
         ! Reading the measured drug price path seed.
         integer :: seed_iostat_1=0,seed_count_1=0
         real(8) :: seed_value_1=0
+        ! The clipped pi_v step and its cap.
+        real(8) :: pi_v_step_1=0,pi_v_cap_1=0
                 
         loop_count=0
         
@@ -53560,6 +53562,44 @@
 !                write(*,*) "govt_revenues_from_labour_income=", govt_revenues_from_labour_income(time_index)
 !                write(*,*) "govt_spending_on_ss=", govt_spending_on_ss(time_index)
                 
+                ! MEASURE THE BUDGET EVERY LOOP, INCLUDING LOOP 0.
+                !
+                ! THE DIAGNOSTIC USED TO SHARE THE INSTRUMENT'S GATE, and that
+                ! cost a whole 3.5-hour loop. Nothing about the budget was
+                ! printed at loop 0 -- not the residual, not the components --
+                ! because the only place either appeared was inside
+                ! loop_count>start_updating_at_loop_number. So loop 0 ran to
+                ! completion looking healthy on the drug market and the welfare
+                ! path while net_govt_revenues sat at ZERO against a constraint
+                ! of 6.02, and the first anyone knew of it was pi_v slamming
+                ! into its floor on the first step of loop 1.
+                !
+                ! Measure before you move. The residual and its components now
+                ! print on every loop; only the UPDATE stays gated.
+                write(*,*) "TRANSITION BUDGET loop=", loop_count, " t=", time_index, &
+                    " net_govt_revenues=", net_govt_revenues(time_index), &
+                    " constraint=", net_govt_revenue_constraint, &
+                    " residual=", net_govt_revenues(time_index)-net_govt_revenue_constraint
+                write(*,*) "TRANSITION BUDGET PARTS t=", time_index, &
+                    " labour=", govt_revenues_from_labour_income(time_index), &
+                    " consumption=", govt_revenues_from_consumption(time_index), &
+                    " investment=", govt_revenues_from_investment_income(time_index), &
+                    " property=", govt_revenues_from_property_tax(time_index), &
+                    " lump_sum=", govt_lump_sum_transfers(time_index), &
+                    " total_rev=", total_govt_revenues(time_index)
+                write(*,*) "TRANSITION BUDGET SPEND t=", time_index, &
+                    " ss=", govt_spending_on_ss(time_index), &
+                    " ui=", govt_spending_on_ui(time_index), &
+                    " di=", govt_spending_on_di(time_index), &
+                    " homeless=", govt_spending_on_homeless(time_index), &
+                    " addicts=", govt_spending_on_addicts(time_index), &
+                    " food=", govt_spending_on_food_stamps(time_index), &
+                    " vouchers=", govt_spending_on_housing_vouchers(time_index), &
+                    " vouchers_2=", govt_spending_on_housing_vouchers_2(time_index), &
+                    " tests=", govt_spending_on_drug_tests, &
+                    " bequests=", model_bequests(time_index), &
+                    " inheritance=", model_total_inheritance(time_index)
+
                 if (loop_count>start_updating_at_loop_number) then
                                                                 
                     distance_govt_budget=adjust_taxes*abs(net_govt_revenues(time_index)-net_govt_revenue_constraint)
@@ -53589,11 +53629,36 @@
                     ! a path the way it was re-measured for arm 3 -- pair each
                     ! step with the printed distance that drove it.
                     !
-                    ! Bounds at 0 and 1 as in the arm. There is no relative step
-                    ! clip on pi_v, so the gain is what governs.
+                    ! AND A STEP CLIP, BECAUSE THE GAIN ALONE DID NOT GOVERN.
+                    !
+                    ! The comment above ends "there is no relative step clip on
+                    ! pi_v, so the gain is what governs". That held while the
+                    ! residual stayed in the range the gain was measured on --
+                    ! the arm's own probe saw -0.09009, +0.36642, -0.53540. The
+                    ! transition's FIRST residual was -6.02, more than ten times
+                    ! anything the steady state has ever produced, and at gain
+                    ! 0.05 that is a step of -0.30 applied to a pi_v of 0.076:
+                    ! straight through zero to the floor, in ONE step, in every
+                    ! period. The voucher programme was abolished and the run
+                    ! was worthless from that instant.
+                    !
+                    ! A gain tuned on a residual of 0.5 cannot be trusted on a
+                    ! residual of 6. The clip caps the move at a QUARTER of the
+                    ! current pi_v per period per loop, which leaves the arm's
+                    ! measured behaviour untouched -- its largest step was
+                    ! 0.11 on a pi_v of 0.15, well inside a quarter -- and turns
+                    ! a wild residual into a slow walk instead of a collapse.
+                    !
+                    ! THIS CHANGES NO EQUILIBRIUM CONDITION. The fixed point is
+                    ! still net_govt_revenues == net_govt_revenue_constraint to
+                    ! within the stopping rule; only the path to it changes.
+                    ! Same argument as the drug price's trust region.
+                    pi_v_step_1=0.05*(net_govt_revenues(time_index)-net_govt_revenue_constraint)
+                    pi_v_cap_1=0.25*probability_of_voucher_path(time_index)
+                    pi_v_step_1=max(min(pi_v_step_1,pi_v_cap_1),-pi_v_cap_1)
+
                     probability_of_voucher_path(time_index)=&
-                        max(min(probability_of_voucher_path(time_index)+&
-                        0.05*(net_govt_revenues(time_index)-net_govt_revenue_constraint),1.d0),10.d0**(-5))
+                        max(min(probability_of_voucher_path(time_index)+pi_v_step_1,1.d0),10.d0**(-5))
 
                     write(*,*) "TRANSITION PI_V loop=", loop_count, " t=", time_index, &
                         " pi_v=", probability_of_voucher_path(time_index), &
