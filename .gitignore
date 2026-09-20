@@ -251,3 +251,20 @@ code/tr[0-9]*/
 # GitHub's 100 MB limit.
 code/bm/
 code/bmbuild/
+
+# GENERATED TRANSITION AND BENCHMARK BUILD DIRECTORIES. build_transition_gf.sh,
+# build_cf.sh and the hand-staged benchmark build each write a generated .f90
+# plus three binaries into their own directory, so that a run cannot tread on
+# another's .dat files. The generator plus the master source reproduces every one
+# of them exactly, and a committed copy would go stale against the master
+# silently -- which is the same reasoning the variant_*.f90 rule above gives.
+code/bm_build/
+code/tr_gf/
+code/tr_gf5/
+code/tr_gf*/
+code/cf/
+# Run directories. Every one of them holds a copy of the binary and up to 2.2 GB
+# of .dat output that the run reproduces.
+code/bm/
+code/arm3/
+code/trans_*/

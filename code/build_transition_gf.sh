@@ -1,5 +1,5 @@
 #!/bin/bash
-# build_transition_gf.sh [outdir]
+# build_transition_gf.sh [outdir] [T]
 #
 # THE GRANDFATHERED TRANSITION AT T=60. Five compile-time parameters, and the
 # script REFUSES unless the diff is exactly five lines, on build_transition.sh's
@@ -8,7 +8,7 @@
 #   is_counterfactual                             0 -> 1
 #   use_revenues_to_increase_voucher_probability   0 -> 1
 #   solve_transition_dynamics                     0 -> 1
-#   transition_length                            30 -> 60
+#   transition_length                            30 -> T (default 60)
 #   grandfather_voucher_states                    0 -> 1
 #
 # window_distributions is ALREADY 1 in the source and is asserted, not sed'd.
@@ -24,12 +24,16 @@
 set -e
 SRC=${SRC:-$(cd "$(dirname "$0")" && pwd)/housing_first_or_treatment_first_SR_v1.f90}
 OUT=${1:-$(pwd)/tr_gf}
+# THE HORIZON. 60 is the run; 3 or 5 is the probe the lessons file requires in
+# front of an overnight one, and which also re-checks the memory model.
+T=${2:-60}
+case "$T" in ''|*[!0-9]*) echo "REFUSING: T must be a positive integer, got '$T'"; exit 1;; esac
 mkdir -p "$OUT"
 
 sed -e 's/integer, parameter :: is_counterfactual=0/integer, parameter :: is_counterfactual=1/' \
     -e 's/integer, parameter :: use_revenues_to_increase_voucher_probability=0/integer, parameter :: use_revenues_to_increase_voucher_probability=1/' \
     -e 's/integer, parameter :: solve_transition_dynamics=is_counterfactual\*0+(1-is_counterfactual)\*0/integer, parameter :: solve_transition_dynamics=1/' \
-    -e 's/solve_transition_dynamics\*30$/solve_transition_dynamics*60/' \
+    -e "s/solve_transition_dynamics\\*30\$/solve_transition_dynamics*$T/" \
     -e 's/integer, parameter :: grandfather_voucher_states=0/integer, parameter :: grandfather_voucher_states=1/' \
     "$SRC" > "$OUT/tr_gf.f90"
 
@@ -47,7 +51,7 @@ assert () { grep -qE "$2" "$OUT/tr_gf.f90" || { echo "REFUSING: $1 is not set in
 assert "is_counterfactual=1"                             'parameter :: is_counterfactual=1 *$'
 assert "use_revenues_to_increase_voucher_probability=1"   'parameter :: use_revenues_to_increase_voucher_probability=1 *$'
 assert "solve_transition_dynamics=1"                     'parameter :: solve_transition_dynamics=1 *$'
-assert "transition_length ... *60"                       'parameter :: transition_length=.*solve_transition_dynamics\*60 *$'
+assert "transition_length ... *$T"                       "parameter :: transition_length=.*solve_transition_dynamics\\*$T *\$"
 assert "grandfather_voucher_states=1"                    'parameter :: grandfather_voucher_states=1 *$'
 assert "window_distributions=1"                          'parameter :: window_distributions=1 *$'
 echo "all six switches asserted in the generated source:"
@@ -63,4 +67,4 @@ for f in build_bounds.err build_snan.err build_prod.err; do
   [ "$e" -gt 0 ] && { echo "BUILD ERRORS in $f"; head -20 "$f"; exit 1; }
 done
 echo "built in $OUT: hftf_trgf_prod (run this), hftf_trgf_bounds, hftf_trgf_snan"
-echo "EXPECTED PEAK RSS: about 13.1 GB of 15 at T=60 with the fourth voucher state (1.306x)."
+echo "EXPECTED PEAK RSS: about 2.91 + 1.306*0.079*T GB -- 13.1 GB of 15 at T=60."
