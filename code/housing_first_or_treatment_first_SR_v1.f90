@@ -15652,8 +15652,37 @@
         median_index=minloc(median_income_cdf(time_period,:),1,&
             mask=median_income_cdf(time_period,:)-0.5>=0)
                         
+        ! GUARDED LIKE EVERY OTHER DIVISION IN THIS ROUTINE, and it was the only
+        ! one that was not. Its neighbours all divide by max(x,10.d0**(-14));
+        ! this one divided raw, so when rent_to_income_ratios is zero for an
+        ! interior transition period the result is NaN.
+        !
+        ! THE NaN DOES NOT STAY LOCAL. median_income(t) feeds the voucher
+        ! eligibility cutoff at ten sites, written as
+        !     (1-is_counterfactual)*median_income(t) + is_counterfactual*median_income_calibrated
+        ! so in a counterfactual it is multiplied by ZERO -- and 0*NaN is NaN,
+        ! not 0. The whole cutoff came back NaN, "income < NaN" is FALSE, and
+        ! every household was judged ineligible for a voucher.
+        !
+        ! MEASURED at T=3 before this guard, with the declaration initialiser
+        ! already in place:
+        !
+        !   t=1  threshold 0.43155613898950002  spending 0.64528  passing 3.2052
+        !   t=2  threshold NaN                  spending 0.00000  passing 0.0000
+        !
+        ! at a mean income of 0.3273 against a 0.4316 cutoff -- all 3.5204 of
+        ! those households qualified and all were rejected.
+        !
+        ! WHY THE INITIALISER ALONE WAS NOT ENOUGH, and this is the part worth
+        ! keeping. =0 on the declaration fixed the BACKWARD pass, which runs
+        ! before this line poisons the array, so household behaviour and the
+        ! value function became correct: t=1 lifetime welfare moved from
+        ! 790.87260 to 791.70728, turning a loss of 0.522 against the
+        ! benchmark's 791.3946 into a GAIN of 0.313. The forward pass runs AFTER
+        ! this line, so the accounting stayed blind. One bug, two halves, and
+        ! the halves were fixed by different lines.
         median_income(time_period)=(model_average_rent(time_period)*model_average_rental_unit_size(time_period))/&
-            rent_to_income_ratios(time_period,max(median_index(1),1))
+            max(rent_to_income_ratios(time_period,max(median_index(1),1)),10.d0**(-14))
         
         if (current_beta_type==number_of_beta_types) then
             model_fraction_of_homeless_and_addicted_unemployed(time_period)=&
