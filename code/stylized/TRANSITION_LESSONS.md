@@ -705,3 +705,62 @@ not survive a container. **An arm's results file is not enough to run a
 transition from it; the arm has to be re-solved, or its .dat output kept.**
 Warm started at the converged price and pi_v it is much cheaper than the first
 solve, but it is not free.
+
+## 14. THE CHILD'S KEYING WAS RE-CHECKED ON THE TRANSITION PATH, NOT ONLY IN THE STEADY STATE
+
+20 September. Section 7's table already answers "does the quantitative model
+key the child's inherited penalty on the period the parent dies in?" with a No
+-- it does not have the stylized model's bug -- and the reasoning there is about
+`expected_child_value` entering the CONTINUATION at every age inside the child
+window. That is the value function's side of it.
+
+**The forward pass is a separate mechanism and had never been checked.** Along a
+transition the child is not created by a continuation term, it is created by
+`converge_to_stationary_equilibrium` writing newborn mass into the distribution,
+and nothing in section 7 said which period's parent state that write reads.
+
+It reads the right one. The newborn mass is
+
+    newborn_employment_probability(future_employment_index, employment_index, &
+                                   is_addicted_1, is_homeless_2)
+      * (1 - survival_probability_for_dist_iteration(age_index,1,0,0))
+      * distribution_guess(...)%vector_transition_real(time_period-solve_transition_dynamics, ...)
+
+and `is_homeless_2` is set immediately above it from
+
+    future_housing_status_index_to_use_2 = policy_function_housing_status_index(...)%&
+        vector_transition_integer(time_period, age_index, ...)
+
+-- the household's CHOSEN housing status in `time_period`, the period it dies
+in and the period conditionality acts in. So a revocation at age 50 that puts a
+household on the street is in the index the child inherits from, on the path
+and not only in the steady state. Both halves of the rule hold.
+
+`newborn_parent_share` looks like it ought to be the thing that carries this and
+is NOT: its only consumer is `print_all_moments`. It is a diagnostic, it has no
+time index, and it must not be read as the transmission channel. Anyone
+auditing this next should go to `converge_to_stationary_equilibrium` and the
+policy function, not to it.
+
+## 15. A DIAGNOSTIC MUST NOT SHARE A GATE WITH THE INSTRUMENT IT DIAGNOSES
+
+20 September, and it cost a 3.5-hour loop.
+
+The transition's budget residual was computed and printed only inside
+
+    if (loop_count>start_updating_at_loop_number) then
+
+which is also where pi_v moves. So at loop 0 -- the whole first loop -- NOTHING
+about the budget was printed: not the residual, not a single component. The
+loop ran to completion looking healthy on the drug market and on the welfare
+path while `net_govt_revenues` sat at ZERO against a constraint of 6.02, and
+the first anyone knew of it was pi_v slamming into its floor on the first step
+of loop 1, three and a half hours later.
+
+**The rule: measure every loop, move on the loops you choose.** The gate belongs
+on the update alone. A quantity that is not printed until the iteration that
+acts on it cannot be sanity-checked before it does damage, and the cheapest
+loop to catch it on is the one that is not allowed to move anything.
+
+The same shape is worth looking for elsewhere: any `if (loop_count>...)` block
+that contains both a `write` and an assignment to an instrument.
