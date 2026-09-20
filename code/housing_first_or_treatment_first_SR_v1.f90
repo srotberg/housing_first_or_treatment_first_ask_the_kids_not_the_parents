@@ -54087,6 +54087,37 @@
                     " bequests=", model_bequests(time_index), &
                     " inheritance=", model_total_inheritance(time_index)
 
+                ! WHY VOUCHER SPENDING IS EXACTLY ZERO FROM t=2. Three candidates
+                ! and this line separates them in one run:
+                !
+                !   holders=0                 no mass at voucher_index==1, so the
+                !                             forward step is losing the state
+                !   holders>0, receiving=0    the state survives and the PAYMENT
+                !                             is zero -- calculate_housing_voucher_2
+                !                             or the rent it is capped by
+                !   holders>0, receiving>0    the state and the payment survive and
+                !                             the ACCUMULATOR is at fault
+                !
+                ! The benchmark spends 0.69016 on vouchers and the long-run TF
+                ! steady state spends 0.68484 -- the programme is not cheaper under
+                ! conditionality, it re-sorts who holds. The transition pays 0.6394
+                ! at t=1 and 0.0000000000000000 at t=2, 3 and 4, and the "surplus"
+                ! of 0.69 that the budget then reports is, to three digits, the
+                ! whole voucher budget. So this is not the reform saving money.
+                !
+                ! Note that "tests=" above prints a SCALAR, not a path: there is no
+                ! (time_index) on govt_spending_on_drug_tests. Its going to zero
+                ! after t=1 is this print's artefact and not a second symptom --
+                ! though the budget at 20252 subtracts that same scalar, which is
+                ! its own question and a small one at 1.2e-3.
+                write(*,*) "TRANSITION VOUCHER DIAG t=", time_index, &
+                    " holders=", model_eligible_voucher_holders(time_index), &
+                    " receiving=", model_fraction_recieving_housing_vouchers(time_index), &
+                    " eligibles_getting=", model_eligibles_getting_voucher(time_index), &
+                    " drug_tests=", model_drug_tests(time_index), &
+                    " pi_v=", probability_of_voucher_path(time_index), &
+                    " rent0=", rent(time_index,0)
+
                 if (loop_count>start_updating_at_loop_number) then
                                                                 
                     distance_govt_budget=adjust_taxes*abs(net_govt_revenues(time_index)-net_govt_revenue_constraint)
