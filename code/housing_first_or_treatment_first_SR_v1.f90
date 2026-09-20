@@ -8979,6 +8979,36 @@
         ! Two previous sweeps of the distribution, kept for the Aitken step.
         type(jagged_matrix_transition_real), dimension(1:2) :: dist_prev_1,dist_prev_2
 
+        ! THE TRANSITION'S INITIAL CONDITION, KEPT OUTSIDE THE WINDOW.
+        !
+        ! initialize_feasible_distribution runs ONCE, in the prologue, and seeds
+        ! slot 1-solve_transition_dynamics with the benchmark distribution the
+        ! whole transition starts from. The window then WALKS: loop 0's forward
+        ! pass takes it from (0:1) to (T-2:T-1), and slot 0's storage is
+        ! deallocated the first time it advances.
+        !
+        ! Loop 1 then calls reslot_distributions(1). old_hi is T-1, so
+        ! advancing=(1==T) is FALSE, the arrays are reallocated to (0:1), zeroed,
+        ! and NOTHING IS COPIED BACK. The initial condition is gone and every
+        ! loop after the first runs the forward pass on an EMPTY ECONOMY.
+        !
+        ! That is what made net_govt_revenues come out as EXACTLY 0.0 at t=1 --
+        ! no households, so no revenue and no spending, a sum of ten nonzero
+        ! terms landing on a bit-exact zero -- and then 0, -0.03, +0.13, +0.30
+        ! as newborn cohorts slowly rebuilt mass from nothing. It is also why no
+        ! transition had ever converged: every iteration after the first was
+        ! solving a different, empty problem.
+        !
+        ! These four hold slot 0 exactly as the prologue left it, so loop 1
+        ! starts bit-identically to loop 0. All four are kept, not just
+        ! distribution_guess: at loop 0 the t=1 reslot returns EARLY because the
+        ! window is already (0:1), so whatever the prologue put in the Aitken
+        ! buffers is what loop 0 saw, and restoring anything else would make
+        ! later loops differ from the first for a second reason.
+        type(jagged_matrix_real), dimension(1:2) :: init_keep_guess,init_keep_stat,&
+            init_keep_prev1,init_keep_prev2
+        logical :: init_keep_done=.false.
+
         type(jagged_matrix_transition_integer), dimension(1:2) :: &
             policy_function_financial_index,policy_function_housing_status_index,policy_function_space_lived_in_index,&
             policy_function_years_of_amortization_index,fin_index_frac_mov_to_optimal,policy_function_addiction,&
@@ -52773,6 +52803,8 @@
         real(8) :: seed_value_1=0
         ! The clipped pi_v step and its cap.
         real(8) :: pi_v_step_1=0,pi_v_cap_1=0
+        ! Its own index, not the module's i, which reslot_distributions uses.
+        integer :: keep_i_1
                 
         loop_count=0
         
@@ -52893,6 +52925,35 @@
             ! The two drivers become consistent rather than accidentally
             ! different.
             call initialize_feasible_distribution(1)
+
+            ! SNAPSHOT THE INITIAL CONDITION BEFORE THE WINDOW CAN WALK AWAY.
+            ! source= copies the bounds as well as the values, so the keeper
+            ! matches whatever this build's grids make a slice.
+            if (solve_transition_dynamics==1) then
+
+                do keep_i_1=1,2
+
+                    allocate(init_keep_guess(keep_i_1)%vector_real,&
+                        source=distribution_guess(keep_i_1)%&
+                        vector_transition_real(1-solve_transition_dynamics,:,:,:,:,:,:))
+                    allocate(init_keep_stat(keep_i_1)%vector_real,&
+                        source=distribution_stationary(keep_i_1)%&
+                        vector_transition_real(1-solve_transition_dynamics,:,:,:,:,:,:))
+                    allocate(init_keep_prev1(keep_i_1)%vector_real,&
+                        source=dist_prev_1(keep_i_1)%&
+                        vector_transition_real(1-solve_transition_dynamics,:,:,:,:,:,:))
+                    allocate(init_keep_prev2(keep_i_1)%vector_real,&
+                        source=dist_prev_2(keep_i_1)%&
+                        vector_transition_real(1-solve_transition_dynamics,:,:,:,:,:,:))
+
+                end do
+
+                init_keep_done=.true.
+
+                write(*,*) "TRANSITION INIT: initial condition kept, mass=",&
+                    sum(init_keep_guess(1)%vector_real)+sum(init_keep_guess(2)%vector_real)
+
+            end if
                     
         else
         
@@ -53378,6 +53439,41 @@
                 call solve_value_function_and_policy_functions(time_index)
 
                 call reslot_distributions(time_index)
+
+                ! PUT THE INITIAL CONDITION BACK. reslot_distributions has just
+                ! zeroed slot 0 on every loop after the first, because a rewind
+                ! from (T-2:T-1) to (0:1) is not an advance and copies nothing.
+                !
+                ! At loop 0 this is a no-op by construction: the window is
+                ! already (0:1) there, reslot returns before touching anything,
+                ! and the keeper holds exactly what is already in the slot. So
+                ! the restore cannot change loop 0's answer, which is the
+                ! control this fix is checked against.
+                if ((time_index==1) .AND. init_keep_done) then
+
+                    do keep_i_1=1,2
+
+                        distribution_guess(keep_i_1)%&
+                            vector_transition_real(1-solve_transition_dynamics,:,:,:,:,:,:)=&
+                            init_keep_guess(keep_i_1)%vector_real
+                        distribution_stationary(keep_i_1)%&
+                            vector_transition_real(1-solve_transition_dynamics,:,:,:,:,:,:)=&
+                            init_keep_stat(keep_i_1)%vector_real
+                        dist_prev_1(keep_i_1)%&
+                            vector_transition_real(1-solve_transition_dynamics,:,:,:,:,:,:)=&
+                            init_keep_prev1(keep_i_1)%vector_real
+                        dist_prev_2(keep_i_1)%&
+                            vector_transition_real(1-solve_transition_dynamics,:,:,:,:,:,:)=&
+                            init_keep_prev2(keep_i_1)%vector_real
+
+                    end do
+
+                    write(*,*) "TRANSITION INIT RESTORED loop=", loop_count, " mass=",&
+                        sum(distribution_guess(1)%vector_transition_real(1-solve_transition_dynamics,:,:,:,:,:,:))+&
+                        sum(distribution_guess(2)%vector_transition_real(1-solve_transition_dynamics,:,:,:,:,:,:))
+
+                end if
+
                 call converge_to_stationary_equilibrium(time_index)
 
                 call stationary_equilibrium_statistics(time_index)
