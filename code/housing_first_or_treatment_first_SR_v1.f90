@@ -8336,6 +8336,14 @@
         ! Indexed by min(max(amortization_used,0),3), accumulated only over
         ! renters (years_left_on_mortgage_index==1) holding a voucher.
         real(8), dimension(0:3) :: diag_amort_mass=0
+        ! THE INCOME GATE AT 18655, measured over renters holding a voucher.
+        ! The amortization histogram showed all three conjuncts of the gate at
+        ! 18714 pass at t=2 with the full 3.5204 of holder mass, so the block is
+        ! not being reached: the enclosing income test at 18655 is rejecting
+        ! everyone. mass is the denominator, pass is how much clears the test,
+        ! inc_sum and inc1_sum give the means, and inc_thresh is the cutoff the
+        ! test actually used that period.
+        real(8) :: diag_inc_mass=0,diag_inc_pass=0,diag_inc_sum=0,diag_inc1_sum=0,diag_inc_thresh=0
         ! THE REALISED SHARE OF THE POPULATION IN EACH CHILD CLASS, which is an
         ! equilibrium outcome and not a property of the productivity process, so
         ! it is measured rather than assumed. It is also the sanity check on the
@@ -18153,6 +18161,10 @@
         ! with nothing left to lose or barely binds at all.
         if (accumulating_beta_types==0) model_mass_by_voucher_state=0
         if (accumulating_beta_types==0) diag_amort_mass=0
+        if (accumulating_beta_types==0) diag_inc_mass=0
+        if (accumulating_beta_types==0) diag_inc_pass=0
+        if (accumulating_beta_types==0) diag_inc_sum=0
+        if (accumulating_beta_types==0) diag_inc1_sum=0
         if (accumulating_beta_types==0) model_mass_by_child_class=0
         if (accumulating_beta_types==0) model_eligibles_getting_voucher(time_period)=0
         if (accumulating_beta_types==0) model_eligible_voucher_holders(time_period)=0
@@ -18642,6 +18654,24 @@
                                         avg_income_to_use_1,avg_income_to_use_2,labor_supply_used,in_retirement)
 
                                     income_2=income_1+(risk_free_rate(time_period)*max(financial_grid(financial_index),0.d0)+unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0))  
+
+                                    if ((years_left_on_mortgage_index==1) .AND. (voucher_index==1) .AND. &
+                                        (amortization_used==1)) then
+
+                                        diag_inc_thresh=threshold_income_vouchers*&
+                                            ((1-is_counterfactual)*median_income(time_period)+&
+                                            is_counterfactual*median_income_calibrated)
+                                        diag_inc_mass=diag_inc_mass+distribution_mass_used
+                                        diag_inc_sum=diag_inc_sum+income_2*distribution_mass_used
+                                        diag_inc1_sum=diag_inc1_sum+income_1*distribution_mass_used
+
+                                        if (income_2<diag_inc_thresh) then
+
+                                            diag_inc_pass=diag_inc_pass+distribution_mass_used
+
+                                        end if
+
+                                    end if
                                                                         
                                     if ((addiction_consumption_1>0) .AND. &
                                         (unemployment_index<=threshold_addiction_index) .AND. &
@@ -54182,6 +54212,14 @@
                     " renter_voucher_mass_by_amort_used: 0=", diag_amort_mass(0), &
                     " 1=", diag_amort_mass(1), " 2=", diag_amort_mass(2), &
                     " 3plus=", diag_amort_mass(3)
+
+                write(*,*) "TRANSITION INCOME GATE t=", time_index, &
+                    " holder_renter_mass=", diag_inc_mass, &
+                    " passing=", diag_inc_pass, &
+                    " mean_income_2=", diag_inc_sum/max(diag_inc_mass,10.d0**(-12)), &
+                    " mean_income_1=", diag_inc1_sum/max(diag_inc_mass,10.d0**(-12)), &
+                    " threshold=", diag_inc_thresh, &
+                    " model_eligibles=", model_eligibles(time_index)
 
                 if (loop_count>start_updating_at_loop_number) then
                                                                 
