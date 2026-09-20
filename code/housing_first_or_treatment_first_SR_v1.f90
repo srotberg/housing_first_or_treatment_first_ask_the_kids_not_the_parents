@@ -52978,6 +52978,9 @@
         ! Reading the measured drug price path seed.
         integer :: seed_iostat_1=0,seed_count_1=0
         real(8) :: seed_value_1=0
+        integer :: seed_iostat_2=0,seed_count_2=0
+        real(8) :: seed_value_2=0
+        character(len=400) :: seed_line_1=''
         ! The clipped pi_v step and its cap.
         real(8) :: pi_v_step_1=0,pi_v_cap_1=0
         ! Its own index, not the module's i, which reslot_distributions uses.
@@ -53515,27 +53518,62 @@
         ! pinned to the terminal steady state's cleared price, which is the
         ! transition's boundary condition and is not the previous run's to set.
         !
-        ! One undamped fixed-point step is safe here, and that is measured too:
-        ! over a sixteen per cent walk in the faced price the implied price
-        ! moved about one per cent, so the map's slope is small and it is a
-        ! contraction. It is a SEED for a fresh run in any case, not a step
-        ! taken inside the cap.
+        ! THE JUSTIFICATION THAT USED TO BE HERE WAS WRONG AND IS RETRACTED.
+        ! It read: "over a sixteen per cent walk in the faced price the implied
+        ! price moved about one per cent, so the map's slope is small and it is
+        ! a contraction". That was never measured. It came from comparing
+        ! implied prices ACROSS PERIODS within a single loop, which is not a
+        ! price experiment at all, and it gave a slope of -0.19. The slope
+        ! MEASURED period by period is -2.25 at t=1 falling to about -7.8 by
+        ! t=28, so the map is EXPANSIVE and a raw fixed-point step diverges.
+        ! Seeding on that false claim took distance from 0.21730 to 0.48885 and
+        ! flipped its sign.
+        !
+        ! What makes a seed safe is not a contraction, it is that the run's own
+        ! per-period secant in previous_price_of_addictive_good_path re-measures
+        ! the gap from whatever price it is handed. A seed only has to be closer
+        ! than the linear ramp, and the ramp is the thing it replaces.
         !
         ! Absent or short file, the ramp stands and the run says so.
         open(unit=97,file='drug_price_path_seed.txt',status='old',action='read',iostat=seed_iostat_1)
 
         if (seed_iostat_1==0) then
 
+            ! A '#' LINE MUST NOT END THE READ. save_transition_paths.py writes a
+            ! provenance header -- which log, which loop, which periods, and for
+            ! a spliced path which loop each period came from -- and the list
+            ! read that used to be here would have taken the first '#' as a bad
+            ! record, exited, and fallen back to the ramp having read ZERO
+            ! entries. It says "entries read= 0" when it does that, so it is not
+            ! silent, but it is a whole run seeded on nothing for the sake of a
+            ! comment line. Blank lines are skipped for the same reason.
             seed_count_1=0
 
-            do time_index=1,max(transition_length-1,1)
+            do
 
-                read(97,*,iostat=seed_iostat_1) seed_value_1
+                read(97,'(A)',iostat=seed_iostat_1) seed_line_1
 
                 if (seed_iostat_1/=0) exit
 
-                price_of_addictive_good_path(time_index)=seed_value_1
+                seed_line_1=adjustl(seed_line_1)
+
+                if (len_trim(seed_line_1)==0) cycle
+                if (seed_line_1(1:1)=='#') cycle
+
+                read(seed_line_1,*,iostat=seed_iostat_1) seed_value_1
+
+                if (seed_iostat_1/=0) exit
+
                 seed_count_1=seed_count_1+1
+
+                if (seed_count_1>max(transition_length-1,1)) then
+
+                    seed_count_1=seed_count_1-1
+                    exit
+
+                end if
+
+                price_of_addictive_good_path(seed_count_1)=seed_value_1
 
             end do
 
@@ -53564,6 +53602,99 @@
         ! the seed sets only how fast the budget clears, not where it clears --
         ! every period's value is driven by its own budget residual below.
         probability_of_voucher_path=probability_of_voucher_benchmark_used
+
+        ! AND THEN THE SAME SEED THE DRUG PRICE GETS, FOR THE SAME REASON.
+        !
+        ! pi_v is the budget's instrument and it moves slowly: the step is
+        ! 0.05 of the residual, clipped to a quarter of the current pi_v per
+        ! period per loop, so a path that has walked away from the benchmark
+        ! took several loops to get there and a fresh run pays for all of them
+        ! again. At five to eight hours a loop at T=60 that is the difference
+        ! between a day and a morning.
+        !
+        ! The flat start above stands when there is no file, which is the
+        ! honest default: pi_v's terminal value is the steady state's and every
+        ! period's is driven by its OWN residual, so a flat path is a guess
+        ! about speed and not about where the budget clears.
+        !
+        ! NOTE what this file is NOT allowed to be. A pi_v sitting on the 1e-5
+        ! floor or the 1.0 ceiling is the collapse the step clip was added to
+        ! stop, and as a column of numbers it looks exactly like a converged
+        ! path. save_transition_paths.py refuses to WRITE one; this reader
+        ! refuses to USE one, because the two halves get separated.
+        open(unit=96,file='pi_v_path_seed.txt',status='old',action='read',iostat=seed_iostat_2)
+
+        if (seed_iostat_2==0) then
+
+            seed_count_2=0
+
+            do
+
+                read(96,'(A)',iostat=seed_iostat_2) seed_line_1
+
+                if (seed_iostat_2/=0) exit
+
+                seed_line_1=adjustl(seed_line_1)
+
+                if (len_trim(seed_line_1)==0) cycle
+                if (seed_line_1(1:1)=='#') cycle
+
+                read(seed_line_1,*,iostat=seed_iostat_2) seed_value_2
+
+                if (seed_iostat_2/=0) exit
+
+                if ((seed_value_2<=1.000001d0*10.d0**(-5)) .OR. (seed_value_2>=0.999999d0)) then
+
+                    write(*,*) "PI_V PATH SEED REFUSED: entry", seed_count_2+1, &
+                        " is", seed_value_2, " which is on a bound. Keeping the flat start."
+
+                    seed_count_2=0
+                    exit
+
+                end if
+
+                seed_count_2=seed_count_2+1
+
+                if (seed_count_2>max(transition_length-1,1)) then
+
+                    seed_count_2=seed_count_2-1
+                    exit
+
+                end if
+
+                probability_of_voucher_path(seed_count_2)=seed_value_2
+
+            end do
+
+            close(96)
+
+            if (seed_count_2==0) then
+
+                probability_of_voucher_path=probability_of_voucher_benchmark_used
+
+                write(*,*) "PI_V PATH: seed rejected or empty, flat at", &
+                    probability_of_voucher_benchmark_used
+
+            else
+
+                write(*,*) "PI_V PATH seeded FROM FILE, entries read=", seed_count_2, &
+                    " of", max(transition_length-1,1)
+
+                if (seed_count_2<max(transition_length-1,1)) then
+
+                    write(*,*) "  SHORT FILE. periods", seed_count_2+1, "to", &
+                        max(transition_length-1,1), "keep the flat start."
+
+                end if
+
+            end if
+
+        else
+
+            write(*,*) "PI_V PATH: no pi_v_path_seed.txt, flat at", &
+                probability_of_voucher_benchmark_used
+
+        end if
 
         write(*,*) "DRUG PRICE PATH seeded: t=0", price_of_addictive_good_path(1-solve_transition_dynamics), &
             " t=1", price_of_addictive_good_path(1), &
@@ -54231,6 +54362,71 @@
                                 
             close(3)
                             
+            ! SAVE THE INSTRUMENT PATHS EVERY LOOP.
+            !
+            ! The two paths the transition iterates per period are the drug
+            ! price and pi_v. Until now neither survived the run that produced
+            ! it: the T=30 secant roots had to be reconstructed out of a log by
+            ! hand, and run directories are gitignored, so a container that died
+            ! took the path with it. Writing them every loop means a kill costs
+            ! the loop in progress rather than the whole run.
+            !
+            ! WRITTEN TO *_out.txt, NOT OVER THE SEED FILES THIS RUN READ.
+            ! Overwriting the input would make a restart inherit this run's last
+            ! loop automatically, which is what you want when the loop was good
+            ! and a catastrophe when it was not -- t30_loop1_pivcollapse is the
+            ! case: pi_v through zero to its floor in one step in every period,
+            ! h_1 at NaN, and as a file 29 plausible decimals. Promoting an
+            ! _out file to a seed is therefore a deliberate copy, and
+            ! save_transition_paths.py's guards are what it should be read with.
+            !
+            ! h_1 is written for the same loop and IS NOT AN INSTRUMENT. Nothing
+            ! reads it back; homelessness is an outcome of the distribution and
+            ! has no slot to be put into. It is here to score a restart against.
+            open(unit=95,file='drug_price_path_seed_out.txt',action='write',status='replace')
+
+                write(95,*) "# price_of_addictive_good_path after loop", loop_count-1
+                write(95,*) "# the price FACED, not a step onto the measured gap"
+                write(95,*) "# periods 1 to", max(transition_length-1,1)
+
+                do time_index=1,max(transition_length-1,1)
+
+                    write(95,'(F30.15)') price_of_addictive_good_path(time_index)
+
+                end do
+
+            close(95)
+
+            open(unit=95,file='pi_v_path_seed_out.txt',action='write',status='replace')
+
+                write(95,*) "# probability_of_voucher_path after loop", loop_count-1
+                write(95,*) "# periods 1 to", max(transition_length-1,1)
+
+                do time_index=1,max(transition_length-1,1)
+
+                    write(95,'(F30.15)') probability_of_voucher_path(time_index)
+
+                end do
+
+            close(95)
+
+            open(unit=95,file='h1_path_reference_out.txt',action='write',status='replace')
+
+                write(95,*) "# model_fraction_homeless after loop", loop_count-1
+                write(95,*) "# A REFERENCE, NOT AN INPUT. Nothing reads this back."
+                write(95,*) "# periods 1 to", max(transition_length-1,1)
+
+                do time_index=1,max(transition_length-1,1)
+
+                    write(95,'(F30.15)') model_fraction_homeless(time_index)
+
+                end do
+
+            close(95)
+
+            write(*,*) "TRANSITION PATHS SAVED after loop", loop_count-1, &
+                " periods=", max(transition_length-1,1)
+
             loop_count=loop_count+1
             
             write(*,*) "loop_count=", loop_count
