@@ -54118,6 +54118,33 @@
                     " pi_v=", probability_of_voucher_path(time_index), &
                     " rent0=", rent(time_index,0)
 
+                ! WHERE THE MASS ACTUALLY SITS, which is the line that separates
+                ! the two remaining candidates. model_mass_by_voucher_state is
+                ! accumulated at 18384 over the WHOLE distribution with no
+                ! mortgage, amortization or voucher gate on it, so unlike
+                ! model_eligible_voucher_holders it is a clean census.
+                !
+                !   all in NONE      the forward step is dumping every household
+                !                    into voucher state 0. Suspect the income
+                !                    gate in calculate_future_voucher_index, whose
+                !                    default when the test fails is first=second=0.
+                !   all in EXCLUDED  every holder is being read as category 3,
+                !                    "fails the condition", and barred at
+                !                    probability_of_detection. Suspect
+                !                    voucher_index_1, which is the CATEGORY index
+                !                    in voucher_probabilities(...,voucher_index_1)
+                !                    and not a voucher state despite the name.
+                !
+                ! At t=1 holders=0.2744 and at t=2 holders, receiving,
+                ! eligibles_getting and drug_tests are all exactly zero, so the
+                ! state is gone rather than unpaid. This says where it went.
+                write(*,*) "TRANSITION VOUCHER CENSUS t=", time_index, &
+                    " none=", model_mass_by_voucher_state(0), &
+                    " holding=", model_mass_by_voucher_state(1), &
+                    " excluded=", model_mass_by_voucher_state(2), &
+                    " total=", model_mass_by_voucher_state(0)+&
+                        model_mass_by_voucher_state(1)+model_mass_by_voucher_state(2)
+
                 if (loop_count>start_updating_at_loop_number) then
                                                                 
                     distance_govt_budget=adjust_taxes*abs(net_govt_revenues(time_index)-net_govt_revenue_constraint)
