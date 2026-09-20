@@ -593,8 +593,42 @@
         ! the runtime flag alone decides whether anyone goes there.
         integer :: include_voucher_exclusion=0
         integer, parameter :: voucher_exclusion_states=1
-        integer, parameter :: voucher_state_max=include_vouchers*(1+voucher_exclusion_states)
+
+        ! GRANDFATHERING: A FOURTH VOUCHER STATE, OFF BY DEFAULT.
+        !
+        ! The author's design, 20 September: conditionality applies only to
+        ! households that receive a voucher AFTER the reform. Anyone HOLDING one
+        ! at implementation keeps it whatever they do, so the policy never puts
+        ! the caught generation's children on the street.
+        !
+        ! WHY THIS NEEDS A STATE AND NOT A RULE. Exempting whoever currently
+        ! holds a voucher is a different and permanent policy -- test at award,
+        ! never re-test -- and the long run under it is much weaker, because the
+        ! stock of holders with a disorder is continuously replenished by people
+        ! who acquire one after being awarded. True grandfathering has to know
+        ! who held a voucher AT t=0 and still know it twenty periods later, and
+        ! voucher_index cannot say: it only distinguishes none, holder, barred.
+        !
+        ! WHAT IT BUYS. The exempt cohort dies out, so the TERMINAL STEADY STATE
+        ! IS ARM 3 EXACTLY and the long-run gain is unchanged by construction.
+        ! Only the path differs. That is why it is worth the state.
+        !
+        ! COST. voucher_state_max 2 -> 3 grows the renter slice from 8,564,400
+        ! to 11,419,200 cells, 1.306x on everything carrying voucher_index.
+        ! Measured: T=30 goes 7.8 -> 10.2 GB and T=60 to 13.1 GB of 15. The
+        ! exempt cohort is only gone once the youngest adult alive at the reform
+        ! has died -- 26 at t=0 reaches 85 at t=59 -- so a clean terminal
+        ! condition needs T>=60, and that is the binding pair.
+        !
+        ! voucher_excl is min(2,...) and so is unchanged at 2 either way.
+        ! voucher_gf collides with voucher_excl when the switch is OFF, which is
+        ! safe only because every use of it is guarded on the switch. Do not
+        ! remove those guards.
+        integer, parameter :: grandfather_voucher_states=0
+        integer, parameter :: voucher_state_max=include_vouchers*&
+            (1+voucher_exclusion_states+grandfather_voucher_states)
         integer, parameter :: voucher_excl=min(2,voucher_state_max)
+        integer, parameter :: voucher_gf=voucher_state_max
         real(8), parameter :: voucher_exclusion_release=1.d0/3.d0
         integer, parameter :: use_cobb_douglas=0
         integer, parameter :: use_cobb_douglas_2=0
@@ -8930,7 +8964,17 @@
         ! In a steady state transition_length is 1 and these are (1:1), so the
         ! allocation is bit-for-bit what it was before.
         integer :: tslot_lo=1,tslot_hi=1
-        integer :: dslot_lo=1-solve_transition_dynamics,dslot_hi=1
+        ! WINDOWING SWITCH, so the bit-for-bit control can actually be run.
+        !
+        ! The windowing took T=30 from 11.35 GB to 7.17 GB and is what made
+        ! T>=30 possible, so it is load-bearing -- and it had never been checked
+        ! against an unwindowed run for IDENTICAL NUMBERS. T=5 proved it runs,
+        ! which is a different claim. Set this to 0 and the distributions
+        ! allocate over the whole path and reslot does nothing, which is the
+        ! pre-windowing code exactly.
+        integer, parameter :: window_distributions=1
+        integer :: dslot_lo=1-solve_transition_dynamics,&
+            dslot_hi=window_distributions*1+(1-window_distributions)*transition_length
 
         integer :: time_index,age_index,unemployment_index,employment_index,years_left_on_mortgage_index,&
            housing_status_index,space_lived_in_index,space_lived_in_index_feasible,frac_spent_on_addiction_index,&
@@ -17888,10 +17932,20 @@
         real(8), intent(in) :: income_1,rent_spending_1
         real(8), intent(inout) :: housing_voucher_1
         integer, intent(in) :: time_period,future_addiction_index_1
+        integer :: gf_exempt_1
         
         housing_voucher_1=0
+
+        ! A GRANDFATHERED HOLDER IS NEVER TESTED AND NEVER REVOKED.
+        ! Falling through to the else branch gives it the UNCONDITIONAL voucher
+        ! formula, which is exactly the benchmark's rule, which is the point.
+        gf_exempt_1=0
+        if ((grandfather_voucher_states==1) .AND. (voucher_index==voucher_gf)) then
+            gf_exempt_1=1
+        end if
         
-        if (((unemployment_index>threshold_addiction_index) .OR. &
+        if ((gf_exempt_1==0) .AND. &
+            ((unemployment_index>threshold_addiction_index) .OR. &
             ((future_addiction_index_1>=1) .AND. (unemployment_index<=threshold_addiction_index))) .AND. &
             (voucher_conditional_on_clean==1)) then
             
@@ -17903,7 +17957,7 @@
             
             housing_voucher_1=0
             
-        elseif ((unemployment_index>threshold_addiction_index) .AND. &
+        elseif ((gf_exempt_1==0) .AND. (unemployment_index>threshold_addiction_index) .AND. &
             (voucher_conditional_on_clean_just_addicts==1)) then
             
             if (voucher_conditional_on_clean==1) then
@@ -36195,6 +36249,27 @@
             
         end if
 
+
+        ! A GRANDFATHERED HOLDER NEVER MOVES OUT OF THE STATE.
+        !
+        ! Placed at the very end of the routine on purpose, so it applies
+        ! whichever branch above ran and cannot be overwritten by one of the
+        ! blanket assignments -- voucher_probabilities(:,voucher_excl,:,:)=0 is
+        ! exactly that shape and would otherwise zero this row depending on
+        ! order.
+        !
+        ! Row voucher_gf is ABSORBING: never tested, so never revoked and never
+        ! excluded, and nothing transitions INTO it either. The only mass it
+        ! ever holds is what the reform puts there at t=0.
+        if (grandfather_voucher_states==1) then
+
+            voucher_probabilities(voucher_gf,:,:,:)=0
+            voucher_probabilities(voucher_gf,voucher_gf,:,:)=1
+            voucher_probabilities_benchmark(voucher_gf,:,:,:)=0
+            voucher_probabilities_benchmark(voucher_gf,voucher_gf,:,:)=1
+
+        end if
+
     end subroutine
 
     subroutine create_unemployment_process()
@@ -43194,6 +43269,7 @@
         real(8), allocatable :: buf_real(:,:,:,:,:,:)
 
         if (solve_transition_dynamics==0) return
+        if (window_distributions==0) return
         if ((dslot_lo==t_new-1) .AND. (dslot_hi==t_new)) return
 
         old_hi=dslot_hi
@@ -52925,6 +53001,38 @@
             ! The two drivers become consistent rather than accidentally
             ! different.
             call initialize_feasible_distribution(1)
+
+            ! THE REFORM GRANDFATHERS EVERY HOUSEHOLD HOLDING A VOUCHER.
+            !
+            ! Applied to the INITIAL CONDITION only, and before the snapshot, so
+            ! it is a property of the economy the transition starts from and is
+            ! restored with it at the top of every loop. Nothing transitions
+            ! into voucher_gf afterwards, so this single move is the whole
+            ! cohort for the whole run.
+            !
+            ! Renters only: the owner array is allocated 0:0 on the voucher
+            ! dimension, so there is no state 1 there to move.
+            if ((grandfather_voucher_states==1) .AND. (solve_transition_dynamics==1)) then
+
+                write(*,*) "TRANSITION GF: holders before=",&
+                    sum(distribution_guess(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,1))
+
+                distribution_guess(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,voucher_gf)=&
+                    distribution_guess(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,1)
+                distribution_guess(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,1)=0
+
+                write(*,*) "TRANSITION GF: grandfathered=",&
+                    sum(distribution_guess(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,voucher_gf)),&
+                    " left in state 1=",&
+                    sum(distribution_guess(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,1))
+
+            end if
 
             ! SNAPSHOT THE INITIAL CONDITION BEFORE THE WINDOW CAN WALK AWAY.
             ! source= copies the bounds as well as the values, so the keeper
