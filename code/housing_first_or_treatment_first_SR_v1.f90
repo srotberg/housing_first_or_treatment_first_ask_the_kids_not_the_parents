@@ -24401,7 +24401,27 @@
         ! what put index 75 into a (0:1) array and corrupted the heap.
         ! Both routines return immediately in a steady state.
         call reslot_policies(time_period)
-        call reslot_distributions(time_period)
+
+        ! THE DISTRIBUTIONS ARE NOT RE-SLOTTED HERE, AND MUST NOT BE.
+        !
+        ! This routine solves the household problem and reads NO distribution
+        ! -- checked across its whole body. But the BACKWARD pass calls it for
+        ! t = T-1 down to 1, and reslot_distributions DEALLOCATES, REALLOCATES
+        ! and ZEROES, carrying only the top slice forward. So re-slotting here
+        ! walked the distribution window (28:29), (27:28), ... and destroyed
+        ! slot 0 -- the initial condition initialize_feasible_distribution had
+        ! just filled -- on the very first backward step.
+        !
+        ! MEASURED at T=5, 20 September: 'mass at t-1 = 0' in the forward pass,
+        ! so calculate_welfare and calculate_childhood_utility both integrated
+        ! over an empty distribution and returned zero, and the run died in the
+        ! CEV routine on a zero target. INVISIBLE BEFORE THE WINDOWING, because
+        ! a full-range array has no window to lose -- which is exactly why the
+        ! windowing needed its own validation run and should have had one first.
+        !
+        ! The forward pass re-slots the distributions explicitly before
+        ! converge_to_stationary_equilibrium, which re-slots again itself, so
+        ! nothing there depended on this call.
 
         if (report_lottery_diagnostics==1) then
 
@@ -53369,8 +53389,19 @@
                 ! half getting there.
                 cev_this_period=0
 
-                if ((average_welfare_with_childhood(time_index)>welfare_curve_w(1)) .AND. &
-                    (average_welfare_with_childhood(time_index)<welfare_curve_w(welfare_curve_points))) then
+                ! THE CURVE IS LOADED INSIDE calculate_welfare_gains, at its own
+                ! open of welfare_curve<vf_simulation>.dat, so testing
+                ! welfare_curve_w before the first call reads module arrays still
+                ! at their declared zero -- which is why the diagnostic reported
+                ! "curve spans 0.0 to 0.0". The curve was never broken; the guard
+                ! was looking too early.
+                !
+                ! Require a positive target always, and apply the band test only
+                ! once the curve has actually been read.
+                if ((average_welfare_with_childhood(time_index)>0.d0) .AND. &
+                    ((welfare_curve_w(welfare_curve_points)<=0.d0) .OR. &
+                     ((average_welfare_with_childhood(time_index)>welfare_curve_w(1)) .AND. &
+                      (average_welfare_with_childhood(time_index)<welfare_curve_w(welfare_curve_points))))) then
 
                     call calculate_welfare_gains(time_index,average_welfare_with_childhood(time_index),1,cev_this_period)
 
