@@ -8329,6 +8329,13 @@
         ! one, and both explanations tested for that were rejected by their own
         ! predictions.
         real(8), dimension(0:2) :: model_mass_by_voucher_state=0
+        ! WHICH CONJUNCT OF THE VOUCHER GATE FAILS. The gate at 18714 is
+        ! years_left_on_mortgage_index==1 .AND. amortization_used==1 .AND.
+        ! voucher_index==1. The census says voucher_index==1 holds 3.5204 of
+        ! mass at t=2, so that conjunct passes and the other two are suspect.
+        ! Indexed by min(max(amortization_used,0),3), accumulated only over
+        ! renters (years_left_on_mortgage_index==1) holding a voucher.
+        real(8), dimension(0:3) :: diag_amort_mass=0
         ! THE REALISED SHARE OF THE POPULATION IN EACH CHILD CLASS, which is an
         ! equilibrium outcome and not a property of the productivity process, so
         ! it is measured rather than assumed. It is also the sanity check on the
@@ -18145,6 +18152,7 @@
         ! predictions. This says directly whether the bar traps a large group
         ! with nothing left to lose or barely binds at all.
         if (accumulating_beta_types==0) model_mass_by_voucher_state=0
+        if (accumulating_beta_types==0) diag_amort_mass=0
         if (accumulating_beta_types==0) model_mass_by_child_class=0
         if (accumulating_beta_types==0) model_eligibles_getting_voucher(time_period)=0
         if (accumulating_beta_types==0) model_eligible_voucher_holders(time_period)=0
@@ -18381,6 +18389,14 @@
                                     ! Voucher-state mass, counted here for the same
                                     ! reason the comment below gives: every
                                     ! household passes this point exactly once.
+                                    if ((years_left_on_mortgage_index==1) .AND. (voucher_index==1)) then
+
+                                        diag_amort_mass(min(max(amortization_used,0),3))=&
+                                            diag_amort_mass(min(max(amortization_used,0),3))+&
+                                            distribution_mass_used
+
+                                    end if
+
                                     model_mass_by_voucher_state(min(max(voucher_index,0),2))=&
                                         model_mass_by_voucher_state(min(max(voucher_index,0),2))+&
                                         distribution_mass_used
@@ -54161,6 +54177,11 @@
                     " excluded=", model_mass_by_voucher_state(2), &
                     " total=", model_mass_by_voucher_state(0)+&
                         model_mass_by_voucher_state(1)+model_mass_by_voucher_state(2)
+
+                write(*,*) "TRANSITION AMORT DIAG t=", time_index, &
+                    " renter_voucher_mass_by_amort_used: 0=", diag_amort_mass(0), &
+                    " 1=", diag_amort_mass(1), " 2=", diag_amort_mass(2), &
+                    " 3plus=", diag_amort_mass(3)
 
                 if (loop_count>start_updating_at_loop_number) then
                                                                 
