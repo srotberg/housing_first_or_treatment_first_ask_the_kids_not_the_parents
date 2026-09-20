@@ -1,11 +1,31 @@
 #!/bin/bash
-# launch_arm.sh <arm: 1|2|3> <kappa_x> <benchmark run dir> [drug_price_start] [pi_v]
+# launch_arm.sh <arm: 1|2|3> <kappa_x> <benchmark run dir> [drug_price_start] [pi_v] [drug_market_adjuster]
 #
 # Stages and starts one counterfactual arm. The benchmark run dir supplies the
 # baseline_benchmark files every arm reads -- 62 of them -- and must be a run
 # that reached "simulation ended", not one that was stopped.
 set -e
 ARM=$1; KX=$2; BM=$3; P0=${4:-0.8720}; PIV=${5:-}
+# THE DRUG MARKET ADJUSTER, AND IT IS NOT A TUNING KNOB ON THIS ARM.
+#
+# Declared 0.2 in the Fortran. results/arm3_convergence/CONVERGED.md is explicit
+# that the ONLY arm 3 run which met its acceptance test -- movement decaying
+# monotonically into the stop, b inside the measured cycle band -- used 0.1, and
+# that "arm 3 cycles at adjuster 0.2; the two converged runs are peak and trough"
+# of that cycle. This script did not set it, so every arm launched through it ran
+# at 0.2 and a stop could land on any phase.
+#
+# CAUGHT ON A LIVE RUN, 20 September: block 3 came back with b = 0.047320 against
+# a measured cycle band of [0.04492, 0.04732] -- sitting exactly on the top of it,
+# with all three live rules just outside tolerance and about to cross. That run
+# was killed and relaunched at 0.1.
+#
+# 0.2 is DIVERGENT by the arithmetic in section 6a of the recipe: d(gap)/dp =
+# -7.41 makes the update multiplier 1 - 7.41*a, which needs a < 0.270, and the
+# 0.5-per-cent clip converts the divergence into a slow crawl rather than curing
+# it. 0.2 is inside that bound and 0.5 was not, which is why 0.2 was chosen
+# originally; 0.1 is what actually stopped the cycling on this arm.
+ADJ=${6:-0.1}
 S=$(cd "$(dirname "$0")" && pwd)
 
 # The binary: $HFTF if set, else the conventional spot beside this script.
@@ -44,9 +64,9 @@ for f in calibration_distribution1.dat calibration_distribution2.dat \
 done
 true
 
-python3 - "$SEED" "$N/PARAM_HANDOVER.txt" "$ARM" "$KX" "$P0" "$PIV" <<'PY'
+python3 - "$SEED" "$N/PARAM_HANDOVER.txt" "$ARM" "$KX" "$P0" "$PIV" "$ADJ" <<'PY'
 import sys
-src,dst,arm,kx,p0,piv = sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6]
+src,dst,arm,kx,p0,piv,adj = sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7]
 common = {
   "penalty_child_addicted":"0.24",      # delta_d, Nilsson, pinned
   "omega_c_is_pinned":"1",
@@ -70,6 +90,9 @@ common = {
   # CALIBRATION_RECIPE.md section 6a for how the sign is recovered -- the log
   # prints |gap| only.
   "drug_price_start":p0,
+  # See the block at the top of this script. Not a knob: 0.1 is the setting the
+  # one arm 3 run that passed its own acceptance test was made at.
+  "drug_market_adjuster":adj,
 }
 if piv: common["probability_of_voucher_benchmark_used"]=piv
 arms = {
