@@ -53119,19 +53119,26 @@
                 distribution_stationary(1)%vector_transition_real&
                     (1-solve_transition_dynamics,:,:,:,:,:,1)=0
 
-                dist_prev_1(1)%vector_transition_real&
-                    (1-solve_transition_dynamics,:,:,:,:,:,voucher_gf)=&
-                    dist_prev_1(1)%vector_transition_real&
-                    (1-solve_transition_dynamics,:,:,:,:,:,1)
-                dist_prev_1(1)%vector_transition_real&
-                    (1-solve_transition_dynamics,:,:,:,:,:,1)=0
-
-                dist_prev_2(1)%vector_transition_real&
-                    (1-solve_transition_dynamics,:,:,:,:,:,voucher_gf)=&
-                    dist_prev_2(1)%vector_transition_real&
-                    (1-solve_transition_dynamics,:,:,:,:,:,1)
-                dist_prev_2(1)%vector_transition_real&
-                    (1-solve_transition_dynamics,:,:,:,:,:,1)=0
+                ! dist_prev_1 AND dist_prev_2 ARE DELIBERATELY NOT MAPPED.
+                !
+                ! They are not the initial condition. Their own declaration
+                ! says what they are: "two previous sweeps of the distribution,
+                ! kept for the Aitken step" -- iteration history, not state.
+                !
+                ! Mapping them was an OVER-CORRECTION of the previous bug, and
+                ! it showed up immediately: the T=5 run produced a one-period
+                ! spike at t=1 -- b 0.1127 against 0.0471 at t=2, h_1 0.01153
+                ! against 0.00731 -- that vanished by t=2 and never returned. A
+                ! policy effect does not appear for one period and disappear.
+                ! Injecting grandfathered mass into the Aitken history makes the
+                ! FIRST period's distribution converge against a state the
+                ! iteration never produced, and the buffers then refill from
+                ! real sweeps and the transient washes out.
+                !
+                ! The rule the two bugs bracket: map every array that HOLDS THE
+                ! INITIAL CONDITION, and no array that holds ITERATION STATE.
+                ! distribution_guess and distribution_stationary are the former;
+                ! these two are the latter.
 
                 write(*,*) "TRANSITION GF: stationary slot-0 mass before/after=",&
                     sum(distribution_stationary(1)%vector_transition_real&
