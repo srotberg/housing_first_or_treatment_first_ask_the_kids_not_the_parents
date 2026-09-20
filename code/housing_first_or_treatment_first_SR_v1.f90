@@ -5089,6 +5089,24 @@
         ! which is not the derivative it thinks it is measuring.
         real(8), dimension(1-solve_transition_dynamics:transition_length) :: price_of_addictive_good_path=1
         real(8), dimension(1-solve_transition_dynamics:transition_length) :: previous_price_of_addictive_good_path=0
+
+        ! THE SECANT'S OTHER TWO PIECES OF STATE, AND WHY THEY ARE PATHS.
+        !
+        ! previous_price_of_addictive_good was carried per period from the
+        ! start, and its comment claimed the secant therefore differenced one
+        ! period across LOOPS. It did not. previous_drug_price_gap and
+        ! have_drug_price_secant are module scalars, last written by the
+        ! PREVIOUS PERIOD of the SAME loop, so the slope had an across-loops
+        ! numerator over an across-periods denominator -- two different
+        ! experiments divided by one another.
+        !
+        ! It was survivable rather than fatal: loop 0 seeds previous == current,
+        ! which the 1e-10 guard turns into a damped step, and from loop 1 the
+        ! trust region and the half-a-per-cent cap bound the error to picking a
+        ! wrong direction within half a per cent. It is still wrong, and the fix
+        ! is to give the other two the same per-period treatment.
+        real(8), dimension(1-solve_transition_dynamics:transition_length) :: previous_drug_price_gap_path=0
+        integer, dimension(1-solve_transition_dynamics:transition_length) :: have_drug_price_secant_path=0
         real(8) :: largest_distance_drug_market=1
         ! PI_V ALONG THE PATH. In the arms pi_v is what clears the government
         ! budget; the transition measured distance_govt_budget, put its maximum
@@ -52750,6 +52768,9 @@
         ! interpolated off the benchmark's saved welfare curve rather than
         ! converted by hand from utils.
         real(8) :: cev_this_period=0
+        ! Reading the measured drug price path seed.
+        integer :: seed_iostat_1=0,seed_count_1=0
+        real(8) :: seed_value_1=0
                 
         loop_count=0
         
@@ -53146,6 +53167,76 @@
 
         end do
 
+        ! AND OVERRIDE THE RAMP WITH A MEASURED PATH WHERE ONE IS SUPPLIED.
+        !
+        ! THE RAMP WAS THE WRONG SHAPE AND IT COST A WHOLE LOOP TO FIND OUT.
+        ! Its first full loop at T=30 walked the FACED price 0.98929 -> 0.83008
+        ! while the market's IMPLIED price sat at 0.777 -> 0.807 the entire way,
+        ! never once crossing it. distance_drug_market ran 0.19-0.22 against a
+        ! stopping rule of 5e-3, in every one of the 29 periods.
+        !
+        ! That is not slow convergence, it is a seed in the wrong place, and the
+        ! half-a-per-cent-a-loop cap on the price means the seed is most of the
+        ! answer: from 0.994 to 0.78 is twenty-one per cent, so about forty
+        ! loops, and a transition loop is not four minutes like a steady state's
+        ! but closer to three hours.
+        !
+        ! WHAT THE SHAPE ACTUALLY IS. The implied price is nearly FLAT along the
+        ! path and sits BELOW the terminal steady state's 0.83349, because drug
+        ! quantity along the path (0.342-0.360) is below the terminal steady
+        ! state's 0.377 -- the conditionality bites immediately while the
+        ! distribution has not yet adjusted. So the price undershoots and
+        ! recovers, which is the author's own reading of 19 September: *"It
+        ! drops and rises slowly"*. The ramp asserted the opposite.
+        !
+        ! WHAT IS SEEDED. The file holds the supply curve evaluated at the
+        ! previous run's allocation, period by period -- a MEASURED quantity,
+        ! not an elasticity and not a shape I chose. The terminal entry is
+        ! pinned to the terminal steady state's cleared price, which is the
+        ! transition's boundary condition and is not the previous run's to set.
+        !
+        ! One undamped fixed-point step is safe here, and that is measured too:
+        ! over a sixteen per cent walk in the faced price the implied price
+        ! moved about one per cent, so the map's slope is small and it is a
+        ! contraction. It is a SEED for a fresh run in any case, not a step
+        ! taken inside the cap.
+        !
+        ! Absent or short file, the ramp stands and the run says so.
+        open(unit=97,file='drug_price_path_seed.txt',status='old',action='read',iostat=seed_iostat_1)
+
+        if (seed_iostat_1==0) then
+
+            seed_count_1=0
+
+            do time_index=1,max(transition_length-1,1)
+
+                read(97,*,iostat=seed_iostat_1) seed_value_1
+
+                if (seed_iostat_1/=0) exit
+
+                price_of_addictive_good_path(time_index)=seed_value_1
+                seed_count_1=seed_count_1+1
+
+            end do
+
+            close(97)
+
+            write(*,*) "DRUG PRICE PATH seeded FROM FILE, entries read=", seed_count_1, &
+                " of", max(transition_length-1,1)
+
+            if (seed_count_1<max(transition_length-1,1)) then
+
+                write(*,*) "  SHORT FILE. periods", seed_count_1+1, "to", &
+                    max(transition_length-1,1), "keep the ramp."
+
+            end if
+
+        else
+
+            write(*,*) "DRUG PRICE PATH: no drug_price_path_seed.txt, using the linear ramp."
+
+        end if
+
         previous_price_of_addictive_good_path=price_of_addictive_good_path
 
         ! PI_V's path starts flat at the value the handover supplied, which is
@@ -53377,6 +53468,23 @@
                     " youngest=", average_welfare_of_youngest_cohort(time_index), &
                     " benchmark_youngest=", average_welfare_of_youngest_cohort_calibrated
 
+                ! THE THREE MOMENTS THE WELFARE PATH HAS TO BE ATTRIBUTED TO.
+                !
+                ! They were computed every period and never printed, so the
+                ! first loop's welfare path arrived with no way to say whether
+                ! a fall came from homelessness, from continued use, or from
+                ! the price -- and the author's question on 19 September was
+                ! exactly that. Reconstructing h from mass_homeless over
+                ! mass_all works but is a different base from the h_1 the
+                ! calibration targets, so the two cannot be compared directly.
+                ! These are the calibration's own three, on its own bases.
+                write(*,*) "TRANSITION MECH t=", time_index, &
+                    " h_1=", model_fraction_homeless(time_index), &
+                    " b=", model_total_drug_users(time_index), &
+                    " lambda_d=", model_fraction_addicted(time_index), &
+                    " p_drug=", price_of_addictive_good_path(time_index), &
+                    " pi_v=", probability_of_voucher_path(time_index)
+
                 write(*,*) "TRANSITION WELFARE DIAG t=", time_index, &
                     " current_beta_type=", current_beta_type, &
                     " number_of_beta_types=", number_of_beta_types, &
@@ -53428,10 +53536,14 @@
                 ! so the secant inside clear_drug_market compares this period
                 ! across LOOPS rather than across periods within a loop.
                 previous_price_of_addictive_good=previous_price_of_addictive_good_path(time_index)
+                previous_drug_price_gap=previous_drug_price_gap_path(time_index)
+                have_drug_price_secant=have_drug_price_secant_path(time_index)
 
                 call clear_drug_market(time_index)
 
                 previous_price_of_addictive_good_path(time_index)=previous_price_of_addictive_good
+                previous_drug_price_gap_path(time_index)=previous_drug_price_gap
+                have_drug_price_secant_path(time_index)=have_drug_price_secant
                 price_of_addictive_good_path(time_index)=price_of_addictive_good
 
                 if (distance_drug_market>largest_distance_drug_market) then

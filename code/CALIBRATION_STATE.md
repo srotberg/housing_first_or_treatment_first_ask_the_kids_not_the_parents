@@ -1,3 +1,115 @@
+# THE TRANSITION'S FIRST COMPLETE LOOP, AND WHY ITS SEED WAS THE ANSWER
+
+20 September. T=30, benchmark -> the converged arm 3 (Treatment First), one
+complete loop from the LINEAR RAMP seed. It converged on nothing and was never
+going to, and the reason is worth keeping.
+
+## THE PRICE NEVER CROSSED THE PRICE
+
+      t   with_child      CEV     p_faced  p_implied        V   homeless   vs bench
+      1    788.1511    -8.663%   0.98929   0.77695  0.34204   1.0342%  +19.2%
+      2    787.2763   -10.819%   0.98357   0.78658  0.34825   1.4325%  +65.0%
+      3    786.9589   -11.585%   0.97786   0.79067  0.35089   1.5018%  +73.0%
+      4    787.0787   -11.297%   0.97215   0.78723  0.34867   1.5289%  +76.1%
+      5    787.2190   -10.958%   0.96643   0.78313  0.34602   1.5289%  +76.2%
+      6    787.3495   -10.641%   0.96072   0.77909  0.34341   1.5254%  +75.7%
+      7    787.4558   -10.381%   0.95501   0.77827  0.34289   1.5184%  +74.9%
+      8    787.5161   -10.234%   0.94930   0.80298  0.35890   1.5095%  +73.9%
+      9    787.6368    -9.938%   0.94358   0.79883  0.35619   1.4991%  +72.7%
+     10    787.7424    -9.678%   0.93787   0.79400  0.35305   1.4887%  +71.5%
+     11    787.8331    -9.454%   0.93216   0.79092  0.35106   1.4778%  +70.3%
+     12    787.9270    -9.222%   0.92644   0.78690  0.34846   1.4669%  +69.0%
+     13    788.0804    -8.840%   0.92073   0.78020  0.34413   1.4570%  +67.9%
+     14    788.1609    -8.638%   0.91502   0.78111  0.34472   1.4474%  +66.8%
+     15    788.2054    -8.527%   0.90930   0.80443  0.35984   1.4387%  +65.8%
+     16    788.3105    -8.262%   0.90359   0.79973  0.35678   1.4301%  +64.8%
+     17    788.4216    -7.982%   0.89788   0.79495  0.35367   1.4218%  +63.8%
+     18    788.5375    -7.687%   0.89217   0.79544  0.35399   1.4161%  +63.2%
+     19    788.6748    -7.337%   0.88645   0.79082  0.35099   1.4098%  +62.4%
+     20    788.7979    -7.021%   0.88074   0.80725  0.36169   1.4025%  +61.6%
+     21    788.9585    -6.607%   0.87503   0.80507  0.36026   1.3998%  +61.3%
+     22    789.1471    -6.117%   0.86931   0.80085  0.35751   1.3973%  +61.0%
+     23    789.3143    -5.680%   0.86360   0.79667  0.35479   1.3889%  +60.0%
+     24    789.4918    -5.213%   0.85789   0.79327  0.35258   1.3911%  +60.3%
+     25    789.7314    -4.578%   0.85217   0.78445  0.34687   1.3897%  +60.1%
+     26    790.0117    -3.828%   0.84646   0.79304  0.35243   1.3843%  +59.5%
+     27    790.2574    -3.164%   0.84075   0.79644  0.35464   1.3830%  +59.3%
+     28    790.4493    -2.640%   0.83504   0.79338  0.35265   1.3923%  +60.4%
+     29    790.6663    -2.043%   0.83008   0.79938  0.35655   1.4038%  +61.7%
+
+    bench   791.3946             1.00000   1.00000   ~0.485   0.8680%
+    TF ss   792.5130   +3.249%   0.83349   0.83349  0.37700   0.8792%
+
+The FACED price walks the ramp 0.98929 -> 0.83008. The IMPLIED price -- the
+supply curve read at the model's own allocation -- sits at 0.777 to 0.807 the
+whole way and **never crosses it in any of the 29 periods**.
+`distance_drug_market` ran 0.192 to 0.217 against a stopping rule of 5e-3.
+
+## WHY THE SEED IS MOST OF THE ANSWER
+
+The drug price carries a HARD CAP OF HALF A PER CENT A LOOP, on the author's
+instruction of 8 September. That cap was set for the steady-state solver, where
+a loop is about four minutes. **A transition loop is about three hours.** From
+0.994 to 0.78 is twenty-one per cent, so roughly forty loops -- five days of
+walking a seed to a place the first loop already knew.
+
+The cap is not the thing to change. The seed is.
+
+## THE SHAPE IS AN UNDERSHOOT, WHICH IS WHAT THE AUTHOR SAID
+
+Implied price is nearly flat and sits BELOW the terminal steady state's
+0.83349, because quantity along the path (0.342-0.360) is below the terminal
+steady state's 0.377: the conditionality bites at once while the distribution
+has not yet adjusted. So the price DROPS BELOW the long-run level and RISES
+back to it -- the author, 19 September: *"It's not exponential decay I think...
+It drops and rises slowly."* The ramp asserted a monotone fall from 1.0 and was
+the wrong shape, not merely the wrong level.
+
+The reseed is the supply curve at the previous allocation, period by period, a
+MEASURED quantity rather than an elasticity or a shape chosen by hand, with the
+terminal entry pinned to the boundary condition. One undamped fixed-point step
+is defensible here and that is measured too: over a sixteen per cent walk in
+the faced price the implied price moved about one per cent, so the map is a
+contraction.
+
+## THE OTHER THING THIS LOOP SAYS: T=30 LOOKS TOO SHORT
+
+At t=29 the economy is nowhere near the terminal steady state it is being
+solved against. Homelessness is 1.40 per cent against the steady state's 0.879,
+sixty per cent above the benchmark where the steady state is 1.3 per cent above
+it. Part of that is the bad price path contaminating the tail, and the reseeded
+run is the test. If the tail is still far from the steady state with the price
+right, the terminal condition is being imposed on a period that has not
+converged, and the answer is T=75 -- which fits memory at about 10.5 GB of 15
+since the windowing.
+
+## TWO THINGS FOUND WHILE CHECKING THIS
+
+**The secant's state was only one-third carried per period.**
+`previous_price_of_addictive_good` was a path; `previous_drug_price_gap` and
+`have_drug_price_secant` were left as module scalars, so from loop 1 the slope
+had an across-loops numerator over an across-periods denominator. Bounded by
+the trust region and the cap to a wrong direction within half a per cent, and
+invisible at loop 0 because the seed makes previous == current. Fixed.
+
+**The committed handover seed was stale.** It still carried the SUPERSEDED
+22-loop arm 3: `probability_of_voucher_benchmark_used 0.070288` and
+`drug_price_start 0.8422`, against the converged 0.076347 and 0.83349. The
+running copy was right -- the binary deletes it on startup, and it was
+reconstructed from the log's own HANDOVER lines and the two values corrected.
+Had the container restarted again, the restore would have quietly run a
+different experiment.
+
+## STILL OPEN
+
+- No loop has converged. Nothing here is a result.
+- The windowing has still not been compared bit-for-bit against an unwindowed
+  run. T=5 proved it works, not that it gives identical numbers.
+- The child's inherited penalty must key on the period the parent DIES in.
+  Read, not verified.
+- Arms 1 and 2 were run under the loose stopping rules and have not been
+  re-checked.
+
 ## THE THREE LIVE RULES DO NOT PIN THE EQUILIBRIUM. TWO ARM 3 RUNS, CEV 1.65% vs 3.29%. 19 September
 
 **Every counterfactual number reported before this entry carries an uncertainty
