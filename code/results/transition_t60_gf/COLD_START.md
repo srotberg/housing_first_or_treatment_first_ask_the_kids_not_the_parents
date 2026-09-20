@@ -85,3 +85,29 @@ must too.
 
 Keep a copy of the handover beside the run: the binary deletes the original with
 `close(79,status='delete')`.
+
+## 4. ON A COLD START THE COMMITTED `newborn_parent_share.dat` IS DEAD
+
+Measured, not read off the source: neither `newborn_parent_share resumed:` nor
+`no banked newborn parent shares` appears anywhere in the benchmark's log, so
+that read never executed.
+
+The reason is that the read is NESTED inside the `calibration_state.dat` reader's
+own `if (state_ios_1==0)` chain (unit 72). No state file, no read -- even though
+`newborn_parent_share.dat` has its own unit and its own `iostat`, and even though
+it is deliberately un-gitignored precisely so a rebuilt container can have it.
+The `.gitignore`'s comment says two container rebuilds cost a loop each before
+that exception was added; on a COLD start the exception buys nothing, because the
+only path that opens the file is the resume path.
+
+So a cold run's first distribution is built with every parent clean and housed --
+the print confirms it, `newborn_parent_share (clean housed, ...) = 1.0 0 0 0` --
+and the intergenerational channel is switched off until the aggregation rebuilds
+it. **That costs a block, not correctness**, and the frozen stopping test is a
+move BETWEEN CONSECUTIVE BLOCKS over b, lambda_d, h_1 and average labour income,
+so a block-1 transient cannot satisfy it and cannot be mistaken for convergence.
+
+It is written down rather than fixed: the model is frozen, and this is a block of
+wall clock, not a wrong number. What it does mean is that **copying
+`newborn_parent_share.dat` into a cold run directory is a no-op** and should not
+be counted as having warm started anything.
