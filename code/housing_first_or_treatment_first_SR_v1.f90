@@ -5082,6 +5082,12 @@
         ! 0.43 and the market clears in a handful of loops. The convergence
         ! difficulty and the failed elasticity validation are one defect.
         real(8) :: stopping_rule_drug_market=5*10.d0**(-3)
+        ! Multiplies the four transition stopping rules and NOTHING else. Both
+        ! operands are literals, so this blend cannot carry an uninitialised
+        ! value the way the median_income cutoff did -- 0*NaN=NaN was today's
+        ! bug and the pattern is worth distrusting on sight.
+        real(8), parameter :: transition_tolerance_factor=&
+            solve_transition_dynamics*2.d0+(1-solve_transition_dynamics)*1.d0
         ! 0.5 -> 0.2, 19 September, because 0.5 is ABOVE the stability
         ! threshold at this model's demand elasticity and the price iteration
         ! diverges.
@@ -53865,10 +53871,38 @@
         ! VACUOUS series they are in the arms -- identically zero every loop --
         ! so before this line the do-while was testing the government budget
         ! and nothing else.
-        do while ((largest_housing_market_distance>stopping_rule_housing_market) .OR. &
-            (largest_rental_market_distance>stopping_rule_rental_market) .OR. &
-            (largest_distance_govt_budget>stopping_rule_govt_budget) .OR. &
-            (largest_distance_drug_market>stopping_rule_drug_market) .OR. (loop_count<1))
+            ! THE TRANSITION CLEARS TO A LOOSER TOLERANCE THAN A STEADY STATE,
+            ! on the author's instruction, 20 September: "the convergence rule
+            ! can be less tight than the long run... it doesn't have to be 100
+            ! per cent, it can be a bit looser".
+            !
+            ! THE REASON IS IN THE WORD "largest". Every one of these four
+            ! distances is a MAXIMUM OVER ALL PERIODS, so the same numeric
+            ! tolerance is a far stricter object here than in a steady state: at
+            ! T=30 the drug market's 5e-3 demands that all twenty-nine periods
+            ! clear to 5e-3 SIMULTANEOUSLY, where the benchmark asks it of one
+            ! economy. The number looks the same and is not.
+            !
+            ! A factor of two, applied ONLY when solve_transition_dynamics is 1,
+            ! so the steady state and the calibration keep exactly the rules the
+            ! archive was produced under. At 0 the factor is 1 and this line is
+            ! the old line.
+            !
+            ! WHAT THE TOLERANCE IS REALLY FOR. These distances are a proxy; the
+            ! object the transition exists to produce is the welfare path. The
+            ! honest test of whether the tolerance is tight enough is whether
+            ! average_welfare_with_childhood has stopped moving between loops --
+            ! it is printed every loop at every period, so it costs nothing to
+            ! watch, and if it is stable to four digits while a distance is
+            ! still drifting, the distance is measuring iteration noise.
+            do while ((largest_housing_market_distance>&
+                transition_tolerance_factor*stopping_rule_housing_market) .OR. &
+            (largest_rental_market_distance>&
+                transition_tolerance_factor*stopping_rule_rental_market) .OR. &
+            (largest_distance_govt_budget>&
+                transition_tolerance_factor*stopping_rule_govt_budget) .OR. &
+            (largest_distance_drug_market>&
+                transition_tolerance_factor*stopping_rule_drug_market) .OR. (loop_count<1))
             
             write(*,*) "solving value functions"
                         
