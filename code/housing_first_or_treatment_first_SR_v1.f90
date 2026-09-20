@@ -629,6 +629,31 @@
             (1+voucher_exclusion_states+grandfather_voucher_states)
         integer, parameter :: voucher_excl=min(2,voucher_state_max)
         integer, parameter :: voucher_gf=voucher_state_max
+
+        ! THE SHAPE THE BENCHMARK .dat FILES WERE ACTUALLY WRITTEN WITH.
+        !
+        ! Every saved array is a BARE LIST OF NUMBERS with no record of the
+        ! state space that produced it. The benchmark and the arms were solved
+        ! with three voucher states, so a four-state build reading them whole
+        ! runs off the end -- which is how grandfathering first failed, with
+        ! "End of file" on distribution_stationary1baseline_benchmark.dat.
+        !
+        ! It failed LOUDLY only because the new array is BIGGER. Had the change
+        ! made arrays smaller the read would have succeeded, taken a prefix of
+        ! another layout, and produced plausible nonsense -- which is exactly
+        ! what happened once to calibration_distribution at a different asset
+        ! grid. TRANSITION_LESSONS.md section 7 records the class.
+        !
+        ! The voucher index is the LAST dimension and Fortran is column-major,
+        ! so reading the 0:voucher_state_max_benchmark slice consumes precisely
+        ! the three-state file in the order it was written. The grandfathered
+        ! slab is left at zero, which is correct: nobody is grandfathered before
+        ! the reform, and the mapping into that state happens afterwards.
+        !
+        ! With grandfathering OFF this equals voucher_state_max, the slice is
+        ! the whole array, and nothing changes -- which is the control.
+        integer, parameter :: voucher_state_max_benchmark=&
+            include_vouchers*(1+voucher_exclusion_states)
         real(8), parameter :: voucher_exclusion_release=1.d0/3.d0
         integer, parameter :: use_cobb_douglas=0
         integer, parameter :: use_cobb_douglas_2=0
@@ -22292,58 +22317,69 @@
 
             open(unit=10,file="distribution_stationary"//trim(string_used)//trim(vf_simulation)//".dat", &
                  action='read')
-                read(10,'(F30.28)') distribution_stationary_benchmark(i)%vector_real(:,:,:,:,:,:)
+                read(10,'(F30.28)') distribution_stationary_benchmark(i)%&
+                    vector_real(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(10)
 
             open(unit=10,file="value_function"//trim(string_used)//trim(vf_simulation)//".dat", &
                  action='read')
-                read(10,'(F35.13)') value_function_benchmark(i)%vector_real(:,:,:,:,:,:)
+                read(10,'(F35.13)') value_function_benchmark(i)%&
+                    vector_real(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(10)
 
             open(unit=10,file="policy_function_frac_spent_on_addiction"//&
                 trim(string_used)//trim(vf_simulation)//".dat", &
                  action='read')
-                read(10,'(F25.20)') policy_function_frac_spent_on_addiction_benchmark(i)%vector_real(:,:,:,:,:,:)
+                read(10,'(F25.20)') policy_function_frac_spent_on_addiction_benchmark(i)%&
+                    vector_real(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(10)
 
             open(unit=10,file="policy_function_total_consumption"//trim(string_used)//trim(vf_simulation)//".dat", &
                  action='read')
-                read(10,'(F26.20)') policy_function_total_consumption_benchmark(i)%vector_real(:,:,:,:,:,:)
+                read(10,'(F26.20)') policy_function_total_consumption_benchmark(i)%&
+                    vector_real(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(10)
 
             open(unit=10,file="policy_function_labor_supply"//trim(string_used)//trim(vf_simulation)//".dat", &
                  action='read')
-                read(10,'(F22.20)') policy_function_labor_supply_benchmark(i)%vector_real(:,:,:,:,:,:)
+                read(10,'(F22.20)') policy_function_labor_supply_benchmark(i)%&
+                    vector_real(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(10)
 
             open(unit=10,file="policy_function_housing_status_index"//trim(string_used)//trim(vf_simulation)//".dat", &
                  action='read')
-                read(10,'(I2)') policy_function_housing_status_index_benchmark(i)%vector_integer(:,:,:,:,:,:)
+                read(10,'(I2)') policy_function_housing_status_index_benchmark(i)%&
+                    vector_integer(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(10)
 
             open(unit=10,file="policy_function_years_of_amortization_index"//&
                 trim(string_used)//trim(vf_simulation)//".dat", action='read')
-                read(10,'(I2)') policy_function_years_of_amortization_index_benchmark(i)%vector_integer(:,:,:,:,:,:)
+                read(10,'(I2)') policy_function_years_of_amortization_index_benchmark(i)%&
+                    vector_integer(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(10)
 
             open(unit=10,file="policy_function_addiction"//trim(string_used)//trim(vf_simulation)//".dat", &
                  action='read')
-                read(10,'(I1)') policy_function_addiction_benchmark(i)%vector_integer(:,:,:,:,:,:)
+                read(10,'(I1)') policy_function_addiction_benchmark(i)%&
+                    vector_integer(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(10)
 
             open(unit=10,file="policy_function_financial_index"//trim(string_used)//trim(vf_simulation)//".dat", &
                  action='read')
-                read(10,'(I3)') policy_function_financial_index_benchmark(i)%vector_integer(:,:,:,:,:,:)
+                read(10,'(I3)') policy_function_financial_index_benchmark(i)%&
+                    vector_integer(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(10)
 
             open(unit=10,file="fin_index_frac_mov_to_optimal"//trim(string_used)//trim(vf_simulation)//".dat", &
                  action='read')
-                read(10,'(I3)') fin_index_frac_mov_to_optimal_benchmark(i)%vector_integer(:,:,:,:,:,:)
+                read(10,'(I3)') fin_index_frac_mov_to_optimal_benchmark(i)%&
+                    vector_integer(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(10)
 
             open(unit=10,file="frac_mov_optimal_1"//trim(string_used)//trim(vf_simulation)//".dat", &
                  action='read')
-                read(10,'(F22.20)') frac_mov_optimal_1_benchmark(i)%vector_real(:,:,:,:,:,:)
+                read(10,'(F22.20)') frac_mov_optimal_1_benchmark(i)%&
+                    vector_real(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(10)
 
         end do
@@ -24214,10 +24250,12 @@
                 write(string_used,'(i1)') i
 
                 open(unit=9,file="value_function"//trim(string_used)//trim(benchmark_simulation)//".dat",action='read')
-                    read(9,'(F35.13)') value_function_benchmark(i)%vector_real(:,:,:,:,:,:)
+                    read(9,'(F35.13)') value_function_benchmark(i)%&
+                    vector_real(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
                 close(9)
                 open(unit=10,file="distribution_stationary"//trim(string_used)//trim(benchmark_simulation)//".dat",action='read')
-                    read(10,'(F30.28)') distribution_stationary_benchmark(i)%vector_real(:,:,:,:,:,:)
+                    read(10,'(F30.28)') distribution_stationary_benchmark(i)%&
+                    vector_real(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
                 close(10)
 
             end do
@@ -36231,7 +36269,12 @@
         if (is_counterfactual==1) then
         
             open(unit=23,file="voucher_probabilities_benchmark"//trim(benchmark_simulation)//".dat",action='read')
-                read(23,'((F35.13))') voucher_probabilities_benchmark
+                ! SUB-BLOCK, not a trailing slice: the first TWO dimensions
+                ! are voucher states here, so the three-state file fills
+                ! (0:2,0:2,:,:) and the grandfathered row and column stay at
+                ! zero until build_voucher_probabilities sets them absorbing.
+                read(23,'((F35.13))') voucher_probabilities_benchmark&
+                    (0:voucher_state_max_benchmark,0:voucher_state_max_benchmark,:,:)
             close(23)
             
         else
@@ -52833,12 +52876,14 @@
             write(string_used,'(i1)') i
                                 
             open(unit=12,file="distribution_stationary"//trim(string_used)//trim(benchmark_simulation)//".dat",action='read')
-                read(12,'(F30.28)') distribution_to_fetch(i)%vector_real(:,:,:,:,:,:)
+                read(12,'(F30.28)') distribution_to_fetch(i)%&
+                    vector_real(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(12)
                            
             open(unit=12,file="policy_function_space_lived_in_size"&
                 //trim(string_used)//trim(benchmark_simulation)//".dat",action='read')
-                read(12,'(F25.20)') policy_function_space_lived_in_size_to_fetch(i)%vector_real(:,:,:,:,:,:)
+                read(12,'(F25.20)') policy_function_space_lived_in_size_to_fetch(i)%&
+                    vector_real(:,:,:,:,:,0:(1-(i-1))*voucher_state_max_benchmark)
             close(12)
                     
         end do
@@ -52848,8 +52893,36 @@
             write(string_used,'(i1)') i
                            
             open(unit=1,file="value_function"//trim(string_used)//trim(long_run_simulation)//".dat",action='read')
-                read(1,'(F35.13)') value_function(i)%vector_transition_real(transition_length,:,:,:,:,:,:)
+                read(1,'(F35.13)') value_function(i)%&
+                    vector_transition_real(transition_length,:,:,:,:,:,&
+                    0:(1-(i-1))*voucher_state_max_benchmark)
             close(1)
+
+            ! WHAT A GRANDFATHERED HOUSEHOLD IS WORTH AT THE TERMINAL DATE.
+            !
+            ! The terminal steady state has no grandfathered mass -- by T>=60
+            ! the exempt cohort is dead -- so the file carries no such slab and
+            ! the slot would otherwise stay ZERO. At T>=60 nothing ever reads
+            ! it. At a SHORT horizon the cohort is still alive at T and would
+            ! read a zero continuation, which would make exemption look
+            ! catastrophic and the test worthless.
+            !
+            ! Filled from the ORDINARY HOLDER, slot 1. That is the right limit:
+            ! once conditionality has emptied the using population, being
+            ! exempt from it is worth almost nothing, so the two coincide. It
+            ! is an explicit modelling choice for short horizons and it is
+            ! stated rather than left as an implicit zero.
+            if ((grandfather_voucher_states==1) .AND. (i==1)) then
+
+                value_function(i)%vector_transition_real&
+                    (transition_length,:,:,:,:,:,voucher_gf)=&
+                    value_function(i)%vector_transition_real&
+                    (transition_length,:,:,:,:,:,1)
+
+                write(*,*) "TRANSITION GF: terminal value for the grandfathered state &
+                    &filled from the ordinary holder"
+
+            end if
                             
             value_function_guess(i)%vector_youngest_real(:,:,:,:,:)=&
                 value_function(i)%vector_transition_real(transition_length,1,:,:,:,:,:)
