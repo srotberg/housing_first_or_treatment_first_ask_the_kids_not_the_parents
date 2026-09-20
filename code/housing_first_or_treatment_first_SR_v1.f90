@@ -53091,12 +53091,53 @@
                     sum(distribution_guess(1)%vector_transition_real&
                     (1-solve_transition_dynamics,:,:,:,:,:,1))
 
+                ! ALL FOUR ARRAYS, not distribution_guess alone.
+                !
+                ! The first attempt moved the holders in distribution_guess
+                ! only, and the T=5 result came back with welfare and h_1
+                ! BIT-IDENTICAL to arm 3 while b and lambda_d moved 7 per cent
+                ! -- which no pair of distinct policies can produce.
+                ! calculate_childhood_utility reads distribution_stationary at
+                ! time_period-solve_transition_dynamics, which is slot 0 at
+                ! t=1, so the childhood half of the welfare measure never saw
+                ! the reform at all.
+                !
+                ! The initial condition has to be mapped in EVERY array that
+                ! carries it, or the run is two different economies depending
+                ! on which one a routine happens to read.
                 distribution_guess(1)%vector_transition_real&
                     (1-solve_transition_dynamics,:,:,:,:,:,voucher_gf)=&
                     distribution_guess(1)%vector_transition_real&
                     (1-solve_transition_dynamics,:,:,:,:,:,1)
                 distribution_guess(1)%vector_transition_real&
                     (1-solve_transition_dynamics,:,:,:,:,:,1)=0
+
+                distribution_stationary(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,voucher_gf)=&
+                    distribution_stationary(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,1)
+                distribution_stationary(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,1)=0
+
+                dist_prev_1(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,voucher_gf)=&
+                    dist_prev_1(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,1)
+                dist_prev_1(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,1)=0
+
+                dist_prev_2(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,voucher_gf)=&
+                    dist_prev_2(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,1)
+                dist_prev_2(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,1)=0
+
+                write(*,*) "TRANSITION GF: stationary slot-0 mass before/after=",&
+                    sum(distribution_stationary(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,1)),&
+                    sum(distribution_stationary(1)%vector_transition_real&
+                    (1-solve_transition_dynamics,:,:,:,:,:,voucher_gf))
 
                 write(*,*) "TRANSITION GF: grandfathered=",&
                     sum(distribution_guess(1)%vector_transition_real&
