@@ -9218,7 +9218,46 @@
         real(8), dimension(transition_length,0:2,number_of_wide_grids_income_to_avg_income_cdf) :: &
             mass_at_profile_income_to_avg_income_wide_1
                         
-        real(8), dimension(transition_length) :: median_income
+        ! INITIALISED BECAUSE ZERO TIMES AN UNINITIALISED VALUE IS NOT ZERO.
+        !
+        ! The voucher eligibility cutoff is written in ten places as
+        !
+        !     threshold_income_vouchers*((1-is_counterfactual)*median_income(time_period)
+        !                                + is_counterfactual*median_income_calibrated)
+        !
+        ! In a counterfactual is_counterfactual is 1, so the first term is
+        ! multiplied by ZERO and the author's rule -- the cutoff is fixed to the
+        ! BENCHMARK median -- is what the line means. But this array had no
+        ! initialiser and nothing assigns its interior periods in a transition,
+        ! so median_income(t) was uninitialised memory for t>=2, and
+        ! 0 * NaN = NaN. The whole cutoff came back NaN, every
+        ! "income < cutoff" test is FALSE against a NaN, and every household was
+        ! judged ineligible.
+        !
+        ! MEASURED at T=3, over renters holding a voucher:
+        !
+        !   t=1  threshold 0.43155613898950002  passing 3.2052  eligibles 11.682
+        !   t=2  threshold NaN                  passing 0.0000  eligibles  0.000
+        !
+        ! with mean income 0.3273 at t=2, far UNDER the 0.4316 cutoff -- all
+        ! 3.5204 of them should have qualified. t=1 worked only because
+        ! median_income(1) is assigned at 46562.
+        !
+        ! That is why govt_spending_on_housing_vouchers_2 read 0.6394 at t=1 and
+        ! exactly 0.0000000000000000 from t=2, and why the transition reported a
+        ! phantom surplus of 0.69 -- the benchmark's entire voucher budget.
+        !
+        ! WHY A ZERO INITIALISER IS THE WHOLE FIX. It makes the dead term
+        ! 0*0 = 0 at all ten sites at once, which is what the multiply-by-zero
+        ! was always supposed to mean, and it cannot change a non-counterfactual
+        ! run because median_income(1) is assigned before any use there.
+        !
+        ! THE PATTERN IS THE REAL LESSON. Selecting between two values by
+        ! multiplying one by zero does not neutralise it in IEEE arithmetic; it
+        ! propagates whatever the dead branch holds. A branch would have been
+        ! safe. Ten sites in this file still use the multiply, and they are safe
+        ! only because of this initialiser.
+        real(8), dimension(transition_length) :: median_income=0
         real(8), dimension(transition_length,2) :: percentiles_homeless_income
             
         real(8), dimension(transition_length,101) :: LTV_cdf,LTV_ratios
