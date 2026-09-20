@@ -242,3 +242,12 @@ code/tr/
 # tr75/ holds the windowed build used to validate the T=75 memory fix.
 code/tr75/
 code/tr[0-9]*/
+# The benchmark's own run directory and build output, on the same rule as the
+# arm directories above. bm/ holds the cold-start benchmark solve: its binary,
+# its handover (the seed for it is committed at code/seeds/) and the ~2.2 GB of
+# *baseline_benchmark.* files the arm and the transition read. bmbuild/ is the
+# three benchmark binaries and the compiler's .err files, reproduced in 100
+# seconds. Neither can go in git and the largest single file is 295 MB against
+# GitHub's 100 MB limit.
+code/bm/
+code/bmbuild/
