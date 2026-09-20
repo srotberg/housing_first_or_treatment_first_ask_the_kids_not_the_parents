@@ -31887,11 +31887,28 @@
             ! It would never crash. The comment above said so about the third
             ! state, and it was right about the fourth.
             !
-            ! The state is ABSORBING, so the range is voucher_gf to voucher_gf:
-            ! the only reachable future state is itself, which is what
-            ! build_voucher_probabilities sets. has_opportunity=1 because the
-            ! household does hold a voucher; the row is 1 for both values of the
-            ! flag in any case.
+            ! THE STATE IS ABSORBING ONLY WHILE THE HOUSEHOLD STAYS ELIGIBLE,
+            ! and calling it absorbing full stop -- as an earlier version of this
+            ! comment did -- misdescribes it. The author, 20 September: they
+            ! "don't leave that state until their income goes up above the
+            ! eligibility or die".
+            !
+            ! Both exits are already here rather than in the row. This branch
+            ! sits INSIDE the income gate above, so a grandfathered household
+            ! whose income rises past threshold_income_vouchers*median_income_calibrated
+            ! falls out of the whole block, takes the default first=second=0 and
+            ! moves to voucher state 0. Death is the survival probability. What
+            ! build_voucher_probabilities pins to 1 is the self-loop that applies
+            ! while the gate still holds, which is "stay exempt while eligible".
+            !
+            ! AND THE EXIT IS ONE-WAY. Nothing routes mass back into voucher_gf:
+            ! the only entry is the t=0 mapping at implementation. A household
+            ! that loses it and later draws a voucher again re-enters at state 1,
+            ! the ordinary holder state, and is tested like anyone else -- which
+            ! is the author's rule in the same message.
+            !
+            ! has_opportunity=1 because the household does hold a voucher; the row
+            ! is 1 for both values of the flag in any case.
             if ((has_house==0) .AND. (choose_to_own_1==0) .AND. &
                 (grandfather_voucher_states==1) .AND. (voucher_index==voucher_gf)) then
 
