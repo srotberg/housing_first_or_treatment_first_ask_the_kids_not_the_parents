@@ -5166,6 +5166,9 @@
         ! is to give the other two the same per-period treatment.
         real(8), dimension(1-solve_transition_dynamics:transition_length) :: previous_drug_price_gap_path=0
         integer, dimension(1-solve_transition_dynamics:transition_length) :: have_drug_price_secant_path=0
+        real(8), dimension(1-solve_transition_dynamics:transition_length) :: previous_probability_of_voucher_path=0
+        real(8), dimension(1-solve_transition_dynamics:transition_length) :: previous_budget_residual_path=0
+        integer, dimension(1-solve_transition_dynamics:transition_length) :: have_pi_v_secant_path=0
         real(8) :: largest_distance_drug_market=1
         ! PI_V ALONG THE PATH. In the arms pi_v is what clears the government
         ! budget; the transition measured distance_govt_budget, put its maximum
@@ -52982,7 +52985,7 @@
         real(8) :: seed_value_2=0
         character(len=400) :: seed_line_1=''
         ! The clipped pi_v step and its cap.
-        real(8) :: pi_v_step_1=0,pi_v_cap_1=0
+        real(8) :: pi_v_step_1=0,pi_v_cap_1=0,pi_v_gap_1=0,pi_v_damped_1=0,pi_v_new_1=0
         ! Its own index, not the module's i, which reslot_distributions uses.
         integer :: keep_i_1
                 
@@ -54137,16 +54140,100 @@
                     ! still net_govt_revenues == net_govt_revenue_constraint to
                     ! within the stopping rule; only the path to it changes.
                     ! Same argument as the drug price's trust region.
-                    pi_v_step_1=0.05*(net_govt_revenues(time_index)-net_govt_revenue_constraint)
+                    ! AND A SECANT, BECAUSE THE GAIN ALONE IS THE CRUDER OF THE
+                    ! TWO INSTRUMENTS SITTING SIDE BY SIDE.
+                    !
+                    ! clear_drug_market measures its slope from two evaluations
+                    ! and steps to the root. pi_v did not: it moved on a fixed
+                    ! gain of 0.05 with a clip, which is a bisection-speed walk
+                    ! on an instrument whose residual at loop 0 is 0.69 -- about
+                    ! eleven per cent of the budget, because TF stops paying
+                    ! households that fail the condition and the savings are not
+                    ! yet recycled. At a quarter of pi_v per loop that is many
+                    ! loops, and a loop at T=60 is five to eight hours.
+                    !
+                    ! The map is as well behaved as the drug price's and for the
+                    ! same reason: raising pi_v hands out more vouchers, which
+                    ! raises spending, which LOWERS net revenue, so the residual
+                    ! is monotone decreasing in pi_v. A secant on a monotone
+                    ! residual is the right instrument.
+                    !
+                    ! STRUCTURE COPIED FROM clear_drug_market, guards included,
+                    ! because those guards were paid for. The secant there
+                    ! diverged on universal treatment -- 47 loops, the gap
+                    ! GROWING through 0.0198, 0.165, 0.346, 0.520 -- when it was
+                    ! differencing a quantity that came out of a distribution
+                    ! solved only to 6e-4, so it was extrapolating off numerical
+                    ! noise. pi_v differences net_govt_revenues, which comes out
+                    ! of the same distribution, so it can do the same thing.
+                    !
+                    !   default          a damped step, the old gain of 0.05
+                    !   secant           only with two usable, distinct points
+                    !   guard on growth  if the gap GREW the last step was wrong
+                    !                    and its secant is worthless: damp
+                    !   trust region     never further than four damped steps
+                    !   existing clip    a quarter of pi_v, kept, applied LAST
+                    !
+                    ! THIS CHANGES NO EQUILIBRIUM CONDITION. The fixed point is
+                    ! still net_govt_revenues == net_govt_revenue_constraint to
+                    ! within the stopping rule; only the path to it changes.
+                    pi_v_gap_1=net_govt_revenues(time_index)-net_govt_revenue_constraint
+
+                    pi_v_damped_1=0.05*pi_v_gap_1
+
+                    pi_v_step_1=pi_v_damped_1
+
+                    if ((have_pi_v_secant_path(time_index)==1) .AND. &
+                        (abs(pi_v_gap_1-previous_budget_residual_path(time_index))>10.d0**(-10)) .AND. &
+                        (abs(probability_of_voucher_path(time_index)-&
+                             previous_probability_of_voucher_path(time_index))>10.d0**(-10))) then
+
+                        if (abs(pi_v_gap_1)>abs(previous_budget_residual_path(time_index))) then
+
+                            pi_v_step_1=pi_v_damped_1
+
+                        else
+
+                            pi_v_step_1=-pi_v_gap_1*&
+                                (probability_of_voucher_path(time_index)-&
+                                 previous_probability_of_voucher_path(time_index))/&
+                                (pi_v_gap_1-previous_budget_residual_path(time_index))
+
+                            pi_v_step_1=max(min(pi_v_step_1,4*abs(pi_v_damped_1)),-4*abs(pi_v_damped_1))
+
+                        end if
+
+                    end if
+
+                    ! The clip stays, and stays LAST. It is what stopped the
+                    ! collapse: a residual of -6.02 at gain 0.05 is a step of
+                    ! -0.30 on a pi_v of 0.076, straight through zero to the
+                    ! floor in one step in every period. A secant can produce a
+                    ! step just as large, so it is capped by the same rule.
                     pi_v_cap_1=0.25*probability_of_voucher_path(time_index)
                     pi_v_step_1=max(min(pi_v_step_1,pi_v_cap_1),-pi_v_cap_1)
 
-                    probability_of_voucher_path(time_index)=&
-                        max(min(probability_of_voucher_path(time_index)+pi_v_step_1,1.d0),10.d0**(-5))
+                    ! Carry the point the NEXT loop differences against. Written
+                    ! before pi_v moves, so the pair is (pi_v faced, gap it
+                    ! produced) rather than a value and someone else's gap --
+                    ! and carried PER PERIOD, because a scalar would difference
+                    ! this period's gap against the previous PERIOD's, which is
+                    ! not a pi_v experiment. That is the same mistake the drug
+                    ! price's secant state was fixed for.
+                    previous_probability_of_voucher_path(time_index)=&
+                        probability_of_voucher_path(time_index)
+                    previous_budget_residual_path(time_index)=pi_v_gap_1
+                    have_pi_v_secant_path(time_index)=1
+
+                    pi_v_new_1=max(min(probability_of_voucher_path(time_index)+pi_v_step_1,1.d0),10.d0**(-5))
+
+                    probability_of_voucher_path(time_index)=pi_v_new_1
 
                     write(*,*) "TRANSITION PI_V loop=", loop_count, " t=", time_index, &
                         " pi_v=", probability_of_voucher_path(time_index), &
-                        " budget_residual=", net_govt_revenues(time_index)-net_govt_revenue_constraint
+                        " budget_residual=", pi_v_gap_1, &
+                        " step=", pi_v_step_1, " damped=", pi_v_damped_1, &
+                        " secant=", have_pi_v_secant_path(time_index)
                     
                 end if
 
