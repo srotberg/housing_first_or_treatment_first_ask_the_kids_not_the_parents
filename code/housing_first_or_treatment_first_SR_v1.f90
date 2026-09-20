@@ -18709,7 +18709,7 @@
                                         end if
 
                                         if ((years_left_on_mortgage_index==1) .AND. (amortization_used==1) .AND. &
-                                            (voucher_index==1)) then
+                                            ((voucher_index==1) .OR. ((grandfather_voucher_states==1) .AND. (voucher_index==voucher_gf)))) then
 
                                             ! EVERY HOLDER, counted before the payment test below.
                                             model_eligible_voucher_holders(time_period)=&
@@ -20492,7 +20492,7 @@
                                         is_counterfactual*median_income_calibrated)) .AND. (include_vouchers==1)) then
 
                                         if ((years_left_on_mortgage_index==1) .AND. (amortization_used==1) .AND. &
-                                            (voucher_index==1)) then
+                                            ((voucher_index==1) .OR. ((grandfather_voucher_states==1) .AND. (voucher_index==voucher_gf)))) then
                                                                                                             
                                             call calculate_housing_voucher_2(housing_voucher_2,addiction_used_1,total_income,&
                                                 rent(time_period,low_quality_market)*lived_in_size_used,time_period)
@@ -29022,7 +29022,7 @@
         
         housing_voucher_2=0
                 
-        if ((is_current_owner==0) .AND. (years_left_on_mortgage_1==1) .AND. (voucher_index==1) .AND. (include_vouchers==1)) then
+        if ((is_current_owner==0) .AND. (years_left_on_mortgage_1==1) .AND. ((voucher_index==1) .OR. ((grandfather_voucher_states==1) .AND. (voucher_index==voucher_gf))) .AND. (include_vouchers==1)) then
 
             income_2=gross_wage_income_1+risk_free_rate(time_period)*max(financial_grid(financial_index_1),0.d0)
         
@@ -29583,7 +29583,7 @@
                                 
             end if
 
-            if ((include_vouchers==1) .AND. (voucher_index==1) .AND. &
+            if ((include_vouchers==1) .AND. ((voucher_index==1) .OR. ((grandfather_voucher_states==1) .AND. (voucher_index==voucher_gf))) .AND. &
                 (gross_wage_income+investment_income<threshold_income_vouchers*&
                 ((1-is_counterfactual)*median_income(time_period)+is_counterfactual*median_income_calibrated))) then
 
@@ -30758,7 +30758,7 @@
             if ((income_to_use<threshold_income_vouchers*((1-is_counterfactual)*median_income(time_period)+&
                 is_counterfactual*median_income_calibrated)) .AND. (include_vouchers==1)) then
 
-                if ((is_current_owner_1==0) .AND. (ownership_status_index_1==0) .AND. (voucher_index==1)) then
+                if ((is_current_owner_1==0) .AND. (ownership_status_index_1==0) .AND. ((voucher_index==1) .OR. ((grandfather_voucher_states==1) .AND. (voucher_index==voucher_gf)))) then
 
                     call calculate_housing_voucher_2&
                         (housing_voucher_recieved_3,future_addiction_index_1,&
@@ -31868,7 +31868,35 @@
             ! The range has to span 0 to voucher_state_max so the release row
             ! (2 -> 0) and the stay row (2 -> 2) are both reachable; the (2 -> 1)
             ! row is zero, so the middle contributes nothing.
+            ! AND A GRANDFATHERED HOUSEHOLD NEEDS ITS OWN BRANCH TOO, for
+            ! exactly the reason the comment above gives about the third state.
+            !
+            ! THIS IS THAT BUG RECURRING. With no branch of its own, voucher_gf
+            ! falls through the ==voucher_excl, ==0 and ==1 tests and keeps
+            ! has_opportunity=0 and first=second=0, so the expectation
+            ! integrates over future voucher state ZERO ONLY: a grandfathered
+            ! household computes its continuation as though it will have NO
+            ! VOUCHER next period. It is exempt in fact and believes itself
+            ! unprotected, so it behaves like a non-holder -- which is why
+            ! participation more than doubled at t=1 and the first grandfathered
+            ! result looked like the policy made welfare worse.
+            !
+            ! It would never crash. The comment above said so about the third
+            ! state, and it was right about the fourth.
+            !
+            ! The state is ABSORBING, so the range is voucher_gf to voucher_gf:
+            ! the only reachable future state is itself, which is what
+            ! build_voucher_probabilities sets. has_opportunity=1 because the
+            ! household does hold a voucher; the row is 1 for both values of the
+            ! flag in any case.
             if ((has_house==0) .AND. (choose_to_own_1==0) .AND. &
+                (grandfather_voucher_states==1) .AND. (voucher_index==voucher_gf)) then
+
+                has_opportunity=1
+                first_voucher_index=voucher_gf
+                second_voucher_index=voucher_gf
+
+            elseif ((has_house==0) .AND. (choose_to_own_1==0) .AND. &
                 (voucher_index==voucher_excl) .AND. (include_voucher_exclusion==1)) then
 
                 has_opportunity=1
