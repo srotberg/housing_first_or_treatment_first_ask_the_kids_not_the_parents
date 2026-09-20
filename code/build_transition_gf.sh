@@ -67,4 +67,18 @@ for f in build_bounds.err build_snan.err build_prod.err; do
   [ "$e" -gt 0 ] && { echo "BUILD ERRORS in $f"; head -20 "$f"; exit 1; }
 done
 echo "built in $OUT: hftf_trgf_prod (run this), hftf_trgf_bounds, hftf_trgf_snan"
-echo "EXPECTED PEAK RSS: about 2.91 + 1.306*0.079*T GB -- 13.1 GB of 15 at T=60."
+# THE MEMORY PREDICTION, from the two figures grandfather_voucher_states'
+# declaration actually measured -- T=30 at 10.2 GB and T=60 at 13.1 GB with the
+# fourth voucher state. Those two give 7.3 + 0.0967*T GB; the intercept is large
+# because the steady-state copies and the one working slice of each policy do not
+# carry a transition dimension and still pay the 1.306x.
+#
+# Do NOT use the lessons file's 2.91 + 0.079*T here. That is the THREE-state
+# build's fit, it predicts 9.1 GB at T=60 against a measured 13.1, and scaling
+# only its slope by 1.306 is the mistake -- the T-independent term scales too.
+python3 - "$T" <<'PY'
+import sys
+T=int(sys.argv[1]); print("EXPECTED PEAK RSS at T=%d: about %.2f GB of 15 (fit 7.3 + 0.0967*T," % (T,7.3+0.0967*T))
+print("  from the two measured points T=30 -> 10.2 GB and T=60 -> 13.1 GB).")
+print("  Far above it and the re-slotting is not doing what it claims.")
+PY
