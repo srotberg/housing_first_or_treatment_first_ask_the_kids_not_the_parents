@@ -1,0 +1,66 @@
+#!/bin/bash
+# build_transition_gf.sh [outdir]
+#
+# THE GRANDFATHERED TRANSITION AT T=60. Five compile-time parameters, and the
+# script REFUSES unless the diff is exactly five lines, on build_transition.sh's
+# own pattern: a renamed or already-set parameter is a silent wrong build.
+#
+#   is_counterfactual                             0 -> 1
+#   use_revenues_to_increase_voucher_probability   0 -> 1
+#   solve_transition_dynamics                     0 -> 1
+#   transition_length                            30 -> 60
+#   grandfather_voucher_states                    0 -> 1
+#
+# window_distributions is ALREADY 1 in the source and is asserted, not sed'd.
+#
+# WHY T=60 AND NOT LESS. The exempt cohort must die out before arm 3 is a valid
+# terminal condition. A household aged 26 at the reform reaches 85 at t=59. At
+# any shorter horizon the grandfathered are still alive at the terminal date and
+# the boundary condition is wrong.
+#
+# WHY NOT build_transition.sh. That script sets three of the five and guards on
+# a diff of exactly three, so it cannot be told to do this; and the horizon it
+# would leave standing is the source's 30.
+set -e
+SRC=${SRC:-$(cd "$(dirname "$0")" && pwd)/housing_first_or_treatment_first_SR_v1.f90}
+OUT=${1:-$(pwd)/tr_gf}
+mkdir -p "$OUT"
+
+sed -e 's/integer, parameter :: is_counterfactual=0/integer, parameter :: is_counterfactual=1/' \
+    -e 's/integer, parameter :: use_revenues_to_increase_voucher_probability=0/integer, parameter :: use_revenues_to_increase_voucher_probability=1/' \
+    -e 's/integer, parameter :: solve_transition_dynamics=is_counterfactual\*0+(1-is_counterfactual)\*0/integer, parameter :: solve_transition_dynamics=1/' \
+    -e 's/solve_transition_dynamics\*30$/solve_transition_dynamics*60/' \
+    -e 's/integer, parameter :: grandfather_voucher_states=0/integer, parameter :: grandfather_voucher_states=1/' \
+    "$SRC" > "$OUT/tr_gf.f90"
+
+n=$(diff "$SRC" "$OUT/tr_gf.f90" | grep -c '^[<>]' || true)
+if [ "$n" -ne 10 ]; then
+  echo "REFUSING: expected exactly 5 changed lines (10 diff lines), got $n."
+  echo "  Either a parameter was renamed or one is already set. Look before building."
+  diff "$SRC" "$OUT/tr_gf.f90" | grep '^[<>]' || true
+  exit 1
+fi
+
+# EVERY ONE OF THE SIX ASSERTED IN THE GENERATED SOURCE, not inferred from the
+# sed exit status -- a sed that matches nothing succeeds.
+assert () { grep -qE "$2" "$OUT/tr_gf.f90" || { echo "REFUSING: $1 is not set in the generated source"; exit 1; }; }
+assert "is_counterfactual=1"                             'parameter :: is_counterfactual=1 *$'
+assert "use_revenues_to_increase_voucher_probability=1"   'parameter :: use_revenues_to_increase_voucher_probability=1 *$'
+assert "solve_transition_dynamics=1"                     'parameter :: solve_transition_dynamics=1 *$'
+assert "transition_length ... *60"                       'parameter :: transition_length=.*solve_transition_dynamics\*60 *$'
+assert "grandfather_voucher_states=1"                    'parameter :: grandfather_voucher_states=1 *$'
+assert "window_distributions=1"                          'parameter :: window_distributions=1 *$'
+echo "all six switches asserted in the generated source:"
+grep -nE 'parameter :: (is_counterfactual|use_revenues_to_increase_voucher_probability|solve_transition_dynamics|transition_length|grandfather_voucher_states|window_distributions)=' "$OUT/tr_gf.f90" | sed 's/^/    /'
+
+COMMON="-fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium"
+cd "$OUT"
+echo "bounds..."; gfortran -O1 -fcheck=bounds,pointer -g -fbacktrace $COMMON tr_gf.f90 -o hftf_trgf_bounds 2> build_bounds.err
+echo "snan..."  ; gfortran -O1 -finit-real=snan -ffpe-trap=invalid,zero,overflow -g -fbacktrace $COMMON tr_gf.f90 -o hftf_trgf_snan 2> build_snan.err
+echo "prod..."  ; gfortran -O3 -funroll-loops $COMMON tr_gf.f90 -o hftf_trgf_prod 2> build_prod.err
+for f in build_bounds.err build_snan.err build_prod.err; do
+  e=$(grep -c "Error" "$f" || true)
+  [ "$e" -gt 0 ] && { echo "BUILD ERRORS in $f"; head -20 "$f"; exit 1; }
+done
+echo "built in $OUT: hftf_trgf_prod (run this), hftf_trgf_bounds, hftf_trgf_snan"
+echo "EXPECTED PEAK RSS: about 13.1 GB of 15 at T=60 with the fourth voucher state (1.306x)."
