@@ -29,6 +29,46 @@ bit-reproducible, the standing score for a no-op is 1e-4 RELATIVE, and this is a
 different compiler as well as a different container, where the measured
 cross-container spread on w_bot is 1.8e-2.
 
+## STEP 1'S SHARPEST ACCEPTANCE TEST IS THE DRUG SUPPLY SHIFTER, NOT b
+
+Found while the benchmark was still in block 1, and it is the best control this
+chain has, because it is a SINGLE NUMBER that everything downstream reads.
+
+`drug_supply_shifterbaseline_benchmark.dat` is the only thing an arm or a
+transition takes from the benchmark's drug market. It is read once and held
+fixed, which is what makes the PRICE rather than the quantity the endogenous
+object in every counterfactual. The committed benchmark's value is
+
+    shifter = 1.62001478993009917495
+
+and it is not independent information -- it is a restatement of the benchmark's
+own drug quantity through the supply curve's normalisation `1 = shifter*V^(1/eps_s)`:
+
+    shifter = V^(-1/1.46) = V^(-0.684932)
+    V = 0.494427  ->  1.620015      the committed benchmark
+    V = 0.394988  ->  1.889349      this run's block 1, cold
+
+Both reproduce to six digits, so the identity is confirmed rather than assumed,
+and the recipe's independently measured exponent (0.684931 recovered against
+1/eps_s = 0.684932) is the same number again.
+
+**So the benchmark reproduction test is: V converges to 0.494427.** That is
+sharper than b, lambda_d or h_1 because it is exactly the channel arm 3 inherits.
+
+WHAT AN ERROR IN IT COSTS ARM 3, bounded rather than estimated. Arm 3's price
+solves `shifter*V(p)^(1/eps_s) = p`, so a shifter that is x per cent out moves
+the implied-price curve by x per cent at a given quantity and the equilibrium
+price by `x/(1 + 0.685*|dlnV/dlnp|)`. The measured demand elasticity is between
+-1.8 (participation, on the transition path) and -9.2 (the converged bracket on
+the omega_c=1 arm), so the divisor is between 2.2 and 7.3: **a one per cent
+shifter error is at most half a per cent on arm 3's price.** Half a per cent is
+one loop of `max_drug_price_move`, so it is recoverable; five per cent would not
+be.
+
+Block 1 is an artefact and is not the test -- the recipe says so twice, and V at
+0.394988 against 0.494427 is a 20 per cent cold-start miss, which is the
+expected size of that artefact and not a failure.
+
 ## STEP 3'S ACCEPTANCE TEST, from the T=5 grandfathered test
 
     grandfathered mass          3.6187 of 50.8612 total, about 7.1 per cent
