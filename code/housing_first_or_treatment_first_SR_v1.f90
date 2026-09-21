@@ -54315,6 +54315,34 @@
                     " 1=", diag_amort_mass(1), " 2=", diag_amort_mass(2), &
                     " 3plus=", diag_amort_mass(3)
 
+                ! THE FAIR-MARKET-RENT STANDARD, which is the cap the voucher
+                ! formula takes a min against:
+                !
+                !   voucher = min( max(model_average_rent(t)*model_average_rental_unit_size(t)
+                !                      - rent_to_income_ratio_vouchers*income, 0),
+                !                  max(rent_spending - rent_to_income_ratio_vouchers*income, 0) )
+                !
+                ! MEASURED at T=30 loop 0: the mass RECEIVING a voucher is flat
+                ! (3.0443, 2.9506, 2.8856 at t=1,2,3) while the amount per
+                ! recipient falls 56 per cent in one period (0.20800, 0.09094,
+                ! 0.08781). A common cap collapsing is the only thing that
+                ! halves everyone at once while zeroing nobody -- household
+                ! behaviour would zero people out, not scale them.
+                !
+                ! Backing the standard out of those numbers gives about 0.304 at
+                ! t=1 against 0.189 at t=2, a 38 per cent drop, where the
+                ! benchmark's own is about 0.311. Both components are path
+                ! arrays zeroed at 16222-16223 and accumulated at 16456-16459 in
+                ! stationary_equilibrium_statistics -- the SAME routine whose
+                ! unguarded division produced tonight's NaN, and the same
+                ! product that feeds median_income at 15655. This prints them
+                ! rather than inferring them.
+                write(*,*) "TRANSITION FMR STANDARD t=", time_index, &
+                    " avg_rent=", model_average_rent(time_index), &
+                    " avg_unit_size=", model_average_rental_unit_size(time_index), &
+                    " product=", model_average_rent(time_index)*model_average_rental_unit_size(time_index), &
+                    " ratio=", rent_to_income_ratio_vouchers
+
                 write(*,*) "TRANSITION INCOME GATE t=", time_index, &
                     " holder_renter_mass=", diag_inc_mass, &
                     " passing=", diag_inc_pass, &
