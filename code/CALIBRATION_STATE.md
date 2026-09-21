@@ -82,19 +82,43 @@ which is a level error in a seed measured on the pre-fix economy (participation
 fell 27 per cent there, 46 here). pi_v has not moved because its update switches
 on at loop 1.
 
-## THE T=30 RUN WAS KILLED, AND THE HORIZON QUESTION IS SETTLED
+## THE HORIZON IS NOT SETTLED. T=45 IS NOT ENOUGH, AND I SAID IT WAS.
 
-`hftf_t30b` was killed at 02:44 on the author's instruction -- *"i suggest to
-just go to T=45"* -- one hour into its loop 0. The T=45 answers what it was
-launched to ask, and answers it the other way:
+This section said, at 08:11, that "everything is at or past its terminal value
+by the early twenties", that T=45 had twenty periods to spare and that post-fix
+even T=30 would have sufficed. **That was wrong.** The completed 43-period path
+says so plainly:
 
-**Everything is at or past its terminal value by the early twenties.** h_1
-returns to the benchmark by t=23, lambda_d crosses its long-run value at t=17,
-participation is at terminal from t=1. T=45 has twenty periods to spare and
-**post-fix even T=30 would have sufficed.** The "T=30 IS TOO SHORT" section this
-file used to carry was the fair-market-rent cap from end to end -- predicted in
-`results/transition_t30_nogf/HORIZON_PREDICTION.md` before the forward pass ran,
-and confirmed by it.
+                  t=44        terminal      gap    closing at    needs
+    h_1         -0.39%        +1.31%       1.70    0.155/period   ~11 more
+    b          -47.65%       -44.65%       3.00    0.095/period   ~32 more
+    lambda_d   -51.23%       -45.20%       6.03    0.260/period   ~23 more
+
+**None of the three has arrived at the last free period.** They CROSS their
+terminal values in the early twenties, overshoot by several points, and then
+crawl back. I read the crossing as the arrival. Crossing is the start of the
+approach, not the end of it.
+
+On those rates participation binds and wants about **T=76**; lambda_d wants ~67
+and homelessness ~55.
+
+**So `CALIBRATION_STATE.md`'s original instinct -- "the reported result should be
+T=75" -- was right, and I overturned it on a misreading.** What was genuinely
+wrong in the old section was the explanation of h_1's +63.9 per cent stall,
+which WAS the fair-market-rent cap; the horizon conclusion was not.
+
+The T=30 run was still correctly killed at 02:44 on the author's instruction
+(*"i suggest to just go to T=45"*): T=30 is further from enough, not closer.
+
+Caveat: loop 0 of an unconverged run, so the rates may shift as the price path
+settles. The overshoot-and-slow-return shape should be robust, since it is
+cohort turnover rather than prices.
+
+**The horizon is an open scope question for the author.** T=76 is about 8 hours
+a loop against 4.7, so roughly 40 hours for five loops against 24. Whether it is
+worth it depends on whether the paper reports a converged lambda_d or a welfare
+path over the first few decades; the second is unaffected by a tail still
+settling.
 
 ## WHAT THE AUTHOR ESTABLISHED ABOUT THE MODEL, 21 September
 
