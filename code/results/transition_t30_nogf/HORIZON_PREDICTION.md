@@ -100,3 +100,60 @@ grandfathering (0.008747 against 0.007713 at t=1) because the exempt lose the
 deterrent and b rose 21.7 per cent. "Exempting the caught generation makes
 things worse" is a finding, not an absence of one. That is a scope call for the
 author and no work is being done on it.
+
+---
+
+# VERDICT, 05:25. THE FIRST PREDICTION HELD. THE SECOND DID NOT.
+
+Measured on `t45_nogf/t45_run.log`, loop 0, T=45, six periods -- the same window
+the prediction named.
+
+## PREDICTION ONE: h_1's STALL WAS THE BUG, NOT THE HORIZON. CONFIRMED.
+
+               t=1    t=2    t=3    t=4    t=5    t=6
+    pre-fix  +19.4  +65.6  +73.4  +76.5  +76.4  +76.0   peak t=4, then +63% forever
+    post-fix +18.7  +18.9  +18.4  +17.6  +17.2  +16.7   peak t=2, monotone decline
+
+The prediction asked for "a lower peak, earlier than t=4, still visibly
+DECLINING". It got +18.9 at t=2 against +76.5 at t=4, and a monotone fall
+after. The stated falsifier -- "h_1 still stalls somewhere near +60 per cent" --
+is not close to happening.
+
+**So `CALIBRATION_STATE.md`'s "T=30 IS TOO SHORT, AND THE RIGHT RUN NOW SAYS SO"
+was the fair-market-rent cap collapsing along the path.** Every clause of that
+section rested on h_1 sitting 62 points from its terminal at the last free
+period. It sits 15 points from it at t=6 and is still moving.
+
+## PREDICTION TWO: THE t=1 GAIN WOULD SHRINK AT A LONGER HORIZON. FALSIFIED.
+
+    T=5  post-fix   CEV t=1  +2.306%
+    T=45 post-fix   CEV t=1  +2.318%
+
+The reasoning was that the terminal steady state is the best state in the
+problem and a longer horizon gives the t=1 cohort less of it -- 57 of its 61
+periods at T=5 against 32 at T=45. The stated falsifier was "t=1 at T=45 coming
+in at or ABOVE +2.306 per cent". It came in above, by 0.012 points.
+
+**Why the reasoning failed.** It treated the cohort's lifetime as a weighted
+average over which steady state it sits in. It is not: discounting puts the
+weight on the near periods, and those are nearly identical under both horizons.
+A nine-fold change in horizon moved t=1 by twelve thousandths of a point, which
+is the real finding and is stronger than the prediction would have been.
+
+## AND THE HORIZON ARITHMETIC I GAVE THE AUTHOR WAS WRONG BY A FACTOR OF FOUR
+
+At 05:02 I said lambda_d decays 1.70 per cent a period and reaches terminal
+about t=36, making it the variable that sets the horizon. That rate was measured
+on the PRE-FIX path. Post-fix it decays **4.13 per cent a period** and projects
+to about **t=15**.
+
+    measured t=1..6, post-fix        reaches terminal about
+    lambda_d   -4.13%/period         t=15
+    h_1        -0.47%/period         t=36
+
+**Homelessness is the slow variable, not SUD** -- the reverse of what I told the
+author an hour earlier, and for the same reason the horizon claim was wrong: the
+bug slowed the thing I was measuring the rate on. Both still arrive inside 45.
+
+Six periods is a direction, not a number, and decay rates slow near the target.
+The path itself answers it by about t=20.
