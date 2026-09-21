@@ -65,13 +65,50 @@ on, was the collapsing cap and not the reform.
 
 ## IN FLIGHT
 
-`hftf_t30b`: T=30, no grandfathering, on the fully corrected source, launched
-21 September 01:41 with the machine to itself. 2.93 s per age sweep measured,
-3,538 sweeps in loop 0, so the backward pass ends about 03:07 and loop 0 about
-04:33. The author has asked for five graphs off its first loop -- per cent
-change in homelessness, drug use and SUD, the level of pi_v, and lifetime CEV
-including childhood by cohort -- and `code/transition_graphs.py` builds them,
-reading every reference value out of the steady-state dumps.
+`hftf` T=45, no grandfathering, `code/t45_nogf/`, launched 21 September 02:49 on
+the corrected source with the post-fix terminal anchor. **Loop 0 closed 07:58**:
+5,192 sweeps, 5h09m, 44 periods. Full result in
+`results/transition_t45_nogf/RESULT.md`; loop 1 is running and is the first loop
+in which pi_v moves at all.
+
+    t=1 CEV +2.318%   t=44 +2.983%   long-run TF +3.249%
+    a GAIN in every one of the 44 periods, no trough anywhere
+
+    drug market     max 0.1818 vs rule 0.01   18.2x -- NOT CLEARED
+    budget residual max 0.0738 vs rule 0.05    1.5x -- NOT CLEARED
+
+Nothing from it is quotable. p_drug's distance is FLAT across all 44 periods,
+which is a level error in a seed measured on the pre-fix economy (participation
+fell 27 per cent there, 46 here). pi_v has not moved because its update switches
+on at loop 1.
+
+## THE T=30 RUN WAS KILLED, AND THE HORIZON QUESTION IS SETTLED
+
+`hftf_t30b` was killed at 02:44 on the author's instruction -- *"i suggest to
+just go to T=45"* -- one hour into its loop 0. The T=45 answers what it was
+launched to ask, and answers it the other way:
+
+**Everything is at or past its terminal value by the early twenties.** h_1
+returns to the benchmark by t=23, lambda_d crosses its long-run value at t=17,
+participation is at terminal from t=1. T=45 has twenty periods to spare and
+**post-fix even T=30 would have sufficed.** The "T=30 IS TOO SHORT" section this
+file used to carry was the fair-market-rent cap from end to end -- predicted in
+`results/transition_t30_nogf/HORIZON_PREDICTION.md` before the forward pass ran,
+and confirmed by it.
+
+## WHAT THE AUTHOR ESTABLISHED ABOUT THE MODEL, 21 September
+
+**The transition solves for TWO objects, not five.** *"rent and housing price
+and lump sum transfer are not equilibrium objects, they are constant"*, and
+*"i can only think of 2: pi_v and p_v"*. `peg_prices_in_counterfactual=1` pins
+the house price and rent and ZEROES their distances, so two of the four stopping
+rules never bind; lump_sum_transfer is never assigned inside the loop. I had
+claimed three of four rules belonged to them. See
+`results/transition_t30_nogf/TWO_OBJECTS_NOT_FIVE.md`.
+
+**And homelessness is not one either.** *"once pi_v and p_v converge,
+homelessness is what it is and is applied to the welfare"*. The code already
+does this: h_1 is written every loop as a reference and never read back.
 
 ## WHAT SURVIVES FROM THE 20 SEPTEMBER RUN
 
