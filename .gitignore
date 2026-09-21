@@ -242,6 +242,10 @@ code/tr/
 # tr75/ holds the windowed build used to validate the T=75 memory fix.
 code/tr75/
 code/tr[0-9]*/
+# Transition RUN directories. stage_transition.sh copies both steady states in,
+# so one is 4.4 GB of .dat before the run writes a line. code/trans_*/ already
+# covers the ones named trans_*; a run named for its horizon and arm is not.
+code/t[0-9]*_*/
 # The benchmark's own run directory and build output, on the same rule as the
 # arm directories above. bm/ holds the cold-start benchmark solve: its binary,
 # its handover (the seed for it is committed at code/seeds/) and the ~2.2 GB of
