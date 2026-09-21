@@ -16759,6 +16759,41 @@
         end if
             
         if (current_beta_type==number_of_beta_types) model_average_rent(time_period)=model_average_rent(time_period)/sum(total_rental_demand(time_period,:))
+
+        ! PIN THE RENTAL STANDARD IN A COUNTERFACTUAL, AT THE SOURCE.
+        !
+        ! The author, 21 September: "use the same model average rental size as
+        ! the benchmark. Pin it so the counterfactual uses the same rule." One
+        ! rule applied once, rather than a branch at each use site -- and there
+        ! are several, because this pair feeds median_income at 15690, the
+        ! rent-to-income ratios at 14648 and 14886, and the voucher's
+        ! fair-market-rent cap at 18090.
+        !
+        ! WHY IT HAS TO BE PINNED RATHER THAN COMPUTED. The two are zeroed at
+        ! 16222-16223, accumulated at 16456-16459 and normalised just above, and
+        ! the normalisers DIFFER: the size divides by mass_of_renters, the rent
+        ! by sum(total_rental_demand). They agree only when the rental
+        ! aggregate is consistent with the distribution being summed, which held
+        ! in the benchmark and did not on the transition path. Measured there,
+        ! the product fell from about 0.304 at t=1 to 0.189 at t=2 and stayed,
+        ! halving every recipient's voucher while zeroing nobody.
+        !
+        ! And it is a POLICY PARAMETER in any case. The standard a housing
+        ! programme pays against is set from data, not re-estimated each year
+        ! from the economy the programme is changing. The benchmark and the
+        ! long-run TF steady state put it at 0.302089800944 and 0.303010526294 --
+        ! three tenths of one per cent apart -- so pinning it costs nothing in
+        ! the steady state and removes a whole class of path artefact.
+        !
+        ! This makes the branch at 18090 redundant, deliberately: that one
+        ! documents the rule where the payment is computed, this one enforces it
+        ! for every other consumer too.
+        if ((is_counterfactual==1) .AND. (current_beta_type==number_of_beta_types)) then
+
+            model_average_rental_unit_size(time_period)=average_rental_unit_size_calibrated
+            model_average_rent(time_period)=average_rent_calibrated
+
+        end if
                         
         if (current_beta_type==number_of_beta_types) then
             model_average_owner_occupied_unit_size(time_period)=&
