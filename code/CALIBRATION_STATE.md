@@ -137,11 +137,23 @@ unconverged loop, and re-solving arm 3 here first would cost hours before the
 diagnostic the author asked for could even start.
 
 **What it does mean.** The pi_v panel's last periods inherit a slightly low
-anchor, so read the END of that panel as approximate. And the terminal
-condition must be refreshed before any run that gets REPORTED. The post-fix
-arm 3 dump was produced in a sibling container that has since ended and only
-its log was committed, so refreshing it means re-solving arm 3 here -- eight
-blocks -- on the corrected source, and copying the new `counter_TF*` set in.
+anchor, so read the END of that panel as approximate.
+
+**The anchor is now fixed for the NEXT run, 02:11.** A sibling committed
+`seeds/PARAM_HANDOVER_trans_postfix.txt` and made `stage_transition.sh` default
+to it: `probability_of_voucher_benchmark_used` 0.076876159888350143 against the
+old 0.076347, and `drug_price_start` 0.83283631757376753 against 0.83349. Those
+two scalars ARE the terminal pin, so a run staged from here carries the
+corrected one without needing the `counter_TF` `.dat` set rebuilt.
+
+**The running job was NOT restarted for it, and that is a decision, not an
+oversight.** It is thirty minutes into a three-hour loop; the change is 0.69 per
+cent on one instrument and 0.079 per cent on the price; and nothing the author
+asked this loop to show -- whether homelessness rises, whether use falls,
+whether the CEV is positive, whether the path flattens by t=30 -- turns on
+either. Paying thirty minutes to move a tail anchor by two thirds of a per cent
+in a loop that will not have converged anyway is churn. The next T=30 stages
+from the post-fix handover.
 
 ## STILL OPEN
 
