@@ -42,6 +42,36 @@
 > reproduces it. Restarting a search against a moving target is how the archive
 > filled with points whose moments cannot be reproduced by re-solving them.
 
+> ## LAUNCH EVERY SOLVE WITH setsid. VERIFIED 21 September, 22:43.
+>
+> The platform recycles this session's process tree. A solve started from a tool
+> call is four levels under environment-manager and dies with it. Twice today
+> that cost hours; the third time it cost nothing, because the solve had its own
+> session id:
+>
+>     09:46  platform restart, solve inside the session   ~5 h lost
+>     17:58  my own OOM, mid backward pass                ~2 h lost
+>     22:43  platform restart, solve under setsid         ONE WATCHER lost
+>
+> At 22:43 the same pid, 27741, came through with 3h52m of runtime intact and
+> the log still being written. **This is the verification, not the intention.**
+>
+>     cd <run dir> && setsid ./hftf > run.log 2> run.err < /dev/null &
+>     ps -o pid=,ppid=,sid= -p $(pgrep -x hftf)     # sid must equal the pid
+>
+> **nohup and disown do NOT do this.** disown removes a job from the shell's
+> table; the process keeps the session id and dies with the session. Only setsid
+> gives it its own session. That mistake was made at 09:48 and the relaunch
+> would have died too had the next recycle come sooner.
+>
+> What it does NOT cover: a cgroup-wide kill, or the machine rebooting. The
+> kernel uptime shows the box has not rebooted in any of these events, so the
+> mechanism that has actually hit us is the one setsid defeats.
+>
+> The cost is that the harness stops tracking the process, so completion is
+> polled rather than notified. The log and the per-period checkpoints are the
+> real record anyway.
+
 > ## CHECK MEMORY BEFORE LAUNCHING A SECOND SOLVE. 21 September, paid for.
 >
 > A T=45 transition five hours into its third loop was OOM-killed because I
