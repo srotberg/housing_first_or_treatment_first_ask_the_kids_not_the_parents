@@ -42,6 +42,32 @@
 > reproduces it. Restarting a search against a moving target is how the archive
 > filled with points whose moments cannot be reproduced by re-solving them.
 
+> ## CHECK MEMORY BEFORE LAUNCHING A SECOND SOLVE. 21 September, paid for.
+>
+> A T=45 transition five hours into its third loop was OOM-killed because I
+> started three T=3 runs beside it without looking at free memory. The kernel
+> names the victim and the cause:
+>
+>     Memory cgroup out of memory: Killed process 24211 (hftf)
+>       anon-rss: 5,835,936 kB
+>
+> Three T=3 solves at 2.65 GB each against a T=45 at 5.8 GB is 13.75 GB in a
+> 15 GB cgroup, and the killer takes the LARGEST process -- which is always the
+> long run you care about, never the cheap test you just started.
+>
+> **Before starting any solve while another is running, print `free -g` and the
+> running solve's RSS, and add them.** I checked disk before staging and never
+> checked memory. Disk was the thing that could not hurt me; memory was the
+> thing that killed a five-hour run.
+>
+> Per-solve RSS, measured on this machine: T=3 about 2.65 GB, T=45 about 5.8 GB
+> in the forward pass. The ceiling is 15 GB.
+>
+> **And the checkpoint does not save you here.** The per-period path write lives
+> in the FORWARD pass, so a solve killed during its backward pass falls back to
+> its last completed loop. Prefer to start a second solve just after a loop
+> boundary, not two hours into one.
+
 > ## PHASE 3. THE CALIBRATION IS REOPENED, 11 September. THIS SUPERSEDES PHASE 2.
 >
 > The author, 11 September: *"new calibration strategy: 1. add the child utility
