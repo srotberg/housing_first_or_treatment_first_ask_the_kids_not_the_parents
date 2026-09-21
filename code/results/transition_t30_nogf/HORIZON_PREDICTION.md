@@ -52,3 +52,51 @@ If the bug caused it, the reported horizon can stay at T=30 and every run gets
 about three times cheaper than the T=75 the state file was heading toward. If
 the horizon caused it, T=30 is a diagnostic only and the paper's transition
 costs five hours a loop instead of 2.7.
+
+---
+
+# AND A SECOND PREDICTION, ON THE t=1 WELFARE GAIN, SAME RULE
+
+Added 02:50, still before the forward pass. The author's hope is stated plainly:
+*"ideally we find a welfare gain in t=1 and dont need a grandfathered
+simulation"*. The gain already exists at T=5 -- **CEV +2.306 per cent at t=1** on
+the corrected source. What follows is why I expect the T=30 number to be LOWER,
+written now so it is not explained away later.
+
+## WHY A LONGER HORIZON SHOULD SHRINK THE t=1 GAIN
+
+The terminal steady state is the BEST state in the problem: +3.249 per cent,
+h_1 back to +1.3, lambda_d at 0.018460. Every period of the transition is worse
+than it -- homelessness elevated, the stock of disorder still turning over.
+
+A cohort alive at t=1 lives about 61 periods. The horizon decides how many of
+those it spends in the transition and how many in the terminal steady state:
+
+    T=5    4 transition periods,  57 in the terminal steady state
+    T=30  29 transition periods,  32 in the terminal steady state
+
+**T=5 hands the t=1 cohort the good news twenty-five periods early.** It is not a
+truncation that merely shortens the path; it replaces the bad middle with the
+good end. So +2.306 per cent is an OPTIMISTIC reading of the t=1 gain, and the
+honest expectation is that T=30 comes in below it.
+
+## WHAT TO WATCH, AND WHAT WOULD BE BAD NEWS
+
+**The sign, not the level.** If t=1 stays positive at T=30, the finding holds and
+grandfathering has no loss left to recover. If it crosses zero, the T=5 result
+was a horizon artefact and the whole question reopens.
+
+**The falsifier for this prediction** is t=1 at T=30 coming in at or ABOVE
++2.306 per cent. That would mean the transition periods are not worse than the
+terminal for the t=1 cohort, which would contradict the h_1 and lambda_d paths,
+and I would want to know why before believing the welfare number.
+
+## ON WHETHER THE GRANDFATHERED ARM IS STILL NEEDED
+
+If t=1 is a gain, grandfathering has nothing to recover and the arm is not
+needed to rescue the policy. It may still be worth ONE paragraph as a result
+rather than an arm: the pre-fix T=5 test found homelessness HIGHER under
+grandfathering (0.008747 against 0.007713 at t=1) because the exempt lose the
+deterrent and b rose 21.7 per cent. "Exempting the caught generation makes
+things worse" is a finding, not an absence of one. That is a scope call for the
+author and no work is being done on it.
