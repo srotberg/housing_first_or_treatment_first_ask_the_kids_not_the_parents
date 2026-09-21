@@ -60,8 +60,20 @@
 > checked memory. Disk was the thing that could not hurt me; memory was the
 > thing that killed a five-hour run.
 >
-> Per-solve RSS, measured on this machine: T=3 about 2.65 GB, T=45 about 5.8 GB
-> in the forward pass. The ceiling is 15 GB.
+> **AND READ THE RSS IN A FORWARD PASS, NEVER A BACKWARD ONE.** This rule was
+> written after the first OOM and was not enough: an hour later a cap-bracket
+> run died the same way, because the T=3 footprint was sized at 2.65 GB read
+> during a backward pass. The forward pass carries the distribution as well as
+> the policies and holds 5.9 GB -- the same 2.2x growth already measured on the
+> T=45 that morning, 5.57 GB backward against 8.78 forward. Three T=3 solves at
+> the backward figure look like 8 GB and are 17.7 GB in truth.
+>
+> Per-solve PEAK RSS, forward pass, measured on this machine:
+>
+>     T=3    5.9 GB          two fit, three do not
+>     T=45   8.8 GB          one fits beside nothing bigger than a T=3
+>
+> The ceiling is 15 GB. Plan on the forward figure and leave a gigabyte spare.
 >
 > **And the checkpoint does not save you here.** The per-period path write lives
 > in the FORWARD pass, so a solve killed during its backward pass falls back to
