@@ -85,4 +85,25 @@ for b in $PAIRS; do
 done
 echo
 echo "the previous seeds are kept as *_path_seed.previous.txt"
-echo "restart with: cd $N && ./hftf > run.log 2>&1"
+echo
+# LAUNCH IT OUTSIDE THE SESSION, OR THE NEXT SESSION RESTART TAKES IT WITH IT.
+#
+# The 09:46 kill on 21 September was NOT a machine reboot -- kernel uptime was
+# continuous across it. The platform recycled the SESSION, and the solve died
+# because it sat four levels under environment-manager and shared its session
+# id. A plain ./hftf, or nohup ./hftf &, or ./hftf & disown, all keep that
+# session id: disown removes the job from the shell'"'"'s table, not the process
+# from the session. Only setsid gives the process its own session and reparents
+# it to init, which a session recycle cannot reach.
+#
+# Verified before relying on it: a setsid probe came up with ppid 1 and its own
+# sid, against the in-session solve'"'"'s sid of its launching shell.
+#
+# The cost is that the harness no longer tracks it, so completion has to be
+# polled for. The log and the per-loop *_out.txt files are the real record
+# anyway, and surviving a restart is worth more than a notification.
+echo "restart with:"
+echo "    cd $N && setsid ./hftf > run.log 2> run.err < /dev/null &"
+echo
+echo "then check it detached:  ps -o pid=,ppid=,sid= -p \$(pgrep -x hftf)"
+echo "  ppid must be 1 and sid must be its own pid."
