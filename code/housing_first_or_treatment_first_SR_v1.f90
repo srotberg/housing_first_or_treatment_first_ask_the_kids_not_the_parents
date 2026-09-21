@@ -53209,6 +53209,14 @@
         real(8) :: seed_value_1=0
         integer :: seed_iostat_2=0,seed_count_2=0
         real(8) :: seed_value_2=0
+        ! The three REMAINING equilibrium paths. The transition iterates five
+        ! objects per period, not two: the drug price and pi_v have been saved
+        ! since 0b1e5ce, but the house price, the rent and the lump-sum transfer
+        ! were reconstructed from their level-and-slope guess on every restart,
+        ! which threw away every loop of housing and rental clearing the run had
+        ! paid for. One counter set serves all three; they are read in turn.
+        integer :: seed_iostat_3=0,seed_count_3=0
+        real(8) :: seed_value_3=0
         character(len=400) :: seed_line_1=''
         ! The clipped pi_v step and its cap.
         real(8) :: pi_v_step_1=0,pi_v_cap_1=0,pi_v_gap_1=0,pi_v_damped_1=0,pi_v_new_1=0
@@ -53922,6 +53930,155 @@
 
             write(*,*) "PI_V PATH: no pi_v_path_seed.txt, flat at", &
                 probability_of_voucher_benchmark_used
+
+        end if
+
+        ! THE OTHER THREE PATHS. Same contract as the two above.
+        !
+        ! WHY THEY ARE HERE. The housing market, the rental market and the
+        ! government budget are cleared period by period exactly as the drug
+        ! market is -- housing_price(t), rent(t,:) and lump_sum_transfer(t) are
+        ! updated inside the loop off their own distances -- but their GUESS was
+        ! rebuilt on every run from a level and a slope
+        ! (house_price_upon_implementation, slope_of_log_rent and the rest). So
+        ! a restart inherited the drug price and pi_v a previous run had earned
+        ! and threw away its housing and rental clearing, which is three of the
+        ! four stopping rules. At four hours a loop that is the expensive half.
+        !
+        ! These are read AFTER the level-and-slope construction above, so the
+        ! ramp is what stands when a file is absent, short or refused, exactly
+        ! as it does for the drug price.
+        !
+        ! THE GUARD IS A POSITIVITY TEST, not a bound test. A house price or a
+        ! rent at or below zero is not a slow path, it is a broken one, and as a
+        ! column of decimals it reads like any other. The transfer takes no such
+        ! test: its sign is economics, not a failure.
+        open(unit=94,file='house_price_path_seed.txt',status='old',action='read',iostat=seed_iostat_3)
+
+        if (seed_iostat_3==0) then
+
+            seed_count_3=0
+
+            do
+
+                read(94,'(A)',iostat=seed_iostat_3) seed_line_1
+                if (seed_iostat_3/=0) exit
+                seed_line_1=adjustl(seed_line_1)
+                if (len_trim(seed_line_1)==0) cycle
+                if (seed_line_1(1:1)=='#') cycle
+                read(seed_line_1,*,iostat=seed_iostat_3) seed_value_3
+                if (seed_iostat_3/=0) exit
+
+                if (seed_value_3<=0.d0) then
+
+                    write(*,*) "HOUSE PRICE PATH SEED REFUSED: entry", seed_count_3+1, &
+                        " is", seed_value_3, " which is not positive. Keeping the ramp."
+                    seed_count_3=0
+                    exit
+
+                end if
+
+                seed_count_3=seed_count_3+1
+                if (seed_count_3>max(transition_length-1,1)) then
+                    seed_count_3=seed_count_3-1
+                    exit
+                end if
+
+                housing_price(seed_count_3)=seed_value_3
+
+            end do
+
+            close(94)
+
+            write(*,*) "HOUSE PRICE PATH: entries read=", seed_count_3, &
+                " of", max(transition_length-1,1)
+
+        else
+
+            write(*,*) "HOUSE PRICE PATH: no seed file, ramp stands."
+
+        end if
+
+        open(unit=94,file='rent_path_seed.txt',status='old',action='read',iostat=seed_iostat_3)
+
+        if (seed_iostat_3==0) then
+
+            seed_count_3=0
+
+            do
+
+                read(94,'(A)',iostat=seed_iostat_3) seed_line_1
+                if (seed_iostat_3/=0) exit
+                seed_line_1=adjustl(seed_line_1)
+                if (len_trim(seed_line_1)==0) cycle
+                if (seed_line_1(1:1)=='#') cycle
+                read(seed_line_1,*,iostat=seed_iostat_3) seed_value_3
+                if (seed_iostat_3/=0) exit
+
+                if (seed_value_3<=0.d0) then
+
+                    write(*,*) "RENT PATH SEED REFUSED: entry", seed_count_3+1, &
+                        " is", seed_value_3, " which is not positive. Keeping the ramp."
+                    seed_count_3=0
+                    exit
+
+                end if
+
+                seed_count_3=seed_count_3+1
+                if (seed_count_3>max(transition_length-1,1)) then
+                    seed_count_3=seed_count_3-1
+                    exit
+                end if
+
+                rent(seed_count_3,0)=seed_value_3
+
+            end do
+
+            close(94)
+
+            write(*,*) "RENT PATH: entries read=", seed_count_3, &
+                " of", max(transition_length-1,1)
+
+        else
+
+            write(*,*) "RENT PATH: no seed file, ramp stands."
+
+        end if
+
+        open(unit=94,file='lump_sum_path_seed.txt',status='old',action='read',iostat=seed_iostat_3)
+
+        if (seed_iostat_3==0) then
+
+            seed_count_3=0
+
+            do
+
+                read(94,'(A)',iostat=seed_iostat_3) seed_line_1
+                if (seed_iostat_3/=0) exit
+                seed_line_1=adjustl(seed_line_1)
+                if (len_trim(seed_line_1)==0) cycle
+                if (seed_line_1(1:1)=='#') cycle
+                read(seed_line_1,*,iostat=seed_iostat_3) seed_value_3
+                if (seed_iostat_3/=0) exit
+
+                seed_count_3=seed_count_3+1
+                if (seed_count_3>max(transition_length-1,1)) then
+                    seed_count_3=seed_count_3-1
+                    exit
+                end if
+
+                lump_sum_transfer(seed_count_3)=seed_value_3
+
+            end do
+
+            close(94)
+
+            write(*,*) "LUMP SUM PATH: entries read=", seed_count_3, &
+                " of", max(transition_length-1,1)
+
+        else
+
+            write(*,*) "LUMP SUM PATH: no seed file, ramp stands."
 
         end if
 
@@ -54859,6 +55016,52 @@
                 do time_index=1,max(transition_length-1,1)
 
                     write(95,'(F30.15)') model_fraction_homeless(time_index)
+
+                end do
+
+            close(95)
+
+            ! AND THE THREE THAT CLEAR THE OTHER MARKETS.
+            !
+            ! housing_price, rent and lump_sum_transfer are iterated per period
+            ! exactly as the two above are, and three of the four stopping rules
+            ! are theirs. Saving only the drug price and pi_v meant a restart
+            ! re-earned the housing and rental clearing from a level-and-slope
+            ! ramp every time, which is most of what a loop buys.
+            open(unit=95,file='house_price_path_seed_out.txt',action='write',status='replace')
+
+                write(95,*) "# housing_price after loop", loop_count-1
+                write(95,*) "# periods 1 to", max(transition_length-1,1)
+
+                do time_index=1,max(transition_length-1,1)
+
+                    write(95,'(F30.15)') housing_price(time_index)
+
+                end do
+
+            close(95)
+
+            open(unit=95,file='rent_path_seed_out.txt',action='write',status='replace')
+
+                write(95,*) "# rent(:,0) after loop", loop_count-1
+                write(95,*) "# periods 1 to", max(transition_length-1,1)
+
+                do time_index=1,max(transition_length-1,1)
+
+                    write(95,'(F30.15)') rent(time_index,0)
+
+                end do
+
+            close(95)
+
+            open(unit=95,file='lump_sum_path_seed_out.txt',action='write',status='replace')
+
+                write(95,*) "# lump_sum_transfer after loop", loop_count-1
+                write(95,*) "# periods 1 to", max(transition_length-1,1)
+
+                do time_index=1,max(transition_length-1,1)
+
+                    write(95,'(F30.15)') lump_sum_transfer(time_index)
 
                 end do
 
