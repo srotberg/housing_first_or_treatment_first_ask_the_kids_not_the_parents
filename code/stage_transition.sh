@@ -49,7 +49,18 @@ true
 # THE PARAMETER VECTOR. The transition runs under the REFORM's configuration --
 # it is a path to Treatment First -- so this is arm 3's handover, not the
 # benchmark's, and the two must be one file rather than two believed to match.
-cp "$S/seeds/PARAM_HANDOVER_trans_bench.txt" "$N/PARAM_HANDOVER.txt"
+# THE HANDOVER, AND WHICH ONE. PARAM_HANDOVER_trans_bench.txt carries the
+# ARCHIVE's terminal condition -- pi_v 0.076347 and price 0.833490 -- which
+# predates the voucher cap fixes (cbc9639, f05451d). A transition seeded there
+# warm starts its fiscal instrument and its drug price at values the terminal
+# steady state no longer has. _trans_postfix.txt carries the re-solved arm 3's:
+# pi_v 0.076876159888350143 and price 0.83283631757376753.
+#
+# Override with HANDOVER=<path> to pin a specific one.
+HANDOVER=${HANDOVER:-$S/seeds/PARAM_HANDOVER_trans_postfix.txt}
+[ -f "$HANDOVER" ] || { echo "REFUSING: no handover at $HANDOVER"; exit 1; }
+cp "$HANDOVER" "$N/PARAM_HANDOVER.txt"
+echo "handover        : $HANDOVER"
 cp "$N/PARAM_HANDOVER.txt" "$N/PARAM_HANDOVER.kept.txt"   # the binary deletes the original
 
 # THE PRICE PATH SEED. Absent or SHORT, the code silently keeps the linear ramp
