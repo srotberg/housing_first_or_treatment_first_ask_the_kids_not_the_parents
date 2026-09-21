@@ -8885,6 +8885,18 @@
         real(8), dimension(0:have_two_rental_markets) :: rent_calibrated=1.d0
     
         real(8) :: average_rent_calibrated=1.d0
+        ! THE FAIR-MARKET-RENT STANDARD IS A POLICY PARAMETER, NOT AN EQUILIBRIUM
+        ! OBJECT. The author, 21 September: "You should use the benchmark average
+        ! rental size", which is the same rule already applied to the eligibility
+        ! cutoff -- "in counterfactuals the median income for the cutoff needs to
+        ! be fixed to the benchmark median".
+        !
+        ! Captured at upload from model_average_rental_unit_size<benchmark>.dat,
+        ! the value being 0.302089800944. It gets its own scalar because
+        ! stationary_equilibrium_statistics OVERWRITES the path array every
+        ! period: correct at t=1 from the upload, recomputed from t=2. Exactly
+        ! the shape of the median_income bug, in the same routine.
+        real(8) :: average_rental_unit_size_calibrated=0
                                    
         real(8), dimension(0:have_two_rental_markets) :: long_run_rent=1.d0
                                  
@@ -18050,6 +18062,7 @@
         real(8), intent(inout) :: housing_voucher_1
         integer, intent(in) :: time_period,future_addiction_index_1
         integer :: gf_exempt_1
+        real(8) :: fmr_standard_1
         
         housing_voucher_1=0
 
@@ -18087,7 +18100,44 @@
             
         else
                         
-            housing_voucher_1=min(max(model_average_rent(time_period)*model_average_rental_unit_size(time_period)-&
+            ! THE STANDARD IS THE BENCHMARK'S IN A COUNTERFACTUAL.
+            !
+            ! MEASURED at T=30 loop 0: the mass RECEIVING a voucher is flat
+            ! (3.0443, 2.9506, 2.8856) while the amount per recipient falls 56
+            ! per cent in one period (0.20800, 0.09094, 0.08781). Only a common
+            ! cap scales everyone at once; conditionality ZEROES a user, so it
+            ! would cut the count, not the average. The author's own arithmetic
+            ! settled it: holders are seven per cent of the population against a
+            ! lambda_d of 0.0336, so detection can reach a few per cent of them
+            ! at most -- "those with vouchers mostly don't have sud... it can't
+            ! explain this huge reduction in outlays". The measurement says three
+            ! per cent stop receiving.
+            !
+            ! AND THE STANDARD IS THE SAME AT BOTH ENDS OF THE POLICY:
+            !
+            !     benchmark    average rental unit size   0.302089800944
+            !     long-run TF                             0.303010526294
+            !
+            ! three tenths of one per cent apart. A transition value near 0.189
+            ! in between is not a behavioural response to anything -- there is no
+            ! fixed moving cost in this model, so nothing takes renters to 62 per
+            ! cent of a size identical before and after.
+            !
+            ! AN EXPLICIT BRANCH, NOT A BLEND. The cutoff a few lines away is
+            ! written (1-is_counterfactual)*x + is_counterfactual*y, and that is
+            ! what made 0*NaN=NaN poison the whole expression tonight. This does
+            ! not repeat it.
+            if (is_counterfactual==1) then
+
+                fmr_standard_1=average_rent_calibrated*average_rental_unit_size_calibrated
+
+            else
+
+                fmr_standard_1=model_average_rent(time_period)*model_average_rental_unit_size(time_period)
+
+            end if
+
+            housing_voucher_1=min(max(fmr_standard_1-&
                 rent_to_income_ratio_vouchers*income_1,0.d0),max(rent_spending_1-rent_to_income_ratio_vouchers*income_1,0.d0))
                 
         end if
@@ -40642,6 +40692,10 @@
         open(unit=18,file="model_average_rental_unit_size"//trim(old_results)//".dat",action='read')
             read(18,'(F15.12)') model_average_rental_unit_size(time_period)
         close(18)
+
+        ! Pin the standard here, where the BENCHMARK's own value is in hand and
+        ! before any period can overwrite the array it was read into.
+        average_rental_unit_size_calibrated=model_average_rental_unit_size(time_period)
         
         open(unit=18,file="model_average_net_wealth"//trim(old_results)//".dat",action='read')
             read(18,'(F15.12)') model_average_net_wealth(time_period)
