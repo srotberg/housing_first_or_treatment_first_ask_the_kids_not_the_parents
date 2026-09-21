@@ -63,6 +63,20 @@ done
 
 [ "$bad" -eq 0 ] || { echo; echo "REFUSING to promote: fix or delete the files above."; exit 1; }
 
+# THE HANDOVER MUST BE PUT BACK FIRST. The binary DELETES PARAM_HANDOVER.txt as
+# it starts, which is why stage_transition.sh keeps a copy as .kept.txt. Without
+# it a restart runs on the declared defaults: is_counterfactual's file_number
+# becomes 'counter_arm', nothing it opens exists, and it dies at the first read
+# with "Cannot open file 'total_rental_supplycounter_arm.dat'". Measured, 09:48.
+if [ -f PARAM_HANDOVER.kept.txt ]; then
+  cp PARAM_HANDOVER.kept.txt PARAM_HANDOVER.txt
+  echo "restored PARAM_HANDOVER.txt from .kept.txt"
+else
+  echo "REFUSING: no PARAM_HANDOVER.kept.txt. A restart without the handover runs"
+  echo "  on declared defaults and dies at the first counter_arm file. Re-stage."
+  exit 1
+fi
+
 echo
 for b in $PAIRS; do
   [ -f "${b}.txt" ] && cp "${b}.txt" "${b}.previous.txt"
