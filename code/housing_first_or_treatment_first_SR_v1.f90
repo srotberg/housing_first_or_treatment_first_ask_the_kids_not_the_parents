@@ -24651,6 +24651,21 @@
             write(*,*) "frac_in_support(",time_period,")=", frac_in_support(time_period)
             write(*,*) "frac_in_support_youngest(",time_period,")=", frac_in_support_youngest(time_period)
             
+        else
+        
+            ! THE SHARE BETTER OFF, EVERY PERIOD. The name is the accident: the
+            ! block that builds this counts mass under
+            !     value_function_used > value_function_benchamrk_used
+            ! against the BENCHMARK's own distribution, so it is the fraction of
+            ! households whose transition value beats their own benchmark value
+            ! at the same state -- winners, not common support. It was computed
+            ! on every period of every transition and printed on none of them.
+            write(*,*) "TRANSITION BETTER OFF t=", time_period, &
+                " share_all_ages=", frac_in_support(time_period), &
+                " share_newborns=", frac_in_support_youngest(time_period), &
+                " share_addicted=", frac_in_support_addicted(time_period), &
+                " share_addicted_newborns=", frac_in_support_addicted_youngest(time_period)
+        
         end if
             
     end subroutine
@@ -54474,6 +54489,38 @@
                 !
                 ! Measure before you move. The residual and its components now
                 ! print on every loop; only the UPDATE stays gated.
+                ! CHECKPOINT THE TWO INSTRUMENTS EVERY PERIOD, NOT EVERY LOOP.
+                !
+                ! The paths were written only at a loop boundary, so a kill mid
+                ! loop cost the whole loop. Measured 21 September: the platform
+                ! recycles this session about once every thirteen hours, and a
+                ! loop is 4.7 hours, so a week of running loses about thirty
+                ! hours re-walking ground it had already covered. Writing here
+                ! costs two files of 44 lines per period -- nothing against a
+                ! 171-second period -- and cuts a kill's cost to one period.
+                !
+                ! The file therefore holds a MIXED path while a loop is in
+                ! flight: periods 1..time_index from this loop, the rest from
+                ! the last one. That is exactly what a restart wants, and it is
+                ! what the header records so nobody has to guess.
+                open(unit=93,file='drug_price_path_seed_out.txt',action='write',status='replace')
+                    write(93,*) "# price_of_addictive_good_path, loop", loop_count, &
+                        " through period", time_index, "of", max(transition_length-1,1)
+                    write(93,*) "# periods after that one are from the previous loop"
+                    do keep_i_1=1,max(transition_length-1,1)
+                        write(93,'(F30.15)') price_of_addictive_good_path(keep_i_1)
+                    end do
+                close(93)
+
+                open(unit=93,file='pi_v_path_seed_out.txt',action='write',status='replace')
+                    write(93,*) "# probability_of_voucher_path, loop", loop_count, &
+                        " through period", time_index, "of", max(transition_length-1,1)
+                    write(93,*) "# periods after that one are from the previous loop"
+                    do keep_i_1=1,max(transition_length-1,1)
+                        write(93,'(F30.15)') probability_of_voucher_path(keep_i_1)
+                    end do
+                close(93)
+
                 write(*,*) "TRANSITION BUDGET loop=", loop_count, " t=", time_index, &
                     " net_govt_revenues=", net_govt_revenues(time_index), &
                     " constraint=", net_govt_revenue_constraint, &
@@ -54982,7 +55029,7 @@
             ! has no slot to be put into. It is here to score a restart against.
             open(unit=95,file='drug_price_path_seed_out.txt',action='write',status='replace')
 
-                write(95,*) "# price_of_addictive_good_path after loop", loop_count-1
+                write(95,*) "# price_of_addictive_good_path after loop", loop_count
                 write(95,*) "# the price FACED, not a step onto the measured gap"
                 write(95,*) "# periods 1 to", max(transition_length-1,1)
 
@@ -54996,7 +55043,7 @@
 
             open(unit=95,file='pi_v_path_seed_out.txt',action='write',status='replace')
 
-                write(95,*) "# probability_of_voucher_path after loop", loop_count-1
+                write(95,*) "# probability_of_voucher_path after loop", loop_count
                 write(95,*) "# periods 1 to", max(transition_length-1,1)
 
                 do time_index=1,max(transition_length-1,1)
@@ -55009,7 +55056,7 @@
 
             open(unit=95,file='h1_path_reference_out.txt',action='write',status='replace')
 
-                write(95,*) "# model_fraction_homeless after loop", loop_count-1
+                write(95,*) "# model_fraction_homeless after loop", loop_count
                 write(95,*) "# A REFERENCE, NOT AN INPUT. Nothing reads this back."
                 write(95,*) "# periods 1 to", max(transition_length-1,1)
 
@@ -55030,7 +55077,7 @@
             ! ramp every time, which is most of what a loop buys.
             open(unit=95,file='house_price_path_seed_out.txt',action='write',status='replace')
 
-                write(95,*) "# housing_price after loop", loop_count-1
+                write(95,*) "# housing_price after loop", loop_count
                 write(95,*) "# periods 1 to", max(transition_length-1,1)
 
                 do time_index=1,max(transition_length-1,1)
@@ -55043,7 +55090,7 @@
 
             open(unit=95,file='rent_path_seed_out.txt',action='write',status='replace')
 
-                write(95,*) "# rent(:,0) after loop", loop_count-1
+                write(95,*) "# rent(:,0) after loop", loop_count
                 write(95,*) "# periods 1 to", max(transition_length-1,1)
 
                 do time_index=1,max(transition_length-1,1)
@@ -55056,7 +55103,7 @@
 
             open(unit=95,file='lump_sum_path_seed_out.txt',action='write',status='replace')
 
-                write(95,*) "# lump_sum_transfer after loop", loop_count-1
+                write(95,*) "# lump_sum_transfer after loop", loop_count
                 write(95,*) "# periods 1 to", max(transition_length-1,1)
 
                 do time_index=1,max(transition_length-1,1)
@@ -55067,7 +55114,7 @@
 
             close(95)
 
-            write(*,*) "TRANSITION PATHS SAVED after loop", loop_count-1, &
+            write(*,*) "TRANSITION PATHS SAVED after loop", loop_count, &
                 " periods=", max(transition_length-1,1)
 
             loop_count=loop_count+1
