@@ -198,3 +198,83 @@ It is NOT a fix this session should make -- the model is frozen and the coordina
 is editing this routine now -- but the census should gain a fourth slot before it
 is read on a grandfathered run, or it will mislead exactly the person trying to
 find where the voucher mass went.
+
+---
+
+# I WAS WRONG. IT WAS THE PAYMENT'S CAP, AND HERE IS HOW THE ERROR WORKED
+
+The fix landed as cbc9639 and f05451d. The cause is the voucher's fair-market-rent
+CAP inside `calculate_housing_voucher_2`, which is to say **the accounting**. The
+conclusion at the top of this file -- *"the payment calculation is innocent. It is
+the forward transition of the voucher state"* -- **is false.** Anyone who followed
+it would have looked in the wrong routine.
+
+## WHAT IT ACTUALLY WAS
+
+The cap was `model_average_rent(t) * model_average_rental_unit_size(t)`, and those
+two statistics are normalised against DIFFERENT bases -- the size by the mass of
+renters, the rent by the rental-demand aggregate. Their product is the true average
+rent only when those bases agree, which is true in a steady state and false on a
+path. So the cap drifted and collapsed after t=1. The decisive measurement is one
+I never took:
+
+    t     receiving    spending    per recipient
+    1      3.0443       0.63324      0.20800
+    2      2.9506       0.26832      0.09094
+    3      2.8856       0.25338      0.08781
+
+**The count receiving is flat and the amount each gets halves. Only a common cap
+does that**, and it is the opposite of an empty state: the holders were there the
+whole time, being paid too little. `calculate_housing_voucher_2` sets the payment
+to zero for a USER, so conditionality cuts the count, not the average -- which is
+how the coordinator separated the two, by looking at the count and the average
+separately rather than at the total.
+
+## HOW MY INFERENCE FAILED, AND IT IS THE SAME CLASS AS THE CENSUS CLAMP
+
+I argued that `tests=` going to exactly zero from t=2, at a site with its own
+accumulator, proved there was no holder mass. The brief I was given says, of the
+five sites fixed on 20 September:
+
+> The two drug-test sites correctly keep the bare `==1`, because grandfathered
+> households must NOT be tested.
+
+**So on the GRANDFATHERED arm the drug-test counter is zero BY DESIGN for the
+exempt cohort** -- and at t=1 that cohort is the entire inherited holder stock,
+3.6183 of it, mapped into `voucher_gf`. I used as evidence of an empty state a
+diagnostic that this arm is built to leave empty.
+
+That is exactly the class of the census clamp recorded above, and exactly the class
+the brief closes with: *adding a value to a state variable breaks every if-chain
+enumerating the old values.* I found that class in someone else's diagnostic an
+hour before walking into it myself, with the warning in my own brief.
+
+## WHAT I SHOULD HAVE DONE, CONCRETELY
+
+Not "been more careful". Two specific things:
+
+1. **Measured the count and the average separately** instead of reading the total.
+   Spending is count x average, and a total going to zero cannot distinguish them.
+   The coordinator's table is three columns for that reason. I had `vouchers_2`
+   and nothing else, and I should have said the total could not separate the two
+   rather than picking one.
+2. **Not used a voucher-gated counter as evidence on the grandfathered arm at
+   all.** Every such counter is either three-state or deliberately excludes the
+   exempt cohort. On this build they are the least trustworthy instruments
+   available, and I reached for one.
+
+## WHAT SURVIVES
+
+- The independent reproduction stands: 0.64937 at t=1 then exact zeros on a
+  separately re-solved chain, which ruled out the inputs.
+- The budget arithmetic stands: residuals +0.0427, +0.6474, +0.6139, +0.5854
+  against the coordinator's 0.0534, 0.693, 0.686, 0.680, and the t=1-to-t=2 jump
+  of +0.6047 against a lost voucher spend of 0.649367.
+- The census finding stands, and is now better motivated: `model_mass_by_voucher_
+  state` is `dimension(0:2)` with a `min(...,2)` clamp, so on the grandfathered
+  build the exempt cohort is reported as "excluded".
+- The chain verification in `CHAIN_VERIFIED.md` stands.
+
+What does not survive is my diagnosis, and the withdrawal of the `tests=` argument
+one commit earlier was a half-measure: I withdrew the argument and kept the
+conclusion it was the only support for.
