@@ -91,3 +91,110 @@ contradiction: the T=5 reference they are matched against was measured on a run
 carrying this same bug. They test that this chain reproduces that one, which is
 what they were for. They do NOT say the economics is right, and they were never
 going to.
+
+---
+
+# CORRECTIONS, 21 September, after reading the coordinator's newer source
+
+Three things in this file need amending. It is left standing with the amendments
+below rather than rewritten, because two of them are mistakes worth recording.
+
+## 1. THE COORDINATOR WAS ALREADY PAST THIS, AND THIS FILE DID NOT KNOW IT
+
+My push helper rebases onto the shared branch before every push, so the
+coordinator's later commits have been arriving in this working tree all along --
+and the source now carries four new per-period diagnostics (`TRANSITION VOUCHER
+DIAG`, `VOUCHER CENSUS`, `AMORT DIAG`, `INCOME GATE`) plus comments that state the
+diagnosis directly:
+
+> At t=1 holders=0.2744 and at t=2 holders, receiving, eligibles_getting and
+> drug_tests are all exactly zero, so the state is gone rather than unpaid.
+
+So the conclusion above -- the payment is innocent, the voucher STATE is empty --
+is confirmed independently and by a more direct instrument than mine. It was not a
+new finding by the time it was written. What survives as this session's own
+contribution is the INDEPENDENT REPRODUCTION on a separately re-solved chain, which
+rules out the inputs, and the closed budget arithmetic below.
+
+**None of those diagnostics appear in this session's T=5 log, and that is not a
+finding either.** The binary was built at 19:09 and they were added afterwards. A
+run's log can only contain the diagnostics its binary was compiled with, which is
+worth remembering before reading a silent diagnostic as a silent code path.
+
+## 2. THE `tests=` ARGUMENT IS WEAKER THAN I PRESENTED IT
+
+I rested the "accounting is innocent" conclusion on `tests=` going to exactly zero
+at a site with its own accumulator. The coordinator's own comment says that
+variable is misleading:
+
+> Note that "tests=" above prints a SCALAR, not a path: there is no (time_index)
+> on govt_spending_on_drug_tests. Its going to zero after t=1 is this print's
+> artefact and not a second symptom.
+
+Tracing it: `govt_spending_on_drug_tests` is declared scalar at 505 and assigned at
+20364 as `voucher_conditional_on_clean*cost_per_drug_test*model_drug_tests(time_period)`
+-- so it is re-assigned per period from an array that IS a path, and the printed
+value does correspond to the period printed. On that reading the argument holds.
+
+**But it should not have been the load-bearing evidence, and I am withdrawing it as
+such.** Resting a published claim on a variable whose owner has documented it as
+misleading, when a direct instrument for the same question exists, is the wrong
+order of operations regardless of whether the inference happens to survive. The
+conclusion stands on `holders`, `receiving` and `eligibles_getting` all being
+exactly zero, which is what actually settles it.
+
+## 3. WHAT DOES SURVIVE AS EVIDENCE FROM THIS CHAIN: THE BUDGET ARITHMETIC CLOSES
+
+`net_govt_revenues` IS printed at loop 0, against a constraint of 6.0219346:
+
+    t   net_govt_revenues   residual    vouchers_2
+    1   6.0646344           +0.0427     0.649367
+    2   6.6693559           +0.6474     0.0
+    3   6.6358740           +0.6139     0.0
+    4   6.6073047           +0.5854     0.0
+
+The coordinator's `t5_fixed.log` had 0.0534 then 0.693, 0.686, 0.680. Same shape,
+independently, on a different benchmark and compiler.
+
+And the jump in the surplus from t=1 to t=2 is **+0.6047** against a lost voucher
+spend of **0.649367** -- within 7 per cent, the remainder being small movements in
+social security, UI, food stamps and bequests. **The surplus is quantitatively the
+unpaid programme**, which is the claim the hold rests on, now closed on this
+session's own numbers.
+
+---
+
+# AND ONE NEW FINDING THAT BITES THE GRANDFATHERED ARM ONLY
+
+**`TRANSITION VOUCHER CENSUS` CANNOT SEE THE GRANDFATHERED STATE, AND WILL REPORT
+THE EXEMPT COHORT AS "excluded".**
+
+    8337:  real(8), dimension(0:2) :: model_mass_by_voucher_state=0
+    18486: model_mass_by_voucher_state(min(max(voucher_index,0),2))=&
+    18487:     model_mass_by_voucher_state(min(max(voucher_index,0),2))+...
+
+The array has THREE slots. With `grandfather_voucher_states=1`,
+`voucher_gf = voucher_state_max = 3`, and `min(max(3,0),2) = 2`. So the
+grandfathered mass is **clamped into slot 2 and counted as "excluded"** -- the
+state for a household BARRED from vouchers, which is the exact opposite of exempt.
+
+Three consequences:
+
+- On the no-grandfathering arm the census is correct, because only three states
+  exist. **It is wrong only on the grandfathered build**, which is this session's.
+- The clamp means it does not crash, does not go out of bounds, and the printed
+  `total` still adds up -- so nothing flags it. The 3.6183 of grandfathered mass
+  simply appears under the wrong label.
+- Anyone reading that census on the grandfathered arm to chase the missing voucher
+  mass would conclude the exempt cohort had been EXCLUDED from vouchers, and would
+  be chasing an artefact of the diagnostic.
+
+This is the class the brief names: *adding a value to a state variable breaks every
+if-chain enumerating the old values, and neither the compiler nor the bounds checker
+sees it.* The `min(...,2)` is what hides it here, and the same clamp appears at
+11074-11076 in the steady-state `DIAG voucher-state mass` print.
+
+It is NOT a fix this session should make -- the model is frozen and the coordinator
+is editing this routine now -- but the census should gain a fourth slot before it
+is read on a grandfathered run, or it will mislead exactly the person trying to
+find where the voucher mass went.
