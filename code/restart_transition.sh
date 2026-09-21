@@ -1,9 +1,26 @@
 #!/bin/bash
 # restart_transition.sh <run dir>
 #
-# Promotes the five *_out.txt paths a running transition writes every loop to
-# the five seed files the next run reads, so a restart resumes from the latest
-# guesses instead of from the level-and-slope ramp.
+# Promotes the TWO instrument paths a running transition writes every loop to
+# the two seed files the next run reads, so a restart resumes from the latest
+# guesses instead of from the seed it started on.
+#
+# THE TRANSITION SOLVES FOR EXACTLY TWO OBJECTS. The author, 21 September:
+# "rent and housing price and lump sum transfer are not equilibrium objects,
+# they are constant", and "i can only think of 2: pi_v and p_v". The source
+# agrees: peg_prices_in_counterfactual=1 sets housing_price to
+# calibrated_stationary_housing_price and rent to rent_calibrated in every
+# period and ZEROES their distances, so two of the four stopping rules are
+# satisfied by construction and never bind; lump_sum_transfer is never assigned
+# inside the loop at all. An earlier version of this script promoted all five,
+# on a reading of an elseif branch the peg makes dead. Promoting a constant is
+# noise; feeding it back through a reader is worse, because loop 0's BACKWARD
+# pass would use it before the peg is re-imposed.
+#
+# Aggregate homelessness is not here for the same reason, and it is the
+# author's point too: once pi_v and the drug price clear, h_1 is whatever the
+# distribution makes it and feeds the welfare calculation. It is written every
+# loop as a reference to score a restart against, never read back.
 #
 # WHY THIS IS A SCRIPT AND NOT AUTOMATIC. The writer deliberately does NOT
 # overwrite the seed files it read. t30_loop1_pivcollapse is the reason: pi_v
@@ -21,7 +38,7 @@ N=${1:?usage: restart_transition.sh <run dir>}
 [ -d "$N" ] || { echo "REFUSING: no run dir at $N"; exit 1; }
 cd "$N"
 
-PAIRS="drug_price_path_seed pi_v_path_seed house_price_path_seed rent_path_seed lump_sum_path_seed"
+PAIRS="drug_price_path_seed pi_v_path_seed"
 
 # NOTHING IS PROMOTED UNTIL EVERYTHING HAS BEEN CHECKED. A half-promoted set --
 # a new price path against an old pi_v path -- is a state no loop ever produced
@@ -37,7 +54,7 @@ for b in $PAIRS; do
     pi_v_path_seed)
       if awk '!/^[[:space:]]*(#|$)/ {if ($1+0 <= 0.000010000011 || $1+0 >= 0.999999) exit 1}' "$f"; then :; else
         echo "  $f has an entry on a bound -- this is the collapse the clip exists to stop"; bad=1; fi ;;
-    drug_price_path_seed|house_price_path_seed|rent_path_seed)
+    drug_price_path_seed)
       if awk '!/^[[:space:]]*(#|$)/ {if ($1+0 <= 0) exit 1}' "$f"; then :; else
         echo "  $f has a non-positive entry"; bad=1; fi ;;
   esac
