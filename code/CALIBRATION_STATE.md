@@ -113,6 +113,36 @@ scope decision for the author.
 - **The benchmark `.dat` set is shared**, 90 files, 2.06 GB compressed to 124 MB
   in `code/seeds/benchmark_dat/`, retiring the four-and-a-half-hour cold start.
 
+## THE RUNNING T=30 CARRIES A PRE-FIX TERMINAL CONDITION. QUANTIFIED, NOT FATAL
+
+Found 21 September 02:05, by reading the file the run actually loads. The
+transition does not solve its terminal steady state -- it reads `counter_TF`,
+and the set in `trans_bench_to_tf/` is dated 19 September 19:21, before any of
+the five voucher fixes:
+
+    counter_TF.txt  probability_of_voucher          0.0763466554594919
+                    govt_spending_on_housing_vouchers_2  0.68483690499099070
+
+The post-fix arm 3 re-solve gives 0.0768762 and 0.67956504, so the terminal
+pi_v this run is anchored to is **0.69 per cent low** and the terminal voucher
+spending 0.77 per cent high.
+
+**Why the run continues anyway.** The same controlled re-solve moves the
+terminal quantities the backward pass actually needs by almost nothing: b
++0.031 per cent, h_1 +0.153, lambda_d -0.190, and **lifetime welfare by 0.001
+per cent** -- four orders of magnitude inside anything that could change a t=1
+CEV. A 0.69 per cent error in one instrument's terminal level sits far inside
+the transition's own stopping rules and inside the noise of a first,
+unconverged loop, and re-solving arm 3 here first would cost hours before the
+diagnostic the author asked for could even start.
+
+**What it does mean.** The pi_v panel's last periods inherit a slightly low
+anchor, so read the END of that panel as approximate. And the terminal
+condition must be refreshed before any run that gets REPORTED. The post-fix
+arm 3 dump was produced in a sibling container that has since ended and only
+its log was committed, so refreshing it means re-solving arm 3 here -- eight
+blocks -- on the corrected source, and copying the new `counter_TF*` set in.
+
 ## STILL OPEN
 
 - Nothing has converged. No number in the "in flight" section is a result yet.
