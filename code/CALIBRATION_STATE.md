@@ -1,79 +1,132 @@
-# THE SECANT SEED WORKED. FIRST TRANSITION LOOP NEAR AN EQUILIBRIUM
+# THE 20 SEPTEMBER T=30 IS VOID. THE FAIR-MARKET-RENT CAP WAS BROKEN
 
-20 September. T=30, third seed, one complete loop. The test set before the run
-was that `distance_drug_market` at t=1 fall well below 0.21730. It came in at
-**0.031346**, and across all 29 periods:
+21 September. The archive disagrees with what this file said yesterday, and the
+archive wins. Everything below the first two sections is what survives.
 
-    mean distance_drug_market    ramp 0.2027   supply curve 0.4878   SECANT 0.01351
+## WHAT WAS WRONG
 
-**Fifteen times better than the ramp**, with seven of 29 periods already inside
-the 5e-3 rule (0.00029 at t=20, 0.00107 at t=23, 0.00258 at t=16).
+The counterfactual's housing voucher is capped by a fair-market-rent standard.
+The benchmark builds that standard from its own calibrated average rent times
+its own calibrated average rental unit size. The counterfactual was rebuilding
+it every period from `model_average_rent(t)*model_average_rental_unit_size(t)`
+-- its OWN drifting product -- so the cap moved with the equilibrium it was
+supposed to discipline, and in a transition it collapsed. Four defects, all
+closed and each committed separately:
 
-## NO FOURTH RESEED. THE CAP IS NO LONGER BINDING
+    a65b9dd4  median_income was never declared for the transition
+    c463dd20  the eligibility cutoff's median income was computed off the
+              wrong denominator
+    cbc96395  the standard now reads the BENCHMARK's calibrated rent and
+              calibrated unit size in every counterfactual
+    f05451d5  the same two are pinned at the source, after the normalisation,
+              so nothing downstream can re-derive a drifting one
 
-Three points in period 1 put the root at 0.9183 (bracketing pair) and 0.9167
-(two nearest) against a seed of 0.92739 -- about 1.2 per cent, which is three
-loops at the half-a-per-cent cap rather than forty. The reseeding was only ever
-justified by the cap being the binding constraint. It is not any more, so the
-run walks in on its own machinery.
+The author's instruction was the whole of it: *"No, the formula has to be the
+same as the benchmark... The rent is identical..."* and *"use the same model
+average rental size as the benchmark. Pin it so the counterfactual uses the
+same rule."*
 
-## THE MECHANISM, WHICH IS NOW READABLE PERIOD BY PERIOD
+## THE CONTROLLED PAIR, T=5, ONE SOURCE CHANGE
 
-                  benchmark      t=1           t=29          TF steady state
-    h_1            0.006458   0.007714 +19.4%  0.010585 +63.9%  0.006542 +1.3%
-    b              0.081740   0.059749 -26.9%  0.047540 -41.8%  0.045287 -44.6%
-    lambda_d       0.033625   0.033610  flat   0.020800         0.018460
-    lifetime       791.3946   787.9067         790.6010         792.5130
-    CEV                  --    -9.272%          -2.223%           +3.249%
+Same benchmark, same handover, same binary settings, controls stated before the
+run:
 
-**Participation falls at once; disorder does not.** b drops 26.9 per cent in
-the FIRST period and grinds to -41.8 per cent by t=29. lambda_d is completely
-unmoved at t=1 -- 0.033610 against the benchmark's 0.033625 -- and only decays
-later. That is the right shape: a household can stop USING the day the policy
-starts, but the stock of people WITH disorder turns over only as the cohort
-does. The author's reading of 19 September, that drug use would stop
-immediately for many, is confirmed; what is slow is recovery from disorder.
+                      pre-fix      post-fix
+    vouchers t=1      0.63943      0.65572
+    vouchers t=2      0.000000     0.66355
+    lifetime t=1      790.873      792.194     (benchmark 791.39464)
+    lifetime t=2         --        792.521
+    CEV      t=1       -9.272%      +2.306%
+    CEV      t=2          --        +3.273%    (long run +3.249%)
+    budget residual     0.445       0.0327 / 0.0241 against a rule of 5e-2
 
-**The welfare trough is at t=3 and shallow**: -9.27%, -11.46%, -12.15%, then
-monotone recovery to -2.22% at t=29. A dip and a slow climb, not exponential
-decay -- again the author's reading rather than mine.
+    FMR standard, both periods: avg_rent 1.0000000
+                                avg_unit_size 0.30208980094400001
 
-**Homelessness rises and stays up.** +19.4 per cent at t=1, peaking at +76.5
-per cent, still +63.9 per cent at t=29 against +1.3 per cent in the long run.
-That is where the welfare loss is.
+At t=2 the pre-fix path paid NO vouchers at all. **Treatment First is welfare
+improving at t=1 once the cap is fixed.** The -9.27 per cent that this file
+reported yesterday, and that the grandfathering arm's entire rationale rested
+on, was the collapsing cap and not the reform.
 
-## THE CONTROL HELD, AND IT IS A RESULT IN ITSELF
+## WHAT THIS VOIDS
 
-h_1 at t=1 was 0.0077265 at p=0.777 and 0.0077137 at p=0.927: **a 0.17 per cent
-move in homelessness across a 19 per cent move in the drug price.** Homelessness
-at implementation is the conditionality revoking housing from people still
-using, and the price is not a competing explanation.
+- The welfare column of the 20 September T=30 -- -9.272%, -11.46%, -12.15%,
+  recovering to -2.223% at t=29 -- in full. There is no trough.
+- The grandfathering brief. Its question has inverted from *how much of the t=1
+  loss does it recover* to *how much of the t=1 gain does it forgo*, and the
+  pre-fix evidence already had homelessness HIGHER under grandfathering
+  (0.008747 against 0.007713 at t=1) because the exempt lose the deterrent.
+  Its `CONTROL.md` acceptance numbers were measured on the broken cap and are
+  stale.
+- The quantity path -- h_1, b, lambda_d by period -- is not known to be wrong,
+  but it is not verified either. At T=5 the quantities barely moved (h_1 +18.75%
+  at t=1 post-fix against +19.4% pre-fix at T=30) while welfare inverted. Do not
+  quote the 20 September quantity path as a result until the rerun lands.
 
-Participation is the opposite -- violently price-sensitive. b was 0.092053 at
-p=0.777 and 0.059749 at p=0.927, a 35 per cent fall for a 19 per cent price
-rise, an implied demand elasticity near -1.8 consistent with the -2.3 slope
+## IN FLIGHT
+
+`hftf_t30b`: T=30, no grandfathering, on the fully corrected source, launched
+21 September 01:41 with the machine to itself. 2.93 s per age sweep measured,
+3,538 sweeps in loop 0, so the backward pass ends about 03:07 and loop 0 about
+04:33. The author has asked for five graphs off its first loop -- per cent
+change in homelessness, drug use and SUD, the level of pi_v, and lifetime CEV
+including childhood by cohort -- and `code/transition_graphs.py` builds them,
+reading every reference value out of the steady-state dumps.
+
+## WHAT SURVIVES FROM THE 20 SEPTEMBER RUN
+
+**The secant seed.** `distance_drug_market` at t=1 came in at 0.031346 against a
+test of 0.21730, and the mean across 29 periods was 0.01351 -- fifteen times
+better than the ramp's 0.2027 and the supply curve's 0.4878. The cap stopped
+binding, so no fourth reseed was needed. This is a property of the seeding, not
+of the voucher, and the fix does not touch it.
+
+**The control on the drug price, which is a result in itself.** h_1 at t=1 was
+0.0077265 at p=0.777 and 0.0077137 at p=0.927: a 0.17 per cent move in
+homelessness across a 19 per cent move in the price. Homelessness at
+implementation is conditionality revoking housing from people still using, and
+the price is not a competing explanation. Participation is the opposite --
+b went 0.092053 to 0.059749 over the same price move, a 35 per cent fall for a
+19 per cent rise, an implied demand elasticity near -1.8 against the -2.3 slope
 measured on the supply side. **This model's drug market clears through
 participation, not through homelessness.**
 
-## T=30 IS TOO SHORT, AND THE RIGHT RUN NOW SAYS SO
+**The horizon problem.** At t=29 the price was already the boundary condition,
+0.83349, and yet h_1 sat at +63.9 per cent on the benchmark where the terminal
+steady state is +1.3. Whether that survives the fix is exactly what the rerun
+answers; if it does, the reported result needs a longer horizon and that is a
+scope decision for the author.
 
-At t=29 the price IS the boundary condition, 0.83349, so the seed can no longer
-be blamed. And yet h_1 is 0.010585, **+63.9 per cent on the benchmark where the
-terminal steady state is +1.3 per cent**, and lambda_d is 0.0208 against
-0.0185. The terminal condition is being imposed on a period nowhere near the
-terminal steady state.
+## CLOSED SINCE THIS FILE LAST SAID OTHERWISE
 
-The reported result should be T=75, which fits memory at about 10.5 GB of 15
-since the windowing. That is a scope decision and it is the author's. The T=30
-run continues meanwhile: it is close on the drug market and will show how pi_v
-behaves as the fiscal instrument, which no transition has yet exercised.
+- **The windowing was compared bit for bit**: 6.075e-05 relative against a rule
+  of 1e-4. Windowing the policies to one slot is a no-op on the path.
+- **pi_v's update is no longer a fixed damped step.** It carries per-period
+  secant state, falls back to a damped 0.05 of the residual, abandons the
+  secant when the gap grows, holds a four-step trust region, and applies the
+  existing quarter-of-pi_v clip last.
+- **The transition's stopping rules were loosened by the author's instruction**
+  (*"the convergence rule can be less tight than the long run"*): a factor of
+  two on all four, applied only when `solve_transition_dynamics` is on.
+- **Paths save and restore**, in Fortran and in `code/save_transition_paths.py`,
+  and both refuse a path carrying NaN or a pi_v on a bound.
+- **The benchmark `.dat` set is shared**, 90 files, 2.06 GB compressed to 124 MB
+  in `code/seeds/benchmark_dat/`, retiring the four-and-a-half-hour cold start.
 
 ## STILL OPEN
 
-- Nothing has converged. No number here is a result.
-- pi_v's budget update switches on at loop 1 and has never run on a path.
-- The windowing has not been compared bit-for-bit against an unwindowed run.
+- Nothing has converged. No number in the "in flight" section is a result yet.
+- pi_v's budget update switches on at loop 1 and has still never run to
+  convergence on a path.
+- Whether the t=1 gain is the right SIZE. A recipient's voucher is about 67 per
+  cent of their income and recipients are 6.3 per cent of the population, so
+  abolishing the programme outright is worth roughly 3 per cent of population
+  average consumption -- that is the bound the t=1 number has to sit inside.
+- The grandfathered arm's voucher code has not been run since any of the five
+  fixes.
+- `penalty_child_homeless` is 0, so the "children on the street" channel
+  transmits no inherited penalty at all. Whether that is intended is the
+  author's call and it is not a bug to fix unasked.
 - The child's inherited penalty must key on the period the parent DIES in.
   Read, not verified.
 - Arms 1 and 2 were run under the loose stopping rules and not re-checked.
-
