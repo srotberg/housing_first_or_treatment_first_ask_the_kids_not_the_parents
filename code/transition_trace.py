@@ -34,16 +34,42 @@ need it: clear_drug_market already carries a per-period secant across loops in
 previous_price_of_addictive_good_path, so the built-in iteration is the better
 instrument and an external reseed throws its history away.
 """
-import sys, re, argparse
+import sys, re, argparse, os
 
 EPS_S   = 1.4600000381469727
-SHIFTER = 1.62001478993009917495     # the committed benchmark's, held fixed
+
+# THE SHIFTER IS READ FROM THE RUN'S OWN BENCHMARK FILE, NOT HARD-CODED.
+#
+# It was hard-coded to the archive's 1.62001478993009917495, and on a re-solved
+# benchmark that is wrong in the sixth digit -- this session's is 1.6198936. The
+# implied price is linear in it, so a 0.0075 per cent error moves every implied
+# price by 7.5e-5 and every gap by the same, which is 75 times the 1e-6 agreement
+# the check below demands. Every period then reported MISMATCH and the script
+# refused to write a seed: the guard worked, and what it caught was the constant.
+#
+# Read from drug_supply_shifter<benchmark>.dat beside the log, falling back to the
+# archive's value with a warning, because a transition run directory always has it.
+SHIFTER_ARCHIVE = 1.62001478993009917495
+def _read_shifter(logpath):
+    d = os.path.dirname(os.path.abspath(logpath))
+    f = os.path.join(d, "drug_supply_shifterbaseline_benchmark.dat")
+    try:
+        with open(f) as fh:
+            v = float(fh.read().split()[0])
+        if v > 0:
+            return v, f
+    except Exception:
+        pass
+    return SHIFTER_ARCHIVE, "(fallback) the archive's value -- no %s" % os.path.basename(f)
 
 ap = argparse.ArgumentParser()
 ap.add_argument("log")
 ap.add_argument("--loop", type=int, default=None, help="loop number; default the last complete one")
 ap.add_argument("--seed", default=None, help="write a Newton-step price path seed here")
 a = ap.parse_args()
+
+SHIFTER, _shifter_src = _read_shifter(a.log)
+print("shifter %.20g  from %s" % (SHIFTER, _shifter_src))
 
 def slope(t):
     # LINEAR IN t BETWEEN THE TWO MEASURED POINTS, and flat outside them.
