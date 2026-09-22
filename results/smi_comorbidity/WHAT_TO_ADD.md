@@ -280,3 +280,86 @@ suppressor rather than adding an assumption.
 
 Step 2 delivers the mechanism and is the SMALLEST change of the three: the
 parameter exists and is already calibrated, just set mild.
+
+# WHERE IT LANDED: the drug has to have value, and the author was right twice
+
+## The error the author caught, which is why the design is what it is
+
+I proposed lowering the recovery hazard under SMI so they could not quit. The
+author: "but if you raise the hazard, they will use even less....what you need
+is for the drug to have some value to them."
+
+CORRECT, AND MY PROPOSAL WAS BACKWARDS. Addiction is a trap and agents see the
+trap coming. Making it harder to escape makes it more frightening to ENTER, so
+lowering mu_m under SMI DETERS initiation and pushes their use DOWN.
+
+And it worsens the larger failure. The measurement says the model fails worst at
+initiation -- casual use off by 8x (0.126) against addiction off by 1.7x
+(0.596). The hazard route would have damaged the big gap to fix the small one,
+and it pushes the same direction as the existing 2.5x over-charge. I was piling
+on.
+
+THE ONE NON-PREFERENCE LEVER THAT MOVES THEIR USE UP is the mortality double
+count fix, because it makes the drug CHEAPER for them. It can restore correct
+pricing; it cannot make the drug worth MORE to them than to anyone else.
+Instrumental routes -- drugs improving their employment or health -- are
+empirically indefensible.
+
+So value it is, and value lives in preferences. "they need it to feel better."
+
+## The structure
+
+    flow_utility = [as now] - chi_m * 1{SMI} * (1 - relief(drug))
+
+Nothing else changes. b, the drug's weight in the aggregate, the housing terms,
+all identical across households.
+
+## Why this survives attack when "they like drugs more" does not
+
+It is not that they enjoy drugs more. It is that they are suffering and the drug
+reduces the suffering. Two checkable consequences:
+
+  - They are WORSE OFF THAN EVERYONE ELSE THROUGHOUT, using or not. Relief only
+    partly restores them, never puts them ahead. Nothing assumes they gain
+    relative to anybody, so "you assumed the answer" has nothing to grip.
+  - THE MODEL ALREADY DOES THIS FOR HOMELESSNESS, through
+    housing_status_utility_function. State-dependent utility is a welfare cost
+    of a bad state, not a taste. SMI becomes the same kind of object.
+
+## What it delivers that the hazard could not
+
+  necessity        inelastic demand, bought even when poor, because it relieves
+                   rather than pleases
+  the right margin raises casual use AND addiction, and casual use is the bigger
+                   failure
+  NON-COMPLIANCE   quitting means returning to untreated suffering, so the
+                   sobriety-for-housing trade is far more expensive for them and
+                   conditionality fails on exactly the group it should not
+
+## Identification: keep only one parameter free
+
+  chi_m          ASSIGN from health-economics disability weights for severe
+                 mental disorders. External, defensible the way kappa_phi_m=2.50
+                 is assigned from mortality ratios.
+  relief         CALIBRATE to the comorbidity rate.
+
+One free parameter, one moment, and the casual-use gap held in reserve to CHECK
+the fit rather than to fit.
+
+## Cost to the results, stated before it is built
+
+Drug use falls by less than the current 45 to 47 per cent. Homelessness stays
+higher longer, because this group never regains eligibility. CEV at t=1 comes
+down from +1.955 per cent, possibly through zero, which would put the
+grandfathered arm back on the table.
+
+One reassurance on the CEV: it compares two economies and a constant state cost
+appears in both, so chi_m largely differences out. What does NOT difference out
+is the relief -- under TF they lose the drug and therefore the relief -- and
+that is exactly the effect that should be measured rather than assumed away.
+
+## Sequencing
+
+Mortality fix first, re-measure both gaps, then size relief against what is
+left. Otherwise relief is calibrated partly to cancel the 2.5x over-charge, and
+a referee who spots the double count then has two problems instead of one.
