@@ -2132,6 +2132,22 @@
         ! at a pooled rate near a quarter (Murrie et al., 2020).
         real(8), parameter :: iota_smi=1.0
 
+        ! b FOR HOUSEHOLDS WITH SMI, AS A MULTIPLE OF b.
+        !
+        ! Calibrated on sud_smi_ratio_data = 7.30, the SUD rate given SMI over
+        ! the SUD rate given no SMI, NSDUH 2024 at 26 and over.
+        !
+        ! ONE at the declaration so the channel is off until it is asked for,
+        ! and so the no-op control is the default rather than a thing to
+        ! remember to set. It is settable through PARAM_HANDOVER.
+        !
+        ! WELL POSED ONLY BECAUSE SMI IS EXOGENOUS. With iota_smi above one,
+        ! carrying a SUD raised the hazard of SMI onset, so an SMI-specific
+        ! preference would have been a preference responding to the agent's own
+        ! choices. iota_smi is one, so SMI is a pure age-Markov state and this
+        ! is ordinary type heterogeneity in a Stone-Geary subsistence level.
+        real(8) :: b_smi_multiple=1.d0
+
         ! Calibrated: earnings of workers with SMI, through the homeless income
         ! share. code/simple reached 0.55 targeting homeless income over average.
         ! HELD AT ONE, ON THE AUTHOR'S INSTRUCTION, 2 September: "rho_d=1,
@@ -12637,7 +12653,20 @@
             ! probability, it is what Milby et al.\ (2005) actually measure,
             ! abstinence rates by arm, and it carries the elasticity of drug use
             ! with respect to housing access on its own.
-            b_shifter=addiction_scalar_1
+            ! SMI IS READ FROM THE STATE INDEX, NOT PASSED. See the header of
+            ! patch_b_smi.py for why, and for what it costs: this function is no
+            ! longer a pure function of its arguments. unemployment_index is
+            ! module level, shared in every OpenMP clause, and is the
+            ! household's own state wherever flow utility is evaluated.
+            if (smi_of(unemployment_index)==1) then
+
+                b_shifter=addiction_scalar_1*b_smi_multiple
+
+            else
+
+                b_shifter=addiction_scalar_1
+
+            end if
 
         end function
 
@@ -45734,6 +45763,22 @@
                     write(*,*) "HANDOVER rho_intergenerational_adjuster:",&
                         rho_intergenerational_adjuster, "->", handover_value
                     rho_intergenerational_adjuster=max(handover_value,0.d0)
+
+                case ("b_smi_multiple")
+                    write(*,*) "HANDOVER b_smi_multiple:", b_smi_multiple, "->", handover_value
+                    ! FLOORED, NOT CLAMPED SILENTLY. b enters as (b+q)^phi_q and
+                    ! u = -1/X at sigma = 2, so b_smi_multiple at or below zero
+                    ! sends flow utility to minus infinity for every SMI
+                    ! household at q = 0, which is a crash rather than a corner.
+                    ! The floor is 1e-6, six orders below anything the search
+                    ! should reach, and it says so if it bites.
+                    if (handover_value<10.d0**(-6)) then
+                        write(*,*) "HANDOVER b_smi_multiple FLOORED from",&
+                            handover_value, "to", 10.d0**(-6)
+                        b_smi_multiple=10.d0**(-6)
+                    else
+                        b_smi_multiple=handover_value
+                    end if
 
                 case ("addiction_scalar_1")
                     write(*,*) "HANDOVER addiction_scalar_1:", addiction_scalar_1, "->", handover_value
