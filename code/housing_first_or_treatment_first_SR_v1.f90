@@ -54097,6 +54097,41 @@
 
         end if
 
+        ! A RESUMED RUN'S LOOP 0 IS NOT A COLD START, SO PI_V UPDATES IN IT.
+        !
+        ! The gate is loop_count>start_updating_at_loop_number with the counter
+        ! starting at 0, so pi_v first moves in LOOP 1. That is right for a cold
+        ! start: loop 0's quantities come off a seeded path nobody has re-solved,
+        ! and moving the fiscal instrument on that budget residual is moving on
+        ! noise.
+        !
+        ! It is WRONG for a resumed run, and 21 September is the proof. loop_count
+        ! resets to zero on every restart, so four runs in one day each died or
+        ! were stopped at loop_count=1 -- the platform twice, my own maintenance
+        ! window once, an OOM once -- and **pi_v never moved a single time**. The
+        ! schedule was being restarted, not just the compute.
+        !
+        ! The author, 21 September: "You need to start moving piv...".
+        !
+        ! The test is whether the pi_v PATH came from a file. If it did, some
+        ! earlier loop earned it and this loop 0 is that loop's successor, so the
+        ! instrument should move in it. seed_count_2 is that test and it is
+        ! already computed above: >0 only when entries were read AND passed the
+        ! bound guard. A cold start leaves it 0 and the old behaviour stands.
+        if (seed_count_2>0) then
+
+            start_updating_at_loop_number=-1
+
+            write(*,*) "PI_V GATE: seeded run, pi_v updates from loop 0 &
+                &(start_updating_at_loop_number=-1)"
+
+        else
+
+            write(*,*) "PI_V GATE: cold start, pi_v updates from loop 1 &
+                &(start_updating_at_loop_number=0)"
+
+        end if
+
         write(*,*) "DRUG PRICE PATH seeded: t=0", price_of_addictive_good_path(1-solve_transition_dynamics), &
             " t=1", price_of_addictive_good_path(1), &
             " t=T", price_of_addictive_good_path(transition_length)
