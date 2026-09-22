@@ -1,3 +1,68 @@
+# VOID: THIS RUN SOLVED TREATMENT FIRST, NOT THE BENCHMARK
+
+22 September 20:37. Everything below the line that reports a MODEL number is
+wrong and must not be quoted. The run was seeded with
+`t45_nogf/PARAM_HANDOVER.kept.txt`, which is the TRANSITION's vector, and that
+file sets the policy switches:
+
+    voucher_conditional_on_clean                        0 -> 1
+    include_voucher_exclusion                           0 -> 1
+    increased_prob_of_voucher_if_homeless_and_addicted  1 -> 0
+    adjust_taxes                                        0 -> 1
+
+`voucher_conditional_on_clean` is not gated on `is_counterfactual` -- the
+handover is the ONLY thing that sets it, and nothing resets it per phase. So the
+solve was a Treatment First economy, compared against a benchmark, and the
+comparison confounds the mortality fix with the whole of the policy.
+
+**THE AUTHOR CAUGHT IT BY ARITHMETIC, NOT BY READING THE LOG**: *"why would such
+a small change alter the equilibrium so much? It should just raise drug use...
+Not lower it."* That is right and it is decisive. The patch lowers the death
+probability for SMI households carrying a SUD and touches nothing else; the
+control in this very file shows the clean housed cell identical to the last
+digit. A fall of a third in AGGREGATE drug use, in a population 95 per cent of
+which the patch cannot reach, had no mechanism. Treatment First has exactly that
+mechanism, and it is what Treatment First is for.
+
+## VOID
+
+    ratios 1.928 / 2.028 / 2.207 / 2.244
+    "the fix flips the sign of the comorbidity"
+    SUD rate 0.033609 -> 0.019036 and participation 0.10502 -> 0.046343
+    the user-state ratio 0.419 -> 0.810
+    every conclusion drawn from them, including the claim that adopting the fix
+    forces a drug-block recalibration -- that inference was drawn from TF's
+    own effect on the drug block
+
+## NOT VOID
+
+The survival table is read off at build time and no policy switch can touch it:
+
+    clean housed, age 40         0.98719030618667603 both, to the last digit
+    SMI homeless w/ SUD, age 40  0.79504489593274741 -> 0.88727469276301107
+    cells clipped to zero           2 of 472 -> 0 of 472
+
+The patch itself, the three standing builds, `SMI_BY_SUD_UNIVERSE.md` and
+`SMI_SUD_COMORBIDITY_EVIDENCE.md` are all independent of this run and stand.
+
+## HOW IT HAPPENED, SO IT DOES NOT AGAIN
+
+The seeding note below says `PARAM_HANDOVER.kept.txt` is *"the 102-line vector
+the reference benchmark was actually solved at"*. That is false. The reference
+benchmark was never solved in the T=45 run: it was LOADED from
+`seeds/benchmark_dat/`, which the md5 `c35f79f5...` proves -- and that md5 was
+checked later, in this same session, without going back to correct the earlier
+claim it contradicted.
+
+**A HANDOVER IS NOT A CALIBRATION. IT CARRIES POLICY SWITCHES TOO.** Before
+using any `PARAM_HANDOVER*` file, print the switch lines. The benchmark vector
+is `seeds/PARAM_HANDOVER_bm_n90repro.txt`; it agrees with the transition's on
+every calibrated parameter and differs only on the seven switches. The Fortran
+settles the ambiguous one outright: *"a zero here is written out as TF, a one is
+written as HF. Default 1 is the benchmark."*
+
+---
+
 # The mortality double count fix, run at the calibrated point
 
 22 September. The author: *"run the calibrated model with it, and see how much

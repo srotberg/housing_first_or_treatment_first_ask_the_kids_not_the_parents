@@ -65,53 +65,60 @@ on, was the collapsing cap and not the reform.
 
 ## IN FLIGHT
 
-Two solves, on two containers, one each, after a day in which they split four
-cores and halved each other.
+**THE 22 SEPTEMBER MORTALITY DIAGNOSTIC IS VOID. It solved Treatment First.**
+Seeded from the TRANSITION's handover, which sets
+`voucher_conditional_on_clean=1`; that switch is set by the handover alone and
+nothing resets it per phase. Every model number it produced is withdrawn --
+the ratios 1.928 through 2.244, the aggregate drug-use fall, and the inference
+that adopting the fix forces a drug-block recalibration. Full account in
+`results/smi_comorbidity/MORTALITY_FIX_RUN.md`. The author caught it from the
+arithmetic: a patch that lowers death risk for SMI households with a SUD, and
+touches nothing else, cannot cut aggregate drug use by a third in a population
+95 per cent of which it cannot reach.
 
-**HERE: the mortality double-count fix, at the calibrated point.** `hftf_bm`
-pid 28587, launched 22 September 19:31:43 in `code/bench_mortfix/`, detached
-(ppid 1, own pgid). Not a calibration -- the author: *"no need to recalibrate,
-let's just see how it affects the model with the parameters we already fixed"*.
-Seeded from `code/t45_nogf`: its `PARAM_HANDOVER.kept.txt`, and its own
-distribution, which is byte identical (md5 c35f79f5...) to the file the SMI
-ratios were read off. The binary confirms it at sum 50.861206888360229 against
-the reference's 50.861206888360229, so the run differs from the reference in the
-survival table alone. Control stated before the run and passing on equality:
+**A HANDOVER IS NOT A CALIBRATION.** `PARAM_HANDOVER*` files carry policy
+switches as well as parameters. Print the switch lines before using one. The
+benchmark vector is `seeds/PARAM_HANDOVER_bm_n90repro.txt`, which agrees with
+the transition's on every calibrated parameter and differs only on the seven
+switches; the Fortran settles the ambiguous one: *"a zero here is written out as
+TF, a one is written as HF. Default 1 is the benchmark."*
 
-    clean housed, age 40         0.98719030618667603  ->  0.98719030618667603
-    SMI homeless w/ SUD, age 40  0.79504489593274741  ->  0.88727469276301107
-    cells clipped to zero           2 of 472          ->     0 of 472
+**THE MODEL HAS CHANGED.** The SMI mortality double count is now fixed in
+`code/housing_first_or_treatment_first_SR_v1.f90` (1f8e7110), on the author's
+instruction to refit. What survives from the diagnostic is only the survival
+table itself, which is read at build time and no switch can touch:
 
-Measuring whether the SMI drug-use and SUD ratios move off 0.596 (SUD), 0.126
-(uses, no SUD) and 0.317 (uses at all). Provenance and the discarded first
-attempt in `results/smi_comorbidity/MORTALITY_FIX_RUN.md`.
+    clean housed, age 40         0.98719030618667603  both, to the last digit
+    SMI homeless w/ SUD, age 40  0.79504489593274741 -> 0.88727469276301107
+    cells clipped to zero           2 of 472  ->  0 of 472
 
-**ELSEWHERE: the T=45 no-grandfathering transition, loop 2 onward**, handed to
-session_01NLWdEFtsCKd6KBJ4bPj4NP on 22 September 19:37 with its own container.
-Loop 0 closed 21 September 07:58 (5,192 sweeps, 5h09m, 44 periods; full result
-in `results/transition_t45_nogf/RESULT.md`). Loop 1 closed 22 September 16:45
-and is the first loop in the project in which pi_v moved at all:
+This invalidates the calibration, the benchmark, and every counterfactual and
+transition in the archive, because survival feeds the value of life, saving and
+labour supply.
 
-    largest_distance_govt_budget   0.0738  ->  0.046182  ->  0.032962
-                                   against a rule of 5e-2, so the budget cleared
+**RUNNING: the full joint calibration on the fixed model.** The author chose the
+full joint calibration over a drug-block-only refit. One `run_one_point.sh` at
+the 88 settable parameters of `seeds/PARAM_HANDOVER_bm_n90repro.txt`; its
+internal do-while has no iteration cap and the script no timeout. LOOP 0 OF THIS
+RUN IS THE FIX-ONLY CONTROL the void diagnostic was meant to be: the benchmark
+vector, benchmark switches, patched survival, before any parameter moves. Read
+the comorbidity ratio there before reading anything else.
 
-The drug market is the binding condition and run 8 prints no `largest_` key for
-the transition path's drug distance, only for the budget, housing and rental --
-so loop 1's drug distance is not stated here rather than guessed at. Housing and
-rental are zeroed by `peg_prices_in_counterfactual=1` and are not conditions.
+Two things to know before it has run for a day. The search-control entries in
+the vector -- `freeze_all_but_omega_c=1`, `omega_c_is_pinned=1` -- are omega_c
+trial switches that would zero 47 adjusters; they are harmless only because
+`run_one_point.sh` cannot set them, so the Fortran's zeros apply. And the step
+caps therefore also come from the Fortran, which is much tighter than the vector
+for the drug block: `addiction_scalar_max_rel_step` 0.003 against 0.1, and
+`kappa_phi_d_max_rel_step` 0.01 against 0.05.
 
-Loop 2's backward pass was killed at 19:25:18 by numeric pid, 15m24s in, to give
-the diagnostic the whole machine. Nothing was lost that is not committed: loop
-2 had written no path, and loop 1's are now in `code/seeds/` as
-`drug_price_path_seed_t45_nogf_afterloop1.txt` and
-`pi_v_path_seed_t45_nogf_afterloop1.txt`, 44 entries each, checked by hand for
-NaN, for pi_v on a bound and for the entry count. `seeds/README.md` says there
-is no good pi_v vector and that the T=30 one is 29 copies of a single number;
-that is now out of date, and the provenance file beside the new pair says so.
-
-**Both sessions push to `claude/two-period-addiction-hazard-d7gb61`.** The
-sibling was told to rebase before every push and to confine new files to
-`results/t45_nogf_session2/` and `code/seeds/`.
+**STOPPED: the T=45 no-grandfathering transition.** Killed 20:25 and its session
+archived, because it is a transition of a model that no longer exists. Loop 1's
+paths are committed as `seeds/*_t45_nogf_afterloop1.txt`, including the first
+pi_v vector in the project that carries a shape. Loop 0 closed 21 September
+07:58; loop 1 closed 22 September 16:45 with the budget at 0.0738 -> 0.046182 ->
+0.032962 against a rule of 5e-2, so the budget cleared and the drug market did
+not.
 
 ## THE HORIZON IS NOT SETTLED. T=45 IS NOT ENOUGH, AND I SAID IT WAS.
 
