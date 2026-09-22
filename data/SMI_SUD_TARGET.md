@@ -148,3 +148,60 @@ and moderate exactly as that ratio does.
 The surprising number is not 7.30. It is that 1.6 per cent of adults with no
 mental illness carry a moderate or severe drug use disorder against 20.4 per
 cent of those with serious mental illness.
+
+## EVERY CHECK ON 7.30, AND WHERE THE REAL PROBLEM IS
+
+The author pushed back three times -- *"way too high"*, *"ridiculous"*,
+*"implausible"*. Everything checkable about the number has now been checked and
+none of it moves:
+
+    universe            reproduces 0.0890 and 0.0368, the target's own source
+    missing SMI at 26+  none, 0 records
+    cell counts         418 SMI with mod/severe, 1146 non-SMI -- not thin
+    severity gradient   0.0160 / 0.0613 / 0.1217 / 0.2043 across none, mild,
+                        moderate, serious: monotone, not a boundary jump
+    NSDUH's own var     SMISUD5ANY puts 44.5% of SMI on ANY SUD, consistent
+    external            TEDS-A 2022, in data/FINDINGS.md: 43.1% of treatment
+                        admissions carry a co-occurring psychiatric problem,
+                        against an implied 27.8% population share -- right
+                        order, right direction for a severity-selected sample
+
+**THE CODING IS NOW VERIFIED FROM THE DATA, NOT FROM A COMMENT.** Everything
+rested on the Fortran's claim that `svyrdudany in (2,3)` is moderate-or-severe.
+Cross-tabulated against the per-drug severity variable `IRPYSEV5MRJ`:
+
+    svyrdudany=1  ->  2575 at marijuana severity 1, none higher
+    svyrdudany=2  ->  1488 at severity 2
+    svyrdudany=3  ->  1133 at severity 3
+    svyrdudany=4  ->  no drug disorder at all
+
+`SVYRDUDANY` is the MAXIMUM severity across drugs, ordered 1 mild, 2 moderate,
+3 severe, 4 none. The Fortran's reading is right.
+
+## SO THE DISCOMFORT IS NOT ABOUT THE DATA. IT IS ABOUT WHICH SMI
+
+`DATA_APPENDIX.md` already records that the model is incoherent here, and this
+is where an implausible-feeling implication actually comes from:
+
+    s_m(j)       matched to NSDUH's SMI, 5.6 per cent; the model delivers 4.86
+    kappa_uem    deliberately NOT NSDUH's SMI -- set to 30 per cent employment
+                 from the clinical high-disability literature, BECAUSE on
+                 NSDUH's own definition 58.0 per cent of those with SMI are
+                 employed against 57.5 per cent of those without
+
+The model takes its SMI POPULATION from NSDUH and its SMI SEVERITY from the
+schizophrenia literature. Pick one and the rest follows:
+
+    SMI = NSDUH's SMI          ratio 7.30, concentration 27.8%, and kappa_uem
+    (what the prevalence       needs rethinking
+     target already commits
+     the model to)
+
+    SMI = high-disability      ratio nearer 10 (Hunt's schizophrenia figure) but
+    (about 1 per cent)         at 1 per cent prevalence the concentration falls
+                               to roughly 9 per cent, and the PREVALENCE target
+                               has to change
+
+The second is the coherent version of the objection. It is a legitimate choice.
+It is not the one the model is currently calibrated to, and taking it means
+moving `s_m(j)`, not the comorbidity target.
