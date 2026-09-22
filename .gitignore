@@ -3,6 +3,9 @@
 *.bbl
 *.blg
 *.log
+# Stderr streams are logs in everything but the extension, and the refit's is
+# rewritten continuously by a live solve. Same footing as *.log above.
+*.err
 *.out
 *.synctex.gz
 *.toc
