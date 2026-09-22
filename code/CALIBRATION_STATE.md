@@ -65,22 +65,53 @@ on, was the collapsing cap and not the reform.
 
 ## IN FLIGHT
 
-`hftf` T=45, no grandfathering, `code/t45_nogf/`, launched 21 September 02:49 on
-the corrected source with the post-fix terminal anchor. **Loop 0 closed 07:58**:
-5,192 sweeps, 5h09m, 44 periods. Full result in
-`results/transition_t45_nogf/RESULT.md`; loop 1 is running and is the first loop
-in which pi_v moves at all.
+Two solves, on two containers, one each, after a day in which they split four
+cores and halved each other.
 
-    t=1 CEV +2.318%   t=44 +2.983%   long-run TF +3.249%
-    a GAIN in every one of the 44 periods, no trough anywhere
+**HERE: the mortality double-count fix, at the calibrated point.** `hftf_bm`
+pid 28587, launched 22 September 19:31:43 in `code/bench_mortfix/`, detached
+(ppid 1, own pgid). Not a calibration -- the author: *"no need to recalibrate,
+let's just see how it affects the model with the parameters we already fixed"*.
+Seeded from `code/t45_nogf`: its `PARAM_HANDOVER.kept.txt`, and its own
+distribution, which is byte identical (md5 c35f79f5...) to the file the SMI
+ratios were read off. The binary confirms it at sum 50.861206888360229 against
+the reference's 50.861206888360229, so the run differs from the reference in the
+survival table alone. Control stated before the run and passing on equality:
 
-    drug market     max 0.1818 vs rule 0.01   18.2x -- NOT CLEARED
-    budget residual max 0.0738 vs rule 0.05    1.5x -- NOT CLEARED
+    clean housed, age 40         0.98719030618667603  ->  0.98719030618667603
+    SMI homeless w/ SUD, age 40  0.79504489593274741  ->  0.88727469276301107
+    cells clipped to zero           2 of 472          ->     0 of 472
 
-Nothing from it is quotable. p_drug's distance is FLAT across all 44 periods,
-which is a level error in a seed measured on the pre-fix economy (participation
-fell 27 per cent there, 46 here). pi_v has not moved because its update switches
-on at loop 1.
+Measuring whether the SMI drug-use and SUD ratios move off 0.596 (SUD), 0.126
+(uses, no SUD) and 0.317 (uses at all). Provenance and the discarded first
+attempt in `results/smi_comorbidity/MORTALITY_FIX_RUN.md`.
+
+**ELSEWHERE: the T=45 no-grandfathering transition, loop 2 onward**, handed to
+session_01NLWdEFtsCKd6KBJ4bPj4NP on 22 September 19:37 with its own container.
+Loop 0 closed 21 September 07:58 (5,192 sweeps, 5h09m, 44 periods; full result
+in `results/transition_t45_nogf/RESULT.md`). Loop 1 closed 22 September 16:45
+and is the first loop in the project in which pi_v moved at all:
+
+    largest_distance_govt_budget   0.0738  ->  0.046182  ->  0.032962
+                                   against a rule of 5e-2, so the budget cleared
+
+The drug market is the binding condition and run 8 prints no `largest_` key for
+the transition path's drug distance, only for the budget, housing and rental --
+so loop 1's drug distance is not stated here rather than guessed at. Housing and
+rental are zeroed by `peg_prices_in_counterfactual=1` and are not conditions.
+
+Loop 2's backward pass was killed at 19:25:18 by numeric pid, 15m24s in, to give
+the diagnostic the whole machine. Nothing was lost that is not committed: loop
+2 had written no path, and loop 1's are now in `code/seeds/` as
+`drug_price_path_seed_t45_nogf_afterloop1.txt` and
+`pi_v_path_seed_t45_nogf_afterloop1.txt`, 44 entries each, checked by hand for
+NaN, for pi_v on a bound and for the entry count. `seeds/README.md` says there
+is no good pi_v vector and that the T=30 one is 29 copies of a single number;
+that is now out of date, and the provenance file beside the new pair says so.
+
+**Both sessions push to `claude/two-period-addiction-hazard-d7gb61`.** The
+sibling was told to rebase before every push and to confine new files to
+`results/t45_nogf_session2/` and `code/seeds/`.
 
 ## THE HORIZON IS NOT SETTLED. T=45 IS NOT ENOUGH, AND I SAID IT WAS.
 
