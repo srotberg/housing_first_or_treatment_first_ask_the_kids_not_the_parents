@@ -1133,7 +1133,7 @@
         ! The auto-pin at 47853 still closes it once the gap is inside three per
         ! cent AND the economy is inside ten, so the second solve is given back
         ! as soon as it has done its job.
-        integer :: omega_c_is_pinned=0
+        integer :: omega_c_is_pinned=1
         integer, parameter :: calibrate_weight_on_child=1
 
         ! WHETHER A POINT MEASURES OMEGA_C'S MOMENT. It costs a second
@@ -1658,7 +1658,7 @@
         ! sits a factor of thirty inside the region where the externality still
         ! decides the comparison, and it is consistent with Altonji, Hayashi and
         ! Kotlikoff (1997) rejecting operative altruism at the margin.
-        real(8) :: weight_on_child=0.0137
+        real(8) :: weight_on_child=0.d0
         integer, parameter :: ss_decrease_for_retired_addicted=0
         ! THE UNEMPLOYMENT INDEX CARRIES EMPLOYMENT, THE SUD AND, WHEN IT IS
         ! TURNED ON, MENTAL ILLNESS. The layout is
@@ -2130,7 +2130,7 @@
         ! Assigned. Danish registers put the hazard ratio at 1.34 for any SUD
         ! and 2.74 for opioid use disorder; substance induced psychosis converts
         ! at a pooled rate near a quarter (Murrie et al., 2020).
-        real(8), parameter :: iota_smi=2.0
+        real(8), parameter :: iota_smi=1.0
 
         ! Calibrated: earnings of workers with SMI, through the homeless income
         ! share. code/simple reached 0.55 targeting homeless income over average.
@@ -2218,7 +2218,7 @@
         real(8), parameter :: kappa_phi_m=2.50
 
         ! Assigned. Dual diagnosis relapse of 39.8 against 26.4 percent.
-        real(8), parameter :: mu_m=0.82
+        real(8), parameter :: mu_m=1.0
 
         ! CALIBRATED. The EXPECTED replacement rate for the non employed with
         ! SMI: the statutory SSDI and SSI rate multiplied by the share who take
@@ -6179,7 +6179,7 @@
         ! somewhere between twelve and thirty, and the distribution file goes to
         ! roughly 265 MB. The economy moves, so b, pi_V and the rest have to
         ! re-converge before the odds ratio is readable.
-        integer, parameter :: child_penalty_classes=2
+        integer, parameter :: child_penalty_classes=1
         integer, parameter :: employment_grid_size=employment_base_size*child_penalty_classes
         integer :: use_unemployment_by_productivity=1
         ! Persistent income risk over working life. See the block beside
