@@ -79,3 +79,40 @@ already overdone.
 
 The zip's header mangles the underscore in `ANALWT2_C` to `ANALWT2+AF8-C`, so
 match the weight by position, not by name.
+
+## CORRECTION 21:30: THE PERSISTENCE RATIO IS NEARLY RIGHT
+
+The decomposition above compared the model's MILD-ONLY rate against the data's
+ALL-USE rate, which is not like for like. The data's `use` counts everyone with
+at least a mild disorder, so the model's equivalent is block 1 PLUS block 2.
+Redone:
+
+                    use ratio   persistence ratio   SUD ratio
+        data           4.51           1.62             7.30
+        model          1.39           1.47             2.04
+
+    model: use  SMI 0.13470 non 0.09678 -> 1.392
+           SUD  SMI 0.09889 non 0.04845 -> 2.041
+           persistence 0.7342 / 0.5006  -> 1.467,  1.392 x 1.467 = 2.042
+
+**The model's persistence ratio is 1.47 against a data value of 1.62.** It is
+very nearly right. The claim above that the model over-does persistence at 2.78,
+and the inference that `mu_m=0.82` is too strong, are both WITHDRAWN -- they came
+from the mismatched comparison.
+
+**The whole of the comorbidity gap is the USE ratio, 1.39 against 4.51.** That
+makes the instrument unambiguous rather than merely indicated:
+`addiction_scalar_1` is bracketed on participation and participation is the only
+margin that is wrong. The recovery-side routes in `WHAT_TO_ADD.md` would push on
+a ratio that is already close.
+
+## AND ON "IT WOULD IMPLY A USE RATE OF ABOUT 70 PER CENT"
+
+The author, 21:28. That is the SUD ratio applied to use: 7.30 x 0.0890 = 0.650.
+The two margins have different ratios and the SUD one already contains the
+progression difference. The implied use rate is 4.51 x 0.0757 = 0.341.
+
+34 per cent of SMI adults carrying at least a mild drug use disorder is high but
+internally consistent: NSDUH's own `SMISUD5ANY` puts 44.5 per cent of SMI adults
+on ANY substance use disorder including alcohol, leaving about 10 points for
+alcohol-only, which is the ordinary pattern.
