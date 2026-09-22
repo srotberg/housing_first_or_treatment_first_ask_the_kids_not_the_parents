@@ -217,3 +217,66 @@ mu_m=0.82 makes SMI lower the RECOVERY hazard, bracketed on
 smi_ten_year_recovery_data=0.50. A technology parameter, no welfare objection,
 already calibrated. The machinery and the precedent both exist. What is missing
 is the same treatment on the way IN rather than the way out.
+
+# THE DESIGN CONCLUSION, after the author pushed back twice
+
+Two objections, in order, and the second produced the answer.
+
+## Objection 1: a utility change is attackable
+
+Right, and it also picks the worse model. Group-specific tastes make drugs worth
+more to the mentally ill BY ASSUMPTION, so any policy cutting their use looks
+costly and the CEV stops aggregating cleanly.
+
+## Objection 2: a hazard does not capture NEEDING the drug
+
+Also right, and it defeated my first correction. "so even if you did TF, they
+would not comply ... since they are using to alleviate pain." A bare onset
+multiplier says the mentally ill get UNLUCKY more often. Those households still
+respond to incentives normally, so offered housing for sobriety they take it at
+the same rate, TF still works on them, and drug use still falls 45 per cent. It
+adds the comorbidity statistic WITHOUT the mechanism.
+
+## The resolution: conditionality tests sobriety, not effort
+
+The author framed non-compliance as UNWILLINGNESS. The policy cannot see
+willingness. A household that tries to quit and FAILS loses the voucher exactly
+like one that never tried. So the whole mechanism is available from INABILITY,
+which lives in transition probabilities and not in utility.
+
+Three routes, none touching preferences:
+
+  1. SMI MAKES QUITTING FAIL. mu_m=0.82 already does this, bracketed on
+     smi_ten_year_recovery_data=0.50, and it is mild. Strengthen it.
+  2. SMI MAKES THE TREATMENT WORK LESS WELL. treatment_effect_on_recovery=2.0
+     doubles the hazard for everyone in treatment; make it lower under SMI.
+     MOST POLICY-RELEVANT of the three -- it says the treatment TF offers does
+     not work on this group -- and worse dual-diagnosis outcomes are documented,
+     so it is calibratable rather than assumed.
+  3. SMI RAISES RELAPSE, so even compliers cycle back off eligibility.
+
+Each produces the author's outcome: vouchers lost, homelessness persistent, drug
+use falling by less than the 45 to 47 per cent now claimed. No utility function
+is touched, so the CEV stays clean.
+
+AND THE WELFARE CASE IS STRONGER under inability than under unwillingness. If
+they need the drug, a referee can say they chose it over the housing. If they
+tried and could not, they are punished for something that was never a choice.
+
+## What each route does and does not close
+
+The recovery routes act on EXITS, so they close the SUD gap (0.596) and not the
+experimentation gap (0.126), which is about ENTRIES and is the larger failure.
+Pair them with the mortality double count fix, which removes an artificial
+suppressor rather than adding an assumption.
+
+## The package, zero utility change
+
+  1. fix the mortality double count      stops suppressing their use artificially
+  2. SMI into recovery or treatment
+     efficacy                            they cannot get clean -> they fail
+                                         conditionality -> the mechanism
+  3. onset multiplier if needed          closes any remaining initiation gap
+
+Step 2 delivers the mechanism and is the SMALLEST change of the three: the
+parameter exists and is already calibrated, just set mild.
