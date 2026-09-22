@@ -93,3 +93,47 @@ the sequencing that file already argues for.
     binary    hftf_bm, md5 473c983e4054a543cc18ab973aec3efb
     source    bm.f90, patched by code/patch_mortality_smi.py
     log       code/bench_mortfix/bm_run.log
+
+## FIRST BLOCK, 19:45. THE SIGN FLIPS. NOT CONVERGED -- READ THE CAVEAT.
+
+The run writes `calibration_distribution{1,2}.dat` at the end of each block, and
+those decode exactly as the stationary files do. Block 1's, against the
+reference's own checkpoint, by the same script on both sides:
+
+                   mass      SMI share  SUD rate | SUD|SMI  SUD|non   ratio
+    REFERENCE    50.861207    0.048291  0.033609 | 0.02043  0.03428   0.596
+    PATCHED b1   50.868662    0.048209  0.030655 | 0.05657  0.02934   1.928
+
+The reference row reproduces the four published numbers to every digit shown,
+which is the check that the script is the same one that produced 0.596.
+
+**SMI households go from carrying SUD at 60 per cent of the population rate to
+carrying it at 193 per cent.** `SUD|SMI` nearly triples, 0.02043 -> 0.05657.
+The sign of the model's comorbidity is no longer the opposite of the data's.
+
+**THE CAVEAT, AND IT IS NOT SMALL.** This is block 1 of a warm start. The block
+printed `BLOCK MOVE 1.0000 against a rule of 1.0000E-004`, so the economy is one
+pass from the reference and nowhere near a fixed point; the drug price has not
+re-cleared and neither has the budget. The DIRECTION is established -- a 45 per
+cent cut in the comorbid cell's death probability is not a subtle intervention
+and it moves this ratio hard -- but the MAGNITUDE is not, and 1.928 should not
+be quoted anywhere until the solve converges.
+
+Two things in the row are worth flagging before then.
+
+**Total mass rises, 50.861207 -> 50.868662.** Tiny, and the right sign: fewer
+deaths in the comorbid cells means slightly more people alive. It is a check
+that the patch did what it says rather than a result.
+
+**The NON-SMI SUD rate falls, 0.03428 -> 0.02934, and the patch does not touch
+non-SMI survival.** So this is either a general-equilibrium channel -- a
+non-SMI household's continuation value includes the SMI states it may transit
+into, those states got less deadly, its value of life rose and its drug use
+fell -- or it is simply block 1 being far from converged. `mu_m=0.82` makes the
+first mechanism real rather than hypothetical, but a 14 per cent fall is large
+for it, and the aggregate SUD rate falling while the SMI rate triples is exactly
+what an unconverged block looks like. DO NOT explain this until it converges;
+it was explained wrongly once already in this file's parent.
+
+The `uses, no SUD` and `uses at all` ratios -- 0.126 and 0.317 -- need the
+policy function, which is only written when the solve finishes.
