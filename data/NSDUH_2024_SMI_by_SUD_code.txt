@@ -1,0 +1,76 @@
+* ---------------------------------------------------------------------------
+* SMI x drug use disorder, NSDUH 2024, in the model's own definitions.
+*
+* Produces the three numbers the SMI channel needs, from ONE two-way table:
+*
+*     use  | SMI      svyrdudany in (1,2,3)   any drug use disorder incl. mild
+*     SUD  | SMI      svyrdudany in (2,3)     moderate or severe
+*     SUD  | use,SMI  the progression rate, which says whether the channel
+*                     needs ONE parameter or TWO
+*
+* THE UNIVERSE IS 26 AND OVER, age3 >= 7. Model age one is data age 26
+* (child_at_home_last_index, line 513 of the Fortran). The population rates
+* this reproduces are use 0.0890 and SUD 0.0368, which are the numbers the
+* targets are built from: 0.089*1.18 = 0.10502 and 0.0368*1.18 = 0.043424.
+*
+* DO NOT USE 18+. It gives 0.1014 and 0.0454 -- the two shares quoted in the
+* Fortran's comments -- and a conditional rate computed on that universe has a
+* denominator the model does not target. See SMI_BY_SUD_UNIVERSE.md.
+*
+* Both rates must come from svyrdudany and nothing else. Mixing an alcohol-
+* inclusive SUD measure with this participation measure makes the ratio
+* meaningless, which is why the existing extraction code uses one variable.
+* ---------------------------------------------------------------------------
+
+clear
+use NSDUH_2024_full.dta, clear          // the full public use file, not the
+                                        // 17-variable extract in data/
+
+* --- find the SMI indicator; name varies by release, so try in order --------
+local smivar ""
+foreach v in smipppy smiyr_u smi_u mi_cat_u {
+    capture confirm variable `v'
+    if _rc==0 & "`smivar'"=="" local smivar "`v'"
+}
+if "`smivar'"=="" {
+    display as error "no SMI variable found -- check the codebook and add it above"
+    exit 111
+}
+display "using SMI variable: `smivar'"
+
+* mi_cat_u is a 4-level category (0 none, 1 mild, 2 moderate, 3 serious);
+* the others are already 0/1 indicators. Collapse to SMI = the top level.
+capture drop smi
+if "`smivar'"=="mi_cat_u"  gen byte smi = (`smivar'==3) if !missing(`smivar')
+else                       gen byte smi = (`smivar'==1) if !missing(`smivar')
+
+* --- the model's universe and the model's two cuts --------------------------
+keep if age3>=7                         // 26 and over
+keep if !missing(svyrdudany) & !missing(smi)
+
+gen byte use_any = inlist(svyrdudany,1,2,3)
+gen byte sud     = inlist(svyrdudany,2,3)
+
+* --- the table --------------------------------------------------------------
+display _n "SMI prevalence, 26+:"
+mean smi [pw=analwt2_c]
+
+display _n "use and SUD by SMI (these are the two moments):"
+mean use_any sud [pw=analwt2_c], over(smi)
+
+display _n "progression: SUD among USERS, by SMI:"
+mean sud [pw=analwt2_c] if use_any==1, over(smi)
+
+* --- the ratios, which are what the model is scored on ----------------------
+foreach y in use_any sud {
+    quietly mean `y' [pw=analwt2_c], over(smi)
+    matrix b = e(b)
+    display "`y': SMI=" %7.4f b[1,2] "  non-SMI=" %7.4f b[1,1] ///
+            "  ratio=" %7.3f b[1,2]/b[1,1]
+}
+
+* Expected population rates if the universe is right:
+*     use_any, all 26+   0.0890
+*     sud,     all 26+   0.0368
+* If those two do not print, the universe or the weight is wrong and nothing
+* below them should be used.
