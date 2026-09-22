@@ -98,3 +98,73 @@ before and after rather than one number with nothing to compare it to.
 SMI ALREADY lowers the recovery hazard, mu_m=0.82, bracketed on
 smi_ten_year_recovery_data=0.50. So SMI-to-SUD PERSISTENCE exists. What is
 missing is SMI-to-SUD INITIATION.
+
+# How to capture self-medication specifically
+
+The author asked. Two places it can live, different economics, and the two
+measured gaps identify them separately.
+
+## What the existing hook actually is
+
+utility_improvement is NOT a "drugs are pleasant" bonus, which is what I first
+said. It enters as a MULTIPLICATIVE shifter on the whole flow utility and only
+in the addicted branch:
+
+    flow_utility_1=(1-utility_improvement)*sqrt_household_size(age_index)*(...)
+
+So it is "how much better or worse life is WHILE ADDICTED". That is a better
+starting point than a taste shifter, and it is currently zero.
+
+## Option 1: the drug is worth more per unit to them
+
+relative_share_of_addiction_1=0.16, _2=0.13 is the drug's weight in the
+consumption aggregate. Make it higher under SMI.
+
+  economics   a given dose delivers more utility
+  acts on     how much they buy -> whether they try at all -> addiction risk
+  targets     THE CASUAL USE GAP, 0.126, which is the bigger one
+
+## Option 2: being addicted is less bad for them
+
+Make utility_improvement conditional on SMI.
+
+  economics   life while addicted is less miserable if you were suffering anyway
+  acts on     the value of BEING addicted, so starting is more attractive AND
+              quitting is less attractive
+  targets     THE SUD GAP, 0.596
+
+OPTION 2 IS THE ONE THAT BITES THE POLICY. It makes mentally ill addicts less
+willing to get clean in exchange for a voucher, which is R1's mechanism exactly.
+
+## The enabling change, and it is the real cost
+
+calculate_flow_utility takes housing, space, frac_spent_on_addiction,
+consumption, ownership and addicted_status. IT DOES NOT TAKE SMI. Either option
+needs it threaded into that signature, and the routine is called from the
+innermost loop, so every call site changes. The parameter is trivial; the
+plumbing is not.
+
+## Identification, and what the gap sizes say
+
+Two measured moments -- casual use 0.126 of the population rate, SUD 0.596 --
+identify two parameters exactly. And their SIZES are informative: the casual use
+gap is far larger, so the model's failure is mostly at the INITIATION margin,
+not at progression to addiction. Option 1 should carry most of the weight.
+
+Do not add a third channel without a third moment.
+
+## Sequencing, which matters for the calibration not just the order of work
+
+DO THE MORTALITY DOUBLE COUNT FIX FIRST, re-measure both gaps, then size these
+against what is left. Calibrating self-medication while 2.5x is still charged on
+the drug margin produces a spuriously large parameter that exists only to cancel
+an error, and a referee who then spots the double count has two problems with
+the paper rather than one.
+
+## What to leave alone
+
+The most faithful story is that SMI imposes a flow disutility and the drug
+relieves it. It is better economics and it would make the author's original
+value-of-life argument real rather than working only through income. But it is
+two more parameters and it moves every welfare number in the paper including the
+CEV. Not worth it unless a referee demands the mechanism rather than the moment.
