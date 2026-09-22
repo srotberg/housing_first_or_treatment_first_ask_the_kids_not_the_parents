@@ -137,3 +137,55 @@ it was explained wrongly once already in this file's parent.
 
 The `uses, no SUD` and `uses at all` ratios -- 0.126 and 0.317 -- need the
 policy function, which is only written when the solve finishes.
+
+## BLOCK 2, 19:58. THE RATIO HOLDS; THE LEVEL IS THE NEW PROBLEM
+
+                   mass      SMI share  SUD rate | SUD|SMI  SUD|non   ratio
+    REFERENCE    50.861207    0.048291  0.033609 | 0.02043  0.03428   0.596
+    PATCHED b1   50.868662    0.048209  0.030655 | 0.05657  0.02934   1.928
+    PATCHED b2   50.968664    0.047988  0.023042 | 0.04453  0.02196   2.028
+
+    BLOCK MOVE   1.0000  ->  0.2483     against a rule of 1e-4
+
+The ratio is stable across two blocks while the block move falls by a factor of
+four, which is weak evidence that it is converging to something near 2 rather
+than passing through it. Both conditional rates are falling; the non-SMI rate
+falls faster, so the ratio keeps rising.
+
+**THE LEVEL IS WHAT NEEDS SAYING NOW.** The aggregate SUD rate has gone
+
+    0.033609  ->  0.030655  ->  0.023042      against sud_rate_data = 0.043424
+
+so the fix does not merely redistribute drug use towards the SMI, it cuts the
+total by a third and takes lambda_d from 23 per cent below its target to 47 per
+cent below. The same is true of participation: b is 0.055967 against a
+participation target of 0.10502.
+
+This is not a defect of the fix and it is not a reason to reverse it. The
+benchmark was calibrated with the double count IN, so some of what the drug
+block's parameters were doing was offsetting an excess hazard that should never
+have been charged. Removing it leaves those parameters over-tuned in the other
+direction. But it has a consequence for the work the author is weighing:
+
+**ADOPTING THE FIX MEANS RECALIBRATING THE DRUG BLOCK, AND THAT RECALIBRATION
+MOVES THE SAME DIAL THE SMI CHANNEL WOULD USE.** Restoring lambda_d and b to
+target pushes `addiction_scalar_1` -- the Stone-Geary shifter, the model's `b`
+-- DOWN for everyone, because participation is a decreasing function of it. The
+proposed SMI channel is a lower `b` for SMI households specifically. The two are
+the same instrument at different margins, so the SMI-specific value cannot be
+sized against the CURRENT calibration; it has to be sized against the
+recalibrated one, or it will be fitted to close a gap the recalibration was
+going to close anyway.
+
+Order of work that follows from this, and it is the opposite of the intuitive one:
+
+    1. let this converge                      the ratio and the level
+    2. pull the NSDUH SMI x SUD extract       the target the channel answers to
+    3. recalibrate the drug block WITH the fix and WITHOUT an SMI channel
+    4. read the residual comorbidity gap off THAT benchmark
+    5. size b_SMI against the residual, if there is one
+
+Step 3 is a full calibration and is the expensive one. Skipping it is what
+produces a self-medication parameter that exists to cancel an arithmetic error,
+which is the failure `WHAT_TO_ADD.md` already warned about for the double count
+itself.
