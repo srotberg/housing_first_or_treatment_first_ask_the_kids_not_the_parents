@@ -116,3 +116,35 @@ progression difference. The implied use rate is 4.51 x 0.0757 = 0.341.
 internally consistent: NSDUH's own `SMISUD5ANY` puts 44.5 per cent of SMI adults
 on ANY substance use disorder including alcohol, leaving about 10 points for
 alcohol-only, which is the ordinary pattern.
+
+## THE SEVERITY GRADIENT, 21:32 -- why 7.30 is not an artefact, and is conservative
+
+The author, twice: *"It seems way too high"*, *"I still think the 7.3 seems
+ridiculous"*. The obvious way it could be junk is that NSDUH's SMI is PREDICTED
+from K6 distress and WHODAS impairment rather than diagnosed, and heavy drug
+users score high on both -- so drug use could be manufacturing the SMI
+classification. That would show up as a jump at the SMI boundary.
+
+It does not. `MICATPY` gives the four-rung ladder, adults 26+, weighted:
+
+    mental illness   share     use      SUD    SUD vs none
+    none             78.0%   0.0525   0.0160      1.00
+    mild             10.9%   0.1494   0.0613      3.83
+    moderate          6.1%   0.2404   0.1217      7.61
+    serious           5.0%   0.3413   0.2043     12.77
+
+Each step up in severity roughly DOUBLES the SUD rate, monotonically, on both
+margins. That is a dose-response, not a boundary artefact.
+
+**AND 7.30 IS THE CONSERVATIVE SUMMARY.** It compares SMI against everyone else,
+and everyone else contains 38 million adults with mild or moderate mental
+illness running at 3.8 and 7.6 times the clean baseline. Against adults with NO
+mental illness the ratio is 12.77.
+
+7.30 is nonetheless the right target for THIS model, because the model carries
+one binary SMI state at about 5 per cent and its non-SMI group pools none, mild
+and moderate exactly as that ratio does.
+
+The surprising number is not 7.30. It is that 1.6 per cent of adults with no
+mental illness carry a moderate or severe drug use disorder against 20.4 per
+cent of those with serious mental illness.
