@@ -168,3 +168,52 @@ relieves it. It is better economics and it would make the author's original
 value-of-life argument real rather than working only through income. But it is
 two more parameters and it moves every welfare number in the paper including the
 CEV. Not worth it unless a referee demands the mechanism rather than the moment.
+
+# THE AUTHOR'S OBJECTION, WHICH CHANGES THE RECOMMENDATION
+
+"but making SMI require self medication means that the utility changes....and
+they can attack it"
+
+Correct, and it is not only a defensive point -- it picks the better model.
+
+## Why the attack lands
+
+If SMI changes the utility function then drugs are worth more to those
+households BY ASSUMPTION, so any policy that cuts their use looks costly in
+welfare terms and the referee can say the answer was assumed. And the CEV
+aggregates across households: once preferences differ by group the aggregation
+stops being clean. It hands them the "should an addict's utility from drugs
+count" fight on top of everything else.
+
+## Change the technology, not the tastes
+
+Put the channel in the HAZARD of becoming addicted -- a transition probability,
+not a preference. Everyone keeps one utility function, the CEV stays
+interpretable, and nobody can say the mentally ill were assumed to enjoy drugs
+more. It is also R1's literal sentence: "mental health contributing to drug use
+and addiction". He asked for a causal channel into addiction, not a taste.
+
+## It makes the welfare case STRONGER
+
+  preferences  SMI use more because they like it more -> TF denying them
+               housing is AMBIGUOUS, they chose it
+  hazard       SMI become addicted more readily with no change in what they
+               want -> conditionality punishes them for something they did not
+               choose, and the welfare cost is UNAMBIGUOUS
+
+The preference route muddies the very result it would be built to show.
+
+## Revised order
+
+  1. Fix the mortality double count. Removes an error, adds no assumption,
+     no welfare implications, immune to this attack.
+  2. Add an SMI multiplier on addiction ONSET, bracketed on the comorbidity
+     rate. This is the substantive addition.
+  3. Self-medication in preferences: LAST, and possibly never.
+
+## The precedent is already in the model
+
+mu_m=0.82 makes SMI lower the RECOVERY hazard, bracketed on
+smi_ten_year_recovery_data=0.50. A technology parameter, no welfare objection,
+already calibrated. The machinery and the precedent both exist. What is missing
+is the same treatment on the way IN rather than the way out.
