@@ -96,21 +96,57 @@ This invalidates the calibration, the benchmark, and every counterfactual and
 transition in the archive, because survival feeds the value of life, saving and
 labour supply.
 
-**RUNNING: the full joint calibration on the fixed model.** The author chose the
-full joint calibration over a drug-block-only refit. One `run_one_point.sh` at
-the 88 settable parameters of `seeds/PARAM_HANDOVER_bm_n90repro.txt`; its
-internal do-while has no iteration cap and the script no timeout. LOOP 0 OF THIS
-RUN IS THE FIX-ONLY CONTROL the void diagnostic was meant to be: the benchmark
-vector, benchmark switches, patched survival, before any parameter moves. Read
-the comorbidity ratio there before reading anything else.
+**THE COMORBIDITY TARGET IS 7.30, COMPUTED 21:05.** From the repo's own
+`data/raw/NSDUH_2024_public_use_file_tab_delimited.zip`, adults 26+, weighted,
+SMI from `SMIPY`, drug involvement from `SVYRDUDANY` -- the variable both model
+targets are built from. The universe check passes exactly, 0.0890 and 0.0368.
+Full account in `data/SMI_SUD_TARGET.md`.
 
-Two things to know before it has run for a day. The search-control entries in
-the vector -- `freeze_all_but_omega_c=1`, `omega_c_is_pinned=1` -- are omega_c
-trial switches that would zero 47 adjusters; they are harmless only because
-`run_one_point.sh` cannot set them, so the Fortran's zeros apply. And the step
-caps therefore also come from the Fortran, which is much tighter than the vector
-for the drug block: `addiction_scalar_max_rel_step` 0.003 against 0.1, and
-`kappa_phi_d_max_rel_step` 0.01 against 0.05.
+                                      SMI    non-SMI   ratio
+    use  (any DUD incl. mild)       0.34126   0.07570   4.51
+    SUD  (moderate or severe)       0.20426   0.02797   7.30
+    SUD among USERS                 0.59854   0.36940   1.62
+
+The "about 2" carried through this session was wrong by a factor of 3.6: it came
+from secondary summaries on a broad, alcohol-inclusive definition at 18+.
+
+**RUNNING: the fix-only test, NOT a calibration.** The author: *"Before you do
+any refit I want to see if it is even needed."* `code/bench_fixonly/`, pid
+32050, launched 20:44:16, warm started from the archive benchmark and running
+`seeds/PARAM_HANDOVER_bm_n90repro.txt` with the benchmark switches VERIFIED IN
+ITS OWN LOG. No parameter moves.
+
+                    ref      blk 1     blk 2     target
+    aggregate SUD  0.03361   0.04359   0.05110   0.04342
+    ratio          0.596     2.162     2.043     7.30
+    BLOCK MOVE       --      1.0000    0.2048    1e-4
+
+**THE FIX IS WORTH KEEPING AND IS NOT ENOUGH.** It corrects an arithmetic error
+at no parameter cost and takes the comorbidity from the wrong sign to about a
+quarter of the way. It also OVERSHOOTS the level: lambda_d is now 18 per cent
+above target and still climbing, so a refit is needed for the level. "lambda_d
+lands on its target" was reported at block 1 and is withdrawn -- the path
+crossed the target, it did not settle on it.
+
+**THE REMAINING GAP IS AT ENTRY, AND THE INSTRUMENT IS `b`.** The ratios
+multiply exactly:
+
+                      entry  x  persistence  =  SUD ratio
+        data           4.51        1.62           7.30
+        model, fixed   0.78        2.78           2.16
+
+The model has SMI households STARTING to use less than everyone else when the
+data says they start 4.5 times more, and compensates with too much stickiness.
+`addiction_scalar_1` is bracketed on participation, which is exactly the missing
+margin, so an SMI-specific `b` answers to the use ratio 4.51. The recovery-side
+routes in `results/smi_comorbidity/WHAT_TO_ADD.md` push on persistence, which is
+already OVERDONE at 2.78 against 1.62 -- so does `mu_m=0.82`.
+
+**THE FULL JOINT CALIBRATION IS PREPARED BUT NOT RUNNING.** Launched 20:38:48
+and stopped at 20:43:28 because `run_one_point.sh` deletes the warm start by
+design, so it was cold: 41 minutes to a first block that means nothing, against
+~13 minutes a block warm. Its 88-argument vector is built and verified at
+`/tmp/claude-0/refit_args.txt`, the switches checked.
 
 **STOPPED: the T=45 no-grandfathering transition.** Killed 20:25 and its session
 archived, because it is a transition of a model that no longer exists. Loop 1's
