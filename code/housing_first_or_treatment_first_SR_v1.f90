@@ -54580,6 +54580,48 @@
                     " bequests=", model_bequests(time_index), &
                     " inheritance=", model_total_inheritance(time_index)
 
+                ! THE RECOVERY CONTRAST, EVERY PERIOD. The author, 22 September:
+                ! "all we need is to see what happens to those whose voucher is
+                ! revoked and have SUD...do they recover more or less?" All four
+                ! quantities were computed on every period of every transition
+                ! and printed on none of them, so the question could not be
+                ! answered from the output at all.
+                !
+                ! HERE AND NOT BESIDE THE BETTER OFF LINE. govt_revenues_calc
+                ! divides both hazards by their own SUD masses, and it is called
+                ! at time_index earlier in this same pass. Printed before that
+                ! divide these are unnormalised accumulators, not hazards.
+                !
+                ! LEVELS, NOT ONLY THE RATIO. 1.2405 in the unconditional arm
+                ! against 1.0422 under conditionality is consistent with the
+                ! homeless hazard RISING or the housed one FALLING, and the
+                ! ratio alone cannot separate the two. The masses are printed
+                ! because the housed-with-SUD group is a leftover under
+                ! conditionality and its composition is what makes the ratio
+                ! hard to read.
+                write(*,*) "TRANSITION RECOVERY t=", time_index, &
+                    " recovery_housed=", model_recovery_housed(time_index), &
+                    " recovery_homeless=", model_recovery_homeless(time_index), &
+                    " sud_mass_housed=", model_sud_mass_housed(time_index), &
+                    " sud_mass_homeless=", model_sud_mass_homeless(time_index), &
+                    " ratio=", model_recovery_housed(time_index)/ &
+                        max(model_recovery_homeless(time_index),10.d0**(-12))
+
+                ! AND THE FAST MARGIN, which is the one the trial can see. One
+                ! model period is ONE YEAR -- model age 1 is data age 26 -- so
+                ! Milby's 24 weeks is 0.46 of a period and his whole trial fits
+                ! inside t=1, where lambda_d is +0.00 per cent by construction
+                ! because it is the inherited stock. The stock cannot answer him.
+                !
+                ! Treatment take up can. A household can enter treatment in the
+                ! period the voucher is revoked, and "in treatment" is the
+                ! model's nearest state to abstinent-but-still-disordered, which
+                ! is what a longest-clean-run-in-24-weeks measures. Normalised
+                ! by model_mass_with_sud in govt_revenues_calc, above.
+                write(*,*) "TRANSITION TREATMENT t=", time_index, &
+                    " take_up=", model_treatment_take_up(time_index), &
+                    " mass_with_sud=", model_mass_with_sud(time_index)
+
                 ! WHY VOUCHER SPENDING IS EXACTLY ZERO FROM t=2. Three candidates
                 ! and this line separates them in one run:
                 !
