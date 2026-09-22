@@ -42,7 +42,47 @@
 > reproduces it. Restarting a search against a moving target is how the archive
 > filled with points whose moments cannot be reproduced by re-solving them.
 
-> ## LAUNCH EVERY SOLVE WITH setsid. VERIFIED 21 September, 22:43.
+> ## setsid IS NOT ENOUGH. ANCHOR THE SOLVE IN A LIVE BACKGROUND TASK.
+> ## MEASURED 22 September, 05:44 and 05:52, at the cost of two runs.
+>
+> The section below is kept because everything in it is still true, but its
+> headline was wrong and the verification that produced it was confounded. The
+> 22:43 solve that survived was launched from INSIDE a background task that
+> stayed alive for the whole run. setsid was doing something; the anchor was
+> doing the rest, and neither was separated from the other.
+>
+> Separated on 22 September, twice, by accident:
+>
+>     run5  setsid, launched inside a LIVE background task    survived 5 h
+>     run6  setsid, launched from a foreground tool call      died at 3m02s
+>     run7  setsid + a wrapper, from a foreground tool call   died at ~10m
+>
+> run7 is the one that settles it. Its wrapper existed only to record the exit
+> signal, and the wrapper NEVER WROTE ITS EXIT LINE -- the `wait` never ran.
+> A fault inside hftf would have left the wrapper alive to record it. Both
+> processes went at once, which is a process-group reap from outside, not a
+> crash. Neither run was OOM: memory.events read 0, dmesg carried no kill
+> record, 15 GB was free, and run7 sat flat at 5.57 GB for ten minutes.
+>
+> So the rule is BOTH, and the anchor is the part that was missing:
+>
+>     launch the solve INSIDE a background task, and keep that task alive for
+>     as long as the solve, e.g. `while [ -d /proc/$P ]; do sleep 30; done`
+>
+> This also buys the notification back. The old section's stated cost -- that
+> the harness stops tracking the process -- was a consequence of launching it
+> detached from any task. Anchored, the task ends when the solve does and says
+> so, which is how a death gets noticed in minutes instead of at the next
+> firing.
+>
+> WHAT IT COST: run6 and run7 between them burned 24 minutes of wall clock and,
+> worse, ~18 minutes of a backward pass each. Loop 0 survived only because its
+> seeds were on disk. THE BACKWARD PASS HAS NO CHECKPOINT -- the per-period
+> writer sits before the TRANSITION BUDGET print, which only the forward pass
+> reaches -- so a reap during a backward pass costs that whole loop.
+
+> ## LAUNCH EVERY SOLVE WITH setsid. Still do this. The 21 September note follows,
+> ## with its headline corrected above.
 >
 > The platform recycles this session's process tree. A solve started from a tool
 > call is four levels under environment-manager and dies with it. Twice today
