@@ -205,3 +205,66 @@ schizophrenia literature. Pick one and the rest follows:
 The second is the coherent version of the objection. It is a legitimate choice.
 It is not the one the model is currently calibrated to, and taking it means
 moving `s_m(j)`, not the comorbidity target.
+
+## `b` IS LABELLED "TOTAL DRUG USERS" AND MEASURED AS A DISORDER
+
+Found 21:47 answering the author's *"Or are you saying that about 1 in 4
+uses..."*. It is not about SMI at all and it is worth settling on its own.
+
+Adults 26+, weighted, four different objects:
+
+                                    SMI    non-SMI   ratio   population
+    USED any illicit, past year   0.5640   0.2309    2.44      0.2476
+    USED excl. marijuana          0.2832   0.0755    3.75      0.0859
+    any DRUG use disorder         0.3413   0.0757    4.51      0.0890   <- b
+    moderate/severe DUD           0.2043   0.0280    7.30      0.0368   <- lambda_d
+
+`b` is called "total drug users" in the Fortran and sourced from `svyrdudany in
+(1,2,3)`, which is ANY DRUG USE DISORDER, not use. **Past-year use of an illicit
+drug other than marijuana is 0.0859 against `b`'s 0.0890** -- the same number to
+within four per cent, so the LEVEL is defensible under either reading and
+nothing in the existing calibration is wrong because of this.
+
+But they are not the same object and the SMI ratio differs:
+
+    if b means non-marijuana USE          SMI target ratio 3.75
+    if b means any drug USE DISORDER      SMI target ratio 4.51
+
+It also bears on `theta`, drug spending over income across users, whose
+denominator is whoever `b` counts.
+
+DSM-5 matters here and explains why these rates feel high against older figures.
+The variable names carry the edition -- `IRPYUD5MRJ`, `IRPYSEV5COC` -- and NSDUH
+switched in 2020. DSM-5 counts "mild" at two criteria where DSM-IV required an
+abuse or dependence syndrome, and population SUD on this file is 16.4 per cent
+for adults 26+ against roughly 7 per cent on the older criteria. The familiar
+"1 in 4 adults with SMI has a co-occurring SUD" is a DSM-IV era statistic; the
+DSM-5 figure for the same quantity is 44.5 per cent.
+
+## A CALCULATION THAT ALMOST WORKS, AND WHY IT DOES NOT
+
+The author, 21:52: *"if we have a ratio of 2 and drug use is what the 1 in 5
+means, then 8.9*2=17.9 which is almost exactly the rate in the data for smi"*.
+
+    proposed   8.9%  x 2.00 = 17.8%      data SMI moderate/severe 20.4%
+    correct    3.68% x 5.55 = 20.4%
+
+Two errors that nearly cancel. 8.9 per cent is the base for ANY drug use
+disorder while 20.4 per cent is the MODERATE/SEVERE rate, so the base is 2.4
+times too high; and the ratio that multiplies a POPULATION rate is 5.55, not the
+7.30 quoted against non-SMI and not the model's 2.0, so the ratio is 2.8 times
+too low. 2.4 x 0.36 = 0.87, and 17.8/20.4 = 0.87.
+
+## THE LIKE-FOR-LIKE COMPARISON, WHICH IS BETTER NEWS THAN THE RATIOS
+
+Rescaling the model to its target aggregate, which is what a refit does:
+
+    lambda_d margin        SMI     non-SMI   aggregate
+    model as it stands    0.0983    0.0480    0.0505
+    model rescaled        0.0717    0.0350    0.0368
+    data                  0.2043    0.0280    0.0368
+                        SMI 0.35x  non 1.25x
+
+Once the level is refitted the NON-SMI side is roughly right, at 1.25 times the
+data, and essentially the whole remaining gap is the SMI group, which has to
+roughly triple. One parameter, one margin, one group.
