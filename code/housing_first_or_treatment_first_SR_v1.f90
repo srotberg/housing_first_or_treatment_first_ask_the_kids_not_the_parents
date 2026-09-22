@@ -9371,6 +9371,9 @@
             model_treatment_take_up,model_mass_with_sud,&
             model_sud_mass_housed,model_sud_mass_homeless,&
             model_recovery_housed,model_recovery_homeless,&
+            xtab_mass_smi,xtab_mass_pop,xtab_sud_mass_smi,xtab_sud_mass_pop,&
+            xtab_exp_mass_smi,xtab_exp_mass_pop,&
+            xtab_rec_voucher,xtab_mass_voucher,xtab_rec_housed_nov,xtab_mass_housed_nov,&
             model_drugs_used_by_users_on_average,model_drugs_used_by_experimenters_on_average,model_mass_total_users,&
             model_mass_experimenters,model_mass_addicts,model_drugs_used_by_addicts_on_average,&
             model_drugs_consumed_by_users,model_experimenters_getting_voucher,model_avg_income_experimenters,&
@@ -18300,6 +18303,16 @@
         if (accumulating_beta_types==0) model_sud_mass_homeless(time_period)=0
         if (accumulating_beta_types==0) model_recovery_housed(time_period)=0
         if (accumulating_beta_types==0) model_recovery_homeless(time_period)=0
+        if (accumulating_beta_types==0) xtab_mass_smi(time_period)=0
+        if (accumulating_beta_types==0) xtab_mass_pop(time_period)=0
+        if (accumulating_beta_types==0) xtab_sud_mass_smi(time_period)=0
+        if (accumulating_beta_types==0) xtab_sud_mass_pop(time_period)=0
+        if (accumulating_beta_types==0) xtab_exp_mass_smi(time_period)=0
+        if (accumulating_beta_types==0) xtab_exp_mass_pop(time_period)=0
+        if (accumulating_beta_types==0) xtab_rec_voucher(time_period)=0
+        if (accumulating_beta_types==0) xtab_mass_voucher(time_period)=0
+        if (accumulating_beta_types==0) xtab_rec_housed_nov(time_period)=0
+        if (accumulating_beta_types==0) xtab_mass_housed_nov(time_period)=0
         if (accumulating_beta_types==0) model_drugs_used_by_users_on_average(time_period)=0
         if (accumulating_beta_types==0) model_drugs_consumed_by_users(time_period)=0
         if (accumulating_beta_types==0) model_drugs_used_by_experimenters_on_average(time_period)=0
@@ -19167,6 +19180,57 @@
                                         
                                     end if
                                     
+                                    ! SMI BY DRUG STATE. The author, 22 September:
+                                    ! "check what the prevalence of drug use (but
+                                    ! no sud) is for those with SMI relative to the
+                                    ! entire population and check the rate of SUD
+                                    ! for those with SMI as well."
+                                    !
+                                    ! There is no joint SMI-by-drug statistic
+                                    ! anywhere in the model, so the comorbidity has
+                                    ! never been measured. The two forces run
+                                    ! opposite ways and the sign is not assertable:
+                                    ! SMI multiplies the death probability by
+                                    ! kappa_phi_m, which makes the drug's marginal
+                                    ! risk LARGER, while SMI lowers employment
+                                    ! through smi_of and so lowers the continuation
+                                    ! value that the risk costs -- a household with
+                                    ! little to lose pays less for a given increase
+                                    ! in death risk. Masses are accumulated raw and
+                                    ! the rates taken downstream, so no division
+                                    ! happens here and no ordering can bite.
+                                    !
+                                    ! SUD is unemployment_index>threshold_addiction_index
+                                    ! and drug-use-without-SUD is the experimenter
+                                    ! test used above, both as the existing code
+                                    ! writes them. SMI comes from smi_of, never from
+                                    ! the packing, which this file's own comment
+                                    ! warns about having been written out eight
+                                    ! times until one copy drifted.
+                                    xtab_mass_pop(time_period)=&
+                                        xtab_mass_pop(time_period)+distribution_mass_used
+                                    if (smi_of(unemployment_index)>=1) then
+                                        xtab_mass_smi(time_period)=&
+                                            xtab_mass_smi(time_period)+distribution_mass_used
+                                    end if
+                                    if (unemployment_index>threshold_addiction_index) then
+                                        xtab_sud_mass_pop(time_period)=&
+                                            xtab_sud_mass_pop(time_period)+distribution_mass_used
+                                        if (smi_of(unemployment_index)>=1) then
+                                            xtab_sud_mass_smi(time_period)=&
+                                                xtab_sud_mass_smi(time_period)+distribution_mass_used
+                                        end if
+                                    end if
+                                    if ((addiction_consumption_1>0) .AND. &
+                                        (unemployment_index<=threshold_addiction_index)) then
+                                        xtab_exp_mass_pop(time_period)=&
+                                            xtab_exp_mass_pop(time_period)+distribution_mass_used
+                                        if (smi_of(unemployment_index)>=1) then
+                                            xtab_exp_mass_smi(time_period)=&
+                                                xtab_exp_mass_smi(time_period)+distribution_mass_used
+                                        end if
+                                    end if
+
                                     ! TREATMENT TAKE UP, over households that
                                     ! carry the disorder, which is the
                                     ! denominator NSDUH reports it on.
@@ -19209,6 +19273,72 @@
                                                 vector_transition_integer(time_period,age_index,financial_index,&
                                                 unemployment_index,employment_index,housing_status_index,&
                                                 voucher_index),smi_of(unemployment_index))
+
+                                            ! MILBY'S THREE ARMS. The author, 22
+                                            ! September: "show me also whether
+                                            ! someone who has conditional housing
+                                            ! is more likely to recover, as in
+                                            ! Milby?" Milby randomised 196
+                                            ! cocaine-dependent homeless adults
+                                            ! across no housing (NH), housing NOT
+                                            ! contingent on abstinence (NACH), and
+                                            ! abstinence-contingent housing (ACH),
+                                            ! and only NH against ACH was
+                                            ! significant, at P=.0004.
+                                            !
+                                            ! The model's counterparts, within one
+                                            ! economy: a voucher holder is ACH
+                                            ! wherever the voucher is conditional
+                                            ! on being clean, housed WITHOUT a
+                                            ! voucher is NACH, and homeless is NH.
+                                            ! voucher_index==1 means holds a
+                                            ! voucher, per this file's own note at
+                                            ! the declaration. In the BENCHMARK the
+                                            ! voucher is unconditional, so its
+                                            ! holders are NACH and the split reads
+                                            ! as voucher against non-voucher
+                                            ! housing rather than as Milby's arms.
+                                            !
+                                            ! The hazard expression is copied
+                                            ! unchanged from the housed accumulation
+                                            ! directly above -- both arms ARE
+                                            ! housed, so the housed argument stays 1
+                                            ! in each.
+                                            if (voucher_index==1) then
+
+                                                xtab_mass_voucher(time_period)=&
+                                                    xtab_mass_voucher(time_period)+distribution_mass_used
+
+                                                xtab_rec_voucher(time_period)=&
+                                                    xtab_rec_voucher(time_period)+distribution_mass_used*&
+                                                    addiction_transition(1,0,&
+                                                policy_function_addiction(years_left_on_mortgage_index)%&
+                                                vector_transition_integer(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,&
+                                                voucher_index),1,0.d0,1,&
+                                                policy_function_treatment(years_left_on_mortgage_index)%&
+                                                vector_transition_integer(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,&
+                                                voucher_index),smi_of(unemployment_index))
+
+                                            else
+
+                                                xtab_mass_housed_nov(time_period)=&
+                                                    xtab_mass_housed_nov(time_period)+distribution_mass_used
+
+                                                xtab_rec_housed_nov(time_period)=&
+                                                    xtab_rec_housed_nov(time_period)+distribution_mass_used*&
+                                                    addiction_transition(1,0,&
+                                                policy_function_addiction(years_left_on_mortgage_index)%&
+                                                vector_transition_integer(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,&
+                                                voucher_index),1,0.d0,1,&
+                                                policy_function_treatment(years_left_on_mortgage_index)%&
+                                                vector_transition_integer(time_period,age_index,financial_index,&
+                                                unemployment_index,employment_index,housing_status_index,&
+                                                voucher_index),smi_of(unemployment_index))
+
+                                            end if
 
                                         else
 
@@ -54621,6 +54751,28 @@
                 write(*,*) "TRANSITION TREATMENT t=", time_index, &
                     " take_up=", model_treatment_take_up(time_index), &
                     " mass_with_sud=", model_mass_with_sud(time_index)
+
+                ! Raw masses, rates taken downstream. Nothing here is normalised
+                ! in govt_revenues_calc, so unlike the recovery hazards these do
+                ! not depend on where in the pass they are read.
+                write(*,*) "TRANSITION SMIDRUG t=", time_index, &
+                    " mass_smi=", xtab_mass_smi(time_index), &
+                    " mass_pop=", xtab_mass_pop(time_index), &
+                    " sud_smi=", xtab_sud_mass_smi(time_index), &
+                    " sud_pop=", xtab_sud_mass_pop(time_index), &
+                    " exp_smi=", xtab_exp_mass_smi(time_index), &
+                    " exp_pop=", xtab_exp_mass_pop(time_index)
+
+                ! Milby's arms. rec_* are mass-weighted hazard SUMS, so each arm's
+                ! average hazard is rec_/mass_ and the arms are comparable only
+                ! after that division.
+                write(*,*) "TRANSITION MILBY t=", time_index, &
+                    " rec_voucher=", xtab_rec_voucher(time_index), &
+                    " mass_voucher=", xtab_mass_voucher(time_index), &
+                    " rec_housed_nov=", xtab_rec_housed_nov(time_index), &
+                    " mass_housed_nov=", xtab_mass_housed_nov(time_index), &
+                    " rec_homeless=", model_recovery_homeless(time_index), &
+                    " mass_homeless=", model_sud_mass_homeless(time_index)
 
                 ! WHY VOUCHER SPENDING IS EXACTLY ZERO FROM t=2. Three candidates
                 ! and this line separates them in one run:
