@@ -54,6 +54,7 @@ Degenhardt et al.'s SMR range of 2.5 to 9.8.
 | `Stergiopoulos_et_al_2015_At_Home_Chez_Soi_RCT_scattered_site_housing_ICM_moderate_needs_JAMA.odt` | At Home/Chez Soi, N=1198, scattered site housing plus intensive case management, moderate needs, 4 Canadian cities | **The housing to mental health channel should NOT be added.** Mental illness symptom severity is null at every wave, $-0.96$ (p=.16), $-0.51$ (p=.46), 0.18 (p=.79), 0.57 (p=.44). Recovery Assessment Scale 0.09 (p=.92). **Severity of substance use problems 1.04 (0.89 to 1.21), p=.66, also null.** What IS large and significant: housing stability, the primary outcome, and condition specific quality of life, 5.91 (3.41 to 8.41), p<.001 |
 | `Aubry_et_al_2015_At_Home_Chez_Soi_RCT_Housing_First_with_ACT_high_needs_PsychServices.pdf` | The high needs arm of the same trial, Housing First with Assertive Community Treatment | Same design, sicker population. Outcomes measured on the Colorado Symptom Index and the GAIN substance problem scale |
 | `Sadowski_et_al_2009_Housing_and_case_management_ED_visits_hospitalizations_Chicago_RCT_JAMA.odt` | Chicago RCT, N=407, housing plus case management for chronically ill homeless adults | Health SERVICE use, emergency department visits and hospitalisations. The outcome family the model has no state for |
+| `Milby_et_al_2005_To_House_or_Not_to_House_abstinence_contingent_housing_RCT_AJPH.pdf` | The trial behind `mu_H` and `b_hl_ratio`. N=196 cocaine-dependent homeless adults in day treatment, randomised across three housing conditions: no housing (NH), housing NOT contingent on abstinence (NACH), and abstinence-contingent housing (ACH) | **Read the arms before using the ratio.** The outcome is the LONGEST STRING of consecutive weeks abstinent out of a possible **24**, not a recovery hazard and not total weeks abstinent. Means (SD): NH **4.48** (4.98), NACH **6.60** (6.32), ACH **8.32** (6.79). The significance runs the other way from the target: NH vs ACH **P=.0004**, NACH vs ACH **P=.35**, and NH vs NACH **P=.058** |
 
 **The Milby tension, and it is productive rather than awkward.** The model's
 `b_hl_ratio` is calibrated to Milby, where housing raised abstinence. At Home/Chez
@@ -70,15 +71,13 @@ better evidence for it than either alone.
 | `Rog_et_al_Permanent_Supportive_Housing_Assessing_the_Evidence_PsychServices.mht` | *Psychiatric Services* review of permanent supportive housing. Housing retention and treatment engagement effects. A second capture of the same article is kept as `..._capture2.mht`; identical content, different save. |
 | `Keenan_et_al_Accommodation_based_interventions_homelessness_review_PMC.mht` | Systematic review of accommodation-based interventions. |
 | `CSH_literature_review_supportive_housing_by_study.pdf` | CSH study-by-study outcomes table. Marked *do not distribute without permission* — do not redistribute. |
-| `To_House_or_Not_to_House_commentary.mht` | Commentary on the Housing First / Treatment First debate. |
+| `To_House_or_Not_to_House_commentary.mht` | MIS-NAMED. Its `Snapshot-Content-Location` is `ajph.aphapublications.org/doi/full/10.2105/AJPH.2004.039743`, which is Milby et al. (2005) itself, not a commentary on it. Kept because the HTML capture carries the Results text in a searchable form that the PDF's text layer does not; the PDF above is the citable copy. |
 | `Long_term_health_outcomes_homelessness_link.mht` | Long-term health outcomes of homelessness. |
 | `Key_substance_use_and_mental_health_indicators_SAMHSA.mht` | SAMHSA key indicators report — the narrative companion to the NSDUH detailed tables in `data/raw/`. |
 
 ## Cited but not held here
 
-Referenced in the note without a local copy: Milby, Schumacher, Wallace, Freedman
-and Vuchinich (2005), *To House or Not to House*, AJPH 95(7):1259-65, whose NACH
-and NH arms are behind `b_hl_ratio` and moment 24, Desmond & Gershenson
+Referenced in the note without a local copy: Desmond & Gershenson
 (the homelessness–employment penalty κ_ueH), Loubière et al. (the eight-country
 contingent valuation behind κ_x), and the National Alliance to End Homelessness
 figure χ_H previously rested on.
