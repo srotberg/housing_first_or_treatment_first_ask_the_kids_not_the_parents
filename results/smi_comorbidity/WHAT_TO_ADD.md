@@ -363,3 +363,73 @@ that is exactly the effect that should be measured rather than assumed away.
 Mortality fix first, re-measure both gaps, then size relief against what is
 left. Otherwise relief is calibrated partly to cancel the 2.5x over-charge, and
 a referee who spots the double count then has two problems instead of one.
+
+# THE MORTALITY FIX, concretely
+
+survival_probability is a PRECOMPUTED TABLE, not a function:
+
+    real(8), dimension(life_span,2,0:include_addiction,0:number_of_smi_states-1)
+
+indexed (age, housing 1=housed 2=homeless, SUD 0/1, SMI 0/1). It is built fully
+multiplicatively ON THE DEATH PROBABILITY, around line 34875:
+
+    d(age, housed,   clean, no SMI) = d0
+    d(age, homeless, clean, no SMI) = kappa_h * d0
+    d(age, housed,   SUD,   no SMI) = kappa_d * d0
+    d(age, homeless, SUD,   no SMI) = kappa_h * kappa_d * d0
+    d(age,  ...,      ...,  SMI   ) = kappa_m * d(same cell, no SMI)
+
+## Where the double count is, exactly
+
+The drug's MARGINAL contribution to the death probability:
+
+    non-SMI   kappa_d*d0 - d0                 = (kappa_d - 1)*d0
+    SMI       kappa_m*kappa_d*d0 - kappa_m*d0 = kappa_m*(kappa_d - 1)*d0
+
+The drug is exactly kappa_m = 2.5 times deadlier at the margin for an SMI
+household. Nobody chose that; it falls out of applying the SMI multiplier to a
+number that already carries the drug's penalty. And kappa_m is ASSIGNED from the
+epidemiological standardised mortality ratio, which is a TOTAL already
+containing substance-related deaths.
+
+## The change: six lines in the table construction
+
+    ! now
+    survival_probability(i,j,k,1) = survival_with_smi(survival_probability(i,j,k,0),1)
+
+    ! proposed -- clean cell unchanged; the addicted cell scales the CLEAN risk
+    ! and adds the drug's increment at par
+    survival_probability(i,j,0,1) = survival_with_smi(survival_probability(i,j,0,0),1)
+    survival_probability(i,j,1,1) = 1.d0 - min(1.d0, &
+        kappa_phi_m*(1.d0-survival_probability(i,j,0,0)) + &
+        ((1.d0-survival_probability(i,j,1,0)) - (1.d0-survival_probability(i,j,0,0))))
+
+No signature changes, no call sites touched, and because the table is built once
+there is ZERO RUNTIME COST. I earlier implied this would need a double
+evaluation in the innermost loop; that was wrong, I had assumed
+survival_probability was a function.
+
+## Size
+
+From the model's own print, clean housed at age 40 survives 0.98719 so
+d0 = 0.0128, and the compounded multipliers for SMI+homeless+SUD reach about
+16x, producing the 0.795 it prints. Under the fix that cell's death probability
+roughly halves, and the drug's marginal cost to an SMI household falls by
+exactly kappa_m = 2.5 -- the factor that was double counted.
+
+Given the reweighting says they should be using at 11.6 per cent against an
+actual 2.7, this is plausibly a large share of the gap. No number until it runs.
+
+## The caveat to keep
+
+After the fix kappa_m=2.5 is still the TOTAL SMR applied to NON-substance
+mortality, so it now over-states the non-drug part. Strictly the SMR should be
+decomposed and only the non-substance component used. That needs a data source.
+The double count is first order and certain; this refinement is second order.
+
+## What it triggers
+
+Survival feeds the value of life, saving and labour supply, so this is a
+RECALIBRATION and it changes the benchmark. The transition now running would be
+superseded -- which is the argument for letting it finish, so it becomes the
+before-picture.
