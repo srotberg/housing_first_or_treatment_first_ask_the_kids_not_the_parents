@@ -68,17 +68,32 @@ welf = re.compile(r"TRANSITION WELFARE loop=\s*(\d+)\s+t=\s*(\d+)")
 # on the MECH line that most recently went past, which is why last_t is tracked.
 dist = re.compile(r"distance_drug_market=\s*(%s)" % NUM)
 budg = re.compile(r"TRANSITION BUDGET loop=\s*(\d+)\s+t=\s*(\d+).*?residual=\s*(%s)" % NUM)
+# The three SMI lines carry no period tag either, but unlike the drug distance
+# they are printed BEFORE that period's MECH line, not after it. So they are
+# buffered and handed to the NEXT MECH line that arrives. Keying them backward,
+# the way the drug distance is keyed, shifts the whole path by one period and
+# silently turns t=1 into the benchmark.
+smiP = re.compile(r"SMI prevalence all ages, model=\s*(%s)" % NUM)
+smiH = re.compile(r"SMI share of homeless=\s*(%s)\s+employment rate given SMI=\s*(%s)" % (NUM, NUM))
 f    = lambda s: float(s.replace("D", "E").replace("d", "e"))
 
-M, C, D, R, loop, last_t = {}, {}, {}, {}, 0, None
+M, C, D, R, S, loop, last_t = {}, {}, {}, {}, {}, 0, None
+pend = {}
 for ln in open(a.log, errors="replace"):
     m = welf.search(ln)
     if m: loop = int(m.group(1)); continue
     m = mech.search(ln)
     if m:
-        M.setdefault(loop, {})[int(m.group(1))] = tuple(f(m.group(i)) for i in (2,3,4,6,5))
-        last_t = int(m.group(1))
+        t = int(m.group(1))
+        M.setdefault(loop, {})[t] = tuple(f(m.group(i)) for i in (2,3,4,6,5))
+        if len(pend) == 3: S.setdefault(loop, {})[t] = (pend["p"], pend["h"], pend["e"])
+        pend.clear()
+        last_t = t
         continue
+    m = smiP.search(ln)
+    if m: pend["p"] = f(m.group(1)); continue
+    m = smiH.search(ln)
+    if m: pend["h"], pend["e"] = f(m.group(1)), f(m.group(2)); continue
     m = cev.search(ln)
     if m: C.setdefault(loop, {})[int(m.group(1))] = f(m.group(2)); continue
     m = budg.search(ln)
@@ -102,6 +117,13 @@ Td    = [t for t in T if t in D.get(L, {})];  dd = [D[L][t] for t in Td]
 Tr    = [t for t in T if t in R.get(L, {})];  rr = [R[L][t] for t in Tr]
 # The transition doubles the steady state's rules; both are maxima over periods.
 RULE_DRUG, RULE_BUDGET = 1.0e-2, 5.0e-2
+Ts    = [t for t in T if t in S.get(L, {})]
+if Ts:
+    s0 = S[L][Ts[0]]
+    smi_p = [pct(S[L][t][0], s0[0]) for t in Ts]
+    smi_h = [pct(S[L][t][1], s0[1]) for t in Ts]
+    smi_e = [pct(S[L][t][2], s0[2]) for t in Ts]
+SMI_TARGET = 0.25      # smi_share_of_homeless_data, line 2337 of the Fortran
 Tc    = [t for t in T if t in C.get(L, {})]
 cevs  = [100.0*C[L][t] for t in Tc]
 
@@ -109,8 +131,8 @@ INK, MUTE, GRID = "#0b0b0b", "#52514e", "#dcdbd6"
 S1, S2, S3      = "#2a78d6", "#eb6834", "#1baf7a"   # validated slots 1-3
 REFC            = "#9a9892"
 
-fig, ax = plt.subplots(5, 1, figsize=(9.5, 17.5), sharex=True,
-                       gridspec_kw={"height_ratios": [1.3, 1, 1, 1, 1.15], "hspace": 0.26})
+fig, ax = plt.subplots(6, 1, figsize=(9.5, 21.0), sharex=True,
+                       gridspec_kw={"height_ratios": [1.3, 1, 1, 1, 1.15, 1.2], "hspace": 0.26})
 fig.patch.set_facecolor("#fcfcfb")
 
 def dress(x, ylab):
@@ -181,7 +203,7 @@ else:
 # Log axis: these span orders of magnitude within one loop, and the thing worth
 # seeing is distance-to-rule, which is a ratio.
 dress(ax[4], "distance remaining (log)")
-ax[4].set_xlabel("period of the transition", color=MUTE, fontsize=10)
+ax[5].set_xlabel("period of the transition", color=MUTE, fontsize=10)
 ax[4].set_yscale("log")
 drew = False
 for ts, ys, colour, name, rule in ((Td, dd, S1, "drug market", RULE_DRUG),
@@ -211,6 +233,28 @@ for x in ax:
     x.set_xlim(T[0] - 0.02*span, T[-1] + 0.14*span)
 
 out = a.out or os.path.join(RUNDIR, "transition_loop%d.png" % L)
+# PANEL 6 -- SMI. The referees' question, so it gets its own panel rather than
+# a line squeezed into panel 0. All three series are per cent against their own
+# t=1 value, which is the inherited benchmark distribution: one unit, one axis.
+if Ts:
+    for y, c, lab in ((smi_p, S1, "SMI prevalence"),
+                      (smi_h, S2, "SMI share of the homeless"),
+                      (smi_e, S3, "employment rate given SMI")):
+        ax[5].plot(Ts, y, color=c, linewidth=2.0, solid_capstyle="round", label=lab)
+        label_end(ax[5], Ts, y, lab, c)
+    ax[5].axhline(0, color=REFC, linewidth=1.0)
+    ax[5].legend(frameon=False, fontsize=9, labelcolor=MUTE, ncol=3,
+                 loc="upper left", bbox_to_anchor=(0.0, 1.16))
+    ax[5].annotate("t=1 levels: prevalence %.5f, share of homeless %.5f "
+                   "(data target %.2f), employment %.5f"
+                   % (s0[0], s0[1], SMI_TARGET, s0[2]),
+                   xy=(0.0, 1.03), xycoords="axes fraction",
+                   fontsize=8.5, color=MUTE)
+    dress(ax[5], "per cent vs t=1")
+else:
+    ax[5].annotate("no SMI prints parsed", xy=(0.5, 0.5),
+                   xycoords="axes fraction", ha="center", color=MUTE)
+
 fig.savefig(out, dpi=170, bbox_inches="tight", facecolor=fig.get_facecolor())
 print("wrote", out)
 for nm, v in (("h_1", h1), ("b", bb), ("lambda_d", ld)):
