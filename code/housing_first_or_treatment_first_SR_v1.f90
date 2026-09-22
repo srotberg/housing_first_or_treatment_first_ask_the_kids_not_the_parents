@@ -34928,12 +34928,24 @@
 
                 do j=1,2
 
-                    do k=0,include_addiction
+                    ! SMI scales the CLEAN death probability and the drug's
+                    ! increment is added AT PAR, so the drug costs an SMI
+                    ! household the same extra risk it costs anyone else.
+                    ! kappa_phi_m is assigned from the standardised mortality
+                    ! ratio, a TOTAL that already contains substance-related
+                    ! deaths; scaling the whole probability by it charged the
+                    ! drug's own marginal risk 2.5 times over.
+                    survival_probability(i,j,0,1)=&
+                        survival_with_smi(survival_probability(i,j,0,0),1)
 
-                        survival_probability(i,j,k,1)=&
-                            survival_with_smi(survival_probability(i,j,k,0),1)
+                    if (include_addiction==1) then
 
-                    end do
+                        survival_probability(i,j,1,1)=1.d0-min(1.d0,&
+                            kappa_phi_m*(1.d0-survival_probability(i,j,0,0))+&
+                            ((1.d0-survival_probability(i,j,1,0))-&
+                            (1.d0-survival_probability(i,j,0,0))))
+
+                    end if
 
                 end do
 
