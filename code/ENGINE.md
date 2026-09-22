@@ -1,5 +1,41 @@
 # The calibration engine
 
+> ## THERE ARE TWO KINDS OF RESTART AND setsid ONLY SURVIVES ONE.
+> ## MEASURED 22 September 23:21, at the cost of five minutes.
+>
+> The section below says a solve launched with `setsid` from a background task
+> that has exited survives a restart, on the evidence of 19:05. That is true of
+> the event it was measured on and NOT true in general, and the difference is
+> one line:
+>
+>     19:05   platform restarted its own processes   uptime CONTINUOUS at 13h
+>     23:21   the container rebooted                  uptime 0 MINUTES
+>
+> At 23:21 `uptime -s` read 23:21:32 against a solve launched at 22:51 with
+> ppid 1 and its own process group. It died anyway, because a kernel reboot
+> takes everything: stderr was empty, the log stopped mid-INVARIANTS, memory
+> was 15 GB free and there was no kill record. Nothing in a container survives
+> its container rebooting.
+>
+> **SO THE THING THAT SAVES A RUN IS THE CHECKPOINT, NOT THE LAUNCH.** This one
+> cost five minutes instead of twenty-five because `calibration_state.dat` and
+> the distribution were written at 23:16:45, and the resume came back at loop 12
+> with `warm start distribution loaded, sum= 50.537513340218254` -- the same sum
+> as the last DIAG line before the reboot. Keep launching with `setsid`, which
+> is free and does help against the other event; do not treat it as protection.
+>
+> **AND ON A RESUME, DO NOT RESTORE PARAM_HANDOVER.** It consumes itself as it
+> is read, and restoring it would reset every calibrated parameter to its
+> starting value and throw the loops away. `calibration_state.dat` carries them.
+>
+> **PUT SWITCHES IN THE SOURCE, NOT ONLY IN THE VECTOR.** The handover is gone
+> on a resume, so a configuration that lives only there is silently lost. This
+> resume was correct because the one-class patch had set
+> `voucher_conditional_on_clean`, `omega_c_is_pinned`, `weight_on_child` and
+> `freeze_all_but_omega_c` as DECLARED values as well; had they been vector-only
+> the run would have come back as a different experiment and said nothing.
+
+
 > ## THE BENCHMARK OF RECORD IS NOT A FIXED POINT. READ THIS FIRST.
 >
 > Found 9 September, and it sits upstream of every number in the archive.
