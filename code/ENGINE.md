@@ -42,6 +42,48 @@
 > reproduces it. Restarting a search against a moving target is how the archive
 > filled with points whose moments cannot be reproduced by re-solving them.
 
+> ## THE ANCHOR RULE BELOW IS WRONG. DO NOT HOLD THE TASK ALIVE.
+> ## MEASURED 22 September 19:05, at the cost of a 2h14m backward pass.
+>
+> A container restart at 19:05 killed the T=45 transition and SPARED a benchmark
+> diagnostic running beside it. The difference was the opposite of what the
+> section below claims:
+>
+>     transition  launched from a background task HELD ALIVE as an anchor   KILLED
+>     diagnostic  launched from a background task that EXITED after 45s     SURVIVED
+>
+> The kernel did not reboot -- uptime was continuous at 13 hours -- so this was
+> the platform restarting its own processes. It kills the background tasks it is
+> still TRACKING, and a solve parented to one dies with it. The diagnostic's
+> launching task had already completed, so the harness no longer managed it and
+> the restart passed it by. Its parent chain at the time was
+> process_api -> a leftover bash -> hftf_bm.
+>
+> THE RECIPE THAT SURVIVED, and the one to use:
+>
+>     launch from a BACKGROUND task, with setsid, and let that task EXIT within
+>     a minute. Do not wait on the solve inside it. Check ppid afterwards: 1, or
+>     a bash whose own parent is 1, is what you want.
+>
+> All five launches, so the next session does not have to re-derive this:
+>
+>     run5  background task, stayed alive          survived 5h (killed by me)
+>     run6  FOREGROUND tool call, setsid           died at 3m02s
+>     run7  FOREGROUND tool call, setsid+wrapper   died at ~10m, wrapper too
+>     run9  background task, HELD ALIVE            died at the container restart
+>     diag  background task that EXITED            survived the container restart
+>
+> run5 and run9 were launched the same way and only one survived, which says the
+> anchor never helped -- run5 simply never met a restart. The consistent signal
+> is that FOREGROUND launches die fast and TRACKED tasks die at a restart.
+>
+> AND IT COST WHAT THE CHECKPOINT GAP SAID IT WOULD. The backward pass writes no
+> checkpoint, so the 2h14m loop in flight was lost entirely. The seeds from the
+> previous completed loop were on disk, so nothing before that was lost. Closing
+> the backward-pass checkpoint gap would have made this a five-minute event.
+
+> ## SUPERSEDED, 22 September 19:05. Kept because its evidence is still real,
+> ## but its conclusion is wrong -- see the section immediately above.
 > ## setsid IS NOT ENOUGH. ANCHOR THE SOLVE IN A LIVE BACKGROUND TASK.
 > ## MEASURED 22 September, 05:44 and 05:52, at the cost of two runs.
 >
