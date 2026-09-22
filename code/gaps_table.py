@@ -74,6 +74,17 @@ ROWS = [
     ("tau_u",                "utility_cost_of_treatment",        "utility_cost_of_treatment",  "MOMENT:tau_u"),
     ("aleph",                "value_of_life",                    "value_of_life",              "MOMENT:aleph"),
     ("b",                    "addiction_scalar_1",               "addiction_scalar",           "MOMENT:b"),
+
+    # THE SMI COMORBIDITY RATIO, added 22 September on the author's instruction
+    # that "the new target is the Sud smi ratio of 7.3". The moment is
+    # SUD given SMI over SUD given no SMI, measured from the four masses
+    # govt_revenues_calc already accumulates, against 7.30 from NSDUH 2024 at
+    # 26+ on the same svyrdudany cut the level targets use.
+    #
+    # ITS INSTRUMENT IS b_smi_multiple, WHICH IS NOT BUILT YET. Until it is,
+    # this row prints its moment with no parameter beside it, which is the
+    # honest state: the target is being measured and nothing is moving it.
+    ("b_smi",                "b_smi_multiple",                   "b_smi_multiple",             "MOMENT:r_smi"),
     ("delta_d",              "penalty_child_addicted",           "penalty_child_addicted",     "SPECIAL:child_sud"),
     ("h2",                   "smallest_rental_relative_to_lowest_income",
                                                                  "smallest_house_size",        "SPECIAL:renter_burden_30"),

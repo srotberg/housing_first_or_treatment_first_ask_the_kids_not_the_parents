@@ -6666,6 +6666,24 @@
         real(8), parameter :: yu_band_hi=0.80d0
         real(8), parameter :: sud_share_of_homeless=0.217
 
+        ! THE SMI COMORBIDITY RATIO, SUD given SMI over SUD given no SMI.
+        !
+        ! NSDUH 2024, adults 26 and over, weighted by ANALWT2_C, SUD from
+        ! svyrdudany in (2,3) and SMI from SMIPY: 0.20426 against 0.02797.
+        ! The same file and the same variable the level targets come from, and
+        ! the universe check reproduces 0.0890 and 0.0368 exactly.
+        !
+        ! NOT SCALED BY 1.18, because it is a ratio of two rates and a common
+        ! scaling cancels, exactly as for sud_share_of_homeless above.
+        !
+        ! IT IS THE RATIO AGAINST NON-SMI, NOT AGAINST THE POPULATION. Against
+        ! the population it is 5.55, and multiplying a population rate by 7.30
+        ! double counts. Against adults with NO mental illness at all it is
+        ! 12.77, so 7.30 is the conservative summary: the non-SMI comparison
+        ! group contains 38 million adults with mild or moderate mental illness
+        ! running at 3.8 and 7.6 times the clean baseline.
+        real(8), parameter :: sud_smi_ratio_data=7.30
+
         ! FLAT EXCESS DEATH RISK FROM HOMELESSNESS. See build_kappa_phi.
         ! The default is Baggett's own implied excess at age 26, so the youngest
         ! household's deterrent is unchanged and only the AGE GRADIENT in it is
@@ -11073,6 +11091,28 @@
                 model_smi_prevalence(1), " target=", model_smi_prevalence_target(1)
             write(*,*) "MOMENT lambda_m  SMI share of the homeless   model=",&
                 model_smi_share_of_homeless(1), " target=", smi_share_of_homeless_data
+            ! THE COMORBIDITY RATIO. Built from the four masses govt_revenues_calc
+            ! already accumulates, which is why no new accumulation is needed.
+            ! Guarded on both denominators: at a corner with no SMI mass or no
+            ! non-SMI SUD the ratio is meaningless rather than large, so it
+            ! prints as zero and the gaps table shows it against its target
+            ! rather than reporting a spurious number.
+            if ((xtab_mass_smi(1)>10.d0**(-12)) .AND. &
+                ((xtab_mass_pop(1)-xtab_mass_smi(1))>10.d0**(-12)) .AND. &
+                ((xtab_sud_mass_pop(1)-xtab_sud_mass_smi(1))>10.d0**(-12))) then
+
+                write(*,*) "MOMENT r_smi     SUD ratio SMI over non-SMI  model=",&
+                    (xtab_sud_mass_smi(1)/xtab_mass_smi(1))/&
+                    ((xtab_sud_mass_pop(1)-xtab_sud_mass_smi(1))/&
+                    (xtab_mass_pop(1)-xtab_mass_smi(1))),&
+                    " target=", sud_smi_ratio_data
+
+            else
+
+                write(*,*) "MOMENT r_smi     SUD ratio SMI over non-SMI  model=",&
+                    0.d0, " target=", sud_smi_ratio_data
+
+            end if
             write(*,*) "MOMENT pi_V      eligibles with a voucher    model=",&
                 model_eligibles_getting_voucher(1), " target=", voucher_coverage_data
             if (child_penalty_classes>=4) then
