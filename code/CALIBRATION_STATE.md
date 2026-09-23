@@ -64,10 +64,23 @@ version: nothing on this box survives the gap between one firing and the next,
 so a long solve belongs in a session of its own, and that session must keep
 its container busy rather than idle while the solve runs.
 
-The coordinator cannot steer those sessions -- `SendMessage` reaches no cloud
-sibling from here, and `ListAgents` shows none. The only channel is
-`get_session`, which returns each one's own post-turn summary. Brief a session
-fully at creation, because there is no second chance to correct it.
+THE COORDINATOR CAN STEER THOSE SESSIONS, and the note that first stood here
+saying it could not was wrong. `SendMessage` does reach no cloud sibling and
+`ListAgents` shows none, but that is not the only channel: `create_trigger`
+takes a `persistent_session_id`, which binds a prompt to a session you own, and
+`fire_trigger` delivers it immediately. Omit both `cron_expression` and
+`run_once_at` and the Routine never fires on its own -- it exists only to be
+fired by hand.
+
+Used at 20:43 on the control, stuck for 27 minutes installing a compiler that
+was already in the image, and on the 0.08 point, stuck 11 minutes on an exit
+127 it had misattributed to that same compiler.
+
+Briefing at creation still matters most, because a poke costs a turn and
+interrupts. But a worker that has gone down a wrong path is recoverable, so
+watch the summaries for one that has not advanced and correct it rather than
+writing the point off. `get_session` remains the only way to READ a worker;
+the poke is the only way to WRITE to one.
 
 # WHY A RESTART COSTS TWO HOURS: IT IS THE BEQUEST BLOCK, NOT THE VALUE
 # FUNCTION, 23 September

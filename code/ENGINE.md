@@ -1,3 +1,27 @@
+# HOW TO CORRECT A WORKER THAT IS ALREADY RUNNING, 23 September
+
+A cloud worker cannot be reached with `SendMessage` and does not appear in
+`ListAgents`. It can still be written to:
+
+    create_trigger  persistent_session_id = <the worker>   no cron, no run_once_at
+    fire_trigger    <the returned trig_ id>
+
+With both schedule fields omitted the Routine never fires by itself; it is a
+poke-only channel that exists to be fired by hand. `get_session` reads a
+worker's post-turn summary; this writes to it. Those are the two directions.
+
+Watch the summaries for one that has NOT advanced. Two were recovered this way
+at 20:43: the omega_c = 0 control had read "installing gfortran" for 27 minutes,
+and the 0.08 point had spent 11 minutes on an exit 127 it blamed on the same
+compiler. gfortran is in the image at /usr/bin/gfortran and needs no install at
+all; `apt-get update` in these containers stalls because the agent proxy 403s
+the third-party PPA lists, so an install attempt is a dead end as well as
+unnecessary.
+
+A worker is therefore recoverable, and a point should not be written off
+because its session went down a wrong path. Brief fully at creation anyway --
+a poke costs the worker a turn and interrupts whatever it is doing.
+
 # A LOCAL SOLVE DOES NOT SURVIVE THE GAP BETWEEN FIRINGS, 23 September
 
 The coordinator's container is rebuilt when the session is woken. Measured boot
