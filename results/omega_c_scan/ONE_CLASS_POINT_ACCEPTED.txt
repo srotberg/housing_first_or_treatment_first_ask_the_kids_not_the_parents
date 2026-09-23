@@ -1,0 +1,31 @@
+gaps table   log: oc1c0/run.log   blocks complete: 19
+
+parameter            value        model        data              gap  update moves it
+-------------------------------------------------------------------------------------
+b_smi                not printed  2.0441       7.3             72.0%  HELD
+h1                   0.021587     0.0062477    0.004           56.2%  HELD (rate inside the band)  [scored on band [0.004,0.01], band gap +0.00000]
+emp_homeless         not printed  0.20832      0.46            54.7%  NO INSTRUMENT (follows h_1)
+h2                   0.040674     0.58488      0.406           44.1%  LOWER
+pi_eu                0.026783     0.057629     0.049           17.6%  HELD
+kappa_phi_d_level    not printed  0.64235      0.74            13.2%  HELD
+b                    0.0054624    0.096256     0.10502          8.3%  LOWER
+tau_ell              0.89353      0.21127      0.224            5.7%  HELD
+sigma_y              2.0635       0.16257      0.172            5.5%  HELD
+kappa_find_smi       8.5069       0.26186      0.25             4.7%  LOWER
+theta                0.165        0.15335      0.16             4.2%  HELD  [aggregate, not mean-of-ratios]
+gamma                0.5356       0.25868      0.268            3.5%  HELD
+find_if_addicted     4.2645       0.21061      0.217            2.9%  RAISE
+pi_v                 not printed  0.27137      0.266            2.0%  HELD
+tau_u                4.6729       0.24034      0.245            1.9%  LOWER
+aleph                86.747       80.801       80               1.0%  LOWER
+newborn_endowment    0.10814      0.26196      0.26             0.8%  RAISE
+c_bar                0.088533     0.0041794    0.0042           0.5%  RAISE
+addiction_onset_base 0.032891     0.41154      0.41348          0.5%  RAISE
+beta                 0.94733      2.9871       3                0.4%  RAISE
+mu_H                 0.69007      1.4687       1.4732           0.3%  LOWER
+p_m                  not printed  0.048356     0.048234         0.3%  HELD
+omega_c              -            not printed  -                   -  no moment in this log
+delta_d              0.24         not printed  -                   -  no moment in this log
+
+direction is parsed from the Fortran update line, not remembered.
+RAISE/LOWER is what the rule does to the PARAMETER at the current gap.

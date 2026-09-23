@@ -1,3 +1,51 @@
+# THE ONE-CLASS omega_c = 0 POINT, ACCEPTED BY THE AUTHOR, 23 September
+
+*"These are ok. Both within 10%"*.
+
+    instrument             value
+    addiction_scalar_1     5.4623508156177907E-003
+    addiction_onset_base   3.2890778075819450E-002
+
+    moment                 model      target     gap
+    b, total drug users    0.096256   0.10502    -8.3%
+    lambda_d, disorder     0.039614   0.043424   -8.8%
+
+**IT IS A POINT, NOT A CROSSING**, which is the distinction that matters and
+that this session got wrong once already. Its last three blocks:
+
+    block_move 0.03877   b 0.096133   lambda_d 0.039707
+    block_move 0.00330   b 0.095816   lambda_d 0.039638
+    block_move 0.00459   b 0.096256   lambda_d 0.039614
+
+The block move fell by an order of magnitude and the moments held within half a
+point while `addiction_scalar_1` sat frozen at 5.4623508156177907E-003. Compare
+block 14 of the same run, which read b -4.9 per cent and lambda_d +0.1 per cent
+and was reported here as converged: the instrument was frozen there too and the
+distribution was still FALLING, and two blocks later the same model was at
+-11.9 and -8.0. A moment near its target on a moving sequence is not a
+calibrated moment.
+
+## THE STOPPING STANDARD FOR THE TWO-CLASS RUN FOLLOWS FROM THIS
+
+The author's test is BOTH MOMENTS WITHIN TEN PER CENT WITH THE SEQUENCE FLAT,
+not `block_move` under the Fortran's `frozen_stop_tolerance` of 1e-3. The
+one-class point was accepted at a block move of 0.0033 to 0.0046, three to five
+times the Fortran's rule, so chasing 1e-3 on the two-class run would spend many
+hours buying precision the author has said is not needed.
+
+`oc2c0` is judged the same way: b and lambda_d both inside ten per cent, held
+across three consecutive blocks with the block move an order of magnitude below
+its opening value.
+
+## WHAT THE ONE-CLASS RUN WAS FOR, AND WHAT IT SETTLED
+
+1. One class and two classes track each other to within a point or two at the
+   same `omega_c` through the whole transient, so carrying `b` across the class
+   count is legitimate. That was its purpose.
+2. The converged scalar is WELL BELOW 0.0055 -- the model settles about 8.5 per
+   cent under target at that value -- which is why the two-class run's rise to
+   0.0056 was flagged here as an overshoot before it turned into one.
+
 # A BENCHMARK RUN ENDS AT TWENTY LOOPS, AND THEN THE WELFARE CURVE HALTS IT,
 # 23 September
 
