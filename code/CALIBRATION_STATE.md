@@ -1,3 +1,64 @@
+# A BENCHMARK RUN ENDS AT TWENTY LOOPS, AND THEN THE WELFARE CURVE HALTS IT,
+# 23 September
+
+Two separate things, and the first is not a fault at all.
+
+## TWENTY LOOPS IS TEN BLOCKS, AND THE RUN STOPS THERE
+
+`oc2c0` ended after 10 moment blocks with an EMPTY stderr, which looked exactly
+like the 05:14:52 silent death. It was not. `loop_count` reached 20 and a block
+is TWO loops, so the run had simply finished its allotment. It wrote the
+COMPLETE benchmark first -- every `*baseline_benchmark.dat`, the value
+functions, the policy functions, the stationary distribution, every aggregate,
+stamped 09:29 to 09:30 -- so nothing is lost and the calibration resumes.
+
+**RESUMING IS ONE COMMAND IN THE RUN DIRECTORY.** The state file and the
+distributions are already there and the handover has been consumed, so
+`nohup ./hftf > run.log 2> run.err &` continues it. Confirm with:
+
+    grep -a "resumed from calibration_state" run.log   # "written after loop 20"
+    grep -a "addiction_scalar_1=" run.log | head -1    # the CALIBRATED value
+
+Preserve the old log first; the relaunch truncates `run.log`.
+
+**SO AN EMPTY STDERR PROVES NOTHING ON ITS OWN.** Before calling a stop a
+crash, read the END of run.log. A run that reached its loop limit says
+`loop_count= 20`; a run that failed the welfare curve's null says `CEV NULL
+FAILED`; both leave stderr at zero bytes because both are `stop`, not a signal.
+
+## THE WELFARE CURVE'S NULL CHECK FAILS, AND IT BLOCKS kappa_x
+
+After `save_vars_and_functions(1)`, a benchmark calls `save_welfare_curve(1)`
+at 52325, gated only on `use_old_results==0`. That is the 21-point curve of
+CALIBRATION_RECIPE.md section 5 -- the `kappa_x` probe. At x = 0 nothing is
+scaled, so the curve must reproduce the welfare the model just reported. It
+does not:
+
+    adult      curve 1363.2055   reported 1351.7308   0.85 per cent
+    childhood  curve  454.1325   reported  451.2884   0.63 per cent
+    lifetime   curve  788.7948   reported  780.0421   1.12 per cent
+
+The tolerance is `10.d0**(-6)` relative and the code does a hard `stop` at
+22858. ALL THREE disagree, not only the childhood half the message names --
+which matters, because the comment at 22843 says both halves are checked
+precisely so that a curve matching on the total while the halves are wrong
+cannot pass.
+
+**CONSEQUENCES.** `kappa_x` cannot be recomputed until this is understood, so
+task 10 is blocked on it rather than on the benchmark. Every benchmark run will
+halt here, which is harmless for the calibration -- the `.dat` files are
+written BEFORE the check -- but means a run must be resumed rather than left to
+finish. The `omega_c` scan is NOT blocked by it: a scan point reads the
+benchmark's saved vector and never needs the curve.
+
+**NOT YET INVESTIGATED, AND THE OBVIOUS FIRST QUESTIONS.** Whether this predates
+today, since the archive has a benchmark of record that must once have passed;
+whether it is peculiar to `omega_c` = 0, since the message names the childhood
+half and `weight_on_child` is zero here; and whether a NON-CONVERGED point can
+fail it legitimately, since `oc2c0` stopped mid-calibration at b +1.4 per cent
+rather than at a fixed point. The note at 22880 records that
+`save_welfare_curve` once had NO CALLER at all, so this path is young.
+
 # SIX THREADS ON FOUR CORES LIVELOCKS THE DISTRIBUTION LOOP, 23 September
 
 **Every launch script caps threads at two.** `oc00_run.sh:22`,
