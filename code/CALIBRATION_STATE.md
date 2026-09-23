@@ -1,3 +1,43 @@
+# T = 60 FITS IN MEMORY, MEASURED FROM THE ALLOCATION, 23 September
+
+The author asked for the transition at T = 60. It fits, and no paging is
+needed to get there. The arithmetic, from the declarations rather than from a
+remembered figure:
+
+`value_function` is the ONLY large structure that keeps the whole transition
+path -- every policy function is allocated `(tslot_lo:tslot_hi)`, a single
+slice, by the memory window at line 9056. So T multiplies exactly one object.
+Its bounds give
+
+    renter slab  (life_span+1) x 27 x 18 x 26 x 3 x 3
+    owner slab   (life_span+1) x 27 x 18 x 26 x 1 x 1
+    together     10,020,348 doubles per transition period = 0.0746 GB
+
+Against the source's own measurement that the windowed run at T = 30 is
+7.17 GB, the part that does NOT scale with T is 7.17 - 2.24 = 4.93 GB, so
+
+    total(T) = 4.93 + 0.0746*T GB
+
+    T = 30     7.17 GB   (matches the recorded figure, which is the check)
+    T = 60     9.41 GB   FITS
+    T = 90    11.65 GB   fits, tight
+    T = 120   13.88 GB   OVER the 13.36 GB cgroup cap measured on these boxes
+
+So paging the value function -- the open task -- is needed beyond about T =
+110, not for the T = 60 the author has asked for.
+
+TWO SWITCHES HAVE TO CHANGE, and neither is a model change:
+
+    transition_length        30 -> 60          line 2948
+    solve_transition_dynamics is 0 in BOTH branches at line 2946, so
+                             transitions are currently OFF entirely
+
+At `solve_transition_dynamics = 0` the horizon parameter collapses to 1 and
+every array allocates exactly as it does now, so raising the horizon cannot
+disturb a steady-state solve or the calibration -- but that is a claim to
+re-measure rather than assert, by running one benchmark block before and after
+and checking the moments are bit-identical.
+
 # omega_c = 0.06 IS THE CHOSEN VALUE, 23 September 23:15
 
 The author's decision, in two parts:
