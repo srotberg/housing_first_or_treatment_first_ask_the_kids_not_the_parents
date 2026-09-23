@@ -254,3 +254,45 @@ from the index map in the source rather than from their sizes, and check each
 against a printed moment the way the SUD block was checked against
 `model_fraction_addicted`. A column that matches nothing the model prints is
 not a measurement.
+
+---
+
+# THE THREE BLOCKS, NAMED FROM THE SOURCE. THE PUZZLE IS CLOSED, NOT OPEN
+
+`unemployment_grid_size` at 7868 is "Three SUD blocks of three employment
+states each, crossed with SMI", and the accessors say what the blocks are:
+
+    sud_of(i)      = (i-1)/12          one only in block 2
+    ever_sud_of(i) = min((i-1)/6, 1)   one in blocks 1 and 2
+
+and `sud_of`'s own comment at 10527 reads *"Blocks 0 and 1 are both clean --
+one has never had it and one has recovered."* So:
+
+    block 0   i = 1..6     NEVER had the disorder
+    block 1   i = 7..12    had it and RECOVERED
+    block 2   i = 13..18   has it NOW
+
+Not abstainers, current users and SUD. A household in block 0 can be buying the
+drug every period; it has simply never crossed into the disorder.
+`model_exprimenters` is a FLOW off the policy function, households using without
+the disorder, and it spans blocks 0 and 1 -- which is why it printed 0.1098
+against 0.0399 in block 1 and gave the mislabelling away.
+
+**So there was never any abstention to explain**, and the section two above that
+argued the Cobb-Douglas made abstaining ruinous was answering a question the
+model does not pose. `code/smi_sud_xtab.py` now names the blocks from the source
+and carries the reason in a comment.
+
+## THE TABLE, CORRECTLY LABELLED, AT `b_smi_multiple = 1e-5` AND BLOCK 2
+
+                              non-SMI       SMI
+    never had a SUD            0.8777     0.7167
+    recovered from a SUD       0.0591     0.0522
+    has a SUD now              0.0631     0.2311
+                                     r_smi 3.6604
+
+The interesting row is the middle one. Recovery is not SMI-specific any more --
+`mu_m` is one, and would do nothing even if it were not -- so the recovered
+stocks are close, 0.0522 against 0.0591, while the current stocks differ by a
+factor of 3.7. The whole SMI gradient is in ENTRY to the disorder, not in
+staying there, which is what the sweep has been moving all along.

@@ -64,6 +64,28 @@ def main(path):
           "  rate  %.4f" % (sud_pop / mass_pop))
     print("SUD mass, SMI                  ", "%.10f" % sud_smi)
     print()
+    # THE THREE BLOCKS, NAMED FROM THE SOURCE AND NOT FROM THEIR SIZES.
+    # unemployment_grid_size is "three SUD blocks of three employment states
+    # each, crossed with SMI" (7868), and the accessors at 10529 and 10537 say
+    # what the blocks are: sud_of is (i-1)/12, one only in block 2, and its
+    # comment reads "Blocks 0 and 1 are both clean -- one has NEVER had it and
+    # one has RECOVERED". ever_sud_of is min((i-1)/6,1), which is what the
+    # child's inherited penalty keys on.
+    #
+    # THEY ARE NOT ABSTAINERS AND CURRENT USERS, and calling them that was
+    # wrong once. model_exprimenters is a FLOW read off the policy function --
+    # households buying the drug this period without the disorder -- and it
+    # spans blocks 0 and 1. At b_smi_multiple = 1e-5 the model printed 0.1098
+    # of it against 0.0399 in block 1, which is how the mislabelling was found.
+    block = np.array([(i - 1) // 6 for i in range(1, N_UEM + 1)])
+    names = ("never had a SUD    ", "recovered from a SUD", "has a SUD now      ")
+    print("                                  non-SMI        SMI")
+    for b in range(3):
+        print("  %s %12.4f %10.4f"
+              % (names[b],
+                 by_uem[(block == b) & (smi == 0)].sum() / mass_non,
+                 by_uem[(block == b) & (smi == 1)].sum() / mass_smi))
+    print()
     print("SUD rate given SMI             ", "%.4f" % (sud_smi / mass_smi))
     print("SUD rate given no SMI          ", "%.4f" % (sud_non / mass_non))
     print("ratio r_smi                    ", "%.4f"
