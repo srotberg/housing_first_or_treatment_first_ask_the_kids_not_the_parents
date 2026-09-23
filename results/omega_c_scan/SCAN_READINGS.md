@@ -16,8 +16,22 @@ reduction. The author is looking for the omega_c that gives 18 per cent.
 `bequest_residual` is a model output that `calibration_state.dat` cannot bank,
 so it re-converges from scratch and drags newborn assets, the wealth
 distribution and hence drug use with it. The benchmark itself swung thirty
-points across this transient. The readings below shrink as blocks settle,
-which is the transient decaying, not the policy weakening.
+points across this transient.
+
+**WHICH WAY AN EARLY BLOCK IS WRONG IS NOT KNOWN, and an earlier version of
+this file asserted it was.** That version said the readings shrink as blocks
+settle, so every early reading overstates the reduction. It was inferred from
+0.075's block 1 at -28 per cent against 0.065's block 5 at -15, which is a
+comparison of TWO DIFFERENT POINTS and says nothing about a trajectory. Inside
+a single point the movement runs the other way so far:
+
+    0.065   block 5   b ~ -15%
+    0.065   block 9   b = 0.0808, -18.3%
+
+The reduction GREW by three points between those blocks. So a raw early
+reading is untrustworthy in size, not reliably biased in a known direction,
+and the correction has to come from the control rather than from a rule of
+thumb about early blocks.
 
 **The control is the instrument.** At omega_c = 0 the same frozen path runs
 with no policy change, so its distance from 0.098916 IS the transient. Only
@@ -30,6 +44,7 @@ omega_c. Nothing here is reportable until the control has blocks to compare.
     20:28  0.075     1         -28.4%          --                     session summary
     21:20  0.065     5 of ~9   ~-15%           ~-18%                  session summary
     22:21  0     ctrl 4         -4.0%           -5.9%                  session summary
+    22:25  0.065     9 of ~11  -18.3%          --                     b=0.0808, MOVE 3.0e-3
 
 ## THE CONTROL HAS A NUMBER, AND IT IS NOT ZERO
 
@@ -50,9 +65,18 @@ number and should go to zero. The two readings are one block apart rather
 than matched. And a difference of rounded numbers carries the rounding of
 both.
 
-What it does settle is the shape of the answer: the raw readings overstate
-the reduction by several points, so the omega_c that delivers a true 18 per
-cent is HIGHER than a naive reading of the raw table would suggest.
+The claim first written here -- that the correction makes the answering
+omega_c HIGHER -- rests on the control's -4 per cent surviving to its own
+settled block, and that is exactly what is not yet known. State the two
+outcomes instead, and wait:
+
+    if the control settles at 0%, 0.065's -18.3% is all policy and 0.065 IS
+    the answer to the author's question;
+    if it settles near -4%, 0.065 nets about -14% and the answer lies above
+    0.065.
+
+Both hinge on the control, which is four blocks behind the point it has to be
+compared with. Match the block depth before subtracting.
 
 ## IN FLIGHT
 
