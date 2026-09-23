@@ -215,6 +215,36 @@ def param_values(path):
     except OSError:
         return {}
     series = {}
+
+    # THE STARTING VALUE IS ONLY EVER PRINTED ON THE HANDOVER LINE, and for a
+    # parameter the run updates once that is the value which produced the first
+    # block's moments. Seeded first so it sits at the head of the series, where
+    # value_at's "one before the last change" reads it.
+    for m in re.finditer(r'(?m)^\s*HANDOVER\s+([a-z_][a-z_0-9]*):.*?->\s*'
+                         r'([-+]?[0-9]*\.?[0-9]+(?:[EDed][-+]?[0-9]+)?)\s*$', txt):
+        try:
+            series.setdefault(m.group(1), []).append(
+                (m.start(), float(m.group(2).replace('D', 'E').replace('d', 'e'))))
+        except ValueError:
+            pass
+
+    # A PARAMETER PRINTED WITH ITS DISTANCE BESIDE IT IS STILL A PARAMETER. The
+    # anchored pattern below requires the number to end the line, which is what
+    # keeps it from reading distance_X= and calling it X. b_smi_multiple prints
+    # both on ONE line --
+    #     b_smi_multiple= 9.5E-003  distance_b_smi_multiple= 0.4677  SUD ratio...
+    # -- so its value column was empty in the only table it is the point of.
+    # Admitted only when what follows is that parameter's OWN distance, which
+    # cannot match a different parameter's name.
+    for m in re.finditer(r'(?m)^\s*([a-z_][a-z_0-9]*)=\s*'
+                         r'([-+]?[0-9]*\.?[0-9]+(?:[EDed][-+]?[0-9]+)?)\s+'
+                         r'distance_\1=', txt):
+        try:
+            series.setdefault(m.group(1), []).append(
+                (m.start(), float(m.group(2).replace('D', 'E').replace('d', 'e'))))
+        except ValueError:
+            pass
+
     for m in re.finditer(r'(?m)^\s*([a-z_][a-z_0-9]*)=\s*'
                          r'([-+]?[0-9]*\.?[0-9]+(?:[EDed][-+]?[0-9]+)?)\s*$', txt):
         name, v = m.group(1), m.group(2)
