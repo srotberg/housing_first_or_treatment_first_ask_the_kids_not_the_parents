@@ -1,3 +1,56 @@
+# SIX THREADS ON FOUR CORES LIVELOCKS THE DISTRIBUTION LOOP, 23 September
+
+**Every launch script caps threads at two.** `oc00_run.sh:22`,
+`oc055_bounds_run.sh:13` and `oc1c0_run.sh:19` all carry
+`export OMP_NUM_THREADS=2`. The first version of `oc2c0_run.sh` did not, so
+libgomp took its default of `nproc` = 4, and with `oc1c0`'s two that put SIX
+threads on FOUR cores.
+
+**THE SYMPTOM IS NOT A CRASH AND NOT A SLOWDOWN. IT IS A DEAD STOP.** The run
+burned 2.3 cores for twenty-five minutes and produced not one line of output.
+The value function had already finished two full age sweeps at 14 seconds an
+age; the hang was in `converge_to_stationary_equilibrium`, the DISTRIBUTION
+iteration. It resumed within seconds of the other solve being stopped, and the
+diagnosis is not an inference -- three `gdb` samples minutes apart all showed:
+
+    #2  GOMP_parallel
+    #3  converge_to_stationary_equilibrium (time_period=1) at 32652
+    #4  calibrating_model () at 47794
+
+with ALL FOUR threads parked in `libgomp`. Master finished its chunk, every
+worker finished its chunk, and everyone spun at the implicit barrier waiting
+for a thread the kernel had descheduled to make room for the other solve's
+threads. Spinners eat the core the straggler needs to arrive on.
+
+**WHAT THIS RULES OUT, WHICH MATTERS BECAUSE IT WAS ABOUT TO BE BLAMED.** It is
+NOT the optimiser: `oc00/hftf` is byte-identical to `build2c/hftf`, the plain
+`-O3` build, and it ran three blocks. It is NOT the joint loop: `oc055_bounds`
+is joint and completed a block. It is NOT two classes: all of the above are.
+The pattern "joint under -O3 fails" was a coincidence of which runs happened to
+be staged by hand without the cap.
+
+**THE RULE.** No solve starts without `OMP_NUM_THREADS=2`, and the box takes at
+most TWO solves -- four cores, two threads each, no oversubscription. A run
+already holding four threads blocks any second solve until it ends.
+
+**HOW TO TELL A LIVELOCK FROM A LONG BLOCK.** A healthy solve writes an
+`AGE_TIME` line every ~14 seconds through the value function; through the
+distribution it writes less often, so use CPU and the stack, not the log:
+
+    ps -o pid,etime,time -p <pid>        # cpu climbing, wall climbing: it is burning
+    grep -c AGE_TIME <dir>/run.log       # compare against 118 at the first moment
+    gdb -p <pid> -batch -ex "bt 6" -ex detach
+
+All threads in `libgomp` with no frame in the model's own code is the signature.
+This is what `build2c/hftf_trace` and its `-g` were built for, and it earned
+its keep here on a hang rather than the crash it was made for.
+
+**THE 05:14:52 SILENT DEATH IS STILL OPEN.** A livelock does not kill a
+process, so this does not explain that one. What is settled about it: not a
+bounds or pointer fault (`oc055_bounds` completed a block under
+`-fcheck=bounds,pointer`), and mute because the standing `-O3` build carries no
+`-fbacktrace`.
+
 # THE HANDOVER FILE IS READ UNDER ONE NAME ONLY, 23 September
 
 `PARAM_HANDOVER.txt` is the name the reader opens, at the `open(unit=79,...)`

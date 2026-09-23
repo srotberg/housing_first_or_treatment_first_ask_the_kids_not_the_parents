@@ -29,6 +29,15 @@
 # 05:14:52 silent death prints a stack into run.err instead of nothing.
 set -e
 cd "$(dirname "$0")"
+# EVERY launch script in this project caps threads at 2 -- oc00_run.sh:22,
+# oc055_bounds_run.sh:13, oc1c0_run.sh:19 -- and the first version of THIS
+# script was the one that did not. libgomp then defaulted to nproc = 4, which
+# with oc1c0's 2 put six threads on four cores, and the run livelocked in the
+# distribution loop's spin barrier for twenty-five minutes at 2.3 cores of pure
+# spin. It was not a crash, not the optimiser and not the joint loop: all four
+# threads sat in libgomp at src_trace.f90:32652 and the run resumed the instant
+# the other solve was stopped.
+export OMP_NUM_THREADS=2
 rm -rf oc2c0 && mkdir -p oc2c0
 cp build2c/hftf_trace oc2c0/hftf
 cp oc00/PARAM_HANDOVER.relaunch.txt oc2c0/PARAM_HANDOVER.relaunch.txt
