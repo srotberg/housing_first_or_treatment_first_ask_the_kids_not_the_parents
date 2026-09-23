@@ -1,8 +1,8 @@
-# b_smi_multiple = 0.01 — INTERIM, NO BLOCK COMPLETED
+# b_smi_multiple = 0.01 — BLOCKED, NO BLOCK COMPLETED
 
-**Status at 01:30 UTC, 23 September: blocked. No moment is reportable.**
-This file will be replaced if the run gets a block out. Until then nothing
-below is a number to put in the sweep table.
+**Final for this container, 01:38 UTC, 23 September. No moment is reportable.**
+Four launches, two of them resumes that each failed to close a single loop.
+Nothing below is a number to put in the sweep table.
 
     b_smi_multiple      0.01
     blocks completed    0
@@ -33,7 +33,17 @@ empty, no OOM record and no Fortran fault. Four launches:
     00:30  cold    died ~00:37      checkpoint written, "after loop 2"
     00:55  cold    died  00:59:59   checkpoint written, "after loop 2"
     01:21  resume  died  01:26:49   checkpoint NOT rewritten, still loop 2
-    01:30  resume  (pending)
+    01:30  resume  died  01:33:45   checkpoint NOT rewritten, still loop 2
+
+The last two lines are the decisive test. `calibration_state.dat` has been
+stamped 00:59:56 throughout both resumes, so neither closed a loop and neither
+banked anything. Longest contiguous run observed: ~7 minutes. Compute needed for
+the six blocks asked for: 35+ minutes contiguous, or a checkpoint that survives
+a mid-loop kill. Neither is available here.
+
+Container reboots compound it but are NOT the cause — the reaps land several
+minutes BEFORE each reboot (boots at 00:28:04, 00:52:35, 01:14:30, 01:28:16,
+01:37:40).
 
 `calibration_state.dat` is only rewritten at the END of a loop — the source says
 so itself at lines 46709 and 52206 ("a kill costs one loop instead of all of
