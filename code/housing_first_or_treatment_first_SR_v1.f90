@@ -6202,7 +6202,7 @@
         ! somewhere between twelve and thirty, and the distribution file goes to
         ! roughly 265 MB. The economy moves, so b, pi_V and the rest have to
         ! re-converge before the odds ratio is readable.
-        integer, parameter :: child_penalty_classes=1
+        integer, parameter :: child_penalty_classes=2
         integer, parameter :: employment_grid_size=employment_base_size*child_penalty_classes
         integer :: use_unemployment_by_productivity=1
         ! Persistent income risk over working life. See the block beside

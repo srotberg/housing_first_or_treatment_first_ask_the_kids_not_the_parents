@@ -1,0 +1,23 @@
+THE -O3 BUILD THAT CAN SAY WHY IT DIED, 23 September
+
+    gfortran -fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium \
+             -O3 -funroll-loops -g -fbacktrace \
+             -o hftf_trace src_trace.f90
+
+7 warnings, 0 errors, the same count as every other build. src_trace.f90 is a
+copy of code/housing_first_or_treatment_first_SR_v1.f90 with
+child_penalty_classes=2.
+
+WHY IT EXISTS. The standing three-build check compiles -O3 -funroll-loops with
+no -g and no -fbacktrace. So when the two-class joint solve died at 05:14:52 on
+23 September, seventy seconds in, it left an EMPTY stderr -- there was no
+handler to print a stack. That silence was read as a container restart at
+first; it was not, uptime at 05:17 was 02:06:21 and dmesg had no OOM line.
+
+WHAT IS ALREADY RULED OUT. oc055_bounds re-ran the identical configuration
+under -O1 -fcheck=bounds,pointer and completed a full moment block, so the
+fault is neither an array-bounds nor a pointer violation. -O1 also rules out
+nothing about the optimiser, which is what this binary is for.
+
+IF A RUN UNDER THIS BINARY DIES, THE TRACEBACK IS THE EVIDENCE. Read run.err
+first; -fbacktrace writes there, not to run.log.

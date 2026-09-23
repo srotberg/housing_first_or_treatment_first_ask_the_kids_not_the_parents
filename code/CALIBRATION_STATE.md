@@ -1,3 +1,48 @@
+# TWO CLASSES IN THE SOURCE, AND THE omega_c = 0 BENCHMARK IS RUNNING, 23 September
+
+`child_penalty_classes` is back to **2** in
+`housing_first_or_treatment_first_SR_v1.f90` at line 6205. It was 1 for the
+one-class b search and the search is now a side run, not the master.
+
+## WHAT THE FOUR RUNS SAY ABOUT omega_c
+
+Against b's target of 0.10502 and lambda_d's of 0.043424:
+
+    run            classes  omega_c  loop     b                lambda_d
+    oc1c0          1        0        joint    0.1297 - 0.1343  0.0552 - 0.0569
+    oc00           2        0        frozen   0.1354 - 0.1370  0.0565 - 0.0569
+    oc055          2        0.055    frozen   0.1070 -> 0.1205 0.0431 -> 0.0500
+    oc055_bounds   2        0.055    joint    0.1097           0.0457
+
+**Like for like at omega_c = 0, one class and two classes are within three per
+cent**, so the author's plan -- tune b cheaply at one class, carry it to two --
+is sound. An earlier reading that the two-class model needed far less
+adjustment compared 0.055 against 0 and is WITHDRAWN: the gap is omega_c, not
+the number of classes.
+
+**NO REDUCTION IS QUOTED FROM THESE.** `oc055` moves 0.1070 to 0.1205 between
+its own two blocks, as far as the distance between the two omega_c values.
+All four warm-started from the pre-wiring distribution and `mu_m` has since
+changed the SUD recovery hazard, so the stock is still settling and the
+block-to-block drift is the settling, not the instrument.
+
+## WHAT IS RUNNING
+
+    oc1c0   1 class, omega_c 0, joint, -O3          the b search, pid 569
+    oc2c0   2 classes, omega_c 0, joint, TRACEBACK  the benchmark of record
+
+`oc2c0` starts from the DECLARED `addiction_scalar_1` and is not seeded toward
+the value b's gap implies; the loop's own bracket is the measurement.
+
+## THE CRASH HUNT
+
+The silent death of 23 September at 05:14:52 is **not a bounds or pointer
+fault**: `oc055_bounds` re-ran that configuration under
+`-O1 -fcheck=bounds,pointer` and completed a full moment block. The mute part
+is explained -- the standing `-O3` build carries no `-fbacktrace`, so there was
+no handler to print anything. `build2c/hftf_trace` is `-O3 -funroll-loops -g
+-fbacktrace`, and it is what `oc2c0` runs under.
+
 # THE MODEL IS RESTORED AND TWO CLASSES AGAIN, 23 September 04:10
 
 The SMI block is settled and the source now carries it. Everything below this

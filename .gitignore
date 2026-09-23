@@ -297,3 +297,14 @@ code/up2c/
 code/oc055_bounds/
 code/build1c/
 code/oc1c*/
+
+# The two-class omega_c = 0 benchmark under the traceback binary, 23 September.
+# Its distributions are 265 MB and 24 MB, the size that broke a push once.
+code/oc2c*/
+# The traceback build. hftf, hftf_bounds and hftf_snan beside it are tracked
+# from an earlier round; this one is not, because the source copy and the
+# binary together are eight megabytes that trace_build.status reproduces in one
+# command. If the convention is wanted back, the status file names the flags.
+code/build2c/hftf_trace
+code/build2c/src_trace.f90
+code/build2c/trace_build.log

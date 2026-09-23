@@ -1,3 +1,31 @@
+# THE HANDOVER FILE IS READ UNDER ONE NAME ONLY, 23 September
+
+`PARAM_HANDOVER.txt` is the name the reader opens, at the `open(unit=79,...)`
+on line 45793. `PARAM_HANDOVER.relaunch.txt` is the SAVED COPY a finished run
+leaves behind, and nothing ever opens it. Every launch script copies one to the
+other before starting -- `oc00_run.sh:21` and `oc055_bounds_run.sh:12` both
+carry the same line -- and a script that stages only the `.relaunch.txt` starts
+a run on the DECLARED vector with no error, no warning and no missing file.
+
+It happened on 23 September: `oc2c0` was staged with the `.relaunch.txt` alone
+and solved the declared parameters for two and a half minutes before it was
+caught.
+
+**THE TELL IS THE HANDOVER ECHO, AND IT IS CHEAP.** A run that read its
+handover prints about a hundred `HANDOVER x: a -> b` lines, before the warm
+start, at roughly line 114 of the log. `oc00` printed 102. A run that did not
+read it prints ZERO. So the check on every launch is one command:
+
+    grep -ac HANDOVER <dir>/run.log     # ~100 good, 0 means the declared vector
+
+Do not use the `MOMENT` lines for this. They appear about 1400 lines in, a
+block later, and they look entirely healthy on a run that is calibrating the
+wrong vector.
+
+`oc2c0_run.sh` now asserts the four switches the author set against
+`PARAM_HANDOVER.txt` itself and refuses to launch if any is missing, which is
+the form this check should take in any future launch script.
+
 # The calibration engine
 
 > ## TWO CLASSES COSTS 4.67 GB A SOLVE, SO THE BOX HOLDS TWO. MEASURED 23
