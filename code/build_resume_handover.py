@@ -27,7 +27,20 @@ THE CORRECT HANDOVER IS NEITHER, and this script builds it:
 
 Usage:
     python3 code/build_resume_handover.py <run_dir> -o out.txt \
-        --omega-c 0 --loop joint
+        --omega-c 0 --loop joint [--stop-after-blocks N]
+
+--stop-after-blocks defaults to 0, which means NO BLOCK LIMIT: the run then
+stops on its own convergence test, block_move < frozen_stop_tolerance, which is
+the right criterion. oc00's staging handover carries 10, and inheriting it made
+every launch halt after ten blocks and pay a re-settling penalty on resume --
+measured at 14 points of b across one resume boundary, because the steady state
+has no value-function warm start and re-solves it cold.
+
+THE REFERENCE HANDOVER HAS DUPLICATE LINES. frozen_stop_after_blocks appears
+twice in it, 25 then 10, and frozen_stop_tolerance twice, 0.0001 then 0.001.
+The reader takes the LAST, so the effective values were 10 and 0.001. This
+script now keeps only the last occurrence of any repeated name, so the file it
+writes says what it means.
 
 --omega-c and --loop are REQUIRED, not optional. The reference handover is
 oc00's, which is a FROZEN run at omega_c = 0, so both switches come through
@@ -88,6 +101,9 @@ def reached_values(logs):
 
 
 def main(argv):
+    stop_blocks = '0'
+    if '--stop-after-blocks' in argv:
+        stop_blocks = argv[argv.index('--stop-after-blocks') + 1]
     for flag in ('-o', '--omega-c', '--loop'):
         if flag not in argv:
             sys.exit(__doc__)
@@ -130,12 +146,24 @@ def main(argv):
     # THE SWITCHES ARE SET HERE, NOT INHERITED. Whatever the reference said,
     # and whatever the log's reached values were, these three are what the
     # caller asked for.
-    lines = [l for l in lines
-             if l.split()[0] not in ('weight_on_child', 'omega_c_is_pinned',
-                                     'freeze_all_but_omega_c')]
+    # DE-DUPLICATE, LAST WINS, matching the reader. The reference carries
+    # frozen_stop_after_blocks twice and frozen_stop_tolerance twice.
+    seen_order, last = [], {}
+    for l in lines:
+        k = l.split()[0]
+        if k not in last:
+            seen_order.append(k)
+        last[k] = l
+    dups = len(lines) - len(seen_order)
+    lines = [last[k] for k in seen_order]
+
+    controlled = ('weight_on_child', 'omega_c_is_pinned',
+                  'freeze_all_but_omega_c', 'frozen_stop_after_blocks')
+    lines = [l for l in lines if l.split()[0] not in controlled]
     lines.append('weight_on_child %s' % omega)
     lines.append('omega_c_is_pinned 1')
     lines.append('freeze_all_but_omega_c %s' % freeze)
+    lines.append('frozen_stop_after_blocks %s' % stop_blocks)
 
     # A zero onset base is the collapse, so refuse rather than write it.
     ob = [l for l in lines if l.startswith('addiction_onset_base ')]
@@ -152,7 +180,12 @@ def main(argv):
           % (len(lines), unbanked_n, len(repaired)))
     print('omitted so the state keeps them: %s' % (', '.join(omitted) or 'none'))
     print()
-    print('switches SET (not inherited): omega_c=%s, loop=%s' % (omega, loop))
+    print('switches SET (not inherited): omega_c=%s, loop=%s, '
+          'stop_after_blocks=%s%s'
+          % (omega, loop, stop_blocks,
+             '  (0 = no limit, stops on block_move < tolerance)'
+             if stop_blocks == '0' else ''))
+    print('duplicate names collapsed (last wins): %d' % dups)
     for k in ('addiction_onset_base', 'addiction_scalar_1', 'weight_on_child',
               'freeze_all_but_omega_c', 'omega_c_is_pinned'):
         v = [l for l in lines if l.startswith(k + ' ')]

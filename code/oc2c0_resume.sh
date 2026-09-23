@@ -42,10 +42,13 @@ head -1 "$DIR/calibration_state.dat" | grep -qx 'calibration_state_v3' || { echo
 cd "$DIR"
 [ -f run.log ] && cp run.log "run.log.$(date +%H%M%S)"
 
-# Any distribution left by a bad block is garbage. The benchmark's own
-# stationary distribution, written at 09:29 before the first collapse, is the
-# good one and is byte-identical in size.
-if [ -f distribution_stationary1baseline_benchmark.dat ]; then
+# RESTORING THE DISTRIBUTION IS OPT-IN, because it is not free. The
+# benchmark's saved stationary distribution is the right input after a
+# COLLAPSE, when the working distribution is garbage. On a clean halt it is
+# merely DIFFERENT from the working one, and swapping it moved b by 14 points
+# across one resume boundary -- the loop then spends blocks re-settling. Pass
+# --restore-distribution only when the working one is known bad.
+if [ "$1" = "--restore-distribution" ] && [ -f distribution_stationary1baseline_benchmark.dat ]; then
     cp distribution_stationary1baseline_benchmark.dat calibration_distribution1.dat
     cp distribution_stationary2baseline_benchmark.dat calibration_distribution2.dat
     printf '     8564400\n' > calibration_distribution_shape.dat
