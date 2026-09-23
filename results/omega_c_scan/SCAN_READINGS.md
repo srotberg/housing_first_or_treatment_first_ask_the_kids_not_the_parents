@@ -46,6 +46,30 @@ omega_c. Nothing here is reportable until the control has blocks to compare.
     22:21  0     ctrl 4         -4.0%           -5.9%                  session summary
     22:25  0.065     9 of ~11  -18.3%          --                     b=0.0808, MOVE 3.0e-3
     22:41  0     ctrl 5         -5.0%           --                     b=0.094, deviation GROWING
+    22:46  0.075     7         -20.6%          --                     b=0.0785, metric stalled then rose
+
+## THE STOP RULE, FIXED FOR EVERY POINT SO THEY STAY COMPARABLE
+
+The 0.075 point asked for one at 22:46, having hit the benchmark's own
+stall-then-rise (its metric fell to 0.0254 and turned). The rule given to it,
+and to be given to every point:
+
+    Stop when |b(k) - b(k-1)| / b(k-1) < 0.5 per cent for TWO CONSECUTIVE
+    blocks, or at block 12, whichever comes first.
+    Never stop on block_move alone, in either direction.
+    When stopping, report the last THREE blocks' b so the wander is visible.
+
+Two consecutive blocks, because one quiet block is not arrival. Block 12 as a
+cap, because the benchmark never fired the 0.001 rule at all.
+
+## MONOTONICITY HOLDS SO FAR
+
+    omega_c 0.065   block 9   b = 0.0808
+    omega_c 0.075   block 7   b = 0.0785
+
+b falls as omega_c rises, which is the direction the mechanism predicts. The
+0.08 point has reported ten convergence distances and no moment at all, so it
+cannot extend this yet; it has been asked for b.
 
 ## THE BENCHMARK IS A HAND-STOPPED SNAPSHOT, NOT A RESTING POINT
 
