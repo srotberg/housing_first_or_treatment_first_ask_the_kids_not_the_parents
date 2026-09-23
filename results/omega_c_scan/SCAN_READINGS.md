@@ -45,6 +45,43 @@ omega_c. Nothing here is reportable until the control has blocks to compare.
     21:20  0.065     5 of ~9   ~-15%           ~-18%                  session summary
     22:21  0     ctrl 4         -4.0%           -5.9%                  session summary
     22:25  0.065     9 of ~11  -18.3%          --                     b=0.0808, MOVE 3.0e-3
+    22:41  0     ctrl 5         -5.0%           --                     b=0.094, deviation GROWING
+
+## THE BENCHMARK IS A HAND-STOPPED SNAPSHOT, NOT A RESTING POINT
+
+The control's deviation is GROWING, not decaying:
+
+    control  block 4   b = 0.095   -4.0%
+    control  block 5   b = 0.094   -5.0%
+
+It is not returning to 0.098916, and the reason is in this project's own
+record. The two-class benchmark was STOPPED BY HAND at block 11, deliberately,
+because `block_move` had collapsed to 0.00513 and then risen again (0.016,
+0.036) so the 0.001 rule would never fire -- and b was still wandering when it
+was stopped, -0.7 then -2.3 then -5.8 per cent across the last three blocks.
+
+So b = 0.098916 is a SNAPSHOT of a run that had not settled. The control,
+allowed to run on, is walking to wherever the frozen system actually rests.
+The gap between the two is not a transient decaying to zero; it is the
+distance between a hand-stopped reading and the system's resting point.
+
+**The consequence is the whole reason the control exists.** A scan point must
+be measured against the CONTROL AT THE SAME DEPTH, never against 0.098916:
+
+    0.065 at b = 0.0808, against the snapshot 0.098916     -18.3%
+    against a control that settles at 0.095                -15.0%
+    against a control that settles at 0.094                -14.0%
+    against a control that settles at 0.093                -13.1%
+
+Both numbers are still moving, so none of those is the answer. But the
+correction is large -- four to five points -- and it runs one way: measured
+properly, the reduction at a given omega_c is SMALLER than the raw table says,
+so the omega_c delivering a true 18 per cent is HIGHER than 0.065.
+
+That is the same conclusion an earlier version of this file drew and then
+withdrew. It was withdrawn because it rested on comparing two different
+points' early blocks, which was not evidence. It is restated here on the
+control's own trajectory, which is.
 
 ## THE CONTROL HAS A NUMBER, AND IT IS NOT ZERO
 
