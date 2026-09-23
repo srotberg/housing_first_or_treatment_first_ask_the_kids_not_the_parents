@@ -1,3 +1,36 @@
+# CORRECTION: THE ONE-CLASS POINT WAS NOT CONVERGED, 23 September 07:15
+
+The section below this one calls the one-class `omega_c` = 0 point converged on
+both drug moments at `addiction_scalar_1` = 0.0054962. **That was wrong and is
+withdrawn.** The next two blocks kept falling:
+
+    block 10   b  +3.2%   lambda_d  +8.0%
+    block 11   b  +1.5%   lambda_d  +5.7%
+    block 12   b  -0.6%   lambda_d  +3.9%
+    block 13   b  -0.4%   lambda_d  +2.8%
+    block 14   b  -4.9%   lambda_d  +0.1%
+    block 15   b  -9.2%   lambda_d  -4.5%
+
+`addiction_scalar_1` was frozen at 0.0054962 across blocks 14 and 15, so this
+is the SAME settling that closed the gap from +23.5 per cent -- it simply did
+not stop at the target. Blocks 12 to 14 looked converged only because a falling
+path sits near zero while it crosses.
+
+**THE LESSON, WHICH IS GENERAL.** A moment near its target is not a converged
+moment. On a monotone trajectory with the instrument frozen, proximity says
+nothing; the test is whether the SEQUENCE has flattened, not whether the latest
+value is small. Three readings near zero on a falling path are three points on
+the way past.
+
+So the one-class answer is NOT 0.0055. That scalar is too HIGH -- the sign is
+reversed, a higher scalar means less use -- which is why b now undershoots. The
+converged value lies between the declared 0.0049192 and 0.0055, and the loop
+has begun walking it back down.
+
+None of this touches the two-class benchmark `oc2c0`, which calibrates its own
+`addiction_scalar_1` from the declared value and was never going to inherit
+this one.
+
 # THE ONE-CLASS omega_c = 0 POINT IS CONVERGED, 23 September 07:05
 
 Step 1 of the author's run order -- *"go back to the one-class model, play with
