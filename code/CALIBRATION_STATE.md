@@ -133,6 +133,46 @@ easy to get wrong and are written at the code rather than only here:
     Without that every resume reset it to 1.0; without the adjuster a resume
     came back HELD while still looking like it was running.
 
+**WHERE THE SMI BLOCK STANDS AT 03:25, 23 September.** The ladder is finished
+and settled, DI income has been tested, and one question is open.
+
+    b_smi_multiple   r_smi block 1   r_smi settled
+        0.20             3.2589          --
+        0.01             3.5506          --
+        0.001            4.0057        3.5752   block 4
+        1e-5             4.0094        3.5769   block 4
+        1e-12            4.0140        3.5809   block 4
+        0 exactly        VOID -- value_of_life NaN, 94 per cent homeless
+                                      TARGET 7.30
+
+Seven decades of `b_smi` and three settled ratios inside 0.16 per cent of each
+other. The channel is exhausted at about 3.58.
+
+**DI INCOME DOES NOT MOVE IT.** `zeta_DI = 0.25` leaves `SUD | SMI` at 0.2278
+against 0.2278 at zero; the ratio slips two per cent only because the
+denominator rises. The author has since set the expected payment the parameter
+was built for, `3/12 * 0.25 = 0.0625`, and that run is in flight -- for the
+model's realism, not for the ratio, since four times the payment did nothing.
+
+**THE LEAD IS `kappa_uem`.** `MOMENT kappa_uem employment given SMI` prints
+0.80826 against a target of 0.30000. `kappa_uem` is 1.0554 where one means no
+penalty at all, and `kappa_uem_adjuster` is zero IN THE DECLARATION, so nothing
+moves it in any configuration. With `iota` and `mu_m` both fixed at one, the
+endogenous employment-and-income route is the ONLY SMI-to-SUD channel left, and
+it is being fed a group that is employed four fifths of the time against three
+tenths in the data. That is the referee's concern in the model's own numbers.
+
+**OPEN, AND IT IS A POSSIBLE BUG RATHER THAN A RESULT.** At `b_smi = 1e-12` an
+abstaining SMI household's flow factor is 170 times a buyer's, and 81 per cent
+of them are employed, so on the author's argument essentially all of them should
+buy. Two inferences from stocks disagree on how many do -- 0.59 from
+`r_smi = u_SMI/u_non`, 0.34 from the never-disordered stock and the flat 0.0336
+onset hazard. `code/u_probe` is measuring it: `xtab_exp_mass_smi` is accumulated
+at 19305 every block and printed only on the transition path at 54973, so three
+WRITE statements in a private copy put it in the steady-state block. If
+participation comes back near a third with 81 per cent employed, look for a bug
+before reaching for an explanation.
+
 **THE SWEEP WAS RUN AND IT SETTLES THE QUESTION: `b_smi` CANNOT REACH 7.30.**
 Five points, every one of them with the other forty seven adjusters frozen, so
 each is the single-parameter test ENGINE.md's phase 3 rule 1 asks for:
