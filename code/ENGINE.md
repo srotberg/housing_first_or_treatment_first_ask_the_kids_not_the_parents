@@ -1,5 +1,54 @@
 # The calibration engine
 
+> ## THE CONTAINER IS CREATED AT THE FIRING AGAIN, SO RULE 3 IS BACK IN FORCE.
+> ## MEASURED 23 September 00:55, at the cost of a 6.5 minute run.
+>
+> Phase 3's rule 3 -- *"COMPUTE HAPPENS ONLY WHILE A TURN IS OPEN"* -- carries a
+> note dated 19 September marking it MEASURED FALSE, and that note gives the
+> one-line test: **`uptime -s` against the firing time. Hold the turn only if
+> they match.** They match now, to the second:
+>
+>     boot time   00:55:12        uptime -s
+>     firing      00:55:13        the check-in trigger
+>
+> So the 19 September note is itself now out of date, and rule 3 governs again.
+> The evidence either side of it:
+>
+>     launch            00:28:00   setsid, ppid 1, own session, 3.79 of 4 cores
+>     last log write    00:34:39   ~when the turn that launched it ended
+>     boot              00:55:12   coincident with the next firing
+>
+> The solve got **6.5 minutes**, which is the life of the turn and not the
+> twenty minutes it needs to reach its first block. It was launched by exactly
+> the recipe the 22 September entry below certifies -- setsid, ppid 1, a
+> background task that exited in seconds -- and that recipe did not save it,
+> because this is neither of the two restarts that entry distinguishes.
+>
+> **A boot time equal to the firing time is a THIRD event**: the container is
+> created for the turn and reclaimed after it. setsid cannot help, and neither
+> can the launching task's parentage, because there is no machine left to be
+> parented to.
+>
+> **THE CHECKPOINT IS STILL WHAT SAVES THE RUN, AND HERE IT DID.** The disk
+> survives the reclaim -- `run.log`, `calibration_state.dat` written at 00:33:21
+> and the 132 MB distribution at 00:33:23 were all intact -- so the relaunch
+> came back with `resumed from calibration_state.dat, written after loop 2` and
+> `warm start distribution loaded, sum= 51.029103887395664`. Two loops were kept
+> and only the part-loop in flight was lost.
+>
+> WHAT TO DO ABOUT IT, until it is measured false again:
+>
+>     - run the test every time: `uptime -s` against the firing time;
+>     - when they match, HOLD THE TURN -- the container dies when it ends, so a
+>       launch-and-return firing buys a few minutes and nothing more;
+>     - keep check-ins CLOSE together rather than far apart: at a 25 minute
+>       cadence roughly 20 of those minutes are a machine that does not exist;
+>     - keep committing the checkpoint, which is what made this a 6.5 minute
+>       loss instead of a whole run.
+>
+> Do not delete the 19 September note. The premise has now flipped twice, which
+> is the reason the test is one line and is run rather than remembered.
+
 > ## THERE ARE TWO KINDS OF RESTART AND setsid ONLY SURVIVES ONE.
 > ## MEASURED 22 September 23:21, at the cost of five minutes.
 >
