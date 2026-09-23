@@ -1,3 +1,42 @@
+# omega_c = 0.06 IS THE CHOSEN VALUE, 23 September 23:15
+
+The author's decision, in two parts:
+
+1. The omega_c = 0 benchmark STANDS AS PUBLISHED. b = 0.098916 is the
+   reference for everything measured against it. The control's drift below
+   that value is a note about the benchmark's own convergence, recorded in
+   `results/omega_c_scan/SCAN_READINGS.md`, and is NOT a reason to re-reference
+   any result.
+
+2. **omega_c = 0.06** is the value delivering the drug-use reduction:
+
+       b        0.081242     -17.87% from 0.098916
+       omega_c  0.06         converged, bequest_residual settled at 1.45135
+
+An 18 per cent reduction would be b = 0.081111, reached at omega_c = 0.0615 by
+interpolation between 0.06 and the also-converged 0.065 (b = 0.080735,
+-18.38%). 0.06 was chosen over the interpolated value because it is a solved
+equilibrium rather than a point on a line between two of them, and it is the
+closer of the two grid points to 18 per cent.
+
+The scan, for the record:
+
+    omega_c   b            reduction   lambda_d     reduction   state
+    0.055     --            ~-16%      --           --          running
+    0.06      0.081242     -17.87%     --           --          CHOSEN, converged
+    0.065     0.080735     -18.38%     0.034414    -21.03%      converged on the rule
+    0.075     0.078567     -20.57%     --           --          running
+    0.08      0.077688     -21.46%     0.033133    -23.97%      complete, block 12
+
+b is monotone in omega_c, and lambda_d falls HARDER than b wherever both are
+measured -- -21.0 against -18.4 at 0.065, -24.0 against -21.5 at 0.08. The
+disorder rate is more responsive to omega_c than total use is.
+
+The converged 0.06 equilibrium is being packaged into `code/omega_c_006_seed/`
+the way the benchmark was packaged into `code/scan_seed/`, because it lives on
+a container that will be reclaimed and it is the starting point for the
+transition and the welfare work.
+
 # LIVE STATE, 23 September 20:15 -- THE omega_c SCAN IS IN FLIGHT, SEVEN POINTS
 
 The two-class omega_c = 0 benchmark is CONVERGED and PUBLISHED under
