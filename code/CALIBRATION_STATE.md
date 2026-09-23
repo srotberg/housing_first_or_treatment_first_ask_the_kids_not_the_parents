@@ -1,3 +1,53 @@
+# THE CEV NULL CHECK PASSES ON A CONVERGED RUN, AND kappa_x IS ~310x TOO SMALL
+# 23 September 23:20
+
+## THE BLOCKER IS GONE, AND IT WAS A CONVERGENCE ARTEFACT
+
+`save_welfare_curve` has a hard `stop` when the welfare curve at x = 0 fails to
+reproduce the reported welfare at 1e-6 relative. It failed on the CHILDHOOD
+half on every benchmark run for days -- 460.99 against 460.27 at one halt --
+and blocked the kappa_x calibration.
+
+The omega_c = 0.065 run, which converged on the rule itself at block 12,
+PASSED it: 1.2012e-04 relative post-shift, identity check passed, and the probe
+ran. The discrepancy had been halving between halts, which was the clue. It was
+the equilibrium that was unconverged, not the check that was wrong. NOTHING IN
+THE FORTRAN NEEDED CHANGING, and the tolerance must not be loosened.
+
+## THE PROBE'S TWO ESTIMATES ARE NOT A DISAGREEMENT
+
+The worker flagged its own output: "probe kappa_x estimates diverge (0.619 vs
+0.248) -- suggests noise floor at small x". They do not diverge. The probe
+evaluates TWO DIFFERENT TARGETS, 0.20 and 0.08 per cent of consumption given up
+for life, and the implied kappa_x is linear in that target:
+
+    implied kappa_x at x = 0.0020     0.619
+    implied kappa_x at x = 0.0008     0.248
+    ratio of estimates                2.4960
+    ratio of targets                  2.5000     0.16 per cent apart
+
+Agreement to a sixth of a per cent of the exactly predicted ratio is a strong
+check that the probe is linear and working, which is the OPPOSITE of a noise
+floor. Read them as two answers to two questions, never as one number measured
+twice.
+
+## THE NUMBER
+
+    target: disamenity worth 0.20% of consumption   ->  kappa_x ~ 0.619
+    target: disamenity worth 0.08% of consumption   ->  kappa_x ~ 0.248
+    currently coded                                      kappa_x = 0.002
+
+The coded value corresponds to a disamenity worth about 0.00065 per cent of
+consumption for life -- roughly 310 times smaller than a 0.20 per cent target
+implies. If the target is 0.20 per cent then kappa_x has been essentially
+switched off in every run to date.
+
+TWO THINGS BEFORE THIS IS ACCEPTED. These numbers come from the omega_c = 0.065
+point, not from the benchmark, and H differs between them, so the benchmark's
+own probe is the one to quote -- the control run is producing it. And WHICH
+TARGET the author wants, 0.20 or 0.08 per cent, is the author's call and is not
+recorded anywhere in the source.
+
 # T = 60 FITS IN MEMORY, MEASURED FROM THE ALLOCATION, 23 September
 
 The author asked for the transition at T = 60. It fits, and no paging is
