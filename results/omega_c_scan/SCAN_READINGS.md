@@ -74,6 +74,34 @@ b falls as omega_c rises, which is the direction the mechanism predicts. The
 0.08 point has reported ten convergence distances and no moment at all, so it
 cannot extend this yet; it has been asked for b.
 
+## THE SCAN AT 23:13 -- FIVE POINTS, THREE OF THEM FINISHED
+
+    omega_c   b            state              vs snapshot   vs control 0.0914
+    0.055     --           block 8             ~-16%         --
+    0.06      0.081242     CONVERGED           -17.87%       -11.11%
+    0.065     0.080735     CONVERGED blk 12    -18.38%       -11.67%
+    0.075     0.078567     block 8             -20.57%       -14.04%
+    0.08      0.077688     complete blk 12     -21.46%       -15.00%
+
+b falls monotonically in omega_c across all five. 0.065 exited on the rule
+itself (BLOCK MOVE 1.55e-04 against 1e-3) rather than on a hand stop, which is
+the cleanest exit in the scan.
+
+THE CONTROL IS STILL FALLING and is now the only thing standing between this
+table and an answer:
+
+    block 4   0.095     block 5   0.094     block 6  ~0.093
+    block 7   0.092     block 8   0.0914   (-7.54%, block move 0.0053)
+
+Its last step was -0.65 per cent, so the stop rule (two consecutive blocks
+under 0.5 per cent) has NOT fired. Note that its block move is now 0.0053 --
+the same value at which the benchmark stalled and then rose. If it does the
+same, the control will need the hand stop too.
+
+    reference                    omega_c delivering an 18 per cent reduction
+    snapshot 0.098916            ~0.0615, and 0.06 gives 17.87 per cent
+    control at 0.0914            above 0.08; the scanned range does not reach it
+
 ## FIRST POINT CONVERGED, AND THE ANSWER TURNS ENTIRELY ON THE REFERENCE
 
 omega_c = 0.06 exited cleanly at 23:00 with b = 0.081242 and, the part that
