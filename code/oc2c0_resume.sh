@@ -54,8 +54,18 @@ fi
 cp ../oc2c0_resume_handover.txt PARAM_HANDOVER.txt
 cp PARAM_HANDOVER.txt PARAM_HANDOVER.relaunch.txt
 
-grep -qE '^addiction_onset_base +3\.34310'  PARAM_HANDOVER.txt || { echo "GUARD: onset base not calibrated -- a zero here collapses the model"; exit 1; }
-grep -qE '^addiction_scalar_1 +5\.53363'    PARAM_HANDOVER.txt || { echo "GUARD: addiction_scalar_1 is not the reached value -- ten blocks would be discarded"; exit 1; }
+# PROPERTY, NOT LITERAL. An earlier version pinned the first resume's exact
+# values here and went stale the moment the loop moved them: it refused a
+# perfectly good handover whose onset base had simply walked from 3.34310E-2 to
+# 3.32622E-2. A guard that has to be edited every resume is a guard that gets
+# deleted. These test what actually matters -- the onset base exists and is
+# positive, and the scalar is not the DECLARED value.
+ob=$(awk '$1=="addiction_onset_base"{print $2}' PARAM_HANDOVER.txt | tr 'Dd' 'Ee')
+[ -n "$ob" ] || { echo "GUARD: no addiction_onset_base line -- the model would run the declared 0.d0 and NOBODY would develop a disorder"; exit 1; }
+awk -v v="$ob" 'BEGIN{exit !(v+0>0)}' || { echo "GUARD: addiction_onset_base is $ob, not positive -- that is the collapse"; exit 1; }
+as=$(awk '$1=="addiction_scalar_1"{print $2}' PARAM_HANDOVER.txt | tr 'Dd' 'Ee')
+[ -n "$as" ] || { echo "GUARD: no addiction_scalar_1 line"; exit 1; }
+case "$as" in 4.9191800*) echo "GUARD: addiction_scalar_1 is the DECLARED value -- every block of calibration would be discarded"; exit 1;; esac
 grep -qx 'weight_on_child 0'                PARAM_HANDOVER.txt || { echo "GUARD: weight_on_child"; exit 1; }
 grep -qx 'freeze_all_but_omega_c 0'         PARAM_HANDOVER.txt || { echo "GUARD: joint loop"; exit 1; }
 
