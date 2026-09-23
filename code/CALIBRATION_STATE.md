@@ -1,3 +1,55 @@
+# WHY A RESTART COSTS TWO HOURS: IT IS THE BEQUEST BLOCK, NOT THE VALUE
+# FUNCTION, 23 September
+
+Eight separate runs of the two-class benchmark, 55 blocks of real compute, and
+no converged point, because every restart throws the run back into a transient.
+The cause was nearly misdiagnosed and the wrong fix nearly built.
+
+## IT IS NOT THE VALUE FUNCTION
+
+The obvious suspect is a cold value function, and the author asked for a
+value-function warm start this morning. But the log says `CHILD V CONVERGED
+after 2 passes`: the household problem is a FINITE-HORIZON backward induction,
+exact in one pass, wrapped in a two-pass fixed point for the child's value. A
+warm start there saves at most one pass of about fifteen minutes. It does not
+explain a thirty-point swing in the moments.
+
+## IT IS THE BEQUEST BLOCK, MEASURED ACROSS THE 16:50 REBOOT
+
+    bequest_residual   settled before the reboot   1.4737, 1.4762, 1.4771
+                       after the restart           2.1528, 1.8655, 1.6459
+    model_bequests     1.6542 -> 2.2275            +35 per cent
+    inheritance_paid   0.177  -> 7.47
+
+These are model OUTPUTS built from the distribution by the aggregation, not
+parameters, so `calibration_state.dat` cannot carry them -- it banks
+`inheritance_amount` and `minimum_inheritance`, which are the parameters, and
+those do survive. Bequests set newborn assets, newborn assets set the wealth
+distribution, and the wealth distribution sets drug use. A 46 per cent jump in
+the residual is therefore a large shock to the targeted moment, and it decays
+over several blocks as the aggregate re-converges.
+
+The source already records this class of failure for a sibling object: the
+comment at the state writer explains that `newborn_parent_share` is built by
+the aggregation, which runs AFTER the distribution, so a fresh process used the
+declared default and "switched the intergenerational channel off at every
+restart" until it was given its own file.
+
+## THE USABLE CONSEQUENCE: A CONVERGENCE INDICATOR THAT LEADS THE MOMENTS
+
+`bequest_residual` walks back monotonically toward its settled value while b
+and lambda_d swing. Watch it instead of the moments when judging whether a
+restart has finished re-settling. On this run the pre-reboot settled value was
+**1.4771**.
+
+## AND THE RULE THAT FOLLOWS
+
+**Do not restart a benchmark that is making progress.** The cost is not the
+minute of relaunch, it is several blocks of bequest re-convergence plus the
+moment transient behind it. Five of today's eight restarts were chosen rather
+than forced, and three of those were errors -- the wrong handover filename, the
+handover-less resume, the full-handover resume.
+
 # THE ONSET DOES NOT FOLLOW ITS OWN GAP, AND THAT IS NOT A BUG, 23 September
 
 `oc2c0` fell for six straight blocks -- b through -8.7, -12.8, -15.1, -20.3,
