@@ -311,3 +311,50 @@ suggestion in this session to score it against 4.51 was wrong: 4.51 belongs to
 the 0.0890 population rate, which is a different model object.
 
 The author's decision, 23 September: **keep marijuana in.**
+
+---
+
+# THE AUTHOR'S CHOICE, 23 September: 2.44 FOR USE AND 2.98 FOR THE DISORDER
+
+All eight cuts, computed from the repo's own NSDUH 2024 file, adults 26 and
+over, weighted by ANALWT2_C, universe AGE3 >= 7:
+
+    object                              SMI   non-SMI   ratio   population
+    used any illicit, past year      0.5640    0.2309    2.44      0.2476  <-
+    any SUD, INCLUDING alcohol       0.4454    0.1493    2.98      0.1641  <-
+    used excl. marijuana             0.2832    0.0755    3.75      0.0859
+    any DUD, drugs only              0.3413    0.0757    4.51      0.0890
+    mod/severe SUD, incl. alcohol    0.2833    0.0576    4.92      0.0689
+    any DUD, excl. marijuana         0.1749    0.0299    5.86      0.0371
+    mod/severe DUD                   0.2043    0.0280    7.30      0.0368
+    mod/severe DUD, excl. marijuana  0.1034    0.0114    9.06      0.0160
+
+The two marked rows are what the paper reports against. The reading is that the
+model's single addictive good stands for substance use broadly rather than for
+one illicit drug, which is what licenses the alcohol-inclusive disorder ratio.
+
+**MODEL AGAINST THEM.** `r_smi` is 2.0610 at `omega_c = 0.055`, two classes,
+`iota_smi = 2.0` and `mu_m = 0.82` wired -- **31 per cent short of 2.98**. The
+use ratio is being measured and scores against 2.44.
+
+## WHAT A REFEREE WILL CHECK, RECORDED SO IT IS NOT A SURPRISE
+
+The LEVELS do not line up with those two rows, and they do line up with two
+others:
+
+    model object            target      data row                level   ratio
+    total drug users       0.10502      used any illicit       0.2476   0.42x
+    SUD (lambda_d)         0.043424     any SUD incl. alcohol  0.1641   0.26x
+
+    total drug users       0.10502      any DUD                0.0890   1.180x
+    SUD (lambda_d)         0.043424     moderate/severe DUD    0.0368   1.180x
+
+The second pair reproduces the eighteen per cent uplift the author specified on
+22 September, on BOTH objects independently, which is the arithmetic that says
+the calibration's levels were set against the drugs-only cuts with marijuana
+in. Scoring the ratio against 2.44 and 2.98 while the levels were set against
+0.0890 and 0.0368 is a deliberate choice, not an oversight, and the ratio
+comparison is sound on its own terms.
+
+Against the level-consistent pair the model would be 72 per cent short rather
+than 31.
