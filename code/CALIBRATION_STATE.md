@@ -1,3 +1,64 @@
+# THE ONSET DOES NOT FOLLOW ITS OWN GAP, AND THAT IS NOT A BUG, 23 September
+
+`oc2c0` fell for six straight blocks -- b through -8.7, -12.8, -15.1, -20.3,
+-21.8, -27.2 -- while `addiction_scalar_1` was UNWINDING, which should have
+raised use. The reason is the other instrument, and it took three wrong calls
+on "the bottom is close" to go and look.
+
+## THE RULE IS AN ASSIGNMENT, NOT AN INCREMENT
+
+At 49052:
+
+    cap_old_1 = addiction_onset_base
+    addiction_onset_base = onset_at_mean_1
+    addiction_onset_base = cap_step_rel(addiction_onset_base, cap_old_1,
+                                        drug_block_max_rel_step)
+
+`addiction_onset_base` is SET to `onset_at_mean_1`, the onset evaluated at the
+model's mean drug quantity, and then capped to a relative step. It is not
+`parameter +/- adjuster * gap` like every other instrument.
+
+## SO THE PRINTED DIRECTION WORD IS A LABEL, NOT THE MOTION
+
+The `RAISED` / `LOWERED` text in the same write is computed separately, from
+`model_fraction_addicted(1) < sud_rate_data`. It says what the rule WANTS.
+The value moves toward `onset_at_mean_1`. **The two can disagree with nothing
+wrong**, and they currently do:
+
+    0.033094  LOWERED
+    0.032929  RAISED   <- lower than the line above
+    0.032764  RAISED   <- lower again
+    0.032600  RAISED   <- lower again
+
+The same pattern is in `oc1c0`, so it is not specific to this run.
+CLAUDE.md already warns that the onset's sign LOOKED backwards once, was very
+nearly "fixed", and was measured correct, with an earlier round having spent
+nineteen loops paying for exactly that mistake. **Do not "fix" it.**
+
+## WHAT IT MEANS FOR THE CALIBRATION
+
+There is a self-reinforcing loop: use falls, the mean drug quantity falls,
+`onset_at_mean_1` falls, the onset base follows it down, fewer households
+develop a disorder, and use falls further. The disorder stock is part of b, so
+this shows up directly in the targeted moment.
+
+The scalar's unwinding fights it, and at the observed 0.37 per cent a block
+against the onset's 0.5 per cent it is currently LOSING. That is the whole
+explanation for a descent that outran three predictions of its bottom.
+
+**A COOLDOWN GATES THE ONSET.** `blocks_since_onset_step < b_step_cooldown`
+holds it for some blocks between steps, and the comment at that gate records
+why: the counter was added to stop the onset stepping every block when the
+model needs four to settle, and "it overshot to never". So the onset moves in
+bursts, which is another reason block-to-block pattern reading misleads.
+
+## THE LESSON, WHICH IS THE THIRD TIME TODAY
+
+Watching one instrument and inferring the dynamics from the moment is how all
+three wrong "the bottom is close" calls happened. When a moment moves against
+the instrument you are watching, ANOTHER instrument is moving -- look at all of
+them before reading the pattern.
+
 # THE ONE-CLASS omega_c = 0 POINT, ACCEPTED BY THE AUTHOR, 23 September
 
 *"These are ok. Both within 10%"*.
