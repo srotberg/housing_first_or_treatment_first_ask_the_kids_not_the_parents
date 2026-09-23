@@ -10,6 +10,14 @@ With both schedule fields omitted the Routine never fires by itself; it is a
 poke-only channel that exists to be fired by hand. `get_session` reads a
 worker's post-turn summary; this writes to it. Those are the two directions.
 
+Two things about the poke that cost a stray session at 20:51. FIRE IT WITHOUT
+`text`: the bound prompt alone is delivered into the target, but passing `text`
+as well minted a NEW, repo-less session running the poke with no checkout and
+no context (it had to be archived). And an `interrupt_session` carries
+`cancel_queued: true`, so it DISCARDS anything already queued for that worker --
+interrupting and then expecting an earlier poke to land is a mistake. Interrupt
+first, then create and fire a fresh poke that stands on its own.
+
 Watch the summaries for one that has NOT advanced. Two were recovered this way
 at 20:43: the omega_c = 0 control had read "installing gfortran" for 27 minutes,
 and the 0.08 point had spent 11 minutes on an exit 127 it blamed on the same
