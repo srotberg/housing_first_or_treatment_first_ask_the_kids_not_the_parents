@@ -45276,6 +45276,12 @@
             ! homeless, a resume that reset it to its declared 1.0 would throw
             ! away every loop spent moving it.
             write(71,'(F30.15)') kappa_find_smi
+            ! AND AT THE TAIL AGAIN. Without these two a resume resets the SMI
+            ! channel to off and the loops spent moving it are gone; the
+            ! adjuster goes with the level because it arrives through the
+            ! handover, which is consumed on the first read.
+            write(71,'(F30.15)') b_smi_multiple
+            write(71,'(F30.15)') b_smi_multiple_adjuster
 
         close(71)
 
@@ -45636,6 +45642,35 @@
                             " it starts at its declared", kappa_find_smi
                     else
                         kappa_find_smi=max(min(kappa_find_smi,100.d0),1.d0)
+                    end if
+
+                end if
+
+                if (state_ios_1==0) then
+
+                    read(72,'(F30.15)',iostat=state_ios_1) b_smi_multiple
+
+                    ! SAFE DIRECTION AGAIN. A checkpoint written before the SMI
+                    ! channel existed runs out here and leaves b_smi_multiple at
+                    ! its declared 1.0, which is the channel OFF -- the value
+                    ! every such checkpoint was solved under.
+                    if (state_ios_1/=0) then
+                        write(*,*) "calibration_state.dat predates b_smi_multiple;",&
+                            " it starts at its declared", b_smi_multiple,&
+                            " which is the SMI channel off"
+                    else
+                        b_smi_multiple=max(min(b_smi_multiple,10.d0),10.d0**(-6))
+
+                        read(72,'(F30.15)',iostat=state_ios_1) b_smi_multiple_adjuster
+
+                        if (state_ios_1/=0) then
+                            write(*,*) "calibration_state.dat carries b_smi_multiple but",&
+                                " not its adjuster; the bracket resumes HELD at",&
+                                b_smi_multiple_adjuster
+                        else
+                            b_smi_multiple_adjuster=max(min(b_smi_multiple_adjuster,10.d0),0.d0)
+                        end if
+
                     end if
 
                 end if
