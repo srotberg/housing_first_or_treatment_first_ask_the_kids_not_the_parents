@@ -2148,6 +2148,13 @@
         ! is ordinary type heterogeneity in a Stone-Geary subsistence level.
         real(8) :: b_smi_multiple=1.d0
 
+        ! ITS BRACKET. Held at zero, so the channel is measured but not moved
+        ! until a vector asks for it. See patch_b_smi_bracket.py for the sign.
+        real(8) :: b_smi_multiple_adjuster=0.d0
+        real(8) :: distance_b_smi_multiple=1
+        real(8) :: stopping_rule_b_smi_multiple=10.d0**(-2)
+        real(8), parameter :: b_smi_multiple_max_rel_step=0.05d0
+
         ! Calibrated: earnings of workers with SMI, through the homeless income
         ! share. code/simple reached 0.55 targeting homeless income over average.
         ! HELD AT ONE, ON THE AUTHOR'S INSTRUCTION, 2 September: "rho_d=1,
@@ -37620,6 +37627,9 @@
         call one_convergence_term("kappa_find_smi",&
             distance_kappa_find_smi, stopping_rule_kappa_find_smi,&
             1, open_1)
+        call one_convergence_term("b_smi_multiple",&
+            distance_b_smi_multiple, stopping_rule_b_smi_multiple,&
+            1, open_1)
         call one_convergence_term("rho_m",&
             distance_rho_m, stopping_rule_rho_m,&
             1, open_1)
@@ -45764,6 +45774,11 @@
                         rho_intergenerational_adjuster, "->", handover_value
                     rho_intergenerational_adjuster=max(handover_value,0.d0)
 
+                case ("b_smi_multiple_adjuster")
+                    write(*,*) "HANDOVER b_smi_multiple_adjuster:",&
+                        b_smi_multiple_adjuster, "->", handover_value
+                    b_smi_multiple_adjuster=max(min(handover_value,10.d0),0.d0)
+
                 case ("b_smi_multiple")
                     write(*,*) "HANDOVER b_smi_multiple:", b_smi_multiple, "->", handover_value
                     ! FLOORED, NOT CLAMPED SILENTLY. b enters as (b+q)^phi_q and
@@ -46904,6 +46919,7 @@
         ! The value a parameter held before its bracket moved it, so the
         ! global governor can cap the relative step. See max_rel_step_all.
         real(8) :: cap_old_1
+        real(8) :: sud_smi_ratio_1=0
         real(8) :: mean_drug_quantity_1,onset_at_mean_1,onset_step_1,treatment_step_1,&
             separation_step_1,b_move_1,lambda_move_1
         character*1 :: string_used
@@ -47018,6 +47034,7 @@
         distance_lambda_m=1
         distance_kappa_uem=1
         distance_kappa_find_smi=1
+        distance_b_smi_multiple=1
         distance_rho_m=1
         distance_rho_d=1
         distance_discount_factor=1
@@ -47324,6 +47341,7 @@
             (distance_lambda_m>stopping_rule_lambda_m) .OR. &
             (distance_kappa_uem>stopping_rule_kappa_uem) .OR. &
             (distance_kappa_find_smi>stopping_rule_kappa_find_smi) .OR. &
+            (distance_b_smi_multiple>stopping_rule_b_smi_multiple) .OR. &
             (distance_rho_m>stopping_rule_rho_m) .OR. &
             (distance_rho_d>stopping_rule_rho_d) .OR. &
             (distance_mu_homeless>stopping_rule_mu_homeless) .OR. &
@@ -50979,6 +50997,66 @@
                     else
 
                         distance_kappa_find_smi=0
+
+                    end if
+
+                    ! ------- b_smi_multiple, on the SMI comorbidity ratio -------
+                    !
+                    ! THE SIGN IS REVERSED FROM EVERY OTHER BRACKET HERE, and the
+                    ! plus is not a typo. b enters flow utility as (b+q)^phi_q, so
+                    ! the marginal value of the first unit goes like 1/b: a LARGER
+                    ! multiple makes the drug worth LESS to an SMI household, they
+                    ! use less, and the ratio FALLS. Parameter and moment move in
+                    ! OPPOSITE directions, so a model ABOVE target wants the
+                    ! parameter RAISED and the update ADDS the gap. CLAUDE.md
+                    ! records the same trap on kappa_phi_d_level and warns that
+                    ! reading the operator alone gives the opposite direction.
+                    if ((b_smi_multiple_adjuster>0) .AND. (number_of_smi_states>1)) then
+
+                        ! Three denominators, and a corner in any one of them
+                        ! makes the ratio a fabricated number rather than a large
+                        ! one. Same guard kappa_find_smi carries on its homeless
+                        ! mass above.
+                        if ((xtab_mass_smi(1)<=10.d0**(-12)) .OR. &
+                            ((xtab_mass_pop(1)-xtab_mass_smi(1))<=10.d0**(-12)) .OR. &
+                            ((xtab_sud_mass_pop(1)-xtab_sud_mass_smi(1))<=10.d0**(-12))) then
+
+                            write(*,*) "b_smi_multiple HELD: the comorbidity ratio is not"
+                            write(*,*) "   measurable this loop -- an empty SMI, non-SMI or non-SMI SUD cell"
+
+                            distance_b_smi_multiple=1
+
+                        else
+
+                            sud_smi_ratio_1=(xtab_sud_mass_smi(1)/xtab_mass_smi(1))/&
+                                ((xtab_sud_mass_pop(1)-xtab_sud_mass_smi(1))/&
+                                (xtab_mass_pop(1)-xtab_mass_smi(1)))
+
+                            cap_old_1=b_smi_multiple
+                            b_smi_multiple=min(max(b_smi_multiple+b_smi_multiple_adjuster*&
+                                (sud_smi_ratio_1-sud_smi_ratio_data),&
+                                10.d0**(-6)),10.d0)
+                            b_smi_multiple=cap_step_rel(b_smi_multiple,cap_old_1,&
+                                b_smi_multiple_max_rel_step)
+
+                            ! RELATIVE, because the ratio is order 7 and not order
+                            ! 0.05 like the shares the other brackets score. An
+                            ! absolute distance against a 1e-2 rule would be asking
+                            ! for three significant figures on a moment read off a
+                            ! distribution.
+                            distance_b_smi_multiple=&
+                                abs(sud_smi_ratio_1-sud_smi_ratio_data)/sud_smi_ratio_data
+
+                        end if
+
+                        write(*,*) "b_smi_multiple=", b_smi_multiple,&
+                            " distance_b_smi_multiple=", distance_b_smi_multiple,&
+                            " SUD ratio SMI over non-SMI=", sud_smi_ratio_1,&
+                            " target=", sud_smi_ratio_data
+
+                    else
+
+                        distance_b_smi_multiple=0
 
                     end if
 
@@ -55519,6 +55597,10 @@
             if (distance_kappa_find_smi .NE. distance_kappa_find_smi) then
                 write(*,*) "NaN DISTANCE: distance_kappa_find_smi, forced to 1 so the sweep cannot mistake it for convergence"
                 distance_kappa_find_smi=1
+            end if
+            if (distance_b_smi_multiple .NE. distance_b_smi_multiple) then
+                write(*,*) "NaN DISTANCE: distance_b_smi_multiple, forced to 1 so the sweep cannot mistake it for convergence"
+                distance_b_smi_multiple=1
             end if
 
             if (distance_kappa_uem .NE. distance_kappa_uem) then
