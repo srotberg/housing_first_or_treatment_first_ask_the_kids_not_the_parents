@@ -1,3 +1,85 @@
+# THE MODEL IS RESTORED AND TWO CLASSES AGAIN, 23 September 04:10
+
+The SMI block is settled and the source now carries it. Everything below this
+section predates the restoration and is kept for the record.
+
+## THE CONFIGURATION
+
+    iota_smi               2.0    a SUD raises the hazard of SMI onset
+    mu_m                   0.82   SMI lowers the SUD recovery hazard, AND WIRED
+    b_smi_multiple         1.0    b_smi = b, no SMI-specific drug preference
+    zeta_DI                0      no disability income for SMI
+    child_penalty_classes  2
+    penalty_child_addicted 0.24
+    omega_c                pinned, run at 0 and at 0.055
+
+`iota_smi` and `mu_m` are the values git records before 875750f4 made SMI
+exogenous: the paper's external two from Nielsen et al. (2017), and Bradizza's
+relapse rates at (1-0.398)/(1-0.264) = 0.818. Neither was invented here.
+
+## THE BUG THAT MADE ANY OF THIS NECESSARY
+
+`mu_m` was never wired. `addiction_transition` takes `smi_1` as an OPTIONAL
+eighth argument and ELEVEN OF FIFTEEN call sites dropped it; the four that
+passed it are all in `govt_revenues_calc`, so the household's value function and
+the stationary distribution never saw it and no value of `mu_m` had ever moved
+an equilibrium. Measured: `mu_m` at 0.10 against 1.0 reproduced every cell of
+the drug-state table to four decimals and moved `r_smi` from 1.7792 to 1.7790.
+`code/patch_wire_mu_m.py` closed it and refuses to run twice.
+
+**So the two-class fix-only benchmark's `r_smi` of 2.062 was produced by `iota`
+alone.** Wiring `mu_m` is new ground and should lift it.
+
+## WHY `b_smi` IS OFF, WHICH IS THE RESULT THAT SETTLED THE WHOLE QUESTION
+
+At `b_smi = 1`, no SMI-specific preference anywhere, the model produces a drug
+USE ratio of **2.715 against the data's 2.44**. It overshoots rather than falls
+short. The SMI drug-use gradient is ENTIRELY ENDOGENOUS -- SMI lowers employment
+and income, poorer households use more -- so it is a prediction, not a fitted
+moment, and it goes in the UNTARGETED table on the author's instruction.
+
+The whole `b_smi` ladder was driving a moment that was already on target past
+it, to 7.82. Six points, 0.20 down to 1e-12, settle the SUD ratio at 3.58 and
+cannot reach 7.30; `b_smi = 0` exactly is a crash, not a corner.
+
+## WHY 7.30 WAS THE WRONG TARGET, WHICH IS THE AUTHOR'S FINDING
+
+*"maybe it's the death rate?"* It is. Exit from the disorder runs 0.1137 a year
+for SMI users against 0.0420 for non-SMI users, and exit is recovery PLUS
+DEATH: the survival print at age 40 puts a clean housed household at 0.0128 and
+an SMI homeless household with a SUD at 0.1127, a gap of 0.0999 that accounts
+for essentially all of it. NSDUH measures LIVING RESPONDENTS, so a model with
+honest excess mortality undershoots a survey-based severe prevalence ratio by
+construction.
+
+Making them poor does not fix it either: `kappa_uem` at 23.5 drove employment
+given SMI from 0.81 to 0.15 and more than doubled homelessness, and `r_smi`
+went DOWN, 4.014 to 3.924. Extra entry and extra death cancel.
+
+## THE RUN ORDER, AND WHERE IT IS
+
+    1. omega_c = 0 and omega_c = 0.055, two classes      <- RUNNING, warm started
+    2. read the gaps tables; continue unless materially different from before
+    3. compute kappa_x
+    4. omega_c = 1
+    5. full internalisation of homelessness, kappa_x borne by the homeless
+    6. Treatment First
+    7. the transition at T = 60
+
+Both runs are warm started from `seeds/benchmark_dat`, whose stationary
+distribution is byte-exact against the warm-start reader at 265,496,400 and
+23,894,676, with the shape stamp written beside it because an unstamped pair is
+refused. Both loaded, `sum = 50.861206888360229`.
+
+**STILL OPEN AND WORTH DOING: the steady state has no value-function warm
+start.** It reads `calibration_distribution1/2.dat` and nothing else, so a
+restart pairs a warm distribution with a cold value function. The archive
+carries `value_function1/2baseline_benchmark.dat.gz`, but `use_old_results` is
+1 only for a counterfactual, so a benchmark solve never reads them. The author
+asked for both the steady state and the transition to read the old files. It is
+a starting guess, so it cannot change a converged equilibrium -- only how fast
+it arrives.
+
 # THE 20 SEPTEMBER T=30 IS VOID. THE FAIR-MARKET-RENT CAP WAS BROKEN
 
 21 September. The archive disagrees with what this file said yesterday, and the
