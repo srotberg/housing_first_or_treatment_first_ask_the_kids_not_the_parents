@@ -47,6 +47,9 @@ omega_c. Nothing here is reportable until the control has blocks to compare.
     22:25  0.065     9 of ~11  -18.3%          --                     b=0.0808, MOVE 3.0e-3
     22:41  0     ctrl 5         -5.0%           --                     b=0.094, deviation GROWING
     22:46  0.075     7         -20.6%          --                     b=0.0785, metric stalled then rose
+    23:00  0.06      CONVERGED -17.87%         --                     b=0.081242, residual 1.45135
+    23:00  0.075     8         -20.6%          --                     b=0.078567, stop rule not fired
+    23:01  0     ctrl 6        ~-6%            --                     b ~ 0.093, still falling
 
 ## THE STOP RULE, FIXED FOR EVERY POINT SO THEY STAY COMPARABLE
 
@@ -70,6 +73,44 @@ cap, because the benchmark never fired the 0.001 rule at all.
 b falls as omega_c rises, which is the direction the mechanism predicts. The
 0.08 point has reported ten convergence distances and no moment at all, so it
 cannot extend this yet; it has been asked for b.
+
+## FIRST POINT CONVERGED, AND THE ANSWER TURNS ENTIRELY ON THE REFERENCE
+
+omega_c = 0.06 exited cleanly at 23:00 with b = 0.081242 and, the part that
+makes it trustworthy, `bequest_residual` SETTLED at 1.45135 -- within 1.7 per
+cent of the benchmark's 1.4771. That is a converged point, not a hand-stop.
+
+    omega_c   b           state          vs snapshot   vs ctrl .094   vs ctrl .093
+    0.06      0.081242    CONVERGED       -17.87%       -13.57%       -12.64%
+    0.065     0.0808      block 9         -18.31%       -14.04%       -13.12%
+    0.075     0.078567    block 8         -20.57%       -16.42%       -15.52%
+
+b falls monotonically in omega_c, as the mechanism requires.
+
+**THE RESPONSE IS FLAT.** Raising omega_c from 0.06 to 0.075 -- a quarter
+again -- moves b by only 3.3 per cent. Almost the whole reduction is already
+delivered at the bottom of the scanned range, and buying the last few points
+costs a lot of omega_c. Linear extrapolation of the provisional slope:
+
+    reference             omega_c reaching an 18 per cent reduction
+    snapshot 0.098916     about 0.06, or a little below
+    control near 0.094    about 0.083
+    control near 0.093    about 0.088
+
+So the author's question does not have one answer until the reference is
+chosen, and the two choices differ by more than the whole width of the scan.
+That is a question for the author, not for this loop, and it should be put to
+them in exactly those terms.
+
+There is a consequence for the paper either way. If the control settles near
+0.093, then the benchmark's own published b of 0.098916 is six per cent above
+the frozen system's resting point, and the calibration is further from the
+0.10502 data target than Table 5 reports -- about -11 per cent rather than
+-5.8. The benchmark would need re-stating at its settled value before any
+counterfactual is quoted against it.
+
+The extrapolations above use a slope from one converged point and one
+unconverged one, so treat them as orientation, not as results.
 
 ## THE BENCHMARK IS A HAND-STOPPED SNAPSHOT, NOT A RESTING POINT
 
