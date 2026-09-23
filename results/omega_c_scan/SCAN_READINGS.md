@@ -1,5 +1,33 @@
 # omega_c SCAN -- RUNNING READINGS
 
+## THE ANSWER, 23 September: omega_c = 0.06
+
+The author decided at 23:15 that the omega_c = 0 benchmark STANDS AS
+PUBLISHED. The reference is therefore b = 0.098916, and the question has a
+bracketed answer rather than an extrapolated one:
+
+    omega_c   b            reduction in b   lambda_d     reduction   state
+    0.055     --            ~-16%           --           --          running
+    0.06      0.081242     -17.87%          --           --          CONVERGED
+    0.065     0.080735     -18.38%          0.034414    -21.03%      CONVERGED on the rule
+    0.075     0.078567     -20.57%          --           --          running
+    0.08      0.077688     -21.46%          0.033133    -23.97%      complete, block 12
+
+An 18 per cent reduction means b = 0.081111, which the scan straddles. Exact
+interpolation gives omega_c = 0.0615. Of the two grid points, **0.06 is the
+closer** -- 0.13 points from the target against 0.38 for 0.065 -- and it is
+converged, so that is the value to use.
+
+The control question is closed by the author's decision and is recorded below
+only because it remains true of the model: run on past where it was stopped,
+the frozen omega_c = 0 vector keeps walking down, reaching 0.0914 at block 8.
+It is not evidence against the answer above, which is internally consistent --
+every point in the table is measured the same way against the same reference.
+It is a note about the benchmark's own convergence, for whenever that is
+revisited.
+
+
+
 The benchmark, calibrated once at omega_c = 0 and published under
 `code/scan_seed/`:
 
