@@ -18,10 +18,24 @@ reduction. The author is looking for the omega_c that gives 18 per cent.
     0.055     session_016XoU7o6mG64ktEiJ8y1da3    19:44
     0.06      session_01L9UR4QYx4b8S6CXqZS8JQ7    19:44
     0.065     session_013vxekwRecnZLSY6nyycP2T    19:44
-    0.07      session_01N1JcJU4fTSAjjhLNk52Pbr    19:44
+    0.07      session_01WtwzuCmJ6Ko5fro63GAXvc    20:33   (v3)
     0.075     session_01X8T8hReZpctbPNBCLLCWCE    19:44
     0.08      session_01Kdtds1VF5DyzFY8F4BsZbA    19:44
-    0     (control)  session_01SKhdk9YHUqn1u5dACdBKXg   20:15
+    0     (control)  session_016NSzSjqdS8bkRsa51S5fbk   21:02   (take 2)
+
+Two sessions were replaced and ARCHIVED rather than repaired. The first 0.07
+session launched at 19:45 and ended its turn with nothing armed to check back,
+so its result was unreadable whatever the solve did. The first control spent
+45 minutes installing a compiler already present in the image and never
+launched at all.
+
+A POKE THAT IS DELIVERED IS NOT A POKE THAT IS ACTED ON. Both pokes to that
+control are recorded SUCCEEDED, and the session's token usage did not move by
+one token across either of them -- it was wedged inside a hung tool call and
+never drained its queue. `interrupt_session` did not free it either. The rule
+that follows: poke once, and if the worker's usage has not moved by the next
+firing, replace the session rather than poking again. A clean container reaches
+its first block faster than a wedged one recovers.
 
 The v1 sessions of the six raised points were ARCHIVED: they ran the
 three-line handover and were therefore solving a model with a zero onset
