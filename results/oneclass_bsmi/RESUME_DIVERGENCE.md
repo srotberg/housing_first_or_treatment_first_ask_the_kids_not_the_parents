@@ -100,3 +100,78 @@ No Fortran is being edited. The run is left going so the recovery question gets
 its answer. If the author wants the mechanism settled, the cheap decisive test
 is the one-parameter kind the engine already prefers: checkpoint the value
 function, or re-run a cold start to the same loop and compare block by block.
+
+---
+
+# THE ANSWER: IT DOES NOT RECOVER. IT OSCILLATES BETWEEN CORNERS.
+
+Block 3 settled the open question, and not the way the onset step promised.
+
+    block 1   b = 0.95251      quantity 5.7272       everyone uses
+    block 2   b = 0.95267      quantity 8.7880       everyone uses
+    block 3   b = 0.0000077    quantity 0.0000023    nobody uses
+
+The onset instrument came off its cooldown and stepped `addiction_onset_base`
+to 0.0827, printing "RAISED: lambda_d is below target". That is the right
+direction by its own rule and it emptied the drug market completely -- the
+counterintuitive sign ENGINE.md already documents, where making use riskier
+deters use at the extensive margin instead of converting users. The run went
+from one corner to the other in a single block. It never passed through
+anything resembling the economy it was checkpointed from.
+
+**THE RUN WAS STOPPED** at 01:16, by numeric pid, and cold-restarted. Stopping
+was within the standing bar -- a state that provably cannot produce a usable
+point -- and the second finding below is why it could not simply be left going.
+
+# A SECOND DEFECT, AND THIS ONE CORRUPTS THE PARAMETER
+
+At block 3 the bracket printed a MEASURABLE ratio and stepped on it:
+
+    b_smi_multiple= 0.9025   distance= 0.6566   SUD ratio SMI over non-SMI= 2.5066
+
+That 2.5066 was computed over a drug-using population of **7.66e-06**. The
+corner guard in front of it tests the three denominators against `1e-12`:
+
+    if ((xtab_mass_smi(1)<=10.d0**(-12)) .OR. &
+        ((xtab_mass_pop(1)-xtab_mass_smi(1))<=10.d0**(-12)) .OR. &
+        ((xtab_sud_mass_pop(1)-xtab_sud_mass_smi(1))<=10.d0**(-12))) then
+
+A mass of 7.66e-06 clears 1e-12 by seven orders of magnitude, so the guard
+passes, the ratio is fabricated out of a handful of households, and
+`b_smi_multiple` takes a real 5 per cent step on it -- 0.95 -> 0.9025.
+
+**So an emptied drug market does not merely stall the channel, it moves the
+parameter on noise.** The guard is doing what it was written to do, which is to
+catch an exactly empty cell; it was not written to catch a cell that is
+populated but negligible. A guard on a SHARE -- the SUD rate, or the SMI mass,
+against something like 1e-4 of the population -- would have held the bracket
+here. That is a source change and it is the author's call.
+
+**AND IT IS WHY THE OBVIOUS READING OF BLOCK 3 IS WRONG.** r_smi went 1.7792 at
+b_smi_multiple = 1.0 to 2.5066 at 0.95, which is exactly the "r_smi RISES as
+b_smi_multiple FALLS" the channel is supposed to show. It is not evidence of
+anything. The two numbers come from two different economies, neither of them
+the calibrated one, and the second was measured on 7.66e-06 of the population.
+Reporting that pair as the channel working would have been the mistake this
+whole note exists to prevent.
+
+# WHAT WAS DONE
+
+Cold-restarted at 01:16:40 from `PARAM_HANDOVER.kept.txt`, which carries
+`b_smi_multiple 1.0` -- deliberately NOT the 0.9025 the diverged run left in
+the state file, since that step was taken on a fabricated ratio. The diverged
+run's log is kept as `run_attempt2_diverged.log` and its state under
+`void_20260923T011640Z/`.
+
+Cold start verified: `no calibration_state.dat, starting from the declared
+values`, the benchmark switches, the adjuster at 0.02, the survival pair, zero
+`HANDOVER IGNORED`, empty stderr.
+
+# THE WORKING RULE UNTIL THE AUTHOR RULES OTHERWISE
+
+**Do not resume this model. Cold start.** A cold start reaches its first moment
+block in about five and a half minutes, measured on attempt 1 -- not the twenty
+minutes the launch notes predicted -- so the resume is not even buying much.
+`cold_restart.sh` in the run directory does it safely: it moves the state AND
+the distribution aside, since leaving either behind is what makes the binary
+resume, and it refuses to run while `hftf` is alive.
