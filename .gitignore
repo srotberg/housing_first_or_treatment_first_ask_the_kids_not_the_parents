@@ -312,3 +312,11 @@ code/build2c/trace_build.log
 # The scan seed is COMMITTED on purpose: it is the converged benchmark,
 # compressed, so a session of its own can run a scan point. Added with -f.
 !code/scan_seed/
+
+# Scan POINT directories: a 253 MB distribution and a binary each, like every
+# other run directory. code/scan_seed/ is the exception -- it is the committed
+# 14 MB compressed benchmark the points warm start from, and the negation below
+# must stay AFTER this pattern to survive it.
+code/scan_*/
+!code/scan_seed/
+!code/scan_seed/**
