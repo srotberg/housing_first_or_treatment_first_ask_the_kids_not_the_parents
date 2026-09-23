@@ -29,6 +29,17 @@
 # 05:14:52 silent death prints a stack into run.err instead of nothing.
 set -e
 cd "$(dirname "$0")"
+# SUPERSEDED, AND ITS INPUTS ARE GONE. This is the FIRST-launch script. oc2c0
+# now exists and is continued with oc2c0_resume.sh, which inherits
+# calibration_state.dat and the committed oc2c0_resume_handover.txt. On 23
+# September the finished run directories had their .dat files reclaimed for
+# disk (962 MB), so oc00's distributions no longer exist and this script cannot
+# run as written. Kept for the record of how oc2c0 was first staged.
+[ -f oc00/calibration_distribution1.dat ] || {
+    echo "REFUSING: oc00's distributions were reclaimed for disk on 23 September."
+    echo "This is the first-launch script and oc2c0 already exists."
+    echo "To continue the benchmark use:  ./oc2c0_resume.sh"
+    exit 1; }
 # EVERY launch script in this project caps threads at 2 -- oc00_run.sh:22,
 # oc055_bounds_run.sh:13, oc1c0_run.sh:19 -- and the first version of THIS
 # script was the one that did not. libgomp then defaulted to nproc = 4, which
