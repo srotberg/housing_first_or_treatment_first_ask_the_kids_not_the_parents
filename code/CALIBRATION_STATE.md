@@ -84,12 +84,37 @@ at 0.0890 and 0.0368. Full account and the whole verification trail in
     same, the worker's block 1                          1.779
     TARGET                                              7.30
 
-Removing `mu_m` cost most of the rise. The fix-only 2.062 was entry 1.39 times
-persistence 1.47; with `mu_m` at one the persistence contribution goes and the
-ratio falls back towards entry alone. That was stated before the choice was
-made and is recorded here because it sets the size of the job: `b_smi_multiple`
-now carries the whole distance from about 1.7 to 7.30, a factor of four and a
-third, where with `mu_m` kept it would have been about three.
+**THE AUTHOR'S DECISION, 23 September: BOTH SMI-SUD MULTIPLIERS STAY AT ONE.**
+*"ok, we say it stays at 1"* on `mu_m`, and *"and no extra SMI risk with SUD"*
+on `iota`. So SMI is exogenous to everything a policy does, a SUD does not
+raise the hazard of SMI, and SMI does not slow recovery from a SUD. The whole
+comorbidity ratio has to come from the endogenous employment and income route
+plus `b_smi`.
+
+**THIS FILE PREVIOUSLY SAID "Removing `mu_m` cost most of the rise" IN THE
+RATIO, FROM 2.062 TO ABOUT 1.7. THAT IS WRONG AND IT IS WITHDRAWN.** `mu_m`
+cannot have cost anything: it is not wired into the household's problem or into
+the stationary distribution, only into `govt_revenues_calc`, so no value of it
+has ever moved an equilibrium. Measured on a controlled point -- same vector,
+`mu_m` compiled at 0.10 against 1.0 -- every cell of the drug-state table is
+identical to four decimals and `r_smi` moves 1.7792 to 1.7790, which is the
+no-op threshold. Full account in
+`results/smi_comorbidity/MU_M_IS_NOT_WIRED.md`. The earlier claim came from a
+comparison that also switched two classes to one and set `iota_smi` to one, and
+attributed the whole move to the one parameter incapable of producing any of
+it.
+
+`iota_smi` was checked for the same fault and is fine: `smi_transition` has one
+call site, passes all four arguments, and builds the table everything else
+reads.
+
+**THE PAPER NOW ASSERTS SEVERAL THINGS THESE TWO DECISIONS MAKE FALSE**, and
+they are listed for the author rather than edited, because the model section is
+theirs. `\iota>1` at 1616; `\mu_m<1` at 1564; the `\iota` entry at 2351 which
+calls it "the hinge of the whole block" and states it is set externally at two;
+the `\mu_m` entry at 2415; `\rho_m` at 2389, whose only route to the
+comparison is through `\iota`; the SMI channel list at 1626; and 2687, "what
+this paper adds is `\iota` ... and that is where the interaction lives".
 
 **THE CHANNEL IS BUILT AND LIVE.** `b_smi_multiple`, an SMI-specific multiple on
 `addiction_scalar_1`, with its moment `MOMENT r_smi`, its gaps row, its bracket
