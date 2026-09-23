@@ -268,3 +268,46 @@ Rescaling the model to its target aggregate, which is what a refit does:
 Once the level is refitted the NON-SMI side is roughly right, at 1.25 times the
 data, and essentially the whole remaining gap is the SMI group, which has to
 roughly triple. One parameter, one margin, one group.
+
+---
+
+# EXCLUDING MARIJUANA RAISES THE RATIO, IT DOES NOT LOWER IT. COMPUTED 23 Sep
+
+The author asked what the SMI SUD ratio is excluding marijuana, expecting it to
+come in below 7.30. It comes in ABOVE.
+
+`SVYRDUDANY` is the maximum severity across the drug components, and the
+components are separately available, so the object can be rebuilt without
+marijuana. Rebuilt WITH marijuana first, as the validation:
+
+    object, adults 26+, weighted        SMI   non-SMI   ratio   population
+    any DUD  (SVYRDUDANY, published) 0.3413    0.0757    4.51      0.0890
+    mod/sev  (SVYRDUDANY, published) 0.2043    0.0280    7.30      0.0368
+    any DUD  rebuilt                 0.3413    0.0757    4.51      0.0890
+    mod/sev  rebuilt                 0.2043    0.0280    7.30      0.0368
+    any DUD  EXCLUDING marijuana     0.1749    0.0299    5.86      0.0371
+    mod/sev  EXCLUDING marijuana     0.1034    0.0114    9.06      0.0160
+
+The rebuild reproduces the published figures to four decimals in every cell,
+which is what licenses the exclusion. Components used: IRPYSEV5MRJ, COC, HER,
+HAL, INH, MTH and SVYRPSYANY, taking the largest value in {1,2,3} and treating
+4 as none; weights ANALWT2_C, universe AGE3 >= 7.
+
+**Marijuana use disorder is common in the NON-SMI population and dilutes the
+denominator.** Drop it and the non-SMI rate falls from 0.0757 to 0.0299 while
+the SMI rate falls from 0.3413 to only 0.1749, so the ratio rises.
+
+## THE LEVEL CHECK THAT FIXES WHICH OBJECT `lambda_d` IS
+
+`lambda_d`'s target is 0.043424 and the data's moderate/severe rate INCLUDING
+marijuana is 0.0368:
+
+    0.043424 / 0.0368 = 1.180
+
+which is exactly the eighteen per cent uplift the author specified on
+22 September. So the model's SUD state is the MODERATE/SEVERE cut with
+marijuana IN, and the data ratio that matches it is **7.30**. An earlier
+suggestion in this session to score it against 4.51 was wrong: 4.51 belongs to
+the 0.0890 population rate, which is a different model object.
+
+The author's decision, 23 September: **keep marijuana in.**
