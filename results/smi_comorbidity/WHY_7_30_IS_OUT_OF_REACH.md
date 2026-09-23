@@ -72,3 +72,20 @@ or the permanent binary DI state the source writes down at 2277 -- 3/13 awarded
 at 0.25 for as long as they stay ill, nothing forever otherwise -- which is the
 object `zeta_DI` averages over and costs one more dimension. If `r_smi` does not
 move, affordability is not it either and the search reopens.
+
+## THE `Infinity` IN THESE LOGS IS BENIGN, AND HERE IS THE FAULT SIGNATURE THAT IS NOT
+
+Grepping a log for `Infinity` flags every healthy run in this configuration.
+`model_average_rental_unit_size(1)/model_average_owner_occupied_unit_size(1)`
+divides by zero because homeownership is switched off, so the line prints
+`Infinity` as a matter of course: four times in `sw_1e5`, four in `sw_0001`,
+once in `sw_02`, once in `b0_1e12`.
+
+The signature that actually distinguishes the void `b_smi = 0` point from every
+valid one is
+
+    model_value_of_life(1)=                       NaN
+
+which appears once in `b0_0` and in NONE of `sw_1e5`, `b0_1e12` or `di_probe`.
+Watch that, and `VALUE OF LIFE FLOOR BINDS ... -Infinity`, not the word
+`Infinity` on its own. `b0_1e12`'s 4.0140 is clean.
