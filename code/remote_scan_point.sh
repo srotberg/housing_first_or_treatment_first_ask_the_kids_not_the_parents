@@ -32,6 +32,18 @@ head -1 "$SEED/calibration_state.dat" | grep -qx 'calibration_state_v3' || { ech
 # the source must be TWO classes for this experiment to mean anything
 grep -q 'child_penalty_classes=2' housing_first_or_treatment_first_SR_v1.f90 || { echo "GUARD: source is not child_penalty_classes=2"; exit 1; }
 
+# gfortran is NOT in the base image and does NOT survive a container rebuild.
+# Measured: the omega_c = 0.08 session relaunched after a rebuild and died with
+# exit 127. Install it here rather than in each session's prompt, so that any
+# relaunch after a rebuild is self-repairing.
+command -v gfortran >/dev/null 2>&1 || {
+  echo "gfortran is missing -- installing it (a rebuilt container loses it)"
+  apt-get update -qq >/dev/null 2>&1
+  apt-get install -y -qq gfortran >/dev/null 2>&1
+  command -v gfortran >/dev/null 2>&1 || { echo "GUARD: gfortran could not be installed; nothing can be built"; exit 1; }
+  echo "gfortran installed: $(gfortran --version | head -1)"
+}
+
 rm -rf "$DIR" && mkdir -p "$DIR"
 echo "building (-O3 with -g -fbacktrace, so a fault prints a stack)..."
 gfortran -fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium \
