@@ -19,5 +19,5 @@
 # what this runs.
 cd "$(dirname "$0")/oc055" || exit 1
 if [ ! -f PARAM_HANDOVER.txt ]; then cp PARAM_HANDOVER.relaunch.txt PARAM_HANDOVER.txt || exit 1; fi
-export OMP_NUM_THREADS=2
+export OMP_NUM_THREADS=4
 exec ./hftf
