@@ -1,3 +1,68 @@
+# A LOCAL SOLVE DOES NOT SURVIVE THE GAP BETWEEN FIRINGS, 23 September
+
+The coordinator's container is rebuilt when the session is woken. Measured boot
+times against the firings that woke it:
+
+    boot 16:50:50
+    boot 19:49:46
+    boot 20:02:01     firing at 20:02:03
+    boot 20:11:50     firing at 20:11:51
+
+Two of those were diagnosed at the time as "container reboots, not model
+faults" and left there. They are not random: the last two arrive one to two
+seconds before the trigger, which is a fresh container being started to serve
+the wake. The session idles at the end of a firing, the container is reclaimed,
+and the next firing gets a new one.
+
+## WHAT SURVIVES AND WHAT DOES NOT
+
+The DISK survives. `code/scan_0/` was written at 20:05 and its files were still
+there, byte for byte, after the 20:11:50 boot; the checkout was clean and in
+sync with origin.
+
+The PROCESSES do not. Two consecutive launches of the omega_c = 0 control died
+with `run.err` EMPTY, no backtrace, and no OOM line in `dmesg` -- the ring
+buffer holds nothing after boot, and the memory cgroup
+(`/sys/fs/cgroup/memory/process_api/*/claude-code-bash`, limit 13.36 GB)
+reports `oom_kill 0` with 15 GB free. Nothing killed the solve. The machine
+under it was replaced.
+
+## THE TWO THINGS THAT MAKE THIS HARD TO SEE
+
+**The log size does not date the death.** Both dead runs stopped at exactly
+62122 bytes, which reads as a deterministic fault at a fixed point in the
+output. It is not: the Fortran's output is BUFFERED, so the last flush lands at
+the same place every time whatever the run then goes on to do. Never infer the
+time of death from where the log stops -- use the file's mtime, and check it
+against `uptime -s`.
+
+**It is not the tool-call boundary.** The obvious suspect is that a background
+process is torn down when the Bash call that launched it returns. Tested
+directly: `nohup sh -c 'sleep 900' &` and a `setsid` variant were both still
+alive, reparented to pid 1, in the following call. Background launches survive
+a call; they do not survive an idle gap.
+
+## THE CONSEQUENCE FOR THE METHOD
+
+A multi-hour solve cannot be run on the coordinator's own container while the
+session idles between firings, and no amount of `nohup`, `setsid` or
+`run_in_background` changes that. Long solves belong in a session of their own,
+and that session must not end its turn into idleness while one is running: keep
+the container occupied with a foreground poll, for example
+
+    for i in $(seq 1 40); do sleep 30; done; tail -2 <dir>/run.log
+
+and on every poll compare `uptime -s` against the launch time. If the boot time
+is later than the launch, the container was rebuilt and the run is gone
+whatever the log says -- relaunch from the top rather than reading the stale
+log as progress.
+
+The three sanity checks after any silent death, in order:
+
+    uptime -s                      later than launch  -> the container went
+    stat -c%s run.err              0 bytes            -> no Fortran fault
+    dmesg | grep -i oom            nothing            -> no OOM kill
+
 # WHY A RESTART COSTS TWO HOURS: IT IS THE BEQUEST BLOCK, NOT THE VALUE
 # FUNCTION, 23 September
 

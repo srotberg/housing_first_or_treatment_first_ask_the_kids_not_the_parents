@@ -1,3 +1,55 @@
+# LIVE STATE, 23 September 20:15 -- THE omega_c SCAN IS IN FLIGHT, SEVEN POINTS
+
+The two-class omega_c = 0 benchmark is CONVERGED and PUBLISHED under
+`code/scan_seed/`:
+
+    b        0.098916   target 0.10502     -5.8%
+    lambda_d 0.043579   target 0.043424    +0.4%
+    addiction_scalar_1     5.5328648553264140E-003
+    addiction_onset_base   3.4509299932932086E-002
+
+Every scan point HOLDS that vector and only raises omega_c
+(`freeze_all_but_omega_c 1`, `omega_c_is_pinned 1`), so the fall in b is the
+reduction. The author is looking for the omega_c that gives 18 per cent.
+
+## THE SEVEN POINTS, one session each
+
+    omega_c   session                             launched
+    0.055     session_016XoU7o6mG64ktEiJ8y1da3    19:44
+    0.06      session_01L9UR4QYx4b8S6CXqZS8JQ7    19:44
+    0.065     session_013vxekwRecnZLSY6nyycP2T    19:44
+    0.07      session_01N1JcJU4fTSAjjhLNk52Pbr    19:44
+    0.075     session_01X8T8hReZpctbPNBCLLCWCE    19:44
+    0.08      session_01Kdtds1VF5DyzFY8F4BsZbA    19:44
+    0     (control)  session_01SKhdk9YHUqn1u5dACdBKXg   20:15
+
+The v1 sessions of the six raised points were ARCHIVED: they ran the
+three-line handover and were therefore solving a model with a zero onset
+hazard. See the handover section below.
+
+## THE CONTROL IS THE FIRST THING TO READ
+
+The control is not a spare point, it is the test of the scan path. At
+omega_c = 0 the frozen path must reproduce the benchmark, to about 1e-4
+relative -- the model is not bit-reproducible, so never judge it on equality.
+If the control does not come back at b = 0.098916 the six raised points are
+measuring something other than the reduction and none of them can be reported.
+
+## WHY THE CONTROL MOVED OFF THIS BOX
+
+It was launched locally twice and died twice, silently, because the
+coordinator's container is reclaimed while the session idles between firings.
+That is written up at the top of ENGINE.md, with the three checks that tell a
+reclaimed container apart from an OOM kill and from a Fortran fault. The short
+version: nothing on this box survives the gap between one firing and the next,
+so a long solve belongs in a session of its own, and that session must keep
+its container busy rather than idle while the solve runs.
+
+The coordinator cannot steer those sessions -- `SendMessage` reaches no cloud
+sibling from here, and `ListAgents` shows none. The only channel is
+`get_session`, which returns each one's own post-turn summary. Brief a session
+fully at creation, because there is no second chance to correct it.
+
 # WHY A RESTART COSTS TWO HOURS: IT IS THE BEQUEST BLOCK, NOT THE VALUE
 # FUNCTION, 23 September
 
