@@ -1,3 +1,45 @@
+# THE HANDOVER OVERRIDES THE STATE FILE, SO A FULL HANDOVER DESTROYS A
+# COUNTERFACTUAL, 23 September
+
+The order at startup is fixed and it is the opposite of what a staging script
+naturally assumes:
+
+    read_calibration_state()   loads the FULL vector from calibration_state.dat
+    apply_param_handover()     THEN overrides every name in PARAM_HANDOVER.txt
+                               on top of it, and deletes the file (45768 on)
+
+**The model never writes a handover file.** The only `PARAM_HANDOVER` in the
+source is the `open(...,action='read')` at 45793. Every
+`PARAM_HANDOVER.relaunch.txt` in the tree is a HAND-MADE STAGING ARTEFACT from
+whenever that directory was set up, and it still holds the values of that
+moment. `oc2c0`'s is stamped 06:20 and carries `addiction_scalar_1` at the
+declared `4.9191800065755218E-03` while the run has since calibrated four
+blocks past it.
+
+**THE CONSEQUENCE, WHICH WAS CAUGHT BEFORE IT RAN RATHER THAN AFTER.** A scan
+point staged by copying the source run's `.relaunch.txt` would override every
+calibrated parameter back to its declared value. The counterfactual would then
+be measured on a model that is not the benchmark, with a healthy-looking log,
+about a hundred HANDOVER lines, and no error anywhere. It would read as a
+clean result.
+
+**THE RULE FOR ANY COUNTERFACTUAL OFF A CALIBRATED BENCHMARK.** Inherit
+`calibration_state.dat`, which carries the converged vector, and write a
+MINIMAL handover naming ONLY the switches being changed. `omega_scan_run.sh`
+does this in three lines -- `weight_on_child`, `omega_c_is_pinned`,
+`freeze_all_but_omega_c` -- and refuses to launch if the handover is longer
+than three lines or names a calibrated parameter.
+
+**HOW TO CONFIRM IT WORKED, AND DO NOT SKIP THIS.** The startup echo prints the
+resumed vector:
+
+    grep -a "resumed from calibration_state" <dir>/run.log   # must be present
+    grep -a "addiction_scalar_1=" <dir>/run.log | head -1    # must NOT be the
+                                                             # declared value
+
+A run that says `no calibration_state.dat, starting from the declared values`
+has inherited nothing, whatever else its log shows.
+
 # SIX THREADS ON FOUR CORES LIVELOCKS THE DISTRIBUTION LOOP, 23 September
 
 **Every launch script caps threads at two.** `oc00_run.sh:22`,
