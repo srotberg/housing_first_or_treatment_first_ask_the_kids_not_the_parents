@@ -76,6 +76,30 @@ def pairs():
         hit = re.match(r'^(.+?)\s*-\s*(\w*_data(?:\(\d+\))?)$', expr)
         if hit:
             out.setdefault(name, (hit.group(1).strip(), hit.group(2).strip()))
+
+    # A RELATIVE DISTANCE IS STILL A DISTANCE, and the pattern above cannot see
+    # one. b_smi_multiple scores the SMI comorbidity ratio as
+    #     distance_b_smi_multiple=abs(sud_smi_ratio_1-sud_smi_ratio_data)
+    #                             /sud_smi_ratio_data
+    # because that ratio is order seven, not order 0.05 like the shares the
+    # other brackets score, and an absolute distance against a 1e-2 rule would
+    # be asking for three significant figures on a moment read off a
+    # distribution. It had no row at all until this pass existed, which is the
+    # third time in this file a calibrated parameter read as inert because the
+    # report could not find it rather than because nothing was moving it.
+    #
+    # Matched in a SEPARATE pass rather than by loosening the pattern above, so
+    # that no row which already resolves can change.
+    for m in re.finditer(r'distance_(\w+)\s*=\s*abs\(([^\n]*?)\)\s*/\s*\w+\s*$',
+                         src, re.M):
+        name, expr = m.group(1), m.group(2).strip()
+        if name in out:
+            continue
+        if expr in gap_of and expr not in seen_twice:
+            expr = gap_of[expr]
+        hit = re.match(r'^(.+?)\s*-\s*(\w*_data(?:\(\d+\))?)$', expr)
+        if hit:
+            out[name] = (hit.group(1).strip(), hit.group(2).strip())
     return out
 
 
@@ -92,6 +116,39 @@ def rules():
                 got.setdefault(name, float(eval(expr.replace('d0', 'e0').replace('D0', 'e0'),
                                                 {'__builtins__': {}}, {})))
             except Exception:
+                pass
+    return got
+
+
+def log_adjusters(log):
+    """Each adjuster AS THIS RUN WAS CONFIGURED, not as the source declares it.
+
+    Two prints carry it and they are read in file order, so a later one wins:
+
+        HANDOVER separation_rate_adjuster:   0.30  ->  0.0      at startup
+        separation_rate_adjuster=   0.0000000000000000          per loop
+
+    The per loop print happens AFTER freeze_all_but_omega_c has been applied,
+    which is why it is allowed to override the handover's. Only nine adjusters
+    print that way, so the handover line is what settles the rest.
+    """
+    got = {}
+    num = r'([-+]?[0-9]*\.?[0-9]+(?:[EDed][-+]?[0-9]+)?)'
+    direct = re.compile(r'^\s*(\w+)_adjuster=\s*' + num)
+    handed = re.compile(r'HANDOVER\s+(\w+)_adjuster:\s*' + num + r'\s*->\s*' + num)
+    for line in open(log, errors='replace'):
+        m = handed.search(line)
+        if m:
+            try:
+                got[m.group(1)] = float(m.group(3).replace('D', 'E').replace('d', 'e'))
+            except ValueError:
+                pass
+            continue
+        m = direct.match(line)
+        if m:
+            try:
+                got[m.group(1)] = float(m.group(2).replace('D', 'E').replace('d', 'e'))
+            except ValueError:
                 pass
     return got
 
@@ -276,6 +333,9 @@ ALIAS = {
     # THREE THAT ARRIVED WITH THE NAMED GAP FIX, and print under their own names.
     'wealth_to_output_model_1': 'wealth_to_output_model',
     'child_sud_ratio_model_1': 'child_SUD_ratio_model',
+    # THE COMORBIDITY RATIO. The update names sud_smi_ratio_1; the print carries
+    # the MOMENT tag and the whole human label, hyphen sanitised to underscore.
+    'sud_smi_ratio_1': 'MOMENT_r_smi_SUD_ratio_SMI_over_non_SMI_model',
 }
 
 # A TARGET THAT LIVES IN THE LOG RATHER THAN IN A DECLARATION. The rental
@@ -353,6 +413,13 @@ def main():
 
     live = live_distances(sys.argv[1])
     frozen = zero_adjusters()
+    from_log = log_adjusters(sys.argv[1])
+
+    def adj_frozen(name, declared):
+        """Held iff its adjuster is zero, the log outranking the declaration."""
+        if name in from_log:
+            return from_log[name] == 0.0
+        return name in declared
     log_txt, series = param_values(sys.argv[1])
 
     rows, held, missing, seen, excluded = [], [], [], {}, []
@@ -403,7 +470,21 @@ def main():
         # nothing was moving it. Homeownership being switched off is what zeroes
         # these, and they return the moment it is switched back on.
         status = ''
-        if name in frozen and gap > 1e-6:
+        # THE DECLARATION IS THE DEFAULT, NOT THE CONFIGURATION. An adjuster
+        # declared zero can be turned on by PARAM_HANDOVER, and b_smi_multiple
+        # is exactly that case: it is declared 0.d0 so that it does nothing in
+        # the benchmark, and a sweep switches it on from the vector. Dropped on
+        # the declaration alone, the one parameter a b_smi run is moving is the
+        # one parameter missing from the table.
+        #
+        # THE DISTANCE CANNOT STAND IN FOR THE ADJUSTER, and a first attempt at
+        # this used it. ENGINE.md's rule "before turning any bracket off, zero
+        # its distance too" exists because not every bracket does: sw_02 prints
+        # separation_rate_adjuster= 0 and distance_separation_rate= 0.0126 in
+        # the same loop. Keying on the distance therefore promoted two
+        # genuinely held parameters into the table as though they were being
+        # calibrated. The ADJUSTER is the thing that decides, so read that.
+        if adj_frozen(name, frozen) and gap > 1e-6:
             excluded.append((name, 'its adjuster is zero, nothing moves it'))
             continue
         if name in live and live[name] == 0.0 and gap > 1e-6:
