@@ -44,6 +44,24 @@ command -v gfortran >/dev/null 2>&1 || {
   echo "gfortran installed: $(gfortran --version | head -1)"
 }
 
+# code/data MUST EXIST, and it is a symlink to ../data. Do not delete it.
+#
+# The Fortran opens "../data/us_mh_onset_shape.csv" and
+# "../data/us_mortality_multipliers.csv", paths relative to the WORKING
+# DIRECTORY. The binary was written to run from code/, where ../data is the
+# repository's data directory. A scan point runs from code/scan_<x>/, where
+# ../data is code/data -- so without the symlink the path does not resolve.
+#
+# It is not a silent failure: the code inquires, falls back to the file in the
+# working directory, and if neither exists prints "not found. stopping." and
+# STOPS. So a missing symlink costs a run, it does not corrupt one.
+#
+# Three separate workers rediscovered this independently and made the symlink
+# by hand, and one of them was told to delete it as stray clutter -- which was
+# wrong. It is committed now. This guard is here so that a container which
+# somehow lacks it repairs itself rather than halting.
+[ -e data ] || ln -s ../data data
+
 rm -rf "$DIR" && mkdir -p "$DIR"
 echo "building (-O3 with -g -fbacktrace, so a fault prints a stack)..."
 gfortran -fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium \

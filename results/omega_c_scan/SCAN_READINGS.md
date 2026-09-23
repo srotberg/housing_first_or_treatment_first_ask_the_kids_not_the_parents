@@ -1,5 +1,27 @@
 # omega_c SCAN -- RUNNING READINGS
 
+## omega_c = 0.07 SETTLED, AND IT IS THE BEST EVIDENCE FOR THE TRANSIENT
+
+The 0.07 point reported every block with its bequest_residual, which no other
+point did, and the two move together exactly as the restart-transient account
+says they must:
+
+    block  b           vs bench   bequest_residual
+    1      0.071157    -28.06%    2.1197     <- transient, and the worst reading
+    2      0.083250    -15.84%    1.8334
+    3      0.084297    -14.78%    1.6299     <- overshoots the other way
+    6      0.080455    -18.66%    1.4958
+    9      0.080486    -18.63%    1.4523
+    11     0.080471    -18.65%    1.4496
+
+    SETTLED (blocks 9-11)   b = 0.080472 (-18.65%)
+                            lambda_d = 0.034285 (-21.33%)
+
+Block 1 at -28.06 per cent is almost exactly the -28.4 the 0.075 point reported
+from ITS block 1, which is what first went on the board at 20:28 and was nearly
+read as a result. The residual at that block is 2.1197 against a settled 1.4496.
+The reading was the transient, not the policy, and this table is the proof.
+
 ## THE ANSWER, 23 September: omega_c = 0.06
 
 The author decided at 23:15 that the omega_c = 0 benchmark STANDS AS
