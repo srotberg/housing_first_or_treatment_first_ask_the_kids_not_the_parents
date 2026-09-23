@@ -1,3 +1,73 @@
+# NEVER RESUME WITHOUT THE HANDOVER, 23 September
+
+`PARAM_HANDOVER.relaunch.txt` is **not a backup**. It is a REQUIRED RESUME
+INPUT, and that is why every launch script copies it to `PARAM_HANDOVER.txt`
+before starting. An earlier note in this file called it "a hand-made staging
+artefact"; that is only half true and the half that is missing costs the run.
+
+## WHAT A HANDOVER-LESS RESUME DOES
+
+`oc2c0` was resumed in place. The reader CONSUMES `PARAM_HANDOVER.txt` at
+startup, so the directory had none, and the next block reported:
+
+    b        0.952495   target 0.10502
+    lambda_d 0.000000   target 0.043424
+    r_smi    0.000000   target 7.3
+
+Ninety-five per cent using and not one disorder. **No error, no fault, stderr
+empty, and the block looked like every other block.**
+
+## WHY
+
+`calibration_state.dat` banks 108 names. The handover supplies 100, and
+**SIXTY-NINE OF THOSE ARE NOT BANKED** -- they revert to their Fortran
+declarations on every resume. The one that kills the model is
+
+    real(8) :: addiction_onset_base=0.d0
+
+With `lambda_addiction` pinned at zero the onset hazard is
+`min(base + (1-exp(-0*q)), 1)`, so a ZERO BASE MEANS NOBODY EVER DEVELOPS A
+DISORDER. `lambda_d` goes to zero, the deterrent to using goes with it, and use
+runs away. Others in the unbanked 69 include `freeze_all_but_omega_c`,
+`kappa_x`, `kappa_phi_d_level`, `child_penalty_off` and
+`homeless_excess_death_risk` -- a resume without the handover silently changes
+the loop's MODE as well as its parameters.
+
+## THREE OF THE 69 ARE ALSO MOVED BY THE LOOP
+
+So a plain copy of the staging handover silently discards calibration progress
+on them. The loop moves and prints seven parameters --
+`addiction_onset_base`, `housing_status_grid_expander`, `kappa_find_smi`,
+`mu_homeless`, `multiple_find_if_addicted`, `newborn_endowment_scale`,
+`penalty_child_homeless` -- and the intersection with the unbanked set is:
+
+    addiction_onset_base       staging 0.0336007  reached 0.0334310
+    multiple_find_if_addicted  staging 4.8855     reached 4.4688      8.5 pc
+    newborn_endowment_scale    staging 0.11211    reached 0.10478     6.5 pc
+
+Read the reached values out of the run's own log and override them. The other
+66 are constants the loop never touches.
+
+## HOW TO RECOMPUTE THE SET, RATHER THAN TRUSTING THIS LIST
+
+    # what the state banks
+    awk 'NR>=45133 && NR<=45300' <src> | grep -oE "write\(71,'[^']*'\) *[A-Za-z_0-9]+" \
+        | sed -E "s/.*\) *//" | sort -u > banked.txt
+    # what a handover supplies
+    cut -d' ' -f1 <dir>/PARAM_HANDOVER.relaunch.txt | sort -u > hnames.txt
+    comm -23 hnames.txt banked.txt          # the unbanked set
+    # which of those the loop moves
+    grep -aoE "^ [a-z_0-9]+= +[-0-9.E+]+ +distance_[a-z_0-9]+" <dir>/run.log \
+        | sed -E 's/^ ([a-z_0-9]+)=.*/\1/' | sort -u
+
+## THE CHECK THAT CATCHES IT IN ONE BLOCK
+
+    grep -a "HANDOVER addiction_onset_base" run.log   # left side 0.0 means it reverted
+    grep -a "MOMENT lambda_d" run.log | tail -1       # 0.000000 is the collapse
+
+`oc2c0_resume.sh` does the whole thing and REFUSES to launch if the onset base
+is not the calibrated value.
+
 # A BENCHMARK RUN ENDS AT TWENTY LOOPS, AND THEN THE WELFARE CURVE HALTS IT,
 # 23 September
 
