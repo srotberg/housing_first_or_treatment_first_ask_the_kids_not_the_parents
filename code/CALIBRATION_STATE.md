@@ -35,6 +35,25 @@ relative -- the model is not bit-reproducible, so never judge it on equality.
 If the control does not come back at b = 0.098916 the six raised points are
 measuring something other than the reduction and none of them can be reported.
 
+## FIRST SCAN NUMBER, AND WHY IT IS NOT YET AN ANSWER
+
+    omega_c = 0.075   block 1   b = 0.0708   -28.4% from 0.098916
+
+Do NOT read that as the reduction at 0.075. A scan point is a RESTART, and the
+restart transient is the subject of the section below on the bequest block:
+`bequest_residual` is built by the aggregation from the distribution, so
+`calibration_state.dat` cannot bank it and it re-converges from scratch at
+every launch. Newborn assets move with it, the wealth distribution moves with
+newborn assets, and drug use moves with the wealth distribution. The benchmark
+itself swung by thirty points across exactly this transient, and a seed was
+once published mid-transient at +28.2% for the same reason.
+
+The control is what separates the two effects. At omega_c = 0 it is the same
+restart with no policy change, so its block-1 distance from 0.098916 IS the
+transient. Only the part of a raised point's move that exceeds it belongs to
+omega_c. Report a scan point from a settled block, with the control's own
+trajectory beside it -- never from block 1 alone.
+
 ## WHY THE CONTROL MOVED OFF THIS BOX
 
 It was launched locally twice and died twice, silently, because the

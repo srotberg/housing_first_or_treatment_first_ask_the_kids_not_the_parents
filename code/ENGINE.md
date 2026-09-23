@@ -42,6 +42,20 @@ directly: `nohup sh -c 'sleep 900' &` and a `setsid` variant were both still
 alive, reparented to pid 1, in the following call. Background launches survive
 a call; they do not survive an idle gap.
 
+## BUT IT DOES NOT HAPPEN EVERY GAP -- MEASURED 20:21
+
+The rule above was written at 20:15 as "the container is rebuilt when the
+session is woken". That is too strong, and the very next firing disproved it:
+the turn ended around 20:18, the firing came at 20:21:33, and `uptime -s` still
+read 20:11:50 -- the same container, ten minutes old, across an idle gap.
+
+So reclamation is INTERMITTENT, not a rule. The operational consequence is
+unchanged and is if anything sharper: a solve that survives one gap tells you
+nothing about the next, so a run whose loss would cost hours must not be left
+where an idle gap can reach it. What the intermittency does change is the
+diagnosis -- do not read a surviving container as evidence that a dead solve
+died of something else. Check the boot time against the launch time every time.
+
 ## THE CONSEQUENCE FOR THE METHOD
 
 A multi-hour solve cannot be run on the coordinator's own container while the
