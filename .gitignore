@@ -320,3 +320,10 @@ code/build2c/trace_build.log
 code/scan_*/
 !code/scan_seed/
 !code/scan_seed/**
+
+# The full-homelessness-internalisation run directory, on the same rule as every
+# other run directory above: a 265 MB distribution, a 24 MB second distribution
+# and a 3 MB binary, all reproduced by remote_internalise_point.sh stage from the
+# committed scan_seed/. The record of the run is its log and its handover vector,
+# not the grids it leaves behind.
+code/internalise_h_oc006/
