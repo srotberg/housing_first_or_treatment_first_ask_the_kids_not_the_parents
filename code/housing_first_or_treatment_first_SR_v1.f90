@@ -2130,7 +2130,7 @@
         ! Assigned. Danish registers put the hazard ratio at 1.34 for any SUD
         ! and 2.74 for opioid use disorder; substance induced psychosis converts
         ! at a pooled rate near a quarter (Murrie et al., 2020).
-        real(8), parameter :: iota_smi=1.0
+        real(8), parameter :: iota_smi=2.0
 
         ! b FOR HOUSEHOLDS WITH SMI, AS A MULTIPLE OF b.
         !
@@ -2241,7 +2241,7 @@
         real(8), parameter :: kappa_phi_m=2.50
 
         ! Assigned. Dual diagnosis relapse of 39.8 against 26.4 percent.
-        real(8), parameter :: mu_m=1.0
+        real(8), parameter :: mu_m=0.82
 
         ! CALIBRATED. The EXPECTED replacement rate for the non employed with
         ! SMI: the statutory SSDI and SSI rate multiplied by the share who take
@@ -6202,7 +6202,7 @@
         ! somewhere between twelve and thirty, and the distribution file goes to
         ! roughly 265 MB. The economy moves, so b, pi_V and the rest have to
         ! re-converge before the odds ratio is readable.
-        integer, parameter :: child_penalty_classes=1
+        integer, parameter :: child_penalty_classes=2
         integer, parameter :: employment_grid_size=employment_base_size*child_penalty_classes
         integer :: use_unemployment_by_productivity=1
         ! Persistent income risk over working life. See the block beside
@@ -26392,7 +26392,8 @@
                                         addiction_transition(addiction_index,future_addiction_index_2,&
                                         future_addiction_index,is_homeless_1,&
                                         frac_spent_on_addiction*total_consumption_choice/&
-                                        price_of_addictive_good,1,treatment_choice_now)*&
+                                        price_of_addictive_good,1,treatment_choice_now,&
+                                        smi_of(unemployment_index))*&
                                         ev_table(future_financial_index,future_addiction_index_2,&
                                         future_housing_status_index,has_opportunity_1,ev_slot)
 
@@ -26468,7 +26469,8 @@
                                             addiction_transition(addiction_index,future_addiction_index_2,&
                                             future_addiction_index,is_homeless_1,&
                                             frac_spent_on_addiction*total_consumption_choice/&
-                                            price_of_addictive_good,1,treatment_choice_now)*&
+                                            price_of_addictive_good,1,treatment_choice_now,&
+                                            smi_of(unemployment_index))*&
                                             value_function(1)%vector_transition_real&
                                             (min(time_period+solve_transition_dynamics,transition_length),age_index+1,&
                                             future_financial_index,future_unemployment_index,future_employment_index,&
@@ -26938,7 +26940,8 @@
                                                     addiction_transition(addiction_index,future_addiction_index_2,&
                                                     future_addiction_index,1,&
                                                     frac_spent_on_addiction*total_consumption_choice/&
-                                                    price_of_addictive_good,1,treatment_choice_now)*&
+                                                    price_of_addictive_good,1,treatment_choice_now,&
+                                                    smi_of(unemployment_index))*&
                                                     value_function(future_years_of_amortization_index)%&
                                                     vector_transition_real&
                                                     (min(time_period+solve_transition_dynamics,transition_length),&
@@ -27511,7 +27514,8 @@
                                             addiction_transition(addiction_index,future_addiction_index_2,&
                                             future_addiction_index,1,&
                                             frac_spent_on_addiction*total_consumption_choice/&
-                                            price_of_addictive_good,1,treatment_choice_now)*&
+                                            price_of_addictive_good,1,treatment_choice_now,&
+                                            smi_of(unemployment_index))*&
                                             value_function(future_years_of_amortization_index)%&
                                             vector_transition_real(min(time_period+solve_transition_dynamics,transition_length),&
                                             age_index+1,future_mortgage_index,future_unemployment_index,&
@@ -27943,7 +27947,8 @@
                                                         addiction_transition(addiction_index,future_addiction_index_2,&
                                                         future_addiction_index,1,&
                                                         frac_spent_on_addiction*total_consumption_choice/&
-                                                        price_of_addictive_good,1,treatment_choice_now)*&
+                                                        price_of_addictive_good,1,treatment_choice_now,&
+                                                        smi_of(unemployment_index))*&
                                                         value_function(future_years_of_amortization_index)%vector_transition_real&
                                                         (min(time_period+solve_transition_dynamics,transition_length),age_index+1,&
                                                         future_mortgage_index,future_unemployment_index,future_employment_index,&
@@ -28331,7 +28336,8 @@
                                             addiction_transition(addiction_index,future_addiction_index_2,&
                                             future_addiction_index,is_homeless_1,&
                                             frac_spent_on_addiction*total_consumption_choice/&
-                                            price_of_addictive_good,1,treatment_choice_now)*&
+                                            price_of_addictive_good,1,treatment_choice_now,&
+                                            smi_of(unemployment_index))*&
                                             value_function(1)%vector_transition_real&
                                             (min(time_period+solve_transition_dynamics,transition_length),&
                                             age_index+1,future_financial_index,future_unemployment_index,&
@@ -31485,7 +31491,8 @@
                                         addiction_transition(current_addiction_index_1,future_addiction_index_2,&
                                         future_addiction_index_1,is_homeless_1,&
                                         frac_spent_on_addiction_2*total_consumption_choice_1/&
-                                        price_of_addictive_good,1,treatment_choice_now)*&
+                                        price_of_addictive_good,1,treatment_choice_now,&
+                                        smi_of(unemployment_index))*&
                                         (frac_mov_to_another_cell_1*value_function(years_of_amortization_1)%&
                                         vector_transition_real(min(time_period+solve_transition_dynamics,transition_length),&
                                         age_index+1,financial_index_copy_1,future_unemployment_index,future_employment_index,&
@@ -32862,7 +32869,8 @@
                                                                 is_homeless_2,future_addiction_index_2,employment_index)*&
                                                                 addiction_transition(is_addicted_1,&
                                                                 future_addiction_index_2,addiction_choice_1,is_homeless_2,&
-                                                                drug_quantity_dist_1,0,treatment_choice_dist_1)*&
+                                                                drug_quantity_dist_1,0,treatment_choice_dist_1,&
+                                                                smi_of(unemployment_index))*&
                                                                 distribution_guess(years_left_on_mortgage_index)%&
                                                                 vector_transition_real(time_period-solve_transition_dynamics,&
                                                                 age_index,financial_index,unemployment_index,employment_index,&
@@ -33286,7 +33294,8 @@
                                                                     future_addiction_index_2,employment_index)*&
                                                                     addiction_transition(is_addicted_1,&
                                                                     future_addiction_index_2,addiction_choice_1,is_homeless_2,&
-                                                                    drug_quantity_dist_1,0,treatment_choice_dist_1)*& 
+                                                                    drug_quantity_dist_1,0,treatment_choice_dist_1,&
+                                                                    smi_of(unemployment_index))*& 
                                                                     distribution_guess(years_left_on_mortgage_index)%&
                                                                     vector_transition_real(time_period-solve_transition_dynamics,&
                                                                     age_index,financial_index,unemployment_index,employment_index,&
@@ -33309,7 +33318,8 @@
                                                                 future_unemployment_index,is_homeless_2,future_addiction_index_2,&
                                                                 employment_index)*addiction_transition(is_addicted_1,&
                                                                 future_addiction_index_2,addiction_choice_1,is_homeless_2,&
-                                                                drug_quantity_dist_1,0,treatment_choice_dist_1)*&
+                                                                drug_quantity_dist_1,0,treatment_choice_dist_1,&
+                                                                smi_of(unemployment_index))*&
                                                                 distribution_guess(years_left_on_mortgage_index)%&
                                                                 vector_transition_real&
                                                                 (time_period-solve_transition_dynamics,age_index,financial_index,&
@@ -34188,7 +34198,8 @@
                                                                     is_homeless_2,future_addiction_index_2,employment_index)*&
                                                                     addiction_transition(is_addicted_1,&
                                                                     future_addiction_index_2,addiction_choice_1,is_homeless_2,&
-                                                                    drug_quantity_dist_1,0,treatment_choice_dist_1)*&
+                                                                    drug_quantity_dist_1,0,treatment_choice_dist_1,&
+                                                                    smi_of(unemployment_index))*&
                                                                     distribution_forward(years_left_on_mortgage_index)%&
                                                                     vector_transition_real(time_period-solve_transition_dynamics,&
                                                                     age_index,financial_index,unemployment_index,employment_index,&
