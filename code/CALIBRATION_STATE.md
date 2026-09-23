@@ -1,3 +1,58 @@
+# THE ONE-CLASS omega_c = 0 POINT IS CONVERGED, 23 September 07:05
+
+Step 1 of the author's run order -- *"go back to the one-class model, play with
+b a bit to bring down the use rate to target with omega_c=0"* -- is answered.
+
+    moment                     model       target      gap
+    b, total drug users        0.099849    0.10502     -4.9%
+    lambda_d, disorder rate    0.043484    0.043424    +0.14%
+
+    instrument             calibrated     declared     move
+    addiction_scalar_1     0.0054962      0.0049192    +11.7%
+    addiction_onset_base   0.0330975      0.0336007    -1.5%
+
+Both moved the way the Fortran's own rules say: the scalar UP to cut use
+(remember the sign is reversed -- lower b means MORE use), the onset DOWN to
+cut the disorder rate. The loop now oscillates inside a few per cent of both
+rather than travelling.
+
+**THE APPROACH WAS THE SETTLING, NOT THE ADJUSTER.** Blocks 6 to 12 closed b
+from +23.5 per cent to -0.6 while `addiction_scalar_1` moved 0.4 per cent. The
+instrument's real move was made in the noisy opening blocks; everything after
+was the stationary distribution settling toward the post-`mu_m`-wiring point.
+Do not read an elasticity off those blocks -- it is the settling.
+
+## THE SCAN CANNOT START UNTIL oc2c0 CONVERGES, AND NOT FOR A CAPACITY REASON
+
+A JOINT run refits b to 0.10502 whatever `omega_c` is -- that is what
+`oc055_bounds` was doing -- so two joint runs at different `omega_c` measure NO
+reduction, by construction. The experiment is: calibrate ONCE at `omega_c` = 0,
+then HOLD every parameter and raise `omega_c`. The scan's input is `oc2c0`'s
+converged vector.
+
+This also re-reads `oc00` against `oc055`: those two ARE a held-parameter pair,
+the same vector at `omega_c` 0 and 0.055, and they give a fall of 11 to 21 per
+cent depending which blocks are taken. The author's 18 sits inside that range.
+Too noisy to quote, but the right shape.
+
+## A READOUT BUG THAT WAS MINE, NOT THE MODEL'S
+
+Block 14 was first reported as `b = 9.98`. The monitor's pattern was
+`model= *[0-9.]*`, with no exponent in it, and b prints as
+`9.9849024975901174E-002` once it falls below 0.1 -- so the readout dropped the
+exponent and multiplied by a hundred. It had never bitten because b had never
+been under 0.1. `paper/calibration_report.py` does NOT have this bug: it parses
+`([-+]?[0-9]*\.?[0-9]+(?:[EDed][-+]?[0-9]+)?)` everywhere, exponent included,
+so the gaps table is sound. Any ad-hoc log scraper needs that pattern.
+
+## THE HANDOVER FILE IS CONSUMED BY THE READER
+
+`PARAM_HANDOVER.txt` is gone from a run directory after startup: the reader
+consumes it and each block end writes `PARAM_HANDOVER.relaunch.txt` for the
+next relaunch. That is WHY every launch script copies the `.relaunch.txt` to
+the `.txt` first, and why a directory holding only the `.relaunch.txt` looks
+correctly staged when it is not.
+
 # TWO CLASSES IN THE SOURCE, AND THE omega_c = 0 BENCHMARK IS RUNNING, 23 September
 
 `child_penalty_classes` is back to **2** in
