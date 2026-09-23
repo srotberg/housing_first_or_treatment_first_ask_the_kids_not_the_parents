@@ -199,3 +199,58 @@ thread in a region sees the same household state. There is no race.
 That leaves the first, which would mean `b` moves who WANTS to use while the
 stock of users is governed by hazards `b` does not enter. It is consistent with
 everything measured and it has not been demonstrated.
+
+---
+
+# THE "clean" AND "experimenter" COLUMNS ABOVE ARE MISLABELLED. WITHDRAWN.
+
+The decoder splits the 18 unemployment states into three blocks of six and I
+called them clean, experimenter and SUD. The THIRD block is SUD and that is
+verified; the first two are NOT abstainers and current users, and every
+sentence above that rests on "seventy two per cent of SMI households are
+completely clean" is withdrawn with them.
+
+## WHAT IS VERIFIED
+
+At `b_smi_multiple = 1e-5` the decoder gives a population SUD rate of 0.071025
+against the model's own `MOMENT lambda_d` of 7.1025520696582675e-2, and an SMI
+share of 0.0470 against `MOMENT p_m` of 4.6961697314601258e-2. `r_smi` agrees
+with the Fortran's print to five figures at every point. So the SUD column, the
+SMI split and the ratio stand.
+
+## WHAT DOES NOT
+
+The model prints `model_fraction_addicted+model_exprimenters` = 0.18077 and
+`model_exprimenters/model_total_drug_users` = 0.60709 at that point, so the
+experimenter stock is 0.1098. The decoder's second block is 0.0399. They are
+not the same object, so the second block is not "currently uses without the
+disorder", and the first block is therefore not "uses nothing".
+
+The likeliest reading is that the three blocks are a persistent drug STATE --
+something like never-disordered, previously-disordered, currently-disordered --
+while `model_exprimenters` is measured off the POLICY function, a flow of
+households buying the drug this period, spread across the first two blocks. On
+that reading a household in block one may well be using, and there is no
+abstention to explain.
+
+## SO THE PUZZLE IS WITHDRAWN TOO
+
+The section above argued that at a shifter of 4.9e-8 an abstainer's
+Cobb-Douglas factor makes abstaining ruinous, so the 72 per cent was
+inconsistent with the utility function. There is no measured 72 per cent to be
+inconsistent with. The arithmetic in that section is still right about what the
+flow utility does -- `frac_spent_on_addiction` is a CONTINUOUS choice, at 30591
+and 30731, not a grid, so there is no lumpiness either -- and the OpenMP check
+that cleared `unemployment_index` stands on its own. But there is no anomaly
+that needs them.
+
+**THE HEADLINE IS UNAFFECTED.** `r_smi` asymptotes near 4.01 at block 1 and
+falls to about 3.64 as the equilibrium settles, 0.001 and 1e-5 agree to three
+decimals, and `b_smi` cannot deliver 7.30. That rests on `r_smi` and
+`SUD | SMI`, both of which are checked against the model's own prints.
+
+**WHAT TO DO BEFORE THE THREE-BLOCK SPLIT IS USED AGAIN:** identify the blocks
+from the index map in the source rather than from their sizes, and check each
+against a printed moment the way the SUD block was checked against
+`model_fraction_addicted`. A column that matches nothing the model prints is
+not a measurement.
