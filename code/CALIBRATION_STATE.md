@@ -108,21 +108,62 @@ easy to get wrong and are written at the code rather than only here:
     Without that every resume reset it to 1.0; without the adjuster a resume
     came back HELD while still looking like it was running.
 
-**RUNNING:** `session_01AeKvTFcZQr1V4rkDWhnCrx`, the one-class calibration with
-the bracket live at `b_smi_multiple_adjuster = 0.02`. Reports the full gaps
-table, `r_smi` against 7.30, and SUD|SMI and SUD|non-SMI separately as the
-directional gate. Two predecessors are archived.
+**THE SWEEP WAS RUN AND IT SETTLES THE QUESTION: `b_smi` CANNOT REACH 7.30.**
+Five points, every one of them with the other forty seven adjusters frozen, so
+each is the single-parameter test ENGINE.md's phase 3 rule 1 asks for:
 
-**THE CRAWL IS PROBABLY THE WRONG SEARCH, AND THIS IS OPEN.** The 5 per cent
-per loop cap was copied from a convention meant for economy-wide instruments;
-`b_smi_multiple` touches 4.8 per cent of the population and cannot collapse the
-aggregate. Participation is threshold-like in b, so the likelier failure is
-stepping straight PAST 7.30 and taking dozens of loops to come back. A coarse
-sweep at 1.0, 0.5, 0.2 and 0.05 with everything else frozen would map the
-response in four solves. Put to the author, awaiting their call.
+    b_smi_multiple   r_smi   SUD|SMI   SUD|non-SMI   read at
+        1.00         1.779    0.0900      0.0506     block 1
+        0.50         2.384    0.1436      0.0602     block 6, BLOCK MOVE 1.4e-2
+        0.20         3.259    0.1809      0.0555     block 1
+        0.05         3.300    0.2093      0.0634     block 8, BLOCK MOVE 9.4e-3
+        0.01         3.886    0.2229      0.0574     block 1
+                              TARGET 7.30
 
-**THE CONTAINERS ARE REBOOTING** on roughly a ten minute cadence, at the
-coordinator's firing times. Nothing survives a kernel reboot, so every solve
+`SUD|SMI` SATURATES. A twentyfold cut in the multiple, 0.20 to 0.01, buys
+twenty three per cent on it. A ratio of 7.30 against a non-SMI rate of 0.057
+needs `SUD|SMI` at 0.42 and the SMI rate is levelling off near 0.22. The 1e-6
+floor in the update is not what stops it.
+
+THE MARGIN IS THE REASON. `b` enters as `(b+q)^phi_q`, so cutting it raises the
+marginal value of the first unit and raises USE. Whether a user becomes
+DISORDERED is the onset hazard, and at `iota_smi = 1` an SMI household faces the
+population's. At a multiple of 0.20 the model already has
+`model_experimenters/model_total_drug_users` at 0.604: the extra use `b_smi`
+buys arrives as experimentation, which the ratio does not count.
+
+**SO THE INSTRUCTION OF 22 SEPTEMBER CANNOT BE CARRIED OUT AS STATED** --
+remove the higher SUD risk with SMI, remove the lower recovery with SMI, and
+pick `b` to match 7.30. The first two removals are what make the third
+impossible. Three ways forward are written out in
+`results/smi_comorbidity/B_SMI_SWEEP.md` and the choice is the author's; nothing
+has been changed pending it.
+
+**THE 0.20 AND 0.01 RATES ARE READ, NOT DERIVED.** `code/smi_sud_xtab.py`
+decodes `calibration_distribution1.dat` into the four masses `r_smi` is built
+from. The 0.5 and 0.05 rows had to be backed out of `lambda_d`, `p_m` and
+`r_smi`, which is exact only if the cross-tab's population base coincides with
+`model_fraction_addicted`'s -- accumulated in different subroutines and never
+checked. The decode is controlled against the model's own print: 3.2589 against
+3.2588654628626594 at 0.20, and 3.8856 against 3.8855666636818813 at 0.01.
+
+**READ A POINT AT ITS BLOCK COUNT.** The ratio drifts DOWN as the equilibrium
+settles -- 2.657 at block 1 against 2.384 at block 6 on the 0.5 point -- and the
+drift is entirely in the DENOMINATOR: `SUD|non-SMI` rose eleven per cent over
+the 0.05 point's eight blocks while `SUD|SMI` sat inside half a per cent. It
+does not touch the finding, because the saturation is in the column that does
+not drift.
+
+**`b_smi_multiple` HAS A GAPS ROW NOW**, which it did not before: its distance
+is RELATIVE so `pairs()` never discovered it, its adjuster is DECLARED zero and
+turned on from the handover so the held test dropped it, and it prints on the
+same line as its own distance so its value column was empty. All three are
+closed in `code/paper/calibration_report.py`, each with a before-and-after
+control on a frozen log and a joint log.
+
+**THE CONTAINERS REBOOT, BUT NOT AT THE FIRING TIMES** -- that reading was
+measured false and corrected at the top of ENGINE.md. This container booted at
+01:28 and has carried two solves through several turn boundaries since. Nothing survives a kernel reboot, so every solve
 runs in a worker session and this one coordinates only. See the entry at the top
 of ENGINE.md.
 
