@@ -143,3 +143,59 @@ The 18 unemployment states decode as `drug = (i-1)/6` and
 among users is `onset/(onset+exit)`, and the measured 0.2264/0.2792 = 0.811
 implies an exit hazard of 0.0079 -- consistent across both points and with the
 `r_smi` the Fortran itself prints. The split is not an artefact of the decode.
+
+
+---
+
+# SETTLED, 02:16: THE RATIO ASYMPTOTES AT ABOUT 4.01. THE CORRECTION ABOVE WAS
+# RIGHT ABOUT THE CLEAN SHARE AND WRONG ABOUT WHAT IT IMPLIED
+
+The author asked for 0.001 and then 1e-5. Both were run cold and frozen, read at
+block 1, everything else identical:
+
+    b_smi_multiple      r_smi     SMI clean   SMI SUD   SMI any use
+        0.20           3.2589      0.7724     0.1809      0.2276
+        0.01           3.5506      0.7208     0.2264      0.2792
+        0.001          4.0057      0.7245     0.2276      0.2755
+        1e-5           4.0094      0.7244     0.2278      0.2756
+                       TARGET 7.30
+
+**A HUNDREDFOLD CUT FROM 0.001 TO 1e-5 CHANGES EVERY CELL BY LESS THAN 0.0003.**
+That pair is the clean comparison -- same configuration, both cold, both block 1
+-- and it is flat. The ratio asymptotes near 4.01 and `b_smi` cannot deliver
+7.30. The heading of the section above stands; the correction under it was right
+that 72 per cent of SMI households are still clean, and wrong to read an open
+margin off it.
+
+The floor in the update is 1e-6, one decade below the last point, and two
+decades bought 0.0037 on the ratio, so the floor is not what binds either.
+
+## AND A PUZZLE THAT IS WORTH ONE CHEAP TEST BEFORE THIS IS QUOTED
+
+At `b_smi_multiple = 1e-5` the SMI shifter is 4.9e-8. Flow utility is
+Cobb-Douglas in `(b+v)`, so an abstaining household's index carries a factor
+`b^phi_q`, and at `phi_q = 0.165` that factor is 0.062 against 0.47 for a
+household spending five per cent of consumption on the drug. With `u = -1/X` the
+abstainer should be many times worse off, and essentially every SMI household
+should use SOMETHING. Seventy two per cent abstain, and the share does not move
+across two decades of `b`.
+
+So one of these is true and the sweep does not distinguish them:
+
+  - the drug STATE is a slow Markov chain rather than a period choice, and the
+    clean stock empties only through a transition whose hazard `b` does not
+    touch -- `lambda_addiction` is zero, so onset is a flat 0.0336 for any
+    positive quantity;
+  - or the abstaining branch of the value function does not see the SMI `b`.
+
+The second was checked as far as the source allows and looks sound:
+`b_shifter` ignores its arguments and reads `smi_of(unemployment_index)`, the
+abstain branches at 28524, 28534, 28549 and 28557 call it like every other
+branch, and `unemployment_index` is safe under OpenMP -- the loop over it at
+25265 is SERIAL and the `!$omp parallel do` inside runs over the financial
+index with `unemployment_index` correctly in the `shared` clause, so every
+thread in a region sees the same household state. There is no race.
+
+That leaves the first, which would mean `b` moves who WANTS to use while the
+stock of users is governed by hazards `b` does not enter. It is consistent with
+everything measured and it has not been demonstrated.
