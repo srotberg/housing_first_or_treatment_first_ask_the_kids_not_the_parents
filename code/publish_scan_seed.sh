@@ -33,11 +33,19 @@ fi
 # onset-base collapse; b above 0.5 is the degenerate corner.
 last=$(grep -a "BLOCK MOVE" "$SRC/run.log" | tail -1)
 [ -n "$last" ] || { echo "GUARD: no BLOCK MOVE line in $SRC/run.log"; exit 1; }
-echo "$last" | awk '{b=$11;l=$13;gsub(/[Dd]/,"E",b);gsub(/[Dd]/,"E",l)
+echo "$last" | awk -v force="${FORCE:-no}" '{b=$11;l=$13;gsub(/[Dd]/,"E",b);gsub(/[Dd]/,"E",l)
     if (l+0==0) { print "GUARD: lambda_d is ZERO -- collapsed point"; exit 1 }
     if (b+0>0.5) { print "GUARD: b above 0.5 -- degenerate point"; exit 1 }
-    printf "publishing b=%.6f (%+.1f%%)  lambda_d=%.6f (%+.1f%%)  block_move=%s\n",
-        b+0,100*((b+0)/0.10502-1),l+0,100*((l+0)/0.043424-1),$3 }' || exit 1
+    gb=100*((b+0)/0.10502-1); gl=100*((l+0)/0.043424-1)
+    printf "candidate b=%.6f (%+.1f%%)  lambda_d=%.6f (%+.1f%%)  block_move=%s\n", b+0,gb,l+0,gl,$3
+    if ((gb>15||gb<-15||gl>15||gl<-15) && force!="yes") {
+        print  "GUARD: a moment is more than 15 per cent from target."
+        print  "       The stopping rule is block_move < frozen_stop_tolerance, which means"
+        print  "       THE BLOCKS STOPPED MOVING, not that the moments arrived. A run that"
+        print  "       halts far from target is a premature stop, and publishing it would"
+        print  "       put every scan point on a vector that is not the benchmark."
+        print  "       If this point is wanted anyway:  FORCE=yes ./publish_scan_seed.sh"
+        exit 1 } }' || exit 1
 
 rm -rf scan_seed && mkdir -p scan_seed
 cp "$SRC/calibration_state.dat" scan_seed/
