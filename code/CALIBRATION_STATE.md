@@ -65,96 +65,66 @@ on, was the collapsing cap and not the reform.
 
 ## IN FLIGHT
 
-**THE 22 SEPTEMBER MORTALITY DIAGNOSTIC IS VOID. It solved Treatment First.**
-Seeded from the TRANSITION's handover, which sets
-`voucher_conditional_on_clean=1`; that switch is set by the handover alone and
-nothing resets it per phase. Every model number it produced is withdrawn --
-the ratios 1.928 through 2.244, the aggregate drug-use fall, and the inference
-that adopting the fix forces a drug-block recalibration. Full account in
-`results/smi_comorbidity/MORTALITY_FIX_RUN.md`. The author caught it from the
-arithmetic: a patch that lowers death risk for SMI households with a SUD, and
-touches nothing else, cannot cut aggregate drug use by a third in a population
-95 per cent of which it cannot reach.
+**THE MODEL HAS CHANGED THREE TIMES SINCE THE 20 SEPTEMBER BENCHMARK.** The SMI
+mortality double count is fixed; the model is one class with omega_c pinned at
+zero; and SMI is exogenous, `iota_smi` and `mu_m` both at one. All of these are
+DECLARED values in the Fortran, not vector entries, which is what makes a
+resume come back as the same experiment.
 
-**A HANDOVER IS NOT A CALIBRATION.** `PARAM_HANDOVER*` files carry policy
-switches as well as parameters. Print the switch lines before using one. The
-benchmark vector is `seeds/PARAM_HANDOVER_bm_n90repro.txt`, which agrees with
-the transition's on every calibrated parameter and differs only on the seven
-switches; the Fortran settles the ambiguous one: *"a zero here is written out as
-TF, a one is written as HF. Default 1 is the benchmark."*
+**THE COMORBIDITY TARGET IS 7.30**, computed from the repo's own NSDUH file at
+26+ on the same `svyrdudany` cut the level targets use, universe check passing
+at 0.0890 and 0.0368. Full account and the whole verification trail in
+`data/SMI_SUD_TARGET.md`. Data decomposes as entry 4.51 times persistence 1.62.
 
-**THE MODEL HAS CHANGED.** The SMI mortality double count is now fixed in
-`code/housing_first_or_treatment_first_SR_v1.f90` (1f8e7110), on the author's
-instruction to refit. What survives from the diagnostic is only the survival
-table itself, which is read at build time and no switch can touch:
+**WHERE THE RATIO HAS BEEN**, all measured, all on the benchmark switches:
 
-    clean housed, age 40         0.98719030618667603  both, to the last digit
-    SMI homeless w/ SUD, age 40  0.79504489593274741 -> 0.88727469276301107
-    cells clipped to zero           2 of 472  ->  0 of 472
+    archive benchmark, two class                        0.596
+    + mortality fix only, two class                     2.062
+    + one class, iota_smi=1, mu_m=1, mid-calibration    1.656   loop 12 checkpoint
+    same, the worker's block 1                          1.779
+    TARGET                                              7.30
 
-This invalidates the calibration, the benchmark, and every counterfactual and
-transition in the archive, because survival feeds the value of life, saving and
-labour supply.
+Removing `mu_m` cost most of the rise. The fix-only 2.062 was entry 1.39 times
+persistence 1.47; with `mu_m` at one the persistence contribution goes and the
+ratio falls back towards entry alone. That was stated before the choice was
+made and is recorded here because it sets the size of the job: `b_smi_multiple`
+now carries the whole distance from about 1.7 to 7.30, a factor of four and a
+third, where with `mu_m` kept it would have been about three.
 
-**THE COMORBIDITY TARGET IS 7.30, COMPUTED 21:05.** From the repo's own
-`data/raw/NSDUH_2024_public_use_file_tab_delimited.zip`, adults 26+, weighted,
-SMI from `SMIPY`, drug involvement from `SVYRDUDANY` -- the variable both model
-targets are built from. The universe check passes exactly, 0.0890 and 0.0368.
-Full account in `data/SMI_SUD_TARGET.md`.
+**THE CHANNEL IS BUILT AND LIVE.** `b_smi_multiple`, an SMI-specific multiple on
+`addiction_scalar_1`, with its moment `MOMENT r_smi`, its gaps row, its bracket
+and its persistence in `calibration_state.dat`. Three things about it that are
+easy to get wrong and are written at the code rather than only here:
 
-                                      SMI    non-SMI   ratio
-    use  (any DUD incl. mild)       0.34126   0.07570   4.51
-    SUD  (moderate or severe)       0.20426   0.02797   7.30
-    SUD among USERS                 0.59854   0.36940   1.62
+  - **THE BRACKET'S SIGN IS REVERSED.** b enters as (b+q)^phi_q so the marginal
+    value of the first unit goes like 1/b: a LARGER multiple means LESS use and
+    a LOWER ratio. Parameter and moment move in opposite directions and the
+    update ADDS the gap. Same trap as `kappa_phi_d_level`.
+  - **IT READS `smi_of(unemployment_index)` RATHER THAN TAKING AN ARGUMENT**, to
+    avoid forty silent hand edits. The cost is that `b_shifter` is no longer a
+    pure function of its arguments. The gate is DIRECTIONAL, not a no-op: move
+    the parameter and check SUD|SMI moves hard while SUD|non-SMI barely does.
+  - **IT PERSISTS AT THE TAIL OF `calibration_state.dat`, WITH ITS ADJUSTER.**
+    Without that every resume reset it to 1.0; without the adjuster a resume
+    came back HELD while still looking like it was running.
 
-The "about 2" carried through this session was wrong by a factor of 3.6: it came
-from secondary summaries on a broad, alcohol-inclusive definition at 18+.
+**RUNNING:** `session_01AeKvTFcZQr1V4rkDWhnCrx`, the one-class calibration with
+the bracket live at `b_smi_multiple_adjuster = 0.02`. Reports the full gaps
+table, `r_smi` against 7.30, and SUD|SMI and SUD|non-SMI separately as the
+directional gate. Two predecessors are archived.
 
-**RUNNING: the fix-only test, NOT a calibration.** The author: *"Before you do
-any refit I want to see if it is even needed."* `code/bench_fixonly/`, pid
-32050, launched 20:44:16, warm started from the archive benchmark and running
-`seeds/PARAM_HANDOVER_bm_n90repro.txt` with the benchmark switches VERIFIED IN
-ITS OWN LOG. No parameter moves.
+**THE CRAWL IS PROBABLY THE WRONG SEARCH, AND THIS IS OPEN.** The 5 per cent
+per loop cap was copied from a convention meant for economy-wide instruments;
+`b_smi_multiple` touches 4.8 per cent of the population and cannot collapse the
+aggregate. Participation is threshold-like in b, so the likelier failure is
+stepping straight PAST 7.30 and taking dozens of loops to come back. A coarse
+sweep at 1.0, 0.5, 0.2 and 0.05 with everything else frozen would map the
+response in four solves. Put to the author, awaiting their call.
 
-                    ref      blk 1     blk 2     target
-    aggregate SUD  0.03361   0.04359   0.05110   0.04342
-    ratio          0.596     2.162     2.043     7.30
-    BLOCK MOVE       --      1.0000    0.2048    1e-4
-
-**THE FIX IS WORTH KEEPING AND IS NOT ENOUGH.** It corrects an arithmetic error
-at no parameter cost and takes the comorbidity from the wrong sign to about a
-quarter of the way. It also OVERSHOOTS the level: lambda_d is now 18 per cent
-above target and still climbing, so a refit is needed for the level. "lambda_d
-lands on its target" was reported at block 1 and is withdrawn -- the path
-crossed the target, it did not settle on it.
-
-**THE REMAINING GAP IS AT ENTRY, AND THE INSTRUMENT IS `b`.** The ratios
-multiply exactly:
-
-                      entry  x  persistence  =  SUD ratio
-        data           4.51        1.62           7.30
-        model, fixed   0.78        2.78           2.16
-
-The model has SMI households STARTING to use less than everyone else when the
-data says they start 4.5 times more, and compensates with too much stickiness.
-`addiction_scalar_1` is bracketed on participation, which is exactly the missing
-margin, so an SMI-specific `b` answers to the use ratio 4.51. The recovery-side
-routes in `results/smi_comorbidity/WHAT_TO_ADD.md` push on persistence, which is
-already OVERDONE at 2.78 against 1.62 -- so does `mu_m=0.82`.
-
-**THE FULL JOINT CALIBRATION IS PREPARED BUT NOT RUNNING.** Launched 20:38:48
-and stopped at 20:43:28 because `run_one_point.sh` deletes the warm start by
-design, so it was cold: 41 minutes to a first block that means nothing, against
-~13 minutes a block warm. Its 88-argument vector is built and verified at
-`/tmp/claude-0/refit_args.txt`, the switches checked.
-
-**STOPPED: the T=45 no-grandfathering transition.** Killed 20:25 and its session
-archived, because it is a transition of a model that no longer exists. Loop 1's
-paths are committed as `seeds/*_t45_nogf_afterloop1.txt`, including the first
-pi_v vector in the project that carries a shape. Loop 0 closed 21 September
-07:58; loop 1 closed 22 September 16:45 with the budget at 0.0738 -> 0.046182 ->
-0.032962 against a rule of 5e-2, so the budget cleared and the drug market did
-not.
+**THE CONTAINERS ARE REBOOTING** on roughly a ten minute cadence, at the
+coordinator's firing times. Nothing survives a kernel reboot, so every solve
+runs in a worker session and this one coordinates only. See the entry at the top
+of ENGINE.md.
 
 ## THE HORIZON IS NOT SETTLED. T=45 IS NOT ENOUGH, AND I SAID IT WAS.
 
