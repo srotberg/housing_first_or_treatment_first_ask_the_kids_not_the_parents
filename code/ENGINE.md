@@ -1,5 +1,36 @@
 # The calibration engine
 
+> ## TWO CLASSES COSTS 4.67 GB A SOLVE, SO THE BOX HOLDS TWO. MEASURED 23
+> ## September 05:01, AT THE COST OF ONE ARM.
+>
+> A third two-class solve was launched beside two others and the kernel killed
+> one of the first two:
+>
+>     oom-kill: ... task=hftf, pid=9500
+>     Killed process 9500 (hftf) anon-rss:4,895,880 kB
+>
+> **`run.err` WAS EMPTY AND THE LOG JUST STOPPED**, mid value-function sweep at
+> age 42, with no backtrace, no Fortran runtime error and no reboot --
+> `uptime -s` was read at the moment the run was found dead and was unchanged.
+> An OOM kill leaves nothing in the victim's own stderr; the record is in
+> `dmesg`, and that is the only place to find it. Check there before concluding
+> a silent death was a container restart.
+>
+> THE ARITHMETIC. A two-class solve holds 4.67 GB. Three is 14 GB against the
+> cgroup's limit and does not fit; two is 9.3 GB and does. The ONE-CLASS points
+> run at about 2.3 GB, which is why three of them ran together all night and why
+> the habit did not transfer. **`child_penalty_classes` doubles the employment
+> grid, and it doubles the memory with it.**
+>
+> So: at two classes, TWO CONCURRENT SOLVES. If a third is wanted, it waits.
+>
+> THE RECOVERY WAS FREE, and only because the distribution is checkpointed. The
+> killed arm came back warm from its own block-2 `calibration_distribution1.dat`,
+> written 70 seconds before it died. The value function is NOT checkpointed, so
+> the block in flight was lost; that is the standing gap and it is recorded in
+> CALIBRATION_STATE.md.
+
+
 > ## THE CONTAINER SURVIVES TURNS. AN EARLIER VERSION OF THIS ENTRY SAID THE
 > ## OPPOSITE AND WAS WRONG. MEASURED 23 September 00:55 AND CORRECTED AT 01:20.
 >
