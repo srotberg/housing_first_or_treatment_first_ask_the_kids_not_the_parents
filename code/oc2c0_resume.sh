@@ -1,65 +1,66 @@
 #!/bin/sh
-# Resume the two-class omega_c = 0 benchmark. NEVER resume without a handover.
+# Resume the two-class omega_c = 0 benchmark. TWO WAYS TO GET THIS WRONG, and
+# both were got wrong today, an hour apart.
 #
-# WHY THIS SCRIPT EXISTS. oc2c0 was resumed in place with no PARAM_HANDOVER.txt
-# -- the reader consumes it at startup, so the directory had none -- and the
-# run COLLAPSED: b = 0.952, lambda_d = 0.000, r_smi = 0.000. Ninety-five per
-# cent using and nobody with a disorder.
+# WRONG WAY 1: RESUME WITH NO HANDOVER. The reader CONSUMES PARAM_HANDOVER.txt
+# at startup, so a finished run directory has none, and `./hftf` alone looks
+# like a resume. calibration_state.dat banks 108 names; the handover supplies
+# 100 and SIXTY-NINE ARE NOT BANKED, so they revert to their declarations.
+# addiction_onset_base is declared 0.d0 and with lambda_addiction pinned the
+# onset hazard is min(base + (1-exp(-0*q)),1), so a zero base means NOBODY EVER
+# DEVELOPS A DISORDER. Measured: b = 0.952, lambda_d = 0.000, r_smi = 0.000.
 #
-# THE CAUSE. calibration_state.dat banks 108 names. The handover supplies 100,
-# and SIXTY-NINE OF THOSE ARE NOT BANKED. Every one of them reverts to its
-# Fortran declaration on a resume. addiction_onset_base is declared
+# WRONG WAY 2: RESUME WITH THE FULL STAGING HANDOVER. The handover is applied
+# AFTER the state and OVERRIDES it, so copying the original 100-line file
+# resets every CALIBRATED parameter back to where the run started. Measured:
+# addiction_scalar_1 went from its reached 5.5336E-3 back to the declared
+# 4.9192E-3, discarding ten blocks of work, while lambda_d looked perfectly
+# healthy. This is the same trap omega_scan_run.sh already guards against.
 #
-#     real(8) :: addiction_onset_base=0.d0
+# THE CORRECT HANDOVER, WHICH IS oc2c0_resume_handover.txt, IS NEITHER. It is
+#   * the 69 UNBANKED names, which the state cannot carry, and
+#   * the 22 banked names whose reached value can be read back out of the log,
+# each at the value the calibration ACTUALLY REACHED. The remaining 7 banked
+# names are left out on purpose so the state file keeps them.
 #
-# and with lambda_addiction pinned at 0 the onset hazard is
-# min(base + (1-exp(-0*q)),1), so a zero base means NOBODY EVER DEVELOPS A
-# DISORDER. lambda_d goes to zero, the deterrent to using goes with it, and use
-# runs to 95 per cent. The run looked healthy: no error, no fault, stderr empty.
+# Ten parameters moved from staging over loops 1-20 and all ten are carried:
+#   addiction_scalar_1        +12.49%   multiple_find_if_addicted  -8.53%
+#   kappa_find_smi             -7.30%   newborn_endowment_scale    -6.54%
+#   utility_cost_of_treatment  -4.31%   value_of_life              +2.02%
+#   max_food_cost              -0.59%   addiction_onset_base       -0.50%
+#   discount_factor            -0.12%   mu_homeless                -0.00%
 #
-# THREE OF THE SIXTY-NINE ARE ALSO MOVED BY THE LOOP, so the staging value is
-# stale for them and they are overridden below with the values the calibration
-# actually reached:
-#
-#     addiction_onset_base       0.0336007  ->  0.0334310
-#     multiple_find_if_addicted  4.8855     ->  4.4688      (8.5 per cent)
-#     newborn_endowment_scale    0.11211    ->  0.10478     (6.5 per cent)
-#
-# The other 66 are constants the loop never touches, so staging is correct.
+# TO REBUILD IT after further blocks, re-read the reached values from the log:
+#   grep -aoE "^ <name>= +[-0-9.E+]+" run.log | tail -1
 set -e
 cd "$(dirname "$0")"
 DIR=oc2c0
 [ -f "$DIR/calibration_state.dat" ] || { echo "GUARD: no state to resume from"; exit 1; }
-head -1 "$DIR/calibration_state.dat" | grep -qx 'calibration_state_v3' || { echo "GUARD: state not v3; it would be ignored and the declarations would run"; exit 1; }
+head -1 "$DIR/calibration_state.dat" | grep -qx 'calibration_state_v3' || { echo "GUARD: state not v3"; exit 1; }
+[ -f oc2c0_resume_handover.txt ] || { echo "GUARD: no resume handover"; exit 1; }
 
 cd "$DIR"
 [ -f run.log ] && cp run.log "run.log.$(date +%H%M%S)"
 
-# The distributions left by the collapsed block are garbage. The benchmark's
-# own stationary distribution, written before the collapse, is the good one and
-# is byte-identical in size.
+# Any distribution left by a bad block is garbage. The benchmark's own
+# stationary distribution, written at 09:29 before the first collapse, is the
+# good one and is byte-identical in size.
 if [ -f distribution_stationary1baseline_benchmark.dat ]; then
     cp distribution_stationary1baseline_benchmark.dat calibration_distribution1.dat
     cp distribution_stationary2baseline_benchmark.dat calibration_distribution2.dat
     printf '     8564400\n' > calibration_distribution_shape.dat
 fi
 
-cp ../oc00/PARAM_HANDOVER.relaunch.txt PARAM_HANDOVER.txt
-sed -i 's/^addiction_onset_base .*/addiction_onset_base   3.3431004637304002E-02/'        PARAM_HANDOVER.txt
-sed -i 's/^multiple_find_if_addicted .*/multiple_find_if_addicted   4.4688291440779171E+00/' PARAM_HANDOVER.txt
-sed -i 's/^newborn_endowment_scale .*/newborn_endowment_scale   1.0477955188261341E-01/'  PARAM_HANDOVER.txt
-sed -i 's/^weight_on_child .*/weight_on_child 0/'                                          PARAM_HANDOVER.txt
-sed -i 's/^omega_c_is_pinned .*/omega_c_is_pinned 1/'                                      PARAM_HANDOVER.txt
-sed -i 's/^freeze_all_but_omega_c .*/freeze_all_but_omega_c 0/'                            PARAM_HANDOVER.txt
+cp ../oc2c0_resume_handover.txt PARAM_HANDOVER.txt
 cp PARAM_HANDOVER.txt PARAM_HANDOVER.relaunch.txt
 
-for g in "weight_on_child 0" "omega_c_is_pinned 1" "freeze_all_but_omega_c 0" "penalty_child_addicted 0.24"; do
-    grep -qx "$g" PARAM_HANDOVER.txt || { echo "GUARD: $g"; exit 1; }
-done
-grep -qE '^addiction_onset_base +3\.34310' PARAM_HANDOVER.txt || { echo "GUARD: onset base is not the calibrated value -- a zero here collapses the model"; exit 1; }
+grep -qE '^addiction_onset_base +3\.34310'  PARAM_HANDOVER.txt || { echo "GUARD: onset base not calibrated -- a zero here collapses the model"; exit 1; }
+grep -qE '^addiction_scalar_1 +5\.53363'    PARAM_HANDOVER.txt || { echo "GUARD: addiction_scalar_1 is not the reached value -- ten blocks would be discarded"; exit 1; }
+grep -qx 'weight_on_child 0'                PARAM_HANDOVER.txt || { echo "GUARD: weight_on_child"; exit 1; }
+grep -qx 'freeze_all_but_omega_c 0'         PARAM_HANDOVER.txt || { echo "GUARD: joint loop"; exit 1; }
 
 nohup ./hftf > run.log 2> run.err &
 echo "oc2c0 resumed, pid $!"
-echo "CONFIRM WITHIN THE FIRST BLOCK, and stop it if either fails:"
-echo "  grep -ac HANDOVER oc2c0/run.log                  # ~100, never 0"
-echo "  grep -a 'MOMENT lambda_d' oc2c0/run.log | tail -1 # must NOT be 0.000000"
+echo "CONFIRM IN BLOCK 1 -- stop the run if either fails:"
+echo "  grep -a 'MOMENT lambda_d' oc2c0/run.log | tail -1     # NOT 0.000000"
+echo "  grep -a '^ addiction_scalar_1=' oc2c0/run.log | tail -1 # NOT 4.9191800E-3"
