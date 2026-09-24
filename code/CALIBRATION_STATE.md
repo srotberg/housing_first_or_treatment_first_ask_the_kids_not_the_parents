@@ -1,3 +1,50 @@
+# kappa_x = 0.9329, AND A CORRECTION I OWE THE RECORD, 24 September 00:27
+
+## THE NUMBER
+
+The benchmark control's converged probe reports the implied kappa_x two ways:
+
+    income basis        0.9329    <- the author's target
+    consumption basis   0.6083
+
+The target is the kappa_x at which removing ALL homelessness is worth 0.20 per
+cent of INCOME. The probe's scalar multiplies non-drug consumption, so the
+consumption-basis figure answers a different question. Together they give
+
+    s = 0.6083/0.9329 = 0.6521      consumption is 65.2% of the budget
+    CEV scalar = 0.002/s = 0.307%
+
+which is the author's own arithmetic: expressed in consumption rather than
+income, the CEV has to be more than 0.20 per cent. The internalisation run is
+solving at 0.9329.
+
+## I WAS WRONG THAT kappa_x HAD BEEN "NEAR SWITCHED OFF"
+
+Twice today I wrote that the coded kappa_x was 0.002 and therefore about 310
+times too small, and that the charge had been "essentially switched off in
+every run to date". **That is false, and it should not have been said.**
+
+0.002 is the FORTRAN DECLARATION at line 3678. It is not what any run uses.
+The calibrated value is **0.8139**, carried at line 23 of
+`code/scan_seed/PARAM_HANDOVER_base.txt`, and the handover overrides the
+declaration at startup. Every run seeded from that vector -- the whole scan,
+the control, every counterfactual -- has used 0.8139.
+
+So the recalibration is 0.8139 -> 0.9329, a rise of FOURTEEN PER CENT, not a
+factor of 310. Nothing was switched off and no past result is in question on
+this account.
+
+The error was comparing a measured quantity against a declaration without
+checking what the handover does to it -- the same class of mistake as the
+handover trap recorded further down this file, made in the opposite direction.
+The rule that follows: NEVER quote a parameter from its declaration. Read it
+from `PARAM_HANDOVER_base.txt`, which is the vector in use.
+
+And the same correction clears a suspicion I raised: the internalisation worker
+proposed 0.8139 and I doubted it because I could not source it. It was reading
+the calibrated value. The worker was right; asking was still correct, because
+an unsourced kappa_x would have cost a whole run.
+
 # THE kappa_x TARGET IS 0.20 PER CENT OF INCOME, AND THE CONVERSION IS EXACT
 # 24 September 00:25
 
