@@ -1,3 +1,18 @@
+# IN FLIGHT, 24 September 20:40: counterfactuals v2, one benchmark and three arms
+
+- session_011HE2FoD9oEfGDmCFwFg9gx runs remote_cf_arm.sh: the HF omega_c = 0.06
+  benchmark once (cfarm_bench), then internalise, omega1 and tf, each carrying
+  the benchmark's voucher probability 0.067533863251354. Results go to
+  results/counterfactuals_cf_v2/<arm>/. Expected: internalise about 01:00 UTC,
+  the other two a few hours after.
+- The first internalise arm (results/counterfactuals_cf/internalise/) ran at the
+  declared 0.06 and is superseded. The first omega1 arm had the same fault and
+  was archived before it finished.
+- The first tf arm (session_01LxhTRbB5QNDAeLqvVag69e) is still running. pi_V is
+  its budget instrument, so the start value washes out at convergence. Check its
+  stage-1 b: its benchmark stage ended after about 50 minutes, where the others
+  took 2.5 to 4 hours.
+
 # THE REDO RUNS THE WAY THE OLD ARMS DID, 24 September 16:55
 
 The author: *"the budget clearing in rationed TF is done with pi_v and in the
