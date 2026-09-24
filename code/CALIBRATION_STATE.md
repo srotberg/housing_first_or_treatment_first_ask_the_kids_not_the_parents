@@ -1,3 +1,29 @@
+# kappa_x = 0.9329 VERIFIED IN MODEL UNITS, 24 September 00:41
+
+The author: *"It should be done based on model units."* Checked, and it passes.
+
+The control formed s from ITS OWN aggregates, in the model's units, and reports
+
+    s = aggregate_consumption / model_total_income = 0.65201
+
+together with the two confirmations that make the ratio meaningful:
+`aggregate_consumption` EXCLUDES housing and drugs -- housing sits in separate
+rent and mortgage terms -- and both quantities are the same kind of object, so
+no factor of the population mass enters.
+
+The arithmetic closes on itself:
+
+    consumption-basis implied kappa_x   0.6083
+    divided by s = 0.65201              0.93296
+    reported income-basis kappa_x       0.9329      <- 0.007% apart
+
+So the income-basis figure was not formed from a data moment or an assumed
+share; it is the model's own consumption share, and 0.9329 stands in model
+units.
+
+    CEV scalar in consumption = 0.002/0.65201 = 0.3067%
+    recalibration             = 0.8139 -> 0.9329, +14.6%
+
 # kappa_x = 0.9329, AND A CORRECTION I OWE THE RECORD, 24 September 00:27
 
 ## THE NUMBER
