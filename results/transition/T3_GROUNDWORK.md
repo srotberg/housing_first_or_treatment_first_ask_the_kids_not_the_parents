@@ -23,7 +23,16 @@ way `build_transition_t60.sh` already does it; the tracked
 ## What this found, in one page
 
 **The machinery works.** A T = 3 transition runs: prologue, backward pass,
-forward pass, welfare, budget, price update, and into loop 1. Nothing failed.
+forward pass, welfare, budget, price update, loop closure, and a second full
+loop with both equilibrium instruments moving. Nothing failed.
+
+**Raising the horizon is a no-op for a steady-state solve, proved twice.** The
+before and after binaries at `is_counterfactual=0` are byte-identical
+(md5 `a3d4bda31926fb6c9c172aea232b4035`), so a benchmark run after the change
+cannot differ from one before it. The two one-block runs the brief asked for
+agree anyway: `b` 0.083468653643308396 against 0.083466809898833066 and
+`lambda_d` 0.035965729175956591 against 0.035964576278425552, both about
+3e-5 relative, inside the 1e-4 rule.
 
 **T = 60 is affordable.** The brief's 0.0746 GB per period is exactly right,
 confirmed three ways. The T-independent constant is larger than the brief
@@ -243,6 +252,17 @@ budget clears in every period".
 `loop_count<1` is false once loop 0 has incremented the counter at line 55570.
 So **after loop 0 the drug-market distance is the only term that can keep the
 run alive**, and whether the budget was ever measured has no bearing on it.
+
+**Confirmed by carrying the run into loop 1.** The same quantity, printed at the
+close of each loop:
+
+    loop 0   largest_distance_govt_budget=   0.0000000000000000
+    loop 1   largest_distance_govt_budget=   3.0687008268232674E-002
+
+The 0.0307 at loop 1 is the same residual the loop-0 `TRANSITION BUDGET` line
+already printed. Nothing about the economy changed between the two loops to
+make the budget stop clearing; what changed is that the gate opened and somebody
+measured it.
 
 It did not fire here: the T = 3 run reported
 
@@ -877,7 +897,39 @@ map. `OMP_NUM_THREADS=2`.
     b        = 9.8916056747807166E-002
     lambda_d = 4.3579290623499613E-002
 
-(filled below, see RESULT)
+### RESULT: the control passes
+
+|  | BEFORE | AFTER | relative difference |
+|---|---|---|---|
+| `b` | 0.083468653643308396 | 0.083466809898833066 | **2.21e-05** |
+| `lambda_d` | 0.035965729175956591 | 0.035964576278425552 | **3.21e-05** |
+| `h_1` | 0.007126657711096049 | 0.0071263554635781559 | 4.24e-05 |
+| average labour income | 1.1459965086423596 | 1.145997256547417 | 6.53e-07 |
+
+All four are inside 1e-4 relative, which is the standard this note was told to
+judge on and not equality, because the model is not bit-reproducible in general.
+**Raising the horizon is a no-op for a steady-state solve.**
+
+### Two honest notes on what these numbers are
+
+**The residual difference is OpenMP noise and cannot be anything else.** The two
+binaries are byte-identical, the inputs are byte-identical, and the thread count
+is the same, so the only source of difference is reduction order across threads.
+That makes the table above a useful by-product: **2e-5 to 4e-5 is this model's
+own run-to-run spread on b and lambda_d at two threads**, which is the floor any
+future comparison of two solves has to beat before it means anything.
+
+**One block from this seed does NOT reproduce the seed's converged values, and
+should not be read as a failure to.** The reference stated above --
+b = 0.0989, lambda_d = 0.0436 -- is where the source run `oc2c0` ENDED after 22
+loops. Both runs here report b = 0.0835 and lambda_d = 0.0360, about 16 and 17
+per cent below it, and both report `BLOCK MOVE 1.0` against a rule of 1e-3, so
+the economy is nowhere near still. That is what one block from a restart looks
+like: the distribution re-converges from the loaded warm start and the
+equilibrium map moves the moments before the blocks settle again. It is
+irrelevant to the control, which asks only whether the two runs agree with each
+other, and they do. It would be very relevant to anyone reading 0.0835 as a
+measurement of this calibration.
 
 
 ## 5. The exact diff needed to enable T = 60 -- WRITTEN OUT, NOT PUSHED
