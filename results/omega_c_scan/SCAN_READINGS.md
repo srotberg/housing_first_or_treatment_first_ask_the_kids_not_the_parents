@@ -48,6 +48,26 @@ every point in the table is measured the same way against the same reference.
 It is a note about the benchmark's own convergence, for whenever that is
 revisited.
 
+**The control has now been run to convergence** (24 September, 00:07;
+`SCAN_0_CONTROL_RESULT.md`). It did not keep walking indefinitely -- it
+converged on its own rule at block 12, BLOCK MOVE 3.39e-4 against 1e-3:
+
+    b        0.090598    (-8.41% against the published 0.098916)
+    lambda_d 0.038662    (-11.28% against the published 0.043579)
+
+Block 8 there is 0.091459, confirming the 0.0914 above. The run is clean --
+97 HANDOVER lines, zero "budget does not clear", every adjuster reported
+zeroed -- so this is the benchmark's convergence, not a broken point.
+
+The one thing to check first if the benchmark is ever re-published from a
+converged block: **the reference is not a constant shift.** Eighteen per cent
+is b = 0.081111 on the published reference, which the grid straddles at 0.06;
+on the converged control it is b = 0.074290, which is below EVERY point on the
+grid, since 0.08 only reaches 0.077688. Measured against the converged
+control the same points read -10.33% (0.06), -10.89% (0.065), -11.18% (0.07)
+and -14.25% (0.08), so the 18 per cent target would lie beyond omega_c = 0.08
+and the grid would have to be extended to bracket it.
+
 
 
 The benchmark, calibrated once at omega_c = 0 and published under
