@@ -1,3 +1,41 @@
+# THE T = 3 GROUNDWORK FOUND THREE REAL DEFECTS, 24 September 00:20
+
+Full note: `results/transition/T3_GROUNDWORK.md`. The machinery works -- a T = 3
+transition runs the prologue, both passes, welfare, budget, price update and a
+second full loop with both instruments moving -- and raising the horizon is a
+proved no-op for a steady state (the two benchmark binaries are BYTE-IDENTICAL,
+md5 a3d4bda31926fb6c9c172aea232b4035). But three things are wrong, and none of
+them makes a run fail, which is why none was noticed:
+
+1. **THE REFORM PERIOD DRAWS ITS NEWBORNS AGAINST "EVERY PARENT CLEAN AND
+   HOUSED."** `newborn_parent_share` is the live intergenerational channel, has
+   no time index, and at t = 1 has no predecessor to read, so it takes a
+   cold-start fallback: the run reads 1.0, 0.0, 0.0 at t = 1 and measures
+   0.967, 0.0285, 0.0018 one step later. There is no seed file that would fix
+   it -- the tracked one is 104 zeros. **EVERY transition run made from the
+   committed seeds has had this, including the T = 45 arm already in
+   `results/`.**
+
+2. **The budget's term in the exit test is zero at loop 0 because it is never
+   measured there**, and no line says so. After loop 0 the drug distance is the
+   only live term, so the exit test is weaker than it reads.
+
+3. **The transition's CEV is the newborn cohort's and nobody else's.** The
+   EQUILIBRIUM integrates over the whole age distribution alive at the reform,
+   which is what TRANSITION_LESSONS demands and it is correct. The welfare
+   REPORT does not: the 59 generations caught by the reform have no consumption
+   equivalent at all.
+
+**And a correction to the standing instructions themselves.** TRANSITION_LESSONS
+section 14 certifies the child's penalty keying off a branch that CANNOT
+EXECUTE -- the source's own comment at line 32931 says the arm is dead. The
+verdict is right and the mechanism is correct, but the evidence cited is not,
+and it points the next auditor at the wrong array.
+
+THE DIFF LANDS IN HALVES. The horizon change alone compiles bit-identical on
+both arms and is safe today. The `solve_transition_dynamics` line is the one
+that would break the three live counterfactual runs, so it waits for them.
+
 # THE CEV NULL CHECK PASSES ON A CONVERGED RUN, AND kappa_x IS ~310x TOO SMALL
 # 23 September 23:20
 
@@ -72,6 +110,18 @@ Against the source's own measurement that the windowed run at T = 30 is
     T = 60     9.41 GB   FITS
     T = 90    11.65 GB   fits, tight
     T = 120   13.88 GB   OVER the 13.36 GB cgroup cap measured on these boxes
+
+**CORRECTED 24 September 00:20 by measurement.** The 0.0746 GB per period is
+exactly right, confirmed three ways in `results/transition/T3_GROUNDWORK.md`.
+The T-INDEPENDENT CONSTANT IS NOT 4.93 GB, IT IS 6.06 GB: the 7.17 GB figure I
+subtracted it from was not measured at the peak, and the peak is what has to
+fit. So
+
+    T = 60    about 10.5 GB, not 9.41   -- still fits
+    T = 120   correspondingly worse
+
+The conclusion is unchanged and T = 60 is affordable, but the headroom is about
+a gigabyte smaller than I said.
 
 So paging the value function -- the open task -- is needed beyond about T =
 110, not for the T = 60 the author has asked for.
