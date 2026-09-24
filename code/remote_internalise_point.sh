@@ -18,6 +18,15 @@
 # because it moves policy functions a provisional value wastes the entire run.
 # `stage` does everything that does not depend on it -- build, decompress, guard
 # -- and refuses to solve. `solve` writes the handover and launches.
+
+# PEGGED DRUG PRICE -- THIS SCRIPT RUNS A COUNTERFACTUAL ON THE BENCHMARK BINARY.
+# On is_counterfactual = 0, clear_drug_market re-normalises the supply shifter
+# every block, so the drug price is pinned at 1 and drug_supply_elasticity does
+# nothing. The old experiments cleared the market at 1.46, and so must every
+# counterfactual reported in the paper (author, 24 September). Use
+# remote_cf_clearing.sh. Set ALLOW_PEGGED_PRICE=1 only to reproduce an old
+# pegged run deliberately.
+[ "${ALLOW_PEGGED_PRICE:-0}" = 1 ] || { echo "GUARD: pegged drug price -- use remote_cf_clearing.sh (or ALLOW_PEGGED_PRICE=1 to reproduce a pegged run on purpose)"; exit 1; }
 set -e
 cd "$(dirname "$0")"
 
