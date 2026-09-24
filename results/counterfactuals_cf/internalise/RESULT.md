@@ -1,3 +1,14 @@
+> **SUPERSEDED, 24 September 20:50. The arm ran at the wrong voucher probability.**
+> The benchmark (stage 1) reads `probability_of_voucher_benchmark_used` from
+> calibration_state.dat, 0.067533863251354. The counterfactual binary never calls
+> read_calibration_state, and the handover did not carry that line, so the arm
+> ran at the declared 0.06: 11 per cent fewer voucher offers. cf.log prints
+> `probability_of_voucher= 5.9999998658895493E-002` against the benchmark's
+> `6.7533863251354007E-002`. That is a housing-policy cut inside a
+> no-budget-clearing arm, and it is why h_1 RISES here (+2.87%) where the
+> fixed-price run had it falling (-2.45%). code/remote_cf_arm.sh now carries the
+> value and checks it; the rerun goes to results/counterfactuals_cf_v2/.
+
 # Internalise counterfactual (omega_c = 0.06, kappa_x 0.9329, adjust_taxes 0)
 
 Run with `code/remote_cf_arm.sh internalise` on commit 5ab5d5f. The next commit on

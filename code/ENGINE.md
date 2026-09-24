@@ -1,3 +1,28 @@
+# THE COUNTERFACTUAL BINARY DOES NOT READ calibration_state.dat, 24 September 20:50
+
+The internalise arm on the old counterfactual path ran at voucher probability
+0.06, the declaration, while its own benchmark ran at 0.067533863251354. The
+benchmark binary's calibrating_model calls read_calibration_state (46981);
+long_run_counter_factual never does. Anything the benchmark takes from
+calibration_state.dat and the handover does not carry silently reverts to its
+declaration in the arm. Of the 115 handover keys, 16 were missing from the arm's
+handover. probability_of_voucher_benchmark_used was the only one that is also
+held in calibration_state.dat with a non-declared value. rho_intergenerational,
+b_smi_multiple and zeta_DI are in neither, so both stages use their
+declarations. The printed-value diff of bench.log against cf.log shows no other
+parameter moving. size_of_smallest_house_hhld_can_buy does drop 0.01 in
+upload_vars, but it is inert: only smallest_index_for_purchase = 2 is used.
+
+In a no-budget-clearing arm this is an 11 per cent cut in voucher offers hidden
+inside the experiment. h_1 went +2.87 per cent where the fixed-price run had
+-2.45 per cent. Treatment First is not affected at convergence, because pi_V is
+its budget instrument (53184).
+
+THE RULE: before trusting an arm, diff every parameter bench.log prints against
+cf.log's first pass. Policy switches and prices are the only lines that should
+differ. remote_cf_arm.sh now sets the value from the benchmark's own log and
+prints VOUCHER CHECK PASS or GUARD FAIL after the run.
+
 # A SOLVED BENCHMARK IS KEPT WITH EVERY FILE THE COUNTERFACTUAL BINARY READS, 24 September 19:05
 
 The HF omega_c = 0.06 benchmark was solved, but only its welfare curve,
