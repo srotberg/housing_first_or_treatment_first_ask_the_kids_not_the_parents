@@ -25,7 +25,20 @@ set -e
 cd "$(dirname "$0")"
 OMEGA="$1"
 [ -n "$OMEGA" ] || { echo "usage: $0 <omega_c>"; exit 1; }
-DIR="scan_tfu$(echo "$OMEGA" | tr -d '.')"
+# SECOND ARGUMENT "tested": APPLICANTS ARE TESTED BEFORE BEING REJECTED.
+# The author, 24 September: "it should be tested before being rejected. the
+# false negative should apply to applicants too." With the homeless-addicted
+# multiplier at 0, a failing applicant's offer is (1-p_det)*prob*0 = 0 -- an
+# outright ban, detection never enters (voucher_probabilities, ~line 36711).
+# At 1 the applicant is offered at the base rate and then tested: 30 per cent
+# get the voucher, 70 per cent are caught and go to the three-year exclusion.
+# Holders are tested exactly as before. No Fortran change is involved.
+MODE="${2:-ban}"
+case "$MODE" in
+  ban)    INC=0; DIR="scan_tfu$(echo "$OMEGA" | tr -d '.')" ;;
+  tested) INC=1; DIR="scan_tft$(echo "$OMEGA" | tr -d '.')" ;;
+  *) echo "usage: $0 <omega_c> [ban|tested]"; exit 1 ;;
+esac
 SEED=scan_seed
 BIN=${TFU:-$(pwd)/tfu/tfu_prod}
 
@@ -54,7 +67,7 @@ set_line() { sed -i "s|^$1 .*|$1 $2|" PARAM_HANDOVER.txt; grep -qx "$1 $2" PARAM
 
 set_line weight_on_child                                    "$OMEGA"
 set_line voucher_conditional_on_clean                       1
-set_line increased_prob_of_voucher_if_homeless_and_addicted 0
+set_line increased_prob_of_voucher_if_homeless_and_addicted "$INC"
 set_line probability_of_detection                           0.70
 set_line probability_of_false_positive                      0
 set_line include_voucher_exclusion                          1
@@ -73,5 +86,5 @@ echo "handover: $n lines, all eight switches asserted by value"
 
 export OMP_NUM_THREADS=2
 date +%s > START_EPOCH
-echo "solving RATIONED TF (every holder tested) at omega_c=$OMEGA, OMP_NUM_THREADS=2 ..."
+echo "solving RATIONED TF (every holder tested, applicants: $MODE) at omega_c=$OMEGA, OMP_NUM_THREADS=2 ..."
 ./hftf > run.log 2> run.err
