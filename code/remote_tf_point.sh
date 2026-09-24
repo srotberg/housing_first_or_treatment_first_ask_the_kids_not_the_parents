@@ -36,6 +36,11 @@ command -v gfortran >/dev/null 2>&1 || {
   command -v gfortran >/dev/null 2>&1 || { echo "GUARD: gfortran could not be installed"; exit 1; }
 }
 
+# code/data MUST EXIST: the Fortran opens "../data/*.csv" relative to the run
+# directory, so a scan point running from code/scan_<x>/ needs code/data. Absent,
+# it prints "not found. stopping." and halts. Guard taken from remote_scan_point.sh.
+[ -e data ] || ln -s ../data data
+
 rm -rf "$DIR" && mkdir -p "$DIR"
 echo "building (-O3 with -g -fbacktrace)..."
 gfortran -fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium \
