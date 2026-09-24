@@ -36,14 +36,29 @@ mkdir -p "$OUT"
 
 sed -e 's/integer, parameter :: is_counterfactual=0/integer, parameter :: is_counterfactual=1/' \
     -e 's/integer, parameter :: use_revenues_to_increase_voucher_probability=0/integer, parameter :: use_revenues_to_increase_voucher_probability=1/' \
-    -e 's/integer, parameter :: solve_transition_dynamics=is_counterfactual\*0+(1-is_counterfactual)\*0/integer, parameter :: solve_transition_dynamics=1/' \
-    -e "s/solve_transition_dynamics\\*30\$/solve_transition_dynamics*$T/" \
+    -e 's/integer, parameter :: solve_transition_dynamics=.*/integer, parameter :: solve_transition_dynamics=1/' \
+    -e "s/\(integer, parameter :: transition_length=(1-solve_transition_dynamics)\*1+solve_transition_dynamics\*\)[0-9][0-9]*/\1$T/" \
     "$SRC" > "$OUT/tr_nogf.f90"
 
-n=$(diff "$SRC" "$OUT/tr_nogf.f90" | grep -c '^[<>]' || true)
-if [ "$n" -ne 8 ]; then
-  echo "REFUSING: expected exactly 4 changed lines (8 diff lines), got $n."
-  diff "$SRC" "$OUT/tr_nogf.f90" | grep '^[<>]' || true
+# THE GUARD IS BY VALUE, NOT BY COUNT.
+#
+# Counting diff lines breaks the moment the SOURCE already carries a value this
+# script sets. That happened when transition_length moved from 30 to 60: six of
+# the seven transition build scripts refused, and build_transition.sh -- which
+# had no horizon sed at all -- silently built a T=60 binary under its own T=30
+# heading. A count cannot tell "already correct" from "no longer matches", and
+# only one of those two is safe.
+#
+# So the switches are ASSERTED BY VALUE in the generated file, which is the rule
+# this repository already applied to grandfather_voucher_states and
+# window_distributions, and the diff is required to contain NOTHING BUT the
+# parameter lines this script is allowed to touch.
+stray=$(diff "$SRC" "$OUT/tr_nogf.f90" | grep '^[<>]' | \
+        grep -vE 'parameter :: (is_counterfactual|use_revenues_to_increase_voucher_probability|solve_transition_dynamics|transition_length|grandfather_voucher_states|window_distributions)=' || true)
+if [ -n "$stray" ]; then
+  echo "REFUSING: the generated source differs from the tracked source outside"
+  echo "  the switch lines this script is allowed to set:"
+  echo "$stray"
   exit 1
 fi
 
