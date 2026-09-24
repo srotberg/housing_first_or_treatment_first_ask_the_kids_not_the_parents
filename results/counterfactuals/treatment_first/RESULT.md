@@ -102,7 +102,7 @@ the calibration loop exits (line 52324), and a frozen run never exits that loop,
 so a hand-stopped run always dies inside it. A CEV requires a further pass with
 `frozen_stop_after_blocks` set above zero.
 
-## THE TRANSIENT, AND WHY THE EARLY BLOCKS OVERSTATED THE DROP
+## THE TRANSIENT, AND WHY THE EARLY BLOCKS UNDERSTATED THE DROP
 
 `bequest_residual` fell monotonically across all nine blocks and never turned:
 
@@ -148,7 +148,19 @@ only the false positive rate. The enforcement block at 36670 is gated solely on
 `voucher_conditional_on_clean`, so testing and its costs are live throughout,
 and `govt_spending_on_drug_tests` is non-zero at every block.
 
-So this is conditionality that BITES ON THE HOMELESS, not the universal variant.
+Line 32381 is gated the same way. That is the branch giving a household in
+category 3 the transition to drop to no voucher at all:
+
+    if ((is_counterfactual==1) .AND. (voucher_index_1==3) .AND. &
+        (increased_prob_of_voucher_if_homeless_and_addicted==0)) then
+
+so on this path a voucher HOLDER is never tested out of the voucher. What the
+conditionality reaches is ENTRY: a failing homeless household routes to category
+3, whose offer probability is driven to zero, so it never receives one.
+
+So this is the ENTRY-ONLY variant, not the universal Treatment First the paper
+states. The number is sound for what it measures and should be labelled that
+way.
 Setting `is_counterfactual = 1` would require either a source edit or the
 separate counterfactual binary from `code/build_cf.sh`, and was ruled out for
 this run. Recorded so the number is labelled correctly.
