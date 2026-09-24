@@ -344,6 +344,30 @@ That is in line with the 16-30 hours TRANSITION_LESSONS already quotes for the
 recompute-forward design, and it is per LOOP -- the T = 45 arm needed more than
 one.
 
+**How many loops is the open question, and this run gives a first number with a
+large caveat.** Two loops closed here, and the live convergence condition moved
+
+    loop 0   CONVERGENCE drug_market distance=  0.11651339654025572   rule= 5.0E-003  OPEN
+    loop 1   CONVERGENCE drug_market distance=  0.10880745627490562   rule= 5.0E-003  OPEN
+
+-- a fall of 6.6 per cent per loop. Extrapolated naively that is about forty
+loops to reach the rule, which at T = 60 would be months and is obviously not the
+plan.
+
+**The caveat is bigger than the number**, so do not carry the forty across. This
+T = 3 run was seeded with the FIRST TWO ENTRIES of a 59-entry path seed, because
+that is all a 3-period horizon can use, so it is close to the linear ramp that
+`seeds/README.md` records as costing "about ten loops on the T = 30 arm". A
+T = 60 run seeded with the whole of `drug_price_path_seed_t60_nogf.txt` starts
+far closer and should need far fewer. The honest reading is that **the loop count,
+not the per-loop cost, is what sizes a T = 60 run**, and that this test says
+nothing reliable about it -- which is itself worth knowing before an overnight
+run is booked on a per-loop figure alone.
+
+It also sharpens the exit-test finding above. The better the seed, the smaller
+the loop-0 drug distance, and the drug distance is the only term standing between
+a cold-start run and an exit at the end of loop 0.
+
 
 ## 2. The two TRANSITION_LESSONS checks
 
