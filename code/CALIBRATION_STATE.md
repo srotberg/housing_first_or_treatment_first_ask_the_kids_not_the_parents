@@ -1,32 +1,42 @@
-# TREATMENT FIRST IS RERUN WITH APPLICANTS TESTED, 24 September 15:00
+# ON THE FROZEN PATH THE DRUG PRICE IS PEGGED AT 1: THE 1.46 ELASTICITY IS INERT, 24 September 16:05
 
-The author, on the rationed TF result: *"the rationed TF should be redone with an
-average three-year exclusion. ... it should be tested before being rejected. the
-false negative should apply to applicants too."*
+The author asked whether the drug supply elasticity of 1.46 is included,
+surprised at omega_c = 1's -75%. It is SET (handover line 9, in every run
+tonight) but it DOES NOTHING on the path every run tonight used.
 
-The exclusion WAS on in the last run (`include_voucher_exclusion 1`, echoed in
-the log). It never bound because applicants who use were refused outright, so
-nobody was ever caught. With
-increased_prob_of_voucher_if_homeless_and_addicted = 0, a failing applicant's
-offer is (1-p_det)*min(prob*0,1) = 0, and detection never enters.
+clear_drug_market (44756): on `is_counterfactual == 0` -- the benchmark binary,
+which the frozen scan path is -- it re-picks the supply shifter so the price
+sits at the benchmark's own, at WHATEVER quantity is consumed:
 
-At 1, the vcc = 1 block of voucher_probabilities gives exactly the author's rule,
-with no Fortran change:
+    drug_supply_shifter = 1/(quantity**(drug_supply_curvature-1))
+    price_of_addictive_good = price_of_addictive_good_benchmark
 
-    applicant, fails:  offered 0.30*prob, excluded 0.70*prob, stays out 1-prob
-    applicant, clean:  offered prob (no false positives), never excluded
-    holder, fails:     keeps 0.30, excluded 0.70 (never straight to 0)
-    holder, clean:     keeps 1
+Only the `else` branch, `is_counterfactual == 1`, reads the benchmark's shifter
+and clears along the upward-sloping supply curve. The source says so at 46755:
+"With is_counterfactual = 0 clear_drug_market normalises the shifter, sets the
+price to the benchmark's own and sets distance_drug_market to zero".
 
-A failing applicant is offered at the base rate before the test, which is the
-same rate Housing First gives it (the benchmark also carries this multiplier at
-1). So the only thing that separates this arm from Housing First is the test and
-the exclusion. Of the two guards removed for holder testing, 32257 still binds
-through vcc = 1. 32381 goes dead at inc = 1, and it is not needed: with the
-exclusion on, a caught holder goes to voucher_excl, which the holder's default
-range already spans.
+Confirmed in the Housing First reference's own log: "drug_supply_shifter
+(normalised)" is printed on all 12 blocks, the shifter moving with quantity
+(1.7935 at V = 0.4262 to 1.6045 at V = 0.5014), and price_of_addictive_good is 1.
 
-`code/remote_tf_rationed.sh <omega> tested` stages it; `ban`, the default,
-reproduces the previous run. Stated before the run: the excluded mass must be
-POSITIVE after block 1, or the test is not reaching applicants.
+So every counterfactual tonight -- omega_c = 1, internalisation, both TF runs,
+and the omega_c scan that picked 0.06 for an 18 per cent drop -- treats drug
+supply as PERFECTLY ELASTIC. With 1.46, falling demand lowers the price, which
+pushes use back up. For scale, arm 3 on the clearing path had its price fall
+15.8% (to 0.8422) with quantity -22.6%. The frozen-path drops are therefore
+UPPER BOUNDS on the clearing-market drops. The note's introduction claims "a
+drug market that clears, so drug prices respond to policy" (source line ~369).
+
+The same freeze also zeroes labor_income_tax_rate_adjuster (46773), so the tax
+rate is held at the benchmark in every frozen counterfactual. Whether anything
+else balances the budget there has NOT been checked. The note also claims "a
+government budget that balances, so the tax rate responds".
+
+WHAT CLEARING WOULD NEED, not done and the author's call: a counterfactual
+build that takes the clearing branch (a build-directory sed of the one `if` at
+44792, leaving the tracked model untouched), plus the Housing First omega_c = 0.06
+shifter, already in its log as 1.6045261392144357 (the last block). Arm 3
+needed 22 blocks to clear, so frozen_stop_after_blocks would have to rise.
+omega_c = 0.06 was itself chosen with the price pegged.
 
