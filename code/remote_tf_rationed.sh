@@ -1,14 +1,19 @@
 #!/bin/sh
-# UNIVERSAL TREATMENT FIRST at one omega_c, frozen, straight into the welfare curve.
+# TREATMENT FIRST, RATIONED VOUCHERS, EVERY HOLDER TESTED (arm-3 spec).
 #
-#     ./remote_tf_universal.sh 0.06
+# NOT "universal": that word means universal PROVISION in this code and in the
+# paper -- probability_of_voucher_benchmark_used == 1, the counter_VTE_TF arm at
+# line 13469. Here the voucher lottery stays at the benchmark's calibrated rate,
+# which is the code's counter_TF, and what changes is that every HOLDER is tested.
+#
+#     ./remote_tf_rationed.sh 0.06
 #
 # THE AUTHOR'S SPECIFICATION, 24 September: "TF should test everyone who has a
 # voucher! not just the homeless. And if you fail, you are not eligible for an
 # average of 3 years. And false negative occurs at a rate of 30%. Also, no false
 # positive." That is the arm-3 specification of 19 September.
 #
-# Needs the UNIVERSAL binary from build_tf_universal.sh: the two branches that
+# Needs the holder-testing binary from build_tf_rationed.sh: the two branches that
 # test a voucher HOLDER are guarded on is_counterfactual==1 in the tracked
 # source, and is_counterfactual is a compile-time parameter fixed at 0.
 #
@@ -24,7 +29,7 @@ DIR="scan_tfu$(echo "$OMEGA" | tr -d '.')"
 SEED=scan_seed
 BIN=${TFU:-$(pwd)/tfu/tfu_prod}
 
-[ -x "$BIN" ] || { echo "GUARD: no universal binary at $BIN -- run ./build_tf_universal.sh first"; exit 1; }
+[ -x "$BIN" ] || { echo "GUARD: no holder-testing binary at $BIN -- run ./build_tf_rationed.sh first"; exit 1; }
 [ -f "$SEED/PARAM_HANDOVER_base.txt" ] || { echo "GUARD: $SEED/PARAM_HANDOVER_base.txt is missing"; exit 1; }
 head -1 "$SEED/calibration_state.dat" | grep -qx 'calibration_state_v3' || { echo "GUARD: seed state is not v3"; exit 1; }
 grep -q 'child_penalty_classes=2' housing_first_or_treatment_first_SR_v1.f90 || { echo "GUARD: source is not child_penalty_classes=2"; exit 1; }
@@ -68,5 +73,5 @@ echo "handover: $n lines, all eight switches asserted by value"
 
 export OMP_NUM_THREADS=2
 date +%s > START_EPOCH
-echo "solving UNIVERSAL TF at omega_c=$OMEGA, OMP_NUM_THREADS=2 ..."
+echo "solving RATIONED TF (every holder tested) at omega_c=$OMEGA, OMP_NUM_THREADS=2 ..."
 ./hftf > run.log 2> run.err

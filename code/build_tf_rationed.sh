@@ -1,7 +1,7 @@
 #!/bin/sh
-# build_tf_universal.sh [outdir]
+# build_tf_rationed.sh [outdir]
 #
-# Builds the UNIVERSAL TREATMENT FIRST binary: the tracked source with the
+# Builds the TREATMENT FIRST (rationed vouchers, every holder tested) binary: the tracked source with the
 # `(is_counterfactual==1) .AND. ` guard removed from EXACTLY TWO branches, by
 # sed into a BUILD-DIRECTORY COPY. The tracked .f90 is never modified -- other
 # solves are live against it and the transition builds from it.
