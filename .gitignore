@@ -321,6 +321,13 @@ code/scan_*/
 !code/scan_seed/
 !code/scan_seed/**
 
+# Welfare-pass run directories, on the same rule as the scan points: each holds
+# a raw 265 MB calibration_distribution1.dat and a binary. A raw distribution
+# must never reach the branch -- GitHub rejects any blob over 100 MB, so one
+# stray `git add -A` here would wedge the push for everyone. The gzipped
+# artefacts belong under results/, as code/scan_seed/ does.
+code/welfare_*/
+
 # The full-homelessness-internalisation run directory, on the same rule as every
 # other run directory above: a 265 MB distribution, a 24 MB second distribution
 # and a 3 MB binary, all reproduced by remote_internalise_point.sh stage from the
