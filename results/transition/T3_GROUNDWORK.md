@@ -43,8 +43,8 @@ agree anyway: `b` 0.083468653643308396 against 0.083466809898833066 and
 
 **T = 60 is affordable.** The brief's 0.0746 GB per period is exactly right,
 confirmed three ways. The T-independent constant is larger than the brief
-assumes -- 6.06 GB rather than 4.93 -- because the peak is not where the memory
-model was measured, so T = 60 is about 10.5 GB rather than 9.4. It still fits.
+assumes -- 6.09 GB rather than 4.93 -- because the peak is not where the memory
+model was measured, so T = 60 is about 10.6 GB rather than 9.4. It still fits.
 
 **But three things are wrong, none of which makes the run fail**, and the first
 was measured in the log rather than reasoned out:
@@ -802,10 +802,10 @@ The T = 3 run held a flat 2.6493 GiB through the whole backward pass and through
 the forward pass's first value-function solve -- 310 consecutive samples -- and
 then **jumped to 5.7101 GiB** the moment
 `converge_to_stationary_equilibrium` started writing, rose to 5.8549 GiB in the
-second forward period, and held there for the rest of loop 0 and through loop 1:
+second forward period, and drifted only to 5.8779 GiB across two complete loops:
 
     T = 3 backward-pass plateau   2.6493 GiB = 2.8447 GB
-    T = 3 PEAK                    5.8549 GiB = 6.2867 GB   (held 257 samples)
+    T = 3 PEAK                    5.8779 GiB = 6.3113 GB   (over two full loops)
 
 Both figures agree with the same slope -- at the plateau the implied constant
 is 2.6206 GB from T = 3 and 2.6206 GB from T = 9, to four decimals, which is the
@@ -832,26 +832,26 @@ Two things follow, and both matter for T = 60:
 
 ### The T = 60 projection, from the measured peak
 
-    peak(T) = 6.063 GB + 0.074682 * T          (constant = 6.2867 - 3 x 0.074682)
+    peak(T) = 6.087 GB + 0.074682 * T          (constant = 6.3113 - 3 x 0.074682)
 
-    T =  3   6.29 GB   <- measured, 5.8549 GiB
-    T = 30   8.30 GB
-    T = 45   9.42 GB
-    T = 60  10.54 GB
-    T = 75  11.66 GB
-    T = 120 15.02 GB
+    T =  3   6.31 GB   <- measured, 5.8779 GiB over two complete loops
+    T = 30   8.33 GB
+    T = 45   9.45 GB
+    T = 60  10.57 GB
+    T = 75  11.69 GB
+    T = 120 15.05 GB
 
 Broken out at T = 60, in GiB:
 
     value_function, 60 slices            4.173 GiB
     distribution_implied_private (x40)   2.782 GiB
-    everything else                      2.864 GiB
+    everything else                      2.887 GiB
     ------------------------------------------------
-    TOTAL                                9.819 GiB  =  10.54 GB
+    TOTAL                                9.842 GiB  =  10.57 GB
 
 **T = 60 fits, with about 2.8 GB of headroom against the 13.36 GB cap the brief
 quotes.** It is tighter than the brief's 9.41 GB, because the true constant is
-6.06 GB rather than 4.93 GB, but the conclusion is unchanged. T = 120 does not
+6.09 GB rather than 4.93 GB, but the conclusion is unchanged. T = 120 does not
 fit, which the brief also said.
 
 ### The headroom lever, if T = 60 ever turns out tight
