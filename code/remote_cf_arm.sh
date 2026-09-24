@@ -38,12 +38,14 @@ command -v gfortran >/dev/null || { echo "GUARD: no gfortran"; exit 1; }
 COMMON="-fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium"
 
 # the benchmark binary is the TRACKED source, unmodified
-if [ ! -x bench/hftf_bench ]; then
+# A binary older than the source is stale (a container reused from 19 September
+# held a cf binary from then): rebuild it.
+if [ ! -x bench/hftf_bench ] || [ ! bench/hftf_bench -nt housing_first_or_treatment_first_SR_v1.f90 ]; then
   mkdir -p bench
   gfortran -O3 -funroll-loops $COMMON housing_first_or_treatment_first_SR_v1.f90 -o bench/hftf_bench 2> bench/build_prod.err
   e=$(grep -c Error bench/build_prod.err || true); [ "$e" = 0 ] || { echo "GUARD: benchmark build errors"; exit 1; }
 fi
-[ -x cf/hftf_cf_prod ] || sh build_cf.sh "$(pwd)/cf"
+if [ ! -x cf/hftf_cf_prod ] || [ ! cf/hftf_cf_prod -nt housing_first_or_treatment_first_SR_v1.f90 ]; then sh build_cf.sh "$(pwd)/cf"; fi
 
 set_line() {
   if grep -q "^$1 " PARAM_HANDOVER.txt; then sed -i "s|^$1 .*|$1 $2|" PARAM_HANDOVER.txt; else echo "$1 $2" >> PARAM_HANDOVER.txt; fi
