@@ -1,3 +1,16 @@
+# IN FLIGHT, 24 September 22:10: v3 for tf and omega1; v2 is kept for internalise only
+
+- session_012k9WecRrXzogSi5ZtEuDRN (v3) runs the benchmark, then tf, then omega1,
+  at drug_market_adjuster 0.1, to results/counterfactuals_cf_v3/<arm>/.
+- session_011HE2FoD9oEfGDmCFwFg9gx (v2) runs at the declared adjuster 0.2.
+  Its internalise arm is fine, because the price barely moves there (0.991).
+  ARCHIVE v2 AS SOON AS results/counterfactuals_cf_v2/internalise/ IS PUSHED,
+  before its omega1 and tf run at 0.2.
+- The first tf run (session_01LxhTRbB5QNDAeLqvVag69e) runs at 0.2 and started
+  its price at 0.6. When it pushes, read its price path. It gives the tf
+  clearing price and shows whether the run cycled; do not report its numbers
+  unless the movement decayed into the stop.
+
 # IN FLIGHT, 24 September 20:40: counterfactuals v2, one benchmark and three arms
 
 - session_011HE2FoD9oEfGDmCFwFg9gx runs remote_cf_arm.sh: the HF omega_c = 0.06
