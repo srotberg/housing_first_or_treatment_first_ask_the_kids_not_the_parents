@@ -1,0 +1,25 @@
+# T = 60: stopped before launch, 24 September
+
+Stopped on the author's instruction. **The T = 60 run itself never started.**
+
+## Done
+
+- **Build guards, committed at 46bbe31.** The seven transition build scripts guarded by COUNTING diff lines, which cannot separate "the source already carries this value" from "the sed no longer matches". Measured by moving the horizon to 60 in a scratch source and running all seven: six refused, and `build_transition.sh` BUILT -- it has no horizon sed, so it inherited the source's 60 while its heading still said 30. Each now asserts every switch by value in the generated file and requires the diff to hold nothing but permitted lines. 21 combinations and three negative cases pass.
+- **The horizon change is a no-op, proved by the binary**, not by a run: pristine and horizon-changed sources compile byte-identical on BOTH arms (`3323f2b9...` at `is_counterfactual=0`, `102922f1...` at 1).
+- **T = 3 rehearsal ran end to end**, two loops closed, 0 bytes stderr, reproducing `T3_GROUNDWORK.md`: drug-market distance 0.11650559545477102 / 0.10880415688380074 at loops 0 / 1 against 0.11651339654025572 / 0.10880745627490562, and loop-0 welfare 792.20409841074240 identical.
+- **Memory: T = 60 fits.** T=3 plateau 2.649 GiB, T=3 peak 5.855, so the T-independent forward-pass jump is 3.206. T=60 plateau measured 6.614 before an OOM took that run at age pass 219 of 3481. Peak(60) = **9.820 GiB = 10.54 GB against a 13.361 GiB cap** (73%, 3.54 GiB spare). The cap is cgroup **v1** at `process_api/.../claude-code-bash`; the v2 root reads unlimited and misleads. No swap, so overshoot is a kill.
+- **Controls incomplete.** `ctrl_pre` clean: b = 0.083439520558466193, lambda_d = 0.035937439519543930. The "after" run was relaunched into a directory a poisoned run had used, and a run overwrites its own `calibration_distribution1.dat`, so its numbers are not trustworthy and are not recorded. A clean re-run was staged, not run.
+
+## Two operational traps, both paid for
+
+**A run directory is not reusable once a run has started in it.** The binary DELETES `PARAM_HANDOVER.txt` as it starts, so a relaunch after a kill runs the Fortran declarations: measured, 0 HANDOVER lines and 408,676 "budget does not clear" in 171 MB of log. `stage_transition.sh` keeps `PARAM_HANDOVER.kept.txt`; nothing restores it. Restore it and assert the receipt before trusting any relaunch.
+
+**Budget a run's footprint from the same kind of run.** An OOM killed two solves because a steady-state control was budgeted from a T=3 TRANSITION plateau; a control peaks at 5.33 GiB, not 2.6. A control can never share this box with T = 60: 9.82 + 5.33 exceeds the cap.
+
+## (a) Can a T = 60 loop restart from disk after a container rebuild?
+
+**Partly, and the expensive half is not covered.** The two instruments are checkpointed PER PERIOD inside the forward pass -- `drug_price_path_seed_out.txt` at line 54892, `pi_v_path_seed_out.txt` at 54901 -- holding a mixed path (periods 1..t from the loop in flight, the rest from the last) with the header recording which; the source says writing only at loop boundaries meant "a kill mid loop cost the whole loop". But **the value function path and the distributions are never written** -- no `open(...action='write')` for either between 53557 and 55798 -- so a relaunch re-walks the whole backward pass, about 7 hours at T = 60, before reaching the first checkpointable period. Promotion is manual by design: the run READS `*_seed.txt` (54141, 54228) and WRITES `*_seed_out.txt`, because auto-promoting a collapsed loop is the `t30_loop1_pivcollapse` catastrophe (comment at 55470). Confirmed: the T = 60 run died in the backward pass and left no `_out` files at all.
+
+## (b) Must the newborn_parent_share cold start be fixed before T = 60?
+
+**Yes -- parts 1 and 2; leave the time index.** Not a fresh judgement: the comment at line 45201 records the same defect already found and fixed for restarts, in the same words -- leaving the shares unbanked "switched the intergenerational channel off", the trace showing "(1, 0, 0, 0) at the point the draw is mixed". The transition reproduces it permanently -- it never calls `read_calibration_state`, `newborn_parent_share` appears nowhere in `transition_simulation`, and under `fixed_productivity` the reform-period cohort carries the error for life -- and where the steady state says so in the log, the transition says nothing. Part 1 alone is a trap: a seed file fixes t = 1 of loop 0 and leaves every later loop reading the END of the previous one. Part 2, restoring per path iteration, is about six lines beside `init_keep_*` at 53799 and 54655, for an array of 104 doubles. **Blocker:** no `newborn_parent_share.dat` exists for the archive benchmark and it cannot be faked -- `sum <= 1e-12` trips the same fallback, which is why the tracked file of 104 zeros is useless. Note too that a transition run calls `write_calibration_state` at 55764, so it leaves behind a `newborn_parent_share.dat` holding the END of the path.
