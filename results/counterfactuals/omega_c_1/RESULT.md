@@ -131,3 +131,23 @@ The terminal steady state itself is carried by `calibration_state.dat` and the
 two distributions, not by the handover. For a T = 60 transition, the handover
 pins the parameters and the state plus distributions supply the terminal
 equilibrium.
+
+## THE WELFARE PASS WAS CANCELLED BY THE AUTHOR
+
+There is no CEV for this point, by decision rather than by failure: "we dont
+need CEV for the omega_c=1 case or homelesnes internalization". The block 9
+equilibrium above stands as the result. Two things were learned first.
+
+A RESUME DOES NOT CONTINUE THIS EQUILIBRIUM. A two-block pass resumed from the
+converged state re-entered the restart transient instead of staying at the
+point: block-1 bequest_residual 1.9942, against this run's own block-1 1.9888
+and nothing like the settled 1.3252, and b = 0.019494166, which is -3.46 per
+cent -- 346 times the 1e-4 control. Its curve is a different economy's and was
+discarded. `frozen_stop_after_blocks` itself works: the loop exited on schedule
+and save_welfare_curve ran and wrote.
+
+NOT SETTLED. A fresh rerun's block 1 gave b = 0.012128773 against this run's
+0.012130482, a relative difference of 1.409e-04, while bequest_residual differed
+by only 1.05e-05. That is a single block, cancelled before more arrived. Whether
+it is thread-reduction noise or a real effect is unresolved, and the 1e-4
+control should be read as neither validated nor refuted by it.
