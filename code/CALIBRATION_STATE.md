@@ -1,42 +1,34 @@
-# ON THE FROZEN PATH THE DRUG PRICE IS PEGGED AT 1: THE 1.46 ELASTICITY IS INERT, 24 September 16:05
+# THE DRUG PRICE IS MADE ENDOGENOUS, 24 September 16:20
 
-The author asked whether the drug supply elasticity of 1.46 is included,
-surprised at omega_c = 1's -75%. It is SET (handover line 9, in every run
-tonight) but it DOES NOTHING on the path every run tonight used.
+The author: *"you need to allow the drug price to be endogenous based on that
+elasticities"*.
 
-clear_drug_market (44756): on `is_counterfactual == 0` -- the benchmark binary,
-which the frozen scan path is -- it re-picks the supply shifter so the price
-sits at the benchmark's own, at WHATEVER quantity is consumed:
+`code/build_cf_clearing.sh` generates a build-directory copy with exactly four
+one-line changes, each asserted by value, and leaves the tracked .f90 untouched:
 
-    drug_supply_shifter = 1/(quantity**(drug_supply_curvature-1))
-    price_of_addictive_good = price_of_addictive_good_benchmark
+    44793  clear_drug_market: `if (is_counterfactual==0)` -> `if (.false.)`
+           so the clearing branch runs instead of the re-normalisation
+    46236  drug_price_start: `if (is_counterfactual==1)` -> `if (.true.)`
+           so a warm start is honoured instead of IGNORED on this path
+    32257, 32381  the two holder-testing guards, as in build_tf_rationed.sh;
+           inert when vcc = 0 and the multiplier is 1, so one binary serves every arm
 
-Only the `else` branch, `is_counterfactual == 1`, reads the benchmark's shifter
-and clears along the upward-sloping supply curve. The source says so at 46755:
-"With is_counterfactual = 0 clear_drug_market normalises the shifter, sets the
-price to the benchmark's own and sets distance_drug_market to zero".
+Tested here: the diff is exactly those four lines, and -O3 builds with 7 warnings
+and 0 errors.
 
-Confirmed in the Housing First reference's own log: "drug_supply_shifter
-(normalised)" is printed on all 12 blocks, the shifter moving with quantity
-(1.7935 at V = 0.4262 to 1.6045 at V = 0.5014), and price_of_addictive_good is 1.
+`code/remote_cf_clearing.sh tf|omega1|internalise` writes the Housing First
+omega_c = 0.06 shifter, 1.6045261392144357 (its last block, V = 0.50141078281734985;
+1/V**(1/1.46) reproduces it to 4e-16), as drug_supply_shifterbaseline_benchmark.dat.
+Every arm therefore prices drugs on the benchmark's own supply curve at
+elasticity 1.46. The cap is 30 blocks. The stillness exit does not look at the
+drug market, so the price counts as cleared only when distance_drug_market is
+< 5e-3 at the exit block. The clearing branch prints drug quantity, the implied
+supply price, the price and distance_drug_market on every call.
 
-So every counterfactual tonight -- omega_c = 1, internalisation, both TF runs,
-and the omega_c scan that picked 0.06 for an 18 per cent drop -- treats drug
-supply as PERFECTLY ELASTIC. With 1.46, falling demand lowers the price, which
-pushes use back up. For scale, arm 3 on the clearing path had its price fall
-15.8% (to 0.8422) with quantity -22.6%. The frozen-path drops are therefore
-UPPER BOUNDS on the clearing-market drops. The note's introduction claims "a
-drug market that clears, so drug prices respond to policy" (source line ~369).
+The fixed-price TF run with applicants tested was archived, superseded.
+Treatment First goes first as the pilot for the clearing path; omega_c = 1 and
+internalisation follow once its first blocks show the gap closing.
 
-The same freeze also zeroes labor_income_tax_rate_adjuster (46773), so the tax
-rate is held at the benchmark in every frozen counterfactual. Whether anything
-else balances the budget there has NOT been checked. The note also claims "a
-government budget that balances, so the tax rate responds".
-
-WHAT CLEARING WOULD NEED, not done and the author's call: a counterfactual
-build that takes the clearing branch (a build-directory sed of the one `if` at
-44792, leaving the tracked model untouched), plus the Housing First omega_c = 0.06
-shifter, already in its log as 1.6045261392144357 (the last block). Arm 3
-needed 22 blocks to clear, so frozen_stop_after_blocks would have to rise.
-omega_c = 0.06 was itself chosen with the price pegged.
+STILL NOT ADDRESSED: the tax rate is held fixed in every frozen counterfactual,
+and omega_c = 0.06 was chosen with the price pegged.
 
