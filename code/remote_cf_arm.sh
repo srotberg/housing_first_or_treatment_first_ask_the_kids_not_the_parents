@@ -107,6 +107,13 @@ case "$ARM" in
                set_line adjust_taxes 0
                set_line drug_price_start 1.0 ;;
 esac
+# THE OLD ARMS' DAMPING. drug_market_adjuster is declared 0.2; arm 3 CYCLED at
+# 0.2 and only converged at 0.1 (code/results/arm3_convergence/CONVERGED.md,
+# commit 97e5c146). launch_arm.sh set it for every arm; this script did not.
+set_line drug_market_adjuster 0.1
+# A MEASURED warm start beats a guess: max_drug_price_move caps the price at 0.5
+# per cent a pass, so a start 20 per cent off costs about 40 passes of walking.
+if [ -n "$DRUG_PRICE_START" ]; then set_line drug_price_start "$DRUG_PRICE_START"; fi
 cp PARAM_HANDOVER.txt PARAM_HANDOVER.arm.txt
 echo "STAGE 2: arm $ARM on the counterfactual binary ..."
 ./hftf_cf > cf.log 2> cf.err

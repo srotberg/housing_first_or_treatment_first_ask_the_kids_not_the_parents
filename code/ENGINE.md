@@ -1,3 +1,15 @@
+# THE OLD ARMS RAN AT drug_market_adjuster 0.1 WITH A MEASURED PRICE START, 24 September 22:20
+
+The author: *"In the past they took just a couple of hours"*. launch_arm.sh
+(97e5c146) set, for every arm: drug_market_adjuster 0.1 (arm 3 CYCLED at the
+declared 0.2 and stopped on a phase of the cycle, which halved its CEV); a
+drug_price_start measured from two converged points; and the benchmark's voucher
+probability. remote_cf_arm.sh set none of the three. The price moves at most
+max_drug_price_move = 0.5 per cent a pass, so a start 20 per cent off is about
+40 passes. The fixed-price runs cut b by 75 per cent (omega_c = 1) and 81 per
+cent (TF), so the clearing price is far below 1 and 0.6 was a guess.
+remote_cf_arm.sh now sets the adjuster to 0.1 and takes DRUG_PRICE_START.
+
 # THE COUNTERFACTUAL BINARY DOES NOT READ calibration_state.dat, 24 September 20:50
 
 The internalise arm on the old counterfactual path ran at voucher probability
