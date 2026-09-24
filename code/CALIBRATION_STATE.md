@@ -1,34 +1,47 @@
-# THE HOUSING FIRST omega_c = 0.06 REFERENCE HAS LANDED, 24 September 07:32
+# RATIONED TREATMENT FIRST AGAINST RATIONED HOUSING FIRST, omega_c = 0.06, 24 September 09:03
 
-`results/reference/hf_omega_c_006/` (c56cd908, 504f6dec). Twelve blocks, then
-`save_welfare_curve`: the curve is written, and its identity check passed at
-1.16e-4.
+`results/counterfactuals/treatment_first_rationed/` (a7b30642, 74e3819b), against
+`results/reference/hf_omega_c_006/`. One container throughout; the build diff
+was asserted to be exactly the two guard removals, and all eight HANDOVER
+switches were echoed in the log.
 
-    b         0.081260630474628087     h_1   0.0060789275891736669
-    lambda_d  0.034616598188775979     tau_u 0.25057768576255840
+    b          0.081261 -> 0.015392    -81.06%
+    lambda_d   0.034617 -> 0.006520    -81.16%
+    h_1        0.006079 -> 0.005787     -4.80%
+    tau_u      0.2506   -> 0.3034      +21.08%
 
-The family rule fired at block 10, and blocks 11 and 12 stayed inside the band.
+    CEV = +0.052927, i.e. +5.29% of non-drug consumption
 
-**THE CONTROL MISSED ITS STATED 1e-4.** Block 9 was -3.35e-4 relative to the lost
-run's 0.081242, and block 12 was +2.28e-4; bequest_residual matched to 1.1e-5.
-I accept the reference anyway, and this is why: a fresh omega_c = 1 rerun matched
-its original at block 1 only to 1.4e-4, so 1e-4 is below this model's
-run-to-run noise floor for a fresh re-solve. That tolerance was set for no-op
-controls, not for re-solves. A miss of 0.03 per cent on b is immaterial against
-effects measured in tens of per cent. Future re-solve controls should state a
-tolerance of about 5e-4.
+The CEV is TF's average_welfare_with_childhood (791.08974658630109) read off the
+Housing First curve, which is anchored at x = 0 on the same object (789.3488).
+The identity-check line labels that object "average_welfare_of_youngest_cohort",
+but the value it prints is average_welfare_with_childhood; average_welfare_of_youngest_cohort
+itself is 1352.88. The interpolation mirrors calculate_welfare_gains (23028), and
+returns 0 at the Housing First anchor. kappa_x is 0.9329 in both runs.
 
-Effects against this reference:
+## THREE THINGS THAT QUALIFY IT
 
-    internalisation   b -2.34%    h_1 -2.46%
-    omega_c = 1       b -75.15%   h_1 -16.64%
+1. **Stopped at block 10 on the model's own stillness rule**, not the family rule:
+   `frozen_stop_tolerance 0.001` is in the base handover (line 93), and block 10's
+   block_move was 8.8e-4. b moved 0.887% and then 0.039% over the last two blocks,
+   so the family rule was one block from firing. Residual 1.433, a little below the
+   1.45-1.48 band; the policy changes bequests, so that is not by itself a fault.
 
-**gfortran was NOT in that container**, contrary to ENGINE.md. The worker fetched
-the gfortran-13 debs from archive.ubuntu.com with curl and installed them with
-dpkg (apt-get update stalls on the proxy). The image varies between containers,
-so a brief must not promise the compiler.
+2. **The three-year exclusion never bound.** The excluded-state mass is exactly 0
+   from block 2 on. Testing ran (mass tested 3.58 of 11.56 eligibles, spending
+   1.11e-3), but nobody failed. The likely reading is an off-equilibrium threat:
+   users cannot get a voucher at all (see 3), and no holder chooses to use. That
+   has NOT been verified by measuring drug use among holders directly.
 
-The KAPPA_X PROBE at this point reads a consumption-basis implied kappa_x of
-0.61845, against 0.6083 at omega_c = 0: 1.7 per cent apart. Noted, not acted on.
-The author took kappa_x from the omega_c = 0 control.
+3. **The door is a ban, not a 70 per cent test.** With
+   increased_prob_of_voucher_if_homeless_and_addicted = 0, a failing applicant's
+   offer is (1-p_det)*prob*0 = 0. The author's 30 per cent false negative therefore
+   applies to holders only. This was put to the author at 03:41 and is unanswered.
+   It may be a large part of the -81%.
+
+The log also prints, as every run on this seed does, STALE CONSTANT lines:
+median_income_calibrated 0.3875 against a realised 0.8650, and
+average_labor_income_calibrated 0.6679 against 1.6243. Both arms share them, so
+the comparison is internally consistent. Whether the voucher eligibility threshold
+is meant to key on the stale value is a separate question.
 
