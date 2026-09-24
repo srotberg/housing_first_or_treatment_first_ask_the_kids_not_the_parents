@@ -595,14 +595,21 @@ three READs and three WRITEs line up exactly as predicted:
 | loop 0, t = 1 | **1.00000000000000000**  0.0  0.0 | 0.96708503899839415  2.8469009685325335E-002  1.7906142126064412E-003 |
 | loop 0, t = 2 | 0.96708503899839415  2.8469009685325335E-002  1.7906142126064412E-003 | 0.96728678036225224  2.8208456100937761E-002  1.7821796762782260E-003 |
 | loop 1, t = 1 | **0.96728678036225224**  2.8208456100937761E-002  1.7821796762782260E-003 | 0.96708498100955809  2.8468908040757371E-002  1.7906141052367371E-003 |
+| loop 1, t = 2 | 0.96708498100955809  2.8468908040757371E-002  1.7906141052367371E-003 | 0.96728574276742796 ... |
 
-Read down the diagonal and the mechanism is unambiguous.
+**Every READ is the previous WRITE, with no reset anywhere.** That is the whole
+mechanism in one sentence: the array is a single unbroken one-step chain running
+from the first period of the first loop to the last period of the last one, and
+the loop boundary is invisible to it. Read down the diagonal:
 
-- **loop 0, t = 2 reads loop 0, t = 1's write, to the last digit.** The
-  within-loop lag is correct.
-- **loop 1, t = 1 reads loop 0, t = 2's write** -- the composition at the END of
-  the transition -- when the thing it needs is the benchmark's composition the
-  instant before the reform.
+- **Within a loop the lag is correct.** t = 2 reads t = 1's write to the last
+  digit, in loop 0 and again in loop 1. Period t's newborns are drawn against
+  the parents measured at t-1, which is when those parents died.
+- **At the loop boundary the same chain keeps running, and that is the defect.**
+  loop 1, t = 1 reads loop 0, t = 2's write -- the composition at the END of the
+  transition -- when the thing it needs is the benchmark's composition the
+  instant before the reform. Nothing distinguishes "the previous period" from
+  "the previous period of the previous loop", because nothing ever resets.
 - **And the run tells us what that correct value is**, because loop 1's t = 1
   statistics measure it one step later: 0.96708498100955809, which agrees with
   loop 0's t = 1 write to eight significant figures. So t = 1 reads
