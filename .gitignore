@@ -334,3 +334,10 @@ code/welfare_*/
 # committed scan_seed/. The record of the run is its log and its handover vector,
 # not the grids it leaves behind.
 code/internalise_h_oc006/
+
+# The 12-block companion of the run directory above, launched fresh from the
+# seed with frozen_stop_after_blocks 12 so the run leaves the calibration loop
+# and reaches save_welfare_curve. Same rule and same reason: the distributions
+# and the binary are reproduced by remote_internalise_point12.sh from the
+# committed scan_seed/, and the record of the run is its log and its handover.
+code/internalise_h_oc006_b12/
