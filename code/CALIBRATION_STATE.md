@@ -1,29 +1,34 @@
-# EVERY GENERAL-EQUILIBRIUM CHANNEL OF A COUNTERFACTUAL IS CHECKED AGAINST THE OLD ARMS BEFORE IT RUNS, 24 September 16:35
+# THE REDO RUNS THE WAY THE OLD ARMS DID, 24 September 16:55
 
-Last night's counterfactuals -- the omega_c scan points, omega_c = 1,
-internalisation, and three Treatment First runs -- were all solved on the frozen
-scan path, which is the BENCHMARK binary. On that binary clear_drug_market
-normalises the price to 1 every block, so drug_supply_elasticity 1.46 did
-nothing. The old arms (19 September) ran the counterfactual binary, where the
-price clears; arm 3's fell to 0.842. The author had to point it out: *"im
-surprised that i had to tell you how to run the elasticity of drug supply
-because in the old experiments that is how we did it"*. The source said so in
-plain words (the comment at 46755), and the check was never made.
+The author: *"the budget clearing in rationed TF is done with pi_v and in the
+omega_c=1 case and internlization case for homelessness there is no budget
+clear"*, and chose the old counterfactual build over patching the frozen one.
 
-THE RULE: before any counterfactual runs, compare it channel by channel with
-how the old arms ran -- drug market, taxes and budget, rental market, voucher
-rules -- and check each against the branch the binary actually takes. A switch
-being SET in the handover proves nothing; drug_supply_elasticity was set to
-1.46 in every run.
+The market-clearing pilot on the frozen build was archived: that setup zeroes
+voucher_probability_adjuster, so pi_V could not clear the budget.
 
-THE GUARD: remote_tf_rationed.sh, remote_tf_point.sh and
-remote_internalise_point.sh now refuse to run unless ALLOW_PEGGED_PRICE=1.
-Counterfactuals go through remote_cf_clearing.sh. remote_scan_point.sh is left
-alone: a BENCHMARK should normalise its own price.
+`code/remote_cf_arm.sh tf|omega1|internalise`, one container per arm:
 
-THE TAX IS NOT THE SAME KIND OF MISS. adjust_taxes is 0 and labour income taxes
-were removed on the author's instruction of 12 September ("we also dont need
-labor income taxes"). The source records the unfunded residual as "the
-experiment, not a bug" (line 333). The note's introduction still says the tax
-rate responds, so that sentence may be stale -- the author's to decide.
+    STAGE 1  Housing First omega_c = 0.06 benchmark on the TRACKED source,
+             12 blocks into save_welfare_curve, in the arm's own directory.
+             Its full saved files were lost with the reference container, and
+             the counterfactual binary reads them.
+    STAGE 2  the arm on build_cf.sh's binary (is_counterfactual=1,
+             use_revenues_to_increase_voucher_probability=1), in the same
+             directory.
+
+Checked in the source before writing it:
+- the drug price clears in clear_drug_market's counterfactual branch against the
+  benchmark's own shifter, drug_supply_shifterbaseline_benchmark.dat;
+- adjust_taxes 1 plus use_revenues=1 sets tax_system_type 3 (53091), so pi_V
+  moves with gain 0.05 and the tax does not. adjust_taxes 0 gives no budget
+  clearing. That is tf, and omega1/internalise, respectively;
+- upload_vars imports the median income, the labour income profile, the net
+  revenue constraint and the rest from the benchmark's saved files. So the
+  STALE CONSTANT declarations are overwritten before use, and no Fortran edit
+  is needed; I told the author otherwise and corrected it;
+- inc = 1 (applicants tested) takes the file-name branch 'counter_arm', and
+  old_results is still 'baseline_benchmark', so every arm reads the right files.
+
+A relaunch skips stage 1 when BENCH_DONE and the benchmark files are on disk.
 
