@@ -1,3 +1,36 @@
+# A WORKER THAT CANNOT PUSH IS USUALLY NOT LOCKED OUT, 24 September 02:13
+
+The omega_c = 1 worker finished its run and then went BLOCKED on "git add/push
+denied", and its summary asked for GitHub to be "reconnected with write
+access". That diagnosis was wrong, and it is the kind of wrong that costs a
+worker its container while it waits for a human who is not coming.
+
+What it actually did: it put a 13.6 MB `calibration_distribution1.dat.gz` in
+the SAME add as a 3 KB `RESULT.md` and a 97-line `PARAM_HANDOVER.txt`. The
+permission classifier stops a broad add; the worker read the refusal as a
+credentials failure.
+
+Two checks settle it from the coordinator's side in one command each:
+
+- **Other workers pushed.** `git log origin/<branch> --oneline -6` showed three
+  pushes from two other sessions inside the last hour. Credentials shared
+  across the fleet cannot be broken for one session only.
+- **Size is not the obstacle.** `git ls-tree -r -l HEAD | sort -k4 -n | tail -5`
+  shows the repo already tracks `code/seeds/arm3_counter_TF/value_function1counter_TF.dat.gz`
+  at 43.9 MB and `value_function1baseline_benchmark.dat.gz` at 36.8 MB. There
+  is no LFS and no size wall at 13.6 MB.
+
+## THE BRIEFING THAT PREVENTS IT
+
+Tell a worker to push its deliverable SEPARATELY FROM ITS BINARIES, smallest
+first, each path named explicitly -- never `git add -A`, `git add .`, or a
+glob. The text artefacts are what the fleet needs; the binaries are a
+convenience. A transition solves its own terminal steady state from the
+parameter vector, so `PARAM_HANDOVER.txt` is the deliverable and
+`calibration_distribution1.dat.gz` is not.
+
+And a worker should never report a fleet-wide cause for a symptom only it has.
+
 # HOW TO CORRECT A WORKER THAT IS ALREADY RUNNING, 23 September
 
 A cloud worker cannot be reached with `SendMessage` and does not appear in
