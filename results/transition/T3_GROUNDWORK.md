@@ -4,6 +4,13 @@ Prepared 23 September in a fresh container on branch
 `claude/two-period-addiction-hazard-d7gb61` at
 `4e97f02`, source md5 `b181aee24a0ca2ca32294b70bd1a9d7f`.
 
+(This note was rebased onto `94a794f` before pushing, because the live
+counterfactual runs advanced the branch while it was being written. None of
+their four commits touches the Fortran -- `git diff 4e97f02 94a794f --
+housing_first_or_treatment_first_SR_v1.f90` is empty and the md5 above is
+unchanged -- so every line number and measurement below still refers to the
+source as it stands.)
+
 **NOTHING IN THE FORTRAN WAS CHANGED AND NOTHING WAS PUSHED.** Three
 counterfactual runs are live off this branch and the switch this note describes
 turns transitions on for every one of them. Every binary here was built from a
