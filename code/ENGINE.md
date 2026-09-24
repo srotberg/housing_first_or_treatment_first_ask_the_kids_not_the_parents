@@ -1,3 +1,22 @@
+# A SOLVED BENCHMARK IS KEPT WITH EVERY FILE THE COUNTERFACTUAL BINARY READS, 24 September 19:05
+
+The HF omega_c = 0.06 benchmark was solved, but only its welfare curve,
+distributions and handover were kept (results/reference/hf_omega_c_006/). The
+counterfactual binary's upload_vars (40697 on) and the stationary-distribution
+and benefits reads (32062, 39388, 39524) open about fifteen files named
+<stem>baseline_benchmark.dat from the working directory: net_govt_revenues,
+govt_revenues_to_use_in_tests, model_ss_benefits, rent, model_total_hours,
+model_labor_supply, income_cutoffs_of_quintiles, median_income,
+average_labor_income*, average_welfare_of_youngest_cohort,
+welfare_by_addiction_youngest, distribution_stationary*, the drug supply
+shifter and the welfare curve. None were kept, so all three counterfactuals had
+to re-solve the benchmark first, costing one to three hours each. The author:
+*"I thought it was done"*.
+
+THE RULE: when a benchmark that counterfactuals will run against is solved,
+keep every *baseline_benchmark.dat file its directory holds (gzipped if large)
+beside RESULT.md, so an arm can start from it without a re-solve.
+
 # EVERY GENERAL-EQUILIBRIUM CHANNEL OF A COUNTERFACTUAL IS CHECKED AGAINST THE OLD ARMS BEFORE IT RUNS, 24 September 16:35
 
 Last night's counterfactuals -- the omega_c scan points, omega_c = 1,
