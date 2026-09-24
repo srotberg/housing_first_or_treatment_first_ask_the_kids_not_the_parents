@@ -1,3 +1,14 @@
+# PLAN, 24 September 22:25: ONE benchmark (v2's), every remaining arm run from it
+
+The author: *"Wouldn't it be more efficient to run it once in this session and
+use it for the other sessions??"* Yes. v2's benchmark finishes first. Its worker
+pushes results/counterfactuals_cf_v2/bench/{bench_files.tar.gz,bench.log.gz}.
+When those land, run tf and omega1 from them in THIS container:
+`cd code && BENCH_FROM=../results/counterfactuals_cf_v2/bench sh remote_cf_arm.sh <arm>`
+(4 cores, 16 GB; two arms at OMP 2 each; check the first arm's RSS before
+starting the second). Then archive v3 (session_012k9WecRrXzogSi5ZtEuDRN), whose
+own benchmark is a hedge only in case v2's tarball is over 40 MB and not pushed.
+
 # IN FLIGHT, 24 September 22:10: v3 for tf and omega1; v2 is kept for internalise only
 
 - session_012k9WecRrXzogSi5ZtEuDRN (v3) runs the benchmark, then tf, then omega1,

@@ -55,6 +55,20 @@ stage_handover() {
   set_line kappa_x 0.9329
 }
 
+# SOLVE THE BENCHMARK ONCE, SHARE IT BY GIT. With BENCH_FROM=<dir holding
+# bench_files.tar.gz and bench.log.gz> (e.g. ../results/counterfactuals_cf_v2/bench)
+# stage 1 is not run: the arm reads that benchmark's *baseline_benchmark.dat set,
+# which is all the counterfactual binary opens (it never reads the calibration
+# distributions -- read_calibration_distribution is called only from
+# calibrating_model). Gzipped, the set is tens of MB.
+if [ -n "$BENCH_FROM" ] && [ ! -f "$BDIR/BENCH_DONE" ]; then
+  [ -s "$BENCH_FROM/bench_files.tar.gz" ] && [ -s "$BENCH_FROM/bench.log.gz" ] || { echo "GUARD: $BENCH_FROM lacks bench_files.tar.gz or bench.log.gz"; exit 1; }
+  rm -rf "$BDIR" && mkdir -p "$BDIR"
+  tar xzf "$BENCH_FROM/bench_files.tar.gz" -C "$BDIR"
+  gunzip -c "$BENCH_FROM/bench.log.gz" > "$BDIR/bench.log"
+  echo "$BENCH_FROM" > "$BDIR/BENCH_FROM"; date +%s > "$BDIR/BENCH_DONE"
+  echo "STAGE 1 taken from $BENCH_FROM: $(ls "$BDIR" | grep -c baseline_benchmark) benchmark files"
+fi
 if [ -f "$BDIR/BENCH_DONE" ] && [ -f "$BDIR/welfare_curvebaseline_benchmark.dat" ] && [ -f "$BDIR/median_incomebaseline_benchmark.dat" ]; then
   echo "STAGE 1 already done in $BDIR -- skipping the benchmark"
 else
