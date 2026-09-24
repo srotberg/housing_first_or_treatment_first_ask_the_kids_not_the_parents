@@ -1,3 +1,62 @@
+# THE kappa_x TARGET IS 0.20 PER CENT OF INCOME, AND THE CONVERSION IS EXACT
+# 24 September 00:25
+
+The author, 24 September: the kappa_x to use is the one that makes the CEV
+equal 0.20 per cent of INCOME when all homelessness is removed -- and, because
+the probe is expressed in consumption rather than income, *"if consumption is
+50% of the budget, then the cev has to be 0.4%"*.
+
+## WHY THE PROBE'S 0.002 IS NOT THE TARGET
+
+The probe's scalar does not touch income. At line 23301:
+
+    consumption_1 = (1-fraction_spent_on_addiction_1)*total_consumption_1*(1+x_1)
+
+so x scales NON-DRUG CONSUMPTION. Income also funds housing, and the drug share
+is netted out of that base, so 0.20 per cent of income is a LARGER fraction of
+the base. The scalar must exceed 0.002 and kappa_x rises with it.
+
+## THE CONVERSION, AND IT NEEDS NO RE-RUN
+
+The probe is linear in x, so with s the consumption share of the budget:
+
+    CEV scalar          = 0.002 / s
+    kappa_x(0.2% income) = kappa_x(at x=0.0020) / s
+
+## WHAT s IS, SETTLED FROM THE BUDGET IDENTITY RATHER THAN ASSUMED
+
+The identity printed at line 40303 sums total expenditure as
+
+    aggregate_consumption + aggregate_spending_on_addiction
+      + aggregate_housing_consumption + mortgage, transaction, origination,
+        prepayment and moving costs + government terms + rent
+
+`aggregate_consumption` appears there as a term SEPARATE from both the drug
+term and the housing term, so it already excludes both. And it accumulates
+`consumption_used` (line 39993), which is the same `(1-frac)*total_consumption`
+object the probe scales. Therefore
+
+    base = aggregate_consumption          printed at line 40290
+    income = model_total_income           printed at line 40314
+    s = aggregate_consumption / model_total_income
+
+Both are mass-weighted LEVELS, so the units match and no population factor of
+about 51 enters. Both are printed in EVERY run's log, so any completed run can
+supply them; the benchmark's own are the ones to use.
+
+## FOR ORIENTATION, PENDING THE BENCHMARK NUMBERS
+
+From the omega_c = 0.065 point's 0.619 at x = 0.0020:
+
+    s = 1.00   scalar 0.200%   kappa_x 0.619
+    s = 0.76   scalar 0.263%   kappa_x 0.814
+    s = 0.50   scalar 0.400%   kappa_x 1.238
+
+The internalisation worker independently proposed 0.8139, which implies
+s = 0.7605. That is the shape of a genuine income-to-non-drug-consumption
+ratio, so it may be this correction already made; its working has been asked
+for rather than assumed.
+
 # THE T = 3 GROUNDWORK FOUND THREE REAL DEFECTS, 24 September 00:20
 
 Full note: `results/transition/T3_GROUNDWORK.md`. The machinery works -- a T = 3
