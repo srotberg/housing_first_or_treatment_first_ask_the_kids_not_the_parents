@@ -1,18 +1,15 @@
-# THE EXPERIMENT: RATIONED TF AGAINST RATIONED HF, 24 September 04:37
+# A WORKER THAT GOES IDLE LOSES ITS SOLVE; ONE THAT WATCHES KEEPS IT, 24 September 06:33
 
-The author: *"the experiment we care about is the rationed TF relative to the
-rationed HF which is the benchmark"*.
+Measured tonight across two workers running the same kind of solve:
 
-    rationed HF (benchmark), omega_c = 0.06   session_015uvFUYEc5ziAB37Ckjvp5o
-    rationed TF, arm-3 rules, omega_c = 0.06  session_01SAVKzK7R5g1BkxS2G1KnmK
+    Housing First reference   background watcher on its log + self check-in   epoch 1 for 3.5 h
+    Treatment First           idle between check-ins                          epoch 8, $130 spent
 
-Same calibrated vector, same frozen path, same voucher lottery at the calibrated
-rate; they differ only in the voucher rules. Both end in save_welfare_curve at
-block 12, so the CEV is TF's welfare read against HF's curve.
-
-**"Universal" is withdrawn as a label for the TF run.** In the code and the paper
-it means universal PROVISION (probability_of_voucher_benchmark_used == 1, the
-counter_VTE_TF arm at line 13469). The run is the rationed counter_TF with every
-voucher HOLDER tested; its results go to results/counterfactuals/treatment_first_rationed/.
-Entries below that say "universal TF" mean this run.
+A session that goes fully idle has its container reclaimed, and the solve with
+it. Each relaunch then cost a restart AND a turn over a 350k-token history.
+Brief every long-solve worker to keep a background watcher armed on its log for
+the whole run, re-armed on expiry, and keep the brief lean so each wake is
+cheap. The Treatment First run was moved to a fresh lean session
+(session_016mEcrWxYuSsKpMQits6Rmo) using the pushed build_tf_rationed.sh and
+remote_tf_rationed.sh; the old session is archived.
 
