@@ -1,3 +1,18 @@
+# 25 September 16:45: the voucher fixes are a NO-OP for the benchmark, within run-to-run noise
+
+cfarm_det_bench ran cfarm_bench's OWN binary (built 01:42) from the same seed
+and handover. Block 1:
+  b        7.1887043830630423E-002  (reference 7.1894758675946219E-002, -0.011%)
+  lambda_d 3.1450566266557796E-002  (reference 3.1458335936491132E-002, -0.025%)
+  h_1      7.0776658289252760E-003  (reference 7.0781358129644208E-003, -0.007%)
+So a run is NOT bitwise reproducible at 2 OpenMP threads: the same binary moves
+b by 1e-4 relative between runs. The fixed build's gap (-0.005%) is inside that,
+so a102cfaa is a no-op for the benchmark and cfarm_bench's baseline files stand.
+STANDING CONSEQUENCE for no-op checks: compare against a SECOND run of the old
+binary, not against its saved log, or the noise reads as a change.
+Both check directories stopped by pid; their files are not used.
+TF pass 4 at 0.8723: b 0.05600 (-31.1%), lambda 0.02449 (-29.2%), h 0.006024 (-0.9%).
+
 # 25 September 16:35: grandfathering is not needed
 
 The author, on the latent voucher_gf leak: "It is ok with the grandfathering. We
