@@ -1,3 +1,15 @@
+# 25 September 06:55: internalise and omega1 DONE (adjuster 0.1, one local benchmark); tf pending
+
+- results/counterfactuals_cf_local/internalise: lambda_d -2.14%, h_1 -2.47% (firm);
+  b -1.64% final, -1.94% averaged over the last five passes (range -2.4 to -1.6);
+  price 0.9966.
+- results/counterfactuals_cf_local/omega1: b -35.0%, lambda_d -33.0%, h_1 -12.3%,
+  price 0.870. b steps each time the price rises 1.5 to 2 per cent; the price
+  stopped with the gap inside its rule.
+- tf: v3 (session_012k9WecRrXzogSi5ZtEuDRN) has been running since about 01:25.
+  When it pushes results/counterfactuals_cf_v3/tf, ARCHIVE v3 (its queued omega1
+  duplicates the local one).
+
 # 25 September 04:50: omega1 restarted at drug_price_start 0.81
 
 The omega1 arm started at 0.6. Pass 1 printed demand V = 1.91 (b = 0.157)
