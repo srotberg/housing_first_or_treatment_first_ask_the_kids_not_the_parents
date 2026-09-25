@@ -1,3 +1,16 @@
+# 25 September 22:55: FIRM TF NUMBERS -- 70 and 85 per cent detection with the budget closed tightly
+
+The author: "finish both and give me firm numbers for 70% and 85%". Build copy
+code/cf_tightbudget (scratchpad build_cf_tightbudget.sh): stopping_rule_govt_budget
+2.5e-2 -> 2.0e-3, nothing else; three builds 7 warnings / 0 errors (a first attempt
+ran them in parallel in one directory and collided on the module file).
+Running (scratchpad tight_cf_arm.sh): code/cfarm_tf_tight70 (warm start price 0.8776,
+pi_V 0.0753) and code/cfarm_tf_tight85 (0.8708, 0.0711); logs confirm the rule 2e-3,
+the target 6.26479886, detection 0.70 / 0.85, applicant switch 1.
+PAUSED (killed by pid, logs in the scratchpad *_paused.log.gz, directories removed):
+cfarm_tf_old_saved (pass 5) and cfarm_tf_old_like (pass 0); restart after, ideally
+on the tight build too so the comparison uses the same tolerance.
+
 # 25 September 22:45: TWO CONVERGED TF RUNS DISAGREE ON WELFARE -- the budget tolerance is too loose
 
 Same settings (rationed TF, 70% detection, target 6.26479886), different start:
