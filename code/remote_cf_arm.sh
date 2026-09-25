@@ -136,9 +136,13 @@ if [ -n "$DRUG_PRICE_START" ]; then set_line drug_price_start "$DRUG_PRICE_START
 # hands a policy a surplus it did not create. NET_TARGET overwrites this arm's
 # COPY of the target file; cfarm_bench's is never touched. The guard after the
 # run checks the value the binary actually cleared against.
+# THE FILE IS govt_revenues_to_use_in_tests, NOT net_govt_revenues: with
+# clear_only_vouchers_govt_budget a compile-time 0 the binary reads its
+# constraint from the former, and the first attempt wrote the latter and
+# cleared against the old value (both hold 6.038875634967).
 if [ -n "$NET_TARGET" ]; then
-  printf '%15.12f\n' "$NET_TARGET" > net_govt_revenuesbaseline_benchmark.dat
-  echo "budget target $(cat net_govt_revenuesbaseline_benchmark.dat) (saved benchmark $(cat ../$BDIR/net_govt_revenuesbaseline_benchmark.dat))"
+  printf '%15.12f\n' "$NET_TARGET" > govt_revenues_to_use_in_testsbaseline_benchmark.dat
+  echo "budget target $(cat govt_revenues_to_use_in_testsbaseline_benchmark.dat) (saved benchmark $(cat ../$BDIR/govt_revenues_to_use_in_testsbaseline_benchmark.dat))"
 fi
 cp PARAM_HANDOVER.txt PARAM_HANDOVER.arm.txt
 echo "STAGE 2: arm $ARM on the counterfactual binary ..."
