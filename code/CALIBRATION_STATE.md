@@ -1,3 +1,14 @@
+# 25 September 04:50: omega1 restarted at drug_price_start 0.81
+
+The omega1 arm started at 0.6. Pass 1 printed demand V = 1.91 (b = 0.157)
+against supply 0.5014*0.6^1.46 = 0.238, so the price rose at the 0.5 per cent
+cap, which is about 60 passes (10 hours) to anywhere near 0.8. The fixed-price
+omega1 run had b = 0.0202 at p = 1, so demand there is about 0.12. The log-linear
+demand through the two points has elasticity 5.4. Against supply elasticity 1.46
+it clears at p^6.88 = 0.12/0.5014, so p = 0.81. Killed (pid 3063) and relaunched
+with DRUG_PRICE_START=0.81 (task b14c0bziq). The same arithmetic puts TF near
+0.79 (fixed-price b = 0.0154), about 54 passes from its 0.6 start.
+
 # IN FLIGHT, 25 September 04:25: both remaining local arms from ONE local benchmark
 
 - Local benchmark (code/cfarm_bench) done 04:15: b = 0.081255009769345327,
