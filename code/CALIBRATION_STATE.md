@@ -1,3 +1,33 @@
+# 25 September 14:20: CONFIRMED -- the excluded-state leak is what made TF -99 per cent
+
+The new design (inc 1, exclusion on, p_det 0.70, unfixed payment) on the
+range-fixed build (code/cfarm_tf_rangefix, price start 0.80), against the
+benchmark b 0.08126, h 0.006079, V 0.5013 at price 1.0:
+
+| pass | price | b | vs bench | h_1 | vs bench | V (demand) | pi_V next |
+|---|---|---|---|---|---|---|---|
+| 1 | 0.800 | 0.08200 | +0.9% | 0.007088 | +16.6% | 0.6870 | 0.0748 |
+| 2 | 0.804 | 0.07495 | -7.8% | 0.006850 | +12.7% | 0.6237 | 0.0885 |
+
+The same design on the unfixed build: pass 1 b 0.00057 (-99 per cent) at 0.86.
+So the leak, not the model, drove the collapse. The fixed run is nowhere near a
+cleared market: supply at 0.808 is 0.5013*0.808^1.46 = 0.367 against demand
+0.624, so the price walks up at the 0.5 per cent cap and b will fall as it does.
+Its equilibrium is not known yet; it is a diagnostic (payment rule still unfixed).
+
+The leak is OLD: the exclusion state and its range date from 9-10 September,
+so the 19 and 24 September TF runs had it too, but with inc 0 only holders could
+be excluded. The old design on the current model (code/cfarm_tf_diagold19, same
+unfixed binary) sits at b 0.0433 (-47 per cent), price 0.831, h +3 per cent, so its
+size is also inflated by the leak to an unknown degree.
+
+Proposed (author's call, and only once no solve is running): fix in the source
+(a) the excluded-state range, (b) the holder range with exclusion off,
+(c) the payment rule so a holder who passes is paid; three builds; rerun TF.
+Open design choice for (a): an excluded household above the income gate either
+keeps its exclusion clock running (range [0,2], what the diagnostic does) or is
+released on leaving eligibility (row 1 to state 0).
+
 # 25 September 13:55: SUSPECTED CAUSE -- a probability leak for the excluded state
 
 calculate_future_voucher_index_and_opportunity (32273-32400) gives an EXCLUDED
