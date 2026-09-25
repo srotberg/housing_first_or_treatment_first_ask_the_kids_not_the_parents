@@ -1,3 +1,15 @@
+# 25 September 14:35: the 19 September TF settings on the current model, FINISHED (record only, leak in)
+
+code/cfarm_tf_diagold19 (inc 0, exclusion on, p_det 0.70, unfixed build, so the
+excluded-state leak bites every excluded HOLDER) exited 0 after 10 passes.
+Against the benchmark (b 0.08126, lambda 0.03461, h 0.006079, price 1.0, pi_V 0.06753):
+b 0.04558 (-43.9%), lambda 0.01861 (-46.2%), h 0.006239 (+2.6%), price 0.8239
+(-17.6%), pi_V 0.07143 (+5.8%), CEV 2.75%. Drug market cleared: demand 0.3769
+against supply 0.5013*0.8239^1.46 = 0.3779; budget distance 0.0175.
+Close to the old run's recollected size (price -13, drug use -35, h +5), so the
+recalibration is not what moved TF. NOT A RESULT: the leak inflates it by an
+unknown amount. Log kept outside the repo (scratchpad cf_tf_diagold19_final.log.gz).
+
 # 25 September 14:20: CONFIRMED -- the excluded-state leak is what made TF -99 per cent
 
 The new design (inc 1, exclusion on, p_det 0.70, unfixed payment) on the
