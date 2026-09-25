@@ -130,6 +130,16 @@ set_line drug_market_adjuster 0.1
 # A MEASURED warm start beats a guess: max_drug_price_move caps the price at 0.5
 # per cent a pass, so a start 20 per cent off costs about 40 passes of walking.
 if [ -n "$DRUG_PRICE_START" ]; then set_line drug_price_start "$DRUG_PRICE_START"; fi
+# THE BUDGET TARGET, LIKE FOR LIKE (author, 25 September). With no policy the
+# counterfactual binary puts net revenue 0.226 above the benchmark's saved value
+# (CALIBRATION_STATE.md, 25 September 18:20), so clearing against the saved value
+# hands a policy a surplus it did not create. NET_TARGET overwrites this arm's
+# COPY of the target file; cfarm_bench's is never touched. The guard after the
+# run checks the value the binary actually cleared against.
+if [ -n "$NET_TARGET" ]; then
+  printf '%15.12f\n' "$NET_TARGET" > net_govt_revenuesbaseline_benchmark.dat
+  echo "budget target $(cat net_govt_revenuesbaseline_benchmark.dat) (saved benchmark $(cat ../$BDIR/net_govt_revenuesbaseline_benchmark.dat))"
+fi
 cp PARAM_HANDOVER.txt PARAM_HANDOVER.arm.txt
 echo "STAGE 2: arm $ARM on the counterfactual binary ..."
 ./hftf_cf > cf.log 2> cf.err
@@ -143,4 +153,10 @@ else
   python3 -c "import sys; a,b=float('$PA'),float('$PV'); sys.exit(0 if abs(a-b)<=1e-9*b else 1)" \
     && echo "VOUCHER CHECK PASS: arm ran at $PA, benchmark $PV" \
     || echo "GUARD FAIL: arm ran at voucher probability $PA, benchmark $PV -- the result is contaminated"
+fi
+if [ -n "$NET_TARGET" ]; then
+  NC=$(grep -a "net_govt_revenue_constraint=" cf.log | head -1 | awk '{print $2}')
+  python3 -c "import sys; sys.exit(0 if abs(float('$NC')-float('$NET_TARGET'))<1e-9 else 1)" \
+    && echo "TARGET CHECK PASS: cleared against $NC" \
+    || echo "GUARD FAIL: the run cleared against $NC, not $NET_TARGET"
 fi
