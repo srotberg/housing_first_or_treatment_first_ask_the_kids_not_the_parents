@@ -1,3 +1,26 @@
+# 25 September 13:55: SUSPECTED CAUSE -- a probability leak for the excluded state
+
+calculate_future_voucher_index_and_opportunity (32273-32400) gives an EXCLUDED
+household with has_opportunity = 0 (income above 0.5 * median, or buying) the
+next-state range [0,0]. But voucher_probabilities writes the exclusion rows for
+BOTH opportunity slices: (excl,0) = 1/3 and (excl,excl) = 2/3 (36757-36759, and
+the comment there says so deliberately). The 2/3 fall outside the range, so in
+the VALUE FUNCTION such a household keeps a third of its continuation value.
+Exclusion is then close to catastrophic for anyone whose income might rise.
+The simulation loses no mass: every run's sum of the distribution is about 51,
+the same as omega1, which has no exclusion. So only decisions are distorted.
+- It fits the asymmetry. With inc 0 only holders (about 7 per cent) can be
+  excluded; with inc 1 every failing lottery winner can be.
+- The exclusion-off diagnostic (b 0.00001) hit a SECOND leak: a holder's range
+  is [1,2], so with exclusion OFF a failing holder's 0.7 to state 0 is dropped.
+  That leak cannot bite with exclusion on.
+- omega1, internalise and the HF benchmark have exclusion off, so they are unaffected.
+- Test: code/build_cf_rangefix.sh (ignored build copy) adds, before the routine's
+  end, "if has_opportunity==0 and exclusion on and voucher_index==voucher_excl:
+  range [0, voucher_excl]". The new design (inc 1, unfixed payment) runs on it in
+  code/cfarm_tf_rangefix at price 0.80. Compare with the unfixed new design's
+  pass 1 (-99 per cent) and the old design (-40 per cent).
+
 # 25 September 13:40: the TF size traced to the applicant switch, not the model
 
 Pass-1 first answers, all against the same local benchmark (b 0.0813):
