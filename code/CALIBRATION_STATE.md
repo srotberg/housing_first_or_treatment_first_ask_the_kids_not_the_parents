@@ -1,4 +1,4 @@
-# 25 September 14:05: two TF diagnostics running locally (the author: "do both")
+# 25 September 13:12: two TF diagnostics running locally (the author: "do both")
 
 - The payment zeroing is NOT new. git blame puts line 18194 at 304e9ed4
   (30 August), so the 19 September arm 3 had it too. It cannot explain why TF is
@@ -12,7 +12,7 @@
   0.83. If still huge, the model changes since 19 September are the cause; if
   near -35 to -45 per cent, the test-and-exclude applicant design (inc 1) is.
 
-# 25 September 13:45: TF PAYMENT BUG, diagnostic run on a build copy
+# 25 September 13:05: TF PAYMENT BUG, diagnostic run on a build copy
 
 The author's rule: test only holders and those about to get a voucher; a fail
 revokes it (holder) or withholds it (new winner), then about 3 years of exclusion;
