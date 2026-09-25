@@ -1,3 +1,15 @@
+# 25 September 20:40: NULL ARM ON THE 19 SEPTEMBER MODEL (did arm 3 have the surplus too?)
+
+The author: "start it now". code/null19: the 19 September counterfactual binary
+(code/arm1/hftf, built 19-Sep 13:14, the arms' shared binary) against the 19 September
+benchmark files in code/arm1 (saved target 6.021272176537, the value arm 3 cleared
+against). Handover rebuilt from arm 3's 101 echoed HANDOVER lines with the policy off:
+test 0, exclusion 0, adjust_taxes 0, applicant switch back to 1, price start 1.0,
+omega_c 0.055, pi_V 0.068274, adjuster 0.1 (102 lines, all echoed back). If its net
+revenue settles well above 6.0213, arm 3's 3.25% carried the same surplus.
+The author also asked that pi_V balance the budget: it does (tax_system_type 3 in the
+TF logs; the labour tax rate stays at the benchmark's 0.8935).
+
 # 25 September 20:30: the author doubts the TF CEV (about 0, against 3.25% in arm 3)
 
 Welfare split (childhood + beta^25*adult), against the null arm, 1% CEV ~ 0.33 utils:
