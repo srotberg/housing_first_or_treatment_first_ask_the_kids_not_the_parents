@@ -1,3 +1,9 @@
+# 25 September 16:35: grandfathering is not needed
+
+The author, on the latent voucher_gf leak: "It is ok with the grandfathering. We
+don't need to run it". Leave grandfather_voucher_states at 0 and the gf leak
+unfixed; revisit only if the author asks for a grandfathered run.
+
 # 25 September 16:30: no-op check NOT bitwise; determinism test running
 
 cfarm_noop_bench block 1 (fixed build a102cfaa, same seed, same 97-line handover
