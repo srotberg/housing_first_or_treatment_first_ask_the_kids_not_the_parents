@@ -5,8 +5,10 @@
   b sawtooths +/-0.65 per cent with the price (0.9949 to 0.9967), so its b
   change of -1.67 per cent is +/-0.6 pp. lambda_d -2.19 per cent and h_1 -2.50
   per cent are steady. bench_files.tar.gz was NOT pushed. v2 archived.
-- THIS container: `remote_cf_arm.sh internalise` at adjuster 0.1, stage 1
-  started 01:32 in code/cfarm_bench (out: code/cfarm_internalise.out). The
+- THIS container: `remote_cf_arm.sh internalise` at adjuster 0.1. The 01:32
+  launch used nohup and DIED when the turn ended (the container is suspended
+  between firings); relaunched 01:43 as a harness background task (Bash
+  run_in_background), which survives. Stage 1 started 01:43 in code/cfarm_bench (out: code/cfarm_internalise.out). The
   container restarted once (01:21), so check `uptime -s` each firing and
   relaunch the same line if it is newer than the launch. Push
   cfarm_bench/bench_files.tar.gz when stage 1 finishes.
