@@ -1,3 +1,16 @@
+# 25 September 21:55: the inherited channel works under TF; diagnostic extended to adults
+
+The author: TF is "totally misaligned" with the stylized model, whose TF gain runs
+through children inheriting better draws. The quantitative model's analogue is the
+penalty class (child_penalty_classes 2, fed by newborn_parent_share), and it UPDATES
+in the counterfactual: newborns with a disordered parent 2.93% (null) -> 2.18% (TF,
+-26%) and 2.07% (omega_c 1, -29%); disordered or homeless 3.09% -> 2.34% (-24%) and
+2.23% (-28%). Difference in the experiments: the stylized comparison is UNIVERSAL HF
+against universal TF with zero homelessness under both; the quantitative one is
+rationed TF with homelessness +9% and vouchers -5%. Diagnostic rebuilt with
+ADULTDECOMP (age-one value by penalty class x SUD); cfarm_null_childdecomp restarted
+on it (the first start had 2.7 minutes of run time).
+
 # 25 September 21:30: the author bets on a code error behind TF's CEV of about 0
 
 Checked and CLEARED: the child's flow uses goods consumption net of drugs
