@@ -1,3 +1,13 @@
+# 25 September 19:50: RATIONED TF CONVERGED against the like-for-like budget
+
+results/counterfactuals_cf_local/tf/RESULT.md (the saved-target run kept beside it as
+RESULT_saved_target.md). TARGET CHECK PASS at 6.26479885996; exit after pass 10.
+Against the benchmark (against the null arm): b -27.7% (-27.4%), lambda_d -28.2%
+(-27.9%), h_1 +8.9% (+9.5%), SMI -0.3%, SMI share of homeless -6.0%, drug quantity
+-17.5%, price 0.88117 (-11.9%), pi_V 0.07154 (+5.9%), eligibles getting a voucher
+-5.3% (-4.7%), voucher spending -6.0% (-4.5%). CEV +0.151% against the null's
++0.140%: about zero. Budget gap 0.021 at exit, pi_V still easing down.
+
 # 25 September 18:40: rationed TF RERUN against the like-for-like budget target
 
 The author: "Go ahead with the rerun... You need to rerun the rationed tf with the
