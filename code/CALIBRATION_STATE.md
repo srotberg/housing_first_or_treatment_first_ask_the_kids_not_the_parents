@@ -1,3 +1,19 @@
+# 25 September 21:30: the author bets on a code error behind TF's CEV of about 0
+
+Checked and CLEARED: the child's flow uses goods consumption net of drugs
+(consumption_choice = total*(1-frac_spent), asserted at six places). b_shifter is
+addiction_scalar_1 (0.0055) for every child regardless of parental SUD (times
+b_smi_multiple under SMI), and value_of_life (87.62) enters the child's flow as
+(xi-1)*(u+aleph), so children do not die and the constant cancels. Homeless size
+0.0216 against the smallest rental 0.0407 (53 per cent); housing share 0.447, sigma 2.
+The author: drug spending is about 16 per cent of income for the 10 per cent who use,
+so the diversion channel should be worth roughly +0.3 to +0.5 to children under TF,
+against a measured -0.01. DIAGNOSTIC: scratchpad build_cf_childdecomp.sh prints
+CHILDDECOMP mass/util/cons by household (1 homeless, 2 housed and using, 3 voucher,
+4 excluded, 5 other), discounted and age-normalised so util sums to own childhood
+before the kappa_x term. Running: cfarm_null_childdecomp (no policy); next, TF on the
+same build with the corrected target once cfarm_tf_pdet85 frees memory.
+
 # 25 September 21:10: the 19 September null stopped after pass 1 -- its benchmark's big files are gone
 
 code/null19 ran pass 1 and then died reading value_function1baseline_benchmark.dat:
