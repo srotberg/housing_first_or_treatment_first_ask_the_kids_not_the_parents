@@ -1,3 +1,12 @@
+# 25 September 21:00: the 85 per cent detection run is going
+
+The author: "ok, run the 85% detection one"; "i think the 85% is more reasonable";
+tests are by surprise, so nobody can abstain ahead of one. code/cfarm_tf_pdet85:
+rationed TF, probability_of_detection 0.85, like-for-like target (log: 6.26479885996),
+price start 0.87. To make room cfarm_tf_old_like (19 Sep design, corrected budget)
+was stopped by pid at pass 1 (its pass-1 log in the scratchpad) and removed; rerun
+later if the attribution is still wanted. Running now: null19, cfarm_tf_pdet85.
+
 # 25 September 20:45: memory, and the detection-rate test queued
 
 cfarm_tf_old_saved was killed by the kernel (out of memory: three 4.9 GB solves on
