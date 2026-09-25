@@ -1,3 +1,13 @@
+# 25 September 10:35: tf settled demand is price-inelastic; main run restarted at 0.35
+
+Settled (post-transient) demand, with the budget cleared (pi_V about 0.10):
+0.0600 at p = 0.4448 and 0.0626 at 0.4359 (0.47-start run); 0.0733 at 0.4196 and
+0.0743 at 0.4175 (0.42-start run); b about 0.008 to 0.009. The implied elasticity
+is 2 to 4, so against supply 0.5014*p^1.46 it clears at p = 0.354 to 0.372. First
+passes overstate demand, so the price climbs a few per cent before it settles. The
+main run now starts at 0.35 (code/cfarm_tf); the 0.42-start run (code/cfarm_tf_probe,
+now at 0.415) walks down from above as the check.
+
 # 25 September 07:55: tf clearing price bracketed by probes, local runs at 0.47 and 0.52
 
 These are pass-1 demands from the local benchmark at adjuster 0.1, with the voucher
