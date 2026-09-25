@@ -1,3 +1,16 @@
+# 25 September 07:55: tf clearing price bracketed by probes, local runs at 0.47 and 0.52
+
+These are pass-1 demands from the local benchmark at adjuster 0.1, with the voucher
+probability carried:
+- p = 0.86: V = 0.0018, b = 0.00057, lambda_d = 0.00019 (supply about 0.40);
+  passes 2 to 4 kept b under 0.0006.
+- p = 0.40: V = 0.917, b = 0.0487 (supply 0.13).
+The log-linear demand has elasticity 8.1 and clears near p = 0.49. First-pass demand
+overstated the settled demand in omega1, so the main run starts at 0.47
+(code/cfarm_tf) and a probe at 0.52 (code/cfarm_tf_probe, via the ignored copy
+code/probe_cf_arm.sh). A run started at 0.6 (v3) or 0.86 walks 20 to 60 passes at
+the 0.5 per cent cap, which is why v3 has taken over 6 hours.
+
 # 25 September 06:55: internalise and omega1 DONE (adjuster 0.1, one local benchmark); tf pending
 
 - results/counterfactuals_cf_local/internalise: lambda_d -2.14%, h_1 -2.47% (firm);
