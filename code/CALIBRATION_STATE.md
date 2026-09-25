@@ -1,3 +1,28 @@
+# 25 September 18:10: TF's voucher expansion is a BUDGET-TARGET ARTEFACT
+
+The author doubted pi_V +54 per cent ("But not that much"). A NULL ARM settles it:
+the counterfactual binary with NO policy change (code/cfarm_null_revsplit: omega_c
+0.06, test 0, exclusion 0, adjust_taxes 0, price clearing from 1.0), built with one
+extra print, the revenue split (scratchpad build_cf_revsplit.sh; source untouched).
+Pass 3 against the saved benchmark:
+  b 0.080884 (-0.5%), lambda_d 0.034528 (-0.2%), h_1 0.0060467 (-0.5%)  -- moments reproduce
+  total income 63.246 vs 62.956 (+0.46%); revenue 14.2817 vs 14.0405
+  (labour 13.514, investment 0.768, consumption 0, property 0); ss 8.4385 vs 8.4078
+  NET REVENUE 6.2685 vs the target 6.0389 read from net_govt_revenuesbaseline_benchmark.dat
+So the budget rule sees +0.23 of "surplus" with no policy at all -- a third of
+voucher spending -- and TF's pi_V clearing hands it to vouchers. Against the null,
+TF's net revenue BEFORE vouchers is about 0.065 LOWER (warm-started TF, pass 4:
+net 6.0588 with vouchers 0.8182, i.e. 6.877 before vouchers, vs the null's 6.942):
+more retirees (ss +0.06), smaller bequest residual (-0.04), revenue +0.036. Budget-
+neutral TF would cut voucher spending about 9 per cent, not raise it 20.
+Unaffected: omega1 and internalise (adjust_taxes 0). Their moments are measured
+against the saved benchmark, which the null reproduces within 0.5 per cent.
+Root cause of the +0.46 per cent income gap: NOT FOUND. The warm-started TF
+diagnostic was stopped by pid after pass 4 (its log in the scratchpad).
+Proposed: rerun TF with the target set, arm-locally, to the null's converged net
+revenue (the arm directory's copy of net_govt_revenuesbaseline_benchmark.dat, not
+cfarm_bench's). Waiting on the author.
+
 # 25 September 17:15: RATIONED TF CONVERGED on the fixed model
 
 results/counterfactuals_cf_local/tf (RESULT.md, cf.log.gz, the 100-line arm
