@@ -1,3 +1,19 @@
+# 25 September 22:45: TWO CONVERGED TF RUNS DISAGREE ON WELFARE -- the budget tolerance is too loose
+
+Same settings (rationed TF, 70% detection, target 6.26479886), different start:
+run 1 (from the benchmark pi_V; results/counterfactuals_cf_local/tf): 10 passes, budget
+gap at exit 0.021, pi_V 0.0705, voucher spending 0.643, h 0.00662, lifetime 789.4006,
+CEV +0.15%. run 2 (warm start at pi_V 0.0715, price 0.881; the childdecomp run,
+scratchpad cf_tf_childdecomp.log.gz): 8 passes, gap 0.008, pi_V 0.0753, spending
+0.656, h 0.00655, lifetime 789.5976, CEV +0.73%. Both pass every stopping rule;
+stopping_rule_govt_budget = 0.025 (declared, no handover case) is about 4% of voucher
+spending, and welfare moves ~0.6pp of CEV inside it. NOT a best-of: neither is THE
+number until a run closes the budget tightly (build copy with the declared value
+changed, e.g. 2e-3). Welfare split, run 2 against the null: childhood +0.091 (users'
+children 20.1% -> 14.6%, excluded 0.54%, homeless 0.97 -> 1.03%), adult +0.110 of
+which the inherited penalty (penalised newborns 2.93% -> 2.10%) about +0.047.
+Running: cfarm_tf_old_saved, cfarm_tf_old_like (19 Sep design, both targets).
+
 # 25 September 22:05: QUEUE (the author: "yes, rerun both after the diagnostic")
 
 1. running: cfarm_null_childdecomp (welfare split, no policy) and cfarm_tf_pdet85.
