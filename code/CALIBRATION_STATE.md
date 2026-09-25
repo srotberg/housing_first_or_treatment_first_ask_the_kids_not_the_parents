@@ -1,3 +1,17 @@
+# 25 September 20:30: the author doubts the TF CEV (about 0, against 3.25% in arm 3)
+
+Welfare split (childhood + beta^25*adult), against the null arm, 1% CEV ~ 0.33 utils:
+TF fixed, like-for-like target: childhood -0.01, adult +0.02 (CEV 0.15%, null 0.14%);
+TF fixed, SAVED target: childhood +0.89, adult +0.63 (CEV 4.76%); 19 Sep settings on
+today's model, unfixed, saved target: childhood +0.78, adult +0.09 (CEV 2.75%).
+The CEV code passes the null and the curve is shifted to w(0) = benchmark welfare
+(bench log: shift -0.0917 utils). With sigma = 2 the voucher money (to the poorest)
+carries most of the welfare. IN FLIGHT, to attribute the old 3%:
+- code/cfarm_tf_old_like: INC 0 (the 19 Sep design), fixed code, target 6.26479886
+- code/cfarm_tf_old_saved: INC 0, fixed code, saved target 6.03887563
+(scratchpad design_cf_arm.sh = remote_cf_arm.sh with DIAG_TAG and INC; price 0.85).
+code/cfarm_tf removed for disk; its log, handover and target are in results/.
+
 # 25 September 19:50: RATIONED TF CONVERGED against the like-for-like budget
 
 results/counterfactuals_cf_local/tf/RESULT.md (the saved-target run kept beside it as
