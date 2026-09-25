@@ -1,3 +1,13 @@
+# 25 September 22:05: QUEUE (the author: "yes, rerun both after the diagnostic")
+
+1. running: cfarm_null_childdecomp (welfare split, no policy) and cfarm_tf_pdet85.
+2. next, in the slot the null frees: TF on the cf_childdecomp build, corrected target
+   6.2647988599575077, warm start (price 0.881, PV_START 0.0715).
+3. after the diagnostic: the 19 September design (INC=0) on the fixed code, twice,
+   via scratchpad design2_cf_arm.sh -- DIAG_TAG _old_like with NET_TARGET
+   6.2647988599575077, and _old_saved without it -- price start 0.85.
+At most two solves at once (ENGINE.md, memory).
+
 # 25 September 21:55: the inherited channel works under TF; diagnostic extended to adults
 
 The author: TF is "totally misaligned" with the stylized model, whose TF gain runs
