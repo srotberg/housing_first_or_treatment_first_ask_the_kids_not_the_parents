@@ -1,3 +1,14 @@
+# 25 September 21:10: the 19 September null stopped after pass 1 -- its benchmark's big files are gone
+
+code/null19 ran pass 1 and then died reading value_function1baseline_benchmark.dat:
+code/arm1 kept only the small benchmark files and no copy of the large ones exists
+on this machine. Pass 1 against its target 6.0213: net revenue 6.0868 (+0.0655),
+revenue 14.322, ss 8.648, vouchers_2 0.696, income 63.33; b 0.082059, lambda 0.033087,
+h 0.0063302. Today's null at the same stage: 6.0920 against 6.0389 (+0.0531), which
+settled at +0.2259. So the 19 September model shows the same gap at pass 1, slightly
+larger. Not proven to convergence; finishing it means re-solving the 19 September
+benchmark (hours). Log in the scratchpad (cf_null19_pass1.log.gz).
+
 # 25 September 21:00: the 85 per cent detection run is going
 
 The author: "ok, run the 85% detection one"; "i think the 85% is more reasonable";
