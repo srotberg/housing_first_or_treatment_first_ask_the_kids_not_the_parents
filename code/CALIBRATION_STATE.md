@@ -1,3 +1,15 @@
+# 25 September 18:40: rationed TF RERUN against the like-for-like budget target
+
+The author: "Go ahead with the rerun... You need to rerun the rationed tf with the
+correct budget and budget clearing". code/cfarm_tf, remote_cf_arm.sh tf with
+NET_TARGET 6.2647988599575077 (the null arm's converged net revenue) and price start
+0.86; binary cf/ from a102cfaa. The log confirms net_govt_revenue_constraint
+6.2647988599580; cfarm_bench's file still reads 6.038875634967.
+- The target file is govt_revenues_to_use_in_tests, not net_govt_revenues:
+  clear_only_vouchers_govt_budget is a compile-time 0. The first launch wrote the
+  wrong file, cleared against 6.0389 and was stopped by pid at startup.
+- Report TF's CEV next to the null arm's own CEV against the saved curve: +0.14%.
+
 # 25 September 18:20: the null arm converged (exit after pass 4, VOUCHER CHECK PASS)
 
 b 0.080903 (-0.4%), lambda_d 0.034513 (-0.3%), h_1 0.0060470 (-0.5%), price 1.00014,
