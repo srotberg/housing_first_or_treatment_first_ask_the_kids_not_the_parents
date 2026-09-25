@@ -18188,20 +18188,19 @@
             gf_exempt_1=1
         end if
         
-        if ((gf_exempt_1==0) .AND. &
-            ((unemployment_index>threshold_addiction_index) .OR. &
-            ((future_addiction_index_1>=1) .AND. (unemployment_index<=threshold_addiction_index))) .AND. &
-            (voucher_conditional_on_clean==1)) then
-            
-            if (voucher_conditional_on_clean_just_addicts==1) then
-            
-                write(*,*) "wrong"
-                
-            end if
-            
-            housing_voucher_1=0
-            
-        elseif ((gf_exempt_1==0) .AND. (unemployment_index>threshold_addiction_index) .AND. &
+        ! TREATMENT FIRST ACTS THROUGH THE VOUCHER STATE, NOT THROUGH THIS
+        ! PAYMENT. A branch here used to zero the voucher of every drug user and
+        ! every SUD holder whenever voucher_conditional_on_clean was on, before
+        ! any test was drawn. That is detection with probability one in the
+        ! current period on top of the probability_of_detection that
+        ! voucher_probabilities applies to next period's state, so a holder the
+        ! test MISSED was still never paid. The author's rule, 25 September:
+        ! "with 30% chance you don't get caught and still get paid". The test now
+        ! reaches a holder only through the transition -- caught, it is excluded
+        ! from next period; missed, it keeps the voucher and is paid -- which is
+        ! the timing a lottery winner already faced, so holders and applicants
+        ! are tested the same way.
+        if ((gf_exempt_1==0) .AND. (unemployment_index>threshold_addiction_index) .AND. &
             (voucher_conditional_on_clean_just_addicts==1)) then
             
             if (voucher_conditional_on_clean==1) then
@@ -32286,6 +32285,21 @@
         first_voucher_index=0
         second_voucher_index=0
 
+        ! AN EXCLUDED HOUSEHOLD THAT NO BRANCH BELOW CATCHES STAYS EXCLUDED.
+        ! The exclusion rows are written for both values of has_opportunity --
+        ! release to 0 with voucher_exclusion_release, stay with the rest -- but
+        ! an excluded household above the income gate, or buying, fell through
+        ! to the range [0,0] above, so the stay row was never summed: the value
+        ! function kept a third of its continuation and the distribution lost
+        ! the other two thirds of its mass. Exclusion looked close to death,
+        ! and with every failing lottery winner exposed to it, Treatment First
+        ! took drug participation to -99 per cent. The author, 25 September:
+        ! keep the exclusion running when income rises past the gate. A branch
+        ! below that sets its own range for this state still overrides this.
+        if ((include_voucher_exclusion==1) .AND. (voucher_index==voucher_excl)) then
+            second_voucher_index=voucher_excl
+        end if
+
         if ((income_to_use_5<threshold_income_vouchers*&
             ((1-is_counterfactual)*median_income(time_period)+&
             is_counterfactual*median_income_calibrated)) .AND. &
@@ -32384,9 +32398,24 @@
                     has_opportunity=1
                     first_voucher_index=0
                     second_voucher_index=include_vouchers+include_voucher_exclusion
-                    
-                end if             
-                
+
+                end if
+
+                ! A TEST WITHOUT EXCLUSION SENDS A HOLDER BACK TO STATE 0, and the
+                ! range above starts at 1. With voucher_conditional_on_clean on and
+                ! include_voucher_exclusion off, voucher_probabilities puts
+                ! probability_of_detection on (1 -> 0) for a failing holder and
+                ! probability_of_false_positive on it for a clean one, and none of
+                ! it was summed. With exclusion on the same mass goes to
+                ! voucher_excl, inside the range, which is why only the
+                ! exclusion-off diagnostic (drug participation near zero) exposed
+                ! it. Gated rather than widened for everyone: the benchmark's
+                ! (1 -> 0) row is zero below the gate, so a wider range there
+                ! would only add work.
+                if ((voucher_conditional_on_clean==1) .AND. (include_voucher_exclusion==0)) then
+                    first_voucher_index=0
+                end if
+
             elseif ((has_house==1) .AND. (choose_to_own_1==0)) then
 
                 has_opportunity=1
