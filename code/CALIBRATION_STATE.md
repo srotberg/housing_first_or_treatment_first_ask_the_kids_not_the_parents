@@ -1,3 +1,26 @@
+# 25 September 13:45: TF PAYMENT BUG, diagnostic run on a build copy
+
+The author's rule: test only holders and those about to get a voucher; a fail
+revokes it (holder) or withholds it (new winner), then about 3 years of exclusion;
+false negatives 30 per cent; SUD fails the test even without use this period
+("those who have sud can't change anything and the test reveals if they have sud").
+The transitions (voucher_probabilities, compute_voucher_index_1) match this.
+THE PAYMENT DOES NOT: calculate_housing_voucher_2 (18191-18194) zeroes a holder's
+voucher every period the holder uses drugs or has SUD, even when the test missed
+them. That contradicts equation 32's own comment ("a household that is not
+caught gets the whole voucher") and the author's 30 per cent false negatives.
+- code/build_cf_payfix.sh (ignored) builds the cf binary with line 18194's
+  condition set to ==-1 (asserted by content) into code/cf_payfix. The tracked
+  source is NOT edited, because solves were running.
+- TF on that binary: code/cfarm_tf_payfix, drug_price_start 0.85 (the earlier
+  TF price was about -13 to -17 per cent).
+- The unfixed TF (price about 0.38, b -85 per cent) was stopped. Its logs are in
+  the scratchpad only.
+- Probe B (unfixed, p_det 0, price 1) in code/cfarm_tf_diagB isolates the zeroing
+  channel.
+If the fix brings TF back near the 19 September size, fix the source (with all
+three builds) once no solve is running, with the author's OK.
+
 # 25 September 13:00: the author accepts omega1 and internalisation; tf payment rule queried
 
 The author: *"Omegac=1 and internalizarion seem correct to me. Similar to before"*
