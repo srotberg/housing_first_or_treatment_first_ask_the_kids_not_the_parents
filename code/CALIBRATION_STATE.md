@@ -1,3 +1,11 @@
+# 25 September 18:20: the null arm converged (exit after pass 4, VOUCHER CHECK PASS)
+
+b 0.080903 (-0.4%), lambda_d 0.034513 (-0.3%), h_1 0.0060470 (-0.5%), price 1.00014,
+total income 63.236 (+0.44%), revenue 14.2783 (labour 13.5104, investment 0.7679),
+ss 8.4384. NET REVENUE 6.2647988599575077 against the saved target 6.038875634967:
++0.2259. That is the proposed arm-local TF budget target. Log in the scratchpad
+(cf_null_revsplit.log.gz). Waiting on the author.
+
 # 25 September 18:10: TF's voucher expansion is a BUDGET-TARGET ARTEFACT
 
 The author doubted pi_V +54 per cent ("But not that much"). A NULL ARM settles it:
