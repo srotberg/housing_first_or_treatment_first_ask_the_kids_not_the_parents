@@ -1,3 +1,5 @@
+> NOT FINAL, 25 September 18:10: the budget rule cleared against a target 0.23 below what the counterfactual binary gives with no policy change, so pi_V, the voucher coverage, homelessness and the CEV here all include a spurious surplus. See code/CALIBRATION_STATE.md, 25 September 18:10.
+
 # Rationed Treatment First, voucher fixes in (a102cfaa), 25 September
 
 Rationed TF at omega_c = 0.06 against the Housing First benchmark in code/cfarm_bench
