@@ -1,3 +1,19 @@
+# 25 September 13:00: the author accepts omega1 and internalisation; tf payment rule queried
+
+The author: *"Omegac=1 and internalizarion seem correct to me. Similar to before"*
+(results/counterfactuals_cf_local/{omega1,internalise}).
+
+On tf the author doubts b -85 per cent. The fall is policy-driven: at p = 0.86 it
+was -99 per cent, and the price then fell to about 0.38 to clear the market.
+Found and put to the author, awaiting a decision:
+calculate_housing_voucher_2 (18191) zeroes a holder's PAYMENT every period the
+holder uses drugs or has SUD, deterministically. p_det = 0.70 governs only
+revocation and exclusion, so the 30 per cent false negatives never reach the
+payment. Options offered: (a) decompose who stops using, (b) pay a using holder
+with probability 1 - p_det, (c) keep the rule and write it up with the caveat.
+Local tf runs continue meanwhile (cfarm_tf from 0.35, cfarm_tf_probe from 0.42,
+both near 0.375). v3 archived: its tf is redundant with the local runs.
+
 # 25 September 10:35: tf settled demand is price-inelastic; main run restarted at 0.35
 
 Settled (post-transient) demand, with the budget cleared (pi_V about 0.10):
