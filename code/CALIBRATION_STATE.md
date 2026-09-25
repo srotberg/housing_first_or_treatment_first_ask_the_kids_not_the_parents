@@ -1,3 +1,17 @@
+# 25 September 14:05: two TF diagnostics running locally (the author: "do both")
+
+- The payment zeroing is NOT new. git blame puts line 18194 at 304e9ed4
+  (30 August), so the 19 September arm 3 had it too. It cannot explain why TF is
+  larger now than then.
+- Probe B (unfixed, p_det 0, price 1, pass 1): b 0.0298, -63 per cent. The
+  payment zeroing ALONE removes two thirds of drug use in the current model.
+- (1) code/cfarm_tf_payfix: the payment fixed (build copy), the author's TF
+  settings (inc 1), price start 0.85.
+- (2) code/cfarm_tf_diagold19: the 19 September design (inc 0, p_det 0.70, p_fp 0,
+  exclusion, vcc 1) on the CURRENT model with the unfixed binary, price start
+  0.83. If still huge, the model changes since 19 September are the cause; if
+  near -35 to -45 per cent, the test-and-exclude applicant design (inc 1) is.
+
 # 25 September 13:45: TF PAYMENT BUG, diagnostic run on a build copy
 
 The author's rule: test only holders and those about to get a voucher; a fail
