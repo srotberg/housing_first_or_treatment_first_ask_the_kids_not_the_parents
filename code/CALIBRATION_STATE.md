@@ -1,3 +1,38 @@
+# 25 September 16:05: the voucher fixes are in the source (a102cfaa); rationed TF relaunched
+
+The author, 25 September: "Go ahead with the fix, keep the exclusion running".
+Three fixes, each gated on the test or the exclusion switch:
+- (a) calculate_future_voucher_index_and_opportunity: an excluded household no
+  branch catches (above the income gate, or buying) now gets the range
+  [0, voucher_excl], so the stay row is summed and the exclusion keeps running.
+- (b) same routine, holder branch: with the test on and exclusion off the range
+  starts at 0, where the test sends a caught holder.
+- (c) calculate_housing_voucher_2: the branch that zeroed every user's and SUD
+  holder's voucher under the test is gone; the test acts only through the
+  transition, so a holder the test misses is paid.
+Three builds 7 warnings / 0 errors each; benchmark -O3 7 / 0. Binaries in cf/
+and bench/ are from a102cfaa.
+
+IN FLIGHT (both harness background tasks, 2 threads each):
+- code/cfarm_tf: remote_cf_arm.sh tf, DRUG_PRICE_START 0.86 (the leak-fixed,
+  payment-unfixed diagnostic was clearing near 0.854 at pass 13: b 0.05315,
+  lambda 0.02302, h 0.005870, pi_V 0.0968). Handover checked in the log:
+  vcc 1, inc 1, p_det 0.70, p_fp 0, exclusion 1, adjust_taxes 1, omega_c 0.06,
+  pi_V 0.067534, adjuster 0.1.
+- code/cfarm_noop_bench: NO-OP CHECK. The fixed benchmark binary from scan_seed
+  with cfarm_bench's own 97-line handover must reproduce cfarm_bench block 1:
+  b 7.1894758675946219E-002, lambda_d 3.1458335936491132E-002,
+  h_1 7.0781358129644208E-003. Kill it (by pid) once block 1's BLOCK MOVE line
+  prints; its baseline files stay in that directory and are not used.
+
+LATENT, NOT FIXED: with grandfather_voucher_states = 1 (a compile-time 0 today)
+voucher_gf has the same leak -- rows (gf,gf)=1 only, but the range is [0,0]
+above the gate or buying and [0,2] for has_house = 1. Must be settled before
+any grandfathered transition runs; the author said on 20 September a
+grandfathered household leaves the state when its income rises past the gate.
+Also latent: the holder range's inc==0 case is gated on is_counterfactual while
+its row is not, so a BENCHMARK with inc 0 would leak (every benchmark has inc 1).
+
 # 25 September 14:35: the 19 September TF settings on the current model, FINISHED (record only, leak in)
 
 code/cfarm_tf_diagold19 (inc 0, exclusion on, p_det 0.70, unfixed build, so the
