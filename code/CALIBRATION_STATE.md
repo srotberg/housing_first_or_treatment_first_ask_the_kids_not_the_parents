@@ -1,3 +1,20 @@
+# 25 September 16:30: no-op check NOT bitwise; determinism test running
+
+cfarm_noop_bench block 1 (fixed build a102cfaa, same seed, same 97-line handover
+with exclusion 0, test 0, inc 1) against cfarm_bench block 1 (binary built 01:42,
+no source commit in between but this one):
+  b        7.1890971726074712E-002  vs 7.1894758675946219E-002  (-0.005%)
+  lambda_d 3.1454560537358053E-002  vs 3.1458335936491132E-002  (-0.012%)
+  h_1      7.0780456256119388E-003  vs 7.0781358129644208E-003  (-0.001%)
+  y        1.1459324862351796       vs 1.145927...
+Every changed line is gated on vcc 1 or exclusion 1, so the gap is either run
+to run noise (2 OpenMP threads) or -O3 code generation. Test: code/cfarm_det_bench
+runs cfarm_bench's OWN binary from the same start; if it reproduces the reference
+exactly, runs are deterministic and the gap is the build. noop run stopped by pid
+after block 1.
+TF (code/cfarm_tf) pass 1 at 0.860: b 0.06551 (-19.4%), lambda 0.02696 (-22.1%),
+h 0.006806 (+12.0%); price moved to 0.8643.
+
 # 25 September 16:05: the voucher fixes are in the source (a102cfaa); rationed TF relaunched
 
 The author, 25 September: "Go ahead with the fix, keep the exclusion running".
