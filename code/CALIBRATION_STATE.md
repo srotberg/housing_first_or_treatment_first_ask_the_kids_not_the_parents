@@ -1,3 +1,12 @@
+# 25 September 17:15: RATIONED TF CONVERGED on the fixed model
+
+results/counterfactuals_cf_local/tf (RESULT.md, cf.log.gz, the 100-line arm
+handover). Exit after pass 9 by the run's own rule. Against the benchmark: b -32.8%,
+lambda_d -32.8%, h_1 -6.4%, SMI prevalence -0.4%, SMI share of homeless -12.7%,
+drug quantity -20.0%, price 0.86208 (-13.8%), pi_V 0.10381 (+53.7%), eligibles
+getting a voucher +20.3%, CEV +4.76%. Caveat: budget gap 1.06e-02 at exit, pi_V
+still drifting down. The 24 September TF result is marked superseded.
+
 # 25 September 16:45: the voucher fixes are a NO-OP for the benchmark, within run-to-run noise
 
 cfarm_det_bench ran cfarm_bench's OWN binary (built 01:42) from the same seed

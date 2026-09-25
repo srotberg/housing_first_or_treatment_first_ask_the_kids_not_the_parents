@@ -1,3 +1,5 @@
+> SUPERSEDED 25 September: this run carried the excluded-state range leak and the payment rule fixed in a102cfaa. The result is results/counterfactuals_cf_local/tf.
+
 # TREATMENT FIRST, RATIONED VOUCHERS, EVERY HOLDER TESTED, at omega_c = 0.06 -- CONVERGED AT BLOCK 10
 
 Run 2026-09-24 06:35Z to 08:54Z, `sh code/build_tf_rationed.sh` then
