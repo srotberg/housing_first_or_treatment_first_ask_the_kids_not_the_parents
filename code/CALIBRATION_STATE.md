@@ -1,3 +1,17 @@
+# IN FLIGHT, 25 September 04:25: both remaining local arms from ONE local benchmark
+
+- Local benchmark (code/cfarm_bench) done 04:15: b = 0.081255009769345327,
+  -6.9e-5 against the reference; voucher probability 0.067533863251354.
+  bench_files.tar.gz is 131 MB, over GitHub's 100 MB limit, which is why v2
+  never pushed it. Deleted; the set lives in code/cfarm_bench only.
+- Local internalise at adjuster 0.1 (task b3hj81odq), stage 2 since 04:15.
+- Local omega1 at adjuster 0.1 (task b08fa7bn8), from the same benchmark, since
+  04:24. Deleted code/trans_bench_to_tf (4.5 GB, the 21 September arm 3
+  transition on the superseded model, results in results/transition/) to make
+  disk room: one arm directory is 2.5 GB.
+- v3 (session_012k9WecRrXzogSi5ZtEuDRN): tf at 0.1 since about 01:25. Archive
+  it once tf is pushed; its omega1 duplicates the local one.
+
 # IN FLIGHT, 25 September 01:35
 
 - internalise v2 (results/counterfactuals_cf_v2/internalise/): the voucher
