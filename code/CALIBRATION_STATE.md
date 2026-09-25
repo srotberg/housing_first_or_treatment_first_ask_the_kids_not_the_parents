@@ -1,3 +1,18 @@
+# IN FLIGHT, 25 September 01:35
+
+- internalise v2 (results/counterfactuals_cf_v2/internalise/): the voucher
+  check PASSED and stage-1 b is -1.8e-5 against the reference. At adjuster 0.2
+  b sawtooths +/-0.65 per cent with the price (0.9949 to 0.9967), so its b
+  change of -1.67 per cent is +/-0.6 pp. lambda_d -2.19 per cent and h_1 -2.50
+  per cent are steady. bench_files.tar.gz was NOT pushed. v2 archived.
+- THIS container: `remote_cf_arm.sh internalise` at adjuster 0.1, stage 1
+  started 01:32 in code/cfarm_bench (out: code/cfarm_internalise.out). The
+  container restarted once (01:21), so check `uptime -s` each firing and
+  relaunch the same line if it is newer than the launch. Push
+  cfarm_bench/bench_files.tar.gz when stage 1 finishes.
+- v3 (session_012k9WecRrXzogSi5ZtEuDRN): stage 1 passed; tf at 0.1 running
+  since about 01:25, omega1 after it.
+
 # PLAN, 24 September 22:25: ONE benchmark (v2's), every remaining arm run from it
 
 The author: *"Wouldn't it be more efficient to run it once in this session and
