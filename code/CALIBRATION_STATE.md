@@ -1,3 +1,12 @@
+# 25 September 20:45: memory, and the detection-rate test queued
+
+cfarm_tf_old_saved was killed by the kernel (out of memory: three 4.9 GB solves on
+16 GB); removed, not rerun (the TF pair already measures the target's effect).
+QUEUED: the author asks whether 15 per cent false negatives would deter more.
+Rationed TF with probability_of_detection 0.85, like-for-like target, price 0.87,
+via scratchpad design2_cf_arm.sh (PDET), DIAG_TAG _pdet85, as soon as null19 frees
+its memory. Running: cfarm_tf_old_like, null19.
+
 # 25 September 20:40: NULL ARM ON THE 19 SEPTEMBER MODEL (did arm 3 have the surplus too?)
 
 The author: "start it now". code/null19: the 19 September counterfactual binary

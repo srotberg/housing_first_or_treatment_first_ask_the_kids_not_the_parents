@@ -1,3 +1,10 @@
+# AT MOST TWO SOLVES AT ONCE: each counterfactual solve holds about 4.9 GB, 25 September 20:40
+
+The container has 16 GB and no swap. Three counterfactual solves (4.9 GB RSS each)
+do not fit: the kernel killed code/cfarm_tf_old_saved with SIGKILL (exit 137,
+"Killed" in the .out) when a third run was added. Check free -m before launching;
+a launch needs about 5 GB available.
+
 # THE OLD ARMS RAN AT drug_market_adjuster 0.1 WITH A MEASURED PRICE START, 24 September 22:20
 
 The author: *"In the past they took just a couple of hours"*. launch_arm.sh
