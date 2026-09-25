@@ -1,3 +1,25 @@
+# 25 September 13:40: the TF size traced to the applicant switch, not the model
+
+Pass-1 first answers, all against the same local benchmark (b 0.0813):
+- 19 September design (inc 0) on the CURRENT model, unfixed, p 0.83: b 0.0487
+  (-40%), lambda_d -43%, h_1 +4%. This reproduces the old arm 3 (-44.6%, h +1.3%)
+  and the author's memory, so the recalibration since 21 September is NOT it.
+  (Handover diff against PARAM_HANDOVER_arm3_converged.txt: the homeless-state
+  parameters are identical; only modest recalibrations moved.)
+- New design (inc 1), unfixed, p 0.86: b 0.00057 (-99%).
+- New design (inc 1), payment fixed, p 0.85: b 0.00146 (-98%). So the payment
+  rule is not what separates the two designs.
+- Probe B (inc 1, p_det 0, unfixed, p 1): b 0.0298 (-63%). Payment zeroing alone.
+- Code: inc changes only the row for a FAILING NON-HOLDER. With inc 0 it is never
+  offered, tested or excluded. With inc 1 it wins with probability pi, then
+  30% get the voucher and 70% are excluded. On paper that is MORE generous except
+  for the exclusion, so the size is not explained yet.
+- The comment at 32366 records an earlier bug in which a voucher carried no
+  continuation value: drug use fell 0.0849 to 0.0253. In this model drug use
+  leans heavily on the voucher as a safety net.
+- Running: code/cfarm_tf_diagnoexcl (inc 1, exclusion OFF, unfixed, p 0.86)
+  isolates the applicant exclusion. code/cfarm_tf_diagold19 continues to converge.
+
 # 25 September 13:12: two TF diagnostics running locally (the author: "do both")
 
 - The payment zeroing is NOT new. git blame puts line 18194 at 304e9ed4
