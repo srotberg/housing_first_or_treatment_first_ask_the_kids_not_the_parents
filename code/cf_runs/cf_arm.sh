@@ -34,7 +34,7 @@ case "$ARM" in tf|omega1|internalise|null) ;; *) echo "usage: $0 tf|omega1|inter
 # THE DISTRIBUTION IS SOLVED EACH PASS (26 September): BUILD is cf_tightdist or
 # cf_tightdist_permban (scratchpad build_cf_tightdist.sh), rule 5e-6 in the loop.
 BUILD="${BUILD:-cf_tightdist}"
-case "$BUILD" in cf_tightdist|cf_tightdist_permban|cf_tightdist_b4|cf_tightdist_b4_permban|cf_tightdist_b4h|cf_tightdist_b4h_permban|cf_tightdist_b3h|cf_tightdist_b3h_permban|cf_tightdist_b3hs|cf_tightdist_b3hs_permban|cf_tdm|cf_tdm_permban|cf_tdm_revdiag|cf_fix|cf_fix_permban|cf_fix2|cf_fix2_permban) ;; *) echo "GUARD: BUILD must be a cf_tightdist build"; exit 1 ;; esac
+case "$BUILD" in cf_tightdist|cf_tightdist_permban|cf_tightdist_b4|cf_tightdist_b4_permban|cf_tightdist_b4h|cf_tightdist_b4h_permban|cf_tightdist_b3h|cf_tightdist_b3h_permban|cf_tightdist_b3hs|cf_tightdist_b3hs_permban|cf_tdm|cf_tdm_permban|cf_tdm_revdiag|cf_fix|cf_fix_permban|cf_fix2|cf_fix2_permban|cf_fix2_damp|cf_fix2_damp_permban) ;; *) echo "GUARD: BUILD must be a cf_tightdist build"; exit 1 ;; esac
 [ -x "$BUILD/hftf_cf_prod" ] || { echo "GUARD: $BUILD/hftf_cf_prod missing"; exit 1; }
 DIR="cfarm_${ARM}${DIAG_TAG}"; BDIR=cfarm_bench; SEED=scan_seed
 export OMP_NUM_THREADS=2
