@@ -1,3 +1,17 @@
+# 26 September 20:20: FLAT CONTROL PASSED; T = 60 TF 85 staged, launches when TF 70 exits
+
+results/transition_fix/flat10: T = 10, no reform, both ends the no-policy steady state (cf_fix2_share),
+section-16 fixes. One loop, every per-period rule met (budget at most 1.07e-4), welfare within 0.0011
+utils of the steady state in all nine periods, 0.00007 at t = 1; the t = 1 parent share restored from
+the no-policy run. TRANSITION_LESSONS section 16 updated.
+code/trtf60 staged (scratchpad stage_tr_fix.sh): terminal cfarm_tf_fix2_85 (counter_arm), t = 0 the
+no-policy distribution and parent share (code/seed_null_share), target 6.0370824602930142, price and
+pi_V seeds flat at TF 85's 0.8674 and 0.0814112, handover pi_V set to the same. It must NOT share the
+box with a steady-state solve (T60_STOPPED: an OOM when it did), so background task baw1htwyf starts it
+with 4 threads once cfarm_tf_damp70 has exited and at least 11 GB are available.
+TF 70 damped (cfarm_tf_damp70): the flip is gone (b 0.057645 -> 0.057637, passes 2 -> 3); budget
+closing with the halved step.
+
 # 26 September 18:05: TF 70 CYCLED ON THE PARENT SHARE; rerun with a damped update
 
 TF 70 on cf_fix2 alternated between two states from pass 4 (b -28.4 / -28.9%, disordered-housed
