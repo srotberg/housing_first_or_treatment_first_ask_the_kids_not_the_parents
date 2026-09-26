@@ -1,3 +1,22 @@
+# 26 September 03:50: BENCHMARK RE-SOLVE FIRST (the author: "run the benchmark re-solve first")
+
+Why: a no-policy counterfactual should reproduce the benchmark (CEV about 0). The old converged
+no-policy run gave +0.14 per cent and net revenue 6.2646 against the benchmark's saved 6.0389
+(+0.226). Almost all of it is total revenue (14.278 against 14.040, +1.7 per cent); spending
+barely differs; income +0.44 and consumption +0.14 per cent. The counterfactual's imported
+averages match the saved benchmark (average labour income 1.6164, net wealth 3.3461). Leading
+suspect: the benchmark itself, solved on the loose 6e-4 rule, with net revenue still falling in
+its last four blocks (6.060, 6.049, 6.041, 6.039) and one sweep in the last. The +1.21 per
+cent of a no-policy FIRST pass is separate: in pass 1 newborn_parent_share is (1,0,0,0), so no
+child inherits a penalty (the first-sweep wave repeats when pass 2 restores the shares).
+Build code/bench_tdm (scratchpad build_bench_tdm.sh): the benchmark binary with the calibration
+loop's rule 6e-4 -> 5e-5 (47815) and at least 70 sweeps -- the counterfactual build's numerics.
+Three builds, 7 warnings / 0 errors, 4 diff lines. Running code/cfarm_bench_tdm (scratchpad
+bench_tdm.sh): same seed, same 97-line handover as cfarm_bench's stage 1, 12 frozen blocks,
+into save_welfare_curve; it saves a full benchmark file set. TF 85 on cf_tdm was stopped after
+pass 1 (log in the scratchpad) since a changed benchmark changes what every arm imports.
+Still running: code/cfarm_null_tdm (no policy on cf_tdm, the other half of the comparison).
+
 # 26 September 03:20: 5e-6 IS BELOW THE DISTRIBUTION'S FLOOR -- at least 70 sweeps a pass, then 5e-5
 
 The no-policy run's first pass on cf_tightdist: the transient washes out after one lifetime
