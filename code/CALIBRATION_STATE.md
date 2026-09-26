@@ -1,3 +1,12 @@
+# 26 September 00:25: PERMANENT BAN queued (the author: "try the permanent ban")
+
+Build copy code/cf_permban (scratchpad build_cf_permban.sh): voucher_exclusion_release
+1/3 -> 0 (used only in the exclusion rows, no division) plus the tight budget rule
+2e-3; three builds 7 warnings / 0 errors. Run at 85 per cent detection (the author:
+"i think the 85% is more reasonable"), corrected target 6.26479886, warm start from
+the tight 85 run, via scratchpad permban_cf_arm.sh with DIAG_TAG _permban85. Starts
+when a tight run finishes and its directory is saved and freed.
+
 # 25 September 22:55: FIRM TF NUMBERS -- 70 and 85 per cent detection with the budget closed tightly
 
 The author: "finish both and give me firm numbers for 70% and 85%". Build copy
