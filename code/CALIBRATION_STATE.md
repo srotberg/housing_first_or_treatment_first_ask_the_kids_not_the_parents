@@ -1,3 +1,21 @@
+# 26 September 03:10: TF RUNS MOVE TO THE 1e-3 HALVING BUILD (author's requests)
+
+The author: "Why can't you clear the budget around 0.0002?", then "Maybe you need to update
+piv more slowly closer to the end", then "You can do 0.001 too if it helps". Build copies
+code/cf_tightdist_b3h and _b3h_permban (scratchpad build_cf_tightdist_b3h.sh): cf_tightdist
+plus budget rule 1e-3 and pi_V's step HALVED whenever the budget gap changes sign (floor
+0.05/8, prints "PV STEP: gap= gain="). Gain left at 0.05: the budget's slope in pi_V was
+measured at about -8 (pass 1 of the two 70% runs) and about -21 including the distribution's
+response, so a larger fixed gain could overshoot. Three builds each, 7 warnings / 0 errors;
+diffs against cf_tightdist_b4 and between the pair are exactly the intended lines.
+TF 85 on cf_tightdist was stopped in its first pass and relaunched as code/cfarm_tf_b3h85
+(pi_V start 0.0725, price 0.874, target 6.26479886 pending the new no-policy run); its log
+confirms detection 0.85, pi_V 0.0725, rule 1e-3. The no-policy run continues on cf_tightdist
+(no budget clearing, so neither change touches it). Its first pass shows the distribution
+converging in waves (a bump from 9.4e-6 to 1.2e-4 at sweep 68; acceleration is off,
+accelerate_distribution = 0), most likely the parent-to-child link echoing a generation on.
+Every relaunch starts from the best equilibrium guesses available (the author).
+
 # 26 September 02:50: THE DISTRIBUTION SOLVED EACH PASS -- no-policy and TF 85 running
 
 Build copies code/cf_tightdist and code/cf_tightdist_permban (scratchpad
