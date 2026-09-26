@@ -8,6 +8,7 @@ gfortran was not installed in this container; installed from apt: GNU Fortran (U
 | permban85 | running (STAGE 2 since 17:56) |
 | null_remote | DONE 19:30, pass 5, checks pass; net revenue 6.0373408770945769 (results/counterfactuals_cf_fix2/null_remote) |
 | elast5_85 | running (launched 19:31, NET_TARGET 6.0373408770945769) |
+| tf70 (damped) | pending: takes the next free slot (coordinator, 22:10) |
 | omega1 | pending |
 | uniq85 | pending |
 | internalise | pending |
@@ -37,3 +38,5 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
 - 18:15 coordinator's second amendment (damped build for a cycling arm) pulled; a watcher checks every running arm for moments >1e-4 three passes running with b alternating.
 - 19:30 null_remote finished: VOUCHER CHECK PASS, DIST CHECK PASS (5 passes). Final net_govt_revenues 6.0373408770945769, 2.58e-4 above the coordinator's 6.0370824602930142. This is NET_TARGET for elast5_85 and uniq85.
 - 19:31 elast5_85 launched: `... SUPPLY_ELAST=5 DIAG_TAG=_elast5_85 PV_START=0.082 DRUG_PRICE_START=0.94 NET_TARGET=6.0373408770945769 sh cf_runs/cf_arm.sh tf`
+- 22:10 coordinator's third amendment pulled: TF 70 per cent on cf_fix2_damp moves here, ahead of omega1, uniq85, internalise, NET_TARGET 6.0373408770945769.
+- 22:15 progress: permban85 at pass 8 (pi_V 0.0905, budget gap 3.4e-3, moments change 1.4e-4, no cycle); elast5_85 at pass 5, price walking down at the 0.5 per cent cap (0.9353 -> 0.9167, drug-market gap 7.9e-2), so it needs many more passes.
