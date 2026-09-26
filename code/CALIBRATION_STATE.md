@@ -1,3 +1,13 @@
+# 26 September 22:10: CONTAINER RESTART killed TF 70 (damped, pass 7); T = 60 launched here, TF 70 moved to the worker
+
+Everything on disk survived (trtf60 staging, cfarm_tf_fix2_85, seeds, builds). Lost: cfarm_tf_damp70 in
+pass 7 (six passes archived in results/counterfactuals_cf_fix2/tf70_damp_partial; flip gone, moments
+met, budget -0.0034 and closing slowly), the T = 60 launcher and the monitors.
+T = 60 TF 85 launched here at 22:07 with 4 threads (task b4u4vishc): detection 0.85, initial parent
+share read, seeds 59 of 59, constraint 6.0370824603. TF 70 damped moved to the worker, ahead of its
+queue (trigger trig_01CWGDkRBJyUmJ3kpRuYmUWp, 22:10): cf_fix2_damp, SEED_FROM=bench, pi_V 0.0800, price
+0.8733, against the worker's own target 6.0373408771.
+
 # 26 September 20:20: FLAT CONTROL PASSED; T = 60 TF 85 staged, launches when TF 70 exits
 
 results/transition_fix/flat10: T = 10, no reform, both ends the no-policy steady state (cf_fix2_share),
