@@ -18,7 +18,7 @@ solved in this container (elast5_85, uniq85).
   `OMP_NUM_THREADS=2 BUILD=cf_fix2 SEED_FROM=bench DIAG_TAG=_fix2 DRUG_PRICE_START=1.0 sh cf_runs/cf_arm.sh null > cfarm_null_fix2.out 2>&1`
 - `weight_on_child` 0.06, no budget clearing (`adjust_taxes` 0), drug supply elasticity 1.46.
 
-## Checks (from `run.out`)
+## Checks (from `run.out.gz`)
 
     VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002
     DIST CHECK PASS: 5 passes, sweeps [81, 71, 74, 70, 72], largest final 4.83e-05 (rule 5e-05, at least 70 sweeps)
