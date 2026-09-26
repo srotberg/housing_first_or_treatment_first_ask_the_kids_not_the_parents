@@ -6,8 +6,8 @@ gfortran was not installed in this container; installed from apt: GNU Fortran (U
 | arm | status |
 |---|---|
 | permban85 | running (STAGE 2 since 17:56) |
-| null_remote | running (launched 17:57, gives this container's budget target) |
-| elast5_85 | pending (waits for null_remote's net revenue) |
+| null_remote | DONE 19:30, pass 5, checks pass; net revenue 6.0373408770945769 (results/counterfactuals_cf_fix2/null_remote) |
+| elast5_85 | running (launched 19:31, NET_TARGET 6.0373408770945769) |
 | omega1 | pending |
 | uniq85 | pending |
 | internalise | pending |
@@ -34,3 +34,6 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
   Under the coordinator's amended rule (b), 17:50: permban85 keeps running, and the second slot runs the
   no-policy arm first (cfarm_null_fix2, BUILD=cf_fix2, DRUG_PRICE_START=1.0). Its last net_govt_revenues=
   becomes NET_TARGET for elast5_85 and uniq85.
+- 18:15 coordinator's second amendment (damped build for a cycling arm) pulled; a watcher checks every running arm for moments >1e-4 three passes running with b alternating.
+- 19:30 null_remote finished: VOUCHER CHECK PASS, DIST CHECK PASS (5 passes). Final net_govt_revenues 6.0373408770945769, 2.58e-4 above the coordinator's 6.0370824602930142. This is NET_TARGET for elast5_85 and uniq85.
+- 19:31 elast5_85 launched: `... SUPPLY_ELAST=5 DIAG_TAG=_elast5_85 PV_START=0.082 DRUG_PRICE_START=0.94 NET_TARGET=6.0373408770945769 sh cf_runs/cf_arm.sh tf`
