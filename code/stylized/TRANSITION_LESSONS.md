@@ -840,6 +840,12 @@ t = 1 of zero to the precision the steady state reproduces the benchmark, about
 until it passes no transition number is believed. It is cheap: nothing moves,
 so it should close in one or two loops.
 
+**RUN AND PASSED, 26 September 20:05** (`results/transition_fix/flat10`). T = 10 with every fix
+above, both ends the no-policy steady state on the corrected build, its parent share restored at
+t = 1. One loop, every per-period rule met (budget at most 1.07e-4), welfare within 0.0011 utils of
+the steady state in all nine periods and within 0.00007 at t = 1. What it cannot test is pi_V and
+the price moving when they must; only a reform path exercises those.
+
 **Order.** Fixes 2 to 5 go in a build copy, asserted by value, not in the
 source. The no-policy arm is re-run once to write the parent share. The flat
 control runs next, then the reform paths from the corrected arms' directories.
