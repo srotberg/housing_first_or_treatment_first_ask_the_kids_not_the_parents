@@ -1,3 +1,20 @@
+# 26 September 02:50: THE DISTRIBUTION SOLVED EACH PASS -- no-policy and TF 85 running
+
+Build copies code/cf_tightdist and code/cf_tightdist_permban (scratchpad
+build_cf_tightdist.sh): cf_childdecomp_tight (budget rule 2e-3 plus the diagnostic
+children's and adults' split) with the counterfactual loop's distribution rule
+6e-4 -> 5e-6 (source line 52877 only; the benchmark loop's 47815 untouched, asserted);
+the permban copy also sets voucher_exclusion_release 0 and differs from the other by
+that one line. Three builds each, 7 warnings / 0 errors. Arm script scratchpad
+tightdist_cf_arm.sh (BUILD, PDET, PV_START, DRUG_PRICE_START, NET_TARGET, SUPPLY_ELAST,
+DIAG_TAG); after the run it prints DIST CHECK PASS only if every pass ended at or below
+5e-6 without hitting the 200-sweep cap.
+Running: code/cfarm_null_tightdist (no policy, pi_V at the benchmark's, price start
+1.00014) and code/cfarm_tf_tightdist85 (detection 0.85, target 6.26479886 -- to be
+checked against the new no-policy net revenue -- price start 0.874, pi_V start 0.0725,
+the middle of the old cycle). Next: TF 70, the permanent ban, elasticity 5 (85 per
+cent), omega_c = 1.
+
 # 26 September 02:30: THE TF WELFARE NUMBERS ARE NOT FIRM -- pi_V cycles because the distribution converges across passes
 
 The "firm" 70 and 85 per cent runs (results/counterfactuals_cf_local/tf_tight70, tf_tight85)
