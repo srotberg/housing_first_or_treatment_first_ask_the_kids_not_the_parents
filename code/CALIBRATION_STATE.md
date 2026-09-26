@@ -1,3 +1,25 @@
+# 26 September 03:20: 5e-6 IS BELOW THE DISTRIBUTION'S FLOOR -- at least 70 sweeps a pass, then 5e-5
+
+The no-policy run's first pass on cf_tightdist: the transient washes out after one lifetime
+(per-sweep change 7.9e-4 at sweep 58, 7e-5 at 61; life_span 60), then the change bounces
+between 1e-5 and 4e-4 with spikes in identical pairs and never settles below 5e-6 (156
+sweeps, still 4.4e-5). So every pass would run to the 200-sweep cap: about an hour a TF
+pass (TF sweeps take about 16 s, the no-policy run's about 7 s). The lag that made pi_V
+cycle is removed by sweeping a whole lifetime every pass, not by the tolerance: build copy
+code/cf_tdm (and _permban), scratchpad build_cf_tdm.sh = the 1e-3 halving build, seeded,
+with the loop's rule 5e-5 and `do while ((distance > rule) .OR. (loop_count_dist < 70))`.
+Seeding (the author: "You can also use the old equilibrium distribution"): use_old_distribution
+1, read from distribution_stationary{1,2}seed.dat, which the arm script copies from a finished
+run's counter_arm files or, with SEED_FROM=bench, from the benchmark's (sizes checked); the
+benchmark's own files are not touched. The old runs' distributions were not kept. The arm
+script's check now requires every pass at least 70 sweeps, final at or below 5e-5, and
+below the cap. Three builds each, 7 warnings / 0 errors; each diff exactly the intended lines.
+Running: code/cfarm_null_tightdist (no policy, 5e-6 rule, so 200 sweeps a pass -- the most
+tightly solved run, and the source of the budget target) and code/cfarm_tf_tdm85 (seeded
+from the benchmark, pi_V 0.0725, price 0.874, target 6.26479886, rule 1e-3; confirmed in
+its log). Plan: TF 70 seeded from the no-policy run; the ban and elasticity 5 seeded from
+TF 85; TF 85 repeated from the benchmark seed at a different pi_V as the uniqueness check.
+
 # 26 September 03:10: TF RUNS MOVE TO THE 1e-3 HALVING BUILD (author's requests)
 
 The author: "Why can't you clear the budget around 0.0002?", then "Maybe you need to update
