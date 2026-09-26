@@ -5,10 +5,10 @@ gfortran was not installed in this container; installed from apt: GNU Fortran (U
 
 | arm | status |
 |---|---|
-| permban85 | running (STAGE 2 since 17:56) |
+| permban85 | STOPPED 23:10 at pass 10 for cycling (results/counterfactuals_cf_fix2/permban85_cycle); rerun on cf_fix2_damp_permban queued after tf70 |
 | null_remote | DONE 19:30, pass 5, checks pass; net revenue 6.0373408770945769 (results/counterfactuals_cf_fix2/null_remote) |
 | elast5_85 | running (launched 19:31, NET_TARGET 6.0373408770945769) |
-| tf70 (damped) | pending: takes the next free slot (coordinator, 22:10) |
+| tf70 (damped) | running (launched 23:15, cf_fix2_damp, NET_TARGET 6.0373408770945769) |
 | omega1 | pending |
 | uniq85 | pending |
 | internalise | pending |
@@ -40,3 +40,7 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
 - 19:31 elast5_85 launched: `... SUPPLY_ELAST=5 DIAG_TAG=_elast5_85 PV_START=0.082 DRUG_PRICE_START=0.94 NET_TARGET=6.0373408770945769 sh cf_runs/cf_arm.sh tf`
 - 22:10 coordinator's third amendment pulled: TF 70 per cent on cf_fix2_damp moves here, ahead of omega1, uniq85, internalise, NET_TARGET 6.0373408770945769.
 - 22:15 progress: permban85 at pass 8 (pi_V 0.0905, budget gap 3.4e-3, moments change 1.4e-4, no cycle); elast5_85 at pass 5, price walking down at the 0.5 per cent cap (0.9353 -> 0.9167, drug-market gap 7.9e-2), so it needs many more passes.
+- 23:10 permban85 STOPPED under the cycle rule: moments change 1.39e-4, 1.10e-3, 1.09e-3 at passes 8-10 with b down/up/down (period three over passes 5-10). Process 4871 confirmed gone. Archived in results/counterfactuals_cf_fix2/permban85_cycle.
+- 23:12-23:14 damped builds (one solve running, as the 22:10 amendment allows): cf_fix2_damp and cf_fix2_damp_permban, each build_bounds/build_snan/build_prod warnings=7 errors=0, 11 diff lines against cf_fix2 / cf_fix2_permban.
+- 23:15 tf70 launched: `OMP_NUM_THREADS=2 BUILD=cf_fix2_damp SEED_FROM=bench PDET=0.70 DIAG_TAG=_damp70 PV_START=0.0800 DRUG_PRICE_START=0.8733 NET_TARGET=6.0373408770945769 sh cf_runs/cf_arm.sh tf`
+- Next free slot: permban85 rerun on cf_fix2_damp_permban from pi_V 0.09075, price 0.8598, same target 6.0370824602930142 as the stopped run; then omega1, uniq85, internalise.
