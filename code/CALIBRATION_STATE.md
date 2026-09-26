@@ -1,3 +1,21 @@
+# 26 September 17:20: TF 85 CONVERGED (results/counterfactuals_cf_fix2/tf85); TF 70 flips on drug use
+
+TF 85, cf_fix2, pass 7, every rule met, TARGET and DIST checks pass: pi_V 0.081411, drug price
+0.8674, b -30.2%, SUD -30.8%, h_1 +5.6%, CEV +1.416% (+1.39% net of the no-policy run's +0.027),
+split against no policy: childhood +0.237 utils, adult part +0.233. code/cfarm_tf_fix2_85 is KEPT
+(the transition's terminal state). code/cf_runs/finalstats.py reads a run's exit pass against the
+no-policy run.
+TF 70: budget cleared at pass 7 (-0.00043), drug market 3.5e-3, but b alternates -28.4% / -28.9%
+between passes (moments change 3.6-3.8e-4 at passes 5, 6, 7 against 1e-4): a knife-edge group moving
+with the small pi_V and price steps. Waiting on passes 8-9; CEV +1.45 to +1.50 either way.
+Running here: code/cfarm_null_share (build cf_fix2_share: cf_fix2 plus a write of the final
+newborn_parent_share, for the transition's t = 0), seeded from seed_null_fix.
+Built (0 errors): code/cf_fix2_share, code/tr10_fix (T = 10 flat control; its one warning is in the
+dead use_old_transition_results branch, index T-25), code/tr60_fix (0 warnings).
+Disk: oc2c0, arm1 and the scratchpad's arm2 gzipped in place (3.9 GB -> 0.27 GB).
+Worker session_01CNbZe1BHmxiBzKxWgBVugk: builds clean, STAGE 1 benchmark running; a one-shot routine
+(trig_01V4XUEqAGdS1rhEYBPYAZuT, 17:40) tells it to check the benchmark and start arm 2.
+
 # 26 September 14:40: STEADY-STATE ARMS MOVED TO A PARALLEL SESSION; the transition stays here
 
 The author asked for the T = 60 transition in a parallel session. It cannot start anywhere until
