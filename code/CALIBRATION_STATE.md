@@ -1,3 +1,14 @@
+# 26 September 18:05: TF 70 CYCLED ON THE PARENT SHARE; rerun with a damped update
+
+TF 70 on cf_fix2 alternated between two states from pass 4 (b -28.4 / -28.9%, disordered-housed
+parent share 0.01917 / 0.01905, moments change stuck at 3.6e-4 against 1e-4) while pi_V and the
+price moved smoothly: the one-pass lag in newborn_parent_share overshoots at 70% detection.
+Stopped by TaskStop, log in results/counterfactuals_cf_fix2/tf70_cycle. Build cf_fix2_damp
+(scratchpad build_cf_fix2_damp.sh; 11 diff lines against cf_fix2, 7 warnings / 0 errors x3)
+damps that update 50/50 once per pass, skipping the clean-housed default; fixed point unchanged.
+Running: code/cfarm_tf_damp70, seeded from cfarm_tf_fix2_85, pi_V 0.0801, price 0.8736, target
+6.0370824602930142. TF 85 needs no rerun: its share converged without damping.
+
 # 26 September 17:20: TF 85 CONVERGED (results/counterfactuals_cf_fix2/tf85); TF 70 flips on drug use
 
 TF 85, cf_fix2, pass 7, every rule met, TARGET and DIST checks pass: pi_V 0.081411, drug price
