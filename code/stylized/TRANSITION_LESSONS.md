@@ -183,6 +183,7 @@ turned up eight bugs that had to be checked back against the stylized model:
 | The parameter handover was read at the foot of `read_calibration_state`, BELOW two early returns. `calibration_state.dat` is not in the repository, so a container that had never run the model returned before `PARAM_HANDOVER.txt` was opened, solved at the values in the Fortran declarations, and printed a complete moments block saying nothing about the vector it had discarded. It bites only the FIRST run in such a container, because that run's own loop then writes the state file, which is why it hid: a worker measuring six points lost its first and honoured the other five, and it cost one archived point in 423. What made it expensive was not the bug but the diagnosis: three re-runs agreeing to four decimals were read as evidence the whole archive was invalid, when all three were first runs in one container and the agreement was the bug's signature | **No, and the design is why.** The stylized model takes its parameters as function ARGUMENTS -- `calibrate(seed, ...)`, `with_(P(), **kw)` -- so there is no side channel through which a caller's vector can be dropped. `calibrated.json` is a seed and not a specification: its absence means a cold start from the class defaults, which is a slower calibration rather than a different experiment, and `calibrate.py` says so where it loads it. The class generalises past handover files, though, and this is the form to carry: **a parameter that arrives by a channel the run can skip must leave a receipt, and the caller must refuse the measurement when the receipt is missing.** The Fortran echoes one `HANDOVER` line per parameter it applies, which was already the receipt; nothing was reading it. `run_one_point.sh` now counts them and fails the point unless every parameter it handed was echoed. |
 | An aggregation array was declared from 0 while the state dimension it sums over starts at `lowest_housing_grid_point=-1`, homelessness. The filling loop correctly ran over the dimension's own bounds, so `dist_housing_1(-1)` read-modify-wrote the 8 bytes below the array on every 100th distribution sweep of every run, and the homeless column of the DIST_MOM diagnostic never received its mass. Found by `-fcheck=bounds` the first time the diagnostic fired; invisible before because the victim of the write is whatever the compiler placed there | **The class is LIVE in principle and MORE dangerous here, and was checked.** numpy does not fault a negative index: `arr[-1]` silently wraps to the LAST element, so the same off-by-one would add homeless mass to the top housing bin and no tool would ever object. Checked: the stylized model's states are dict keys and 0-based tuple positions (`(par.na, 2)` arrays indexed by explicit 0/1), with no state code that can go negative, so no instance exists today. The rule to carry: any accumulator indexed by a STATE CODE must be declared over the code's own range, and in Python a state code that can be negative must never index an array directly. |
 | **The child's inherited penalty was written out in ONE of the six housing branches.** `weight_on_child*expected_child_value(...)` sat in `renter_to_renter_problem` alone; `renter_to_owner_problem`, `owner_owner_stay_problem`, `owner_owner_move_problem` and `owner_renter_problem` did not carry it at all. `expected_child_value` is zero for a clean housed parent and negative otherwise, so a parent with the disorder paid the child's penalty when it rented and did not pay it when it owned, bought or moved between houses. The rent-versus-own margin was tilted towards owning by the whole size of the externality, for exactly the households the paper is about, and `omega_c`'s own moment was measured on an economy in which five of six branches ignored `omega_c` | **No, and the reason is worth keeping rather than a lucky escape.** The stylized model's penalty is `par.beta * par.omega * _chdmg_at(par, y) * _pid(par, vg)`: it depends on income and on the drug quantity and NOT on which dwelling the household takes. `_branch` maximises over the housing options internally and `pen` is subtracted from the result, which is exact precisely because the penalty is flat across the options -- a constant cannot move an argmax. The quantitative model's `expected_child_value(e, d, h)` carries the housing status as its third index, because there the street is a state the child can inherit, so the term MUST sit inside the housing comparison and not after it. **The rule to carry: a term may be hoisted out of a maximisation only while it is constant across what is being maximised over, and adding an argument to such a term silently invalidates every hoist of it.** The homelessness index was added to `expected_child_value` at some point after the term was written, and that is what turned a correct hoist into a wrong one. Fixed by routing all six branches through `child_continuation_value`. |
+| **A warm start for a quantity the loop does not solve.** `long_run_counter_factual` set `increase_in_labour_income_tax` to hard-coded starting values AFTER `upload_vars` had read the benchmark's 0, and the tax is only solved when `tax_system_type = 1`. Every counterfactual that balanced its budget on `pi_V` therefore carried a permanent tax change nobody chose: -0.0026 in the Housing First voucher rule's arms (a tax RISE, lambda 0.8935 to 0.8909, labour tax +0.148, a no-policy arm at -0.26 per cent CEV with not one newborn better off), +0.00145 in the others. Found 26 September because a no-policy run did not reproduce the benchmark; see `code/ENGINE.md` | **Does not arise, because there is nothing for it to act on.** The stylized model has no financing side: a proportional tax balancing each policy's budget was built and removed (`welfare.py`, docstring), and its only budget instrument, Treatment First's matching `pi_V`, is solved by bisection on every call from no stored value. Its transition runs both policies at the benchmark's own `par.pV`. `calibrated.json` is loaded, but it holds parameters that are meant to be held. **The rule to carry is the control, not the code: a run with no policy must reproduce the benchmark before any counterfactual is believed, and a transition with no reform must stay flat and give zero CEV before any transition is believed.** The stylized model passes the first by construction; the quantitative transition has never been put through the second (section 16). |
 
 The drug first order condition row is the sharpest methodological difference
 between the two models found so far, and it is worth stating as a rule. **The stylized model picks the
@@ -243,6 +244,8 @@ the newborn draw is the household's productivity for life, so the parent
 composition at the reform date is what the whole cohort carries through the
 transition, and getting it from the wrong period misdates the reform's effect on
 the generation the paper is about.
+
+**STATUS, 26 September: NOT DONE, and the fix is a restore, not a time index.** Within a forward pass the statistics sweep at t-1 runs immediately before the draw at t, so for t >= 2 the array already holds the right period and a time index would add memory and nothing else. Only t = 1 of each loop is wrong: loop 0 reads the clean housed default, (1, 0, 0, 0), and every later loop reads the sweep at T-1 of the loop before. The t45 log shows it: (1, 0, 0, 0) at t = 1, then (0.966, 0.029, 0.002, 0.003). The fix is the one `results/transition/T60_STOPPED.md` (b) recommends: the share of the INITIAL steady state, read at start-up and restored beside `init_keep_*` at every loop. See section 16.
 
 ## 8. The transition horizon is not the display horizon
 
@@ -742,6 +745,10 @@ time index, and it must not be read as the transmission channel. Anyone
 auditing this next should go to `converge_to_stationary_equilibrium` and the
 policy function, not to it.
 
+**CORRECTED, 26 September: the two paragraphs above audited a branch that never runs.** The newborn row that multiplies `newborn_employment_probability` by each dying parent's own mass sits in the `else` of `if ((have_probablistic_death==1) .OR. (newborns_inherit_addiction==0))`, and `have_probablistic_death = 1` is a parameter, so that branch is unreachable -- the source says so in the comment under the `if`. The live row places every newborn at `newborn_productivity_draw`, which is `newborn_parent_share` contracted with `newborn_employment_probability`. So `newborn_parent_share` IS the transmission channel, and has been since 30 August (commit 304e9ed4); `print_all_moments` is not its only consumer.
+
+The verdict on keying survives the correction, for a different reason. The share is accumulated in `stationary_equilibrium_statistics` from the household's CHOSEN housing status at `time_period` (`policy_function_housing_status_index(...)%vector_transition_integer(time_period, ...)`) and its disorder in that period, weighted by the chance of dying in it. The sweep at t-1 feeds the draw at t, so the child inherits the state of the period the parent dies in, which is the period conditionality acts in. That holds for every t >= 2. At t = 1 it does not hold at all; see the status note in section 7 and section 16.
+
 ## 15. A DIAGNOSTIC MUST NOT SHARE A GATE WITH THE INSTRUMENT IT DIAGNOSES
 
 20 September, and it cost a 3.5-hour loop.
@@ -764,3 +771,78 @@ loop to catch it on is the one that is not allowed to move anything.
 
 The same shape is worth looking for elsewhere: any `if (loop_count>...)` block
 that contains both a `write` and an assignment to an instrument.
+
+## 16. AUDIT OF THE TRANSITION AFTER THE HIDDEN TAX, 26 September
+
+Read-only, against the source as committed, while the steady-state Treatment
+First arms re-ran on the corrected counterfactual build. The question was the
+author's: now that a steady-state counterfactual was found carrying a policy
+nobody chose, is the transition doing its job, and does it clear the budget in
+every period closely?
+
+**What is right.**
+
+- *One sweep per period.* In `converge_to_stationary_equilibrium` a transition
+  period sets `distance_distribution = 0` after the first sweep (the `else` of
+  `if (solve_transition_dynamics==0)`), and the Aitken step needs
+  `loop_count_dist >= 3`, so it never fires. Period t's distribution is exactly
+  one application of period t's policies to period t-1's. The steady-state
+  distribution rule (5e-5, at least 70 sweeps) does not enter the path at all;
+  it matters only for the two end points.
+- *The labour tax on the path is 0.* `transition_simulation` zeroes it, and the
+  `upload_vars(1)` after that reads `increase_in_labour_income_tax` from
+  `old_results`, which is the benchmark, whose file holds 0. The hidden tax
+  never reached the path itself.
+- *The child's keying,* for t >= 2; see the correction in section 14.
+
+**What is wrong or unproven, most consequential first.**
+
+1. **The terminal steady state is the arm's files, so every arm solved before
+   26 September hands the path a terminal value function with the hidden tax
+   in it.** `long_run_simulation = file_number` for a transition, so period T
+   is the arm directory's value function, prices and transfer. The t45 run's
+   terminal arm holds `increase_in_labour_income_taxcounter_TF.dat` =
+   +0.00145: the path ran at no tax change and ended in a steady state with a
+   tax cut. No transition built on an old arm can be used. The arms now running
+   on the corrected build are clean, so their directories are the terminal
+   states to keep.
+2. **The per-period budget test is 0.05.** The stopping rule is
+   `transition_tolerance_factor * stopping_rule_govt_budget` = 2 x 0.025. At the
+   measured slope, about 1 per cent CEV per 0.053 of budget, a path can stop
+   with every period off by the equivalent of a whole per cent of welfare. The
+   steady-state arms now clear to 1e-3; the path must too, with the factor at
+   one for the budget. The drug market is loose the same way (2 x 5e-3).
+3. **Newborns at t = 1 are drawn from the wrong parents** -- the clean housed
+   default in loop 0, the end of the previous loop afterwards. Found
+   24 September, recorded, not fixed. Under `fixed_productivity` that cohort
+   keeps the draw for life, and it is in the population whose t = 1 welfare is
+   the result. The initial steady state's share has to exist on disk first: no
+   `newborn_parent_share.dat` was ever written for the benchmark, so it needs
+   a no-policy counterfactual that writes one.
+4. **The initial distribution was converged at 6e-4 per sweep, not 5e-5.** The
+   path starts from the benchmark's saved distribution. The steady-state
+   arms showed that 6e-4 is loose enough to move pi_V and the budget, so t = 0
+   is not the stationary point of the benchmark's own policies, and the path
+   would drift with no reform at all. The corrected no-policy arm reproduces
+   the benchmark at revenue 6.03708, which is also the target every reform
+   arm clears to, so its distribution is the consistent t = 0.
+5. **The pi_V step is gentler than the steady state's.** The per-period
+   update starts at 0.05 times the gap, then a secant clipped at four times that
+   and at a quarter of pi_V, where the steady state now starts at 0.12 and
+   halves on a sign change. Every extra loop is about 3.5 hours at T = 45,
+   and a tighter per-period rule makes this the binding cost.
+
+**THE CONTROL THAT HAS NEVER BEEN RUN.** A transition whose terminal state is
+the no-policy arm and whose initial state is the same arm must stay flat in
+every period -- homelessness, drug use, the price, the budget -- and give CEV at
+t = 1 of zero to the precision the steady state reproduces the benchmark, about
+0.03 per cent. It is the path's version of the rule in `code/ENGINE.md`, and
+until it passes no transition number is believed. It is cheap: nothing moves,
+so it should close in one or two loops.
+
+**Order.** Fixes 2 to 5 go in a build copy, asserted by value, not in the
+source. The no-policy arm is re-run once to write the parent share. The flat
+control runs next, then the reform paths from the corrected arms' directories.
+A T = 45 transition cannot share the machine with a steady-state solve (peak
+about 9 GiB against a 13.4 GiB cap), so none of this starts until the arms
+finish.
