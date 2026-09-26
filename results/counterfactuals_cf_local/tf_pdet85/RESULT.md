@@ -1,3 +1,5 @@
+> SUPERSEDED 26 September by ../tf_tight85 (the budget closed to 2e-3); this run stopped with a gap of 0.014.
+
 > UNDER REVIEW with the 70 per cent run: the welfare figures are being checked (see ../tf/RESULT.md).
 
 # Rationed TF at 85 per cent detection, like-for-like budget, 25 September

@@ -1,3 +1,5 @@
+> SUPERSEDED 26 September by ../tf_tight70 (the budget closed to 2e-3); this run stopped with a gap of 0.021.
+
 > UNDER REVIEW, 25 September 21:40: the author finds the welfare result (CEV about zero, childhood -0.01 against the no-policy run) too small to be credible next to the 19 September run (children +0.78). Do not use until the welfare split and the reruns of the 19 September design (CALIBRATION_STATE.md) explain the gap.
 
 # Rationed Treatment First, like-for-like budget, 25 September
