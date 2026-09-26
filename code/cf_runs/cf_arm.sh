@@ -35,7 +35,8 @@ case "$ARM" in tf|omega1|internalise|null) ;; *) echo "usage: $0 tf|omega1|inter
 # cf_tightdist_permban (scratchpad build_cf_tightdist.sh), rule 5e-6 in the loop.
 BUILD="${BUILD:-cf_tightdist}"
 case "$BUILD" in cf_tightdist|cf_tightdist_permban|cf_tightdist_b4|cf_tightdist_b4_permban|cf_tightdist_b4h|cf_tightdist_b4h_permban|cf_tightdist_b3h|cf_tightdist_b3h_permban|cf_tightdist_b3hs|cf_tightdist_b3hs_permban|cf_tdm|cf_tdm_permban|cf_tdm_revdiag|cf_fix|cf_fix_permban|cf_fix2|cf_fix2_permban|cf_fix2_damp|cf_fix2_damp_permban) ;; *) echo "GUARD: BUILD must be a cf_tightdist build"; exit 1 ;; esac
-[ -x "$BUILD/hftf_cf_prod" ] || { echo "GUARD: $BUILD/hftf_cf_prod missing"; exit 1; }
+# STAGE1_ONLY=1 runs the benchmark and stops, so no counterfactual build is needed.
+[ "$STAGE1_ONLY" = 1 ] || [ -x "$BUILD/hftf_cf_prod" ] || { echo "GUARD: $BUILD/hftf_cf_prod missing"; exit 1; }
 DIR="cfarm_${ARM}${DIAG_TAG}"; BDIR=cfarm_bench; SEED=scan_seed
 export OMP_NUM_THREADS=2
 command -v gfortran >/dev/null || { echo "GUARD: no gfortran"; exit 1; }
@@ -45,12 +46,17 @@ COMMON="-fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium"
 # the benchmark binary is the TRACKED source, unmodified
 # A binary older than the source is stale (a container reused from 19 September
 # held a cf binary from then): rebuild it.
-if [ ! -x bench/hftf_bench ] || [ ! bench/hftf_bench -nt housing_first_or_treatment_first_SR_v1.f90 ]; then
+# BENCH_BIN=<path> uses that benchmark binary instead (e.g. the print-only all-ages curve
+# build of transition_fix/patch_allage_curve.py); unset, nothing changes.
+if [ -n "$BENCH_BIN" ]; then
+  [ -x "$BENCH_BIN" ] || { echo "GUARD: BENCH_BIN $BENCH_BIN is not executable"; exit 1; }
+  mkdir -p bench && cp "$BENCH_BIN" bench/hftf_bench && echo "benchmark binary from $BENCH_BIN"
+elif [ ! -x bench/hftf_bench ] || [ ! bench/hftf_bench -nt housing_first_or_treatment_first_SR_v1.f90 ]; then
   mkdir -p bench
   gfortran -O3 -funroll-loops $COMMON housing_first_or_treatment_first_SR_v1.f90 -o bench/hftf_bench 2> bench/build_prod.err
   e=$(grep -c Error bench/build_prod.err || true); [ "$e" = 0 ] || { echo "GUARD: benchmark build errors"; exit 1; }
 fi
-if [ ! -x cf/hftf_cf_prod ] || [ ! cf/hftf_cf_prod -nt housing_first_or_treatment_first_SR_v1.f90 ]; then sh build_cf.sh "$(pwd)/cf"; fi
+if [ "$STAGE1_ONLY" != 1 ]; then if [ ! -x cf/hftf_cf_prod ] || [ ! cf/hftf_cf_prod -nt housing_first_or_treatment_first_SR_v1.f90 ]; then sh build_cf.sh "$(pwd)/cf"; fi; fi
 
 set_line() {
   if grep -q "^$1 " PARAM_HANDOVER.txt; then sed -i "s|^$1 .*|$1 $2|" PARAM_HANDOVER.txt; else echo "$1 $2" >> PARAM_HANDOVER.txt; fi
@@ -101,6 +107,7 @@ else
   echo "STAGE 1 done"
   cd ..
 fi
+if [ "$STAGE1_ONLY" = 1 ]; then echo "STAGE1_ONLY: stopping after the benchmark"; exit 0; fi
 
 PV=$(grep -a "^ *probability_of_voucher=" "$BDIR/bench.log" | tail -1 | awk '{print $2}')
 python3 -c "import sys; v=float('$PV'); sys.exit(0 if 1e-5<v<1 else 1)" || { echo "GUARD: no benchmark voucher probability in $BDIR/bench.log ('$PV')"; exit 1; }
