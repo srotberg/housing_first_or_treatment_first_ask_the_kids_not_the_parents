@@ -1,3 +1,17 @@
+# 26 September 10:00: FOUND -- a hidden labour-tax rise in every counterfactual (ENGINE.md, same time)
+
+The no-policy gap (revenue +0.148, welfare -0.26%) is the hard-coded tax warm start
+increase_in_labour_income_tax = -2.599e-3 (lambda 0.8935 -> 0.8909), which no arm ever solves.
+Every counterfactual so far carried it: omega_c = 1, internalisation, every TF run, the 19
+September arms. TF measured against its own no-policy run is like-for-like in the tax (+1.39 net
+for TF 85 on cf_tdm); levels and anything read against the benchmark directly are off.
+Build code/cf_fix (+ _permban): cf_tdm with the three warm starts neutralised (the benchmark's
+uploaded 0 stands) and the counterfactual moments rule 5e-4 -> 1e-4. Three builds each, 7
+warnings / 0 errors; diff against cf_tdm exactly 4 lines. Running: code/cfarm_null_fix (no policy,
+tax 0 confirmed in its log) -- it must reproduce the benchmark: revenue about 6.036-6.039, CEV
+about 0. Then TF 85 against its revenue. The 12-block revenue diagnostic was stopped (not needed).
+SOURCE FIX PROPOSED, NOT MADE: apply the tax warm start only when the tax is the instrument.
+
 # 26 September 08:15: TF 85 CONVERGED (not firm); the benchmark's 12 blocks are an income fixed point
 
 TF 85 on cf_tdm exited at pass 6 on every rule: pi_V 0.08184, b -29.8%, SUD -30.4%, h +5.6%,

@@ -1,3 +1,21 @@
+# A WARM START FOR A QUANTITY THE LOOP DOES NOT SOLVE IS A HIDDEN POLICY, 26 September 10:00
+
+long_run_counter_factual sets increase_in_labour_income_tax to hard-coded "warm starts"
+(-2.599e-3 under the HF voucher rule, 1.449e-3 and -7.359e-4 otherwise; source ~52630-52640)
+AFTER upload_vars has read the benchmark's value (0). The comment calls it "the one quantity
+here the loop genuinely solves for" -- true only when the labour tax is the budget instrument
+(tax_system_type 1). Every arm since at least 19 September cleared the budget with pi_V
+(use_revenues_to_increase_voucher_probability = 1 at compile time, tax_system_type 3) or not at
+all, so the warm start was never touched again: a permanent labour-tax rise inside every
+counterfactual. Measured on the no-policy run: +0.148 of labour tax with every spending line
+equal to the benchmark's, welfare -0.26 per cent, 8 per cent of households better off and no
+newborn. It is also the 0.226 "surplus" of 25 September. THE RULE: before trusting a
+counterfactual, run it with no policy change and require it to reproduce the benchmark (net
+revenue and welfare); a gap is a bug in the counterfactual path until proven otherwise. And any
+starting value the arm sets must be one the loop then solves for in THAT arm's configuration.
+Build copies code/cf_fix and cf_fix_permban (scratchpad build_cf_fix.sh) keep the uploaded
+value; the source fix is the author's call.
+
 # A DIFFERENT DRUG SUPPLY ELASTICITY NEEDS A REFITTED SUPPLY LEVEL, 26 September 01:00
 
 The counterfactual reads drug_supply_shifter from the benchmark's file, fitted so the
