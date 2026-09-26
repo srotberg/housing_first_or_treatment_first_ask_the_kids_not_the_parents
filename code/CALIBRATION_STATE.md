@@ -1,3 +1,16 @@
+# 26 September 12:55: TF 85 and 70 restarted on cf_fix2 (pi_V update ignores pass 1, step 0.12)
+
+On cf_fix both TF runs crawled: pass 1's parent-share artefact inflated revenue (surplus 0.09),
+pi_V jumped to about 0.086, pass 2's deficit flipped the sign, the step halved to 0.025 and pi_V
+fell about 0.001 a pass against a deficit of 0.034-0.043 (15-20 more passes). Readings then, NOT
+results: TF 85 pass 3 pi_V 0.0856, CEV +2.08; TF 70 pass 3 pi_V 0.0850, CEV +2.25, both in deficit
+(logs in the scratchpad, cf_tf_fix85/70_slow_stopped). Build cf_fix2 (+ _permban; scratchpad
+build_cf_fix2.sh): cf_fix with the pi_V update skipped after pass 1 and its step starting at 0.12
+(about 1/slope; the budget answers pi_V at roughly -9), still halved on each sign change. Three
+builds each, 7 warnings / 0 errors; 15 diff lines against cf_fix, exactly the intended ones.
+Running: code/cfarm_tf_fix2_85 (pi_V 0.082, price 0.8647) and code/cfarm_tf_fix2_70 (pi_V 0.081,
+price 0.8702), both against the no-policy target 6.0370824603, seeded from TF 85's distribution.
+
 # 26 September 10:35: THE FIX WORKS -- the no-policy run reproduces the benchmark
 
 code/cfarm_null_fix (build cf_fix: tax warm starts neutralised, moments rule 1e-4): pass 3 net revenue
