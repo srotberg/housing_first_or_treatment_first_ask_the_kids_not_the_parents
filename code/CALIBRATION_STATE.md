@@ -1,3 +1,21 @@
+# 26 September 14:40: STEADY-STATE ARMS MOVED TO A PARALLEL SESSION; the transition stays here
+
+The author asked for the T = 60 transition in a parallel session. It cannot start anywhere until
+TF 85 converges here (its terminal state), and a fresh container has none of the multi-GB
+steady-state files, so the transition runs HERE when TF 85/70 finish (T = 60 peaks ~9.8 GiB, alone).
+The other steady-state arms went to worker session_01CNbZe1BHmxiBzKxWgBVugk instead, from
+code/cf_runs (commit 06e0c56c; its builds regenerate the running arms' cf_fix2 source byte for
+byte): it re-solves the benchmark (must reproduce welfare 789.34893176009462, pi_V 0.0675338...),
+then permanent ban 85, elasticity 5 at 85, omega_c = 1, TF 85 from pi_V 0.075 (uniqueness) and
+internalisation, all against 6.0370824602930142. It writes only results/counterfactuals_cf_fix2/
+and code/cf_runs/STATUS_remote.md.
+TF runs here after round 3: 85% pi_V 0.08245, gap -0.0086 (overshoot; the budget answers pi_V at
+about -27, not -9), gain halved to 0.06; 70% gap -0.0131, gain 0.06. Expected exit round 6-7.
+Disk: t45_nogf gzipped in place (4.5 GB -> 0.36 GB; superseded, its terminal arm carried +0.00145).
+Transition build copy ready, not compiled: scratchpad patch_transition_fix.py / build_tr45_fix.sh
+(section 16 fixes; 29 diff lines). Initial parent share: code/cfarm_bench/newborn_parent_share.dat
+(benchmark's own; within 1.3e-4 of the no-policy run's).
+
 # 26 September 12:55: TF 85 and 70 restarted on cf_fix2 (pi_V update ignores pass 1, step 0.12)
 
 On cf_fix both TF runs crawled: pass 1's parent-share artefact inflated revenue (surplus 0.09),
