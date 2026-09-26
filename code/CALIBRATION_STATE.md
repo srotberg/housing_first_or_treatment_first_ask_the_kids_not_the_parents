@@ -1,3 +1,22 @@
+# 26 September 22:50: THE PERIOD-1 CEV THE AUTHOR ASKED FOR IS THE ALL-ALIVE ONE -- instrumented
+
+The author wants the CEV "in period 1 of implementation". The transition's TRANSITION CEV t=1 is the
+newborn cohort's (with childhood), read off the benchmark's newborn curve; it is not TRANSITION_LESSONS
+6.1's welfare of everyone alive at the reform. The support routine already compared, on the pre-reform
+distribution, each state's path value with its benchmark value, but only counted winners. So:
+- patch_transition_fix.py gained a print-only TRANSITION ALLALIVE line per period (path and benchmark
+  average values, share better off; all ages and six ten-year bands; zero-mass cells skipped so an
+  unset value cannot poison the sums). tr60_fix rebuilt (56 diff lines, 0 warnings / 0 errors x3);
+  T = 60 stopped at 22:52 after 45 minutes of backward pass and restarted from the same staging with
+  the new binary (task bledy824u); the aborted log kept as trtf60/run_aborted_no_allalive.log.
+- The conversion needs the benchmark curve averaged over every age: code/transition_fix/
+  patch_allage_curve.py (benchmark, print-only: compute_value_of_comparison's own loops widened to all
+  ages, ALLAGE CURVE lines). Worker session_019E8MxoQ4iRWJww1ne4rf8Z re-solves the benchmark with it
+  (STAGE1_ONLY, BENCH_BIN; cf_arm.sh gained both, default unchanged) and pushes
+  results/transition_fix/allage_curve/allage_curve.csv. CEV_all(t) = the x where w(x)-w(0) equals
+  V_reform-V_bench from the ALLALIVE line, band by band.
+Transition scripts now in code/transition_fix (path-independent).
+
 # 26 September 22:10: CONTAINER RESTART killed TF 70 (damped, pass 7); T = 60 launched here, TF 70 moved to the worker
 
 Everything on disk survived (trtf60 staging, cfarm_tf_fix2_85, seeds, builds). Lost: cfarm_tf_damp70 in
