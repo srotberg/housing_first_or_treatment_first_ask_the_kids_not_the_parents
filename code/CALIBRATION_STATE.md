@@ -1,3 +1,35 @@
+# 26 September 02:30: THE TF WELFARE NUMBERS ARE NOT FIRM -- pi_V cycles because the distribution converges across passes
+
+The "firm" 70 and 85 per cent runs (results/counterfactuals_cf_local/tf_tight70, tf_tight85)
+stopped at the bottom of a cycle, not at a fixed point. PROOF: tf_childsplit70, same model,
+rules and target, warm-started at tf_tight70's exit, stopped at pass 7 near the TOP of the
+same cycle: pi_V 0.0758, h +8.2%, CEV +0.70%, against tf_tight70's 0.0688, +10.3%, -0.30%.
+Both satisfy every stopping rule. The permanent ban (tf_permban85) stopped on the way down
+at +0.15% (peak +1.03% at pass 7). The loose-rule pair of 22:45 (+0.15%, +0.73%) was the
+same cycle, NOT the budget tolerance.
+
+CAUSE: in the counterfactual loop stopping_rule_stationary_distribution is 6e-4 when
+include_addiction is 1 (source ~52877), a per-sweep change, reached in 1 to 9 sweeps a pass.
+The distribution is therefore a lagged state carried from pass to pass; the budget each
+pass sees trails the pi_V that produced it, and pi_V overshoots with a period of about 12
+passes. Measured in tf_tight70: passes 2 -> 3 moved pi_V 0.0681 -> 0.0685 while the budget
+residual moved +0.057. Within one pass the budget answers pi_V with a slope of about -21,
+so the static step (gain 0.05) contracts almost at once; the cycle is the distribution.
+The source already says this for the benchmark loop (~47794: "the distribution converges
+ACROSS blocks rather than within them") and gives its fixed-parameter pass 1e-8; the
+counterfactual loop was never given the same.
+
+What survives: in every pass TF cuts b 27-30% and SUD 28-30% and raises h (+7 to +17%).
+The sign of welfare does not: 70% ranges -0.3 to +0.7 across the cycle.
+
+PROPOSED FIX (awaiting the author; a kill of the two runs was refused by the permission
+system at 01:25 and both have since exited on their own): a build copy with the
+counterfactual loop's distribution rule 6e-4 -> 5e-6, a solver tolerance, not a model
+change. Passes lengthen (value function ~4.2 min, a sweep ~19 s), passes should fall to a
+handful. Order: the no-policy run first (the budget target and the +0.14% offset come
+from it), then TF 70, TF 85, permanent ban, elasticity 5; omega_c = 1 on the same build
+for comparability.
+
 # 26 September 01:00: SUPPLY ELASTICITY 5 queued (the author: "run the supply elasticity 5 case")
 
 Rationed TF, 85 per cent detection, tight budget rule (cf_tightbudget), target 6.26479886,

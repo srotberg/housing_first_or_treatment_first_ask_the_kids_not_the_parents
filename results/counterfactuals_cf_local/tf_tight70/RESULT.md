@@ -1,3 +1,5 @@
+> NOT FIRM, 26 September 02:30: the run stopped at the bottom of a pi_V cycle, not at the fixed point (CALIBRATION_STATE.md, 26 September 02:30). The same settings stopped at CEV +0.70 per cent in ../tf_childsplit70. Do not use.
+
 # Rationed TF, 70 per cent detection, budget closed to 2e-3, 26 September
 
 Same build (code/cf_tightbudget: stopping_rule_govt_budget 2.0e-3, nothing else) and
