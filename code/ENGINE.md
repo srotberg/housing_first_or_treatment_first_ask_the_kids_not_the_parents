@@ -1,3 +1,14 @@
+# A DIFFERENT DRUG SUPPLY ELASTICITY NEEDS A REFITTED SUPPLY LEVEL, 26 September 01:00
+
+The counterfactual reads drug_supply_shifter from the benchmark's file, fitted so the
+price is 1 at the benchmark quantity UNDER the benchmark's curvature (elasticity 1.46).
+The handover case for drug_supply_elasticity updates the curvature but not that level,
+so at elasticity 5 the old level prices the benchmark quantity (0.501347) at 1.398:
+a 40 per cent supply shock inside the experiment, with the no-policy economy no longer
+in equilibrium. THE RULE: an arm that changes the elasticity refits the level in its
+OWN copy of drug_supply_shifterbaseline_benchmark.dat (scratchpad tight_elast_cf_arm.sh
+does it and prints the check); cfarm_bench's file is never touched.
+
 # AT MOST TWO SOLVES AT ONCE: each counterfactual solve holds about 4.9 GB, 25 September 20:40
 
 The container has 16 GB and no swap. Three counterfactual solves (4.9 GB RSS each)

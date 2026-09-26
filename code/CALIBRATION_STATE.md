@@ -1,3 +1,11 @@
+# 26 September 01:00: SUPPLY ELASTICITY 5 queued (the author: "run the supply elasticity 5 case")
+
+Rationed TF, 85 per cent detection, tight budget rule (cf_tightbudget), target 6.26479886,
+drug_supply_elasticity 5 with the supply level refitted (shifter 1.604666 -> 1.148080, price
+1.000 at the benchmark quantity; see ENGINE.md). Script: scratchpad tight_elast_cf_arm.sh,
+SUPPLY_ELAST=5 PDET=0.85 DIAG_TAG=_elast5_85, price start 0.94, PV_START 0.0702. Starts in
+the first free slot (running: cfarm_tf_permban85, cfarm_tf_childdecomp_tight).
+
 # 26 September 00:25: PERMANENT BAN queued (the author: "try the permanent ban")
 
 Build copy code/cf_permban (scratchpad build_cf_permban.sh): voucher_exclusion_release
