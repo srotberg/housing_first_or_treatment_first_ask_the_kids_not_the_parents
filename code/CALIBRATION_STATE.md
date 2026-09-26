@@ -1,3 +1,13 @@
+# 26 September 10:35: THE FIX WORKS -- the no-policy run reproduces the benchmark
+
+code/cfarm_null_fix (build cf_fix: tax warm starts neutralised, moments rule 1e-4): pass 3 net revenue
+6.03766 against the benchmark's 6.03888, CEV +0.05 per cent (the old build: 6.1753, -0.26). The hidden
+labour-tax rise was the whole gap. TF 85 relaunched on cf_fix (code/cfarm_tf_fix85): target 6.03766
+(pass 3; checked against the no-policy run's final value when it ends), seeded from TF 85's converged
+distribution, pi_V 0.0818, price 0.8666; its log confirms tax adjustment 0 and detection 0.85.
+Freed: code/cfarm_bench_tdm (its file set, final calibration state and distribution are kept in the
+scratchpad) and code/cfarm_bench_revdiag.
+
 # 26 September 10:00: FOUND -- a hidden labour-tax rise in every counterfactual (ENGINE.md, same time)
 
 The no-policy gap (revenue +0.148, welfare -0.26%) is the hard-coded tax warm start
