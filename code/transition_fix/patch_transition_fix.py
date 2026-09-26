@@ -127,13 +127,29 @@ once("        frac_in_support_addicted_youngest(time_period)=&\n"
      "        end do\n",
      "all-alive print")
 
+# 6. PRINT-ONLY: childhood utility by age in every transition period. The steady state prints it;
+#    the transition computed it and printed nothing. With it, the lifetime utility of the cohort
+#    BORN at the reform can be assembled along its own life (childhood at age a in period a, adult
+#    value on entering at 26), which is the number the author asked for.
+once('            if (solve_transition_dynamics==0) then\n\n'
+     '                write(*,*) "average_childhood_utility=", average_childhood_utility(time_period)\n',
+     '            if (solve_transition_dynamics==1) then\n'
+     '                write(*,*) "TRANSITION CHILDHOOD t=", time_period, " own=", average_childhood_utility(time_period), &\n'
+     '                    " with_childhood=", average_welfare_with_childhood(time_period)\n'
+     '                write(*,*) "TRANSITION CHILDHOOD_BY_AGE t=", time_period, childhood_utility_by_age(time_period,:)\n'
+     '            end if\n'
+     '            if (solve_transition_dynamics==0) then\n\n'
+     '                write(*,*) "average_childhood_utility=", average_childhood_utility(time_period)\n',
+     "childhood print")
+
 # Re-checked by value in the result.
 for must in ["solve_transition_dynamics*1.d0+(1-solve_transition_dynamics)*1.d0",
              "real(8) :: stopping_rule_govt_budget=1.0*10.d0**(-3)",
              "pi_v_damped_1=0.12*pi_v_gap_1",
              "newborn_parent_share=init_parent_share_1",
              "file=\"newborn_parent_share_initial.dat\"",
-             "TRANSITION ALLALIVE t="]:
+             "TRANSITION ALLALIVE t=",
+             "TRANSITION CHILDHOOD_BY_AGE t="]:
     if s.count(must) != 1:
         sys.exit(f"REFUSING: {must!r} is not in the result exactly once")
 if "unit=419" in open(src).read():
