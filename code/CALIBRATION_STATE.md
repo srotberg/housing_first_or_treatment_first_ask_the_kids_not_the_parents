@@ -1,3 +1,17 @@
+# 26 September 08:15: TF 85 CONVERGED (not firm); the benchmark's 12 blocks are an income fixed point
+
+TF 85 on cf_tdm exited at pass 6 on every rule: pi_V 0.08184, b -29.8%, SUD -30.4%, h +5.6%,
+CEV +1.13% (+1.39 net of the no-policy run); results/counterfactuals_cf_local/tf_tdm85. Not firm:
+drug use was still rising about half a point a pass at exit (moments 4.3e-4 against 5e-4; the
+parent-to-child penalty converges one generation per pass), and the no-policy gap is unexplained.
+REVDIAG, benchmark side: warm-started from the re-solve's FINAL state, block 1 still gives net
+revenue 10.34 (labour-income tax 12.98, investment 0.94, consumption and property 0). The
+benchmark restarts its income normalisers every run: average labour income 1.148 -> 1.384 ->
+... -> 1.617 at block 12, median income 0.580 -> 0.863, eligibles holding a voucher 0.072 ->
+0.273. Only block 12 is its fixed point, so the diagnostic now runs all 12 blocks
+(code/cfarm_bench_revdiag, about 2.5 h). The counterfactual side (code/cfarm_null_revdiag, no
+policy seeded from its converged distribution) prints the same components.
+
 # 26 September 07:55: THE BENCHMARK REPRODUCES ITSELF -- the no-policy gap is in the counterfactual binary
 
 Re-solve (results/reference/hf_omega_c_006_tdm): 12 blocks at the counterfactual's numerics end at
