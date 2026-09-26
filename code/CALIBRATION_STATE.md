@@ -1,3 +1,19 @@
+# 26 September 07:55: THE BENCHMARK REPRODUCES ITSELF -- the no-policy gap is in the counterfactual binary
+
+Re-solve (results/reference/hf_omega_c_006_tdm): 12 blocks at the counterfactual's numerics end at
+net revenue 6.03603 against the old 6.03888, every saved value within 0.05 per cent. So the
+no-policy counterfactual's +0.137 of net revenue (all of it in total revenue, spending barely
+moves) and -0.26 per cent of welfare come from something the counterfactual binary does
+differently. Checked and matching the benchmark: average labour income, net wealth, median
+income, drug threshold, rental management costs, c_1 (its 592.94 prints are startup values; the
+saved 171.39 is the value that clears the benchmark's housing market). Next: REVDIAG copies of
+both binaries print the four revenue components (labour, consumption, investment income,
+property) where they are summed; the benchmark side runs two blocks warm-started from the
+re-solve's final state (code/cfarm_bench_revdiag), the counterfactual side a no-policy run seeded
+from the no-policy distribution. TF 85 (code/cfarm_tf_tdm85, target 6.1753) is near convergence:
+pass 5 pi_V 0.08185, b -30.3%, SUD -30.9%, h +5.4%, CEV +1.18% (+1.44% net of the no-policy
+run) -- NOT firm until the counterfactual-side gap is explained.
+
 # 26 September 03:50: BENCHMARK RE-SOLVE FIRST (the author: "run the benchmark re-solve first")
 
 Why: a no-policy counterfactual should reproduce the benchmark (CEV about 0). The old converged
