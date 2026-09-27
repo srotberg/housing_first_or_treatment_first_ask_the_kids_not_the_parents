@@ -1,3 +1,12 @@
+# 27 September 20:35: WORKER DONE -- TF 85 is unique from a second start; its final table in code/cf_runs/STATUS_remote.md
+
+- uniq85 (TF 85 from pi_V 0.075, price 0.90) converged at 20:26 onto the same equilibrium: price 0.86726, pi_V
+  0.081394, b -30.2, h_1 +5.6, CEV +1.415 against +1.416 (results/counterfactuals_cf_fix2/uniq85).
+- internalise exited at pass 7 on the damped build, probably on the quiet phase of its period-three cycle: b -2.0,
+  h_1 -2.2, no CEV (the author's instruction for this arm).
+- Still without an equilibrium: TF 70 and permban85 (the demand jump, 12:55 entry; the author's call on (a)/(b)/(c)).
+- No worker runs left. Here: T = 60 bracket-seeded, loop 0 backward pass.
+
 # 27 September 18:00: T = 60 RESTARTED FROM THE BRACKETED PRICE PATH (third seed)
 
 The Newton-seeded run finished loop 0 at 17:55 (log and outputs in code/trtf60/newtonseed_run/); stopped at the
