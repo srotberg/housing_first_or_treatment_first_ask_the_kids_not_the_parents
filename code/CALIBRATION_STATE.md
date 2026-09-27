@@ -1,3 +1,16 @@
+# 27 September 09:55: TF 70 ALSO FLIPS ON THE DAMPED BUILD -- but its flip sits inside both equilibrium rules
+
+The worker stopped TF 70 damped at pass 12 (results/counterfactuals_cf_fix2/tf70_remote_damp_cycle). b jumps
+0.0578 <-> 0.0582 (-28.9 / -28.4 per cent) on passes 7, 10, 12 while the price creeps 0.8730 -> 0.8739 and
+pi_V 0.0805 -> 0.0800. What fails is ONLY the moments-change stopping rule (3.7e-4 against 1e-4): at passes
+10-12 the drug market is inside its rule on both sides of the flip (3.0-3.5e-3 high, 7.4e-4 low, rule 5e-3)
+and the budget too (1.3e-4, 9.6e-4, 4.6e-4, rule 1e-3). The bracket: b -28.4 to -28.9, h_1 +4.9, CEV
++1.43 to +1.47 per cent. Permban85 differs: its high-b state breaks the drug rule (1.1-1.3e-2).
+Both look like a discrete jump in drug demand at a price the iteration keeps crossing, not the one-pass
+parent-share lag. Whether a state inside both equilibrium rules is reportable when the moments rule cannot
+be met is the author's call (the standing rule is one equilibrium, the exit pass, never a best-of);
+asked in chat. The worker moved on: uniq85 launched 09:45, omega1 at pass 6.
+
 # 27 September 08:25: T = 60 RESTARTED FROM A NEWTON-SEEDED DRUG PRICE PATH (the flat seed would have cost ~12 loops)
 
 Loop 1 of the flat-seeded run showed the drug price moving by exactly +0.5 per cent in EVERY period
