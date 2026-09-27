@@ -1,3 +1,11 @@
+# 27 September 11:05: CONTAINER RESTART killed the Newton-seeded T = 60 at loop 0, backward period 4; relaunched
+
+Started 08:16, killed ~11:02 two periods short of its forward pass (2 h 46 min lost). The killed run's log and
+the files it wrote at start-up are in code/trtf60/newtonseed_killed_1103/; PARAM_HANDOVER.txt restored from
+the kept copy; the same seeds (price 0.922 at t = 1, the flat run's pi_V path). Relaunched 11:04 (task
+bar3pulcu, 4 threads); the log confirms both seeds read 59 of 59, the parent share and the target. Next
+reading of the new cohort's CEV at loop 0, year 26: about 15:40 UTC. Nothing else was running here.
+
 # 27 September 09:55: TF 70 ALSO FLIPS ON THE DAMPED BUILD -- but its flip sits inside both equilibrium rules
 
 The worker stopped TF 70 damped at pass 12 (results/counterfactuals_cf_fix2/tf70_remote_damp_cycle). b jumps
