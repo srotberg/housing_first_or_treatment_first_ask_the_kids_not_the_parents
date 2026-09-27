@@ -98,6 +98,43 @@ for b in range(1, last_b + 1):
     if b == 1:
         headline = cev_of(L)
 print(f"\nTHE COHORT BORN AT THE REFORM (b = 1): CEV {100*headline:+.4f}% of consumption")
+
+
+def steady(path):
+    """last average_childhood_utility and average_welfare_with_childhood of a steady-state log"""
+    import gzip
+    c = w = None
+    for l in gzip.open(path, "rt", errors="replace"):
+        if "average_childhood_utility=" in l:
+            c = float(l.split("=")[1].split()[0])
+        elif "average_welfare_with_childhood=" in l:
+            w = float(l.split("=")[1].split()[0])
+    return c, w - c
+
+
+# The same split for the steady states, childhood and discounted adult part (total minus childhood),
+# so the cohort's lifetime can be read against no policy and against the long run of the same reform.
+here = os.path.dirname(os.path.abspath(__file__))
+refs = [("no policy", os.path.join(here, "../../results/counterfactuals_cf_fix2/null_share/cf.log.gz")),
+        ("long run (TF 85)", os.path.join(here, "../../results/counterfactuals_cf_fix2/tf85/cf.log.gz"))]
+b1_child = sum(BETA ** (a - 1) * (by[a][a - 1] - KAPPA_X * h[a]) for a in range(1, CHILD_YEARS + 1))
+b1_adult = BETA ** CHILD_YEARS * young[1 + CHILD_YEARS]
+print("\nBorn at the reform, split into childhood (ages 1-25, discounted to age 1) and adulthood (from 26):")
+print(f"   {'':18s} {'childhood':>11s} {'adulthood':>11s} {'total':>11s}")
+print(f"   {'cohort b = 1':18s} {b1_child:11.4f} {b1_adult:11.4f} {b1_child + b1_adult:11.4f}")
+got = {}
+for name, path in refs:
+    if os.path.exists(path):
+        c, a = steady(path)
+        got[name] = (c, a)
+        print(f"   {name:18s} {c:11.4f} {a:11.4f} {c + a:11.4f}")
+if "no policy" in got:
+    c0, a0 = got["no policy"]
+    print(f"   {'gain on no policy':18s} {b1_child - c0:+11.4f} {b1_adult - a0:+11.4f} {b1_child + b1_adult - c0 - a0:+11.4f}"
+          "   (utils)")
+    if "long run (TF 85)" in got:
+        c1, a1 = got["long run (TF 85)"]
+        print(f"   {'long-run gain':18s} {c1 - c0:+11.4f} {a1 - a0:+11.4f} {c1 + a1 - c0 - a0:+11.4f}")
 print("For comparison, the code's cross-section measure (cohort entering adulthood at t):")
 for t in (1, 26):
     if t in cev:
