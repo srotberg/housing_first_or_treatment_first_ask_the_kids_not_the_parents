@@ -1,3 +1,22 @@
+# 27 September 03:31: T = 60 LOOP 0 REACHED YEAR 26 -- the new cohort's CEV, FIRST ITERATE, +1.00 per cent
+
+The author clarified (after the 22:50 entry) that the number they want is the cohort BORN at the reform,
+lifetime including childhood, not the all-alive one; the all-alive worker was dropped and the transition
+restarted with a print-only CHILDHOOD / CHILDHOOD_BY_AGE line; code/transition_fix/cohort_cev.py assembles
+the cohort's lifetime along its own life (childhood in years 1..25, adult from 26) and reads it off the
+benchmark curve. Loop 0, prices and pi_V flat at the TF 85 terminal values, budget not cleared:
+- cohort born at the reform: lifetime 789.68860, CEV +1.0018 per cent (the no-policy run itself sits at
+  +0.027, so about +0.97 net), against +1.39 net in the long run (results/counterfactuals_cf_fix2/tf85).
+- split against the no-policy run, utils: childhood +0.137 (long run +0.236), adult part +0.194 (long run
+  +0.233). The shortfall is mostly childhood: SUD falls gradually (-1.6 per cent in year 2, -25 in year 26,
+  -31 in the long run) and homelessness overshoots (+12.8 to +14.8 in years 2-6, +7.6 in year 26, +5.6 long
+  run).
+- the code's own measure (cohort entering adulthood at t): +1.67 at t = 1, +1.07 at t = 26.
+- budget residual (revenue minus target): +0.019 in year 2, +0.008 in year 5, then negative from about
+  year 10 (-0.011 around year 20). The next loop raises pi_V early and lowers it later, so the direction
+  of the cohort's number is not predictable from here. Not reportable until the path clears.
+Loop 0's forward pass ends around 06:00; each loop about 6.5 hours; the next reading at loop 1's year 26.
+
 # 26 September 22:50: THE PERIOD-1 CEV THE AUTHOR ASKED FOR IS THE ALL-ALIVE ONE -- instrumented
 
 The author wants the CEV "in period 1 of implementation". The transition's TRANSITION CEV t=1 is the
