@@ -1,3 +1,15 @@
+# 27 September 07:50: PERMBAN 85 HAS NO CLEAN EQUILIBRIUM ON EITHER BUILD -- for the author
+
+The worker stopped permban85's damped rerun at pass 8 (results/counterfactuals_cf_fix2/permban85_damp_cycle).
+From pass 6 drug use flips 0.05687 / 0.05590 every pass while the price it was solved at moves only
+between about 0.8593 and 0.8596 (the passes table prints the price after each pass's update, so each
+row's b was solved at the row above's price): a 0.03 per cent price change flips b by 1.7 per cent. That
+is a jump in demand near p = 0.8594, not the one-pass parent-share lag the damped build removes (the
+parent share moves 1e-4). The two states bracket the answer: CEV +2.19 to +2.32 per cent, b -30.0 to
+-31.2 per cent, h_1 +5.8 to +6.0. Pass 5 nearly met every rule (drug 3.5e-3, budget 7.0e-4, moments
+change 1.15e-4 against 1e-4). Not pursued further without the author: a bisection on the price or a
+tighter distribution rule are the candidates. omega1 took the slot (07:49); TF 70 at pass 8.
+
 # 27 September 05:50: T = 60 LOOP 0 DONE -- the drug market is far from clearing early on; the 03:31 CEV will move
 
 Loop 0's forward pass finished around 05:45 and loop 1's backward pass started (the waiter bhqqo2vjn
