@@ -1,3 +1,19 @@
+# 27 September 14:10: THE NEWTON PRICE SEED OVERSHOT -- the drug gap flipped from +0.13 to -0.04; the root is now bracketed
+
+Restarted T = 60, loop 0, years 1-3, against the flat-seeded run's loop 0 at the same years:
+- price 0.922 (was 0.867): implied supply price 0.883 (was 0.999), gap -0.039 / -0.064 / -0.044 at t = 1-3
+  (was +0.132 / +0.137 / +0.137). Drug use -30.8 per cent at t = 1 (was -18.3): demand responds to a 6 per
+  cent price rise about 30 per cent more strongly than the 0.5 per cent step measured (log slope 3.0, not
+  2.3), as the jump in initiation found in the steady-state arms would do. The clearing price at t = 1 is
+  bracketed, 0.867 (gap +0.14) and 0.922 (gap -0.04); log-linear between them it is about 0.909.
+- budget +0.0013 / +0.0142 / -0.0061 (pi_V's year-2 secant step now shows in year 3).
+- the code's cross-section CEV at t = 1 (cohort entering adulthood) +2.87 per cent (was +1.67).
+PLAN: let loop 0 finish (~17:30), then restart at the loop boundary with each period's price from the
+bracket (log-linear between the two runs' price and gap), pi_V from this run's updated path. A restart at
+the boundary loses only the secant memory; with the 0.5 per cent cap binding it saves two to three loops.
+The new cohort's CEV from this loop (~15:40) is at prices about 4 per cent too high early on; with the
+flat run's +1.00 at prices 13 per cent too low, the two bracket it.
+
 # 27 September 12:55: WHY THREE ARMS CYCLE -- drug demand JUMPS at a threshold price; no pure clearing price exists
 
 TF 70 (damped), permban85 (damped) and internalise (pi_V fixed, no conditionality) all flip the same way, and
