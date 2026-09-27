@@ -52,3 +52,5 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
   The arm script restarts from the benchmark's distribution, so both were relaunched from the last printed pi_V and price, as for a cycle rerun:
   `... BUILD=cf_fix2_damp PDET=0.70 DIAG_TAG=_damp70 PV_START=0.08011 DRUG_PRICE_START=0.8734 NET_TARGET=6.0373408770945769 ...`
   `... BUILD=cf_fix2_damp_permban PDET=0.85 DIAG_TAG=_damp_permban85 PV_START=0.09198 DRUG_PRICE_START=0.8602 NET_TARGET=6.0370824602930142 ...`
+- 05:36 the cycle watcher flagged the permban85 damped rerun at pass 4 (moments change 7.1e-3, 3.5e-3, 9.3e-4 with b -34.3/-30.1/-31.2 per cent at passes 2-4). NOT stopped: the change is falling fourfold over the window (a damped start-up transient after the relaunch, not a stuck cycle), and the arm is already on the damped build, which is the cycle rule's remedy. The watcher now ignores passes 1-2 and flags only a window whose moments change is not falling by half. If it does stick, it is recorded here and stopped.
+- 05:36 tf70 at pass 4 after the relaunch: budget gap 4.7e-3, moments change 2.0e-4, no oscillation.
