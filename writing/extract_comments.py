@@ -76,4 +76,7 @@ for pi, pn in enumerate(order, 1):
             rc = re.search(rb'/Rect\s*\[([^\]]*)\]', o); nums = [float(x) for x in rc.group(1).split()]
             near = sorted(words, key=lambda w: abs((w[0]+w[2])/2-nums[0])+abs((w[1]+w[3])/2-nums[1]))[:6]
             under = ["[near: " + " ".join(w[4] for w in near) + "]"]
-        print(f"p{pi} {st}: «{' '.join(under)}»\n     -> {lit(cm.group(1)) if cm else '(no comment)'}\n")
+        pos = ""
+        if q:
+            pos = f" [x {min(nums[0::2]):.0f}-{max(nums[0::2]):.0f}, y {min(nums[1::2]):.0f}-{max(nums[1::2]):.0f}]"
+        print(f"p{pi} {st}{pos}: «{' '.join(under)}»\n     -> {lit(cm.group(1)) if cm else '(no comment)'}\n")
