@@ -868,6 +868,12 @@ the price moving when they must; only a reform path exercises those.
   t = 59 is therefore -0.018 while the terminal steady state's is -0.0004, and pi_V is cut to close
   it. That is the truncation task 4's longer horizon addresses. Its effect on the cohort born at
   the reform is through pi_V in its adult years and has not been measured.
+- *With the price capped at 0.5 per cent a loop, the seed decides the run time.* The cap
+  (max_drug_price_move, the author's instruction of 8 September) binds wherever the gap is larger,
+  so a seed 6 per cent off costs twelve loops, about three days at T = 60. The run was restarted
+  from a Newton step using the demand response loops 0 and 1 measured (section 16's price seed,
+  `code/trtf60/drug_price_path_seed.txt` says how). Seed from the best estimate of the clearing
+  path, not from what is to hand.
 
 **Order.** Fixes 2 to 5 go in a build copy, asserted by value, not in the
 source. The no-policy arm is re-run once to write the parent share. The flat

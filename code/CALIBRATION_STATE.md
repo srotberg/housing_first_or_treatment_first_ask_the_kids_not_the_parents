@@ -1,3 +1,27 @@
+# 27 September 08:25: T = 60 RESTARTED FROM A NEWTON-SEEDED DRUG PRICE PATH (the flat seed would have cost ~12 loops)
+
+Loop 1 of the flat-seeded run showed the drug price moving by exactly +0.5 per cent in EVERY period
+(0.8674 -> 0.8717 -> 0.8761): max_drug_price_move = 0.005, the per-loop cap the author set on 8 September
+("You might need to update the price more slowly. Like 0.5% at most"), binds wherever the gap exceeds it.
+The early periods need about +6 per cent, so about twelve loops of ~6.5 hours for the price alone.
+Loops 0 and 1 measure the demand response: +0.50 per cent on the price moved V by -0.95 per cent and the
+implied supply price by -0.65 per cent at t = 1, so d log-gap / d log-price = 2.32 (2.41 by t = 6; the
+steady state's is 3.15). A Newton step p0*exp(log(implied/p0)/s), s measured for t <= 6 and ramped to 3.15
+by t = 40, gives 0.922 at t = 1, 0.912 at t = 10, 0.892 at t = 20, 0.877 at t = 30, 0.870 at t = 40.
+- Stopped the flat-seeded run at loop 1, period 6 (TaskStop; nothing to revert, the tree was clean).
+  Its log and every file it wrote are in code/trtf60/flatseed_run/ (run_flatseed_loops0-1.log); the
+  restart starts from the staged state exactly as the first start did.
+- New seeds: drug price the Newton path (scratchpad drug_price_path_seed.newton.txt, copied in with a
+  header saying how it was made); pi_V the flat run's latest written path (its loop 1 through period 6,
+  loop 0 after -- note period 2 at 0.0928, a secant step: the per-period budget barely responds to its
+  own period's pi_V because holders are a stock, so the per-period secant takes big steps there).
+- The cap still governs every update from here; the seed is the only change. Restarted 08:22 as task
+  bn41cw4qx, 4 threads; the log confirms both seeds read (59 of 59), the parent share, the target.
+- Checked in passing: the path's t = T price prints 0.8647 (the handover's drug_price_start), not the
+  terminal equilibrium's 0.8674. price_of_addictive_good_path(transition_length) is only set and printed,
+  never used, so it is a mislabel and not a bug.
+- Next reading of the new cohort's CEV at this run's loop 0, year 26: about 13:00 UTC.
+
 # 27 September 07:50: PERMBAN 85 HAS NO CLEAN EQUILIBRIUM ON EITHER BUILD -- for the author
 
 The worker stopped permban85's damped rerun at pass 8 (results/counterfactuals_cf_fix2/permban85_damp_cycle).
