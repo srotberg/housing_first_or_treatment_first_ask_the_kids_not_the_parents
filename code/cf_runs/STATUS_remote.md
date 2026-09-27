@@ -10,7 +10,7 @@ gfortran was not installed in this container; installed from apt: GNU Fortran (U
 | elast5_85 | DONE 01:57, pass 12, checks pass: b -44.8%, h_1 +2.1%, CEV +2.77% (results/counterfactuals_cf_fix2/elast5_85) |
 | tf70 (damped) | **STOPPED 09:43 at pass 12, NO EQUILIBRIUM**: the two-pass flip returned on the damped build from pass 7 (results/counterfactuals_cf_fix2/tf70_remote_damp_cycle). Needs the coordinator. |
 | omega1 | DONE 09:54, pass 7, checks pass: b -35.7%, h_1 -12.7%, budget not cleared (net revenue -0.140); no CEV, as the author asked (results/counterfactuals_cf_fix2/omega1) |
-| uniq85 | running (launched 09:45, NET_TARGET 6.0373408770945769) |
+| uniq85 | killed by the second container restart at pass 12 (uniq85_partial), continued from its last pi_V and price since 16:37 |
 | internalise | DONE 14:54 on cf_fix2_damp, pass 7, checks pass: b -2.0%, h_1 -2.2%. **Caveat: exited on the quiet phase of the same period-three pattern** (results/counterfactuals_cf_fix2/internalise) |
 
 ## Log
@@ -67,3 +67,5 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
 - 12:37 uniq85 at pass 5, converging from its different start (pi_V 0.075 -> 0.0825, price walking down at the cap, 0.8955 -> 0.8777, drug gap 5.3e-2).
 - PATTERN, for the coordinator: three of the five arms here cycle (permban85, tf70, internalise), in the same way: b jumps by 1-3 per cent on one pass and returns on the next, the moments change sits at 4e-4 to 1.4e-3 on each jump and its return, and the drug-market gap spikes on the same passes. The damped parent share did not remove it in either TF arm.
 - 14:54 internalise damped rerun exited at pass 7: VOUCHER CHECK PASS, DIST CHECK PASS (7 passes); moments change 2.3e-5, drug gap 2.7e-3. But passes 5-6 spiked exactly as the undamped run did (b 0.08104, moments change 1.4e-3), and pass 7 is the quiet phase; the undamped run spiked again at pass 8. Reported as the exit pass, with that caveat at the top of RESULT.md.
+- ~16:30 SECOND CONTAINER RESTART killed uniq85 at pass 12 (partial pass 13). From its different start (pi_V 0.075, price 0.90) it had reached pi_V 0.08150, price 0.8673, b -30.2 per cent, h_1 +5.5 per cent; moments change 1.8e-5 and drug gap 7.4e-4 inside their rules, budget gap 1.7e-3 still above 1e-3. The coordinator's TF 85: price 0.8674, pi_V 0.08141, b -30.2, h_1 +5.6. Archived in results/counterfactuals_cf_fix2/uniq85_partial; continued from the last printed values:
+  `OMP_NUM_THREADS=2 BUILD=cf_fix2 SEED_FROM=bench PDET=0.85 DIAG_TAG=_uniq85 PV_START=0.081470 DRUG_PRICE_START=0.8673 NET_TARGET=6.0373408770945769 sh cf_runs/cf_arm.sh tf`
