@@ -11,7 +11,7 @@ gfortran was not installed in this container; installed from apt: GNU Fortran (U
 | tf70 (damped) | **STOPPED 09:43 at pass 12, NO EQUILIBRIUM**: the two-pass flip returned on the damped build from pass 7 (results/counterfactuals_cf_fix2/tf70_remote_damp_cycle). Needs the coordinator. |
 | omega1 | DONE 09:54, pass 7, checks pass: b -35.7%, h_1 -12.7%, budget not cleared (net revenue -0.140); no CEV, as the author asked (results/counterfactuals_cf_fix2/omega1) |
 | uniq85 | running (launched 09:45, NET_TARGET 6.0373408770945769) |
-| internalise | running (launched 09:55) |
+| internalise | cf_fix2 run STOPPED 12:37 at pass 9 for a period-three cycle (internalise_cycle); rerun on cf_fix2_damp running since 12:40 |
 
 ## Log
 - builds done (sequential, 14:40-14:48), every compile 7 warnings 0 errors:
@@ -62,3 +62,7 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
 - 09:43 omega1 at pass 6: b -35.7 per cent, h_1 -12.7 per cent, drug gap 4.0e-3, moments change 9.1e-4 and falling.
 - 09:54 omega1 finished: VOUCHER CHECK PASS, DIST CHECK PASS (7 passes). Exit pass 7: drug gap 3.71e-3, moments change 9.2e-5.
 - 09:55 internalise launched: `OMP_NUM_THREADS=2 BUILD=cf_fix2 SEED_FROM=bench DIAG_TAG=_fix2 DRUG_PRICE_START=0.997 sh cf_runs/cf_arm.sh internalise`
+- 12:37 internalise STOPPED at pass 9 under the cycle rule (process 20080 confirmed gone): period three, b 0.08106 on passes 5 and 8, about 0.0796 otherwise, moments change 1.4e-3 on each jump and the pass after, drug gap about 1.5e-2 on the jumps. pi_V is fixed in this arm, so it is not a budget cycle. The newborn parent share jumps one pass AFTER b. Archived: results/counterfactuals_cf_fix2/internalise_cycle.
+- 12:40 internalise rerun on the damped build: `OMP_NUM_THREADS=2 BUILD=cf_fix2_damp SEED_FROM=bench DIAG_TAG=_damp DRUG_PRICE_START=0.9964 sh cf_runs/cf_arm.sh internalise`
+- 12:37 uniq85 at pass 5, converging from its different start (pi_V 0.075 -> 0.0825, price walking down at the cap, 0.8955 -> 0.8777, drug gap 5.3e-2).
+- PATTERN, for the coordinator: three of the five arms here cycle (permban85, tf70, internalise), in the same way: b jumps by 1-3 per cent on one pass and returns on the next, the moments change sits at 4e-4 to 1.4e-3 on each jump and its return, and the drug-market gap spikes on the same passes. The damped parent share did not remove it in either TF arm.
