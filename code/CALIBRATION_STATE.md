@@ -1,3 +1,19 @@
+# 27 September 23:35: BRACKET-SEEDED T = 60, LOOP 0, YEAR 26 -- new cohort's CEV +2.89 per cent
+
+cohort_cev.py on code/trtf60/run.log (task bhp5c6ar6, loop 0, years 1-26):
+- cohort born at the reform: lifetime 790.31463, CEV +2.8876 per cent. Between the flat run's +1.00 (price too
+  low) and the Newton run's +3.19 (too high), nearer the latter. Against no policy, utils: childhood +0.750
+  (flat +0.137, Newton +0.865, long run +0.236), adulthood +0.207 (flat +0.194, Newton +0.189, long run +0.233).
+  The code's cross-section CEV: t = 1 +2.62, t = 26 +1.31.
+- the childhood gain moves with the early drug price across the three runs: the transition's price sits above the
+  long run's 0.867 for about twenty years (0.909 at t = 1, 0.897 at 10, 0.877 at 20), because the SUD stock the
+  reform inherits keeps demand high, and a dearer drug cuts parents' use further while their children are young.
+- drug market, years 1-26: within 0.005 in 5 of 26, median |gap| 0.0097, max 0.021 (the seeds' 0.04-0.13).
+  Budget within 0.001 in 1 of 26, median |residual| 0.0064: -0.016 at t = 5, +0.005 to +0.007 in years 15-26.
+- path: b -29 to -31 per cent from year 1, SUD -9 (t = 5), -17 (10), -27 (20), -31 (26); h_1 +13 (t = 5),
+  +11 (15), +7 (26), against +5.6 in the long run.
+- NOT CONVERGED: loop 0 of perhaps 4-8. Loop 0 ends about 01:40 UTC; loop 1 then runs on the code's own updates.
+
 # 27 September 20:35: WORKER DONE -- TF 85 is unique from a second start; its final table in code/cf_runs/STATUS_remote.md
 
 - uniq85 (TF 85 from pi_V 0.075, price 0.90) converged at 20:26 onto the same equilibrium: price 0.86726, pi_V
