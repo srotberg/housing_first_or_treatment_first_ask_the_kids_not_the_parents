@@ -9,9 +9,9 @@ gfortran was not installed in this container; installed from apt: GNU Fortran (U
 | null_remote | DONE 19:30, pass 5, checks pass; net revenue 6.0373408770945769 (results/counterfactuals_cf_fix2/null_remote) |
 | elast5_85 | DONE 01:57, pass 12, checks pass: b -44.8%, h_1 +2.1%, CEV +2.77% (results/counterfactuals_cf_fix2/elast5_85) |
 | tf70 (damped) | **STOPPED 09:43 at pass 12, NO EQUILIBRIUM**: the two-pass flip returned on the damped build from pass 7 (results/counterfactuals_cf_fix2/tf70_remote_damp_cycle). Needs the coordinator. |
-| omega1 | running (launched 07:49) |
+| omega1 | DONE 09:54, pass 7, checks pass: b -35.7%, h_1 -12.7%, budget not cleared (net revenue -0.140); no CEV, as the author asked (results/counterfactuals_cf_fix2/omega1) |
 | uniq85 | running (launched 09:45, NET_TARGET 6.0373408770945769) |
-| internalise | pending |
+| internalise | running (launched 09:55) |
 
 ## Log
 - builds done (sequential, 14:40-14:48), every compile 7 warnings 0 errors:
@@ -60,3 +60,5 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
 - 09:43 tf70 damped STOPPED at pass 12 (process 14258 confirmed gone). Clean and monotone to pass 6 (moments 5.3e-5, which is where the coordinator's damped run was lost), but the budget had not cleared, and from pass 7 the flip returned: b -28.4 / -28.9 per cent, moments change stuck at 3.7e-4 from pass 10, drug gap spiking with b, budget inside its rule (1.3e-4, 4.6e-4). The same size as the coordinator's undamped TF 70 cycle. The damped parent share alternates too, about half b's relative amplitude. NOTE.md in results/counterfactuals_cf_fix2/tf70_remote_damp_cycle. Both TF arms that cycled undamped (70, permban85) also cycle damped.
 - 09:45 uniq85 launched: `OMP_NUM_THREADS=2 BUILD=cf_fix2 SEED_FROM=bench PDET=0.85 DIAG_TAG=_uniq85 PV_START=0.075 DRUG_PRICE_START=0.90 NET_TARGET=6.0373408770945769 sh cf_runs/cf_arm.sh tf`
 - 09:43 omega1 at pass 6: b -35.7 per cent, h_1 -12.7 per cent, drug gap 4.0e-3, moments change 9.1e-4 and falling.
+- 09:54 omega1 finished: VOUCHER CHECK PASS, DIST CHECK PASS (7 passes). Exit pass 7: drug gap 3.71e-3, moments change 9.2e-5.
+- 09:55 internalise launched: `OMP_NUM_THREADS=2 BUILD=cf_fix2 SEED_FROM=bench DIAG_TAG=_fix2 DRUG_PRICE_START=0.997 sh cf_runs/cf_arm.sh internalise`
