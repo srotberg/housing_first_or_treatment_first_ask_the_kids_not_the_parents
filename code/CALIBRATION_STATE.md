@@ -1,3 +1,29 @@
+# 27 September 12:55: WHY THREE ARMS CYCLE -- drug demand JUMPS at a threshold price; no pure clearing price exists
+
+TF 70 (damped), permban85 (damped) and internalise (pi_V fixed, no conditionality) all flip the same way, and
+the logs show why. Per pass, against the price the pass was SOLVED at (the passes tables print the price after
+the update):
+- total_experimenters_1 jumps (TF 70 1.7046 -> 1.7157, permban85 1.651 -> 1.679, internalise 2.326 -> 2.367):
+  the flip is in INITIATION, a mass of households switching to trying drugs at once.
+- permban85: high whenever p <= 0.85934, low whenever p >= 0.85961. internalise: high at p <= 0.99512, low at
+  p >= 0.99557. A clean threshold price in both. TF 70 also moves pi_V each pass, so its threshold moves.
+- the signed gap (implied supply price minus p) is NEGATIVE on the low side and strongly POSITIVE on the high
+  side in all three: TF 70 -0.0003 to -0.0007 / +0.0030 to +0.0037; permban85 -0.0033 to -0.0039 / +0.0114 to
+  +0.0132; internalise -0.0016 to -0.0035 / +0.0152 to +0.0155. Excess demand jumps across zero at the
+  threshold, so no price clears the market exactly and the price update walks back and forth across it.
+  The damped parent share cannot fix this; it is not a lag.
+- every LOW state clears the drug market inside its rule (|gap| <= 0.0039 against 5e-3); the high states
+  do not except in TF 70. What fails is the moments-change rule, because the iteration keeps crossing.
+- the clearing mixture (the share theta of the jumping mass that must try drugs for the gap to be zero,
+  theta = |gap_low| / (|gap_low| + gap_high)) is close to the low state: theta about 0.12 (TF 70), 0.23
+  (permban85), 0.17 (internalise). Its numbers: TF 70 b about -28.8 per cent, CEV about +1.46;
+  permban85 b about -30.9, CEV about +2.24; internalise b about -1.7, CEV about +0.12.
+Options for the author (asked in chat, nothing done): (a) a build copy that stops updating the price once
+the gap is inside its rule, so the run settles and exits on the low state, which clears to the paper's
+tolerance; (b) report the clearing mixture computed from the two states; (c) smooth the jump in the model,
+which is a model change. The difference between (a) and (b) is at most 0.4 per cent of b and 0.02 points
+of CEV in these three arms.
+
 # 27 September 11:05: CONTAINER RESTART killed the Newton-seeded T = 60 at loop 0, backward period 4; relaunched
 
 Started 08:16, killed ~11:02 two periods short of its forward pass (2 h 46 min lost). The killed run's log and
