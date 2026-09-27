@@ -1,3 +1,16 @@
+# 27 September 18:00: T = 60 RESTARTED FROM THE BRACKETED PRICE PATH (third seed)
+
+The Newton-seeded run finished loop 0 at 17:55 (log and outputs in code/trtf60/newtonseed_run/); stopped at the
+loop boundary and restarted at 17:57 (task bhp5c6ar6, 4 threads). Seeds:
+- drug price, per period, the secant between the two runs' loop 0 (flat: price 0.8674, gap positive everywhere;
+  Newton: gap negative in every year to 58), code/transition_fix/bracket_seed.py: 0.909 at t = 1, 0.897 at 10,
+  0.877 at 20, 0.870 at 30, 0.8674 from about 45. Bracketed in years 1-58; t = 59 is capped extrapolation.
+  The secant is per period and ignores that a lower early price raises the later SUD stock, so the later
+  years' clearing prices will sit somewhat above it; the 0.5 per cent cap then walks them.
+- pi_V: the Newton run's path after loop 0 (0.0824 at t = 1, 0.0945 at t = 2, 0.0792 at 20, 0.0770 at 59).
+The log confirms both read (59 of 59), the parent share and the target. The new cohort's CEV from this loop
+at year 26, about 22:45 UTC; the two earlier readings, +1.00 (price too low) and +3.19 (too high), bracket it.
+
 # 27 September 15:50: NEW COHORT'S CEV FROM THE PRICE-TOO-HIGH SIDE: +3.19 per cent -- the two runs bracket it
 
 Restarted T = 60, loop 0, year 26 reached 15:46 (cohort_cev.py on code/trtf60/run.log):
