@@ -1,3 +1,21 @@
+# 27 September 05:50: T = 60 LOOP 0 DONE -- the drug market is far from clearing early on; the 03:31 CEV will move
+
+Loop 0's forward pass finished around 05:45 and loop 1's backward pass started (the waiter bhqqo2vjn
+fires at loop 1's forward start, about 09:00; year 26 about two hours after that). Findings:
+- DRUG MARKET: largest gap 0.137 (rule 5e-3), 0.13 in years 1-10, 0.028 at year 30, below 1e-3 after
+  about year 45. The drug quantity V barely falls at the reform (0.5007 against 0.5015 with no policy)
+  because SUD falls slowly, so the clearing price starts near 1.0 and falls to 0.867 over ~45 years; the
+  seed held it flat at 0.867. Written up in TRANSITION_LESSONS section 16. The transition's own update
+  is price + 0.1 x gap in loop 1 (drug_market_adjuster 0.1 from the handover), then a per-period
+  secant bounded at 4x that step: by the code's own estimate of the steady-state gain (2.15) the
+  damped step closes about a third of the gap per loop and the secant much more, so perhaps 4-6 loops.
+  Not restarted: a restart resets the secant memory and would save at most one loop.
+- BUDGET: residual +0.019 at year 2, -0.011 at year 20, +0.005 at year 40, -0.018 at year 59; pi_V
+  updated per period (0.0837 at year 2, 0.0792 at year 59). The year-59 deficit is the horizon:
+  revenue 14.109 against the terminal 14.130 and still rising (TRANSITION_LESSONS section 16).
+- The new cohort's +1.00 per cent (03:31 entry) was computed with drug prices about 13 per cent below
+  clearing throughout its childhood. It will move, in a direction that cannot be signed from here.
+
 # 27 September 03:31: T = 60 LOOP 0 REACHED YEAR 26 -- the new cohort's CEV, FIRST ITERATE, +1.00 per cent
 
 The author clarified (after the 22:50 entry) that the number they want is the cohort BORN at the reform,

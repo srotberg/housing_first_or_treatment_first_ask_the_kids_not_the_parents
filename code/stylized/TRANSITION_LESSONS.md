@@ -846,6 +846,29 @@ t = 1. One loop, every per-period rule met (budget at most 1.07e-4), welfare wit
 the steady state in all nine periods and within 0.00007 at t = 1. What it cannot test is pi_V and
 the price moving when they must; only a reform path exercises those.
 
+**What the first reform loop showed, 27 September 05:45** (T = 60, Treatment First at 85 per cent,
+`code/trtf60`, loop 0). Two things the flat control could not show:
+
+- *The drug price seed was the wrong shape, and flat at the terminal price is the worst choice.*
+  The drug QUANTITY V does not fall at the reform: 0.5007 at t = 1 against 0.5015 with no policy,
+  0.456 at t = 20, 0.427 at t = 30, and the terminal 0.407 only around t = 45. V is carried by
+  people with SUD, and SUD falls over decades (-1.6 per cent at t = 2, -25 at t = 26), while the
+  -18 per cent in participation at t = 1 is casual use that buys little. So the market-clearing
+  price starts at the pre-reform level (implied supply price 0.999 at t = 1) and falls to the
+  terminal 0.867 over about 45 years. Seeded flat at 0.867, the early periods sold drugs about 13
+  per cent below clearing: largest drug-market gap 0.137 against the rule 5e-3. The code's own
+  default path (benchmark price at t = 0, terminal at T, linear between) would have started much
+  closer. Seed a reform path from that default, or from a previous loop's implied supply price
+  through a damped or Newton step, never flat at the terminal value and never the raw implied
+  price (the map's gain is 2.15, so a full step overshoots).
+- *T = 60 does not reach the terminal steady state in the budget.* At t = 59 total revenue is
+  14.109 against the terminal 14.130 and still rising about 0.001 a year, pensions 8.467 against
+  8.476, and the population 51.0264 against 51.0279. Cohorts raised under the reform reach every
+  working age only by about t = 66, and every age later still. The per-period budget residual at
+  t = 59 is therefore -0.018 while the terminal steady state's is -0.0004, and pi_V is cut to close
+  it. That is the truncation task 4's longer horizon addresses. Its effect on the cohort born at
+  the reform is through pi_V in its adult years and has not been measured.
+
 **Order.** Fixes 2 to 5 go in a build copy, asserted by value, not in the
 source. The no-policy arm is re-run once to write the parent share. The flat
 control runs next, then the reform paths from the corrected arms' directories.
