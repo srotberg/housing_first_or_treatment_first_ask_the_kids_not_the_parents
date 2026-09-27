@@ -11,7 +11,7 @@ gfortran was not installed in this container; installed from apt: GNU Fortran (U
 | tf70 (damped) | **STOPPED 09:43 at pass 12, NO EQUILIBRIUM**: the two-pass flip returned on the damped build from pass 7 (results/counterfactuals_cf_fix2/tf70_remote_damp_cycle). Needs the coordinator. |
 | omega1 | DONE 09:54, pass 7, checks pass: b -35.7%, h_1 -12.7%, budget not cleared (net revenue -0.140); no CEV, as the author asked (results/counterfactuals_cf_fix2/omega1) |
 | uniq85 | running (launched 09:45, NET_TARGET 6.0373408770945769) |
-| internalise | cf_fix2 run STOPPED 12:37 at pass 9 for a period-three cycle (internalise_cycle); rerun on cf_fix2_damp running since 12:40 |
+| internalise | DONE 14:54 on cf_fix2_damp, pass 7, checks pass: b -2.0%, h_1 -2.2%. **Caveat: exited on the quiet phase of the same period-three pattern** (results/counterfactuals_cf_fix2/internalise) |
 
 ## Log
 - builds done (sequential, 14:40-14:48), every compile 7 warnings 0 errors:
@@ -66,3 +66,4 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
 - 12:40 internalise rerun on the damped build: `OMP_NUM_THREADS=2 BUILD=cf_fix2_damp SEED_FROM=bench DIAG_TAG=_damp DRUG_PRICE_START=0.9964 sh cf_runs/cf_arm.sh internalise`
 - 12:37 uniq85 at pass 5, converging from its different start (pi_V 0.075 -> 0.0825, price walking down at the cap, 0.8955 -> 0.8777, drug gap 5.3e-2).
 - PATTERN, for the coordinator: three of the five arms here cycle (permban85, tf70, internalise), in the same way: b jumps by 1-3 per cent on one pass and returns on the next, the moments change sits at 4e-4 to 1.4e-3 on each jump and its return, and the drug-market gap spikes on the same passes. The damped parent share did not remove it in either TF arm.
+- 14:54 internalise damped rerun exited at pass 7: VOUCHER CHECK PASS, DIST CHECK PASS (7 passes); moments change 2.3e-5, drug gap 2.7e-3. But passes 5-6 spiked exactly as the undamped run did (b 0.08104, moments change 1.4e-3), and pass 7 is the quiet phase; the undamped run spiked again at pass 8. Reported as the exit pass, with that caveat at the top of RESULT.md.
