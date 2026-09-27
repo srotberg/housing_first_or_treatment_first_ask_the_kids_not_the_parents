@@ -5,9 +5,9 @@ gfortran was not installed in this container; installed from apt: GNU Fortran (U
 
 | arm | status |
 |---|---|
-| permban85 | STOPPED 23:10 at pass 10 for cycling (results/counterfactuals_cf_fix2/permban85_cycle); rerun on cf_fix2_damp_permban queued after tf70 |
+| permban85 | first run STOPPED 23:10 at pass 10 for cycling (permban85_cycle); rerun on cf_fix2_damp_permban running since 01:58 |
 | null_remote | DONE 19:30, pass 5, checks pass; net revenue 6.0373408770945769 (results/counterfactuals_cf_fix2/null_remote) |
-| elast5_85 | running (launched 19:31, NET_TARGET 6.0373408770945769) |
+| elast5_85 | DONE 01:57, pass 12, checks pass: b -44.8%, h_1 +2.1%, CEV +2.77% (results/counterfactuals_cf_fix2/elast5_85) |
 | tf70 (damped) | running (launched 23:15, cf_fix2_damp, NET_TARGET 6.0373408770945769) |
 | omega1 | pending |
 | uniq85 | pending |
@@ -44,3 +44,5 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
 - 23:12-23:14 damped builds (one solve running, as the 22:10 amendment allows): cf_fix2_damp and cf_fix2_damp_permban, each build_bounds/build_snan/build_prod warnings=7 errors=0, 11 diff lines against cf_fix2 / cf_fix2_permban.
 - 23:15 tf70 launched: `OMP_NUM_THREADS=2 BUILD=cf_fix2_damp SEED_FROM=bench PDET=0.70 DIAG_TAG=_damp70 PV_START=0.0800 DRUG_PRICE_START=0.8733 NET_TARGET=6.0373408770945769 sh cf_runs/cf_arm.sh tf`
 - Next free slot: permban85 rerun on cf_fix2_damp_permban from pi_V 0.09075, price 0.8598, same target 6.0370824602930142 as the stopped run; then omega1, uniq85, internalise.
+- 01:57 elast5_85 finished: TARGET CHECK PASS, DIST CHECK PASS (12 passes). Exit pass 12: budget gap -6.08e-4, drug gap 1.23e-3, moments change 5.85e-5.
+- 01:58 permban85 rerun launched: `OMP_NUM_THREADS=2 BUILD=cf_fix2_damp_permban SEED_FROM=bench PDET=0.85 DIAG_TAG=_damp_permban85 PV_START=0.09075 DRUG_PRICE_START=0.8598 NET_TARGET=6.0370824602930142 sh cf_runs/cf_arm.sh tf`
