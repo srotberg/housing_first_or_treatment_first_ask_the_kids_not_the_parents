@@ -5,10 +5,10 @@ gfortran was not installed in this container; installed from apt: GNU Fortran (U
 
 | arm | status |
 |---|---|
-| permban85 | first run STOPPED 23:10 at pass 10 for cycling (permban85_cycle); rerun on cf_fix2_damp_permban running since 01:58 |
+| permban85 | first run STOPPED 23:10 at pass 10 for cycling (permban85_cycle); rerun on cf_fix2_damp_permban: killed by the 03:3x container restart at pass 3, relaunched 03:40 |
 | null_remote | DONE 19:30, pass 5, checks pass; net revenue 6.0373408770945769 (results/counterfactuals_cf_fix2/null_remote) |
 | elast5_85 | DONE 01:57, pass 12, checks pass: b -44.8%, h_1 +2.1%, CEV +2.77% (results/counterfactuals_cf_fix2/elast5_85) |
-| tf70 (damped) | running (launched 23:15, cf_fix2_damp, NET_TARGET 6.0373408770945769) |
+| tf70 (damped) | killed by the container restart after pass 8, relaunched 03:39 |
 | omega1 | pending |
 | uniq85 | pending |
 | internalise | pending |
@@ -46,3 +46,9 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
 - Next free slot: permban85 rerun on cf_fix2_damp_permban from pi_V 0.09075, price 0.8598, same target 6.0370824602930142 as the stopped run; then omega1, uniq85, internalise.
 - 01:57 elast5_85 finished: TARGET CHECK PASS, DIST CHECK PASS (12 passes). Exit pass 12: budget gap -6.08e-4, drug gap 1.23e-3, moments change 5.85e-5.
 - 01:58 permban85 rerun launched: `OMP_NUM_THREADS=2 BUILD=cf_fix2_damp_permban SEED_FROM=bench PDET=0.85 DIAG_TAG=_damp_permban85 PV_START=0.09075 DRUG_PRICE_START=0.8598 NET_TARGET=6.0370824602930142 sh cf_runs/cf_arm.sh tf`
+- ~03:30 CONTAINER RESTART killed both solves. Disk (cfarm_bench, builds, logs) survived; gfortran survived. Partial logs archived:
+  results/counterfactuals_cf_fix2/tf70_remote_partial (8 passes, pi_V 0.0800 -> 0.08023, price 0.8734, budget gap 1.9e-3 at pass 8, moments change settling, no cycle)
+  results/counterfactuals_cf_fix2/permban85_damp_partial (3 passes).
+  The arm script restarts from the benchmark's distribution, so both were relaunched from the last printed pi_V and price, as for a cycle rerun:
+  `... BUILD=cf_fix2_damp PDET=0.70 DIAG_TAG=_damp70 PV_START=0.08011 DRUG_PRICE_START=0.8734 NET_TARGET=6.0373408770945769 ...`
+  `... BUILD=cf_fix2_damp_permban PDET=0.85 DIAG_TAG=_damp_permban85 PV_START=0.09198 DRUG_PRICE_START=0.8602 NET_TARGET=6.0370824602930142 ...`
