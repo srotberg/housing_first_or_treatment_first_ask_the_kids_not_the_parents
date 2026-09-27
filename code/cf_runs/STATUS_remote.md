@@ -8,9 +8,9 @@ gfortran was not installed in this container; installed from apt: GNU Fortran (U
 | permban85 | **STOPPED, NO EQUILIBRIUM.** Cycles on both builds: cf_fix2_permban period three (permban85_cycle), cf_fix2_damp_permban period two (permban85_damp_cycle). Needs the coordinator. |
 | null_remote | DONE 19:30, pass 5, checks pass; net revenue 6.0373408770945769 (results/counterfactuals_cf_fix2/null_remote) |
 | elast5_85 | DONE 01:57, pass 12, checks pass: b -44.8%, h_1 +2.1%, CEV +2.77% (results/counterfactuals_cf_fix2/elast5_85) |
-| tf70 (damped) | killed by the container restart after pass 8, relaunched 03:39 |
+| tf70 (damped) | **STOPPED 09:43 at pass 12, NO EQUILIBRIUM**: the two-pass flip returned on the damped build from pass 7 (results/counterfactuals_cf_fix2/tf70_remote_damp_cycle). Needs the coordinator. |
 | omega1 | running (launched 07:49) |
-| uniq85 | pending |
+| uniq85 | running (launched 09:45, NET_TARGET 6.0373408770945769) |
 | internalise | pending |
 
 ## Log
@@ -54,6 +54,9 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
   `... BUILD=cf_fix2_damp_permban PDET=0.85 DIAG_TAG=_damp_permban85 PV_START=0.09198 DRUG_PRICE_START=0.8602 NET_TARGET=6.0370824602930142 ...`
 - 05:36 the cycle watcher flagged the permban85 damped rerun at pass 4 (moments change 7.1e-3, 3.5e-3, 9.3e-4 with b -34.3/-30.1/-31.2 per cent at passes 2-4). NOT stopped: the change is falling fourfold over the window (a damped start-up transient after the relaunch, not a stuck cycle), and the arm is already on the damped build, which is the cycle rule's remedy. The watcher now ignores passes 1-2 and flags only a window whose moments change is not falling by half. If it does stick, it is recorded here and stopped.
 - 05:36 tf70 at pass 4 after the relaunch: budget gap 4.7e-3, moments change 2.0e-4, no oscillation.
-- 07:47 permban85 damped rerun STOPPED at pass 8 (process 14540 confirmed gone): from pass 6 b alternates 0.05687 / 0.05590 every pass with the moments change stuck at 9.6e-4 three passes running, budget cleared (7.2e-4). The damped build did not remove the cycle, and in this arm the newborn parent share is NOT what flips (its disordered-housed entry moves 1e-4 while b swings 1e-3); the swing is in the drug market. Per the brief, the arm is stopped and recorded rather than improvised: results/counterfactuals_cf_fix2/permban85_damp_cycle/NOTE.md. No equilibrium for permban85 from this container.
+- 07:47 permban85 damped rerun STOPPED at pass 8 (process 14540 confirmed gone): from pass 6 b alternates 0.05687 / 0.05590 every pass with the moments change stuck at 9.6e-4 three passes running, budget cleared (7.2e-4). The damped build did not remove the cycle, [corrected 09:50: the newborn parent share alternates too, about 0.5 per cent against 1.7 per cent in b; whether it drives or follows is not established; the swing shows most in the drug-market gap.] Per the brief, the arm is stopped and recorded rather than improvised: results/counterfactuals_cf_fix2/permban85_damp_cycle/NOTE.md. No equilibrium for permban85 from this container.
 - 07:49 omega1 launched in the freed slot: `OMP_NUM_THREADS=2 BUILD=cf_fix2 SEED_FROM=bench DIAG_TAG=_fix2 DRUG_PRICE_START=0.870 sh cf_runs/cf_arm.sh omega1`
 - 07:47 tf70 at pass 8 after the relaunch: budget gap 1.8e-3, moments change 3.6e-4 (it reached 5.3e-5 at pass 6, then a jump at pass 7 with the drug gap 3.7e-3). Watching.
+- 09:43 tf70 damped STOPPED at pass 12 (process 14258 confirmed gone). Clean and monotone to pass 6 (moments 5.3e-5, which is where the coordinator's damped run was lost), but the budget had not cleared, and from pass 7 the flip returned: b -28.4 / -28.9 per cent, moments change stuck at 3.7e-4 from pass 10, drug gap spiking with b, budget inside its rule (1.3e-4, 4.6e-4). The same size as the coordinator's undamped TF 70 cycle. The damped parent share alternates too, about half b's relative amplitude. NOTE.md in results/counterfactuals_cf_fix2/tf70_remote_damp_cycle. Both TF arms that cycled undamped (70, permban85) also cycle damped.
+- 09:45 uniq85 launched: `OMP_NUM_THREADS=2 BUILD=cf_fix2 SEED_FROM=bench PDET=0.85 DIAG_TAG=_uniq85 PV_START=0.075 DRUG_PRICE_START=0.90 NET_TARGET=6.0373408770945769 sh cf_runs/cf_arm.sh tf`
+- 09:43 omega1 at pass 6: b -35.7 per cent, h_1 -12.7 per cent, drug gap 4.0e-3, moments change 9.1e-4 and falling.

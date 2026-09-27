@@ -40,11 +40,11 @@ rule is 1e-3), so pi_V is not what moves; the flip is in the drug market and the
       8  0.8605  0.09157   -30.0%   -30.8%    +6.0%  1.14e-02  7.18e-04   790.0839  +2.19%
 
 Undamped (`../permban85_cycle`), the same arm flipped with period three and an amplitude of
-about 1.1e-3 in b; damped, period two with about 1e-3. THE PARENT SHARE IS NOT WHAT FLIPS here:
-its disordered-housed entry, the one the damping acts on, is 0.018668 / 0.018656 / 0.018815 /
-0.018734 over passes 5-8, a change of 1e-4 against a b swing of 1e-3. The swing sits in the drug
-market (gap alternating 1.1-1.3e-2 / 3.3-3.5e-3, price moving about 0.1 per cent a pass), so the
-cycle in this arm is not the one-pass newborn lag that `cf_fix2_damp` removes in TF 70. Diagnosing
+about 1.1e-3 in b; damped, period two with about 1e-3. The parent share alternates
+too but by much less: its disordered-housed entry, the one the damping acts on, is 0.018668 /
+0.018656 / 0.018815 / 0.018734 over passes 5-8, about 0.5 per cent, against about 1.7 per cent in
+b. The swing shows most in the drug market (gap alternating 1.1-1.3e-2 / 3.3-3.5e-3, price moving
+about 0.1 per cent a pass). Whether the share drives the flip or follows it is not established. Diagnosing
 it is the coordinator's call; no further build was tried here.
 
 ## newborn_parent_share at the end of each pass
