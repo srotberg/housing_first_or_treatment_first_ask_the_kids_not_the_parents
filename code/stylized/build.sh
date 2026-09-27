@@ -8,7 +8,7 @@
 #   transition.py  the transition figure           ->  writing/figures/
 #   sync_tables.py Tables 5 and 6 from the Fortran ->  writing/tables/, params_numbers.json
 #   fill.py        every @@name@@ in the prose      ->  writing/housing_first_children_later.tex
-#   pdflatex       twice, for the cross references ->  writing/housing_first_children_later.pdf
+#   pdflatex       twice, for the cross references ->  writing/children_first_housing_later.pdf (named after the title)
 #
 # CALIBRATION IS NOT RUN HERE. It takes upwards of half an hour and everything
 # below reads calibrated.json, so it is run on its own and this is run after:
@@ -55,9 +55,9 @@ python3 fill.py
 
 echo "== note"
 cd "$ROOT/writing"
-pdflatex -interaction=nonstopmode housing_first_children_later.tex > /dev/null
-pdflatex -interaction=nonstopmode housing_first_children_later.tex > /dev/null
-echo "   wrote writing/housing_first_children_later.pdf"
+pdflatex -interaction=nonstopmode -jobname=children_first_housing_later housing_first_children_later.tex > /dev/null
+pdflatex -interaction=nonstopmode -jobname=children_first_housing_later housing_first_children_later.tex > /dev/null
+echo "   wrote writing/children_first_housing_later.pdf"
 
 echo "== checking that nothing in the prose is typed"
 python3 check_numbers.py

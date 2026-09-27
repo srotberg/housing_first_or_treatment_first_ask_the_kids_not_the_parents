@@ -42,7 +42,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'housing_first_children_later.src.tex')
 BUILT = os.path.join(HERE, 'housing_first_children_later.tex')
-PDF = os.path.join(HERE, 'housing_first_children_later.pdf')
+PDF = os.path.join(HERE, 'children_first_housing_later.pdf')
 
 # Words that legitimately run two words together, or that the paper uses as one
 # token. Kept short on purpose: a long allow list hides the bug it is meant to
