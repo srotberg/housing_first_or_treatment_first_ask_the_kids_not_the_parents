@@ -5,11 +5,11 @@ gfortran was not installed in this container; installed from apt: GNU Fortran (U
 
 | arm | status |
 |---|---|
-| permban85 | first run STOPPED 23:10 at pass 10 for cycling (permban85_cycle); rerun on cf_fix2_damp_permban: killed by the 03:3x container restart at pass 3, relaunched 03:40 |
+| permban85 | **STOPPED, NO EQUILIBRIUM.** Cycles on both builds: cf_fix2_permban period three (permban85_cycle), cf_fix2_damp_permban period two (permban85_damp_cycle). Needs the coordinator. |
 | null_remote | DONE 19:30, pass 5, checks pass; net revenue 6.0373408770945769 (results/counterfactuals_cf_fix2/null_remote) |
 | elast5_85 | DONE 01:57, pass 12, checks pass: b -44.8%, h_1 +2.1%, CEV +2.77% (results/counterfactuals_cf_fix2/elast5_85) |
 | tf70 (damped) | killed by the container restart after pass 8, relaunched 03:39 |
-| omega1 | pending |
+| omega1 | running (launched 07:49) |
 | uniq85 | pending |
 | internalise | pending |
 
@@ -54,3 +54,6 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
   `... BUILD=cf_fix2_damp_permban PDET=0.85 DIAG_TAG=_damp_permban85 PV_START=0.09198 DRUG_PRICE_START=0.8602 NET_TARGET=6.0370824602930142 ...`
 - 05:36 the cycle watcher flagged the permban85 damped rerun at pass 4 (moments change 7.1e-3, 3.5e-3, 9.3e-4 with b -34.3/-30.1/-31.2 per cent at passes 2-4). NOT stopped: the change is falling fourfold over the window (a damped start-up transient after the relaunch, not a stuck cycle), and the arm is already on the damped build, which is the cycle rule's remedy. The watcher now ignores passes 1-2 and flags only a window whose moments change is not falling by half. If it does stick, it is recorded here and stopped.
 - 05:36 tf70 at pass 4 after the relaunch: budget gap 4.7e-3, moments change 2.0e-4, no oscillation.
+- 07:47 permban85 damped rerun STOPPED at pass 8 (process 14540 confirmed gone): from pass 6 b alternates 0.05687 / 0.05590 every pass with the moments change stuck at 9.6e-4 three passes running, budget cleared (7.2e-4). The damped build did not remove the cycle, and in this arm the newborn parent share is NOT what flips (its disordered-housed entry moves 1e-4 while b swings 1e-3); the swing is in the drug market. Per the brief, the arm is stopped and recorded rather than improvised: results/counterfactuals_cf_fix2/permban85_damp_cycle/NOTE.md. No equilibrium for permban85 from this container.
+- 07:49 omega1 launched in the freed slot: `OMP_NUM_THREADS=2 BUILD=cf_fix2 SEED_FROM=bench DIAG_TAG=_fix2 DRUG_PRICE_START=0.870 sh cf_runs/cf_arm.sh omega1`
+- 07:47 tf70 at pass 8 after the relaunch: budget gap 1.8e-3, moments change 3.6e-4 (it reached 5.3e-5 at pass 6, then a jump at pass 7 with the drug gap 3.7e-3). Watching.
