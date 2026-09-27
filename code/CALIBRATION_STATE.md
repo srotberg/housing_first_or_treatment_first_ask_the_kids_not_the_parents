@@ -1,3 +1,19 @@
+# 27 September 15:50: NEW COHORT'S CEV FROM THE PRICE-TOO-HIGH SIDE: +3.19 per cent -- the two runs bracket it
+
+Restarted T = 60, loop 0, year 26 reached 15:46 (cohort_cev.py on code/trtf60/run.log):
+- cohort born at the reform: lifetime 790.41212, CEV +3.1858 per cent (flat-seeded run: +1.0018).
+  Against no policy, utils: childhood +0.865 (flat run +0.137, long run +0.236), adulthood +0.189
+  (flat +0.194, long run +0.233). The code's cross-section CEV: t = 1 +2.87, t = 26 +1.53.
+- this run's drug price is ABOVE clearing in every year to 26: gap -0.039 (t = 1), -0.046 (5), -0.058 (10),
+  -0.077 (15), -0.097 (20), -0.065 (25). Drug use -31 to -38 per cent (long run -30), SUD -36 by year 25.
+  Budget -0.023 to -0.026 in years 5-10 (pi_V seeded high early, fewer exclusions), +0.004 by 26.
+- the flat run's price was below clearing everywhere, so the two runs bracket the equilibrium path and the
+  cohort's CEV: between +1.0 and +3.2 per cent. Log-linear between the two runs' (price, gap) per year the
+  clearing price is about 0.909 at t = 1 but only about 0.877 at t = 20: demand is far more elastic in the
+  middle years (log slope about 6.8 at t = 20), because higher early prices also cut the SUD stock later.
+- PLAN unchanged: at the end of this loop (~17:30) restart at the boundary with each year's price from the
+  bracket (both runs' full paths), pi_V from this run's updated path.
+
 # 27 September 14:10: THE NEWTON PRICE SEED OVERSHOT -- the drug gap flipped from +0.13 to -0.04; the root is now bracketed
 
 Restarted T = 60, loop 0, years 1-3, against the flat-seeded run's loop 0 at the same years:
