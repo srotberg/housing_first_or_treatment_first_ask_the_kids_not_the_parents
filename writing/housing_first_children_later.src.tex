@@ -731,8 +731,7 @@ well. However, if a SUD generates externalities, such
 as affecting the earning potential of the children of parents with a SUD, then
 Treatment First may be preferred, on the evidence above. The
 model's work here is to show why Housing First raises welfare whenever
-there are no externalities (and no distortions from the programmes or
-from the taxes that pay for them, both of which the full model takes up),
+there are no externalities (and \new{nothing to fund the programmes, whose budget the full model takes up}),
 and then show how the externality that overturns it works.
 
 \end{enumerate}
@@ -749,7 +748,8 @@ First raises welfare relative to Housing First in a model that fits the data.
 
 \subsubsection{Households and preferences}
 
-There are two periods and a continuum of households. A period stands for
+There are two \new{adult} periods and a continuum of households\new{, each of which
+raises one child through its first period}. A period stands for
 thirty years of adult life, so the two of them span ages twenty six to eighty five.
 Parameters with a natural annual counterpart are compounded to that length: the
 discount factor is $\beta$ per period, the gross interest rate is $R=1/\beta$ so
@@ -762,28 +762,50 @@ differ in $y$, in age $j\in\{1,2\}$, in employment status $e\in\{0,1\}$, in
 voucher receipt $\eta\in\{0,1\}$ and in SUD status $d\in\{0,1\}$, all
 discussed below, and in nothing else.
 
-Flow utility depends on non-durable consumption $c$, housing services $h$ and
-drug consumption $v$,
-\begin{equation}\label{eq:u}
-u(c,h,v) \;=\; (1-\gamma-\theta)\log c \;+\; \gamma \log h
-\;+\; \theta\big[\log(b+v)-\log b\big] \;+\; \aleph .
+\new{Flow utility is the quantitative model's, and it counts the child. In period 1 the
+child lives in the household, which then has two members: non-durable consumption
+$c$ and housing services $h$ are shared through the square-root equivalence scale
+$\xi=\sqrt2$, while drug consumption $v$ is the parent's alone. The parent and the
+child therefore hold different bundles,
+\begin{equation}\label{eq:bundles}
+X_P=\Big(\frac{c}{\xi}\Big)^{1-\gamma-\theta}\Big(\frac{h}{\xi}\Big)^{\gamma}(b+v)^{\theta},
+\qquad
+X_K=\Big(\frac{c}{\xi}\Big)^{1-\gamma-\theta}\Big(\frac{h}{\xi}\Big)^{\gamma}\,b^{\theta},
 \end{equation}
-The three weights sum to one, where the weight on housing consumption is $\gamma$ and the weight on drug consumption is $\theta$.
+and flow utility is
+\begin{equation}\label{eq:u}
+u(c,h,v) \;=\; U(X_P)\;+\;\omega_c\,(\xi-1)\,U(X_K)\;+\;\aleph\;-\;\kappa_x H,
+\qquad U(X)=\frac{X^{1-\sigma}}{1-\sigma}.
+\end{equation}
+In period 2 the child has left, so $\xi=1$ and the second term is absent.}
+The three weights sum to one, where the weight on housing consumption is $\gamma$ and the weight on drug consumption is $\theta$\new{, and $\sigma$ is the coefficient of relative risk aversion}.
 Drugs enter only in the first period, since that is the only period in which I allow $v$ to be chosen, and housing is chosen each period from a three point grid
 $\{h_1,h_2,h_3\}$. The pair $(\theta,b)$ governs the drug term: the marginal
-utility of the $v$th unit is $\theta/(b+v)$, so $\theta$ mostly sets how much a
+utility of the $v$th unit \new{is proportional to} $\theta/(b+v)$, so $\theta$ mostly sets how much a
 user uses and $b$ whether anyone uses at all. The Stone-Geary form keeps the
 first unit's marginal utility finite, which is what generates non-users at
-all, because under plain $\theta\log v$ every
+all, because \new{without the shifter} every
 household uses whatever the consequences. Finally $\aleph$ is the flow value of
 being alive, the utility of surviving into a period over and above what is
 consumed in it, which gives mortality a cost that does not vanish when
-consumption is low. Households save in one risk-free asset and cannot borrow.
+consumption is low\new{; it is counted once per household, not per member}. Households save in one risk-free asset and cannot borrow.
+
+\new{The child enters the parent's problem twice, once for each part of its life. In
+childhood it is the second term of~\eqref{eq:u}: it consumes the household's
+consumption and housing but none of the drug, so a parent's drug spending reaches it
+only by taking consumption and housing out of what they share, and it counts as
+$\xi-1$ of the household against the scale. As an adult it is the continuation value
+of Section~\ref{sec:problem}. One weight $\omega_c$ multiplies both. A planner who
+counted the child fully would put a weight of one on both, so what the parent leaves
+out, $1-\omega_c$ of the child's terms, is the externality on the child. The last
+term of~\eqref{eq:u} is the aggregate homelessness externality: $H$ is the share of
+households that is homeless, which every household takes as given, and $\kappa_x$ is
+the disamenity each unit of it carries, as in the quantitative model.}
 
 \subsubsection{Timing}
 
 
-\paragraph{Period 1.} Every household is clean. Employment $e\in\{0,1\}$ is
+\paragraph{Period 1.} Every household is clean \new{and has its child at home}. Employment $e\in\{0,1\}$ is
 drawn with the unemployment probability $u_0$, and a household that is income
 eligible draws a voucher with probability $\pi_V$; these are the same two
 lotteries it faces again in period 2. It then chooses consumption, housing, drug
@@ -808,7 +830,22 @@ rest, and the household survives into period 2 with probability
 so $\kappa_{\phi d}$ is the mortality \emph{rate} ratio with the SUD.
 The mortality penalty applies here, and here only.
 
-\paragraph{Period 2.} This is the terminal period, after which the household dies with certainty. A
+\paragraph{\new{The child leaves.}} \new{At the end of period 1 the child leaves the
+household and becomes an adult, entering period 1 of its own life. Its productivity
+carries its parent's, and it is cut if the parent acquired the disorder while the
+child lived with it,
+\begin{equation}\label{eq:kids}
+\log y_{\text{child}} \;=\; \rho\log y+(1-\rho)\log\bar y+\varepsilon
+-\delta_d\,\mathbf{1}\{d'=1\},
+\qquad \varepsilon\sim\mathcal N\big(0,\,(1-\rho^2)\,\sigma_y^2\big),
+\end{equation}
+where $\rho$ is the persistence of productivity across generations, $\bar y$ is
+average income, the variance of $\varepsilon$ keeps the spread of productivity the same
+in every generation, and $\delta_d$ is the penalty for the parent's disorder. There is
+no penalty for the parent's homelessness: a child of a homeless parent is poorer only
+because its parent was.}
+
+\paragraph{Period 2.} This is the terminal period, after which the household dies with certainty. \new{The child has left, so the household is the parent alone.} A
 household without the SUD is unemployed with probability $u_0$ and one with
 the SUD with the higher probability $u_1$; if unemployed it receives income
 support (Section~\ref{sec:support}). The voucher is drawn again, subject to the policy rule (Section~\ref{sec:mh}). The household
@@ -833,8 +870,8 @@ Each period the household chooses
 \begin{equation}\label{eq:opts}
 h_k \in \{h_1,\ h_2,\ h_3\}, \qquad h_1 < h_2 < h_3 ,
 \end{equation}
-homelessness ($h_1$), a small unit ($h_2$) and a standard unit
-($h_3$). Homelessness is free and delivers less housing services than
+\new{a shelter} ($h_1$), a small unit ($h_2$) and a standard unit
+($h_3$). \new{A shelter} is free and delivers less housing services than
 the market does.\footnote{Two rented sizes is the fewest that lets a
 household economise on housing rather than lose it. With one, homelessness comes
 out at @@homeless1@@ percent against a target of $@@q_h_1@@$, at any $h_1$.}
@@ -886,21 +923,35 @@ Let $a$ be assets carried in. Period 2 is terminal, so the household consumes
 everything and chooses housing,
 \begin{equation}\label{eq:v2}
 V_2(a',y,e',\eta',d') = \max_{\{k\}}
-\Big\{ (1-\gamma-\theta)\log c + \gamma \log h_k + \aleph \Big\},
+\Big\{ \new{U\big(c^{1-\gamma-\theta}h_k^{\gamma}b^{\theta}\big) + \aleph - \kappa_x H} \Big\},
 \qquad c = Ra' + y^{g}(y,e') - r_k(\eta'),
 \end{equation}
 and write $V_2(a',y,d') = \mathbb{E}\big[V_2(a',y,e',\eta',d')\mid y,d'\big]$ for its
 expectation over the period 2 employment and voucher draws, the SUD having already been realised at the transition. In period 1 the
 household draws $(e,\eta)$ and then chooses housing, drug use and saving,
 \begin{equation}\label{eq:v1}
+\begin{aligned}
 V_1(y,e,\eta) = \max_{\{k,\,v \ge 0,\,a' \ge 0\}}
-\Big\{ (1-\gamma-\theta)\log c + \gamma \log h_k
-+ \theta[\log(b+v)-\log b] + \aleph
-+ \beta\, \mathbb{E}_{d'}\Big[\phi(d')\,V_2(a',y,d')\Big] \Big\},
+\Big\{ &\new{U(X_P)+\omega_c(\xi-1)\,U(X_K)+\aleph-\kappa_x H}
++ \beta\, \mathbb{E}_{d'}\Big[\phi(d')\,V_2(a',y,d')\Big]\\
+&\new{-\ \beta\,\omega_c\,\pi(v)\,D(y)} \Big\},
+\end{aligned}
 \end{equation}
-with $c = y^{g}(y,e) - r_k(\eta) - p_v v - a'$ and $d'=1$ with the use dependent
+with $c = y^{g}(y,e) - r_k(\eta) - p_v v - a'$ \new{in the bundles of~\eqref{eq:bundles}} and $d'=1$ with the use dependent
 probability of~\eqref{eq:hazard}. Survival sits inside the expectation over
-$d'$ because it depends on which $d'$ is realised. A household uses if the value at its best positive $v$ exceeds the value at $v=0$.
+$d'$ because it depends on which $d'$ is realised. \new{The last term is the child as
+an adult. $D(y)$ is what the parent's disorder costs its child, in the child's own
+lifetime value,
+\begin{equation}\label{eq:damage}
+D(y)\;=\;\mathbb{E}\big[\bar V_1(y_{\text{child}})\,\big|\,y,\,d'=0\big]
+-\mathbb{E}\big[\bar V_1(y_{\text{child}})\,\big|\,y,\,d'=1\big]\;\ge\;0,
+\end{equation}
+where $\bar V_1$ is the value of entering period 1, before its draws, at the child's
+productivity from~\eqref{eq:kids}. It enters as a difference and not a level, so it
+costs the parent nothing unless its use makes the disorder possible, and it is
+weighted by $\pi(v)$, the chance that the use does. $V_1$ depends on $D$ through the
+parent's problem and $D$ on $V_1$ through the child's, so the two are solved as a
+fixed point.} A household uses if the value at its best positive $v$ exceeds the value at $v=0$.
 
 
 %======================================================================
@@ -1045,15 +1096,16 @@ drug use at the bottom.
 
 Why should the two channels differ at all, when in both the disorder
 punishes the household? Because only one of them has a bite that grows with what the household
-has. Flow utility is logarithmic, so a \emph{proportional} loss of income costs
-a number of utils that hardly moves with income: a household earning below the
-cap $\bar y$ that loses its job and falls back on income support gives up
-$-\log\psi_{ui}$, whatever it was earning. Multiplied by the $u_1-u_0$ chance of it
-happening, the resource channel is close to a flat charge for using. What it has
-to overturn is not flat at all. Buying $v$ units costs a rich household almost
+has. \new{With a relative risk aversion of two, a \emph{proportional} loss of income
+costs a rich household fewer utils than a poor one: a household earning below the cap
+$\bar y$ that loses its job and falls back on income support loses the same share of
+its consumption whatever it was earning, and a given share is worth fewer utils the
+higher consumption is. Multiplied by the $u_1-u_0$ chance of it happening, the
+resource channel is a charge for using that falls with income. What it has to
+overturn falls with income as well.} Buying $v$ units costs a rich household almost
 nothing in consumption terms and a poor household a great deal, so the utility
 price of using \emph{falls} as income rises, and that is what puts use at the top
-to begin with. A charge that does not vary with income cannot reverse a price
+to begin with. A charge that \new{falls with income too} cannot reverse a price
 that does.
 
 Mortality is a different object. What it destroys is the whole
@@ -1068,12 +1120,13 @@ lose loses more, and loses disproportionally more than it gains from drugs.
 This is the work of $\aleph$ in equation~\eqref{eq:u}, and it is worth saying
 why a constant can do it. What the household weighs against the drug is the cost
 of dying measured in \emph{consumption}, which is the continuation value divided
-by the marginal utility of consumption. Flow utility is logarithmic, so that
-marginal utility is $1/c$ and a term worth $\aleph$ utils is worth $c\aleph$
-goods: constant in utility is \emph{proportional to consumption} in the units
-the household actually trades off. The consumption part of the continuation
-contributes about $c\log c$, which is small and negative for a poor household,
-so it is the constant that carries the income gradient in the value of a life.
+by the marginal utility of consumption. \new{With a relative risk aversion of two
+that marginal utility falls roughly with the square of consumption, so a term worth
+$\aleph$ utils is worth goods roughly in proportion to $c^2$: constant in utility
+\emph{rises faster than consumption} in the units the household actually trades off.
+The consumption part of the continuation is negative under this curvature, and in
+goods it is only proportional to consumption, so it is the constant that carries the
+income gradient in the value of a life.}
 
 %======================================================================
 \subsection{How does housing assistance shape the drug use decision?}\label{sec:mh}
@@ -1086,25 +1139,14 @@ operate. Comparing the two policies at the same generosity therefore isolates
 the moral hazard force, and comparing Treatment First with no programme at all
 isolates the value-of-life force.
 
-\begin{figure}[!tb]
-\centering
-\includegraphics[width=0.66\textwidth]{figures/stylized_moral_hazard.pdf}
-\caption{Drug use under the two policies as the voucher becomes more generous}
-\label{fig:mh}
-\notes{0.66\textwidth}{Note: the red band is the moral hazard force and the blue
-band above it is what Housing First delivers net; together they are the value-of-life
-force, marked at the right. The dashed line is the generosity of the
-current programme, $\pi_V = @@pvbase@@$.}
-\end{figure}
-
-Figure~\ref{fig:mh} traces both as generosity rises, that is across values of $\pi_V$.
+\new{At the benchmark rationing, $\pi_V=@@pvbase@@$, the gap between the two is the
+whole comparison. With no programme at all, \blank\ percent of households use.
+Treatment First takes that to \blank\ percent, a value-of-life force of \blank\
+percentage points, and Housing First to \blank\ percent, so the moral hazard force is
+\blank\ points and the net effect of Housing First is \blank.}
 Both comparisons here are between long-run steady states, each the rest point of
 the economy under a policy that has always been in place. Section~\ref{sec:trans}
-follows the path between them. With no programme at all,
-@@p0@@ percent of households use. Universal Treatment First takes that to
-@@pt@@ percent, a value-of-life force of @@vol@@ percentage points; universal
-Housing First leaves it at @@ph@@ percent, so the moral hazard force is
-@@mh@@ points and the net effect of Housing First is @@net@@. Both forces are
+follows the path between them. Both forces are
 first order and they work against each other, which is the central feature of
 the problem. Anyone asserting that housing the homeless must increase drug use,
 or must reduce it, is making a quantitative claim that needs to be tested.
@@ -1115,8 +1157,7 @@ policies end in the same place on homelessness, both driving it from @@hl0@@
 percent with no
 programme to @@hluniv@@, and along the way Treatment First is if anything slightly
 @@hltfdir@@ Housing First, because the households it deters from using never acquire
-the SUD that puts their housing at risk. Panel (b) repeats
-Figure~\ref{fig:mh} here for convenience. The larger difference is
+the SUD that puts their housing at risk. \new{Panel (b) is drug use.} The larger difference is
 in Panel (c), where at universal cover Housing First leaves @@sudh@@ percent of
 the population carrying the SUD and Treatment First leaves @@sudt@@
 percent. What the moral hazard buys is extra SUD cases among households that
@@ -1169,7 +1210,7 @@ and no choice of parameters overturns it.
 It follows that the moral hazard is not an inefficiency. Households here face the
 true SUD hazard and make no mistakes, so the extra use Housing First
 induces is not a wedge to be closed but a household optimally taking a risk it
-is now better able to bear. The @@mh@@ points of Section~\ref{sec:mh} are a
+is now better able to bear. \new{The moral hazard force} of Section~\ref{sec:mh} \new{is} a
 statement about drug use and not about welfare.
 
 Panel B of
@@ -1248,29 +1289,13 @@ development. The income
 gradient does the whole job, so the model transmits a SUD across generations
 \emph{without transmitting any preference for drugs}.
 
-A child's baseline income is drawn from the same lognormal as everyone else, and
-the entire link is a penalty
-\begin{equation}\label{eq:kids}
-y_{\text{child}} \;=\; y_{\text{base}}\,
-(1-\delta_d)^{\mathbf{1}\{\text{parent had a SUD when it died}\}}\,
-(1-\delta_h)^{\mathbf{1}\{\text{parent was homeless when it died}\}} ,
-\end{equation}
-which the parent does not internalise at all. That is what makes it an externality.\footnote{In the quantitative
-model the altruism of parents towards their children is calibrated rather than
-set to zero, so that the channel where a parent does take some account of what it
-does to its child is present and only the remainder is external.}
-
-\new{Both penalties are set from earnings estimates.}
+\new{The link is the penalty of~\eqref{eq:kids}, on top of the persistence of
+productivity that every child carries from its parent. The parent internalises the
+share $\omega_c$ of what it does to its child, in childhood through the shared bundle
+and in adulthood through $D(y)$, and the rest, $1-\omega_c$ of it, is the externality.}
 $\delta_d = @@del_d@@$ is Nilsson (2017), who follows children exposed in utero to
 Sweden's regional experiment in strong beer and finds they earn @@del_d_pc@@ percent
-less as adults. $\delta_h = @@del_h@@$ is Chetty et al.\ (2016)'s @@del_h_pc@@ percent,
-the adult earnings gain from a move to a lower-poverty neighbourhood before age
-thirteen.
-
-The two penalties also do different work: both policies drive
-homelessness to @@hluniv@@ at universal coverage, so $\delta_h$ prices the programme
-against no programme while $\delta_d$ decides Treatment First against Housing
-First.
+less as adults.
 
 
 Panel B of Table~\ref{tab:children} puts the two sides together and they are not close. The private cost of
@@ -1294,28 +1319,13 @@ goes is a question about magnitudes, and that is what the quantitative model of
 the next section is for.
 
 
-The quantitative model carries two further channels absent here, and
-they are different in kind as well as in sign, which is another substantive reason
-the welfare ranking is a question of magnitudes. The first is not an externality at
-all but the distortions the programme creates and the distortionary taxes
-required to pay for it create; the second is an externality of the
-same type as the one on children, but not directly on children.
-
-\begin{itemize}\setlength{\itemsep}{0.15em}
-\item \textbf{Programmes distort the decisions of recipients and are
-paid for out of distortionary taxes.} A programme lowers the labour supply of the households it
-does reach, because eligibility is means-tested, and the voucher is clawed back at a
-rate of $\kappa_r$, so a recipient who works more loses eligibility or
-some of the transfer.
-This, combined with the pure financing of the programmes, means that other
-households have to pay more taxes, which
-distorts their labour supply.
-
-\item \textbf{Homelessness is a disamenity in itself.} Households dislike
-homelessness around them and not only their own, so the aggregate rate is an
-argument of everyone's utility. This externality runs in favour of whichever policy houses
-more, which is the opposite direction from the tax.
-\end{itemize}
+\new{The quantitative model carries what this one leaves out, and each piece can move
+the ranking. A government budget balances through the probability of drawing a
+voucher, so a programme that houses more households has to ration more. The drug
+price clears its market, so a policy that takes users out of it lowers the price for
+everyone still deciding. And recovery, treatment and SMI make the disorder a state a
+household can leave and one that compounds, so the reform lands on households with a
+disorder they cannot shed at once.}
 
 
 
@@ -1324,11 +1334,10 @@ more, which is the opposite direction from the tax.
 Comparing rest points hides a key tradeoff. Treatment First takes immediately and
 gives back only later: at implementation a household with a SUD can do nothing
 about its condition but loses its voucher, and lower substance use pays off only
-for the generations after it. The link across generations is the penalty, not
-persistence of income: a child's income is a fresh draw times $(1-\delta_d)$ if
-its parent acquired the disorder and $(1-\delta_h)$ if its parent was unhoused
-when it died, so a cohort inherits a mixture over four types, no penalty, one of
-the two, or both, and that mixture is a Markov chain in the policy.
+for the generations after it. The link across generations is the \new{persistence of productivity and the}
+penalty \new{of~\eqref{eq:kids}, so the distribution a cohort inherits depends on its
+parents' productivity and on how many of them acquired the disorder, and that
+distribution is a Markov chain in the policy}.
 
 \begin{figure}[!tb]
 \centering
