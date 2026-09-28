@@ -768,9 +768,9 @@ $c$ and housing services $h$ are shared through the square-root equivalence scal
 $\xi=\sqrt2$, while drug consumption $v$ is the parent's alone. The parent and the
 child therefore hold different bundles,
 \begin{equation}\label{eq:bundles}
-X_P=\Big(\frac{c}{\xi}\Big)^{1-\gamma-\theta}\Big(\frac{h}{\xi}\Big)^{\gamma}(b+v)^{\theta},
+X_P=\Big[\Big(\frac{c}{\xi}\Big)^{1-\gamma}\Big(\frac{h}{\xi}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
 \qquad
-X_K=\Big(\frac{c}{\xi}\Big)^{1-\gamma-\theta}\Big(\frac{h}{\xi}\Big)^{\gamma}\,b^{\theta},
+X_K=\Big[\Big(\frac{c}{\xi}\Big)^{1-\gamma}\Big(\frac{h}{\xi}\Big)^{\gamma}\Big]^{1-\theta}\,b^{\theta},
 \end{equation}
 and flow utility is
 \begin{equation}\label{eq:u}
@@ -778,7 +778,7 @@ u(c,h,v) \;=\; U(X_P)\;+\;\omega_c\,(\xi-1)\,U(X_K)\;+\;\aleph\;-\;\kappa_x H,
 \qquad U(X)=\frac{X^{1-\sigma}}{1-\sigma}.
 \end{equation}
 In period 2 the child has left, so $\xi=1$ and the second term is absent.}
-The three weights sum to one, where the weight on housing consumption is $\gamma$ and the weight on drug consumption is $\theta$\new{, and $\sigma$ is the coefficient of relative risk aversion}.
+\new{The weight on housing $\gamma$ is its share of the non-drug bundle, the weight on the drug $\theta$ is its share of the whole, and $\sigma$ is the coefficient of relative risk aversion.}
 Drugs enter only in the first period, since that is the only period in which I allow $v$ to be chosen, and housing is chosen each period from a three point grid
 $\{h_1,h_2,h_3\}$. The pair $(\theta,b)$ governs the drug term: the marginal
 utility of the $v$th unit \new{is proportional to} $\theta/(b+v)$, so $\theta$ mostly sets how much a
@@ -923,7 +923,7 @@ Let $a$ be assets carried in. Period 2 is terminal, so the household consumes
 everything and chooses housing,
 \begin{equation}\label{eq:v2}
 V_2(a',y,e',\eta',d') = \max_{\{k\}}
-\Big\{ \new{U\big(c^{1-\gamma-\theta}h_k^{\gamma}b^{\theta}\big) + \aleph - \kappa_x H} \Big\},
+\Big\{ \new{U\big([c^{1-\gamma}h_k^{\gamma}]^{1-\theta}b^{\theta}\big) + \aleph - \kappa_x H} \Big\},
 \qquad c = Ra' + y^{g}(y,e') - r_k(\eta'),
 \end{equation}
 and write $V_2(a',y,d') = \mathbb{E}\big[V_2(a',y,e',\eta',d')\mid y,d'\big]$ for its
@@ -2926,8 +2926,16 @@ V^{b}\big((1+\Delta)\,c\big)\;=\;V^{c}(c) .
 A positive $\Delta$ therefore means the counterfactual is worth that much of a
 permanent consumption gain, and a negative one that it costs that much.
 
-\paragraph{Whose welfare.} The household considered is a newborn, and the value is taken before
-any of its draws are realised, so $\Delta$ is an expectation over the productivity
+\paragraph{Whose welfare.} \new{The household considered is a newborn, and its welfare
+counts the whole of its life: its childhood in its parent's household and its adult
+life after it. The childhood part is the child's own flow utility from the bundle it
+shares with its parent, $U(X_K)$ less the disamenity of aggregate homelessness it
+bears like everyone else, summed over the years it lives at home and discounted to its
+birth; the adult part is its value on entering the economy at age 26, discounted by
+the same years. The child counts at a weight of one here, not at its parent's
+$\omega_c$, and that is what brings the externality on the child into welfare. The
+value is taken before any of its draws are realised, including the household it is
+born into,} so $\Delta$ is an expectation over the productivity
 draw and everything that follows from it. The expectation is taken under each policy's
 own equilibrium rather than a common one, since the penalties that set a child's
 starting productivity depend on what happened to its parent, so the distribution a
@@ -2936,26 +2944,27 @@ criterion in this literature (Conesa et al., 2009; Guvenen et al., 2023b).
 
 Two horizons are used, and they are the same object measured at different dates: a
 newborn on the date the policy is implemented, who lives through the transition, and
-a newborn in the new steady state. Because both are the ex-ante value of a household
-at age one, any difference between them is the transition itself rather than a change
+a newborn in the new steady state. Because both are the ex-ante value of a \new{child at birth, childhood included},
+any difference between them is the transition itself rather than a change
 in who is being counted.
 
-\paragraph{The stylized model has a closed form and the quantitative model does not.}
-With log utility over consumption and housing, scaling consumption by $1+\Delta$ at
-every date adds $K\log(1+\Delta)$ to lifetime value, where $K$ collects the weight on
-consumption and the discounted periods a household expects to live,
-$K=(1-\gamma-\theta)\,(1+\beta\bar\phi)$. Equation~\eqref{eq:cev} then inverts
-directly to $\Delta=\exp\{(V^{c}-V^{b})/K\}-1$, which is how every CEV
-in Section~\ref{sec:welfare} is computed.
+\paragraph{\new{How $\Delta$ is computed.}} \new{In both models consumption enters every
+bundle, the parent's and the child's, with the exponent $(1-\gamma)(1-\theta)$, so
+scaling consumption by $1+\Delta$ at every date multiplies every term of the form
+$U(X)$ by $(1+\Delta)^{(1-\gamma)(1-\theta)(1-\sigma)}$, while the flow value of being
+alive $\aleph$, which is additive, does not scale at all. Writing $A$ for the
+discounted, survival-weighted count of $\aleph$ in a lifetime,
+$V\big((1+\Delta)c\big)=(1+\Delta)^{(1-\gamma)(1-\theta)(1-\sigma)}(V-A)+A$, so
+$\Delta$ depends on the level of lifetime value through $V-A$ and not only on the
+difference between the two policies. In the stylized model that inverts directly,
+and every CEV in Section~\ref{sec:welfare} is computed that way.
 
-No such inversion exists in the quantitative model, and three features of flow utility
-in equation~\eqref{eq:futil} are why. The flow value of being alive $\aleph$ is additive,
-so it does not scale with consumption. The drug enters through $\log(b+v)$ with a
-Stone-Geary shifter, so scaling consumption does not scale the drug term
-proportionately. And food assistance pays exactly the
-households the paper is about, and it is withdrawn at the rate $\varrho$ rather than one for one,
-so scaling their consumption scales their resources by less than the scaling factor. $\Delta$ is therefore solved numerically, by bisection on
-the newborn's expected value.
+In the quantitative model the same object is read off a curve, because $A$ there is
+a sum over sixty ages, two states of health and every survival path. The benchmark's
+choices are held fixed, its newborn's expected lifetime value, childhood included, is
+evaluated at a grid of proportional scalings of consumption, and $\Delta$ is the
+scaling at which that value equals the counterfactual's, found by interpolating on
+the curve.}
 
 
 %======================================================================
