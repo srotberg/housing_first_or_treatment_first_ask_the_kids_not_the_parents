@@ -204,6 +204,8 @@ for l in gzip.open(os.path.join(RES, 'tf85', 'cf.log.gz'), 'rt', errors='replace
 out['x_tf_new_pc'] = pc(100 * (e_tf / e0 - 1))
 out['x_tr_h_peak_pc'] = pc(100 * (max(H[k] for k in range(1, 11)) / h0 - 1))
 out['x_tr_new_t1_pc'] = pc(100 * (E[1] / e0 - 1))
+# the largest fall in new users over the same first decade, for 'falls by up to'
+out['x_tr_new_peak_pc'] = pc(100 * (min(E[k] for k in range(1, 11)) / e0 - 1))
 # drug use (participation b) in the same first decade, its largest fall on no
 # policy, against the long run's x_tf_b_pc
 B = {}

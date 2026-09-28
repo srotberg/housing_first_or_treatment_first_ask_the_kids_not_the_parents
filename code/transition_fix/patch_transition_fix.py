@@ -247,7 +247,8 @@ span_once("                    pi_v_gap_1=net_govt_revenues(time_index)-net_govt
 """, "pi_V pairing")
 
 # 8. PRINT-ONLY: each period's homelessness by age and its mass by age (children live with parents
-#    aged 26-50, so childhood homelessness along the path can be read off), the disorder rate's band
+#    aged 26-50, so childhood homelessness along the path can be read off), drug use by age (the
+#    share CONSUMING, addiction_rate_by_age, so parents' use can be read off), the disorder rate's band
 #    sums, and the drug market's distance after clearing. Nothing the model computes changes.
 once("                    \" p_drug=\", price_of_addictive_good_path(time_index), &\n"
      "                    \" pi_v=\", probability_of_voucher_path(time_index)\n",
@@ -255,6 +256,7 @@ once("                    \" p_drug=\", price_of_addictive_good_path(time_index)
      "                    \" pi_v=\", probability_of_voucher_path(time_index)\n"
      "                write(*,*) \"TRANSITION HOMELESS_BY_AGE t=\", time_index, homelessness_by_age(time_index,:)\n"
      "                write(*,*) \"TRANSITION MASS_BY_AGE t=\", time_index, mass_by_age(time_index,:)\n"
+     "                write(*,*) \"TRANSITION USE_BY_AGE t=\", time_index, addiction_rate_by_age(time_index,:)\n"
      "                write(*,*) \"TRANSITION SUD_BANDS t=\", time_index, \" sud=\", val_sud_band(time_index,:), &\n"
      "                    \" mass=\", val_mass_band(time_index,:)\n",
      "homelessness by age print")
@@ -275,6 +277,7 @@ for must in ["solve_transition_dynamics*1.d0+(1-solve_transition_dynamics)*1.d0"
              "pi_v_s_1=time_index-1",
              "if (time_index==1) distance_govt_budget=0",
              "TRANSITION HOMELESS_BY_AGE t=",
+             "TRANSITION USE_BY_AGE t=",
              "TRANSITION DRUG t="]:
     if s.count(must) != 1:
         sys.exit(f"REFUSING: {must!r} is not in the result exactly once")
