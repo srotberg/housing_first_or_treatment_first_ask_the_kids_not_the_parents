@@ -143,17 +143,23 @@ def _aw(par, pi):
     return aleph_weight(par, pi)
 
 
+# THE CHILD BEARS kappa_x H ONCE, NOT xi - 1 TIMES, as the quantitative model has
+# it: its childhood utility is (xi - 1)(U(X_K) + aleph) -- f90 at child_flow_out,
+# "THE VALUE OF LIFE IS INSIDE THE FACTOR" -- and own_childhood subtracts
+# kappa_x * model_fraction_homeless once per year of childhood, outside that factor.
+
+
 def _const(par, pi, kx=0.0, H=0.0):
-    """The additive part of a newborn's lifetime value: aleph and -kappa_x H,
-    in childhood (xi - 1 of the household) and over the adult life."""
-    per = (par.xi - 1.0) + par.beta * _aw(par, pi)
-    return par.aleph * per - kx * H * per
+    """The additive part of a newborn's lifetime value: aleph, counted as xi - 1
+    of the household in childhood and once over the adult life, and -kappa_x H,
+    once in childhood and once over the adult life."""
+    aw = _aw(par, pi)
+    return par.aleph * ((par.xi - 1.0) + par.beta * aw) - kx * H * (1.0 + par.beta * aw)
 
 
 def life(par, e, kx=0.0):
-    pi = par.pi_base * e['part']
-    per = (par.xi - 1.0) + par.beta * _aw(par, pi)
-    return e['kid'] + par.beta * e['adult'] - kx * e['homeless_stat'] * per
+    aw = _aw(par, par.pi_base * e['part'])
+    return e['kid'] + par.beta * e['adult'] - kx * e['homeless_stat'] * (1.0 + par.beta * aw)
 
 
 def cev_life(par, e_new, e_ref, kx=0.0):
