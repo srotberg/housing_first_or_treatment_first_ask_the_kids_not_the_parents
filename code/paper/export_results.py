@@ -99,6 +99,22 @@ hc0 = child_homeless('null_share')
 out['x_tf_hchild_pc'] = pc(100 * (child_homeless('tf85') / hc0 - 1))
 out['x_om_hchild_pc'] = pc(100 * (child_homeless('omega1') / hc0 - 1))
 
+# WHO THE NEWBORNS' PARENTS ARE, the channel any child penalty keys on: the
+# share of newborns whose parent is homeless, and whose parent has a SUD, in
+# percentage points, from the last newborn_parent_share each run printed
+# (clean housed, disordered housed, clean street, disordered street).
+def parent_share(arm):
+    last = None
+    for l in gzip.open(os.path.join(RES, arm, 'cf.log.gz'), 'rt', errors='replace'):
+        if 'newborn_parent_share (clean housed' in l:
+            last = [float(x) for x in l.split('=')[1].split()]
+    return last
+
+
+p0, p1 = parent_share('null_share'), parent_share('tf85')
+out['x_tf_par_hl_pp'] = f"{100 * ((p1[2] + p1[3]) - (p0[2] + p0[3])):.2f}"
+out['x_tf_par_sud_pp'] = f"{abs(100 * ((p1[1] + p1[3]) - (p0[1] + p0[3]))):.2f}"
+
 # THE TRANSITION: the latest forward pass that reached period 26, anywhere under
 # code/trtf60 (the live run.log or a run a container restart killed).
 tr_dir = os.path.join(ROOT, 'code', 'trtf60')
