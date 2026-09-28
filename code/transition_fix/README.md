@@ -5,6 +5,12 @@
   newborn_parent_share read at start-up and restored at t = 1 of every loop -- plus a print-only
   `TRANSITION ALLALIVE` line per period: the average value of everyone alive at the reform on the
   path and in the benchmark, the share better off, overall and by ten-year age band.
+- Items 7 and 8 of `patch_transition_fix.py` (28 September): the budget residual at t now steps
+  pi_V(t-1), the instrument that sets it (a draw in t-1 makes a holder paid at t); residual(1) is
+  reported and left out of the stopping rule, since no pi_V reaches it; the last free period takes
+  t-1's value; the secant is used only when its slope has the map's sign. Print-only: `TRANSITION
+  HOMELESS_BY_AGE`, `MASS_BY_AGE`, `SUD_BANDS` and `DRUG` lines each period, so childhood
+  homelessness along the path can be read off. The `PI_V` line's `t=` is now the instrument period.
 - `build_tr60_fix.sh`, `build_tr10_fix.sh` (+ `build_transition_t10_copy.sh`): T = 60 and the
   T = 10 flat control, through the tracked build_transition_t45/t60 scripts.
 - `build_cf_fix2_share.sh`: the no-policy steady state that saves its newborn_parent_share, the

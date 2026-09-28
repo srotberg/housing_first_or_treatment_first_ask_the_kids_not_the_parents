@@ -1,3 +1,21 @@
+# 28 September 20:10: THE PI_V PAIRING FIX IS BUILT; IT GOES IN WHEN LOOP 0 OF RELAUNCH 2 ENDS (about 22:30)
+
+The author, 28 September: "fix the updating rules so that they work better", and chose to let the running loop
+finish first. patch_transition_fix.py item 7: the budget residual at t steps pi_V(t-1), the instrument that sets
+it; residual(1) is reported and left out of the stopping rule; the last free period takes t-1's value; the secant
+is used only when its slope is negative. Item 8, print-only: TRANSITION HOMELESS_BY_AGE, MASS_BY_AGE, SUD_BANDS
+and DRUG lines each period, for childhood homelessness along the path (the author asked what happens to it; the
+transition never printed homelessness by age). build_tr60_fix.sh now expects a 172-line diff. Test-built in the
+scratchpad at nice 19: bounds, snan and prod all 0 warnings, 0 errors; the patch reproduces the built source.
+The drug price rule is left alone: it is paired with its own period and moved at most 0.0025 in this loop.
+
+Where loop 0 of relaunch 2 stands (year 29 at 19:50): price moved under 0.005 in 29 of 29 years (median 0.0003);
+budget within 1e-3 in 2 of 29 (median 0.0035, worst 0.016 at t = 2) -- the pairing problem, as diagnosed.
+
+At the end of the loop (the PI_V line for t = 59): stop b9e7qq9qd, archive the files newer than START_EPOCH,
+restore PARAM_HANDOVER.txt, seed both paths from the checkpoint (pi_V 59 from its PI_V line), install the new
+binary, relaunch. The PI_V line's t= is the instrument period from then on.
+
 # 28 September 19:35: RELAUNCH 2, LOOP 0 REACHES YEAR 26 -- cohort born at the reform +2.13%
 
 Forward pass 0 of the run launched 12:58 (seeded from the loop-1 checkpoint) reached year 26. cohort_cev.py on

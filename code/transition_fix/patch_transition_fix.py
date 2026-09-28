@@ -142,6 +142,128 @@ once('            if (solve_transition_dynamics==0) then\n\n'
      '                write(*,*) "average_childhood_utility=", average_childhood_utility(time_period)\n',
      "childhood print")
 
+# 7. THE BUDGET AT t IS SET BY pi_V(t-1), NOT BY pi_V(t) (TRANSITION_LESSONS, "What the second loop
+#    showed", 28 September). pi_V(t) sets the lottery households face in t, a draw in t makes a
+#    holder in t+1, and the budget at t is paid on the holders at t, so the old rule stepped each
+#    pi_V on a residual it cannot move: a lagged controller that overshot and flipped signs. Now
+#    the residual at t steps pi_V(t-1). residual(1) is set by the holders the reform inherits and
+#    no pi_V reaches it, so it is reported and left out of the stopping rule. The last free
+#    period has no computed residual(T) and takes t-1's value. Secant state is kept per
+#    INSTRUMENT period, and a secant is used only when its slope has the sign the map has.
+#    Same gain, same growth guard, trust region and clip. NO EQUILIBRIUM CONDITION CHANGES.
+def span_once(start, end, new, what):
+    global s
+    if s.count(start) != 1 or s.count(end) != 1:
+        sys.exit(f"REFUSING: anchors for {what} found {s.count(start)}, {s.count(end)} times")
+    i = s.index(start)
+    j = s.index(end, i) + len(end)
+    s = s[:i] + new + s[j:]
+
+
+once("        real(8) :: pi_v_step_1=0,pi_v_cap_1=0,pi_v_gap_1=0,pi_v_damped_1=0,pi_v_new_1=0\n",
+     "        real(8) :: pi_v_step_1=0,pi_v_cap_1=0,pi_v_gap_1=0,pi_v_damped_1=0,pi_v_new_1=0\n"
+     "        integer :: pi_v_s_1=0\n",
+     "pi_V instrument period declaration")
+
+once("                    distance_govt_budget=adjust_taxes*abs(net_govt_revenues(time_index)-net_govt_revenue_constraint)\n",
+     "                    distance_govt_budget=adjust_taxes*abs(net_govt_revenues(time_index)-net_govt_revenue_constraint)\n"
+     "                    ! residual(1) is set by the holders the reform inherits; no pi_V reaches it\n"
+     "                    if (time_index==1) distance_govt_budget=0\n",
+     "budget stopping rule without t = 1")
+
+span_once("                    pi_v_gap_1=net_govt_revenues(time_index)-net_govt_revenue_constraint\n",
+          "                        \" secant=\", have_pi_v_secant_path(time_index)\n",
+"""                    ! THE RESIDUAL AT t STEPS pi_V(t-1) (patch_transition_fix.py, item 7).
+                    pi_v_gap_1=net_govt_revenues(time_index)-net_govt_revenue_constraint
+                    pi_v_s_1=time_index-1
+
+                    if (pi_v_s_1<1) then
+
+                        write(*,*) "TRANSITION PI_V loop=", loop_count, " t=", time_index, &
+                            " residual set by the inherited holders=", pi_v_gap_1, &
+                            " (reported, not in the stopping rule)"
+
+                    else
+
+                        pi_v_damped_1=0.12*pi_v_gap_1
+
+                        pi_v_step_1=pi_v_damped_1
+
+                        if ((have_pi_v_secant_path(pi_v_s_1)==1) .AND. &
+                            (abs(pi_v_gap_1-previous_budget_residual_path(pi_v_s_1))>10.d0**(-10)) .AND. &
+                            (abs(probability_of_voucher_path(pi_v_s_1)-&
+                                 previous_probability_of_voucher_path(pi_v_s_1))>10.d0**(-10)) .AND. &
+                            ((pi_v_gap_1-previous_budget_residual_path(pi_v_s_1))*&
+                             (probability_of_voucher_path(pi_v_s_1)-&
+                              previous_probability_of_voucher_path(pi_v_s_1))<0.d0)) then
+
+                            if (abs(pi_v_gap_1)>abs(previous_budget_residual_path(pi_v_s_1))) then
+
+                                pi_v_step_1=pi_v_damped_1
+
+                            else
+
+                                pi_v_step_1=-pi_v_gap_1*&
+                                    (probability_of_voucher_path(pi_v_s_1)-&
+                                     previous_probability_of_voucher_path(pi_v_s_1))/&
+                                    (pi_v_gap_1-previous_budget_residual_path(pi_v_s_1))
+
+                                pi_v_step_1=max(min(pi_v_step_1,4*abs(pi_v_damped_1)),-4*abs(pi_v_damped_1))
+
+                            end if
+
+                        end if
+
+                        pi_v_cap_1=0.25*probability_of_voucher_path(pi_v_s_1)
+                        pi_v_step_1=max(min(pi_v_step_1,pi_v_cap_1),-pi_v_cap_1)
+
+                        previous_probability_of_voucher_path(pi_v_s_1)=&
+                            probability_of_voucher_path(pi_v_s_1)
+                        previous_budget_residual_path(pi_v_s_1)=pi_v_gap_1
+                        have_pi_v_secant_path(pi_v_s_1)=1
+
+                        pi_v_new_1=max(min(probability_of_voucher_path(pi_v_s_1)+pi_v_step_1,1.d0),10.d0**(-5))
+
+                        probability_of_voucher_path(pi_v_s_1)=pi_v_new_1
+
+                        write(*,*) "TRANSITION PI_V loop=", loop_count, " t=", pi_v_s_1, &
+                            " pi_v=", probability_of_voucher_path(pi_v_s_1), &
+                            " budget_residual=", pi_v_gap_1, &
+                            " step=", pi_v_step_1, " damped=", pi_v_damped_1, &
+                            " secant=", have_pi_v_secant_path(pi_v_s_1), &
+                            " from_residual_at_t=", time_index
+
+                        if (time_index==max(transition_length-1,1)) then
+
+                            probability_of_voucher_path(time_index)=probability_of_voucher_path(pi_v_s_1)
+
+                            write(*,*) "TRANSITION PI_V loop=", loop_count, " t=", time_index, &
+                                " pi_v=", probability_of_voucher_path(time_index), &
+                                " (last free period: no residual(T) to pair with, takes t-1's value)"
+
+                        end if
+
+                    end if
+""", "pi_V pairing")
+
+# 8. PRINT-ONLY: each period's homelessness by age and its mass by age (children live with parents
+#    aged 26-50, so childhood homelessness along the path can be read off), the disorder rate's band
+#    sums, and the drug market's distance after clearing. Nothing the model computes changes.
+once("                    \" p_drug=\", price_of_addictive_good_path(time_index), &\n"
+     "                    \" pi_v=\", probability_of_voucher_path(time_index)\n",
+     "                    \" p_drug=\", price_of_addictive_good_path(time_index), &\n"
+     "                    \" pi_v=\", probability_of_voucher_path(time_index)\n"
+     "                write(*,*) \"TRANSITION HOMELESS_BY_AGE t=\", time_index, homelessness_by_age(time_index,:)\n"
+     "                write(*,*) \"TRANSITION MASS_BY_AGE t=\", time_index, mass_by_age(time_index,:)\n"
+     "                write(*,*) \"TRANSITION SUD_BANDS t=\", time_index, \" sud=\", val_sud_band(time_index,:), &\n"
+     "                    \" mass=\", val_mass_band(time_index,:)\n",
+     "homelessness by age print")
+once("                price_of_addictive_good_path(time_index)=price_of_addictive_good\n",
+     "                price_of_addictive_good_path(time_index)=price_of_addictive_good\n"
+     "                write(*,*) \"TRANSITION DRUG t=\", time_index, \" distance=\", distance_drug_market, &\n"
+     "                    \" price=\", price_of_addictive_good\n",
+     "drug market print")
+
 # Re-checked by value in the result.
 for must in ["solve_transition_dynamics*1.d0+(1-solve_transition_dynamics)*1.d0",
              "real(8) :: stopping_rule_govt_budget=1.0*10.d0**(-3)",
@@ -149,7 +271,11 @@ for must in ["solve_transition_dynamics*1.d0+(1-solve_transition_dynamics)*1.d0"
              "newborn_parent_share=init_parent_share_1",
              "file=\"newborn_parent_share_initial.dat\"",
              "TRANSITION ALLALIVE t=",
-             "TRANSITION CHILDHOOD_BY_AGE t="]:
+             "TRANSITION CHILDHOOD_BY_AGE t=",
+             "pi_v_s_1=time_index-1",
+             "if (time_index==1) distance_govt_budget=0",
+             "TRANSITION HOMELESS_BY_AGE t=",
+             "TRANSITION DRUG t="]:
     if s.count(must) != 1:
         sys.exit(f"REFUSING: {must!r} is not in the result exactly once")
 if "unit=419" in open(src).read():

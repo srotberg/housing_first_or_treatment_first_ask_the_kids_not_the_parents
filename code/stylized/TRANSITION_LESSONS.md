@@ -883,6 +883,16 @@ while pi_V(2) drifted, and the later years overshot and flipped sign within one 
 residual(t + 1). The stylized model does not have this, because its transition holds pV at the benchmark and
 clears no budget; the rule to carry is that an instrument must be paired with the first period it can move.
 
+*Applied, 28 September, as item 7 of patch_transition_fix.py, at the author's request* ("fix the updating rules
+so that they work better"). The residual at t steps pi_V(t - 1); residual(1) is reported and left out of the
+stopping rule; the last free period takes t - 1's value; the secant is used only when its slope is negative (more
+vouchers, lower net revenue). On a one-line model of the holder stock, H(t) = rho H(t - 1) + A pi_V(t - 1), the
+correctly paired Jacobi step at the steady state's gain contracts every frequency (at rho = 0.9 the worst
+multiplier is about 0.94), while the one-period lag of the old pairing rotates the same circle out of the unit
+disc, which is the overshoot and sign-flipping the second loop showed. The drug price was already paired with its
+own period (demand at t responds to the price at t) and is left as it is; it moved at most 0.0025 in loop 0 of
+the relaunch against a rule of 0.005.
+
 **Order.** Fixes 2 to 5 go in a build copy, asserted by value, not in the
 source. The no-policy arm is re-run once to write the parent share. The flat
 control runs next, then the reform paths from the corrected arms' directories.
