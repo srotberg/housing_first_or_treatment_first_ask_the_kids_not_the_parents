@@ -1,3 +1,17 @@
+# 28 September 05:15: T = 60 RELAUNCH (checkpoint seeds), YEAR 26 -- new cohort's CEV +2.78 per cent
+
+cohort_cev.py on code/trtf60/run.log (the relaunch, whose seeds are loop 0's updates in years 1-32):
+- cohort born at the reform: CEV +2.7815 per cent (killed run +2.8876). Utils against no policy: childhood +0.708
+  (+0.750), adulthood +0.213 (+0.207). Code's cross-section CEV t = 1 +2.61, t = 26 +1.34.
+- years 1-26, against the killed run's loop 0: drug within 0.005 in 7 of 26 (5), median |gap| 0.0074 (0.0097), max
+  0.0137 (0.0207); budget within 0.001 in 3 of 26 (1), median |residual| 0.0045 (0.0064). The budget at t = 2
+  (+0.0147) and t = 5 (-0.0137) barely moved: pi_V acts on a stock, and the damped step is small.
+- new users -51 (t = 1), -44 (5), -41 (10), -32 (20) per cent; homelessness +12.7 (t = 2), +13.1 (5), +12.8 (10),
+  +9.2 (20), +7.3 (25) per cent. Early drug price 0.906-0.908 (years 1-5), 0.895 at 10, 0.878 at 20.
+- the waiter for this reading failed silently for five hours: a background command's leading `cd DIR &&` is not
+  honoured, so `grep run.log` ran in the wrong directory. USE ABSOLUTE PATHS in background waiters.
+- Loop end about 07:05 UTC.
+
 # 28 September 00:40: WHY THE TRANSITION COHORT BEATS THE LONG RUN -- the early drug price, through initiation
 
 The author asked why the reform-year cohort's CEV (+2.89) exceeds the long run's (+1.42). Decomposed on the three
