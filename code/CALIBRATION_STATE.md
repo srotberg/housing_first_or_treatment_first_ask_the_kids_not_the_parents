@@ -1,3 +1,19 @@
+# 28 September 22:35: TRANSITION RESTARTED WITH ITEMS 7-9; TWO CODE FINDINGS FROM THE SECTION 4 AUDIT
+
+- Loop 0 of relaunch 2 finished year 59 at 22:31 and was stopped (TaskStop); its files are archived in
+  code/trtf60/relaunch2_loop0_2232. The seeds for the restart are its paths (price t=1 0.905872, t=59
+  0.867475; pi_V t=1 0.083132, t=59 0.077337, the last from its PI_V line).
+- Restart 3 runs code/tr60_fix/hftf_tr_prod (md5 aed5b190...): items 1-8 as before, plus item 9, the child
+  value paired with its own period (transition_fix/README.md). Found by an audit of Section 4 against the
+  Fortran: the backward pass priced period t's child with V_{t+2}(1). Built with 0 warnings and 0 errors.
+- NOT FIXED, FOR THE AUTHOR (it moves the benchmark): an employed, income-eligible voucher holder in a
+  shelter is paid the voucher through the secant/objective path, which has no h_1 guard
+  (f90 ~29466-29469), while calculate_after_tax_wealth pays it nothing there (29985); and the
+  government books the payment for every eligible holder at h_1, employed or not (19014-19018). Size
+  unmeasured. It binds only where kappa_r*y_hat < p_r*h_1 = 0.0216, i.e. the bottom productivity node.
+- The stylized staged build started (code/stylized/stages.py, stage1.log) on one worker beside the
+  transition.
+
 # 28 September 21:20: TWO INCONSISTENCIES IN HOW THE CHILD'S PENALTY IS KEYED -- for the author, not fixed
 
 Found while mapping the Fortran for the Section 4 rewrite (read-only audit, verified by hand):

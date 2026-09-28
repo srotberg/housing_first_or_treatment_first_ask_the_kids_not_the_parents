@@ -266,6 +266,20 @@ once("                price_of_addictive_good_path(time_index)=price_of_addictiv
      "                    \" price=\", price_of_addictive_good\n",
      "drug market print")
 
+# 9. THE CHILD'S VALUE PAIRED WITH THE RIGHT PERIOD. compute_expected_child_value(t) builds D from
+#    V_{t+1}(1), and it was called only at the END of each solve, whose result the NEXT solve loaded.
+#    The backward pass solves t-1 next, so period t-1 priced its child with D from V_{t+1}(1) instead of
+#    V_t(1): one period late on the way back, and one period early on the forward re-solve, which runs
+#    t+1 next. Found by the Section 4 audit, 28 September. Rebuilding it at the START of each transition
+#    solve, from V_{t+1}(1), which the backward pass has already filled and the forward re-solve has not
+#    yet touched, pairs every period with its own child. The steady state (solve_transition_dynamics = 0)
+#    is unchanged: it keeps the fixed-point reuse of the previous solve's D.
+once("                expected_child_value=expected_child_value_own\n",
+     "                expected_child_value=expected_child_value_own\n"
+     "                ! PAIRED WITH ITS OWN PERIOD (transition fix item 9): D from V_{t+1}(1).\n"
+     "                if (solve_transition_dynamics==1) call compute_expected_child_value(time_period)\n",
+     "child value pairing")
+
 # Re-checked by value in the result.
 for must in ["solve_transition_dynamics*1.d0+(1-solve_transition_dynamics)*1.d0",
              "real(8) :: stopping_rule_govt_budget=1.0*10.d0**(-3)",
@@ -278,7 +292,8 @@ for must in ["solve_transition_dynamics*1.d0+(1-solve_transition_dynamics)*1.d0"
              "if (time_index==1) distance_govt_budget=0",
              "TRANSITION HOMELESS_BY_AGE t=",
              "TRANSITION USE_BY_AGE t=",
-             "TRANSITION DRUG t="]:
+             "TRANSITION DRUG t=",
+             "if (solve_transition_dynamics==1) call compute_expected_child_value(time_period)"]:
     if s.count(must) != 1:
         sys.exit(f"REFUSING: {must!r} is not in the result exactly once")
 if "unit=419" in open(src).read():

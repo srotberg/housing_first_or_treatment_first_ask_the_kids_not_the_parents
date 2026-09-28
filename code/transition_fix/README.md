@@ -11,6 +11,11 @@
   t-1's value; the secant is used only when its slope has the map's sign. Print-only: `TRANSITION
   HOMELESS_BY_AGE`, `MASS_BY_AGE`, `SUD_BANDS` and `DRUG` lines each period, so childhood
   homelessness along the path can be read off. The `PI_V` line's `t=` is now the instrument period.
+- Item 9 (28 September, found by the Section 4 audit): the child's value D is paired with its own
+  period. compute_expected_child_value(t) builds D from V_{t+1}(1) and was called only at the END of
+  each solve, whose result the next solve loaded, so the backward pass priced period t with
+  V_{t+2}(1) and the forward re-solve with V_t(1). It is now also called at the START of every
+  transition solve, from V_{t+1}(1). The steady state is unchanged. The patch diff is 175 lines.
 - `build_tr60_fix.sh`, `build_tr10_fix.sh` (+ `build_transition_t10_copy.sh`): T = 60 and the
   T = 10 flat control, through the tracked build_transition_t45/t60 scripts.
 - `build_cf_fix2_share.sh`: the no-policy steady state that saves its newborn_parent_share, the
