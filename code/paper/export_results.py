@@ -107,6 +107,32 @@ out['x_tf_sud1'] = f"{tf['SUD lambda_d']['level'] * 100:.2f}"
 out['x_tf_sud_pp'] = f"{abs(tf['SUD lambda_d']['level'] - tf['SUD lambda_d']['base']) * 100:.2f}"
 out['x_om_hchild_pc'] = pc(100 * (child_homeless('omega1') / hc0 - 1))
 
+# CHILDREN LIVING WITH A PARENT WHO HAS A SUD, the comparison to the children on
+# the street above, over the same ages 26-50 and the same mass weights. The age
+# profile's sud= column is drug CONSUMPTION (is_addicted = consumes), so the
+# disorder is read from DIAG disorder rate, band k, where band 1 is ages 26-34,
+# 2 is 35-44 and 3 is 45-54; each age takes its band's rate, so ages 45-50 carry
+# band 3's rate. The same banding reproduces the exact childhood homelessness
+# above to within 0.02 points (1.001 against 1.015, 1.061 against 1.078).
+def child_sud(arm):
+    ages, band = {}, {}
+    for l in gzip.open(os.path.join(RES, arm, 'cf.log.gz'), 'rt', errors='replace'):
+        m = re.search(r'DIAG age\s+(\d+)\s+homeless=.*mass=\s*(\S+)', l)
+        if m:
+            ages[int(m.group(1))] = float(m.group(2))
+        m = re.search(r'DIAG disorder rate, band\s+(\d)\s+=\s*(\S+)', l)
+        if m:
+            band[int(m.group(1))] = float(m.group(2))
+    k = lambda a: 1 if a <= 34 else 2 if a <= 44 else 3
+    aa = [a for a in ages if 26 <= a <= 50]
+    return sum(band[k(a)] * ages[a] for a in aa) / sum(ages[a] for a in aa)
+
+
+sc0, sc1 = child_sud('null_share'), child_sud('tf85')
+out['x_sudchild0'] = f'{100 * sc0:.2f}'
+out['x_tf_sudchild1'] = f'{100 * sc1:.2f}'
+out['x_tf_sudchild_pp'] = f'{100 * abs(sc1 - sc0):.2f}'
+
 # WHO THE NEWBORNS' PARENTS ARE, the channel any child penalty keys on: the
 # share of newborns whose parent is homeless, and whose parent has a SUD, in
 # percentage points, from the last newborn_parent_share each run printed
@@ -178,6 +204,15 @@ for l in gzip.open(os.path.join(RES, 'tf85', 'cf.log.gz'), 'rt', errors='replace
 out['x_tf_new_pc'] = pc(100 * (e_tf / e0 - 1))
 out['x_tr_h_peak_pc'] = pc(100 * (max(H[k] for k in range(1, 11)) / h0 - 1))
 out['x_tr_new_t1_pc'] = pc(100 * (E[1] / e0 - 1))
+# drug use (participation b) in the same first decade, its largest fall on no
+# policy, against the long run's x_tf_b_pc
+B = {}
+for l in open(best, errors='replace'):
+    if 'TRANSITION INIT PARENT SHARE RESTORED' in l and B:
+        break
+    if 'TRANSITION MECH t=' in l:
+        B[int(l.split('t=')[1].split()[0])] = float(re.search(r' b=\s*(\S+)', l).group(1))
+out['x_tr_b_peak_pc'] = pc(100 * (min(B[k] for k in range(1, 11)) / tf['drug use b']['base'] - 1))
 
 json.dump(out, open(OUT, 'w'), indent=1, sort_keys=True)
 print(f'wrote {OUT} (transition from {os.path.relpath(best, ROOT)}, forward pass {out["x_tr_pass"]})')
