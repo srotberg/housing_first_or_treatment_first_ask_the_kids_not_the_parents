@@ -1,3 +1,21 @@
+# 29 September 00:10: THE STYLIZED MODEL, BUILT IN STAGES AND RECALIBRATED AT EACH
+
+- code/stylized/stages.py: stage 1 (no child: xi = 1, omega_c = 0, delta_d = 0) exits at iteration 500 with every
+  live row within 1.3 per cent; stage 2 (the child: xi = sqrt 2, omega_c on the 18.3 per cent child use gap,
+  delta_d set from Nilsson as in the quantitative model) at iteration 300 within 1.8. theta aims at the Fortran's
+  0.16 drug share, not sr_calibrate's 0.14098. u1 held at 0.108. calibrated_sep13.json does NOT reproduce under
+  the current code (participation 0.0554, drug share in the corner) and is a record only.
+- Results (stage_results.py, stage_transition.py -> stage_numbers.json): stage 1 users earn 3.88x average with no
+  consequence, 0.53 with mortality at full strength, unemployment never moves it; at pi_V 0.266 participation is
+  8.02 / 2.13 / 8.90 with none / TF / HF; 7.5 per cent worse off under TF, none better. Stage 2: TF beats HF for a
+  newborn by 1.336 per cent (0.404 childhood, 0.926 adult); omega_c = 0.0022; child SUD odds ratio 1.17 (reported,
+  data 1.44-2.51). Stage 3: kappa_x 0.438 from the 0.2 per cent WTP, TF gain 1.349. Stage 4: at omega_c = 1 nobody
+  uses, worth 2.475; transition (null test 4e-14): old -1.13, young -0.075, cohort 1 +1.03, cohort 2 on +1.34.
+- Welfare accounting corrected relative to optimal_sud.py: a newborn's life is childhood + beta * adulthood, and the
+  childhood aleph is in the CEV's constant; the child bears kappa_x H once per period, as the Fortran does.
+- welfare.tab_welfare and transition.caught call cev() without the level and raise at sigma = 2; the stage scripts
+  carry the level. Section 3 is rewritten in the four stages; Figures 2 and 3 are gone (Table 3 replaces Figure 2).
+
 # 28 September 22:35: TRANSITION RESTARTED WITH ITEMS 7-9; TWO CODE FINDINGS FROM THE SECTION 4 AUDIT
 
 - Loop 0 of relaunch 2 finished year 59 at 22:31 and was stopped (TaskStop); its files are archived in

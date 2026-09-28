@@ -456,6 +456,17 @@ def _params(out):
     # AND WHAT THE COUNTERFACTUALS AND THE TRANSITION PRODUCED, as x_<name>.
     for k, v in _results_all().items():
         out.setdefault(k, v)
+    # AND THE STAGED STYLIZED MODEL, as s<stage>_<name> and s_<name>
+    # (stage_results.py, stage_transition.py), and SECTION 5'S TABLES, as
+    # c_<name> (code/paper/calib_tables.py). Leading underscores are raw data.
+    for fn in (os.path.join(HERE, 'stage_numbers.json'),
+               os.path.normpath(os.path.join(HERE, '..', 'paper', 'calib_numbers.json'))):
+        if not os.path.exists(fn):
+            print(f'   {os.path.basename(fn)} missing')
+            continue
+        for k, v in json.load(open(fn)).items():
+            if not k.startswith('_'):
+                out.setdefault(k, v)
     _derived_from_fortran(out)
 
 

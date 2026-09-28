@@ -44,6 +44,7 @@ ALLOW = [
     ('1.8', 'odds ratios of'), ('2.4', 'odds ratios of'),
     ('1.8', 'in the data (Bassuk'), ('2.4', 'in the data (Bassuk'),
     ('1.44', 'likelier to acquire a SUD'), ('2.51', 'likelier to acquire a SUD'),
+    ('1.44', 'of Mellentin et al.'), ('2.51', 'of Mellentin et al.'),   # the same two, in Section 3's stage 2
     ('2.5', '(Mellentin et al.'),
     # a demand elasticity bound in the literature review; the table's 0.8 is
     # the model's share of the homeless aged 65 and over
