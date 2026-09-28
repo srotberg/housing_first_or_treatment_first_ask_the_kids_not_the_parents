@@ -81,6 +81,24 @@ out['x_om_b_pc'] = pc(om['drug use b']['pc'])
 out['x_om_sud_pc'] = pc(om['SUD lambda_d']['pc'])
 out['x_om_h_pc'] = pc(om['homelessness h_1']['pc'])
 
+# CHILDHOOD HOMELESSNESS: a child lives with its parent from the parent's age 26
+# to 50 (child_at_home_last_index = 25 model years), so the share of children on
+# the street is the mass-weighted homelessness of households aged 26-50, from the
+# last DIAG age profile each run printed.
+def child_homeless(arm):
+    rows = {}
+    for l in gzip.open(os.path.join(RES, arm, 'cf.log.gz'), 'rt', errors='replace'):
+        m = re.search(r'DIAG age\s+(\d+)\s+homeless=\s*(\S+).*mass=\s*(\S+)', l)
+        if m:
+            rows[int(m.group(1))] = (float(m.group(2)), float(m.group(3)))
+    ages = [a for a in rows if 26 <= a <= 50]
+    return sum(rows[a][0] * rows[a][1] for a in ages) / sum(rows[a][1] for a in ages)
+
+
+hc0 = child_homeless('null_share')
+out['x_tf_hchild_pc'] = pc(100 * (child_homeless('tf85') / hc0 - 1))
+out['x_om_hchild_pc'] = pc(100 * (child_homeless('omega1') / hc0 - 1))
+
 # THE TRANSITION: the latest forward pass that reached period 26, anywhere under
 # code/trtf60 (the live run.log or a run a container restart killed).
 tr_dir = os.path.join(ROOT, 'code', 'trtf60')
