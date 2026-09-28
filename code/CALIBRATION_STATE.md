@@ -1,3 +1,17 @@
+# 28 September 00:10: CONTAINER RESTART killed the bracket-seeded T = 60 at loop 0, year 32 of the forward pass; relaunched from its checkpoint
+
+Killed about 23:58, six hours in. The code checkpoints both instruments every period (drug_price_path_seed_out.txt,
+pi_v_path_seed_out.txt), so the restart keeps what loop 0 computed:
+- drug price: periods 1-32 as updated in loop 0 (moves of at most 0.23 per cent on the bracket seed; equal to the
+  log's price_of_addictive_good lines to 4e-16), periods 33-59 the bracket seed;
+- pi_V: periods 1-31 from the checkpoint (equal to the TRANSITION PI_V lines), period 32 from its PI_V line
+  (0.083314; THE CHECKPOINT HOLDS PERIOD t's pi_V BEFORE ITS UPDATE, because it is written ahead of the pi_V
+  step in the same period), periods 33-59 the Newton run's post-loop-0 path.
+Lost: the per-period secant memory, so years 1-32 take a damped step again on the next update.
+The killed run's log and start-up files are in code/trtf60/bracketseed_killed_0000/. PARAM_HANDOVER.txt restored
+from the kept copy. Relaunched 00:05 (task bm9nrc673, 4 threads); both seeds read 59 of 59, parent share as before.
+Year 26 of this loop about 04:45 UTC, loop end about 06:40.
+
 # 27 September 23:35: BRACKET-SEEDED T = 60, LOOP 0, YEAR 26 -- new cohort's CEV +2.89 per cent
 
 cohort_cev.py on code/trtf60/run.log (task bhp5c6ar6, loop 0, years 1-26):
