@@ -1,3 +1,30 @@
+# 28 September 21:20: TWO INCONSISTENCIES IN HOW THE CHILD'S PENALTY IS KEYED -- for the author, not fixed
+
+Found while mapping the Fortran for the Section 4 rewrite (read-only audit, verified by hand):
+
+1. THE PARENT'S OBJECTIVE COUNTS THE FULL PENALTY FOR ANY USE. child_continuation_value (10420-10467) keys on
+   transmitted_1 = max(ever_sud_of(unemployment_index_1), future_addiction_index_1) (10449), and at the call sites
+   (26358 ff.) future_addiction_index is the DRUG CHOICE being maximised over. So a never-SUD parent that chooses any
+   v > 0 counts the whole Delta EV of a penalised child, although onset is a flat addiction_onset_base = 0.0345 with
+   lambda_addiction = 0 (12688-12709). The deterrent the child exerts on use is overstated by about 1/0.0345 = 29,
+   and weight_on_child = 0.06 was calibrated to the 18.3 per cent moment THROUGH that overstatement.
+2. THE LAW OF MOTION KEYS ON THE SUD AT DEATH. newborn_parent_share_acc (15006-15020) uses the parent's CURRENT SUD
+   (block 2) in the period it dies; the Bellman keys on the latch (ever had it between 26 and 50) or the use choice,
+   with weight one at age 50. The two halves of the same rule disagree.
+
+Both change results if fixed (omega_c recalibrates; the omega_c = 1 optimum and the full-altruism arm move most),
+so the model stays frozen until the author decides. The paper's Section 4 will describe the intended rule
+(the parent weighs the penalty by the chance it is realised; the child inherits it if the parent carried the
+disorder while the child lived at home) and say so in chat.
+
+Other facts the audit established that the paper's Section 4 did not reflect (all now being written in):
+onset is flat in quantity; kappa_x H is in welfare only (internalise_homelessness_cost = 0); productivity is an
+AR(1) over working life (fixed_productivity = 0); hours are fixed (inelastic_labor_supply = 1); treatment allows
+use, keeps the SUD's mortality and does not exempt from Treatment First's test; DI is zero; UI reaches 30 per
+cent of separations; mortality multipliers act on the death probability; the homeless multiplier is flat in age;
+newborns enter at the parent's death with a one-time transfer; pi_V clears the budget in experiments with the
+labour tax held; a third voucher state (excluded, released at a third a year).
+
 # 28 September 20:40: STYLIZED MODEL -- WAITING FOR THE AUTHOR TO REACH SECTION 3
 
 The author, 28 September: the stylized model needs the aggregate homelessness externality "the same way we did
