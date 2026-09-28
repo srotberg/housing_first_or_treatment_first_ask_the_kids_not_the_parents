@@ -185,7 +185,9 @@ for l in gzip.open(os.path.join(RES, 'null_share', 'cf.log.gz'), 'rt', errors='r
     elif 'UNTARGETED delta_h child homeless odds ratio' in l:
         out['x_odds_hl'] = f"{float(l.split('model=')[1].split()[0]):.2f}"
 
-# the first forward pass in that log, years 1-10: peak homelessness and new users at t = 1
+# the first forward pass in that log, years 1-10: peak homelessness, and drug users WITHOUT A SUD
+# (exp_pop; total_experimenters_1 in the steady state, the same count on the same base: the
+# no-reform control's t = 1 value equals the no-policy steady state's, 2.3726) at t = 1
 H, E = {}, {}
 t = None
 for l in open(best, errors='replace'):
@@ -196,7 +198,7 @@ for l in open(best, errors='replace'):
         H[t] = float(re.search(r'h_1=\s*(\S+)', l).group(1))
     elif 'TRANSITION SMIDRUG t=' in l:
         E[t] = float(re.search(r'exp_pop=\s*(\S+)', l).group(1))
-# long-run new users under Treatment First, for the transition's comparison
+# long-run drug users without a SUD under Treatment First, for the transition's comparison
 e_tf = None
 for l in gzip.open(os.path.join(RES, 'tf85', 'cf.log.gz'), 'rt', errors='replace'):
     if 'total_experimenters_1=' in l:
@@ -204,7 +206,7 @@ for l in gzip.open(os.path.join(RES, 'tf85', 'cf.log.gz'), 'rt', errors='replace
 out['x_tf_new_pc'] = pc(100 * (e_tf / e0 - 1))
 out['x_tr_h_peak_pc'] = pc(100 * (max(H[k] for k in range(1, 11)) / h0 - 1))
 out['x_tr_new_t1_pc'] = pc(100 * (E[1] / e0 - 1))
-# the largest fall in new users over the same first decade, for 'falls by up to'
+# the largest fall in drug users without a SUD over the same first decade, for 'falls by up to'
 out['x_tr_new_peak_pc'] = pc(100 * (min(E[k] for k in range(1, 11)) / e0 - 1))
 # drug use (participation b) in the same first decade, its largest fall on no
 # policy, against the long run's x_tf_b_pc
