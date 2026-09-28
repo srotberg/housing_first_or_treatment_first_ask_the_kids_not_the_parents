@@ -14,6 +14,13 @@ loop-0 runs (scratchpad decomp.py; cohort b = 1 against no policy, utils, discou
 - the price is high because the reform inherits the benchmark's SUD stock (1.76, falling to 1.34 by t = 15), which
   keeps demand up against an upward-sloping supply curve. As the stock falls the price falls, initiation returns,
   and each later cohort's gain shrinks toward the long run (+2.89, +2.21, +2.07, +2.02, +2.01, +1.65, +1.58).
+- WHY ABOUT TWICE (01:00, for the author): the long run's +0.26 at ages 1-5 is NET of conditionality's costs. Across
+  the three runs each 0.1 fewer new users a year in years 1-5 adds about 0.06-0.07 utils, so the long run's 30 per
+  cent cut is worth roughly +0.5 gross and exclusions, lost vouchers and homelessness take about half back. The
+  transition's further cut (0.4-0.5 fewer a year) comes from the price, not from more exclusions, so it adds its
+  ~+0.3 with nothing taken back: 0.26 + 0.31 = 0.57. Inferred, not measured (no child utility by parent state).
+  Confound: the bracket run has ~4 per cent more voucher recipients in years 3-8 than the flat run (pi_V 0.0945 at
+  t = 2) while its budget is in deficit, so part of the +0.3 may shrink as the budget clears.
 - CAVEAT: the size rests on initiation's sensitivity to price near its threshold, the same jump that stops TF 70
   and permban85 clearing (12:55 entry). And the price path is loop 0's.
 
