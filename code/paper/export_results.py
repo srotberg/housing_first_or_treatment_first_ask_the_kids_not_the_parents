@@ -97,6 +97,8 @@ def child_homeless(arm):
 
 hc0 = child_homeless('null_share')
 out['x_tf_hchild_pc'] = pc(100 * (child_homeless('tf85') / hc0 - 1))
+out['x_hchild0'] = f'{100 * hc0:.2f}'
+out['x_tf_hchild1'] = f"{100 * child_homeless('tf85'):.2f}"
 out['x_om_hchild_pc'] = pc(100 * (child_homeless('omega1') / hc0 - 1))
 
 # WHO THE NEWBORNS' PARENTS ARE, the channel any child penalty keys on: the
