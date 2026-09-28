@@ -294,7 +294,7 @@ STANDARD = [
         (r'$S(y)$', 'Replacement rates between bend points', 'Ext.', 'SSA primary insurance amount',
          'statute', NA,
          f'{C["ss_pia_rate_1"]:.2f}, {C["ss_pia_rate_2"]:.2f}, {C["ss_pia_rate_3"]:.2f}'),
-        (r'$\underline S$', 'SSI floor, over average earnings', 'Ext.', 'SSA federal benefit rate',
+        (r'$\underline S$', 'SSI floor, over the average wage index', 'Ext.', 'SSA federal benefit rate',
          f(H['ssi_floor_level'], 3), NA, f(H['ssi_floor_level'], 3)),
         (r'$\psi_{ui}$', 'UI replacement rate', 'Ext.', 'DOL statutory replacement rates',
          f(H['replacement_rate_ui']), NA, f(H['replacement_rate_ui'])),
