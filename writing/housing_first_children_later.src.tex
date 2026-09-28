@@ -977,8 +977,8 @@ is about, so a higher factor corrects for the coarseness of the horizon rather
 than making a claim about preferences.} and the gross interest rate is
 $R=1/\beta$, and survival over
 a period is $\bar\phi = @@phi0@@$, from the Social Security Administration (SSA) period life table for twenty six to fifty five. For the SUD, the
-mortality rate ratio is $\kappa_{\phi d} = @@smrd@@$, the midpoint of the range in
-Hjorth\o j et al.\ (2023), so survival with the disorder is
+mortality rate ratio is $\kappa_{\phi d} = @@smrd@@$, \new{the quantitative model's
+value}, so survival with the disorder is
 $\bar\phi^{\,@@smrd@@}$ over the period and the implied proportional fall in
 survival is $1-\bar\phi^{\,@@smrd@@-1} = @@kap@@$, so a clean household's chance of dying before period 2 is @@dth0@@
 percent and a household that acquires a SUD has a @@dth1@@ percent chance of
@@ -986,17 +986,26 @@ dying before period 2.\footnote{The second figure is not $\kappa_{\phi d}$ and s
 read as one: $\kappa_{\phi d}$ is a ratio of mortality rates, so survival goes
 from $\bar\phi=@@phi0@@$ to $\bar\phi^{\,\kappa_{\phi d}}=@@phi1@@$ and the
 chance of dying is one minus that.}
-The two unemployment probabilities are measured directly. $u_0 = @@u0@@$
-is the headline civilian unemployment rate from the Bureau of Labor Statistics
+\new{The unemployment probability without the disorder is measured directly:}
+$u_0 = @@u0@@$ is the headline civilian unemployment rate from the Bureau of Labor Statistics
 (BLS) Current Population Survey (CPS), series UNRATE as distributed by Federal Reserve
-Economic Data (FRED), averaged over 2014 to 2024. And $u_1 = @@u1@@$ is from the
-National Survey on Drug Use and Health (NSDUH) 2024 for respondents aged 26 and
-over.
+Economic Data (FRED), averaged over 2014 to 2024. \new{The one with the disorder, $u_1$,
+is calibrated below.}
+
+\new{Risk aversion is $\sigma=@@f_risk_aversion_consumption@@$, the persistence of
+productivity across generations is $\rho=@@f_rho_intergenerational@@$, within the
+range of the intergenerational elasticities of earnings in
+Section~\ref{sec:literature}, and the penalty $\delta_d$ and the disamenity
+$\kappa_x$ are set as in the quantitative model, from Nilsson (2017) and from the
+contingent valuation in Loubi\`ere et al.\ (2020), both taken up in
+Section~\ref{sec:fullcal}.}
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. Only the standard rental unit is set,
-at $h_3 = @@h3@@$ of mean income; the small unit $h_2$ is calibrated, on the share
-of housed households living in one. The voucher parameters are institutional: covered
+income, in line with statutory state rules. \new{Both rental units are set, the standard one at $h_3 = @@h3@@$ of mean income,
+and so is the weight on housing $\gamma$, at the share of non-drug expenditure that
+shelter plus utilities take in the 2024 Consumer Expenditure Survey (CEX): a menu of
+two units and a shelter bounds the housing share the model can produce, so it is set
+from the survey rather than targeted.} The voucher parameters are institutional: covered
 tenants pay $@@q_kappa_r_pc@@$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = @@kV@@$, and $\pi_V = @@pvbase@@$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
 Households (PSH), published by HUD.
 
@@ -1010,11 +1019,7 @@ the 2022 Survey of Consumer Finances (SCF), households aged $26$ to $65$ with po
 and salary income hold $@@q_sigma_y@@$ percent of total earnings in the poorer half of the
 distribution, and the
 quantitative model of Section~\ref{sec:full} is calibrated to the same moment.
-The weight on
-housing $\gamma$ is matched to the $@@q_gamma@@$ percent of total expenditure that
-shelter plus utilities take in the 2024 Consumer Expenditure Survey (CEX); the model
-counterpart is housing over expenditure net of drugs, since the survey's total has no
-drug spending in it. The flow value
+The flow value
 of being alive $\aleph$ is matched to a value of a statistical life of @@vsl_t@@
 times average annual income, about \$9 million against a mean household income of
 \$113,000, which is the range surveyed by Viscusi and Aldy (2003) once their
@@ -1024,10 +1029,12 @@ respondents aged 26 and over with a disorder of any severity, housing services \
 $h_1$ to a homelessness rate of $@@q_h_1@@$ percent from the 2023 HUD PiT count, and the SUD hazard $\lambda_d$ to the $@@q_lambda_d@@$ percent
 of adults aged $26$ and over carrying a moderate or severe SUD in NSDUH 2024.
 
-The small rental unit $h_2$ is matched to the $@@hsmall_t@@$ percent of housed
-households living in a unit with fewer than three bedrooms, from Table B25042 of
-the 2023 American Community Survey (ACS), which is the source
-the quantitative model's size distribution comes from as well.
+\new{The unemployment probability with the disorder $u_1$ is matched to the
+$@@f_sud_share_of_homeless_pc@@$ percent of the homeless who carry a SUD (Gutwinski et
+al., 2021), since it is what decides how many users lose their housing, and the
+parent's weight on its child $\omega_c$ is matched as in the quantitative model:
+switching the child's terms off raises drug use by the $@@q_omega_c@@$ percent by
+which adults without children in NSDUH 2024 use more than parents.}
 The weight on drugs $\theta$ is matched to the drug spending share, the
 $@@q_theta@@$ percent of income users spend on the drug, which divides retail
 expenditure on the four drugs, from Midgette et al.\ (2019) for 2016 carried to
