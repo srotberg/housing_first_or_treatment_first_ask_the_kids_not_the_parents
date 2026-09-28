@@ -1,3 +1,15 @@
+# 28 September 19:35: RELAUNCH 2, LOOP 0 REACHES YEAR 26 -- cohort born at the reform +2.13%
+
+Forward pass 0 of the run launched 12:58 (seeded from the loop-1 checkpoint) reached year 26. cohort_cev.py on
+run.log: the cohort born at the reform gains +2.1266% of consumption (the code's own t = 1 check agrees at +2.3312%
+on the cross-section measure). Of its +0.7058 utils over no policy, +0.4960 is childhood and +0.2098 adulthood;
+the long-run newborn's +0.4692 splits +0.2364 / +0.2328.
+
+export_results.py would now read this run and move three transition numbers the paper quotes: x_tr_cev_b1
+2.8 -> 2.1, x_tr_h_peak_pc 13 -> 14, x_tr_new_t1_pc 51 -> 48. results_numbers.json was restored to the earlier
+values, so the paper and the file agree; the move goes into the paper at the author's next round, in red.
+The budget is still unconverged (pi_V pairing, entry below), so neither run's numbers are final.
+
 # 28 September 13:10: SECOND CONTAINER RESTART (loop 1, year 19) -- and THE PI_V UPDATE IS PAIRED WITH THE WRONG PERIOD
 
 Killed about 12:56 at loop 1, year 19. Relaunched 12:58 (task b9e7qq9qd, launched through `bash -c 'cd ... && exec'`
