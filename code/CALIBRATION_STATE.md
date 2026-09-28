@@ -1,3 +1,22 @@
+# 28 September 08:10: T = 60 RELAUNCH, LOOP 0 DONE -- per-cohort CEV b = 1..34; the late years are the unconverged part
+
+Loop 0 of the relaunch ended 08:01; loop 1 runs on the code's own updates (per-period secants now armed).
+- CEV of the cohort born in year b (cohort_cev.py): +2.78 (b = 1), +2.15, +2.05, +1.99, +2.01 (b = 5), +1.57 to
+  +1.64 (b = 6-11), +1.34 to +1.36 (b = 12-15), +1.25 to +1.30 (b = 16-28), rising to +1.42 by b = 34. Long run
+  +1.42. The steps at b = 6 and b = 12 are where each cohort's childhood starts after a fall in the price path.
+- cohorts 12-30 sit BELOW the long run: childhood equals it (451.02-451.05 against 451.034), adulthood is lower
+  (338.74-338.78 against 338.793). They enter adulthood in years 37-55, the least converged stretch:
+  drug price above clearing in years 30-45 (gap -0.013 to -0.021: the SUD stock undershoots the long run, -32.6
+  against -30.8 per cent, because early initiation fell, so the price should dip below 0.867 there); budget in
+  deficit in years 41-56 (-0.008 to -0.011) with pi_V falling 0.084 -> 0.077 and homelessness rising again from
+  +4.3 (t = 40) to +7.4 per cent (t = 59) against +5.6 in the long run -- the T = 60 end.
+- gaps, all 59 years: drug within 0.005 in 15, median 0.0095, max 0.021 (t = 38); budget within 0.001 in 14,
+  median 0.0045, max 0.016 (t = 4). By decade, drug / budget medians: 1-10 0.006 / 0.006, 11-20 0.006 / 0.005,
+  21-30 0.009 / 0.0004, 31-40 0.019 / 0.0005, 41-50 0.013 / 0.011, 51-59 0.003 / 0.008.
+- loop 0's steps were small: price -0.06 to -0.23 per cent, pi_V about 0.001. The secant is capped at the
+  author's 0.5 per cent a loop, so years 30-45 need 3-5 more loops on their own. Re-seeding them is the option
+  put to the author; nothing changed without an answer.
+
 # 28 September 05:15: T = 60 RELAUNCH (checkpoint seeds), YEAR 26 -- new cohort's CEV +2.78 per cent
 
 cohort_cev.py on code/trtf60/run.log (the relaunch, whose seeds are loop 0's updates in years 1-32):
