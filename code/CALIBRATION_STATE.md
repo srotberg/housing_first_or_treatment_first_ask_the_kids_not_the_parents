@@ -1,3 +1,140 @@
+# 28 September 13:10: SECOND CONTAINER RESTART (loop 1, year 19) -- and THE PI_V UPDATE IS PAIRED WITH THE WRONG PERIOD
+
+Killed about 12:56 at loop 1, year 19. Relaunched 12:58 (task b9e7qq9qd, launched through `bash -c 'cd ... && exec'`
+because a background command's leading cd is not honoured) from the checkpoint: price and pi_V years 1-19 after
+loop 1, years 20-59 after loop 0 (pi_V year 19 from its PI_V line). Files in code/trtf60/relaunch_killed_1256/.
+Both seeds read 59 of 59, cwd confirmed.
+
+Loop 1, years 1-19, against loop 0: drug within 0.005 in 10 of 19 (4), median 0.0045 (0.0078). Budget within 0.001
+in 1 of 19 (1), median 0.0050 (0.0053) -- the budget is NOT converging, and the log says why:
+
+- pi_V(t) sets the voucher lottery households face IN period t (build_voucher_probabilities at time_index); a draw
+  in t makes a holder in t+1, and the budget at t is paid on the holders at t. So residual(t) is set by
+  pi_V(1..t-1), not by pi_V(t). Measured, loop 0 -> loop 1: pi_V(2) +0.0018 and receiving at t = 2 FELL (3.0914 ->
+  3.0878) while receiving at t = 3 rose (3.1889 -> 3.1958); the cuts to pi_V in years 3-6 lowered receiving in
+  years 5-11 by 0.012-0.023 and flipped years 8-11 from deficit to surplus (-0.0023 -> +0.0027 at t = 8).
+- the update steps pi_V(t) on residual(t) (pi_v_gap_1 = net_govt_revenues(time_index) - constraint). It is an
+  instrument paired with a residual it cannot move:
+  * residual(1) = +0.0014 is predetermined by the benchmark's holders: no pi_V reaches it, and it is above the
+    1e-3 rule, so the budget rule can never be met at t = 1 as written;
+  * residual(2) = +0.015 is set by pi_V(1), which only chases residual(1): it stays at +0.015 while pi_V(2) drifts
+    upward by ~0.002 a loop (0.0945 -> 0.0962 -> 0.0980) without effect on it;
+  * later years become a lagged integral controller: overshoot and sign flips, as years 8-11 did in one loop.
+- FIX (a solver change, not a model change; for the author): step pi_V(t) on residual(t+1), applied when period
+  t+1's residual is known in the forward pass, and exempt residual(1) from the rule, reporting it. Not applied:
+  it needs the author's word, and the Fortran is not touched while a solve runs.
+
+# 28 September 08:10: T = 60 RELAUNCH, LOOP 0 DONE -- per-cohort CEV b = 1..34; the late years are the unconverged part
+
+Loop 0 of the relaunch ended 08:01; loop 1 runs on the code's own updates (per-period secants now armed).
+- CEV of the cohort born in year b (cohort_cev.py): +2.78 (b = 1), +2.15, +2.05, +1.99, +2.01 (b = 5), +1.57 to
+  +1.64 (b = 6-11), +1.34 to +1.36 (b = 12-15), +1.25 to +1.30 (b = 16-28), rising to +1.42 by b = 34. Long run
+  +1.42. The steps at b = 6 and b = 12 are where each cohort's childhood starts after a fall in the price path.
+- cohorts 12-30 sit BELOW the long run: childhood equals it (451.02-451.05 against 451.034), adulthood is lower
+  (338.74-338.78 against 338.793). They enter adulthood in years 37-55, the least converged stretch:
+  drug price above clearing in years 30-45 (gap -0.013 to -0.021: the SUD stock undershoots the long run, -32.6
+  against -30.8 per cent, because early initiation fell, so the price should dip below 0.867 there); budget in
+  deficit in years 41-56 (-0.008 to -0.011) with pi_V falling 0.084 -> 0.077 and homelessness rising again from
+  +4.3 (t = 40) to +7.4 per cent (t = 59) against +5.6 in the long run -- the T = 60 end.
+- gaps, all 59 years: drug within 0.005 in 15, median 0.0095, max 0.021 (t = 38); budget within 0.001 in 14,
+  median 0.0045, max 0.016 (t = 4). By decade, drug / budget medians: 1-10 0.006 / 0.006, 11-20 0.006 / 0.005,
+  21-30 0.009 / 0.0004, 31-40 0.019 / 0.0005, 41-50 0.013 / 0.011, 51-59 0.003 / 0.008.
+- loop 0's steps were small: price -0.06 to -0.23 per cent, pi_V about 0.001. The secant is capped at the
+  author's 0.5 per cent a loop, so years 30-45 need 3-5 more loops on their own. Re-seeding them is the option
+  put to the author; nothing changed without an answer.
+
+# 28 September 05:15: T = 60 RELAUNCH (checkpoint seeds), YEAR 26 -- new cohort's CEV +2.78 per cent
+
+cohort_cev.py on code/trtf60/run.log (the relaunch, whose seeds are loop 0's updates in years 1-32):
+- cohort born at the reform: CEV +2.7815 per cent (killed run +2.8876). Utils against no policy: childhood +0.708
+  (+0.750), adulthood +0.213 (+0.207). Code's cross-section CEV t = 1 +2.61, t = 26 +1.34.
+- years 1-26, against the killed run's loop 0: drug within 0.005 in 7 of 26 (5), median |gap| 0.0074 (0.0097), max
+  0.0137 (0.0207); budget within 0.001 in 3 of 26 (1), median |residual| 0.0045 (0.0064). The budget at t = 2
+  (+0.0147) and t = 5 (-0.0137) barely moved: pi_V acts on a stock, and the damped step is small.
+- new users -51 (t = 1), -44 (5), -41 (10), -32 (20) per cent; homelessness +12.7 (t = 2), +13.1 (5), +12.8 (10),
+  +9.2 (20), +7.3 (25) per cent. Early drug price 0.906-0.908 (years 1-5), 0.895 at 10, 0.878 at 20.
+- the waiter for this reading failed silently for five hours: a background command's leading `cd DIR &&` is not
+  honoured, so `grep run.log` ran in the wrong directory. USE ABSOLUTE PATHS in background waiters.
+- Loop end about 07:05 UTC.
+
+# 28 September 00:40: WHY THE TRANSITION COHORT BEATS THE LONG RUN -- the early drug price, through initiation
+
+The author asked why the reform-year cohort's CEV (+2.89) exceeds the long run's (+1.42). Decomposed on the three
+loop-0 runs (scratchpad decomp.py; cohort b = 1 against no policy, utils, discounted to age 1):
+- all of the excess is childhood flow utility at ages 1-10, i.e. in periods 1-10: ages 1-5 +0.57 (long run +0.26),
+  ages 6-10 +0.15 (+0.02). The homelessness externality term is -0.009 in every run. Adulthood is slightly BELOW
+  the long run (+0.207 against +0.233).
+- it scales with the early price: at the long-run price throughout (flat run) the childhood gain is +0.18, BELOW
+  the long run's +0.24, because the transition has more SUD and more homelessness; at 0.909 (bracket) +0.75; at
+  0.922 (Newton) +0.87.
+- the channel is initiation: experimenters at t = 1-5 are 1.62-1.66 at price 0.867, 1.16-1.31 at 0.909,
+  1.04-1.17 at 0.922. A 5 per cent dearer drug cuts initiation by about 30 per cent, so fewer young parents (a
+  child aged a lives with a parent at model age a) spend on the drug, and their children consume more.
+- the price is high because the reform inherits the benchmark's SUD stock (1.76, falling to 1.34 by t = 15), which
+  keeps demand up against an upward-sloping supply curve. As the stock falls the price falls, initiation returns,
+  and each later cohort's gain shrinks toward the long run (+2.89, +2.21, +2.07, +2.02, +2.01, +1.65, +1.58).
+- WHY ABOUT TWICE (01:00, for the author): the long run's +0.26 at ages 1-5 is NET of conditionality's costs. Across
+  the three runs each 0.1 fewer new users a year in years 1-5 adds about 0.06-0.07 utils, so the long run's 30 per
+  cent cut is worth roughly +0.5 gross and exclusions, lost vouchers and homelessness take about half back. The
+  transition's further cut (0.4-0.5 fewer a year) comes from the price, not from more exclusions, so it adds its
+  ~+0.3 with nothing taken back: 0.26 + 0.31 = 0.57. Inferred, not measured (no child utility by parent state).
+  Confound: the bracket run has ~4 per cent more voucher recipients in years 3-8 than the flat run (pi_V 0.0945 at
+  t = 2) while its budget is in deficit, so part of the +0.3 may shrink as the budget clears.
+- CAVEAT: the size rests on initiation's sensitivity to price near its threshold, the same jump that stops TF 70
+  and permban85 clearing (12:55 entry). And the price path is loop 0's.
+
+# 28 September 00:10: CONTAINER RESTART killed the bracket-seeded T = 60 at loop 0, year 32 of the forward pass; relaunched from its checkpoint
+
+Killed about 23:58, six hours in. The code checkpoints both instruments every period (drug_price_path_seed_out.txt,
+pi_v_path_seed_out.txt), so the restart keeps what loop 0 computed:
+- drug price: periods 1-32 as updated in loop 0 (moves of at most 0.23 per cent on the bracket seed; equal to the
+  log's price_of_addictive_good lines to 4e-16), periods 33-59 the bracket seed;
+- pi_V: periods 1-31 from the checkpoint (equal to the TRANSITION PI_V lines), period 32 from its PI_V line
+  (0.083314; THE CHECKPOINT HOLDS PERIOD t's pi_V BEFORE ITS UPDATE, because it is written ahead of the pi_V
+  step in the same period), periods 33-59 the Newton run's post-loop-0 path.
+Lost: the per-period secant memory, so years 1-32 take a damped step again on the next update.
+The killed run's log and start-up files are in code/trtf60/bracketseed_killed_0000/. PARAM_HANDOVER.txt restored
+from the kept copy. Relaunched 00:05 (task bm9nrc673, 4 threads); both seeds read 59 of 59, parent share as before.
+Year 26 of this loop about 04:45 UTC, loop end about 06:40.
+
+# 27 September 23:35: BRACKET-SEEDED T = 60, LOOP 0, YEAR 26 -- new cohort's CEV +2.89 per cent
+
+cohort_cev.py on code/trtf60/run.log (task bhp5c6ar6, loop 0, years 1-26):
+- cohort born at the reform: lifetime 790.31463, CEV +2.8876 per cent. Between the flat run's +1.00 (price too
+  low) and the Newton run's +3.19 (too high), nearer the latter. Against no policy, utils: childhood +0.750
+  (flat +0.137, Newton +0.865, long run +0.236), adulthood +0.207 (flat +0.194, Newton +0.189, long run +0.233).
+  The code's cross-section CEV: t = 1 +2.62, t = 26 +1.31.
+- the childhood gain moves with the early drug price across the three runs: the transition's price sits above the
+  long run's 0.867 for about twenty years (0.909 at t = 1, 0.897 at 10, 0.877 at 20), because the SUD stock the
+  reform inherits keeps demand high, and a dearer drug cuts parents' use further while their children are young.
+- drug market, years 1-26: within 0.005 in 5 of 26, median |gap| 0.0097, max 0.021 (the seeds' 0.04-0.13).
+  Budget within 0.001 in 1 of 26, median |residual| 0.0064: -0.016 at t = 5, +0.005 to +0.007 in years 15-26.
+- path: b -29 to -31 per cent from year 1, SUD -9 (t = 5), -17 (10), -27 (20), -31 (26); h_1 +13 (t = 5),
+  +11 (15), +7 (26), against +5.6 in the long run.
+- NOT CONVERGED: loop 0 of perhaps 4-8. Loop 0 ends about 01:40 UTC; loop 1 then runs on the code's own updates.
+
+# 27 September 20:35: WORKER DONE -- TF 85 is unique from a second start; its final table in code/cf_runs/STATUS_remote.md
+
+- uniq85 (TF 85 from pi_V 0.075, price 0.90) converged at 20:26 onto the same equilibrium: price 0.86726, pi_V
+  0.081394, b -30.2, h_1 +5.6, CEV +1.415 against +1.416 (results/counterfactuals_cf_fix2/uniq85).
+- internalise exited at pass 7 on the damped build, probably on the quiet phase of its period-three cycle: b -2.0,
+  h_1 -2.2, no CEV (the author's instruction for this arm).
+- Still without an equilibrium: TF 70 and permban85 (the demand jump, 12:55 entry; the author's call on (a)/(b)/(c)).
+- No worker runs left. Here: T = 60 bracket-seeded, loop 0 backward pass.
+
+# 27 September 18:00: T = 60 RESTARTED FROM THE BRACKETED PRICE PATH (third seed)
+
+The Newton-seeded run finished loop 0 at 17:55 (log and outputs in code/trtf60/newtonseed_run/); stopped at the
+loop boundary and restarted at 17:57 (task bhp5c6ar6, 4 threads). Seeds:
+- drug price, per period, the secant between the two runs' loop 0 (flat: price 0.8674, gap positive everywhere;
+  Newton: gap negative in every year to 58), code/transition_fix/bracket_seed.py: 0.909 at t = 1, 0.897 at 10,
+  0.877 at 20, 0.870 at 30, 0.8674 from about 45. Bracketed in years 1-58; t = 59 is capped extrapolation.
+  The secant is per period and ignores that a lower early price raises the later SUD stock, so the later
+  years' clearing prices will sit somewhat above it; the 0.5 per cent cap then walks them.
+- pi_V: the Newton run's path after loop 0 (0.0824 at t = 1, 0.0945 at t = 2, 0.0792 at 20, 0.0770 at 59).
+The log confirms both read (59 of 59), the parent share and the target. The new cohort's CEV from this loop
+at year 26, about 22:45 UTC; the two earlier readings, +1.00 (price too low) and +3.19 (too high), bracket it.
+
 # 27 September 15:50: NEW COHORT'S CEV FROM THE PRICE-TOO-HIGH SIDE: +3.19 per cent -- the two runs bracket it
 
 Restarted T = 60, loop 0, year 26 reached 15:46 (cohort_cev.py on code/trtf60/run.log):

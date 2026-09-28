@@ -10,7 +10,7 @@ gfortran was not installed in this container; installed from apt: GNU Fortran (U
 | elast5_85 | DONE 01:57, pass 12, checks pass: b -44.8%, h_1 +2.1%, CEV +2.77% (results/counterfactuals_cf_fix2/elast5_85) |
 | tf70 (damped) | **STOPPED 09:43 at pass 12, NO EQUILIBRIUM**: the two-pass flip returned on the damped build from pass 7 (results/counterfactuals_cf_fix2/tf70_remote_damp_cycle). Needs the coordinator. |
 | omega1 | DONE 09:54, pass 7, checks pass: b -35.7%, h_1 -12.7%, budget not cleared (net revenue -0.140); no CEV, as the author asked (results/counterfactuals_cf_fix2/omega1) |
-| uniq85 | running (launched 09:45, NET_TARGET 6.0373408770945769) |
+| uniq85 | DONE 20:26, pass 7 of the continuation, checks pass: the coordinator's TF 85 equilibrium again (results/counterfactuals_cf_fix2/uniq85) |
 | internalise | DONE 14:54 on cf_fix2_damp, pass 7, checks pass: b -2.0%, h_1 -2.2%. **Caveat: exited on the quiet phase of the same period-three pattern** (results/counterfactuals_cf_fix2/internalise) |
 
 ## Log
@@ -67,3 +67,29 @@ cf_fix2_permban build_bounds.err warnings=7 errors=0 / build_snan.err warnings=7
 - 12:37 uniq85 at pass 5, converging from its different start (pi_V 0.075 -> 0.0825, price walking down at the cap, 0.8955 -> 0.8777, drug gap 5.3e-2).
 - PATTERN, for the coordinator: three of the five arms here cycle (permban85, tf70, internalise), in the same way: b jumps by 1-3 per cent on one pass and returns on the next, the moments change sits at 4e-4 to 1.4e-3 on each jump and its return, and the drug-market gap spikes on the same passes. The damped parent share did not remove it in either TF arm.
 - 14:54 internalise damped rerun exited at pass 7: VOUCHER CHECK PASS, DIST CHECK PASS (7 passes); moments change 2.3e-5, drug gap 2.7e-3. But passes 5-6 spiked exactly as the undamped run did (b 0.08104, moments change 1.4e-3), and pass 7 is the quiet phase; the undamped run spiked again at pass 8. Reported as the exit pass, with that caveat at the top of RESULT.md.
+- ~16:30 SECOND CONTAINER RESTART killed uniq85 at pass 12 (partial pass 13). From its different start (pi_V 0.075, price 0.90) it had reached pi_V 0.08150, price 0.8673, b -30.2 per cent, h_1 +5.5 per cent; moments change 1.8e-5 and drug gap 7.4e-4 inside their rules, budget gap 1.7e-3 still above 1e-3. The coordinator's TF 85: price 0.8674, pi_V 0.08141, b -30.2, h_1 +5.6. Archived in results/counterfactuals_cf_fix2/uniq85_partial; continued from the last printed values:
+  `OMP_NUM_THREADS=2 BUILD=cf_fix2 SEED_FROM=bench PDET=0.85 DIAG_TAG=_uniq85 PV_START=0.081470 DRUG_PRICE_START=0.8673 NET_TARGET=6.0373408770945769 sh cf_runs/cf_arm.sh tf`
+- 20:26 uniq85 finished: TARGET CHECK PASS, DIST CHECK PASS (7 passes). Exit: budget gap -2.6e-4, drug gap 5.3e-4, moments change 1.7e-5. Matches the coordinator's TF 85 to four or five figures.
+
+## FINAL SUMMARY (27 September 20:30)
+
+All on this container's benchmark (welfare 3.8e-7 relative from the coordinator's, pi_V identical).
+Changes against the benchmark (b 0.081255, lambda_d 0.034611, h_1 0.0060789); exit pass only.
+
+| arm | build | outcome | exit pass | b | SUD lambda_d | h_1 | price | pi_V | budget gap | drug gap | welfare | CEV |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| null_remote (no policy) | cf_fix2 | converged | 5 | 0.081236 (-0.0%) | 0.034595 (-0.0%) | 0.0060751 (-0.1%) | 0.99995 | 0.067534 | not cleared; net revenue 6.0373408771 = this container's target | 5.2e-4 | 789.35899 | +0.03% (the null's own distance) |
+| permban85 | cf_fix2_permban, then cf_fix2_damp_permban | **NO EQUILIBRIUM**: cycles on both builds (period three undamped, two damped) | - | - | - | - | - | - | - | - | - | - |
+| elast5_85 | cf_fix2, elasticity 5, supply refitted | converged | 12 | 0.044850 (-44.8%) | 0.018902 (-45.4%) | 0.0062071 (+2.1%) | 0.89450 | 0.081488 | -6.1e-4 | 1.2e-3 | 790.2747 | +2.77% |
+| tf70 (damped) | cf_fix2_damp | **NO EQUILIBRIUM**: two-pass flip returned from pass 7 | - | - | - | - | - | - | - | - | - | - |
+| omega1 | cf_fix2 | converged | 7 | 0.052248 (-35.7%) | 0.022146 (-36.0%) | 0.0053093 (-12.7%) | 0.86303 | 0.067534 | not cleared; net revenue -0.140 | 3.7e-3 | 779.29845 | not reported (author) |
+| uniq85 | cf_fix2 | converged, = coordinator's TF 85 | 7 (of leg 2) | 0.056711 (-30.2%) | 0.023928 (-30.9%) | 0.0064196 (+5.6%) | 0.86726 | 0.081394 | -2.6e-4 | 5.3e-4 | 789.82705 | +1.42% |
+| internalise | cf_fix2 (cycled), then cf_fix2_damp | exited, **probably on the quiet phase of a period-three cycle** | 7 | 0.079606 (-2.0%) | 0.033906 (-2.0%) | 0.0059429 (-2.2%) | 0.99509 | 0.067534 | not cleared; net revenue +0.0024 | 2.7e-3 | 789.39947 | not reported (author) |
+
+Reads for the coordinator:
+- UNIQUENESS: TF 85 from pi_V 0.075 and price 0.90 lands on the coordinator's equilibrium (CEV +1.415 against +1.416 per cent).
+- CYCLING is the main open problem: three arms (permban85, tf70, internalise) show the same pattern -- b jumps 1-3 per cent on one pass and returns, moments change 4e-4 to 1.4e-3, the drug-market gap spikes on the same passes -- and the damped parent share does not remove it (permban85 and tf70 cycle on cf_fix2_damp too; internalise exited on cf_fix2_damp only on a quiet pass). Notes with the per-pass parent share are in results/counterfactuals_cf_fix2/{permban85_cycle,permban85_damp_cycle,tf70_remote_damp_cycle,internalise_cycle}.
+- Two container restarts killed runs mid-way (03:30 and 16:30); each was continued from its last printed pi_V and price, logged in the *_partial directories.
+- elast5_85 and uniq85 cleared against this container's own no-policy target 6.0373408770945769; permban85's attempts used the coordinator's 6.0370824602930142.
+
+Worker done.
