@@ -1458,18 +1458,19 @@ factor. The values are in Section~\ref{sec:fullcal}.}
 \subsection{Demographics and the state and choice sets}
 
 \new{Households enter the economy as adults at model age $j=1$, which is age 26, live
-at most $J$ annual periods, work until $J_R$ and are retired after. Each has a child,
-which lives in the household for the first $J_K$ years of its adult life, until age
-50, and then leaves. A household that dies is replaced by its grown child, which
-enters at $j=1$, so the mass of households is constant. The individual state is
+at most $J$ annual periods, work while $j<J_R$ and are retired from $J_R$. Each has a
+child, which lives in the household for the first $J_K$ years of its adult life, until
+age 50, and then leaves. Each period a cohort of unit mass enters at $j=1$, made up of
+the grown children of the households that died, in proportion to their parents'
+deaths, so the mass of households is constant in a stationary equilibrium. The individual state is
 \begin{equation}\label{eq:fstate}
 s=(a,\,y,\,e,\,d,\,m,\,\eta)\in
 \mathcal A\times\mathcal Y_j\times\{1,2,3\}\times\{0,1,2\}\times\{0,1\}\times\{0,1,2\},
 \end{equation}
 where $a$ denotes assets, $y$ productivity, $e$ employment status, $d$ the SUD, $m$
 SMI and $\eta$ the household's standing with the voucher programme. The SUD takes
-three values because the child's penalty depends on the parent's history and not only
-on its present: $d=0$ for a household that has never carried the disorder, $d=1$ for
+three values because the parent's valuation of its child's prospects depends on its
+history and not only on its present (Section~\ref{sec:fproblem}): $d=0$ for a household that has never carried the disorder, $d=1$ for
 one that carried it and has recovered, and $d=2$ for one that carries it now. The
 voucher state is $\eta=0$ without a voucher, $\eta=1$ holding one, and $\eta=2$
 excluded from the programme after failing Treatment First's condition.}
@@ -1520,8 +1521,12 @@ working life, $z_{j+1}=\rho_z z_j+\upsilon_{j+1}$ with $\upsilon\sim\mathcal N(0
 discretised on a grid whose width grows with the variance of $z$ at each age, and it is
 frozen at its last working value in retirement. Earnings on the job are
 $y\,\varepsilon(j)$, with $y=e^{z}$ normalised so that productivity averages one at
-entry and $\varepsilon(j)$ the deterministic age profile. A household's productivity at
-entry is its inheritance from its parent, set out in Section~\ref{sec:fnewbornsec}.}
+entry and $\varepsilon(j)$ the deterministic age profile. The lowest node of the grid is
+held at a fixed level at every age, with the others rescaled to keep the mean. A
+household's productivity at entry is its inheritance from its parent, set out in
+Section~\ref{sec:fnewbornsec}; its spread combines $\sigma_\upsilon$ with a persistent
+component drawn at entry, and a child entering with the penalty of that section is on a
+separate block of the grid, the base grid scaled down for life.}
 
 \paragraph{\new{Gross income.}} \new{It depends on age and employment,
 \begin{equation}\label{eq:fincome}
@@ -1536,9 +1541,10 @@ S(y) & j\ge J_{R} \quad\text{(retired)} .
 Unemployment insurance (UI) replaces the share $\psi_{ui}$ of earnings on a base capped
 at average earnings $\bar y$, and it is paid for one year only, to the share $p_{ui}$
 of separations that are insured. Social security $S(y)$ follows the statutory formula:
-a primary insurance amount that replaces declining shares of capped earnings between
-two bend points, applied to the household's productivity at its last working age,
-with the Supplemental Security Income (SSI) payment as a floor. The SUD and SMI do not
+a primary insurance amount that replaces declining shares of the household's
+productivity at its last working age, capped, between two bend points, with the
+Supplemental Security Income (SSI) payment as a floor, the whole scaled by average
+earnings. The SUD and SMI do not
 cut earnings on the job; they act on whether there is a job at all, through the
 employment transitions below.}
 
@@ -1547,21 +1553,25 @@ and capital income at a flat rate,
 \begin{equation}\label{eq:ftax}
 y^{n}=\min\big\{Y,\ \tau_{\ell}\,Y^{\varphi}\big\}\;+\;(1-\tau_k)\,r\,a ,
 \end{equation}
-with $\tau_{\ell}$ the level, $\varphi$ the progressivity and $\tau_k$ the capital income
-tax.}
+with $\tau_{\ell}$ the level, $1-\varphi$ the progressivity and $\tau_k$ the capital
+income tax.}
 
 \paragraph{\new{Transfers.}} \new{Food assistance pays the maximum allotment $\underline c$ less
-the share $\varrho$ of income, which is the statutory rule, and the voucher pays the
-rent on the dwelling above a tenant contribution of $\kappa_r$ of income, up to the fair
-market rent,
+the share $\varrho$ of income, the statutory taper without the statute's deductions or
+its schedule by household size, and the voucher pays a holder that is eligible this
+period the rent on the dwelling above a tenant contribution of $\kappa_r$ of income, up
+to the fair market rent,
 \begin{equation}\label{eq:ftrans}
-F=\max\big\{0,\ \underline c-\varrho\,\hat y\big\},
-\qquad
-V\!ch=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{h'\neq h_1\}\,
+\begin{aligned}
+F&=\max\big\{0,\ \underline c-\varrho\,\hat y\big\},\\
+V\!ch&=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{\hat y<\kappa_V y^{\text{med}}\}\,\mathbf{1}\{h'\neq h_1\}\,
 \min\Big\{\max\{0,\ p_r h'-\kappa_r\hat y\},\ \max\{0,\ \mathit{FMR}-\kappa_r\hat y\}\Big\},
+\end{aligned}
 \end{equation}
-where $\hat y=Y+r\max\{a,0\}$ is the income both programmes are means-tested on and
-$\mathit{FMR}$ is the average rent paid by housed renters in the benchmark. A voucher
+where $\hat y=Y+r\max\{a,0\}$ is the income both programmes are means-tested on,
+$\kappa_V$ and median income $y^{\text{med}}$ are the eligibility rule
+of~\eqref{eq:felig}, and $\mathit{FMR}$ is the average rent paid by housed renters in
+the benchmark. A voucher
 holder in a shelter keeps the voucher and is paid nothing until it rents again. Each
 entering household receives a one-time transfer $T_0$ from the government, and the
 government collects the estates of the dead.}
@@ -1570,10 +1580,11 @@ government collects the estates of the dead.}
 
 \new{\begin{equation}\label{eq:fbudget}
 c+p_v v+a' \;=\; y^{n}+a+T_0\mathbf{1}\{j=1\}\;-\;p_r\, h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F,
-\qquad c>0,\ v\ge0,\ a'\ge0 .
+\qquad c\ge F,\ v\ge0,\ a'\ge0 .
 \end{equation}
-The drug price is $p_v$ and the rent per unit of housing $p_r$, held at its benchmark
-value in every simulation. Treatment costs utility and no money.}
+Food assistance is paid in kind, so it cannot fund the drug, the rent or saving. The
+drug price is $p_v$ and the rent per unit of housing $p_r$, held at its benchmark value
+in every simulation. Treatment costs utility and no money.}
 
 \subsection{Housing and the homelessness loop}
 
@@ -1626,7 +1637,7 @@ treatment still carries the disorder.}
 
 \subsection{Serious mental illness}\label{sec:fsmi}
 
-\new{$m$ is an exogenous two state Markov chain representing SMI, whose prevalence is
+\new{$m$ is a two state Markov chain representing SMI, whose prevalence is
 a small share of adults, defined by substantial functional impairment, rather than any
 mental illness, which is roughly a quarter of adults and includes mild anxiety. Onset
 has an age profile $\varsigma_m(j)$, taken from the prevalence of SMI by age in NSDUH
@@ -1697,10 +1708,12 @@ unemployment rates of the education groups the productivity grid spans, and the
 multipliers $\kappa^{eu}$ and $\kappa^{ue}$ making a job likelier to lose and harder to
 find with the SUD and with SMI. $\kappa_{H}$ does both for a household in a shelter.}
 
-\paragraph{\new{The child's productivity penalty.}} \new{A parent who carried the disorder while
-its child lived at home lowers the productivity its child enters the economy with, by
-the proportion $\delta_d$ in~\eqref{eq:fnewborn}, and the penalty stays with the child
-for life. There is no penalty for a parent's homelessness. The penalty is a risk to the
+\paragraph{\new{The child's productivity penalty.}} \new{A child whose parent carries the
+disorder in the period the parent dies enters the economy with its productivity lowered
+by the proportion $\delta_d$ in~\eqref{eq:fnewborn}, and the penalty stays with the
+child for life. There is no penalty for a parent's homelessness. The parent's own
+problem prices the penalty on a different event, set out in
+Section~\ref{sec:fproblem}. The penalty is a risk to the
 parent's own objective only to the extent that $\omega_c$ is positive, so it is the one
 risk here that carries an externality rather than a pure personal cost, which is what
 makes it a candidate for policy in a way that mortality and unemployment risk, both
@@ -1726,18 +1739,21 @@ wrongly flagged with probability $p_{\text{fp}}$ at the same two points. A house
 flagged either way is excluded, $\eta'=2$. An excluded household cannot draw a voucher
 whatever its income, and it returns to the lottery, $\eta'=0$, with probability
 $\psi_x$ each year. The test acts on next period's standing, so the voucher a household
-holds this period pays out this period.}
+holds this period pays out this period. It reaches only households that are income
+eligible, and the government pays $c_{\text{test}}$ for each one it tests.}
 
-\new{This means that in contrast to Section~\ref{sec:mh}, enforcement here is not perfect
-both ways: some are excluded although they meet the condition, and some who fail it
-keep their voucher. None of $p_{\text{det}}$, $p_{\text{fp}}$ and $\psi_x$ binds in
-the benchmark, where no voucher is conditional, so all three are set with the
-experiment in Section~\ref{sec:experiments} rather than in the calibration.}
+\new{This means that in contrast to Section~\ref{sec:mh}, enforcement here need not be
+perfect: with $p_{\text{fp}}>0$ some are excluded although they meet the condition, and
+with $p_{\text{det}}<1$ some who fail it keep their voucher. None of $p_{\text{det}}$,
+$p_{\text{fp}}$, $\psi_x$ and $c_{\text{test}}$ binds in the benchmark, where no voucher
+is conditional, so all four are set with the experiment in
+Section~\ref{sec:experiments} rather than in the calibration.}
 
 \subsection{The shocks, collected}\label{sec:fshocks}
 
-\new{Conditional on the state and the choices, next period's state is drawn from five
-independent transitions:}
+\new{Conditional on the state and the choices, next period's state is drawn in five
+transitions, which are independent given the state except that employment depends on
+next period's SUD, SMI and dwelling through~\eqref{eq:femp}:}
 
 \paragraph{\new{Productivity $y$.}} \new{By the process of Section~\ref{sec:ftaxes} while
 working, and unchanged in retirement.}
@@ -1762,15 +1778,15 @@ State $2$ is reachable only from employment and never from itself, so the insure
 in it for the first year out of work and then move to state $3$, which pays nothing.}
 
 \paragraph{\new{The SUD $d$.}} \new{By~\eqref{eq:fd} if $d\neq2$ and~\eqref{eq:frecover} if
-$d=2$, conditioning on the chosen $v$, $h'$ and $\tau$.}
+$d=2$, conditioning on the chosen $v$, $h'$ and $\tau$ and on $m$.}
 
-\paragraph{\new{Mental illness $m$.}} \new{By~\eqref{eq:fonset}, conditioning on $d$.}
+\paragraph{\new{Mental illness $m$.}} \new{By~\eqref{eq:fonset}, conditioning on $d$ and age.}
 
 \paragraph{\new{The voucher $\eta$.}} \new{By~\eqref{eq:felig} and the rule of
-Section~\ref{sec:fvoucher}, conditioning on next period's eligibility and, under
+Section~\ref{sec:fvoucher}, conditioning on this period's eligibility and, under
 Treatment First, on the chosen $v$ and the state $d$.}
 
-\new{Write $\Gamma\big(s'\mid s,\,h',v,\tau\big)$ for the product of these five, which is
+\new{Write $\Gamma\big(s'\mid s,\,h',v,\tau\big)$ for their joint law, which is
 the object the expectation in~\eqref{eq:fbellman} is taken against.}
 
 \subsection{The household's dynamic problem}\label{sec:fproblem}
@@ -1782,7 +1798,7 @@ V(j,s)=\max_{\{h',\,v,\,\tau,\,a'\}}\ \Bigg\{\
 &U(X_P)+\omega_c(\xi_j-1)\,U(X_K)+\aleph-\tau\bar\tau^{u}\\[2pt]
 &+\ \beta\,\phi(j,h',d,m)\!\int_{\mathcal S}\! V(j{+}1,s')\,
 \Gamma\big(\mathrm{d}s'\mid s,h',v,\tau\big)\\[2pt]
-&-\ \beta\,\chi_j\,\omega_c\,\mathbf{1}\{d\ge1\}\,D(y)\Bigg\},
+&-\ \beta\,\chi_j\,\omega_c\,\max\big\{\mathbf{1}\{d\ge1\},\,\mathbf{1}\{v>0\}\big\}\,D(y)\Bigg\},
 \qquad
 \chi_j=\begin{cases}1-\phi(j,h',d,m) & j<J_K\\ 1 & j=J_K\\ 0 & j>J_K,\end{cases}
 \end{aligned}
@@ -1800,18 +1816,18 @@ $D(y)$ is what the parent's disorder costs the child, in the child's own lifetim
 D(y)=\mathbb{E}\big[V(1,s_{\text{child}})\,\big|\,y,\ \text{not penalised}\big]
 -\mathbb{E}\big[V(1,s_{\text{child}})\,\big|\,y,\ \text{penalised}\big]\;\ge\;0,
 \end{equation}
-where the child enters at $j=1$ with productivity drawn as in~\eqref{eq:fnewborn}, and
-it is charged if the parent carried the disorder at any point while the child lived at
-home, $d\ge1$. The drug reaches the child through the continuation: a household that
-uses raises the chance, $\pi_d$ by~\eqref{eq:fd}, that its own $d$ becomes $2$, and with
-it the chance that the third line bites in every period that follows. The term is a difference and not a level, and the
+where the child enters at $j=1$ without SMI and with productivity drawn as
+in~\eqref{eq:fnewborn}. It is charged in any period in which the parent has ever
+carried the disorder, $d\ge1$, or uses, $v>0$, and a parent that uses is charged the
+whole of $D(y)$ in that period rather than the chance $\pi_d$ that using gives it the
+disorder. The term is a difference and not a level, and the
 distinction is not cosmetic. Written as a level, $\omega_c$ times the child's value, it
 would be worth more to a household the likelier it is to die, because it is the death
 branch that carries it, and a SUD raises the death risk several fold, so a level would
 pay most to exactly the households the paper is about, for reasons that have nothing to
-do with the child. The term is zero for a parent with a clean history and a
-cost otherwise, so what enters the decision is only the loss the parent's own history
-imposes on its child.}
+do with the child. The term is zero for a parent with a clean history that does
+not use and a cost otherwise, so what enters the decision is only the loss the parent's
+own history and use impose on its child.}
 
 \new{One weight $\omega_c$ multiplies both child terms, the flow of childhood and the value
 of adulthood, so calibrating it pins the parent's concern for the whole of the child's
@@ -1828,15 +1844,15 @@ what is left to divide between consumption and the drug is
 \begin{equation}\label{eq:fresource}
 x\;=\;y^{n}+a+T_0\mathbf{1}\{j=1\}\;-\;p_r\,h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F\;-\;a' ,
 \end{equation}
-and a household that uses splits it to maximise the flow of~\eqref{eq:futil}. Once
-the child has left, that is the Cobb-Douglas split,
+and a household that uses splits it by its own Cobb-Douglas shares, at every age,
 \begin{equation}\label{eq:fcvstatic}
 c=\max\Big\{F,\ \frac{(1-\gamma)(1-\theta)}{(1-\gamma)(1-\theta)+\theta}\big(x+p_v b\big)\Big\},
 \qquad
 v=\max\Big\{0,\ \frac{x-c}{p_v}\Big\},
 \end{equation}
-and while the child is at home its term, which rises with consumption and not with the
-drug, tilts the split towards consumption. The corner is abstention: a household buys
+so the child's term, which rises with consumption and not with the drug, does not enter
+the split. Only a household without the disorder chooses whether to use; one that
+carries it takes the split. The corner is abstention: a household buys
 nothing when the Stone-Geary shifter already exceeds what it wants, which is how $b>0$
 deters use. The outer maximum is the
 food stamp payment $F$: where it binds, consumption is held at $F$ and the drug takes
@@ -1858,10 +1874,12 @@ estates of the dead,
 \underbrace{\big(S+UI+F+V\!ch+\text{tests}+T_0\big)}_{\text{outlay}}
 \;=\;\mathcal R .
 \end{equation}
-In the benchmark the tax parameters are calibrated and $\mathcal R$ is whatever surplus
-they produce. In every experiment the taxes are held at their benchmark values and the
-probability of drawing a voucher $\pi_V$ adjusts so that $\mathcal R$ equals its
-benchmark value: a programme that costs more has to ration more, and one that saves
+In the benchmark the tax parameters are set as in Section~\ref{sec:fullcal} and
+$\mathcal R$ is whatever surplus they produce. In every policy experiment the taxes are
+held at their benchmark values and the probability of drawing a voucher $\pi_V$ adjusts
+so that $\mathcal R$ equals its benchmark value; an experiment that changes a preference
+rather than a policy, such as $\omega_c=1$, holds both and lets $\mathcal R$ move. In a
+policy experiment a programme that costs more has to ration more, and one that saves
 money can reach more households. So a policy that houses more households is paid for
 by rationing its own reach rather than by taxes, and no tax distortion enters the
 comparison.}
@@ -1882,32 +1900,34 @@ price itself is not fixed: it adjusts in every experiment to clear the drug mark
 \new{Given the policy functions, the distribution over states evolves by pushing
 households through their choices and then through the shocks,
 \begin{equation}\label{eq:flom}
-\Phi_{j+1}(\mathcal S')\;=\;\phi(j,\cdot)\!\int
+\Phi_{j+1}(\mathcal S')\;=\;\int\phi\big(j,h'_j(s),d,m\big)\,
 \Gamma\big(\mathcal S'\mid s,\,h'_j(s),v_j(s),\tau_j(s)\big)\,
 \mathrm{d}\Phi_j(s)
 \qquad\text{for every measurable } \mathcal S' ,
 \end{equation}
 together with the inflow of entrants
 \begin{equation}\label{eq:flomnew}
-\Phi_{1}(\mathcal S')\;=\;\sum_{j}\int\big[1-\phi(j,\cdot)\big]\,
-\mathcal N\big(\mathcal S'\mid s\big)\,\mathrm{d}\Phi_j(s),
+\Phi_{1}(\mathcal S')\;=\;\frac{\sum_{j}\int\big[1-\phi(j,\cdot)\big]\,
+\mathcal N\big(\mathcal S'\mid s\big)\,\mathrm{d}\Phi_j(s)}
+{\sum_{j}\int\big[1-\phi(j,\cdot)\big]\,\mathrm{d}\Phi_j(s)},
 \end{equation}
 where $\mathcal N$ places the child of a household that dies according
-to~\eqref{eq:fnewborn}, so that the mass of entrants equals the mass of the dead and
-the population is conserved. The child enters when its parent dies rather than when it
-leaves home, which is the standard overlapping-generations simplification; its
-childhood is counted in its parent's household for the years the parent is 26 to 50
-either way.}
+to~\eqref{eq:fnewborn}. The entering cohort has unit mass every period, and its
+composition is that of the parents who died, so in a stationary equilibrium it equals
+the mass of the dead. The child enters when its parent dies rather than when it leaves
+home, which is the standard overlapping-generations simplification. Its childhood is
+counted in its parent's household while the parent lives and the child is at home, so
+the childhood of a child whose parent dies before 50 ends when it enters.}
 
 \new{An entrant has zero assets and the transfer $T_0$, is employed, has never carried the
 disorder, holds no voucher, and carries SMI with the prevalence observed at age 26.
 Its log productivity is drawn around its parent's, with the persistence $\rho$ and an
 innovation that keeps the spread of productivity at entry the same in every
-generation, and it is scaled for life by the penalty if the parent carried the
-disorder while the child lived at home,
+generation, and it is scaled for life by the penalty if the parent carries the
+disorder in the period it dies,
 \begin{equation}\label{eq:fnewborn}
 \log y_{1}^{\text{child}}\;=\;\rho\,\log y^{\text{parent}}+(1-\rho)\,\mu+\epsilon
-+\log(1-\delta_d)\,\mathbf{1}\{\text{parent had } d\ge1 \text{ while the child lived at home}\},
++\log(1-\delta_d)\,\mathbf{1}\{\text{parent has } d=2 \text{ in the period it dies}\},
 \end{equation}
 with $\mu$ the mean of log productivity at entry and $\epsilon$ normal. Because the
 penalised child's own productivity is lower, its own child inherits a lower draw too,
@@ -1931,12 +1951,14 @@ $\{V_t(j,\cdot)\}_{j=1}^{J}$ are the associated values;
 \item $\Phi_{t+1}(j{+}1,\cdot)$ follows from $\Phi_t(j,\cdot)$ by the law of
 motion~\eqref{eq:flom} together with the entrants of~\eqref{eq:flomnew}
 and~\eqref{eq:fnewborn};
-\item the government budget~\eqref{eq:fgovt} holds at $\pi_{Vt}$, with its benchmark
-net revenue;
+\item in a policy experiment, the government budget~\eqref{eq:fgovt} holds at
+$\pi_{Vt}$, with its benchmark net revenue;
 \item the drug market clears at $p_{vt}$, so~\eqref{eq:fdrug} holds with aggregate drug
 demand $S_{vt}=\int v_t(s)\,\mathrm{d}\Phi_t$;
-\item $\bar y_t$, median income $y^{\text{med}}_t$ and the homelessness rate $H_t$ are
-the aggregates implied by $\Phi_t$.
+\item the homelessness rate $H_t$ is the aggregate implied by $\Phi_t$, and so are
+$\bar y_t$ and median income $y^{\text{med}}_t$ in the benchmark; in every experiment
+and along the transition those two are held at their benchmark values, as are $T_0$
+and $\mathit{FMR}$.
 \end{enumerate}
 A stationary equilibrium is the special case in which all of these are constant and
 $\Phi_{t+1}=\Phi_t$, which is what the calibration and the long-run policy comparisons
@@ -2022,8 +2044,8 @@ Assistance is means-tested on income including the return on savings, and it is
 withdrawn at the rate $\kappa_r$ for the voucher and $\varrho$ for food stamps, so a
 recipient who saves more loses eligibility or part of the transfer. Labour supply is
 inelastic, so no tax changes hours. What a programme costs the budget is met by
-rationing rather than by a tax: every experiment holds the tax schedule at its
-benchmark and lets the chance of drawing a voucher, $\pi_V$, adjust until the
+rationing rather than by a tax: every policy experiment holds the tax schedule at
+its benchmark and lets the chance of drawing a voucher, $\pi_V$, adjust until the
 government's surplus is the benchmark's, so a programme that costs more reaches fewer
 of the households eligible for it.}
 
