@@ -3,9 +3,13 @@ import re, zlib, html, sys, subprocess
 P = sys.argv[1]
 d = open(P, "rb").read()
 objs = {}
+# IN FILE ORDER, LATEST DEFINITION WINS. A PDF saved with comments is written as
+# incremental updates: a page and its /Annots are redefined later in the file,
+# often inside a compressed object stream. Letting an older plain copy of an
+# object win over a newer one in a stream hid 11 of 27 highlights on 28 Sep.
 for m in re.finditer(rb'(\d+)\s+0\s+obj(.*?)endobj', d, re.S):
-    objs[int(m.group(1))] = m.group(2)
-for n, body in list(objs.items()):
+    n, body = int(m.group(1)), m.group(2)
+    objs[n] = body
     if re.search(rb'/Type\s*/ObjStm', body):
         hdr = body[:body.find(b'stream')]
         N = int(re.search(rb'/N\s+(\d+)', hdr).group(1)); F = int(re.search(rb'/First\s+(\d+)', hdr).group(1))
@@ -16,7 +20,7 @@ for n, body in list(objs.items()):
         pairs = list(map(int, raw[:F].split())); offs = [(pairs[i], pairs[i+1]) for i in range(0, 2*N, 2)]
         for k, (on, off) in enumerate(offs):
             end = offs[k+1][1] if k+1 < len(offs) else len(raw) - F
-            objs.setdefault(on, raw[F+off:F+end])
+            objs[on] = raw[F+off:F+end]
 def lit(s):
     if s.startswith(b'<'): h = bytes.fromhex(re.sub(rb'\s', b'', s[1:-1]).decode())
     else:
