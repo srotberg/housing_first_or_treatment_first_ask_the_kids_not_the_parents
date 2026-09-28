@@ -199,23 +199,23 @@ option from an optimiser and gives nothing back.
 
 
 The case for Treatment First therefore has to rest on something outside the
-household's own objective, and this paper focuses on two externalities, which randomised
-trials cannot resolve: the one Housing First leaves in place and the one Treatment
-First creates. The first is the harm drug use does to the user's children, and it runs
-through two channels. One is the household's budget: children live with their parents
+household's own objective, and this paper focuses on \new{four} externalities, which randomised
+trials cannot resolve: \new{two that Housing First leaves in place and two that Treatment
+First creates. The two Housing First leaves in place are harms drug use does to the
+user's children. The first runs through the household's budget:} children live with their parents
 and depend on them for consumption, so drug use takes resources away from the
 children's consumption and housing, and a SUD that costs the parent their job tightens
-the budget further. The other is earnings in adulthood: children who grew up with a
+the budget further. \new{The second runs through} earnings in adulthood: children who grew up with a
 parent with a SUD earn less as adults, consistent with the literature (Nilsson,
 2017).
 
-The externality Treatment First creates is homelessness. By denying housing
-assistance to drug users, Treatment First exposes more of them to homelessness. That
-raises homelessness across the city, which lowers the welfare of every household alive
-at the time, since it is less pleasant to live in a place with more homelessness,
-and it puts drug users' children on the street with them.
+\new{The two Treatment First creates both run through homelessness.} By denying housing
+assistance to drug users, Treatment First exposes more of them to homelessness. \new{The
+first falls on everyone: more homelessness across the city} lowers the welfare of every household alive
+at the time, since it is less pleasant to live in a place with more homelessness. \new{The
+second falls on drug users' children, who end up on the street with their parents.}
 
-The model captures these four channels. The \emph{budget externality}: children
+The model captures these four \new{externalities}. The \emph{budget externality}: children
 live in their parents' household and share its consumption and its dwelling, but not
 the drug, so every unit a parent spends on drugs, and every job a SUD costs it, is
 consumption and housing the child goes without. The \emph{earnings externality}: a
@@ -232,23 +232,24 @@ the street as well. The first two are what Housing First leaves in place and the
 two are what Treatment First creates. A parent counts the child's side of the budget,
 earnings and childhood homelessness externalities through its altruism.
 
-% 1.51 and 4.92 are the UNTARGETED delta_d and delta_h odds ratios of the no-policy
-% benchmark on the corrected build (results/counterfactuals_cf_fix2/null_share/cf.log.gz),
-% typed until a generated name exists for them.
-Each externality is disciplined by data. The budget externality turns on how much
+\new{The budget, earnings and childhood homelessness externalities turn on} how much
 a parent weighs its child, and that altruism weight is calibrated to how much less
 parents use drugs than adults without children, so the part of the child's loss a
-parent does internalise is pinned down by observed behaviour. The earnings externality
+parent does internalise is pinned down by observed behaviour. \new{How much a household
+spends on the drug in the first place is set to the share of their income that drug
+users spend on drugs, $@@q_theta@@$ percent, from retail drug spending (Midgette et
+al., 2019) and the incomes of adults who use in the 2024 National Survey on Drug Use
+and Health (NSDUH).} The earnings externality
 is set from a direct estimate: children exposed in utero to a Swedish alcohol
 experiment earn about $@@q_delta_d_pc@@$ percent less as adults (Nilsson, 2017). The
 intergenerational transmission of SUD is then left untargeted: in the model a child of
-a parent with a SUD is 1.51 times as likely to acquire one itself, against $1.5$ to
+a parent with a SUD is $@@x_odds_sud@@$ times as likely to acquire one itself, against $1.5$ to
 $2.5$ in the data (Mellentin et al., 2016; Yoon et al., 2013). The childhood
 homelessness externality carries no earnings penalty at all. The link between a
 parent's homelessness and the child's comes from intergenerational transmission alone:
 a child's productivity is correlated with its parent's, and homeless parents are poorer
 and likelier to have a SUD. That is enough, if anything more than enough: a child of a
-homeless parent is 4.92 times as likely to be homeless itself, against $1.8$ to $2.4$
+homeless parent is $@@x_odds_hl@@$ times as likely to be homeless itself, against $1.8$ to $2.4$
 in the data (Bassuk et al., 1997). The aggregate homelessness externality is priced as
 a disamenity in flow utility, in proportion to the homelessness rate, set from the
 contingent valuation in Loubi\`ere et al.\ (2020), where the Europeans willing to pay
@@ -256,26 +257,21 @@ anything to end homelessness would pay $@@f_kappa_x_pc@@$ percent of average ann
 year.
 
 The impact does not end with the child: through the child it ripples out to the whole
-lineage. The parent counts a fraction of what happens to its own
-child, that child counts the same fraction again of what happens to the grandchild,
-and so on down, so each further generation enters the parent's problem at a smaller
-weight than the last: what one decision costs is a line of
-descendants, and the share left external rises at every link.
+lineage.
 
 Where the model is superior to a randomised trial is in what it can follow. I
 can trace the impact of a policy well beyond the households in the study group, to
 others in the economy and to their children, and well beyond the length of a trial.
-And I can price what the policy does to the government's budget and to the economy as
-a whole, which a trial holds fixed by construction.
 
 
 
-One mechanism of the model decides who the two policies treat differently, and it is
-central enough to state here. Two facts about drug use have to be reproduced
+One mechanism of the model decides who the two policies\new{, Housing First and
+Treatment First,} treat differently. Two facts about drug use have to be reproduced
 together. It is concentrated at the bottom of the income distribution, and it is not
 universal: most households do not use at all, so there is a margin at zero, with a
-participation rate of $@@q_b@@$ percent among adults aged $26$ and over in the 2024 National Survey on Drug Use and Health (NSDUH), which is the share
-who use at all, with or without a SUD. To
+participation rate of $@@q_b@@$ percent among adults aged $26$ and over in the 2024
+\new{NSDUH, which counts every adult with a drug use disorder, including a mild one;
+the model treats a mild disorder as use and a moderate or severe one as a SUD}. To
 generate both I model drugs as a luxury good bought at a price, which puts most
 households at a corner where they optimally consume none. Left to its own devices,
 however, that same assumption concentrates use at the \emph{top}, since the share of
@@ -288,18 +284,23 @@ equilibrium use concentrates at the bottom.
 
 I proceed with two models, a stylized model for the
 intuition and a full quantitative model for the policy analysis. The stylized
-model is a life-cycle model with two periods of life and rational forward-looking
+model is a life-cycle model with \new{three periods of life (childhood, youth and old
+age)} and rational forward-looking
 households, calibrated to United States data. It shows the income-gradient reversal mechanism at its
-clearest, and how the externality that overturns the dominance result
-works. A household draws a productivity and an unemployment shock, and chooses how
-much of the drug to buy; the last choice sets the hazard of acquiring a disorder,
-and the disorder raises both the chance of dying (between the first period of life and the second) and the chance of losing employment.
+clearest, \new{how one can find the optimal degree of homelessness, drug use and SUD,
+and why the externalities Treatment First removes outweigh the one it creates. It
+also separates the value of life from moral hazard: at the same rationing, \blank\
+percent of households use drugs under Housing First and \blank\ percent under Treatment
+First. Children live with the young and share their resources, but the parent does
+not count their utility at all (in the full model I calibrate how much it does).} A
+\new{young} household draws a productivity and an unemployment shock, and chooses how
+much of the drug to buy; \new{drug users risk acquiring a SUD, and a SUD} raises
+both the chance of dying \new{before old age} and the chance of losing employment.
 It chooses where to live, on the street or in one of two rentals, and it may hold
-a means-tested voucher. When it dies, it leaves one child,
-whose own productivity draw is penalised if the parent carried the disorder or was
-unhoused, and the parent does not value that child's utility at all
-(in the full model they do to some extent), which is what
-makes the penalty an externality. There is no government budget in it, so it does
+a means-tested voucher. \new{At the end of youth the child becomes an adult, and its
+productivity draw is penalised if the parent acquired a SUD while the child lived
+with it. Because the parent does not count the child's utility, that penalty is an
+externality.} There is no government budget in it, so it does
 not consider the source from which either programme is paid for; that is
 deliberate, so the mechanisms can be seen clearly, and the quantitative model
 takes up the detail.
@@ -307,72 +308,90 @@ takes up the detail.
 This model shows starkly how the income gradient
 reverses. It separates the two penalties a disorder carries (death and unemployment). Scaled from
 nothing to full strength, the death penalty takes the average user from
-@@r_off@@ times average income to @@r_mort@@ times it; the unemployment penalty
-leaves it at @@r_unemp@@. Flow utility is logarithmic, so losing a job costs a
-household about the same number of utils whatever it earns, and what that penalty
-has to overturn is not flat at all: a fixed quantity of the drug costs a rich
-household little in utility and a poor household a great deal in utility, so the
-utility price of using falls as income rises, and a cost that does not vary
-strongly enough with income cannot reverse a price that does. In contrast,
+\new{\blank} times average income to \new{\blank} times it; the unemployment penalty
+leaves it at \new{\blank}. \new{The reason is how each penalty varies with income. A
+fixed quantity of the drug costs a rich household little in utility and a poor
+household a great deal, so the utility price of using falls as income rises. Utility
+has constant relative risk aversion, so a job loss costs a poor household at least as
+much in utility as a rich one, and it cannot reverse that price.} In contrast,
 mortality destroys the whole continuation value, including
 the value of being alive at all, which is positive
 even for households with low consumption, and that is worth more to a richer
 household, so when the death
 penalty is large enough it is the poor who use and the rich who do not.
 
-The experiment is the reform itself. The programme moves from
-Housing First at its benchmark rationing to universal coverage, under Housing First
-and then under Treatment First, and each newborn cohort, along
-with the generation already alive when it lands, is priced against the world
-before it in percent of remaining lifetime consumption.
-This experiment first highlights the moral hazard and
-value-of-life forces housing assistance sets against each other, because they differ in what happens to a household that uses.
-Treatment First withdraws the voucher from a household that violates the sobriety
-condition, so only the value of life is at stake; Housing First does not, so moral
-hazard operates as well, and it is the difference between Housing First and Treatment First that identifies the size of each channel. It shows that both are first order and work against each other,
-which is why whether housing the homeless raises or lowers drug use is a
-quantitative question rather than one that can be settled by pure theory.
+The experiment is the reform itself. \new{The programme stays at its benchmark
+rationing and only the rule changes, from Housing First to Treatment First.} Each
+newborn cohort, along with the generation already alive when it lands, is priced
+against the world before it in percent of remaining lifetime consumption. \new{Under
+rationing Treatment First works by deterrence alone: no household holding a voucher
+chooses to use.}
+
+\new{To see what the externality costs, I first set the weight a parent puts on its
+child to one, so that nothing is left external. This gives the optimal degree of each:
+in that economy nobody uses drugs, so nobody acquires a SUD, and homelessness is
+\blank\ percent. Changing Housing First to Treatment First there changes welfare by
+\blank\ percent.}
 
 Setting the externalities aside, the stylized model shows that Housing First
 is weakly better for every household: when households are forward
 looking and rational, conditionality removes an option and gives
-nothing back, so in the model @@worse@@ percent are strictly worse off under Treatment First
-and none is better off. Switching on the externality a parent imposes on its child, both from homelessness and from a SUD, turns the ranking, but only in the long run, from the @@tr_flip@@
-cohort of newborns onward, since in this model a household deterred by Treatment First from using never acquires
-the disorder and its children inherit better draws. Conditionality, however, takes
-immediately in this model and gives back only later (though the quantitative model carries channels through which it can also give something back at once, explained shortly below): a household
-already carrying the disorder when the reform lands can do nothing about its
-condition here, and loses its voucher anyway. So Housing First
-is still ahead in the short run, but by very little, costing the generation caught
-that way @@tr_caught@@ percent of remaining lifetime consumption and the first cohort of
-newborns only @@tr_c1_gap@@ percent.
+nothing back, so in the model \new{\blank} percent are strictly worse off under Treatment First
+and none is better off. \new{Counting the penalty a parent's SUD imposes on its child}
+turns the ranking\new{, from the first cohort of newborns on: Treatment First is ahead
+by \blank\ percent of lifetime consumption for that cohort and by \blank\ percent in
+the long run}, since in this model a household deterred by Treatment First from using
+never acquires the disorder and its children inherit better draws.
 
 The full quantitative model that follows quantifies the mechanisms
 and the welfare implications of Housing First against Treatment First, and settles
-whether that ranking survives in an environment that fits the data. It is a general equilibrium
-life-cycle economy, in Section~\ref{sec:full}, with six state variables and @@n_all@@ parameters. It carries endogenous homelessness, drug use, the SUD, recovery, serious
+whether that ranking survives in an environment that fits the data. It is a
+\new{general-equilibrium} life-cycle economy, in Section~\ref{sec:full}. It carries
+endogenous homelessness, drug use, the SUD, recovery, serious
 mental illness (SMI), employment and mortality, together with a drug market that
-clears, so drug prices respond to policy, and a government budget that balances,
-so the tax rate responds to what either programme costs. It
+clears, so drug prices respond to policy, and a government budget that balances \new{through the probability of receiving a voucher, so the programme's reach responds to
+what it costs; there are no distortionary taxes}. It
 also considers the costs of enforcing conditionality, and imperfect detection.
-Conditionality there is enforced by a test that is wrong in both directions, so some
-households lose the voucher though they meet the condition and some keep it though
-they do not, and the government pays to run the test.
+\new{Conditionality there is enforced by a drug test that misses some users; a
+household that is caught loses its voucher and is barred from the programme for a
+time, and the government pays for every test.}
 It is calibrated to United States data as well, and both
 calibrations are set out parameter by parameter, in Section~\ref{sec:cal} for the
 stylized model and Section~\ref{sec:fullcal} for the quantitative one.
+
+\new{The experiment is the same rationed reform. In the long run Treatment First cuts
+drug use by $@@x_tf_b_pc@@$ percent and the SUD by $@@x_tf_sud_pc@@$ percent, and
+raises homelessness by $@@x_tf_h_pc@@$ percent. The externalities it removes outweigh
+the ones it creates: a newborn gains $@@x_tf_cev@@$ percent of lifetime consumption,
+$@@x_tf_child_share_pc@@$ percent of it during childhood, from its parents' greater
+resources, and the rest as an adult, through higher earnings. The size of what is at
+stake shows at the other end: if parents weighed their children fully, drug use would
+fall by $@@x_om_b_pc@@$ percent and homelessness by $@@x_om_h_pc@@$ percent, even under
+Housing First.}
+
+\new{The transition to the reform is still being solved, and its first iterations point
+the same way, more strongly. The drug users the reform inherits keep the demand for
+drugs, and so their price, high for years, and the high price deters young adults
+from starting: new drug use falls by $@@x_tr_new_t1_pc@@$ percent in the first year,
+against $@@x_tf_new_pc@@$ percent in the long run. Homelessness rises by up to
+$@@x_tr_h_peak_pc@@$ percent in the first decade, against $@@x_tf_h_pc@@$ percent in
+the long run, because the first to lose their vouchers are the drug users the reform
+inherits. Children born at the reform gain about $@@x_tr_cev_b1@@$ percent of lifetime
+consumption, against $@@x_tf_cev@@$ percent in the long run, because their parents are
+the young adults the high price keeps from starting.}
 
 The model is also validated on a long list of moments that no parameter is fitted to,
 set out in Section~\ref{sec:fvalid}. Among the larger ones: the homelessness rate by
 age band and the age composition of the homeless, both from the HUD PiT
 count; the share who return to homelessness within two years; drug poisonings as a
 share of deaths between $25$ and $44$; the earnings held by the bottom and top tenths
-and the share of net worth held by the bottom half; the standardised mortality ratio of
-the homeless by age; the share of renters spending more than thirty and more than fifty
-percent of income on housing; the income and labour force participation of households
-with a disorder relative to those without; the disorder share of the homeless; the
-price elasticity of drug participation; and the odds that a homeless adult had a
-homeless caretaker. Each is a place the model can be caught.
+and \new{the income and net worth held at the very bottom of the distribution}; the share of renters spending more than thirty and more than fifty
+percent of income on housing; \new{the labour force participation of households with
+and without a disorder, and the income of those with one; how often the homeless enter
+treatment, and what they bring to it;} the
+price elasticity of drug participation; and the odds that \new{the child of a parent
+with a SUD acquires one, and that} a homeless adult had a homeless caretaker. Each is
+a place the model can be caught.
 
 
 %======================================================================
