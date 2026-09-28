@@ -233,6 +233,141 @@ def stage4(par, hf, kx):
     return d
 
 
+# ---------------------------------------------------------------------------
+# THE CALIBRATION: Tables 1 and 2 and the names the calibration prose quotes
+# ---------------------------------------------------------------------------
+TAB = os.path.join(HERE, '..', '..', 'writing', 'tables')
+
+
+def _smr(par):
+    """kap is the proportional fall in thirty-year survival; the rate ratio it
+    implies is what the literature and the quantitative model quote."""
+    return 1.0 + math.log(1.0 - par.kap) / math.log(par.phi0)
+
+
+def calibration_names(p1, r1, p2, r2):
+    T = C.TARGET
+    th_t = stages.DSHARE_TARGET
+    d = dict(s_beta=f'{p1.beta:.3f}', s_beta_ann=f'{p1.beta ** (1 / p1.years):.3f}',
+             s_sigma=f'{p1.sigma:.0f}', s_phi0=f'{p1.phi0:.2f}', s_yfloor=f'{p1.y_floor:.3f}',
+             s_h2=f'{p1.h2:.2f}', s_h3=f'{p1.h3:.2f}', s_kr_pc=f'{100 * p1.kappa_r:.0f}',
+             s_kv=f'{p1.kV:.2f}', s_pv=f'{p1.pV:.3f}', s_u1=f'{p1.u1:.3f}',
+             s_pid=f'{p1.pi_base:.3f}', s_rho=f'{p2.rho:.2f}',
+             s_deltad_pc=f'{100 * (1 - math.exp(-p2.delta_d)):.0f}', s_deltad=f'{p2.delta_d:.3f}',
+             s_t_sud=f'{100 * T["sud"]:.2f}', s_t_part=f'{100 * T["part"]:.2f}',
+             s_t_bot50=f'{100 * T["bot50"]:.1f}', s_t_vsl=f'{T["vsl"]:.0f}',
+             s_t_hspend=f'{100 * T["hspend"]:.1f}', s_t_dshare=f'{100 * th_t:.1f}',
+             s_t_ruse=f'{T["r_use"]:.2f}', s_t_homeless=f'{100 * T["homeless"]:.2f}',
+             s_t_unemp=f'{100 * 0.0485:.2f}', s_t_sudhl=f'{100 * T["sud_of_homeless2"]:.1f}',
+             s_t_gap=f'{100 * 0.1834:.1f}', s_sigy=f'{C.SIG:.3f}')
+    for tag, par, raw in (('s1', p1, r1), ('s2', p2, r2)):
+        m = raw['_moments']
+        d.update({f'{tag}_v_aleph': f'{par.aleph:.2f}', f'{tag}_v_gam': f'{par.gam:.3f}',
+                  f'{tag}_v_b': f'{par.b:.4f}', f'{tag}_v_th': f'{par.th:.3f}',
+                  f'{tag}_v_smr': f'{_smr(par):.2f}', f'{tag}_v_h1': f'{par.h1:.4f}',
+                  f'{tag}_v_u0': f'{par.u0:.4f}', f'{tag}_iter': f'{raw["_iteration"]}',
+                  f'{tag}_worst': f'{raw["_worst_gap_pc"]:.1f}'})
+        for k in ('vsl', 'hspend', 'part', 'dshare', 'r_use', 'homeless', 'unemployment',
+                  'sud_of_homeless2', 'child_gap', 'child_sud_or', 'child_hl_or', 'sud'):
+            if m.get(k) is not None:
+                d[f'{tag}_m_{k}'] = (f'{m[k]:.1f}' if k == 'vsl' else f'{m[k]:.2f}'
+                                     if k in ('r_use', 'child_sud_or', 'child_hl_or')
+                                     else f'{100 * m[k]:.2f}')
+    d['s2_v_omega'] = f'{p2.omega:.4f}'
+    return d
+
+
+def red(x):
+    return r'\textcolor{red}{%s}' % x
+
+
+def write_tables(p1, r1, p2, r2):
+    """Tables 1 and 2, every cell red: both were rebuilt for the staged model."""
+    ext = [('Preferences and demographics', [
+        (r'$\beta$', 'Discount factor over a thirty-year period',
+         f'${p1.beta ** (1 / p1.years):.3f}$ annually, compounded', f'${p1.beta:.3f}$'),
+        (r'$R$', 'Gross return on saving', 'No interest', f'${p1.R:.2f}$'),
+        (r'$\sigma$', 'Risk aversion', 'As in the quantitative model', f'${p1.sigma:.0f}$'),
+        (r'$\bar\phi$', 'Survival over a period, no SUD', 'SSA period life table, ages 26--55',
+         f'${p1.phi0:.2f}$')]),
+        ('The SUD', [
+        (r'$\pi_d$', 'Chance that use starts a SUD', 'NSDUH 2024: SUD rate over participation',
+         f'${p1.pi_base:.3f}$')]),
+        ('Income', [
+        (r'$\psi_{ui}$', 'Income support replacement rate', 'DOL, statutory UI rates', f'${p1.repl:.2f}$'),
+        (r'$\bar y$', 'Cap on the earnings base', 'DOL, state benefit maxima', f'${p1.ycap:.2f}$'),
+        (r'$\underline y$', 'Floor under income', 'Set', f'${p1.y_floor:.3f}$')]),
+        ('Housing, drugs and the voucher', [
+        (r'$p_r$', 'Rent per unit of housing services', 'Normalisation', f'${p1.pr:.2f}$'),
+        (r'$p_v$', 'Price of a unit of drugs', 'Normalisation', f'${p1.p_v:.2f}$'),
+        (r'$h_2$', 'Small rental unit', 'Set', f'${p1.h2:.2f}$'),
+        (r'$h_3$', 'Standard rental unit', 'Set', f'${p1.h3:.2f}$'),
+        (r'$\kappa_r$', "Tenant's share of the rent", 'HUD voucher rules', f'${p1.kappa_r:.2f}$'),
+        (r'$\kappa_V$', 'Voucher means test', 'HUD income limits', f'${p1.kV:.2f}$'),
+        (r'$\pi_V$', 'Chance of drawing a voucher', 'HUD 2023, recipients over eligible', f'${p1.pV:.3f}$')]),
+        ('The child, stage 2 onward', [
+        (r'$\xi$', 'Equivalence scale while the child is at home', 'Square-root scale', f'${p2.xi:.2f}$'),
+        (r'$\rho$', 'Persistence of productivity across generations', 'As in the quantitative model',
+         f'${p2.rho:.2f}$'),
+        (r'$\delta_d$', "Child's income, parent's SUD, in logs",
+         f'Nilsson (2017), a {100 * (1 - math.exp(-p2.delta_d)):.0f} percent cut', f'${p2.delta_d:.3f}$')])]
+    L = [r'\footnotesize', r'\begin{tabular}{@{}lL{6.4cm}L{5.4cm}r@{}}', r'\toprule',
+         r'Parameter & Description & Source or rationale & Value \\', r'\midrule']
+    for i, (hd, rows) in enumerate(ext):
+        if i:
+            L.append(r'\addlinespace')
+        L.append(r'\multicolumn{4}{@{}l}{\emph{%s}} \\' % red(hd))
+        for r in rows:
+            L.append(' & '.join(red(c) for c in r) + r' \\')
+    L += [r'\bottomrule', r'\end{tabular}']
+    open(os.path.join(TAB, 'tab_external.tex'), 'w').write(
+        '% Generated by code/stylized/stage_results.py from the stage calibrations.\n'
+        + '\n'.join(L) + '\n')
+
+    T = C.TARGET
+    m1, m2 = r1['_moments'], r2['_moments']
+
+    def mm(m, k, fmt):
+        return fmt(m[k]) if m.get(k) is not None else '--'
+    pct = lambda x: f'{100 * x:.1f}\\%'
+    rows = [
+        (r'$\sigma_y$', "Bottom half's share of earnings, SCF 2022", pct(T['bot50']),
+         pct(T['bot50']), f'{C.SIG:.3f}', pct(T['bot50']), f'{C.SIG:.3f}'),
+        (r'$\gamma$', 'Housing over non-drug expenditure, CEX 2024', pct(T['hspend']),
+         mm(m1, 'hspend', pct), f'{p1.gam:.3f}', mm(m2, 'hspend', pct), f'{p2.gam:.3f}'),
+        (r'$\aleph$', 'Value of a statistical life over income', f'{T["vsl"]:.0f}',
+         mm(m1, 'vsl', lambda x: f'{x:.1f}'), f'{p1.aleph:.2f}', mm(m2, 'vsl', lambda x: f'{x:.1f}'),
+         f'{p2.aleph:.2f}'),
+        (r'$b$', 'Drug participation, NSDUH 2024', pct(T['part']),
+         mm(m1, 'part', pct), f'{p1.b:.4f}', mm(m2, 'part', pct), f'{p2.b:.4f}'),
+        (r'$\theta$', 'Drug spending over users\' income', pct(stages.DSHARE_TARGET),
+         mm(m1, 'dshare', pct), f'{p1.th:.3f}', mm(m2, 'dshare', pct), f'{p2.th:.3f}'),
+        (r'$\kappa_{\phi d}$', "Users' income over the average, NSDUH 2024", f'{T["r_use"]:.2f}',
+         mm(m1, 'r_use', lambda x: f'{x:.2f}'), f'{_smr(p1):.2f}', mm(m2, 'r_use', lambda x: f'{x:.2f}'),
+         f'{_smr(p2):.2f}'),
+        (r'$h_1$', 'Homelessness rate', pct(T['homeless']),
+         mm(m1, 'homeless', pct), f'{p1.h1:.4f}', mm(m2, 'homeless', pct), f'{p2.h1:.4f}'),
+        (r'$u_0$', 'Unemployment rate, BLS CPS 2014--24', pct(0.0485),
+         mm(m1, 'unemployment', pct), f'{p1.u0:.4f}', mm(m2, 'unemployment', pct), f'{p2.u0:.4f}'),
+        (r'$u_1^{\dagger}$', 'SUD share of the homeless, Gutwinski et al.\\ (2021)',
+         pct(T['sud_of_homeless2']), mm(m1, 'sud_of_homeless2', pct), f'{p1.u1:.3f}',
+         mm(m2, 'sud_of_homeless2', pct), f'{p2.u1:.3f}'),
+        (r'$\omega_c$', 'Use of non-parents over parents, less one, NSDUH 2024', pct(0.1834),
+         '--', '--', mm(m2, 'child_gap', pct), f'{p2.omega:.4f}'),
+    ]
+    L = [r'\footnotesize\setlength{\tabcolsep}{4pt}',
+         r'\begin{tabular}{@{}lL{5.6cm}rrrrr@{}}', r'\toprule',
+         r' & & & \multicolumn{2}{c}{Stage 1} & \multicolumn{2}{c}{Stage 2} \\',
+         r'\cmidrule(lr){4-5}\cmidrule(l){6-7}',
+         r'Parameter & Target moment & Data & Model & Value & Model & Value \\', r'\midrule']
+    for r in rows:
+        L.append(' & '.join(red(c) for c in r) + r' \\')
+    L += [r'\bottomrule', r'\end{tabular}']
+    open(os.path.join(TAB, 'tab_internal.tex'), 'w').write(
+        '% Generated by code/stylized/stage_results.py from the stage calibrations.\n'
+        + '\n'.join(L) + '\n')
+
+
 def merge(d):
     old = json.load(open(OUT)) if os.path.exists(OUT) else {}
     old.update(d)
@@ -240,6 +375,15 @@ def merge(d):
 
 
 if __name__ == '__main__':
+    if sys.argv[1] == 'tables':
+        p1, r1 = load(1)
+        p2, r2 = load(2)
+        write_tables(p1, r1, p2, r2)
+        d = calibration_names(p1, r1, p2, r2)
+        merge(d)
+        for k in sorted(d):
+            print(f'   {k:22s} {d[k]}')
+        raise SystemExit
     stage = int(sys.argv[1])
     par, raw = load(stage)
     print(f'stage {stage}: calibrated_stage{stage}.json, iteration {raw["_iteration"]}, '

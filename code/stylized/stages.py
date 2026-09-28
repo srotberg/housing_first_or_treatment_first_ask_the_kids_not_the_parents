@@ -161,8 +161,15 @@ def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None):
     else:
         prev = json.load(open(os.path.join(HERE, 'calibrated_stage1.json')))
         v = {k: x for k, x in prev.items() if not k.startswith('_')}
-        # omega_c starts where the 13 September fit left it; delta_d is set
-        v.update(omega=0.00055, delta_d=DELTA_D_NILSSON)
+        # delta_d is set.  omega_c STARTS AT 0.01 AND MAY STEP 1 PER CENT A PASS.
+        # Measured 28 September: at stage 1's vector with the child added and
+        # omega_c at the 13 September 0.00055, the child use gap is 0.25 per cent
+        # against 18.3, and the gap is close to linear in omega_c there, so the
+        # target sits near 0.04.  At sr_calibrate's cap of 0.05 per cent a pass
+        # that is some 8,000 passes away; the sign-flip ratchet still damps it
+        # if it overshoots.
+        v.update(omega=0.01, delta_d=DELTA_D_NILSSON)
+        S.PER_PARAM_STEP['omega'] = 0.01
     v.update(STAGE_SET[stage])
     par = with_(P(), **v)
     print(f'STAGE {stage}: {len(S.SPEC)} parameters live: '
