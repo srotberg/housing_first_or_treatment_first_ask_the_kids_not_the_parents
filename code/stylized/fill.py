@@ -416,6 +416,21 @@ def _model_all():
     return json.load(open(p))
 
 
+def _results_all():
+    """
+    results_numbers.json, the counterfactuals' and the transition's results as
+    x_<name>, written by code/paper/export_results.py from each arm's saved
+    equilibrium and the transition's latest forward pass.
+    """
+    p = os.path.normpath(os.path.join(HERE, '..', 'paper',
+                                      'results_numbers.json'))
+    if not os.path.exists(p):
+        print('   results_numbers.json missing: run '
+              'code/paper/export_results.py first')
+        return {}
+    return json.load(open(p))
+
+
 def _params(out):
     """The quantitative model's table numbers, from the Fortran declarations.
 
@@ -437,6 +452,9 @@ def _params(out):
         out.setdefault(k, v)
     # AND WHAT THE MODEL PRODUCED, as m_<name>, on the same terms.
     for k, v in _model_all().items():
+        out.setdefault(k, v)
+    # AND WHAT THE COUNTERFACTUALS AND THE TRANSITION PRODUCED, as x_<name>.
+    for k, v in _results_all().items():
         out.setdefault(k, v)
     _derived_from_fortran(out)
 
