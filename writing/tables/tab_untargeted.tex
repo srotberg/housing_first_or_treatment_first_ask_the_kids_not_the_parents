@@ -1,0 +1,50 @@
+% Body rows written by code/paper/calib_tables.py from the benchmark's log;
+% only the caption, the column spec and the note are typed here.
+\begin{table}[!tb]\centering
+\caption{Moments the model is not asked to match}\label{tab:untargeted}
+\begingroup\scriptsize\setlength{\tabcolsep}{3pt}
+\sbox{\ntbox}{\begin{tabular}{@{}L{146pt}L{96pt}L{96pt}L{92pt}@{}}
+\toprule
+Moment & Data & Model & Source \\
+\midrule
+\multicolumn{4}{@{}l}{\emph{\textcolor{red}{Homelessness}}} \\
+Homelessness rate, 25--34, 35--44, 45--54, 55--64, 65+ & \textcolor{red}{0.32, 0.34, 0.29, 0.25, 0.08} & \textcolor{red}{0.92, 1.20, 0.79, 0.36, 0.02} & HUD PiT 2024 \\
+\textcolor{red}{Shares of the homeless in those bands$^{a}$} & \textcolor{red}{26.0, 27.2, 21.0, 18.4, 7.5} & \textcolor{red}{26.6, 38.1, 24.1, 10.4, 0.8} & \textcolor{red}{HUD PiT 2024} \\
+\textcolor{red}{Employed share of the homeless} & \textcolor{red}{46} & \textcolor{red}{21.4} & \textcolor{red}{HUD PiT 2023, TEDS-A 2022} \\
+\textcolor{red}{Income of the homeless, over average} & \textcolor{red}{19.1} & \textcolor{red}{0.2} & \textcolor{red}{Meyer et al.\ (2024)} \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{\textcolor{red}{Who uses and who carries a SUD}}} \\
+\textcolor{red}{Users by age, 26--34, 35--44, 45--54, 55--64, 65+} & \textcolor{red}{45, 19, 14, 12, 10} & \textcolor{red}{67, 16, 10, 5, 2} & \textcolor{red}{NSDUH 2024} \\
+\textcolor{red}{Mean age of users, years} & \textcolor{red}{39.6} & \textcolor{red}{34.6} & \textcolor{red}{NSDUH 2024} \\
+\textcolor{red}{Income with a SUD, over average} & \textcolor{red}{71.1} & \textcolor{red}{84.8} & \textcolor{red}{NSDUH 2024} \\
+\textcolor{red}{Unemployment given a SUD} & \textcolor{red}{16.2} & \textcolor{red}{14.7} & \textcolor{red}{NSDUH 2024} \\
+\textcolor{red}{Participation, with a SUD and without} & \textcolor{red}{65.8, 61.5} & \textcolor{red}{95.3, 73.8} & \textcolor{red}{NSDUH 2024} \\
+\textcolor{red}{SUD rate with SMI over without, ratio} & \textcolor{red}{7.30} & \textcolor{red}{2.05} & \textcolor{red}{NSDUH 2024} \\
+\textcolor{red}{Drug poisonings as a share of deaths} & \textcolor{red}{20.0} & \textcolor{red}{13.3} & \textcolor{red}{CDC WONDER} \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{\textcolor{red}{Treatment}}} \\
+Homeless at treatment admission & 14.5 & \textcolor{red}{3.2} & TEDS-A 2022 \\
+Psychiatric problem alongside SUD at admission & 43.1 & \textcolor{red}{0.1} & TEDS-A 2022 \\
+Working at all, homeless in treatment & 6.6 & \textcolor{red}{0.0} & TEDS-A 2022 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{\textcolor{red}{Housing and vouchers}}} \\
+\textcolor{red}{Housing over income, renters} & \textcolor{red}{20.2} & \textcolor{red}{37.0} & \textcolor{red}{SCF 2022} \\
+\textcolor{red}{Renters paying over half of income} & \textcolor{red}{17.5} & \textcolor{red}{26.8} & \textcolor{red}{SCF 2022} \\
+\textcolor{red}{Housed in the largest unit size} & \textcolor{red}{62.7} & \textcolor{red}{86.5} & \textcolor{red}{ACS 2023, B25042} \\
+Tenant contribution rate & 31.2 & \textcolor{red}{38.4} & HUD PSH 2023 \\
+Voucher holders with wages as main income & 28.0 & \textcolor{red}{39.8} & HUD PSH 2023 \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{\textcolor{red}{Distribution}}} \\
+\textcolor{red}{Earnings shares, bottom and top tenth} & \textcolor{red}{0.99, 41.10} & \textcolor{red}{1.68, 33.09} & \textcolor{red}{SCF 2022} \\
+\textcolor{red}{Income shares, bottom 1, 5, 10, 20 per cent} & \textcolor{red}{0.01, 0.31, 0.92, 2.71} & \textcolor{red}{0.01, 0.19, 1.01, 3.40} & \textcolor{red}{SCF 2022} \\
+\textcolor{red}{Net worth shares, bottom 1, 5, 10, 20 per cent} & \textcolor{red}{$-0.16$, $-0.28$, $-0.29$, $-0.23$} & \textcolor{red}{$0.00$, $0.00$, $0.01$, $0.29$} & \textcolor{red}{SCF 2022} \\
+\textcolor{red}{Net worth share, bottom half} & \textcolor{red}{2.5} & \textcolor{red}{6.4} & \textcolor{red}{SCF 2022} \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{\textcolor{red}{Transmission, odds ratios}}} \\
+\textcolor{red}{A child of a parent with a SUD acquires one} & \textcolor{red}{1.44 and 2.51} & \textcolor{red}{1.50} & \textcolor{red}{Mellentin et al.\ (2016), Yoon et al.\ (2013)} \\
+\textcolor{red}{A homeless adult had a homeless caretaker} & \textcolor{red}{1.8 to 2.4} & \textcolor{red}{4.92} & \textcolor{red}{Bassuk et al.\ (1997)} \\
+\bottomrule
+\end{tabular}}\usebox{\ntbox}
+\tabnote{Note: per cent unless the moment says otherwise; the model is the Housing First benchmark. $^{a}$The share aged 25 to 34 is the target of $T_0$ in Table~\ref{tab:eleven}, so of this row only the other four bands are untargeted.}
+\endgroup
+\end{table}

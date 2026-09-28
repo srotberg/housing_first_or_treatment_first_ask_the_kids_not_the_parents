@@ -12,48 +12,47 @@
 Parameter & Description & Set & Moment and source & Data & Model & Value \\
 \midrule
 \multicolumn{7}{@{}l}{\emph{Who uses drugs}} \\
-$\theta$ & Weight on drugs in utility & Int. & Drug spending over income, Midgette et al.\ (2019) & 16.2\% & \textemdash & \textemdash \\
-$b$ & Whether a household uses & Int. & Drug participation, NSDUH 2024 & 8.90\% & \textemdash & \textemdash \\
-$\lambda_d$ & SUD hazard per unit used & Int. & Adult SUD rate, NSDUH 2024 & 3.68\% & \textemdash & \textemdash \\
-$\kappa_{\phi d}$ & Increased mortality with a SUD & Ext. & Mortality ratios, Hjorth\o j et al.\ (2023) & 6 to 10 & n.a. & 8.00 \\
-$\aleph$ & Flow value of being alive & Int. & Value of a statistical life, Viscusi and Aldy (2003) & \$9m & \textemdash & \textemdash \\
+$\theta$ & \textcolor{red}{Weight on the drug} & \textcolor{red}{Int.$^\dagger$} & Drug spending over income, Midgette et al.\ (2019) & \textcolor{red}{16.0\%} & \textcolor{red}{15.3\%} & \textcolor{red}{0.165} \\
+$b$ & \textcolor{red}{Shifter on the drug} & Int. & Drug participation, NSDUH 2024 & 8.90\% & \textcolor{red}{8.12\%} & \textcolor{red}{0.0055} \\
+\textcolor{red}{$\pi_d$} & \textcolor{red}{Chance a year of use starts a SUD} & \textcolor{red}{Int.} & \textcolor{red}{Share of users carrying a SUD, NSDUH 2024} & \textcolor{red}{41.3\%} & \textcolor{red}{42.6\%} & \textcolor{red}{0.0345} \\
+$\kappa_{\phi d}$ & \textcolor{red}{Mortality multiplier, SUD} & \textcolor{red}{Int.$^\dagger$} & \textcolor{red}{Income of drug users over average, NSDUH 2024} & \textcolor{red}{74\%} & \textcolor{red}{60\%} & \textcolor{red}{4.00} \\
+$\aleph$ & Flow value of being alive & Int. & \textcolor{red}{Value of a statistical life over income, Viscusi and Aldy (2003)} & \textcolor{red}{80} & \textcolor{red}{82} & \textcolor{red}{87.6} \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{What using and being homeless cost, and the voucher}} \\
-$\rho_d$ & Earnings lost to a SUD & Ext. & Set to one; the extensive margin carries it & 0.50 & n.a. & 0.50 \\
-$\kappa_{ued}$ & Employment multiplier, SUD & Int. & Unemployment rate given a SUD, NSDUH 2024 & 16.25\% & \textemdash & \textemdash \\
-$h_1$ & Service flow of homelessness & Int. & Homelessness rate, HUD 2023 & 0.399\% & \textemdash & \textemdash \\
-$\kappa_{\phi H}(j)$ & Increased mortality when homeless & Ext. & Mortality ratios by age, Baggett et al.\ (2013) & 9.1 to 1.1 & n.a. & 4.41 to 1.09 \\
-$\kappa_{ueH}$ & Employment multiplier, homeless & Ext. & Desmond and Gershenson (2016) & 0.80 & n.a. & 0.80 \\
-$\underline c$ & Food stamp maximum allotment & Int. & Food stamps over labour income, USDA & 0.42\% & \textemdash & \textemdash \\
-$\pi_V$ & Chance of drawing a voucher & Int. & Recipients over eligible, HUD 2023 & 26.6\% & \textemdash & \textemdash \\
+\textcolor{red}{$\kappa^{ue}_{d}$} & \textcolor{red}{Job-finding divisor, SUD} & \textcolor{red}{Int.} & \textcolor{red}{SUD share of the homeless, Gutwinski et al.\ (2021)} & \textcolor{red}{21.7\%} & \textcolor{red}{19.2\%} & \textcolor{red}{3.78} \\
+\textcolor{red}{$\kappa^{eu}_{d}$} & \textcolor{red}{Separation multiplier, SUD} & \textcolor{red}{Ext.} & \textcolor{red}{Set to one; $\kappa^{ue}_{d}$ carries the SUD} & \textcolor{red}{1.00} & \textcolor{red}{n.a.} & \textcolor{red}{1.00} \\
+$h_1$ & \textcolor{red}{Housing services in a shelter} & Int. & \textcolor{red}{Homelessness rate, HUD PiT 2023, within a band} & \textcolor{red}{0.40 to 1.00\%} & \textcolor{red}{0.61\%} & \textcolor{red}{0.0216} \\
+\textcolor{red}{$\kappa_{\phi H}$} & \textcolor{red}{Mortality multiplier, shelter} & \textcolor{red}{Ext.} & \textcolor{red}{Meyer, Wyse and Logani (2023)} & \textcolor{red}{1.60} & \textcolor{red}{n.a.} & \textcolor{red}{1.60} \\
+\textcolor{red}{$\kappa_{H}$} & \textcolor{red}{Employment penalty, shelter} & \textcolor{red}{Ext.} & \textcolor{red}{Desmond and Gershenson (2016)} & \textcolor{red}{0.20} & \textcolor{red}{n.a.} & \textcolor{red}{0.20} \\
+$\underline c$ & Food stamp maximum allotment & Int. & Food stamps over labour income, USDA & 0.42\% & \textcolor{red}{0.41\%} & \textcolor{red}{0.0879} \\
+$\pi_V$ & Chance of drawing a voucher & \textcolor{red}{Int.$^\dagger$} & Recipients over eligible, HUD 2023 & 26.6\% & \textcolor{red}{27.3\%} & \textcolor{red}{0.0675} \\
+\textcolor{red}{$T_0$} & \textcolor{red}{Transfer at entry, over average earnings} & \textcolor{red}{Int.} & \textcolor{red}{Share of the homeless aged 25 to 34, HUD PiT 2024} & \textcolor{red}{26.0\%} & \textcolor{red}{26.6\%} & \textcolor{red}{0.111} \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Mental illness chain}} \\
 $\iota$ & SUD multiplier on SMI onset & Ext. & Danish registers, Nielsen et al.\ (2017) & 2.00 & n.a. & 2.00 \\
-$\lambda_m$ & Chance of recovering from SMI & Ext. & Ten year recovery rate, {\AA}sb{\o} et al.\ (2022) & 50\% & n.a. & 0.067 \\
-$\omega_m$ & Level of the SMI onset profile & Int. & SMI share of the population, NSDUH 2024 & 4.82\% & \textemdash & \textemdash \\
-$\zeta_{DI}$ & Disability insurance, unemployed & Int. & SMI share of homeless, Gutwinski et al.\ (2021) & 25\% & \textemdash & \textemdash \\
-$\rho_m$ & Earnings lost to SMI & Ext. & Set to one; the extensive margin carries it & 1.00 & n.a. & 1.00 \\
-$\kappa_{uem}$ & Employment multiplier, SMI & Int. & Employment given SMI, Mechanic et al.\ (2002) & 30\% & \textemdash & \textemdash \\
+$\lambda_m$ & Chance of recovering from SMI & Ext. & \textcolor{red}{Ten-year recovery rate, {\AA}sb{\o} et al.\ (2022)} & 50\% & n.a. & \textcolor{red}{0.066} \\
+$\omega_m$ & Level of the SMI onset profile & \textcolor{red}{Int.$^\dagger$} & SMI share of the population, NSDUH 2024 & 4.82\% & \textcolor{red}{4.82\%} & \textcolor{red}{0.0037} \\
+\textcolor{red}{$\kappa^{ue}_{m}$} & \textcolor{red}{Job-finding divisor, SMI} & \textcolor{red}{Int.} & \textcolor{red}{SMI share of the homeless, Gutwinski et al.\ (2021)} & \textcolor{red}{25\%} & \textcolor{red}{25.4\%} & \textcolor{red}{7.71} \\
+\textcolor{red}{$\kappa^{eu}_{m}$} & \textcolor{red}{Separation multiplier, SMI} & \textcolor{red}{Int.$^\dagger$} & \textcolor{red}{Employment given SMI, Mechanic et al.\ (2002)} & \textcolor{red}{30\%} & \textcolor{red}{83\%} & \textcolor{red}{1.06} \\
 $\mu_m$ & SUD recovery multiplier, SMI & Ext. & Dual diagnosis relapse, Bradizza et al.\ (2006) & 0.82 & n.a. & 0.82 \\
 $\kappa_{\phi m}$ & Mortality multiplier, SMI & Ext. & Olfson et al.\ (2015) & 2.50 & n.a. & 2.50 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Recovery and treatment}} \\
-$\bar\pi_r$ & Baseline SUD recovery rate & Ext. & Ten year remission rate, Vaillant (1995) & 0.025 & n.a. & 0.025 \\
-$\mu_H$ & Recovery multiplier when homeless & Int. & Weeks abstinent, Milby et al.\ (2005) & 1.473 & \textemdash & \textemdash \\
-$g$ & Treatment effect on recovery & Ext. & Odds ratio, Milby et al.\ (2005) & 1.35 & n.a. & 1.35 \\
-$\bar\tau^{u}$ & Utility cost of treatment & Int. & Treatment take up, NSDUH 2024 & 24.5\% & \textemdash & \textemdash \\
+$\bar\pi_r$ & Baseline SUD recovery rate & Ext. & \textcolor{red}{Ten-year remission rate, Vaillant (1995)} & 0.025 & n.a. & 0.025 \\
+$\mu_H$ & \textcolor{red}{Recovery multiplier in a shelter} & Int. & \textcolor{red}{Weeks abstinent, housed over homeless, Milby et al.\ (2005)} & \textcolor{red}{1.47} & \textcolor{red}{1.47} & \textcolor{red}{0.696} \\
+$g$ & \textcolor{red}{Treatment multiplier on recovery} & Ext. & \textcolor{red}{Remission with medication for opioid use disorder} & \textcolor{red}{2.00} & n.a. & \textcolor{red}{2.00} \\
+$\bar\tau^{u}$ & Utility cost of treatment & Int. & \textcolor{red}{Treatment take-up, NSDUH 2024} & 24.5\% & \textcolor{red}{25.0\%} & \textcolor{red}{4.49} \\
 \addlinespace
-\multicolumn{7}{@{}l}{\emph{Externalities and distortions}} \\
-$\omega_c$ & Weight on the child & Int. & Use rise with altruism off, NSDUH 2024 & 18.3\% & \textemdash & \textemdash \\
-$\delta_d$ & Child's earnings, parent SUD & Ext. & Earnings lost in utero, Nilsson (2017) & 0.24 & n.a. & 0.24 \\
-$\delta_h$ & Child's earnings, homeless & Ext. & Earnings lost to poverty, Chetty et al.\ (2016) & 0.31 & n.a. & 0.31 \\
-$\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay, Loubi\`ere et al.\ (2020) & 0.20\% & n.a. & 0.002 \\
-$\sigma_{\ell}$ & Curvature on leisure & Ext. & Frisch elasticity, Chetty (2012) & 0.50 & n.a. & 3.00 \\
+\multicolumn{7}{@{}l}{\emph{\textcolor{red}{Externalities}}} \\
+$\omega_c$ & Weight on the child & Int. & \textcolor{red}{Use of non-parents over parents, less one, NSDUH 2024} & 18.3\% & \textcolor{red}{21.8\%} & \textcolor{red}{0.06} \\
+$\delta_d$ & \textcolor{red}{Child's earnings, parent's SUD} & Ext. & Earnings lost in utero, Nilsson (2017) & 0.24 & n.a. & 0.24 \\
+\textcolor{red}{$\rho$} & \textcolor{red}{Persistence of productivity across generations} & \textcolor{red}{Ext.} & \textcolor{red}{Solon (1992), Mazumder (2005)} & \textcolor{red}{0.50} & \textcolor{red}{n.a.} & \textcolor{red}{0.50} \\
+$\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay, Loubi\`ere et al.\ (2020) & 0.20\% & \textcolor{red}{0.30\%} & \textcolor{red}{0.93} \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Drug market}} \\
-$\nu_2$ & Drug supply curvature & Ext. & Supply elasticity, Mace et al.\ (2020) & 1.46 & n.a. & 1.68 \\
+\textcolor{red}{$\varepsilon_s$} & \textcolor{red}{Price elasticity of drug supply} & \textcolor{red}{Ext.} & \textcolor{red}{Mace et al.\ (2020)} & \textcolor{red}{1.46} & \textcolor{red}{n.a.} & \textcolor{red}{1.46} \\
 \bottomrule
 \end{tabular}}\usebox{\ntbox}
-\tabnote{Note: n.a.\ in the Model column marks a parameter that is set from outside rather than calibrated inside the model. For those the model produces no internal target to compare with the data, so the cell reads n.a.\ rather than a dash, which keeps them distinct from the internally calibrated parameters. For two parameters the source measures an elasticity while the model is written in a curvature, so the Data column gives the elasticity and the Value column gives the curvature that delivers it: $\sigma_{\ell}$, where a Frisch elasticity of $0.5$ needs a curvature of $3.00$, and $\nu_2$, where a supply elasticity of $1.46$ needs a curvature of $1.68$ through $1/(\nu_2-1)$.}
+\tabnote{Note: the Model column is the Housing First benchmark. n.a.\ marks a parameter set from outside the model, which has no moment of its own to reproduce. Int.$^\dagger$ marks one fitted to its moment in an earlier round of the calibration and held since, so its Model cell shows how far the moment has moved from its target in the rounds after it stopped being an instrument. For two parameters the Model cell is not a moment the parameter was fitted to: $\omega_c$ reports how far drug use rises when the child is given no weight and every other parameter is held, and $\kappa_x$ the willingness to pay its value implies at the benchmark.}
 \endgroup
 \end{table}

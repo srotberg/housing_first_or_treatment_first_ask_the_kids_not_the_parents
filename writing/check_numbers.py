@@ -36,6 +36,18 @@ TAB = os.path.join(HERE, 'tables')
 
 # (value, fragment of the sentence) pairs that are known coincidences
 ALLOW = [
+    # LITERATURE ODDS RATIOS, quoted in the prose and in the Data column of
+    # tab_untargeted.tex, which calib_tables.py writes. They are estimates read
+    # off the studies, not anything a model computes, and the validation table
+    # moved into tables/ on 28 September, which is when the checker began to see
+    # both copies. Bassuk et al. (1997); Mellentin et al. (2016), Yoon et al. (2013).
+    ('1.8', 'odds ratios of'), ('2.4', 'odds ratios of'),
+    ('1.8', 'in the data (Bassuk'), ('2.4', 'in the data (Bassuk'),
+    ('1.44', 'likelier to acquire a SUD'), ('2.51', 'likelier to acquire a SUD'),
+    ('2.5', '(Mellentin et al.'),
+    # a demand elasticity bound in the literature review; the table's 0.8 is
+    # the model's share of the homeless aged 65 and over
+    ('0.8', 'intensive margin is the smaller'),
     ('1.80', 'odds ratios'),          # Bassuk et al., not the ladder curvature
     ('2.41', 'odds ratios'),
     ('0.40', 'social security'),      # the retirement replacement rate
