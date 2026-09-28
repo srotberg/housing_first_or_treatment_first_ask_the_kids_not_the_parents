@@ -1,3 +1,18 @@
+# 28 September 20:40: STYLIZED MODEL -- WAITING FOR THE AUTHOR TO REACH SECTION 3
+
+The author, 28 September: the stylized model needs the aggregate homelessness externality "the same way we did
+in the full model" (a disamenity in flow utility in proportion to the homelessness rate, kappa_x), "but this
+will be done later when i get to that section". Until then the introduction's claims about it are ahead of the
+code. Found in the same check, for that round:
+- neither model has a homelessness penalty (the author: "we dont have a homelessness penalty"); Sections 3, 4 and
+  5 still describe delta_h = 0.31 from Chetty et al. (2016) and have to lose it;
+- stylized.py sets omega at 0.09, the full model's old weight, where the introduction says it is calibrated to
+  the parents' drug-use gap; optimal_sud.py uses a calibrated 0.00055; the code is not in one state;
+- the stylized build is broken and every stylized number in the paper is from 30 August (blanks in the intro);
+- the calibration section never states rho_intergenerational = 0.50 or cites Solon, Mazumder and Chetty et al.,
+  which the introduction now does;
+- Section 7 is still the plan, not the experiments that were run.
+
 # 28 September 20:10: THE PI_V PAIRING FIX IS BUILT; IT GOES IN WHEN LOOP 0 OF RELAUNCH 2 ENDS (about 22:30)
 
 The author, 28 September: "fix the updating rules so that they work better", and chose to let the running loop
