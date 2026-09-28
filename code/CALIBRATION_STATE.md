@@ -1,3 +1,22 @@
+# 28 September 00:40: WHY THE TRANSITION COHORT BEATS THE LONG RUN -- the early drug price, through initiation
+
+The author asked why the reform-year cohort's CEV (+2.89) exceeds the long run's (+1.42). Decomposed on the three
+loop-0 runs (scratchpad decomp.py; cohort b = 1 against no policy, utils, discounted to age 1):
+- all of the excess is childhood flow utility at ages 1-10, i.e. in periods 1-10: ages 1-5 +0.57 (long run +0.26),
+  ages 6-10 +0.15 (+0.02). The homelessness externality term is -0.009 in every run. Adulthood is slightly BELOW
+  the long run (+0.207 against +0.233).
+- it scales with the early price: at the long-run price throughout (flat run) the childhood gain is +0.18, BELOW
+  the long run's +0.24, because the transition has more SUD and more homelessness; at 0.909 (bracket) +0.75; at
+  0.922 (Newton) +0.87.
+- the channel is initiation: experimenters at t = 1-5 are 1.62-1.66 at price 0.867, 1.16-1.31 at 0.909,
+  1.04-1.17 at 0.922. A 5 per cent dearer drug cuts initiation by about 30 per cent, so fewer young parents (a
+  child aged a lives with a parent at model age a) spend on the drug, and their children consume more.
+- the price is high because the reform inherits the benchmark's SUD stock (1.76, falling to 1.34 by t = 15), which
+  keeps demand up against an upward-sloping supply curve. As the stock falls the price falls, initiation returns,
+  and each later cohort's gain shrinks toward the long run (+2.89, +2.21, +2.07, +2.02, +2.01, +1.65, +1.58).
+- CAVEAT: the size rests on initiation's sensitivity to price near its threshold, the same jump that stops TF 70
+  and permban85 clearing (12:55 entry). And the price path is loop 0's.
+
 # 28 September 00:10: CONTAINER RESTART killed the bracket-seeded T = 60 at loop 0, year 32 of the forward pass; relaunched from its checkpoint
 
 Killed about 23:58, six hours in. The code checkpoints both instruments every period (drug_price_path_seed_out.txt,
