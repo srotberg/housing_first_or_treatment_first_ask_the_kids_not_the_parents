@@ -43,6 +43,8 @@
 % \textcolor directly. check_red.py now fails the build if this line is
 % a passthrough while any \new remains in the file.
 \newcommand{\new}[1]{{\color{red}#1}}
+% A number not computed yet: a slot to fill, never a guess.
+\newcommand{\blank}{\underline{\hspace{2.2em}}}
 % A STANDING FLAG, which survives the strip between rounds. \new and \cut both
 % mark what changed since the last version and are cleared when the next round
 % starts, so neither can carry an open question forward. \query holds one: a
