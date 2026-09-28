@@ -12,9 +12,9 @@ optimal. Then add the children and kappax"*, and *"recalibrate each stage"*.
   STAGE 2  THE CHILD, as CHILD_FLOW_UTILITY.md specifies it: the child shares the
            period-1 bundle through xi = sqrt 2, the parent weighs it at omega_c,
            and a parent who acquires the disorder cuts its child's income by
-           delta_d.  omega_c is fitted on the child use gap and delta_d on the
-           child's SUD odds ratio, and every stage-1 parameter is refitted with
-           them.
+           delta_d.  omega_c is fitted on the child use gap and delta_d is set
+           from Nilsson (2017) as in the quantitative model (see
+           DELTA_D_NILSSON), and every stage-1 parameter is refitted.
   STAGE 3  kappa_x, the disamenity of aggregate homelessness, solved from the
            willingness to pay in Loubiere et al. (2020).  It enters welfare and no
            choice, as in the quantitative model with internalise_homelessness_cost
@@ -89,8 +89,55 @@ def start_vector():
     return v
 
 
+# delta_d IS SET, AS IN THE QUANTITATIVE MODEL, not fitted.  Nilsson (2017)'s 24 per
+# cent earnings loss is penalty_child_addicted = 0.24 there, a proportional cut; in
+# logs, which is how stylized.py applies it, that is -log(1 - 0.24).  Fitted on the
+# child's SUD odds ratio of 2, as sr_calibrate.py does, it ran to its bound of 1.0
+# (a 63 per cent cut) in the 13 September run without reaching the target, so the
+# odds ratio is reported beside it instead, as the quantitative model reports its.
+DELTA_D_NILSSON = -math.log(1.0 - 0.24)
+
+
+# THE DRUG SPENDING TARGET IS THE QUANTITATIVE MODEL'S, read from its declaration.
+# sr_calibrate.py aims theta at 0.14098, data/drug_spending_target.csv's figure with
+# the open top income band at 125,000; the Fortran's drug_spending_share_data is
+# 0.16 from 17 September, on the author's instruction, and Section 5 reports it.
+# Both sections cite Midgette et al. (2019) for the same moment, the aggregate
+# spending of users over their aggregate income, so the two models aim at one
+# number.  Changed 28 September.
+sys.path.insert(0, os.path.join(HERE, '..', 'paper'))
+from fortran_consts import constants as _fc
+DSHARE_TARGET = float(_fc()['drug_spending_share_data'])
+
+
 def spec(stage):
-    return [r for r in FULL_SPEC if stage >= 2 or r[0] not in CHILD_ROWS]
+    out = []
+    for r in FULL_SPEC:
+        if stage == 1 and r[0] in CHILD_ROWS:
+            continue
+        if r[0] == 'delta_d':
+            r = (r[0], r[1], r[2], r[3], 0.0, r[5], r[6])
+        if r[0] == 'th':
+            r = (r[0], r[1], DSHARE_TARGET, r[3], r[4], r[5], r[6])
+        out.append(r)
+    return out
+
+
+# HOMELESSNESS IS QUANTISED on this income grid -- across twenty-eight tables on
+# 13 September it took two values, 0.0096 and 0.0103, either side of the target --
+# so its row is held to four per cent and every other live row to two; the author
+# stopped the 13 September run at 3.1 per cent on this row for that reason.  The
+# gap is scaled so that a single tolerance of two per cent applies to all.
+ROW_TOL = {'homeless': 4.0}
+
+
+def live_worst(m):
+    gaps = [abs(m[mom] - tgt) / tgt * 100 * 2.0 / ROW_TOL.get(mom, 2.0)
+            for name, mom, tgt, sgn, adj, lo, hi in S.SPEC
+            if adj > 0 and m.get(mom) is not None]
+    held = [name for name, mom, tgt, sgn, adj, lo, hi in S.SPEC
+            if adj > 0 and m.get(mom) is None]
+    return math.inf if held else max(gaps)
 
 
 def save(par, stage, it, m, worst):
@@ -103,15 +150,19 @@ def save(par, stage, it, m, worst):
     json.dump(out, open(os.path.join(HERE, f'calibrated_stage{stage}.json'), 'w'), indent=1)
 
 
-def calibrate(stage, iters=6000, tol=2.0, every=25):
+def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None):
     S.SPEC = spec(stage)
     if stage == 1:
         v = start_vector()
+        if resume:
+            r = json.load(open(os.path.join(HERE, resume)))
+            v.update({k: x for k, x in r.items() if not k.startswith('_')})
+            print(f'  resumed from {resume}: {r.get("_from", "")}')
     else:
         prev = json.load(open(os.path.join(HERE, 'calibrated_stage1.json')))
         v = {k: x for k, x in prev.items() if not k.startswith('_')}
-        # the child's two parameters start where the 13 September fit left them
-        v.update(omega=0.01518, delta_d=0.57906)
+        # omega_c starts where the 13 September fit left it; delta_d is set
+        v.update(omega=0.00055, delta_d=DELTA_D_NILSSON)
     v.update(STAGE_SET[stage])
     par = with_(P(), **v)
     print(f'STAGE {stage}: {len(S.SPEC)} parameters live: '
@@ -127,16 +178,30 @@ def calibrate(stage, iters=6000, tol=2.0, every=25):
     for it in range(iters):
         m = S.moments(par, it)
         if it % every == 0:
-            worst = S.table(par, m, it)
+            S.table(par, m, it)
+            # THE STOPPING RULE READS THE LIVE ROWS ONLY.  sr_calibrate's table
+            # counts every row with a moment, including a held one (u1, adjuster
+            # zero), whose gap nothing can close, so its worst never falls below
+            # the tolerance and the loop would run to its cap.
+            worst = live_worst(m)
+            print(f'  LIVE    worst {worst:.2f} %  over '
+                  f'{", ".join(r[0] for r in S.SPEC if r[4] > 0)}')
             sys.stdout.flush()
             save(par, stage, it, m, worst)
             if worst < tol:
                 print(f'\n  every gap inside {tol} per cent at iteration {it}, stopping')
                 break
-        par, _ = S.step(par, m, state)
+        # THE BRANCH GUARD IS USED, which sr_calibrate's own loop does not: stage 1
+        # run with the plain step alternated between the interior and the corner
+        # every 25 to 50 passes (stage1.log, iterations 350 to 525), with b and
+        # theta chasing a drug share that kept collapsing.  step_on_branch halves
+        # a step that would leave the interior and lets a step taken from the
+        # corner climb out.
+        par = S.step_on_branch(par, m, state)
     else:
         m = S.moments(par, iters)
-        worst = S.table(par, m, iters)
+        S.table(par, m, iters)
+        worst = live_worst(m)
         save(par, stage, iters, m, worst)
     print(f'\nSTAGE {stage} EXIT: iteration {it}, worst gap {worst:.2f} per cent, '
           f'written to calibrated_stage{stage}.json')
@@ -144,4 +209,4 @@ def calibrate(stage, iters=6000, tol=2.0, every=25):
 
 
 if __name__ == '__main__':
-    calibrate(int(sys.argv[1]))
+    calibrate(int(sys.argv[1]), resume=sys.argv[2] if len(sys.argv) > 2 else None)
