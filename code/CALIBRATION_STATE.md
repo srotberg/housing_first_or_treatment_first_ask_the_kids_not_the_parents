@@ -1,3 +1,29 @@
+# 28 September 13:10: SECOND CONTAINER RESTART (loop 1, year 19) -- and THE PI_V UPDATE IS PAIRED WITH THE WRONG PERIOD
+
+Killed about 12:56 at loop 1, year 19. Relaunched 12:58 (task b9e7qq9qd, launched through `bash -c 'cd ... && exec'`
+because a background command's leading cd is not honoured) from the checkpoint: price and pi_V years 1-19 after
+loop 1, years 20-59 after loop 0 (pi_V year 19 from its PI_V line). Files in code/trtf60/relaunch_killed_1256/.
+Both seeds read 59 of 59, cwd confirmed.
+
+Loop 1, years 1-19, against loop 0: drug within 0.005 in 10 of 19 (4), median 0.0045 (0.0078). Budget within 0.001
+in 1 of 19 (1), median 0.0050 (0.0053) -- the budget is NOT converging, and the log says why:
+
+- pi_V(t) sets the voucher lottery households face IN period t (build_voucher_probabilities at time_index); a draw
+  in t makes a holder in t+1, and the budget at t is paid on the holders at t. So residual(t) is set by
+  pi_V(1..t-1), not by pi_V(t). Measured, loop 0 -> loop 1: pi_V(2) +0.0018 and receiving at t = 2 FELL (3.0914 ->
+  3.0878) while receiving at t = 3 rose (3.1889 -> 3.1958); the cuts to pi_V in years 3-6 lowered receiving in
+  years 5-11 by 0.012-0.023 and flipped years 8-11 from deficit to surplus (-0.0023 -> +0.0027 at t = 8).
+- the update steps pi_V(t) on residual(t) (pi_v_gap_1 = net_govt_revenues(time_index) - constraint). It is an
+  instrument paired with a residual it cannot move:
+  * residual(1) = +0.0014 is predetermined by the benchmark's holders: no pi_V reaches it, and it is above the
+    1e-3 rule, so the budget rule can never be met at t = 1 as written;
+  * residual(2) = +0.015 is set by pi_V(1), which only chases residual(1): it stays at +0.015 while pi_V(2) drifts
+    upward by ~0.002 a loop (0.0945 -> 0.0962 -> 0.0980) without effect on it;
+  * later years become a lagged integral controller: overshoot and sign flips, as years 8-11 did in one loop.
+- FIX (a solver change, not a model change; for the author): step pi_V(t) on residual(t+1), applied when period
+  t+1's residual is known in the forward pass, and exempt residual(1) from the rule, reporting it. Not applied:
+  it needs the author's word, and the Fortran is not touched while a solve runs.
+
 # 28 September 08:10: T = 60 RELAUNCH, LOOP 0 DONE -- per-cohort CEV b = 1..34; the late years are the unconverged part
 
 Loop 0 of the relaunch ended 08:01; loop 1 runs on the code's own updates (per-period secants now armed).

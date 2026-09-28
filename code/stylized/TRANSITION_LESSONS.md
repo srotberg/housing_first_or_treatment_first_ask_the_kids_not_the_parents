@@ -875,6 +875,14 @@ the price moving when they must; only a reform path exercises those.
   `code/trtf60/drug_price_path_seed.txt` says how). Seed from the best estimate of the clearing
   path, not from what is to hand.
 
+**What the second loop showed, 28 September** (same run). *The per-period pi_V update is paired with the wrong
+period.* pi_V(t) is the lottery faced in t; a draw in t is a holder, and a payment, in t + 1. The budget residual
+at t is therefore set by pi_V up to t - 1, and stepping pi_V(t) on residual(t) moves an instrument that cannot
+reach its target: residual(1) is predetermined (+0.0014, above the 1e-3 rule), residual(2) stayed at +0.015
+while pi_V(2) drifted, and the later years overshot and flipped sign within one loop. Pair pi_V(t) with
+residual(t + 1). The stylized model does not have this, because its transition holds pV at the benchmark and
+clears no budget; the rule to carry is that an instrument must be paired with the first period it can move.
+
 **Order.** Fixes 2 to 5 go in a build copy, asserted by value, not in the
 source. The no-policy arm is re-run once to write the parent share. The flat
 control runs next, then the reform paths from the corrected arms' directories.
