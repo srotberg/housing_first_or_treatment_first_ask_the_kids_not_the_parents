@@ -711,17 +711,17 @@ case exists has to be made on the externalities.
 In the data, drug use is concentrated among low-income households, most of the
 homeless do not carry a SUD, and housing vouchers
 reach only about a quarter of the households eligible for them. The quantitative
-model is built to match facts of that kind. It has six state variables and
+model is built to match facts of that kind. It has \new{seven} state variables\new{, counting age,} and
 @@n_all@@ parameters, which is what the welfare and fiscal questions
 require,
 but it also makes it hard to see which pieces of the environment do the
-heavy lifting. This note strips the environment down to help see the
-main drivers in the model, but where the main questions of this paper are still well
-posed.
+heavy lifting. This \new{section} strips the environment down \new{to where the main
+questions of this paper are still well posed, to help see the main drivers in the
+model.}
 
 Households are perfectly forward-looking, here and in the quantitative model.
 They know the true hazard of acquiring a SUD, they are aware of what carrying one would
-cost them, and they make no mistakes. Nothing below rests on misperception, myopia, self control, or on a taste that changes once the household has used. The model abstracts from government and from how the programmes are funded; both enter the quantitative model of Section~\ref{sec:full}.
+cost them, and they make no mistakes. Nothing below rests on misperception, myopia, self control, or on a taste that changes once the household has \new{developed a SUD}. The model abstracts from government and from how the programmes are funded; both enter the quantitative model of Section~\ref{sec:full}. \new{The stylized model answers three main questions.}
 
 \begin{enumerate}\setlength{\itemsep}{0.3em}\setlength{\parskip}{0em}
 
@@ -729,9 +729,9 @@ cost them, and they make no mistakes. Nothing below rests on misperception, myop
 the income distribution, and it is not universal there either: most poor households
 do not use at all. Both facts have to hold together. I model drugs as a
 \emph{luxury} good bought at a price, which is what delivers the second: not
-all households choose to consume them. However, left to itself the Stone-Geary form in equation~\eqref{eq:u} below means the share of
-income spent on them rises with income, so the environment
-concentrates use at the \emph{top}. Two risks push the other way, and each
+all households choose to consume \new{drugs}. However, left to itself the Stone-Geary form in equation~\eqref{eq:u} below means the share of
+income spent on \new{drugs} rises with income, so \new{when the environment is calibrated
+to the use rate, use is concentrated} at the \emph{top}. Two risks push the other way, and each
 costs the household something: a SUD raises the chance of losing work, which
 costs earnings, and it raises the chance of dying, which costs the value of the life
 it has left. The question is which of the two reverses the concentration from the top
@@ -740,42 +740,47 @@ to the bottom, and I show that it is the risk of death.
 \item \textbf{How does housing assistance shape the drug use decision?} Housing
 assistance pulls drug use in two opposite directions. It raises the value of
 staying clean, because a housed future is worth more than a homeless one and
-using puts that future at risk: call this the value-of-life force, and it lowers
+using puts that future at risk: \new{I refer to it as} the value-of-life force, and it lowers
 use. In contrast, if the voucher is unconditional, then it cushions the consequence of acquiring a SUD, because
-a household that acquires one is housed anyway: call this the moral hazard
+a household that acquires one is housed anyway: \new{I call this the moral-hazard}
 force, and it raises use. Both are first order, so theory does not sign the
 effect of unconditional housing assistance on drug use, and the question is quantitative.
 
-\item \textbf{When is Treatment First better than Housing First?} In this model, without externalities, and where the two programmes cost the same to
+\item \textbf{When is Treatment First \new{welfare improving relative to} Housing First?} In this model, without externalities, and where the two programmes cost the same to
 run, never. Housing First always raises welfare when agents
-are forward-looking, as they are here. A SUD creates a genuine tension,
+are forward-looking, as they are \new{in the models in this paper}. A SUD creates a genuine tension,
 since the same voucher that insures a household also makes the risk it insures
-more attractive, but that tension does not raise welfare, because Treatment
-First only removes an option that a household can take under Housing First as
-well. However, if a SUD generates externalities, such
-as affecting the earning potential of the children of parents with a SUD, then
-Treatment First may be preferred, on the evidence above. The
-model's work here is to show why Housing First raises welfare whenever
-there are no externalities (and \new{nothing to fund the programmes, whose budget the full model takes up}),
-and then show how the externality that overturns it works.
+more attractive, but that tension \new{can only lower} welfare, because Treatment
+First only removes an option that a household \new{who does not have hyperbolic
+discounting can commit to taking} under Housing First as
+well. However, if \new{parents do not fully weigh their children's welfare in their
+decisions, then drug use and SUD generate} externalities, such
+as \new{diverting resources away from children and reducing the earnings of} the
+children of parents \new{who had a SUD during their childhood, and}
+Treatment First may be preferred. \new{By setting the weight parents give to their
+children's utility in their own objective function, the model can also say what the
+optimal drug use, SUD and homelessness rates are.}
 
 \end{enumerate}
 
-\new{The model is built in stages, and each is recalibrated before it is used, so
+The model is built in stages, and each is recalibrated before it is used, so
 every result below is read off a model that fits its targets. The first stage has
-no child and no externality: nothing a household does lands on anyone else. It
-answers the first two questions and shows that, in it, Treatment First only ever
-costs. The second adds the child, who lives in the household through the parent's
-first period and inherits a lower income if the parent acquires a SUD. The third
-adds the disamenity every household suffers from the homelessness of others. The
-last asks what those two externalities change: what drug use would be if parents
+no child \new{living with its parents} and no \new{externalities}: nothing a household does lands on anyone else. It
+answers the first two questions and shows that \new{Treatment First cannot raise
+welfare}. The second adds the child, who lives in the household \new{during} the parent's
+\new{adulthood period, shares its consumption and housing, and inherits a lower
+lifetime productivity if the parent acquired a SUD, which brings in the budget, the
+earnings and the childhood homelessness externalities}. The third
+adds \new{the aggregate homelessness externality, the disamenity every household
+suffers from the homelessness of others}. The
+last asks what \new{these externalities} change: what drug use would be if parents
 counted their children fully, and how Treatment First then compares with Housing
-First, in the long run and along the way there.}
+First, in the long run and along the \new{transition to that long run}.
 
 The model is qualitative throughout: the calibration is rough by design, there
 is no validation exercise, and components that obscure the mechanisms have
-been removed and the model refitted without them. What remains are the main
-drivers of the results. The welfare evaluations below are for illustration only; the full
+been removed \new{with} the model refitted without them. What remains are the main
+drivers of the results. The welfare evaluations below are for illustration \new{and intuition} only; the full
 quantitative model is what settles the main question, which is whether Treatment
 First raises welfare relative to Housing First in a model that fits the data.
 
