@@ -180,7 +180,9 @@ def draw_who_uses(sc, curves, r_cal=None, part_ref=None):
     # other".  A curve's 100 per cent point is that channel ALONE, so the calibrated
     # economy is on neither curve and a circle at 0.74 would read as if it were.  The
     # dotted line carries the one label, as it did before.
-    ax.annotate('calibrated', xy=(100, 0.04 * top), ha='center', va='bottom',
+    # at the TOP of the dotted line: at the foot it sat on the mortality curve once h1
+    # was held at its calibrated value and that curve ran along the bottom
+    ax.annotate('calibrated', xy=(100, 0.97 * top), ha='center', va='top',
                 fontsize=8, color='black',
                 bbox=dict(boxstyle='square,pad=0.15', fc='white', ec='none'))
     if OTHER_CHANNEL == 'calibrated':

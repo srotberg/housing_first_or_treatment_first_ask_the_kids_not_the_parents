@@ -1091,14 +1091,13 @@ the right of it is extrapolation.}
 
 The result is sharper than the statement that mortality matters more. On its own,
 the mortality channel takes the income ratio from @@s1_r_none@@ with nothing switched on
-down to @@s1_r_mortonly@@ at its calibrated strength, and then further down to
+down to @@s1_r_mortonly@@ at its calibrated strength, and \new{@@s1_r_mort_hi_dir@@}
 @@s1_r_mort_hi@@ as it continues to rise to $@@s1_scanhi_pc@@$ percent of its calibrated
-value. The ratio hardly moves up to $@@s1_revstart_pc@@$ percent of that strength,
-and the reversal happens over the last @@s1_revfrac@@ of the channel. That threshold is a feature of the
-mechanism rather than an artefact. What mortality destroys is a continuation value,
+value. \new{At half of its calibrated strength the ratio is already @@s1_r_mort_half@@, and it
+crosses one between $@@s1_cross_lo_pc@@$ and $@@s1_cross_hi_pc@@$ percent of that strength.}
+What mortality destroys is a continuation value,
 and a household only stops using when the expected loss of that value exceeds what
-the drug is worth to it; below the point where it does, a stronger penalty changes
-nothing about who uses, and above it the ordering starts to flip.
+the drug is worth to it.
 
 In contrast, the unemployment channel does not reverse the gradient at all: on its
 own it leaves users at @@s1_r_jobonly@@ times average income at its calibrated strength,
