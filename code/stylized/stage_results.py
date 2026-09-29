@@ -35,6 +35,7 @@ import stylized as ST
 from stylized import P, with_, value1, use_prob
 import calibrate as C
 from calibrate import stats
+import fill as F                   # compare(): direction words the prose takes from the numbers
 from welfare import cev
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -260,6 +261,13 @@ def stage2(par):
         d[f's2_sud_{tag}'] = pc(e['sud_stat'], 3)
         d[f's2_homeless_{tag}'] = pc(e['homeless_stat'], 3)
         d[f's2_part_{tag}'] = pc(e['part'])
+    # WHICH WAY TREATMENT FIRST MOVES CHILDHOOD HOMELESSNESS here, as a word the prose
+    # takes rather than types: homeless_stat is period 1, when the child is at home,
+    # and the quantitative model moves it the other way, so the sentence has to turn
+    # with the numbers.
+    d.update(F.compare(tf['homeless_stat'], hf['homeless_stat'], 's2_homeless_',
+                       more='raises', less='lowers'))
+    d['s2_homeless_chg_pc'] = f"{100 * abs(tf['homeless_stat'] / hf['homeless_stat'] - 1):.0f}"
     d['s2_cev_tf'] = pc(cev_life(par, tf, hf), 3)
     kid_only = dict(tf, adult=hf['adult'])
     adult_only = dict(tf, kid=hf['kid'])
@@ -283,6 +291,10 @@ def stage4(par, hf, kx):
     d['s4_sud_opt'] = pc(opt['sud_stat'], 3)
     d['s4_dshare_opt'] = pc(opt['dshare']) if opt['dshare'] is not None else 'n.a.'
     d['s4_homeless_opt'] = pc(opt['homeless_stat'], 3)
+    # its fall against the Housing First economy the optimum is compared with
+    d['s4_homeless_opt_pc'] = f"{100 * abs(opt['homeless_stat'] / hf['homeless_stat'] - 1):.0f}"
+    d.update(F.compare(opt['homeless_stat'], hf['homeless_stat'], 's4_homeless_opt_',
+                       more='rises', less='drops'))
     d['s4_cev_opt'] = pc(cev_life(par, opt, hf, kx), 3)
     return d
 
@@ -369,7 +381,7 @@ def write_tables(p1, r1, p2, r2):
          f'${p2.rho:.2f}$'),
         (r'$\delta_d$', "Child's income, parent's SUD, in logs",
          f'Nilsson (2017), a {100 * (1 - math.exp(-p2.delta_d)):.0f} percent cut', f'${p2.delta_d:.3f}$')])]
-    L = [r'\footnotesize', r'\begin{tabular}{@{}lL{6.4cm}L{5.4cm}r@{}}', r'\toprule',
+    L = [r'\footnotesize', r'\begin{tabular}{@{}lllr@{}}', r'\toprule',
          r'Parameter & Description & Source or rationale & Value \\', r'\midrule']
     for i, (hd, rows) in enumerate(ext):
         if i:

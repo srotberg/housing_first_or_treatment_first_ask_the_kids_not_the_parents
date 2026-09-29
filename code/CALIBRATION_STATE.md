@@ -1,3 +1,21 @@
+# 29 September 13:40: MY ELASTICITY RUN OOM-KILLED THE T=60 TRANSITION; RELAUNCHED FROM LOOP 0'S PATHS
+
+- 13:23: the kernel's memory cgroup killed the transition (hftf 10.3 GB RSS) with hftf_elast (3.6-4.9 GB) beside
+  it. The rule that no solve runs beside the transition is a MEMORY rule, not only a CPU one; it was broken here.
+- Lost: loop 1's first 6 backward periods. Loop 0's paths were saved at 12:49. Archive: trtf60/restart3_killed_1323
+  (run.log, the 12:49 state files and all five *_out paths, the seeds it used as *.used.txt).
+- Relaunched 13:37 (task b1r0gafrx), same binary aed5b190. Seeds: loop 0's saved drug price and pi_V paths, the
+  restart-3 precedent (it used relaunch2's *_out files verbatim); house price and rent paths are flat and lump sum
+  ~0, so they stay unseeded as before. calibration_state.dat, newborn_parent_share.dat and resume_seed.dat
+  restored from restart3_killed_0155 (the loop-end rewrite rounds calibration_state.dat); PARAM_HANDOVER.txt from
+  .kept. All 100 HANDOVER lines identical to the killed run's. Being seeded, pi_V updates from its loop 0.
+- A watcher meant to relaunch after the elasticity run never could: `pgrep -f hftf_elast` matches the watcher's
+  own command line. Use pgrep -x on the binary name.
+- The elasticity attempt is DISCARDED: one frozen block from cfarm_bench's end state did not reproduce the
+  benchmark (first sweep distance 5e-2; h_1 +18%, b -11%, lambda_d -11%, pi_V moment 0.075 vs 0.272).
+  A valid measurement needs the full 12-block stage 1 from scan_seed with the flipped binary (2.5 h, ~5 GB),
+  which cannot share this box with the transition: another container, or after the transition.
+
 # 29 September 13:30: T=60 LOOP 0 DONE -- children in a shelter over the transition; elasticity run launched
 
 - Loop 0 finished (paths saved, 59 periods); loop 1 running. Largest gaps: drug market 2.0e-2, budget 1.6e-2.
