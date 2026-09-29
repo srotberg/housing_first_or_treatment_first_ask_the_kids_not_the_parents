@@ -452,9 +452,9 @@ def write_tables(p1, r1, p2, r2):
         (r'$\pi_V$', 'Chance of drawing a voucher', 'HUD 2023, recipients over eligible', f'${tn(p1.pV)}$')]),
         ('The child, stage 2 onward', [
         (r'$\xi$', 'Equivalence scale while the child is at home', 'Square-root scale', f'${p2.xi:.2f}$'),
-        (r'$\rho$', 'Persistence of productivity across generations', 'As in the quantitative model',
+        (r'$\rho$', 'Persistence of productivity across generations', 'Solon (1992); Mazumder (2005)',
          f'${p2.rho:.2f}$'),
-        (r'$\delta_d$', "Child's income, parent's SUD, in logs",
+        (r'$\delta_d$', "Child's productivity penalty, parent had a SUD",
          f'Nilsson (2017), a {100 * (1 - math.exp(-p2.delta_d)):.0f} percent cut', f'${tn(p2.delta_d)}$')])]
     L = [r'\footnotesize', r'\begin{tabular}{@{}lllr@{}}', r'\toprule',
          r'Parameter & Description & Source or rationale & Value \\', r'\midrule']
