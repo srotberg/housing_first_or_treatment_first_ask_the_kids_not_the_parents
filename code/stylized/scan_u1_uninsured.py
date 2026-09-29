@@ -46,8 +46,8 @@ from calibrate import stats, bracket, TARGET
 from negative_value_of_life import (strict_negative_values, occupied_negative_values,
                                    period1_negative_values)
 
-ui_sud = float(sys.argv[1])
-u1s = [float(x) for x in sys.argv[2:]]
+ui_sud = float(sys.argv[1]) if __name__ == '__main__' else 0.0
+u1s = [float(x) for x in sys.argv[2:]] if __name__ == '__main__' else []
 FS_TARGET = 0.0042
 SPEC = dict(repl=0.5, ui_sud=ui_sud, cbar=0.077, h2=0.10, h3=0.40)
 
@@ -154,17 +154,18 @@ def gradient_check(q):
               f'SUD share of homeless {100*m["sud_of_homeless2"]:.2f}', flush=True)
 
 
-par0, _ = R.load(1)
-print(f'stage 1 start; set {SPEC}; u1 values {u1s}', flush=True)
-q = with_(par0, **SPEC)
-for u1 in u1s:
-    print(f'--- u1 {u1}, calibrated grid', flush=True)
-    set_grid(1.08)
-    qa = fit(with_(q, u1=u1, yV=par0.yV))
-    neg = report(qa)
-    gradient_check(qa)
-    if neg > 0:
-        print(f'--- u1 {u1}, lowest income raised (TRUNC_FLOOR 2.4)', flush=True)
-        qb = fit(with_(qa, yV=set_grid(2.4)))
-        report(qb)
-        gradient_check(qb)
+if __name__ == '__main__':
+    par0, _ = R.load(1)
+    print(f'stage 1 start; set {SPEC}; u1 values {u1s}', flush=True)
+    q = with_(par0, **SPEC)
+    for u1 in u1s:
+        print(f'--- u1 {u1}, calibrated grid', flush=True)
+        set_grid(1.08)
+        qa = fit(with_(q, u1=u1, yV=par0.yV))
+        neg = report(qa)
+        gradient_check(qa)
+        if neg > 0:
+            print(f'--- u1 {u1}, lowest income raised (TRUNC_FLOOR 2.4)', flush=True)
+            qb = fit(with_(qa, yV=set_grid(2.4)))
+            report(qb)
+            gradient_check(qb)

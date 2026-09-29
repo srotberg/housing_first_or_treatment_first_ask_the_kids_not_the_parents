@@ -28,6 +28,14 @@
   on it. At the stage-1 calibration it is negative in 182 states, 11.1% of households,
   worst -44.7 (income 0.108, unemployed); with the rule and food stamps, unrefitted, 7.5%.
   The 21:43 sessions (bound on period 2) were archived and relaunched.
+- 22:00 first result, u1 0.10 on the calibrated grid, all refit: SUD share of the homeless
+  38.2 (target 21.7), P(homeless|SUD) 5.8, homelessness 0.605, part 8.90, r_use 0.73,
+  vsl 79.8; users 89% at incomes 0.34-0.61. Gradient check passes (mortality off, users at
+  3.88x average at every u1 to 0.50). Period 1: 7.5% of households negative (bottom).
+  Lowest income raised to 0.235: homelessness 0.32 after two rounds, h1 0.046 near its cap.
+- 22:05 the author: "raise the bottom only as much as needed". bottom_bound.py bisects
+  TRUNC_FLOOR in [1.08, 2.4] for the lowest bottom with no negative period-1 state, full
+  refit at each trial; u1 held at 0.10, and u1 fitted on the 21.7% share.
 - Found by the smoke test: at the calibrated grid the poorest households have a negative
   value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
 
