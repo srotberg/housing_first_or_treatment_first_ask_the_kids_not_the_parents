@@ -36,6 +36,12 @@
 - 22:05 the author: "raise the bottom only as much as needed". bottom_bound.py bisects
   TRUNC_FLOOR in [1.08, 2.4] for the lowest bottom with no negative period-1 state, full
   refit at each trial; u1 held at 0.10, and u1 fitted on the 21.7% share.
+- 22:08 WORKER BRIEF LESSON: the 21:47 scan sessions died without tracebacks. A script
+  started with `nohup ... &` from a worker's Bash call is killed when that shell exits,
+  and a log written straight into a tracked file is replaced by `git pull --rebase` under
+  the running script. Briefs now say: start with run_in_background=true, log to /tmp, copy
+  into the repo only to commit. Relaunched 22:10: bottom_bound fit and 0.10, scan 0.05,
+  0.20, 0.30. Only the u1 0.10 calibrated-grid result from 22:00 survived.
 - Found by the smoke test: at the calibrated grid the poorest households have a negative
   value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
 
