@@ -95,6 +95,16 @@ for l in out.splitlines():
         G[p[0]] = l
 HELD = {k for k, l in G.items() if ' HELD' in l and 'rate inside the band' not in l}
 HELD.add('kappa_uem')                             # adjuster zeroed; not in the gaps table
+# h_2 IS HELD TOO (audit, 29 September): the benchmark's handover zeroes
+# smallest_house_size_adjuster, which the gaps table cannot see because it reads
+# the Fortran declaration (0.05), so h_2 = 0.0407 did not move in the final round.
+if H.get('smallest_house_size_adjuster', 1.0) == 0.0:
+    HELD.add('h2')
+# AVERAGE LABOUR INCOME, the scale the SSI floor is quoted against: the floor is
+# applied to productivity (mean one at entry), and the log prints the food
+# allotment over average labour income, so the two give the level.
+AVG_LAB = H['max_food_cost'] / float(
+    re.findall(r'DIAG max allotment / avg labour income\s*=\s*(\S+)', LOG)[-1])
 THETA_AGG = float(G['theta'].split()[2])
 
 # omega_c: drug use with the child's weight off and every other parameter the same
@@ -130,7 +140,7 @@ SD_ENTRY = H['kkk_sigma_scale'] * math.sqrt(
 ELEVEN = [
     ('Who uses drugs', [
         (r'$\theta$', 'Weight on the drug', setcol('theta'),
-         r'Drug spending over income, Midgette et al.\ (2019)',
+         r'Drug spending over income, Midgette et al.\ (2019); model, users with a SUD',
          pc(C['drug_spending_share_data']), pc(THETA_AGG), f(H['relative_share_of_addiction_1'], 3)),
         (r'$b$', 'Shifter on the drug', setcol('b'), 'Drug participation, NSDUH 2024',
          pc(C['participation_rate_data'] / UPLIFT, 2), pc(mom('b total drug users'), 2),
@@ -145,7 +155,7 @@ ELEVEN = [
          pc(C['drug_user_income_data'], 0), pc(mom('y_u income of drug users'), 0),
          f(H['kappa_phi_d_level'])),
         (r'$\aleph$', 'Flow value of being alive', setcol('aleph'),
-         r'Value of a statistical life over income, Viscusi and Aldy (2003)',
+         r'Value of a statistical life over average labour income, Viscusi and Aldy (2003)',
          f(C['vsl_data'], 0), f(mom('aleph value of life / income'), 0), f(H['value_of_life'], 1)),
     ]),
     ('What using and being homeless cost, and the voucher', [
@@ -153,10 +163,9 @@ ELEVEN = [
          r'SUD share of the homeless, Gutwinski et al.\ (2021)',
          pc(C['sud_share_of_homeless']), pc(mom('sud_homeless SUD share of the homeless')),
          f(H['multiple_find_if_addicted'])),
-        (r'$\kappa^{eu}_{d}$', 'Separation multiplier, SUD', 'Ext.',
-         r'Set to one; $\kappa^{ue}_{d}$ carries the SUD',
-         f(H['multiple_of_probabilities_of_employment_if_addicted']), NA,
-         f(H['multiple_of_probabilities_of_employment_if_addicted'])),
+        # kappa^eu_d HAS NO ROW: it is one in the benchmark (clamped at its floor),
+        # so the SUD does not raise separations and the parameter is inert (audit,
+        # 29 September); Section 4 no longer carries it.
         (r'$h_1$', 'Housing services in a shelter', 'Int.',
          'Homelessness rate, HUD PiT 2023, within a band',
          f'{100 * C["h1_band_lo"]:.2f} to {100 * C["h1_band_hi"]:.2f}\\%',
@@ -192,10 +201,12 @@ ELEVEN = [
          r'SMI share of the homeless, Gutwinski et al.\ (2021)',
          pc(C['smi_share_of_homeless_data'], 0), pc(mom('lambda_m SMI share of the homeless')),
          f(H['kappa_find_smi'])),
+        # ITS RULE IS ON THE SMI SHARE OF THE HOMELESS (f90 ~51004), the moment
+        # kappa^ue_m carries, and its adjuster is zero; employment given SMI, which
+        # the row used to show as its moment, is reported in Table 7 instead.
         (r'$\kappa^{eu}_{m}$', 'Separation multiplier, SMI', setcol('kappa_uem'),
-         r'Employment given SMI, Mechanic et al.\ (2002)',
-         pc(C['employment_rate_given_smi_data'], 0), pc(mom('kappa_uem employment given SMI'), 0),
-         f(H['kappa_uem'])),
+         r'Held; its rule is on the SMI share of the homeless',
+         NA, NA, f(H['kappa_uem'])),
         (r'$\mu_m$', 'SUD recovery multiplier, SMI', 'Ext.',
          r'Dual diagnosis relapse, Bradizza et al.\ (2006)', f(C['mu_m']), NA, f(C['mu_m'])),
         (r'$\kappa_{\phi m}$', 'Mortality multiplier, SMI', 'Ext.', r'Olfson et al.\ (2015)',
@@ -294,7 +305,7 @@ STANDARD = [
         (r'$S(y)$', 'Replacement rates between bend points', 'Ext.', 'SSA primary insurance amount',
          'statute', NA,
          f'{C["ss_pia_rate_1"]:.2f}, {C["ss_pia_rate_2"]:.2f}, {C["ss_pia_rate_3"]:.2f}'),
-        (r'$\underline S$', 'SSI floor, over the average wage index', 'Ext.', 'SSA federal benefit rate',
+        (r'$\underline S$', 'SSI floor, over mean productivity at entry', 'Ext.', 'SSA federal benefit rate',
          f(H['ssi_floor_level'], 3), NA, f(H['ssi_floor_level'], 3)),
         (r'$\psi_{ui}$', 'UI replacement rate', 'Ext.', 'DOL statutory replacement rates',
          f(H['replacement_rate_ui']), NA, f(H['replacement_rate_ui'])),
@@ -348,10 +359,13 @@ UNTARGETED = [
     ('Mean age of users, years', one('mean age of drug users', 1, 1), 'NSDUH 2024'),
     ('Income with a SUD, over average', one('income with a SUD'), 'NSDUH 2024'),
     ('Unemployment given a SUD', one('kappa_ued unemployment given SUD'), 'NSDUH 2024'),
-    ('Participation, with a SUD and without',
+    ('Labour force participation, with a SUD and without',
      many(['participation, with a SUD', 'participation, without a SUD']), 'NSDUH 2024'),
     ('SUD rate with SMI over without, ratio', one('r_smi SUD ratio SMI over non-SMI', 2, 1), 'NSDUH 2024'),
-    ('Drug poisonings as a share of deaths', one('drug deaths, share of deaths'), 'CDC WONDER'),
+    ('Employment given SMI', (f'{100 * C["employment_rate_given_smi_data"]:.0f}',
+                              f'{100 * mom("kappa_uem employment given SMI"):.1f}'),
+     r'Mechanic et al.\ (2002)'),
+    ('Drug deaths as a share of deaths, 25--44', one('drug deaths, share of deaths'), 'CDC WONDER'),
     ('Treatment', None, None),
     ('Homeless at treatment admission', one('homeless at treatment admission'), 'TEDS-A 2022'),
     ('Psychiatric problem alongside SUD at admission', one('SMI alongside SUD at admission'), 'TEDS-A 2022'),
@@ -363,7 +377,9 @@ UNTARGETED = [
     ('Tenant contribution rate', one('tenant contribution rate'), 'HUD PSH 2023'),
     ('Voucher holders with wages as main income', one('voucher holders, wages main'), 'HUD PSH 2023'),
     ('Distribution', None, None),
-    ('Earnings shares, bottom and top tenth',
+    # the model side is PRODUCTIVITY at entry (f90 11414-11453, employment_grid(1,:)),
+    # without the age profile or unemployment, and the label says so
+    ('Bottom and top tenth: earnings (data), productivity at entry (model)',
      many(['earnings share, bottom tenth', 'earnings share, top tenth'], 2), 'SCF 2022'),
     ('Income shares, bottom 1, 5, 10, 20 per cent',
      many([f'income share bottom {p} pct' for p in (1, 5, 10, 20)], 2), 'SCF 2022'),
@@ -371,7 +387,7 @@ UNTARGETED = [
      many([f'wealth share bottom {p} pct' for p in (1, 5, 10, 20)], 2, neg=True), 'SCF 2022'),
     ('Net worth share, bottom half',
      (f'{100 * mom("w_bot net worth share, bottom half", 1):.1f}',
-      f'{100 * mom("w_bot net worth share, bottom half"):.1f}'), 'SCF 2022'),
+      f'{100 * mom("w_bot net worth share, bottom half"):.1f}'), 'FRB DFA'),
     ('Transmission, odds ratios', None, None),
     ('A child of a parent with a SUD acquires one',
      ('1.44 and 2.51', f'{mom("delta_d child SUD odds ratio"):.2f}'),
@@ -486,6 +502,15 @@ def numbers():
         'c_shelter_last_age': f'{25 + H["max_age_to_choose_homelessness"]:.0f}',
         'c_nodes': f'{C["employment_base_size"]:.0f}',
         'c_ssi_takeup': f'{H["ssi_floor_takeup"]:.0f}',
+        # the SSI floor over the benchmark's average labour income (audit, 29 September)
+        'c_ssi_floor_earn': f'{H["ssi_floor_level"] / AVG_LAB:.3f}',
+        'c_avg_lab': f'{AVG_LAB:.2f}',
+        # the productivity grid's settings that no row carried (audit, 29 September)
+        'c_sd_fixed': f'{H["sd_fixed_employment_newborn"]:.2f}',
+        'c_rho_fixed': f'{H["persistence_fixed_employment_newborn"]:.2f}',
+        'c_kkk_lo': f'{H["kkk_s_deviation_bottom"]:.2f}',
+        'c_kkk_hi': f'{H["kkk_s_deviation_top"]:.2f}',
+        'c_bottom_prod': f'{H["bottom_productivity_level"]:.3f}',
         # the share of SUDs over within ten years at the baseline hazard (Section 2 quotes it)
         'c_bar_pi_r_ten_pc': f'{100 * (1 - (1 - H["probability_of_stopping_addiction"]) ** 10):.0f}',
     })

@@ -12,15 +12,14 @@
 Parameter & Description & Set & Moment and source & Data & Model & Value \\
 \midrule
 \multicolumn{7}{@{}l}{\emph{Who uses drugs}} \\
-$\theta$ & \textcolor{red}{Weight on the drug} & \textcolor{red}{Int.$^\dagger$} & Drug spending over income, Midgette et al.\ (2019) & \textcolor{red}{16.0\%} & \textcolor{red}{15.3\%} & \textcolor{red}{0.165} \\
+$\theta$ & \textcolor{red}{Weight on the drug} & \textcolor{red}{Int.$^\dagger$} & \textcolor{red}{Drug spending over income, Midgette et al.\ (2019); model, users with a SUD} & \textcolor{red}{16.0\%} & \textcolor{red}{15.3\%} & \textcolor{red}{0.165} \\
 $b$ & \textcolor{red}{Shifter on the drug} & Int. & Drug participation, NSDUH 2024 & 8.90\% & \textcolor{red}{8.12\%} & \textcolor{red}{0.0055} \\
 \textcolor{red}{$\pi_d$} & \textcolor{red}{Chance a year of use starts a SUD} & \textcolor{red}{Int.} & \textcolor{red}{Share of users carrying a SUD, NSDUH 2024} & \textcolor{red}{41.3\%} & \textcolor{red}{42.6\%} & \textcolor{red}{0.0345} \\
 $\kappa_{\phi d}$ & \textcolor{red}{Mortality multiplier, SUD} & \textcolor{red}{Int.$^\dagger$} & \textcolor{red}{Income of drug users over average, NSDUH 2024} & \textcolor{red}{74\%} & \textcolor{red}{60\%} & \textcolor{red}{4.00} \\
-$\aleph$ & Flow value of being alive & Int. & \textcolor{red}{Value of a statistical life over income, Viscusi and Aldy (2003)} & \textcolor{red}{80} & \textcolor{red}{82} & \textcolor{red}{87.6} \\
+$\aleph$ & Flow value of being alive & Int. & \textcolor{red}{Value of a statistical life over average labour income, Viscusi and Aldy (2003)} & \textcolor{red}{80} & \textcolor{red}{82} & \textcolor{red}{87.6} \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{What using and being homeless cost, and the voucher}} \\
 \textcolor{red}{$\kappa^{ue}_{d}$} & \textcolor{red}{Job-finding divisor, SUD} & \textcolor{red}{Int.} & \textcolor{red}{SUD share of the homeless, Gutwinski et al.\ (2021)} & \textcolor{red}{21.7\%} & \textcolor{red}{19.2\%} & \textcolor{red}{3.78} \\
-\textcolor{red}{$\kappa^{eu}_{d}$} & \textcolor{red}{Separation multiplier, SUD} & \textcolor{red}{Ext.} & \textcolor{red}{Set to one; $\kappa^{ue}_{d}$ carries the SUD} & \textcolor{red}{1.00} & \textcolor{red}{n.a.} & \textcolor{red}{1.00} \\
 $h_1$ & \textcolor{red}{Housing services in a shelter} & Int. & \textcolor{red}{Homelessness rate, HUD PiT 2023, within a band} & \textcolor{red}{0.40 to 1.00\%} & \textcolor{red}{0.61\%} & \textcolor{red}{0.0216} \\
 \textcolor{red}{$\kappa_{\phi H}$} & \textcolor{red}{Mortality multiplier, shelter} & \textcolor{red}{Ext.} & \textcolor{red}{Meyer et al.\ (2023)} & \textcolor{red}{1.60} & \textcolor{red}{n.a.} & \textcolor{red}{1.60} \\
 \textcolor{red}{$\kappa_{H}$} & \textcolor{red}{Employment penalty, shelter} & \textcolor{red}{Ext.} & \textcolor{red}{Desmond and Gershenson (2016)} & \textcolor{red}{0.20} & \textcolor{red}{n.a.} & \textcolor{red}{0.20} \\
@@ -33,7 +32,7 @@ $\iota$ & SUD multiplier on SMI onset & Ext. & Danish registers, Nielsen et al.\
 $\lambda_m$ & Chance of recovering from SMI & Ext. & \textcolor{red}{Ten-year recovery rate, {\AA}sb{\o} et al.\ (2022)} & 50\% & n.a. & \textcolor{red}{0.066} \\
 $\omega_m$ & Level of the SMI onset profile & \textcolor{red}{Int.$^\dagger$} & SMI share of the population, NSDUH 2024 & 4.82\% & \textcolor{red}{4.82\%} & \textcolor{red}{0.0037} \\
 \textcolor{red}{$\kappa^{ue}_{m}$} & \textcolor{red}{Job-finding divisor, SMI} & \textcolor{red}{Int.} & \textcolor{red}{SMI share of the homeless, Gutwinski et al.\ (2021)} & \textcolor{red}{25\%} & \textcolor{red}{25.4\%} & \textcolor{red}{7.71} \\
-\textcolor{red}{$\kappa^{eu}_{m}$} & \textcolor{red}{Separation multiplier, SMI} & \textcolor{red}{Int.$^\dagger$} & \textcolor{red}{Employment given SMI, Mechanic et al.\ (2002)} & \textcolor{red}{30\%} & \textcolor{red}{83\%} & \textcolor{red}{1.06} \\
+\textcolor{red}{$\kappa^{eu}_{m}$} & \textcolor{red}{Separation multiplier, SMI} & \textcolor{red}{Int.$^\dagger$} & \textcolor{red}{Held; its rule is on the SMI share of the homeless} & \textcolor{red}{n.a.} & \textcolor{red}{n.a.} & \textcolor{red}{1.06} \\
 $\mu_m$ & SUD recovery multiplier, SMI & Ext. & Dual diagnosis relapse, Bradizza et al.\ (2006) & 0.82 & n.a. & 0.82 \\
 $\kappa_{\phi m}$ & Mortality multiplier, SMI & Ext. & Olfson et al.\ (2015) & 2.50 & n.a. & 2.50 \\
 \addlinespace

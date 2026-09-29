@@ -89,6 +89,10 @@ for l in open(os.path.join(RES, 'tf85', 'PARAM_HANDOVER.arm.txt')):
 out['x_tf_pdet_pc'] = pc(100 * float(_ho['probability_of_detection']))
 out['x_tf_pfp_pc'] = pc(100 * float(_ho['probability_of_false_positive']))
 assert _ho.get('include_voucher_exclusion') == '1', 'tf85 ran without exclusion?'
+# the release rate out of exclusion is a compile-time parameter (f90 657), 1/3
+_psi = float(json.load(open(os.path.join(HERE, 'fortran_numbers.json')))['f_voucher_exclusion_release'])
+out['x_psi_x'] = '1/3' if abs(_psi - 1 / 3) < 1e-5 else f'{_psi:.2f}'
+out['x_ban_years'] = {1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five'}.get(round(1 / _psi), f'{1 / _psi:.0f}')
 
 om = final('omega1')
 out['x_om_b_pc'] = pc(om['drug use b']['pc'])
