@@ -12,7 +12,13 @@ half's 17.2 per cent, yV to half the median, and cbar (food assistance share), h
 (homelessness), kappa (users' income) and b (participation) refitted, until the strict
 check finds no negative cell.  Then the band table and u1 + 0.03 with the same refit.
 Log only.
-usage:  STYLIZED_WORKERS=<n> python3 test_fs_bound.py stage [first TRUNC_FLOOR] [step]
+usage:  STYLIZED_WORKERS=<n> python3 test_fs_bound.py stage [first TRUNC_FLOOR] [step] [psi]
+
+psi (optional) sets the income-support replacement, the author, 29 September, on a
+30-year spell of unemployment: the justifiable psi for the households at risk is about
+0.15 to 0.25.  THE BOUND MAY NOT BE REACHABLE: with sigma_y refitted to keep the bottom
+half's 17.2 per cent, the lowest productivity stopped rising near 0.24 in test_bottom.py.
+If a step raises it by less than 0.002, or after 12 steps, the loop stops and says so.
 """
 import sys
 import numpy as np
@@ -27,6 +33,7 @@ FS_TARGET = 0.0042
 stage = int(sys.argv[1])
 tf = float(sys.argv[2]) if len(sys.argv) > 2 else 2.2
 step = float(sys.argv[3]) if len(sys.argv) > 3 else 0.1
+psi = float(sys.argv[4]) if len(sys.argv) > 4 else None
 
 
 def set_grid(tf):
@@ -81,9 +88,21 @@ def report(tag, q):
 
 
 par0, _ = R.load(stage)
+if psi is not None:
+    par0 = with_(par0, repl=psi)
+    print(f'psi set to {psi}', flush=True)
 q = par0
+prev_bottom, steps, reached = -1.0, 0, True
 while True:
     yV = set_grid(tf)
+    steps += 1
+    if C.YG.min() - prev_bottom < 0.002 or steps > 12:
+        reached = False
+        print(f'  BOUND NOT REACHABLE: the lowest productivity stopped rising at {C.YG.min():.3f} '
+              f'(sigma_y {C.SIG:.4f}); continuing at this grid', flush=True)
+        q = fit(with_(q, yV=yV))
+        break
+    prev_bottom = C.YG.min()
     print(f'TRUNC_FLOOR {tf:.2f}: lowest productivity {C.YG.min():.3f}, sigma_y {C.SIG:.4f}, '
           f'bottom-half share {100*C._bottom_half_share(C.SIG):.1f}%', flush=True)
     q = fit(with_(q, yV=yV))
@@ -93,7 +112,9 @@ while True:
     if sv['cells'] == 0:
         break
     tf += step
-print(f'  BOUND: lowest productivity {C.YG.min():.3f} (TRUNC_FLOOR {tf:.2f}); '
+sv0 = strict_negative_values(ST.solve_child_damage(q))
+print(f'  BOUND {"REACHED" if reached else "NOT REACHED"} ({sv0["cells"]} negative cells): '
+      f'lowest productivity {C.YG.min():.3f} (TRUNC_FLOOR {tf:.2f}); '
       f'PARAMS cbar {q.cbar:.6f} h1 {q.h1:.6f} kap {q.kap:.6f} b {q.b:.6f} sigma_y {C.SIG:.4f}', flush=True)
 report('BASE', q)
 q1 = fit(with_(q, u1=q.u1 + 0.03))
