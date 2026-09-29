@@ -97,6 +97,11 @@
   share 17.2 / 18.2 / 19.1 / 21.1% at floors 0.108 / 0.15 / 0.18 / 0.24. kappa should work
   again (it hit 0.73 on the original floor); the cost is the bottom-half share.
   scan_bottom_ui.py takes 'keepsig'; launched at 1.5 / 1.8 / 2.4 with the split rule.
+- 23:50 WORKER LESSON: cloud containers check the branch out DETACHED; cloud_run.sh pushed by
+  branch name and failed (1.5 x 0 finished 23:45, result stuck: u1 0.052, share 21.61, VSL
+  81.6 per its summary). Fixed: fetch, rebase on FETCH_HEAD, push HEAD:branch. All nine
+  sessions archived; relaunched the four that decide it: 1.08 split rule, and 1.5 / 1.8 /
+  2.4 split rule with sigma held, pushing every 5 minutes.
 - Found by the smoke test: at the calibrated grid the poorest households have a negative
   value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
 
