@@ -12,8 +12,10 @@ u1 included, as sr_calibrate.moments counts it), aleph on the value of a statist
 and kappa on users' income with b refit on participation inside every kappa trial; three
 rounds.
 
-THE VALUE-OF-LIFE BOUND.  The fit runs first on the calibrated grid (lowest income 0.108).
-If any household it OCCUPIES has a negative value of life, the grid's lowest income is
+THE VALUE-OF-LIFE BOUND IS ON PERIOD 1 (the author, 29 September: "no household in period
+1 of life has a negative value of life. It is ok if it is negative in period 2").  The
+fit runs first on the calibrated grid (lowest income 0.108).  If any period-1 state has a
+negative lifetime value, the grid's lowest income is
 raised as the quantitative model's bottom_productivity_floor_rate does, with sigma_y
 refitted to the bottom half's 17.2 per cent, to TRUNC_FLOOR 2.4, lowest income 0.235,
 which is as high as it goes with that share held (test_fs_bound.py), and the fit reruns.
@@ -41,7 +43,8 @@ import stylized as ST
 import stage_results as R
 from stylized import with_
 from calibrate import stats, bracket, TARGET
-from negative_value_of_life import strict_negative_values, occupied_negative_values
+from negative_value_of_life import (strict_negative_values, occupied_negative_values,
+                                   period1_negative_values)
 
 ui_sud = float(sys.argv[1])
 u1s = [float(x) for x in sys.argv[2:]]
@@ -115,20 +118,26 @@ def report(q):
               f'{100*mb["part"]*Wt[mask].sum()/tot["part"]:5.1f}%  use rate {100*mb["part"]:5.2f}%  '
               f'P(homeless|SUD) {100*mb["hl_sud"]/max(mb["sud"],1e-12):5.2f}%', flush=True)
     print(f'  grid: lowest income {C.YG[0]:.3f}, sigma_y {C.SIG:.4f}, means test yV {q.yV:.4f}', flush=True)
+    neg1 = 0
+    for pol in ('HF', 'TF'):
+        v1 = period1_negative_values(q, pol)
+        neg1 += v1['cells']
+        print(f'  PERIOD 1 value of life (the requirement), {pol}: {v1["cells"]} negative states holding '
+              f'{100*v1["share"]:.3f}% of households; lowest {v1["lowest"]:.3f} at {v1["where"]}; '
+              f'lowest before the draws {v1["lowest_ex_ante"]:.3f} at y {v1["lowest_ex_ante_y"]:.3f}',
+              flush=True)
     sv = strict_negative_values(q)
-    print(f'  STRICT value of life (every cell): {sv["cells"]} negative; lowest {sv["lowest"]:.3f} at {sv["where"]}',
+    print(f'  period 2, every cell (information): {sv["cells"]} negative; lowest {sv["lowest"]:.3f} at {sv["where"]}',
           flush=True)
-    occ = 0
     for pol in ('HF', 'TF'):
         ov = occupied_negative_values(q, pol)
-        occ += ov['cells']
-        print(f'  OCCUPIED value of life, {pol}: {ov["cells"]} negative cells holding '
+        print(f'  period 2, occupied (information), {pol}: {ov["cells"]} negative cells holding '
               f'{100*ov["share"]:.3f}% of period-2 households; lowest {ov["lowest"]:.3f} at {ov["where"]}',
               flush=True)
     print(f'  PARAMS ' + ' '.join(f'{k} {getattr(q, k):.6g}' for k in
                                   ('repl', 'ui_sud', 'cbar', 'h2', 'h3', 'gam', 'h1', 'u0', 'u1',
                                    'aleph', 'kap', 'b', 'th', 'yV')), flush=True)
-    return occ
+    return neg1
 
 
 def gradient_check(q):

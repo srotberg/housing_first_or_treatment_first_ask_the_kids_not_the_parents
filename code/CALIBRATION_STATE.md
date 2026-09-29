@@ -22,6 +22,12 @@
   fitted to 0.42%, u1 0.05/0.10/0.20/0.30, one cloud session each. Refits cbar, gamma, h1,
   u0, aleph, kappa (b inside); theta held. Grid bound to lowest income 0.235 if occupied
   negative values remain. Gradient check at each fit: kappa 0, u1 u0..0.50, b refit.
+- 21:50 the author: "no household in period 1 of life has a negative value of life. It is
+  ok if it is negative in period 2". negative_value_of_life.period1_negative_values():
+  the period-1 lifetime value in every period-1 state (all occupied). The bound now keys
+  on it. At the stage-1 calibration it is negative in 182 states, 11.1% of households,
+  worst -44.7 (income 0.108, unemployed); with the rule and food stamps, unrefitted, 7.5%.
+  The 21:43 sessions (bound on period 2) were archived and relaunched.
 - Found by the smoke test: at the calibrated grid the poorest households have a negative
   value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
 

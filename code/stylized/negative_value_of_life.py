@@ -141,6 +141,37 @@ def occupied_negative_values(par, policy='HF'):
                         worst = (float(w), dict(y=float(y), a=float(ag[k]), d=d, used=used, inc=float(inc)))
     return dict(cells=n, share=neg / max(tot, 1e-300), lowest=worst[0], where=worst[1])
 
+
+def period1_negative_values(par, policy='HF'):
+    """THE REQUIREMENT, the author, 29 September: "no household in period 1 of life has a
+    negative value of life. It is ok if it is negative in period 2".  The lifetime value
+    at the start of period 1, the parent's own at its optimum (period1's last entry), in
+    every period-1 state -- each income node, employed or not, voucher or not -- all of
+    which are occupied, since every household starts period 1 with no assets.  Also the
+    value before the employment and voucher draws.  Returns the number of negative
+    states, their population share, and the worst."""
+    n = 0
+    neg = tot = 0.0
+    worst = (float('inf'), None)
+    ex_lo = (float('inf'), None)
+    for j, y in enumerate(C.YG):
+        ex = 0.0
+        for s, (p, gain, v, ru, rn, inc, own) in enumerate(S.period1(par, float(y), policy)):
+            if p <= 1e-14:
+                continue
+            m = C.W[j] * p
+            tot += m
+            ex += p * own
+            if own < 0.0:
+                n += 1
+                neg += m
+                if own < worst[0]:
+                    worst = (float(own), dict(y=float(y), state=s, inc=float(inc), uses=bool(gain > 0.0)))
+        if ex < ex_lo[0]:
+            ex_lo = (float(ex), float(y))
+    return dict(cells=n, share=neg / max(tot, 1e-300), lowest=worst[0], where=worst[1],
+                lowest_ex_ante=ex_lo[0], lowest_ex_ante_y=ex_lo[1])
+
 if __name__ == '__main__':
     d = json.load(open('best_vector_it1800.json'))
     kw = {k: v for k, v in FIXED.items()
