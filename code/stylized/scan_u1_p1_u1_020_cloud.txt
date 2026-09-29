@@ -1,0 +1,42 @@
+stage 1 start; set {'repl': 0.5, 'ui_sud': 0.0, 'cbar': 0.077, 'h2': 0.1, 'h3': 0.4}; u1 values [0.2]
+--- u1 0.2, calibrated grid
+   round 0: cbar 0.0769 fshare 0.444% gam 0.4352 h1 0.024924 u0 0.0485 aleph 10.021 kap 0.1726 b 0.02554 | hspend 26.9 homeless 0.806 unemp 5.41 vsl 62.4 r_use 0.748 part 8.90 SUD share of homeless 15.87
+   round 1: cbar 0.0758 fshare 0.418% gam 0.4340 h1 0.023329 u0 0.0437 aleph 11.828 kap 0.1487 b 0.02300 | hspend 26.9 homeless 0.580 unemp 4.94 vsl 77.9 r_use 0.734 part 8.88 SUD share of homeless 13.01
+   round 2: cbar 0.0759 fshare 0.419% gam 0.4330 h1 0.023384 u0 0.0432 aleph 12.053 kap 0.1454 b 0.02285 | hspend 26.9 homeless 0.593 unemp 4.90 vsl 79.9 r_use 0.730 part 8.87 SUD share of homeless 13.66
+  RESULT ui_sud 0 u1 0.200 (u0 0.0432): SUD share of homeless 13.66 (target 21.7)  P(homeless|SUD) 1.34  homeless 0.593  part 8.87  SUD 3.67  r_use 0.730  hsmall 41.1
+     bottom 10% y 0.11-0.20  share of users   8.3%  use rate  7.33%  P(homeless|SUD) 15.55%
+     10-25%     y 0.20-0.33  share of users   0.4%  use rate  0.21%  P(homeless|SUD) 15.55%
+     25-50%     y 0.34-0.61  share of users  83.4%  use rate 29.40%  P(homeless|SUD)  0.00%
+     50-75%     y 0.63-1.17  share of users   0.0%  use rate  0.00%  P(homeless|SUD)  0.00%
+     top 25%    y 1.22-7.46  share of users   8.0%  use rate  2.84%  P(homeless|SUD)  0.00%
+  grid: lowest income 0.108, sigma_y 0.9896, means test yV 0.3061
+  PERIOD 1 value of life (the requirement), HF: 146 negative states holding 7.840% of households; lowest -11.505 at {'y': 0.10803857988304222, 'state': 3, 'inc': 0.05401928994152111, 'uses': True}; lowest before the draws -6.930 at y 0.108
+  PERIOD 1 value of life (the requirement), TF: 146 negative states holding 7.840% of households; lowest -11.682 at {'y': 0.10803857988304222, 'state': 3, 'inc': 0.05401928994152111, 'uses': False}; lowest before the draws -7.124 at y 0.108
+  period 2, every cell (information): 4466 negative; lowest -7.028 at {'y': 0.10803857988304222, 'a': 0.0, 'd': 1, 'used': 0, 'policy': 'TF'}
+  period 2, occupied (information), HF: 177 negative cells holding 7.160% of period-2 households; lowest -5.787 at {'y': 0.10803857988304222, 'a': 0.0, 'd': 1, 'used': 1, 'inc': 0.05401928994152111}
+  period 2, occupied (information), TF: 134 negative cells holding 7.129% of period-2 households; lowest -4.759 at {'y': 0.10803857988304222, 'a': 0.0175791587606306, 'd': 1, 'used': 1, 'inc': 0.10803857988304222}
+  PARAMS repl 0.5 ui_sud 0 cbar 0.0759472 h2 0.1 h3 0.4 gam 0.433016 h1 0.0233843 u0 0.0432092 u1 0.2 aleph 12.0529 kap 0.14541 b 0.0228531 th 0.175694 yV 0.3061
+  GRADIENT CHECK (mortality off, b refit to participation 8.87): users' income / average must stay above 1
+     u1 0.043: users income / average 3.889 (not reversed)  participation 8.87  SUD share of homeless 0.00
+     u1 0.100: users income / average 3.889 (not reversed)  participation 8.87  SUD share of homeless 0.00
+     u1 0.200: users income / average 3.889 (not reversed)  participation 8.87  SUD share of homeless 0.00
+     u1 0.300: users income / average 3.889 (not reversed)  participation 8.87  SUD share of homeless 0.00
+     u1 0.500: users income / average 3.889 (not reversed)  participation 8.87  SUD share of homeless 0.00
+--- u1 0.2, lowest income raised (TRUNC_FLOOR 2.4)
+   round 0: cbar 0.0940 fshare 0.346% gam 0.4760 h1 0.027405 u0 0.0233 aleph 11.421 kap 0.1505 b 0.02751 | hspend 25.2 homeless 0.000 unemp 2.95 vsl 83.8 r_use 0.501 part 8.42 SUD share of homeless 0.00
+   round 1: cbar 0.0968 fshare 0.422% gam 0.4952 h1 0.034948 u0 0.0267 aleph 10.877 kap 0.1600 b 0.03068 | hspend 25.7 homeless 0.082 unemp 3.26 vsl 82.3 r_use 0.485 part 8.24 SUD share of homeless 100.00
+   round 2: cbar 0.0967 fshare 0.431% gam 0.5045 h1 0.039467 u0 0.0303 aleph 10.653 kap 0.1629 b 0.03296 | hspend 26.1 homeless 0.201 unemp 3.65 vsl 81.5 r_use 0.473 part 8.79 SUD share of homeless 100.00
+  RESULT ui_sud 0 u1 0.200 (u0 0.0303): SUD share of homeless 100.00 (target 21.7)  P(homeless|SUD) 10.52  homeless 0.201  part 8.79  SUD 3.63  r_use 0.473  hsmall 46.5
+     bottom 10% y 0.24-0.27  share of users   0.0%  use rate  0.00%  P(homeless|SUD)  0.00%
+     10-25%     y 0.27-0.33  share of users   0.0%  use rate  0.00%  P(homeless|SUD)  0.00%
+     25-50%     y 0.33-0.50  share of users  90.2%  use rate 31.48%  P(homeless|SUD) 10.45%
+     50-75%     y 0.52-0.93  share of users   9.8%  use rate  3.45%  P(homeless|SUD) 11.18%
+     top 25%    y 0.98-11.92  share of users   0.0%  use rate  0.00%  P(homeless|SUD)  0.00%
+  grid: lowest income 0.235, sigma_y 1.7060, means test yV 0.2508
+  PERIOD 1 value of life (the requirement), HF: 54 negative states holding 0.451% of households; lowest -1.659 at {'y': 0.2516552791040342, 'state': 3, 'inc': 0.1258276395520171, 'uses': False}; lowest before the draws 1.561 at y 0.252
+  PERIOD 1 value of life (the requirement), TF: 54 negative states holding 0.451% of households; lowest -1.659 at {'y': 0.2516552791040342, 'state': 3, 'inc': 0.1258276395520171, 'uses': False}; lowest before the draws 1.561 at y 0.252
+  period 2, every cell (information): 612 negative; lowest -0.967 at {'y': 0.235376748196508, 'a': 0.0, 'd': 1, 'used': 0, 'policy': 'TF'}
+  period 2, occupied (information), HF: 0 negative cells holding 0.000% of period-2 households; lowest inf at None
+  period 2, occupied (information), TF: 0 negative cells holding 0.000% of period-2 households; lowest inf at None
+  PARAMS repl 0.5 ui_sud 0 cbar 0.0967404 h2 0.1 h3 0.4 gam 0.504543 h1 0.0394673 u0 0.0303139 u1 0.2 aleph 10.6535 kap 0.16293 b 0.0329634 th 0.175694 yV 0.250826
+  GRADIENT CHECK (mortality off, b refit to participation 8.79): users' income / average must stay above 1
