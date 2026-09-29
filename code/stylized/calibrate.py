@@ -503,7 +503,10 @@ _HSMALL = _hsmall_target()
 # disorder deters use, so fewer households carry it and fewer of the homeless
 # have it.  bracket() reads its direction from the endpoints, so a falling
 # moment is bisected correctly.
-TARGET = dict(part=_DRUG['participation'], homeless=0.0100, r_use=0.74,
+# homeless 0.0060, the author 29 September: "target homelessness rate of 0.6% as in the
+# quant model" (its benchmark h_1 is 0.61); it was 0.0100, the top of that model's band.
+# sr_calibrate's h1 row reads it from here, so the fit, Table 2 and the prose agree.
+TARGET = dict(part=_DRUG['participation'], homeless=0.0060, r_use=0.74,
               # the author, 13 September: raise the lowest income until only
               # half a per cent of households cannot afford the rental
               priced_out=0.005,

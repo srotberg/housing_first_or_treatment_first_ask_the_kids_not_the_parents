@@ -156,7 +156,9 @@ SPEC = [
     # over: a bracket sitting on a bound has stopped being a parameter, and at
     # exactly zero the flow utility raises 0 to a negative power and the solve
     # dies -- which is how the last scan crashed.
-    ('h1',    'homeless',         0.0100,  +1, 0.40, 0.001, 0.05),
+    # 0.6 PER CENT, the author 29 September: *"target homelessness rate of 0.6% as in
+    # the quant model"* -- its benchmark h_1 is 0.61. It was 1.00, the top of the band.
+    ('h1',    'homeless',         C.TARGET['homeless'],  +1, 0.40, 0.001, 0.05),
     # b's CEILING IS 1.0, author 12 September: *"i think you need to have a very
     # high b"*.  At theta = 0.25 the model starts with 72 to 86 per cent of
     # households using, and b is the only thing that brings that down: measured

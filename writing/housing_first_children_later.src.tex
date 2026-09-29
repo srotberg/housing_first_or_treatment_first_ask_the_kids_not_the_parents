@@ -959,77 +959,76 @@ dataset behind each one, its year and universe, and the computation that turns i
 into the number quoted here. What follows gives the moment and its source; the
 appendix gives the arithmetic.
 
-\new{Each stage is fitted to the same targets. Table~\ref{tab:ext} lists what is set
+Each stage is fitted to the same targets. Table~\ref{tab:ext} lists what is set
 outside the model and Table~\ref{tab:int} what is fitted inside it, with a column for
 each stage: the baseline of this section, and the model with the child that
 Section~\ref{sec:kids} adds, which is refitted with the child in place. The fit uses
-the quantitative model's rule, moving every internal parameter at once in proportion
-to the gap on its own moment until each gap is closed.}
+the quantitative model's rule, moving \new{all internal parameters together, each} in proportion
+to the gap on its own moment until each gap is closed.
 
 \subsubsection{External calibration}
 
-\new{Preferences and demographics are conventional: the discount factor over a
-thirty-year period is $\beta=@@s_beta@@$, which is $@@s_beta_ann@@$ a year compounded,}\footnote{The annual discount factor here is higher than the one in the
+Preferences and demographics are conventional: the discount factor over a
+thirty-year period is $\beta=@@s_beta@@$, which is $@@s_beta_ann@@$ a year compounded,\footnote{The annual discount factor here is higher than the one in the
 quantitative model, and this is deliberate. A period here is thirty years, so
 every consequence of using drugs arrives thirty years after the decision,
 whereas in the quantitative model consequences arrive annually and compound. A
 low annual discount factor would weigh that distant death much less and the
 mortality channel would be losing to impatience rather than to anything the model
-is about, so a higher factor corrects for the coarseness of the horizon rather
-than making a claim about preferences.} \new{risk aversion is
+is about, so a higher factor corrects for the coarseness of the horizon.} risk aversion is
 $\sigma=@@s_sigma@@$, as in the quantitative model, and survival over a period is
 $\bar\phi = @@s_phi0@@$, from the Social Security Administration (SSA) period life
-table for twenty six to fifty five.} Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. \new{Both rental units are
+table for twenty six to fifty five.
+
+Income support replaces half of previous earnings on a base capped at mean
+income, in line with statutory state rules. Both rental units are
 set, the small one at $h_2=@@s_h2@@$ and the standard one at $h_3 = @@s_h3@@$ of mean
-income.} The voucher parameters are institutional: covered
+income. The voucher parameters are institutional: covered
 tenants pay $@@s_kr_pc@@$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = @@s_kv@@$, and $\pi_V = @@s_pv@@$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
 Households (PSH), published by HUD.
 
-\new{The chance that use starts a SUD, $\pi_d$, needs no search: every user runs the
+The chance that use \new{causes} a SUD, $\pi_d$, needs no search: every user runs the
 same risk, so the SUD rate is participation times $\pi_d$, and $\pi_d$ is the ratio
 of the two in NSDUH 2024, $@@s_t_sud@@$ percent of adults aged 26 and over carrying a
-moderate or severe SUD against $@@s_t_part@@$ percent using, which is
-$\pi_d=@@s_pid@@$.}
+moderate or severe SUD against $@@s_t_part@@$ percent using, which \new{gives}
+$\pi_d=@@s_pid@@$. \new{The rent per unit of housing services $p_r$ and the price of a
+unit of drugs $p_v$ are normalised to one and held fixed in every counterfactual.}
 
 \subsubsection{Internal calibration}
 
-\new{The dispersion of log permanent income $\sigma_y$ is matched to how unequal
+The dispersion of log permanent income $\sigma_y$ is \new{set to match} how unequal
 earnings are at the bottom: in the 2022 Survey of Consumer Finances (SCF), households
 aged $26$ to $65$ with positive wage and salary income hold $@@s_t_bot50@@$ percent of
-total earnings in the poorer half of the distribution, and the quantitative model of
-Section~\ref{sec:full} is calibrated to the same moment. It is fixed before anything
-else, since nothing in the model moves the income distribution.} The flow value
+total earnings in the poorer half of the distribution. The flow value
 of being alive $\aleph$ is matched to a value of a statistical life of @@s_t_vsl@@
 times average annual income, about \$9 million against a mean household income of
 \$113,000, which is the range surveyed by Viscusi and Aldy (2003) once their
-estimates are put in current dollars. \new{The weight on housing $\gamma$ is matched to
+estimates are put in current dollars. The weight on housing $\gamma$ is \new{picked to match}
 the $@@s_t_hspend@@$ percent of non-drug expenditure that shelter plus utilities take in
-the 2024 Consumer Expenditure Survey (CEX); housing comes in three sizes rather than
-any size, so the share is not $\gamma$ itself, as it would be with a continuous choice.
-The pull of the first unit $b$ is matched to a drug participation rate of
+the 2024 Consumer Expenditure Survey (CEX).
+The pull of the first unit $b$ is \new{chosen to match} a drug participation rate of
 $@@s_t_part@@$ percent from NSDUH 2024 for respondents aged 26 and over with a disorder
 of any severity, and the weight on drugs $\theta$ to aggregate drug spending over the
-aggregate income of users, $@@s_t_dshare@@$ percent, the target of the quantitative
-model, from retail spending in Midgette et al.\ (2019) and the incomes of users in
-NSDUH 2024.}
+aggregate income of users, $@@s_t_dshare@@$ percent, from retail spending in Midgette et al.\ (2019) and the incomes of users in
+NSDUH 2024.
 
-\new{The mortality rate ratio $\kappa_{\phi d}$ is matched to the income of users,
-$@@s_t_ruse@@$ of the population average in NSDUH 2024, which is the moment the
-quantitative model first fitted it to: the death risk is what decides how far down
+The mortality rate ratio $\kappa_{\phi d}$ is \new{set to match} the income of users,
+$@@s_t_ruse@@$ of the population average in NSDUH 2024, \new{because} the death risk is what decides how far down
 the income distribution use sits, as Section~\ref{sec:who} shows. Housing services in
-a shelter $h_1$ are matched to a homelessness rate of $@@s_t_homeless@@$ percent,
-the top of the band the quantitative model is held within. The unemployment
-probability without the disorder $u_0$ is matched to the aggregate unemployment rate
-of $@@s_t_unemp@@$ percent from the Bureau of Labor Statistics (BLS) Current Population
-Survey (CPS), averaged over 2014 to 2024, and the unemployment probability with the
+a shelter $h_1$ are \new{chosen so that the homelessness rate in the model is}
+$@@s_t_homeless@@$ percent\new{, as in the quantitative model, where it is
+$@@c_h_1_model@@$, inside the band of $@@c_h_1_data@@$ percent of households that model
+is held within, whose floor is HUD's 2023 PiT count of a single night}. The unemployment
+probability without the disorder $u_0$ is \new{chosen such that the aggregate} unemployment rate
+\new{is} $@@s_t_unemp@@$ percent\new{, the average over 2014 to 2024 in} the Bureau of Labor Statistics (BLS) Current Population
+Survey (CPS), and the unemployment probability with the
 disorder $u_1$ to the share of the homeless carrying a SUD, $@@s_t_sudhl@@$ percent in
 the meta-analysis of Gutwinski et al.\ (2021). That share falls as $u_1$ rises: with
 participation held on its target, a larger job-loss penalty deters use most among the
 poor, for whom losing a job means losing the home, so the disorder moves up the income
 distribution and off the street. With the child in place the share falls short even at
 $u_1=u_0$, so in stage 2 $u_1$ rests at that bound, $@@s2_v_u1@@$, and the share is
-$@@s2_m_sudhl_pc@@$ percent.}
+$@@s2_m_sudhl_pc@@$ percent.
 
 \begin{table}[!tb]
 \centering
