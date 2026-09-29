@@ -75,6 +75,20 @@ out['x_tf_price_pc'] = pc(tf['drug price']['pc'])
 out['x_tf_cev'] = f"{last_cev('tf85'):.2f}"
 # the long-run gain splits about evenly between childhood and adulthood
 out['x_tf_child_share_pc'] = pc(100 * tf['split']['child'] / tf['split']['total'])
+# THE EXPERIMENT AS RUN (Section 7): pi_V clears the budget, and the screen's
+# parameters are the ARM's handover values, not the Fortran declarations (0.95 and
+# 0.005 there; the arm ran at 0.85 and 0).
+out['x_tf_piv0'] = f"{tf['pi_V (voucher probability)']['base']:.3f}"
+out['x_tf_piv1'] = f"{tf['pi_V (voucher probability)']['level']:.3f}"
+out['x_tf_piv_pc'] = pc(tf['pi_V (voucher probability)']['pc'])
+_ho = {}
+for l in open(os.path.join(RES, 'tf85', 'PARAM_HANDOVER.arm.txt')):
+    f = l.split()
+    if len(f) >= 2:
+        _ho[f[0]] = f[1]
+out['x_tf_pdet_pc'] = pc(100 * float(_ho['probability_of_detection']))
+out['x_tf_pfp_pc'] = pc(100 * float(_ho['probability_of_false_positive']))
+assert _ho.get('include_voucher_exclusion') == '1', 'tf85 ran without exclusion?'
 
 om = final('omega1')
 out['x_om_b_pc'] = pc(om['drug use b']['pc'])
