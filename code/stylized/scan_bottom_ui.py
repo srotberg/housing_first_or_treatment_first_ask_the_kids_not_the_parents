@@ -16,7 +16,7 @@ the targets, where users sit, the median over the mean, the SUD share around the
 u1, the period-1 value of life at the drug decision, the aleph and VSL that would clear
 it with the rest held, and the Figure 1 gradient check.  theta is held.  Log only.
 
-usage:  STYLIZED_WORKERS=<n> python3 scan_bottom_ui.py <TRUNC_FLOOR> <ui_sud | excess>
+usage:  STYLIZED_WORKERS=<n> python3 scan_bottom_ui.py <TRUNC_FLOOR> <ui_sud | excess> [keepsig]
 """
 import sys
 import numpy as np
@@ -63,13 +63,36 @@ def fit_u1(q, iters=10):
     return SC.with_b(with_(q, u1=0.5 * (lo + hi)))
 
 
-yV = SC.set_grid(tf)
+# KEEPSIG (optional third argument): raise the floor but HOLD sigma_y at its value on the
+# original floor (17.2 per cent there), rather than refitting it to keep the bottom half at
+# 17.2.  Refitting stretched the top -- median over mean 0.50 at the 0.235 floor -- and
+# users' income then jumped between about 0.45 and 0.95 with kappa, never 0.74.  Held,
+# the median stays at 0.62-0.65 of the mean and the bottom half's share rises instead:
+# 18.2 / 19.1 / 21.1 per cent at floors 0.15 / 0.18 / 0.24.  The author: "What is your
+# solution".
+KEEPSIG = len(sys.argv) > 3 and sys.argv[3] == 'keepsig'
+if KEEPSIG:
+    C.TRUNC_FLOOR = 1.08
+    SIG_HELD = C._solve_sig()
+    C.TRUNC_FLOOR = tf
+    C.SIG = SIG_HELD
+    C.YG, _W0 = C._grid(C.SIG)
+    C.EDGES = np.concatenate(([0.0], np.cumsum(_W0)))
+    C.W = _W0 * len(_W0)
+    C.Q_F = C._ndtr((np.log(C._trunc_level(C.SIG, tf * ST.P().pr * ST.P().h2)) + 0.5 * C.SIG ** 2) / C.SIG)
+    C.GRID_MEAN = (1.0 - C._tail_mean(C.SIG, C.Q_F)) / max(1.0 - C.Q_F, 1e-14)
+    yV = 0.5 * C._median_of(C.YG, _W0)
+else:
+    yV = SC.set_grid(tf)
 par0, _ = R.load(1)
 q = with_(par0, **{**SC.SPEC, 'ui_sud': ui, 'cbar': 0.09}, ui_sud_excess=int(EXCESS), u1=0.07, yV=yV, h1=0.03)
 med = C._median_of(C.YG, np.diff(C.EDGES))
 mean = float(np.sum(np.asarray(C.W) * np.asarray(C.YG)) / np.sum(C.W))
+_o = np.argsort(C.YG); _y = np.asarray(C.YG)[_o]; _w = np.asarray(C.W)[_o] / np.sum(C.W); _cw = np.cumsum(_w)
+_k = int(np.searchsorted(_cw, 0.5))
+_bh = float(((_w * _y)[:_k].sum() + (0.5 - (_cw[_k - 1] if _k else 0.0)) * _y[_k]) / mean)
 print(f'floor TRUNC_FLOOR {tf}: lowest income {C.YG[0]:.3f}, sigma_y {C.SIG:.4f}, median {med:.3f}, '
-      f'mean {mean:.3f}, median / mean {med / mean:.3f}; ' + ('uninsured SUD-caused job loss (ui_sud_excess)' if EXCESS else f'ui_sud {ui}') + f'; VSL target {TARGET["vsl"]}', flush=True)
+      f'mean {mean:.3f}, median / mean {med / mean:.3f}, bottom-half share {100*_bh:.1f}% ({"sigma HELD" if KEEPSIG else "sigma refitted to 17.2"}); ' + ('uninsured SUD-caused job loss (ui_sud_excess)' if EXCESS else f'ui_sud {ui}') + f'; VSL target {TARGET["vsl"]}', flush=True)
 for r in range(3):
     q = SC.fit(q, rounds=1)
     q = SC.unemployment_u0(fit_u1(q))

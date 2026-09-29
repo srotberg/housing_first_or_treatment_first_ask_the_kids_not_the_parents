@@ -87,6 +87,16 @@
   by the disorder is not (misconduct). Both replacement rates are rules; the uninsured
   share (u1-u0)/u1 comes out of u1; at u1 = u0 the channel is off. Default off. The half
   and quarter scan points were archived and replaced by 'excess' at 1.08/1.5/1.8/2.4.
+- 23:40 first point, floor 0.18 with no insurance: every target on except users' income
+  (0.46 -> 0.79 -> 0.96 across rounds: a few very rich users switch in and out as kappa
+  moves, because refitting sigma to hold 17.2% stretches the top); u1 0.055 above u0
+  0.048 but the SUD share barely moves with it; 0.64% negative at the drug decision,
+  cleared at a VSL of about 101.
+- 23:55 SOLUTION put to the author: raise the floor but HOLD sigma at 0.9896 (its value on
+  the original floor). Median over mean 0.615 / 0.624 / 0.633 / 0.654 and bottom half's
+  share 17.2 / 18.2 / 19.1 / 21.1% at floors 0.108 / 0.15 / 0.18 / 0.24. kappa should work
+  again (it hit 0.73 on the original floor); the cost is the bottom-half share.
+  scan_bottom_ui.py takes 'keepsig'; launched at 1.5 / 1.8 / 2.4 with the split rule.
 - Found by the smoke test: at the calibrated grid the poorest households have a negative
   value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
 
