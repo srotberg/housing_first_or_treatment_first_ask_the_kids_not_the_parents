@@ -163,8 +163,13 @@ def save(par, stage, it, m, worst):
     json.dump(out, open(os.path.join(HERE, f'calibrated_stage{stage}.json'), 'w'), indent=1)
 
 
-def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None):
+def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None, hold=()):
     S.SPEC = spec(stage)
+    # HELD ROWS (29 September): a parameter parked on its bound is not calibrated,
+    # and its row can never close, so it would keep the stopping rule from firing.
+    # Stage 2 with the child drove u1 to its floor (0.0486, u0 0.0485) with the SUD
+    # share of the homeless 20.6 against 21.7; it is held there and reported.
+    S.SPEC = [(r[0], r[1], r[2], r[3], 0.0, r[5], r[6]) if r[0] in hold else r for r in S.SPEC]
     if stage == 1:
         v = start_vector()
         if resume:
@@ -197,6 +202,11 @@ def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None):
             v['omega'] = o2['omega']
             print('  warm start, omega_c from the floor-era stage 2: ' +
                   ', '.join(f'{k}={v[k]:.5g}' for k in ('aleph', 'b', 'th', 'omega', 'u1', 'kap')))
+    if stage != 1 and resume:
+        r = json.load(open(os.path.join(HERE, resume)))
+        v.update({k: x for k, x in r.items() if not k.startswith('_')})
+        v['y_floor'] = 0.0
+        print(f'  resumed stage {stage} from {resume}, iteration {r.get("_iteration")}')
     v.update(STAGE_SET[stage])
     par = with_(P(), **v)
     print(f'STAGE {stage}: {len(S.SPEC)} parameters live: '
@@ -243,4 +253,6 @@ def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None):
 
 
 if __name__ == '__main__':
-    calibrate(int(sys.argv[1]), resume=sys.argv[2] if len(sys.argv) > 2 else None)
+    args = [a for a in sys.argv[2:] if not a.startswith('--')]
+    hold = tuple(a.split('=', 1)[1] for a in sys.argv[2:] if a.startswith('--hold='))
+    calibrate(int(sys.argv[1]), resume=args[0] if args else None, hold=hold)
