@@ -1,11 +1,13 @@
 """Does u1 raise the SUD share of the homeless once a household with a SUD that loses its
 job draws no unemployment insurance?
 
-The author, 29 September: "we need u1 to raise homelessness sud", then "Make UI for those
-with Sud 0 ... And remove the food stamps".  Specification: repl (psi) 0.15, ui_sud 0 (no
-insurance with a SUD), no food stamps (cbar 0), small unit h2 0.05, standard unit h3 0.40.
-At each u1 the model is refitted from calibrated_stage1.json: gamma on housing spending,
-h1 on homelessness, u0 on the unemployment rate (4.85 per cent, the SUD households'
+The author, 29 September: "we need u1 to raise homelessness sud", "Make UI for those with
+Sud 0", "you may need food stamps for 0 asset, 0 income case.. So keep the food stamps",
+and "You can just set psi =0.5. It's ok. And go back to 0.1 and 0.4 for h2 and h3".
+Specification: repl (psi) 0.5, ui_sud 0 (no insurance with a SUD), food stamps fitted to
+0.42 per cent of labour income (the full model's target), h2 0.10, h3 0.40.  At each u1
+the model is refitted from calibrated_stage1.json: cbar on the food stamp share, gamma on
+housing spending, h1 on homelessness, u0 on the unemployment rate (4.85 per cent, the SUD households'
 u1 included, as sr_calibrate.moments counts it), aleph on the value of a statistical life,
 and kappa on users' income with b refit on participation inside every kappa trial; three
 rounds.
@@ -14,13 +16,23 @@ THE VALUE-OF-LIFE BOUND.  The fit runs first on the calibrated grid (lowest inco
 If any household it OCCUPIES has a negative value of life, the grid's lowest income is
 raised as the quantitative model's bottom_productivity_floor_rate does, with sigma_y
 refitted to the bottom half's 17.2 per cent, to TRUNC_FLOOR 2.4, lowest income 0.235,
-which is as high as it goes with that share held (test_fs_bound.py), and the fit reruns.  theta (drug spending share) is held, so this is a test, not the
-calibration.  Reports who uses by income band, P(homeless | SUD) by band, the SUD share
+which is as high as it goes with that share held (test_fs_bound.py), and the fit reruns.
+
+THE GRADIENT CHECK, Figure 1's unemployment channel (the author: "check that raising u1
+above u0 does not reverse the income gradient... even with 0 Income").  At the fitted
+point the mortality penalty is switched off (kappa = 0) and u1 is set to u0, 0.10, 0.20,
+0.30 and 0.50 in turn, b refitted each time to the point's participation, h1 held, as
+run._scaled does.  Users' income over the average must stay above one: below one, the
+unemployment channel alone has moved use to the bottom, which the paper says only the
+mortality penalty does.
+
+theta (drug spending share) is held, so this is a test, not the calibration.  Reports who uses by income band, P(homeless | SUD) by band, the SUD share
 of the homeless, and both value-of-life checks: every cell (strict) and the cells
 households actually occupy.  Log only.
 
 usage:  STYLIZED_WORKERS=<n> python3 scan_u1_uninsured.py ui_sud u1 [u1 ...]
-        ui_sud 0 is the rule, 1 is the comparison without it
+        ui_sud 0 is the rule, 1 is the model without it
+needs numpy (pip install numpy scipy matplotlib in a fresh container)
 """
 import sys
 import numpy as np
@@ -33,7 +45,8 @@ from negative_value_of_life import strict_negative_values, occupied_negative_val
 
 ui_sud = float(sys.argv[1])
 u1s = [float(x) for x in sys.argv[2:]]
-SPEC = dict(repl=0.15, ui_sud=ui_sud, cbar=0.0, h2=0.05, h3=0.40)
+FS_TARGET = 0.0042
+SPEC = dict(repl=0.5, ui_sud=ui_sud, cbar=0.077, h2=0.10, h3=0.40)
 
 
 def set_grid(tf):
@@ -63,6 +76,7 @@ def with_b(q):
 
 def fit(q, rounds=3):
     for r in range(rounds):
+        q = with_(q, cbar=bracket(q, 'cbar', 'fshare', 1e-4, 0.6, iters=16, tgt=FS_TARGET))
         q = with_(q, gam=bracket(q, 'gam', 'hspend', 0.02, 0.70, iters=16))
         q = with_(q, h1=bracket(q, 'h1', 'homeless', 1e-6, 0.049, iters=18))
         q = unemployment_u0(q)
@@ -76,7 +90,7 @@ def fit(q, rounds=3):
                 hi = mid
         q = with_b(with_(q, kap=np.sqrt(lo * hi)))
         m = stats(q)
-        print(f'   round {r}: gam {q.gam:.4f} h1 {q.h1:.6f} u0 {q.u0:.4f} aleph {q.aleph:.3f} '
+        print(f'   round {r}: cbar {q.cbar:.4f} fshare {100*m["fshare"]:.3f}% gam {q.gam:.4f} h1 {q.h1:.6f} u0 {q.u0:.4f} aleph {q.aleph:.3f} '
               f'kap {q.kap:.4f} b {q.b:.5f} | hspend {100*m["hspend"]:.1f} homeless {100*m["homeless"]:.3f} '
               f'unemp {100*((1-m["sud"])*q.u0+m["sud"]*q.u1):.2f} vsl {m["vsl"]:.1f} r_use {m["r_use"]:.3f} '
               f'part {100*m["part"]:.2f} SUD share of homeless {100*m["sud_of_homeless2"]:.2f}', flush=True)
@@ -117,6 +131,20 @@ def report(q):
     return occ
 
 
+def gradient_check(q):
+    """Figure 1's unemployment channel alone: kappa 0, u1 raised, b refit, h1 held."""
+    ref = stats(q)['part']
+    print(f'  GRADIENT CHECK (mortality off, b refit to participation {100*ref:.2f}): '
+          "users' income / average must stay above 1", flush=True)
+    for u1 in (q.u0, 0.10, 0.20, 0.30, 0.50):
+        g = with_(q, kap=0.0, u1=u1)
+        g = with_(g, b=bracket(g, 'b', 'part', 1e-5, 20.0, iters=30, tgt=ref))
+        m = stats(g)
+        print(f'     u1 {u1:.3f}: users income / average {m["r_use"]:.3f} '
+              f'({"REVERSED" if m["r_use"] < 1.0 else "not reversed"})  participation {100*m["part"]:.2f}  '
+              f'SUD share of homeless {100*m["sud_of_homeless2"]:.2f}', flush=True)
+
+
 par0, _ = R.load(1)
 print(f'stage 1 start; set {SPEC}; u1 values {u1s}', flush=True)
 q = with_(par0, **SPEC)
@@ -124,7 +152,10 @@ for u1 in u1s:
     print(f'--- u1 {u1}, calibrated grid', flush=True)
     set_grid(1.08)
     qa = fit(with_(q, u1=u1, yV=par0.yV))
-    if report(qa) > 0:
+    neg = report(qa)
+    gradient_check(qa)
+    if neg > 0:
         print(f'--- u1 {u1}, lowest income raised (TRUNC_FLOOR 2.4)', flush=True)
         qb = fit(with_(qa, yV=set_grid(2.4)))
         report(qb)
+        gradient_check(qb)

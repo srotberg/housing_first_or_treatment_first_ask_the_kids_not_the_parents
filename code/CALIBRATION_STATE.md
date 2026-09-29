@@ -13,9 +13,15 @@
   _mix() makes 0 * W2 exactly 0 (W2 is -inf at zero assets with the rule and no food
   stamps). Both stages reproduce their calibrated moments with the default.
   negative_value_of_life.occupied_negative_values(): the check on cells households reach.
-- Running: scan_u1_uninsured.py, cloud, ui_sud 0 at u1 0.05/0.10/0.20/0.30 and ui_sud 1 for
-  comparison. Refits gamma, h1, u0, aleph, kappa (b inside); theta held. Grid bound to
-  lowest income 0.235 if occupied negative values remain.
+- SUPERSEDED 21:50 by the author: "keep the food stamps" (the zero-asset, zero-income
+  case), then "You can just set psi =0.5. It's ok. And go back to 0.1 and 0.4 for h2 and
+  h3", and "check that raising u1 above u0 does not reverse the income gradient... even
+  with 0 Income". The first six cloud sessions crashed at import (no numpy in the
+  container) and were archived; their logs are removed.
+- Running: scan_u1_uninsured.py at psi 0.5, h2 0.10, h3 0.40, ui_sud 0, food stamps
+  fitted to 0.42%, u1 0.05/0.10/0.20/0.30, one cloud session each. Refits cbar, gamma, h1,
+  u0, aleph, kappa (b inside); theta held. Grid bound to lowest income 0.235 if occupied
+  negative values remain. Gradient check at each fit: kappa 0, u1 u0..0.50, b refit.
 - Found by the smoke test: at the calibrated grid the poorest households have a negative
   value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
 
