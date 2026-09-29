@@ -121,8 +121,21 @@ def revstart_names(sc, mort, part, ref):
     for s_, r_, k in zip(sc, mort, ok):
         if k and s_ <= 1.0 + 1e-9 and abs(r_ - off) <= 0.05 * abs(off):
             start = float(s_)
+    # WHERE THE CURVE CROSSES ONE, between the last drawn point above it and the first
+    # below, and what it does past the calibrated strength.  Once h1 was held at its
+    # calibrated value (the author, 29 September) the curve fell from the first step
+    # and the "hardly moves up to" reading had nothing left to describe.
+    pts = [(float(s_), float(r_)) for s_, r_, k in zip(sc, mort, ok) if k]
+    lo = max((s_ for s_, r_ in pts if r_ >= 1.0), default=0.0)
+    hi = min((s_ for s_, r_ in pts if r_ < 1.0 and s_ > lo), default=float('nan'))
+    r1 = next(r_ for s_, r_ in pts if abs(s_ - 1.0) < 1e-9)
+    rh = pts[-1][1]
+    hi_dir = ('stays at' if f'{rh:.2f}' == f'{r1:.2f}' else
+              'falls further to' if rh < r1 else 'rises back to')
     return dict(s1_revstart_pc=f'{100 * start:g}',
-                s1_revfrac=run._fraction_word(max(1.0 - start, 0.0)))
+                s1_revfrac=run._fraction_word(max(1.0 - start, 0.0)),
+                s1_cross_lo_pc=f'{100 * lo:g}', s1_cross_hi_pc=f'{100 * hi:g}',
+                s1_r_mort_hi_dir=hi_dir)
 
 
 def stage1_figure(par):
