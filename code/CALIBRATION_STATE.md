@@ -1,3 +1,17 @@
+# 29 September 16:10: STYLIZED MODEL ON 0.6 PER CENT HOMELESSNESS, DONE; SECTION 3 TYPESET ON IT
+
+- Stage 2 converged at the author's 2.5 per cent tolerance (worst 1.42): kappa 0.119264, omega_c 0.00135,
+  b 0.0627, u1 held at its floor (SUD share of the homeless 19.5 against 21.7). The point sits on a CLIFF
+  in kappa (users' income 0.79 at 0.1192, 0.69 at 0.1193, 0.18 at 0.1194), and the omega = 0 comparison
+  behind omega_c's moment moves one productivity node (0.5-1 point of participation) at a time, so the
+  proportional rule cycled; the three were searched jointly (search_kob_h06.py, refine_kob_h06.py).
+- Regenerated: stage_results 1 (Figure 1), 2, tables, stage_transition. 59 stylized numbers moved; the
+  introduction and Section 3 typeset with every moved one red against stage_numbers_h100.json
+  (scratchpad splice_moved.py). s4_tr_c1_kid turned slightly negative (-0.011), so 3.7 says "almost
+  nothing in childhood". Tables 1-2 red only where a cell moved (tab_*_prev.tex).
+- Elasticities: worker session_01JaAkpUmaEC15EkfDuU4RXD, benchmark solve from 15:12, due about 17:45;
+  a send_later at 17:50 checks for code/ELASTICITY_RESULT_BENCH.txt.
+
 # 29 September 15:15: STYLIZED MODEL TO 0.6 PER CENT HOMELESSNESS; u1 CHECKED; ELASTICITIES ON A WORKER
 
 - The author: target homelessness of 0.6 per cent as in the quantitative model (benchmark h_1 0.61). The
