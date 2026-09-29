@@ -376,7 +376,21 @@ def _solve_sig(lo=0.30, hi=2.50, iters=60):
     return 0.5 * (lo + hi)
 
 
+# SIG IS FITTED ON THE ORIGINAL FLOOR AND HELD WHEN THE FLOOR RISES (29 September).
+# Refitting it at a raised floor, to keep the bottom half at 17.2 per cent, stretched the
+# top -- median over mean 0.50 at a floor of 0.235 against about 0.65 in the data -- and
+# users' income then jumped between about 0.45 and 0.95 with kappa, never 0.74.  Held,
+# the median stays at 0.62 to 0.65 of the mean and the bottom half's share rises instead
+# (18.2 / 19.1 / 21.1 per cent at floors 0.15 / 0.18 / 0.24), which is reported, not
+# targeted.  The author: "It's ok if income share of bottom is a bit off".
+# None keeps the old behaviour (SIG fitted at TRUNC_FLOOR itself) until the floor is chosen
+# from the scan; it becomes 1.08 together with the new TRUNC_FLOOR and yV.
+SIG_FIT_FLOOR = None
+_floor = TRUNC_FLOOR
+if SIG_FIT_FLOOR is not None:
+    TRUNC_FLOOR = SIG_FIT_FLOOR
 SIG = _solve_sig()
+TRUNC_FLOOR = _floor
 
 # THE MEANS TEST IS HALF OF MEDIAN INCOME, the HUD rule the quantitative model
 # uses, and the median moves with SIG. Tying the two together here means the
