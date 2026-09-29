@@ -1,32 +1,9 @@
 bottom bound; spec {'repl': 0.5, 'ui_sud': 0.0, 'cbar': 0.077, 'h2': 0.1, 'h3': 0.4}; u1 FITTED on the SUD share
    round 0: cbar 0.0769 fshare 0.432% gam 0.4352 h1 0.024924 u0 0.0485 aleph 10.021 kap 0.1574 b 0.03681 | hspend 26.9 homeless 0.725 unemp 5.04 vsl 68.8 r_use 0.732 part 8.92 SUD share of homeless 36.35
-     u1 bracket: share 28.69 at u1 0.0495, 23.39 at 0.50 (target 21.7; FALLS in u1)
-     TARGET OUTSIDE the bracket; u1 kept at 0.5000
-     after u1: u1 0.5000 u0 0.0338 SUD share of homeless 29.27 homeless 0.721 part 4.79
-   round 0: cbar 0.0765 fshare 0.463% gam 0.4331 h1 0.023959 u0 0.0425 aleph 12.776 kap 0.1387 b 0.01311 | hspend 27.0 homeless 0.867 unemp 5.94 vsl 75.6 r_use 0.848 part 8.91 SUD share of homeless 33.13
-     u1 bracket: share 25.93 at u1 0.0435, 33.13 at 0.50 (target 21.7; RISES in u1)
-     TARGET OUTSIDE the bracket; u1 kept at 0.0435
-     after u1: u1 0.0435 u0 0.0487 SUD share of homeless 25.67 homeless 0.574 part 9.96
-   round 0: cbar 0.0765 fshare 0.417% gam 0.4364 h1 0.024609 u0 0.0487 aleph 10.857 kap 0.1328 b 0.04965 | hspend 26.9 homeless 0.527 unemp 4.85 vsl 83.4 r_use 0.749 part 8.81 SUD share of homeless 22.52
-     u1 bracket: share 21.70 at u1 0.0497, 18.45 at 0.50 (target 21.7; FALLS in u1)
-     TARGET OUTSIDE the bracket; u1 kept at 0.0497
-     after u1: u1 0.0497 u0 0.0485 SUD share of homeless 21.62 homeless 0.560 part 8.27
-Traceback (most recent call last):
-  File "/home/user/housing_first_or_treatment_first/code/stylized/bottom_bound.py", line 87, in <module>
-    q_lo, n_lo = trial(q0, 1.08)
-                 ^^^^^^^^^^^^^^^
-  File "/home/user/housing_first_or_treatment_first/code/stylized/bottom_bound.py", line 76, in trial
-    neg = sum(period1_negative_values(q, pol)['cells'] for pol in ('HF', 'TF'))
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/housing_first_or_treatment_first/code/stylized/bottom_bound.py", line 76, in <genexpr>
-    neg = sum(period1_negative_values(q, pol)['cells'] for pol in ('HF', 'TF'))
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/housing_first_or_treatment_first/code/stylized/negative_value_of_life.py", line 159, in period1_negative_values
-    for s, (p, gain, v, ru, rn, inc, own) in enumerate(S.period1(par, float(y), policy)):
-                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/user/housing_first_or_treatment_first/code/stylized/stylized.py", line 1278, in period1
-    pen = par.beta * par.omega * _chdmg_at(par, y) * _pid(par, vg)
-                                 ^^^^^^^^^^^^^^^^^
-  File "/home/user/housing_first_or_treatment_first/code/stylized/stylized.py", line 1368, in _chdmg_at
-    raise RuntimeError(
-RuntimeError: chdmg is None: the child damage has not been solved for these parameters.  Call stylized.solve_child_damage(par) LAST, after every with_() that changes a parameter, and solve on what it returns.  See the note at the chdmg declaration for why this raises instead of defaulting to zero.
+     u1 curve: 0.050:28.7  0.060:30.9  0.080:35.3  0.100:36.4  0.130:30.6  0.160:14.9  0.200:8.2  (target 21.7; peak at u1 0.100)
+     share already at or above target at u1 = u0 + 0.001; u1 kept at 0.0495
+     after u1: u1 0.0495 u0 0.0485 SUD share of homeless 28.68 homeless 0.582 part 8.88
+   round 0: cbar 0.0769 fshare 0.424% gam 0.4356 h1 0.024989 u0 0.0485 aleph 10.582 kap 0.1357 b 0.04866 | hspend 26.9 homeless 0.624 unemp 4.85 vsl 80.0 r_use 0.747 part 9.03 SUD share of homeless 24.10
+     u1 curve: 0.049:24.0  0.060:18.4  0.080:17.2  0.100:20.2  0.130:11.2  0.160:1.6  0.200:1.9  (target 21.7; peak at u1 0.049)
+     share already at or above target at u1 = u0 + 0.001; u1 kept at 0.0495
+     after u1: u1 0.0495 u0 0.0485 SUD share of homeless 24.03 homeless 0.623 part 7.69
