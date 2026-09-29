@@ -25,7 +25,7 @@ from calibrate import YG, W, bracket, stats, TARGET
 # horizontal axis ends here and three sentences in Section 3.4 quote it, so it
 # is a constant rather than a literal inside the scan: fill.py exports it as
 # @@scanhi_pc@@ and the prose reads it from there.
-SCAN_HI = 1.25
+SCAN_HI = 2.0     # the author, 29 September: from nothing to twice the penalty
 
 OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                     '..', '..', 'writing', 'figures'))
@@ -97,11 +97,12 @@ def fig_who_uses(base):
     """Figure 1: how strong must each channel be to move use to the bottom."""
     plt = style()
     fig, ax = plt.subplots(figsize=(7.0, 4.4))
-    # PAST THE CALIBRATED VALUE, to 125 per cent. Stopping at 100 leaves the
+    # PAST THE CALIBRATED VALUE, to SCAN_HI. Stopping at 100 leaves the
     # reader unable to tell a channel that has just crossed the line from one
     # that is still falling hard, and it leaves the unemployment channel's
-    # failure looking like it might be about to turn. It is not.
-    sc = np.linspace(0.0, SCAN_HI, 11)
+    # failure looking like it might be about to turn. It is not. The grid keeps
+    # its step of an eighth of the calibrated value whatever SCAN_HI is.
+    sc = np.linspace(0.0, SCAN_HI, int(round(8 * SCAN_HI)) + 1)
     curves, parts = {}, {}
     for which, col, ls, mk in (('mortality', '#2C6FAD', '-', 'o'),
                                ('unemployment', '#D9822B', '--', 's')):
@@ -127,11 +128,12 @@ def fig_who_uses(base):
     # ticks can still be placed.
     ax.yaxis.set_major_locator(FixedLocator([0.1, 0.2, 0.5, 1.0, 2.0, 3.0, 5.0]))
     ax.set_yticklabels(['0.1', '0.2', '0.5', '1.0', '2.0', '3.0', '5.0'])
-    ax.set_ylim(0.10, 5.6)
+    lo = min(min(curves['mortality']), min(curves['unemployment']))
+    ax.set_ylim(min(0.10, 0.85 * lo), 5.6)
     ax.grid(axis='y', which='major', color='0.88', lw=0.7, zorder=0)
     ax.set_axisbelow(True)
-    ax.set_xlim(-3, 128)
-    ax.set_xticks([0, 25, 50, 75, 100, 125])
+    ax.set_xlim(-3, 100 * SCAN_HI + 3)
+    ax.set_xticks(list(range(0, int(round(100 * SCAN_HI)) + 1, 25)))
     # the calibrated point, so the extrapolation past it reads as extrapolation
     ax.axvline(100, color='black', lw=0.9, ls=':')
     ax.annotate('calibrated', xy=(100, 0.115), ha='center', va='bottom',
@@ -141,14 +143,8 @@ def fig_who_uses(base):
     # legend OUTSIDE the plotting area, so it cannot sit on the lines
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.16), ncol=2,
               fontsize=9.5)
-    # ABOVE the line the ratio exceeds one, so users are RICHER. An earlier
-    # version had these two labels the wrong way round.
-    ax.annotate('users are RICHER than average',
-                xy=(0.985, 0.985), xycoords='axes fraction', ha='right',
-                va='top', fontsize=8.5, color='0.4')
-    ax.annotate('users are POORER than average',
-                xy=(0.985, 0.015), xycoords='axes fraction', ha='right',
-                va='bottom', fontsize=8.5, color='0.4')
+    # NO "users are RICHER / POORER than average" labels: the author, 29
+    # September, asked for them off; the line at one says it.
     # THE TWO ENDPOINTS, PRINTED ON THE CURVE. The prose quotes them and the
     # reader should not have to interpolate a log axis to check.
     for which, col in (('mortality', '#2C6FAD'), ('unemployment', '#D9822B')):
@@ -160,7 +156,7 @@ def fig_who_uses(base):
     ax.annotate(f'{y0:.2f}', xy=(0, y0), xytext=(2, 6),
                 textcoords='offset points', fontsize=8.5, color='0.25',
                 fontweight='bold')
-    ax.set_xlim(-3, 136)
+    ax.set_xlim(-3, 100 * SCAN_HI + 11)
     fig.tight_layout()
     save(fig, 'stylized_who_uses')
     return sc, curves, parts

@@ -2,7 +2,7 @@
 What Section 3 reports at each stage of the stylized model, computed at that
 stage's own calibration (stages.py), and written as s<stage>_<name> for fill.py.
 
-usage:  STYLIZED_WORKERS=1 python3 stage_results.py 1 [--no-figure]
+usage:  STYLIZED_WORKERS=1 python3 stage_results.py 1 [--no-figure | --figure-only]
         -> merges into stage_numbers.json
 
 STAGE 1, the baseline without the child, reports three things.
@@ -101,20 +101,47 @@ def stage1(par, figure=True):
         d[f's1_cevpop_{tag}'] = pc(dom['cev_pop'], 3)
         d[f'_s1_mingap_{tag}'] = dom['min_gap']
     if figure:
-        import run
-        sc, curves, parts = run.fig_who_uses(par)
-        mort, unem = np.asarray(curves['mortality']), np.asarray(curves['unemployment'])
+        d.update(stage1_figure(par))
+    return d
 
-        def at(c, s):
-            return float(c[int(np.argmin(np.abs(sc - s)))])
-        d.update(s1_r_off=f'{at(mort, 0.0):.2f}', s1_r_mort=f'{at(mort, 1.0):.2f}',
-                 s1_r_mort_half=f'{at(mort, 0.5):.2f}', s1_r_unemp=f'{at(unem, 1.0):.2f}',
-                 s1_r_unemp_hi=f'{at(unem, run.SCAN_HI):.2f}',
-                 s1_scanhi_pc=f'{100 * run.SCAN_HI:.0f}')
-        d['_s1_curves'] = {'scale': [float(x) for x in sc],
-                           'mortality': [float(x) for x in mort],
-                           'unemployment': [float(x) for x in unem],
-                           'part': {k: [float(x) for x in v] for k, v in parts.items()}}
+
+def stage1_figure(par):
+    """Figure 1 and every number the prose reads off it. The reversal's start, the
+    fraction of the channel it takes and the points where no b delivers the target
+    participation are derived here from the curves, so they move with the scan."""
+    import run
+    sc, curves, parts = run.fig_who_uses(par)
+    mort, unem = np.asarray(curves['mortality']), np.asarray(curves['unemployment'])
+
+    def at(c, s):
+        return float(c[int(np.argmin(np.abs(sc - s)))])
+    d = dict(s1_r_off=f'{at(mort, 0.0):.2f}', s1_r_mort=f'{at(mort, 1.0):.2f}',
+             s1_r_mort_half=f'{at(mort, 0.5):.2f}', s1_r_unemp=f'{at(unem, 1.0):.2f}',
+             s1_r_mort_hi=f'{at(mort, run.SCAN_HI):.2f}',
+             s1_r_unemp_hi=f'{at(unem, run.SCAN_HI):.2f}',
+             s1_scanhi_pc=f'{100 * run.SCAN_HI:.0f}', s1_scanhi_x=f'{run.SCAN_HI:g}')
+    hi = at(unem, run.SCAN_HI)
+    d['s1_runemphidir'] = 'above' if hi > 1.0 else ('below' if hi < 1.0 else 'at')
+    # where the fall begins: the last point at or below the calibrated strength still
+    # within five per cent of the ratio with the channel off (run.figure_numbers' rule)
+    off, start = at(mort, 0.0), 0.0
+    for s_, r_ in zip(sc, mort):
+        if s_ <= 1.0 + 1e-9 and abs(r_ - off) <= 0.05 * abs(off):
+            start = float(s_)
+    d['s1_revstart_pc'] = f'{100 * start:.0f}'
+    d['s1_revfrac'] = run._fraction_word(max(1.0 - start, 0.0))
+    # points where no b delivers the target participation, by channel
+    misses = {w: [(float(s_), float(p_)) for s_, p_ in zip(sc, parts[w])
+                  if abs(p_ - C.TARGET['part']) > 5e-4] for w in ('mortality', 'unemployment')}
+    d['_s1_misses'] = misses
+    if len(misses['mortality']) == 1 and not misses['unemployment']:
+        s_, p_ = misses['mortality'][0]
+        d['s1_miss_scale_pc'] = f'{100 * s_:.0f}'
+        d['s1_miss_part'] = f'{100 * p_:.2f}'
+    d['_s1_curves'] = {'scale': [float(x) for x in sc],
+                       'mortality': [float(x) for x in mort],
+                       'unemployment': [float(x) for x in unem],
+                       'part': {k: [float(x) for x in v] for k, v in parts.items()}}
     return d
 
 
@@ -444,7 +471,9 @@ if __name__ == '__main__':
     par, raw = load(stage)
     print(f'stage {stage}: calibrated_stage{stage}.json, iteration {raw["_iteration"]}, '
           f'worst gap {raw["_worst_gap_pc"]} per cent')
-    if stage == 1:
+    if stage == 1 and '--figure-only' in sys.argv:
+        d = stage1_figure(par)
+    elif stage == 1:
         d = stage1(par, figure='--no-figure' not in sys.argv)
     else:
         # stages 2, 3 and 4 are one calibration: kappa_x moves no choice, and
