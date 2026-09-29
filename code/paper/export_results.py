@@ -187,6 +187,12 @@ m = re.search(r'THE COHORT BORN AT THE REFORM \(b = 1\): CEV ([+-]\S+)%', cc)
 out['x_tr_cev_b1'] = f'{float(m.group(1)):.1f}'
 m = re.search(r'forward pass (\d+) of', cc)
 out['x_tr_pass'] = m.group(1)
+# THE REFORM COHORT'S GAIN IS A CHILDHOOD GAIN (the author, 29 September: the transition's
+# larger drop in use "diverts more resources in transition to the children"): its
+# childhood gain over the long run's, in utils, from cohort_cev.py's split
+g_b1 = float(re.search(r'gain on no policy\s+([+-]\S+)', cc).group(1))
+g_lr = float(re.search(r'long-run gain\s+([+-]\S+)', cc).group(1))
+out['x_tr_kid_ratio'] = f'{g_b1 / g_lr:.1f}'
 
 # no-policy baselines for the transition's changes, and the benchmark's two
 # UNTARGETED intergenerational odds ratios (a child of a parent with a SUD
@@ -226,6 +232,8 @@ out['x_tr_h_peak_pc'] = pc(100 * (max(H[k] for k in range(1, 11)) / h0 - 1))
 out['x_tr_new_t1_pc'] = pc(100 * (E[1] / e0 - 1))
 # the largest fall in drug users without a SUD over the same first decade, for 'falls by up to'
 out['x_tr_new_peak_pc'] = pc(100 * (min(E[k] for k in range(1, 11)) / e0 - 1))
+# whether that first-decade fall in users without a SUD is larger than the long run's, as a word
+out['x_tr_new_vs_lr'] = 'larger' if min(E[k] for k in range(1, 11)) < e_tf else 'smaller'
 # drug use (participation b) in the same first decade, its largest fall on no
 # policy, against the long run's x_tf_b_pc
 B = {}
