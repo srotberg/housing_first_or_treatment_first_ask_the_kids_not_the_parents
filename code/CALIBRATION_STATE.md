@@ -1,3 +1,18 @@
+# 29 September 19:15: WHY u1 LOWERS THE SUD SHARE OF THE HOMELESS (stylized, both stages)
+
+- Joint probe (probe_u1_joint.py: kappa refit on users' income 0.74, b on participation 8.9)
+  stage 2: u1 u0 19.6, 0.055 18.3, 0.065 15.8, 0.0765 13.2, 0.11 7.4; stage 1: u0 29.9,
+  0.055 29.2, 0.065 26.3, 0.0765 21.7 (its calibration), 0.09 17.0.
+- Decomposition (decompose_u1.py): with who uses and savings held, u1 RAISES the share
+  (stage 2 19.6 -> 27.4 at 0.0765; stage 1 21.7 -> 24.6 at 0.09), the author's direct effect.
+  Savings re-chosen: no change. Who uses re-chosen: participation collapses (stage 2 8.9 ->
+  2.6), and with b and kappa refit the replacement users have P(homeless | SUD) 1.5 against
+  2.1, so the share falls. The fall is composition, not a bug and not savings.
+- Open, for the author: set u1 at its measured value (NSDUH unemployment with a SUD, 16.25)
+  and leave the share untargeted; keep the stage-2 gap; or change the model so the job-loss
+  risk is not fully foreseen at the use decision. CLAUDE.md section-7 rule: check whether the
+  same composition effect operates on kappa_ue_d in the quantitative model.
+
 # 29 September 17:10: BENCHMARK ELASTICITY RUN FAILED; RERUN WITH THE BASE PRICE RESTORED
 
 - Worker session_01JaAkpU (code/ELASTICITY_RESULT_BENCH.txt, 2937db65): the measure_price_elasticity block restores
