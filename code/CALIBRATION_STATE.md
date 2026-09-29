@@ -48,6 +48,14 @@
   rest held: u0 vs 0.50 read 28.7/23.4, 25.9/33.1, 21.7/18.5 in three rounds, while u1 0.10
   gave 38. fit_u1 now traces the share on u0..0.20, finds the peak, and solves the target
   on the rising branch only. Relaunched.
+- 22:32 the three scans finished (calibrated grid, all refit): SUD share of the homeless
+  23.9 / 38.2 / 13.7 / 23.1 at u1 0.05 / 0.10 / 0.20 / 0.30; homelessness 0.60-0.63
+  throughout; gradient never reversed. Raised grid (lowest income 0.235): u1 0.05 gives
+  homelessness 0.571 with h1 ON ITS CAP 0.049 (mine), SUD share 22.7, vsl 80.1, fshare
+  0.42, NO negative value anywhere in period 2, period 1 negative for 0.365% (unemployed
+  through period 1 at y 0.25, not users, worst -0.54), before the draws all positive;
+  r_use 0.42 (kappa did not settle). u1 0.20 / 0.30 on it: homelessness 0.20 / 0.43.
+  h1 cap raised to 0.095 (h2 is 0.10); bottom_bound relaunched.
 - Found by the smoke test: at the calibrated grid the poorest households have a negative
   value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
 

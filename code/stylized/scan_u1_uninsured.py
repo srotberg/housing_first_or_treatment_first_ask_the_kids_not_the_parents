@@ -81,7 +81,9 @@ def fit(q, rounds=3):
     for r in range(rounds):
         q = with_(q, cbar=bracket(q, 'cbar', 'fshare', 1e-4, 0.6, iters=16, tgt=FS_TARGET))
         q = with_(q, gam=bracket(q, 'gam', 'hspend', 0.02, 0.70, iters=16))
-        q = with_(q, h1=bracket(q, 'h1', 'homeless', 1e-6, 0.049, iters=18))
+        # h1 UP TO 0.095, just under the small unit (0.10).  It was capped at 0.049 and the
+        # cap bound on the raised grid: u1 0.05 stopped at homelessness 0.571 with h1 0.04900.
+        q = with_(q, h1=bracket(q, 'h1', 'homeless', 1e-6, 0.095, iters=20))
         q = unemployment_u0(q)
         q = with_(q, aleph=bracket(q, 'aleph', 'vsl', 3.0, 60.0, iters=16))
         lo, hi = 0.3 * q.kap, 3.0 * q.kap
