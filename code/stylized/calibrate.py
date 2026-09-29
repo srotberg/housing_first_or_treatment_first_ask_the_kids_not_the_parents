@@ -286,7 +286,18 @@ POOL_MARGIN = 1.08    # superseded by GRID_FLOOR; kept for scan_theta.py
 # something: a household whose income equals its rent exactly consumes nothing
 # and its flow utility is minus infinity. Eight per cent puts the poorest
 # household at 0.108 of mean income, where the pooled cell used to sit.
-TRUNC_FLOOR = 1.08
+#
+# RAISED TO 2.4, lowest income 0.235, the author, 29 September: "Why not fix the negative
+# value of life by raising the bottom productivity", as the quantitative model's
+# bottom_productivity_floor_rate does.  At 1.08, with psi 0.5, no insurance with a SUD and
+# food stamps on their 0.42 per cent, 7.5 per cent of households had a negative lifetime
+# value at the drug decision (unemployed at the bottom, on the street).  2.4 is as high as
+# the lowest node goes with SIG refitted to the bottom half's 17.2 per cent (higher values
+# leave it at 0.235), and there 0.37 per cent stay slightly negative, households
+# unemployed through period 1 who do not use, worst -0.54: "It doesn't have to be 100%".
+# The street then fits at about half the small unit, the ratio the quantitative model's
+# benchmark has (h_1 0.0216 against h_2 0.0407), which the author accepted: "That is ok".
+TRUNC_FLOOR = 2.4
 
 
 def _grid(sig, n=GRID_N, kappa=GRID_KAPPA):

@@ -492,8 +492,9 @@ class P:
     # unemployed user near the median still covers the rent, and raising u1 by 0.03
     # left P(homeless | SUD) at exactly zero in every income band (the cloud run
     # test_fs_bound_s1_psi015_cloud.txt).  It acts only in period 2, since nobody
-    # has the disorder in period 1.  DEFAULT 1, i.e. OFF.
-    ui_sud = 1.0
+    # has the disorder in period 1.  ON (0) SINCE 29 SEPTEMBER: the staged calibration
+    # is run with it, and 1 reproduces every earlier result.
+    ui_sud = 0.0
 
 
     # HOUSING. Rent per unit of housing services is the NUMERAIRE, p_r = 1, so
@@ -592,7 +593,9 @@ class P:
     kV    = 0.50      # MEANS TEST, the share of MEDIAN income below which a
                       # household is eligible. This is the quantitative model's
                       # kappa_V and the paper uses the same symbol for both.
-    yV    = 0.3061    # the level kV implies, kV times median income. It has moved
+    yV    = 0.2508    # the level kV implies, kV times median income. 0.3061 until 29
+                      # September, when the grid's floor rose to TRUNC_FLOOR 2.4 and SIG
+                      # to 1.706 (calibrate.py); the assertion there caught it. It has moved
                       # twice with the grid: 0.2591 at 30 log spaced nodes, 0.2477
                       # at 120, and 0.3172 once the nodes were placed by quantile
                       # and the top tail stopped being truncated. The last move is

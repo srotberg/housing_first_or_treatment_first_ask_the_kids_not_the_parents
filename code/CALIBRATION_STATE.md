@@ -56,6 +56,18 @@
   through period 1 at y 0.25, not users, worst -0.54), before the draws all positive;
   r_use 0.42 (kappa did not settle). u1 0.20 / 0.30 on it: homelessness 0.20 / 0.43.
   h1 cap raised to 0.095 (h2 is 0.10); bottom_bound relaunched.
+- 22:50 SPECIFICATION AGREED with the author: psi 0.5, h2 0.10, h3 0.40, food stamps on
+  0.42%, no insurance under a SUD, lowest income raised to 0.235 (TRUNC_FLOOR 2.4, the
+  most the 17.2% share allows), h1 free to 0.095 (fits at about half of h2, the full
+  model's ratio: h_1 0.0216 / h_2 0.0407), VSL kept at 80 (the full model's vsl_data),
+  0.37% of households slightly negative at the drug decision accepted ("It doesn't have
+  to be 100%"). Raising the VSL instead needs ~140-170 on the old grid; 84 clears it on
+  the raised one, not adopted.
+- Code: calibrate.TRUNC_FLOOR 2.4; P.yV 0.2508 (the assertion caught it); P.ui_sud 0 by
+  default; stages.spec: cbar row on food_stamps_share_data, u1 sign +1 on [0.0486, 0.10]
+  (the rising side), h1 up to 0.095; save() keeps cbar, ui_sud, repl, h2, h3, yV.
+  Stage 1 launched from start_stage1_sep29.json (the u1 0.05 raised-floor fit): worst
+  gap at the start 42.7 (users' income 0.42), dshare -17, the rest within 5.
 - Found by the smoke test: at the calibrated grid the poorest households have a negative
   value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
 

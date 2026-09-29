@@ -112,6 +112,8 @@ DELTA_D_NILSSON = -math.log(1.0 - 0.24)
 sys.path.insert(0, os.path.join(HERE, '..', 'paper'))
 from fortran_consts import constants as _fc
 DSHARE_TARGET = float(_fc()['drug_spending_share_data'])
+# THE FOOD STAMP TARGET IS THE QUANTITATIVE MODEL'S TOO, read from its declaration.
+FS_TARGET = float(_fc()['food_stamps_share_data'])
 
 
 def spec(stage):
@@ -125,14 +127,28 @@ def spec(stage):
             r = (r[0], r[1], DSHARE_TARGET, r[3], r[4], r[5], r[6])
         if r[0] == 'u1':
             # u1 IS CALIBRATED on the SUD share of the homeless (the author, 29
-            # September: "i think u1 can be calibrated"), with the sign MEASURED on
-            # this model, floor off, b refit on participation (probe_u1.py): the
-            # share FALLS in u1, 25.4 per cent at u1 = 0.048 against 16.3 at 0.108,
-            # because the job-loss risk deters the poorest users and b's refit
-            # replaces them with richer ones.  The 21.7 per cent target lies between
-            # the two, above u0, so the rule lowers u1 when the share is short.
-            r = (r[0], r[1], r[2], -1, 0.40, r[5], r[6])
+            # September: "i think u1 can be calibrated").  With no insurance under a
+            # SUD (stylized.P.ui_sud) the share RISES in u1 from u0 to about 0.10 and
+            # falls beyond it, because a high risk deters use and changes who uses:
+            # fully refitted on the old grid, 23.9 / 38.2 / 13.7 / 23.1 per cent at
+            # u1 0.05 / 0.10 / 0.20 / 0.30 (scan_u1_uninsured.py, 29 September).  The
+            # author: "we need u1 rising increasing homeless with sud", so the row is
+            # held to the rising side, u1 in [0.0486, 0.10], with the sign +1.  It was
+            # -1, measured when the share fell in u1 because the poorest users were
+            # there to die (the negative value of life that the raised floor removed).
+            r = (r[0], r[1], r[2], +1, 0.40, r[5], 0.10)
+        if r[0] == 'h1':
+            # UP TO 0.095, just under the small unit.  With the floor raised the street
+            # fits at about half of h2, the quantitative model's own ratio; the old
+            # ceiling of 0.05 bound (homelessness 0.571 at h1 0.049).
+            r = (r[0], r[1], r[2], r[3], r[4], r[5], 0.095)
         out.append(r)
+    # FOOD ASSISTANCE, fitted like the quantitative model's on food stamp spending over
+    # labour income, 0.42 per cent (food_stamps_share_data).  The author, 29 September:
+    # "you may need food stamps for 0 asset, 0 income case.. So keep the food stamps":
+    # with no insurance under a SUD, a household with the disorder that loses its job and
+    # has no savings otherwise has nothing to eat.
+    out.append(('cbar', 'fshare', FS_TARGET, +1, 0.30, 0.02, 0.30))
     return out
 
 
@@ -155,7 +171,10 @@ def live_worst(m):
 
 def save(par, stage, it, m, worst):
     names = sorted({r[0] for r in FULL_SPEC} | set(STAGE_SET[stage]) |
-                   {'pi_base', 'beta', 'y_floor', 'u1', 'xi', 'omega', 'delta_d'})
+                   {'pi_base', 'beta', 'y_floor', 'u1', 'xi', 'omega', 'delta_d',
+                    # the 29 September specification: food stamps, no insurance under
+                    # a SUD, and the settings that go with the raised floor
+                    'cbar', 'ui_sud', 'repl', 'h2', 'h3', 'yV'})
     out = {'_stage': stage, '_iteration': it, '_worst_gap_pc': round(worst, 3),
            '_moments': {k: (round(v, 6) if isinstance(v, float) else v)
                         for k, v in m.items() if not isinstance(v, (list, dict, np.ndarray))}}
