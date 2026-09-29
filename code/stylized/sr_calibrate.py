@@ -875,7 +875,9 @@ def step_on_branch(par, m, state):
     corner's meaningless numbers mixed into the record.
     """
     full, _ = step(par, m, state)
-    if m.get('dshare', 0.0) <= CORNER:
+    # dshare is None when moments() has HELD it in the corner; read the raw value
+    ds = m.get('dshare_raw', m.get('dshare'))
+    if ds is None or ds <= CORNER:
         return full          # already in the corner: let the rule climb out
     # THE SKIP WAS THE BUG, AND ITS PREMISE WAS MEASURED FALSE.
     #

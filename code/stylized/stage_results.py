@@ -83,7 +83,7 @@ def dominance(par, pV):
 
 def stage1(par, figure=True):
     d = {}
-    for pV, tag in ((par.pV, 'b'), (1.0, 'u')):
+    for pV, tag in ((par.pV, 'b'),):          # rationed only (the author, 29 September)
         none = outcomes(par, 'HF', 0.0)
         tf = outcomes(par, 'TF', pV)
         hf = outcomes(par, 'HF', pV)
@@ -106,24 +106,34 @@ def stage1(par, figure=True):
 
 
 def stage1_figure(par):
-    """Figure 1 and every number the prose reads off it. The reversal's start, the
-    fraction of the channel it takes and the points where no b delivers the target
-    participation are derived here from the curves, so they move with the scan."""
+    """Figure 1 and every number the prose reads off it.  Each curve scans one channel
+    with the other held at its calibrated strength (run.OTHER_CHANNEL), so both pass
+    through the calibrated economy at 100 per cent and each curve's 0 per cent point
+    is the other channel acting alone.  The economy with neither channel is computed
+    beside them, since the prose starts from it."""
     import run
+    from calibrate import stats
     sc, curves, parts = run.fig_who_uses(par)
     mort, unem = np.asarray(curves['mortality']), np.asarray(curves['unemployment'])
+    saved = run.OTHER_CHANNEL
+    try:
+        run.OTHER_CHANNEL = 'off'
+        none = stats(run._scaled(par, 'mortality', 0.0))
+    finally:
+        run.OTHER_CHANNEL = saved
 
     def at(c, s):
         return float(c[int(np.argmin(np.abs(sc - s)))])
-    d = dict(s1_r_off=f'{at(mort, 0.0):.2f}', s1_r_mort=f'{at(mort, 1.0):.2f}',
-             s1_r_mort_half=f'{at(mort, 0.5):.2f}', s1_r_unemp=f'{at(unem, 1.0):.2f}',
+    d = dict(s1_r_none=f'{none["r_use"]:.2f}',
+             s1_r_jobonly=f'{at(mort, 0.0):.2f}',       # mortality off, job loss on
+             s1_r_mortonly=f'{at(unem, 0.0):.2f}',      # job loss off, mortality on
+             s1_r_cal=f'{at(mort, 1.0):.2f}',           # both on: the calibrated economy
+             s1_r_mort_half=f'{at(mort, 0.5):.2f}',
              s1_r_mort_hi=f'{at(mort, run.SCAN_HI):.2f}',
              s1_r_unemp_hi=f'{at(unem, run.SCAN_HI):.2f}',
              s1_scanhi_pc=f'{100 * run.SCAN_HI:.0f}', s1_scanhi_x=f'{run.SCAN_HI:g}')
-    hi = at(unem, run.SCAN_HI)
-    d['s1_runemphidir'] = 'above' if hi > 1.0 else ('below' if hi < 1.0 else 'at')
-    # where the fall begins: the last point at or below the calibrated strength still
-    # within five per cent of the ratio with the channel off (run.figure_numbers' rule)
+    # where the mortality curve's fall begins: the last point at or below the
+    # calibrated strength still within five per cent of its value at zero
     off, start = at(mort, 0.0), 0.0
     for s_, r_ in zip(sc, mort):
         if s_ <= 1.0 + 1e-9 and abs(r_ - off) <= 0.05 * abs(off):
@@ -134,14 +144,12 @@ def stage1_figure(par):
     misses = {w: [(float(s_), float(p_)) for s_, p_ in zip(sc, parts[w])
                   if abs(p_ - C.TARGET['part']) > 5e-4] for w in ('mortality', 'unemployment')}
     d['_s1_misses'] = misses
-    if len(misses['mortality']) == 1 and not misses['unemployment']:
-        s_, p_ = misses['mortality'][0]
-        d['s1_miss_scale_pc'] = f'{100 * s_:.0f}'
-        d['s1_miss_part'] = f'{100 * p_:.2f}'
+    d['_s1_none'] = {k: float(none[k]) for k in ('r_use', 'part')}
     d['_s1_curves'] = {'scale': [float(x) for x in sc],
                        'mortality': [float(x) for x in mort],
                        'unemployment': [float(x) for x in unem],
-                       'part': {k: [float(x) for x in v] for k, v in parts.items()}}
+                       'part': {k: [float(x) for x in v] for k, v in parts.items()},
+                       'other_channel': run.OTHER_CHANNEL}
     return d
 
 
@@ -407,24 +415,26 @@ def write_stage1_table():
     Every cell red: the table is new."""
     d = json.load(open(OUT))
     g = lambda k: d[k]
-    L = [r'\footnotesize', r'\begin{tabular}{@{}lcccccc@{}}', r'\toprule',
-         r' & \multicolumn{3}{c}{At $\pi_V=' + d['s_pv'] + r'$} & \multicolumn{3}{c}{Universal cover} \\',
-         r'\cmidrule(lr){2-4}\cmidrule(l){5-7}',
-         r' & None & TF & HF & None & TF & HF \\', r'\midrule',
-         r'\multicolumn{7}{@{}l}{\emph{Panel A. Outcomes, percent of households}} \\']
+    # THE RATIONED CASE ONLY (the author, 29 September: "in table 3 there is no need
+    # to do universal coverage case", "just TF vs HF with rationing").  None stays,
+    # because the value-of-life force is Treatment First against no programme.
+    # ...and no column head naming the rationing: both programmes are rationed.
+    L = [r'\footnotesize', r'\begin{tabular}{@{}lccc@{}}', r'\toprule',
+         r' & None & TF & HF \\', r'\midrule',
+         r'\multicolumn{4}{@{}l}{\emph{Panel A. Outcomes, percent of households}} \\']
     for lab, k in (('Drug participation', 'part'), ('Carrying a SUD', 'sud'), ('Homeless', 'homeless')):
-        L.append(r'\quad ' + lab + ' & ' + ' & '.join(g(f's1_{k}_{p}_{t}') for t in ('b', 'u')
+        L.append(r'\quad ' + lab + ' & ' + ' & '.join(g(f's1_{k}_{p}_b')
                                                    for p in ('none', 'tf', 'hf')) + r' \\')
     L += [r'\addlinespace',
-          r'\multicolumn{7}{@{}l}{\emph{Panel B. The two forces on participation, percentage points}} \\',
-          r'\quad Value of life, TF less none & & ' + g('s1_vol_b') + r' & & & ' + g('s1_vol_u') + r' & \\',
-          r'\quad Moral hazard, HF less TF & & & ' + g('s1_mh_b') + r' & & & ' + g('s1_mh_u') + r' \\',
+          r'\multicolumn{4}{@{}l}{\emph{Panel B. The two forces on participation, percentage points}} \\',
+          r'\quad Value of life, TF less none & & ' + g('s1_vol_b') + r' & \\',
+          r'\quad Moral hazard, HF less TF & & & ' + g('s1_mh_b') + r' \\',
           r'\addlinespace',
-          r'\multicolumn{7}{@{}l}{\emph{Panel C. Treatment First against Housing First}} \\',
-          r'\quad Households strictly worse off, percent & & ' + g('s1_worse_b') + r' & & & ' + g('s1_worse_u') + r' & \\',
-          r'\quad Households strictly better off, percent & & ' + g('s1_better_b') + r' & & & ' + g('s1_better_u') + r' & \\',
-          r'\quad CEV of those affected, percent & & $-' + g('s1_cevaff_b') + r'$ & & & $-' + g('s1_cevaff_u') + r'$ & \\',
-          r'\quad CEV of the population, percent & & $-' + g('s1_cevpop_b') + r'$ & & & $-' + g('s1_cevpop_u') + r'$ & \\',
+          r'\multicolumn{4}{@{}l}{\emph{Panel C. Treatment First against Housing First}} \\',
+          r'\quad Households strictly worse off, percent & & ' + g('s1_worse_b') + r' & \\',
+          r'\quad Households strictly better off, percent & & ' + g('s1_better_b') + r' & \\',
+          r'\quad CEV of those affected, percent & & $-' + g('s1_cevaff_b') + r'$ & \\',
+          r'\quad CEV of the population, percent & & $-' + g('s1_cevpop_b') + r'$ & \\',
           r'\bottomrule', r'\end{tabular}']
     body = '\n'.join(L) + '\n'
     # every cell red

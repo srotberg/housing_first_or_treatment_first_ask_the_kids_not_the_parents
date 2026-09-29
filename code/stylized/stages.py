@@ -184,6 +184,19 @@ def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None):
         # if it overshoots.
         v.update(omega=0.01, delta_d=DELTA_D_NILSSON)
         S.PER_PARAM_STEP['omega'] = 0.01
+        # A WARM START FOR omega_c (29 September).  With the floor off, omega_c =
+        # 0.01 made the child gap 91 per cent at iteration 50 and participation
+        # 4.2, and omega_c moves a per cent a pass, so it starts at the floor-era
+        # stage 2 value instead; everything else starts at stage 1's exit.
+        f1, f2 = (os.path.join(HERE, f'calibrated_stage{k}_floor.json') for k in (1, 2))
+        if os.path.exists(f1) and os.path.exists(f2):
+            o1, o2 = json.load(open(f1)), json.load(open(f2))
+            # ONLY omega_c.  Scaling the others by the floor-era shift as well
+            # (tried first) put the start on the corner branch, drug share 0.092
+            # against CORNER = 0.10, where the drug moments are not read.
+            v['omega'] = o2['omega']
+            print('  warm start, omega_c from the floor-era stage 2: ' +
+                  ', '.join(f'{k}={v[k]:.5g}' for k in ('aleph', 'b', 'th', 'omega', 'u1', 'kap')))
     v.update(STAGE_SET[stage])
     par = with_(P(), **v)
     print(f'STAGE {stage}: {len(S.SPEC)} parameters live: '

@@ -57,8 +57,18 @@ def _off(base):
     return dict(kap=0.0, u1=base.u0, h1=base.h2)
 
 
+# WHERE THE OTHER CHANNEL SITS while one is scanned.  It was 'off', and then the
+# mortality curve's 100 per cent point was mortality ALONE, users at 0.53 of the
+# average, while the calibrated economy (both channels on) has them at 0.74: the
+# author, 29 September, "you said you calibrated it to 0.74, so why does it not look
+# like it is higher than 0.5?".  At 'calibrated' both curves pass through the
+# calibrated economy at 100 per cent, and each curve's 0 per cent point is the OTHER
+# channel acting alone.
+OTHER_CHANNEL = 'calibrated'
+
+
 def _scaled(base, which, s):
-    kw = _off(base)
+    kw = _off(base) if OTHER_CHANNEL == 'off' else dict(kap=base.kap, u1=base.u1, h1=base.h1)
     if which == 'mortality':
         kw.update(kap=s * base.kap)
     else:
@@ -131,11 +141,19 @@ def draw_who_uses(sc, curves):
     ax.grid(axis='y', which='major', color='0.88', lw=0.7, zorder=0)
     ax.set_axisbelow(True)
     ax.set_xticks(list(range(0, int(round(100 * SCAN_HI)) + 1, 25)))
-    # the calibrated point, so the extrapolation past it reads as extrapolation
+    # the calibrated strength, so the extrapolation past it reads as extrapolation,
+    # and, when the other channel sits at its calibrated value, the calibrated
+    # economy itself, where both curves meet
     ax.axvline(100, color='black', lw=0.9, ls=':')
     ax.annotate('calibrated', xy=(100, 0.04 * top), ha='center', va='bottom',
                 fontsize=8, color='black',
                 bbox=dict(boxstyle='square,pad=0.15', fc='white', ec='none'))
+    if OTHER_CHANNEL == 'calibrated':
+        i1 = int(np.argmin(np.abs(sc - 1.0)))
+        yc = curves['mortality'][i1]
+        ax.plot([100], [yc], 'o', ms=9, mfc='none', mec='black', mew=1.4, zorder=5)
+        ax.annotate(f'calibrated economy, {yc:.2f}', xy=(100, yc), xytext=(8, 10),
+                    textcoords='offset points', fontsize=8.5, color='black')
     ax.set_xlabel('Strength of the channel, percent of its calibrated value')
     ax.set_ylabel('Mean income of users / population mean')
     # legend OUTSIDE the plotting area, so it cannot sit on the lines
@@ -150,10 +168,11 @@ def draw_who_uses(sc, curves):
         ax.annotate(f'{y_end:.2f}', xy=(100 * sc[-1], y_end),
                     xytext=(4, -2), textcoords='offset points',
                     fontsize=8.5, color=col, fontweight='bold', va='center')
-    y0 = curves['mortality'][0]
-    ax.annotate(f'{y0:.2f}', xy=(0, y0), xytext=(2, 6),
-                textcoords='offset points', fontsize=8.5, color='0.25',
-                fontweight='bold')
+    for which, col, dy in (('mortality', '#2C6FAD', 6), ('unemployment', '#D9822B', -12)):
+        y0 = curves[which][0]
+        ax.annotate(f'{y0:.2f}', xy=(0, y0), xytext=(2, dy),
+                    textcoords='offset points', fontsize=8.5, color=col,
+                    fontweight='bold')
     ax.set_xlim(-3, 100 * SCAN_HI + 11)
     fig.tight_layout()
     save(fig, 'stylized_who_uses')
