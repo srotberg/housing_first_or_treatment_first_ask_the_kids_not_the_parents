@@ -381,7 +381,7 @@ def write_tables(p1, r1, p2, r2):
          f'${p2.rho:.2f}$'),
         (r'$\delta_d$', "Child's income, parent's SUD, in logs",
          f'Nilsson (2017), a {100 * (1 - math.exp(-p2.delta_d)):.0f} percent cut', f'${p2.delta_d:.3f}$')])]
-    L = [r'\footnotesize', r'\begin{tabular}{@{}lL{6.4cm}L{5.4cm}r@{}}', r'\toprule',
+    L = [r'\footnotesize', r'\begin{tabular}{@{}lllr@{}}', r'\toprule',
          r'Parameter & Description & Source or rationale & Value \\', r'\midrule']
     for i, (hd, rows) in enumerate(ext):
         if i:
