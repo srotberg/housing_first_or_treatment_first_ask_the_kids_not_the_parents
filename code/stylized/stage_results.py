@@ -107,6 +107,24 @@ def stage1(par, figure=True):
     return d
 
 
+def revstart_names(sc, mort, part, ref):
+    """Where the mortality curve's fall begins: the last point at or below the
+    calibrated strength still within five per cent of its value at zero, COUNTING
+    ONLY POINTS WHERE b HOLDS PARTICIPATION ON ITS REFERENCE.  A point where no b
+    does is not on the same footing as the rest -- at 75 per cent it sat at 7.89
+    per cent participation and 4.08 times average income -- and the figure no
+    longer draws it (the author, 29 September: "smooth the blue line so there is
+    not uptick before the 100%"), so the prose must not read off it either."""
+    import run
+    ok = [abs(p - ref) <= 5e-4 for p in part]
+    off, start = mort[0], 0.0
+    for s_, r_, k in zip(sc, mort, ok):
+        if k and s_ <= 1.0 + 1e-9 and abs(r_ - off) <= 0.05 * abs(off):
+            start = float(s_)
+    return dict(s1_revstart_pc=f'{100 * start:g}',
+                s1_revfrac=run._fraction_word(max(1.0 - start, 0.0)))
+
+
 def stage1_figure(par):
     """Figure 1 and every number the prose reads off it.  Under run.OTHER_CHANNEL =
     'off' (the author, 29 September: "remove the other channel and just scale the
@@ -146,14 +164,7 @@ def stage1_figure(par):
     # if it ever does
     d['s1_rjobdir'] = 'above' if r_unem > 1.0 else 'below'
     d['s1_runemphidir'] = 'above' if at(unem, run.SCAN_HI) > 1.0 else 'below'
-    # where the mortality curve's fall begins: the last point at or below the
-    # calibrated strength still within five per cent of its value at zero
-    off, start = at(mort, 0.0), 0.0
-    for s_, r_ in zip(sc, mort):
-        if s_ <= 1.0 + 1e-9 and abs(r_ - off) <= 0.05 * abs(off):
-            start = float(s_)
-    d['s1_revstart_pc'] = f'{100 * start:.0f}'
-    d['s1_revfrac'] = run._fraction_word(max(1.0 - start, 0.0))
+    d.update(revstart_names(sc, mort, parts['mortality'], run.PART_REF))
     # points where no b delivers the target participation, by channel
     misses = {w: [(float(s_), float(p_)) for s_, p_ in zip(sc, parts[w])
                   if abs(p_ - run.PART_REF) > 5e-4] for w in ('mortality', 'unemployment')}
@@ -164,7 +175,8 @@ def stage1_figure(par):
                        'mortality': [float(x) for x in mort],
                        'unemployment': [float(x) for x in unem],
                        'part': {k: [float(x) for x in v] for k, v in parts.items()},
-                       'other_channel': run.OTHER_CHANNEL, 'r_cal': r_cal}
+                       'other_channel': run.OTHER_CHANNEL, 'r_cal': r_cal,
+                       'part_ref': float(run.PART_REF)}
     return d
 
 
@@ -562,7 +574,10 @@ if __name__ == '__main__':
     if stage == 1 and '--replot' in sys.argv:
         import run
         c = json.load(open(OUT))['_s1_curves']
-        run.draw_who_uses(c['scale'], c, r_cal=c.get('r_cal'))
+        run.draw_who_uses(c['scale'], c, r_cal=c.get('r_cal'), part_ref=c.get('part_ref'))
+        if c.get('part_ref') is not None:
+            merge(revstart_names(c['scale'], c['mortality'], c['part']['mortality'],
+                                 c['part_ref']))
         raise SystemExit
     if stage == 1 and '--figure-only' in sys.argv:
         d = stage1_figure(par)

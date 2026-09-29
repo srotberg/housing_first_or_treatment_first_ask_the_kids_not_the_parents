@@ -132,19 +132,31 @@ def fig_who_uses(base):
         m_ = [stats(_scaled(base, which, s)) for s in sc]
         curves[which] = [x['r_use'] for x in m_]
         parts[which] = [x['part'] for x in m_]
-    draw_who_uses(sc, curves, r_cal=float(stats(base)['r_use']))
+    draw_who_uses(sc, dict(curves, part=parts), r_cal=float(stats(base)['r_use']),
+                  part_ref=PART_REF)
     return sc, curves, parts
 
 
-def draw_who_uses(sc, curves, r_cal=None):
+def draw_who_uses(sc, curves, r_cal=None, part_ref=None):
     """Figure 1's drawing, apart from its computation, so it can be redrawn from
     the curves stage_numbers.json keeps (stage_results.py 1 --replot)."""
     plt = style()
     fig, ax = plt.subplots(figsize=(7.0, 4.4))
     sc = np.asarray(sc)
+    # ONLY POINTS WHERE b HOLDS PARTICIPATION ON ITS REFERENCE ARE DRAWN.  The
+    # author, 29 September: "can you smooth the blue line so there is not uptick
+    # before the 100%?".  The uptick was the one point, 75 per cent of the calibrated
+    # mortality, where participation is a step in b and no b gives the reference: it
+    # sat at 7.89 per cent against 8.82, so it compared a different amount of drug
+    # use.  Dropping it, rather than smoothing through it, keeps every drawn point
+    # on the same footing; the line joins its neighbours.
     for which, col, ls, mk in (('mortality', '#2C6FAD', '-', 'o'),
                                ('unemployment', '#D9822B', '--', 's')):
-        ax.plot(100 * sc, curves[which], ls, color=col, marker=mk, ms=4.5,
+        y = np.asarray(curves[which], dtype=float)
+        keep = np.ones(len(sc), dtype=bool)
+        if part_ref is not None and 'part' in curves:
+            keep = np.abs(np.asarray(curves['part'][which]) - part_ref) <= 5e-4
+        ax.plot(100 * sc[keep], y[keep], ls, color=col, marker=mk, ms=4.5,
                 label=f'{which} channel')
     ax.axhline(1.0, color='0.3', lw=1.1)
     # A LINEAR AXIS (the author, 29 September: "it does not look to scale"). The
