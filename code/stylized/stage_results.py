@@ -108,32 +108,44 @@ def stage1(par, figure=True):
 
 
 def stage1_figure(par):
-    """Figure 1 and every number the prose reads off it.  Each curve scans one channel
-    with the other held at its calibrated strength (run.OTHER_CHANNEL), so both pass
-    through the calibrated economy at 100 per cent and each curve's 0 per cent point
-    is the other channel acting alone.  The economy with neither channel is computed
-    beside them, since the prose starts from it."""
+    """Figure 1 and every number the prose reads off it.  Under run.OTHER_CHANNEL =
+    'off' (the author, 29 September: "remove the other channel and just scale the
+    penalty itself") each curve scans ONE channel with the other switched off, so both
+    start from the economy with neither channel and each curve's 100 per cent point is
+    that channel acting alone; the calibrated economy, both channels on, is the circle
+    on the dotted line.  Under 'calibrated' both curves pass through the calibrated
+    economy instead.  Names mean the same thing either way."""
     import run
     from calibrate import stats
     sc, curves, parts = run.fig_who_uses(par)
     mort, unem = np.asarray(curves['mortality']), np.asarray(curves['unemployment'])
-    saved = run.OTHER_CHANNEL
-    try:
-        run.OTHER_CHANNEL = 'off'
-        none = stats(run._scaled(par, 'mortality', 0.0))
-    finally:
-        run.OTHER_CHANNEL = saved
 
     def at(c, s):
         return float(c[int(np.argmin(np.abs(sc - s)))])
-    d = dict(s1_r_none=f'{none["r_use"]:.2f}',
-             s1_r_jobonly=f'{at(mort, 0.0):.2f}',       # mortality off, job loss on
-             s1_r_mortonly=f'{at(unem, 0.0):.2f}',      # job loss off, mortality on
-             s1_r_cal=f'{at(mort, 1.0):.2f}',           # both on: the calibrated economy
+    if run.OTHER_CHANNEL == 'off':
+        r_none, r_mort, r_unem = at(mort, 0.0), at(mort, 1.0), at(unem, 1.0)
+        r_cal = float(stats(par)['r_use'])
+    else:
+        saved = run.OTHER_CHANNEL
+        try:
+            run.OTHER_CHANNEL = 'off'
+            r_none = float(stats(run._scaled(par, 'mortality', 0.0))['r_use'])
+        finally:
+            run.OTHER_CHANNEL = saved
+        r_mort, r_unem, r_cal = at(unem, 0.0), at(mort, 0.0), at(mort, 1.0)
+    d = dict(s1_r_none=f'{r_none:.2f}',
+             s1_r_mortonly=f'{r_mort:.2f}',             # mortality alone, full strength
+             s1_r_jobonly=f'{r_unem:.2f}',              # job loss alone, full strength
+             s1_r_cal=f'{r_cal:.2f}',                   # both on: the calibrated economy
              s1_r_mort_half=f'{at(mort, 0.5):.2f}',
              s1_r_mort_hi=f'{at(mort, run.SCAN_HI):.2f}',
              s1_r_unemp_hi=f'{at(unem, run.SCAN_HI):.2f}',
              s1_scanhi_pc=f'{100 * run.SCAN_HI:.0f}', s1_scanhi_x=f'{run.SCAN_HI:g}')
+    # which side of one the job-loss channel leaves users at, at full and at twice
+    # its strength: the prose says it never reverses the gradient, so the word turns
+    # if it ever does
+    d['s1_rjobdir'] = 'above' if r_unem > 1.0 else 'below'
+    d['s1_runemphidir'] = 'above' if at(unem, run.SCAN_HI) > 1.0 else 'below'
     # where the mortality curve's fall begins: the last point at or below the
     # calibrated strength still within five per cent of its value at zero
     off, start = at(mort, 0.0), 0.0
@@ -148,12 +160,11 @@ def stage1_figure(par):
     d['s1_part_ref'] = pc(run.PART_REF)
     d['s1_nmiss'] = str(sum(len(v) for v in misses.values()))
     d['_s1_misses'] = misses
-    d['_s1_none'] = {k: float(none[k]) for k in ('r_use', 'part')}
     d['_s1_curves'] = {'scale': [float(x) for x in sc],
                        'mortality': [float(x) for x in mort],
                        'unemployment': [float(x) for x in unem],
                        'part': {k: [float(x) for x in v] for k, v in parts.items()},
-                       'other_channel': run.OTHER_CHANNEL}
+                       'other_channel': run.OTHER_CHANNEL, 'r_cal': r_cal}
     return d
 
 
@@ -541,7 +552,7 @@ if __name__ == '__main__':
     if stage == 1 and '--replot' in sys.argv:
         import run
         c = json.load(open(OUT))['_s1_curves']
-        run.draw_who_uses(c['scale'], c)
+        run.draw_who_uses(c['scale'], c, r_cal=c.get('r_cal'))
         raise SystemExit
     if stage == 1 and '--figure-only' in sys.argv:
         d = stage1_figure(par)

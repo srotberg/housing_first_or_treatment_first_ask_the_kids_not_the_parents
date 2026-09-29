@@ -65,6 +65,14 @@ def _off(base):
 # calibrated economy at 100 per cent, and each curve's 0 per cent point is the OTHER
 # channel acting alone.
 OTHER_CHANNEL = 'calibrated'
+# BACK TO 'off', the author, 29 September, later the same day: "i think you remove the
+# other channel and just scale the penalty itself", "the old figure showed exactly how
+# the penalties reverse the income gradients", "the whole point is to show that the
+# mortality penalty is what reverses the gradient".  With the other channel at its
+# calibrated value the unemployment curve was forced through 0.74 at 100 per cent and
+# wandered on either side of it, which says nothing about what that penalty does on
+# its own.
+OTHER_CHANNEL = 'off'
 # AND b HOLDS THE CALIBRATED ECONOMY'S OWN PARTICIPATION, not the data target, so the
 # 100 per cent point IS the calibrated economy: refitting b to 8.90 there moved
 # participation off the calibrated 9.02 and users' income from 0.73 to 0.70, and the
@@ -124,11 +132,11 @@ def fig_who_uses(base):
         m_ = [stats(_scaled(base, which, s)) for s in sc]
         curves[which] = [x['r_use'] for x in m_]
         parts[which] = [x['part'] for x in m_]
-    draw_who_uses(sc, curves)
+    draw_who_uses(sc, curves, r_cal=float(stats(base)['r_use']))
     return sc, curves, parts
 
 
-def draw_who_uses(sc, curves):
+def draw_who_uses(sc, curves, r_cal=None):
     """Figure 1's drawing, apart from its computation, so it can be redrawn from
     the curves stage_numbers.json keeps (stage_results.py 1 --replot)."""
     plt = style()
@@ -153,16 +161,18 @@ def draw_who_uses(sc, curves):
     # and, when the other channel sits at its calibrated value, the calibrated
     # economy itself, where both curves meet
     ax.axvline(100, color='black', lw=0.9, ls=':')
+    # NO CALIBRATED-ECONOMY POINT under 'off'.  The author asked first for one label,
+    # "calibrated, 0.74", then: "we dont even need to add the calibrated values....and
+    # they wont be exact as in the calibration, because we turn one off and move the
+    # other".  A curve's 100 per cent point is that channel ALONE, so the calibrated
+    # economy is on neither curve and a circle at 0.74 would read as if it were.  The
+    # dotted line carries the one label, as it did before.
     ax.annotate('calibrated', xy=(100, 0.04 * top), ha='center', va='bottom',
                 fontsize=8, color='black',
                 bbox=dict(boxstyle='square,pad=0.15', fc='white', ec='none'))
     if OTHER_CHANNEL == 'calibrated':
-        i1 = int(np.argmin(np.abs(sc - 1.0)))
-        yc = curves['mortality'][i1]
-        ax.plot([100], [yc], 'o', ms=9, mfc='none', mec='black', mew=1.4, zorder=5)
-        ax.annotate(f'calibrated economy, {yc:.2f}', xy=(100, yc), xytext=(10, -16),
-                    textcoords='offset points', fontsize=8.5, color='black',
-                    bbox=dict(boxstyle='square,pad=0.1', fc='white', ec='none'))
+        r_cal = curves['mortality'][int(np.argmin(np.abs(sc - 1.0)))]
+        ax.plot([100], [r_cal], 'o', ms=9, mfc='none', mec='black', mew=1.4, zorder=5)
     ax.set_xlabel('Strength of the channel, percent of its calibrated value')
     ax.set_ylabel('Mean income of users / population mean')
     # legend OUTSIDE the plotting area, so it cannot sit on the lines
