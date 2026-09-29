@@ -1,0 +1,23 @@
+bottom bound; spec {'repl': 0.5, 'ui_sud': 0.0, 'cbar': 0.077, 'h2': 0.1, 'h3': 0.4}; u1 0.10
+   round 0: cbar 0.0769 fshare 0.432% gam 0.4352 h1 0.024924 u0 0.0485 aleph 10.021 kap 0.1574 b 0.03681 | hspend 26.9 homeless 0.725 unemp 5.04 vsl 68.8 r_use 0.732 part 8.92 SUD share of homeless 36.35
+   round 0: cbar 0.0763 fshare 0.420% gam 0.4349 h1 0.023968 u0 0.0470 aleph 11.111 kap 0.1455 b 0.03417 | hspend 26.9 homeless 0.618 unemp 4.90 vsl 78.5 r_use 0.734 part 8.87 SUD share of homeless 38.00
+   round 0: cbar 0.0763 fshare 0.420% gam 0.4344 h1 0.023772 u0 0.0468 aleph 11.259 kap 0.1439 b 0.03383 | hspend 26.9 homeless 0.605 unemp 4.87 vsl 79.8 r_use 0.730 part 8.90 SUD share of homeless 38.22
+Traceback (most recent call last):
+  File "/home/user/housing_first_or_treatment_first/code/stylized/bottom_bound.py", line 87, in <module>
+    q_lo, n_lo = trial(q0, 1.08)
+                 ^^^^^^^^^^^^^^^
+  File "/home/user/housing_first_or_treatment_first/code/stylized/bottom_bound.py", line 76, in trial
+    neg = sum(period1_negative_values(q, pol)['cells'] for pol in ('HF', 'TF'))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/housing_first_or_treatment_first/code/stylized/bottom_bound.py", line 76, in <genexpr>
+    neg = sum(period1_negative_values(q, pol)['cells'] for pol in ('HF', 'TF'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/housing_first_or_treatment_first/code/stylized/negative_value_of_life.py", line 159, in period1_negative_values
+    for s, (p, gain, v, ru, rn, inc, own) in enumerate(S.period1(par, float(y), policy)):
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/housing_first_or_treatment_first/code/stylized/stylized.py", line 1278, in period1
+    pen = par.beta * par.omega * _chdmg_at(par, y) * _pid(par, vg)
+                                 ^^^^^^^^^^^^^^^^^
+  File "/home/user/housing_first_or_treatment_first/code/stylized/stylized.py", line 1368, in _chdmg_at
+    raise RuntimeError(
+RuntimeError: chdmg is None: the child damage has not been solved for these parameters.  Call stylized.solve_child_damage(par) LAST, after every with_() that changes a parameter, and solve on what it returns.  See the note at the chdmg declaration for why this raises instead of defaulting to zero.
