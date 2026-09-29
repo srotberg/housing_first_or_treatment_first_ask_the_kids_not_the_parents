@@ -81,6 +81,12 @@
   0.5), (1.5, 0.5), (1.8, 0.5), (2.4, 0.5), (1.8, 0.25), (1.5, 0), (1.8, 0): users' income,
   fitted u1, the period-1 check and the VSL that clears it, the gradient check.
 - The .log files are gitignored (code/stylized/.gitignore): cloud logs go in .txt.
+- 23:45 the author: "I prefer if we somehow were able to get u1>u0 and be able to justify
+  a specific number for UI. 0 seemed defensible. But half is just random". New rule,
+  stylized.P.ui_sud_excess: job loss at u0 is insured as usual, the extra u1 - u0 caused
+  by the disorder is not (misconduct). Both replacement rates are rules; the uninsured
+  share (u1-u0)/u1 comes out of u1; at u1 = u0 the channel is off. Default off. The half
+  and quarter scan points were archived and replaced by 'excess' at 1.08/1.5/1.8/2.4.
 - Found by the smoke test: at the calibrated grid the poorest households have a negative
   value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
 

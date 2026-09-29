@@ -16,7 +16,7 @@ the targets, where users sit, the median over the mean, the SUD share around the
 u1, the period-1 value of life at the drug decision, the aleph and VSL that would clear
 it with the rest held, and the Figure 1 gradient check.  theta is held.  Log only.
 
-usage:  STYLIZED_WORKERS=<n> python3 scan_bottom_ui.py <TRUNC_FLOOR> <ui_sud>
+usage:  STYLIZED_WORKERS=<n> python3 scan_bottom_ui.py <TRUNC_FLOOR> <ui_sud | excess>
 """
 import sys
 import numpy as np
@@ -28,7 +28,12 @@ from calibrate import stats, bracket, TARGET
 import scan_u1_uninsured as SC
 from negative_value_of_life import period1_negative_values
 
-tf, ui = float(sys.argv[1]), float(sys.argv[2])
+tf = float(sys.argv[1])
+# ui: a number is ui_sud, the fraction of the replacement a household with a SUD keeps;
+# 'excess' is stylized.P.ui_sud_excess, no insurance for the job loss the disorder causes
+# and the usual insurance for the rest (the author: "half is just random").
+EXCESS = sys.argv[2] == 'excess'
+ui = 1.0 if EXCESS else float(sys.argv[2])
 
 
 def fit_u1(q, iters=10):
@@ -60,11 +65,11 @@ def fit_u1(q, iters=10):
 
 yV = SC.set_grid(tf)
 par0, _ = R.load(1)
-q = with_(par0, **{**SC.SPEC, 'ui_sud': ui, 'cbar': 0.09}, u1=0.07, yV=yV, h1=0.03)
+q = with_(par0, **{**SC.SPEC, 'ui_sud': ui, 'cbar': 0.09}, ui_sud_excess=int(EXCESS), u1=0.07, yV=yV, h1=0.03)
 med = C._median_of(C.YG, np.diff(C.EDGES))
 mean = float(np.sum(np.asarray(C.W) * np.asarray(C.YG)) / np.sum(C.W))
 print(f'floor TRUNC_FLOOR {tf}: lowest income {C.YG[0]:.3f}, sigma_y {C.SIG:.4f}, median {med:.3f}, '
-      f'mean {mean:.3f}, median / mean {med / mean:.3f}; ui_sud {ui}; VSL target {TARGET["vsl"]}', flush=True)
+      f'mean {mean:.3f}, median / mean {med / mean:.3f}; ' + ('uninsured SUD-caused job loss (ui_sud_excess)' if EXCESS else f'ui_sud {ui}') + f'; VSL target {TARGET["vsl"]}', flush=True)
 for r in range(3):
     q = SC.fit(q, rounds=1)
     q = SC.unemployment_u0(fit_u1(q))

@@ -495,6 +495,17 @@ class P:
     # has the disorder in period 1.  ON (0) SINCE 29 SEPTEMBER: the staged calibration
     # is run with it, and 1 reproduces every earlier result.
     ui_sud = 0.0
+    # NO INSURANCE FOR THE JOB LOSS THE DISORDER CAUSES, THE USUAL INSURANCE FOR THE REST.
+    # The author, 29 September: "I prefer if we somehow were able to get u1>u0 and be able
+    # to justify a specific number for UI. 0 seemed defensible. But half is just random".
+    # A household with the disorder loses its job at the ordinary rate u0 for ordinary
+    # reasons, and is insured like anyone else, and at the extra rate u1 - u0 BECAUSE of
+    # the disorder -- dismissed for misconduct (a failed drug test, impairment at work) or
+    # quitting -- which disqualifies it.  Both replacement rates are rules, repl and 0; the
+    # share of such job losers without insurance, (u1 - u0)/u1, comes out of u1.  At
+    # u1 = u0 the channel is off, so reaching the SUD share of the homeless needs u1 above
+    # u0.  When on, ui_sud is not used.  DEFAULT 0, i.e. OFF.
+    ui_sud_excess = 0
 
 
     # HOUSING. Rent per unit of housing services is the NUMERAIRE, p_r = 1, so
@@ -914,13 +925,19 @@ def _states(par, d, policy, y, used=0):
     # Treatment First exactly.
     rate = par.kappa_r if ((policy == 'HF') or (d == 0)) else par.kappa_c
     out = []
-    for e, pe in ((0, 1.0 - pu), (1, pu)):
-        # Lose your job and income support replaces the fraction repl of what
-        # you used to earn, on an earnings base capped at ycap. For the poorest
-        # household that is well below the rent on the smallest unit, so the
-        # disorder can put the roof at risk, which is what the voucher insures.
-        # A household with the disorder draws ui_sud of it (see ui_sud in P).
-        inc = y if e == 0 else par.repl * (par.ui_sud if d == 1 else 1.0) * min(y, par.ycap)
+    # EMPLOYMENT STATES: (probability, income).  Lose your job and income support
+    # replaces the fraction repl of what you used to earn, on an earnings base capped
+    # at ycap. For the poorest household that is well below the rent on the smallest
+    # unit, so the disorder can put the roof at risk, which is what the voucher insures.
+    # A household with the disorder draws ui_sud of it (see ui_sud in P), unless
+    # ui_sud_excess splits its job loss into the ordinary part, insured, and the part
+    # the disorder causes, uninsured (see ui_sud_excess in P).
+    ins = par.repl * min(y, par.ycap)
+    if d == 1 and par.ui_sud_excess:
+        emp = ((1.0 - par.u1, y), (min(par.u0, par.u1), ins), (max(par.u1 - par.u0, 0.0), 0.0))
+    else:
+        emp = ((1.0 - pu, y), (pu, ins * (par.ui_sud if d == 1 else 1.0)))
+    for pe, inc in emp:
         # A FLOOR UNDER REALISED INCOME.  The author, 12 September: *"you need
         # to limit the lowest income from below so no one has negative value of
         # life"*.
