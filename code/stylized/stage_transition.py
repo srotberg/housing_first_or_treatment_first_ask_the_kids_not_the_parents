@@ -4,6 +4,7 @@ the model with the child (stage 2's calibration), for EVERY generation alive at
 the reform and every one after it.
 
 usage:  STYLIZED_WORKERS=2 python3 stage_transition.py   -> merges s4_tr_* into stage_numbers.json
+                                                          and draws writing/figures/stylized_transition
 
 WHO IS ALIVE WHEN THE RULE CHANGES (TRANSITION_LESSONS section 1: a cohort path
 is not a transition).  The rule lands at the start of a period.
@@ -125,6 +126,70 @@ def run(par, policy_new, n=8):
     return young, coh, b
 
 
+def paths(par, n=8):
+    """What each cohort does on the path: drug use, the SUD and homelessness of the
+    adults in period 1 from the young at the reform (cohort 0, born into the old
+    mixture, choosing under the new rule) onward, with the Housing First rest point
+    beside them. The mixture steps exactly as optimal_sud.transition steps it."""
+    q_o = T._ready(par, 'HF', par.pV)
+    q_n = T._ready(par, 'TF', par.pV)
+    use_o = np.array([ST.use_prob(q_o, y, 'HF') for y in C.YG], dtype=float)
+    use_n = np.array([ST.use_prob(q_n, y, 'TF') for y in C.YG], dtype=float)
+    v1o, sud_o, hl_o, ev_o = T._policy_grids(par, 'HF', par.pV)
+    v1n, sud_n, hl_n, ev_n = T._policy_grids(par, 'TF', par.pV)
+    hls_n = T._hl_by_shift(par, 'TF', par.pV)
+    p0 = T._rest_point(sud_o, T._hl_by_shift(par, 'HF', par.pV), par)
+    base = dict(part=T._outcome(p0, use_o, par), sud=T._outcome(p0, sud_o, par),
+                homeless=T._outcome(p0, hl_o, par))
+    rows, p = [], p0.copy()
+    for t in range(0, n + 1):
+        rows.append(dict(cohort=t, part=T._outcome(p, use_n, par),
+                         sud=T._outcome(p, sud_n, par), homeless=T._outcome(p, hl_n, par)))
+        p = T._step(p, sud_n, hls_n, par)
+    return rows, base
+
+
+def figure(tr, out='stylized_transition'):
+    """The stage 4 transition in four panels: drug use, the SUD and homelessness by
+    cohort against the Housing First rest point, and the CEV of every generation,
+    the old and the young at the reform included."""
+    import run
+    plt = run.style()
+    fig, axs = plt.subplots(2, 2, figsize=(8.6, 6.0))
+    rows, base = tr['rows'], tr['base']
+    t = [r['cohort'] for r in rows]
+    for ax, key, title in ((axs[0, 0], 'part', '(a) Drug use'),
+                           (axs[0, 1], 'sud', '(b) Carrying a SUD'),
+                           (axs[1, 0], 'homeless', '(c) Homeless')):
+        ax.plot(t, [100 * r[key] for r in rows], '-o', color='#2C6FAD', ms=4.5,
+                label='Treatment First, by cohort')
+        ax.axhline(100 * base[key], color='#D9822B', ls='--', lw=1.6,
+                   label='Housing First')
+        ax.set_title(title, fontsize=10.5, loc='left')
+        ax.set_ylabel('percent of adults')
+        ax.set_xticks(t)
+        ax.set_xticklabels(['young\nat reform' if c == 0 else str(c) for c in t], fontsize=8.5)
+        lo = min(min(100 * r[key] for r in rows), 100 * base[key])
+        hi = max(max(100 * r[key] for r in rows), 100 * base[key])
+        pad = 0.15 * (hi - lo) if hi > lo else 0.5
+        ax.set_ylim(max(0.0, lo - pad), hi + pad)
+    axs[0, 0].legend(fontsize=8, loc='best')
+    ax = axs[1, 1]
+    labs = ['old', 'young'] + [str(c['cohort']) for c in tr['cohorts']]
+    vals = [tr['old'], tr['young']] + [c['cev'] for c in tr['cohorts']]
+    cols = ['#B5443B' if v < 0 else '#2C6FAD' for v in vals]
+    ax.bar(range(len(vals)), [100 * v for v in vals], color=cols, width=0.62)
+    ax.axhline(0.0, color='0.3', lw=1.0)
+    ax.set_xticks(range(len(vals)))
+    ax.set_xticklabels(labs, fontsize=8.5)
+    ax.set_title('(d) Welfare, CEV', fontsize=10.5, loc='left')
+    ax.set_ylabel('percent of consumption')
+    for ax in (axs[1, 0], axs[1, 1]):
+        ax.set_xlabel('generation: alive at the reform, then cohorts born after it')
+    fig.tight_layout()
+    run.save(fig, out)
+
+
 def main():
     par, raw = R.load(2)
     print(f'stage 2 calibration, iteration {raw["_iteration"]}')
@@ -148,6 +213,13 @@ def main():
         d[f's4_tr_c{t}_sud'] = R.pc(c['sud'], 3)
         d[f's4_tr_c{t}_hl'] = R.pc(c['homeless'], 3)
     d['s4_tr_sud0'] = R.pc(b['sud0'], 3)
+    # THE FIGURE (the author, 29 September: "you can show homelessness, drug use,
+    # SUD, CEV"), from the same path, with its series kept for a redraw
+    rows, base = paths(par, n=8)
+    tr = dict(rows=rows, base=base, old=old['cev_tf'], young=young,
+              cohorts=[dict(cohort=c['cohort'], cev=c['cev']) for c in coh])
+    d['_s4_tr_figure'] = tr
+    figure(tr)
     d['s4_tr_hl0'] = R.pc(b['homeless0'], 3)
     R.merge(d)
     for k in sorted(d):

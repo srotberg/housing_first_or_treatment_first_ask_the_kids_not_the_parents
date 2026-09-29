@@ -85,7 +85,11 @@ def start_vector():
     v.update(dict(aleph=12.45683, gam=0.44351, h1=0.01017, b=0.05110,
                   pi_base=0.0368 / 0.089, u0=0.04622, u1=0.10814, omega=0.00065,
                   delta_d=0.85980, kap=0.10748, th=0.14962))
-    v['y_floor'] = 0.099
+    # NO INCOME FLOOR (the author, 29 September: "there doesnt need to be a minimum
+    # UI", "it is just a proportion of income up to a cap").  At 0.099 it no longer
+    # did its old job: the share of period-2 states with a negative value of life
+    # was 2.07 per cent with it and 2.19 without at stage 1 (0.88 and 0.96 at stage 2).
+    v['y_floor'] = 0.0
     return v
 
 
@@ -119,6 +123,15 @@ def spec(stage):
             r = (r[0], r[1], r[2], r[3], 0.0, r[5], r[6])
         if r[0] == 'th':
             r = (r[0], r[1], DSHARE_TARGET, r[3], r[4], r[5], r[6])
+        if r[0] == 'u1':
+            # u1 IS CALIBRATED on the SUD share of the homeless (the author, 29
+            # September: "i think u1 can be calibrated"), with the sign MEASURED on
+            # this model, floor off, b refit on participation (probe_u1.py): the
+            # share FALLS in u1, 25.4 per cent at u1 = 0.048 against 16.3 at 0.108,
+            # because the job-loss risk deters the poorest users and b's refit
+            # replaces them with richer ones.  The 21.7 per cent target lies between
+            # the two, above u0, so the rule lowers u1 when the share is short.
+            r = (r[0], r[1], r[2], -1, 0.40, r[5], r[6])
         out.append(r)
     return out
 
@@ -157,6 +170,7 @@ def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None):
         if resume:
             r = json.load(open(os.path.join(HERE, resume)))
             v.update({k: x for k, x in r.items() if not k.startswith('_')})
+            v['y_floor'] = 0.0          # the floor is off whatever the file says
             print(f'  resumed from {resume}: {r.get("_from", "")}')
     else:
         prev = json.load(open(os.path.join(HERE, 'calibrated_stage1.json')))
