@@ -17,7 +17,7 @@ import stylized as ST
 import stage_results as R
 from stylized import with_
 from calibrate import stats, bracket, TARGET
-from negative_value_of_life import negative_value_share
+from negative_value_of_life import negative_value_share, strict_negative_values
 
 FS_TARGET = 0.0042
 stage = int(sys.argv[1])
@@ -56,6 +56,9 @@ def report(tag, q):
     print(f'  {tag}: u1 {q.u1:.4f}  SUD share of homeless {100*m["sud_of_homeless2"]:.2f}  '
           f'P(homeless|SUD) {100*m["hl_sud"]/max(m["sud"],1e-12):.2f}  negative value of life '
           f'{100*nv["share"]:.2f}% (lowest {nv["lowest"]:.2f})  fshare {100*m["fshare"]:.3f}%', flush=True)
+    sv = strict_negative_values(q)
+    print(f'  STRICT value-of-life check: {sv["cells"]} negative cells (must be 0); '
+          f'lowest {sv["lowest"]:.3f} at {sv["where"]}', flush=True)
     for name, lo, hi in (('bottom 10%', 0, .10), ('10-25%', .10, .25), ('25-50%', .25, .50),
                          ('50-75%', .50, .75), ('top 25%', .75, 1.0)):
         mask = (mid >= lo) & (mid < hi)
