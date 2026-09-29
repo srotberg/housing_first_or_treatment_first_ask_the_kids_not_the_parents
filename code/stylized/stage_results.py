@@ -307,7 +307,12 @@ def calibration_names(p1, r1, p2, r2):
                   f'{tag}_v_b': f'{par.b:.4f}', f'{tag}_v_th': f'{par.th:.3f}',
                   f'{tag}_v_smr': f'{_smr(par):.2f}', f'{tag}_v_h1': f'{par.h1:.4f}',
                   f'{tag}_v_u0': f'{par.u0:.4f}', f'{tag}_iter': f'{raw["_iteration"]}',
-                  f'{tag}_worst': f'{raw["_worst_gap_pc"]:.1f}'})
+                  f'{tag}_worst': f'{raw["_worst_gap_pc"]:.1f}',
+                  # u1 and its moment, which the text quotes per stage: in stage 2
+                  # u1 sits on its floor, u0, and the share falls short there
+                  f'{tag}_v_u1': f'{par.u1:.4f}'})
+        if m.get('sud_of_homeless2') is not None:
+            d[f'{tag}_m_sudhl_pc'] = f'{100 * m["sud_of_homeless2"]:.1f}'
         for k in ('vsl', 'hspend', 'part', 'dshare', 'r_use', 'homeless', 'unemployment',
                   'sud_of_homeless2', 'child_gap', 'child_sud_or', 'child_hl_or', 'sud'):
             if m.get(k) is not None:
