@@ -203,7 +203,9 @@ def main():
         raise SystemExit('NULL TEST FAILED: not reporting a transition')
     young, coh, b = run(par, 'TF', n=8)
     old = old_generation(par, par.pV)
-    d = {'s4_tr_old': R.pc(old['cev_tf'], 3), 's4_tr_old_hl_tf': R.pc(old['hl_tf'], 3),
+    d = {'s4_tr_old': R.pc(old['cev_tf'], 3), 's4_tr_old_abs': R.pc(abs(old['cev_tf']), 2),
+         's4_tr_young_abs': R.pc(abs(young), 3),
+         's4_tr_old_hl_tf': R.pc(old['hl_tf'], 3),
          's4_tr_old_hl_hf': R.pc(old['hl_old'], 3), 's4_tr_young': R.pc(young, 3)}
     for c in coh:
         t = c['cohort']

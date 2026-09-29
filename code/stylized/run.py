@@ -65,6 +65,11 @@ def _off(base):
 # calibrated economy at 100 per cent, and each curve's 0 per cent point is the OTHER
 # channel acting alone.
 OTHER_CHANNEL = 'calibrated'
+# AND b HOLDS THE CALIBRATED ECONOMY'S OWN PARTICIPATION, not the data target, so the
+# 100 per cent point IS the calibrated economy: refitting b to 8.90 there moved
+# participation off the calibrated 9.02 and users' income from 0.73 to 0.70, and the
+# circle disagreed with Table 2. fig_who_uses sets it from the base it is given.
+PART_REF = None
 
 
 def _scaled(base, which, s):
@@ -89,7 +94,7 @@ def _scaled(base, which, s):
     # with three times the drug use of every other point on them, while the note
     # said the amount of use was identical throughout. Raising the ceiling to 20
     # makes the claim true where it can be made true.
-    q = with_(par, b=bracket(par, 'b', 'part', 1e-5, 20.0, iters=30))
+    q = with_(par, b=bracket(par, 'b', 'part', 1e-5, 20.0, iters=30, tgt=PART_REF))
     # AND WHERE IT CANNOT, SAY SO. Participation is a step function of b at the
     # far end of the mortality curve, jumping from 4.1 to 6.2 percent with
     # nothing in between, so no b delivers 5.13 there. That is a fact about the
@@ -97,9 +102,10 @@ def _scaled(base, which, s):
     # than passed over, because a point that misses the target is not comparable
     # with the points that hit it.
     got = stats(q)['part']
-    if abs(got - TARGET['part']) > 5e-4:
+    ref = TARGET['part'] if PART_REF is None else PART_REF
+    if abs(got - ref) > 5e-4:
         print(f'   NOTE: {which} at {s:.2f}: participation {100*got:.2f} percent, '
-              f'not {100*TARGET["part"]:.2f}; no b delivers the target here')
+              f'not {100*ref:.2f}; no b delivers the target here')
     return q
 
 
@@ -111,6 +117,8 @@ def fig_who_uses(base):
     # failure looking like it might be about to turn. It is not. The grid keeps
     # its step of an eighth of the calibrated value whatever SCAN_HI is.
     sc = np.linspace(0.0, SCAN_HI, int(round(8 * SCAN_HI)) + 1)
+    global PART_REF
+    PART_REF = float(stats(base)['part'])
     curves, parts = {}, {}
     for which in ('mortality', 'unemployment'):
         m_ = [stats(_scaled(base, which, s)) for s in sc]

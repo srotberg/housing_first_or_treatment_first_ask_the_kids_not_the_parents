@@ -695,9 +695,9 @@ def stats(par):
     return m
 
 
-def bracket(par, name, mom, lo, hi, iters=34):
-    """Bisect one parameter on one monotone target."""
-    tgt = TARGET[mom]
+def bracket(par, name, mom, lo, hi, iters=34, tgt=None):
+    """Bisect one parameter on one monotone target (TARGET[mom] unless given)."""
+    tgt = TARGET[mom] if tgt is None else tgt
     rising = stats(with_(par, **{name: hi}))[mom] > stats(with_(par, **{name: lo}))[mom]
     for _ in range(iters):
         mid = np.sqrt(lo * hi)

@@ -92,6 +92,7 @@ def stage1(par, figure=True):
                 d[f's1_{k}_{lab}_{tag}'] = pc(m[k], 2 if k == 'part' else 3)
             d[f's1_cost_{lab}_{tag}'] = f'{m["cost"]:.4f}'
         d[f's1_vol_{tag}'] = pc(tf['part'] - none['part'])
+        d[f's1_vol_{tag}_abs'] = pc(abs(tf['part'] - none['part']))
         d[f's1_mh_{tag}'] = pc(hf['part'] - tf['part'])
         d[f's1_net_{tag}'] = pc(hf['part'] - none['part'])
         dom = dominance(par, pV)
@@ -142,7 +143,9 @@ def stage1_figure(par):
     d['s1_revfrac'] = run._fraction_word(max(1.0 - start, 0.0))
     # points where no b delivers the target participation, by channel
     misses = {w: [(float(s_), float(p_)) for s_, p_ in zip(sc, parts[w])
-                  if abs(p_ - C.TARGET['part']) > 5e-4] for w in ('mortality', 'unemployment')}
+                  if abs(p_ - run.PART_REF) > 5e-4] for w in ('mortality', 'unemployment')}
+    d['s1_part_ref'] = pc(run.PART_REF)
+    d['s1_nmiss'] = str(sum(len(v) for v in misses.values()))
     d['_s1_misses'] = misses
     d['_s1_none'] = {k: float(none[k]) for k in ('r_use', 'part')}
     d['_s1_curves'] = {'scale': [float(x) for x in sc],
@@ -238,6 +241,16 @@ def stage2(par):
     d['s2_r_use_om0'] = f'{m0["r_use"]:.2f}'
     d['s2_part_om0'] = pc(m0['part'])
     d['s2_part'] = pc(m['part'])
+    d['s2_ruse_dir'] = 'richer' if m0['r_use'] > m['r_use'] else 'poorer'
+    # WHAT THE CHILD CHANGES BEFORE ANY REFIT: stage 1's parameters with the shared
+    # bundle alone (xi), then with omega_c and delta_d on top at stage 2's values
+    p1, _r1 = load(1)
+    mx = stats(ready(with_(p1, xi=par.xi)))
+    mc = stats(ready(with_(p1, xi=par.xi, omega=par.omega, delta_d=par.delta_d)))
+    d['s2_xi_part'] = pc(mx['part'], 1)
+    d['s2_xi_vsl'] = f'{mx["vsl"]:.0f}'
+    d['s2_xi_ruse'] = f'{mx["r_use"]:.2f}'
+    d['s2_child_part'] = pc(mc['part'], 1)
     import children as CH
     d['s2_or_sud'] = f'{ST.child_sud_odds_ratio(q, C.YG, C.W):.2f}'
     d['s2_or_hl'] = f'{ST.child_homeless_odds_ratio(q, C.YG, C.W):.2f}'
@@ -501,6 +514,9 @@ if __name__ == '__main__':
         d3, kx = stage3(par, hf, tf)
         d.update(d3)
         d.update(stage4(par, hf, kx))
+        # how much of the distance to the omega_c = 1 allocation Treatment First closes
+        import run
+        d['s4_close_frac'] = run._fraction_word(float(d['s3_cev_tf']) / float(d['s4_cev_opt']))
     merge(d)
     for k in sorted(d):
         if not k.startswith('_'):
