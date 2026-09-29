@@ -1,3 +1,19 @@
+# 29 September 13:30: T=60 LOOP 0 DONE -- children in a shelter over the transition; elasticity run launched
+
+- Loop 0 finished (paths saved, 59 periods); loop 1 running. Largest gaps: drug market 2.0e-2, budget 1.6e-2.
+- The rescaled HOMELESS_BY_AGE (x 1e-14 / MASS_BY_AGE) equals h_1 in all 59 years to 7e-13.
+- Children in a shelter (ages 26-50, mass-weighted): year 1 1.015 (= benchmark), year 2 1.126, peak 1.141 in
+  year 7 (+12.4 per cent on the benchmark, against +6.2 in the TF long run, 1.078); crosses the long run about
+  year 21; 1.070-1.075 over years 25-42; then drifts up to 1.104 by year 59 as loop 0's pi_V path falls to
+  0.077 (TF steady state 0.081). The tail is loop 0 not converged, not a result. Mechanism of the overshoot:
+  the reform meets the benchmark's SUD stock (lambda_d 3.46), which falls to about 2.4 over 25 years.
+- Transition b is not on another base: 5.89 at t=1 against 8.12 in the benchmark is the reform's immediate
+  flow response (TF long run 5.67, x_tf_b_pc 30); h_1 and lambda_d are stocks and match the benchmark at t=1.
+- Elasticities: the only measurement on file (ELASTICITY_RESULT.txt, 30 August) is on an old point and its
+  intensive figure is the per-user one. Measuring on the HF benchmark: code/elast_bench, one frozen block from
+  cfarm_bench's converged end state, on 77803322 (rebuilds hftf_bench bit for bit under its own filename,
+  md5 36b839a6) with only measure_price_elasticity flipped; OMP 2, sharing the box with the transition.
+
 # 29 September 07:15: T=60 RESTART 3 IN LOOP 0'S FORWARD PASS; THE BY-AGE HOMELESSNESS PRINT IS MIS-SCALED (diagnostic only)
 
 - Backward pass finished (59 of 59) about 07:10; the forward pass is on t=1.
