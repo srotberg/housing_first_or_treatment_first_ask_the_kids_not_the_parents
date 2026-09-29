@@ -1,0 +1,132 @@
+BENCHMARK DRUG PRICE ELASTICITIES, measure_price_elasticity=1 (worker run, 29 Sep 2026)
+=====================================================================================
+
+*** THE RUN FAILED AND THE MEASUREMENT IS NOT AT THE BENCHMARK POINT. ***
+
+1. cf_arm.sh stage 1 stopped on its guard:
+     GUARD: the benchmark did not write welfare_curvebaseline_benchmark.dat -- it never reached the save
+   The binary stopped itself on "CEV NULL FAILED on the childhood half" (last 40 lines below).
+   The paper's benchmark log (results/counterfactuals_cf_v2/bench/bench.log.gz) passes the
+   same check: childhood curve 450.79120963614810 = reported 450.79120963614810.
+
+2. The run left the calibration loop after 5 moment blocks (frozen_stop_tolerance 1e-3 met,
+   BLOCK MOVE 7.76e-5), not 12. The paper's benchmark ran all 12.
+
+3. Eight of the eleven moments differ from the paper's benchmark by more than 1e-3 relative
+   (y_u by 3.2 per cent). The elasticities below were measured at a different point.
+
+LIKELY CAUSE (read from the log and the source; not tested by a second run):
+the measurement block (source lines ~11784-11930 of 77803322) raises price_of_addictive_good,
+calls solve_value_function_and_policy_functions(1), stationary_equilibrium_statistics(1) and
+govt_revenues_calc(1), then restores ONLY the price. The policies, value functions and
+statistics stay at the raised price. Evidence:
+  - every BLOCK MOVE line reports b equal to the RAISED-price user count, not the benchmark's
+    (last block: BLOCK MOVE b = 0.0645262327 = "ELASTICITY_DIAG new price ... users=",
+    while MOMENT b = 0.0811630846); the INVARIANTS block also reports drug users 0.0645262327.
+    So the stopping rule compares perturbed economies, and the loop stopped early.
+  - block 1 matches the paper (h_1 7.07808e-3 vs 7.07799e-3); the paths split from block 2
+    on (h_1 6.0935e-3 here vs 6.4900e-3 in the paper), i.e. once one perturbed block has fed
+    the next.
+  - the saved state is the raised-price solve, so the CEV null check at x=0 (curve built
+    from benchmark policies vs calculate_childhood_utility) no longer matches.
+A fix would re-solve (or restore) policies and statistics at the base price after the
+measurement, before BLOCK MOVE and the save. Not done here: the brief was not to improvise.
+
+BUILD (step 1)
+--------------
+gfortran: GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 (installed by apt on this machine)
+source: git show 77803322:code/housing_first_or_treatment_first_SR_v1.f90
+  b181aee24a0ca2ca32294b70bd1a9d7f  same/housing_first_or_treatment_first_SR_v1.f90
+  b53d30088e9930869d8fcf6757c0f97e  flip/housing_first_or_treatment_first_SR_v1.f90
+diff: exactly one line changed (line 1186, measure_price_elasticity=0 -> =1), 2 diff lines.
+  36b839a648c483d4c86a04bffa638c0d  /tmp/eb/same/hftf_bench   (MATCHES the requesting machine)
+  69c7ff94e539a2c638b7112845e00193  /tmp/eb/flip/hftf_elast
+Run: cd code && STAGE1_ONLY=1 BENCH_BIN=/tmp/eb/flip/hftf_elast sh cf_runs/cf_arm.sh null
+
+MOMENT CHECK (step 3): last block that ran (block 5, loop_count=14) vs the paper's last block
+-------------------------------------------------------------------------------------------
+moment           paper benchmark    this run (block 5)    rel diff  flag
+h_1                 0.0060788992          0.0060708562   -1.32e-03  >1e-3
+b                   0.0812550098          0.0811630846   -1.13e-03  >1e-3
+lambda_d            0.0346112458          0.0345196994   -2.64e-03  >1e-3
+theta               0.5425465256          0.5420983872   -8.26e-04  
+pi_V                0.2724355933          0.2721628158   -1.00e-03  >1e-3
+aleph              82.4702111594         82.4264900034   -5.30e-04  
+gamma               0.2595126411          0.2594466172   -2.54e-04  
+beta                2.9409550116          2.9392421447   -5.82e-04  
+y_u                 0.6003862892          0.5813414400   -3.17e-02  >1e-3
+sud_homeless        0.1921097720          0.1914334286   -3.52e-03  >1e-3
+emp_homeless        0.2142356424          0.2144608652    1.05e-03  >1e-3
+
+PER-BLOCK ELASTICITIES (step 4); each measured at +10% price (1.0 -> 1.1) on that block's distribution
+-----------------------------------------------------------------------------------------------------
+block  loop_count  participation model=    intensive model= (per SUD user)   [observed: -0.63 / -0.55]
+    1           2     -1.2303620360234666    -0.53933279876841356
+    2           5     -2.5313311623936721    -0.63269911721992933
+    3           8     -2.3852373250027665     -1.0041597016957520
+    4          11     -2.4064169685675552     -1.0053032322005120
+    5          14     -2.4067593550381918     -1.0051798981733573
+
+LAST BLOCK'S EXTRACTED LINES (block 5, loop_count=14)
+-----------------------------------------------------
+ ELASTICITY_DIAG base price= 1.0000000000000000 users= 8.1163084583571549E-002 quantity per user= 0.12130775802412916 
+ ELASTICITY_DIAG base per addict= 0.18211966690644490 per experimenter= 7.6302259166100311E-002 addict share of users= 0.42531280834680191 
+ ELASTICITY_DIAG new price= 1.1000000014901161 users= 6.4526232742584705E-002 quantity per user= 0.11425410790873633 
+ UNTARGETED price elasticity, participation model= -2.4067593550381918 observed= -0.63000000000000000 
+ UNTARGETED price elasticity, intensive model= -1.0051798981733573 observed= -0.55000000000000004 
+ DIAG elasticity, quantity per USER (mixed) = -0.62853502050794674 
+ ELASTICITY_DIAG new per addict= 0.16548161537416348 per experimenter= 5.5321670004266681E-002 addict share of users= 0.53497156073000107 
+ DIAG elasticity, quantity per ADDICT = -1.0051798981733573 
+ DIAG elasticity, quantity per EXPERIMENTER = -3.3735939699112767 
+ DIAG elasticity, ADDICT SHARE of users = 2.4067593550381905 
+
+cf_arm.sh OUTPUT
+----------------
+benchmark binary from /tmp/eb/flip/hftf_elast
+STAGE 1: Housing First omega_c = 0.06 benchmark, 12 blocks ...
+GUARD: the benchmark did not write welfare_curvebaseline_benchmark.dat -- it never reached the save
+
+bench.err: 0 bytes
+
+LAST 40 LINES OF code/cfarm_bench/bench.log
+-------------------------------------------
+ WALK DIAG age 27 mass= 0.93739289629708900 mean difference= 1.0963423208247562 
+ WALK DIAG age 28 mass= 0.93195333788139378 mean difference= 0.99493553578746197 
+ WALK DIAG age 29 mass= 0.92621213509797651 mean difference= 0.89801740911199812 
+ WALK DIAG age 30 mass= 0.92046028415415826 mean difference= 0.80507281477193493 
+ WALK DIAG age 31 mass= 0.91357988404448820 mean difference= 0.71726749933831824 
+ WALK DIAG age 32 mass= 0.90669788071347635 mean difference= 0.63290250347178434 
+ WALK DIAG age 33 mass= 0.89940672580462278 mean difference= 0.55262431858161154 
+ WALK DIAG age 34 mass= 0.89167752689676028 mean difference= 0.47624494653360078 
+ WALK DIAG age 35 mass= 0.88355276833045104 mean difference= 0.40392798830380533 
+ WALK DIAG age 36 mass= 0.87488617944939395 mean difference= 0.33636775561462845 
+ WALK DIAG age 37 mass= 0.86582533502056469 mean difference= 0.27055769661095158 
+ WALK DIAG age 38 mass= 0.85600669086677805 mean difference= 0.21562541494288118 
+ WALK DIAG age 39 mass= 0.84586319266056154 mean difference= 0.15532844574071286 
+ WALK DIAG age 40 mass= 0.83506147763816641 mean difference= 9.7680320924154518E-002
+ WALK DIAG age 41 mass= 0.82350836302301822 mean difference= 4.1452079833208796E-002
+ WALK DIAG age 42 mass= 0.81109100438740023 mean difference= 2.0708065706669658E-002
+ WALK DIAG age 43 mass= 0.79782195349497831 mean difference= -3.1415226243440082E-003
+ WALK DIAG age 44 mass= 0.78377194730764743 mean difference= -2.7322131340851652E-002
+ WALK DIAG age 45 mass= 0.76901746176239472 mean difference= -5.1229615989101064E-002
+ WALK DIAG age 46 mass= 0.75307334278015803 mean difference= -7.4164095267875860E-002
+ WALK DIAG age 47 mass= 0.73630355231224376 mean difference= -8.6252195880310606E-002
+ WALK DIAG age 48 mass= 0.71843709766431130 mean difference= -8.1840517774562818E-002
+ WALK DIAG age 49 mass= 0.69939143133340897 mean difference= -7.0929069536436087E-002
+ WALK DIAG age 50 mass= 0.67904309794669271 mean difference= -6.1180042300594005E-002
+ WALK DIAG age 51 mass= 0.65747132795737739 mean difference= -5.2638617026449334E-002
+ WALK DIAG age 52 mass= 0.63462832215991893 mean difference= -4.5131170541738971E-002
+ WALK DIAG age 53 mass= 0.61036411740680130 mean difference= -3.8585584027504748E-002
+ WALK DIAG age 54 mass= 0.58467151677404694 mean difference= -3.2880312319691775E-002
+ WALK DIAG age 55 mass= 0.55752008606193493 mean difference= -2.7828484096613509E-002
+ WALK DIAG age 56 mass= 0.52910720873835826 mean difference= -2.3365662225810074E-002
+ WALK DIAG age 57 mass= 0.49931925139725464 mean difference= -1.9089928183045557E-002
+ WALK DIAG age 58 mass= 0.46828377936747384 mean difference= -1.4920455111914538E-002
+ WALK DIAG age 59 mass= 0.43621536632452795 mean difference= -1.0502749364999722E-002
+ WALK DIAG age 60 mass= 0.40281719301107127 mean difference= -5.6104899551405428E-003
+ CEV NULL at x=0: adult curve 1353.2120767954509 reported 1353.0547837194315 
+ CEV NULL at x=0: childhood curve 451.26697927086030 reported 450.81814178995654 
+ CEV NULL at x=0: lifetime curve 789.86469262047376 reported 789.37649761625255 
+ CEV NULL FAILED on the childhood half. The curve at x=0 is
+ built from the benchmark policies at unscaled consumption, so it
+ must equal what calculate_childhood_utility reported. It does not.
