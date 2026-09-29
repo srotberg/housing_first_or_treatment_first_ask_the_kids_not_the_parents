@@ -2,7 +2,7 @@
 What Section 3 reports at each stage of the stylized model, computed at that
 stage's own calibration (stages.py), and written as s<stage>_<name> for fill.py.
 
-usage:  STYLIZED_WORKERS=1 python3 stage_results.py 1 [--no-figure | --figure-only]
+usage:  STYLIZED_WORKERS=1 python3 stage_results.py 1 [--no-figure | --figure-only | --replot]
         -> merges into stage_numbers.json
 
 STAGE 1, the baseline without the child, reports three things.
@@ -471,6 +471,11 @@ if __name__ == '__main__':
     par, raw = load(stage)
     print(f'stage {stage}: calibrated_stage{stage}.json, iteration {raw["_iteration"]}, '
           f'worst gap {raw["_worst_gap_pc"]} per cent')
+    if stage == 1 and '--replot' in sys.argv:
+        import run
+        c = json.load(open(OUT))['_s1_curves']
+        run.draw_who_uses(c['scale'], c)
+        raise SystemExit
     if stage == 1 and '--figure-only' in sys.argv:
         d = stage1_figure(par)
     elif stage == 1:

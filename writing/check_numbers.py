@@ -46,6 +46,8 @@ ALLOW = [
     ('1.44', 'more likely} to acquire a SUD'), ('2.51', 'more likely} to acquire a SUD'),
     # Heiberg et al. (2018)'s standardised mortality ratio; the table's 6.6 is an unrelated TEDS-A share
     ('6.6', 'Heiberg et al.\\ (2018) at'),
+    # Olmstead et al. (2015)'s heroin elasticity; the table's 0.8 is an unrelated share
+    ('0.8', 'elasticity for heroin at'),
     ('1.44', 'of Mellentin et al.'), ('2.51', 'of Mellentin et al.'),   # the same two, in Section 3's stage 2
     ('2.5', '(Mellentin et al.'),
     # a demand elasticity bound in the literature review; the table's 0.8 is

@@ -95,8 +95,6 @@ def _scaled(base, which, s):
 
 def fig_who_uses(base):
     """Figure 1: how strong must each channel be to move use to the bottom."""
-    plt = style()
-    fig, ax = plt.subplots(figsize=(7.0, 4.4))
     # PAST THE CALIBRATED VALUE, to SCAN_HI. Stopping at 100 leaves the
     # reader unable to tell a channel that has just crossed the line from one
     # that is still falling hard, and it leaves the unemployment channel's
@@ -104,40 +102,40 @@ def fig_who_uses(base):
     # its step of an eighth of the calibrated value whatever SCAN_HI is.
     sc = np.linspace(0.0, SCAN_HI, int(round(8 * SCAN_HI)) + 1)
     curves, parts = {}, {}
+    for which in ('mortality', 'unemployment'):
+        m_ = [stats(_scaled(base, which, s)) for s in sc]
+        curves[which] = [x['r_use'] for x in m_]
+        parts[which] = [x['part'] for x in m_]
+    draw_who_uses(sc, curves)
+    return sc, curves, parts
+
+
+def draw_who_uses(sc, curves):
+    """Figure 1's drawing, apart from its computation, so it can be redrawn from
+    the curves stage_numbers.json keeps (stage_results.py 1 --replot)."""
+    plt = style()
+    fig, ax = plt.subplots(figsize=(7.0, 4.4))
+    sc = np.asarray(sc)
     for which, col, ls, mk in (('mortality', '#2C6FAD', '-', 'o'),
                                ('unemployment', '#D9822B', '--', 's')):
-        m_ = [stats(_scaled(base, which, s)) for s in sc]
-        r_ = [x['r_use'] for x in m_]
-        curves[which] = r_
-        parts[which] = [x['part'] for x in m_]
-        ax.plot(100 * sc, r_, ls, color=col, marker=mk, ms=4.5,
+        ax.plot(100 * sc, curves[which], ls, color=col, marker=mk, ms=4.5,
                 label=f'{which} channel')
     ax.axhline(1.0, color='0.3', lw=1.1)
-    ax.set_yscale('log')
-    # A log axis prints its own minor labels (3x10^-1 and so on) ON TOP of the
-    # ticks set below, which is what made the earlier version unreadable. Both
-    # the minor locator and the minor formatter have to be silenced.
-    from matplotlib.ticker import NullFormatter, NullLocator, FixedLocator
-    ax.yaxis.set_minor_locator(NullLocator())
-    ax.yaxis.set_minor_formatter(NullFormatter())
-    # TICKS THE READER CAN ACTUALLY READ A VALUE AGAINST. The top labelled tick
-    # used to be 4.0 with the axis running to 6.0, so a curve ending at 4.85 sat
-    # in unlabelled space and there was nothing to measure it by: the text said
-    # 4.85 and the figure could not be checked against it. Ticks now run to 5
-    # and the axis stops just above, with light gridlines so a value between two
-    # ticks can still be placed.
-    ax.yaxis.set_major_locator(FixedLocator([0.1, 0.2, 0.5, 1.0, 2.0, 3.0, 5.0]))
-    ax.set_yticklabels(['0.1', '0.2', '0.5', '1.0', '2.0', '3.0', '5.0'])
-    lo = min(min(curves['mortality']), min(curves['unemployment']))
-    ax.set_ylim(min(0.10, 0.85 * lo), 5.6)
+    # A LINEAR AXIS (the author, 29 September: "it does not look to scale"). The
+    # log axis spaced 0.1, 0.2, 0.5, 1, 2, 3, 5 unevenly, so 0.53 and 3.88 did not
+    # read as the distances they are.
+    hi = max(max(curves['mortality']), max(curves['unemployment']))
+    top = 0.5 * np.ceil(hi / 0.5 + 0.4)
+    ax.set_ylim(0.0, top)
+    ax.set_yticks(np.arange(0.0, top + 1e-9, 0.5))
     ax.grid(axis='y', which='major', color='0.88', lw=0.7, zorder=0)
     ax.set_axisbelow(True)
-    ax.set_xlim(-3, 100 * SCAN_HI + 3)
     ax.set_xticks(list(range(0, int(round(100 * SCAN_HI)) + 1, 25)))
     # the calibrated point, so the extrapolation past it reads as extrapolation
     ax.axvline(100, color='black', lw=0.9, ls=':')
-    ax.annotate('calibrated', xy=(100, 0.115), ha='center', va='bottom',
-                fontsize=8, color='black')
+    ax.annotate('calibrated', xy=(100, 0.04 * top), ha='center', va='bottom',
+                fontsize=8, color='black',
+                bbox=dict(boxstyle='square,pad=0.15', fc='white', ec='none'))
     ax.set_xlabel('Strength of the channel, percent of its calibrated value')
     ax.set_ylabel('Mean income of users / population mean')
     # legend OUTSIDE the plotting area, so it cannot sit on the lines
@@ -145,8 +143,8 @@ def fig_who_uses(base):
               fontsize=9.5)
     # NO "users are RICHER / POORER than average" labels: the author, 29
     # September, asked for them off; the line at one says it.
-    # THE TWO ENDPOINTS, PRINTED ON THE CURVE. The prose quotes them and the
-    # reader should not have to interpolate a log axis to check.
+    # THE TWO ENDPOINTS, PRINTED ON THE CURVE, so the prose's numbers can be
+    # checked against the figure without interpolating.
     for which, col in (('mortality', '#2C6FAD'), ('unemployment', '#D9822B')):
         y_end = curves[which][-1]
         ax.annotate(f'{y_end:.2f}', xy=(100 * sc[-1], y_end),
@@ -159,7 +157,6 @@ def fig_who_uses(base):
     ax.set_xlim(-3, 100 * SCAN_HI + 11)
     fig.tight_layout()
     save(fig, 'stylized_who_uses')
-    return sc, curves, parts
 
 
 def fig_moral_hazard(base):
