@@ -371,6 +371,17 @@ def calibration_names(p1, r1, p2, r2):
     return d
 
 
+# TABLES: TWO DECIMALS UNLESS THE THIRD MATTERS (the author, 29 September; NUMBERS.md,
+# "Decimals").  Values below 0.1 keep two significant figures, since two decimals
+# would print u0 = 0.0474 and u1 = 0.0486 alike and omega_c = 0.0014 as nothing.
+def tn(x):
+    import math
+    x = float(x)
+    if x == 0.0 or abs(x) >= 0.1:
+        return f'{x:.2f}'
+    return f'{x:.{1 - int(math.floor(math.log10(abs(x))))}f}'
+
+
 def red(x):
     return r'\textcolor{red}{%s}' % x
 
@@ -407,14 +418,14 @@ def write_tables(p1, r1, p2, r2):
     prev_ext, prev_int = _prev_rows('tab_external'), _prev_rows('tab_internal')
     ext = [('Preferences and demographics', [
         (r'$\beta$', 'Discount factor over a thirty-year period',
-         f'${p1.beta ** (1 / p1.years):.3f}$ annually, compounded', f'${p1.beta:.3f}$'),
+         f'${p1.beta ** (1 / p1.years):.3f}$ annually, compounded', f'${tn(p1.beta)}$'),
         (r'$R$', 'Gross return on saving', 'Zero percent interest', f'${p1.R:.2f}$'),
         (r'$\sigma$', 'Risk aversion', 'Standard; Attanasio and Weber (2010)', f'${p1.sigma:.0f}$'),
         (r'$\bar\phi$', 'Survival over a period, no SUD', 'SSA period life table, ages 26--55',
          f'${p1.phi0:.2f}$')]),
         ('The SUD', [
         (r'$\pi_d$', 'Chance that use starts a SUD', 'NSDUH 2024: SUD rate over participation',
-         f'${p1.pi_base:.3f}$')]),
+         f'${tn(p1.pi_base)}$')]),
         ('Income', [
         (r'$\psi_{ui}$', 'Income support replacement rate', 'DOL, statutory UI rates', f'${p1.repl:.2f}$'),
         (r'$\bar y$', 'Cap on the earnings base', 'DOL, state benefit maxima', f'${p1.ycap:.2f}$')]),
@@ -425,13 +436,13 @@ def write_tables(p1, r1, p2, r2):
         (r'$h_3$', 'Standard rental unit', 'Externally set', f'${p1.h3:.2f}$'),
         (r'$\kappa_r$', "Tenant's share of the rent", 'HUD voucher rules', f'${p1.kappa_r:.2f}$'),
         (r'$\kappa_V$', 'Voucher means test', 'HUD income limits', f'${p1.kV:.2f}$'),
-        (r'$\pi_V$', 'Chance of drawing a voucher', 'HUD 2023, recipients over eligible', f'${p1.pV:.3f}$')]),
+        (r'$\pi_V$', 'Chance of drawing a voucher', 'HUD 2023, recipients over eligible', f'${tn(p1.pV)}$')]),
         ('The child, stage 2 onward', [
         (r'$\xi$', 'Equivalence scale while the child is at home', 'Square-root scale', f'${p2.xi:.2f}$'),
         (r'$\rho$', 'Persistence of productivity across generations', 'As in the quantitative model',
          f'${p2.rho:.2f}$'),
         (r'$\delta_d$', "Child's income, parent's SUD, in logs",
-         f'Nilsson (2017), a {100 * (1 - math.exp(-p2.delta_d)):.0f} percent cut', f'${p2.delta_d:.3f}$')])]
+         f'Nilsson (2017), a {100 * (1 - math.exp(-p2.delta_d)):.0f} percent cut', f'${tn(p2.delta_d)}$')])]
     L = [r'\footnotesize', r'\begin{tabular}{@{}lllr@{}}', r'\toprule',
          r'Parameter & Description & Source or rationale & Value \\', r'\midrule']
     for i, (hd, rows) in enumerate(ext):
@@ -453,28 +464,28 @@ def write_tables(p1, r1, p2, r2):
     pct = lambda x: f'{100 * x:.1f}\\%'
     rows = [
         (r'$\sigma_y$', "Bottom half's share of earnings, SCF 2022", pct(T['bot50']),
-         pct(T['bot50']), f'{C.SIG:.3f}', pct(T['bot50']), f'{C.SIG:.3f}'),
+         pct(T['bot50']), tn(C.SIG), pct(T['bot50']), tn(C.SIG)),
         (r'$\gamma$', 'Housing over non-drug expenditure, CEX 2024', pct(T['hspend']),
-         mm(m1, 'hspend', pct), f'{p1.gam:.3f}', mm(m2, 'hspend', pct), f'{p2.gam:.3f}'),
+         mm(m1, 'hspend', pct), tn(p1.gam), mm(m2, 'hspend', pct), tn(p2.gam)),
         (r'$\aleph$', 'Value of a statistical life over income', f'{T["vsl"]:.0f}',
          mm(m1, 'vsl', lambda x: f'{x:.1f}'), f'{p1.aleph:.2f}', mm(m2, 'vsl', lambda x: f'{x:.1f}'),
          f'{p2.aleph:.2f}'),
         (r'$b$', 'Drug participation, NSDUH 2024', pct(T['part']),
-         mm(m1, 'part', pct), f'{p1.b:.4f}', mm(m2, 'part', pct), f'{p2.b:.4f}'),
+         mm(m1, 'part', pct), tn(p1.b), mm(m2, 'part', pct), tn(p2.b)),
         (r'$\theta$', 'Drug spending over users\' income', pct(stages.DSHARE_TARGET),
-         mm(m1, 'dshare', pct), f'{p1.th:.3f}', mm(m2, 'dshare', pct), f'{p2.th:.3f}'),
+         mm(m1, 'dshare', pct), tn(p1.th), mm(m2, 'dshare', pct), tn(p2.th)),
         (r'$\kappa_{\phi d}$', "Users' income over the average, NSDUH 2024", f'{T["r_use"]:.2f}',
          mm(m1, 'r_use', lambda x: f'{x:.2f}'), f'{_smr(p1):.2f}', mm(m2, 'r_use', lambda x: f'{x:.2f}'),
          f'{_smr(p2):.2f}'),
         (r'$h_1$', 'Homelessness rate', pct(T['homeless']),
-         mm(m1, 'homeless', pct), f'{p1.h1:.4f}', mm(m2, 'homeless', pct), f'{p2.h1:.4f}'),
+         mm(m1, 'homeless', pct), tn(p1.h1), mm(m2, 'homeless', pct), tn(p2.h1)),
         (r'$u_0$', 'Unemployment rate, BLS CPS 2014--24', pct(0.0485),
-         mm(m1, 'unemployment', pct), f'{p1.u0:.4f}', mm(m2, 'unemployment', pct), f'{p2.u0:.4f}'),
+         mm(m1, 'unemployment', pct), tn(p1.u0), mm(m2, 'unemployment', pct), tn(p2.u0)),
         (r'$u_1$', 'SUD share of the homeless, Gutwinski et al.\\ (2021)',
-         pct(T['sud_of_homeless2']), mm(m1, 'sud_of_homeless2', pct), f'{p1.u1:.3f}',
-         mm(m2, 'sud_of_homeless2', pct), f'{p2.u1:.3f}'),
+         pct(T['sud_of_homeless2']), mm(m1, 'sud_of_homeless2', pct), tn(p1.u1),
+         mm(m2, 'sud_of_homeless2', pct), tn(p2.u1)),
         (r'$\omega_c$', 'Use of non-parents over parents, less one, NSDUH 2024', pct(0.1834),
-         '--', '--', mm(m2, 'child_gap', pct), f'{p2.omega:.4f}'),
+         '--', '--', mm(m2, 'child_gap', pct), tn(p2.omega)),
     ]
     # ONE LINE A ROW (the author, 29 September): the target column is l, not a
     # fixed-width paragraph column that wrapped the longer moments onto two lines.
@@ -503,7 +514,11 @@ def write_stage1_table():
     L = [r'\footnotesize', r'\begin{tabular}{@{}lccc@{}}', r'\toprule',
          r' & None & TF & HF \\', r'\midrule',
          r'\multicolumn{4}{@{}l}{\emph{Panel A. Outcomes, percent of households}} \\']
-    for lab, k in (('Drug participation', 'part'), ('Carrying a SUD', 'sud'), ('Homeless', 'homeless')):
+    # "Drug use", not "Drug participation" (the author, 29 September).  Cells carry the
+    # prose's precision (fill.text_precision), so 3.752 in the text is 3.75 here too.
+    from fill import text_precision as _tp
+    g = lambda k: _tp(k, d[k])
+    for lab, k in (('Drug use', 'part'), ('Carrying a SUD', 'sud'), ('Homeless', 'homeless')):
         L.append(r'\quad ' + lab + ' & ' + ' & '.join(g(f's1_{k}_{p}_b')
                                                    for p in ('none', 'tf', 'hf')) + r' \\')
     L += [r'\addlinespace',
@@ -517,24 +532,35 @@ def write_stage1_table():
           r'\quad CEV of those affected, percent & & $-' + g('s1_cevaff_b') + r'$ & \\',
           r'\quad CEV of the population, percent & & $-' + g('s1_cevpop_b') + r'$ & \\',
           r'\bottomrule', r'\end{tabular}']
-    body = '\n'.join(L) + '\n'
-    # every cell red
+    # RED MARKS WHAT MOVED, cell by cell against the table as the author last saw it
+    # (tab_stage1_prev.tex), matched by ROW POSITION so a relabelled row keeps its
+    # unchanged numbers black.  It used to be red throughout because it was new.
     import re as _re
-    def _redcells(line):
-        if not line.rstrip().endswith('\\\\') or line.startswith('\\multicolumn') or 'cmidrule' in line:
-            return line
-        cells = line.rstrip()[:-2].split('&')
-        def one(c):
-            c = c.strip()
+    def _cells(line):
+        return [_re.sub(r'\\textcolor\{red\}\{(.*)\}$', r'\1', c.strip())
+                for c in line.rstrip()[:-2].split('&')]
+    def _is_row(line):
+        return (line.rstrip().endswith('\\\\') and not line.startswith('\\multicolumn')
+                and not line.startswith(' &'))
+    pf = os.path.join(HERE, 'tab_stage1_prev.tex')
+    prev = [_cells(l) for l in open(pf) if _is_row(l)] if os.path.exists(pf) else []
+    out, i = [], 0
+    for line in L:
+        if not _is_row(line):
+            out.append(line)
+            continue
+        cur = _cells(line)
+        old = prev[i] if i < len(prev) else None
+        i += 1
+        def one(j, c):
             if not c:
                 return ''
-            if c.startswith('\\multicolumn'):
-                return c.replace('}{', '}{\\textcolor{red}{', 2).rstrip('}') + '}}}' if False else c
             if _re.fullmatch(r'-[0-9.]+', c):
                 c = f'${c}$'
-            return red(c)
-        return ' & '.join(one(c) for c in cells) + r' \\'
-    body = '\n'.join(_redcells(l) for l in body.splitlines()) + '\n'
+            same = old is not None and j < len(old) and old[j] == c
+            return c if same else red(c)
+        out.append(' & '.join(one(j, c) for j, c in enumerate(cur)) + r' \\')
+    body = '\n'.join(out) + '\n'
     open(os.path.join(TAB, 'tab_stage1.tex'), 'w').write(
         '% Generated by code/stylized/stage_results.py from stage 1.\n' + body)
 

@@ -53,8 +53,13 @@ def save(fig, name):
 # calibrated standard unit, so P.h2 is a stale starting value rather than the
 # size the model was solved at, and taking the endpoint from it would put the
 # street somewhere other than "as good as the small unit".
+# h1 IS NOT PART OF EITHER CHANNEL, the author, 29 September, on the unemployment
+# channel moving h1 down from h2: "why? you dont need to recalibrate the homelessness
+# rate....".  A shelter's housing services are what homelessness is like for anybody,
+# not a consequence of the SUD, so h1 stays at its calibrated value on both curves and
+# in the economy with neither channel; the unemployment channel is u1 - u0 alone.
 def _off(base):
-    return dict(kap=0.0, u1=base.u0, h1=base.h2)
+    return dict(kap=0.0, u1=base.u0)
 
 
 # WHERE THE OTHER CHANNEL SITS while one is scanned.  It was 'off', and then the
@@ -85,11 +90,7 @@ def _scaled(base, which, s):
     if which == 'mortality':
         kw.update(kap=s * base.kap)
     else:
-        # the street's housing services belong HERE, not with mortality. An
-        # earlier version had h1 in the mortality group, which quietly put an
-        # unemployment consequence inside the mortality curve.
-        kw.update(u1=base.u0 + s * (base.u1 - base.u0),
-                  h1=base.h2 * (base.h1 / base.h2) ** s)
+        kw.update(u1=base.u0 + s * (base.u1 - base.u0))
     par = with_(base, **kw)
     # b is recalibrated at EVERY point, so participation is 5.13 percent all
     # along both curves and the only thing moving is WHO uses.

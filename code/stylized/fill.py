@@ -344,6 +344,34 @@ def _black_notes(src):
     return src
 
 
+# DECIMALS, the author, 29 September: "no need to put 3 decimals in the text anywhere.
+# please make a note of that", "same with tables unless it is important to put the 3rd
+# decimal" (NUMBERS.md, "Decimals").  Applied when a name is filled, so every script
+# keeps writing full precision and the prose never disagrees with a table that needs it.
+#   |x| >= 0.1   two decimals               3.752 -> 3.75, 0.608 -> 0.61
+#   |x| <  0.1   two significant figures    0.0248 -> 0.025, 0.0014 -> 0.0014
+#                and no trailing zero past the second decimal: 0.040 -> 0.04
+# A name whose third decimal IS the number is listed here and left alone.
+KEEP_THIRD = {'s_beta_ann'}      # 0.995 a year; two decimals would print 1.00
+
+
+def text_precision(k, v):
+    import math, re as _re
+    s = str(v)
+    if k in KEEP_THIRD or not _re.fullmatch(r'-?\d+\.\d{3,}', s):
+        return s
+    x = float(s)
+    if x == 0.0:
+        return '0.00'
+    if abs(x) >= 0.1:
+        out = f'{x:.2f}'
+    else:
+        out = f'{x:.{1 - int(math.floor(math.log10(abs(x))))}f}'
+        while _re.search(r'\.\d{3,}$', out) and out.endswith('0'):
+            out = out[:-1]
+    return '-0.00' if out in ('-0.00', '-0.0') else out
+
+
 def mark(new, prev):
     """Wrap every value that moved in \new{}, and leave the rest black."""
     out, moved = {}, []

@@ -82,6 +82,22 @@ Red is cleared at the start of a round only up to the start of the quantitative
 model's section, by `writing/strip_red_before_transition.py`. From Section 4
 onward it accumulates until the reader says otherwise.
 
+## Decimals
+
+The author, 29 September: *"no need to put 3 decimals in the text anywhere. please
+make a note of that"*, and for tables *"same with tables unless it is important to put
+the 3rd decimal"*. Earlier the same day, of the introduction: *"no need to have 3
+decimals in the intro. i am referring to all numbers not just this"*.
+
+- **Text: at most two decimals.** `fill.text_precision()` applies it when a name is
+  filled, so scripts keep writing full precision: 3.752 prints as 3.75.
+- **Numbers below 0.1** keep two significant figures instead, since two decimals would
+  print 0.0014 as 0.00; no trailing zero past the second decimal (0.040 prints 0.04).
+- **A name whose third decimal is the number** goes in `fill.KEEP_THIRD` with a
+  reason (the annual discount factor, 0.995, would print as 1.00).
+- **Tables: two decimals** unless the third matters; small parameter values keep two
+  significant figures for the same reason as above.
+
 ## The checker
 
 `writing/check_numbers.py` reports any literal in the prose that a table also

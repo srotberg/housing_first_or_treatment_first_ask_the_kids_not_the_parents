@@ -93,6 +93,12 @@ printed" means the update was gated that block, not that the value is missing.
 The hyphenation rule applies to ANY multi-word modifier, not only the ones
 already in the list. Read the section in NUMBERS.md before adding prose.
 
+**Two decimals, never three** (the author, 29 September: *"no need to put 3 decimals
+in the text anywhere. please make a note of that"*). The text quotes at most two
+decimals; numbers below 0.1 keep two significant figures; tables likewise unless the
+third decimal matters. `fill.text_precision()` applies it at fill time; see
+"Decimals" in NUMBERS.md.
+
 ## Red accumulates from Section 4 onward, and stripping it is a mistake
 
 `writing/strip_red.py` takes a file and removes every red wrapper in it. It must
