@@ -483,6 +483,17 @@ class P:
     # knife edge. Real income support is capped too.
     repl  = 0.50      # replacement rate
     ycap  = 1.00      # earnings base capped at this multiple of average income
+    # NO UNEMPLOYMENT INSURANCE WITH A SUD.  The author, 29 September: "Make UI for
+    # those with Sud 0".  A household with the disorder that loses its job draws the
+    # fraction ui_sud of the replacement: 0 is the rule, 1 is the old model.  Most US
+    # states disqualify a worker dismissed for misconduct, drug use included, and in
+    # the quantitative model 70 per cent of job losers draw nothing.  Without it u1
+    # could not reach the street: at repl 0.15 with the small unit at 0.05 an
+    # unemployed user near the median still covers the rent, and raising u1 by 0.03
+    # left P(homeless | SUD) at exactly zero in every income band (the cloud run
+    # test_fs_bound_s1_psi015_cloud.txt).  It acts only in period 2, since nobody
+    # has the disorder in period 1.  DEFAULT 1, i.e. OFF.
+    ui_sud = 1.0
 
 
     # HOUSING. Rent per unit of housing services is the NUMERAIRE, p_r = 1, so
@@ -905,7 +916,8 @@ def _states(par, d, policy, y, used=0):
         # you used to earn, on an earnings base capped at ycap. For the poorest
         # household that is well below the rent on the smallest unit, so the
         # disorder can put the roof at risk, which is what the voucher insures.
-        inc = y if e == 0 else par.repl * min(y, par.ycap)
+        # A household with the disorder draws ui_sud of it (see ui_sud in P).
+        inc = y if e == 0 else par.repl * (par.ui_sud if d == 1 else 1.0) * min(y, par.ycap)
         # A FLOOR UNDER REALISED INCOME.  The author, 12 September: *"you need
         # to limit the lowest income from below so no one has negative value of
         # life"*.
@@ -983,6 +995,19 @@ def _pid(par, v):
     never at risk.  d pi / d v is zero everywhere it is defined.
     """
     return par.pi_base * (np.asarray(v, dtype=float) > 0.0)
+
+
+def _mix(pid, w0, w1):
+    """
+    (1 - pid) w0 + pid w1, the continuation over the realised disorder, with a zero
+    onset probability contributing exactly zero rather than 0 * W.  W2 at d = 1 is
+    minus infinity at zero assets once a household with the disorder draws no
+    unemployment insurance (ui_sud = 0) and has nothing to consume, and 0 * -inf is
+    NaN, which turned the value of a statistical life into NaN.  Wherever W2 is
+    finite this is the same number as before.
+    """
+    with np.errstate(invalid='ignore'):
+        return (1.0 - pid) * w0 + np.where(pid > 0.0, pid * w1, 0.0)
 
 
 def _hpick(par, street, small):
@@ -1226,7 +1251,7 @@ def period1(par, y, policy=None):
         pid = _pid(par, vg)[:, None]
         # SURVIVAL INSIDE THE EXPECTATION over the realised disorder. Not
         # phi * E W2: see the note at the head of this file.
-        cont = (1.0 - pid) * s0 * W2u[None, :, 0] + pid * s1 * W2u[None, :, 1]
+        cont = _mix(pid, s0 * W2u[None, :, 0], s1 * W2u[None, :, 1])
         vu, au, su, ru, gu, mu_ = _branch(par, ag, inc, _p1_rmul(par, policy, rmul),
                                      vg, cont)
         # v = 0 is solved on its own, because the household still holds the
@@ -2037,7 +2062,7 @@ def vsl(par, y=1.0, policy=None):
             continue
         vg = _vgrid(par, inc)
         pid = _pid(par, vg)[:, None]
-        cont = (1.0 - pid) * s0 * W2u[None, :, 0] + pid * s1 * W2u[None, :, 1]
+        cont = _mix(pid, s0 * W2u[None, :, 0], s1 * W2u[None, :, 1])
         rm = _p1_rmul(par, policy, rmul)
         val, aa, ss, rr, _, mm = _branch(par, ag, inc, rm, vg, cont)
         cont0 = np.repeat((s0 * W2c[:, 0])[None, :], 2, axis=0)
@@ -2054,7 +2079,7 @@ def vsl(par, y=1.0, policy=None):
             h1, q1 = _hpick(par, ss0[0], mm0[0]), 0.0
         i2 = int(np.argmin(np.abs(ag - a)))
         # d(objective)/d(phi0), which is the continuation per unit of survival
-        ew = (1.0 - pi) * W2c[i2, 0] + pi * (1.0 - par.kap) * W2u[i2, 1]
+        ew = float(_mix(pi, W2c[i2, 0], (1.0 - par.kap) * W2u[i2, 1]))
         # d(flow)/dc at the chosen allocation.  With V = S/(1-sigma) + aleph and
         # S the parent's and the child's bundles each to the power 1-sigma, both
         # carry c with the same exponent phi_c, so dV/dc = phi_c * S / c.

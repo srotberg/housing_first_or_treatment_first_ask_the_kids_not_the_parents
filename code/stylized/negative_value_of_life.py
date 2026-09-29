@@ -102,6 +102,45 @@ def strict_negative_values(par, policies=('HF', 'TF')):
                         worst = (float(w[k]), dict(y=float(y), a=float(ag[k]), d=d, used=used, policy=pol))
     return dict(cells=n, lowest=worst[0], where=worst[1])
 
+
+def occupied_negative_values(par, policy='HF'):
+    """THE OCCUPIED CHECK: the strict check restricted to period-2 states households
+    actually reach.  Each period-1 state's own choice (use or not, a') is followed into
+    period 2, with d drawn from the onset hazard and survival applied, so a cell counts
+    only if it carries mass.  The strict check also counts cells nobody is in, such as
+    a SUD at an income where nobody uses, or zero assets where every user saves; with
+    no unemployment insurance under a SUD, an unemployed household at zero assets has
+    nothing to consume and its value is minus infinity there.  Returns the number of
+    occupied negative cells, their share of period-2 households, and the worst one."""
+    s0, s1 = par.phi0, par.phi0 * (1.0 - par.kap)
+    tot = neg = 0.0
+    n = 0
+    worst = (float('inf'), None)
+    for j, y in enumerate(C.YG):
+        ag, W2c, *_ = S.solve_period2(par, float(y), policy, used=0)
+        W2u = W2c if policy == 'HF' else S.solve_period2(par, float(y), policy, used=1)[1]
+        for p, gain, v, ru, rn, inc, own in S.period1(par, float(y), policy):
+            if p <= 1e-14:
+                continue
+            if gain > 0.0:
+                pid = float(S._pid(par, v))
+                k = int(np.argmin(np.abs(ag - ru[0])))
+                cells = ((W2u[k, 1], p * pid * s1, 1, 1), (W2u[k, 0], p * (1.0 - pid) * s0, 0, 1))
+            else:
+                k = int(np.argmin(np.abs(ag - rn[0])))
+                cells = ((W2c[k, 0], p * s0, 0, 0),)
+            for w, m, d, used in cells:
+                m *= C.W[j]
+                if m <= 0.0:
+                    continue
+                tot += m
+                if w < 0.0:
+                    neg += m
+                    n += 1
+                    if w < worst[0]:
+                        worst = (float(w), dict(y=float(y), a=float(ag[k]), d=d, used=used, inc=float(inc)))
+    return dict(cells=n, share=neg / max(tot, 1e-300), lowest=worst[0], where=worst[1])
+
 if __name__ == '__main__':
     d = json.load(open('best_vector_it1800.json'))
     kw = {k: v for k, v in FIXED.items()

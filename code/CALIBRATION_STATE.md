@@ -1,3 +1,24 @@
+# 29 September 21:45: STYLIZED u1 SCAN, NO UNEMPLOYMENT INSURANCE WITH A SUD
+
+- Author: psi 0.15 (0.30 insured x 0.5 replacement, the full model's numbers), small unit
+  h2 0.05 with h3 kept at 0.40, "Make UI for those with Sud 0", "remove the food stamps".
+- Why: at psi 0.15 with h2 0.10 homelessness floors at 1.19-1.22% with h1 on its bound
+  (the rent is out of reach for the unemployed below 0.67 of mean income); h2 0.05 gives an
+  interior h1 (0.59%, housing spending 27.0, small-unit share 34.9 vs 37.3 in the ACS).
+  h3 0.25 put gamma on its bound (spending 24.2) and the small-unit share at 10.4.
+- u1 could not reach the street: cloud run test_fs_bound_s1_psi015 (h2 0.10, food stamps,
+  kappa and b refit), u1 0.077 -> 0.107 left P(homeless|SUD) at 0.00 in every band; users
+  sit at 0.33-0.93 and move up.
+- Code: stylized.P.ui_sud (default 1 = off; 0 = the rule), applied in _states for d = 1;
+  _mix() makes 0 * W2 exactly 0 (W2 is -inf at zero assets with the rule and no food
+  stamps). Both stages reproduce their calibrated moments with the default.
+  negative_value_of_life.occupied_negative_values(): the check on cells households reach.
+- Running: scan_u1_uninsured.py, cloud, ui_sud 0 at u1 0.05/0.10/0.20/0.30 and ui_sud 1 for
+  comparison. Refits gamma, h1, u0, aleph, kappa (b inside); theta held. Grid bound to
+  lowest income 0.235 if occupied negative values remain.
+- Found by the smoke test: at the calibrated grid the poorest households have a negative
+  value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
+
 # 29 September 20:50: FOOD STAMPS TESTED AND SWITCHED OFF (author: keep the model simple); psi SCAN
 
 - Stage 1 with food assistance at the full model's target (cbar 0.077, 0.42 per cent of labour
