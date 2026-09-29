@@ -486,6 +486,8 @@ def numbers():
         'c_shelter_last_age': f'{25 + H["max_age_to_choose_homelessness"]:.0f}',
         'c_nodes': f'{C["employment_base_size"]:.0f}',
         'c_ssi_takeup': f'{H["ssi_floor_takeup"]:.0f}',
+        # the share of SUDs over within ten years at the baseline hazard (Section 2 quotes it)
+        'c_bar_pi_r_ten_pc': f'{100 * (1 - (1 - H["probability_of_stopping_addiction"]) ** 10):.0f}',
     })
     return nums
 

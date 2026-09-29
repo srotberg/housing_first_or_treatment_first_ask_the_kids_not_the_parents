@@ -361,8 +361,10 @@ def write_tables(p1, r1, p2, r2):
         (r'$\omega_c$', 'Use of non-parents over parents, less one, NSDUH 2024', pct(0.1834),
          '--', '--', mm(m2, 'child_gap', pct), f'{p2.omega:.4f}'),
     ]
+    # ONE LINE A ROW (the author, 29 September): the target column is l, not a
+    # fixed-width paragraph column that wrapped the longer moments onto two lines.
     L = [r'\footnotesize\setlength{\tabcolsep}{4pt}',
-         r'\begin{tabular}{@{}lL{5.6cm}rrrrr@{}}', r'\toprule',
+         r'\begin{tabular}{@{}llrrrrr@{}}', r'\toprule',
          r' & & & \multicolumn{2}{c}{Stage 1} & \multicolumn{2}{c}{Stage 2} \\',
          r'\cmidrule(lr){4-5}\cmidrule(l){6-7}',
          r'Parameter & Target moment & Data & Model & Value & Model & Value \\', r'\midrule']
