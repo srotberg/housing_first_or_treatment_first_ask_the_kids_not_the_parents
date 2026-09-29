@@ -1,3 +1,14 @@
+# 29 September 19:52: ELASTICITY RUN 2 FAILED TOO; RUN 3 MEASURES ONCE AFTER THE LOOP
+
+- Run 2 (base-price re-solve added, adef4fbd): still 5 blocks, 6 of 11 moments off by more
+  than 1e-3. Cause (worker): the block sits in print_all_moments, called AFTER each pass's
+  parameter update, so both of its solves use post-update parameters on the held
+  distribution; the path leaves the paper's from block 2 whatever is restored. Last-block
+  values -2.407 participation, -1.005 intensive per addict (run 1: -2.407, -1.005): not
+  at the benchmark, not quoted.
+- Run 3: session_01QGKgHov6QuYMCgdjZD6k3k, per-pass block off, one measurement after the
+  loop exits and before the save, state restored. About 2.5 hours from 19:52.
+
 # 29 September 19:15: WHY u1 LOWERS THE SUD SHARE OF THE HOMELESS (stylized, both stages)
 
 - Joint probe (probe_u1_joint.py: kappa refit on users' income 0.74, b on participation 8.9)
