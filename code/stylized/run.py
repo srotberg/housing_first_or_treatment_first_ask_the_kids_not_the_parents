@@ -160,8 +160,9 @@ def draw_who_uses(sc, curves):
         i1 = int(np.argmin(np.abs(sc - 1.0)))
         yc = curves['mortality'][i1]
         ax.plot([100], [yc], 'o', ms=9, mfc='none', mec='black', mew=1.4, zorder=5)
-        ax.annotate(f'calibrated economy, {yc:.2f}', xy=(100, yc), xytext=(8, 10),
-                    textcoords='offset points', fontsize=8.5, color='black')
+        ax.annotate(f'calibrated economy, {yc:.2f}', xy=(100, yc), xytext=(10, -16),
+                    textcoords='offset points', fontsize=8.5, color='black',
+                    bbox=dict(boxstyle='square,pad=0.1', fc='white', ec='none'))
     ax.set_xlabel('Strength of the channel, percent of its calibrated value')
     ax.set_ylabel('Mean income of users / population mean')
     # legend OUTSIDE the plotting area, so it cannot sit on the lines
@@ -176,7 +177,7 @@ def draw_who_uses(sc, curves):
         ax.annotate(f'{y_end:.2f}', xy=(100 * sc[-1], y_end),
                     xytext=(4, -2), textcoords='offset points',
                     fontsize=8.5, color=col, fontweight='bold', va='center')
-    for which, col, dy in (('mortality', '#2C6FAD', 6), ('unemployment', '#D9822B', -12)):
+    for which, col, dy in (('mortality', '#2C6FAD', 6), ('unemployment', '#D9822B', 7)):
         y0 = curves[which][0]
         ax.annotate(f'{y0:.2f}', xy=(0, y0), xytext=(2, dy),
                     textcoords='offset points', fontsize=8.5, color=col,

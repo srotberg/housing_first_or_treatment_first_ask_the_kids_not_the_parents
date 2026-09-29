@@ -184,8 +184,8 @@ def figure(tr, out='stylized_transition'):
     ax.set_xticklabels(labs, fontsize=8.5)
     ax.set_title('(d) Welfare, CEV', fontsize=10.5, loc='left')
     ax.set_ylabel('percent of consumption')
-    for ax in (axs[1, 0], axs[1, 1]):
-        ax.set_xlabel('generation: alive at the reform, then cohorts born after it')
+    axs[1, 0].set_xlabel('adults by cohort, from the young at the reform')
+    axs[1, 1].set_xlabel('generation: alive at the reform, then born after it')
     fig.tight_layout()
     run.save(fig, out)
 
