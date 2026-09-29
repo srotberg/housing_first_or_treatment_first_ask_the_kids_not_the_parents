@@ -1,0 +1,139 @@
+BENCHMARK DRUG PRICE ELASTICITIES, measure_price_elasticity=1 WITH A BASE-PRICE RE-SOLVE (worker run 2, 29 Sep 2026)
+========================================================================================================
+
+VERDICT: FAILED. The base-price re-solve after the measurement did not restore the benchmark path.
+The run reached the save (welfare_curvebaseline_benchmark.dat written, no GUARD) and its CEV null
+passes the binary's own 1e-6 test, but it again left the calibration loop after 5 moment blocks,
+not 12, and in blocks 1-3 BLOCK MOVE's b differs from that block's MOMENT b. Six of the eleven
+moments at the last block differ from the paper's benchmark by more than 1e-3 relative. The
+elasticities are therefore NOT measured at the paper's benchmark, and no benchmark elasticity is
+reported. For the record, the last block printed participation -2.4071 and intensive (per addict)
+-1.0052, within 4e-4 of run 1's -2.4068 and -1.0052: the re-solve changed almost nothing.
+Per the brief, no further fix was tried.
+
+LIKELY CAUSE (read from the log and the source; NOT tested by a run)
+-----------------------------------------------------------------
+The elasticity block sits inside print_all_moments, which calibrating_model calls at line 52248
+of 77803322 -- AFTER that loop pass's parameter update block (e.g. addiction_onset_base at
+49058, kappa_phi_d_level at 49314). So:
+  - the base moments printed (MOMENT b, ELASTICITY_DIAG base) are statistics of the distribution
+    and policies solved under the PRE-update parameters;
+  - both solves inside the elasticity block -- at the raised price and, now, at the base price --
+    use the POST-update parameters on the held distribution.
+Evidence: in block 1 the base-price re-solve gives b = 0.0824349 (BLOCK MOVE), against MOMENT b
+0.0718856 at the same price and distribution; the gap is the parameter update, not the price.
+Once the parameters stop moving (blocks 4-5) the two agree to ~1e-9 relative. Consequences:
+  (1) each block's elasticity mixes the +10% price step with that pass's parameter update (small
+      at the last block, where the update is small, but not zero by construction);
+  (2) the state left behind (policies, value functions, statistics from the re-solve) is not the
+      one the next pass would otherwise start from, so the trajectory diverges from the paper's
+      from block 2 on whether or not the base price is re-solved -- run 1 and this run follow
+      nearly the same path (block-2 h_1 6.0935e-3 in run 1, 6.0932e-3 here; paper 6.4900e-3).
+      Restoring the benchmark path would need the pre-measurement state SAVED and RESTORED (policies,
+      value functions, statistics), or the measurement moved to a point where parameters and
+      policies are consistent (e.g. once, after the loop exits, before the save). Not done here.
+Note also that block 1, printed before any elasticity measurement has fed back (ELASTICITY_DIAG
+base appears 5 times, once per block), is already off the paper by ~4e-5 (MOMENT b 0.07188565 vs
+0.07188836; h_1 7.07797e-3 vs 7.07799e-3), and run 1's block 1 differed again (h_1 7.07808e-3).
+Unexplained here; run-to-run floating-point order under OpenMP is one candidate, not tested. It is
+two orders smaller than the block-2 divergence.
+
+BUILD (step 1)
+--------------
+gfortran: GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 (apt)
+compile: gfortran -O3 -funroll-loops -fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium
+source: git show 77803322:code/housing_first_or_treatment_first_SR_v1.f90
+  b181aee24a0ca2ca32294b70bd1a9d7f  same/housing_first_or_treatment_first_SR_v1.f90
+  f49ec9d35e2d9d6693321e9470e63948  fix/housing_first_or_treatment_first_SR_v1.f90
+  36b839a648c483d4c86a04bffa638c0d  /tmp/eb/same/hftf_bench      (MATCHES the required md5)
+  35ba4bb2d7e1433205d1114e407a470c  /tmp/eb/fix/hftf_elast_fix
+Both builds: 0 errors.
+
+diff /tmp/eb/same/housing_first_or_treatment_first_SR_v1.f90 /tmp/eb/fix/housing_first_or_treatment_first_SR_v1.f90
+1186c1186
+<         integer, parameter :: measure_price_elasticity=0
+---
+>         integer, parameter :: measure_price_elasticity=1
+11929a11930,11935
+>                 ! Re-solve at the base price: the measurement above left policies, value
+>                 ! functions and statistics at the raised price, and the calibration loop,
+>                 ! BLOCK MOVE and the save must continue from the benchmark economy.
+>                 call solve_value_function_and_policy_functions(1)
+>                 call stationary_equilibrium_statistics(1)
+>                 call govt_revenues_calc(1)
+
+Run: cd code && STAGE1_ONLY=1 BENCH_BIN=/tmp/eb/fix/hftf_elast_fix sh cf_runs/cf_arm.sh null  (OMP_NUM_THREADS=2)
+cf_arm.sh output:
+benchmark binary from /tmp/eb/fix/hftf_elast_fix
+STAGE 1: Housing First omega_c = 0.06 benchmark, 12 blocks ...
+STAGE 1 done
+STAGE1_ONLY: stopping after the benchmark
+bench.err: 0 bytes
+
+CHECKS (step 3)
+---------------
+(a) 12 moment blocks and the save: FAILED on the block count. 5 blocks ran (loop_count 2, 5, 8, 11, 14).
+    The loop left on frozen_stop_tolerance:
+    ECONOMY IS STILL: the largest relative move across b, lambda_d, h_1 and average labour income is   8.1762125922610928E-005  which is inside   1.0000000000000000E-003 . Leaving the calibration loop so 
+    The paper's BLOCK MOVE first fell below 1e-3 at block 12 (1.554e-4). The save WAS reached:
+    welfare_curvebaseline_benchmark.dat written, no GUARD line.
+(b) CEV null at x=0: PASSED the binary's test (|curve-reported| <= 1e-6 relative on the childhood
+    half; no FAILED line), but NOT bit-equal as in the paper, where childhood curve = reported exactly.
+    this run:
+    CEV NULL at x=0: adult curve   1353.4211422680264       reported   1353.0550242326708
+    CEV NULL at x=0: childhood curve   450.81830281160177       reported   450.81833487435824
+    CEV NULL at x=0: lifetime curve   789.46832805834379       reported   789.37675088134154
+    paper (results/counterfactuals_cf_v2/bench/bench.log.gz):
+    CEV NULL at x=0: adult curve   1353.4184074765171       reported   1353.0520772646344
+    CEV NULL at x=0: childhood curve   450.79146457357393       reported   450.79146457357393
+    CEV NULL at x=0: lifetime curve   789.44080552687262       reported   789.34914319677569
+    childhood gap here 3.2e-5 (7.1e-8 relative). The adult and lifetime halves differ from 'reported'
+    in the paper's log as well (the binary tests only the childhood half).
+(c) BLOCK MOVE b = MOMENT b in every block: FAILED in blocks 1-3; blocks 4-5 agree to ~1e-9 relative
+    (last digit). It is no longer the raised-price count, as in run 1.
+    block loop  MOMENT b        BLOCK MOVE b    rel diff    raised-price users (ELASTICITY_DIAG new)
+        1    2  0.0718856450  0.0824349422   1.47e-01   0.0639305703
+        2    5  0.0830422111  0.0815994166  -1.74e-02   0.0652358359
+        3    8  0.0808908588  0.0811099471   2.71e-03   0.0644394153
+        4   11  0.0811537444  0.0811537443  -1.22e-10   0.0645189016
+        5   14  0.0811537889  0.0811537888  -1.22e-10   0.0645168286
+(d) Eleven moments at the LAST block vs the paper's last block (block 12; MOMENT lines between the
+    last '===== ALL TARGETED MOMENTS =====' and BLOCK MOVE): FAILED, 6 of 11 beyond 1e-3.
+    moment           paper benchmark    this run (block 5)    rel diff  flag
+    h_1                 0.0060782202          0.0060707638   -1.23e-03  >1e-3
+    b                   0.0812591941          0.0811537889   -1.30e-03  >1e-3
+    lambda_d            0.0346150707          0.0345103315   -3.03e-03  >1e-3
+    theta               0.5425498861          0.5421128227   -8.06e-04  
+    pi_V                0.2724342741          0.2721622345   -9.99e-04  
+    aleph              82.4699181770         82.4266834527   -5.24e-04  
+    gamma               0.2595129332          0.2594452681   -2.61e-04  
+    beta                2.9409682791          2.9392763876   -5.75e-04  
+    y_u                 0.6004093347          0.5996729277   -1.23e-03  >1e-3
+    sud_homeless        0.1920290188          0.1914214319   -3.16e-03  >1e-3
+    emp_homeless        0.2142591905          0.2144622937    9.48e-04  
+    (Run 1's report has a slightly different 'paper' column, e.g. h_1 0.0060788992; that value is not
+    on any MOMENT h_1 line of bench.log.gz. The column above is read from the MOMENT lines directly.)
+
+RESULT (step 4) -- NOT the benchmark; recorded only
+--------------------------------------------------
+Per-block elasticities, each at +10% price (1.0 -> 1.1) on that block's held distribution:
+block  loop_count  participation model=    intensive model= (per ADDICT)   [observed: -0.63 / -0.55]
+    1           2       -1.2304974671838691      -0.53932359648954542
+    2           5       -2.5321544342928162      -0.63289574947917937
+    3           8       -2.3856353639844921       -1.0041572232501699
+    4          11       -2.4067439904168082       -1.0052987416908501
+    5          14       -2.4070868567027257       -1.0051953505864573
+
+Last block's extracted lines (block 5, loop_count=14):
+ ELASTICITY_DIAG base price=   1.0000000000000000       users=   8.1153788859099671E-002  quantity per user=  0.12129276282406233
+ ELASTICITY_DIAG base per addict=  0.18210052304707741       per experimenter=   7.6302616633319623E-002  addict share of users=  0.42524609149433984
+ ELASTICITY_DIAG new price=   1.1000000014901161       users=   6.4516828585218608E-002  quantity per user=  0.11423734347033176
+ ELASTICITY_DIAG new per addict=  0.16546397676467134       per experimenter=   5.5321832804391811E-002  addict share of users=  0.53490433858981812
+ UNTARGETED price elasticity, participation   model=  -2.4070868567027257       observed= -0.63000000000000000
+ UNTARGETED price elasticity, intensive       model=  -1.0051953505864573       observed= -0.55000000000000004
+ DIAG elasticity, quantity per USER (mixed)      = -0.62877759344404349
+ DIAG elasticity, quantity per ADDICT            =  -1.0051953505864573
+ DIAG elasticity, quantity per EXPERIMENTER      =  -3.3736122479790236
+ DIAG elasticity, ADDICT SHARE of users          =   2.4070868567027244
+
+The full log is not committed (tens of MB); it is in the worker container at code/cfarm_bench/bench.log.

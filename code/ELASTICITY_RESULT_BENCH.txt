@@ -1,139 +1,401 @@
-BENCHMARK DRUG PRICE ELASTICITIES, measure_price_elasticity=1 WITH A BASE-PRICE RE-SOLVE (worker run 2, 29 Sep 2026)
-========================================================================================================
+BENCHMARK DRUG PRICE ELASTICITIES, MEASURED ONCE AFTER THE CALIBRATION LOOP (worker run 3, 29 Sep 2026)
+=====================================================================================================
 
-VERDICT: FAILED. The base-price re-solve after the measurement did not restore the benchmark path.
-The run reached the save (welfare_curvebaseline_benchmark.dat written, no GUARD) and its CEV null
-passes the binary's own 1e-6 test, but it again left the calibration loop after 5 moment blocks,
-not 12, and in blocks 1-3 BLOCK MOVE's b differs from that block's MOMENT b. Six of the eleven
-moments at the last block differ from the paper's benchmark by more than 1e-3 relative. The
-elasticities are therefore NOT measured at the paper's benchmark, and no benchmark elasticity is
-reported. For the record, the last block printed participation -2.4071 and intensive (per addict)
--1.0052, within 4e-4 of run 1's -2.4068 and -1.0052: the re-solve changed almost nothing.
-Per the brief, no further fix was tried.
-
-LIKELY CAUSE (read from the log and the source; NOT tested by a run)
------------------------------------------------------------------
-The elasticity block sits inside print_all_moments, which calibrating_model calls at line 52248
-of 77803322 -- AFTER that loop pass's parameter update block (e.g. addiction_onset_base at
-49058, kappa_phi_d_level at 49314). So:
-  - the base moments printed (MOMENT b, ELASTICITY_DIAG base) are statistics of the distribution
-    and policies solved under the PRE-update parameters;
-  - both solves inside the elasticity block -- at the raised price and, now, at the base price --
-    use the POST-update parameters on the held distribution.
-Evidence: in block 1 the base-price re-solve gives b = 0.0824349 (BLOCK MOVE), against MOMENT b
-0.0718856 at the same price and distribution; the gap is the parameter update, not the price.
-Once the parameters stop moving (blocks 4-5) the two agree to ~1e-9 relative. Consequences:
-  (1) each block's elasticity mixes the +10% price step with that pass's parameter update (small
-      at the last block, where the update is small, but not zero by construction);
-  (2) the state left behind (policies, value functions, statistics from the re-solve) is not the
-      one the next pass would otherwise start from, so the trajectory diverges from the paper's
-      from block 2 on whether or not the base price is re-solved -- run 1 and this run follow
-      nearly the same path (block-2 h_1 6.0935e-3 in run 1, 6.0932e-3 here; paper 6.4900e-3).
-      Restoring the benchmark path would need the pre-measurement state SAVED and RESTORED (policies,
-      value functions, statistics), or the measurement moved to a point where parameters and
-      policies are consistent (e.g. once, after the loop exits, before the save). Not done here.
-Note also that block 1, printed before any elasticity measurement has fed back (ELASTICITY_DIAG
-base appears 5 times, once per block), is already off the paper by ~4e-5 (MOMENT b 0.07188565 vs
-0.07188836; h_1 7.07797e-3 vs 7.07799e-3), and run 1's block 1 differed again (h_1 7.07808e-3).
-Unexplained here; run-to-run floating-point order under OpenMP is one candidate, not tested. It is
-two orders smaller than the block-2 divergence.
+VERDICT: PASSED on all four checks the brief lists, with one caveat about the files saved afterwards.
+With measure_price_elasticity=0 the calibration path is the paper's: all 12 moment blocks ran, and
+the eleven moments at the last block agree with the paper's last block to within 4.5e-4 relative
+(largest: lambda_d). The measurement's ELASTICITY_DIAG base line equals the last block's moments
+exactly (users = MOMENT b, quantity per user = DIAG mean drug quantity, to every printed digit). The
+save was reached, there was no GUARD stop, and the CEV null at x=0 passes (childhood curve =
+reported, bit-equal, as in the paper). THE BENCHMARK ELASTICITIES, at +10 per cent on the price
+(1.0 -> 1.1), holding the distribution and re-solving the policies once:
+    participation                      -2.4038   (observed -0.63)
+    intensive, per ADDICT              -1.0093   (observed -0.55)   [per USER, mixed: -0.6325]
+CAVEAT, NOT one of the four checks, found by a restore check I added: after the measurement the
+value and policy functions, the child value and loop_count were restored exactly, but re-running
+stationary_equilibrium_statistics(1) and govt_revenues_calc(1) to rebuild the statistics does not
+reproduce the loop's end state for the DAMPED scalars. The loop damps median_income after the
+statistics (median_income(1)=0.5*new+0.5*previous, line 51682 of 77803322), and the re-run puts back
+the undamped value. So median_income moved 0.8629197 -> 0.8633348 (+4.8e-4 relative), average labour
+income 1.61643 -> 1.61669 (+1.6e-4), theta -1.5e-6, and the saved revenue target is 6.037700 against
+the loop's last printed 6.038988. h_1, b, lambda_d, pi_V and the drug quantities came back
+bit-identical. THE ELASTICITIES ARE NOT AFFECTED: they are computed before the restore, from the loop's
+own state. But cfarm_bench's *baseline_benchmark.dat files from this run (median_income, the revenue
+target) are NOT the paper's benchmark files and should not be used as a benchmark for counterfactuals.
+A clean version would also save and restore median_income and whatever other scalars the loop damps,
+or skip the statistics re-run. Per the brief, no further fix was tried.
 
 BUILD (step 1)
 --------------
-gfortran: GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 (apt)
+gfortran: GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
 compile: gfortran -O3 -funroll-loops -fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium
 source: git show 77803322:code/housing_first_or_treatment_first_SR_v1.f90
   b181aee24a0ca2ca32294b70bd1a9d7f  same/housing_first_or_treatment_first_SR_v1.f90
-  f49ec9d35e2d9d6693321e9470e63948  fix/housing_first_or_treatment_first_SR_v1.f90
-  36b839a648c483d4c86a04bffa638c0d  /tmp/eb/same/hftf_bench      (MATCHES the required md5)
-  35ba4bb2d7e1433205d1114e407a470c  /tmp/eb/fix/hftf_elast_fix
-Both builds: 0 errors.
+  6f4161cb676d6d39cc37e161cc223bd4  fix/housing_first_or_treatment_first_SR_v1.f90
+  36b839a648c483d4c86a04bffa638c0d  /tmp/eb/same/hftf_bench          (MATCHES the required md5)
+  84e2d24a4c1ece0828ac86220ad950dc  /tmp/eb/fix/hftf_elast_postloop
+Both builds: 0 errors, identical warning sets (43 lines of build output each).
 
-diff /tmp/eb/same/housing_first_or_treatment_first_SR_v1.f90 /tmp/eb/fix/housing_first_or_treatment_first_SR_v1.f90
-1186c1186
-<         integer, parameter :: measure_price_elasticity=0
----
->         integer, parameter :: measure_price_elasticity=1
-11929a11930,11935
->                 ! Re-solve at the base price: the measurement above left policies, value
->                 ! functions and statistics at the raised price, and the calibration loop,
->                 ! BLOCK MOVE and the save must continue from the benchmark economy.
->                 call solve_value_function_and_policy_functions(1)
->                 call stationary_equilibrium_statistics(1)
->                 call govt_revenues_calc(1)
+THE CHANGE (step 2)
+-------------------
+measure_price_elasticity stays 0, so the per-pass block in print_all_moments prints "ELASTICITY
+SKIPPED" on every block and the loop is the paper's code. Two insertions in calibrating_model only:
+local declarations, and after the loop's `end do` (after "ECONOMY IS STILL ... Leaving the calibration
+loop", before simulation_ended=0, the inequality calls, save_vars_and_functions and save_welfare_curve):
+  - snapshot of ten statistics (h_1, b, lambda_d, theta, pi_V, average labour income, median income,
+    quantity per user, per addict, mass of addicts);
+  - deep copies of value_function and all 16 policy arrays that solve_value_function_and_policy_functions
+    resets (10 real, 7 integer, both slots), expected_child_value, expected_child_value_own,
+    expected_child_value_guessed, loop_count (the solve increments it) and max_future_mortgage_index_1;
+    the solve also recomputes expected_child_value_own from its own value function, which is why a
+    plain base-price re-solve would not be exact;
+  - the existing block from print_all_moments, lines 11798-11929, copied verbatim (re-indented);
+  - restore of every copy, then stationary_equilibrium_statistics(1) and govt_revenues_calc(1) at the
+    base price, and a POSTLOOP RESTORE CHECK printing the ten statistics before and after.
+No converge_to_stationary_equilibrium call anywhere in the insertion.
 
-Run: cd code && STAGE1_ONLY=1 BENCH_BIN=/tmp/eb/fix/hftf_elast_fix sh cf_runs/cf_arm.sh null  (OMP_NUM_THREADS=2)
+Full diff (diff same/... fix/...):
+46976a46977,46985
+>         ! THE ONE-TIME ELASTICITY MEASUREMENT AFTER THE LOOP (see below): copies of
+>         ! everything the three calls overwrite, restored once it is done.
+>         type(jagged_matrix_transition_real), dimension(1:2) :: ems_vf,ems_tax,ems_mid,&
+>             ems_cons,ems_size,ems_lab,ems_cut,ems_frac,ems_fmo,ems_tcons
+>         type(jagged_matrix_transition_integer), dimension(1:2) :: ems_fin,ems_hs,&
+>             ems_space,ems_amort,ems_ffmo,ems_add,ems_treat
+>         real(8), dimension(employment_grid_size,0:1,1:2) :: ems_ecv,ems_ecv_own,ems_ecv_guess
+>         integer :: ems_loop_count,ems_max_mort
+>         real(8), dimension(10) :: ems_before,ems_after
+52289a52299,52543
+> 
+>         ! THE BENCHMARK DRUG PRICE ELASTICITIES, MEASURED ONCE, AFTER THE LOOP.
+>         ! The per-pass block in print_all_moments runs after that pass's
+>         ! parameter update, so it mixes the price step with the update and the
+>         ! state it leaves behind moves the calibration path. Here parameters no
+>         ! longer move: the same block (copied verbatim) runs on the held
+>         ! distribution, and everything the three calls overwrite is saved first
+>         ! and restored after, then the statistics are recomputed at the base
+>         ! price and checked against the values before the measurement.
+>         if (measure_child_gap==1) then
+> 
+>             write(*,*) "POSTLOOP ELASTICITY SKIPPED  omega ran first and left its distribution behind"
+> 
+>         elseif (model_total_drug_users(1)<=10.d0**(-8)) then
+> 
+>             write(*,*) "POSTLOOP ELASTICITY HELD     nobody uses, so a demand elasticity is not defined"
+> 
+>         else
+> 
+>             write(*,*) "POSTLOOP ELASTICITY: measuring once at the benchmark, loop_count=", loop_count
+> 
+>             ems_before(1)=model_fraction_homeless(1)
+>             ems_before(2)=model_total_drug_users(1)
+>             ems_before(3)=model_fraction_addicted(1)
+>             ems_before(4)=weighted_drug_share_now()
+>             ems_before(5)=model_eligibles_getting_voucher(1)
+>             ems_before(6)=model_average_labour_income(1)
+>             ems_before(7)=median_income(1)
+>             ems_before(8)=model_drugs_used_by_users_on_average(1)
+>             ems_before(9)=model_drugs_used_by_addicts_on_average(1)
+>             ems_before(10)=model_mass_addicts(1)
+>             ems_vf=value_function
+>             ems_tax=policy_function_wage_income_tax_paid
+>             ems_mid=policy_function_mortgage_interest_deductions
+>             ems_cons=policy_function_consumption
+>             ems_size=policy_function_space_lived_in_size
+>             ems_lab=policy_function_labor_supply
+>             ems_cut=policy_function_cutoff_taxable_income
+>             ems_frac=policy_function_frac_spent_on_addiction
+>             ems_fmo=frac_mov_optimal_1
+>             ems_tcons=policy_function_total_consumption
+>             ems_fin=policy_function_financial_index
+>             ems_hs=policy_function_housing_status_index
+>             ems_space=policy_function_space_lived_in_index
+>             ems_amort=policy_function_years_of_amortization_index
+>             ems_ffmo=fin_index_frac_mov_to_optimal
+>             ems_add=policy_function_addiction
+>             ems_treat=policy_function_treatment
+>             ems_ecv=expected_child_value
+>             ems_ecv_own=expected_child_value_own
+>             ems_ecv_guess=expected_child_value_guessed
+>             ems_loop_count=loop_count
+>             ems_max_mort=max_future_mortgage_index_1
+> 
+>             val_price_base_1=price_of_addictive_good
+> 
+>             ! HOLD THE BENCHMARK DISTRIBUTION AND ITERATE ONCE. The
+>             ! author, 9 September: *"the elasticity of participation should
+>             ! be using the benchmark distribution and iterate only once on it
+>             ! with the change in the price"*.
+>             !
+>             ! WHAT THIS REPLACES, AND WHY BOTH EARLIER VERSIONS WERE WRONG.
+>             ! Originally the base was read straight off the main loop's
+>             ! distribution while the raised point got its own
+>             ! solve_value_function_and_policy_functions AND
+>             ! converge_to_stationary_equilibrium, so the two points came from
+>             ! different procedures and the difference between the procedures
+>             ! was counted as a price response. The author's own null caught
+>             ! it: at a ZERO price step users moved +8.6661 per cent, a
+>             ! spurious participation elasticity of +0.87199 with the WRONG
+>             ! SIGN sitting inside a reported -3.2074, and a spurious -0.30224
+>             ! inside a reported intensive -1.4821.
+>             !
+>             ! The first repair gave the base its own solve-and-converge, so
+>             ! the two were symmetric. That removes the asymmetry but measures
+>             ! the wrong object: the difference between two STATIONARY
+>             ! EQUILIBRIA, which mixes the demand response with everything the
+>             ! distribution does in response to it.
+>             !
+>             ! This measures the demand response. The benchmark distribution
+>             ! is held; the value function is re-solved at the new price; the
+>             ! moments are read off the SAME distribution under the new
+>             ! policy. Same households, one price change, no distributional
+>             ! feedback and no second convergence to contaminate anything. It
+>             ! is also the right object for a paper that quotes an elasticity
+>             ! from a cross section.
+>             !
+>             ! There is therefore NO converge_to_stationary_equilibrium call
+>             ! in this block, in either direction. If one reappears, the null
+>             ! above comes back with it.
+>             val_users_base_1=model_total_drug_users(1)
+>             val_qty_base_1=model_drugs_used_by_users_on_average(1)
+>             val_qty_addict_base_1=model_drugs_used_by_addicts_on_average(1)
+>             val_qty_exper_base_1=model_drugs_used_by_experimenters_on_average(1)
+>             val_addict_share_base_1=model_mass_addicts(1)/&
+>                 max(model_mass_addicts(1)+model_mass_experimenters(1),10.d0**(-14))
+> 
+>             write(*,*) "ELASTICITY_DIAG base price=", val_price_base_1,&
+>                 " users=", val_users_base_1, " quantity per user=", val_qty_base_1
+>             write(*,*) "ELASTICITY_DIAG base per addict=", val_qty_addict_base_1,&
+>                 " per experimenter=", val_qty_exper_base_1,&
+>                 " addict share of users=", val_addict_share_base_1
+> 
+>             ! The market clears in the OUTER loop, so the price stays where
+>             ! it is put across a direct solve and converge. That is the
+>             ! whole reason this measures a demand curve.
+>             price_of_addictive_good=val_price_base_1*(1+elasticity_price_step)
+> 
+>             call solve_value_function_and_policy_functions(1)
+>             ! NO converge_to_stationary_equilibrium HERE. The benchmark
+>             ! distribution is what the moments are read off; re-converging it
+>             ! would make this the difference between two equilibria instead
+>             ! of the response of the same households to a price.
+>             call stationary_equilibrium_statistics(1)
+>             ! model_total_drug_users is built in govt_revenues_calc and not
+>             ! in stationary_equilibrium_statistics, which is the mistake
+>             ! omega made and paid for.
+>             call govt_revenues_calc(1)
+> 
+>             write(*,*) "ELASTICITY_DIAG new price=", price_of_addictive_good,&
+>                 " users=", model_total_drug_users(1),&
+>                 " quantity per user=", model_drugs_used_by_users_on_average(1)
+> 
+>             if ((model_total_drug_users(1)>10.d0**(-12)) .AND. &
+>                 (val_users_base_1>10.d0**(-12))) then
+>                 write(*,*) "UNTARGETED price elasticity, participation   model=",&
+>                     log(model_total_drug_users(1)/max(val_users_base_1,10.d0**(-14)))/&
+>                     log(1+elasticity_price_step), " observed=", -0.63d0
+>             else
+>                 write(*,*) "ELASTICITY HELD     participation went to zero at the higher price"
+>             end if
+> 
+>             ! THE INTENSIVE MARGIN IS THE PER-ADDICT NUMBER, NOT THE PER-USER
+>             ! ONE. Olmstead et al. measure a conditional elasticity among
+>             ! continuing regular users. Quantity per USER moves whenever the
+>             ! addict/experimenter mix shifts, and a price rise shrinks the
+>             ! disorder stock, so that statistic mixes each household's own
+>             ! response with a change in who is being averaged over. It read
+>             ! -5.06 where the first order condition bounds an individual at
+>             ! about -1.3, which is how the mismatch was caught.
+>             if ((model_drugs_used_by_addicts_on_average(1)>10.d0**(-12)) .AND. &
+>                 (val_qty_addict_base_1>10.d0**(-12))) then
+>                 write(*,*) "UNTARGETED price elasticity, intensive       model=",&
+>                     log(model_drugs_used_by_addicts_on_average(1)/max(val_qty_addict_base_1,10.d0**(-14)))/&
+>                     log(1+elasticity_price_step), " observed=", -0.55d0
+>             else
+>                 write(*,*) "ELASTICITY HELD     quantity per addict went to zero at the higher price"
+>             end if
+> 
+>             ! The per-user figure is kept as a diagnostic, since the gap
+>             ! between it and the row above IS the composition effect.
+>             if ((model_drugs_used_by_users_on_average(1)>10.d0**(-12)) .AND. &
+>                 (val_qty_base_1>10.d0**(-12))) then
+>                 write(*,*) "DIAG elasticity, quantity per USER (mixed)      =",&
+>                     log(model_drugs_used_by_users_on_average(1)/max(val_qty_base_1,10.d0**(-14)))/&
+>                     log(1+elasticity_price_step)
+>             end if
+> 
+>             write(*,*) "ELASTICITY_DIAG new per addict=", model_drugs_used_by_addicts_on_average(1),&
+>                 " per experimenter=", model_drugs_used_by_experimenters_on_average(1),&
+>                 " addict share of users=", model_mass_addicts(1)/&
+>                 max(model_mass_addicts(1)+model_mass_experimenters(1),10.d0**(-14))
+> 
+>             ! THE THREE PIECES THE PER-USER NUMBER IS MADE OF. The first is
+>             ! the one the literature measures.
+>             if ((model_drugs_used_by_addicts_on_average(1)>10.d0**(-12)) .AND. &
+>                 (val_qty_addict_base_1>10.d0**(-12))) then
+>                 write(*,*) "DIAG elasticity, quantity per ADDICT            =",&
+>                     log(model_drugs_used_by_addicts_on_average(1)/max(val_qty_addict_base_1,10.d0**(-14)))/&
+>                     log(1+elasticity_price_step)
+>             end if
+>             if ((model_drugs_used_by_experimenters_on_average(1)>10.d0**(-12)) .AND. &
+>                 (val_qty_exper_base_1>10.d0**(-12))) then
+>                 write(*,*) "DIAG elasticity, quantity per EXPERIMENTER      =",&
+>                     log(model_drugs_used_by_experimenters_on_average(1)/max(val_qty_exper_base_1,10.d0**(-14)))/&
+>                     log(1+elasticity_price_step)
+>             end if
+>             if ((val_addict_share_base_1>10.d0**(-12)) .AND. &
+>                 (model_mass_addicts(1)+model_mass_experimenters(1)>10.d0**(-14))) then
+>                 write(*,*) "DIAG elasticity, ADDICT SHARE of users          =",&
+>                     log((model_mass_addicts(1)/(model_mass_addicts(1)+&
+>                     model_mass_experimenters(1)))/max(val_addict_share_base_1,10.d0**(-14)))/&
+>                     log(1+elasticity_price_step)
+>             end if
+> 
+>             price_of_addictive_good=val_price_base_1
+> 
+>             value_function=ems_vf
+>             policy_function_wage_income_tax_paid=ems_tax
+>             policy_function_mortgage_interest_deductions=ems_mid
+>             policy_function_consumption=ems_cons
+>             policy_function_space_lived_in_size=ems_size
+>             policy_function_labor_supply=ems_lab
+>             policy_function_cutoff_taxable_income=ems_cut
+>             policy_function_frac_spent_on_addiction=ems_frac
+>             frac_mov_optimal_1=ems_fmo
+>             policy_function_total_consumption=ems_tcons
+>             policy_function_financial_index=ems_fin
+>             policy_function_housing_status_index=ems_hs
+>             policy_function_space_lived_in_index=ems_space
+>             policy_function_years_of_amortization_index=ems_amort
+>             fin_index_frac_mov_to_optimal=ems_ffmo
+>             policy_function_addiction=ems_add
+>             policy_function_treatment=ems_treat
+>             expected_child_value=ems_ecv
+>             expected_child_value_own=ems_ecv_own
+>             expected_child_value_guessed=ems_ecv_guess
+>             loop_count=ems_loop_count
+>             max_future_mortgage_index_1=ems_max_mort
+> 
+>             ! Statistics back at the base price, from the restored policies on
+>             ! the held distribution.
+>             call stationary_equilibrium_statistics(1)
+>             call govt_revenues_calc(1)
+> 
+>             ems_after(1)=model_fraction_homeless(1)
+>             ems_after(2)=model_total_drug_users(1)
+>             ems_after(3)=model_fraction_addicted(1)
+>             ems_after(4)=weighted_drug_share_now()
+>             ems_after(5)=model_eligibles_getting_voucher(1)
+>             ems_after(6)=model_average_labour_income(1)
+>             ems_after(7)=median_income(1)
+>             ems_after(8)=model_drugs_used_by_users_on_average(1)
+>             ems_after(9)=model_drugs_used_by_addicts_on_average(1)
+>             ems_after(10)=model_mass_addicts(1)
+>             write(*,*) "POSTLOOP RESTORE CHECK before  ", ems_before
+>             write(*,*) "POSTLOOP RESTORE CHECK after   ", ems_after
+>             write(*,*) "POSTLOOP RESTORE CHECK largest relative gap", &
+>                 maxval(abs(ems_after-ems_before)/max(abs(ems_before),10.d0**(-14))), &
+>                 " price", price_of_addictive_good, " loop_count", loop_count
+> 
+>             do i=1,2
+>                 deallocate(ems_vf(i)%vector_transition_real,ems_tax(i)%vector_transition_real,&
+>                     ems_mid(i)%vector_transition_real,ems_cons(i)%vector_transition_real,&
+>                     ems_size(i)%vector_transition_real,ems_lab(i)%vector_transition_real,&
+>                     ems_cut(i)%vector_transition_real,ems_frac(i)%vector_transition_real,&
+>                     ems_fmo(i)%vector_transition_real,ems_tcons(i)%vector_transition_real)
+>                 deallocate(ems_fin(i)%vector_transition_integer,ems_hs(i)%vector_transition_integer,&
+>                     ems_space(i)%vector_transition_integer,ems_amort(i)%vector_transition_integer,&
+>                     ems_ffmo(i)%vector_transition_integer,ems_add(i)%vector_transition_integer,&
+>                     ems_treat(i)%vector_transition_integer)
+>             end do
+> 
+>         end if
+> 
+
+RUN (step 3)
+------------
+cd code && STAGE1_ONLY=1 BENCH_BIN=/tmp/eb/fix/hftf_elast_postloop sh cf_runs/cf_arm.sh null   (nohup, OMP_NUM_THREADS=2)
 cf_arm.sh output:
-benchmark binary from /tmp/eb/fix/hftf_elast_fix
+benchmark binary from /tmp/eb/fix/hftf_elast_postloop
 STAGE 1: Housing First omega_c = 0.06 benchmark, 12 blocks ...
 STAGE 1 done
 STAGE1_ONLY: stopping after the benchmark
-bench.err: 0 bytes
+bench.err: 0 bytes. Started 19:57, BENCH_DONE 23:12 (3h15).
 
-CHECKS (step 3)
+CHECKS (step 4)
 ---------------
-(a) 12 moment blocks and the save: FAILED on the block count. 5 blocks ran (loop_count 2, 5, 8, 11, 14).
-    The loop left on frozen_stop_tolerance:
-    ECONOMY IS STILL: the largest relative move across b, lambda_d, h_1 and average labour income is   8.1762125922610928E-005  which is inside   1.0000000000000000E-003 . Leaving the calibration loop so 
-    The paper's BLOCK MOVE first fell below 1e-3 at block 12 (1.554e-4). The save WAS reached:
-    welfare_curvebaseline_benchmark.dat written, no GUARD line.
-(b) CEV null at x=0: PASSED the binary's test (|curve-reported| <= 1e-6 relative on the childhood
-    half; no FAILED line), but NOT bit-equal as in the paper, where childhood curve = reported exactly.
+(1) 12 moment blocks: PASSED. '===== ALL TARGETED MOMENTS =====' appears 12 times (paper 12); the loop
+    left on frozen_stop_tolerance at block 12, as the paper did. BLOCK MOVE per block:
+    block        paper              this run      rel diff
+      1   1.0000000000e+00   1.0000000000e+00   0.00e+00
+      2   2.0610868304e-01   2.0611090839e-01   1.08e-05
+      3   8.5296785261e-02   8.5296276799e-02  -5.96e-06
+      4   3.9083119088e-02   3.9090037486e-02   1.77e-04
+      5   1.8630475322e-02   1.8627321771e-02  -1.69e-04
+      6   1.8935571432e-02   1.8931720186e-02  -2.03e-04
+      7   1.4719791689e-02   1.4437945430e-02  -1.91e-02
+      8   5.0019423790e-03   5.0051120481e-03   6.34e-04
+      9   3.3888673717e-03   3.4494256983e-03   1.79e-02
+     10   1.4770734523e-03   1.6935704054e-03   1.47e-01
+     11   2.2080109542e-03   2.4721662373e-03   1.20e-01
+     12   1.5541142454e-04   1.5694847721e-04   9.89e-03
+    The loop is the paper's code unchanged (the insertion is after it), so the drift in blocks 7-11
+    (moves of ~1e-3 differing by up to 15 per cent of themselves) is run-to-run variation, the same
+    kind run 2 saw in block 1; its effect on the moments is below 5e-4 (next table).
+(2) Eleven moments at the last block vs the paper's last block: PASSED, 0 of 11 beyond 1e-3.
+    blocks: paper 12  this run 12
+    moment              paper benchmark             this run    rel diff
+    h_1                0.00607822022111     0.00607783040801   -6.41e-05 
+    b                   0.0812591940593      0.0812427645417   -2.02e-04 
+    lambda_d            0.0346150707349      0.0345996125697   -4.47e-04 
+    theta                0.542549886122       0.542489450889   -1.11e-04 
+    pi_V                 0.272434274109       0.272434398922    4.58e-07 
+    aleph                  82.469918177         82.470905633    1.20e-05 
+    gamma                0.259512933242       0.259511346358   -6.11e-06 
+    beta                  2.94096827911        2.94097851781    3.48e-06 
+    y_u                  0.600409334668       0.600364816535   -7.41e-05 
+    sud_homeless         0.192029018817       0.191982471436   -2.42e-04 
+    emp_homeless         0.214259190496       0.214270146719    5.11e-05 
+    moments beyond 1e-3: 0
+(3) ELASTICITY_DIAG base = last block's moments: PASSED.
+    base users              8.1242764541749987E-002   last block MOMENT b:                  8.1242764541749987E-002
+    base quantity per user  0.12127671167855018    last block DIAG mean drug quantity:   0.12127671167855018
+    base price 1.0; the measurement started at loop_count=23, after the loop's last block.
+(4) Save reached, no GUARD, CEV null: PASSED. welfare_curvebaseline_benchmark.dat,
+    median_incomebaseline_benchmark.dat and drug_supply_shifterbaseline_benchmark.dat written,
+    "STAGE 1 done", no GUARD line, "simulation ended" printed, no FAILED line.
     this run:
-    CEV NULL at x=0: adult curve   1353.4211422680264       reported   1353.0550242326708
-    CEV NULL at x=0: childhood curve   450.81830281160177       reported   450.81833487435824
-    CEV NULL at x=0: lifetime curve   789.46832805834379       reported   789.37675088134154
-    paper (results/counterfactuals_cf_v2/bench/bench.log.gz):
-    CEV NULL at x=0: adult curve   1353.4184074765171       reported   1353.0520772646344
-    CEV NULL at x=0: childhood curve   450.79146457357393       reported   450.79146457357393
-    CEV NULL at x=0: lifetime curve   789.44080552687262       reported   789.34914319677569
-    childhood gap here 3.2e-5 (7.1e-8 relative). The adult and lifetime halves differ from 'reported'
-    in the paper's log as well (the binary tests only the childhood half).
-(c) BLOCK MOVE b = MOMENT b in every block: FAILED in blocks 1-3; blocks 4-5 agree to ~1e-9 relative
-    (last digit). It is no longer the raised-price count, as in run 1.
-    block loop  MOMENT b        BLOCK MOVE b    rel diff    raised-price users (ELASTICITY_DIAG new)
-        1    2  0.0718856450  0.0824349422   1.47e-01   0.0639305703
-        2    5  0.0830422111  0.0815994166  -1.74e-02   0.0652358359
-        3    8  0.0808908588  0.0811099471   2.71e-03   0.0644394153
-        4   11  0.0811537444  0.0811537443  -1.22e-10   0.0645189016
-        5   14  0.0811537889  0.0811537888  -1.22e-10   0.0645168286
-(d) Eleven moments at the LAST block vs the paper's last block (block 12; MOMENT lines between the
-    last '===== ALL TARGETED MOMENTS =====' and BLOCK MOVE): FAILED, 6 of 11 beyond 1e-3.
-    moment           paper benchmark    this run (block 5)    rel diff  flag
-    h_1                 0.0060782202          0.0060707638   -1.23e-03  >1e-3
-    b                   0.0812591941          0.0811537889   -1.30e-03  >1e-3
-    lambda_d            0.0346150707          0.0345103315   -3.03e-03  >1e-3
-    theta               0.5425498861          0.5421128227   -8.06e-04  
-    pi_V                0.2724342741          0.2721622345   -9.99e-04  
-    aleph              82.4699181770         82.4266834527   -5.24e-04  
-    gamma               0.2595129332          0.2594452681   -2.61e-04  
-    beta                2.9409682791          2.9392763876   -5.75e-04  
-    y_u                 0.6004093347          0.5996729277   -1.23e-03  >1e-3
-    sud_homeless        0.1920290188          0.1914214319   -3.16e-03  >1e-3
-    emp_homeless        0.2142591905          0.2144622937    9.48e-04  
-    (Run 1's report has a slightly different 'paper' column, e.g. h_1 0.0060788992; that value is not
-    on any MOMENT h_1 line of bench.log.gz. The column above is read from the MOMENT lines directly.)
+    CEV NULL at x=0: adult curve   1353.4190397978382       reported   1353.0527072248833     
+    CEV NULL at x=0: childhood curve   450.79190425748760       reported   450.79190425748760     
+    CEV NULL at x=0: lifetime curve   789.44140342881951       reported   789.34974050794040     
+    paper:
+    CEV NULL at x=0: adult curve   1353.4184074765171       reported   1353.0520772646344     
+    CEV NULL at x=0: childhood curve   450.79146457357393       reported   450.79146457357393     
+    CEV NULL at x=0: lifetime curve   789.44080552687262       reported   789.34914319677569     
 
-RESULT (step 4) -- NOT the benchmark; recorded only
---------------------------------------------------
-Per-block elasticities, each at +10% price (1.0 -> 1.1) on that block's held distribution:
-block  loop_count  participation model=    intensive model= (per ADDICT)   [observed: -0.63 / -0.55]
-    1           2       -1.2304974671838691      -0.53932359648954542
-    2           5       -2.5321544342928162      -0.63289574947917937
-    3           8       -2.3856353639844921       -1.0041572232501699
-    4          11       -2.4067439904168082       -1.0052987416908501
-    5          14       -2.4070868567027257       -1.0051953505864573
+RESTORE CHECK (the caveat in the verdict)
+-----------------------------------------
+order: h_1, b, lambda_d, theta, pi_V, avg labour income, median income, qty/user, qty/addict, mass addicts
+ POSTLOOP RESTORE CHECK before     6.0778304080061941E-003   8.1242764541749987E-002   3.4599612569718857E-002  0.54248945088913603       0.27243439892187921        1.6164331723173639       0.86291969511602740       0.12127671167855018       0.18192915325383460        1.7602532972429783     
+ POSTLOOP RESTORE CHECK after      6.0778304080061941E-003   8.1242764541749987E-002   3.4599612569718857E-002  0.54248864633789950       0.27243439892187921        1.6166868292312033       0.86333483477540141       0.12127671167855018       0.18192915325383460        1.7602532972429783     
+ POSTLOOP RESTORE CHECK largest relative gap   4.8108724568882318E-004  price   1.0000000000000000       loop_count          23
+Saved: median_incomebaseline_benchmark.dat 0.863334834775 (= "after"); the paper's log reports the
+realised benchmark median as 0.86291714531989361 ("STALE CONSTANT" line), this run's loop 0.8629197.
+govt_revenues_to_use_in_testsbaseline_benchmark.dat 6.037700228974; the loop's last net_govt_revenues
+was 6.0389881472359068 (paper's last: 6.0387717971118651).
 
-Last block's extracted lines (block 5, loop_count=14):
- ELASTICITY_DIAG base price=   1.0000000000000000       users=   8.1153788859099671E-002  quantity per user=  0.12129276282406233
- ELASTICITY_DIAG base per addict=  0.18210052304707741       per experimenter=   7.6302616633319623E-002  addict share of users=  0.42524609149433984
- ELASTICITY_DIAG new price=   1.1000000014901161       users=   6.4516828585218608E-002  quantity per user=  0.11423734347033176
- ELASTICITY_DIAG new per addict=  0.16546397676467134       per experimenter=   5.5321832804391811E-002  addict share of users=  0.53490433858981812
- UNTARGETED price elasticity, participation   model=  -2.4070868567027257       observed= -0.63000000000000000
- UNTARGETED price elasticity, intensive       model=  -1.0051953505864573       observed= -0.55000000000000004
- DIAG elasticity, quantity per USER (mixed)      = -0.62877759344404349
- DIAG elasticity, quantity per ADDICT            =  -1.0051953505864573
- DIAG elasticity, quantity per EXPERIMENTER      =  -3.3736122479790236
- DIAG elasticity, ADDICT SHARE of users          =   2.4070868567027244
+THE MEASUREMENT'S LINES (verbatim)
+----------------------------------
+ POSTLOOP ELASTICITY: measuring once at the benchmark, loop_count=          23
+ ELASTICITY_DIAG base price=   1.0000000000000000       users=   8.1242764541749987E-002  quantity per user=  0.12127671167855018     
+ ELASTICITY_DIAG base per addict=  0.18192915325383460       per experimenter=   7.6285091447326508E-002  addict share of users=  0.42587931079005070     
+ ELASTICITY_DIAG new price=   1.1000000014901161       users=   6.4607517531073869E-002  quantity per user=  0.11418156447815768     
+ UNTARGETED price elasticity, participation   model=  -2.4038459291185279       observed= -0.63000000000000000     
+ UNTARGETED price elasticity, intensive       model=  -1.0092809347697977       observed= -0.55000000000000004     
+ DIAG elasticity, quantity per USER (mixed)      = -0.63251328477877733     
+ ELASTICITY_DIAG new per addict=  0.16524390502997052       per experimenter=   5.5305838156339930E-002  addict share of users=  0.53553539730229838     
+ DIAG elasticity, quantity per ADDICT            =  -1.0092809347697977     
+ DIAG elasticity, quantity per EXPERIMENTER      =  -3.3742360575696289     
+ DIAG elasticity, ADDICT SHARE of users          =   2.4038459291185279     
 
 The full log is not committed (tens of MB); it is in the worker container at code/cfarm_bench/bench.log.
