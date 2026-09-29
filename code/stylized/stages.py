@@ -137,6 +137,10 @@ def spec(stage):
             # -1, measured when the share fell in u1 because the poorest users were
             # there to die (the negative value of life that the raised floor removed).
             r = (r[0], r[1], r[2], +1, 0.40, r[5], 0.10)
+        if r[0] == 'aleph':
+            # THE VSL TARGET IS calibrate.TARGET's, which the tables and fill.py read:
+            # 84 since 29 September (see there).  sr_calibrate's row still says 80.
+            r = (r[0], r[1], C.TARGET['vsl'], r[3], r[4], r[5], r[6])
         if r[0] == 'h1':
             # UP TO 0.095, just under the small unit.  With the floor raised the street
             # fits at about half of h2, the quantitative model's own ratio; the old

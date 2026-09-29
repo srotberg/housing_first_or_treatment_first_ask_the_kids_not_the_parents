@@ -68,6 +68,9 @@
   (the rising side), h1 up to 0.095; save() keeps cbar, ui_sud, repl, h2, h3, yV.
   Stage 1 launched from start_stage1_sep29.json (the u1 0.05 raised-floor fit): worst
   gap at the start 42.7 (users' income 0.42), dshare -17, the rest within 5.
+- 22:50 the author: "bring the vsl to 84 to make sure there is no one with negative value
+  of life". calibrate.TARGET['vsl'] 84 (the full model stays at 80); stages.spec reads it
+  for the aleph row; start aleph 10.5. Stage 1 archived after 2 minutes and relaunched.
 - Found by the smoke test: at the calibrated grid the poorest households have a negative
   value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
 

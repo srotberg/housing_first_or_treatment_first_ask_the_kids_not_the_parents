@@ -522,7 +522,13 @@ TARGET = dict(part=_DRUG['participation'], homeless=0.0060, r_use=0.74,
               # half a per cent of households cannot afford the rental
               priced_out=0.005,
               sud_of_homeless2=0.217,
-              sud=_DRUG['sud_rate'], vsl=80.0,
+              # VSL 84, NOT THE QUANTITATIVE MODEL'S 80 (vsl_data), the author, 29 September:
+              # "I think it's ok to bring the vsl to 84 to make sure there is no one with
+              # negative value of life".  On the raised floor (TRUNC_FLOOR 2.4) at 80, 0.37
+              # per cent of households had a slightly negative lifetime value at the drug
+              # decision (worst -0.54); aleph 10.50, a VSL of 84.4, cleared them with the rest
+              # held.  On the old floor it would have taken 140 to 170.
+              sud=_DRUG['sud_rate'], vsl=84.0,
               dshare=_DRUG['drug_spending_share'],
               housing_share=0.30, hspend=0.268,
               bot50=BOT50_TARGET,
