@@ -1,3 +1,20 @@
+# 29 September 07:15: T=60 RESTART 3 IN LOOP 0'S FORWARD PASS; THE BY-AGE HOMELESSNESS PRINT IS MIS-SCALED (diagnostic only)
+
+- Backward pass finished (59 of 59) about 07:10; the forward pass is on t=1.
+- TRANSITION HOMELESS_BY_AGE prints ~1e12, not shares. The division at tr.f90 24579 uses mass_by_age(t,:), which is
+  filled in a different routine (19893, reset at 18533) that runs AFTER it within a forward-pass period; the
+  statistics routine's own reset and accumulation are commented out (23689, 24215). In loop 0 the mass is still
+  zero, the 1e-14 floor binds, and the print is the raw homeless mass times 1e14. Verified: sum(print)*1e-14 /
+  sum(MASS_BY_AGE) = 0.6078 per cent = h_1 on the same period's MECH line, to all printed digits. In loops >= 1 the
+  division will use the PREVIOUS loop's mass at t -- close, not exact; recheck with the same identity then.
+- Only diagnostics are touched: the array feeds prints and homelessness_age_*.txt, which no script reads. The same
+  division order applies to consumption_by_age, homeownership_by_age, model_assets_by_age and housing_size_by_age
+  in that routine. Not fixed: the model is frozen and the solve is running; fix after the run if the prints are used.
+- Children in a shelter (ages 26-50, mass-weighted, export_results.child_homeless's base), t=1: 1.015 per cent,
+  equal to the benchmark's 1.015 age by age -- right, since the dwelling is a state chosen before the reform lands,
+  so the first year that can move is t=2. The TF long run is 1.078 (x_tf_hchild1). Read the path as the forward
+  pass prints it; multiply loop 0's HOMELESS_BY_AGE by 1e-14 and divide by MASS_BY_AGE; age = 25 + index.
+
 # 29 September 03:55: STYLIZED MODEL RECALIBRATED (no income floor, u1 fitted) AND SECTION 3 REBUILT ON IT
 
 - Stage 1 (stages.py, floor off, u1 live with sign -1 as probe_u1.py measured): iteration 350, every row inside 1.4
