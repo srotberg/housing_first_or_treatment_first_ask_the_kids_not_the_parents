@@ -1,3 +1,21 @@
+# 29 September 20:15: THE STYLIZED "USERS" AT THE BOTTOM ARE BUYING A SUD TO DIE (decompose_use.py)
+
+- At the stage 2 calibration, 62 per cent of the bottom decile (69 per cent of all users) "use":
+  best v is the grid's minimum sliver (drug utility +0.0001) and the whole gain is the death
+  term (+0.08), because their period-2 value is negative (W2 -2.12 at y 0.15). The corner
+  branch the y_floor note describes; the staged calibration runs with y_floor = 0.
+- Participation, users' income, the U shape and the whole SUD share of the homeless rest on
+  them, and so does u1 lowering the share.
+- Bottom raised to 0.20 (test_bottom.py, sigma_y 1.27, h1 0.0199): no negative value of life
+  (lowest V2 +1.96), no user below 0.47, no SUD household homeless. The poor abstain because
+  the drug's utility at low consumption does not cover its cost and the death cost (-0.12 at
+  y 0.22): drugs are a luxury under the Stone-Geary shifter b.
+- In stage 2 the SUD's period-2 cost apart from death is about -0.0003 (u1 at u0).
+- For the author: bound productivity from below so no one is better off dead, and make the
+  poor want to use (heterogeneity in b, or drugs worth more when consumption or housing is
+  poor). Section-7 rule: check whether the quantitative model's 0.45 per cent with a negative
+  value of life are its drug users.
+
 # 29 September 19:52: ELASTICITY RUN 2 FAILED TOO; RUN 3 MEASURES ONCE AFTER THE LOOP
 
 - Run 2 (base-price re-solve added, adef4fbd): still 5 blocks, 6 of 11 moments off by more
