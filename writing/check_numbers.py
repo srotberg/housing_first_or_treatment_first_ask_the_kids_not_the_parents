@@ -43,7 +43,9 @@ ALLOW = [
     # both copies. Bassuk et al. (1997); Mellentin et al. (2016), Yoon et al. (2013).
     ('1.8', 'odds ratios of'), ('2.4', 'odds ratios of'),
     ('1.8', 'in the data (Bassuk'), ('2.4', 'in the data (Bassuk'),
-    ('1.44', 'to acquire a SUD, at \\new{odds ratios of}'), ('2.51', 'to acquire a SUD, at \\new{odds ratios of}'),
+    # Mellentin et al. (2016) and Yoon et al. (2013); keyed without the red wrapper,
+    # which comes and goes as the author clears red
+    ('1.44', 'to acquire a SUD, at'), ('2.51', 'to acquire a SUD, at'),
     # Heiberg et al. (2018)'s standardised mortality ratio; the table's 6.6 is an unrelated TEDS-A share
     ('6.6', 'Heiberg et al.\\ (2018) at'),
     # Olmstead et al. (2015)'s heroin elasticity; the table's 0.8 is an unrelated share

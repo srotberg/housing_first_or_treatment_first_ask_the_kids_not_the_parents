@@ -162,7 +162,7 @@ ELEVEN = [
          f'{100 * C["h1_band_lo"]:.2f} to {100 * C["h1_band_hi"]:.2f}\\%',
          pc(mom('h_1 homelessness rate'), 2), f(H['size_homelessness'], 4)),
         (r'$\kappa_{\phi H}$', 'Mortality multiplier, shelter', 'Ext.',
-         r'Meyer, Wyse and Logani (2023)',
+         r'Meyer et al.\ (2023)',
          f(1 + C['increased_risk_of_death_homeless']), NA, f(1 + C['increased_risk_of_death_homeless'])),
         (r'$\kappa_{H}$', 'Employment penalty, shelter', 'Ext.', r'Desmond and Gershenson (2016)',
          f(H['increased_prob_if_homeless']), NA, f(H['increased_prob_if_homeless'])),
