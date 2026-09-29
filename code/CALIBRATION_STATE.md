@@ -1,3 +1,22 @@
+# 29 September 15:15: STYLIZED MODEL TO 0.6 PER CENT HOMELESSNESS; u1 CHECKED; ELASTICITIES ON A WORKER
+
+- The author: target homelessness of 0.6 per cent as in the quantitative model (benchmark h_1 0.61). The
+  target now lives in calibrate.TARGET['homeless'] = 0.0060 only; sr_calibrate's h1 row reads it.
+- Stage 1 refitted from the 1.00 calibration: iteration 175, worst 1.83; u1 0.0765 puts the SUD share of
+  the homeless on 21.7 again. Stage 2 with u1 free parked u1 on its floor (share 19.4 against 21.7), as at
+  1.00; resumed at iteration 125 with --hold=u1 (stage2_h06_hold.log). The 1.00 calibration is in *_h100.
+- u1 (the author: "no way! you have to double check this"): probe_u1_h06.log. b held: participation
+  collapses as u1 rises (32.4 at u1 = u0, 8.8 calibrated, 0 by 0.22) and the SUD share of the homeless with
+  it (36.4, 21.7, 0.3). b refit, participation 8.90 and SUD 3.68 fixed: the share still falls, 32.4, 21.7,
+  12.1, 3.3, 0.0 at u1 = u0, 0.0765, 0.108, 0.16, 0.30 -- forward-looking households use only if they can
+  stay housed through the job loss the disorder brings. The claim in 3.3 stands; its wording is rewritten.
+- Elasticities: remote worker session_01JaAkpUmaEC15EkfDuU4RXD solves the 12-block benchmark
+  (cf_arm.sh STAGE1_ONLY, BENCH_BIN = 77803322 with measure_price_elasticity=1) and pushes
+  code/ELASTICITY_RESULT_BENCH.txt with a check of eleven moments against cfarm_bench's last block.
+- Tables 1 and 2 now mark red only cells that moved against code/stylized/tab_*_prev.tex (the 1.00 tables).
+- Transition restart 3c running since 14:49 from restart 3's loop 0 paths (the 14:19 container restart
+  killed 3b ten periods in; restart3b_killed_1419).
+
 # 29 September 13:40: MY ELASTICITY RUN OOM-KILLED THE T=60 TRANSITION; RELAUNCHED FROM LOOP 0'S PATHS
 
 - 13:23: the kernel's memory cgroup killed the transition (hftf 10.3 GB RSS) with hftf_elast (3.6-4.9 GB) beside
