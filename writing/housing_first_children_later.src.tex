@@ -444,6 +444,10 @@ and finds large and persistent improvements in housing stability and reductions 
 shelter and other public service use (Tsemberis et al., 2004; Padgett et al., 2006; Larimer et al., 2009; Goering et al., 2014; Aubry et
 al., 2016). Evidence on substance use is mixed: most studies find no statistically
 significant change, and some report modest reductions in alcohol related outcomes.
+\new{The trial closest to this paper is Milby et al.\ (2005): among cocaine-dependent
+homeless adults, all of them in day treatment, those randomised into housing stayed
+abstinent longer than those who were not, and it is where the model takes the penalty
+homelessness imposes on recovery from.}
 These evaluations typically measure outcomes over six to twenty four months and
 rarely beyond three years, which is short against a recovery process that Vaillant
 (1995) documents as \new{much more gradual and protracted: at the annual rate the model
@@ -579,10 +583,10 @@ male caretaker had, $2.41$ times.}
 \paragraph{How much a parent weighs its child.} The externality is
 whatever the parent does not internalise, so its size is decided by the weight a
 parent puts on its child, and that weight has a literature of its own. Altonji et
-al.\ (1997) test pure altruism directly, on consumption within parent-and-child
-households, and reject \new{the idea that parents are perfectly altruistic}: the
-transfers parents make to their children while alive do not respond to the
-distribution of income inside the family the way complete altruism requires. Parents
+al.\ (1997) test pure altruism directly, on \new{the transfers parents make to their
+grown children}, and reject \new{the idea that parents are perfectly altruistic}:
+\new{moving a dollar of income from a child to its parents raises what they transfer to
+it by less than thirteen cents, against the full dollar complete altruism requires}. Parents
 are probably altruistic, but not completely, which is the case for treating \new{that
 weight} as strictly between zero and one rather than assuming either end of it.
 \new{The Altonji et al.\ experiment cannot be run here. It needs a parent and a grown
@@ -598,12 +602,16 @@ raises use by the same $@@q_omega_c@@$ percent. The externality is therefore not
 calibrated to observed behaviour on exactly the margin this paper is about.
 
 \paragraph{What the hazards are built from.} The model's transitions are not
-free parameters dressed as structure; each is anchored on a clinical or
-epidemiological estimate, and the calibration section names them one at a time. Four
-groups do the work. On mortality, Hjorth\o j et al.\ (2023) put the excess death
-rate for a SUD at six to ten times the baseline, Baggett et al.\
-(2013) measure it for the homeless by age, and Olfson et al.\ (2015) do the same for
-serious mental illness (SMI); against those hazards the value of a life comes from the
+free parameters dressed as structure; each is anchored on\new{, or checked against,} a
+clinical or epidemiological estimate, and the calibration section names them one at a time. Four
+groups do the work. On mortality, \new{the excess death rate of a SUD is calibrated inside
+the model, to the average income of users, since it is what decides how far down the
+income distribution use sits. The rate it lands on, $@@c_kappa_phi_d_value@@$ times the
+baseline, is in line with the estimates in the literature: Plana-Ripoll et al.\ (2019)
+put the mortality rate ratio of a SUD at $3.91$ in the Danish registers, and Heiberg et
+al.\ (2018) at $6.6$ among Norwegians in specialist care for one.} Baggett et al.\
+(2013) measure \new{the excess death rate} for the homeless by age, and Olfson et al.\
+(2015) do the same for serious mental illness (SMI); against those hazards the value of a life comes from the
 willingness-to-pay estimates surveyed in Viscusi and Aldy (2003).
 
 On the mental
@@ -620,7 +628,8 @@ penalty homelessness imposes on recovery comes from}.
 
 On
 employment and the cost of housing loss, Desmond and Gershenson (2016) estimate what
-losing housing does to holding a job, and Loubi\`ere et al.\ (2020) price the
+losing housing does to holding a job\new{, a penalty the model also applies to finding
+one}, and Loubi\`ere et al.\ (2020) price the
 disamenity of visible homelessness through a contingent valuation, which is what
 makes the aggregate headcount enter anybody's utility at all.
 
@@ -667,7 +676,10 @@ estimate for an illicit drug. Cannabis is the closest market I found to an illic
 drug, as it remains a Schedule I substance federally, so even a licensed producer works
 without interstate trade, without ordinary banking and under federal prohibition,
 which is the set of frictions an illicit supplier faces. Mace et al.\ (2020) estimate a price elasticity of supply of
-$@@f_drug_supply_elasticity@@$ on Washington State administrative data, and that is the elasticity the model reproduces.
+$@@f_drug_supply_elasticity@@$ on Washington State administrative data, and that is the
+elasticity the model reproduces\new{, which is at the low end of what the literature
+uses: where studies of illicit markets take a position, they treat supply as very
+elastic, because the drugs are cheap and simple to produce (Rhodes et al., 2002)}.
 
 \paragraph{In a nutshell.} The trials establish that housing stability responds to
 policy but cannot price what happens in the long run, to others not in the sample,
@@ -2812,6 +2824,7 @@ executive order.
 \item Guvenen, F. et al.\ (2023a). ``Lifetime Earnings in the United States over Six Decades.'' \emph{American Economic Journal: Applied Economics} 14(4), 446--79.
 \item Heathcote, J., K. Storesletten and G. Violante (2017). ``Optimal Tax Progressivity: An Analytical Framework.'' \emph{Quarterly Journal of Economics} 132(4), 1693--1754.
 \item Heathcote, J., F. Perri and G. Violante (2010). ``Unequal We Stand.'' \emph{Review of Economic Dynamics} 13(1), 15--51.
+\item \new{Heiberg, I. H. et al.\ (2018). ``Total and cause-specific standardized mortality ratios in patients with schizophrenia and/or substance use disorder.'' \emph{PLoS ONE} 13(8), e0202028.}
 \item Hjorth\o j, C. et al.\ (2023). ``Excess mortality among people with substance use disorders.'' \emph{World Psychiatry} 22(2).
 \item Hser, Y. et al.\ (2017). ``Mortality among substance-using mothers and fathers.'' \emph{Addiction} 112(11), 2011--18.
 \item \.{I}mrohoro\u{g}lu, A. and K. Zhao (2022). ``Homelessness.'' Working paper.
@@ -2838,7 +2851,9 @@ executive order.
 \item Olmstead, T. et al.\ (2015). ``The price elasticity of demand for heroin.'' \emph{Journal of Health Economics} 41, 59--71.
 \item Oreopoulos, P., M. Page and A. H. Stevens (2008). ``The Intergenerational Effects of Worker Displacement.'' \emph{Journal of Labor Economics} 26(3), 455--83.
 \item Padgett, D. K., L. Gulcur and S. Tsemberis (2006). ``Housing First Services for People Who Are Homeless with Co-Occurring Serious Mental Illness and Substance Abuse.'' \emph{Research on Social Work Practice} 16(1), 74--83.
+\item \new{Plana-Ripoll, O. et al.\ (2019). ``A comprehensive analysis of mortality-related health metrics associated with mental disorders: a nationwide, register-based cohort study.'' \emph{The Lancet} 394(10211), 1827--35.}
 \item Restuccia, D. and C. Urrutia (2004). ``Intergenerational Persistence of Earnings: The Role of Early and College Education.'' \emph{American Economic Review} 94(5), 1354--78.
+\item \new{Rhodes, W., P. Johnston, S. Han, Q. McMullen and L. Hozik (2002). \emph{Illicit Drugs: Price Elasticity of Demand and Supply}. Report to the National Institute of Justice, Abt Associates.}
 \item Saffer, H. and F. Chaloupka (1999). ``The demand for illicit drugs.'' \emph{Economic Inquiry} 37(3), 401--11.
 \item Scutella, R., G. Johnson, J. Moschion, Y.-P. Tseng and M. Wooden (2012). ``Journeys Home Research Report No.\ 1: Wave 1 Findings.'' Melbourne Institute of Applied Economic and Social Research, University of Melbourne.
 \item Solon, G. (1992). ``Intergenerational Income Mobility in the United States.'' \emph{American Economic Review} 82(3), 393--408.
