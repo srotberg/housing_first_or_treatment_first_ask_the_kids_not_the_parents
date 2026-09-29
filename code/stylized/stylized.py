@@ -737,6 +737,16 @@ class P:
 
     na    = 60
     nv    = 140
+    # FOOD ASSISTANCE, as in the quantitative model (eq:ftrans, eq:fbudget): paid in
+    # kind, F = max(0, cbar - rho_fs * income), with c >= F, so it cannot fund the
+    # drug, the rent or saving.  The author, 29 September: "maybe then we have to add
+    # food stamps... That bounds value of life to be positive and still makes the
+    # lowest productivities use", "Calibrate the food stamps to match the same target
+    # in the full model" -- food stamp spending over labour income, 0.0042
+    # (food_stamps_share_data).  rho_fs is the statutory taper the quantitative model
+    # uses (food_stamp_taper).  cbar = 0 is OFF and reproduces the model without it.
+    cbar = 0.0
+    rho_fs = 0.30
     y_floor = 0.0     # guaranteed minimum realised income; 0 is off.  See
                       # _states for what it is for and what value clears the
                       # negative value of life.
@@ -847,6 +857,11 @@ def with_(par, **kw):
 
 
 # ---------------------------------------------------------------------------
+def _fs(par, inc):
+    """Food assistance at income inc: the maximum allotment less the taper."""
+    return np.maximum(par.cbar - par.rho_fs * np.asarray(inc, dtype=float), 0.0)
+
+
 def _states(par, d, policy, y, used=0):
     """
     (probability, income level, tenant's rent multiplier) given d and whether
@@ -1084,13 +1099,16 @@ def solve_period2(par, y, policy, used=0):
             if p <= 1e-14:
                 continue
             cash = par.R * ag + inc
+            fs = float(_fs(par, inc))
             best = np.full(par.na, -np.inf); onst = np.zeros(par.na)
             rnt = np.zeros(par.na); out = np.zeros(par.na)
             sml = np.zeros(par.na)
             for h, rent, street in _options(par, rmul):
-                c = cash - rent
-                v = np.where(c > 1e-9, _flow(par, c, h, 0.0, child=False),
-                             -np.inf)
+                # the rent is paid from cash; food assistance only adds to c
+                net = cash - rent
+                c = net + fs
+                v = np.where((net >= 0.0) & (c > 1e-9),
+                             _flow(par, c, h, 0.0, child=False), -np.inf)
                 # what the voucher pays on this option: the rest of the market
                 # rent. Zero on the street, which is free to begin with.
                 s = 0.0 if street else par.pr * h * (1.0 - rmul)
@@ -1131,16 +1149,20 @@ def _branch(par, ag, inc, rmul, vg, cont):
     """
     n = len(vg)
     cash = (inc - par.p_v * vg[:, None]) - ag[None, :]
+    fs = float(_fs(par, inc))
     opts = _options(par, rmul)
     val = np.full(cash.shape, -np.inf)
     idx = np.zeros(cash.shape, dtype=np.intp)
     for o, (h, rent, street) in enumerate(opts):
-        c = cash - rent
+        # drug, saving and rent are paid from cash (c >= F): food assistance is in
+        # kind and only adds to consumption
+        net = cash - rent
+        c = net + fs
         # THE DRUG IS INSIDE THE BUNDLE NOW.  Under log it was additively
         # separable and period1 added it after the fact; at sigma = 2 it
         # multiplies, so it has to be here, where housing and saving are chosen
         # against it.
-        u = np.where(c > 1e-9,
+        u = np.where((net >= 0.0) & (c > 1e-9),
                      _flow(par, c, h, vg[:, None]) + par.beta * cont,
                      -np.inf)
         better = u > val
@@ -1883,6 +1905,11 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
     # tenant actually pays, net of any voucher, on both sides of the ratio, so
     # the object is an outlay share exactly as the survey measures it.
     hexp = 0.0
+    # FOOD ASSISTANCE SPENDING OVER LABOUR INCOME, the quantitative model's
+    # govt_spending_on_food_stamps / output, target 0.0042; labour income is the
+    # earnings of the employed, both periods.  F is also consumption, so it is in
+    # the non-drug expenditure the housing share is taken over.
+    fsp = lab = 0.0
     for i, y in enumerate(ygrid):
         ag, _, H2c, R2c, G2c, S2c = solve_period2(par, y, policy, used=0)
         if policy == 'HF':
@@ -1911,7 +1938,10 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                 hl += mm * street
                 smallmass += mm * small1; housedmass += mm * (1.0 - street)
                 hcost += mm * rent; hinc += mm * INC[i, s]; cost += mm * sub
-                hexp += mm * (INC[i, s] - (par.p_v * VV[i, s] if uu else 0.0) - a)
+                f1 = float(_fs(par, INC[i, s]))
+                hexp += mm * (INC[i, s] - (par.p_v * VV[i, s] if uu else 0.0) - a + f1)
+                fsp += mm * f1
+                lab += mm * (INC[i, s] if INC[i, s] >= y - 1e-12 else 0.0)
                 # period 2: the disorder is drawn at the transition and survival
                 # depends on it
                 Hx, Rx, Gx = (H2u, R2u, G2u) if uu else (H2c, R2c, G2c)
@@ -1933,7 +1963,10 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                     hexp += m2 * par.R * a
                     for p2, inc2, _ in _states(par, d, policy, y, uu):
                         hinc += m2 * p2 * inc2
-                        hexp += m2 * p2 * inc2
+                        f2 = float(_fs(par, inc2))
+                        hexp += m2 * p2 * (inc2 + f2)
+                        fsp += m2 * p2 * f2
+                        lab += m2 * p2 * (inc2 if inc2 >= y - 1e-12 else 0.0)
 
     use = (PR * frac).sum(axis=1)
     return dict(part=float(part), sud=float(sud),
@@ -1974,6 +2007,7 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                 # voucher deliver the survey share the weight was set from. It
                 # is what h3 is calibrated on.
                 hspend=float(hcost / max(hexp, 1e-12)),
+                fshare=float(fsp / max(lab, 1e-12)),
                 cost=float(cost),
                 use=use, v=(PR * frac * VV).sum(axis=1) / np.maximum(use, 1e-12))
 
