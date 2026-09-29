@@ -71,6 +71,16 @@
 - 22:50 the author: "bring the vsl to 84 to make sure there is no one with negative value
   of life". calibrate.TARGET['vsl'] 84 (the full model stays at 80); stages.spec reads it
   for the aleph row; start aleph 10.5. Stage 1 archived after 2 minutes and relaunched.
+- 23:20 stage 1 (floor 0.235, no insurance under a SUD) stalled after 2,550 iterations:
+  every target within 5% except users' income 0.41 (0.74) and dshare 0.126 (0.16); u1 at
+  its floor 0.0486 (u0 0.0485). Median over mean by floor, bottom half held at 17.2%:
+  0.612 / 0.589 / 0.564 / 0.502 at lowest income 0.108 / 0.150 / 0.180 / 0.235 (data about
+  0.65), so the raised floor makes users near the median look poor against the mean.
+  Archived. The author: "I think it's ok that u1=u0. But you can also do what you
+  suggest". scan_bottom_ui.py launched 23:31 via cloud_run.sh at (floor, ui_sud) = (1.08,
+  0.5), (1.5, 0.5), (1.8, 0.5), (2.4, 0.5), (1.8, 0.25), (1.5, 0), (1.8, 0): users' income,
+  fitted u1, the period-1 check and the VSL that clears it, the gradient check.
+- The .log files are gitignored (code/stylized/.gitignore): cloud logs go in .txt.
 - Found by the smoke test: at the calibrated grid the poorest households have a negative
   value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
 
