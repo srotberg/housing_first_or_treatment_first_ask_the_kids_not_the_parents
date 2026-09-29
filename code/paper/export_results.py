@@ -236,6 +236,49 @@ for l in open(best, errors='replace'):
         B[int(l.split('t=')[1].split()[0])] = float(re.search(r' b=\s*(\S+)', l).group(1))
 out['x_tr_b_peak_pc'] = pc(100 * (min(B[k] for k in range(1, 11)) / tf['drug use b']['base'] - 1))
 
+# CHILDHOOD HOMELESSNESS OF THE COHORT BORN AT THE REFORM, on x_hchild0's base (ages
+# 26-50, mass-weighted), followed down the diagonal: a child born in year 1 is at
+# home while its parent is 26 to 50, which is age index t in year t, t = 1..25.
+#
+# THE BY-AGE PRINT IS NOT A SHARE IN LOOP 0. The division by mass_by_age runs before
+# the routine that fills the mass, so loop 0 divides by the 1e-14 floor and prints the
+# raw homeless mass times 1e14; a later loop divides by the previous loop's mass
+# (CALIBRATION_STATE, 29 September 07:15). So the scale is not assumed: each period is
+# read both ways and must reproduce that period's h_1 on its MECH line, or nothing is
+# written.
+HB, MB = {}, {}
+for l in open(best, errors='replace'):
+    if 'TRANSITION INIT PARENT SHARE RESTORED' in l and HB:
+        break
+    for tag, D in (('HOMELESS_BY_AGE', HB), ('MASS_BY_AGE', MB)):
+        if l.startswith(' TRANSITION ' + tag + ' t='):
+            f = l.split('t=')[1].split()
+            D[int(f[0])] = [float(x) for x in f[1:]]
+share = {}
+for t in HB:
+    raw_floor = [x * 1e-14 for x in HB[t]]
+    raw_share = [x * m for x, m in zip(HB[t], MB[t])]
+    for raw in (raw_floor, raw_share):
+        if abs(sum(raw) / sum(MB[t]) / H[t] - 1) < 1e-6:
+            share[t] = [r / m if m > 0 else 0.0 for r, m in zip(raw, MB[t])]
+            break
+    else:
+        sys.exit(f'HOMELESS_BY_AGE at t={t} reproduces h_1 on neither scale')
+if not all(t in share for t in range(1, 26)):
+    sys.exit('the forward pass does not cover the first cohort\'s childhood')
+w = [MB[t][t - 1] for t in range(1, 26)]
+hc_b1 = sum(share[t][t - 1] * w[t - 1] for t in range(1, 26)) / sum(w)
+out['x_tr_hchild_b1'] = f'{100 * hc_b1:.2f}'
+out['x_tr_hchild_b1_pc'] = pc(100 * (hc_b1 / hc0 - 1))
+# the direction word the prose takes, from the numbers, not typed
+out['x_tr_hchild_b1_dir'] = 'rises' if hc_b1 > hc0 else 'falls'
+# and ALL children at home in each of the first ten years, the cross section on the same
+# base: its largest rise, for 'rises by up to'
+hc_cross = {t: sum(share[t][a] * MB[t][a] for a in range(25)) / sum(MB[t][:25]) for t in share}
+out['x_tr_hchild_peak_pc'] = pc(100 * (max(hc_cross[t] for t in range(1, 11)) / hc0 - 1))
+out['x_tr_hchild_peak'] = f'{100 * max(hc_cross[t] for t in range(1, 11)):.2f}'
+out['x_tr_hchild_peak_dir'] = 'rises' if max(hc_cross[t] for t in range(1, 11)) > hc0 else 'falls'
+
 json.dump(out, open(OUT, 'w'), indent=1, sort_keys=True)
 print(f'wrote {OUT} (transition from {os.path.relpath(best, ROOT)}, forward pass {out["x_tr_pass"]})')
 for k, v in sorted(out.items()):
