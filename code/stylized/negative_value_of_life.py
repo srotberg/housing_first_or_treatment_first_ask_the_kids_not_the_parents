@@ -80,6 +80,28 @@ def negative_value_share(par):
     return dict(share=neg / tot, lowest=lo, mean=acc / tot)
 
 
+
+def strict_negative_values(par, policies=('HF', 'TF')):
+    """THE STRICT CHECK, the author, 29 September: "Make sure that no one has a negative
+    value of life".  negative_value_share above looks at clean households' period-2
+    values only.  This looks at every income node, every asset level, with and without
+    the disorder (d = 0, 1), after using or not in period 1 (the used argument), under
+    each policy.  Returns the number of negative (node, asset, d, used, policy) cells,
+    the worst value and where it is.  Zero cells is the requirement."""
+    n = 0
+    worst = (float('inf'), None)
+    for pol in policies:
+        for used in (0, 1):
+            for y in C.YG:
+                ag, W2, *_ = S.solve_period2(par, float(y), pol, used=used)
+                for d in (0, 1):
+                    w = W2[:, d]
+                    n += int((w < 0).sum())
+                    k = int(np.argmin(w))
+                    if w[k] < worst[0]:
+                        worst = (float(w[k]), dict(y=float(y), a=float(ag[k]), d=d, used=used, policy=pol))
+    return dict(cells=n, lowest=worst[0], where=worst[1])
+
 if __name__ == '__main__':
     d = json.load(open('best_vector_it1800.json'))
     kw = {k: v for k, v in FIXED.items()
