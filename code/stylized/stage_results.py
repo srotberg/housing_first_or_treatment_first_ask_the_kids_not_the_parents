@@ -328,8 +328,7 @@ def write_tables(p1, r1, p2, r2):
          f'${p1.pi_base:.3f}$')]),
         ('Income', [
         (r'$\psi_{ui}$', 'Income support replacement rate', 'DOL, statutory UI rates', f'${p1.repl:.2f}$'),
-        (r'$\bar y$', 'Cap on the earnings base', 'DOL, state benefit maxima', f'${p1.ycap:.2f}$'),
-        (r'$\underline y$', 'Floor under income', 'Set', f'${p1.y_floor:.3f}$')]),
+        (r'$\bar y$', 'Cap on the earnings base', 'DOL, state benefit maxima', f'${p1.ycap:.2f}$')]),
         ('Housing, drugs and the voucher', [
         (r'$p_r$', 'Rent per unit of housing services', 'Normalisation', f'${p1.pr:.2f}$'),
         (r'$p_v$', 'Price of a unit of drugs', 'Normalisation', f'${p1.p_v:.2f}$'),
@@ -382,7 +381,7 @@ def write_tables(p1, r1, p2, r2):
          mm(m1, 'homeless', pct), f'{p1.h1:.4f}', mm(m2, 'homeless', pct), f'{p2.h1:.4f}'),
         (r'$u_0$', 'Unemployment rate, BLS CPS 2014--24', pct(0.0485),
          mm(m1, 'unemployment', pct), f'{p1.u0:.4f}', mm(m2, 'unemployment', pct), f'{p2.u0:.4f}'),
-        (r'$u_1^{\dagger}$', 'SUD share of the homeless, Gutwinski et al.\\ (2021)',
+        (r'$u_1$', 'SUD share of the homeless, Gutwinski et al.\\ (2021)',
          pct(T['sud_of_homeless2']), mm(m1, 'sud_of_homeless2', pct), f'{p1.u1:.3f}',
          mm(m2, 'sud_of_homeless2', pct), f'{p2.u1:.3f}'),
         (r'$\omega_c$', 'Use of non-parents over parents, less one, NSDUH 2024', pct(0.1834),

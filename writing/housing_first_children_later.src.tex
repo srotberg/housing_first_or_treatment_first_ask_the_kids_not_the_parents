@@ -860,15 +860,13 @@ run down with nothing bequeathed.
 period, given permanent productivity $y$ and employment status $e$, is
 \begin{equation}\label{eq:inc}
 y^{g}(y,e) \;=\;
-\max\Big\{\underline y,\
 \begin{cases}
 y & \text{if } e = 1,\\[0.2em]
-\psi_{ui}\cdot\min\{y,\bar y\} & \text{if } e = 0
-\end{cases}\Big\},
+\psi_{ui}\cdot\min\{y,\bar y\} & \text{if } e = 0,
+\end{cases}
 \end{equation}
-with $\psi_{ui}$ the replacement rate, $\bar y$ a cap on the earnings base and
-$\underline y$ a floor under income in every state, which stands in for the
-transfers a household at the bottom receives. There is no other income risk.}
+with $\psi_{ui}$ the replacement rate and $\bar y$ a cap on the earnings base. There
+is no other income risk.}
 
 Each period the household chooses
 \begin{equation}\label{eq:opts}
@@ -971,8 +969,7 @@ than making a claim about preferences.} \new{risk aversion is
 $\sigma=@@s_sigma@@$, as in the quantitative model, and survival over a period is
 $\bar\phi = @@s_phi0@@$, from the Social Security Administration (SSA) period life
 table for twenty six to fifty five.} Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. \new{Income is floored at
-$\underline y=@@s_yfloor@@$ of mean income in every state.} \new{Both rental units are
+income, in line with statutory state rules. \new{Both rental units are
 set, the small one at $h_2=@@s_h2@@$ and the standard one at $h_3 = @@s_h3@@$ of mean
 income.} The voucher parameters are institutional: covered
 tenants pay $@@s_kr_pc@@$ percent of market rent, eligibility is capped at half of median income, $\kappa_V = @@s_kv@@$, and $\pi_V = @@s_pv@@$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
@@ -982,12 +979,7 @@ Households (PSH), published by HUD.
 same risk, so the SUD rate is participation times $\pi_d$, and $\pi_d$ is the ratio
 of the two in NSDUH 2024, $@@s_t_sud@@$ percent of adults aged 26 and over carrying a
 moderate or severe SUD against $@@s_t_part@@$ percent using, which is
-$\pi_d=@@s_pid@@$. The unemployment probability with the disorder is held at
-$u_1=@@s_u1@@$, the value an earlier round of the fit gave it on the SUD share of the
-homeless, because the share turned out to fall in $u_1$: a larger job-loss penalty
-deters use so strongly among the poor that the disorder moves up the income
-distribution and off the street. The share is reported beside it in
-Table~\ref{tab:int}.}
+$\pi_d=@@s_pid@@$.}
 
 \subsubsection{Internal calibration}
 
@@ -1019,7 +1011,12 @@ a shelter $h_1$ are matched to a homelessness rate of $@@s_t_homeless@@$ percent
 the top of the band the quantitative model is held within. The unemployment
 probability without the disorder $u_0$ is matched to the aggregate unemployment rate
 of $@@s_t_unemp@@$ percent from the Bureau of Labor Statistics (BLS) Current Population
-Survey (CPS), averaged over 2014 to 2024, given $u_1$.}
+Survey (CPS), averaged over 2014 to 2024, and the unemployment probability with the
+disorder $u_1$ to the share of the homeless carrying a SUD, $@@s_t_sudhl@@$ percent in
+the meta-analysis of Gutwinski et al.\ (2021). That share falls as $u_1$ rises: with
+participation held on its target, a larger job-loss penalty deters use most among the
+poor, for whom losing a job means losing the home, so the disorder moves up the income
+distribution and off the street.}
 
 \begin{table}[!tb]
 \centering
@@ -1032,8 +1029,7 @@ Survey (CPS), averaged over 2014 to 2024, given $u_1$.}
 \caption{Internally calibrated parameters, by stage}\label{tab:int}
 \sbox{\ntbox}{\input{tables/tab_internal}}\usebox{\ntbox}
 \tabnote{Note: stage 1 is the model of Section~\ref{sec:env}, without the child;
-stage 2 adds the child of Section~\ref{sec:kids} and refits every parameter with it.
-$u_1^{\dagger}$ is held at an earlier round's value and its moment is reported only;
+stage 2 adds the child of Section~\ref{sec:kids} and refits every parameter with it;
 $\omega_c$ exists only once the child does.}
 \end{table}
 
