@@ -21,8 +21,13 @@ publish() {
     cp "$TMP" "$HERE/$LOG"
     git add "$HERE/$LOG" $(for f in $EXTRA; do echo "$HERE/$f"; done) 2>/dev/null
     git commit -q -m "$1$TRAILER" || return 0
+    # FROM A DETACHED HEAD TOO: some containers check the branch out detached, and a push
+    # by branch name then has no local branch to send (the 1.5 x 0 scan, 23:45).  Rebase
+    # onto the fetched tip and push HEAD to the branch.  -X theirs keeps this worker's own
+    # version of a file on a conflict (in a rebase "theirs" is the commit being replayed).
     for i in 1 2 3 4; do
-        git pull -q --rebase -X theirs origin "$BRANCH" && git push -q -u origin "$BRANCH" && return 0
+        git fetch -q origin "$BRANCH" && git rebase -q -X theirs FETCH_HEAD && \
+            git push -q origin HEAD:"$BRANCH" && return 0
         git rebase --abort 2>/dev/null
         sleep $((2 ** i))
     done
