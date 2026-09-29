@@ -17,13 +17,15 @@ inside), warm-started from the last one.  The bottom is bisected in TRUNC_FLOOR 
 2.4 passes at all.
 
 u1 is either held (a number) or FITTED ('fit') on the SUD share of the homeless, 21.7 per
-cent, with b refit on participation at every trial, inside each round of the fit.
+cent, with b refit on participation at every trial, inside each round of the fit, on the
+rising branch of the share (see fit_u1).
 
 usage:  STYLIZED_WORKERS=<n> python3 bottom_bound.py <u1 | fit>
 """
 import sys
 import numpy as np
 import calibrate as C
+import stylized as ST
 import stage_results as R
 from stylized import with_
 from calibrate import stats, TARGET
@@ -34,24 +36,37 @@ mode = sys.argv[1]
 FIT_U1 = mode == 'fit'
 
 
-def fit_u1(q, iters=12):
-    """u1 on the SUD share of the homeless, b refit at every trial; direction read off the
-    endpoints, and the nearer endpoint kept, with a warning, if the target is outside."""
+def fit_u1(q, iters=10):
+    """u1 on the SUD share of the homeless, ON THE RISING BRANCH, b refit at every trial.
+
+    The share is hump-shaped in u1 (22:15 run, other parameters held): it rises at first,
+    because more households with the disorder lose their job and have no insurance, and
+    falls at high u1, because the risk deters use and changes who uses.  A bracket from u0
+    to 0.50 compared the two ends and landed on the falling side in two rounds out of
+    three.  The author's requirement is that raising u1 raises the share, so the share is
+    traced on a grid up to 0.20, its peak found, and the target solved between u0 and the
+    peak.  If the target is above the peak the peak is kept; if it is below the share at
+    u0 the lowest u1 is kept; both say so."""
     def share(v):
         return stats(SC.with_b(with_(q, u1=v)))['sud_of_homeless2']
-    lo, hi = q.u0 + 1e-3, 0.50
-    s_lo, s_hi = share(lo), share(hi)
     tgt = TARGET['sud_of_homeless2']
-    print(f'     u1 bracket: share {100*s_lo:.2f} at u1 {lo:.4f}, {100*s_hi:.2f} at {hi:.2f} '
-          f'(target {100*tgt:.1f}; {"RISES" if s_hi > s_lo else "FALLS"} in u1)', flush=True)
-    if (s_lo - tgt) * (s_hi - tgt) > 0:
-        v = lo if abs(s_lo - tgt) < abs(s_hi - tgt) else hi
-        print(f'     TARGET OUTSIDE the bracket; u1 kept at {v:.4f}', flush=True)
-        return SC.with_b(with_(q, u1=v))
-    rising = s_hi > s_lo
+    grid = [q.u0 + 1e-3, 0.06, 0.08, 0.10, 0.13, 0.16, 0.20]
+    grid = sorted({max(g, q.u0 + 1e-3) for g in grid})
+    sh = [share(g) for g in grid]
+    k = int(np.argmax(sh))
+    print('     u1 curve: ' + '  '.join(f'{g:.3f}:{100*v:.1f}' for g, v in zip(grid, sh)) +
+          f'  (target {100*tgt:.1f}; peak at u1 {grid[k]:.3f})', flush=True)
+    if sh[0] >= tgt:
+        print(f'     share already at or above target at u1 = u0 + 0.001; u1 kept at {grid[0]:.4f}', flush=True)
+        return SC.with_b(with_(q, u1=grid[0]))
+    if sh[k] < tgt:
+        print(f'     TARGET ABOVE THE PEAK; u1 kept at the peak {grid[k]:.4f}', flush=True)
+        return SC.with_b(with_(q, u1=grid[k]))
+    j = next(i for i in range(1, k + 1) if sh[i] >= tgt)
+    lo, hi = grid[j - 1], grid[j]
     for _ in range(iters):
         mid = 0.5 * (lo + hi)
-        if (share(mid) > tgt) == rising:
+        if share(mid) >= tgt:
             hi = mid
         else:
             lo = mid
@@ -73,7 +88,9 @@ def full_fit(q, rounds=3):
 def trial(q, tf):
     yV = SC.set_grid(tf)
     q = full_fit(with_(q, yV=yV))
-    neg = sum(period1_negative_values(q, pol)['cells'] for pol in ('HF', 'TF'))
+    # the check reads V1, which needs the child damage solved on these parameters
+    qc = ST.solve_child_damage(q)
+    neg = sum(period1_negative_values(qc, pol)['cells'] for pol in ('HF', 'TF'))
     m = stats(q)
     print(f'  TRIAL TRUNC_FLOOR {tf:.3f}: lowest income {C.YG[0]:.4f}  period-1 negative states {neg}  '
           f'homeless {100*m["homeless"]:.3f} (target {100*TARGET["homeless"]:.2f}) h1 {q.h1:.5f}  '

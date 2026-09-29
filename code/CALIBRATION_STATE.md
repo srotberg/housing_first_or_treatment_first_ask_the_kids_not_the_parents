@@ -42,6 +42,12 @@
   the running script. Briefs now say: start with run_in_background=true, log to /tmp, copy
   into the repo only to commit. Relaunched 22:10: bottom_bound fit and 0.10, scan 0.05,
   0.20, 0.30. Only the u1 0.10 calibrated-grid result from 22:00 survived.
+- 22:20 both bottom_bound runs crashed at the first period-1 check: chdmg unsolved on the
+  fitted parameters (my bug; the scan's report solves it first, bottom_bound did not).
+  Before crashing the fitted-u1 run showed the SUD share is HUMP-SHAPED in u1 with the
+  rest held: u0 vs 0.50 read 28.7/23.4, 25.9/33.1, 21.7/18.5 in three rounds, while u1 0.10
+  gave 38. fit_u1 now traces the share on u0..0.20, finds the peak, and solves the target
+  on the rising branch only. Relaunched.
 - Found by the smoke test: at the calibrated grid the poorest households have a negative
   value of life whatever the rule (flow utility at income 0.108 with rent 0.05).
 
