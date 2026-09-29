@@ -1,0 +1,34 @@
+floor TRUNC_FLOOR 1.8: lowest income 0.180, sigma_y 1.1614, median 0.564, mean 1.000, median / mean 0.564; ui_sud 0.0; VSL target 84.0
+   round 0: cbar 0.0868 fshare 0.429% gam 0.4678 h1 0.040648 u0 0.0485 aleph 10.331 kap 0.1379 b 0.04511 | hspend 26.7 homeless 0.680 unemp 4.93 vsl 80.6 r_use 0.475 part 8.90 SUD share of homeless 26.16
+     u1 curve: 0.050:20.6  0.060:23.6  0.080:25.2  0.100:24.6  0.130:22.5  0.160:25.7  0.200:28.1  (target 21.7; peak at u1 0.200)
+   after u1, round 0: u1 0.0534 u0 0.0483 SUD share of homeless 21.68 homeless 0.657 part 8.86 r_use 0.467
+   round 0: cbar 0.0865 fshare 0.420% gam 0.4720 h1 0.039828 u0 0.0483 aleph 10.471 kap 0.1363 b 0.04787 | hspend 26.8 homeless 0.587 unemp 4.85 vsl 83.9 r_use 0.464 part 8.89 SUD share of homeless 24.04
+     u1 curve: 0.049:22.7  0.060:23.8  0.080:24.6  0.100:24.1  0.130:22.9  0.160:25.6  0.200:27.8  (target 21.7; peak at u1 0.200)
+     share already at or above target at u1 = u0 + 0.001; u1 kept at 0.0493
+   after u1, round 1: u1 0.0493 u0 0.0485 SUD share of homeless 22.69 homeless 0.584 part 8.91 r_use 0.462
+   round 0: cbar 0.0865 fshare 0.421% gam 0.4727 h1 0.039933 u0 0.0485 aleph 10.448 kap 0.1359 b 0.04905 | hspend 26.9 homeless 0.579 unemp 4.85 vsl 84.2 r_use 0.794 part 9.28 SUD share of homeless 21.58
+     u1 curve: 0.049:21.6  0.060:22.0  0.080:23.2  0.100:22.6  0.130:21.8  0.160:24.2  0.200:26.5  (target 21.7; peak at u1 0.200)
+   after u1, round 2: u1 0.0554 u0 0.0482 SUD share of homeless 21.74 homeless 0.577 part 8.77 r_use 0.955
+  RESULT ui_sud 0 u1 0.055 (u0 0.0482): SUD share of homeless 21.74 (target 21.7)  P(homeless|SUD) 3.47  homeless 0.577  part 8.77  SUD 3.63  r_use 0.955  hsmall 41.7
+     bottom 10% y 0.18-0.23  share of users   0.0%  use rate  0.00%  P(homeless|SUD)  0.00%
+     10-25%     y 0.23-0.33  share of users   0.0%  use rate  0.00%  P(homeless|SUD)  0.00%
+     25-50%     y 0.33-0.57  share of users  85.4%  use rate 29.75%  P(homeless|SUD)  4.07%
+     50-75%     y 0.58-1.09  share of users   0.0%  use rate  0.00%  P(homeless|SUD)  0.00%
+     top 25%    y 1.14-8.71  share of users  14.6%  use rate  5.14%  P(homeless|SUD)  0.00%
+  grid: lowest income 0.180, sigma_y 1.1614, means test yV 0.2821
+  PERIOD 1 value of life (the requirement), HF: 51 negative states holding 0.642% of households; lowest -2.655 at {'y': 0.18001720327819748, 'state': 3, 'inc': 0.09000860163909874, 'uses': False}; lowest before the draws 1.113 at y 0.180
+  PERIOD 1 value of life (the requirement), TF: 51 negative states holding 0.642% of households; lowest -2.655 at {'y': 0.18001720327819748, 'state': 3, 'inc': 0.09000860163909874, 'uses': False}; lowest before the draws 1.113 at y 0.180
+  period 2, every cell (information): 144 negative; lowest -0.643 at {'y': 0.18001720327819748, 'a': 0.0, 'd': 1, 'used': 0, 'policy': 'TF'}
+  period 2, occupied (information), HF: 0 negative cells holding 0.000% of period-2 households; lowest inf at None
+  period 2, occupied (information), TF: 0 negative cells holding 0.000% of period-2 households; lowest inf at None
+  PARAMS repl 0.5 ui_sud 0 cbar 0.0864985 h2 0.1 h3 0.4 gam 0.472718 h1 0.0399334 u0 0.0482401 u1 0.0554082 aleph 10.4476 kap 0.135869 b 0.0481005 th 0.166651 yV 0.282147
+  SUD share around the fitted u1 (b refit): u1 0.0504: 21.75  u1 0.0554: 21.74  u1 0.0604: 22.04  u1 0.0654: 22.37
+  u1 above u0 by +0.0072; raising u1 does NOT raise the SUD share of the homeless here
+  CLEARING aleph 11.948 (fitted 10.448) gives a VSL of 101.0 with the rest held
+  GRADIENT CHECK (mortality off, b refit to participation 8.77): users' income / average must stay above 1
+     u1 0.048: users income / average 4.197 (not reversed)  participation 8.77  SUD share of homeless 0.00
+     u1 0.100: users income / average 4.197 (not reversed)  participation 8.77  SUD share of homeless 0.00
+     u1 0.200: users income / average 4.197 (not reversed)  participation 8.77  SUD share of homeless 0.00
+     u1 0.300: users income / average 4.197 (not reversed)  participation 8.77  SUD share of homeless 0.00
+     u1 0.500: users income / average 4.197 (not reversed)  participation 8.77  SUD share of homeless 0.00
+cloud_run: exit code 0 at 23:40
