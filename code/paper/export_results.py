@@ -273,10 +273,6 @@ out['x_tr_hchild_b1_pc'] = pc(100 * (hc_b1 / hc0 - 1))
 # and in percentage points, the author 29 September: a relative change beside two levels
 # read as inconsistent with them
 out['x_tr_hchild_b1_pp'] = f'{abs(100 * (hc_b1 - hc0)):.2f}'
-# against the children born in the long run, the author 29 September ("but above you
-# wrote that it goes to 1.06!"): three numbers, three objects, and the word that says
-# which is larger comes from them
-out['x_tr_hchild_vs_lr'] = 'less than' if hc_b1 < child_homeless('tf85') else 'more than'
 # the direction word the prose takes, from the numbers, not typed
 out['x_tr_hchild_b1_dir'] = 'rises' if hc_b1 > hc0 else 'falls'
 # and ALL children at home in each of the first ten years, the cross section on the same
