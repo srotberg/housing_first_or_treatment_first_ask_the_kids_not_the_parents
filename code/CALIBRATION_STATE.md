@@ -1,3 +1,19 @@
+# 29 September 20:50: FOOD STAMPS TESTED AND SWITCHED OFF (author: keep the model simple); psi SCAN
+
+- Stage 1 with food assistance at the full model's target (cbar 0.077, 0.42 per cent of labour
+  income; test_fs_s1_cloud.txt): strict negative value-of-life cells 6,252 -> 2,884, worst
+  -21.6 -> -4.6, cutoff productivity 0.24 -> 0.21; use still U-shaped (bottom decile 41 per
+  cent); u1 + 0.03 still lowers the SUD share of the homeless (19.55 -> 15.81).
+- Author: "I rather not have the food stamps if it's not critical. I want to make the model
+  simple." cbar stays 0 (code kept, exact switch-off); the value-of-life bound alone needs the
+  lowest productivity near 0.25. Food-stamp cloud runs archived.
+- psi scan at the stage-1 food-stamp point, no refit: psi 0.5/0.35/0.25/0.15 -> street possible
+  up to y 0.20/0.30/0.42/0.72, homelessness 0.58/0.99/1.42/2.16, participation 8.9/4.9/3.4/2.6,
+  SUD share of the homeless 19.5/9.7/6.2/4.1. Lowering psi puts users at risk and they stop.
+- Open, for the author: (a) psi 0.5, no food stamps, the bound; u1 set at 16.25 and the share
+  reported; or (b) a low psi (UI lasts six months against a 30-year spell) with food stamps as
+  the floor, a smaller long-term-non-employment u0, and the bound.
+
 # 29 September 20:15: THE STYLIZED "USERS" AT THE BOTTOM ARE BUYING A SUD TO DIE (decompose_use.py)
 
 - At the stage 2 calibration, 62 per cent of the bottom decile (69 per cent of all users) "use":
