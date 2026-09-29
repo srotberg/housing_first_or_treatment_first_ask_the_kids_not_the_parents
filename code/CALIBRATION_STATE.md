@@ -1,3 +1,30 @@
+# 29 September 03:40: SECTIONS 4-7 AUDITED AGAINST THE CODE -- what is fixed, and what is for the author
+
+Three read-only audits (Sections 4, 5, 6-7), each finding verified before the paper changed; commit e478e24b.
+Fixed in the paper (red): see that commit. NOT fixed, FOR THE AUTHOR:
+- omega_c: 0.06 lowers drug use 17.9 per cent against the published omega_c = 0 benchmark (b 9.89, unconverged:
+  block move 3.6e-2 against 1e-3), i.e. removing the child raises use 21.8 per cent against the data's 18.3; against
+  the omega_c = 0 run taken to convergence (b 9.06) the rise is 11.5. Section 2 says the weight "is set so that ...
+  raises drug use by the same 18.3 percent" -- not true as run. (The author ruled on 23 September that the
+  published benchmark stands.)
+- kappa_x: 0.9329 coded against 0.62 implied by the 0.2 per cent WTP at this benchmark (known since 28 Sept).
+- Welfare accounting: a newborn's lifetime welfare charges kappa_x H in childhood only; V(1,.) has none (kappa_x
+  appears only at f90 21635, 23328, 23451 and 28690, the last behind a switch that is 0). About 0.004 CEV points
+  at tf85 -- below the reported precision -- but inconsistent with the stylized model and the paper's criterion.
+  Also V(1,.) carries the newborn's OWN child at omega_c (flow and D), a TRANSITION_LESSONS section 7 item.
+- Social security and the SSI floor are applied to productivity (mean one at entry), not average earnings: the
+  floor is 0.110 of average labour income (1.62), not 0.177; if the intent was the average wage, benefits are
+  1.6 times too low.
+- Undocumented settings now stated in Section 5 but without a source: the entry spread (sd 0.309, persistence
+  0.5), the grid span (2.69 / 3.0 sd) and the bottom node (0.009).
+- The voucher paid to a shelter-dweller on the secant path (28 Sept 22:35) -- Section 4 states the intended rule.
+- data/DATA_APPENDIX.md is stale in several places (g, kappa_phi_H, lambda_m, delta_d, social security, h_2,
+  kappa_uem, p_det/p_fp); the paper matches the code in each.
+- Notation clashes in Section 4: phi (survival) vs varphi (tax curvature); a (assets) vs a(y); N (normal) vs the
+  newborn kernel; epsilon(j) / epsilon_s / epsilon; S(y) / S_v / script S; tau (treatment) vs the tax taus.
+- The transition's all-alive measure (ALLALIVE) exists only in utils; the paper reports cohorts only, as
+  TRANSITION_LESSONS section 1 warns against. The Discussion section is still a plan (ladder, delta_h).
+
 # 29 September 01:56: CONTAINER RESTART KILLED RESTART 3 IN LOOP 0'S BACKWARD PASS (period 19, 41 of 59 done); RELAUNCHED
 
 - Killed about 01:53. The backward pass keeps no checkpoint, so loop 0 starts again from the same seeds (restart
