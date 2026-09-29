@@ -270,6 +270,9 @@ w = [MB[t][t - 1] for t in range(1, 26)]
 hc_b1 = sum(share[t][t - 1] * w[t - 1] for t in range(1, 26)) / sum(w)
 out['x_tr_hchild_b1'] = f'{100 * hc_b1:.2f}'
 out['x_tr_hchild_b1_pc'] = pc(100 * (hc_b1 / hc0 - 1))
+# and in percentage points, the author 29 September: a relative change beside two levels
+# read as inconsistent with them
+out['x_tr_hchild_b1_pp'] = f'{abs(100 * (hc_b1 - hc0)):.2f}'
 # the direction word the prose takes, from the numbers, not typed
 out['x_tr_hchild_b1_dir'] = 'rises' if hc_b1 > hc0 else 'falls'
 # and ALL children at home in each of the first ten years, the cross section on the same
