@@ -1,3 +1,13 @@
+# 29 September 01:56: CONTAINER RESTART KILLED RESTART 3 IN LOOP 0'S BACKWARD PASS (period 19, 41 of 59 done); RELAUNCHED
+
+- Killed about 01:53. The backward pass keeps no checkpoint, so loop 0 starts again from the same seeds (restart
+  3's: price t=1 0.905872, pi_V t=1 0.083132, from relaunch2_loop0_2232) on the same binary (md5 aed5b190, items
+  1-9). The killed run's 7 output files are in code/trtf60/restart3_killed_0155; PARAM_HANDOVER.txt restored from
+  PARAM_HANDOVER.kept.txt; start-up HANDOVER and seed lines identical to the killed run's. Relaunched 01:56
+  (task b90rf06c3). About 3.4 hours lost: at ~5 minutes a period the backward pass ends near 07:00 and loop 0
+  near 10:30-12:00; the first children's-homelessness lines (item 8) print in its forward pass from ~07:00.
+- Nothing else ran beside it after 01:33 (the Figure 1 scan, stage_results.py 1 --figure-only, finished then).
+
 # 29 September 00:10: THE STYLIZED MODEL, BUILT IN STAGES AND RECALIBRATED AT EACH
 
 - code/stylized/stages.py: stage 1 (no child: xi = 1, omega_c = 0, delta_d = 0) exits at iteration 500 with every
