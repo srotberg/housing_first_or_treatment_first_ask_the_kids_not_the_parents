@@ -1,3 +1,18 @@
+# 29 September 03:55: STYLIZED MODEL RECALIBRATED (no income floor, u1 fitted) AND SECTION 3 REBUILT ON IT
+
+- Stage 1 (stages.py, floor off, u1 live with sign -1 as probe_u1.py measured): iteration 350, every row inside 1.4
+  per cent; u1 0.0775 puts the SUD share of the homeless on 21.7; kappa_phi_d 2.33, aleph 10.03.
+- Stage 2 (the child): with u1 live it ran 875 passes and parked u1 on its floor 0.0486 (u0 0.0485) with the share
+  20.6 against 21.7 -- out of reach once the child is in (calibrated_stage2_u1free_it875.json). Continued with u1
+  held (--hold=u1): exits at 25 more passes, worst 1.94; omega_c 0.0023, aleph 12.32.
+- Results (stage_results.py 1 / 2 / tables, stage_transition.py): stage 1 none / TF / HF participation 9.49 / 1.53 /
+  9.02, 8.0 per cent worse off under TF, none better; stage 2 TF beats HF by 1.446 (0.378 childhood, 1.062 adult);
+  stage 3 kappa_x 0.439, 1.462; stage 4 omega_c = 1 nobody uses, worth 2.018 (TF closes about three quarters);
+  transition old -1.71, young -0.14, cohort 1 +1.08, cohort 2 on +1.45 (null test 0).
+- Figure 1 now scans each channel with the other at its calibrated strength and b on the calibrated participation
+  (run.OTHER_CHANNEL, run.PART_REF): both curves meet at the calibrated economy, 0.73; 3 points miss participation.
+- Section 3 rebuilt and on main (439eafa3); Table 3 rationed only; the transition figure is back.
+
 # 29 September 03:40: SECTIONS 4-7 AUDITED AGAINST THE CODE -- what is fixed, and what is for the author
 
 Three read-only audits (Sections 4, 5, 6-7), each finding verified before the paper changed; commit e478e24b.
