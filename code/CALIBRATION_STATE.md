@@ -1,3 +1,16 @@
+# 29 September 17:10: BENCHMARK ELASTICITY RUN FAILED; RERUN WITH THE BASE PRICE RESTORED
+
+- Worker session_01JaAkpU (code/ELASTICITY_RESULT_BENCH.txt, 2937db65): the measure_price_elasticity block restores
+  only price_of_addictive_good after the +10 per cent solve, so policies, value functions and statistics stay at
+  the raised price. Every later block started from the perturbed economy: the loop stopped after 5 blocks (not 12),
+  BLOCK MOVE's b is the raised-price user count, y_u is 3.2 per cent off the paper's benchmark, and the CEV null
+  failed on the childhood half. Its elasticities (participation -2.41, intensive per addict -1.005, per user -0.63,
+  stable over blocks 3-5) are NOT at the benchmark and are not quoted.
+- Rerun: session_01HMbTrAZ783Ax73qisQgD7X, the same build of 77803322 plus a base-price re-solve (the three calls)
+  after the price is restored; checks: 12 blocks, the save reached, the CEV null, BLOCK MOVE b = MOMENT b, eleven
+  moments at the last block within 1e-3 of the paper's. About 2.5 hours from 17:10.
+
+
 # 29 September 16:10: STYLIZED MODEL ON 0.6 PER CENT HOMELESSNESS, DONE; SECTION 3 TYPESET ON IT
 
 - Stage 2 converged at the author's 2.5 per cent tolerance (worst 1.42): kappa 0.119264, omega_c 0.00135,

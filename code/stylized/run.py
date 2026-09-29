@@ -187,7 +187,13 @@ def draw_who_uses(sc, curves, r_cal=None):
         ax.annotate(f'{y_end:.2f}', xy=(100 * sc[-1], y_end),
                     xytext=(4, -2), textcoords='offset points',
                     fontsize=8.5, color=col, fontweight='bold', va='center')
-    for which, col, dy in (('mortality', '#2C6FAD', 6), ('unemployment', '#D9822B', 7)):
+    # ONE START LABEL WHEN THE CURVES SHARE A START. With the other channel off both
+    # curves begin at the economy with no consequences, so the two labels printed on
+    # top of each other.
+    y0m, y0u = curves['mortality'][0], curves['unemployment'][0]
+    starts = ((('mortality', '#2C6FAD', 6), ('unemployment', '#D9822B', 7))
+              if abs(y0m - y0u) >= 0.05 else (('mortality', 'black', 6),))
+    for which, col, dy in starts:
         y0 = curves[which][0]
         ax.annotate(f'{y0:.2f}', xy=(0, y0), xytext=(2, dy),
                     textcoords='offset points', fontsize=8.5, color=col,
