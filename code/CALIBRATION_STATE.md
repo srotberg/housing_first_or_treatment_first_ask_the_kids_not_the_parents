@@ -1,3 +1,15 @@
+# 30 September 18:45: TRANSITION 3h STOPPED (superseded); CHILD-FIX POINT RUN LAUNCHED
+
+- The author: "stop the transition and do the point run". Restart 3h (pid 8916) stopped by pid in
+  loop 0's forward pass (year 3); archive code/trtf60/restart3h_killed_1837. It ran the old child
+  rule and is superseded.
+- code/build_bench_tdm_childfix.sh: the benchmark of record's build (bench_tdm: rule 5e-5, at
+  least 70 sweeps) on the source at d45b36ea; 0 errors, the same 7 warnings as bench_tdm.
+- code/pointrun_childfix.sh -> code/pointrun_childfix: the benchmark of record's handover
+  (results/reference/hf_omega_c_006_tdm/PARAM_HANDOVER.bench.txt, omega_c 0.06, kappa_x 0.9329,
+  12 frozen blocks) and seed (scan_seed); 97 HANDOVER lines identical to the reference. pid 26910,
+  OMP 4. Compare its MOMENT lines with the reference's bench.log.gz, omega_c's moment first.
+
 # 30 September 18:55: ROUND 8ac63824; RED CLEARED TO THE END OF 4.11; CHILD PENALTY RULE SETTLED
 
 - The author's comments on 4.8-4.11 and the intro, in red: what a parent spends on drugs comes
