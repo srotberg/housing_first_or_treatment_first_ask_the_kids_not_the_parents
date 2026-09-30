@@ -1,3 +1,26 @@
+# 30 September 18:55: ROUND 8ac63824; RED CLEARED TO THE END OF 4.11; CHILD PENALTY RULE SETTLED
+
+- The author's comments on 4.8-4.11 and the intro, in red: what a parent spends on drugs comes
+  out of its child's consumption (intro); the child's penalty written to the author's rule, a
+  parent that had the disorder while the child is at home, and "using does not pass it on by
+  itself"; 4.9 rewritten shorter, with the test's timing (a detected holder keeps this period's
+  payment and loses the voucher from the next; a detected applicant never receives it) and
+  imperfect enforcement where p_det is introduced; 4.10 names the sections, "conditional",
+  "law of motion"; 4.11 drops 1{v>0}, D(y) conditioned on d=0 / d>=1, kappa_x H's absence
+  explained, the lineage sentence out. Every indicator written as a multiple, not an exponent
+  ((27), (28), q0/q1, (30)); (27) and (30) now on two lines.
+- THE CHILD PENALTY IN THE FULL MODEL (author, 30 September): penalise the child if the parent had
+  a SUD before J_K; NO v>0. Found: child_continuation_value charged the whole D(y) on the drug
+  choice (since 30 August, 304e9ed4; kept 13 September, 3d6bf367, on Claude's reasoning, never the
+  author's), and the newborn draw penalised on the disorder AT DEATH at any age. Option 1
+  approved: the newborn's parent taken when its child leaves (death before J_K, weighted by the
+  death probability, or J_K with weight one), penalised on the latched ever-SUD bit; the parent's
+  charge on ever-SUD only. The stylized model (omega*pi(v)*Delta) is right as it is.
+  NEXT: the Fortran change, then a point run at the benchmark's parameters compared with the
+  benchmark of record (author: "see if the model calibrates very similarly"); omega_c expected to
+  rise. The running transition (3h) is superseded once the change is in.
+- Splice sec2/splice_r55.py, baseline 27a93391; red kept from 4.12 on.
+
 # 30 September 16:50: ROUND 93bd6955; RED CLEARED TO THE END OF 4.8
 
 - 5 comments, in red: the stylized kappa_x footnote now V((1-w)c; 0) = V(c; H), H the homelessness
