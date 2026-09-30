@@ -1,3 +1,18 @@
+# 30 September 02:45: CONTAINER RESTART (02:41:32) KILLED T=60 RESTART 3e; 3f LAUNCHED DETACHED
+
+- 3e (pid 4874, 00:32) died with the container at 02:41, run.log last written 02:39 in
+  loop 0's backward pass at period 30 of 59 (age 19).  The backward pass writes no
+  checkpoint, so 3f restarts it from the same seeds (drug price and pi_V of 00:00; start-up
+  .dat files identical to 3c's archive; PARAM_HANDOVER.txt from .kept).  Lost: 2 h 10 min.
+- Archive: trtf60/restart3e_killed_0241.  3f: pid 513, 02:43, same detached launch line as
+  3e; seeds read 59 of 59, 100 HANDOVER lines identical to 3e's.  No watcher: the harness
+  ended 3e's at its 2 h limit and says not to restart one that had the longest timeout; the
+  engine firings check the run every ten minutes.
+- Measured: the backward pass runs about 13.5 periods an hour (30 in 2 h 10 min), so the
+  whole of it takes about 4.4 h.  Container restarts today at 23:58 and 02:41, 2 h 43 min
+  apart; at that rate the backward pass may never finish.  For the author: it needs a
+  checkpoint inside the backward pass, which is a change to the frozen Fortran.
+
 # 30 September 02:40: ROUND ffc0db4c TYPESET; SECTION 3 RESTRUCTURED; WTP AS A SHARE OF INCOME
 
 - Red cleared to the end of Section 3 (author); the 41 comments in red.  3.7 ends with the
