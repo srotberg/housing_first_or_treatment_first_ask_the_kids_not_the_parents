@@ -352,8 +352,7 @@ model the deterrence is large enough that no household holding a voucher chooses
 use in the long run, and a household deterred by Treatment First from using never
 acquires the disorder, keeps more of its resources for its children, and its children
 inherit better draws. In the stylized model Treatment First @@s2_homeless_dir@@
-childhood homelessness as well, from
-$@@s2_homeless_hf_i@@$ to $@@s2_homeless_tf_i@@$ percent of children, because fewer
+childhood homelessness as well, \new{by about $@@s2_homeless_chg_pc@@$ percent}, because fewer
 households have a SUD and lose their jobs with no income support, and fewer are poor for having been born to a parent with the disorder; the
 quantitative model does not share this last result regarding childhood homelessness. In the transition,
 the old and the adults alive at the reform lose $@@s4_tr_old_abs@@$ and
@@ -411,7 +410,9 @@ $@@x_tf_b_pc@@$ percent and the SUD by $@@x_tf_sud_pc@@$ percent, but raises
 homelessness by $@@x_tf_h_pc@@$ percent. The externalities it removes outweigh the
 ones it creates: a newborn gains $@@x_tf_cev@@$ percent of lifetime consumption,
 $@@x_tf_child_share_pc@@$ percent of it during childhood, from its parent spending more on its
-consumption and housing instead of on drugs, and the rest as an adult, through higher earnings, even as childhood
+consumption and housing instead of on drugs, and the rest as an adult, \new{only about
+$@@x_lr_draw_pc@@$ percent of that through the higher earnings of a child whose parent is free
+of the disorder}, even as childhood
 homelessness rises by $@@x_tf_hchild_pc@@$ percent, from $@@x_hchild0@@$ to
 $@@x_tf_hchild1@@$ percent of children. An earnings penalty for growing up in a
 shelter would not reverse this result: the share of children in shelters
@@ -1351,8 +1352,8 @@ percent and the share carrying the disorder from $@@s2_sud_hf@@$ to $@@s2_sud_tf
 percent, so fewer children enter adult life with the penalty, and the gain is
 $@@s2_cev_tf_kid@@$ percent in childhood, because parents spend more of their
 resources on them instead of on drugs, and $@@s2_cev_tf_adult@@$ percent in adult
-life, where the child enters with a better draw. Homelessness is lower too, $@@s2_homeless_tf@@$ against
-$@@s2_homeless_hf@@$ percent, because fewer households have a SUD and lose their jobs
+life, where the child enters with a better draw. \new{Treatment First @@s2_homeless_dir@@
+homelessness too, by about $@@s2_homeless_chg_pc@@$ percent}, because fewer households have a SUD and lose their jobs
 with no income support, and fewer are themselves poor for having been born to a
 parent with the disorder, so their income is higher.
 
@@ -1983,9 +1984,10 @@ drug targets raised $@@c_uplift_pc@@$ percent above the data: participation to
 $@@c_b_target_pc@@$ percent rather than $@@c_b_data@@$, and the SUD rate to
 $@@c_sud_target_pc@@$ percent rather than $@@c_sud_data_pc@@$. In the second step
 $\omega_c$ is raised, holding every other parameter where the first step left it, to
-the value at which the weight on the child lowers drug use by $@@c_b_fall_pc@@$ percent,
-which is meant to reproduce the gap between parents and non-parents in the data; the
-entry for $\omega_c$ below reports how close it comes. The raised targets are therefore the economy
+\new{the point of a scan closest to a fall in drug use of $@@c_omega_c_data@@$ percent, the
+gap between parents and non-parents in the data, where the weight on the child lowers drug
+use by $@@c_b_fall_pc@@$ percent. The data's gap is a rise, the use of non-parents over
+parents, and the entry for $\omega_c$ below compares the two on that footing.} The raised targets are therefore the economy
 without the child's weight, and the data are what the benchmark has to reach once
 the weight is in. The benchmark every experiment starts from is the economy at the end
 of the second step, and it is what the Model column of each table reports: drug
@@ -2095,18 +2097,20 @@ is $@@c_theta_model@@$ percent, against
 $@@c_theta_data@@$ percent from retail drug spending in Midgette et al.\ (2019) and the
 incomes of adults aged 26 and over who use in NSDUH 2024. Section 1 of the data
 appendix builds the target from those two. The ratio is of totals: the average of each
-user's own ratio is far higher, $@@c_theta_mor_pc@@$ percent in the model, because the
-poorest users spend most of what little they have.}
+user's own ratio is far higher, $@@c_theta_mor_pc@@$ percent \new{across all users} in the
+model, \new{because users spend out of savings as well as income, and a user with no income
+counts as spending all of it}.}
 
 \item[$b$, whether a household uses at all.] The marginal value of the drug goes
 as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a household
 with little to spend buys nothing. As $b$ rises use falls, so the
 private cost and the externality both fall, and housing assistance is
 less likely to be translated into more spending on drugs: $b$ affects the
-degree of moral hazard. \new{Its value is chosen in the first step so the model
-generates a participation rate of $@@c_b_target_pc@@$ percent, the NSDUH 2024 rate for
-adults aged 26 and over raised as described above, which leaves the benchmark at
-$@@c_b_model@@$ percent against $@@c_b_data@@$.}
+degree of moral hazard. \new{Its value is chosen in the first step to target a participation rate of
+$@@c_b_target_pc@@$ percent, the NSDUH 2024 rate of a drug use disorder of any severity
+among adults aged 26 and over, raised as described above; the first step reached
+$@@c_b_off_pc@@$ percent, and the benchmark is at $@@c_b_model@@$ percent against
+$@@c_b_data@@$.}
 \item[\new{$\pi_d$, the chance that a year of use starts a SUD.}] \new{This is what
 makes using \emph{risky}, and it is the step that turns drug consumption into a
 disorder: a household that uses any amount in a year acquires the disorder with this
@@ -2127,7 +2131,7 @@ value of life. Both policies reduce these deaths, Treatment First by curing
 and Housing First too, because recovery is less likely when homeless. \new{Its
 instrument is the income of users, because the reversal is what it is responsible for:
 a higher death risk leaves only those with less to lose willing to use. It was fitted to
-that moment and then pinned at $@@c_kappa_phi_d_value@@$, within the range of two to
+that moment \new{in earlier rounds, and then set at $@@c_kappa_phi_d_value@@$ and held}, within the range of two to
 nine that studies of excess mortality in SUD report and below the six to ten of
 Hjorth\o j et al.\ (2023), when moving it alongside $b$ kept the stock of households
 with the disorder from settling. At that
@@ -2147,8 +2151,8 @@ negative value of life in equilibrium, so death is never an optimal outcome.}
 \paragraph{What using and being homeless cost, and the voucher.} Both
 policies work on this block, from opposite ends: each parameter says how bad a state
 is, so each sets what a voucher is worth to a household in that state and
-what being cured of that state is worth. The voucher itself closes the
-block. This is because it is the instrument that acts on all of them. Because the child inherits a higher chance of landing in these
+what being cured of that state is worth. \new{The voucher and the transfer at entry close the
+block, the voucher because it is the instrument that acts on all of them.} Because the child inherits a higher chance of landing in these
 states, everything here moves the private value and the externality together.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[\new{$\kappa^{ue}_{d}$, how much harder a job is to find with a SUD.}] \new{The
@@ -2165,7 +2169,7 @@ household with little to lose from dying is one for which the mortality cost of
 using is small. When $h_1$ rises, \new{a shelter} is less bad, so the private
 cost of homelessness falls, a voucher is worth less, and the externality on
 the child likelier to be unhoused falls with it. \new{Its value is chosen so that the
-homelessness rate lies between $@@c_h_1_data@@$ percent of households. The floor is
+homelessness rate lies \new{within} $@@c_h_1_data@@$ percent of households. The floor is
 HUD's 2023 PiT count, which counts a single night and so misses households homeless at
 other times of the year\new{; the ceiling is the share homeless at some point over a year,
 from Burt et al.\ (2001)}. Within the band $h_1$ is held, because it moves drug
@@ -2191,8 +2195,10 @@ This parameter determines how low consumption can go, which equals the
 transfer food assistance pays at zero income. When it rises, the private cost of every bad
 state falls, so a voucher is worth less at the margin and the externality on a
 child likelier to reach those states falls too\new{, while the budget that pays for it
-tightens.} It is calibrated internally to food stamp spending over total labour income,
-\new{$@@c_underline_c_data@@$} percent, from the United States Department of Agriculture (USDA).
+tightens.} It is calibrated internally to food stamp spending over \new{output},
+\new{$@@c_underline_c_data@@$} percent\new{: outlays from the United States Department of
+Agriculture (USDA) over GDP in the data, and over output, which in this model is labour
+income, in the model}.
 \item[$\pi_V$, the chance of drawing a voucher.] This is the policy dial itself.
 \new{Increase it and the private gain rises and two externalities fall mechanically,
 the child's years in a shelter and the aggregate disamenity of homelessness, while the
@@ -2225,8 +2231,8 @@ treating SUD cannot touch it. As it rises a SUD causes more mental illness,
 so the private cost of using rises, and the externality rises further, because the
 child of a user now inherits a higher chance of illness that is a consequence
 of the productivity penalty. Treatment First's return rises as $\iota$ rises,
-because curing the disorder now prevents some cases of SMI too. It is set externally at two, from the
-Danish registers in Nielsen et al.\ (2017).
+because curing the disorder now prevents some cases of SMI too. It is set externally at \new{$@@c_iota_value@@$, between the hazard ratios of $1.34$ for any
+SUD and $2.74$ for opioid use disorder in the} Danish registers \new{of} Nielsen et al.\ (2017).
 \item[$\lambda_m$, the annual chance of recovering from SMI.] This parameter
 governs how long an episode of mental illness lasts: it is the hazard of leaving
 the SMI state each year, so it sets the persistence of the illness rather than
@@ -2259,10 +2265,10 @@ $@@c_kappa_eu_m_value@@$ from an earlier round. Its update rule is on the SMI sh
 the homeless, the moment $\kappa^{ue}_{m}$ carries, so it has no moment of its own here.
 Employment given SMI, which it would otherwise answer to, is reported with the
 untargeted moments against the midpoint of the range for high-disability diagnoses in
-Mechanic et al.\ (2002), and the model is well above it. A child of a SUD-treated parent is less
+Mechanic et al.\ (2002), and the model is well above it. \cut{A child of a SUD-treated parent is less
 likely to end up with SMI, which raises its earnings and lowers its chance of being
 unhoused, so part of Treatment First's return appears in the health of the children of
-those treated for a SUD rather than in the treated household's own drug use.}
+those treated for a SUD rather than in the treated household's own drug use.}}
 \item[$\mu_m$, the SUD recovery multiplier for SMI.] This parameter is the
 second direction of the
 chain: not only does a SUD increase the chance of SMI, but SMI also means
@@ -2275,7 +2281,7 @@ Bradizza et al.\ (2006), whose review covers people carrying both a SUD
 and a mood, anxiety, schizophrenia-spectrum or personality disorder.
 Section~8 of the data appendix takes their relapse rates to the multiplier.
 \item[$\kappa_{\phi m}$, the mortality multiplier for SMI.] The chain's last link,
-and the channel that makes it matter for welfare, not through income. As it
+\new{and the one through which it shortens life}. As it
 rises deaths among the mentally ill rise, so the private cost rises, and the
 externality rises with it, because a child born to a parent with a SUD is
 more likely to acquire a SUD and through it SMI, and therefore more likely to die
@@ -2386,10 +2392,10 @@ headcount grows, which loads whichever policy houses more people. Setting it hig
 mostly favour Housing First, so the value used errs on the high side, and a ranking
 that still favours Treatment First survives an assumption unkind to it. The estimate is
 the willingness to pay for ending homelessness in the contingent valuation of
-Loubi\`ere et al.\ (2020), $@@c_kappa_x_data@@$ percent of consumption, the upper end
-of its estimates. The value used, $@@c_kappa_x_value@@$ in units of utility, is worth
-$@@c_kappa_x_model@@$ percent of consumption at the benchmark, where
-$@@c_kappa_x_data@@$ percent would imply $@@c_kx_implied@@$.}
+Loubi\`ere et al.\ (2020), $@@c_kappa_x_data@@$ percent of \new{income}, the upper end
+of its estimates. The value used, $@@c_kappa_x_value@@$ in units of utility, \new{was set to
+it, and at the benchmark it is worth $@@c_kappa_x_model@@$ percent of consumption, the same
+willingness to pay measured against consumption rather than income}.}
 \end{description}
 
 \paragraph{Drug market.} One parameter of the drug market belongs here.
@@ -2446,8 +2452,9 @@ the bundle of consumption and housing that the drug is then weighed against, so 
 fixes what a dwelling is worth against consumption. Because housing comes in four sizes,
 the shelter included, rather than any size, the share of spending that goes on housing is not $\gamma$
 itself, as it would be with a continuous choice, and $\gamma$ is chosen for the share
-it produces: $@@c_gamma_data@@$ percent of expenditure net of drugs, as shelter plus
-utilities take in the 2024 Consumer Expenditure Survey. It was fitted in an earlier
+it produces: $@@c_gamma_data@@$ percent of expenditure, as shelter plus
+utilities take in the 2024 Consumer Expenditure Survey\new{, which records no illicit drugs;
+the model's share is of expenditure including them}. It was fitted in an earlier
 round and held at $@@c_gamma_value@@$, where the share is $@@c_gamma_model@@$ percent. As
 $\gamma$ rises housing is worth more against consumption, households buy more of it,
 and that expenditure share rises with it.}
@@ -2496,7 +2503,8 @@ productivity is persistent but not permanent: it follows an autoregressive proce
 with persistence $\rho_z=@@c_rho_z_value@@$ and shocks of standard deviation
 $\sigma_\upsilon$, on $@@c_nodes@@$ nodes, and it is frozen at its last working value in
 retirement. The spread at entry combines that scale with a persistent component of the
-entry draw, set with a standard deviation of $@@c_sd_fixed@@$ and a persistence of
+entry draw, set with a standard deviation of $@@c_sd_fixed@@$ \new{before the common scale
+that $\sigma_\upsilon$ carries, $@@c_sd_fixed_scaled@@$ after it,} and a persistence of
 $@@c_rho_fixed@@$, which gives a standard deviation of $@@c_sd_entry@@$ in logs. The grid
 spans $@@c_kkk_lo@@$ standard deviations below the mean and $@@c_kkk_hi@@$ above, with
 its lowest node held at $@@c_bottom_prod@@$ of mean productivity, and separations are
@@ -2536,8 +2544,8 @@ Section~\ref{sec:fullcal} multiplies, so it is the base the SUD, homelessness an
 mental illness hazards are measured against.}
 
 \item[\new{$\varsigma_m(j)$, the age profile of SMI onset.}] \new{The shape of onset
-across ages, taken from the share of adults carrying SMI at each age in NSDUH 2024 and
-normalised to one at age $26$, so that $\omega_m$ in Table~\ref{tab:eleven} sets its
+across ages, \new{the onset that reproduces a log-linear fit to} the share of adults
+carrying SMI at each age in NSDUH 2024\new{,} normalised to one at age $26$, so that $\omega_m$ in Table~\ref{tab:eleven} sets its
 level alone. It sits here rather than there because it is the baseline profile, in the
 same way the life table is: what this paper adds is $\iota$, the multiplier a SUD puts
 on that onset, and that is where the interaction lives.}
@@ -2572,16 +2580,16 @@ balanced by $\pi_V$ instead.}
 \paragraph{Social security benefits and programmes' rules.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[\new{$S(y)$, social security.}] \new{Retirement income follows the statutory
-primary insurance amount: it replaces $@@c_s_y_value@@$ of the household's earnings
-at its last working productivity between the SSA's two bend points, on earnings capped
-at the taxable maximum, with the Supplemental Security Income payment as a floor. The
+primary insurance amount: it replaces $@@c_s_y_value@@$ of the household's \new{productivity at its last working
+age below the first of the SSA's two bend points, between them and above the second, up to
+the taxable maximum}, with the Supplemental Security Income payment as a floor. The
 formula and the floor apply to productivity, in units in which it averages one at
 entry, so the floor, $@@c_underline_s_value@@$ in those units, is
 $@@c_ssi_floor_earn@@$ of the benchmark's average labour income. As it rises the old are richer, so the value of a life
 still to be lived rises and with it the cost of a disorder that shortens it.}
 \item[$\psi_{ui}$ and $\bar y$, unemployment insurance.] These two set the UI replacement
 rate and the cap on the earnings it is paid on. I set them to fifty percent and one
-times average income, respectively, taking both from the statutory replacement rates
+times average \new{labour} income, respectively, taking both from the statutory replacement rates
 and state benefit maxima that the Department of Labor compiles in its comparison of
 state UI laws
 (\url{https://oui.doleta.gov/unemploy/statelaws.asp}).
@@ -2591,7 +2599,8 @@ cutoff for eligibility and the tenant's contribution, and I take both from HUD's
 rules. I set them to half of median income and thirty
 percent, respectively. The first is the very low-income limit HUD publishes
 annually with its income limits
-(\url{https://www.huduser.gov/portal/datasets/il.html}); the second is the share of rent a tenant pays when a voucher covers the rest, under the Housing Choice
+(\url{https://www.huduser.gov/portal/datasets/il.html}); the second is \new{the share of its income a tenant pays towards the rent, the voucher
+paying the rest up to the payment standard}, under the Housing Choice
 Voucher programme
 (\url{https://www.hud.gov/helping-americans/housing-choice-vouchers}).
 
@@ -2645,8 +2654,8 @@ and the homelessness one needs a word about its construction. Bassuk et al.\ (19
 case-control study of $220$ homeless mothers and $216$ low-income housed mothers, so
 both arms are poor and the comparison isolates transmission from the poverty that
 accompanies it. The share whose primary female caretaker had ever been homeless was
-$14.2$ against $8.3$ percent, and for the male caretaker $10.3$ against $4.4$, which
-are odds ratios of $1.8$ and $2.4$. A ratio taken against the general population
+$14.2$ against $8.3$ percent, and for the male caretaker $10.3$ against $4.4$, which\new{,
+computed on the two samples' counts,} are odds ratios of $1.8$ and $2.4$. A ratio taken against the general population
 instead would be far larger and would credit the housing penalty with everything else
 that differs between poor children, which Cobb-Clark and Zhu (2015) show is
 substantial: among the households of the Journeys Home panel (Scutella
@@ -2655,13 +2664,13 @@ were more than twice as likely to have been in foster care.
 
 \input{tables/tab_untargeted}
 
-\new{Every parameter is disciplined, either by a moment the model is asked to
+\new{\cut{Every parameter is disciplined, either by a moment the model is asked to
 reproduce or by an estimate taken from outside it, and
 Tables~\ref{tab:eleven} and~\ref{tab:stdparams} name which for each. Three rest on a
 single study rather than on a literature: the treatment effect on recovery $g$, the
 recovery multiplier for SMI $\mu_m$ and the price elasticity of drug supply
 $\varepsilon_s$. Of these only $g$ carries a headline result, so it is reported as a
-range rather than as a number.}
+range rather than as a number.}}
 
 
 %======================================================================
@@ -2692,10 +2701,10 @@ Section~\ref{sec:fullcal}.}
 \new{The detection rate is $p_{\mathrm{det}}=@@x_tf_pdet_pc@@$ percent, chosen rather
 than measured, since no programme publishes a detection rate for a drug screen in a
 housing programme, and no household that meets the condition is flagged. The release rate is $\psi_x=@@x_psi_x@@$, an expected
-exclusion of @@x_ban_years@@ years. The test costs $c_{\mathrm{test}}=@@f_cost_per_drug_test_pc@@$
-percent of average earnings, the assay cost in the state fiscal notes of the public
-assistance programmes that have tried testing, which is a lower bound on the cost of
-administering a screen once staffing is counted.}
+exclusion of @@x_ban_years@@ years. The test costs $c_{\mathrm{test}}=@@x_ctest_earn_pc@@$
+percent of average earnings, @@x_ctest_vs_assay@@ the assay cost in the state fiscal notes of
+the public assistance programmes that have tried testing, which is itself a lower bound on the
+cost of administering a screen once staffing is counted.}
 
 %----------------------------------------------------------------------
 \subsection{\new{The welfare criterion}}\label{sec:cev}
@@ -2722,7 +2731,7 @@ problem and with the flow value of being alive, $(\xi-1)\big[U(\new{X_c})+\aleph
 the disamenity of aggregate homelessness $\kappa_x H$ that it bears like everyone else,
 averaged at each age over the households of that age, summed over the years it lives
 at home and discounted to its birth; the adult part is its value on entering the economy
-at age 26, discounted by the same years. Its own childhood counts in full here, not at
+at age 26, discounted by the same years. Its own childhood counts at weight one here, not at
 its parent's weight $\omega_c$, and that is what brings the externality on the child
 into welfare; its adult part is the value its own problem maximises, so the child it
 raises in turn enters there at the weight $\omega_c$. The
@@ -2758,52 +2767,119 @@ a sum over sixty ages, every health state and every survival path. The benchmark
 choices are held fixed, its newborn's expected lifetime value, childhood included, is
 evaluated at a grid of proportional scalings of consumption, and $\Delta$ is the
 scaling at which that value equals the counterfactual's, found by interpolating on
-the curve.}
+the curve. Run with no change of policy, the counterfactual's code itself reads
+$@@x_cev0@@$ percent off that curve, and every CEV reported is net of it.}
 
 %----------------------------------------------------------------------
 \subsection{\new{The long run}}\label{sec:longrun}
 
-\new{In the long run Treatment First cuts drug use by $@@x_tf_b_pc@@$ percent and the
+\new{Table~\ref{tab:longrun} sets the long run under Treatment First beside the benchmark
+and two alternatives. Treatment First cuts drug use by $@@x_tf_b_pc@@$ percent and the
 share of households carrying a SUD by $@@x_tf_sud_pc@@$ percent, from $@@x_sud0@@$ to
-$@@x_tf_sud1@@$ percent of households, and it raises homelessness by $@@x_tf_h_pc@@$
-percent. Users who lose their vouchers leave the programme, so it costs less at a
-given $\pi_V$, and $\pi_V$ rises from $@@x_tf_piv0@@$ to $@@x_tf_piv1@@$, by
-$@@x_tf_piv_pc@@$ percent, to spend the same budget. Taking users out of the drug market
-lowers the drug price by $@@x_tf_price_pc@@$ percent, which draws some households back:
-the number who use without carrying the disorder falls by $@@x_tf_new_pc@@$ percent,
-less than drug use as a whole.}
+$@@x_tf_sud1@@$ percent of households, and it @@x_tf_h_dir@@ homelessness by $@@x_tf_h_pc@@$
+percent. Users who lose their vouchers leave the programme, so it costs less at a given
+$\pi_V$, and $\pi_V$ rises from $@@x_tf_piv0_pc@@$ to $@@x_tf_piv1_pc@@$ percent, by
+$@@x_tf_piv_pc@@$ percent, to hold net government revenue at its benchmark level. Taking
+users out of the drug market lowers the drug price by $@@x_tf_price_pc@@$ percent, which
+draws some households back and so works against the reform. The third column shows by how
+much: with a drug supply elasticity of $@@x_lr_e5_elast@@$ rather than
+$@@f_drug_supply_elasticity@@$, the price falls by only $@@x_lr_e5_price_pc@@$ percent, drug
+use falls by $@@x_lr_e5_b_pc@@$ percent rather than $@@x_tf_b_pc@@$, and homelessness
+@@x_lr_e5_h_dir@@ by $@@x_lr_e5_h_pc@@$ percent.}
+
+\begin{table}[!tb]\centering
+\caption{\new{The long run under each policy}}\label{tab:longrun}
+\begingroup\scriptsize
+\sbox{\ntbox}{\input{tables/tab_longrun}}\usebox{\ntbox}
+\tabnote{\new{Note: per cent unless the row says otherwise; each column is a steady state.
+Housing First is the benchmark. Treatment First screens with a detection rate of
+$@@x_tf_pdet_pc@@$ percent, and $\pi_V$ holds net government revenue at its benchmark level;
+the elastic supply is the same experiment with a drug supply elasticity of
+$@@x_lr_e5_elast@@$. The last column is Housing First with $\omega_c=1$ and $\pi_V$ at its
+benchmark value. Children are those of households aged 26 to 50, the years a child lives at
+home. The CEV is against the benchmark, net of the no-policy run's own.}}
+\endgroup
+\end{table}
+
+\new{The last column keeps Housing First but has each parent weigh its child as itself,
+$\omega_c=1$: the drug use parents would choose if they took in full what their use does to
+their children. Treatment First delivers $@@x_lr_tf_of_om_pc@@$ percent of the fall in drug
+use that full altruism would bring, $@@x_tf_b_pc@@$ percent against $@@x_lr_om_b_pc@@$. The two
+@@x_lr_h_split@@ homelessness: under full altruism it @@x_lr_om_h_dir@@ by $@@x_lr_om_h_pc@@$
+percent, and the share of children in a shelter @@x_lr_om_hchild_dir@@ by
+$@@x_lr_om_hchild_pc@@$ percent. $\pi_V$ is held at its benchmark value in this column, so
+net revenue is not, and it has no CEV, since the weight on the child changes the welfare
+function itself.}
 
 \new{What the reform does to children runs in both directions. The share of children
-living with a parent who carries a SUD falls from $@@x_sudchild0@@$ to
-$@@x_tf_sudchild1@@$ percent, by $@@x_tf_sudchild_pp@@$ percentage points, and the share
-of children in a shelter rises from $@@x_hchild0@@$ to $@@x_tf_hchild1@@$ percent, by
-$@@x_tf_hchild_pp@@$ points.}
+living with a parent who carries a SUD @@x_tf_sudchild_dir@@ from $@@x_sudchild0@@$ to
+$@@x_tf_sudchild1@@$ percent, by $@@x_tf_sudchild_pp@@$ percentage points, and the share living
+with a parent who uses drugs @@x_lr_paruse_dir@@ from $@@x_lr_paruse0@@$ to $@@x_lr_paruse1@@$
+percent. The share of children in a shelter @@x_tf_hchild_dir@@ from $@@x_hchild0@@$ to
+$@@x_tf_hchild1@@$ percent, by $@@x_tf_hchild_pp@@$ points. The rise in homelessness is
+largest among households aged 35 to 44, whose children are of school age: their homelessness
+@@x_lr_hl_b2_dir@@ by $@@x_lr_hl_b2_pc@@$ percent, against $@@x_lr_hl_b1_pc@@$ percent at 26
+to 34.}
 
-\new{A newborn is better off under Treatment First by $@@x_tf_cev@@$ percent of lifetime
-consumption. About $@@x_tf_child_share_pc@@$ percent of its gain in lifetime utility
-comes in childhood, from a parent who spends more on the consumption and housing they
-share and less on the drug, and the rest in adult life, from the higher productivity a
-child draws when its parent does not carry the disorder.}
+\new{A newborn is @@x_tf_cev_dir@@ off under Treatment First by $@@x_tf_cev@@$ percent of
+lifetime consumption. About $@@x_tf_child_share_pc@@$ percent of its gain in lifetime utility
+comes in childhood, from a parent who spends more on the consumption and housing they share
+and less on the drug. The rest comes in adult life, and only about $@@x_lr_draw_pc@@$ percent
+of that from the higher productivity a child draws when its parent does not carry the
+disorder. The @@x_lr_draw_rest@@ part is a higher value of adult life at a given draw: the
+value of entering the economy at 26 rises at @@x_lr_v26_all_up@@ level of productivity, about
+$@@x_lr_v26_ratio@@$ times as much at the lowest as at the highest, and the economy a child
+enters has a cheaper drug and a voucher that is easier to get. With the more elastic supply,
+the gain @@x_lr_e5_cev_dir@@ to $@@x_lr_e5_cev@@$ percent, $@@x_lr_e5_child_pc@@$ percent of it
+in childhood.}
 
 %----------------------------------------------------------------------
 \subsection{\new{The transition}}\label{sec:ftrans}
 
 \new{The transition starts from the benchmark, with the reform landing at the start of
 the first year, and runs sixty years to the Treatment First steady state; $\pi_V$ and the
-drug price are solved year by year, so that the budget and the drug market clear in
-every year and not only at the end. The numbers below come from the first iteration of
-that computation, which has not converged, and are preliminary.}
+drug price are solved year by year, so that the drug market clears in every year and the
+budget in every year after the first, whose spending is set by the vouchers households
+already hold. The numbers below come from a computation that has not yet converged, and are
+preliminary. Figure~\ref{fig:ftrans} shows the path.}
 
-\new{The reform lands on an economy that already has the benchmark's stock of households
-with a SUD. Recovery is slow, so for many of them the disorder lasts, and their demand
-keeps the drug price above its long-run level for years: they are the first to lose
-their vouchers, and the elevated price deters young adults who have not yet started.
-In the first decade the number of drug users without a SUD falls by up to
-$@@x_tr_new_peak_pc@@$ percent and homelessness rises by up to $@@x_tr_h_peak_pc@@$
-percent, against $@@x_tf_new_pc@@$ and $@@x_tf_h_pc@@$ percent in the long run. Children
-born at the reform gain about $@@x_tr_cev_b1@@$ percent of lifetime consumption, against
-$@@x_tf_cev@@$ percent in the long run, because their parents are the young adults the
-elevated price keeps from starting.}
+\begin{figure}[!tb]
+\centering
+\includegraphics[width=\textwidth]{figures/full_transition.pdf}
+\caption{\new{The transition from Housing First to Treatment First, quantitative model}}\label{fig:ftrans}
+\notes{\textwidth}{\new{Note: panels (a) to (e) are by year since the reform, which lands at
+the start of year 1, with the benchmark as year 0; the dashed orange line is the Housing
+First benchmark, the dotted blue line the Treatment First long run and the solid blue line
+the path. Children are those of households aged 26 to 50. Panel (f) is the CEV of each cohort
+born on the path, against the benchmark, by its year of birth. The path is from a computation
+that has not yet converged, and from year $@@x_trf_shade_from@@$ it drifts away from the
+steady state it should reach; those years are shaded, and so are the cohorts born from year
+$@@x_trf_shade_born@@$, whose adult lives start in them.}}
+\end{figure}
+
+\new{Drug use falls at once: $@@x_trf_b1_share_pc@@$ percent of its long-run fall happens in
+the first year, and the share of parents using drugs falls from $@@x_trf_paruse0@@$ to
+$@@x_trf_paruse1@@$ percent, @@x_trf_paruse1_vs_lr@@ its long-run level of $@@x_trf_paruse_lr@@$ percent. The
+share of households carrying a SUD falls slowly, because recovery is slow: half of its
+long-run fall is done by year $@@x_trf_sud_half_yr@@$, and nine tenths by year
+$@@x_trf_sud_90_yr@@$. That stock keeps demand for the drug up, and the drug price stays
+above its long-run level for $@@x_trf_price_above_yrs@@$ years. The elevated price deters
+young adults who have not yet started: in the first decade the number of drug users without
+a SUD falls by up to $@@x_tr_new_peak_pc@@$ percent, against $@@x_tf_new_pc@@$ percent in the
+long run.}
+
+\new{Homelessness overshoots. It rises by $@@x_trf_h_peak_pc@@$ percent at its peak, in year
+$@@x_trf_h_peak_yr@@$, against $@@x_trf_h_lr_pc@@$ percent in the long run, and then declines
+slowly toward it. So does the share of children in a shelter, from $@@x_trf_hchild0@@$ to
+$@@x_trf_hchild_peak@@$ percent in year $@@x_trf_hchild_peak_yr@@$, against
+$@@x_trf_hchild_lr@@$ percent in the long run.}
+
+\new{Children born at the reform gain about $@@x_tr_cev_b1@@$ percent of lifetime
+consumption, against $@@x_tf_cev@@$ percent in the long run, because their parents are the
+young adults the elevated price keeps from starting, and children born in the first ten
+years gain $@@x_trf_cev_dec1@@$ percent on average. Of the adults alive at the reform,
+$@@x_trf_alive_better_pc@@$ percent are better off under it, but only
+$@@x_trf_alive_sud_better_pc@@$ percent of those who carry a SUD when it lands.}
 
 %======================================================================
 \section{Discussion}\label{sec:discussion}

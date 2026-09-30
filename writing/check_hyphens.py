@@ -52,7 +52,11 @@ VERBS = {'draws', 'is', 'are', 'was', 'were', 'has', 'have', 'had', 'can', 'coul
          'being', 'been', 'becomes', 'remains', 'stays', 'falls', 'rises',
          'matters', 'holds', 'follows', 'means', 'implies', 'and', 'or',
          'of', 'to', 'the', 'a', 'in', 'it', 'that', 'which', 'than', 'but',
-         'so', 'for', 'with', 'at', 'by', 'if', 'when', 'where', 'as'}
+         'so', 'for', 'with', 'at', 'by', 'if', 'when', 'where', 'as',
+         # a preposition after the phrase makes it a noun too: "the long run under
+         # Treatment First", "in transition and the long run through children's"
+         'under', 'through', 'beside', 'against', 'from', 'on', 'into', 'over',
+         'after', 'before', 'until', 'between'}
 
 
 def prose(text):

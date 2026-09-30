@@ -120,7 +120,10 @@ def names(S, C, R):
     # cohorts: the first born whose CEV is within a tenth of a point of the long run's
     cev = [(int(r['born']), r['cev_pc'] - CEV0) for r in C]
     out['x_trf_cev_b1'] = f'{cev[0][1]:.1f}'
-    out['x_trf_cev_b10'] = f'{cev[9][1]:.1f}'
+    # the first decade's cohorts on average: single cohorts are noisy on an unconverged pass
+    out['x_trf_cev_dec1'] = f'{sum(c for b, c in cev[:10]) / 10:.2f}'
+    out['x_trf_shade_from'] = str(UNCONVERGED_FROM)
+    out['x_trf_shade_born'] = str(UNCONVERGED_FROM - 25)
     # the drug price: the years it stays above its long-run level
     p = col('p_drug')
     out['x_trf_price_above_yrs'] = str(next(i for i, v in enumerate(p) if v <= tf['p_drug']))

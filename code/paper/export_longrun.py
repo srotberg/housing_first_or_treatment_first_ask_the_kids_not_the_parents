@@ -170,7 +170,7 @@ def main():
         body.append(' & '.join(line) + ' \\\\')
     tab = ['% Written by code/paper/export_longrun.py from results/counterfactuals_cf_fix2;',
            '% edit the script, not this file. Caption and note are in the paper.',
-           '\\begin{tabular}{@{}L{150pt}rrrr@{}}', '\\toprule',
+           '\\begin{tabular}{@{}L{190pt}rrrr@{}}', '\\toprule',
            ' & Housing & Treatment & Treatment First, & Housing First, \\\\',
            ' & First & First & elastic supply & $\\omega_c=1$ \\\\',
            '\\midrule'] + body + ['\\bottomrule', '\\end{tabular}']
@@ -207,6 +207,10 @@ def main():
     out['x_lr_paruse0'] = f"{100 * D['null_share']['par_use']:.2f}"
     out['x_lr_paruse1'] = f"{100 * D[t]['par_use']:.2f}"
     out['x_lr_hl_b2_dir'] = 'rises' if hb1[2] > hb0[2] else 'falls'
+    out['x_lr_e5_h_dir'] = 'rises' if D[e]['h'] > D['null_remote']['h'] else 'falls'
+    # whether full altruism and Treatment First move homelessness the same way
+    same = (D[o]['h'] > D['null_remote']['h']) == (D[t]['h'] > D['null_share']['h'])
+    out['x_lr_h_split'] = 'move together on' if same else 'part ways on'
     m0, v0 = D['null_share']['adult']['mass'], D['null_share']['adult']['vf']
     m1, v1 = D[t]['adult']['mass'], D[t]['adult']['vf']
     # blocks: [clean parent, -, penalised, -]
@@ -217,6 +221,7 @@ def main():
     assert abs(tot * beta25 / adult_utils - 1) < 0.02, \
         f'ADULTDECOMP {tot * beta25:.4f} does not reproduce the adult part {adult_utils:.4f}'
     out['x_lr_draw_pc'] = f'{100 * comp / tot:.0f}'
+    out['x_lr_draw_rest'] = 'larger' if comp / tot < 0.5 else 'smaller'
     # the value of entering adult life, by productivity node: bottom against top, clean parent
     nb, nt = nodes('benchmark'), nodes('tf85')
     g = [a - b for a, b in zip(nt, nb)]

@@ -58,6 +58,10 @@ ALLOW = [
     ('1.80', 'odds ratios'),          # Bassuk et al., not the ladder curvature
     ('2.41', 'odds ratios'),
     ('0.40', 'social security'),      # the retirement replacement rate
+    # Milby et al. (2005)'s weeks abstinent and Nielsen et al. (2017)'s hazard ratio; the long-run
+    # table's 4.48 (drug use with an elastic supply) and 2.74 (its CEV) are unrelated
+    ('4.48', 'weeks against'), ('4.48', 'in the homeless, so housing'),
+    ('2.74', 'opioid use disorder'),
     ('25', 'ages'), ('25', '25 to 44'), ('25', '25--34'), ('25', '25--48'),
     ('30', 'Housing costs above'), ('30', 'quadratic in age'),
     ('35', '35 to 54'), ('35', '35--44'),

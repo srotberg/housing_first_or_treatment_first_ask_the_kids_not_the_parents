@@ -97,6 +97,7 @@ out['x_tf_h_pc'] = pc(tf['homelessness h_1']['pc'])
 out['x_tf_price_pc'] = pc(tf['drug price']['pc'])
 CEV0 = cev_log('null_share')
 out['_cev_null_share'] = CEV0
+out['x_cev0'] = f'{CEV0:.2g}'
 out['x_tf_cev'] = f"{last_cev('tf85') - CEV0:.2f}"
 out['x_tf_cev_dir'] = 'better' if last_cev('tf85') > CEV0 else 'worse'
 # the long-run gain splits about evenly between childhood and adulthood
