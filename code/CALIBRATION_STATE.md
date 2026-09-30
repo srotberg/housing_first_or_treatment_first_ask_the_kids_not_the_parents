@@ -1,3 +1,21 @@
+# 30 September 01:55: ROUND 9775f014 TYPESET; BENCHMARK ELASTICITIES IN THE PAPER
+
+- Author's 47 comments (pp. 3-18) applied in red; red cleared from the start to 3.7's Why
+  income paragraph, where the comments end.  Figure pages carried no annotation.
+- Elasticities (run 3, ELASTICITY_RESULT_BENCH.txt, PASSED 29 Sep 23:41, unread until now):
+  participation -2.40; intensive over ALL users -0.63 (author: "based on all users not just
+  addicted"; per addict -1.01).  code/paper/export_elasticity.py writes x_el_* into
+  results_numbers.json, direction words against the literature ranges the prose quotes.
+- Table 2's VSL target column reads the full model's 80 while aleph stays fitted to 84
+  (author: "just say 80, and the calibration numbers are a bit off"); y_min row dropped.
+- code/stylized/derived_names.py: arithmetic on generated names the prose quotes (costs in
+  per cent, the net effect's direction, a sixth).  The scratchpad splice imports it.
+- Stylized transition merged (stage_transition.py rerun 00:51): long run 0.461 = s2_cev_tf.
+- Open, for the author: the worse-off share (10.2) exceeds participation (8.92) partly
+  because dominance() counts whole grid cells while participation integrates the use
+  threshold within cells (9.77 on the grid); mortality alone at calibrated strength leaves
+  users at 1.24 of average, both channels together 0.74.
+
 # 30 September 00:33: T=60 RESTART 3d KILLED BY THE BACKGROUND-TASK TIME LIMIT; 3e LAUNCHED DETACHED
 
 - 3d (task bowlb663u, launched 00:00:54) was stopped at 00:31 by the harness: background

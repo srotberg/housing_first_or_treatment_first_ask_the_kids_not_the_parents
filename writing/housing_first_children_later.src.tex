@@ -285,13 +285,14 @@ value of life and moral hazard pull drug use in opposite directions, how one can
 the optimal degree of homelessness, drug use and SUD, and why the externalities
 Treatment First removes outweigh the ones it creates.
 
-In the model, an adult draws a productivity and an unemployment shock, and
+In the \new{stylized} model, an adult draws a productivity and an unemployment shock, and
 chooses how much of the drug to buy; drug users risk acquiring a SUD, and a SUD raises
-both the chance of dying before old age and the chance of losing employment, and
+the chance of dying before old age\new{,} the chance of losing employment, and
 a job lost to the disorder is not covered by unemployment insurance. It
 chooses whether to live in a shelter or in a rental, and it may hold a
 means-tested voucher, which is rationed; food assistance puts a floor under its
-consumption. Children live with their parents during the
+consumption\new{, so that all households have a positive value of life, something valuable to
+lose by dying}. Children live with their parents during the
 parents' adulthood and share their resources (except the drugs), and the weight
 a parent puts on its child is calibrated, as in the full model, to match the gap in
 drug use between parents and adults without children. The aggregate homelessness
@@ -314,10 +315,12 @@ from $@@s1_r_none@@$ times average income to $@@s1_r_mort_hi@@$ times it; the un
 it at $@@s1_r_unemp_hi@@$, against $@@s1_r_none@@$ with neither penalty. The reason is how each penalty varies with income. A fixed quantity of
 the drug costs a rich household less in utility terms than a poor household,
 which means that the utility price of using falls as income rises. A job the
-disorder costs drops a household to the same floor whatever it earned, its food
-assistance and what it saved, and because households are risk averse the utils that fall
-costs grow with income only up to a bound. Among the richer households who would
-otherwise use, it is close to a flat charge, which changes how many use but not who.
+disorder costs drops a household to the same floor \new{no matter what it earned before,
+which leaves its resources equal to its food assistance and its savings. Because risk
+aversion is above one, utility has a ceiling, so the utility lost in that fall stops
+growing with income: households well above the floor all lose about the same. For the
+richer households who would otherwise use, the penalty is then a flat charge, which
+changes how many use but not who.}
 Thus, the unemployment
 penalty cannot pull drug use down the income distribution. In contrast, mortality destroys the whole continuation
 value, including the value of being alive at all, which is worth more to
@@ -351,7 +354,7 @@ model the deterrence is large enough that no household holding a voucher chooses
 use in the long run, and a household deterred by Treatment First from using never
 acquires the disorder, keeps more of its resources for its children, and its children
 inherit better draws. In the stylized model Treatment First @@s2_homeless_dir@@
-childhood homelessness as well, by $@@s2_homeless_chg_pc@@$ percent, from
+childhood homelessness as well, from
 $@@s2_homeless_hf_i@@$ to $@@s2_homeless_tf_i@@$ percent of children, because fewer
 households are poor for having been born to a parent with the disorder; the
 quantitative model does not share this last result regarding childhood homelessness. In the transition,
@@ -661,7 +664,7 @@ decline in use that lowers the price does not bring many users back. Estimates o
 (Saffer and Chaloupka, 1999; Grossman and Chaloupka, 1998), and Grossman and
 Chaloupka (1998) find that a permanent ten percent fall in the price of cocaine raises
 the number of cocaine users by a little over eight percent. The model's
-participation elasticity, \blank, is higher than these estimates, so in the model a fall
+participation elasticity, \new{$@@x_el_part@@$}, is \new{@@x_el_part_where@@} these estimates, so in the model a fall
 in the drug price brings back more users than it would in the data. That works against
 Treatment First: while it deters use, the drop in price brings back more users
 than the evidence suggests, so the model if anything understates how much the policy reduces drug use,
@@ -672,10 +675,8 @@ $-0.3$ and $-0.8$. That same ten percent fall raises the frequency of use among 
 users by a little over three percent, and Olmstead et al.\ (2015) put the conditional
 elasticity for heroin at $-0.8$, on two research designs that share a sample of
 regular users but not an identification strategy. The model's intensive
-elasticity, \blank, is higher than these estimates as well, so a fall in the price
-raises what each remaining user buys by more than the data suggest. That too works
-against Treatment First, because what a user spends on the drug is taken out of what
-its child consumes, so the model if anything understates the gain from the intensive margin.
+elasticity\new{, measured over all users, $@@x_el_int@@$, is @@x_el_int_where@@ these estimates,
+so the model matches how much each user's purchases respond to the price.}
 
 A separate point about rational drug use follows from the findings of van Ours (1995), Saffer and Chaloupka (1999) and
 Caulkins (2001): participation responds to price, even for drugs as habit-forming
@@ -868,36 +869,37 @@ run down with nothing bequeathed.
 
 \subsubsection{Employment, income support and housing}\label{sec:support}
 
-The gap $u_1-u_0$ is the entire resource cost of the SUD, and it is the part of
-a job loss that income support does not cover. A household with a SUD loses its job
+\new{A SUD costs a household resources in one way only: it raises the chance of losing its
+job from $u_0$ to $u_1$, and income support does not cover the extra job losses.} A household with a SUD loses its job
 for the ordinary reasons anyone does, with probability $u_0$, and because of the
-disorder with the further probability $u_1-u_0$: it is dismissed for misconduct,
-a failed drug test or impairment at work, or it quits. State unemployment insurance
-laws disqualify a worker in that case (U.S.\ Department of Labor, 2024), so employment
-status takes a third value, $e=2$, for a job lost to the disorder. Income in a
+disorder with the further probability $u_1-u_0$\new{, related to at-fault dismissal}: it is dismissed for misconduct,
+a failed drug test or impairment at work. State unemployment insurance
+laws disqualify a worker in \new{those cases} (U.S.\ Department of Labor, 2024), so employment
+status \new{$e$ takes three values: working ($e=0$), out of work and covered by income
+support ($e=1$), and out of work because of the disorder and not covered ($e=2$).} Income in a
 period, given permanent productivity $y$ and employment status $e$, is
 \begin{equation}\label{eq:inc}
 y^{g}(y,e) \;=\;
 \begin{cases}
-y & \text{if } e = 1,\\[0.2em]
-\psi_{ui}\cdot\min\{y,\bar y\} & \text{if } e = 0,\\[0.2em]
+y & \text{if } e = \new{0},\\[0.2em]
+\psi_{ui}\cdot\min\{y,\bar y\} & \text{if } e = \new{1},\\[0.2em]
 0 & \text{if } e = 2,
 \end{cases}
 \end{equation}
 with $\psi_{ui}$ the replacement rate and $\bar y$ a cap on the earnings base, and
 $e=2$ has probability $u_1-u_0$ for a household with a SUD and zero for every other. There
-is no other income risk. Both replacement rates are rules, $\psi_{ui}$ and zero, and
-none is chosen: the share of the job losses of households with a SUD that go uncovered,
-$(u_1-u_0)/u_1$, follows from the two probabilities.
+is no other income risk.
 
-Food assistance is paid in kind, as in the quantitative model. A household with
+Food assistance is paid in kind. A household with
 income $y^{g}$ in a period receives
 \begin{equation}\label{eq:fs}
 F(y^{g}) \;=\; \max\{0,\ \bar c-\rho_F\,y^{g}\}
 \end{equation}
-of consumption, which it cannot spend on rent or on drugs, so its cash has to cover
-those. It is what a household lives on when it loses a job that income support does
-not cover and has nothing saved.
+of consumption, which it cannot spend on rent or on drugs, so its \new{other income} has to cover
+those. \new{I include it because it is} what a household lives on when it loses a job that income support does
+not cover and has nothing saved\new{: without it that household would consume nothing, and
+with risk aversion above one its value of life would be negative, leaving it nothing to
+lose by dying}.
 
 Each period the household chooses
 \begin{equation}\label{eq:opts}
@@ -955,10 +957,10 @@ everything and chooses housing,
 \begin{equation}\label{eq:v2}
 V_2(a',y,e',\eta',d') = \max_{\{k\}}
 \Big\{ u(c,h_k,0) \Big\},
-\qquad c = Ra' + y^{g}(y,e') - r_k(\eta')\;+\;F\big(y^{g}(y,e')\big),
+\qquad c = Ra' + y^{g}(y,e') - r_k(\eta')\;+\;F\big(y^{g}(y,e')\big)\new{\;\ge\;F\big(y^{g}(y,e')\big)},
 \end{equation}
-where the cash left after rent, $Ra'+y^{g}(y,e')-r_k(\eta')$, cannot be negative,
-and write $V_2(a',y,d') = \mathbb{E}\big[V_2(a',y,e',\eta',d')\mid y,d'\big]$ for its
+\new{where consumption cannot fall below the food assistance, which is paid in kind. I}
+write $V_2(a',y,d') = \mathbb{E}\big[V_2(a',y,e',\eta',d')\mid y,d'\big]$ for its
 expectation over the period 2 employment and voucher draws, the SUD having already
 been realised at the transition. In period 1 the household draws $(e,\eta)$ and then
 chooses housing, drug use and saving,
@@ -967,8 +969,7 @@ V_1(y,e,\eta) = \max_{\{k,\,v \ge 0,\,a' \ge 0\}}
 \Big\{ u(c,h_k,v)
 + \beta\, \mathbb{E}_{d'}\Big[\phi(d')\,V_2(a',y,d')\Big] \Big\},
 \end{equation}
-with $c = y^{g}(y,e) - r_k(\eta) - p_v v - a'\;+\;F\big(y^{g}(y,e)\big)$, the cash
-spent on rent, drugs and saving no more than $y^{g}(y,e)$, and
+with $c = y^{g}(y,e) - r_k(\eta) - p_v v - a'\;+\;F\big(y^{g}(y,e)\big)\new{\;\ge\;F\big(y^{g}(y,e)\big)}$, and
 $d'=1$ with the probability of~\eqref{eq:hazard}. Survival sits inside the expectation
 over $d'$ because it depends on which $d'$ is realised. A household uses if the value
 at its best positive $v$ exceeds the value at $v=0$.
@@ -1015,7 +1016,7 @@ Income support replaces half of previous earnings on a base capped at mean
 income, in line with statutory state rules, and nothing after a job lost to the
 disorder, which those rules treat as misconduct. Food assistance tapers at
 $\rho_F=@@s_rho_fs@@$, the benefit reduction rate of the Supplemental Nutrition
-Assistance Program (SNAP) that the quantitative model uses. The rent per unit of housing services
+Assistance Program (SNAP). The rent per unit of housing services
 $p_r$ and the price of a unit of drugs $p_v$ are normalised to one and held fixed in
 every counterfactual. Both rental units are
 set, the small one at $h_2=@@s_h2@@$ and the standard one at $h_3 = @@s_h3@@$ of mean
@@ -1028,29 +1029,19 @@ Households (PSH), published by HUD.
 The dispersion of log permanent income $\sigma_y$ is set to match how unequal
 earnings are at the bottom: in the 2022 Survey of Consumer Finances (SCF), households
 aged $26$ to $65$ with positive wage and salary income hold $@@s_t_bot50@@$ percent of
-total earnings in the poorer half of the distribution. The lognormal is cut off from
-below at $@@s_ylow@@$ of mean income, $@@s_floor_mult@@$ times the rent on the small unit,
-which is high enough that no household has a negative lifetime value at the moment it
-decides whether to use drugs. $\sigma_y$ is fitted before the floor is raised and then
-held, so on the grid the model solves the poorer half holds $@@s_bot50_real@@$ percent of
-earnings and median income is $@@s_med_mean@@$ of the mean; refitting $\sigma_y$ to keep
-the share at its target would instead stretch the top of the distribution, and with it
-the income of users relative to the mean. The weight on housing $\gamma$ is picked to match
+total earnings in the poorer half of the distribution. The weight on housing $\gamma$ is picked to match
 the $@@s_t_hspend@@$ percent of non-drug expenditure that shelter plus utilities take in
 the 2024 Consumer Expenditure Survey (CEX). The flow value
-of being alive $\aleph$ is matched to a value of a statistical life of @@s_t_vsl@@
-times average annual income, about \$@@s_t_vsl_musd@@ million against a mean household income of
+of being alive $\aleph$ is matched to a value of a statistical life of \new{@@f_vsl_data@@}
+times average annual income, about \$\new{@@s_vsl_data_musd@@} million against a mean household income of
 \$@@s_mean_hh_usd@@, which is within the range surveyed by Viscusi and Aldy (2003) once their
-estimates are put in current dollars. It is slightly above the quantitative model's
-@@f_vsl_data@@, so that at the floor above no household has a negative value of life
-when it decides whether to use drugs.
+estimates are put in current dollars.
 The pull of the first unit $b$ is chosen to match a drug participation rate of
 $@@s_t_part@@$ percent from NSDUH 2024 for respondents aged 26 and over with a disorder
 of any severity, and the weight on drugs $\theta$ to aggregate drug spending over the
 aggregate income of users, $@@s_t_dshare@@$ percent, from retail spending in Midgette et al.\ (2019) and the incomes of users in
-NSDUH 2024. The level of food assistance $\bar c$ is fitted to food stamp spending of
-$@@f_food_stamps_share_data_pc@@$ percent of labour income, the quantitative model's
-target.
+NSDUH 2024. The level of food assistance $\bar c$ is fitted \new{so that total food assistance is}
+$@@f_food_stamps_share_data_pc@@$ percent of \new{total labour income}.
 
 The mortality rate ratio $\kappa_{\phi d}$ is set to match the income of users,
 $@@s_t_ruse@@$ of the population average in NSDUH 2024, because the death risk is what decides how far down
@@ -1066,12 +1057,7 @@ disorder $u_1$ such that the share of the homeless carrying a SUD is $@@s_t_sudh
 from
 the meta-analysis of Gutwinski et al.\ (2021). That share rises with $u_1$: every job
 the disorder costs is one that income support does not cover, so a household with a SUD
-that has too little saved to pay the rent through it ends up in a shelter. The calibrated
-$u_1$ is $@@s1_v_u1@@$, @@s1_u1_over_u0@@ times $u_0$, so @@s1_unins_pc@@ percent of the job
-losses of households with a SUD go uncovered, and raising $u_1$ by half a percentage point
-raises the share from $@@s1_m_sudhl_pc@@$ to $@@s1_sudhl_up_pc@@$ percent. In stage 2,
-$u_1$ is $@@s2_v_u1@@$, @@s2_u1_over_u0@@ times $u_0$, and the share is
-$@@s2_m_sudhl_pc@@$ percent.
+that has too little saved to pay the rent through it ends up in a shelter.
 
 \begin{table}[!tb]
 \centering
@@ -1087,8 +1073,7 @@ parameters of the child enter at stage 2, in Section~\ref{sec:kids}.}
 \sbox{\ntbox}{\input{tables/tab_internal}}\usebox{\ntbox}
 \tabnote{Note: stage 1 is the model of Section~\ref{sec:env}, without the child;
 stage 2 adds the child of Section~\ref{sec:kids} and refits every parameter; $\omega_c$ exists only once the child
-does. $\sigma_y$ is fitted to the bottom half's share before the floor on income is
-raised and then held, so its model column is the share on the grid the model solves.}
+does.}
 \end{table}
 
 %======================================================================
@@ -1137,8 +1122,7 @@ The result is sharper than the statement that mortality matters more. On its own
 the mortality channel takes the income ratio from @@s1_r_none@@ with nothing switched on
 down to @@s1_r_mortonly@@ at its calibrated strength, and @@s1_r_mort_hi_dir@@
 @@s1_r_mort_hi@@ as it continues to rise to $@@s1_scanhi_pc@@$ percent of its calibrated
-value. At half of its calibrated strength the ratio is already @@s1_r_mort_half@@, and it
-crosses one between $@@s1_cross_lo_pc@@$ and $@@s1_cross_hi_pc@@$ percent of that strength.
+value.
 What mortality destroys is a continuation value,
 and a household only stops using when the expected loss of that value exceeds what
 the drug is worth to it.
@@ -1151,17 +1135,16 @@ drug use at the bottom.
 
 Why should the two channels differ at all, when in both the disorder
 punishes the household? Because the cost of only one of them rises with the household's income. A job the disorder costs is not
-covered by income support, so it drops the household to the same floor whatever it was
-earning: food assistance and whatever it saved. With a relative risk aversion of two, the
-utils lost in that fall grow with income only up to a bound, the utility of the floor
-itself, and the households who would use if nothing else stood in their way are all well
-above the floor, where the loss is close to that bound for every one of them.
-Multiplied by the $u_1-u_0$ chance of it happening, the resource channel is then a charge
-for using that is nearly the same at every income: it changes how many use, which the
-recalibration of $b$ undoes, but not which households do. What it would have to
+covered by income support, so it drops the household to the same floor \new{regardless of what it was earning. What it
+has left is just food assistance and whatever it saved. Because risk aversion is above
+one, utility has a ceiling, so how much a household loses in that fall stops growing with
+its income: two households well above the floor lose about the same, even if one earns
+twice as much as the other. The unemployment channel is therefore close to a flat charge
+on using, the same for every household that would use. It changes how many use, which
+the recalibration of $b$ undoes, but not which households do.} What it would have to
 overturn falls with income. Buying $v$ units costs a rich household almost
 nothing in consumption terms and a poor household a great deal, so the utility
-price of using \emph{falls} as income rises, and that is what puts use at the top
+price of using \emph{falls} as income rises, and that\new{, combined with the bounded loss from acquiring a SUD,} is what puts use at the top
 to begin with.
 
 Mortality is a different object. What it destroys is the whole
@@ -1185,12 +1168,12 @@ the moral hazard force, and comparing Treatment First with no programme at all
 isolates the value-of-life force.
 
 Panels A and B of Table~\ref{tab:stage1} put numbers on both, in the baseline of stage 1. With no
-programme at all, $@@s1_part_none_b@@$ percent of households use. Treatment First takes that to $@@s1_part_tf_b@@$ percent, a
+programme at all, $@@s1_part_none_b@@$ percent of households use. Treatment First takes that \new{down to} $@@s1_part_tf_b@@$ percent, a
 value-of-life force that reduces drug use by $@@s1_vol_b_abs@@$ percentage points.
-Switching to Housing First then raises it back to
+Switching to Housing First then raises it \new{@@s1_hf_vs_none@@, to}
 $@@s1_part_hf_b@@$ percent, so the moral hazard force raises drug use by $@@s1_mh_b@@$
 percentage points and the
-net effect of Housing First is $@@s1_net_b@@$ percentage points in drug use relative to
+net effect of Housing First is \new{a $@@s1_net_b_abs@@$ percentage point @@s1_net_dir@@} in drug use relative to
 no vouchers at all. Both comparisons here are between long-run steady states, each the rest point of
 the economy under a policy that has always been in place. Both forces are
 first order and they work against each other, which is the central feature of
@@ -1250,13 +1233,11 @@ $@@s1_worse_b@@$ percent of households are strictly worse off under
 Treatment First, none is better off, and those affected lose the equivalent of $@@s1_cevaff_b@@$ percent
 of consumption. Those are the households that use under Housing First and
 can draw a voucher: a household that never uses faces the same voucher rule under
-both policies and is indifferent between them. A household that uses cannot be too rich to be eligible: a job its
-disorder costs is not covered by income support and leaves it with no income, which makes
-it eligible in period 2.
+both policies and is indifferent between them. 
 
 A fixed budget does not rescue the welfare case for conditionality either. The two
-programmes cost almost the same, $@@s1_cost_tf_b@@$ of mean income per household under
-Treatment First against $@@s1_cost_hf_b@@$ under Housing First, so matching on cost
+programmes cost almost the same, \new{$@@s1_cost_tf_pc@@$ percent} of mean income per household under
+Treatment First against \new{$@@s1_cost_hf_pc@@$ percent} under Housing First, so matching on cost
 rather than on generosity would change nothing. Both programmes give a voucher to the same
 share $\pi_V$ of eligible households, and Treatment First then denies it to those that fail the
 sobriety condition, so it pays out less for that reason; the two costs are close because few of
@@ -1277,11 +1258,11 @@ through the square-root equivalence scale $\xi$, while the drug only enters the 
 \begin{equation}\label{eq:bundleskid}
 X_P=\Big[\Big(\frac{c}{\xi}\Big)^{1-\gamma}\Big(\frac{h}{\xi}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
 \qquad
-X_K=\Big[\Big(\frac{c}{\xi}\Big)^{1-\gamma}\Big(\frac{h}{\xi}\Big)^{\gamma}\Big]^{1-\theta}\,b^{\theta},
+\new{X_c}=\Big[\Big(\frac{c}{\xi}\Big)^{1-\gamma}\Big(\frac{h}{\xi}\Big)^{\gamma}\Big]^{1-\theta}\,b^{\theta},
 \end{equation}
 and the parent's flow utility in period 1 becomes
 \begin{equation}\label{eq:ukid}
-u_1(c,h,v) \;=\; U(X_P)\;+\;\omega_c\,(\xi-1)\,U(X_K)\;+\;\aleph .
+u_1(c,h,v) \;=\; U(X_P)\;+\;\omega_c\,(\xi-1)\,U(\new{X_c})\;+\;\aleph .
 \end{equation}
 The child consumes the household's consumption and housing but none of the drug, so
 a parent's drug spending reaches it only by taking consumption and housing out of what
@@ -1289,8 +1270,8 @@ they share, and it counts as $\xi-1$ of the household against the scale. The wei
 share of the child's utility that the parent takes into account. Without the drug and with
 $\omega_c=1$, the first two terms are $U(X)+(\xi-1)\,U(X)=\xi\,U(X)$, the usual form, which
 counts the household as $\xi$ adult equivalents: the parent as one and the child as the
-remaining $\xi-1$. In period 2
-the child has left, $\xi=1$, and flow utility is that of~\eqref{eq:u}.
+remaining $\xi-1$. In period 2\new{, old age,}
+the child has left \new{and the parent lives alone}, $\xi=1$, and flow utility is that of~\eqref{eq:u}.
 
 \paragraph{The child leaves.} At the end of period 1 the child leaves the
 household and becomes an adult, entering period 1 of its own life, with its own child living with it. Its productivity
@@ -1303,9 +1284,7 @@ child lived with it,
 \end{equation}
 where $\rho$ is the persistence of productivity across generations, $\bar y$ is
 average income, the variance of $\varepsilon$ keeps the spread of productivity the same
-in every generation, and $\delta_d$ is the penalty for the parent's disorder. There is
-no penalty for the parent's homelessness: a child of a homeless parent is poorer only
-because its parent was.
+in every generation, and $\delta_d$ is the penalty for the parent's disorder. 
 
 \paragraph{The parent's problem.} The child enters the parent's problem
 twice, once for each part of its life. In childhood it is the second term
@@ -1318,7 +1297,7 @@ D(y)\;=\;\mathbb{E}\big[\bar V_1(y_{\text{child}})\,\big|\,y,\,d'=0\big]
 where $\bar V_1$ is the value of entering period 1, before its draws, at the child's
 productivity from~\eqref{eq:kids}. $D(y)$ captures the direct impact of the parent's SUD on
 its child's utility, which runs through the child's earnings. It enters as a difference and not
-a level, so it costs the parent nothing unless its use makes the disorder possible. The period 1 problem~\eqref{eq:v1} becomes
+a level, so it costs the parent nothing unless its use makes the disorder possible. The period 1 problem \new{in~\eqref{eq:v1} in Section~\ref{sec:problem} then} becomes
 \begin{equation}\label{eq:v1kid}
 V_1(y,e,\eta) = \max_{\{k,\,v \ge 0,\,a' \ge 0\}}
 \Big\{ u_1(c,h_k,v)
@@ -1424,7 +1403,7 @@ use at all: participation and the SUD rate both fall to $@@s4_part_opt@@$ percen
 homelessness to $@@s4_homeless_opt@@$ percent. That allocation is worth
 $@@s4_cev_opt@@$ percent of lifetime consumption to a newborn, children and the
 disamenity counted, so Treatment First, at $@@s3_cev_tf@@$ percent, closes about
-@@s4_close_frac@@ of the distance to it by conditioning the voucher, without changing
+\new{@@s4_close_frac_a@@} of the distance to it by conditioning the voucher, without changing
 what anybody wants.}
 
 \subsubsection{The transition}\label{sec:trans}
@@ -1451,8 +1430,7 @@ the price of an option removed.}
 
 \new{Their children, the first cohort born into the reform, gain
 $@@s4_tr_c1@@$ percent: $@@s4_tr_c1_adult@@$ in adult life, since they are the first to
-enter it with the draws of parents who chose under the condition, and \new{almost nothing in childhood,
-$@@s4_tr_c1_kid@@$,} since the parents they grow up with were themselves born
+enter it with the draws of parents who chose under the condition, and \new{$@@s4_tr_c1_kid@@$ in childhood, against $@@s4_tr_c2_kid@@$ in the long run,} since the parents they grow up with were themselves born
 into the old, more penalised distribution. From the second cohort on the chain is at its
 new rest point and every cohort gains the long-run $@@s4_tr_c2@@$ percent. The cost
 falls on the two generations alive at the reform and the benefit on every generation
@@ -1537,11 +1515,11 @@ drug is the parent's alone, so the parent and the child hold the bundles
 \begin{equation}\label{eq:fbundles}
 X_P=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{h'}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
 \qquad
-X_K=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{h'}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}b^{\theta},
+\new{X_c}=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{h'}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}b^{\theta},
 \end{equation}
 and period utility is
 \begin{equation}\label{eq:futil}
-u\big(c,h',v,\tau\big) \;=\; U(X_P)\;+\;\omega_c\,(\xi_j-1)\,U(X_K)\;+\;\aleph\;-\;\tau\,\bar\tau^{u},
+u\big(c,h',v,\tau\big) \;=\; U(X_P)\;+\;\omega_c\,(\xi_j-1)\,U(\new{X_c})\;+\;\aleph\;-\;\tau\,\bar\tau^{u},
 \qquad U(X)=\frac{X^{1-\sigma}}{1-\sigma}.
 \end{equation}
 $\gamma$ is housing's share of the non-drug bundle and $\theta$ the drug's share of
@@ -1839,7 +1817,7 @@ the object the expectation in~\eqref{eq:fbellman} is taken against.}
 \begin{equation}\label{eq:fbellman}
 \begin{aligned}
 V(j,s)=\max_{\{h',\,v,\,\tau,\,a'\}}\ \Bigg\{\
-&U(X_P)+\omega_c(\xi_j-1)\,U(X_K)+\aleph-\tau\bar\tau^{u}\\[2pt]
+&U(X_P)+\omega_c(\xi_j-1)\,U(\new{X_c})+\aleph-\tau\bar\tau^{u}\\[2pt]
 &+\ \beta\,\phi(j,h',d,m)\!\int_{\mathcal S}\! V(j{+}1,s')\,
 \Gamma\big(\mathrm{d}s'\mid s,h',v,\tau\big)\\[2pt]
 &-\ \beta\,\chi_j\,\omega_c\,\max\big\{\mathbf{1}\{d\ge1\},\,\mathbf{1}\{v>0\}\big\}\,D(y)\Bigg\},
@@ -2776,7 +2754,7 @@ permanent consumption gain, and a negative one that it costs that much.
 counts the whole of its life: its childhood in its parent's household and its adult
 life after it. The childhood part is the child's own flow utility from the bundle it
 shares with its parent, counted as $\xi-1$ of the household as it is in the parent's
-problem and with the flow value of being alive, $(\xi-1)\big[U(X_K)+\aleph\big]$, less
+problem and with the flow value of being alive, $(\xi-1)\big[U(\new{X_c})+\aleph\big]$, less
 the disamenity of aggregate homelessness $\kappa_x H$ that it bears like everyone else,
 averaged at each age over the households of that age, summed over the years it lives
 at home and discounted to its birth; the adult part is its value on entering the economy
