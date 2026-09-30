@@ -1077,7 +1077,7 @@ $@@s2_m_sudhl_pc@@$ percent.}
 \centering
 \caption{Externally set parameters}\label{tab:ext}
 \sbox{\ntbox}{\input{tables/tab_external}}\usebox{\ntbox}
-\tabnote{\new{Note: stage 1 is the model of Section~\ref{sec:env}, without the child; the
+\tabnote{\new{Notes: stage 1 is the model of Section~\ref{sec:env}, without the child; the
 parameters of the child enter at stage 2, in Section~\ref{sec:kids}.}}
 \end{table}
 
@@ -1250,46 +1250,48 @@ $@@s1_worse_b@@$ percent of households are strictly worse off under
 Treatment First, none is better off, and those affected lose \new{the equivalent of} $@@s1_cevaff_b@@$ percent
 of consumption. Those are the households that use under Housing First and
 can draw a voucher: a household that never uses faces the same voucher rule under
-both policies and is indifferent between them. \new{So is a household that uses but is too
-rich to be eligible for a voucher, which is why the share is below the $@@s1_part_hf_b@@$ percent who
-use under Housing First.}
+both policies and is indifferent between them. \new{A household that uses cannot be too rich to be eligible: a job its
+disorder costs is not covered by income support and leaves it with no income, which makes
+it eligible in period 2.}
 
 A fixed budget does not rescue the welfare case for conditionality either. The two
 programmes cost almost the same, $@@s1_cost_tf_b@@$ of mean income per household under
 Treatment First against $@@s1_cost_hf_b@@$ under Housing First, so matching on cost
-rather than on generosity would change \new{nothing. Under Treatment First a household that
-draws a voucher does not use, so the two programmes pay the same subsidy to the same households.} So a case for conditionality in
+rather than on generosity would change \new{nothing. Both programmes give a voucher to the same
+share $\pi_V$ of eligible households, and Treatment First then denies it to those that fail the
+sobriety condition, so it pays out less for that reason; the two costs are close because few of
+the households that draw a voucher fail the condition.} \new{Therefore, the} case for conditionality in
 this model has to come from elsewhere: from what a household's drug use does to
 somebody else.
 
 %======================================================================
 \subsection{\new{Stage 2: the child}}\label{sec:kids}
 
-\new{One of the externalities modelled in this paper is the one imposed on the
+\new{\new{Some} of the externalities modelled in this paper \new{are the ones} imposed on the
 children of households with a SUD. This stage adds the child, as the quantitative
 model has it, and refits the model with the child in place.}
 
 \paragraph{\new{The child in the household.}} \new{Each household raises one child
-through its first period. The child shares the household's consumption and housing
-through the square-root equivalence scale $\xi=\sqrt2$, while the drug is the parent's
-alone, so the parent and the child hold different bundles,
+\new{during its adulthood period}. The child shares the household's consumption and housing
+through the square-root equivalence scale \new{$\xi$}, while the drug \new{only enters the utility of the parent}, so the parent and the child hold different bundles,
 \begin{equation}\label{eq:bundleskid}
 X_P=\Big[\Big(\frac{c}{\xi}\Big)^{1-\gamma}\Big(\frac{h}{\xi}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
 \qquad
 X_K=\Big[\Big(\frac{c}{\xi}\Big)^{1-\gamma}\Big(\frac{h}{\xi}\Big)^{\gamma}\Big]^{1-\theta}\,b^{\theta},
 \end{equation}
-and period 1 flow utility becomes
+and \new{the parent's flow utility in period 1} becomes
 \begin{equation}\label{eq:ukid}
 u_1(c,h,v) \;=\; U(X_P)\;+\;\omega_c\,(\xi-1)\,U(X_K)\;+\;\aleph .
 \end{equation}
 The child consumes the household's consumption and housing but none of the drug, so
 a parent's drug spending reaches it only by taking consumption and housing out of what
-they share, and it counts as $\xi-1$ of the household against the scale. In period 2
+they share, and it counts as $\xi-1$ of the household against the scale. \new{The weight $\omega_c$ is the
+share of the child's utility that the parent takes into account.} In period 2
 the child has left, $\xi=1$, and flow utility is that of~\eqref{eq:u}.}
 
 \paragraph{\new{The child leaves.}} \new{At the end of period 1 the child leaves the
-household and becomes an adult, entering period 1 of its own life. Its productivity
-carries its parent's, and it is cut if the parent acquired the disorder while the
+household and becomes an adult, entering period 1 of its own life\new{, with its own child living with it}. Its productivity
+\new{is correlated with its parent's}, and it is \new{permanently reduced} if the parent acquired the disorder while the
 child lived with it,
 \begin{equation}\label{eq:kids}
 \log y_{\text{child}} \;=\; \rho\log y+(1-\rho)\log\bar y+\varepsilon
@@ -1311,18 +1313,18 @@ D(y)\;=\;\mathbb{E}\big[\bar V_1(y_{\text{child}})\,\big|\,y,\,d'=0\big]
 -\mathbb{E}\big[\bar V_1(y_{\text{child}})\,\big|\,y,\,d'=1\big]\;\ge\;0,
 \end{equation}
 where $\bar V_1$ is the value of entering period 1, before its draws, at the child's
-productivity from~\eqref{eq:kids}. The period 1 problem~\eqref{eq:v1} becomes
+productivity from~\eqref{eq:kids}. \new{$D(y)$ captures the direct impact of the parent's SUD on
+its child's utility, which runs through the child's earnings. It enters as a difference and not
+a level, so it costs the parent nothing unless its use makes the disorder possible.} The period 1 problem~\eqref{eq:v1} becomes
 \begin{equation}\label{eq:v1kid}
 V_1(y,e,\eta) = \max_{\{k,\,v \ge 0,\,a' \ge 0\}}
 \Big\{ u_1(c,h_k,v)
 + \beta\, \mathbb{E}_{d'}\Big[\phi(d')\,V_2(a',y,d')\Big]
 -\ \beta\,\omega_c\,\pi(v)\,D(y) \Big\}.
 \end{equation}
-One weight $\omega_c$ multiplies both child terms. A planner who counted the child
+\new{$\omega_c$} multiplies both child terms. A planner who counted the child
 fully would put a weight of one on both, so what the parent leaves out, $1-\omega_c$ of
-the child's terms, is the externality on the child. $D$ enters as a difference and not a
-level, so it costs the parent nothing unless its use makes the disorder possible, and it
-is weighted by $\pi(v)$, the chance that the use does. $V_1$ depends on $D$ through the
+the child's terms, is the externality on the child. \new{$D$ is weighted by $\pi(v)$, the chance that the use turns into a disorder.} $V_1$ depends on $D$ through the
 parent's problem and $D$ on $V_1$ through the child's, so the two are solved as a
 fixed point.}
 
@@ -1337,19 +1339,12 @@ In contrast to the above, income works on both counts, and it works through the 
 Section~\ref{sec:who}: lower permanent income is unambiguously bad to receive,
 and this model already puts users at the bottom, so a child born poorer is
 mechanically more likely to use, which is aligned with the data. It is also
-supported by the empirical evidence, and it stands in for more than income alone: a parent
-who diverts spending and time to drugs invests less in the child's education and
-development. \new{Growing up with household substance abuse is one of the adverse
-childhood experiences in Felitti et al.\ (1998), and it predicts higher rates of
-depression, worse self-reported health and lower life satisfaction in adulthood; the
-children of parents with a SUD also have lower educational attainment, which is the
-premise of the transmission literature $\delta_d$ is checked against (Mellentin et
-al., 2016; Yoon et al., 2013).} The income
+supported by the empirical evidence\new{ reviewed in Section~\ref{sec:literature}}. The income
 gradient does the whole job, so the model transmits a SUD across generations
-\emph{without transmitting any preference for drugs}.
+\emph{without \new{the child inheriting any greater susceptibility to the disorder}}.
 
 \paragraph{\new{Calibrating the child.}} \new{$\xi$, $\rho$ and $\delta_d$ are set as in
-the quantitative model: $\rho=@@s_rho@@$, within the range of the intergenerational
+the quantitative model: \new{$\xi=\sqrt2$, the square-root scale for a household of two,} $\rho=@@s_rho@@$, within the range of the intergenerational
 elasticities of earnings in Section~\ref{sec:literature}, and $\delta_d=@@s_deltad@@$
 in logs, the $@@s_deltad_pc@@$ percent earnings loss Nilsson (2017) measures for
 children exposed in utero to Sweden's regional experiment in strong beer. The parent's
