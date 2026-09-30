@@ -1,18 +1,456 @@
-BENCHMARK DRUG PRICE ELASTICITIES AT SIX PRICE CHANGES (run in progress, 30 Sep 2026)
-=====================================================================================
+BENCHMARK DRUG PRICE ELASTICITIES AT SIX PRICE CHANGES, MEASURED AFTER THE CALIBRATION LOOP (30 Sep 2026)
+=========================================================================================================
 
-VERDICT: PENDING. The run is still going; this file is replaced by the result when it ends.
+VERDICT: THE FOUR STANDARD CHECKS PASSED. THE FIFTH (THE 10% LINE REPRODUCES RUN 3) FAILS AT FOUR DECIMALS AND
+PASSES AT TWO, and measurements 2-6 did NOT start from exactly the saved benchmark state (see (b) below).
+  - 12 moment blocks; the eleven last-block moments within 1e-3 of the paper's (largest 5.1e-4, sud_homeless);
+    the ELASTICITY_DIAG base line of all six measurements equal to the last block's MOMENT b and DIAG mean drug
+    quantity to every printed digit; the save reached, no GUARD, no FAILED, "simulation ended", and the CEV null
+    at x=0 passes (childhood curve = reported, bit-equal).
+  - (a) 10% line: participation -2.4033 (run 3 -2.4038), per user -0.6324 (run 3 -0.6325), per addict -1.0093
+    (run 3 -1.0093). Relative gaps 2.3e-4, 2.2e-4, 1e-7. Equal at two decimals, not at four.
+  - (b) THE RESTORE DOES NOT RESET median_income, AND THE SOLVE READS IT. Run 3's restore brings back the value
+    and policy functions, the child values, loop_count and max_future_mortgage_index_1, but not median_income(1),
+    which stationary_equilibrium_statistics overwrites UNDAMPED and which the solve reads through the voucher
+    income threshold (threshold_income_vouchers*median_income(time_period), lines 29465-32696 of 77803322). The
+    per-measurement start line shows it: median_income 0.862917 before the 1% measurement (the loop's own damped
+    value), 0.863331 (+4.8e-4) before each of the 2%, 5%, 10%, 20% and 50% ones. So only the 1% measurement is
+    exactly "from the saved benchmark state"; the other five solved with a voucher threshold 4.8e-4 higher. The
+    effect is small, and is inside the gap in (a), but this run cannot separate it from run-to-run variation
+    (this run's base users 0.0812605 vs run 3's 0.0812428, 2.2e-4 apart, from the same kind of block-to-block
+    drift run 3 saw). Per the brief, no fix was tried. A clean version would also save and restore median_income(1)
+    (and any other scalar the statistics call overwrites and the solve reads) inside the loop.
+  - (c) THE SMALL STEPS ARE NOISY. Participation -1.81 at 1% and -4.20 at 2%, per user even POSITIVE (+0.50) at
+    2%: at 1-2% the response is a few households crossing grid points, so the log ratio over log(1.01) amplifies
+    discrete jumps. Per addict is flat (-1.004 to -1.016) at every step. The per-user average (-0.29) is pulled
+    toward zero by the +0.50 at 2%; without the 2% row it would be -0.45.
 
-PROGRESS (pushed every 30 minutes)
-  run started 03:33 UTC: run 3's build of 77803322 with the +10% measurement replaced by
-  a loop over 1.01, 1.02, 1.05, 1.10, 1.20, 1.50 (binary md5 48ee06856e1a5ce97bd9ff20230415d3);
-  run 3 took 3h15 for 12 blocks.
-  03:35 UTC: moment blocks done 0 of 12, ELASTICITY_MULTI measurements done 0 of 6
-  04:05 UTC: moment blocks done 1 of 12, ELASTICITY_MULTI measurements done 0 of 6
-  04:35 UTC: moment blocks done 2 of 12, ELASTICITY_MULTI measurements done 0 of 6
-  05:05 UTC: moment blocks done 4 of 12, ELASTICITY_MULTI measurements done 0 of 6
-  05:35 UTC: moment blocks done 6 of 12, ELASTICITY_MULTI measurements done 0 of 6
-  06:05 UTC: moment blocks done 8 of 12, ELASTICITY_MULTI measurements done 0 of 6
-  06:35 UTC: moment blocks done 10 of 12, ELASTICITY_MULTI measurements done 0 of 6
-  07:05 UTC: moment blocks done 12 of 12, ELASTICITY_MULTI measurements done 0 of 6
-  07:35 UTC: moment blocks done 12 of 12, ELASTICITY_MULTI measurements done 4 of 6
+THE SIX MEASUREMENTS (elasticity = log(new/base)/log(multiplier), exactly as the copied block computes it: a
+log-ratio (arc-log) elasticity over the whole step, NOT a point derivative and NOT a midpoint arc)
+    dp      participation (users)   intensive per USER (mixed)   intensive per ADDICT   start median_income
+    1%            -1.8132                  -0.1819                    -1.0160            0.86291696
+    2%            -4.1997                  +0.5004                    -1.0085            0.86333140
+    5%            -2.4595                  -0.4939                    -1.0114            0.86333140
+   10%            -2.4033                  -0.6324                    -1.0093            0.86333140
+   20%            -1.7681                  -0.5834                    -1.0065            0.86333140
+   50%            -1.5651                  -0.3494                    -1.0041            0.86333140
+  AVERAGE         -2.3681                  -0.2901                    -1.0093
+  observed        -0.63                                               -0.55
+ ELASTICITY_MULTI average participation= -2.3681453118116211E+00 per_user= -2.9011426466535423E-01 per_addict= -1.0093118109573689E+00
+
+BUILD
+-----
+gfortran: GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 (installed with apt in this container; same version)
+compile: gfortran -O3 -funroll-loops -fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium
+source: git show 77803322:code/housing_first_or_treatment_first_SR_v1.f90
+  b181aee24a0ca2ca32294b70bd1a9d7f  same/housing_first_or_treatment_first_SR_v1.f90   (matches)
+  36b839a648c483d4c86a04bffa638c0d  same/hftf_bench                                   (MATCHES the required md5)
+  6f4161cb676d6d39cc37e161cc223bd4  fix/...f90  = run 3's source, rebuilt by applying the diff printed in
+                                    ELASTICITY_RESULT_BENCH.txt to same/ (matches run 3's md5)
+  1eabab922acd1e38e614698a36738471  multi/...f90 = fix/ plus the change below
+  48ee06856e1a5ce97bd9ff20230415d3  multi/hftf_elast_multi
+All builds: 0 errors, 43 lines of build output each, identical warning sets.
+
+RUN
+---
+cd code && STAGE1_ONLY=1 BENCH_BIN=/tmp/eb/multi/hftf_elast_multi sh cf_runs/cf_arm.sh null   (setsid nohup, OMP_NUM_THREADS=2)
+cf_arm.sh output: benchmark binary from /tmp/eb/multi/hftf_elast_multi / STAGE 1: ... 12 blocks ... /
+STAGE 1 done / STAGE1_ONLY: stopping after the benchmark / exit 0.
+bench.err 0 bytes. Started 03:34 UTC, ended 07:52 (4h18: 12 blocks by about 07:00, then six solves).
+Paper's log compared against: results/counterfactuals_cf_v2/bench/bench.log.gz (the one run 3 compared with;
+its columns reproduce run 3's "paper" columns exactly).
+
+THE CHANGE FROM RUN 3 (diff fix/ multi/)
+----------------------------------------
+Only inside the post-loop insertion: the base values and the saves are taken once as before; the price step,
+the three calls (solve_value_function_and_policy_functions, stationary_equilibrium_statistics,
+govt_revenues_calc), every print of the copied block and run 3's full restore now sit inside do ems_k=1,6 over
+1.01, 1.02, 1.05, 1.10, 1.20, 1.50, with elasticity_price_step replaced by the multiplier. Added prints only:
+one ELASTICITY_MULTI start line (loop_count, median_income, price at the start of each measurement), one
+ELASTICITY_MULTI dp= line per measurement, and the average. After the loop, run 3's statistics re-run and
+POSTLOOP RESTORE CHECK run unchanged. Note: run 3's step constant was a default-real 0.10 (its price came out
+1.1000000015); the loop uses 1.10d0, a 1.5e-9 difference in the price.
+
+46985a46986,46987
+>         real(8), dimension(6) :: ems_mult,ems_part,ems_user,ems_addict
+>         integer :: ems_k
+52396,52416d52397
+<             write(*,*) "ELASTICITY_DIAG base price=", val_price_base_1,&
+<                 " users=", val_users_base_1, " quantity per user=", val_qty_base_1
+<             write(*,*) "ELASTICITY_DIAG base per addict=", val_qty_addict_base_1,&
+<                 " per experimenter=", val_qty_exper_base_1,&
+<                 " addict share of users=", val_addict_share_base_1
+< 
+<             ! The market clears in the OUTER loop, so the price stays where
+<             ! it is put across a direct solve and converge. That is the
+<             ! whole reason this measures a demand curve.
+<             price_of_addictive_good=val_price_base_1*(1+elasticity_price_step)
+< 
+<             call solve_value_function_and_policy_functions(1)
+<             ! NO converge_to_stationary_equilibrium HERE. The benchmark
+<             ! distribution is what the moments are read off; re-converging it
+<             ! would make this the difference between two equilibria instead
+<             ! of the response of the same households to a price.
+<             call stationary_equilibrium_statistics(1)
+<             ! model_total_drug_users is built in govt_revenues_calc and not
+<             ! in stationary_equilibrium_statistics, which is the mistake
+<             ! omega made and paid for.
+<             call govt_revenues_calc(1)
+52418,52429c52399,52417
+<             write(*,*) "ELASTICITY_DIAG new price=", price_of_addictive_good,&
+<                 " users=", model_total_drug_users(1),&
+<                 " quantity per user=", model_drugs_used_by_users_on_average(1)
+< 
+<             if ((model_total_drug_users(1)>10.d0**(-12)) .AND. &
+<                 (val_users_base_1>10.d0**(-12))) then
+<                 write(*,*) "UNTARGETED price elasticity, participation   model=",&
+<                     log(model_total_drug_users(1)/max(val_users_base_1,10.d0**(-14)))/&
+<                     log(1+elasticity_price_step), " observed=", -0.63d0
+<             else
+<                 write(*,*) "ELASTICITY HELD     participation went to zero at the higher price"
+<             end if
+---
+>             ! SIX PRICE CHANGES, EACH FROM THE SAVED BENCHMARK STATE. The author:
+>             ! *"you should check 1%, 2%, 5%, 10%, 20%, 50% and average them out.
+>             ! same for the intensive margin"*. Every copy above is restored after
+>             ! each measurement, as run 3 restored after its one.
+>             ems_mult=(/1.01d0,1.02d0,1.05d0,1.10d0,1.20d0,1.50d0/)
+>             do ems_k=1,6
+> 
+>             write(*,*) 'ELASTICITY_MULTI start dp=', 100.d0*(ems_mult(ems_k)-1.d0), ' loop_count=', loop_count,&
+>                 ' median_income=', median_income(1), ' price=', price_of_addictive_good
+>                 write(*,*) "ELASTICITY_DIAG base price=", val_price_base_1,&
+>                     " users=", val_users_base_1, " quantity per user=", val_qty_base_1
+>                 write(*,*) "ELASTICITY_DIAG base per addict=", val_qty_addict_base_1,&
+>                     " per experimenter=", val_qty_exper_base_1,&
+>                     " addict share of users=", val_addict_share_base_1
+> 
+>                 ! The market clears in the OUTER loop, so the price stays where
+>                 ! it is put across a direct solve and converge. That is the
+>                 ! whole reason this measures a demand curve.
+>                 price_of_addictive_good=val_price_base_1*ems_mult(ems_k)
+52431,52446c52419,52428
+<             ! THE INTENSIVE MARGIN IS THE PER-ADDICT NUMBER, NOT THE PER-USER
+<             ! ONE. Olmstead et al. measure a conditional elasticity among
+<             ! continuing regular users. Quantity per USER moves whenever the
+<             ! addict/experimenter mix shifts, and a price rise shrinks the
+<             ! disorder stock, so that statistic mixes each household's own
+<             ! response with a change in who is being averaged over. It read
+<             ! -5.06 where the first order condition bounds an individual at
+<             ! about -1.3, which is how the mismatch was caught.
+<             if ((model_drugs_used_by_addicts_on_average(1)>10.d0**(-12)) .AND. &
+<                 (val_qty_addict_base_1>10.d0**(-12))) then
+<                 write(*,*) "UNTARGETED price elasticity, intensive       model=",&
+<                     log(model_drugs_used_by_addicts_on_average(1)/max(val_qty_addict_base_1,10.d0**(-14)))/&
+<                     log(1+elasticity_price_step), " observed=", -0.55d0
+<             else
+<                 write(*,*) "ELASTICITY HELD     quantity per addict went to zero at the higher price"
+<             end if
+---
+>                 call solve_value_function_and_policy_functions(1)
+>                 ! NO converge_to_stationary_equilibrium HERE. The benchmark
+>                 ! distribution is what the moments are read off; re-converging it
+>                 ! would make this the difference between two equilibria instead
+>                 ! of the response of the same households to a price.
+>                 call stationary_equilibrium_statistics(1)
+>                 ! model_total_drug_users is built in govt_revenues_calc and not
+>                 ! in stationary_equilibrium_statistics, which is the mistake
+>                 ! omega made and paid for.
+>                 call govt_revenues_calc(1)
+52448,52455c52430,52441
+<             ! The per-user figure is kept as a diagnostic, since the gap
+<             ! between it and the row above IS the composition effect.
+<             if ((model_drugs_used_by_users_on_average(1)>10.d0**(-12)) .AND. &
+<                 (val_qty_base_1>10.d0**(-12))) then
+<                 write(*,*) "DIAG elasticity, quantity per USER (mixed)      =",&
+<                     log(model_drugs_used_by_users_on_average(1)/max(val_qty_base_1,10.d0**(-14)))/&
+<                     log(1+elasticity_price_step)
+<             end if
+---
+>                 write(*,*) "ELASTICITY_DIAG new price=", price_of_addictive_good,&
+>                     " users=", model_total_drug_users(1),&
+>                     " quantity per user=", model_drugs_used_by_users_on_average(1)
+> 
+>                 if ((model_total_drug_users(1)>10.d0**(-12)) .AND. &
+>                     (val_users_base_1>10.d0**(-12))) then
+>                     write(*,*) "UNTARGETED price elasticity, participation   model=",&
+>                         log(model_total_drug_users(1)/max(val_users_base_1,10.d0**(-14)))/&
+>                         log(ems_mult(ems_k)), " observed=", -0.63d0
+>                 else
+>                     write(*,*) "ELASTICITY HELD     participation went to zero at the higher price"
+>                 end if
+52457,52460c52443,52458
+<             write(*,*) "ELASTICITY_DIAG new per addict=", model_drugs_used_by_addicts_on_average(1),&
+<                 " per experimenter=", model_drugs_used_by_experimenters_on_average(1),&
+<                 " addict share of users=", model_mass_addicts(1)/&
+<                 max(model_mass_addicts(1)+model_mass_experimenters(1),10.d0**(-14))
+---
+>                 ! THE INTENSIVE MARGIN IS THE PER-ADDICT NUMBER, NOT THE PER-USER
+>                 ! ONE. Olmstead et al. measure a conditional elasticity among
+>                 ! continuing regular users. Quantity per USER moves whenever the
+>                 ! addict/experimenter mix shifts, and a price rise shrinks the
+>                 ! disorder stock, so that statistic mixes each household's own
+>                 ! response with a change in who is being averaged over. It read
+>                 ! -5.06 where the first order condition bounds an individual at
+>                 ! about -1.3, which is how the mismatch was caught.
+>                 if ((model_drugs_used_by_addicts_on_average(1)>10.d0**(-12)) .AND. &
+>                     (val_qty_addict_base_1>10.d0**(-12))) then
+>                     write(*,*) "UNTARGETED price elasticity, intensive       model=",&
+>                         log(model_drugs_used_by_addicts_on_average(1)/max(val_qty_addict_base_1,10.d0**(-14)))/&
+>                         log(ems_mult(ems_k)), " observed=", -0.55d0
+>                 else
+>                     write(*,*) "ELASTICITY HELD     quantity per addict went to zero at the higher price"
+>                 end if
+52462,52482c52460,52467
+<             ! THE THREE PIECES THE PER-USER NUMBER IS MADE OF. The first is
+<             ! the one the literature measures.
+<             if ((model_drugs_used_by_addicts_on_average(1)>10.d0**(-12)) .AND. &
+<                 (val_qty_addict_base_1>10.d0**(-12))) then
+<                 write(*,*) "DIAG elasticity, quantity per ADDICT            =",&
+<                     log(model_drugs_used_by_addicts_on_average(1)/max(val_qty_addict_base_1,10.d0**(-14)))/&
+<                     log(1+elasticity_price_step)
+<             end if
+<             if ((model_drugs_used_by_experimenters_on_average(1)>10.d0**(-12)) .AND. &
+<                 (val_qty_exper_base_1>10.d0**(-12))) then
+<                 write(*,*) "DIAG elasticity, quantity per EXPERIMENTER      =",&
+<                     log(model_drugs_used_by_experimenters_on_average(1)/max(val_qty_exper_base_1,10.d0**(-14)))/&
+<                     log(1+elasticity_price_step)
+<             end if
+<             if ((val_addict_share_base_1>10.d0**(-12)) .AND. &
+<                 (model_mass_addicts(1)+model_mass_experimenters(1)>10.d0**(-14))) then
+<                 write(*,*) "DIAG elasticity, ADDICT SHARE of users          =",&
+<                     log((model_mass_addicts(1)/(model_mass_addicts(1)+&
+<                     model_mass_experimenters(1)))/max(val_addict_share_base_1,10.d0**(-14)))/&
+<                     log(1+elasticity_price_step)
+<             end if
+---
+>                 ! The per-user figure is kept as a diagnostic, since the gap
+>                 ! between it and the row above IS the composition effect.
+>                 if ((model_drugs_used_by_users_on_average(1)>10.d0**(-12)) .AND. &
+>                     (val_qty_base_1>10.d0**(-12))) then
+>                     write(*,*) "DIAG elasticity, quantity per USER (mixed)      =",&
+>                         log(model_drugs_used_by_users_on_average(1)/max(val_qty_base_1,10.d0**(-14)))/&
+>                         log(ems_mult(ems_k))
+>                 end if
+52484c52469,52532
+<             price_of_addictive_good=val_price_base_1
+---
+>                 write(*,*) "ELASTICITY_DIAG new per addict=", model_drugs_used_by_addicts_on_average(1),&
+>                     " per experimenter=", model_drugs_used_by_experimenters_on_average(1),&
+>                     " addict share of users=", model_mass_addicts(1)/&
+>                     max(model_mass_addicts(1)+model_mass_experimenters(1),10.d0**(-14))
+> 
+>                 ! THE THREE PIECES THE PER-USER NUMBER IS MADE OF. The first is
+>                 ! the one the literature measures.
+>                 if ((model_drugs_used_by_addicts_on_average(1)>10.d0**(-12)) .AND. &
+>                     (val_qty_addict_base_1>10.d0**(-12))) then
+>                     write(*,*) "DIAG elasticity, quantity per ADDICT            =",&
+>                         log(model_drugs_used_by_addicts_on_average(1)/max(val_qty_addict_base_1,10.d0**(-14)))/&
+>                         log(ems_mult(ems_k))
+>                 end if
+>                 if ((model_drugs_used_by_experimenters_on_average(1)>10.d0**(-12)) .AND. &
+>                     (val_qty_exper_base_1>10.d0**(-12))) then
+>                     write(*,*) "DIAG elasticity, quantity per EXPERIMENTER      =",&
+>                         log(model_drugs_used_by_experimenters_on_average(1)/max(val_qty_exper_base_1,10.d0**(-14)))/&
+>                         log(ems_mult(ems_k))
+>                 end if
+>                 if ((val_addict_share_base_1>10.d0**(-12)) .AND. &
+>                     (model_mass_addicts(1)+model_mass_experimenters(1)>10.d0**(-14))) then
+>                     write(*,*) "DIAG elasticity, ADDICT SHARE of users          =",&
+>                         log((model_mass_addicts(1)/(model_mass_addicts(1)+&
+>                         model_mass_experimenters(1)))/max(val_addict_share_base_1,10.d0**(-14)))/&
+>                         log(ems_mult(ems_k))
+>                 end if
+> 
+> 
+>                 ! THE THREE NUMBERS OF THIS MEASUREMENT, as the rows above compute them.
+>                 ems_part(ems_k)=log(model_total_drug_users(1)/max(val_users_base_1,10.d0**(-14)))/&
+>                     log(ems_mult(ems_k))
+>                 ems_user(ems_k)=log(model_drugs_used_by_users_on_average(1)/max(val_qty_base_1,10.d0**(-14)))/&
+>                     log(ems_mult(ems_k))
+>                 ems_addict(ems_k)=log(model_drugs_used_by_addicts_on_average(1)/max(val_qty_addict_base_1,10.d0**(-14)))/&
+>                     log(ems_mult(ems_k))
+>                 write(*,'(A,F6.1,A,ES24.16,A,ES24.16,A,ES24.16)') ' ELASTICITY_MULTI dp=', 100.d0*(ems_mult(ems_k)-1.d0),&
+>                     ' participation=', ems_part(ems_k), ' per_user=', ems_user(ems_k), ' per_addict=', ems_addict(ems_k)
+> 
+>                 price_of_addictive_good=val_price_base_1
+> 
+>                 value_function=ems_vf
+>                 policy_function_wage_income_tax_paid=ems_tax
+>                 policy_function_mortgage_interest_deductions=ems_mid
+>                 policy_function_consumption=ems_cons
+>                 policy_function_space_lived_in_size=ems_size
+>                 policy_function_labor_supply=ems_lab
+>                 policy_function_cutoff_taxable_income=ems_cut
+>                 policy_function_frac_spent_on_addiction=ems_frac
+>                 frac_mov_optimal_1=ems_fmo
+>                 policy_function_total_consumption=ems_tcons
+>                 policy_function_financial_index=ems_fin
+>                 policy_function_housing_status_index=ems_hs
+>                 policy_function_space_lived_in_index=ems_space
+>                 policy_function_years_of_amortization_index=ems_amort
+>                 fin_index_frac_mov_to_optimal=ems_ffmo
+>                 policy_function_addiction=ems_add
+>                 policy_function_treatment=ems_treat
+>                 expected_child_value=ems_ecv
+>                 expected_child_value_own=ems_ecv_own
+>                 expected_child_value_guessed=ems_ecv_guess
+>                 loop_count=ems_loop_count
+>                 max_future_mortgage_index_1=ems_max_mort
+> 
+>             end do
+52486,52507c52534,52535
+<             value_function=ems_vf
+<             policy_function_wage_income_tax_paid=ems_tax
+<             policy_function_mortgage_interest_deductions=ems_mid
+<             policy_function_consumption=ems_cons
+<             policy_function_space_lived_in_size=ems_size
+<             policy_function_labor_supply=ems_lab
+<             policy_function_cutoff_taxable_income=ems_cut
+<             policy_function_frac_spent_on_addiction=ems_frac
+<             frac_mov_optimal_1=ems_fmo
+<             policy_function_total_consumption=ems_tcons
+<             policy_function_financial_index=ems_fin
+<             policy_function_housing_status_index=ems_hs
+<             policy_function_space_lived_in_index=ems_space
+<             policy_function_years_of_amortization_index=ems_amort
+<             fin_index_frac_mov_to_optimal=ems_ffmo
+<             policy_function_addiction=ems_add
+<             policy_function_treatment=ems_treat
+<             expected_child_value=ems_ecv
+<             expected_child_value_own=ems_ecv_own
+<             expected_child_value_guessed=ems_ecv_guess
+<             loop_count=ems_loop_count
+<             max_future_mortgage_index_1=ems_max_mort
+---
+>             write(*,'(A,ES24.16,A,ES24.16,A,ES24.16)') ' ELASTICITY_MULTI average participation=', sum(ems_part)/6.d0,&
+>                 ' per_user=', sum(ems_user)/6.d0, ' per_addict=', sum(ems_addict)/6.d0
+
+CHECKS
+------
+(1) blocks: paper 12  this run 12  -> PASSED
+    block        paper              this run      rel diff
+      1   1.0000000000e+00   1.0000000000e+00    0.00e+00
+      2   2.0610868304e-01   2.0610620962e-01   -1.20e-05
+      3   8.5296785261e-02   8.5294159463e-02   -3.08e-05
+      4   3.9083119088e-02   3.9083965448e-02    2.17e-05
+      5   1.8630475322e-02   1.8631418131e-02    5.06e-05
+      6   1.8935571432e-02   1.8953268338e-02    9.35e-04
+      7   1.4719791689e-02   1.4755948474e-02    2.46e-03
+      8   5.0019423790e-03   5.0060245088e-03    8.16e-04
+      9   3.3888673717e-03   3.3643698065e-03   -7.23e-03
+     10   1.4770734523e-03   1.4826539687e-03    3.78e-03
+     11   2.2080109542e-03   2.3454974379e-03    6.23e-02
+     12   1.5541142454e-04   1.5580951658e-04    2.56e-03
+(2) moment              paper benchmark             this run    rel diff
+    h_1            6.0782202211071903E-003 6.0789545251027852E-003    1.21e-04 
+    b              8.1259194059271331E-002 8.1260476164969911E-002    1.58e-05 
+    lambda_d       3.4615070734915473E-002 3.4616366233863216E-002    3.74e-05 
+    theta             0.54254988612157773    0.54253352257754395   -3.02e-05 
+    pi_V              0.27243427410926918    0.27243234774196629   -7.07e-06 
+    aleph              82.469918176960874     82.469722712152631   -2.37e-06 
+    gamma             0.25951293324218616    0.25951321257703858    1.08e-06 
+    beta               2.9409682791115768     2.9409615412116410   -2.29e-06 
+    y_u               0.60040933466775437    0.60041639082013953    1.18e-05 
+    sud_homeless      0.19202901881668752    0.19212634654268643    5.07e-04 
+    emp_homeless      0.21425919049582842    0.21423294452129160   -1.22e-04 
+    moments beyond 1e-3: 0  -> PASSED
+(3) base users 8.1260476164969911E-002 (MOMENT b 8.1260476164969911E-002)  qty/user 0.12128806788961537 (DIAG 0.12128806788961537)  equal
+(3) base users 8.1260476164969911E-002 (MOMENT b 8.1260476164969911E-002)  qty/user 0.12128806788961537 (DIAG 0.12128806788961537)  equal
+(3) base users 8.1260476164969911E-002 (MOMENT b 8.1260476164969911E-002)  qty/user 0.12128806788961537 (DIAG 0.12128806788961537)  equal
+(3) base users 8.1260476164969911E-002 (MOMENT b 8.1260476164969911E-002)  qty/user 0.12128806788961537 (DIAG 0.12128806788961537)  equal
+(3) base users 8.1260476164969911E-002 (MOMENT b 8.1260476164969911E-002)  qty/user 0.12128806788961537 (DIAG 0.12128806788961537)  equal
+(3) base users 8.1260476164969911E-002 (MOMENT b 8.1260476164969911E-002)  qty/user 0.12128806788961537 (DIAG 0.12128806788961537)  equal
+    6 base lines -> PASSED
+(4) GUARD lines: 0  FAILED lines: 0  'simulation ended': True
+    CEV NULL at x=0: adult curve   1353.4183183636485       reported   1353.0519996586338
+    CEV NULL at x=0: childhood curve   450.79114828267592       reported   450.79114828267592
+    CEV NULL at x=0: lifetime curve   789.44046693835094       reported   789.34880748747696
+(5) 10% vs run 3: participation -2.4032834721 vs -2.4038459291 (rel 2.3e-4), per user -0.6323737274 vs -0.6325132848
+    (rel 2.2e-4), per addict -1.0092808358 vs -1.0092809348: FAILED at four decimals, PASSED at two.
+
+RESTORE CHECK (unchanged from run 3; same caveat: the damped median_income comes back undamped)
+---------------------------------------------------------------------------------------------
+order: h_1, b, lambda_d, theta, pi_V, avg labour income, median income, qty/user, qty/addict, mass addicts
+ POSTLOOP RESTORE CHECK before     6.0789545251027852E-003   8.1260476164969911E-002   3.4616366233863216E-002  0.54253352257754395       0.27243234774196629        1.6164149624457274       0.86291695724233297       0.12128806788961537       0.18192879242712223        1.7610878006475079     
+ POSTLOOP RESTORE CHECK after      6.0789545251027852E-003   8.1260476164969911E-002   3.4616366233863216E-002  0.54253272352686399       0.27243234774196629        1.6166667760446700       0.86333139639090672       0.12128806788961537       0.18192879242712223        1.7610878006475079     
+ POSTLOOP RESTORE CHECK largest relative gap   4.8027697809786596E-004  price   1.0000000000000000       loop_count          23
+Saved median_incomebaseline_benchmark.dat 0.863331396391 and govt_revenues_to_use_in_testsbaseline_benchmark.dat
+6.037522527594: as in run 3, these are NOT the paper's benchmark files and should not seed counterfactuals.
+
+THE MEASUREMENTS' LINES (verbatim)
+----------------------------------
+ POSTLOOP ELASTICITY: measuring once at the benchmark, loop_count=          23
+ ELASTICITY_MULTI start dp=   1.0000000000000009       loop_count=          23  median_income=  0.86291695724233297       price=   1.0000000000000000     
+ ELASTICITY_DIAG base price=   1.0000000000000000       users=   8.1260476164969911E-002  quantity per user=  0.12128806788961537     
+ ELASTICITY_DIAG base per addict=  0.18192879242712223       per experimenter=   7.6284282151672225E-002  addict share of users=  0.42599265802463732     
+ ELASTICITY_DIAG new price=   1.0100000000000000       users=   7.9807521842946538E-002  quantity per user=  0.12106871228703737     
+ UNTARGETED price elasticity, participation   model=  -1.8132051971085636       observed= -0.63000000000000000     
+ UNTARGETED price elasticity, intensive       model=  -1.0160492852324574       observed= -0.55000000000000004     
+ DIAG elasticity, quantity per USER (mixed)      = -0.18192238875803032     
+ ELASTICITY_DIAG new per addict=  0.18009875396172412       per experimenter=   7.5851777383058983E-002  addict share of users=  0.43374816601854738     
+ DIAG elasticity, quantity per ADDICT            =  -1.0160492852324574     
+ DIAG elasticity, quantity per EXPERIMENTER      = -0.57141597918720899     
+ DIAG elasticity, ADDICT SHARE of users          =   1.8132051971085732     
+ ELASTICITY_MULTI dp=   1.0 participation= -1.8132051971085636E+00 per_user= -1.8192238875803032E-01 per_addict= -1.0160492852324574E+00
+ ELASTICITY_MULTI start dp=   2.0000000000000018       loop_count=          23  median_income=  0.86333139639090672       price=   1.0000000000000000     
+ ELASTICITY_DIAG base price=   1.0000000000000000       users=   8.1260476164969911E-002  quantity per user=  0.12128806788961537     
+ ELASTICITY_DIAG base per addict=  0.18192879242712223       per experimenter=   7.6284282151672225E-002  addict share of users=  0.42599265802463732     
+ ELASTICITY_DIAG new price=   1.0200000000000000       users=   7.4775830035035268E-002  quantity per user=  0.12249586450804799     
+ UNTARGETED price elasticity, participation   model=  -4.1996975542573525       observed= -0.63000000000000000     
+ UNTARGETED price elasticity, intensive       model=  -1.0084894834657883       observed= -0.55000000000000004     
+ DIAG elasticity, quantity per USER (mixed)      =  0.50037945120603844     
+ ELASTICITY_DIAG new per addict=  0.17833157863414184       per experimenter=   7.4366996585717896E-002  addict share of users=  0.46293523211503179     
+ DIAG elasticity, quantity per ADDICT            =  -1.0084894834657883     
+ DIAG elasticity, quantity per EXPERIMENTER      =  -1.2854186927444877     
+ DIAG elasticity, ADDICT SHARE of users          =   4.1996975542573463     
+ ELASTICITY_MULTI dp=   2.0 participation= -4.1996975542573525E+00 per_user=  5.0037945120603844E-01 per_addict= -1.0084894834657883E+00
+ ELASTICITY_MULTI start dp=   5.0000000000000044       loop_count=          23  median_income=  0.86333139639090672       price=   1.0000000000000000     
+ ELASTICITY_DIAG base price=   1.0000000000000000       users=   8.1260476164969911E-002  quantity per user=  0.12128806788961537     
+ ELASTICITY_DIAG base per addict=  0.18192879242712223       per experimenter=   7.6284282151672225E-002  addict share of users=  0.42599265802463732     
+ ELASTICITY_DIAG new price=   1.0500000000000000       users=   7.2071748037042097E-002  quantity per user=  0.11840014768655818     
+ UNTARGETED price elasticity, participation   model=  -2.4594634800355286       observed= -0.63000000000000000     
+ UNTARGETED price elasticity, intensive       model=  -1.0114279231470444       observed= -0.55000000000000004     
+ DIAG elasticity, quantity per USER (mixed)      = -0.49392071386669945     
+ ELASTICITY_DIAG new per addict=  0.17316893582825083       per experimenter=   6.7782683994417045E-002  addict share of users=  0.48030424093601481     
+ DIAG elasticity, quantity per ADDICT            =  -1.0114279231470444     
+ DIAG elasticity, quantity per EXPERIMENTER      =  -2.4218027226026555     
+ DIAG elasticity, ADDICT SHARE of users          =   2.4594634800355313     
+ ELASTICITY_MULTI dp=   5.0 participation= -2.4594634800355286E+00 per_user= -4.9392071386669945E-01 per_addict= -1.0114279231470444E+00
+ ELASTICITY_MULTI start dp=   10.000000000000009       loop_count=          23  median_income=  0.86333139639090672       price=   1.0000000000000000     
+ ELASTICITY_DIAG base price=   1.0000000000000000       users=   8.1260476164969911E-002  quantity per user=  0.12128806788961537     
+ ELASTICITY_DIAG base per addict=  0.18192879242712223       per experimenter=   7.6284282151672225E-002  addict share of users=  0.42599265802463732     
+ ELASTICITY_DIAG new price=   1.1000000000000001       users=   6.4625067057120955E-002  quantity per user=  0.11419377531435036     
+ UNTARGETED price elasticity, participation   model=  -2.4032834721431446       observed= -0.63000000000000000     
+ UNTARGETED price elasticity, intensive       model=  -1.0092808357561434       observed= -0.55000000000000004     
+ DIAG elasticity, quantity per USER (mixed)      = -0.63237372739231001     
+ ELASTICITY_DIAG new per addict=  0.16524357908104839       per experimenter=   5.5305564399695209E-002  addict share of users=  0.53564921183395331     
+ DIAG elasticity, quantity per ADDICT            =  -1.0092808357561434     
+ DIAG elasticity, quantity per EXPERIMENTER      =  -3.3741767309013184     
+ DIAG elasticity, ADDICT SHARE of users          =   2.4032834721431442     
+ ELASTICITY_MULTI dp=  10.0 participation= -2.4032834721431446E+00 per_user= -6.3237372739231001E-01 per_addict= -1.0092808357561434E+00
+ ELASTICITY_MULTI start dp=   19.999999999999996       loop_count=          23  median_income=  0.86333139639090672       price=   1.0000000000000000     
+ ELASTICITY_DIAG base price=   1.0000000000000000       users=   8.1260476164969911E-002  quantity per user=  0.12128806788961537     
+ ELASTICITY_DIAG base per addict=  0.18192879242712223       per experimenter=   7.6284282151672225E-002  addict share of users=  0.42599265802463732     
+ ELASTICITY_DIAG new price=   1.2000000000000000       users=   5.8867671422310176E-002  quantity per user=  0.10904946582704836     
+ UNTARGETED price elasticity, participation   model=  -1.7681270843480617       observed= -0.63000000000000000     
+ UNTARGETED price elasticity, intensive       model=  -1.0064870702027877       observed= -0.55000000000000004     
+ DIAG elasticity, quantity per USER (mixed)      = -0.58340247952642876     
+ ELASTICITY_DIAG new per addict=  0.15142812207022252       per experimenter=   4.8558078925865479E-002  addict share of users=  0.58803695470692607     
+ DIAG elasticity, quantity per ADDICT            =  -1.0064870702027877     
+ DIAG elasticity, quantity per EXPERIMENTER      =  -2.4775256379172763     
+ DIAG elasticity, ADDICT SHARE of users          =   1.7681270843480612     
+ ELASTICITY_MULTI dp=  20.0 participation= -1.7681270843480617E+00 per_user= -5.8340247952642876E-01 per_addict= -1.0064870702027877E+00
+ ELASTICITY_MULTI start dp=   50.000000000000000       loop_count=          23  median_income=  0.86333139639090672       price=   1.0000000000000000     
+ ELASTICITY_DIAG base price=   1.0000000000000000       users=   8.1260476164969911E-002  quantity per user=  0.12128806788961537     
+ ELASTICITY_DIAG base per addict=  0.18192879242712223       per experimenter=   7.6284282151672225E-002  addict share of users=  0.42599265802463732     
+ ELASTICITY_DIAG new price=   1.5000000000000000       users=   4.3080407151266896E-002  quantity per user=  0.10526493807716175     
+ UNTARGETED price elasticity, participation   model=  -1.5650950829770758       observed= -0.63000000000000000     
+ UNTARGETED price elasticity, intensive       model=  -1.0041362679399919       observed= -0.55000000000000004     
+ DIAG elasticity, quantity per USER (mixed)      = -0.34944572965469506     
+ ELASTICITY_DIAG new per addict=  0.12108262207982130       per experimenter=   4.0573527939742095E-002  addict share of users=  0.80352922646055425     
+ DIAG elasticity, quantity per ADDICT            =  -1.0041362679399919     
+ DIAG elasticity, quantity per EXPERIMENTER      =  -1.5571033636431715     
+ DIAG elasticity, ADDICT SHARE of users          =   1.5650950829770758     
+ ELASTICITY_MULTI dp=  50.0 participation= -1.5650950829770758E+00 per_user= -3.4944572965469506E-01 per_addict= -1.0041362679399919E+00
+ ELASTICITY_MULTI average participation= -2.3681453118116211E+00 per_user= -2.9011426466535423E-01 per_addict= -1.0093118109573689E+00
