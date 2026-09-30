@@ -1,3 +1,9 @@
+# 30 September 12:30: THE 2 PER CENT STEP DROPPED FROM THE ELASTICITY AVERAGES (author)
+
+- "i think you should throw away the 2% price increase, something there seems odd".  Averages
+  over 1, 5, 10, 20 and 50 per cent: participation -2.00 (was -2.37), intensive over all
+  users -0.45 (was -0.29), now within -0.3 to -0.8.  export_elasticity.py: DROP = (2.0,).
+
 # 30 September 08:05: THE SIX-CHANGE ELASTICITIES ARE IN SECTION 2, IN RED
 
 - code/ELASTICITY_RESULT_MULTI.txt (07:53): four standard checks passed; its 10 per cent line

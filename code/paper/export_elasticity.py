@@ -13,8 +13,14 @@ reproduces run 3's (ELASTICITY_RESULT_BENCH.txt), holds at two decimals, not fou
 things the file records and the prose does not repeat: five of the six measurements
 started from a voucher income threshold 4.8e-4 higher than the saved state's (the
 restore does not reset median_income), and at 1-2 per cent the response is a few
-households crossing grid points, so the per-user elasticity is +0.50 at 2 per cent and
-the average over all six, -0.29, would be -0.45 without it.
+households crossing grid points, so the per-user elasticity is +0.50 at 2 per cent.
+
+THE 2 PER CENT STEP IS DROPPED (the author, 30 September: "i think you should throw away the
+2% price increase, something there seems odd").  Its participation elasticity, -4.20, is
+nearly twice its neighbours', and its per-user one is the only positive entry.  The averages
+are over the other five steps, computed here from the per-step lines rather than read off
+the run's own average line, which includes it: participation -2.37 -> -2.00, per user
+-0.29 -> -0.45.
 
 THE INTENSIVE MARGIN IS OVER ALL USERS (the author, 30 September: "the intensive margin
 should be based on all users not just addicted"): the per-USER column, not the per-ADDICT
@@ -37,16 +43,22 @@ SRC = os.path.join(HERE, '..', 'ELASTICITY_RESULT_MULTI.txt')
 OUT = os.path.join(HERE, 'results_numbers.json')
 LIT = {'part': (-0.3, -0.9), 'int': (-0.3, -0.8)}
 EDGE = 0.10
+DROP = (2.0,)                         # price steps, per cent, left out of the averages
 
 txt = open(SRC).read()
 assert 'THE FOUR STANDARD CHECKS PASSED' in txt, 'the elasticity run did not pass its checks'
-m = re.findall(r'ELASTICITY_MULTI average participation=\s*(\S+)\s+per_user=\s*(\S+)\s+per_addict=\s*(\S+)', txt)
-part, user = float(m[-1][0]), float(m[-1][1])
-steps = []
-for s in re.findall(r'ELASTICITY_MULTI dp=\s*([\d.]+)\s+participation=', txt):
-    if float(s) not in steps:
-        steps.append(float(s))
-assert len(steps) == 6, f'expected six price changes, found {steps}'
+rows = {}
+for dp, pa, us in re.findall(r'^ ELASTICITY_MULTI dp=\s*([\d.]+)\s+participation=\s*(\S+)\s+per_user=\s*(\S+)',
+                             txt, re.M):
+    rows[float(dp)] = (float(pa), float(us))
+assert sorted(rows) == [1.0, 2.0, 5.0, 10.0, 20.0, 50.0], f'expected six price changes, found {sorted(rows)}'
+# the per-step lines reproduce the run's own average over all six
+m = re.findall(r'ELASTICITY_MULTI average participation=\s*(\S+)\s+per_user=\s*(\S+)', txt)[-1]
+assert abs(sum(r[0] for r in rows.values()) / 6 - float(m[0])) < 1e-9
+assert abs(sum(r[1] for r in rows.values()) / 6 - float(m[1])) < 1e-9
+steps = [dp for dp in sorted(rows) if dp not in DROP]
+part = sum(rows[dp][0] for dp in steps) / len(steps)
+user = sum(rows[dp][1] for dp in steps) / len(steps)
 
 
 def where(x, lo_hi):
@@ -79,6 +91,7 @@ def listing(xs):
 out = json.load(open(OUT))
 out.pop('x_el_dp_pc', None)          # the single 10 per cent step this replaced
 out['x_el_dp_list'] = listing(steps)
+out['x_el_n_word'] = {4: 'four', 5: 'five', 6: 'six'}[len(steps)]
 out['x_el_part'] = f'{part:.2f}'
 out['x_el_int'] = f'{user:.2f}'
 out['x_el_part_where'] = where(part, LIT['part'])
