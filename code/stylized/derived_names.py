@@ -36,4 +36,14 @@ def derived(n):
                             else 'back towards its level with no programme')
     x = _f(n['s3_cev_tf']) / _f(n['s4_cev_opt'])
     out['s4_close_frac_a'] = min(_CLOSE, key=lambda fw: abs(fw[0] - x))[1]
+    # the share worse off against the share using, both on participation's footing
+    # (stage_results.worse_share_exact), for "it is above the ... who use because ..."
+    out['s1_worse_vs_part'] = 'above' if _f(n['s1_worse_b']) > _f(n['s1_part_hf_b']) else 'not above'
+    # what kappa_x does to the gain from Treatment First, at the precision the text prints
+    import fill
+    a = fill.text_precision('s3_cev_tf_nokx', n['s3_cev_tf_nokx'])
+    b = fill.text_precision('s3_cev_tf', n['s3_cev_tf'])
+    out['s3_kx_phrase'] = ('it changes nothing about the welfare gain from Treatment First, which remains at'
+                           if a == b else
+                           f'it barely changes the welfare gain from Treatment First, which moves from ${a}$ to')
     return out
