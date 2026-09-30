@@ -1,3 +1,39 @@
+# 30 September 04:35: SECTIONS 5-7 REWORKED OVERNIGHT, IN RED; PDF SENT (6619d525)
+
+- Section 6.2 is built around Table tab:longrun (code/paper/export_longrun.py): Housing
+  First (null_share), Treatment First (tf85), TF with a supply elasticity of 5 (elast5_85)
+  and HF at omega_c = 1 (omega1, no CEV, author).  Each arm against its own no-policy run.
+- Section 6.3 is built around Figure fig:ftrans (code/paper/transition_series.py and
+  transition_figure.py, results/transition/restart3_loop0/): restart 3's loop 0, PINNED in
+  both scripts and in export_results.py (the newest-log rule had moved to 3c).  Years 41-59
+  and cohorts born from 16 are shaded (the drifting end).
+- THE CEV IS NOW NET OF THE NO-POLICY RUN'S +0.027 off the benchmark curve: x_tf_cev 1.42
+  -> 1.39 (tf85/RESULT.md already said 1.39); the transition's cohorts are netted by the
+  same amount.  x_cev0 in 6.1 says so.
+- export_results.py now runs export_elasticity.py, export_longrun.py and
+  transition_figure.py after it, so results_numbers.json is always whole.
+- Audit fixes (scratchpad/audit/section5.md and section6.md, each verified): the adult half
+  of the gain is 21 per cent the child's draw (ADULTDECOMP), 79 per cent a better value at
+  a given draw -- corrected in 6.2 AND the introduction; the drug test costs 0.019 per cent
+  of average labour income as the model charges it (the declaration meant 0.031); Section 5's
+  Loubiere basis (income; kappa_x = 0.93 WAS set on the income basis on 24 September, so the
+  full model needs no change and the probe's 'IMPLIED' is the consumption basis), kappa_r
+  (of income), the food stamp target (over GDP; the stylized sentence too), and eleven
+  smaller ones.  The g paragraph and the kappa^eu_m SMI sentence are \cut{} (proposed
+  deletions).
+- Section 7 (Discussion) written from the results.  Section 8 (Conclusion) is still a plan.
+- The whole file is filled by scratchpad splice_r45.py: red against b61b28a4 in Sections
+  1-3, kept red from Section 4 on.  fill.py main is still broken (hsmall).
+- FOR THE AUTHOR, in chat, not in the paper: omega_c's parent charged the whole ΔEV rather
+  than pi_d of it (M4); the unconverged omega_c = 0 control (11.5 against 21.8, M3); the VSL
+  target over household income while the model divides by labour income (80 would be about
+  102 on a labour basis: this bears on the stylized stage 2 too); the homelessness odds
+  ratio's comparison group; kappa_H's units in Desmond and Gershenson; DATA_APPENDIX stale;
+  kappa_x H of adult years not in the CEV (about -0.02 points); the age-26 drug use of 97 per
+  cent (27-50: 11.31 -> 7.87); the transition cohort CEV's sensitivity to the seed (+1.0 to
+  +3.2 across seeds).
+- Still to come: the six-change elasticities (run ends about 06:50) into Section 2.
+
 # 30 September 03:45: AUTHOR SIGNED OFF.  TOMORROW: FINISH THE MODEL PART OF SECTION 4
 
 - Sections 1-3 are black (red cleared to the end of Section 3 at 03:40); Section 4 on keeps
