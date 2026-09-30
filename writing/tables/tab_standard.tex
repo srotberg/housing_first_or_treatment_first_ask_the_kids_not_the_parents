@@ -7,44 +7,44 @@ Parameter & Description & Set & Moment and source & Data & Model & Value \\
 \midrule
 \multicolumn{7}{@{}l}{\emph{Preferences}} \\
 $\sigma$ & Risk aversion & Ext. & Attanasio and Weber (2010) & 2.00 & n.a. & 2.00 \\
-$\gamma$ & \textcolor{red}{Weight on housing, non-drug bundle} & \textcolor{red}{Int.$^\dagger$} & Housing over expenditure net of drugs, CEX 2024 & 26.8\% & \textcolor{red}{26.0\%} & \textcolor{red}{0.536} \\
-$\beta$ & Discount factor & Int. & Wealth over output, BEA fixed assets & 3.00 & \textcolor{red}{2.94} & \textcolor{red}{0.946} \\
-\textcolor{red}{$\xi_j$} & \textcolor{red}{Equivalence scale, child at home} & \textcolor{red}{Ext.} & \textcolor{red}{Square-root scale, OECD} & \textcolor{red}{1.41} & \textcolor{red}{n.a.} & \textcolor{red}{1.41} \\
+$\gamma$ & Weight on housing, non-drug bundle & Int.$^\dagger$ & Housing over expenditure net of drugs, CEX 2024 & 26.8\% & 26.0\% & 0.536 \\
+$\beta$ & Discount factor & Int. & Wealth over output, BEA fixed assets & 3.00 & 2.94 & 0.946 \\
+$\xi_j$ & Equivalence scale, child at home & Ext. & Square-root scale, OECD & 1.41 & n.a. & 1.41 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Rental ladder}} \\
-$h_2$ & Smallest rental size & \textcolor{red}{Int.$^\dagger$} & \textcolor{red}{Renters paying over 30\% of income, SCF 2022} & \textcolor{red}{40.6\%} & \textcolor{red}{58.9\%} & \textcolor{red}{0.0407} \\
-\textcolor{red}{$h_3/h_2$} & \textcolor{red}{Middle rung over the smallest} & \textcolor{red}{Ext.} & \textcolor{red}{Set} & \textcolor{red}{4.00} & \textcolor{red}{n.a.} & \textcolor{red}{4.00} \\
-\textcolor{red}{$h_4/h_2$} & \textcolor{red}{Largest rung over the smallest} & \textcolor{red}{Ext.} & \textcolor{red}{Set} & \textcolor{red}{8.00} & \textcolor{red}{n.a.} & \textcolor{red}{8.00} \\
+$h_2$ & Smallest rental size & Int.$^\dagger$ & Renters paying over 30\% of income, SCF 2022 & 40.6\% & 58.9\% & 0.0407 \\
+$h_3/h_2$ & Middle rung over the smallest & Ext. & Set & 4.00 & n.a. & 4.00 \\
+$h_4/h_2$ & Largest rung over the smallest & Ext. & Set & 8.00 & n.a. & 8.00 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Earnings and employment}} \\
 $\varepsilon(j)$ & Age profile of efficiency & Ext. & Hump peaking at age 56, Greenwood et al.\ (2025) & profile & n.a. & profile \\
-\textcolor{red}{$\rho_z$} & \textcolor{red}{Persistence of productivity} & \textcolor{red}{Ext.} & \textcolor{red}{Set} & \textcolor{red}{0.90} & \textcolor{red}{n.a.} & \textcolor{red}{0.90} \\
-\textcolor{red}{$\sigma_\upsilon$} & \textcolor{red}{Standard deviation of its shocks} & \textcolor{red}{Int.$^\dagger$} & \textcolor{red}{Bottom half's share of earnings, SCF 2022} & \textcolor{red}{17.2\%} & \textcolor{red}{16.3\%} & \textcolor{red}{0.413} \\
-$\bar\pi^{eu}$ & Job separation rate & \textcolor{red}{Int.$^\dagger$} & Unemployment rate, BLS CPS 2014--24 & \textcolor{red}{4.9\%} & \textcolor{red}{5.6\%} & \textcolor{red}{0.0268} \\
+$\rho_z$ & Persistence of productivity & Ext. & Set & 0.90 & n.a. & 0.90 \\
+$\sigma_\upsilon$ & Standard deviation of its shocks & Int.$^\dagger$ & Bottom half's share of earnings, SCF 2022 & 17.2\% & 16.3\% & 0.413 \\
+$\bar\pi^{eu}$ & Job separation rate & Int.$^\dagger$ & Unemployment rate, BLS CPS 2014--24 & 4.9\% & 5.6\% & 0.0268 \\
 $\bar\pi^{ue}$ & Job finding rate, annual & Ext. & Krueger et al.\ (2014) & 0.55 & n.a. & 0.55 \\
-\textcolor{red}{$p_{ui}$} & \textcolor{red}{Share of separations insured} & \textcolor{red}{Ext.} & \textcolor{red}{Set} & \textcolor{red}{0.30} & \textcolor{red}{n.a.} & \textcolor{red}{0.30} \\
+$p_{ui}$ & Share of separations insured & Ext. & Set & 0.30 & n.a. & 0.30 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Survival and mental illness}} \\
-\textcolor{red}{$\bar q_j$} & \textcolor{red}{Baseline mortality by age} & \textcolor{red}{Ext.} & \textcolor{red}{SSA period life table, ages 26 to 85} & \textcolor{red}{profile} & \textcolor{red}{n.a.} & \textcolor{red}{profile} \\
-\textcolor{red}{$\varsigma_m(j)$} & \textcolor{red}{Age profile of SMI onset} & \textcolor{red}{Ext.} & \textcolor{red}{SMI prevalence by age, NSDUH 2024} & \textcolor{red}{profile} & \textcolor{red}{n.a.} & \textcolor{red}{profile} \\
+$\bar q_j$ & Baseline mortality by age & Ext. & SSA period life table, ages 26 to 85 & profile & n.a. & profile \\
+$\varsigma_m(j)$ & Age profile of SMI onset & Ext. & SMI prevalence by age, NSDUH 2024 & profile & n.a. & profile \\
 \addlinespace
-\multicolumn{7}{@{}l}{\emph{\textcolor{red}{Interest and taxes}}} \\
-$r$ & \textcolor{red}{Risk-free rate} & Ext. & Kaplan et al.\ (2020) & 0.03 & n.a. & 0.03 \\
-\textcolor{red}{$\varphi$} & \textcolor{red}{Tax progressivity} & \textcolor{red}{Ext.} & \textcolor{red}{Heathcote et al.\ (2017)} & \textcolor{red}{0.85} & \textcolor{red}{n.a.} & \textcolor{red}{0.85} \\
-$\tau_k$ & Capital income tax & Ext. & \textcolor{red}{US long-run rate on gains and dividends} & 0.15 & n.a. & 0.15 \\
-$\tau_{\ell}$ & Tax level & \textcolor{red}{Int.$^\dagger$} & Average labour income tax, McDaniel (2007) & 22.4\% & \textcolor{red}{21.1\%} & \textcolor{red}{0.894} \\
+\multicolumn{7}{@{}l}{\emph{Interest and taxes}} \\
+$r$ & Risk-free rate & Ext. & Kaplan et al.\ (2020) & 0.03 & n.a. & 0.03 \\
+$\varphi$ & Tax progressivity & Ext. & Heathcote et al.\ (2017) & 0.85 & n.a. & 0.85 \\
+$\tau_k$ & Capital income tax & Ext. & US long-run rate on gains and dividends & 0.15 & n.a. & 0.15 \\
+$\tau_{\ell}$ & Tax level & Int.$^\dagger$ & Average labour income tax, McDaniel (2007) & 22.4\% & 21.1\% & 0.894 \\
 \addlinespace
-\multicolumn{7}{@{}l}{\emph{\textcolor{red}{Social security and programmes' rules}}} \\
-\textcolor{red}{$S(y)$} & \textcolor{red}{Replacement rates between bend points} & \textcolor{red}{Ext.} & \textcolor{red}{SSA primary insurance amount} & \textcolor{red}{statute} & \textcolor{red}{n.a.} & \textcolor{red}{0.90, 0.32, 0.15} \\
-\textcolor{red}{$\underline S$} & \textcolor{red}{SSI floor, over mean productivity at entry} & \textcolor{red}{Ext.} & \textcolor{red}{SSA federal benefit rate} & \textcolor{red}{0.177} & \textcolor{red}{n.a.} & \textcolor{red}{0.177} \\
+\multicolumn{7}{@{}l}{\emph{Social security and programmes' rules}} \\
+$S(y)$ & Replacement rates between bend points & Ext. & SSA primary insurance amount & statute & n.a. & 0.90, 0.32, 0.15 \\
+$\underline S$ & SSI floor, over mean productivity at entry & Ext. & SSA federal benefit rate & 0.177 & n.a. & 0.177 \\
 $\psi_{ui}$ & UI replacement rate & Ext. & DOL statutory replacement rates & 0.50 & n.a. & 0.50 \\
-$\bar y$ & \textcolor{red}{Cap on the UI earnings base} & Ext. & DOL state benefit maxima & 1.00 & n.a. & 1.00 \\
+$\bar y$ & Cap on the UI earnings base & Ext. & DOL state benefit maxima & 1.00 & n.a. & 1.00 \\
 $\kappa_V$ & Voucher means test & Ext. & HUD rule & 0.50 & n.a. & 0.50 \\
-$\kappa_r$ & \textcolor{red}{Tenant's contribution, share of income} & Ext. & HUD rule & 0.30 & n.a. & 0.30 \\
+$\kappa_r$ & Tenant's contribution, share of income & Ext. & HUD rule & 0.30 & n.a. & 0.30 \\
 $\varrho$ & Food stamp taper rate & Ext. & SNAP statute, 7 CFR 273.10 & 0.30 & n.a. & 0.30 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Drug market}} \\
-$J_E$ & \textcolor{red}{Last age at which use can begin} & Ext. & Model age 55, that is age 80 & 55 & n.a. & 55 \\
+$J_E$ & Last age at which use can begin & Ext. & Model age 55, that is age 80 & 55 & n.a. & 55 \\
 $\nu_1$ & Drug supply shifter & Ext. & Normalisation, so $p_v=1$ & norm. & n.a. & norm. \\
 \bottomrule
 \end{tabular}}\usebox{\ntbox}

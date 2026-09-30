@@ -1,3 +1,12 @@
+# 30 September 13:05: ALL RED REMOVED FROM THE TABLES (author)
+
+- "remove all red from the tables too": every table is black -- Tables 1-3 (stylized; their
+  snapshots code/stylized/tab_*_prev.tex now equal the black tables), 5-7 (calib_tables.py
+  --freeze) and the long-run table (export_longrun.py --freeze); captions and notes too.
+- calib_tables.py fix: the untargeted table's freeze left out the model column, so every model
+  cell stayed red after a freeze; it is frozen now.
+- The splice (scratchpad sec2/splice_r46.py) never marks a number red inside a table.
+
 # 30 September 12:55: ROUND 580c4b7e; THE TRANSITION IS NOW RESTART 3g'S LOOP 0
 
 - Red cleared to the end of Section 3 (author); updates in red: the elasticity sentences

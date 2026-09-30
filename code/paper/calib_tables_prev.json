@@ -5,24 +5,33 @@
    "What using and being homeless cost, and the voucher",
    "Mental illness chain",
    "Recovery and treatment",
-   "Externalities and distortions",
+   "Externalities",
    "Drug market"
   ],
   "rows": {
+   "$T_0$": [
+    "$T_0$",
+    "Transfer at entry, over average earnings",
+    "Int.",
+    "Share of the homeless aged 25 to 34, HUD PiT 2024",
+    "26.0\\%",
+    "26.6\\%",
+    "0.111"
+   ],
    "$\\aleph$": [
     "$\\aleph$",
     "Flow value of being alive",
     "Int.",
-    "Value of a statistical life, Viscusi and Aldy (2003)",
-    "\\$9m",
-    "\\textemdash",
-    "\\textemdash"
+    "Value of a statistical life over average labour income, Viscusi and Aldy (2003)",
+    "80",
+    "82",
+    "87.6"
    ],
    "$\\bar\\pi_r$": [
     "$\\bar\\pi_r$",
     "Baseline SUD recovery rate",
     "Ext.",
-    "Ten year remission rate, Vaillant (1995)",
+    "Ten-year remission rate, Vaillant (1995)",
     "0.025",
     "n.a.",
     "0.025"
@@ -31,28 +40,19 @@
     "$\\bar\\tau^{u}$",
     "Utility cost of treatment",
     "Int.",
-    "Treatment take up, NSDUH 2024",
+    "Treatment take-up, NSDUH 2024",
     "24.5\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "25.0\\%",
+    "4.49"
    ],
    "$\\delta_d$": [
     "$\\delta_d$",
-    "Child's earnings, parent SUD",
+    "Child's earnings, parent's SUD",
     "Ext.",
     "Earnings lost in utero, Nilsson (2017)",
     "0.24",
     "n.a.",
     "0.24"
-   ],
-   "$\\delta_h$": [
-    "$\\delta_h$",
-    "Child's earnings, homeless",
-    "Ext.",
-    "Earnings lost to poverty, Chetty et al.\\ (2016)",
-    "0.31",
-    "n.a.",
-    "0.31"
    ],
    "$\\iota$": [
     "$\\iota$",
@@ -63,32 +63,68 @@
     "n.a.",
     "2.00"
    ],
+   "$\\kappa^{eu}_{m}$": [
+    "$\\kappa^{eu}_{m}$",
+    "Separation multiplier, SMI",
+    "Int.$^\\dagger$",
+    "Held; its rule is on the SMI share of the homeless",
+    "n.a.",
+    "n.a.",
+    "1.06"
+   ],
+   "$\\kappa^{ue}_{d}$": [
+    "$\\kappa^{ue}_{d}$",
+    "Job-finding divisor, SUD",
+    "Int.",
+    "SUD share of the homeless, Gutwinski et al.\\ (2021)",
+    "21.7\\%",
+    "19.2\\%",
+    "3.78"
+   ],
+   "$\\kappa^{ue}_{m}$": [
+    "$\\kappa^{ue}_{m}$",
+    "Job-finding divisor, SMI",
+    "Int.",
+    "SMI share of the homeless, Gutwinski et al.\\ (2021)",
+    "25\\%",
+    "25.4\\%",
+    "7.71"
+   ],
    "$\\kappa_x$": [
     "$\\kappa_x$",
     "Disamenity of homelessness",
     "Ext.",
-    "Willingness to pay, Loubi\\`ere et al.\\ (2020)",
+    "Willingness to pay, Loubi\\`ere et al.\\ (2020): of income (data), of consumption (model)",
     "0.20\\%",
-    "n.a.",
-    "0.002"
+    "0.30\\%",
+    "0.93"
    ],
-   "$\\kappa_{\\phi H}(j)$": [
-    "$\\kappa_{\\phi H}(j)$",
-    "Increased mortality when homeless",
+   "$\\kappa_{H}$": [
+    "$\\kappa_{H}$",
+    "Employment penalty, shelter",
     "Ext.",
-    "Mortality ratios by age, Baggett et al.\\ (2013)",
-    "9.1 to 1.1",
+    "Desmond and Gershenson (2016)",
+    "0.20",
     "n.a.",
-    "4.41 to 1.09"
+    "0.20"
+   ],
+   "$\\kappa_{\\phi H}$": [
+    "$\\kappa_{\\phi H}$",
+    "Mortality multiplier, shelter",
+    "Ext.",
+    "Meyer et al.\\ (2023)",
+    "1.60",
+    "n.a.",
+    "1.60"
    ],
    "$\\kappa_{\\phi d}$": [
     "$\\kappa_{\\phi d}$",
-    "Increased mortality with a SUD",
-    "Ext.",
-    "Mortality ratios, Hjorth\\o j et al.\\ (2023)",
-    "6 to 10",
-    "n.a.",
-    "8.00"
+    "Mortality multiplier, SUD",
+    "Int.$^\\dagger$",
+    "Income of drug users over average, NSDUH 2024",
+    "74\\%",
+    "60\\%",
+    "4.00"
    ],
    "$\\kappa_{\\phi m}$": [
     "$\\kappa_{\\phi m}$",
@@ -99,59 +135,23 @@
     "n.a.",
     "2.50"
    ],
-   "$\\kappa_{ueH}$": [
-    "$\\kappa_{ueH}$",
-    "Employment multiplier, homeless",
-    "Ext.",
-    "Desmond and Gershenson (2016)",
-    "0.80",
-    "n.a.",
-    "0.80"
-   ],
-   "$\\kappa_{ued}$": [
-    "$\\kappa_{ued}$",
-    "Employment multiplier, SUD",
-    "Int.",
-    "Unemployment rate given a SUD, NSDUH 2024",
-    "16.25\\%",
-    "\\textemdash",
-    "\\textemdash"
-   ],
-   "$\\kappa_{uem}$": [
-    "$\\kappa_{uem}$",
-    "Employment multiplier, SMI",
-    "Int.",
-    "Employment given SMI, Mechanic et al.\\ (2002)",
-    "30\\%",
-    "\\textemdash",
-    "\\textemdash"
-   ],
-   "$\\lambda_d$": [
-    "$\\lambda_d$",
-    "SUD hazard per unit used",
-    "Int.",
-    "Adult SUD rate, NSDUH 2024",
-    "3.68\\%",
-    "\\textemdash",
-    "\\textemdash"
-   ],
    "$\\lambda_m$": [
     "$\\lambda_m$",
     "Chance of recovering from SMI",
     "Ext.",
-    "Ten year recovery rate, {\\AA}sb{\\o} et al.\\ (2022)",
+    "Ten-year recovery rate, {\\AA}sb{\\o} et al.\\ (2022)",
     "50\\%",
     "n.a.",
-    "0.067"
+    "0.066"
    ],
    "$\\mu_H$": [
     "$\\mu_H$",
-    "Recovery multiplier when homeless",
+    "Recovery multiplier in a shelter",
     "Int.",
-    "Weeks abstinent, Milby et al.\\ (2005)",
-    "1.473",
-    "\\textemdash",
-    "\\textemdash"
+    "Weeks abstinent, housed over homeless, Milby et al.\\ (2005)",
+    "1.47",
+    "1.47",
+    "0.696"
    ],
    "$\\mu_m$": [
     "$\\mu_m$",
@@ -162,122 +162,104 @@
     "n.a.",
     "0.82"
    ],
-   "$\\nu_2$": [
-    "$\\nu_2$",
-    "Drug supply curvature",
-    "Ext.",
-    "Supply elasticity, Mace et al.\\ (2020)",
-    "1.46",
-    "n.a.",
-    "1.68"
-   ],
    "$\\omega_c$": [
     "$\\omega_c$",
     "Weight on the child",
     "Int.",
-    "Use rise with altruism off, NSDUH 2024",
+    "Use of non-parents over parents, less one, NSDUH 2024",
     "18.3\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "21.8\\%",
+    "0.06"
    ],
    "$\\omega_m$": [
     "$\\omega_m$",
     "Level of the SMI onset profile",
-    "Int.",
+    "Int.$^\\dagger$",
     "SMI share of the population, NSDUH 2024",
     "4.82\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "4.82\\%",
+    "0.0037"
    ],
    "$\\pi_V$": [
     "$\\pi_V$",
     "Chance of drawing a voucher",
-    "Int.",
+    "Int.$^\\dagger$",
     "Recipients over eligible, HUD 2023",
     "26.6\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "27.3\\%",
+    "0.0675"
    ],
-   "$\\rho_d$": [
-    "$\\rho_d$",
-    "Earnings lost to a SUD",
+   "$\\pi_d$": [
+    "$\\pi_d$",
+    "Chance a year of use starts a SUD",
+    "Int.",
+    "Share of users carrying a SUD, NSDUH 2024",
+    "41.3\\%",
+    "42.6\\%",
+    "0.0345"
+   ],
+   "$\\rho$": [
+    "$\\rho$",
+    "Persistence of productivity across generations",
     "Ext.",
-    "Set to one; the extensive margin carries it",
+    "Solon (1992), Mazumder (2005)",
     "0.50",
     "n.a.",
     "0.50"
    ],
-   "$\\rho_m$": [
-    "$\\rho_m$",
-    "Earnings lost to SMI",
-    "Ext.",
-    "Set to one; the extensive margin carries it",
-    "1.00",
-    "n.a.",
-    "1.00"
-   ],
-   "$\\sigma_{\\ell}$": [
-    "$\\sigma_{\\ell}$",
-    "Curvature on leisure",
-    "Ext.",
-    "Frisch elasticity, Chetty (2012)",
-    "0.50",
-    "n.a.",
-    "3.00"
-   ],
    "$\\theta$": [
     "$\\theta$",
-    "Weight on drugs in utility",
-    "Int.",
-    "Drug spending over income, Midgette et al.\\ (2019)",
-    "16.2\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "Weight on the drug",
+    "Int.$^\\dagger$",
+    "Drug spending over income, Midgette et al.\\ (2019); model, users with a SUD",
+    "16.0\\%",
+    "15.3\\%",
+    "0.165"
    ],
    "$\\underline c$": [
     "$\\underline c$",
     "Food stamp maximum allotment",
     "Int.",
-    "Food stamps over labour income, USDA",
+    "Food stamps over output (GDP), USDA",
     "0.42\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "0.41\\%",
+    "0.0879"
    ],
-   "$\\zeta_{DI}$": [
-    "$\\zeta_{DI}$",
-    "Disability insurance, unemployed",
-    "Int.",
-    "SMI share of homeless, Gutwinski et al.\\ (2021)",
-    "25\\%",
-    "\\textemdash",
-    "\\textemdash"
+   "$\\varepsilon_s$": [
+    "$\\varepsilon_s$",
+    "Price elasticity of drug supply",
+    "Ext.",
+    "Mace et al.\\ (2020)",
+    "1.46",
+    "n.a.",
+    "1.46"
    ],
    "$b$": [
     "$b$",
-    "Whether a household uses",
+    "Shifter on the drug",
     "Int.",
     "Drug participation, NSDUH 2024",
     "8.90\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "8.12\\%",
+    "0.0055"
    ],
    "$g$": [
     "$g$",
-    "Treatment effect on recovery",
+    "Treatment multiplier on recovery",
     "Ext.",
-    "Odds ratio, Milby et al.\\ (2005)",
-    "1.35",
+    "Remission with medication for opioid use disorder",
+    "2.00",
     "n.a.",
-    "1.35"
+    "2.00"
    ],
    "$h_1$": [
     "$h_1$",
-    "Service flow of homelessness",
+    "Housing services in a shelter",
     "Int.",
-    "Homelessness rate, HUD 2023",
-    "0.399\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "Homelessness rate, HUD PiT 2023, within a band",
+    "0.40 to 1.00\\%",
+    "0.61\\%",
+    "0.0216"
    ]
   }
  },
@@ -287,46 +269,55 @@
    "Rental ladder",
    "Earnings and employment",
    "Survival and mental illness",
-   "Interest, taxes and public spending",
-   "Social security benefits and programmes' rules",
+   "Interest and taxes",
+   "Social security and programmes' rules",
    "Drug market"
   ],
   "rows": {
    "$J_E$": [
     "$J_E$",
-    "Last experimentation age",
+    "Last age at which use can begin",
     "Ext.",
     "Model age 55, that is age 80",
     "55",
     "n.a.",
     "55"
    ],
-   "$\\bar y$": [
-    "$\\bar y$",
-    "Cap on the earnings base",
+   "$S(y)$": [
+    "$S(y)$",
+    "Replacement rates between bend points",
     "Ext.",
-    "DOL state benefit maxima",
-    "1.00",
+    "SSA primary insurance amount",
+    "statute",
     "n.a.",
-    "1.00"
+    "0.90, 0.32, 0.15"
    ],
-   "$\\bar\\phi(j)$": [
-    "$\\bar\\phi(j)$",
-    "Baseline survival by age",
+   "$\\bar q_j$": [
+    "$\\bar q_j$",
+    "Baseline mortality by age",
     "Ext.",
     "SSA period life table, ages 26 to 85",
     "profile",
     "n.a.",
     "profile"
    ],
+   "$\\bar y$": [
+    "$\\bar y$",
+    "Cap on the UI earnings base",
+    "Ext.",
+    "DOL state benefit maxima",
+    "1.00",
+    "n.a.",
+    "1.00"
+   ],
    "$\\bar\\pi^{eu}$": [
     "$\\bar\\pi^{eu}$",
     "Job separation rate",
-    "Int.",
+    "Int.$^\\dagger$",
     "Unemployment rate, BLS CPS 2014--24",
-    "4.85\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "4.9\\%",
+    "5.6\\%",
+    "0.0268"
    ],
    "$\\bar\\pi^{ue}$": [
     "$\\bar\\pi^{ue}$",
@@ -343,17 +334,17 @@
     "Int.",
     "Wealth over output, BEA fixed assets",
     "3.00",
-    "\\textemdash",
-    "\\textemdash"
+    "2.94",
+    "0.946"
    ],
    "$\\gamma$": [
     "$\\gamma$",
-    "Weight on housing services",
-    "Int.",
+    "Weight on housing, non-drug bundle",
+    "Int.$^\\dagger$",
     "Housing over expenditure net of drugs, CEX 2024",
     "26.8\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "26.0\\%",
+    "0.536"
    ],
    "$\\kappa_V$": [
     "$\\kappa_V$",
@@ -366,7 +357,7 @@
    ],
    "$\\kappa_r$": [
     "$\\kappa_r$",
-    "Tenant's share of the rent",
+    "Tenant's contribution, share of income",
     "Ext.",
     "HUD rule",
     "0.30",
@@ -382,24 +373,6 @@
     "n.a.",
     "norm."
    ],
-   "$\\omega_{\\ell}$": [
-    "$\\omega_{\\ell}$",
-    "Weight on leisure",
-    "Int.",
-    "Average hours worked, Guvenen et al.\\ (2023a)",
-    "0.40",
-    "\\textemdash",
-    "\\textemdash"
-   ],
-   "$\\psi_R$": [
-    "$\\psi_R$",
-    "Retirement replacement rate",
-    "Ext.",
-    "SSA, share of the productivity state",
-    "0.40",
-    "n.a.",
-    "0.40"
-   ],
    "$\\psi_{ui}$": [
     "$\\psi_{ui}$",
     "UI replacement rate",
@@ -408,6 +381,15 @@
     "0.50",
     "n.a.",
     "0.50"
+   ],
+   "$\\rho_z$": [
+    "$\\rho_z$",
+    "Persistence of productivity",
+    "Ext.",
+    "Set",
+    "0.90",
+    "n.a.",
+    "0.90"
    ],
    "$\\sigma$": [
     "$\\sigma$",
@@ -418,20 +400,20 @@
     "n.a.",
     "2.00"
    ],
-   "$\\sigma_y$": [
-    "$\\sigma_y$",
-    "Dispersion of productivity",
-    "Int.",
+   "$\\sigma_\\upsilon$": [
+    "$\\sigma_\\upsilon$",
+    "Standard deviation of its shocks",
+    "Int.$^\\dagger$",
     "Bottom half's share of earnings, SCF 2022",
     "17.2\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "16.3\\%",
+    "0.413"
    ],
    "$\\tau_k$": [
     "$\\tau_k$",
     "Capital income tax",
     "Ext.",
-    "US long run rate on gains and dividends",
+    "US long-run rate on gains and dividends",
     "0.15",
     "n.a.",
     "0.15"
@@ -439,11 +421,20 @@
    "$\\tau_{\\ell}$": [
     "$\\tau_{\\ell}$",
     "Tax level",
-    "Int.",
+    "Int.$^\\dagger$",
     "Average labour income tax, McDaniel (2007)",
     "22.4\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "21.1\\%",
+    "0.894"
+   ],
+   "$\\underline S$": [
+    "$\\underline S$",
+    "SSI floor, over mean productivity at entry",
+    "Ext.",
+    "SSA federal benefit rate",
+    "0.177",
+    "n.a.",
+    "0.177"
    ],
    "$\\varepsilon(j)$": [
     "$\\varepsilon(j)$",
@@ -454,6 +445,15 @@
     "n.a.",
     "profile"
    ],
+   "$\\varphi$": [
+    "$\\varphi$",
+    "Tax progressivity",
+    "Ext.",
+    "Heathcote et al.\\ (2017)",
+    "0.85",
+    "n.a.",
+    "0.85"
+   ],
    "$\\varrho$": [
     "$\\varrho$",
     "Food stamp taper rate",
@@ -463,172 +463,235 @@
     "n.a.",
     "0.30"
    ],
-   "$\\varsigma$": [
-    "$\\varsigma$",
-    "Curvature, and so $h_3$",
+   "$\\varsigma_m(j)$": [
+    "$\\varsigma_m(j)$",
+    "Age profile of SMI onset",
     "Ext.",
-    "Set; the two ends carry the distribution",
-    "1.80",
+    "SMI prevalence by age, NSDUH 2024",
+    "profile",
     "n.a.",
-    "1.80"
+    "profile"
    ],
-   "$\\xi$": [
-    "$\\xi$",
-    "Tax progressivity",
+   "$\\xi_j$": [
+    "$\\xi_j$",
+    "Equivalence scale, child at home",
     "Ext.",
-    "Heathcote et al.\\ (2017)",
-    "0.85",
+    "Square-root scale, OECD",
+    "1.41",
     "n.a.",
-    "0.85"
+    "1.41"
    ],
    "$h_2$": [
     "$h_2$",
     "Smallest rental size",
-    "Int.",
-    "Employment rate of the homeless, HUD 2023",
-    "13\\%",
-    "\\textemdash",
-    "\\textemdash"
+    "Int.$^\\dagger$",
+    "Renters paying over 30\\% of income, SCF 2022",
+    "40.6\\%",
+    "58.9\\%",
+    "0.0407"
    ],
-   "$h_4$": [
-    "$h_4$",
-    "Largest rental size",
-    "Int.",
-    "Share in largest unit size, ACS 2023",
-    "62.7\\%",
-    "\\textemdash",
-    "\\textemdash"
-   ],
-   "$p_v$": [
-    "$p_v$",
-    "Price of a unit of drugs",
+   "$h_3/h_2$": [
+    "$h_3/h_2$",
+    "Middle rung over the smallest",
     "Ext.",
-    "Clears the drug market in the benchmark",
-    "1.00",
+    "Set",
+    "4.00",
     "n.a.",
-    "1.00"
+    "4.00"
+   ],
+   "$h_4/h_2$": [
+    "$h_4/h_2$",
+    "Largest rung over the smallest",
+    "Ext.",
+    "Set",
+    "8.00",
+    "n.a.",
+    "8.00"
+   ],
+   "$p_{ui}$": [
+    "$p_{ui}$",
+    "Share of separations insured",
+    "Ext.",
+    "Set",
+    "0.30",
+    "n.a.",
+    "0.30"
    ],
    "$r$": [
     "$r$",
-    "Risk free rate",
+    "Risk-free rate",
     "Ext.",
     "Kaplan et al.\\ (2020)",
     "0.03",
     "n.a.",
     "0.03"
-   ],
-   "$s_m(j)$": [
-    "$s_m(j)$",
-    "Age profile of SMI prevalence",
-    "Ext.",
-    "Share with SMI, NSDUH 2024",
-    "5.6\\%",
-    "n.a.",
-    "5.6\\%"
    ]
   }
  },
  "tab_untargeted": {
-  "heads": [],
+  "heads": [
+   "Homelessness",
+   "Who uses and who carries a SUD",
+   "Treatment",
+   "Housing and vouchers",
+   "Distribution",
+   "Transmission, odds ratios"
+  ],
   "rows": {
-   "Drug poisonings as a share of deaths, 25--44": [
-    "Drug poisonings as a share of deaths, 25--44",
-    "about 20 percent",
+   "A child of a parent with a SUD acquires one": [
+    "A child of a parent with a SUD acquires one",
+    "1.44 and 2.51",
+    "1.50",
+    "Mellentin et al.\\ (2016), Yoon et al.\\ (2013)"
+   ],
+   "A homeless adult had a homeless caretaker": [
+    "A homeless adult had a homeless caretaker",
+    "1.8 to 2.4",
+    "4.92",
+    "Bassuk et al.\\ (1997)"
+   ],
+   "Bottom and top tenth: earnings (data), productivity at entry (model)": [
+    "Bottom and top tenth: earnings (data), productivity at entry (model)",
+    "0.99, 41.10",
+    "1.68, 33.09",
+    "SCF 2022"
+   ],
+   "Drug deaths as a share of deaths, 25--44": [
+    "Drug deaths as a share of deaths, 25--44",
+    "20.0",
+    "13.3",
     "CDC WONDER"
    ],
-   "Earnings shares, bottom tenth and top tenth": [
-    "Earnings shares, bottom tenth and top tenth",
-    "0.99 and 41.1 percent",
-    "SCF 2022"
+   "Employed share of the homeless": [
+    "Employed share of the homeless",
+    "46",
+    "21.4",
+    "HUD PiT 2023, TEDS-A 2022"
+   ],
+   "Employment given SMI": [
+    "Employment given SMI",
+    "30",
+    "83.1",
+    "Mechanic et al.\\ (2002)"
    ],
    "Homeless at treatment admission": [
     "Homeless at treatment admission",
-    "14.5 percent",
+    "14.5",
+    "3.2",
     "TEDS-A 2022"
    ],
    "Homelessness rate, 25--34, 35--44, 45--54, 55--64, 65+": [
     "Homelessness rate, 25--34, 35--44, 45--54, 55--64, 65+",
-    "0.316, 0.338, 0.291, 0.250, 0.077 percent",
+    "0.32, 0.34, 0.29, 0.25, 0.08",
+    "0.92, 1.20, 0.79, 0.36, 0.02",
     "HUD PiT 2024"
    ],
-   "Housing costs above 30 and 50 percent of income": [
-    "Housing costs above 30 and 50 percent of income",
-    "40.6 and 17.5 percent",
+   "Housed in the largest unit size": [
+    "Housed in the largest unit size",
+    "62.7",
+    "86.5",
+    "ACS 2023, B25042"
+   ],
+   "Housing over income, renters": [
+    "Housing over income, renters",
+    "20.2",
+    "37.0",
     "SCF 2022"
    ],
-   "Income of drug users": [
-    "Income of drug users",
-    "74.0 percent of average",
-    "NSDUH 2024"
+   "Income of the homeless, over average": [
+    "Income of the homeless, over average",
+    "19.1",
+    "0.2",
+    "Meyer et al.\\ (2024)"
    ],
-   "Income shares, bottom 1st, 5th and 10th percentiles": [
-    "Income shares, bottom 1st, 5th and 10th percentiles",
-    "0.01, 0.29 and 0.92 percent",
+   "Income shares, bottom 1, 5, 10, 20 per cent": [
+    "Income shares, bottom 1, 5, 10, 20 per cent",
+    "0.01, 0.31, 0.92, 2.71",
+    "0.01, 0.19, 1.01, 3.40",
     "SCF 2022"
    ],
-   "Income with a moderate or severe SUD": [
-    "Income with a moderate or severe SUD",
-    "71.1 percent of average",
+   "Income with a SUD, over average": [
+    "Income with a SUD, over average",
+    "71.1",
+    "84.8",
     "NSDUH 2024"
    ],
-   "Labour force participation, with a SUD against without": [
-    "Labour force participation, with a SUD against without",
-    "65.8 against 61.5 percent",
+   "Labour force participation, with a SUD and without": [
+    "Labour force participation, with a SUD and without",
+    "65.8, 61.5",
+    "95.3, 73.8",
     "NSDUH 2024"
    ],
-   "Net worth shares, bottom 1st, 5th and 10th percentiles": [
-    "Net worth shares, bottom 1st, 5th and 10th percentiles",
-    "$-0.23$, $-0.42$ and $-0.45$ percent",
+   "Mean age of users, years": [
+    "Mean age of users, years",
+    "39.6",
+    "34.6",
+    "NSDUH 2024"
+   ],
+   "Net worth share, bottom half": [
+    "Net worth share, bottom half",
+    "2.5",
+    "6.4",
+    "FRB DFA"
+   ],
+   "Net worth shares, bottom 1, 5, 10, 20 per cent": [
+    "Net worth shares, bottom 1, 5, 10, 20 per cent",
+    "$-0.16$, $-0.28$, $-0.29$, $-0.23$",
+    "$0.00$, $0.00$, $0.01$, $0.29$",
     "SCF 2022"
-   ],
-   "Odds a child of a parent with a SUD acquires one": [
-    "Odds a child of a parent with a SUD acquires one",
-    "1.44 and 2.51",
-    "Mellentin et al.\\ (2016), Yoon et al.\\ (2013)"
-   ],
-   "Odds a homeless adult had a homeless caretaker": [
-    "Odds a homeless adult had a homeless caretaker",
-    "1.8 to 2.4",
-    "Bassuk et al.\\ (1997)"
-   ],
-   "Price elasticity of demand, intensive margin": [
-    "Price elasticity of demand, intensive margin",
-    "$-0.55$",
-    "Midpoint, Section~\\ref{sec:literature}"
-   ],
-   "Price elasticity of demand, participation": [
-    "Price elasticity of demand, participation",
-    "$-0.63$",
-    "Saffer and Chaloupka (1999)"
    ],
    "Psychiatric problem alongside SUD at admission": [
     "Psychiatric problem alongside SUD at admission",
-    "43.1 percent",
+    "43.1",
+    "0.1",
     "TEDS-A 2022"
    ],
-   "Returns to homelessness within 24 months": [
-    "Returns to homelessness within 24 months",
-    "17.4 percent",
-    "HUD SPM 2024"
+   "Renters paying over half of income": [
+    "Renters paying over half of income",
+    "17.5",
+    "26.8",
+    "SCF 2022"
    ],
-   "Shares of the homeless across those bands": [
-    "Shares of the homeless across those bands",
-    "26.0, 27.2, 21.0, 18.4, 7.5 percent",
+   "SUD rate with SMI over without, ratio": [
+    "SUD rate with SMI over without, ratio",
+    "7.30",
+    "2.05",
+    "NSDUH 2024"
+   ],
+   "Shares of the homeless in those bands$^{a}$": [
+    "Shares of the homeless in those bands$^{a}$",
+    "26.0, 27.2, 21.0, 18.4, 7.5",
+    "26.6, 38.1, 24.1, 10.4, 0.8",
     "HUD PiT 2024"
    ],
    "Tenant contribution rate": [
     "Tenant contribution rate",
-    "31.2 percent",
+    "31.2",
+    "38.4",
     "HUD PSH 2023"
+   ],
+   "Unemployment given a SUD": [
+    "Unemployment given a SUD",
+    "16.2",
+    "14.7",
+    "NSDUH 2024"
+   ],
+   "Users by age, 26--34, 35--44, 45--54, 55--64, 65+": [
+    "Users by age, 26--34, 35--44, 45--54, 55--64, 65+",
+    "45, 19, 14, 12, 10",
+    "67, 16, 10, 5, 2",
+    "NSDUH 2024"
    ],
    "Voucher holders with wages as main income": [
     "Voucher holders with wages as main income",
-    "28 percent",
+    "28.0",
+    "39.8",
     "HUD PSH 2023"
    ],
    "Working at all, homeless in treatment": [
     "Working at all, homeless in treatment",
-    "6.6 percent",
+    "6.6",
+    "0.0",
     "TEDS-A 2022"
    ]
   }

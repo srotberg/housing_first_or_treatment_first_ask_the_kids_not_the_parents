@@ -461,7 +461,7 @@ def rows_untargeted():
             out.append(head('tab_untargeted', mo, 4))
             continue
         # the baseline table had no Model column: Moment, Data, Source
-        out.append(' & '.join(marked('tab_untargeted', [mo, dm[0], dm[1], s], [0, 1, None, 2])) + r' \\')
+        out.append(' & '.join(marked('tab_untargeted', [mo, dm[0], dm[1], s])) + r' \\')
     return '\n'.join(out) + '\n'
 
 
@@ -525,7 +525,9 @@ if __name__ == '__main__':
         for t, blocks in (('tab_eleven', ELEVEN), ('tab_standard', STANDARD)):
             fr[t] = {'rows': {r[0]: list(r) for hd, rs in blocks for r in rs},
                      'heads': [hd for hd, rs in blocks]}
-        fr['tab_untargeted'] = {'rows': {mo: [mo, dm[0], s] for mo, dm, s in UNTARGETED if dm},
+        # the MODEL column is frozen too: without it every model cell stayed red after a
+        # freeze (30 September, the author: "remove all red from the tables too")
+        fr['tab_untargeted'] = {'rows': {mo: [mo, dm[0], dm[1], s] for mo, dm, s in UNTARGETED if dm},
                                 'heads': [mo for mo, dm, s in UNTARGETED if dm is None]}
         json.dump(fr, open(PREV_JSON, 'w'), indent=1, sort_keys=True)
         PREV = fr
