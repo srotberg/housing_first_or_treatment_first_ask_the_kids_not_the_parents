@@ -1,4 +1,4 @@
-# 30 September 20:45: THE CHILD IN THE DRUG SPLIT (ec1358e1); CHILD-FIX POINT RUN SUPERSEDED; CHAIN LAUNCHED
+# 30 September 20:30: THE CHILD IN THE DRUG SPLIT (ec1358e1); CHILD-FIX POINT RUN SUPERSEDED; CHAIN LAUNCHED
 
 The author: *"the child term has to count in both whether to use and how much to use"*, *"and the
 parent counts it with omega_c"*. The split was the parent's own Cobb-Douglas closed form;
@@ -11,7 +11,7 @@ removed on the author's instruction.
 - pointrun_childfix (penalty fix only) stopped at block 5 of 12 (pid 26910); its log is kept.
 - build_bench_tdm_childsplit.sh: bounds, snan, prod all 7 warnings (the same as before), 0 errors.
 - pointrun_childsplit.sh chain (bash pid 32589): pointrun_childsplit (omega_c 0.06, hftf_bench pid
-  32592, from 20:43) then pointrun_childsplit_omega0 (omega_c 0.0) -- same handover, seed and build;
+  32592, from 20:28) then pointrun_childsplit_omega0 (omega_c 0.0) -- same handover, seed and build;
   omega_c's moment is the use rise from the first to the second. About 4.6 hours each.
 - The snan build cannot be smoke-tested from this seed: it traps at start-up in read_calibration_state
   (cf.f90 45701), summing newborn_parent_share after filling it from unconditional_employment_probability,
