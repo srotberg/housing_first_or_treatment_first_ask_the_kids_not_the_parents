@@ -10446,7 +10446,15 @@
             ! of omega_c's moment. For a household whose bit is already on the max
             ! is 1 either way and there is nothing left to deter, which is the
             ! author's point: the damage is done and cannot be undone by quitting.
-            transmitted_1=max(ever_sud_of(unemployment_index_1),future_addiction_index_1)
+            ! THE DRUG CHOICE IS OUT (the author, 30 September: "the full model should
+            ! penalize the child if the parent had a sud before age Jk"; "the issue is that
+            ! you have v>0 included in the penalty"). It was maxed in here on 30 August and
+            ! kept on 13 September, which charged a parent that USES the whole of the
+            ! child's loss, as if using itself passed the penalty on, where the stylized
+            ! model charges pi(v) times it. Using now deters only through the chance pi_d
+            ! of acquiring the disorder, which switches the latched bit on for every later
+            ! period up to J_K. future_addiction_index_1 stays in the argument list unused.
+            transmitted_1=ever_sud_of(unemployment_index_1)
 
             if (age_1==child_at_home_last_index) then
 
@@ -13974,6 +13982,7 @@
         use Global_Vars
         
         implicit none
+        real(8) :: newborn_weight_1
         
         integer :: financial_index,time_period,pay_mortgage_insurance_1,has_house,low_quality_market,is_homeless_1,&
             is_addicted_1,time_period_used,housing_status_index_used,financial_index_used,amortization_used,fin_frac_used,&
@@ -15011,13 +15020,27 @@
                                         
                                     end if
 
-                                    ! Weighted by the probability of dying, because a newborn
-                                    ! replaces a household that dies and the death hazard is
-                                    ! itself a function of the disorder and of homelessness.
-                                    newborn_parent_share_acc(employment_index,is_addicted_1,is_homeless_1)=&
-                                        newborn_parent_share_acc(employment_index,is_addicted_1,is_homeless_1)+&
-                                        distribution_mass_used*(1-survival_probability(age_index,is_homeless_1,&
-                                        is_addicted_1,smi_of(unemployment_index)))
+                                    ! THE PARENT WHEN ITS CHILD LEAVES, PENALISED ON THE SUD HISTORY (the
+                                    ! author, 30 September, option 1: "the full model should penalize the
+                                    ! child if the parent had a sud before age Jk"). A newborn's parent is
+                                    ! taken at its death if that comes before J_K, weighted by the chance of
+                                    ! dying, and at J_K otherwise, with weight one -- the same timing
+                                    ! child_continuation_value prices. The child is penalised if the parent
+                                    ! EVER had the disorder by then (the latched bit), where it used to read
+                                    ! the disorder at death, at any age: a parent that recovered passed
+                                    ! nothing on and one that acquired it at 75 did. Mortality still reads
+                                    ! the CURRENT disorder. The shares are normalised below, so the newborn
+                                    ! mass is unchanged.
+                                    newborn_weight_1=0.d0
+                                    if (age_index<child_at_home_last_index) then
+                                        newborn_weight_1=1-survival_probability(age_index,is_homeless_1,&
+                                            is_addicted_1,smi_of(unemployment_index))
+                                    elseif (age_index==child_at_home_last_index) then
+                                        newborn_weight_1=1.d0
+                                    end if
+                                    newborn_parent_share_acc(employment_index,ever_sud_of(unemployment_index),is_homeless_1)=&
+                                        newborn_parent_share_acc(employment_index,ever_sud_of(unemployment_index),is_homeless_1)+&
+                                        distribution_mass_used*newborn_weight_1
                                     
                                     if (amortization_used>1) then
                                     
