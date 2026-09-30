@@ -1423,36 +1423,37 @@ percent of income. Households in the model spend $@@s3_cshare_pc@@$ percent of t
 on consumption, so $@@s3_wtp_pc@@$ percent of income translates to $@@s3_wtp_c_pc@@$ percent of consumption. $\kappa_x$ is the
 disamenity per unit of homelessness, in utils per period alive, that costs an adult in
 the stage 2 economy as much over its adult life as giving up $@@s3_wtp_c_pc@@$ percent of
-its consumption in every period\new{: since consumption enters utility with the exponent
-$(1-\gamma)(1-\theta)(1-\sigma)$ and $\aleph$ does not scale with it,
-$\kappa_x H\bar D=\big[1-(1-w)^{(1-\gamma)(1-\theta)(1-\sigma)}\big]\big(V-\aleph\bar D\big)$,
+its consumption in every period.\footnote{\new{$\kappa_x H\bar D=\big[1-(1-w)^{(1-\gamma)(1-\theta)(1-\sigma)}\big]\big(V-\aleph\bar D\big)$,
 where $V$ is the adult's lifetime value, $\bar D$ the expected discounted number of periods
-it is alive, $H$ the share of households that is homeless and $w$ the willingness to pay as a
-share of consumption}. That gives
+it is alive and $w$ the willingness to pay as a share of consumption.}} That gives
 $\kappa_x=@@s3_kx@@$. Because the two policies differ little in homelessness, @@s3_kx_phrase@@
 $@@s3_cev_tf@@$ percent of lifetime consumption.
 
 %======================================================================
 \section{The quantitative model}\label{sec:full}
 
-\new{This section describes the model the paper's numbers come from. It is the stylized
-model of Section~\ref{sec:stylized} with a life cycle of annual periods and the pieces
-that model leaves out: income risk over working life, retirement, recovery and
-treatment, SMI, a government budget and a drug market. Notation follows
+\new{By now, I have shown how the main mechanisms in this paper work.} This section
+describes the model the paper's numbers come from. \new{It is very similar to the stylized
+model of Section~\ref{sec:stylized}, but with annual periods and} the pieces that model
+leaves out: income risk over working life, retirement, recovery and treatment, SMI,
+\new{a higher risk of dying while homeless, a drug test that misses some users,} a
+government budget and a drug market. Notation follows
 Section~\ref{sec:stylized} wherever the two models share an object: $\gamma$ and
-$\theta$ are the housing and drug weights in both, $b$ is the same Stone-Geary
-shifter, $\aleph$ the same flow value of being alive, $\xi$ the same equivalence
+$\theta$ are the housing and drug weights in both, \new{$\sigma$ the same risk aversion,} $b$ is
+the same Stone-Geary shifter, $\aleph$ the same flow value of being alive, $\xi$ the same equivalence
 scale, $\omega_c$ the same weight on the child, $\rho$ and $\delta_d$ the same
 persistence of productivity and penalty, $\psi_{ui}$ and $\bar y$ the same replacement
-rate and earnings cap, $\kappa_x$ the same disamenity, and $\beta$ is the discount
-factor. The values are in Section~\ref{sec:fullcal}.}
+rate and earnings cap, $\kappa_x$ the same disamenity, \new{$\pi_d$ the same chance that use
+starts a SUD, $\kappa_{\phi d}$ the same mortality multiplier for the disorder, $h_1$ the same
+shelter, $\kappa_V$ and $\pi_V$ the same means test and chance of drawing a voucher, $p_v$
+and $p_r$ the same drug price and rent,} and $\beta$ is the discount factor. The values are in Section~\ref{sec:fullcal}.
 
 \subsection{Demographics and the state and choice sets}
 
-\new{Households enter the economy as adults at model age $j=1$, which is age 26, live
+Households enter the economy as adults at model age $j=1$, which is age 26, live
 at most $J$ annual periods, work while $j<J_R$ and are retired from $J_R$. Each has a
-child, which lives in the household for the first $J_K$ years of its adult life, until
-age 50, and then leaves. Each period a cohort of unit mass enters at $j=1$, made up of
+child, \new{who} lives in the household for the first $J_K$ years of its adult life, until
+age 50, \new{then leaves, and becomes an adult with a child of its own}. Each period a cohort of unit mass enters at $j=1$, made up of
 the grown children of the households that died, in proportion to their parents'
 deaths, so the mass of households is constant in a stationary equilibrium. The individual state is
 \begin{equation}\label{eq:fstate}
@@ -1462,34 +1463,36 @@ s=(a,\,y,\,e,\,d,\,m,\,\eta)\in
 where $a$ denotes assets, $y$ productivity, $e$ employment status, $d$ the SUD, $m$
 SMI and $\eta$ the household's standing with the voucher programme. The SUD takes
 three values because the parent's valuation of its child's prospects depends on its
-history and not only on its present (Section~\ref{sec:fproblem}): $d=0$ for a household that has never carried the disorder, $d=1$ for
-one that carried it and has recovered, and $d=2$ for one that carries it now. The
-voucher state is $\eta=0$ without a voucher, $\eta=1$ holding one, and $\eta=2$
-excluded from the programme after failing Treatment First's condition.}
+history and not only on its present (Section~\ref{sec:fproblem}): $d=0$ \new{denotes} a household that has never carried the disorder, $d=1$ \new{refers to}
+one that carried it and has recovered, and $d=2$ \new{stands for} one that carries it now. The
+voucher state is $\eta=0$\new{, denoting having no voucher,} $\eta=1$\new{, representing}
+holding one, and $\eta=2$\new{, standing for exclusion} from the programme after failing
+Treatment First's condition.
 
-\new{Each period the household chooses
+Each period the household chooses
 \begin{equation}\label{eq:fchoice}
-\big(h',\,v,\,\tau,\,a'\big)\in
+\big(\new{h},\,v,\,\tau,\,a'\big)\in
 \{h_1,h_2,h_3,h_4\}\times\mathbb R_+\times\{0,1\}\times\mathcal A ,
 \end{equation}
-where $h'$ is the dwelling, of which $h_1$ is a shelter, $v$ drug use, $\tau$ SUD
-treatment, available only to a household that carries the disorder, and $a'$ next
-period's assets. Labour supply is not a choice: a household that has a job works it.}
+where $\new{h}$ is the dwelling, of which $h_1$ is a shelter, $v$ \new{is} drug use, $\tau$
+\new{is whether a household is in SUD treatment}, available only to a household that carries
+the disorder, and $a'$ \new{is its} next period's assets. \new{Labour is inelastically
+supplied}: a household that has a job works it.
 
 \subsection{Preferences}\label{sec:fprefs}
 
 \new{Flow utility is the stylized model's, with the child present for the first $J_K$
-years. Consumption $c$ and housing $h'$ are shared through the square-root equivalence
+years. Consumption $c$ and housing $\new{h}$ are shared through the square-root equivalence
 scale $\xi_j$, which is $\sqrt 2$ while the child is at home and one after, and the
 drug is the parent's alone, so the parent and the child hold the bundles
 \begin{equation}\label{eq:fbundles}
-X_P=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{h'}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
+X_P=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{\new{h}}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
 \qquad
-\new{X_c}=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{h'}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}b^{\theta},
+\new{X_c}=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{\new{h}}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}b^{\theta},
 \end{equation}
 and period utility is
 \begin{equation}\label{eq:futil}
-u\big(c,h',v,\tau\big) \;=\; U(X_P)\;+\;\omega_c\,(\xi_j-1)\,U(\new{X_c})\;+\;\aleph\;-\;\tau\,\bar\tau^{u},
+u\big(c,\new{h},v,\tau\big) \;=\; U(X_P)\;+\;\omega_c\,(\xi_j-1)\,U(\new{X_c})\;+\;\aleph\;-\;\tau\,\bar\tau^{u},
 \qquad U(X)=\frac{X^{1-\sigma}}{1-\sigma}.
 \end{equation}
 $\gamma$ is housing's share of the non-drug bundle and $\theta$ the drug's share of
@@ -1556,8 +1559,8 @@ to the fair market rent,
 \begin{equation}\label{eq:ftrans}
 \begin{aligned}
 F&=\max\big\{0,\ \underline c-\varrho\,\hat y\big\},\\
-V\!ch&=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{\hat y<\kappa_V y^{\text{med}}\}\,\mathbf{1}\{h'\neq h_1\}\,
-\min\Big\{\max\{0,\ p_r h'-\kappa_r\hat y\},\ \max\{0,\ \mathit{FMR}-\kappa_r\hat y\}\Big\},
+V\!ch&=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{\hat y<\kappa_V y^{\text{med}}\}\,\mathbf{1}\{\new{h}\neq h_1\}\,
+\min\Big\{\max\{0,\ p_r \new{h}-\kappa_r\hat y\},\ \max\{0,\ \mathit{FMR}-\kappa_r\hat y\}\Big\},
 \end{aligned}
 \end{equation}
 where $\hat y=Y+r\max\{a,0\}$ is the income both programmes are means-tested on,
@@ -1571,7 +1574,7 @@ government collects the estates of the dead.}
 \subsection{The budget constraint}
 
 \new{\begin{equation}\label{eq:fbudget}
-c+p_v v+a' \;=\; y^{n}+a+T_0\mathbf{1}\{j=1\}\;-\;p_r\, h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F,
+c+p_v v+a' \;=\; y^{n}+a+T_0\mathbf{1}\{j=1\}\;-\;p_r\, \new{h}\,\mathbf{1}\{\new{h}\neq h_1\}\;+\;V\!ch+F,
 \qquad c\ge F,\ v\ge0,\ a'\ge0 .
 \end{equation}
 Food assistance is paid in kind, so it cannot fund the drug, the rent or saving. The
@@ -1606,8 +1609,8 @@ age $J_E$.\footnote{Without it there is little consequence at old ages to using:
 little life remains for the disorder to damage, so the model produces too much of
 it.} A household with the SUD recovers, to $d=1$, with probability
 \begin{equation}\label{eq:frecover}
-\pi_r(h',m,\tau)=\min\Big\{1,\ \bar\pi_r\,
-\mu_H^{\mathbf{1}\{h'=h_1\}}\,\mu_m^{\mathbf{1}\{m=1\}}\,g^{\tau}\Big\},
+\pi_r(\new{h},m,\tau)=\min\Big\{1,\ \bar\pi_r\,
+\mu_H^{\mathbf{1}\{\new{h}=h_1\}}\,\mu_m^{\mathbf{1}\{m=1\}}\,g^{\tau}\Big\},
 \end{equation}
 with $\bar\pi_r$ the baseline annual chance of recovering while housed, without SMI
 and untreated, and three multipliers on it: $\mu_H<1$, which means that recovery is
@@ -1616,7 +1619,7 @@ which means that it is more likely in treatment.}
 
 \new{$\mu_H$ is how housing acts on drug use here, and it is worth being exact about what
 that claim is and is not. Housing does not change what a household wants: flow utility
-is the same function of $(c,h',v)$ housed or not. What housing changes is the chance of
+is the same function of $(c,\new{h},v)$ housed or not. What housing changes is the chance of
 getting out of the disorder once it is carried. Milby et al.\ (2005) randomised
 cocaine-dependent homeless adults into arms differing in housing and measured weeks of
 abstinence, so the ratio between arms identifies $\mu_H$.}
@@ -1663,12 +1666,12 @@ and did not find.}
 \paragraph{\new{Death risk.}}\label{sec:fdeath} \new{Write $\bar q_j$ for the baseline
 probability of dying at age $j$, from the Social Security Administration (SSA) period
 life table, and
-$q^{\,0}_j(h')=\min\{1,\kappa_{\phi H}^{\mathbf{1}\{h'=h_1\}}\,\bar q_j\}$ and
-$q^{\,1}_j(h')=\min\{1,\kappa_{\phi d}\,\kappa_{\phi H}^{\mathbf{1}\{h'=h_1\}}\,\bar q_j\}$
+$q^{\,0}_j(\new{h})=\min\{1,\kappa_{\phi H}^{\mathbf{1}\{\new{h}=h_1\}}\,\bar q_j\}$ and
+$q^{\,1}_j(\new{h})=\min\{1,\kappa_{\phi d}\,\kappa_{\phi H}^{\mathbf{1}\{\new{h}=h_1\}}\,\bar q_j\}$
 for the probability without and with the disorder. The probability of dying is then
 \begin{equation}\label{eq:fsurv}
-1-\phi(j,h',d,m)=\min\Big\{1,\ \kappa_{\phi m}^{\mathbf{1}\{m=1\}}\,q^{\,0}_j(h')
-+\mathbf{1}\{d=2\}\big[q^{\,1}_j(h')-q^{\,0}_j(h')\big]\Big\},
+1-\phi(j,\new{h},d,m)=\min\Big\{1,\ \kappa_{\phi m}^{\mathbf{1}\{m=1\}}\,q^{\,0}_j(\new{h})
++\mathbf{1}\{d=2\}\big[q^{\,1}_j(\new{h})-q^{\,0}_j(\new{h})\big]\Big\},
 \end{equation}
 so $\kappa_{\phi H}$ multiplies the death probability of a household in a shelter,
 $\kappa_{\phi d}$ that of a household carrying the disorder, and $\kappa_{\phi m}$ the
@@ -1689,9 +1692,9 @@ against.}}
 with probability $\pi^{ue}$,
 \begin{equation}\label{eq:femp}
 \pi^{eu}=\min\Big\{1,\ \bar\pi^{eu}\,a(y)\,
-\kappa^{eu}_{m}{}^{\mathbf{1}\{m'=1\}}(1+\kappa_{H})^{\mathbf{1}\{h'=h_1\}}\Big\},
+\kappa^{eu}_{m}{}^{\mathbf{1}\{m'=1\}}(1+\kappa_{H})^{\mathbf{1}\{\new{h}=h_1\}}\Big\},
 \qquad
-\pi^{ue}=\min\Big\{1,\ \frac{\bar\pi^{ue}\,(1-\kappa_{H})^{\mathbf{1}\{h'=h_1\}}}
+\pi^{ue}=\min\Big\{1,\ \frac{\bar\pi^{ue}\,(1-\kappa_{H})^{\mathbf{1}\{\new{h}=h_1\}}}
 {\kappa^{ue}_{d}{}^{\mathbf{1}\{d'=2\}}\,\kappa^{ue}_{m}{}^{\mathbf{1}\{m'=1\}}}\Big\},
 \end{equation}
 with $\bar\pi^{eu}$ and $\bar\pi^{ue}$ the baseline separation and job finding rates,
@@ -1745,7 +1748,7 @@ Section~\ref{sec:experiments} rather than in the calibration.}
 
 \new{Conditional on the state and the choices, next period's state is drawn in five
 transitions, which are independent given the state except that employment depends on
-next period's SUD and SMI and on the dwelling $h'$ through~\eqref{eq:femp}:}
+next period's SUD and SMI and on the dwelling $\new{h}$ through~\eqref{eq:femp}:}
 
 \paragraph{\new{Productivity $y$.}} \new{By the process of Section~\ref{sec:ftaxes} while
 working, and unchanged in retirement.}
@@ -1770,7 +1773,7 @@ State $2$ is reachable only from employment and never from itself, so the insure
 in it for the first year out of work and then move to state $3$, which pays nothing.}
 
 \paragraph{\new{The SUD $d$.}} \new{By~\eqref{eq:fd} if $d\neq2$ and~\eqref{eq:frecover} if
-$d=2$, conditioning on the chosen $v$, $h'$ and $\tau$ and on $m$.}
+$d=2$, conditioning on the chosen $v$, $\new{h}$ and $\tau$ and on $m$.}
 
 \paragraph{\new{Mental illness $m$.}} \new{By~\eqref{eq:fonset}, conditioning on $d$ and age.}
 
@@ -1778,7 +1781,7 @@ $d=2$, conditioning on the chosen $v$, $h'$ and $\tau$ and on $m$.}
 Section~\ref{sec:fvoucher}, conditioning on this period's eligibility and, under
 Treatment First, on the chosen $v$ and the state $d$.}
 
-\new{Write $\Gamma\big(s'\mid s,\,h',v,\tau\big)$ for their joint law, which is
+\new{Write $\Gamma\big(s'\mid s,\,\new{h},v,\tau\big)$ for their joint law, which is
 the object the expectation in~\eqref{eq:fbellman} is taken against.}
 
 \subsection{The household's dynamic problem}\label{sec:fproblem}
@@ -1786,13 +1789,13 @@ the object the expectation in~\eqref{eq:fbellman} is taken against.}
 \new{Putting it together, for $j=1,\dots,J$ and with $V(J{+}1,\cdot)=0$,
 \begin{equation}\label{eq:fbellman}
 \begin{aligned}
-V(j,s)=\max_{\{h',\,v,\,\tau,\,a'\}}\ \Bigg\{\
+V(j,s)=\max_{\{\new{h},\,v,\,\tau,\,a'\}}\ \Bigg\{\
 &U(X_P)+\omega_c(\xi_j-1)\,U(\new{X_c})+\aleph-\tau\bar\tau^{u}\\[2pt]
-&+\ \beta\,\phi(j,h',d,m)\!\int_{\mathcal S}\! V(j{+}1,s')\,
-\Gamma\big(\mathrm{d}s'\mid s,h',v,\tau\big)\\[2pt]
+&+\ \beta\,\phi(j,\new{h},d,m)\!\int_{\mathcal S}\! V(j{+}1,s')\,
+\Gamma\big(\mathrm{d}s'\mid s,\new{h},v,\tau\big)\\[2pt]
 &-\ \beta\,\chi_j\,\omega_c\,\max\big\{\mathbf{1}\{d\ge1\},\,\mathbf{1}\{v>0\}\big\}\,D(y)\Bigg\},
 \qquad
-\chi_j=\begin{cases}1-\phi(j,h',d,m) & j<J_K\\ 1 & j=J_K\\ 0 & j>J_K,\end{cases}
+\chi_j=\begin{cases}1-\phi(j,\new{h},d,m) & j<J_K\\ 1 & j=J_K\\ 0 & j>J_K,\end{cases}
 \end{aligned}
 \end{equation}
 subject to the budget~\eqref{eq:fbudget}, the income and transfer
@@ -1834,7 +1837,7 @@ stays outside. What is meant throughout is the lineage.}
 dose, so the drug decision separates into two. Taking the dwelling and saving as given,
 what is left to divide between consumption and the drug is
 \begin{equation}\label{eq:fresource}
-x\;=\;y^{n}+a+T_0\mathbf{1}\{j=1\}\;-\;p_r\,h'\,\mathbf{1}\{h'\neq h_1\}\;+\;V\!ch+F\;-\;a' ,
+x\;=\;y^{n}+a+T_0\mathbf{1}\{j=1\}\;-\;p_r\,\new{h}\,\mathbf{1}\{\new{h}\neq h_1\}\;+\;V\!ch+F\;-\;a' ,
 \end{equation}
 and a household that uses splits it by its own Cobb-Douglas shares, at every age,
 \begin{equation}\label{eq:fcvstatic}
@@ -1893,8 +1896,8 @@ price itself is not fixed: it adjusts in every experiment to clear the drug mark
 \new{Given the policy functions, the distribution over states evolves by pushing
 households through their choices and then through the shocks,
 \begin{equation}\label{eq:flom}
-\Phi_{j+1}(\mathcal S')\;=\;\int\phi\big(j,h'_j(s),d,m\big)\,
-\Gamma\big(\mathcal S'\mid s,\,h'_j(s),v_j(s),\tau_j(s)\big)\,
+\Phi_{j+1}(\mathcal S')\;=\;\int\phi\big(j,\new{h}_j(s),d,m\big)\,
+\Gamma\big(\mathcal S'\mid s,\,\new{h}_j(s),v_j(s),\tau_j(s)\big)\,
 \mathrm{d}\Phi_j(s)
 \qquad\text{for every measurable } \mathcal S' ,
 \end{equation}
@@ -1933,7 +1936,7 @@ so the penalty reaches the grandchild through the persistence alone.}
 \begin{itemize}\setlength{\itemsep}{0em}\setlength{\parskip}{0em}
 \item value functions $\big\{\{V_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$;
 \item policy functions
-$\big\{\{h'_t(j,\cdot),\,v_t(j,\cdot),\,\tau_t(j,\cdot),\,a'_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$;
+$\big\{\{\new{h}_t(j,\cdot),\,v_t(j,\cdot),\,\tau_t(j,\cdot),\,a'_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$;
 \item distributions $\big\{\{\Phi_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$; and
 \item prices, policies and aggregates
 $\big\{p_{vt},\,\pi_{Vt},\,\bar y_t,\,y^{\text{med}}_t,\,H_t\big\}_{t=0}^{\infty}$,
