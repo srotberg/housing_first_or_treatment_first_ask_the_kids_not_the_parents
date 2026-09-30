@@ -1586,7 +1586,7 @@ in Section~\ref{sec:fvoucher}, and $\mathit{FMR}$ is the average rent paid by ho
 the benchmark. A voucher
 holder in a shelter keeps the voucher and is paid nothing until it rents again, as long as it keeps its eligibility. Voucher holders
 keep their vouchers for as long as they remain eligible. Each
-entering household receives a one-time transfer $T_0$ from bequests left by deceased households, and the
+entering household receives a one-time \new{endowment} $T_0$ from bequests left by deceased households, and the
 government collects the rest of the estates of the dead.
 
 \subsection{The budget constraint}
@@ -1800,7 +1800,7 @@ Section~\ref{sec:fdrug}, conditional on the chosen $v$, $h$ and $\tau$ and on $m
 Section~\ref{sec:fvoucher}, conditional on this period's eligibility and, under
 Treatment First, on the chosen $v$ and the state $d$.
 
-Write $\Gamma\big(s'\mid s,\,h,v,\tau\big)$ for their joint law of motion, which is
+Write $\Gamma\big(s'\mid s,\,h,v,\tau\new{,a'}\big)$ for their joint law of motion, which is
 the object the expectation in~\eqref{eq:fbellman} in Section~\ref{sec:fproblem} is taken against.
 
 \subsection{The household's dynamic problem}\label{sec:fproblem}
@@ -1811,7 +1811,7 @@ Putting it together, for $j=1,\dots,J$ and with $V(J{+}1,\cdot)=0$,
 V(j,s)=\max_{\{h,\,v,\,\tau,\,a'\}}\ \Bigg\{\
 &U(X_P)+\omega_c(\xi_j-1)\,U(X_c)+\aleph-\tau\bar\tau^{u}\\[2pt]
 &+\ \beta\,\phi(j,h,d,m)\!\int_{\mathcal S}\! V(j{+}1,s')\,
-\Gamma\big(\mathrm{d}s'\mid s,h,v,\tau\big)\\[2pt]
+\Gamma\big(\mathrm{d}s'\mid s,h,v,\tau\new{,a'}\big)\\[2pt]
 &-\ \beta\,\chi_j\,\omega_c\,\mathbf{1}\{d\ge1\}\,D(y)\Bigg\},
 \qquad
 \chi_j=\begin{cases}1-\phi(j,h,d,m) & j<J_K\\ 1 & j=J_K\\ 0 & j>J_K,\end{cases}
@@ -1822,7 +1822,7 @@ rules~\eqref{eq:fincome} to~\eqref{eq:ftrans} in Section~\ref{sec:ftaxes}, and t
 available only to a household with $d=2$, that no household begins using after $J_E$,
 and that $c\ge F$, since the food stamp payment is paid in kind and cannot be saved.
 
-The first line is the flow of~\eqref{eq:futil}.\footnote{The disamenity $\kappa_x H$ is not in \new{the formulation},
+The first line is the flow of~\eqref{eq:futil}.\footnote{The disamenity $\kappa_x H$ is not in the formulation,
 because no choice of the household changes it (Section~\ref{sec:fprefs}).} The second is the household's own
 continuation. The third is the child as an adult. It enters when the child leaves: at
 $J_K$ with certainty, and before then with the probability that the parent dies first.
@@ -1831,11 +1831,11 @@ $D(y)$ is what the parent's disorder costs the child, in the child's own lifetim
 D(y)=\mathbb{E}\big[V(1,s_{\text{child}})\,\big|\,y,\ d=0\big]
 -\mathbb{E}\big[V(1,s_{\text{child}})\,\big|\,y,\ d\ge1\big]\;\ge\;0,
 \end{equation}
-where the child enters at $j=1$ \new{with the transfer $T_0$ and no other assets}, employed, without the disorder, SMI or a
+where the child enters at $j=1$ with the \new{endowment} $T_0$ and no other assets, employed, without the disorder, SMI or a
 voucher, and with productivity drawn as
 in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec}, from a parent with productivity $y$
-that has never had the disorder, $d=0$, or has had it, $d\ge1$. It is charged \new{whenever the parent has carried the disorder at some point before the child
-becomes an adult}.
+that has never had the disorder, $d=0$, or has had it, $d\ge1$. It is charged whenever the parent has carried the disorder at some point before the child
+becomes an adult.
 
 The term is a difference and not a level, and the
 distinction is not cosmetic. Written as a level, $\omega_c$ times the child's value, it
@@ -1857,7 +1857,7 @@ remains external.
 The government pays social security, unemployment insurance, food assistance,
 vouchers and the drug tests under Treatment First. It collects the labour and capital income
 taxes of~\eqref{eq:ftax} in Section~\ref{sec:ftaxes} and the estates of the dead, less the
-transfer $T_0$ to entering \new{adults ($j=1$)},
+\new{endowment} $T_0$ \new{given to} entering adults ($j=1$),
 \begin{equation}\label{eq:fgovt}
 \underbrace{\textstyle\sum \big(Y-\min\{Y,\tau_{\ell}Y^{\varphi}\}\big)+\tau_k\sum ra+\big(\text{estates}-T_0\big)}_{\text{revenue}}
 \;-\;
@@ -1867,7 +1867,7 @@ transfer $T_0$ to entering \new{adults ($j=1$)},
 In the benchmark the tax parameters are set as in Section~\ref{sec:fullcal} and
 $\mathcal R$ is whatever surplus they produce. In every policy experiment the taxes are
 held at their benchmark values and the probability of drawing a voucher $\pi_V$ adjusts
-so that $\mathcal R$ equals its benchmark value; an experiment that changes a preference
+so that $\mathcal R$ equals its benchmark value \new{$\bar{\mathcal R}$}; an experiment that changes a preference
 rather than a policy, such as $\omega_c=1$, holds both and lets $\mathcal R$ move.
 
 \subsection{The drug market}
@@ -1883,52 +1883,57 @@ price itself is not fixed: it adjusts in every experiment to clear the drug mark
 
 \subsection{The law of motion and newborns}\label{sec:fnewbornsec}
 
-\new{Given the policy functions, the distribution over states evolves by pushing
+Given the policy functions, the distribution over states evolves by pushing
 households through their choices and then through the shocks,
 \begin{equation}\label{eq:flom}
-\Phi_{j+1}(\mathcal S')\;=\;\int\phi\big(j,\new{h}_j(s),d,m\big)\,
-\Gamma\big(\mathcal S'\mid s,\,\new{h}_j(s),v_j(s),\tau_j(s)\big)\,
+\Phi_{j+1}(\mathcal S')\;=\;\int\phi\big(j,h_j(s),d,m\big)\,
+\Gamma\big(\mathcal S'\mid s,\,h_j(s),v_j(s),\tau_j(s)\new{,a'_j(s)}\big)\,
 \mathrm{d}\Phi_j(s)
 \qquad\text{for every measurable } \mathcal S' ,
 \end{equation}
 together with the inflow of entrants
 \begin{equation}\label{eq:flomnew}
-\Phi_{1}(\mathcal S')\;=\;\frac{\sum_{j\le J_K}\int\new{\chi_j}\,
+\Phi_{1}(\mathcal S')\;=\;\frac{\sum_{j\le J_K}\int\chi_j\,
 \mathcal N\big(\mathcal S'\mid s\big)\,\mathrm{d}\Phi_j(s)}
-{\sum_{j\le J_K}\int\new{\chi_j}\,\mathrm{d}\Phi_j(s)},
+{\sum_{j\le J_K}\int\chi_j\,\mathrm{d}\Phi_j(s)},
 \end{equation}
 where $\mathcal N$ places the child according
-to~\eqref{eq:fnewborn} \new{and $\chi_j$ is the weight of~\eqref{eq:fbellman}. The entering cohort has unit
-mass every period, so in a stationary equilibrium it equals the mass of the dead, and its
-composition is that of the parents at the moment their child leaves home: at the parent's
-death if that comes before $J_K$, and at $J_K$ otherwise, the same timing the parent weighs
-its child with in~\eqref{eq:fbellman}.}}
+to~\eqref{eq:fnewborn} and $\chi_j$ is the weight \new{defined in Section~\ref{sec:fproblem}}. The entering cohort has unit
+mass every period, so in a stationary equilibrium it equals the mass of the dead. \new{Where an
+entrant starts depends on its parent: its productivity is drawn around the parent's, and it
+carries the penalty if the parent had the disorder, both as of the moment the child becomes an
+adult, which is at the parent's death if that comes before $J_K$ and at $J_K$ otherwise, the
+same timing with which the parent weighs its child in Section~\ref{sec:fproblem}.}
 
-\new{An entrant has zero assets and the transfer $T_0$, is employed, has never carried the
+An entrant \new{starts with the endowment $T_0$ and no other assets}, is employed, has never carried the
 disorder, holds no voucher, and carries SMI with the prevalence observed at age 26.
 Its log productivity is drawn around its parent's, with the persistence $\rho$ and an
 innovation that keeps the spread of productivity at entry the same in every
-generation, and it is scaled for life by the penalty if the parent \new{had the disorder at any point
-before its child left},
+generation, and it is scaled for life by the penalty if the parent had the disorder at any point
+before its child \new{became an adult},
 \begin{equation}\label{eq:fnewborn}
 \log y_{1}^{\text{child}}\;=\;\rho\,\log y^{\text{parent}}+(1-\rho)\,\mu+\epsilon
-+\log(1-\delta_d)\,\new{\mathbf{1}\{\text{parent has } d\ge1 \text{ when its child leaves}\}},
++\log(1-\delta_d)\,\mathbf{1}\{\text{parent has } d\ge1 \text{ when its child \new{becomes an adult}}\},
 \end{equation}
-with $y^{\text{parent}}$ the parent's productivity node at its entry-age level, $\mu$
-the mean of log productivity at entry and $\epsilon$ normal. Because the
+with $y^{\text{parent}}$ \new{the productivity of the parent's node at age $j=1$, the age at which
+the child enters, so that parent and child are compared at the same age}, $\mu$
+the mean of log productivity at entry and $\epsilon$ \new{normally distributed with mean zero and
+variance $1-\rho^2$ times the variance of log productivity at entry, which keeps that
+variance the same in every generation}. Because the
 penalised child's own productivity is lower, its own child inherits a lower draw too,
-so the penalty reaches the grandchild through the persistence alone.}
+so the penalty reaches the grandchild through the persistence alone.
 
 \subsection{Competitive equilibrium}
 
-\new{A competitive equilibrium is a collection of
+A competitive equilibrium is a collection of
 \begin{itemize}\setlength{\itemsep}{0em}\setlength{\parskip}{0em}
 \item value functions $\big\{\{V_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$;
 \item policy functions
-$\big\{\{\new{h}_t(j,\cdot),\,v_t(j,\cdot),\,\tau_t(j,\cdot),\,a'_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$;
+$\big\{\{h_t(j,\cdot),\,v_t(j,\cdot),\,\tau_t(j,\cdot),\,a'_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$;
 \item distributions $\big\{\{\Phi_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$; and
 \item prices, policies and aggregates
-$\big\{p_{vt},\,\pi_{Vt},\,\bar y_t,\,y^{\text{med}}_t,\,H_t\big\}_{t=0}^{\infty}$,
+$\big\{p_{vt},\,\pi_{Vt},\,H_t\big\}_{t=0}^{\infty}$\new{, together with $\bar y$, $y^{\text{med}}$ and
+$\mathit{FMR}$, which carry no date because they are the benchmark's},
 \end{itemize}
 such that, at every date $t$,
 \begin{enumerate}\setlength{\itemsep}{0.1em}\setlength{\parskip}{0em}
@@ -1938,17 +1943,16 @@ $\{V_t(j,\cdot)\}_{j=1}^{J}$ are the associated values;
 motion~\eqref{eq:flom} together with the entrants of~\eqref{eq:flomnew}
 and~\eqref{eq:fnewborn};
 \item in a policy experiment, the government budget~\eqref{eq:fgovt} holds at
-$\pi_{Vt}$, with its benchmark net revenue;
-\item the drug market clears at $p_{vt}$, so~\eqref{eq:fdrug} holds with aggregate drug
-demand $S_{vt}=\int v_t(s)\,\mathrm{d}\Phi_t$;
+$\pi_{Vt}$ \new{with $\mathcal R=\bar{\mathcal R}$};
+\item the drug market clears at $p_{vt}$, so~\eqref{eq:fdrug} holds;
 \item the homelessness rate $H_t$ is the aggregate implied by $\Phi_t$, and so are
-$\bar y_t$ and median income $y^{\text{med}}_t$ in the benchmark; in every experiment
-and along the transition those two are held at their benchmark values, as are $T_0$
-and $\mathit{FMR}$.
+\new{average earnings $\bar y$, median income $y^{\text{med}}$ and the fair market rent
+$\mathit{FMR}$} in the benchmark; in every experiment
+and along the transition \new{the latter three} are held at their benchmark values, as is $T_0$.
 \end{enumerate}
 A stationary equilibrium is the special case in which all of these are constant and
 $\Phi_{t+1}=\Phi_t$, which is what the calibration and the long-run policy comparisons
-report. The sequence version is what the transition between them solves.}
+report. The sequence version is what the transition between them solves.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
@@ -2148,7 +2152,7 @@ negative value of life in equilibrium, so death is never an optimal outcome.}
 \paragraph{What using and being homeless cost, and the voucher.} Both
 policies work on this block, from opposite ends: each parameter says how bad a state
 is, so each sets what a voucher is worth to a household in that state and
-what being cured of that state is worth. \new{The voucher and the transfer at entry close the
+what being cured of that state is worth. \new{The voucher and the endowment at entry close the
 block, the voucher because it is the instrument that acts on all of them.} Because the child inherits a higher chance of landing in these
 states, everything here moves the private value and the externality together.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
@@ -2204,8 +2208,8 @@ is held at $@@c_pi_v_value@@$, where $@@c_pi_v_model@@$ percent of the income-el
 population holds a voucher, against $@@c_pi_v_data@@$ percent in HUD's Picture of
 Subsidized Households, 2023. In every experiment it is the instrument that balances the
 government's budget, as set out above.}
-\item[\new{$T_0$, the transfer at entry.}] \new{A household enters the economy with no
-assets and a one-time transfer of $T_0$ times average earnings, which sets how far a
+\item[\new{$T_0$, the endowment at entry.}] \new{A household enters the economy with an
+endowment of $T_0$ times average earnings and no other assets, which sets how far a
 young household is from the street in its first years. Homelessness at the youngest
 ages is steeply decreasing in what a household enters with, so this one number places
 the age profile of homelessness at its young end. Its moment is the share of the

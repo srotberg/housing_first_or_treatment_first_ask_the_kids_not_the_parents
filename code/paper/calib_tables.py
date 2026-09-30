@@ -182,7 +182,7 @@ ELEVEN = [
         (r'$\pi_V$', 'Chance of drawing a voucher', setcol('pi_v'),
          'Recipients over eligible, HUD 2023',
          pc(C['voucher_coverage_data']), pc(mom('pi_V eligibles with a voucher')), f(PI_V, 4)),
-        (r'$T_0$', 'Transfer at entry, over average earnings', setcol('newborn_endowment'),
+        (r'$T_0$', 'Endowment at entry, over average earnings', setcol('newborn_endowment'),
          'Share of the homeless aged 25 to 34, HUD PiT 2024',
          pc(mom('share of the homeless, band 1', 1)), pc(mom('share of the homeless, band 1')),
          f(H['newborn_endowment_scale'], 3)),
