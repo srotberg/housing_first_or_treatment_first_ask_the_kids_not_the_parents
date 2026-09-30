@@ -1,3 +1,30 @@
+# 30 September 00:30: STYLIZED STAGES 1 AND 2 DONE, EVERY REQUIREMENT PASSES
+
+stages_sep30_cloud.txt, check_stage.py on each (the gradient check included):
+
+- stage 1, 425 iterations, worst gap 1.13 per cent: every target in tolerance
+  (homelessness 0.594 per cent, participation 8.92, users' income 0.748, SUD share of the
+  homeless 21.76, food stamps 0.42 per cent of labour income); no negative value at the
+  drug decision under HF or TF; u1 0.0997 against u0 0.0465; SUD share 21.22 -> 21.76 ->
+  22.41 as u1 rises by 0.005; mortality off, users stay at 3.545 times average at every u1.
+- stage 2, 250 iterations, worst gap 1.72 per cent: every fitted target in tolerance
+  (homelessness 0.619 per cent, child gap 0.182, users' income 0.740, SUD share 21.33);
+  no negative value at the drug decision under HF or TF, none in occupied period-2
+  cells either; u1 0.0999 against u0 0.0466; SUD share 19.88 -> 21.33 -> 23.40 -> 25.54;
+  users at 3.559 with mortality off.  aleph 13.85 (stage 1 11.25), omega 0.00227.
+- check_stage printed "SOMETHING FAILS" for stage 2 on the child SUD odds ratio, 0.96
+  against 2.  That row has no adjuster: delta_d is SET at Nilsson's 24 per cent and the
+  odds ratio is reported beside it, as in the full model.  check_stage now reports a set
+  row instead of judging it (4b12a665).  Nothing was rerun; the verdict on the same output
+  is ALL PASS.
+
+Results: stage 1 figure, tables and numbers in session_01KJJ1goWAmptHL4jSqHarzJ
+(stage1_results_cloud.txt; its tables step read the OLD calibrated_stage2.json, cloned
+before stage 2 ended, so tables are regenerated after stage 2).  Stages 2-4 numbers in
+session_01AJRPXfqbZ5SXvdDCiePa7W, written to stage_numbers_s2.json (STAGE_NUMBERS_OUT) so
+the two workers' rebases cannot drop each other's keys; merged here, then
+`stage_results.py tables` once more.
+
 # 30 September 00:10: STYLIZED SPECIFICATION CHOSEN, STAGES 1 AND 2 LAUNCHED
 
 - Scan (scan_bottom_ui.py, split rule, sigma held): floor 2.4 (lowest income 0.240, bottom half 21.1%,
