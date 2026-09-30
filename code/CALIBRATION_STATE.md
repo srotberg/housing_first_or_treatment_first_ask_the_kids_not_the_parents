@@ -1,3 +1,21 @@
+# 30 September 13:40: TRANSITION SOLVER ITEM 10 BUILT; RESTART 3h RUNS IT FROM 3g'S LOOP 0 PATHS
+
+- The author, on the three changes proposed for convergence: "yes, do the changes you suggested in
+  1-3".  patch_transition_fix.py item 10 (README there): (a) pi_V stepped year by year forward from
+  the reform, each step net of this loop's earlier steps (retention 0.9, damping 0.7, 25% cap kept,
+  secant dropped); (b) each year's drug price step blended with its neighbours' (0.2/0.6/0.2),
+  printed as TRANSITION PRICE FILTER; (c) the restart below.  No equilibrium condition or stopping
+  rule changes.  Diff 176 lines; build_tr60_fix.sh checks it.  0 warnings, 0 errors in all three
+  builds; hftf md5 22b1342d.
+- 3g stopped at 13:38 in loop 1's backward pass (pid 484, by pid); archive trtf60/restart3g_killed_1338.
+  3g's loop 0 paths are kept in trtf60/restart3g_loop0/seeds_in (what it read) and seeds_out (what
+  it wrote); seeds_out is 3h's seed (price t=1 0.905362 against 0.905503; 59/59 read for both paths).
+- 3h: pid 8916, launched 13:38 with the same detached line, PARAM_HANDOVER.txt from .kept, 100
+  HANDOVER lines identical to 3g's.  Watcher task bpugv8b66 (2 h): RE-ARM IT when it stops.
+  Loop 0 ends about 23:40 (backward 4.2 h, forward 5.5 h); compare its years 1-40 with 3g's loop 0
+  (drug gap above 0.005 in 14 years, worst 0.026; budget above 0.005 in 5).
+- The paper still pins 3g's loop 0 (transition_source.py); re-pin only when 3h's pass is better.
+
 # 30 September 13:05: ALL RED REMOVED FROM THE TABLES (author)
 
 - "remove all red from the tables too": every table is black -- Tables 1-3 (stylized; their
