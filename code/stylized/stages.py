@@ -121,6 +121,7 @@ FS_TARGET = float(_fc()['food_stamps_share_data'])
 # target and written to another file, leaving calibrated_stage<n>.json as it is.
 VSL_TARGET = None
 OUT_NAME = None
+STAGE2_VSL = float(_fc()['vsl_data'])
 
 
 def spec(stage):
@@ -150,7 +151,14 @@ def spec(stage):
         if r[0] == 'aleph':
             # THE VSL TARGET IS calibrate.TARGET's, which the tables and fill.py read:
             # 84 since 29 September (see there).  sr_calibrate's row still says 80.
-            r = (r[0], r[1], VSL_TARGET if VSL_TARGET is not None else C.TARGET['vsl'],
+            # STAGE 2 ON 80, THE QUANTITATIVE MODEL'S vsl_data (the author, 30 September:
+            # "for stage 2, try to calibrate to 80 and see if the VSL is positive for
+            # everyone in period 1").  It is: stage2_vsl80_cloud.txt, ALL PASS, no
+            # negative value of life at the drug decision under either programme.
+            # Stage 1 stays on calibrate.TARGET's 84, where 80 left 0.37 per cent of
+            # households with a negative value at the drug decision.
+            default = STAGE2_VSL if stage >= 2 else C.TARGET['vsl']
+            r = (r[0], r[1], VSL_TARGET if VSL_TARGET is not None else default,
                  r[3], r[4], r[5], r[6])
         if r[0] == 'h1':
             # UP TO 0.095, just under the small unit.  With the floor raised the street
