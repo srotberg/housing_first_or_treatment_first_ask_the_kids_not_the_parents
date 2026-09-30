@@ -1426,10 +1426,11 @@ percent of income. Households in the model spend $73$ percent of their income
 on consumption, so $0.2$ percent of income translates to $0.27$ percent of consumption. $\kappa_x$ is the
 disamenity per unit of homelessness, in utils per period alive, that costs an adult in
 the stage 2 economy as much over its adult life as giving up $0.27$ percent of
-its consumption in every period.\footnote{\new{$\kappa_x$ solves
-$V\big((1-w)\,c;\,0\big)=V\big(c;\,\kappa_x\big)$, where $V(c;\kappa)$ is an adult's lifetime value in
-the stage 2 economy when it consumes $c$ and bears the disamenity $\kappa H$, and $w$ is the
-willingness to pay as a share of consumption.}} That gives
+its consumption in every period.\footnote{$\kappa_x$ solves
+$V\big((1-w)\,c;\,0\big)=V\big(c;\,\new{H}\big)$, where \new{$V(c;H)$} is an adult's lifetime value in
+the stage 2 economy when it consumes $c$ and \new{homelessness is $H$, which it bears as the disamenity
+$\kappa_x H$}, and $w$ is the
+willingness to pay as a share of consumption \new{to have $H=0$}.} That gives
 $\kappa_x=1.36$. Because the two policies differ little in homelessness, it changes essentially nothing about the welfare gain from Treatment First, which remains at
 $0.46$ percent of lifetime consumption.
 
@@ -1662,8 +1663,8 @@ that does not,
 \end{equation}
 The effect of the SUD on the onset of SMI, $\iota>1$, runs in the direction the evidence
 supports. About a quarter of those with a psychosis induced by a substance go on to develop
-schizophrenia or bipolar disorder (Murrie et al., 2020), and in the Danish registers people with any SUD are $1.34$ times \new{more} likely to develop
-schizophrenia \new{than} people with no SUD, and those with opioid use disorder $2.74$ times \new{more}
+schizophrenia or bipolar disorder (Murrie et al., 2020), and in the Danish registers people with any SUD are $1.34$ times more likely to develop
+schizophrenia than people with no SUD, and those with opioid use disorder $2.74$ times more
 likely (Nielsen et al., 2017).
 
 SMI then affects three objects: the chances of losing a job and of finding one,
@@ -1685,14 +1686,14 @@ $q^{\,0}_j(h)=\min\{1,\kappa_{\phi H}^{\mathbf{1}\{h=h_1\}}\,(1-\bar\phi_j)\}$ a
 $q^{\,1}_j(h)=\min\{1,\kappa_{\phi d}\,\kappa_{\phi H}^{\mathbf{1}\{h=h_1\}}\,(1-\bar\phi_j)\}$
 for the probability without and with the disorder. The probability of dying is then
 \begin{equation}\label{eq:fsurv}
-1-\phi(j,h,d,m)=\min\Big\{1,\ \kappa_{\phi m}^{\mathbf{1}\{m=1\}}\,q^{\,0}_j(h)
+1-\phi(j,h,d,m)=\min\Big\{1,\ \new{\big(\mathbf{1}\{m=1\}\,\kappa_{\phi m}+\mathbf{1}\{m=0\}\big)}\,q^{\,0}_j(h)
 +\mathbf{1}\{d=2\}\big[q^{\,1}_j(h)-q^{\,0}_j(h)\big]\Big\},
 \end{equation}
 so $\kappa_{\phi H}$ multiplies the death probability of a household in a shelter,
-$\kappa_{\phi d}$ that of a household carrying the disorder, and $\kappa_{\phi m}\new{>1}$ the
+$\kappa_{\phi d}$ that of a household carrying the disorder, and $\kappa_{\phi m}>1$ the
 baseline risk of a household with SMI, to which the excess risk of the disorder is
-added\new{; without SMI the factor $\kappa_{\phi m}^{\mathbf{1}\{m=1\}}$ is one}. A household without the disorder therefore dies with probability $q^{\,0}_j(h)$, or
-$\new{\min\{1,\,\kappa_{\phi m}\,q^{\,0}_j(h)\}}$ with SMI, and the disorder adds the excess
+added. A household without the disorder therefore dies with probability $q^{\,0}_j(h)$, or
+$\min\{1,\,\kappa_{\phi m}\,q^{\,0}_j(h)\}$ with SMI, and the disorder adds the excess
 $q^{\,1}_j(h)-q^{\,0}_j(h)$ on top. The disorder kills
 whether or not it is being treated.\footnote{In the data, the meta-analyses of mortality among people using extramedical
 opioids report overdose as the largest single contributor to the excess (Larney et al.,
@@ -1704,26 +1705,26 @@ against.}
 \paragraph{Unemployment risk.} A job is lost with probability $\pi^{eu}$ and found
 with probability $\pi^{ue}$,
 \begin{equation}\label{eq:femp}
-\pi^{eu}=\min\Big\{1,\ \bar\pi^{eu}\,\new{\varpi(y)}\,
+\pi^{eu}=\min\Big\{1,\ \bar\pi^{eu}\,\varpi(y)\,
 \kappa^{eu}_{m}{}^{\mathbf{1}\{m'=1\}}(1+\kappa_{H})^{\mathbf{1}\{h=h_1\}}\Big\},
 \qquad
 \pi^{ue}=\min\Big\{1,\ \frac{\bar\pi^{ue}\,(1-\kappa_{H})^{\mathbf{1}\{h=h_1\}}}
 {\kappa^{ue}_{d}{}^{\mathbf{1}\{d'=2\}}\,\kappa^{ue}_{m}{}^{\mathbf{1}\{m'=1\}}}\Big\},
 \end{equation}
 with $\bar\pi^{eu}$ and $\bar\pi^{ue}$ the baseline separation and job finding rates,
-$\new{\varpi(y)}$ a factor that makes separations likelier at low productivity, in line with the
+$\varpi(y)$ a factor that makes separations likelier at low productivity, in line with the
 unemployment rates of the education groups the productivity grid spans, the multiplier
 $\kappa^{eu}_{m}$ making a job likelier to lose with SMI, and the divisors
 $\kappa^{ue}_{d}$ and $\kappa^{ue}_{m}$ making one harder to find with the SUD and with
-SMI. The SUD does not raise separations\new{, only reduces the chance of regaining employment}. $\kappa_{H}$ does both for a household in a
+SMI. The SUD does not raise separations, only reduces the chance of regaining employment. $\kappa_{H}$ does both for a household in a
 shelter.
 
 \paragraph{The child's productivity penalty.} A child whose parent carries the
 disorder in the period the parent dies enters the economy with its productivity lowered
-by the proportion $\delta_d$ in~\eqref{eq:fnewborn} \new{in Section~\ref{sec:fnewbornsec}}, and the penalty stays with the
+by the proportion $\delta_d$ in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec}, and the penalty stays with the
 child for life. There is no penalty for a parent's homelessness. The parent's own
-problem prices the penalty on a different event\new{: it is charged in every period in which the
-parent uses or has ever carried the disorder, not only in the period it dies carrying it}, as set out in
+problem prices the penalty on a different event: it is charged in every period in which the
+parent uses or has ever carried the disorder, not only in the period it dies carrying it, as set out in
 Section~\ref{sec:fproblem}. The penalty is a risk to the
 parent's own objective only to the extent that $\omega_c$ is positive, so it is the one
 risk here that carries an externality rather than a pure personal cost, which is what

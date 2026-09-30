@@ -1,3 +1,12 @@
+# 30 September 16:50: ROUND 93bd6955; RED CLEARED TO THE END OF 4.8
+
+- 5 comments, in red: the stylized kappa_x footnote now V((1-w)c; 0) = V(c; H), H the homelessness
+  the adult bears as kappa_x H, w the willingness to pay "to have H = 0"; in (29) the SMI factor is
+  written (1{m=1} kappa_phi_m + 1{m=0}) rather than as an exponent, and the "factor is one" clause
+  is gone. Other indicator exponents (kappa_phi_H, mu_H, the employment divisors) left as they
+  are; offered to the author.
+- Splice sec2/splice_r54.py, baseline 6a810485; red kept from 4.9 on.
+
 # 30 September 16:40: ROUND c0107aaf; RED CLEARED TO THE END OF 4.8
 
 - 11 comments, in red: the stylized kappa_x footnote as the equation it solves,
