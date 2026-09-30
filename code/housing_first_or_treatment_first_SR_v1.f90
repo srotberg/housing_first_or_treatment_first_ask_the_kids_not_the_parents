@@ -30460,6 +30460,36 @@
             frac_spent_on_addiction_1=1-consumption_choice_1/total_consumption_choice_3
             total_consumption_choice_1=total_consumption_choice_3
 
+            ! THE CHILD COUNTS IN HOW MUCH, NOT ONLY IN WHETHER. The author, 30
+            ! September: *"the child term has to count in both whether to use
+            ! and how much to use"*, *"and the parent counts it with omega_c"*.
+            !
+            ! The closed form above is the parent's own Cobb-Douglas split. The
+            ! flow utility it is the split of carries the child's term as well,
+            ! omega_c*(xi-1) times the child's bundle, which shares the
+            ! consumption and gets none of the drug, so every unit of the drug
+            ! takes consumption from the child too. Solving the parent's split
+            ! and then evaluating the child's term at it left omega_c out of the
+            ! quantity: the child counted in the value compared across use and
+            ! abstention but not in the first order condition, which is not the
+            ! maximum of the objective the paper writes. The stylized model has
+            ! always maximised the whole objective over v, child included.
+            !
+            ! Only while the child is at home (xi > 1) and omega_c > 0; after
+            ! J_K, or at omega_c = 0, the closed form is the answer and is left
+            ! untouched, so the omega_c = 0 counterfactual is bit for bit what
+            ! it was.
+            if ((weight_on_child>0) .AND. (sqrt_household_size(age_index)>1) .AND. &
+                (frac_spent_on_addiction_1>0) .AND. (total_consumption_choice_3>0)) then
+
+                call solve_drug_split_with_child(total_consumption_choice_3,&
+                    consumption_choice_1,frac_spent_on_addiction_1,&
+                    price_of_addictive_good_1,housing_size_1)
+
+                total_consumption_choice_1=total_consumption_choice_3
+
+            end if
+
             ! THE RISK TERM, and this is where the hazard stops being decoration.
             !
             ! The closed form above is the static Cobb-Douglas split: it sets the
@@ -30649,6 +30679,134 @@
 
     end subroutine
 
+    subroutine solve_drug_split_with_child(total_consumption_choice_1,consumption_choice_1,&
+        frac_spent_on_addiction_1,price_of_addictive_good_1,housing_size_1)
+
+        ! The drug quantity that counts the child at omega_c. Called only from
+        ! optimize_frac_spent_on_addiciton, for a household whose child is at
+        ! home, after the parent's own closed form, which it replaces.
+        !
+        ! THE CONDITION. In calculate_flow_utility the household's scale, its
+        ! housing term and the homeless penalty multiply the parent's and the
+        ! child's terms alike and cancel from the margin, leaving
+        !
+        !   c^((1-sigma)phi) [ (b+v)^delta + K b^delta ] / (1-sigma),   c + p v = C,
+        !
+        ! with K = omega_c*(xi-1) and delta = theta*(1-sigma). Its derivative in
+        ! v is zero where, in t = b + v,
+        !
+        !   g(t) = theta (C + p b) - (theta+phi) p t - phi p K b^delta t^(1-delta) = 0.
+        !
+        ! At K = 0 that is the closed form. g falls in t, since 1-delta > 0, and
+        ! at the parent's own split it equals -phi p K b^delta t^(1-delta) < 0,
+        ! so the root lies between abstention, t = b, and the parent's split:
+        ! counting the child can only move the household towards less of the
+        ! drug. If g(b) <= 0 it buys none.
+        !
+        ! Safeguarded Newton inside that bracket. At sigma > 1 g is concave, so
+        ! Newton from the right end converges monotonically and the bracket is
+        ! only a guard.
+
+        use Global_Vars
+
+        implicit none
+
+        real(8), intent(in) :: total_consumption_choice_1,price_of_addictive_good_1,housing_size_1
+        real(8), intent(inout) :: consumption_choice_1,frac_spent_on_addiction_1
+
+        real(8) :: share_c_1,share_v_1,b_1,delta_1,kb_1,y_1,t_lo,t_hi,t_1,t_new,g_1,dg_1,v_1
+        integer :: is_sud_1,loop_1
+
+        is_sud_1=0
+
+        if (unemployment_index>threshold_addiction_index) then
+
+            is_sud_1=1
+
+        end if
+
+        if (is_sud_1==1) then
+
+            share_c_1=relative_share_of_consumption_2
+            share_v_1=relative_share_of_addiction_2
+
+        else
+
+            share_c_1=relative_share_of_consumption_1
+            share_v_1=relative_share_of_addiction_1
+
+        end if
+
+        b_1=b_shifter(is_sud_1,housing_size_1)
+        delta_1=share_v_1*(1-risk_aversion_consumption)
+        kb_1=share_c_1*price_of_addictive_good_1*&
+            weight_on_child*(sqrt_household_size(age_index)-1)*b_1**delta_1
+        y_1=total_consumption_choice_1+price_of_addictive_good_1*b_1
+
+        t_lo=b_1
+        t_hi=b_1+(total_consumption_choice_1-consumption_choice_1)/price_of_addictive_good_1
+
+        ! The corner: the consumption the first unit of the drug takes from the
+        ! child is worth more than the unit.
+        if (share_v_1*y_1-(share_v_1+share_c_1)*price_of_addictive_good_1*t_lo-&
+            kb_1*t_lo**(1-delta_1)<=0) then
+
+            consumption_choice_1=total_consumption_choice_1
+            frac_spent_on_addiction_1=0.d0
+
+            return
+
+        end if
+
+        t_1=t_hi
+
+        do loop_1=1,100
+
+            g_1=share_v_1*y_1-(share_v_1+share_c_1)*price_of_addictive_good_1*t_1-&
+                kb_1*t_1**(1-delta_1)
+
+            if (g_1>0) then
+
+                t_lo=t_1
+
+            else
+
+                t_hi=t_1
+
+            end if
+
+            dg_1=-(share_v_1+share_c_1)*price_of_addictive_good_1-&
+                kb_1*(1-delta_1)*t_1**(-delta_1)
+
+            t_new=t_1-g_1/dg_1
+
+            if ((t_new<=t_lo) .OR. (t_new>=t_hi)) then
+
+                t_new=(t_lo+t_hi)/2
+
+            end if
+
+            if ((abs(t_new-t_1)<=10.d0**(-13)*t_1) .OR. ((t_hi-t_lo)<=10.d0**(-13)*t_hi)) then
+
+                t_1=t_new
+
+                exit
+
+            end if
+
+            t_1=t_new
+
+        end do
+
+        v_1=max(t_1-b_1,0.d0)
+
+        consumption_choice_1=min(max(total_consumption_choice_1-price_of_addictive_good_1*v_1,0.d0),&
+            total_consumption_choice_1)
+
+        frac_spent_on_addiction_1=min(max(1-consumption_choice_1/total_consumption_choice_1,0.d0),1.d0)
+
+    end subroutine
+
     subroutine solve_drug_split_with_risk(total_consumption_choice_1,consumption_choice_1,&
         frac_spent_on_addiction_1,price_of_addictive_good_1,housing_size_1,addiction_index_1)
 
@@ -30673,6 +30831,7 @@
         integer, intent(in) :: addiction_index_1
 
         real(8) :: x_lo,x_hi,x_mid,cons_x_1,v_1,b_1,utility_1,scale_1,marginal_1,share_c_1,share_v_1
+        real(8) :: child_k_1,child_share_1
         real(8) :: stopping_rule_1=10.d0**(-6)
         integer :: is_sud_1,loop_1,max_loop_1
 
@@ -30733,7 +30892,19 @@
             ! aggregate, recorded before either term is appended.
             scale_1=(1-risk_aversion_consumption)*flow_utility_goods_only
 
-            marginal_1=scale_1*(share_v_1/(b_1+v_1))-&
+            ! THE CHILD'S TERM IS IN THE AGGREGATE AND NOT IN THE DRUG. With the
+            ! child at home the aggregate is the parent's bundle plus
+            ! omega_c*(xi-1) times the child's, and the child's carries b but no
+            ! v, so only the parent's part of the aggregate has a drug margin;
+            ! consumption's margin is on the whole of it. child_share_1 is the
+            ! child's part, zero at omega_c = 0 or once the child has left, where
+            ! this is the condition as it was.
+            child_k_1=weight_on_child*(sqrt_household_size(age_index)-1)
+            child_share_1=child_k_1*b_1**(share_v_1*(1-risk_aversion_consumption))/&
+                ((b_1+v_1)**(share_v_1*(1-risk_aversion_consumption))+&
+                child_k_1*b_1**(share_v_1*(1-risk_aversion_consumption)))
+
+            marginal_1=scale_1*(1-child_share_1)*(share_v_1/(b_1+v_1))-&
                 scale_1*(price_of_addictive_good_1*share_c_1/cons_x_1)-&
                 addiction_transition_slope(is_sud_1,addiction_index_1,v_1)*drug_risk_value
 
