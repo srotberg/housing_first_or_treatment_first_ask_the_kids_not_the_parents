@@ -1,3 +1,15 @@
+# 30 September 19:40: ROUND cac6315d; RED CLEARED TO THE END OF 4.13
+
+- 6 comments, in red: the child enters "with the transfer T_0 and no other assets"; charged
+  "whenever the parent has carried the disorder at some point before the child becomes an adult";
+  the "using matters only through the disorder" sentence and the two 4.12 sentences on rationing
+  and tax distortions removed (redundant); "not in the formulation"; T_0 "to entering adults (j=1)".
+- Point run (pid 26910): block 1 of 12 after 29 min; its moments match the reference's block 1
+  to the third decimal (b 0.0700 against 0.0698) -- expected, since the child's value is zero
+  until age one has been solved. omega_c's own moment (drug use with omega_c = 0) is NOT in the
+  MOMENT list: it needs a second point run at weight_on_child 0 on the fixed code.
+- Splice sec2/splice_r57.py, baseline 1e8068ec; red kept from 4.14 on.
+
 # 30 September 19:20: ROUND bdde13a6; RED CLEARED TO THE END OF 4.12
 
 - The author's comments on 4.8-4.12, in red: tense in the penalty sentence; 4.10 "SMI begins and

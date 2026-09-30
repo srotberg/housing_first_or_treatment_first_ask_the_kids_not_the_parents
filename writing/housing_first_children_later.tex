@@ -1723,8 +1723,8 @@ $\kappa^{ue}_{d}$ and $\kappa^{ue}_{m}$ making one harder to find with the SUD a
 SMI. The SUD does not raise separations, only reduces the chance of regaining employment. $\kappa_{H}$ does both for a household in a
 shelter.
 
-\paragraph{The child's productivity penalty.} A child whose parent \new{had} the disorder at any point while the child \new{lived} at home,
-before $J_K$ or before the parent \new{died} if that \new{came} first, enters the economy with its productivity lowered
+\paragraph{The child's productivity penalty.} A child whose parent had the disorder at any point while the child lived at home,
+before $J_K$ or before the parent died if that came first, enters the economy with its productivity lowered
 by the proportion $\delta_d$ in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec}, and the penalty stays with the
 child for life. There is no penalty for a parent's homelessness. The parent weighs the
 penalty through the weight $\omega_c$ it puts on its child (Section~\ref{sec:fproblem}): using does
@@ -1794,9 +1794,9 @@ in it for the first year out of work and then move to state $3$, which pays noth
 probability~\eqref{eq:fd} and one with it recovers with the probability~\eqref{eq:frecover}, both in
 Section~\ref{sec:fdrug}, conditional on the chosen $v$, $h$ and $\tau$ and on $m$.
 
-\paragraph{Mental illness $m$.} \new{SMI begins and ends according to}~\eqref{eq:fonset} in Section~\ref{sec:fsmi}, conditional on $d$ and age.
+\paragraph{Mental illness $m$.} SMI begins and ends according to~\eqref{eq:fonset} in Section~\ref{sec:fsmi}, conditional on $d$ and age.
 
-\paragraph{The voucher $\eta$.} \new{A voucher is drawn and revoked according to} the rule of
+\paragraph{The voucher $\eta$.} A voucher is drawn and revoked according to the rule of
 Section~\ref{sec:fvoucher}, conditional on this period's eligibility and, under
 Treatment First, on the chosen $v$ and the state $d$.
 
@@ -1822,8 +1822,8 @@ rules~\eqref{eq:fincome} to~\eqref{eq:ftrans} in Section~\ref{sec:ftaxes}, and t
 available only to a household with $d=2$, that no household begins using after $J_E$,
 and that $c\ge F$, since the food stamp payment is paid in kind and cannot be saved.
 
-The first line is the flow of~\eqref{eq:futil}.\footnote{\new{The disamenity $\kappa_x H$ is not in it,
-because no choice of the household changes it (Section~\ref{sec:fprefs}).}} The second is the household's own
+The first line is the flow of~\eqref{eq:futil}.\footnote{The disamenity $\kappa_x H$ is not in \new{the formulation},
+because no choice of the household changes it (Section~\ref{sec:fprefs}).} The second is the household's own
 continuation. The third is the child as an adult. It enters when the child leaves: at
 $J_K$ with certainty, and before then with the probability that the parent dies first.
 $D(y)$ is what the parent's disorder costs the child, in the child's own lifetime value,
@@ -1831,13 +1831,11 @@ $D(y)$ is what the parent's disorder costs the child, in the child's own lifetim
 D(y)=\mathbb{E}\big[V(1,s_{\text{child}})\,\big|\,y,\ d=0\big]
 -\mathbb{E}\big[V(1,s_{\text{child}})\,\big|\,y,\ d\ge1\big]\;\ge\;0,
 \end{equation}
-where the child enters at $j=1$ \new{with no assets, employed, without the disorder, SMI or a
-voucher,} and with productivity drawn as
+where the child enters at $j=1$ \new{with the transfer $T_0$ and no other assets}, employed, without the disorder, SMI or a
+voucher, and with productivity drawn as
 in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec}, from a parent with productivity $y$
-that has never had the disorder, $d=0$, or has had it, $d\ge1$. It is charged in any period in which the parent ever
-carried the disorder. \new{Using matters for the term only through the disorder: a parent that
-uses acquires it with probability $\pi_d$, and from then on it is charged in every period until
-the child leaves.}
+that has never had the disorder, $d=0$, or has had it, $d\ge1$. It is charged \new{whenever the parent has carried the disorder at some point before the child
+becomes an adult}.
 
 The term is a difference and not a level, and the
 distinction is not cosmetic. Written as a level, $\omega_c$ times the child's value, it
@@ -1883,10 +1881,10 @@ the household and, through the third line of~\eqref{eq:fbellman}, for its child.
 
 The government pays social security, unemployment insurance, food assistance,
 vouchers and the drug tests under Treatment First. It collects the labour and capital income
-taxes of~\eqref{eq:ftax} \new{in Section~\ref{sec:ftaxes}} and the estates of the dead\new{, less the
-transfer $T_0$ to entering households},
+taxes of~\eqref{eq:ftax} in Section~\ref{sec:ftaxes} and the estates of the dead, less the
+transfer $T_0$ to entering \new{adults ($j=1$)},
 \begin{equation}\label{eq:fgovt}
-\underbrace{\textstyle\sum \big(Y-\min\{Y,\tau_{\ell}Y^{\varphi}\}\big)+\tau_k\sum ra+\new{\big(\text{estates}-T_0\big)}}_{\text{revenue}}
+\underbrace{\textstyle\sum \big(Y-\min\{Y,\tau_{\ell}Y^{\varphi}\}\big)+\tau_k\sum ra+\big(\text{estates}-T_0\big)}_{\text{revenue}}
 \;-\;
 \underbrace{\big(S+UI+F+V\!ch+\text{tests}\big)}_{\text{outlay}}
 \;=\;\mathcal R .
@@ -1895,22 +1893,18 @@ In the benchmark the tax parameters are set as in Section~\ref{sec:fullcal} and
 $\mathcal R$ is whatever surplus they produce. In every policy experiment the taxes are
 held at their benchmark values and the probability of drawing a voucher $\pi_V$ adjusts
 so that $\mathcal R$ equals its benchmark value; an experiment that changes a preference
-rather than a policy, such as $\omega_c=1$, holds both and lets $\mathcal R$ move. In a
-policy experiment a programme that costs more has to ration more, and one that saves
-money can reach more households. \new{Because the taxes never change across experiments, no difference in tax distortions enters
-the comparison between policies: a policy that costs more is paid for by giving vouchers to
-fewer households, not by raising taxes.}
+rather than a policy, such as $\omega_c=1$, holds both and lets $\mathcal R$ move.
 
 \subsection{The drug market}
 
-\new{The price of the drug clears its market,
+The price of the drug clears its market,
 \begin{equation}\label{eq:fdrug}
 p_v=\nu_1 S_v^{1/\varepsilon_s},
 \qquad S_v=\int v(s)\,\mathrm{d}\Phi(s),
 \end{equation}
 where $\varepsilon_s$ is the price elasticity of supply and $\nu_1$ is normalised so
 that the price is one in the benchmark, and then held fixed across experiments. The
-price itself is not fixed: it adjusts in every experiment to clear the drug market.}
+price itself is not fixed: it adjusts in every experiment to clear the drug market.
 
 \subsection{The law of motion and newborns}\label{sec:fnewbornsec}
 
