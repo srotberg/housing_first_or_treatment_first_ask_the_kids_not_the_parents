@@ -1,3 +1,11 @@
+# 30 September 22:37: A SECOND CONTAINER RESTART (22:35); OMEGA_C = 0 RESUMED FROM BLOCK 6
+
+The first resume (pid 509) finished one block (block 6 overall, state saved 22:32) before the container
+restarted again. Resumed from that state with frozen_stop_after_blocks 6 (5 + 1 + 6 = 12): hftf_bench pid
+466 from 22:36; logs bench.part1_blocks1to5.log, bench.part2_block6.log, bench.log. Due about 00:50. The
+worker fan-out waits on it. If the container restarts again: move bench.log aside, set
+frozen_stop_after_blocks to 12 minus the blocks done, and relaunch in place.
+
 # 30 September 22:16: CONTAINER RESTART AT 22:13 KILLED THE OMEGA_C = 0 RUN AT BLOCK 5; RESUMED
 
 pointrun_childsplit_omega0 had finished five blocks (state saved 22:07) when the container restarted.
