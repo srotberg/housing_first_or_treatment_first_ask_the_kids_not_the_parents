@@ -1,3 +1,18 @@
+# 30 September 23:36: SCAN RELAUNCHED A THIRD TIME -- THE SOLVE NOW OUTLIVES THE WORKER'S TOOL CALL
+
+The 23:30 workers ran, but their background call has a 2-hour limit (several said so) and the solve takes
+4-4.5 hours: every point would have died half way. remote_omega_point.sh now runs the work under setsid
+(9f9d749a); the foreground call only waits, and rerunning the same command ATTACHES to the running solve.
+Dry run checked here. The 23:30 sessions and the 0.0 backup were archived (minutes into their builds) and
+all eleven relaunched 23:35 with a prompt that reruns the command whenever the call stops:
+  0.0  session_01DvFqctcCm1Up87VjfJGw2W   0.06 session_013zXoFzXyvLuaozzkVbp5Jq
+  0.02 session_01F7xT4dF7haEApprPuyVJL6   0.08 session_01TjoJoeACBSRNxnR41sirwu
+  0.03 session_017ksUECm6G19H7Fs9nxvYrP   0.10 session_01AWqM9RAeEhhFqX5xaDrSGB
+  0.04 session_01Nd8WPr8QtMm7xwmxFCqwdD   0.12 session_0169vzcspanvjksbkf7hMxBg
+  0.05 session_01Be1bRRaPTTt52SZwwz9Wbw   0.15 session_01Av9sfhoKvyCiBr4SjKheFs
+                                          0.20 session_01PL1VY6G6ZPzsSK13ZYWhEF
+Every session ID in the two entries below is archived. Due about 04:10.
+
 # 30 September 23:31: THE SCAN WORKERS WERE BLOCKED BY THE PERMISSION CHECK; RULE ADDED, RELAUNCHED
 
 All ten 23:15-23:16 workers stopped at the cloud sessions' auto-mode permission check before running
