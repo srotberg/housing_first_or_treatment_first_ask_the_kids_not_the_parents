@@ -280,6 +280,84 @@ once("                expected_child_value=expected_child_value_own\n",
      "                if (solve_transition_dynamics==1) call compute_expected_child_value(time_period)\n",
      "child value pairing")
 
+# 10. THE PATH'S TWO INSTRUMENTS STEPPED AS A PATH, 30 September (the author: "do what you can to
+#     make it converge on the current rule"; "yes, do the changes you suggested"). Two passes of the
+#     T = 60 path left the drug market above 0.005 in 14 of years 1-40 and the budget above 1e-3 in
+#     most, and the two failures had different causes.
+#     (a) pi_V. A voucher is kept until the holder's income rises past the threshold or it dies, so
+#         pi_V(s) moves the budget at s+1 AND every later year. Each year was stepped from its own
+#         residual as if the years were independent, so a step at s was repeated at s+1, s+2, ...
+#         and the path overshot back and forth (+0.011, -0.013, -0.011 in years 2-4). Now the years
+#         are stepped in order, and each step first nets out the effect this loop's earlier steps
+#         will have on its residual: with the pairing's slope 1/0.12 and a retention of
+#         TR_PI_V_RETENTION a year, residual(t) is predicted as residual(t) - acc/0.12, where acc
+#         sums the earlier steps discounted by the retention. The step is TR_PI_V_DAMPING of the
+#         pairing's full step on that prediction. The secant is not used: it differences one year's
+#         residual across loops and cannot see the other years' steps.
+#     (b) the drug price. Its failures are one-year spikes that move from pass to pass (0.026 in
+#         year 10 of one pass, 0.020 in year 11 of the other), where a cohort's use jumps on the
+#         grid. Each year's step (clear_drug_market's, capped as before) is replaced by its own step
+#         blended with its neighbours', weights TR_PRICE_NEIGHBOUR, 1-2*TR_PRICE_NEIGHBOUR and
+#         TR_PRICE_NEIGHBOUR, which cuts a year-to-year zigzag to a fifth and passes a smooth
+#         correction whole. The secant state stays as clear_drug_market set it.
+#     NO EQUILIBRIUM CONDITION CHANGES: at a path where every residual and every gap is zero every
+#     step is zero, and the stopping rules are the ones above, unchanged.
+once("        integer :: pi_v_s_1=0\n",
+     "        integer :: pi_v_s_1=0\n"
+     "        ! transition fix item 10\n"
+     "        real(8), parameter :: TR_PI_V_RETENTION=0.9d0, TR_PI_V_DAMPING=0.7d0, TR_PRICE_NEIGHBOUR=0.2d0\n"
+     "        real(8) :: pi_v_acc_1=0\n"
+     "        integer :: tr_lo_1=1, tr_hi_1=1, tr_t_1=1\n",
+     "item 10 declarations")
+once("        real(8), dimension(1-solve_transition_dynamics:transition_length) :: price_of_addictive_good_path=1\n",
+     "        real(8), dimension(1-solve_transition_dynamics:transition_length) :: price_of_addictive_good_path=1\n"
+     "        real(8), dimension(1-solve_transition_dynamics:transition_length) :: tr_price_before_1=1, tr_price_step_1=0\n",
+     "item 10 price arrays")
+once("            largest_distance_govt_budget=0\n            largest_distance_drug_market=0\n",
+     "            largest_distance_govt_budget=0\n            largest_distance_drug_market=0\n"
+     "            pi_v_acc_1=0\n",
+     "item 10 accumulator reset")
+span_once("                        pi_v_damped_1=0.12*pi_v_gap_1\n",
+          "                        pi_v_cap_1=0.25*probability_of_voucher_path(pi_v_s_1)\n",
+"""                        pi_v_damped_1=0.12*pi_v_gap_1
+
+                        ! SEQUENTIAL, NET OF THIS LOOP'S EARLIER STEPS (transition fix item 10a).
+                        pi_v_step_1=TR_PI_V_DAMPING*(pi_v_damped_1-pi_v_acc_1)
+
+                        pi_v_cap_1=0.25*probability_of_voucher_path(pi_v_s_1)
+""", "item 10a pi_V step")
+once("                        probability_of_voucher_path(pi_v_s_1)=pi_v_new_1\n",
+     "                        probability_of_voucher_path(pi_v_s_1)=pi_v_new_1\n"
+     "                        pi_v_acc_1=TR_PI_V_RETENTION*(pi_v_acc_1+pi_v_new_1-&\n"
+     "                            previous_probability_of_voucher_path(pi_v_s_1))\n",
+     "item 10a accumulator")
+once("                call clear_drug_market(time_index)\n",
+     "                tr_price_before_1(time_index)=price_of_addictive_good\n"
+     "                call clear_drug_market(time_index)\n",
+     "item 10b price before the step")
+once("            largest_housing_market_distance=0\n                        \n            do time_index=1,max(transition_length-1,1)\n                        \n                housing_stock(time_index)=(1-housing_depreciation_rate)",
+"""            ! EACH YEAR'S PRICE STEP BLENDED WITH ITS NEIGHBOURS' (transition fix item 10b).
+            if ((solve_transition_dynamics==1) .AND. (transition_length>3)) then
+                do tr_t_1=1,transition_length-1
+                    tr_price_step_1(tr_t_1)=price_of_addictive_good_path(tr_t_1)-tr_price_before_1(tr_t_1)
+                end do
+                do tr_t_1=1,transition_length-1
+                    tr_lo_1=max(tr_t_1-1,1)
+                    tr_hi_1=min(tr_t_1+1,transition_length-1)
+                    price_of_addictive_good_path(tr_t_1)=tr_price_before_1(tr_t_1)+&
+                        (1-2*TR_PRICE_NEIGHBOUR)*tr_price_step_1(tr_t_1)+&
+                        TR_PRICE_NEIGHBOUR*(tr_price_step_1(tr_lo_1)+tr_price_step_1(tr_hi_1))
+                end do
+                write(*,*) "TRANSITION PRICE FILTER loop=", loop_count, " largest raw step=", &
+                    maxval(abs(tr_price_step_1(1:transition_length-1)))
+            end if
+
+            largest_housing_market_distance=0
+                        
+            do time_index=1,max(transition_length-1,1)
+                        
+                housing_stock(time_index)=(1-housing_depreciation_rate)""", "item 10b filter")
+
 # Re-checked by value in the result.
 for must in ["solve_transition_dynamics*1.d0+(1-solve_transition_dynamics)*1.d0",
              "real(8) :: stopping_rule_govt_budget=1.0*10.d0**(-3)",
@@ -293,7 +371,9 @@ for must in ["solve_transition_dynamics*1.d0+(1-solve_transition_dynamics)*1.d0"
              "TRANSITION HOMELESS_BY_AGE t=",
              "TRANSITION USE_BY_AGE t=",
              "TRANSITION DRUG t=",
-             "if (solve_transition_dynamics==1) call compute_expected_child_value(time_period)"]:
+             "if (solve_transition_dynamics==1) call compute_expected_child_value(time_period)",
+             "pi_v_step_1=TR_PI_V_DAMPING*(pi_v_damped_1-pi_v_acc_1)",
+             "TRANSITION PRICE FILTER loop="]:
     if s.count(must) != 1:
         sys.exit(f"REFUSING: {must!r} is not in the result exactly once")
 if "unit=419" in open(src).read():

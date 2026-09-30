@@ -16,6 +16,13 @@
   each solve, whose result the next solve loaded, so the backward pass priced period t with
   V_{t+2}(1) and the forward re-solve with V_t(1). It is now also called at the START of every
   transition solve, from V_{t+1}(1). The steady state is unchanged. The patch diff is 175 lines.
+- Item 10 (30 September, the author: "yes, do the changes you suggested in 1-3"): the path's two
+  instruments are stepped as paths. pi_V is stepped year by year forward from the reform, each step
+  net of this loop's earlier steps (a voucher drawn at s is held at s+1, s+2, ..., retention 0.9 a
+  year, damping 0.7), and the secant is dropped; each year's drug price step, as clear_drug_market
+  computes it, is blended with its neighbours' (0.2, 0.6, 0.2, `TRANSITION PRICE FILTER` line). No
+  equilibrium condition or stopping rule changes. Restart 3h runs it from 3g's loop 0 paths. The
+  patch diff is 176 lines.
 - `build_tr60_fix.sh`, `build_tr10_fix.sh` (+ `build_transition_t10_copy.sh`): T = 60 and the
   T = 10 flat control, through the tracked build_transition_t45/t60 scripts.
 - `build_cf_fix2_share.sh`: the no-policy steady state that saves its newborn_parent_share, the
