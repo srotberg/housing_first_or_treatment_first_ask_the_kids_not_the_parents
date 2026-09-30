@@ -1,3 +1,13 @@
+# 30 September 16:40: ROUND c0107aaf; RED CLEARED TO THE END OF 4.8
+
+- 11 comments, in red: the stylized kappa_x footnote as the equation it solves,
+  V((1-w)c; 0) = V(c; kappa_x), in place of the closed form; Nielsen "more likely than"; the
+  notation clause out; kappa_phi_m > 1 and the factor one without SMI; the SMI death probability
+  capped, min{1, kappa_phi_m q0}; a(y) renamed varpi(y) (4.8 and Section 5; a is assets); the
+  SUD "only reduces the chance of regaining employment"; eq. (41)'s section named; the "different
+  event" the parent's problem prices the penalty on spelled out.
+- Splice sec2/splice_r53.py, baseline 7b46924a; red kept from 4.9 on.
+
 # 30 September 16:20: ROUND 085df22e; RED CLEARED TO THE END OF 4.8
 
 - 10 comments on 4.7-4.8, in red: Nielsen as "1.34 / 2.74 times as likely as people with no SUD";
