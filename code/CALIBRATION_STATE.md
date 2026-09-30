@@ -1,4 +1,4 @@
-# 30 September 23:16: OMEGA_C SCAN LAUNCHED (six cloud workers)
+# 30 September 23:16: OMEGA_C SCAN LAUNCHED (ten cloud workers)
 
 The author, on the first five omega_c = 0 blocks (users 9.70 against 10.50, SUD 4.13 against 4.34, the
 rest as in the benchmark of record): *"It seems to be close to target."* The first stage holds, so the scan
@@ -8,6 +8,8 @@ every 20 minutes into results/omega_c_scan_childsplit/omega_<w>.moments.txt:
   0.06 session_01XZQkzCH5RLqjyKw81T7f7U     0.12 session_01Q5BjwbMv73dFuFSLzTyrpP
   0.08 session_01KSc1LeyvN4aRZVetgbPAj8     0.15 session_01Fx95ry5CXPGSvzZ47EeR4L
   0.0  session_016pA1ktbMt6LPcGaNcFdjgJ (backup of the local omega_point_0.0, pid 1504)
+  and, on the author's *"Try maybe 10 omega_c"* (23:16): 0.02 session_01EKuBzup3WXgGKF7C31j6hk,
+  0.03 session_01VCZs6b5qnV8hq4pM5sK3XX, 0.05 session_01Wwd59Pg48R8KwpxzDuEkvf, 0.20 session_01BDpCcbHXwUn8RdFKoCjyM8
 omega_c's moment at each point: users(0) / users(omega_c) - 1 against 18.3 per cent, block 12 against
 block 12. Due about 03:45. Provisional readings: block 1, 17.3 at 0.06 (both runs); block 5, 12.9 at 0.06
 (penalty fix only). I expect a rise in omega_c, the author a fall; the grid straddles 0.06.
