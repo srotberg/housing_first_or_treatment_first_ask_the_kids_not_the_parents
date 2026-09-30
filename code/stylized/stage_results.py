@@ -347,6 +347,28 @@ def _smr(par):
     return 1.0 + math.log(1.0 - par.kap) / math.log(par.phi0)
 
 
+# MEAN HOUSEHOLD INCOME, the dollar anchor for the VSL sentence in Section 3.3: CPS ASEC
+# mean household income, in the dollars the text quotes.  One place, so the dollar value
+# of the VSL moves with the target rather than being typed beside it.
+MEAN_HH_INCOME_USD = 113000.0
+
+
+def _floor_names():
+    """The raised floor and what it does to the distribution: the lowest income, the floor
+    as a multiple of the small unit's rent, and the bottom half's share of earnings and the
+    median over the mean on the grid actually solved (sigma_y is fitted at SIG_FIT_FLOOR
+    and held, so the share is no longer the target)."""
+    import numpy as np
+    y = np.asarray(C.YG, dtype=float)
+    w = np.asarray(C.W, dtype=float); w = w / w.sum()
+    o = np.argsort(y); y, w = y[o], w[o]
+    mean = float((w * y).sum())
+    cw = np.cumsum(w); k = int(np.searchsorted(cw, 0.5))
+    bottom = float((w * y)[:k].sum() + (0.5 - (cw[k - 1] if k else 0.0)) * y[k])
+    return dict(s_ylow=f'{y[0]:.2f}', s_floor_mult=f'{C.TRUNC_FLOOR:.1f}',
+                s_bot50_real=f'{100 * bottom / mean:.1f}', s_med_mean=f'{y[k] / mean:.2f}')
+
+
 def calibration_names(p1, r1, p2, r2):
     T = C.TARGET
     th_t = stages.DSHARE_TARGET
@@ -362,6 +384,12 @@ def calibration_names(p1, r1, p2, r2):
              s_t_ruse=f'{T["r_use"]:.2f}', s_t_homeless=f'{100 * T["homeless"]:.2f}',
              s_t_unemp=f'{100 * 0.0485:.2f}', s_t_sudhl=f'{100 * T["sud_of_homeless2"]:.1f}',
              s_t_gap=f'{100 * 0.1834:.1f}', s_sigy=f'{C.SIG:.3f}')
+    # THE 30 SEPTEMBER SPECIFICATION: food assistance, the raised floor with sigma_y held,
+    # the stylized VSL of 84 against the quantitative model's 80, and the dollar value.
+    d.update(_floor_names())
+    d.update(s_rho_fs=f'{p1.rho_fs:.2f}', s_fs_t_pc=f'{100 * stages.FS_TARGET:.2f}',
+             s_t_vsl_musd=f'{T["vsl"] * MEAN_HH_INCOME_USD / 1e6:.1f}',
+             s_mean_hh_usd=f'{MEAN_HH_INCOME_USD:,.0f}')
     for tag, par, raw in (('s1', p1, r1), ('s2', p2, r2)):
         m = raw['_moments']
         d.update({f'{tag}_v_aleph': f'{par.aleph:.2f}', f'{tag}_v_gam': f'{par.gam:.3f}',
@@ -371,11 +399,16 @@ def calibration_names(p1, r1, p2, r2):
                   f'{tag}_worst': f'{raw["_worst_gap_pc"]:.1f}',
                   # u1 and its moment, which the text quotes per stage: in stage 2
                   # u1 sits on its floor, u0, and the share falls short there
-                  f'{tag}_v_u1': f'{par.u1:.4f}'})
+                  f'{tag}_v_u1': f'{par.u1:.4f}',
+                  f'{tag}_v_cbar': f'{par.cbar:.3f}',
+                  # the share of the job losses of households with a SUD that the disorder
+                  # causes and income support does not cover, (u1 - u0)/u1, and u1 over u0
+                  f'{tag}_unins_pc': f'{100 * max(par.u1 - par.u0, 0.0) / par.u1:.0f}',
+                  f'{tag}_u1_over_u0': f'{par.u1 / par.u0:.1f}'})
         if m.get('sud_of_homeless2') is not None:
             d[f'{tag}_m_sudhl_pc'] = f'{100 * m["sud_of_homeless2"]:.1f}'
         for k in ('vsl', 'hspend', 'part', 'dshare', 'r_use', 'homeless', 'unemployment',
-                  'sud_of_homeless2', 'child_gap', 'child_sud_or', 'child_hl_or', 'sud'):
+                  'sud_of_homeless2', 'child_gap', 'child_sud_or', 'child_hl_or', 'sud', 'fshare'):
             if m.get(k) is not None:
                 d[f'{tag}_m_{k}'] = (f'{m[k]:.1f}' if k == 'vsl' else f'{m[k]:.2f}'
                                      if k in ('r_use', 'child_sud_or', 'child_hl_or')
@@ -441,7 +474,10 @@ def write_tables(p1, r1, p2, r2):
          f'${tn(p1.pi_base)}$')]),
         ('Income', [
         (r'$\psi_{ui}$', 'Income support replacement rate', 'DOL, statutory UI rates', f'${p1.repl:.2f}$'),
-        (r'$\bar y$', 'Cap on the earnings base', 'DOL, state benefit maxima', f'${p1.ycap:.2f}$')]),
+        (r'$\bar y$', 'Cap on the earnings base', 'DOL, state benefit maxima', f'${p1.ycap:.2f}$'),
+        (r'$\rho_F$', 'Food assistance taper', 'SNAP benefit reduction rate', f'${p1.rho_fs:.2f}$'),
+        (r'$y_{\min}$', 'Lowest income', 'No negative value of life at the drug decision',
+         f'${float(C.YG[0]):.2f}$')]),
         ('Housing, drugs and the voucher', [
         (r'$p_r$', 'Rent per unit of housing services', 'Normalisation', f'${p1.pr:.2f}$'),
         (r'$p_v$', 'Price of a unit of drugs', 'Normalisation', f'${p1.p_v:.2f}$'),
@@ -476,8 +512,10 @@ def write_tables(p1, r1, p2, r2):
         return fmt(m[k]) if m.get(k) is not None else '--'
     pct = lambda x: f'{100 * x:.1f}\\%'
     rows = [
+        # the model column is the share on the grid actually solved: sigma_y is fitted at
+        # the original floor and held when the floor is raised (calibrate.SIG_FIT_FLOOR)
         (r'$\sigma_y$', "Bottom half's share of earnings, SCF 2022", pct(T['bot50']),
-         pct(T['bot50']), tn(C.SIG), pct(T['bot50']), tn(C.SIG)),
+         f"{_floor_names()['s_bot50_real']}\\%", tn(C.SIG), f"{_floor_names()['s_bot50_real']}\\%", tn(C.SIG)),
         (r'$\gamma$', 'Housing over non-drug expenditure, CEX 2024', pct(T['hspend']),
          mm(m1, 'hspend', pct), tn(p1.gam), mm(m2, 'hspend', pct), tn(p2.gam)),
         (r'$\aleph$', 'Value of a statistical life over income', f'{T["vsl"]:.0f}',
@@ -497,6 +535,9 @@ def write_tables(p1, r1, p2, r2):
         (r'$u_1$', 'SUD share of the homeless, Gutwinski et al.\\ (2021)',
          pct(T['sud_of_homeless2']), mm(m1, 'sud_of_homeless2', pct), tn(p1.u1),
          mm(m2, 'sud_of_homeless2', pct), tn(p2.u1)),
+        (r'$\bar c$', 'Food stamp spending over labour income', f'{100 * stages.FS_TARGET:.2f}\\%',
+         mm(m1, 'fshare', lambda x: f'{100 * x:.2f}\\%'), tn(p1.cbar),
+         mm(m2, 'fshare', lambda x: f'{100 * x:.2f}\\%'), tn(p2.cbar)),
         (r'$\omega_c$', 'Use of non-parents over parents, less one, NSDUH 2024', pct(0.1834),
          '--', '--', mm(m2, 'child_gap', pct), tn(p2.omega)),
     ]
