@@ -313,11 +313,12 @@ $@@s1_scanhi_x@@$ times its calibrated value, \new{with the other penalty switch
 from \new{$@@s1_r_none@@$} times average income to $@@s1_r_mort_hi@@$ times it; the unemployment penalty on its own leaves
 it at \new{$@@s1_r_unemp_hi@@$}, against $@@s1_r_none@@$ with neither penalty. The reason is how each penalty varies with income. A fixed quantity of
 the drug costs a rich household less in utility terms than a poor household,
-which means that the utility price of using falls as income rises. A job loss cuts
-income by the same share for every household except those above average income,
-where unemployment insurance is capped, so it scales their utility from consumption
-by the same factor, and because households are risk averse, that
-costs a rich household fewer utils than a poor one. Thus, the unemployment
+which means that the utility price of using falls as income rises. \new{A job the
+disorder costs drops a household to the same floor whatever it earned, its food
+assistance and what it saved, and because households are risk averse the utils that fall
+costs grow with income only up to a bound. Among the richer households who would
+otherwise use, it is close to a flat charge, which changes how many use but not who.}
+Thus, the unemployment
 penalty cannot pull drug use down the income distribution. In contrast, mortality destroys the whole continuation
 value, including the value of being alive at all, which is worth more to
 richer households, so when the death penalty is large enough it is the poor who
@@ -1149,13 +1150,16 @@ are still at @@s1_r_unemp_hi@@. A resource penalty does not produce the concentr
 drug use at the bottom.
 
 Why should the two channels differ at all, when in both the disorder
-punishes the household? Because the cost of only one of them rises with the household's income. With a relative risk aversion of two, a \emph{proportional} loss of income
-costs a rich household fewer utils than a poor one: a household earning below the cap
-$\bar y$ that loses its job and falls back on income support loses the same share of
-its consumption whatever it was earning, and a given share is worth fewer utils the
-higher consumption is. Multiplied by the $u_1-u_0$ chance of it happening, the
-resource channel is a charge for using that falls with income. What it has to
-overturn falls with income as well. Buying $v$ units costs a rich household almost
+punishes the household? Because the cost of only one of them rises with the household's income. \new{A job the disorder costs is not
+covered by income support, so it drops the household to the same floor whatever it was
+earning: food assistance and whatever it saved. With a relative risk aversion of two, the
+utils lost in that fall grow with income only up to a bound, the utility of the floor
+itself, and the households who would use if nothing else stood in their way are all well
+above the floor, where the loss is close to that bound for every one of them.
+Multiplied by the $u_1-u_0$ chance of it happening, the resource channel is then a charge
+for using that is nearly the same at every income: it changes how many use, which the
+recalibration of $b$ undoes, but not which households do. What it would have to
+overturn falls with income.} Buying $v$ units costs a rich household almost
 nothing in consumption terms and a poor household a great deal, so the utility
 price of using \emph{falls} as income rises, and that is what puts use at the top
 to begin with.
