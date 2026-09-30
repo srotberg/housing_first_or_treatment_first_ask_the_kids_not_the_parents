@@ -1,4 +1,4 @@
-# 30 September 21:25: ROUND 61f402f8; RED CLEARED TO THE END OF SECTION 4
+# 30 September 20:40: ROUND 61f402f8; RED CLEARED TO THE END OF SECTION 4
 
 Eleven comments on 4.12-4.15: a' in Gamma (39, and (33) where Gamma is defined and used); chi_j
 "defined in Section 4.11"; entrant "composition" rewritten; "left" -> "became an adult" (also in (41));
