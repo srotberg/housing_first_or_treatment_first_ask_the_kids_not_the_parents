@@ -1,3 +1,14 @@
+# 30 September 02:55: THE "CONTAINER RESTARTS" ARE THE SESSION GOING IDLE; 3g LAUNCHED WITH A WATCHER
+
+- 3f (02:43) died at 02:50:20 with another restart.  Both restarts (02:41:32, 02:50:20)
+  fell on engine firings, and none came while a background task ran (00:32-02:31, the
+  watcher): with nothing running, the idle container is reclaimed and each firing brings up
+  a new one.  A detached hftf dies with it.
+- 3g: pid 484, 02:51, the same seeds and launch line; seeds 59/59, HANDOVER identical.  A
+  WATCHER BACKGROUND TASK KEEPS THE CONTAINER ALIVE (timeout 2 h): RE-ARM IT THE MOMENT ITS
+  STOP NOTIFICATION ARRIVES, whatever the harness note says about not restarting a task
+  that had the longest timeout.  Archive of 3f's 7 minutes: trtf60/restart3f_killed_0250.
+
 # 30 September 02:45: CONTAINER RESTART (02:41:32) KILLED T=60 RESTART 3e; 3f LAUNCHED DETACHED
 
 - 3e (pid 4874, 00:32) died with the container at 02:41, run.log last written 02:39 in
