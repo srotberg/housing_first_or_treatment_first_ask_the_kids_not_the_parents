@@ -1423,37 +1423,37 @@ percent of income. Households in the model spend $@@s3_cshare_pc@@$ percent of t
 on consumption, so $@@s3_wtp_pc@@$ percent of income translates to $@@s3_wtp_c_pc@@$ percent of consumption. $\kappa_x$ is the
 disamenity per unit of homelessness, in utils per period alive, that costs an adult in
 the stage 2 economy as much over its adult life as giving up $@@s3_wtp_c_pc@@$ percent of
-its consumption in every period.\footnote{\new{$\kappa_x H\bar D=\big[1-(1-w)^{(1-\gamma)(1-\theta)(1-\sigma)}\big]\big(V-\aleph\bar D\big)$,
+its consumption in every period.\footnote{$\kappa_x H\bar D=\big[1-(1-w)^{(1-\gamma)(1-\theta)(1-\sigma)}\big]\big(V-\aleph\bar D\big)$,
 where $V$ is the adult's lifetime value, $\bar D$ the expected discounted number of periods
-it is alive and $w$ the willingness to pay as a share of consumption.}} That gives
+it is alive and $w$ the willingness to pay as a share of consumption.} That gives
 $\kappa_x=@@s3_kx@@$. Because the two policies differ little in homelessness, @@s3_kx_phrase@@
 $@@s3_cev_tf@@$ percent of lifetime consumption.
 
 %======================================================================
 \section{The quantitative model}\label{sec:full}
 
-\new{By now, I have shown how the main mechanisms in this paper work.} This section
-describes the model the paper's numbers come from. \new{It is very similar to the stylized
-model of Section~\ref{sec:stylized}, but with annual periods and} the pieces that model
+By now, I have shown how the main mechanisms in this paper work. This section
+describes the model the paper's numbers come from. It is very similar to the stylized
+model of Section~\ref{sec:stylized}, but \new{includes} annual periods and pieces that model
 leaves out: income risk over working life, retirement, recovery and treatment, SMI,
-\new{a higher risk of dying while homeless, a drug test that misses some users,} a
+a higher risk of dying while homeless, a drug test that misses some users, a
 government budget and a drug market. Notation follows
 Section~\ref{sec:stylized} wherever the two models share an object: $\gamma$ and
-$\theta$ are the housing and drug weights in both, \new{$\sigma$ the same risk aversion,} $b$ is
+$\theta$ are the housing and drug weights in both, $\sigma$ the same risk aversion, $b$ is
 the same Stone-Geary shifter, $\aleph$ the same flow value of being alive, $\xi$ the same equivalence
 scale, $\omega_c$ the same weight on the child, $\rho$ and $\delta_d$ the same
 persistence of productivity and penalty, $\psi_{ui}$ and $\bar y$ the same replacement
-rate and earnings cap, $\kappa_x$ the same disamenity, \new{$\pi_d$ the same chance that use
+rate and earnings cap, $\kappa_x$ the same disamenity, $\pi_d$ the same chance that use
 starts a SUD, $\kappa_{\phi d}$ the same mortality multiplier for the disorder, $h_1$ the same
-shelter, $\kappa_V$ and $\pi_V$ the same means test and chance of drawing a voucher, $p_v$
-and $p_r$ the same drug price and rent,} and $\beta$ is the discount factor. The values are in Section~\ref{sec:fullcal}.
+shelter, $\kappa_V$ and $\pi_V$ the same means test and chance of drawing a voucher, $p_r$ the
+same rent, and $\beta$ is the discount factor. The values are in Section~\ref{sec:fullcal}.
 
 \subsection{Demographics and the state and choice sets}
 
-Households enter the economy as adults at model age $j=1$, which is age 26, live
+Households enter the economy as adults at model age $j=1$, live
 at most $J$ annual periods, work while $j<J_R$ and are retired from $J_R$. Each has a
-child, \new{who} lives in the household for the first $J_K$ years of its adult life, until
-age 50, \new{then leaves, and becomes an adult with a child of its own}. Each period a cohort of unit mass enters at $j=1$, made up of
+child, who lives in the household for the first $J_K$ years of its adult life \new{and then
+leaves to become} an adult with a child of its own. Each period a cohort of unit mass enters at $j=1$, made up of
 the grown children of the households that died, in proportion to their parents'
 deaths, so the mass of households is constant in a stationary equilibrium. The individual state is
 \begin{equation}\label{eq:fstate}
@@ -1463,51 +1463,51 @@ s=(a,\,y,\,e,\,d,\,m,\,\eta)\in
 where $a$ denotes assets, $y$ productivity, $e$ employment status, $d$ the SUD, $m$
 SMI and $\eta$ the household's standing with the voucher programme. The SUD takes
 three values because the parent's valuation of its child's prospects depends on its
-history and not only on its present (Section~\ref{sec:fproblem}): $d=0$ \new{denotes} a household that has never carried the disorder, $d=1$ \new{refers to}
-one that carried it and has recovered, and $d=2$ \new{stands for} one that carries it now. The
-voucher state is $\eta=0$\new{, denoting having no voucher,} $\eta=1$\new{, representing}
-holding one, and $\eta=2$\new{, standing for exclusion} from the programme after failing
+history and not only on its present (Section~\ref{sec:fproblem}): $d=0$ denotes a household that has never carried the disorder, $d=1$ refers to
+one that carried it and has recovered, and $d=2$ stands for one that carries it now. The
+voucher state is $\eta=0$, denoting having no voucher, $\eta=1$, representing
+holding one, and $\eta=2$, standing for exclusion from the programme after failing
 Treatment First's condition.
 
 Each period the household chooses
 \begin{equation}\label{eq:fchoice}
-\big(\new{h},\,v,\,\tau,\,a'\big)\in
+\big(h,\,v,\,\tau,\,a'\big)\in
 \{h_1,h_2,h_3,h_4\}\times\mathbb R_+\times\{0,1\}\times\mathcal A ,
 \end{equation}
-where $\new{h}$ is the dwelling, of which $h_1$ is a shelter, $v$ \new{is} drug use, $\tau$
-\new{is whether a household is in SUD treatment}, available only to a household that carries
-the disorder, and $a'$ \new{is its} next period's assets. \new{Labour is inelastically
-supplied}: a household that has a job works it.
+where $h$ is the dwelling, of which $h_1$ is a shelter, $v$ is drug use, $\tau$
+is whether \new{or not} a household is in SUD treatment, available only to a household that carries
+the disorder, and $a'$ is its next period's assets. Labour is inelastically
+supplied: a household that has a job works it.
 
 \subsection{Preferences}\label{sec:fprefs}
 
-\new{Flow utility is the stylized model's, with the child present for the first $J_K$
-years. Consumption $c$ and housing $\new{h}$ are shared through the square-root equivalence
-scale $\xi_j$, which is $\sqrt 2$ while the child is at home and one after, and the
-drug is the parent's alone, so the parent and the child hold the bundles
+Flow utility is the stylized model's, with the child present for the first $J_K$
+years. Consumption $c$ and housing $h$ are shared through the square-root equivalence
+scale $\xi_j$, \new{which scales for two members} while the child is at home and \new{for one}
+after, and the drug \new{enters the parent's utility alone}, so the parent and the child hold the bundles
 \begin{equation}\label{eq:fbundles}
-X_P=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{\new{h}}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
+X_P=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{h}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
 \qquad
-\new{X_c}=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{\new{h}}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}b^{\theta},
+X_c=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{h}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}b^{\theta},
 \end{equation}
 and period utility is
 \begin{equation}\label{eq:futil}
-u\big(c,\new{h},v,\tau\big) \;=\; U(X_P)\;+\;\omega_c\,(\xi_j-1)\,U(\new{X_c})\;+\;\aleph\;-\;\tau\,\bar\tau^{u},
+u\big(c,h,v,\tau\big) \;=\; U(X_P)\;+\;\omega_c\,(\xi_j-1)\,U(X_c)\;+\;\aleph\;-\;\tau\,\bar\tau^{u},
 \qquad U(X)=\frac{X^{1-\sigma}}{1-\sigma}.
 \end{equation}
 $\gamma$ is housing's share of the non-drug bundle and $\theta$ the drug's share of
 the whole, $\sigma$ is the coefficient of relative risk aversion, $\aleph$ is the flow
 value of being alive, counted once per household, and $\bar\tau^{u}$ is the utility
-cost of a year in treatment. The child's term is its own flow utility, weighted by
+cost of a year in treatment\new{, which is described in Section~\ref{sec:fdrug}}. The child's term is its own flow utility, weighted by
 $\omega_c$ and counted as $\xi_j-1$ of the household; it gets none of the drug, so a
 parent's drug spending reaches it only through the consumption and housing they
-share. After $J_K$ the child has left, $\xi_j=1$, and the term is gone.}
+share. After $J_K$ the child \new{leaves to form its own household}, $\xi_j=1$, and the \new{child} term is gone.
 
-\new{Aggregate homelessness $H$ carries the disamenity $\kappa_x H$ for every household,
-which is what makes homelessness an externality for everyone rather than only a
+Aggregate homelessness $H$ carries the disamenity $\kappa_x H$ for every household \new{and
+child alive}, which is what makes homelessness an externality for everyone rather than only a
 private misfortune. It enters every household's welfare and no household's decision:
 each takes $H$ as given, and the term is left out of the problem it solves.
-Section~\ref{sec:fleftout} takes up its size.}
+Section~\ref{sec:fleftout} takes up its size.
 
 \subsection{Income, taxes and transfers}\label{sec:ftaxes}
 
