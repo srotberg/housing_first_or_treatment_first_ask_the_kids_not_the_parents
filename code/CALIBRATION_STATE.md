@@ -1,3 +1,19 @@
+# 30 September 16:05: ROUND 10bc8a80; RED CLEARED TO THE END OF 4.7
+
+- Comments on p7 and 4.3-4.7, each in red: comma and "and capped" in the social security sentence;
+  the old-age shelter sentence removed (the author: "it's at age 83-85 only"; the restriction stays
+  in the model and Section 5); "the same for all users" out; "the vast majority of people do not
+  know"; 4.7 onset sentence rewritten, the NSDUH clause left to Section 5; "the effect of the SUD on
+  the onset of SMI"; the Murrie/Nielsen evidence rewritten, same numbers; "the chances of losing a
+  job and of finding one" with sections; the Chez Soi sentence fixed; the housing-dependence
+  sentence out.
+- NOT WRITTEN, told the author: "the model matches SMI drug use relative to non-SMI". NSDUH 2024
+  adults 26+: past-year illicit use 56.4 against 23.1 per cent, ratio 2.44 (not 2.74, which is
+  Nielsen's opioid hazard ratio); SUD (moderate or severe) 7.30. The model prints only the SUD
+  ratio, 2.05 (bench.log MOMENT r_smi); no use-ratio measurement exists.
+- p7 "not 78 for women?": no 78 in NSFG; women 40-49 harder drugs 73, frequent 81, any 76.
+- Splice sec2/splice_r51.py, baseline 27e8611e; red kept from 4.8 on.
+
 # 30 September 15:40: ROUND 459d74d8; RED CLEARED TO THE END OF 4.6
 
 - 25 comments (p7, 4.3-4.6), each in red: the NSFG sentence a footnote; UI "the share of insured
