@@ -1,3 +1,19 @@
+# 30 September 12:55: ROUND 580c4b7e; THE TRANSITION IS NOW RESTART 3g'S LOOP 0
+
+- Red cleared to the end of Section 3 (author); updates in red: the elasticity sentences
+  (no list of steps, 'in the middle of'), the kappa_x formula in stage 3 (the author asked
+  whether to give it), and the elastic supply out of Table 7 and 6.2 into a footnote
+  (author: "it can be a footnote").  Splice: scratchpad sec2/splice_r46.py, baseline f933e6ad.
+- The paper's transition is restart 3g's loop 0 (code/trtf60/restart3g_loop0/run.log, archived;
+  pinned in code/paper/transition_source.py).  It agrees with restart 3's loop 0 to the third
+  decimal: first-decade cohort CEV 1.74 -> 1.83, homelessness peak year 7 -> 6.
+- CONVERGENCE (for the author): 3g loop 0 has the drug market off by more than the 0.005 rule
+  in 14 of years 1-40 (worst 0.026), against 17 (worst 0.020) for restart 3; the budget above
+  0.005 in 5 years against 10.  One loop takes about 10 h (backward 4.2 h, forward 5.5 h); 3g's
+  loop 1 started 12:35.  The iteration barely contracts between passes, which is what the
+  tr.f90 note on stopping_rule_drug_market predicts when the distribution rule is loose.
+- No 70 per cent detection footnote exists; tf70 never settled (asked the author).
+
 # 30 September 12:30: THE 2 PER CENT STEP DROPPED FROM THE ELASTICITY AVERAGES (author)
 
 - "i think you should throw away the 2% price increase, something there seems odd".  Averages

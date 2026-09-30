@@ -50,6 +50,8 @@ TAB = os.path.join(ROOT, 'writing', 'tables', 'tab_longrun.tex')
 PREV = os.path.join(HERE, 'tab_longrun_prev.json')
 ARMS = (('null_share', None), ('tf85', 'null_share'), ('elast5_85', 'null_remote'),
         ('omega1', 'null_remote'))
+# the columns of the table: the elastic supply is a footnote (the author, 30 September)
+TABLE = (('null_share', None), ('tf85', 'null_share'), ('omega1', 'null_remote'))
 
 
 def log(arm):
@@ -149,9 +151,9 @@ def main():
     except (OSError, ValueError):
         prev = {}
     cells, body = {}, []
-    heads = {1: '\\multicolumn{5}{@{}l}{\\emph{Adults}} \\\\',
-             2: '\\multicolumn{5}{@{}l}{\\emph{Children, households aged 26 to 50}} \\\\',
-             3: '\\multicolumn{5}{@{}l}{\\emph{Welfare}} \\\\'}
+    heads = {1: '\\multicolumn{4}{@{}l}{\\emph{Adults}} \\\\',
+             2: '\\multicolumn{4}{@{}l}{\\emph{Children, households aged 26 to 50}} \\\\',
+             3: '\\multicolumn{4}{@{}l}{\\emph{Welfare}} \\\\'}
     body.append(heads[1])
     part = 1
     for r in rows:
@@ -162,7 +164,7 @@ def main():
             continue
         lab, key, fmt = r
         line = [lab]
-        for arm, _ in ARMS:
+        for arm, _ in TABLE:
             v = D[arm].get(key)
             c = '--' if v is None else fmt(v)
             cells[f'{key}/{arm}'] = c
@@ -170,9 +172,9 @@ def main():
         body.append(' & '.join(line) + ' \\\\')
     tab = ['% Written by code/paper/export_longrun.py from results/counterfactuals_cf_fix2;',
            '% edit the script, not this file. Caption and note are in the paper.',
-           '\\begin{tabular}{@{}L{190pt}rrrr@{}}', '\\toprule',
-           ' & Housing & Treatment & Treatment First, & Housing First, \\\\',
-           ' & First & First & elastic supply & $\\omega_c=1$ \\\\',
+           '\\begin{tabular}{@{}L{190pt}rrr@{}}', '\\toprule',
+           ' & Housing & Treatment & Housing First, \\\\',
+           ' & First & First & $\\omega_c=1$ \\\\',
            '\\midrule'] + body + ['\\bottomrule', '\\end{tabular}']
     open(TAB, 'w').write('\n'.join(tab) + '\n')
     if freeze:

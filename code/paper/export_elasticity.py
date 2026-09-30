@@ -72,7 +72,8 @@ def where(x, lo_hi):
         return 'higher than'
     if a < lo:
         return 'lower than'
-    return 'within'
+    # the author, 30 September: 'is in the middle of'
+    return 'in the middle of'
 
 
 def so_int(w):
