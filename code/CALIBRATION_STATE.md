@@ -1,3 +1,20 @@
+# 30 September 03:45: AUTHOR SIGNED OFF.  TOMORROW: FINISH THE MODEL PART OF SECTION 4
+
+- Sections 1-3 are black (red cleared to the end of Section 3 at 03:40); Section 4 on keeps
+  its accumulated red.  Next round: the quantitative model's section (Section 4).
+- Overnight, the author's instructions:
+  * stage 2 at a VSL of 80 (stage2_vsl80_cloud.txt, session_01KMpHSXaUbqoR3vPiKYBq6e) and,
+    in parallel, 81/82/83 (session_01FjdmhYZZjNFgNgb6rrQPfb).  "if you can [reach 80 with no
+    negative value of life in period 1], update the paper. if you can't try the lowest
+    possible closest to 80 that still gives positive value of life" -- period 1 only (the
+    author).  Adopt the lowest target whose check_stage verdict is ALL PASS: copy its file
+    to calibrated_stage2.json (keep the VSL 84 fit as calibrated_stage2_vsl84.json), rerun
+    stage_results 2, tables and stage_transition in the cloud, fill, build, updates in red.
+  * elasticities at 1/2/5/10/20/50 per cent, averaged (session_01PchPkCvuyMGQunqMWERZeX,
+    code/ELASTICITY_RESULT_MULTI.txt): when it lands, export the averages and put them in
+    Section 2's two sentences, in red.
+- T=60 restart 3g (pid 484) runs with a watcher; re-arm the watcher when it stops (~04:51).
+
 # 30 September 02:55: THE "CONTAINER RESTARTS" ARE THE SESSION GOING IDLE; 3g LAUNCHED WITH A WATCHER
 
 - 3f (02:43) died at 02:50:20 with another restart.  Both restarts (02:41:32, 02:50:20)
