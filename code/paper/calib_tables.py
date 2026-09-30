@@ -272,7 +272,7 @@ STANDARD = [
          r'Hump peaking at age 56, Greenwood et al.\ (2025)', 'profile', NA, 'profile'),
         (r'$\rho_z$', 'Persistence of productivity', 'Ext.', 'Set',
          f(H['persistence_employment_surviving']), NA, f(H['persistence_employment_surviving'])),
-        (r'$\sigma_\upsilon$', 'Standard deviation of its shocks', setcol('sigma_y'),
+        (r'$\sigma_\zeta$', 'Standard deviation of its shocks', setcol('sigma_y'),
          "Bottom half's share of earnings, SCF 2022",
          pc(C['bottom_half_earnings_share_data']), pc(mom('sigma_y bottom half labour income share')),
          f(SIG_UPS, 3)),
