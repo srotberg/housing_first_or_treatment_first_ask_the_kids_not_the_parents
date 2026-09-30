@@ -116,6 +116,13 @@ DSHARE_TARGET = float(_fc()['drug_spending_share_data'])
 FS_TARGET = float(_fc()['food_stamps_share_data'])
 
 
+# --vsl= AND --out= (30 September, the author: "for stage 2, try to calibrate to 80 and see
+# if the VSL is positive for everyone in period 1"): a stage can be fitted to another VSL
+# target and written to another file, leaving calibrated_stage<n>.json as it is.
+VSL_TARGET = None
+OUT_NAME = None
+
+
 def spec(stage):
     out = []
     for r in FULL_SPEC:
@@ -143,7 +150,8 @@ def spec(stage):
         if r[0] == 'aleph':
             # THE VSL TARGET IS calibrate.TARGET's, which the tables and fill.py read:
             # 84 since 29 September (see there).  sr_calibrate's row still says 80.
-            r = (r[0], r[1], C.TARGET['vsl'], r[3], r[4], r[5], r[6])
+            r = (r[0], r[1], VSL_TARGET if VSL_TARGET is not None else C.TARGET['vsl'],
+                 r[3], r[4], r[5], r[6])
         if r[0] == 'h1':
             # UP TO 0.095, just under the small unit.  With the floor raised the street
             # fits at about half of h2, the quantitative model's own ratio; the old
@@ -186,7 +194,9 @@ def save(par, stage, it, m, worst):
            '_moments': {k: (round(v, 6) if isinstance(v, float) else v)
                         for k, v in m.items() if not isinstance(v, (list, dict, np.ndarray))}}
     out.update({k: float(getattr(par, k)) for k in names})
-    json.dump(out, open(os.path.join(HERE, f'calibrated_stage{stage}.json'), 'w'), indent=1)
+    if VSL_TARGET is not None:
+        out['_vsl_target'] = VSL_TARGET
+    json.dump(out, open(os.path.join(HERE, OUT_NAME or f'calibrated_stage{stage}.json'), 'w'), indent=1)
 
 
 def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None, hold=()):
@@ -281,4 +291,9 @@ def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None, hold=()):
 if __name__ == '__main__':
     args = [a for a in sys.argv[2:] if not a.startswith('--')]
     hold = tuple(a.split('=', 1)[1] for a in sys.argv[2:] if a.startswith('--hold='))
+    for a in sys.argv[2:]:
+        if a.startswith('--vsl='):
+            VSL_TARGET = float(a.split('=', 1)[1])
+        if a.startswith('--out='):
+            OUT_NAME = a.split('=', 1)[1]
     calibrate(int(sys.argv[1]), resume=args[0] if args else None, hold=hold)

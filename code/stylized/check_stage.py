@@ -25,7 +25,17 @@ from negative_value_of_life import period1_negative_values, occupied_negative_va
 
 stage = int(sys.argv[1])
 GRADIENT = '--no-gradient' not in sys.argv
-q, raw = R.load(stage)
+# --file= checks another calibration of the stage (stages.py --out=), e.g. the VSL 80 fit
+FILE = next((a.split('=', 1)[1] for a in sys.argv if a.startswith('--file=')), None)
+if FILE:
+    import json as _json
+    raw = _json.load(open(FILE))
+    q = with_(ST.P(), **{k: x for k, x in raw.items() if not k.startswith('_')})
+    if raw.get('_vsl_target') is not None:
+        C.TARGET['vsl'] = raw['_vsl_target']
+        stages.VSL_TARGET = raw['_vsl_target']
+else:
+    q, raw = R.load(stage)
 q = ST.solve_child_damage(q)
 ok = True
 
