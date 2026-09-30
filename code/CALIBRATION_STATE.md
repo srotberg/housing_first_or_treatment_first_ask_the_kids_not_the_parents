@@ -1,3 +1,17 @@
+# 30 September 23:31: THE SCAN WORKERS WERE BLOCKED BY THE PERMISSION CHECK; RULE ADDED, RELAUNCHED
+
+All ten 23:15-23:16 workers stopped at the cloud sessions' auto-mode permission check before running
+remote_omega_point.sh (it installs a compiler, builds and pushes). The author chose the one-rule fix:
+.claude/settings.json allows "Bash(bash code/remote_omega_point.sh:*)" (99dd92ed), nothing else. The ten
+blocked sessions and the failed first 0.0 worker are archived; the IDs in the 23:16 entry below are dead.
+Relaunched 23:30, the prompt no longer fetching (the checkout is the branch head, rule included):
+  0.02 session_01RRaNQwmgJw9gvieuXXZQdm (solve running)   0.08 session_01M7e5bakQt7JfTpJHDELc6s
+  0.03 session_015DFwemHVJEgMHYrsz4XiKR                   0.10 session_01RC7zQJQJRpGKEeGtxY21xV
+  0.04 session_01RJDvnfgLbrQWPkwDQkPBCK                   0.12 session_01EakQ64xKBMRmKtRbLncRgQ
+  0.05 session_01Bm4ogCM6wKjYsQ5uhjEPZQ                   0.15 session_01MKkMhbJD4T5No8wae8yiMh
+  0.06 session_01LdoARGsXxqDk41D2ZnER8x                   0.20 session_01VtbmvzVbTsfAttXTP4H7PK
+  0.0 backup session_016pA1ktbMt6LPcGaNcFdjgJ (started 23:13, not blocked). Due about 04:00.
+
 # 30 September 23:16: OMEGA_C SCAN LAUNCHED (ten cloud workers)
 
 The author, on the first five omega_c = 0 blocks (users 9.70 against 10.50, SUD 4.13 against 4.34, the
