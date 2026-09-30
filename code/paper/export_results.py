@@ -18,12 +18,26 @@ best-of):
                                                       weight on the child at 1
   results/counterfactuals_cf_fix2/null_share/cf.log.gz  no policy, the baseline
                                                       for the transition's changes
-  code/trtf60/<latest run log with a forward pass to period 26>
-                                                      the T = 60 transition
+  code/trtf60/restart3_killed_1323/run.log            the T = 60 transition, PINNED
 
 THE TRANSITION IS NOT CONVERGED. Its numbers are exported with the loop they
-come from, and the prose must say they are preliminary; rerun this file when a
-later loop lands and the sentence moves with it.
+come from, and the prose must say they are preliminary.  THE LOG IS PINNED, not
+picked: this file used to take the newest log under code/trtf60 that reached
+period 26, which on 30 September silently moved to restart 3c, a second iterate,
+while the figure (transition_series.py) read restart 3.  Both now read restart 3's
+loop 0, the one complete 59-year pass on the current binary; move TR_LOG and
+transition_series.LOG together when a converged pass lands.
+
+THE CEV IS NET OF THE NO-POLICY RUN'S.  Read off the benchmark's curve, the
+no-policy run itself sits at +0.027 per cent (null_share), which is what the
+counterfactual code produces with no policy at all.  Every other change in
+Section 6 is against that run, and so is the childhood/adult split, so the CEV is
+too: x_tf_cev = CEV(tf85) - CEV(null_share), and the transition's cohorts are
+netted by the same amount (the no-reform control's own cohort CEV is not printed).
+
+This file OVERWRITES results_numbers.json, and then runs export_elasticity.py,
+export_longrun.py and transition_figure.py, which merge their names into it, so the
+file is always whole.
 """
 import glob
 import gzip
@@ -61,6 +75,15 @@ def last_cev(arm):
     return float(rows[-1][-1].rstrip('%'))
 
 
+def cev_log(arm):
+    """the arm's CEV off the benchmark's curve, per cent, from its cf.log.gz"""
+    x = None
+    for l in gzip.open(os.path.join(RES, arm, 'cf.log.gz'), 'rt', errors='replace'):
+        if 'CEV from the saved benchmark curve' in l:
+            x = 100 * float(l.split('x=')[1])
+    return x
+
+
 def pc(x, nd=0):
     return f'{abs(x):.{nd}f}'
 
@@ -72,7 +95,10 @@ out['x_tf_b_pc'] = pc(tf['drug use b']['pc'])
 out['x_tf_sud_pc'] = pc(tf['SUD lambda_d']['pc'])
 out['x_tf_h_pc'] = pc(tf['homelessness h_1']['pc'])
 out['x_tf_price_pc'] = pc(tf['drug price']['pc'])
-out['x_tf_cev'] = f"{last_cev('tf85'):.2f}"
+CEV0 = cev_log('null_share')
+out['_cev_null_share'] = CEV0
+out['x_tf_cev'] = f"{last_cev('tf85') - CEV0:.2f}"
+out['x_tf_cev_dir'] = 'better' if last_cev('tf85') > CEV0 else 'worse'
 # the long-run gain splits about evenly between childhood and adulthood
 out['x_tf_child_share_pc'] = pc(100 * tf['split']['child'] / tf['split']['total'])
 # THE EXPERIMENT AS RUN (Section 7): pi_V clears the budget, and the screen's
@@ -81,6 +107,29 @@ out['x_tf_child_share_pc'] = pc(100 * tf['split']['child'] / tf['split']['total'
 out['x_tf_piv0'] = f"{tf['pi_V (voucher probability)']['base']:.3f}"
 out['x_tf_piv1'] = f"{tf['pi_V (voucher probability)']['level']:.3f}"
 out['x_tf_piv_pc'] = pc(tf['pi_V (voucher probability)']['pc'])
+# and in per cent to two decimals, so that the two levels and the change agree when
+# rounded (0.068 to 0.081 reads as 19 per cent, not the 21 it is)
+out['x_tf_piv0_pc'] = f"{100 * tf['pi_V (voucher probability)']['base']:.2f}"
+out['x_tf_piv1_pc'] = f"{100 * tf['pi_V (voucher probability)']['level']:.2f}"
+out['x_tf_h_dir'] = 'raises' if tf['homelessness h_1']['pc'] > 0 else 'lowers'
+# THE DRUG TEST'S COST, as the model charges it.  The declaration's comment says the
+# value is in units of average earnings; the budget charges it raw (f90 20654), in
+# the units in which productivity averages one at entry.  So it is quoted against the
+# benchmark's average labour income, as Section 5 quotes the SSI floor.
+_avg_lab = None
+for l in gzip.open(os.path.join(RES, 'tf85', 'cf.log.gz'), 'rt', errors='replace'):
+    if 'average_labor_income_calibrated=' in l:
+        _avg_lab = float(l.split('=')[1].split()[0])
+        break
+_ctest = float(json.load(open(os.path.join(HERE, 'fortran_numbers.json')))['f_cost_per_drug_test'])
+out['x_ctest_earn_pc'] = f'{100 * _ctest / _avg_lab:.2g}'
+# the declared value was meant as the assay cost as a share of average earnings, so the
+# cost the model charges is below it when average labour income exceeds one
+out['x_ctest_vs_assay'] = 'below' if _avg_lab > 1 else 'above'
+# the share of net government revenue that the tests cost under Treatment First
+_tests = [float(l.split()[-1]) for l in open(os.path.join(RES, 'tf85', 'final.txt'))
+          if l.strip().startswith('drug-test cost')][0]
+out['x_ctest_budget_pc'] = f"{100 * _tests / tf['net government revenue']['level']:.2g}"
 _ho = {}
 for l in open(os.path.join(RES, 'tf85', 'PARAM_HANDOVER.arm.txt')):
     f = l.split()
@@ -117,7 +166,8 @@ hc0 = child_homeless('null_share')
 out['x_tf_hchild_pc'] = pc(100 * (child_homeless('tf85') / hc0 - 1))
 out['x_hchild0'] = f'{100 * hc0:.2f}'
 out['x_tf_hchild1'] = f"{100 * child_homeless('tf85'):.2f}"
-out['x_tf_hchild_pp'] = f"{100 * (child_homeless('tf85') - hc0):.2f}"
+out['x_tf_hchild_pp'] = f"{abs(float(out['x_tf_hchild1']) - float(out['x_hchild0'])):.2f}"
+out['x_tf_hchild_dir'] = 'rises' if child_homeless('tf85') > hc0 else 'falls'
 # the SUD rate, all adults, levels and the fall in points, for the comparison
 # with childhood homelessness in the same units
 out['x_sud0'] = f"{tf['SUD lambda_d']['base'] * 100:.2f}"
@@ -149,7 +199,9 @@ def child_sud(arm):
 sc0, sc1 = child_sud('null_share'), child_sud('tf85')
 out['x_sudchild0'] = f'{100 * sc0:.2f}'
 out['x_tf_sudchild1'] = f'{100 * sc1:.2f}'
-out['x_tf_sudchild_pp'] = f'{100 * abs(sc1 - sc0):.2f}'
+# from the two levels as printed, so that the three numbers agree (5.28 - 3.69 = 1.59)
+out['x_tf_sudchild_pp'] = f"{abs(float(out['x_tf_sudchild1']) - float(out['x_sudchild0'])):.2f}"
+out['x_tf_sudchild_dir'] = 'falls' if sc1 < sc0 else 'rises'
 
 # WHO THE NEWBORNS' PARENTS ARE, the channel any child penalty keys on: the
 # share of newborns whose parent is homeless, and whose parent has a SUD, in
@@ -167,24 +219,17 @@ p0, p1 = parent_share('null_share'), parent_share('tf85')
 out['x_tf_par_hl_pp'] = f"{100 * ((p1[2] + p1[3]) - (p0[2] + p0[3])):.2f}"
 out['x_tf_par_sud_pp'] = f"{abs(100 * ((p1[1] + p1[3]) - (p0[1] + p0[3]))):.2f}"
 
-# THE TRANSITION: the latest forward pass that reached period 26, anywhere under
-# code/trtf60 (the live run.log or a run a container restart killed).
+# THE TRANSITION: restart 3's loop 0, pinned (see the docstring)
+best = os.path.join(ROOT, 'code', 'trtf60', 'restart3_killed_1323', 'run.log')
 tr_dir = os.path.join(ROOT, 'code', 'trtf60')
-cands = [p for p in glob.glob(os.path.join(tr_dir, '**', '*.log'), recursive=True)
-         if 'TRANSITION WELFARE' in open(p, errors='replace').read(10 ** 9)]
-best = None
-for p in sorted(cands, key=os.path.getmtime, reverse=True):
-    txt = open(p, errors='replace').read()
-    if re.search(r'TRANSITION WELFARE loop=\s*\d+\s+t=\s*26 ', txt):
-        best = p
-        break
-if best is None:
-    sys.exit('no transition log reaches period 26')
+if not re.search(r'TRANSITION WELFARE loop=\s*\d+\s+t=\s*26 ', open(best, errors='replace').read()):
+    sys.exit(f'{best} does not reach period 26')
 cc = subprocess.run([sys.executable, os.path.join(ROOT, 'code', 'transition_fix', 'cohort_cev.py'),
                      best, os.path.join(tr_dir, 'welfare_curvebaseline_benchmark.dat')],
                     capture_output=True, text=True).stdout
 m = re.search(r'THE COHORT BORN AT THE REFORM \(b = 1\): CEV ([+-]\S+)%', cc)
-out['x_tr_cev_b1'] = f'{float(m.group(1)):.1f}'
+out['x_tr_cev_b1'] = f'{float(m.group(1)) - CEV0:.1f}'
+out['x_tr_cev_b1_2'] = f'{float(m.group(1)) - CEV0:.2f}'
 m = re.search(r'forward pass (\d+) of', cc)
 out['x_tr_pass'] = m.group(1)
 # THE REFORM COHORT'S GAIN IS A CHILDHOOD GAIN (the author, 29 September: the transition's
@@ -297,3 +342,9 @@ json.dump(out, open(OUT, 'w'), indent=1, sort_keys=True)
 print(f'wrote {OUT} (transition from {os.path.relpath(best, ROOT)}, forward pass {out["x_tr_pass"]})')
 for k, v in sorted(out.items()):
     print(f'  {k} = {v}')
+# the names the other two exporters own, merged back so the file is whole
+for f in ('export_elasticity.py', 'export_longrun.py', 'transition_figure.py'):
+    r = subprocess.run([sys.executable, os.path.join(HERE, f)], capture_output=True, text=True)
+    if r.returncode:
+        sys.exit(f'{f} failed:\n{r.stdout}\n{r.stderr}')
+    print(f'  + {f}: {r.stdout.strip().splitlines()[0]}')
