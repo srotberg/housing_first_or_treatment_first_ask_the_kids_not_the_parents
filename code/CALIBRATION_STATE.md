@@ -1,3 +1,19 @@
+# 30 September 20:55: OMEGA_C = 0 FIRST; ROUND 415e1041 (RED CLEARED TO THE END OF SECTION 4)
+
+The author: *"i think youll need to first run omega_c=0"*, *"to have the case with no parents"*, *"and
+then you can spawn several sessions to test many omega_c vlaue at once"*. pointrun_childsplit
+(omega_c 0.06) stopped at 20:49 after one block (pid 32592); the chain went straight on to
+pointrun_childsplit_omega0 (hftf_bench pid 3354, from 20:49, weight_on_child 0 read, 12 blocks or
+block move < 1e-3), due by about 01:10. It is the first stage on the corrected code: its moments
+against the raised targets (participation 10.50, SUD 4.34) say whether stage 1 still fits. NEXT: a
+fan-out of cloud workers, one omega_c each, spread both sides of 0.06 (I expect a rise, the author a
+fall), same handover, seed and build, to fit the 18.3 per cent use rise against this run.
+
+Round 415e1041: "and no other assets" removed (3 places); (39) in z, z^parent the parent's log
+productivity when its child becomes an adult at its node's entry-grid value (the code:
+employment_grid(1, parent node), the node at death or J_K); "kept fixed at their benchmark values";
+item 5 cut to H_t.
+
 # 30 September 20:40: ROUND 61f402f8; RED CLEARED TO THE END OF SECTION 4
 
 Eleven comments on 4.12-4.15: a' in Gamma (39, and (33) where Gamma is defined and used); chi_j
