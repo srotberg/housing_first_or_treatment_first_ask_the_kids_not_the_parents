@@ -1,3 +1,14 @@
+# 30 September 00:05: CONTAINER RESTART killed the T=60 transition (restart 3c) at loop 0, forward pass period 27; relaunched from its checkpoints
+
+- Killed about 23:58, forward pass at period 27 of 59 (last checkpoint 23:54). Archive: trtf60/restart3c_killed_2358
+  (run.log, the three start-up .dat files, both *_out checkpoints, the seeds it used as *.used.txt).
+- Seeds: drug price = the checkpoint (periods 1-26 as updated in this loop, 27-59 the previous seed); pi_V = the
+  checkpoint with period 25 set from its TRANSITION PI_V line, 0.080940 -> 0.081012 (the checkpoint holds period t
+  before its update; the 28 September precedent). Start-up .dat files identical to restart3_killed_0155;
+  PARAM_HANDOVER.txt from .kept. Relaunched ~00:03 (task bowlb663u, 4 threads): both seeds read 59 of 59, all
+  100 HANDOVER lines identical to the killed run's. Lost: this loop's backward pass (~7 h) and forward periods
+  27+ ; the backward pass reruns on the updated paths.
+
 # 29 September 21:45: STYLIZED u1 SCAN, NO UNEMPLOYMENT INSURANCE WITH A SUD
 
 - Author: psi 0.15 (0.30 insured x 0.5 replacement, the full model's numbers), small unit
