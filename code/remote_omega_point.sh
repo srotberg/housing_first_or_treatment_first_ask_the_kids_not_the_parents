@@ -40,7 +40,10 @@ publish() (  # publish <message>; a subshell, so its cd cannot leak into the cal
         cat "$D.status" 2>/dev/null
         [ -f "$D/BUILD_USED" ] && echo "build md5: $(cut -c1-32 "$D/BUILD_USED")"
         [ -f "$D/bench.log" ] && grep -a "HANDOVER weight_on_child\|MOMENT\|BLOCK MOVE\|newborn_parent_share (clean\|FROZEN\|simulation ended" "$D/bench.log"
-    } > "$OUT.tmp" && mv "$OUT.tmp" "$OUT"
+        # the group's status is its last test's: without this, a publish before the solve (no
+        # bench.log yet) skipped the mv and committed the .tmp file instead (worker 0.0, 23:04)
+        true
+    } > "$OUT.tmp"; mv "$OUT.tmp" "$OUT"
     cd "$REPO"
     git add "$R" 2>/dev/null
     git commit -q -m "omega_c scan point $W: $1$TRAILER" || return 0
@@ -54,7 +57,14 @@ publish() (  # publish <message>; a subshell, so its cd cannot leak into the cal
 )
 
 : > "$D.status"
-command -v gfortran >/dev/null || { note "GUARD: no gfortran"; publish "failed"; exit 1; }
+# A FRESH CLOUD CONTAINER HAS NO FORTRAN COMPILER (worker 0.0 failed on this at 23:04); install it,
+# as remote_internalise_point.sh does.
+command -v gfortran >/dev/null 2>&1 || {
+    note "gfortran missing, installing"
+    apt-get update -qq >/dev/null 2>&1
+    apt-get install -y -qq gfortran >/dev/null 2>&1
+}
+command -v gfortran >/dev/null || { note "GUARD: no gfortran and it could not be installed"; publish "failed"; exit 1; }
 if [ ! -x "$C/bench_tdm_childsplit/hftf_bench" ]; then
     note "building"
     bash "$C/build_bench_tdm_childsplit.sh" > "/tmp/omega_point_build_$W.log" 2>&1 || {
