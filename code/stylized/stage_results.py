@@ -86,6 +86,26 @@ def dominance(par, pV):
                 min_gap=float((vh - vt).min()))
 
 
+def worse_share_exact(par, pV):
+    """THE SHARE WORSE OFF UNDER TREATMENT FIRST, measured the way participation is.
+
+    dominance() counts every income node whose lifetime value falls as worse off,
+    WHOLE: a node whose cell straddles the use threshold counts in full, while
+    participation (calibrate.stats) gives that cell only the fraction of itself
+    inside the use region.  On 30 September that put 10.2 per cent worse off against
+    8.92 per cent using, and the author asked twice how that could be.  A household is
+    worse off exactly when it would use under Housing First in some period 1 draw
+    (checked on the grid: no non-user worse off, no user indifferent), so the share
+    is each cell's largest use fraction across its draws, on the same weights and
+    boundaries as participation.  It is still above participation, because a
+    household that uses in only some of its draws is worse off in full and counts in
+    participation only in the draws in which it uses."""
+    q = ready(with_(par, policy='HF', pV=pV))
+    PR, frac, *_ = ST.threshold(q, C.YG, 'HF', C.EDGES, C.CDF)
+    ww = np.asarray(C.W) / np.sum(C.W)
+    return float((ww * np.max(np.where(PR > 0.0, frac, 0.0), axis=1)).sum())
+
+
 def stage1(par, figure=True):
     d = {}
     for pV, tag in ((par.pV, 'b'),):          # rationed only (the author, 29 September)
@@ -101,7 +121,8 @@ def stage1(par, figure=True):
         d[f's1_mh_{tag}'] = pc(hf['part'] - tf['part'])
         d[f's1_net_{tag}'] = pc(hf['part'] - none['part'])
         dom = dominance(par, pV)
-        d[f's1_worse_{tag}'] = pc(dom['worse'], 1)
+        d[f's1_worse_{tag}'] = pc(worse_share_exact(par, pV), 1)
+        d[f's1_worse_grid_{tag}'] = pc(dom['worse'], 1)          # the old whole-node count
         d[f's1_better_{tag}'] = pc(dom['better'], 1)
         d[f's1_cevaff_{tag}'] = pc(dom['cev_aff'], 2)
         d[f's1_cevpop_{tag}'] = pc(dom['cev_pop'], 3)
@@ -316,9 +337,22 @@ def stage2(par):
     return d, hf, tf
 
 
+def consumption_share(par):
+    """Consumption c (the good the CEV scales, housing and drugs apart) over income, at
+    the Housing First benchmark: rent over income times non-drug spending over rent,
+    less the rent, both from calibrate.stats."""
+    m = stats(ready(with_(par, policy='HF')))
+    return float(m['housing_share'] * (1.0 / m['hspend'] - 1.0))
+
+
 def stage3(par, hf, tf):
-    kx = kappa_x(par, hf, WTP)
+    # THE WILLINGNESS TO PAY IS A SHARE OF INCOME (the author, 30 September: "0.2 of
+    # income, which is translated to consumption based on the share of income spent on
+    # consumption").  It was applied as 0.2 per cent of consumption.
+    cs = consumption_share(par)
+    kx = kappa_x(par, hf, WTP / cs)
     d = {'s3_kx': f'{kx:.3f}', 's3_wtp_pc': f'{100 * WTP:.1f}',
+         's3_cshare_pc': f'{100 * cs:.0f}', 's3_wtp_c_pc': f'{100 * WTP / cs:.2f}',
          's3_cev_tf': pc(cev_life(par, tf, hf, kx), 3),
          's3_cev_tf_nokx': pc(cev_life(par, tf, hf), 3)}
     return d, kx
