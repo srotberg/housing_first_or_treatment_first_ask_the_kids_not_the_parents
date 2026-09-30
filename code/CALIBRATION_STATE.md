@@ -8,6 +8,9 @@ block move < 1e-3), due by about 01:10. It is the first stage on the corrected c
 against the raised targets (participation 10.50, SUD 4.34) say whether stage 1 still fits. NEXT: a
 fan-out of cloud workers, one omega_c each, spread both sides of 0.06 (I expect a rise, the author a
 fall), same handover, seed and build, to fit the 18.3 per cent use rise against this run.
+code/remote_omega_point.sh <omega_c> is the worker: build, stage (dry run checked: only
+weight_on_child differs from the reference handover), solve, push a MOMENT digest every 20 minutes to
+results/omega_c_scan_childsplit/ and the gzipped log at the end. Launch when the omega_c = 0 run ends.
 
 Round 415e1041: "and no other assets" removed (3 places); (39) in z, z^parent the parent's log
 productivity when its child becomes an adult at its node's entry-grid value (the code:
