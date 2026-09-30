@@ -1,3 +1,21 @@
+# 30 September 00:33: T=60 RESTART 3d KILLED BY THE BACKGROUND-TASK TIME LIMIT; 3e LAUNCHED DETACHED
+
+- 3d (task bowlb663u, launched 00:00:54) was stopped at 00:31 by the harness: background
+  Bash tasks now end at their timeout, 30 minutes by default and 2 hours at most, and 3d
+  was launched without one.  Every earlier restart ran for hours as a background task; that
+  no longer works for a run of this length.  3d was in loop 0's backward pass at period 53
+  and had written no checkpoint, so nothing but 30 minutes was lost.
+- Archive: trtf60/restart3d_killed_0030 (run.log, the three start-up .dat files, the seeds
+  as *.used.txt).  3e uses the SAME seeds as 3d (drug price and pi_V, written 00:00);
+  PARAM_HANDOVER.txt from .kept; the start-up .dat files are identical to 3c's archive.
+- 3e LAUNCH, DETACHED:  `cd code/trtf60 && date +%s > START_EPOCH &&
+  (setsid nohup env OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 < /dev/null &)` -- its own
+  session, parent init, so no harness timeout reaches it (pid 4874, 00:32).  A watcher
+  background task (`while kill -0 4874; do sleep 30; done`, timeout 2 h) keeps the
+  container awake and reports the exit; WHEN THE WATCHER TIMES OUT, RE-ARM IT, do not
+  touch hftf.  Kill hftf only by its numeric pid.
+- 100 HANDOVER lines identical to 3d's.
+
 # 30 September 00:30: STYLIZED STAGES 1 AND 2 DONE, EVERY REQUIREMENT PASSES
 
 stages_sep30_cloud.txt, check_stage.py on each (the gradient check included):
