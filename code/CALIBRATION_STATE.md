@@ -11,7 +11,8 @@ pointrun_childsplit_omega0_resumed_invalid (blocks 1-5 in bench.part1_blocks1to5
 
 Clean omega_c = 0 run: code/omega_point_0.0 staged by remote_omega_point.sh (DRY=1), hftf_bench pid 1504 from
 23:03, 12 blocks from the seed, due about 03:20. BACKUP, because this container restarted twice in half an
-hour: cloud worker session_018YKqnBUUUBo3RQh24URRmS runs remote_omega_point.sh 0.0 and pushes
+hour: cloud worker session_016pA1ktbMt6LPcGaNcFdjgJ (from 23:13; the first, session_018YKqnB, failed at
+23:04: no gfortran in a fresh container -- the script now installs it) runs remote_omega_point.sh 0.0 and pushes
 results/omega_c_scan_childsplit/omega_0.0.moments.txt every 20 minutes. Same inputs, so the two must agree.
 The omega_c scan workers still wait for this result (the author: omega_c = 0 first).
 
