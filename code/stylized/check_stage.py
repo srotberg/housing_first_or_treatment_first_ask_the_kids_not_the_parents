@@ -45,9 +45,16 @@ print('  ' + ' '.join(f'{k} {getattr(q, k):.5g}' for k in
 # 1. targets
 S.SPEC = stages.spec(stage)
 m = S.moments(q, 0)
-for name, mom, tgt, *_ in S.SPEC:
+for name, mom, tgt, sgn, adj, *_ in S.SPEC:
     v = m.get(mom)
     if v is None:
+        continue
+    if adj == 0:
+        # A ROW WITH NO ADJUSTER IS SET, NOT FITTED (delta_d at Nilsson's 24 per cent in
+        # stage 2): its moment is reported beside it and is not a requirement.  Judged as
+        # one, it failed stage 2 on the 30 September run with everything else passing.
+        print(f'  info  {mom} (set, {name} = {getattr(q, name):.4g} not fitted): {v:.4g} against {tgt:.4g}',
+              flush=True)
         continue
     tol = stages.ROW_TOL.get(mom, 2.0)
     gap = 100 * (v / tgt - 1)

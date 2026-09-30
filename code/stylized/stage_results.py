@@ -39,7 +39,11 @@ import fill as F                   # compare(): direction words the prose takes 
 from welfare import cev
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, 'stage_numbers.json')
+# STAGE_NUMBERS_OUT (30 September): stage 1 and stage 2 run in separate cloud workers, and
+# each worker's rebase keeps its own version of a conflicting file, so two workers merging
+# into one stage_numbers.json can drop each other's keys.  The second writes elsewhere and
+# the two are merged afterwards.
+OUT = os.path.join(HERE, os.environ.get('STAGE_NUMBERS_OUT', 'stage_numbers.json'))
 WW = C.W / C.W.sum()
 
 
