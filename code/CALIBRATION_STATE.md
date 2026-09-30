@@ -1,3 +1,14 @@
+# 30 September 08:05: THE SIX-CHANGE ELASTICITIES ARE IN SECTION 2, IN RED
+
+- code/ELASTICITY_RESULT_MULTI.txt (07:53): four standard checks passed; its 10 per cent line
+  reproduces run 3's at two decimals, not four; five of the six measurements started from a
+  voucher threshold 4.8e-4 higher (the restore does not reset median_income).
+- Averages over 1, 2, 5, 10, 20 and 50 per cent: participation -2.37 (was -2.40 at 10 per
+  cent alone), intensive over all users -0.29 (was -0.63), per addict -1.01.  The per-user
+  +0.50 at 2 per cent is grid noise; without it the average would be -0.45 (for the author).
+- export_elasticity.py reads the MULTI file; -0.29 is 'at the less elastic end of' -0.3 to
+  -0.8 (within a tenth of an end counts as at it), and the clause after it is generated.
+
 # 30 September 04:35: SECTIONS 5-7 REWORKED OVERNIGHT, IN RED; PDF SENT (6619d525)
 
 - Section 6.2 is built around Table tab:longrun (code/paper/export_longrun.py): Housing
