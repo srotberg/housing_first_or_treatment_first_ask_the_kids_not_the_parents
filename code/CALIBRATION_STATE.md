@@ -1,3 +1,22 @@
+# 30 September 15:00: ROUND 1234180a; RED CLEARED TO THE END OF 4.3; NSFG CHILDREN BY DRUG USE
+
+- 28 comments on 4.1-4.3 (PyMuPDF finds all 28; scratchpad extract_comments.py found 16), each in red:
+  assets in R+, "J_K periods", H "does not affect any household's decision", zeta for the
+  productivity innovation (upsilon read as the drug's v; Table 5 relabelled, c_sigma_zeta_*),
+  the grid clauses out, before-tax/after-tax income, UI "only to a share p_ui ... zero UI after the
+  first year (e=3)", the social security formula in a footnote (PIA, bend points, taxable maximum,
+  SSI floor), no disability insurance for SMI (zeta_DI = 0, the author's 13 September call; the
+  author asked it be shown clearly), tau_k a flat tax rate, the taper clause out, FMR, y-hat = Y + ra,
+  eligibility in Section 4.9, no "renters" in the model, vouchers kept while eligible, T_0 from
+  bequests and the rest of the estates to the government (bench.log: bequests 1.63, paid 0.18).
+- Page 7 (author): drug users nearly as likely to have children, pooled NSFG 2017-2019 men and
+  women 40-49: 75 per cent of harder-drug users have had a child against 81 (the closest of the
+  comparisons, the author: "use the best number"). data/nsfg_births_by_drug_use.py ->
+  code/paper/nsfg_births.json; raw NSFG files in data/raw.  Children at home differ far more.
+- Splice: scratchpad sec2/splice_r49.py, baseline cd692a7f; red kept from 4.4 on.  Checks: numbers,
+  hyphens pass; acronyms only DC; check_params' 3 disagreements predate the round.
+- Restart 3h (pid 8916) still in loop 0's backward pass.
+
 # 30 September 13:40: TRANSITION SOLVER ITEM 10 BUILT; RESTART 3h RUNS IT FROM 3g'S LOOP 0 PATHS
 
 - The author, on the three changes proposed for convergence: "yes, do the changes you suggested in

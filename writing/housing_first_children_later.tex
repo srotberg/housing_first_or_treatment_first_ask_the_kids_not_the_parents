@@ -610,7 +610,10 @@ children. In NSDUH 2024 past-month use among parents is $0.845$ of use among non
 is behaviour rather than composition or observed characteristics. The weight on the child's utility in the
 household's problem is the only thing in the model that makes a household use less
 than it otherwise would, so the weight is set so that setting it to zero (mimicking
-having no children) raises drug use by the same $18.3$ percent. The externality is therefore not assumed to be large; its size is
+having no children) raises drug use by the same $18.3$ percent. \new{Drug users are nearly as likely as anyone to
+have children: in the National Survey of Family Growth 2017--2019, \new{$75$} percent of
+men and women aged 40 to 49 who used cocaine, crack or methamphetamine or injected a drug in the
+past year have had a child, against \new{$81$} percent of those who used none.} The externality is therefore not assumed to be large; its size is
 calibrated to observed behaviour on exactly the margin this paper is about.
 
 \paragraph{What the hazards are built from.} The model's transitions are not
@@ -1434,7 +1437,7 @@ $0.46$ percent of lifetime consumption.
 
 By now, I have shown how the main mechanisms in this paper work. This section
 describes the model the paper's numbers come from. It is very similar to the stylized
-model of Section~\ref{sec:stylized}, but \new{includes} annual periods and pieces that model
+model of Section~\ref{sec:stylized}, but includes annual periods and pieces that model
 leaves out: income risk over working life, retirement, recovery and treatment, SMI,
 a higher risk of dying while homeless, a drug test that misses some users, a
 government budget and a drug market. Notation follows
@@ -1452,13 +1455,13 @@ same rent, and $\beta$ is the discount factor. The values are in Section~\ref{se
 
 Households enter the economy as adults at model age $j=1$, live
 at most $J$ annual periods, work while $j<J_R$ and are retired from $J_R$. Each has a
-child, who lives in the household for the first $J_K$ years of its adult life \new{and then
-leaves to become} an adult with a child of its own. Each period a cohort of unit mass enters at $j=1$, made up of
+child, who lives in the household for the first $J_K$ years of its adult life and then
+leaves to become an adult with a child of its own. Each period a cohort of unit mass enters at $j=1$, made up of
 the grown children of the households that died, in proportion to their parents'
 deaths, so the mass of households is constant in a stationary equilibrium. The individual state is
 \begin{equation}\label{eq:fstate}
 s=(a,\,y,\,e,\,d,\,m,\,\eta)\in
-\mathcal A\times\mathcal Y_j\times\{1,2,3\}\times\{0,1,2\}\times\{0,1\}\times\{0,1,2\},
+\new{\mathbb R_+}\times\mathcal Y_j\times\{1,2,3\}\times\{0,1,2\}\times\{0,1\}\times\{0,1,2\},
 \end{equation}
 where $a$ denotes assets, $y$ productivity, $e$ employment status, $d$ the SUD, $m$
 SMI and $\eta$ the household's standing with the voucher programme. The SUD takes
@@ -1472,10 +1475,10 @@ Treatment First's condition.
 Each period the household chooses
 \begin{equation}\label{eq:fchoice}
 \big(h,\,v,\,\tau,\,a'\big)\in
-\{h_1,h_2,h_3,h_4\}\times\mathbb R_+\times\{0,1\}\times\mathcal A ,
+\{h_1,h_2,h_3,h_4\}\times\mathbb R_+\times\{0,1\}\times\new{\mathbb R_+} ,
 \end{equation}
 where $h$ is the dwelling, of which $h_1$ is a shelter, $v$ is drug use, $\tau$
-is whether \new{or not} a household is in SUD treatment, available only to a household that carries
+is whether or not a household is in SUD treatment, available only to a household that carries
 the disorder, and $a'$ is its next period's assets. Labour is inelastically
 supplied: a household that has a job works it.
 
@@ -1483,8 +1486,8 @@ supplied: a household that has a job works it.
 
 Flow utility is the stylized model's, with the child present for the first $J_K$
 years. Consumption $c$ and housing $h$ are shared through the square-root equivalence
-scale $\xi_j$, \new{which scales for two members} while the child is at home and \new{for one}
-after, and the drug \new{enters the parent's utility alone}, so the parent and the child hold the bundles
+scale $\xi_j$, which scales for two members while the child is at home and for one
+after, and the drug enters the parent's utility alone, so the parent and the child hold the bundles
 \begin{equation}\label{eq:fbundles}
 X_P=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{h}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
 \qquad
@@ -1498,32 +1501,30 @@ u\big(c,h,v,\tau\big) \;=\; U(X_P)\;+\;\omega_c\,(\xi_j-1)\,U(X_c)\;+\;\aleph\;-
 $\gamma$ is housing's share of the non-drug bundle and $\theta$ the drug's share of
 the whole, $\sigma$ is the coefficient of relative risk aversion, $\aleph$ is the flow
 value of being alive, counted once per household, and $\bar\tau^{u}$ is the utility
-cost of a year in treatment\new{, which is described in Section~\ref{sec:fdrug}}. The child's term is its own flow utility, weighted by
+cost of a year in treatment, which is described in Section~\ref{sec:fdrug}. The child's term is its own flow utility, weighted by
 $\omega_c$ and counted as $\xi_j-1$ of the household; it gets none of the drug, so a
 parent's drug spending reaches it only through the consumption and housing they
-share. After $J_K$ the child \new{leaves to form its own household}, $\xi_j=1$, and the \new{child} term is gone.
+share. After $J_K$ \new{periods} the child leaves to form its own household, $\xi_j=1$, and the child term is gone.
 
-Aggregate homelessness $H$ carries the disamenity $\kappa_x H$ for every household \new{and
-child alive}, which is what makes homelessness an externality for everyone rather than only a
-private misfortune. It enters every household's welfare and no household's decision:
+Aggregate homelessness $H$ carries the disamenity $\kappa_x H$ for every household and
+child alive, which is what makes homelessness an externality for everyone rather than only a
+private misfortune. \new{However, it does not affect any household's decision:}
 each takes $H$ as given, and the term is left out of the problem it solves.
 Section~\ref{sec:fleftout} takes up its size.
 
 \subsection{Income, taxes and transfers}\label{sec:ftaxes}
 
-\paragraph{\new{Productivity.}} \new{Log productivity follows a persistent process over
-working life, $z_{j+1}=\rho_z z_j+\upsilon_{j+1}$ with $\upsilon\sim\mathcal N(0,\sigma_\upsilon^2)$,
-discretised on a grid whose width grows with the variance of $z$ at each age, and it is
+\paragraph{Productivity.} Log productivity follows a persistent process over
+working life, $z_{j+1}=\rho_z z_j+\new{\zeta_{j+1}}$ with $\new{\zeta\sim\mathcal N(0,\sigma_\zeta^2)}$, and it is
 frozen at its last working value in retirement. Earnings on the job are
-$y\,\varepsilon(j)$, with $y=e^{z}$ normalised so that productivity averages one at
-entry and $\varepsilon(j)$ the deterministic age profile. The lowest node of the grid is
-held at a fixed level at every age, with the others rescaled to keep the mean. A
+$y\,\varepsilon(j)$, with $y=e^{z}$ normalised so that \new{$y$} averages one at
+entry and $\varepsilon(j)$ the deterministic age profile. A
 household's productivity at entry is its inheritance from its parent, set out in
-Section~\ref{sec:fnewbornsec}; its spread combines $\sigma_\upsilon$ with a persistent
+Section~\ref{sec:fnewbornsec}; its spread combines $\new{\sigma_\zeta}$ with a persistent
 component drawn at entry, and a child entering with the penalty of that section is on a
-separate block of the grid, the base grid scaled down for life.}
+separate block of the grid, \new{with} the base grid scaled down for life.
 
-\paragraph{\new{Gross income.}} \new{It depends on age and employment,
+\paragraph{\new{Before-tax income.}} \new{Before-tax income depends} on age and employment,
 \begin{equation}\label{eq:fincome}
 Y(j,y,e)=
 \begin{cases}
@@ -1534,42 +1535,51 @@ S(y) & j\ge J_{R} \quad\text{(retired)} .
 \end{cases}
 \end{equation}
 Unemployment insurance (UI) replaces the share $\psi_{ui}$ of earnings on a base capped
-at average earnings $\bar y$, and it is paid for one year only, to the share $p_{ui}$
-of separations that are insured. Social security $S(y)$ follows the statutory formula:
+at average earnings $\bar y$, and it is paid \new{only to a share $p_{ui}$ of those losing their job, mimicking the idea of
+insured separations. After the first year, households, insured and uninsured alike, receive
+zero UI ($e=3$).} Social security $S(y)$ follows the statutory formula:
 a primary insurance amount that replaces declining shares of the household's
-productivity at its last working age, capped, between two bend points, with the
-Supplemental Security Income (SSI) payment as a floor, all in units in which
-productivity averages one at entry. The SUD and SMI do not
+productivity at its last working age between two bend points \new{and up to the taxable
+maximum, capped below by the Supplemental Security Income (SSI) payment}, all in units in which
+\new{$y$} averages one at entry.\footnote{\new{With $\tilde y=\min\{y,\,y^{\max}\}$ the household's productivity at its last
+working age up to the taxable maximum $y^{\max}$,
+$S(y)=\max\big\{\underline S,\ \alpha_1\min\{\tilde y,k_1\}+\alpha_2\max\{0,\min\{\tilde y,k_2\}-k_1\}
++\alpha_3\max\{0,\tilde y-k_2\}\big\}$, where $k_1<k_2$ are the two bend points,
+$\alpha_1>\alpha_2>\alpha_3$ the shares replaced below, between and above them, and
+$\underline S$ the SSI payment. Their values are in
+Section~\ref{sec:fullcal}.}} The SUD and SMI do not
 cut earnings on the job; they act on whether there is a job at all, through the
-employment transitions below.}
+employment transitions below. \new{Out of work, a household with the SUD or SMI is paid what any other household is:
+UI in its first year if its separation is insured, and nothing after it. There is no
+disability insurance in the model, so SMI brings no income of its own.}
 
-\paragraph{\new{Taxes.}} \new{Gross income is taxed with the Heathcote et al.\ (2017) function
-and capital income at a flat rate,
+\paragraph{Taxes.} \new{Before-tax} income is taxed with the Heathcote et al.\ (2017) function
+and capital income at a flat rate, \new{so that after-tax income is}
 \begin{equation}\label{eq:ftax}
 y^{n}=\min\big\{Y,\ \tau_{\ell}\,Y^{\varphi}\big\}\;+\;(1-\tau_k)\,r\,a ,
 \end{equation}
-with $\tau_{\ell}$ the level, $1-\varphi$ the progressivity, $\tau_k$ the capital
-income tax and $r$ the exogenous interest rate on savings.}
+with $\tau_{\ell}$ the level, $1-\varphi$ the progressivity, $\tau_k$ the \new{flat tax rate on capital
+income} and $r$ the exogenous interest rate on savings.
 
-\paragraph{\new{Transfers.}} \new{Food assistance pays the maximum allotment $\underline c$ less
-the share $\varrho$ of income, the statutory taper without the statute's deductions or
-its schedule by household size, and the voucher pays a holder that is eligible this
+\paragraph{Transfers.} Food assistance pays the maximum allotment $\underline c$ less
+the share $\varrho$ of income, and the voucher pays a holder that is eligible this
 period the rent on the dwelling above a tenant contribution of $\kappa_r$ of income, up
-to the fair market rent,
+to the fair market rent \new{(FMR)},
 \begin{equation}\label{eq:ftrans}
 \begin{aligned}
 F&=\max\big\{0,\ \underline c-\varrho\,\hat y\big\},\\
-V\!ch&=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{\hat y<\kappa_V y^{\text{med}}\}\,\mathbf{1}\{\new{h}\neq h_1\}\,
-\min\Big\{\max\{0,\ p_r \new{h}-\kappa_r\hat y\},\ \max\{0,\ \mathit{FMR}-\kappa_r\hat y\}\Big\},
+V\!ch&=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{\hat y<\kappa_V y^{\text{med}}\}\,\mathbf{1}\{h\neq h_1\}\,
+\min\Big\{\max\{0,\ p_r h-\kappa_r\hat y\},\ \max\{0,\ \mathit{FMR}-\kappa_r\hat y\}\Big\},
 \end{aligned}
 \end{equation}
-where $\hat y=Y+r\max\{a,0\}$ is the income both programmes are means-tested on,
+where $\hat y=Y+r\new{a}$ is the income both programmes are means-tested on,
 $\kappa_V$ and median income $y^{\text{med}}$ are the eligibility rule
-of~\eqref{eq:felig}, and $\mathit{FMR}$ is the average rent paid by housed renters in
+\new{in Section~\ref{sec:fvoucher}}, and $\mathit{FMR}$ is the average rent paid by housed \new{households} in
 the benchmark. A voucher
-holder in a shelter keeps the voucher and is paid nothing until it rents again. Each
-entering household receives a one-time transfer $T_0$ from the government, and the
-government collects the estates of the dead.}
+holder in a shelter keeps the voucher and is paid nothing until it rents again\new{, as long as it keeps its eligibility. Voucher holders
+keep their vouchers for as long as they remain eligible}. Each
+entering household receives a one-time transfer $T_0$ from \new{bequests left by deceased households}, and the
+government collects \new{the rest of the estates of the dead}.
 
 \subsection{The budget constraint}
 
@@ -2477,14 +2487,14 @@ household of two, from the parent's age 26 to 50, and one after the child has le
 \end{description}
 
 \paragraph{Rental ladder.} \new{These three parameters build the grid of dwelling
-sizes a renter chooses from. Below the smallest rung is the shelter, $h_1$, in
+sizes a \new{household} chooses from. Below the smallest rung is the shelter, $h_1$, in
 Table~\ref{tab:eleven}.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$h_2$, the smallest rental size.] \new{The size of the cheapest dwelling is what
 decides how much of its income a poor household must spend to be housed at all, so
 its moment is the share of renters paying more than thirty percent of their income for
 housing, \new{$40.6$} percent in the 2022 SCF. Raise it and the bottom rung is
-larger and dearer, so more renters are burdened. It was fitted to this moment in an
+larger and dearer, so more \new{households} are burdened. It was fitted to this moment in an
 earlier round and held since, and the model now overshoots the share, at
 \new{$58.9$} percent.}
 \item[\new{$h_3/h_2$ and $h_4/h_2$, the spacing of the ladder.}] \new{The two larger
@@ -2506,24 +2516,24 @@ household would earn the same at every age, and the ages at which households are
 poor, and so at risk of homelessness and of using, would be wrong at both ends of
 working life.
 
-\item[\new{$\rho_z$ and $\sigma_\upsilon$, the productivity process.}] \new{Log
+\item[\new{$\rho_z$ and $\sigma_\zeta$, the productivity process.}] \new{Log
 productivity is persistent but not permanent: it follows an autoregressive process
 with persistence $\rho_z=\new{0.90}$ and shocks of standard deviation
-$\sigma_\upsilon$, on \new{$13$} nodes, and it is frozen at its last working value in
+$\sigma_\zeta$, on \new{$13$} nodes, and it is frozen at its last working value in
 retirement. The spread at entry combines that scale with a persistent component of the
 entry draw, set with a standard deviation of \new{$0.31$} \new{before the common scale
-that $\sigma_\upsilon$ carries, \new{$0.64$} after it,} and a persistence of
+that $\sigma_\zeta$ carries, \new{$0.64$} after it,} and a persistence of
 \new{$0.50$}, which gives a standard deviation of \new{$0.84$} in logs. The grid
 spans \new{$2.69$} standard deviations below the mean and \new{$3.00$} above, with
 its lowest node held at \new{$0.009$} of mean productivity, and separations are
 tilted across it, through $a(y)$, by the unemployment rates of four education groups
-in the Bureau of Labor Statistics (BLS) 2019 annual averages for ages 25 and over. $\sigma_\upsilon$ is what decides how many households are poor
+in the Bureau of Labor Statistics (BLS) 2019 annual averages for ages 25 and over. $\sigma_\zeta$ is what decides how many households are poor
 enough to be at risk of homelessness and of acquiring a SUD, and it was fitted to the
 share of earnings held by the bottom half of working households: in the 2022 SCF,
 households aged $26$ to $65$ with positive wage and salary income in the poorer half of
 the distribution hold \new{$17.2$} percent of total earnings. It has been
 held at \new{$0.41$} since, where the model gives
-\new{$16.3$} percent. The share falls in $\sigma_\upsilon$.}
+\new{$16.3$} percent. The share falls in $\sigma_\zeta$.}
 
 \item[$\bar\pi^{eu}$, the job separation rate.] \new{Chosen to reproduce the aggregate
 unemployment rate in the BLS Current Population Survey (CPS) over 2014 to 2024,
