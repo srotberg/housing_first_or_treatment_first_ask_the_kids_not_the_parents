@@ -1,3 +1,18 @@
+# 30 September 02:40: ROUND ffc0db4c TYPESET; SECTION 3 RESTRUCTURED; WTP AS A SHARE OF INCOME
+
+- Red cleared to the end of Section 3 (author); the 41 comments in red.  3.7 ends with the
+  optimum (a paragraph, no welfare comparison: "you changed the weights") and Treatment
+  First; 3.8 is the transition; 3.9 stage 3.  The Stage 4 subsection is gone; the Section 3
+  roadmap says so.
+- Stylized WTP: Loubiere et al.'s 0.2 per cent is of INCOME (author), translated at the HF
+  benchmark's consumption share, 73 per cent, to 0.27 per cent of consumption: kappa_x
+  0.954 -> 1.307; the TF gain stays 0.46.  SECTION-7 RULE: the full model's KAPPA_X PROBE
+  applies 0.2 per cent to consumption the same way; the Fortran is frozen, flagged to the
+  author, not changed.
+- Worse off under TF 10.2 -> 9.4 per cent on participation's footing (worse_share_exact);
+  above the 8.92 who use because of draws in which a household does not use.
+- References to verify: U.S. DOL (2024) and OECD (2013), both from memory.
+
 # 30 September 01:55: ROUND 9775f014 TYPESET; BENCHMARK ELASTICITIES IN THE PAPER
 
 - Author's 47 comments (pp. 3-18) applied in red; red cleared from the start to 3.7's Why
