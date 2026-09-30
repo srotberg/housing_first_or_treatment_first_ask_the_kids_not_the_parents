@@ -136,7 +136,10 @@ def spec(stage):
             # held to the rising side, u1 in [0.0486, 0.10], with the sign +1.  It was
             # -1, measured when the share fell in u1 because the poorest users were
             # there to die (the negative value of life that the raised floor removed).
-            r = (r[0], r[1], r[2], +1, 0.40, r[5], 0.10)
+            # 30 SEPTEMBER, THE SPLIT RULE (stylized.P.ui_sud_excess): the share rises
+            # steadily in u1 around the scan's fit -- 21.7 / 22.7 / 23.7 / 24.2 per cent at
+            # u1 0.089 / 0.094 / 0.099 / 0.104 -- so the ceiling is 0.15.
+            r = (r[0], r[1], r[2], +1, 0.40, r[5], 0.15)
         if r[0] == 'aleph':
             # THE VSL TARGET IS calibrate.TARGET's, which the tables and fill.py read:
             # 84 since 29 September (see there).  sr_calibrate's row still says 80.
@@ -178,7 +181,7 @@ def save(par, stage, it, m, worst):
                    {'pi_base', 'beta', 'y_floor', 'u1', 'xi', 'omega', 'delta_d',
                     # the 29 September specification: food stamps, no insurance under
                     # a SUD, and the settings that go with the raised floor
-                    'cbar', 'ui_sud', 'repl', 'h2', 'h3', 'yV'})
+                    'cbar', 'ui_sud', 'ui_sud_excess', 'repl', 'h2', 'h3', 'yV'})
     out = {'_stage': stage, '_iteration': it, '_worst_gap_pc': round(worst, 3),
            '_moments': {k: (round(v, 6) if isinstance(v, float) else v)
                         for k, v in m.items() if not isinstance(v, (list, dict, np.ndarray))}}

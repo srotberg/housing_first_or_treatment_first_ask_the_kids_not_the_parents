@@ -297,6 +297,8 @@ POOL_MARGIN = 1.08    # superseded by GRID_FLOOR; kept for scan_theta.py
 # unemployed through period 1 who do not use, worst -0.54: "It doesn't have to be 100%".
 # The street then fits at about half the small unit, the ratio the quantitative model's
 # benchmark has (h_1 0.0216 against h_2 0.0407), which the author accepted: "That is ok".
+# 30 SEPTEMBER: still 2.4, now with SIG held at its value on the original floor
+# (SIG_FIT_FLOOR below), so the lowest income is 0.240 and the median 0.65 of the mean.
 TRUNC_FLOOR = 2.4
 
 
@@ -383,9 +385,11 @@ def _solve_sig(lo=0.30, hi=2.50, iters=60):
 # the median stays at 0.62 to 0.65 of the mean and the bottom half's share rises instead
 # (18.2 / 19.1 / 21.1 per cent at floors 0.15 / 0.18 / 0.24), which is reported, not
 # targeted.  The author: "It's ok if income share of bottom is a bit off".
-# None keeps the old behaviour (SIG fitted at TRUNC_FLOOR itself) until the floor is chosen
-# from the scan; it becomes 1.08 together with the new TRUNC_FLOOR and yV.
-SIG_FIT_FLOOR = None
+# ON SINCE 30 SEPTEMBER, with the floor at 2.4 (lowest income 0.240, bottom half 21.1 per
+# cent): the author, "yes, go ahead with stage 1 and 2", after the scan at that floor had no
+# negative value of life at the drug decision, u1 at twice u0 raising the SUD share of the
+# homeless, homelessness 0.60 and users' income 0.79 (scan_bottom_ui_2.4_excess_keepsig.txt).
+SIG_FIT_FLOOR = 1.08
 _floor = TRUNC_FLOOR
 if SIG_FIT_FLOOR is not None:
     TRUNC_FLOOR = SIG_FIT_FLOOR

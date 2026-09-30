@@ -494,7 +494,7 @@ class P:
     # test_fs_bound_s1_psi015_cloud.txt).  It acts only in period 2, since nobody
     # has the disorder in period 1.  ON (0) SINCE 29 SEPTEMBER: the staged calibration
     # is run with it, and 1 reproduces every earlier result.
-    ui_sud = 0.0
+    ui_sud = 1.0      # not used while ui_sud_excess is on (30 September)
     # NO INSURANCE FOR THE JOB LOSS THE DISORDER CAUSES, THE USUAL INSURANCE FOR THE REST.
     # The author, 29 September: "I prefer if we somehow were able to get u1>u0 and be able
     # to justify a specific number for UI. 0 seemed defensible. But half is just random".
@@ -504,8 +504,9 @@ class P:
     # quitting -- which disqualifies it.  Both replacement rates are rules, repl and 0; the
     # share of such job losers without insurance, (u1 - u0)/u1, comes out of u1.  At
     # u1 = u0 the channel is off, so reaching the SUD share of the homeless needs u1 above
-    # u0.  When on, ui_sud is not used.  DEFAULT 0, i.e. OFF.
-    ui_sud_excess = 0
+    # u0.  When on, ui_sud is not used.  ON SINCE 30 SEPTEMBER (the staged calibration);
+    # 0 with ui_sud 1 reproduces the model before 29 September.
+    ui_sud_excess = 1
 
 
     # HOUSING. Rent per unit of housing services is the NUMERAIRE, p_r = 1, so
@@ -604,9 +605,10 @@ class P:
     kV    = 0.50      # MEANS TEST, the share of MEDIAN income below which a
                       # household is eligible. This is the quantitative model's
                       # kappa_V and the paper uses the same symbol for both.
-    yV    = 0.2508    # the level kV implies, kV times median income. 0.3061 until 29
-                      # September, when the grid's floor rose to TRUNC_FLOOR 2.4 and SIG
-                      # to 1.706 (calibrate.py); the assertion there caught it. It has moved
+    yV    = 0.3257    # the level kV implies, kV times median income. 0.3061 until 29
+                      # September, 0.2508 on the floor of 2.4 with SIG refitted to 1.706,
+                      # 0.3257 since 30 September with SIG held at 0.9896 (calibrate.py's
+                      # SIG_FIT_FLOOR); the assertion there catches each move. It has moved
                       # twice with the grid: 0.2591 at 30 log spaced nodes, 0.2477
                       # at 120, and 0.3172 once the nodes were placed by quantile
                       # and the top tail stopped being truncated. The last move is

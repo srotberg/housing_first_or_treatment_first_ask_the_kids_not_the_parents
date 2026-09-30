@@ -1,3 +1,16 @@
+# 30 September 00:10: STYLIZED SPECIFICATION CHOSEN, STAGES 1 AND 2 LAUNCHED
+
+- Scan (scan_bottom_ui.py, split rule, sigma held): floor 2.4 (lowest income 0.240, bottom half 21.1%,
+  median 0.65 of the mean): no negative value of life at the drug decision at VSL 84; u1 0.094 against u0
+  0.047, the SUD share rising 21.7/22.7/23.7/24.2 at u1 0.089/0.094/0.099/0.104; homelessness 0.60; users'
+  income 0.79; gradient not reversed (3.3 at every u1 to 0.50). Floor 1.8: users' income stuck at 0.54, 0.12%
+  negative, clears at VSL 90. The author: "yes, go ahead with stage 1 and 2".
+- Code: calibrate.SIG_FIT_FLOOR 1.08 (SIG 0.9896 held), TRUNC_FLOOR 2.4; P.yV 0.3257; P.ui_sud_excess 1
+  (ui_sud 1, unused); stages.spec u1 +1 on [0.0486, 0.15]; save() keeps ui_sud_excess.
+- start_stage1_sep30.json (the scan's fit): worst gap 18.3 (participation 10.5), the rest within 8.3.
+- One cloud worker via cloud_run.sh: stages.py 1 -> check_stage.py 1 -> stages.py 2 -> check_stage.py 2, log
+  code/stylized/stages_sep30_cloud.txt, committing calibrated_stage1.json and calibrated_stage2.json.
+
 # 30 September 00:05: CONTAINER RESTART killed the T=60 transition (restart 3c) at loop 0, forward pass period 27; relaunched from its checkpoints
 
 - Killed about 23:58, forward pass at period 27 of 59 (last checkpoint 23:54). Archive: trtf60/restart3c_killed_2358
