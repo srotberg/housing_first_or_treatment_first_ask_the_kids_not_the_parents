@@ -287,9 +287,11 @@ Treatment First removes outweigh the ones it creates.
 
 In the model, an adult draws a productivity and an unemployment shock, and
 chooses how much of the drug to buy; drug users risk acquiring a SUD, and a SUD raises
-both the chance of dying before old age and the chance of losing employment. It
+both the chance of dying before old age and the chance of losing employment\new{, and
+a job lost to the disorder is not covered by unemployment insurance}. It
 chooses whether to live in a shelter or in a rental, and it may hold a
-means-tested voucher, which is rationed. Children live with their parents during the
+means-tested voucher, which is rationed\new{; food assistance puts a floor under its
+consumption}. Children live with their parents during the
 parents' adulthood and share their resources (except the drugs), and the weight
 a parent puts on its child is calibrated, as in the full model, to match the gap in
 drug use between parents and adults without children. The aggregate homelessness
@@ -307,9 +309,9 @@ rationed Housing First.
 
 This stylized model shows starkly how the income gradient reverses. It separates the
 two penalties a disorder carries (death and unemployment). Scaled from nothing to
-$@@s1_scanhi_x@@$ times its calibrated value, with the other penalty at its own, the death penalty takes the average user
-from $@@s1_r_jobonly@@$ times average income to $@@s1_r_mort_hi@@$ times it; the unemployment penalty on its own leaves
-it at $@@s1_r_jobonly@@$, against $@@s1_r_none@@$ with neither penalty. The reason is how each penalty varies with income. A fixed quantity of
+$@@s1_scanhi_x@@$ times its calibrated value, \new{with the other penalty switched off}, the death penalty takes the average user
+from \new{$@@s1_r_none@@$} times average income to $@@s1_r_mort_hi@@$ times it; the unemployment penalty on its own leaves
+it at \new{$@@s1_r_unemp_hi@@$}, against $@@s1_r_none@@$ with neither penalty. The reason is how each penalty varies with income. A fixed quantity of
 the drug costs a rich household less in utility terms than a poor household,
 which means that the utility price of using falls as income rises. A job loss cuts
 income by the same share for every household except those above average income,
@@ -802,7 +804,7 @@ period. Notation follows the full model in Section~\ref{sec:full}.
 A household is characterised by its productivity $y$, fixed over its
 life and lognormally distributed across households, $\log y \sim
 \mathcal{N}(-\tfrac12\sigma_y^2, \sigma_y^2)$, so mean income is one. Labour is supplied inelastically. Households
-differ in $y$, in age $j\in\{1,2\}$, in employment status $e\in\{0,1\}$, in
+differ in $y$, in age $j\in\{1,2\}$, in employment status $e\in\{0,1\new{,2}\}$, in
 voucher receipt $\eta\in\{0,1\}$ and in SUD status $d\in\{0,1\}$, all
 discussed below, and in nothing else.
 
@@ -859,23 +861,42 @@ The mortality penalty applies here, and here only.
 \paragraph{Period 2.} This is the terminal period, after which the household dies with certainty. A
 household without a SUD is unemployed with probability $u_0$ and one with
 a SUD with the higher probability $u_1$; if unemployed it receives income
-support (Section~\ref{sec:support}). The voucher is drawn again, subject to the policy rule (Section~\ref{sec:mh}). The household
+support\new{, unless the disorder is what cost it the job} (Section~\ref{sec:support}). The voucher is drawn again, subject to the policy rule (Section~\ref{sec:mh}). The household
 chooses consumption and housing, there is no drug use decision, and assets are
 run down with nothing bequeathed.
 
 \subsubsection{Employment, income support and housing}\label{sec:support}
 
-The gap $u_1-u_0$ is the entire resource cost of the SUD. Income in a
+The gap $u_1-u_0$ is the entire resource cost of the SUD\new{, and it is the part of
+a job loss that income support does not cover. A household with a SUD loses its job
+for the ordinary reasons anyone does, with probability $u_0$, and because of the
+disorder with the further probability $u_1-u_0$: it is dismissed for misconduct,
+a failed drug test or impairment at work, or it quits. State unemployment insurance
+laws disqualify a worker in that case (U.S.\ Department of Labor, 2024), so employment
+status takes a third value, $e=2$, for a job lost to the disorder}. Income in a
 period, given permanent productivity $y$ and employment status $e$, is
 \begin{equation}\label{eq:inc}
 y^{g}(y,e) \;=\;
 \begin{cases}
 y & \text{if } e = 1,\\[0.2em]
-\psi_{ui}\cdot\min\{y,\bar y\} & \text{if } e = 0,
+\psi_{ui}\cdot\min\{y,\bar y\} & \text{if } e = 0,\\[0.2em]
+\new{0} & \new{\text{if } e = 2,}
 \end{cases}
 \end{equation}
-with $\psi_{ui}$ the replacement rate and $\bar y$ a cap on the earnings base. There
-is no other income risk.
+with $\psi_{ui}$ the replacement rate and $\bar y$ a cap on the earnings base\new{, and
+$e=2$ has probability $u_1-u_0$ for a household with a SUD and zero for every other}. There
+is no other income risk. \new{Both replacement rates are rules, $\psi_{ui}$ and zero, and
+none is chosen: the share of the job losses of households with a SUD that go uncovered,
+$(u_1-u_0)/u_1$, follows from the two probabilities.}
+
+\new{Food assistance is paid in kind, as in the quantitative model. A household with
+income $y^{g}$ in a period receives
+\begin{equation}\label{eq:fs}
+F(y^{g}) \;=\; \max\{0,\ \bar c-\rho_F\,y^{g}\}
+\end{equation}
+of consumption, which it cannot spend on rent or on drugs, so its cash has to cover
+those. It is what a household lives on when it loses a job that income support does
+not cover and has nothing saved.}
 
 Each period the household chooses
 \begin{equation}\label{eq:opts}
@@ -933,8 +954,9 @@ everything and chooses housing,
 \begin{equation}\label{eq:v2}
 V_2(a',y,e',\eta',d') = \max_{\{k\}}
 \Big\{ u(c,h_k,0) \Big\},
-\qquad c = Ra' + y^{g}(y,e') - r_k(\eta'),
+\qquad c = Ra' + y^{g}(y,e') - r_k(\eta')\new{\;+\;F\big(y^{g}(y,e')\big)},
 \end{equation}
+\new{where the cash left after rent, $Ra'+y^{g}(y,e')-r_k(\eta')$, cannot be negative,}
 and write $V_2(a',y,d') = \mathbb{E}\big[V_2(a',y,e',\eta',d')\mid y,d'\big]$ for its
 expectation over the period 2 employment and voucher draws, the SUD having already
 been realised at the transition. In period 1 the household draws $(e,\eta)$ and then
@@ -944,7 +966,8 @@ V_1(y,e,\eta) = \max_{\{k,\,v \ge 0,\,a' \ge 0\}}
 \Big\{ u(c,h_k,v)
 + \beta\, \mathbb{E}_{d'}\Big[\phi(d')\,V_2(a',y,d')\Big] \Big\},
 \end{equation}
-with $c = y^{g}(y,e) - r_k(\eta) - p_v v - a'$ and
+with $c = y^{g}(y,e) - r_k(\eta) - p_v v - a'\new{\;+\;F\big(y^{g}(y,e)\big)}$\new{, the cash
+spent on rent, drugs and saving no more than $y^{g}(y,e)$,} and
 $d'=1$ with the probability of~\eqref{eq:hazard}. Survival sits inside the expectation
 over $d'$ because it depends on which $d'$ is realised. A household uses if the value
 at its best positive $v$ exceeds the value at $v=0$.
@@ -988,7 +1011,10 @@ moderate or severe SUD against $@@s_t_part@@$ percent using, which gives
 $\pi_d=@@s_pid@@$.
 
 Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules. The rent per unit of housing services
+income, in line with statutory state rules\new{, and nothing after a job lost to the
+disorder, which those rules treat as misconduct. Food assistance tapers at
+$\rho_F=@@s_rho_fs@@$, the benefit reduction rate of the Supplemental Nutrition
+Assistance Program (SNAP) that the quantitative model uses}. The rent per unit of housing services
 $p_r$ and the price of a unit of drugs $p_v$ are normalised to one and held fixed in
 every counterfactual. Both rental units are
 set, the small one at $h_2=@@s_h2@@$ and the standard one at $h_3 = @@s_h3@@$ of mean
@@ -1001,18 +1027,29 @@ Households (PSH), published by HUD.
 The dispersion of log permanent income $\sigma_y$ is set to match how unequal
 earnings are at the bottom: in the 2022 Survey of Consumer Finances (SCF), households
 aged $26$ to $65$ with positive wage and salary income hold $@@s_t_bot50@@$ percent of
-total earnings in the poorer half of the distribution. The weight on housing $\gamma$ is picked to match
+total earnings in the poorer half of the distribution. \new{The lognormal is cut off from
+below at $@@s_ylow@@$ of mean income, $@@s_floor_mult@@$ times the rent on the small unit,
+which is high enough that no household has a negative lifetime value at the moment it
+decides whether to use drugs. $\sigma_y$ is fitted before the floor is raised and then
+held, so on the grid the model solves the poorer half holds $@@s_bot50_real@@$ percent of
+earnings and median income is $@@s_med_mean@@$ of the mean; refitting $\sigma_y$ to keep
+the share at its target would instead stretch the top of the distribution, and with it
+the income of users relative to the mean.} The weight on housing $\gamma$ is picked to match
 the $@@s_t_hspend@@$ percent of non-drug expenditure that shelter plus utilities take in
 the 2024 Consumer Expenditure Survey (CEX). The flow value
 of being alive $\aleph$ is matched to a value of a statistical life of @@s_t_vsl@@
-times average annual income, about \$9 million against a mean household income of
-\$113,000, which is the range surveyed by Viscusi and Aldy (2003) once their
-estimates are put in current dollars.
+times average annual income, about \new{\$@@s_t_vsl_musd@@} million against a mean household income of
+\new{\$@@s_mean_hh_usd@@}, which is \new{within} the range surveyed by Viscusi and Aldy (2003) once their
+estimates are put in current dollars. \new{It is slightly above the quantitative model's
+@@f_vsl_data@@, so that at the floor above no household has a negative value of life
+when it decides whether to use drugs.}
 The pull of the first unit $b$ is chosen to match a drug participation rate of
 $@@s_t_part@@$ percent from NSDUH 2024 for respondents aged 26 and over with a disorder
 of any severity, and the weight on drugs $\theta$ to aggregate drug spending over the
 aggregate income of users, $@@s_t_dshare@@$ percent, from retail spending in Midgette et al.\ (2019) and the incomes of users in
-NSDUH 2024.
+NSDUH 2024. \new{The level of food assistance $\bar c$ is fitted to food stamp spending of
+$@@f_food_stamps_share_data_pc@@$ percent of labour income, the quantitative model's
+target.}
 
 The mortality rate ratio $\kappa_{\phi d}$ is set to match the income of users,
 $@@s_t_ruse@@$ of the population average in NSDUH 2024, because the death risk is what decides how far down
@@ -1026,12 +1063,14 @@ is $@@s_t_unemp@@$ percent, the average over 2014 to 2024 in the Bureau of Labor
 Survey (CPS), and the unemployment probability with the
 disorder $u_1$ such that the share of the homeless carrying a SUD is $@@s_t_sudhl@@$ percent,
 from
-the meta-analysis of Gutwinski et al.\ (2021). That share falls as $u_1$ rises, even
-with participation and the SUD rate held on their targets: households use only if they
-can stay housed through the job loss the disorder brings, so a larger $u_1$ leaves fewer
-of those carrying it in a shelter. With the child in place the share falls short even at
-$u_1=u_0$, so in stage 2 $u_1$ rests at that bound, $@@s2_v_u1@@$, and the share is
-$@@s2_m_sudhl_pc@@$ percent.
+the meta-analysis of Gutwinski et al.\ (2021). \new{That share rises with $u_1$: every job
+the disorder costs is one that income support does not cover, so a household with a SUD
+that has too little saved to pay the rent through it ends up in a shelter. The calibrated
+$u_1$ is $@@s1_v_u1@@$, @@s1_u1_over_u0@@ times $u_0$, so @@s1_unins_pc@@ percent of the job
+losses of households with a SUD go uncovered, and raising $u_1$ by half a percentage point
+raises the share from $@@s1_m_sudhl_pc@@$ to $@@s1_sudhl_up_pc@@$ percent. In stage 2,
+$u_1$ is $@@s2_v_u1@@$, @@s2_u1_over_u0@@ times $u_0$, and the share is
+$@@s2_m_sudhl_pc@@$ percent.}
 
 \begin{table}[!tb]
 \centering
@@ -1047,7 +1086,8 @@ parameters of the child enter at stage 2, in Section~\ref{sec:kids}.}}
 \sbox{\ntbox}{\input{tables/tab_internal}}\usebox{\ntbox}
 \tabnote{Note: stage 1 is the model of Section~\ref{sec:env}, without the child;
 stage 2 adds the child of Section~\ref{sec:kids} and refits every parameter; $\omega_c$ exists only once the child
-does.}
+does. \new{$\sigma_y$ is fitted to the bottom half's share before the floor on income is
+raised and then held, so its model column is the share on the grid the model solves.}}
 \end{table}
 
 %======================================================================
@@ -1065,7 +1105,8 @@ Two features of the environment are candidates to reverse it. The
 \emph{mortality channel} is that the SUD increases the chance of dying,
 through $\kappa_{\phi d}$ in equation~\eqref{eq:surv}.
 The \emph{unemployment channel} is that it costs the household a job with probability
-$u_1-u_0$, and if income support cannot cover the rent then the household downsizes,
+$u_1-u_0$, \new{a job loss that income support does not cover}, and if \new{its savings
+and food assistance} cannot cover the rent then the household downsizes,
 consumes less, or loses their home for a shelter, which is free but whose
 housing services $h_1$ are below those of the small rental, $h_2$.
 
@@ -1311,8 +1352,7 @@ children exposed in utero to Sweden's regional experiment in strong beer. The pa
 weight on its child $\omega_c$ is fitted as in the quantitative model: switching the
 child's terms off, every other parameter held, raises drug use by the $@@s_t_gap@@$
 percent by which adults without children in NSDUH 2024 use more than parents. Every
-other stage 1 parameter is refitted with the child in place, except $u_1$, which rests
-at its bound, and Table~\ref{tab:int} reports both.}
+other stage 1 parameter is refitted with the child in place, \new{$u_1$ included}, and Table~\ref{tab:int} reports both.}
 
 \paragraph{\new{What the child changes before any policy does.}} \new{Adding the child
 moves the economy a long way, and almost all of it is the shared bundle rather than
@@ -1326,7 +1366,7 @@ raises the marginal utility of consumption in period 1, so the life a death woul
 is worth less in consumption than before; the mortality cost of using falls, and with
 it the reversal of Section~\ref{sec:who}. The refit of
 Table~\ref{tab:int} undoes it, chiefly by raising $\aleph$ from $@@s1_v_aleph@@$ to
-$@@s2_v_aleph@@$, and every stage 2 moment but the SUD share of the homeless is back on
+$@@s2_v_aleph@@$, and every stage 2 moment \new{is} back on
 its target.}
 
 \paragraph{\new{The parent's weight and who uses.}} \new{The weight the parent puts on
@@ -2944,6 +2984,9 @@ executive order.
 \item Tsemberis, S., L. Gulcur and M. Nakae (2004). ``Housing First, Consumer Choice, and Harm Reduction for Homeless Individuals With a Dual Diagnosis.'' \emph{American Journal of Public Health} 94(4), 651--56.
 \item Vaillant, G. (1995). \emph{The Natural History of Alcoholism Revisited}. Harvard University Press.
 \item van Ours, J. C. (1995). ``The Price Elasticity of Hard Drugs: The Case of Opium in the Dutch East Indies, 1923--1938.'' \emph{Journal of Political Economy} 103(2), 261--79.
+\item \new{U.S.\ Department of Labor (2024). \emph{Comparison of State Unemployment
+Insurance Laws}. Washington, DC: Employment and Training Administration, Office of
+Unemployment Insurance.}
 \item Viscusi, W. K. and J. Aldy (2003). ``The Value of a Statistical Life.'' \emph{Journal of Risk and Uncertainty} 27(1), 5--76.
 \end{list}
 

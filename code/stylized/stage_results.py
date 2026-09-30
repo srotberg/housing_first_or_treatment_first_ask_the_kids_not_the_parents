@@ -369,6 +369,17 @@ def _floor_names():
                 s_bot50_real=f'{100 * bottom / mean:.1f}', s_med_mean=f'{y[k] / mean:.2f}')
 
 
+def _sudhl_up(par, du=0.005):
+    """The SUD share of the homeless with u1 raised by du, b refit so participation is
+    where it was: the local answer to "does u1 raise the SUD share of the homeless"."""
+    from calibrate import stats, bracket
+    from stylized import with_
+    ref = stats(par)['part']
+    g = with_(par, u1=par.u1 + du)
+    g = with_(g, b=bracket(g, 'b', 'part', 1e-5, 1.0, iters=20, tgt=ref))
+    return stats(g)['sud_of_homeless2']
+
+
 def calibration_names(p1, r1, p2, r2):
     T = C.TARGET
     th_t = stages.DSHARE_TARGET
@@ -407,6 +418,7 @@ def calibration_names(p1, r1, p2, r2):
                   f'{tag}_u1_over_u0': f'{par.u1 / par.u0:.1f}'})
         if m.get('sud_of_homeless2') is not None:
             d[f'{tag}_m_sudhl_pc'] = f'{100 * m["sud_of_homeless2"]:.1f}'
+            d[f'{tag}_sudhl_up_pc'] = f'{100 * _sudhl_up(par):.1f}'
         for k in ('vsl', 'hspend', 'part', 'dshare', 'r_use', 'homeless', 'unemployment',
                   'sud_of_homeless2', 'child_gap', 'child_sud_or', 'child_hl_or', 'sud', 'fshare'):
             if m.get(k) is not None:
