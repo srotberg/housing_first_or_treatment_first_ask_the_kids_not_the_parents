@@ -285,7 +285,7 @@ STANDARD = [
          f(C['probability_of_ui']), NA, f(C['probability_of_ui'])),
     ]),
     ('Survival and mental illness', [
-        (r'$\bar q_j$', 'Baseline mortality by age', 'Ext.', 'SSA period life table, ages 26 to 85',
+        (r'$\bar\phi_j$', 'Baseline survival by age', 'Ext.', 'SSA period life table, ages 26 to 85',
          'profile', NA, 'profile'),
         (r'$\varsigma_m(j)$', 'Age profile of SMI onset', 'Ext.', 'SMI prevalence by age, NSDUH 2024',
          'profile', NA, 'profile'),

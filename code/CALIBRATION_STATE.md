@@ -1,3 +1,19 @@
+# 30 September 16:20: ROUND 085df22e; RED CLEARED TO THE END OF 4.8
+
+- 10 comments on 4.7-4.8, in red: Nielsen as "1.34 / 2.74 times as likely as people with no SUD";
+  the Chez Soi housing-stability clause out; baseline survival written 1 - phi-bar_j as in the
+  stylized model (Section 5 item and Table 5 relabelled "Baseline survival by age"), defined as the
+  risk of a housed household with neither the SUD nor SMI; the SSA life-table clause left to
+  Section 5; a sentence spelling out the base risk q0 and the SUD's excess q1 - q0; the hazard and
+  mortality-of-use sentences out; the space before footnote 11 gone.
+- SMI use ratio (author: "about 3 in the benchmark"): the only record is SMI_RESTORE_PLAN.md,
+  2.715 on 23 September at b_smi = 1, before the later recalibration; the current benchmark does
+  not print it. patch_participation_print.py prints it (u_any) but WRITES THE TRACKED SOURCE IN
+  PLACE whatever its arguments: run as a test at 16:10 it edited the frozen .f90, reverted at once
+  with git checkout, nothing built from it.
+- Container restart 15:46 (worker only): hftf 8916 survived; watcher re-armed (b35sn9bh7).
+- Splice sec2/splice_r52.py, baseline 3929283a; red kept from 4.9 on.
+
 # 30 September 16:05: ROUND 10bc8a80; RED CLEARED TO THE END OF 4.7
 
 - Comments on p7 and 4.3-4.7, each in red: comma and "and capped" in the social security sentence;
