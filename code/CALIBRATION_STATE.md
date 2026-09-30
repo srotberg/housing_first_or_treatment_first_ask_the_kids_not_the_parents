@@ -1,3 +1,17 @@
+# 30 September 23:16: OMEGA_C SCAN LAUNCHED (six cloud workers)
+
+The author, on the first five omega_c = 0 blocks (users 9.70 against 10.50, SUD 4.13 against 4.34, the
+rest as in the benchmark of record): *"It seems to be close to target."* The first stage holds, so the scan
+went out at 23:15 instead of after block 12. remote_omega_point.sh, one omega_c per cloud worker, digests
+every 20 minutes into results/omega_c_scan_childsplit/omega_<w>.moments.txt:
+  0.04 session_014Lp3qVKPsXRo3CSZTbmrM8     0.10 session_01AAP32WG4SQAdaQjFBsQJjg
+  0.06 session_01XZQkzCH5RLqjyKw81T7f7U     0.12 session_01Q5BjwbMv73dFuFSLzTyrpP
+  0.08 session_01KSc1LeyvN4aRZVetgbPAj8     0.15 session_01Fx95ry5CXPGSvzZ47EeR4L
+  0.0  session_016pA1ktbMt6LPcGaNcFdjgJ (backup of the local omega_point_0.0, pid 1504)
+omega_c's moment at each point: users(0) / users(omega_c) - 1 against 18.3 per cent, block 12 against
+block 12. Due about 03:45. Provisional readings: block 1, 17.3 at 0.06 (both runs); block 5, 12.9 at 0.06
+(penalty fix only). I expect a rise in omega_c, the author a fall; the grid straddles 0.06.
+
 # 30 September 23:05: A FROZEN RUN CANNOT BE RESUMED FROM ITS SAVED BLOCK STATE; OMEGA_C = 0 RESTARTED CLEAN
 
 The two resumes after the container restarts were NOT a continuation. The first block after each resume
