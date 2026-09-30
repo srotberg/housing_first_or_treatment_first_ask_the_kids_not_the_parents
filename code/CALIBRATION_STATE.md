@@ -1,3 +1,22 @@
+# 30 September 20:45: THE CHILD IN THE DRUG SPLIT (ec1358e1); CHILD-FIX POINT RUN SUPERSEDED; CHAIN LAUNCHED
+
+The author: *"the child term has to count in both whether to use and how much to use"*, *"and the
+parent counts it with omega_c"*. The split was the parent's own Cobb-Douglas closed form;
+solve_drug_split_with_child now solves the first order condition of the whole flow while the child
+is at home and omega_c > 0, and the risk-adjusted split's marginal carries the same term. Checked
+against brute force (300 draws, within half a grid step); identical to the closed form at omega_c = 0.
+The stylized model already maximised the whole objective over v. Paper: "How the choices separate"
+removed on the author's instruction.
+
+- pointrun_childfix (penalty fix only) stopped at block 5 of 12 (pid 26910); its log is kept.
+- build_bench_tdm_childsplit.sh: bounds, snan, prod all 7 warnings (the same as before), 0 errors.
+- pointrun_childsplit.sh chain (bash pid 32589): pointrun_childsplit (omega_c 0.06, hftf_bench pid
+  32592, from 20:43) then pointrun_childsplit_omega0 (omega_c 0.0) -- same handover, seed and build;
+  omega_c's moment is the use rise from the first to the second. About 4.6 hours each.
+- The snan build cannot be smoke-tested from this seed: it traps at start-up in read_calibration_state
+  (cf.f90 45701), summing newborn_parent_share after filling it from unconditional_employment_probability,
+  which is not yet computed there. The reference printed the same zeros, so it predates both fixes.
+
 # 30 September 19:40: ROUND cac6315d; RED CLEARED TO THE END OF 4.13
 
 - 6 comments, in red: the child enters "with the transfer T_0 and no other assets"; charged
