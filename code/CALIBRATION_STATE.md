@@ -1,3 +1,18 @@
+# 30 September 19:20: ROUND bdde13a6; RED CLEARED TO THE END OF 4.12
+
+- The author's comments on 4.8-4.12, in red: tense in the penalty sentence; 4.10 "SMI begins and
+  ends according to", "a voucher is drawn and revoked according to"; 4.11 kappa_x H to a footnote,
+  the child's entry state spelled out (as compute_expected_child_value has it: no assets,
+  employed, clean, no SMI, no voucher), "using matters only through the disorder"; 4.12 T_0 netted
+  from the estates, the tax-distortion sentence rewritten. 4.14 brought to the child-penalty fix
+  (option 1): entrants weighted by chi_j up to J_K, penalty on d>=1 when the child leaves.
+- RAISED WITH THE AUTHOR (their question: "shouldnt the utility of the child enter too?!"): the
+  consumption-drug split, optimize_frac_spent_on_addiciton, uses the parent's own Cobb-Douglas
+  shares only; the child's utility, which rises with consumption, is left out, so the intensive
+  margin ignores omega_c. Also: D(y) values the child as entering WITHOUT SMI, while entrants carry
+  SMI at the age-26 prevalence. Point run (pid 26910) continues meanwhile.
+- Splice sec2/splice_r56.py, baseline 6039e2e1; red kept from 4.13 on.
+
 # 30 September 18:45: TRANSITION 3h STOPPED (superseded); CHILD-FIX POINT RUN LAUNCHED
 
 - The author: "stop the transition and do the point run". Restart 3h (pid 8916) stopped by pid in
