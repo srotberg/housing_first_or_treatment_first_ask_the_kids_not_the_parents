@@ -1,3 +1,20 @@
+# 30 September 23:05: A FROZEN RUN CANNOT BE RESUMED FROM ITS SAVED BLOCK STATE; OMEGA_C = 0 RESTARTED CLEAN
+
+The two resumes after the container restarts were NOT a continuation. The first block after each resume
+reproduced a FRESH first block, not block 6: pi_V eligibles-with-a-voucher 0.257 at block 5 -> 0.075 after
+the resume (0.072 at a fresh block 1), wealth/output 3.01 -> 3.60 (3.58), aleph 80.8 -> 89.3, drug users
+9.70 -> 8.72 per cent. The saved state (calibration_state.dat, the two distributions, newborn shares,
+resume seed) does not carry everything a block builds -- the voucher stock at least. LESSON: after a
+container restart a frozen run is restarted FROM THE SEED, never resumed. The resumed directory is kept as
+pointrun_childsplit_omega0_resumed_invalid (blocks 1-5 in bench.part1_blocks1to5.log are valid: users
+8.21, 9.74, 9.88, 9.80, 9.70; SUD 3.47, 4.14, 4.20, 4.16, 4.13).
+
+Clean omega_c = 0 run: code/omega_point_0.0 staged by remote_omega_point.sh (DRY=1), hftf_bench pid 1504 from
+23:03, 12 blocks from the seed, due about 03:20. BACKUP, because this container restarted twice in half an
+hour: cloud worker session_018YKqnBUUUBo3RQh24URRmS runs remote_omega_point.sh 0.0 and pushes
+results/omega_c_scan_childsplit/omega_0.0.moments.txt every 20 minutes. Same inputs, so the two must agree.
+The omega_c scan workers still wait for this result (the author: omega_c = 0 first).
+
 # 30 September 22:37: A SECOND CONTAINER RESTART (22:35); OMEGA_C = 0 RESUMED FROM BLOCK 6
 
 The first resume (pid 509) finished one block (block 6 overall, state saved 22:32) before the container
