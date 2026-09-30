@@ -610,10 +610,10 @@ children. In NSDUH 2024 past-month use among parents is $0.845$ of use among non
 is behaviour rather than composition or observed characteristics. The weight on the child's utility in the
 household's problem is the only thing in the model that makes a household use less
 than it otherwise would, so the weight is set so that setting it to zero (mimicking
-having no children) raises drug use by the same $18.3$ percent. \new{Drug users are nearly as likely as anyone to
-have children: in the National Survey of Family Growth 2017--2019, \new{$75$} percent of
+having no children) raises drug use by the same $18.3$ percent.\footnote{\new{Drug users are nearly as likely as anyone to
+have children: in the National Survey of Family Growth 2017--2019, $75$ percent of
 men and women aged 40 to 49 who used cocaine, crack or methamphetamine or injected a drug in the
-past year have had a child, against \new{$81$} percent of those who used none.} The externality is therefore not assumed to be large; its size is
+past year have had a child, against $81$ percent of those who used none.}} The externality is therefore not assumed to be large; its size is
 calibrated to observed behaviour on exactly the margin this paper is about.
 
 \paragraph{What the hazards are built from.} The model's transitions are not
@@ -1461,7 +1461,7 @@ the grown children of the households that died, in proportion to their parents'
 deaths, so the mass of households is constant in a stationary equilibrium. The individual state is
 \begin{equation}\label{eq:fstate}
 s=(a,\,y,\,e,\,d,\,m,\,\eta)\in
-\new{\mathbb R_+}\times\mathcal Y_j\times\{1,2,3\}\times\{0,1,2\}\times\{0,1\}\times\{0,1,2\},
+\mathbb R_+\times\mathcal Y_j\times\{1,2,3\}\times\{0,1,2\}\times\{0,1\}\times\{0,1,2\},
 \end{equation}
 where $a$ denotes assets, $y$ productivity, $e$ employment status, $d$ the SUD, $m$
 SMI and $\eta$ the household's standing with the voucher programme. The SUD takes
@@ -1475,7 +1475,7 @@ Treatment First's condition.
 Each period the household chooses
 \begin{equation}\label{eq:fchoice}
 \big(h,\,v,\,\tau,\,a'\big)\in
-\{h_1,h_2,h_3,h_4\}\times\mathbb R_+\times\{0,1\}\times\new{\mathbb R_+} ,
+\{h_1,h_2,h_3,h_4\}\times\mathbb R_+\times\{0,1\}\times\mathbb R_+ ,
 \end{equation}
 where $h$ is the dwelling, of which $h_1$ is a shelter, $v$ is drug use, $\tau$
 is whether or not a household is in SUD treatment, available only to a household that carries
@@ -1504,27 +1504,27 @@ value of being alive, counted once per household, and $\bar\tau^{u}$ is the util
 cost of a year in treatment, which is described in Section~\ref{sec:fdrug}. The child's term is its own flow utility, weighted by
 $\omega_c$ and counted as $\xi_j-1$ of the household; it gets none of the drug, so a
 parent's drug spending reaches it only through the consumption and housing they
-share. After $J_K$ \new{periods} the child leaves to form its own household, $\xi_j=1$, and the child term is gone.
+share. After $J_K$ periods the child leaves to form its own household, $\xi_j=1$, and the child term is gone.
 
 Aggregate homelessness $H$ carries the disamenity $\kappa_x H$ for every household and
 child alive, which is what makes homelessness an externality for everyone rather than only a
-private misfortune. \new{However, it does not affect any household's decision:}
+private misfortune. However, it does not affect any household's decision:
 each takes $H$ as given, and the term is left out of the problem it solves.
 Section~\ref{sec:fleftout} takes up its size.
 
 \subsection{Income, taxes and transfers}\label{sec:ftaxes}
 
 \paragraph{Productivity.} Log productivity follows a persistent process over
-working life, $z_{j+1}=\rho_z z_j+\new{\zeta_{j+1}}$ with $\new{\zeta\sim\mathcal N(0,\sigma_\zeta^2)}$, and it is
+working life, $z_{j+1}=\rho_z z_j+\zeta_{j+1}$ with $\zeta\sim\mathcal N(0,\sigma_\zeta^2)$, and it is
 frozen at its last working value in retirement. Earnings on the job are
-$y\,\varepsilon(j)$, with $y=e^{z}$ normalised so that \new{$y$} averages one at
+$y\,\varepsilon(j)$, with $y=e^{z}$ normalised so that $y$ averages one at
 entry and $\varepsilon(j)$ the deterministic age profile. A
 household's productivity at entry is its inheritance from its parent, set out in
-Section~\ref{sec:fnewbornsec}; its spread combines $\new{\sigma_\zeta}$ with a persistent
+Section~\ref{sec:fnewbornsec}; its spread combines $\sigma_\zeta$ with a persistent
 component drawn at entry, and a child entering with the penalty of that section is on a
-separate block of the grid, \new{with} the base grid scaled down for life.
+separate block of the grid, with the base grid scaled down for life.
 
-\paragraph{\new{Before-tax income.}} \new{Before-tax income depends} on age and employment,
+\paragraph{Before-tax income.} Before-tax income depends on age and employment,
 \begin{equation}\label{eq:fincome}
 Y(j,y,e)=
 \begin{cases}
@@ -1535,36 +1535,41 @@ S(y) & j\ge J_{R} \quad\text{(retired)} .
 \end{cases}
 \end{equation}
 Unemployment insurance (UI) replaces the share $\psi_{ui}$ of earnings on a base capped
-at average earnings $\bar y$, and it is paid \new{only to a share $p_{ui}$ of those losing their job, mimicking the idea of
-insured separations. After the first year, households, insured and uninsured alike, receive
-zero UI ($e=3$).} Social security $S(y)$ follows the statutory formula:
+at average earnings $\bar y$, and it is paid only to a share $p_{ui}$ of those losing their job, mimicking \new{the share of}
+insured separations. After the first year, \new{unemployed households}, insured and uninsured alike, receive
+zero UI ($e=3$). Social security $S(y)$ follows the statutory formula:
 a primary insurance amount that replaces declining shares of the household's
-productivity at its last working age between two bend points \new{and up to the taxable
-maximum, capped below by the Supplemental Security Income (SSI) payment}, all in units in which
-\new{$y$} averages one at entry.\footnote{\new{With $\tilde y=\min\{y,\,y^{\max}\}$ the household's productivity at its last
+productivity at its last working age between two bend points and up to the taxable
+maximum\new{, the ceiling above which earnings no longer raise the benefit}, capped below by the Supplemental Security Income (SSI) payment, all in units in which
+$y$ averages one at entry.\footnote{With $\tilde y=\min\{y,\,y^{\max}\}$ the household's productivity at its last
 working age up to the taxable maximum $y^{\max}$,
 $S(y)=\max\big\{\underline S,\ \alpha_1\min\{\tilde y,k_1\}+\alpha_2\max\{0,\min\{\tilde y,k_2\}-k_1\}
 +\alpha_3\max\{0,\tilde y-k_2\}\big\}$, where $k_1<k_2$ are the two bend points,
 $\alpha_1>\alpha_2>\alpha_3$ the shares replaced below, between and above them, and
 $\underline S$ the SSI payment. Their values are in
-Section~\ref{sec:fullcal}.}} The SUD and SMI do not
+Section~\ref{sec:fullcal}.} The SUD and SMI do not
 cut earnings on the job; they act on whether there is a job at all, through the
-employment transitions below. \new{Out of work, a household with the SUD or SMI is paid what any other household is:
-UI in its first year if its separation is insured, and nothing after it. There is no
-disability insurance in the model, so SMI brings no income of its own.}
+employment transitions below. Out of work, a household with the SUD or SMI is paid what any other household is:
+UI in its first year \new{with probability $p_{ui}$, nothing with probability $1-p_{ui}$, and
+nothing after the first year}. There is no
+disability insurance in the model, so SMI brings no income of its own.\footnote{\new{In the
+data only a minority of adults with SMI receive disability benefits on the basis of a mental
+disorder: about 3 million, through Social Security Disability Insurance or SSI, against 14.6
+million adults with SMI in NSDUH 2023, roughly one in five.}}
 
-\paragraph{Taxes.} \new{Before-tax} income is taxed with the Heathcote et al.\ (2017) function
-and capital income at a flat rate, \new{so that after-tax income is}
+\paragraph{Taxes.} Before-tax income is taxed with the Heathcote et al.\ (2017) function
+and capital income at a flat rate, so that after-tax income is
 \begin{equation}\label{eq:ftax}
 y^{n}=\min\big\{Y,\ \tau_{\ell}\,Y^{\varphi}\big\}\;+\;(1-\tau_k)\,r\,a ,
 \end{equation}
-with $\tau_{\ell}$ the level, $1-\varphi$ the progressivity, $\tau_k$ the \new{flat tax rate on capital
-income} and $r$ the exogenous interest rate on savings.
+\new{where $\tau_{\ell}$ scales after-tax income, and so sets the level of the tax, and $1-\varphi$ sets
+its progressivity; $\tau_k$ is the flat tax rate on capital income and $r$ is the exogenous
+interest rate on savings.}
 
 \paragraph{Transfers.} Food assistance pays the maximum allotment $\underline c$ less
 the share $\varrho$ of income, and the voucher pays a holder that is eligible this
 period the rent on the dwelling above a tenant contribution of $\kappa_r$ of income, up
-to the fair market rent \new{(FMR)},
+to the fair market rent \new{($\mathit{FMR}$)},
 \begin{equation}\label{eq:ftrans}
 \begin{aligned}
 F&=\max\big\{0,\ \underline c-\varrho\,\hat y\big\},\\
@@ -1572,73 +1577,77 @@ V\!ch&=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{\hat y<\kappa_V y^{\text{med}}\}\,\math
 \min\Big\{\max\{0,\ p_r h-\kappa_r\hat y\},\ \max\{0,\ \mathit{FMR}-\kappa_r\hat y\}\Big\},
 \end{aligned}
 \end{equation}
-where $\hat y=Y+r\new{a}$ is the income both programmes are means-tested on,
+where $\hat y=Y+ra$ is the income both programmes are means-tested on,
 $\kappa_V$ and median income $y^{\text{med}}$ are the eligibility rule
-\new{in Section~\ref{sec:fvoucher}}, and $\mathit{FMR}$ is the average rent paid by housed \new{households} in
+in Section~\ref{sec:fvoucher}, and $\mathit{FMR}$ is the average rent paid by housed households in
 the benchmark. A voucher
-holder in a shelter keeps the voucher and is paid nothing until it rents again\new{, as long as it keeps its eligibility. Voucher holders
-keep their vouchers for as long as they remain eligible}. Each
-entering household receives a one-time transfer $T_0$ from \new{bequests left by deceased households}, and the
-government collects \new{the rest of the estates of the dead}.
+holder in a shelter keeps the voucher and is paid nothing until it rents again, as long as it keeps its eligibility. Voucher holders
+keep their vouchers for as long as they remain eligible. Each
+entering household receives a one-time transfer $T_0$ from bequests left by deceased households, and the
+government collects the rest of the estates of the dead.
 
 \subsection{The budget constraint}
 
-\new{\begin{equation}\label{eq:fbudget}
-c+p_v v+a' \;=\; y^{n}+a+T_0\mathbf{1}\{j=1\}\;-\;p_r\, \new{h}\,\mathbf{1}\{\new{h}\neq h_1\}\;+\;V\!ch+F,
+\new{The household's budget constraint is as follows:}
+\begin{equation}\label{eq:fbudget}
+c+p_v v+a' \;=\; y^{n}+a+T_0\mathbf{1}\{j=1\}\;-\;p_r\, h\,\mathbf{1}\{h\neq h_1\}\;+\;V\!ch+F,
 \qquad c\ge F,\ v\ge0,\ a'\ge0 .
 \end{equation}
-Food assistance is paid in kind, so it cannot fund the drug, the rent or saving. The
-drug price is $p_v$ and the rent per unit of housing $p_r$, held at its benchmark value
-in every simulation. Treatment costs utility and no money.}
+Food assistance is paid in kind, so it cannot \new{directly fund} the drug, the rent or saving. The
+drug price is $p_v$\new{, which is endogenous here as opposed to exogenous like in the
+stylized model,} and the rent per unit of housing $p_r$, held at its benchmark value
+in every simulation. Treatment costs utility \new{only}.
 
 \subsection{Housing and the homelessness loop}
 
-\new{Housing is the four point grid of~\eqref{eq:fchoice}: $h_1$ is literal
+Housing is the four point grid of~\eqref{eq:fchoice}: $h_1$ is literal
 homelessness, sleeping rough or in an emergency shelter, which is free, and $h_2<h_3<h_4$
-are three rental sizes, the larger two fixed multiples of the smallest. In the last
+are three rental sizes. In the last
 years of life the shelter is not available, for the same reason the drug has an
 initiation age (Section~\ref{sec:fdrug}): too little life remains for its costs to
-bind.}
+bind.
 
-\new{Homelessness then enters three separate equations: survival~\eqref{eq:fsurv}, the
-employment transitions~\eqref{eq:femp} and the SUD recovery hazard~\eqref{eq:frecover}.
+Homelessness then enters three separate equations: survival~\eqref{eq:fsurv} and the
+employment transitions~\eqref{eq:femp}\new{, both in Section~\ref{sec:fcosts},} and the SUD recovery hazard~\eqref{eq:frecover} \new{in Section~\ref{sec:fdrug}}.
 It raises mortality, worsens both employment margins and lowers the chance of
 recovering from the SUD. SMI is the one thing it does not reach, for the reason given
-in Section~\ref{sec:fsmi}.}
+in Section~\ref{sec:fsmi}.
 
 \subsection{Drug use, the SUD, recovery and treatment}\label{sec:fdrug}
 
-\new{A household that does not carry the disorder, $d\in\{0,1\}$, and uses any
-quantity acquires it with probability $\pi_d$,
+A household that does not carry the disorder, \new{either $d=0$ (never had it) or $d=1$ (had it
+but recovered)}, and uses any
+quantity acquires it \new{($d=2$)} with probability $\pi_d$,
 \begin{equation}\label{eq:fd}
 \Pr(d'=2\mid d\neq 2,\,v)=\pi_d\,\mathbf{1}\{v>0\},
 \end{equation}
-so the risk is a cost of using at all and not of the dose, and a household that has
+so the risk \new{is the same for all users}, and a household that has
 recovered can acquire the disorder again. A household may begin using only up to an
 age $J_E$.\footnote{Without it there is little consequence at old ages to using: too
 little life remains for the disorder to damage, so the model produces too much of
-it.} A household with the SUD recovers, to $d=1$, with probability
+it. \new{The cause is that death is certain at the last age $J$, so close to it a household
+knows how little life remains, whereas in real life nobody knows exactly when they will die.
+Section~\ref{sec:fullcal} gives the value of $J_E$.}} A household with the SUD recovers, to $d=1$, with probability
 \begin{equation}\label{eq:frecover}
-\pi_r(\new{h},m,\tau)=\min\Big\{1,\ \bar\pi_r\,
-\mu_H^{\mathbf{1}\{\new{h}=h_1\}}\,\mu_m^{\mathbf{1}\{m=1\}}\,g^{\tau}\Big\},
+\pi_r(h,m,\tau)=\min\Big\{1,\ \bar\pi_r\,
+\mu_H^{\mathbf{1}\{h=h_1\}}\,\mu_m^{\mathbf{1}\{m=1\}}\,g^{\tau}\Big\},
 \end{equation}
 with $\bar\pi_r$ the baseline annual chance of recovering while housed, without SMI
-and untreated, and three multipliers on it: $\mu_H<1$, which means that recovery is
+and untreated, \new{with} three multipliers on it: $\mu_H<1$, which means that recovery is
 harder in a shelter, $\mu_m<1$, which means that it is harder with SMI, and $g>1$,
-which means that it is more likely in treatment.}
+which means that it is more likely in treatment.
 
-\new{$\mu_H$ is how housing acts on drug use here, and it is worth being exact about what
-that claim is and is not. Housing does not change what a household wants: flow utility
-is the same function of $(c,\new{h},v)$ housed or not. What housing changes is the chance of
+$\mu_H$ is how housing acts on drug use here. Housing does not change what a household wants: flow utility
+is the same function of $(c,h,v)$ housed or not. What housing changes is the chance of
 getting out of the disorder once it is carried. Milby et al.\ (2005) randomised
 cocaine-dependent homeless adults into arms differing in housing and measured weeks of
-abstinence, so the ratio between arms identifies $\mu_H$.}
+abstinence, so the ratio between arms identifies $\mu_H$ \new{in the calibration}.
 
-\new{Treatment $\tau$ is a \emph{choice}, taken at the utility cost $\bar\tau^u$
+Treatment $\tau$ is a \new{choice}, taken at the utility cost $\bar\tau^u$
 in~\eqref{eq:futil}, and $g$ is the only thing it buys. It does not stop the household
 using, it does not remove the excess mortality of the disorder while it lasts, and it
 does not exempt the household from Treatment First's condition, since a household in
-treatment still carries the disorder.}
+treatment still carries the disorder.
 
 \subsection{Serious mental illness}\label{sec:fsmi}
 

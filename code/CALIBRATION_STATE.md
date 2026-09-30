@@ -1,3 +1,18 @@
+# 30 September 15:40: ROUND 459d74d8; RED CLEARED TO THE END OF 4.6
+
+- 25 comments (p7, 4.3-4.6), each in red: the NSFG sentence a footnote; UI "the share of insured
+  separations", "unemployed households", out of work with probability p_ui / 1-p_ui and nothing
+  after; taxable maximum explained; a DI footnote (about 3 million on SSDI or SSI against 14.6
+  million adults with SMI in NSDUH 2023 Table 6.4A; the 3 million is the code's note, not verified
+  here); the tax sentence rewritten; FMR italic; 4.4 introduced, "directly fund", p_v endogenous
+  unlike the stylized model, "utility only"; 4.5 multiples clause out, sections for each equation;
+  4.6 d=0/d=1 spelled out, (d=2), "the same for all users", footnote on the certain death at J,
+  "with three multipliers", "in the calibration", choice not italic.
+- NOT DONE, told the author: the old-age shelter sentence stays (max_age_to_choose_homelessness is
+  58 in every benchmark handover, so no shelter at model ages 59-60); J_E's value (55, age 80) not
+  put in Section 4 (the no-calibration-numbers rule), the footnote points to Section 5.
+- Splice sec2/splice_r50.py, baseline 46ad868c; red kept from 4.7 on.
+
 # 30 September 15:00: ROUND 1234180a; RED CLEARED TO THE END OF 4.3; NSFG CHILDREN BY DRUG USE
 
 - 28 comments on 4.1-4.3 (PyMuPDF finds all 28; scratchpad extract_comments.py found 16), each in red:
