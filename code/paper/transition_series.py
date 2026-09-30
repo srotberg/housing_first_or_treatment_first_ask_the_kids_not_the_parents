@@ -45,10 +45,10 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
-LOG = os.path.join(ROOT, 'code', 'trtf60', 'restart3_killed_1323', 'run.log')
+sys.path.insert(0, HERE)
+from transition_source import LOG, OUT   # the one pin
 CURVE = os.path.join(ROOT, 'code', 'trtf60', 'welfare_curvebaseline_benchmark.dat')
 RES = os.path.join(ROOT, 'results', 'counterfactuals_cf_fix2')
-OUT = os.path.join(ROOT, 'results', 'transition', 'restart3_loop0')
 KV = re.compile(r'(\w+)=\s*([-+0-9.E]+)')
 
 

@@ -221,7 +221,8 @@ out['x_tf_par_hl_pp'] = f"{100 * ((p1[2] + p1[3]) - (p0[2] + p0[3])):.2f}"
 out['x_tf_par_sud_pp'] = f"{abs(100 * ((p1[1] + p1[3]) - (p0[1] + p0[3]))):.2f}"
 
 # THE TRANSITION: restart 3's loop 0, pinned (see the docstring)
-best = os.path.join(ROOT, 'code', 'trtf60', 'restart3_killed_1323', 'run.log')
+sys.path.insert(0, HERE)
+from transition_source import LOG as best   # the one pin
 tr_dir = os.path.join(ROOT, 'code', 'trtf60')
 if not re.search(r'TRANSITION WELFARE loop=\s*\d+\s+t=\s*26 ', open(best, errors='replace').read()):
     sys.exit(f'{best} does not reach period 26')

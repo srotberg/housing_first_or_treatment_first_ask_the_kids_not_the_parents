@@ -27,7 +27,8 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
-IN = os.path.join(ROOT, 'results', 'transition', 'restart3_loop0')
+sys.path.insert(0, HERE)
+from transition_source import OUT as IN   # the one pin
 FIG = os.path.join(ROOT, 'writing', 'figures', 'full_transition')
 OUT_JSON = os.path.join(HERE, 'results_numbers.json')
 sys.path.insert(0, os.path.join(ROOT, 'code', 'stylized'))
