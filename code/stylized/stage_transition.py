@@ -149,34 +149,44 @@ def paths(par, n=8):
     return rows, base
 
 
-def figure(tr, out='stylized_transition'):
-    """The stage 4 transition in four panels: drug use, the SUD and homelessness by
-    cohort against the Housing First rest point, and the CEV of every generation,
-    the old and the young at the reform included."""
+# FIVE COHORTS, AND THE GENERATIONS NAMED AS THE TEXT NAMES THEM (the author, 30 September:
+# "I think 5 periods is enough", and "it should be old, adult, and child, but you use
+# unclear terms also in the figure").  The adults alive at the reform were "the young".
+N_FIG = 5
+_ORD = {5: 'fifth', 6: 'sixth', 8: 'eighth'}
+
+
+def figure(tr, out='stylized_transition', n=N_FIG):
+    """The transition in four panels: drug use, the SUD and homelessness of the adults of
+    each cohort against the Housing First rest point, and the CEV of every generation:
+    the old and the adults alive at the reform, their children, and the cohorts after."""
     import run
     plt = run.style()
     fig, axs = plt.subplots(2, 2, figsize=(8.6, 6.0))
-    rows, base = tr['rows'], tr['base']
+    rows = [r for r in tr['rows'] if r['cohort'] <= n]
+    base = tr['base']
     t = [r['cohort'] for r in rows]
     for ax, key, title in ((axs[0, 0], 'part', '(a) Drug use'),
                            (axs[0, 1], 'sud', '(b) Carrying a SUD'),
                            (axs[1, 0], 'homeless', '(c) Homeless')):
         ax.plot(t, [100 * r[key] for r in rows], '-o', color='#2C6FAD', ms=4.5,
-                label='Treatment First, by cohort')
+                label='Treatment First, cohort by cohort')
         ax.axhline(100 * base[key], color='#D9822B', ls='--', lw=1.6,
-                   label='Housing First')
+                   label='Housing First rest point')
         ax.set_title(title, fontsize=10.5, loc='left')
         ax.set_ylabel('percent of adults')
         ax.set_xticks(t)
-        ax.set_xticklabels(['young\nat reform' if c == 0 else str(c) for c in t], fontsize=8.5)
+        ax.set_xticklabels(['adults' if c == 0 else ('children' if c == 1 else str(c)) for c in t],
+                           fontsize=8.5)
         lo = min(min(100 * r[key] for r in rows), 100 * base[key])
         hi = max(max(100 * r[key] for r in rows), 100 * base[key])
         pad = 0.15 * (hi - lo) if hi > lo else 0.5
         ax.set_ylim(max(0.0, lo - pad), hi + pad)
     axs[0, 0].legend(fontsize=8, loc='best')
     ax = axs[1, 1]
-    labs = ['old', 'young'] + [str(c['cohort']) for c in tr['cohorts']]
-    vals = [tr['old'], tr['young']] + [c['cev'] for c in tr['cohorts']]
+    coh = [c for c in tr['cohorts'] if c['cohort'] <= n]
+    labs = ['old', 'adults', 'children'] + [str(c['cohort']) for c in coh[1:]]
+    vals = [tr['old'], tr['young']] + [c['cev'] for c in coh]
     cols = ['#B5443B' if v < 0 else '#2C6FAD' for v in vals]
     ax.bar(range(len(vals)), [100 * v for v in vals], color=cols, width=0.62)
     ax.axhline(0.0, color='0.3', lw=1.0)
@@ -184,10 +194,12 @@ def figure(tr, out='stylized_transition'):
     ax.set_xticklabels(labs, fontsize=8.5)
     ax.set_title('(d) Welfare, CEV', fontsize=10.5, loc='left')
     ax.set_ylabel('percent of consumption')
-    axs[1, 0].set_xlabel('adults by cohort, from the young at the reform')
-    axs[1, 1].set_xlabel('generation: alive at the reform, then born after it')
+    axs[1, 0].set_xlabel('each generation as adults: those at the reform, their children, cohorts 2 on',
+                         fontsize=8.5)
+    axs[1, 1].set_xlabel('alive at the reform, then born after it (cohorts 2 on)', fontsize=8.5)
     fig.tight_layout()
     run.save(fig, out)
+    return {'s4_tr_n_ord': _ORD.get(n, f'{n}th')}
 
 
 def main():
@@ -221,7 +233,7 @@ def main():
     tr = dict(rows=rows, base=base, old=old['cev_tf'], young=young,
               cohorts=[dict(cohort=c['cohort'], cev=c['cev']) for c in coh])
     d['_s4_tr_figure'] = tr
-    figure(tr)
+    d.update(figure(tr))
     d['s4_tr_hl0'] = R.pc(b['homeless0'], 3)
     R.merge(d)
     for k in sorted(d):
@@ -229,4 +241,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    import json
+    if '--replot' in sys.argv:
+        # redraw from the series main() saved, without re-solving anything
+        R.merge(figure(json.load(open(R.OUT))['_s4_tr_figure']))
+    else:
+        main()

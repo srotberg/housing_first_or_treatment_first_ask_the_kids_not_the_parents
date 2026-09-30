@@ -43,7 +43,9 @@ def derived(n):
     import fill
     a = fill.text_precision('s3_cev_tf_nokx', n['s3_cev_tf_nokx'])
     b = fill.text_precision('s3_cev_tf', n['s3_cev_tf'])
-    out['s3_kx_phrase'] = ('it changes nothing about the welfare gain from Treatment First, which remains at'
+    out['s3_kx_phrase'] = ('it changes essentially nothing about the welfare gain from Treatment First, which remains at'
                            if a == b else
                            f'it barely changes the welfare gain from Treatment First, which moves from ${a}$ to')
+    # the children born at the reform gain less than every cohort after them
+    out['s4_tr_more'] = 'even more' if _f(n['s4_tr_c2']) > _f(n['s4_tr_c1']) else 'less'
     return out

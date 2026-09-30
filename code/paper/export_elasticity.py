@@ -41,7 +41,13 @@ def where(x, lo_hi):
     return 'within'
 
 
+# THE PRICE CHANGE the elasticities are measured at (the author asked, twice): the run
+# raises the price once, from its base to the new level, holding the distribution
+base_p = float(re.findall(r'ELASTICITY_DIAG base price=\s*([-+.\dEe]+)\s', txt)[-1])
+new_p = float(re.findall(r'ELASTICITY_DIAG new price=\s*([-+.\dEe]+)\s', txt)[-1])
+
 out = json.load(open(OUT))
+out['x_el_dp_pc'] = f'{100 * (new_p / base_p - 1):.0f}'
 out['x_el_part'] = f'{part:.2f}'
 out['x_el_int'] = f'{user:.2f}'
 out['x_el_part_where'] = where(part, LIT['part'])
