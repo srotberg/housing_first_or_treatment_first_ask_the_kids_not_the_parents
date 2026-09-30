@@ -1888,10 +1888,9 @@ households through their choices and then through the shocks,
 \begin{equation}\label{eq:flom}
 \Phi_{j+1}(\mathcal S')\;=\;\int\phi\big(j,h_j(s),d,m\big)\,
 \Gamma\big(\mathcal S'\mid s,\,h_j(s),v_j(s),\tau_j(s)\new{,a'_j(s)}\big)\,
-\mathrm{d}\Phi_j(s)
-\qquad\text{for every measurable } \mathcal S' ,
+\mathrm{d}\Phi_j(s),
 \end{equation}
-together with the inflow of entrants
+\new{for every measurable set $\mathcal S'$,} together with the inflow of entrants
 \begin{equation}\label{eq:flomnew}
 \Phi_{1}(\mathcal S')\;=\;\frac{\sum_{j\le J_K}\int\chi_j\,
 \mathcal N\big(\mathcal S'\mid s\big)\,\mathrm{d}\Phi_j(s)}
@@ -1912,8 +1911,10 @@ innovation that keeps the spread of productivity at entry the same in every
 generation, and it is scaled for life by the penalty if the parent had the disorder at any point
 before its child \new{became an adult},
 \begin{equation}\label{eq:fnewborn}
-\log y_{1}^{\text{child}}\;=\;\rho\,\log y^{\text{parent}}+(1-\rho)\,\mu+\epsilon
-+\log(1-\delta_d)\,\mathbf{1}\{\text{parent has } d\ge1 \text{ when its child \new{becomes an adult}}\},
+\begin{aligned}
+\log y_{1}^{\text{child}}\;=\;&\rho\,\log y^{\text{parent}}+(1-\rho)\,\mu+\epsilon\\
+&+\log(1-\delta_d)\,\mathbf{1}\{\text{parent has } d\ge1 \text{ when its child \new{becomes an adult}}\},
+\end{aligned}
 \end{equation}
 with $y^{\text{parent}}$ \new{the productivity of the parent's node at age $j=1$, the age at which
 the child enters, so that parent and child are compared at the same age}, $\mu$

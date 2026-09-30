@@ -1,3 +1,15 @@
+# 30 September 21:25: ROUND 61f402f8; RED CLEARED TO THE END OF SECTION 4
+
+Eleven comments on 4.12-4.15: a' in Gamma (39, and (33) where Gamma is defined and used); chi_j
+"defined in Section 4.11"; entrant "composition" rewritten; "left" -> "became an adult" (also in (41));
+T_0 called the endowment throughout, Table 4 label included, the code unchanged (the author: "the
+transfer and the endowment are the same"); y^parent is the parent's node at age 1; epsilon's law;
+benchmark revenue R-bar; drug demand clause removed; ybar, y^med, FMR undated benchmark aggregates,
+"the latter three". Numbers red against base_8457 (84577729, the PDF the author commented on); from
+Section 5 on red accumulates as before. Asked: will omega_c rise or fall? My answer: rise (the charge
+now bites only through pi_d; the split change raises participation at a given omega_c); the author
+expects a fall. The chain decides.
+
 # 30 September 20:30: THE CHILD IN THE DRUG SPLIT (ec1358e1); CHILD-FIX POINT RUN SUPERSEDED; CHAIN LAUNCHED
 
 The author: *"the child term has to count in both whether to use and how much to use"*, *"and the
