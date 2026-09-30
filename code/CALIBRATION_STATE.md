@@ -1,3 +1,12 @@
+# 30 September 22:16: CONTAINER RESTART AT 22:13 KILLED THE OMEGA_C = 0 RUN AT BLOCK 5; RESUMED
+
+pointrun_childsplit_omega0 had finished five blocks (state saved 22:07) when the container restarted.
+Resumed in place from that saved state (calibration_state.dat, both distributions, newborn_parent_share.dat,
+resume_seed.dat -- the same files the seed supplies at a fresh start) with frozen_stop_after_blocks 7, so
+5 + 7 = 12 blocks as the scan workers will run; hftf_bench pid 509 from 22:15. The first part's log is
+bench.part1_blocks1to5.log. The resumed start read the banked newborn shares (clean housed 0.897,
+disordered housed 0.094), so it does not repeat the zero-newborn first block. Due about 00:40.
+
 # 30 September 20:55: OMEGA_C = 0 FIRST; ROUND 415e1041 (RED CLEARED TO THE END OF SECTION 4)
 
 The author: *"i think youll need to first run omega_c=0"*, *"to have the case with no parents"*, *"and
