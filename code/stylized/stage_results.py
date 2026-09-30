@@ -491,9 +491,9 @@ def write_tables(p1, r1, p2, r2):
         ('Income', [
         (r'$\psi_{ui}$', 'Income support replacement rate', 'DOL, statutory UI rates', f'${p1.repl:.2f}$'),
         (r'$\bar y$', 'Cap on the earnings base', 'DOL, state benefit maxima', f'${p1.ycap:.2f}$'),
-        (r'$\rho_F$', 'Food assistance taper', 'SNAP benefit reduction rate', f'${p1.rho_fs:.2f}$'),
-        (r'$y_{\min}$', 'Lowest income', 'No negative value of life at the drug decision',
-         f'${float(C.YG[0]):.2f}$')]),
+        (r'$\rho_F$', 'Food assistance taper', 'SNAP benefit reduction rate', f'${p1.rho_fs:.2f}$')]),
+        # y_min's row removed, the author 30 September ("remove"): the floor on income is
+        # not reported, in the table or in the text.
         ('Housing, drugs and the voucher', [
         (r'$p_r$', 'Rent per unit of housing services', 'Normalisation', f'${p1.pr:.2f}$'),
         (r'$p_v$', 'Price of a unit of drugs', 'Normalisation', f'${p1.p_v:.2f}$'),
@@ -534,7 +534,11 @@ def write_tables(p1, r1, p2, r2):
          f"{_floor_names()['s_bot50_real']}\\%", tn(C.SIG), f"{_floor_names()['s_bot50_real']}\\%", tn(C.SIG)),
         (r'$\gamma$', 'Housing over non-drug expenditure, CEX 2024', pct(T['hspend']),
          mm(m1, 'hspend', pct), tn(p1.gam), mm(m2, 'hspend', pct), tn(p2.gam)),
-        (r'$\aleph$', 'Value of a statistical life over income', f'{T["vsl"]:.0f}',
+        # THE TARGET COLUMN SAYS 80, THE QUANTITATIVE MODEL'S vsl_data, although aleph is
+        # fitted to 84 (calibrate.TARGET): the author, 30 September, "just say 80, and the
+        # calibration numbers are a bit off" / "put 80".  The model columns report what the
+        # model delivers.
+        (r'$\aleph$', 'Value of a statistical life over income', f'{float(stages._fc()["vsl_data"]):.0f}',
          mm(m1, 'vsl', lambda x: f'{x:.1f}'), f'{p1.aleph:.2f}', mm(m2, 'vsl', lambda x: f'{x:.1f}'),
          f'{p2.aleph:.2f}'),
         (r'$b$', 'Drug participation, NSDUH 2024', pct(T['part']),
