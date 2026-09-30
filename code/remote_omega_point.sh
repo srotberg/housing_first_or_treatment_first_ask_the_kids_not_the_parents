@@ -34,6 +34,26 @@ TRAILER=$'\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Se
 
 note() { echo "remote_omega_point $W: $* ($(date -u +%H:%M))" | tee -a "$D.status"; }
 
+# THE SOLVE OUTLIVES THE TOOL CALL. A cloud session stops a background command at its time
+# limit (two hours at most) and the solve takes four to four and a half, so the first
+# workers of 30 September would have died half way. The real work therefore runs in its own
+# process session (setsid, the way the main session's runs have always survived), and this
+# foreground call only waits for it. When the wait is stopped, running the same command again
+# ATTACHES to the running solve rather than starting a second one.
+if [ "${OMEGA_POINT_DETACHED:-0}" != 1 ]; then
+    if [ -f "$D.pid" ] && kill -0 "$(cat "$D.pid")" 2>/dev/null; then
+        echo "remote_omega_point $W: attaching to the running solve, pid $(cat "$D.pid")"
+    else
+        OMEGA_POINT_DETACHED=1 setsid nohup bash "$0" "$W" > "/tmp/omega_point_$W.detached.log" 2>&1 < /dev/null &
+        echo $! > "$D.pid"
+        echo "remote_omega_point $W: started detached, pid $(cat "$D.pid"); log /tmp/omega_point_$W.detached.log"
+    fi
+    while kill -0 "$(cat "$D.pid")" 2>/dev/null; do sleep 60; done
+    echo "remote_omega_point $W: finished"; cat "$D.status" 2>/dev/null
+    grep -q "solve exited 0\|dry run" "$D.status" 2>/dev/null
+    exit $?
+fi
+
 publish() (  # publish <message>; a subshell, so its cd cannot leak into the caller
     {
         echo "# omega_c scan point, weight_on_child $W, corrected code; $(date -u '+%d %b %H:%M UTC')"
