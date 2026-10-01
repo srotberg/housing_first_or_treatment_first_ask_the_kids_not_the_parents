@@ -12,6 +12,10 @@ for l in log:
     elif s.startswith("distance_govt_budget="):
         cur["bg"] = float(s.split()[1]); rows.append(cur); cur = {}
 B = dict(b=0.081255, ld=0.034611, h=0.0060789)
+# PASSES_BASE="b,lambda_d,h_1" of another benchmark (stage C, the omega_c = 0.085 one); unset, as before
+import os
+if os.environ.get("PASSES_BASE"):
+    B = dict(zip(("b", "ld", "h"), map(float, os.environ["PASSES_BASE"].split(","))))
 print("pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV")
 for i, r in enumerate(rows, 1):
     x = subprocess.run(["python3", sys.argv[2], str(r["w"])], capture_output=True, text=True, cwd="..").stdout

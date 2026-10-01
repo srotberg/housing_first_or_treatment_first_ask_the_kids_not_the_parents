@@ -8,7 +8,10 @@ average_welfare_of_youngest_cohort -- the same object.
 usage: python3 cev.py <target_welfare>
 """
 import sys
-curve = "results/reference/hf_omega_c_006/welfare_curvebaseline_benchmark.dat"
+import os
+# CEV_CURVE names another benchmark's curve (stage C of OVERNIGHT_PLAN.md, the omega_c = 0.085
+# benchmark); unset, the 26 September one, as before
+curve = os.environ.get("CEV_CURVE", "results/reference/hf_omega_c_006/welfare_curvebaseline_benchmark.dat")
 xs, ws = zip(*[tuple(map(float, l.split())) for l in open(curve) if l.strip()])
 t = float(sys.argv[1])
 assert all(b > a for a, b in zip(ws, ws[1:])), "curve not increasing"
