@@ -31,6 +31,12 @@ before stage C's local arms need the cores. Also flagged to the author: SMI alon
 the model (b* and the current benchmark alike) against 43.1 -- implausibly low, may be a measurement problem; asked
 whether to investigate. Round bb799b06 committed (Block 3, SMI sweep, table labels); asked whether to add the SS bend
 points (0.2208, 1.3314), taxable maximum (2.6428) and the alpha names to Table 5 / Block 12.
+15:40 TEDS-A, FIRST READING (code/teds_bstar, block 1, b* at omega_c = 0; block 1 is transient, users 9.79 v 10.54
+settled): admissions by age 26-34/35-44/45-54/55-64/65+ model 1.8/8.4/32.9/44.7/12.2 against TEDS-A 40.5/33.9/15.6/8.5/1.6 --
+REVERSED, the model's treated are old; employed at admission 60.6 v 23.6; homeless at admission 4.0 v 14.5 (3.0 settled at
+b*); SMI alongside SUD at admission 0.13 v 43.1; working homeless in treatment 0 v 6.6. Reported to the author; asked
+whether these rows go in Table 6 and whether to trace who takes treatment (age, employment, housing, SMI; the SMI near-zero
+first). Round 28776f9a done (SS statute values in the Section 4 footnote, CLAUDE.md exception; Block 4 comments).
 13:52 ROUND afd4901a (all comments on page 30, Block 2) DONE in red (15947015): no red was left to remove. Block 2 retitled
 "Costs of homelessness and vouchers" (paragraph, Table 4, params_spec.json); h_1's band printed in text (was "0.40to1.00" in
 math). The author had merged PR #10 into main at 09:13 (merge commit 9470aa1e); a rebase + force-push to re-base the branch
