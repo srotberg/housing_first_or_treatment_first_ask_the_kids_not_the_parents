@@ -11036,6 +11036,20 @@
             write(*,*) "DIAG drug share, sum spend / sum income      =",&
                 model_addicted_total_addiction_spending_to_total_income(1),&
                 model_experimenters_total_drug_spending_to_total_income(1)
+            ! EVERY USER TOGETHER, the author, 1 October: "i want to see the
+            ! spending of everyone". The line above gives users with a SUD and
+            ! without apart, each as its own spending over its own income; this is
+            ! the two groups' total drug spending over their total income, which
+            ! is what the data's 16 per cent measures. The two group totals are
+            ! still totals here (only the shares were divided), so share times
+            ! total gives each group's spending back. OUTPUT ONLY: nothing reads it.
+            write(*,*) "DIAG drug share, all users, sum spend / sum income =",&
+                (max(model_addicted_total_addiction_spending_to_total_income(1),0.d0)*&
+                model_addicted_total_income(1)+&
+                max(model_experimenters_total_drug_spending_to_total_income(1),0.d0)*&
+                model_experimenters_total_income(1))/&
+                max(model_addicted_total_income(1)+model_experimenters_total_income(1),&
+                10.d0**(-14))
             ! HOW MUCH OF THE CALIBRATED MOMENT IS THE income_2<=0 BRANCH.
             ! Each such household enters the mean as exactly 1, so this share
             ! is a LOWER BOUND on the moment: a group where half the mass has

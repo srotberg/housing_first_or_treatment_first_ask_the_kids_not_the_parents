@@ -1032,7 +1032,7 @@ aged $26$ to $65$ with positive wage and salary income hold $@@s_t_bot50@@$ perc
 total earnings in the poorer half of the distribution. The weight on housing $\gamma$ is picked to match
 the $@@s_t_hspend@@$ percent of non-drug expenditure that shelter plus utilities take in
 the 2024 Consumer Expenditure Survey (CEX). The flow value
-of being alive $\aleph$ is matched to a value of a statistical life \new{(VSL)} of @@f_vsl_data@@
+of being alive $\aleph$ is matched to a value of a statistical life (VSL) of @@f_vsl_data@@
 times average annual income, about \$@@s_vsl_data_musd@@ million against a mean household income of
 \$@@s_mean_hh_usd@@, which is within the range surveyed by Viscusi and Aldy (2003) once their
 estimates are put in current dollars.
@@ -1995,43 +1995,40 @@ there is for a policy to act on.
 It is the parameter that determines the amount spent on drugs when
 the household consumes a strictly positive amount of it. As it rises use rises on both the extensive and intensive
 margins, which means that the externality rises and there is more for
-either policy to act on. \new{It is calibrated internally, at $@@c_theta_value@@$, so that aggregate drug
-spending by users over their aggregate income is close to the $@@c_theta_data@@$ percent
-in the data,} from retail drug spending in Midgette et al.\ (2019) and the
-incomes of adults aged 26 and over who use in NSDUH 2024\new{; the model gives
-$@@c_theta_model@@$ percent among users carrying a SUD and $@@c_theta_model_nosud@@$ percent among
-the others}. Section 1 of the data
+either policy to act on. It is calibrated internally, at $@@c_theta_value@@$, \new{to} aggregate drug
+spending by users over their aggregate income\new{,} $@@c_theta_data@@$ percent
+in the data, from retail drug spending in Midgette et al.\ (2019) and the
+incomes of adults aged 26 and over who use in NSDUH 2024. Section 1 of the data
 appendix builds the target from those two.
 
 \item[$b$, whether a household uses at all.] The marginal value of the drug goes
 as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a household
-with little to spend buys nothing. \new{As $b$ declines use rises, raising the externality
-that policy can affect.} Its value is chosen to target a participation rate of
-\new{$@@c_b_data@@$} percent, the NSDUH 2024 rate of a drug use disorder of any severity
-among adults aged 26 and over\new{, and the model gives $@@c_b_model@@$ percent}.
-\item[$\pi_d$, the chance that a year of use \new{leads to} a SUD.] This is what
+with little to spend buys nothing. As $b$ declines use rises, raising the externality
+that policy can affect. Its value is chosen to target a participation rate of
+$@@c_b_data@@$ percent, the NSDUH 2024 rate of a drug use disorder of any severity
+among adults aged 26 and over, and the model gives $@@c_b_model@@$ percent.
+\item[$\pi_d$, the chance that a year of use leads to a SUD.] This is what
 makes using \emph{risky}, and it is the step that turns drug consumption into a
-disorder\new{.} Raise it and the
-externality \new{rises}, and the moral hazard costs more, since it is $\pi_d$ that converts an
+disorder. Raise it and the
+externality rises, and the moral hazard costs more, since it is $\pi_d$ that converts an
 extra voucher under Housing First into a higher SUD rate that Treatment First then
 attempts to cure. Its value is chosen so the model generates the share of users who
 carry a SUD, $@@c_pi_d_data@@$ percent among adults aged 26 and over in NSDUH 2024.
-\item[$\kappa_{\phi d}$, increased mortality with a SUD.] \new{As discussed at length in the
-stylized model, this is a key parameter in the paper.} Mortality truncates the value of life for a user, which
+\item[$\kappa_{\phi d}$, increased mortality with a SUD.] As discussed at length in the
+stylized model, this is a key parameter in the paper. Mortality truncates the value of life for a user, which
 hits households with the highest life values hardest and thus reverses the income
-gradient, making the poor the users rather than the rich\new{, in equilibrium when $b$ is
-chosen to match the drug use rate. When it rises, more high-income households are deterred
-from using.} Its
+gradient, making the poor the users rather than the rich, in equilibrium when $b$ is
+chosen to match the drug use rate. Its
 instrument is the income of users, because the reversal is what it is responsible for:
 a higher death risk leaves only those with less to lose willing to use. It is calibrated to
-that moment, at $@@c_kappa_phi_d_value@@$, \new{at the lower end of the standardised mortality
-ratios that Chesney et al.\ (2014) report for substance use disorders}. At that
+that moment, at $@@c_kappa_phi_d_value@@$, at the lower end of the standardised mortality
+ratios that Chesney et al.\ (2014) report for substance use disorders. At that
 value users earn $@@c_kappa_phi_d_model@@$ percent of average income in the model,
 against $@@c_kappa_phi_d_data@@$ percent in NSDUH 2024.
 \item[$\aleph$, the flow value of being alive.] $\aleph$ is the other half
 of the mortality mechanism: $\kappa_{\phi d}$ sets how much a SUD raises the chance of dying and
-$\aleph$ sets what the life being lost is worth. Increase it and use falls\new{, because
-dying is more costly}. Its value is chosen so the model generates a \new{VSL}
+$\aleph$ sets what the life being lost is worth. Increase it and use falls, because
+dying is more costly. Its value is chosen so the model generates a VSL
 of $@@c_aleph_data@@$ times average labour income, which is the \$9m of Viscusi and Aldy
 (2003) against a mean household income of \$113,000.\footnote{No household has a
 negative value of life in equilibrium, so death is never an optimal outcome.}
@@ -2833,7 +2830,7 @@ executive order.
 \item Midgette, G., S. Davenport, J. P. Caulkins and B. Kilmer (2019). ``What America's Users Spend on Illegal Drugs, 2006--2016.'' Santa Monica, CA: RAND Corporation.
 \item North, C. S. and D. E. Pollio (2017). ``Financing Cocaine Use in a Homeless Population.'' \emph{Behavioral Sciences} 7(4), 74.
 \item Roddy, J. and M. K. Greenwald (2009). ``An Economic Analysis of Income and Expenditures by Heroin-Using Research Volunteers.'' \emph{Substance Use \& Misuse} 44(11), 1503--18.
-\item \new{Chesney, E., G.\ M.\ Goodwin and S.\ Fazel (2014). ``Risks of all-cause and suicide mortality in mental disorders: a meta-review.'' \emph{World Psychiatry} 13(2), 153--160.}
+\item Chesney, E., G.\ M.\ Goodwin and S.\ Fazel (2014). ``Risks of all-cause and suicide mortality in mental disorders: a meta-review.'' \emph{World Psychiatry} 13(2), 153--160.
 \item Chetty, R. (2012). ``Bounds on Elasticities with Optimization Frictions: A Synthesis of Micro and Macro Evidence on Labor Supply.'' \emph{Econometrica} 80(3), 969--1018.
 \item Bassuk, E. L., J. C. Buckner, L. F. Weinreb, A. Browne, S. S. Bassuk, R. Dawson and J. N. Perloff (1997). ``Homelessness in Female-Headed Families: Childhood and Adult Risk and Protective Factors.'' \emph{American Journal of Public Health} 87(2), 241--248.
 \item Chetty, R., N. Hendren, P. Kline and E. Saez (2014). ``Where is the Land of Opportunity? The Geography of Intergenerational Mobility in the United States.'' \emph{Quarterly Journal of Economics} 129(4), 1553--1623.
