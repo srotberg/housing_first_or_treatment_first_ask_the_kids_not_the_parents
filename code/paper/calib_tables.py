@@ -140,7 +140,7 @@ SD_ENTRY = H['kkk_sigma_scale'] * math.sqrt(
 ELEVEN = [
     ('Who uses drugs', [
         (r'$\theta$', 'Weight on the drug', setcol('theta'),
-         r'Drug spending over income, Midgette et al.\ (2019); model, users with a SUD',
+         r'Drug spending over income, Midgette et al.\ (2019)',
          pc(C['drug_spending_share_data']), pc(THETA_AGG), f(H['relative_share_of_addiction_1'], 3)),
         (r'$b$', 'Shifter on the drug', setcol('b'), 'Drug participation, NSDUH 2024',
          pc(C['participation_rate_data'] / UPLIFT, 2), pc(mom('b total drug users'), 2),
@@ -155,7 +155,7 @@ ELEVEN = [
          pc(C['drug_user_income_data'], 0), pc(mom('y_u income of drug users'), 0),
          f(H['kappa_phi_d_level'])),
         (r'$\aleph$', 'Flow value of being alive', setcol('aleph'),
-         r'Value of a statistical life over average labour income, Viscusi and Aldy (2003)',
+         r'Value of statistical life, Viscusi and Aldy (2003)',
          f(C['vsl_data'], 0), f(mom('aleph value of life / income'), 0), f(H['value_of_life'], 1)),
     ]),
     ('What using and being homeless cost, and the voucher', [
@@ -168,7 +168,7 @@ ELEVEN = [
         # 29 September); Section 4 no longer carries it.
         (r'$h_1$', 'Housing services in a shelter', 'Int.',
          'Homelessness rate, HUD PiT 2023, within a band',
-         f'{100 * C["h1_band_lo"]:.2f} to {100 * C["h1_band_hi"]:.2f}\\%',
+         f'{100 * C["h1_band_lo"]:.2f}--{100 * C["h1_band_hi"]:.2f}\\%',
          pc(mom('h_1 homelessness rate'), 2), f(H['size_homelessness'], 4)),
         (r'$\kappa_{\phi H}$', 'Mortality multiplier, shelter', 'Ext.',
          r'Meyer et al.\ (2023)',
@@ -182,8 +182,8 @@ ELEVEN = [
         (r'$\pi_V$', 'Chance of drawing a voucher', setcol('pi_v'),
          'Recipients over eligible, HUD 2023',
          pc(C['voucher_coverage_data']), pc(mom('pi_V eligibles with a voucher')), f(PI_V, 4)),
-        (r'$T_0$', 'Endowment at entry, over average earnings', setcol('newborn_endowment'),
-         'Share of the homeless aged 25 to 34, HUD PiT 2024',
+        (r'$T_0$', 'Entry endowment over mean earnings', setcol('newborn_endowment'),
+         'Share of homeless aged 25 to 34, HUD PiT 2024',
          pc(mom('share of the homeless, band 1', 1)), pc(mom('share of the homeless, band 1')),
          f(H['newborn_endowment_scale'], 3)),
     ]),
@@ -216,7 +216,7 @@ ELEVEN = [
         (r'$\bar\pi_r$', 'Baseline SUD recovery rate', 'Ext.', r'Ten-year remission rate, Vaillant (1995)',
          f(H['probability_of_stopping_addiction'], 3), NA, f(H['probability_of_stopping_addiction'], 3)),
         (r'$\mu_H$', 'Recovery multiplier in a shelter', setcol('mu_H'),
-         r'Weeks abstinent, housed over homeless, Milby et al.\ (2005)',
+         r'Abstinence, housed/homeless, Milby et al.\ (2005)',
          f(C['milby_recovery_ratio_data']), f(mom('mu_H recovery housed / homeless')),
          f(H['mu_homeless'], 3)),
         (r'$g$', 'Treatment multiplier on recovery', 'Ext.',
@@ -228,15 +228,15 @@ ELEVEN = [
     ]),
     ('Externalities', [
         (r'$\omega_c$', 'Weight on the child', 'Int.',
-         'Use of non-parents over parents, less one, NSDUH 2024',
+         "Non-parents' use over parents', NSDUH 2024",
          pc(C['child_use_gap_data']), pc(RISE), f(H['weight_on_child'])),
         (r'$\delta_d$', "Child's earnings, parent's SUD", 'Ext.', r'Earnings lost in utero, Nilsson (2017)',
          f(C['penalty_child_addicted']), NA, f(H['penalty_child_addicted'])),
-        (r'$\rho$', 'Persistence of productivity across generations', 'Ext.',
+        (r'$\rho$', 'Intergenerational persistence', 'Ext.',
          r'Solon (1992), Mazumder (2005)', f(C['rho_intergenerational']), NA,
          f(C['rho_intergenerational'])),
         (r'$\kappa_x$', 'Disamenity of homelessness', 'Ext.',
-         r'Willingness to pay, Loubi\`ere et al.\ (2020): of income (data), of consumption (model)',
+         r'Willingness to pay, Loubi\`ere et al.\ (2020)',
          pc(KX_X, 2), pc(KX_WTP, 2), f(H['kappa_x'])),
     ]),
     ('Drug market', [
@@ -490,7 +490,8 @@ def numbers():
             for sym, desc, st, src, data, model, value in rs:
                 for tag, v in (('value', value), ('data', data), ('model', model)):
                     if v != NA:
-                        nums[f'c_{key(sym)}_{tag}'] = v.replace('\\%', '')
+                        # a band is an en dash in the table and 'to' in the prose
+                        nums[f'c_{key(sym)}_{tag}'] = v.replace('\\%', '').replace('--', ' to ')
     nums.update({
         'c_uplift_pc': f'{100 * (UPLIFT - 1):.0f}',
         'c_b_target_pc': f'{100 * C["participation_rate_data"]:.2f}',
