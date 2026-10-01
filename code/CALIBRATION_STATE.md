@@ -22,6 +22,11 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+19:25 ROUND 375493a0 DONE. SS statute values back in Section 5.2 Block 12 (bend points and taxable maximum joined the
+shares there); the Section 4 footnote now refers to Section 5.2 (the author reversed the 1 October exception; CLAUDE.md
+updated). Block 10 retitled 'Baseline survival and SMI onset' (paragraph, Table 5, calib_tables.py, params_spec.json);
+tau_l now before tau_k. rho_z sourced to Guvenen et al. (2023b), as the code's comment on KKK_process records -- NOT
+checked against the paper (piketty.pse.ens.fr and nber.org blocked here); flagged to the author.
 19:00 ROUND b8142d12 DONE. p_ui KEPT AT 0.30 (the author, after BLS USDL-23-0586, Table 1, 2022: job losers 37.3 applied,
 59.0 of applicants received, 22.0 of the unemployed received; all who worked in the past year 25.9 / 55.0 / 14.2): the paper
 cites the release's 'about 7 in 10 had not applied'. Top rung REMOVED from Table 6 (the author; the model's 86.5 in the

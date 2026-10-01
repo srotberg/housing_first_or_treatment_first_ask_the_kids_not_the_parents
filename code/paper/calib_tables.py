@@ -289,7 +289,7 @@ STANDARD = [
          f'{J_RET}', NA, f'{J_RET}'),
         (r'$\varepsilon(j)$', 'Age profile of efficiency', 'Ext.',
          r'Hump peaking at age 56, Greenwood et al.\ (2025)', 'profile', NA, 'profile'),
-        (r'$\rho_z$', 'Persistence of productivity', 'Ext.', 'Set',
+        (r'$\rho_z$', 'Persistence of productivity', 'Ext.', r'Guvenen et al.\ (2023b)',
          f(H['persistence_employment_surviving']), NA, f(H['persistence_employment_surviving'])),
         (r'$\sigma_\zeta$', 'Standard deviation of its shocks', setcol('sigma_y'),
          "Bottom half's share of earnings, SCF 2022",
@@ -312,7 +312,7 @@ STANDARD = [
         (r'$p_{ui}$', 'Share of separations that are insured', 'Ext.', 'UI applicants among the unemployed, BLS 2022',
          f(C['probability_of_ui']), NA, f(C['probability_of_ui'])),
     ]),
-    ('Survival and SMI', [
+    ('Baseline survival and SMI onset', [
         (r'$\bar\phi_j$', 'Baseline survival by age', 'Ext.', 'SSA period life table, ages 26 to 85',
          'profile', NA, 'profile'),
         (r'$\varsigma_m(j)$', 'Age profile of SMI onset', 'Ext.', 'SMI prevalence by age, NSDUH 2024',
@@ -323,11 +323,12 @@ STANDARD = [
          f(C['risk_free_rate_data']), NA, f(C['risk_free_rate_data'])),
         (r'$\varphi$', 'Tax progressivity', 'Ext.', r'Heathcote et al.\ (2017)',
          f(C['curvature_of_labor_income_taxes']), NA, f(C['curvature_of_labor_income_taxes'])),
-        (r'$\tau_k$', 'Capital income tax', 'Ext.', 'US long-run rate on gains and dividends',
-         f(C['investment_income_tax']), NA, f(C['investment_income_tax'])),
+        # tau_l before tau_k (the author, round 375493a0)
         (r'$\tau_{\ell}$', 'Level of the labour income tax', setcol('tau_ell'), r'Average labour income tax, McDaniel (2007)',
          pc(C['average_labor_income_tax_data']), pc(mom('tau_l average labour income tax')),
          f(H['labor_income_tax_rate'], 3)),
+        (r'$\tau_k$', 'Capital income tax', 'Ext.', 'US long-run rate on gains and dividends',
+         f(C['investment_income_tax']), NA, f(C['investment_income_tax'])),
     ]),
     ("Social security benefits and programmes' rules", [
         (r'$S(y)$', 'Social security', 'Ext.', 'SSA primary insurance amount',
