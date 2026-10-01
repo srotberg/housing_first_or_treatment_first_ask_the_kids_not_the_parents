@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+20:25 STAGE C PASS 1 (all three arms): omega1 price 0.867, b -3.7, SUD -4.5, h_1 -15.9; internalise price 0.996, b -3.4,
+h_1 -4.7; null price 1.000, b -3.1, h_1 -3.0, welfare 789.127 against the benchmark's 787.495 (curve w(0) 787.495, so the
+null's pass-1 'CEV' reads +4.85). The old null's pass 1 was +0.5 utils and converged to +0.01; this one starts 1.6 utils
+high. WATCH passes 2-3: the null must come back to the benchmark (b, h_1 near 0, welfare near 787.5) or the arms do not
+reproduce the benchmark. omega1's pass-1 b of -3.7 is also far from the old arm's -29 at pass 1; watch it too.
+TEDS-A FILE IS TRUNCATED: data/raw/TEDS_A_2022_admissions_public_use_file.zip's CSV has exactly 1,048,576 lines, Excel's
+row limit (re-saved through Excel). The author offered to download the full file; link given (SAMHSA TEDS page). Proposed
+to the author: NSDUH 2024 treatment receipt by age and employment among adults 26+ with a SUD, the like-for-like
+comparator (the take-up target's own population), computable from data/NSDUH_2024.dta.
+
 20:17 VALIDATION TABLE AT omega_c = 0.085 (the author: "update the validation table with omega_c=0.085", "what about the TEDs
 new data"). Table 6 already read the benchmark from stage B; the two TEDS-A rows (admissions by age, employed at admission)
 added (166dd046), with a Section 5.3 sentence. Two rows still need a measurement on the new benchmark, launched in the
