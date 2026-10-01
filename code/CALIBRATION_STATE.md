@@ -22,6 +22,15 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+13:52 ROUND afd4901a (all comments on page 30, Block 2) DONE in red (15947015): no red was left to remove. Block 2 retitled
+"Costs of homelessness and vouchers" (paragraph, Table 4, params_spec.json); h_1's band printed in text (was "0.40to1.00" in
+math). The author had merged PR #10 into main at 09:13 (merge commit 9470aa1e); a rebase + force-push to re-base the branch
+was REFUSED by the permission check, so origin/main was merged back into the branch (identical trees) and main fast-forwarded
+to 2262e987. Next time main carries a merge commit: merge it back, never force-push.
+13:45 0.07 STOPPED (session_019d5RwmfQSXk75uSWtXvcaC) -- the author: "stop 0.07 too if it will not give what we need"; 17.7 at
+block 4 and falling. Four remain: 0.075, 0.08, 0.085, 0.09. At 13:52 the rise (block 2 / latest): 0.075 20.4/20.4 (2), 0.08
+20.6/19.0 (3), 0.085 21.0/21.0 (2), 0.09 22.0/22.3 (3). Settled values run about 2.5 below block 2, so best guess (told the
+author): 0.085 about 18.4, 0.08 about 18.0, 0.075 about 17.6, 0.09 about 19.5. Stage B trigger moved to 16:50.
 13:20 THETA FOR ALL USERS, reported to the author (asked 13:12, "vs just those with SUD"): drug spending over income, sum of
 spending / sum of income, at b* (omega_c = 0, kappa_uem = 1): ALL USERS 13.48 per cent (data 16), SUD ONLY 15.29, non-SUD 11.20;
 the calibrated mean-of-ratios row 52.5 (SUD 87.75, non-SUD 26.46). Flat in b: 0.97x 13.43 / 15.30, 0.99x 13.47 / 15.27. The
