@@ -22,6 +22,15 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+14:40 LOCAL RUN FOR THE NEW TEDS-A ROWS: code/teds_bstar (pid 1529, setsid in a subshell, 4 threads), the b* economy at
+omega_c = 0 from the seed with the b* run's own handover, on a binary with the 06:00 prints (age bands of treatment
+admissions, employed at admission; source identical to d62835db). The b scan's binaries were built at 05:43, before the
+prints, so the b* run cannot show them; the omega_c runs can, at stage B. The author asked (14:35) for the model against
+the TEDS-A stats pulled this morning (bands 40.5/33.9/15.6/8.5/1.6, employed 23.6). Watcher b6rp58bfb. Stop it (by pid)
+before stage C's local arms need the cores. Also flagged to the author: SMI alongside SUD at admission is 0.08 per cent in
+the model (b* and the current benchmark alike) against 43.1 -- implausibly low, may be a measurement problem; asked
+whether to investigate. Round bb799b06 committed (Block 3, SMI sweep, table labels); asked whether to add the SS bend
+points (0.2208, 1.3314), taxable maximum (2.6428) and the alpha names to Table 5 / Block 12.
 13:52 ROUND afd4901a (all comments on page 30, Block 2) DONE in red (15947015): no red was left to remove. Block 2 retitled
 "Costs of homelessness and vouchers" (paragraph, Table 4, params_spec.json); h_1's band printed in text (was "0.40to1.00" in
 math). The author had merged PR #10 into main at 09:13 (merge commit 9470aa1e); a rebase + force-push to re-base the branch
