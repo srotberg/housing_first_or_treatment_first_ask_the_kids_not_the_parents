@@ -22,6 +22,14 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+12:20 GRID EXTENDED: 0.075, 0.08, 0.085, 0.09 LAUNCHED (one machine each). The rise B_OFF/users(w) - 1 against the
+omega_c = 0 run AT THE SAME BLOCK, per cent: 0.05 blocks 2/4/6 15.1/13.3/13.3; 0.055 16.1/14.8 (2/4); 0.065 18.6/15.9 (2/4);
+0.06 18.0 (2); 0.07 19.2 (2). It falls 2-3 points from block 2 and settles, so 0.07 ends near 16 and the target 18.34 lies
+above the grid. The 30 September scan (old b, kappa_uem 1.0554, blocks 4-5) had 0.06 11.6, 0.08 16.1, 0.10 30: the same
+direction, steep between 0.08 and 0.10. Without the extension stage B would have taken 0.07 at about 16 (2.3 points short).
+    0.075 session_014Czf9sMUovAsVRwQ64TqaY     0.08  session_019rR9xkNssoMmYCDyPikxVr
+    0.085 session_01XjWFNZPCFtgf2oiVPb3YYT     0.09  session_01Y7EMDFgFgPSDWk3WDmgPao
+Stage B trigger rewritten for nine points (bracket rule unchanged); due between about 14:45 and 20:30.
 10:25: all five report "solve running" (0.06 checked: pid 506); first digests about 10:38.
 10:25 STAGE E's BUILD CHECKED AGAINST TODAY'S SOURCE: transition_fix/patch_transition_fix.py applies to the current
 .f90 with the expected 176 diff lines, and build_transition_t60.sh builds all three in scratch, 0 warnings, 0 errors
