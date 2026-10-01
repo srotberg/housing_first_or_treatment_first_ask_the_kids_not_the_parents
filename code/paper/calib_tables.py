@@ -106,6 +106,7 @@ if H.get('smallest_house_size_adjuster', 1.0) == 0.0:
 AVG_LAB = H['max_food_cost'] / float(
     re.findall(r'DIAG max allotment / avg labour income\s*=\s*(\S+)', LOG)[-1])
 THETA_AGG = float(G['theta'].split()[2])
+SMI_USE = json.load(open(os.path.join(ROOT, 'code', 'paper', 'smi_use_ratio.json')))
 THETA_NOSUD = float(re.findall(r'drug share, sum spend / sum income\s*=\s*(\S+)\s+(\S+)', LOG)[-1][1])
 
 # omega_c: drug use with the child's weight off and every other parameter the same
@@ -356,7 +357,7 @@ UNTARGETED = [
     # bracket"). The within-band rate row went: its data are PERSON rates at the PiT
     # one-night level and the model's are HOUSEHOLD rates at the level h_1 targets, so
     # the two were in different units by construction (DATA_APPENDIX section 9).
-    (r'Share of the homeless by age, 25--34 to 65+$^{a}$', band5('share of the homeless'), 'HUD PiT 2024'),
+    (r'Share of homeless by age, 25--34 to 65+$^{a}$', band5('share of the homeless'), 'HUD PiT 2024'),
     ('Employed share of the homeless',
      (f'{100 * C["employed_share_of_homeless_data"]:.0f}', f'{100 * mom("emp_homeless employed share of homeless"):.1f}'),
      'HUD PiT 2023, TEDS-A 2022'),
@@ -366,40 +367,40 @@ UNTARGETED = [
     ('Mean age of users, years', one('mean age of drug users', 1, 1), 'NSDUH 2024'),
     ('Income with a SUD, over average', one('income with a SUD'), 'NSDUH 2024'),
     ('Unemployment given a SUD', one('kappa_ued unemployment given SUD'), 'NSDUH 2024'),
-    ('In the labour force, with a SUD and without',
-     many(['participation, with a SUD', 'participation, without a SUD']), 'NSDUH 2024'),
-    ('SUD rate with SMI over without, ratio', one('r_smi SUD ratio SMI over non-SMI', 2, 1), 'NSDUH 2024'),
-    ('Employment given SMI', (f'{100 * C["employment_rate_given_smi_data"]:.0f}',
-                              f'{100 * mom("kappa_uem employment given SMI"):.1f}'),
-     r'Mechanic et al.\ (2002)'),
+    # DRUG USE, NOT THE SUD RATE, with SMI over without (the author, 1 October: "we need to
+    # show the drug use ratio with SMI over without (not show the SUD rate)"); the same
+    # numbers as the Block 3 sentence, from smi_use_ratio.json (model measured 23 Sept).
+    ('Drug use with SMI over without, ratio', (SMI_USE['c_smi_use_ratio_data'],
+     f"{float(SMI_USE['c_smi_use_ratio_model']):.2f}"), 'NSDUH 2024'),
     ('Drug deaths as a share of deaths, 25--44', one('drug deaths, share of deaths'), 'CDC WONDER'),
     ('Treatment', None, None),
     ('Homeless at treatment admission', one('homeless at treatment admission'), 'TEDS-A 2022'),
     ('Psychiatric problem at SUD admission', one('SMI alongside SUD at admission'), 'TEDS-A 2022'),
     ('Working at all, homeless in treatment', one('working, homeless in treatment'), 'TEDS-A 2022'),
     ('Housing and vouchers', None, None),
-    ('Housing over income, renters', one('housing over income, renters'), 'SCF 2022'),
     ('Renters paying over half of income', one('over half of income, all renters'), 'SCF 2022'),
     ('Housed in the largest unit size', one('h_3 share in the largest unit'), 'ACS 2023, B25042'),
-    ('Tenant contribution rate', one('tenant contribution rate'), 'HUD PSH 2023'),
-    ('Voucher holders living mainly on wages', one('voucher holders, wages main'), 'HUD PSH 2023'),
-    ('Distribution', None, None),
-    # the model side is PRODUCTIVITY at entry (f90 11414-11453, employment_grid(1,:)),
-    # without the age profile or unemployment, and the label says so
-    (r'Bottom and top tenth of earnings$^{b}$',
-     many(['earnings share, bottom tenth', 'earnings share, top tenth'], 2), 'SCF 2022'),
-    (r'Income shares, bottom 1, 5, 10, 20\%',
+    ('Rent over income, voucher holders', one('tenant contribution rate'), 'HUD PSH 2023'),
+    ('Voucher holders living on wages', one('voucher holders, wages main'), 'HUD PSH 2023'),
+    ('Distribution, shares of the total', None, None),
+    (r'Income, bottom 1, 5, 10, 20\%',
      many([f'income share bottom {p} pct' for p in (1, 5, 10, 20)], 2), 'SCF 2022'),
-    (r'Net worth shares, bottom 1, 5, 10, 20\%',
-     many([f'wealth share bottom {p} pct' for p in (1, 5, 10, 20)], 2, neg=True), 'SCF 2022'),
-    ('Net worth share, bottom half',
-     (f'{100 * mom("w_bot net worth share, bottom half", 1):.1f}',
-      f'{100 * mom("w_bot net worth share, bottom half"):.1f}'), 'FRB DFA'),
+    # THE BOTTOM HALF JOINS THE ROW (the author, 1 October: "add the 50% here instead of
+    # its own row"); its data side is the FRB DFA's, the other four the SCF's
+    (r'Net worth, bottom 1, 5, 10, 20, 50\%',
+     tuple(a + ', ' + b for a, b in zip(
+         many([f'wealth share bottom {p} pct' for p in (1, 5, 10, 20)], 2, neg=True),
+         (f'{100 * mom("w_bot net worth share, bottom half", 1):.1f}',
+          f'{100 * mom("w_bot net worth share, bottom half"):.1f}'))), 'SCF 2022, FRB DFA'),
     ('Transmission, odds ratios', None, None),
-    ('Child of a parent with a SUD acquires one',
-     ('1.44 and 2.51', f'{mom("delta_d child SUD odds ratio"):.2f}'),
-     r'Mellentin et al.\ (2016)$^{c}$'),
-    ('A homeless adult had a homeless caretaker',
+    # ONE ROW PER STUDY, so Yoon et al. is in the table (the author, 1 October) and the
+    # Source column stays one line: 1.44 is Mellentin's and 2.51 Yoon's, as the paper's
+    # Section 2 has it ("at odds ratios of 1.44 and 2.51, respectively")
+    ('Child of a SUD parent acquires a SUD',
+     ('1.44', f'{mom("delta_d child SUD odds ratio"):.2f}'), r'Mellentin et al.\ (2016)'),
+    (r'\quad the same, a second study',
+     ('2.51', f'{mom("delta_d child SUD odds ratio"):.2f}'), r'Yoon et al.\ (2013)'),
+    ('Homeless adult had a homeless caretaker',
      ('1.8 to 2.4', f'{mom("delta_h child homeless odds ratio"):.2f}'), r'Bassuk et al.\ (1997)'),
 ]
 

@@ -9384,7 +9384,7 @@
             model_fraction_unemployed_on_ui,model_fraction_of_homeless_unemployed,model_fraction_of_unemployed_homeless,&
             model_fraction_recieving_food_stamps,model_fraction_recieving_housing_vouchers,&
             model_fraction_homeless_recieving_food_stamps,model_fraction_homeless_by_choice,&
-            model_avg_homeless_income,model_avg_homeless_assets,model_avg_homeless_after_tax_income,&
+            model_avg_homeless_income,model_avg_homeless_income_fs,model_avg_homeless_assets,model_avg_homeless_after_tax_income,&
             model_avg_homeless_tax_to_income,model_food_stamps_share_to_homeless,&
             model_fraction_addicted,model_fraction_homeless_and_addicted,model_homelessness_old,&
             model_mass_smi,model_smi_and_homeless,model_smi_and_employed,&
@@ -11977,9 +11977,13 @@
             ! The pair matters more than either alone. It says the homeless in
             ! the world are POOR AND HALF OF THEM WORK, where the model's are
             ! comfortable and nearly all of them work.
+            ! WITH FOOD STAMPS from 1 October, as the data count them; the old
+            ! measure, earnings and capital income only, stays as a DIAG line.
             write(*,*) "UNTARGETED income of the homeless            model=",&
-                model_avg_homeless_income(1)/max(model_average_income(1),10.d0**(-14)),&
+                model_avg_homeless_income_fs(1)/max(model_average_income(1),10.d0**(-14)),&
                 " observed=", 0.191d0
+            write(*,*) "DIAG income of the homeless, without food stamps =",&
+                model_avg_homeless_income(1)/max(model_average_income(1),10.d0**(-14))
             ! SCORED FROM 3 SEPTEMBER, on the author's instruction: *"I think you
             ! can choose the bottom productivity level to march the share of the
             ! employed homeless."*
@@ -18540,6 +18544,7 @@
         if (accumulating_beta_types==0) model_addicted_and_homeless_by_choice(time_period)=0
         
         if (accumulating_beta_types==0) model_avg_homeless_income(time_period)=0
+        if (accumulating_beta_types==0) model_avg_homeless_income_fs(time_period)=0
         if (accumulating_beta_types==0) model_avg_homeless_after_tax_income(time_period)=0
         if (accumulating_beta_types==0) model_avg_homeless_tax_to_income(time_period)=0
         if (accumulating_beta_types==0) model_avg_homeless_assets(time_period)=0
@@ -19935,6 +19940,16 @@
                                         model_avg_homeless_income(time_period)=&
                                             model_avg_homeless_income(time_period)+&
                                             income_2*distribution_mass_used
+
+                                        ! THE SAME INCOME WITH FOOD STAMPS, which is what the
+                                        ! data's 19.1 per cent counts (the author, 1 October:
+                                        ! "the incomes they compute for the homeless include
+                                        ! food stamps", "and probably capital income if they
+                                        ! have" -- income_2 already carries the capital income
+                                        ! and the bequest). Output only: nothing reads it.
+                                        model_avg_homeless_income_fs(time_period)=&
+                                            model_avg_homeless_income_fs(time_period)+&
+                                            (income_2+food_stamps_1)*distribution_mass_used
                                             
                                         after_tax_income_1=&
                                             (income_1-income_tax_used+(1-investment_income_tax)*&
@@ -20511,6 +20526,8 @@
         if (current_beta_type==number_of_beta_types) then
             model_avg_homeless_income(time_period)=&
                 model_avg_homeless_income(time_period)/max(total_homeless_1,10.d0**(-14))
+            model_avg_homeless_income_fs(time_period)=&
+                model_avg_homeless_income_fs(time_period)/max(total_homeless_1,10.d0**(-14))
         end if
             
         if (current_beta_type==number_of_beta_types) then
