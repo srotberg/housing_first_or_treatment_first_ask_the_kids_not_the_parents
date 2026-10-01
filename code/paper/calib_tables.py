@@ -431,7 +431,7 @@ UNTARGETED = [
     ('Child of a SUD parent acquires a SUD',
      ('1.44, 2.51', f'{mom("delta_d child SUD odds ratio"):.2f}'),
      r'Mellentin et al.\ (2016), Yoon et al.\ (2013)'),
-    ('Homeless adult had a homeless caretaker',
+    ('Homeless adult had a homeless parent',
      ('1.8 to 2.4', f'{mom("delta_h child homeless odds ratio"):.2f}'), r'Bassuk et al.\ (1997)'),
 ]
 
@@ -573,6 +573,15 @@ def numbers():
 
     def where(m, lo, hi):
         return 'within' if lo <= m <= hi else ('below' if m < lo else 'above')
+
+    # Block 6's argument (the author, 1 October): where each transmission sits in its range says
+    # which policy the model's transmission favours. A link near the bottom of its evidence
+    # understates what the policy acting on it can do. All four phrases turn when the numbers do.
+    def pos(m, lo, hi):
+        if m < lo or m > hi:
+            return where(m, lo, hi)
+        return 'at the low end of' if m <= (lo + hi) / 2 else 'at the high end of'
+    rel = lambda m, lo, hi: (m - lo) / (hi - lo)
     band = lambda k, d=0: mom(f'share of the homeless, band {k}', d) if d else mom(f'share of the homeless, band {k}')
     age_m, age_d = mom('mean age of drug users'), mom('mean age of drug users', 1)
     odds_d, odds_h = mom('delta_d child SUD odds ratio'), mom('delta_h child homeless odds ratio')
@@ -610,6 +619,15 @@ def numbers():
         'u_odds_sud_where': where(odds_d, 1.44, 2.51),
         'u_odds_hl_lo': '1.8', 'u_odds_hl_hi': '2.4', 'u_odds_hl_m': f'{odds_h:.2f}',
         'u_odds_hl_where': where(odds_h, 1.8, 2.4),
+        'u_odds_sud_pos': pos(odds_d, 1.44, 2.51), 'u_odds_hl_pos': pos(odds_h, 1.8, 2.4),
+    })
+    hf_favoured = rel(odds_h, 1.8, 2.4) > rel(odds_d, 1.44, 2.51)
+    nums.update({
+        'u_odds_tilt': 'Housing First' if hf_favoured else 'Treatment First',
+        'u_odds_tilt_other': 'Treatment First' if hf_favoured else 'Housing First',
+        'u_odds_tilt_so': ('if Treatment First still raises welfare in the experiments below, that result is conservative'
+                           if hf_favoured else
+                           'a welfare gain from Treatment First in the experiments below is an upper bound'),
     })
     return nums
 
