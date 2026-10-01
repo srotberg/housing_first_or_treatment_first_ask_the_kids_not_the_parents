@@ -5,8 +5,11 @@ SPECIAL:theta_aggregate takes the FIRST figure of "DIAG drug share, sum spend / 
 WITH a SUD; non-SUD users are the second, 11.6) -- never said so; the author took it as all users. No all-
 users ratio was printed. On the author's instruction ("Add print, restart b scan") the Fortran prints
 "DIAG drug share, all users, sum spend / sum income" (output only, f90 after the sum-spend DIAG). Rough
-estimate ~14 against 16, so theta may need to rise with b. The scan relaunched at 03:01: sessions tagged
-b-scan-childsplit-ku1-v2 (0.6/0.7/0.8/0.9/0.95/1.0x), local 0.85x in code/omega_point_0.0_b0.0047030_ku1.0.
+estimate ~14 against 16, so theta may need to rise with b. The scan relaunched at 03:01-03:05: sessions tagged
+b-scan-childsplit-ku1-v2 at 0.9, 0.95, 0.96, 0.97, 0.98, 0.99, 0.995 and 1.0 times b (the author: "multiples
+of 0.995-0.95 of the current b"; 0.6/0.7/0.8x and the local 0.85x were stopped at 03:04). Due ~07:45. The
+author: "make sure we have the right b by tomorrow" -- interpolate at once, then a confirming run AND the
+omega_c scan at that b in parallel, not one after the other.
 The new line is NOT in the 20-minute digests (publish() greps MOMENT/BLOCK MOVE); read it from the gzipped
 logs at the end. Reminder trig_014YcDCJiAHBL4BbJLncVXAz at 07:45. The paper keeps the current numbers.
 TABLE 6 AUDIT (told the author): rows comparing different things -- homeless income (model excludes
