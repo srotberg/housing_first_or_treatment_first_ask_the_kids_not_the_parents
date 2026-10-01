@@ -20812,6 +20812,7 @@
         real(8) :: total_income,mass_of_renters_1,labor_supply_used,distribution_mass_used,lived_in_size_used,&
             avg_income_to_use_1,avg_income_to_use_2,housing_voucher_2
         real(8) :: val_hous_outlay_1,val_total_expend_1,val_total_consumption_1
+        real(8) :: burden_food_stamps_1,burden_income_1,avg_net_wealth_burden_1
 
         ! STATIC STORAGE, BECAUSE THESE ACCUMULATE ACROSS THE TWO PASSES.
         !
@@ -21145,14 +21146,28 @@
                                         end if
                                     end if
 
-                                    if (total_income==0) then
-                                    
+                                    ! FOOD STAMPS COUNT AS INCOME IN THE COST BURDEN (the author, 1
+                                    ! October: "i think you should just add the food stamps to
+                                    ! income thats all"). The SCF's income, which the two burden
+                                    ! targets are measured on, includes transfers, SNAP among them.
+                                    ! The amount is the one the budget pays: snap_benefit on income
+                                    ! plus interest on positive balances, for a household under the
+                                    ! asset limit, as in the statistics routine. Output only: the
+                                    ! voucher's income test above still reads total_income.
+                                    avg_net_wealth_burden_1=is_counterfactual*average_net_wealth_calibrated+&
+                                        (1-is_counterfactual)*model_average_net_wealth(time_period)
+                                    burden_food_stamps_1=0
+                                    if (max(financial_grid(financial_index),0.d0)<&
+                                        threshold_for_food_stamps_as_perc_of_average_net_wealth*avg_net_wealth_burden_1) then
+                                        burden_food_stamps_1=snap_benefit(actual_household_size(age_index),&
+                                            total_income-unsecured_borrowing_rate*min(financial_grid(financial_index),0.d0),&
+                                            avg_income_to_use_1)
+                                    end if
+                                    burden_income_1=total_income+burden_food_stamps_1
+                                    if (burden_income_1==0) then
                                         fraction_of_income_spent_on_housing=1
-                                    
                                     else
-                                        
-                                        fraction_of_income_spent_on_housing=fraction_of_income_spent_on_housing/max(total_income,10.d0**(-14))
-                                        
+                                        fraction_of_income_spent_on_housing=fraction_of_income_spent_on_housing/max(burden_income_1,10.d0**(-14))
                                     end if
                                                 
                                     frac_of_inc_spent_on_hous_threshold(time_period,1)=0.3

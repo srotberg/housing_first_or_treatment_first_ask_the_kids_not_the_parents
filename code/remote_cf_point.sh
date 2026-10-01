@@ -20,14 +20,19 @@
 # pushes passes.txt, final.txt, the checks, cf.log.gz and run.out.gz, and RESULT.md.
 set -u
 ARM="$1"
-case "$ARM" in omega1|internalise|nulltf) ;; *) echo "usage: $0 omega1|internalise|nulltf"; exit 1 ;; esac
+case "$ARM" in omega1|internalise|nulltf) ;; *) echo "usage: $0 omega1|internalise|nulltf [drug price start]"; exit 1 ;; esac
+# OPTIONAL SECOND ARGUMENT: the drug price the arm starts from, overriding the old arm's equilibrium.
+# The price moves at most 0.5 per cent a pass, so a warm start far from the new equilibrium costs
+# passes rather than saving them: omega1 started at the old 0.863 sat at 0.87 after two passes
+# while its supply curve implied about 0.98 (1 October, 21:10). Its runs publish to <arm>_p<price>.
+PSTART="${2:-}"
 BRANCH=claude/two-period-addiction-hazard-d7gb61
 C=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$C/.." && pwd)
 REF=$REPO/results/reference/hf_2c_omega_0.085
-R=$REPO/results/counterfactuals_2c/$ARM
+R=$REPO/results/counterfactuals_2c/$ARM${PSTART:+_p$PSTART}
 mkdir -p "$R"
-D=$C/cf_point_$ARM
+D=$C/cf_point_$ARM${PSTART:+_p$PSTART}
 TRAILER=$'\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01WpmVwzkbKX7RRP8t9yBCLv'
 # the benchmark: b*, omega_c and kappa_uem of the run, kappa_x on the income basis
 export BENCH_FROM=$REF BENCH_B=0.0054222 BENCH_OMEGA=0.085 BENCH_KU=1.0 KAPPA_X=0.9342362271804227
@@ -142,14 +147,14 @@ publish "built, starting"
 
 case "$ARM" in
     omega1)
-        run_arm omega1 cf_fix2 DRUG_PRICE_START=0.863 ;;
+        run_arm omega1 cf_fix2 DRUG_PRICE_START=${PSTART:-0.863} ;;
     internalise)
-        run_arm internalise cf_fix2_damp DRUG_PRICE_START=0.995 ;;
+        run_arm internalise cf_fix2_damp DRUG_PRICE_START=${PSTART:-0.995} ;;
     nulltf)
         if run_arm null cf_fix2 DRUG_PRICE_START=1.0; then
             NT=$(grep -a "^ *net_govt_revenues=" "$C/cfarm_null_2c/cf.log" | tail -1 | awk '{print $2}')
             note "no-policy net revenue $NT is the TF budget target"
-            run_arm tf cf_fix2 PDET=0.85 NET_TARGET="$NT" PV_START=0.0814 DRUG_PRICE_START=0.867
+            run_arm tf cf_fix2 PDET=0.85 NET_TARGET="$NT" PV_START=0.0814 DRUG_PRICE_START=${PSTART:-0.867}
         fi ;;
 esac
 publish "complete"
