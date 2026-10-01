@@ -1,3 +1,14 @@
+# 1 October 03:50: "ONE CLASS" WAS MISREAD -- THE b SCAN IS THE TWO-CLASS MODEL
+
+"Class" in this project is child_penalty_classes (the newborn's class by the parent's disorder at death),
+a compile-time parameter, 2 in the source and in bench_tdm_childsplit (6205); the scan seed's 265 MB
+distribution is the two-class one. When the author said "use the one class model" (1 October) I checked
+number_of_beta_types (1) and said yes -- wrong object; corrected to the author at 03:50. So the running b scan
+(ku1 v2) IS the two-class omega_c = 0 economy. The author's plan (03:47): best b from the scan, then, at once,
+TWO-CLASS runs at that b for omega_c 0, 0.05, 0.055, 0.06, 0.065, 0.07, each on its own cloud session
+("each on a separate machine"). The 07:45 reminder (trig_014YcDCJiAHBL4BbJLncVXAz) carries it.
+Paper: Table 6 is "Untargeted moments"; its note says percent except the transmission block (ratios).
+
 # 1 October 04:00: ROUND 666c5f18 -- VALIDATION WALK-THROUGH; RENTERS 43.2/19.2; TEDS-A TRUNCATED
 
 The validation section now walks through Table 6 block by block (the author's request); every figure and

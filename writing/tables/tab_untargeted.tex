@@ -1,7 +1,7 @@
 % Body rows written by code/paper/calib_tables.py from the benchmark's log;
 % only the caption, the column spec and the note are typed here.
 \begin{table}[!tb]\centering
-\caption{Moments the model is not asked to match}\label{tab:untargeted}
+\caption{Untargeted moments}\label{tab:untargeted}
 \begingroup\scriptsize\setlength{\tabcolsep}{1pt}
 \sbox{\ntbox}{\begin{tabular}{@{}l@{\hspace{4pt}}l@{\hspace{6pt}}l@{\hspace{6pt}}l@{}}
 \toprule
@@ -43,6 +43,6 @@ Homeless adult had a homeless caretaker & 1.8 to 2.4 & 4.92 & Bassuk et al.\ (19
 % October): scale it to the text width rather than wrap a row
 \ifdim\wd\ntbox>\textwidth\sbox{\ntbox}{\resizebox{\textwidth}{!}{\usebox{\ntbox}}}\fi
 \usebox{\ntbox}
-\tabnote{Notes: percent, except the transmission block, which is ratios, and the two rows labelled years and ratio; the model is the Housing First benchmark. $^{a}$The share aged 25 to 34 is the target of $T_0$ in Table~\ref{tab:eleven}, so of this row only the other four bands are untargeted.}
+\tabnote{Notes: percent, except the transmission block, which is ratios; the model is the Housing First benchmark. $^{a}$The share aged 25 to 34 is the target of $T_0$ in Table~\ref{tab:eleven}, so of this row only the other four bands are untargeted.}
 \endgroup
 \end{table}
