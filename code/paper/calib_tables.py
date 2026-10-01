@@ -107,6 +107,10 @@ AVG_LAB = H['max_food_cost'] / float(
     re.findall(r'DIAG max allotment / avg labour income\s*=\s*(\S+)', LOG)[-1])
 THETA_AGG = float(G['theta'].split()[2])
 SMI_USE = json.load(open(os.path.join(ROOT, 'code', 'paper', 'smi_use_ratio.json')))
+# THE DRUG PRICE ELASTICITIES (the author, round ae7a28ed: "where is the extensive and
+# intensive drug price elasticities? they should be in the table"): export_elasticity.py's
+# averages, the same names Section 2 quotes; the data side is the literature range it types.
+RES = json.load(open(os.path.join(ROOT, 'code', 'paper', 'results_numbers.json')))
 THETA_NOSUD = float(re.findall(r'drug share, sum spend / sum income\s*=\s*(\S+)\s+(\S+)', LOG)[-1][1])
 
 # omega_c: drug use with the child's weight off and every other parameter the same
@@ -394,6 +398,11 @@ UNTARGETED = [
          many([f'wealth share bottom {p} pct' for p in (1, 5, 10, 20)], 2, neg=True),
          (f'{100 * mom("w_bot net worth share, bottom half", 1):.1f}',
           f'{100 * mom("w_bot net worth share, bottom half"):.1f}'))), 'SCF 2022, FRB DFA'),
+    ('Drug price elasticities', None, None),
+    ('Participation (extensive margin)', (r'$-0.3$ to $-0.9$', f"${RES['x_el_part']}$"),
+     r'Saffer and Chaloupka (1999), Grossman and Chaloupka (1998)'),
+    ('Per user, all users (intensive margin)', (r'$-0.3$ to $-0.8$', f"${RES['x_el_int']}$"),
+     r'Grossman and Chaloupka (1998), Olmstead et al.\ (2015)'),
     ('Transmission, odds ratios', None, None),
     # BOTH STUDIES ON ONE LINE (the author, 1 October: "just add it to the above, combine
     # them in one line"): 1.44 is Mellentin's and 2.51 Yoon's
