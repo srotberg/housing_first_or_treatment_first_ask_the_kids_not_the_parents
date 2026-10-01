@@ -52,19 +52,39 @@ results/b_scan_childsplit/; they finish about 11:40 and are not needed to pick b
    results/b_scan_childsplit_v3/ (omega_<w>_b<b*>_ku1.0.moments.txt, bench_<w>_b<b*>_ku1.0/).
 4. Report the b table to the author. Do NOT move theta (all-users drug share is reported).
 
+THE WORKER PROMPT for every cloud run of remote_omega_point.sh (the v3 prompt), with <args> filled:
+    You are a calibration worker. Your whole job is to keep ONE model solve going until it
+    finishes. Do not edit any file. 1. From the repository root, run this command with the Bash
+    tool's run_in_background=true and timeout 7200000, exactly as written (the repository's
+    .claude/settings.json allows it): bash code/remote_omega_point.sh <args>. Never add nohup or
+    '&'. The script starts the solve DETACHED from your call (it installs gfortran if missing,
+    builds, solves 12 blocks, about 4.5 hours, then HOLDS its benchmark files for up to 8 hours
+    until the main session asks for them or releases them), pushes a digest every 20 minutes,
+    and your call only waits for it. 2. The call will be stopped at its 2-hour limit before the
+    run ends. That is expected and does NOT stop the run. Whenever the call stops, or you are
+    woken for any reason, run exactly the same command again the same way: it prints "attaching
+    to the running solve" and waits again. Keep doing this until it prints "finished". If it ever
+    prints "started detached" a second time, the solve was lost: say so in your report. 3. Then
+    report the last lines it printed. Never report success for a run that did not finish.
+
 ## B. omega_c and the new benchmark  (~15:00 UTC, when the five are done; was 12:30)
 
 1. For each w: moment = users(omega_c = 0, b*) / users(w) - 1, block 12, against 18.3 per
    cent. w* = the GRID POINT closest. The run at (b*, w*) is THE NEW BENCHMARK.
-2. Its files are in results/b_scan_childsplit_v3/bench_<w*>_b<b*>_ku1.0/ (bench_files.tar.gz,
-   bench.log.gz, PARAM_HANDOVER.bench.txt -- remote_omega_point.sh saves them since 1 Oct).
-   If that directory is missing (the run predates the change), fall back to a STAGE 1 solve
-   in the arms (cf_arm.sh without BENCH_FROM, 4.5 hours).
+2. ITS BENCHMARK FILES ARE HELD IN ITS WORKER'S CONTAINER (since c3fbfd20; the tarred set is
+   123 MB, over GitHub's limit). Commit an empty results/b_scan_childsplit_v3/send_bench_<w*>_b<b*>_ku1.0
+   and push; within about 5 minutes the run pushes one .dat.gz per file to
+   results/b_scan_childsplit_v3/bench_<w*>_b<b*>_ku1.0/files/ (about 123 MB). THEN commit
+   release_<tag> for each of the other four (never release_all before the files have landed).
+   bench.log.gz and PARAM_HANDOVER.bench.txt are already in bench_<tag>/. If the files do not
+   arrive within 30 minutes (the hold lasts 8 hours from the solve's end), fall back to a STAGE 1
+   solve in the arms (cf_arm.sh without BENCH_FROM, 4.5 hours).
 3. kappa_x on the INCOME basis, as on 24 September: the log's first
    "KAPPA_X PROBE: IMPLIED kappa_x" (x = 0.2 per cent of consumption) times 1.5076 (= 0.9329
    / 0.6188, the income-over-consumption factor that set 0.9329). Record the figure.
-4. New reference directory results/reference/hf_2c_omega_<w*>/ : the three files above,
-   with kappa_x in PARAM_HANDOVER.bench.txt set to the new value.
+4. New reference directory results/reference/hf_2c_omega_<w*>/ : bench.log.gz,
+   PARAM_HANDOVER.bench.txt (kappa_x set to the new value) and files/ (the .dat.gz set), so
+   cf_arm.sh BENCH_FROM can point at it.
 5. Paper: point code/paper/calib_tables.py BENCH at it, and the omega_c moment's omega_c = 0
    reading (B_OFF) at the b* run's block-12 users; `calib_tables.py --freeze`; strip red is
    NOT done (the author reads red); splice (numbers that moved print red); build with

@@ -23,6 +23,17 @@
   0.98x session_01UQTEjm2pEtmGhHSDsSxZ2D, 0.99x session_016Xqehwky4x6MafvY6kTYoa. Due about 10:15.
 - Stage A re-timed to 10:15 (trigger updated to read v3 and to launch the omega_c runs with the v3 label);
   stage B about 15:00. OVERNIGHT_PLAN.md updated.
+- 09:35 THE BENCHMARK TARBALL IS OVER GITHUB'S LIMIT. 0.96x (session_014Nsg1im3Zf8w9Evcs2uJ85) FINISHED at
+  09:25, exit 0, but its final push was refused: remote_omega_point.sh committed bench_files.tar.gz, 122.7 MB,
+  over the 100 MB limit, and the block-11/12 moments went down with it (local commit 28d3b2a in its container;
+  the worker is blocked asking). Its last pushed reading is 11.40 at block 10 -- not a candidate for b*, so
+  nothing depends on it. Fixes: (1) .gitignore bench_files.tar.gz (a679c8e5, 09:33), which the running
+  0.97x/0.98x/0.99x workers pick up at their 09:45 rebase, so their final add skips the tarball and the
+  moments land; (2) c3fbfd20: the script now gzips each benchmark file (under 50 MB each, as in
+  code/seeds/benchmark_dat/), publishes the moments, then HOLDS the files in the container and sends them to
+  bench_<TAG>/files/ only when the branch carries send_bench_<TAG> (release_<TAG>/release_all or 8 hours lets
+  go); cf_arm.sh BENCH_FROM reads files/*.gz. Only the run that becomes the benchmark sends its 123 MB.
+  Tested on a local repo. Stage B step 2 and the worker prompt are in OVERNIGHT_PLAN.md.
 - 09:15 STAGE A RULE REFINED, TRIGGER MOVED TO 10:40. Drug users, per cent, 09:05: 0.96x block 10 11.40;
   0.97x block 5 11.16; 0.98x block 8 10.58; 0.99x block 6 10.26. 0.97x and 0.99x run at about 40 minutes a
   block (due about 13:30), 0.98x at 23 (block 12 about 10:35). The 08:20 neighbour margin of 0.30 both ways
