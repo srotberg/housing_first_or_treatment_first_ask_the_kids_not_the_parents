@@ -58,8 +58,14 @@ if [ "${OMEGA_POINT_DETACHED:-0}" != 1 ]; then
     if [ -f "$D.pid" ] && kill -0 "$(cat "$D.pid")" 2>/dev/null; then
         echo "remote_omega_point $TAG: attaching to the running solve, pid $(cat "$D.pid")"
     else
-        OMEGA_POINT_DETACHED=1 setsid nohup bash "$0" "$@" > "/tmp/omega_point_$TAG.detached.log" 2>&1 < /dev/null &
-        echo $! > "$D.pid"
+        # THE SUBSHELL IS THE DETACH. Under setsid alone the solve stayed this call's child,
+        # and the 2-hour limit kills the call's whole process tree: every b worker of 1 October
+        # died at 05:01 after 5 blocks and restarted from the seed. Launched from a subshell
+        # that exits at once, the solve is orphaned to init before the limit can reach it
+        # (tested in the main session, 05:30: setsid alone died, setsid in a subshell lived).
+        # The same form as the T = 60 transition's launch of 30 September.
+        ( OMEGA_POINT_DETACHED=1 setsid nohup bash "$0" "$@" > "/tmp/omega_point_$TAG.detached.log" 2>&1 < /dev/null &
+          echo $! > "$D.pid" )
         echo "remote_omega_point $TAG: started detached, pid $(cat "$D.pid"); log /tmp/omega_point_$TAG.detached.log"
     fi
     while kill -0 "$(cat "$D.pid")" 2>/dev/null; do sleep 60; done
