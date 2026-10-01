@@ -1,5 +1,24 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+21:30 THREE THINGS PENDING FOR THE PAPER, ON THE AUTHOR'S WORD ("when you have the drug participation and
+intensive elasticities update them in the paper everywhere they appear including all sections. and when you have the
+adjusted 30% and 50% housing cost spending with the food stamps update those too"):
+  (1) ELASTICITIES: session_01RsYBGaW5ntXpeX9KsQAZ8P -> code/ELASTICITY_RESULT_2C.txt (about 01:00-02:00). Then point
+      code/paper/export_elasticity.py's SRC at it, regenerate results_numbers.json, splice. The x_el_* names reach
+      Section 2 (lines ~667-683), Section 5.3 Block 5 (~2520-2526) and Table 6; grep 'elasticit' for anything typed.
+  (2) BURDEN WITH FOOD STAMPS: session_01XqSVgDSyGLemYRw61ouArD runs `bash code/remote_omega_point.sh 0.085 0.0054222
+      1.0 fs`, the omega_c = 0.085 benchmark again on the source WITH 7817942f (results/b_scan_childsplit_fs/, log at
+      the end, about 02:00). h_2 is pinned (adjuster 0), so the burden lines are output-only: every other MOMENT line
+      must equal results/reference/hf_2c_omega_0.085/bench.log.gz to 1e-3 or the rerun is not the benchmark. Then
+      'renters above 30 pct of income' and 'over half of income, all renters' from the new log into calib_tables.py's
+      mom() (Table 6 rows, u_b30_*, the h_2 item in 5.2 and Block text at ~2505). Afterwards commit
+      results/b_scan_childsplit_fs/release_all (its benchmark files are not needed).
+  (3) omega1 FROM 0.91: session_01597ZsSiDv3QDHH2NbNneM6 (results/counterfactuals_2c/omega1_p0.91). THE 0.98 READING AT
+      21:12 WAS WRONG: supply at the pass-2 quantity implied 0.98, but a dearer drug cuts demand further. With the
+      measured participation elasticity (-2.0, one-class benchmark) the arm's pass 2 (users -5.0 at price 0.872, 13.7
+      per cent below the benchmark) implies about -28 per cent at a FIXED price, and supply 1.46 clears near 0.90-0.91
+      with users about -10 to -15. From 1.0 that is about 20 passes at 0.5 per cent a pass; from 0.91, a few. The
+      price-1.0 run keeps going as the second demand point (archiving needs the author's word).
 21:15 OLD omega1 STOPPED: session_01LWbnr3YJ3RaWtGdoJhbgxj archived on the author's word ("yes, stop the old omega1
 run") after 3 passes at the warm-start price; results/counterfactuals_2c/omega1/ stays as its record. The price-1.0 rerun
 (session_019sED8Y9sDLqMYEtAkSvhst, results/counterfactuals_2c/omega1_p1.0) replaces it.
