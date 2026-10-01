@@ -7,9 +7,9 @@ Parameter & Description & Set & Moment and source & Data & Model & Value \\
 \midrule
 \multicolumn{7}{@{}l}{\emph{Block 7: Preferences}} \\
 $\sigma$ & Risk aversion & Ext. & Attanasio and Weber (2010) & 2.00 & n.a. & 2.00 \\
-$\gamma$ & Housing weight, non-drug bundle & Int. & Housing over expenditure net of drugs, CEX 2024 & 26.8\% & 26.0\% & 0.536 \\
+$\gamma$ & Weight on housing services & Int. & Housing over expenditure net of drugs, CEX 2024 & 26.8\% & 26.0\% & 0.536 \\
 $\beta$ & Discount factor & Int. & Wealth over output, BEA fixed assets & 3.00 & 2.94 & 0.946 \\
-$\xi_j$ & Equivalence scale, child at home & Ext. & Square-root scale, OECD & 1.41 & n.a. & 1.41 \\
+$\xi_j$ & Equivalence scale & Ext. & Square-root scale, OECD & 1.41 & n.a. & 1.41 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Block 8: Rental ladder}} \\
 $h_2$ & Smallest rental size & Int. & Renters paying over 30\% of income, SCF 2022 & 43.2\% & 58.9\% & 0.0407 \\
@@ -21,10 +21,10 @@ $\varepsilon(j)$ & Age profile of efficiency & Ext. & Hump peaking at age 56, Gr
 $\rho_z$ & Persistence of productivity & Ext. & Set & 0.90 & n.a. & 0.90 \\
 $\sigma_\zeta$ & Standard deviation of its shocks & Int. & Bottom half's share of earnings, SCF 2022 & 17.2\% & 16.3\% & 0.413 \\
 $\bar\pi^{eu}$ & Job separation rate & Int. & Unemployment rate, BLS CPS 2014--24 & 4.9\% & 5.6\% & 0.0268 \\
-$\bar\pi^{ue}$ & Job finding rate, annual & Ext. & Krueger et al.\ (2014) & 0.55 & n.a. & 0.55 \\
-$p_{ui}$ & Share of separations insured & Ext. & Set & 0.30 & n.a. & 0.30 \\
+$\bar\pi^{ue}$ & Annual job finding rate & Ext. & Krueger et al.\ (2014) & 0.55 & n.a. & 0.55 \\
+$p_{ui}$ & Share of separations that are insured & Ext. & Set & 0.30 & n.a. & 0.30 \\
 \addlinespace
-\multicolumn{7}{@{}l}{\emph{Block 10: Survival and mental illness}} \\
+\multicolumn{7}{@{}l}{\emph{Block 10: Survival and SMI}} \\
 $\bar\phi_j$ & Baseline survival by age & Ext. & SSA period life table, ages 26 to 85 & profile & n.a. & profile \\
 $\varsigma_m(j)$ & Age profile of SMI onset & Ext. & SMI prevalence by age, NSDUH 2024 & profile & n.a. & profile \\
 \addlinespace
@@ -32,22 +32,24 @@ $\varsigma_m(j)$ & Age profile of SMI onset & Ext. & SMI prevalence by age, NSDU
 $r$ & Risk-free rate & Ext. & Kaplan et al.\ (2020) & 0.03 & n.a. & 0.03 \\
 $\varphi$ & Tax progressivity & Ext. & Heathcote et al.\ (2017) & 0.85 & n.a. & 0.85 \\
 $\tau_k$ & Capital income tax & Ext. & US long-run rate on gains and dividends & 0.15 & n.a. & 0.15 \\
-$\tau_{\ell}$ & Tax level & Int. & Average labour income tax, McDaniel (2007) & 22.4\% & 21.1\% & 0.894 \\
+$\tau_{\ell}$ & Level of the labour income tax & Int. & Average labour income tax, McDaniel (2007) & 22.4\% & 21.1\% & 0.894 \\
 \addlinespace
-\multicolumn{7}{@{}l}{\emph{Block 12: Social security and programmes' rules}} \\
-$S(y)$ & Replacement rates, bend points & Ext. & SSA primary insurance amount & statute & n.a. & 0.90, 0.32, 0.15 \\
+\multicolumn{7}{@{}l}{\emph{Block 12: Social security benefits and programmes' rules}} \\
+$S(y)$ & Social security & Ext. & SSA primary insurance amount & statute & n.a. & 0.90, 0.32, 0.15 \\
 $\underline S$ & SSI floor over entry productivity & Ext. & SSA federal benefit rate & 0.177 & n.a. & 0.177 \\
 $\psi_{ui}$ & UI replacement rate & Ext. & DOL statutory replacement rates & 0.50 & n.a. & 0.50 \\
 $\bar y$ & Cap on the UI earnings base & Ext. & DOL state benefit maxima & 1.00 & n.a. & 1.00 \\
 $\kappa_V$ & Voucher means test & Ext. & HUD rule & 0.50 & n.a. & 0.50 \\
 $\kappa_r$ & Tenant's rent, share of income & Ext. & HUD rule & 0.30 & n.a. & 0.30 \\
-$\varrho$ & Food stamp taper rate & Ext. & SNAP statute, 7 CFR 273.10 & 0.30 & n.a. & 0.30 \\
+$\varrho$ & Food stamp clawback rate & Ext. & SNAP statute, 7 CFR 273.10 & 0.30 & n.a. & 0.30 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Block 13: Drug market}} \\
-$J_E$ & Last age use can begin & Ext. & Model age 55, that is age 80 & 55 & n.a. & 55 \\
-$\nu_1$ & Drug supply shifter & Ext. & Normalisation, so $p_v=1$ & norm. & n.a. & norm. \\
+$J_E$ & Maximum age at which use can begin & Ext. & Model age 55, that is age 80 & 55 & n.a. & 55 \\
+$\nu_1$ & Supply shifter & Ext. & Normalisation, so $p_v=1$ & norm. & n.a. & norm. \\
 \bottomrule
-\end{tabular}}\usebox{\ntbox}
+\end{tabular}}
+\ifdim\wd\ntbox>\textwidth\sbox{\ntbox}{\resizebox{\textwidth}{!}{\usebox{\ntbox}}}\fi
+\usebox{\ntbox}
 \tabnote{Notes: the Model column is the Housing First benchmark. n.a.\ marks a parameter set from outside the model, which has no moment of its own to reproduce.}
 \endgroup
 \end{table}
