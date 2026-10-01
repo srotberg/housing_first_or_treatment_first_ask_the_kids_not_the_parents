@@ -627,10 +627,10 @@ baseline, is in line with the estimates in the literature: Plana-Ripoll et al.\ 
 put the mortality rate ratio of a SUD at $3.91$ in the Danish registers, and Heiberg et
 al.\ (2018) at $6.6$ among Norwegians in specialist care for one. Meyer et al.\ (2023) put the death rate of homeless adults at
 $@@c_kappa_phi_h_value@@$ times that of the housed at every age, and Olfson et al.\
-(2015) measure the excess death rate for \new{SMI}; against those hazards the value of a life comes from the
+(2015) measure the excess death rate for SMI; against those hazards the value of a life comes from the
 willingness-to-pay estimates surveyed in Viscusi and Aldy (2003).
 
-On the \new{SMI} chain, Nielsen et al.\ (2017) identify the effect of a SUD on the onset
+On the SMI chain, Nielsen et al.\ (2017) identify the effect of a SUD on the onset
 of SMI in Danish registers, Gutwinski et al.\ (2021) meta-analyse its
 prevalence among the homeless, and Bradizza et al.\ (2006) review relapse under dual
 diagnosis.
@@ -706,7 +706,7 @@ elastic, because the drugs are cheap and simple to produce (Rhodes et al., 2002)
 policy but cannot price what happens in the long run, to others not in the sample,
 or to the budget that pays for it. The rational
 addiction literature models the use decision but abstracts from housing,
-children, and \new{SMI}. The structural homelessness literature delivers a housing market
+children, and SMI. The structural homelessness literature delivers a housing market
 equilibrium but has no drug margin for conditionality to act on. The transmission
 literature measures what having a parent with a SUD does to a child but takes the
 parent's behaviour as given. This paper's contribution is to put them in one framework and then to insist
@@ -1548,8 +1548,10 @@ working age up to the taxable maximum $y^{\max}$,
 $S(y)=\max\big\{\underline S,\ \alpha_1\min\{\tilde y,k_1\}+\alpha_2\max\{0,\min\{\tilde y,k_2\}-k_1\}
 +\alpha_3\max\{0,\tilde y-k_2\}\big\}$, where $k_1<k_2$ are the two bend points,
 $\alpha_1>\alpha_2>\alpha_3$ the shares replaced below, between and above them, and
-$\underline S$ the SSI payment. Their values are in
-Section~\ref{sec:fullcal}.} The SUD and SMI do not
+$\underline S$ the SSI payment. \new{From the SSA's 2024 statute,
+$(\alpha_1,\alpha_2,\alpha_3)=(@@c_s_y_value@@)$, and in these units, its 2024 values
+divided by its average wage index, $k_1=@@f_ss_bend_1@@$, $k_2=@@f_ss_bend_2@@$,
+$y^{\max}=@@f_ss_taxable_max@@$ and $\underline S=@@f_ssi_floor_level@@$.}} The SUD and SMI do not
 cut earnings on the job; they act on whether there is a job at all, through the
 employment transitions below. Out of work, a household with the SUD or SMI is paid what any other household is:
 UI in its first year with probability $p_{ui}$, nothing with probability $1-p_{ui}$, and
@@ -1650,7 +1652,7 @@ using, it does not remove the excess mortality of the disorder while it lasts, a
 does not exempt the household from Treatment First's condition, since a household in
 treatment still carries the disorder.
 
-\subsection{\new{SMI}}\label{sec:fsmi}
+\subsection{SMI}\label{sec:fsmi}
 
 $m$ is a two state Markov chain representing SMI, whose prevalence is
 a small share of adults, defined by substantial functional impairment, rather than any
@@ -1792,7 +1794,7 @@ in it for the first year out of work and then move to state $3$, which pays noth
 probability~\eqref{eq:fd} and one with it recovers with the probability~\eqref{eq:frecover}, both in
 Section~\ref{sec:fdrug}, conditional on the chosen $v$, $h$ and $\tau$ and on $m$.
 
-\paragraph{\new{SMI} $m$.} SMI begins and ends according to~\eqref{eq:fonset} in Section~\ref{sec:fsmi}, conditional on $d$ and age.
+\paragraph{SMI $m$.} SMI begins and ends according to~\eqref{eq:fonset} in Section~\ref{sec:fsmi}, conditional on $d$ and age.
 
 \paragraph{The voucher $\eta$.} A voucher is drawn and revoked according to the rule of
 Section~\ref{sec:fvoucher}, conditional on this period's eligibility and, under
@@ -2037,7 +2039,7 @@ HF and TF work on this block, from opposite ends: each parameter says how bad a 
 is, so each sets what a voucher is worth to a household in that state and
 what being removed from that state is worth.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\kappa^{ue}_{d}$, how much harder it is to \new{regain employment} with a SUD.] A
+\item[$\kappa^{ue}_{d}$, how much harder it is to regain employment with a SUD.] A
 household with a SUD who is unemployed finds work at the rate $\bar\pi^{ue}$ divided
 by $\kappa^{ue}_{d}$. Raising $\kappa^{ue}_{d}$ makes unemployment spells longer for households
 with a SUD, and thus they are more likely to be unhoused, which is the link from the
@@ -2095,38 +2097,38 @@ homeless aged 25 to 34, $@@c_t_0_data@@$ percent in HUD's 2024 PiT count, which 
 model gives as $@@c_t_0_model@@$.
 \end{description}
 
-\paragraph{Block 3: \new{SMI} chain.} This block determines how much further
+\paragraph{Block 3: SMI chain.} This block determines how much further
 Treatment First reaches over and above the disorder it treats: a SUD raises
-the chance of \new{SMI, and SMI} lowers employment and raises death.
+the chance of SMI, and SMI lowers employment and raises death.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\iota$, the SUD multiplier on SMI onset.] The hinge of \new{this} whole block.
-Without it \new{SMI} is exogenous to everything a policy does and
-treating SUD cannot touch it. As it rises a SUD causes more \new{SMI, and TF's return
-rises,} because curing the disorder now prevents some cases of SMI too. It is set externally at $@@c_iota_value@@$, between the hazard ratios of $1.34$ for any
+\item[$\iota$, the SUD multiplier on SMI onset.] The hinge of this whole block.
+Without it SMI is exogenous to everything a policy does and
+treating SUD cannot touch it. As it rises a SUD causes more SMI, and TF's return
+rises, because curing the disorder now prevents some cases of SMI too. It is set externally at $@@c_iota_value@@$, between the hazard ratios of $1.34$ for any
 SUD and $2.74$ for opioid use disorder in the Danish registers of Nielsen et al.\ (2017).
 \item[$\lambda_m$, the annual chance of recovering from SMI.] This parameter
-governs how long an episode of \new{SMI} lasts: it is the hazard of leaving
-the SMI state each year. Raise it and \new{SMI} is less persistent, \new{and TF has less
+governs how long an episode of SMI lasts: it is the hazard of leaving
+the SMI state each year. Raise it and SMI is less persistent, and TF has less
 of a deterrent effect, since SMI spells, some of them caused by a SUD, are shorter on
-average.} It is set externally at $@@c_lambda_m_value@@$, the annual hazard that gives a
+average. It is set externally at $@@c_lambda_m_value@@$, the annual hazard that gives a
 $@@c_lambda_m_data@@$ percent chance of recovery within ten years,
 the ten-year clinical recovery rate reported by {\AA}sb{\o} et al.\ (2022).
-\item[$\omega_m$, the level of the SMI onset profile.] \new{This parameter
+\item[$\omega_m$, the level of the SMI onset profile.] This parameter
 scales the chance of developing SMI at every age, so it sets how many households have
 SMI. Increase it and the impact of a SUD on acquiring SMI is larger, and TF has more to
-act on.} It is calibrated internally,
+act on. It is calibrated internally,
 to the share of the population carrying SMI, $@@c_omega_m_data@@$ percent, which is
 the NSDUH 2024 prevalence by age weighted by the model's own age distribution, and
 the benchmark gives $@@c_omega_m_model@@$.
-\item[$\kappa^{ue}_{m}$, how much harder \new{it is to regain employment} with SMI.] The
-same as $\kappa^{ue}_{d}$ but for SMI: a household with \new{SMI} finds work at the
-rate $\bar\pi^{ue}$ divided by $\kappa^{ue}_{m}$. Increase it and \new{the unemployment
-spells during SMI periods are longer, and the utility cost of SMI is higher.} Its moment is the SMI share of the homeless, $@@c_kappa_ue_m_data@@$ percent in
+\item[$\kappa^{ue}_{m}$, how much harder it is to regain employment with SMI.] The
+same as $\kappa^{ue}_{d}$ but for SMI: a household with SMI finds work at the
+rate $\bar\pi^{ue}$ divided by $\kappa^{ue}_{m}$. Increase it and the \new{average} unemployment
+spells during SMI periods are longer, and the utility cost of SMI is higher. Its moment is the SMI share of the homeless, $@@c_kappa_ue_m_data@@$ percent in
 Gutwinski et al.\ (2021), which the model gives as $@@c_kappa_ue_m_model@@$, for the same
-reason as the SUD's: a household \new{out of work for longer} is the one that loses its housing.
+reason as the SUD's: a household out of work for longer \new{is more likely to become homeless}.
 \item[$\mu_m$, the SUD recovery multiplier for SMI.] This parameter is the
 second direction of the
-chain: not only does a SUD increase the chance of SMI, but SMI also \new{makes SUD more persistent}.
+chain: not only does a SUD increase the chance of SMI, but SMI also makes SUD more persistent.
 As it falls the disorder is harder to recover from, and
 Treatment First has more to overcome in exactly the households it most wants to reach. It
 is set externally at $@@c_mu_m_value@@$ from the dual diagnosis relapse rates in
@@ -2134,53 +2136,41 @@ Bradizza et al.\ (2006), whose review covers people carrying both a SUD
 and a mood, anxiety, schizophrenia-spectrum or personality disorder.
 \item[$\kappa_{\phi m}$, the mortality multiplier for SMI.] The chain's last link,
 and the one through which it shortens life. As it
-rises deaths among \new{households with SMI} rise, \new{and TF has more to work on, because
+rises deaths among households with SMI rise, and TF has more to work on, because
 reducing drug use reduces SUD and, through it, the chance of SMI and ultimately the
-chance of death.} It is set
+chance of death. It is set
 externally at $@@c_kappa_phi_m_value@@$, the middle of the standardised mortality ratios for SMI in
 Olfson et al.\ (2015).
 \end{description}
 
 \paragraph{Block 4: Recovery and treatment.} Both policies work through parameters in this block,
-since recovery is what Treatment First buys directly and what Housing First buys by
-housing people. The first two set how much recovery there is to buy and the last two
+since recovery is what Treatment First \new{encourages} directly and what Housing First buys by
+housing people\new{, because recovery is more likely while housed}. The first two set how much recovery there is to buy and the last two
 how much of it a policy can reach.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\bar\pi_r$, the baseline SUD recovery rate.] This parameter is the hazard of getting out of the
-disorder for a housed household, which is the level everything else in this block
-scales. As it rises disorders end sooner on their own, so the private
-cost of acquiring one falls and the externality falls with it, and there is less for
+\item[$\bar\pi_r$, the baseline SUD recovery rate.] This parameter is the hazard of \new{recovering from a SUD} for a housed household, which is the level everything else in this block
+scales. As it rises disorders end sooner on their own, and there is less for
 either policy to buy. It is set externally from the ten-year remission rate in
 Vaillant (1995), which gives an annual hazard of $@@c_bar_pi_r_value@@$.
 \item[$\mu_H$, SUD recovery when homeless.] The value of this parameter determines how much less likely recovery from the
-disorder is for an unhoused household than a housed one. It matters more than the
-level $\bar\pi_r$ because it is a \emph{gradient}: it is what a voucher buys beyond
-shelter. As it falls (i.e., SUD recovery while unhoused is lower) the gradient steepens, so housing buys more
-recovery: the private value of a voucher rises and the externality falls. Near one, assistance is a transfer and the
+disorder is for an unhoused household \new{relative to} a housed one. \new{It determines how
+much a voucher buys beyond shelter.} As it falls (i.e., SUD recovery while unhoused is lower) the gradient steepens, so housing buys more
+recovery \new{and HF is more effective at curing SUD}. Near one, \new{HF has little effect} and the
 moral hazard stands unopposed. Its value is chosen so the model generates the
 increase in recovery housing produced in Milby et al.\ (2005), a randomised trial on
 cocaine-dependent homeless adults: an average of $6.60$ weeks abstinent in the housed arm against
 $4.48$ in the homeless, so housing raises recovery by $47.3$ percent.
 \item[$g$, the treatment effect on recovery.] This is the instrument through
 which Treatment First reaches households that already carry a SUD, which is what
-matters for short-run impacts, since on implementation some households are already
-in the SUD state. Raise it and treatment is more likely to cure a SUD, so a
-household that carries the disorder is more likely to be cured, and
-therefore the private cost falls, with the household choosing to go to
-treatment spending less of its life carrying one. The
-externality falls with it, because a child who acquires a disorder is
-also more able to address their disorder, so what its parent hands on costs it less of its own life. It is
-set externally at $@@c_g_value@@$, which is how much medication for opioid use
+matters for short-run impacts. Raise it and treatment is more likely to cure a SUD
+\new{and TF has a larger margin it can affect}. It is
+set externally \new{to} $@@c_g_value@@$, which is how much medication for opioid use
 disorder raises remission: rates near double those without it, which is also what
-randomised trials of agonist medication against placebo find for abstinence. A
-behavioural adjunct such as contingency management raises the odds of recovery by far
-less, but it is not the treatment a policy called Treatment First would deliver.
+randomised trials of agonist medication against placebo find for abstinence.
 \item[$\bar\tau^{u}$, the utility cost of treatment.] Take up is a choice, not a
 rule, and this is what makes households decline treatment they might gain
-from in the future. When it rises, fewer opt for treatment, so the externality rises, since
-more people remain with a SUD and thus more children are born with lower
-incomes, which leads to higher SUD incidence, and the private cost rises too, since
-treatment is costly. It is calibrated internally to treatment take-up:
+from. When it rises, fewer opt for treatment, \new{and TF induces fewer households with a
+SUD to seek treatment}. It is calibrated internally to treatment take-up:
 $@@c_bar_tau_u_data@@$ percent of adults with a SUD received substance use treatment
 in the past year in NSDUH 2024, and $@@c_bar_tau_u_model@@$ percent do in the model.
 \end{description}
@@ -2212,7 +2202,7 @@ percent.
 \item[$\delta_d$, what the child loses to a parent's SUD.] The child does not inherit
 the disorder, only a worse
 productivity draw, and that lower expected draw is what makes it likelier to be poor, to use, to
-acquire a disorder and \new{SMI} consequently, to be unhoused and to die
+acquire a disorder and SMI consequently, to be unhoused and to die
 earlier.
  Increase it and the externality rises, and it loads whichever policy prevents more
 disorder: Treatment First by curing the parent, Housing First because recovery is
@@ -2382,14 +2372,14 @@ otherwise. It sets how many of the newly unemployed fall straight to zero
 earnings.
 \end{description}
 
-\paragraph{Block 10: Survival and \new{SMI}.} These two parameters are age profiles
+\paragraph{Block 10: Survival and SMI.} These two parameters are age profiles
 that I take from outside the model rather than generate inside it.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\bar\phi_j$, baseline survival by age.] The most recent SSA period life
 table, Table 4.C6, for ages $26$ to $85$, with the sexes combined by survivor weight
 rather than averaged. This is the profile every mortality multiplier in
 Section~\ref{sec:fullcal} multiplies, so it is the base the SUD, homelessness and
-\new{SMI} hazards are measured against.
+SMI hazards are measured against.
 
 \item[$\varsigma_m(j)$, the age profile of SMI onset.] The shape of onset
 across ages, the onset that reproduces a log-linear fit to the share of adults
@@ -2428,15 +2418,12 @@ balanced by $\pi_V$ instead.
 \paragraph{Block 12: Social security benefits and programmes' rules.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$S(y)$, social security.] Retirement income follows the statutory
-primary insurance amount: it replaces shares \new{$(\alpha_1,\alpha_2,\alpha_3)=(@@c_s_y_value@@)$} of the household's productivity at its last working
+primary insurance amount: it replaces $@@c_s_y_value@@$ of the household's productivity at its last working
 age below the first of the SSA's two bend points, between them and above the second, up to
 the taxable maximum, with the Supplemental Security Income payment as a floor. The
 formula and the floor apply to productivity, in units in which it averages one at
 entry, so the floor, $@@c_underline_s_value@@$ in those units, is
-$@@c_ssi_floor_earn@@$ of the benchmark's average labour income. \new{In the same units
-the bend points are $k_1=@@f_ss_bend_1@@$ and $k_2=@@f_ss_bend_2@@$ and the taxable maximum
-is $y^{\max}=@@f_ss_taxable_max@@$, the SSA's 2024 values divided by its average wage
-index.} As it rises the old are richer, so the value of a life
+$@@c_ssi_floor_earn@@$ of the benchmark's average labour income. As it rises the old are richer, so the value of a life
 still to be lived rises and with it the cost of a disorder that shortens it.
 \item[$\psi_{ui}$ and $\bar y$, unemployment insurance.] These two set the UI replacement
 rate and the cap on the earnings it is paid on. I set them to fifty percent and one

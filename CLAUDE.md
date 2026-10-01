@@ -48,6 +48,12 @@ explaining what a parameter is reads naturally with its value attached, and it
 was broken twice in one round: a bare `0.40` inside the income equation, and the
 detection rates quoted beside the policy rule that uses them.
 
+**One exception, the author's (1 October):** the statutory social security
+values -- the PIA shares $\alpha_1,\alpha_2,\alpha_3$, the bend points, the taxable
+maximum and the SSI floor -- are stated in the Section 4 footnote where the formula is
+introduced (*"Why not just show the values here instead of the calibration"*). They are
+statute, not calibration; do not move them back to Section 5.
+
 **A parameter that only binds in a counterfactual is not a calibration
 parameter.** `p_det`, `p_fp` and `c_test` do nothing in the benchmark, where
 `voucher_conditional_on_clean = 0`, so they belong with the experiment rather
