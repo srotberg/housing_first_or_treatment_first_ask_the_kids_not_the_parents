@@ -1,3 +1,24 @@
+# 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
+
+omega_c = 0.085 finished 19:15 (exit 0, 10 blocks, last move 5.5e-4): drug users 8.956, rise with the child's weight
+off 17.65 against 18.34 (0.08 17.3, 0.09 20.0; the author chose 0.085 at about 17:55). Files requested 19:21, landed
+19:27 (90 .dat.gz, 126 MB); 0.08 and 0.09 released. kappa_x = 0.61968 x 1.5076 = 0.934236 (was 0.9329).
+results/reference/hf_2c_omega_0.085/ = bench.log.gz, PARAM_HANDOVER.bench.txt (kappa_x set), files/, RESULT.md.
+PAPER (474b6102): calib_tables reads it; B_OFF from the b* omega_c = 0 run (10.537); 26 numbers moved, red. The intro's
+odds ratios now read the benchmark (1.46, 6.23; were 1.51, 4.92 from the old no-policy run). STILL OLD, to refresh at
+stage D: every x_ result (Sections 1, 2, 6: the TF/omega1/internalise/null arms, elasticities, transition) and Table 6's
+SMI drug-use ratio (smi_use_ratio.json, 23 September; the build does not print it). TEDS-A rows at 0.085: admissions by
+age 1.0/5.0/35.2/44.9/13.8 against 40.5/33.9/15.6/8.5/1.6; employed at admission 63.6 against 23.6.
+STAGE C, ALL IN THE CLOUD (this container has 4 GB of disk; an arm needs about 7; and code/cfarm_bench here still holds
+the OLD benchmark with BENCH_DONE, which cf_arm.sh would have reused instead of BENCH_FROM): code/remote_cf_point.sh
+(e30e66fd), one session each, tag cf-2c, results to results/counterfactuals_2c/<arm>/:
+    omega1       session_01LWbnr3YJ3RaWtGdoJhbgxj   cf_fix2, DRUG_PRICE_START 0.863
+    internalise  session_01VFGwEBeY8tb9VuteWHffgZ   cf_fix2_damp, DRUG_PRICE_START 0.995
+    nulltf       session_01FX9q4BzWUfqNnoLk9bbejF   null (1.0), then tf PDET 0.85, NET_TARGET = null's, PV_START 0.0814,
+                                                    DRUG_PRICE_START 0.867; keeps code/cfarm_tf_2c for stage E
+Launched 19:32. Old arms took 5-7 passes; expect omega1 and internalise around 01:00-03:00, null about 22:00, TF later.
+FLAGGED TO THE AUTHOR: the SS bend points / SSI floor scale (19:45 entry below).
+
 # 1 October 10:13: STAGE A DONE -- b* = 0.0054222 (0.98x); FIVE TWO-CLASS omega_c RUNS LAUNCHED
 
 The two-class omega_c = 0 calibration at kappa_uem = 1 (v3, from the seed, bench_tdm_childsplit build, rule 5e-5,
