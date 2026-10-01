@@ -1,3 +1,14 @@
+# 1 October 04:00: OVERNIGHT PLAN ARMED (code/OVERNIGHT_PLAN.md)
+
+The author is away overnight. Stages: A (07:45, trigger trig_014YcDCJiAHBL4BbJLncVXAz) b* = nearest grid
+point to 10.50 per cent, five two-class omega_c runs at b* (0.05-0.07, one machine each); B (~12:30) w* =
+nearest to 18.3 per cent, new benchmark = the (b*, w*) run, kappa_x = probe's implied x 1.5076, paper
+Section 5 regenerated; C cloud omega1 + internalise, here null then TF 85 (cf_fix2, BENCH_FROM the new
+benchmark); D Section 6; E T = 60 transition here. Hourly check-in trig_01D2jRe8M1baa387yf6YqYNc (:20)
+advances it. cf_fix builds clean on today's source (7 warnings, 0 errors); cf_fix2 building at 04:00.
+remote_omega_point.sh now saves bench_<TAG>/ (benchmark files) per run; cf_arm.sh takes BENCH_B,
+BENCH_OMEGA, BENCH_KU, KAPPA_X.
+
 # 1 October 03:50: "ONE CLASS" WAS MISREAD -- THE b SCAN IS THE TWO-CLASS MODEL
 
 "Class" in this project is child_penalty_classes (the newborn's class by the parent's disorder at death),
