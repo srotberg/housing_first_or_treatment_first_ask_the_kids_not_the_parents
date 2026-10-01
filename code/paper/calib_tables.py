@@ -531,6 +531,42 @@ def numbers():
         # the share of SUDs over within ten years at the baseline hazard (Section 2 quotes it)
         'c_bar_pi_r_ten_pc': f'{100 * (1 - (1 - H["probability_of_stopping_addiction"]) ** 10):.0f}',
     })
+    # TABLE 6 IN THE PROSE (the author, 1 October: the validation text "should walk the
+    # reader through it well"). Every figure the walk-through quotes, and every word in
+    # it that says which way the model misses, comes from here, so it turns when the
+    # numbers do.
+    def p1(x):
+        return f'{100 * x:.1f}'
+
+    def where(m, lo, hi):
+        return 'within' if lo <= m <= hi else ('below' if m < lo else 'above')
+    band = lambda k, d=0: mom(f'share of the homeless, band {k}', d) if d else mom(f'share of the homeless, band {k}')
+    age_m, age_d = mom('mean age of drug users'), mom('mean age of drug users', 1)
+    odds_d, odds_h = mom('delta_d child SUD odds ratio'), mom('delta_h child homeless odds ratio')
+    nums.update({
+        'u_hl_3544_d': p1(band(2, 1)), 'u_hl_3544_m': p1(band(2)),
+        'u_hl_55p_d': p1(band(4, 1) + band(5, 1)), 'u_hl_55p_m': p1(band(4) + band(5)),
+        'u_emp_hl_d': f'{100 * C["employed_share_of_homeless_data"]:.0f}',
+        'u_emp_hl_m': p1(mom('emp_homeless employed share of homeless')),
+        'u_inc_hl_d': p1(mom('income of the homeless', 1)), 'u_inc_hl_m': p1(mom('income of the homeless')),
+        'u_users_young_d': f'{100 * mom(USER_BANDS[0], 1):.0f}', 'u_users_young_m': f'{100 * mom(USER_BANDS[0]):.0f}',
+        'u_age_d': f'{age_d:.1f}', 'u_age_m': f'{age_m:.1f}',
+        'u_age_dir': 'older' if age_m > age_d else 'younger',
+        'u_unemp_d': p1(mom('kappa_ued unemployment given SUD', 1)), 'u_unemp_m': p1(mom('kappa_ued unemployment given SUD')),
+        'u_deaths_d': p1(mom('drug deaths, share of deaths', 1)), 'u_deaths_m': p1(mom('drug deaths, share of deaths')),
+        'u_treat_hl_d': p1(mom('homeless at treatment admission', 1)), 'u_treat_hl_m': p1(mom('homeless at treatment admission')),
+        'u_b50_d': f'{100 * C["renter_burden_50_data"]:.1f}', 'u_b50_m': p1(mom('over half of income, all renters')),
+        'u_large_d': p1(mom('h_3 share in the largest unit', 1)), 'u_large_m': p1(mom('h_3 share in the largest unit')),
+        'u_vrent_d': p1(mom('tenant contribution rate', 1)), 'u_vrent_m': p1(mom('tenant contribution rate')),
+        'u_vwage_d': p1(mom('voucher holders, wages main', 1)), 'u_vwage_m': p1(mom('voucher holders, wages main')),
+        'u_inc20_d': f'{100 * mom("income share bottom 20 pct", 1):.2f}', 'u_inc20_m': f'{100 * mom("income share bottom 20 pct"):.2f}',
+        'u_nw20_d': f'{100 * mom("wealth share bottom 20 pct", 1):.2f}', 'u_nw20_m': f'{100 * mom("wealth share bottom 20 pct"):.2f}',
+        'u_nw50_d': p1(mom('w_bot net worth share, bottom half', 1)), 'u_nw50_m': p1(mom('w_bot net worth share, bottom half')),
+        'u_odds_sud_lo': '1.44', 'u_odds_sud_hi': '2.51', 'u_odds_sud_m': f'{odds_d:.2f}',
+        'u_odds_sud_where': where(odds_d, 1.44, 2.51),
+        'u_odds_hl_lo': '1.8', 'u_odds_hl_hi': '2.4', 'u_odds_hl_m': f'{odds_h:.2f}',
+        'u_odds_hl_where': where(odds_h, 1.8, 2.4),
+    })
     return nums
 
 

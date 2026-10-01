@@ -1,3 +1,17 @@
+# 1 October 04:00: ROUND 666c5f18 -- VALIDATION WALK-THROUGH; RENTERS 43.2/19.2; TEDS-A TRUNCATED
+
+The validation section now walks through Table 6 block by block (the author's request); every figure and
+direction word in it is a u_* name from calib_tables.numbers(), so it turns with the final run. AT THE FINAL
+UPDATE: the homeless-income row then includes food stamps (Fortran print changed 29a19049); the TEDS-A rows
+are to be replaced (candidates shown to the author: age profile of admissions, employed at admission, homeless
+at admission) once the author picks. THE TEDS-A FILE IN data/raw IS TRUNCATED at 1,048,575 rows (Excel's
+limit): most states after New Jersey are missing (NY 374 admissions); samhsa.gov is blocked from here; the
+author was asked for the full file. The TEDS-A print additions (age bands, employed at admission) are WIP in
+the scratchpad (teds_prints_wip.diff, did not compile: an indexed array constructor), not committed.
+Renters over 30/50 per cent of income: 43.2/19.2 (all renters with positive income and rent; the script's
+top-fifth band was a leftover that gives zero). kappa_phi_d sourced to Walker et al. (2017) and Degenhardt
+et al. (2011); related_lit/README's "Degenhardt 2.5-9.8" corrected (Degenhardt's pooled SMR is 14.66).
+
 # 1 October 03:03: b SCAN RELAUNCHED WITH THE ALL-USERS DRUG-SHARE PRINT (one class, kappa_uem 1)
 
 THETA'S MODEL CELL WAS SUD-ONLY. The 15.3 per cent reported since 18 September as "the aggregate" (gaps_table

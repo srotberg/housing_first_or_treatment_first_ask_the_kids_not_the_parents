@@ -2524,8 +2524,48 @@ computation, and the three cases where the universe rather than the arithmetic
 decides the number. The package ships those datasets as well, so none of them has
 to be downloaded first.
 
-The last two rows are the intergenerational transmission the paper turns on,
-and the homelessness one needs a word about its construction. Bassuk et al.\ (1997) is a
+\new{Table~\ref{tab:untargeted} is read below one block at a time.}
+
+\paragraph{\new{Homelessness.}} \new{The first row gives each age band's share of the homeless. The
+youngest band is the target of $T_0$; the other four are free. The model puts
+$@@u_hl_3544_m@@$ percent of the homeless at ages 35 to 44, against $@@u_hl_3544_d@@$ in HUD's
+PiT count, and $@@u_hl_55p_m@@$ percent at 55 and over, against $@@u_hl_55p_d@@$. Of the homeless
+in the model, $@@u_emp_hl_m@@$ percent are employed, against $@@u_emp_hl_d@@$ in the data, and
+their income is $@@u_inc_hl_m@@$ percent of the average, against $@@u_inc_hl_d@@$ in Meyer et al.\
+(2024).}
+
+\paragraph{\new{Who uses and who carries a SUD.}} \new{Users in the model are @@u_age_dir@@ than
+in the data: $@@u_users_young_m@@$ percent of them are 26 to 34, against $@@u_users_young_d@@$ in
+NSDUH 2024, and their mean age is $@@u_age_m@@$, against $@@u_age_d@@$. Unemployment among
+households with a SUD is $@@u_unemp_m@@$ percent, against $@@u_unemp_d@@$. Households with SMI
+are $@@c_smi_use_ratio_model@@$ times as likely as others to use drugs, against
+$@@c_smi_use_ratio_data@@$, and drug poisonings account for $@@u_deaths_m@@$ percent of deaths
+at ages 25 to 44, against $@@u_deaths_d@@$ in CDC WONDER.}
+
+\paragraph{\new{Treatment.}} \new{The rows from the Treatment Episode Data Set for Admissions (TEDS-A) describe admissions to publicly funded
+treatment, so they are read as shares within admissions rather than as levels. Of
+admissions in the model, $@@u_treat_hl_m@@$ percent are homeless, against $@@u_treat_hl_d@@$ in
+the data.}
+
+\paragraph{\new{Housing and vouchers.}} \new{Of renters in the model, $@@u_b50_m@@$ percent spend
+over half their income on rent, against $@@u_b50_d@@$ in the SCF, and $@@u_large_m@@$ percent of
+the housed live in the largest unit size, against $@@u_large_d@@$ in the American Community
+Survey. A voucher holder in the model pays $@@u_vrent_m@@$ percent of its income in rent,
+against $@@u_vrent_d@@$ in HUD's Picture of Subsidized Households, and $@@u_vwage_m@@$ percent of
+voucher holders live mainly on wages, against $@@u_vwage_d@@$.}
+
+\paragraph{\new{Distribution.}} \new{The poorest fifth of households receive $@@u_inc20_m@@$ percent of
+income in the model, against $@@u_inc20_d@@$ in the SCF. Their share of net worth is
+$@@u_nw20_m@@$ percent, against $@@u_nw20_d@@$, because in the SCF the bottom of the
+distribution owes more than it owns, and the bottom half holds $@@u_nw50_m@@$ percent of net
+worth, against $@@u_nw50_d@@$ in the Federal Reserve's Distributional Financial Accounts.}
+
+\paragraph{\new{Transmission.}} \new{A child of a parent with a SUD is $@@u_odds_sud_m@@$ times as
+likely to acquire one in the model, @@u_odds_sud_where@@ the range of $@@u_odds_sud_lo@@$ to
+$@@u_odds_sud_hi@@$ in Mellentin et al.\ (2016) and Yoon et al.\ (2013). An adult who is
+homeless in the model is $@@u_odds_hl_m@@$ times as likely to have had a homeless caretaker,
+@@u_odds_hl_where@@ the $@@u_odds_hl_lo@@$ to $@@u_odds_hl_hi@@$ of Bassuk et al.\ (1997), and that
+row needs a word about its construction.} Bassuk et al.\ (1997) is a
 case-control study of $220$ homeless mothers and $216$ low-income housed mothers, so
 both arms are poor and the comparison isolates transmission from the poverty that
 accompanies it. The share whose primary female caretaker had ever been homeless was
