@@ -9714,6 +9714,13 @@
         ! can produce a wrong validation number and cannot reach a target.
         real(8), dimension(transition_length) :: val_treat_mass,val_treat_homeless,&
             val_treat_smi,val_treat_homeless_working
+        ! TWO MORE TEDS-A ROWS, 1 October (the author: "show me how the model does
+        ! relative to those data"): the age profile of admissions and the share
+        ! employed at admission. Output only.
+        real(8), dimension(transition_length,5) :: val_treat_band
+        real(8), dimension(transition_length) :: val_treat_employed
+        real(8), dimension(5), parameter :: val_treat_band_data=&
+            (/0.405d0,0.339d0,0.156d0,0.085d0,0.016d0/)
         real(8), dimension(transition_length) :: val_lfp_sud_num,val_lfp_sud_den,&
             val_lfp_clean_num,val_lfp_clean_den,val_lfp_sud_work_den,val_lfp_clean_work_den
         real(8), dimension(transition_length) :: val_deaths_all_young,val_deaths_clean_young
@@ -11587,6 +11594,17 @@
             write(*,*) "UNTARGETED SMI alongside SUD at admission    model=",&
                 val_treat_smi(1)/max(val_treat_mass(1),10.d0**(-14)),&
                 " observed=", 0.431d0
+            ! TEDS-A 2022, admissions aged 25 and over whose primary substance is a
+            ! drug, from the file in data/raw (TRUNCATED at 1,048,575 rows, most
+            ! states after New Jersey missing: provisional until the full file).
+            do k_1=1,5
+                write(*,*) "UNTARGETED treatment admissions, band", k_1, " model=",&
+                    val_treat_band(1,k_1)/max(val_treat_mass(1),10.d0**(-14)),&
+                    " observed=", val_treat_band_data(k_1)
+            end do
+            write(*,*) "UNTARGETED employed at treatment admission   model=",&
+                val_treat_employed(1)/max(val_treat_mass(1),10.d0**(-14)),&
+                " observed=", 0.236d0
             write(*,*) "UNTARGETED working, homeless in treatment    model=",&
                 val_treat_homeless_working(1)/max(val_treat_homeless(1),10.d0**(-14)),&
                 " observed=", 0.066d0
@@ -18409,6 +18427,8 @@
         if (accumulating_beta_types==0) model_treatment_take_up(time_period)=0
 
         if (accumulating_beta_types==0) val_treat_mass(time_period)=0
+        if (accumulating_beta_types==0) val_treat_band(time_period,:)=0
+        if (accumulating_beta_types==0) val_treat_employed(time_period)=0
         if (accumulating_beta_types==0) val_treat_homeless(time_period)=0
         if (accumulating_beta_types==0) val_treat_smi(time_period)=0
         if (accumulating_beta_types==0) val_treat_homeless_working(time_period)=0
@@ -18840,6 +18860,23 @@
                                             voucher_index),8)*distribution_mass_used
 
                                         val_treat_mass(time_period)=val_treat_mass(time_period)+val_treat_1
+
+                                        ! the bands of the homelessness profile:
+                                        ! age_index 1-9 is 26-34, then by tens, 40 on is 65+
+                                        if (age_index<=9) then
+                                            val_treat_band(time_period,1)=val_treat_band(time_period,1)+val_treat_1
+                                        elseif (age_index<=19) then
+                                            val_treat_band(time_period,2)=val_treat_band(time_period,2)+val_treat_1
+                                        elseif (age_index<=29) then
+                                            val_treat_band(time_period,3)=val_treat_band(time_period,3)+val_treat_1
+                                        elseif (age_index<=39) then
+                                            val_treat_band(time_period,4)=val_treat_band(time_period,4)+val_treat_1
+                                        else
+                                            val_treat_band(time_period,5)=val_treat_band(time_period,5)+val_treat_1
+                                        end if
+                                        if (val_in_labour_force_1==2) then
+                                            val_treat_employed(time_period)=val_treat_employed(time_period)+val_treat_1
+                                        end if
 
                                         if (smi_of(unemployment_index)>=1) then
                                             val_treat_smi(time_period)=val_treat_smi(time_period)+val_treat_1
