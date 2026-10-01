@@ -1,3 +1,20 @@
+# 1 October 01:35: OMEGA_C SCAN STOPPED; FIRST-STAGE b SCAN LAUNCHED (one class)
+
+The author, on omega_c = 0 settling near 9.5-9.6 per cent against the first stage's 10.50 and users' income
+0.62 against 0.74: *"we need to fine tune the model just a bit"*, *"keep everything else fixed and just bring
+b up a bit"* (participation, by lowering the shifter b = addiction_scalar_1), *"use the one class model"*
+(it is: number_of_beta_types 1), *"you can stop the omega_c runs"*. The ten omega_c > 0 workers are archived.
+remote_omega_point.sh takes b as a second argument (958f7705); omega_c = 0, everything else the reference
+handover's, results in results/b_scan_childsplit/:
+  0.6x 0.0033197 session_01RLj3oDu5euZ2EemqFjaRax    0.9x  0.0049796 session_016pEUB3mV7zhmhxd81AxN4P
+  0.7x 0.0038730 session_012b3e8BSkkxRmo1mB61e1Ds    0.95x 0.0052562 session_01F7KzPD3Vy1dUmSJtEgKxKA
+  0.8x 0.0044263 session_01SjnfN8H4mN7NXWVpnRVoP2
+  1.0x 0.0055329 = the local omega_point_0.0 (pid 1504) and its backup session_01DvFqctcCm1Up87VjfJGw2W
+Interpolate b to 10.50 per cent users at block 12, then the omega_c scan again at that b. Due about 06:00.
+SMI drug-use ratio: measured once, 2.715 against NSDUH 2.44 (SMI_RESTORE_PLAN.md, 23 Sept); the author wants
+it in the untargeted table; the current build does not print it -- asked the author to add the print to the
+build copy.
+
 # 30 September 23:36: SCAN RELAUNCHED A THIRD TIME -- THE SOLVE NOW OUTLIVES THE WORKER'S TOOL CALL
 
 The 23:30 workers ran, but their background call has a 2-hour limit (several said so) and the solve takes
