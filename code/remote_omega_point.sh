@@ -23,16 +23,25 @@
 # CALIBRATION_STATE.md, 29 September).
 set -u
 W="$1"
+# OPTIONAL SECOND ARGUMENT: b, the drug shifter (addiction_scalar_1), for the first-stage b
+# scan at omega_c = 0 (the author, 1 October: "keep everything else fixed and just bring b
+# up a bit", meaning participation, by lowering b). Without it b is the reference handover's.
+BV="${2:-}"
 BRANCH=claude/two-period-addiction-hazard-d7gb61
 C=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$C/.." && pwd)
-R=$REPO/results/omega_c_scan_childsplit; mkdir -p "$R"
-D=$C/omega_point_$W
-OUT=$R/omega_$W.moments.txt
+if [ -n "$BV" ]; then
+    TAG="${W}_b${BV}"; R=$REPO/results/b_scan_childsplit
+else
+    TAG="$W"; R=$REPO/results/omega_c_scan_childsplit
+fi
+mkdir -p "$R"
+D=$C/omega_point_$TAG
+OUT=$R/omega_$TAG.moments.txt
 REF=$REPO/results/reference/hf_omega_c_006_tdm/PARAM_HANDOVER.bench.txt
 TRAILER=$'\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01WpmVwzkbKX7RRP8t9yBCLv'
 
-note() { echo "remote_omega_point $W: $* ($(date -u +%H:%M))" | tee -a "$D.status"; }
+note() { echo "remote_omega_point $TAG: $* ($(date -u +%H:%M))" | tee -a "$D.status"; }
 
 # THE SOLVE OUTLIVES THE TOOL CALL. A cloud session stops a background command at its time
 # limit (two hours at most) and the solve takes four to four and a half, so the first
@@ -42,21 +51,21 @@ note() { echo "remote_omega_point $W: $* ($(date -u +%H:%M))" | tee -a "$D.statu
 # ATTACHES to the running solve rather than starting a second one.
 if [ "${OMEGA_POINT_DETACHED:-0}" != 1 ]; then
     if [ -f "$D.pid" ] && kill -0 "$(cat "$D.pid")" 2>/dev/null; then
-        echo "remote_omega_point $W: attaching to the running solve, pid $(cat "$D.pid")"
+        echo "remote_omega_point $TAG: attaching to the running solve, pid $(cat "$D.pid")"
     else
-        OMEGA_POINT_DETACHED=1 setsid nohup bash "$0" "$W" > "/tmp/omega_point_$W.detached.log" 2>&1 < /dev/null &
+        OMEGA_POINT_DETACHED=1 setsid nohup bash "$0" "$@" > "/tmp/omega_point_$TAG.detached.log" 2>&1 < /dev/null &
         echo $! > "$D.pid"
-        echo "remote_omega_point $W: started detached, pid $(cat "$D.pid"); log /tmp/omega_point_$W.detached.log"
+        echo "remote_omega_point $TAG: started detached, pid $(cat "$D.pid"); log /tmp/omega_point_$TAG.detached.log"
     fi
     while kill -0 "$(cat "$D.pid")" 2>/dev/null; do sleep 60; done
-    echo "remote_omega_point $W: finished"; cat "$D.status" 2>/dev/null
+    echo "remote_omega_point $TAG: finished"; cat "$D.status" 2>/dev/null
     grep -q "solve exited 0\|dry run" "$D.status" 2>/dev/null
     exit $?
 fi
 
 publish() (  # publish <message>; a subshell, so its cd cannot leak into the caller
     {
-        echo "# omega_c scan point, weight_on_child $W, corrected code; $(date -u '+%d %b %H:%M UTC')"
+        echo "# scan point, weight_on_child $W, b ${BV:-as in the reference}, corrected code; $(date -u '+%d %b %H:%M UTC')"
         cat "$D.status" 2>/dev/null
         [ -f "$D/BUILD_USED" ] && echo "build md5: $(cut -c1-32 "$D/BUILD_USED")"
         [ -f "$D/bench.log" ] && grep -a "HANDOVER weight_on_child\|MOMENT\|BLOCK MOVE\|newborn_parent_share (clean\|FROZEN\|simulation ended" "$D/bench.log"
@@ -66,7 +75,7 @@ publish() (  # publish <message>; a subshell, so its cd cannot leak into the cal
     } > "$OUT.tmp"; mv "$OUT.tmp" "$OUT"
     cd "$REPO"
     git add "$R" 2>/dev/null
-    git commit -q -m "omega_c scan point $W: $1$TRAILER" || return 0
+    git commit -q -m "scan point $TAG: $1$TRAILER" || return 0
     for i in 1 2 3 4; do
         git fetch -q origin "$BRANCH" && git rebase -q -X theirs FETCH_HEAD && \
             git push -q origin HEAD:"$BRANCH" && return 0
@@ -99,6 +108,10 @@ gunzip -c "$C/scan_seed/calibration_distribution2.dat.gz" > calibration_distribu
 [ "$(stat -c%s calibration_distribution1.dat)" = "265496400" ] || { note "GUARD: distribution 1 wrong size"; publish "failed"; exit 1; }
 sed -e "s/^weight_on_child .*/weight_on_child $W/" "$REF" > PARAM_HANDOVER.txt
 [ "$(grep -c "^weight_on_child $W\$" PARAM_HANDOVER.txt)" = 1 ] || { note "GUARD: weight_on_child not $W"; publish "failed"; exit 1; }
+if [ -n "$BV" ]; then
+    sed -i -e "s/^addiction_scalar_1 .*/addiction_scalar_1 $BV/" PARAM_HANDOVER.txt
+    [ "$(grep -c "^addiction_scalar_1 $BV\$" PARAM_HANDOVER.txt)" = 1 ] || { note "GUARD: addiction_scalar_1 not $BV"; publish "failed"; exit 1; }
+fi
 [ "$(wc -l < PARAM_HANDOVER.txt)" = "$(wc -l < "$REF")" ] || { note "GUARD: handover length changed"; publish "failed"; exit 1; }
 cp PARAM_HANDOVER.txt PARAM_HANDOVER.kept.txt
 cp "$C/bench_tdm_childsplit/hftf_bench" ./hftf_bench
@@ -114,5 +127,5 @@ while kill -0 "$PID" 2>/dev/null; do
 done
 wait "$PID"; RC=$?
 note "solve exited $RC after $(grep -ac 'BLOCK MOVE' "$D/bench.log") blocks; bench.err: $(tail -2 "$D/bench.err" | tr '\n' ' ')"
-gzip -c "$D/bench.log" > "$R/omega_$W.bench.log.gz"
+gzip -c "$D/bench.log" > "$R/omega_$TAG.bench.log.gz"
 publish "complete (exit $RC)"
