@@ -1995,11 +1995,10 @@ there is for a policy to act on.
 It is the parameter that determines the amount spent on drugs when
 the household consumes a strictly positive amount of it. As it rises use rises on both the extensive and intensive
 margins, which means that the externality rises and there is more for
-either policy to act on. \new{It is calibrated internally, at $0.17$, to aggregate drug
+either policy to act on. It is calibrated internally, at $0.17$, to aggregate drug
 spending by users over their aggregate income, $16.0$ percent
 in the data, from retail drug spending in Midgette et al.\ (2019) and the
-incomes of adults aged 26 and over who use in NSDUH 2024.} Section 1 of the data
-appendix builds the target from those two.
+incomes of adults aged 26 and over who use in NSDUH 2024.
 
 \item[$b$, whether a household uses at all.] The marginal value of the drug goes
 as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a household
@@ -2015,13 +2014,11 @@ extra voucher under Housing First into a higher SUD rate that Treatment First th
 attempts to cure. Its value is chosen so the model generates the share of users who
 carry a SUD, $41.3$ percent among adults aged 26 and over in NSDUH 2024.
 \item[$\kappa_{\phi d}$, increased mortality with a SUD.] As discussed at length in the
-stylized model, this is a key parameter in the paper. Mortality truncates the value of life for a user, which
+stylized model, this is a key parameter in the paper. Mortality truncates the value of life for a user, \new{and as it rises, it}
 hits households with the highest life values hardest and thus reverses the income
 gradient, making the poor the users rather than the rich, in equilibrium when $b$ is
-chosen to match the drug use rate. Its
-instrument is the income of users, because the reversal is what it is responsible for:
-a higher death risk leaves only those with less to lose willing to use. It is calibrated to
-that moment, at $4.00$, at the lower end of the standardised mortality
+chosen to match the drug use rate. \new{It is calibrated to the average income of users,
+setting it to} $4.00$, at the lower end of the standardised mortality
 ratios that Chesney et al.\ (2014) report for substance use disorders. At that
 value users earn $60$ percent of average income in the model,
 against $74$ percent in NSDUH 2024.
@@ -2515,8 +2512,8 @@ the price is free. It normalises units, not behaviour.
 
 \subsection{Validation}\label{sec:fvalid}
 
-None of the moments in Table~\ref{tab:untargeted} is fitted, with \new{one
-qualification: the} share of the homeless in the youngest band is the target of $T_0$. Each
+None of the moments in Table~\ref{tab:untargeted} is fitted, with one
+qualification: the share of the homeless in the youngest band is the target of $T_0$. Each
 is produced endogenously by a model with sixty single ages, and each is a place the
 model can be caught. Section~9 of \texttt{data/}\allowbreak\texttt{DATA\_APPENDIX.md} in the replication
 package derives the data side of each, and it is the place to go for
