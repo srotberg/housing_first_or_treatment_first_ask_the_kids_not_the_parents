@@ -2474,8 +2474,8 @@ the price is free. It normalises units, not behaviour.
 Up to now, I have fitted the model to match, as closely as I could, data from the United
 States on the objects this paper is about. This section asks how the model performs on other
 relevant moments that it was not fitted to. The
-performance is shown in Table~\ref{tab:untargeted}, broken into numbered blocks, \new{with each block
-explaining why} it matters for the experiment.
+performance is shown in Table~\ref{tab:untargeted}, broken into numbered blocks, with each block
+explaining why it matters for the experiment.
 
 \paragraph{Block 1: Homelessness.} The first row gives each age band's share of the homeless. The
 youngest band is the target of $T_0$; the other four are free. The model puts
@@ -2483,39 +2483,39 @@ $@@u_hl_3544_m@@$ percent of the homeless at ages 35 to 44, against $@@u_hl_3544
 PiT count, and $@@u_hl_55p_m@@$ percent at 55 and over, against $@@u_hl_55p_d@@$. Of the homeless
 in the model, $@@u_emp_hl_m@@$ percent are employed, against $@@u_emp_hl_d@@$ in the data, and
 their income is $@@u_inc_hl_m@@$ percent of the average, against $@@u_inc_hl_d@@$ in Meyer et al.\
-(2024). \new{For the experiment, the point is that} Treatment First acts on households through the voucher they
+(2024). For the experiment, the point is that Treatment First acts on households through the voucher they
 hold or lose, and its effect on children runs through households that are homeless while raising
 them. Most of the homeless are of child-rearing age in the model, as in the data,
 $@@u_hl_2554_m@@$ percent aged 25 to 54 against $@@u_hl_2554_d@@$, so the model places the
 policy's margin at the ages where it reaches children.
 
-\paragraph{Block 2: Who uses and who carries a SUD.} Users in the model are \new{somewhat} @@u_age_dir@@ than
+\paragraph{Block 2: Who uses and who carries a SUD.} Users in the model are somewhat @@u_age_dir@@ than
 in the data: $@@u_users_young_m@@$ percent of them are 26 to 34, against $@@u_users_young_d@@$ in
-NSDUH 2024, and their mean age is $@@u_age_m@@$, against $@@u_age_d@@$ \new{in the data}. Unemployment among
-households with a SUD is $@@u_unemp_m@@$ percent, against $@@u_unemp_d@@$ \new{in the data}. Households with SMI
+NSDUH 2024, and their mean age is $@@u_age_m@@$, against $@@u_age_d@@$ in the data. Unemployment among
+households with a SUD is $@@u_unemp_m@@$ percent, against $@@u_unemp_d@@$ in the data. Households with SMI
 are $@@c_smi_use_ratio_model@@$ times as likely as others to use drugs, against
-$@@c_smi_use_ratio_data@@$, and \new{excess deaths due to SUD in the model} account for $@@u_deaths_m@@$ percent of deaths
-at ages 25 to 44, against $@@u_deaths_d@@$ \new{percent from drug poisonings} in CDC WONDER. \new{Treatment First
-affects a child through its parent's decisions, and those who use drugs are mostly of child-rearing
-age, in the model as in the data: $@@u_users_2644_m@@$ percent of users are 26 to 44, against
-$@@u_users_2644_d@@$. And since households with SMI use drugs at higher rates than the rest of the
+$@@c_smi_use_ratio_data@@$, and excess deaths due to SUD in the model account for $@@u_deaths_m@@$ percent of deaths
+at ages 25 to 44, against $@@u_deaths_d@@$ percent from drug poisonings in CDC WONDER. \new{TF and HF affect}
+a child through its parent's decisions, and those who use drugs are mostly of child-rearing
+age, in the model as in the data: \new{$@@u_users_2654_m@@$ percent of users are 26 to 54, against
+$@@u_users_2654_d@@$}. And since households with SMI use drugs at higher rates than the rest of the
 population, the model also carries the notion that it is harder for Treatment First to discourage
-them from using than households without SMI.}
+them from using than households without SMI.
 
-\paragraph{Block 3: Housing and vouchers.} \new{Every housed household in the model rents, and} $@@u_b30_m@@$ percent spend
-over thirty percent of their income on rent, against $@@u_b30_d@@$ \new{percent of renters} in the SCF. A voucher holder in the model pays $@@u_vrent_m@@$ percent of its income in rent,
+\paragraph{Block 3: Housing and vouchers.} \new{In the model,} $@@u_b30_m@@$ percent \new{of housed households} spend
+over thirty percent of their income on rent, against $@@u_b30_d@@$ percent of renters in the SCF. A voucher holder in the model pays $@@u_vrent_m@@$ percent of its income in rent,
 against $@@u_vrent_d@@$ in HUD's Picture of Subsidized Households, and $@@u_vwage_m@@$ percent of
-voucher holders live mainly on wages, against $@@u_vwage_d@@$. \new{The model therefore captures why
+voucher holders live mainly on wages, against $@@u_vwage_d@@$. The model therefore captures why
 vouchers are important: renters spend a large share of their income on housing, so without a
-voucher little is left for other consumption. The consumption that Treatment First puts at stake
-when it conditions the voucher is of the same order in the model as in the data.}
+voucher \new{poor households have substantially less left for other consumption}. The consumption that Treatment First puts at stake
+when it conditions the voucher is of \new{a similar magnitude} in the model as in the data.
 
 \paragraph{Block 4: Distribution.} The poorest fifth of households receive $@@u_inc20_m@@$ percent of
 income in the model, against $@@u_inc20_d@@$ in the SCF. Their share of net worth is
 $@@u_nw20_m@@$ percent, against $@@u_nw20_d@@$, because in the SCF the bottom of the
 distribution owes more than it owns, and the bottom half holds $@@u_nw50_m@@$ percent of net
-worth, against $@@u_nw50_d@@$ in the Federal Reserve's Distributional Financial Accounts. \new{Homelessness and eligibility for a voucher both sit at the
-bottom of the distribution, so its shape decides how many households either policy can reach.}
+worth, against $@@u_nw50_d@@$ in the Federal Reserve's Distributional Financial Accounts. \new{HF and TF act on the households that receive vouchers, and these are the poorest; the model
+captures their relative poverty broadly in line with the data.}
 
 \paragraph{Block 5: Drug price elasticities.} Neither margin of the response to the drug price
 is targeted. Raising the price from the benchmark by each of @@x_el_dp_list@@ percent and
@@ -2524,12 +2524,13 @@ $@@x_el_part@@$, @@x_el_part_where@@ the estimates of about $@@x_el_part_lo@@$ t
 Chaloupka (1999) and Grossman and Chaloupka (1998), and its intensive elasticity, measured
 over all users, is $@@x_el_int@@$, @@x_el_int_where@@ the estimates of about $@@x_el_int_lo@@$ to
 $@@x_el_int_hi@@$ in Grossman and Chaloupka (1998) and Olmstead et al.\ (2015). Section~\ref{sec:literature}
-discusses what these imply for Treatment First. \new{The drug price matters for the experiment as
-the general-equilibrium channel through which part of Treatment First's effect on drug use is
-handed back.}
+discusses what these imply for Treatment First. \new{The more elastic participation is, the more it works against
+Treatment First: as Treatment First lowers the drug price, more households go back to using, so its
+effect on drug use is smaller than it would be with a less elastic participation. If Treatment First still improves welfare in the experiments below, it does so
+despite this channel, which makes that result conservative.}
 
-\paragraph{Block 6: Transmission.} \new{The externalities on children, which carry much of the case
-for either policy, run through these two links.} A child of a parent with a SUD is $@@u_odds_sud_m@@$ times as
+\paragraph{Block 6: Transmission.} The externalities on children, which carry much of the case
+for either policy, run through these two links. A child of a parent with a SUD is $@@u_odds_sud_m@@$ times as
 likely to acquire one in the model, @@u_odds_sud_where@@ the range of $@@u_odds_sud_lo@@$ to
 $@@u_odds_sud_hi@@$ in Mellentin et al.\ (2016) and Yoon et al.\ (2013). An adult who is
 homeless in the model is $@@u_odds_hl_m@@$ times as likely to have had a homeless caretaker,

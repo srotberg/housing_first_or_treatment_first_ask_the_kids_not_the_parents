@@ -423,7 +423,7 @@ UNTARGETED = [
     ('Block 5: Drug price elasticities', None, None),
     ('Participation (extensive margin)', (f"${RES['x_el_part_lo']}$ to ${RES['x_el_part_hi']}$", f"${RES['x_el_part']}$"),
      r'Saffer and Chaloupka (1999), Grossman and Chaloupka (1998)'),
-    ('Per user, all users (intensive margin)', (f"${RES['x_el_int_lo']}$ to ${RES['x_el_int_hi']}$", f"${RES['x_el_int']}$"),
+    ('Intensive margin (users)', (f"${RES['x_el_int_lo']}$ to ${RES['x_el_int_hi']}$", f"${RES['x_el_int']}$"),
      r'Grossman and Chaloupka (1998), Olmstead et al.\ (2015)'),
     ('Block 6: Transmission, odds ratios', None, None),
     # BOTH STUDIES ON ONE LINE (the author, 1 October: "just add it to the above, combine
@@ -588,6 +588,9 @@ def numbers():
         # of child rearing age, in similar magnitudes to the data")
         'u_users_2644_d': f'{100 * (mom(USER_BANDS[0], 1) + mom(USER_BANDS[1], 1)):.0f}',
         'u_users_2644_m': f'{100 * (mom(USER_BANDS[0]) + mom(USER_BANDS[1])):.0f}',
+        # 26 to 54, the author's span (round 2ba5ae6a: "can't you do 26-54?")
+        'u_users_2654_d': f'{100 * sum(mom(USER_BANDS[k], 1) for k in range(3)):.0f}',
+        'u_users_2654_m': f'{100 * sum(mom(USER_BANDS[k]) for k in range(3)):.0f}',
         'u_age_d': f'{age_d:.1f}', 'u_age_m': f'{age_m:.1f}',
         'u_age_dir': 'older' if age_m > age_d else 'younger',
         'u_unemp_d': p1(mom('kappa_ued unemployment given SUD', 1)), 'u_unemp_m': p1(mom('kappa_ued unemployment given SUD')),
