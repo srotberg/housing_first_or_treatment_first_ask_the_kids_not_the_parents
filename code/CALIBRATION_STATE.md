@@ -1,5 +1,17 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+23:25 TWO CONTAINER RESTARTS KILLED internalise AND nulltf. Both 19:32 sessions (session_01VFGwEBeY8tb9VuteWHffgZ,
+session_01FX9q4BzWUfqNnoLk9bbejF) are at worker epoch 3: their containers restarted at about 22:35 and 23:03, the
+solves died, and each worker's re-run started from scratch (the status file is truncated at each start, so the digests
+show only the new run). internalise had reached pass 5 (users -0.8, h_1 -1.9, CEV +0.18); it starts again from 0.995.
+nulltf had the null ACCEPTED (21:20, results/counterfactuals_2c/nulltf/null/) and TF at pass 2; it is now re-solving the
+null. The later sessions (omega1 p1.0, p0.91, elasticity, burden) have not restarted. FIX FOR TF: code/remote_cf_tf.sh
+(84dd6ce6), TF alone with NET_TARGET = the accepted null's 5.8918410999831181, resuming the drug price and pi_V from its
+last published pass after a restart; results/counterfactuals_2c/tf85/; session_01LpAet7uWntUUQEA75xZ7CJ launched 23:22.
+The nulltf session keeps running as a duplicate (archiving needs the author's word). remote_cf_point.sh not edited: four
+workers execute it. omega1 at 23:15: p0.91 pass 5 at 0.8875 users -17.9, quantity -20.2, per user -2.7; p1.0 pass 6 at
+0.970 users -45.8; the clearing price now lies between 0.872 and 0.8875.
+
 22:32 STAGE C/D CHECK-IN (trig_014YcDCJiAHBL4BbJLncVXAz, one-shot): every digest under 20 minutes old; accepted arms: the
 null only, so stage D waits. omega1_p0.91 pass 3 at 0.896: users -20.0, quantity -23.8, quantity per user -4.7 (the old
 model's arm had per-user quantity +25). NOT RE-ARMED: the Claude_Code_Remote connector failed to connect this firing
