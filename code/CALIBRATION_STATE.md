@@ -1,5 +1,10 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+23:27 omega1 CLEARING PRICE, INTERPOLATED (log price, signed gaps): +0.110 at 0.8717 (archived run, pass 2, price rising)
+and -0.035 at 0.8875 (p0.91 pass 5, falling) put it at 0.884 with users about -14.6 (the archived side is an early
+pass, so this is indicative). The 21:30 estimate (0.90-0.91, -10 to -15) had the users right and the price high.
+p0.91 needs about 1-3 more passes; p1.0 (0.970, users -45.8) about 18 more at 0.5 per cent a pass.
+
 23:25 TWO CONTAINER RESTARTS KILLED internalise AND nulltf. Both 19:32 sessions (session_01VFGwEBeY8tb9VuteWHffgZ,
 session_01FX9q4BzWUfqNnoLk9bbejF) are at worker epoch 3: their containers restarted at about 22:35 and 23:03, the
 solves died, and each worker's re-run started from scratch (the status file is truncated at each start, so the digests
