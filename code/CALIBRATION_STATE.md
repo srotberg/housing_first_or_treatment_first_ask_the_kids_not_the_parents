@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+22:32 STAGE C/D CHECK-IN (trig_014YcDCJiAHBL4BbJLncVXAz, one-shot): every digest under 20 minutes old; accepted arms: the
+null only, so stage D waits. omega1_p0.91 pass 3 at 0.896: users -20.0, quantity -23.8, quantity per user -4.7 (the old
+model's arm had per-user quantity +25). NOT RE-ARMED: the Claude_Code_Remote connector failed to connect this firing
+(no send_later, no get_session). The 23:25 check-in (trig_01DbRHcxLh3RnBBzc2uZEtrN) and the hourly overnight check-in
+(trig_01D2jRe8M1baa387yf6YqYNc) carry stage D: when the null and one more arm are accepted, run this step 3.
+
 22:21 CHECK-IN (overnight plan; nothing to launch, every run alive). omega1, left to settle (the author, 22:10): users
 -4.2 at 0.872 (archived run, price RISING), -21.6 at 0.901 (p0.91 pass 2, price falling), -50.5 at 0.985 (p1.0 pass 3,
 falling). The drug gap column is absolute; the price directions put the clearing price between 0.872 and 0.901, users
