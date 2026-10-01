@@ -22,6 +22,13 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+19:00 ROUND b8142d12 DONE. p_ui KEPT AT 0.30 (the author, after BLS USDL-23-0586, Table 1, 2022: job losers 37.3 applied,
+59.0 of applicants received, 22.0 of the unemployed received; all who worked in the past year 25.9 / 55.0 / 14.2): the paper
+cites the release's 'about 7 in 10 had not applied'. Top rung REMOVED from Table 6 (the author; the model's 86.5 in the
+largest of three rungs against ACS 62.7 for three or more bedrooms is real, read off the log: 1.0 / 12.5 / 86.5).
+Table 5 gains J (60, age 85), J_R (41, age 66) and varpi(y). rho's channel CHECKED in the source: the child's mean is
+log(employment_grid(1,parent node)), which carries the parent's own class factor (1-delta_d), so a penalty echoes into
+the grandchild; employment status does NOT enter the draw, so 'a policy that keeps a parent in work' was wrong and is gone.
 18:22 CHECK-IN, NOTHING DUE. omega_c = 0.085 at block 8, rise 18.2 (17.3/17.8/18.2 at blocks 6-8), digest 18:05; due
 about 22:30. Stage B 22:30. Round b8142d12 started (red stripped, e6a01261), waiting on the author's BLS UI file for p_ui.
 18:40 THE AUTHOR'S DECISIONS (17:50-18:35): omega_c = 0.085 is the benchmark (OVERNIGHT_PLAN.md "B, AS DECIDED"; stage B

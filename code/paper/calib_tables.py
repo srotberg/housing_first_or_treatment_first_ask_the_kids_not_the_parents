@@ -58,6 +58,9 @@ SCAN = os.path.join(ROOT, 'results', 'omega_c_scan', 'SCAN_READINGS.md')
 UPLIFT = 1.18
 
 C = constants()
+AGE0 = 25                                     # j = 1 is age 26
+J_MAX = int(C['life_span'])
+J_RET = int(C['life_span'] - C['retirement_span'] + 1)
 H = {}
 for l in open(os.path.join(BENCH, 'PARAM_HANDOVER.bench.txt')):
     p = l.split()
@@ -278,6 +281,12 @@ STANDARD = [
          f(H['rung_ratio_h4'])),
     ]),
     ('Earnings and employment', [
+        # THE HORIZON (the author, round b8142d12: "You never set J=60 and J_R=41 anywhere"):
+        # life_span and retirement_span from the declarations; j = 1 is age 26
+        (r'$J$', 'Maximum age', 'Ext.', f"Age {AGE0 + J_MAX}, end of the SSA life table",
+         f'{J_MAX}', NA, f'{J_MAX}'),
+        (r'$J_R$', 'Retirement age', 'Ext.', f"Age {AGE0 + J_RET}, SSA full retirement age",
+         f'{J_RET}', NA, f'{J_RET}'),
         (r'$\varepsilon(j)$', 'Age profile of efficiency', 'Ext.',
          r'Hump peaking at age 56, Greenwood et al.\ (2025)', 'profile', NA, 'profile'),
         (r'$\rho_z$', 'Persistence of productivity', 'Ext.', 'Set',
@@ -292,9 +301,15 @@ STANDARD = [
         (r'$\bar\pi^{eu}$', 'Job separation rate', setcol('pi_eu'), 'Unemployment rate, BLS CPS 2014--24',
          pc(C['unemployment_rate_data']), pc(mom('pi_eu unemployment rate')),
          f(H['probability_becoming_unemployed'], 4)),
+        # how the separation tilt is set (the author, round b8142d12: "shouldn't you explain
+        # how this parameter is set?!"): data/UNEMPLOYMENT_BY_PRODUCTIVITY.md
+        (r'$\varpi(y)$', 'Separations by productivity', 'Ext.', 'Unemployment by education, BLS 2019',
+         'profile', NA, 'profile'),
         (r'$\bar\pi^{ue}$', 'Annual job finding rate', 'Ext.', r'Krueger et al.\ (2014)',
          f(C['probability_becoming_employed']), NA, f(C['probability_becoming_employed'])),
-        (r'$p_{ui}$', 'Share of separations that are insured', 'Ext.', 'Set',
+        # BLS USDL-23-0586 (the author, round b8142d12): about 7 in 10 of the unemployed who
+        # worked in the past year had not applied for UI; related_lit/ holds the release
+        (r'$p_{ui}$', 'Share of separations that are insured', 'Ext.', 'UI applicants among the unemployed, BLS 2022',
          f(C['probability_of_ui']), NA, f(C['probability_of_ui'])),
     ]),
     ('Survival and SMI', [
@@ -390,7 +405,6 @@ UNTARGETED = [
     # 1 October), not from the benchmark log's observed=, which is the old 0.175
     (r'Renters paying over 30\% of income', (f'{100 * C["renter_burden_30_data"]:.1f}',
      f'{100 * mom("renters above 30 pct of income"):.1f}'), 'SCF 2022'),
-    ('Housed in the largest unit size', one('h_3 share in the largest unit'), 'ACS 2023, B25042'),
     ('Rent over income, voucher holders', one('tenant contribution rate'), 'HUD PSH 2023'),
     ('Voucher holders living on wages', one('voucher holders, wages main'), 'HUD PSH 2023'),
     ('Distribution, shares of the total', None, None),
@@ -533,6 +547,8 @@ def numbers():
         'c_nodes': f'{C["employment_base_size"]:.0f}',
         'c_ssi_takeup': f'{H["ssi_floor_takeup"]:.0f}',
         # the SSI floor over the benchmark's average labour income (audit, 29 September)
+        'c_j_value': f'{J_MAX}', 'c_j_age': f'{AGE0 + J_MAX}',
+        'c_j_r_value': f'{J_RET}', 'c_j_r_age': f'{AGE0 + J_RET}',
         'c_ssi_floor_earn': f'{H["ssi_floor_level"] / AVG_LAB:.3f}',
         'c_avg_lab': f'{AVG_LAB:.2f}',
         # the productivity grid's settings that no row carried (audit, 29 September)
@@ -570,7 +586,6 @@ def numbers():
         'u_deaths_d': p1(mom('drug deaths, share of deaths', 1)), 'u_deaths_m': p1(mom('drug deaths, share of deaths')),
         'u_treat_hl_d': p1(mom('homeless at treatment admission', 1)), 'u_treat_hl_m': p1(mom('homeless at treatment admission')),
         'u_b30_d': f'{100 * C["renter_burden_30_data"]:.1f}', 'u_b30_m': p1(mom('renters above 30 pct of income')),
-        'u_large_d': p1(mom('h_3 share in the largest unit', 1)), 'u_large_m': p1(mom('h_3 share in the largest unit')),
         'u_vrent_d': p1(mom('tenant contribution rate', 1)), 'u_vrent_m': p1(mom('tenant contribution rate')),
         'u_vwage_d': p1(mom('voucher holders, wages main', 1)), 'u_vwage_m': p1(mom('voucher holders, wages main')),
         'u_inc20_d': f'{100 * mom("income share bottom 20 pct", 1):.2f}', 'u_inc20_m': f'{100 * mom("income share bottom 20 pct"):.2f}',

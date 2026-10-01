@@ -2278,36 +2278,41 @@ and the share of spending that goes on housing rises with it. $\gamma$ is chosen
 it produces: $@@c_gamma_data@@$ percent of expenditure, as shelter plus
 utilities take in the 2024 Consumer Expenditure Survey, which excludes illicit drug spending. At its value of $@@c_gamma_value@@$, the model's share is $@@c_gamma_model@@$ percent.
 \item[$\beta$, the discount factor.] It sets how much households discount the
-future, and so how much the prospect of death deters them from using drugs. As it rises households are more patient, save more, and the
-wealth to output ratio rises with it. It is chosen so that wealth over output
+future, and so how much \new{they save and how much} the prospect of death deters them from using drugs. As it rises households \new{save more, the
+wealth to output ratio rises and households are more deterred by death}. It is chosen so that wealth over output
 matches the national accounts, a ratio of three, from the Bureau of Economic Analysis (BEA) fixed asset tables
 against National Income and Product Accounts (NIPA) output, both read at the 2023 vintage, the last year the fixed asset tables cover.
 \item[$\xi_j$, the equivalence scale.] The household's consumption and
-dwelling are shared with the child while it lives at home, and they are divided by
+dwelling are shared with the child while it lives at home, and \new{thus} are divided by
 $\xi_j$ to give what each member gets. It is the square-root scale, $\sqrt N$, where $N$ in the model is set to two while
 the child lives with the parent, from the parent's age 26 to 50, and to one after the child has left.
 \end{description}
 
 \paragraph{Block 8: Rental ladder.} These three parameters build the grid of dwelling
-sizes a household chooses from. Below the smallest rung is the shelter, $h_1$, which was discussed in Block 2
-(Table~\ref{tab:eleven}).
+sizes a household chooses from. Below the smallest rung is the shelter, $h_1$, which was discussed in Block 2.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$h_2$, the smallest rental size.] The size of the cheapest dwelling is what
 decides how much of its income a poor household must spend to be housed at all. Raise it and the bottom rung is
-larger and dearer, so more households are burdened. Its moment is therefore the share of
-renters paying more than half of their income for housing, $@@c_h_2_data@@$ percent in the
-2022 SCF, and it is calibrated to this moment, with the model missing that target
-slightly, at $@@c_h_2_model@@$ percent.
+larger and dearer, so more households are burdened\new{, and a voucher is worth more to them}. \new{It is chosen so that
+the fraction of renters paying more than half of their income for housing is similar to
+the data, $@@c_h_2_data@@$ percent in the 2022 SCF; the model gives $@@c_h_2_model@@$
+percent.}
 \item[$h_3/h_2$ and $h_4/h_2$, the spacing of the ladder.] The two larger
-rungs are set at $@@c_h_3_h_2_value@@$ and $@@c_h_4_h_2_value@@$ times the smallest. Section~\ref{sec:fvalid} compares the share of the housed in
-the top rung with the data: $@@u_large_m@@$ percent in the model, against $@@u_large_d@@$
-percent.
+rungs are set at $@@c_h_3_h_2_value@@$ and $@@c_h_4_h_2_value@@$ times the smallest.
 \end{description}
 
-\paragraph{Block 9: Earnings and employment.} These seven parameters determine what a household
+\paragraph{Block 9: Earnings and employment.} These \new{ten} parameters determine \new{how long a household
+lives and works,} what it
 is expected to earn over its life, how persistent the shocks to it are, and how it
 moves between work and unemployment.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
+\new{\item[$J$ and $J_R$, the length of life and of working life.] A household lives at most
+$J$ periods and works until period $J_R$, after which it retires on social security.
+Together they set how many years of life and of earnings a disorder can cost. Raise
+either and a disorder that shortens life or work costs more. I set $J=@@c_j_value@@$, so
+that with $j=1$ at age 26 the last age is $@@c_j_age@@$, where the life table of Block 10
+ends, and $J_R=@@c_j_r_value@@$, so that retirement begins at age $@@c_j_r_age@@$, the
+full retirement age under social security for those born between 1943 and 1954.}
 \item[$\varepsilon(j)$, the age profile of efficiency.] The deterministic hump in
 earnings over the life cycle. Without it every
 household would earn the same at every age, and the ages at which households are
@@ -2320,48 +2325,50 @@ falls $4$ percent from the peak to age $65$, the last working age.
 \item[$\rho_z$ and $\sigma_\zeta$, the productivity process.] Log
 productivity is persistent but not permanent: it follows an autoregressive process
 with persistence $\rho_z$ and shocks of standard deviation
-$\sigma_\zeta$, and it is frozen at its last working value in
-retirement. $\sigma_\zeta$ is what decides how many households are poor
-enough to be at risk of homelessness and of acquiring a SUD, and the share of earnings
-that goes to the bottom half of working households falls in it. I set
-$\rho_z=@@c_rho_z_value@@$, on $@@c_nodes@@$ nodes. The spread at entry combines that scale with a persistent component of the
-entry draw, set with a standard deviation of $@@c_sd_fixed@@$ before the common scale
-that $\sigma_\zeta$ carries, $@@c_sd_fixed_scaled@@$ after it, and a persistence of
-$@@c_rho_fixed@@$, which gives a standard deviation of $@@c_sd_entry@@$ in logs. The grid
-spans $@@c_kkk_lo@@$ standard deviations below the mean and $@@c_kkk_hi@@$ above, with
-its lowest node at $@@c_bottom_prod@@$ of mean productivity, and separations are
-tilted across it, through $\varpi(y)$, by the unemployment rates of four education groups
-in the Bureau of Labor Statistics (BLS) 2019 annual averages for ages 25 and over. $\sigma_\zeta$ is calibrated to the
-share of earnings that goes to the bottom half of working households: in the 2022 SCF,
-households aged $26$ to $65$ with positive wage and salary income in the poorer half of
-the distribution earn $@@c_sigma_zeta_data@@$ percent of total earnings. At its value of
-$@@c_sigma_zeta_value@@$, the model gives
-$@@c_sigma_zeta_model@@$ percent.
+$\sigma_\zeta$. $\sigma_\zeta$ is what decides how many households are poor
+enough to be at risk of homelessness, and the share of earnings
+that goes to the bottom half of working households falls in it. \new{I set
+$\rho_z=@@c_rho_z_value@@$. With a persistent component of the entry draw, $\sigma_\zeta$
+gives a standard deviation of log productivity at entry of $@@c_sd_entry@@$. $\sigma_\zeta$
+is calibrated to the bottom half's share of earnings among households aged 26 to 65 with
+wage income in the 2022 SCF, $@@c_sigma_zeta_data@@$ percent; at $\sigma_\zeta=@@c_sigma_zeta_value@@$
+the model gives $@@c_sigma_zeta_model@@$ percent.}
 
 \item[$\rho$, the persistence of productivity across generations.] The
-child's log productivity at entry is drawn around its parent's with weight $\rho$ and
-around the mean with weight $1-\rho$, so $\rho$ is how much of its parent's standing a
+child's log productivity at entry \new{into adulthood} is drawn around its parent's with weight $\rho$ and
+around the mean with weight $1-\rho$, so $\rho$ is how much of its parent's \new{current productivity} a
 child keeps. It is the channel through which anything that lowers a parent's
-productivity lowers its child's, and so the channel through which a policy that keeps a
-parent in work reaches the next generation. Raise it and a child's prospects depend more
-on its parent's, so both externalities that run through the draw grow. It is set
+productivity lowers its child's\new{: a parent whose own productivity carries the penalty
+$\delta_d$, because its own parent had a SUD, passes a lower draw on to its child, so a
+parent's SUD lowers productivity beyond the next generation}. Raise it and a child's prospects depend more
+on its parent's. It is set
 externally at $@@c_rho_value@@$, between the intergenerational elasticities of earnings
 in Solon (1992) and Mazumder (2005).
 \item[$\bar\pi^{eu}$, the job separation rate.] The chance that an employed household
-loses its job in a year. It is scaled by $\varpi(y)$ in~\eqref{eq:femp}, so separations are likelier at low
+loses its job \new{each year}. It is scaled by $\varpi(y)$ in~\eqref{eq:femp}, so separations are likelier at low
 productivity. Raise it and more households lose work each year, so the unemployment
 rate rises with it. It is chosen to reproduce the aggregate
 unemployment rate in the BLS Current Population Survey (CPS) over 2014 to 2024,
 $@@c_bar_pi_eu_data@@$ percent, given the job finding rate set externally below; at its value of
-$@@c_bar_pi_eu_value@@$ the model gives $@@c_bar_pi_eu_model@@$.
+$@@c_bar_pi_eu_value@@$ the model gives \new{a $@@c_bar_pi_eu_model@@$ percent aggregate
+unemployment rate}.
+\new{\item[$\varpi(y)$, separations by productivity.] It tilts the separation rate across
+productivity, so that low-productivity households lose their jobs more often, which is what
+puts them at risk of homelessness. It is normalised to average one across households, so
+that $\bar\pi^{eu}$ alone sets the aggregate rate. Each productivity node takes the
+unemployment odds of the education group it falls in, from the BLS 2019 annual averages of
+unemployment by educational attainment for ages 25 and over, with education ordering
+productivity by median earnings.}
 \item[$\bar\pi^{ue}$, the annual job finding rate.] The probability that an
-unemployed household finds work by the end of a period, which I set to
+unemployed household finds work \new{each year it is unemployed}, which I set to
 $@@c_bar_pi_ue_value@@$ from the annual exit rate Krueger et al.\ (2014) estimate on
 matched CPS panels.
 \item[$p_{ui}$, the share of separations that are insured.] A household that
 loses its job draws UI for one year with probability $p_{ui}$ and nothing
 otherwise. It sets how many of the newly unemployed fall straight to zero
-earnings. I set it to $@@c_p_ui_value@@$.
+earnings. I set it to $@@c_p_ui_value@@$\new{, since about seven in ten unemployed people who
+worked in the past year had not applied for UI since their last job in the BLS
+supplement to the CPS for 2022}.
 \end{description}
 
 \paragraph{Block 10: Survival and SMI.} These two parameters are age profiles
@@ -2504,9 +2511,7 @@ admissions in the model, $@@u_treat_hl_m@@$ percent are homeless, against $@@u_t
 the data.
 
 \paragraph{Housing and vouchers.} Of renters in the model, $@@u_b30_m@@$ percent spend
-over thirty percent of their income on rent, against $@@u_b30_d@@$ in the SCF, and $@@u_large_m@@$ percent of
-the housed live in the largest unit size, against $@@u_large_d@@$ in the American Community
-Survey. A voucher holder in the model pays $@@u_vrent_m@@$ percent of its income in rent,
+over thirty percent of their income on rent, against $@@u_b30_d@@$ in the SCF. A voucher holder in the model pays $@@u_vrent_m@@$ percent of its income in rent,
 against $@@u_vrent_d@@$ in HUD's Picture of Subsidized Households, and $@@u_vwage_m@@$ percent of
 voucher holders live mainly on wages, against $@@u_vwage_d@@$.
 
