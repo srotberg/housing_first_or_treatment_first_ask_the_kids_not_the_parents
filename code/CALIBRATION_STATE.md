@@ -1,5 +1,18 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+22:05 omega1 FROM 1.0 CONTRADICTS THE 21:30 ESTIMATE. Passes 1-2 at price 0.995/0.990: users -56.0/-55.6, SUD
+-55.7/-55.4, h_1 -18.7/-17.8, drug gap 0.51 (supply far above demand). The archived run at 0.867/0.872 had users
+-3.7/-4.2. A 13 per cent price gap cannot carry -4 against -56 at the benchmark's participation elasticity (-2.0); it
+would take about -5.6. Pass 1 has no child continuation term, so the -56 is the FLOW channel, the child's consumption
+in the parent's problem (the author's reading, 22:00). Candidate: at omega_c = 1 many parents sit near the corner of
+solve_drug_split_with_child, a tiny quantity at 0.867 (counted as users: a user is anyone with positive consumption) and
+zero at 0.995, so participation is knife-edge while quantity is smooth; or a numerical fault in that solve. The digest
+now prints total quantity and quantity per user (5659d4a1; the workers take it at their next publish). The 21:30
+estimate (-10 to -15) rested on the 0.867 run and is withdrawn. Also WITHDRAWN, the 21:40 claim to the author that the
+old v>0 rule cut the per-year deterrent by 30: the old charge on use was weighted by the death probability before 50
+(the 13 September age gate), so it was a fraction of the ever-SUD route both rules share, and the newborn draw read the
+disorder at death, so no child was penalised for use alone. The author is right that it was nearly inert.
+
 21:30 THREE THINGS PENDING FOR THE PAPER, ON THE AUTHOR'S WORD ("when you have the drug participation and
 intensive elasticities update them in the paper everywhere they appear including all sections. and when you have the
 adjusted 30% and 50% housing cost spending with the food stamps update those too"):
