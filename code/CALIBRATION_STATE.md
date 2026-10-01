@@ -1,3 +1,18 @@
+# 1 October 03:03: b SCAN RELAUNCHED WITH THE ALL-USERS DRUG-SHARE PRINT (one class, kappa_uem 1)
+
+THETA'S MODEL CELL WAS SUD-ONLY. The 15.3 per cent reported since 18 September as "the aggregate" (gaps_table
+SPECIAL:theta_aggregate takes the FIRST figure of "DIAG drug share, sum spend / sum income", which is users
+WITH a SUD; non-SUD users are the second, 11.6) -- never said so; the author took it as all users. No all-
+users ratio was printed. On the author's instruction ("Add print, restart b scan") the Fortran prints
+"DIAG drug share, all users, sum spend / sum income" (output only, f90 after the sum-spend DIAG). Rough
+estimate ~14 against 16, so theta may need to rise with b. The scan relaunched at 03:01: sessions tagged
+b-scan-childsplit-ku1-v2 (0.6/0.7/0.8/0.9/0.95/1.0x), local 0.85x in code/omega_point_0.0_b0.0047030_ku1.0.
+The new line is NOT in the 20-minute digests (publish() greps MOMENT/BLOCK MOVE); read it from the gzipped
+logs at the end. Reminder trig_014YcDCJiAHBL4BbJLncVXAz at 07:45. The paper keeps the current numbers.
+TABLE 6 AUDIT (told the author): rows comparing different things -- homeless income (model excludes
+food stamps), psychiatric problem at admission (any vs SMI; model 0.08 per cent looks like a bug: SMI+SUD
+households almost never treat), labour force (no extensive margin), tenths (productivity vs earnings).
+
 # 1 October 03:00: ROUND e8bf0f37 -- ALL RED REMOVED; BLOCK 1 AND TABLE 4 COMMENTS IN RED
 
 theta: "calibrated internally ... close to 16.0 in the data", with the model split SUD 15.3 / non-SUD 11.6
