@@ -106,6 +106,13 @@ decimals; numbers below 0.1 keep two significant figures; tables likewise unless
 third decimal matters. `fill.text_precision()` applies it at fill time; see
 "Decimals" in NUMBERS.md.
 
+## Never abbreviate the two policies
+
+The author, 1 October: *"use the full name Treatment First, or Housing First. I wrote TF and
+HF because it is easier for me"*, and *"make sure you never use TF or HF abbreviations"*. The
+author's comments use TF and HF as shorthand; the paper never does, in prose, tables, captions
+or equations. Translate the shorthand when applying a comment.
+
 ## A parameter's paragraph runs in a fixed order
 
 The author, 1 October: *"In general, all the parameters should first describe what the

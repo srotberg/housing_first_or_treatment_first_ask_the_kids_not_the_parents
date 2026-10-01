@@ -620,7 +620,7 @@ def write_stage1_table():
     # because the value-of-life force is Treatment First against no programme.
     # ...and no column head naming the rationing: both programmes are rationed.
     L = [r'\footnotesize', r'\begin{tabular}{@{}lccc@{}}', r'\toprule',
-         r' & None & TF & HF \\', r'\midrule',
+         r' & None & Treatment First & Housing First \\', r'\midrule',
          r'\multicolumn{4}{@{}l}{\emph{Panel A. Outcomes, percent of households}} \\']
     # "Drug use", not "Drug participation" (the author, 29 September).  Cells carry the
     # prose's precision (fill.text_precision), so 3.752 in the text is 3.75 here too.
@@ -631,8 +631,8 @@ def write_stage1_table():
                                                    for p in ('none', 'tf', 'hf')) + r' \\')
     L += [r'\addlinespace',
           r'\multicolumn{4}{@{}l}{\emph{Panel B. The two forces on participation, percentage points}} \\',
-          r'\quad Value of life, TF less none & & ' + g('s1_vol_b') + r' & \\',
-          r'\quad Moral hazard, HF less TF & & & ' + g('s1_mh_b') + r' \\',
+          r'\quad Value of life, Treatment First less none & & ' + g('s1_vol_b') + r' & \\',
+          r'\quad Moral hazard, Housing First less Treatment First & & & ' + g('s1_mh_b') + r' \\',
           r'\addlinespace',
           r'\multicolumn{4}{@{}l}{\emph{Panel C. Treatment First against Housing First}} \\',
           r'\quad Households strictly worse off, percent & & ' + g('s1_worse_b') + r' & \\',
