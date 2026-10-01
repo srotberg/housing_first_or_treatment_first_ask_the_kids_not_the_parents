@@ -584,6 +584,10 @@ def numbers():
         'u_emp_hl_m': p1(mom('emp_homeless employed share of homeless')),
         'u_inc_hl_d': p1(mom('income of the homeless', 1)), 'u_inc_hl_m': p1(mom('income of the homeless')),
         'u_users_young_d': f'{100 * mom(USER_BANDS[0], 1):.0f}', 'u_users_young_m': f'{100 * mom(USER_BANDS[0]):.0f}',
+        # users at child-rearing ages, 26 to 44 (the author, round 90e5a951: "those who use drugs are
+        # of child rearing age, in similar magnitudes to the data")
+        'u_users_2644_d': f'{100 * (mom(USER_BANDS[0], 1) + mom(USER_BANDS[1], 1)):.0f}',
+        'u_users_2644_m': f'{100 * (mom(USER_BANDS[0]) + mom(USER_BANDS[1])):.0f}',
         'u_age_d': f'{age_d:.1f}', 'u_age_m': f'{age_m:.1f}',
         'u_age_dir': 'older' if age_m > age_d else 'younger',
         'u_unemp_d': p1(mom('kappa_ued unemployment given SUD', 1)), 'u_unemp_m': p1(mom('kappa_ued unemployment given SUD')),
