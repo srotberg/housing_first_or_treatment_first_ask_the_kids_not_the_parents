@@ -22,6 +22,10 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+10:25: all five report "solve running" (0.06 checked: pid 506); first digests about 10:38.
+10:25 STAGE E's BUILD CHECKED AGAINST TODAY'S SOURCE: transition_fix/patch_transition_fix.py applies to the current
+.f90 with the expected 176 diff lines, and build_transition_t60.sh builds all three in scratch, 0 warnings, 0 errors
+(code/tr60_fix itself not rebuilt; stage E rebuilds it with transition_fix/build_tr60_fix.sh).
 
 # 1 October 05:45: b WORKERS DIED AT THE 2-HOUR LIMIT; DETACH FIXED; 0.96-0.99 RELAUNCHED (v3)
 
