@@ -402,6 +402,13 @@ UNTARGETED = [
     ('Drug deaths as a share of deaths, 25--44', one('drug deaths, share of deaths'), 'CDC WONDER'),
     ('Treatment', None, None),
     ('Homeless at treatment admission', one('homeless at treatment admission'), 'TEDS-A 2022'),
+    # THE TWO NEW TEDS-A ROWS (the author, 1 October: "what about the TEDs new data we wanted
+    # to compare to the model?"): admissions by age band and employed at admission, printed by
+    # the build since 06:00 (d62835db). The data side is provisional: the TEDS-A file in
+    # data/raw is truncated at 1,048,575 rows (the declaration's note).
+    ('Treatment admissions by age, 26--34 to 65+',
+     many([f'treatment admissions, band {k}' for k in range(1, 6)]), 'TEDS-A 2022'),
+    ('Employed at treatment admission', one('employed at treatment admission'), 'TEDS-A 2022'),
     ('Psychiatric problem at SUD admission', one('SMI alongside SUD at admission'), 'TEDS-A 2022'),
     ('Working at all, homeless in treatment', one('working, homeless in treatment'), 'TEDS-A 2022'),
     ('Housing and vouchers', None, None),
@@ -588,6 +595,10 @@ def numbers():
         'u_age_dir': 'older' if age_m > age_d else 'younger',
         'u_unemp_d': p1(mom('kappa_ued unemployment given SUD', 1)), 'u_unemp_m': p1(mom('kappa_ued unemployment given SUD')),
         'u_deaths_d': p1(mom('drug deaths, share of deaths', 1)), 'u_deaths_m': p1(mom('drug deaths, share of deaths')),
+        'u_tadm1_d': p1(mom('treatment admissions, band 1', 1)), 'u_tadm1_m': p1(mom('treatment admissions, band 1')),
+        'u_tadm55_d': p1(mom('treatment admissions, band 4', 1) + mom('treatment admissions, band 5', 1)),
+        'u_tadm55_m': p1(mom('treatment admissions, band 4') + mom('treatment admissions, band 5')),
+        'u_temp_d': p1(mom('employed at treatment admission', 1)), 'u_temp_m': p1(mom('employed at treatment admission')),
         'u_treat_hl_d': p1(mom('homeless at treatment admission', 1)), 'u_treat_hl_m': p1(mom('homeless at treatment admission')),
         'u_b30_d': f'{100 * C["renter_burden_30_data"]:.1f}', 'u_b30_m': p1(mom('renters above 30 pct of income')),
         'u_vrent_d': p1(mom('tenant contribution rate', 1)), 'u_vrent_m': p1(mom('tenant contribution rate')),
