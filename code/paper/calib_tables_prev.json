@@ -2,8 +2,8 @@
  "tab_eleven": {
   "heads": [
    "Who uses drugs",
-   "What using and being homeless cost, and the voucher",
-   "Mental illness chain",
+   "Costs of homelessness and vouchers",
+   "SMI chain",
    "Recovery and treatment",
    "Externalities",
    "Drug market"
@@ -11,7 +11,7 @@
   "rows": {
    "$T_0$": [
     "$T_0$",
-    "Entry endowment over mean earnings",
+    "Endowment at entry to adulthood ($j=1$)",
     "Int.",
     "Share of homeless aged 25 to 34, HUD PiT 2024",
     "26.0\\%",
@@ -47,7 +47,7 @@
    ],
    "$\\delta_d$": [
     "$\\delta_d$",
-    "Child's earnings, parent's SUD",
+    "Earnings the child loses to a parent's SUD",
     "Ext.",
     "Earnings lost in utero, Nilsson (2017)",
     "0.24",
@@ -65,7 +65,7 @@
    ],
    "$\\kappa^{ue}_{d}$": [
     "$\\kappa^{ue}_{d}$",
-    "Job-finding divisor, SUD",
+    "How much harder it is to regain employment with a SUD",
     "Int.",
     "SUD share of the homeless, Gutwinski et al.\\ (2021)",
     "21.7\\%",
@@ -74,7 +74,7 @@
    ],
    "$\\kappa^{ue}_{m}$": [
     "$\\kappa^{ue}_{m}$",
-    "Job-finding divisor, SMI",
+    "How much harder it is to regain employment with SMI",
     "Int.",
     "SMI share of the homeless, Gutwinski et al.\\ (2021)",
     "25\\%",
@@ -92,7 +92,7 @@
    ],
    "$\\kappa_{H}$": [
     "$\\kappa_{H}$",
-    "Employment penalty, shelter",
+    "Employment penalty of homelessness",
     "Ext.",
     "Desmond and Gershenson (2016)",
     "0.20",
@@ -101,7 +101,7 @@
    ],
    "$\\kappa_{\\phi H}$": [
     "$\\kappa_{\\phi H}$",
-    "Mortality multiplier, shelter",
+    "Mortality when homeless",
     "Ext.",
     "Meyer et al.\\ (2023)",
     "1.60",
@@ -110,7 +110,7 @@
    ],
    "$\\kappa_{\\phi d}$": [
     "$\\kappa_{\\phi d}$",
-    "Mortality multiplier, SUD",
+    "Increased mortality with a SUD",
     "Int.",
     "Income of drug users over average, NSDUH 2024",
     "74\\%",
@@ -119,7 +119,7 @@
    ],
    "$\\kappa_{\\phi m}$": [
     "$\\kappa_{\\phi m}$",
-    "Mortality multiplier, SMI",
+    "Mortality multiplier for SMI",
     "Ext.",
     "Olfson et al.\\ (2015)",
     "2.50",
@@ -128,7 +128,7 @@
    ],
    "$\\lambda_m$": [
     "$\\lambda_m$",
-    "Chance of recovering from SMI",
+    "Annual chance of recovering from SMI",
     "Ext.",
     "SMI ten-year recovery rate, {\\AA}sb{\\o} et al.\\ (2022)",
     "50\\%",
@@ -137,7 +137,7 @@
    ],
    "$\\mu_H$": [
     "$\\mu_H$",
-    "Recovery multiplier in a shelter",
+    "SUD recovery when homeless",
     "Int.",
     "Abstinence, housed/homeless, Milby et al.\\ (2005)",
     "1.47",
@@ -146,7 +146,7 @@
    ],
    "$\\mu_m$": [
     "$\\mu_m$",
-    "SUD recovery multiplier, SMI",
+    "SUD recovery multiplier for SMI",
     "Ext.",
     "Dual diagnosis relapse, Bradizza et al.\\ (2006)",
     "0.82",
@@ -155,7 +155,7 @@
    ],
    "$\\omega_c$": [
     "$\\omega_c$",
-    "Weight on the child",
+    "Parent's weight on its child",
     "Int.",
     "Non-parents' use over parents', NSDUH 2024",
     "18.3\\%",
@@ -182,25 +182,16 @@
    ],
    "$\\pi_d$": [
     "$\\pi_d$",
-    "Chance a year of use leads to a SUD",
+    "Chance that a year of use leads to a SUD",
     "Int.",
     "Share of users carrying a SUD, NSDUH 2024",
     "41.3\\%",
     "42.6\\%",
     "0.0345"
    ],
-   "$\\rho$": [
-    "$\\rho$",
-    "Intergenerational persistence",
-    "Ext.",
-    "Solon (1992), Mazumder (2005)",
-    "0.50",
-    "n.a.",
-    "0.50"
-   ],
    "$\\theta$": [
     "$\\theta$",
-    "Weight on the drug",
+    "Weight on drugs in utility",
     "Int.",
     "Drug spending over income, Midgette et al.\\ (2019)",
     "16.0\\%",
@@ -227,7 +218,7 @@
    ],
    "$b$": [
     "$b$",
-    "Shifter on the drug",
+    "Whether a household uses at all",
     "Int.",
     "Drug participation, NSDUH 2024",
     "8.90\\%",
@@ -236,7 +227,7 @@
    ],
    "$g$": [
     "$g$",
-    "Treatment multiplier on recovery",
+    "Treatment effect on recovery",
     "Ext.",
     "Remission with medication for opioid use disorder",
     "2.00",
@@ -245,7 +236,7 @@
    ],
    "$h_1$": [
     "$h_1$",
-    "Housing services in a shelter",
+    "Service flow of homelessness",
     "Int.",
     "Homelessness rate, HUD PiT 2023, within a band",
     "0.40--1.00\\%",
@@ -259,15 +250,15 @@
    "Preferences",
    "Rental ladder",
    "Earnings and employment",
-   "Survival and mental illness",
+   "Survival and SMI",
    "Interest and taxes",
-   "Social security and programmes' rules",
+   "Social security benefits and programmes' rules",
    "Drug market"
   ],
   "rows": {
    "$J_E$": [
     "$J_E$",
-    "Last age use can begin",
+    "Maximum age at which use can begin",
     "Ext.",
     "Model age 55, that is age 80",
     "55",
@@ -276,7 +267,7 @@
    ],
    "$S(y)$": [
     "$S(y)$",
-    "Replacement rates, bend points",
+    "Social security",
     "Ext.",
     "SSA primary insurance amount",
     "statute",
@@ -312,7 +303,7 @@
    ],
    "$\\bar\\pi^{ue}$": [
     "$\\bar\\pi^{ue}$",
-    "Job finding rate, annual",
+    "Annual job finding rate",
     "Ext.",
     "Krueger et al.\\ (2014)",
     "0.55",
@@ -330,7 +321,7 @@
    ],
    "$\\gamma$": [
     "$\\gamma$",
-    "Housing weight, non-drug bundle",
+    "Weight on housing services",
     "Int.",
     "Housing over expenditure net of drugs, CEX 2024",
     "26.8\\%",
@@ -357,7 +348,7 @@
    ],
    "$\\nu_1$": [
     "$\\nu_1$",
-    "Drug supply shifter",
+    "Supply shifter",
     "Ext.",
     "Normalisation, so $p_v=1$",
     "norm.",
@@ -369,6 +360,15 @@
     "UI replacement rate",
     "Ext.",
     "DOL statutory replacement rates",
+    "0.50",
+    "n.a.",
+    "0.50"
+   ],
+   "$\\rho$": [
+    "$\\rho$",
+    "Persistence of productivity across generations",
+    "Ext.",
+    "Solon (1992), Mazumder (2005)",
     "0.50",
     "n.a.",
     "0.50"
@@ -411,7 +411,7 @@
    ],
    "$\\tau_{\\ell}$": [
     "$\\tau_{\\ell}$",
-    "Tax level",
+    "Level of the labour income tax",
     "Int.",
     "Average labour income tax, McDaniel (2007)",
     "22.4\\%",
@@ -447,7 +447,7 @@
    ],
    "$\\varrho$": [
     "$\\varrho$",
-    "Food stamp taper rate",
+    "Food stamp clawback rate",
     "Ext.",
     "SNAP statute, 7 CFR 273.10",
     "0.30",
@@ -465,7 +465,7 @@
    ],
    "$\\xi_j$": [
     "$\\xi_j$",
-    "Equivalence scale, child at home",
+    "Equivalence scale",
     "Ext.",
     "Square-root scale, OECD",
     "1.41",
@@ -501,7 +501,7 @@
    ],
    "$p_{ui}$": [
     "$p_{ui}$",
-    "Share of separations insured",
+    "Share of separations that are insured",
     "Ext.",
     "Set",
     "0.30",

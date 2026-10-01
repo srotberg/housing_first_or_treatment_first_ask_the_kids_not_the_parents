@@ -264,8 +264,13 @@ STANDARD = [
          f(math.sqrt(2)), NA, f(math.sqrt(2))),
     ]),
     ('Rental ladder', [
-        (r'$h_2$', 'Smallest rental size', setcol('h2'), r'Renters paying over 30\% of income, SCF 2022',
-         pc(C['renter_burden_30_data']), pc(mom('renters above 30 pct of income')),
+        # THE TWO BURDEN CUTS SWAPPED (the author, 1 October: "maybe it's better to use that
+        # for the h2 calibration point ... and use the 30% in the validation ... just swap
+        # them"): h_2's row reads the over-half share, the 30 per cent one is untargeted. The
+        # Fortran's h_2 rule still brackets on the 30 per cent cut; h_2 is held in every run
+        # until the next full calibration, which must switch the rule first.
+        (r'$h_2$', 'Smallest rental size', setcol('h2'), r'Renters paying over half of income, SCF 2022',
+         pc(C['renter_burden_50_data']), pc(mom('over half of income, all renters')),
          f(H['smallest_rental_relative_to_lowest_income'], 4)),
         (r'$h_3/h_2$', 'Middle rung over the smallest', 'Ext.', 'Set', f(H['rung_ratio_h3']), NA,
          f(H['rung_ratio_h3'])),
@@ -383,8 +388,8 @@ UNTARGETED = [
     ('Housing and vouchers', None, None),
     # the data side from the declaration (0.192, renters with positive income and rent,
     # 1 October), not from the benchmark log's observed=, which is the old 0.175
-    ('Renters paying over half of income', (f'{100 * C["renter_burden_50_data"]:.1f}',
-     f'{100 * mom("over half of income, all renters"):.1f}'), 'SCF 2022'),
+    (r'Renters paying over 30\% of income', (f'{100 * C["renter_burden_30_data"]:.1f}',
+     f'{100 * mom("renters above 30 pct of income"):.1f}'), 'SCF 2022'),
     ('Housed in the largest unit size', one('h_3 share in the largest unit'), 'ACS 2023, B25042'),
     ('Rent over income, voucher holders', one('tenant contribution rate'), 'HUD PSH 2023'),
     ('Voucher holders living on wages', one('voucher holders, wages main'), 'HUD PSH 2023'),
@@ -399,9 +404,9 @@ UNTARGETED = [
          (f'{100 * mom("w_bot net worth share, bottom half", 1):.1f}',
           f'{100 * mom("w_bot net worth share, bottom half"):.1f}'))), 'SCF 2022, FRB DFA'),
     ('Drug price elasticities', None, None),
-    ('Participation (extensive margin)', (r'$-0.3$ to $-0.9$', f"${RES['x_el_part']}$"),
+    ('Participation (extensive margin)', (f"${RES['x_el_part_lo']}$ to ${RES['x_el_part_hi']}$", f"${RES['x_el_part']}$"),
      r'Saffer and Chaloupka (1999), Grossman and Chaloupka (1998)'),
-    ('Per user, all users (intensive margin)', (r'$-0.3$ to $-0.8$', f"${RES['x_el_int']}$"),
+    ('Per user, all users (intensive margin)', (f"${RES['x_el_int_lo']}$ to ${RES['x_el_int_hi']}$", f"${RES['x_el_int']}$"),
      r'Grossman and Chaloupka (1998), Olmstead et al.\ (2015)'),
     ('Transmission, odds ratios', None, None),
     # BOTH STUDIES ON ONE LINE (the author, 1 October: "just add it to the above, combine
@@ -564,7 +569,7 @@ def numbers():
         'u_unemp_d': p1(mom('kappa_ued unemployment given SUD', 1)), 'u_unemp_m': p1(mom('kappa_ued unemployment given SUD')),
         'u_deaths_d': p1(mom('drug deaths, share of deaths', 1)), 'u_deaths_m': p1(mom('drug deaths, share of deaths')),
         'u_treat_hl_d': p1(mom('homeless at treatment admission', 1)), 'u_treat_hl_m': p1(mom('homeless at treatment admission')),
-        'u_b50_d': f'{100 * C["renter_burden_50_data"]:.1f}', 'u_b50_m': p1(mom('over half of income, all renters')),
+        'u_b30_d': f'{100 * C["renter_burden_30_data"]:.1f}', 'u_b30_m': p1(mom('renters above 30 pct of income')),
         'u_large_d': p1(mom('h_3 share in the largest unit', 1)), 'u_large_m': p1(mom('h_3 share in the largest unit')),
         'u_vrent_d': p1(mom('tenant contribution rate', 1)), 'u_vrent_m': p1(mom('tenant contribution rate')),
         'u_vwage_d': p1(mom('voucher holders, wages main', 1)), 'u_vwage_m': p1(mom('voucher holders, wages main')),

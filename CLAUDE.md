@@ -105,6 +105,16 @@ decimals; numbers below 0.1 keep two significant figures; tables likewise unless
 third decimal matters. `fill.text_precision()` applies it at fill time; see
 "Decimals" in NUMBERS.md.
 
+## A parameter's paragraph runs in a fixed order
+
+The author, 1 October: *"In general, all the parameters should first describe what the
+parameter controls, how it relates to TF, HF or drug use (if those are applicable, because
+they may not always be applicable), and, then explain how things change when it rises, and
+only at the end discuss the target and source."* Every item in Section 5 follows it: what it
+controls, its link to TF, HF or drug use, what happens as it rises, then the value, the
+moment and the source. A value or a citation in the first sentence is the mistake this
+rule was written for.
+
 ## Red accumulates from Section 4 onward, and stripping it is a mistake
 
 `writing/strip_red.py` takes a file and removes every red wrapper in it. It must

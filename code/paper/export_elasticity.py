@@ -98,5 +98,10 @@ out['x_el_int'] = f'{user:.2f}'
 out['x_el_part_where'] = where(part, LIT['part'])
 out['x_el_int_where'] = where(user, LIT['int'])
 out['x_el_int_so'] = so_int(out['x_el_int_where'])
+# THE LITERATURE'S ENDS AS NAMES, so the validation paragraph and Table 6 quote the range
+# the direction words are measured against rather than typing it a second time
+for k, (lo, hi) in LIT.items():
+    out[f'x_el_{k}_lo'] = f'{lo:.1f}'
+    out[f'x_el_{k}_hi'] = f'{hi:.1f}'
 json.dump(out, open(OUT, 'w'), indent=1, sort_keys=True)
 print({k: out[k] for k in ('x_el_part', 'x_el_int', 'x_el_part_where', 'x_el_int_where', 'x_el_dp_list')})
