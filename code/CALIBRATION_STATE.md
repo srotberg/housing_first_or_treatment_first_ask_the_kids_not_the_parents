@@ -22,6 +22,10 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+13:20 THETA FOR ALL USERS, reported to the author (asked 13:12, "vs just those with SUD"): drug spending over income, sum of
+spending / sum of income, at b* (omega_c = 0, kappa_uem = 1): ALL USERS 13.48 per cent (data 16), SUD ONLY 15.29, non-SUD 11.20;
+the calibrated mean-of-ratios row 52.5 (SUD 87.75, non-SUD 26.46). Flat in b: 0.97x 13.43 / 15.30, 0.99x 13.47 / 15.27. The
+all-users figure settled at 13.48 by block 6. theta NOT moved. 0.97x and 0.99x FINISHED (12:13 users 11.01, 11:57 users 10.13).
 13:10 STOPPED 0.05, 0.055, 0.06, 0.065 (archived: session_01KqoyTd5UvvwAYsKXYN4qMT, session_01LokRLWqtqYFJNhSiU5M257,
 session_01Ns9HRdzh34Wf15h4sR5idj, session_0116xprDm5aocixbndP9KTv2) -- the author, 13:08: "Just stop the ones that have no
 chance". Last rise against omega_c = 0 at the same block: 0.05 12.8 (block 8), 0.055 14.9 (6), 0.06 16.2 (3), 0.065 15.5 (6).
