@@ -31,6 +31,10 @@ before stage C's local arms need the cores. Also flagged to the author: SMI alon
 the model (b* and the current benchmark alike) against 43.1 -- implausibly low, may be a measurement problem; asked
 whether to investigate. Round bb799b06 committed (Block 3, SMI sweep, table labels); asked whether to add the SS bend
 points (0.2208, 1.3314), taxable maximum (2.6428) and the alpha names to Table 5 / Block 12.
+15:51 CONTAINER RESTART (uptime 0 at 15:51): the local TEDS-A run (code/teds_bstar) died at 15:49 in block 2. NOT
+relaunched: block 1 already shows the pattern, the converged values come with the new benchmark's log at stage B (the
+omega_c runs carry the prints), and stage C's local arms need the cores. Its directory is stale; a relaunch starts from
+the seed in a fresh directory (lesson of 30 September). Scratch scripts, binaries and tools survived.
 15:40 TEDS-A, FIRST READING (code/teds_bstar, block 1, b* at omega_c = 0; block 1 is transient, users 9.79 v 10.54
 settled): admissions by age 26-34/35-44/45-54/55-64/65+ model 1.8/8.4/32.9/44.7/12.2 against TEDS-A 40.5/33.9/15.6/8.5/1.6 --
 REVERSED, the model's treated are old; employed at admission 60.6 v 23.6; homeless at admission 4.0 v 14.5 (3.0 settled at
