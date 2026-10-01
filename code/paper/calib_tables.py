@@ -291,7 +291,7 @@ STANDARD = [
         (r'$J_R$', 'Retirement age', 'Ext.', f"Age {AGE0 + J_RET}, SSA full retirement age",
          f'{J_RET}', NA, f'{J_RET}'),
         (r'$\varepsilon(j)$', 'Age profile of efficiency', 'Ext.',
-         r'Hump peaking at age 56, Greenwood et al.\ (2025)', 'profile', NA, 'profile'),
+         r'Hump peaking at age 56, Greenwood et al.\ (2025)', 'Profile', NA, 'Profile'),
         (r'$\rho_z$', 'Persistence of productivity', 'Ext.', r'Guvenen et al.\ (2023b)',
          f(H['persistence_employment_surviving']), NA, f(H['persistence_employment_surviving'])),
         (r'$\sigma_\zeta$', 'Standard deviation of its shocks', setcol('sigma_y'),
@@ -307,7 +307,7 @@ STANDARD = [
         # how the separation tilt is set (the author, round b8142d12: "shouldn't you explain
         # how this parameter is set?!"): data/UNEMPLOYMENT_BY_PRODUCTIVITY.md
         (r'$\varpi(y)$', 'Separations by productivity', 'Ext.', 'Unemployment by education, BLS 2019',
-         'profile', NA, 'profile'),
+         'Profile', NA, 'Profile'),
         (r'$\bar\pi^{ue}$', 'Annual job finding rate', 'Ext.', r'Krueger et al.\ (2014)',
          f(C['probability_becoming_employed']), NA, f(C['probability_becoming_employed'])),
         # BLS USDL-23-0586 (the author, round b8142d12): about 7 in 10 of the unemployed who
@@ -317,9 +317,9 @@ STANDARD = [
     ]),
     ('Baseline survival and SMI onset', [
         (r'$\bar\phi_j$', 'Baseline survival by age', 'Ext.', 'SSA period life table, ages 26 to 85',
-         'profile', NA, 'profile'),
+         'Profile', NA, 'Profile'),
         (r'$\varsigma_m(j)$', 'Age profile of SMI onset', 'Ext.', 'SMI prevalence by age, NSDUH 2024',
-         'profile', NA, 'profile'),
+         'Profile', NA, 'Profile'),
     ]),
     ('Interest and taxes', [
         (r'$r$', 'Risk-free rate', 'Ext.', r'Kaplan et al.\ (2020)',
@@ -335,7 +335,7 @@ STANDARD = [
     ]),
     ("Social security benefits and programmes' rules", [
         (r'$S(y)$', 'Social security', 'Ext.', 'SSA primary insurance amount',
-         'statute', NA,
+         'Statute', NA,
          f'{C["ss_pia_rate_1"]:.2f}, {C["ss_pia_rate_2"]:.2f}, {C["ss_pia_rate_3"]:.2f}'),
         (r'$\underline S$', 'SSI floor over entry productivity', 'Ext.', 'SSA federal benefit rate',
          f(H['ssi_floor_level'], 3), NA, f(H['ssi_floor_level'], 3)),
@@ -353,7 +353,7 @@ STANDARD = [
     ('Drug market', [
         (r'$J_E$', 'Maximum age at which use can begin', 'Ext.', 'Model age 55, that is age 80',
          f'{C["max_age_to_choose_addiction"]:.0f}', NA, f'{C["max_age_to_choose_addiction"]:.0f}'),
-        (r'$\nu_1$', 'Supply shifter', 'Ext.', r'Normalisation, so $p_v=1$', 'norm.', NA, 'norm.'),
+        (r'$\nu_1$', 'Supply shifter', 'Ext.', r'Normalisation, so $p_v=1$', 'Norm.', NA, 'Norm.'),
     ]),
 ]
 
@@ -379,7 +379,7 @@ USER_BANDS = ['users aged 34 or less, share', 'users aged 35-44, share', 'users 
 
 # (moment, (data, model), source); per cent unless the label says otherwise.
 UNTARGETED = [
-    ('Homelessness', None, None),
+    ('Block 1: Homelessness', None, None),
     # SHARES IN THE BAND, NOT RATES WITHIN IT (the author, 1 October: "what i need for
     # SUD and homelessness by age is share of in the band, not share within the age
     # bracket"). The within-band rate row went: its data are PERSON rates at the PiT
@@ -390,7 +390,7 @@ UNTARGETED = [
      (f'{100 * C["employed_share_of_homeless_data"]:.0f}', f'{100 * mom("emp_homeless employed share of homeless"):.1f}'),
      'HUD PiT 2023, TEDS-A 2022'),
     ('Income of the homeless, over average', one('income of the homeless'), r'Meyer et al.\ (2024)'),
-    ('Who uses and who carries a SUD', None, None),
+    ('Block 2: Who uses and who carries a SUD', None, None),
     ('Share of users by age, 26--34 to 65+', many(USER_BANDS, 0), 'NSDUH 2024'),
     ('Mean age of users, years', one('mean age of drug users', 1, 1), 'NSDUH 2024'),
     ('Unemployment given a SUD', one('kappa_ued unemployment given SUD'), 'NSDUH 2024'),
@@ -400,25 +400,17 @@ UNTARGETED = [
     ('Drug use with SMI over without, ratio', (SMI_USE['c_smi_use_ratio_data'],
      f"{float(SMI_USE['c_smi_use_ratio_model']):.2f}"), 'NSDUH 2024'),
     ('Drug deaths as a share of deaths, 25--44', one('drug deaths, share of deaths'), 'CDC WONDER'),
-    ('Treatment', None, None),
-    ('Homeless at treatment admission', one('homeless at treatment admission'), 'TEDS-A 2022'),
-    # THE TWO NEW TEDS-A ROWS (the author, 1 October: "what about the TEDs new data we wanted
-    # to compare to the model?"): admissions by age band and employed at admission, printed by
-    # the build since 06:00 (d62835db). The data side is provisional: the TEDS-A file in
-    # data/raw is truncated at 1,048,575 rows (the declaration's note).
-    ('Treatment admissions by age, 26--34 to 65+',
-     many([f'treatment admissions, band {k}' for k in range(1, 6)]), 'TEDS-A 2022'),
-    ('Employed at treatment admission', one('employed at treatment admission'), 'TEDS-A 2022'),
-    ('Psychiatric problem at SUD admission', one('SMI alongside SUD at admission'), 'TEDS-A 2022'),
-    ('Working at all, homeless in treatment', one('working, homeless in treatment'), 'TEDS-A 2022'),
-    ('Housing and vouchers', None, None),
+    # THE TREATMENT BLOCK WENT (the author, round 8a826aab: "remove. we need to find better data
+    # that the model actually replicates...and something meaningul"). Its five TEDS-A rows are
+    # in git history; the full TEDS-A 2024 file is now data/raw/TEDS-A-2024-DS0001-*.zip.
+    ('Block 3: Housing and vouchers', None, None),
     # the data side from the declaration (0.192, renters with positive income and rent,
     # 1 October), not from the benchmark log's observed=, which is the old 0.175
     (r'Renters paying over 30\% of income', (f'{100 * C["renter_burden_30_data"]:.1f}',
      f'{100 * mom("renters above 30 pct of income"):.1f}'), 'SCF 2022'),
     ('Rent over income, voucher holders', one('tenant contribution rate'), 'HUD PSH 2023'),
     ('Voucher holders living on wages', one('voucher holders, wages main'), 'HUD PSH 2023'),
-    ('Distribution, shares of the total', None, None),
+    ('Block 4: Distribution, shares of the total', None, None),
     (r'Income, bottom 1, 5, 10, 20\%',
      many([f'income share bottom {p} pct' for p in (1, 5, 10, 20)], 2), 'SCF 2022'),
     # THE BOTTOM HALF JOINS THE ROW (the author, 1 October: "add the 50% here instead of
@@ -428,12 +420,12 @@ UNTARGETED = [
          many([f'wealth share bottom {p} pct' for p in (1, 5, 10, 20)], 2, neg=True),
          (f'{100 * mom("w_bot net worth share, bottom half", 1):.1f}',
           f'{100 * mom("w_bot net worth share, bottom half"):.1f}'))), 'SCF 2022, FRB DFA'),
-    ('Drug price elasticities', None, None),
+    ('Block 5: Drug price elasticities', None, None),
     ('Participation (extensive margin)', (f"${RES['x_el_part_lo']}$ to ${RES['x_el_part_hi']}$", f"${RES['x_el_part']}$"),
      r'Saffer and Chaloupka (1999), Grossman and Chaloupka (1998)'),
     ('Per user, all users (intensive margin)', (f"${RES['x_el_int_lo']}$ to ${RES['x_el_int_hi']}$", f"${RES['x_el_int']}$"),
      r'Grossman and Chaloupka (1998), Olmstead et al.\ (2015)'),
-    ('Transmission, odds ratios', None, None),
+    ('Block 6: Transmission, odds ratios', None, None),
     # BOTH STUDIES ON ONE LINE (the author, 1 October: "just add it to the above, combine
     # them in one line"): 1.44 is Mellentin's and 2.51 Yoon's
     ('Child of a SUD parent acquires a SUD',
@@ -586,6 +578,7 @@ def numbers():
     odds_d, odds_h = mom('delta_d child SUD odds ratio'), mom('delta_h child homeless odds ratio')
     nums.update({
         'u_hl_3544_d': p1(band(2, 1)), 'u_hl_3544_m': p1(band(2)),
+        'u_hl_2554_d': p1(band(1, 1) + band(2, 1) + band(3, 1)), 'u_hl_2554_m': p1(band(1) + band(2) + band(3)),
         'u_hl_55p_d': p1(band(4, 1) + band(5, 1)), 'u_hl_55p_m': p1(band(4) + band(5)),
         'u_emp_hl_d': f'{100 * C["employed_share_of_homeless_data"]:.0f}',
         'u_emp_hl_m': p1(mom('emp_homeless employed share of homeless')),

@@ -12,37 +12,37 @@
 Parameter & Description & Set & Moment and source & Data & Model & Value \\
 \midrule
 \multicolumn{7}{@{}l}{\emph{Block 1: Who uses drugs}} \\
-$\theta$ & Weight on drugs in utility & Int. & Drug spending over income, Midgette et al.\ (2019) & 16.0\% & \textcolor{red}{14.8\%} & 0.165 \\
-$b$ & Whether a household uses at all & Int. & Drug participation, NSDUH 2024 & 8.90\% & \textcolor{red}{8.96\%} & \textcolor{red}{0.0054} \\
+$\theta$ & Weight on drugs in utility & Int. & Drug spending over income, Midgette et al.\ (2019) & 16.0\% & 14.8\% & 0.165 \\
+$b$ & Whether a household uses at all & Int. & Drug participation, NSDUH 2024 & 8.90\% & 8.96\% & 0.0054 \\
 $\pi_d$ & Chance that a year of use leads to a SUD & Int. & Share of users carrying a SUD, NSDUH 2024 & 41.3\% & 42.6\% & 0.0345 \\
-$\kappa_{\phi d}$ & Increased mortality with a SUD & Int. & Income of drug users over average, NSDUH 2024 & 74\% & \textcolor{red}{62\%} & 4.00 \\
-$\aleph$ & Flow value of being alive & Int. & VSL, Viscusi and Aldy (2003) & 80 & \textcolor{red}{81} & 87.6 \\
+$\kappa_{\phi d}$ & Increased mortality with a SUD & Int. & Income of drug users over average, NSDUH 2024 & 74\% & 62\% & 4.00 \\
+$\aleph$ & Flow value of being alive & Int. & VSL, Viscusi and Aldy (2003) & 80 & 81 & 87.6 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Block 2: Costs of homelessness and vouchers}} \\
-$\kappa^{ue}_{d}$ & How much harder it is to regain employment with a SUD & Int. & SUD share of the homeless, Gutwinski et al.\ (2021) & 21.7\% & \textcolor{red}{20.2\%} & 3.78 \\
-$h_1$ & Service flow of homelessness & Int. & Homelessness rate, HUD PiT 2023, within a band & 0.40--1.00\% & \textcolor{red}{0.62\%} & 0.0216 \\
+$\kappa^{ue}_{d}$ & How much harder it is to regain employment with a SUD & Int. & SUD share of the homeless, Gutwinski et al.\ (2021) & 21.7\% & 20.2\% & 3.78 \\
+$h_1$ & Service flow of homelessness & Int. & Homelessness rate, HUD PiT 2023, within a band & 0.40--1.00\% & 0.62\% & 0.0216 \\
 $\kappa_{\phi H}$ & Mortality when homeless & Ext. & Meyer et al.\ (2023) & 1.60 & n.a. & 1.60 \\
 $\kappa_{H}$ & Employment penalty of homelessness & Ext. & Desmond and Gershenson (2016) & 0.20 & n.a. & 0.20 \\
-$\underline c$ & Food stamp maximum allotment & Int. & Food stamps over output (GDP), USDA & 0.42\% & \textcolor{red}{0.43\%} & 0.0879 \\
-$\pi_V$ & Chance of drawing a voucher & Int. & Recipients over eligible, HUD 2023 & 26.6\% & \textcolor{red}{27.5\%} & 0.0675 \\
-$T_0$ & Endowment at entry to adulthood ($j=1$) & Int. & Share of homeless aged 25 to 34, HUD PiT 2024 & 26.0\% & \textcolor{red}{26.4\%} & 0.111 \\
+$\underline c$ & Food stamp maximum allotment & Int. & Food stamps over output (GDP), USDA & 0.42\% & 0.43\% & 0.0879 \\
+$\pi_V$ & Chance of drawing a voucher & Int. & Recipients over eligible, HUD 2023 & 26.6\% & 27.5\% & 0.0675 \\
+$T_0$ & Endowment at entry to adulthood ($j=1$) & Int. & Share of homeless aged 25 to 34, HUD PiT 2024 & 26.0\% & 26.4\% & 0.111 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Block 3: SMI chain}} \\
 $\iota$ & SUD multiplier on SMI onset & Ext. & Danish registers, Nielsen et al.\ (2017) & 2.00 & n.a. & 2.00 \\
 $\lambda_m$ & Annual chance of recovering from SMI & Ext. & SMI ten-year recovery rate, {\AA}sb{\o} et al.\ (2022) & 50\% & n.a. & 0.066 \\
-$\omega_m$ & Level of the SMI onset profile & Int. & SMI share of the population, NSDUH 2024 & 4.82\% & \textcolor{red}{4.83\%} & 0.0037 \\
-$\kappa^{ue}_{m}$ & How much harder it is to regain employment with SMI & Int. & SMI share of the homeless, Gutwinski et al.\ (2021) & 25\% & \textcolor{red}{24.7\%} & 7.71 \\
+$\omega_m$ & Level of the SMI onset profile & Int. & SMI share of the population, NSDUH 2024 & 4.82\% & 4.83\% & 0.0037 \\
+$\kappa^{ue}_{m}$ & How much harder it is to regain employment with SMI & Int. & SMI share of the homeless, Gutwinski et al.\ (2021) & 25\% & 24.7\% & 7.71 \\
 $\mu_m$ & SUD recovery multiplier for SMI & Ext. & Dual diagnosis relapse, Bradizza et al.\ (2006) & 0.82 & n.a. & 0.82 \\
 $\kappa_{\phi m}$ & Mortality multiplier for SMI & Ext. & Olfson et al.\ (2015) & 2.50 & n.a. & 2.50 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Block 4: Recovery and treatment}} \\
 $\bar\pi_r$ & Baseline SUD recovery rate & Ext. & SUD ten-year remission rate, Vaillant (1995) & 0.025 & n.a. & 0.025 \\
-$\mu_H$ & SUD recovery when homeless & Int. & Abstinence, housed/homeless, Milby et al.\ (2005) & 1.47 & \textcolor{red}{1.45} & 0.696 \\
+$\mu_H$ & SUD recovery when homeless & Int. & Abstinence, housed/homeless, Milby et al.\ (2005) & 1.47 & 1.45 & 0.696 \\
 $g$ & Treatment effect on recovery & Ext. & Remission with medication for opioid use disorder & 2.00 & n.a. & 2.00 \\
-$\bar\tau^{u}$ & Utility cost of treatment & Int. & Treatment take-up, NSDUH 2024 & 24.5\% & \textcolor{red}{24.9\%} & 4.49 \\
+$\bar\tau^{u}$ & Utility cost of treatment & Int. & Treatment take-up, NSDUH 2024 & 24.5\% & 24.9\% & 4.49 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Block 5: Externalities}} \\
-$\omega_c$ & Parent's weight on its child & Int. & Non-parents' use over parents', NSDUH 2024 & 18.3\% & \textcolor{red}{17.7\%} & \textcolor{red}{0.085} \\
+$\omega_c$ & Parent's weight on its child & Int. & Non-parents' use over parents', NSDUH 2024 & 18.3\% & 17.7\% & 0.085 \\
 $\delta_d$ & Earnings the child loses to a parent's SUD & Ext. & Earnings lost in utero, Nilsson (2017) & 0.24 & n.a. & 0.24 \\
 $\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay, Loubi\`ere et al.\ (2020) & 0.20\% & 0.20\% & 0.93 \\
 \addlinespace
