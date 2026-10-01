@@ -2038,16 +2038,16 @@ HF and TF work on this block, from opposite ends: each parameter says how bad a 
 is, so each sets what a voucher is worth to a household in that state and
 what being removed from that state is worth.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\kappa^{ue}_{d}$, how much harder it is to find a job with a SUD.] \new{A
-household with a SUD who is unemployed} finds work at the rate $\bar\pi^{ue}$ divided
-by $\kappa^{ue}_{d}$. Raising \new{$\kappa^{ue}_{d}$} makes unemployment spells longer for households
+\item[$\kappa^{ue}_{d}$, how much harder it is to find a job with a SUD.] A
+household with a SUD who is unemployed finds work at the rate $\bar\pi^{ue}$ divided
+by $\kappa^{ue}_{d}$. Raising $\kappa^{ue}_{d}$ makes unemployment spells longer for households
 with a SUD, and thus they are more likely to be unhoused, which is the link from the
-disorder to the street\new{, and which also affects the efficacy of TF to deter drug use}. It is internally calibrated to the SUD share of the homeless, $@@c_kappa_ue_d_data@@$ percent in Gutwinski et al.\
+disorder to the street, and which also affects the efficacy of TF to deter drug use. It is internally calibrated to the SUD share of the homeless, $@@c_kappa_ue_d_data@@$ percent in Gutwinski et al.\
 (2021), which the model gives as $@@c_kappa_ue_d_model@@$.
 \item[$h_1$, the service flow of homelessness.] This parameter sets how bad the outside option
 is, and the value of being alive is measured against that outside option: a
 household with little to lose from dying is one for which the mortality cost of
-using is \new{smaller}. When $h_1$ rises, a shelter is less bad, a voucher is worth less and TF has
+using is smaller. When $h_1$ rises, a shelter is less bad, a voucher is worth less and TF has
 less to act on. Its value is chosen so that the
 homelessness rate lies within @@c_h_1_data@@ percent of households. The floor is
 HUD's 2023 PiT count, which counts a single night and so misses households homeless at
@@ -2064,16 +2064,16 @@ Meyer et al.\ (2023).
 \item[$\kappa_{H}$, the employment penalty of homelessness.] This parameter
 decides how much more likely a household in a shelter is to lose its job and how much
 less likely it is to find one: separations are $1+\kappa_H$ times as frequent and job
-finding $1-\kappa_H$ times as fast. Housing First mechanically recovers \new{employment} while
-Treatment First \new{only does so if, over time, the decline in SUD is large enough that
-fewer households are unemployed and homeless}. As this parameter's value rises the cost of
-homelessness \new{does too}, and there is more for both HF and TF to act on. It is set externally at $@@c_kappa_h_value@@$, from
+finding $1-\kappa_H$ times as fast. Housing First mechanically recovers employment while
+Treatment First only does so if, over time, the decline in SUD is large enough that
+fewer households are unemployed and homeless. As this parameter's value rises the cost of
+homelessness does too, and there is more for both HF and TF to act on. It is set externally at $@@c_kappa_h_value@@$, from
 Desmond and Gershenson (2016).
 \item[$\underline c$, the food stamp maximum allotment.]
-This parameter determines how low consumption can go, \new{which determines} where utility is
+This parameter determines how low consumption can go, which determines where utility is
 bounded from below for the poorest households with no income, no assets, and no
 vouchers. Raise it and the value of being alive rises, which increases the cost of
-homelessness and SUD, and gives more for TF to \new{deter}. It is calibrated internally to food stamp spending over output,
+homelessness and SUD, and gives more for TF to deter. It is calibrated internally to food stamp spending over output,
 $@@c_underline_c_data@@$ percent: outlays from the United States Department of
 Agriculture (USDA) over GDP in the data, and over output, which in this model is labour
 income.
@@ -2090,8 +2090,8 @@ Subsidized Households, 2023.
 becomes an adult enters the economy with an
 endowment of $T_0$ times average earnings, which sets how likely a young adult is
 to end up in a shelter in its first years. Raise it and fewer young adults become
-homeless, and TF \new{would affect} behaviour less during \new{the child-rearing years,
-when parents' choices affect their children's outcomes}. Its moment is the share of the
+homeless, and TF would affect behaviour less during the child-rearing years,
+when parents' choices affect their children's outcomes. Its moment is the share of the
 homeless aged 25 to 34, $@@c_t_0_data@@$ percent in HUD's 2024 PiT count, which the
 model gives as $@@c_t_0_model@@$.
 \end{description}
