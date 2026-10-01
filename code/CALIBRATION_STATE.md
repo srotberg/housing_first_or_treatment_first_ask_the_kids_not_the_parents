@@ -22,6 +22,10 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+17:21 CHECK-IN, NOTHING DUE. 0.09 FINISHED 16:45 (exit 0, 10 blocks) at 20.0, holding its files; 0.08 17.3 (finished
+15:44, holding until about 23:44); 0.085 at block 6 17.3 and rising (14.7/16.3/17.3 at blocks 4-6), digest 17:04, so its
+detached solve is alive. The candidates bracket 18.34 (0.08 1.0 below, 0.09 1.7 above); 0.085 is the likely w*. Stage B
+still 22:30. This container restarted at about 17:20 (no local runs were in flight).
 16:25 CHECK-IN, NOTHING DUE. The rise B_OFF/users(w) - 1 by block, per cent (digests of 16:03-16:05): 0.08 FINISHED 15:44
 (exit 0, 10 blocks) 17.3, holding its benchmark files until about 23:44; 0.085 14.8/13.6/14.7 (blocks 2-4, about 55 min a
 block, so about 22:30 for ten blocks); 0.09 20.6 at block 8 and still rising, due about 17:45; 0.075 (archived 14:20, not
