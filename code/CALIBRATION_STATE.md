@@ -22,6 +22,13 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+16:25 CHECK-IN, NOTHING DUE. The rise B_OFF/users(w) - 1 by block, per cent (digests of 16:03-16:05): 0.08 FINISHED 15:44
+(exit 0, 10 blocks) 17.3, holding its benchmark files until about 23:44; 0.085 14.8/13.6/14.7 (blocks 2-4, about 55 min a
+block, so about 22:30 for ten blocks); 0.09 20.6 at block 8 and still rising, due about 17:45; 0.075 (archived 14:20, not
+a candidate, 16.5 at block 7) still publishing its digest, so its container outlived the archive. The author (16:20):
+"lets wait for 0.085"; stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz) set for 22:30, re-arming every 20 minutes until 0.085
+finishes; if it has not by 23:30, ask the author whether to take 0.08 before its hold expires. Round c2637ac4 committed
+(e8a6e499): rho moved to Block 9 / Table 5; counts now 26 main, 29 standard.
 15:12 LOCAL RUN FOR THE NEW TEDS-A ROWS (launched 15:12, not 14:40): code/teds_bstar (pid 1529, setsid in a subshell, 4 threads), the b* economy at
 omega_c = 0 from the seed with the b* run's own handover, on a binary with the 06:00 prints (age bands of treatment
 admissions, employed at admission; source identical to d62835db). The b scan's binaries were built at 05:43, before the
