@@ -23,6 +23,12 @@
   0.98x session_01UQTEjm2pEtmGhHSDsSxZ2D, 0.99x session_016Xqehwky4x6MafvY6kTYoa. Due about 10:15.
 - Stage A re-timed to 10:15 (trigger updated to read v3 and to launch the omega_c runs with the v3 label);
   stage B about 15:00. OVERNIGHT_PLAN.md updated.
+- 06:00 TEDS-A PRINTS IN (d62835db, output only): "UNTARGETED treatment admissions, band k" (the five
+  bands of the homelessness profile, data 40.5 / 33.9 / 15.6 / 8.5 / 1.6) and "UNTARGETED employed at
+  treatment admission" (data 23.6), on the flow into treatment like the three TEDS-A rows. Benchmark build
+  and cf_fix / cf_fix2 tested in scratch: 7 warnings, 0 errors each. The omega_c runs of stage A build from
+  this source, so the new benchmark prints them; the b scan runs do not (built 05:43). Data from the
+  TRUNCATED file, provisional; the author picks which rows go in Table 6. Not in the paper.
 
 # 1 October 04:00: OVERNIGHT PLAN ARMED (code/OVERNIGHT_PLAN.md)
 
