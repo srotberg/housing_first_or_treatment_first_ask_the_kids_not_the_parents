@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+22:21 CHECK-IN (overnight plan; nothing to launch, every run alive). omega1, left to settle (the author, 22:10): users
+-4.2 at 0.872 (archived run, price RISING), -21.6 at 0.901 (p0.91 pass 2, price falling), -50.5 at 0.985 (p1.0 pass 3,
+falling). The drug gap column is absolute; the price directions put the clearing price between 0.872 and 0.901, users
+between about -4 and -22. Users at omega_c = 1 are very price sensitive (about -5 between 0.90 and 0.985). TF (nulltf
+session) passes 1-2 from 0.867: users -28.0/-31.5, SUD -29.6/-33.1, h_1 +4.3/+5.0, quantity -15.4/-22.4 with quantity per
+user +17.4/+13.3, budget gap 0.42 -> 0.12 at pi_V 0.0814 (the pass-1 artefact; cf_fix2 starts pi_V's update at pass 2).
+internalise pass 5: users -0.8, h_1 -1.9, CEV +0.18 still falling toward the null's 0.00, not yet accepted.
+Elasticity worker block move 0.036; burden rerun 2 blocks. Section 6 waits for accepted arms (only the null so far).
+
 22:10 THE AUTHOR: "Let omega_c =1 simulation settle on its own. Let it run". No restart, no new starting price, no
 intervention in either omega1 run (omega1_p1.0, omega1_p0.91); report them as they come. At 0.5 per cent a pass the
 price-1.0 run needs about 2 passes per point of price, so it may take many hours if the price falls far.
