@@ -351,14 +351,18 @@ USER_BANDS = ['users aged 34 or less, share', 'users aged 35-44, share', 'users 
 # (moment, (data, model), source); per cent unless the label says otherwise.
 UNTARGETED = [
     ('Homelessness', None, None),
-    ('Homelessness rate, 25--34 to 65+', band5('homelessness rate', 2), 'HUD PiT 2024'),
-    (r'Shares of the homeless in those bands$^{a}$', band5('share of the homeless'), 'HUD PiT 2024'),
+    # SHARES IN THE BAND, NOT RATES WITHIN IT (the author, 1 October: "what i need for
+    # SUD and homelessness by age is share of in the band, not share within the age
+    # bracket"). The within-band rate row went: its data are PERSON rates at the PiT
+    # one-night level and the model's are HOUSEHOLD rates at the level h_1 targets, so
+    # the two were in different units by construction (DATA_APPENDIX section 9).
+    (r'Share of the homeless by age, 25--34 to 65+$^{a}$', band5('share of the homeless'), 'HUD PiT 2024'),
     ('Employed share of the homeless',
      (f'{100 * C["employed_share_of_homeless_data"]:.0f}', f'{100 * mom("emp_homeless employed share of homeless"):.1f}'),
      'HUD PiT 2023, TEDS-A 2022'),
     ('Income of the homeless, over average', one('income of the homeless'), r'Meyer et al.\ (2024)'),
     ('Who uses and who carries a SUD', None, None),
-    ('Users by age, 26--34 to 65+', many(USER_BANDS, 0), 'NSDUH 2024'),
+    ('Share of users by age, 26--34 to 65+', many(USER_BANDS, 0), 'NSDUH 2024'),
     ('Mean age of users, years', one('mean age of drug users', 1, 1), 'NSDUH 2024'),
     ('Income with a SUD, over average', one('income with a SUD'), 'NSDUH 2024'),
     ('Unemployment given a SUD', one('kappa_ued unemployment given SUD'), 'NSDUH 2024'),
