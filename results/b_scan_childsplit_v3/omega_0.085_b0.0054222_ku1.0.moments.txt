@@ -1,7 +1,9 @@
-# scan point, weight_on_child 0.085, b 0.0054222, kappa_uem 1.0, corrected code; 01 Oct 19:05 UTC
+# scan point, weight_on_child 0.085, b 0.0054222, kappa_uem 1.0, corrected code; 01 Oct 19:15 UTC
 remote_omega_point 0.085_b0.0054222_ku1.0: gfortran missing, installing (12:20)
 remote_omega_point 0.085_b0.0054222_ku1.0: building (12:20)
 remote_omega_point 0.085_b0.0054222_ku1.0: solving, 4 cores (12:23)
+remote_omega_point 0.085_b0.0054222_ku1.0: solve exited 0 after 10 blocks; bench.err:  (19:14)
+remote_omega_point 0.085_b0.0054222_ku1.0: benchmark files held here, 90 files, 126M (19:15)
 build md5: 085d056a72e3e7ef0b9930489d6bb4dc
  HANDOVER weight_on_child:   0.0000000000000000      ->   8.5000000000000006E-002
  FROZEN: every adjuster zeroed except weight_on_child's. Only omega_c is calibrated; delta_d is held by hand.
@@ -1235,3 +1237,6 @@ build md5: 085d056a72e3e7ef0b9930489d6bb4dc
  MOMENT sud_homeless SUD share of the homeless model=  0.20198421544467857       target=  0.21699999272823334     
  MOMENT emp_homeless employed share of homeless model=  0.21400757096481449       target=  0.46000000834465027     
  MOMENT y_u       income of drug users        model=  0.62004595384704841       target=  0.73999999999999999     
+ ===== END OF MOMENTS =====
+ BLOCK MOVE   5.4589232155850148E-004  against a rule of   1.0000000000000000E-003  -- b   8.9562893104297908E-002  lambda_d   3.8113117586549894E-002  h_1   6.1835672543113307E-003  y   1.5898179903829757     
+ simulation ended
