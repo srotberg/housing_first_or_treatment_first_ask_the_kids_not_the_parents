@@ -1,5 +1,9 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+21:15 OLD omega1 STOPPED: session_01LWbnr3YJ3RaWtGdoJhbgxj archived on the author's word ("yes, stop the old omega1
+run") after 3 passes at the warm-start price; results/counterfactuals_2c/omega1/ stays as its record. The price-1.0 rerun
+(session_019sED8Y9sDLqMYEtAkSvhst, results/counterfactuals_2c/omega1_p1.0) replaces it.
+
 21:12 omega1 DIAGNOSED (read-only agent) and RERUN. No code path stops weight_on_child from reaching the parent in the
 counterfactual (set from the handover only; the child value is recomputed each pass, class 1 a separate block). The -4.2 at
 pass 2 is mostly NOT an equilibrium: the arm was warm-started at the old arm's price 0.863, the price moves at most 0.5 per
