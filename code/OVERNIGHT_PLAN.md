@@ -101,6 +101,28 @@ THE WORKER PROMPT for every cloud run of remote_omega_point.sh (the v3 prompt), 
    until D.
 6. The gaps table for the new benchmark goes to the author with the PDF.
 
+## B, AS DECIDED BY THE AUTHOR (1 October, about 17:55) -- THIS OVERRIDES B.1 AND EXTENDS B.5
+- w* = 0.085: "ok, so we will go with omega_c=0.085". No comparison; wait for its solve to exit 0
+  (results/b_scan_childsplit_v3/omega_0.085_b0.0054222_ku1.0.moments.txt), then B.2 with w* = 0.085,
+  releasing 0.08 and 0.09 once the files have landed. If the 0.085 run dies, relaunch it by the same
+  command and tell the author.
+- B.5 is the WHOLE calibration, not the omega_c row: "need all the parameter values and the model
+  moments to be updated". Every Value and Model cell of Tables 4 and 5 and every Model cell of the
+  validation table (Table 6) read from the new benchmark's log; check no row still reads the old
+  benchmark (compare each cell with the hf_omega_c_006_tdm values). Table 6 gains the extensive and
+  intensive drug price elasticity rows (round ae7a28ed); they carry the current measurement until it
+  is repeated on the new benchmark, which is a stage D run.
+- Then SCAN the intro, the literature review and Sections 3 and 4 for every number ("make sure you are
+  using correct numbers"): each @@name@@ that reads a full-model source must now read the new
+  benchmark; list any that do not and fix the source, not the text. The TEDS-A rows from the new log
+  go to the author with the PDF and the gaps table.
+- WARM STARTS ("you may be able to use the old equilibria values from other simulations to speed
+  things up, also for the transition"): stage C starts each arm at the old arm's equilibrium
+  (results/counterfactuals_cf_fix2/<arm>/final.txt): omega1 DRUG_PRICE_START=0.863; internalise
+  DRUG_PRICE_START=0.995; null at the default 1.0; tf PV_START=0.0814 DRUG_PRICE_START=0.867. Stage E
+  seeds the drug price and pi_V paths from the old T = 60 loop (code/trtf60/restart3g_loop0/seeds_out/),
+  rescaled so each path starts at the new benchmark's value and ends at the new TF 85 arm's.
+
 ## C. counterfactuals  (right after B)
 
 Common settings, every arm: BUILD=cf_fix2, BENCH_FROM=<abs path of the new reference dir>,
