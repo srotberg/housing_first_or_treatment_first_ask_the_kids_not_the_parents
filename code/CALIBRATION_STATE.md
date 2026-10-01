@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+20:17 VALIDATION TABLE AT omega_c = 0.085 (the author: "update the validation table with omega_c=0.085", "what about the TEDs
+new data"). Table 6 already read the benchmark from stage B; the two TEDS-A rows (admissions by age, employed at admission)
+added (166dd046), with a Section 5.3 sentence. Two rows still need a measurement on the new benchmark, launched in the
+cloud: session_01RsYBGaW5ntXpeX9KsQAZ8P ports the 30 September elasticity patch (ELASTICITY_RESULT_MULTI.txt) to the
+current source, restoring median_income between steps, and adds an output-only SMI drug-use ratio print; result to
+code/ELASTICITY_RESULT_2C.txt, about 4.5 hours. Then export_elasticity.py reads it (SRC) and smi_use_ratio.json takes
+the ratio. Other tables: tab_external/tab_internal/tab_stage1 are the stylized model's (Section 3), not the full model's;
+tab_longrun is Section 6, refreshed at stage D.
+
 omega_c = 0.085 finished 19:15 (exit 0, 10 blocks, last move 5.5e-4): drug users 8.956, rise with the child's weight
 off 17.65 against 18.34 (0.08 17.3, 0.09 20.0; the author chose 0.085 at about 17:55). Files requested 19:21, landed
 19:27 (90 .dat.gz, 126 MB); 0.08 and 0.09 released. kappa_x = 0.61968 x 1.5076 = 0.934236 (was 0.9329).
