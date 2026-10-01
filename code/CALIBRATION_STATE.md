@@ -23,6 +23,13 @@
   0.98x session_01UQTEjm2pEtmGhHSDsSxZ2D, 0.99x session_016Xqehwky4x6MafvY6kTYoa. Due about 10:15.
 - Stage A re-timed to 10:15 (trigger updated to read v3 and to launch the omega_c runs with the v3 label);
   stage B about 15:00. OVERNIGHT_PLAN.md updated.
+- 09:15 STAGE A RULE REFINED, TRIGGER MOVED TO 10:40. Drug users, per cent, 09:05: 0.96x block 10 11.40;
+  0.97x block 5 11.16; 0.98x block 8 10.58; 0.99x block 6 10.26. 0.97x and 0.99x run at about 40 minutes a
+  block (due about 13:30), 0.98x at 23 (block 12 about 10:35). The 08:20 neighbour margin of 0.30 both ways
+  would have held stage A until 0.99x finished, though 0.99x is below the target and only comes closer by
+  rising (at most 0.08 a block in this scan, and it is falling). Now (OVERNIGHT_PLAN.md A.2): a finished point
+  is b* if (a) within 0.10 of 10.50 (the author's "very close is enough"), or (b) every unfinished point's
+  gap less 0.30 (above the target) or 0.10 (below) still exceeds its gap. b*'s own block 12 still required.
 - 08:20 CHECK-IN. THE DETACH FIX HOLDS: the 0.98x worker's call hit the limit at 07:43 and re-attached to
   the same solve (pid 503, launched 05:45); every v3 point kept publishing past 07:45. Drug users, per cent,
   08:05: 0.96x 10.75 11.80 11.88 11.77 11.64 11.45 11.46; 0.97x 10.23 11.50 11.37 11.28; 0.98x 9.80 11.10 11.12
