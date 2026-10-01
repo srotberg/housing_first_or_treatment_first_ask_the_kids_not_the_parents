@@ -22,6 +22,13 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+13:10 STOPPED 0.05, 0.055, 0.06, 0.065 (archived: session_01KqoyTd5UvvwAYsKXYN4qMT, session_01LokRLWqtqYFJNhSiU5M257,
+session_01Ns9HRdzh34Wf15h4sR5idj, session_0116xprDm5aocixbndP9KTv2) -- the author, 13:08: "Just stop the ones that have no
+chance". Last rise against omega_c = 0 at the same block: 0.05 12.8 (block 8), 0.055 14.9 (6), 0.06 16.2 (3), 0.065 15.5 (6).
+The moment rises with omega_c; 0.065 had settled below 18.34 and 0.07 (18.0 at block 3, falling) lies between it and the
+target, so none of the four could be closest. Remaining: 0.07, 0.075, 0.08, 0.085, 0.09. At 13:08: 0.07 18.0 (3), 0.075 25.7
+(1), 0.08 20.6 (2), 0.085 31.1 (1), 0.09 35.7 (1); the rise falls 2-3 points after block 2, so 18.34 most likely lies
+between 0.08 and 0.09. Their digests stay in git. Stage B trigger rewritten for the five.
 12:20 GRID EXTENDED: 0.075, 0.08, 0.085, 0.09 LAUNCHED (one machine each). The rise B_OFF/users(w) - 1 against the
 omega_c = 0 run AT THE SAME BLOCK, per cent: 0.05 blocks 2/4/6 15.1/13.3/13.3; 0.055 16.1/14.8 (2/4); 0.065 18.6/15.9 (2/4);
 0.06 18.0 (2); 0.07 19.2 (2). It falls 2-3 points from block 2 and settles, so 0.07 ends near 16 and the target 18.34 lies

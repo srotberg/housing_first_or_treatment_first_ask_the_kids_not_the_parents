@@ -70,7 +70,9 @@ THE WORKER PROMPT for every cloud run of remote_omega_point.sh (the v3 prompt), 
 
 ## B. omega_c and the new benchmark  (trigger trig_014YcDCJiAHBL4BbJLncVXAz at 14:50, re-arming
 ## every 20 minutes). GRID EXTENDED 12:20 to nine points, 0.05 to 0.09 by 0.005: the first five
-## pointed above 0.07 at blocks 2-6. They finish between about 14:45 and 20:30.
+## pointed above 0.07 at blocks 2-6. 0.05-0.065 STOPPED 13:10 at the author's request ("stop the
+## ones that have no chance"); five remain, 0.07 to 0.09, finishing between about 14:45 and 21:00.
+## If 0.07 itself ends above 18.34 it is w* (nothing below it is left to be the benchmark).
 
 1. For each w: moment = users(omega_c = 0, b*) / users(w) - 1, final block, against 18.3 per
    cent; users(omega_c = 0, b*) = 0.10537369388677348. w* = the GRID POINT closest. Decide when
