@@ -18,7 +18,8 @@ THE MODEL is the TWO-CLASS one (child_penalty_classes = 2, compiled in), one dis
 factor, kappa_uem = 1, the child in the drug split, the build bench_tdm_childsplit (rule 5e-5,
 at least 70 sweeps, 12 frozen blocks). The b scan running since 03:01 is already it.
 
-## A. b  (10:15 UTC, trigger trig_014YcDCJiAHBL4BbJLncVXAz; was 07:45)
+## A. b  -- DONE 10:13. b* = 0.0054222 (0.98x), drug users 10.54 per cent at convergence
+## (block move 9.4e-4 < 1e-3 after 11 blocks), rule A.2(a). Five omega_c runs launched 10:13.
 
 RE-TIMED 05:45. The eight 03:04 workers' solves were killed at the 2-hour tool-call limit
 after 5 blocks (the setsid child stayed a child of the waiting call; fixed be8ec376, tested
@@ -67,10 +68,14 @@ THE WORKER PROMPT for every cloud run of remote_omega_point.sh (the v3 prompt), 
     prints "started detached" a second time, the solve was lost: say so in your report. 3. Then
     report the last lines it printed. Never report success for a run that did not finish.
 
-## B. omega_c and the new benchmark  (~15:00 UTC, when the five are done; was 12:30)
+## B. omega_c and the new benchmark  (trigger trig_014YcDCJiAHBL4BbJLncVXAz at 14:50, re-arming
+## every 20 minutes; the five runs finish between about 14:45 and 18:30)
 
-1. For each w: moment = users(omega_c = 0, b*) / users(w) - 1, block 12, against 18.3 per
-   cent. w* = the GRID POINT closest. The run at (b*, w*) is THE NEW BENCHMARK.
+1. For each w: moment = users(omega_c = 0, b*) / users(w) - 1, final block, against 18.3 per
+   cent; users(omega_c = 0, b*) = 0.10537369388677348. w* = the GRID POINT closest. Decide when
+   all five have finished, or when two finished points adjacent on the grid bracket 18.3 (the
+   moment rises with omega_c, so no unfinished point can be closer). The run at (b*, w*) is THE
+   NEW BENCHMARK.
 2. ITS BENCHMARK FILES ARE HELD IN ITS WORKER'S CONTAINER (since c3fbfd20; the tarred set is
    123 MB, over GitHub's limit). Commit an empty results/b_scan_childsplit_v3/send_bench_<w*>_b<b*>_ku1.0
    and push; within about 5 minutes the run pushes one .dat.gz per file to

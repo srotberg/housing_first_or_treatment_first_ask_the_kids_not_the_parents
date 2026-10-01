@@ -1,3 +1,28 @@
+# 1 October 10:13: STAGE A DONE -- b* = 0.0054222 (0.98x); FIVE TWO-CLASS omega_c RUNS LAUNCHED
+
+The two-class omega_c = 0 calibration at kappa_uem = 1 (v3, from the seed, bench_tdm_childsplit build, rule 5e-5,
+>= 70 sweeps, frozen blocks; FROZEN: only omega_c's adjuster live, so every other parameter is the reference's).
+Drug users, per cent, last block (BLOCK MOVE count in brackets):
+    0.96x 0.0053116  11.40 (10; finished 09:25, final push refused for the tarball -- not a candidate)
+    0.97x 0.0053669  11.02 (7; running, ~40 min a block)
+    0.98x 0.0054222  10.54 (11; FINISHED 10:02, exit 0, last block move 9.4e-4 < 1e-3)   <- b*
+    0.99x 0.0054775  10.22 (7; running, ~40 min a block)
+b* by OVERNIGHT_PLAN.md A.2(a): within 0.10 of 10.50 (the author: "if you have a b that is very close to 10.5% that
+is enough"). Its run is the omega_c = 0 calibration: results/b_scan_childsplit_v3/omega_0.0_b0.0054222_ku1.0.* and
+bench_0.0_b0.0054222_ku1.0/ (bench.log.gz, PARAM_HANDOVER.bench.txt). B_OFF users = 0.10537369388677348.
+At b*: SUD (lambda_d) 4.48 (target 4.34), users' income 0.646 of average (0.74), SMI share of the homeless 24.5 (25),
+homelessness 0.63 (0.40), drug share SUD-only aggregate 15.29, ALL USERS sum spend / sum income 13.48 (against 16; theta
+not moved, as instructed), mean-of-ratios theta row 0.525. KAPPA_X PROBE implied 0.6052 (first) -- at omega_c = 0, so
+NOT the benchmark's; stage B reads it from the (b*, w*) run. Homelessness 0.63, h_3 0.85, employed share of the homeless
+0.21 and theta 0.53 are as in the benchmark of record (hf_omega_c_006_tdm: 0.61, 0.86, 0.21, 0.54): not new, the
+frozen economy's, and b moved only drug users (8.12 -> 10.54).
+LAUNCHED 10:13, `bash code/remote_omega_point.sh <w> 0.0054222 1.0 v3`, the worker prompt in OVERNIGHT_PLAN.md, tag
+omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20):
+    0.05  session_01KqoyTd5UvvwAYsKXYN4qMT     0.055 session_01LokRLWqtqYFJNhSiU5M257
+    0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
+    0.07  session_019d5RwmfQSXk75uSWtXvcaC
+Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+
 # 1 October 05:45: b WORKERS DIED AT THE 2-HOUR LIMIT; DETACH FIXED; 0.96-0.99 RELAUNCHED (v3)
 
 - All eight 03:04 b workers stopped publishing at 04:43-04:47 after 5 blocks: at 05:01-05:05 the 2-hour
