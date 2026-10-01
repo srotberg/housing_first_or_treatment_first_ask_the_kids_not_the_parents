@@ -32,11 +32,16 @@ BV="${2:-}"
 # value never went back): "Set it to 1, restart b scan", since the model has SMI, like the SUD,
 # act only on regaining employment. The b scan from 01:33 at 1.0554 was stopped for it.
 KU="${3:-}"
+# OPTIONAL FOURTH ARGUMENT: a label for a re-run of a b point, so it publishes to
+# results/b_scan_childsplit_<label>/ and cannot collide with an earlier worker of the same
+# point that is still alive (1 October 05:45: the 03:04 workers' solves died at the 2-hour
+# limit, four were archived and could be replaced, two could not and will restart on their own).
+RUN="${4:-}"
 BRANCH=claude/two-period-addiction-hazard-d7gb61
 C=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$C/.." && pwd)
 if [ -n "$BV" ]; then
-    TAG="${W}_b${BV}${KU:+_ku$KU}"; R=$REPO/results/b_scan_childsplit
+    TAG="${W}_b${BV}${KU:+_ku$KU}"; R=$REPO/results/b_scan_childsplit${RUN:+_$RUN}
 else
     TAG="$W"; R=$REPO/results/omega_c_scan_childsplit
 fi
