@@ -139,7 +139,7 @@ def main():
         ('Living with a parent who carries a SUD', 'par_sud', lambda v: f'{100 * v:.2f}'),
         ('In a shelter', 'child_hl', lambda v: f'{100 * v:.2f}'),
         None,
-        ('CEV of a newborn, per cent of lifetime consumption', 'cev_net', lambda v: f'{v:.2f}'),
+        ('CEV of a newborn, percent of lifetime consumption', 'cev_net', lambda v: f'{v:.2f}'),
         ('Share of the newborn\'s gain that comes in childhood', 'child_share', lambda v: f'{v:.0f}'),
     ]
     for arm, base in ARMS[1:]:
