@@ -1,3 +1,17 @@
+# 1 October 03:00: ROUND e8bf0f37 -- ALL RED REMOVED; BLOCK 1 AND TABLE 4 COMMENTS IN RED
+
+theta: "calibrated internally ... close to 16.0 in the data", with the model split SUD 15.3 / non-SUD 11.6
+(c_theta_model_nosud, from the DIAG "sum spend / sum income" line; the model prints no all-user aggregate --
+the author said "all users, not just those with SUD", TOLD); the ratio-of-totals sentence removed. b: "As b
+declines use rises" (the author wrote "falls" -- flipped, TOLD); the stage-1 target text removed, target
+8.90, model 8.12 ("show the final numbers"). pi_d: "leads to a SUD"; three removals. kappa_phi_d: "key
+parameter" sentence, "in equilibrium when b is chosen...", "more high-income households are deterred from
+using"; "two to nine" (my unsourced wording of 28 Sept) replaced by Chesney, Goodwin and Fazel (2014, World
+Psychiatry 13(2) 153-160; SMRs from about 4 up) -- full text not reachable from here, TOLD. aleph: "because
+dying is more costly"; VSL defined at first use (Section 3) and used after (Table 2, Table 4, aleph).
+Table 4: kappa_x Model 0.20% (income basis, by construction since 24 Sept; c_kappa_x_cons = 0.30 keeps the
+consumption figure in the prose), "SMI/SUD ten-year", "VSL", note's last sentence removed.
+
 # 1 October 02:30: ROUND 1fc475ff -- ALL RED REMOVED; SECTION 5 COMMENTS IN RED; NO DAGGER; kappa^eu_m OUT
 
 All red stripped (whole paper, the author's instruction). In red: "The former are", "along similar lines";

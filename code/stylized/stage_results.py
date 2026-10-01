@@ -572,7 +572,7 @@ def write_tables(p1, r1, p2, r2):
         # fitted to 84 (calibrate.TARGET): the author, 30 September, "just say 80, and the
         # calibration numbers are a bit off" / "put 80".  The model columns report what the
         # model delivers.
-        (r'$\aleph$', 'Value of a statistical life over income', f'{float(stages._fc()["vsl_data"]):.0f}',
+        (r'$\aleph$', 'VSL over income', f'{float(stages._fc()["vsl_data"]):.0f}',
          mm(m1, 'vsl', lambda x: f'{x:.1f}'), f'{p1.aleph:.2f}', mm(m2, 'vsl', lambda x: f'{x:.1f}'),
          f'{p2.aleph:.2f}'),
         (r'$b$', 'Drug participation, NSDUH 2024', pct(T['part']),

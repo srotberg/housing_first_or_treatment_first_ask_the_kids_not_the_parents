@@ -106,6 +106,7 @@ if H.get('smallest_house_size_adjuster', 1.0) == 0.0:
 AVG_LAB = H['max_food_cost'] / float(
     re.findall(r'DIAG max allotment / avg labour income\s*=\s*(\S+)', LOG)[-1])
 THETA_AGG = float(G['theta'].split()[2])
+THETA_NOSUD = float(re.findall(r'drug share, sum spend / sum income\s*=\s*(\S+)\s+(\S+)', LOG)[-1][1])
 
 # omega_c: drug use with the child's weight off and every other parameter the same
 scan = open(SCAN).read()
@@ -145,7 +146,7 @@ ELEVEN = [
         (r'$b$', 'Shifter on the drug', setcol('b'), 'Drug participation, NSDUH 2024',
          pc(C['participation_rate_data'] / UPLIFT, 2), pc(mom('b total drug users'), 2),
          f(H['addiction_scalar_1'], 4)),
-        (r'$\pi_d$', 'Chance a year of use starts a SUD', setcol('addiction_onset_base'),
+        (r'$\pi_d$', 'Chance a year of use leads to a SUD', setcol('addiction_onset_base'),
          'Share of users carrying a SUD, NSDUH 2024',
          pc(C['sud_rate_data'] / C['participation_rate_data']),
          pc(mom('lambda_d disorder rate') / mom('b total drug users')),
@@ -155,7 +156,7 @@ ELEVEN = [
          pc(C['drug_user_income_data'], 0), pc(mom('y_u income of drug users'), 0),
          f(H['kappa_phi_d_level'])),
         (r'$\aleph$', 'Flow value of being alive', setcol('aleph'),
-         r'Value of statistical life, Viscusi and Aldy (2003)',
+         r'VSL, Viscusi and Aldy (2003)',
          f(C['vsl_data'], 0), f(mom('aleph value of life / income'), 0), f(H['value_of_life'], 1)),
     ]),
     ('What using and being homeless cost, and the voucher', [
@@ -191,7 +192,7 @@ ELEVEN = [
         (r'$\iota$', 'SUD multiplier on SMI onset', 'Ext.', r'Danish registers, Nielsen et al.\ (2017)',
          f(C['iota_smi']), NA, f(C['iota_smi'])),
         (r'$\lambda_m$', 'Chance of recovering from SMI', 'Ext.',
-         r'Ten-year recovery rate, {\AA}sb{\o} et al.\ (2022)',
+         r'SMI ten-year recovery rate, {\AA}sb{\o} et al.\ (2022)',
          pc(C['smi_ten_year_recovery_data'], 0), NA, f(H['lambda_m'], 3)),
         (r'$\omega_m$', 'Level of the SMI onset profile', setcol('p_m'),
          'SMI share of the population, NSDUH 2024',
@@ -210,7 +211,7 @@ ELEVEN = [
          f(C['kappa_phi_m']), NA, f(C['kappa_phi_m'])),
     ]),
     ('Recovery and treatment', [
-        (r'$\bar\pi_r$', 'Baseline SUD recovery rate', 'Ext.', r'Ten-year remission rate, Vaillant (1995)',
+        (r'$\bar\pi_r$', 'Baseline SUD recovery rate', 'Ext.', r'SUD ten-year remission rate, Vaillant (1995)',
          f(H['probability_of_stopping_addiction'], 3), NA, f(H['probability_of_stopping_addiction'], 3)),
         (r'$\mu_H$', 'Recovery multiplier in a shelter', setcol('mu_H'),
          r'Abstinence, housed/homeless, Milby et al.\ (2005)',
@@ -234,7 +235,12 @@ ELEVEN = [
          f(C['rho_intergenerational'])),
         (r'$\kappa_x$', 'Disamenity of homelessness', 'Ext.',
          r'Willingness to pay, Loubi\`ere et al.\ (2020)',
-         pc(KX_X, 2), pc(KX_WTP, 2), f(H['kappa_x'])),
+         # THE MODEL CELL IS ON THE INCOME BASIS, like the data's (the author, 1 October:
+         # "you should still use 0.2% since it is income terms too"): kappa_x = 0.93 was
+         # set on 24 September so that the willingness to pay is Loubiere's 0.2 per cent
+         # of income (CALIBRATION_STATE.md), so the cell is that share by construction.
+         # KX_WTP, the same amount against consumption, is c_kappa_x_cons for the prose.
+         pc(KX_X, 2), pc(KX_X, 2), f(H['kappa_x'])),
     ]),
     ('Drug market', [
         (r'$\varepsilon_s$', 'Price elasticity of drug supply', 'Ext.', r'Mace et al.\ (2020)',
@@ -499,6 +505,10 @@ def numbers():
         'c_b_fall_pc': f'{100 * (1 - B_ON / B_OFF):.1f}',
         'c_kx_implied': f'{KX_IMPLIED:.2f}',
         'c_theta_mor_pc': f'{100 * mom("theta drug spending share"):.0f}',
+        # theta's aggregate among users WITHOUT a SUD, the second figure of the same DIAG
+        # line whose first (users with a SUD) is the gaps table's and the Model cell's
+        'c_theta_model_nosud': f'{100 * THETA_NOSUD:.1f}',
+        'c_kappa_x_cons': f'{100 * KX_WTP:.2f}',
         'c_sd_entry': f'{SD_ENTRY:.2f}',
         'c_shelter_last_age': f'{25 + H["max_age_to_choose_homelessness"]:.0f}',
         'c_nodes': f'{C["employment_base_size"]:.0f}',
