@@ -10,9 +10,9 @@ declarations are only starting points (kappa_phi_d_level is declared 8 and runs
 at 4; kappa_x is declared 0.002 and runs at 0.9329). The Model column was never
 filled at all. This reads the places the numbers live:
 
-  the benchmark's handover   results/reference/hf_omega_c_006_tdm/PARAM_HANDOVER.bench.txt
+  the benchmark's handover   results/reference/hf_2c_omega_0.085/PARAM_HANDOVER.bench.txt
                              every run-time parameter value
-  the benchmark's log        results/reference/hf_omega_c_006_tdm/bench.log.gz
+  the benchmark's log        results/reference/hf_2c_omega_0.085/bench.log.gz
                              every MOMENT and UNTARGETED line, the voucher
                              probability, the kappa_x probe, and the gaps table
                              (code/gaps_table.py) for theta and the HELD verdicts
@@ -51,7 +51,8 @@ ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
 from fortran_consts import constants
 
-BENCH = os.path.join(ROOT, 'results', 'reference', 'hf_omega_c_006_tdm')
+# THE omega_c = 0.085 BENCHMARK (the author, 1 October: "ok, so we will go with omega_c=0.085")
+BENCH = os.path.join(ROOT, 'results', 'reference', 'hf_2c_omega_0.085')
 TAB = os.path.join(ROOT, 'writing', 'tables')
 OUT = os.path.join(HERE, 'calib_numbers.json')
 SCAN = os.path.join(ROOT, 'results', 'omega_c_scan', 'SCAN_READINGS.md')
@@ -117,8 +118,10 @@ RES = json.load(open(os.path.join(ROOT, 'code', 'paper', 'results_numbers.json')
 THETA_NOSUD = float(re.findall(r'drug share, sum spend / sum income\s*=\s*(\S+)\s+(\S+)', LOG)[-1][1])
 
 # omega_c: drug use with the child's weight off and every other parameter the same
-scan = open(SCAN).read()
-B_OFF = float(re.search(r'reference is therefore b = ([0-9.]+)', scan).group(1))
+# THE omega_c = 0 READING is the b* run at omega_c = 0, every other parameter the same
+# (stage A of code/OVERNIGHT_PLAN.md): its last block's drug users
+B_OFF = float(re.findall(r'MOMENT b\s+total drug users\s+model=\s*([-+0-9.Ee]+)', open(os.path.join(
+    ROOT, 'results', 'b_scan_childsplit_v3', 'omega_0.0_b0.0054222_ku1.0.moments.txt')).read())[-1])
 B_ON = M['b total drug users'][0]
 RISE = B_OFF / B_ON - 1
 
@@ -235,7 +238,7 @@ ELEVEN = [
     ('Externalities', [
         (r'$\omega_c$', "Parent's weight on its child", 'Int.',
          "Non-parents' use over parents', NSDUH 2024",
-         pc(C['child_use_gap_data']), pc(RISE), f(H['weight_on_child'])),
+         pc(C['child_use_gap_data']), pc(RISE), f(H['weight_on_child'], 3)),   # 0.085, not 0.09: the third decimal is the grid point
         (r'$\delta_d$', "Earnings the child loses to a parent's SUD", 'Ext.', r'Earnings lost in utero, Nilsson (2017)',
          f(C['penalty_child_addicted']), NA, f(H['penalty_child_addicted'])),
         (r'$\kappa_x$', 'Disamenity of homelessness', 'Ext.',

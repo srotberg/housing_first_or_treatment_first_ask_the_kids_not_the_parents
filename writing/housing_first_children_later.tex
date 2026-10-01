@@ -242,8 +242,8 @@ income that drug users spend on drugs, $16.2$ percent, from retail drug spending
 earnings penalty is set from a direct estimate: children exposed in utero to a
 Swedish alcohol experiment earn about $24$ percent less as adults
 (Nilsson, 2017). The intergenerational transmission of SUD is then left untargeted:
-in the model a child of a parent with a SUD is $1.51$ times as likely to
-acquire one itself, against $1.5$ to $2.5$ in the data (Mellentin et al., 2016; Yoon
+in the model a child of a parent with a SUD is \new{\new{$1.46$}} times as likely to
+acquire one itself, against \new{$1.44$ to $2.51$} in the data (Mellentin et al., 2016; Yoon
 et al., 2013). The childhood homelessness externality carries no earnings penalty at
 all. The link between a parent's homelessness and the child's comes from
 intergenerational transmission alone, and the model is calibrated to estimates of
@@ -252,7 +252,7 @@ al., 2014): a child's productivity is correlated with its parent's, and
 lower-productivity households are poorer and more likely to be homeless, so their
 children are more likely to draw a lower productivity, be poor, and end up
 homeless as well. With this mechanism in place, a child of a homeless parent is
-$4.92$ times as likely to be homeless itself, against $1.8$ to $2.4$ in the
+\new{\new{$6.23$}} times as likely to be homeless itself, against $1.8$ to $2.4$ in the
 data (Bassuk et al., 1997). The aggregate homelessness externality is priced as a
 disamenity in flow utility, in proportion to the homelessness rate, set from the
 contingent valuation in Loubi\`ere et al.\ (2020), where the Europeans willing to pay
@@ -2003,7 +2003,7 @@ as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a househ
 with little to spend buys nothing. As $b$ declines use rises, raising the externality
 that policy can affect. Its value is chosen to target a participation rate of
 $8.90$ percent, the NSDUH 2024 rate of a drug use disorder of any severity
-among adults aged 26 and over, and the model gives $8.12$ percent.
+among adults aged 26 and over, and the model gives \new{$8.96$} percent.
 \item[$\pi_d$, the chance that a year of use leads to a SUD.] This is what
 makes using \emph{risky}, and it is the step that turns drug consumption into a
 disorder. Raise it and the
@@ -2020,7 +2020,7 @@ setting it to $4.00$, within the range that studies of excess mortality
 among drug users report: from hazard ratios of $1.27$ for cocaine and $2.40$ for heroin among
 those who have ever used them (Walker et al., 2017) to a standardised mortality ratio of
 $14.7$ among people dependent on opioids (Degenhardt et al., 2011). At that
-value users earn $60$ percent of average income in the model,
+value users earn \new{$62$} percent of average income in the model,
 against $74$ percent in NSDUH 2024.
 \item[$\aleph$, the flow value of being alive.] $\aleph$ is the other half
 of the mortality mechanism: $\kappa_{\phi d}$ sets how much a SUD raises the chance of dying and
@@ -2041,7 +2041,7 @@ household with a SUD who is unemployed finds work at the rate $\bar\pi^{ue}$ div
 by $\kappa^{ue}_{d}$. Raising $\kappa^{ue}_{d}$ makes unemployment spells longer for households
 with a SUD, and thus they are more likely to be unhoused, which is the link from the
 disorder to the street, and which also affects the efficacy of TF to deter drug use. It is internally calibrated to the SUD share of the homeless, $21.7$ percent in Gutwinski et al.\
-(2021), which the model gives as $19.2$.
+(2021), which the model gives as \new{$20.2$}.
 \item[$h_1$, the service flow of homelessness.] This parameter sets how bad the outside option
 is, and the value of being alive is measured against that outside option: a
 household with little to lose from dying is one for which the mortality cost of
@@ -2051,7 +2051,7 @@ homelessness rate lies within 0.40 to 1.00 percent of households. The floor is
 HUD's 2023 PiT count, which counts a single night and so misses households homeless at
 other times of the year; the ceiling is the share homeless at some point over a year,
 from Burt et al.\ (2001). I set $h_1$ internally so that the model delivers a
-number inside this range, $0.61$ percent.
+number inside this range, \new{$0.62$} percent.
 \item[$\kappa_{\phi H}$, mortality when homeless.] This parameter determines how
 much more likely a homeless household is to die because of its homelessness.
 Increasing it makes homelessness worse, raises the value of a voucher and makes TF's
@@ -2081,7 +2081,7 @@ externalities that HF fixes. On the other hand, increasing it increases the valu
 being alive, since life is worth more when housed, and thus it allows TF to be more
 effective in deterring drug use and fixing the budget and earnings externalities: the
 whole trade in one parameter. In the benchmark it
-is calibrated internally to $0.068$, so that $27.3$ percent of the income-eligible
+is calibrated internally to $0.068$, so that \new{$27.5$} percent of the income-eligible
 population holds a voucher, against $26.6$ percent in HUD's Picture of
 Subsidized Households, 2023.
 \item[$T_0$, the endowment at entry to adulthood ($j=1$).] A child who
@@ -2091,7 +2091,7 @@ to end up in a shelter in its first years. Raise it and fewer young adults becom
 homeless, and TF would affect behaviour less during the child-rearing years,
 when parents' choices affect their children's outcomes. Its moment is the share of the
 homeless aged 25 to 34, $26.0$ percent in HUD's 2024 PiT count, which the
-model gives as $26.6$.
+model gives as \new{$26.4$}.
 \end{description}
 
 \paragraph{Block 3: SMI chain.} This block determines how much further
@@ -2116,12 +2116,12 @@ SMI. Increase it and the impact of a SUD on acquiring SMI is larger, and TF has 
 act on. It is calibrated internally,
 to the share of the population carrying SMI, $4.82$ percent, which is
 the NSDUH 2024 prevalence by age weighted by the model's own age distribution, and
-the benchmark gives $4.82$.
+the benchmark gives \new{$4.83$}.
 \item[$\kappa^{ue}_{m}$, how much harder it is to regain employment with SMI.] The
 same as $\kappa^{ue}_{d}$ but for SMI: a household with SMI finds work at the
 rate $\bar\pi^{ue}$ divided by $\kappa^{ue}_{m}$. Increase it and the average unemployment
 spells during SMI periods are longer, and the utility cost of SMI is higher. Its moment is the SMI share of the homeless, $25$ percent in
-Gutwinski et al.\ (2021), which the model gives as $25.4$, for the same
+Gutwinski et al.\ (2021), which the model gives as \new{$24.7$}, for the same
 reason as the SUD's: a household out of work for longer is more likely to eventually become homeless.
 \item[$\mu_m$, the SUD recovery multiplier for SMI.] This parameter is the
 second direction of the
@@ -2169,7 +2169,7 @@ rule, and this is what makes households decline treatment they might gain
 from. When it rises, fewer opt for treatment, and TF induces fewer households with a
 SUD to seek treatment. It is calibrated internally to treatment take-up:
 $24.5$ percent of adults with a SUD received substance use treatment
-in the past year in NSDUH 2024, and $25.0$ percent do in the model.
+in the past year in NSDUH 2024, and \new{$24.9$} percent do in the model.
 \end{description}
 
 \paragraph{Block 5: Externalities.} The parameters in this block decide whether
@@ -2189,7 +2189,7 @@ and HF to correct are smaller. It is identified by a counterfactual moment: with
 parameter unchanged, drug use with the child given no weight is compared with drug use at
 $\omega_c$. In NSDUH 2024 adults aged 26 and over without children use at a rate
 $18.3$ percent above parents', and at
-$\omega_c=0.06$ removing the child's weight raises use by about the same
+$\omega_c=\new{0.085}$ removing the child's weight raises use by about the same
 in the model.
 \item[$\delta_d$, earnings the child loses to a parent's SUD.] The child does not inherit
 the disorder, only a worse
@@ -2200,7 +2200,7 @@ earlier.
 drug use: Treatment First by curing the parent, Housing First by making recovery more
 likely once housed. It is set externally at $0.24$, the earnings loss
 Nilsson (2017) measures for children exposed in utero to a Swedish alcohol
-experiment, and with it the model delivers an odds ratio of $1.50$ of acquiring a SUD for the child
+experiment, and with it the model delivers an odds ratio of \new{$1.46$} of acquiring a SUD for the child
 of a parent with one, relative to a child born to a parent who did not have one, within the range of
 $1.44$ to $2.51$ in the literature (Section~\ref{sec:fvalid}).
 \item[$\kappa_x$, the disamenity of homelessness.]\label{sec:fleftout} This parameter
@@ -2273,7 +2273,7 @@ consumption, and that bundle is what the drug is weighed against. As
 $\gamma$ rises housing is worth more against consumption, households buy more of it,
 and the share of spending that goes on housing rises with it. $\gamma$ is chosen for the share
 it produces: $26.8$ percent of expenditure, as shelter plus
-utilities take in the 2024 Consumer Expenditure Survey, which excludes illicit drug spending. At its value of $0.54$, the model's share is $26.0$ percent.
+utilities take in the 2024 Consumer Expenditure Survey, which excludes illicit drug spending. At its value of $0.54$, the model's share is \new{$26.2$} percent.
 \item[$\beta$, the discount factor.] It sets how much households discount the
 future, and so how much they save and how much the prospect of death deters them from using drugs. As it rises households save more, the
 wealth to output ratio rises and households are more deterred by death. It is chosen so that wealth over output
@@ -2292,7 +2292,7 @@ sizes a household chooses from. Below the smallest rung is the shelter, $h_1$, w
 decides how much of its income a poor household must spend to be housed at all. Raise it and the bottom rung is
 larger and dearer, so more households are burdened, and a voucher is worth more to them. It is chosen so that
 the fraction of renters paying more than half of their income for housing is similar to
-the data, $19.2$ percent in the 2022 SCF; the model gives $26.8$
+the data, $19.2$ percent in the 2022 SCF; the model gives \new{$27.2$}
 percent.
 \item[$h_3/h_2$ and $h_4/h_2$, the spacing of the ladder.] The two larger
 rungs are set at $4.00$ and $8.00$ times the smallest.
@@ -2328,7 +2328,7 @@ that goes to the bottom half of working households falls in it. I set
 $\rho_z=0.90$, the persistence of the income process in Guvenen et al.\ (2023b). $\sigma_\zeta$
 is calibrated to the bottom half's share of earnings among households aged 26 to 65 with
 wage income in the 2022 SCF, $17.2$ percent; at $\sigma_\zeta=0.41$
-the model gives $16.3$ percent.
+the model gives \new{$16.2$} percent.
 
 \item[$\rho$, the persistence of productivity across generations.] The
 child's log productivity at entry into adulthood is drawn around its parent's with weight $\rho$ and
@@ -2399,7 +2399,7 @@ balanced by $\pi_V$ instead. It is calibrated so that
 the average labour income tax rate the model produces is $22.4$ percent,
 which is what McDaniel (2007) measures for the United States and what Guvenen et al.\
 (2023a) use; at its value of $0.89$ the model gives
-$21.1$ percent.
+\new{$20.9$} percent.
 
 \item[$\tau_k$, the capital income tax.] This parameter affects the after-tax return on savings. I set it to fifteen percent, consistent
 with the statutory United States rate on long-term capital gains and qualified
@@ -2485,18 +2485,18 @@ Table~\ref{tab:untargeted} is read below one block at a time.
 
 \paragraph{Homelessness.} The first row gives each age band's share of the homeless. The
 youngest band is the target of $T_0$; the other four are free. The model puts
-$38.1$ percent of the homeless at ages 35 to 44, against $27.2$ in HUD's
-PiT count, and $11.2$ percent at 55 and over, against $25.9$. Of the homeless
+\new{$37.9$} percent of the homeless at ages 35 to 44, against $27.2$ in HUD's
+PiT count, and \new{$11.4$} percent at 55 and over, against $25.9$. Of the homeless
 in the model, $21.4$ percent are employed, against $46$ in the data, and
-their income is $0.2$ percent of the average, against $19.1$ in Meyer et al.\
+their income is \new{$6.5$} percent of the average, against $19.1$ in Meyer et al.\
 (2024).
 
 \paragraph{Who uses and who carries a SUD.} Users in the model are younger than
 in the data: $67$ percent of them are 26 to 34, against $45$ in
 NSDUH 2024, and their mean age is $34.6$, against $39.6$. Unemployment among
-households with a SUD is $14.7$ percent, against $16.2$. Households with SMI
+households with a SUD is \new{$14.5$} percent, against $16.2$. Households with SMI
 are $2.71$ times as likely as others to use drugs, against
-$2.44$, and drug poisonings account for $13.3$ percent of deaths
+$2.44$, and drug poisonings account for \new{$14.5$} percent of deaths
 at ages 25 to 44, against $20.0$ in CDC WONDER.
 
 \paragraph{Treatment.} The rows from the Treatment Episode Data Set for Admissions (TEDS-A) describe admissions to publicly funded
@@ -2504,15 +2504,15 @@ treatment, so they are read as shares within admissions rather than as levels. O
 admissions in the model, $3.2$ percent are homeless, against $14.5$ in
 the data.
 
-\paragraph{Housing and vouchers.} Of renters in the model, $58.9$ percent spend
-over thirty percent of their income on rent, against $43.2$ in the SCF. A voucher holder in the model pays $38.4$ percent of its income in rent,
-against $31.2$ in HUD's Picture of Subsidized Households, and $39.8$ percent of
+\paragraph{Housing and vouchers.} Of renters in the model, \new{$59.7$} percent spend
+over thirty percent of their income on rent, against $43.2$ in the SCF. A voucher holder in the model pays \new{$39.0$} percent of its income in rent,
+against $31.2$ in HUD's Picture of Subsidized Households, and \new{$39.2$} percent of
 voucher holders live mainly on wages, against $28.0$.
 
 \paragraph{Distribution.} The poorest fifth of households receive $3.40$ percent of
 income in the model, against $2.71$ in the SCF. Their share of net worth is
-$0.29$ percent, against $-0.23$, because in the SCF the bottom of the
-distribution owes more than it owns, and the bottom half holds $6.4$ percent of net
+\new{$0.27$} percent, against $-0.23$, because in the SCF the bottom of the
+distribution owes more than it owns, and the bottom half holds \new{$6.3$} percent of net
 worth, against $2.5$ in the Federal Reserve's Distributional Financial Accounts.
 
 \paragraph{Drug price elasticities.} Neither margin of the response to the drug price
@@ -2524,10 +2524,10 @@ over all users, is $-0.45$, in the middle of the estimates of about $-0.3$ to
 $-0.8$ in Grossman and Chaloupka (1998) and Olmstead et al.\ (2015). Section~\ref{sec:literature}
 discusses what these imply for Treatment First.
 
-\paragraph{Transmission.} A child of a parent with a SUD is $1.50$ times as
+\paragraph{Transmission.} A child of a parent with a SUD is \new{$1.46$} times as
 likely to acquire one in the model, within the range of $1.44$ to
 $2.51$ in Mellentin et al.\ (2016) and Yoon et al.\ (2013). An adult who is
-homeless in the model is $4.92$ times as likely to have had a homeless caretaker,
+homeless in the model is \new{$6.23$} times as likely to have had a homeless caretaker,
 above the $1.8$ to $2.4$ of Bassuk et al.\ (1997), and that
 row needs a word about its construction. Bassuk et al.\ (1997) is a
 case-control study of $220$ homeless mothers and $216$ low-income housed mothers, so
