@@ -23,6 +23,13 @@
   0.98x session_01UQTEjm2pEtmGhHSDsSxZ2D, 0.99x session_016Xqehwky4x6MafvY6kTYoa. Due about 10:15.
 - Stage A re-timed to 10:15 (trigger updated to read v3 and to launch the omega_c runs with the v3 label);
   stage B about 15:00. OVERNIGHT_PLAN.md updated.
+- 06:22 CHECK-IN. v3 running, block 1 at 06:05: 0.96x 10.75, 0.98x 9.80 (identical to the dead first runs'
+  block 1, 10.75 and 9.79 -- the fresh containers reproduce them); 0.97x and 0.99x published, no block yet.
+  Due about 10:00-10:15. THE OLD WORKERS' 05:05 RESTARTS ARE WARM-STARTED, NOT FROM THE SEED: they ran in
+  the dead solve's directory and read its newborn_parent_share.dat (the seed has none), so their block 1
+  is about half a point higher (0.98x 10.30 v 9.79, 0.99x 9.77 v 9.28, 1.0x 8.74 v 8.23); by blocks 2-3 they
+  are back within 0.1. Not used for anything. remote_omega_point.sh now moves a dead solve's directory
+  aside before restaging (a22c3842), so any later restart is from the seed.
 - 06:00 TEDS-A PRINTS IN (d62835db, output only): "UNTARGETED treatment admissions, band k" (the five
   bands of the homelessness profile, data 40.5 / 33.9 / 15.6 / 8.5 / 1.6) and "UNTARGETED employed at
   treatment admission" (data 23.6), on the flow into treatment like the three TEDS-A rows. Benchmark build
