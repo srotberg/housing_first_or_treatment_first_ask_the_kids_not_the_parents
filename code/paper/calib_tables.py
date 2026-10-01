@@ -160,7 +160,7 @@ ELEVEN = [
          r'VSL, Viscusi and Aldy (2003)',
          f(C['vsl_data'], 0), f(mom('aleph value of life / income'), 0), f(H['value_of_life'], 1)),
     ]),
-    ('What using and being homeless cost, and the voucher', [
+    ('Costs of homelessness and vouchers', [
         (r'$\kappa^{ue}_{d}$', 'Job-finding divisor, SUD', setcol('find_if_addicted'),
          r'SUD share of the homeless, Gutwinski et al.\ (2021)',
          pc(C['sud_share_of_homeless']), pc(mom('sud_homeless SUD share of the homeless')),

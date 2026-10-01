@@ -2033,37 +2033,32 @@ of $@@c_aleph_data@@$ times average labour income, which is the \$9m of Viscusi 
 negative value of life in equilibrium, so death is never an optimal outcome.}
 \end{description}
 
-\paragraph{Block 2: What using and being homeless cost, and the voucher.} Both
-policies work on this block, from opposite ends: each parameter says how bad a state
+\paragraph{Block 2: \new{Costs of homelessness and vouchers}.} Both
+\new{HF and TF} work on this block, from opposite ends: each parameter says how bad a state
 is, so each sets what a voucher is worth to a household in that state and
-what being cured of that state is worth. The voucher and the endowment at entry close the
-block, the voucher because it is the instrument that acts on all of them. Because the child inherits a higher chance of landing in these
-states, everything here moves the private value and the externality together.
+what being \new{removed from} that state is worth.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\kappa^{ue}_{d}$, how much harder a job is to find with a SUD.] The
+\item[$\kappa^{ue}_{d}$, how much harder \new{it is to find a job} with a SUD.] The
 disorder costs earnings through whether there is a job at all rather than through
 what a job pays: a household carrying it finds work at the rate $\bar\pi^{ue}$ divided
-by $\kappa^{ue}_{d}$. Raise it and the private cost rises, the externality rises with
-the child's draw, and a household without a job is poorer and so likelier to be
-unhoused, which is the link from the disorder to the street. That is why its moment is
-the SUD share of the homeless, $@@c_kappa_ue_d_data@@$ percent in Gutwinski et al.\
+by $\kappa^{ue}_{d}$. \new{Raising it makes unemployment spells longer for households
+with a SUD, and thus they are more likely to be unhoused,} which is the link from the
+disorder to the street. \new{It is internally calibrated to} the SUD share of the homeless, $@@c_kappa_ue_d_data@@$ percent in Gutwinski et al.\
 (2021), which the model gives as $@@c_kappa_ue_d_model@@$.
-\item[$h_1$, the service flow of homelessness.] It sets how bad the outside option
+\item[$h_1$, the service flow of homelessness.] \new{This parameter} sets how bad the outside option
 is, and the value of being alive is measured against that outside option: a
 household with little to lose from dying is one for which the mortality cost of
-using is small. When $h_1$ rises, a shelter is less bad, so the private
-cost of homelessness falls, a voucher is worth less, and the externality on
-the child likelier to be unhoused falls with it. Its value is chosen so that the
-homelessness rate lies within $@@c_h_1_data@@$ percent of households. The floor is
+using is small. When $h_1$ rises, a shelter is less bad, \new{and a voucher is worth less and TF has
+less to act on.} Its value is chosen so that the
+homelessness rate lies within \new{@@c_h_1_data@@} percent of households. The floor is
 HUD's 2023 PiT count, which counts a single night and so misses households homeless at
 other times of the year; the ceiling is the share homeless at some point over a year,
-from Burt et al.\ (2001). The target is a band rather than a point because $h_1$ moves drug
-participation as well as homelessness, through what a household has left once it is
-housed. The model puts the rate at $@@c_h_1_model@@$ percent. No household may choose
-a shelter in the last two years of life, ages $84$ and $85$, where, as with $J_E$ below,
-the end of the horizon would otherwise make the street costless.
-\item[$\kappa_{\phi H}$, mortality when homeless.] Increase it and the private
-cost of being unhoused rises and thus so does the private value of a voucher. It
+from Burt et al.\ (2001). \new{I set $h_1$ internally so that the model delivers a
+number inside this range, $@@c_h_1_model@@$ percent.}
+\item[$\kappa_{\phi H}$, mortality when homeless.] \new{This parameter determines how
+much more likely a homeless household is to die because of its homelessness.
+Increasing it makes homelessness worse, raises the value of a voucher and makes TF's
+deterrence larger. I set it externally so that it}
 multiplies the baseline mortality of Section~\ref{sec:fdeath} by
 $@@c_kappa_phi_h_value@@$ at every age, the mortality ratio for homeless adults in
 Meyer et al.\ (2023).
@@ -2071,35 +2066,34 @@ Meyer et al.\ (2023).
 decides how much more likely a household in a shelter is to lose its job and how much
 less likely it is to find one: separations are $1+\kappa_H$ times as frequent and job
 finding $1-\kappa_H$ times as fast. Housing First mechanically recovers earnings while
-Treatment First does not. As this parameter's value rises the private cost and the
-externality rise together, which makes it the clearest case in the table of a parameter
+Treatment First does not. As this parameter's value rises \new{the cost of homelessness is higher, and there
+is more for both HF and TF to act on,} which makes it the clearest case in the table of a parameter
 loading Housing First's side. It is set externally at $@@c_kappa_h_value@@$, from
 Desmond and Gershenson (2016).
 \item[$\underline c$, the food stamp maximum allotment.]
-This parameter determines how low consumption can go, which equals the
-transfer food assistance pays at zero income. When it rises, the private cost of every bad
-state falls, so a voucher is worth less at the margin and the externality on a
-child likelier to reach those states falls too, while the budget that pays for it
-tightens. It is calibrated internally to food stamp spending over output,
+This parameter determines how low consumption can go\new{, and where utility is
+bounded from below for the poorest households with no income, no assets, and no
+vouchers. Raise it and the value of being alive rises, which increases the cost of
+homelessness and SUD, and gives more for TF to act on.} It is calibrated internally to food stamp spending over output,
 $@@c_underline_c_data@@$ percent: outlays from the United States Department of
 Agriculture (USDA) over GDP in the data, and over output, which in this model is labour
-income, in the model.
+income.
 \item[$\pi_V$, the chance of drawing a voucher.] This is the policy dial itself.
-Increase it and the private gain rises and two externalities fall mechanically,
-the child's years in a shelter and the aggregate disamenity of homelessness, while the
-third rises through the SUD rate: the whole trade in one parameter. In the benchmark it
-is calibrated, at $@@c_pi_v_value@@$, so that $@@c_pi_v_model@@$ percent of the income-eligible
+\new{On the one hand, increasing it reduces the childhood and aggregate homelessness
+externalities that HF fixes. On the other hand, increasing it increases the value of
+being alive, since life is worth more when housed, and thus it allows TF to be more
+effective in deterring drug use and fixing the budget and earnings externalities:} the
+whole trade in one parameter. In the benchmark it
+is calibrated \new{internally to} $@@c_pi_v_value@@$, so that $@@c_pi_v_model@@$ percent of the income-eligible
 population holds a voucher, against $@@c_pi_v_data@@$ percent in HUD's Picture of
-Subsidized Households, 2023. In every experiment it is the instrument that balances the
-government's budget, as set out above.
-\item[$T_0$, the endowment at entry.] A household enters the economy with an
-endowment of $T_0$ times average earnings, which sets how far a
-young household is from the street in its first years. Homelessness at the youngest
-ages is steeply decreasing in what a household enters with, so this one number places
-the age profile of homelessness at its young end. Its moment is the share of the
+Subsidized Households, 2023.
+\item[$T_0$, the endowment at \new{entry to adulthood ($j=1$)}.] A \new{child who
+becomes an adult} enters the economy with an
+endowment of $T_0$ times average earnings, which sets how \new{likely a young adult is
+to end up in a shelter in its first years. Raise it and fewer young adults become
+homeless, and TF affects behaviour less during the years of child rearing.} Its moment is the share of the
 homeless aged 25 to 34, $@@c_t_0_data@@$ percent in HUD's 2024 PiT count, which the
-model gives as $@@c_t_0_model@@$. Raise it and the private cost of being young and poor
-falls, as does the child's chance of starting its adult life on the street.
+model gives as $@@c_t_0_model@@$.
 \end{description}
 
 \paragraph{Block 3: Mental illness chain.} This block determines how much further
