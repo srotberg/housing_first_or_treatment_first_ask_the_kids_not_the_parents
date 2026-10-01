@@ -1,5 +1,9 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+22:10 THE AUTHOR: "Let omega_c =1 simulation settle on its own. Let it run". No restart, no new starting price, no
+intervention in either omega1 run (omega1_p1.0, omega1_p0.91); report them as they come. At 0.5 per cent a pass the
+price-1.0 run needs about 2 passes per point of price, so it may take many hours if the price falls far.
+
 22:05 omega1 FROM 1.0 CONTRADICTS THE 21:30 ESTIMATE. Passes 1-2 at price 0.995/0.990: users -56.0/-55.6, SUD
 -55.7/-55.4, h_1 -18.7/-17.8, drug gap 0.51 (supply far above demand). The archived run at 0.867/0.872 had users
 -3.7/-4.2. A 13 per cent price gap cannot carry -4 against -56 at the benchmark's participation elasticity (-2.0); it
