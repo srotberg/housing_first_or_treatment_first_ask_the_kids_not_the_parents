@@ -22,6 +22,13 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+18:40 THE AUTHOR'S DECISIONS (17:50-18:35): omega_c = 0.085 is the benchmark (OVERNIGHT_PLAN.md "B, AS DECIDED"; stage B
+trigger rewritten); all parameter values and model moments, Table 6 included, refresh from it, and the intro, literature
+and Sections 3-4 are scanned for numbers; stage C and E warm-start from the old equilibria. h_2 SWAPPED TO THE OVER-HALF
+RENT BURDEN (19.2 data, 26.8 model at the old benchmark; the 30 per cent cut, 43.2 / 58.9, is now untargeted in Table 6)
+-- in the paper only. The Fortran's h_2 rule still brackets on renter_burden_30_data and the gaps table follows it; h_2
+is held (adjuster zeroed in the handover) in every run until the next full calibration, which must switch the rule to
+renter_burden_50_data first. Round ae7a28ed committed (8f295cc9).
 17:21 CHECK-IN, NOTHING DUE. 0.09 FINISHED 16:45 (exit 0, 10 blocks) at 20.0, holding its files; 0.08 17.3 (finished
 15:44, holding until about 23:44); 0.085 at block 6 17.3 and rising (14.7/16.3/17.3 at blocks 4-6), digest 17:04, so its
 detached solve is alive. The candidates bracket 18.34 (0.08 1.0 below, 0.09 1.7 above); 0.085 is the likely w*. Stage B
