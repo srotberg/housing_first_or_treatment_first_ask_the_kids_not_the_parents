@@ -65,7 +65,11 @@ set_line() {
 stage_handover() {
   cp ../$SEED/PARAM_HANDOVER_base.txt PARAM_HANDOVER.txt
   n=$(wc -l < PARAM_HANDOVER.txt); [ "$n" -gt 50 ] || { echo "GUARD: handover only $n lines"; exit 1; }
-  set_line kappa_x 0.9329
+  set_line kappa_x ${KAPPA_X:-0.9329}
+  # THE NEW BENCHMARK (1 October, the overnight plan, OVERNIGHT_PLAN.md): b, kappa_uem and
+  # omega_c of the recalibrated two-class economy, when given; unset, the 26 September values
+  if [ -n "$BENCH_B" ];  then set_line addiction_scalar_1 "$BENCH_B"; fi
+  if [ -n "$BENCH_KU" ]; then set_line kappa_uem "$BENCH_KU"; fi
 }
 
 # SOLVE THE BENCHMARK ONCE, SHARE IT BY GIT. With BENCH_FROM=<dir holding
@@ -75,9 +79,16 @@ stage_handover() {
 # distributions -- read_calibration_distribution is called only from
 # calibrating_model). Gzipped, the set is tens of MB.
 if [ -n "$BENCH_FROM" ] && [ ! -f "$BDIR/BENCH_DONE" ]; then
-  [ -s "$BENCH_FROM/bench_files.tar.gz" ] && [ -s "$BENCH_FROM/bench.log.gz" ] || { echo "GUARD: $BENCH_FROM lacks bench_files.tar.gz or bench.log.gz"; exit 1; }
+  # The set arrives either tarred (bench_files.tar.gz, local only: tarred it is about 123 MB,
+  # over GitHub's limit) or as one .dat.gz per file in files/ (how remote_omega_point.sh sends
+  # it through git since 1 October, as in code/seeds/benchmark_dat/).
+  { [ -s "$BENCH_FROM/bench_files.tar.gz" ] || ls "$BENCH_FROM"/files/*baseline_benchmark.dat.gz >/dev/null 2>&1; } && [ -s "$BENCH_FROM/bench.log.gz" ] || { echo "GUARD: $BENCH_FROM lacks bench_files.tar.gz or files/*.dat.gz, or bench.log.gz"; exit 1; }
   rm -rf "$BDIR" && mkdir -p "$BDIR"
-  tar xzf "$BENCH_FROM/bench_files.tar.gz" -C "$BDIR"
+  if [ -s "$BENCH_FROM/bench_files.tar.gz" ]; then
+    tar xzf "$BENCH_FROM/bench_files.tar.gz" -C "$BDIR"
+  else
+    for f in "$BENCH_FROM"/files/*baseline_benchmark.dat.gz; do gunzip -c "$f" > "$BDIR/$(basename "$f" .gz)"; done
+  fi
   gunzip -c "$BENCH_FROM/bench.log.gz" > "$BDIR/bench.log"
   echo "$BENCH_FROM" > "$BDIR/BENCH_FROM"; date +%s > "$BDIR/BENCH_DONE"
   echo "STAGE 1 taken from $BENCH_FROM: $(ls "$BDIR" | grep -c baseline_benchmark) benchmark files"
@@ -93,7 +104,7 @@ else
   cd "$BDIR"
   cp ../bench/hftf_bench ./hftf_bench
   stage_handover
-  set_line weight_on_child          0.06
+  set_line weight_on_child          ${BENCH_OMEGA:-0.06}
   set_line frozen_stop_after_blocks 12
   cp PARAM_HANDOVER.txt PARAM_HANDOVER.bench.txt
   echo "STAGE 1: Housing First omega_c = 0.06 benchmark, 12 blocks ..."
@@ -133,7 +144,7 @@ echo "binary $BUILD/hftf_cf_prod"; echo "$BUILD" > BUILD_USED
 stage_handover
 set_line probability_of_voucher_benchmark_used "${PV_START:-$PV}"
 case "$ARM" in
-  tf)          set_line weight_on_child 0.06
+  tf)          set_line weight_on_child ${BENCH_OMEGA:-0.06}
                set_line voucher_conditional_on_clean 1
                set_line increased_prob_of_voucher_if_homeless_and_addicted ${INC:-1}
                set_line probability_of_detection ${PDET:-0.70}
@@ -144,11 +155,11 @@ case "$ARM" in
   omega1)      set_line weight_on_child 1
                set_line adjust_taxes 0
                set_line drug_price_start 0.6 ;;
-  internalise) set_line weight_on_child 0.06
+  internalise) set_line weight_on_child ${BENCH_OMEGA:-0.06}
                set_line internalise_homelessness_cost 1
                set_line adjust_taxes 0
                set_line drug_price_start 1.0 ;;
-  null)        set_line weight_on_child 0.06
+  null)        set_line weight_on_child ${BENCH_OMEGA:-0.06}
                set_line adjust_taxes 0
                set_line drug_price_start 1.0 ;;
 esac

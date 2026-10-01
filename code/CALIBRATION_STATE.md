@@ -1,3 +1,124 @@
+# 1 October 10:13: STAGE A DONE -- b* = 0.0054222 (0.98x); FIVE TWO-CLASS omega_c RUNS LAUNCHED
+
+The two-class omega_c = 0 calibration at kappa_uem = 1 (v3, from the seed, bench_tdm_childsplit build, rule 5e-5,
+>= 70 sweeps, frozen blocks; FROZEN: only omega_c's adjuster live, so every other parameter is the reference's).
+Drug users, per cent, last block (BLOCK MOVE count in brackets):
+    0.96x 0.0053116  11.40 (10; finished 09:25, final push refused for the tarball -- not a candidate)
+    0.97x 0.0053669  11.02 (7; running, ~40 min a block)
+    0.98x 0.0054222  10.54 (11; FINISHED 10:02, exit 0, last block move 9.4e-4 < 1e-3)   <- b*
+    0.99x 0.0054775  10.22 (7; running, ~40 min a block)
+b* by OVERNIGHT_PLAN.md A.2(a): within 0.10 of 10.50 (the author: "if you have a b that is very close to 10.5% that
+is enough"). Its run is the omega_c = 0 calibration: results/b_scan_childsplit_v3/omega_0.0_b0.0054222_ku1.0.* and
+bench_0.0_b0.0054222_ku1.0/ (bench.log.gz, PARAM_HANDOVER.bench.txt). B_OFF users = 0.10537369388677348.
+At b*: SUD (lambda_d) 4.48 (target 4.34), users' income 0.646 of average (0.74), SMI share of the homeless 24.5 (25),
+homelessness 0.63 (0.40), drug share SUD-only aggregate 15.29, ALL USERS sum spend / sum income 13.48 (against 16; theta
+not moved, as instructed), mean-of-ratios theta row 0.525. KAPPA_X PROBE implied 0.6052 (first) -- at omega_c = 0, so
+NOT the benchmark's; stage B reads it from the (b*, w*) run. Homelessness 0.63, h_3 0.85, employed share of the homeless
+0.21 and theta 0.53 are as in the benchmark of record (hf_omega_c_006_tdm: 0.61, 0.86, 0.21, 0.54): not new, the
+frozen economy's, and b moved only drug users (8.12 -> 10.54).
+LAUNCHED 10:13, `bash code/remote_omega_point.sh <w> 0.0054222 1.0 v3`, the worker prompt in OVERNIGHT_PLAN.md, tag
+omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20):
+    0.05  session_01KqoyTd5UvvwAYsKXYN4qMT     0.055 session_01LokRLWqtqYFJNhSiU5M257
+    0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
+    0.07  session_019d5RwmfQSXk75uSWtXvcaC
+Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+13:10 STOPPED 0.05, 0.055, 0.06, 0.065 (archived: session_01KqoyTd5UvvwAYsKXYN4qMT, session_01LokRLWqtqYFJNhSiU5M257,
+session_01Ns9HRdzh34Wf15h4sR5idj, session_0116xprDm5aocixbndP9KTv2) -- the author, 13:08: "Just stop the ones that have no
+chance". Last rise against omega_c = 0 at the same block: 0.05 12.8 (block 8), 0.055 14.9 (6), 0.06 16.2 (3), 0.065 15.5 (6).
+The moment rises with omega_c; 0.065 had settled below 18.34 and 0.07 (18.0 at block 3, falling) lies between it and the
+target, so none of the four could be closest. Remaining: 0.07, 0.075, 0.08, 0.085, 0.09. At 13:08: 0.07 18.0 (3), 0.075 25.7
+(1), 0.08 20.6 (2), 0.085 31.1 (1), 0.09 35.7 (1); the rise falls 2-3 points after block 2, so 18.34 most likely lies
+between 0.08 and 0.09. Their digests stay in git. Stage B trigger rewritten for the five.
+12:20 GRID EXTENDED: 0.075, 0.08, 0.085, 0.09 LAUNCHED (one machine each). The rise B_OFF/users(w) - 1 against the
+omega_c = 0 run AT THE SAME BLOCK, per cent: 0.05 blocks 2/4/6 15.1/13.3/13.3; 0.055 16.1/14.8 (2/4); 0.065 18.6/15.9 (2/4);
+0.06 18.0 (2); 0.07 19.2 (2). It falls 2-3 points from block 2 and settles, so 0.07 ends near 16 and the target 18.34 lies
+above the grid. The 30 September scan (old b, kappa_uem 1.0554, blocks 4-5) had 0.06 11.6, 0.08 16.1, 0.10 30: the same
+direction, steep between 0.08 and 0.10. Without the extension stage B would have taken 0.07 at about 16 (2.3 points short).
+    0.075 session_014Czf9sMUovAsVRwQ64TqaY     0.08  session_019rR9xkNssoMmYCDyPikxVr
+    0.085 session_01XjWFNZPCFtgf2oiVPb3YYT     0.09  session_01Y7EMDFgFgPSDWk3WDmgPao
+Stage B trigger rewritten for nine points (bracket rule unchanged); due between about 14:45 and 20:30.
+10:25: all five report "solve running" (0.06 checked: pid 506); first digests about 10:38.
+10:25 STAGE E's BUILD CHECKED AGAINST TODAY'S SOURCE: transition_fix/patch_transition_fix.py applies to the current
+.f90 with the expected 176 diff lines, and build_transition_t60.sh builds all three in scratch, 0 warnings, 0 errors
+(code/tr60_fix itself not rebuilt; stage E rebuilds it with transition_fix/build_tr60_fix.sh).
+
+# 1 October 05:45: b WORKERS DIED AT THE 2-HOUR LIMIT; DETACH FIXED; 0.96-0.99 RELAUNCHED (v3)
+
+- All eight 03:04 b workers stopped publishing at 04:43-04:47 after 5 blocks: at 05:01-05:05 the 2-hour
+  limit killed each worker's call AND its solve, and the workers re-ran the command, which restarted from
+  the seed. Cause: remote_omega_point.sh launched `setsid nohup bash ... &` directly, so the solve stayed a
+  CHILD of the waiting call and the limit kills the call's process tree. Tested here at 05:25 with a 30 s
+  limit: setsid alone died, setsid inside a subshell (orphaned to init) lived -- the form the T = 60 run
+  has used since 30 September. Fixed be8ec376; optional 4th argument (run label) 829040e3.
+- Block-5 readings of the dead runs (drug users, per cent; in git history at 9a6a1d8f and before):
+  0.9x 14.46, 0.95x 12.24, 0.96x 11.64, 0.97x 11.17, 0.98x 10.79, 0.99x 10.35, 0.995x 10.14, 1.0x 9.72.
+  The two reference runs fall another 0.2-0.25 points from block 5 to block 12 (cfarm_bench 8.38 -> 8.13;
+  the kuem 1.055 run 9.71 -> 9.53 by block 8), so b* is most likely 0.98x (about 10.55) with 0.99x and 0.97x
+  the brackets. NOT acted on: the author said at 03:06 "don't launch omegac>0 yet / first i want the b",
+  so the omega_c runs still wait for block 12.
+- Archived the old 0.9x, 0.95x, 0.96x, 0.97x workers. Archiving 0.98x and 0.99x was REFUSED by the
+  permission classifier (interfering with running work), so 0.98x, 0.99x, 0.995x and 1.0x were left alone:
+  their solves die at about 07:05 and their workers restart them from the seed on the fixed script (their
+  checkouts pick it up through each publish's rebase), into results/b_scan_childsplit/, done about 11:40.
+  The author may want to archive those four.
+- RELAUNCHED 05:43, fresh sessions on the fixed script, `bash code/remote_omega_point.sh 0.0 <b> 1.0 v3`,
+  tag b-scan-childsplit-v3, results in results/b_scan_childsplit_v3/:
+  0.96x session_014Nsg1im3Zf8w9Evcs2uJ85, 0.97x session_01FmE5edrstwKbajpds4MDr1,
+  0.98x session_01UQTEjm2pEtmGhHSDsSxZ2D, 0.99x session_016Xqehwky4x6MafvY6kTYoa. Due about 10:15.
+- Stage A re-timed to 10:15 (trigger updated to read v3 and to launch the omega_c runs with the v3 label);
+  stage B about 15:00. OVERNIGHT_PLAN.md updated.
+- 09:35 THE BENCHMARK TARBALL IS OVER GITHUB'S LIMIT. 0.96x (session_014Nsg1im3Zf8w9Evcs2uJ85) FINISHED at
+  09:25, exit 0, but its final push was refused: remote_omega_point.sh committed bench_files.tar.gz, 122.7 MB,
+  over the 100 MB limit, and the block-11/12 moments went down with it (local commit 28d3b2a in its container;
+  the worker is blocked asking). Its last pushed reading is 11.40 at block 10 -- not a candidate for b*, so
+  nothing depends on it. Fixes: (1) .gitignore bench_files.tar.gz (a679c8e5, 09:33), which the running
+  0.97x/0.98x/0.99x workers pick up at their 09:45 rebase, so their final add skips the tarball and the
+  moments land; (2) c3fbfd20: the script now gzips each benchmark file (under 50 MB each, as in
+  code/seeds/benchmark_dat/), publishes the moments, then HOLDS the files in the container and sends them to
+  bench_<TAG>/files/ only when the branch carries send_bench_<TAG> (release_<TAG>/release_all or 8 hours lets
+  go); cf_arm.sh BENCH_FROM reads files/*.gz. Only the run that becomes the benchmark sends its 123 MB.
+  Tested on a local repo. Stage B step 2 and the worker prompt are in OVERNIGHT_PLAN.md.
+- 09:15 STAGE A RULE REFINED, TRIGGER MOVED TO 10:40. Drug users, per cent, 09:05: 0.96x block 10 11.40;
+  0.97x block 5 11.16; 0.98x block 8 10.58; 0.99x block 6 10.26. 0.97x and 0.99x run at about 40 minutes a
+  block (due about 13:30), 0.98x at 23 (block 12 about 10:35). The 08:20 neighbour margin of 0.30 both ways
+  would have held stage A until 0.99x finished, though 0.99x is below the target and only comes closer by
+  rising (at most 0.08 a block in this scan, and it is falling). Now (OVERNIGHT_PLAN.md A.2): a finished point
+  is b* if (a) within 0.10 of 10.50 (the author's "very close is enough"), or (b) every unfinished point's
+  gap less 0.30 (above the target) or 0.10 (below) still exceeds its gap. b*'s own block 12 still required.
+- 08:20 CHECK-IN. THE DETACH FIX HOLDS: the 0.98x worker's call hit the limit at 07:43 and re-attached to
+  the same solve (pid 503, launched 05:45); every v3 point kept publishing past 07:45. Drug users, per cent,
+  08:05: 0.96x 10.75 11.80 11.88 11.77 11.64 11.45 11.46; 0.97x 10.23 11.50 11.37 11.28; 0.98x 9.80 11.10 11.12
+  10.94 10.79 10.67; 0.99x 9.27 10.62 10.55 10.48 -- identical to the dead first runs where they overlap.
+  0.97x and 0.99x run at about 35 minutes a block against 20-23 for the other two, so they finish about 12:45.
+  Stage A (10:15) given a rule so it does not wait on a neighbour that can no longer win: a finished point is
+  b* if an unfinished one's latest gap to 10.50, less 0.30 points, still exceeds it (OVERNIGHT_PLAN.md A.2;
+  0.30 is above the whole 0.25 fall from block 5 to 12 in the reference runs, and no block after 2 has risen
+  more than 0.08). b*'s own block 12 is still required.
+- 06:22 CHECK-IN. v3 running, block 1 at 06:05: 0.96x 10.75, 0.98x 9.80 (identical to the dead first runs'
+  block 1, 10.75 and 9.79 -- the fresh containers reproduce them); 0.97x and 0.99x published, no block yet.
+  Due about 10:00-10:15. THE OLD WORKERS' 05:05 RESTARTS ARE WARM-STARTED, NOT FROM THE SEED: they ran in
+  the dead solve's directory and read its newborn_parent_share.dat (the seed has none), so their block 1
+  is about half a point higher (0.98x 10.30 v 9.79, 0.99x 9.77 v 9.28, 1.0x 8.74 v 8.23); by blocks 2-3 they
+  are back within 0.1. Not used for anything. remote_omega_point.sh now moves a dead solve's directory
+  aside before restaging (a22c3842), so any later restart is from the seed.
+- 06:00 TEDS-A PRINTS IN (d62835db, output only): "UNTARGETED treatment admissions, band k" (the five
+  bands of the homelessness profile, data 40.5 / 33.9 / 15.6 / 8.5 / 1.6) and "UNTARGETED employed at
+  treatment admission" (data 23.6), on the flow into treatment like the three TEDS-A rows. Benchmark build
+  and cf_fix / cf_fix2 tested in scratch: 7 warnings, 0 errors each. The omega_c runs of stage A build from
+  this source, so the new benchmark prints them; the b scan runs do not (built 05:43). Data from the
+  TRUNCATED file, provisional; the author picks which rows go in Table 6. Not in the paper.
+
+# 1 October 04:00: OVERNIGHT PLAN ARMED (code/OVERNIGHT_PLAN.md)
+
+The author is away overnight. Stages: A (07:45, trigger trig_014YcDCJiAHBL4BbJLncVXAz) b* = nearest grid
+point to 10.50 per cent, five two-class omega_c runs at b* (0.05-0.07, one machine each); B (~12:30) w* =
+nearest to 18.3 per cent, new benchmark = the (b*, w*) run, kappa_x = probe's implied x 1.5076, paper
+Section 5 regenerated; C cloud omega1 + internalise, here null then TF 85 (cf_fix2, BENCH_FROM the new
+benchmark); D Section 6; E T = 60 transition here. Hourly check-in trig_01D2jRe8M1baa387yf6YqYNc (:20)
+advances it. cf_fix and cf_fix2 both build clean on today's source (7 warnings, 0 errors each; code/cf_fix, code/cf_fix2, 04:05).
+remote_omega_point.sh now saves bench_<TAG>/ (benchmark files) per run; cf_arm.sh takes BENCH_B,
+BENCH_OMEGA, BENCH_KU, KAPPA_X.
+
 # 1 October 03:50: "ONE CLASS" WAS MISREAD -- THE b SCAN IS THE TWO-CLASS MODEL
 
 "Class" in this project is child_penalty_classes (the newborn's class by the parent's disorder at death),

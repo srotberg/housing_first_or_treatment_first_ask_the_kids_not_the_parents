@@ -32,11 +32,16 @@ BV="${2:-}"
 # value never went back): "Set it to 1, restart b scan", since the model has SMI, like the SUD,
 # act only on regaining employment. The b scan from 01:33 at 1.0554 was stopped for it.
 KU="${3:-}"
+# OPTIONAL FOURTH ARGUMENT: a label for a re-run of a b point, so it publishes to
+# results/b_scan_childsplit_<label>/ and cannot collide with an earlier worker of the same
+# point that is still alive (1 October 05:45: the 03:04 workers' solves died at the 2-hour
+# limit, four were archived and could be replaced, two could not and will restart on their own).
+RUN="${4:-}"
 BRANCH=claude/two-period-addiction-hazard-d7gb61
 C=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$C/.." && pwd)
 if [ -n "$BV" ]; then
-    TAG="${W}_b${BV}${KU:+_ku$KU}"; R=$REPO/results/b_scan_childsplit
+    TAG="${W}_b${BV}${KU:+_ku$KU}"; R=$REPO/results/b_scan_childsplit${RUN:+_$RUN}
 else
     TAG="$W"; R=$REPO/results/omega_c_scan_childsplit
 fi
@@ -58,8 +63,14 @@ if [ "${OMEGA_POINT_DETACHED:-0}" != 1 ]; then
     if [ -f "$D.pid" ] && kill -0 "$(cat "$D.pid")" 2>/dev/null; then
         echo "remote_omega_point $TAG: attaching to the running solve, pid $(cat "$D.pid")"
     else
-        OMEGA_POINT_DETACHED=1 setsid nohup bash "$0" "$@" > "/tmp/omega_point_$TAG.detached.log" 2>&1 < /dev/null &
-        echo $! > "$D.pid"
+        # THE SUBSHELL IS THE DETACH. Under setsid alone the solve stayed this call's child,
+        # and the 2-hour limit kills the call's whole process tree: every b worker of 1 October
+        # died at 05:01 after 5 blocks and restarted from the seed. Launched from a subshell
+        # that exits at once, the solve is orphaned to init before the limit can reach it
+        # (tested in the main session, 05:30: setsid alone died, setsid in a subshell lived).
+        # The same form as the T = 60 transition's launch of 30 September.
+        ( OMEGA_POINT_DETACHED=1 setsid nohup bash "$0" "$@" > "/tmp/omega_point_$TAG.detached.log" 2>&1 < /dev/null &
+          echo $! > "$D.pid" )
         echo "remote_omega_point $TAG: started detached, pid $(cat "$D.pid"); log /tmp/omega_point_$TAG.detached.log"
     fi
     while kill -0 "$(cat "$D.pid")" 2>/dev/null; do sleep 60; done
@@ -105,6 +116,12 @@ if [ ! -x "$C/bench_tdm_childsplit/hftf_bench" ]; then
         note "GUARD: build failed: $(tail -3 /tmp/omega_point_build_$W.log | tr '\n' ' ')"; publish "failed"; exit 1; }
 fi
 
+# A RESTART STARTS FROM THE SEED, NOT FROM WHAT THE DEAD SOLVE LEFT. The seed has no
+# newborn_parent_share.dat, so a fresh solve builds its first distribution without transmission;
+# a solve restarted in the old directory read the dead one's file instead, and its block 1 came
+# out half a point higher (0.98x: 10.30 against 9.79, the 05:05 restarts of 1 October). The old
+# directory is moved aside, never deleted.
+[ -d "$D" ] && mv "$D" "$D.dead_$(date -u +%H%M%S)"
 mkdir -p "$D" && cd "$D"
 [ -e data ] || ln -s ../../data data
 cp "$C/scan_seed/calibration_state.dat" "$C/scan_seed/calibration_distribution_shape.dat" .
@@ -137,4 +154,50 @@ done
 wait "$PID"; RC=$?
 note "solve exited $RC after $(grep -ac 'BLOCK MOVE' "$D/bench.log") blocks; bench.err: $(tail -2 "$D/bench.err" | tr '\n' ' ')"
 gzip -c "$D/bench.log" > "$R/omega_$TAG.bench.log.gz"
+# THE BENCHMARK FILES THE COUNTERFACTUAL BINARY READS (1 October, OVERNIGHT_PLAN.md): with
+# them a counterfactual arm takes this run as its benchmark (cf_arm.sh BENCH_FROM=...) instead of
+# re-solving it for four and a half hours. The set is 2.1 GB raw and about 123 MB gzipped, over
+# GitHub's 100 MB limit as one tarball: the b scan's 0.96x push was refused for it at 09:25 and
+# its moments went down with it. So the files are gzipped one by one (each under 50 MB, as in
+# code/seeds/benchmark_dat/), HELD in this container, and sent through git only on request --
+# only the run that becomes the benchmark needs them, and 123 MB of history apiece for the rest
+# would be waste. The moments, the log and the handover are published at once as before.
+if ls "$D"/*baseline_benchmark.dat >/dev/null 2>&1; then
+    mkdir -p "$R/bench_$TAG" "$D/bench_hold"
+    for f in "$D"/*baseline_benchmark.dat; do gzip -c "$f" > "$D/bench_hold/$(basename "$f").gz"; done
+    cp "$R/omega_$TAG.bench.log.gz" "$R/bench_$TAG/bench.log.gz"
+    cp "$D/PARAM_HANDOVER.kept.txt" "$R/bench_$TAG/PARAM_HANDOVER.bench.txt"
+    note "benchmark files held here, $(ls "$D/bench_hold" | wc -l) files, $(du -sh "$D/bench_hold" | cut -f1)"
+fi
 publish "complete (exit $RC)"
+
+# THE HOLD. The solve has finished; this process stays alive (so the worker keeps attaching and
+# the container stays up) until the main session commits one of these to the branch:
+#     <results dir>/send_bench_<TAG>   -> the held files go to <results dir>/bench_<TAG>/files/
+#     <results dir>/release_<TAG>      -> exit without sending (also release_all)
+# or until 8 hours pass.
+if [ -d "$D/bench_hold" ]; then
+    REL=${R#$REPO/}
+    note "holding the benchmark files: commit $REL/send_bench_$TAG to receive them, $REL/release_$TAG or $REL/release_all to let go; 8 hours at most"
+    publish "holding benchmark files"
+    END=$(( $(date +%s) + 8*3600 ))
+    while [ "$(date +%s)" -lt "$END" ]; do
+        sleep 300
+        git -C "$REPO" fetch -q origin "$BRANCH" 2>/dev/null || continue
+        if git -C "$REPO" cat-file -e "FETCH_HEAD:$REL/send_bench_$TAG" 2>/dev/null; then
+            mkdir -p "$R/bench_$TAG/files"
+            cp "$D"/bench_hold/*.gz "$R/bench_$TAG/files/"
+            note "benchmark files sent on request"
+            publish "benchmark files sent"
+            exit 0
+        fi
+        if git -C "$REPO" cat-file -e "FETCH_HEAD:$REL/release_$TAG" 2>/dev/null || \
+           git -C "$REPO" cat-file -e "FETCH_HEAD:$REL/release_all" 2>/dev/null; then
+            note "released, benchmark files not sent"
+            publish "released"
+            exit 0
+        fi
+    done
+    note "hold expired after 8 hours, benchmark files not sent"
+    publish "hold expired"
+fi
