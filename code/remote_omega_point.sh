@@ -116,6 +116,12 @@ if [ ! -x "$C/bench_tdm_childsplit/hftf_bench" ]; then
         note "GUARD: build failed: $(tail -3 /tmp/omega_point_build_$W.log | tr '\n' ' ')"; publish "failed"; exit 1; }
 fi
 
+# A RESTART STARTS FROM THE SEED, NOT FROM WHAT THE DEAD SOLVE LEFT. The seed has no
+# newborn_parent_share.dat, so a fresh solve builds its first distribution without transmission;
+# a solve restarted in the old directory read the dead one's file instead, and its block 1 came
+# out half a point higher (0.98x: 10.30 against 9.79, the 05:05 restarts of 1 October). The old
+# directory is moved aside, never deleted.
+[ -d "$D" ] && mv "$D" "$D.dead_$(date -u +%H%M%S)"
 mkdir -p "$D" && cd "$D"
 [ -e data ] || ln -s ../../data data
 cp "$C/scan_seed/calibration_state.dat" "$C/scan_seed/calibration_distribution_shape.dat" .
