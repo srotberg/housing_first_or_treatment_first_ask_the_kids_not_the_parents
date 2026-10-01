@@ -5,7 +5,7 @@ point to 10.50 per cent, five two-class omega_c runs at b* (0.05-0.07, one machi
 nearest to 18.3 per cent, new benchmark = the (b*, w*) run, kappa_x = probe's implied x 1.5076, paper
 Section 5 regenerated; C cloud omega1 + internalise, here null then TF 85 (cf_fix2, BENCH_FROM the new
 benchmark); D Section 6; E T = 60 transition here. Hourly check-in trig_01D2jRe8M1baa387yf6YqYNc (:20)
-advances it. cf_fix builds clean on today's source (7 warnings, 0 errors); cf_fix2 building at 04:00.
+advances it. cf_fix and cf_fix2 both build clean on today's source (7 warnings, 0 errors each; code/cf_fix, code/cf_fix2, 04:05).
 remote_omega_point.sh now saves bench_<TAG>/ (benchmark files) per run; cf_arm.sh takes BENCH_B,
 BENCH_OMEGA, BENCH_KU, KAPPA_X.
 
