@@ -18,24 +18,35 @@ THE MODEL is the TWO-CLASS one (child_penalty_classes = 2, compiled in), one dis
 factor, kappa_uem = 1, the child in the drug split, the build bench_tdm_childsplit (rule 5e-5,
 at least 70 sweeps, 12 frozen blocks). The b scan running since 03:01 is already it.
 
-## A. b  (07:45 UTC, trigger trig_014YcDCJiAHBL4BbJLncVXAz)
+## A. b  (10:15 UTC, trigger trig_014YcDCJiAHBL4BbJLncVXAz; was 07:45)
 
-1. Read results/b_scan_childsplit/omega_0.0_b*_ku1.0.moments.txt (eight points, 0.9 to 1.0
-   times 0.0055329), block 12: drug users (MOMENT b), SUD, users' income, SMI share of the
-   homeless, and from the gz log "DIAG drug share, all users, sum spend / sum income".
+RE-TIMED 05:45. The eight 03:04 workers' solves were killed at the 2-hour tool-call limit
+after 5 blocks (the setsid child stayed a child of the waiting call; fixed be8ec376, tested
+here). Relaunched at 05:43 on the fixed script, four points only, those that bracket 10.5 per
+cent at block 5 (0.96x 11.64, 0.97x 11.17, 0.98x 10.79, 0.99x 10.35; the reference runs fall
+another 0.2 to 0.25 points from block 5 to block 12): sessions tagged b-scan-childsplit-v3,
+results in results/b_scan_childsplit_v3/. Archiving the old 0.98x and 0.99x workers was
+refused, so they and 0.995x / 1.0x restart on their own at about 07:05 into
+results/b_scan_childsplit/; they finish about 11:40 and are not needed to pick b.
+
+1. Read results/b_scan_childsplit_v3/omega_0.0_b*_ku1.0.moments.txt (four points), block 12:
+   drug users (MOMENT b), SUD, users' income, SMI share of the homeless, and from the gz log
+   "DIAG drug share, all users, sum spend / sum income".
 2. b* = the GRID POINT whose block-12 drug users is closest to 10.50 per cent. No
    interpolation and no confirming run (the author: "very close is enough"). Its run IS the
-   two-class omega_c = 0 calibration.
+   two-class omega_c = 0 calibration. Not before block 12 (the author, 03:06: "don't launch
+   omegac>0 yet / first i want the b").
 3. Launch five cloud sessions, ONE PER POINT, each running exactly
-   `bash code/remote_omega_point.sh <w> <b*> 1.0` with the b-scan worker prompt, for
-   w = 0.05, 0.055, 0.06, 0.065, 0.07. Tag omega-c-2c.
+   `bash code/remote_omega_point.sh <w> <b*> 1.0 v3` with the v3 worker prompt, for
+   w = 0.05, 0.055, 0.06, 0.065, 0.07. Tag omega-c-2c. Results land in
+   results/b_scan_childsplit_v3/ (omega_<w>_b<b*>_ku1.0.moments.txt, bench_<w>_b<b*>_ku1.0/).
 4. Report the b table to the author. Do NOT move theta (all-users drug share is reported).
 
-## B. omega_c and the new benchmark  (~12:30 UTC, when the five are done)
+## B. omega_c and the new benchmark  (~15:00 UTC, when the five are done; was 12:30)
 
 1. For each w: moment = users(omega_c = 0, b*) / users(w) - 1, block 12, against 18.3 per
    cent. w* = the GRID POINT closest. The run at (b*, w*) is THE NEW BENCHMARK.
-2. Its files are in results/b_scan_childsplit/bench_0.0X_b<b*>_ku1.0/ (bench_files.tar.gz,
+2. Its files are in results/b_scan_childsplit_v3/bench_<w*>_b<b*>_ku1.0/ (bench_files.tar.gz,
    bench.log.gz, PARAM_HANDOVER.bench.txt -- remote_omega_point.sh saves them since 1 Oct).
    If that directory is missing (the run predates the change), fall back to a STAGE 1 solve
    in the arms (cf_arm.sh without BENCH_FROM, 4.5 hours).
@@ -87,6 +98,7 @@ the build changed, then the TF 85 path. Then transition_figure.py and Section 6.
 
 Every 90 minutes from 07:45 until E is running, then every 3 hours. Each one: fetch, guard
 (ENGINE.md unchanged, processes, memory, disk), advance the plan, record, push, re-arm.
-A worker that died is relaunched by the same command (remote_omega_point.sh resumes by
-attaching or restarts from the seed). A local run killed by a container restart restarts
+A worker that died is relaunched by the same command (remote_omega_point.sh attaches to a
+solve that is alive, which since be8ec376 survives the call's limit, or restarts from the
+seed). A local run killed by a container restart restarts
 from the beginning of its stage, never from a saved block state (lesson of 30 September).

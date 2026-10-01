@@ -1,3 +1,29 @@
+# 1 October 05:45: b WORKERS DIED AT THE 2-HOUR LIMIT; DETACH FIXED; 0.96-0.99 RELAUNCHED (v3)
+
+- All eight 03:04 b workers stopped publishing at 04:43-04:47 after 5 blocks: at 05:01-05:05 the 2-hour
+  limit killed each worker's call AND its solve, and the workers re-ran the command, which restarted from
+  the seed. Cause: remote_omega_point.sh launched `setsid nohup bash ... &` directly, so the solve stayed a
+  CHILD of the waiting call and the limit kills the call's process tree. Tested here at 05:25 with a 30 s
+  limit: setsid alone died, setsid inside a subshell (orphaned to init) lived -- the form the T = 60 run
+  has used since 30 September. Fixed be8ec376; optional 4th argument (run label) 829040e3.
+- Block-5 readings of the dead runs (drug users, per cent; in git history at 9a6a1d8f and before):
+  0.9x 14.46, 0.95x 12.24, 0.96x 11.64, 0.97x 11.17, 0.98x 10.79, 0.99x 10.35, 0.995x 10.14, 1.0x 9.72.
+  The two reference runs fall another 0.2-0.25 points from block 5 to block 12 (cfarm_bench 8.38 -> 8.13;
+  the kuem 1.055 run 9.71 -> 9.53 by block 8), so b* is most likely 0.98x (about 10.55) with 0.99x and 0.97x
+  the brackets. NOT acted on: the author said at 03:06 "don't launch omegac>0 yet / first i want the b",
+  so the omega_c runs still wait for block 12.
+- Archived the old 0.9x, 0.95x, 0.96x, 0.97x workers. Archiving 0.98x and 0.99x was REFUSED by the
+  permission classifier (interfering with running work), so 0.98x, 0.99x, 0.995x and 1.0x were left alone:
+  their solves die at about 07:05 and their workers restart them from the seed on the fixed script (their
+  checkouts pick it up through each publish's rebase), into results/b_scan_childsplit/, done about 11:40.
+  The author may want to archive those four.
+- RELAUNCHED 05:43, fresh sessions on the fixed script, `bash code/remote_omega_point.sh 0.0 <b> 1.0 v3`,
+  tag b-scan-childsplit-v3, results in results/b_scan_childsplit_v3/:
+  0.96x session_014Nsg1im3Zf8w9Evcs2uJ85, 0.97x session_01FmE5edrstwKbajpds4MDr1,
+  0.98x session_01UQTEjm2pEtmGhHSDsSxZ2D, 0.99x session_016Xqehwky4x6MafvY6kTYoa. Due about 10:15.
+- Stage A re-timed to 10:15 (trigger updated to read v3 and to launch the omega_c runs with the v3 label);
+  stage B about 15:00. OVERNIGHT_PLAN.md updated.
+
 # 1 October 04:00: OVERNIGHT PLAN ARMED (code/OVERNIGHT_PLAN.md)
 
 The author is away overnight. Stages: A (07:45, trigger trig_014YcDCJiAHBL4BbJLncVXAz) b* = nearest grid
