@@ -11,14 +11,14 @@
 \toprule
 Parameter & Description & Set & Moment and source & Data & Model & Value \\
 \midrule
-\multicolumn{7}{@{}l}{\emph{Who uses drugs}} \\
+\multicolumn{7}{@{}l}{\emph{Block 1: Who uses drugs}} \\
 $\theta$ & Weight on the drug & Int.$^\dagger$ & Drug spending over income, Midgette et al.\ (2019); model, users with a SUD & 16.0\% & 15.3\% & 0.165 \\
 $b$ & Shifter on the drug & Int. & Drug participation, NSDUH 2024 & 8.90\% & 8.12\% & 0.0055 \\
 $\pi_d$ & Chance a year of use starts a SUD & Int. & Share of users carrying a SUD, NSDUH 2024 & 41.3\% & 42.6\% & 0.0345 \\
 $\kappa_{\phi d}$ & Mortality multiplier, SUD & Int.$^\dagger$ & Income of drug users over average, NSDUH 2024 & 74\% & 60\% & 4.00 \\
 $\aleph$ & Flow value of being alive & Int. & Value of a statistical life over average labour income, Viscusi and Aldy (2003) & 80 & 82 & 87.6 \\
 \addlinespace
-\multicolumn{7}{@{}l}{\emph{What using and being homeless cost, and the voucher}} \\
+\multicolumn{7}{@{}l}{\emph{Block 2: What using and being homeless cost, and the voucher}} \\
 $\kappa^{ue}_{d}$ & Job-finding divisor, SUD & Int. & SUD share of the homeless, Gutwinski et al.\ (2021) & 21.7\% & 19.2\% & 3.78 \\
 $h_1$ & Housing services in a shelter & Int. & Homelessness rate, HUD PiT 2023, within a band & 0.40 to 1.00\% & 0.61\% & 0.0216 \\
 $\kappa_{\phi H}$ & Mortality multiplier, shelter & Ext. & Meyer et al.\ (2023) & 1.60 & n.a. & 1.60 \\
@@ -27,7 +27,7 @@ $\underline c$ & Food stamp maximum allotment & Int. & Food stamps over output (
 $\pi_V$ & Chance of drawing a voucher & Int.$^\dagger$ & Recipients over eligible, HUD 2023 & 26.6\% & 27.3\% & 0.0675 \\
 $T_0$ & Endowment at entry, over average earnings & Int. & Share of the homeless aged 25 to 34, HUD PiT 2024 & 26.0\% & 26.6\% & 0.111 \\
 \addlinespace
-\multicolumn{7}{@{}l}{\emph{Mental illness chain}} \\
+\multicolumn{7}{@{}l}{\emph{Block 3: Mental illness chain}} \\
 $\iota$ & SUD multiplier on SMI onset & Ext. & Danish registers, Nielsen et al.\ (2017) & 2.00 & n.a. & 2.00 \\
 $\lambda_m$ & Chance of recovering from SMI & Ext. & Ten-year recovery rate, {\AA}sb{\o} et al.\ (2022) & 50\% & n.a. & 0.066 \\
 $\omega_m$ & Level of the SMI onset profile & Int.$^\dagger$ & SMI share of the population, NSDUH 2024 & 4.82\% & 4.82\% & 0.0037 \\
@@ -36,22 +36,22 @@ $\kappa^{eu}_{m}$ & Separation multiplier, SMI & Int.$^\dagger$ & Held; its rule
 $\mu_m$ & SUD recovery multiplier, SMI & Ext. & Dual diagnosis relapse, Bradizza et al.\ (2006) & 0.82 & n.a. & 0.82 \\
 $\kappa_{\phi m}$ & Mortality multiplier, SMI & Ext. & Olfson et al.\ (2015) & 2.50 & n.a. & 2.50 \\
 \addlinespace
-\multicolumn{7}{@{}l}{\emph{Recovery and treatment}} \\
+\multicolumn{7}{@{}l}{\emph{Block 4: Recovery and treatment}} \\
 $\bar\pi_r$ & Baseline SUD recovery rate & Ext. & Ten-year remission rate, Vaillant (1995) & 0.025 & n.a. & 0.025 \\
 $\mu_H$ & Recovery multiplier in a shelter & Int. & Weeks abstinent, housed over homeless, Milby et al.\ (2005) & 1.47 & 1.47 & 0.696 \\
 $g$ & Treatment multiplier on recovery & Ext. & Remission with medication for opioid use disorder & 2.00 & n.a. & 2.00 \\
 $\bar\tau^{u}$ & Utility cost of treatment & Int. & Treatment take-up, NSDUH 2024 & 24.5\% & 25.0\% & 4.49 \\
 \addlinespace
-\multicolumn{7}{@{}l}{\emph{Externalities}} \\
+\multicolumn{7}{@{}l}{\emph{Block 5: Externalities}} \\
 $\omega_c$ & Weight on the child & Int. & Use of non-parents over parents, less one, NSDUH 2024 & 18.3\% & 21.8\% & 0.06 \\
 $\delta_d$ & Child's earnings, parent's SUD & Ext. & Earnings lost in utero, Nilsson (2017) & 0.24 & n.a. & 0.24 \\
 $\rho$ & Persistence of productivity across generations & Ext. & Solon (1992), Mazumder (2005) & 0.50 & n.a. & 0.50 \\
 $\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay, Loubi\`ere et al.\ (2020): of income (data), of consumption (model) & 0.20\% & 0.30\% & 0.93 \\
 \addlinespace
-\multicolumn{7}{@{}l}{\emph{Drug market}} \\
+\multicolumn{7}{@{}l}{\emph{Block 6: Drug market}} \\
 $\varepsilon_s$ & Price elasticity of drug supply & Ext. & Mace et al.\ (2020) & 1.46 & n.a. & 1.46 \\
 \bottomrule
 \end{tabular}}\usebox{\ntbox}
-\tabnote{Note: the Model column is the Housing First benchmark. n.a.\ marks a parameter set from outside the model, which has no moment of its own to reproduce. Int.$^\dagger$ marks one fitted to its moment in an earlier round of the calibration and held since, so its Model cell shows how far the moment has moved from its target in the rounds after it stopped being an instrument. For two parameters the Model cell is not a moment the parameter was fitted to: $\omega_c$ reports how far drug use rises when the child is given no weight and every other parameter is held, and $\kappa_x$ the willingness to pay its value implies at the benchmark.}
+\tabnote{Notes: the Model column is the Housing First benchmark. n.a.\ marks a parameter set from outside the model, which has no moment of its own to reproduce. Int.$^\dagger$ marks one fitted to its moment in an earlier round of the calibration and held since, so its Model cell shows how far the moment has moved from its target in the rounds after it stopped being an instrument. For two parameters the Model cell is not a moment the parameter was fitted to: $\omega_c$ reports how far drug use rises when the child is given no weight and every other parameter is held, and $\kappa_x$ the willingness to pay its value implies at the benchmark.}
 \endgroup
 \end{table}

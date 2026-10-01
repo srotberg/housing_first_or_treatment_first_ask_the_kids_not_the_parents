@@ -1,3 +1,18 @@
+# 1 October 02:05: ROUND f636de63 -- ALL RED REMOVED (whole paper, on the author's instruction); SECTION 5 EDITS IN RED
+
+39 comments on Section 5. Done: the two-step "How the internal parameters are fitted" paragraph and the Int.dagger
+paragraph removed (Table 4's note already explains the dagger), and the three entries that referred to them
+fixed (b, pi_d, omega_c); the "comparison has a shape" passage removed whole (private value / externality /
+distortion / HF / TF / GE), so the comments inside it are moot; "What follows gives the moment..." removed;
+"do play a role", "key to the main story", "parameters ... calibrated" in the counts; which twenty eight made
+explicit (5.1 opening; 5.2 labelled sec:stdparams); blocks explained and numbered 1-13 in the text AND in
+Tables 4-5 (calib_tables.py labels the heading, frozen); "Notes:" in every table and figure; the SMI drug-use
+ratio added to Block 3 as untargeted (c_smi_use_ratio_* in code/paper/smi_use_ratio.json: data 2.44, model
+2.715 from 23 Sept -- STALE, to be refreshed when the build prints it). Counts verified against the tables:
+56 = 28 (16 int, 12 ext) + 28 (6 int, 22 ext); 22 int, 34 ext. DATA_APPENDIX audit running (subagent).
+NOTE: a Bash call the author rejected had in fact run (the whole-paper strip); harmless here, but a rejected
+call is not proof nothing happened -- check git diff.
+
 # 1 October 01:35: OMEGA_C SCAN STOPPED; FIRST-STAGE b SCAN LAUNCHED (one class)
 
 The author, on omega_c = 0 settling near 9.5-9.6 per cent against the first stage's 10.50 and users' income

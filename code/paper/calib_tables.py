@@ -436,17 +436,20 @@ def marked(table, cells, cols=None):
     return out
 
 
-def head(table, text, ncol):
+def head(table, text, ncol, label=''):
     h = text if PREV is None or text in PREV[table]['heads'] else red(text)
-    return r'\multicolumn{%d}{@{}l}{\emph{%s}} \\' % (ncol, h)
+    return r'\multicolumn{%d}{@{}l}{\emph{%s%s}} \\' % (ncol, label, h)
 
 
-def rows(blocks, table):
+# THE BLOCKS ARE NUMBERED, in the tables as in the text, one sequence across Tables 4 and 5
+# (the author, 1 October: "block 1: (and do this for every block)"). The number is a label
+# on the heading and not part of it, so the frozen baseline still matches the heading itself.
+def rows(blocks, table, first=1):
     out = []
     for i, (hd, rs) in enumerate(blocks):
         if i:
             out.append(r'\addlinespace')
-        out.append(head(table, hd, 7))
+        out.append(head(table, hd, 7, 'Block %d: ' % (first + i)))
         for r in rs:
             out.append(' & '.join(marked(table, r)) + r' \\')
     return '\n'.join(out) + '\n'
@@ -533,7 +536,7 @@ if __name__ == '__main__':
         PREV = fr
         print('froze the three tables into calib_tables_prev.json')
     write_body('tab_eleven.tex', rows(ELEVEN, 'tab_eleven'))
-    write_body('tab_standard.tex', rows(STANDARD, 'tab_standard'))
+    write_body('tab_standard.tex', rows(STANDARD, 'tab_standard', 1 + len(ELEVEN)))
     write_body('tab_untargeted.tex', rows_untargeted())
     nums = numbers()
     json.dump(nums, open(OUT, 'w'), indent=1, sort_keys=True)
