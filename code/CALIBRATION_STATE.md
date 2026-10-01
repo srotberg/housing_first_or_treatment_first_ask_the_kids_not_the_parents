@@ -1,5 +1,18 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+21:12 omega1 DIAGNOSED (read-only agent) and RERUN. No code path stops weight_on_child from reaching the parent in the
+counterfactual (set from the handover only; the child value is recomputed each pass, class 1 a separate block). The -4.2 at
+pass 2 is mostly NOT an equilibrium: the arm was warm-started at the old arm's price 0.863, the price moves at most 0.5 per
+cent a pass (0.863 -> 0.867 -> 0.872), the drug-market gap is 0.11 against 5e-3, and at the current quantity supply implies
+about 0.98. Also, pass 1 runs with no child continuation term (expected_child_value is zero until refilled), so passes 1-2
+mostly show the flow channel. Part may be real: the new quantity solve (solve_drug_split_with_child) lets a household answer
+omega with less quantity rather than abstaining, and a user is anyone with positive consumption. The old arm was built 27
+September (before d45b36ea / ec1358e1; two classes there too). CHECK LAUNCHED: session_019sED8Y9sDLqMYEtAkSvhst runs
+`bash code/remote_cf_point.sh omega1 1.0` (results/counterfactuals_2c/omega1_p1.0). If users fall about 30 per cent by pass
+2, the warm start was the cause; if they stay near -5, the weak effect is real. The original omega1 session keeps running
+until the author says to stop it (archiving needs their word). BURDEN: food stamps now count as income in both renter burden
+shares (7817942f, the author: "just add the food stamps to income thats all"); takes effect in the next solve.
+
 20:25 STAGE C PASS 1 (all three arms): omega1 price 0.867, b -3.7, SUD -4.5, h_1 -15.9; internalise price 0.996, b -3.4,
 h_1 -4.7; null price 1.000, b -3.1, h_1 -3.0, welfare 789.127 against the benchmark's 787.495 (curve w(0) 787.495, so the
 null's pass-1 'CEV' reads +4.85). The old null's pass 1 was +0.5 utils and converged to +0.01; this one starts 1.6 utils
