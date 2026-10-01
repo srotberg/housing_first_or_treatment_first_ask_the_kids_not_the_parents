@@ -1,3 +1,16 @@
+# 1 October 02:30: ROUND 1fc475ff -- ALL RED REMOVED; SECTION 5 COMMENTS IN RED; NO DAGGER; kappa^eu_m OUT
+
+All red stripped (whole paper, the author's instruction). In red: "The former are", "along similar lines";
+theta's first sentence removed, "which means that the externality rises", theta calibrated; "held" gone
+from the calibration text (theta, kappa_phi_d, h_1, pi_V, omega_m, gamma, h_2, sigma_zeta, pi^eu, tau_ell,
+nu_1, validation) -- "held" left only in Section 6's experiment sense, author told. The dagger and its two
+note sentences are gone from Tables 4-5 (calib_tables.setcol is always Int.). kappa^eu_m = 1 (author): out
+of eq:femp, Table 4 and Section 5; "Neither the SUD nor SMI raises separations". Counts 55 = 27 (15 int,
+12 ext) + 28 (6, 22), red where they changed. The two \cut{} proposed deletions (28 and 30 Sept) carried
+out. Every table row on one line: Table 6 relabelled, l columns; numbers unchanged (diffed).
+THE AUTHOR, 1 October: the paper keeps the CURRENT calibration's numbers (Table 6, results, transition)
+until the new calibration is final, then everything is updated in one pass at the very end.
+
 # 1 October 02:00: kappa_uem SET TO 1; b SCAN RESTARTED WITH IT
 
 The author, on Table 4's "Held" row for kappa^eu_m (1.06): *"I think this was fixed at 1, no? we only
