@@ -403,3 +403,8 @@ code/pointrun_childsplit_omega0/
 code/pointrun_childsplit.chain.out
 code/omega_point_*
 code/pointrun_childsplit_omega0_resumed_invalid/
+
+# A whole benchmark's files tarred are about 123 MB gzipped, over GitHub's 100 MB limit: a push that
+# carried one was refused and took the run's moments down with it (b scan 0.96x, 1 October 09:25).
+# Benchmark files travel only as separate .dat.gz files, as in code/seeds/benchmark_dat/.
+bench_files.tar.gz
