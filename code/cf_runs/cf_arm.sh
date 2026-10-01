@@ -79,9 +79,16 @@ stage_handover() {
 # distributions -- read_calibration_distribution is called only from
 # calibrating_model). Gzipped, the set is tens of MB.
 if [ -n "$BENCH_FROM" ] && [ ! -f "$BDIR/BENCH_DONE" ]; then
-  [ -s "$BENCH_FROM/bench_files.tar.gz" ] && [ -s "$BENCH_FROM/bench.log.gz" ] || { echo "GUARD: $BENCH_FROM lacks bench_files.tar.gz or bench.log.gz"; exit 1; }
+  # The set arrives either tarred (bench_files.tar.gz, local only: tarred it is about 123 MB,
+  # over GitHub's limit) or as one .dat.gz per file in files/ (how remote_omega_point.sh sends
+  # it through git since 1 October, as in code/seeds/benchmark_dat/).
+  { [ -s "$BENCH_FROM/bench_files.tar.gz" ] || ls "$BENCH_FROM"/files/*baseline_benchmark.dat.gz >/dev/null 2>&1; } && [ -s "$BENCH_FROM/bench.log.gz" ] || { echo "GUARD: $BENCH_FROM lacks bench_files.tar.gz or files/*.dat.gz, or bench.log.gz"; exit 1; }
   rm -rf "$BDIR" && mkdir -p "$BDIR"
-  tar xzf "$BENCH_FROM/bench_files.tar.gz" -C "$BDIR"
+  if [ -s "$BENCH_FROM/bench_files.tar.gz" ]; then
+    tar xzf "$BENCH_FROM/bench_files.tar.gz" -C "$BDIR"
+  else
+    for f in "$BENCH_FROM"/files/*baseline_benchmark.dat.gz; do gunzip -c "$f" > "$BDIR/$(basename "$f" .gz)"; done
+  fi
   gunzip -c "$BENCH_FROM/bench.log.gz" > "$BDIR/bench.log"
   echo "$BENCH_FROM" > "$BDIR/BENCH_FROM"; date +%s > "$BDIR/BENCH_DONE"
   echo "STAGE 1 taken from $BENCH_FROM: $(ls "$BDIR" | grep -c baseline_benchmark) benchmark files"

@@ -155,13 +155,49 @@ wait "$PID"; RC=$?
 note "solve exited $RC after $(grep -ac 'BLOCK MOVE' "$D/bench.log") blocks; bench.err: $(tail -2 "$D/bench.err" | tr '\n' ' ')"
 gzip -c "$D/bench.log" > "$R/omega_$TAG.bench.log.gz"
 # THE BENCHMARK FILES THE COUNTERFACTUAL BINARY READS (1 October, OVERNIGHT_PLAN.md): with
-# them a counterfactual arm takes this run as its benchmark (cf_arm.sh BENCH_FROM=...)
-# instead of re-solving it for four and a half hours. Tens of MB gzipped.
+# them a counterfactual arm takes this run as its benchmark (cf_arm.sh BENCH_FROM=...) instead of
+# re-solving it for four and a half hours. The set is 2.1 GB raw and about 123 MB gzipped, over
+# GitHub's 100 MB limit as one tarball: the b scan's 0.96x push was refused for it at 09:25 and
+# its moments went down with it. So the files are gzipped one by one (each under 50 MB, as in
+# code/seeds/benchmark_dat/), HELD in this container, and sent through git only on request --
+# only the run that becomes the benchmark needs them, and 123 MB of history apiece for the rest
+# would be waste. The moments, the log and the handover are published at once as before.
 if ls "$D"/*baseline_benchmark.dat >/dev/null 2>&1; then
-    mkdir -p "$R/bench_$TAG"
-    (cd "$D" && tar czf "$R/bench_$TAG/bench_files.tar.gz" *baseline_benchmark.dat)
+    mkdir -p "$R/bench_$TAG" "$D/bench_hold"
+    for f in "$D"/*baseline_benchmark.dat; do gzip -c "$f" > "$D/bench_hold/$(basename "$f").gz"; done
     cp "$R/omega_$TAG.bench.log.gz" "$R/bench_$TAG/bench.log.gz"
     cp "$D/PARAM_HANDOVER.kept.txt" "$R/bench_$TAG/PARAM_HANDOVER.bench.txt"
-    note "benchmark files saved to bench_$TAG"
+    note "benchmark files held here, $(ls "$D/bench_hold" | wc -l) files, $(du -sh "$D/bench_hold" | cut -f1)"
 fi
 publish "complete (exit $RC)"
+
+# THE HOLD. The solve has finished; this process stays alive (so the worker keeps attaching and
+# the container stays up) until the main session commits one of these to the branch:
+#     <results dir>/send_bench_<TAG>   -> the held files go to <results dir>/bench_<TAG>/files/
+#     <results dir>/release_<TAG>      -> exit without sending (also release_all)
+# or until 8 hours pass.
+if [ -d "$D/bench_hold" ]; then
+    REL=${R#$REPO/}
+    note "holding the benchmark files: commit $REL/send_bench_$TAG to receive them, $REL/release_$TAG or $REL/release_all to let go; 8 hours at most"
+    publish "holding benchmark files"
+    END=$(( $(date +%s) + 8*3600 ))
+    while [ "$(date +%s)" -lt "$END" ]; do
+        sleep 300
+        git -C "$REPO" fetch -q origin "$BRANCH" 2>/dev/null || continue
+        if git -C "$REPO" cat-file -e "FETCH_HEAD:$REL/send_bench_$TAG" 2>/dev/null; then
+            mkdir -p "$R/bench_$TAG/files"
+            cp "$D"/bench_hold/*.gz "$R/bench_$TAG/files/"
+            note "benchmark files sent on request"
+            publish "benchmark files sent"
+            exit 0
+        fi
+        if git -C "$REPO" cat-file -e "FETCH_HEAD:$REL/release_$TAG" 2>/dev/null || \
+           git -C "$REPO" cat-file -e "FETCH_HEAD:$REL/release_all" 2>/dev/null; then
+            note "released, benchmark files not sent"
+            publish "released"
+            exit 0
+        fi
+    done
+    note "hold expired after 8 hours, benchmark files not sent"
+    publish "hold expired"
+fi
