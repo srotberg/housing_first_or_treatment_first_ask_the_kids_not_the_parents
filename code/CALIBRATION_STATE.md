@@ -1,3 +1,17 @@
+# 1 October 02:00: kappa_uem SET TO 1; b SCAN RESTARTED WITH IT
+
+The author, on Table 4's "Held" row for kappa^eu_m (1.06): *"I think this was fixed at 1, no? we only
+calibrated the ue case"*, *"because i believe we write in the model that the risk is only for regaining
+employment"*. Its rule was switched off on 11 September (adjuster 0) but the value never returned: the
+reference handover carries kappa_uem 1.0554. The author chose "Set it to 1, restart b scan". The 01:33
+b-scan workers and the omega_c=0 backup are archived; the local omega_c=0 run (pid 1504, block 8, 9.53 per
+cent) is stopped and its directory kept as code/omega_point_0.0_kuem1.055_stopped. remote_omega_point.sh
+takes kappa_uem as a third argument (TAG gets _ku1.0). With multiple_of_probabilities_of_employment_if_
+addicted 1.0 in the handover, neither the SUD nor SMI now raises separations; both act only on job finding
+(multiple_find_if_addicted, kappa_find_smi). STALE COMMENT, Fortran frozen: employment_transition still
+says "SMI worsens both margins". kappa_find_smi stays at 7.71, so the SMI share of the homeless will fall
+somewhat; report it with the b fit.
+
 # 1 October 02:05: ROUND f636de63 -- ALL RED REMOVED (whole paper, on the author's instruction); SECTION 5 EDITS IN RED
 
 39 comments on Section 5. Done: the two-step "How the internal parameters are fitted" paragraph and the Int.dagger

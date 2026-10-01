@@ -27,11 +27,16 @@ W="$1"
 # scan at omega_c = 0 (the author, 1 October: "keep everything else fixed and just bring b
 # up a bit", meaning participation, by lowering b). Without it b is the reference handover's.
 BV="${2:-}"
+# OPTIONAL THIRD ARGUMENT: kappa_uem, the SMI separation multiplier. The author, 1 October,
+# on its 1.0554 in the reference handover (its rule was switched off on 11 September but the
+# value never went back): "Set it to 1, restart b scan", since the model has SMI, like the SUD,
+# act only on regaining employment. The b scan from 01:33 at 1.0554 was stopped for it.
+KU="${3:-}"
 BRANCH=claude/two-period-addiction-hazard-d7gb61
 C=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$C/.." && pwd)
 if [ -n "$BV" ]; then
-    TAG="${W}_b${BV}"; R=$REPO/results/b_scan_childsplit
+    TAG="${W}_b${BV}${KU:+_ku$KU}"; R=$REPO/results/b_scan_childsplit
 else
     TAG="$W"; R=$REPO/results/omega_c_scan_childsplit
 fi
@@ -65,7 +70,7 @@ fi
 
 publish() (  # publish <message>; a subshell, so its cd cannot leak into the caller
     {
-        echo "# scan point, weight_on_child $W, b ${BV:-as in the reference}, corrected code; $(date -u '+%d %b %H:%M UTC')"
+        echo "# scan point, weight_on_child $W, b ${BV:-as in the reference}, kappa_uem ${KU:-as in the reference}, corrected code; $(date -u '+%d %b %H:%M UTC')"
         cat "$D.status" 2>/dev/null
         [ -f "$D/BUILD_USED" ] && echo "build md5: $(cut -c1-32 "$D/BUILD_USED")"
         [ -f "$D/bench.log" ] && grep -a "HANDOVER weight_on_child\|MOMENT\|BLOCK MOVE\|newborn_parent_share (clean\|FROZEN\|simulation ended" "$D/bench.log"
@@ -111,6 +116,10 @@ sed -e "s/^weight_on_child .*/weight_on_child $W/" "$REF" > PARAM_HANDOVER.txt
 if [ -n "$BV" ]; then
     sed -i -e "s/^addiction_scalar_1 .*/addiction_scalar_1 $BV/" PARAM_HANDOVER.txt
     [ "$(grep -c "^addiction_scalar_1 $BV\$" PARAM_HANDOVER.txt)" = 1 ] || { note "GUARD: addiction_scalar_1 not $BV"; publish "failed"; exit 1; }
+fi
+if [ -n "$KU" ]; then
+    sed -i -e "s/^kappa_uem .*/kappa_uem $KU/" PARAM_HANDOVER.txt
+    [ "$(grep -c "^kappa_uem $KU\$" PARAM_HANDOVER.txt)" = 1 ] || { note "GUARD: kappa_uem not $KU"; publish "failed"; exit 1; }
 fi
 [ "$(wc -l < PARAM_HANDOVER.txt)" = "$(wc -l < "$REF")" ] || { note "GUARD: handover length changed"; publish "failed"; exit 1; }
 cp PARAM_HANDOVER.txt PARAM_HANDOVER.kept.txt
