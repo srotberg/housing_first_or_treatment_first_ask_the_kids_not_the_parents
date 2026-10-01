@@ -28,8 +28,11 @@ Papers cited in the note or used to set a parameter. Filenames are
 
 `kappa_phi_d`, the SUD multiplier, is not set from a paper here: its profile
 comes from CDC WONDER drug poisonings in `data/raw/`, and its level stays
-calibrated to the drug price elasticity of participation, bracketed inside
-Degenhardt et al.'s SMR range of 2.5 to 9.8.
+calibrated to the drug price elasticity of participation. (Corrected 1 October: this
+line used to cite "Degenhardt et al.'s SMR range of 2.5 to 9.8"; Degenhardt et al.
+(2011) report a pooled SMR of 14.66 among opioid-dependent users, and the paper now
+brackets the level between Walker et al. (2017), 1.27 for cocaine and 2.40 for heroin,
+and that 14.7.)
 
 ## Drug supply elasticity
 

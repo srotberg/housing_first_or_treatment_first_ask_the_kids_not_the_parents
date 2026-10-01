@@ -3450,7 +3450,13 @@
         ! is all households above half of SPENDING. Three objects, two
         ! denominators and two universes; naming the constant is what stops the
         ! next reader picking the wrong one.
-        real(8), parameter :: renter_burden_30_data=0.406d0
+        ! RENTERS WITH POSITIVE INCOME AND POSITIVE RENT, ALL OF THEM, 1 October (the
+        ! author chose this universe: "use the second row"). The SCF script on file
+        ! still kept only the top income fifth, which gives zero, so it cannot have
+        ! produced the 0.406 and 0.175 that stood here. SCF 2022, weighted: 0.432 of
+        ! these renters pay over 30 per cent of income, 0.192 over half.
+        real(8), parameter :: renter_burden_30_data=0.432d0
+        real(8), parameter :: renter_burden_50_data=0.192d0
         real(8), parameter :: fraction_light_users=0.731
         
         integer, parameter :: target_HO_of_old=1
@@ -11528,9 +11534,9 @@
             write(*,*) "MOMENT burden50  over half of income, in h2 model=",&
                 val_burden50_by_unit(1,second_lowest_housing_grid_point)/&
                 max(sum(val_mass_by_unit(1,second_lowest_housing_grid_point:)),10.d0**(-14)),&
-                " target=", 0.175d0
+                " target=", renter_burden_50_data
             write(*,*) "UNTARGETED over half of income, all renters  model=",&
-                mass_of_renters_at_housing_spending(1,2), " observed=", 0.175d0
+                mass_of_renters_at_housing_spending(1,2), " observed=", renter_burden_50_data
 
             ! THE TWO PICTURE OF SUBSIDIZED HOUSEHOLDS ROWS. The tenant
             ! contribution rate is the check on kappa_r, which is set to

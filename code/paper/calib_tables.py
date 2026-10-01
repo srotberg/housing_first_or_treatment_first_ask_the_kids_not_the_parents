@@ -365,7 +365,6 @@ UNTARGETED = [
     ('Who uses and who carries a SUD', None, None),
     ('Share of users by age, 26--34 to 65+', many(USER_BANDS, 0), 'NSDUH 2024'),
     ('Mean age of users, years', one('mean age of drug users', 1, 1), 'NSDUH 2024'),
-    ('Income with a SUD, over average', one('income with a SUD'), 'NSDUH 2024'),
     ('Unemployment given a SUD', one('kappa_ued unemployment given SUD'), 'NSDUH 2024'),
     # DRUG USE, NOT THE SUD RATE, with SMI over without (the author, 1 October: "we need to
     # show the drug use ratio with SMI over without (not show the SUD rate)"); the same
@@ -378,7 +377,10 @@ UNTARGETED = [
     ('Psychiatric problem at SUD admission', one('SMI alongside SUD at admission'), 'TEDS-A 2022'),
     ('Working at all, homeless in treatment', one('working, homeless in treatment'), 'TEDS-A 2022'),
     ('Housing and vouchers', None, None),
-    ('Renters paying over half of income', one('over half of income, all renters'), 'SCF 2022'),
+    # the data side from the declaration (0.192, renters with positive income and rent,
+    # 1 October), not from the benchmark log's observed=, which is the old 0.175
+    ('Renters paying over half of income', (f'{100 * C["renter_burden_50_data"]:.1f}',
+     f'{100 * mom("over half of income, all renters"):.1f}'), 'SCF 2022'),
     ('Housed in the largest unit size', one('h_3 share in the largest unit'), 'ACS 2023, B25042'),
     ('Rent over income, voucher holders', one('tenant contribution rate'), 'HUD PSH 2023'),
     ('Voucher holders living on wages', one('voucher holders, wages main'), 'HUD PSH 2023'),
@@ -393,13 +395,11 @@ UNTARGETED = [
          (f'{100 * mom("w_bot net worth share, bottom half", 1):.1f}',
           f'{100 * mom("w_bot net worth share, bottom half"):.1f}'))), 'SCF 2022, FRB DFA'),
     ('Transmission, odds ratios', None, None),
-    # ONE ROW PER STUDY, so Yoon et al. is in the table (the author, 1 October) and the
-    # Source column stays one line: 1.44 is Mellentin's and 2.51 Yoon's, as the paper's
-    # Section 2 has it ("at odds ratios of 1.44 and 2.51, respectively")
+    # BOTH STUDIES ON ONE LINE (the author, 1 October: "just add it to the above, combine
+    # them in one line"): 1.44 is Mellentin's and 2.51 Yoon's
     ('Child of a SUD parent acquires a SUD',
-     ('1.44', f'{mom("delta_d child SUD odds ratio"):.2f}'), r'Mellentin et al.\ (2016)'),
-    (r'\quad the same, a second study',
-     ('2.51', f'{mom("delta_d child SUD odds ratio"):.2f}'), r'Yoon et al.\ (2013)'),
+     ('1.44, 2.51', f'{mom("delta_d child SUD odds ratio"):.2f}'),
+     r'Mellentin et al.\ (2016), Yoon et al.\ (2013)'),
     ('Homeless adult had a homeless caretaker',
      ('1.8 to 2.4', f'{mom("delta_h child homeless odds ratio"):.2f}'), r'Bassuk et al.\ (1997)'),
 ]

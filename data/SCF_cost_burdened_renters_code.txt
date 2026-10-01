@@ -6,7 +6,7 @@ use SCF_2022.dta
 *drop if age<26 | age>85
 
 scalar cost_burden=0.3
-scalar lower_bound=0.8
+scalar lower_bound=0.0
 scalar upper_bound=1.0
 
 egen total_households=sum(wgt)

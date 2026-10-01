@@ -719,13 +719,16 @@ difference is checkable.
 Financial Accounts (`raw/FRB_DFA_net_worth_levels_by_percentile_1989_2026.csv`), most
 recent quarter, bottom 50 percent share of household net worth.
 
-**Housing costs above 30 and 50 percent of income — 40.6 and 17.5 percent.**
-SCF 2022, computed by `SCF_cost_burdened_renters_code.txt`. The universe is renters
-with positive income and positive rent, dropped of homeowners, and restricted to the
-80th to 100th percentile band of the income CDF used in that script; rent to income is
-annualised as 12 × rent / income. This is a different universe from the ACS 49.5 and
-26.5 percent quoted with the rental ladder, which is why the two pairs of numbers
-differ, and both are reported rather than reconciled.
+**Housing costs above 30 and 50 percent of income — 43.2 and 19.2 percent.**
+SCF 2022, computed by `SCF_cost_burdened_renters_code.txt`. The universe is every renter
+with positive income and positive rent, weighted by `wgt`, with no income band; rent to
+income is annualised as 12 × rent / income. *Correction, 1 October:* the script carried
+a leftover restriction to the 80th to 100th percentile of the income distribution, under
+which no renter is burdened at all, so it cannot have produced the 40.6 and 17.5 percent
+that stood here before; the band is removed. Keeping also the 40 renters with no income
+and the 345 who pay no rent gives 40.9 and 18.3. This is a different universe from the
+ACS 49.5 and 26.5 percent quoted with the rental ladder, which is why the two pairs of
+numbers differ, and both are reported rather than reconciled.
 
 **Earnings shares, bottom tenth and top tenth — 0.99 and 41.1 percent.** SCF 2022
 (`SCF_2022.dta`), the same universe and the same weights as the bottom half's share

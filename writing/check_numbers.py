@@ -36,6 +36,10 @@ TAB = os.path.join(HERE, 'tables')
 
 # (value, fragment of the sentence) pairs that are known coincidences
 ALLOW = [
+    # DEGENHARDT ET AL.'S POOLED SMR, 14.7, a literature estimate quoted in the
+    # kappa_phi_d entry (1 October); it coincides with the model's unemployment
+    # given a SUD in Table 6 and has nothing to do with it.
+    ('14.7', 'standardised mortality ratio of'),
     # LITERATURE ODDS RATIOS, quoted in the prose and in the Data column of
     # tab_untargeted.tex, which calib_tables.py writes. They are estimates read
     # off the studies, not anything a model computes, and the validation table
