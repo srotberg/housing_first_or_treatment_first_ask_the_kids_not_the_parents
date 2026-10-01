@@ -22,6 +22,8 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+18:22 CHECK-IN, NOTHING DUE. omega_c = 0.085 at block 8, rise 18.2 (17.3/17.8/18.2 at blocks 6-8), digest 18:05; due
+about 22:30. Stage B 22:30. Round b8142d12 started (red stripped, e6a01261), waiting on the author's BLS UI file for p_ui.
 18:40 THE AUTHOR'S DECISIONS (17:50-18:35): omega_c = 0.085 is the benchmark (OVERNIGHT_PLAN.md "B, AS DECIDED"; stage B
 trigger rewritten); all parameter values and model moments, Table 6 included, refresh from it, and the intro, literature
 and Sections 3-4 are scanned for numbers; stage C and E warm-start from the old equilibria. h_2 SWAPPED TO THE OVER-HALF
