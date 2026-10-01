@@ -63,7 +63,7 @@
 % \input from
 % their own .tex, so a caption saying how many rows its table has could not be
 % generated any other way. Counted off the Set column of the tables themselves.
-\newcommand{\nmain}{twenty eight}
+\newcommand{\nmain}{\new{twenty seven}}
 \newcommand{\nstd}{twenty eight}
 % The cut macro below marks a PROPOSED DELETION: red and struck through, so the reader sees what
 % would go before it goes. ulem is not in this installation, and a single rule over a
@@ -726,7 +726,7 @@ In the data, drug use is concentrated among low-income households, most of the
 homeless do not carry a SUD, and housing vouchers
 reach only about a quarter of the households eligible for them. The quantitative
 model is built to match facts of that kind. It has seven state variables and
-fifty six parameters, which is what the welfare and fiscal questions
+\new{fifty five} parameters, which is what the welfare and fiscal questions
 require,
 but it also makes it hard to see which pieces of the environment do the
 heavy lifting. This section strips the environment down to where the main
@@ -1111,7 +1111,7 @@ with no consequences of a SUD at all.
 \includegraphics[width=0.62\textwidth]{figures/stylized_who_uses.pdf}
 \caption{What it takes to reverse the income gradient in drug use}
 \label{fig:who}
-\notes{0.62\textwidth}{\new{Notes:} stage 1, the model without the child. Each curve
+\notes{0.62\textwidth}{Notes: stage 1, the model without the child. Each curve
 scales one channel with the other switched off, so both start from the economy with no
 consequences of a SUD. The vertical axis is average income of users over the
 population average, and $b$ is recalibrated at every point so that participation is
@@ -1402,7 +1402,7 @@ born at the reform and, even more, on every cohort born after them.
 \centering
 \includegraphics[width=\textwidth]{figures/stylized_transition.pdf}
 \caption{The transition from Housing First to Treatment First}\label{fig:trans}
-\notes{\textwidth}{\new{Notes:} the model with the child. Panels (a) to (c) are each
+\notes{\textwidth}{Notes: the model with the child. Panels (a) to (c) are each
 generation as adults, in their first period: the adults at the reform, who were born into
 the Housing First distribution and choose under Treatment First, their children, and the
 cohorts born after them, when they become adults, to the fifth; the solid blue line is Treatment First,
@@ -1710,17 +1710,16 @@ with probability $\pi^{ue}$,
 \begin{equation}\label{eq:femp}
 \begin{aligned}
 \pi^{eu}&=\min\Big\{1,\ \bar\pi^{eu}\,\varpi(y)\,
-\big(\mathbf{1}\{m'=1\}\,\kappa^{eu}_{m}+\mathbf{1}\{m'=0\}\big)\big(1+\mathbf{1}\{h=h_1\}\,\kappa_{H}\big)\Big\},\\
+\big(1+\mathbf{1}\{h=h_1\}\,\kappa_{H}\big)\Big\},\\
 \pi^{ue}&=\min\Big\{1,\ \frac{\bar\pi^{ue}\,\big(1-\mathbf{1}\{h=h_1\}\,\kappa_{H}\big)}
 {\big(\mathbf{1}\{d'=2\}\,\kappa^{ue}_{d}+\mathbf{1}\{d'\neq2\}\big)\big(\mathbf{1}\{m'=1\}\,\kappa^{ue}_{m}+\mathbf{1}\{m'=0\}\big)}\Big\},
 \end{aligned}
 \end{equation}
 with $\bar\pi^{eu}$ and $\bar\pi^{ue}$ the baseline separation and job finding rates,
 $\varpi(y)$ a factor that makes separations likelier at low productivity, in line with the
-unemployment rates of the education groups the productivity grid spans, the multiplier
-$\kappa^{eu}_{m}$ making a job likelier to lose with SMI, and the divisors
+unemployment rates of the education groups the productivity grid spans, and the divisors
 $\kappa^{ue}_{d}$ and $\kappa^{ue}_{m}$ making one harder to find with the SUD and with
-SMI. The SUD does not raise separations, only reduces the chance of regaining employment. $\kappa_{H}$ does both for a household in a
+SMI. \new{Neither the SUD nor SMI raises separations; each} only reduces the chance of regaining employment. $\kappa_{H}$ does both for a household in a
 shelter.
 
 \paragraph{The child's productivity penalty.} A child whose parent had the disorder at any point while the child lived at home,
@@ -1953,16 +1952,16 @@ report. The sequence version is what the transition between them solves.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has fifty six parameters, some of which vary in value by
+The model has \new{fifty five} parameters, some of which vary in value by
 age. Thirty four are calibrated externally, from data or from the literature,
-and twenty two are calibrated internally. Three further parameters
+and \new{twenty one} are calibrated internally. Three further parameters
 govern drug testing and exclusion from the voucher; they do not play a role in the
-benchmark, where nothing is conditional, but they do \new{play a role} under Treatment First, which is
+benchmark, where nothing is conditional, but they do play a role under Treatment First, which is
 where they are set. The calibrated parameters are
-split across the two tables of this section: twenty eight are \new{key to the main story}
-of this paper and its policy analysis (Table~\ref{tab:eleven}, sixteen \new{parameters}
-internally and twelve externally calibrated), and \new{the other} twenty eight are standard
-(Table~\ref{tab:stdparams}, six \new{parameters} internally and twenty two externally \new{calibrated}).
+split across the two tables of this section: \new{twenty seven} are key to the main story
+of this paper and its policy analysis (Table~\ref{tab:eleven}, \new{fifteen} parameters
+internally and twelve externally calibrated), and the other twenty eight are standard
+(Table~\ref{tab:stdparams}, six parameters internally and twenty two externally calibrated).
 
 The tables carry the parameter, its description, the moment and source used to
 fix its value, the value of that moment in the data and in the model, and the value of
@@ -1973,37 +1972,32 @@ estimate in full, naming the dataset behind each target, its year and universe,
 and the computation that produces it. The package carries the extracts themselves
 alongside the code that reads them, so nothing has to be downloaded.
 
-\subsection{The twenty eight parameters that carry the story of this paper}
+\subsection{The \new{twenty seven} parameters that carry the story of this paper}
 
-\new{Of the fifty six parameters, twenty eight are specific to this paper and carry its main story and policy analysis; the other twenty eight, common to most life-cycle models, are in Section~\ref{sec:stdparams}.} They are set out in Table~\ref{tab:eleven},
+Of the \new{fifty five} parameters, \new{twenty seven} are specific to this paper and carry its main story and policy analysis; the other twenty eight, common to most life-cycle models, are in Section~\ref{sec:stdparams}. \new{The former are} set out in Table~\ref{tab:eleven},
 with the parameter, its description,
 and the moment and source used to fix its value, which is given in the last
 column. They are discussed one at a time below because they are the parameters a
-reader may want to argue over, and each is taken in the order of the table. \new{For clarity
+reader may want to argue over, and each is taken in the order of the table. For clarity
 the table groups them into numbered blocks, each collecting the parameters that work
 through one mechanism, so that what each parameter does and how it moves the model can
-be read alongside the others that act the same way; the blocks are taken in turn below,
+be read alongside the others that act \new{along similar lines}; the blocks are taken in turn below,
 and those of the standard parameters in Section~\ref{sec:stdparams} continue the
-numbering.}
+numbering.
 
 \input{tables/tab_eleven}
 
-\paragraph{\new{Block 1:} Who uses drugs.} \new{The five parameters in this block} set participation and, more importantly,
+\paragraph{Block 1: Who uses drugs.} The five parameters in this block set participation and, more importantly,
 \emph{who} participates. Neither policy acts on them directly; they decide how much
 there is for a policy to act on.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\theta$, the weight on drugs in utility.]
-How much a household wants the drug at all, against consumption and
-housing. It is the parameter that determines the amount spent on drugs when
+It is the parameter that determines the amount spent on drugs when
 the household consumes a strictly positive amount of it. As it rises use rises on both the extensive and intensive
-margins, so the private
-cost and the externality both rise and there is more for
-either policy to act on. It is held rather than searched for, at
-$0.17$, because it moves the point below which a household buys none of
-the drug together with $b$, and an instrument moving that point while $b$ is being
-fitted to it makes $b$ chase a moving target. At that value aggregate drug spending
-over the aggregate income of users carrying a SUD, which is the ratio the model reports,
-is $15.3$ percent, against
+margins, \new{which means that the externality rises} and there is more for
+either policy to act on. \new{It is calibrated, at $0.17$, to aggregate drug spending
+over the aggregate income of users carrying a SUD, which is the ratio the model reports:
+$15.3$ percent in the model,} against
 $16.0$ percent from retail drug spending in Midgette et al.\ (2019) and the
 incomes of adults aged 26 and over who use in NSDUH 2024. Section 1 of the data
 appendix builds the target from those two. The ratio is of totals: the average of each
@@ -2018,9 +2012,9 @@ private cost and the externality both fall, and housing assistance is
 less likely to be translated into more spending on drugs: $b$ affects the
 degree of moral hazard. Its value is chosen to target a participation rate of
 $10.50$ percent, the NSDUH 2024 rate of a drug use disorder of any severity
-among adults aged 26 and over, raised \new{by $18$ percent because the target
+among adults aged 26 and over, raised by $18$ percent because the target
 applies to the economy in which the child is given no weight (see $\omega_c$ below); that
-economy} reached
+economy reached
 $9.89$ percent, and the benchmark is at $8.12$ percent against
 $8.90$.
 \item[$\pi_d$, the chance that a year of use starts a SUD.] This is what
@@ -2032,7 +2026,7 @@ extra voucher under Housing First into a higher SUD rate that Treatment First th
 attempts to cure. Its value is chosen so the model generates the share of users who
 carry a SUD, $41.3$ percent among adults aged 26 and over in NSDUH 2024.
 Both drug targets are raised by the same factor, so this ratio is the
-data's \new{with or without the child's weight}.
+data's with or without the child's weight.
 \item[$\kappa_{\phi d}$, increased mortality with a SUD.] This is the parameter the whole
 paper turns on. Mortality truncates the value of life for a user, which
 hits households with the highest life values hardest and thus reverses the income
@@ -2042,11 +2036,10 @@ with it, since a child born to a parent who died with a SUD has a lower
 value of life. Both policies reduce these deaths, Treatment First by curing
 and Housing First too, because recovery is less likely when homeless. Its
 instrument is the income of users, because the reversal is what it is responsible for:
-a higher death risk leaves only those with less to lose willing to use. It was fitted to
-that moment in earlier rounds, and then set at $4.00$ and held, within the range of two to
+a higher death risk leaves only those with less to lose willing to use. \new{It is calibrated to
+that moment, at $4.00$,} within the range of two to
 nine that studies of excess mortality in SUD report and below the six to ten of
-Hjorth\o j et al.\ (2023), when moving it alongside $b$ kept the stock of households
-with the disorder from settling. At that
+Hjorth\o j et al.\ (2023). At that
 value users earn $60$ percent of average income in the model,
 against $74$ percent in NSDUH 2024, so the reversal is somewhat
 stronger in the model than in the data.
@@ -2060,7 +2053,7 @@ of $80$ times average labour income, which is the \$9m of Viscusi and Aldy
 negative value of life in equilibrium, so death is never an optimal outcome.}
 \end{description}
 
-\paragraph{\new{Block 2:} What using and being homeless cost, and the voucher.} Both
+\paragraph{Block 2: What using and being homeless cost, and the voucher.} Both
 policies work on this block, from opposite ends: each parameter says how bad a state
 is, so each sets what a voucher is worth to a household in that state and
 what being cured of that state is worth. The voucher and the endowment at entry close the
@@ -2084,7 +2077,7 @@ the child likelier to be unhoused falls with it. Its value is chosen so that the
 homelessness rate lies within $0.40 to 1.00$ percent of households. The floor is
 HUD's 2023 PiT count, which counts a single night and so misses households homeless at
 other times of the year; the ceiling is the share homeless at some point over a year,
-from Burt et al.\ (2001). Within the band $h_1$ is held, because it moves drug
+from Burt et al.\ (2001). \new{The target is a band rather than a point} because $h_1$ moves drug
 participation as well as homelessness, through what a household has left once it is
 housed. The model puts the rate at $0.61$ percent. No household may choose
 a shelter in the last two years of life, ages $84$ and $85$, where, as with $J_E$ below,
@@ -2115,7 +2108,7 @@ income, in the model.
 Increase it and the private gain rises and two externalities fall mechanically,
 the child's years in a shelter and the aggregate disamenity of homelessness, while the
 third rises through the SUD rate: the whole trade in one parameter. In the benchmark it
-is held at $0.068$, where $27.3$ percent of the income-eligible
+is \new{calibrated, at} $0.068$, \new{so that} $27.3$ percent of the income-eligible
 population holds a voucher, against $26.6$ percent in HUD's Picture of
 Subsidized Households, 2023. In every experiment it is the instrument that balances the
 government's budget, as set out above.
@@ -2129,16 +2122,16 @@ model gives as $26.6$. Raise it and the private cost of being young and poor
 falls, as does the child's chance of starting its adult life on the street.
 \end{description}
 
-\paragraph{\new{Block 3:} Mental illness chain.} This block determines how much further
+\paragraph{Block 3: Mental illness chain.} This block determines how much further
 Treatment First reaches over and above the disorder it treats: a SUD raises
 the chance of mental illness, mental illness lowers employment and raises death,
 and the child is susceptible to all of this too. Everything here therefore moves
 the private cost and the externality
 in the same direction, and the first three decide whether the chain exists
-at all. \new{The chain also reproduces how much more people with SMI use drugs, which
+at all. The chain also reproduces how much more people with SMI use drugs, which
 nothing in the calibration targets: in the model a household with SMI is
-\new{$2.71$} times as likely to use as one without, against
-\new{$2.44$} in NSDUH 2024 among adults 26 and over.}
+$2.71$ times as likely to use as one without, against
+$2.44$ in NSDUH 2024 among adults 26 and over.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\iota$, the SUD multiplier on SMI onset.] The hinge of the whole block.
 Without it mental illness is exogenous to everything a policy does and
@@ -2163,24 +2156,17 @@ governs how many households ever acquire mental illness: it scales the age
 profile of onset up or down without changing its shape, so it fixes the size of
 the SMI population rather than who reaches it or when. Raise it and both the
 private cost and the externality rise, since a child is likelier to reach a state
-that costs earnings, employment and years of life. It was calibrated internally,
+that costs earnings, employment and years of life. It \new{is} calibrated internally,
 to the share of the population carrying SMI, $4.82$ percent, which is
-the NSDUH 2024 prevalence by age weighted by the model's own age distribution, and held
-once it matched; the benchmark gives $4.82$.
+the NSDUH 2024 prevalence by age weighted by the model's own age distribution\new{, and}
+the benchmark gives $4.82$.
 \item[$\kappa^{ue}_{m}$, how much harder a job is to find with SMI.] The
 same as $\kappa^{ue}_{d}$ but for SMI: a household with the illness finds work at the
 rate $\bar\pi^{ue}$ divided by $\kappa^{ue}_{m}$. Increase it and the private cost
 rises, because being ill costs the job, and the externality rises with the child's
 draw. Its moment is the SMI share of the homeless, $25$ percent in
 Gutwinski et al.\ (2021), which the model gives as $25.4$, for the same
-reason as the SUD's: a household without work is the one that loses its housing.
-\item[$\kappa^{eu}_{m}$, how much likelier a job is to be lost with SMI.]
-It multiplies the separation rate of a household with SMI, and it is held at
-$1.06$ from an earlier round. Its update rule is on the SMI share of
-the homeless, the moment $\kappa^{ue}_{m}$ carries, so it has no moment of its own here.
-Employment given SMI, which it would otherwise answer to, is reported with the
-untargeted moments against the midpoint of the range for high-disability diagnoses in
-Mechanic et al.\ (2002), and the model is well above it. \cut{A child of a SUD-treated parent is less
+reason as the SUD's: a household without work is the one that loses its housing. \cut{A child of a SUD-treated parent is less
 likely to end up with SMI, which raises its earnings and lowers its chance of being
 unhoused, so part of Treatment First's return appears in the health of the children of
 those treated for a SUD rather than in the treated household's own drug use.}
@@ -2207,7 +2193,7 @@ externally at $2.50$, the middle of the standardised mortality ratios for SMI in
 Olfson et al.\ (2015).
 \end{description}
 
-\paragraph{\new{Block 4:} Recovery and treatment.} Both policies work through parameters in this block,
+\paragraph{Block 4: Recovery and treatment.} Both policies work through parameters in this block,
 since recovery is what Treatment First buys directly and what Housing First buys by
 housing people. The first two set how much recovery there is to buy and the last two
 how much of it a policy can reach.
@@ -2251,7 +2237,7 @@ $24.5$ percent of adults with a SUD received substance use treatment
 in the past year in NSDUH 2024, and $25.0$ percent do in the model.
 \end{description}
 
-\paragraph{\new{Block 5:} Externalities.} The parameters in this block decide the strength
+\paragraph{Block 5: Externalities.} The parameters in this block decide the strength
 of the externalities. This affects the ranking between Housing First and Treatment
 First, since the private comparison already favours Housing First, holding the
 externalities aside. The first three are how much of the child a parent counts, what a
@@ -2269,7 +2255,7 @@ loss, so the externality left for a policy to correct is smaller. Identifying it
 requires care, because \emph{every} household here raises a child, so there is no
 parent against non-parent comparison to run inside the benchmark. It is identified
 instead by a counterfactual moment: with every other
-parameter held, drug use with the child given no weight is compared with drug use at
+parameter \new{unchanged}, drug use with the child given no weight is compared with drug use at
 $\omega_c$. In NSDUH 2024 adults aged 26 and over without children use at a rate
 $18.3$ percent above parents', read the way the model reads it, and at
 $\omega_c=0.06$ removing the child's weight raises use by
@@ -2313,7 +2299,7 @@ it, and at the benchmark it is worth $0.30$ percent of consumption, the same
 willingness to pay measured against consumption rather than income.
 \end{description}
 
-\paragraph{\new{Block 6:} Drug market.} One parameter of the drug market belongs here.
+\paragraph{Block 6: Drug market.} One parameter of the drug market belongs here.
 It is what makes the drug price endogenous, so drug use affects drug demand and the
 drug price in equilibrium. This is a general-equilibrium offset that
 runs against Treatment First in particular. Curing households takes them out of the
@@ -2355,7 +2341,7 @@ but that they are not specific to this paper.
 \input{tables/tab_standard}
 
 
-\paragraph{\new{Block 7:} Preferences.} The four parameters in this block say what a household wants, and what it is willing to give up to get it.
+\paragraph{Block 7: Preferences.} The four parameters in this block say what a household wants, and what it is willing to give up to get it.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\sigma$, risk aversion.] I set it to the standard value of two, following
 Attanasio and Weber (2010). Increase it and households want smoother
@@ -2369,8 +2355,7 @@ the shelter included, rather than any size, the share of spending that goes on h
 itself, as it would be with a continuous choice, and $\gamma$ is chosen for the share
 it produces: $26.8$ percent of expenditure, as shelter plus
 utilities take in the 2024 Consumer Expenditure Survey, which records no illicit drugs;
-the model's share is of expenditure including them. It was fitted in an earlier
-round and held at $0.54$, where the share is $26.0$ percent. As
+the model's share is of expenditure including them. \new{At its value of} $0.54$\new{, the model's share} is $26.0$ percent. As
 $\gamma$ rises housing is worth more against consumption, households buy more of it,
 and that expenditure share rises with it.
 \item[$\beta$, the discount factor.] It is chosen so that wealth over output
@@ -2383,7 +2368,7 @@ $\xi_j$ to give what each member gets. It is the square-root scale, $\sqrt2$ for
 household of two, from the parent's age 26 to 50, and one after the child has left.
 \end{description}
 
-\paragraph{\new{Block 8:} Rental ladder.} These three parameters build the grid of dwelling
+\paragraph{Block 8: Rental ladder.} These three parameters build the grid of dwelling
 sizes a household chooses from. Below the smallest rung is the shelter, $h_1$, in
 Table~\ref{tab:eleven}.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
@@ -2391,8 +2376,8 @@ Table~\ref{tab:eleven}.
 decides how much of its income a poor household must spend to be housed at all, so
 its moment is the share of renters paying more than thirty percent of their income for
 housing, $40.6$ percent in the 2022 SCF. Raise it and the bottom rung is
-larger and dearer, so more households are burdened. It was fitted to this moment in an
-earlier round and held since, and the model now overshoots the share, at
+larger and dearer, so more households are burdened. It \new{is calibrated} to this moment,
+and the model overshoots the share, at
 $58.9$ percent.
 \item[$h_3/h_2$ and $h_4/h_2$, the spacing of the ladder.] The two larger
 rungs are set at $4.00$ and $8.00$ times the smallest. The
@@ -2400,7 +2385,7 @@ share of the housed in the largest unit size, which a calibrated top rung would 
 to, is reported with the untargeted moments instead.
 \end{description}
 
-\paragraph{\new{Block 9:} Earnings and employment.} These six parameters determine what a household
+\paragraph{Block 9: Earnings and employment.} These six parameters determine what a household
 is expected to earn over its life, how persistent the shocks to it are, and how it
 moves between work and unemployment.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
@@ -2422,20 +2407,20 @@ entry draw, set with a standard deviation of $0.31$ before the common scale
 that $\sigma_\zeta$ carries, $0.64$ after it, and a persistence of
 $0.50$, which gives a standard deviation of $0.84$ in logs. The grid
 spans $2.69$ standard deviations below the mean and $3.00$ above, with
-its lowest node held at $0.009$ of mean productivity, and separations are
+its lowest node at $0.009$ of mean productivity, and separations are
 tilted across it, through $\varpi(y)$, by the unemployment rates of four education groups
 in the Bureau of Labor Statistics (BLS) 2019 annual averages for ages 25 and over. $\sigma_\zeta$ is what decides how many households are poor
-enough to be at risk of homelessness and of acquiring a SUD, and it was fitted to the
-share of earnings held by the bottom half of working households: in the 2022 SCF,
+enough to be at risk of homelessness and of acquiring a SUD, and it \new{is calibrated} to the
+share of earnings \new{that goes to} the bottom half of working households: in the 2022 SCF,
 households aged $26$ to $65$ with positive wage and salary income in the poorer half of
-the distribution hold $17.2$ percent of total earnings. It has been
-held at $0.41$ since, where the model gives
+the distribution \new{earn} $17.2$ percent of total earnings. \new{At its value of}
+$0.41$\new{,} the model gives
 $16.3$ percent. The share falls in $\sigma_\zeta$.
 
 \item[$\bar\pi^{eu}$, the job separation rate.] Chosen to reproduce the aggregate
 unemployment rate in the BLS Current Population Survey (CPS) over 2014 to 2024,
-$4.9$ percent, given the job finding rate set externally below, and
-held since at $0.027$, where the model gives $5.6$.
+$4.9$ percent, given the job finding rate set externally below\new{; at its value of}
+$0.027$ the model gives $5.6$.
 It is scaled by $\varpi(y)$ in~\eqref{eq:femp}, so separations are likelier at low
 productivity. Raise it and more households lose work each year, so the unemployment
 rate rises with it.
@@ -2449,7 +2434,7 @@ otherwise. It sets how many of the newly unemployed fall straight to zero
 earnings.
 \end{description}
 
-\paragraph{\new{Block 10:} Survival and mental illness.} These two parameters are age profiles
+\paragraph{Block 10: Survival and mental illness.} These two parameters are age profiles
 that I take from outside the model rather than generate inside it.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\bar\phi_j$, baseline survival by age.] The most recent SSA period life
@@ -2466,7 +2451,7 @@ same way the life table is: what this paper adds is $\iota$, the multiplier a SU
 on that onset, and that is where the interaction lives.
 \end{description}
 
-\paragraph{\new{Block 11:} Interest and taxes.}
+\paragraph{Block 11: Interest and taxes.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$r$, the risk-free rate.] I set it to three percent, from Kaplan et al.\
 (2020).
@@ -2483,16 +2468,16 @@ dividends for the middle of the income distribution, which the Internal Revenue
 Service (IRS) sets out in Topic 409
 (\url{https://www.irs.gov/taxtopics/tc409}).
 
-\item[$\tau_{\ell}$, the level of the labour income tax.] It was calibrated so that
+\item[$\tau_{\ell}$, the level of the labour income tax.] It \new{is} calibrated so that
 the average labour income tax rate the model produces is $22.4$ percent,
 which is what McDaniel (2007) measures for the United States and what Guvenen et al.\
-(2023a) use, and held since at $0.89$, where the model gives
+(2023a) use\new{; at its value of} $0.89$ the model gives
 $21.1$ percent. It does not move in the experiments: the budget is
 balanced by $\pi_V$ instead.
 
 \end{description}
 
-\paragraph{\new{Block 12:} Social security benefits and programmes' rules.}
+\paragraph{Block 12: Social security benefits and programmes' rules.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$S(y)$, social security.] Retirement income follows the statutory
 primary insurance amount: it replaces $0.90, 0.32, 0.15$ of the household's productivity at its last working
@@ -2522,7 +2507,7 @@ Voucher programme
 \item[$\varrho$, the food stamp clawback rate.] This is the rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10). It matters beyond the level of the transfer, because it is the implicit marginal tax the programme puts on earnings for the households the paper is about: an extra dollar earned costs a household on food assistance $\varrho$ of a dollar of its allotment.
 \end{description}
 
-\paragraph{\new{Block 13:} Drug market.} These two parameters describe the rest of the drug
+\paragraph{Block 13: Drug market.} These two parameters describe the rest of the drug
 market, closing the loop on the elasticity explained above: the first fixes who can
 enter it, and the second fixes the units in which its price and quantity are
 measured.
@@ -2544,7 +2529,7 @@ disorder carries literally no consequence and only the flow benefit of using, wh
 cannot be a reasonable description of the choice either.
 
 \item[$\nu_1$, the supply shifter.] A pure normalisation, chosen so that supply
-equals demand at $p_v=1$ in the benchmark, and held fixed across experiments, in which
+equals demand at $p_v=1$ in the benchmark, and \new{kept} fixed across experiments, in which
 the price is free. It normalises units, not behaviour.
 
 \end{description}
@@ -2553,7 +2538,7 @@ the price is free. It normalises units, not behaviour.
 \subsection{Validation}\label{sec:fvalid}
 
 None of the moments in Table~\ref{tab:untargeted} is fitted, with two
-qualifications: the homelessness rate's overall level is held within a band, so what
+qualifications: the homelessness rate's overall level is \new{targeted to} a band, so what
 is tested in the first row is the profile across the five age bands rather than its
 level, and the share of the homeless in the youngest band is the target of $T_0$. Each
 is produced endogenously by a model with sixty single ages, and each is a place the
@@ -2760,7 +2745,7 @@ preliminary. Figure~\ref{fig:ftrans} shows the path.
 \centering
 \includegraphics[width=\textwidth]{figures/full_transition.pdf}
 \caption{The transition from Housing First to Treatment First, quantitative model}\label{fig:ftrans}
-\notes{\textwidth}{\new{Notes:} panels (a) to (e) are by year since the reform, which lands at
+\notes{\textwidth}{Notes: panels (a) to (e) are by year since the reform, which lands at
 the start of year 1, with the benchmark as year 0; the dashed orange line is the Housing
 First benchmark, the dotted blue line the Treatment First long run and the solid blue line
 the path. Children are those of households aged 26 to 50. Panel (f) is the CEV of each cohort

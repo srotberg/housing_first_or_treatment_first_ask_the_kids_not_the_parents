@@ -32,10 +32,10 @@ Model column is that benchmark; for b the Data column is the NSDUH figure, the
 declared target divided by UPLIFT, and pi_d is on the SUD share of users, which
 the uplift leaves where it was.
 
-A DAGGER ON Int. marks a parameter the gaps table reports as HELD: fitted to its
-moment in an earlier round and not moved by the final one. The verdict is the
-gaps table's, which parses it out of the Fortran; kappa_uem is not in the gaps
-table at all because its adjuster is zeroed, and is daggered for that reason.
+NO DAGGER (the author, 1 October: "I think we should abandon the idea of this cross
+and 'held'. all the parameters we chosen to match something as best as i could").
+Every internally calibrated parameter is Int.; HELD is still computed and printed,
+for the record, but no longer marks the table.
 """
 import gzip
 import json
@@ -127,7 +127,7 @@ def f(x, nd=2):
 
 
 def setcol(gapkey):
-    return r'Int.$^\dagger$' if gapkey in HELD else 'Int.'
+    return 'Int.'
 
 
 NA = 'n.a.'
@@ -201,12 +201,9 @@ ELEVEN = [
          r'SMI share of the homeless, Gutwinski et al.\ (2021)',
          pc(C['smi_share_of_homeless_data'], 0), pc(mom('lambda_m SMI share of the homeless')),
          f(H['kappa_find_smi'])),
-        # ITS RULE IS ON THE SMI SHARE OF THE HOMELESS (f90 ~51004), the moment
-        # kappa^ue_m carries, and its adjuster is zero; employment given SMI, which
-        # the row used to show as its moment, is reported in Table 7 instead.
-        (r'$\kappa^{eu}_{m}$', 'Separation multiplier, SMI', setcol('kappa_uem'),
-         r'Held; its rule is on the SMI share of the homeless',
-         NA, NA, f(H['kappa_uem'])),
+        # kappa^eu_m IS GONE (the author, 1 October: "I think this was fixed at 1, no?
+        # we only calibrated the ue case"): kappa_uem is 1, so SMI, like the SUD, acts
+        # only on job finding, and the row and the term in the paper's equation went.
         (r'$\mu_m$', 'SUD recovery multiplier, SMI', 'Ext.',
          r'Dual diagnosis relapse, Bradizza et al.\ (2006)', f(C['mu_m']), NA, f(C['mu_m'])),
         (r'$\kappa_{\phi m}$', 'Mortality multiplier, SMI', 'Ext.', r'Olfson et al.\ (2015)',

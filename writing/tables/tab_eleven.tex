@@ -12,10 +12,10 @@
 Parameter & Description & Set & Moment and source & Data & Model & Value \\
 \midrule
 \multicolumn{7}{@{}l}{\emph{Block 1: Who uses drugs}} \\
-$\theta$ & Weight on the drug & Int.$^\dagger$ & Drug spending over income, Midgette et al.\ (2019) & 16.0\% & 15.3\% & 0.165 \\
+$\theta$ & Weight on the drug & Int. & Drug spending over income, Midgette et al.\ (2019) & 16.0\% & 15.3\% & 0.165 \\
 $b$ & Shifter on the drug & Int. & Drug participation, NSDUH 2024 & 8.90\% & 8.12\% & 0.0055 \\
 $\pi_d$ & Chance a year of use starts a SUD & Int. & Share of users carrying a SUD, NSDUH 2024 & 41.3\% & 42.6\% & 0.0345 \\
-$\kappa_{\phi d}$ & Mortality multiplier, SUD & Int.$^\dagger$ & Income of drug users over average, NSDUH 2024 & 74\% & 60\% & 4.00 \\
+$\kappa_{\phi d}$ & Mortality multiplier, SUD & Int. & Income of drug users over average, NSDUH 2024 & 74\% & 60\% & 4.00 \\
 $\aleph$ & Flow value of being alive & Int. & Value of statistical life, Viscusi and Aldy (2003) & 80 & 82 & 87.6 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Block 2: What using and being homeless cost, and the voucher}} \\
@@ -24,15 +24,14 @@ $h_1$ & Housing services in a shelter & Int. & Homelessness rate, HUD PiT 2023, 
 $\kappa_{\phi H}$ & Mortality multiplier, shelter & Ext. & Meyer et al.\ (2023) & 1.60 & n.a. & 1.60 \\
 $\kappa_{H}$ & Employment penalty, shelter & Ext. & Desmond and Gershenson (2016) & 0.20 & n.a. & 0.20 \\
 $\underline c$ & Food stamp maximum allotment & Int. & Food stamps over output (GDP), USDA & 0.42\% & 0.41\% & 0.0879 \\
-$\pi_V$ & Chance of drawing a voucher & Int.$^\dagger$ & Recipients over eligible, HUD 2023 & 26.6\% & 27.3\% & 0.0675 \\
+$\pi_V$ & Chance of drawing a voucher & Int. & Recipients over eligible, HUD 2023 & 26.6\% & 27.3\% & 0.0675 \\
 $T_0$ & Entry endowment over mean earnings & Int. & Share of homeless aged 25 to 34, HUD PiT 2024 & 26.0\% & 26.6\% & 0.111 \\
 \addlinespace
 \multicolumn{7}{@{}l}{\emph{Block 3: Mental illness chain}} \\
 $\iota$ & SUD multiplier on SMI onset & Ext. & Danish registers, Nielsen et al.\ (2017) & 2.00 & n.a. & 2.00 \\
 $\lambda_m$ & Chance of recovering from SMI & Ext. & Ten-year recovery rate, {\AA}sb{\o} et al.\ (2022) & 50\% & n.a. & 0.066 \\
-$\omega_m$ & Level of the SMI onset profile & Int.$^\dagger$ & SMI share of the population, NSDUH 2024 & 4.82\% & 4.82\% & 0.0037 \\
+$\omega_m$ & Level of the SMI onset profile & Int. & SMI share of the population, NSDUH 2024 & 4.82\% & 4.82\% & 0.0037 \\
 $\kappa^{ue}_{m}$ & Job-finding divisor, SMI & Int. & SMI share of the homeless, Gutwinski et al.\ (2021) & 25\% & 25.4\% & 7.71 \\
-$\kappa^{eu}_{m}$ & Separation multiplier, SMI & Int.$^\dagger$ & Held; its rule is on the SMI share of the homeless & n.a. & n.a. & 1.06 \\
 $\mu_m$ & SUD recovery multiplier, SMI & Ext. & Dual diagnosis relapse, Bradizza et al.\ (2006) & 0.82 & n.a. & 0.82 \\
 $\kappa_{\phi m}$ & Mortality multiplier, SMI & Ext. & Olfson et al.\ (2015) & 2.50 & n.a. & 2.50 \\
 \addlinespace
@@ -52,6 +51,6 @@ $\kappa_x$ & Disamenity of homelessness & Ext. & Willingness to pay, Loubi\`ere 
 $\varepsilon_s$ & Price elasticity of drug supply & Ext. & Mace et al.\ (2020) & 1.46 & n.a. & 1.46 \\
 \bottomrule
 \end{tabular}}\usebox{\ntbox}
-\tabnote{Notes: the Model column is the Housing First benchmark. n.a.\ marks a parameter set from outside the model, which has no moment of its own to reproduce. Int.$^\dagger$ marks one fitted to its moment in an earlier round of the calibration and held since, so its Model cell shows how far the moment has moved from its target in the rounds after it stopped being an instrument. For two parameters the Model cell is not a moment the parameter was fitted to: $\omega_c$ reports how far drug use rises when the child is given no weight and every other parameter is held, and $\kappa_x$ the willingness to pay its value implies at the benchmark, as a share of consumption where the data's is a share of income. The Model cell of $\theta$ is drug spending over income among users with a SUD; the moment of $\aleph$ is the value of a statistical life over average labour income; that of $\omega_c$ is the use rate of non-parents over that of parents, less one.}
+\tabnote{Notes: the Model column is the Housing First benchmark. n.a.\ marks a parameter set from outside the model, which has no moment of its own to reproduce. The Model cell of $\theta$ is drug spending over income among users with a SUD; that of $\kappa_x$ is the willingness to pay as a share of consumption, where the data's is a share of income; the moment of $\aleph$ is the value of a statistical life over average labour income; that of $\omega_c$ is the use rate of non-parents over that of parents, less one.}
 \endgroup
 \end{table}
