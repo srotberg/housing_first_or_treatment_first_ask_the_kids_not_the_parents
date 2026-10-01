@@ -1543,12 +1543,12 @@ zero UI ($e=3$). Social security $S(y)$ follows the statutory formula:
 a primary insurance amount that replaces declining shares of the household's
 productivity at its last working age between two bend points, up to the taxable
 maximum, the ceiling above which earnings no longer raise the benefit, and capped below by the Supplemental Security Income (SSI) payment, all in units in which
-$y$ averages one at entry.\footnote{With $\tilde y=\min\{y,\,y^{\max}\}$ the household's productivity at its last
+$y$ averages one at entry.\footnote{\label{fn:ss}With $\tilde y=\min\{y,\,y^{\max}\}$ the household's productivity at its last
 working age up to the taxable maximum $y^{\max}$,
 $S(y)=\max\big\{\underline S,\ \alpha_1\min\{\tilde y,k_1\}+\alpha_2\max\{0,\min\{\tilde y,k_2\}-k_1\}
 +\alpha_3\max\{0,\tilde y-k_2\}\big\}$, where $k_1<k_2$ are the two bend points,
 $\alpha_1>\alpha_2>\alpha_3$ the shares replaced below, between and above them, and
-$\underline S$ the SSI payment. \new{Their values are given in Section~\ref{sec:stdparams}.}} The SUD and SMI do not
+$\underline S$ the SSI payment. Their values are given in Section~\ref{sec:stdparams}.} The SUD and SMI do not
 cut earnings on the job; they act on whether there is a job at all, through the
 employment transitions below. Out of work, a household with the SUD or SMI is paid what any other household is:
 UI in its first year with probability $p_{ui}$, nothing with probability $1-p_{ui}$, and
@@ -2304,7 +2304,7 @@ is expected to earn over its life, how persistent the shocks to it are, and how 
 moves between work and unemployment.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$J$ and $J_R$, the length of life and of working life.] A household lives at most
-$J$ periods and works until \new{age} $J_R$, after which it retires on social security.
+$J$ periods and works until age $J_R$, after which it retires on social security.
 Together they set how many years of life and of earnings a disorder can cost. Raise
 either and a disorder that shortens life or work costs more. I set $J=60$, so
 that with $j=1$ at age 26 the last age is $85$, where the life table of Block 10
@@ -2325,7 +2325,7 @@ with persistence $\rho_z$ and shocks of standard deviation
 $\sigma_\zeta$. $\sigma_\zeta$ is what decides how many households are poor
 enough to be at risk of homelessness, and the share of earnings
 that goes to the bottom half of working households falls in it. I set
-$\rho_z=0.90$\new{, the persistence of the income process in Guvenen et al.\ (2023b)}. $\sigma_\zeta$
+$\rho_z=0.90$, the persistence of the income process in Guvenen et al.\ (2023b). $\sigma_\zeta$
 is calibrated to the bottom half's share of earnings among households aged 26 to 65 with
 wage income in the 2022 SCF, $17.2$ percent; at $\sigma_\zeta=0.41$
 the model gives $16.3$ percent.
@@ -2337,7 +2337,7 @@ child keeps. It is the channel through which anything that lowers a parent's
 productivity lowers its child's: a parent whose own productivity carries the penalty
 $\delta_d$, because its own parent had a SUD, passes a lower draw on to its child, so a
 parent's SUD lowers productivity beyond the next generation. Raise it and a child's prospects depend more
-on its parent's\new{, and the externality grows}. It is set
+on its parent's, and the externality grows. It is set
 externally at $0.50$, between the intergenerational elasticities of earnings
 in Solon (1992) and Mazumder (2005).
 \item[$\bar\pi^{eu}$, the job separation rate.] The chance that an employed household
@@ -2348,9 +2348,9 @@ unemployment rate in the BLS Current Population Survey (CPS) over 2014 to 2024,
 $4.9$ percent, given the job finding rate set externally below; at its value of
 $0.027$ the model gives a $5.6$ percent aggregate
 unemployment rate.
-\item[$\varpi(y)$, separations by productivity.] \new{This parameter} tilts the separation rate across
+\item[$\varpi(y)$, separations by productivity.] This parameter tilts the separation rate across
 productivity, so that low-productivity households lose their jobs more often, which is what
-puts them at \new{a higher} risk of homelessness. It is normalised to average one across households, so
+puts them at a higher risk of homelessness. It is normalised to average one across households, so
 that $\bar\pi^{eu}$ alone sets the aggregate rate. Each productivity node takes the
 unemployment odds of the education group it falls in, from the BLS 2019 annual averages of
 unemployment by educational attainment for ages 25 and over, with education ordering
@@ -2362,46 +2362,46 @@ matched CPS panels.
 \item[$p_{ui}$, the share of separations that are insured.] A household that
 loses its job draws UI for one year with probability $p_{ui}$ and nothing
 otherwise. It sets how many of the newly unemployed fall straight to zero
-earnings\new{, and how bad losing employment to a SUD is}. I set it to $0.30$, since about seven in ten unemployed people who
+earnings, and how bad losing employment to a SUD is. I set it to $0.30$, since about seven in ten unemployed people who
 worked in the past year had not applied for UI since their last job in the BLS
 supplement to the CPS for 2022.
 \end{description}
 
-\paragraph{Block 10: \new{Baseline survival and SMI onset}.} These two parameters are \new{the survival and
-the SMI-onset age profiles}.
+\paragraph{Block 10: Baseline survival and SMI onset.} These two parameters are the survival and
+the SMI-onset age profiles.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\bar\phi_j$, baseline survival by age.] \new{This is the baseline chance of surviving to the
-next age, before} any multiplier. \new{It} is the profile every mortality multiplier in
+\item[$\bar\phi_j$, baseline survival by age.] This is the baseline chance of surviving to the
+next age, before any multiplier. It is the profile every mortality multiplier in
 Section~\ref{sec:fullcal} multiplies, so it is the base the SUD, homelessness and
-SMI hazards \new{scale}. I take \new{the profile from} the most recent SSA period life
+SMI hazards scale. I take the profile from the most recent SSA period life
 table, Table 4.C6, for ages $26$ to $85$, with the sexes combined by survivor weight.
 
 \item[$\varsigma_m(j)$, the age profile of SMI onset.] The shape of onset
 across ages, normalised to one at age $26$, so that $\omega_m$ in Table~\ref{tab:eleven} sets its
-level alone. \new{It is here rather than in Table~\ref{tab:eleven} because, like the life table, it is a
-baseline the model takes as given; what this paper adds is $\iota$, the multiplier a SUD puts
-on that onset, which is in Table~\ref{tab:eleven}.} It is the onset that
+level alone. It is here rather than in Table~\ref{tab:eleven} because, like the \new{age survival profile, it only sets the
+baseline}; what \new{actually affects the impact of HF versus TF} is $\iota$, the multiplier a SUD puts
+on that onset, which is in Table~\ref{tab:eleven}. It is the onset that
 reproduces a log-linear fit to the share of adults carrying SMI at each age in NSDUH
 2024.
 \end{description}
 
 \paragraph{Block 11: Interest and taxes.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$r$, the risk-free rate.] \new{This parameter is the} return on saving. I set it to three percent, from Kaplan et al.\
+\item[$r$, the risk-free rate.] This parameter is the return on saving. I set it to three percent, from Kaplan et al.\
 (2020).
 
-\item[$\varphi$, tax progressivity.] \new{This is the} exponent on income in the tax schedule of
-Section~\ref{sec:ftaxes}\new{, and it} determines the progressivity of the labour income tax. It is set to $0.85$ from Heathcote et al.\ (2017).
+\item[$\varphi$, tax progressivity.] This is the exponent on income in the tax schedule of
+Section~\ref{sec:ftaxes}, and it determines the progressivity of the labour income tax. It is set to $0.85$ from Heathcote et al.\ (2017).
 
-\new{\item[$\tau_{\ell}$, the level of the labour income tax.] Given $\varphi$, it sets how much
+\item[$\tau_{\ell}$, the level of the labour income tax.] Given $\varphi$, it sets how much
 of their labour income households pay in tax. It does not move in the experiments: the budget is
 balanced by $\pi_V$ instead. It is calibrated so that
 the average labour income tax rate the model produces is $22.4$ percent,
 which is what McDaniel (2007) measures for the United States and what Guvenen et al.\
 (2023a) use; at its value of $0.89$ the model gives
-$21.1$ percent.}
+$21.1$ percent.
 
-\item[$\tau_k$, the capital income tax.] \new{This parameter affects the after-tax return on savings.} I set it to fifteen percent, consistent
+\item[$\tau_k$, the capital income tax.] This parameter affects the after-tax return on savings. I set it to fifteen percent, consistent
 with the statutory United States rate on long-term capital gains and qualified
 dividends for the middle of the income distribution, which the Internal Revenue
 Service (IRS) sets out in Topic 409
@@ -2412,15 +2412,15 @@ Service (IRS) sets out in Topic 409
 \paragraph{Block 12: Social security benefits and programmes' rules.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$S(y)$, social security.] Retirement income follows the statutory
-primary insurance amount: it replaces a share of the household's productivity at its last working
+primary insurance amount: it replaces a share of the household's \new{income} at its last working
 age that falls across the SSA's two bend points, up to
-the taxable maximum, with the Supplemental Security Income payment as a floor. As it rises the old are richer, so the value of a life
+the taxable maximum, with the \new{SSI} payment as a floor. As \new{$S(y)$} rises the old are richer, so the value of a life
 still to be lived rises and with it the cost of a disorder that shortens it. The shares
-are $0.90, 0.32, 0.15$ below the first bend point, between them and above the second. The
-formula and the floor apply to productivity, in units in which it averages one at
-entry, \new{and in those units the SSA's 2024 values divided by its average wage index give bend
-points of $0.22$ and $1.33$ and a taxable maximum of
-$2.64$. The} floor, $0.18$ in those units, is
+\new{$\alpha_1,\alpha_2,\alpha_3$ of the formula in footnote~\ref{fn:ss}} are $0.90, 0.32, 0.15$ below the first bend point, between them and above the second\new{, respectively}. \new{The
+bend points $k_1$ and $k_2$ and the taxable maximum $y^{\max}$ are the SSA's 2024 dollar
+amounts divided by its average wage index, $0.22$, $1.33$ and
+$2.64$, and the formula and the floor apply to income in units in which
+productivity averages one at entry into adulthood.} The floor, $0.18$ in those units, is
 $0.11$ of the benchmark's average labour income.
 \item[$\psi_{ui}$ and $\bar y$, unemployment insurance.] These two set the UI replacement
 rate and the cap on the earnings it is paid on. I set them to fifty percent and one
@@ -2430,7 +2430,7 @@ state UI laws
 (\url{https://oui.doleta.gov/unemploy/statelaws.asp}).
 
 \item[$\kappa_V$ and $\kappa_r$, the voucher rules.] These two set the income
-cutoff for eligibility and the tenant's contribution, and I take both from HUD's own
+cutoff for eligibility and the tenant's \new{rent} contribution, and I take both from HUD's own
 rules. I set them to half of median income and thirty
 percent, respectively. The first is the very low-income limit HUD publishes
 annually with its income limits
@@ -2439,13 +2439,13 @@ paying the rest up to the payment standard, under the Housing Choice
 Voucher programme
 (\url{https://www.hud.gov/helping-americans/housing-choice-vouchers}).
 
-\item[$\varrho$, the food stamp clawback rate.] This is the rate at which food assistance is withdrawn as income rises. It matters beyond the level of the transfer, because it is the implicit marginal tax the programme puts on earnings for the households the paper is about: an extra dollar earned costs a household on food assistance $\varrho$ of a dollar of its allotment. I set it to thirty percent, which is the statutory rule: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10).
+\item[$\varrho$, the food stamp clawback rate.] This is the rate at which food assistance is withdrawn as income rises. I set it to thirty percent, which is the statutory rule: a household\textquotesingle s monthly allotment is the maximum allotment for its size reduced by thirty percent of its net monthly income (7 CFR 273.10).
 \end{description}
 
-\paragraph{Block 13: Drug market.} These two parameters describe the rest of the drug
-market, closing the loop on the elasticity explained above: the first fixes who can
-enter it, and the second fixes the units in which its price and quantity are
-measured.
+\paragraph{Block 13: Drug market.} \new{The two parameters in this block describe} the rest of the drug
+market, closing the loop on the elasticity explained \new{in Block 6}: the first fixes who can
+enter it, and the second \new{is set so that supply equals demand in the benchmark, and is
+then held fixed}.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 % THE PARENTHETICAL BELONGS IN THE BODY, NOT THE LABEL. A description
 % label does not wrap: it is typeset on one line and runs off the page,
@@ -2453,15 +2453,14 @@ measured.
 
 \item[$J_E$, the maximum age at which use can begin.] This restricts only households that do not have a SUD, not ones that already do.
 It is there so that use cannot begin in the last few years of life, where almost no
-continuation value remains to be lost and the private cost of using is therefore
-close to zero. That is an artefact of the horizon rather than a feature of the world:
+continuation value remains to be lost. That is an artefact of the horizon rather than a feature of the world:
 to keep the age dimension manageable the model imposes certain mortality after age $85$,
 so a household near the end knows death is coming with certainty and a disorder costs
 it almost nothing. Without the cap the model would let use begin exactly there, and
 at the final age it would be worse than that, since a household that acquires the
 disorder in the last period dies at the end of it whatever the hazard does: the
-disorder carries literally no consequence and only the flow benefit of using, which
-cannot be a reasonable description of the choice either. I set it to fifty five in model terms, which corresponds to age $80$ in the data.
+disorder carries literally no consequence and \new{the household can only stand to benefit from
+the drugs, which is not a reasonable tradeoff}. I set it to fifty five in model terms, which corresponds to age $80$ in the data\new{, very close to the maximum age of $85$}.
 
 \item[$\nu_1$, the supply shifter.] A pure normalisation, chosen so that supply
 equals demand at $p_v=1$ in the benchmark, and kept fixed across experiments, in which

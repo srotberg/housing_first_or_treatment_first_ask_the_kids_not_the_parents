@@ -22,6 +22,12 @@ omega-c-2c, each holds its benchmark files after the solve until asked (c3fbfd20
     0.06  session_01Ns9HRdzh34Wf15h4sR5idj     0.065 session_0116xprDm5aocixbndP9KTv2
     0.07  session_019d5RwmfQSXk75uSWtXvcaC
 Due between about 14:45 and 18:30. Stage B trigger (trig_014YcDCJiAHBL4BbJLncVXAz, renamed) at 14:50, re-arming.
+19:45 ROUND c72a7d3c DONE (Blocks 10, 12, 13 comments). FLAGGED TO THE AUTHOR, NOT CHANGED: the SS bend points, taxable
+maximum and SSI floor are statute dollars divided by the AWI, i.e. multiples of AVERAGE EARNINGS, but the code applies
+them to productivity in units where productivity averages one at entry, and average labour income is 1.617 of those
+units (calib_tables AVG_LAB). So the floor is 0.11 of model average labour income against 0.177 by statute, and the
+bend points sit at about 0.62 of their statutory place in the earnings distribution. Fixing it (scaling the four by
+average labour income) moves retirement income and so the benchmark; it needs the author's decision.
 19:25 ROUND 375493a0 DONE. SS statute values back in Section 5.2 Block 12 (bend points and taxable maximum joined the
 shares there); the Section 4 footnote now refers to Section 5.2 (the author reversed the 1 October exception; CLAUDE.md
 updated). Block 10 retitled 'Baseline survival and SMI onset' (paragraph, Table 5, calib_tables.py, params_spec.json);
