@@ -34,8 +34,14 @@ results/b_scan_childsplit/; they finish about 11:40 and are not needed to pick b
    "DIAG drug share, all users, sum spend / sum income".
 2. b* = the GRID POINT whose block-12 drug users is closest to 10.50 per cent. No
    interpolation and no confirming run (the author: "very close is enough"). Its run IS the
-   two-class omega_c = 0 calibration. Not before block 12 (the author, 03:06: "don't launch
-   omegac>0 yet / first i want the b").
+   two-class omega_c = 0 calibration. Not before b*'s own block 12 (the author, 03:06: "don't
+   launch omegac>0 yet / first i want the b").
+   UNFINISHED NEIGHBOURS (added 08:20: 0.97x and 0.99x run at about 35 minutes a block, the
+   other two at 20-23, so they finish about 12:45). A finished point is b* without waiting for
+   an unfinished one if that one's latest reading cannot come closer: its gap to 10.50, less
+   0.30 points, still exceeds the finished point's gap. 0.30 is more than any move left after
+   block 5: the reference runs fall 0.25 in all from block 5 to block 12, and no block of this
+   scan after block 2 has risen by more than 0.08. Otherwise wait for it.
 3. Launch five cloud sessions, ONE PER POINT, each running exactly
    `bash code/remote_omega_point.sh <w> <b*> 1.0 v3` with the v3 worker prompt, for
    w = 0.05, 0.055, 0.06, 0.065, 0.07. Tag omega-c-2c. Results land in

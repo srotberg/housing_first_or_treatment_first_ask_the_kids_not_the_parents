@@ -23,6 +23,15 @@
   0.98x session_01UQTEjm2pEtmGhHSDsSxZ2D, 0.99x session_016Xqehwky4x6MafvY6kTYoa. Due about 10:15.
 - Stage A re-timed to 10:15 (trigger updated to read v3 and to launch the omega_c runs with the v3 label);
   stage B about 15:00. OVERNIGHT_PLAN.md updated.
+- 08:20 CHECK-IN. THE DETACH FIX HOLDS: the 0.98x worker's call hit the limit at 07:43 and re-attached to
+  the same solve (pid 503, launched 05:45); every v3 point kept publishing past 07:45. Drug users, per cent,
+  08:05: 0.96x 10.75 11.80 11.88 11.77 11.64 11.45 11.46; 0.97x 10.23 11.50 11.37 11.28; 0.98x 9.80 11.10 11.12
+  10.94 10.79 10.67; 0.99x 9.27 10.62 10.55 10.48 -- identical to the dead first runs where they overlap.
+  0.97x and 0.99x run at about 35 minutes a block against 20-23 for the other two, so they finish about 12:45.
+  Stage A (10:15) given a rule so it does not wait on a neighbour that can no longer win: a finished point is
+  b* if an unfinished one's latest gap to 10.50, less 0.30 points, still exceeds it (OVERNIGHT_PLAN.md A.2;
+  0.30 is above the whole 0.25 fall from block 5 to 12 in the reference runs, and no block after 2 has risen
+  more than 0.08). b*'s own block 12 is still required.
 - 06:22 CHECK-IN. v3 running, block 1 at 06:05: 0.96x 10.75, 0.98x 9.80 (identical to the dead first runs'
   block 1, 10.75 and 9.79 -- the fresh containers reproduce them); 0.97x and 0.99x published, no block yet.
   Due about 10:00-10:15. THE OLD WORKERS' 05:05 RESTARTS ARE WARM-STARTED, NOT FROM THE SEED: they ran in
