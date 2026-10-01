@@ -65,7 +65,11 @@ set_line() {
 stage_handover() {
   cp ../$SEED/PARAM_HANDOVER_base.txt PARAM_HANDOVER.txt
   n=$(wc -l < PARAM_HANDOVER.txt); [ "$n" -gt 50 ] || { echo "GUARD: handover only $n lines"; exit 1; }
-  set_line kappa_x 0.9329
+  set_line kappa_x ${KAPPA_X:-0.9329}
+  # THE NEW BENCHMARK (1 October, the overnight plan, OVERNIGHT_PLAN.md): b, kappa_uem and
+  # omega_c of the recalibrated two-class economy, when given; unset, the 26 September values
+  if [ -n "$BENCH_B" ];  then set_line addiction_scalar_1 "$BENCH_B"; fi
+  if [ -n "$BENCH_KU" ]; then set_line kappa_uem "$BENCH_KU"; fi
 }
 
 # SOLVE THE BENCHMARK ONCE, SHARE IT BY GIT. With BENCH_FROM=<dir holding
@@ -93,7 +97,7 @@ else
   cd "$BDIR"
   cp ../bench/hftf_bench ./hftf_bench
   stage_handover
-  set_line weight_on_child          0.06
+  set_line weight_on_child          ${BENCH_OMEGA:-0.06}
   set_line frozen_stop_after_blocks 12
   cp PARAM_HANDOVER.txt PARAM_HANDOVER.bench.txt
   echo "STAGE 1: Housing First omega_c = 0.06 benchmark, 12 blocks ..."
@@ -133,7 +137,7 @@ echo "binary $BUILD/hftf_cf_prod"; echo "$BUILD" > BUILD_USED
 stage_handover
 set_line probability_of_voucher_benchmark_used "${PV_START:-$PV}"
 case "$ARM" in
-  tf)          set_line weight_on_child 0.06
+  tf)          set_line weight_on_child ${BENCH_OMEGA:-0.06}
                set_line voucher_conditional_on_clean 1
                set_line increased_prob_of_voucher_if_homeless_and_addicted ${INC:-1}
                set_line probability_of_detection ${PDET:-0.70}
@@ -144,11 +148,11 @@ case "$ARM" in
   omega1)      set_line weight_on_child 1
                set_line adjust_taxes 0
                set_line drug_price_start 0.6 ;;
-  internalise) set_line weight_on_child 0.06
+  internalise) set_line weight_on_child ${BENCH_OMEGA:-0.06}
                set_line internalise_homelessness_cost 1
                set_line adjust_taxes 0
                set_line drug_price_start 1.0 ;;
-  null)        set_line weight_on_child 0.06
+  null)        set_line weight_on_child ${BENCH_OMEGA:-0.06}
                set_line adjust_taxes 0
                set_line drug_price_start 1.0 ;;
 esac

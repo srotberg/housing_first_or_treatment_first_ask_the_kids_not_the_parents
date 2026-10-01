@@ -137,4 +137,14 @@ done
 wait "$PID"; RC=$?
 note "solve exited $RC after $(grep -ac 'BLOCK MOVE' "$D/bench.log") blocks; bench.err: $(tail -2 "$D/bench.err" | tr '\n' ' ')"
 gzip -c "$D/bench.log" > "$R/omega_$TAG.bench.log.gz"
+# THE BENCHMARK FILES THE COUNTERFACTUAL BINARY READS (1 October, OVERNIGHT_PLAN.md): with
+# them a counterfactual arm takes this run as its benchmark (cf_arm.sh BENCH_FROM=...)
+# instead of re-solving it for four and a half hours. Tens of MB gzipped.
+if ls "$D"/*baseline_benchmark.dat >/dev/null 2>&1; then
+    mkdir -p "$R/bench_$TAG"
+    (cd "$D" && tar czf "$R/bench_$TAG/bench_files.tar.gz" *baseline_benchmark.dat)
+    cp "$R/omega_$TAG.bench.log.gz" "$R/bench_$TAG/bench.log.gz"
+    cp "$D/PARAM_HANDOVER.kept.txt" "$R/bench_$TAG/PARAM_HANDOVER.bench.txt"
+    note "benchmark files saved to bench_$TAG"
+fi
 publish "complete (exit $RC)"
