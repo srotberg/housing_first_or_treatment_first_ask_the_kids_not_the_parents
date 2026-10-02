@@ -1,5 +1,18 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+00:50 THE AUTHOR'S THREE ANSWERS. (1) "we don't need to rerun" the elasticities: accepted as they stand. (2) "Do what
+you think is best": the duplicate nulltf worker (session_01FX9q4BzWUfqNnoLk9bbejF) ARCHIVED; tf85 carries TF.
+(3) Social security, "I don't understand why social security is wrong. Is it a big difference?": THE 19:45 FLAG WAS
+MOSTLY WRONG. The Fortran multiplies every benefit, floor included, by model_average_labour_income after the formula
+(f90 ~39674; 1.5898 in the benchmark), which the flag missed: the SSI floor is 0.1774 OF average labour income, as
+statute, not 0.11, and the paper's 0.11 (c_ssi_floor_earn, Block 12) was the error. Corrected in red: the Section 4
+footnote's S(y) now carries the scale (w-bar, average labour income), the Block 12 item states the floor as 0.18 of
+average labour income, Table 5's row reads 'SSI floor over average labour income'. WHAT REMAINS, small: the bend
+points are compared with productivity at the last working age, which runs about 10 per cent above the household's
+career earnings relative to the mean (earnings by node / 1.5898 = 0.906 x the grid value), so nodes 4-9 get 4-8 per
+cent more than the statute gives; the three floor nodes and the four capped nodes are exact. Not changed; told the
+author it is not worth a re-solve on its own.
+
 00:26 STAGE C/D CHECK-IN: still only the null accepted. internalise (restarted) pass 4: users -0.9, h_1 -2.1, CEV +0.32;
 tf85 pass 1 (worker epoch 1, no restart) reproduces the lost TF pass 1 to the third decimal; omega1 p0.91 pass 8 at
 0.8816: users -14.7, SUD -15.0, h_1 -14.0, quantity -15.8, per user -1.3, drug gap 8.2e-3. Re-armed for 01:26.

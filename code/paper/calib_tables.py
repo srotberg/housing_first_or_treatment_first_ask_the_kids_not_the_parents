@@ -104,9 +104,11 @@ HELD.add('kappa_uem')                             # adjuster zeroed; not in the 
 # the Fortran declaration (0.05), so h_2 = 0.0407 did not move in the final round.
 if H.get('smallest_house_size_adjuster', 1.0) == 0.0:
     HELD.add('h2')
-# AVERAGE LABOUR INCOME, the scale the SSI floor is quoted against: the floor is
-# applied to productivity (mean one at entry), and the log prints the food
-# allotment over average labour income, so the two give the level.
+# AVERAGE LABOUR INCOME. NOT the scale of the SSI floor: the Fortran multiplies every benefit,
+# floor included, by model_average_labour_income after the formula (f90 ~39674), so the floor
+# is ssi_floor_level OF average labour income, as statute. Corrected 2 October; the paper had
+# 0.11 from dividing by this a second time. The log prints the food allotment over average
+# labour income, so the two give the level.
 AVG_LAB = H['max_food_cost'] / float(
     re.findall(r'DIAG max allotment / avg labour income\s*=\s*(\S+)', LOG)[-1])
 THETA_AGG = float(G['theta'].split()[2])
@@ -337,7 +339,7 @@ STANDARD = [
         (r'$S(y)$', 'Social security', 'Ext.', 'SSA primary insurance amount',
          'Statute', NA,
          f'{C["ss_pia_rate_1"]:.2f}, {C["ss_pia_rate_2"]:.2f}, {C["ss_pia_rate_3"]:.2f}'),
-        (r'$\underline S$', 'SSI floor over entry productivity', 'Ext.', 'SSA federal benefit rate',
+        (r'$\underline S$', 'SSI floor over average labour income', 'Ext.', 'SSA federal benefit rate',
          f(H['ssi_floor_level'], 3), NA, f(H['ssi_floor_level'], 3)),
         (r'$\psi_{ui}$', 'UI replacement rate', 'Ext.', 'DOL statutory replacement rates',
          f(H['replacement_rate_ui']), NA, f(H['replacement_rate_ui'])),
@@ -552,7 +554,7 @@ def numbers():
         # the SSI floor over the benchmark's average labour income (audit, 29 September)
         'c_j_value': f'{J_MAX}', 'c_j_age': f'{AGE0 + J_MAX}',
         'c_j_r_value': f'{J_RET}', 'c_j_r_age': f'{AGE0 + J_RET}',
-        'c_ssi_floor_earn': f'{H["ssi_floor_level"] / AVG_LAB:.3f}',
+        'c_ssi_floor_earn': f'{H["ssi_floor_level"]:.3f}',
         'c_avg_lab': f'{AVG_LAB:.2f}',
         # the productivity grid's settings that no row carried (audit, 29 September)
         'c_sd_fixed': f'{H["sd_fixed_employment_newborn"]:.2f}',

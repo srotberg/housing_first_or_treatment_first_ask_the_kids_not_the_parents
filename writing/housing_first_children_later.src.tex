@@ -1542,13 +1542,13 @@ insured separations. After the first year, unemployed households, insured and un
 zero UI ($e=3$). Social security $S(y)$ follows the statutory formula:
 a primary insurance amount that replaces declining shares of the household's
 productivity at its last working age between two bend points, up to the taxable
-maximum, the ceiling above which earnings no longer raise the benefit, and capped below by the Supplemental Security Income (SSI) payment, all in units in which
-$y$ averages one at entry.\footnote{\label{fn:ss}With $\tilde y=\min\{y,\,y^{\max}\}$ the household's productivity at its last
+maximum, the ceiling above which earnings no longer raise the benefit, and capped below by the Supplemental Security Income (SSI) payment, \new{with $y$ in units in which
+it averages one at entry and the benefit scaled by average labour income}.\footnote{\label{fn:ss}With $\tilde y=\min\{y,\,y^{\max}\}$ the household's productivity at its last
 working age up to the taxable maximum $y^{\max}$,
-$S(y)=\max\big\{\underline S,\ \alpha_1\min\{\tilde y,k_1\}+\alpha_2\max\{0,\min\{\tilde y,k_2\}-k_1\}
+$S(y)=\new{\bar w}\max\big\{\underline S,\ \alpha_1\min\{\tilde y,k_1\}+\alpha_2\max\{0,\min\{\tilde y,k_2\}-k_1\}
 +\alpha_3\max\{0,\tilde y-k_2\}\big\}$, where $k_1<k_2$ are the two bend points,
-$\alpha_1>\alpha_2>\alpha_3$ the shares replaced below, between and above them, and
-$\underline S$ the SSI payment. Their values are given in Section~\ref{sec:stdparams}.} The SUD and SMI do not
+$\alpha_1>\alpha_2>\alpha_3$ the shares replaced below, between and above them,
+$\underline S$ the SSI payment\new{, and $\bar w$ the benchmark's average labour income}. Their values are given in Section~\ref{sec:stdparams}.} The SUD and SMI do not
 cut earnings on the job; they act on whether there is a job at all, through the
 employment transitions below. Out of work, a household with the SUD or SMI is paid what any other household is:
 UI in its first year with probability $p_{ui}$, nothing with probability $1-p_{ui}$, and
@@ -2419,9 +2419,10 @@ still to be lived rises and with it the cost of a disorder that shortens it. The
 $\alpha_1,\alpha_2,\alpha_3$ of the formula in footnote~\ref{fn:ss} are $@@c_s_y_value@@$ below the first bend point, between them and above the second, respectively. The
 bend points $k_1$ and $k_2$ and the taxable maximum $y^{\max}$ are the SSA's 2024 dollar
 amounts divided by its average wage index, $@@f_ss_bend_1@@$, $@@f_ss_bend_2@@$ and
-$@@f_ss_taxable_max@@$, and the formula and the floor apply to income in units in which
-productivity averages one at entry into adulthood. The floor, $\underline S$, is $@@c_underline_s_value@@$ in those units, which is
-$@@c_ssi_floor_earn@@$ of the benchmark's average labour income.
+$@@f_ss_taxable_max@@$. \new{The formula is applied to productivity, in units in which it
+averages one at entry into adulthood, and the benefit it gives is scaled by the benchmark's
+average labour income, so the floor, $\underline S$, is $@@c_underline_s_value@@$ of average
+labour income.}
 \item[$\psi_{ui}$ and $\bar y$, unemployment insurance.] These two set the UI replacement
 rate and the cap on the earnings it is paid on. I set them to fifty percent and one
 times average labour income, respectively, taking both from the statutory replacement rates
