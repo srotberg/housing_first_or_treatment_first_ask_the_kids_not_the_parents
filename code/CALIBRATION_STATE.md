@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+00:45 omega1 AND internalise MUST CLEAR THE BUDGET WITH pi_V (the author, 2 October, on omega_c = 1 holding pi_V at the
+benchmark's: "No, you need to adjust piv"; the 24 September design had adjust_taxes 0 for both). code/remote_cf_clear.sh
++ code/cf_runs/cf_arm_clear.sh (dac9e036; copies, since running workers execute cf_arm.sh and git rewrites a file in
+place: tested, same inode across a checkout), ADJUST_TAXES=1, NET_TARGET = the accepted null's 5.8918410999831181, the
+same target as TF. Launched 00:42: omega1_clear session_0197fyiVU5oUqoXaXdnBFVb3 (price start 0.8837), internalise_clear
+session_015CU8Xg6dQLQGNrbmVLPnQb (0.9979); results/counterfactuals_2c/<arm>_clear/. THESE ARE THE ARMS FOR THE PAPER.
+The fixed-pi_V runs (omega1_p0.91 near settled, internalise, omega1_p1.0 far from settled) are now comparisons only;
+p1.0 is not worth finishing (asked the author whether to stop it). Accepted arms for stage D: null, tf85, omega1_clear,
+internalise_clear.
+
 00:40 THE AUTHOR WANTS TO BE TOLD when omega_c = 1 settles and when TF settles ("let me know when omega_c=1 settles",
 "let me know when TF settles"). The hourly stage C/D check-in reports each newly accepted arm: users, SUD,
 homelessness and welfare against the no-policy run, compared pass for pass where the arm is not yet accepted. TF
