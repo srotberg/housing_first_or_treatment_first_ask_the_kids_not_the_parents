@@ -211,12 +211,18 @@ def main():
         ('Households entering adult life at 26 better off', 'y26_better', lambda v: f'{v:.0f}'),
         ('All households better off', 'all_better', lambda v: f'{v:.0f}'),
         ('Households with a SUD better off', 'sud_better', lambda v: f'{v:.0f}'),
+        # the newborns' row (the author, round f4276e76: "add a row for the newborn children"), a placeholder until
+        # code/cf_kid's values from stage E2 (results/transition_2c/newborn/) are checked
+        ('Newborns better off, by the household they are born into', 'nb_hh_better',
+         lambda v: v if isinstance(v, str) else f'{v:.0f}'),
     ]
     for arm, base in [a for a in ARMS if a[1]]:
         s = D[arm]['split']
         D[arm]['child_share'] = 100 * s[0] / s[2] if s and arm not in ('omega1', 'internalise') else None
     for arm in D:
         D[arm]['nb_better'] = D[arm]['y26_better'] = D[arm]['all_better'] = D[arm]['sud_better'] = None
+        D[arm]['nb_hh_better'] = None
+    D['tf85']['nb_hh_better'] = '\\updnum{update}'
     SH = shares()
     if SH:
         D['tf85']['all_better'] = 100 * SH['all households'][0]

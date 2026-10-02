@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+22:45 ALL RED STRIPPED, base_r105 + splice_r105, and MARKERS FOR THE NEXT SIMULATIONS (the author: "put markers, or
+placeholders on the paragraphs and numbers you have to update when you have the newer simulations"): \upd{...} (bold
+blue [UPDATE: ...]) on 13 places -- the abstract's transition clause, the introduction's transition paragraph, 6.2's
+transition sentence, the children's paragraph (26-38 and 39-50), the newborn sentence, a decomposition placeholder,
+6.3's four paragraphs and Figure 3's caption, the Discussion's transition paragraph and its 14 percent -- and \updnum
+(blue) on every number the transition makes (x_tr_*, x_trf_*, x_disc_tr*) and on x_lr_children_hl, applied by
+splice_r105. Table 7: a placeholder row 'Newborns better off, by the household they are born into' (blue 'update').
+The red strippers leave \upd and \updnum alone; each goes when its paragraph is rewritten from the new runs.
+
 22:30 ROUND 3672e7b1: ALL RED STRIPPED, base_r104 + splice_r104. Four edits in red: the intro's drug users 'in the long
 run' (the author asked whether it was the transition; it is the steady-state comparison of Table 7), 'with children born
 in the first ten years gaining', 'more than offsets', ', for example,'. Stage E2 and decomp 2c built by 22:10; arms
