@@ -1,5 +1,16 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+22:05 THE AUTHOR'S DECISIONS (2 October, 21:5x): 1 6.3 waits for the new transition; 2 age split by a new session;
+3 the 97 per cent recomputed with a tolerance; 4 the '30 times' clause in (x_lr_adult_poor, in red, from stage E's
+value_at_26_by_node.txt: the value of entering adult life rises 30 times as much at the lowest node as at the
+highest); 5 newborn (age 1) values restarted; 6 both decompositions, and NO mention of max_age_to_choose_homelessness.
+STAGE E DIED: the container restarted at 21:4x during period 39 of loop 0's backward pass; the relaunch found
+code/tr2c_t60 and launched nothing ('T = 60 ended' with no exit code). FIXED in remote_transition_2c.sh (relaunch when
+no MAIN_EXIT and no live process; age_split and cf_kid after the arms). Source: TRANSITION BETTER OFF TOL (0.001 utils)
+every period; a held drug price (drug_market_adjuster 0) leaves the stopping test. LAUNCHED: session_016cr3A4Quwgo7vZY4BjLBoC
+(stage E2: arms, shares, age split, newborn, T = 60) and session_01WxunbEkdRm5jCTnfNenMvr (decomp 2c: fixpv, fixp;
+extra_2c/remote_decomp_2c.sh), both told to check in hourly to keep their containers. Old stage E session idle.
+
 20:50 ROUND f9ac1593: ALL RED STRIPPED, base_r103 + splice_r103. 'even some drug users'; Table 7's note without the
 tolerance; 6.3: the opening on short-run impacts, 'as a shock', the year-by-year sentence and the PRELIMINARY CAVEAT
 REMOVED AS ASKED (6.3 is still restart3g loop 0, the OLD calibration, unconverged after year 41), 'or having a voucher

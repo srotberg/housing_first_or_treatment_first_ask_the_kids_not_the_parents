@@ -617,8 +617,19 @@ def main():
     _pvpc, _prpc = pc(t, 'piv', 'null_share'), pc(t, 'price', 'null_share')
     # (round f4276e76, the author on this sentence: "should this come where the point about the voucher comes about
     # 2 sentence bfore? can you make it read better?") it now follows the voucher sentence
+    # HOW MUCH MORE AT THE BOTTOM (the author, 2 October: "if these are the newest numbers, yes"): the value of
+    # entering adult life at 26 by productivity node, stage E's re-solved arms (results/transition_2c/arm_*/
+    # value_at_26_by_node.txt, nodes 1-13 a clean parent): its gain at the lowest node over its gain at the highest
+    _v26 = os.path.join(ROOT, 'results', 'transition_2c', 'arm_{}', 'value_at_26_by_node.txt')
+    _r26 = None
+    if all(os.path.exists(_v26.format(a)) for a in ('null', 'tf')):
+        _n0, _n1 = ([float(x) for x in open(_v26.format(a)).read().split()] for a in ('null', 'tf'))
+        _g26 = [b - a for a, b in zip(_n0, _n1)][:13]
+        _r26 = _g26[0] / _g26[-1] if min(_g26) > 0 else None
+    _need = (', and the value of entering adult life rises about ${:.0f}$ times as much at the lowest productivity '
+             'as at the highest'.format(_r26) if _r26 else '')
     _poor = (' A voucher is worth most to a household that enters adult life with low productivity, because it is '
-             'the likeliest to need one. This part of the gain is therefore larger for a child whose own parent '
+             f'the likeliest to need one{_need}. This part of the gain is therefore larger for a child whose own parent '
              'carried the disorder, since the penalty leaves it with lower productivity.' if _gp > _gc > 0 else '')
     # the drug users' line (the author: "are they better off too in welfare terms actually?" on 'Drug users gain
     # too', and "so they can consume more of it!"): stated as the channel, which is what the decomposition
