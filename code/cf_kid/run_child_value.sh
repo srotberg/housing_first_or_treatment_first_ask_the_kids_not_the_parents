@@ -161,6 +161,15 @@ for key, rkey in (("model_fraction_homeless=", "CF_KID RECON model_fraction_home
     ok &= good
     print("RECON %-32s arm %.15g  reload %.15g  rel diff %.2e  %s" % (key, a, r, rel, "PASS" if good else "FAIL"))
 print("RECON CHECK " + ("PASS" if ok else "FAIL: the reloaded state is not the arm's equilibrium"))
+# THE NEWBORN MIXTURE: Phi_1 was drawn from the parent shares of the arm's previous pass, A
+# prices the shares recomputed from the saved distribution. Under the rule this binary
+# carries (ever-SUD at leaving, 30 September) they agree to the distribution tolerance; a
+# gap of order 1e-4 or more says the arm was solved under a different parent-share rule.
+a1 = last(kid, "CF_KID avg V(1) over Phi_1"); mx = last(kid, "CF_KID newborn mixture priced at A")
+if a1 and mx:
+    r = abs(a1 - mx) / abs(a1)
+    print("MIXTURE CHECK avg V(1) %.10g vs newborn mixture priced at A %.10g: rel diff %.2e %s" % (a1, mx, r,
+          "PASS" if r < 1e-4 else "WARN: the arm's parent-share rule differs from this binary's (pre-30-September run?)"))
 for l in kid:
     if "CF_KID" in l and ("VALIDATION" in l or " =" in l or "SANITY" in l or "TIMING" in l):
         print(l.rstrip())
@@ -170,6 +179,7 @@ for f in child_value_at_birth$TAG.dat child_value_at_birth_mass$TAG.dat child_va
   [ -f "$WORK/$f" ] && cp "$WORK/$f" "$OUT/"
 done
 cp "$WORK/cf_kid.log" "$OUT/cf_kid$TAG.log"
+cp "$WORK/cf_kid.err" "$OUT/cf_kid$TAG.err"
 cp "$WORK/PARAM_HANDOVER.cf_kid.txt" "$OUT/PARAM_HANDOVER.cf_kid$TAG.txt"
 echo "wrote $OUT/child_value_at_birth$TAG.dat (and _mass, _parts, summary, log)"
 [ "$KEEP_WORK" = 1 ] || rm -rf "$WORK"

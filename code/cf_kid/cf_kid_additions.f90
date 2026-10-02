@@ -285,6 +285,7 @@
     subroutine compute_child_value_at_birth(time_period,out_tag_1)
 
         use Global_Vars
+        use, intrinsic :: ieee_exceptions
         !$ use omp_lib
 
         implicit none
@@ -316,6 +317,11 @@
         logical :: all_ages_1
         real(8) :: t0_1,t1_1
         integer(8) :: c0_1,c1_1,crate_1
+        logical :: invalid_before_1,invalid_after_1
+        integer :: n_nonfinite_all_1,n_nonfinite_c_1,n_unreached_dev_1
+        real(8) :: max_ptot_dev_all_1
+        real(8) :: sum_dwnd_1
+        integer :: n_lower_nd_1
 
         ! per-state temporaries of the parallel region
         integer :: choose_l,track_l,amort_l,hp_l,ish_l,vidx_l,opp_l,fv1_l,fv2_l,ach_l,trt_l
@@ -328,6 +334,13 @@
 
         call system_clock(c0_1,crate_1)
         call cpu_time(t0_1)
+
+        ! Whether THIS routine raises the IEEE invalid flag (master thread). A
+        ! procedure that uses ieee_exceptions starts with its flags quiet and
+        ! restores the caller's on return, so the "Note: ... IEEE_INVALID_FLAG"
+        ! printed at STOP, if any, comes from the code's own initialisers and
+        ! statistics run before this point, not from here.
+        invalid_before_1=.FALSE.
 
         fl_1=lbound(value_function(1)%vector_transition_real,3)
         fh_1=financial_grid_size
@@ -529,6 +542,8 @@
         !    motion from J_K-1 down to 1, with the forward push alongside.
         ! ---------------------------------------------------------------
         max_ptot_dev_1=0
+        max_ptot_dev_all_1=0
+        n_unreached_dev_1=0
         lost_total_1=0
         lost_mass_1=0
         l1_age_1=0
@@ -809,7 +824,15 @@
                             do fin_1=flo_1,fh_1
                                 do h_1=lowest_housing_grid_point,hhi_1
                                     if (ok_a(fin_1,u_1,e_1,h_1,v_1,j_1)==0) cycle
-                                    max_ptot_dev_1=max(max_ptot_dev_1,abs(ptot_a(fin_1,u_1,e_1,h_1,v_1)-1))
+                                    ! the weights of a MASSED cell must sum to one; a cell nobody
+                                    ! reaches (e.g. the excluded voucher state when exclusion is
+                                    ! off) can have an empty voucher range and is only counted
+                                    max_ptot_dev_all_1=max(max_ptot_dev_all_1,abs(ptot_a(fin_1,u_1,e_1,h_1,v_1)-1))
+                                    if (distribution_stationary(1)%vector_transition_real(1,j_1,fin_1,u_1,e_1,h_1,v_1)>0.d0) then
+                                        max_ptot_dev_1=max(max_ptot_dev_1,abs(ptot_a(fin_1,u_1,e_1,h_1,v_1)-1))
+                                    elseif (abs(ptot_a(fin_1,u_1,e_1,h_1,v_1)-1)>10.d0**(-10)) then
+                                        n_unreached_dev_1=n_unreached_dev_1+1
+                                    end if
                                     lost_total_1=max(lost_total_1,lost_a(fin_1,u_1,e_1,h_1,v_1))
                                     lost_mass_1=lost_mass_1+lost_a(fin_1,u_1,e_1,h_1,v_1)*&
                                         max(distribution_stationary(1)%vector_transition_real(1,j_1,fin_1,u_1,e_1,h_1,v_1),0.d0)
@@ -876,6 +899,27 @@
             end do
         end do
 
+        n_nonfinite_all_1=0
+        n_nonfinite_c_1=0
+        do j_1=1,JK
+            do v_1=0,voucher_state_max
+                do h_1=lowest_housing_grid_point,housing_status_grid_size-1
+                    do e_1=1,employment_grid_size
+                        do u_1=1,unemployment_grid_size
+                            do fin_1=fl_1,fh_1
+                                if (ok_a(fin_1,u_1,e_1,h_1,v_1,j_1)==0) cycle
+                                if (.NOT. ieee_finite_cfkid(c_a(fin_1,u_1,e_1,h_1,v_1,j_1))) n_nonfinite_c_1=n_nonfinite_c_1+1
+                                if ((.NOT. ieee_finite_cfkid(w_a(fin_1,u_1,e_1,h_1,v_1,j_1))) .OR. &
+                                    (.NOT. ieee_finite_cfkid(wnd_a(fin_1,u_1,e_1,h_1,v_1,j_1))) .OR. &
+                                    (.NOT. ieee_finite_cfkid(k_a(fin_1,u_1,e_1,h_1,v_1,j_1)))) &
+                                    n_nonfinite_all_1=n_nonfinite_all_1+1
+                            end do
+                        end do
+                    end do
+                end do
+            end do
+        end do
+
         avg_w_1=avg_w_1/m1_1
         avg_wc_1=avg_wc_1/m1_1
         avg_wnd_1=avg_wnd_1/m1_1
@@ -902,10 +946,13 @@
         write(*,'(A,ES24.16)') " CF_KID avg V(1) over Phi_1                         =", avg_v1_1
         write(*,'(A,ES24.16)') " CF_KID newborn mixture priced at A (parent shares) =", eamix_1
         write(*,'(A,ES24.16)') " CF_KID beta^J_K                                    =", beta_1**JK
-        write(*,'(A,ES24.16)') " CF_KID max |sum of transition weights - 1|         =", max_ptot_dev_1
+        write(*,'(A,ES24.16)') " CF_KID max |sum of transition weights - 1| (massed)=", max_ptot_dev_1
+        write(*,'(A,ES24.16,I10)') " CF_KID same over all cells, and unmassed cells off =", max_ptot_dev_all_1, n_unreached_dev_1
         write(*,'(A,ES24.16)') " CF_KID max weight to cells outside the domain      =", lost_total_1
         write(*,'(A,ES24.16)') " CF_KID mass-weighted weight outside the domain     =", lost_mass_1
         write(*,'(A,I12)')     " CF_KID non-finite W at valid age-1 cells           =", n_nonfinite_1
+        write(*,'(A,I12)')     " CF_KID non-finite W/Wnd/K at valid cells, ages 1-JK=", n_nonfinite_all_1
+        write(*,'(A,I12)')     " CF_KID non-finite child flow at valid cells        =", n_nonfinite_c_1
         write(*,*) "CF_KID forward push of Phi_j vs saved Phi_{j+1}: age, mass pushed, mass saved, L1, max|d|"
         do j_1=2,JK
             write(*,'(A,I4,4ES14.6)') " CF_KID PUSH", j_1, fmass_age_1(j_1), &
@@ -939,8 +986,10 @@
         do j_1=2,JK,1
             n_cmp_1=0
             n_lower_1=0
+            n_lower_nd_1=0
             sum_n_1=0
             sum_dw_1=0
+            sum_dwnd_1=0
             do emp_1=1,3
                 do smi_1=0,number_of_smi_states-1
                     do e_1=1,employment_grid_size
@@ -957,15 +1006,19 @@
                                     if (d_1<0.d0) n_lower_1=n_lower_1+1
                                     sum_n_1=sum_n_1+mass_1
                                     sum_dw_1=sum_dw_1+mass_1*d_1
+                                    dd_1=wnd_a(fin_1,u_1,e_1,h_1,v_1,j_1)-wnd_a(fin_1,ue_1,e_1,h_1,v_1,j_1)
+                                    if (dd_1<0.d0) n_lower_nd_1=n_lower_nd_1+1
+                                    sum_dwnd_1=sum_dwnd_1+mass_1*dd_1
                                 end do
                             end do
                         end do
                     end do
                 end do
             end do
-            if ((j_1==2) .OR. (mod(j_1,5)==0)) write(*,'(A,I4,A,I8,A,I8,A,ES14.6)') " CF_KID SANITY age", j_1, &
+            if ((j_1==2) .OR. (mod(j_1,5)==0)) write(*,'(A,I4,A,I8,A,I8,A,ES14.6,A,I8,A,ES14.6)') " CF_KID SANITY age", j_1, &
                 " SUD-parent cells lower than never-SUD twin:", n_lower_1, " of", n_cmp_1, &
-                "  mass-weighted mean W(SUD)-W(never)=", sum_dw_1/max(sum_n_1,10.d0**(-300))
+                "  mass-weighted mean W(SUD)-W(never)=", sum_dw_1/max(sum_n_1,10.d0**(-300)), &
+                "  | Wnd lower:", n_lower_nd_1, " mean Wnd(SUD)-Wnd(never)=", sum_dwnd_1/max(sum_n_1,10.d0**(-300))
         end do
 
         ! ---------------------------------------------------------------
@@ -1057,6 +1110,7 @@
             write(unit_1,'(A,ES24.16)') "max_transition_weight_dev ", max_ptot_dev_1
             write(unit_1,'(A,ES24.16)') "max_weight_outside_domain ", lost_total_1
             write(unit_1,'(A,I12)') "nonfinite_W_age1 ", n_nonfinite_1
+            write(unit_1,'(A,I12)') "nonfinite_W_all_ages ", n_nonfinite_all_1
             do j_1=2,JK
                 write(unit_1,'(A,I3,3ES24.16)') "push_age ", j_1, fmass_age_1(j_1), l1_age_1(j_1), maxd_age_1(j_1)
             end do
@@ -1066,6 +1120,9 @@
         close(unit_1)
 
         write(*,*) "CF_KID wrote child_value_at_birth"//trim(out_tag_1)//".dat and companions"
+
+        call ieee_get_flag(ieee_invalid,invalid_after_1)
+        write(*,*) "CF_KID IEEE invalid flag raised by this routine (master thread)=", invalid_after_1
 
         deallocate(w_a,wc_a,wnd_a,k_a,c_a,ok_a,fwd_a,fwdsum_a,ptot_a,lost_a)
 

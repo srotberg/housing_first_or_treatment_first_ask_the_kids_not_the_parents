@@ -9,6 +9,7 @@ Each directory must hold what run_child_value.sh writes:
                                         state s of the parent it is born to (model age 1)
     child_value_at_birth_mass<tag>.dat  Phi_1(s)/M_1: the newborns' distribution over s
     child_value_summary<tag>.txt        the state-space dimensions and a node table
+    child_value_at_birth_parts<tag>.dat W, Wc, Wnd, K, V1 at the same cells (for --value Wnd)
 
 THE COMPARISON IS STATE BY STATE: a newborn born to a parent in state s is better off
 under Treatment First when W_TF(1,s) - W_HF(1,s) > tol, worse off when it is < -tol,
@@ -22,6 +23,15 @@ was itself born to a parent who ever had a SUD before it left home, the delta_d 
 "Newborns whose parent has a SUD" is therefore EMPTY at birth by construction; the
 script reports it (as zero mass) and reports the class split, which is the parent's own
 inherited penalty, beside it.
+
+TWO VALUES, --value W | Wnd | both (default both). W is the recursion as specified: a
+parent who dies before J_K sends the child into the economy as a household at model age
+one at once. Wnd sets the parent's mortality before J_K to zero, which is what the paper's
+cross-sectional criterion does in effect (it replaces a dead parent rather than ending the
+childhood) and reproduces the code's newborn welfare to about 0.03 per cent. They differ
+because early entry RAISES a child's value in this model (an adult period is worth more
+than a childhood period), so under W a policy that lowers parental mortality is charged
+for it. See README.md.
 """
 import argparse, json, os, sys
 import numpy as np
@@ -53,7 +63,7 @@ def read_col(path):
     return np.loadtxt(path, dtype=float)
 
 
-def load(dirname, tag):
+def load(dirname, tag, value):
     s = read_summary(os.path.join(dirname, "child_value_summary%s.txt" % tag))
     w = read_col(os.path.join(dirname, "child_value_at_birth%s.dat" % tag))
     m = read_col(os.path.join(dirname, "child_value_at_birth_mass%s.dat" % tag))
@@ -61,6 +71,11 @@ def load(dirname, tag):
          * (s["housing_hi"] - s["housing_lo"] + 1) * (s["voucher_max"] + 1))
     if len(w) != n or len(m) != n:
         sys.exit("GUARD: %s: %d values of W and %d of Phi for a %d-cell age-1 slice" % (dirname, len(w), len(m), n))
+    if value == "Wnd":
+        parts = np.loadtxt(os.path.join(dirname, "child_value_at_birth_parts%s.dat" % tag))
+        if parts.shape != (n, 5) or np.abs(np.where(w > SENTINEL, parts[:, 0] - w, 0)).max() > 1e-6:
+            sys.exit("GUARD: %s: the parts file does not line up with child_value_at_birth" % dirname)
+        w = parts[:, 2]
     return s, w, m
 
 
@@ -108,10 +123,23 @@ def main():
     ap.add_argument("--hf-tag", default=None)
     ap.add_argument("--tol", type=float, nargs="+", default=[1e-3, 1e-2])
     ap.add_argument("--json", default=None, help="also write the numbers here")
+    ap.add_argument("--value", default="both", choices=["W", "Wnd", "both"])
     a = ap.parse_args()
+    allout = {}
+    for value in (["W", "Wnd"] if a.value == "both" else [a.value]):
+        print("\n" + "#" * 100)
+        print("# VALUE %s: %s" % (value, "W(1,s), the recursion with the parent's death sending the child in early"
+              if value == "W" else "Wnd(1,s), the same with no parental death before J_K"))
+        print("#" * 100)
+        allout[value] = compare(a, value)
+    if a.json:
+        json.dump(allout, open(a.json, "w"), indent=1)
+        print("\nwrote", a.json)
 
-    st, wt, mt = load(a.tf, a.tf_tag or a.tag)
-    sh, wh, mh = load(a.hf, a.hf_tag or a.tag)
+
+def compare(a, value):
+    st, wt, mt = load(a.tf, a.tf_tag or a.tag, value)
+    sh, wh, mh = load(a.hf, a.hf_tag or a.tag, value)
     for k in ("fin_lo", "fin_hi", "n_unemployment", "n_employment", "housing_lo", "housing_hi",
               "voucher_max", "number_of_smi_states", "employment_base_size", "J_K"):
         if st[k] != sh[k]:
@@ -183,9 +211,7 @@ def main():
         cells.append(dict(cls=int(lab["cls"][i]), node=int(lab["node"][i]), smi=int(lab["smi"][i]),
                           hf_share=float(w[i]), W_hf=float(wh[i]), W_tf=float(wt[i])))
     out["cells"] = cells
-    if a.json:
-        json.dump(out, open(a.json, "w"), indent=1)
-        print("\nwrote", a.json)
+    return out
 
 
 if __name__ == "__main__":
