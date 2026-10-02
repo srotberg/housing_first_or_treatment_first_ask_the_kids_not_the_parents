@@ -1,5 +1,10 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+00:40 THE AUTHOR WANTS TO BE TOLD when omega_c = 1 settles and when TF settles ("let me know when omega_c=1 settles",
+"let me know when TF settles"). The hourly stage C/D check-in reports each newly accepted arm: users, SUD,
+homelessness and welfare against the no-policy run, compared pass for pass where the arm is not yet accepted. TF
+(tf85) expected about 04:00-05:00; omega1 p0.91 at pass 9, drug gap 5.2e-3, within a pass or two.
+
 00:50 THE AUTHOR'S THREE ANSWERS. (1) "we don't need to rerun" the elasticities: accepted as they stand. (2) "Do what
 you think is best": the duplicate nulltf worker (session_01FX9q4BzWUfqNnoLk9bbejF) ARCHIVED; tf85 carries TF.
 (3) Social security, "I don't understand why social security is wrong. Is it a big difference?": THE 19:45 FLAG WAS
