@@ -488,20 +488,18 @@
         real(8) :: probability_of_false_positive=0.005d0
 
         ! ---- WHAT THE TESTING COSTS ------------------------------------------
-        ! The government pays to run the test, per household screened, per period.
-        ! In units of average annual earnings, so it is comparable to the voucher
-        ! and to the food stamp floor. Set from the direct cost of a test in the
-        ! public assistance programmes that have tried it: the Texas fiscal note
-        ! puts a test at about \$35 and Oklahoma at \$20 for the screen plus
-        ! \$141 for the chemical confirmation of a positive. Against an average
-        ! household income near \$113,000 that is 0.031 per cent of average
-        ! earnings for the screen alone.
-        !
-        ! It is a LOWER BOUND on the administrative burden and is meant as one.
-        ! The programme level figures are far larger once staffing is counted:
-        ! Arkansas spent \$32,507 to run five tests in 2017. The counterfactual
-        ! reports the range rather than resting on the assay cost.
-        real(8) :: cost_per_drug_test=0.00031d0
+        ! The government pays to run the test, per household screened, per period,
+        ! IN MODEL UNITS: the budget charges it raw (f90 ~20714), where average
+        ! labour income is 1.5898 in the omega_c = 0.085 benchmark. \$35 A TEST, the
+        ! upper end of the estimates (the author, 2 October: "you should run the
+        ! cost of the test on the upper end of the estimates...\$35"): the Texas
+        ! Legislative Budget Board's fiscal note for SB 11 (83rd Legislature, 2013)
+        ! puts a test at \$35. At the paper's dollar scale, average labour income
+        ! = \$9m / 80 (the value of a statistical life, Block 1), about \$112,500,
+        ! \$35 is 0.0311 per cent of it, so 0.000311 x 1.5898 = 0.00049461.
+        ! It was 0.00031, meant as 0.031 per cent of average earnings but charged in
+        ! model units, about \$22 (the first Treatment First run, tf85).
+        real(8) :: cost_per_drug_test=0.00049461d0
         real(8) :: govt_spending_on_drug_tests=0
             
         integer, parameter :: life_span=60

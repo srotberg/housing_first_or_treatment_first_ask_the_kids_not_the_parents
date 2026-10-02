@@ -144,6 +144,10 @@ as moved.
 
 ## Never write unmarked prose into the paper
 
+**Never open a `\new{}` with a space.** `\new` is `{\color{red}#1}` and the colour change eats a
+leading space, so `it is\new{ in the benchmark}` prints "isin the benchmark". Put the space outside:
+`it is \new{in the benchmark}`. It happened twice on 2 October.
+
 **Anything I add to the paper goes in `\new{}`, and anything I add that the
 author did not ask for should not go in at all.** The author reads the paper
 between rounds by looking at what is red; text that arrives in black is text

@@ -117,13 +117,17 @@ out['x_tf_h_dir'] = 'raises' if tf['homelessness h_1']['pc'] > 0 else 'lowers'
 # value is in units of average earnings; the budget charges it raw (f90 20654), in
 # the units in which productivity averages one at entry.  So it is quoted against the
 # benchmark's average labour income, as Section 5 quotes the SSI floor.
-_avg_lab = None
-for l in gzip.open(os.path.join(RES, 'tf85', 'cf.log.gz'), 'rt', errors='replace'):
-    if 'average_labor_income_calibrated=' in l:
-        _avg_lab = float(l.split('=')[1].split()[0])
-        break
-_ctest = float(json.load(open(os.path.join(HERE, 'fortran_numbers.json')))['f_cost_per_drug_test'])
+# AVERAGE LABOUR INCOME OF THE omega_c = 0.085 BENCHMARK (2 October), the model's own, saved with it.
+# It was read from the arm's log, which for the old arms was the old benchmark's.
+_avg_lab = float(gzip.open(os.path.join(ROOT, 'results', 'reference', 'hf_2c_omega_0.085', 'files',
+                                        'average_labor_incomebaseline_benchmark.dat.gz'), 'rt').read().split()[0])
+_fn = json.load(open(os.path.join(HERE, 'fortran_numbers.json')))
+_ctest = float(_fn['f_cost_per_drug_test'])
 out['x_ctest_earn_pc'] = f'{100 * _ctest / _avg_lab:.2g}'
+# IN DOLLARS, at the paper's dollar scale: average labour income is the value of a statistical
+# life over its multiple, \$9m / vsl_data (Block 1), so the test is _ctest / _avg_lab of that
+# (the author, 2 October: "give it in dollars too")
+out['x_ctest_usd'] = f'{_ctest / _avg_lab * 9e6 / float(_fn["f_vsl_data"]):.0f}'
 # the declared value was meant as the assay cost as a share of average earnings, so the
 # cost the model charges is below it when average labour income exceeds one
 out['x_ctest_vs_assay'] = 'below' if _avg_lab > 1 else 'above'
@@ -137,6 +141,14 @@ for l in open(os.path.join(RES, 'tf85', 'PARAM_HANDOVER.arm.txt')):
     if len(f) >= 2:
         _ho[f[0]] = f[1]
 out['x_tf_pdet_pc'] = pc(100 * float(_ho['probability_of_detection']))
+# THE DETECTION RATE AGAINST THE EVIDENCE the paragraph quotes (the author, 2 October: "85% is
+# conservative ... it would mean less of an effect of TF"): office screens detected 92.5 per cent of
+# opioid use against LC-MS/MS (Manchikanti et al. 2011), laboratory screens 96 to 100 (Walsh et al.
+# 2025). The words turn if the rate is ever set at or above the lower of the two.
+_pd = 100 * float(_ho['probability_of_detection'])
+out['x_tf_pdet_where'] = 'below' if _pd < 92.5 else 'at or above'
+out['x_tf_pdet_so'] = (', which is conservative, since a lower rate weakens Treatment First'
+                       if _pd < 92.5 else '')
 out['x_tf_pfp_pc'] = pc(100 * float(_ho['probability_of_false_positive']))
 assert _ho.get('include_voucher_exclusion') == '1', 'tf85 ran without exclusion?'
 # the release rate out of exclusion is a compile-time parameter (f90 657), 1/3
