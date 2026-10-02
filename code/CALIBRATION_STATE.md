@@ -1,5 +1,12 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+17:05 TABLE 7 APPROVAL ROWS (the author: "look at all the comments i gave you including in tables"; the screenshot asked
+for "approval rates (fraction better off?) for newborns and for adults entering at 26"): newborns 100 (ex ante, the
+CEV's sign) and households entering adult life at 26 100 (the Fortran's frac_in_support_youngest, 1.0000 in tf85_c35:
+strict V_TF > V_bench at every age-1 state, benchmark-weighted; drift alone gives the no-policy run 0.85, so drift can
+only raise it and a real loss would show). New rows and labels red; note sentence in red (splice_r96 now unreds only
+filled numbers inside a table). The all-adults share still waits on shares.txt (the Fortran's 0.966 is drift-laden).
+
 16:55 ROUND 4ad85a30: ALL RED STRIPPED (whole paper, the author's instruction, repeated; the first attempt was
 blocked by the permission check), tables frozen black, baseline sec2/base_r96 + splice_r96. 30 comments, in red:
 abstract 'in the long run and in transition' (117 words); the introduction's reason homelessness falls

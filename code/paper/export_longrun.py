@@ -111,6 +111,10 @@ def steady(arm):
             band[int(m.group(1))] = float(m.group(2))
         if 'CEV from the saved benchmark curve' in l:
             cev = float(l.split('x=')[1])
+        # the share of households entering adult life (age index 1) with a higher value than in the
+        # benchmark, state by state, weighted by the benchmark's distribution (the Fortran's own check)
+        if 'frac_in_support_youngest(' in l:
+            ad['young_better'] = float(l.split('=')[1])
         if 'ADULTDECOMP mass type' in l:
             ad['mass'] = [float(x) for x in l.split()[4:]]
         if 'ADULTDECOMP vf type' in l:
@@ -181,10 +185,19 @@ def main():
         None,
         ('CEV of a newborn, percent of lifetime consumption', 'cev_net', lambda v: f'{v:.2f}'),
         ('Share of the newborn\'s gain that comes in childhood', 'child_share', lambda v: f'{v:.0f}'),
+        # APPROVAL (the author, 2 October, on Table 7: "can you add approval rates (fraction better off?) for
+        # newborns and for adults entering at 26?"). Newborns are alike before birth (Section 6.1), so all or
+        # none are better off, as the CEV's sign says; entering adults are compared state by state
+        ('Newborns better off', 'nb_better', lambda v: f'{v:.0f}'),
+        ('Households entering adult life at 26 better off', 'y26_better', lambda v: f'{v:.0f}'),
     ]
     for arm, base in [a for a in ARMS if a[1]]:
         s = D[arm]['split']
         D[arm]['child_share'] = 100 * s[0] / s[2] if s and arm not in ('omega1', 'internalise') else None
+    for arm in D:
+        D[arm]['nb_better'] = D[arm]['y26_better'] = None
+    D['tf85']['nb_better'] = 100.0 if D['tf85']['cev_net'] > 0 else 0.0
+    D['tf85']['y26_better'] = 100 * D['tf85']['adult']['young_better']
     # no CEV for the two optimal arms: each changes the welfare function itself
     D['omega1']['cev_net'] = None
     D['internalise']['cev_net'] = None
@@ -214,7 +227,9 @@ def main():
             body.append(heads[part])
             continue
         lab, key, fmt = r
-        line = [lab]
+        # a row the author has not seen: its label is red too
+        new_row = all(f'{key}/{arm}' not in prev for arm, _ in TABLE)
+        line = [f'\\textcolor{{red}}{{{lab}}}' if new_row and prev else lab]
         for arm, _ in TABLE:
             v = D[arm].get(key)
             c = '--' if v is None else fmt(v)
