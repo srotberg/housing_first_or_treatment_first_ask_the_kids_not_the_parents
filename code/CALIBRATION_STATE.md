@@ -1,5 +1,18 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+14:55 STAGE E LAUNCHED (the author: "And you can start the transition"). code/remote_transition_2c.sh, one cloud worker:
+builds cf_fix, cf_fix2, cf_fix2_share, tr60_fix and tr10_fix (transition_2c/build_tr10_fix2.sh: the patch is 176 lines
+now); re-solves the no-policy arm on cf_fix2_share (writes the parent share) and Treatment First at $35 on cf_fix2 from
+their accepted equilibria (transition_2c/cf_arm_tr2c.sh: cf_arm_set.sh with cf_fix2_share whitelisted); the FLAT CONTROL
+(T = 10, both ends the no-policy arm, adjust_taxes 1) beside the TF re-solve; then T = 60 staged by stage_tr_fix.sh, seeds
+= restart3g loop-0 paths rescaled to the new end points (transition_2c/seeds_old). Results to results/transition_2c/
+(status.txt every 20 min, flat10.txt, shares.txt, arm_*/, loop<N>/). ALSO, for the author's new request ("share of
+newborns in favor of the tf policy... and share of all household who gain from it"): transition_2c/shares.py compares
+V_TF with V_null state by state, weighted by the no-policy distribution, with tolerances 1e-3 and 1e-2 utils. Why not
+the Fortran's frac_in_support: the no-policy run scores 0.997 on it (strict >, against the benchmark files), so it counts
+drift as gains; tf85_c35 scores 0.966 (youngest 1.000). Validated on cfarm_tf_fix2_85: SUD mass 3.46 per cent as Table
+7's old column, strict share 0.971 against the Fortran's 0.968; with SUD only 17 per cent better off.
+
 14:10 THE WHOLE TEXT MADE CONSISTENT WITH THE NEW ARMS (the author: "update the paper as well with all these new results.
 Make sure the prose everywhere is consistent ... homelessness drops a bit under tf"). Generated, in red: the abstract
 (x_abs_tf_exposes, x_abs_om_adv, x_abs_tf_result), the kappa_x item of Section 5 (x_kx_sentence: the high-end value no
