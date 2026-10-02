@@ -156,8 +156,9 @@ def names(S, C, R):
     # (round c88b1dda, the author: "this should come when you talk about homelessness dropping. you need to write
     # it better")
     # (round 20b4ddb5, the author: 'the' -> 'a', 'In' -> 'However,', 'instead,' out)
-    out['x_trf_h_sr'] = ('That is a long-run outcome. However, in the first years after the reform homelessness rises. '
-                         'The households that already carry a SUD lose their vouchers at once, '
+    # (round f4276e76, the author: '.' -> 'because the')
+    out['x_trf_h_sr'] = ('That is a long-run outcome. However, in the first years after the reform homelessness rises, '
+                         'because the households that already carry a SUD lose their vouchers at once, '
                          'while their number falls only as fast as recovery allows (Section~\\ref{sec:ftrans}).'
                          if _lowers and max(h) > hf['h_1'] else '')
     out['x_trf_shade_from'] = str(UNCONVERGED_FROM)

@@ -1,5 +1,21 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+20:10 ROUND f4276e76: ALL RED STRIPPED, base_r100 + splice_r100, which now reds generated sentences WORD BY WORD
+against base (the author: "only updates in red please"), gaps of three tokens or fewer merged. 36 comments:
+intro ('further improving childhood consumption', 'taxes paid by working-age households', 'Lastly, even drug
+users benefit from the lower equilibrium drug price': true as a channel, mean quantity per user 0.117 -> 0.137);
+6 opening sentence out; 'which again loads'; 'upon'; 'Thus,', the revenue clause out, ', making', 'At the same
+time,'; 'raises', 'lowers', 'because the'; children: 'cancel out almost exactly', 'depend', ', but', 'the
+vouchers', and 45 TO 50 explained (band 45-54: SUD homeless share 3.72 -> 7.59, a stronger second force, but
+homelessness among households without a SUD 0.66 -> 0.57, -14 percent, against -1 and -2 at 26-34 and 35-44);
+', raising childhood consumption further'; the voucher sentence moved up (x_lr_adult_poor) and the drug users'
+line as a channel (x_lr_adult_drug); 'Thus,', 'Nevertheless, the'. Discussion: 'are child externalities', 'of
+a general-equilibrium model calibrated to United States data', the summary sentence broken up, the transition
+'not harder' (x_disc_tr_kids: born at the reform 2.1 against the same computation's long run 1.39) but deceptive,
+'positive effects on homelessness only come later', 'PiT', Second a new paragraph, Third rewritten in two
+paragraphs. NOT APPLIED: 'needing less UI payments' (a job lost to a SUD pays no UI, Section 4, and UI paid
+rises 0.1202 -> 0.1213). PENDING: Table 7 rows for newborns (age 1) and SUD households better off, from cf_kid.
+
 18:55 SECTION 6 IN SHORTER SENTENCES (the author: "work through the results section and look for long sentences
 that need to be broken down into shorter, clearer sentences"), in red on top of round e1fffcf0 (no strip asked):
 every sentence of 40 words or more in Section 6 split, in the source (opening, the screen, 6.1, the pi_V sentence,

@@ -205,10 +205,10 @@ if not _hrise and _up > 0 > _few and _oth < 0 and _few + _oth < -_up:
         'percent of households, as the balance of two forces. On the one hand, it revokes the vouchers of '
         'households with a SUD and puts them at a higher risk of homelessness. Of them, '
         f'${100 * _rs1:.2f}$ percent are homeless, against ${100 * _rs0:.2f}$ under Housing First. On its own this '
-        f'would raise homelessness by ${_up:.0f}$ percent. On the other hand, less SUD means '
+        f'raises homelessness by ${_up:.0f}$ percent. On the other hand, less SUD means '
         'less unemployment and so less homelessness. There are '
         f"{'a third' if round(abs(_l1 / _l0 - 1), 1) == 0.3 else f'{100 * abs(_l1 / _l0 - 1):.0f} percent'} "
-        f'fewer households with a SUD, which on its own would lower homelessness by ${abs(_few):.0f}$ percent. '
+        f'fewer households with a SUD, which on its own lowers homelessness by ${abs(_few):.0f}$ percent. '
         'And the vouchers it revokes go, through the higher $\\pi_V$, to other clean and poor households, '
         f'lowering homelessness by ${abs(_oth):.0f}$ percent. Together the last two more than offset the first.')
 out['x_tf_h_split'] = (
@@ -238,7 +238,8 @@ out['x_hl_choice_pc'] = f'{100 * _ch:.2g}'
 # even more desirable"): a voucher easier to get is a larger reward for passing the screen
 _pvup = tf['pi_V (voucher probability)']['pc'] > 0
 out['x_tf_piv_dir'] = 'rises' if _pvup else 'falls'
-out['x_tf_piv_so'] = '. This makes staying clean of drugs even more desirable' if _pvup else ''
+# (round f4276e76, the author: 'This' -> ', making')
+out['x_tf_piv_so'] = ', making staying clean of drugs even more desirable' if _pvup else ''
 # WHY WELFARE RISES (the author, 2 October: "you should explain why welfare rises. The cut in drug use
 # reduces the budget and earnings externalities much more than it raises the childhood and aggregate
 # homelessness externalities since the latter a small in an absolute sense relative to the former
@@ -494,6 +495,15 @@ cc = subprocess.run([sys.executable, os.path.join(ROOT, 'code', 'transition_fix'
 m = re.search(r'THE COHORT BORN AT THE REFORM \(b = 1\): CEV ([+-]\S+)%', cc)
 out['x_tr_cev_b1'] = f'{float(m.group(1)) - CEV0_TR:.1f}'
 out['x_tr_cev_b1_2'] = f'{float(m.group(1)) - CEV0_TR:.2f}'
+# THE DISCUSSION'S TRANSITION (round f4276e76, the author on 'The transition is harder': "I don't think it's harder.
+# I think it has even higher welfare....but from a policy point of view it can look decieving because homelessness
+# would rise for a while"): the cohort born at the reform against the long run of the same computation
+_b1, _lr = float(m.group(1)) - CEV0_TR, float(out['x_tr_lr_cev'])
+out['x_disc_tr_kids'] = (
+    'The transition is not harder. Children born at the reform gain even more than those born in the long run, '
+    'because the drug price stays high for years and keeps more of their parents from starting to use.'
+    if _b1 > _lr > 0 else
+    'Children born at the reform gain less than those born in the long run.' if _lr > _b1 > 0 else '')
 m = re.search(r'forward pass (\d+) of', cc)
 out['x_tr_pass'] = m.group(1)
 # THE REFORM COHORT'S GAIN IS A CHILDHOOD GAIN (the author, 29 September: the transition's
