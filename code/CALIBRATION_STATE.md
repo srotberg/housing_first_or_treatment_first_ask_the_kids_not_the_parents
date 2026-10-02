@@ -1,5 +1,20 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+18:40 ROUND e1fffcf0: ALL RED STRIPPED, base_r99 + splice_r99. 28 comments in red: introduction ('latter two effects',
+'former two', the parent 'less likely to lose its job to a SUD', 'with aggregate homelessness slightly declining');
+6.2: the pi_V sentence also names the tax revenue (fewer adults lose jobs to a SUD, more children inherit higher draws;
+NOT less UI, which rises slightly), 'clean and poor', the 0.51 -> 0.48 clause out, 'lowering'; the children's paragraph
+with 45-50 instead of 45-54 (-1.0 percent from the DIAG ages; 26-50 nets +0.2, the shelter share 1.03), 'but raises',
+the overall rates at 26-34 (0.93 -> 0.91) and 35-44 (1.22 -> 1.25), '. This is because', 'has not had enough time to
+cost most of these households their jobs'; the adult part ('only about 3 percent of children', 'It is a result of the
+better economy', 'A clean household', 'drug users gain too', 'The higher voucher probability'); 'whereas'; Table 7's
+note sentence out. DISCUSSION REWRITTEN SHORT (the author: "short and focused mostly on what we found, and then why it
+matters ... new insights"): one paragraph of findings with the transition, two of implications (argued on the wrong
+grounds and judged on the wrong outcomes; the politics run against the payoff, the point-in-time count; condition new
+holders, keep the budget); 'What would overturn it' and 'What the model does not have' removed. AGE-1 APPROVAL (the
+author, twice: "what about the children aged 1?"): subagent building a child value function at birth in code/cf_kid
+(report-back pending), then a cloud run on the two current arms.
+
 18:05 ROUND 20b4ddb5: ALL RED STRIPPED, tables frozen, base_r98 + splice_r98. 22 comments in red: abstract 'despite a
 small rise in childhood homelessness during the transition' (127 words); introduction: 'of drug users and households
 with a SUD', 'with the latter slightly more than offsetting the former', the newborn's gain in its own paragraph as
