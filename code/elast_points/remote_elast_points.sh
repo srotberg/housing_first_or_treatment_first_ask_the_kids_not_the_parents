@@ -1,13 +1,13 @@
 #!/bin/bash
-# remote_elast_points.sh <worker 0-9> -- the drug price elasticities at every whole per cent from -50
-# to +50, ten points per cloud worker (the author, 2 October: "can you try every single point
+# remote_elast_points.sh <worker 0-4> -- the drug price elasticities at every whole per cent from -50
+# to +50, twenty points per cloud worker (the author: "5 workers, 20 points each") (the author, 2 October: "can you try every single point
 # betweeen -50 and +50 and average that for both?"). Worker i takes the points p with
-# (p+50) mod 10 = i, p != 0, so each worker has small and large steps on both sides.
+# (p+50) mod 5 = i, p != 0, so each worker has small and large steps on both sides.
 #
 # Each worker re-solves the omega_c = 0.085 benchmark from the scan seed with the reference
 # handover (about 4.5 hours, as the 2 October measurement did), then raises or lowers the drug
 # price by each of its points from the restored benchmark state and prints one ELASTICITY_MULTI line
-# per point (about 7 minutes each). The binary is make_binary.sh's: the accepted measurement's,
+# per point (about 7 minutes each, so about 2.5 hours for twenty). The binary is make_binary.sh's: the accepted measurement's,
 # with only the list of steps changed. Elasticities are log ratios against the worker's own
 # restored base, so the small run-to-run differences between workers' benchmarks do not enter.
 #
@@ -16,7 +16,7 @@
 # Every 20 minutes it pushes results/elast_points/w<i>.txt; at the end the gzipped log too.
 set -u
 W="$1"
-case "$W" in [0-9]) ;; *) echo "usage: $0 <worker 0-9>"; exit 1 ;; esac
+case "$W" in [0-4]) ;; *) echo "usage: $0 <worker 0-4>"; exit 1 ;; esac
 BRANCH=claude/two-period-addiction-hazard-d7gb61
 C=$(cd "$(dirname "$0")/.." && pwd)
 REPO=$(cd "$C/.." && pwd)
@@ -24,7 +24,7 @@ R=$REPO/results/elast_points; mkdir -p "$R"
 D=$C/elast_w$W
 OUT=$R/w$W.txt
 REF=$REPO/results/reference/hf_2c_omega_0.085/PARAM_HANDOVER.bench.txt
-PTS=$(python3 -c "print(','.join(str(p) for p in range(-50,51) if p and (p+50)%10==$W))")
+PTS=$(python3 -c "print(','.join(str(p) for p in range(-50,51) if p and (p+50)%5==$W))")
 TRAILER=$'\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01WpmVwzkbKX7RRP8t9yBCLv'
 note() { echo "remote_elast_points w$W: $* ($(date -u +%H:%M))" | tee -a "$D.status"; }
 
