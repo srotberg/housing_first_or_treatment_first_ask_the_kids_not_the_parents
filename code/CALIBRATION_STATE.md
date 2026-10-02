@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+01:28 STAGE C/D CHECK-IN. internalise_clear BLOCKED AGAIN (session_01Fw664zrnSRuyHvFKWi8Yn2, permission check on
+remote_cf_clear.sh); asked the author to allow the cf wrappers in .claude/settings.json. Not worked around (the allowed
+remote_omega_point.sh is not to be used to run something else). tf85 pass 4: pi_V 0.0957, budget gap 9.3e-3, users
+-34.3, SUD -35.7, h_1 -1.4, CEV +4.58. omega1_clear pass 2: users -16.6, h_1 -14.7, budget gap 0.050 (pi_V from pass
+3). Fixed-pi_V internalise pass 6, drug gap 1.3e-5, CEV +0.10. Re-armed for 02:28.
+
 01:25 internalise_clear NEVER STARTED: session_015CU8Xg6dQLQGNrbmVLPnQb stopped at a permission check on
 `bash code/remote_cf_clear.sh internalise` (the repo's .claude/settings.json allows only remote_omega_point.sh; the
 auto-mode check passed the same script for omega1_clear and remote_cf_tf.sh for tf85). Relaunched as
