@@ -1,5 +1,10 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03:24 CHECK-IN: nothing accepted since the null, nothing to launch. omega1_clear pass 7 nearly converged: price 0.8756,
+pi_V 0.0586 (from 0.0675), users -16.9, SUD -17.9, h_1 -9.3, gaps 2.5e-5 / 1.9e-3. tf85 ($22) pass 7 converged in all
+but the exit. tf85_c35 running since 02:52, no pass yet. internalise_clear waits on the author (permission). Round
+20b5b6e3 sent (ba0bc187); asked the author whether to launch remote_cf_tf_sens.sh p70 and e5 (2 sessions).
+
 02:50 TF AT $35 A TEST (the author: "rerun TF with the higher test cost", "run the cost of the test on the upper end of
 the estimates...$35", "start it from close to where it finished"). code/remote_cf_tf_c35.sh + cf_runs/cf_arm_set.sh
 (EXTRA_SET), cost_per_drug_test 0.000494610 = $35 at the paper's dollar scale (average labour income = $9m/80 = $112,500,
