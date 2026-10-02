@@ -1,5 +1,10 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+22:30 ROUND 3672e7b1: ALL RED STRIPPED, base_r104 + splice_r104. Four edits in red: the intro's drug users 'in the long
+run' (the author asked whether it was the transition; it is the steady-state comparison of Table 7), 'with children born
+in the first ten years gaining', 'more than offsets', ', for example,'. Stage E2 and decomp 2c built by 22:10; arms
+expected 03:00-04:00 UTC, the T = 60 loop 0's first year about 08:00-09:00 and the full pass about 13:00-14:00.
+
 22:20 ROUND 3350a58a (the author: keep the last round's red, remove older red -- there was none -- and add this round's;
 so NO STRIP, base_r103 and splice_r103 kept): intro 'with ... better off on net, despite losing access to vouchers';
 6.3 'those impacts', 'an unexpected permanent shock', 'what the transition looks like along various key dimensions',
