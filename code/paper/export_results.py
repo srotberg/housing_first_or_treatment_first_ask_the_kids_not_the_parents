@@ -203,10 +203,10 @@ if not _hrise and _up > 0 > _few and _oth < 0 and _few + _oth < -_up:
     out['x_tf_h_sentence'] = (
         f"Treatment First also lowers homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to {out['x_tf_h1']} "
         'percent of households, as the balance of two forces. On the one hand, it revokes the vouchers of '
-        'households with a SUD and puts them at a higher risk of homelessness: '
-        f'${100 * _rs1:.2f}$ percent of them are homeless, against ${100 * _rs0:.2f}$ under Housing First, '
-        f'which on its own would raise homelessness by ${_up:.0f}$ percent. On the other hand, less SUD means '
-        'less unemployment and so less homelessness: there are '
+        'households with a SUD and puts them at a higher risk of homelessness. Of them, '
+        f'${100 * _rs1:.2f}$ percent are homeless, against ${100 * _rs0:.2f}$ under Housing First. On its own this '
+        f'would raise homelessness by ${_up:.0f}$ percent. On the other hand, less SUD means '
+        'less unemployment and so less homelessness. There are '
         f"{'a third' if round(abs(_l1 / _l0 - 1), 1) == 0.3 else f'{100 * abs(_l1 / _l0 - 1):.0f} percent'} "
         f'fewer households with a SUD, which on its own would lower homelessness by ${abs(_few):.0f}$ percent. '
         'And the vouchers it revokes go, through the higher $\\pi_V$, to other clean and poor households, '
@@ -238,7 +238,7 @@ out['x_hl_choice_pc'] = f'{100 * _ch:.2g}'
 # even more desirable"): a voucher easier to get is a larger reward for passing the screen
 _pvup = tf['pi_V (voucher probability)']['pc'] > 0
 out['x_tf_piv_dir'] = 'rises' if _pvup else 'falls'
-out['x_tf_piv_so'] = ', which makes staying clean of drugs even more desirable' if _pvup else ''
+out['x_tf_piv_so'] = '. This makes staying clean of drugs even more desirable' if _pvup else ''
 # WHY WELFARE RISES (the author, 2 October: "you should explain why welfare rises. The cut in drug use
 # reduces the budget and earnings externalities much more than it raises the childhood and aggregate
 # homelessness externalities since the latter a small in an absolute sense relative to the former

@@ -1,5 +1,12 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+18:55 SECTION 6 IN SHORTER SENTENCES (the author: "work through the results section and look for long sentences
+that need to be broken down into shorter, clearer sentences"), in red on top of round e1fffcf0 (no strip asked):
+every sentence of 40 words or more in Section 6 split, in the source (opening, the screen, 6.1, the pi_V sentence,
+the childhood share, optimal drug use, 'Notice that', optimal homelessness, 6.3 opening, drug use, panel (g)) and in
+the generators (x_tf_piv_so, x_tf_h_sentence, x_trf_h_sr, x_trf_h_why, x_trf_better_sentence, x_lr_children_hl,
+x_lr_adult, x_lr_om_h_why). Section 6 now: 147 sentences, none of 40+ words, mean 19.5.
+
 18:40 ROUND e1fffcf0: ALL RED STRIPPED, base_r99 + splice_r99. 28 comments in red: introduction ('latter two effects',
 'former two', the parent 'less likely to lose its job to a SUD', 'with aggregate homelessness slightly declining');
 6.2: the pi_V sentence also names the tax revenue (fewer adults lose jobs to a SUD, more children inherit higher draws;

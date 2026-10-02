@@ -139,8 +139,8 @@ def names(S, C, R):
     out['x_trf_paruse_why'] = ('It is also why the share of parents who use starts below its long-run level in '
                                'panel (d): as the stock of carriers thins and the price comes down, some of '
                                'them come back.' if pu[0] < tf['par_use'] else '')
-    out['x_trf_h_why'] = ('The households that carry a SUD when the reform lands lose their vouchers at once, '
-                          'and that stock shrinks only as fast as recovery allows (panel (b)), so revocations '
+    out['x_trf_h_why'] = ('The households that carry a SUD when the reform lands lose their vouchers at once. '
+                          'That stock shrinks only as fast as recovery allows (panel (b)), so revocations '
                           'are highest in the first years and fall as the stock thins.'
                           if max(h) > tf['h_1'] > hf['h_1'] else '')
     # cohorts: the first born whose CEV is within a tenth of a point of the long run's
@@ -156,8 +156,8 @@ def names(S, C, R):
     # (round c88b1dda, the author: "this should come when you talk about homelessness dropping. you need to write
     # it better")
     # (round 20b4ddb5, the author: 'the' -> 'a', 'In' -> 'However,', 'instead,' out)
-    out['x_trf_h_sr'] = ('That is a long-run outcome. However, in the first years after the reform homelessness rises, '
-                         'because the households that already carry a SUD lose their vouchers at once, '
+    out['x_trf_h_sr'] = ('That is a long-run outcome. However, in the first years after the reform homelessness rises. '
+                         'The households that already carry a SUD lose their vouchers at once, '
                          'while their number falls only as fast as recovery allows (Section~\\ref{sec:ftrans}).'
                          if _lowers and max(h) > hf['h_1'] else '')
     out['x_trf_shade_from'] = str(UNCONVERGED_FROM)
@@ -174,13 +174,13 @@ def names(S, C, R):
     a_ent = [100 * r['entering'] for r in Bt]
     out['x_trf_better_sentence'] = (
         'Panel (h) repeats the comparison in every year of the path, for a household in each state weighted as '
-        'under Housing First: the share better off stays '
+        'under Housing First. The share better off stays '
         + (f"at about ${a_all[0]:.0f}$ percent" if round(min(a_all)) == round(max(a_all)) else
            f"between ${min(a_all):.0f}$ and ${max(a_all):.0f}$ percent")
-        + f", the share among those with a SUD {'rises' if a_sud[-1] > a_sud[0] else 'falls'} from "
-        f"${a_sud[0]:.0f}$ to ${a_sud[-1]:.0f}$ percent as the price comes down, and "
-        + ('every household entering adult life is better off throughout.' if min(a_ent) > 99.95 else
-           f"at least ${min(a_ent):.0f}$ percent of households entering adult life are better off."))
+        + f", and the share among those with a SUD {'rises' if a_sud[-1] > a_sud[0] else 'falls'} from "
+        f"${a_sud[0]:.0f}$ to ${a_sud[-1]:.0f}$ percent as the price comes down. "
+        + ('Every household entering adult life is better off throughout.' if min(a_ent) > 99.95 else
+           f"At least ${min(a_ent):.0f}$ percent of households entering adult life are better off."))
     d = json.load(open(OUT_JSON))
     d.update(out)
     json.dump(d, open(OUT_JSON, 'w'), indent=1, sort_keys=True)
