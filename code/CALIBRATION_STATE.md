@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+09:45 STAGE E CANNOT START AS PLANNED. The plan staged the transition here from TF 85's run directory; tf85_c35 ran
+in the cloud and its counter_arm files (~2 GB: value function, policies, distribution) stayed in that container, which
+no tool here can reach. Locally there are 3.7 GB free (code/trtf60 alone is 4.2 GB) and one loop takes about 10 h
+(backward 4.2, forward 5.5) on 4 cores. PROPOSED (asked the author): one cloud worker that builds cf_fix2 and tr60_fix,
+re-solves the $35 Treatment First arm from its equilibrium (price 0.8555, pi_V 0.0962: 1-3 passes, under 2 h), stages
+the transition with stage_transition.sh from the reference benchmark and that arm, seeds the price and pi_V paths from
+restart3g_loop0/seeds_out rescaled to the new end points, and runs loops of about 10 h each, publishing a digest every
+20 minutes. Not launched: waiting on the author's go.
+
 09:30 tf85_c35 ACCEPTED (11 passes; TARGET CHECK PASS, DIST CHECK PASS): price 0.8555, pi_V 0.0962, users -32.0, SUD
 -33.4, h_1 -0.9 (0.62 -> 0.61), shelter share flat at 1.03, CEV +4.33 net of the null's +0.003. STAGE D DONE: every
 accepted arm is in Section 6.2, Table 7, the introduction and the Discussion, in red (on top of round e459c6d9 and the
