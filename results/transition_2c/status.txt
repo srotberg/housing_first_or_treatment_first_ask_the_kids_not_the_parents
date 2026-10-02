@@ -1,23 +1,5 @@
-# stage E, the T = 60 transition on the omega_c = 0.085 arms; 02 Oct 21:43 UTC
-remote_transition_2c: gfortran missing, installing (14:11)
-remote_transition_2c: free disk 29G, memory 15 GiB, cores 4 (14:12)
-remote_transition_2c: building cf_fix (14:12)
-remote_transition_2c: building cf_fix2 (14:13)
-remote_transition_2c: building cf_fix2_share (14:15)
-remote_transition_2c: building tr60_fix (14:17)
-remote_transition_2c: tr60_fix: build_bounds.err: 0 warnings, 0 errors build_snan.err: 0 warnings, 0 errors build_prod.err: 0 warnings, 0 errors  (14:19)
-remote_transition_2c: building tr10_fix (14:19)
-remote_transition_2c: tr10_fix: build_bounds.err: 2 warnings, 0 errors build_snan.err: 2 warnings, 0 errors build_prod.err: 2 warnings, 0 errors  (14:21)
-remote_transition_2c: arm null on cf_fix2_share: DRUG_PRICE_START=1.0001082 (14:21)
-remote_transition_2c: arm tf on cf_fix2: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.096152024 DRUG_PRICE_START=0.85551291 EXTRA_SET=cost_per_drug_test 0.0004946100 (14:24)
-remote_transition_2c: no-policy re-solve ACCEPTED: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [70, 70, 70, 72, 70], largest final 4.32e-05 (rule 5e-05, at least 70 sweeps)  (15:58)
-remote_transition_2c: flat control staged: all inputs present -- the transition has everything it opens for reading staged /home/user/housing_first_or_treatment_first/code/tr2c_flat10 -- start with: cd /home/user/housing_first_or_treatment_first/code/tr2c_flat10 && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1  (15:58)
-remote_transition_2c: FLAT CONTROL PASS: welfare at t=1 787.49635 against the steady state's 787.49609, largest deviation 0.00081 utils (1 per cent CEV is about 0.34); worst budget residual 1.05e-04 (rule 1e-3); worst drug gap 4.98e-05 (rule 5e-3) (18:06)
-remote_transition_2c: Treatment First re-solve ACCEPTED: TARGET CHECK PASS: cleared against 5.8918410999830000 DIST CHECK PASS: 11 passes, sweeps [70, 70, 70, 70, 70, 71, 72, 70, 71, 70, 70], largest final 4.21e-05 (rule 5e-05, at least 70 sweeps)  (20:01)
-remote_transition_2c: against the accepted runs: arm_null worst relative difference 1.4e-04; arm_tf worst relative difference 1.3e-04 (20:01)
-remote_transition_2c: shares written:   all households                   mass 50.82735  strict better 0.8150 | tol 0.001: better 0.7589 worse 0.0306 | tol 0.01: better 0.7366 worse 0.0305 (20:02)
-remote_transition_2c: T = 60 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/housing_first_or_treatment_first/code/tr2c_t60 -- start with: cd /home/user/housing_first_or_treatment_first/code/tr2c_t60 && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds  # drug_price path: the old transition loop 0 (restart3g) rescaled, start 1.000108, end 0.855513, factor 1.0899 (20:02)
-remote_transition_2c: T = 60 transition started, pid 12853 (20:02)
+# stage E, the T = 60 transition on the omega_c = 0.085 arms; 02 Oct 21:45 UTC
+remote_transition_2c: free disk 14G, memory 15 GiB, cores 4 (21:45)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
