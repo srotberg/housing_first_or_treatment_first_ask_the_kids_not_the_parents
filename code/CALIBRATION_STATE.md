@@ -1,6 +1,6 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
-14:55 STAGE E LAUNCHED (the author: "And you can start the transition"). code/remote_transition_2c.sh, one cloud worker:
+14:55 STAGE E LAUNCHED (session_01LEzYZCkan1Y2rCcy9yazfT, 14:11 UTC) (the author: "And you can start the transition"). code/remote_transition_2c.sh, one cloud worker:
 builds cf_fix, cf_fix2, cf_fix2_share, tr60_fix and tr10_fix (transition_2c/build_tr10_fix2.sh: the patch is 176 lines
 now); re-solves the no-policy arm on cf_fix2_share (writes the parent share) and Treatment First at $35 on cf_fix2 from
 their accepted equilibria (transition_2c/cf_arm_tr2c.sh: cf_arm_set.sh with cf_fix2_share whitelisted); the FLAT CONTROL
