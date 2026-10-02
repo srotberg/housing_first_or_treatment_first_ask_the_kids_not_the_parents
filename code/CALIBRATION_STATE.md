@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+02:50 TF AT $35 A TEST (the author: "rerun TF with the higher test cost", "run the cost of the test on the upper end of
+the estimates...$35", "start it from close to where it finished"). code/remote_cf_tf_c35.sh + cf_runs/cf_arm_set.sh
+(EXTRA_SET), cost_per_drug_test 0.000494610 = $35 at the paper's dollar scale (average labour income = $9m/80 = $112,500,
+the VSL of Block 1; model average labour income 1.5898). The first TF run's 0.00031 is about $22 on that scale (not the
+$12 told to the author at 02:35, which used the SSA wage index). Starts at the first run's pass 7: price 0.8556, pi_V
+0.0964. session_01CJwqQHE5BxjtP6w6Vmg7HS; results/counterfactuals_2c/tf85_c35/. THE PAPER'S TF ARM IS NOW tf85_c35;
+tf85 (pass 7: users -32.0, SUD -33.5, h_1 -1.0, CEV +4.38, gaps ~1e-3) is the $22 comparison.
+Round b33aa75c: 'Two objects move in each of the experiments', in red. The elasticity points over -50..+50: the author,
+'you can update the elasticities later' -- five workers of twenty points ready (30970b76), NOT launched.
+
 02:21 CHECK-IN: nothing to launch; internalise_clear still waits on the author (permission for the cf wrappers).
 tf85 pass 5: pi_V 0.0960, budget gap 1.0e-2, drug gap 9.9e-3, users -32.8, SUD -34.3, h_1 -1.3, CEV +4.51.
 omega1_clear pass 4: pi_V FALLING 0.0675 -> 0.0615 -> 0.0571 (the omega_c = 1 economy runs a deficit at the
