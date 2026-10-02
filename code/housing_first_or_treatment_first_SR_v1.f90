@@ -24737,7 +24737,19 @@
         character*1 :: string_used
         real(8) :: distribution_mass_used,value_function_used,value_function_benchamrk_used,&
             total_addicted_1,total_addicted_youngest_1
+        ! THE SAME COUNT WITH A TOLERANCE (the author, 2 October: "recompute it", of the strict share better off
+        ! at the reform). The strict count above credits numerical drift between two solves as a gain: the flat
+        ! control, with no reform at all, scores 0.99 on it. These count a household better off only when its
+        ! value beats its benchmark value by more than support_tol utils, worse off when it falls short by more
+        ! than that, each over the benchmark mass of its group -- the rule of transition_2c/shares.py and Table 7.
+        real(8), parameter :: support_tol=1.d-3
+        real(8) :: tol_mass_all,tol_mass_sud,tol_mass_young,tol_better_all,tol_worse_all,&
+            tol_better_sud,tol_worse_sud,tol_better_young,tol_worse_young
                         
+        tol_mass_all=0; tol_mass_sud=0; tol_mass_young=0
+        tol_better_all=0; tol_worse_all=0; tol_better_sud=0; tol_worse_sud=0
+        tol_better_young=0; tol_worse_young=0
+
         frac_in_support(time_period)=0
         frac_in_support_youngest(time_period)=0
         
@@ -24864,6 +24876,22 @@
                                         
                                     end if
                                                                            
+                                    tol_mass_all=tol_mass_all+distribution_mass_used
+                                    if (unemployment_index>threshold_addiction_index) &
+                                        tol_mass_sud=tol_mass_sud+distribution_mass_used
+                                    if (age_index==1) tol_mass_young=tol_mass_young+distribution_mass_used
+                                    if (value_function_used>value_function_benchamrk_used+support_tol) then
+                                        tol_better_all=tol_better_all+distribution_mass_used
+                                        if (unemployment_index>threshold_addiction_index) &
+                                            tol_better_sud=tol_better_sud+distribution_mass_used
+                                        if (age_index==1) tol_better_young=tol_better_young+distribution_mass_used
+                                    elseif (value_function_used<value_function_benchamrk_used-support_tol) then
+                                        tol_worse_all=tol_worse_all+distribution_mass_used
+                                        if (unemployment_index>threshold_addiction_index) &
+                                            tol_worse_sud=tol_worse_sud+distribution_mass_used
+                                        if (age_index==1) tol_worse_young=tol_worse_young+distribution_mass_used
+                                    end if
+
                                     if (value_function_used>value_function_benchamrk_used) then
                                                 
                                         if (age_index==1) then
@@ -24980,6 +25008,13 @@
                 " share_newborns=", frac_in_support_youngest(time_period), &
                 " share_addicted=", frac_in_support_addicted(time_period), &
                 " share_addicted_newborns=", frac_in_support_addicted_youngest(time_period)
+            write(*,'(A,I4,A,ES9.2,6(A,F10.6))') " TRANSITION BETTER OFF TOL t=", time_period, " tol=", support_tol, &
+                " better_all=", tol_better_all/max(tol_mass_all,10.d0**(-14)), &
+                " worse_all=", tol_worse_all/max(tol_mass_all,10.d0**(-14)), &
+                " better_sud=", tol_better_sud/max(tol_mass_sud,10.d0**(-14)), &
+                " worse_sud=", tol_worse_sud/max(tol_mass_sud,10.d0**(-14)), &
+                " better_entering=", tol_better_young/max(tol_mass_young,10.d0**(-14)), &
+                " worse_entering=", tol_worse_young/max(tol_mass_young,10.d0**(-14))
         
         end if
             
@@ -45140,6 +45175,12 @@
             gap_1=implied_price_1-price_of_addictive_good
 
             distance_drug_market=abs(gap_1)
+            ! THE PRICE HELD ON PURPOSE (the author, 2 October: the decomposition with the drug price held at its
+            ! no-policy value). drug_market_adjuster = 0 freezes the price below (the secant needs a price that
+            ! moved, the trust region is 4*adjuster*gap wide, so every step is zero); the market then cannot clear
+            ! and must not hold the loop open. Every other run sets the adjuster to 0.1 or 0.2 and is unaffected.
+            ! The gap is still printed by the moments block.
+            if (drug_market_adjuster==0.d0) distance_drug_market=0
 
             ! Secant where two usable points exist, damped step otherwise. The
             ! supply price rises in quantity and demand falls in price, so the

@@ -248,6 +248,32 @@ PYEOF
 ( cd "$C" && python3 transition_2c/shares.py cfarm_tf_2c cfarm_null_2c counter_arm > "$R/shares.txt" 2>&1
   python3 transition_2c/shares.py cfarm_tf_2c cfarm_tf_2c baseline_benchmark > "$R/shares_vs_benchmark_strict.txt" 2>&1 )
 note "shares written: $(grep 'all households' "$R/shares.txt" | head -1)"
+# HOMELESSNESS BY ANY AGE RANGE (the author, 2 October: 26-38 and 39-50 rather than the log's ten-year bands):
+# exact from each arm's distribution and housing policy; reads only, about a minute
+( cd "$C" && python3 transition_2c/age_split.py null=cfarm_null_2c:counter_arm tf=cfarm_tf_2c:counter_arm \
+    > "$R/age_split.txt" 2>&1 ) || note "age_split FAILED: $(tail -2 "$R/age_split.txt" | tr '\n' ' ')"
+note "age split: $(grep -c 'housing policy (exact)' "$R/age_split.txt") of 2 arms exact"
+# THE NEWBORN'S VALUE AT BIRTH BY THE HOUSEHOLD IT IS BORN INTO (the author, 2 October: "restart" the age-1
+# approval): code/cf_kid, from each arm's saved equilibrium, no re-solve. The large outputs stay in $C/newborn_2c
+# (publish adds $R to git); only the summaries, the runs' output and the shares are copied into $R/newborn.
+if [ ! -f "$C/newborn_2c/DONE" ]; then
+    mkdir -p "$C/newborn_2c" "$R/newborn"
+    if sh "$C/cf_kid/build.sh" > /tmp/tr2c_build_kid.log 2>&1; then
+        for a in null tf; do
+            THREADS=4 sh "$C/cf_kid/run_child_value.sh" "$C/cfarm_${a}_2c" "$C/newborn_2c/$a" > "$R/newborn/run_$a.out" 2>&1 \
+                || note "cf_kid on $a FAILED: $(tail -2 "$R/newborn/run_$a.out" | tr '\n' ' ')"
+            cp "$C/newborn_2c/$a"/child_value_summary*.txt "$R/newborn/summary_$a.txt" 2>/dev/null
+        done
+        python3 "$C/cf_kid/share_newborns.py" --tf "$C/newborn_2c/tf" --hf "$C/newborn_2c/null" \
+            --json "$R/newborn/shares.json" > "$R/newborn/shares.txt" 2>&1 || note "share_newborns FAILED"
+        ( cd "$C" && python3 cf_kid/value_shares.py --tf cfarm_tf_2c --null cfarm_null_2c > "$R/value_shares.txt" 2>&1 ) \
+            || note "value_shares FAILED"
+        touch "$C/newborn_2c/DONE"
+        note "newborn values written: $(grep -i -m1 'better' "$R/newborn/shares.txt")"
+    else
+        note "cf_kid build FAILED: $(tail -3 /tmp/tr2c_build_kid.log | tr '\n' ' ')"
+    fi
+fi
 publish "arms done, shares written"
 
 # THE T = 60 PATH. Staged from the re-solved Treatment First arm (terminal) and the no-policy arm (t = 0),
@@ -271,23 +297,44 @@ for name in OLD:
     print(f'{name}: t=1 {new[0]:.6f}, t=30 {new[29]:.6f}, t=59 {new[-1]:.6f}')
 PYEOF
     note "T = 60 staged: $(tail -2 /tmp/tr2c_stage_main.log | tr '\n' ' '); seeds $(head -c 300 "$MAIN/drug_price_path_seed.txt" | sed -n 1p)"
+fi
+# LAUNCH, OR RELAUNCH AFTER A CONTAINER RESTART (2 October 21:46: the container restarted at period 39 of loop 0's
+# backward pass; the old test was 'stage and launch only if $MAIN is missing', so the second run of this script
+# found the directory, launched nothing, read the dead pid as the end and published 'T = 60 ended' with no exit
+# code). A run that finished wrote MAIN_EXIT; one that was killed did not, so: no MAIN_EXIT and no live process
+# means relaunch. Loop 0 has no checkpoint, so it starts over; after a completed loop the run's own
+# *_path_seed_out.txt are the newest paths and become the seeds.
+if [ -f "$MAIN/MAIN_EXIT" ]; then
+    note "T = 60 already finished: $(cat "$MAIN/MAIN_EXIT")"
+elif alive "$D.main.pid"; then
+    note "T = 60 running, attaching to pid $(cat "$D.main.pid")"
+else
+    if [ -f "$MAIN/run.log" ]; then
+        for f in drug_price pi_v; do
+            [ -s "$MAIN/${f}_path_seed_out.txt" ] && cp "$MAIN/${f}_path_seed_out.txt" "$MAIN/${f}_path_seed.txt"
+        done
+        mv "$MAIN/run.log" "$MAIN/run.log.killed.$(date -u +%Y%m%d%H%M)"
+        note "T = 60 RELAUNCH after a killed run (seeds: $(ls "$MAIN"/*_path_seed_out.txt >/dev/null 2>&1 && echo 'its last saved paths' || echo 'the staged seeds, loop 0 again'))"
+    fi
     ( cd "$MAIN" && date +%s > START_EPOCH && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1; echo "exit $?" > MAIN_EXIT ) &
     echo $! > "$D.main.pid"
     note "T = 60 transition started, pid $(cat "$D.main.pid")"
 fi
 publish "T = 60 running"
 
-# archive each completed loop as it lands
+# archive each completed loop as it lands; a relaunch numbers its loops from 0 again, so its archives carry _r<n>
+RUN_N=$(ls "$MAIN"/run.log.killed.* 2>/dev/null | wc -l)
+SUF=$( [ "$RUN_N" -gt 0 ] && echo "_r$RUN_N" )
 archived=-1
 while alive "$D.main.pid"; do
     for _ in $(seq 1 120); do alive "$D.main.pid" || break; sleep 10; done
     last=$(grep -a -o 'TRANSITION PATHS SAVED after loop *[0-9]*' "$MAIN/run.log" 2>/dev/null | tail -1 | grep -o '[0-9]*$')
     if [ -n "$last" ] && [ "$last" -gt "$archived" ]; then
-        mkdir -p "$R/loop$last"
-        gzip -c "$MAIN/run.log" > "$R/loop$last/run.log.gz"
-        cp "$MAIN"/*_path_seed_out.txt "$R/loop$last/" 2>/dev/null
+        mkdir -p "$R/loop$last$SUF"
+        gzip -c "$MAIN/run.log" > "$R/loop$last$SUF/run.log.gz"
+        cp "$MAIN"/*_path_seed_out.txt "$R/loop$last$SUF/" 2>/dev/null
         archived=$last
-        note "loop $last complete, archived to results/transition_2c/loop$last"
+        note "loop $last complete, archived to results/transition_2c/loop$last$SUF"
     fi
     publish "T = 60 running"
 done
