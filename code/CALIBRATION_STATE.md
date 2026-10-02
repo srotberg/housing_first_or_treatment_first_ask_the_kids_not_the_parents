@@ -1,5 +1,18 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+20:10 ROUND 0e3b2441: ALL RED STRIPPED, base_r101 + splice_r101. 31 comments: treatment ('only buys', 'if it is eligible
+and offered one'); ELIGIBILITY in the results' voucher language ('clean and eligible households', 'A clean and eligible
+household', the intro's 'an eligible household that stays clean'); 'Thus, every'; 'Moreover, even a child'. Discussion:
+'externalities imposed on children', ', and actually lowers', 'As a result,', the revenues 'paid by more productive and
+more employed households' (the author wrote 'more employed'; most of the revenue is productivity, so both), 'The
+transition is not harder' out, the transition's children a new paragraph with the SUD stock keeping demand up and
+'raising their childhood consumption even more', 'Yet,'; 'Three lessons follow', the advocacy groups, 'Treatment First
+supporters', 'while', 'The key, which neither side counts', 'and shows up years later' out; 'apparent costs', 'during the
+transition from the Housing First benchmark to the long run under Treatment First', 'long-run positive effects'; the
+money paragraph ('excess funds', 'In my experiment', x_disc_recycle_h, 'without recycling'). NOT DONE: the children's
+paragraph by 26-38 and 39-50 (the author: "shorter and clearer") waits on age_split.py run on the arms' files, which are
+in the stage E worker's container. 'flagging to check' on the intro's drug users: waits on shares.txt.
+
 19:40 ROUND 538f55b4 (no strip; red accumulates on base_r100): TREATMENT in 6.2's opening paragraph, generated
 (x_lr_tf_treat): take-up among households with a SUD 24.9 -> 29.3, because treatment buys only recovery and a household
 that has recovered and does not use passes the screen. OPEN: (1) the author's "does their welfare rise?" on drug users

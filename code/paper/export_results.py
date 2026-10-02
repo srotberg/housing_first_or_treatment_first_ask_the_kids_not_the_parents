@@ -209,7 +209,7 @@ if not _hrise and _up > 0 > _few and _oth < 0 and _few + _oth < -_up:
         'less unemployment and so less homelessness. There are '
         f"{'a third' if round(abs(_l1 / _l0 - 1), 1) == 0.3 else f'{100 * abs(_l1 / _l0 - 1):.0f} percent'} "
         f'fewer households with a SUD, which on its own lowers homelessness by ${abs(_few):.0f}$ percent. '
-        'And the vouchers it revokes go, through the higher $\\pi_V$, to other clean and poor households, '
+        'And the vouchers it revokes go, through the higher $\\pi_V$, to other clean and eligible households, '
         f'lowering homelessness by ${abs(_oth):.0f}$ percent. Together the last two more than offset the first.')
 out['x_tf_h_split'] = (
     'The fall hides a rise among the households the screen acts on: the share of households with a SUD who '
@@ -499,9 +499,14 @@ out['x_tr_cev_b1_2'] = f'{float(m.group(1)) - CEV0_TR:.2f}'
 # I think it has even higher welfare....but from a policy point of view it can look decieving because homelessness
 # would rise for a while"): the cohort born at the reform against the long run of the same computation
 _b1, _lr = float(m.group(1)) - CEV0_TR, float(out['x_tr_lr_cev'])
+# (round 0e3b2441, the author: 'The transition is not hard' -> remove, 'years' -> "(because households with SUD who
+# have not had enough time to recover keep it demand elevated) insert it nicely", 'use.' -> ", thus raising their
+# childhood consumption even more in the transition")
 out['x_disc_tr_kids'] = (
-    'The transition is not harder. Children born at the reform gain even more than those born in the long run, '
-    'because the drug price stays high for years and keeps more of their parents from starting to use.'
+    'Children born at the reform gain even more than those born in the long run. The drug price stays high for '
+    'years, because households with a SUD who have not yet had time to recover keep demand for it elevated. The '
+    "high price keeps more of these children's parents from starting to use, thus raising their childhood "
+    'consumption even more in the transition.'
     if _b1 > _lr > 0 else
     'Children born at the reform gain less than those born in the long run.' if _lr > _b1 > 0 else '')
 m = re.search(r'forward pass (\d+) of', cc)

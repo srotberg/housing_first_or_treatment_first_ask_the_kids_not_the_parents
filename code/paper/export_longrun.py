@@ -424,7 +424,7 @@ def main():
         ' At 45 to 50 the second force is stronger still. The SUD figures are by ten-year band, and across ages 45 '
         f'to 54 the share of households with a SUD who are homeless rises from ${_f(r3[0])}$ to ${_f(r3[1])}$ '
         'percent. But at these ages the vouchers the reform revokes do more for everyone else. They go to other '
-        'clean and poor households, and homelessness among households without a SUD falls from '
+        'clean and eligible households, and homelessness among households without a SUD falls from '
         f'${_f(c3[0])}$ to ${_f(c3[1])}$ percent, against almost no change at younger ages. Together with the fall '
         f'in the share with a SUD, from ${_f(s0b[3])}$ to ${_f(s1b[3])}$ percent, this outweighs the second force, '
         f'so homelessness at 45 to 50 falls, by ${abs(_b45):.0f}$ percent.' if _third else '')
@@ -434,9 +434,12 @@ def main():
     _tk0, _tk1 = D['null_share']['takeup'], D[t]['takeup']
     out['x_lr_tf_treat'] = (
         'It also raises the share of households with a SUD who are in treatment, from '
-        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent. Treatment buys only a higher chance of recovering, and '
+        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent. Treatment only buys a higher chance of recovering, and '
         'Treatment First makes recovering worth more: a household that has recovered and does not use passes the '
-        'screen and can hold a voucher.' if _tk1 > _tk0 else '')
+        'screen and can hold a voucher if it is eligible and offered one.' if _tk1 > _tk0 else '')
+    # (round 0e3b2441, the author: 'only' -> 'only buys', 'voucher.' -> 'if eligible and offered a voucher', and on
+    # 'household': "eligible household (check that you use that kind of language in the results section....the
+    # eligibility is still key)": every 'more likely to get a voucher' now says the household is eligible)
     out['x_lr_children_hl'] = (
         'Children live with households aged 26 to 50. Across those ages the reform moves homelessness in '
         f'opposite directions: it falls by ${abs(_b1):.0f}$ percent among households aged 26 to 34, rises by '
@@ -499,6 +502,11 @@ def main():
     out['x_abs_tf_exposes'] = ('it also raises homelessness' if _trise else
                                'it also exposes the households it screens out to homelessness')
     out['x_abs_om_adv'] = 'sharply ' if abs(pc(o, 'b', 'null_remote')) >= 25 else ''
+    # the Discussion's recycled revenue (round 0e3b2441, the author on 'worth more': ", and homelessness actually
+    # declines slgithy with chioldhood homelessness unaffected in the long run"): Section 6.2's balance credits the
+    # vouchers that go to clean and eligible households with lowering homelessness
+    out['x_disc_recycle_h'] = (', and homelessness actually declines slightly in the long run, with childhood '
+                               'homelessness unaffected' if not _trise and _hflat and _tf_dh_abs < 3 else '')
     out['x_abs_tf_result'] = (
         'Conditioning assistance raises homelessness but substantially cuts drug use' if _trise else
         'Conditioning assistance substantially cuts drug use and, as the vouchers it revokes go to other '
@@ -601,7 +609,7 @@ def main():
         f"${float(out['x_lr_pen0']) - float(out['x_lr_pen1']):.0f}$ percent of children: the share of newborns who "
         f"enter adult life with the penalty {out['x_lr_pen_dir']} from ${out['x_lr_pen0']}$ to ${out['x_lr_pen1']}$ "
         f"percent. The second, the remaining ${_val:.0f}$ percent, does not come from the child's productivity at "
-        'all. It is a result of the better economy it lives its adult life in. A clean household is '
+        'all. It is a result of the better economy it lives its adult life in. A clean and eligible household is '
         f'${_pvpc:.0f}$ percent more likely to draw a voucher, because the users the screen excludes no longer cost '
         'the programme, and tax revenue rises, mostly as fewer adults carry the earnings penalty and partly '
         'as fewer lose their jobs to a SUD.'
@@ -609,7 +617,7 @@ def main():
     # the moved sentence and the drug users' line are names of their own, so the move shows whole
     out['x_lr_adult_poor'] = _poor.strip() if out['x_lr_adult'] else ''
     out['x_lr_adult_drug'] = (
-        f'And a child who goes on to use drugs pays less for them: the drug is ${abs(_prpc):.0f}$ percent cheaper in '
+        f'Moreover, even a child who goes on to use drugs pays less for them: the drug is ${abs(_prpc):.0f}$ percent cheaper in '
         'equilibrium, so it can consume more of it.' if out['x_lr_adult'] else '')
     # THE INTRODUCTION'S ACCOUNT OF THE GAIN (round 20b4ddb5, the author: "too long and not clear...i still dont
     # understand where the rest of the gains in adulthood come from"): the same three shares of the whole gain
@@ -619,7 +627,7 @@ def main():
         f'drugs, and is less likely to lose its job to a SUD, further improving childhood consumption. About '
         f'${_draw:.0f}$ percent comes from the higher earnings of a child whose parent was free of the '
         f'disorder. The remaining ${_val:.0f}$ percent comes from a better economy to live in as an adult: whatever '
-        f'its productivity, a household that stays clean is ${_pvpc:.0f}$ percent more likely to get a voucher, paid '
+        f'its productivity, an eligible household that stays clean is ${_pvpc:.0f}$ percent more likely to get a voucher, paid '
         'for by the users the screen excludes and by the higher taxes paid by working-age households that no longer '
         'carry the earnings penalty or lose their jobs to a SUD. Lastly, even drug users benefit from the lower '
         'equilibrium drug price.' if out['x_lr_adult'] else '')
@@ -634,7 +642,7 @@ def main():
     # APPROVAL IN THE TEXT (round c88b1dda, the author: "also where are the results on approvals?")
     _y = D[t]['y26_better']
     out['x_lr_approve'] = (
-        ('Every household that enters adult life at 26 is better off under Treatment First than it would be in '
+        ('Thus, every household that enters adult life at 26 is better off under Treatment First than it would be in '
          'the same state under Housing First' if _y > 99.95 else
          f'Of the households that enter adult life at 26, ${_y:.0f}$ percent are better off under Treatment First '
          'than they would be in the same state under Housing First')
