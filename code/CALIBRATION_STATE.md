@@ -1,5 +1,29 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+16:55 ROUND 4ad85a30: ALL RED STRIPPED (whole paper, the author's instruction, repeated; the first attempt was
+blocked by the permission check), tables frozen black, baseline sec2/base_r96 + splice_r96. 30 comments, in red:
+abstract 'in the long run and in transition' (117 words); the introduction's reason homelessness falls
+(x_tf_h_why_intro) and ', since aggregate homelessness slightly declines'; kappa_x's 'only just' and 'high end'
+sentences and 'the upper end of its estimates' out; 6.2 Treatment First: less SUD -> less unemployment -> less
+homelessness, 'This is because, as users ...', the SUD/clean split of homelessness (3.28 -> 5.63 vs 0.51 -> 0.48)
+and the short run (x_trf_h_sr); the shelter share unchanged because the age bands cancel, 'but', 45-54, and why
+35-44 rises (carriers' homelessness 4.55 -> 7.36) and 26-34 falls (fewer carriers); 'barely moves' -> 'is almost
+unchanged in the long run' (homelessness -1, the shelter share flat; the author wrote 'unchanged'); the adult part
+rewritten (x_lr_adult: the larger part is the value at a given draw, the draw 26 percent, 'own parent'); the
+'takes an option away' sentence out; optimal drug use: '(and any job lost to a SUD)', 'but', new paragraphs, 'whereas
+Treatment First ...', the 51-64 wealth clause explained, pi_V's fall explained against Treatment First from the
+budgets (voucher bill at the benchmark's pi_V +5 vs -22 percent; estates -6 vs -2); optimal homelessness: 'on top of
+what optimal drug use achieves', the 0.005 sentence out, pi_V against omega_c = 1 (5.84 -> 5.85). Figure 3: drug
+price panel (c), panels relettered (a)-(g), cohorts to year 60 with the TF steady state after the path
+(cohort_cev.py --terminal; cohort 60 lands on the long run), shading and its note out. Table 7 rows on one line.
+NOT DONE: the approval rates for Table 7 wait on results/transition_2c/shares.txt (TF re-solve at pass 3, drifting:
+CEV 7.39 -> 5.14 -> 4.97, a cross-check on 4.33). Newborns: the criterion is ex ante, so the share better off is
+all or none; per birth household needs a child value function in the Fortran (asked the author).
+THE CEV QUESTION (the author: 4.3 against 1.4, "are you sure you didnt do anything wrong?"): same policy switches,
+same utils per CEV point (0.34); the newborn penalty share is 8.7 percent under option 1 (ever-SUD while the child is
+at home) against 2.8 under the old at-death rule, so Treatment First spares 2.9 points of newborns against 0.9;
+labour income +1.15 vs +0.53 percent, tax revenue +0.19 vs +0.08, pi_V +42 vs +21, holders +11.5 vs +1.3.
+
 14:22 STAGE E RUNNING: the worker built cf_fix, cf_fix2, cf_fix2_share, tr60_fix (0 warnings) and tr10_fix (2 warnings),
 0 errors each, by 14:21; 29 GB disk, 15 GiB, 4 cores; the two arm re-solves are next. The overnight plan check-in
 (trig_01D2jRe8M1baa387yf6YqYNc) DISABLED, as its prompt says once stage E runs and Section 6 has every accepted arm.

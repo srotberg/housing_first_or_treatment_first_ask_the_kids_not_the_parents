@@ -175,7 +175,8 @@ def main():
                         S['BUDGET'].get(t, {}).get('residual', float('nan'))])
     # cohorts born after the reform, by the repository's own cohort CEV
     out = subprocess.run([sys.executable, os.path.join(ROOT, 'code', 'transition_fix', 'cohort_cev.py'),
-                          LOG, CURVE], capture_output=True, text=True).stdout
+                          LOG, CURVE, '--terminal', os.path.join(RES, 'tf85', 'cf.log.gz')],
+                         capture_output=True, text=True).stdout
     rows = re.findall(r'^\s+(\d+)\s+\S+\s+([-+]\d+\.\d+)%\s+\((\S+), (\S+)\)', out, re.M)
     assert rows, 'cohort_cev.py printed no cohorts'
     with open(os.path.join(OUT, 'cohorts.csv'), 'w', newline='') as f:

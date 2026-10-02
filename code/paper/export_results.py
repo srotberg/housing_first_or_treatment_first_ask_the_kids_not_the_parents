@@ -172,9 +172,36 @@ out['x_tf_h_sentence'] = (
     f"{out['x_tf_h1']} percent of households, because it revokes vouchers from some of the very "
     f"households that need them most: those with a SUD, who spend more on the drug and may have lost "
     f"their job." if _hrise else
+    # (the author, 2 October, round 4ad85a30: "but also, less SUD means less unemployment and less
+    # homelessness")
     f"It also lowers homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to "
-    f"{out['x_tf_h1']} percent of households: the vouchers it revokes from households with a SUD go, "
-    f"through a higher $\\pi_V$, to other poor households.")
+    f"{out['x_tf_h1']} percent of households: less SUD means less unemployment and so less homelessness, "
+    f"and the vouchers it revokes from households with a SUD go, through a higher $\\pi_V$, to other poor "
+    f"households.")
+# WHO THE FALL IN HOMELESSNESS COMES FROM (round 4ad85a30, the author on the introduction: "explain why
+# ... it is worth explaining that result a bit more"): the share homeless among households with a SUD
+# and among the rest, from h_1, the SUD share of the homeless and the SUD share of households
+_hs, _lam = tf['SUD share of the homeless'], tf['SUD lambda_d']
+_hh = tf['homelessness h_1']
+_rs0 = _hh['base'] * _hs['base'] / _lam['base']
+_rs1 = _hh['level'] * _hs['level'] / _lam['level']
+_rc0 = _hh['base'] * (1 - _hs['base']) / (1 - _lam['base'])
+_rc1 = _hh['level'] * (1 - _hs['level']) / (1 - _lam['level'])
+out['x_tf_h_sud0'], out['x_tf_h_sud1'] = f'{100 * _rs0:.2f}', f'{100 * _rs1:.2f}'
+out['x_tf_h_cln0'], out['x_tf_h_cln1'] = f'{100 * _rc0:.2f}', f'{100 * _rc1:.2f}'
+out['x_tf_h_split'] = (
+    'The fall hides a rise among the households the screen acts on: the share of households with a SUD who '
+    f"are homeless {'rises' if _rs1 > _rs0 else 'falls'} from ${100 * _rs0:.2f}$ to ${100 * _rs1:.2f}$ "
+    f"percent, while among the rest it {'falls' if _rc1 < _rc0 else 'rises'} from ${100 * _rc0:.2f}$ to "
+    f"${100 * _rc1:.2f}$ percent."
+    if not _hrise and _rs1 > _rs0 and _rc1 < _rc0 else '')
+# the introduction's reason (the author: "it is because of the reduction in drug use that lowers the
+# chance of homelessness, through moral hazard, and also from being able to house others whom the
+# vouchers go to instead")
+out['x_tf_h_why_intro'] = ('' if _hrise else
+                           ': removing the moral hazard cuts drug use, so fewer households acquire a SUD and '
+                           'lose their jobs and their housing to it, and the vouchers it revokes from users '
+                           'house other poor households instead')
 # THE HOMELESS WHO COULD HAVE AFFORDED HOUSING, in the benchmark (the author, 2 October: "many just
 # can't afford to not be homeless even if they wanted to"): the share homeless by choice
 _bl = gzip.open(os.path.join(ROOT, 'results', 'reference', 'hf_2c_omega_0.085', 'bench.log.gz'), 'rt',
@@ -203,8 +230,10 @@ if cev_log('tf85') > CEV0:
         'homelessness, and with it the externalities on the child and on everyone else, falls too.'
         if abs(tf['homelessness h_1']['pc']) >= 2 else
         # homelessness all but unchanged (the omega_c = 0.085 arms: -1 per cent, the shelter share flat)
+        # (round 4ad85a30, the author: 'barely moves' -> "is unchanged in the long run"; almost, since
+        # homelessness falls by 1 per cent while the shelter share is flat)
         'Welfare rises because the cut in drug use reduces the budget and earnings externalities, while '
-        'homelessness, and with it the externalities that run through it, barely moves.')
+        'homelessness, and with it the externalities that run through it, is almost unchanged in the long run.')
 else:
     out['x_tf_cev_why'] = ''
 # THE DRUG TEST'S COST, as the model charges it.  The declaration's comment says the
@@ -330,6 +359,9 @@ a0, a1 = out['x_hchild0'], out['x_tf_hchild1']
 if _hflat:
     out['x_tf_hchild_sentence'] = f"The share of children in a shelter is unchanged at ${a0}$ percent."
     out['x_tf_hchild_even'] = f", while childhood homelessness stays at ${a0}$ percent of children"
+    # (round 4ad85a30, the author: ", since aggregate homelessness slightly declines")
+    out['x_tf_hchild_since'] = (', since aggregate homelessness slightly declines'
+                                if tf['homelessness h_1']['pc'] < 0 else '')
     out['x_tf_hchild_only'] = 'does not rise'
 else:
     out['x_tf_hchild_sentence'] = (f"{out['x_tf_hchild_lead']} share of children in a shelter "
@@ -339,6 +371,7 @@ else:
                                f"from ${a0}$ to ${a1}$ percent of children" if _hcup else
                                f", and childhood homelessness falls by ${out['x_tf_hchild_pc']}$ percent, "
                                f"from ${a0}$ to ${a1}$ percent of children")
+    out['x_tf_hchild_since'] = ''
     out['x_tf_hchild_only'] = (f"rises by only ${out['x_tf_hchild_pp']}$ percentage points" if _hcup else
                                f"falls by ${out['x_tf_hchild_pp']}$ percentage points")
 out['x_tf_kids_dir'] = 'runs in both directions' if _hcup else 'runs one way'
@@ -355,9 +388,8 @@ out['x_kx_sentence'] = (
     'estimates, so that if Treatment First still ranks above Housing First, it does so under an assumption '
     'that favours Housing First.' if _hrise else
     'As it rises the aggregate homelessness externality increases, which loads whichever policy houses '
-    'more people. In the long run that is Treatment First, but only just: it lowers homelessness by '
-    f"${out['x_tf_h_pc']}$ percent, so this parameter barely moves the ranking between the two. I take a value "
-    'from the high end of the estimates.')
+    # the rest removed (round 4ad85a30, the author: "remove", twice)
+    'more people.')
 # THE DISCUSSION'S PENALTY SENTENCE ('what the model does not have'): a penalty for growing up in a shelter
 # works against Treatment First only if the share of children in a shelter rises
 _sud_pp = out['x_tf_sudchild_pp']

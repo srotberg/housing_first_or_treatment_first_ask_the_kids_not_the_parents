@@ -115,11 +115,18 @@ def steady(arm):
             ad['mass'] = [float(x) for x in l.split()[4:]]
         if 'ADULTDECOMP vf type' in l:
             ad['vf'] = [float(x) for x in l.split()[4:]]
-    hb = {}
+    hb, hs, bud = {}, {}, {}
     for l in L:
         m = re.search(r'UNTARGETED homelessness rate, band\s+(\d)\s+model=\s*(\S+)', l)
         if m:
             hb[int(m.group(1))] = float(m.group(2))
+        m = re.search(r'DIAG SUD share of the homeless, band\s+(\d)\s+=\s*(\S+)', l)
+        if m:
+            hs[int(m.group(1))] = float(m.group(2))
+        # the government's budget, last print: revenue, social security, vouchers, the estates it keeps
+        if l.startswith(' BUDGET '):
+            for k, v in re.findall(r'(\w+)=\s*(\S+)', l):
+                bud[k] = float(v)
     P = [a for a in ages if 26 <= a <= 50]
     W = sum(ages[a][2] for a in P)
     k = lambda a: 1 if a <= 34 else 2 if a <= 44 else 3
@@ -132,7 +139,7 @@ def steady(arm):
         child_hl=sum(ages[a][0] * ages[a][2] for a in P) / W,
         par_use=sum(ages[a][1] * ages[a][2] for a in P) / W,
         par_sud=sum(band[k(a)] * ages[a][2] for a in P) / W,
-        cev=cev, adult=ad, hl_band=hb)
+        cev=cev, adult=ad, hl_band=hb, sud_hl_band=hs, sud_band=band, budget=bud)
 
 
 def nodes(name):
@@ -216,7 +223,8 @@ def main():
         body.append(' & '.join(line) + ' \\\\')
     tab = ['% Written by code/paper/export_longrun.py from results/counterfactuals_cf_fix2;',
            '% edit the script, not this file. Caption and note are in the paper.',
-           '\\begin{tabular}{@{}L{170pt}rrrr@{}}', '\\toprule',
+           # every row on one line (round 4ad85a30, the author: "can you put all rows in one line?")
+           '\\begin{tabular}{@{}lrrrr@{}}', '\\toprule',
            ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Optimal', 'Optimal'))) + ' \\\\',
            ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'drug use', 'homelessness'))) + ' \\\\',
            '\\midrule'] + body + ['\\bottomrule', '\\end{tabular}']
@@ -246,9 +254,27 @@ def main():
         return (f'$\\pi_V$ {d} from ${100 * p0:.2f}$ to ${100 * p1:.2f}$ percent to hold net government '
                 f'revenue at its benchmark level' + (why_fall if p1 < p0 else '') + '.')
     out['x_lr_om_b_dir'] = 'falls' if D[o]['b'] < D['null_remote']['b'] else 'rises'
-    out['x_lr_om_piv_sentence'] = piv_sentence(o, 'null_remote',
-        ': a population that uses fewer drugs lives longer, so the government collects fewer '
-        'accidental bequests and pays more in social security')
+    # WHY pi_V FALLS HERE AND RISES UNDER TREATMENT FIRST (round 4ad85a30, the author: "i think it pays more
+    # in SS but also each voucher holder lives longer so they hold onto it longer. but isnt this effect also
+    # present in the TF case? how is this differnt here?"). From the budget each run printed: the voucher
+    # bill at the benchmark's pi_V (spending scaled by pi_V0/pi_V1), and the estates the government keeps
+    B0, Bo, Bt = (D[a]['budget'] for a in ('null_remote', o, t))
+    _vb = lambda a, B: B['vouchers_2'] * D['null_remote']['piv'] / D[a]['piv'] / B0['vouchers_2'] - 1
+    _vo, _vt = _vb(o, Bo), _vb(t, Bt)
+    _eo = Bo['bequest_residual'] / B0['bequest_residual'] - 1
+    _et = Bt['bequest_residual'] / B0['bequest_residual'] - 1
+    _ss = Bo['ss'] > B0['ss'] and Bt['ss'] > B0['ss']
+    out['x_lr_om_piv_why'] = (
+        'A population that uses fewer drugs lives longer, so the government pays more in social security and '
+        'each voucher holder holds its voucher for longer: at the benchmark\'s $\\pi_V$ the programme would cost '
+        f'${100 * _vo:.0f}$ percent more. The same happens under Treatment First, but there the users the screen '
+        f'takes out of the programme outweigh it, and at the benchmark\'s $\\pi_V$ the programme would cost '
+        f'${100 * abs(_vt):.0f}$ percent less. The government also keeps less of the estates of the dead, '
+        f'${100 * abs(_eo):.0f}$ percent less against ${100 * abs(_et):.0f}$ under Treatment First, because a '
+        'parent that weighs its child fully spends more on it and dies with less.'
+        if D[o]['piv'] < D['null_remote']['piv'] and D[t]['piv'] > D['null_share']['piv'] and _ss
+        and _vo > 0 > _vt and _eo < _et < 0 else '')
+    out['x_lr_om_piv_sentence'] = piv_sentence(o, 'null_remote', '')
     # WHY HOMELESSNESS FALLS UNDER FULL ALTRUISM (the author, 2 October: "You need to explain why that is",
     # and then, of 'fewer parents acquire the disorder': "this is not a good explanation because this
     # happens also under TF"). What full altruism alone does is make a parent bear its child's shelter
@@ -260,9 +286,12 @@ def main():
     out['x_lr_om_h_why'] = (
         'Homelessness falls because a parent that counts its child as itself bears in full what a '
         'shelter costs the child, and spends what it has to keep the child housed, so the fall comes in '
-        'the years a child lives at home: among households aged 51 to 64, whose children have left and '
-        f'whose renters hold {abs(_wa):.0f} percent {"less" if _wa < 0 else "more"} wealth, homelessness '
-        f'{"rises" if _aft > 0 else "falls"} by {abs(_aft):.0f} percent.'
+        'the years a child lives at home: among households aged 51 to 64, whose children have left, '
+        f'homelessness {"rises" if _aft > 0 else "falls"} by {abs(_aft):.0f} percent, because those that rent '
+        f'hold {abs(_wa):.0f} percent less wealth than under Housing First, having spent more on their children.'
+        if D[o]['h'] < D['null_remote']['h'] and _kid < 0 and _wa < 0 and _aft > 0 else
+        'Homelessness falls because a parent that counts its child as itself bears in full what a '
+        'shelter costs the child, and spends what it has to keep the child housed.'
         if D[o]['h'] < D['null_remote']['h'] and _kid < 0 else '')
     i = 'internalise'
     # OPTIMAL HOMELESSNESS IS FULL ALTRUISM PLUS THE HOMELESSNESS EXTERNALITY (the author, 2 October: "no,
@@ -288,7 +317,13 @@ def main():
     out['x_lr_in_h1'] = f"{100 * D[i]['h']:.2f}"
     out['x_lr_in_hchild_pc'] = f"{abs(pc(i, 'child_hl', 'null_remote')):.0f}"
     out['x_lr_in_hchild_dir'] = 'falls' if D[i]['child_hl'] < D['null_remote']['child_hl'] else 'rises'
-    out['x_lr_in_piv_sentence'] = piv_sentence(i, 'null_remote', '')
+    # (round 4ad85a30, the author: "you have to compare it to the piv in omegac=1"): from its own base
+    _p0, _p1 = D[ib]['piv'], D[i]['piv']
+    _pw = 'under ' + out['x_lr_in_base_word'] if ib == o else 'in the benchmark'
+    out['x_lr_in_piv_sentence'] = (
+        f"$\\pi_V$ {'rises' if _p1 > _p0 else 'falls'}{' slightly' if abs(_p1 / _p0 - 1) < 0.01 else ''}, "
+        f"from ${100 * _p0:.2f}$ percent {_pw} to ${100 * _p1:.2f}$ percent, to hold net government revenue at "
+        'its benchmark level.')
     # homelessness by age band under Treatment First: 26-34 against 35-44
     hb0, hb1 = D['null_share']['hl_band'], D[t]['hl_band']
     out['x_lr_hl_b1_pc'] = f'{100 * (hb1[1] / hb0[1] - 1):.0f}'
@@ -316,6 +351,7 @@ def main():
     # omega_c = 0.085 benchmark, and cuts drug use by more than full altruism does). The first branch of
     # each is the text the paper had.
     _b1, _b2 = 100 * (hb1[1] / hb0[1] - 1), 100 * (hb1[2] / hb0[2] - 1)
+    _b3 = 100 * (hb1[3] / hb0[3] - 1)
     _trise = D[t]['h'] > D['null_share']['h']
     _w = lambda x: 'rises' if x > 0 else 'falls'
     out['x_lr_hl_band_sentence'] = (
@@ -324,8 +360,35 @@ def main():
         f'{_w(_b2)} by ${abs(_b2):.0f}$ percent, against ${_b1:.0f}$ percent at 26 to 34.'
         if _trise and _b2 > _b1 and _b2 > 0 and _b1 >= 0 else
         f'Broken down by the age of the household, homelessness {_w(_b2)} by ${abs(_b2):.0f}$ percent among '
-        'households aged 35 to 44, whose children are still part of their household, and '
-        f'{_w(_b1)} by ${abs(_b1):.0f}$ percent at 26 to 34.')
+        'households aged 35 to 44, whose children are still part of their household, '
+        f"{'but' if (_b1 > 0) != (_b2 > 0) else 'and'} {_w(_b1)} by ${abs(_b1):.0f}$ percent at 26 to 34"
+        + (f' and by ${abs(_b3):.0f}$ percent at 45 to 54.' if (_b3 > 0) == (_b1 > 0) else
+           f' and {_w(_b3)} by ${abs(_b3):.0f}$ percent at 45 to 54.'))
+    # WHY THE SHELTER SHARE HOLDS AND THE BANDS SPLIT (round 4ad85a30, the author: "explain why!" on the
+    # unchanged share, ", explain why" on the bands): by band, the share with a SUD and the share of them
+    # homeless (band rate x SUD share of the homeless / SUD share of households)
+    s0b, s1b = D['null_share']['sud_band'], D[t]['sud_band']
+    q0b, q1b = D['null_share']['sud_hl_band'], D[t]['sud_hl_band']
+    _rs = lambda hb, qb, sb, k: hb[k] * qb[k] / sb[k]
+    r1 = [_rs(hb0, q0b, s0b, 1), _rs(hb1, q1b, s1b, 1)]
+    r2 = [_rs(hb0, q0b, s0b, 2), _rs(hb1, q1b, s1b, 2)]
+    _f = lambda x: f'{100 * x:.2f}'
+    out['x_tf_hchild_why'] = (
+        'It does not move because the reform moves homelessness in opposite directions at the ages a child is at '
+        'home, and the moves cancel.'
+        if _b2 > 0 > _b1 and _b3 < 0 and abs(100 * (D[t]['child_hl'] - D['null_share']['child_hl'])) < 0.005
+        else '')
+    out['x_lr_hl_band_why'] = (
+        'At 26 to 34 the screen deters young adults from starting, so fewer acquire a SUD, '
+        f'${_f(s1b[1])}$ against ${_f(s0b[1])}$ percent of households, and it raises the share of them '
+        f'homeless only a little, to ${_f(r1[1])}$ from ${_f(r1[0])}$ percent. At 35 to 44 there are fewer '
+        f'with a SUD too, ${_f(s1b[2])}$ against ${_f(s0b[2])}$ percent, but under Housing First they were '
+        f"already {'twice' if round(r2[0] / r1[0]) == 2 else f'{r2[0] / r1[0]:.1f} times'} as likely to be "
+        'homeless as those at 26 to 34, since a disorder carried longer has had more time to cost a household '
+        'its job, and losing the voucher puts many more of them on the street: '
+        f'${_f(r2[1])}$ percent are homeless, against ${_f(r2[0])}$, enough to outweigh the fall in their number.'
+        if _b2 > 0 > _b1 and s1b[1] < s0b[1] and s1b[2] < s0b[2] and r2[0] > 1.8 * r1[0]
+        and r2[1] / r2[0] > r1[1] / r1[0] > 1 else '')
     _r = pc(t, 'b', 'null_share') / pc(o, 'b', 'null_remote')
     _tfb, _omb = out['x_lr_tf_b_pc'], out['x_lr_om_b_pc']
     out['x_lr_tf_vs_om'] = (
@@ -429,6 +492,30 @@ def main():
             f"parent was free of the disorder and {'rises' if _gp > 0 else 'falls'} for one whose parent "
             'carried it')
 
+    # THE ADULT PART, SPELLED OUT (round 4ad85a30, the author: "the rest is intergenerational persistence
+    # over more than 1 generation?", "not clear to me...", "ie, the grandfather of that child? ... make it
+    # clear", and of what Treatment First gives back: "remove"). The larger part first, the one that does
+    # not depend on the draw, then the draw and why it is so small a part; 'parent' is the child's own
+    _gc, _gp = v1[0] - v0[0], v1[2] - v0[2]
+    _within = (f"with the same productivity, adult life is worth more under Treatment First than under "
+               f"Housing First, at {out['x_lr_v26_all_up']} level of productivity and about "
+               f"${out['x_lr_v26_ratio']}$ times as much at the lowest as at the highest"
+               if 'x_lr_v26_ratio' in out else
+               'with the same productivity, adult life is worth more under Treatment First than under Housing '
+               f"First, both for a child whose own parent was free of the disorder and, by "
+               f"{'more' if _gp > _gc else 'less'}, for a child whose own parent carried it, whom the penalty "
+               'leaves with lower productivity'
+               if _gc > 0 and _gp > 0 else '')
+    _big, _small = ('larger', 'smaller') if comp / tot < 0.5 else ('smaller', 'larger')
+    out['x_lr_adult'] = (
+        f"The rest comes in adult life, and splits in two. The {_big} part does not depend on the child's "
+        f"draw at all: {_within}. The {_small} part, about ${out['x_lr_draw_pc']}$ percent of the adult gain, "
+        'is the draw itself, the higher productivity a child draws when its own parent does not carry the '
+        f"disorder. For each child it spares, escaping the penalty is worth about ${out['x_lr_pen_ratio']}$ "
+        'times what a child gains at a given draw, but it spares few children: the share of newborns '
+        'who enter adult life with the penalty, because their parent carried a SUD, '
+        f"{out['x_lr_pen_dir']} only from ${out['x_lr_pen0']}$ to ${out['x_lr_pen1']}$ percent."
+        if _within else '')
     d = json.load(open(OUT_JSON))
     d.update(out)
     json.dump(d, open(OUT_JSON, 'w'), indent=1, sort_keys=True)

@@ -48,41 +48,45 @@ def main():
     hf, tf = R['hf'], R['tf']
     import run
     plt = run.style()
-    fig, axs = plt.subplots(2, 3, figsize=(10.6, 6.2))
+    # SEVEN PANELS AND THE LEGEND IN THE EIGHTH (round 4ad85a30, the author: "can you also show the drug
+    # price?"); the shading of the drifting end is gone with its note (the author: "remove")
+    fig, axs = plt.subplots(2, 4, figsize=(13.2, 6.0))
     t = [0] + [r['t'] for r in S]
-    panels = (('b', '(a) Drug use', 'percent of adults'),
-              ('lambda_d', '(b) Carrying a SUD', 'percent of adults'),
-              ('h_1', '(c) Homeless', 'percent of households'),
-              ('child_hl', '(d) Children in a shelter', 'percent of children'),
-              ('par_use', '(e) Parents using drugs', 'percent of parents'))
-    for ax, (key, title, ylab) in zip(axs.flat, panels):
-        y = [100 * hf[key]] + [100 * r[key] for r in S]
-        ax.axvspan(UNCONVERGED_FROM - 0.5, 59.5, color='0.92', lw=0, zorder=0)
-        ax.axhline(100 * hf[key], color=ORANGE, ls='--', lw=1.5, label='Housing First rest point')
-        ax.axhline(100 * tf[key], color=BLUE, ls=':', lw=1.5, label='Treatment First long run')
+    panels = (('b', '(a) Drug use', 'percent of adults', 100),
+              ('lambda_d', '(b) Carrying a SUD', 'percent of adults', 100),
+              ('p_drug', '(c) Drug price', 'benchmark $=1$', 1),
+              ('par_use', '(d) Parents using drugs', 'percent of parents', 100),
+              ('h_1', '(e) Homeless', 'percent of households', 100),
+              ('child_hl', '(f) Children in a shelter', 'percent of children', 100))
+    for ax, (key, title, ylab, sc) in zip(axs.flat, panels):
+        y = [sc * hf[key]] + [sc * r[key] for r in S]
+        ax.axhline(sc * hf[key], color=ORANGE, ls='--', lw=1.5, label='Housing First rest point')
+        ax.axhline(sc * tf[key], color=BLUE, ls=':', lw=1.5, label='Treatment First long run')
         ax.plot(t, y, '-', color=BLUE, lw=2.0, label='Treatment First, year by year')
         ax.plot([0], [y[0]], 'o', color=ORANGE, ms=5)
         ax.set_title(title, fontsize=10.5, loc='left')
         ax.set_ylabel(ylab, fontsize=9)
         ax.set_xlim(-1, 60)
-        lo, hi = min(min(y), 100 * tf[key]), max(max(y), 100 * hf[key])
+        lo, hi = min(min(y), sc * tf[key]), max(max(y), sc * hf[key])
         pad = 0.12 * (hi - lo)
         ax.set_ylim(lo - pad, hi + pad)
     for ax in axs[1, :2]:
         ax.set_xlabel('years since the reform', fontsize=9)
-    axs[0, 0].legend(fontsize=7.5, loc='center right')
     ax = axs[1, 2]
     born = [r['born'] for r in C]; cev = [r['cev_pc'] - CEV0 for r in C]
-    ax.axvspan(UNCONVERGED_FROM - 25 - 0.5, max(born) + 0.5, color='0.92', lw=0, zorder=0)
     ax.axhline(0.0, color=GREY, lw=0.8)
     ax.axhline(TF_CEV, color=BLUE, ls=':', lw=1.5, label='Treatment First long run')
     # a line, like the other five panels (the author, 2 October: "why not give a line like in the
     # other graphs?"); it was a bar per cohort
     ax.plot(born, cev, '-', color=BLUE, lw=2.0, label='Treatment First, by year of birth')
-    ax.set_title('(f) Welfare by year of birth, CEV', fontsize=10.5, loc='left')
+    ax.set_title('(g) Welfare by year of birth, CEV', fontsize=10.5, loc='left')
     ax.set_ylabel('percent of lifetime consumption', fontsize=9)
     ax.set_xlabel('year of birth, after the reform', fontsize=9)
     ax.set_xlim(0, max(born) + 1)
+    # the legend in the empty eighth slot
+    leg = axs[1, 3]
+    leg.axis('off')
+    leg.legend(*axs[0, 0].get_legend_handles_labels(), loc='center', fontsize=9, frameon=False)
     fig.tight_layout()
     run.save(fig, 'full_transition')
     print(f'wrote {FIG}.pdf')
@@ -123,7 +127,7 @@ def names(S, C, R):
     # the intuition for each panel (the author, 2 October: "Are you walking the reader through each of
     # the graphs and explaining why they come out this way?"), only where the path does what it explains
     out['x_trf_paruse_why'] = ('It is also why the share of parents who use starts below its long-run level in '
-                               'panel (e): as the stock of carriers thins and the price comes down, some of '
+                               'panel (d): as the stock of carriers thins and the price comes down, some of '
                                'them come back.' if pu[0] < tf['par_use'] else '')
     out['x_trf_h_why'] = ('The households that carry a SUD when the reform lands lose their vouchers at once, '
                           'and that stock shrinks only as fast as recovery allows (panel (b)), so revocations '
@@ -134,6 +138,13 @@ def names(S, C, R):
     out['x_trf_cev_b1'] = f'{cev[0][1]:.1f}'
     # the first decade's cohorts on average: single cohorts are noisy on an unconverged pass
     out['x_trf_cev_dec1'] = f'{sum(c for b, c in cev[:10]) / 10:.2f}'
+    # the short run against the long run, for Section 6.2 (round 4ad85a30, the author: "This is the long run
+    # result, but in the short run homelessness does spike a bit")
+    # keyed on the paper's long run (export_results.py's x_tf_h_dir, the omega_c = 0.085 arms) and on whether
+    # the path rises above the benchmark at all; the path itself is still the old arms' until stage E lands
+    _lowers = json.load(open(OUT_JSON)).get('x_tf_h_dir') == 'lowers'
+    out['x_trf_h_sr'] = ('That fall is a long-run result: in the short run homelessness does rise for a while, as '
+                         'Section~\\ref{sec:ftrans} shows.' if _lowers and max(h) > hf['h_1'] else '')
     out['x_trf_shade_from'] = str(UNCONVERGED_FROM)
     out['x_trf_shade_born'] = str(UNCONVERGED_FROM - 25)
     # the drug price: the years it stays above its long-run level

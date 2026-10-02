@@ -28,8 +28,17 @@ BETA = 0.94609059720286381   # discount_factor, PARAM_HANDOVER
 KAPPA_X = 0.9329             # kappa_x, PARAM_HANDOVER
 CHILD_YEARS = 25
 
-log = sys.argv[1]
-curve = sys.argv[2] if len(sys.argv) > 2 else os.path.join(os.path.dirname(os.path.abspath(log)),
+# --terminal <cf.log.gz>: the steady state the path ends in. With it, a cohort whose childhood or adult entry
+# falls after the last year of the path is completed with that steady state, so every cohort born on the path
+# has a CEV (the author, 2 October, of the transition figure's panel (f): "why not show 60 years too for f?")
+ARGS = sys.argv[1:]
+TERMINAL = None
+if '--terminal' in ARGS:
+    k = ARGS.index('--terminal')
+    TERMINAL = ARGS[k + 1]
+    del ARGS[k:k + 2]
+log = ARGS[0]
+curve = ARGS[1] if len(ARGS) > 1 else os.path.join(os.path.dirname(os.path.abspath(log)),
                                                             "welfare_curvebaseline_benchmark.dat")
 lines = open(log, errors="replace").read().splitlines()
 
@@ -85,9 +94,29 @@ print(f"forward pass {chosen} of {len(ps) - 1} (0 = the first loop); periods in 
 if 1 in wc and 1 in cev:
     print(f"check: code's CEV at t=1 {100*cev[1]:+.4f}%  this script on the same welfare {100*cev_of(wc[1]):+.4f}%")
 
+LAST = max(young)
+if TERMINAL:
+    import gzip
+    by_ss = c_ss = y_ss = None
+    for l in gzip.open(TERMINAL, "rt", errors="replace"):
+        if "childhood_utility_by_age=" in l:
+            by_ss = [float(x) for x in l.split("=")[1].split()]
+        elif "average_childhood_utility=" in l:
+            c_ss = float(l.split("=")[1].split()[0])
+        elif "average_welfare_of_youngest_cohort=" in l:
+            y_ss = float(l.split("=")[1].split()[0])
+    assert by_ss and len(by_ss) == CHILD_YEARS and c_ss and y_ss, "terminal log lacks the steady-state childhood"
+    # the steady state's h_1 from its own identity, average_childhood_utility = sum beta^(a-1) (by(a) - kappa_x h)
+    disc = [BETA ** (a - 1) for a in range(1, CHILD_YEARS + 1)]
+    h_ss = (sum(d * u for d, u in zip(disc, by_ss)) - c_ss) / (KAPPA_X * sum(disc))
+    print(f"terminal steady state: h_1 {h_ss:.6f} (from its childhood identity), youngest {y_ss:.4f}; "
+          f"the path's last year t={LAST}: h_1 {h[LAST]:.6f}, youngest {young[LAST]:.4f}")
+    for t in range(LAST + 1, LAST + 2 * CHILD_YEARS + 2):
+        by[t], h[t], young[t] = by_ss, h_ss, y_ss
+
 print("\nCohort born in period b: childhood b..b+24, adult from b+25")
 print("   b   lifetime       CEV      (childhood part, adult part)")
-last_b = max(young) - CHILD_YEARS
+last_b = LAST + 1 if TERMINAL else LAST - CHILD_YEARS
 for b in range(1, last_b + 1):
     if not all((b + a - 1) in by and (b + a - 1) in h for a in range(1, CHILD_YEARS + 1)):
         break
