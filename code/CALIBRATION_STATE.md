@@ -1,5 +1,23 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+18:05 ROUND 20b4ddb5: ALL RED STRIPPED, tables frozen, base_r98 + splice_r98. 22 comments in red: abstract 'despite a
+small rise in childhood homelessness during the transition' (127 words); introduction: 'of drug users and households
+with a SUD', 'with the latter slightly more than offsetting the former', the newborn's gain in its own paragraph as
+three shares of the whole (x_intro_gain: 57/11/32, the 32 = a better economy for a clean adult: pi_V +42 paid by the
+excluded users and higher taxes, cheaper drug in equilibrium) and the shelter level folded into the author's penalty
+sentence; 6.2: 'Treatment First also lowers' in its own paragraph, 'a long-run outcome. However, ...', the children's
+paragraph one coherent account (x_lr_children_hl: two forces, which wins at 26-34 and at 35-44), the parent shares
+moved to the welfare paragraph, the strain clause out, the adult part in whole-gain shares (the author: 57+26+32 did
+not add up), taxes 'mostly as fewer adults carry the earnings penalty and partly as fewer lose their jobs' (the
+author asked whether it is less UI and more employment: UI paid rises 0.1202 -> 0.1213; unemployment 5.63 -> 5.47
+explains about a seventh of the +1.15 percent in labour income), 'in equilibrium', no 'mainly'; ', but among'; the
+newborn approval row and its ex-ante sentence OUT (the author: measure the share better off at birth); Discussion
+renamed 'Discussion and implications' with a two-paragraph summary and four new lessons (measure the children, where
+the savings go, who pays, a blunter instrument than it looks), 'Which channel carries the result' removed; Section 8
+(the plan) removed. OPEN for the author: (1) newborn approval at birth needs a child value function by birth state in
+cf.f90 and a re-solve of both arms; (2) decomposition runs, TF at the benchmark pi_V and at the benchmark price, to
+attribute the 32 percent; (3) the transition's strict better-off share is drift-laden (flat control 99 percent).
+
 17:50 SECTIONS 3-5 CONSISTENCY (the author: "then also check the consistency in section 3-5"; subagent audit, report
 only, each finding verified against the source). In red: 4.12 and equilibrium item 3, pi_V clears the budget in every
 experiment, omega_c = 1 included (the 2c omega1 arm does; the sentence described the old fixed-pi_V arm); 4.1, who

@@ -201,7 +201,7 @@ _oth = 100 * (1 - _l1) * (_rc1 - _rc0) / _hh['base']
 assert abs(_up + _few + _oth - _hh['pc']) < 0.05, (_up, _few, _oth, _hh['pc'])
 if not _hrise and _up > 0 > _few and _oth < 0 and _few + _oth < -_up:
     out['x_tf_h_sentence'] = (
-        f"It also lowers homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to {out['x_tf_h1']} "
+        f"Treatment First also lowers homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to {out['x_tf_h1']} "
         'percent of households, as the balance of two forces. On the one hand, it revokes the vouchers of '
         'households with a SUD and puts them at a higher risk of homelessness: '
         f'${100 * _rs1:.2f}$ percent of them are homeless, against ${100 * _rs0:.2f}$ under Housing First, '
@@ -224,11 +224,11 @@ out['x_tf_h_split'] = (
 # (round c88b1dda, the author: "on the one hand, it revokes vouchers for those with SUD and puts them at higher
 # risk for homelessness. On the other hand, in the long run....")
 out['x_tf_h_why_intro'] = ('' if _hrise else
-                           '. On the one hand, it revokes the vouchers of households with a SUD and puts them at a '
+                           '. On the one hand, it revokes the vouchers of drug users and households with a SUD and puts them at a '
                            'higher risk of homelessness. On the other hand, in the long run, removing the moral '
                            'hazard cuts drug use, so fewer households acquire a SUD and lose their jobs and their '
-                           'housing to it, and the vouchers it revokes go to other poor households instead, which '
-                           'more than offsets it')
+                           'housing to it, and the vouchers it revokes go to other poor households instead, with the '
+                           'latter slightly more than offsetting the former')
 # THE HOMELESS WHO COULD HAVE AFFORDED HOUSING, in the benchmark (the author, 2 October: "many just
 # can't afford to not be homeless even if they wanted to"): the share homeless by choice
 _bl = gzip.open(os.path.join(ROOT, 'results', 'reference', 'hf_2c_omega_0.085', 'bench.log.gz'), 'rt',
@@ -405,6 +405,9 @@ else:
 out['x_tf_kids_dir'] = 'runs in both directions' if _hcup else 'runs one way'
 # the introduction's penalty sentence (round c88b1dda, the author: "because child homelessness in the long run
 # stays the same")
+# the level, folded into the author's sentence (round 20b4ddb5: the introduction's gain paragraph rewritten)
+out['x_tf_pen_level'] = (f", at ${out['x_hchild0']}$ percent of children, as aggregate homelessness slightly declines"
+                         if _hflat and tf['homelessness h_1']['pc'] < 0 else '')
 out['x_tf_pen_because'] = (', because childhood homelessness stays the same in the long run' if _hflat else
                            f": the share of children in shelters {out['x_tf_hchild_only']}, while the share of "
                            f"children living with a parent who has a SUD {out['x_tf_sudchild_dir']} by "

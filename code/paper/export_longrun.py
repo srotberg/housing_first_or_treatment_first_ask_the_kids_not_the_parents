@@ -188,7 +188,6 @@ def main():
         # APPROVAL (the author, 2 October, on Table 7: "can you add approval rates (fraction better off?) for
         # newborns and for adults entering at 26?"). Newborns are alike before birth (Section 6.1), so all or
         # none are better off, as the CEV's sign says; entering adults are compared state by state
-        ('Newborns better off', 'nb_better', lambda v: f'{v:.0f}'),
         ('Households entering adult life at 26 better off', 'y26_better', lambda v: f'{v:.0f}'),
     ]
     for arm, base in [a for a in ARMS if a[1]]:
@@ -276,6 +275,8 @@ def main():
     B0, Bo, Bt = (D[a]['budget'] for a in ('null_remote', o, t))
     _vb = lambda a, B: B['vouchers_2'] * D['null_remote']['piv'] / D[a]['piv'] / B0['vouchers_2'] - 1
     _vo, _vt = _vb(o, Bo), _vb(t, Bt)
+    # the Discussion's 'where the savings go' (round 20b4ddb5): the voucher bill the excluded users save, at a given pi_V
+    out['x_lr_om_vt_pc'] = f'{100 * abs(_vt):.0f}'
     _eo = Bo['bequest_residual'] / B0['bequest_residual'] - 1
     _et = Bt['bequest_residual'] / B0['bequest_residual'] - 1
     _ss = Bo['ss'] > B0['ss'] and Bt['ss'] > B0['ss']
@@ -299,7 +300,7 @@ def main():
     out['x_lr_om_h_why'] = (
         'Homelessness falls because a parent that counts its child as itself bears in full what a '
         'shelter costs the child, and spends what it has to keep the child housed, so the fall comes in '
-        'the years a child lives at home: among households aged 51 to 64, whose children have left, '
+        'the years a child lives at home, but among households aged 51 to 64, whose children have left, '
         f'homelessness {"rises" if _aft > 0 else "falls"} by {abs(_aft):.0f} percent.'
         if D[o]['h'] < D['null_remote']['h'] and _kid < 0 and _aft > 0 else
         'Homelessness falls because a parent that counts its child as itself bears in full what a '
@@ -399,19 +400,24 @@ def main():
         return lam1 * (rs1 - rs0), (lam1 - lam0) * (rs0 - rc0)
     _u1, _n1 = _split(1)
     _u2, _n2 = _split(2)
-    out['x_lr_hl_band_why'] = (
-        'At 26 to 34 the screen deters young adults from starting, so fewer acquire a SUD, '
-        f'${_f(s1b[1])}$ percent of households against ${_f(s0b[1])}$ in the benchmark, but it still raises the '
-        f'share of those who do that are homeless a little, from ${_f(r1[0])}$ to ${_f(r1[1])}$ percent: a disorder '
-        'that young is recent, so few of them have yet lost their job to it and needed the voucher to stay '
-        'housed. The fall in the number with a SUD outweighs the rise in their risk, and homelessness at these '
-        f'ages falls. At 35 to 44 there are fewer with a SUD too, ${_f(s1b[2])}$ percent against ${_f(s0b[2])}$, '
-        'but a disorder carried longer has had more time to cost a household its job, so more of them relied on '
-        'the voucher to stay housed, and when Treatment First revokes it the share of them that are homeless '
-        f'rises from ${_f(r2[0])}$ to ${_f(r2[1])}$ percent. Here the revoked vouchers more than offset the fall in '
-        'the number with a SUD, and homelessness at these ages rises.'
-        if _b2 > 0 > _b1 and s1b[1] < s0b[1] and s1b[2] < s0b[2] and r2[0] > r1[0]
-        and r2[1] / r2[0] > r1[1] / r1[0] > 1 and _u1 + _n1 < 0 < _u2 + _n2 else '')
+    _d1, _d2 = 100 * (s1b[1] / s0b[1] - 1), 100 * (s1b[2] / s0b[2] - 1)
+    out['x_lr_children_hl'] = (
+        'Children live with households aged 26 to 50, and across those ages the reform moves homelessness in '
+        f'opposite directions: it falls by ${abs(_b1):.0f}$ percent among households aged 26 to 34, rises by '
+        f'${abs(_b2):.0f}$ percent at 35 to 44 and falls by ${abs(_b3):.0f}$ percent at 45 to 54, and the changes '
+        'cancel. Which way it goes at a given age depends on the balance of the two forces above: Treatment First '
+        'cuts the number of households with a SUD, and it raises the risk of homelessness for those who still have '
+        'one, because they lose their voucher. At 26 to 34 the first force wins. The share of households with a SUD '
+        f'falls from ${_f(s0b[1])}$ to ${_f(s1b[1])}$ percent, while the share of them who are homeless rises only '
+        f'from ${_f(r1[0])}$ to ${_f(r1[1])}$ percent, because a disorder acquired young has rarely cost a household '
+        'its job yet, so few of them depended on a voucher to stay housed. At 35 to 44 the second force wins. The '
+        f"share with a SUD falls {'by about as much' if abs(_d1 - _d2) < 5 else 'too'}, from ${_f(s0b[2])}$ to "
+        f'${_f(s1b[2])}$ percent, but these households have carried the disorder longer, more of them have lost '
+        'their jobs and depend on a voucher, and without it the share of them who are homeless rises from '
+        f'${_f(r2[0])}$ to ${_f(r2[1])}$ percent.'
+        if _b2 > 0 > _b1 and _b3 < 0 and s1b[1] < s0b[1] and s1b[2] < s0b[2] and r2[0] > r1[0]
+        and r2[1] / r2[0] > r1[1] / r1[0] > 1 and _u1 + _n1 < 0 < _u2 + _n2
+        and abs(100 * (D[t]['child_hl'] - D['null_share']['child_hl'])) < 0.005 else '')
     _r = pc(t, 'b', 'null_share') / pc(o, 'b', 'null_remote')
     _tfb, _omb = out['x_lr_tf_b_pc'], out['x_lr_om_b_pc']
     out['x_lr_tf_vs_om'] = (
@@ -543,18 +549,28 @@ def main():
              'to need a voucher, so it is larger for a child whose own parent carried the disorder, whom the '
              'penalty leaves with lower productivity.' if _gp > _gc > 0 else '')
     out['x_lr_adult'] = (
-        f"The other ${100 - _kid:.0f}$ percent comes in adult life, from two sources. About ${_draw:.0f}$ percent "
-        f"of the whole gain, ${out['x_lr_draw_pc']}$ percent of the adult part, is the better productivity a child "
-        'draws when its own parent does not carry the disorder. Escaping the penalty is worth a lot to each child '
-        f"it spares, about ${out['x_lr_pen_ratio']}$ times what the average child gains at the same productivity, "
-        'but it spares few children: the share of newborns who enter adult life with the penalty, because their '
-        f"parent carried a SUD, {out['x_lr_pen_dir']} only from ${out['x_lr_pen0']}$ to ${out['x_lr_pen1']}$ "
-        f"percent. The remaining ${_val:.0f}$ percent of the whole gain is that adult life is worth more at the "
-        'same productivity, mainly because a household that stays clean is '
-        f"${_pvpc:.0f}$ percent more likely to draw a voucher, paid for by the users the screen takes out of the "
-        f"programme and by the taxes that higher earnings bring in, and because the drug is ${abs(_prpc):.0f}$ "
-        f'percent cheaper. {_poor}'
+        f"The other ${100 - _kid:.0f}$ percent comes in adult life, from two sources. The first, ${_draw:.0f}$ "
+        'percent of the whole gain, is the better productivity a child draws when its own parent does not carry the '
+        f"disorder: escaping the penalty is worth a lot to each child it spares, about ${out['x_lr_pen_ratio']}$ "
+        'times what the average child gains at the same productivity, but it spares few children, since the share '
+        f"of newborns who enter adult life with the penalty {out['x_lr_pen_dir']} only from ${out['x_lr_pen0']}$ "
+        f"to ${out['x_lr_pen1']}$ percent. The second, the remaining ${_val:.0f}$ percent, does not depend on the "
+        "child's productivity at all: the economy it lives its adult life in is a better one for a household that "
+        f'stays clean. Such a household is ${_pvpc:.0f}$ percent more likely to draw a voucher, because the users '
+        'the screen excludes no longer cost the programme and because tax revenue rises, mostly as fewer adults '
+        'carry the earnings penalty and partly as fewer lose their jobs to a SUD; and the drug is '
+        f'${abs(_prpc):.0f}$ percent cheaper in equilibrium. {_poor}'
         if comp / tot < 0.5 and _gc > 0 and _gp > 0 and _pvpc > 0 > _prpc else '')
+    # THE INTRODUCTION'S ACCOUNT OF THE GAIN (round 20b4ddb5, the author: "too long and not clear...i still dont
+    # understand where the rest of the gains in adulthood come from"): the same three shares of the whole gain
+    out['x_intro_gain'] = (
+        f"A newborn gains ${D[t]['cev_net']:.2f}$ percent of lifetime consumption. About ${_kid:.0f}$ percent of that "
+        "gain comes in childhood, from a parent who spends more on the child's consumption and housing and less on "
+        f'drugs. About ${_draw:.0f}$ percent comes from the higher earnings of a child whose parent was free of the '
+        f'disorder. The remaining ${_val:.0f}$ percent comes from a better economy to live in as an adult: whatever '
+        f'its productivity, a household that stays clean is ${_pvpc:.0f}$ percent more likely to get a voucher, paid '
+        'for by the users the screen excludes and by the higher taxes of adults who no longer carry the earnings '
+        'penalty or lose their jobs to a SUD, and the drug is cheaper in equilibrium.' if out['x_lr_adult'] else '')
     # the introduction's account of the newborn's gain, consistent with 6.2's (round c88b1dda, the author: "make
     # sure that the explanations in intro ... are consistent with the results we have")
     out['x_intro_adult_rest'] = (', and the rest through adult life being worth more at the same productivity, chiefly '
@@ -566,8 +582,7 @@ def main():
          'the same state under Housing First' if _y > 99.95 else
          f'Of the households that enter adult life at 26, ${_y:.0f}$ percent are better off under Treatment First '
          'than they would be in the same state under Housing First')
-        + (', and, since newborns are alike before they are born, so is every newborn (Table~\\ref{tab:longrun}).'
-           if D[t]['nb_better'] == 100 else ' (Table~\\ref{tab:longrun}).'))
+        + ' (Table~\\ref{tab:longrun}).')
     d = json.load(open(OUT_JSON))
     d.update(out)
     json.dump(d, open(OUT_JSON, 'w'), indent=1, sort_keys=True)
