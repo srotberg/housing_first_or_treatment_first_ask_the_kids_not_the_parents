@@ -77,11 +77,14 @@ def final(arm):
 
 def steady(arm):
     L = log(arm)
-    ages, band, cev, ad = {}, {}, None, {}
+    ages, band, cev, ad, wealth = {}, {}, None, {}, {}
     for l in L:
         m = re.search(r'DIAG age\s+(\d+)\s+homeless=\s*(\S+).*sud=\s*(\S+)\s+mass=\s*(\S+)', l)
         if m:
             ages[int(m.group(1))] = tuple(float(m.group(i)) for i in (2, 3, 4))
+        m = re.search(r'DIAG age\s+(\d+)\s+homeless=.*renter wealth=\s*(\S+)', l)
+        if m:
+            wealth[int(m.group(1))] = float(m.group(2))
         m = re.search(r'DIAG disorder rate, band\s+(\d)\s+=\s*(\S+)', l)
         if m:
             band[int(m.group(1))] = float(m.group(2))
@@ -99,7 +102,12 @@ def steady(arm):
     P = [a for a in ages if 26 <= a <= 50]
     W = sum(ages[a][2] for a in P)
     k = lambda a: 1 if a <= 34 else 2 if a <= 44 else 3
+    # homelessness and renters' wealth after the child has left, ages 51 to 64, mass-weighted
+    Q = [a for a in ages if 51 <= a <= 64 and ages[a][2] > 0]
+    WQ = sum(ages[a][2] for a in Q)
     return dict(
+        hl_after=sum(ages[a][0] * ages[a][2] for a in Q) / WQ,
+        w_after=sum(wealth[a] * ages[a][2] for a in Q) / WQ,
         child_hl=sum(ages[a][0] * ages[a][2] for a in P) / W,
         par_use=sum(ages[a][1] * ages[a][2] for a in P) / W,
         par_sud=sum(band[k(a)] * ages[a][2] for a in P) / W,
@@ -219,10 +227,21 @@ def main():
     out['x_lr_om_piv_sentence'] = piv_sentence(o, 'null_remote',
         ': a population that uses fewer drugs lives longer, so the government collects fewer '
         'accidental bequests and pays more in social security')
-    # WHY HOMELESSNESS FALLS UNDER FULL ALTRUISM (the author, 2 October: "You need to explain why that is")
-    out['x_lr_om_h_why'] = ('Homelessness falls because fewer parents acquire the disorder, which costs a '
-                            'household its job and with it the income that pays the rent.'
-                            if D[o]['h'] < D['null_remote']['h'] else '')
+    # WHY HOMELESSNESS FALLS UNDER FULL ALTRUISM (the author, 2 October: "You need to explain why that is",
+    # and then, of 'fewer parents acquire the disorder': "this is not a good explanation because this
+    # happens also under TF"). What full altruism alone does is make a parent bear its child's shelter
+    # in full, and the runs show it where that bites: homelessness falls at the ages a child is at home
+    # (26 to 50) and not after, when renters hold less wealth (both omega_c = 1 runs, cf_fix2 and 2c)
+    _kid = pc(o, 'child_hl', 'null_remote')
+    _aft = pc(o, 'hl_after', 'null_remote')
+    _wa = pc(o, 'w_after', 'null_remote')
+    out['x_lr_om_h_why'] = (
+        'Homelessness falls because a parent that counts its child as itself bears in full what a '
+        'shelter costs the child, and spends what it has to keep the child housed, so the fall comes in '
+        'the years a child lives at home: among households aged 51 to 64, whose children have left and '
+        f'whose renters hold {abs(_wa):.0f} percent {"less" if _wa < 0 else "more"} wealth, homelessness '
+        f'{"rises" if _aft > 0 else "falls"} by {abs(_aft):.0f} percent.'
+        if D[o]['h'] < D['null_remote']['h'] and _kid < 0 else '')
     i = 'internalise'
     # OPTIMAL HOMELESSNESS IS FULL ALTRUISM PLUS THE HOMELESSNESS EXTERNALITY (the author, 2 October: "no,
     # it includes also omega_c=1"), so its changes are measured from the optimal-drug-use column when
@@ -232,6 +251,13 @@ def main():
     out['x_lr_in_base_word'] = 'optimal drug use' if ib == o else 'the benchmark'
     out['x_lr_in_dh_pc'] = f"{abs(pc(i, 'h', ib)):.0f}"
     out['x_lr_in_dh_dir'] = 'lower' if D[i]['h'] < D[ib]['h'] else 'higher'
+    # the verb (the author, 2 October: 'leaves' -> 'reduces')
+    out['x_lr_in_dh_verb'] = 'reduces' if D[i]['h'] < D[ib]['h'] else 'raises'
+    # households can act on their housing, and many do when they weigh their child (the author, 2
+    # October: "many do reduce homelessness when they weigh their child, so it's not that they cannot
+    # afford to rent a place"): only when full altruism did lower homelessness
+    out['x_lr_in_many_do'] = (', and many do when they weigh their child, as the optimal drug use column shows'
+                              if D[o]['h'] < D['null_remote']['h'] else '')
     out['x_lr_in_b_pc'] = f"{abs(pc(i, 'b', 'null_remote')):.0f}"
     out['x_lr_in_b_dir'] = 'falls' if D[i]['b'] < D['null_remote']['b'] else 'rises'
     out['x_lr_in_h_pc'] = f"{abs(pc(i, 'h', 'null_remote')):.0f}"
@@ -274,6 +300,24 @@ def main():
         f'ADULTDECOMP {tot * beta25:.4f} does not reproduce the adult part {adult_utils:.4f}'
     out['x_lr_draw_pc'] = f'{100 * comp / tot:.0f}'
     out['x_lr_draw_rest'] = 'larger' if comp / tot < 0.5 else 'smaller'
+    # WHY THE DRAW IS SO SMALL A PART (the author, 2 October: "how is that possible? i thought that the
+    # productivity penalty is the rest of it"): a child spared the penalty gains the whole clean-penalised
+    # gap, many times the within gain every child gets, but few are spared
+    out['x_lr_pen0'] = f'{100 * m0[2] / (m0[0] + m0[2]):.2f}'
+    out['x_lr_pen1'] = f'{100 * m1[2] / (m1[0] + m1[2]):.2f}'
+    out['x_lr_pen_dir'] = 'falls' if m1[2] / (m1[0] + m1[2]) < m0[2] / (m0[0] + m0[2]) else 'rises'
+    out['x_lr_pen_ratio'] = f'{gap / (tot - comp):.0f}'
+    # WHERE THE GAIN AT A GIVEN DRAW COMES FROM (the author, 2 October: "the whole story is about taking an
+    # option away and give nothing back. so how can the option taken away be welfare improving?!"): pi_V
+    # clears the budget, so what users no longer cost the programme comes back as a higher pi_V, which the
+    # dominance argument of Section 3, at a fixed pi_V, does not have; and demand falls, so the drug is cheaper
+    _pv_up, _p_dn = D[t]['piv'] > D['null_share']['piv'], D[t]['price'] < D['null_share']['price']
+    out['x_lr_v26_why'] = (
+        'Treatment First takes an option away from users, but, unlike the comparison at a fixed $\\pi_V$ in '
+        'Section~\\ref{sec:nox}, it also gives something back: what users no longer cost the programme '
+        'returns to the eligible households that stay clean as a voucher that is easier to get' +
+        (', and the fall in demand makes the drug cheaper.' if _p_dn else '.')
+        if _pv_up else '')
     # the value of entering adult life, by productivity node: bottom against top, clean parent
     nb, nt = nodes('benchmark'), nodes('tf85')
     g = [a - b for a, b in zip(nt, nb)]

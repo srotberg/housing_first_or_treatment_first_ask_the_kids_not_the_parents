@@ -151,7 +151,10 @@ if last_cev('tf85') > CEV0:
     out['x_tf_cev_why'] = (
         'Welfare rises because the cut in drug use reduces the budget and earnings externalities by '
         'much more than it raises the externalities that run through homelessness, on the child and on '
-        'everyone else, which are small in absolute terms next to the first two.' if _hrise else
+        # (the author, 2 October: "as Table X has shown"): Table 7 sets the levels side by side, the
+        # shares homeless and in a shelter moving by hundredths of a point against SUD's whole points
+        'everyone else, which, as Table~\\ref{tab:longrun} has shown, are small in absolute terms next '
+        'to the first two.' if _hrise else
         'Welfare rises because the cut in drug use reduces the budget and earnings externalities, and '
         'homelessness, and with it the externalities on the child and on everyone else, falls too.')
 else:
@@ -263,6 +266,9 @@ out['x_tf_sudchild1'] = f'{100 * sc1:.2f}'
 # from the two levels as printed, so that the three numbers agree (5.28 - 3.69 = 1.59)
 out['x_tf_sudchild_pp'] = f"{abs(float(out['x_tf_sudchild1']) - float(out['x_sudchild0'])):.2f}"
 out['x_tf_sudchild_dir'] = 'falls' if sc1 < sc0 else 'rises'
+# the shelter sentence opens with 'In contrast' (the author, 2 October) only when the share of
+# children in a shelter moves the other way from the share living with a parent who carries a SUD
+out['x_tf_hchild_lead'] = ('In contrast, the' if (child_homeless('tf85') > hc0) != (sc1 > sc0) else 'The')
 
 # WHO THE NEWBORNS' PARENTS ARE, the channel any child penalty keys on: the
 # share of newborns whose parent is homeless, and whose parent has a SUD, in
