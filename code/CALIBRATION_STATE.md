@@ -1,5 +1,12 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+02:21 CHECK-IN: nothing to launch; internalise_clear still waits on the author (permission for the cf wrappers).
+tf85 pass 5: pi_V 0.0960, budget gap 1.0e-2, drug gap 9.9e-3, users -32.8, SUD -34.3, h_1 -1.3, CEV +4.51.
+omega1_clear pass 4: pi_V FALLING 0.0675 -> 0.0615 -> 0.0571 (the omega_c = 1 economy runs a deficit at the
+benchmark's voucher rate), so homelessness falls less as passes go: h_1 -16.2 -> -10.5 -> -8.3; users -19.1, SUD -19.6.
+The fixed-pi_V internalise (comparison only) restarted a THIRD time at about 02:00 (was at pass 6, nearly converged).
+omega1_p0.91 (comparison) at pass 14, drug gap 2.6e-3, still not exited.
+
 01:28 STAGE C/D CHECK-IN. internalise_clear BLOCKED AGAIN (session_01Fw664zrnSRuyHvFKWi8Yn2, permission check on
 remote_cf_clear.sh); asked the author to allow the cf wrappers in .claude/settings.json. Not worked around (the allowed
 remote_omega_point.sh is not to be used to run something else). tf85 pass 4: pi_V 0.0957, budget gap 9.3e-3, users
