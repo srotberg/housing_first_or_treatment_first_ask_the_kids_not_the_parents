@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03:55 CHECK-IN: omega1_clear ACCEPTED (10 passes, both checks pass): price 0.8756, pi_V 0.0675 -> 0.0584, users -16.8,
+SUD -17.8, h_1 -9.2. tf85 ($22, comparison) ACCEPTED (9 passes): pi_V 0.0964, users -32.0, SUD -33.5, h_1 -1.0, CEV
++4.36. tf85_c35 (the paper's TF) at pass 2; optimal_clear built, no pass yet. A STRAY WORKER: the first of the ten
+elasticity-point launches at 02:39 (session_01HdLgEDbDE2PCh7EJpUpyD6, ten points -50,-40..+50) was created although
+the batch came back rejected; it is solving (3 blocks). Asked the author whether to keep or archive it.
+
 03:42 OPTIMAL HOMELESSNESS REDEFINED (the author: "this experiment should add the homelessness internalization on
 top of omega_c=1", "no, it includes also omega_c=1"): internalise + weight_on_child 1 + pi_V clearing.
 code/remote_cf_optimal.sh + cf_runs/cf_arm_v3.sh; session_01FzP5HjRqsMKCn68QMhqoDR; results/counterfactuals_2c/
