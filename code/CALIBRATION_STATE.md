@@ -1,5 +1,9 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+00:26 STAGE C/D CHECK-IN: still only the null accepted. internalise (restarted) pass 4: users -0.9, h_1 -2.1, CEV +0.32;
+tf85 pass 1 (worker epoch 1, no restart) reproduces the lost TF pass 1 to the third decimal; omega1 p0.91 pass 8 at
+0.8816: users -14.7, SUD -15.0, h_1 -14.0, quantity -15.8, per user -1.3, drug gap 8.2e-3. Re-armed for 01:26.
+
 00:35 ELASTICITIES ON THE omega_c = 0.085 BENCHMARK, INTO THE PAPER. The worker's run finished 00:08 (exit 0, 10
 blocks) and its file refuses itself: check (1) missed by 0.22e-3 on sud_homeless (1.22e-3 against a 1e-3 rule; the
 other 26 moments within 4.9e-4, users 1.24e-4), OpenMP variation from the first sweep, before any patched line.
