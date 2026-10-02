@@ -1,5 +1,24 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+17:30 ROUND c88b1dda: ALL RED STRIPPED (whole paper), tables frozen, baseline sec2/base_r97 + splice_r97. 22 comments
+in red, plus the author's requests in chat: (1) approval of everyone alive at the reform and across time -> Figure 3
+panel (h) from the transition's TRANSITION BETTER OFF lines (transition_series.py writes better.csv; benchmark-
+weighted, V on the path vs V_bench in the same state), 6.3 sentence x_trf_better_sentence; (2) consistency of the
+introduction and literature review with the results: validation list rewritten to Table 6's rows; the newborn's gain
+in the introduction now accounts for the adult rest; the transition paragraph compared with Section 6.2's long run
+(x_tr_lr_compare), why homelessness rises at first (x_tr_h_rise_why), cross-calibration welfare comparisons removed
+('against 1.39 in the long run', '2.1 times the long-run gain', 'by less than in the long run'); the literature
+review's 'rises by only 0.00 percentage points' -> 'does not rise'; the Discussion's 'against 6 percent in the long
+run' -> 'whereas in the long run it lowers homelessness by 1 percent'. 6.2: the homelessness balance in full
+(x_tf_h_sentence: SUD risk +10, fewer SUD -6, others -5, exact split), the short run right after it (x_trf_h_sr),
+'However', the bands rewritten plainly (x_lr_hl_band_why), the strain on childhood consumption, the whole gain split
+57/11/32 with the 32 explained (x_lr_adult), approvals in the text (x_lr_approve); optimal drug use: supply not
+perfectly elastic, 'but homelessness by less', wealth clause and estates sentence out, 'Hence,'; optimal
+homelessness: 'pi_V remains practically unchanged'. Sections 3-5 audited by a subagent (report-only).
+STILL FROM THE OLD CALIBRATION: Section 6.3's numbers and Figure 3 (old transition, compared with its own long run),
+the introduction's transition magnitudes (48, 14, 2.1, 0.04), the Discussion's elastic-supply remark. Replaced when
+stage E's loop 0 lands (estimate 04:30-05:00 UTC 3 October).
+
 17:05 TABLE 7 APPROVAL ROWS (the author: "look at all the comments i gave you including in tables"; the screenshot asked
 for "approval rates (fraction better off?) for newborns and for adults entering at 26"): newborns 100 (ex ante, the
 CEV's sign) and households entering adult life at 26 100 (the Fortran's frac_in_support_youngest, 1.0000 in tf85_c35:

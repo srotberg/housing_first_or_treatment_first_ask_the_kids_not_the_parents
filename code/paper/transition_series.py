@@ -184,6 +184,15 @@ def main():
         w.writerow(['born', 'cev_pc', 'childhood', 'adult'])
         for b, c, ch, ad in rows:
             w.writerow([int(b), float(c), float(ch), float(ad)])
+    # THE SHARE BETTER OFF IN EVERY YEAR (the author, 2 October: "an approval rate of everyone alive at the
+    # beginning of the transition", "and show it across time?"): the model compares, at each t, the value on
+    # the path with the benchmark's in the same state, weighted by the benchmark's distribution
+    with open(os.path.join(OUT, 'better.csv'), 'w', newline='') as f:
+        w = csv.writer(f)
+        w.writerow(['t', 'all', 'with_sud', 'entering'])
+        for t in sorted(S['BETTER']):
+            b = S['BETTER'][t]
+            w.writerow([t, b['share_all_ages'], b['share_addicted'], b['share_newborns']])
     # everyone alive at the reform, t = 1: utils and the share better off
     A, B = S['ALLALIVE'][1], S['BETTER'][1]
     with open(os.path.join(OUT, 'alive.csv'), 'w', newline='') as f:

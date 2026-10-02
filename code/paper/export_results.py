@@ -189,6 +189,29 @@ _rc0 = _hh['base'] * (1 - _hs['base']) / (1 - _lam['base'])
 _rc1 = _hh['level'] * (1 - _hs['level']) / (1 - _lam['level'])
 out['x_tf_h_sud0'], out['x_tf_h_sud1'] = f'{100 * _rs0:.2f}', f'{100 * _rs1:.2f}'
 out['x_tf_h_cln0'], out['x_tf_h_cln1'] = f'{100 * _rc0:.2f}', f'{100 * _rc1:.2f}'
+# THE BALANCE, IN FULL (round c88b1dda, the author: "you have to explain the balance. on the one hand it puts
+# those with SUD at risk of homelessness, but on the other it reduces SUD which more than offsets it...give the
+# full explanation"; of the split sentence: "not clear"). The change in homelessness splits exactly into the
+# risk of those who still carry a SUD, the number who carry one, and the risk of everyone else:
+#   dh = lam1 (rs1 - rs0) + (lam1 - lam0)(rs0 - rc0) + (1 - lam1)(rc1 - rc0)
+_l0, _l1 = _lam['base'], _lam['level']
+_up = 100 * _l1 * (_rs1 - _rs0) / _hh['base']
+_few = 100 * (_l1 - _l0) * (_rs0 - _rc0) / _hh['base']
+_oth = 100 * (1 - _l1) * (_rc1 - _rc0) / _hh['base']
+assert abs(_up + _few + _oth - _hh['pc']) < 0.05, (_up, _few, _oth, _hh['pc'])
+if not _hrise and _up > 0 > _few and _oth < 0 and _few + _oth < -_up:
+    out['x_tf_h_sentence'] = (
+        f"It also lowers homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to {out['x_tf_h1']} "
+        'percent of households, as the balance of two forces. On the one hand, it revokes the vouchers of '
+        'households with a SUD and puts them at a higher risk of homelessness: '
+        f'${100 * _rs1:.2f}$ percent of them are homeless, against ${100 * _rs0:.2f}$ under Housing First, '
+        f'which on its own would raise homelessness by ${_up:.0f}$ percent. On the other hand, less SUD means '
+        'less unemployment and so less homelessness: there are '
+        f"{'a third' if round(abs(_l1 / _l0 - 1), 1) == 0.3 else f'{100 * abs(_l1 / _l0 - 1):.0f} percent'} "
+        f'fewer households with a SUD, which on its own would lower homelessness by ${abs(_few):.0f}$ percent. '
+        'And the vouchers it revokes go, through the higher $\\pi_V$, to other poor households, among whom the '
+        f'share homeless falls from ${100 * _rc0:.2f}$ to ${100 * _rc1:.2f}$ percent, which on its own would '
+        f'lower homelessness by ${abs(_oth):.0f}$ percent. Together the last two more than offset the first.')
 out['x_tf_h_split'] = (
     'The fall hides a rise among the households the screen acts on: the share of households with a SUD who '
     f"are homeless {'rises' if _rs1 > _rs0 else 'falls'} from ${100 * _rs0:.2f}$ to ${100 * _rs1:.2f}$ "
@@ -198,10 +221,14 @@ out['x_tf_h_split'] = (
 # the introduction's reason (the author: "it is because of the reduction in drug use that lowers the
 # chance of homelessness, through moral hazard, and also from being able to house others whom the
 # vouchers go to instead")
+# (round c88b1dda, the author: "on the one hand, it revokes vouchers for those with SUD and puts them at higher
+# risk for homelessness. On the other hand, in the long run....")
 out['x_tf_h_why_intro'] = ('' if _hrise else
-                           ': removing the moral hazard cuts drug use, so fewer households acquire a SUD and '
-                           'lose their jobs and their housing to it, and the vouchers it revokes from users '
-                           'house other poor households instead')
+                           '. On the one hand, it revokes the vouchers of households with a SUD and puts them at a '
+                           'higher risk of homelessness. On the other hand, in the long run, removing the moral '
+                           'hazard cuts drug use, so fewer households acquire a SUD and lose their jobs and their '
+                           'housing to it, and the vouchers it revokes go to other poor households instead, which '
+                           'more than offsets it')
 # THE HOMELESS WHO COULD HAVE AFFORDED HOUSING, in the benchmark (the author, 2 October: "many just
 # can't afford to not be homeless even if they wanted to"): the share homeless by choice
 _bl = gzip.open(os.path.join(ROOT, 'results', 'reference', 'hf_2c_omega_0.085', 'bench.log.gz'), 'rt',
@@ -360,7 +387,8 @@ if _hflat:
     out['x_tf_hchild_sentence'] = f"The share of children in a shelter is unchanged at ${a0}$ percent."
     out['x_tf_hchild_even'] = f", while childhood homelessness stays at ${a0}$ percent of children"
     # (round 4ad85a30, the author: ", since aggregate homelessness slightly declines")
-    out['x_tf_hchild_since'] = (', since aggregate homelessness slightly declines'
+    # (round c88b1dda, the author: 'since' -> 'as')
+    out['x_tf_hchild_since'] = (', as aggregate homelessness slightly declines'
                                 if tf['homelessness h_1']['pc'] < 0 else '')
     out['x_tf_hchild_only'] = 'does not rise'
 else:
@@ -375,6 +403,12 @@ else:
     out['x_tf_hchild_only'] = (f"rises by only ${out['x_tf_hchild_pp']}$ percentage points" if _hcup else
                                f"falls by ${out['x_tf_hchild_pp']}$ percentage points")
 out['x_tf_kids_dir'] = 'runs in both directions' if _hcup else 'runs one way'
+# the introduction's penalty sentence (round c88b1dda, the author: "because child homelessness in the long run
+# stays the same")
+out['x_tf_pen_because'] = (', because childhood homelessness stays the same in the long run' if _hflat else
+                           f": the share of children in shelters {out['x_tf_hchild_only']}, while the share of "
+                           f"children living with a parent who has a SUD {out['x_tf_sudchild_dir']} by "
+                           f"${out['x_tf_sudchild_pp']}$ points")
 # the introduction's homelessness clause
 out['x_tf_h_clause'] = (f", but raises homelessness by ${out['x_tf_h_pc']}$ percent" if _hrise else
                         f", and lowers homelessness by ${out['x_tf_h_pc']}$ percent")
@@ -490,6 +524,29 @@ out['x_tr_h_peak_pc'] = pc(100 * (max(H[k] for k in range(1, 11)) / h0 - 1))
 out['x_tr_new_t1_pc'] = pc(100 * (E[1] / e0 - 1))
 # the largest fall in drug users without a SUD over the same first decade, for 'falls by up to'
 out['x_tr_new_peak_pc'] = pc(100 * (min(E[k] for k in range(1, 11)) / e0 - 1))
+# THE TRANSITION AGAINST THE PAPER'S LONG RUN (round c88b1dda, the author, of 'against 29 and 6 percent in the
+# long run': "need to correct this. also need to explain why here it raises homelessness"). The path is still
+# the old arms' (stage E is re-solving it); its long-run comparison is the omega_c = 0.085 Treatment First of
+# Section 6.2, so the introduction and the Discussion agree with 6.2
+def _exp(arm):
+    v = None
+    for l in gzip.open(os.path.join(adir(arm), 'cf.log.gz'), 'rt', errors='replace'):
+        if 'total_experimenters_1=' in l:
+            v = float(l.split('=')[1].split()[0])
+    return v
+_e_lr = 100 * (_exp('tf85') / _exp('null_share') - 1)
+_h_lr = tf['homelessness h_1']['pc']
+out['x_tr_lr_compare'] = (
+    f", whereas in the long run the number without a SUD falls by ${abs(_e_lr):.0f}$ percent and homelessness "
+    f"{'falls' if _h_lr < 0 else 'rises'} by ${abs(_h_lr):.0f}$ percent" if _h_lr < 0 else
+    f", against ${abs(_e_lr):.0f}$ and ${abs(_h_lr):.0f}$ percent in the long run, respectively")
+out['x_tr_h_rise_why'] = (
+    'Homelessness rises at first because the households that already carry a SUD when the reform lands lose '
+    'their vouchers at once, whereas the fall in the number with a SUD, which is what lowers homelessness in the '
+    'long run, takes years, since recovery is slow.'
+    if max(H[k] for k in range(1, 11)) > h0 and _h_lr < 0 else '')
+out['x_tr_h_lr_disc'] = (f", whereas in the long run it lowers homelessness by ${abs(_h_lr):.0f}$ percent" if _h_lr < 0
+                         else f", against ${abs(_h_lr):.0f}$ percent in the long run")
 # whether that first-decade fall in users without a SUD is larger than the long run's, as a word
 out['x_tr_new_vs_lr'] = 'larger' if min(E[k] for k in range(1, 11)) < e_tf else 'smaller'
 # drug use (participation b) in the same first decade, its largest fall on no

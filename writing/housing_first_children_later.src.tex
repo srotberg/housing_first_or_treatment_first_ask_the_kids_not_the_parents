@@ -127,7 +127,7 @@ conditionality reduces the externalities drug use imposes on users' children, @@
 general-equilibrium model of homelessness, drug use, drug prices and mortality,
 calibrated to United States data, captures both externalities, with altruism
 matching how much less parents use drugs than non-parents. Full altruism @@x_abs_om_adv@@cuts
-drug use and homelessness. @@x_abs_tf_result@@, raising welfare in the long run \new{and in transition}
+drug use and homelessness. @@x_abs_tf_result@@, raising welfare in the long run and in transition
 through children's greater resources and future earnings.
 
 \vspace{0.6em}
@@ -389,16 +389,13 @@ about a quarter of eligible households get a voucher with no sobriety
 conditions.
 
 The model is also validated on a long list of moments that no parameter is fitted
-to, set out in Section~\ref{sec:fvalid}. Among the larger ones: the homelessness rate by
-age band and the age composition of the homeless, both from the HUD PiT count; the
-share who return to homelessness within two years; drug poisonings as a share of deaths
-between $25$ and $44$; the earnings held by the bottom and top tenths and the income and
-net worth held at the very bottom of the distribution; the share of renters spending
-more than thirty and more than fifty percent of income on housing; the labour force
-participation of households with and without a disorder, and the income of those with
-one; how often the homeless enter treatment, and what they bring to it; the price
-elasticity of drug participation; and the odds that the child of a parent with a SUD
-acquires one, and that a homeless adult had a homeless parent. Each is a place the
+to, set out in Section~\ref{sec:fvalid}. \new{Among them: the age composition of the homeless, from the
+HUD PiT count, with the share of them in work and their income; the age profile of drug users,
+unemployment among those with a SUD, how much more those with SMI use, and drug poisonings as a share of
+deaths between $25$ and $44$; the share of renters spending more than thirty percent of income on
+housing, and the rent burden and wages of voucher holders; the income and net worth held at the very
+bottom of the distribution; the price elasticities of drug participation and of use; and the odds that
+the child of a parent with a SUD acquires one, and that a homeless adult had a homeless parent.} Each is a place the
 model can be caught.
 
 The quantitative experiments start from full altruism, which shows how much is at
@@ -407,16 +404,12 @@ $@@x_om_b_pc@@$ percent and homelessness by $@@x_om_h_pc@@$ percent, even under
 rationed Housing First. The Treatment First reform itself is the same rationed change of rule as
 in the stylized model, with the difference that the probability of drawing a voucher
 rises to balance the budget. In the long run Treatment First cuts drug use by
-$@@x_tf_b_pc@@$ percent and the SUD by $@@x_tf_sud_pc@@$ percent@@x_tf_h_clause@@\new{@@x_tf_h_why_intro@@}. The externalities it removes outweigh the
-ones it creates: a newborn gains $@@x_tf_cev@@$ percent of lifetime consumption,
+$@@x_tf_b_pc@@$ percent and the SUD by $@@x_tf_sud_pc@@$ percent@@x_tf_h_clause@@@@x_tf_h_why_intro@@. \new{A} newborn gains $@@x_tf_cev@@$ percent of lifetime consumption,
 $@@x_tf_child_share_pc@@$ percent of it during childhood, from its parent spending more on its
 consumption and housing instead of on drugs, and the rest as an adult, only about
 $@@x_lr_draw_pc@@$ percent of that through the higher earnings of a child whose parent is free
-of the disorder@@x_tf_hchild_even@@\new{@@x_tf_hchild_since@@}. An earnings penalty for growing up in a
-shelter would not reverse this result: the share of children in shelters
-@@x_tf_hchild_only@@, while the share of children
-living with a parent who has a SUD falls by $@@x_tf_sudchild_pp@@$ points, from
-$@@x_sudchild0@@$ to $@@x_tf_sudchild1@@$ percent.
+of the disorder\new{@@x_intro_adult_rest@@}@@x_tf_hchild_even@@@@x_tf_hchild_since@@. An earnings penalty for growing up in a
+shelter would not reverse this result\new{@@x_tf_pen_because@@}.
 
 Accounting for the transition, the reform lands on an economy that already has many
 households with a SUD. Since recovery from a SUD happens only with a small
@@ -425,15 +418,11 @@ price elevated for many years. They are the first to lose their vouchers and
 be exposed to higher risk of homelessness, but the elevated price deters young
 adults who still have children living with them. In the first decade the number of drug
 users without a SUD falls by up to $@@x_tr_new_peak_pc@@$ percent and homelessness rises by up to
-$@@x_tr_h_peak_pc@@$ percent, against $@@x_tf_new_pc@@$ and $@@x_tr_lr_h_pc@@$
-percent in the long run, respectively. Children born at the reform gain about $@@x_tr_cev_b1@@$ percent of
-lifetime consumption, against $@@x_tr_lr_cev@@$ percent in the long run, because their
-parents are the young adults the elevated price keeps from starting. That drop in drug use,
-@@x_tr_new_vs_lr@@ in the transition than in the long run, diverts more resources to them while
-they live with their parents, so their gain during childhood is $@@x_tr_kid_ratio@@$ times the
-long-run gain, despite a small rise in their homelessness (as vouchers are revoked for some
-households who use drugs), by
-@@x_tr_hchild_vs_lr@@ in the long run, $@@x_tr_hchild_b1_pp@@$ percentage points, from $@@x_tr_hchild0@@$ to $@@x_tr_hchild_b1@@$ percent.
+$@@x_tr_h_peak_pc@@$ percent\new{@@x_tr_lr_compare@@}. \new{@@x_tr_h_rise_why@@} Children born at the reform gain about $@@x_tr_cev_b1@@$ percent of
+lifetime consumption, because their
+parents are the young adults the elevated price keeps from starting\new{: that} drop in drug use diverts \new{resources} to them while
+they live with their parents, despite a small rise in their homelessness\new{, as vouchers are revoked for some
+households who use drugs, of} $@@x_tr_hchild_b1_pp@@$ percentage points, from $@@x_tr_hchild0@@$ to $@@x_tr_hchild_b1@@$ percent.
 
 
 %======================================================================
@@ -577,7 +566,7 @@ environment a child is raised in rather than anything the child carries.
 
 The model imposes no earnings penalty for growing up in a shelter, but adding one would
 not change its conclusions: under Treatment First the share of children in shelters
-rises by only $@@x_tf_hchild_pp@@$ percentage points, while the share of children living
+\new{@@x_tf_hchild_only@@}, while the share of children living
 with a parent who has a SUD falls by $@@x_tf_sudchild_pp@@$ points.
 Bassuk et al.\ (1997) measure how much more likely a child of a homeless parent is
 to be homeless itself. Its case-control design is what makes it usable: among $220$
@@ -2630,24 +2619,24 @@ experiments beside the benchmark.
 \paragraph{Treatment First.} Treatment First cuts drug use by $@@x_tf_b_pc@@$ percent,
 from $@@x_b0@@$ to $@@x_tf_b1@@$ percent of households, and the share of households carrying
 a SUD by $@@x_tf_sud_pc@@$ percent, from $@@x_sud0@@$ to $@@x_tf_sud1@@$ percent of
-households. @@x_tf_h_sentence@@ \new{This is because, as users} who lose their vouchers leave the programme, \new{it} costs
+households. \new{As users} who lose their vouchers leave the programme, it costs
 less at a given $\pi_V$, and $\pi_V$ @@x_tf_piv_dir@@ from $@@x_tf_piv0_pc@@$ to
 $@@x_tf_piv1_pc@@$ percent, by $@@x_tf_piv_pc@@$ percent, to hold net government revenue at its
-benchmark level@@x_tf_piv_so@@. Yet, taking users out of the drug market lowers the drug price by
+benchmark level@@x_tf_piv_so@@. \new{However,} taking users out of the drug market lowers the drug price by
 $@@x_tf_price_pc@@$ percent, which draws some households back.\footnote{The qualitative results continue
 to hold with a detection rate of 70 percent and with a more elastic supply of the drug.}
-\new{@@x_tf_h_split@@} \new{@@x_trf_h_sr@@}
+@@x_tf_h_sentence@@ @@x_trf_h_sr@@
 
 What the reform does to children @@x_tf_kids_dir@@. The share of children
 living with a parent who carries a SUD @@x_tf_sudchild_dir@@ from $@@x_sudchild0@@$ to
 $@@x_tf_sudchild1@@$ percent, by $@@x_tf_sudchild_pp@@$ percentage points, and the share living
 with a parent who uses drugs @@x_lr_paruse_dir@@ from $@@x_lr_paruse0@@$ to $@@x_lr_paruse1@@$
-percent. @@x_tf_hchild_sentence@@ \new{@@x_tf_hchild_why@@} @@x_lr_hl_band_sentence@@ \new{@@x_lr_hl_band_why@@}
+percent. @@x_tf_hchild_sentence@@ @@x_tf_hchild_why@@ @@x_lr_hl_band_sentence@@ @@x_lr_hl_band_why@@
 
 A newborn is @@x_tf_cev_dir@@ off under Treatment First by $@@x_tf_cev@@$ percent of
 lifetime consumption. @@x_tf_cev_why@@ About $@@x_tf_child_share_pc@@$ percent of the gain in lifetime utility
-comes in childhood, \new{because parents spend more} on the consumption and housing they share
-and less on the drug\new{, and are less likely to acquire a SUD and lose their employment}. \new{@@x_lr_adult@@}
+comes in childhood, because parents spend more on the consumption and housing they share
+and less on the drug, and are less likely to acquire a SUD and lose their employment\new{, which puts a further strain on childhood consumption}. @@x_lr_adult@@ \new{@@x_lr_approve@@}
 
 \begin{table}[!tb]\centering
 \caption{The long run under each policy}\label{tab:longrun}
@@ -2659,30 +2648,29 @@ $@@x_tf_pdet_pc@@$ percent, and $\pi_V$ holds net government revenue at its benc
 in every column. Optimal drug use is Housing First with $\omega_c=1$, and optimal
 homelessness adds to optimal drug use each household weighing the disamenity of its own
 homelessness. Children are those living with households aged 26 to 50, the years a child lives at
-home. The CEV is against the benchmark. \new{Newborns are alike before they are born, so either all or none
+home. The CEV is against the benchmark. Newborns are alike before they are born, so either all or none
 are better off; households entering adult life at 26 are compared state by state, weighted by the
-benchmark's distribution.}}
+benchmark's distribution.}
 \endgroup
 \end{table}
 
 \paragraph{Optimal drug use.} The third column keeps Housing First but has each parent weigh its child as itself,
 $\omega_c=1$: the drug use parents would choose if they took in full what their use does to
 their children. A parent that counts its child's consumption as its own uses less of the
-drug, and some parents stop altogether, because what it spends on the drug \new{(and any job lost to a SUD)} comes out of the bundle
-it shares with the child, and a SUD penalises the child's earnings; \new{but} the fall in demand then lowers the drug price, which draws some of them
+drug, and some parents stop altogether, because what it spends on the drug (and any job lost to a SUD) comes out of the bundle
+it shares with the child, and a SUD penalises the child's earnings; but\new{, because supply is not perfectly elastic,} the fall in demand then lowers the drug price, which draws some of them
 back.
 
-Notice that @@x_lr_tf_vs_om@@ The two
-@@x_lr_h_split@@ homelessness: under full altruism it @@x_lr_om_h_dir@@ by $@@x_lr_om_h_pc@@$
+Notice that \new{@@x_lr_tf_vs_om2@@}: under full altruism it @@x_lr_om_h_dir@@ by $@@x_lr_om_h_pc@@$
 percent, and the share of children in a shelter @@x_lr_om_hchild_dir@@ by
-$@@x_lr_om_hchild_pc@@$ percent\new{, whereas Treatment First @@x_lr_tf_both@@}. @@x_lr_om_h_why@@
+$@@x_lr_om_hchild_pc@@$ percent, whereas Treatment First @@x_lr_tf_both@@. @@x_lr_om_h_why@@
 
-@@x_lr_om_piv_sentence@@ \new{@@x_lr_om_piv_why@@} I do not report a CEV here because the weight on the
+@@x_lr_om_piv_sentence@@ @@x_lr_om_piv_why@@ I do not report a CEV here because the weight on the
 child changes the welfare function itself.
 
 \paragraph{Optimal homelessness.} The last column is the same as the optimal drug use case, with the
 addition of each household weighing the disamenity its own homelessness imposes on everyone else.
-It @@x_lr_in_dh_verb@@ homelessness by only $@@x_lr_in_dh_pc@@$ percent \new{on top of what} @@x_lr_in_base_word@@ \new{achieves},
+It @@x_lr_in_dh_verb@@ homelessness by only $@@x_lr_in_dh_pc@@$ percent on top of what @@x_lr_in_base_word@@ achieves,
 which shows that this externality turns out to be very small. Households can save and use less of the drug
 to improve their housing outcomes@@x_lr_in_many_do@@, but the disamenity their homelessness imposes on others
 is not a strong enough deterrent, so weighing it does not alter their behaviour significantly.
@@ -2702,14 +2690,15 @@ preliminary. Figure~\ref{fig:ftrans} shows the path.
 \centering
 \includegraphics[width=\textwidth]{figures/full_transition.pdf}
 \caption{The transition from Housing First to Treatment First, quantitative model}\label{fig:ftrans}
-\notes{\textwidth}{Notes: panels (a) to \new{(f)} are by year since the reform, which lands at
+\notes{\textwidth}{Notes: panels (a) to (f) \new{and (h)} are by year since the reform, which lands at
 the start of year 1, with the benchmark as year 0; the dashed orange line is the Housing
 First benchmark, the dotted blue line the Treatment First long run and the solid blue line
-the path. Children are those of households aged 26 to 50. Panel \new{(g)} is the CEV of each cohort
-born on the path, against the benchmark, by its year of birth.}
+the path. Children are those of households aged 26 to 50. Panel (g) is the CEV of each cohort
+born on the path, against the benchmark, by its year of birth. \new{Panel (h) is the share of households better off in each year of the path than in the
+same state under Housing First, weighted by the benchmark's distribution.}}
 \end{figure}
 
-Panels (a) and \new{(d)} show drug use and the share of parents who use. Drug use falls at once: $@@x_trf_b1_share_pc@@$ percent of its long-run fall happens in
+Panels (a) and (d) show drug use and the share of parents who use. Drug use falls at once: $@@x_trf_b1_share_pc@@$ percent of its long-run fall happens in
 the first year, because the screen acts on the decision to use from the day the reform lands:
 a household that uses risks its voucher at once, while a disorder takes years to clear, and the share of parents using drugs falls from $@@x_trf_paruse0@@$ to
 $@@x_trf_paruse1@@$ percent, @@x_trf_paruse1_vs_lr@@ its long-run level of $@@x_trf_paruse_lr@@$ percent. Panel (b) shows the
@@ -2717,18 +2706,18 @@ share carrying a SUD. The
 share of households carrying a SUD falls slowly, because recovery is slow: half of its
 long-run fall is done by year $@@x_trf_sud_half_yr@@$, and nine tenths by year
 $@@x_trf_sud_90_yr@@$. That stock keeps demand for the drug up, and the drug price stays
-above its long-run level for $@@x_trf_price_above_yrs@@$ years \new{(panel (c))}. The elevated price deters
+above its long-run level for $@@x_trf_price_above_yrs@@$ years (panel (c)). The elevated price deters
 young adults who have not yet started: in the first decade the number of drug users without
 a SUD falls by up to $@@x_tr_new_peak_pc@@$ percent, against $@@x_tf_new_pc@@$ percent in the
 long run. @@x_trf_paruse_why@@
 
-Panels \new{(e) and (f)} show homelessness and the share of children in a shelter. Homelessness overshoots. It rises by $@@x_trf_h_peak_pc@@$ percent at its peak, in year
+Panels (e) and (f) show homelessness and the share of children in a shelter. Homelessness overshoots. It rises by $@@x_trf_h_peak_pc@@$ percent at its peak, in year
 $@@x_trf_h_peak_yr@@$, against $@@x_trf_h_lr_pc@@$ percent in the long run, and then declines
 slowly toward it. @@x_trf_h_why@@ So does the share of children in a shelter, from $@@x_trf_hchild0@@$ to
 $@@x_trf_hchild_peak@@$ percent in year $@@x_trf_hchild_peak_yr@@$, against
 $@@x_trf_hchild_lr@@$ percent in the long run.
 
-Panel \new{(g)} shows the CEV of each cohort by its year of birth. Children born at the reform gain about $@@x_tr_cev_b1@@$ percent of lifetime
+Panel (g) shows the CEV of each cohort by its year of birth. Children born at the reform gain about $@@x_tr_cev_b1@@$ percent of lifetime
 consumption, against $@@x_tr_lr_cev@@$ percent in the long run, because their parents are the
 young adults the elevated price keeps from starting: while the stock of carriers keeps the
 drug price up, fewer young parents start using than will in the long run, when the cheaper drug
@@ -2737,7 +2726,7 @@ in homelessness costs them. The gain falls with the year of birth as the price c
 its long-run level, and children born in the first ten
 years gain $@@x_trf_cev_dec1@@$ percent on average. Of the adults alive at the reform,
 $@@x_trf_alive_better_pc@@$ percent are better off under it, but only
-$@@x_trf_alive_sud_better_pc@@$ percent of those who carry a SUD when it lands.
+$@@x_trf_alive_sud_better_pc@@$ percent of those who carry a SUD when it lands. \new{@@x_trf_better_sentence@@}
 
 %======================================================================
 \section{Discussion}\label{sec:discussion}
@@ -2745,8 +2734,8 @@ $@@x_trf_alive_sud_better_pc@@$ percent of those who carry a SUD when it lands.
 \paragraph{What the trials can and cannot settle.} The trials measure housing
 stability over six to twenty four months, and on that margin the model agrees with them:
 in the first years after the reform Treatment First raises homelessness by up to
-$@@x_trf_h_peak_pc@@$ percent, against $@@x_trf_h_lr_pc@@$ percent in the long run, and the
-share of children in a shelter with it. What decides the ranking moves on a slower clock.
+$@@x_trf_h_peak_pc@@$ percent, and the
+share of children in a shelter with it\new{@@x_tr_h_lr_disc@@}. What decides the ranking moves on a slower clock.
 Drug use falls at once, but the share of households carrying a SUD takes
 $@@x_trf_sud_90_yr@@$ years to complete nine tenths of its fall, and the gain that puts
 Treatment First ahead comes to children over their whole lives. A trial of one rule against the other would find Housing First

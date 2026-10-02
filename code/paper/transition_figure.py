@@ -83,10 +83,20 @@ def main():
     ax.set_ylabel('percent of lifetime consumption', fontsize=9)
     ax.set_xlabel('year of birth, after the reform', fontsize=9)
     ax.set_xlim(0, max(born) + 1)
-    # the legend in the empty eighth slot
-    leg = axs[1, 3]
-    leg.axis('off')
-    leg.legend(*axs[0, 0].get_legend_handles_labels(), loc='center', fontsize=9, frameon=False)
+    # (h) THE SHARE BETTER OFF, YEAR BY YEAR (the author, 2 October: "an approval rate of everyone alive at the
+    # beginning of the transition", "and show it across time?"), in the eighth slot; the legend goes to (a)
+    Bt = rows('better.csv')
+    ax = axs[1, 3]
+    ax.plot([r['t'] for r in Bt], [100 * r['all'] for r in Bt], '-', color=BLUE, lw=2.0, label='all households')
+    ax.plot([r['t'] for r in Bt], [100 * r['with_sud'] for r in Bt], '--', color=BLUE, lw=1.5,
+            label='households with a SUD')
+    ax.set_title('(h) Better off than under Housing First', fontsize=10.5, loc='left')
+    ax.set_ylabel('percent of households', fontsize=9)
+    ax.set_xlabel('years since the reform', fontsize=9)
+    ax.set_xlim(-1, 60)
+    ax.set_ylim(0, 105)
+    ax.legend(fontsize=7.5, loc='center right', frameon=False)
+    axs[0, 0].legend(fontsize=7.5, loc='center right')
     fig.tight_layout()
     run.save(fig, 'full_transition')
     print(f'wrote {FIG}.pdf')
@@ -143,8 +153,12 @@ def names(S, C, R):
     # keyed on the paper's long run (export_results.py's x_tf_h_dir, the omega_c = 0.085 arms) and on whether
     # the path rises above the benchmark at all; the path itself is still the old arms' until stage E lands
     _lowers = json.load(open(OUT_JSON)).get('x_tf_h_dir') == 'lowers'
-    out['x_trf_h_sr'] = ('That fall is a long-run result: in the short run homelessness does rise for a while, as '
-                         'Section~\\ref{sec:ftrans} shows.' if _lowers and max(h) > hf['h_1'] else '')
+    # (round c88b1dda, the author: "this should come when you talk about homelessness dropping. you need to write
+    # it better")
+    out['x_trf_h_sr'] = ('That is the long-run outcome. In the first years after the reform homelessness rises '
+                         'instead, because the households that already carry a SUD lose their vouchers at once, '
+                         'while their number falls only as fast as recovery allows (Section~\\ref{sec:ftrans}).'
+                         if _lowers and max(h) > hf['h_1'] else '')
     out['x_trf_shade_from'] = str(UNCONVERGED_FROM)
     out['x_trf_shade_born'] = str(UNCONVERGED_FROM - 25)
     # the drug price: the years it stays above its long-run level
@@ -153,6 +167,19 @@ def names(S, C, R):
     # adults alive at the reform: the share better off, all of them and those carrying a SUD
     out['x_trf_alive_better_pc'] = f"{100 * R['better_off_all']:.0f}"
     out['x_trf_alive_sud_better_pc'] = f"{100 * R['better_off_sud']:.0f}"
+    # panel (h): the shares over the path
+    Bt = rows('better.csv')
+    a_all = [100 * r['all'] for r in Bt]; a_sud = [100 * r['with_sud'] for r in Bt]
+    a_ent = [100 * r['entering'] for r in Bt]
+    out['x_trf_better_sentence'] = (
+        'Panel (h) repeats the comparison in every year of the path, for a household in each state weighted as '
+        'under Housing First: the share better off stays '
+        + (f"at about ${a_all[0]:.0f}$ percent" if round(min(a_all)) == round(max(a_all)) else
+           f"between ${min(a_all):.0f}$ and ${max(a_all):.0f}$ percent")
+        + f", the share among those with a SUD {'rises' if a_sud[-1] > a_sud[0] else 'falls'} from "
+        f"${a_sud[0]:.0f}$ to ${a_sud[-1]:.0f}$ percent as the price comes down, and "
+        + ('every household entering adult life is better off throughout.' if min(a_ent) > 99.95 else
+           f"at least ${min(a_ent):.0f}$ percent of households entering adult life are better off."))
     d = json.load(open(OUT_JSON))
     d.update(out)
     json.dump(d, open(OUT_JSON, 'w'), indent=1, sort_keys=True)
