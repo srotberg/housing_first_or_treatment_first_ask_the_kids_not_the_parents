@@ -48,7 +48,15 @@
 % WHAT THE NEXT SIMULATIONS CHANGE (2 October): \upd tags a paragraph or a sentence, \updnum colours a number or a
 % generated sentence that will be refilled. Blue, so they are never confused with the red of an edit; the red
 % strippers leave them alone, and each goes when its paragraph is rewritten from the new runs.
-\newcommand{\upd}[1]{{\color{blue}\textbf{[UPDATE: #1]}}}
+\usepackage{marginnote}
+% each \upd also flags the margin (marginnote works in minipages and floats, where \marginpar does not) and
+% enters the list printed after the abstract, with its page, so every pending update can be found and clicked to
+\newcommand{\upd}[1]{\phantomsection\addcontentsline{upd}{subsection}{#1}%
+  \marginnote{\color{blue}\textbf{UPDATE}}{\color{blue}\textbf{[UPDATE: #1]}}}
+\makeatletter
+\newcommand{\listofupdates}{\par\noindent{\color{blue}\textbf{Pending updates from the new simulations}}\par
+  {\small\@starttoc{upd}}}
+\makeatother
 \newcommand{\updnum}[1]{{\color{blue}#1}}
 % A number not computed yet: a slot to fill, never a guess.
 \newcommand{\blank}{\underline{\hspace{2.2em}}}
@@ -134,7 +142,7 @@ calibrated to United States data, captures both externalities, with altruism
 matching how much less parents use drugs than non-parents. Full altruism @@x_abs_om_adv@@cuts
 drug use and homelessness. @@x_abs_tf_result@@, raising welfare in the long run and in transition
 through children's greater resources and future earnings, despite a small rise in childhood homelessness during
-the transition. \upd{the transition claims, from the new transition}
+the transition. \upd{abstract: the transition claims, from the new transition}
 
 \vspace{0.6em}
 \noindent\textit{Keywords:} homelessness; housing vouchers; substance
@@ -149,6 +157,8 @@ use disorder; intergenerational transmission; externalities; distortions.
 
 
 %======================================================================
+\listofupdates
+
 \section{Introduction}\label{sec:intro}
 
 
@@ -415,7 +425,7 @@ $@@x_tf_b_pc@@$ percent and the SUD by $@@x_tf_sud_pc@@$ percent@@x_tf_h_clause@
 @@x_intro_gain@@ An earnings penalty for growing up in a
 shelter would not reverse this result@@x_tf_pen_because@@@@x_tf_pen_level@@.
 
-\upd{every number and claim in this paragraph, from the new transition} Accounting for the transition, the reform lands on an economy that already has many
+\upd{introduction: the transition paragraph, every number and claim, from the new transition} Accounting for the transition, the reform lands on an economy that already has many
 households with a SUD. Since recovery from a SUD happens only with a small
 probability, for many their SUD lasts a while, and their demand keeps the drug
 price elevated for many years. They are the first to lose their vouchers and
@@ -2620,9 +2630,9 @@ $@@x_tf_piv1_pc@@$ percent, by $@@x_tf_piv_pc@@$ percent@@x_tf_piv_so@@. At the 
 $@@x_tf_price_pc@@$ percent, which draws some households back.\footnote{The qualitative results continue
 to hold with a detection rate of 70 percent and with a more elastic supply of the drug.}
 
-@@x_tf_h_sentence@@ \upd{new transition} @@x_trf_h_sr@@
+@@x_tf_h_sentence@@ \upd{long run: homelessness rising in the first years, from the new transition} @@x_trf_h_sr@@
 
-@@x_tf_hchild_sentence@@ \upd{rewrite by ages 26 to 38 and 39 to 50, from the age split} @@x_lr_children_hl@@
+@@x_tf_hchild_sentence@@ \upd{long run: children's homelessness rewritten by ages 26 to 38 and 39 to 50, from the age split} @@x_lr_children_hl@@
 
 A newborn is @@x_tf_cev_dir@@ off under Treatment First by $@@x_tf_cev@@$ percent of
 lifetime consumption. @@x_tf_cev_why@@ About $@@x_tf_child_share_pc@@$ percent of the gain in lifetime utility comes in childhood. Parents spend
@@ -2630,9 +2640,9 @@ more on the consumption and housing they share with the child and less on the dr
 acquire a SUD and lose their employment, raising childhood consumption further. The share of children living with a parent who uses drugs
 @@x_lr_paruse_dir@@ from $@@x_lr_paruse0@@$ to $@@x_lr_paruse1@@$ percent, and the share living with one who carries a SUD
 @@x_tf_sudchild_dir@@ from $@@x_sudchild0@@$ to $@@x_tf_sudchild1@@$ percent. @@x_lr_adult@@ @@x_lr_adult_poor@@ @@x_lr_adult_drug@@ @@x_lr_approve@@ @@x_lr_approve_sud@@
-\upd{newborns better off by the household they are born into, from the newborn values}
+\upd{long run: newborns better off by the household they are born into, here and in Table~\ref{tab:longrun}, from the newborn values}
 
-\upd{the two decompositions, Treatment First with $\pi_V$ held and with the drug price held at their no-policy
+\upd{long run: the two decompositions, Treatment First with $\pi_V$ held and with the drug price held at their no-policy
 values: what each channel contributes, and where in the paper it goes}
 
 \begin{table}[!tb]\centering
@@ -2675,7 +2685,7 @@ is not a strong enough deterrent, so weighing it does not alter their behaviour 
 %----------------------------------------------------------------------
 \subsection{The transition}\label{sec:ftrans}
 
-\upd{this section and Figure~\ref{fig:ftrans} are still the previous calibration's first pass; every number and claim below, from the
+\upd{transition: this section and Figure~\ref{fig:ftrans} are still the previous calibration's first pass; every number and claim below, from the
 new transition} Up until this point, I have discussed the implications of Treatment First across various dimensions in the long
 run. However, a major consideration for any policy change is its short-run impact on those dimensions as well. To
 evaluate those impacts, I compute the transition from Housing First to Treatment First. The transition starts from the
@@ -2686,8 +2696,8 @@ spending is set by the vouchers households already hold. Figure~\ref{fig:ftrans}
 \begin{figure}[!tb]
 \centering
 \includegraphics[width=\textwidth]{figures/full_transition.pdf}
-\caption{The transition from Housing First to Treatment First, quantitative model \upd{new transition}}\label{fig:ftrans}
-\notes{\textwidth}{Notes: panels (a) to (f) and (h) are by year since the reform, which lands at
+\caption{The transition from Housing First to Treatment First, quantitative model}\label{fig:ftrans}
+\notes{\textwidth}{\upd{transition: Figure~\ref{fig:ftrans}, every panel} Notes: panels (a) to (f) and (h) are by year since the reform, which lands at
 the start of year 1, with the benchmark as year 0; the dashed orange line is the Housing
 First benchmark, the dotted blue line the Treatment First long run and the solid blue line
 the path. Children are those of households aged 26 to 50. Panel (g) is the CEV of each cohort
@@ -2695,7 +2705,7 @@ born on the path, against the benchmark, by its year of birth. Panel (h) is the 
 same state under Housing First, weighted by the benchmark's distribution.}
 \end{figure}
 
-\upd{new transition} Panels (a) and (d) show drug use and the share of parents who use. Drug use falls at once: $@@x_trf_b1_share_pc@@$ percent of its long-run fall happens in
+\upd{transition: drug use, the SUD and the drug price} Panels (a) and (d) show drug use and the share of parents who use. Drug use falls at once: $@@x_trf_b1_share_pc@@$ percent of its long-run fall happens in
 the first year. This is because the screen acts on the decision to use from the day the reform lands. A
 household that uses risks its voucher at once, or having a voucher offer revoked in the future when it may need
 it but suffers from a SUD, while a disorder takes years to clear. The share of parents using drugs falls from $@@x_trf_paruse0@@$ to
@@ -2708,14 +2718,14 @@ young adults who have not yet started: in the first decade the number of drug us
 a SUD falls by up to $@@x_tr_new_peak_pc@@$ percent, against $@@x_tf_new_pc@@$ percent in the
 long run. @@x_trf_paruse_why@@
 
-\upd{new transition} Panels (e) and (f) show homelessness and the share of children in a shelter. Homelessness overshoots. It rises by $@@x_trf_h_peak_pc@@$ percent at its peak, in year
+\upd{transition: homelessness and children in a shelter} Panels (e) and (f) show homelessness and the share of children in a shelter. Homelessness overshoots. It rises by $@@x_trf_h_peak_pc@@$ percent at its peak, in year
 $@@x_trf_h_peak_yr@@$, against $@@x_trf_h_lr_pc@@$ percent in the long run, and then declines
 slowly toward it. @@x_trf_h_why@@ A similar pattern is observed for childhood homelessness: the share of children in a
 shelter rises from $@@x_trf_hchild0@@$ to
 $@@x_trf_hchild_peak@@$ percent in year $@@x_trf_hchild_peak_yr@@$, against
 $@@x_trf_hchild_lr@@$ percent in the long run.
 
-\upd{new transition, and the share better off with a tolerance} Panel (g) shows the CEV of each cohort by its year of birth. Children born at the reform gain about $@@x_tr_cev_b1@@$ percent of lifetime
+\upd{transition: welfare by year of birth, and the share better off with a tolerance} Panel (g) shows the CEV of each cohort by its year of birth. Children born at the reform gain about $@@x_tr_cev_b1@@$ percent of lifetime
 consumption, @@x_tr_cev_b1_vs_lr@@. This is because their parents are the young adults the
 elevated price keeps from starting. While the stock of carriers keeps the drug price up, fewer young parents start
 using than in the long run, when the cheaper drug draws some of them back. In the model that is worth more to
@@ -2740,7 +2750,7 @@ consumption. Most of that gain comes in childhood, from parents who spend less o
 rest comes from better earnings and from a larger voucher programme, which the users it excludes and the higher revenues from the taxes paid by more productive and more employed
 households pay for.
 
-\upd{new transition} @@x_disc_tr_kids@@ Yet, from a policy point of view the transition can be deceptive. The households that carry a SUD
+\upd{discussion: the transition paragraph, from the new transition} @@x_disc_tr_kids@@ Yet, from a policy point of view the transition can be deceptive. The households that carry a SUD
 when the reform lands lose their vouchers at once, so
 homelessness first rises, by up to $@@x_trf_h_peak_pc@@$ percent, and the share of children in a shelter with it. It
 comes down only as the number with a SUD falls, which takes $@@x_trf_sud_90_yr@@$ years to complete nine tenths
@@ -2771,7 +2781,7 @@ The second is whom the condition applies to, which may further mitigate the impa
 already carry a SUD along the transition. The gain comes from deterrence: adults who have not yet started using stay clean to keep their
 access to a voucher. The early cost falls on a different group, the households that already carry a SUD when the
 reform lands. They cannot respond quickly, because recovery from a SUD is slow, so for them the condition brings
-mostly the cost. \upd{new transition} Their homelessness rises at once, and only $@@x_trf_alive_sud_better_pc@@$ percent of them are
+mostly the cost. \upd{discussion: households with a SUD at the reform, from the new transition} Their homelessness rises at once, and only $@@x_trf_alive_sud_better_pc@@$ percent of them are
 better off. A condition applied only to new voucher holders, with current holders given a five-to-ten-year exemption, for example,
 may be a good balance between keeping the threat
 for those who can still respond to it but sparing those who cannot.

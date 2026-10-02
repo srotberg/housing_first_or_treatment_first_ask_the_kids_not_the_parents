@@ -1,5 +1,10 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+22:55 MARKERS MADE VISIBLE (the author: "i want to be able to see those myself in the paper"): each \upd also puts a
+blue UPDATE flag in the margin (marginnote) and an entry, with its page and a link, in a "Pending updates from the new
+simulations" list printed after the abstract (\listofupdates, the .upd file; build three times). Tags now say where
+they are and what will change them (abstract / introduction / long run / transition / discussion).
+
 22:45 ALL RED STRIPPED, base_r105 + splice_r105, and MARKERS FOR THE NEXT SIMULATIONS (the author: "put markers, or
 placeholders on the paragraphs and numbers you have to update when you have the newer simulations"): \upd{...} (bold
 blue [UPDATE: ...]) on 13 places -- the abstract's transition clause, the introduction's transition paragraph, 6.2's

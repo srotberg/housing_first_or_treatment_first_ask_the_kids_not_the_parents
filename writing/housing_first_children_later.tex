@@ -48,7 +48,15 @@
 % WHAT THE NEXT SIMULATIONS CHANGE (2 October): \upd tags a paragraph or a sentence, \updnum colours a number or a
 % generated sentence that will be refilled. Blue, so they are never confused with the red of an edit; the red
 % strippers leave them alone, and each goes when its paragraph is rewritten from the new runs.
-\newcommand{\upd}[1]{{\color{blue}\textbf{[UPDATE: #1]}}}
+\usepackage{marginnote}
+% each \upd also flags the margin (marginnote works in minipages and floats, where \marginpar does not) and
+% enters the list printed after the abstract, with its page, so every pending update can be found and clicked to
+\newcommand{\upd}[1]{\phantomsection\addcontentsline{upd}{subsection}{#1}%
+  \marginnote{\color{blue}\textbf{UPDATE}}{\color{blue}\textbf{[UPDATE: #1]}}}
+\makeatletter
+\newcommand{\listofupdates}{\par\noindent{\color{blue}\textbf{Pending updates from the new simulations}}\par
+  {\small\@starttoc{upd}}}
+\makeatother
 \newcommand{\updnum}[1]{{\color{blue}#1}}
 % A number not computed yet: a slot to fill, never a guess.
 \newcommand{\blank}{\underline{\hspace{2.2em}}}
@@ -134,7 +142,7 @@ calibrated to United States data, captures both externalities, with altruism
 matching how much less parents use drugs than non-parents. Full altruism cuts
 drug use and homelessness. Conditioning assistance substantially cuts drug use and, as the vouchers it revokes go to other poor households, lowers homelessness slightly, raising welfare in the long run and in transition
 through children's greater resources and future earnings, despite a small rise in childhood homelessness during
-the transition. \upd{the transition claims, from the new transition}
+the transition. \upd{abstract: the transition claims, from the new transition}
 
 \vspace{0.6em}
 \noindent\textit{Keywords:} homelessness; housing vouchers; substance
@@ -149,6 +157,8 @@ use disorder; intergenerational transmission; externalities; distortions.
 
 
 %======================================================================
+\listofupdates
+
 \section{Introduction}\label{sec:intro}
 
 
@@ -415,7 +425,7 @@ $32$ percent and the SUD by $33$ percent, and lowers homelessness by $1$ percent
 A newborn gains $4.33$ percent of lifetime consumption. About $57$ percent of that gain comes in childhood, from a parent who spends more on the child's consumption and housing and less on drugs, and is less likely to lose its job to a SUD, further improving childhood consumption. About $11$ percent comes from the higher earnings of a child whose parent was free of the disorder. The remaining $32$ percent comes from a better economy to live in as an adult: whatever its productivity, an eligible household that stays clean is $42$ percent more likely to get a voucher, paid for by the users the screen excludes and by the higher taxes paid by working-age households that no longer carry the earnings penalty or lose their jobs to a SUD. Lastly, even some drug users benefit from the lower equilibrium drug price, with $20$ percent of the households that carry a SUD better off on net in the long run, despite losing access to vouchers. An earnings penalty for growing up in a
 shelter would not reverse this result, because childhood homelessness stays the same in the long run, at $1.03$ percent of children, with aggregate homelessness slightly declining.
 
-\upd{every number and claim in this paragraph, from the new transition} Accounting for the transition, the reform lands on an economy that already has many
+\upd{introduction: the transition paragraph, every number and claim, from the new transition} Accounting for the transition, the reform lands on an economy that already has many
 households with a SUD. Since recovery from a SUD happens only with a small
 probability, for many their SUD lasts a while, and their demand keeps the drug
 price elevated for many years. They are the first to lose their vouchers and
@@ -2620,9 +2630,9 @@ $9.62$ percent, by $42$ percent, making staying clean of drugs even more desirab
 $14$ percent, which draws some households back.\footnote{The qualitative results continue
 to hold with a detection rate of 70 percent and with a more elastic supply of the drug.}
 
-Treatment First also lowers homelessness by 1 percent, from 0.62 to 0.61 percent of households, as the balance of two forces. On the one hand, it revokes the vouchers of households with a SUD and puts them at a higher risk of homelessness. Of them, $5.63$ percent are homeless, against $3.28$ under Housing First. On its own this raises homelessness by $10$ percent. On the other hand, less SUD means less unemployment and so less homelessness. There are a third fewer households with a SUD, which on its own lowers homelessness by $6$ percent. And the vouchers it revokes go, through the higher $\pi_V$, to other clean and eligible households, lowering homelessness by $5$ percent. Together the last two more than offset the first. \upd{new transition} \updnum{That is a long-run outcome. However, in the first years after the reform homelessness rises, because the households that already carry a SUD lose their vouchers at once, while their number falls only as fast as recovery allows (Section~\ref{sec:ftrans}).}
+Treatment First also lowers homelessness by 1 percent, from 0.62 to 0.61 percent of households, as the balance of two forces. On the one hand, it revokes the vouchers of households with a SUD and puts them at a higher risk of homelessness. Of them, $5.63$ percent are homeless, against $3.28$ under Housing First. On its own this raises homelessness by $10$ percent. On the other hand, less SUD means less unemployment and so less homelessness. There are a third fewer households with a SUD, which on its own lowers homelessness by $6$ percent. And the vouchers it revokes go, through the higher $\pi_V$, to other clean and eligible households, lowering homelessness by $5$ percent. Together the last two more than offset the first. \upd{long run: homelessness rising in the first years, from the new transition} \updnum{That is a long-run outcome. However, in the first years after the reform homelessness rises, because the households that already carry a SUD lose their vouchers at once, while their number falls only as fast as recovery allows (Section~\ref{sec:ftrans}).}
 
-The share of children in a shelter is unchanged at $1.03$ percent. \upd{rewrite by ages 26 to 38 and 39 to 50, from the age split} \updnum{Children live with households aged 26 to 50. Across those ages the reform moves homelessness in opposite directions: it falls by $2$ percent among households aged 26 to 34, rises by $2$ percent at 35 to 44 and falls by $1$ percent at 45 to 50. The changes cancel out almost exactly. Which way it goes at a given age depends on the balance of the two forces above. Treatment First cuts the number of households with a SUD, but raises the risk of homelessness for those who still have one, because they lose their voucher. At 26 to 34 the first force wins. The share of households with a SUD falls from $5.59$ to $3.83$ percent, while the share of them who are homeless rises only from $2.27$ to $2.59$ percent. So homelessness at these ages falls from $0.93$ to $0.91$ percent. This is because a disorder acquired young has not had enough time to cost most of these households their jobs, so few of them depend on a voucher to stay housed. At 35 to 44 the second force wins. The share with a SUD falls by about as much, from $6.61$ to $4.38$ percent, but these households have carried the disorder longer, and more of them have lost their jobs and depend on a voucher. Without the vouchers, the share of them who are homeless rises from $4.55$ to $7.36$ percent, so homelessness at these ages rises from $1.22$ to $1.25$ percent. At 45 to 50 the second force is stronger still. The SUD figures are by ten-year band, and across ages 45 to 54 the share of households with a SUD who are homeless rises from $3.72$ to $7.59$ percent. But at these ages the vouchers the reform revokes do more for everyone else. They go to other clean and eligible households, and homelessness among households without a SUD falls from $0.66$ to $0.57$ percent, against almost no change at younger ages. Together with the fall in the share with a SUD, from $4.78$ to $3.13$ percent, this outweighs the second force, so homelessness at 45 to 50 falls, by $1$ percent.}
+The share of children in a shelter is unchanged at $1.03$ percent. \upd{long run: children's homelessness rewritten by ages 26 to 38 and 39 to 50, from the age split} \updnum{Children live with households aged 26 to 50. Across those ages the reform moves homelessness in opposite directions: it falls by $2$ percent among households aged 26 to 34, rises by $2$ percent at 35 to 44 and falls by $1$ percent at 45 to 50. The changes cancel out almost exactly. Which way it goes at a given age depends on the balance of the two forces above. Treatment First cuts the number of households with a SUD, but raises the risk of homelessness for those who still have one, because they lose their voucher. At 26 to 34 the first force wins. The share of households with a SUD falls from $5.59$ to $3.83$ percent, while the share of them who are homeless rises only from $2.27$ to $2.59$ percent. So homelessness at these ages falls from $0.93$ to $0.91$ percent. This is because a disorder acquired young has not had enough time to cost most of these households their jobs, so few of them depend on a voucher to stay housed. At 35 to 44 the second force wins. The share with a SUD falls by about as much, from $6.61$ to $4.38$ percent, but these households have carried the disorder longer, and more of them have lost their jobs and depend on a voucher. Without the vouchers, the share of them who are homeless rises from $4.55$ to $7.36$ percent, so homelessness at these ages rises from $1.22$ to $1.25$ percent. At 45 to 50 the second force is stronger still. The SUD figures are by ten-year band, and across ages 45 to 54 the share of households with a SUD who are homeless rises from $3.72$ to $7.59$ percent. But at these ages the vouchers the reform revokes do more for everyone else. They go to other clean and eligible households, and homelessness among households without a SUD falls from $0.66$ to $0.57$ percent, against almost no change at younger ages. Together with the fall in the share with a SUD, from $4.78$ to $3.13$ percent, this outweighs the second force, so homelessness at 45 to 50 falls, by $1$ percent.}
 
 A newborn is better off under Treatment First by $4.33$ percent of
 lifetime consumption. Welfare rises because the cut in drug use reduces the budget and earnings externalities, while homelessness, and with it the externalities that run through it, is almost unchanged in the long run. About $57$ percent of the gain in lifetime utility comes in childhood. Parents spend
@@ -2630,9 +2640,9 @@ more on the consumption and housing they share with the child and less on the dr
 acquire a SUD and lose their employment, raising childhood consumption further. The share of children living with a parent who uses drugs
 falls from $16.32$ to $10.99$ percent, and the share living with one who carries a SUD
 falls from $5.81$ to $3.89$ percent. The other $43$ percent comes in adult life, from two sources. The first, $11$ percent of the whole gain, is the better productivity a child draws when its own parent does not carry the disorder. Escaping the penalty is worth a lot to each child it spares, about $12$ times what the average child gains at the same productivity. But it spares only about $3$ percent of children: the share of newborns who enter adult life with the penalty falls from $8.99$ to $6.07$ percent. The second, the remaining $32$ percent, does not come from the child's productivity at all. It is a result of the better economy it lives its adult life in. A clean and eligible household is $42$ percent more likely to draw a voucher, because the users the screen excludes no longer cost the programme, and tax revenue rises, mostly as fewer adults carry the earnings penalty and partly as fewer lose their jobs to a SUD. A voucher is worth most to a household that enters adult life with low productivity, because it is the likeliest to need one, and the value of entering adult life rises about $30$ times as much at the lowest productivity as at the highest. This part of the gain is therefore larger for a child whose own parent carried the disorder, since the penalty leaves it with lower productivity. Moreover, even a child who goes on to use drugs pays less for them: the drug is $14$ percent cheaper in equilibrium, so it can consume more of it. Thus, every household that enters adult life at 26 is better off under Treatment First than it would be in the same state under Housing First (Table~\ref{tab:longrun}). Across all households, $76$ percent are better off, but only $20$ percent of those that carry a SUD, since they lose access to vouchers.
-\upd{newborns better off by the household they are born into, from the newborn values}
+\upd{long run: newborns better off by the household they are born into, here and in Table~\ref{tab:longrun}, from the newborn values}
 
-\upd{the two decompositions, Treatment First with $\pi_V$ held and with the drug price held at their no-policy
+\upd{long run: the two decompositions, Treatment First with $\pi_V$ held and with the drug price held at their no-policy
 values: what each channel contributes, and where in the paper it goes}
 
 \begin{table}[!tb]\centering
@@ -2675,7 +2685,7 @@ $\pi_V$ remains practically unchanged. Again, I report no CEV here because it to
 %----------------------------------------------------------------------
 \subsection{The transition}\label{sec:ftrans}
 
-\upd{this section and Figure~\ref{fig:ftrans} are still the previous calibration's first pass; every number and claim below, from the
+\upd{transition: this section and Figure~\ref{fig:ftrans} are still the previous calibration's first pass; every number and claim below, from the
 new transition} Up until this point, I have discussed the implications of Treatment First across various dimensions in the long
 run. However, a major consideration for any policy change is its short-run impact on those dimensions as well. To
 evaluate those impacts, I compute the transition from Housing First to Treatment First. The transition starts from the
@@ -2686,8 +2696,8 @@ spending is set by the vouchers households already hold. Figure~\ref{fig:ftrans}
 \begin{figure}[!tb]
 \centering
 \includegraphics[width=\textwidth]{figures/full_transition.pdf}
-\caption{The transition from Housing First to Treatment First, quantitative model \upd{new transition}}\label{fig:ftrans}
-\notes{\textwidth}{Notes: panels (a) to (f) and (h) are by year since the reform, which lands at
+\caption{The transition from Housing First to Treatment First, quantitative model}\label{fig:ftrans}
+\notes{\textwidth}{\upd{transition: Figure~\ref{fig:ftrans}, every panel} Notes: panels (a) to (f) and (h) are by year since the reform, which lands at
 the start of year 1, with the benchmark as year 0; the dashed orange line is the Housing
 First benchmark, the dotted blue line the Treatment First long run and the solid blue line
 the path. Children are those of households aged 26 to 50. Panel (g) is the CEV of each cohort
@@ -2695,7 +2705,7 @@ born on the path, against the benchmark, by its year of birth. Panel (h) is the 
 same state under Housing First, weighted by the benchmark's distribution.}
 \end{figure}
 
-\upd{new transition} Panels (a) and (d) show drug use and the share of parents who use. Drug use falls at once: \updnum{$91$} percent of its long-run fall happens in
+\upd{transition: drug use, the SUD and the drug price} Panels (a) and (d) show drug use and the share of parents who use. Drug use falls at once: \updnum{$91$} percent of its long-run fall happens in
 the first year. This is because the screen acts on the decision to use from the day the reform lands. A
 household that uses risks its voucher at once, or having a voucher offer revoked in the future when it may need
 it but suffers from a SUD, while a disorder takes years to clear. The share of parents using drugs falls from \updnum{$14.80$} to
@@ -2708,14 +2718,14 @@ young adults who have not yet started: in the first decade the number of drug us
 a SUD falls by up to \updnum{$48$} percent, against $29$ percent in the
 long run. \updnum{It is also why the share of parents who use starts below its long-run level in panel (d): as the stock of carriers thins and the price comes down, some of them come back.}
 
-\upd{new transition} Panels (e) and (f) show homelessness and the share of children in a shelter. Homelessness overshoots. It rises by \updnum{$14$} percent at its peak, in year
+\upd{transition: homelessness and children in a shelter} Panels (e) and (f) show homelessness and the share of children in a shelter. Homelessness overshoots. It rises by \updnum{$14$} percent at its peak, in year
 \updnum{$6$}, against \updnum{$6$} percent in the long run, and then declines
 slowly toward it. \updnum{This happens because the households that carry a SUD when the reform lands lose their vouchers at once. That stock shrinks only as fast as recovery allows, even with more households in treatment (panel (b)), so revocations are highest in the first years and fall as the stock thins.} A similar pattern is observed for childhood homelessness: the share of children in a
 shelter rises from \updnum{$1.02$} to
 \updnum{$1.14$} percent in year \updnum{$6$}, against
 \updnum{$1.08$} percent in the long run.
 
-\upd{new transition, and the share better off with a tolerance} Panel (g) shows the CEV of each cohort by its year of birth. Children born at the reform gain about \updnum{$2.1$} percent of lifetime
+\upd{transition: welfare by year of birth, and the share better off with a tolerance} Panel (g) shows the CEV of each cohort by its year of birth. Children born at the reform gain about \updnum{$2.1$} percent of lifetime
 consumption, \updnum{even more than those born in the long run}. This is because their parents are the young adults the
 elevated price keeps from starting. While the stock of carriers keeps the drug price up, fewer young parents start
 using than in the long run, when the cheaper drug draws some of them back. In the model that is worth more to
@@ -2740,7 +2750,7 @@ consumption. Most of that gain comes in childhood, from parents who spend less o
 rest comes from better earnings and from a larger voucher programme, which the users it excludes and the higher revenues from the taxes paid by more productive and more employed
 households pay for.
 
-\upd{new transition} \updnum{Children born at the reform gain even more than those born in the long run. The drug price stays high for years, because households with a SUD who have not yet had time to recover keep demand for it elevated. The high price keeps more of these children's parents from starting to use, thus raising their childhood consumption even more in the transition.} Yet, from a policy point of view the transition can be deceptive. The households that carry a SUD
+\upd{discussion: the transition paragraph, from the new transition} \updnum{Children born at the reform gain even more than those born in the long run. The drug price stays high for years, because households with a SUD who have not yet had time to recover keep demand for it elevated. The high price keeps more of these children's parents from starting to use, thus raising their childhood consumption even more in the transition.} Yet, from a policy point of view the transition can be deceptive. The households that carry a SUD
 when the reform lands lose their vouchers at once, so
 homelessness first rises, by up to \updnum{$14$} percent, and the share of children in a shelter with it. It
 comes down only as the number with a SUD falls, which takes \updnum{$21$} years to complete nine tenths
@@ -2771,7 +2781,7 @@ The second is whom the condition applies to, which may further mitigate the impa
 already carry a SUD along the transition. The gain comes from deterrence: adults who have not yet started using stay clean to keep their
 access to a voucher. The early cost falls on a different group, the households that already carry a SUD when the
 reform lands. They cannot respond quickly, because recovery from a SUD is slow, so for them the condition brings
-mostly the cost. \upd{new transition} Their homelessness rises at once, and only \updnum{$14$} percent of them are
+mostly the cost. \upd{discussion: households with a SUD at the reform, from the new transition} Their homelessness rises at once, and only \updnum{$14$} percent of them are
 better off. A condition applied only to new voucher holders, with current holders given a five-to-ten-year exemption, for example,
 may be a good balance between keeping the threat
 for those who can still respond to it but sparing those who cannot.
