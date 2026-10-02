@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+20:40 ROUND 2d8ffd3b: ALL RED STRIPPED, base_r102 + splice_r102. STAGE E ARMS DONE (TF pass 11, CEV 4.34 against the
+paper's 4.33; shares.txt landed): at tol 0.001 utils against the no-policy run, all households 75.9 per cent better off
+and 3.1 worse, WITH A SUD 19.8 better and 80.1 worse, without a SUD 78.1 better and 0 worse, entering adults 100. Table 7
+rows 'All households better off' 76 and 'Households with a SUD better off' 20 (export_longrun.shares()), a note on the
+measure; the intro's drug-users sentence answered ('although only 20 percent ... better off on net, since they lose
+access to vouchers') and the same in 6.2 (x_lr_approve_sud). Discussion: 'long-run equilibrium', 'the model says',
+', the SUD and, most importantly, children ... in full', 'could'. NOT DONE: the children's paragraph by 26-38 and 39-50
+(the author: "you know you have to update this, right?"): age_split.py must run where cfarm_null_2c and cfarm_tf_2c are,
+the stage E worker's container, which this session cannot message.
+
 20:10 ROUND 0e3b2441: ALL RED STRIPPED, base_r101 + splice_r101. 31 comments: treatment ('only buys', 'if it is eligible
 and offered one'); ELIGIBILITY in the results' voucher language ('clean and eligible households', 'A clean and eligible
 household', the intro's 'an eligible household that stays clean'); 'Thus, every'; 'Moreover, even a child'. Discussion:

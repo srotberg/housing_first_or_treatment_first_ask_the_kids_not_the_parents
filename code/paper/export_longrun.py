@@ -148,6 +148,24 @@ def steady(arm):
         cev=cev, adult=ad, hl_band=hb, sud_hl_band=hs, sud_band=band, budget=bud, ages=ages)
 
 
+def shares(tol='0.001'):
+    """WHO IS BETTER OFF IN THE LONG RUN (the author, round f4276e76, on Table 7: "add a row ... for those with
+    SUD. I wonder if they are better off", and round 538f55b4 on drug users: "does their welfare rise?").
+    results/transition_2c/shares.txt (transition_2c/shares.py, stage E): Treatment First's value against the
+    no-policy run's in every state, weighted by the no-policy distribution, better when ahead by more than tol
+    utils, so that numerical drift between two solves is not counted as a gain. Returns {group: (better, worse)}."""
+    p = os.path.join(ROOT, 'results', 'transition_2c', 'shares.txt')
+    out = {}
+    if not os.path.exists(p):
+        return out
+    for l in open(p):
+        m = re.match(r'\s+(all households|with a SUD|without a SUD)\s.*?tol ' + re.escape(tol)
+                     + r': better (\S+) worse (\S+)', l)
+        if m:
+            out[m.group(1)] = (float(m.group(2)), float(m.group(3)))
+    return out
+
+
 def nodes(name):
     return [float(x) for x in open(os.path.join(adir('tf85'), f'value_at_26_by_node_{name}.txt'))
             if x.strip()]
@@ -191,12 +209,18 @@ def main():
         # newborns and for adults entering at 26?"). Newborns are alike before birth (Section 6.1), so all or
         # none are better off, as the CEV's sign says; entering adults are compared state by state
         ('Households entering adult life at 26 better off', 'y26_better', lambda v: f'{v:.0f}'),
+        ('All households better off', 'all_better', lambda v: f'{v:.0f}'),
+        ('Households with a SUD better off', 'sud_better', lambda v: f'{v:.0f}'),
     ]
     for arm, base in [a for a in ARMS if a[1]]:
         s = D[arm]['split']
         D[arm]['child_share'] = 100 * s[0] / s[2] if s and arm not in ('omega1', 'internalise') else None
     for arm in D:
-        D[arm]['nb_better'] = D[arm]['y26_better'] = None
+        D[arm]['nb_better'] = D[arm]['y26_better'] = D[arm]['all_better'] = D[arm]['sud_better'] = None
+    SH = shares()
+    if SH:
+        D['tf85']['all_better'] = 100 * SH['all households'][0]
+        D['tf85']['sud_better'] = 100 * SH['with a SUD'][0]
     D['tf85']['nb_better'] = 100.0 if D['tf85']['cev_net'] > 0 else 0.0
     D['tf85']['y26_better'] = 100 * D['tf85']['adult']['young_better']
     # no CEV for the two optimal arms: each changes the welfare function itself
@@ -621,6 +645,18 @@ def main():
         'equilibrium, so it can consume more of it.' if out['x_lr_adult'] else '')
     # THE INTRODUCTION'S ACCOUNT OF THE GAIN (round 20b4ddb5, the author: "too long and not clear...i still dont
     # understand where the rest of the gains in adulthood come from"): the same three shares of the whole gain
+    # (round 538f55b4, the author on 'Lastly, even drug users benefit from the lower equilibrium drug price': "does
+    # their welfare rise?", and round 0e3b2441: "flagging to check"). The price helps them, but on net most households
+    # that carry a SUD lose: shares.txt, better by more than the tolerance against the no-policy run
+    _SH = shares()
+    _sb = 100 * _SH['with a SUD'][0] if _SH else None
+    _sud_net = (f', although only ${_sb:.0f}$ percent of the households that carry a SUD are better off on net, '
+                'since they lose access to vouchers' if _sb is not None and _sb < 50 else '')
+    out['x_lr_better_tol'] = '0.001'
+    out['x_lr_approve_sud'] = (
+        f"Across all households, ${100 * _SH['all households'][0]:.0f}$ percent are better off, but only ${_sb:.0f}$ "
+        'percent of those that carry a SUD, since they lose access to vouchers.'
+        if _SH and _sb is not None and _sb < 50 else '')
     out['x_intro_gain'] = (
         f"A newborn gains ${D[t]['cev_net']:.2f}$ percent of lifetime consumption. About ${_kid:.0f}$ percent of that "
         "gain comes in childhood, from a parent who spends more on the child's consumption and housing and less on "
@@ -630,7 +666,7 @@ def main():
         f'its productivity, an eligible household that stays clean is ${_pvpc:.0f}$ percent more likely to get a voucher, paid '
         'for by the users the screen excludes and by the higher taxes paid by working-age households that no longer '
         'carry the earnings penalty or lose their jobs to a SUD. Lastly, even drug users benefit from the lower '
-        'equilibrium drug price.' if out['x_lr_adult'] else '')
+        'equilibrium drug price' + _sud_net + '.' if out['x_lr_adult'] else '')
     # (round f4276e76, the author: 'UD' -> ', further imporving childhood consumption', 'taxes' -> 'taxes paid by
     # working-age households', 'and' -> 'period. Lastly, even drug users benefit from the lower equilibrium drug
     # price (is that correct?)': correct as a channel, the price is 14 percent lower; whether a user is better off
