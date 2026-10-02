@@ -16,6 +16,8 @@
 \usepackage{array}
 \usepackage[hidelinks]{hyperref}
 \usepackage{xcolor}
+% colour carried across a page break inside a footnote leaked into the body (2 October: Section 6 printed red)
+\usepackage{pdfcolfoot}
 % Everything revised in this draft is marked in red: the move to two periods and
 % the responses to the comments on the previous version. The change of
 % terminology from "the disorder" to "a SUD" runs through the whole note and is
@@ -398,7 +400,7 @@ more than thirty and more than fifty percent of income on housing; the labour fo
 participation of households with and without a disorder, and the income of those with
 one; how often the homeless enter treatment, and what they bring to it; the price
 elasticity of drug participation; and the odds that the child of a parent with a SUD
-acquires one, and that a homeless adult had a homeless \new{parent}. Each is a place the
+acquires one, and that a homeless adult had a homeless parent. Each is a place the
 model can be caught.
 
 The quantitative experiments start from full altruism, which shows how much is at
@@ -668,7 +670,7 @@ decline in use that lowers the price does not bring many users back. Estimates o
 (Saffer and Chaloupka, 1999; Grossman and Chaloupka, 1998), and Grossman and
 Chaloupka (1998) find that a permanent ten percent fall in the price of cocaine raises
 the number of cocaine users by a little over eight percent. The model's
-participation elasticity, \new{$-2.14$}, with the distribution of households held fixed, is higher than these estimates, so in the model a fall
+participation elasticity, $-2.14$, with the distribution of households held fixed, is higher than these estimates, so in the model a fall
 in the drug price brings back more users than it would in the data. That works against
 Treatment First: while it deters use, the drop in price brings back more users
 than the evidence suggests, so the model if anything understates how much the policy reduces drug use,
@@ -679,7 +681,7 @@ $-0.3$ and $-0.8$. That same ten percent fall raises the frequency of use among 
 users by a little over three percent, and Olmstead et al.\ (2015) put the conditional
 elasticity for heroin at $-0.8$, on two research designs that share a sample of
 regular users but not an identification strategy. The model's intensive
-elasticity, measured over all users, \new{$-0.49$}, is in the middle of these estimates,
+elasticity, measured over all users, $-0.49$, is in the middle of these estimates,
 so the model matches how much each user's purchases respond to the drug price.
 
 A separate point about rational drug use follows from the findings of van Ours (1995), Saffer and Chaloupka (1999) and
@@ -1542,13 +1544,13 @@ insured separations. After the first year, unemployed households, insured and un
 zero UI ($e=3$). Social security $S(y)$ follows the statutory formula:
 a primary insurance amount that replaces declining shares of the household's
 productivity at its last working age between two bend points, up to the taxable
-maximum, the ceiling above which earnings no longer raise the benefit, and capped below by the Supplemental Security Income (SSI) payment, \new{with $y$ in units in which
-it averages one at entry and the benefit scaled by average labour income}.\footnote{\label{fn:ss}With $\tilde y=\min\{y,\,y^{\max}\}$ the household's productivity at its last
+maximum, the ceiling above which earnings no longer raise the benefit, and capped below by the Supplemental Security Income (SSI) payment, with $y$ in units in which
+it averages one at entry and the benefit scaled by average labour income.\footnote{\label{fn:ss}With $\tilde y=\min\{y,\,y^{\max}\}$ the household's productivity at its last
 working age up to the taxable maximum $y^{\max}$,
-$S(y)=\new{\bar w}\max\big\{\underline S,\ \alpha_1\min\{\tilde y,k_1\}+\alpha_2\max\{0,\min\{\tilde y,k_2\}-k_1\}
+$S(y)=\bar w\max\big\{\underline S,\ \alpha_1\min\{\tilde y,k_1\}+\alpha_2\max\{0,\min\{\tilde y,k_2\}-k_1\}
 +\alpha_3\max\{0,\tilde y-k_2\}\big\}$, where $k_1<k_2$ are the two bend points,
 $\alpha_1>\alpha_2>\alpha_3$ the shares replaced below, between and above them,
-$\underline S$ the SSI payment\new{, and $\bar w$ the benchmark's average labour income}. Their values are given in Section~\ref{sec:stdparams}.} The SUD and SMI do not
+$\underline S$ the SSI payment, and $\bar w$ the benchmark's average labour income. Their values are given in Section~\ref{sec:stdparams}.} The SUD and SMI do not
 cut earnings on the job; they act on whether there is a job at all, through the
 employment transitions below. Out of work, a household with the SUD or SMI is paid what any other household is:
 UI in its first year with probability $p_{ui}$, nothing with probability $1-p_{ui}$, and
@@ -2292,7 +2294,7 @@ sizes a household chooses from. Below the smallest rung is the shelter, $h_1$, w
 decides how much of its income a poor household must spend to be housed at all. Raise it and the bottom rung is
 larger and dearer, so more households are burdened, and a voucher is worth more to them. It is chosen so that
 the fraction of renters paying more than half of their income for housing is similar to
-the data, $19.2$ percent in the 2022 SCF; the model gives \new{$25.8$}
+the data, $19.2$ percent in the 2022 SCF; the model gives $25.8$
 percent.
 \item[$h_3/h_2$ and $h_4/h_2$, the spacing of the ladder.] The two larger
 rungs are set at $4.00$ and $8.00$ times the smallest.
@@ -2419,9 +2421,7 @@ still to be lived rises and with it the cost of a disorder that shortens it. The
 $\alpha_1,\alpha_2,\alpha_3$ of the formula in footnote~\ref{fn:ss} are $0.90, 0.32, 0.15$ below the first bend point, between them and above the second, respectively. The
 bend points $k_1$ and $k_2$ and the taxable maximum $y^{\max}$ are the SSA's 2024 dollar
 amounts divided by its average wage index, $0.22$, $1.33$ and
-$2.64$. \new{The formula is applied to productivity, in units in which it
-averages one at entry into adulthood, and the benefit it gives is scaled by the benchmark's
-average labour income, so the floor, $\underline S$, is $0.18$ of average
+$2.64$. \new{The floor, $\underline S$, is $0.18$ of average
 labour income.}
 \item[$\psi_{ui}$ and $\bar y$, unemployment insurance.] These two set the UI replacement
 rate and the cap on the earnings it is paid on. I set them to fifty percent and one
@@ -2494,7 +2494,7 @@ policy's margin at the ages where it reaches children.
 in the data: $67$ percent of them are 26 to 34, against $45$ in
 NSDUH 2024, and their mean age is $34.6$, against $39.6$ in the data. Unemployment among
 households with a SUD is $14.5$ percent, against $16.2$ in the data. Households with SMI
-are \new{$2.64$} times as likely as others to use drugs, against
+are $2.64$ times as likely as others to use drugs, against
 $2.44$, and excess deaths due to SUD in the model account for $14.5$ percent of deaths
 at ages 25 to 44, against $20.0$ percent from drug poisonings in CDC WONDER. Treatment First and Housing First affect
 a child through its parent's decisions, and those who use drugs are mostly of child-rearing
@@ -2503,10 +2503,10 @@ $78$. And since households with SMI use drugs at higher rates than the rest of t
 population, the model also carries the notion that it is harder for Treatment First to discourage
 them from using than households without SMI.
 
-\paragraph{Block 3: Housing and vouchers.} In the model, \new{$58.7$} percent of housed households spend
+\paragraph{Block 3: Housing and vouchers.} In the model, $58.7$ percent of housed households spend
 over thirty percent of their income on rent, against $43.2$ percent of renters in the SCF. A voucher holder in the model pays $39.0$ percent of its income in rent,
 against $31.2$ in HUD's Picture of Subsidized Households, and $39.2$ percent of
-voucher holders live mainly on wages, against $28.0$. The model therefore captures \new{how important vouchers are to households}: \new{households} spend a large share of their income on housing, so without a
+voucher holders live mainly on wages, against $28.0$. The model therefore captures how important vouchers are to households: households spend a large share of their income on housing, so without a
 voucher poor households have substantially less left for other consumption. The consumption that Treatment First puts at stake
 when it conditions the voucher is of a similar magnitude in the model as in the data.
 
@@ -2517,32 +2517,32 @@ distribution owes more than it owns, and the bottom half holds $6.3$ percent of 
 worth, against $2.5$ in the Federal Reserve's Distributional Financial Accounts. Housing First and Treatment First act on the households that receive vouchers, and these are the poorest; the model
 captures their relative poverty broadly in line with the data.
 
-\paragraph{Block 5: Drug price elasticities.} \new{The calibration targets neither the participation nor
-the intensive elasticity of drug demand.} Raising the price from the benchmark by each of 1, 5, 10, 20 and 50 percent and
+\paragraph{Block 5: Drug price elasticities.} The calibration targets neither the participation nor
+the intensive elasticity of drug demand. Raising the price from the benchmark by each of 1, 5, 10, 20 and 50 percent and
 averaging the five responses, the model's participation elasticity is
-\new{$-2.14$}, higher than the estimates of about $-0.3$ to $-0.9$ in Saffer and
+$-2.14$, higher than the estimates of about $-0.3$ to $-0.9$ in Saffer and
 Chaloupka (1999) and Grossman and Chaloupka (1998), and its intensive elasticity, measured
-over all users, is \new{$-0.49$}, in the middle of the estimates of about $-0.3$ to
+over all users, is $-0.49$, in the middle of the estimates of about $-0.3$ to
 $-0.8$ in Grossman and Chaloupka (1998) and Olmstead et al.\ (2015). The more elastic participation is, the more it works against
 Treatment First: as Treatment First lowers the drug price, more households go back to using, so its
-effect on drug use is smaller than it would be with a \new{smaller participation elasticity}. If Treatment First still improves welfare in the experiments below, it does so
+effect on drug use is smaller than it would be with a smaller participation elasticity. If Treatment First still improves welfare in the experiments below, it does so
 despite this channel, which makes that result conservative.
 
 \paragraph{Block 6: Transmission.} The externalities on children, which carry much of the case
 for either policy, run through these two links. A child of a parent with a SUD is $1.46$ times as
 likely to acquire one in the model, within the range of $1.44$ to
 $2.51$ in Mellentin et al.\ (2016) and Yoon et al.\ (2013). An adult who is
-homeless in the model is $6.23$ times as likely to have had a homeless \new{parent},
-above the $1.8$ to $2.4$ of Bassuk et al.\ (1997).\footnote{\new{Bassuk et al.\ (1997)
+homeless in the model is $6.23$ times as likely to have had a homeless parent,
+above the $1.8$ to $2.4$ of Bassuk et al.\ (1997).\footnote{Bassuk et al.\ (1997)
 compare $220$ homeless mothers with $216$ low-income housed mothers, so both groups are poor and
 the odds ratios, $1.8$ for a homeless female caretaker and $2.4$ for a
 male one, separate the transmission of homelessness from the poverty that accompanies it. A
 ratio against the general population would also credit the housing penalty with everything
-else that differs between poor children.}} \new{Transmission in the model is therefore
+else that differs between poor children.} Transmission in the model is therefore
 at the low end of the evidence on the SUD, the margin Treatment First acts on, and
 above it on homelessness, the margin Housing First acts on. The model loads the
 externality on children toward Housing First more than Treatment First, so
-if Treatment First still raises welfare in the experiments below, that result is conservative.}
+if Treatment First still raises welfare in the experiments below, that result is conservative.
 
 \input{tables/tab_untargeted}
 
@@ -2552,20 +2552,20 @@ if Treatment First still raises welfare in the experiments below, that result is
 %======================================================================
 \section{Experiments and results}\label{sec:experiments}
 
-The experiment is the reform the introduction describes. The programme stays
+The \new{main} experiment is the reform the introduction describes. The programme stays
 rationed and only its rule changes, from Housing First, the benchmark, to Treatment
 First, under which a household that uses or carries a SUD cannot hold a voucher
-(Section~\ref{sec:fvoucher}). Every parameter Section~\ref{sec:fullcal} calibrates keeps
-its benchmark value, the weight a parent puts on its child and the disamenity of
-homelessness included, and so do the aggregates the government's rules are indexed
-to. Two prices move. The probability of drawing a voucher $\pi_V$ adjusts so that net
-government revenue stays at its benchmark level, since conditionality changes who
+(Section~\ref{sec:fvoucher}). \new{Two further experiments, in Section~\ref{sec:longrun},
+give the optimal drug use, with a parent that weighs its child fully, and the optimal
+homelessness, with each household weighing the disamenity its own homelessness imposes on
+everyone else.} Two \new{objects}
+move. The probability of drawing a voucher $\pi_V$ adjusts so that net
+government revenue stays at its benchmark level\new{, $\bar R$,} since conditionality changes who
 holds a voucher and so what the programme costs, and the drug price clears the drug
-market, with the labour tax held where it is.
+market, with the \new{tax system} held where it is\new{ in the benchmark}.
 
 \paragraph{The screen.} Under Treatment First a household fails the condition
-if it uses drugs in the period or carries the disorder, and treatment does not exempt
-it. A holder that fails is caught with probability $p_{\mathrm{det}}$ and loses its
+if it uses drugs or carries the disorder. A holder that fails is caught with probability $p_{\mathrm{det}}$ and loses its
 voucher, and an applicant that draws a voucher is screened the same way before it
 receives one. A household that is caught is excluded from the programme whatever its
 income, and returns to the queue for a voucher with probability $\psi_x$ a year. The
