@@ -1,5 +1,10 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+00:50 omega1 FROM 1.0 STOPPED on the author's word ("yes, stop the omega_c=1 run from price 1.0"):
+session_019sED8Y9sDLqMYEtAkSvhst archived at pass 9 (price 0.956, users -38.1); results/counterfactuals_2c/omega1_p1.0/
+stays as its record. Running: tf85, omega1_clear, internalise_clear (the paper's arms), and the fixed-pi_V omega1_p0.91
+and internalise as comparisons; the burden rerun (results/b_scan_childsplit_fs).
+
 00:45 omega1 AND internalise MUST CLEAR THE BUDGET WITH pi_V (the author, 2 October, on omega_c = 1 holding pi_V at the
 benchmark's: "No, you need to adjust piv"; the 24 September design had adjust_taxes 0 for both). code/remote_cf_clear.sh
 + code/cf_runs/cf_arm_clear.sh (dac9e036; copies, since running workers execute cf_arm.sh and git rewrites a file in
