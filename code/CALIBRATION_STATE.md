@@ -1,5 +1,13 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+01:30 BURDEN WITH FOOD STAMPS INTO THE PAPER. The rerun (results/b_scan_childsplit_fs, 7817942f source) exited 0 at
+00:32 after 10 blocks; every last-block moment within 1e-3 of the reference except the burden lines and sud_homeless
+(+1.25e-3, the same OpenMP variation) and the bottom-10 wealth share (base 3.7e-5). Renters over 30 per cent of income
+59.7 -> 58.7 (data 43.2); over half 27.2 -> 25.8 (data 19.2); the h_2-node line 'over half of income, in h2' 0.0058 -> 0.
+calib_tables.py reads the two shares from the rerun's log (FS_LOG); Table 4's h_2 row, Table 6's 30 per cent row, the
+h_2 item and validation Block 3, in red. release_all committed there (its benchmark files are not needed). TF pass 3:
+pi_V 0.0961, budget gap 6.8e-3, users -34.4, SUD -35.9, h_1 -1.6, CEV +4.54 (null pass 3 +0.09).
+
 00:50 omega1 FROM 1.0 STOPPED on the author's word ("yes, stop the omega_c=1 run from price 1.0"):
 session_019sED8Y9sDLqMYEtAkSvhst archived at pass 9 (price 0.956, users -38.1); results/counterfactuals_2c/omega1_p1.0/
 stays as its record. Running: tf85, omega1_clear, internalise_clear (the paper's arms), and the fixed-pi_V omega1_p0.91

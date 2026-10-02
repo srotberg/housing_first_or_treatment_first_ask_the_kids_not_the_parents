@@ -124,6 +124,17 @@ THETA_NOSUD = float(re.findall(r'drug share, sum spend / sum income\s*=\s*(\S+)\
 # (stage A of code/OVERNIGHT_PLAN.md): its last block's drug users
 B_OFF = float(re.findall(r'MOMENT b\s+total drug users\s+model=\s*([-+0-9.Ee]+)', open(os.path.join(
     ROOT, 'results', 'b_scan_childsplit_v3', 'omega_0.0_b0.0054222_ku1.0.moments.txt')).read())[-1])
+# THE RENTERS' COST BURDEN WITH FOOD STAMPS COUNTED AS INCOME (the author, 1 October: "just add
+# the food stamps to income thats all"; 7817942f). The benchmark run predates the change, so the
+# two burden shares come from its rerun on the patched source, results/b_scan_childsplit_fs
+# (2 October 00:32, 10 blocks): output only, every other last-block moment within 1e-3 of the
+# benchmark's except sud_homeless at 1.25e-3 (the OpenMP variation the elasticity run also saw).
+FS_LOG = gzip.open(os.path.join(ROOT, 'results', 'b_scan_childsplit_fs',
+                                'omega_0.085_b0.0054222_ku1.0.bench.log.gz'), 'rt', errors='replace').read()
+for _k in ('renters above 30 pct of income', 'over half of income, all renters'):
+    _v = [float(x) for x in re.findall(r'UNTARGETED\s+' + re.escape(_k) + r'\s+model=\s*(\S+)', FS_LOG)]
+    assert _v, _k
+    M[_k] = (_v[-1],) + tuple(M[_k][1:])
 B_ON = M['b total drug users'][0]
 RISE = B_OFF / B_ON - 1
 
