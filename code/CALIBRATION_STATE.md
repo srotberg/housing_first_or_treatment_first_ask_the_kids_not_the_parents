@@ -1,5 +1,9 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+05:21 OVERNIGHT CHECK-IN: nothing due, all alive. tf85_c35 pass 4 (digest 05:12): price 0.8535, pi_V 0.0985, users
+-32.7, SUD -34.1, h_1 -2.2, CEV +4.75, gaps 3.1e-3 / 1.3e-2. optimal_clear pass 4 (05:08): pi_V 0.0621, users -17.3,
+SUD -17.7, h_1 -13.2 (omega1_clear -9.2), drug gap 3.5e-4, budget gap 2.6e-2. w0 elasticities 8 blocks, 0 points.
+
 04:25 OVERNIGHT CHECK-IN: nothing due. Stage D waits on tf85_c35 (pass 2, digest 04:12; the paper's TF arm, so Table 7
 cannot mix it with the old cf_fix2 TF) and optimal_clear (built, 0 passes, digest 04:07); w0 elasticities 5 blocks,
 0 points (04:02). All three sessions alive. STAGE D GAP FOUND: export_longrun's x_lr_v26_* read the value at 26 by
