@@ -661,8 +661,9 @@ def main():
     # that carry a SUD lose: shares.txt, better by more than the tolerance against the no-policy run
     _SH = shares()
     _sb = 100 * _SH['with a SUD'][0] if _SH else None
-    _sud_net = (f', although only ${_sb:.0f}$ percent of the households that carry a SUD are better off on net, '
-                'since they lose access to vouchers' if _sb is not None and _sb < 50 else '')
+    # (round 3350a58a, the author: 'although only' -> 'with', 'since they' -> 'despite losing')
+    _sud_net = (f', with ${_sb:.0f}$ percent of the households that carry a SUD better off on net, despite losing '
+                'access to vouchers' if _sb is not None and _sb < 50 else '')
     out['x_lr_better_tol'] = '0.001'
     out['x_lr_approve_sud'] = (
         f"Across all households, ${100 * _SH['all households'][0]:.0f}$ percent are better off, but only ${_sb:.0f}$ "

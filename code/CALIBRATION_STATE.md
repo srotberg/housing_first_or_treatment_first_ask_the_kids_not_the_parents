@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+22:20 ROUND 3350a58a (the author: keep the last round's red, remove older red -- there was none -- and add this round's;
+so NO STRIP, base_r103 and splice_r103 kept): intro 'with ... better off on net, despite losing access to vouchers';
+6.3 'those impacts', 'an unexpected permanent shock', 'what the transition looks like along various key dimensions',
+'but suffers from a SUD', 'childhood homelessness', x_trf_many (the first year's fall in parents who use, 4.65 points,
+against the largest rise in children in a shelter, 0.12: about 39 times as many children, from the printed values),
+'which encourages more parents to use drugs', 'and even 14 percent ... benefit, because the lower drug price offsets the
+loss from the sobriety requirement for some of them'; Discussion 'positive outcomes', 'may further mitigate ... along
+the transition', 'a five-to-ten-year exemption', 'may be a good balance between keeping ... but sparing'.
+
 22:05 THE AUTHOR'S DECISIONS (2 October, 21:5x): 1 6.3 waits for the new transition; 2 age split by a new session;
 3 the 97 per cent recomputed with a tolerance; 4 the '30 times' clause in (x_lr_adult_poor, in red, from stage E's
 value_at_26_by_node.txt: the value of entering adult life rises 30 times as much at the lowest node as at the

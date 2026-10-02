@@ -134,6 +134,15 @@ def names(S, C, R):
     out['x_trf_paruse0'] = f"{100 * hf['par_use']:.2f}"
     out['x_trf_paruse_lr'] = f"{100 * tf['par_use']:.2f}"
     out['x_trf_paruse1_vs_lr'] = 'below' if pu[0] < tf['par_use'] else 'above'
+    # HOW MANY MORE CHILDREN (round 3350a58a, the author on 'while the former affects many': "(put magnitudes). how
+    # many more children does the first affect relative to the second?"): the fall in the share of parents who use
+    # in the first year against the largest rise in the share of children in a shelter, both in percentage points
+    _du = 100 * (hf['par_use'] - pu[0])
+    _dh = 100 * (max(ch[i] for i in body) - hf['child_hl'])
+    out['x_trf_many'] = (f': in the first year the share of parents who use drugs falls by ${_du:.2f}$ percentage points, '
+                         f'while the share of children in a shelter rises by at most ${_dh:.2f}$ points, so the first '
+                         f'reaches about ${round(_du, 2) / round(_dh, 2):.0f}$ times as many children as the second'
+                         if _du > 0 and _dh > 0 and _du > 5 * _dh else '')
     # the intuition for each panel (the author, 2 October: "Are you walking the reader through each of
     # the graphs and explaining why they come out this way?"), only where the path does what it explains
     out['x_trf_paruse_why'] = ('It is also why the share of parents who use starts below its long-run level in '
