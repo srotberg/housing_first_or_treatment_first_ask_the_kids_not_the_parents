@@ -1,5 +1,10 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+14:22 STAGE E RUNNING: the worker built cf_fix, cf_fix2, cf_fix2_share, tr60_fix (0 warnings) and tr10_fix (2 warnings),
+0 errors each, by 14:21; 29 GB disk, 15 GiB, 4 cores; the two arm re-solves are next. The overnight plan check-in
+(trig_01D2jRe8M1baa387yf6YqYNc) DISABLED, as its prompt says once stage E runs and Section 6 has every accepted arm.
+Follow-up check: trig_013HirNBZiEs7zTc2KKCR5wZ at 14:47.
+
 14:55 STAGE E LAUNCHED (session_01LEzYZCkan1Y2rCcy9yazfT, 14:11 UTC) (the author: "And you can start the transition"). code/remote_transition_2c.sh, one cloud worker:
 builds cf_fix, cf_fix2, cf_fix2_share, tr60_fix and tr10_fix (transition_2c/build_tr10_fix2.sh: the patch is 176 lines
 now); re-solves the no-policy arm on cf_fix2_share (writes the parent share) and Treatment First at $35 on cf_fix2 from
