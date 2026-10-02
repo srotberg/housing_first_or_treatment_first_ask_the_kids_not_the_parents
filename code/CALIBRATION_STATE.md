@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+04:20 ROUND e459c6d9 (657481ef, on main): all red stripped, 16 comments on Section 6.2 in red. THE AUTHOR'S ANSWERS:
+no sensitivity runs ('dont run the sensitivity analysis, we already know those answers'): remote_cf_tf_sens.sh p70/e5
+NOT launched, the footnote stays. The stray elasticity worker w0 (session_01HdLgEDbDE2PCh7EJpUpyD6, ten points
+-50,-40..+50) KEEPS RUNNING: 'we can wait for the numbers for table 6'; Table 6's elasticities update from it when it
+finishes. Optimal homelessness prose takes the author's reason: the disamenity is not a strong enough deterrent
+(households can act, and many do under omega_c = 1). New generated names: x_tf_hchild_lead, x_lr_pen0/1/_dir/_ratio,
+x_lr_v26_why, x_lr_om_h_why (homelessness falls at ages 26-50, rises at 51-64 where renters hold less wealth; true in
+both omega_c = 1 runs), x_lr_in_dh_verb, x_lr_in_many_do. STAGE D NOTE: the age-band sentence ('the rise in
+homelessness is largest among 35 to 44') is static; tf85 ($22) LOWERS h_1 by 1.0, so rewrite it if tf85_c35 does too.
+
 03:55 CHECK-IN: omega1_clear ACCEPTED (10 passes, both checks pass): price 0.8756, pi_V 0.0675 -> 0.0584, users -16.8,
 SUD -17.8, h_1 -9.2. tf85 ($22, comparison) ACCEPTED (9 passes): pi_V 0.0964, users -32.0, SUD -33.5, h_1 -1.0, CEV
 +4.36. tf85_c35 (the paper's TF) at pass 2; optimal_clear built, no pass yet. A STRAY WORKER: the first of the ten
