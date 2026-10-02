@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+04:25 OVERNIGHT CHECK-IN: nothing due. Stage D waits on tf85_c35 (pass 2, digest 04:12; the paper's TF arm, so Table 7
+cannot mix it with the old cf_fix2 TF) and optimal_clear (built, 0 passes, digest 04:07); w0 elasticities 5 blocks,
+0 points (04:02). All three sessions alive. STAGE D GAP FOUND: export_longrun's x_lr_v26_* read the value at 26 by
+productivity node, which is the Fortran's welfare_by_employment_youngest{baseline_benchmark,counter_arm}.txt (checked
+against code/cfarm_tf_fix2_85: same 26 numbers). The cf workers do not publish it and the reference dir lacks the
+benchmark's. When tf85_c35 finishes, ask its worker (session_01CJwqQHE5BxjtP6w6Vmg7HS) to commit both files from its
+run directory before archiving; the null's run is gone (nulltf archived), so if the baseline file is not there the
+comparison is against the benchmark file or the 'times as much at the lowest' clause is dropped.
+
 04:20 ROUND e459c6d9 (657481ef, on main): all red stripped, 16 comments on Section 6.2 in red. THE AUTHOR'S ANSWERS:
 no sensitivity runs ('dont run the sensitivity analysis, we already know those answers'): remote_cf_tf_sens.sh p70/e5
 NOT launched, the footnote stays. The stray elasticity worker w0 (session_01HdLgEDbDE2PCh7EJpUpyD6, ten points
