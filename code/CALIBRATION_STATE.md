@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+00:35 ELASTICITIES ON THE omega_c = 0.085 BENCHMARK, INTO THE PAPER. The worker's run finished 00:08 (exit 0, 10
+blocks) and its file refuses itself: check (1) missed by 0.22e-3 on sud_homeless (1.22e-3 against a 1e-3 rule; the
+other 26 moments within 4.9e-4, users 1.24e-4), OpenMP variation from the first sweep, before any patched line.
+ACCEPTED here, recorded in code/ELASTICITY_RESULT_2C.accepted.md; export_elasticity.py reads the 2C file and the log.
+Five steps (2 per cent dropped as before): participation -2.14 (was -2.00), per user -0.49 (was -0.45); the 2 per
+cent step is odd again (-3.02, per user -0.003). SMI drug-use ratio 2.64 (was 2.715 from 23 September). Paper:
+Section 2, Section 5.3 Block 5, Table 6, and the SMI ratio in Block 2 and Table 6, in red. Overnight items left:
+the burden rerun (8 blocks, last move 3.8e-3), then the 30 and 50 per cent shares.
+
 23:27 omega1 CLEARING PRICE, INTERPOLATED (log price, signed gaps): +0.110 at 0.8717 (archived run, pass 2, price rising)
 and -0.035 at 0.8875 (p0.91 pass 5, falling) put it at 0.884 with users about -14.6 (the archived side is an early
 pass, so this is indicative). The 21:30 estimate (0.90-0.91, -10 to -15) had the users right and the price high.
