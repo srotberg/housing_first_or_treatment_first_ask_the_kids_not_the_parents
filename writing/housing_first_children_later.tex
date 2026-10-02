@@ -1445,8 +1445,8 @@ Households enter the economy as adults at model age $j=1$, live
 at most $J$ annual periods, work while $j<J_R$ and are retired from $J_R$. Each has a
 child, who lives in the household for the first $J_K$ years of its adult life and then
 leaves to become an adult with a child of its own. Each period a cohort of unit mass enters at $j=1$, made up of
-the grown children of the households that died, in proportion to their parents'
-deaths, so the mass of households is constant in a stationary equilibrium. The individual state is
+\new{the children who leave home that period, at their parent's death if that comes before $J_K$ and at $J_K$
+otherwise (equation~\eqref{eq:flomnew})}, so the mass of households is constant in a stationary equilibrium. The individual state is
 \begin{equation}\label{eq:fstate}
 s=(a,\,y,\,e,\,d,\,m,\,\eta)\in
 \mathbb R_+\times\mathcal Y_j\times\{1,2,3\}\times\{0,1,2\}\times\{0,1\}\times\{0,1,2\},
@@ -1713,10 +1713,10 @@ child for life. There is no penalty for a parent's homelessness. The parent weig
 penalty through the weight $\omega_c$ it puts on its child (Section~\ref{sec:fproblem}): using does
 not pass the penalty on by itself, but it carries the chance $\pi_d$ of acquiring the disorder,
 and with it the penalty. The penalty is a risk to the
-parent's own objective only to the extent that $\omega_c$ is positive, so it is the one
-risk here that carries an externality rather than a pure personal cost, which is what
-makes it a candidate for policy in a way that mortality and unemployment risk, both
-fully internalised, do not.
+parent's own objective only to the extent that $\omega_c$ is positive, so it \new{carries an externality rather
+than a pure personal cost, and it is the one risk that reaches the child after it has left home; unemployment
+reaches the child only while it is at home, through what the household shares, which the parent likewise weighs
+only at $\omega_c$.}
 
 \subsection{The voucher and the two policies}\label{sec:fvoucher}
 
@@ -1848,10 +1848,10 @@ endowment $T_0$ given to entering adults ($j=1$),
 \;=\;\mathcal R .
 \end{equation}
 In the benchmark the tax parameters are set as in Section~\ref{sec:fullcal} and
-$\mathcal R$ is whatever surplus they produce. In every policy experiment the taxes are
+$\mathcal R$ is whatever surplus they produce. In every \new{experiment, including one that changes a preference rather than a policy, such as
+$\omega_c=1$,} the taxes are
 held at their benchmark values and the probability of drawing a voucher $\pi_V$ adjusts
-so that $\mathcal R$ equals its benchmark value $\bar{\mathcal R}$; an experiment that changes a preference
-rather than a policy, such as $\omega_c=1$, holds both and lets $\mathcal R$ move.
+so that $\mathcal R$ equals its benchmark value $\bar{\mathcal R}$.
 
 \subsection{The drug market}
 
@@ -1925,7 +1925,7 @@ $\{V_t(j,\cdot)\}_{j=1}^{J}$ are the associated values;
 \item $\Phi_{t+1}(j{+}1,\cdot)$ follows from $\Phi_t(j,\cdot)$ by the law of
 motion~\eqref{eq:flom} together with the entrants of~\eqref{eq:flomnew}
 and~\eqref{eq:fnewborn};
-\item in a policy experiment, the government budget~\eqref{eq:fgovt} holds at
+\item in \new{every} experiment, the government budget~\eqref{eq:fgovt} holds at
 $\pi_{Vt}$ with $\mathcal R=\bar{\mathcal R}$;
 \item the drug market clears at $p_{vt}$, so~\eqref{eq:fdrug} holds;
 \item the homelessness rate $H_t$ is the aggregate implied by $\Phi_t$.
@@ -1995,7 +1995,7 @@ makes using \emph{risky}, and it is the step that turns drug consumption into a
 disorder. Raise it and the
 externality rises, and the moral hazard costs more, since it is $\pi_d$ that converts an
 extra voucher under Housing First into a higher SUD rate that Treatment First then
-attempts to cure. Its value is chosen so the model generates the share of users who
+attempts to \new{prevent}. Its value is chosen so the model generates the share of users who
 carry a SUD, $41.3$ percent among adults aged 26 and over in NSDUH 2024.
 \item[$\kappa_{\phi d}$, increased mortality with a SUD.] As discussed at length in the
 stylized model, this is a key parameter in the paper. Mortality truncates the value of life for a user, and as it rises, it
@@ -2063,7 +2063,7 @@ Agriculture (USDA) over GDP in the data, and over output, which in this model is
 income.
 \item[$\pi_V$, the chance of drawing a voucher.] This is the policy dial itself.
 On the one hand, increasing it reduces the childhood and aggregate homelessness
-externalities that Housing First fixes. On the other hand, increasing it increases the value of
+externalities\new{, since more households are housed}. On the other hand, increasing it increases the value of
 being alive, since life is worth more when housed, and thus it allows Treatment First to be more
 effective in deterring drug use and fixing the budget and earnings externalities: the
 whole trade in one parameter. In the benchmark it
@@ -2081,7 +2081,7 @@ model gives as $26.4$.
 \end{description}
 
 \paragraph{Block 3: SMI chain.} This block determines how much further
-Treatment First reaches over and above the disorder it treats: a SUD raises
+Treatment First reaches over and above the disorder it \new{prevents}: a SUD raises
 the chance of SMI, and SMI lowers employment and raises death.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\iota$, the SUD multiplier on SMI onset.] The hinge of this whole block.
@@ -2183,7 +2183,7 @@ productivity draw, and that lower expected draw is what makes it likelier to be 
 acquire a disorder and SMI consequently, to be unhoused and to die
 earlier.
  When $\omega_c<1$, raising it increases the earnings externality, and loads whichever policy prevents more
-drug use: Treatment First by curing the parent, Housing First by making recovery more
+drug use: Treatment First by \new{deterring the parent from using}, Housing First by making recovery more
 likely once housed. It is set externally at $0.24$, the earnings loss
 Nilsson (2017) measures for children exposed in utero to a Swedish alcohol
 experiment, and with it the model delivers an odds ratio of $1.46$ of acquiring a SUD for the child
@@ -2202,7 +2202,7 @@ Loubi\`ere et al.\ (2020), $0.20$ percent of income. Its value solves the same p
 \paragraph{Block 6: Drug market.} Only one parameter of the drug market belongs here.
 It is what makes the drug price endogenous, so that when drug demand changes, so does
 the equilibrium drug price. This is a general-equilibrium offset that
-runs against Treatment First in particular. Curing households takes them out of the
+runs against Treatment First in particular. \new{Deterring households from using} takes them out of the
 drug market, demand falls and so does the price, and a cheaper drug draws other
 households in. Some of what the policy removes is handed back through the price,
 and how much depends entirely on this parameter.
@@ -2464,8 +2464,7 @@ PiT count, and $11.4$ percent at 55 and over, against $25.9$. Of the homeless
 in the model, $21.4$ percent are employed, against $46$ in the data, and
 their income is $6.5$ percent of the average, against $19.1$ in Meyer et al.\
 (2024). For the experiment, the point is that Treatment First acts on households through the voucher they
-hold or lose, and its effect on children runs through households that are homeless while raising
-them. Most of the homeless are of child-rearing age in the model, as in the data,
+hold or lose, and its effect on children runs through \new{the households raising them}. Most of the homeless are of child-rearing age in the model, as in the data,
 $88.6$ percent aged 25 to 54 against $74.2$, so the model places the
 policy's margin at the ages where it reaches children.
 
@@ -2519,9 +2518,7 @@ male one, separate the transmission of homelessness from the poverty that accomp
 ratio against the general population would also credit the housing penalty with everything
 else that differs between poor children.} Transmission in the model is therefore
 at the low end of the evidence on the SUD, the margin Treatment First acts on, and
-above it on homelessness, the margin Housing First acts on. The model loads the
-externality on children toward Housing First more than Treatment First, so
-if Treatment First still raises welfare in the experiments below, that result is conservative.
+above it on homelessness\new{\new{}}. \new{\new{Since Treatment First leaves the share of children in a shelter where it was, the excess transmission of homelessness favours neither policy, while transmission of the SUD at the low end of the evidence understates what Treatment First does for children, so if it still raises welfare in the experiments below, that result is conservative.}}
 
 \input{tables/tab_untargeted}
 

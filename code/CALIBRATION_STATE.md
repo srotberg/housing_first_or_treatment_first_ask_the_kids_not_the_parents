@@ -1,5 +1,18 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+17:50 SECTIONS 3-5 CONSISTENCY (the author: "then also check the consistency in section 3-5"; subagent audit, report
+only, each finding verified against the source). In red: 4.12 and equilibrium item 3, pi_V clears the budget in every
+experiment, omega_c = 1 included (the 2c omega1 arm does; the sentence described the old fixed-pi_V arm); 4.1, who
+enters (children leaving home at J_K or the parent's death, as eq. flomnew); 4.8, unemployment also reaches the child
+while at home (the 'fully internalised' clause was wrong); Block 1 of 5.3, the children's channel runs through the
+households raising them; Block 6, the tilt sentence generated against the shelter result (x_odds_tilt_sentence:
+excess homelessness transmission favours neither policy since the share in a shelter is flat; SUD at the low end ->
+conservative); the pi_V item ('since more households are housed', not 'that Housing First fixes'); 'cure'/'treats'
+-> prevent/deter in four places (Treatment First provides no treatment). Not changed: the stylized/quantitative
+delta_d line (same 24 percent loss, logs there); kappa_H and kappa_x items (consistent). Raised with the author: the
+handover's max_age_to_choose_homelessness 58 (ages 84-85 cannot choose a shelter) is not among Section 4's listed
+restrictions.
+
 17:30 ROUND c88b1dda: ALL RED STRIPPED (whole paper), tables frozen, baseline sec2/base_r97 + splice_r97. 22 comments
 in red, plus the author's requests in chat: (1) approval of everyone alive at the reform and across time -> Figure 3
 panel (h) from the transition's TRANSITION BETTER OFF lines (transition_series.py writes better.csv; benchmark-

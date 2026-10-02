@@ -437,6 +437,21 @@ out['x_disc_penalty'] = (
     f"A penalty of that kind would work in favour of Treatment First in the long run, where the share of "
     f"children in a shelter falls by ${out['x_tf_hchild_pp']}$ percentage points and the share living with a "
     f"parent who carries a SUD {out['x_tf_sudchild_dir']} by ${_sud_pp}$.")
+# TABLE 6'S TRANSMISSION BLOCK, against the results (round c88b1dda, the consistency check of Sections 3-5): the
+# tilt of the two odds ratios read against what Treatment First does to the share of children in a shelter; the
+# old sentence said the over-transmission of homelessness loads the model toward Housing First, which holds only
+# when Treatment First raises that share
+_cal = json.load(open(os.path.join(HERE, 'calib_numbers.json')))
+_sud_low = _cal.get('u_odds_sud_pos', '').startswith('at the low end') or _cal.get('u_odds_sud_pos') == 'below'
+out['x_odds_hl_margin'] = '' if _hflat else ', the margin Housing First acts on'
+out['x_odds_tilt_sentence'] = (
+    'Since Treatment First leaves the share of children in a shelter where it was, the excess transmission of '
+    'homelessness favours neither policy, while transmission of the SUD '
+    + ('at the low end of' if _cal.get('u_odds_sud_pos', '').startswith('at the low end') else 'below')
+    + ' the evidence understates what Treatment First does for children, so if it still raises welfare in the '
+    'experiments below, that result is conservative.' if _hflat and _sud_low else
+    f"The model loads the externality on children toward {_cal['u_odds_tilt']} more than "
+    f"{_cal['u_odds_tilt_other']}, so {_cal['u_odds_tilt_so']}.")
 out['_tf_hchild_flat'] = _hflat
 out['_tf_hchild_up'] = _hcup
 
