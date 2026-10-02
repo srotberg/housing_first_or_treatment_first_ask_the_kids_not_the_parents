@@ -49,14 +49,45 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
-RES = os.path.join(ROOT, 'results', 'counterfactuals_cf_fix2')
+RES = os.path.join(ROOT, 'results', 'counterfactuals_2c')
+RES_OLD = os.path.join(ROOT, 'results', 'counterfactuals_cf_fix2')
 OUT = os.path.join(HERE, 'results_numbers.json')
+# STAGE D (2 October): THE LONG RUN READS THE omega_c = 0.085 ARMS, each the accepted run of its
+# experiment, pi_V clearing the budget in every one (the author: "you need to adjust piv"); the
+# Treatment First arm is the $35 test (the author: "run the cost of the test on the upper end of the
+# estimates...$35"). THE TRANSITION STILL READS THE OLD ARMS ('old_*'): its path was solved from the
+# old benchmark to the old Treatment First, so its changes are measured against those two until the
+# T = 60 transition is re-run on the new ones (stage E).
+TF_ARM = os.environ.get('TF_ARM', 'tf85_c35/tf')
+ARMDIR = {'null_share': (RES, 'nulltf/null'), 'null_remote': (RES, 'nulltf/null'),
+          'tf85': (RES, TF_ARM), 'omega1': (RES, 'omega1_clear/omega1'),
+          'internalise': (RES, 'optimal_clear/internalise'),
+          'old_null_share': (RES_OLD, 'null_share'), 'old_tf85': (RES_OLD, 'tf85')}
+
+
+def adir(arm):
+    return os.path.join(*ARMDIR[arm])
+
+
+def levels(arm):
+    """the first number on each line of an arm's final.txt, by label"""
+    out = {}
+    for l in open(os.path.join(adir(arm), 'final.txt')):
+        m = re.match(r'\s+(.+?)\s{2,}([-+0-9.Ee]+)(\s|$)', l)
+        if m:
+            out[m.group(1).strip()] = float(m.group(2))
+    return out
 
 
 def final(arm):
-    """change in per cent, and levels, of each line of an arm's final.txt"""
+    """change in per cent, and levels, of each line of an arm's final.txt. The old arms printed the
+    no-policy level and the change beside each line, and the welfare split; the new arms print the
+    level only, so both are taken against the no-policy run here (the same run every change in
+    Section 6 is measured against). The split: total = the difference in welfare with childhood,
+    childhood = the difference in childhood utility, adult = the rest (the old split, from these
+    same two lines: +0.2367 = 451.03402 - 450.79733)."""
     rows = {}
-    for l in open(os.path.join(RES, arm, 'final.txt')):
+    for l in open(os.path.join(adir(arm), 'final.txt')):
         m = re.match(r'\s+(.+?)\s{2,}(\S+)\s+no policy\s+(\S+)\s+change\s+(\S+)%', l)
         if m:
             rows[m.group(1).strip()] = dict(level=float(m.group(2)), base=float(m.group(3)),
@@ -65,20 +96,31 @@ def final(arm):
         if m:
             rows['split'] = dict(child=float(m.group(1)), adult=float(m.group(2)),
                                  total=float(m.group(3)))
+    if not rows:
+        a, b = levels(arm), levels('old_null_share' if arm.startswith('old_') else 'null_share')
+        for k, v in a.items():
+            if k in b:
+                rows[k] = dict(level=v, base=b[k], pc=100 * (v / b[k] - 1) if b[k] else 0.0)
+        tot = a['welfare (with childhood)'] - b['welfare (with childhood)']
+        kid = a['childhood utility'] - b['childhood utility']
+        rows['split'] = dict(child=kid, adult=tot - kid, total=tot)
     return rows
 
 
 def last_cev(arm):
     """CEV at the exit pass, from passes.txt (the last row)"""
-    rows = [l.split() for l in open(os.path.join(RES, arm, 'passes.txt'))
-            if l.strip() and l.split()[0].isdigit()]
-    return float(rows[-1][-1].rstrip('%'))
+    L = open(os.path.join(adir(arm), 'passes.txt')).read().splitlines()
+    rows = [l.split() for l in L if l.strip() and l.split()[0].isdigit()]
+    # the CEV column by its header: the new arms' passes.txt adds V(chg) and V/user(chg) after it
+    # ('drug gap' and 'budget gap' are two words each in the header and one number each in a row)
+    col = [l.split() for l in L if l.startswith('pass')][-1].index('CEV') - 2
+    return float(rows[-1][col].rstrip('%'))
 
 
 def cev_log(arm):
     """the arm's CEV off the benchmark's curve, per cent, from its cf.log.gz"""
     x = None
-    for l in gzip.open(os.path.join(RES, arm, 'cf.log.gz'), 'rt', errors='replace'):
+    for l in gzip.open(os.path.join(adir(arm), 'cf.log.gz'), 'rt', errors='replace'):
         if 'CEV from the saved benchmark curve' in l:
             x = 100 * float(l.split('x=')[1])
     return x
@@ -178,11 +220,11 @@ out['x_ctest_usd'] = f'{_ctest / _avg_lab * 9e6 / float(_fn["f_vsl_data"]):.0f}'
 # cost the model charges is below it when average labour income exceeds one
 out['x_ctest_vs_assay'] = 'below' if _avg_lab > 1 else 'above'
 # the share of net government revenue that the tests cost under Treatment First
-_tests = [float(l.split()[-1]) for l in open(os.path.join(RES, 'tf85', 'final.txt'))
+_tests = [float(l.split()[-1]) for l in open(os.path.join(adir('tf85'), 'final.txt'))
           if l.strip().startswith('drug-test cost')][0]
 out['x_ctest_budget_pc'] = f"{100 * _tests / tf['net government revenue']['level']:.2g}"
 _ho = {}
-for l in open(os.path.join(RES, 'tf85', 'PARAM_HANDOVER.arm.txt')):
+for l in open(os.path.join(adir('tf85'), 'PARAM_HANDOVER.arm.txt')):
     f = l.split()
     if len(f) >= 2:
         _ho[f[0]] = f[1]
@@ -218,7 +260,7 @@ out['x_om_h_pc'] = pc(om['homelessness h_1']['pc'])
 # last DIAG age profile each run printed.
 def child_homeless(arm):
     rows = {}
-    for l in gzip.open(os.path.join(RES, arm, 'cf.log.gz'), 'rt', errors='replace'):
+    for l in gzip.open(os.path.join(adir(arm), 'cf.log.gz'), 'rt', errors='replace'):
         m = re.search(r'DIAG age\s+(\d+)\s+homeless=\s*(\S+).*mass=\s*(\S+)', l)
         if m:
             rows[int(m.group(1))] = (float(m.group(2)), float(m.group(3)))
@@ -248,7 +290,7 @@ out['x_om_hchild_pc'] = pc(100 * (child_homeless('omega1') / hc0 - 1))
 # above to within 0.02 points (1.001 against 1.015, 1.061 against 1.078).
 def child_sud(arm):
     ages, band = {}, {}
-    for l in gzip.open(os.path.join(RES, arm, 'cf.log.gz'), 'rt', errors='replace'):
+    for l in gzip.open(os.path.join(adir(arm), 'cf.log.gz'), 'rt', errors='replace'):
         m = re.search(r'DIAG age\s+(\d+)\s+homeless=.*mass=\s*(\S+)', l)
         if m:
             ages[int(m.group(1))] = float(m.group(2))
@@ -276,7 +318,7 @@ out['x_tf_hchild_lead'] = ('In contrast, the' if (child_homeless('tf85') > hc0) 
 # (clean housed, disordered housed, clean street, disordered street).
 def parent_share(arm):
     last = None
-    for l in gzip.open(os.path.join(RES, arm, 'cf.log.gz'), 'rt', errors='replace'):
+    for l in gzip.open(os.path.join(adir(arm), 'cf.log.gz'), 'rt', errors='replace'):
         if 'newborn_parent_share (clean housed' in l:
             last = [float(x) for x in l.split('=')[1].split()]
     return last
@@ -286,7 +328,12 @@ p0, p1 = parent_share('null_share'), parent_share('tf85')
 out['x_tf_par_hl_pp'] = f"{100 * ((p1[2] + p1[3]) - (p0[2] + p0[3])):.2f}"
 out['x_tf_par_sud_pp'] = f"{abs(100 * ((p1[1] + p1[3]) - (p0[1] + p0[3]))):.2f}"
 
-# THE TRANSITION: restart 3's loop 0, pinned (see the docstring)
+# THE TRANSITION: restart 3's loop 0, pinned (see the docstring). ITS BASELINES ARE THE OLD ARMS
+# (see ARMDIR): the no-policy run and Treatment First it was solved between
+CEV0_TR = cev_log('old_null_share')
+tf_tr = final('old_tf85')
+hc0_tr = child_homeless('old_null_share')
+out['x_tr_lr_cev'] = f"{last_cev('old_tf85') - CEV0_TR:.2f}"
 sys.path.insert(0, HERE)
 from transition_source import LOG as best   # the one pin
 tr_dir = os.path.join(ROOT, 'code', 'trtf60')
@@ -296,8 +343,8 @@ cc = subprocess.run([sys.executable, os.path.join(ROOT, 'code', 'transition_fix'
                      best, os.path.join(tr_dir, 'welfare_curvebaseline_benchmark.dat')],
                     capture_output=True, text=True).stdout
 m = re.search(r'THE COHORT BORN AT THE REFORM \(b = 1\): CEV ([+-]\S+)%', cc)
-out['x_tr_cev_b1'] = f'{float(m.group(1)) - CEV0:.1f}'
-out['x_tr_cev_b1_2'] = f'{float(m.group(1)) - CEV0:.2f}'
+out['x_tr_cev_b1'] = f'{float(m.group(1)) - CEV0_TR:.1f}'
+out['x_tr_cev_b1_2'] = f'{float(m.group(1)) - CEV0_TR:.2f}'
 m = re.search(r'forward pass (\d+) of', cc)
 out['x_tr_pass'] = m.group(1)
 # THE REFORM COHORT'S GAIN IS A CHILDHOOD GAIN (the author, 29 September: the transition's
@@ -312,7 +359,7 @@ out['x_tr_kid_ratio'] = f'{g_b1 / g_lr:.1f}'
 # acquiring one; a child of a homeless parent becoming homeless), the last
 # printed values in the no-policy run on the corrected build
 h0 = e0 = None
-for l in gzip.open(os.path.join(RES, 'null_share', 'cf.log.gz'), 'rt', errors='replace'):
+for l in gzip.open(os.path.join(adir('old_null_share'), 'cf.log.gz'), 'rt', errors='replace'):
     if 'model_fraction_homeless=' in l:
         h0 = float(l.split('=')[1].split()[0])
     elif 'total_experimenters_1=' in l:
@@ -337,7 +384,7 @@ for l in open(best, errors='replace'):
         E[t] = float(re.search(r'exp_pop=\s*(\S+)', l).group(1))
 # long-run drug users without a SUD under Treatment First, for the transition's comparison
 e_tf = None
-for l in gzip.open(os.path.join(RES, 'tf85', 'cf.log.gz'), 'rt', errors='replace'):
+for l in gzip.open(os.path.join(adir('old_tf85'), 'cf.log.gz'), 'rt', errors='replace'):
     if 'total_experimenters_1=' in l:
         e_tf = float(l.split('=')[1].split()[0])
 out['x_tf_new_pc'] = pc(100 * (e_tf / e0 - 1))
@@ -355,7 +402,7 @@ for l in open(best, errors='replace'):
         break
     if 'TRANSITION MECH t=' in l:
         B[int(l.split('t=')[1].split()[0])] = float(re.search(r' b=\s*(\S+)', l).group(1))
-out['x_tr_b_peak_pc'] = pc(100 * (min(B[k] for k in range(1, 11)) / tf['drug use b']['base'] - 1))
+out['x_tr_b_peak_pc'] = pc(100 * (min(B[k] for k in range(1, 11)) / tf_tr['drug use b']['base'] - 1))
 
 # CHILDHOOD HOMELESSNESS OF THE COHORT BORN AT THE REFORM, on x_hchild0's base (ages
 # 26-50, mass-weighted), followed down the diagonal: a child born in year 1 is at
@@ -390,21 +437,21 @@ if not all(t in share for t in range(1, 26)):
 w = [MB[t][t - 1] for t in range(1, 26)]
 hc_b1 = sum(share[t][t - 1] * w[t - 1] for t in range(1, 26)) / sum(w)
 out['x_tr_hchild_b1'] = f'{100 * hc_b1:.2f}'
-out['x_tr_hchild_b1_pc'] = pc(100 * (hc_b1 / hc0 - 1))
+out['x_tr_hchild_b1_pc'] = pc(100 * (hc_b1 / hc0_tr - 1))
 # and in percentage points, the author 29 September: a relative change beside two levels
 # read as inconsistent with them
-out['x_tr_hchild_b1_pp'] = f'{abs(100 * (hc_b1 - hc0)):.2f}'
+out['x_tr_hchild_b1_pp'] = f'{abs(100 * (hc_b1 - hc0_tr)):.2f}'
 # 'rises by less than in the long run' (the author, 29 September): the comparison word comes
 # from the two rises, the cohort born at the reform against children born in the long run
-out['x_tr_hchild_vs_lr'] = 'less than' if hc_b1 < child_homeless('tf85') else 'more than'
+out['x_tr_hchild_vs_lr'] = 'less than' if hc_b1 < child_homeless('old_tf85') else 'more than'
 # the direction word the prose takes, from the numbers, not typed
-out['x_tr_hchild_b1_dir'] = 'rises' if hc_b1 > hc0 else 'falls'
+out['x_tr_hchild_b1_dir'] = 'rises' if hc_b1 > hc0_tr else 'falls'
 # and ALL children at home in each of the first ten years, the cross section on the same
 # base: its largest rise, for 'rises by up to'
 hc_cross = {t: sum(share[t][a] * MB[t][a] for a in range(25)) / sum(MB[t][:25]) for t in share}
-out['x_tr_hchild_peak_pc'] = pc(100 * (max(hc_cross[t] for t in range(1, 11)) / hc0 - 1))
+out['x_tr_hchild_peak_pc'] = pc(100 * (max(hc_cross[t] for t in range(1, 11)) / hc0_tr - 1))
 out['x_tr_hchild_peak'] = f'{100 * max(hc_cross[t] for t in range(1, 11)):.2f}'
-out['x_tr_hchild_peak_dir'] = 'rises' if max(hc_cross[t] for t in range(1, 11)) > hc0 else 'falls'
+out['x_tr_hchild_peak_dir'] = 'rises' if max(hc_cross[t] for t in range(1, 11)) > hc0_tr else 'falls'
 
 json.dump(out, open(OUT, 'w'), indent=1, sort_keys=True)
 print(f'wrote {OUT} (transition from {os.path.relpath(best, ROOT)}, forward pass {out["x_tr_pass"]})')

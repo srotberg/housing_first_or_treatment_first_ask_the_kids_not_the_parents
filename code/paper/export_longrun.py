@@ -44,12 +44,28 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
-RES = os.path.join(ROOT, 'results', 'counterfactuals_cf_fix2')
+RES = os.path.join(ROOT, 'results', 'counterfactuals_2c')
+# STAGE D (2 October): the omega_c = 0.085 arms, pi_V clearing the budget in each; the arm names
+# below are the old ones, mapped to the new runs here (export_results.py carries the same map)
+TF_ARM = os.environ.get('TF_ARM', 'tf85_c35/tf')
+ARMDIR = {'null_share': 'nulltf/null', 'null_remote': 'nulltf/null', 'tf85': TF_ARM,
+          'omega1': 'omega1_clear/omega1', 'internalise': 'optimal_clear/internalise'}
+# THE ELASTIC-SUPPLY ARM WAS NOT RE-RUN (the author, 2 October: "dont run the sensitivity analysis, we
+# already know those answers"), so the x_lr_e5_* names keep the old arms' answer, each measured against
+# the old arms' own no-policy runs and old Treatment First
+RES_OLD = os.path.join(ROOT, 'results', 'counterfactuals_cf_fix2')
+for _a in ('elast5_85', 'null_remote', 'null_share', 'tf85'):
+    ARMDIR['old_' + _a] = os.path.join(RES_OLD, _a)
+
+
+def adir(arm):
+    return os.path.join(RES, ARMDIR[arm])
 OUT_JSON = os.path.join(HERE, 'results_numbers.json')
 TAB = os.path.join(ROOT, 'writing', 'tables', 'tab_longrun.tex')
 PREV = os.path.join(HERE, 'tab_longrun_prev.json')
-ARMS = (('null_share', None), ('tf85', 'null_share'), ('elast5_85', 'null_remote'),
-        ('omega1', 'null_remote'), ('internalise', 'null_remote'))
+ARMS = (('null_share', None), ('tf85', 'null_share'),
+        ('omega1', 'null_remote'), ('internalise', 'null_remote'),
+        ('old_null_share', None), ('old_tf85', 'old_null_share'), ('old_elast5_85', 'old_null_remote'))
 # the columns of the table: the elastic supply is a footnote (the author, 30 September); optimal
 # homelessness added as a fourth column (the author, 2 October: "You should also add the column for
 # omega_c=1 and internalization of homelessness")
@@ -58,20 +74,25 @@ TABLE = (('null_share', None), ('tf85', 'null_share'), ('omega1', 'null_remote')
 
 
 def log(arm):
-    with gzip.open(os.path.join(RES, arm, 'cf.log.gz'), 'rt', errors='replace') as f:
+    with gzip.open(os.path.join(adir(arm), 'cf.log.gz'), 'rt', errors='replace') as f:
         return f.read().splitlines()
 
 
 def final(arm):
-    """the levels of an arm's final.txt, first column (the arm), by label"""
-    rows = {}
-    for l in open(os.path.join(RES, arm, 'final.txt')):
-        m = re.match(r'\s+(.+?)\s{2,}([-+0-9.Ee]+)(\s|$)', l)
-        if m:
-            rows[m.group(1).strip()] = float(m.group(2))
-        m = re.search(r'childhood ([+-]\S+), adult part ([+-]\S+), total ([+-]\S+)', l)
-        if m:
-            rows['split'] = tuple(float(m.group(i)) for i in (1, 2, 3))
+    """the levels of an arm's final.txt, first column (the arm), by label, and the welfare split
+    against the no-policy run (the new arms do not print it: total = the difference in welfare with
+    childhood, childhood = the difference in childhood utility, adult = the rest)"""
+    def lv(a):
+        rows = {}
+        for l in open(os.path.join(adir(a), 'final.txt')):
+            m = re.match(r'\s+(.+?)\s{2,}([-+0-9.Ee]+)(\s|$)', l)
+            if m:
+                rows[m.group(1).strip()] = float(m.group(2))
+        return rows
+    rows, b = lv(arm), lv('old_null_share' if arm.startswith('old_') else 'null_share')
+    tot = rows['welfare (with childhood)'] - b['welfare (with childhood)']
+    kid = rows['childhood utility'] - b['childhood utility']
+    rows['split'] = (kid, tot - kid, tot)
     return rows
 
 
@@ -115,21 +136,22 @@ def steady(arm):
 
 
 def nodes(name):
-    return [float(x) for x in open(os.path.join(RES, 'tf85', f'value_at_26_by_node_{name}.txt'))
+    return [float(x) for x in open(os.path.join(adir('tf85'), f'value_at_26_by_node_{name}.txt'))
             if x.strip()]
 
 
 def main():
     freeze = '--freeze' in sys.argv
     D = {}
-    for arm, base in ARMS + (('null_remote', None),):
+    for arm, base in ARMS + (('null_remote', None), ('old_null_remote', None)):
         f = final(arm)
         D[arm] = dict(steady(arm), price=f['drug price'], piv=f['pi_V (voucher probability)'],
                       b=f['drug use b'], sud=f['SUD lambda_d'], h=f['homelessness h_1'],
                       sud_hl=f['SUD share of the homeless'], takeup=f['treatment take-up'],
                       net=f['net government revenue'], split=f.get('split'))
-    for arm, base in ARMS[1:]:
-        D[arm]['cev_net'] = 100 * (D[arm]['cev'] - D[base]['cev'])
+    for arm, base in ARMS:
+        if base:
+            D[arm]['cev_net'] = 100 * (D[arm]['cev'] - D[base]['cev'])
     # beta^25, the discount on the adult part, from the calibrated factor the run used
     beta = [float(l.split('=')[1]) for l in log('tf85') if l.startswith(' discount_factor=')][-1]
     beta25 = beta ** 25
@@ -153,7 +175,7 @@ def main():
         ('CEV of a newborn, percent of lifetime consumption', 'cev_net', lambda v: f'{v:.2f}'),
         ('Share of the newborn\'s gain that comes in childhood', 'child_share', lambda v: f'{v:.0f}'),
     ]
-    for arm, base in ARMS[1:]:
+    for arm, base in [a for a in ARMS if a[1]]:
         s = D[arm]['split']
         D[arm]['child_share'] = 100 * s[0] / s[2] if s and arm not in ('omega1', 'internalise') else None
     # no CEV for the two optimal arms: each changes the welfare function itself
@@ -203,7 +225,7 @@ def main():
         json.dump(cells, open(PREV, 'w'), indent=1)
 
     # ---- names for the prose
-    t, e, o = 'tf85', 'elast5_85', 'omega1'
+    t, e, o = 'tf85', 'old_elast5_85', 'omega1'
     out['x_lr_om_b_pc'] = f"{abs(pc(o, 'b', 'null_remote')):.0f}"
     out['x_lr_tf_b_pc'] = f"{abs(pc(t, 'b', 'null_share')):.0f}"
     # how much of full altruism's fall in drug use Treatment First delivers
@@ -246,7 +268,7 @@ def main():
     # OPTIMAL HOMELESSNESS IS FULL ALTRUISM PLUS THE HOMELESSNESS EXTERNALITY (the author, 2 October: "no,
     # it includes also omega_c=1"), so its changes are measured from the optimal-drug-use column when
     # the arm ran at omega_c = 1, and from the benchmark for the old arm, which did not
-    _ho_i = dict(l.split()[:2] for l in open(os.path.join(RES, i, 'PARAM_HANDOVER.arm.txt')) if len(l.split()) >= 2)
+    _ho_i = dict(l.split()[:2] for l in open(os.path.join(adir(i), 'PARAM_HANDOVER.arm.txt')) if len(l.split()) >= 2)
     ib = o if abs(float(_ho_i.get('weight_on_child', 0)) - 1) < 1e-9 else 'null_remote'
     out['x_lr_in_base_word'] = 'optimal drug use' if ib == o else 'the benchmark'
     out['x_lr_in_dh_pc'] = f"{abs(pc(i, 'h', ib)):.0f}"
@@ -273,19 +295,20 @@ def main():
     out['x_lr_hl_b2_pc'] = f'{100 * (hb1[2] / hb0[2] - 1):.0f}'
     # the newborn's gain: net CEV, and the adult part's composition share
     out['x_lr_e5_cev'] = f"{D[e]['cev_net']:.2f}"
-    out['x_lr_e5_b_pc'] = f"{abs(pc(e, 'b', 'null_remote')):.0f}"
-    out['x_lr_e5_h_pc'] = f"{abs(pc(e, 'h', 'null_remote')):.0f}"
-    out['x_lr_e5_price_pc'] = f"{abs(pc(e, 'price', 'null_remote')):.0f}"
+    out['x_lr_e5_b_pc'] = f"{abs(pc(e, 'b', 'old_null_remote')):.0f}"
+    out['x_lr_e5_h_pc'] = f"{abs(pc(e, 'h', 'old_null_remote')):.0f}"
+    out['x_lr_e5_price_pc'] = f"{abs(pc(e, 'price', 'old_null_remote')):.0f}"
     out['x_lr_e5_child_pc'] = f"{D[e]['child_share']:.0f}"
-    out['x_lr_e5_cev_dir'] = 'rises' if D[e]['cev_net'] > D[t]['cev_net'] else 'falls'
+    # against the old Treatment First, the run it was a sensitivity of
+    out['x_lr_e5_cev_dir'] = 'rises' if D[e]['cev_net'] > D['old_tf85']['cev_net'] else 'falls'
     # the supply elasticity the arm ran at, from its handover (the benchmark's is f_drug_supply_elasticity)
-    ho = dict(l.split()[:2] for l in open(os.path.join(RES, e, 'PARAM_HANDOVER.arm.txt')) if len(l.split()) >= 2)
+    ho = dict(l.split()[:2] for l in open(os.path.join(adir(e), 'PARAM_HANDOVER.arm.txt')) if len(l.split()) >= 2)
     out['x_lr_e5_elast'] = f"{float(ho['drug_supply_elasticity']):g}"
     out['x_lr_paruse_dir'] = 'falls' if D[t]['par_use'] < D['null_share']['par_use'] else 'rises'
     out['x_lr_paruse0'] = f"{100 * D['null_share']['par_use']:.2f}"
     out['x_lr_paruse1'] = f"{100 * D[t]['par_use']:.2f}"
     out['x_lr_hl_b2_dir'] = 'rises' if hb1[2] > hb0[2] else 'falls'
-    out['x_lr_e5_h_dir'] = 'rises' if D[e]['h'] > D['null_remote']['h'] else 'falls'
+    out['x_lr_e5_h_dir'] = 'rises' if D[e]['h'] > D['old_null_remote']['h'] else 'falls'
     # whether full altruism and Treatment First move homelessness the same way
     same = (D[o]['h'] > D['null_remote']['h']) == (D[t]['h'] > D['null_share']['h'])
     out['x_lr_h_split'] = 'move together on' if same else 'part ways on'
@@ -319,6 +342,10 @@ def main():
         (', and the fall in demand makes the drug cheaper.' if _p_dn else '.')
         if _pv_up else '')
     # the value of entering adult life, by productivity node: bottom against top, clean parent
+    # the value at 26 by node: the Fortran's welfare_by_employment_youngest{baseline_benchmark,counter_arm}.txt
+    # from the Treatment First arm's run directory (the cf workers do not publish it unasked)
+    if not os.path.exists(os.path.join(adir('tf85'), 'value_at_26_by_node_tf85.txt')):
+        sys.exit(f"value_at_26_by_node_*.txt missing in {adir('tf85')}: ask the arm's worker for them")
     nb, nt = nodes('benchmark'), nodes('tf85')
     g = [a - b for a, b in zip(nt, nb)]
     out['x_lr_v26_ratio'] = f'{g[0] / g[12]:.0f}'
