@@ -1,10 +1,11 @@
-# counterfactual tf85_c35 against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 02 Oct 08:53 UTC
+# counterfactual tf85_c35 against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 02 Oct 09:09 UTC
 remote_cf_point tf85_c35: gfortran missing, installing (02:49)
 remote_cf_point tf85_c35: building cf_fix (02:49)
 remote_cf_point tf85_c35: building cf_fix2 (02:50)
 remote_cf_point tf85_c35: TF budget target: the accepted no-policy run's net revenue 5.8918410999831181 (02:52)
 remote_cf_point tf85_c35: test cost 0.0004946100 in model units ($35) (02:52)
 remote_cf_point tf85_c35: arm tf on cf_fix2: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.0964 DRUG_PRICE_START=0.8556 EXTRA_SET=cost_per_drug_test 0.0004946100 (02:52)
+remote_cf_point tf85_c35: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.8918410999830000 DIST CHECK PASS: 11 passes, sweeps [71, 70, 71, 70, 70, 70, 70, 71, 72, 70, 70], largest final 4.34e-05 (rule 5e-05, at least 70 sweeps)  (09:09)
 
 == tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -18,3 +19,4 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   8  0.8554  0.09655   -32.0%   -33.5%    -1.0%  3.23e-04  3.28e-03   788.9740  +4.39%   -20.4%   +17.1%
   9  0.8554  0.09636   -32.0%   -33.5%    -1.0%  6.27e-05  2.16e-03   788.9663  +4.36%   -20.4%   +17.1%
  10  0.8555  0.09623   -32.0%   -33.4%    -0.9%  1.67e-04  1.28e-03   788.9612  +4.35%   -20.4%   +17.1%
+ 11  0.8555  0.09615   -32.0%   -33.4%    -0.9%  1.36e-04  8.19e-04   788.9582  +4.34%   -20.4%   +17.1%
