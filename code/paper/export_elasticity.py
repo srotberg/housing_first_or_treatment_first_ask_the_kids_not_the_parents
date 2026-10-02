@@ -4,7 +4,8 @@ results_numbers.json beside export_results.py's.
 
 usage: python3 code/paper/export_elasticity.py
 
-Source: code/ELASTICITY_RESULT_MULTI.txt, the worker run of 30 September: the paper's 12
+Source now: results/elast_points/w0.txt, ten points from -50 to +50 by ten (see SRC below).
+History: code/ELASTICITY_RESULT_MULTI.txt, the worker run of 30 September: the paper's 12
 moment blocks, then the price raised from the saved benchmark state by each of 1, 2, 5,
 10, 20 and 50 per cent, and the six elasticities AVERAGED (the author, 30 September: "you
 should check 1%, 2%, 5%, 10%, 20%, 50% and average them out. same for the intensive
@@ -40,32 +41,50 @@ import os
 import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-# THE omega_c = 0.085 BENCHMARK'S RUN (2 October): ELASTICITY_RESULT_2C.txt, its six steps in
-# elast_2c.log.gz. Its check (1) missed by 0.22e-3 on sud_homeless (OpenMP variation, before any
-# patched line); ELASTICITY_RESULT_2C.accepted.md records why the elasticities stand. Was
-# ELASTICITY_RESULT_MULTI.txt, the one-class benchmark's run of 30 September.
-SRC = os.path.join(HERE, '..', 'ELASTICITY_RESULT_2C.txt')
-SRC_LOG = os.path.join(HERE, '..', 'elast_2c.log.gz')
-ACCEPTED = os.path.join(HERE, '..', 'ELASTICITY_RESULT_2C.accepted.md')
+ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
+# THE TEN POINTS, -50 TO +50 BY TEN (2 October; the author: "we can wait for the numbers for table 6"):
+# results/elast_points/w0.txt, a worker that re-solved the omega_c = 0.085 benchmark and then moved the
+# price from its saved state down and up by each of 10 to 50 per cent. Replaces ELASTICITY_RESULT_2C.txt
+# (1, 5, 10, 20 and 50 per cent up, the 2 per cent step dropped: -2.14 and -0.49). Two checks, here
+# rather than in a note: every last-block moment of the re-solve within 1e-3 of the reference
+# benchmark's, and the null re-solve at the base price moving users by under 1e-4.
+SRC = os.path.join(ROOT, 'results', 'elast_points', 'w0.txt')
+SRC_LOG = os.path.join(ROOT, 'results', 'elast_points', 'w0.bench.log.gz')
+REF_LOG = os.path.join(ROOT, 'results', 'reference', 'hf_2c_omega_0.085', 'bench.log.gz')
 OUT = os.path.join(HERE, 'results_numbers.json')
 LIT = {'part': (-0.3, -0.9), 'int': (-0.3, -0.8)}
 EDGE = 0.10
-DROP = (2.0,)                         # price steps, per cent, left out of the averages
+DROP = ()                             # price steps, per cent, left out of the averages
 
 txt = open(SRC).read()
-assert 'THE FOUR STANDARD CHECKS PASSED' in txt or os.path.exists(ACCEPTED), \
-    'the elasticity run did not pass its checks and no acceptance is recorded'
-if len(re.findall(r'^ ELASTICITY_MULTI dp=', txt, re.M)) < 6:
-    txt = gzip.open(SRC_LOG, 'rt', errors='replace').read()
+assert 'solve exited 0' in txt, 'the elasticity worker did not finish'
+
+
+def moments(path):
+    d = {}
+    for l in gzip.open(path, 'rt', errors='replace'):
+        m = re.match(r'^ MOMENT (\S+).*model=\s*(\S+)', l)
+        if m:
+            d[m.group(1)] = float(m.group(2))
+    return d
+
+
+_a, _b = moments(SRC_LOG), moments(REF_LOG)
+_gap = {k: abs(_a[k] / _b[k] - 1) for k in _b if k in _a and _b[k]}
+assert len(_gap) >= 27 and max(_gap.values()) < 1e-3, \
+    f'the re-solved benchmark is not the reference: {max(_gap.items(), key=lambda x: x[1])}'
+_null = re.findall(r'ELASTICITY_NULL dp=0 users=.*rel gaps\s+(\S+)', txt)[-1]
+assert abs(float(_null)) < 1e-4, f'the null re-solve moves users by {_null}'
 rows = {}
-for dp, pa, us in re.findall(r'^ ELASTICITY_MULTI dp=\s*([\d.]+)\s+participation=\s*(\S+)\s+per_user=\s*(\S+)',
+for dp, pa, us in re.findall(r'^ ELASTICITY_MULTI dp=\s*(-?[\d.]+)\s+participation=\s*(\S+)\s+per_user=\s*(\S+)',
                              txt, re.M):
     rows[float(dp)] = (float(pa), float(us))
-assert sorted(rows) == [1.0, 2.0, 5.0, 10.0, 20.0, 50.0], f'expected six price changes, found {sorted(rows)}'
-# the per-step lines reproduce the run's own average over all six
+assert sorted(rows) == [-50.0, -40.0, -30.0, -20.0, -10.0, 10.0, 20.0, 30.0, 40.0, 50.0], \
+    f'expected ten price changes, found {sorted(rows)}'
+# the per-step lines reproduce the run's own average
 m = re.findall(r'ELASTICITY_MULTI average participation=\s*(\S+)\s+per_user=\s*(\S+)', txt)[-1]
-assert abs(sum(r[0] for r in rows.values()) / 6 - float(m[0])) < 1e-9
-assert abs(sum(r[1] for r in rows.values()) / 6 - float(m[1])) < 1e-9
+assert abs(sum(r[0] for r in rows.values()) / len(rows) - float(m[0])) < 1e-9
+assert abs(sum(r[1] for r in rows.values()) / len(rows) - float(m[1])) < 1e-9
 steps = [dp for dp in sorted(rows) if dp not in DROP]
 part = sum(rows[dp][0] for dp in steps) / len(steps)
 user = sum(rows[dp][1] for dp in steps) / len(steps)
@@ -101,8 +120,11 @@ def listing(xs):
 
 out = json.load(open(OUT))
 out.pop('x_el_dp_pc', None)          # the single 10 per cent step this replaced
-out['x_el_dp_list'] = listing(steps)
-out['x_el_n_word'] = {4: 'four', 5: 'five', 6: 'six'}[len(steps)]
+# the sizes once, and whether the price was moved both ways
+_sizes = sorted({abs(dp) for dp in steps})
+out['x_el_dp_list'] = listing(_sizes)
+out['x_el_dp_how'] = 'Raising and lowering' if min(steps) < 0 < max(steps) else 'Raising'
+out['x_el_n_word'] = {4: 'four', 5: 'five', 6: 'six', 10: 'ten'}[len(steps)]
 out['x_el_part'] = f'{part:.2f}'
 out['x_el_int'] = f'{user:.2f}'
 out['x_el_part_where'] = where(part, LIT['part'])

@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+06:30 ELASTICITIES FROM THE TEN POINTS INTO THE PAPER (the author: "we can wait for the numbers for table 6"). w0
+(session_01HdLgEDbDE2PCh7EJpUpyD6) exited 0 at 06:18: re-solve 10 blocks (last move 5.4e-4), all 27 last-block moments
+within 7.5e-4 of the reference, null re-solve users 1.0e-6. Price moved down and up by 10-50 per cent, ten points:
+participation -1.07 (-50) ... -2.30 (+10) ... -1.59 (+50), AVERAGE -1.61 (was -2.14 from five upward steps); per user
+-0.88 (-50) ... -0.34 (+50), AVERAGE -0.60 (was -0.49). export_elasticity.py reads results/elast_points/w0.txt and
+checks both itself; Section 2, Block 5 ('Raising and lowering', generated) and Table 6, in red on top of round e459c6d9.
+w0's session is idle and finished; archiving it needs the author's word. Overnight check-in 06:21: tf85_c35 pass 6
+(users -32.0, SUD -33.5, h_1 -1.4, CEV +4.48, gaps 2.7e-3/7.3e-3); optimal_clear pass 7 (users -17.0, h_1 -11.0, gaps
+2.1e-3/3.8e-3).
+
 05:21 OVERNIGHT CHECK-IN: nothing due, all alive. tf85_c35 pass 4 (digest 05:12): price 0.8535, pi_V 0.0985, users
 -32.7, SUD -34.1, h_1 -2.2, CEV +4.75, gaps 3.1e-3 / 1.3e-2. optimal_clear pass 4 (05:08): pi_V 0.0621, users -17.3,
 SUD -17.7, h_1 -13.2 (omega1_clear -9.2), drug gap 3.5e-4, budget gap 2.6e-2. w0 elasticities 8 blocks, 0 points.
