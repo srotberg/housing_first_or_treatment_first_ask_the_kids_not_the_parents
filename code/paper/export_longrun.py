@@ -428,6 +428,15 @@ def main():
         f'${_f(c3[0])}$ to ${_f(c3[1])}$ percent, against almost no change at younger ages. Together with the fall '
         f'in the share with a SUD, from ${_f(s0b[3])}$ to ${_f(s1b[3])}$ percent, this outweighs the second force, '
         f'so homelessness at 45 to 50 falls, by ${abs(_b45):.0f}$ percent.' if _third else '')
+    # TREATMENT (the author, 2 October: "you should also make a point about how treatment goes increase in TF....
+    # put it in the resutls somwhere where it flows"). Treatment buys only the multiplier g on recovery
+    # (Section 4), and under Treatment First a household that has recovered and does not use passes the screen
+    _tk0, _tk1 = D['null_share']['takeup'], D[t]['takeup']
+    out['x_lr_tf_treat'] = (
+        'It also raises the share of households with a SUD who are in treatment, from '
+        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent. Treatment buys only a higher chance of recovering, and '
+        'Treatment First makes recovering worth more: a household that has recovered and does not use passes the '
+        'screen and can hold a voucher.' if _tk1 > _tk0 else '')
     out['x_lr_children_hl'] = (
         'Children live with households aged 26 to 50. Across those ages the reform moves homelessness in '
         f'opposite directions: it falls by ${abs(_b1):.0f}$ percent among households aged 26 to 34, rises by '

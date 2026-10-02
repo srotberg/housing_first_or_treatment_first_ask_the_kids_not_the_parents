@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+19:40 ROUND 538f55b4 (no strip; red accumulates on base_r100): TREATMENT in 6.2's opening paragraph, generated
+(x_lr_tf_treat): take-up among households with a SUD 24.9 -> 29.3, because treatment buys only recovery and a household
+that has recovered and does not use passes the screen. OPEN: (1) the author's "does their welfare rise?" on drug users
+(intro): shares.txt's 'with a SUD' line, when the stage E TF re-solve finishes (pass 9 at 19:3x, CEV 4.37); (2) 26-38
+and 39-50 instead of the band 45-54: code/transition_2c/age_split.py (exact from the housing policy; reproduces the
+log's bands on cfarm_bench and cfarm_tf_fix2_85) needs the arms' distribution and policy files, which are in the stage
+E worker's container; the worker is not reachable by message. (3) the cf_kid subagent was STOPPED BY THE AUTHOR:
+newborn (age 1) approval cancelled unless asked again.
+
 20:10 ROUND f4276e76: ALL RED STRIPPED, base_r100 + splice_r100, which now reds generated sentences WORD BY WORD
 against base (the author: "only updates in red please"), gaps of three tokens or fewer merged. 36 comments:
 intro ('further improving childhood consumption', 'taxes paid by working-age households', 'Lastly, even drug
