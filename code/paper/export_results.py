@@ -113,6 +113,38 @@ out['x_tf_piv_pc'] = pc(tf['pi_V (voucher probability)']['pc'])
 out['x_tf_piv0_pc'] = f"{100 * tf['pi_V (voucher probability)']['base']:.2f}"
 out['x_tf_piv1_pc'] = f"{100 * tf['pi_V (voucher probability)']['level']:.2f}"
 out['x_tf_h_dir'] = 'raises' if tf['homelessness h_1']['pc'] > 0 else 'lowers'
+# THE LEVELS BEHIND THE CHANGES (the author, 2 October: "from X to Y"), in percent of households
+out['x_b0'] = f"{100 * tf['drug use b']['base']:.2f}"
+out['x_tf_b1'] = f"{100 * tf['drug use b']['level']:.2f}"
+out['x_h0'] = f"{100 * tf['homelessness h_1']['base']:.2f}"
+out['x_tf_h1'] = f"{100 * tf['homelessness h_1']['level']:.2f}"
+# the homelessness sentence of Section 6.2 (the author: "However, it also raises homelessness by 6
+# percent from X to Y"): the 'However' belongs only to a rise, so the sentence turns with the sign
+_hrise = tf['homelessness h_1']['pc'] > 0
+out['x_tf_h_sentence'] = (
+    f"However, it also raises homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to "
+    f"{out['x_tf_h1']} percent of households." if _hrise else
+    f"It also lowers homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to "
+    f"{out['x_tf_h1']} percent of households.")
+# pi_V's direction, and the clause the author added to a rise ("which makes staying clean of drugs
+# even more desirable"): a voucher easier to get is a larger reward for passing the screen
+_pvup = tf['pi_V (voucher probability)']['pc'] > 0
+out['x_tf_piv_dir'] = 'rises' if _pvup else 'falls'
+out['x_tf_piv_so'] = ', which makes staying clean of drugs even more desirable' if _pvup else ''
+# WHY WELFARE RISES (the author, 2 October: "you should explain why welfare rises. The cut in drug use
+# reduces the budget and earnings externalities much more than it raises the childhood and aggregate
+# homelessness externalities since the latter a small in an absolute sense relative to the former
+# two"). That reason is for a reform that raises homelessness; when homelessness falls too, every
+# one of the four moves the same way.
+if last_cev('tf85') > CEV0:
+    out['x_tf_cev_why'] = (
+        'Welfare rises because the cut in drug use reduces the budget and earnings externalities by '
+        'much more than it raises the externalities that run through homelessness, on the child and on '
+        'everyone else, which are small in absolute terms next to the first two.' if _hrise else
+        'Welfare rises because the cut in drug use reduces the budget and earnings externalities, and '
+        'homelessness, and with it the externalities on the child and on everyone else, falls too.')
+else:
+    out['x_tf_cev_why'] = ''
 # THE DRUG TEST'S COST, as the model charges it.  The declaration's comment says the
 # value is in units of average earnings; the budget charges it raw (f90 20654), in
 # the units in which productivity averages one at entry.  So it is quoted against the
@@ -155,6 +187,11 @@ assert _ho.get('include_voucher_exclusion') == '1', 'tf85 ran without exclusion?
 _psi = float(json.load(open(os.path.join(HERE, 'fortran_numbers.json')))['f_voucher_exclusion_release'])
 out['x_psi_x'] = '1/3' if abs(_psi - 1 / 3) < 1e-5 else f'{_psi:.2f}'
 out['x_ban_years'] = {1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five'}.get(round(1 / _psi), f'{1 / _psi:.0f}')
+# THE EXCLUSION AGAINST THE VOUCHER PROGRAMME'S OWN RULE (the author, 2 October: "Is this also in
+# line with current programme rules? if so cite some reason"): 24 CFR 982.553 bars for three years a
+# household evicted from federally assisted housing for drug-related criminal activity
+out['x_ban_rule_lead'] = ('the same period for which' if round(1 / _psi) == 3 else
+                          'against the three years for which')
 
 om = final('omega1')
 out['x_om_b_pc'] = pc(om['drug use b']['pc'])

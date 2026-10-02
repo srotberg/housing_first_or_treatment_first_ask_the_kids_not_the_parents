@@ -49,9 +49,12 @@ OUT_JSON = os.path.join(HERE, 'results_numbers.json')
 TAB = os.path.join(ROOT, 'writing', 'tables', 'tab_longrun.tex')
 PREV = os.path.join(HERE, 'tab_longrun_prev.json')
 ARMS = (('null_share', None), ('tf85', 'null_share'), ('elast5_85', 'null_remote'),
-        ('omega1', 'null_remote'))
-# the columns of the table: the elastic supply is a footnote (the author, 30 September)
-TABLE = (('null_share', None), ('tf85', 'null_share'), ('omega1', 'null_remote'))
+        ('omega1', 'null_remote'), ('internalise', 'null_remote'))
+# the columns of the table: the elastic supply is a footnote (the author, 30 September); optimal
+# homelessness added as a fourth column (the author, 2 October: "You should also add the column for
+# omega_c=1 and internalization of homelessness")
+TABLE = (('null_share', None), ('tf85', 'null_share'), ('omega1', 'null_remote'),
+         ('internalise', 'null_remote'))
 
 
 def log(arm):
@@ -144,16 +147,27 @@ def main():
     ]
     for arm, base in ARMS[1:]:
         s = D[arm]['split']
-        D[arm]['child_share'] = 100 * s[0] / s[2] if s and arm != 'omega1' else None
+        D[arm]['child_share'] = 100 * s[0] / s[2] if s and arm not in ('omega1', 'internalise') else None
+    # no CEV for the two optimal arms: each changes the welfare function itself
     D['omega1']['cev_net'] = None
+    D['internalise']['cev_net'] = None
     try:
         prev = json.load(open(PREV))
     except (OSError, ValueError):
         prev = {}
     cells, body = {}, []
-    heads = {1: '\\multicolumn{4}{@{}l}{\\emph{Adults}} \\\\',
-             2: '\\multicolumn{4}{@{}l}{\\emph{Children, households aged 26 to 50}} \\\\',
-             3: '\\multicolumn{4}{@{}l}{\\emph{Welfare}} \\\\'}
+
+    def hd(key, w):
+        cells[key] = w
+        return w if prev.get(key) == w else f'\\textcolor{{red}}{{{w}}}'
+    heads = {1: '\\multicolumn{5}{@{}l}{\\emph{Adults}} \\\\',
+             2: '\\multicolumn{5}{@{}l}{\\emph{Children}} \\\\',
+             3: '\\multicolumn{5}{@{}l}{\\emph{Welfare}} \\\\'}
+    for k in heads:
+        title = re.search(r'\\emph\{([^}]*)\}', heads[k]).group(1)
+        cells[f'panel/{k}'] = title
+        if prev.get(f'panel/{k}') != title:
+            heads[k] = heads[k].replace('\\emph{', '\\emph{\\textcolor{red}{', 1).replace('}} \\\\', '}}} \\\\', 1)
     body.append(heads[1])
     part = 1
     for r in rows:
@@ -172,9 +186,9 @@ def main():
         body.append(' & '.join(line) + ' \\\\')
     tab = ['% Written by code/paper/export_longrun.py from results/counterfactuals_cf_fix2;',
            '% edit the script, not this file. Caption and note are in the paper.',
-           '\\begin{tabular}{@{}L{190pt}rrr@{}}', '\\toprule',
-           ' & Housing & Treatment & Housing First, \\\\',
-           ' & First & First & $\\omega_c=1$ \\\\',
+           '\\begin{tabular}{@{}L{170pt}rrrr@{}}', '\\toprule',
+           ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Optimal', 'Optimal'))) + ' \\\\',
+           ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'drug use', 'homelessness'))) + ' \\\\',
            '\\midrule'] + body + ['\\bottomrule', '\\end{tabular}']
     open(TAB, 'w').write('\n'.join(tab) + '\n')
     if freeze:
@@ -191,6 +205,30 @@ def main():
     out['x_lr_om_hchild_pc'] = f"{abs(pc(o, 'child_hl', 'null_remote')):.0f}"
     out['x_lr_om_hchild_dir'] = 'falls' if D[o]['child_hl'] < D['null_remote']['child_hl'] else 'rises'
     out['x_lr_om_net_pc'] = f"{abs(pc(o, 'net', 'null_remote')):.1f}"
+    # THE TWO OPTIMAL ARMS IN THE PROSE (the author, 2 October: titles for each simulation, the
+    # optimal-homelessness column, and "explain more"): drug use, homelessness and pi_V, each with
+    # its direction, and the pi_V sentence only when pi_V clears (it was held in the old arms)
+    def piv_sentence(arm, base, why_fall):
+        p0, p1 = D[base]['piv'], D[arm]['piv']
+        if abs(p1 / p0 - 1) < 1e-6:
+            return ''
+        d = 'falls' if p1 < p0 else 'rises'
+        return (f'$\\pi_V$ {d} from ${100 * p0:.2f}$ to ${100 * p1:.2f}$ percent to hold net government '
+                f'revenue at its benchmark level' + (why_fall if p1 < p0 else '') + '.')
+    out['x_lr_om_b_dir'] = 'falls' if D[o]['b'] < D['null_remote']['b'] else 'rises'
+    out['x_lr_om_piv_sentence'] = piv_sentence(o, 'null_remote',
+        ': a population that uses fewer drugs lives longer, so the government collects fewer '
+        'accidental bequests and pays more in social security')
+    i = 'internalise'
+    out['x_lr_in_b_pc'] = f"{abs(pc(i, 'b', 'null_remote')):.0f}"
+    out['x_lr_in_b_dir'] = 'falls' if D[i]['b'] < D['null_remote']['b'] else 'rises'
+    out['x_lr_in_h_pc'] = f"{abs(pc(i, 'h', 'null_remote')):.0f}"
+    out['x_lr_in_h_dir'] = 'falls' if D[i]['h'] < D['null_remote']['h'] else 'rises'
+    out['x_lr_in_h0'] = f"{100 * D['null_remote']['h']:.2f}"
+    out['x_lr_in_h1'] = f"{100 * D[i]['h']:.2f}"
+    out['x_lr_in_hchild_pc'] = f"{abs(pc(i, 'child_hl', 'null_remote')):.0f}"
+    out['x_lr_in_hchild_dir'] = 'falls' if D[i]['child_hl'] < D['null_remote']['child_hl'] else 'rises'
+    out['x_lr_in_piv_sentence'] = piv_sentence(i, 'null_remote', '')
     # homelessness by age band under Treatment First: 26-34 against 35-44
     hb0, hb1 = D['null_share']['hl_band'], D[t]['hl_band']
     out['x_lr_hl_b1_pc'] = f'{100 * (hb1[1] / hb0[1] - 1):.0f}'
