@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08:25 OVERNIGHT CHECK-IN: tf85_c35 pass 9 (digest 08:13): price 0.8554, pi_V 0.0964, users -32.0, SUD -33.5, h_1 -1.0,
+CEV +4.36, gaps 6.3e-5 / 2.2e-3: one more pass, about 08:50. STAGE D IS READY TO RUN when it is accepted:
+`git apply code/paper/stageD_src.patch`, `python3 code/paper/export_results.py` (TF_ARM defaults to tf85_c35/tf), splice
+(splice_r95 base + the new names), build, checks, commit, main, send. The value-at-26 files could not be fetched (no
+cross-session tool reaches a cloud worker from here; ListAgents shows none), so x_lr_v26_clause falls back on the two
+ADULTDECOMP blocks: rises for a child of a clean parent and, by more, of a penalised one (at $22: +1.85 / +2.67
+utils). The '23 times at the lowest' figure goes unless the files are produced. RESULTS THAT TURN ON THE NEW ARMS
+(told the author 07:50): TF lowers h_1 by 1, the shelter share is flat (1.03), TF cuts drug use by more than full
+altruism (32 against 17), CEV about 4.4 (was 1.39), pi_V +43 per cent.
+
 07:22 optimal_clear ACCEPTED (10 passes; TARGET CHECK PASS, DIST CHECK PASS): price 0.8756, pi_V 0.0585, users -16.9,
 SUD -17.9, h_1 -10.7 against the null. Against omega1_clear (its base in the prose): h_1 0.0055190 vs 0.0056166, -1.7;
 drug use -0.06; pi_V 0.05855 vs 0.05842. So internalising the disamenity on top of omega_c = 1 moves homelessness by

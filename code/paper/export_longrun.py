@@ -388,13 +388,27 @@ def main():
         if _pv_up else '')
     # the value of entering adult life, by productivity node: bottom against top, clean parent
     # the value at 26 by node: the Fortran's welfare_by_employment_youngest{baseline_benchmark,counter_arm}.txt
-    # from the Treatment First arm's run directory (the cf workers do not publish it unasked)
-    if not os.path.exists(os.path.join(adir('tf85'), 'value_at_26_by_node_tf85.txt')):
-        sys.exit(f"value_at_26_by_node_*.txt missing in {adir('tf85')}: ask the arm's worker for them")
-    nb, nt = nodes('benchmark'), nodes('tf85')
-    g = [a - b for a, b in zip(nt, nb)]
-    out['x_lr_v26_ratio'] = f'{g[0] / g[12]:.0f}'
-    out['x_lr_v26_all_up'] = 'every' if min(g) > 0 else 'not every'
+    # from the Treatment First arm's run directory. The new arms' workers did not publish it and could
+    # not be asked to (no cross-session message reaches a cloud worker from here), so without it the
+    # clause falls back on the two blocks ADULTDECOMP prints, a child of a clean parent and of a
+    # penalised one, each at its own draw distribution: the within gains v1 - v0 of each block.
+    if os.path.exists(os.path.join(adir('tf85'), 'value_at_26_by_node_tf85.txt')):
+        nb, nt = nodes('benchmark'), nodes('tf85')
+        g = [a - b for a, b in zip(nt, nb)]
+        out['x_lr_v26_ratio'] = f'{g[0] / g[12]:.0f}'
+        out['x_lr_v26_all_up'] = 'every' if min(g) > 0 else 'not every'
+        out['x_lr_v26_clause'] = (f"the value of entering the economy at 26 rises at {out['x_lr_v26_all_up']} "
+                                  f"level of productivity, about ${out['x_lr_v26_ratio']}$ times as much at the "
+                                  "lowest as at the highest")
+    else:
+        _gc, _gp = v1[0] - v0[0], v1[2] - v0[2]
+        out['x_lr_v26_clause'] = (
+            'the value of entering the economy at 26 rises both for a child whose parent was free of the '
+            f"disorder and, by {'more' if _gp > _gc else 'less'}, for one whose parent carried it"
+            if _gc > 0 and _gp > 0 else
+            f"the value of entering the economy at 26 {'rises' if _gc > 0 else 'falls'} for a child whose "
+            f"parent was free of the disorder and {'rises' if _gp > 0 else 'falls'} for one whose parent "
+            'carried it')
 
     d = json.load(open(OUT_JSON))
     d.update(out)
