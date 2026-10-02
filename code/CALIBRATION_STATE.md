@@ -1,5 +1,16 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+20:50 ROUND f9ac1593: ALL RED STRIPPED, base_r103 + splice_r103. 'even some drug users'; Table 7's note without the
+tolerance; 6.3: the opening on short-run impacts, 'as a shock', the year-by-year sentence and the PRELIMINARY CAVEAT
+REMOVED AS ASKED (6.3 is still restart3g loop 0, the OLD calibration, unconverged after year 41), 'or having a voucher
+offer revoked in the future', 'This share', 'This happens because', 'even with more households in treatment', the
+children's shelter sentence, x_tr_cev_b1_vs_lr ('even more than those born in the long run', against the SAME
+computation's long run, 1.39), 'This is because their', 'than in the long run', 'because the latter is very small in
+absolute terms'; 'However, every child and household entering adult life'. Discussion: "the model's reading is that",
+the two design choices swapped (money first; the condition on new holders second, 'which could further mitigate').
+NOT CHANGED, flagged to the author: 6.3's long-run comparisons ('against 6 percent', '1.08', 'not converging') are
+the old computation's; they change only with stage E's T = 60 path (loop 0 due about 04:30-05:00 UTC, 3 October).
+
 20:40 ROUND 2d8ffd3b: ALL RED STRIPPED, base_r102 + splice_r102. STAGE E ARMS DONE (TF pass 11, CEV 4.34 against the
 paper's 4.33; shares.txt landed): at tol 0.001 utils against the no-policy run, all households 75.9 per cent better off
 and 3.1 worse, WITH A SUD 19.8 better and 80.1 worse, without a SUD 78.1 better and 0 worse, entering adults 100. Table 7

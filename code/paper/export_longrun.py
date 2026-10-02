@@ -665,7 +665,7 @@ def main():
         f'disorder. The remaining ${_val:.0f}$ percent comes from a better economy to live in as an adult: whatever '
         f'its productivity, an eligible household that stays clean is ${_pvpc:.0f}$ percent more likely to get a voucher, paid '
         'for by the users the screen excludes and by the higher taxes paid by working-age households that no longer '
-        'carry the earnings penalty or lose their jobs to a SUD. Lastly, even drug users benefit from the lower '
+        'carry the earnings penalty or lose their jobs to a SUD. Lastly, even some drug users benefit from the lower '
         'equilibrium drug price' + _sud_net + '.' if out['x_lr_adult'] else '')
     # (round f4276e76, the author: 'UD' -> ', further imporving childhood consumption', 'taxes' -> 'taxes paid by
     # working-age households', 'and' -> 'period. Lastly, even drug users benefit from the lower equilibrium drug

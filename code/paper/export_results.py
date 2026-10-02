@@ -495,6 +495,13 @@ cc = subprocess.run([sys.executable, os.path.join(ROOT, 'code', 'transition_fix'
 m = re.search(r'THE COHORT BORN AT THE REFORM \(b = 1\): CEV ([+-]\S+)%', cc)
 out['x_tr_cev_b1'] = f'{float(m.group(1)) - CEV0_TR:.1f}'
 out['x_tr_cev_b1_2'] = f'{float(m.group(1)) - CEV0_TR:.2f}'
+# (round f9ac1593, the author on ', against 1.39 percent in the long run.': "incorrect....need to use updated
+# figures", 'consumption,' -> 'consumption, even more than...'): against the long run of the SAME computation,
+# which is the only one the path converges to; the paper's long run (4.33) is the new arms', whose transition
+# (stage E) has not finished a pass
+_b1x, _lrx = float(m.group(1)) - CEV0_TR, float(out['x_tr_lr_cev'])
+out['x_tr_cev_b1_vs_lr'] = ('even more than those born in the long run' if _b1x > _lrx else
+                            'less than those born in the long run')
 # THE DISCUSSION'S TRANSITION (round f4276e76, the author on 'The transition is harder': "I don't think it's harder.
 # I think it has even higher welfare....but from a policy point of view it can look decieving because homelessness
 # would rise for a while"): the cohort born at the reform against the long run of the same computation

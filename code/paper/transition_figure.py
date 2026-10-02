@@ -139,8 +139,11 @@ def names(S, C, R):
     out['x_trf_paruse_why'] = ('It is also why the share of parents who use starts below its long-run level in '
                                'panel (d): as the stock of carriers thins and the price comes down, some of '
                                'them come back.' if pu[0] < tf['par_use'] else '')
-    out['x_trf_h_why'] = ('The households that carry a SUD when the reform lands lose their vouchers at once. '
-                          'That stock shrinks only as fast as recovery allows (panel (b)), so revocations '
+    # (round f9ac1593, the author: 'The' -> 'This happens because', 'allows' -> ', even with more households in
+    # treatment,')
+    out['x_trf_h_why'] = ('This happens because the households that carry a SUD when the reform lands lose their '
+                          'vouchers at once. That stock shrinks only as fast as recovery allows, even with more '
+                          'households in treatment (panel (b)), so revocations '
                           'are highest in the first years and fall as the stock thins.'
                           if max(h) > tf['h_1'] > hf['h_1'] else '')
     # cohorts: the first born whose CEV is within a tenth of a point of the long run's
@@ -180,7 +183,8 @@ def names(S, C, R):
            f"between ${min(a_all):.0f}$ and ${max(a_all):.0f}$ percent")
         + f", and the share among those with a SUD {'rises' if a_sud[-1] > a_sud[0] else 'falls'} from "
         f"${a_sud[0]:.0f}$ to ${a_sud[-1]:.0f}$ percent as the price comes down. "
-        + ('Every household entering adult life is better off throughout.' if min(a_ent) > 99.95 else
+        + ('However, every child and household entering adult life is better off throughout.' if min(a_ent) > 99.95
+           and min(c for b, c in cev) > 0 else
            f"At least ${min(a_ent):.0f}$ percent of households entering adult life are better off."))
     d = json.load(open(OUT_JSON))
     d.update(out)
