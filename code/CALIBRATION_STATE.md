@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+14:10 THE WHOLE TEXT MADE CONSISTENT WITH THE NEW ARMS (the author: "update the paper as well with all these new results.
+Make sure the prose everywhere is consistent ... homelessness drops a bit under tf"). Generated, in red: the abstract
+(x_abs_tf_exposes, x_abs_om_adv, x_abs_tf_result), the kappa_x item of Section 5 (x_kx_sentence: the high-end value no
+longer 'favours Housing First' once Treatment First lowers homelessness), the Discussion's channel sentence aligned with
+Section 6.2 (x_disc_economy) and its shelter-penalty sentence (x_disc_penalty). Scanned: literature, Sections 3-4 and
+the rest of 5 make no claim about the quantitative results that turns. NOT CONSISTENT, BY NECESSITY: the transition
+passages (introduction's transition paragraph, Section 6.3, Figure 3, Discussion 'what the trials can and cannot
+settle') describe the old transition against its own long run (+6 homelessness, CEV 1.39); they change only with stage
+E. Asked the author again to launch it.
+
 10:21 OVERNIGHT CHECK-IN: nothing due. Stage E waits on the author's go (cloud transition, 09:45). Only run alive:
 omega1_p0.91 (session_01597ZsSiDv3QDHH2NbNneM6, the obsolete fixed-pi_V comparison), at pass 39; archiving needs the
 author's word, asked.

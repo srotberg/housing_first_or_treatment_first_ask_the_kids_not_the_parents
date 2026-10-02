@@ -357,6 +357,25 @@ def main():
               'matches it on the housing margin')
     out['x_lr_margins'] = (f"Conditionality {_drug} and {_house}, because it works by taking housing away."
                            if _tf_dh > _om_dh else f"Conditionality {_drug} and {_house}.")
+    # THE WHOLE TEXT CONSISTENT WITH THE NEW ARMS (the author, 2 October: "make sure the prose everywhere is
+    # consistent ... homelessness drops a bit under tf"). The abstract: the first branch of each is the
+    # text it had, for a Treatment First that raises homelessness
+    _tf_dh_abs = abs(_tf_dh)
+    out['x_abs_tf_exposes'] = ('it also raises homelessness' if _trise else
+                               'it also exposes the households it screens out to homelessness')
+    out['x_abs_om_adv'] = 'sharply ' if abs(pc(o, 'b', 'null_remote')) >= 25 else ''
+    out['x_abs_tf_result'] = (
+        'Conditioning assistance raises homelessness but substantially cuts drug use' if _trise else
+        'Conditioning assistance substantially cuts drug use and, as the vouchers it revokes go to other '
+        f"poor households, lowers homelessness{' slightly' if _tf_dh_abs < 3 else ''}")
+    # the Discussion's 'which channel' sentence, as Section 6.2 now explains it (x_lr_v26_why): what users
+    # no longer cost the programme comes back as a higher pi_V, and demand falls, so the drug is cheaper
+    _pv_up, _p_dn = D[t]['piv'] > D['null_share']['piv'], D[t]['price'] < D['null_share']['price']
+    out['x_disc_economy'] = (
+        'the rest is a better economy to enter: what users no longer cost the programme returns to the '
+        'households that stay clean as a voucher that is easier to get' +
+        (', and the drug is cheaper' if _p_dn else '')
+        if _pv_up else 'the rest is a better economy to enter')
     m0, v0 = D['null_share']['adult']['mass'], D['null_share']['adult']['vf']
     m1, v1 = D[t]['adult']['mass'], D[t]['adult']['vf']
     # blocks: [clean parent, -, penalised, -]

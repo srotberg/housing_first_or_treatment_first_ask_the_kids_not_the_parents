@@ -345,6 +345,32 @@ out['x_tf_kids_dir'] = 'runs in both directions' if _hcup else 'runs one way'
 # the introduction's homelessness clause
 out['x_tf_h_clause'] = (f", but raises homelessness by ${out['x_tf_h_pc']}$ percent" if _hrise else
                         f", and lowers homelessness by ${out['x_tf_h_pc']}$ percent")
+# THE kappa_x ITEM OF SECTION 5 (the author, 2 October: "make sure the prose everywhere is consistent"):
+# a higher disamenity loads whichever policy houses more people, and in the long run that is Treatment
+# First once it lowers homelessness, so the 'favours Housing First' argument for the high-end value
+# holds only for a rise
+out['x_kx_sentence'] = (
+    'As it rises the aggregate homelessness externality increases, which loads whichever policy houses '
+    'more people, which in this model is Housing First. I therefore take a value from the high end of the '
+    'estimates, so that if Treatment First still ranks above Housing First, it does so under an assumption '
+    'that favours Housing First.' if _hrise else
+    'As it rises the aggregate homelessness externality increases, which loads whichever policy houses '
+    'more people. In the long run that is Treatment First, but only just: it lowers homelessness by '
+    f"${out['x_tf_h_pc']}$ percent, so this parameter barely moves the ranking between the two. I take a value "
+    'from the high end of the estimates.')
+# THE DISCUSSION'S PENALTY SENTENCE ('what the model does not have'): a penalty for growing up in a shelter
+# works against Treatment First only if the share of children in a shelter rises
+_sud_pp = out['x_tf_sudchild_pp']
+out['x_disc_penalty'] = (
+    f"A penalty of that kind would work against Treatment First, but on few children: the share of children "
+    f"in a shelter rises by ${out['x_tf_hchild_pp']}$ percentage points while the share living with a parent "
+    f"who carries a SUD {out['x_tf_sudchild_dir']} by ${_sud_pp}$." if _hcup else
+    f"A penalty of that kind would not work against Treatment First in the long run, where the share of "
+    f"children in a shelter does not rise while the share living with a parent who carries a SUD "
+    f"{out['x_tf_sudchild_dir']} by ${_sud_pp}$ percentage points." if _hflat else
+    f"A penalty of that kind would work in favour of Treatment First in the long run, where the share of "
+    f"children in a shelter falls by ${out['x_tf_hchild_pp']}$ percentage points and the share living with a "
+    f"parent who carries a SUD {out['x_tf_sudchild_dir']} by ${_sud_pp}$.")
 out['_tf_hchild_flat'] = _hflat
 out['_tf_hchild_up'] = _hcup
 
