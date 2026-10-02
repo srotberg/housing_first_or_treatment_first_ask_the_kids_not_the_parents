@@ -1,5 +1,9 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+10:21 OVERNIGHT CHECK-IN: nothing due. Stage E waits on the author's go (cloud transition, 09:45). Only run alive:
+omega1_p0.91 (session_01597ZsSiDv3QDHH2NbNneM6, the obsolete fixed-pi_V comparison), at pass 39; archiving needs the
+author's word, asked.
+
 09:45 STAGE E CANNOT START AS PLANNED. The plan staged the transition here from TF 85's run directory; tf85_c35 ran
 in the cloud and its counter_arm files (~2 GB: value function, policies, distribution) stayed in that container, which
 no tool here can reach. Locally there are 3.7 GB free (code/trtf60 alone is 4.2 GB) and one loop takes about 10 h
