@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07:22 optimal_clear ACCEPTED (10 passes; TARGET CHECK PASS, DIST CHECK PASS): price 0.8756, pi_V 0.0585, users -16.9,
+SUD -17.9, h_1 -10.7 against the null. Against omega1_clear (its base in the prose): h_1 0.0055190 vs 0.0056166, -1.7;
+drug use -0.06; pi_V 0.05855 vs 0.05842. So internalising the disamenity on top of omega_c = 1 moves homelessness by
+under 2 per cent, as the round-e459c6d9 prose says. Accepted arms now: null, omega1_clear, optimal_clear, tf85 ($22).
+Stage D waits only on tf85_c35 (pass 7 at 07:12: users -32.0, SUD -33.5, h_1 -1.2, CEV +4.42, gaps 9.5e-4/5.1e-3).
+
 06:30 ELASTICITIES FROM THE TEN POINTS INTO THE PAPER (the author: "we can wait for the numbers for table 6"). w0
 (session_01HdLgEDbDE2PCh7EJpUpyD6) exited 0 at 06:18: re-solve 10 blocks (last move 5.4e-4), all 27 last-block moments
 within 7.5e-4 of the reference, null re-solve users 1.0e-6. Price moved down and up by 10-50 per cent, ten points:
