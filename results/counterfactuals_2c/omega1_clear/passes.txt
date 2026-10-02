@@ -1,9 +1,10 @@
-# counterfactual omega1_clear against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 02 Oct 03:46 UTC
+# counterfactual omega1_clear against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 02 Oct 03:50 UTC
 remote_cf_point omega1_clear: gfortran missing, installing (00:42)
 remote_cf_point omega1_clear: building cf_fix (00:42)
 remote_cf_point omega1_clear: building cf_fix2 (00:44)
 remote_cf_point omega1_clear: omega1, budget cleared by pi_V against the accepted no-policy run's net revenue 5.8918410999831181 (00:45)
 remote_cf_point omega1_clear: arm omega1 on cf_fix2: ADJUST_TAXES=1 NET_TARGET=5.8918410999831181 PV_START=0.067533863251354007 DRUG_PRICE_START=0.8837 (00:45)
+remote_cf_point omega1_clear: arm omega1 ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.8918410999830000 DIST CHECK PASS: 10 passes, sweeps [70, 70, 70, 71, 70, 70, 70, 70, 70, 70], largest final 4.77e-05 (rule 5e-05, at least 70 sweeps)  (03:50)
 
 == omega1
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -16,3 +17,4 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   7  0.8756  0.05857   -16.9%   -17.9%    -9.3%  2.48e-05  1.95e-03   777.5063  -23.86%   -17.6%    -0.9%
   8  0.8756  0.05851   -16.9%   -17.9%    -9.2%  6.28e-05  1.87e-03   777.5001  -23.87%   -17.6%    -0.9%
   9  0.8756  0.05845   -16.9%   -17.9%    -9.2%  3.58e-05  1.09e-03   777.4956  -23.88%   -17.6%    -0.9%
+ 10  0.8756  0.05842   -16.8%   -17.8%    -9.2%  2.08e-04  4.15e-04   777.4931  -23.89%   -17.6%    -0.9%
