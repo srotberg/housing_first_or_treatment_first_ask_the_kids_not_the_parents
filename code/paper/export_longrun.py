@@ -312,6 +312,51 @@ def main():
     # whether full altruism and Treatment First move homelessness the same way
     same = (D[o]['h'] > D['null_remote']['h']) == (D[t]['h'] > D['null_share']['h'])
     out['x_lr_h_split'] = 'move together on' if same else 'part ways on'
+    # STAGE D: THE SENTENCES THAT TURN WITH THE NEW ARMS (Treatment First lowers homelessness on the
+    # omega_c = 0.085 benchmark, and cuts drug use by more than full altruism does). The first branch of
+    # each is the text the paper had.
+    _b1, _b2 = 100 * (hb1[1] / hb0[1] - 1), 100 * (hb1[2] / hb0[2] - 1)
+    _trise = D[t]['h'] > D['null_share']['h']
+    _w = lambda x: 'rises' if x > 0 else 'falls'
+    out['x_lr_hl_band_sentence'] = (
+        'Broken down by the age of the household, the rise in homelessness is largest among households '
+        'aged 35 to 44, whose children are still part of their household: their homelessness '
+        f'{_w(_b2)} by ${abs(_b2):.0f}$ percent, against ${_b1:.0f}$ percent at 26 to 34.'
+        if _trise and _b2 > _b1 and _b2 > 0 and _b1 >= 0 else
+        f'Broken down by the age of the household, homelessness {_w(_b2)} by ${abs(_b2):.0f}$ percent among '
+        'households aged 35 to 44, whose children are still part of their household, and '
+        f'{_w(_b1)} by ${abs(_b1):.0f}$ percent at 26 to 34.')
+    _r = pc(t, 'b', 'null_share') / pc(o, 'b', 'null_remote')
+    _tfb, _omb = out['x_lr_tf_b_pc'], out['x_lr_om_b_pc']
+    out['x_lr_tf_vs_om'] = (
+        f"Treatment First delivers ${out['x_lr_tf_of_om_pc']}$ percent of the fall in drug use that full "
+        f"altruism would bring, ${_tfb}$ percent against ${_omb}$." if _r <= 1.05 else
+        f"Treatment First cuts drug use by more than full altruism would, ${_tfb}$ percent against ${_omb}$.")
+    out['x_lr_tf_of_om_disc'] = (f"Treatment First delivers ${out['x_lr_tf_of_om_pc']}$ percent of that fall"
+                                 if _r <= 1.05 else f"Treatment First cuts it by more, ${_tfb}$ percent")
+    # Treatment First on the two housing margins, beside full altruism's
+    _hc_t = D[t]['child_hl'] - D['null_share']['child_hl']
+    _hflat = abs(100 * _hc_t) < 0.005
+    if _trise and _hc_t > 0:
+        out['x_lr_tf_both'] = 'raises both'
+    elif not _trise and _hc_t < 0 and not _hflat:
+        out['x_lr_tf_both'] = 'lowers both'
+    else:
+        out['x_lr_tf_both'] = (f"{'raises' if _trise else 'lowers'} homelessness by only "
+                               f"${abs(pc(t, 'h', 'null_share')):.0f}$ percent and "
+                               + ('leaves the share in a shelter where it was' if _hflat else
+                                  f"{'raises' if _hc_t > 0 else 'lowers'} the share in a shelter"))
+    _drug = ('gets the drug margin roughly right' if 0.85 <= _r <= 1.15 else
+             'goes further than full altruism on the drug margin' if _r > 1.15 else
+             'falls short of full altruism on the drug margin')
+    _om_dh = pc(o, 'h', 'null_remote')
+    _tf_dh = pc(t, 'h', 'null_share')
+    _house = (('the housing margin wrong' if _drug.startswith('gets') else 'gets the housing margin wrong')
+              if _tf_dh > 0 else
+              'falls short of it on the housing margin' if _tf_dh > _om_dh else
+              'matches it on the housing margin')
+    out['x_lr_margins'] = (f"Conditionality {_drug} and {_house}, because it works by taking housing away."
+                           if _tf_dh > _om_dh else f"Conditionality {_drug} and {_house}.")
     m0, v0 = D['null_share']['adult']['mass'], D['null_share']['adult']['vf']
     m1, v1 = D[t]['adult']['mass'], D[t]['adult']['vf']
     # blocks: [clean parent, -, penalised, -]

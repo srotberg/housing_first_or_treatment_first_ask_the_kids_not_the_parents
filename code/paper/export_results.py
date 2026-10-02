@@ -198,7 +198,11 @@ if last_cev('tf85') > CEV0:
         'everyone else, which, as Table~\\ref{tab:longrun} has shown, are small in absolute terms next '
         'to the first two.' if _hrise else
         'Welfare rises because the cut in drug use reduces the budget and earnings externalities, and '
-        'homelessness, and with it the externalities on the child and on everyone else, falls too.')
+        'homelessness, and with it the externalities on the child and on everyone else, falls too.'
+        if abs(tf['homelessness h_1']['pc']) >= 2 else
+        # homelessness all but unchanged (the omega_c = 0.085 arms: -1 per cent, the shelter share flat)
+        'Welfare rises because the cut in drug use reduces the budget and earnings externalities, while '
+        'homelessness, and with it the externalities that run through it, barely moves.')
 else:
     out['x_tf_cev_why'] = ''
 # THE DRUG TEST'S COST, as the model charges it.  The declaration's comment says the
@@ -311,6 +315,36 @@ out['x_tf_sudchild_dir'] = 'falls' if sc1 < sc0 else 'rises'
 # the shelter sentence opens with 'In contrast' (the author, 2 October) only when the share of
 # children in a shelter moves the other way from the share living with a parent who carries a SUD
 out['x_tf_hchild_lead'] = ('In contrast, the' if (child_homeless('tf85') > hc0) != (sc1 > sc0) else 'The')
+# STAGE D: THE SENTENCES THAT TURN WITH THE CHILDREN'S SHELTER SHARE. On the omega_c = 0.085 arms
+# Treatment First lowers homelessness and leaves the share of children in a shelter where it was
+# (1.03 to 1.03 at the $22 test), so 'rises by 0.00 percentage points' and 'runs in both directions'
+# would be false; each sentence is generated in three versions, rise, no change at two decimals,
+# and fall, the rise being the text the paper had.
+_hc1 = child_homeless('tf85')
+_hpp = float(out['x_tf_hchild_pp'])
+_hflat = _hpp < 0.005
+_hcup = _hc1 > hc0 and not _hflat
+a0, a1 = out['x_hchild0'], out['x_tf_hchild1']
+if _hflat:
+    out['x_tf_hchild_sentence'] = f"The share of children in a shelter is unchanged at ${a0}$ percent."
+    out['x_tf_hchild_even'] = f", while childhood homelessness stays at ${a0}$ percent of children"
+    out['x_tf_hchild_only'] = 'does not rise'
+else:
+    out['x_tf_hchild_sentence'] = (f"{out['x_tf_hchild_lead']} share of children in a shelter "
+                                   f"{out['x_tf_hchild_dir']} from ${a0}$ to ${a1}$ percent, by "
+                                   f"${out['x_tf_hchild_pp']}$ percentage points.")
+    out['x_tf_hchild_even'] = (f", even as childhood homelessness rises by ${out['x_tf_hchild_pc']}$ percent, "
+                               f"from ${a0}$ to ${a1}$ percent of children" if _hcup else
+                               f", and childhood homelessness falls by ${out['x_tf_hchild_pc']}$ percent, "
+                               f"from ${a0}$ to ${a1}$ percent of children")
+    out['x_tf_hchild_only'] = (f"rises by only ${out['x_tf_hchild_pp']}$ percentage points" if _hcup else
+                               f"falls by ${out['x_tf_hchild_pp']}$ percentage points")
+out['x_tf_kids_dir'] = 'runs in both directions' if _hcup else 'runs one way'
+# the introduction's homelessness clause
+out['x_tf_h_clause'] = (f", but raises homelessness by ${out['x_tf_h_pc']}$ percent" if _hrise else
+                        f", and lowers homelessness by ${out['x_tf_h_pc']}$ percent")
+out['_tf_hchild_flat'] = _hflat
+out['_tf_hchild_up'] = _hcup
 
 # WHO THE NEWBORNS' PARENTS ARE, the channel any child penalty keys on: the
 # share of newborns whose parent is homeless, and whose parent has a SUD, in
@@ -334,6 +368,9 @@ CEV0_TR = cev_log('old_null_share')
 tf_tr = final('old_tf85')
 hc0_tr = child_homeless('old_null_share')
 out['x_tr_lr_cev'] = f"{last_cev('old_tf85') - CEV0_TR:.2f}"
+# the long run the transition prose compares its path with: the old Treatment First's homelessness change
+out['x_tr_lr_h_pc'] = pc(tf_tr['homelessness h_1']['pc'])
+out['x_tr_hchild0'] = f'{100 * hc0_tr:.2f}'
 sys.path.insert(0, HERE)
 from transition_source import LOG as best   # the one pin
 tr_dir = os.path.join(ROOT, 'code', 'trtf60')
