@@ -167,7 +167,7 @@ fi
 publish "built, starting"
 
 # the last published tf pass, if a killed solve left one
-P0=0.8559; V0=0.0963   # the first TF run's pass 6
+P0=0.8556; V0=0.0964   # where the first TF run finished (pass 7; the author: "start the TF from the last place it finishes")
 if [ -f "$R/passes.txt" ]; then
     LAST=$(awk '/^== tf/{t=1;next} /^==/{t=0} t && $1 ~ /^[0-9]+$/ {p=$2; v=$3} END{if (p) print p, v}' "$R/passes.txt")
     [ -n "$LAST" ] && { P0=${LAST% *}; V0=${LAST#* }; note "resuming from the last published pass: price $P0, pi_V $V0"; }
