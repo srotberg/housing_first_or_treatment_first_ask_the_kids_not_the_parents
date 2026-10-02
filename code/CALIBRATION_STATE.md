@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+09:30 tf85_c35 ACCEPTED (11 passes; TARGET CHECK PASS, DIST CHECK PASS): price 0.8555, pi_V 0.0962, users -32.0, SUD
+-33.4, h_1 -0.9 (0.62 -> 0.61), shelter share flat at 1.03, CEV +4.33 net of the null's +0.003. STAGE D DONE: every
+accepted arm is in Section 6.2, Table 7, the introduction and the Discussion, in red (on top of round e459c6d9 and the
+elasticities). export_results.py/export_longrun.py read results/counterfactuals_2c through the arm map; x_tf_cev now
+from the exact log value (passes.txt rounds, which put the prose 0.01 above Table 7). THE TRANSITION (Section 6.3,
+Figure 3, the introduction's transition paragraph) STILL READS THE OLD ARMS, by design: x_tr_lr_cev 1.39, x_tr_lr_h_pc
+6, x_tr_hchild0 1.02, _cev_null_share_tr; so the introduction's long-run paragraph (4.33, -1) and its transition
+paragraph (against 1.39 and +6 in the long run) now disagree until stage E. Stage E next: T = 60 from tf85_c35.
+
 08:25 OVERNIGHT CHECK-IN: tf85_c35 pass 9 (digest 08:13): price 0.8554, pi_V 0.0964, users -32.0, SUD -33.5, h_1 -1.0,
 CEV +4.36, gaps 6.3e-5 / 2.2e-3: one more pass, about 08:50. STAGE D IS READY TO RUN when it is accepted:
 `git apply code/paper/stageD_src.patch`, `python3 code/paper/export_results.py` (TF_ARM defaults to tf85_c35/tf), splice

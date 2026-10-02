@@ -140,8 +140,10 @@ out['x_tf_price_pc'] = pc(tf['drug price']['pc'])
 CEV0 = cev_log('null_share')
 out['_cev_null_share'] = CEV0
 out['x_cev0'] = f'{CEV0:.2g}'
-out['x_tf_cev'] = f"{last_cev('tf85') - CEV0:.2f}"
-out['x_tf_cev_dir'] = 'better' if last_cev('tf85') > CEV0 else 'worse'
+# the exact CEV off the curve (cf.log), as Table 7 prints it: passes.txt rounds it to two decimals
+# before the no-policy run's is taken off, which put the prose 0.01 above the table (4.34 against 4.33)
+out['x_tf_cev'] = f"{cev_log('tf85') - CEV0:.2f}"
+out['x_tf_cev_dir'] = 'better' if cev_log('tf85') > CEV0 else 'worse'
 # the long-run gain splits about evenly between childhood and adulthood
 out['x_tf_child_share_pc'] = pc(100 * tf['split']['child'] / tf['split']['total'])
 # THE EXPERIMENT AS RUN (Section 7): pi_V clears the budget, and the screen's
@@ -189,7 +191,7 @@ out['x_tf_piv_so'] = ', which makes staying clean of drugs even more desirable' 
 # homelessness externalities since the latter a small in an absolute sense relative to the former
 # two"). That reason is for a reform that raises homelessness; when homelessness falls too, every
 # one of the four moves the same way.
-if last_cev('tf85') > CEV0:
+if cev_log('tf85') > CEV0:
     out['x_tf_cev_why'] = (
         'Welfare rises because the cut in drug use reduces the budget and earnings externalities by '
         'much more than it raises the externalities that run through homelessness, on the child and on '
@@ -368,6 +370,7 @@ CEV0_TR = cev_log('old_null_share')
 tf_tr = final('old_tf85')
 hc0_tr = child_homeless('old_null_share')
 out['x_tr_lr_cev'] = f"{last_cev('old_tf85') - CEV0_TR:.2f}"
+out['_cev_null_share_tr'] = CEV0_TR
 # the long run the transition prose compares its path with: the old Treatment First's homelessness change
 out['x_tr_lr_h_pc'] = pc(tf_tr['homelessness h_1']['pc'])
 out['x_tr_hchild0'] = f'{100 * hc0_tr:.2f}'

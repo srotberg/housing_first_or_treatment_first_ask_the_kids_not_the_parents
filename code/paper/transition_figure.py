@@ -152,7 +152,9 @@ def names(S, C, R):
 # The long-run CEV the cohorts are compared with: the paper's x_tf_cev, net of the no-policy
 # run's, and that offset, which the cohorts are netted by too.
 _N = json.load(open(OUT_JSON))
-TF_CEV, CEV0 = float(_N['x_tf_cev']), float(_N['_cev_null_share'])
+# the transition's own long run and no-policy run, the old arms it was solved between (export_results.py,
+# STAGE D), until the T = 60 transition is re-run on the omega_c = 0.085 arms
+TF_CEV, CEV0 = float(_N['x_tr_lr_cev']), float(_N['_cev_null_share_tr'])
 
 if __name__ == '__main__':
     main()
