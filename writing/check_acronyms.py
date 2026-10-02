@@ -35,6 +35,7 @@ ALLOW = {
     'DI',                                          # appears only as a maths subscript
     'WONDER',                                      # defined jointly as "(CDC WONDER)"
     'DATA',                                        # part of the filename DATA_APPENDIX.md
+    'UPDATE',                                      # the blue pending-update marker (\\upd), not prose
 }
 
 

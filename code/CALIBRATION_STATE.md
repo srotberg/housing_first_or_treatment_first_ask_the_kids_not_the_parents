@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+23:05 ROUND b02ad04b (no strip; the blue markers kept; red on top of base_r105): the introduction's validation
+paragraph -- 'checked against', 'employed', 'use drugs relative to others', 'excess drug-related deaths', the source
+named ('from the Centers for Disease Control and Prevention (CDC) WONDER database', the author: "against what
+data?"; the later definition in Section 4 shortened to 'CDC' for the acronym rule), 'drug use intensity', and 'Each is
+a place the model can be caught' removed. check_acronyms.py: UPDATE (the marker) allowed; DC was flagged before.
+
 22:55 MARKERS MADE VISIBLE (the author: "i want to be able to see those myself in the paper"): each \upd also puts a
 blue UPDATE flag in the margin (marginnote) and an entry, with its page and a link, in a "Pending updates from the new
 simulations" list printed after the abstract (\listofupdates, the .upd file; build three times). Tags now say where
