@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+01:25 internalise_clear NEVER STARTED: session_015CU8Xg6dQLQGNrbmVLPnQb stopped at a permission check on
+`bash code/remote_cf_clear.sh internalise` (the repo's .claude/settings.json allows only remote_omega_point.sh; the
+auto-mode check passed the same script for omega1_clear and remote_cf_tf.sh for tf85). Relaunched as
+session_01Fw664zrnSRuyHvFKWi8Yn2. If it is blocked again, the fix is an allow rule for the cf wrappers, which needs the
+author's say. omega1_clear pass 1 at 0.884: users -16.5, h_1 -16.2, budget gap 0.28 (pi_V moves from pass 2).
+
 01:30 BURDEN WITH FOOD STAMPS INTO THE PAPER. The rerun (results/b_scan_childsplit_fs, 7817942f source) exited 0 at
 00:32 after 10 blocks; every last-block moment within 1e-3 of the reference except the burden lines and sud_homeless
 (+1.25e-3, the same OpenMP variation) and the bottom-10 wealth share (base 3.7e-5). Renters over 30 per cent of income
