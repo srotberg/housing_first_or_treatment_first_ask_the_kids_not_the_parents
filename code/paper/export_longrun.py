@@ -219,7 +219,19 @@ def main():
     out['x_lr_om_piv_sentence'] = piv_sentence(o, 'null_remote',
         ': a population that uses fewer drugs lives longer, so the government collects fewer '
         'accidental bequests and pays more in social security')
+    # WHY HOMELESSNESS FALLS UNDER FULL ALTRUISM (the author, 2 October: "You need to explain why that is")
+    out['x_lr_om_h_why'] = ('Homelessness falls because fewer parents acquire the disorder, which costs a '
+                            'household its job and with it the income that pays the rent.'
+                            if D[o]['h'] < D['null_remote']['h'] else '')
     i = 'internalise'
+    # OPTIMAL HOMELESSNESS IS FULL ALTRUISM PLUS THE HOMELESSNESS EXTERNALITY (the author, 2 October: "no,
+    # it includes also omega_c=1"), so its changes are measured from the optimal-drug-use column when
+    # the arm ran at omega_c = 1, and from the benchmark for the old arm, which did not
+    _ho_i = dict(l.split()[:2] for l in open(os.path.join(RES, i, 'PARAM_HANDOVER.arm.txt')) if len(l.split()) >= 2)
+    ib = o if abs(float(_ho_i.get('weight_on_child', 0)) - 1) < 1e-9 else 'null_remote'
+    out['x_lr_in_base_word'] = 'optimal drug use' if ib == o else 'the benchmark'
+    out['x_lr_in_dh_pc'] = f"{abs(pc(i, 'h', ib)):.0f}"
+    out['x_lr_in_dh_dir'] = 'lower' if D[i]['h'] < D[ib]['h'] else 'higher'
     out['x_lr_in_b_pc'] = f"{abs(pc(i, 'b', 'null_remote')):.0f}"
     out['x_lr_in_b_dir'] = 'falls' if D[i]['b'] < D['null_remote']['b'] else 'rises'
     out['x_lr_in_h_pc'] = f"{abs(pc(i, 'h', 'null_remote')):.0f}"

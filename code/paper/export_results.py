@@ -121,11 +121,22 @@ out['x_tf_h1'] = f"{100 * tf['homelessness h_1']['level']:.2f}"
 # the homelessness sentence of Section 6.2 (the author: "However, it also raises homelessness by 6
 # percent from X to Y"): the 'However' belongs only to a rise, so the sentence turns with the sign
 _hrise = tf['homelessness h_1']['pc'] > 0
+# and why (the author, 2 October: "explain why....because it revokes vouchers for some of the very
+# households that need them since they have SUD, spend more on drugs, and may have lost their job")
 out['x_tf_h_sentence'] = (
     f"However, it also raises homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to "
-    f"{out['x_tf_h1']} percent of households." if _hrise else
+    f"{out['x_tf_h1']} percent of households, because it revokes vouchers from some of the very "
+    f"households that need them most: those with a SUD, who spend more on the drug and may have lost "
+    f"their job." if _hrise else
     f"It also lowers homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to "
-    f"{out['x_tf_h1']} percent of households.")
+    f"{out['x_tf_h1']} percent of households: the vouchers it revokes from households with a SUD go, "
+    f"through a higher $\\pi_V$, to other poor households.")
+# THE HOMELESS WHO COULD HAVE AFFORDED HOUSING, in the benchmark (the author, 2 October: "many just
+# can't afford to not be homeless even if they wanted to"): the share homeless by choice
+_bl = gzip.open(os.path.join(ROOT, 'results', 'reference', 'hf_2c_omega_0.085', 'bench.log.gz'), 'rt',
+                errors='replace').read()
+_ch = float(re.findall(r'DIAG homeless by choice, share of the homeless\s*=\s*(\S+)', _bl)[-1])
+out['x_hl_choice_pc'] = f'{100 * _ch:.2g}'
 # pi_V's direction, and the clause the author added to a rise ("which makes staying clean of drugs
 # even more desirable"): a voucher easier to get is a larger reward for passing the screen
 _pvup = tf['pi_V (voucher probability)']['pc'] > 0

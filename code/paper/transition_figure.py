@@ -76,7 +76,9 @@ def main():
     ax.axvspan(UNCONVERGED_FROM - 25 - 0.5, max(born) + 0.5, color='0.92', lw=0, zorder=0)
     ax.axhline(0.0, color=GREY, lw=0.8)
     ax.axhline(TF_CEV, color=BLUE, ls=':', lw=1.5, label='Treatment First long run')
-    ax.bar(born, cev, color=BLUE, width=0.7)
+    # a line, like the other five panels (the author, 2 October: "why not give a line like in the
+    # other graphs?"); it was a bar per cohort
+    ax.plot(born, cev, '-', color=BLUE, lw=2.0, label='Treatment First, by year of birth')
     ax.set_title('(f) Welfare by year of birth, CEV', fontsize=10.5, loc='left')
     ax.set_ylabel('percent of lifetime consumption', fontsize=9)
     ax.set_xlabel('year of birth, after the reform', fontsize=9)
@@ -118,6 +120,15 @@ def names(S, C, R):
     out['x_trf_paruse0'] = f"{100 * hf['par_use']:.2f}"
     out['x_trf_paruse_lr'] = f"{100 * tf['par_use']:.2f}"
     out['x_trf_paruse1_vs_lr'] = 'below' if pu[0] < tf['par_use'] else 'above'
+    # the intuition for each panel (the author, 2 October: "Are you walking the reader through each of
+    # the graphs and explaining why they come out this way?"), only where the path does what it explains
+    out['x_trf_paruse_why'] = ('It is also why the share of parents who use starts below its long-run level in '
+                               'panel (e): as the stock of carriers thins and the price comes down, some of '
+                               'them come back.' if pu[0] < tf['par_use'] else '')
+    out['x_trf_h_why'] = ('The households that carry a SUD when the reform lands lose their vouchers at once, '
+                          'and that stock shrinks only as fast as recovery allows (panel (b)), so revocations '
+                          'are highest in the first years and fall as the stock thins.'
+                          if max(h) > tf['h_1'] > hf['h_1'] else '')
     # cohorts: the first born whose CEV is within a tenth of a point of the long run's
     cev = [(int(r['born']), r['cev_pc'] - CEV0) for r in C]
     out['x_trf_cev_b1'] = f'{cev[0][1]:.1f}'
