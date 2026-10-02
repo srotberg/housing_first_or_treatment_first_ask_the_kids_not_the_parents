@@ -1,5 +1,13 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03:42 OPTIMAL HOMELESSNESS REDEFINED (the author: "this experiment should add the homelessness internalization on
+top of omega_c=1", "no, it includes also omega_c=1"): internalise + weight_on_child 1 + pi_V clearing.
+code/remote_cf_optimal.sh + cf_runs/cf_arm_v3.sh; session_01FzP5HjRqsMKCn68QMhqoDR; results/counterfactuals_2c/
+optimal_clear/; starts at omega1_clear's pass 7 (0.8756, 0.0586). THE PAPER'S FOURTH COLUMN IS NOW optimal_clear;
+internalise_clear (blocked, never ran) is obsolete. export_longrun.py measures its changes from omega1 once its
+handover has weight_on_child 1. Round abaf0fc0 sent (10716918). Told the author: the fiscal externality (taxes and
+transfers a user's SUD costs the government) is still not internalised, so this is not the full planner optimum.
+
 03:24 CHECK-IN: nothing accepted since the null, nothing to launch. omega1_clear pass 7 nearly converged: price 0.8756,
 pi_V 0.0586 (from 0.0675), users -16.9, SUD -17.9, h_1 -9.3, gaps 2.5e-5 / 1.9e-3. tf85 ($22) pass 7 converged in all
 but the exit. tf85_c35 running since 02:52, no pass yet. internalise_clear waits on the author (permission). Round
