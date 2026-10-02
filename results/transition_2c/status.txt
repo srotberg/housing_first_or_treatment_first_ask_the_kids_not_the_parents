@@ -1,4 +1,4 @@
-# stage E, the T = 60 transition on the omega_c = 0.085 arms; 02 Oct 17:59 UTC
+# stage E, the T = 60 transition on the omega_c = 0.085 arms; 02 Oct 18:06 UTC
 remote_transition_2c: gfortran missing, installing (14:11)
 remote_transition_2c: free disk 29G, memory 15 GiB, cores 4 (14:12)
 remote_transition_2c: building cf_fix (14:12)
@@ -12,6 +12,7 @@ remote_transition_2c: arm null on cf_fix2_share: DRUG_PRICE_START=1.0001082 (14:
 remote_transition_2c: arm tf on cf_fix2: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.096152024 DRUG_PRICE_START=0.85551291 EXTRA_SET=cost_per_drug_test 0.0004946100 (14:24)
 remote_transition_2c: no-policy re-solve ACCEPTED: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [70, 70, 70, 72, 70], largest final 4.32e-05 (rule 5e-05, at least 70 sweeps)  (15:58)
 remote_transition_2c: flat control staged: all inputs present -- the transition has everything it opens for reading staged /home/user/housing_first_or_treatment_first/code/tr2c_flat10 -- start with: cd /home/user/housing_first_or_treatment_first/code/tr2c_flat10 && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1  (15:58)
+remote_transition_2c: FLAT CONTROL PASS: welfare at t=1 787.49635 against the steady state's 787.49609, largest deviation 0.00081 utils (1 per cent CEV is about 0.34); worst budget residual 1.05e-04 (rule 1e-3); worst drug gap 4.98e-05 (rule 5e-3) (18:06)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -32,6 +33,6 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   7  0.8549  0.09688   -32.0%   -33.5%    -1.2%  9.96e-04  5.17e-03   788.9883  +4.43%   -20.3%   +17.2%
 
 == flat control (T = 10)
-  loop 0: periods to 8, worst budget residual (t>1) 1.05e-04, worst drug gap 4.65e-05
+  loop 0: periods to 9, worst budget residual (t>1) 1.05e-04, worst drug gap 4.65e-05  [paths saved]
   latest TRANSITION CEV t=           1  CEV=   3.8608539465664231E-005
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.98966206377696098       share_newborns=  0.54256422930291193       share_addicted=  0.96744929236215083       share_addicted_newborns=   0.0000000000000000
