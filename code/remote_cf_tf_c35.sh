@@ -1,0 +1,178 @@
+#!/bin/bash
+# remote_cf_tf_c35.sh -- TREATMENT FIRST WITH THE DRUG TEST AT $35 (2 October). The author: "rerun TF
+# with the higher test cost" and "you should run the cost of the test on the upper end of the
+# estimates...$35". The test cost is in the model's units, where average labour income is
+# 1.589817990383 in the benchmark; the paper's dollar scale is average labour income = $9m / 80 (the
+# value of a statistical life, Block 1), about $112,500, so $35 is 0.0311 per cent of it and
+# cost_per_drug_test = 0.000311 x 1.5898 = 0.000494. The 0.00031 of the first run was meant as 0.031
+# per cent of average earnings but is charged in model units, about $22. Results to
+# results/counterfactuals_2c/tf85_c35/. Otherwise as remote_cf_tf.sh, whose header follows:
+#
+# remote_cf_tf.sh -- THE RATIONED TREATMENT FIRST ARM ALONE, against the omega_c = 0.085 two-class
+# benchmark, for a cloud worker. A copy of remote_cf_point.sh with one arm (1 October, 23:30).
+#
+# WHY A COPY. The nulltf worker's container was restarted twice (22:35 and 23:03, worker epoch 3);
+# each restart killed the solve and the worker's re-run started the whole sequence again, so the
+# ACCEPTED no-policy run (21:20) is being solved a third time before TF can begin. Its net revenue,
+# the TF budget target, is already known: 5.8918410999831181 (results/counterfactuals_2c/nulltf,
+# the 21:20 status line). remote_cf_point.sh itself is not edited, because four workers are
+# executing it. AND A RESTART RESUMES FROM THE LAST PUBLISHED PASS: the drug price and pi_V start
+# at the last tf row of results/counterfactuals_2c/tf85/passes.txt when there is one, so a killed
+# solve loses its passes but not the walk of the two prices.
+#
+# The rest of the header is remote_cf_point.sh's:
+#
+#   arm = omega1        the parent counts the child fully (optimal SUD)
+#         internalise   the homeless bear kappa_x (optimal homelessness)
+#         nulltf        no policy, then rationed Treatment First at 85 per cent detection,
+#                       cleared against the no-policy run's net revenue
+#
+# The benchmark is NOT re-solved: cf_arm.sh takes it from results/reference/hf_2c_omega_0.085
+# (BENCH_FROM), the run the author chose on 1 October. Each arm warm-starts its drug price (and
+# TF its pi_V) at the old arm's equilibrium (results/counterfactuals_cf_fix2/<arm>/final.txt):
+# the author, 1 October, "you may be able to use the old equilibria values from other
+# simulations to speed things up".
+#
+# START IT WITH THE BASH TOOL'S run_in_background=true from the repo root, and run the same
+# command again whenever the call is stopped: it ATTACHES to the running solve (the detach is
+# remote_omega_point.sh's, which survived the 2-hour limit on 1 October). Every 20 minutes it
+# pushes the passes so far to results/counterfactuals_2c/<arm>/passes.txt; at the end it
+# pushes passes.txt, final.txt, the checks, cf.log.gz and run.out.gz, and RESULT.md.
+set -u
+ARM=tf85_c35
+CTEST=$(python3 -c "print('%.10f' % (35/(9e6/80)*1.589817990383))")
+NET_TARGET_NULL=5.8918410999831181
+# OPTIONAL SECOND ARGUMENT: the drug price the arm starts from, overriding the old arm's equilibrium.
+# The price moves at most 0.5 per cent a pass, so a warm start far from the new equilibrium costs
+# passes rather than saving them: omega1 started at the old 0.863 sat at 0.87 after two passes
+# while its supply curve implied about 0.98 (1 October, 21:10). Its runs publish to <arm>_p<price>.
+PSTART=""
+BRANCH=claude/two-period-addiction-hazard-d7gb61
+C=$(cd "$(dirname "$0")" && pwd)
+REPO=$(cd "$C/.." && pwd)
+REF=$REPO/results/reference/hf_2c_omega_0.085
+R=$REPO/results/counterfactuals_2c/$ARM${PSTART:+_p$PSTART}
+mkdir -p "$R"
+D=$C/cf_point_$ARM${PSTART:+_p$PSTART}
+TRAILER=$'\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01WpmVwzkbKX7RRP8t9yBCLv'
+# the benchmark: b*, omega_c and kappa_uem of the run, kappa_x on the income basis
+export BENCH_FROM=$REF BENCH_B=0.0054222 BENCH_OMEGA=0.085 BENCH_KU=1.0 KAPPA_X=0.9342362271804227
+export OMP_NUM_THREADS=2 SEED_FROM=bench DIAG_TAG=_2c
+# passes.py measures changes against THIS benchmark and its CEV on THIS benchmark's curve
+export PASSES_BASE="0.089562893104297908,0.038113117586549894,0.0061835672543113307"
+export CEV_CURVE=$D.welfare_curve.dat
+
+note() { echo "remote_cf_point $ARM: $* ($(date -u +%H:%M))" | tee -a "$D.status"; }
+
+if [ "${CF_POINT_DETACHED:-0}" != 1 ]; then
+    mkdir -p "$(dirname "$D")"
+    if [ -f "$D.pid" ] && kill -0 "$(cat "$D.pid")" 2>/dev/null; then
+        echo "remote_cf_point $ARM: attaching to the running solve, pid $(cat "$D.pid")"
+    else
+        ( CF_POINT_DETACHED=1 setsid nohup bash "$0" "$@" > "/tmp/cf_point_$ARM.detached.log" 2>&1 < /dev/null &
+          echo $! > "$D.pid" )
+        echo "remote_cf_point $ARM: started detached, pid $(cat "$D.pid"); log /tmp/cf_point_$ARM.detached.log"
+    fi
+    while kill -0 "$(cat "$D.pid")" 2>/dev/null; do sleep 60; done
+    echo "remote_cf_point $ARM: finished"; cat "$D.status" 2>/dev/null
+    grep -q "ACCEPTED" "$D.status" 2>/dev/null
+    exit $?
+fi
+
+# digest <sub-arm>: passes so far, from the arm's own log
+digest() (
+    cd "$C"
+    L="cfarm_${1}_2c/cf.log"
+    [ -f "$L" ] && python3 cf_runs/passes.py "$L" "$C/cf_runs/cev.py" 2>/dev/null
+)
+publish() (
+    {
+        echo "# counterfactual $ARM against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); $(date -u '+%d %b %H:%M UTC')"
+        cat "$D.status" 2>/dev/null
+        for a in null omega1 internalise tf; do
+            [ -f "$C/cfarm_${a}_2c/cf.log" ] && { echo; echo "== $a"; digest "$a"; }
+        done
+        true
+    } > "$R/passes.txt.tmp"; mv "$R/passes.txt.tmp" "$R/passes.txt"
+    cd "$REPO"
+    git add "$R" 2>/dev/null
+    git commit -q -m "counterfactual $ARM (omega_c 0.085): $1$TRAILER" || return 0
+    for i in 1 2 3 4; do
+        git fetch -q origin "$BRANCH" && git rebase -q -X theirs FETCH_HEAD && \
+            git push -q origin HEAD:"$BRANCH" && return 0
+        git rebase --abort 2>/dev/null
+        sleep $((2 ** i))
+    done
+    note "push failed after 4 tries"
+)
+
+# run_arm <cf_arm.sh arm> <build> [VAR=value ...]: one arm, published every 20 minutes;
+# returns 0 only if its checks pass
+run_arm() (
+    a=$1; b=$2; shift 2
+    cd "$C"
+    note "arm $a on $b: $*"
+    env BUILD="$b" "$@" sh cf_runs/cf_arm_set.sh "$a" > "$C/cfarm_${a}_2c.out" 2>&1 &
+    P=$!
+    while kill -0 "$P" 2>/dev/null; do
+        for _ in $(seq 1 120); do kill -0 "$P" 2>/dev/null || break; sleep 10; done
+        kill -0 "$P" 2>/dev/null && publish "$a running, $(grep -ac '^ *distance_govt_budget=' "$C/cfarm_${a}_2c/cf.log" 2>/dev/null) passes"
+    done
+    wait "$P"; rc=$?
+    O="$C/cfarm_${a}_2c.out"
+    mkdir -p "$R/$a"
+    gzip -c "$O" > "$R/$a/run.out.gz"
+    [ -f "$C/cfarm_${a}_2c/cf.log" ] && gzip -c "$C/cfarm_${a}_2c/cf.log" > "$R/$a/cf.log.gz"
+    [ -f "$C/cfarm_${a}_2c/PARAM_HANDOVER.arm.txt" ] && cp "$C/cfarm_${a}_2c/PARAM_HANDOVER.arm.txt" "$R/$a/"
+    grep -a "CHECK PASS\|GUARD" "$O" > "$R/$a/checks.txt"
+    NULLLOG=""; [ "$a" != null ] && [ -f "$C/cfarm_null_2c/cf.log" ] && NULLLOG="$C/cfarm_null_2c/cf.log"
+    [ -f "$C/cfarm_${a}_2c/cf.log" ] && python3 "$C/cf_runs/finalstats.py" "$C/cfarm_${a}_2c/cf.log" $NULLLOG > "$R/$a/final.txt" 2>&1
+    digest "$a" > "$R/$a/passes.txt"
+    ok=0
+    tail -5 "$O" | grep -q "DIST CHECK PASS" || ok=1
+    case "$a" in
+        tf) grep -q "TARGET CHECK PASS" "$O" || ok=1 ;;
+        *)  grep -q "VOUCHER CHECK PASS" "$O" || ok=1 ;;
+    esac
+    grep -q "GUARD" "$O" && ok=1
+    [ "$rc" = 0 ] || ok=1
+    if [ "$ok" = 0 ]; then note "arm $a ACCEPTED (exit $rc): $(tr '\n' ' ' < "$R/$a/checks.txt")"
+    else note "arm $a NOT accepted (exit $rc): $(tail -3 "$O" | tr '\n' ' ')"; fi
+    publish "$a finished"
+    return $ok
+)
+
+[ -f "$D.status" ] && mv "$D.status" "$D.status.$(date -u +%H%M%S)"; : > "$D.status"
+command -v gfortran >/dev/null 2>&1 || {
+    note "gfortran missing, installing"
+    apt-get update -qq >/dev/null 2>&1; apt-get install -y -qq gfortran >/dev/null 2>&1
+}
+command -v gfortran >/dev/null || { note "GUARD: no gfortran"; publish "failed"; exit 1; }
+gunzip -c "$REF/files/welfare_curvebaseline_benchmark.dat.gz" > "$CEV_CURVE"
+
+# THE BUILDS, SEQUENTIALLY (cf_runs/README.md): cf_fix, then cf_fix2, and the damped build for
+# internalise, which cycled on cf_fix2 on 26 September and converged on cf_fix2_damp
+cd "$C"
+for b in cf_fix cf_fix2; do
+    [ -x "$C/$b/hftf_cf_prod" ] && continue
+    note "building $b"
+    bash "cf_runs/build_$b.sh" > "/tmp/cf_point_build_$b.log" 2>&1 || {
+        note "GUARD: build $b failed: $(tail -3 /tmp/cf_point_build_$b.log | tr '\n' ' ')"; publish "failed"; exit 1; }
+done
+if [ "$ARM" = internalise ] && [ ! -x "$C/cf_fix2_damp/hftf_cf_prod" ]; then
+    note "building cf_fix2_damp"
+    bash cf_runs/build_cf_fix2_damp.sh > /tmp/cf_point_build_damp.log 2>&1 || {
+        note "GUARD: build cf_fix2_damp failed"; publish "failed"; exit 1; }
+fi
+publish "built, starting"
+
+# the last published tf pass, if a killed solve left one
+P0=0.8559; V0=0.0963   # the first TF run's pass 6
+if [ -f "$R/passes.txt" ]; then
+    LAST=$(awk '/^== tf/{t=1;next} /^==/{t=0} t && $1 ~ /^[0-9]+$/ {p=$2; v=$3} END{if (p) print p, v}' "$R/passes.txt")
+    [ -n "$LAST" ] && { P0=${LAST% *}; V0=${LAST#* }; note "resuming from the last published pass: price $P0, pi_V $V0"; }
+fi
+note "TF budget target: the accepted no-policy run's net revenue $NET_TARGET_NULL"
+note "test cost $CTEST in model units (\$35)"
+run_arm tf cf_fix2 PDET=0.85 NET_TARGET="$NET_TARGET_NULL" PV_START="$V0" DRUG_PRICE_START="$P0" EXTRA_SET="cost_per_drug_test $CTEST"
+publish "complete"
