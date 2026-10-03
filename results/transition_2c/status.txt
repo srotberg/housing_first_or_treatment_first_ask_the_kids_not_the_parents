@@ -1,8 +1,5 @@
-# stage E, the T = 60 transition on the omega_c = 0.085 arms; 03 Oct 08:32 UTC
-remote_transition_2c: free disk 22G, memory 15 GiB, cores 4 (06:35)
-remote_transition_2c: arm null on cf_fix2_share: DRUG_PRICE_START=1.0001082 (06:36)
-remote_transition_2c: arm tf on cf_fix2: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.096152024 DRUG_PRICE_START=0.85551291 EXTRA_SET=cost_per_drug_test 0.0004946100 (06:36)
-remote_transition_2c: no-policy re-solve ACCEPTED: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [70, 70, 71, 70, 70], largest final 4.73e-05 (rule 5e-05, at least 70 sweeps)  (08:32)
+# stage E, the T = 60 transition on the omega_c = 0.085 arms; 03 Oct 09:15 UTC
+remote_transition_2c: free disk 16G, memory 15 GiB, cores 4 (09:15)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -16,3 +13,6 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  0.8581  0.09615   -30.5%   -32.0%    -2.5%  2.58e-02  3.15e-01   789.9398  +7.39%   -16.8%   +19.6%
   2  0.8552  0.09615   -34.4%   -35.8%    -2.2%  2.90e-02  2.46e-02   789.2342  +5.18%   -23.9%   +15.9%
+  3  0.8547  0.09910   -32.7%   -34.2%    -2.4%  4.03e-03  1.08e-02   789.1327  +4.87%   -21.0%   +17.4%
+
+== flat control (T = 10)
