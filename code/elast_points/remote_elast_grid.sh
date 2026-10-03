@@ -72,6 +72,11 @@ command -v gfortran >/dev/null || { note "GUARD: no gfortran"; publish "failed";
 [ -d "$D" ] && mv "$D" "$D.dead_$(date -u +%H%M%S)"
 mkdir -p "$D/run"
 note "building, points $PTS"
+# THE BINARY IS BUILT FROM d62835db, and a cloud session clones fifty commits deep, so that commit is
+# not in its history: both workers of 03 Oct 02:05 failed on 'invalid object name'. Fetch it first.
+git -C "$C/.." cat-file -e d62835db^{commit} 2>/dev/null || git -C "$C/.." fetch -q --unshallow origin 2>/dev/null || \
+    git -C "$C/.." fetch -q --depth=1000 origin "$BRANCH"
+git -C "$C/.." cat-file -e d62835db^{commit} 2>/dev/null || { note "GUARD: d62835db not reachable"; publish "failed"; exit 1; }
 bash "$C/elast_points/make_binary.sh" "$D/build" "$PTS" > "$D/build.log" 2>&1 || {
     note "GUARD: build failed: $(tail -3 "$D/build.log" | tr '\n' ' ')"; publish "failed"; exit 1; }
 note "$(tail -1 "$D/build.log")"
