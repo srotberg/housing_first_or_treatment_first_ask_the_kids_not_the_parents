@@ -202,14 +202,14 @@ assert abs(_up + _few + _oth - _hh['pc']) < 0.05, (_up, _few, _oth, _hh['pc'])
 if not _hrise and _up > 0 > _few and _oth < 0 and _few + _oth < -_up:
     out['x_tf_h_sentence'] = (
         f"Treatment First also lowers homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to {out['x_tf_h1']} "
-        'percent of households, as the balance of two forces. On the one hand, it revokes the vouchers of '
+        'percent of households, as the balance of three effects. First, it revokes the vouchers of '
         'households with a SUD and puts them at a higher risk of homelessness. Of them, '
         f'${100 * _rs1:.2f}$ percent are homeless, against ${100 * _rs0:.2f}$ under Housing First. On its own this '
-        f'raises homelessness by ${_up:.0f}$ percent. On the other hand, less SUD means '
+        f'raises homelessness by ${_up:.0f}$ percent. Second, less SUD means '
         'less unemployment and so less homelessness. There are '
         f"{'a third' if round(abs(_l1 / _l0 - 1), 1) == 0.3 else f'{100 * abs(_l1 / _l0 - 1):.0f} percent'} "
         f'fewer households with a SUD, which on its own lowers homelessness by ${abs(_few):.0f}$ percent. '
-        'And the vouchers it revokes go, through the higher $\\pi_V$, to other clean and eligible households, '
+        'Third, the vouchers it revokes go, through the higher $\\pi_V$, to other clean and eligible households, '
         f'lowering homelessness by ${abs(_oth):.0f}$ percent. Together the last two more than offset the first.')
 out['x_tf_h_split'] = (
     'The fall hides a rise among the households the screen acts on: the share of households with a SUD who '
@@ -225,9 +225,9 @@ out['x_tf_h_split'] = (
 out['x_tf_h_why_intro'] = ('' if _hrise else
                            '. On the one hand, it revokes the vouchers of drug users and households with a SUD and puts them at a '
                            'higher risk of homelessness. On the other hand, in the long run, removing the moral '
-                           'hazard cuts drug use, so fewer households acquire a SUD and lose their jobs and their '
-                           'housing to it, and the vouchers it revokes go to other poor households instead, with the '
-                           'latter two effects slightly more than offsetting the former two')
+                           'hazard cuts drug use, so fewer households acquire a SUD and, with it, long spells out of work that '
+                           'cost them their housing, and the vouchers it revokes go to other poor households instead. '
+                           'Together these two effects slightly more than offset the first')
 # THE HOMELESS WHO COULD HAVE AFFORDED HOUSING, in the benchmark (the author, 2 October: "many just
 # can't afford to not be homeless even if they wanted to"): the share homeless by choice
 _bl = gzip.open(os.path.join(ROOT, 'results', 'reference', 'hf_2c_omega_0.085', 'bench.log.gz'), 'rt',
@@ -259,8 +259,10 @@ if cev_log('tf85') > CEV0:
         # homelessness all but unchanged (the omega_c = 0.085 arms: -1 per cent, the shelter share flat)
         # (round 4ad85a30, the author: 'barely moves' -> "is unchanged in the long run"; almost, since
         # homelessness falls by 1 per cent while the shelter share is flat)
-        'Welfare rises because the cut in drug use reduces the budget and earnings externalities, while '
-        'homelessness, and with it the externalities that run through it, is almost unchanged in the long run.')
+        'Welfare rises because the cut in drug use reduces the budget and earnings externalities and, '
+        'through the government budget and the drug market, leaves a larger voucher programme and a cheaper '
+        'drug, while homelessness, and with it the externalities that run through it, is almost unchanged in '
+        'the long run.')
 else:
     out['x_tf_cev_why'] = ''
 # THE DRUG TEST'S COST, as the model charges it.  The declaration's comment says the
@@ -384,13 +386,13 @@ _hflat = _hpp < 0.005
 _hcup = _hc1 > hc0 and not _hflat
 a0, a1 = out['x_hchild0'], out['x_tf_hchild1']
 if _hflat:
-    out['x_tf_hchild_sentence'] = f"The share of children in a shelter is unchanged at ${a0}$ percent."
+    out['x_tf_hchild_sentence'] = f"In the long run, the share of children in a shelter is unchanged at ${a0}$ percent."
     out['x_tf_hchild_even'] = f", while childhood homelessness stays at ${a0}$ percent of children"
     # (round 4ad85a30, the author: ", since aggregate homelessness slightly declines")
     # (round c88b1dda, the author: 'since' -> 'as')
     out['x_tf_hchild_since'] = (', as aggregate homelessness slightly declines'
                                 if tf['homelessness h_1']['pc'] < 0 else '')
-    out['x_tf_hchild_only'] = 'does not rise'
+    out['x_tf_hchild_only'] = 'does not rise in the long run'
 else:
     out['x_tf_hchild_sentence'] = (f"{out['x_tf_hchild_lead']} share of children in a shelter "
                                    f"{out['x_tf_hchild_dir']} from ${a0}$ to ${a1}$ percent, by "
@@ -453,7 +455,7 @@ out['x_odds_tilt_sentence'] = (
     + ('at the low end of' if _cal.get('u_odds_sud_pos', '').startswith('at the low end') else 'below')
     + ' the evidence understates what Treatment First does for children, so if it still raises welfare in the '
     'experiments below, that result is conservative.' if _hflat and _sud_low else
-    f"The model loads the externality on children toward {_cal['u_odds_tilt']} more than "
+    f"The model loads the externality on children towards {_cal['u_odds_tilt']} more than "
     f"{_cal['u_odds_tilt_other']}, so {_cal['u_odds_tilt_so']}.")
 out['_tf_hchild_flat'] = _hflat
 out['_tf_hchild_up'] = _hcup

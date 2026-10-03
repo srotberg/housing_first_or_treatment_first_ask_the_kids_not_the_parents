@@ -1,5 +1,26 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 01:00 REVIEW ROUND (the author: "fix everything you found. put it in red"; no strip, base_r109 + splice_r109,
+164 red marks, blue \upd tags kept and four added). Groups A-F of the 2 October review applied. A: 'lose their jobs
+to a SUD' -> spells out of work (Section 4.8: the SUD only lowers job finding) in the generators and prose; footnote 16
+tagged blue (old-calibration checks); Discussion's second lesson, second design choice and the recycling sentence tagged
+blue; 'in the long run' in the abstract, 6.2 and the literature; the screen as Section 4.9 states it; 'what turns the
+ranking' and x_tf_cev_why name the budget and drug-market gains; Table 3 9.4 (was a stale 10.2) and its CEV of those
+affected 0.19 on the same basis (stage_results.py: cev_pop / exact share); the mortality claim with s1_r_cal and
+s1_r_mortonly; stage 2 participation at the rest point (s2_part_* 9.66, 7.16, = sud_stat / pi_d); full altruism 'the
+optimal level of drug use'; odds ratios as odds. B: 16.0 for the drug-spending target (q_theta was a stale 16.2;
+sync_tables.py is broken on avg_rent_to_income_data); 8.90 as an any-severity disorder rate; kappa_r; notation; 'the
+same'; SMI at entry; 'larger in absolute value'; tau_ell; Table 4 rows (pi_r ten-year rate, kappa_x Int., omega_c 'less
+one') and a J_K row in Table 5 (c_j_k_value); Section 4 numbers out. C (citations checked by an agent through search
+summaries, WebFetch blocked): Lundborg-Lindgren is the 2002 alcohol paper and finds OVERestimation; Milby had three
+arms and 6.60/4.48 is non-contingent housing against none; Meyer 1.60 is against the housed POOR; HSV estimate
+1-phi = 0.181; Aubry 2016 is Psychiatric Services; Guvenen 2023a dropped (2022, not about taxes), 2023b -> 2023; Asbo
+2022 added (50 percent is the BIPOLAR ten-year rate); Stergiopoulos 2015 added; AFCARS FY2017 cited; 13 uncited entries
+dropped; the data line; Imrohoroglu. D: hyphens, number words hyphenated (fill._word), acronyms in tables, CPS/CEX/PSH
+once, eleven Section 5 paragraphs given their 'as it rises' clause. E: the grammar list. F: Table 7 note on unrounded
+changes; the stylized transition's rounded parts. NOT CHANGED: Tables 4-5 parameter values keep their third decimal
+(the replication value); the repository name. Decomp 2c restarted from pass 1 at 23:46 (container restart).
+
 23:05 ROUND b02ad04b (no strip; the blue markers kept; red on top of base_r105): the introduction's validation
 paragraph -- 'checked against', 'employed', 'use drugs relative to others', 'excess drug-related deaths', the source
 named ('from the Centers for Disease Control and Prevention (CDC) WONDER database', the author: "against what

@@ -62,6 +62,7 @@ C = constants()
 AGE0 = 25                                     # j = 1 is age 26
 J_MAX = int(C['life_span'])
 J_RET = int(C['life_span'] - C['retirement_span'] + 1)
+J_K = int(C['child_at_home_last_index'])
 H = {}
 for l in open(os.path.join(BENCH, 'PARAM_HANDOVER.bench.txt')):
     p = l.split()
@@ -167,7 +168,7 @@ ELEVEN = [
         (r'$\theta$', 'Weight on drugs in utility', setcol('theta'),
          r'Drug spending over income, Midgette et al.\ (2019)',
          pc(C['drug_spending_share_data']), pc(THETA_AGG), f(H['relative_share_of_addiction_1'], 3)),
-        (r'$b$', 'Whether a household uses at all', setcol('b'), 'Drug participation, NSDUH 2024',
+        (r'$b$', 'Whether a household uses at all', setcol('b'), 'Any drug use disorder, NSDUH 2024',
          pc(C['participation_rate_data'] / UPLIFT, 2), pc(mom('b total drug users'), 2),
          f(H['addiction_scalar_1'], 4)),
         (r'$\pi_d$', 'Chance that a year of use leads to a SUD', setcol('addiction_onset_base'),
@@ -201,7 +202,7 @@ ELEVEN = [
         (r'$\kappa_{H}$', 'Employment penalty of homelessness', 'Ext.', r'Desmond and Gershenson (2016)',
          f(H['increased_prob_if_homeless']), NA, f(H['increased_prob_if_homeless'])),
         (r'$\underline c$', 'Food stamp maximum allotment', setcol('c_bar'),
-         'Food stamps over output (GDP), USDA',
+         'SNAP outlays over output',
          pc(C['food_stamps_share_data'], 2), pc(mom('cbar food stamps / income'), 2),
          f(H['max_food_cost'], 4)),
         (r'$\pi_V$', 'Chance of drawing a voucher', setcol('pi_v'),
@@ -235,8 +236,10 @@ ELEVEN = [
          f(C['kappa_phi_m']), NA, f(C['kappa_phi_m'])),
     ]),
     ('Recovery and treatment', [
+        # THE DATA CELL IS THE TEN-YEAR RATE ITS LABEL NAMES (review, 3 October), not the annual hazard
         (r'$\bar\pi_r$', 'Baseline SUD recovery rate', 'Ext.', r'SUD ten-year remission rate, Vaillant (1995)',
-         f(H['probability_of_stopping_addiction'], 3), NA, f(H['probability_of_stopping_addiction'], 3)),
+         f"{100 * (1 - (1 - H['probability_of_stopping_addiction']) ** 10):.0f}\\%", NA,
+         f(H['probability_of_stopping_addiction'], 3)),
         (r'$\mu_H$', 'SUD recovery when homeless', setcol('mu_H'),
          r'Abstinence, housed/homeless, Milby et al.\ (2005)',
          f(C['milby_recovery_ratio_data']), f(mom('mu_H recovery housed / homeless')),
@@ -250,11 +253,12 @@ ELEVEN = [
     ]),
     ('Externalities', [
         (r'$\omega_c$', "Parent's weight on its child", 'Int.',
-         "Non-parents' use over parents', NSDUH 2024",
+         "Non-parents' use over parents', less one, NSDUH 2024",
          pc(C['child_use_gap_data']), pc(RISE), f(H['weight_on_child'], 3)),   # 0.085, not 0.09: the third decimal is the grid point
         (r'$\delta_d$', "Earnings the child loses to a parent's SUD", 'Ext.', r'Earnings lost in utero, Nilsson (2017)',
          f(C['penalty_child_addicted']), NA, f(H['penalty_child_addicted'])),
-        (r'$\kappa_x$', 'Disamenity of homelessness', 'Ext.',
+        # INTERNAL (review, 3 October): kappa_x is solved inside the model from the willingness to pay
+        (r'$\kappa_x$', 'Disamenity of homelessness', 'Int.',
          r'Willingness to pay, Loubi\`ere et al.\ (2020)',
          # THE MODEL CELL IS ON THE INCOME BASIS, like the data's (the author, 1 October:
          # "you should still use 0.2% since it is income terms too"): kappa_x = 0.93 was
@@ -301,11 +305,14 @@ STANDARD = [
         # life_span and retirement_span from the declarations; j = 1 is age 26
         (r'$J$', 'Maximum age', 'Ext.', f"Age {AGE0 + J_MAX}, end of the SSA life table",
          f'{J_MAX}', NA, f'{J_MAX}'),
+        # J_K HAS A ROW (review, 3 October): the child is at home for the parent's first J_K years
+        (r'$J_K$', 'Years the child lives at home', 'Ext.', f"Parent aged 26 to {AGE0 + J_K}",
+         f'{J_K}', NA, f'{J_K}'),
         (r'$J_R$', 'Retirement age', 'Ext.', f"Age {AGE0 + J_RET}, SSA full retirement age",
          f'{J_RET}', NA, f'{J_RET}'),
         (r'$\varepsilon(j)$', 'Age profile of efficiency', 'Ext.',
          r'Hump peaking at age 56, Greenwood et al.\ (2025)', 'Profile', NA, 'Profile'),
-        (r'$\rho_z$', 'Persistence of productivity', 'Ext.', r'Guvenen et al.\ (2023b)',
+        (r'$\rho_z$', 'Persistence of productivity', 'Ext.', r'Guvenen et al.\ (2023)',
          f(H['persistence_employment_surviving']), NA, f(H['persistence_employment_surviving'])),
         (r'$\sigma_\zeta$', 'Standard deviation of its shocks', setcol('sigma_y'),
          "Bottom half's share of earnings, SCF 2022",
@@ -352,9 +359,9 @@ STANDARD = [
          f'{C["ss_pia_rate_1"]:.2f}, {C["ss_pia_rate_2"]:.2f}, {C["ss_pia_rate_3"]:.2f}'),
         (r'$\underline S$', 'SSI floor over average labour income', 'Ext.', 'SSA federal benefit rate',
          f(H['ssi_floor_level'], 3), NA, f(H['ssi_floor_level'], 3)),
-        (r'$\psi_{ui}$', 'UI replacement rate', 'Ext.', 'DOL statutory replacement rates',
+        (r'$\psi_{ui}$', 'UI replacement rate', 'Ext.', 'Department of Labor, statutory rates',
          f(H['replacement_rate_ui']), NA, f(H['replacement_rate_ui'])),
-        (r'$\bar y$', 'Cap on the UI earnings base', 'Ext.', 'DOL state benefit maxima',
+        (r'$\bar y$', 'Cap on the UI earnings base', 'Ext.', 'Department of Labor, state benefit maxima',
          f(H['max_ui_as_perc_of_avg_inc']), NA, f(H['max_ui_as_perc_of_avg_inc'])),
         (r'$\kappa_V$', 'Voucher means test', 'Ext.', 'HUD rule',
          f(C['threshold_income_vouchers']), NA, f(C['threshold_income_vouchers'])),
@@ -401,7 +408,7 @@ UNTARGETED = [
     (r'Share of homeless by age, 25--34 to 65+$^{a}$', band5('share of the homeless'), 'HUD PiT 2024'),
     ('Employed share of the homeless',
      (f'{100 * C["employed_share_of_homeless_data"]:.0f}', f'{100 * mom("emp_homeless employed share of homeless"):.1f}'),
-     'HUD PiT 2023, TEDS-A 2022'),
+     'HUD PiT 2023, Treatment Episode Data Set 2022'),
     ('Income of the homeless, over average', one('income of the homeless'), r'Meyer et al.\ (2024)'),
     ('Block 2: Who uses and who carries a SUD', None, None),
     ('Share of users by age, 26--34 to 65+', many(USER_BANDS, 0), 'NSDUH 2024'),
@@ -432,7 +439,7 @@ UNTARGETED = [
      tuple(a + ', ' + b for a, b in zip(
          many([f'wealth share bottom {p} pct' for p in (1, 5, 10, 20)], 2, neg=True),
          (f'{100 * mom("w_bot net worth share, bottom half", 1):.1f}',
-          f'{100 * mom("w_bot net worth share, bottom half"):.1f}'))), 'SCF 2022, FRB DFA'),
+          f'{100 * mom("w_bot net worth share, bottom half"):.1f}'))), 'SCF 2022, Distributional Financial Accounts'),
     ('Block 5: Drug price elasticities', None, None),
     ('Participation (extensive margin)', (f"${RES['x_el_part_lo']}$ to ${RES['x_el_part_hi']}$", f"${RES['x_el_part']}$"),
      r'Saffer and Chaloupka (1999), Grossman and Chaloupka (1998)'),
@@ -565,6 +572,7 @@ def numbers():
         # the SSI floor over the benchmark's average labour income (audit, 29 September)
         'c_j_value': f'{J_MAX}', 'c_j_age': f'{AGE0 + J_MAX}',
         'c_j_r_value': f'{J_RET}', 'c_j_r_age': f'{AGE0 + J_RET}',
+        'c_j_k_value': f'{J_K}', 'c_j_k_age': f'{AGE0 + J_K}',
         'c_ssi_floor_earn': f'{H["ssi_floor_level"]:.3f}',
         'c_avg_lab': f'{AVG_LAB:.2f}',
         # the productivity grid's settings that no row carried (audit, 29 September)

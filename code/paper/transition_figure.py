@@ -192,7 +192,7 @@ def names(S, C, R):
            f"between ${min(a_all):.0f}$ and ${max(a_all):.0f}$ percent")
         + f", and the share among those with a SUD {'rises' if a_sud[-1] > a_sud[0] else 'falls'} from "
         f"${a_sud[0]:.0f}$ to ${a_sud[-1]:.0f}$ percent as the price comes down. "
-        + ('However, every child and household entering adult life is better off throughout.' if min(a_ent) > 99.95
+        + ('Every child and household entering adult life is better off throughout.' if min(a_ent) > 99.95
            and min(c for b, c in cev) > 0 else
            f"At least ${min(a_ent):.0f}$ percent of households entering adult life are better off."))
     d = json.load(open(OUT_JSON))

@@ -121,10 +121,15 @@ def stage1(par, figure=True):
         d[f's1_mh_{tag}'] = pc(hf['part'] - tf['part'])
         d[f's1_net_{tag}'] = pc(hf['part'] - none['part'])
         dom = dominance(par, pV)
-        d[f's1_worse_{tag}'] = pc(worse_share_exact(par, pV), 1)
+        _ex = worse_share_exact(par, pV)
+        d[f's1_worse_{tag}'] = pc(_ex, 1)
         d[f's1_worse_grid_{tag}'] = pc(dom['worse'], 1)          # the old whole-node count
         d[f's1_better_{tag}'] = pc(dom['better'], 1)
-        d[f's1_cevaff_{tag}'] = pc(dom['cev_aff'], 2)
+        # THE CEV OF THOSE AFFECTED ON THE SAME BASIS AS THE SHARE (review, 3 October): the
+        # population CEV over the share worse off, so share times CEV is the population CEV.
+        # dom['cev_aff'] averaged over whole grid nodes, the 10.2 per cent basis, against the
+        # 9.4 per cent the text and Table 3 report
+        d[f's1_cevaff_{tag}'] = pc(dom['cev_pop'] / max(_ex, 1e-12), 2)
         d[f's1_cevpop_{tag}'] = pc(dom['cev_pop'], 3)
         d[f'_s1_mingap_{tag}'] = dom['min_gap']
     if figure:
@@ -321,7 +326,10 @@ def stage2(par):
     for tag, e in (('hf', hf), ('tf', tf)):
         d[f's2_sud_{tag}'] = pc(e['sud_stat'], 3)
         d[f's2_homeless_{tag}'] = pc(e['homeless_stat'], 3)
-        d[f's2_part_{tag}'] = pc(e['part'])
+        # PARTICIPATION AT THE REST POINT, LIKE THE SUD RATE BESIDE IT (review, 3 October): e['part'] is
+        # at the base income distribution, so the two quoted together implied a conversion other than
+        # pi_d. Every user runs the same pi_d, so the rest point's participation is its SUD rate over it.
+        d[f's2_part_{tag}'] = pc(e['sud_stat'] / par.pi_base)
     # WHICH WAY TREATMENT FIRST MOVES CHILDHOOD HOMELESSNESS here, as a word the prose
     # takes rather than types: homeless_stat is period 1, when the child is at home,
     # and the quantitative model moves it the other way, so the sentence has to turn
@@ -523,9 +531,9 @@ def write_tables(p1, r1, p2, r2):
         (r'$\pi_d$', 'Chance that use starts a SUD', 'NSDUH 2024: SUD rate over participation',
          f'${tn(p1.pi_base)}$')]),
         ('Income', [
-        (r'$\psi_{ui}$', 'Income support replacement rate', 'DOL, statutory UI rates', f'${p1.repl:.2f}$'),
-        (r'$\bar y$', 'Cap on the earnings base', 'DOL, state benefit maxima', f'${p1.ycap:.2f}$'),
-        (r'$\rho_F$', 'Food assistance taper', 'SNAP benefit reduction rate', f'${p1.rho_fs:.2f}$')]),
+        (r'$\psi_{ui}$', 'Income support replacement rate', 'Department of Labor, statutory rates', f'${p1.repl:.2f}$'),
+        (r'$\bar y$', 'Cap on the earnings base', 'Department of Labor, state benefit maxima', f'${p1.ycap:.2f}$'),
+        (r'$\varrho$', 'Food assistance taper', 'SNAP benefit reduction rate', f'${p1.rho_fs:.2f}$')]),
         # y_min's row removed, the author 30 September ("remove"): the floor on income is
         # not reported, in the table or in the text.
         ('Housing, drugs and the voucher', [

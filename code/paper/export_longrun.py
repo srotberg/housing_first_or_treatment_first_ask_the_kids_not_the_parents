@@ -457,7 +457,7 @@ def main():
         'clean and eligible households, and homelessness among households without a SUD falls from '
         f'${_f(c3[0])}$ to ${_f(c3[1])}$ percent, against almost no change at younger ages. Together with the fall '
         f'in the share with a SUD, from ${_f(s0b[3])}$ to ${_f(s1b[3])}$ percent, this outweighs the second force, '
-        f'so homelessness at 45 to 50 falls, by ${abs(_b45):.0f}$ percent.' if _third else '')
+        f'so homelessness at 45 to 50 falls by ${abs(_b45):.0f}$ percent.' if _third else '')
     # TREATMENT (the author, 2 October: "you should also make a point about how treatment goes increase in TF....
     # put it in the resutls somwhere where it flows"). Treatment buys only the multiplier g on recovery
     # (Section 4), and under Treatment First a household that has recovered and does not use passes the screen
@@ -479,11 +479,11 @@ def main():
         'one, because they lose their voucher. At 26 to 34 the first force wins. The share of households with a SUD '
         f'falls from ${_f(s0b[1])}$ to ${_f(s1b[1])}$ percent, while the share of them who are homeless rises only '
         f'from ${_f(r1[0])}$ to ${_f(r1[1])}$ percent. So homelessness at these ages falls from ${_f(hb0[1])}$ to '
-        f'${_f(hb1[1])}$ percent. This is because a disorder acquired young has not had enough time to cost most of '
-        'these households their jobs, so few of them depend on a voucher to stay housed. At 35 to 44 the second '
+        f'${_f(hb1[1])}$ percent. This is because a disorder acquired young has not yet kept most of these '
+        'households out of work for long, so few of them depend on a voucher to stay housed. At 35 to 44 the second '
         f"force wins. The share with a SUD falls {'by about as much' if abs(_d1 - _d2) < 5 else 'too'}, from "
         f'${_f(s0b[2])}$ to ${_f(s1b[2])}$ percent, but these households have carried the disorder longer, and more '
-        'of them have lost their jobs and depend on a voucher. Without the vouchers, the share of them who are homeless rises '
+        'of them have been out of work for long and depend on a voucher. Without the vouchers, the share of them who are homeless rises '
         f'from ${_f(r2[0])}$ to ${_f(r2[1])}$ percent, so homelessness at these ages rises from ${_f(hb0[2])}$ to '
         f'${_f(hb1[2])}$ percent.' + _45
         if _b2 > 0 > _b1 and _b45 < 0 and s1b[1] < s0b[1] and s1b[2] < s0b[2] and r2[0] > r1[0]
@@ -538,8 +538,8 @@ def main():
     out['x_disc_recycle_h'] = (', and homelessness actually declines slightly in the long run, with childhood '
                                'homelessness unaffected' if not _trise and _hflat and _tf_dh_abs < 3 else '')
     out['x_abs_tf_result'] = (
-        'Conditioning assistance raises homelessness but substantially cuts drug use' if _trise else
-        'Conditioning assistance substantially cuts drug use and, as the vouchers it revokes go to other '
+        'In the long run, conditioning assistance raises homelessness but substantially cuts drug use' if _trise else
+        'In the long run, conditioning assistance substantially cuts drug use and, as the vouchers it revokes go to other '
         f"poor households, lowers homelessness{' slightly' if _tf_dh_abs < 3 else ''}")
     # the Discussion's 'which channel' sentence, as Section 6.2 now explains it (x_lr_v26_why): what users
     # no longer cost the programme comes back as a higher pi_V, and demand falls, so the drug is cheaper
@@ -653,7 +653,7 @@ def main():
         'all. It is a result of the better economy it lives its adult life in. A clean and eligible household is '
         f'${_pvpc:.0f}$ percent more likely to draw a voucher, because the users the screen excludes no longer cost '
         'the programme, and tax revenue rises, mostly as fewer adults carry the earnings penalty and partly '
-        'as fewer lose their jobs to a SUD.'
+        'as fewer spend long spells out of work with a SUD.'
         if comp / tot < 0.5 and _gc > 0 and _gp > 0 and _pvpc > 0 > _prpc and _qup else '')
     # the moved sentence and the drug users' line are names of their own, so the move shows whole
     out['x_lr_adult_poor'] = _poor.strip() if out['x_lr_adult'] else ''
@@ -680,12 +680,12 @@ def main():
     out['x_intro_gain'] = (
         f"A newborn gains ${D[t]['cev_net']:.2f}$ percent of lifetime consumption. About ${_kid:.0f}$ percent of that "
         "gain comes in childhood, from a parent who spends more on the child's consumption and housing and less on "
-        f'drugs, and is less likely to lose its job to a SUD, further improving childhood consumption. About '
+        f'drugs, and is less likely to spend long spells out of work with a SUD, further improving childhood consumption. About '
         f'${_draw:.0f}$ percent comes from the higher earnings of a child whose parent was free of the '
         f'disorder. The remaining ${_val:.0f}$ percent comes from a better economy to live in as an adult: whatever '
         f'its productivity, an eligible household that stays clean is ${_pvpc:.0f}$ percent more likely to get a voucher, paid '
         'for by the users the screen excludes and by the higher taxes paid by working-age households that no longer '
-        'carry the earnings penalty or lose their jobs to a SUD. Lastly, even some drug users benefit from the lower '
+        'carry the earnings penalty or stay out of work with a SUD. Lastly, even some drug users benefit from the lower '
         'equilibrium drug price' + _sud_net + '.' if out['x_lr_adult'] else '')
     # (round f4276e76, the author: 'UD' -> ', further imporving childhood consumption', 'taxes' -> 'taxes paid by
     # working-age households', 'and' -> 'period. Lastly, even drug users benefit from the lower equilibrium drug
