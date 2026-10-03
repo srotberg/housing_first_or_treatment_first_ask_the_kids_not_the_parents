@@ -125,6 +125,12 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r132 (03 Oct 23:40; the author's PDF of r131: "remove all red and put updates in red"): strip_red.py (the source
+had none), tables frozen (Table 7's 92 black), base_r132 + splice_r132. Three comments, all on the children's paragraph:
+"this is very unclear and hard to follow. Can you make the point faster and easier to understand?", ', respectively',
+'the share with a SUD at those ages falls'. x_lr_children_hl rewritten as one paragraph, point first ('This is because two
+effects of the reform offset each other...'), 163 words, the two pairs of rates 'respectively', the older ages' larger
+risk offset by the revoked vouchers, the 0.55 / 0.12 changes last. Red: that paragraph only.
 ROUND r131, THE TWO 6.2 BLUE ITEMS (03 Oct 23:15; no strip, base_r130 + splice_r131, which drops x_lr_children_hl from
 the blue list and marks it red whole). STAGE E2: Treatment First ACCEPTED at 22:38 (11 passes, budget gap 6.4e-4, CEV row
 788.9581), age split 2 of 2 exact (22:39), newborn values 22:43 (RECON CHECK PASS both arms, monotone in parent node, every

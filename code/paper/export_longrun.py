@@ -541,26 +541,27 @@ def main():
             l0, l1 = r0['sud'] / 100, r1['sud'] / 100
             return (l1 * (r1['h_sud'] - r0['h_sud']), (l1 - l0) * (r0['h_sud'] - r0['h_clean']),
                     (1 - l1) * (r1['h_clean'] - r0['h_clean']))
-        e1y, e2y, _ = _eff(Y0, Y1)
         e1o, e2o, e3o = _eff(O0, O1)
         _p = lambda x: f'{x:.2f}'
+        # (round r132, the author: "this is very unclear and hard to follow. Can you make the point faster and easier
+        # to understand?", ', respectively', 'the share with a SUD at those ages falls'): the point first, one paragraph,
+        # following x_tf_hchild_sentence's unchanged shelter share
         out['x_lr_children_hl'] = (
-            'Children live with households aged 26 to 50, and at those ages homelessness barely moves: it '
-            f'{_w(_ya)} by ${abs(_ya):.2f}$ percent among households aged 26 to 38 and {_w(_ob)} by '
-            f'${abs(_ob):.2f}$ percent at 39 to 50. The same three effects are at work, with different weights at '
-            'different ages. The share of households with a SUD who are homeless rises, from '
-            f"${_p(Y0['h_sud'])}$ to ${_p(Y1['h_sud'])}$ percent at 26 to 38 and from ${_p(O0['h_sud'])}$ to "
-            f"${_p(O1['h_sud'])}$ percent at 39 to 50, while the share with a SUD falls, from ${_p(Y0['sud'])}$ to "
-            f"${_p(Y1['sud'])}$ percent and from ${_p(O0['sud'])}$ to ${_p(O1['sud'])}$ percent. At 26 to 38 these "
-            'first two effects nearly cancel.\n\nAt 39 to 50 the first effect is stronger, because these households '
-            'have carried the disorder longer, and more of them have remained unemployed because of it and depend on '
-            'a voucher. The third effect offsets it: the revoked vouchers go to other clean and eligible households, '
-            f"and homelessness among households without a SUD at these ages falls from ${_p(O0['h_clean'])}$ to "
-            f"${_p(O1['h_clean'])}$ percent."
+            'This is because two effects of the reform offset each other at the ages a child is at home, 26 to 50. '
+            'Fewer households carry a SUD, but those that still do lose their voucher and are more likely to be '
+            'homeless. Among households aged 26 to 38 and 39 to 50, respectively, the share with a SUD falls from '
+            f"${_p(Y0['sud'])}$ to ${_p(Y1['sud'])}$ percent and from ${_p(O0['sud'])}$ to ${_p(O1['sud'])}$ percent, "
+            f"while the share of them who are homeless rises from ${_p(Y0['h_sud'])}$ to ${_p(Y1['h_sud'])}$ percent "
+            f"and from ${_p(O0['h_sud'])}$ to ${_p(O1['h_sud'])}$ percent. The second effect is larger at older ages, "
+            'where households have carried the disorder longer and more of them depend on a voucher, but there the '
+            'revoked vouchers go to other clean and eligible households, and homelessness among households without a '
+            f"SUD falls from ${_p(O0['h_clean'])}$ to ${_p(O1['h_clean'])}$ percent. So homelessness barely moves at "
+            f'either age: it {_w(_ya)} by ${abs(_ya):.2f}$ percent at 26 to 38 and {_w(_ob)} by ${abs(_ob):.2f}$ '
+            'percent at 39 to 50.'
             if max(abs(_ya), abs(_ob)) < 1 and Y1['sud'] < Y0['sud'] and O1['sud'] < O0['sud']
             and O1['h_sud'] / O0['h_sud'] > Y1['h_sud'] / Y0['h_sud'] > 1
-            and abs(e1y + e2y) < 0.25 * max(abs(e1y), abs(e2y))
-            and e1o > abs(e2o) and e3o < 0 and abs(e1o + e2o + e3o) < 0.25 * e1o else '')
+            and e3o < 0 and abs(e1o + e2o + e3o) < 0.25 * e1o
+            and abs(100 * (D[t]['child_hl'] - D['null_share']['child_hl'])) < 0.005 else '')
         if not out['x_lr_children_hl']:
             print('WARNING: the 26-38 / 39-50 children paragraph does not match the split; check age_split.txt',
                   file=sys.stderr)
