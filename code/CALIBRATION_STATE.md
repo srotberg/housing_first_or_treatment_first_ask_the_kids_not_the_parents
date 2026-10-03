@@ -21,6 +21,8 @@ disorder raises mortality, not because tastes differ." (21 words, 150 in all).
 Then the author's own wording ("drugs in the model are a luxury good, so few use them; but drug users also risk early
 death, so users are poorer"), tightened to 21: "In the model, drugs are a luxury good, so few use them, but using
 risks early death, so users are poorer."
+Then ("can you still add something about taste difference?"): "In the model," traded for "without differing tastes":
+"Drugs are a luxury good, so few use them, but using risks early death, so users are poorer, without differing tastes."
 
 03 Oct 07:30 ROUND r116 (the author: "remove all striked sentences and red"; and "since i have 27 words left in the
 abstract ... say ... that modelling drugs as a luxury good with increased mortality risk can produce a small set of drug
