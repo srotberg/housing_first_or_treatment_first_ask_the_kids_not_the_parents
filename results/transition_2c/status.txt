@@ -1,38 +1,10 @@
-# stage E, the T = 60 transition on the omega_c = 0.085 arms; 03 Oct 01:54 UTC
-remote_transition_2c: gfortran missing, installing (22:00)
-remote_transition_2c: free disk 29G, memory 15 GiB, cores 4 (22:00)
-remote_transition_2c: building cf_fix (22:00)
-remote_transition_2c: building cf_fix2 (22:02)
-remote_transition_2c: building cf_fix2_share (22:03)
-remote_transition_2c: building tr60_fix (22:05)
-remote_transition_2c: tr60_fix: build_bounds.err: 0 warnings, 0 errors build_snan.err: 0 warnings, 0 errors build_prod.err: 0 warnings, 0 errors  (22:07)
-remote_transition_2c: building tr10_fix (22:07)
-remote_transition_2c: tr10_fix: build_bounds.err: 2 warnings, 0 errors build_snan.err: 2 warnings, 0 errors build_prod.err: 2 warnings, 0 errors  (22:09)
-remote_transition_2c: arm null on cf_fix2_share: DRUG_PRICE_START=1.0001082 (22:09)
-remote_transition_2c: arm tf on cf_fix2: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.096152024 DRUG_PRICE_START=0.85551291 EXTRA_SET=cost_per_drug_test 0.0004946100 (22:12)
-remote_transition_2c: no-policy re-solve ACCEPTED: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [87, 74, 71, 70, 70], largest final 4.89e-05 (rule 5e-05, at least 70 sweeps)  (23:46)
-remote_transition_2c: flat control staged: all inputs present -- the transition has everything it opens for reading staged /home/user/housing_first_or_treatment_first/code/tr2c_flat10 -- start with: cd /home/user/housing_first_or_treatment_first/code/tr2c_flat10 && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1  (23:46)
-remote_transition_2c: FLAT CONTROL PASS: welfare at t=1 787.49617 against the steady state's 787.49609, largest deviation 0.00040 utils (1 per cent CEV is about 0.34); worst budget residual 6.42e-05 (rule 1e-3); worst drug gap 1.87e-04 (rule 5e-3) (01:54)
-
-== arm null
-pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
-  1  0.9999  0.06753    -3.1%    -3.1%    -3.0%  1.82e-03  0.00e+00   789.1272  +4.85%    -0.3%    +3.0%
-  2  0.9999  0.06753    -0.6%    -0.5%    -1.0%  3.42e-04  0.00e+00   787.8802  +1.12%    -0.1%    +0.5%
-  3  0.9999  0.06753    -0.0%    +0.0%    -0.0%  5.70e-04  0.00e+00   787.5276  +0.09%    +0.1%    +0.1%
-  4  1.0000  0.06753    +0.0%    +0.1%    +0.0%  6.75e-04  0.00e+00   787.4997  +0.01%    +0.1%    +0.1%
-  5  1.0002  0.06753    +0.0%    +0.1%    +0.0%  5.41e-04  0.00e+00   787.4963  +0.00%    +0.1%    +0.0%
-
-== arm tf
-pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
-  1  0.8581  0.09615   -30.5%   -32.0%    -2.5%  2.58e-02  3.15e-01   789.9401  +7.39%   -16.8%   +19.6%
-  2  0.8552  0.09615   -34.4%   -35.8%    -2.2%  2.90e-02  2.47e-02   789.2338  +5.18%   -23.9%   +15.9%
-  3  0.8547  0.09912   -32.7%   -34.2%    -2.4%  4.04e-03  1.11e-02   789.1327  +4.87%   -21.0%   +17.4%
-  4  0.8535  0.09845   -32.7%   -34.1%    -2.1%  3.10e-03  1.23e-02   789.0920  +4.75%   -20.9%   +17.4%
-  5  0.8538  0.09771   -32.0%   -33.5%    -1.6%  3.14e-03  7.40e-03   789.0301  +4.56%   -20.2%   +17.4%
-  6  0.8549  0.09727   -32.0%   -33.5%    -1.4%  2.69e-03  7.29e-03   789.0050  +4.48%   -20.2%   +17.3%
-  7  0.8553  0.09683   -32.0%   -33.5%    -1.2%  9.92e-04  4.97e-03   788.9851  +4.42%   -20.3%   +17.2%
-
-== flat control (T = 10)
-  loop 0: periods to 9, worst budget residual (t>1) 6.42e-05, worst drug gap 1.87e-04  [paths saved]
-  latest TRANSITION CEV t=           1  CEV=   3.3419610359529858E-005
-  latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.99090179021584623       share_newborns=  0.54256458475987368       share_addicted=  0.99998777857697552       share_addicted_newborns=   0.0000000000000000
+# stage E, the T = 60 transition on the omega_c = 0.085 arms; 03 Oct 02:49 UTC
+remote_transition_2c: gfortran missing, installing (02:39)
+remote_transition_2c: free disk 29G, memory 15 GiB, cores 4 (02:39)
+remote_transition_2c: building cf_fix (02:39)
+remote_transition_2c: building cf_fix2 (02:41)
+remote_transition_2c: building cf_fix2_share (02:43)
+remote_transition_2c: building tr60_fix (02:45)
+remote_transition_2c: tr60_fix: build_bounds.err: 0 warnings, 0 errors build_snan.err: 0 warnings, 0 errors build_prod.err: 0 warnings, 0 errors  (02:47)
+remote_transition_2c: building tr10_fix (02:47)
+remote_transition_2c: tr10_fix: build_bounds.err: 2 warnings, 0 errors build_snan.err: 2 warnings, 0 errors build_prod.err: 2 warnings, 0 errors  (02:49)
