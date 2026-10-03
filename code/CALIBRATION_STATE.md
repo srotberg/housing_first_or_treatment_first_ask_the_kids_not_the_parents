@@ -4,6 +4,8 @@
 frozen, base_r118 + splice_r118. "Drugs are a luxury, so few use them, but because using risks early death, users are
 poorer, without requiring tastes to differ." (22 words, two commas added; 'As in the data' goes; the abstract stays 150).
 Then ("maybe without assuming tastes differ?"): "...users are poorer, without assuming tastes differ." (149).
+Then ("any way of adding in equilibrium?"): "...because using risks early death, in equilibrium users are poorer, without
+assuming tastes differ.", paid for by "an externality harming children" in place of "that harms". 150.
 The old sentence not struck: the author had just asked for every cross line out.
 
 03 Oct 07:50 ROUND r117 (the author's PDF of f20a0572, comments on the abstract; "show me the alteration here"):
