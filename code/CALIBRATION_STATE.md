@@ -12,6 +12,10 @@ strip_red.py (only r116's sentence was red), base_r117 + splice_r117, the altera
 luxury explains why few use and users are poor, without assuming different tastes." (18 words). The abstract is 150 by
 whitespace count, the same as the PDF's text gives; the author's "27 words left" counted 123 where both give 131.
 'distortions' struck from the keywords (the author).
+Then (the author: "a big idea", "i want the reader to understand that these mechanisms are what produces the data"):
+the sentence is now "Because drugs are a luxury, few use them; because a disorder can kill, users are poorer; no taste
+difference is needed." (21 words), paid for by "despite a temporary rise in childhood homelessness" in place of "a small
+rise ... during the transition". Still 150.
 
 03 Oct 07:30 ROUND r116 (the author: "remove all striked sentences and red"; and "since i have 27 words left in the
 abstract ... say ... that modelling drugs as a luxury good with increased mortality risk can produce a small set of drug
