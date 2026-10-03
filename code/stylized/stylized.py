@@ -136,6 +136,22 @@ import math
 import numpy as np
 
 
+def _arias_survival(years, first_age=26):
+    """Survival from first_age over `years` years in the quantitative model's life table: the
+    product of the Fortran's actual_survival_probability from model age 1 (age 26), which is
+    Arias (2014), Table 1, total population. One source for both models."""
+    import os, re
+    f = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..',
+                     'housing_first_or_treatment_first_SR_v1.f90')
+    s = open(f).read()
+    i = s.index('actual_survival_probability=(/')
+    body = s[i:s.index('/)', i)].split('(/', 1)[1]
+    v = [float(x.replace('d', 'e').replace('D', 'e'))
+         for x in re.findall(r'[0-9]\.[0-9]+(?:[dDeE][-+]?[0-9]+)?', body)]
+    assert len(v) >= years + first_age - 26 and all(0.9 < x <= 1.0 for x in v[:years]), v[:5]
+    return float(np.prod(v[first_age - 26:first_age - 26 + years]))
+
+
 class P:
     # preferences
     # SHARES THAT SUM TO ONE. The weight on consumption is 1-gam-th, so gam is
@@ -340,15 +356,13 @@ class P:
     # argued: see the run in the commit that made this change.
     R     = 1.0
     years = 30.0      # years in a period, used to put the VSL in annual units
-    phi0  = 0.91      # survival over one period, clean: ages 26 to 55, SSA
-    # THE SOURCE AND THE AGES BOTH SAID SOMETHING THE PACKAGE DOES NOT HOLD.
-    # This read 'ages 25 to 55, CDC'. The table in data/ is the SSA period
-    # life table 4.C6 and it starts at 26, so there is no 25 to read and no
-    # CDC table behind it. Thirty years of exposure from 26 means surviving
-    # ages 26 through 55, which the packaged table puts at 0.9199 rather than
-    # 0.91; the gap is carried over from the source this used to name and is
-    # flagged in the note rather than changed here, because moving it moves
-    # every number in the stylized section.
+    # SURVIVAL OVER ONE PERIOD, clean: ages 26 through 55, FROM THE QUANTITATIVE MODEL'S OWN
+    # LIFE TABLE (the author, 3 October: "it's better to use the same data for consistency").
+    # The product of the first thirty entries of the Fortran's actual_survival_probability,
+    # which is Arias (2014), United States Life Tables, 2010, Table 1, total population
+    # (model age 1 is age 26): 0.9293. It was 0.91, carried over from a source the package
+    # never held; the SSA period life table 4.C6 in data/ gives 0.9199.
+    phi0  = _arias_survival(30)
     # SET SO THAT NO HOUSEHOLD HAS A NEGATIVE VALUE OF LIFE. When the poorest
     # household's continuation goes below zero, dying is worth more than living
     # and it then WANTS the extra mortality the disorder brings, which inverts
