@@ -1,5 +1,12 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 07:30 ROUND r116 (the author: "remove all striked sentences and red"; and "since i have 27 words left in the
+abstract ... say ... that modelling drugs as a luxury good with increased mortality risk can produce a small set of drug
+users who are poorer, as opposed to assuming systematic preference difference"): strip_red.py, tables frozen, base_r116
++ splice_r116. One sentence in the abstract, in red, after the model sentence: "Modelling drugs as a luxury good that
+raises mortality yields few users, mostly poor, without assuming systematically different preferences." 19 words; the
+abstract is 150 by whitespace count (131 before; the author counts 123), so it fits either way.
+
 03 Oct 07:10 ROUND r115 (the author's PDF of 96736dad, the r114 version: "remove all red ... and put updates in red";
 "look for paragraphs that are too long. there may be 5-10 of them. and break them down"): strip_red.py, tables frozen,
 base_r115 + splice_r115. 'the gain' -> 'the overall gain' (x_dc_p_dir); "which raises it to 11.45 percent" removed,
