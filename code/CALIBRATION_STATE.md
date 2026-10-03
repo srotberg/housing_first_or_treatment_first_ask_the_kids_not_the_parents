@@ -125,6 +125,11 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r134 (03 Oct 23:45; no strip, base_r133 + splice_r133): the author's own text for the children's paragraph,
+verbatim except 'essentially at 1.03' read as 'essentially unchanged at' (x_tf_hchild_sentence, export_results.py's flat
+branch). 'three effects nearly cancel', 'Furthermore', 'the first effect slightly outweighs the latter two' (guarded:
+e1 +0.084 against e2 + e3 -0.081, sum > 0), 'by a mere 0.23 percent'. Offered, not applied: 'It does not move' after
+'essentially unchanged' could read 'It barely moves'.
 ROUND r133 (03 Oct 23:35; the author's PDF of r132: "remove all red and put updates in red"; one comment: "Why do we need
 to break it down by ages? cant we just talk about the aggregate during these ages? i feel like it would be easier to
 follow, no?"): x_lr_children_hl from age_split()'s 26-50 row alone, 102 words: the same three effects nearly cancel;

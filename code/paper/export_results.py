@@ -451,7 +451,9 @@ _hflat = _hpp < 0.005
 _hcup = _hc1 > hc0 and not _hflat
 a0, a1 = out['x_hchild0'], out['x_tf_hchild1']
 if _hflat:
-    out['x_tf_hchild_sentence'] = f"In the long run, the share of children in a shelter is unchanged at ${a0}$ percent."
+    # (round r134, the author's own text: "is essentially at 1.03 percent", read as 'essentially unchanged at')
+    out['x_tf_hchild_sentence'] = (f"In the long run, the share of children in a shelter is essentially unchanged at "
+                                   f"${a0}$ percent.")
     out['x_tf_hchild_even'] = f", while childhood homelessness stays at ${a0}$ percent of children"
     # (round 4ad85a30, the author: ", since aggregate homelessness slightly declines")
     # (round c88b1dda, the author: 'since' -> 'as')
