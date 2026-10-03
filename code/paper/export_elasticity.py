@@ -143,32 +143,22 @@ def listing(xs):
     return ', '.join(xs[:-1]) + ' and ' + xs[-1]
 
 
-def run_of_tens(xs):
-    """10, 20, ..., 90 and 95: a run of tens from ten, written with an ellipsis, then anything left over"""
-    xs = sorted(xs)
-    k = 0
-    while k < len(xs) and xs[k] == 10 * (k + 1):
-        k += 1
-    if k < 4:
-        return listing(xs)
-    head = r'10, 20, \ldots, ' + f'{xs[k - 1]:.0f}'
-    rest = xs[k:]
-    return head + (' and ' + listing(rest) if len(rest) > 1 else f' and {rest[0]:.0f}' if rest else '')
-
-
 out = json.load(open(OUT))
 for k in ('x_el_dp_pc', 'x_el_dp_list', 'x_el_dp_how'):   # the single 10 per cent step; the -50 to +50 wording
     out.pop(k, None)
-# the moves up and down, each a run of tens where it is one
-_up = [dp for dp in steps if dp > 0]
-_down = [-dp for dp in steps if dp < 0]
-_moves = []
-if _up:
-    _moves.append('Raising the price from the benchmark by each of ' + run_of_tens(_up) + ' percent')
-if _down:
-    _moves.append(('and lowering it' if _up else 'Lowering the price from the benchmark') + ' by each of '
-                  + run_of_tens(_down) + ' percent')
-out['x_el_dp_moves'] = ' '.join(_moves) + ','
+# THE MOVES IN WORDS, no ellipsis (the author, 3 October, on "10, 20, ..., 90 and 95 percent": "any better way of
+# writing it without the ....?"): the steps off the ten-percent grid by name, then the grid by its two ends
+_tens = [dp for dp in steps if dp % 10 == 0]
+_off = [dp for dp in steps if dp % 10 != 0]
+assert _tens == [float(t) for t in range(int(min(_tens)), int(max(_tens)) + 1, 10) if t != 0], _tens
+
+
+def _change(dp):
+    return f'a {abs(dp):.0f} percent ' + ('cut' if dp < 0 else 'rise')
+
+
+_grid = f'every 10 percent from {_change(min(_tens))} to {_change(max(_tens))}'
+out['x_el_dp_moves'] = ' and '.join([_change(dp) for dp in _off] + [_grid])
 out['x_el_n_word'] = {4: 'four', 5: 'five', 6: 'six', 10: 'ten', 20: 'twenty'}[len(steps)]
 out['x_el_part'] = f'{part:.2f}'
 out['x_el_int'] = f'{user:.2f}'
