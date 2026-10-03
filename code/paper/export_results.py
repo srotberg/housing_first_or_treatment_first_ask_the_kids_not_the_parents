@@ -274,9 +274,9 @@ else:
 # no-policy value (code/extra_2c/remote_decomp_2c.sh). From each arm's cf.log.gz once it has finished (the exact
 # CEV off the curve, as x_tf_cev), until then from the last pass in results/decomp_2c/status.txt, which rounds
 # before the no-policy run's CEV is taken off (0.01 at most). DC_FINAL says which.
-def _dc_last_pass(arm):
+def _dc_last_pass(arm, sub='decomp_2c'):
     rows, cur = [], None
-    for l in open(os.path.join(ROOT, 'results', 'decomp_2c', 'status.txt')):
+    for l in open(os.path.join(ROOT, 'results', sub, 'status.txt')):
         if l.startswith('== arm '):
             cur = l.split()[2]
         elif cur == arm and re.match(r'\s+\d+\s', l):
@@ -286,9 +286,9 @@ def _dc_last_pass(arm):
     return {'b': pcv(r[3]), 'sud': pcv(r[4]), 'h': pcv(r[5]), 'cev': pcv(r[9]), 'piv': float(r[2]), 'pass': int(r[0])}
 
 
-def _dc(arm):
-    log = os.path.join(ROOT, 'results', 'decomp_2c', f'arm_{arm}', 'cf.log.gz')
-    d = _dc_last_pass(arm)
+def _dc(arm, sub='decomp_2c'):
+    log = os.path.join(ROOT, 'results', sub, f'arm_{arm}', 'cf.log.gz')
+    d = _dc_last_pass(arm, sub)
     if os.path.exists(log):
         for l in gzip.open(log, 'rt', errors='replace'):
             if 'CEV from the saved benchmark curve' in l:
@@ -317,6 +317,19 @@ out['x_dc_pv_share_word'] = ('nearly all of' if _keep < 0.1 else 'most of' if _k
 # (round r115, the author: 'the gain' -> 'overall gain')
 out['x_dc_p_dir'] = 'works against the overall gain' if DC_P['cev'] > _tfc else 'adds to the overall gain'
 out['x_dc_p_cmp'] = 'larger' if DC_P['cev'] > _tfc else 'smaller'
+# THE SCREEN ALONE (the author, 3 October: "can you also do constant price and constant piv?"): Treatment First with
+# both pi_V and the drug price held (code/extra_2c/remote_decomp_2c_both.sh, results/decomp_2c_both). Read in the order
+# screen -> its price response (fixpv) -> recycling (tf): what the cheaper drug takes back of the screen's gain, and
+# how much of that loss recycling the revenue restores, in words that turn with the numbers
+DC_B = _dc('fixboth', 'decomp_2c_both')
+out['x_dc_b_cev'] = f"{DC_B['cev']:.2f}"
+_lost = (DC_B['cev'] - DC_PV['cev']) / DC_B['cev'] if DC_B['cev'] else 0
+_back = (_tfc - DC_PV['cev']) / (DC_B['cev'] - DC_PV['cev']) if DC_B['cev'] != DC_PV['cev'] else 0
+_share = lambda x: 'nearly all of' if x >= 0.9 else 'most of' if x >= 0.5 else 'part of'
+out['x_dc_b_takeback'] = _share(_lost)
+out['x_dc_b_restore'] = _share(_back)
+out['x_dc_b_source'] = ('the screen on its own delivers more than the whole reform' if DC_B['cev'] > _tfc else
+                        'the screen on its own delivers most of the gain')
 # THE DRUG TEST'S COST, as the model charges it.  The declaration's comment says the
 # value is in units of average earnings; the budget charges it raw (f90 20654), in
 # the units in which productivity averages one at entry.  So it is quoted against the

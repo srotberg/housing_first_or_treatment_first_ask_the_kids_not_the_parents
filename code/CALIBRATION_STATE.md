@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 06:00 THE SCREEN ALONE (both-held arm, results/decomp_2c_both, DIST CHECK PASS, pi_V and price never moved):
+drug use -64.3%, SUD -64.6%, homelessness +0.4%, vouchers held -10.8%, net revenue +5.2% unspent; newborn CEV 5.04
+(cf.log.gz, net of the no-policy run). Chain screen -> price (fixpv 0.18) -> recycling (tf 4.33): the cheaper drug takes
+back nearly all of the screen's gain, recycling restores most of it; the other order, screen -> recycling (fixp 13.11)
+-> price, gives +8.07 and -8.78. In 6.2 in red (x_dc_b_*), its blue \upd removed. The author has not seen it yet.
+
 03 Oct 10:10 ROUND r123 (the author's PDF of c53bfd20: "remove all red and put updates in red"): strip_red.py, tables
 frozen, base_r123 + splice_r123. The introduction's sentence in the author's words, in red: "As far as I know, this is
 the first theory that can explain both why not everyone uses drugs and why drug users are poorer on average without
