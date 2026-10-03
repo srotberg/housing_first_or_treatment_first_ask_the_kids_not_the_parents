@@ -1,8 +1,9 @@
-# elasticity grid, worker 1, points -90,-70,-50,-30,-10,20,40,60,80,100; 03 Oct 07:06 UTC
+# elasticity grid, worker 1, points -90,-70,-50,-30,-10,20,40,60,80,100; 03 Oct 07:14 UTC
 remote_elast_grid w1: gfortran missing, installing (02:24)
 remote_elast_grid w1: building, points -90,-70,-50,-30,-10,20,40,60,80,100 (02:24)
 remote_elast_grid w1: built /home/user/children_first_housing_later/code/elast_g1/build/hftf_elast, 0 errors, md5 b1123e7c (02:25)
 remote_elast_grid w1: solving, 4 cores (02:26)
+remote_elast_grid w1: solve exited 0 after 10 blocks and 10 points; bench.err:  (07:14)
  BLOCK MOVE   1.0000000000000000       against a rule of   1.0000000000000000E-003  -- b   7.4788729262622519E-002  lambda_d   3.1483469288890564E-002  h_1   7.0061439674119217E-003  y   1.1482818002917496     
  BLOCK MOVE  0.24199451036798938       against a rule of   1.0000000000000000E-003  -- b   9.1808126454160616E-002  lambda_d   3.9102296024141267E-002  h_1   6.5849742032256233E-003  y   1.3745216778514147     
  BLOCK MOVE   7.8681657055259785E-002  against a rule of   1.0000000000000000E-003  -- b   9.2768923029377587E-002  lambda_d   3.9481015604303712E-002  h_1   6.4624160974554416E-003  y   1.4826713211231399     
@@ -24,3 +25,5 @@ remote_elast_grid w1: solving, 4 cores (02:26)
  ELASTICITY_MULTI dp=  80.0 participation= -1.4074151916985564E+00 per_user= -3.4536089758494681E-01 per_addict= -9.9779223569104636E-01
  ELASTICITY_MULTI dp= 100.0 participation= -1.2180976474699374E+00 per_user= -4.2482559849860807E-01 per_addict= -9.9903504203462146E-01
  ELASTICITY_MULTI average participation= -1.3129809349394448E+00 per_user= -6.2104955630647596E-01 per_addict= -9.9025365744810045E-01
+ ELASTICITY_NULL dp=0 users=   8.9588555499220984E-002  per_user=  0.11748853464899503       per_addict=  0.17632875716632818       rel gaps  -2.0776981802472783E-005   3.7235831432447242E-005   4.3744491672326191E-005
+ simulation ended
