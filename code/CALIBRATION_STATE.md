@@ -125,6 +125,14 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+STAGE E2 DIED A SECOND TIME (03 Oct, after 08:36; relaunched by its own session at 09:15). The no-policy arm was
+accepted at 08:32 and is kept (5 passes, DIST CHECK PASS); the Treatment First re-solve and the flat control start over
+from 09:15. THE CAUSE, as on 24 September: a cloud session with only check-ins goes fully idle between them and its
+container is reclaimed. A session whose container survives always has a background task running as well. The default
+background timeout is 30 minutes, so the attach call has to be given timeout 7200000 and re-armed. Briefed at 09:25
+(trig_01VpLrvW9UsgQYNNS7mobnLQ): keep a 2-hour background attach running and re-armed at every check-in, about every
+100 minutes. Grid worker 0 died the same way. The parent's blue-item check-in has moved to 14:00 and the first-year
+transition check to 20:00.
 ELASTICITY GRID (03 Oct 07:45). Worker 1 (session_01A16fPk8Ys2zdDygDCsnt56) finished at 07:14: all ten points, solve
 exited 0, average participation -1.31, per user -0.62 over its ten. Worker 0 (session_01FuQgdQWKqCqpJZPXQdESJH) died
 after its sixth point (+10; only five were pushed, last push 06:26). It is told to stand down and push its partial
