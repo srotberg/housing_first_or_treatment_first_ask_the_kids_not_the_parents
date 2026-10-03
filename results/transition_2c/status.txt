@@ -1,4 +1,4 @@
-# stage E, the T = 60 transition on the omega_c = 0.085 arms; 03 Oct 02:49 UTC
+# stage E, the T = 60 transition on the omega_c = 0.085 arms; 03 Oct 03:12 UTC
 remote_transition_2c: gfortran missing, installing (02:39)
 remote_transition_2c: free disk 29G, memory 15 GiB, cores 4 (02:39)
 remote_transition_2c: building cf_fix (02:39)
@@ -8,3 +8,11 @@ remote_transition_2c: building tr60_fix (02:45)
 remote_transition_2c: tr60_fix: build_bounds.err: 0 warnings, 0 errors build_snan.err: 0 warnings, 0 errors build_prod.err: 0 warnings, 0 errors  (02:47)
 remote_transition_2c: building tr10_fix (02:47)
 remote_transition_2c: tr10_fix: build_bounds.err: 2 warnings, 0 errors build_snan.err: 2 warnings, 0 errors build_prod.err: 2 warnings, 0 errors  (02:49)
+remote_transition_2c: arm null on cf_fix2_share: DRUG_PRICE_START=1.0001082 (02:49)
+remote_transition_2c: arm tf on cf_fix2: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.096152024 DRUG_PRICE_START=0.85551291 EXTRA_SET=cost_per_drug_test 0.0004946100 (02:52)
+
+== arm null
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+
+== arm tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
