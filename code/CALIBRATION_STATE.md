@@ -125,6 +125,11 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r137 (04 Oct 00:10; base_r136 + splice_r136): the author: combine the children's paragraph with the previous one,
+"the same three effect basically net to zero also for households aged 26-50 ... and therefore childhood homelessness
+remains unchanged at 1.03 percent". x_lr_children_hl is now one sentence closing x_tf_h_sentence's paragraph, before
+the blue transition \upd; x_tf_hchild_sentence and the separate paragraph are gone from the source. Red: that sentence.
+Children's shelter share 1.03 under both (guarded: equal at two decimals).
 ROUND r136 (04 Oct 00:00; the author: change "It does not move" to "It barely moves", "adn remove all red"): done;
 strip_red.py (source had none), base_r136 = the current numbers, so splice_r136 marks nothing. NO RED anywhere in the
 paper; the blue \upd items (transition) stay. The next round's splice must use base_r136.

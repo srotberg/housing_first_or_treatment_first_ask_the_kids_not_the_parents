@@ -542,22 +542,16 @@ def main():
         e2 = (l1 - l0) * (A0['h_sud'] - A0['h_clean'])
         e3 = (1 - l1) * (A1['h_clean'] - A0['h_clean'])
         _p = lambda x: f'{x:.2f}'
-        # (round r134, the author's own text, verbatim: 'Furthermore', 'the first effect slightly outweighs the latter
-        # two', 'a mere'; r135, the author: bring back "the same three effect", "but make it clear that they are the ones
-        # from the prevoious paragrpah" -- x_tf_h_sentence's, the paragraph before; r136, the author: 'It does not
-        # move' -> 'It barely moves')
+        # (round r137, the author: "why not just combine that paragraph about the children with the previous paragraph
+        # and say that the same three effect basically net to zero also for households aged 26-50, which is the years
+        # the children live them, and therefore childhood homelessness remains unchanged at 1.03 percent"): one
+        # sentence closing x_tf_h_sentence's paragraph, in place of x_tf_hchild_sentence and the r133-r136 paragraph
+        _c0, _c1 = 100 * D['null_share']['child_hl'], 100 * D[t]['child_hl']
         out['x_lr_children_hl'] = (
-            'It barely moves because, at the ages a child is at home, 26 to 50, the same three effects as in the previous '
-            'paragraph nearly cancel. '
-            'Households that still carry a SUD lose their voucher, and the share of them who are homeless rises from '
-            f"${_p(A0['h_sud'])}$ to ${_p(A1['h_sud'])}$ percent. But fewer households carry one, as the share with a "
-            f"SUD at these ages falls from ${_p(A0['sud'])}$ to ${_p(A1['sud'])}$ percent. Furthermore, the revoked "
-            'vouchers go to other clean and eligible households, so homelessness among households without a SUD falls '
-            f"from ${_p(A0['h_clean'])}$ to ${_p(A1['h_clean'])}$ percent. Together, the first effect slightly "
-            f'outweighs the latter two, and homelessness among households aged 26 to 50 {_w(_ach)} by a mere '
-            f'${abs(_ach):.2f}$ percent.'
-            if 0 < _ach < 1 and e1 > 0 > e2 and e3 < 0 and 0 < e1 + e2 + e3 < 0.25 * e1
-            and abs(100 * (D[t]['child_hl'] - D['null_share']['child_hl'])) < 0.005 else '')
+            'For households aged 26 to 50, the years a child lives with them, the same three effects nearly net to '
+            f'zero, so the share of children in a shelter remains unchanged at ${_c0:.2f}$ percent.'
+            if abs(_ach) < 1 and e1 > 0 > e2 and e3 < 0 and abs(e1 + e2 + e3) < 0.25 * e1
+            and f'{_c0:.2f}' == f'{_c1:.2f}' else '')
         if not out['x_lr_children_hl']:
             print('WARNING: the 26-50 children paragraph does not match the split; check age_split.txt',
                   file=sys.stderr)
