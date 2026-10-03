@@ -1,7 +1,8 @@
-# stage E, the T = 60 transition on the omega_c = 0.085 arms; 03 Oct 11:53 UTC
+# stage E, the T = 60 transition on the omega_c = 0.085 arms; 03 Oct 12:14 UTC
 remote_transition_2c: free disk 16G, memory 15 GiB, cores 4 (11:53)
 remote_transition_2c: arm tf on cf_fix2: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.096152024 DRUG_PRICE_START=0.85551291 EXTRA_SET=cost_per_drug_test 0.0004946100 (11:53)
 remote_transition_2c: no-policy re-solve ACCEPTED: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [70, 70, 71, 70, 70], largest final 4.73e-05 (rule 5e-05, at least 70 sweeps)  (11:53)
+remote_transition_2c: flat control staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_flat10 -- start with: cd /home/user/children_first_housing_later/code/tr2c_flat10 && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1  (11:54)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -11,7 +12,7 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   4  1.0000  0.06753    +0.0%    +0.1%    +0.0%  6.50e-04  0.00e+00   787.4997  +0.01%    +0.1%    +0.1%
   5  1.0003  0.06753    +0.0%    +0.1%    +0.0%  5.45e-04  0.00e+00   787.4962  +0.00%    +0.1%    +0.0%
 
+== arm tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+
 == flat control (T = 10)
-  loop 0: periods to 5, worst budget residual (t>1) 2.90e-04, worst drug gap 1.66e-04
-  latest TRANSITION CEV t=           1  CEV=   3.0954502742036941E-005
-  latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.99088111591182326       share_newborns=  0.54256518240790552       share_addicted=  0.99941009327006147       share_addicted_newborns=   0.0000000000000000
