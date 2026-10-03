@@ -125,6 +125,23 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r131, THE TWO 6.2 BLUE ITEMS (03 Oct 23:15; no strip, base_r130 + splice_r131, which drops x_lr_children_hl from
+the blue list and marks it red whole). STAGE E2: Treatment First ACCEPTED at 22:38 (11 passes, budget gap 6.4e-4, CEV row
+788.9581), age split 2 of 2 exact (22:39), newborn values 22:43 (RECON CHECK PASS both arms, monotone in parent node, every
+SUD-parent cell below its never-SUD twin under Wnd). (1) The children's paragraph by 26-38 and 39-50 (export_longrun
+age_split()): homelessness +0.55 percent at 26-38 (1.0505 -> 1.0563) and -0.12 at 39-50 (1.0050 -> 1.0038); the SUD share
+falls 6.06 -> 4.10 and 5.74 -> 3.79, the homeless share of those with a SUD rises 3.03 -> 4.01 and 4.34 -> 7.84; at 26-38
+the first two effects of x_tf_h_sentence cancel (+0.040 and -0.041 points), at 39-50 the first (+0.133) beats the second
+(-0.069) and the third, households without a SUD 0.80 -> 0.73, offsets it (-0.065). NOT EXPLAINED, flagged to the author:
+homelessness among households without a SUD RISES at 26-38 (0.9227 -> 0.9301) though it falls at 26-34 and 35-44; the
+author stopped the per-age check. (2) Newborns better off by the household they are born into: 92 percent (Wnd, the
+paper's criterion: HF average 787.442 against the no-policy run's 787.496; W, with the parent's death sending the child in
+early, gives 81). Worse off: parent node 1 (both classes, 1.1 percent of newborns) and node 4 class 0 without SMI (6.8).
+Table 7's row and one sentence (x_lr_approve_nb), in red. DISK FULL AT 22:44: staging the T = 60 path failed (GUARD) and
+every watcher died writing its output. Freed with the author's yes: the September scratch job folders, /home/user/sty_run
+(identical to main), e2_run's cfarm_bench (the arms are accepted) and the half-staged tr2c_t60 (a relaunch skips staging
+when the folder exists). T = 60 RELAUNCHED and STARTED 23:01 (seeds: price t=1 0.8969, pi_V t=1 0.1093, factors 1.09 and
+2.06); 2.4 GB free after staging. The watcher now also stops on under 600 MB free.
 STAGE E2's TREATMENT FIRST RE-SOLVE NEEDS ELEVEN PASSES, NOT ONE TO THREE (03 Oct 18:10). remote_transition_2c.sh's header
 says each arm is re-solved 'from its own equilibrium (one to three passes each)'. It is not: the Treatment First rerun
 retraces the accepted tf85_c35 run pass for pass (passes 1-4 match it to three decimals), and that run took eleven passes

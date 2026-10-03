@@ -166,6 +166,42 @@ def shares(tol='0.001'):
     return out
 
 
+def age_split():
+    """HOMELESSNESS BY 26-38 AND 39-50 (the author, 2 October, on 'The SUD figures are by ten-year band': "why not
+    break it down to 26-38 and 39-50?", and "by doing it by 26-38 and 39-50, you can make this shorter and clearer").
+    results/transition_2c/age_split.txt (transition_2c/age_split.py on stage E2's two re-solved arms, exact from the
+    housing policy). Returns {'null'|'tf': {(lo, hi): dict(sud, h, h_sud, h_clean)}} in per cent, or {} unless both
+    arms are exact."""
+    p = os.path.join(ROOT, 'results', 'transition_2c', 'age_split.txt')
+    out, lab = {}, None
+    if not os.path.exists(p):
+        return {}
+    for l in open(p):
+        m = re.match(r'== (\w+): .*homeless from the housing policy \(exact\)', l)
+        if l.startswith('=='):
+            lab = m.group(1) if m else None
+            if lab:
+                out[lab] = {}
+            continue
+        m = re.match(r'\s+(\d+)-(\d+)\s+\S+\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)', l)
+        if lab and m:
+            out[lab][(int(m.group(1)), int(m.group(2)))] = dict(
+                sud=float(m.group(3)), h=float(m.group(4)), h_sud=float(m.group(5)), h_clean=float(m.group(6)))
+    return out if {'null', 'tf'} <= set(out) else {}
+
+
+def newborn_better(value='Wnd', tol='0.001'):
+    """NEWBORNS BETTER OFF BY THE HOUSEHOLD THEY ARE BORN INTO (the author, round f4276e76: "add a row for the newborn
+    children"). results/transition_2c/newborn/shares.json (code/cf_kid on stage E2's arms): a newborn's lifetime value
+    under Treatment First against Housing First in the same birth state, weighted by the Housing First newborns.
+    Wnd, with no parental death before the child leaves home, is the paper's criterion (Section 6.1 replaces a dead
+    parent rather than ending the childhood) and reproduces each arm's newborn welfare. Share in per cent, or None."""
+    p = os.path.join(ROOT, 'results', 'transition_2c', 'newborn', 'shares.json')
+    if not os.path.exists(p):
+        return None
+    return 100 * json.load(open(p))[value]['by_tolerance'][tol]['all newborns']['better']
+
+
 def nodes(name):
     return [float(x) for x in open(os.path.join(adir('tf85'), f'value_at_26_by_node_{name}.txt'))
             if x.strip()]
@@ -222,7 +258,8 @@ def main():
     for arm in D:
         D[arm]['nb_better'] = D[arm]['y26_better'] = D[arm]['all_better'] = D[arm]['sud_better'] = None
         D[arm]['nb_hh_better'] = None
-    D['tf85']['nb_hh_better'] = '\\updnum{update}'
+    _nb = newborn_better()
+    D['tf85']['nb_hh_better'] = _nb if _nb is not None else '\\updnum{update}'
     SH = shares()
     if SH:
         D['tf85']['all_better'] = 100 * SH['all households'][0]
@@ -490,6 +527,43 @@ def main():
         if _b2 > 0 > _b1 and _b45 < 0 and s1b[1] < s0b[1] and s1b[2] < s0b[2] and r2[0] > r1[0]
         and r2[1] / r2[0] > r1[1] / r1[0] > 1 and _u1 + _n1 < 0 < _u2 + _n2
         and abs(100 * (D[t]['child_hl'] - D['null_share']['child_hl'])) < 0.005 else '')
+    # BY 26-38 AND 39-50 (the author, 2 October: "by doing it by 26-38 and 39-50, you can make this shorter and
+    # clearer"), from age_split(), which replaces the ten-year bands above when stage E2's split is in. The three
+    # effects are x_tf_h_sentence's, in its order: at each age the change in homelessness is lam1 (rs1 - rs0), the
+    # higher risk of those who keep a SUD, plus (lam1 - lam0)(rs0 - rc0), fewer with a SUD, plus (1 - lam1)(rc1 - rc0),
+    # the households without a SUD, who get the revoked vouchers
+    AS = age_split()
+    if AS:
+        Y0, Y1, O0, O1 = AS['null'][(26, 38)], AS['tf'][(26, 38)], AS['null'][(39, 50)], AS['tf'][(39, 50)]
+        _ch = lambda r0, r1: 100 * (r1['h'] / r0['h'] - 1)
+        _ya, _ob = _ch(Y0, Y1), _ch(O0, O1)
+        def _eff(r0, r1):
+            l0, l1 = r0['sud'] / 100, r1['sud'] / 100
+            return (l1 * (r1['h_sud'] - r0['h_sud']), (l1 - l0) * (r0['h_sud'] - r0['h_clean']),
+                    (1 - l1) * (r1['h_clean'] - r0['h_clean']))
+        e1y, e2y, _ = _eff(Y0, Y1)
+        e1o, e2o, e3o = _eff(O0, O1)
+        _p = lambda x: f'{x:.2f}'
+        out['x_lr_children_hl'] = (
+            'Children live with households aged 26 to 50, and at those ages homelessness barely moves: it '
+            f'{_w(_ya)} by ${abs(_ya):.2f}$ percent among households aged 26 to 38 and {_w(_ob)} by '
+            f'${abs(_ob):.2f}$ percent at 39 to 50. The same three effects are at work, with different weights at '
+            'different ages. The share of households with a SUD who are homeless rises, from '
+            f"${_p(Y0['h_sud'])}$ to ${_p(Y1['h_sud'])}$ percent at 26 to 38 and from ${_p(O0['h_sud'])}$ to "
+            f"${_p(O1['h_sud'])}$ percent at 39 to 50, while the share with a SUD falls, from ${_p(Y0['sud'])}$ to "
+            f"${_p(Y1['sud'])}$ percent and from ${_p(O0['sud'])}$ to ${_p(O1['sud'])}$ percent. At 26 to 38 these "
+            'first two effects nearly cancel.\n\nAt 39 to 50 the first effect is stronger, because these households '
+            'have carried the disorder longer, and more of them have remained unemployed because of it and depend on '
+            'a voucher. The third effect offsets it: the revoked vouchers go to other clean and eligible households, '
+            f"and homelessness among households without a SUD at these ages falls from ${_p(O0['h_clean'])}$ to "
+            f"${_p(O1['h_clean'])}$ percent."
+            if max(abs(_ya), abs(_ob)) < 1 and Y1['sud'] < Y0['sud'] and O1['sud'] < O0['sud']
+            and O1['h_sud'] / O0['h_sud'] > Y1['h_sud'] / Y0['h_sud'] > 1
+            and abs(e1y + e2y) < 0.25 * max(abs(e1y), abs(e2y))
+            and e1o > abs(e2o) and e3o < 0 and abs(e1o + e2o + e3o) < 0.25 * e1o else '')
+        if not out['x_lr_children_hl']:
+            print('WARNING: the 26-38 / 39-50 children paragraph does not match the split; check age_split.txt',
+                  file=sys.stderr)
     _r = pc(t, 'b', 'null_share') / pc(o, 'b', 'null_remote')
     _tfb, _omb = out['x_lr_tf_b_pc'], out['x_lr_om_b_pc']
     out['x_lr_tf_vs_om'] = (
@@ -709,6 +783,14 @@ def main():
          f'Of the households that enter adult life at 26, ${_y:.0f}$ percent are better off under Treatment First '
          'than they would be in the same state under Housing First')
         + ' (Table~\\ref{tab:longrun}).')
+    # the newborns, by the household they are born into (newborn_better(); the Table 7 row of the same name)
+    _nb = newborn_better()
+    out['x_lr_approve_nb'] = (
+        '' if _nb is None else
+        'So is every newborn, compared with itself born into the same household under Housing First.'
+        if _nb > 99.95 else
+        f'Of newborns, ${_nb:.0f}$ percent are better off under Treatment First than they would be if born into the '
+        'same household under Housing First.')
     d = json.load(open(OUT_JSON))
     d.update(out)
     json.dump(d, open(OUT_JSON, 'w'), indent=1, sort_keys=True)
