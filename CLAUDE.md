@@ -144,6 +144,12 @@ as moved.
 
 ## Deletions are struck through, and changes carry a note
 
+**SUPERSEDED FOR STRIKES, 3 October (round r120): the author, *"no need to show striked lines anymore"*.** Changes go in
+red with `\new{}` and deleted text simply goes; do not write `\del{}`, do not run `track_changes.py` to strike, and the
+round's splice drops every `\del` it would generate (`marks.drop_marks` before it writes). Say in chat what was deleted
+when it matters. The rest of this section is kept for the record.
+
+
 The author, 3 October: *"deleted sentences should show as crossed so I know what you delete"*, and *"leave notes
 for me in case I need to understand why you made a change"*. Both are standing.
 

@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 09:00 ROUND r120 (the author's PDF of b80607ce: "put updates in red. no need to show striked lines anymore"):
+NO MORE STRIKES (CLAUDE.md updated; splice_r120 drops every \\del it would write). base_r120 + splice_r120. The
+abstract's long-run sentence, x_abs_tf_result, rearranged as the author marked it: "Conditioning assistance cuts drug
+use substantially in the long run, and, as the vouchers it revokes go to other poor households, lowers homelessness
+slightly." Same length; the abstract stays 150.
+
 03 Oct 08:40 ROUND r119 (the author: "users are poorer in equilibrium" and "remove all red"): strip_red.py, tables frozen,
 base_r119 + splice_r119; no red anywhere (the move is the author's own wording, in black as asked). The abstract's
 sentence: "Drugs are a luxury, so few use them, but because using risks early death, users are poorer in equilibrium,
