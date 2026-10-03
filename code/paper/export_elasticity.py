@@ -121,9 +121,12 @@ def where(x, lo_hi):
         return 'at the less elastic end of'
     if abs(a - hi) <= EDGE * hi:
         return 'at the more elastic end of'
-    # 'larger in absolute value than' (review, 3 October): -1.61 is not higher than -0.3 to -0.9
+    # 'larger in absolute value than' (review, 3 October): -1.61 is not higher than -0.3 to -0.9.
+    # 'SOMEWHAT larger' within twice the range's end (the author, 3 October, on -1.32 against
+    # -0.9: "is somewhat larger"); plain 'larger' beyond it.
     if a > hi:
-        return 'larger in absolute value than'
+        return ('somewhat larger in absolute value than' if a <= 2.0 * hi
+                else 'larger in absolute value than')
     if a < lo:
         return 'smaller in absolute value than'
     # the author, 30 September: 'is in the middle of'
@@ -131,9 +134,9 @@ def where(x, lo_hi):
 
 
 def so_int(w):
-    if w == 'larger in absolute value than':
+    if w.endswith('larger in absolute value than'):
         return "so each user's purchases respond more to the drug price in the model than in the data"
-    if w == 'smaller in absolute value than':
+    if w.endswith('smaller in absolute value than'):
         return "so each user's purchases respond less to the drug price in the model than in the data"
     return "so the model matches how much each user's purchases respond to the drug price"
 
