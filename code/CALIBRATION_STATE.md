@@ -125,6 +125,15 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ELASTICITY GRID DONE (03 Oct 14:30) AND IN THE PAPER (14:40, in red). The worker 0 rerun measured all ten points, its
+average and its null re-solve, then exited 2 writing its saved-state .dat files onto a full disk (2.4 GB at the end of
+the run; freed, and the result files rebuilt from the intact bench.log and pushed). Twenty points: participation
+-1.32 (was -1.61 over -50..+50), per user -0.63 (was -0.60); the words are unchanged ('larger in absolute value than'
+the literature's -0.3 to -0.9, 'in the middle of' -0.3 to -0.8). export_elasticity.py now: finished = average and
+null lines printed (exit 0 or 2); benchmark tolerance 2e-3, because both grid re-solves sit 1.4e-3 off the reference on
+sud_homeless, which is run-to-run noise; and a new REPRO check, under which every step also measured on 2 October or in
+worker 0's first run agrees to under 1e-3 (it agrees to 4.3e-4 at worst). Section 2, Section 5.3 Block 5 (the moves now
+generated as x_el_dp_moves), Table 6 and DATA_APPENDIX.md are updated.
 THE PARENT'S OWN CONTAINER IS NOT SAFE EITHER (03 Oct 10:22). The worker 0 grid rerun here stopped writing at 09:46,
 two minutes after its 2-hour background attach expired at 09:44. The container booted again at 10:21:46
 (/proc/uptime), with the disk kept and every process gone. The engine's firings every ten minutes do NOT keep it

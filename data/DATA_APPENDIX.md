@@ -489,9 +489,10 @@ whether a household uses at all: Saffer and Chaloupka (1999) and Grossman and Ch
 decomposition has a permanent ten percent price fall raising the number of cocaine users by a little over eight
 percent. Intensive margin, how much a user buys: the same decomposition raises frequency among users by a little over
 three percent, and Olmstead et al. (2015) put the conditional elasticity for heroin at −0.80 on two designs sharing a
-sample of regular users but not an identification strategy. The model's figures average ten price moves, 10 to 50
-percent up and down, with the distribution of households held fixed (`results/elast_points/w0.txt`); neither is
-targeted.
+sample of regular users but not an identification strategy. The model's figures, −1.32 for participation and −0.63
+per user, average twenty price moves, up by 10, 20, ..., 100 percent and down by 10, 20, ..., 90 and 95 percent, with
+the distribution of households held fixed (`results/elast_grid/w0.txt` and `w1.txt`, two workers that each re-solved
+the benchmark; every step also measured in an earlier run reproduces to under 0.001). Neither is targeted.
 
 ## Block 6: Transmission
 
