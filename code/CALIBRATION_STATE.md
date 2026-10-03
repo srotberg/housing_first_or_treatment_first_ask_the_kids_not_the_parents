@@ -7,6 +7,7 @@ resting on differences in preferences." The clause on goods other than drugs rem
 Then (the author: "add in the footnotes that Claude was used to simulate the model and partially to write the code"):
 the author footnote's "The code used to solve the model is the author's own" extended, in red: ", written in part with
 Claude (Anthropic), which was also used to run the model's simulations".
+Then ("without resting on systemic differences in preferences"): "systematic differences in preferences" in the introduction.
 
 03 Oct 09:50 ROUND r122 (the author's PDF of 151d474e: "remove all red and put updates in red"): strip_red.py, tables
 frozen, base_r122 + splice_r122. Block 5's selection sentence REMOVED -- the author: "this is not true! in the data they
