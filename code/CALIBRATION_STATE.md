@@ -6,6 +6,10 @@ for other poor households" (the author's idea, "as government recycles excess re
 households", at the same length; the decomposition shows recycling is what lowers homelessness). In red; 150 words.
 Then ("maybe 'as excess revenues funds more...'"): "as excess revenues fund more vouchers for other poor households".
 Then ("not clear what other poor households....maybe say 'clean'"): "...fund more vouchers for clean poor households".
+Then (the author: "add them in red where you think they make sense", on pre-empting referees): two sentences in red in
+5.1 Block 5. omega_c: selection in the parent/non-parent gap would mean lower true altruism, a larger externality, so
+the calibration understates the case for Treatment First. delta_d: the penalty carries only x_lr_draw_whole_pc (11)
+percent of the gain, so the ranking does not rest on its size (new name in export_longrun.py).
 REPO CLEANUP PAUSED at the author's word: an strace'd rebuild started at 03:33 was cut off mid-export and left
 results_numbers.json without its 28 x_trf_* names; restored from git and regenerated whole. Nothing moved or renamed.
 

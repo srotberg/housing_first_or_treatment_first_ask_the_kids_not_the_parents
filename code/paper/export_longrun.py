@@ -624,6 +624,8 @@ def main():
     _kid = 100 * _sp[0] / _sp[2]
     _draw = (100 - _kid) * comp / tot
     _val = 100 - _kid - _draw
+    # the penalty's share of the WHOLE gain, for Section 5's delta_d item (3 October: the ranking does not rest on it)
+    out['x_lr_draw_whole_pc'] = f'{_draw:.0f}'
     _pvpc, _prpc = pc(t, 'piv', 'null_share'), pc(t, 'price', 'null_share')
     # (round f4276e76, the author on this sentence: "should this come where the point about the voucher comes about
     # 2 sentence bfore? can you make it read better?") it now follows the voucher sentence
