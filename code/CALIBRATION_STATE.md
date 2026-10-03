@@ -125,6 +125,11 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+STAGE E2 SILENT AGAIN (03 Oct 06:33): no push after 04:33 (null arm pass 4, Treatment First pass 2); the session went
+idle at 04:39 with no check-in armed and shows 'disconnected', the same pattern as the 01:54 death. Woken with
+trig_017p6rLBhLvgDGprwL9RrrRw (06:35): attach if alive, else relaunch remote_transition_2c.sh unedited, and keep the
+container awake with send_later check-ins every ~45 min until T = 60 finishes. If it relaunched, the arms restart
+(about 4-5 h), so the 08:30 blue-item check-in will find them still running.
 
 03 Oct 05:40 ROUND r112, SECOND PASS (the author's answers on the appendix audit; no strip, red on top of r112).
 SURVIVAL: the hard-coded actual_survival_probability IS Arias (2014), United States Life Tables, 2010, Table 1, total
