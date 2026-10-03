@@ -542,10 +542,12 @@ def main():
         e2 = (l1 - l0) * (A0['h_sud'] - A0['h_clean'])
         e3 = (1 - l1) * (A1['h_clean'] - A0['h_clean'])
         _p = lambda x: f'{x:.2f}'
-        # (round r134, the author's own text, verbatim: three effects, 'Furthermore', 'the first effect slightly
-        # outweighs the latter two', 'a mere')
+        # (round r134, the author's own text, verbatim: 'Furthermore', 'the first effect slightly outweighs the latter
+        # two', 'a mere'; r135, the author: bring back "the same three effect", "but make it clear that they are the ones
+        # from the prevoious paragrpah" -- x_tf_h_sentence's, the paragraph before)
         out['x_lr_children_hl'] = (
-            'It does not move because, at the ages a child is at home, 26 to 50, three effects nearly cancel. '
+            'It does not move because, at the ages a child is at home, 26 to 50, the same three effects as in the previous '
+            'paragraph nearly cancel. '
             'Households that still carry a SUD lose their voucher, and the share of them who are homeless rises from '
             f"${_p(A0['h_sud'])}$ to ${_p(A1['h_sud'])}$ percent. But fewer households carry one, as the share with a "
             f"SUD at these ages falls from ${_p(A0['sud'])}$ to ${_p(A1['sud'])}$ percent. Furthermore, the revoked "
