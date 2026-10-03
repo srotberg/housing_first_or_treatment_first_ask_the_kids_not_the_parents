@@ -125,6 +125,13 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+STAGE E2's TREATMENT FIRST RE-SOLVE NEEDS ELEVEN PASSES, NOT ONE TO THREE (03 Oct 18:10). remote_transition_2c.sh's header
+says each arm is re-solved 'from its own equilibrium (one to three passes each)'. It is not: the Treatment First rerun
+retraces the accepted tf85_c35 run pass for pass (passes 1-4 match it to three decimals), and that run took eleven passes
+to bring the budget gap under 1e-3 (results/counterfactuals_2c/tf85_c35/passes.txt). The arm starts from PV_START and
+the drug price but from the benchmark's distribution. At about 45 minutes a pass here it is accepted around 23:30 UTC;
+the age split and newborn values (Section 6.2's two blue items) follow around 00:00, and the T = 60 loop 0 after that:
+first-year numbers around 05:30, the full pass around 10:00 on 4 October. Check-ins moved to 23:30 and 05:30.
 STAGE E2 MOVED INTO THE PARENT'S CONTAINER (03 Oct 14:40). The cloud worker (session_01XLysxgFaoMhyvjcwwKb2w7) lost its
 run a FOURTH time: its 11:53 two-hour attach expired at 13:53, it ended the turn asking for instructions instead of
 re-arming, and the container was reclaimed. It has been told to stand down and push nothing under results/transition_2c/.
