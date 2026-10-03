@@ -1,5 +1,10 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 08:20 ROUND r118 (the author: "remove all red", and the abstract's sentence in their wording): strip_red.py, tables
+frozen, base_r118 + splice_r118. "Drugs are a luxury, so few use them, but because using risks early death, users are
+poorer, without requiring tastes to differ." (22 words, two commas added; 'As in the data' goes; the abstract stays 150).
+The old sentence not struck: the author had just asked for every cross line out.
+
 03 Oct 07:50 ROUND r117 (the author's PDF of f20a0572, comments on the abstract; "show me the alteration here"):
 strip_red.py (only r116's sentence was red), base_r117 + splice_r117, the alteration struck and red. 'model of' ->
 'model with endogenous'; the luxury-good sentence made punchier ("this is a big deal"): "Modelling drugs as a deadly
