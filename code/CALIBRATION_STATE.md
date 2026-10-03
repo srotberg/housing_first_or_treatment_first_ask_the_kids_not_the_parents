@@ -125,6 +125,13 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r133 (03 Oct 23:35; the author's PDF of r132: "remove all red and put updates in red"; one comment: "Why do we need
+to break it down by ages? cant we just talk about the aggregate during these ages? i feel like it would be easier to
+follow, no?"): x_lr_children_hl from age_split()'s 26-50 row alone, 102 words: the same three effects nearly cancel;
+homeless share of those with a SUD 3.63 -> 5.75, SUD share 5.91 -> 3.95, without a SUD 0.87 -> 0.84; homelessness at
+26-50 +0.23 percent (1.0290 -> 1.0314). Effects +0.084, -0.054, -0.027 points, sum +0.0025 against +0.0024. base_r133 +
+splice_r133; red: that paragraph only. The container's background tasks were lost at about 23:20 but the T = 60 run
+(pid 16163's child) survived; the disk-and-worker watcher re-armed.
 ROUND r132 (03 Oct 23:40; the author's PDF of r131: "remove all red and put updates in red"): strip_red.py (the source
 had none), tables frozen (Table 7's 92 black), base_r132 + splice_r132. Three comments, all on the children's paragraph:
 "this is very unclear and hard to follow. Can you make the point faster and easier to understand?", ', respectively',
