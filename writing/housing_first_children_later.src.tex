@@ -137,7 +137,7 @@
 \begin{center}
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 {\Large\bfseries Children First, Housing Later}\footnote{I thank Ay\c{s}e \.{I}mrohoro\u{g}lu, Kai Zhao, Joseph Steinberg, Efraim Benmelech, Jonathan Alschech, Ryan Quandt, Christopher Sharp and the seminar participants at the University of Toronto for their helpful comments. The data and replication code are available on GitHub at \url{https://github.com/srotberg/children_first_housing_later}.}\\[0.6em]
-{\large Shahar Rotberg}\footnote{Canada Mortgage and Housing Corporation (CMHC). Contact: \url{shahar.rotberg@gmail.com}. Website: \url{www.shaharrotberg.com}. This work was conducted on personal equipment and time. \new{The author wrote the baseline code of the quantitative model. Claude (Anthropic) was used to write the code of the stylized model and the extensions of the quantitative model, to debug the code, and to run the simulations.} The opinions expressed herein do not necessarily represent the views of CMHC.}\\[0.35em]
+{\large Shahar Rotberg}\footnote{Canada Mortgage and Housing Corporation (CMHC). Contact: \url{shahar.rotberg@gmail.com}. Website: \url{www.shaharrotberg.com}. This work was conducted on personal equipment and time. The author wrote the baseline code of the quantitative model. Claude (Anthropic) was used to write the code of the stylized model and the extensions of the quantitative model, to debug the code, and to run the simulations. The opinions expressed herein do not necessarily represent the views of CMHC.}\\[0.35em]
 \today
 \end{center}
 \renewcommand{\thefootnote}{\arabic{footnote}}
@@ -1021,8 +1021,8 @@ low annual discount factor would weigh that distant death much less and the
 mortality channel would be losing to impatience rather than to anything the model
 is about, so a higher factor corrects for the coarseness of the horizon.} risk aversion is
 $\sigma=@@s_sigma@@$, as in the quantitative model, and survival over a period is
-$\bar\phi = @@s_phi0@@$, from \new{the life table for the total population of the United States in 2010
-(Arias, 2014), which the quantitative model also uses,} for twenty-six to fifty-five.
+$\bar\phi = @@s_phi0@@$, from the life table for the total population of the United States in 2010
+(Arias, 2014), for twenty-six to fifty-five.
 
 The chance that use causes a SUD, $\pi_d$, can also be externally calibrated. This
 is because drug use and the SUD are fully separated by cohort: the young are the
@@ -2424,7 +2424,7 @@ Service (IRS) sets out in Topic 409
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$S(y)$ and $\underline S$, social security and its floor.] Retirement income follows the statutory
 primary insurance amount: it replaces a share of the household's income at its last working
-age that falls across the \new{two bend points of the Social Security Administration (SSA)}, up to
+age that falls across the two bend points of the Social Security Administration (SSA), up to
 the taxable maximum, with the SSI payment as a floor. As $S(y)$ rises the old are richer, so the value of a life
 still to be lived rises and with it the cost of a disorder that shortens it. The shares
 $\alpha_1,\alpha_2,\alpha_3$ of the formula in footnote~\ref{fn:ss} are $@@c_s_y_value@@$ below the first bend point, between them and above the second, respectively. The
