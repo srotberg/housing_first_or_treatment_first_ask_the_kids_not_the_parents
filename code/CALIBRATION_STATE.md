@@ -1,5 +1,16 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 07:10 ROUND r115 (the author's PDF of 96736dad, the r114 version: "remove all red ... and put updates in red";
+"look for paragraphs that are too long. there may be 5-10 of them. and break them down"): strip_red.py, tables frozen,
+base_r115 + splice_r115. 'the gain' -> 'the overall gain' (x_dc_p_dir); "which raises it to 11.45 percent" removed,
+struck; "can you also do constant price and constant piv?" -> the both-held run (code/extra_2c/remote_decomp_2c_both.sh),
+blue \upd in 6.2 until it lands. TEN PARAGRAPHS SPLIT (no text changed, so nothing red; the list is in chat): intro
+externalities (before 'The childhood homelessness externality'), income gradient ('To generate both'), stylized sketch
+('Children live with'), 'starkly' ('The reason is how'), second result ('In the stylized model Treatment First'); 2's
+third point ('There is evidence'); 3.3 calibration ('The pull of the first unit'); 4.3 income ('The SUD and SMI do not');
+6's screen ('The release rate'); 6.2's children by age (one paragraph per age band, in x_lr_children_hl). Left whole:
+'Why should the two channels differ' (one argument) and the transition's paragraphs (to be rewritten).
+
 03 Oct 06:40 ROUND r114 (the author's PDF of 073c2f11: "remove all striked lines and all red and put updates in red"):
 strip_red.py, tables frozen, base_r114 (results_numbers.json from HEAD) + splice_r114; four comments, all in 6.2's welfare
 paragraph. Three paragraph breaks: before 'About 57 percent', before 'The other 43 percent' (source) and before 'The

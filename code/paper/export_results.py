@@ -314,7 +314,8 @@ _keep = DC_PV['cev'] / _tfc if _tfc else 1
 out['x_dc_pv_share_word'] = ('nearly all of' if _keep < 0.1 else 'most of' if _keep < 0.5 else 'part of'
                              if _keep < 1 else 'none of')
 # the cheaper drug: against the gain when it is not cheaper
-out['x_dc_p_dir'] = 'works against the gain' if DC_P['cev'] > _tfc else 'adds to the gain'
+# (round r115, the author: 'the gain' -> 'overall gain')
+out['x_dc_p_dir'] = 'works against the overall gain' if DC_P['cev'] > _tfc else 'adds to the overall gain'
 out['x_dc_p_cmp'] = 'larger' if DC_P['cev'] > _tfc else 'smaller'
 # THE DRUG TEST'S COST, as the model charges it.  The declaration's comment says the
 # value is in units of average earnings; the budget charges it raw (f90 20654), in

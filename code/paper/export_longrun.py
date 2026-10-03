@@ -451,7 +451,8 @@ def main():
     _cy = max(abs(_rc(hb1, q1b, s1b, k) / _rc(hb0, q0b, s0b, k) - 1) for k in (1, 2))
     _third = (c3[1] / c3[0] - 1 < -2 * _cy and r3[1] / r3[0] > r2[1] / r2[0] and s1b[3] < s0b[3] and _b45 < 0)
     _45 = (
-        ' At 45 to 50 the second force is stronger still. The SUD figures are by ten-year band, and across ages 45 '
+        # (round r115, the author: "look for paragraphs that are too long... and break them down": one per age band)
+        '\n\nAt 45 to 50 the second force is stronger still. The SUD figures are by ten-year band, and across ages 45 '
         f'to 54 the share of households with a SUD who are homeless rises from ${_f(r3[0])}$ to ${_f(r3[1])}$ '
         'percent. But at these ages the vouchers the reform revokes do more for everyone else. They go to other '
         'clean and eligible households, and homelessness among households without a SUD falls from '
@@ -476,11 +477,11 @@ def main():
         f'${abs(_b2):.0f}$ percent at 35 to 44 and falls by ${abs(_b45):.0f}$ percent at 45 to 50. The changes '
         'cancel out almost exactly. Which way it goes at a given age depends on the balance of the two forces above. Treatment First '
         'cuts the number of households with a SUD, but raises the risk of homelessness for those who still have '
-        'one, because they lose their voucher. At 26 to 34 the first force wins. The share of households with a SUD '
+        'one, because they lose their voucher.\n\nAt 26 to 34 the first force wins. The share of households with a SUD '
         f'falls from ${_f(s0b[1])}$ to ${_f(s1b[1])}$ percent, while the share of them who are homeless rises only '
         f'from ${_f(r1[0])}$ to ${_f(r1[1])}$ percent. So homelessness at these ages falls from ${_f(hb0[1])}$ to '
         f'${_f(hb1[1])}$ percent. This is because a disorder acquired young has not yet kept most of these '
-        'households unemployed for long, so few of them depend on a voucher to stay housed. At 35 to 44 the second '
+        'households unemployed for long, so few of them depend on a voucher to stay housed.\n\nAt 35 to 44 the second '
         f"force wins. The share with a SUD falls {'by about as much' if abs(_d1 - _d2) < 5 else 'too'}, from "
         f'${_f(s0b[2])}$ to ${_f(s1b[2])}$ percent, but these households have carried the disorder longer, and more '
         'of them have remained unemployed because of it and depend on a voucher. Without the vouchers, the share of them who are homeless rises '
