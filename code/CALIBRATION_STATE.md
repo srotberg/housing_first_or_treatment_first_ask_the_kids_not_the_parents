@@ -1,5 +1,10 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 08:40 ROUND r119 (the author: "users are poorer in equilibrium" and "remove all red"): strip_red.py, tables frozen,
+base_r119 + splice_r119; no red anywhere (the move is the author's own wording, in black as asked). The abstract's
+sentence: "Drugs are a luxury, so few use them, but because using risks early death, users are poorer in equilibrium,
+without assuming tastes differ." 150 words.
+
 03 Oct 08:20 ROUND r118 (the author: "remove all red", and the abstract's sentence in their wording): strip_red.py, tables
 frozen, base_r118 + splice_r118. "Drugs are a luxury, so few use them, but because using risks early death, users are
 poorer, without requiring tastes to differ." (22 words, two commas added; 'As in the data' goes; the abstract stays 150).
