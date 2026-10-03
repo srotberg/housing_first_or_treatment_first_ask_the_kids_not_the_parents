@@ -651,9 +651,8 @@ def main():
         f"enter adult life with the penalty {out['x_lr_pen_dir']} from ${out['x_lr_pen0']}$ to ${out['x_lr_pen1']}$ "
         f"percent. The second, the remaining ${_val:.0f}$ percent, does not come from the child's productivity at "
         'all. It is a result of the better economy it lives its adult life in. A clean and eligible household is '
-        f'${_pvpc:.0f}$ percent more likely to draw a voucher, because the users the screen excludes no longer cost '
-        'the programme, and tax revenue rises, mostly as fewer adults carry the earnings penalty and partly '
-        'as fewer remain unemployed because of a SUD.'
+        # (3 October, "so it is less heavy": why pi_V rises is the first paragraph's, and is not repeated here)
+        f'${_pvpc:.0f}$ percent more likely to draw a voucher.'
         if comp / tot < 0.5 and _gc > 0 and _gp > 0 and _pvpc > 0 > _prpc and _qup else '')
     # the moved sentence and the drug users' line are names of their own, so the move shows whole
     out['x_lr_adult_poor'] = _poor.strip() if out['x_lr_adult'] else ''

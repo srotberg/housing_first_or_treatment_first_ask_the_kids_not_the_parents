@@ -1,5 +1,19 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 06:10 ROUND r113 (the author: "remove all red and striked line from the current version. only put new updates
+in red"; on the decomposition: "if not [a table], we can just mention this in the text, weaving it", "so it is less
+heavy"): strip_red.py, tables frozen, base_r113 (results_numbers.json from HEAD, since the freeze had already written the
+trimmed x_lr_adult) + splice_r113, which now spaces a struck run off a preceding word and keeps punctuation against it.
+NO TABLE: the two decompositions fit in two sentences. Woven in red: 6.2's first paragraph (at the benchmark price use
+would fall 74 percent, not 32); the welfare paragraph (without the larger voucher programme the reform loses nearly all
+of its gain, 0.17 percent; the cheaper drug works against the gain, 13.08 percent at the benchmark price); the
+Discussion's recycling sentence (0.17 against 4.33, homelessness up 13 percent). x_tf_cev_why no longer lists 'a cheaper
+drug' as a source of the gain -- the decomposition shows it is not. x_lr_adult drops the repeat of why pi_V rises.
+Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decomp_2c/arm_*/ exists, the last pass of
+status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
+STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
+with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+
 03 Oct 05:40 ROUND r112, SECOND PASS (the author's answers on the appendix audit; no strip, red on top of r112).
 SURVIVAL: the hard-coded actual_survival_probability IS Arias (2014), United States Life Tables, 2010, Table 1, total
 population -- q_x at 26 to 84 to within 0.05 percent at every age (the author's guess; the PDF they uploaded is now

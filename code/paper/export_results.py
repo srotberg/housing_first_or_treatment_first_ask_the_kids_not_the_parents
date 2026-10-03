@@ -259,12 +259,60 @@ if cev_log('tf85') > CEV0:
         # homelessness all but unchanged (the omega_c = 0.085 arms: -1 per cent, the shelter share flat)
         # (round 4ad85a30, the author: 'barely moves' -> "is unchanged in the long run"; almost, since
         # homelessness falls by 1 per cent while the shelter share is flat)
+        # (3 October: the decomposition shows the cheaper drug LOWERS welfare -- at the benchmark price the
+        # gain is larger -- so it is no longer listed beside the voucher programme as a source of the gain)
         'Welfare rises because the cut in drug use reduces the budget and earnings externalities and, '
-        'through the government budget and the drug market, enables a larger voucher programme and a cheaper '
-        'drug, while homelessness, and with it the externalities that run through it, is almost unchanged in '
-        'the long run.')
+        'through the government budget, pays for a larger voucher programme, while homelessness, and with it '
+        'the externalities that run through it, is almost unchanged in the long run.')
 else:
     out['x_tf_cev_why'] = ''
+
+
+# THE TWO DECOMPOSITIONS (the author, 3 October: "the decomposition should be part of the long run results",
+# then "if not, we can just mention this in the text, weaving it"). Each is Treatment First with one channel shut:
+# fixpv holds pi_V at the no-policy value and leaves the revenue unspent, fixp holds the drug price at the
+# no-policy value (code/extra_2c/remote_decomp_2c.sh). From each arm's cf.log.gz once it has finished (the exact
+# CEV off the curve, as x_tf_cev), until then from the last pass in results/decomp_2c/status.txt, which rounds
+# before the no-policy run's CEV is taken off (0.01 at most). DC_FINAL says which.
+def _dc_last_pass(arm):
+    rows, cur = [], None
+    for l in open(os.path.join(ROOT, 'results', 'decomp_2c', 'status.txt')):
+        if l.startswith('== arm '):
+            cur = l.split()[2]
+        elif cur == arm and re.match(r'\s+\d+\s', l):
+            rows.append(l.split())
+    r = rows[-1]   # pass price pi_V b SUD h_1 drug-gap budget-gap welfare CEV V V/user
+    pcv = lambda s: float(s.rstrip('%'))
+    return {'b': pcv(r[3]), 'sud': pcv(r[4]), 'h': pcv(r[5]), 'cev': pcv(r[9]), 'pass': int(r[0])}
+
+
+def _dc(arm):
+    log = os.path.join(ROOT, 'results', 'decomp_2c', f'arm_{arm}', 'cf.log.gz')
+    d = _dc_last_pass(arm)
+    if os.path.exists(log):
+        for l in gzip.open(log, 'rt', errors='replace'):
+            if 'CEV from the saved benchmark curve' in l:
+                d['cev'] = 100 * float(l.split('x=')[1]) - CEV0
+        d['final'] = True
+    return d
+
+
+DC_PV, DC_P = _dc('fixpv'), _dc('fixp')
+out['_dc_final'] = bool(DC_PV.get('final') and DC_P.get('final'))
+out['_dc_passes'] = f"fixpv {DC_PV['pass']}, fixp {DC_P['pass']}"
+_tfc = cev_log('tf85') - CEV0
+out['x_dc_pv_cev'] = f"{DC_PV['cev']:.2f}"
+out['x_dc_p_cev'] = f"{DC_P['cev']:.2f}"
+out['x_dc_p_b_pc'] = f"{abs(DC_P['b']):.0f}"
+out['x_dc_pv_h_pc'] = f"{abs(DC_PV['h']):.0f}"
+out['x_dc_pv_h_dir'] = 'rise' if DC_PV['h'] > 0 else 'fall'
+# how much of the gain the unspent revenue takes with it, in words that turn with the numbers
+_keep = DC_PV['cev'] / _tfc if _tfc else 1
+out['x_dc_pv_share_word'] = ('nearly all of' if _keep < 0.1 else 'most of' if _keep < 0.5 else 'part of'
+                             if _keep < 1 else 'none of')
+# the cheaper drug: against the gain when it is not cheaper
+out['x_dc_p_dir'] = 'works against the gain' if DC_P['cev'] > _tfc else 'adds to the gain'
+out['x_dc_p_cmp'] = 'larger' if DC_P['cev'] > _tfc else 'smaller'
 # THE DRUG TEST'S COST, as the model charges it.  The declaration's comment says the
 # value is in units of average earnings; the budget charges it raw (f90 20654), in
 # the units in which productivity averages one at entry.  So it is quoted against the
