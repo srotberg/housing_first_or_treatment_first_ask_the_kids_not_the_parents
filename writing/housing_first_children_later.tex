@@ -137,7 +137,7 @@
 \begin{center}
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 {\Large\bfseries Children First, Housing Later}\footnote{I thank Ay\c{s}e \.{I}mrohoro\u{g}lu, Kai Zhao, Joseph Steinberg, Efraim Benmelech, Jonathan Alschech, Ryan Quandt, Christopher Sharp and the seminar participants at the University of Toronto for their helpful comments. The data and replication code are available on GitHub at \url{https://github.com/srotberg/children_first_housing_later}.}\\[0.6em]
-{\large Shahar Rotberg}\footnote{Canada Mortgage and Housing Corporation (CMHC). Contact: \url{shahar.rotberg@gmail.com}. Website: \url{www.shaharrotberg.com}. This work was conducted on personal equipment and time. The code used to solve the model is the author's own, written in part with Claude (Anthropic), which was also used to run the model's simulations. The opinions expressed herein do not necessarily represent the views of CMHC.}\\[0.35em]
+{\large Shahar Rotberg}\footnote{Canada Mortgage and Housing Corporation (CMHC). Contact: \url{shahar.rotberg@gmail.com}. Website: \url{www.shaharrotberg.com}. This work was conducted on personal equipment and time. \new{The author wrote the baseline code of the quantitative model. Claude (Anthropic) was used to write the code of the stylized model and the extensions of the quantitative model, to debug the code, and to run the simulations.} The opinions expressed herein do not necessarily represent the views of CMHC.}\\[0.35em]
 \today
 \end{center}
 \renewcommand{\thefootnote}{\arabic{footnote}}
@@ -379,7 +379,7 @@ isolates the moral hazard.
 
 The first result of the stylized model is the optimal level of drug use. To estimate it, I set the weight a parent puts on its child to one, so that nothing a
 parent does to its child is left external . In that economy nobody uses drugs, so
-nobody acquires a SUD, and homelessness drops by $4$ percent.
+nobody acquires a SUD, and homelessness drops by \new{$3$} percent.
 
 The second result is that, without the externalities, the stylized model confirms the
 dominance result: $9.4$ percent of households are strictly worse off under Treatment
@@ -396,8 +396,8 @@ childhood homelessness as well, by about $1$ percent, because fewer
 households have a SUD and lose their jobs with no income support, and fewer are poor for having been born to a parent with the disorder; the
 quantitative model does not share this last result regarding childhood homelessness. In the transition,
 the old and the adults alive at the reform lose $0.07$ and
-$0.017$ percent of consumption, while their children, the first cohort born
-into the reform, already gain $0.36$ percent of lifetime
+ \new{$0.019$} percent of consumption, while their children, the first cohort born
+into the reform, already gain \new{$0.34$} percent of lifetime
 consumption, because their parents are deterred while they live with them.
 
 The full quantitative model that follows quantifies in more detail the mechanisms and the welfare
@@ -1021,8 +1021,8 @@ low annual discount factor would weigh that distant death much less and the
 mortality channel would be losing to impatience rather than to anything the model
 is about, so a higher factor corrects for the coarseness of the horizon.} risk aversion is
 $\sigma=2$, as in the quantitative model, and survival over a period is
-$\bar\phi = 0.91$, from the Social Security Administration (SSA) period life
-table for twenty-six to fifty-five.
+$\bar\phi = \new{0.93}$, from \new{the life table for the total population of the United States in 2010
+(Arias, 2014), which the quantitative model also uses,} for twenty-six to fifty-five.
 
 The chance that use causes a SUD, $\pi_d$, can also be externally calibrated. This
 is because drug use and the SUD are fully separated by cohort: the young are the
@@ -1123,7 +1123,7 @@ from nothing to $200$ percent of its calibrated value. Scaling the
 mortality channel multiplies $\kappa_{\phi d}$; scaling the unemployment channel moves
 $u_1$ up from $u_0$, reaching its calibrated value at 100 percent. Apart from the two channels, every parameter stays at its calibrated value
 except $b$, which is recalibrated at every point so that participation stays at the calibrated
-$8.92$ percent: the amount of drug use is the same everywhere on the figure,
+ \new{$8.95$} percent: the amount of drug use is the same everywhere on the figure,
 and only who uses changes. Both curves therefore start from the same economy, the one
 with no consequences of a SUD at all.
 
@@ -1136,13 +1136,13 @@ with no consequences of a SUD at all.
 scales one channel with the other switched off, so both start from the economy with no
 consequences of a SUD. The vertical axis is average income of users over the
 population average, and $b$ is recalibrated at every point so that participation is
-the calibrated $8.92$ percent. The black dotted line marks the calibrated strength; everything to
+the calibrated \new{$8.95$} percent. The black dotted line marks the calibrated strength; everything to
 the right of it is extrapolation.}
 \end{figure}
 
 The result is sharper than the statement that mortality matters more. On its own,
 the mortality channel takes the income ratio from 3.54 with nothing switched on
-down to 1.24 at its calibrated strength, and falls further to
+down to \new{1.19} at its calibrated strength, and falls further to
 0.52 as it continues to rise to $200$ percent of its calibrated
 value. With both channels at their calibrated strength the ratio is 0.75: the unemployment channel, which does nothing on its own, adds to the mortality channel once it is in place. 
 What mortality destroys is a continuation value,
@@ -1190,12 +1190,12 @@ the moral-hazard force, and comparing Treatment First with no programme at all
 isolates the value-of-life force.
 
 Panels A and B of Table~\ref{tab:stage1} put numbers on both, in the baseline of stage 1. With no
-programme at all, $7.62$ percent of households use. Treatment First takes that down to $4.19$ percent, a
-value-of-life force that reduces drug use by $3.43$ percentage points.
+programme at all, \new{$7.61$} percent of households use. Treatment First takes that down to \new{$4.45$} percent, a
+value-of-life force that reduces drug use by \new{$3.16$} percentage points.
 Switching to Housing First then raises it even higher than before a programme existed, to
-$8.92$ percent, so the moral-hazard force raises drug use by $4.73$
+ \new{$8.95$} percent, so the moral-hazard force raises drug use by \new{$4.50$}
 percentage points and the
-net effect of Housing First is a $1.30$ percentage-point increase in drug use relative to
+net effect of Housing First is a \new{$1.33$} percentage-point increase in drug use relative to
 no vouchers at all. Both comparisons here are between long-run steady states, each the rest point of
 the economy under a policy that has always been in place. Both forces are
 first order and they work against each other, which is the central feature of
@@ -1204,7 +1204,7 @@ or must reduce it, is making a quantitative claim that needs to be tested.
 
 The SUD rate follows participation one for one, since every user runs the same
 risk: $3.15$ percent of households carry the disorder with no programme,
-$1.73$ under Treatment First and $3.69$ under Housing First.
+ \new{$1.84$} under Treatment First and \new{$3.70$} under Housing First.
 Homelessness falls under both programmes, from
 $0.79$ percent to $0.56$ under Treatment First and
 to $0.59$ under Housing First.
@@ -1252,7 +1252,7 @@ statement about drug use and not about welfare.
 
 Panel C of Table~\ref{tab:stage1} puts welfare numbers on it:
 $9.4$ percent of households are strictly worse off under
-Treatment First,\footnote{The share worse off is above the $8.92$
+Treatment First,\footnote{The share worse off is above the \new{$8.95$}
 percent who use under Housing First, because a household that would use in only some of
 its period 1 draws is worse off in full but counts in participation only in the draws in
 which it uses.} none is better off, and those affected lose the equivalent of $0.19$ percent
@@ -1261,8 +1261,8 @@ can draw a voucher: a household that never uses faces the same voucher rule unde
 both policies and is indifferent between them. 
 
 A fixed budget does not rescue the welfare case for conditionality either. The two
-programmes cost almost the same, $2.14$ percent of mean income per household under
-Treatment First against $2.15$ percent under Housing First, so matching on cost
+programmes cost almost the same, \new{$2.16$} percent of mean income per household under
+Treatment First against \new{$2.17$} percent under Housing First, so matching on cost
 rather than on generosity would change nothing. Both programmes give a voucher to the same
 share $\pi_V$ of eligible households, and Treatment First then denies it to those that fail the
 sobriety condition, so it pays out less for that reason; the two costs are close because, in equilibrium under Treatment First, households are deterred, and thus few of
@@ -1364,17 +1364,17 @@ Table~\ref{tab:int} reports both.
 drug use and SUD is, one can set the weight a parent puts on its child to one,
 $\omega_c=1$, so that a parent counts its child fully, with nothing else changed and the
 programme left as it is. In this case, no parent uses at all: participation and the SUD rate
-both fall to $0.00$ percent, and homelessness to $0.52$ percent.
+both fall to $0.00$ percent, and homelessness to \new{$0.55$} percent.
 
 \paragraph{Treatment First with the child counted.} Counting the child's utility in
 welfare, as Section~\ref{sec:cev} describes, a newborn is better off under Treatment First
-than under Housing First, by $0.46$ percent of
+than under Housing First, by \new{$0.44$} percent of
 lifetime consumption in the long run. The dominance of Section~\ref{sec:nox} still holds
 for the parent's own choices; what reverses the ranking is what those choices do to the
 child. Treatment First cuts participation from $9.66$ to $7.16$
 percent and the share carrying the disorder from $4.00$ to $2.96$
 percent, both at each policy's rest point, so fewer children enter adult life with the penalty, and the gain is
-$0.22$ percent in childhood, because parents spend more of their
+ \new{$0.20$} percent in childhood, because parents spend more of their
 resources on them instead of on drugs, and $0.24$ percent in adult
 life, where the child enters with a better draw. Treatment First lowers
 homelessness too, by about $1$ percent, because fewer households have a SUD and lose their jobs
@@ -1403,18 +1403,18 @@ the adults alive at the reform, their children, and the cohorts born after them.
 The old, in their second period, chose under the old rule,
 carry whatever disorder that choice left them and cannot recover in a terminal period;
 conditionality now withdraws the voucher from those carrying one, and they lose
-$0.07$ percent of consumption, with $0.72$ percent of them
-homeless against $0.71$ under the old rule. The adults, in their first
+$0.07$ percent of consumption, with \new{$0.74$} percent of them
+homeless against \new{$0.73$} under the old rule. The adults, in their first
 period with their children at home, who were born into the old distribution, choose
-under the new rule; they lose $0.017$ percent over their adult lives,
+under the new rule; they lose \new{$0.019$} percent over their adult lives,
 the price of an option removed.
 
 Their children, the first cohort born into the reform, gain
-$0.36$ percent, which the rounded parts below do not add up to exactly: $0.24$ in adult life, since they are the first to
-enter it with the draws of parents who chose under Treatment First, and $0.11$ in childhood, against the
-$0.22$ that childhood contributes in the long run, since the parents they grow up with were themselves born
+ \new{$0.34$} percent, which the rounded parts below do not add up to exactly: $0.24$ in adult life, since they are the first to
+enter it with the draws of parents who chose under Treatment First, and \new{$0.094$} in childhood, against the
+ \new{$0.20$} that childhood contributes in the long run, since the parents they grow up with were themselves born
 into the penalised distribution. From the second cohort on the chain is at its
-new rest point and every cohort gains the long-run $0.46$ percent. The cost
+new rest point and every cohort gains the long-run \new{$0.44$} percent. The cost
 falls on the adults and the old alive at the reform, and the benefit on the children
 born at the reform and, even more, on every cohort born after them.
 
@@ -1452,8 +1452,8 @@ $V\big((1-w)\,c;\,0\big)=V\big(c;\,H\big)$, where $V(c;H)$ is an adult's lifetim
 the stage 2 economy when it consumes $c$ and homelessness is $H$, which it bears as the disamenity
 $\kappa_x H$, and $w$ is the
 willingness to pay as a share of consumption to have $H=0$.} That gives
-$\kappa_x=1.36$. Because the two policies differ little in homelessness, it changes essentially nothing about the welfare gain from Treatment First, which remains at
-$0.46$ percent of lifetime consumption.
+$\kappa_x= \new{1.30}$. Because the two policies differ little in homelessness, it changes essentially nothing about the welfare gain from Treatment First, which remains at
+ \new{$0.44$} percent of lifetime consumption.
 
 %======================================================================
 \section{The quantitative model}\label{sec:full}
@@ -2424,7 +2424,7 @@ Service (IRS) sets out in Topic 409
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$S(y)$ and $\underline S$, social security and its floor.] Retirement income follows the statutory
 primary insurance amount: it replaces a share of the household's income at its last working
-age that falls across the SSA's two bend points, up to
+age that falls across the \new{two bend points of the Social Security Administration (SSA)}, up to
 the taxable maximum, with the SSI payment as a floor. As $S(y)$ rises the old are richer, so the value of a life
 still to be lived rises and with it the cost of a disorder that shortens it. The shares
 $\alpha_1,\alpha_2,\alpha_3$ of the formula in footnote~\ref{fn:ss} are $0.90, 0.32, 0.15$ below the first bend point, between them and above the second, respectively. The
