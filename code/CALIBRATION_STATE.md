@@ -1,5 +1,12 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 05:00 ROUND r112 (the author's PDF of 095862a3: "remove all the red and all striked out lines and put updates
+in red"): strip_red.py, tables frozen, base_r112 + splice_r112; four comments, all "keep the word longer". 'Longer' is
+back where the author marked it -- Section 2's mechanism, the children's paragraph of 6.2, the Discussion, and the
+introduction's x_intro_gain -- plus x_intro_gain's first instance, the same construction in the same paragraph. It
+stays out of 'fewer (adults) remain unemployed because of a SUD' (6.2 and x_lr_adult), which the author removed in
+r111 and did not restore, and of x_tf_h_why_intro, the same 'fewer ... remain unemployed' construction.
+
 03 Oct 04:30 ROUND r111 (the author's PDF of 6010aa9d: "remove all red and striked lines. and put updates in red"):
 strip_red.py, tables frozen, base_r111 + splice_r111; six comments. 'remains unemployed' -> 'is expected to remain
 unemployed' (the job-finding rate); 'scaled back' -> 'clawed back' (the food stamp clawback); 'longer' removed from
