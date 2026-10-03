@@ -125,6 +125,13 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r138 (04 Oct 00:20; base_r136 + splice_r138): the author: combine the children's sentence with the transition
+sentence "and add that childhood homelessness rises in transition". x_trf_h_sr (transition_figure.py): 'These are
+long-run outcomes. However, in the first years after the reform both homelessness and childhood homelessness rise, because
+...'. Guarded on the children's path before the drifting end rising above the benchmark: on the OLD arms' path it goes
+1.02 -> peak 1.14 in year 6 (+12 percent), long run 1.08 there. The new T = 60 (running) must confirm it; the guard
+drops the clause if not. splice_r138 prints x_trf_h_sr RED this round instead of blue (its \upd tag stays); when red is
+next stripped, drop it from WHOLE so it goes back to blue until the new transition lands.
 ROUND r137 (04 Oct 00:10; base_r136 + splice_r136): the author: combine the children's paragraph with the previous one,
 "the same three effect basically net to zero also for households aged 26-50 ... and therefore childhood homelessness
 remains unchanged at 1.03 percent". x_lr_children_hl is now one sentence closing x_tf_h_sentence's paragraph, before
