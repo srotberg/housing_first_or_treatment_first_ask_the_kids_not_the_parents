@@ -531,7 +531,7 @@ def main():
     # text it had, for a Treatment First that raises homelessness
     _tf_dh_abs = abs(_tf_dh)
     out['x_abs_tf_exposes'] = ('it also raises homelessness' if _trise else
-                               'it also exposes the households it screens out to homelessness')
+                               'it also exposes those it screens out to homelessness')
     out['x_abs_om_adv'] = 'sharply ' if abs(pc(o, 'b', 'null_remote')) >= 25 else ''
     # the Discussion's recycled revenue (round 0e3b2441, the author on 'worth more': ", and homelessness actually
     # declines slgithy with chioldhood homelessness unaffected in the long run"): Section 6.2's balance credits the
