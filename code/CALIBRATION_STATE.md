@@ -1,5 +1,16 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 04:30 ROUND r111 (the author's PDF of 6010aa9d: "remove all red and striked lines. and put updates in red"):
+strip_red.py, tables frozen, base_r111 + splice_r111; six comments. 'remains unemployed' -> 'is expected to remain
+unemployed' (the job-finding rate); 'scaled back' -> 'clawed back' (the food stamp clawback); 'longer' removed from
+'remain unemployed longer because of a SUD' wherever it was (three marked by the author, the rest the r110 additions
+for consistency: Section 2, 6.2 x2, Discussion, x_intro_gain x2, x_lr_adult, x_tf_h_why_intro), struck. Table 6's
+employed share confirmed as Meyer et al. (2024): 52 percent of the sheltered and 40 of the unsheltered homeless had
+formal employment in 2010, and 46 is the midpoint; no change. phi = 0.85 not changed: the author's HSV revision has
+tau = 0.185 (1 - tau = 0.815); its 0.845 is the labour-supply factor (1 + sigma)/(sigma + gamma) in eq. (34).
+data/DATA_APPENDIX.md rewritten against the paper (Blocks 1-13, the experiment, Table 6, the stylized model, open
+provenance, retired entries).
+
 03 Oct 03:10 ROUND r110 (the author's PDF of 02:5x: "remove all red and all crossed lines and put only updates in red",
 "you can also remove the Why explanations"): strip_red.py (red, struck text and notes), base_r110 + splice_r110, tables
 frozen; 31 comments applied in red with deletions struck (writing/track_changes.py now strikes runs that contain a whole

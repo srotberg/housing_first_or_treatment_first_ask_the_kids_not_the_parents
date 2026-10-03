@@ -653,7 +653,7 @@ def main():
         'all. It is a result of the better economy it lives its adult life in. A clean and eligible household is '
         f'${_pvpc:.0f}$ percent more likely to draw a voucher, because the users the screen excludes no longer cost '
         'the programme, and tax revenue rises, mostly as fewer adults carry the earnings penalty and partly '
-        'as fewer remain unemployed longer because of a SUD.'
+        'as fewer remain unemployed because of a SUD.'
         if comp / tot < 0.5 and _gc > 0 and _gp > 0 and _pvpc > 0 > _prpc and _qup else '')
     # the moved sentence and the drug users' line are names of their own, so the move shows whole
     out['x_lr_adult_poor'] = _poor.strip() if out['x_lr_adult'] else ''
@@ -680,12 +680,12 @@ def main():
     out['x_intro_gain'] = (
         f"A newborn gains ${D[t]['cev_net']:.2f}$ percent of lifetime consumption. About ${_kid:.0f}$ percent of that "
         "gain comes in childhood, from a parent who spends more on the child's consumption and housing and less on "
-        f'drugs, and is less likely to remain unemployed longer because of a SUD, further improving childhood consumption. About '
+        f'drugs, and is less likely to remain unemployed because of a SUD, further improving childhood consumption. About '
         f'${_draw:.0f}$ percent comes from the higher earnings of a child whose parent was free of the '
         f'disorder. The remaining ${_val:.0f}$ percent comes from a better economy to live in as an adult: whatever '
         f'its productivity, an eligible household that stays clean is ${_pvpc:.0f}$ percent more likely to get a voucher, paid '
         'for by the users the screen excludes and by the higher taxes paid by working-age households that no longer '
-        'carry the earnings penalty or remain unemployed longer because of a SUD. Lastly, even some drug users benefit from the lower '
+        'carry the earnings penalty or remain unemployed because of a SUD. Lastly, even some drug users benefit from the lower '
         'equilibrium drug price' + _sud_net + '.' if out['x_lr_adult'] else '')
     # (round f4276e76, the author: 'UD' -> ', further imporving childhood consumption', 'taxes' -> 'taxes paid by
     # working-age households', 'and' -> 'period. Lastly, even drug users benefit from the lower equilibrium drug
