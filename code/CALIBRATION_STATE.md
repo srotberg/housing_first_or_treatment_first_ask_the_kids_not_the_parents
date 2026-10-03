@@ -1,5 +1,10 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 10:10 ROUND r123 (the author's PDF of c53bfd20: "remove all red and put updates in red"): strip_red.py, tables
+frozen, base_r123 + splice_r123. The introduction's sentence in the author's words, in red: "As far as I know, this is
+the first theory that can explain both why not everyone uses drugs and why drug users are poorer on average without
+resting on differences in preferences." The clause on goods other than drugs removed (the author: "remove").
+
 03 Oct 09:50 ROUND r122 (the author's PDF of 151d474e: "remove all red and put updates in red"): strip_red.py, tables
 frozen, base_r122 + splice_r122. Block 5's selection sentence REMOVED -- the author: "this is not true! in the data they
 are basically as likely" (users and non-users become parents at about the same rate; do not argue selection in the
