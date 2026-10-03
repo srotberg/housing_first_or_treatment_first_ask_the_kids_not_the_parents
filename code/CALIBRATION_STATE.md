@@ -6,6 +6,13 @@ strip_red.py (only r116's sentence was red), base_r117 + splice_r117, the altera
 luxury explains why few use and users are poor, without assuming different tastes." (18 words). The abstract is 150 by
 whitespace count, the same as the PDF's text gives; the author's "27 words left" counted 123 where both give 131.
 
+03 Oct 07:50 ROUND r117 (the author's PDF of f20a0572, comments on the abstract; "show me the alteration here"):
+strip_red.py (only r116's sentence was red), base_r117 + splice_r117, the alteration struck and red. 'model of' ->
+'model with endogenous'; the luxury-good sentence made punchier ("this is a big deal"): "Modelling drugs as a deadly
+luxury explains why few use and users are poor, without assuming different tastes." (18 words). The abstract is 150 by
+whitespace count, the same as the PDF's text gives; the author's "27 words left" counted 123 where both give 131.
+'distortions' struck from the keywords (the author).
+
 03 Oct 07:30 ROUND r116 (the author: "remove all striked sentences and red"; and "since i have 27 words left in the
 abstract ... say ... that modelling drugs as a luxury good with increased mortality risk can produce a small set of drug
 users who are poorer, as opposed to assuming systematic preference difference"): strip_red.py, tables frozen, base_r116
