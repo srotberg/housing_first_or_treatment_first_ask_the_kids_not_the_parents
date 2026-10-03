@@ -544,9 +544,10 @@ def main():
         _p = lambda x: f'{x:.2f}'
         # (round r134, the author's own text, verbatim: 'Furthermore', 'the first effect slightly outweighs the latter
         # two', 'a mere'; r135, the author: bring back "the same three effect", "but make it clear that they are the ones
-        # from the prevoious paragrpah" -- x_tf_h_sentence's, the paragraph before)
+        # from the prevoious paragrpah" -- x_tf_h_sentence's, the paragraph before; r136, the author: 'It does not
+        # move' -> 'It barely moves')
         out['x_lr_children_hl'] = (
-            'It does not move because, at the ages a child is at home, 26 to 50, the same three effects as in the previous '
+            'It barely moves because, at the ages a child is at home, 26 to 50, the same three effects as in the previous '
             'paragraph nearly cancel. '
             'Households that still carry a SUD lose their voucher, and the share of them who are homeless rises from '
             f"${_p(A0['h_sud'])}$ to ${_p(A1['h_sud'])}$ percent. But fewer households carry one, as the share with a "
