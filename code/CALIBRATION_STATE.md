@@ -26,6 +26,9 @@ Then ("can you still add something about taste difference?"): "In the model," tr
 Then ("i also want it to be clear that this matches the data"): "As in the data, few use drugs, a luxury, and users are
 poorer because using risks early death, not because tastes differ." (22), paid for by x_abs_tf_exposes' "those it
 screens out" in place of "the households it screens out". 150.
+Then "remove all cross lines": every \\del dropped from the source (marks.drop_marks) and from this build's splice
+output; red kept. DECOMPOSITION FINAL (both arms DIST CHECK PASS, fixp TARGET CHECK PASS, "decompositions done" 02:52):
+fixpv 0.18, fixp 13.11 off each arm's cf.log.gz; the two blue \\upd tags (6.2, Discussion) removed.
 
 03 Oct 07:30 ROUND r116 (the author: "remove all striked sentences and red"; and "since i have 27 words left in the
 abstract ... say ... that modelling drugs as a luxury good with increased mortality risk can produce a small set of drug
