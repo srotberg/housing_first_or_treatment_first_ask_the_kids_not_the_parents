@@ -125,6 +125,11 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r139 (03 Oct 23:50; the author: "remove all red"): base_r139 = current numbers, splice_r139 (= splice_r136,
+x_trf_h_sr back to blue). No red anywhere. T = 60 TIMING (asked): backward pass at about 5.5 min a year (59 to 52 by
+23:45), so it ends about 04:25; the forward pass gives year 1 soon after and the whole loop-0 path about 10:00-11:30
+(the old run: backward 4.2 h, forward 5.5 h; this one runs about 30 percent slower). Loop 0 is the same standing as the
+path in the paper now (one iteration, seeded prices); each further loop about 11-12 h.
 ROUND r138 (04 Oct 00:20; base_r136 + splice_r138): the author: combine the children's sentence with the transition
 sentence "and add that childhood homelessness rises in transition". x_trf_h_sr (transition_figure.py): 'These are
 long-run outcomes. However, in the first years after the reform both homelessness and childhood homelessness rise, because
