@@ -1,5 +1,17 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 02:30 REVIEW ROUND, SECOND PASS (the author: "it is not that they lose their job to a SUD but that they remain
+unemployed because of their SUD"; footnote 16: "we know because I ran it before. We don't have to re run"; "make the
+fixes you think are necessary"; "leave notes for me"; "deleted sentences should show as crossed"). Wording is now
+'remain unemployed because of a SUD' throughout the quantitative part. Footnote 16's blue tag removed. DELETIONS ARE
+STRUCK (\del, ulem) and NOTES ARE GREEN (\why, 35 of them, listed after the abstract): writing/track_changes.py
+diffs the source the author last saw (git 0556f9d6^1) against the round's clean source; the splice strikes what a
+moved generated name used to print; strip_red.py drops both (writing/marks.py); CLAUDE.md carries the rule. STYLIZED
+BUG FIXED: the child's draw centred on log average income, not the mean of log productivity (0.25 log points too
+high); _child_centre in stylized.py; moves only the unprinted child odds ratios (0.96, 1.26 -> 0.94, 1.23), s2_part
+8.93 -> 8.94, s3_kx 1.363 -> 1.364; not refitted. Checked against the Fortran (mu_1 = -sd^2/2): never had it;
+TRANSITION_LESSONS.md section 7 has the row. Section 3's equation now reads (1-rho) mu_y.
+
 03 Oct 01:00 REVIEW ROUND (the author: "fix everything you found. put it in red"; no strip, base_r109 + splice_r109,
 164 red marks, blue \upd tags kept and four added). Groups A-F of the 2 October review applied. A: 'lose their jobs
 to a SUD' -> spells out of work (Section 4.8: the SUD only lowers job finding) in the generators and prose; footnote 16

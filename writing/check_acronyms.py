@@ -40,6 +40,8 @@ ALLOW = {
 
 
 def prose(text):
+    from marks import drop_marks          # struck deletions and notes are not prose
+    text = drop_marks(text)
     """The paper's prose: no comments, no maths, no bibliography."""
     end = text.find(r'\begin{thebibliography}')
     if end > 0:

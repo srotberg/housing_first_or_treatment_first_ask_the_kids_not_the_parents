@@ -1315,6 +1315,21 @@ def period1(par, y, policy=None):
     return out
 
 
+
+def _child_centre(w, ly, lb):
+    """THE CENTRE OF THE CHILD'S DRAW IS THE MEAN OF LOG PRODUCTIVITY (review, 3 October). It was
+    (1-rho)*log ybar with ybar average income, which is one, while log y has mean -sigma^2/2, so the
+    children of the average parent were drawn (1-rho)*sigma^2/2 above their parents and the draw was not
+    stationary. Measured at stage 2's parameters, the fix leaves the welfare of Treatment First at 0.461
+    and participation at 8.93 against 8.94, and moves the child odds ratios from 0.96 and 1.26 to 0.94
+    and 1.23. STYL_LB_MEANLOG=0 restores the old centre for a comparison. The quantitative model was
+    checked and never had the error: create_newborn_employment_probability centres on mu, the mean of
+    log productivity at entry (TRANSITION_LESSONS.md, section 7)."""
+    import os as _os
+    if _os.environ.get('STYL_LB_MEANLOG', '1') == '1':
+        return float((w * ly).sum() / w.sum())
+    return lb
+
 def _child_rate(par, ly, lb, w, ygrid, prob, shift):
     """
     Average a per-income probability over the CHILD's income distribution.
@@ -1371,6 +1386,7 @@ def child_damage(par, ygrid, w, v1):
     """
     ybar = float((w * ygrid).sum() / w.sum())
     ly, lb = np.log(np.maximum(ygrid, 1e-12)), np.log(max(ybar, 1e-12))
+    lb = _child_centre(w, ly, lb)
     k0 = _child_kernel(par, ly, lb, ygrid, 0.0)
     k1 = _child_kernel(par, ly, lb, ygrid, par.delta_d)
     return (k0 - k1) @ np.asarray(v1, dtype=float)
@@ -1447,6 +1463,7 @@ def child_sud_odds_ratio(par, ygrid, w, policy=None):
     """
     ybar = float((w * ygrid).sum() / w.sum())
     ly, lb = np.log(np.maximum(ygrid, 1e-12)), np.log(max(ybar, 1e-12))
+    lb = _child_centre(w, ly, lb)
     use = np.array([use_prob(par, float(y), policy) for y in ygrid])
 
     def rate(shift):
@@ -1472,6 +1489,7 @@ def child_homeless_odds_ratio(par, ygrid, w, policy=None):
     """
     ybar = float((w * ygrid).sum() / w.sum())
     ly, lb = np.log(np.maximum(ygrid, 1e-12)), np.log(max(ybar, 1e-12))
+    lb = _child_centre(w, ly, lb)
     hl = np.array([homeless_prob(par, float(y), policy) for y in ygrid])
 
     def rate(shift):

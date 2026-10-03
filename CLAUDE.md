@@ -142,6 +142,23 @@ from git if it happens again -- and note that the four frozen baselines
 themselves) have to be restored with it, or the next build re-marks everything
 as moved.
 
+## Deletions are struck through, and changes carry a note
+
+The author, 3 October: *"deleted sentences should show as crossed so I know what you delete"*, and *"leave notes
+for me in case I need to understand why you made a change"*. Both are standing.
+
+- **Deleted text stays in the paper as `\del{...}`**, red and struck through (ulem's `\sout`), right before
+  whatever replaced it. Write the round's edits with `\new{}` as usual, keep a copy of the source as the author
+  last saw it, then run `python3 writing/track_changes.py OLD CUR OUT`: it diffs the two word by word, strikes
+  every deleted run, wraps any inserted run that is not yet marked, takes the reference list entry by entry,
+  and leaves display maths, tables, figures and section titles alone (listed as SKIPPED; say those in a note).
+  Generated sentences get the same treatment from the round's splice, which strikes what a moved name used to
+  print. Tables stay black, so a table change goes in a note.
+- **A substantive change carries `\why{...}`**, a short green note after it, listed with its page after the
+  abstract. Say what was wrong and where the new number or claim comes from. Not for grammar or hyphens.
+- `writing/strip_red.py` removes both, contents and all (`writing/marks.py`), and the checkers skip them.
+  Escape `_` in anything struck (`\sout` is not verbatim), and never strike a lone control space.
+
 ## Never write unmarked prose into the paper
 
 **Never open a `\new{}` with a space.** `\new` is `{\color{red}#1}` and the colour change eats a
@@ -162,7 +179,8 @@ visible for one round**, which is why the second half of the rule matters more
 than the first:
 
 - responding to a comment: edit, mark it `\new{}`, that is the job;
-- explaining something to the author: say it in chat, NOT in the paper;
+- explaining something to the author: say it in chat or, for why a change was made, in a `\why{}` note,
+  which the strip removes -- NOT in the paper's prose;
 - noticing something the paper should say: say so in chat and ask, rather than
   writing the paragraph and letting the strip bury it a round later.
 

@@ -114,6 +114,8 @@ def cells():
 
 def main(strict=False):
     s = io.open(SRC, encoding='utf-8').read()
+    from marks import drop_marks          # struck deletions and notes are not prose
+    s = drop_marks(s)
     s = s[s.index(r'\section{Introduction}'):]
     s = re.sub(r'@@[a-zA-Z_0-9]+@@', '', s)
     s = re.sub(r'\\(?:label|ref|eqref|cite[a-z]*|url|href)\{[^}]*\}', '', s)

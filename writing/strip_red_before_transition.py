@@ -69,6 +69,8 @@ def main(dry=False):
         sys.exit(f'refusing to run: found {s.count(ANCHOR)} copies of {ANCHOR}')
     cut = s.index(ANCHOR)
     head, tail = s[:cut], s[cut:]
+    from marks import drop_marks          # struck deletions and notes go with the red
+    head = drop_marks(head)
     before, kept = head.count(TOK), tail.count(TOK)
     new_head = _strip(head)
     print(f'   before Section 3.7: {before} red group(s) -> {new_head.count(TOK)}')

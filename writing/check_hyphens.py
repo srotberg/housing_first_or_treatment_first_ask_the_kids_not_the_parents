@@ -60,6 +60,8 @@ VERBS = {'draws', 'is', 'are', 'was', 'were', 'has', 'have', 'had', 'can', 'coul
 
 
 def prose(text):
+    from marks import drop_marks          # struck deletions and notes are not prose
+    text = drop_marks(text)
     # STRIP THE RED WRAPPERS FIRST. A phrase marked as an edit reads as
     # "\textcolor{red}{value-of-life} force" once the macro name is blanked,
     # which leaves a brace between the compound and the noun it modifies and

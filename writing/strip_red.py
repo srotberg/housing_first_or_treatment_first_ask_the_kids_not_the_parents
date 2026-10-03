@@ -70,6 +70,10 @@ def strip(s):
 if __name__ == "__main__":
     p = sys.argv[1]
     src = open(p).read()
+    # DELETED TEXT AND NOTES GO WHOLE (the author, 3 October): \del{...} is what a round took out, shown
+    # struck through, and \why{...} a note to the author; neither is the paper's text once the round is read
+    from marks import drop_marks
+    src = drop_marks(src)
     # THE MACRO DEFINITION IS NOT AN INSTANCE OF THE MACRO. Stripping
     # \\newcommand{\\new}[1]{\\textcolor{red}{#1}} turns \\new into a no-op and
     # silently un-reds every number fill.py marked, which is the opposite of
