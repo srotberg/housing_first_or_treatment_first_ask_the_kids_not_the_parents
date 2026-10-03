@@ -1,5 +1,13 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 06:40 ROUND r114 (the author's PDF of 073c2f11: "remove all striked lines and all red and put updates in red"):
+strip_red.py, tables frozen, base_r114 (results_numbers.json from HEAD) + splice_r114; four comments, all in 6.2's welfare
+paragraph. Three paragraph breaks: before 'About 57 percent', before 'The other 43 percent' (source) and before 'The
+second, the remaining' (inside x_lr_adult, a blank line in the generated string; the splice does not mark it). "even
+holding pi_v constant?" on the price-held gain: no -- in fixp pi_V still clears the budget and rises to 11.45 percent
+(Treatment First's 9.62), so the sentence says so (x_dc_p_piv_pc, from the pass table's pi_V). fixp at pass 7 (budget
+gap 5.5e-4, gain 13.11), fixpv at pass 6. A run with BOTH held would give the screen's direct effect: offered.
+
 03 Oct 06:10 ROUND r113 (the author: "remove all red and striked line from the current version. only put new updates
 in red"; on the decomposition: "if not [a table], we can just mention this in the text, weaving it", "so it is less
 heavy"): strip_red.py, tables frozen, base_r113 (results_numbers.json from HEAD, since the freeze had already written the

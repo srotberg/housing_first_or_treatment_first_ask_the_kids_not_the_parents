@@ -649,7 +649,8 @@ def main():
         'times what the average child gains at the same productivity. But it spares only about '
         f"${float(out['x_lr_pen0']) - float(out['x_lr_pen1']):.0f}$ percent of children: the share of newborns who "
         f"enter adult life with the penalty {out['x_lr_pen_dir']} from ${out['x_lr_pen0']}$ to ${out['x_lr_pen1']}$ "
-        f"percent. The second, the remaining ${_val:.0f}$ percent, does not come from the child's productivity at "
+        # (round r114, the author: "new paragraph" before 'The second')
+        f"percent.\n\nThe second, the remaining ${_val:.0f}$ percent, does not come from the child's productivity at "
         'all. It is a result of the better economy it lives its adult life in. A clean and eligible household is '
         # (3 October, "so it is less heavy": why pi_V rises is the first paragraph's, and is not repeated here)
         f'${_pvpc:.0f}$ percent more likely to draw a voucher.'

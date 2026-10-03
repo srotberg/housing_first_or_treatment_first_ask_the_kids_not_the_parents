@@ -283,7 +283,7 @@ def _dc_last_pass(arm):
             rows.append(l.split())
     r = rows[-1]   # pass price pi_V b SUD h_1 drug-gap budget-gap welfare CEV V V/user
     pcv = lambda s: float(s.rstrip('%'))
-    return {'b': pcv(r[3]), 'sud': pcv(r[4]), 'h': pcv(r[5]), 'cev': pcv(r[9]), 'pass': int(r[0])}
+    return {'b': pcv(r[3]), 'sud': pcv(r[4]), 'h': pcv(r[5]), 'cev': pcv(r[9]), 'piv': float(r[2]), 'pass': int(r[0])}
 
 
 def _dc(arm):
@@ -304,6 +304,9 @@ _tfc = cev_log('tf85') - CEV0
 out['x_dc_pv_cev'] = f"{DC_PV['cev']:.2f}"
 out['x_dc_p_cev'] = f"{DC_P['cev']:.2f}"
 out['x_dc_p_b_pc'] = f"{abs(DC_P['b']):.0f}"
+# (round r114, the author on the price-held gain: "even holding pi_v constant?" -- no: pi_V still clears the budget,
+# and rises further than under Treatment First, so the sentence says so and gives its level)
+out['x_dc_p_piv_pc'] = f"{100 * DC_P['piv']:.2f}"
 out['x_dc_pv_h_pc'] = f"{abs(DC_PV['h']):.0f}"
 out['x_dc_pv_h_dir'] = 'rise' if DC_PV['h'] > 0 else 'fall'
 # how much of the gain the unspent revenue takes with it, in words that turn with the numbers
