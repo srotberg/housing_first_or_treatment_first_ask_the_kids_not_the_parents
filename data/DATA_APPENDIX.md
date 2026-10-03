@@ -258,7 +258,7 @@ still brackets on the thirty percent cut, and h₂ was held in the benchmark.
 
 ## Block 9: Earnings and employment
 
-**J, J_K and J_R — 60, 25 and 41, with j = 1 at age 26.** Ext. The last age is 85, where the SSA life table ends; the
+**J, J_K and J_R — 60, 25 and 41, with j = 1 at age 26.** Ext. The last age is 85; the
 child is at home while its parent is 26 to 50; retirement begins at 66, the full retirement age for those born 1943
 to 1954 (`life_span = 60`, `child_at_home_last_index = 25`, `retirement_span = 20`).
 
@@ -315,7 +315,7 @@ repository's first commit; it reproduces Table 1's q_x at every age to within 0.
 0.075818), against 11 percent or more if the table is shifted a year either way. The SSA period life table, Table 4.C6,
 is also in the package (`raw/SSA_period_life_table_table4c6.xlsx`, written to `us_life_table.csv` by
 `make_life_table.py`); the quantitative model does not use it for baseline survival, but it reaches the model through
-`make_mortality_multipliers.py`, and the stylized model's survival comes from it.
+`make_mortality_multipliers.py`. The stylized model's survival comes from the Arias table too (Part IV).
 
 **ς_m(j), the age profile of SMI onset.** Ext. NSDUH 2024, SMI prevalence by `AGE3` band (10.15, 8.98, 6.30, 4.32 and
 1.27 percent at 26–29, 30–34, 35–49, 50–64 and 65+), fitted log-linearly in age. Onset is backed out of the fitted
@@ -532,7 +532,10 @@ The stylized model's targets are the quantitative model's wherever the two share
 them; the differences are these.
 
 - **Periods.** A period is thirty years, so β = 0.995 a year compounded, 0.86, saving earns nothing (R = 1), and φ̄ =
-  0.91 is survival from 26 to 55 in the SSA period life table (`us_life_table.csv`).
+  0.93 is survival from 26 through 55 in the quantitative model's own life table, Arias (2014) (Block 10): the
+  product of the first thirty entries of `actual_survival_probability`, which `stylized.py` reads from the Fortran
+  (`_arias_survival`). Until 3 October it was 0.91, a figure carried over from a source the package never held (the
+  SSA period life table gives 0.92); the author: "it's better to use the same data for consistency".
 - **Two rental units**, set at h₂ = 0.10 and h₃ = 0.40 of mean income, rather than a calibrated smallest rung.
 - **π_d = 0.41, set externally** as 3.68/8.90, since use and the SUD are separated by cohort there.
 - **b and θ** are fitted by the quantitative model's update rule to the same 8.90 and 16.0 percent (θ = 0.18: 15.8

@@ -525,7 +525,7 @@ def write_tables(p1, r1, p2, r2):
          f'${p1.beta ** (1 / p1.years):.3f}$ annually, compounded', f'${tn(p1.beta)}$'),
         (r'$R$', 'Gross return on saving', 'Zero percent interest', f'${p1.R:.2f}$'),
         (r'$\sigma$', 'Risk aversion', 'Standard; Attanasio and Weber (2010)', f'${p1.sigma:.0f}$'),
-        (r'$\bar\phi$', 'Survival over a period, no SUD', 'SSA period life table, ages 26--55',
+        (r'$\bar\phi$', 'Survival over a period, no SUD', 'US life table 2010, Arias (2014), ages 26--55',
          f'${p1.phi0:.2f}$')]),
         ('The SUD', [
         (r'$\pi_d$', 'Chance that use starts a SUD', 'NSDUH 2024: SUD rate over participation',

@@ -35,7 +35,7 @@ EXTERNAL = [
         ('R', 'R', 'Interest rate over a thirty year period',
          r'Set to $1/\beta$', '{:.3f}'),
         ('phi0', r'\bar\phi', 'Survival over a period, no SUD',
-         'SSA period life table, ages 26--55', '{:.2f}'),
+         'US life table 2010, Arias (2014), ages 26--55', '{:.2f}'),
     ]),
     ('The SUD', [
         ('kap', r'\kappa_{\phi d}', 'Fall in survival with a SUD, over a thirty year period',
