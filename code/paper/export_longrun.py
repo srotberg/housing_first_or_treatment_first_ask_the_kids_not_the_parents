@@ -541,8 +541,10 @@ def main():
     out['x_abs_tf_result'] = (
         'In the long run, conditioning assistance raises homelessness but substantially cuts drug use' if _trise else
         # (round r120, the author: 'In the long run,' and 'substantially' moved: "drug use substantially ... in the long run, and")
-        'Conditioning assistance cuts drug use substantially in the long run, and, as the vouchers it revokes go to other '
-        f"poor households, lowers homelessness{' slightly' if _tf_dh_abs < 3 else ''}")
+        # (3 October, the author: "as government recycles excess revenues as vouchers to other poor households"; the
+        # decomposition shows recycling is what lowers homelessness -- with pi_V held it would rise)
+        'Conditioning assistance cuts drug use substantially in the long run, and, as recycled revenue funds more vouchers '
+        f"for other poor households, lowers homelessness{' slightly' if _tf_dh_abs < 3 else ''}")
     # the Discussion's 'which channel' sentence, as Section 6.2 now explains it (x_lr_v26_why): what users
     # no longer cost the programme comes back as a higher pi_V, and demand falls, so the drug is cheaper
     _pv_up, _p_dn = D[t]['piv'] > D['null_share']['piv'], D[t]['price'] < D['null_share']['price']

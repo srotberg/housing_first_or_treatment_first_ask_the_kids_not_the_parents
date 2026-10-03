@@ -1,5 +1,12 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 09:20 ROUND r121 (the author: "remove red", then the abstract's voucher clause): all red removed; then
+x_abs_tf_result's "as the vouchers it revokes go to other poor households" -> "as recycled revenue funds more vouchers
+for other poor households" (the author's idea, "as government recycles excess revenues as vouchers to other poor
+households", at the same length; the decomposition shows recycling is what lowers homelessness). In red; 150 words.
+REPO CLEANUP PAUSED at the author's word: an strace'd rebuild started at 03:33 was cut off mid-export and left
+results_numbers.json without its 28 x_trf_* names; restored from git and regenerated whole. Nothing moved or renamed.
+
 03 Oct 09:00 ROUND r120 (the author's PDF of b80607ce: "put updates in red. no need to show striked lines anymore"):
 NO MORE STRIKES (CLAUDE.md updated; splice_r120 drops every \\del it would write). base_r120 + splice_r120. The
 abstract's long-run sentence, x_abs_tf_result, rearranged as the author marked it: "Conditioning assistance cuts drug
