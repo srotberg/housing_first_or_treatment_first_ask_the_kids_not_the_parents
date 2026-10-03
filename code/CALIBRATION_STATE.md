@@ -18,6 +18,9 @@ difference is needed." (21 words), paid for by "despite a temporary rise in chil
 rise ... during the transition". Still 150.
 Then ("i want something that flows better"): "Few use drugs because they are a luxury, and users are poorer because a
 disorder raises mortality, not because tastes differ." (21 words, 150 in all).
+Then the author's own wording ("drugs in the model are a luxury good, so few use them; but drug users also risk early
+death, so users are poorer"), tightened to 21: "In the model, drugs are a luxury good, so few use them, but using
+risks early death, so users are poorer."
 
 03 Oct 07:30 ROUND r116 (the author: "remove all striked sentences and red"; and "since i have 27 words left in the
 abstract ... say ... that modelling drugs as a luxury good with increased mortality risk can produce a small set of drug
