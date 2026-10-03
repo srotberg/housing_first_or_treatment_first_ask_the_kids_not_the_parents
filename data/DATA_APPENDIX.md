@@ -308,13 +308,14 @@ applied for UI since their last job.
 
 ## Block 10: Baseline survival and SMI onset
 
-**φ̄_j, baseline survival by age.** Ext. The SSA period life table, Table 4.C6, ages 26 to 85, sexes combined by
-survivor weight, is in `raw/SSA_period_life_table_table4c6.xlsx` and `make_life_table.py` writes it to
-`us_life_table.csv` (q₂₆ = 0.00116, q₈₅ = 0.0805). **The quantitative model does not read that file.** Its survival
-is the hard-coded vector `actual_survival_probability`, in place since the repository's first commit, whose source is
-not recorded; against the SSA table its death probabilities are 0.81 times as high at 26, 0.65 at 35, 0.88 at 45,
-about 1.0 from 50 to 65 and 1.05 to 1.09 from 70 to 84 (Part V). The SSA table reaches the quantitative model only
-through `make_mortality_multipliers.py`, and the stylized model's survival comes from it.
+**φ̄_j, baseline survival by age.** Ext. Arias (2014), *United States Life Tables, 2010*, National Vital Statistics
+Reports 63(7) (`raw/NCHS_US_life_tables_2010_nvsr63_07.pdf`), Table 1, the total population: one minus the probability of dying, q_x, at ages 26 to 84, with death
+certain after 85. The quantitative model carries it as the vector `actual_survival_probability`, in place since the
+repository's first commit; it reproduces Table 1's q_x at every age to within 0.05 percent (q₂₆ = 0.000943, q₈₄ =
+0.075818), against 11 percent or more if the table is shifted a year either way. The SSA period life table, Table 4.C6,
+is also in the package (`raw/SSA_period_life_table_table4c6.xlsx`, written to `us_life_table.csv` by
+`make_life_table.py`); the quantitative model does not use it for baseline survival, but it reaches the model through
+`make_mortality_multipliers.py`, and the stylized model's survival comes from it.
 
 **ς_m(j), the age profile of SMI onset.** Ext. NSDUH 2024, SMI prevalence by `AGE3` band (10.15, 8.98, 6.30, 4.32 and
 1.27 percent at 26–29, 30–34, 35–49, 50–64 and 65+), fitted log-linearly in age. Onset is backed out of the fitted
@@ -427,7 +428,7 @@ in thousands, ages 12 and over, pooled in `drug_use_age_distribution.xlsx` (shee
 48,464, ages 12 to 34 hold 21,941, 35–44 9,281, 45–54 6,582, 55–64 6,048 and 65 and over 4,610. The mean age takes band
 midpoints and 70 for the open band. Three things about this universe: the youngest band starts at 12, because the
 model's first cohort stands in for everyone who began earlier; the object is a substance use disorder with alcohol
-included; and the year is 2023. (Table 6 labels the row NSDUH 2024 and its first band 26–34.) On the drug use
+included; and the year is 2023, as Table 6 now says. (Table 6 labels the first band 26–34.) On the drug use
 disorder column of the same table the shares are 51.1, 17.4, 12.5, 10.8 and 8.2 and the mean age 37.5; restricted to
 26 and over they are 31.0, 24.6, 17.7, 15.2 and 11.6, mean 44.6.
 
@@ -472,12 +473,13 @@ percent of tenant-based voucher households.
 restriction, total household income `income` weighted by `wgt`, sorted and cumulated with the household that straddles
 each cut split, as the Fortran walks its own histogram: 0.00012, 0.00311, 0.00915 and 0.02705.
 
-**Net worth, bottom 1, 5, 10, 20 and 50 percent — −0.16, −0.28, −0.29, −0.23 and 2.5 percent.** The first four are SCF
-2022, all households, `networth` weighted by `wgt`, with the same straddle split: −0.00158, −0.00279, −0.00287 and
-−0.00226. The bottom half is the Federal Reserve's Distributional Financial Accounts
-(`raw/FRB_DFA_net_worth_levels_by_percentile_1989_2026.csv`): Bottom50 over the sum of the five groups, averaged over
-the 17 quarters 2022:Q1 to 2026:Q1, 2.52 percent (`make_wealth_shares.py --from-year 2022`, `us_wealth_shares.csv`).
-The latest quarter, 2026:Q1, is 2.45, and the SCF's own bottom-half share is 2.20. (Table 6 now names only the SCF.)
+**Net worth, bottom 1, 5, 10, 20 and 50 percent — −0.16, −0.28, −0.29, −0.23 and 2.2 percent.** SCF 2022, all
+households, `networth` weighted by `wgt`, with the same straddle split: −0.00158, −0.00279, −0.00287, −0.00226 and
+0.02202 (`SCF_wealth_shares.txt`, which `calib_tables.py` reads for the bottom half). For comparison, the Federal
+Reserve's Distributional Financial Accounts (`raw/FRB_DFA_net_worth_levels_by_percentile_1989_2026.csv`) put the
+bottom half at 2.52 percent averaged over 2022:Q1 to 2026:Q1 and 2.45 in 2026:Q1 (`make_wealth_shares.py --from-year
+2022`, `us_wealth_shares.csv`); the Fortran's `bottom_half_wealth_share_data = 0.025` is that figure, and the paper no
+longer uses it.
 
 ## Block 5: Drug price elasticities
 
@@ -552,20 +554,18 @@ them; the differences are these.
 
 What the package does not yet document, or does not carry:
 
-1. **The quantitative model's baseline survival** (`actual_survival_probability`) has no recorded source and is not the
-   SSA table the paper cites (Block 10).
-2. **The ceiling of h₁'s band**, 1.00 percent from Burt, Aron and Lee (2001): the figure, its year and whether it is
+1. **The ceiling of h₁'s band**, 1.00 percent from Burt, Aron and Lee (2001): the figure, its year and whether it is
    a share of people or of households are not recorded.
-3. **π_V's denominator**, the number of households below half of median income behind 26.6 percent, is not named.
-4. **SNAP outlays and GDP** behind 0.42 percent: the fiscal year is not recorded, and 113 billion over 27.7 trillion
+2. **π_V's denominator**, the number of households below half of median income behind 26.6 percent, is not named.
+3. **SNAP outlays and GDP** behind 0.42 percent: the fiscal year is not recorded, and 113 billion over 27.7 trillion
    is 0.41.
-5. **The 25 percent SMI share of the homeless**: which diagnoses in Gutwinski et al. (2021) sum to it is not recorded.
-6. **The mean household income of 113,000 dollars** behind the VSL multiple has no recorded source or year.
-7. **g's study**: the buprenorphine-naloxone remission figures, 18.8 against 10.4 percent, carry no citation.
-8. **The progressivity 0.15** is not attributed to a study (Block 11).
-9. **Meyer et al. (2024)**: the table behind the 19.1 percent income of the homeless.
-10. **Not in the package**: the BEA fixed asset tables and NIPA, the USDA SNAP outlays, the BLS 2019 unemployment rates by
-    education behind ϖ(y), and the McDaniel (2007) series.
+4. **The 25 percent SMI share of the homeless**: which diagnoses in Gutwinski et al. (2021) sum to it is not recorded.
+5. **The mean household income of 113,000 dollars** behind the VSL multiple has no recorded source or year.
+6. **g's study**: the buprenorphine-naloxone remission figures, 18.8 against 10.4 percent, carry no citation.
+7. **The progressivity 0.15** is not attributed to a study (Block 11).
+8. **Meyer et al. (2024)**: the table behind the 19.1 percent income of the homeless.
+9. **Not in the package**: the BEA fixed asset tables and NIPA, the USDA SNAP outlays, the BLS 2019 unemployment rates by
+   education behind ϖ(y) and the McDaniel (2007) series.
 
 ---
 

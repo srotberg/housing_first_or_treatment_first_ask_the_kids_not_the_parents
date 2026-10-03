@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 05:40 ROUND r112, SECOND PASS (the author's answers on the appendix audit; no strip, red on top of r112).
+SURVIVAL: the hard-coded actual_survival_probability IS Arias (2014), United States Life Tables, 2010, Table 1, total
+population -- q_x at 26 to 84 to within 0.05 percent at every age (the author's guess; the PDF they uploaded is now
+data/raw/NCHS_US_life_tables_2010_nvsr63_07.pdf). Block 10's sentence, Table 5's phi_j row and the references cite it;
+J's "where the life table of Block 10 ends" and Table 5's "end of the SSA life table" are gone, since that table runs
+to 100. USERS BY AGE: NSDUH 2023 in Table 6 and in 5.3's Block 2. NET WORTH, BOTTOM HALF: the SCF's own 2.2
+(calib_tables.py reads data/SCF_wealth_shares.txt) in place of the DFA's 2.5; 5.3's Block 4 and the data line no
+longer name the DFA. DRUG DEATHS (Table 6 prints a typed 20.0; the 2024 WONDER file gives 20.8): explained, waiting.
+
 03 Oct 05:00 ROUND r112 (the author's PDF of 095862a3: "remove all the red and all striked out lines and put updates
 in red"): strip_red.py, tables frozen, base_r112 + splice_r112; four comments, all "keep the word longer". 'Longer' is
 back where the author marked it -- Section 2's mechanism, the children's paragraph of 6.2, the Discussion, and the

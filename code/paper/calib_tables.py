@@ -140,6 +140,12 @@ B_ON = M['b total drug users'][0]
 RISE = B_OFF / B_ON - 1
 
 
+# THE SCF'S BOTTOM-HALF SHARE OF NET WORTH, all households, from the SCF extract's own output
+# (data/SCF_wealth_shares.txt, the "50" row, all-households column)
+import re as _re
+SCF_NW50 = float(_re.search(r'^\s*50\s+(-?[0-9.]+)', open(os.path.join(ROOT, 'data', 'SCF_wealth_shares.txt')).read(), _re.M).group(1))
+
+
 def mom(key, which=0):
     return M[key][which]
 
@@ -303,7 +309,7 @@ STANDARD = [
     ('Earnings and employment', [
         # THE HORIZON (the author, round b8142d12: "You never set J=60 and J_R=41 anywhere"):
         # life_span and retirement_span from the declarations; j = 1 is age 26
-        (r'$J$', 'Maximum age', 'Ext.', f"Age {AGE0 + J_MAX}, end of the SSA life table",
+        (r'$J$', 'Maximum age', 'Ext.', f"Age {AGE0 + J_MAX}",
          f'{J_MAX}', NA, f'{J_MAX}'),
         # J_K HAS A ROW (review, 3 October): the child is at home for the parent's first J_K years
         (r'$J_K$', 'Years the child lives at home', 'Ext.', f"Parent aged 26 to {AGE0 + J_K}",
@@ -336,7 +342,7 @@ STANDARD = [
          f(C['probability_of_ui']), NA, f(C['probability_of_ui'])),
     ]),
     ('Baseline survival and SMI onset', [
-        (r'$\bar\phi_j$', 'Baseline survival by age', 'Ext.', 'SSA period life table, ages 26 to 85',
+        (r'$\bar\phi_j$', 'Baseline survival by age', 'Ext.', 'US life table 2010, Arias (2014)',
          'Profile', NA, 'Profile'),
         (r'$\varsigma_m(j)$', 'Age profile of SMI onset', 'Ext.', 'SMI prevalence by age, NSDUH 2024',
          'Profile', NA, 'Profile'),
@@ -411,8 +417,10 @@ UNTARGETED = [
      'Meyer et al.\\ (2024)'),
     ('Income of the homeless, over average', one('income of the homeless'), r'Meyer et al.\ (2024)'),
     ('Block 2: Who uses and who carries a SUD', None, None),
-    ('Share of users by age, 26--34 to 65+', many(USER_BANDS, 0), 'NSDUH 2024'),
-    ('Mean age of users, years', one('mean age of drug users', 1, 1), 'NSDUH 2024'),
+    # NSDUH 2023 (the author, 3 October: "should change the year"): the shares are Table 5.3A of the 2023
+    # detailed tables, data/drug_use_age_distribution.xlsx, not the 2024 file
+    ('Share of users by age, 26--34 to 65+', many(USER_BANDS, 0), 'NSDUH 2023'),
+    ('Mean age of users, years', one('mean age of drug users', 1, 1), 'NSDUH 2023'),
     ('Unemployment given a SUD', one('kappa_ued unemployment given SUD'), 'NSDUH 2024'),
     # DRUG USE, NOT THE SUD RATE, with SMI over without (the author, 1 October: "we need to
     # show the drug use ratio with SMI over without (not show the SUD rate)"); the same
@@ -434,11 +442,12 @@ UNTARGETED = [
     (r'Income, bottom 1, 5, 10, 20\%',
      many([f'income share bottom {p} pct' for p in (1, 5, 10, 20)], 2), 'SCF 2022'),
     # THE BOTTOM HALF JOINS THE ROW (the author, 1 October: "add the 50% here instead of
-    # its own row"); its data side is the FRB DFA's, the other four the SCF's
+    # its own row"); its data side is now the SCF's too (the author, 3 October: "use the SCF number
+    # 2.2"), read from data/SCF_wealth_shares.txt -- the benchmark log's observed= is the DFA's 0.025
     (r'Net worth, bottom 1, 5, 10, 20, 50\%',
      tuple(a + ', ' + b for a, b in zip(
          many([f'wealth share bottom {p} pct' for p in (1, 5, 10, 20)], 2, neg=True),
-         (f'{100 * mom("w_bot net worth share, bottom half", 1):.1f}',
+         (f'{100 * SCF_NW50:.1f}',
           f'{100 * mom("w_bot net worth share, bottom half"):.1f}'))), 'SCF 2022'),
     ('Block 5: Drug price elasticities', None, None),
     ('Participation (extensive margin)', (f"${RES['x_el_part_lo']}$ to ${RES['x_el_part_hi']}$", f"${RES['x_el_part']}$"),
@@ -635,7 +644,7 @@ def numbers():
         'u_vwage_d': p1(mom('voucher holders, wages main', 1)), 'u_vwage_m': p1(mom('voucher holders, wages main')),
         'u_inc20_d': f'{100 * mom("income share bottom 20 pct", 1):.2f}', 'u_inc20_m': f'{100 * mom("income share bottom 20 pct"):.2f}',
         'u_nw20_d': f'{100 * mom("wealth share bottom 20 pct", 1):.2f}', 'u_nw20_m': f'{100 * mom("wealth share bottom 20 pct"):.2f}',
-        'u_nw50_d': p1(mom('w_bot net worth share, bottom half', 1)), 'u_nw50_m': p1(mom('w_bot net worth share, bottom half')),
+        'u_nw50_d': p1(SCF_NW50), 'u_nw50_m': p1(mom('w_bot net worth share, bottom half')),
         'u_odds_sud_lo': '1.44', 'u_odds_sud_hi': '2.51', 'u_odds_sud_m': f'{odds_d:.2f}',
         'u_odds_sud_where': where(odds_d, 1.44, 2.51),
         'u_odds_hl_lo': '1.8', 'u_odds_hl_hi': '2.4', 'u_odds_hl_m': f'{odds_h:.2f}',
