@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 03:10 ROUND r110 (the author's PDF of 02:5x: "remove all red and all crossed lines and put only updates in red",
+"you can also remove the Why explanations"): strip_red.py (red, struck text and notes), base_r110 + splice_r110, tables
+frozen; 31 comments applied in red with deletions struck (writing/track_changes.py now strikes runs that contain a whole
+cross-reference). 'remain unemployed LONGER because of a SUD' wherever the author marked it and, for consistency, in the
+other places that say it; Table 6's employed share sourced to Meyer et al. (2024) (the Fortran's attribution; PiT and
+TEDS cannot produce 46) and the net-worth row to SCF 2022 alone (the bottom-half 2.5 is the DFA's: flagged); Section 2's
+new short-run ratio is x_trf_many_x (blue, from the old transition). Not changed, answered in chat: number words and
+self-control keep their hyphens; phi = 0.85 stays described against Heathcote et al.'s 0.181; the SMI-at-entry fix in
+compute_expected_child_value belongs in the next full re-run; the table note deletion cannot be struck.
+
 03 Oct 02:30 REVIEW ROUND, SECOND PASS (the author: "it is not that they lose their job to a SUD but that they remain
 unemployed because of their SUD"; footnote 16: "we know because I ran it before. We don't have to re run"; "make the
 fixes you think are necessary"; "leave notes for me"; "deleted sentences should show as crossed"). Wording is now

@@ -71,13 +71,18 @@ def zones(s):
             z.append((m.start(), m.end()))
     for m in re.finditer(r'\\(?:sub)*section\*?\{', s):
         z.append((m.start(), close(s, m.end())))
-    for m in re.finditer(r'\\(?:caption|label|input|ref|eqref|includegraphics)\{', s):
+    for m in re.finditer(r'\\caption\{', s):
         z.append((m.start(), close(s, m.end())))
     return z
 
 
-def inz(z, a, b):
-    return any(a < z1 and b > z0 for z0, z1 in z)
+def atoms(s):
+    """a cross-reference or a label is struck whole or not at all: a run may contain one, never cut one"""
+    return [(m.start(), close(s, m.end())) for m in re.finditer(r'\\(?:label|input|ref|eqref|includegraphics)\{', s)]
+
+
+def inz(z, a, b, at=()):
+    return any(a < z1 and b > z0 for z0, z1 in z) or any(a < z1 and b > z0 and not (a <= z0 and b >= z1) for z0, z1 in at)
 
 
 def balanced(t):
@@ -120,6 +125,7 @@ def track(OLD, CUR, guard=True):
     ka = [t[1] for t in A]
     kb = [t[1] if t[0] in ('plain', 'upd') else '\x00%d' % k for k, t in enumerate(B)]
     za, zb = (zones(OLD), zones(CUR)) if guard else ([], [])
+    aa, ab = atoms(OLD), atoms(CUR)
     sm = difflib.SequenceMatcher(None, ka, kb, autojunk=False)
     edits, skipped = [], []          # (position in cur, text to insert) and (position in cur, end, replacement)
     for op, i1, i2, j1, j2 in sm.get_opcodes():
@@ -129,7 +135,7 @@ def track(OLD, CUR, guard=True):
         if i2 > i1:
             a0, a1 = A[i1][2], A[i2 - 1][3]
             orun = OLD[a0:a1]
-            if inz(za, a0, a1):
+            if inz(za, a0, a1, aa):
                 skipped.append(('deleted in a protected place', orun[:120]))
             elif not balanced(orun):
                 skipped.append(('deleted run not brace-balanced', orun[:120]))
@@ -141,7 +147,7 @@ def track(OLD, CUR, guard=True):
         if plain:
             b0, b1 = B[plain[0]][2], B[plain[-1]][3]
             run = CUR[b0:b1]
-            if inz(zb, b0, b1):
+            if inz(zb, b0, b1, ab):
                 skipped.append(('inserted in a protected place', run[:120]))
             elif balanced(run) and all(B[k][0] == 'plain' for k in range(plain[0], plain[-1] + 1)):
                 rep = (b0, b1, wrap(run))

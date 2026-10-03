@@ -143,6 +143,9 @@ def names(S, C, R):
                          f'while the share of children in a shelter rises by at most ${_dh:.2f}$ points, so the first '
                          f'reaches about ${round(_du, 2) / round(_dh, 2):.0f}$ times as many children as the second'
                          if _du > 0 and _dh > 0 and _du > 5 * _dh else '')
+    # the same ratio alone, for Section 2 (the author, round r110: 'even in the short run the absolute increase in
+    # childhood homelessness is X times smaller than the mass of children spared a parent who abuses drugs')
+    out['x_trf_many_x'] = f'{round(_du, 2) / round(_dh, 2):.0f}' if _du > 0 and _dh > 0 else ''
     # the intuition for each panel (the author, 2 October: "Are you walking the reader through each of
     # the graphs and explaining why they come out this way?"), only where the path does what it explains
     out['x_trf_paruse_why'] = ('It is also why the share of parents who use starts below its long-run level in '

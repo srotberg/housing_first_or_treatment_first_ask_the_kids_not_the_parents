@@ -408,7 +408,7 @@ UNTARGETED = [
     (r'Share of homeless by age, 25--34 to 65+$^{a}$', band5('share of the homeless'), 'HUD PiT 2024'),
     ('Employed share of the homeless',
      (f'{100 * C["employed_share_of_homeless_data"]:.0f}', f'{100 * mom("emp_homeless employed share of homeless"):.1f}'),
-     'HUD PiT 2023, Treatment Episode Data Set 2022'),
+     'Meyer et al.\\ (2024)'),
     ('Income of the homeless, over average', one('income of the homeless'), r'Meyer et al.\ (2024)'),
     ('Block 2: Who uses and who carries a SUD', None, None),
     ('Share of users by age, 26--34 to 65+', many(USER_BANDS, 0), 'NSDUH 2024'),
@@ -439,7 +439,7 @@ UNTARGETED = [
      tuple(a + ', ' + b for a, b in zip(
          many([f'wealth share bottom {p} pct' for p in (1, 5, 10, 20)], 2, neg=True),
          (f'{100 * mom("w_bot net worth share, bottom half", 1):.1f}',
-          f'{100 * mom("w_bot net worth share, bottom half"):.1f}'))), 'SCF 2022, Distributional Financial Accounts'),
+          f'{100 * mom("w_bot net worth share, bottom half"):.1f}'))), 'SCF 2022'),
     ('Block 5: Drug price elasticities', None, None),
     ('Participation (extensive margin)', (f"${RES['x_el_part_lo']}$ to ${RES['x_el_part_hi']}$", f"${RES['x_el_part']}$"),
      r'Saffer and Chaloupka (1999), Grossman and Chaloupka (1998)'),

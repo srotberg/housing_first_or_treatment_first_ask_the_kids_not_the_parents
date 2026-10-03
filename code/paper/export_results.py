@@ -225,7 +225,7 @@ out['x_tf_h_split'] = (
 out['x_tf_h_why_intro'] = ('' if _hrise else
                            '. On the one hand, it revokes the vouchers of drug users and households with a SUD and puts them at a '
                            'higher risk of homelessness. On the other hand, in the long run, removing the moral '
-                           'hazard cuts drug use, so fewer households acquire a SUD, remain unemployed because of it and lose '
+                           'hazard cuts drug use, so fewer households acquire a SUD, remain unemployed longer because of it and lose '
                            'their housing, and the vouchers it revokes go to other poor households instead. '
                            'Together these two effects slightly more than offset the first')
 # THE HOMELESS WHO COULD HAVE AFFORDED HOUSING, in the benchmark (the author, 2 October: "many just
@@ -260,7 +260,7 @@ if cev_log('tf85') > CEV0:
         # (round 4ad85a30, the author: 'barely moves' -> "is unchanged in the long run"; almost, since
         # homelessness falls by 1 per cent while the shelter share is flat)
         'Welfare rises because the cut in drug use reduces the budget and earnings externalities and, '
-        'through the government budget and the drug market, leaves a larger voucher programme and a cheaper '
+        'through the government budget and the drug market, enables a larger voucher programme and a cheaper '
         'drug, while homelessness, and with it the externalities that run through it, is almost unchanged in '
         'the long run.')
 else:
