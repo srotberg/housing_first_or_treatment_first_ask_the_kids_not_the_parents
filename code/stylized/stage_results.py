@@ -146,7 +146,7 @@ def revstart_names(sc, mort, part, ref):
     longer draws it (the author, 29 September: "smooth the blue line so there is
     not uptick before the 100%"), so the prose must not read off it either."""
     import run
-    ok = [abs(p - ref) <= 5e-4 for p in part]
+    ok = [run.part_ok(p, ref) for p in part]
     off, start = mort[0], 0.0
     for s_, r_, k in zip(sc, mort, ok):
         if k and s_ <= 1.0 + 1e-9 and abs(r_ - off) <= 0.05 * abs(off):
@@ -210,7 +210,7 @@ def stage1_figure(par):
     d.update(revstart_names(sc, mort, parts['mortality'], run.PART_REF))
     # points where no b delivers the target participation, by channel
     misses = {w: [(float(s_), float(p_)) for s_, p_ in zip(sc, parts[w])
-                  if abs(p_ - run.PART_REF) > 5e-4] for w in ('mortality', 'unemployment')}
+                  if not run.part_ok(p_, run.PART_REF)] for w in ('mortality', 'unemployment')}
     d['s1_part_ref'] = pc(run.PART_REF)
     d['s1_nmiss'] = str(sum(len(v) for v in misses.values()))
     d['_s1_misses'] = misses

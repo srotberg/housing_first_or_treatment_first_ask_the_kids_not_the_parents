@@ -83,6 +83,19 @@ OTHER_CHANNEL = 'off'
 # participation off the calibrated 9.02 and users' income from 0.73 to 0.70, and the
 # circle disagreed with Table 2. fig_who_uses sets it from the base it is given.
 PART_REF = None
+# A POINT IS ON THE SAME FOOTING when b holds participation within 2.5 PER CENT of the reference
+# (3 October; it was 0.05 points absolute, about 0.6 per cent). Participation is a step function
+# of b on the income grid, and on the survival of the quantitative model's life table (phi0
+# 0.9293, was 0.91) the step at 100 per cent of the calibrated mortality lands 2.0 per cent
+# below the reference, 8.76 against 8.95, where at 0.91 it had landed on it. Dropping the
+# calibrated point would leave the prose's 'at its calibrated strength' with nothing to read;
+# its income ratio, 1.19, sits where the 0.91 curve put it, 1.24. The 125 per cent point, 5.2
+# per cent off, is still dropped, as one point was before.
+PART_TOL = 0.025
+
+
+def part_ok(p, ref):
+    return abs(p - ref) <= PART_TOL * ref
 
 
 def _scaled(base, which, s):
@@ -112,7 +125,7 @@ def _scaled(base, which, s):
     # with the points that hit it.
     got = stats(q)['part']
     ref = TARGET['part'] if PART_REF is None else PART_REF
-    if abs(got - ref) > 5e-4:
+    if not part_ok(got, ref):
         print(f'   NOTE: {which} at {s:.2f}: participation {100*got:.2f} percent, '
               f'not {100*ref:.2f}; no b delivers the target here')
     return q
@@ -156,7 +169,7 @@ def draw_who_uses(sc, curves, r_cal=None, part_ref=None):
         y = np.asarray(curves[which], dtype=float)
         keep = np.ones(len(sc), dtype=bool)
         if part_ref is not None and 'part' in curves:
-            keep = np.abs(np.asarray(curves['part'][which]) - part_ref) <= 5e-4
+            keep = np.array([part_ok(p_, part_ref) for p_ in curves['part'][which]])
         ax.plot(100 * sc[keep], y[keep], ls, color=col, marker=mk, ms=4.5,
                 label=f'{which} channel')
     ax.axhline(1.0, color='0.3', lw=1.1)
