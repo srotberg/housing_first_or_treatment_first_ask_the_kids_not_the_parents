@@ -125,6 +125,16 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ELASTICITY GRID (03 Oct 07:45). Worker 1 (session_01A16fPk8Ys2zdDygDCsnt56) finished at 07:14: all ten points, solve
+exited 0, average participation -1.31, per user -0.62 over its ten. Worker 0 (session_01FuQgdQWKqCqpJZPXQdESJH) died
+after its sixth point (+10; only five were pushed, last push 06:26). It is told to stand down and push its partial
+log as results/elast_grid/w0_first_run_partial.txt for the record only. WORKER 0 IS RERUN HERE, in the parent's
+container (it stays awake on the engine's firings), from a separate worktree /home/user/elast_rerun so its
+rebase-and-push publisher cannot touch the paper checkout: bash code/elast_points/remote_elast_grid.sh 0, unedited,
+binary md5 cd90ac7f (the same as the cloud worker's), solving since 07:44; about 4.5 h for the ten blocks and 70 min
+for the ten points, so about 13:30. It publishes results/elast_grid/w0.txt every 20 minutes. The paper waits on it:
+export_elasticity.py already reads both workers and averages the twenty steps. NOTE for watchers: 'complete (exit'
+is the commit message only; the file says 'solve exited 0'.
 STAGE E2 SILENT AGAIN (03 Oct 06:33): no push after 04:33 (null arm pass 4, Treatment First pass 2); the session went
 idle at 04:39 with no check-in armed and shows 'disconnected', the same pattern as the 01:54 death. Woken with
 trig_017p6rLBhLvgDGprwL9RrrRw (06:35): attach if alive, else relaunch remote_transition_2c.sh unedited, and keep the
