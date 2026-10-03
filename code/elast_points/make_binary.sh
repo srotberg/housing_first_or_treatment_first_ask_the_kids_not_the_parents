@@ -15,7 +15,16 @@ OUT=$1; PTS=$2
 CODE=$(cd "$(dirname "$0")/.." && pwd)
 mkdir -p "$OUT"
 md5() { md5sum "$1" | cut -c1-8; }
-git -C "$CODE/.." show d62835db:code/housing_first_or_treatment_first_SR_v1.f90 > "$OUT/src.f90"
+# A CLOUD CLONE IS SHALLOW (fifty commits) and d62835db is hundreds back: both grid workers of 03 Oct
+# 02:05 and 02:20 stopped on 'invalid object name'. Fetch it by its full hash, else deepen, and say which.
+SHA=d62835dbe73e35cd32e8fc271dfd9e41846e64e9
+R="$CODE/.."
+if ! git -C "$R" cat-file -e "$SHA^{commit}" 2>/dev/null; then
+    echo "make_binary: $SHA not in the clone (shallow: $(git -C "$R" rev-parse --is-shallow-repository)), fetching"
+    git -C "$R" fetch -q --depth=1 origin "$SHA" 2>&1 || git -C "$R" fetch -q --unshallow origin 2>&1 || true
+    git -C "$R" cat-file -e "$SHA^{commit}" 2>/dev/null || { echo "REFUSING: $SHA still unreachable"; exit 1; }
+fi
+git -C "$R" show "$SHA:code/housing_first_or_treatment_first_SR_v1.f90" > "$OUT/src.f90"
 [ "$(md5 "$OUT/src.f90")" = c6c28c6a ] || { echo "REFUSING: source md5 $(md5 "$OUT/src.f90")"; exit 1; }
 ln_of() { n=$(grep -n -F -x -- "$1" "$OUT/src.f90" | cut -d: -f1); [ "$(echo "$n" | wc -w)" = 1 ] || { echo "REFUSING: anchor not unique: $1"; exit 1; }; echo $n; }
 BL=$(ln_of "                    stopping_rule_stationary_distribution=6*10.d0**(-4)")
