@@ -1,7 +1,8 @@
-# elasticity grid, worker 0, points -95,-80,-60,-40,-20,10,30,50,70,90; 03 Oct 14:24 UTC
+# elasticity grid, worker 0, points -95,-80,-60,-40,-20,10,30,50,70,90; 03 Oct 14:31 UTC
 remote_elast_grid w0: building, points -95,-80,-60,-40,-20,10,30,50,70,90 (10:22)
 remote_elast_grid w0: built /home/user/elast_rerun/code/elast_g0/build/hftf_elast, 0 errors, md5 cd90ac7f (10:23)
 remote_elast_grid w0: solving, 4 cores (10:23)
+remote_elast_grid w0: solve exited 2 after 10 blocks and 10 points; bench.err:  (14:30)
  BLOCK MOVE   1.0000000000000000       against a rule of   1.0000000000000000E-003  -- b   7.4787816294541579E-002  lambda_d   3.1482561922555601E-002  h_1   7.0061175070825895E-003  y   1.1482825922320448     
  BLOCK MOVE  0.24212904965019513       against a rule of   1.0000000000000000E-003  -- b   9.1812134789306818E-002  lambda_d   3.9105404721417408E-002  h_1   6.5851720542976378E-003  y   1.3745049013421085     
  BLOCK MOVE   7.8688842149250898E-002  against a rule of   1.0000000000000000E-003  -- b   9.2765882093190463E-002  lambda_d   3.9478538041786450E-002  h_1   6.4625269547440188E-003  y   1.4826631005571893     
@@ -23,3 +24,4 @@ remote_elast_grid w0: solving, 4 cores (10:23)
  ELASTICITY_MULTI dp=  70.0 participation= -1.5119272665593761E+00 per_user= -3.1128236853736391E-01 per_addict= -9.9824539812683000E-01
  ELASTICITY_MULTI dp=  90.0 participation= -1.3005225731723258E+00 per_user= -3.9134035228564445E-01 per_addict= -9.9870709756809839E-01
  ELASTICITY_MULTI average participation= -1.3331256080734852E+00 per_user= -6.3449623094678453E-01 per_addict= -9.8998837166111309E-01
+ ELASTICITY_NULL dp=0 users=   8.9583908836540077E-002  per_user=  0.11747004051366204       per_addict=  0.17630374193699536       rel gaps  -1.0267061606450412E-006   2.0252177059587595E-005   4.6457671170507808E-005
