@@ -125,6 +125,15 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+THE PARENT'S OWN CONTAINER IS NOT SAFE EITHER (03 Oct 10:22). The worker 0 grid rerun here stopped writing at 09:46,
+two minutes after its 2-hour background attach expired at 09:44. The container booted again at 10:21:46
+(/proc/uptime), with the disk kept and every process gone. The engine's firings every ten minutes do NOT keep it
+alive: between them the session is idle, and with no background task running the container is reclaimed. Two firings
+reported the rerun 'alive' in between because `pgrep -f hftf_elast` matched its own command line. Use
+`ps -eo pid,etime,args | grep '[.]/hftf_elast'`. Relaunched at 10:23, unedited, binary md5 cd90ac7f again, now kept
+awake by a 2-hour background attach that is re-armed before it expires, with a second one staggered. The first
+rerun's five blocks are in the scratchpad (elast_rerun1_bench_5blocks.log). New estimate for the twenty-point
+elasticities: about 15:15 UTC.
 STAGE E2 DIED A SECOND TIME (03 Oct, after 08:36; relaunched by its own session at 09:15). The no-policy arm was
 accepted at 08:32 and is kept (5 passes, DIST CHECK PASS); the Treatment First re-solve and the flat control start over
 from 09:15. THE CAUSE, as on 24 September: a cloud session with only check-ins goes fully idle between them and its
