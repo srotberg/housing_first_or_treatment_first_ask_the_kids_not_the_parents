@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+03 Oct 09:50 ROUND r122 (the author's PDF of 151d474e: "remove all red and put updates in red"): strip_red.py, tables
+frozen, base_r122 + splice_r122. Block 5's selection sentence REMOVED -- the author: "this is not true! in the data they
+are basically as likely" (users and non-users become parents at about the same rate; do not argue selection in the
+altruism moment again). The penalty's share (x_lr_draw_whole_pc) is a footnote to delta_d, in red. The introduction,
+end of the income gradient paragraph, in red: "As far as I know, this is the first account of why users are poorer that
+does not rest on differences in preferences, and the mechanism is not specific to drugs: it applies to any good whose
+consumption risks an early death." No proposition: the author, "we dont have a proof. it is a computational model!"
+A stray space before a colon fixed in the same paragraph.
+
 03 Oct 09:20 ROUND r121 (the author: "remove red", then the abstract's voucher clause): all red removed; then
 x_abs_tf_result's "as the vouchers it revokes go to other poor households" -> "as recycled revenue funds more vouchers
 for other poor households" (the author's idea, "as government recycles excess revenues as vouchers to other poor
