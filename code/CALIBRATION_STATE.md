@@ -4,6 +4,7 @@
 x_abs_tf_result's "as the vouchers it revokes go to other poor households" -> "as recycled revenue funds more vouchers
 for other poor households" (the author's idea, "as government recycles excess revenues as vouchers to other poor
 households", at the same length; the decomposition shows recycling is what lowers homelessness). In red; 150 words.
+Then ("maybe 'as excess revenues funds more...'"): "as excess revenues fund more vouchers for other poor households".
 REPO CLEANUP PAUSED at the author's word: an strace'd rebuild started at 03:33 was cut off mid-export and left
 results_numbers.json without its 28 x_trf_* names; restored from git and regenerated whole. Nothing moved or renamed.
 

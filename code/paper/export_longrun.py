@@ -543,7 +543,7 @@ def main():
         # (round r120, the author: 'In the long run,' and 'substantially' moved: "drug use substantially ... in the long run, and")
         # (3 October, the author: "as government recycles excess revenues as vouchers to other poor households"; the
         # decomposition shows recycling is what lowers homelessness -- with pi_V held it would rise)
-        'Conditioning assistance cuts drug use substantially in the long run, and, as recycled revenue funds more vouchers '
+        'Conditioning assistance cuts drug use substantially in the long run, and, as excess revenues fund more vouchers '
         f"for other poor households, lowers homelessness{' slightly' if _tf_dh_abs < 3 else ''}")
     # the Discussion's 'which channel' sentence, as Section 6.2 now explains it (x_lr_v26_why): what users
     # no longer cost the programme comes back as a higher pi_V, and demand falls, so the drug is cheaper
