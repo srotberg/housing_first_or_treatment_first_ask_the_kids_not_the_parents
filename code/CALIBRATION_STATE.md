@@ -125,6 +125,17 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+STAGE E2 MOVED INTO THE PARENT'S CONTAINER (03 Oct 14:40). The cloud worker (session_01XLysxgFaoMhyvjcwwKb2w7) lost its
+run a FOURTH time: its 11:53 two-hour attach expired at 13:53, it ended the turn asking for instructions instead of
+re-arming, and the container was reclaimed. It has been told to stand down and push nothing under results/transition_2c/.
+Now running here from the worktree /home/user/e2_run (`bash code/remote_transition_2c.sh`, unedited), so its
+rebase-and-push publisher cannot touch the paper checkout. It is kept awake by overlapping 2-hour background tasks,
+re-armed at the engine firings. DISK: 16 GB freed by deleting stale untracked state in code/: cfarm_bench, the 26 September
+benchmark, which a run here would have reused silently (the worktree has its own code/, but it was a hazard anyway);
+the >10 MB .dat files of cfarm_tf_fix2_85; and every .dat in trtf60 EXCEPT welfare_curvebaseline_benchmark.dat. That one
+stays, with every restart*/run.log, because export_results.py, transition_source.py and transition_series.py read them
+for the paper's current transition numbers. The order of the run: builds, the no-policy arm, the flat control beside the
+Treatment First arm, then the age split and newborn values (Section 6.2's two blue items), then T = 60.
 ELASTICITY GRID DONE (03 Oct 14:30) AND IN THE PAPER (14:40, in red). The worker 0 rerun measured all ten points, its
 average and its null re-solve, then exited 2 writing its saved-state .dat files onto a full disk (2.4 GB at the end of
 the run; freed, and the result files rebuilt from the intact bench.log and pushed). Twenty points: participation
