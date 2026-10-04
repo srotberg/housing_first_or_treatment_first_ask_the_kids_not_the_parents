@@ -125,6 +125,18 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+T = 60 LOOP 0 COMPLETE (04 Oct 10:28; archived by hand to results/transition_2c/loop0/ -- run.log.gz and the six
+*_path_seed_out.txt -- because the worker cannot push). Loop 1 running, about 11.5 h a loop. Homelessness against Housing
+First: +0.0 (y1), +11.5 (y2), +9.4 (y10), +4.4 (y20), +0.3 (y30), -2.6 (y40), then the END DRIFTS back up to +3.1 at y59
+(pi_V 8.80 against the long run's 9.61; the old path drifted the same way after year 40). Children: 1.029 -> 1.128 (y2),
+1.053 (y20), 1.015 (y40), 1.072 (y59). Cohort CEVs (gross, completed with the TF long run; net = gross - 0.003): b=1
+4.84, b=2-25 between 3.33 and 3.89, b=27-34 4.15-4.27, b=40-46 about 3.6, then up to the long run's 4.34 -- every cohort
+better off. Better off along the path: 96.6-96.8 percent of all, 16-20 of those with a SUD, 100 of those entering.
+NOT CONVERGED, BADLY: drug gap above 5e-3 in 52 of 59 years (worst 0.059, y9); budget residual above 1e-3 in 58 of 59
+(worst 0.089, y16), negative to y48 then positive. The old path in the paper (3g loop 0) had median 0.0015. AND THE
+UPDATE IS SLOW: loop 0 moved pi_V by 0.0005 on average (max 0.005) and the drug price by 0.002 (max 0.0045) against a
+residual of 0.08 -- at that pace many 11.5-hour loops. Put to the author: write 6.3 from loop 0 (blue), wait for loop 1
+(about 22:00) to see how fast the gap closes, or change the pi_V step (Fortran / seeds: the author's call).
 REFORM COHORT CEV (04 Oct 07:05, sent to the author): cohort_cev.py on tr2c_t60/run.log at year 27: b = 1 lifetime
 789.1216, +4.8377 percent gross off the benchmark curve (same md5 as both arms'); net of the no-policy arm's own CEV
 off that curve (0.0030; TF arm 4.3364, so the long run nets to 4.33 like for like) = +4.83 against the long run's 4.33.
