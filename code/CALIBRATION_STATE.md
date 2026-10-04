@@ -125,6 +125,12 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+DECISION (04 Oct 22:55, the author): the partial-equilibrium experiment without externalities goes into Section 6.2
+"right before the decomposition" (the paragraph 'A newborn is ... off under Treatment First ... Without the larger
+voucher programme ...'), as the full model's counterpart of Section 3's dominance result, so the two read as a pair: no
+externalities -> Housing First wins at fixed pi_V and price; the screen alone (both held) -> Treatment First wins
+(x_dc_b_cev). Write it in red when results/pe_noext/RESULT.md lands, every number generated (a small exporter merging
+x_pe_* names into results_numbers.json), then build, push branch and main, send the PDF.
 ROUND r141 (04 Oct 22:50; the author: "remove the government budget point from the first paragraphs of the intro. The
 whole point relies on the externalities. The government budget is just a reinforcement but not the main point"): the
 opening's 'One such cost runs through the government budget ...' is gone; the paragraph now reads 'The case for
