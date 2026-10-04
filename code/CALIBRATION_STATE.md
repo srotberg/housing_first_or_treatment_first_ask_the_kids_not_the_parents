@@ -125,6 +125,25 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+T = 60 LOOP 1 COMPLETE (04 Oct 19:18, 8.8 h; archived by hand to results/transition_2c/loop1/ -- run.log.gz, the six
+*_out.txt paths, early_years.txt, cohort_cev.txt; loop 2's backward pass started at once). DRUG MARKET CLOSING: years over
+5e-3 52 -> 26, median gap 0.016 -> 0.0029, worst 0.058 -> 0.040 (years 5-24). BUDGET NOT: years over 1e-3 58 -> 58,
+worst 0.089 -> 0.081, median 0.073 -> 0.065, a shrink of about 0.9 a loop, so about 40 loops (2 weeks) at this rule. The
+earlier "about 3 days" is WITHDRAWN; it was the case the 13:00 entry called "a stall if loop 0's small steps persist".
+WHY THE STEP IS SMALL: the rule's damped step is 0.12 x gap (about -0.9 pp of pi_V) but the sequential netting (item 10a,
+retention 0.9, damping 0.7) leaves each year about a tenth of it, about 0.1 pp a loop. WHY THE GAP IS REAL: voucher spending
+jumps from 0.685 (t = 1, the benchmark's 0.689) to 0.75-0.80 by year 3 -- the long run's 0.769 -- while labour revenue rises
+only as lower-SUD cohorts age in (12.94 at t = 1, 13.05 at 40, 13.13 at 59). TF's fiscal dividend arrives over decades;
+a budget balanced year by year cannot pay the long-run pi_V early on. So the converged path has pi_V well BELOW the long
+run's 9.61 in years 3-45 (loop 1: 8.2-10.2), hence MORE homelessness in the transition than loop 1 shows and LOWER early
+cohort CEVs. Loop 1 vs loop 0: homelessness +11.6 (y2), +9.9 (y10), +4.7 (y20), +0.5 (y30), -2.5 (y40), +2.7 (y59; loop 0
++3.1); children 1.129 (y2), 1.111 (y10), 1.056 (y20), 1.016 (y40), 1.068 (y59). Cohort CEV gross b=1 5.07 (4.84), b=2
+4.22, min 3.31 (b=17), b=59 4.34 -- all positive, within 0.33 of loop 0. HORIZON: SUD 2.52-2.55 from year 35 (2.54),
+drug use 6.12 (6.09), price 0.857 (0.856) at y59; the end drift is pi_V 8.87 against 9.61 with a surplus of +0.037 at
+y59, which is the long-run slope (about 0.05 per pp) times the 0.74 pp shortfall: the budget rule, not the horizon.
+early_years.py: loop 1 prints HOMELESS_BY_AGE as shares (loop 0: masses x 1e14), rebuilt h_1 off by up to 6e-5, so the
+scratch copy checks the scale at 1e-4. Put to the author (19:30): a larger pi_V step (Newton seed from loops 0-1, or
+retention 0 in the Fortran), a present-value budget (debt; changes the economics), or keep waiting. NOT written into 6.3.
 REVOKED-VOUCHER EXPERIMENT IN A SEPARATE SESSION (04 Oct 14:56, the author: "yes, launch it in a separate session").
 Worker session_01FnerWRXcTmZf4bd8qqQ3Sb, own container. The author's question: SUD and MORTALITY of households whose
 voucher is revoked in years 1-3 against the same households had they stayed housed; short run, T = 10, drug price and
