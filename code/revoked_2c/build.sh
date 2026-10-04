@@ -3,7 +3,7 @@
 #   transition_fix/patch_transition_fix.py  (the corrected transition, the 176-line patch stage E runs)
 #   revoked_2c/patch_revoked.py             (plain: + stop after loop 0; track: + the print-only revk_track module)
 # then the transition switches exactly as transition_fix/build_transition_t10_copy.sh sets them, at the horizon asked.
-#   bash build.sh                 -> work/plain3, work/track3, work/track10 (prod, -O3), work/track3b (bounds-checked)
+#   [ONLY="track3 track10"] bash build.sh   -> work/plain3, work/track3, work/track10 (prod, -O3), work/track3b (bounds-checked)
 set -e
 R=$(cd "$(dirname "$0")" && pwd); C=$(cd "$R/.." && pwd); W=$R/work; mkdir -p "$W"
 python3 "$C/transition_fix/patch_transition_fix.py" "$C/housing_first_or_treatment_first_SR_v1.f90" "$W/tr_fix_src.f90"
@@ -14,6 +14,7 @@ n=$(diff "$W/tr_fix_src.f90" "$W/revk_plain.f90" | grep -c '^[<>]' || true)
 [ "$n" -eq 3 ] || { echo "REFUSING: plain diff is $n lines, expected 3 (the stop)"; exit 1; }
 COMMON="-fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium"
 build() {   # <name> <source> <T> <flags>
+    case " ${ONLY:-$1} " in *" $1 "*) ;; *) echo "skipped $1 (ONLY=$ONLY)"; return 0 ;; esac
     O=$W/$1; mkdir -p "$O"
     sed -e 's/integer, parameter :: is_counterfactual=0/integer, parameter :: is_counterfactual=1/' \
         -e 's/integer, parameter :: use_revenues_to_increase_voucher_probability=0/integer, parameter :: use_revenues_to_increase_voucher_probability=1/' \

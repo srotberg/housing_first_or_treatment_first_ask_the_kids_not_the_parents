@@ -75,6 +75,11 @@ MODULE = r'''
         real(8) :: revk_pop_h=0,revk_pop_e=0
         logical :: revk_ready=.false.
         character(len=400) :: revk_tagdir='.'
+        ! THE CELLS THE MODEL'S REDUCTION COPIES. converge_to_stationary_equilibrium sums the per-thread arrays into
+        ! distribution_implied only over each age's own state range (the renter floor by age above all), so mass the
+        ! kernel sends outside it is dropped by the model. The shadow drops the same mass and books it as an exit.
+        logical, dimension(:,:,:,:,:,:), allocatable :: revk_mask_1,revk_mask_2
+        real(8) :: revk_leak_last=0
 
     contains
 
@@ -125,7 +130,60 @@ MODULE = r'''
             call revk_alloc(revk_new)
             call revk_alloc(revk_p)
             call revk_alloc(revk_tagbuf)
+            call revk_build_mask()
             revk_ready=.true.
+        end subroutine
+
+        ! the reduction loop's ranges, verbatim
+        subroutine revk_build_mask()
+            integer :: rk_a,rk_y,rk_u,rk_e,rk_v,rk_f,rk_h,rk_nb,rk_hh,rk_t1
+            allocate(revk_mask_1(lbound(revk_new(1)%vector_real,1):ubound(revk_new(1)%vector_real,1),&
+                lbound(revk_new(1)%vector_real,2):ubound(revk_new(1)%vector_real,2),&
+                lbound(revk_new(1)%vector_real,3):ubound(revk_new(1)%vector_real,3),&
+                lbound(revk_new(1)%vector_real,4):ubound(revk_new(1)%vector_real,4),&
+                lbound(revk_new(1)%vector_real,5):ubound(revk_new(1)%vector_real,5),&
+                lbound(revk_new(1)%vector_real,6):ubound(revk_new(1)%vector_real,6)))
+            allocate(revk_mask_2(lbound(revk_new(2)%vector_real,1):ubound(revk_new(2)%vector_real,1),&
+                lbound(revk_new(2)%vector_real,2):ubound(revk_new(2)%vector_real,2),&
+                lbound(revk_new(2)%vector_real,3):ubound(revk_new(2)%vector_real,3),&
+                lbound(revk_new(2)%vector_real,4):ubound(revk_new(2)%vector_real,4),&
+                lbound(revk_new(2)%vector_real,5):ubound(revk_new(2)%vector_real,5),&
+                lbound(revk_new(2)%vector_real,6):ubound(revk_new(2)%vector_real,6)))
+            revk_mask_1=.false.
+            revk_mask_2=.false.
+            do rk_a=1,life_span
+                rk_nb=0
+                if (rk_a==1) rk_nb=1
+                do rk_y=1,rk_nb*1+(1-rk_nb)*max_amortization_years
+                    rk_hh=0
+                    if (rk_y>1) rk_hh=1
+                    rk_t1=1
+                    if ((rk_hh==0) .AND. (track_renters_housing==0)) rk_t1=0
+                    do rk_u=1,unemployment_grid_size
+                        do rk_e=1,employment_grid_size
+                            do rk_v=0,(1-rk_hh)*voucher_state_max
+                                do rk_f=rk_nb*negative_financial_grid_size+&
+                                    (1-rk_nb)*(rk_hh*1+(1-rk_hh)*renter_floor_by_age(min(max(rk_a,1),life_span))),&
+                                    include_exogenous_endowment*financial_grid_size+(1-include_exogenous_endowment)*&
+                                    (rk_nb*negative_financial_grid_size+(1-rk_nb)*financial_grid_size)
+                                    do rk_h=(1-rk_hh)*lowest_housing_grid_point+&
+                                        rk_hh*index_of_smallest_house_hhld_can_buy,&
+                                        rk_t1*(1-rk_nb)*(housing_status_grid_size-1)
+                                        if (rk_y==1) then
+                                            revk_mask_1(rk_a,rk_f,rk_u,rk_e,rk_h,rk_v)=.true.
+                                        else
+                                            revk_mask_2(rk_a,rk_f,rk_u,rk_e,rk_h,rk_v)=.true.
+                                        end if
+                                    end do
+                                end do
+                            end do
+                        end do
+                    end do
+                end do
+            end do
+            write(*,*) "REVK MASK cells copied by the reduction: block 1", count(revk_mask_1), " of", size(revk_mask_1), &
+                " block 2", count(revk_mask_2), " of", size(revk_mask_2), " renter floor by age (1, life_span-1, life_span)=", &
+                renter_floor_by_age(1), renter_floor_by_age(life_span-1), renter_floor_by_age(life_span)
         end subroutine
 
         ! THE FORWARD KERNEL OF converge_to_stationary_equilibrium, on a shadow mass, without the newborn row.
@@ -389,6 +447,15 @@ MODULE = r'''
                     end do
                 end do
             end do
+            ! what the reduction would not copy leaves the model: an exit, booked with the end of life
+            revk_leak_last=sum(dst(1)%vector_real,mask=.NOT.revk_mask_1)+sum(dst(2)%vector_real,mask=.NOT.revk_mask_2)
+            where (.NOT. revk_mask_1) dst(1)%vector_real=0
+            where (.NOT. revk_mask_2) dst(2)%vector_real=0
+            if (do_tag==1) then
+                where (.NOT. revk_mask_1) tagbuf(1)%vector_real=0
+                where (.NOT. revk_mask_2) tagbuf(2)%vector_real=0
+            end if
+            deaths_e=deaths_e+revk_leak_last
         end subroutine
 
         subroutine revk_stats(x,alive,sud,hom,vhold,vexcl,meanage)
@@ -488,6 +555,8 @@ MODULE = r'''
                         0.d0,revk_tagbuf,0)
                     revk_cum_h(rk_g)=revk_cum_h(rk_g)+revk_step_h(rk_g)
                     revk_cum_e(rk_g)=revk_cum_e(rk_g)+revk_step_e(rk_g)
+                    write(*,'(A,I3,A,I2,A,ES23.15)') " REVK LEAK t=", time_period, " g=", rk_g, &
+                        " dropped by the reduction (in deaths_e)=", revk_leak_last
                     do rk_k=1,2
                         revk_s(rk_k,rk_g)%vector_real=revk_new(rk_k)%vector_real
                     end do
@@ -505,6 +574,8 @@ MODULE = r'''
             rk_dotag=0
             if ((revk_mode==1) .AND. (time_period<=3)) rk_dotag=1
             call revk_step(time_period,revk_p,revk_new,revk_pop_h,revk_pop_e,negligible_mass,revk_tagbuf,rk_dotag)
+            write(*,'(A,I3,A,ES23.15)') " REVK LEAK t=", time_period, " population, dropped by the reduction (in deaths_e)=", &
+                revk_leak_last
             rk_maxabs=0; rk_sumabs=0; rk_maxmass=0; rk_stat=0
             do rk_k=1,2
                 rk_maxabs=max(rk_maxabs,maxval(abs(revk_new(rk_k)%vector_real(2:,:,:,:,:,:)-&

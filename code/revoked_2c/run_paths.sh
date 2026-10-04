@@ -107,15 +107,19 @@ note "against the accepted runs: $(python3 "$R/compare_arms.py" "$OUT/arms/null_
 publish "arms re-solved"
 
 # GUARD RUNS, T = 3: plain and tracking side by side (2 threads each), then Housing First from the tags + a bounds check
-if [ ! -f "$W/g_track3/EXIT" ] || [ ! -f "$W/g_plain3/EXIT" ]; then
+# (a run is done when its log says REVK STOP; the plain control is reused across rebuilds of the tracking binary)
+if ! grep -q "REVK STOP" "$W/g_plain3/run.log" 2>/dev/null && ! alive "$W/g_plain3.pid"; then
     stage "$W/g_plain3" "$W/plain3/hftf_tr" cfarm_tf_2c_fixboth || { publish "blocked"; exit 1; }
-    stage "$W/g_track3" "$W/track3/hftf_tr" cfarm_tf_2c_fixboth || { publish "blocked"; exit 1; }
-    launch "$W/g_plain3" 2 off; launch "$W/g_track3" 2 tf
-    note "T = 3 guard pair running"
-    PUBMSG="T = 3 guard pair running" wait_pub "$W/g_plain3.pid" "$W/g_track3.pid"
+    launch "$W/g_plain3" 2 off
 fi
-note "T = 3 pair: $(cat "$W/g_plain3/EXIT") / $(cat "$W/g_track3/EXIT")"
-if [ ! -f "$W/g_hf3/EXIT" ]; then
+if ! grep -q "REVK STOP" "$W/g_track3/run.log" 2>/dev/null; then
+    stage "$W/g_track3" "$W/track3/hftf_tr" cfarm_tf_2c_fixboth || { publish "blocked"; exit 1; }
+    launch "$W/g_track3" 2 tf
+fi
+note "T = 3 guard pair running"
+PUBMSG="T = 3 guard pair running" wait_pub "$W/g_plain3.pid" "$W/g_track3.pid"
+note "T = 3 pair: $(grep -c 'REVK STOP' "$W/g_plain3/run.log") / $(grep -c 'REVK STOP' "$W/g_track3/run.log") stopped after loop 0"
+if ! grep -q "REVK STOP" "$W/g_hf3/run.log" 2>/dev/null; then
     stage "$W/g_hf3" "$W/track3/hftf_tr" cfarm_null_2c || { publish "blocked"; exit 1; }
     stage "$W/g_track3b" "$W/track3b/hftf_tr" cfarm_tf_2c_fixboth || { publish "blocked"; exit 1; }
     launch "$W/g_hf3" 2 hf "$W/g_track3"; launch "$W/g_track3b" 2 tf
@@ -130,14 +134,14 @@ grep -q "GUARD SUMMARY: PASS" "$OUT/guard_T3.txt" || { note "GUARD: the T = 3 gu
 publish "T = 3 guards passed"
 
 # THE TWO T = 10 PATHS, one after the other, 4 threads each
-if [ ! -f "$W/tf10/EXIT" ]; then
+if ! grep -q "REVK STOP" "$W/tf10/run.log" 2>/dev/null; then
     stage "$W/tf10" "$W/track10/hftf_tr" cfarm_tf_2c_fixboth || { publish "blocked"; exit 1; }
     launch "$W/tf10" 4 tf; note "T = 10 Treatment First path running"
     PUBMSG="T = 10 Treatment First path running" wait_pub "$W/tf10.pid"
 fi
 note "tf10: $(cat "$W/tf10/EXIT"); $(grep -a -c 'REVK TAG WRITTEN' "$W/tf10/run.log") tags"
 gzip -c "$W/tf10/run.log" > "$OUT/tf10_run.log.gz"; publish "T = 10 Treatment First path done"
-if [ ! -f "$W/hf10/EXIT" ]; then
+if ! grep -q "REVK STOP" "$W/hf10/run.log" 2>/dev/null; then
     stage "$W/hf10" "$W/track10/hftf_tr" cfarm_null_2c || { publish "blocked"; exit 1; }
     launch "$W/hf10" 4 hf "$W/tf10"; note "T = 10 Housing First path running"
     PUBMSG="T = 10 Housing First path running" wait_pub "$W/hf10.pid"
