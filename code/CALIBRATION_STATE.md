@@ -125,6 +125,14 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+REFORM COHORT CEV (04 Oct 07:05, sent to the author): cohort_cev.py on tr2c_t60/run.log at year 27: b = 1 lifetime
+789.1216, +4.8377 percent gross off the benchmark curve (same md5 as both arms'); net of the no-policy arm's own CEV
+off that curve (0.0030; TF arm 4.3364, so the long run nets to 4.33 like for like) = +4.83 against the long run's 4.33.
+b = 2: +3.89. Cross section entering adulthood: t=1 +3.99, t=26 +3.69. Split against the no-policy arm (child 449.8266,
+adult 337.6694): b = 1 childhood +1.01, adulthood +0.61 utils (62 percent in childhood); long run +0.83 and +0.64 (57).
+CAUTION: cohort_cev.py's 'no policy' / 'long run (TF 85)' rows read results/counterfactuals_cf_fix2 (the OLD arms);
+point them at results/transition_2c/arm_{null,tf} before anything goes in the paper. Loop 0 overspends (budget residual
+negative every year), which flatters the early cohorts; a second pass lowers pi_V.
 T = 60 LOOP 0, FIRST 18 YEARS (04 Oct 06:00, sent to the author): backward pass 23:01-04:12, forward pass about 6 min a
 year (whole path about 10:00). Against the new arms' Housing First: homelessness +0.0 percent in year 1, +11.5 in year
 2 (peak so far), +10 to +11 to year 7, +5.0 at year 18 (long run -0.9); children in a shelter 1.029 -> 1.128 in year 2,
