@@ -59,8 +59,14 @@ def check_common(run, name, out, krule=1e-12, knote=''):
     ok &= good
     # the shadow kernel is the model's kernel
     k = max([d['kernel_maxabs'] / max(d['max_cell'], 1e-300) for d in run['pop'].values()] + [0])
-    good = k < krule and len(run['pop']) > 0
-    out.append(f"  {name}: shadow kernel against the model's own step (ages 2+), worst max-cell gap / largest cell = {k:.2e} (rule {krule:.0e}{knote}) {'PASS' if good else 'FAIL'}")
+    ks = max([d['kernel_sumabs'] / max(d['alive'], 1e-300) for d in run['pop'].values()] + [0])
+    if knote:   # several threads: the measure is the share of the mass the model's race moves, not one cell
+        good = ks < krule and len(run['pop']) > 0
+        out.append(f"  {name}: shadow kernel against the model's own step (ages 2+), worst sum of |gap| / mass alive = {ks:.1e} "
+                   f"(rule {krule:.0e}{knote}); worst single cell / largest cell {k:.1e} {'PASS' if good else 'FAIL'}")
+    else:
+        good = k < krule and len(run['pop']) > 0
+        out.append(f"  {name}: shadow kernel against the model's own step (ages 2+), worst max-cell gap / largest cell = {k:.2e} (rule {krule:.0e}{knote}) {'PASS' if good else 'FAIL'}")
     ok &= good
     # fixed paths
     ps = sorted({d['p_drug'] for d in run['mech'].values()}); vs = sorted({d['pi_v'] for d in run['mech'].values()})
@@ -155,8 +161,8 @@ def main(a):
     T = max(tf['pop']) if tf['pop'] else 0
     out = ["# GUARDS (T = 10)"]
     kn = "; four threads: bounded by the model's race, exact on one thread at T = 3"
-    ok = check_common(tf, "Treatment First path", out, 1e-3, kn)
-    ok &= check_common(hf, "Housing First path", out, 1e-3, kn)
+    ok = check_common(tf, "Treatment First path", out, 1e-4, kn)
+    ok &= check_common(hf, "Housing First path", out, 1e-4, kn)
     good = all(abs(hf['tags'].get(c, -1) - m) <= 1e-15 * max(m, 1e-300) for c, m in tf['tags'].items()) and len(tf['tags']) == 3
     out.append(f"  tags: written {tf['tags']}, read {hf['tags']} {'PASS' if good else 'FAIL'}")
     ok &= good
@@ -206,7 +212,7 @@ def main(a):
             head3 = (100 * (da - db) / m0, 100 * da / m0, 100 * db / m0, 100 * (ha - hb) / m0)
     out.append("")
     out.append("## the whole population, Treatment First path against Housing First\n")
-    out.append("| year | deaths TF | deaths HF | SUD % TF | SUD % HF | homeless % TF | homeless % HF | holding % TF | holding % HF | excluded % TF |")
+    out.append("| year | deaths, Treatment First | deaths, Housing First | SUD %, Treatment First | SUD %, Housing First | homeless %, Treatment First | homeless %, Housing First | holding %, Treatment First | holding %, Housing First | excluded %, Treatment First |")
     out.append("|" + "---|" * 10)
     for t in sorted(tf['pop']):
         x, y = tf['pop'][t], hf['pop'].get(t)
