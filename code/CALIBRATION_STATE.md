@@ -125,6 +125,15 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+T = 60 LOOP 0, FIRST 18 YEARS (04 Oct 06:00, sent to the author): backward pass 23:01-04:12, forward pass about 6 min a
+year (whole path about 10:00). Against the new arms' Housing First: homelessness +0.0 percent in year 1, +11.5 in year
+2 (peak so far), +10 to +11 to year 7, +5.0 at year 18 (long run -0.9); children in a shelter 1.029 -> 1.128 in year 2,
+1.060 at year 18 (long run 1.031); drug use 6.49 at once (long run 6.09); SUD 3.81 -> 2.88 by year 18 (2.54); price 0.90
+-> 0.88 (0.86); pi_V 10.9, 12.8, then about 9.2 (9.6). r138's 'childhood homelessness rises in the first years' HOLDS.
+Old path: +12 percent at year 6, children 1.02 -> 1.14. At t = 1: better off 96.6 percent of all, 16.4 of those with a
+SUD, 100 of those entering. NOT CLEARING: drug gap 0.025-0.059 (rule 0.005), budget residual negative every year to
+-0.089 (rule 0.001); the pi_V step has the residual's sign, so a second pass lowers pi_V in these years. Reform-cohort
+CEV needs year 26: send_later trig_01X4rVDCx6VPsHUL1arGNey1 at 07:00 (net as x_tf_cev is).
 E2 WORKER CANNOT PUSH (04 Oct 01:20): since the session restart at about 23:20 its git pushes fail ('Failed to
 connect to 127.0.0.1 port 38421'): the detached worker kept the old agent proxy in its environment, and the new one
 is on another port. Its status commits pile up locally in /home/user/e2_run. The T = 60 run is unaffected. Not fixed
