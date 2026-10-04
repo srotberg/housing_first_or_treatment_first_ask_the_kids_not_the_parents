@@ -1,4 +1,4 @@
-# revoked-voucher experiment (code/revoked_2c); 04 Oct 20:34 UTC
+# revoked-voucher experiment (code/revoked_2c); 04 Oct 21:16 UTC
 ## stage 1, the two steady states
 run_arms: free disk 29G, memory 15 GiB, cores 4 (04 Oct 14:59)
 run_arms: building cf_fix (04 Oct 14:59)
@@ -35,6 +35,11 @@ run_paths: T = 3 pair: GUARD SUMMARY: PASS (04 Oct 18:53)
 run_paths: staged /home/user/housing_first_or_treatment_first/code/revoked_2c/work/tf10 (T=10, terminal cfarm_tf_2c_fixboth): staged /home/user/housing_first_or_treatment_first/code/revoked_2c/work/tf10 --  (04 Oct 18:53)
 run_paths: T = 10 Treatment First path running (04 Oct 18:53)
 run_paths: tf10: exit 0; 3 tags (04 Oct 20:34)
+run_paths: staged /home/user/housing_first_or_treatment_first/code/revoked_2c/work/hf10 (T=10, terminal cfarm_null_2c): staged /home/user/housing_first_or_treatment_first/code/revoked_2c/work/hf10 --  (04 Oct 20:34)
+run_paths: T = 10 Housing First path running (04 Oct 20:34)
+run_paths: waiting for the arms and the builds (04 Oct 21:16)
+run_paths: against the accepted runs: null: worst relative difference 1.6e-04 (drug price) over 7 statistics fixboth: worst relative difference 2.1e-04 (SUD lambda_d) over 7 statistics  (04 Oct 21:16)
 -- g_plain3_1t: 0 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- g_track3_1t: 2 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- tf10: 9 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
+-- hf10: 1 forward periods done; last line:  expected_child_value=   0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000   
