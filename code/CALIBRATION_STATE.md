@@ -125,6 +125,22 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r140 (04 Oct 22:45; PDF 574bbebd, 28 comments on pages 1-2, "put updates in red", abstract <= 150 words, then the
+author: "let's see your updates suggestion ... in the paper, in red", "push it to main"). base_r139 + splice_r140 (=
+splice_r139); base_r140 = the numbers after this round. Abstract 148 words (rendered, update tag excluded); x_abs_tf_result
+loses "substantially" (export_longrun.py). Keywords: intergenerational spillovers. Intro: PiT count "during the last ten
+days of January" (HUD's window; the night varies by CoC), the author's commas and wording; "This executive order redirected"
+(strictly HUD's November 2025 funding notice under it -- flagged in chat); Costantini (2025) added to the trials paragraph
+and the references (VA quasi-experiment: Housing First lowers three-year mortality, Treatment First no lasting health effect);
+GE clause in the trials sentence. THE FRAMING (the author asked whether "same generosity and the same cost" survives "what
+about the government budget?"): the moral hazard is "on its own" not an inefficiency; dominance stated at the same
+generosity only; drug use matters "only through what it costs somebody other than the user", the shared budget named as one
+such cost beside the four externalities. Intro results: one GE sentence (x_dc_p_cev 13.11 with the price held, x_dc_pv_cev
+0.18 with pi_V held, against 4.33). Section 3 'A fixed budget': code/stylized/s1_budget.py (new; merges s1_bb_* into
+stage_numbers.json): stage 1 with Treatment First's pi_V raised to Housing First's cost, p_v fixed: pi_V +0.31 percent,
+40.4 percent of households (all non-users under Housing First, low incomes) slightly better off, users still worse off,
+population CEV 0.0083 against 0.017 at the same pi_V -- Housing First still wins on average, but not household by household.
+Checkers: numbers, hyphens clean; acronyms (CDC) and spacing notes predate this round.
 T = 60 RESTARTED WITH A NEWTON STEP ON pi_V (04 Oct 21:28; the author, 21:25: "ok, go with the larger pi_V step").
 Loop 2 was stopped in its backward pass (year 29 of 59; its partial log is tr2c_t60/run.log.killed.202610042128). The
 restart reproduces the original start: calibration_state.dat, newborn_parent_share.dat and the old seeds moved to
