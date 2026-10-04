@@ -125,6 +125,16 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+REVOKED-VOUCHER EXPERIMENT IN A SEPARATE SESSION (04 Oct 14:56, the author: "yes, launch it in a separate session").
+Worker session_01FnerWRXcTmZf4bd8qqQ3Sb, own container. The author's question: SUD and MORTALITY of households whose
+voucher is revoked in years 1-3 against the same households had they stayed housed; short run, T = 10, drug price and
+pi_V held at the no-policy values (1.0001082, 0.067533863), budget not cleared, end point the 'fixboth' steady state
+(code/extra_2c/remote_decomp_2c_both.sh). Purpose: the AE's Costantini (2025) comment (HF cuts 3-year mortality by
+4.6 pp, TF none, 'in contrast with the model'); fills response_AE.tex's \tbd{HF LATE} row. Reporting-only Fortran on
+a copy under code/revoked_2c/; results to results/revoked_2c/ (RESULT.md, status.txt). Guards: aggregates identical with
+and without the tracking; counterfactual stationary on HF; mass accounting; paths fixed. About 12 h. Check-ins from
+16:30 (send_later), every 2 h. Also noted for the author: the reply letters still say recovery is 'six times harder
+on the street' (stale: mu_H = 1.473 now), and Milby's abstinence-contingent arm (8.32 weeks) is the closest to TF.
 DECISION (04 Oct 13:00, the author): "let T=60 converge first", THEN a T = 75 horizon check (compile-time
 transition_length=75; about 8.6 GB, fits 15 GB without paging; about 4.2 GB disk to stage, needs space freed with the
 author's OK; 13-14.5 h a loop), seeded from the converged T = 60 paths with years 60-74 at the long run, one or two
