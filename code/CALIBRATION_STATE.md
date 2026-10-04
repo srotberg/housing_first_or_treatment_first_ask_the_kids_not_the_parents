@@ -125,6 +125,12 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r144 (04 Oct 23:50; the author: "add the Constantino numbers to the validation table too, no?"): Table 6
+(tab:untargeted) gets Block 7: Losing a voucher, one row 'Three-year mortality per household made homeless, pp', data
+4.6 (Costantini 2025), model 2.9 (x_rv_wald_pp), with note b (what each side is); written by code/paper/calib_tables.py
+(red by its own marking; RUN export_revoked.py FIRST, it writes the x_rv_* the row reads), the note typed in
+writing/tables/tab_untargeted.tex in \new{}. The Validation paragraph is now titled 'Block 7: Losing a voucher.'.
+calib_tables.py regenerated the other two table bodies and calib_numbers.json unchanged.
 ROUND r143 (04 Oct 23:35; PDF a72149c3 = r141, 11 comments, "put updates in red"; then the author on the intro's GE
 sentence: "it needs to say that in PE with externalities, TF is better, but without it is worse" and "all these numbers
 are not helpful...that point is clear"). Intro: 'The January 2024 point-in-time (PiT) count, run by ...'; trials: 'gains

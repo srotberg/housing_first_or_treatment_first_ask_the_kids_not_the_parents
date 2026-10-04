@@ -462,6 +462,13 @@ UNTARGETED = [
      r'Mellentin et al.\ (2016), Yoon et al.\ (2013)'),
     ('Homeless adult had a homeless parent',
      ('1.8 to 2.4', f'{mom("delta_h child homeless odds ratio"):.2f}'), r'Bassuk et al.\ (1997)'),
+    # THE REVOKED-VOUCHER COMPARISON (round r144, the author: "add the Constantino numbers to the validation table
+    # too"): Costantini's IV estimate against the model's three-year mortality gap of the households Treatment First
+    # revokes, scaled by the share it puts on the street (code/paper/export_revoked.py); like for like, per household
+    # whose housing changes. Run export_revoked.py first: it writes the x_rv_* names this reads.
+    ('Block 7: Losing a voucher', None, None),
+    ('Three-year mortality per household made homeless, pp$^{b}$',
+     (RES['x_rv_costantini_pp'], RES['x_rv_wald_pp']), r'Costantini (2025)'),
 ]
 
 
