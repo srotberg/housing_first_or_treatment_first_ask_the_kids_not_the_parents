@@ -1,4 +1,19 @@
-# revoked-voucher experiment (code/revoked_2c); 04 Oct 16:54 UTC
-stage 1 running: no-policy arm 5 distribution passes done, fixboth arm 3 (started 15:04/15:09 UTC).
-binaries built (plain3, track3, track10, track3b). stage 2 waits for the arms: T = 3 guards, then T = 10 Treatment First and Housing First paths.
-ETA: arms ~18:00 UTC, guards ~19:00, T = 10 paths ~22:00 UTC.
+# revoked-voucher experiment (code/revoked_2c); 04 Oct 17:10 UTC
+## stage 1, the two steady states
+run_arms: free disk 29G, memory 15 GiB, cores 4 (04 Oct 14:59)
+run_arms: building cf_fix (04 Oct 14:59)
+run_arms: building cf_fix2 (04 Oct 15:01)
+run_arms: building cf_fix2_share (04 Oct 15:03)
+run_arms: builds done (04 Oct 15:04)
+run_arms: arm null on cf_fix2_share (04 Oct 15:04)
+run_arms: arm fixboth on cf_fix2 (04 Oct 15:09)
+run_arms: null_2c: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [74, 75, 70, 70, 72], largest final 4.84e-05 (rule 5e-05, at least 70 sweeps)  (04 Oct 17:09)
+run_arms: tf_2c_fixboth: DIST CHECK PASS: 4 passes, sweeps [72, 70, 70, 70], largest final 4.21e-05 (rule 5e-05, at least 70 sweeps)  (04 Oct 17:09)
+run_arms: arms done (04 Oct 17:09)
+-- null_2c
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+-- tf_2c_fixboth
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+## stage 2, the paths
+run_paths: waiting for the arms and the builds (04 Oct 15:08)
+run_paths: against the accepted runs: null: worst relative difference 1.6e-04 (drug price) over 7 statistics fixboth: worst relative difference 2.1e-04 (SUD lambda_d) over 7 statistics  (04 Oct 17:10)
