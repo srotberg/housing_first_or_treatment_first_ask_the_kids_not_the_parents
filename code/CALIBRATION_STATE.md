@@ -125,6 +125,18 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+REVOKED-VOUCHER RESULT (04 Oct 22:48, results/revoked_2c/RESULT.md; headline re-computed here from tf10/hf10 logs'
+REVK GROUP lines, matches): of the households whose voucher Treatment First revokes in years 1-3 (pooled mass 0.166, 96
+percent with a SUD, mean age about 46), 6.92 percent are dead three years later against 6.12 had they kept the voucher
+under Housing First's rules: +0.80 pp (+13 percent); +1.02 at four years, +1.42 at six. Channel: the street (27-29
+percent of the year-1 cohort homeless in each of the three years, none in the counterfactual). Every holder at the
+reform: +0.02-0.03 pp. Against Costantini's 4.6 pp (a LATE for homeless veterans at entry): Wald-style rescaling by the
+28 pp homelessness the revocation causes gives about 2.9 pp per household moved onto the street -- same order. SUD: as a
+share of the STARTING group marginally lower under Treatment First (deaths); AMONG SURVIVORS higher under Treatment First,
+about 1 percent relative at three years and 2 at eight (the street's slower recovery) -- the worker's RESULT reads the
+first only. Pending: tables.md and guard_T3_rest.txt (last T = 3 guards running at 22:48). NEXT: the author placed this
+test in the Validation section (Section 5, sec:fvalid) -- ask before drafting the block and the tab_untargeted row, and
+point response_AE.tex's \tbd{HF LATE} at it. The mortality gap is untargeted; the SUD gap is partly targeted (mu_H).
 DECISION (04 Oct 22:55, the author): the partial-equilibrium experiment without externalities goes into Section 6.2
 "right before the decomposition" (the paragraph 'A newborn is ... off under Treatment First ... Without the larger
 voucher programme ...'), as the full model's counterpart of Section 3's dominance result, so the two read as a pair: no
