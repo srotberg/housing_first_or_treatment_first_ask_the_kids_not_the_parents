@@ -125,6 +125,18 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+T = 60 RESTARTED WITH A NEWTON STEP ON pi_V (04 Oct 21:28; the author, 21:25: "ok, go with the larger pi_V step").
+Loop 2 was stopped in its backward pass (year 29 of 59; its partial log is tr2c_t60/run.log.killed.202610042128). The
+restart reproduces the original start: calibration_state.dat, newborn_parent_share.dat and the old seeds moved to
+tr2c_t60/restart_r1_202610042128/, PARAM_HANDOVER.txt restored from the kept copy (the binary deletes it once applied),
+the first 1060 log lines identical to the original run's but for the seeded values. Seeds (results/transition_2c/restart_r1/):
+drug price = loop 1's saved path; pi_V = loop 1's saved path plus 0.8 of a Newton step from the voucher accounting
+(code/transition_2c/newton_piv.py: holders H(t+1) = 0.814 H(t) + 5.91 pi_V(t) + 0.19 fitted on loops 0-1, spending
+0.191 H, dS(t) = residual(t)): pi_V 9.30 (t=1), 8.23 (t=2, was 11.83), 7.9-8.0 (t=5-20), 8.81 (30), 9.18 (40), 9.28
+(50), 9.61 (59, the long run). Launched by hand, not by remote_transition_2c.sh (its pushes fail on the stale proxy);
+wrapper pid 31270, binary 31272, OMP 4, tr2c_worker.pid points at the wrapper for the keep-alive watchers. Loops number
+from 0 again: archive them as results/transition_2c/loop<N>_r1/. Loop 0_r1 should end about 06:15-07:00 UTC 5 Oct;
+send_later at 06:30 compares it with loop 1 (budget and drug gaps, the shrink, the path) and reports.
 DATA RACE IN THE DISTRIBUTION STEP (04 Oct 21:25; found by the revoked-voucher worker, results/revoked_2c/RESULT.md,
 checked here): in the forward kernel's !$omp parallel do (code/housing_first_or_treatment_first_SR_v1.f90:32972, and the
 same clause in e2_run/code/tr60_fix/tr.f90 and transition_fix/tr_fix_src.f90) is_addicted_1 is SHARED, and each iteration
