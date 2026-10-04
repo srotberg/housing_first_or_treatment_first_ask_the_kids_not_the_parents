@@ -125,6 +125,20 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r143 (04 Oct 23:35; PDF a72149c3 = r141, 11 comments, "put updates in red"; then the author on the intro's GE
+sentence: "it needs to say that in PE with externalities, TF is better, but without it is worse" and "all these numbers
+are not helpful...that point is clear"). Intro: 'The January 2024 point-in-time (PiT) count, run by ...'; trials: 'gains
+in housing stability and mortality' with Costantini (2025) in the citation bracket (his is IV, not randomised -- flagged
+in chat), the long Costantini sentence dropped; 'Randomised trials, however, focus on ... As such, they cannot speak to
+the impacts either policy has on people who are not the participants themselves, or long-run behaviour'; 'on government
+budgets and' and 'implications ... at scale' removed; 'Then, ceteris paribus, Housing First weakly dominates ...';
+'externalities that randomised trials have not resolved'. Results paragraph: the GE sentence replaced by 'In partial
+equilibrium, with the drug price and the probability of drawing a voucher held at their benchmark levels, Treatment First
+is better than Housing First with the externalities and worse without them, as in the stylized model.' (no numbers), with
+a blue \upd until results/pe_noext confirms 'worse without them'. Literature (Milby paragraph): a Costantini sentence
+with what the model shows (x_rv_*, Section ref to sec:fvalid). Comment 7 ("are none of these studies studying the impact
+on children?") answered in chat: the Housing First trials for single adults do not; the Family Options Study (homeless
+families, housing subsidies) does -- offered, not added. Same splice; abstract 148; 50 pages.
 ROUND r142 (04 Oct 23:20; the author: "add the constantini stuff to the validation, in its own paragraph with
 explanations"): Section 5's Validation, after Block 6, a titled paragraph 'Losing a voucher: a comparison with
 Costantini (2025)' in red (two paragraphs: the experiment and result; why the magnitudes differ, the Wald-style 2.9 pp per
