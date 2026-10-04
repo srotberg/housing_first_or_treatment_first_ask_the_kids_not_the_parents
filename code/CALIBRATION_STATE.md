@@ -125,6 +125,14 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r141 (04 Oct 22:50; the author: "remove the government budget point from the first paragraphs of the intro. The
+whole point relies on the externalities. The government budget is just a reinforcement but not the main point"): the
+opening's 'One such cost runs through the government budget ...' is gone; the paragraph now reads 'The case for
+Treatment First therefore has to rest on what drug use costs somebody other than the user, and this paper focuses on four
+such costs, externalities that randomised trials cannot resolve'; the trials sentence ends at 'when either policy runs at
+scale' (my ': what it does to the price of drugs and to the government budget' dropped). KEPT: the author's own 'impact of
+a policy on government budgets and well beyond' (comment 21), the results paragraph's GE sentence, Section 3's
+budget-balanced numbers. Same splice (splice_r140, base_r139: red accumulates over r140 and r141). Abstract 148 words.
 PE EXPERIMENT WITHOUT EXTERNALITIES (04 Oct 22:39; the author: "run a pe experiment with no externalities also in the
 full model ... take the omega_c = 0 case and don't impose any of the penalties ... run it once to get the benchmark ...
 then simulate with piv, pv fixed and the externalities turned off ... could be the very first experiment we refer to").
