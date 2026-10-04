@@ -125,6 +125,15 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+DATA RACE IN THE DISTRIBUTION STEP (04 Oct 21:25; found by the revoked-voucher worker, results/revoked_2c/RESULT.md,
+checked here): in the forward kernel's !$omp parallel do (code/housing_first_or_treatment_first_SR_v1.f90:32972, and the
+same clause in e2_run/code/tr60_fix/tr.f90 and transition_fix/tr_fix_src.f90) is_addicted_1 is SHARED, and each iteration
+writes it 0 then 1 for a disorder state (33154-33159), so another thread can read the transient 0 and move a disordered
+household with the clean survival and transition rows. The comment at 32995 calling it benign is wrong about the
+transient. Measured: two runs of the same plain binary on two threads differ by about 1e-6 relative in b and lambda_d
+after one step; h_1 identical; on one thread the runs agree bit for bit. Every arm and transition in the repository
+carries it, at a size three orders below the stopping rules (1e-3, 5e-3). FIX (not applied): move is_addicted_1 to the
+private clause, at the next rebuild of any binary; no rerun on its account. The running T = 60 is left alone.
 T = 60 LOOP 1 COMPLETE (04 Oct 19:18, 8.8 h; archived by hand to results/transition_2c/loop1/ -- run.log.gz, the six
 *_out.txt paths, early_years.txt, cohort_cev.txt; loop 2's backward pass started at once). DRUG MARKET CLOSING: years over
 5e-3 52 -> 26, median gap 0.016 -> 0.0029, worst 0.058 -> 0.040 (years 5-24). BUDGET NOT: years over 1e-3 58 -> 58,
