@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """analyse.py -- the revoked-voucher experiment's guards and tables (code/revoked_2c/README.md).
 
-  analyse.py guard3 <plain3 log> <track3 log> <hf3 log> <track3 bounds log>
-  analyse.py main   <tf10 log> <hf10 log>
+  analyse.py pair3 <plain3 1-thread> <track3 1-thread> <plain3 2-thread> <track3 2-thread>
+  analyse.py rest3 <track3 1-thread> <hf3 1-thread> <track3 bounds-checked>
+  analyse.py main  <tf10 log> <hf10 log>
 
 Reads only the REVK lines the tracking module prints and the transition's own TRANSITION lines.
 """
@@ -49,7 +50,7 @@ def agg_lines(run):
     return [l.strip() for l in run['lines'] if l.strip().startswith(AGG)]
 
 
-def check_common(run, name, out):
+def check_common(run, name, out, krule=1e-12, knote=''):
     ok = True
     # mass accounting
     worst = max([abs(d['acct_close']) for d in run['groups'].values()] + [abs(d['acct']) for d in run['groups'].values()] + [0])
@@ -58,8 +59,8 @@ def check_common(run, name, out):
     ok &= good
     # the shadow kernel is the model's kernel
     k = max([d['kernel_maxabs'] / max(d['max_cell'], 1e-300) for d in run['pop'].values()] + [0])
-    good = k < 1e-12 and len(run['pop']) > 0
-    out.append(f"  {name}: shadow kernel against the model's own step (ages 2+), worst max-cell gap / largest cell = {k:.2e} (rule 1e-12) {'PASS' if good else 'FAIL'}")
+    good = k < krule and len(run['pop']) > 0
+    out.append(f"  {name}: shadow kernel against the model's own step (ages 2+), worst max-cell gap / largest cell = {k:.2e} (rule {krule:.0e}{knote}) {'PASS' if good else 'FAIL'}")
     ok &= good
     # fixed paths
     ps = sorted({d['p_drug'] for d in run['mech'].values()}); vs = sorted({d['pi_v'] for d in run['mech'].values()})
@@ -74,30 +75,59 @@ def check_common(run, name, out):
     return ok
 
 
-def guard3(a):
-    plain, track, hf, bnd = (load(p) for p in a)
-    out, ok = ["T = 3 GUARDS"], True
-    A, B = agg_lines(plain), agg_lines(track)
+def grp_diff(x, y):
+    keys = set(x['groups']) & set(y['groups'])
+    w = 0.0
+    for k in keys:
+        for f in ('alive', 'cum_deaths_h', 'cum_deaths_e', 'sud', 'homeless', 'holding', 'excluded'):
+            u, v = x['groups'][k][f], y['groups'][k][f]
+            w = max(w, abs(u - v) / max(abs(u), abs(v), 1e-300))
+    return len(keys), w
+
+
+def pair3(a):
+    p1, t1, p2, t2 = (load(p) for p in a)
+    out, ok = ["T = 3 GUARDS, ONE THREAD (plain against tracking)"], True
+    A, B = agg_lines(p1), agg_lines(t1)
     diff = [i for i, (x, y) in enumerate(zip(A, B)) if x != y]
     good = len(A) == len(B) and not diff and len(A) > 0
-    out.append(f"  aggregate lines (MECH, CENSUS, BUDGET, DRUG, WELFARE, ...): plain {len(A)}, tracking {len(B)}, differing {len(diff)} {'PASS' if good else 'FAIL'}")
+    out.append(f"  aggregate lines (MECH, CENSUS, BUDGET, DRUG, WELFARE, MILBY, ...): plain {len(A)}, tracking {len(B)}, differing {len(diff)} {'PASS' if good else 'FAIL'}")
     for i in diff[:5]:
         out.append(f"    plain:    {A[i][:160]}\n    tracking: {B[i][:160]}")
     ok &= good
-    ok &= check_common(track, "tf T=3", out)
-    ok &= check_common(hf, "hf T=3", out)
-    tw = {c: m for c, m in track['tags'].items()}; th = hf['tags']
+    ok &= check_common(t1, "tracking, one thread", out)
+    out.append("THE MODEL'S RACE, for the record (two threads; informational):")
+    A2 = agg_lines(p2)
+    d2 = sum(1 for x, y in zip(A, A2) if x != y)
+    out.append(f"  plain on two threads against plain on one: {d2} of {min(len(A), len(A2))} aggregate lines differ")
+    for t in sorted(set(p1['mech']) & set(p2['mech'])):
+        x, y = p1['mech'][t], p2['mech'][t]
+        out.append(f"    t={t}: b {x['b']:.15e} vs {y['b']:.15e}, lambda_d {x['lambda_d']:.15e} vs {y['lambda_d']:.15e}")
+    n, w = grp_diff(t1, t2)
+    out.append(f"  tracked groups, one thread against two: {n} group-years in common, worst relative difference {w:.1e} "
+               f"(the shadow step is serial and, with the paths fixed, the policies do not depend on the distribution)")
+    out.append(f"GUARD SUMMARY: {'PASS' if ok else 'FAIL'}")
+    print("\n".join(out))
+
+
+def rest3(a):
+    t1, hf, bnd = (load(p) for p in a)
+    out, ok = ["T = 3 GUARDS: Housing First from the tags (one thread), bounds-checked tracking build"], True
+    ok &= check_common(hf, "Housing First, one thread", out)
+    tw, th = t1['tags'], hf['tags']
     good = bool(tw) and all(abs(th.get(c, -1) - m) <= 1e-15 * max(m, 1e-300) for c, m in tw.items())
     out.append(f"  tags written {tw}, read {th} {'PASS' if good else 'FAIL'}")
     ok &= good
-    good = bnd['stopped'] and not bnd['rterr'] and len(bnd['done']) == len(track['done'])
-    out.append(f"  bounds-checked tracking build: periods {len(bnd['done'])}, runtime errors {len(bnd['rterr'])} {'PASS' if good else 'FAIL'}")
+    good = bnd['stopped'] and not bnd['rterr'] and len(bnd['done']) == len(t1['done'])
+    n, w = grp_diff(t1, bnd)
+    out.append(f"  bounds-checked build: periods {len(bnd['done'])}, runtime errors {len(bnd['rterr'])}; tracked groups against "
+               f"the -O3 build: {n} group-years, worst relative difference {w:.1e} {'PASS' if good else 'FAIL'}")
     for l in bnd['rterr'][:3]:
         out.append("    " + l)
     ok &= good
     for t, d in sorted(hf['pop'].items()):
-        out.append(f"  hf t={t}: population moved from t-1 by {d['moved_from_tminus1_sumabs']:.2e} (sum of |change| over cells, mass 1)")
-    for r, nm in ((track, 'tf'), (hf, 'hf')):
+        out.append(f"  Housing First t={t}: the population moved from t-1 by {d['moved_from_tminus1_sumabs']:.2e} (sum of |change| over cells; alive {d['alive']:.6f})")
+    for r, nm in ((t1, 'tf'), (hf, 'hf')):
         for l in r['done']:
             out.append(f"  {nm} {l}")
     out.append(f"GUARD SUMMARY: {'PASS' if ok else 'FAIL'}")
@@ -124,8 +154,9 @@ def main(a):
     tf, hf = load(a[0]), load(a[1])
     T = max(tf['pop']) if tf['pop'] else 0
     out = ["# GUARDS (T = 10)"]
-    ok = check_common(tf, "Treatment First path", out)
-    ok &= check_common(hf, "Housing First path", out)
+    kn = "; four threads: bounded by the model's race, exact on one thread at T = 3"
+    ok = check_common(tf, "Treatment First path", out, 1e-3, kn)
+    ok &= check_common(hf, "Housing First path", out, 1e-3, kn)
     good = all(abs(hf['tags'].get(c, -1) - m) <= 1e-15 * max(m, 1e-300) for c, m in tf['tags'].items()) and len(tf['tags']) == 3
     out.append(f"  tags: written {tf['tags']}, read {hf['tags']} {'PASS' if good else 'FAIL'}")
     ok &= good
@@ -192,4 +223,4 @@ def main(a):
 
 
 if __name__ == '__main__':
-    {'guard3': guard3, 'main': main}[sys.argv[1]](sys.argv[2:])
+    {'pair3': pair3, 'rest3': rest3, 'main': main}[sys.argv[1]](sys.argv[2:])

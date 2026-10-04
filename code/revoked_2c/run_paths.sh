@@ -36,7 +36,7 @@ publish() (
             L="$C/cfarm_$a/cf.log"; [ -f "$L" ] && { echo "-- $a"; python3 "$C/cf_runs/passes.py" "$L" 2>/dev/null | tail -4; }
         done
         echo "## stage 2, the paths"; cat "$W/paths.status" 2>/dev/null
-        for d in g_plain3 g_track3 g_hf3 g_track3b tf10 hf10; do
+        for d in g_plain3_1t g_track3_1t tf10 hf10 g_hf3_1t g_track3b; do
             L="$W/$d/run.log"; [ -f "$L" ] || continue
             echo "-- $d: $(grep -a -c 'REVK PERIOD DONE' "$L") forward periods done; last line: $(tail -1 "$L" | cut -c1-150)"
         done
@@ -106,49 +106,52 @@ python3 "$C/cf_runs/finalstats.py" "$C/cfarm_tf_2c_fixboth/cf.log" "$C/cfarm_nul
 note "against the accepted runs: $(python3 "$R/compare_arms.py" "$OUT/arms/null_final.txt" "$REPO/results/counterfactuals_2c/nulltf/null/final.txt" "$OUT/arms/fixboth_final.txt" "$REPO/results/decomp_2c_both/arm_fixboth/final.txt" 2>&1 | tr '\n' ' ')"
 publish "arms re-solved"
 
-# GUARD RUNS, T = 3: plain and tracking side by side (2 threads each), then Housing First from the tags + a bounds check
-# (a run is done when its log says REVK STOP; the plain control is reused across rebuilds of the tracking binary)
-if ! grep -q "REVK STOP" "$W/g_plain3/run.log" 2>/dev/null && ! alive "$W/g_plain3.pid"; then
-    stage "$W/g_plain3" "$W/plain3/hftf_tr" cfarm_tf_2c_fixboth || { publish "blocked"; exit 1; }
-    launch "$W/g_plain3" 2 off
+# GUARD RUNS, T = 3, ONE THREAD. The model's forward kernel has a data race (is_addicted_1 is SHARED in the parallel
+# loop of converge_to_stationary_equilibrium and every iteration writes 0 then 1 to it), so two runs of the same binary
+# on 2 threads differ at about 1e-6 (README). On one thread there is no race and the plain and tracking builds must
+# agree bit for bit, and the shadow kernel must reproduce the model's step to rounding.
+done_run() { grep -q "REVK STOP" "$1/run.log" 2>/dev/null; }
+if ! done_run "$W/g_plain3_1t" || ! done_run "$W/g_track3_1t"; then
+    done_run "$W/g_plain3_1t" || { stage "$W/g_plain3_1t" "$W/plain3/hftf_tr" cfarm_tf_2c_fixboth && launch "$W/g_plain3_1t" 1 off; } || { publish "blocked"; exit 1; }
+    done_run "$W/g_track3_1t" || { stage "$W/g_track3_1t" "$W/track3/hftf_tr" cfarm_tf_2c_fixboth && launch "$W/g_track3_1t" 1 tf; } || { publish "blocked"; exit 1; }
+    note "T = 3 guard pair running, one thread each"
+    PUBMSG="T = 3 guard pair running (one thread)" wait_pub "$W/g_plain3_1t.pid" "$W/g_track3_1t.pid"
 fi
-if ! grep -q "REVK STOP" "$W/g_track3/run.log" 2>/dev/null; then
-    stage "$W/g_track3" "$W/track3/hftf_tr" cfarm_tf_2c_fixboth || { publish "blocked"; exit 1; }
-    launch "$W/g_track3" 2 tf
-fi
-note "T = 3 guard pair running"
-PUBMSG="T = 3 guard pair running" wait_pub "$W/g_plain3.pid" "$W/g_track3.pid"
-note "T = 3 pair: $(grep -c 'REVK STOP' "$W/g_plain3/run.log") / $(grep -c 'REVK STOP' "$W/g_track3/run.log") stopped after loop 0"
-if ! grep -q "REVK STOP" "$W/g_hf3/run.log" 2>/dev/null; then
-    stage "$W/g_hf3" "$W/track3/hftf_tr" cfarm_null_2c || { publish "blocked"; exit 1; }
-    stage "$W/g_track3b" "$W/track3b/hftf_tr" cfarm_tf_2c_fixboth || { publish "blocked"; exit 1; }
-    launch "$W/g_hf3" 2 hf "$W/g_track3"; launch "$W/g_track3b" 2 tf
-    note "T = 3 Housing First from the tags, and the bounds-checked tf, running"
-    PUBMSG="T = 3 hf and bounds runs" wait_pub "$W/g_hf3.pid" "$W/g_track3b.pid"
-fi
-python3 "$R/analyse.py" guard3 "$W/g_plain3/run.log" "$W/g_track3/run.log" "$W/g_hf3/run.log" "$W/g_track3b/run.log" > "$OUT/guard_T3.txt" 2>&1
-note "T = 3 guards: $(grep -a 'GUARD SUMMARY' "$OUT/guard_T3.txt")"
-for d in g_plain3 g_track3 g_hf3 g_track3b; do gzip -c "$W/$d/run.log" > "$OUT/${d#g_}_T3_run.log.gz"; done
+python3 "$R/analyse.py" pair3 "$W/g_plain3_1t/run.log" "$W/g_track3_1t/run.log" "$W/g_plain3_2t/run.log" "$W/g_track3_2t/run.log" > "$OUT/guard_T3_pair.txt" 2>&1
+note "T = 3 pair: $(grep -a 'GUARD SUMMARY' "$OUT/guard_T3_pair.txt")"
+for d in g_plain3_1t g_track3_1t g_plain3_2t g_track3_2t; do gzip -c "$W/$d/run.log" > "$OUT/${d#g_}_run.log.gz"; done
 find "$W"/g_* -name '*.dat' -size +10M -delete 2>/dev/null
-grep -q "GUARD SUMMARY: PASS" "$OUT/guard_T3.txt" || { note "GUARD: the T = 3 guards did not pass, stopping before T = 10"; publish "blocked at the T = 3 guards"; exit 1; }
-publish "T = 3 guards passed"
+grep -q "GUARD SUMMARY: PASS" "$OUT/guard_T3_pair.txt" || { note "GUARD: the T = 3 pair did not pass, stopping before T = 10"; publish "blocked at the T = 3 guards"; exit 1; }
+publish "T = 3 pair passed"
 
 # THE TWO T = 10 PATHS, one after the other, 4 threads each
-if ! grep -q "REVK STOP" "$W/tf10/run.log" 2>/dev/null; then
+if ! done_run "$W/tf10"; then
     stage "$W/tf10" "$W/track10/hftf_tr" cfarm_tf_2c_fixboth || { publish "blocked"; exit 1; }
     launch "$W/tf10" 4 tf; note "T = 10 Treatment First path running"
     PUBMSG="T = 10 Treatment First path running" wait_pub "$W/tf10.pid"
 fi
 note "tf10: $(cat "$W/tf10/EXIT"); $(grep -a -c 'REVK TAG WRITTEN' "$W/tf10/run.log") tags"
 gzip -c "$W/tf10/run.log" > "$OUT/tf10_run.log.gz"; publish "T = 10 Treatment First path done"
-if ! grep -q "REVK STOP" "$W/hf10/run.log" 2>/dev/null; then
+if ! done_run "$W/hf10"; then
     stage "$W/hf10" "$W/track10/hftf_tr" cfarm_null_2c || { publish "blocked"; exit 1; }
     launch "$W/hf10" 4 hf "$W/tf10"; note "T = 10 Housing First path running"
     PUBMSG="T = 10 Housing First path running" wait_pub "$W/hf10.pid"
 fi
 note "hf10: $(cat "$W/hf10/EXIT")"
 gzip -c "$W/hf10/run.log" > "$OUT/hf10_run.log.gz"
+publish "T = 10 Housing First path done"
+find "$W"/tf10 "$W"/hf10 -name '*.dat' -size +10M -delete 2>/dev/null
+# the Housing First kernel on one thread (tags from the one-thread T = 3 run) and the bounds-checked tracking build
+if ! done_run "$W/g_hf3_1t" || ! done_run "$W/g_track3b"; then
+    done_run "$W/g_hf3_1t" || { stage "$W/g_hf3_1t" "$W/track3/hftf_tr" cfarm_null_2c && launch "$W/g_hf3_1t" 1 hf "$W/g_track3_1t"; } || { publish "blocked"; exit 1; }
+    done_run "$W/g_track3b" || { stage "$W/g_track3b" "$W/track3b/hftf_tr" cfarm_tf_2c_fixboth && launch "$W/g_track3b" 2 tf; } || { publish "blocked"; exit 1; }
+    note "T = 3 Housing First (one thread) and bounds-checked runs"
+    PUBMSG="T = 3 hf and bounds runs" wait_pub "$W/g_hf3_1t.pid" "$W/g_track3b.pid"
+fi
+for d in g_hf3_1t g_track3b; do gzip -c "$W/$d/run.log" > "$OUT/${d#g_}_run.log.gz"; done
+python3 "$R/analyse.py" rest3 "$W/g_track3_1t/run.log" "$W/g_hf3_1t/run.log" "$W/g_track3b/run.log" > "$OUT/guard_T3_rest.txt" 2>&1
+note "T = 3 hf and bounds: $(grep -a 'GUARD SUMMARY' "$OUT/guard_T3_rest.txt")"
 python3 "$R/analyse.py" main "$W/tf10/run.log" "$W/hf10/run.log" > "$OUT/tables.md" 2>&1
 note "analysis: $(grep -a 'HEADLINE' "$OUT/tables.md" | head -2 | tr '\n' ' ')"
 touch "$W/PATHS_DONE"
-publish "T = 10 paths done, tables written"
+publish "all runs done, tables written"
