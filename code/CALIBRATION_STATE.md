@@ -125,6 +125,10 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+DECISION (04 Oct 12:25, the author): "Wait for loop 1" -- Section 6.3 is NOT rewritten from loop 0; its blue text stays.
+Loop 1's backward pass runs about 3.9 min a year (loop 0: 5.3), so loop 1 should end about 20:15. send_later
+trig_01FH1cT44ATUWxoaeU94shDX at 20:30 archives it (results/transition_2c/loop1/), compares its gaps and path with loop
+0's and asks the author: write 6.3 from loop 1, wait for loop 2, or a larger pi_V step.
 T = 60 LOOP 0 COMPLETE (04 Oct 10:28; archived by hand to results/transition_2c/loop0/ -- run.log.gz and the six
 *_path_seed_out.txt -- because the worker cannot push). Loop 1 running, about 11.5 h a loop. Homelessness against Housing
 First: +0.0 (y1), +11.5 (y2), +9.4 (y10), +4.4 (y20), +0.3 (y30), -2.6 (y40), then the END DRIFTS back up to +3.1 at y59
