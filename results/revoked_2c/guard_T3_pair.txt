@@ -1,0 +1,13 @@
+T = 3 GUARDS, ONE THREAD (plain against tracking)
+  aggregate lines (MECH, CENSUS, BUDGET, DRUG, WELFARE, MILBY, ...): plain 48, tracking 48, differing 0 PASS
+  tracking, one thread: mass accounting, worst |alive + cumulative deaths - starting mass| / starting mass = 7.93e-14 (rule 1e-10) PASS
+  tracking, one thread: shadow kernel against the model's own step (ages 2+), worst max-cell gap / largest cell = 0.00e+00 (rule 1e-12) PASS
+  tracking, one thread: price printed in 2 years: [1.0001082]; pi_V: [0.067533863] PASS
+  tracking, one thread: mass the model's reduction drops each year (below the last age's renter floor; booked as an end-of-life exit): t=1 0.00e+00, t=2 0.00e+00
+  tracking, one thread: one pass and stopped cleanly: True, runtime errors: 0 PASS
+THE MODEL'S RACE, for the record (two threads; informational):
+  plain on two threads against plain on one: 17 of 48 aggregate lines differ
+    t=1: b 5.642129866024571e-02 vs 5.642132489995119e-02, lambda_d 3.813914315203085e-02 vs 3.813916088930219e-02
+    t=2: b 5.539641210211328e-02 vs 5.539590601995799e-02, lambda_d 3.694520753944973e-02 vs 3.694469501760071e-02
+  tracked groups, one thread against two: 3 group-years in common, worst relative difference 0.0e+00 (the shadow step is serial and, with the paths fixed, the policies do not depend on the distribution)
+GUARD SUMMARY: PASS
