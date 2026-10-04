@@ -125,6 +125,13 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+DECISION (04 Oct 13:00, the author): "let T=60 converge first", THEN a T = 75 horizon check (compile-time
+transition_length=75; about 8.6 GB, fits 15 GB without paging; about 4.2 GB disk to stage, needs space freed with the
+author's OK; 13-14.5 h a loop), seeded from the converged T = 60 paths with years 60-74 at the long run, one or two
+loops, compare years 1-40. Told the author: converge in about 3 days (1-1.5 if the secant acts like Newton, 5+ or a
+stall if loop 0's small steps persist -- then propose a larger pi_V step rather than wait); about 4 with the T = 75
+check. Evidence that T = 60 is long enough: SUD 2.539 at y40 against 2.536 long run; the end drift is pi_V (9.90 at
+y40 -> 8.80 at y59, budget turns surplus from y48), not the state.
 DECISION (04 Oct 12:25, the author): "Wait for loop 1" -- Section 6.3 is NOT rewritten from loop 0; its blue text stays.
 Loop 1's backward pass runs about 3.9 min a year (loop 0: 5.3), so loop 1 should end about 20:15. send_later
 trig_01FH1cT44ATUWxoaeU94shDX at 20:30 archives it (results/transition_2c/loop1/), compares its gaps and path with loop
