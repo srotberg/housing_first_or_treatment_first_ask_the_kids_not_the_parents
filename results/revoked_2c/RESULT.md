@@ -62,7 +62,7 @@ multiplier, not abstinence.
 | fixed paths | price 1.0001082 and pi_V 0.067533863 printed in all 9 years of both T = 10 paths (and every T = 3 run), one value each. PASS |
 | tags | written by the Treatment First run, read by the Housing First run, same mass to the last digit (0.13989, 0.020557, 0.0057635). PASS |
 | Housing First stays stationary | the no-policy steady state through its own kernel, newborns added: SUD share 0.038139 at t = 1 and 0.038133 at t = 9, homelessness 0.0061309 and 0.0061299, deaths 0.99998 to 1.00001 a year, mass alive 50.8276 to 50.8280; sum over cells of the year's change 2e-3 to 5e-3 of a mass of 50.8 (1e-4 relative). The drift is the arms' own tolerance (distribution rule 5e-5 per cell), the 1.6e-4 gap between the held price and the re-solved arm's, and the race; it is two orders of magnitude below every effect reported. PASS |
-| Housing First from the tags on one thread, and a bounds-checked tracking build | see `guard_T3_rest.txt` |
+| Housing First from the tags on one thread, and a bounds-checked tracking build | Housing First on one thread: the shadow step reproduces the model's to 0.0, accounting 3.3e-14, tags read back exactly. Bounds-checked (-fcheck=bounds,pointer) tracking build: no runtime error, tracked groups within 2.5e-8 of the -O3 build (optimisation rounding). PASS |
 
 ## Results
 
