@@ -125,6 +125,11 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+E2 WORKER CANNOT PUSH (04 Oct 01:20): since the session restart at about 23:20 its git pushes fail ('Failed to
+connect to 127.0.0.1 port 38421'): the detached worker kept the old agent proxy in its environment, and the new one
+is on another port. Its status commits pile up locally in /home/user/e2_run. The T = 60 run is unaffected. Not fixed
+(restarting the worker kills the run; an http.proxy in git config would go stale at the next restart and break the
+main checkout's pushes too). PUBLISH ITS RESULTS FROM THE MAIN CHECKOUT when loop 0 lands.
 EARLY-YEARS NOTE AT 06:00 (the author asked, 23:48): send_later trig_01GydtWVbwUbeDjsVtu35L11 at 2026-10-04T06:00Z runs
 scratchpad/early_years.py (loop 0's forward pass against results/transition_2c's two arms; tested on restart3g's log)
 and sends a short chat note: years done, homelessness and childhood homelessness against the benchmark, peak so far,
