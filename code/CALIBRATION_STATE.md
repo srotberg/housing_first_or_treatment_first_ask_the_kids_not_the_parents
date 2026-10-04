@@ -125,6 +125,16 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+PE EXPERIMENT WITHOUT EXTERNALITIES (04 Oct 22:39; the author: "run a pe experiment with no externalities also in the
+full model ... take the omega_c = 0 case and don't impose any of the penalties ... run it once to get the benchmark ...
+then simulate with piv, pv fixed and the externalities turned off ... could be the very first experiment we refer to").
+Worker session_015Bm2E4c5g1sJ1DJWYHV1uF (own container; this one holds T = 60). Arm A hf_noext: the benchmark with
+weight_on_child 0, penalty_child_addicted 0 (was 0.24), penalty_child_homeless 0, any other parent-to-child channel off,
+price clearing, pi_V 0.067533863. Arm B tf_noext_pe: tf85_c35's Treatment First with pi_V and the price held at Arm A's,
+adjust_taxes 0, every other movable price held if the build allows. Welfare: the household's own value (omega_c = 0, so
+no child term; kappa_x = 0), state by state and newborn CEV; expectation: nobody better off under Treatment First beyond
+tolerance. Results to results/pe_noext/ (RESULT.md, status.txt); code/pe_noext/. Placement: the first experiment of
+Section 6 -- ask the author before writing it in.
 ROUND r140 (04 Oct 22:45; PDF 574bbebd, 28 comments on pages 1-2, "put updates in red", abstract <= 150 words, then the
 author: "let's see your updates suggestion ... in the paper, in red", "push it to main"). base_r139 + splice_r140 (=
 splice_r139); base_r140 = the numbers after this round. Abstract 148 words (rendered, update tag excluded); x_abs_tf_result
