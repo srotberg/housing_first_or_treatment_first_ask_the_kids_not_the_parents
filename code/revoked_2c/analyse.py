@@ -24,7 +24,7 @@ def kv(line):
 
 def load(path):
     L = open(path, errors='replace').read().splitlines()
-    groups, pop, mech, tags, done = {}, {}, {}, {}, []
+    groups, pop, mech, tags, done, leak = {}, {}, {}, {}, [], {}
     for l in L:
         s = l.strip()
         if s.startswith('REVK GROUP'):
@@ -36,9 +36,11 @@ def load(path):
         elif s.startswith('REVK TAG'):
             m = re.search(r'c=\s*(\d+).*mass=\s*(\S+)', s)
             tags[int(m.group(1))] = float(m.group(2))
+        elif s.startswith('REVK LEAK') and 'population' in s:
+            m = re.search(r't=\s*(\d+).*=\s*(\S+)$', s); leak[int(m.group(1))] = float(m.group(2))
         elif s.startswith('REVK PERIOD DONE'):
             done.append(s)
-    return dict(lines=L, groups=groups, pop=pop, mech=mech, tags=tags, done=done,
+    return dict(lines=L, leak=leak, groups=groups, pop=pop, mech=mech, tags=tags, done=done,
                 stopped=any('REVK STOP after loop 0' in l for l in L),
                 rterr=[l for l in L if 'Fortran runtime error' in l or 'At line' in l])
 
@@ -64,6 +66,8 @@ def check_common(run, name, out):
     good = len(ps) == 1 and len(vs) == 1 and abs(ps[0] - P_NULL) < 1e-12 and abs(vs[0] - V_NULL) < 1e-12
     out.append(f"  {name}: price printed in {len(run['mech'])} years: {ps}; pi_V: {vs} {'PASS' if good else 'FAIL'}")
     ok &= good
+    out.append(f"  {name}: mass the model's reduction drops each year (below the last age's renter floor; booked as an end-of-life exit): "
+               + ", ".join(f"t={t} {v:.2e}" for t, v in sorted(run['leak'].items())))
     good = run['stopped'] and not run['rterr']
     out.append(f"  {name}: one pass and stopped cleanly: {run['stopped']}, runtime errors: {len(run['rterr'])} {'PASS' if good else 'FAIL'}")
     ok &= good

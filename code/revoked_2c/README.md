@@ -32,6 +32,11 @@ RED_reviews/responses_round1/response_AE.tex). Results: `results/revoked_2c/`.
     Housing First run).
   * **Holders at the reform**, revoked or not: voucher state 1 in the t = 0 distribution, followed under each kernel
     from year 1.
+  * The model's reduction (the per-thread arrays summed into `distribution_implied`) copies only the cells inside
+    each age's own state range, so mass the kernel sends outside it -- below the renter floor of the last age, where
+    the floor is 3 rather than 1 -- leaves the model. The first T = 3 run showed it (shadow against model 1.9e-6 in
+    one cell); the shadow now drops the same cells (`revk_build_mask`, the reduction loop's ranges verbatim) and books
+    the mass as an exit at the end of life, printed as `REVK LEAK`.
   * Deaths: in each step, mass times one minus the survival probability the kernel applies (homelessness, the disorder
     and SMI enter it through the mortality multipliers), plus the mass at the last age, which the kernel does not
     carry (end of life).
