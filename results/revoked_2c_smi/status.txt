@@ -1,4 +1,4 @@
-# SMI split of the revoked-voucher experiment (code/revoked_2c_smi); 05 Oct 03:09 UTC
+# SMI split of the revoked-voucher experiment (code/revoked_2c_smi); 05 Oct 03:39 UTC
 Builds done. Waiting for the two steady states (code/revoked_2c/run_arms.sh):
 run_arms: free disk 29G, memory 15 GiB, cores 4 (05 Oct 01:30)
 run_arms: building cf_fix (05 Oct 01:30)
@@ -7,5 +7,5 @@ run_arms: building cf_fix2_share (05 Oct 01:34)
 run_arms: builds done (05 Oct 01:36)
 run_arms: arm null on cf_fix2_share (05 Oct 01:36)
 run_arms: arm fixboth on cf_fix2 (05 Oct 01:41)
--- null_2c: 19 log lines; STAGE 2: arm null on the counterfactual binary ...
--- tf_2c_fixboth: 12 log lines; STAGE 2: arm tf on the counterfactual binary ...
+-- null_2c: 20 log lines; DIST CHECK PASS: 5 passes, sweeps [70, 72, 70, 75, 70], largest final 4.86e-05 (rule 5e-05, at least 70 sweeps)
+-- tf_2c_fixboth: 16 log lines; STAGE 2: arm tf on the counterfactual binary ...
