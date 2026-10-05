@@ -133,6 +133,15 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r158 (05 Oct 14:30; PDF 31b911a2 = r157, 4 comments, "remove all red and put updates in red"). ALL RED STRIPPED
+(source and Table 6); calib_tables.py --freeze; base_r158 + splice_r158. In red: the abstract opens 'Without externalities,
+no: if households are rational and forward-looking, conditionality only removes an option.' (the author's wording);
+'conditionality fixes some externalities drug use imposes on users' children' (the author marked 'the' -> 'fixes some';
+read as replacing 'reduces the'); 'exposes those it screens out to homelessness, whose externalities harm their children
+and everyone nearby' (the author: 'homelessness, -> homelessness externalities'; a literal 'exposes ... to homelessness
+externalities' would have them exposed to the externalities rather than to homelessness). Introduction: 'Finally, in the
+model, losing a voucher raises the mortality of households with SMI whom it puts on the street, relative to households
+with SMI who keep their vouchers, by an amount of the same order ...'. Abstract 148 words; 49 pages.
 ROUND r157 (05 Oct 14:15; PDF a69f569a = r156, 7 comments, "remove all red and put updates in red"; no red was left from
 r156, so the round is the comments plus the Costantini update, all in red). COSTANTINI DONE: results/revoked_2c_street
 (every guard PASS; the four parts sum to the unsplit 6.91/6.12/+0.80 to 1e-13; SMI halves = the SMI-only run's
