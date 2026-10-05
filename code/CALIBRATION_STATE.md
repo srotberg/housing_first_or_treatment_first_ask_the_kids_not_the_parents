@@ -125,6 +125,24 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r149 (05 Oct 02:35; PDF 94633a66 = r148, 10 comments, "i think your sentences are really poorly phrased in the last
+version. put updates in red" -- NO strip this round, r148's red kept). Page 3 rewritten plainly: the budget externality
+'depends on two things: how much a user household spends on the drug, and how likely it is to find work again when a SUD
+has left it unemployed. Both determine the resources left for the child.'; 'How hard it is to find work again with a SUD
+is set to match ...'; the childhood homelessness externality 'also depends on two things, both of which shape what the
+child consumes ...', the range sourced, kappa_H; ADDED (the author asked where the aggregate homelessness externality's
+calibration should go): 'Finally, the aggregate homelessness externality is set to the willingness to pay ... Loubiere et
+al. (2020), c_kappa_x_data percent of income.' at the end of that paragraph; 'Whose children bear these externalities
+...'. Page 5: 'In general equilibrium, the drug price clears the drug market. Full altruism, with the probability of drawing
+a voucher held at its benchmark level, shows ...'; the reform '... except that the probability of drawing a voucher now
+rises to balance the government's budget' (pi_V answered, the duplication gone). Literature: 'using data on the programmes
+of the Department of Veterans Affairs'; 'no lasting effect on health or mortality'; 'among households with SMI, those whom a
+revoked voucher puts on the street are more likely to die within three years than those that keep their voucher, by an
+amount of the same order'. Block 7: 'health or mortality'; 'In the model, with the drug price and pi_V held, I compare
+households with SMI whom Treatment First's revocation puts on the street with households who have SMI and kept their
+voucher. Losing the voucher raises the former's three-year mortality by about x_rv_wald_pp percentage points relative to
+the latter's ...' (the author's wording; the model's comparison is the same households with the voucher kept -- noted in
+chat). Still 2.9 under \upd until results/revoked_2c_street. 50 pages.
 ROUND r148 (05 Oct 02:15; PDF 4a7853ef = r147, 15 comments, "remove all red and put updates in red"): all red stripped
 (source and the table note; tables frozen); splice_r147 (base_r147). Page 3: 'since both reduce the resources going to the
 child'; 'How much less likely a household with a SUD is to regain employment is set to match ...'; the childhood
