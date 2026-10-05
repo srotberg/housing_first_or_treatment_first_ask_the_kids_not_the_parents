@@ -1,4 +1,4 @@
-# SMI split of the revoked-voucher experiment (code/revoked_2c_smi); 05 Oct 06:56 UTC
+# SMI split of the revoked-voucher experiment (code/revoked_2c_smi); 05 Oct 06:58 UTC
 ## stage 1, the two steady states (code/revoked_2c/run_arms.sh)
 run_arms: free disk 29G, memory 15 GiB, cores 4 (05 Oct 01:30)
 run_arms: building cf_fix (05 Oct 01:30)
@@ -26,7 +26,9 @@ run_paths_smi: T = 3 guard pair (plain, split) running, one thread each (05 Oct 
 run_paths_smi: staged g_track3_1t (T=3, terminal cfarm_tf_2c_fixboth) (05 Oct 04:31)
 run_paths_smi: staged tf10 (T=10, terminal cfarm_tf_2c_fixboth) (05 Oct 04:31)
 run_paths_smi: T = 10 Treatment First path running; T = 3 unsplit tracking beside it (05 Oct 04:31)
+run_paths_smi: tf10: exit 0; 3 tags (05 Oct 06:57)
+run_paths_smi: T = 3 guards: GUARD SUMMARY: PASS (05 Oct 06:57)
 -- g_plain3_1t: 0 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- g_smi3_1t: 2 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- g_track3_1t: 2 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
--- tf10: 8 forward periods done; last line:  TRANSITION PI_V loop=           0  t=           9  pi_v=   6.8428016000364134E-002  (last free period: no residual(T) to pair with, takes t-1's value
+-- tf10: 9 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated

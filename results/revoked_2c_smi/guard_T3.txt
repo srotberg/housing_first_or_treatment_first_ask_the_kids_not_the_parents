@@ -1,0 +1,13 @@
+T = 3 GUARDS, ONE THREAD: plain, unsplit tracking, split tracking (Treatment First path)
+  aggregate lines (MECH, CENSUS, BUDGET, DRUG, WELFARE, MILBY, ...): plain 48, split 48, differing 0 PASS
+  unsplit tracking against split tracking: every REVK GROUP, POP, TAG, LEAK, INIT, MASK and aggregate line, 68 and 68 lines, differing 0: groups 1-4 reproduced byte for byte PASS
+  split tracking, one thread: mass accounting, worst |alive + cumulative deaths - starting mass| / starting mass = 1.10e-13 (rule 1e-10) PASS
+  split tracking, one thread: shadow kernel against the model's own step (ages 2+), worst max-cell gap / largest cell = 0.00e+00 (rule 1e-12) PASS
+  split tracking, one thread: price printed in 2 years: [1.0001082]; pi_V: [0.067533863] PASS
+  split tracking, one thread: mass the model's reduction drops each year (below the last age's renter floor; booked as an end-of-life exit): t=1 0.00e+00, t=2 0.00e+00
+  split tracking, one thread: one pass and stopped cleanly: True, runtime errors: 0 PASS
+  split tracking, one thread: the SMI halves summed against the unsplit group, 48 comparisons (levels; shares times survivors): 14 bit for bit, worst relative difference 9.7e-14 (rule 1e-12) PASS
+    (not identity: the module totals a group by summing whole arrays, a half by summing its own cells, so even at the start, where the cut is an exact partition of cells, the totals are added in a different order (starting masses bit for bit: False); after it the halves move in separate passes and rejoin in the same cells as SMI is left and entered. The rule is rounding.)
+  split tracking, one thread: SMI share at the start: exactly 0 in the halves without SMI ([0.0, 0.0, 0.0]), 1 to rounding in the halves with it (worst |share - 1| 2.0e-14, rule 1e-12; a share of slices over a sum of the whole) PASS
+  split tracking, one thread: mass accounting in the halves, worst 2.5e-13 (rule 1e-10) PASS
+GUARD SUMMARY: PASS
