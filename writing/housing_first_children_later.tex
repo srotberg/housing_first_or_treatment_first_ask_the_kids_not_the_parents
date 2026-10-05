@@ -907,7 +907,7 @@ outside the model and Table~\ref{tab:int} what is fitted inside it, with a colum
 each stage: stage 1 of this section, and stage 2, with the child that
 Section~\ref{sec:kids} adds, which is refitted with the child in place. The fit uses
 the quantitative model's rule, moving all internal parameters together, each in proportion
-to the gap on its own moment until each gap is within a certain \new{degree of} tolerance.
+to the gap on its own moment until each gap is within a certain degree of tolerance.
 
 Every target is documented in full in the replication package's data
 appendix, \texttt{data/DATA\_APPENDIX.md}, which names the
@@ -925,20 +925,20 @@ whereas in the quantitative model consequences arrive annually and compound. A
 low annual discount factor would weigh that distant death much less and the
 mortality channel would be losing to impatience rather than to anything the model
 is about, so a higher factor corrects for the coarseness of the horizon.} risk aversion is
-$\sigma=2$, as in the quantitative model, and survival over a period\new{, the cumulative chance of surviving from age twenty-six to age fifty-five,} is
+$\sigma=2$, as in the quantitative model, and survival over a period, the cumulative chance of surviving from age twenty-six to age fifty-five, is
 $\bar\phi = 0.93$, from the life table for the total population of the United States in 2010
 (Arias, 2014).
 
-The chance that \new{drug} use causes a SUD, $\pi_d$, \new{is} also externally calibrated. This
+The chance that drug use causes a SUD, $\pi_d$, is also externally calibrated. This
 is because drug use and the SUD are fully separated by cohort: the young are the
-users, and the old \new{just} carry the SUD. So the SUD rate is
+users, and the old just carry the SUD. So the SUD rate is
 participation times $\pi_d$, and $\pi_d$ is the ratio
 of the two in NSDUH 2024, $3.68$ percent of adults aged 26 and over carrying a
 moderate or severe SUD against $8.90$ percent carrying one of any severity, the measure of use the model matches, which gives
 $\pi_d=0.41$.
 
-\new{UI} replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules, and nothing \new{when a job is lost to the}
+UI replaces half of previous earnings on a base capped at mean
+income, in line with statutory state rules, and nothing when a job is lost to the
 disorder, which those rules treat as misconduct (U.S.\ Department of Labor, 2024). Food assistance tapers at
  $\varrho=0.30$, the benefit reduction rate of the Supplemental Nutrition
 Assistance Program (SNAP). The rent per unit of housing services
@@ -946,7 +946,7 @@ $p_r$ and the price of a unit of drugs $p_v$ are normalised to one and held fixe
 every counterfactual. Both rental units are
 set, the small one at $h_2=0.10$ and the standard one at $h_3 = 0.40$ of mean
 income. The voucher parameters are institutional: covered
-tenants pay $30$ percent of market rent, a simplification of the HUD rule, under which a tenant pays thirty percent of its income \new{and the voucher pays the rest of the rent only up to the fair market rent;} eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.27$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
+tenants pay $30$ percent of market rent, a simplification of the HUD rule, under which a tenant pays thirty percent of its income and the voucher pays the rest of the rent only up to the fair market rent \new{(the latter condition being abstracted from)}; eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.27$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
 Households (PSH), published by HUD.
 
 \subsubsection{Internal calibration}
@@ -962,16 +962,16 @@ times average annual income, about \$9.0 million against a mean household income
 \$113,000, which is within the range surveyed by Viscusi and Aldy (2003) once their
 estimates are put in current dollars.
 
-\new{The parameter} $b$\new{, which sets the marginal utility of the first unit of drugs,} is chosen to match a drug participation rate of
-$8.90$ percent from \new{the 2024 NSDUH} for respondents aged 26 and over with a disorder
-of any severity, and the weight on drugs $\theta$ \new{is set to match the} aggregate drug spending over the
+The parameter $b$, which sets the marginal utility of the first unit of drugs, is chosen to match a drug participation rate of
+$8.90$ percent from the 2024 NSDUH for respondents aged 26 and over with a disorder
+of any severity, and the weight on drugs $\theta$ is set to match the aggregate drug spending over the
 aggregate income of users, $16.0$ percent, from retail spending in Midgette et al.\ (2019) and the incomes of users in
-\new{the 2024 NSDUH}. The level of food assistance $\bar c$ is fitted so that total food assistance is
+the 2024 NSDUH. The level of food assistance $\bar c$ is fitted so that total food assistance is
 $0.42$ percent of total labour income, the ratio of SNAP outlays
 to gross domestic product (GDP) in the data.
 
 The mortality rate ratio $\kappa_{\phi d}$ is set to match the income of users,
-$0.74$ of the population average in \new{the 2024 NSDUH}, because the death risk is what decides how far down
+$0.74$ of the population average in the 2024 NSDUH, because the death risk is what decides how far down
 the income distribution use sits, as Section~\ref{sec:who} shows. Housing services in
 a shelter $h_1$ are chosen so that the homelessness rate in the model is
 $0.60$ percent, inside a band of 0.40 to 1.00 percent of households. The
@@ -980,8 +980,8 @@ homeless at some point over a year, from Burt et al.\ (2001). The unemployment
 probability without the disorder $u_0$ is chosen such that the aggregate unemployment rate
 is $4.85$ percent, the average over 2014 to 2024 in the Bureau of Labor Statistics (BLS) Current Population
 Survey (CPS), and the unemployment probability with the
-disorder $u_1$ \new{is set} such that the share of the homeless carrying a SUD is $21.7$ percent,
-\new{consistent with}
+disorder $u_1$ is set such that the share of the homeless carrying a SUD is $21.7$ percent,
+consistent with
 the meta-analysis of Gutwinski et al.\ (2021).
 
 \begin{table}[!tb]
@@ -1004,27 +1004,26 @@ does.}
 %======================================================================
 \subsection{Who uses drugs}\label{sec:who}
 
-This section asks which feature of the model puts drug use at the bottom of the
-income distribution, and it starts from the force that any answer has to
-overcome. Drugs are a luxury good bought at a price, so a household with
+\new{With the calibrated stage 1 model in hand, this} section asks which feature of the model puts drug use at the bottom of the
+income distribution. Drugs are a luxury good bought at a price, so a household with
 twice the income gives up less utility per dollar spent on them. With no consequences
 at all for acquiring a SUD that is the only force operating, and drug use
 concentrates at the top: in the baseline of stage 1 the average user then earns
 3.54 times the population average.
 
 Two features of the environment are candidates to reverse it. The
-\emph{mortality channel} is that the SUD increases the chance of dying,
+\emph{mortality channel}\new{:} the SUD increases the chance of dying,
 through $\kappa_{\phi d}$ in equation~\eqref{eq:surv}.
-The \emph{unemployment channel} is that it costs the household a job with probability
-$u_1-u_0$, a job loss that income support does not cover, and if its savings
+The \emph{unemployment channel}\new{: a SUD costs} the household a job with \new{additional} probability
+$u_1-u_0$, a job loss that \new{UI} does not cover, and if its savings
 and food assistance cannot cover the rent then the household downsizes,
-consumes less, or loses its home for a shelter, which is free but whose
-housing services $h_1$ are below those of the small rental, $h_2$.
+consumes less, or loses its home for a shelter, which is free but \new{provides}
+housing services \new{that are} below those of the small rental.
 
 Figure~\ref{fig:who} scales each channel on its own, with the other switched off,
 from nothing to $200$ percent of its calibrated value. Scaling the
 mortality channel multiplies $\kappa_{\phi d}$; scaling the unemployment channel moves
-$u_1$ up from $u_0$, reaching its calibrated value at 100 percent. Apart from the two channels, every parameter stays at its calibrated value
+$u_1$ up from $u_0$, reaching its calibrated value at 100 percent \new{and continuing all the way up to $200$ percent of its calibrated value}. Apart from the two channels, every parameter stays at its calibrated value
 except $b$, which is recalibrated at every point so that participation stays at the calibrated
 $8.95$ percent: the amount of drug use is the same everywhere on the figure,
 and only who uses changes. Both curves therefore start from the same economy, the one
@@ -1043,7 +1042,7 @@ the calibrated $8.95$ percent. The black dotted line marks the calibrated streng
 the right of it is extrapolation.}
 \end{figure}
 
-The result is sharper than the statement that mortality matters more. On its own,
+On its own,
 the mortality channel takes the income ratio from 3.54 with nothing switched on
 down to 1.19 at its calibrated strength, and falls further to
 0.52 as it continues to rise to $200$ percent of its calibrated
@@ -1058,13 +1057,10 @@ against 3.54 with nothing switched on, and at $200$ percent they
 are still at 3.54. A resource penalty does not produce the concentration of
 drug use at the bottom.
 
-Why should the two channels differ at all, when in both the disorder
-punishes the household? Because the cost of only one of them rises with the household's income. A job the disorder costs is not
-covered by income support, so it drops the household to the same floor regardless of what it was earning. What it
+Why should the two channels differ at all, when \new{both punish} the household? Because the cost of only one of them rises \new{quickly enough} with the household's income. A job the disorder costs is not
+covered by \new{UI}, so it drops the household to the same floor regardless of what it was earning. What it
 has left is just food assistance, whatever it saved and, under Housing First, a voucher
-if it draws one. Because risk aversion is above
-one, utility has a ceiling, so how much a household loses in that fall stops growing with
-its income: two households well above the floor lose about the same, even if one earns
+if it draws one. \new{A richer household falls further in dollars, but not by much more in utility. Because risk aversion is above one, utility is bounded above, so the utility of a high income is already close to that bound and most of the loss comes from how low the floor is, not from how high income was: with $\sigma=2$, $U(X)=-1/X$, and falling from a bundle $X$ to the floor's $X_f$ costs $1/X_f-1/X$, which is almost $1/X_f$ for anyone well above the floor.} Two households well above the floor \new{therefore} lose about the same, even if one earns
 twice as much as the other. The unemployment channel is therefore close to a flat charge
 on using, the same for every household that would use. It changes how many use, which
 the recalibration of $b$ undoes, but not which households do. On the other hand, buying $v$ units costs a rich household almost

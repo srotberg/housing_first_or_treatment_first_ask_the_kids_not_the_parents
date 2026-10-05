@@ -133,6 +133,17 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r173 (05 Oct 21:30; PDF 70b2fda2 = r172, 16 comments on pages 13-16, Section 3.4). ALL RED STRIPPED; base_r173 +
+splice_r173. In red: the HUD rule '(the latter condition being abstracted from)'; 3.4 opens 'With the calibrated stage 1
+model in hand, this section asks ...' (the 'force any answer has to overcome' clause removed); 'The mortality channel:
+...', 'The unemployment channel: a SUD costs the household a job with additional probability u1-u0, a job loss that UI
+does not cover'; 'a shelter, which is free but provides housing services that are below those of the small rental';
+the scan 'continuing all the way up to 200 percent'; 'The result is sharper ...' removed; 'when both punish the
+household', 'rises quickly enough'; 'not covered by UI'. The author asked whether the job-loss penalty is about the
+floor or about the penalty not growing with income, and why losing 100k is not worse than losing 10k: added in red 'A
+richer household falls further in dollars, but not by much more in utility. Because risk aversion is above one, utility
+is bounded above ... with sigma = 2, U(X) = -1/X, and falling from a bundle X to the floor's X_f costs 1/X_f - 1/X, which
+is almost 1/X_f for anyone well above the floor.' and 'Two households well above the floor therefore lose ...'.
 ROUND r172 (05 Oct 20:55; PDF 2a4ed346 = r171, 17 comments on pages 13-14, the stylized calibration). ALL RED
 STRIPPED; base_r172 + splice_r172. In red: 'a certain degree of tolerance'; survival 'over a period, the cumulative
 chance of surviving from age twenty-six to age fifty-five,' (the author asked; yes); 'The chance that drug use causes a
