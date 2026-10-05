@@ -133,6 +133,10 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r169 (05 Oct 18:00; PDF 691c34d9 = r168, 3 comments on the survival sentence). ALL RED STRIPPED; base_r169 +
+splice_r169. The author wrote 'raises the annual hazard of dying to the power of kappa, thus lowering it'; written as
+'where a SUD raises the probability of surviving the period to the power of kappa_phi_d, thus lowering it', since it is
+survival that eq. (surv) raises to the power (a hazard raised to kappa > 1 would fall). Said in chat.
 ROUND r168 (05 Oct 17:55; PDF 897b5363 = r167, 4 comments). ALL RED STRIPPED; base_r168 + splice_r168. 'other' removed
 ('fits many aspects of the data', black); 'survives into period 2 with probabilities'; eq. (surv) now followed by 'where a
 SUD multiplies the annual hazard of dying by kappa_phi_d.' and the clause deriving survival to the power kappa removed
