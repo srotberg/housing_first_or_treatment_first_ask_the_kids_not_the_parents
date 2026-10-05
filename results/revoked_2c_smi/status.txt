@@ -1,4 +1,4 @@
-# SMI split of the revoked-voucher experiment (code/revoked_2c_smi); 05 Oct 10:17 UTC
+# SMI split of the revoked-voucher experiment (code/revoked_2c_smi); 05 Oct 10:24 UTC
 ## stage 1, the two steady states (code/revoked_2c/run_arms.sh)
 run_arms: free disk 29G, memory 15 GiB, cores 4 (05 Oct 01:30)
 run_arms: building cf_fix (05 Oct 01:30)
@@ -42,8 +42,10 @@ run_paths_smi: tf10: exit 0; 3 tags (05 Oct 08:48)
 run_paths_smi: T = 3 guards: GUARD SUMMARY: PASS (05 Oct 08:48)
 run_paths_smi: staged hf10 (T=10, terminal cfarm_null_2c) (05 Oct 08:49)
 run_paths_smi: T = 10 Housing First path running (05 Oct 08:49)
+run_paths_smi: hf10: exit 0 (05 Oct 10:24)
+run_paths_smi: analysis: HEADLINE WITH SMI: 12.2 per cent of the revoked (pooled, years 1-3); three-year mortality 8.31 against 6.40 per cent, gap +1.92 pp; homeless 50.8, 52.2, 52.8 per cent in years 1-3; per household made homeless 3.7 pp HEADLINE WITHOUT SMI: 87.8 per cent of the revoked (pooled, years 1-3); three-year mortality 6.72 against 6.08 per cent, gap +0.64 pp; homeless 24.8, 24.3, 23.5 per cent in years 1-3; per household made homeless 2.6 pp HEADLINE ALL: 100.0 per cent of the revoked (pooled, years 1-3); three-year mortality 6.91 against 6.12 per cent, gap +0.80 pp; homeless 27.9, 27.7, 27.0 per cent in years 1-3; per household made homeless 2.9 pp  (05 Oct 10:24)
 -- g_plain3_1t: 0 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- g_smi3_1t: 2 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- g_track3_1t: 2 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- tf10: 9 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
--- hf10: 7 forward periods done; last line:  REVK LEAK t=  8 g= 1 dropped by the reduction (in deaths_e)=  0.000000000000000E+00
+-- hf10: 9 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
