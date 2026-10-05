@@ -125,6 +125,16 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+PE EXPERIMENT RESULT (05 Oct 01:39, results/pe_noext/RESULT.md; checked against analysis.json): without the
+externalities (weight_on_child 0, penalty_child_addicted 0, penalty_child_homeless 0, class-1 SS equalised, kappa_x 0)
+and at Arm A's drug price, pi_V and house price, NO HOUSEHOLD IS BETTER OFF under Treatment First (better-off mass 2.2e-12:
+one grid point, a missed maximum in Arm A's solver, explained); worse off 25 percent at 1e-3 utils (96 percent of those with
+a SUD, nearly every entrant); newborn adult-value CEV -1.50 (population -1.91, with a SUD -31.3); the childhood-inclusive
+newborn number (+1.88) is NOT externality-free. Arm A against the accepted benchmark: price +3.0, b +0.6, h_1 -2.7 percent;
+Arm B: b -60, SUD -61, h_1 +3.2 percent. ROUND r146 (02:00): Section 6.2, right before the decomposition, in red: 'Without
+the externalities, the full model gives the ranking of the stylized model ... no household is better off under Treatment
+First, and a newborn loses $x_pe_newborn_cev$ percent of lifetime consumption as an adult ...' (code/paper/export_pe_noext.py,
+which refuses to write if any mass is better off); the introduction's \upd on 'worse without them' removed. splice_r145.
 ROUND r145 (05 Oct 01:45; PDF d5ceb486 = r144, 20 comments, "remove all red and put updates in red"). ALL RED STRIPPED
 (strip_red.py on the source and tables/tab_untargeted.tex, checked equal to a brace-matched strip; calib_tables.py
 --freeze so Block 7 is black); base_r145 = the numbers now, splice_r145 (= splice_r140 on base_r145). Edits in red: trials
