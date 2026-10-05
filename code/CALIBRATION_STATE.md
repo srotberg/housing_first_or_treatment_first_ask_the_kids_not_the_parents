@@ -125,6 +125,20 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r147 (05 Oct 02:20; PDF 8d79e076 = r145, 10 comments, "remove all red and put updates in red", then "my comments may
+be on an older version, so if you had any red changes before this version, keep them"): all red stripped EXCEPT r146's
+partial-equilibrium paragraph in Section 6.2 (re-wrapped in \new{}; x_pe_newborn_cev red because splice_r145's base
+predates it). Introduction page 3 in three paragraphs: the budget externality now also runs through regaining
+employment with a SUD (kappa^ue_d, calibrated to the SUD share of the homeless, c_kappa_ue_d_data, Gutwinski et al.
+2021); the earnings externality paragraph; the childhood homelessness externality 'carries no additional earnings
+penalty' and is a function of the shelter's housing services (h_1, matched to the homelessness rate, c_h_1_data) and the
+employment penalty of homelessness (kappa_H, c_kappa_h_pc = 20 percent, a new derived name in derived_names.py, Desmond
+and Gershenson 2016); the old paragraph on transmission and kappa_x removed ("we have it explained in the lit review").
+Literature: 'and through homelessness rather than the disorder' removed; 'A limitation of all of the randomised trials
+above is that they measure ...'. Block 7: the model's counterpart described for households WITH SMI, scaled per
+household made homeless; 'The calibration sets ... not targeted' removed; 'This validation matters for the experiment
+because ...'; Table 6 note b 'with SMI'. The Block 7 numbers are still the all-revoked ones until results/revoked_2c_smi
+lands (\upd says so). base_r147 = the numbers now; splice_r147 for the next round.
 PE EXPERIMENT RESULT (05 Oct 01:39, results/pe_noext/RESULT.md; checked against analysis.json): without the
 externalities (weight_on_child 0, penalty_child_addicted 0, penalty_child_homeless 0, class-1 SS equalised, kappa_x 0)
 and at Arm A's drug price, pi_V and house price, NO HOUSEHOLD IS BETTER OFF under Treatment First (better-off mass 2.2e-12:

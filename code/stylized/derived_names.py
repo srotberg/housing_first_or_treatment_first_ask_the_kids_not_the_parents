@@ -25,6 +25,10 @@ _CLOSE = ((1.0, 'all'), (0.75, 'three quarters'), (2.0 / 3.0, 'two thirds'), (0.
 
 def derived(n):
     out = {}
+    # the employment penalty of homelessness in percent, for the introduction (round r147, the author: "how much more
+    # likely a parent is to be unemployed because of homelessness")
+    if 'c_kappa_h_value' in n:
+        out['c_kappa_h_pc'] = f"{100 * _f(n['c_kappa_h_value']):.0f}"
     out['s_vsl_data_musd'] = f"{_f(n['f_vsl_data']) * _f(n['s_mean_hh_usd']) / 1e6:.1f}"
     out['s1_cost_tf_pc'] = f"{100 * _f(n['s1_cost_tf_b']):.2f}"
     out['s1_cost_hf_pc'] = f"{100 * _f(n['s1_cost_hf_b']):.2f}"
