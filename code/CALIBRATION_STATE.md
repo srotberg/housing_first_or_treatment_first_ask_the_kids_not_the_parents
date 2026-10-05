@@ -133,6 +133,19 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r166 (05 Oct 17:25; PDF a035c6f1 = r165, 20 comments on pages 7-10). ALL RED STRIPPED; base_r166 + splice_r166.
+In red: Altonji 'already gives to the child', 'a perfectly altruistic parent', 'far from what perfect altruism implies'
+(the author's wording; told in chat that any altruism implies the full dollar). Section 3.1: 'require for a satisfactory
+analysis' (the author asked for English for the Hebrew 'meniach et hada'at'); 'To help see the main drivers in the
+model, this section strips the environment down to the basics, but only to the point where ...'; 'the chance of
+unemployment ... and also raises the chance of dying'; 'the net effect'; 'When does Treatment First improve welfare
+relative to Housing First? In the stylized as well as the full model, without externalities, never.'; 'makes the thing
+it insures against less risky'; 'self-control issues'; the third stage 'and shows the results remain essentially
+unchanged with that addition' (s3_cev_tf 0.442 against 0.439 without kappa_x); 'fits many aspects of the data'. Typos
+'death .' and 'that  is ... targets .' fixed. HYPHEN RULE CHANGED: forward-looking is no longer always hyphenated
+(NUMBERS.md and check_hyphens.py), the author having removed it predicatively three times; all four predicative uses
+now 'forward looking' (3.1 twice, Block 3's 'rational and forward looking', the Discussion's 'are forward looking and
+weigh').
 ROUND r165 (05 Oct 17:35; PDF ec44cb85 = r164, 6 comments on the Altonji sentences). ALL RED STRIPPED; base_r165 +
 splice_r165. In red: 'has chosen, through the size of its gift, how to divide ...' (the author did not understand how
 the initial division was made); 'Mechanically moving a dollar of income from the child back to the parent leaves those

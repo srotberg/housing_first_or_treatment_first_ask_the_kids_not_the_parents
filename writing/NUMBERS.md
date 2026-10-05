@@ -170,8 +170,14 @@ unexplained, then for missing the hyphen in "consumption-equivalent variation".
 
 **Three classes stay hyphenated wherever they appear**, including predicatively
 and as nouns, because they are established forms rather than positional
-compounds: `means-tested`, `forward-looking`, `take-up`, `point-in-time`. And a
-compound adjective used substantively keeps its hyphen: "the income-eligible".
+compounds: `means-tested`, `take-up`, `point-in-time`. And a compound adjective
+used substantively keeps its hyphen: "the income-eligible".
+
+**`forward-looking` is NOT one of them** (the author, 5 October, three rounds running:
+"dont think we need a hyphen", "why a hyphen?"). It is positional like any other
+compound: "rational forward-looking households", but "households are rational and
+forward looking". The checker flags it hyphenated before punctuation; a predicative use
+followed by a word ("are forward-looking and weigh") it cannot see, so look for those.
 
 `writing/check_hyphens.py` scans the prose in both directions, for a known
 compound sitting unhyphenated before a noun and for a hyphen where the phrase is

@@ -103,10 +103,11 @@ def main():
                 body[max(0, m.start() - 58):m.end() + 12].split())))
         # ALWAYS HYPHENATED, including predicatively and as nouns. These are
         # established forms rather than positional compounds: "eligibility is
-        # means-tested", "households are forward-looking", "treatment take-up".
+        # means-tested", "treatment take-up". NOT forward-looking: the author, 5 October,
+        # wants "households are forward looking" open and only the attributive form hyphenated.
         # "the income-eligible" is a compound adjective used substantively and
         # keeps its hyphen, so it is not a spurious one.
-        if p in ('means tested', 'forward looking', 'take up', 'point in time',
+        if p in ('means tested', 'take up', 'point in time',
                  'income eligible'):
             continue
         hy = p.replace(' ', '-')
