@@ -133,6 +133,20 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r163 (05 Oct 17:05; PDF 0358e641 = r162, 16 comments on pages 7-9). ALL RED STRIPPED; base_r163 + splice_r163.
+In red: Altonji et al. explained ('An altruistic parent who already gives to its child has chosen how to split their
+combined resources, so a dollar of income moved from the child to the parent should come back to the child in full;
+Altonji et al. find that only thirteen cents does'; the author asked 'is that what Altonji say?': yes, the altruism
+model's transfer-income derivative of one dollar, 13 cents found); '4.00 times the baseline mortality risk'; the
+homeless ratio applied 'to homeless households'; 'the excess death rate households with SMI face'; 'respond to changes
+in price', 'the equilibrium price moves'; 'And' removed; the Grossman and Chaloupka eight-percent sentence and 'with
+the distribution of households held fixed' removed; 'as it deters use'; the intensive margin now 'The literature
+estimates the intensive-margin elasticity to be of a similar magnitude to the extensive-margin elasticity' and 'A ten
+percent fall in the price of cocaine raises the frequency of use among its users by a little over three percent
+(Grossman and Chaloupka, 1998)' (the citation moved here because its earlier sentence went); 'the findings of all these
+studies' (van Ours and Caulkins stay cited in the introduction); 'the elasticity the model uses'; nutshell 'housing
+stability, SUD recovery and mortality respond'. NOT ADDED: a comparison of omega_c with Altonji (asked twice; the 13
+cents is not an altruism weight).
 ROUND r162 (05 Oct 16:45; PDF 8a1d05c6 = r161, 13 comments on pages 6-8, plus the author's chat answers to r161:
 'yes change to General equilibrium' and Abramson 'like a side note' when mentioning the Zhao paper). ALL RED STRIPPED;
 base_r162 + splice_r162. In red: 'general-equilibrium models of homelessness' in the literature overview and 'The
