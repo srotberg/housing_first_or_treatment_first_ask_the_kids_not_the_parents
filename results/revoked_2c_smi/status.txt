@@ -1,5 +1,5 @@
-# SMI split of the revoked-voucher experiment (code/revoked_2c_smi); 05 Oct 03:39 UTC
-Builds done. Waiting for the two steady states (code/revoked_2c/run_arms.sh):
+# SMI split of the revoked-voucher experiment (code/revoked_2c_smi); 05 Oct 03:41 UTC
+## stage 1, the two steady states (code/revoked_2c/run_arms.sh)
 run_arms: free disk 29G, memory 15 GiB, cores 4 (05 Oct 01:30)
 run_arms: building cf_fix (05 Oct 01:30)
 run_arms: building cf_fix2 (05 Oct 01:32)
@@ -7,5 +7,16 @@ run_arms: building cf_fix2_share (05 Oct 01:34)
 run_arms: builds done (05 Oct 01:36)
 run_arms: arm null on cf_fix2_share (05 Oct 01:36)
 run_arms: arm fixboth on cf_fix2 (05 Oct 01:41)
--- null_2c: 20 log lines; DIST CHECK PASS: 5 passes, sweeps [70, 72, 70, 75, 70], largest final 4.86e-05 (rule 5e-05, at least 70 sweeps)
--- tf_2c_fixboth: 16 log lines; STAGE 2: arm tf on the counterfactual binary ...
+run_arms: null_2c: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [70, 72, 70, 75, 70], largest final 4.86e-05 (rule 5e-05, at least 70 sweeps)  (05 Oct 03:41)
+run_arms: tf_2c_fixboth: DIST CHECK PASS: 4 passes, sweeps [70, 70, 70, 70], largest final 2.41e-05 (rule 5e-05, at least 70 sweeps)  (05 Oct 03:41)
+run_arms: arms done (05 Oct 03:41)
+## builds
+split confined to the tracking module
+built plain3 (T=3, -O3 -funroll-loops): 2 warnings
+built track3 (T=3, -O3 -funroll-loops): 2 warnings
+built smi3 (T=3, -O3 -funroll-loops): 2 warnings
+built smi10 (T=10, -O3 -funroll-loops): 2 warnings
+all built
+## stage 2, the runs
+run_paths_smi: waiting for the arms and the builds (05 Oct 01:39)
+run_paths_smi: against the accepted runs: null: worst relative difference 1.2e-04 (drug price) over 7 statistics fixboth: worst relative difference 2.5e-04 (SUD lambda_d) over 7 statistics  (05 Oct 03:41)
