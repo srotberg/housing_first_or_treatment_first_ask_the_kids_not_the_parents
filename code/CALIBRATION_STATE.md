@@ -125,6 +125,17 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+T = 60 KILLED AGAIN BY A CONTAINER RESTART (05 Oct about 10:25), loop 0_r1 at forward year 45 of 59, about 11 h in.
+Saved: results/transition_2c/loop0_r1_partial/ (run.log.gz, early_years.txt). Its residuals: budget 4e-4 to 5e-3 in
+years 1-24, then a deficit growing to -0.017 by years 38-45 (the seed's pi_V rose toward 9.61 too early); drug gaps 0.015-
+0.05. RELAUNCHED 10:31 (wrapper 713, binary 721; state files to tr2c_t60/restart_r2_crash_202610051031/, handover
+restored, same drug price seed) WITH A SECOND NEWTON STEP ON pi_V (code/transition_2c/newton2_piv.py; same model as
+newton_piv.py, refitted on loops 0, 1 and the partial 0_r1: H(t+1) = 0.8166 H(t) + 5.7242 pi_V(t) + 0.1949, spending
+0.1913 H; damping 0.8; applied to the restart seed loop 0_r1 ran; years 45-59, with no residual, taper the year-44 step
+to zero at 59, which the terminal steady state pins). Seed results/transition_2c/restart_r2/: pi_V 9.70 (t=1), 8.27 (2),
+7.9-8.1 (3-20), 8.23 (25), 8.63 (30), 8.97-9.00 (35-45), 9.15 (50), 9.41 (55), 9.61 (59). The same method the author
+approved on 4 Oct for the first restart, so as not to repeat 11 h; loops number from 0 again (loop<N>_r2). Next: loop
+0_r2 ends about 22:00-23:00 UTC 5 Oct; the five-iteration look moves accordingly (about 8 Oct).
 T = 60 LOOP 0_r1, FORWARD PASS AT YEAR 15 (05 Oct 06:31; scratchpad/early_years.py on tr2c_t60/run.log). THE NEWTON
 pi_V STEP LANDED: budget residuals in years 1-15 are 1.3e-3, 5.4e-3, 4.9e-3, 1.3e-3, 9.0e-4, 1.7e-3, 2.2e-3, 2.0e-3,
 1.5e-3, 9.3e-4, 5.2e-4, 4.7e-4, 5.3e-4, 5.1e-4, 3.8e-4 (loop 1: -1.8e-2 to -8.0e-2), pi_V 9.30 (t=1), 8.23 (2), 7.88-8.27
