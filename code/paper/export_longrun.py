@@ -750,6 +750,7 @@ def main():
     # the share alone, for the introduction's list of what differs from the stylized model (the author, 5 October:
     # "maybe you can just state which results are different?"): in the stylized model no user gains
     out['x_lr_sud_better_pc'] = f'{_sb:.0f}' if _sb is not None else ''
+    out['x_lr_all_better_pc'] = f"{100 * _SH['all households'][0]:.0f}" if _SH else ''
     out['x_lr_approve_sud'] = (
         f"Across all households, ${100 * _SH['all households'][0]:.0f}$ percent are better off, but only ${_sb:.0f}$ "
         'percent of those that carry a SUD, since they lose access to vouchers.'

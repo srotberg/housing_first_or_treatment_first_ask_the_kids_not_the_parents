@@ -125,6 +125,20 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r151 (05 Oct 03:20; the author: "Like all the results follow except... And then list it ... It's ok if the results
+are slightly different, as long as they are the same qualitatively. In that case you don't need to explain it. The piv and
+pv adjusting to clear markets and budget should just be explained when the model is explained"). No strip. The
+introduction's full-model results are now: the partial-equilibrium sentence (kept), then in red 'In general equilibrium,
+too, all the stylized model's results on policy carry over, except three.' (1) full altruism does not end drug use,
+x_lr_tf_vs_om; (2) childhood homelessness does not fall, x_tf_hchild1, so a shelter earnings penalty would not reverse the
+ranking; (3) not only newborns gain: x_lr_all_better_pc (NEW, 76) percent of households better off in the long run,
+including x_lr_sud_better_pc (20) of SUD households, and \upd x_trf_alive_better_pc (97, old transition) of the adults alive
+at the reform (in the stylized model every household is weakly worse off state by state, and the old and adults alive
+lose). REMOVED: r150's explanations (price, budget, 0.18 vs 4.33, homelessness +13 with pi_V held) and the whole transition
+paragraph (the elevated price, the first-decade numbers, homelessness rising at first, the first cohort's gain: the same
+qualitatively as the stylized model, apart from the adults alive, now item 3); and from the stylized paragraph the clause
+'the quantitative model does not share this last result regarding childhood homelessness' (now item 2). The model
+description already explains the price and pi_V adjusting. Intro 3631 -> about 3290 words; 49 pages.
 ROUND r150 (05 Oct 03:00; the author: "I like the current flow starting with the stylized model ... But the full model
 results is a bit of a repetition. Maybe you can just state which results are different?"). No strip. The introduction's
 full-model results now state only what differs from the stylized model, in red: partial equilibrium as in the stylized
