@@ -129,7 +129,8 @@ T = 60: LOOK AFTER FIVE ITERATIONS (05 Oct 04:20, the author: "we can see how it
 When loop 4_r1 completes (the fifth loop of the restart; about 9 h each from loop 0_r1's end at about 08:00-09:00 5 Oct,
 so about 20:00-22:00 UTC 6 Oct), send the author the figure (code/paper/transition_figure.py on that loop) and the key
 numbers -- drug use, SUD, homelessness and children in a shelter by year, the cohort CEVs, the share of adults alive at
-the reform better off -- with the budget and drug gaps, against the previous calibration's text. The run keeps going.
+the reform better off -- with the budget and drug gaps, against the previous calibration's text, and ASSESS it with the author ("and assess
+then"): whether it is converged enough to write Section 6.3 from, or should keep running. The run keeps going meanwhile.
 T = 60: RUN TO FULL CONVERGENCE (05 Oct 04:15, the author: "20 loops is 10-20 days, thats ok"). No early stop, no pi_V
 fallback: the restart keeps going to the stopping rule (budget 1e-3, drug market 5e-3), about 9 h a loop. After each loop:
 archive results/transition_2c/loop<N>_r1/, report the budget and drug gaps and their shrink to the author, re-arm the
