@@ -125,6 +125,23 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r148 (05 Oct 02:15; PDF 4a7853ef = r147, 15 comments, "remove all red and put updates in red"): all red stripped
+(source and the table note; tables frozen); splice_r147 (base_r147). Page 3: 'since both reduce the resources going to the
+child'; 'How much less likely a household with a SUD is to regain employment is set to match ...'; the childhood
+homelessness externality 'is a function of ... both affecting the child's consumption bundle'; the homelessness range
+sourced '(HUD's 2023 PiT count and Burt et al., 2001)'. Page 5: 'Turning to full general equilibrium, with an endogenous drug
+price, full altruism shows ...' -- NOT 'pi_V clearing the budget', which the author's draft had: the full-altruism arm
+holds pi_V at the benchmark (export_longrun docstring), flagged in chat; the reform 'rises to balance the budget and the
+drug price is endogenous'. Costantini (literature, Block 7, Table 6 note b): the comparison is now households WITH SMI
+WHOM THE REVOCATION PUTS ON THE STREET against the same households, also with SMI, had they kept their voucher; the
+Wald scaling sentence, 'through homelessness rather than the disorder' and 'divided by the share ...' removed. THE
+NUMBERS ARE PENDING: worker session_0146XhtbLwNujhJ1e2fbujz2 (results/revoked_2c_street; the author: "condition on SMI for
+both voucher holder and those revoked, and then compare those who ended up on the street whose voucher was revoked" --
+"that is exactly the constantini paper") tags the revoked by SMI x street (TF policy picks the shelter after
+revocation) and follows them under both kernels; the earlier SMI-only worker (session_01CjMDyrSNKikUNZizA1x7RE,
+results/revoked_2c_smi) runs on as a check. Until then Block 7 quotes 2.9 (all revoked, per household made homeless)
+under a \upd. When the street result lands: export_revoked.py reads the SMI-and-street subgroup's direct gap (no Wald),
+calib_tables.py row label, Block 7, the literature sentence and the intro validation line, remove the \upd tags.
 ROUND r147 (05 Oct 02:20; PDF 8d79e076 = r145, 10 comments, "remove all red and put updates in red", then "my comments may
 be on an older version, so if you had any red changes before this version, keep them"): all red stripped EXCEPT r146's
 partial-equilibrium paragraph in Section 6.2 (re-wrapped in \new{}; x_pe_newborn_cev red because splice_r145's base
