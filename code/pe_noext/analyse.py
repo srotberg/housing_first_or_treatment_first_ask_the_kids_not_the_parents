@@ -28,7 +28,8 @@ import argparse, json, os, re, sys
 import numpy as np
 
 A = 61
-TOLS_ABS = (1e-6, 1e-4, 1e-3, 1e-2)
+TOLS_ABS = (1e-8, 1e-6, 1e-4, 1e-3, 1e-2)
+THR, F1 = 12, 25                      # SUD when unemployment_index > 12 (index map); renter financial points
 RTOL = 1e-6
 
 
@@ -70,7 +71,7 @@ def main():
     k0 = int(np.argmin(np.abs(xs)))
     assert abs(xs[k0]) < 1e-12, 'the walk grid lacks x = 0'
 
-    VA, VB, W, AGE, IDX = [], [], [], [], []
+    VA, VB, W, AGE, IDX, SUD = [], [], [], [], [], []
     for i in (1, 2):
         va, vb, w = vf(o.a, 'value_function', i), vf(o.b, 'value_function', i), vf(o.a, 'distribution_stationary', i)
         assert len(va) == len(vb) == len(w), (i, len(va), len(vb), len(w))
@@ -85,9 +86,11 @@ def main():
         live_w = walks.min(axis=0) > -1e9           # states the walk could evaluate at every x
         VA.append(va[live][live_w]); VB.append(vb[live][live_w]); W.append(w[live][live_w])
         AGE.append(age[live][live_w]); IDX.append(walks[:, live_w])
+        F = F1 if i == 1 else 27
+        SUD.append((((np.arange(len(va)) // (A * F)) % 18 + 1) > THR)[live][live_w])
         print(f'file {i}: {len(va)} states, {live.sum()} occupied, mass {w[live].sum():.6f}, '
               f'walk could not evaluate mass {w[live][~live_w].sum():.3e}')
-    va = np.concatenate(VA); vb = np.concatenate(VB); w = np.concatenate(W); age = np.concatenate(AGE)
+    va = np.concatenate(VA); vb = np.concatenate(VB); w = np.concatenate(W); age = np.concatenate(AGE); sud = np.concatenate(SUD)
     g = np.concatenate(IDX, axis=1)                 # W_s(x_k)
     m = w.sum(); w = w / m
     d = vb - va
@@ -104,7 +107,8 @@ def main():
     print(f'walk increasing in x at {np.sum(w[mono]):.6f} of the mass')
 
     print('\nSHARES (weights: Arm A distribution)')
-    groups = (('all households', np.ones_like(age, bool)), ('age 26 (model age 1)', age == 1))
+    groups = (('all households', np.ones_like(age, bool)), ('with a SUD', sud), ('without a SUD', ~sud),
+              ('age 26 (model age 1)', age == 1))
     out['shares'] = {}
     for name, sel in groups:
         ms = w[sel].sum()
@@ -135,6 +139,7 @@ def main():
         aff = np.abs(d) > t
         for name, sel in (('population', np.ones_like(aff)), (f'affected (|dV|>{t:g})', aff),
                           (f'worse off (dV<-{t:g})', d < -t), (f'better off (dV>{t:g})', d > t),
+                          (f'with a SUD', sud), (f'without a SUD', ~sud),
                           ('newborn adult (age 26)', age == 1), (f'newborn adult, affected (|dV|>{t:g})', (age == 1) & aff)):
             if not sel.any():
                 print(f'  {name:40s} none'); continue

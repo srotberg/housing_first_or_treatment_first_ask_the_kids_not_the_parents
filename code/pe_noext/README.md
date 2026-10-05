@@ -56,3 +56,9 @@ government budget.
 * `cf_arm_pe.sh` -- copy of `transition_2c/cf_arm_tr2c.sh`: the two builds in the whitelist, no
   benchmark build, `SS_NO_CLASS` and `HOUSING_PRICE_HOLD`.
 * `run_pe.sh` -- both arms in order, detached; publishes `results/pe_noext/status.txt`.
+* `patch_walk.py` -- the walk-only build (`code/cf_walk`): with `pe_walk.dat` in the run directory, the
+  counterfactual binary loads an arm's saved policies and writes every state's value with consumption scaled by
+  (1+x), for the consumption equivalents. Tested on the benchmark (`code/pe_walk_test`).
+* `run_walk.sh` -- the walk on Arm A's policies (`code/pe_walk_A`) and then `analyse.py`.
+* `analyse.py` -- shares better, worse off and indifferent, and the CEVs, weighted by Arm A's distribution.
+  Output: `results/pe_noext/analysis.txt`. The result: `results/pe_noext/RESULT.md`.
