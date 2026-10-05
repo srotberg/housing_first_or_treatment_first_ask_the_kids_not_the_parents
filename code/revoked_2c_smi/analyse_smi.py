@@ -63,14 +63,16 @@ def split_sum(r, out, name):
     good = n > 0 and w < 1e-12
     out.append(f"  {name}: the SMI halves summed against the unsplit group, {n} comparisons (levels; shares times survivors): "
                f"{exact} bit for bit, worst relative difference {w:.1e} (rule 1e-12) {'PASS' if good else 'FAIL'}")
-    out.append(f"    (the halves move in separate passes through the same kernel and rejoin in the same cells, SMI being "
-               f"left and entered; a sum of two separately rounded passes can differ from the joint pass in the last bit, "
-               f"so the rule is rounding, not identity. At the start the cut is a partition of cells: mass bit for bit "
-               f"there: {start_exact})")
+    out.append(f"    (not identity: the module totals a group by summing whole arrays, a half by summing its own cells, so even "
+               f"at the start, where the cut is an exact partition of cells, the totals are added in a different order "
+               f"(starting masses bit for bit: {start_exact}); after it the halves move in separate passes and rejoin in the "
+               f"same cells as SMI is left and entered. The rule is rounding.)")
     # the cut is by SMI at the start
-    bad = [(p, q, t) for (p, q, t), d in r['split'].items() if t == int(d['start']) and abs(d['smi_now'] - q) > 0]
-    out.append(f"  {name}: SMI share at the start is exactly 1 in the SMI halves and 0 in the others: "
-               f"{'PASS' if not bad else 'FAIL ' + str(bad[:4])}")
+    st = {(p, q): d['smi_now'] for (p, q, t), d in r['split'].items() if t == int(d['start'])}
+    bad = [k for k, v in st.items() if (k[1] == 0 and v != 0) or (k[1] == 1 and abs(v - 1) > 1e-12)]
+    out.append(f"  {name}: SMI share at the start: exactly 0 in the halves without SMI ({[st[k] for k in sorted(st) if k[1] == 0]}), "
+               f"1 to rounding in the halves with it (worst |share - 1| {max([abs(v - 1) for k, v in st.items() if k[1] == 1] + [0]):.1e}, "
+               f"rule 1e-12; a share of slices over a sum of the whole) {'PASS' if not bad else 'FAIL ' + str(bad[:4])}")
     worst = max([abs(d['acct_close']) for d in r['split'].values()] + [abs(d['acct']) for d in r['split'].values()] + [0])
     out.append(f"  {name}: mass accounting in the halves, worst {worst:.1e} (rule 1e-10) {'PASS' if worst < 1e-10 else 'FAIL'}")
     return good and not bad and worst < 1e-10
