@@ -125,6 +125,9 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+REVOKED-VOUCHER GUARDS (05 Oct 00:07): tables.md and guard_T3_rest.txt pushed 23:46-23:47, GUARD SUMMARY PASS in both
+guard files (mass accounting 3.3e-14, shadow kernel 0.0 on one thread, fixed paths, tags, bounds-checked build 2.5e-8);
+RESULT.md headline unchanged (+0.80 pp, 6.92 against 6.12); export_revoked.py re-run, x_rv_* unchanged. Worker done, idle.
 ROUND r144 (04 Oct 23:50; the author: "add the Constantino numbers to the validation table too, no?"): Table 6
 (tab:untargeted) gets Block 7: Losing a voucher, one row 'Three-year mortality per household made homeless, pp', data
 4.6 (Costantini 2025), model 2.9 (x_rv_wald_pp), with note b (what each side is); written by code/paper/calib_tables.py
