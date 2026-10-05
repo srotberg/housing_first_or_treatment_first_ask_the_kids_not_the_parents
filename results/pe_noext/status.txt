@@ -1,16 +1,18 @@
-# PE experiment without externalities (code/pe_noext); 04 Oct 23:55 UTC
+# PE experiment without externalities (code/pe_noext); 05 Oct 00:25 UTC
 run_pe: free memory 15 GiB available, cores 4 (04 Oct 22:55)
 run_pe: arm A (null_pe_noext) on cf_fix2_share_pe: switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', kappa_x 0, SS_NO_CLASS, price clearing from 1.0001082 (04 Oct 22:55)
 
-== arm null (5 passes done)
+== arm null (7 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0051  0.06753   +13.0%   +13.0%    -2.0%  1.57e-01  0.00e+00   789.8757  +nan%   +23.7%    +9.5%
   2  1.0101  0.06753   +11.5%   +11.5%    -1.8%  1.37e-01  0.00e+00   789.8717  +nan%   +21.4%    +8.9%
   3  1.0152  0.06753    +9.1%    +9.1%    -2.0%  1.08e-01  0.00e+00   789.9152  +nan%   +17.7%    +7.9%
   4  1.0203  0.06753    +8.1%    +8.1%    -1.9%  8.64e-02  0.00e+00   789.9279  +nan%   +15.2%    +6.6%
   5  1.0254  0.06753    +6.3%    +6.3%    -2.0%  6.12e-02  0.00e+00   789.9557  +nan%   +12.1%    +5.5%
- PE USED pass=    4 housing_price=  1.2048967243846947E+01 drug_price=  1.0202608804553444E+00 pi_V=  6.7533863251354007E-02
- PE USED pass=    5 housing_price=  1.2049034341835187E+01 drug_price=  1.0253621847435981E+00 pi_V=  6.7533863251354007E-02
+  6  1.0266  0.06753    +1.2%    +1.2%    -2.6%  1.17e-02  0.00e+00   790.0573  +nan%    +5.5%    +4.2%
+  7  1.0303  0.06753    +1.1%    +1.1%    -2.6%  9.36e-03  0.00e+00   790.0580  +nan%    +5.3%    +4.2%
+ PE USED pass=    6 housing_price=  1.2049223332443422E+01 drug_price=  1.0265708755616318E+00 pi_V=  6.7533863251354007E-02
+ PE USED pass=    7 housing_price=  1.2049227029646335E+01 drug_price=  1.0303148989571012E+00 pi_V=  6.7533863251354007E-02
 
 == CEV walk
 run_walk: waiting for arm A (04 Oct 23:14)
