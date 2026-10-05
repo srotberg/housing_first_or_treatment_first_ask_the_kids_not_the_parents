@@ -133,6 +133,21 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r170 (05 Oct 20:35; PDF 20589cbe = r169, 24 comments on pages 11-12, stage 1 of the stylized model). ALL RED
+STRIPPED; base_r170 + splice_r170. In red: 'kappa_phi_d > 1'; UI defined at its first acronym use, 3.2.2 Period 2
+'unemployment insurance (UI)' (the introduction spells it out earlier without the acronym), and UI from there on
+('UI does not provide income support for the extra job losses', 'covered by UI', 'not covered by UI'; Section 4's
+'Unemployment insurance (UI) replaces' -> 'UI replaces', the budget's 'UI', Block heading 'UI'); 'risk-free asset,
+denoted as a,'; 'Food assistance is essential for guaranteeing that every household has a positive value of life';
+'where h_k can be a shelter, a small unit or a standard unit'; 'Vouchers are rationed and means-tested, and when
+provided they cover part of the rent. A voucher is drawn ...'; 'Vouchers are provided in both periods of life ...
+the share of eligible households receiving vouchers'; Housing First 'does not condition vouchers on sobriety, and thus
+does not revoke them from eligible households who consume drugs (v>0) or have a SUD (d'=1)', Treatment First 'revokes
+vouchers from income-eligible households unless they satisfy the sobriety condition'; 'an assumption I relax in the full
+model'; the moral-hazard sentence removed (the author: out of context); the period-1 timing paragraph reworded ('Whether
+a voucher is revoked in period 1 is a function of the choice v>0 in the same period, so the timing is worth stating
+exactly'; 'and ... This means that ... at entry'; 'the voucher is drawn, the household chooses v'; 'knowing whether or
+not its voucher was revoked').
 ROUND r169 (05 Oct 18:00; PDF 691c34d9 = r168, 3 comments on the survival sentence). ALL RED STRIPPED; base_r169 +
 splice_r169. The author wrote 'raises the annual hazard of dying to the power of kappa, thus lowering it'; written as
 'where a SUD raises the probability of surviving the period to the power of kappa_phi_d, thus lowering it', since it is
