@@ -133,6 +133,13 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r167 (05 Oct 17:45; PDF af9c463b = r166, 9 comments). ALL RED STRIPPED; base_r167 + splice_r167. In red: Altonji
+'A parent who already gives to the child decides, through the size of that transfer, how to divide ...' (the author:
+'what gift?', and asked how the experiment was done: explained in chat, PSID transfer data, the derivative of transfers
+to parent income minus that to child income, 13 cents against 1); 3.1's third question 'Unconditional assistance creates
+moral hazard through its insurance value, but that alone means Treatment First can only lower welfare, because it only
+removes an option ...'; 'many other aspects of the data'; 3.2 'In stage 1, without children, there are two periods';
+'Saving earns no interest (R=1), so a unit saved ...'; 'Households can save'.
 ROUND r166 (05 Oct 17:25; PDF a035c6f1 = r165, 20 comments on pages 7-10). ALL RED STRIPPED; base_r166 + splice_r166.
 In red: Altonji 'already gives to the child', 'a perfectly altruistic parent', 'far from what perfect altruism implies'
 (the author's wording; told in chat that any altruism implies the full dollar). Section 3.1: 'require for a satisfactory
