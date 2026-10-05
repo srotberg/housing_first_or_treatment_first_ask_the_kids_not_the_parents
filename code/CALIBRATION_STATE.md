@@ -125,6 +125,14 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+T = 60 LOOP 0_r1, FORWARD PASS AT YEAR 15 (05 Oct 06:31; scratchpad/early_years.py on tr2c_t60/run.log). THE NEWTON
+pi_V STEP LANDED: budget residuals in years 1-15 are 1.3e-3, 5.4e-3, 4.9e-3, 1.3e-3, 9.0e-4, 1.7e-3, 2.2e-3, 2.0e-3,
+1.5e-3, 9.3e-4, 5.2e-4, 4.7e-4, 5.3e-4, 5.1e-4, 3.8e-4 (loop 1: -1.8e-2 to -8.0e-2), pi_V 9.30 (t=1), 8.23 (2), 7.88-8.27
+(3-15). THE DRUG MARKET GOT WORSE there: gaps 0.027-0.048 in years 1-15 (loop 1: 2e-6 to 0.040), because the lower pi_V
+raises drug use (6.9 in years 1-2 against loop 1's 6.2) at loop 1's price path (0.89-0.90). Homelessness +12.6 (y2) to
++14.9 (y6-7) percent against Housing First (loop 1: +10-12), children in a shelter +10.6 to +12.8 percent (loop 1: +8-10),
+as predicted for a lower pi_V. Backward pass ended about 04:50; the forward pass runs about 6-7 minutes a year, so the
+loop ends about 11:00-12:00 UTC, not 08:00-09:00. Check re-armed at 07:31.
 T = 60: LOOK AFTER FIVE ITERATIONS (05 Oct 04:20, the author: "we can see how it looks like after the 5 iterations").
 When loop 4_r1 completes (the fifth loop of the restart; about 9 h each from loop 0_r1's end at about 08:00-09:00 5 Oct,
 so about 20:00-22:00 UTC 6 Oct), send the author the figure (code/paper/transition_figure.py on that loop) and the key
