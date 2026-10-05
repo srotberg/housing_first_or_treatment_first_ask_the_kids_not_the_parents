@@ -1,8 +1,10 @@
-# PE experiment without externalities (code/pe_noext); 05 Oct 00:25 UTC
+# PE experiment without externalities (code/pe_noext); 05 Oct 00:41 UTC
 run_pe: free memory 15 GiB available, cores 4 (04 Oct 22:55)
 run_pe: arm A (null_pe_noext) on cf_fix2_share_pe: switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', kappa_x 0, SS_NO_CLASS, price clearing from 1.0001082 (04 Oct 22:55)
+run_pe: arm A: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 9 passes, sweeps [73, 70, 70, 70, 79, 70, 71, 70, 70], largest final 4.69e-05 (rule 5e-05, at least 70 sweeps)  (05 Oct 00:41)
+run_pe: arm A's last solve used: drug price 1.0305057924439740E+00, pi_V 6.7533863251354007E-02, house price 1.2049246174348939E+01 (05 Oct 00:41)
 
-== arm null (7 passes done)
+== arm null (9 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0051  0.06753   +13.0%   +13.0%    -2.0%  1.57e-01  0.00e+00   789.8757  +nan%   +23.7%    +9.5%
   2  1.0101  0.06753   +11.5%   +11.5%    -1.8%  1.37e-01  0.00e+00   789.8717  +nan%   +21.4%    +8.9%
@@ -11,8 +13,10 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   5  1.0254  0.06753    +6.3%    +6.3%    -2.0%  6.12e-02  0.00e+00   789.9557  +nan%   +12.1%    +5.5%
   6  1.0266  0.06753    +1.2%    +1.2%    -2.6%  1.17e-02  0.00e+00   790.0573  +nan%    +5.5%    +4.2%
   7  1.0303  0.06753    +1.1%    +1.1%    -2.6%  9.36e-03  0.00e+00   790.0580  +nan%    +5.3%    +4.2%
- PE USED pass=    6 housing_price=  1.2049223332443422E+01 drug_price=  1.0265708755616318E+00 pi_V=  6.7533863251354007E-02
+  8  1.0305  0.06753    +0.6%    +0.6%    -2.6%  4.77e-04  0.00e+00   790.0667  +nan%    +4.5%    +3.9%
+  9  1.0306  0.06753    +0.6%    +0.7%    -2.6%  2.59e-04  0.00e+00   790.0666  +nan%    +4.5%    +3.9%
  PE USED pass=    7 housing_price=  1.2049227029646335E+01 drug_price=  1.0303148989571012E+00 pi_V=  6.7533863251354007E-02
+ PE USED pass=    8 housing_price=  1.2049246174348939E+01 drug_price=  1.0305057924439740E+00 pi_V=  6.7533863251354007E-02
 
 == CEV walk
 run_walk: waiting for arm A (04 Oct 23:14)
