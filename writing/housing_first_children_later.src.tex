@@ -255,10 +255,10 @@ in the model by that much. The part of the child's loss a parent does internalis
 thus pinned down by observed behaviour.
 
 Given the degree of altruism, the size of each externality is set by data. The
-budget externality depends on \new{two things: how much a user household spends on the drug, and how likely it is to find work again when a SUD has left it unemployed. Both determine the resources left for the child.}
+budget externality depends on two things: how much a user household spends on the drug, and how likely it is to find work again when a SUD has left it unemployed. Both determine the resources left for the child.
 The weight given to drugs in the utility function is set to match the share of their
 income that drug users spend on drugs, $@@c_theta_data@@$ percent, from retail drug spending
-(Midgette et al., 2019) and the incomes of adults who use in the 2024 NSDUH. \new{How hard it is to find work again with a SUD is} set to match the SUD share of the homeless, $@@c_kappa_ue_d_data@@$ percent (Gutwinski et al., 2021).
+(Midgette et al., 2019) and the incomes of adults who use in the 2024 NSDUH. How hard it is to find work again with a SUD is set to match the SUD share of the homeless, $@@c_kappa_ue_d_data@@$ percent (Gutwinski et al., 2021).
 
 The
 earnings penalty is set from a direct estimate: children exposed in utero to a
@@ -268,9 +268,9 @@ in the model a child of a parent with a SUD has $@@u_odds_sud_m@@$ times the odd
 acquiring one itself, against $@@u_odds_sud_lo@@$ to $@@u_odds_sud_hi@@$ in the data (Mellentin et al., 2016; Yoon
 et al., 2013).
 
-\new{The childhood homelessness externality also depends on two things, both of which shape what the child consumes: how much less housing a shelter provides than a dwelling on the market, and how much more likely a homeless parent is to be unemployed. The first is set so that the share of households who are homeless lies within @@c_h_1_data@@ percent (HUD's 2023 PiT count and Burt et al., 2001). The second is set externally: a household in a shelter is $@@c_kappa_h_pc@@$ percent more likely to lose its job and $@@c_kappa_h_pc@@$ percent less likely to find one (Desmond and Gershenson, 2016). Finally, the aggregate homelessness externality is set to the willingness to pay for ending homelessness in the contingent valuation of Loubi\`ere et al.\ (2020), $@@c_kappa_x_data@@$ percent of income.}
+The childhood homelessness externality also depends on two things, both of which shape what the child consumes: how much less housing a shelter provides than a dwelling on the market, and how much more likely a homeless parent is to be unemployed. The first is set so that the share of households who are homeless lies within @@c_h_1_data@@ percent (HUD's 2023 PiT count and Burt et al., 2001). The second is set externally: a household in a shelter is $@@c_kappa_h_pc@@$ percent more likely to lose its job and $@@c_kappa_h_pc@@$ percent less likely to find one (Desmond and Gershenson, 2016). Finally, the aggregate homelessness externality is set to the willingness to pay for ending homelessness in the contingent valuation of Loubi\`ere et al.\ (2020), $@@c_kappa_x_data@@$ percent of income.
 
-\new{Whose children bear} these externalities depends on who uses drugs, and one mechanism of the
+Whose children bear these externalities depends on who uses drugs, and one mechanism of the
 model decides it. Two facts about drug use have to be reproduced together, and the
 literature has so far explained them only by assuming that lower-education
 households, whose income is lower because of their education, have a stronger
@@ -414,7 +414,7 @@ housing, and the rent burden and wages of voucher holders; the income and net wo
 bottom of the distribution; the price elasticities of drug participation and of drug-use intensity; and the odds that
 the child of a parent with a SUD acquires one, and that a homeless adult had a homeless parent. Finally, losing a voucher raises mortality in the model by an amount of the same order as the reduction in mortality that Costantini (2025) finds from Housing First. \upd{introduction: the Costantini line, to be confirmed with the comparison conditioned on SMI (results/revoked\_2c\_smi)}
 
-The quantitative experiments start in partial equilibrium: with the drug price and the probability of drawing a voucher held at their benchmark levels, Treatment First is better than Housing First with the externalities and worse without them, as in the stylized model. \new{In general equilibrium, too, all the stylized model's results on policy carry over, except three. First, full altruism does not end drug use. @@x_lr_tf_vs_om@@ Second, childhood homelessness does not fall: it stays at $@@x_tf_hchild1@@$ percent of children in the long run, so an earnings penalty for growing up in a shelter would not reverse the ranking. Third, not only newborns gain: $@@x_lr_all_better_pc@@$ percent of households are better off in the long run, including $@@x_lr_sud_better_pc@@$ percent of those that carry a SUD, and} \upd{introduction: the adults alive at the reform, from the new transition} \new{so are $@@x_trf_alive_better_pc@@$ percent of the adults alive at the reform.}
+The quantitative experiments start in partial equilibrium: with the drug price and the probability of drawing a voucher held at their benchmark levels, Treatment First is better than Housing First with the externalities and worse without them, as in the stylized model. In general equilibrium, too, all the stylized model's results on policy carry over, except three. First, full altruism does not end drug use. @@x_lr_tf_vs_om@@ Second, childhood homelessness does not fall: it stays at $@@x_tf_hchild1@@$ percent of children in the long run, so an earnings penalty for growing up in a shelter would not reverse the ranking. Third, not only newborns gain: $@@x_lr_all_better_pc@@$ percent of households are better off in the long run, including $@@x_lr_sud_better_pc@@$ percent of those that carry a SUD, and \upd{introduction: the adults alive at the reform, from the new transition} so are $@@x_trf_alive_better_pc@@$ percent of the adults alive at the reform.
 
 
 %======================================================================
@@ -441,7 +441,7 @@ homeless adults, all of them in day treatment, those randomised into housing not
 abstinent longer than those given no housing, and a third arm, whose housing was conditional on abstinence, did best, and it is where the model takes the penalty
 homelessness imposes on recovery from.
 
-Another relevant study is Costantini (2025), which, \new{using data on} the programmes of the Department of Veterans Affairs, finds that Housing First lowers the three-year mortality of homeless veterans with mental illness by $@@x_rv_costantini_pp@@$ percentage points, while its Treatment First programmes, which combine short-term housing with treatment, have no lasting effect on health \new{or mortality}. The model produces outcomes consistent with these findings: \new{among households with SMI, those whom a revoked voucher puts on the street are more likely to die within three years than those that keep their voucher, by an amount of the same order} (Section~\ref{sec:fvalid}). \upd{literature: the comparison for households with SMI put on the street (results/revoked\_2c\_street)}
+Another relevant study is Costantini (2025), which, using data on the programmes of the Department of Veterans Affairs, finds that Housing First lowers the three-year mortality of homeless veterans with mental illness by $@@x_rv_costantini_pp@@$ percentage points, while its Treatment First programmes, which combine short-term housing with treatment, have no lasting effect on health or mortality. The model produces outcomes consistent with these findings: among households with SMI, those whom a revoked voucher puts on the street are more likely to die within three years than those that keep their voucher, by an amount of the same order (Section~\ref{sec:fvalid}). \upd{literature: the comparison for households with SMI put on the street (results/revoked\_2c\_street)}
 
 A limitation of all of the randomised trials above is that they measure outcomes over six to twenty-four
 months, which is short against a recovery process that
@@ -2507,9 +2507,9 @@ else that differs between poor children.} Transmission in the model is therefore
 @@u_odds_sud_pos@@ the evidence on the SUD, the margin Treatment First acts on, and
 @@u_odds_hl_pos@@ it on homelessness@@x_odds_hl_margin@@. @@x_odds_tilt_sentence@@
 
-\paragraph{Block 7: Losing a voucher.} Costantini (2025) finds that Housing First lowers the three-year mortality of homeless veterans with mental illness by $@@x_rv_costantini_pp@@$ percentage points, while transitional Treatment First programmes have no lasting effect on health \new{or mortality}.
+\paragraph{Block 7: Losing a voucher.} Costantini (2025) finds that Housing First lowers the three-year mortality of homeless veterans with mental illness by $@@x_rv_costantini_pp@@$ percentage points, while transitional Treatment First programmes have no lasting effect on health or mortality.
 
-\new{In the model, with the drug price and $\pi_V$ held, I compare households with SMI whom Treatment First's revocation puts on the street with households who have SMI and kept their voucher. Losing the voucher raises the former's three-year mortality by about $@@x_rv_wald_pp@@$ percentage points relative to the latter's, the same order of magnitude as his estimate.} This validation matters for the experiment because a higher risk of death is the main cost Treatment First imposes on the households it screens out, and the model does not understate it. \upd{validation, Block 7 and Table 6: the numbers for households with SMI that the revocation puts on the street (results/revoked\_2c\_street); until they land, the number is the earlier one for all revoked households, per household made homeless}
+In the model, with the drug price and $\pi_V$ held, I compare households with SMI whom Treatment First's revocation puts on the street with households who have SMI and kept their voucher. Losing the voucher raises the former's three-year mortality by about $@@x_rv_wald_pp@@$ percentage points relative to the latter's, the same order of magnitude as his estimate. This validation matters for the experiment because a higher risk of death is the main cost Treatment First imposes on the households it screens out, and the model does not understate it. \upd{validation, Block 7 and Table 6: the numbers for households with SMI that the revocation puts on the street (results/revoked\_2c\_street); until they land, the number is the earlier one for all revoked households, per household made homeless}
 
 \input{tables/tab_untargeted}
 
