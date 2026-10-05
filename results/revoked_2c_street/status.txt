@@ -1,4 +1,4 @@
-# SMI x street split of the revoked-voucher experiment (code/revoked_2c_street); 05 Oct 04:51 UTC
+# SMI x street split of the revoked-voucher experiment (code/revoked_2c_street); 05 Oct 05:20 UTC
 ## stage 1, the two steady states (code/revoked_2c/run_arms.sh)
 run_arms: free disk 29G, memory 15 GiB, cores 4 (05 Oct 02:05)
 run_arms: building cf_fix (05 Oct 02:05)
@@ -26,5 +26,8 @@ run_paths_street: staged g_street3_1t (T=3, terminal cfarm_tf_2c_fixboth) (05 Oc
 run_paths_street: T = 3 guard pair (plain, split) running, one thread each (05 Oct 04:08)
 run_paths_street: waiting for the arms and the builds (05 Oct 04:51)
 run_paths_street: against the accepted runs: null: worst relative difference 2.6e-04 (homelessness h_1) over 7 statistics fixboth: worst relative difference 1.2e-04 (SUD lambda_d) over 7 statistics  (05 Oct 04:51)
--- g_plain3_1t: 0 forward periods done; last line:  newborn_employment_probability, disordered housed, parent at the median node=   0.0000000000000000        0.0000000000000000        0.000000000000000
+run_paths_street: staged g_track3_1t (T=3, terminal cfarm_tf_2c_fixboth) (05 Oct 04:51)
+run_paths_street: T = 3 plain and unsplit tracking running, one thread each (05 Oct 04:51)
+-- g_plain3_1t: 0 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- g_street3_1t: 1 forward periods done; last line:  AGE_TIME age=  19  wall_s=     15.80  cpu_s=     15.80
+-- g_track3_1t: 0 forward periods done; last line:  AGE_TIME age=  19  wall_s=     16.27  cpu_s=     16.26
