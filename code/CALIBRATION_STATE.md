@@ -133,6 +133,23 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r159 (05 Oct 15:30; PDF 2d73dce3 = r158, 44 comments on pages 1-5, "remove all red and put updates in red"). ALL RED
+STRIPPED (source and Table 6); calib_tables.py --freeze; export_longrun.py --freeze; base_r159 + splice_r159. In red,
+abstract and introduction only: 'forward looking' unhyphenated as a predicate (twice; the attributive 'rational
+forward-looking households' keeps it); 'Consider a model with no externalities, and households who are rational and
+forward looking ... and who do not have self-control problems'; the internalisation clause moved from the aggregate
+externality's paragraph to 'In the model I design, a parent takes ... only through its imperfect altruism towards its
+child, and homeless households do not internalise at all ...'; a parent 'in a shelter because of a sobriety programme it
+cannot comply with, or chooses not to'; 'annual willingness to pay'; 'a systematic preference'; 'a large margin at
+zero'; the NSDUH measurement clause and the 'which the unemployment ... cannot produce on its own' clause removed. The
+stylized long-run explanation is now the author's: 'Treatment First lowers drug use, the SUD rate and, with them,
+homelessness, so in the long run it reduces all four externalities' (checked: SUD 3.995 -> 2.963, homelessness
+0.566 -> 0.561 percent, and homeless_stat is both the childhood and the aggregate externality's share in the stylized
+model); the next paragraph loses 'In the long run,' and 'as well'. The Costantini line is now the last item of the
+untargeted list: 'and how much higher three-year mortality is for households with SMI who lose their housing than for
+those who keep it (Costantini, 2025)'. 'raises welfare relative to' / 'lowers it'; 'also carry over'. A stray space in
+'left external .' removed. 'a full quantitative model for a full policy analysis' is the author's literal edit (two
+'full's). Abstract 149 words; 49 pages.
 ROUND r158 (05 Oct 14:30; PDF 31b911a2 = r157, 4 comments, "remove all red and put updates in red"). ALL RED STRIPPED
 (source and Table 6); calib_tables.py --freeze; base_r158 + splice_r158. In red: the abstract opens 'Without externalities,
 no: if households are rational and forward-looking, conditionality only removes an option.' (the author's wording);
