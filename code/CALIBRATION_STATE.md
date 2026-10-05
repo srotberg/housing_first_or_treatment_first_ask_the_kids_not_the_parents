@@ -125,6 +125,13 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r155 (05 Oct 05:15; PDF 819ccd85 = r154, 3 comments, "remove all red and put updates in red"; and "how much longer
+before all the updates in blue are tested"). ALL RED STRIPPED; base_r155 + splice_r155. In red: Section 6's opening now
+announces 'Three further experiments, in Section 6.2, ... The first is Treatment First without the externalities, with the
+drug price and pi_V held at their levels under Housing First. The other two give ...'; 'Two objects move in the main
+experiment and in these last two.'; 6.2 'with newborns losing x_pe_newborn_cev percent of lifetime consumption as adults';
+Table 7's note describes the first two columns right after its opening sentence (the author: "why not move it to the
+beginning?"). 49 pages.
 ROUND r154 (05 Oct 05:00; PDF a33ee266 = r153, 9 comments, "remove all red and put updates in red"; and "how much more is
 missing in the paper? which simulations have you finished?"). ALL RED STRIPPED; calib_tables.py --freeze; base_r154 +
 splice_r154. In red: 3.6.1 'comparing the two with the same pi_V and p_v', 'where nothing a household does affects anyone
