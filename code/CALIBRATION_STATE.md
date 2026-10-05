@@ -329,6 +329,23 @@ out to homelessness' (x_abs_tf_exposes now 'but also ...'), 'harming their child
 externality' cut to stay at 150 words), 'in equilibrium, without assuming tastes differ' REMOVED, 'Welfare rises in both
 the long run and the transition'. Introduction: 'found that at least 771,480', '...homelessness programmes, redirecting
 about a third ...'. 150 words; 49 pages.
+T = 60 LOOP 0_r2 DONE (05 Oct 23:54; relaunched 10:31 on the second Newton step on pi_V, restart_r2). Archived in
+results/transition_2c/loop0_r2/ (run.log.gz to 'PATHS SAVED after loop 0', *_path_seed_out.txt, early_years.txt,
+cohort_cev.txt, transition_loop0r2.png against loop 1). The run continues into loop 1 (about 13 h a loop: backward 6.4 h,
+forward 6.7 min a year). BUDGET: 35 of 59 years over 1e-3 but median 1.3e-3, worst 3.1e-3 (loop 1: 58 over, median
+6.5e-2, worst 8.1e-2; loop 0_r1 years 1-45: worst 1.9e-2), surplus to year 34 and a small deficit after. DRUG: 57 of 59
+over 5e-3, median 0.025, worst 0.048 (3-5 percent of the price), falling to 0.005 by year 59; the price seed is the one
+every restart has used (0.900 -> 0.857), and the code moves it a tenth of the gap after loop 0 and by a secant capped at
+0.4 of the gap from loop 1 (gain 1+|eps|/eps_s = 2.34, so the secant is nearly a full Newton step): NO RESTART, the code's
+rule should clear it. PATHS (vs HF): drug use 6.92 at once (8.96), 6.55 y10, 6.51 y20, 6.14 y59 (LR 6.09); SUD 3.81,
+3.25, 2.87, 2.58 (LR 2.54); homelessness +0.0 y1, +12.4 y2, peak +14.8 y6-7, +14.2 y10, +10.2 y20, +6.8 y30, +3.5 y40,
++1.0 y59 (LR -0.9); children in shelters +10.5 y2, peak +12.7 y6-8, +12.2 y10, +7.8 y20, +6.4 y30, +4.2 y40, +1.9 y59
+(LR +0.2). pi_V 9.70 y1, 8.27 y2, 7.9-8.0 y5-20, 8.63 y30, 8.97 y40, 9.61 y59 (loop 1: 9.2-12.3, overspent). COHORT CEVs
+(net of 0.003): born at the reform +2.23, born y2-20 +2.1 to +2.4, y27 +3.40, y30-39 +3.5 to +3.6, y51 +4.09, y60 +4.33
+(LR 4.33); loop 1 had +5.07 at b=1 and +3.4 to +4.2 for b=2-20, inflated by the deficit-funded vouchers. The code's
+cross-section CEV at t=1 +2.24 (loop 1 +4.06). NOTE: cohort_cev.py's 'gain on no policy' line reads the OLD
+counterfactuals_cf_fix2 null arm and is stale; the CEVs themselves use the current benchmark curve. PLAN: loops 1-3, the
+drug market inside 5e-3 by loop 3, ending about 15:00 UTC 7 Oct (a fourth loop as buffer, about 04:00 UTC 8 Oct).
 T = 60 KILLED AGAIN BY A CONTAINER RESTART (05 Oct about 10:25), loop 0_r1 at forward year 45 of 59, about 11 h in.
 Saved: results/transition_2c/loop0_r1_partial/ (run.log.gz, early_years.txt). Its residuals: budget 4e-4 to 5e-3 in
 years 1-24, then a deficit growing to -0.017 by years 38-45 (the seed's pi_V rose toward 9.61 too early); drug gaps 0.015-
