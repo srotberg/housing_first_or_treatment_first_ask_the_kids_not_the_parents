@@ -133,6 +133,15 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r173c (05 Oct 22:00; no PDF, the author: 'can you rewrite those explanations where you don't explain it with the
+food assistance?', after a check showed the floor does not matter: Figure 1 at cbar x 1, 0.5 and 0.1 gives users at 3.54
+(none), 3.54/3.54 (unemployment 100/200), 1.19/0.52 (mortality 100/200) in all three, scratchpad/fs_channels.py). In red,
+same round: the introduction's floor sentences replaced by 'A job the disorder costs takes more dollars from a richer
+household, but with risk aversion above one not much more utility, since the utility of a high income is already close
+to its upper bound. The utility loss from losing employment therefore grows only slowly with income, too slowly ...';
+Section 3.4's paragraph drops the floor and food assistance ('falling from a bundle X to a bundle X_L costs 1/X_L - 1/X,
+which is almost 1/X_L once X is well above X_L. Two households well above where a job loss leaves them therefore lose
+about the same').
 ROUND r173b (05 Oct 21:45; no PDF, the author in chat: 'the story is really about how the losses from income grow slowly
 and the marginal utility cost of drugs ... the penalty is not growing fast enough', 'and the floor helps with it too'; I
 agreed). NOT STRIPPED (same round's red kept, base_r173). In red: Section 3.4's paragraph now frames a race between the
