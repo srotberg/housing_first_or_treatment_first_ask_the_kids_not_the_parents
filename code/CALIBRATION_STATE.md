@@ -133,6 +133,13 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r165 (05 Oct 17:35; PDF ec44cb85 = r164, 6 comments on the Altonji sentences). ALL RED STRIPPED; base_r165 +
+splice_r165. In red: 'has chosen, through the size of its gift, how to divide ...' (the author did not understand how
+the initial division was made); 'Mechanically moving a dollar of income from the child back to the parent leaves those
+combined resources unchanged, and so an altruistic parent would wish to restore the previous division it chose by giving
+the whole dollar back'; the 'only half' clause removed; '... only thirteen cents comes back, which is far from what
+altruism implies, and the calibrated model implies a low degree of altruism as well'. The author wrote 'far from perfect
+altruism'; written as 'far from what altruism implies' because any altruism implies the full dollar (said in chat).
 ROUND r164 (05 Oct 17:20; PDF f27b36c2 = r163, 3 comments). ALL RED STRIPPED; base_r164 + splice_r164. In red: Altonji
 et al. explained as 'A parent who cares about its child and already gives to it has chosen how to divide the family's
 combined resources between the two of them. Moving a dollar of income from the child to the parent leaves those combined
