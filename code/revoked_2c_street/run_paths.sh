@@ -99,21 +99,30 @@ python3 "$C/cf_runs/finalstats.py" "$C/cfarm_tf_2c_fixboth/cf.log" "$C/cfarm_nul
 note "against the accepted runs: $(python3 "$C/revoked_2c/compare_arms.py" "$OUT/arms/null_final.txt" "$REPO/results/counterfactuals_2c/nulltf/null/final.txt" "$OUT/arms/fixboth_final.txt" "$REPO/results/decomp_2c_both/arm_fixboth/final.txt" 2>&1 | tr '\n' ' ')"
 publish "arms re-solved"
 
-# (1) T = 3 GUARDS, ONE THREAD (no race): plain and split together, then the unsplit tracking
-if ! done_run "$W/g_plain3_1t" || ! done_run "$W/g_street3_1t"; then
-    done_run "$W/g_plain3_1t" || { stage "$W/g_plain3_1t" "$W/plain3/hftf_tr" cfarm_tf_2c_fixboth && launch "$W/g_plain3_1t" 1 off; } || { publish "blocked"; exit 1; }
-    done_run "$W/g_street3_1t"   || { stage "$W/g_street3_1t" "$W/street3/hftf_tr" cfarm_tf_2c_fixboth && launch "$W/g_street3_1t" 1 tf; } || { publish "blocked"; exit 1; }
-    note "T = 3 guard pair (plain, split) running, one thread each"
-    PUBMSG="T = 3 guard pair running (one thread)" wait_pub "$W/g_plain3_1t.pid" "$W/g_street3_1t.pid"
+# (1) T = 3 GUARDS, ONE THREAD (no race). MEMORY: the split build carries 18 more shadow masses (about 1.4 GB) and
+# plain + split together were killed by the kernel (exit 137, 16 GB, no swap). So: plain and unsplit tracking together,
+# then the split alone; then each T = 10 path alone.
+if ! done_run "$W/g_plain3_1t" || ! done_run "$W/g_track3_1t"; then
+    if ! done_run "$W/g_plain3_1t" && ! alive "$W/g_plain3_1t.pid"; then
+        { stage "$W/g_plain3_1t" "$W/plain3/hftf_tr" cfarm_tf_2c_fixboth && launch "$W/g_plain3_1t" 1 off; } || { publish "blocked"; exit 1; }
+    fi
+    if ! done_run "$W/g_track3_1t" && ! alive "$W/g_track3_1t.pid"; then
+        { stage "$W/g_track3_1t" "$W/track3/hftf_tr" cfarm_tf_2c_fixboth && launch "$W/g_track3_1t" 1 tf; } || { publish "blocked"; exit 1; }
+    fi
+    note "T = 3 plain and unsplit tracking running, one thread each"
+    PUBMSG="T = 3 plain and unsplit tracking running (one thread)" wait_pub "$W/g_plain3_1t.pid" "$W/g_track3_1t.pid"
 fi
-# (2) the unsplit tracking at T = 3 (one thread) beside the T = 10 Treatment First path (four threads)
-if ! done_run "$W/g_track3_1t"; then
-    stage "$W/g_track3_1t" "$W/track3/hftf_tr" cfarm_tf_2c_fixboth && launch "$W/g_track3_1t" 1 tf || { publish "blocked"; exit 1; }
+if ! done_run "$W/g_street3_1t"; then
+    { stage "$W/g_street3_1t" "$W/street3/hftf_tr" cfarm_tf_2c_fixboth && launch "$W/g_street3_1t" 1 tf; } || { publish "blocked"; exit 1; }
+    note "T = 3 split tracking running alone, one thread"
+    PUBMSG="T = 3 split tracking running (one thread)" wait_pub "$W/g_street3_1t.pid"
 fi
+note "street3: $(cat "$W/g_street3_1t/EXIT")"
+# (2) the T = 10 Treatment First path, alone, four threads
 if ! done_run "$W/tf10"; then
     stage "$W/tf10" "$W/street10/hftf_tr" cfarm_tf_2c_fixboth || { publish "blocked"; exit 1; }
-    launch "$W/tf10" 4 tf; note "T = 10 Treatment First path running; T = 3 unsplit tracking beside it"
-    PUBMSG="T = 10 Treatment First path running" wait_pub "$W/tf10.pid" "$W/g_track3_1t.pid"
+    launch "$W/tf10" 4 tf; note "T = 10 Treatment First path running"
+    PUBMSG="T = 10 Treatment First path running" wait_pub "$W/tf10.pid"
 fi
 note "tf10: $(cat "$W/tf10/EXIT"); $(grep -a -c 'REVK TAG WRITTEN' "$W/tf10/run.log") tags"
 python3 "$R/analyse_street.py" guard "$W/g_plain3_1t/run.log" "$W/g_street3_1t/run.log" "$W/g_track3_1t/run.log" > "$OUT/guard_T3.txt" 2>&1
