@@ -768,7 +768,7 @@ all, because without the shifter every
 household uses whatever the consequences. Finally $\aleph$ is the flow value of
 being alive, the utility of surviving into a period over and above what is
 consumed in it, which gives mortality a cost that does not vanish even when
-consumption is low. Households can save in one risk-free asset\new{, denoted as $a$,} and cannot borrow.
+consumption is low. Households can save in one risk-free asset, denoted as $a$, and cannot borrow.
 
 \subsubsection{Timing}
 
@@ -792,21 +792,21 @@ rest, and the household survives into period 2 with probabilities
 \begin{equation}\label{eq:surv}
 \phi(0) \;=\; \bar\phi, \qquad \phi(1) \;=\; \bar\phi^{\,\kappa_{\phi d}},
 \end{equation}
-where a SUD raises the probability of surviving the period to the power of $\kappa_{\phi d}$\new{$\,>1$}, thus lowering it.
+where a SUD raises the probability of surviving the period to the power of $\kappa_{\phi d}$$\,>1$, thus lowering it.
 The mortality penalty applies here, and here only.
 
 \paragraph{Period 2.} This is the terminal period, after which the household dies with certainty. A
 household without a SUD is unemployed with probability $u_0$ and one with
-a SUD with the higher probability $u_1$; if unemployed it receives \new{unemployment insurance (UI)}, unless the disorder is what cost it the job (Section~\ref{sec:support}). The voucher is drawn again, subject to the policy rule (Section~\ref{sec:mh}). The household
+a SUD with the higher probability $u_1$; if unemployed it receives unemployment insurance (UI), unless the disorder is what cost it the job (Section~\ref{sec:support}). The voucher is drawn again, subject to the policy rule (Section~\ref{sec:mh}). The household
 chooses consumption and housing, there is no drug-use decision, and assets are
 run down with nothing bequeathed.
 
 \subsubsection{Employment, income support and housing}\label{sec:support}
 
 A SUD costs a household resources in one way only: it raises the chance of losing its
-job from $u_0$ to $u_1$, and \new{UI} does not \new{provide income support for} the extra job losses. A household with a SUD loses its job
+job from $u_0$ to $u_1$, and UI does not provide income support for the extra job losses. A household with a SUD loses its job
 for the ordinary reasons anyone does, with probability $u_0$, and because of the
-disorder with the further probability $u_1-u_0$. Employment status $e$ therefore takes three values: working ($e=1$), out of work and covered by \new{UI} ($e=0$), and out of work because of the disorder and not covered \new{by UI} ($e=-1$). Income in a
+disorder with the further probability $u_1-u_0$. Employment status $e$ therefore takes three values: working ($e=1$), out of work and covered by UI ($e=0$), and out of work because of the disorder and not covered by UI ($e=-1$). Income in a
 period, given permanent productivity $y$ and employment status $e$, is
 \begin{equation}\label{eq:inc}
 y^{g}(y,e) \;=\;
@@ -826,7 +826,7 @@ income $y^{g}$ in a period receives
 F(y^{g}) \;=\; \max\{0,\ \bar c-\varrho\,y^{g}\}
 \end{equation}
 of consumption, which it cannot spend on rent or on drugs, so its other income has to cover
-those. \new{Food assistance is essential for guaranteeing that} every household has a positive value of life: it puts a floor under the
+those. Food assistance is essential for guaranteeing that every household has a positive value of life: it puts a floor under the
 consumption of every household, including one that loses its job to a SUD, so that every
 household has something valuable to lose by dying.
 
@@ -834,11 +834,11 @@ Each period the household chooses
 \begin{equation}\label{eq:opts}
 h_k \in \{h_1,\ h_2,\ h_3\}, \qquad h_1 < h_2 < h_3 ,
 \end{equation}
-\new{where $h_k$ can be} a shelter ($h_1$), a small unit ($h_2$) \new{or} a standard unit
+where $h_k$ can be a shelter ($h_1$), a small unit ($h_2$) or a standard unit
 ($h_3$). A shelter is free and delivers fewer housing services than
 the market does.
 
-\new{Vouchers are rationed and means-tested, and when provided they cover part of the rent. A voucher} is drawn
+Vouchers are rationed and means-tested, and when provided they cover part of the rent. A voucher is drawn
 independently each period, which is a simplification relative to the
 quantitative model, where a voucher persists as long as eligibility holds.
 Writing $\eta\in\{0,1\}$ for whether one is held,
@@ -853,24 +853,24 @@ rent paid on housing option $k$ is
 r_k(\eta) \;=\; p_r\,h_k\big[\kappa_r \eta + (1-\eta)\big]\cdot
 \mathbf{1}\{k \ne 1\},
 \end{equation}
-which is zero when the household is homeless. Vouchers \new{are provided} in both periods \new{of life},
-and $\pi_V$, the share of eligible households \new{receiving vouchers}, is a policy
+which is zero when the household is homeless. Vouchers are provided in both periods of life,
+and $\pi_V$, the share of eligible households receiving vouchers, is a policy
 dial of Section~\ref{sec:mh}.
 
 The two policies differ in exactly one respect, the last indicator in
-equation~\eqref{eq:vouch}. \textbf{Housing First} \new{does not condition vouchers on sobriety, and thus does not revoke them from eligible households who consume drugs ($v>0$) or have a SUD ($d'=1$)}. \textbf{Treatment First} \new{revokes vouchers from income-eligible households unless they satisfy} the sobriety condition, $v=0$ and $d'=0$, which is the
+equation~\eqref{eq:vouch}. \textbf{Housing First} does not condition vouchers on sobriety, and thus does not revoke them from \new{income-eligible} households who consume drugs ($v>0$) or have a SUD ($d'=1$). \textbf{Treatment First} revokes vouchers from income-eligible households unless they satisfy the sobriety condition, $v=0$ and $d'=0$, which is the
 rule in the quantitative model as well. In the stylized model, detection of drug use and SUD is assumed
-to be perfect, \new{an assumption I relax} in the full model. The condition is applied to the
+to be perfect, an assumption I relax in the full model. The condition is applied to the
 period in which the voucher is paid, so what it tests differs by period: every
 household is born clean, so $d'=0$ holds for everyone in period 1 and only $v$
 can fail the condition in that period, while in period 2 there is no drug choice, $v=0$
 holds by construction, and only the disorder, $d'=1$, can fail it.
 
-\new{Whether a voucher is revoked in period 1 is a function of the choice $v>0$ in the same period, so the timing is worth stating exactly.}
-Every household arrives clean, \new{and} the period-1 voucher is drawn before $v$ is
-chosen\new{. This means that} conditionality cannot screen anyone out \new{at} entry. The order
-within the period is therefore: \new{the voucher is drawn,} the household chooses $v$, the policy rule is
-then applied to the voucher it drew, and it chooses housing knowing \new{whether or not its voucher was revoked} and the effective rent it
+\new{A voucher's revocation} in period 1 is a function of the choice $v>0$ in the same period, so the timing is worth stating exactly.
+Every household arrives clean, and the period-1 voucher is drawn before $v$ is
+chosen. This means that conditionality cannot screen anyone out at entry. The order
+within the period is therefore: the voucher is drawn, the household chooses $v$, the policy rule is
+then applied to the voucher it drew, and it chooses housing knowing whether or not its voucher was revoked and the effective rent it
 faces. So under Treatment First a household that uses (period 1), or carries the
 disorder (period 2), is subject to
 full market rent immediately, in the period concerned.
@@ -902,18 +902,18 @@ at its best positive $v$ exceeds the value at $v=0$.
 %======================================================================
 \subsection{Calibration}\label{sec:cal}
 
-Every target below is documented in full in the replication package's data
+Each stage is fitted to the same targets. Table~\ref{tab:ext} lists what is set
+outside the model and Table~\ref{tab:int} what is fitted inside it, with a column for
+each stage: \new{stage 1 of this section, and stage 2,} with the child that
+Section~\ref{sec:kids} adds, which is refitted with the child in place. The fit uses
+the quantitative model's rule, moving all internal parameters together, each in proportion
+to the gap on its own moment until each gap is \new{within a certain tolerance}.
+
+Every target is documented in full in the replication package's data
 appendix, \texttt{data/DATA\_APPENDIX.md}, which names the
 dataset behind each one, its year and universe, and the computation that turns it
 into the number quoted here. What follows gives the moment and its source; the
 appendix gives the arithmetic.
-
-Each stage is fitted to the same targets. Table~\ref{tab:ext} lists what is set
-outside the model and Table~\ref{tab:int} what is fitted inside it, with a column for
-each stage: the baseline of this section, and the model with the child that
-Section~\ref{sec:kids} adds, which is refitted with the child in place. The fit uses
-the quantitative model's rule, moving all internal parameters together, each in proportion
-to the gap on its own moment until each gap is closed.
 
 \subsubsection{External calibration}
 
@@ -1460,7 +1460,7 @@ y\,\varepsilon(j) & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
 S(y) & j\ge J_{R} \quad\text{(retired)} .
 \end{cases}
 \end{equation}
-\new{UI} replaces the share $\psi_{ui}$ of earnings on a base capped
+UI replaces the share $\psi_{ui}$ of earnings on a base capped
 at $\bar y$, and it is paid only to a share $p_{ui}$ of those losing their job, mimicking the share of
 insured separations. After the first year, unemployed households, insured and uninsured alike, receive
 zero UI ($e=3$). Social security $S(y)$ follows the statutory formula:
@@ -1774,7 +1774,7 @@ remains external.
 
 \subsection{The government}
 
-The government pays social security, \new{UI}, food assistance,
+The government pays social security, UI, food assistance,
 vouchers and the drug tests under Treatment First. It collects the labour and capital income
 taxes of~\eqref{eq:ftax} in Section~\ref{sec:ftaxes} and the estates of the dead, less the
 endowment $T_0$ given to entering adults ($j=1$),
@@ -2335,7 +2335,7 @@ bend points $k_1$ and $k_2$ and the taxable maximum $y^{\max}$ are the SSA's 202
 amounts divided by its average wage index, $0.22$, $1.33$ and
 $2.64$. The floor, $\underline S$, is $0.18$ of average
 labour income.
-\item[$\psi_{ui}$ and $\bar y$, \new{UI}.] These two set the UI replacement
+\item[$\psi_{ui}$ and $\bar y$, UI.] These two set the UI replacement
 rate and the cap on the earnings it is paid on. Raise either and the first year out of work costs a household less, so a spell out of work is less likely to end in a shelter. I set them to fifty percent and one
 times average labour income, respectively, taking both from the statutory replacement rates
 and state benefit maxima that the Department of Labor compiles in its comparison of

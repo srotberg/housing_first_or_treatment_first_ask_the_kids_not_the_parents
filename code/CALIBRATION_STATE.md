@@ -133,6 +133,11 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r171 (05 Oct 20:40; PDF 94bf02ce = r170, 5 comments). ALL RED STRIPPED; base_r171 + splice_r171. In red:
+'income-eligible households'; 'A voucher's revocation in period 1 is a function of the choice v>0 ...' (the author:
+remove 'Whether'); 3.3 Calibration now opens with the staging paragraph ('stage 1 of this section, and stage 2, with the
+child that Section 3.7 adds'; 'until each gap is within a certain tolerance'), then 'Every target is documented ...'
+('below' removed).
 ROUND r170 (05 Oct 20:35; PDF 20589cbe = r169, 24 comments on pages 11-12, stage 1 of the stylized model). ALL RED
 STRIPPED; base_r170 + splice_r170. In red: 'kappa_phi_d > 1'; UI defined at its first acronym use, 3.2.2 Period 2
 'unemployment insurance (UI)' (the introduction spells it out earlier without the acronym), and UI from there on
