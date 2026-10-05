@@ -133,6 +133,16 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r161 (05 Oct 16:15; PDF 2730af45 = r160, 14 comments on page 6, "remove all red and put updates in red"). ALL RED
+STRIPPED; calib_tables.py --freeze; export_longrun.py --freeze; base_r161 + splice_r161. In red: 'the government's
+budget'; Greenwood et al. (2025) on beliefs moved first, then 'Moreover, young people ...' (Lundborg and Lindgren);
+'... long-run preferences. With such assumptions, Treatment First has a rationale even with no externalities at all.
+Therefore, that literature is complementary and cuts in the same direction'; 'Beyond the focus on externalities, this
+paper also departs materially from that literature in how it generates the income gradient'; Greenwood et al. 'differ
+by education ... the less educated' (the author asked education or skill; the introduction already says
+lower-education); heading 'General-equilibrium models of homelessness', 'I build directly on'. NOT CHANGED, asked in
+chat: the Abramson (2026) sentence (the author: 'what the point of this paragraph is'); the literature overview's
+'what structural models of homelessness already deliver' still says structural.
 ROUND r160 (05 Oct 16:00; PDF 48a49842 = r159, 15 comments on pages 2-6, "remove all red and put updates in red"). ALL RED
 STRIPPED (source and Table 6); calib_tables.py --freeze; export_longrun.py --freeze; base_r160 + splice_r160. In red: 'a
 parent ending up in a shelter'; 'a full quantitative model for a comprehensive policy analysis'; 'it is the poor who use
