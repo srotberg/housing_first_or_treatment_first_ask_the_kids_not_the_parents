@@ -13,10 +13,12 @@ Four steady states, each the one saved equilibrium of its arm (the exit pass):
                                                                      on the counterfactual build
   Treatment First        tf85        85 per cent detection, pi_V clears the budget
   ... elastic supply     elast5_85   the same with a drug supply elasticity of 5
-  Housing First, w_c=1   omega1      the parent weighs its child as itself; pi_V held at the
-                                     benchmark's, so net revenue is NOT held (no CEV: the
-                                     author asked for none on this arm, since omega_c changes
-                                     the welfare function itself)
+  Housing First, w_c=1   omega1      the parent weighs its child as itself; pi_V CLEARS the budget
+                                     (Stage D, omega1_clear: 6.75 -> 5.84 percent; the old cf_fix2
+                                     arm held it, and this line said so until 5 October, which put a
+                                     wrong 'pi_V held' into the introduction in round r149). No CEV:
+                                     the author asked for none, since omega_c changes the welfare
+                                     function itself
 
 EACH ARM IS COMPARED WITH ITS OWN NO-POLICY RUN: tf85 with null_share, elast5_85 and omega1
 with null_remote, the benchmark re-solved on the container they ran on (3.8e-7 relative from
@@ -745,6 +747,9 @@ def main():
     _sud_net = (f', with ${_sb:.0f}$ percent of the households that carry a SUD better off on net in the long run, '
                 'despite losing access to vouchers' if _sb is not None and _sb < 50 else '')
     out['x_lr_better_tol'] = '0.001'
+    # the share alone, for the introduction's list of what differs from the stylized model (the author, 5 October:
+    # "maybe you can just state which results are different?"): in the stylized model no user gains
+    out['x_lr_sud_better_pc'] = f'{_sb:.0f}' if _sb is not None else ''
     out['x_lr_approve_sud'] = (
         f"Across all households, ${100 * _SH['all households'][0]:.0f}$ percent are better off, but only ${_sb:.0f}$ "
         'percent of those that carry a SUD, since they lose access to vouchers.'

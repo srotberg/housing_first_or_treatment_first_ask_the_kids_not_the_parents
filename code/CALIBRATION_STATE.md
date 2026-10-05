@@ -125,6 +125,20 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r150 (05 Oct 03:00; the author: "I like the current flow starting with the stylized model ... But the full model
+results is a bit of a repetition. Maybe you can just state which results are different?"). No strip. The introduction's
+full-model results now state only what differs from the stylized model, in red: partial equilibrium as in the stylized
+model (kept); in general equilibrium Treatment First still cuts drug use and the SUD and a newborn gains x_tf_cev; 'Three
+results differ': (1) full altruism no longer ends drug use, x_lr_tf_vs_om; (2) the drug price falls x_tf_price_pc, which
+undoes x_dc_b_takeback the screen's own gain but leaves x_lr_sud_better_pc (NEW name, export_longrun.py; 20) percent of SUD
+households better off; (3) the budget restores x_dc_b_restore it: pi_V +x_tf_piv_pc, and without it a newborn gains
+x_dc_pv_cev instead of x_tf_cev and homelessness would x_dc_pv_h_dir x_dc_pv_h_pc percent. x_intro_gain (the 57/11/32
+split) and x_tf_h_why_intro no longer used in the introduction. Transition paragraph: its last clause (the first cohort's
+resources and the 0.04 pp childhood homelessness) cut, the same as the stylized model's. Intro 3814 -> 3631 words; 49 pages.
+r149 ERROR CORRECTED: r149 wrote 'Full altruism, with the probability of drawing a voucher held at its benchmark level'
+(from export_longrun.py's stale docstring, written for the old cf_fix2 arm). The Stage D arm omega1_clear CLEARS the
+budget with pi_V (passes.txt: 'budget cleared by pi_V'; final 0.0584 against 0.0675; TARGET CHECK PASS) -- the author's
+original wording was right. The sentence is gone in the rewrite; the docstring fixed.
 ROUND r149 (05 Oct 02:35; PDF 94633a66 = r148, 10 comments, "i think your sentences are really poorly phrased in the last
 version. put updates in red" -- NO strip this round, r148's red kept). Page 3 rewritten plainly: the budget externality
 'depends on two things: how much a user household spends on the drug, and how likely it is to find work again when a SUD
