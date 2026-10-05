@@ -133,6 +133,19 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r160 (05 Oct 16:00; PDF 48a49842 = r159, 15 comments on pages 2-6, "remove all red and put updates in red"). ALL RED
+STRIPPED (source and Table 6); calib_tables.py --freeze; export_longrun.py --freeze; base_r160 + splice_r160. In red: 'a
+parent ending up in a shelter'; 'a full quantitative model for a comprehensive policy analysis'; 'it is the poor who use
+rather than the rich'; the stylized long run now names 'childhood homelessness and aggregate homelessness'. Related
+literature: the Milby paragraph rewritten short ('In the design of the model, I draw directly from Milby et al. (2005).
+Among cocaine-dependent homeless adults in day treatment, those given housing stayed abstinent longer than those given
+none, and those whose housing required abstinence did best. The model takes from this trial the penalty homelessness
+imposes on recovery.'); 'Another relevant study, which I use to validate the model, is Costantini (2025). Using data
+... it finds'; 'no lasting effect on mortality' (health removed); trials 'six to thirty-six months' (the introduction
+says six months to three years); 'the budget impact a policy has'. Deleted without red: the 'and' before 'who do not
+have self-control problems'. The author asked whether 22 percent recover within ten years with the model's
+probabilities: yes, 1-(1-0.025)^10 = 22.4 percent at the housed baseline hazard (the benchmark handover keeps 0.025);
+homeless it is 0.025 x mu_H 0.696 = 0.0174, 16 percent in ten years. The sentence now says 'for a housed household'.
 ROUND r159 (05 Oct 15:30; PDF 2d73dce3 = r158, 44 comments on pages 1-5, "remove all red and put updates in red"). ALL RED
 STRIPPED (source and Table 6); calib_tables.py --freeze; export_longrun.py --freeze; base_r159 + splice_r159. In red,
 abstract and introduction only: 'forward looking' unhyphenated as a predicate (twice; the attributive 'rational
