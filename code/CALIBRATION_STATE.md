@@ -133,6 +133,21 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r157 (05 Oct 14:15; PDF a69f569a = r156, 7 comments, "remove all red and put updates in red"; no red was left from
+r156, so the round is the comments plus the Costantini update, all in red). COSTANTINI DONE: results/revoked_2c_street
+(every guard PASS; the four parts sum to the unsplit 6.91/6.12/+0.80 to 1e-13; SMI halves = the SMI-only run's
+8.31/6.40). Households with SMI whom the revocation puts on the street (6.22 percent of the revoked): three-year mortality
+10.20 percent under Treatment First against 6.63 with the voucher kept, +3.57 pp (+54 percent), direct, no rescaling;
+Costantini 4.6. export_revoked.py reads the pooled 'SMI, on the street' row (x_rv_street_smi_pp = 3.6, one decimal like
+4.6; _share 6.2, _dead_tf 10.20, _dead_hf 6.63); Block 7 and Table 6 (row now 'Three-year mortality, households with
+SMI put on the street, pp', 4.6 against 3.6) use it; the introduction's line now says 'the mortality of households with
+SMI whom it puts on the street' (it was true only for that group); the three Costantini \upd removed, 12 transition \upd
+left. Abstract, in red: 'Not when there are no externalities and households are rational and forward-looking, since
+conditionality only removes an option. With externalities, conditionality reduces ... but also exposes those it screens
+out to homelessness' (x_abs_tf_exposes now 'but also ...'), 'harming their children and everyone nearby' ('an
+externality' cut to stay at 150 words), 'in equilibrium, without assuming tastes differ' REMOVED, 'Welfare rises in both
+the long run and the transition'. Introduction: 'found that at least 771,480', '...homelessness programmes, redirecting
+about a third ...'. 150 words; 49 pages.
 T = 60 KILLED AGAIN BY A CONTAINER RESTART (05 Oct about 10:25), loop 0_r1 at forward year 45 of 59, about 11 h in.
 Saved: results/transition_2c/loop0_r1_partial/ (run.log.gz, early_years.txt). Its residuals: budget 4e-4 to 5e-3 in
 years 1-24, then a deficit growing to -0.017 by years 38-45 (the seed's pi_V rose toward 9.61 too early); drug gaps 0.015-
