@@ -133,6 +133,14 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r164 (05 Oct 17:20; PDF f27b36c2 = r163, 3 comments). ALL RED STRIPPED; base_r164 + splice_r164. In red: Altonji
+et al. explained as 'A parent who cares about its child and already gives to it has chosen how to divide the family's
+combined resources between the two of them. Moving a dollar of income from the child to the parent leaves those combined
+resources unchanged, so the parent restores the division it chose by giving the whole dollar back; giving back only half
+would leave the child poorer and the parent richer than the parent itself wanted. Altonji et al. find that only thirteen
+cents comes back.' (the author: why not half a dollar); the intensive-margin sentences replaced by citations, 'between
+about -0.3 (Grossman and Chaloupka, 1998) and -0.8 (Olmstead et al., 2015)'; 'participation and intensity both respond
+to price'.
 ROUND r163 (05 Oct 17:05; PDF 0358e641 = r162, 16 comments on pages 7-9). ALL RED STRIPPED; base_r163 + splice_r163.
 In red: Altonji et al. explained ('An altruistic parent who already gives to its child has chosen how to split their
 combined resources, so a dollar of income moved from the child to the parent should come back to the child in full;
