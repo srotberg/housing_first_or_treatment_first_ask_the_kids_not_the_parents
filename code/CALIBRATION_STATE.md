@@ -133,6 +133,23 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r162 (05 Oct 16:45; PDF 8a1d05c6 = r161, 13 comments on pages 6-8, plus the author's chat answers to r161:
+'yes change to General equilibrium' and Abramson 'like a side note' when mentioning the Zhao paper). ALL RED STRIPPED;
+base_r162 + splice_r162. In red: 'general-equilibrium models of homelessness' in the literature overview and 'The
+general-equilibrium homelessness literature' in the nutshell; Abramson as '(see also Abramson, 2026, on how eviction
+policy changes who becomes homeless)' after Imrohoroglu and Zhao, his separate sentence deleted. Intergenerational
+paragraph opens 'The earnings externality rests on three intergenerational links, and the literature documents each of
+them.'; 'The impacts on earnings have been measured'; the EITC clause removed; odds ratios '..., respectively, which the
+model replicates' (model 1.46 against 1.44 to 2.51); 'The third link'; 'enough to generate ... the higher likelihood
+... homeless themselves (Bassuk et al., 1997):' ('more than' removed at the author's request; the model's odds are
+6.23 against 1.8 to 2.4 in Table 6); the Bassuk case-control sentences removed. Heading 'Parental altruism towards
+children'. Altonji et al.: 'test pure altruism directly ... and reject it: only thirteen cents of a dollar moved from
+a child to its parents comes back to the child as a transfer, against the full dollar that altruism of any degree
+implies when the parent is already giving' (the author asked whether full altruism implies a dollar or half: with
+operative transfers ANY positive weight implies the full dollar, so the 13 cents is not a weight and cannot be
+compared with omega_c = 0.085; told the author, nothing added on the comparison). The experiment 'needs a parent and
+a grown child with budgets of their own at the same time, linked by the parent's transfers. In the model, the child
+shares its parent's budget while the parent is 26 to 50 ...'.
 ROUND r161 (05 Oct 16:15; PDF 2730af45 = r160, 14 comments on page 6, "remove all red and put updates in red"). ALL RED
 STRIPPED; calib_tables.py --freeze; export_longrun.py --freeze; base_r161 + splice_r161. In red: 'the government's
 budget'; Greenwood et al. (2025) on beliefs moved first, then 'Moreover, young people ...' (Lundborg and Lindgren);
