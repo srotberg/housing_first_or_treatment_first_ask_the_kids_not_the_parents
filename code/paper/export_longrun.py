@@ -79,7 +79,9 @@ ARMS = (('null_share', None), ('tf85', 'null_share'),
 # homelessness added as a fourth column (the author, 2 October: "You should also add the column for
 # omega_c=1 and internalization of homelessness")
 # (round r153, the author, on the last column: "should it be the first after HF?": second, as Section 6.2 now opens with it)
-TABLE = (('null_share', None), ('pe_b', 'pe_a'), ('tf85', 'null_share'), ('omega1', 'null_remote'),
+# (round r154, the author: "dont we then have to have HF, no externalities on the left? and HF on the right of it?":
+# each experiment beside its own base, Housing First and Treatment First without the externalities first)
+TABLE = (('pe_a', None), ('pe_b', 'pe_a'), ('null_share', None), ('tf85', 'null_share'), ('omega1', 'null_remote'),
          ('internalise', 'null_remote'))
 
 
@@ -302,9 +304,9 @@ def main():
     def hd(key, w):
         cells[key] = w
         return w if prev.get(key) == w else f'\\textcolor{{red}}{{{w}}}'
-    heads = {1: '\\multicolumn{6}{@{}l}{\\emph{Adults}} \\\\',
-             2: '\\multicolumn{6}{@{}l}{\\emph{Children}} \\\\',
-             3: '\\multicolumn{6}{@{}l}{\\emph{Welfare}} \\\\'}
+    heads = {1: '\\multicolumn{7}{@{}l}{\\emph{Adults}} \\\\',
+             2: '\\multicolumn{7}{@{}l}{\\emph{Children}} \\\\',
+             3: '\\multicolumn{7}{@{}l}{\\emph{Welfare}} \\\\'}
     for k in heads:
         title = re.search(r'\\emph\{([^}]*)\}', heads[k]).group(1)
         cells[f'panel/{k}'] = title
@@ -331,9 +333,11 @@ def main():
     tab = ['% Written by code/paper/export_longrun.py from results/counterfactuals_cf_fix2;',
            '% edit the script, not this file. Caption and note are in the paper.',
            # every row on one line (round 4ad85a30, the author: "can you put all rows in one line?")
-           '\\begin{tabular}{@{}lrrrrr@{}}', '\\toprule',
-           ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment First,', 'Treatment', 'Optimal', 'Optimal'))) + ' \\\\',
-           ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'no externalities', 'First', 'drug use', 'homelessness'))) + ' \\\\',
+           '\\begin{tabular}{@{}lrrrrrr@{}}', '\\toprule',
+           # the two no-externality columns under one spanning head, so that no column is wider than its numbers need
+           ' & \\multicolumn{2}{c}{' + hd('h0/0', 'No externalities') + '} & & & & \\\\', '\\cmidrule(lr){2-3}',
+           ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Housing', 'Treatment', 'Optimal', 'Optimal'))) + ' \\\\',
+           ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'First', 'First', 'drug use', 'homelessness'))) + ' \\\\',
            '\\midrule'] + body + ['\\bottomrule', '\\end{tabular}']
     open(TAB, 'w').write('\n'.join(tab) + '\n')
     if freeze:

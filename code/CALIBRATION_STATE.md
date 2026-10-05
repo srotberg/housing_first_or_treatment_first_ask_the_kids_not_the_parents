@@ -125,6 +125,18 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r154 (05 Oct 05:00; PDF a33ee266 = r153, 9 comments, "remove all red and put updates in red"; and "how much more is
+missing in the paper? which simulations have you finished?"). ALL RED STRIPPED; calib_tables.py --freeze; base_r154 +
+splice_r154. In red: 3.6.1 'comparing the two with the same pi_V and p_v', 'where nothing a household does affects anyone
+else'; r153's 'There are no externalities here because ...' REMOVED from 3.6.1 (the author: "we have not yet introduced a
+child here") and put where the child arrives, opening Stage 2: 'From a model point of view, stage 1 is as if the child
+only appeared as an adult: nothing its parent did affected it, and nobody counted it before then.' 6.2: 'To capture the
+no-externality case, I set the aggregate homelessness externality to zero, kappa_x = 0, and treat the child as appearing
+only as an adult'. TABLE 7: Housing First WITHOUT externalities added as the FIRST column (pe_a), Treatment First without
+them second, under one spanning head 'No externalities' (six number columns did not fit with two-line heads); text 'first
+two columns', note rewritten in red ('Housing First, the third column, is the benchmark'; pi_V 'in every column but the
+first two'; the first two columns described). Introduction: 'also' removed; the shelter earnings-penalty clause removed.
+49 pages.
 ROUND r153 (05 Oct 04:30; PDF 40c3a10c = r152, 13 comments, "remove all red. put updates in red", and in chat: "in the
 stylized model you also have to explain the point about no externalities. it is like the child only appears in as an
 adult, unaffected by decisions made by others and others not counting it"). ALL RED STRIPPED (source and Table 6);
