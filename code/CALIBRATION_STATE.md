@@ -133,6 +133,16 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r172 (05 Oct 20:55; PDF 2a4ed346 = r171, 17 comments on pages 13-14, the stylized calibration). ALL RED
+STRIPPED; base_r172 + splice_r172. In red: 'a certain degree of tolerance'; survival 'over a period, the cumulative
+chance of surviving from age twenty-six to age fifty-five,' (the author asked; yes); 'The chance that drug use causes a
+SUD ... is also externally calibrated'; 'the old just carry the SUD'; 'UI replaces half ... nothing when a job is lost
+to the disorder'; the HUD rule 'and the voucher pays the rest of the rent only up to the fair market rent;' (the author
+asked whether the simplification is the FMR cap: the model's tenant pays a share of RENT, not of income, and has no
+cap; spelled out without the acronym, which Section 4 defines); 'The parameter b, which sets the marginal utility of the
+first unit of drugs,' (the author: 'what does pull mean?'); 'theta is set to match the'; 'the 2024 NSDUH' three times
+in 3.3.2 (the author marked one); 'u_1 is set such that ... consistent with the meta-analysis'; the 'That share rises
+with u_1' sentence removed. Table 1 row 'UI replacement rate' (code/stylized/stage_results.py and the table).
 ROUND r171 (05 Oct 20:40; PDF 94bf02ce = r170, 5 comments). ALL RED STRIPPED; base_r171 + splice_r171. In red:
 'income-eligible households'; 'A voucher's revocation in period 1 is a function of the choice v>0 ...' (the author:
 remove 'Whether'); 3.3 Calibration now opens with the staging paragraph ('stage 1 of this section, and stage 2, with the

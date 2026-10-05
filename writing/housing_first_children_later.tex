@@ -858,7 +858,7 @@ and $\pi_V$, the share of eligible households receiving vouchers, is a policy
 dial of Section~\ref{sec:mh}.
 
 The two policies differ in exactly one respect, the last indicator in
-equation~\eqref{eq:vouch}. \textbf{Housing First} does not condition vouchers on sobriety, and thus does not revoke them from \new{income-eligible} households who consume drugs ($v>0$) or have a SUD ($d'=1$). \textbf{Treatment First} revokes vouchers from income-eligible households unless they satisfy the sobriety condition, $v=0$ and $d'=0$, which is the
+equation~\eqref{eq:vouch}. \textbf{Housing First} does not condition vouchers on sobriety, and thus does not revoke them from income-eligible households who consume drugs ($v>0$) or have a SUD ($d'=1$). \textbf{Treatment First} revokes vouchers from income-eligible households unless they satisfy the sobriety condition, $v=0$ and $d'=0$, which is the
 rule in the quantitative model as well. In the stylized model, detection of drug use and SUD is assumed
 to be perfect, an assumption I relax in the full model. The condition is applied to the
 period in which the voucher is paid, so what it tests differs by period: every
@@ -866,7 +866,7 @@ household is born clean, so $d'=0$ holds for everyone in period 1 and only $v$
 can fail the condition in that period, while in period 2 there is no drug choice, $v=0$
 holds by construction, and only the disorder, $d'=1$, can fail it.
 
-\new{A voucher's revocation} in period 1 is a function of the choice $v>0$ in the same period, so the timing is worth stating exactly.
+A voucher's revocation in period 1 is a function of the choice $v>0$ in the same period, so the timing is worth stating exactly.
 Every household arrives clean, and the period-1 voucher is drawn before $v$ is
 chosen. This means that conditionality cannot screen anyone out at entry. The order
 within the period is therefore: the voucher is drawn, the household chooses $v$, the policy rule is
@@ -904,10 +904,10 @@ at its best positive $v$ exceeds the value at $v=0$.
 
 Each stage is fitted to the same targets. Table~\ref{tab:ext} lists what is set
 outside the model and Table~\ref{tab:int} what is fitted inside it, with a column for
-each stage: \new{stage 1 of this section, and stage 2,} with the child that
+each stage: stage 1 of this section, and stage 2, with the child that
 Section~\ref{sec:kids} adds, which is refitted with the child in place. The fit uses
 the quantitative model's rule, moving all internal parameters together, each in proportion
-to the gap on its own moment until each gap is \new{within a certain tolerance}.
+to the gap on its own moment until each gap is within a certain \new{degree of} tolerance.
 
 Every target is documented in full in the replication package's data
 appendix, \texttt{data/DATA\_APPENDIX.md}, which names the
@@ -925,20 +925,20 @@ whereas in the quantitative model consequences arrive annually and compound. A
 low annual discount factor would weigh that distant death much less and the
 mortality channel would be losing to impatience rather than to anything the model
 is about, so a higher factor corrects for the coarseness of the horizon.} risk aversion is
-$\sigma=2$, as in the quantitative model, and survival over a period is
+$\sigma=2$, as in the quantitative model, and survival over a period\new{, the cumulative chance of surviving from age twenty-six to age fifty-five,} is
 $\bar\phi = 0.93$, from the life table for the total population of the United States in 2010
-(Arias, 2014), for twenty-six to fifty-five.
+(Arias, 2014).
 
-The chance that use causes a SUD, $\pi_d$, can also be externally calibrated. This
+The chance that \new{drug} use causes a SUD, $\pi_d$, \new{is} also externally calibrated. This
 is because drug use and the SUD are fully separated by cohort: the young are the
-users, and the old carry the SUD but cannot start using. So the SUD rate is
+users, and the old \new{just} carry the SUD. So the SUD rate is
 participation times $\pi_d$, and $\pi_d$ is the ratio
 of the two in NSDUH 2024, $3.68$ percent of adults aged 26 and over carrying a
 moderate or severe SUD against $8.90$ percent carrying one of any severity, the measure of use the model matches, which gives
 $\pi_d=0.41$.
 
-Income support replaces half of previous earnings on a base capped at mean
-income, in line with statutory state rules, and nothing after a job lost to the
+\new{UI} replaces half of previous earnings on a base capped at mean
+income, in line with statutory state rules, and nothing \new{when a job is lost to the}
 disorder, which those rules treat as misconduct (U.S.\ Department of Labor, 2024). Food assistance tapers at
  $\varrho=0.30$, the benefit reduction rate of the Supplemental Nutrition
 Assistance Program (SNAP). The rent per unit of housing services
@@ -946,7 +946,7 @@ $p_r$ and the price of a unit of drugs $p_v$ are normalised to one and held fixe
 every counterfactual. Both rental units are
 set, the small one at $h_2=0.10$ and the standard one at $h_3 = 0.40$ of mean
 income. The voucher parameters are institutional: covered
-tenants pay $30$ percent of market rent, a simplification of the HUD rule, under which a tenant pays thirty percent of its income, eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.27$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
+tenants pay $30$ percent of market rent, a simplification of the HUD rule, under which a tenant pays thirty percent of its income \new{and the voucher pays the rest of the rent only up to the fair market rent;} eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.27$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
 Households (PSH), published by HUD.
 
 \subsubsection{Internal calibration}
@@ -962,16 +962,16 @@ times average annual income, about \$9.0 million against a mean household income
 \$113,000, which is within the range surveyed by Viscusi and Aldy (2003) once their
 estimates are put in current dollars.
 
-The pull of the first unit $b$ is chosen to match a drug participation rate of
-$8.90$ percent from NSDUH 2024 for respondents aged 26 and over with a disorder
-of any severity, and the weight on drugs $\theta$ to aggregate drug spending over the
+\new{The parameter} $b$\new{, which sets the marginal utility of the first unit of drugs,} is chosen to match a drug participation rate of
+$8.90$ percent from \new{the 2024 NSDUH} for respondents aged 26 and over with a disorder
+of any severity, and the weight on drugs $\theta$ \new{is set to match the} aggregate drug spending over the
 aggregate income of users, $16.0$ percent, from retail spending in Midgette et al.\ (2019) and the incomes of users in
-NSDUH 2024. The level of food assistance $\bar c$ is fitted so that total food assistance is
+\new{the 2024 NSDUH}. The level of food assistance $\bar c$ is fitted so that total food assistance is
 $0.42$ percent of total labour income, the ratio of SNAP outlays
 to gross domestic product (GDP) in the data.
 
 The mortality rate ratio $\kappa_{\phi d}$ is set to match the income of users,
-$0.74$ of the population average in NSDUH 2024, because the death risk is what decides how far down
+$0.74$ of the population average in \new{the 2024 NSDUH}, because the death risk is what decides how far down
 the income distribution use sits, as Section~\ref{sec:who} shows. Housing services in
 a shelter $h_1$ are chosen so that the homelessness rate in the model is
 $0.60$ percent, inside a band of 0.40 to 1.00 percent of households. The
@@ -980,11 +980,9 @@ homeless at some point over a year, from Burt et al.\ (2001). The unemployment
 probability without the disorder $u_0$ is chosen such that the aggregate unemployment rate
 is $4.85$ percent, the average over 2014 to 2024 in the Bureau of Labor Statistics (BLS) Current Population
 Survey (CPS), and the unemployment probability with the
-disorder $u_1$ such that the share of the homeless carrying a SUD is $21.7$ percent,
-from
-the meta-analysis of Gutwinski et al.\ (2021). That share rises with $u_1$: every job
-the disorder costs is one that income support does not cover, so a household with a SUD
-that has too little saved to pay the rent through it ends up in a shelter.
+disorder $u_1$ \new{is set} such that the share of the homeless carrying a SUD is $21.7$ percent,
+\new{consistent with}
+the meta-analysis of Gutwinski et al.\ (2021).
 
 \begin{table}[!tb]
 \centering

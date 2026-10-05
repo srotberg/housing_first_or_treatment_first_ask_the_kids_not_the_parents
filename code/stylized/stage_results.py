@@ -531,7 +531,7 @@ def write_tables(p1, r1, p2, r2):
         (r'$\pi_d$', 'Chance that use starts a SUD', 'NSDUH 2024: SUD rate over participation',
          f'${tn(p1.pi_base)}$')]),
         ('Income', [
-        (r'$\psi_{ui}$', 'Income support replacement rate', 'Department of Labor, statutory rates', f'${p1.repl:.2f}$'),
+        (r'$\psi_{ui}$', 'UI replacement rate', 'Department of Labor, statutory rates', f'${p1.repl:.2f}$'),
         (r'$\bar y$', 'Cap on the earnings base', 'Department of Labor, state benefit maxima', f'${p1.ycap:.2f}$'),
         (r'$\varrho$', 'Food assistance taper', 'SNAP benefit reduction rate', f'${p1.rho_fs:.2f}$')]),
         # y_min's row removed, the author 30 September ("remove"): the floor on income is
