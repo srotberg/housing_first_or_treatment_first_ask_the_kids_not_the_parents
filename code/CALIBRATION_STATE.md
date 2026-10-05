@@ -125,6 +125,11 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r156 (05 Oct 05:30; the author: "remove all red"). strip_red.py on the source and Table 6; both tables frozen; base_r156 +
+splice_r156; no red anywhere (check_red: 0 edits); blue \upd untouched (15 markers: 12 transition, 3 Costantini). 49 pages.
+The author asked whether a "mildly converged" transition is usable in 2-3 days: told yes if loop 0_r1 (ends about 08:00-
+09:00) shows the Newton pi_V step closing the budget; otherwise offered the fallback of pi_V held at its long-run Treatment
+First level with temporary deficits (only the drug price to clear, about a day) -- the author's call, not started.
 ROUND r155 (05 Oct 05:15; PDF 819ccd85 = r154, 3 comments, "remove all red and put updates in red"; and "how much longer
 before all the updates in blue are tested"). ALL RED STRIPPED; base_r155 + splice_r155. In red: Section 6's opening now
 announces 'Three further experiments, in Section 6.2, ... The first is Treatment First without the externalities, with the
