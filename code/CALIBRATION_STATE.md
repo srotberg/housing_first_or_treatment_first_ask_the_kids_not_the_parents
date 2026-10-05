@@ -125,6 +125,14 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+COSTANTINI CHECK IN, SMI ONLY (05 Oct 10:40, results/revoked_2c_smi/RESULT.md; every guard PASS; the SMI halves reproduce
+the unsplit 6.91/6.12/+0.80 to the fourth decimal). Revoked with SMI at revocation (12.2 percent of the revoked, years
+1-3 pooled): three-year mortality 8.31 percent under Treatment First against 6.40 had they kept the voucher, +1.92 pp
+(+30 percent); 51-53 percent of them homeless in each of the three years (none in the counterfactual); per household
+made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 pp (2.6 per household made homeless).
+NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
+(session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
+hf10, about 100 min each: result about 14:00 UTC.
 T = 60 KILLED AGAIN BY A CONTAINER RESTART (05 Oct about 10:25), loop 0_r1 at forward year 45 of 59, about 11 h in.
 Saved: results/transition_2c/loop0_r1_partial/ (run.log.gz, early_years.txt). Its residuals: budget 4e-4 to 5e-3 in
 years 1-24, then a deficit growing to -0.017 by years 38-45 (the seed's pi_V rose toward 9.61 too early); drug gaps 0.015-
