@@ -1,9 +1,10 @@
-# PE experiment without externalities (code/pe_noext); 05 Oct 01:11 UTC
+# PE experiment without externalities (code/pe_noext); 05 Oct 01:34 UTC
 run_pe: free memory 15 GiB available, cores 4 (04 Oct 22:55)
 run_pe: arm A (null_pe_noext) on cf_fix2_share_pe: switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', kappa_x 0, SS_NO_CLASS, price clearing from 1.0001082 (04 Oct 22:55)
 run_pe: arm A: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 9 passes, sweeps [73, 70, 70, 70, 79, 70, 71, 70, 70], largest final 4.69e-05 (rule 5e-05, at least 70 sweeps)  (05 Oct 00:41)
 run_pe: arm A's last solve used: drug price 1.0305057924439740E+00, pi_V 6.7533863251354007E-02, house price 1.2049246174348939E+01 (05 Oct 00:41)
 run_pe: arm B (tf_pe_noext) on cf_fix2_pe: detection 0.85, test 0.0004946100, held price 1.0305057924439740E+00, pi_V 6.7533863251354007E-02, house price 1.2049246174348939E+01, adjust_taxes 0 (05 Oct 00:41)
+run_pe: arm B: DIST CHECK PASS: 3 passes, sweeps [79, 70, 71], largest final 4.61e-05 (rule 5e-05, at least 70 sweeps)  (05 Oct 01:34)
 
 == arm null (9 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -19,11 +20,13 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
  PE USED pass=    7 housing_price=  1.2049227029646335E+01 drug_price=  1.0303148989571012E+00 pi_V=  6.7533863251354007E-02
  PE USED pass=    8 housing_price=  1.2049246174348939E+01 drug_price=  1.0305057924439740E+00 pi_V=  6.7533863251354007E-02
 
-== arm tf (1 passes done)
+== arm tf (3 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0305  0.06753   -59.9%   -60.3%    +0.2%  0.00e+00  0.00e+00   790.7243  +nan%   -65.2%   -13.2%
+  2  1.0305  0.06753   -59.9%   -60.4%    +0.5%  0.00e+00  0.00e+00   790.6931  +nan%   -65.3%   -13.3%
+  3  1.0305  0.06753   -60.0%   -60.4%    +0.5%  0.00e+00  0.00e+00   790.6928  +nan%   -65.3%   -13.3%
  PE HOLD housing_price set to   12.049246174348939     
- PE USED pass=    1 housing_price=  1.2049246174348939E+01 drug_price=  1.0305057924439740E+00 pi_V=  6.7533863251354007E-02
+ PE USED pass=    2 housing_price=  1.2049246174348939E+01 drug_price=  1.0305057924439740E+00 pi_V=  6.7533863251354007E-02
 
 == CEV walk
 run_walk: waiting for arm A (04 Oct 23:14)
