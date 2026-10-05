@@ -125,6 +125,22 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r145 (05 Oct 01:45; PDF d5ceb486 = r144, 20 comments, "remove all red and put updates in red"). ALL RED STRIPPED
+(strip_red.py on the source and tables/tab_untargeted.tex, checked equal to a brace-matched strip; calib_tables.py
+--freeze so Block 7 is black); base_r145 = the numbers now, splice_r145 (= splice_r140 on base_r145). Edits in red: trials
+sentence ('people who are not the participants or long-run participant behaviour and outcomes', 'things that', 'people',
+'from their children to others'); stylized second result without 'the stylized model confirms the dominance result: at
+the same generosity'; THE PARTIAL-EQUILIBRIUM SENTENCE NOW OPENS the results paragraph ('The quantitative experiments start
+in partial equilibrium: ... better with the externalities and worse without them ... Full altruism then shows ...'), \upd
+until results/pe_noext; validation summary: one Costantini line (\upd until the SMI comparison); literature: Milby and
+Costantini in their own paragraphs ('Another relevant study is ...', 'The model produces outcomes consistent with these
+findings: ...', numbers dropped there), 'All of the randomised trials above measure outcomes over six to twenty-four
+months' ('rarely beyond three years' dropped); Section 3: the budget-balanced numbers moved to a footnote; Block 7
+shortened to two short paragraphs (Costantini's finding; the model's counterpart, the per-household-made-homeless gap, not
+targeted, why it matters) with \upd for the SMI conditioning. SMI (the author: "you need to condition on the SMI for the
+constantini comparison, no?"): worker session_01CjMDyrSNKikUNZizA1x7RE launched 01:30 (results/revoked_2c_smi): the
+revoked split by SMI at revocation, print-only, re-solved arms, T = 3 guard, T = 10 paths; about 4-5 h. When it lands:
+x_rv_* from the SMI subgroup (export_revoked.py), the table note and row say SMI, the three \upd tags go.
 REVOKED-VOUCHER GUARDS (05 Oct 00:07): tables.md and guard_T3_rest.txt pushed 23:46-23:47, GUARD SUMMARY PASS in both
 guard files (mass accounting 3.3e-14, shadow kernel 0.0 on one thread, fixed paths, tags, bounds-checked build 2.5e-8);
 RESULT.md headline unchanged (+0.80 pp, 6.92 against 6.12); export_revoked.py re-run, x_rv_* unchanged. Worker done, idle.
