@@ -1,4 +1,4 @@
-# SMI split of the revoked-voucher experiment (code/revoked_2c_smi); 05 Oct 04:10 UTC
+# SMI split of the revoked-voucher experiment (code/revoked_2c_smi); 05 Oct 05:00 UTC
 ## stage 1, the two steady states (code/revoked_2c/run_arms.sh)
 run_arms: free disk 29G, memory 15 GiB, cores 4 (05 Oct 01:30)
 run_arms: building cf_fix (05 Oct 01:30)
@@ -23,5 +23,10 @@ run_paths_smi: against the accepted runs: null: worst relative difference 1.2e-0
 run_paths_smi: staged g_plain3_1t (T=3, terminal cfarm_tf_2c_fixboth) (05 Oct 03:41)
 run_paths_smi: staged g_smi3_1t (T=3, terminal cfarm_tf_2c_fixboth) (05 Oct 03:41)
 run_paths_smi: T = 3 guard pair (plain, split) running, one thread each (05 Oct 03:41)
--- g_plain3_1t: 0 forward periods done; last line:  AGE_TIME age=  19  wall_s=     17.23  cpu_s=     17.23
--- g_smi3_1t: 0 forward periods done; last line:  AGE_TIME age=  19  wall_s=     17.07  cpu_s=     17.07
+run_paths_smi: staged g_track3_1t (T=3, terminal cfarm_tf_2c_fixboth) (05 Oct 04:31)
+run_paths_smi: staged tf10 (T=10, terminal cfarm_tf_2c_fixboth) (05 Oct 04:31)
+run_paths_smi: T = 10 Treatment First path running; T = 3 unsplit tracking beside it (05 Oct 04:31)
+-- g_plain3_1t: 0 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
+-- g_smi3_1t: 2 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
+-- g_track3_1t: 0 forward periods done; last line:  expected_child_value=   0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000   
+-- tf10: 0 forward periods done; last line:  age_index=          55
