@@ -125,6 +125,11 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+T = 60: RUN TO FULL CONVERGENCE (05 Oct 04:15, the author: "20 loops is 10-20 days, thats ok"). No early stop, no pi_V
+fallback: the restart keeps going to the stopping rule (budget 1e-3, drug market 5e-3), about 9 h a loop. After each loop:
+archive results/transition_2c/loop<N>_r1/, report the budget and drug gaps and their shrink to the author, re-arm the
+keep-alive watcher (2 h, tr2c_worker.pid) and relaunch exactly as at 23:08 if the container restarts. Section 6.3 and the
+12 transition \upd markers wait for convergence; an interim write-up only if the author asks.
 ROUND r156 (05 Oct 05:30; the author: "remove all red"). strip_red.py on the source and Table 6; both tables frozen; base_r156 +
 splice_r156; no red anywhere (check_red: 0 edits); blue \upd untouched (15 markers: 12 transition, 3 Costantini). 49 pages.
 The author asked whether a "mildly converged" transition is usable in 2-3 days: told yes if loop 0_r1 (ends about 08:00-
