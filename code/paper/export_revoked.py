@@ -52,6 +52,24 @@ def pooled(G, years, key):
     return sum(G[(g, g + years)][key] * x for g, x in zip(GROUPS, w)) / sum(w)
 
 
+STREET = os.path.join(ROOT, 'results', 'revoked_2c_street', 'tables.md')
+
+
+def street_smi():
+    """THE COMPARISON THE PAPER USES (the author, 5 October: "condition on SMI for both voucher holder and those revoked,
+    and then compare those who ended up on the street whose voucher was revoked", "that is exactly the constantini
+    paper"): results/revoked_2c_street, the revoked split by SMI at revocation and by whether Treatment First's first
+    housing choice after the revocation is the street, each followed under both kernels. The pooled row 'SMI, on the
+    street' of tables.md: mass share, three-year deaths under (a) and (b), and their DIRECT gap, no Wald rescaling.
+    Refuses unless the worker's guard summary passed."""
+    T = open(STREET).read()
+    assert 'GUARD SUMMARY: PASS' in T, 'the street split did not pass its guards'
+    sec = T.split('## pooled, years 1-3')[1].split('## ')[0]
+    row = [l for l in sec.splitlines() if l.startswith('| SMI, on the street |')][0]
+    c = [x.strip() for x in row.strip('|').split('|')]
+    return dict(share=float(c[2]), dead_a=float(c[5]), dead_b=float(c[6]), gap=float(c[7]))
+
+
 def main():
     tf, hf = groups('tf10_run.log.gz'), groups('hf10_run.log.gz')
     assert all((g, g) in tf and (g, g + 3) in tf and (g, g + 3) in hf for g in GROUPS), 'missing REVK GROUP lines'
@@ -81,6 +99,15 @@ def main():
         # rise in the survivors' homelessness across the three years (a Wald-style rescaling, not a model output)
         'x_rv_wald_pp': f'{100 * gap / (sum(hl) / len(hl)):.1f}',
     }
+    st = street_smi()
+    assert abs(st['dead_a'] - st['dead_b'] - st['gap']) < 0.011, st
+    out.update({
+        'x_rv_street_smi_share': f"{st['share']:.1f}",
+        'x_rv_street_smi_dead_tf': f"{st['dead_a']:.2f}",
+        'x_rv_street_smi_dead_hf': f"{st['dead_b']:.2f}",
+        # one decimal, as Costantini's 4.6 beside it
+        'x_rv_street_smi_pp': f"{st['gap']:.1f}",
+    })
     d = json.load(open(OUT_JSON))
     d.update(out)
     json.dump(d, open(OUT_JSON, 'w'), indent=1, sort_keys=True)

@@ -467,8 +467,8 @@ UNTARGETED = [
     # revokes, scaled by the share it puts on the street (code/paper/export_revoked.py); like for like, per household
     # whose housing changes. Run export_revoked.py first: it writes the x_rv_* names this reads.
     ('Block 7: Losing a voucher', None, None),
-    ('Three-year mortality per household made homeless, pp$^{b}$',
-     (RES['x_rv_costantini_pp'], RES['x_rv_wald_pp']), r'Costantini (2025)'),
+    ('Three-year mortality, households with SMI put on the street, pp$^{b}$',
+     (RES['x_rv_costantini_pp'], RES['x_rv_street_smi_pp']), r'Costantini (2025)'),
 ]
 
 
