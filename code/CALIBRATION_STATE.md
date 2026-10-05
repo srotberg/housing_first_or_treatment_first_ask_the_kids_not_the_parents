@@ -133,6 +133,14 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r173b (05 Oct 21:45; no PDF, the author in chat: 'the story is really about how the losses from income grow slowly
+and the marginal utility cost of drugs ... the penalty is not growing fast enough', 'and the floor helps with it too'; I
+agreed). NOT STRIPPED (same round's red kept, base_r173). In red: Section 3.4's paragraph now frames a race between the
+utility cost of the drug (falls with income: less marginal utility given up per dollar) and the expected SUD penalty
+(the unemployment penalty grows too slowly, the floor holding it back), ending 'and with the drug getting cheaper in
+utility terms as income rises, use stays at the top'; the old 'On the other hand, buying v units ...' sentence moved
+into the race. Introduction: the floor 'makes the utility loss from losing employment grow only slowly with income, too
+slowly to offset the utility cost of the drug, which declines with income' (was 'bounds the utility loss').
 ROUND r173 (05 Oct 21:30; PDF 70b2fda2 = r172, 16 comments on pages 13-16, Section 3.4). ALL RED STRIPPED; base_r173 +
 splice_r173. In red: the HUD rule '(the latter condition being abstracted from)'; 3.4 opens 'With the calibrated stage 1
 model in hand, this section asks ...' (the 'force any answer has to overcome' clause removed); 'The mortality channel:
