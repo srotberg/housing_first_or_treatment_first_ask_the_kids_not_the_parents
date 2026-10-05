@@ -133,7 +133,7 @@ def main(a):
         ok &= split_sum(r, out, nm)
     for k in sorted(tf['split']):
         p, q, t = k
-        if t == p or (p == 4 and t == 0):
+        if t == int(tf['split'][k]['start']):
             m1, m2 = tf['split'][k]['mass0'], hf['split'].get(k, {}).get('mass0', -1)
             good = abs(m1 - m2) <= 1e-12 * m1
             out.append(f"  group {p}, SMI at start {q}: starting mass {m1:.6e} (a), {m2:.6e} (b) {'PASS' if good else 'FAIL'}")

@@ -24,8 +24,6 @@
   group 3, SMI at start 0: starting mass 5.122992e-03 (a), 5.122992e-03 (b) PASS
   group 3, SMI at start 1: starting mass 6.404701e-04 (a), 6.404701e-04 (b) PASS
   group 4, SMI at start 0: starting mass 3.377636e+00 (a), 3.377636e+00 (b) PASS
-  group 4, SMI at start 0: starting mass 3.377636e+00 (a), 3.377636e+00 (b) PASS
-  group 4, SMI at start 1: starting mass 2.255530e-01 (a), 2.255530e-01 (b) PASS
   group 4, SMI at start 1: starting mass 2.255530e-01 (a), 2.255530e-01 (b) PASS
 GUARD SUMMARY: PASS
 
