@@ -78,8 +78,9 @@ ARMS = (('null_share', None), ('tf85', 'null_share'),
 # the columns of the table: the elastic supply is a footnote (the author, 30 September); optimal
 # homelessness added as a fourth column (the author, 2 October: "You should also add the column for
 # omega_c=1 and internalization of homelessness")
-TABLE = (('null_share', None), ('tf85', 'null_share'), ('omega1', 'null_remote'),
-         ('internalise', 'null_remote'), ('pe_b', 'pe_a'))
+# (round r153, the author, on the last column: "should it be the first after HF?": second, as Section 6.2 now opens with it)
+TABLE = (('null_share', None), ('pe_b', 'pe_a'), ('tf85', 'null_share'), ('omega1', 'null_remote'),
+         ('internalise', 'null_remote'))
 
 
 def log(arm):
@@ -331,8 +332,8 @@ def main():
            '% edit the script, not this file. Caption and note are in the paper.',
            # every row on one line (round 4ad85a30, the author: "can you put all rows in one line?")
            '\\begin{tabular}{@{}lrrrrr@{}}', '\\toprule',
-           ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Optimal', 'Optimal', 'Treatment First,'))) + ' \\\\',
-           ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'drug use', 'homelessness', 'no externalities'))) + ' \\\\',
+           ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment First,', 'Treatment', 'Optimal', 'Optimal'))) + ' \\\\',
+           ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'no externalities', 'First', 'drug use', 'homelessness'))) + ' \\\\',
            '\\midrule'] + body + ['\\bottomrule', '\\end{tabular}']
     open(TAB, 'w').write('\n'.join(tab) + '\n')
     if freeze:

@@ -125,6 +125,21 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r153 (05 Oct 04:30; PDF 40c3a10c = r152, 13 comments, "remove all red. put updates in red", and in chat: "in the
+stylized model you also have to explain the point about no externalities. it is like the child only appears in as an
+adult, unaffected by decisions made by others and others not counting it"). ALL RED STRIPPED (source and Table 6);
+calib_tables.py --freeze; base_r153 + splice_r153. In red: 3.6.1 'There are no externalities here because it is as if the
+child only appears as an adult: nothing its parent does affects it, and nobody counts it before then.'; 6.2's opening
+paragraph the same ('its parent does not weigh it, its productivity does not depend on what its parent did, and its
+childhood, the years its parent is 26 to 50, is not counted in welfare'; 'the measure that leaves out ...' removed; 'And
+yet,'); 'Moving to full general equilibrium, with an endogenous drug price and the government's budget clearing,' opens
+the Treatment First paragraph. TABLE 7: the no-externalities column moved to SECOND (after Housing First; the author:
+"should it be the first after HF?"), text and note follow; the note's list of base values REMOVED (the author: "not sure why
+you need to include that"; the x_pe_a_* names stay in results_numbers.json, unused). Introduction: r152's 'does not weigh
+the aggregate homelessness externality' REMOVED; 'The second result is that in the long run, without the externalities';
+'In the long run, Treatment First lowers childhood homelessness' (was 'In the stylized model'); exceptions now TWO
+('including welfare results'; the third, 'not only newborns gain', REMOVED: "I don't think it's important"); childhood
+homelessness 'rises by up to x_tr_hchild_peak_pc (12, previous transition, blue) percent in the short run'. 49 pages.
 ROUND r152 (05 Oct 04:00; PDF a012a3de = r151, 14 comments, "remove all red and put updates in red"). ALL RED STRIPPED
 (strip_red.py on the source and tables/tab_untargeted.tex, committed alone as step 1 at 48d947c2; blue \upd untouched);
 calib_tables.py --freeze; base_r152 + splice_r152. In red: the two homelessness externalities reordered, childhood first,
