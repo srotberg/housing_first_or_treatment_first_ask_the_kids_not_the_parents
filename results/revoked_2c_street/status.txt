@@ -1,5 +1,5 @@
-# SMI x street split of the revoked-voucher experiment (code/revoked_2c_street); 05 Oct 03:39 UTC
-Builds done (plain3, track3, street3, street10; the same two warnings as the unsplit build). Steady states re-solving:
+# SMI x street split of the revoked-voucher experiment (code/revoked_2c_street); 05 Oct 04:07 UTC
+## stage 1, the two steady states (code/revoked_2c/run_arms.sh)
 run_arms: free disk 29G, memory 15 GiB, cores 4 (05 Oct 02:05)
 run_arms: building cf_fix (05 Oct 02:05)
 run_arms: building cf_fix2 (05 Oct 02:07)
@@ -7,8 +7,17 @@ run_arms: building cf_fix2_share (05 Oct 02:08)
 run_arms: builds done (05 Oct 02:10)
 run_arms: arm null on cf_fix2_share (05 Oct 02:10)
 run_arms: arm fixboth on cf_fix2 (05 Oct 02:15)
--- null_2c
-pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
--- tf_2c_fixboth
-pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
-run_paths.sh is waiting for them.
+run_arms: null_2c: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [76, 70, 83, 70, 71], largest final 4.60e-05 (rule 5e-05, at least 70 sweeps)  (05 Oct 04:07)
+run_arms: tf_2c_fixboth: DIST CHECK PASS: 4 passes, sweeps [70, 77, 70, 70], largest final 1.52e-05 (rule 5e-05, at least 70 sweeps)  (05 Oct 04:07)
+run_arms: arms done (05 Oct 04:07)
+## builds
+split confined to the tracking module
+built plain3 (T=3, -O3 -funroll-loops): 2 warnings
+built track3 (T=3, -O3 -funroll-loops): 2 warnings
+built street3 (T=3, -O3 -funroll-loops): 2 warnings
+built street10 (T=10, -O3 -funroll-loops): 2 warnings
+all built
+exit 0
+## stage 2, the runs
+run_paths_street: waiting for the arms and the builds (05 Oct 02:10)
+run_paths_street: against the accepted runs: null: worst relative difference 2.6e-04 (homelessness h_1) over 7 statistics fixboth: worst relative difference 1.2e-04 (SUD lambda_d) over 7 statistics  (05 Oct 04:07)
