@@ -1,4 +1,4 @@
-# SMI x street split of the revoked-voucher experiment (code/revoked_2c_street); 05 Oct 06:05 UTC
+# SMI x street split of the revoked-voucher experiment (code/revoked_2c_street); 05 Oct 06:51 UTC
 ## stage 1, the two steady states (code/revoked_2c/run_arms.sh)
 run_arms: free disk 29G, memory 15 GiB, cores 4 (05 Oct 02:05)
 run_arms: building cf_fix (05 Oct 02:05)
@@ -30,6 +30,10 @@ run_paths_street: staged g_track3_1t (T=3, terminal cfarm_tf_2c_fixboth) (05 Oct
 run_paths_street: T = 3 plain and unsplit tracking running, one thread each (05 Oct 04:51)
 run_paths_street: staged g_street3_1t (T=3, terminal cfarm_tf_2c_fixboth) (05 Oct 05:36)
 run_paths_street: T = 3 split tracking running alone, one thread (05 Oct 05:36)
+run_paths_street: street3: exit 0 (05 Oct 06:22)
+run_paths_street: staged tf10 (T=10, terminal cfarm_tf_2c_fixboth) (05 Oct 06:22)
+run_paths_street: T = 10 Treatment First path running (05 Oct 06:22)
 -- g_plain3_1t: 0 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
--- g_street3_1t: 0 forward periods done; last line:  AGE_TIME age=  19  wall_s=     15.93  cpu_s=     15.92
+-- g_street3_1t: 2 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- g_track3_1t: 2 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
+-- tf10: 0 forward periods done; last line:  expected_child_value=   0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000   
