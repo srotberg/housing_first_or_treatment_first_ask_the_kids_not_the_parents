@@ -79,6 +79,8 @@ PYEOF
     note "staged $(basename "$N") (T=$T, terminal $ARM)"
 }
 launch() {   # <dir> <threads> <mode> [tagdir]
+    local free; free=$(df -BG --output=avail "$1" | tail -1 | tr -dc 0-9)
+    [ "$free" -ge 4 ] || { note "GUARD: only ${free} GB of disk left at the launch of $(basename "$1")"; return 1; }
     ( cd "$1" && date +%s > START_EPOCH && OMP_NUM_THREADS=$2 REVK_MODE=$3 REVK_TAGDIR=${4:-.} ./hftf > run.log 2>&1; echo "exit $?" > EXIT ) &
     echo $! > "$1.pid"
 }
@@ -129,7 +131,10 @@ python3 "$R/analyse_street.py" guard "$W/g_plain3_1t/run.log" "$W/g_street3_1t/r
 note "T = 3 guards: $(grep -a 'GUARD SUMMARY' "$OUT/guard_T3.txt")"
 for d in g_plain3_1t g_street3_1t g_track3_1t; do gzip -c "$W/$d/run.log" > "$OUT/${d#g_}_run.log.gz"; done
 gzip -c "$W/tf10/run.log" > "$OUT/tf10_run.log.gz"
-find "$W"/g_* -name '*.dat' -size +10M -delete 2>/dev/null
+# DISK: each staged run holds about 5 GB of .dat files; the first tf10 died at period 4 when the session's disk
+# allowance ran out (ENOSPC) with the three guard directories still full. Free them, and tf10's, before hf10 (the
+# tags hf10 reads are .bin files and stay).
+find "$W"/g_* "$W"/tf10 -name '*.dat' -size +10M -delete 2>/dev/null
 grep -q "GUARD SUMMARY: PASS" "$OUT/guard_T3.txt" || { note "GUARD: the T = 3 guards did not pass, stopping before the Housing First path"; publish "blocked at the T = 3 guards"; exit 1; }
 publish "T = 3 guards passed; T = 10 Treatment First path done"
 # (3) the Housing First path from the tags
