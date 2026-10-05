@@ -125,6 +125,26 @@ Numbers: export_results.py's _dc(), from each arm's cf.log.gz once results/decom
 status.txt until then (fixpv 6, fixp 6 now); blue \upd tags in 6.2 and the Discussion until both converge.
 STAGE E2 DIED (no push after 01:54, session idle asking to approve check-ins); relaunched as session_01XLysxgFaoMhyvjcwwKb2w7
 with the check-ins pre-approved. It starts over: both arms, then age split and newborn values, then T = 60.
+ROUND r152 (05 Oct 04:00; PDF a012a3de = r151, 14 comments, "remove all red and put updates in red"). ALL RED STRIPPED
+(strip_red.py on the source and tables/tab_untargeted.tex, committed alone as step 1 at 48d947c2; blue \upd untouched);
+calib_tables.py --freeze; base_r152 + splice_r152. In red: the two homelessness externalities reordered, childhood first,
+aggregate second; 'and does not weigh the aggregate homelessness externality at all in its decisions'; 'altruism towards
+the child'; 'The earnings externality depends on the productivity penalty, which is set from ...'; the stylized model's
+second thing is now 'that with no externalities Treatment First reduces welfare relative to Housing First'; the paragraph
+'Comparing each rule with no programme at all ...' REMOVED (the author: "i dont see the value of this"). Introduction's
+exceptions: 'long-run and transition qualitative results carry over'; (1) 'full altruism does not end drug use, but rather
+cuts it by x_lr_om_b_pc (17) percent' (the author wrote 'about a third': that is Treatment First's 32, so the number is
+used); (2) 'childhood homelessness does not fall in the long run or short run: it rises slightly in the short run and
+remains unchanged in the long run' (the short-run rise is the previous transition's: \upd); (3) the 97 percent of the
+adults alive at the reform TAKEN OUT until the new transition confirms it (\upd kept; the author: "97% ... really?").
+Block 7: 'no lasting effect on mortality' ('health or' removed; the literature review still says 'health or mortality').
+Table 6 note b: '... the same households, also with SMI, who kept their voucher'. TABLE 7: NEW LAST COLUMN 'Treatment
+First, no externalities' (export_longrun.py: pe_a/pe_b from results/pe_noext; welfare rows from analysis.json at 1e-3
+utils; CEV = newborn adult value -1.50, printed with a math minus), frozen black; note in red names its base, Housing First
+without the externalities (x_pe_a_*: price 1.03, drug use 9.01, SUD 3.84, homelessness 0.60, ...). Section 6.2 now OPENS
+with '\paragraph{Treatment First without externalities.}' (moved from before the decomposition), adding in red: drug use
+-x_pe_b_pc (60), SUD -x_pe_sud_pc (61), homelessness x_pe_h_dir x_pe_h_pc (rises 3) against its base. 'Two objects move in
+each of these experiments'; the note's 'in every column but the last'. 49 pages.
 ROUND r151 (05 Oct 03:20; the author: "Like all the results follow except... And then list it ... It's ok if the results
 are slightly different, as long as they are the same qualitatively. In that case you don't need to explain it. The piv and
 pv adjusting to clear markets and budget should just be explained when the model is explained"). No strip. The

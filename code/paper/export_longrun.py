@@ -58,6 +58,13 @@ ARMDIR = {'null_share': 'nulltf/null', 'null_remote': 'nulltf/null', 'tf85': TF_
 RES_OLD = os.path.join(ROOT, 'results', 'counterfactuals_cf_fix2')
 for _a in ('elast5_85', 'null_remote', 'null_share', 'tf85'):
     ARMDIR['old_' + _a] = os.path.join(RES_OLD, _a)
+# TREATMENT FIRST WITHOUT THE EXTERNALITIES, the last column (the author, round r152, on Table 7: "I think you need to
+# add one column on the right of this which if TF no externalities, right?"): results/pe_noext, Arm B (Treatment First,
+# omega_c and both penalties at zero, the drug price and pi_V held at Arm A's) against Arm A (Housing First with the same
+# switches, the price clearing). Its welfare rows come from the walk (analysis.json), not from the benchmark's curve
+PE = os.path.join(ROOT, 'results', 'pe_noext')
+ARMDIR['pe_a'] = os.path.join(PE, 'arm_A')
+ARMDIR['pe_b'] = os.path.join(PE, 'arm_B')
 
 
 def adir(arm):
@@ -72,7 +79,7 @@ ARMS = (('null_share', None), ('tf85', 'null_share'),
 # homelessness added as a fourth column (the author, 2 October: "You should also add the column for
 # omega_c=1 and internalization of homelessness")
 TABLE = (('null_share', None), ('tf85', 'null_share'), ('omega1', 'null_remote'),
-         ('internalise', 'null_remote'))
+         ('internalise', 'null_remote'), ('pe_b', 'pe_a'))
 
 
 def log(arm):
@@ -221,6 +228,12 @@ def main():
     for arm, base in ARMS:
         if base:
             D[arm]['cev_net'] = 100 * (D[arm]['cev'] - D[base]['cev'])
+    for arm in ('pe_a', 'pe_b'):
+        f = final(arm)
+        D[arm] = dict(steady(arm), price=f['drug price'], piv=f['pi_V (voucher probability)'],
+                      b=f['drug use b'], sud=f['SUD lambda_d'], h=f['homelessness h_1'],
+                      sud_hl=f['SUD share of the homeless'], takeup=f['treatment take-up'],
+                      net=f['net government revenue'], split=None, cev_net=None)
     # beta^25, the discount on the adult part, from the calibrated factor the run used
     beta = [float(l.split('=')[1]) for l in log('tf85') if l.startswith(' discount_factor=')][-1]
     beta25 = beta ** 25
@@ -241,7 +254,7 @@ def main():
         ('Living with a parent who carries a SUD', 'par_sud', lambda v: f'{100 * v:.2f}'),
         ('In a shelter', 'child_hl', lambda v: f'{100 * v:.2f}'),
         None,
-        ('CEV of a newborn, percent of lifetime consumption', 'cev_net', lambda v: f'{v:.2f}'),
+        ('CEV of a newborn, percent of lifetime consumption', 'cev_net', lambda v: f'{v:.2f}'.replace('-', '$-$')),
         ('Share of the newborn\'s gain that comes in childhood', 'child_share', lambda v: f'{v:.0f}'),
         # APPROVAL (the author, 2 October, on Table 7: "can you add approval rates (fraction better off?) for
         # newborns and for adults entering at 26?"). Newborns are alike before birth (Section 6.1), so all or
@@ -268,6 +281,14 @@ def main():
         D['tf85']['sud_better'] = 100 * SH['with a SUD'][0]
     D['tf85']['nb_better'] = 100.0 if D['tf85']['cev_net'] > 0 else 0.0
     D['tf85']['y26_better'] = 100 * D['tf85']['adult']['young_better']
+    # the last column's welfare rows, from the walk on Arm A's distribution (results/pe_noext/RESULT.md): the CEV is the
+    # newborn's adult value at 26, since its childhood is the externality the column switches off (the paragraph and the
+    # table note say so); better off at the same tolerance as the Treatment First column, 1e-3 utils
+    _pe = json.load(open(os.path.join(PE, 'analysis.json')))
+    _ps = lambda g: 100 * _pe['shares'][g]['abs0.001']['better']
+    D['pe_b'].update(cev_net=100 * _pe['cev']['newborn adult (age 26)']['cev_group'],
+                     y26_better=_ps('age 26 (model age 1)'), all_better=_ps('all households'),
+                     sud_better=_ps('with a SUD'))
     # no CEV for the two optimal arms: each changes the welfare function itself
     D['omega1']['cev_net'] = None
     D['internalise']['cev_net'] = None
@@ -280,9 +301,9 @@ def main():
     def hd(key, w):
         cells[key] = w
         return w if prev.get(key) == w else f'\\textcolor{{red}}{{{w}}}'
-    heads = {1: '\\multicolumn{5}{@{}l}{\\emph{Adults}} \\\\',
-             2: '\\multicolumn{5}{@{}l}{\\emph{Children}} \\\\',
-             3: '\\multicolumn{5}{@{}l}{\\emph{Welfare}} \\\\'}
+    heads = {1: '\\multicolumn{6}{@{}l}{\\emph{Adults}} \\\\',
+             2: '\\multicolumn{6}{@{}l}{\\emph{Children}} \\\\',
+             3: '\\multicolumn{6}{@{}l}{\\emph{Welfare}} \\\\'}
     for k in heads:
         title = re.search(r'\\emph\{([^}]*)\}', heads[k]).group(1)
         cells[f'panel/{k}'] = title
@@ -309,9 +330,9 @@ def main():
     tab = ['% Written by code/paper/export_longrun.py from results/counterfactuals_cf_fix2;',
            '% edit the script, not this file. Caption and note are in the paper.',
            # every row on one line (round 4ad85a30, the author: "can you put all rows in one line?")
-           '\\begin{tabular}{@{}lrrrr@{}}', '\\toprule',
-           ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Optimal', 'Optimal'))) + ' \\\\',
-           ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'drug use', 'homelessness'))) + ' \\\\',
+           '\\begin{tabular}{@{}lrrrrr@{}}', '\\toprule',
+           ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Optimal', 'Optimal', 'Treatment First,'))) + ' \\\\',
+           ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'drug use', 'homelessness', 'no externalities'))) + ' \\\\',
            '\\midrule'] + body + ['\\bottomrule', '\\end{tabular}']
     open(TAB, 'w').write('\n'.join(tab) + '\n')
     if freeze:
@@ -319,6 +340,17 @@ def main():
 
     # ---- names for the prose
     t, e, o = 'tf85', 'old_elast5_85', 'omega1'
+    # the last column against ITS base, Housing First without the externalities (Arm A), which the table does not show:
+    # the paragraph that opens Section 6.2 and the table note
+    A_, B_ = D['pe_a'], D['pe_b']
+    for k, f in (('price', lambda v: f'{v:.2f}'), ('b', lambda v: f'{100 * v:.2f}'), ('sud', lambda v: f'{100 * v:.2f}'),
+                 ('h', lambda v: f'{100 * v:.2f}'), ('par_use', lambda v: f'{100 * v:.2f}'),
+                 ('par_sud', lambda v: f'{100 * v:.2f}'), ('child_hl', lambda v: f'{100 * v:.2f}')):
+        out[f'x_pe_a_{k}'] = f(A_[k])
+    for k in ('b', 'sud', 'h', 'child_hl'):
+        ch = 100 * (B_[k] / A_[k] - 1)
+        out[f'x_pe_{k}_pc'] = f'{abs(ch):.0f}'
+        out[f'x_pe_{k}_dir'] = 'falls' if ch < 0 else 'rises'
     out['x_lr_om_b_pc'] = f"{abs(pc(o, 'b', 'null_remote')):.0f}"
     out['x_lr_tf_b_pc'] = f"{abs(pc(t, 'b', 'null_share')):.0f}"
     # how much of full altruism's fall in drug use Treatment First delivers
