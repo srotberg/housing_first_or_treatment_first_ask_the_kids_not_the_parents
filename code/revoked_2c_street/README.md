@@ -47,7 +47,8 @@ worker) splits by SMI alone; nothing here touches it.
 
 * `patch_street.py` -- the split, on `revoked_2c/patch_revoked.py`'s tracking output.
 * `build.sh` -- plain and unsplit tracking at T = 3 (controls), split tracking at T = 3 and T = 10.
-* `run_paths.sh` -- waits for `revoked_2c/run_arms.sh` (the two steady states), then the one-thread T = 3 guards, the
-  T = 10 Treatment First path (with the unsplit tracking at T = 3 beside it), the T = 10 Housing First path from its
-  tags, and `analyse_street.py`; publishes `results/revoked_2c_street/status.txt` about every 30 minutes.
+* `run_paths.sh` -- waits for `revoked_2c/run_arms.sh` (the two steady states), then the one-thread T = 3 guards (plain
+  and unsplit tracking together, then the split alone), the T = 10 Treatment First path, the T = 10 Housing First path
+  from its tags, and `analyse_street.py`. MEMORY: the split carries 18 more shadow masses (about 1.4 GB); plain and
+  split together were killed by the kernel (exit 137, 16 GB, no swap), so the split build always runs alone; publishes `results/revoked_2c_street/status.txt` about every 30 minutes.
 * `analyse_street.py` -- the guards and the tables.
