@@ -133,6 +133,14 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r202 (06 Oct 21:00; PDF 4cde3d4d, 12 comments, pp. 31-33). ALL RED STRIPPED; base_r202 + splice_r202 (0 names moved).
+In red: 'which can be instigated by a SUD'; Block 5's opening 'forward looking (and I show this in the full model as well in
+Section 6.2)' (6.2's 'Treatment First without externalities'); 'costs the child in earnings'; omega_c 'the labour productivity
+draw penalty the child enters with'; delta_d 'earnings the child loses because of a parent's SUD' in the item AND Table 5
+(calib_tables.py); kappa_x 'The estimate I draw from is' and '(Section 3.9, see footnote 10)' (new \label{fn:kx} on the
+stylized footnote); Block 6 'is in this block', 'entirely' removed, 'the general-equilibrium price effect plays little role';
+epsilon_s 'administrative data.[fn] This choice is at the lower end'.
+
 STANDING (the author, 6 Oct 20:30): "update all the figures and numbers related to the T=60 transition after each
 iteration is done". After every completed loop: cut its forward pass (INIT PARENT SHARE RESTORED loop=N .. the CONVERGENCE
 TERMS after PATHS SAVED loop N) into code/trtf60/tr2c_loopN_rK/run.log with the welfare curve, point
