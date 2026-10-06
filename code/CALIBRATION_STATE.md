@@ -133,6 +133,21 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r174 (06 Oct 01:00; PDF 7968feca, 14 comments). ALL RED STRIPPED; base_r174 + splice_r174. The income-gradient
+explanation rebuilt on the OLD PAPER'S APPENDIX (writing/old/appendix.tex, section A: with log utility a proportional
+unemployment loss only shifts the level of utility, mortality multiplies the whole value of life and changes its slope in
+log y), at the author's request ('true also for log ... take another look'; 'there is no upper bound'; 'why does that rise
+faster than the cost of drugs falls'; 'is there a better way to show it without this math?'). In red: introduction and
+Section 3.4 now say the job takes a share of resources and losing a given share costs a richer household no more utility
+(exactly the same with log, less with sigma = 2), and that dying destroys the LEVEL of utility, which rises with income
+although each extra dollar adds less, while the gain from using rises only through the drug's share of the bundle; the
+sigma = 2 / 1/X algebra and 'bounded above' removed. 3.4 also: 'costs a rich household little ... relative to a poor
+household', 'and the utility price of using falls' removed, new paragraph 'On the other side are the expected penalties
+from acquiring a SUD.', 'flat penalty to using', 'Raising the penalty reduces use, but then b is brought down to bring the
+drug use rate back up to its target, with the exact same high-income households using'. Altonji in the author's framing:
+'A perfectly altruistic parent who already gives to its child treats the child's budget as part of its own, so a dollar
+with the child is worth the same to it as a dollar with itself. Mechanically moving a dollar ... should therefore make no
+difference: the parent gives the whole dollar back.'
 ROUND r173c (05 Oct 22:00; no PDF, the author: 'can you rewrite those explanations where you don't explain it with the
 food assistance?', after a check showed the floor does not matter: Figure 1 at cbar x 1, 0.5 and 0.1 gives users at 3.54
 (none), 3.54/3.54 (unemployment 100/200), 1.19/0.52 (mortality 100/200) in all three, scratchpad/fs_channels.py). In red,

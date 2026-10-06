@@ -329,11 +329,9 @@ it at $3.54$, against $3.54$ with neither penalty.
 The reason is how each penalty varies with income. A fixed quantity of
 the drug costs a rich household less in utility terms than a poor household,
 which means that the utility price of using falls as income rises. \new{A job the
-disorder costs takes more dollars from a richer household, but with risk aversion above one not much more utility, since the utility of a high income is already close to its upper bound. The utility loss
-from losing employment therefore grows only slowly with income, too slowly to offset the utility cost of the drug, which declines with
-income}, so the unemployment penalty cannot reverse the income gradient in drug use. In contrast, mortality destroys the whole continuation
-value, including the value of being alive at all, which is worth more to
-richer households, so when the death penalty is large enough it is the poor who use rather than the rich.
+disorder costs takes away a share of a household's resources, not all of them, and losing a given share costs a richer household no more utility than a poorer one; with log utility it costs exactly the same. The unemployment penalty therefore does not grow with
+income while the utility cost of the drug falls}, so the unemployment penalty cannot reverse the income gradient in drug use. In contrast, mortality destroys the whole continuation
+value, including the value of being alive at all, \new{and that value rises with income: each extra dollar adds less utility, but the level of utility, which is what dying destroys, keeps rising. The gain from using rises with income too, but only through the drug's share of the consumption bundle, while the loss from dying scales with the whole of it,} so when the death penalty is large enough it is the poor who use rather than the rich.
 
 The experiment is the reform itself. The programme stays at its benchmark
 rationing, with the same probability of drawing a voucher, and only the rule
@@ -540,7 +538,7 @@ with a parent who has a SUD falls by $1.92$ points, and even in the short run th
 exist depends on the degree to which the parent does not internalise them, that is,
 one minus the weight it puts on its child, and that weight has a literature of its own. Altonji et
 al.\ (1997) test pure altruism directly, on the transfers parents make to their
-grown children, and reject it. A parent who already gives to the child decides, through the size of that transfer, how to divide the family's combined resources between the two of them. Mechanically moving a dollar of income from the child back to the parent leaves those combined resources unchanged, and so a perfectly altruistic parent would wish to restore the previous division it chose by giving the whole dollar back. Altonji et al.\ find that only thirteen cents comes back, which is far from what perfect altruism implies, and the calibrated model implies a low degree of altruism as well. Parents
+grown children, and reject it. \new{A perfectly altruistic parent who already gives to its child treats the child's budget as part of its own, so a dollar with the child is worth the same to it as a dollar with itself.} Mechanically moving a dollar of income from the child back to the parent \new{should therefore make no difference: the parent gives} the whole dollar back. Altonji et al.\ find that only thirteen cents comes back, which is far from what perfect altruism implies, and the calibrated model implies a low degree of altruism as well. Parents
 are probably altruistic, but not completely, which is the case for treating that
 weight as strictly between zero and one rather than assuming either end of it.
 
@@ -943,7 +941,7 @@ $p_r$ and the price of a unit of drugs $p_v$ are normalised to one and held fixe
 every counterfactual. Both rental units are
 set, the small one at $h_2=0.10$ and the standard one at $h_3 = 0.40$ of mean
 income. The voucher parameters are institutional: covered
-tenants pay $30$ percent of market rent, a simplification of the HUD rule, under which a tenant pays thirty percent of its income and the voucher pays the rest of the rent only up to the fair market rent \new{(the latter condition being abstracted from)}; eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.27$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
+tenants pay $30$ percent of market rent, a simplification of the HUD rule, under which a tenant pays thirty percent of its income and the voucher pays the rest of the rent only up to the fair market rent (the latter condition being abstracted from); eligibility is capped at half of median income, $\kappa_V = 0.50$, and $\pi_V = 0.27$ is the ratio of recipients to the income-eligible population in the 2023 Picture of Subsidized
 Households (PSH), published by HUD.
 
 \subsubsection{Internal calibration}
@@ -1001,7 +999,7 @@ does.}
 %======================================================================
 \subsection{Who uses drugs}\label{sec:who}
 
-\new{With the calibrated stage 1 model in hand, this} section asks which feature of the model puts drug use at the bottom of the
+With the calibrated stage 1 model in hand, this section asks which feature of the model puts drug use at the bottom of the
 income distribution. Drugs are a luxury good bought at a price, so a household with
 twice the income gives up less utility per dollar spent on them. With no consequences
 at all for acquiring a SUD that is the only force operating, and drug use
@@ -1009,18 +1007,18 @@ concentrates at the top: in the baseline of stage 1 the average user then earns
 3.54 times the population average.
 
 Two features of the environment are candidates to reverse it. The
-\emph{mortality channel}\new{:} the SUD increases the chance of dying,
+\emph{mortality channel}: the SUD increases the chance of dying,
 through $\kappa_{\phi d}$ in equation~\eqref{eq:surv}.
-The \emph{unemployment channel}\new{: a SUD costs} the household a job with \new{additional} probability
-$u_1-u_0$, a job loss that \new{UI} does not cover, and if its savings
+The \emph{unemployment channel}: a SUD costs the household a job with additional probability
+$u_1-u_0$, a job loss that UI does not cover, and if its savings
 and food assistance cannot cover the rent then the household downsizes,
-consumes less, or loses its home for a shelter, which is free but \new{provides}
-housing services \new{that are} below those of the small rental.
+consumes less, or loses its home for a shelter, which is free but provides
+housing services that are below those of the small rental.
 
 Figure~\ref{fig:who} scales each channel on its own, with the other switched off,
 from nothing to $200$ percent of its calibrated value. Scaling the
 mortality channel multiplies $\kappa_{\phi d}$; scaling the unemployment channel moves
-$u_1$ up from $u_0$, reaching its calibrated value at 100 percent \new{and continuing all the way up to $200$ percent of its calibrated value}. Apart from the two channels, every parameter stays at its calibrated value
+$u_1$ up from $u_0$, reaching its calibrated value at 100 percent and continuing all the way up to $200$ percent of its calibrated value. Apart from the two channels, every parameter stays at its calibrated value
 except $b$, which is recalibrated at every point so that participation stays at the calibrated
 $8.95$ percent: the amount of drug use is the same everywhere on the figure,
 and only who uses changes. Both curves therefore start from the same economy, the one
@@ -1054,17 +1052,16 @@ against 3.54 with nothing switched on, and at $200$ percent they
 are still at 3.54. A resource penalty does not produce the concentration of
 drug use at the bottom.
 
-Why should the two channels differ at all, when \new{both punish} the household? Because the cost of only one of them rises \new{quickly enough} with the household's income. \new{Who uses is decided by a race between two things that change with income. On one side is the utility cost of the drug: a household with a higher income gives up less marginal utility for each dollar it spends on drugs, so buying $v$ units costs a rich household almost nothing in terms of utility and a poor household a great deal, and the utility price of using \emph{falls} as income rises. On the other side is the expected penalty from acquiring a SUD. The unemployment penalty grows with income, but not fast enough to offset the falling price of the drug.} A job the disorder costs is not
-covered by \new{UI}, \new{so a richer household that loses one falls further in dollars, but not by much more in utility. Because risk aversion is above one, utility is bounded above, so the utility of a high income is already close to that bound and most of the loss comes from how far down the household falls, not from how high its income was: with $\sigma=2$, $U(X)=-1/X$, and falling from a bundle $X$ to a bundle $X_L$ costs $1/X_L-1/X$, which is almost $1/X_L$ once $X$ is well above $X_L$. Two households well above where a job loss leaves them therefore lose about the same}, even if one earns
-twice as much as the other. The unemployment channel is therefore close to a flat charge
-on using, the same for every household that would use. It changes how many use, which
-the recalibration of $b$ undoes, but not which households do\new{, and with the drug getting cheaper in utility terms as income rises, use stays at the top}.
+Why should the two channels differ at all, when both punish the household? Because the cost of only one of them rises quickly enough with the household's income. Who uses is decided by a race between two things that change with income. On one side is the utility cost of the drug: a household with a higher income gives up less marginal utility for each dollar it spends on drugs, so buying $v$ units costs a rich household \new{little} in terms of utility \new{relative to a poor household}.
+
+\new{On the other side are the expected penalties from acquiring a SUD.} The unemployment penalty \new{does not keep up with} the falling price of the drug. A job the disorder costs is not
+covered by UI, so a richer household that loses one falls further in dollars, but not \new{further} in utility. \new{The job takes away the household's earnings for the period, a share of its resources rather than all of them, and losing a given share costs a richer household no more utility than a poorer one: with log utility, losing a tenth of one's resources costs exactly the same utility at any income, and with the risk aversion here it costs a richer household less.} The unemployment channel is therefore close to a flat \new{penalty to using}, the same for every household that would use. \new{Raising the penalty reduces use, but then $b$ is brought down to bring the drug use rate back up to its target, with the exact same high-income households using}, and with the drug getting cheaper in utility terms as income rises, use stays at the top.
 
 Mortality is a different object. What it destroys is the whole
 continuation value: the consumption of a life still to be lived, and $\aleph$,
-the value of being alive at all, which does not shrink as consumption does. The value of life
-rises with permanent income, so the expected cost of using rises with
-income at the same time as its utility price falls. Past a point the two cross,
+the value of being alive at all, which does not shrink as consumption does. \new{Each extra dollar adds less utility as income rises, but the level of utility still rises, and the level is what dying destroys, so the} value of life
+rises with permanent income\new{, and} the expected cost of using rises with
+income at the same time as its utility price falls. \new{The gain from using rises with income too, but only through the drug's share of the consumption bundle, while the loss from dying scales with the whole of it, so with a large enough death risk the expected loss grows faster than the gain.} Past a point the two cross,
 and it is the rich who stop first. The reversal therefore happens because the mortality
 penalty rises quickly with income. The household with more to
 lose loses more, and loses disproportionately more than it gains from drugs.
