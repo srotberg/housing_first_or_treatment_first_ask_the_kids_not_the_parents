@@ -2185,21 +2185,19 @@ reproduces a log-linear fit to the share of adults carrying SMI at each age in N
 
 \paragraph{Block 11: Interest and taxes.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$r$, the risk-free rate.] This parameter is the return on saving. Raise it and saving pays more, so households hold more assets to carry them through a spell out of work or without a voucher. I set it to three percent, from Kaplan et al.\
+\item[$r$, the risk-free rate.] This parameter \new{sets} the return on saving. Raise it and saving pays more, so households hold more assets to carry them through a spell out of work or without a voucher. I set it to three percent, from Kaplan et al.\
 (2020).
 
 \item[$\varphi$, tax progressivity.] This is the exponent on income in the tax schedule of
 Section~\ref{sec:ftaxes}, and it determines the progressivity of the labour income tax. Lower it and the tax is more progressive, so households with low incomes, among them most voucher holders and most drug users, keep more of what they earn. It is set to $0.85$, which makes the schedule somewhat less progressive than the estimate of $1-\varphi=0.181$ in Heathcote et al.\ (2017). 
 
-\item[$\tau_{\ell}$, the scale of after-tax labour income.] Given $\varphi$, it sets how much
-of their labour income households keep after tax, so raising it lowers the tax liability. It does not move in the experiments: the budget is
+\item[$\tau_{\ell}$, the scale of after-tax labour income.] Given $\varphi$, \new{this parameter} sets how much
+of their labour income households keep after tax \new{on average}, so raising it lowers the tax liability. It does not move in the experiments: the budget is
 balanced by $\pi_V$ instead. It is calibrated  to
 an average labour income tax rate of $22.4$ percent,
-which is what McDaniel (2007) measures for the United States and what Guvenen et al.\
- (2023) use; at its value of $0.89$ the model gives
-$20.9$ percent.
+which is what McDaniel (2007) measures for the United States and what Guvenen et al.\ (2023) use.
 
-\item[$\tau_k$, the capital income tax.] This parameter affects the after-tax return on savings. Raise it and saving pays less, so households hold fewer assets to fall back on. I set it to fifteen percent, consistent
+\item[$\tau_k$, the capital income tax \new{rate}.] This parameter affects the after-tax return on savings. Raise it and saving pays less, so households hold fewer assets to fall back on. I set it to fifteen percent, consistent
 with the statutory United States rate on long-term capital gains and qualified
 dividends for the middle of the income distribution, which the Internal Revenue
 Service (IRS) sets out in Topic 409

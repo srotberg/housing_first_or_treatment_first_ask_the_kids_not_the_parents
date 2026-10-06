@@ -133,6 +133,14 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r206 (06 Oct 22:10; PDF 51a863e6, 6 comments, p. 36). ALL RED STRIPPED; base_r206 + splice_r206 (0 names moved). In red: r
+'This parameter sets the return'; tau_ell 'this parameter sets', 'after tax on average', its model value REMOVED (marked);
+tau_k 'the capital income tax rate' in the item AND Table 6. NOT CHANGED, answered in chat: phi = 0.85 against Heathcote et al.
+(the author: 'I think there is a paper they have where it is 0.85' / 'we did find a place where Heathcote et al use 0.845'):
+established earlier -- the 0.845 is under eq. (34) of their 2014 AER paper, the labour-supply factor (1+sigma)/(sigma+gamma),
+not the tax term; that paper's tau is 0.185 (1 - tau = 0.815), the 2017 QJE's 0.181. The sentence 'somewhat less progressive
+than the estimate of 1-phi = 0.181' stays; 0.85 itself is still unattributed (DATA_APPENDIX open item 7).
+
 ALL RED REMOVED (06 Oct 21:55, the author: "remove all red"); PDF has no red span. RED_reviews (the author, same time): the repo
 is PRIVATE now; the author wants RED_reviews to stay private if the repo is ever made public, but "i will keep it in the repo for
 now". BEFORE THE REPO IS MADE PUBLIC: move RED_reviews to its own private repo with its history, delete it here with a local-only
