@@ -133,6 +133,12 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r195 (06 Oct 18:50; PDF e0300de0, 3 comments, p. 27). ALL RED STRIPPED; base_r195 + splice_r195 (0 names moved). In red:
+the integrals of (37) and (38) carry the subscript S, the state space, as the Bellman's does, and the text says (37) holds 'for
+j = 1,...,J-1 and every measurable set S' of the state space S of (18), with the integral over the state s of the households of
+age j', and after (38) 'the integrals are again over s' (the author: 'what are the integrals here over? s?', 'for j=1...J-1?');
+after (39) 'z_1^child the child's log productivity at entry, age j = 1' (the author: 'what is the 1 denoting?').
+
 ROUND r194 (06 Oct 18:35; PDF 5761332e, 7 comments, pp. 26-27). ALL RED STRIPPED; base_r194 + splice_r194 (0 names moved).
 POLICY FUNCTIONS AND DISTRIBUTIONS NOW TAKE (j,s), like V(j,s) and the equilibrium definition's h_t(j,.) (the author: 'the j has
 to be inside... check everywhere'): the definition at the end of 4.11 h(j,s), v(j,s), tau(j,s), a'(j,s); the drug market (36)
