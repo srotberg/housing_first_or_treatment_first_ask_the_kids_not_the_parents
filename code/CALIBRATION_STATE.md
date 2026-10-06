@@ -133,6 +133,22 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r190 (06 Oct 17:30; PDF 667b7ef7, 24 comments, pp. 22-25). ALL RED STRIPPED; base_r190 + splice_r190 (0 names
+moved). In red: S(y) footnote '... raise the benefit. Then social security payments are'; tax footnote 'The minimum keeps
+the labour income tax from turning negative, since at low incomes tau Y^phi exceeds Y itself.' (the rest removed); 'the
+chance of finding a job when unemployed'; death risk 'kappa_phiH > 1 multiplies the death probability when a household is
+in a shelter, kappa_phid > 1 when a household has a SUD, and kappa_phim > 1 the baseline risk when a household has SMI';
+THE EMPLOYMENT RATES ARE NOW FUNCTIONS (the author: 'should these be functions?'): pi^eu(y,h) and pi^ue(h,d',m') in (femp),
+the shocks sentence and (fetrans), the arguments what each depends on in the Fortran (separation: productivity tilt and
+the shelter; finding: shelter, next period's SUD and SMI); 'There is no penalty for a parent's homelessness' removed;
+'parental unemployment ... through the reduction in household resources'; 'Income-eligible holders and income-eligible
+households that draw a voucher are tested'; 'unlike in Section 3.5, enforcement is not perfect: with probability 1-p_det > 0
+a household that fails the condition actually gets to keep its voucher'; 'excluded from the voucher programme for a period
+of time'; 'the next period's state'; 'with the probability in (26)', 'in (27)'.
+T = 60 KILLED BY A CONTAINER RESTART (06 Oct about 17:12; uptime 2 min at 17:14), last log line 17:04, loop 3 a few minutes
+into its backward pass. Loop 2's paths (saved 17:00) are archived in results/transition_2c/loop2_r2 and are the restart's
+seeds. NOT RELAUNCHED: the author is asked whether to relaunch on the same pi_V rule or with the weakened netting.
+
 T = 60 LOOP 2 COMPLETE (06 Oct 17:00) AND ARCHIVED to results/transition_2c/loop2_r2/ (six path seeds, the curve,
 run.log.gz, run_between_paths_saved.log.gz = log lines 37131-51645, early_years.txt, cohort_cev.txt with --terminal
 arm_tf --refs arm_null arm_tf, transition_loop2r2.png against loop 1_r2). DRUG MARKET CONVERGING: mean |distance| over

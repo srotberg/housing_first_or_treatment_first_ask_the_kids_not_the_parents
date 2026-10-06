@@ -1337,7 +1337,7 @@ u\big(c,h,v,\tau\big) \;=\; U(X_P)\;+\;\omega_c\,(\xi_j-1)\,U(X_c)\;+\;\aleph\;-
 \end{equation}
 $\gamma$ is housing's share of the non-drug bundle and $\theta$ the drug's share of
 the whole, $\sigma$ is the coefficient of relative risk aversion, $\aleph$ is a flow value of being alive, counted once per household, and $\bar\tau^{u}$ is the utility
-cost of a year in treatment, which is described in Section~\ref{sec:fdrug}. The child's term is its own flow utility, which the parent weighs by $\omega_c$, and is counted as $\xi_j-1$ of the household; it gets none of the drug, so a parent's drug spending reaches it through \new{a} reduction in the consumption and housing they share. After $J_K$ periods the child leaves to form its own household, and the child term is gone, at which point $\xi_j=1$ for the parent.
+cost of a year in treatment, which is described in Section~\ref{sec:fdrug}. The child's term is its own flow utility, which the parent weighs by $\omega_c$, and is counted as $\xi_j-1$ of the household; it gets none of the drug, so a parent's drug spending reaches it through a reduction in the consumption and housing they share. After $J_K$ periods the child leaves to form its own household, and the child term is gone, at which point $\xi_j=1$ for the parent.
 
 Aggregate homelessness $H$ carries the disamenity $\kappa_x H$ for every household and
 child alive, which is what makes homelessness an externality for everyone rather than only a
@@ -1369,8 +1369,8 @@ S(y) & j\ge J_{R} \quad\text{(retired)} .
 UI replaces a share $\psi_{ui}$ of earnings on a base capped
 at $\bar y$, and it is paid only to a share $p_{ui}$ of those losing their job, mimicking the share of
 insured separations. After the first year, unemployed households, insured and uninsured alike, receive
-zero UI ($e=3$). Social security $S(y)$ follows the statutory formula.\footnote{\label{fn:ss}\new{Let} $\tilde y=\min\{y,\,y^{\max}\}$ \new{denote} the household's productivity at its last
-working age up to the taxable maximum $y^{\max}$, the ceiling above which earnings no longer raise the benefit, \new{then social security payments are} $S(y)=\bar w\max\big\{\underline S,\ \alpha_1\min\{\tilde y,k_1\}+\alpha_2\max\{0,\min\{\tilde y,k_2\}-k_1\}
+zero UI ($e=3$). Social security $S(y)$ follows the statutory formula.\footnote{\label{fn:ss}Let $\tilde y=\min\{y,\,y^{\max}\}$ denote the household's productivity at its last
+working age up to the taxable maximum $y^{\max}$, the ceiling above which earnings no longer raise the benefit\new{. Then} social security payments are $S(y)=\bar w\max\big\{\underline S,\ \alpha_1\min\{\tilde y,k_1\}+\alpha_2\max\{0,\min\{\tilde y,k_2\}-k_1\}
 +\alpha_3\max\{0,\tilde y-k_2\}\big\}$, where $k_1<k_2$ are the two bend points,
 $\alpha_1>\alpha_2>\alpha_3$ the shares replaced below, between and above them,
 $\underline S$ the Supplemental Security Income (SSI) payment, and $\bar w$ the benchmark's average labour income. Their values are given in Section~\ref{sec:stdparams}.}
@@ -1391,7 +1391,7 @@ and capital income at a flat rate, so that after-tax income is
 y^{n}=\min\big\{Y,\ \tau_{\ell}\,Y^{\varphi}\big\}\;+\;(1-\tau_k)\,r\,a ,
 \end{equation}
 where $\tau_{\ell}$ scales after-tax income, and so sets the level of the tax, which falls as $\tau_{\ell}$ rises, and $1-\varphi$ sets
-its progressivity; $\tau_k$ is the flat tax rate on capital income and $r$ is the exogenous interest rate on savings.\footnote{\new{The minimum keeps the labour income tax from turning negative: at low incomes $\tau_{\ell}Y^{\varphi}$ exceeds $Y$ itself, and a household there pays no tax rather than receiving a transfer through it.}}
+its progressivity; $\tau_k$ is the flat tax rate on capital income and $r$ is the exogenous interest rate on savings.\footnote{The minimum keeps the labour income tax from turning negative\new{, since} at low incomes $\tau_{\ell}Y^{\varphi}$ exceeds $Y$ itself.}
 
 \paragraph{Transfers.} Food assistance pays the maximum allotment $\underline c$ less
 the share $\varrho$ of income, and the voucher pays a holder that is eligible this
@@ -1422,7 +1422,7 @@ c+p_v v+a' \;=\; y^{n}+a+T_0\mathbf{1}\{j=1\}\;-\;p_r\, h\,\mathbf{1}\{h\neq h_1
 \end{equation}
 Food assistance is paid in kind, so it cannot directly fund the drug, the rent or saving. The
 drug price is $p_v$, which is endogenous here as opposed to exogenous like in the
-stylized model, and the rent per unit of housing $p_r$ \new{is fixed and held} at its benchmark value
+stylized model, and the rent per unit of housing $p_r$ is fixed and held at its benchmark value
 in every simulation. Treatment costs utility only.
 
 \subsection{Housing and the homelessness loop}
@@ -1446,7 +1446,7 @@ but recovered), and uses acquires it ($d=2$) with probability $\pi_d$,
 \end{equation}
 and a household that has
 recovered can acquire the disorder again. A household may begin using only up to an
-age $J_E$.\footnote{Without it there is \new{little-to-no} consequence at old ages to using: too
+age $J_E$.\footnote{Without it there is little-to-no consequence at old ages to using: too
 little life remains for the disorder to damage, so the model produces too much of
 it. The cause is that death is certain at the last age $J$, so close to it a household
 knows how little life remains, whereas in real life the vast majority of people do not know exactly when they will die.
@@ -1457,11 +1457,11 @@ Section~\ref{sec:fullcal} gives the value of $J_E$.} A household with the SUD re
 &\times\big(\mathbf{1}\{\tau=1\}\,g+\mathbf{1}\{\tau=0\}\big)\Big\},
 \end{aligned}
 \end{equation}
-\new{where} $\bar\pi_r$ \new{is} the baseline annual chance of recovering while housed, without SMI and untreated\new{. It has} three multipliers on it: $\mu_H<1$, which means that recovery is
+where $\bar\pi_r$ is the baseline annual chance of recovering while housed, without SMI and untreated. It has three multipliers on it: $\mu_H<1$, which means that recovery is
 harder in a shelter, $\mu_m<1$, which means that it is harder with SMI, and $g>1$,
 which means that it is more likely in treatment.
 
-$\mu_H$ is how housing acts on \new{SUD recovery} here. Housing does not change what a household wants: flow utility
+$\mu_H$ is how housing acts on SUD recovery here. Housing does not change what a household wants: flow utility
 is the same function of $(c,h,v)$ housed or not. What housing changes is the chance of
 getting out of the disorder once it is carried. Milby et al.\ (2005) randomised
 cocaine-dependent homeless adults into arms differing in housing and measured weeks of
@@ -1477,18 +1477,18 @@ does not exempt the household from Treatment First's condition.
 $m$ is a two-state Markov chain representing SMI, mental illness severe enough to cause substantial functional impairment. It affects a small share of adults, whereas any
 mental illness affects roughly a quarter of adults and includes mild anxiety. Onset
 follows an age profile $\varsigma_m(j)$, normalised to one at age $26$ and scaled by the level
-$\omega_m$, and a household that carries the SUD is $\iota>1$ times \new{more} likely to develop SMI \new{than} one that does not,
+$\omega_m$, and a household that carries the SUD is $\iota>1$ times more likely to develop SMI than one that does not,
 \begin{equation}\label{eq:fonset}
 \Pr(m'=1\mid m=0,d)=\min\big\{1,\ \omega_m\,\varsigma_m(j)\,\big(\mathbf{1}\{d=2\}\,\iota+\mathbf{1}\{d\neq2\}\big)\big\},
 \qquad
 \Pr(m'=0\mid m=1)=\lambda_m .
 \end{equation}
-The effect of the SUD on \new{SMI onset}, $\iota>1$, runs in the direction the evidence
+The effect of the SUD on SMI onset, $\iota>1$, runs in the direction the evidence
 supports. About a quarter of those with a psychosis induced by a substance go on to develop
 schizophrenia or bipolar disorder (Murrie et al., 2020), and in the Danish registers people with any SUD are more likely to develop
-schizophrenia than people with no SUD, and those with \new{an} opioid use disorder more likely still (Nielsen et al., 2017).
+schizophrenia than people with no SUD, and those with an opioid use disorder more likely still (Nielsen et al., 2017).
 
-SMI then affects three objects: the chance of \new{finding a job}, through~\eqref{eq:femp}, mortality, through~\eqref{eq:fsurv}, both in
+SMI then affects three objects: the chance of finding a job \new{when unemployed}, through~\eqref{eq:femp}, mortality, through~\eqref{eq:fsurv}, both in
 Section~\ref{sec:fcosts}, and the SUD recovery hazard, through $\mu_m$
 in~\eqref{eq:frecover} in Section~\ref{sec:fdrug}. It does not change the utility function or earnings on the job.
 
@@ -1509,9 +1509,7 @@ for the probability without and with the disorder. The probability of dying is t
 1-\phi(j,h,d,m)=\min\Big\{1,\ \big(\mathbf{1}\{m=1\}\,\kappa_{\phi m}+\mathbf{1}\{m=0\}\big)\,q^{\,0}_j(h)
 +\mathbf{1}\{d=2\}\big[q^{\,1}_j(h)-q^{\,0}_j(h)\big]\Big\},
 \end{equation}
-so $\kappa_{\phi H}$ multiplies the death probability of a household in a shelter,
-$\kappa_{\phi d}$ that of a household carrying the disorder, and $\kappa_{\phi m}>1$ the
-baseline risk of a household with SMI, to which the excess risk of the disorder is
+so $\kappa_{\phi H}\new{{}>1}$ multiplies the death probability \new{when a household is in a shelter}, $\kappa_{\phi d}\new{{}>1}$ \new{when a household has a SUD}, and $\kappa_{\phi m}>1$ the baseline risk \new{when a household has SMI}, to which the excess risk of the disorder is
 added. A household without the disorder therefore dies with probability $q^{\,0}_j(h)$, or
 $\min\{1,\,\kappa_{\phi m}\,q^{\,0}_j(h)\}$ with SMI, and the disorder adds the excess
 $q^{\,1}_j(h)-q^{\,0}_j(h)$ on top. The disorder kills
@@ -1525,9 +1523,9 @@ against.}
 with probability $\pi^{ue}$,
 \begin{equation}\label{eq:femp}
 \begin{aligned}
-\pi^{eu}&=\min\Big\{1,\ \bar\pi^{eu}\,\varpi(y)\,
+\pi^{eu}\new{(y,h)}&=\min\Big\{1,\ \bar\pi^{eu}\,\varpi(y)\,
 \big(1+\mathbf{1}\{h=h_1\}\,\kappa_{H}\big)\Big\},\\
-\pi^{ue}&=\min\Big\{1,\ \frac{\bar\pi^{ue}\,\big(1-\mathbf{1}\{h=h_1\}\,\kappa_{H}\big)}
+\pi^{ue}\new{(h,d',m')}&=\min\Big\{1,\ \frac{\bar\pi^{ue}\,\big(1-\mathbf{1}\{h=h_1\}\,\kappa_{H}\big)}
 {\big(\mathbf{1}\{d'=2\}\,\kappa^{ue}_{d}+\mathbf{1}\{d'\neq2\}\big)\big(\mathbf{1}\{m'=1\}\,\kappa^{ue}_{m}+\mathbf{1}\{m'=0\}\big)}\Big\},
 \end{aligned}
 \end{equation}
@@ -1541,13 +1539,12 @@ shelter.
 \paragraph{The child's productivity penalty.} A child whose parent had the disorder at any point while the child lived at home,
 before $J_K$ or before the parent died if that came first, enters the economy with its productivity lowered
 by the proportion $\delta_d$ in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec}, and the penalty stays with the
-child for life. There is no penalty for a parent's homelessness. The parent weighs the
+child for life. The parent weighs the
 penalty through the weight $\omega_c$ it puts on its child (Section~\ref{sec:fproblem}): using does
 not pass the penalty on by itself, but it carries the chance $\pi_d$ of acquiring the disorder,
 and with it the penalty. The penalty is a risk to the
 parent's own objective only to the extent that $\omega_c$ is positive, so it carries an externality rather
-than a pure personal cost, and it is the one risk that reaches the child after it has left home; unemployment
-reaches the child only while it is at home, through what the household shares, which the parent likewise weighs
+than a pure personal cost, and it is the one risk that reaches the child after it has left home; \new{parental} unemployment reaches the child only while it is at home, through \new{the reduction in household resources}, which the parent likewise weighs
 only at $\omega_c$.
 
 \subsection{The voucher and the two policies}\label{sec:fvoucher}
@@ -1563,12 +1560,11 @@ redrawn each period, and an eligible household without one draws one with probab
 $\pi_V$. Under Housing First that is the whole rule.
 
 Under Treatment First the programme is conditional. A household fails the condition if
-it uses or carries the disorder, $v>0$ or $d=2$, whether or not it is in treatment. Income-eligible holders and applicants that draw a voucher are tested, at a cost
+it uses or carries the disorder, $v>0$ or $d=2$, whether or not it is in treatment. Income-eligible holders and \new{income-eligible households} that draw a voucher are tested, at a cost
 $c_{\text{test}}$ each to the government, and one that fails is detected with probability
-$p_{\text{det}}$, so unlike in Section~\ref{sec:mh} enforcement need not be perfect: with
-$p_{\text{det}}<1$ some who fail keep their voucher. A detected holder keeps this period's payment
+$p_{\text{det}}$, so unlike in Section~\ref{sec:mh}\new{,} enforcement \new{is not} perfect: with \new{probability $1-p_{\text{det}}>0$ a household that fails the condition actually gets to keep its} voucher. A detected holder keeps this period's payment
 and loses the voucher from the next period; a detected applicant never receives it. Either way
-the household is excluded, $\eta'=2$: it cannot draw a voucher whatever its income, and it
+the household is excluded \new{from the voucher programme for a period of time}, $\eta'=2$: it cannot draw a voucher whatever its income, and it
 returns to the lottery, $\eta'=0$, with probability $\psi_x$ each year.
 
 None of
@@ -1578,7 +1574,7 @@ Section~\ref{sec:experiments} rather than in the calibration.
 
 \subsection{The shocks, collected}\label{sec:fshocks}
 
-Conditional on the state and the choices, next period's state is drawn in five
+Conditional on the state and the choices, \new{the} next period's state is drawn in five
 transitions, which are independent given the state except that employment depends on
 next period's SUD and SMI and on the dwelling $h$ through~\eqref{eq:femp} of
 Section~\ref{sec:fcosts}:
@@ -1587,26 +1583,25 @@ Section~\ref{sec:fcosts}:
 working, and unchanged in retirement.
 
 \paragraph{Employment $e$.} A household that loses its job is insured with probability
-$p_{ui}$, for one year. With $\pi^{ue}$ and $\pi^{eu}$ from~\eqref{eq:femp},
+$p_{ui}$, for one year. With $\pi^{ue}\new{(h,d',m')}$ and $\pi^{eu}\new{(y,h)}$ from~\eqref{eq:femp},
 \begin{equation}\label{eq:fetrans}
 e=1\ \longrightarrow
 \begin{cases}
-e'=1 & \text{w.p. } 1-\pi^{eu}\\
-e'=2 & \text{w.p. } p_{ui}\,\pi^{eu}\\
-e'=3 & \text{w.p. } (1-p_{ui})\,\pi^{eu}
+e'=1 & \text{w.p. } 1-\pi^{eu}\new{(y,h)}\\
+e'=2 & \text{w.p. } p_{ui}\,\pi^{eu}\new{(y,h)}\\
+e'=3 & \text{w.p. } (1-p_{ui})\,\pi^{eu}\new{(y,h)}
 \end{cases}
 \qquad
 e\in\{2,3\}\ \longrightarrow
 \begin{cases}
-e'=1 & \text{w.p. } \pi^{ue}\\
-e'=3 & \text{w.p. } 1-\pi^{ue}.
+e'=1 & \text{w.p. } \pi^{ue}\new{(h,d',m')}\\
+e'=3 & \text{w.p. } 1-\pi^{ue}\new{(h,d',m')}.
 \end{cases}
 \end{equation}
 State $2$ is reachable only from employment and never from itself, so the insured are
 in it for the first year out of work and then move to state $3$, which pays nothing.
 
-\paragraph{The SUD $d$.} A household without the disorder acquires it with the
-probability~\eqref{eq:fd} and one with it recovers with the probability~\eqref{eq:frecover}, both in
+\paragraph{The SUD $d$.} A household without the disorder acquires it with the probability \new{in}~\eqref{eq:fd} and one with it recovers with the probability \new{in}~\eqref{eq:frecover}, both in
 Section~\ref{sec:fdrug}, conditional on the chosen $v$, $h$ and $\tau$ and on $m$.
 
 \paragraph{SMI $m$.} SMI begins and ends according to~\eqref{eq:fonset} in Section~\ref{sec:fsmi}, conditional on $d$ and age.
