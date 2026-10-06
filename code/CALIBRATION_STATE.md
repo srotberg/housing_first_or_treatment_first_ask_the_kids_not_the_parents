@@ -133,6 +133,16 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r191 (06 Oct 17:50; PDF bc81571c, 6 comments, pp. 18 and 26). ALL RED STRIPPED; base_r191 + splice_r191 (0 names
+moved). The child term D(y) in (16) and (34) now conditions on the PENALTY, 0 or 1, not on the parent's state (the author:
+'the base is 0. writing d=0 makes it seem like the actual state is used'): E[.|y,0] - E[.|y,1], with 'drawn without the
+penalty delta_d, 0, or with it, 1' after each; 'valued entering at j=1'; 'Instead, when it enters as a difference, the term
+is zero'. The author's 'should this be d' instead of >=1?': in the Fortran (child_continuation_value) the charge reads
+ever_sud_of(current state), the latched bit ENTERING the period, and future_addiction_index is unused (removed 30 Sep, the
+author: 'you have v>0 included in the penalty'); so the Bellman's 1{d>=1} with today's d matches the code, and a disorder
+acquired in the year the child leaves or the parent dies does not reach the child. The stylized model charges pi(v)D on
+d', the period-1 draw. Raised with the author, not changed.
+
 ROUND r190 (06 Oct 17:30; PDF 667b7ef7, 24 comments, pp. 22-25). ALL RED STRIPPED; base_r190 + splice_r190 (0 names
 moved). In red: S(y) footnote '... raise the benefit. Then social security payments are'; tax footnote 'The minimum keeps
 the labour income tax from turning negative, since at low incomes tau Y^phi exceeds Y itself.' (the rest removed); 'the
