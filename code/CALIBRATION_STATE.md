@@ -133,6 +133,14 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r179 (06 Oct 03:00; PDF ea928640, 13 comments). ALL RED STRIPPED; base_r179 + splice_r179. Section 3.6, in red, made
+easier to read: dominance equality 'for any combination of unemployment and voucher draws they may receive in period 1';
+'measured at the start of period 1' removed; the worse-off footnote rewritten (a household with a given productivity that
+would use only after a certain combination of draws is worse off before the draws, but counts among the users only in the
+cases in which it gets that combination); 'Those are the households that would use under Housing First after some
+combination of draws, and so could lose a voucher under Treatment First, in period 1 or, if they acquire a SUD, in period 2.
+A household that would never use, regardless of its unemployment and voucher draws, is indifferent to which programme is
+in place.'
 ROUND r178 (06 Oct 02:50; PDF 5ba21ab7, 10 comments). ALL RED STRIPPED; base_r178 + splice_r178. Sections 3.5-3.6, in red:
 s1_hf_vs_none now 'above what it was before a programme existed' (derived_names.py); 'isolate these forces'; dominance
 equality for households 'that would not use under Housing First whatever employment and voucher draw they receive in
