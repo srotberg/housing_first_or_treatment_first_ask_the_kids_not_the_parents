@@ -133,6 +133,17 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r193 (06 Oct 18:20; PDF 7f1d65e3, 11 comments, pp. 18, 26, 27). ALL RED STRIPPED; base_r193 + splice_r193 (0 names
+moved). In red: the sentences after (16) and (34) broken up ('history' removed); NEW at the end of 4.11: 'The policy functions
+h_j(s), v_j(s), tau_j(s) and a'_j(s) are the dwelling, drug use, treatment and saving that solve (33) at age j and state s'
+(the author: 'should you define the policy functions notation?'); the government 'pays social security, UI, food assistance and
+vouchers under Housing First, with the addition of the drug tests under Treatment First'; 'In every experiment the taxes are
+held' (the omega_c = 1 clause removed); 'so in equilibrium it equals the mass of the dead'; after (39) 'The draw is of log
+productivity, and the child's productivity is y = e^{z}' (the author asked whether z or y is drawn: the Fortran draws LOG
+productivity, a normal over log_y_edge centred at mu + rho*(log y_parent - mu) + log(penalty)); 'the penalty also reaches the
+grandchild through the persistence'. FLAGGED, NOT CHANGED: the equilibrium definition (4.15) writes the policy functions
+h_t(j,.), the law of motion (37) h_j(s).
+
 T = 60 RESTARTED WITH A FASTER pi_V STEP (06 Oct 17:51; the author: "yes, restart T=60" and "do a faster step if you think
 it's best"). code/transition_fix/patch_transition_fix.py: TR_PI_V_RETENTION 0.9 -> 0.5 (damping 0.7 and the 0.12 pairing
 unchanged), so a persistent gap is stepped about 0.049*gap a year instead of 0.0115*gap. Rebuilt with build_tr60_fix.sh
