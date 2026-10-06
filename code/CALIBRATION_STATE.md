@@ -133,6 +133,8 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r180 (06 Oct 03:05; PDF 1d228e9b, 1 comment). ALL RED STRIPPED; base_r180 + splice_r180. In red: the budget-neutral
+footnote of Section 3.6 now compares with 'the same pi_V as in the benchmark of stage 1' instead of 'the same generosity'.
 ROUND r179 (06 Oct 03:00; PDF ea928640, 13 comments). ALL RED STRIPPED; base_r179 + splice_r179. Section 3.6, in red, made
 easier to read: dominance equality 'for any combination of unemployment and voucher draws they may receive in period 1';
 'measured at the start of period 1' removed; the worse-off footnote rewritten (a household with a given productivity that
