@@ -133,6 +133,27 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+T = 60 LOOP 1 (restart_r2) DONE 06 Oct 08:08, AND IN THE PAPER (the author: "we can put them when you have them").
+Loop 1 against loop 0_r2: drug market median gap 0.0090 (1.0 percent of the price) against 0.0249, worst 0.0305 (3.4
+percent) against 0.0480, above 0.005 in 39 of 59 years against 57; budget median residual 5.5e-4 against 1.35e-3, worst
+3.6e-3, above 1e-3 in 22 of 58 against 34. Not converged; loop 2 runs on. Archived: code/trtf60/tr2c_loop1_r2/run.log (loop
+1's segment, lines 28128-37130 of tr2c_t60/run.log, because the readers take a log's FIRST pass) and its welfare curve;
+results/transition_2c/loop1_r2/ (run.log.gz, the six path files saved after loop 1, the curve). Re-pinned:
+code/paper/transition_source.py (LOG, TAG, OUT, and new CURVE, REF, REF_NULL, REF_TF), transition_series.py (reference
+arms results/transition_2c/arm_null and arm_tf), cohort_cev.py (new --refs), export_results.py ('old_*' keys now point at
+the two transition_2c arms; last_cev falls back to cev_log where an arm has no passes.txt; the HOMELESS_BY_AGE scale check
+accepts shares to 5e-4, as later loops print shares), then export_results, export_revoked and export_pe_noext (the last
+two must follow export_results, which overwrites the file). Results/transition/tr2c_loop1_r2/ written, Figure ftrans
+redrawn. Changed in the paper (red; the splice now reds a MOVED transition number and keeps unmoved ones blue): reform
+cohort +2.4 percent (was 2.1), now LESS than the long run's 4.33 (was more than the old run's 1.39); first-decade average
+2.47; 76 percent of drug use's long-run fall in year 1 (91); parents using 16.32 -> 11.82, above the long run 10.99;
+homelessness peak +15 percent in year 7, long run -1 percent (x_trf_h_tail, new); children in a shelter 1.03 -> 1.16 in
+year 7, long run 1.03; SUD half its fall by year 11, nine tenths by 29; price above its long run for 33 years. Welfare
+paragraph rewritten (they gain because the fall in parental use reaches far more children than the shelter overshoot; they
+gain less than the long run because the share of parents with a SUD is still near its Housing First level, 5.81 percent in
+year 1 against 3.92 in the long run; the cohort CEV stays near 2.2-2.7 for about two decades, then rises to 4.33);
+x_disc_tr_kids rewritten for the 'less' branch. Abstract, introduction, long-run and Discussion claims checked against the
+new numbers and kept; their \upd tags removed; the section's tag now says provisional.
 ROUND r185 (06 Oct 06:00; PDF 3122dad6, 27 comments). ALL RED STRIPPED; base_r185 + splice_r185. In red, Sections
 3.7-3.9: stage 2's 'Some of the externalities ...' sentence removed; '24-percent earnings loss'; 'I set the weight';
 'better off in the long run under Treatment First'; the dominance sentence removed; 'Breaking the gains by periods of life

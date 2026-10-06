@@ -37,6 +37,11 @@ if '--terminal' in ARGS:
     k = ARGS.index('--terminal')
     TERMINAL = ARGS[k + 1]
     del ARGS[k:k + 2]
+REFS = None
+if '--refs' in ARGS:
+    k = ARGS.index('--refs')
+    REFS = ARGS[k + 1:k + 3]
+    del ARGS[k:k + 3]
 log = ARGS[0]
 curve = ARGS[1] if len(ARGS) > 1 else os.path.join(os.path.dirname(os.path.abspath(log)),
                                                             "welfare_curvebaseline_benchmark.dat")
@@ -146,6 +151,10 @@ def steady(path):
 here = os.path.dirname(os.path.abspath(__file__))
 refs = [("no policy", os.path.join(here, "../../results/counterfactuals_cf_fix2/null_share/cf.log.gz")),
         ("long run (TF 85)", os.path.join(here, "../../results/counterfactuals_cf_fix2/tf85/cf.log.gz"))]
+# --refs <no-policy cf.log.gz> <long-run cf.log.gz>: the steady states the path was solved between, when they are
+# not the old cf_fix2 arms (the T = 60 run on the 2c build, 6 October)
+if REFS:
+    refs = [("no policy", REFS[0]), ("long run (TF 85)", REFS[1])]
 b1_child = sum(BETA ** (a - 1) * (by[a][a - 1] - KAPPA_X * h[a]) for a in range(1, CHILD_YEARS + 1))
 b1_adult = BETA ** CHILD_YEARS * young[1 + CHILD_YEARS]
 print("\nBorn at the reform, split into childhood (ages 1-25, discounted to age 1) and adulthood (from 26):")

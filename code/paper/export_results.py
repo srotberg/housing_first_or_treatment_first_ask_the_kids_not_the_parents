@@ -58,11 +58,16 @@ OUT = os.path.join(HERE, 'results_numbers.json')
 # estimates...$35"). THE TRANSITION STILL READS THE OLD ARMS ('old_*'): its path was solved from the
 # old benchmark to the old Treatment First, so its changes are measured against those two until the
 # T = 60 transition is re-run on the new ones (stage E).
+# 6 October: THE TRANSITION NOW READS THE T = 60 RUN ON THE 2c BUILD (tr2c_t60, loop 1), solved between
+# results/transition_2c/arm_null and arm_tf, which transition_source.py names; the 'old_*' keys below are those two
+# arms now, kept under their old names so every reader of the transition block is unchanged.
+sys.path.insert(0, HERE)
+from transition_source import REF as TR_REF, REF_NULL as TR_NULL, REF_TF as TR_TF, CURVE as TR_CURVE
 TF_ARM = os.environ.get('TF_ARM', 'tf85_c35/tf')
 ARMDIR = {'null_share': (RES, 'nulltf/null'), 'null_remote': (RES, 'nulltf/null'),
           'tf85': (RES, TF_ARM), 'omega1': (RES, 'omega1_clear/omega1'),
           'internalise': (RES, 'optimal_clear/internalise'),
-          'old_null_share': (RES_OLD, 'null_share'), 'old_tf85': (RES_OLD, 'tf85')}
+          'old_null_share': (TR_REF, TR_NULL), 'old_tf85': (TR_REF, TR_TF)}
 
 
 def adir(arm):
@@ -108,7 +113,10 @@ def final(arm):
 
 
 def last_cev(arm):
-    """CEV at the exit pass, from passes.txt (the last row)"""
+    """CEV at the exit pass, from passes.txt (the last row); an arm kept without passes.txt (the transition's
+    re-solved arms in results/transition_2c) gives the CEV its cf.log.gz printed off the benchmark curve"""
+    if not os.path.exists(os.path.join(adir(arm), 'passes.txt')):
+        return cev_log(arm)
     L = open(os.path.join(adir(arm), 'passes.txt')).read().splitlines()
     rows = [l.split() for l in L if l.strip() and l.split()[0].isdigit()]
     # the CEV column by its header: the new arms' passes.txt adds V(chg) and V/user(chg) after it
@@ -559,7 +567,8 @@ tr_dir = os.path.join(ROOT, 'code', 'trtf60')
 if not re.search(r'TRANSITION WELFARE loop=\s*\d+\s+t=\s*26 ', open(best, errors='replace').read()):
     sys.exit(f'{best} does not reach period 26')
 cc = subprocess.run([sys.executable, os.path.join(ROOT, 'code', 'transition_fix', 'cohort_cev.py'),
-                     best, os.path.join(tr_dir, 'welfare_curvebaseline_benchmark.dat')],
+                     best, TR_CURVE, '--refs', os.path.join(adir('old_null_share'), 'cf.log.gz'),
+                     os.path.join(adir('old_tf85'), 'cf.log.gz')],
                     capture_output=True, text=True).stdout
 m = re.search(r'THE COHORT BORN AT THE REFORM \(b = 1\): CEV ([+-]\S+)%', cc)
 out['x_tr_cev_b1'] = f'{float(m.group(1)) - CEV0_TR:.1f}'
@@ -584,7 +593,8 @@ out['x_disc_tr_kids'] = (
     "high price keeps more of these children's parents from starting to use, thus raising their childhood "
     'consumption even more in the transition.'
     if _b1 > _lr > 0 else
-    'Children born at the reform gain less than those born in the long run.' if _lr > _b1 > 0 else '')
+    'Children born at the reform gain less than those born in the long run, because they grow up while the share of '
+    'parents carrying a SUD is still close to its Housing First level, but they still gain.' if _lr > _b1 > 0 else '')
 m = re.search(r'forward pass (\d+) of', cc)
 out['x_tr_pass'] = m.group(1)
 # THE REFORM COHORT'S GAIN IS A CHILDHOOD GAIN (the author, 29 September: the transition's
@@ -689,8 +699,9 @@ share = {}
 for t in HB:
     raw_floor = [x * 1e-14 for x in HB[t]]
     raw_share = [x * m for x, m in zip(HB[t], MB[t])]
-    for raw in (raw_floor, raw_share):
-        if abs(sum(raw) / sum(MB[t]) / H[t] - 1) < 1e-6:
+    # loop 0 prints masses x 1e14 (exact to 1e-13); later loops print shares, exact only to about 1e-4 relative
+    for raw, tol in ((raw_floor, 1e-6), (raw_share, 5e-4)):
+        if abs(sum(raw) / sum(MB[t]) / H[t] - 1) < tol:
             share[t] = [r / m if m > 0 else 0.0 for r, m in zip(raw, MB[t])]
             break
     else:

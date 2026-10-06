@@ -46,9 +46,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
-from transition_source import LOG, OUT   # the one pin
-CURVE = os.path.join(ROOT, 'code', 'trtf60', 'welfare_curvebaseline_benchmark.dat')
-RES = os.path.join(ROOT, 'results', 'counterfactuals_cf_fix2')
+from transition_source import LOG, OUT, CURVE, REF as RES, REF_NULL, REF_TF   # the one pin
 KV = re.compile(r'(\w+)=\s*([-+0-9.E]+)')
 
 
@@ -99,8 +97,10 @@ def parse(block):
 
 def hl_share_by_age(S, t):
     h = S['MECH'][t]['h_1']; HB, MB = S['HB'][t], S['MB'][t]
-    for raw in ([x * 1e-14 for x in HB], [x * m for x, m in zip(HB, MB)]):
-        if abs(sum(raw) / sum(MB) / h - 1) < 1e-6:
+    # loop 0 prints masses times 1e14 and they rebuild h_1 to 1e-13; loops 1 and on print shares, which rebuild it
+    # only to about 1e-4 relative (CALIBRATION_STATE, early_years.py: 'off by up to 6e-5'), hence the two tolerances
+    for raw, tol in (([x * 1e-14 for x in HB], 1e-6), ([x * m for x, m in zip(HB, MB)], 5e-4)):
+        if abs(sum(raw) / sum(MB) / h - 1) < tol:
             return [r / m if m > 0 else 0.0 for r, m in zip(raw, MB)]
     raise SystemExit(f'HOMELESS_BY_AGE t={t} reproduces h_1 on neither scale')
 
@@ -145,7 +145,7 @@ def final_tf85():
     keys = {'drug price': 'p_drug', 'pi_V (voucher probability)': 'pi_v', 'drug use b': 'b',
             'SUD lambda_d': 'lambda_d', 'homelessness h_1': 'h_1'}
     hf, tf = {}, {}
-    for l in open(os.path.join(RES, 'tf85', 'final.txt')):
+    for l in open(os.path.join(RES, REF_TF, 'final.txt')):
         for lab, k in keys.items():
             m = re.match(r'\s+' + re.escape(lab) + r'\s+(\S+)\s+no policy\s+(\S+)', l)
             if m:
@@ -175,7 +175,7 @@ def main():
                         S['BUDGET'].get(t, {}).get('residual', float('nan'))])
     # cohorts born after the reform, by the repository's own cohort CEV
     out = subprocess.run([sys.executable, os.path.join(ROOT, 'code', 'transition_fix', 'cohort_cev.py'),
-                          LOG, CURVE, '--terminal', os.path.join(RES, 'tf85', 'cf.log.gz')],
+                          LOG, CURVE, '--terminal', os.path.join(RES, REF_TF, 'cf.log.gz')],
                          capture_output=True, text=True).stdout
     rows = re.findall(r'^\s+(\d+)\s+\S+\s+([-+]\d+\.\d+)%\s+\((\S+), (\S+)\)', out, re.M)
     assert rows, 'cohort_cev.py printed no cohorts'
@@ -203,7 +203,7 @@ def main():
             d = A[k]
             w.writerow([k, ages.get(k, ''), d['mass'], d['V_reform'] - d['V_bench'], d['better_off']])
     hf, tf = final_tf85()
-    ref = {'hf': {**steady('null_share'), **hf}, 'tf': {**steady('tf85'), **tf},
+    ref = {'hf': {**steady(REF_NULL), **hf}, 'tf': {**steady(REF_TF), **tf},
            'better_off_all': B['share_all_ages'], 'better_off_sud': B['share_addicted']}
     json.dump(ref, open(os.path.join(OUT, 'reference.json'), 'w'), indent=1)
     print(f'wrote {OUT}: {len(T)} years, {len(rows)} cohorts, {len(A)} age bands')

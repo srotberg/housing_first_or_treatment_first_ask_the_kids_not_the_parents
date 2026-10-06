@@ -61,6 +61,13 @@ def derived(n):
     out['s2_split'] = ('a rather even split' if 2.0 / 3.0 <= r <= 1.5 else
                        'that most of the gain comes in adult life' if r < 2.0 / 3.0 else
                        'that most of the gain comes in childhood')
+    # the end of the full model's homelessness overshoot (6 October, the T = 60 run's second iterate): the long run
+    # can sit either side of Housing First, and "against $-1$ percent" read badly
+    if 'x_trf_h_lr_pc' in n:
+        v = _f(n['x_trf_h_lr_pc'])
+        out['x_trf_h_tail'] = (f'and then declines slowly towards its long-run level, ${abs(v):g}$ percent below that under Housing First'
+                               if v < 0 else
+                               f'against ${v:g}$ percent in the long run, and then declines slowly towards it')
     # the children born at the reform gain less than every cohort after them
     out['s4_tr_more'] = 'even more' if _f(n['s4_tr_c2']) > _f(n['s4_tr_c1']) else 'less'
     return out
