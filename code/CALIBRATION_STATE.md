@@ -133,6 +133,15 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r178 (06 Oct 02:50; PDF 5ba21ab7, 10 comments). ALL RED STRIPPED; base_r178 + splice_r178. Sections 3.5-3.6, in red:
+s1_hf_vs_none now 'above what it was before a programme existed' (derived_names.py); 'isolate these forces'; dominance
+equality for households 'that would not use under Housing First whatever employment and voucher draw they receive in
+period 1'; 'a household taking a risk it rationally chooses to bear'; the 9.4 percent worse off are 'measured at the start of
+period 1, when all of them are alive'; footnote on worse-off vs participation rewritten (welfare is measured before the
+period 1 draw, so a household that would use only after some draws is worse off as a whole); worse-off households are those
+that would use after at least one period 1 draw and can draw a voucher in period 1, or in period 2 after acquiring a SUD;
+the fixed-budget paragraph removed (the author: 'a side point ... go to the externality right away'), its footnote kept;
+budget-neutral CEV now 'about half of the' same-generosity one, from the new derived name s1_bb_frac.
 ROUND r177 (06 Oct 02:35; PDF 113d7954, 7 comments). ALL RED STRIPPED; base_r177 + splice_r177. In red: intro 'does not
 raise the utility cost on the rich', 'because no amount of savings can insure against it'; Section 3.5 (two forces) 'a
 voucher is not revoked for sobriety-related reasons, so both the moral-hazard and the value-of-life forces operate', 'which

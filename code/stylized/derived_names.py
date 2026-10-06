@@ -9,6 +9,7 @@ time so they are never typed.  Round 9775f014 (the author, 30 September).
                     the difference ("these are identical!" at 0.021 and 0.021)
   s1_net_b_abs, s1_net_dir     "a 1.30 percentage point increase"
   s1_hf_vs_none     whether Housing First takes use above its level with no programme
+  s1_bb_frac        the budget-neutral CEV as a fraction of the same-generosity one ("about half of the")
   s4_close_frac_a   the share of the distance Treatment First closes, with its article
                     ("closes about eighth" read ungrammatically, and 0.157 is a sixth)
 """
@@ -35,9 +36,12 @@ def derived(n):
     net = _f(n['s1_net_b'])
     out['s1_net_b_abs'] = f'{abs(net):.2f}'
     out['s1_net_dir'] = 'increase' if net > 0 else 'decrease'
-    out['s1_hf_vs_none'] = ('even higher than before a programme existed'
+    out['s1_hf_vs_none'] = ('above what it was before a programme existed'
                             if _f(n['s1_part_hf_b']) > _f(n['s1_part_none_b'])
                             else 'back towards its level with no programme')
+    # the budget-neutral footnote's cost of keeping Housing First as a share of the same-generosity one (round r178, the
+    # author: "about half of the ...")
+    out['s1_bb_frac'] = min(_CLOSE, key=lambda fw: abs(fw[0] - _f(n['s1_bb_cevpop']) / _f(n['s1_cevpop_b'])))[1]
     x = _f(n['s3_cev_tf']) / _f(n['s4_cev_opt'])
     out['s4_close_frac_a'] = min(_CLOSE, key=lambda fw: abs(fw[0] - x))[1]
     # the share worse off against the share using, both on participation's footing
