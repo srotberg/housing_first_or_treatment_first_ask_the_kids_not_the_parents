@@ -133,6 +133,12 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r203 (06 Oct 21:15; PDF e6cd075c, 12 comments, pp. 33-34). ALL RED STRIPPED; base_r203 + splice_r203 (0 names moved).
+In red: 5.2 'The parameters in this section are not inert'; Block 7 'determine what a household wants'; sigma 'which then means
+that the voucher is worth more'; gamma 'worth more relative to consumption' and its model share REMOVED (the author marked it);
+beta 'and thus how much they save'; xi_j 'while it lives with its parent', 'sqrt(N_j), where N_j ... with the parent (j <= J_K)
+... after the child has left (j > J_K)'; h_1 'which was calibrated in Block 2'.
+
 ROUND r202 (06 Oct 21:00; PDF 4cde3d4d, 12 comments, pp. 31-33). ALL RED STRIPPED; base_r202 + splice_r202 (0 names moved).
 In red: 'which can be instigated by a SUD'; Block 5's opening 'forward looking (and I show this in the full model as well in
 Section 6.2)' (6.2's 'Treatment First without externalities'); 'costs the child in earnings'; omega_c 'the labour productivity

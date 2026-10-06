@@ -1918,7 +1918,7 @@ SUD and $2.74$ for opioid use disorder in the Danish registers of Nielsen et al.
 \item[$\lambda_m$, the annual chance of recovering from SMI.] This parameter
 governs how long an episode of SMI lasts on average: it is the hazard of leaving
 the SMI state each year. Raise it and SMI is less persistent, and Treatment First has less
-of a deterrent effect, since SMI spells, which can be \new{instigated} by a SUD, are shorter on
+of a deterrent effect, since SMI spells, which can be instigated by a SUD, are shorter on
 average. It is set externally at $0.066$, the annual hazard that gives a
 $50$ percent chance of recovery within ten years,
 the ten-year clinical recovery rate for bipolar disorder in the first-episode psychosis cohort of {\AA}sb{\o} et al.\ (2022). 
@@ -1984,14 +1984,14 @@ in the past year in NSDUH 2024.
 \paragraph{Block 5: Externalities.} The parameters in this block decide whether
 something is an externality and, if so, what its magnitude is. This affects the ranking between Housing First and Treatment
 First, since the no-externality comparison already favours Housing First, because
-households are rational and forward looking \new{(and I show this in the full model as well in Section~\ref{sec:longrun})}. The first two are how much of the child a parent counts
-and what a parent's disorder costs the child \new{in earnings}, and the third is what the homelessness of strangers costs everybody. All three
+households are rational and forward looking (and I show this in the full model as well in Section~\ref{sec:longrun}). The first two are how much of the child a parent counts
+and what a parent's disorder costs the child in earnings, and the third is what the homelessness of strangers costs everybody. All three
 concern externalities in the strict sense: one household's choice enters another
 household's utility directly without being internalised by the household making the
 decision.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\omega_c$, the parent's weight on its child.] A parent bears $\omega_c$ of what
-its choices cost its child, during their childhood and in the \new{labour productivity draw penalty} the child
+its choices cost its child, during their childhood and in the labour productivity draw penalty the child
 enters with. As it rises the parent counts more of the child's
 loss, so the budget, earnings and childhood homelessness externalities left for Treatment First
 and Housing First to correct are smaller. It is identified by a counterfactual moment: with every other
@@ -2000,7 +2000,7 @@ $\omega_c$. In NSDUH 2024 adults aged 26 and over without children use at a rate
 $18.3$ percent above parents', and at
 $\omega_c=0.085$ removing the child's weight raises use by about the same
 in the model.
-\item[$\delta_d$, earnings the child loses \new{because of} a parent's SUD.] The child does not inherit
+\item[$\delta_d$, earnings the child loses because of a parent's SUD.] The child does not inherit
 the disorder, only a worse
 productivity draw, and that lower expected draw is what makes it likelier to be poor, to use, to
 acquire a disorder and SMI consequently, to be unhoused and to die
@@ -2016,13 +2016,13 @@ $1.44$ to $2.51$ in the literature (Section~\ref{sec:fvalid}).\footnote{The pena
 connects one household's housing status to the utility of another who is not its own child. Each
 household's flow utility falls by $\kappa_x$ times the aggregate homelessness rate,
 which no household can move on its own, so it moves no policy function and prices only
-what the policies do to the headcount. As it rises the aggregate homelessness externality increases, which loads whichever policy houses more people. The estimate \new{I draw from} is
+what the policies do to the headcount. As it rises the aggregate homelessness externality increases, which loads whichever policy houses more people. The estimate I draw from is
 the willingness to pay for ending homelessness in the contingent valuation of
 Loubi\`ere et al.\ (2020), $0.20$ percent of income. Its value solves the same problem as in the stylized model
-(Section~\ref{sec:kx}\new{, see footnote~\ref{fn:kx}}), with that willingness to pay converted to a share of consumption.
+(Section~\ref{sec:kx}, see footnote~\ref{fn:kx}), with that willingness to pay converted to a share of consumption.
 \end{description}
 
-\paragraph{Block 6: Drug market.} Only one parameter of the drug market \new{is in this block}.
+\paragraph{Block 6: Drug market.} Only one parameter of the drug market is in this block.
 It is what makes the drug price endogenous, so that when drug demand changes, so does
 the equilibrium drug price. This is a general-equilibrium offset that
 runs against Treatment First in particular. Deterring households from using takes them out of the
@@ -2031,14 +2031,14 @@ households in. Some of what the policy removes is handed back through the price,
 and how much depends on this parameter.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\varepsilon_s$, the price elasticity of drug supply.] When it rises, supply is more elastic, so the price moves less when demand does, and the general-equilibrium offset to Treatment First shrinks: at a very elastic supply,
-curing households barely lowers the price, so \new{the general-equilibrium price effect plays}
+curing households barely lowers the price, so the general-equilibrium price effect plays
 little role. Thus, setting it to a low value loads the model against Treatment First. I set it to
 $1.46$, which is what Mace et al.\ (2020) estimate for cannabis on
-Washington State administrative data\new{.}\footnote{To the best of my knowledge, there is no direct estimate for an illicit
+Washington State administrative data.\footnote{To the best of my knowledge, there is no direct estimate for an illicit
 drug, and cannabis is the closest market there is: it remains a Schedule I
 substance federally, so even a state-licensed producer works without interstate
 trade, without ordinary banking and under federal prohibition, which is the set of
-frictions an illicit supplier faces.} \new{This choice is} at the lower end of elasticities used in the drug supply
+frictions an illicit supplier faces.} This choice is at the lower end of elasticities used in the drug supply
 literature (Rhodes et al., 2002).
 \end{description}
 
@@ -2054,7 +2054,7 @@ data. The Model column reports what the model produces against that value, and i
 does so only for the six I calibrate internally, since the other
 twenty-seven have no target to reproduce.
 
-These parameters are not inert in the experiments. For example, the discount
+\new{The parameters in this section} are not inert in the experiments. For example, the discount
 factor governs how heavily a household weighs a death later in life, the dispersion
 of productivity determines how many households are poor enough to be at risk of
 homelessness and of acquiring a disorder, and risk aversion governs what insurance
@@ -2064,32 +2064,32 @@ but that they are not specific to this paper.
 \input{tables/tab_standard}
 
 
-\paragraph{Block 7: Preferences.} The four parameters in this block say what a household wants, and what it is willing to give up to get it.
+\paragraph{Block 7: Preferences.} The four parameters in this block \new{determine} what a household wants, and what it is willing to give up to get it.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\sigma$, risk aversion.] It sets the marginal utility of consumption, so it
 affects every welfare comparison in the paper. Increase it and households want smoother
 consumption and insurance is
-worth more, so the voucher is worth more. I set it to the standard value of two, following
+worth more, \new{which then means that} the voucher is worth more. I set it to the standard value of two, following
 Attanasio and Weber (2010).
 \item[$\gamma$, the weight on housing services.] It is the weight on housing in the
 bundle of consumption and housing, so it sets what a dwelling is worth against
 consumption, and that bundle is what the drug is weighed against. As
-$\gamma$ rises housing is worth more against consumption, households buy more of it,
+$\gamma$ rises housing is worth more \new{relative to} consumption, households buy more of it,
 and the share of spending that goes on housing rises with it. $\gamma$ is chosen for the share
-it produces: shelter plus utilities take $26.8$ percent of expenditure in the 2024 CEX, which excludes illicit drug spending. At its value of $0.54$, the model's share is $26.2$ percent.
+it produces: shelter plus utilities take $26.8$ percent of expenditure in the 2024 CEX, which excludes illicit drug spending.
 \item[$\beta$, the discount factor.] It sets how much households discount the
-future, and so how much they save and how much the prospect of death deters them from using drugs. As it rises households save more, the
+future, and \new{thus} how much they save and how much the prospect of death deters them from using drugs. As it rises households save more, the
  wealth-to-output ratio rises and households are more deterred by death. It is chosen so that wealth over output
 matches the national accounts, a ratio of three, from the Bureau of Economic Analysis (BEA) fixed asset tables
 against National Income and Product Accounts (NIPA) output, both read at the 2023 vintage, the last year the fixed asset tables cover.
 \item[$\xi_j$, the equivalence scale.] The household's consumption and
-dwelling are shared with the child while it lives at home, and thus are divided by
-$\xi_j$ to give what each member gets. Raise it and each member gets less of a given budget, and the child counts for more of the household, through the weight $\xi_j-1$ in~\eqref{eq:futil}. It is the square-root scale, $\sqrt N$, where $N$ in the model is set to two while
-the child lives with the parent, from the parent's age 26 to 50, and to one after the child has left.
+dwelling are shared with the child while it lives \new{with its parent}, and thus are divided by
+$\xi_j$ to give what each member gets. Raise it and each member gets less of a given budget, and the child counts for more of the household, through the weight $\xi_j-1$ in~\eqref{eq:futil}. It is the square-root scale, $\sqrt{\new{N_j}}$, where $\new{N_j}$ in the model is set to two while
+the child lives with the parent \new{($j\le J_K$)}, from the parent's age 26 to 50, and to one after the child has left \new{($j>J_K$)}.
 \end{description}
 
 \paragraph{Block 8: Rental ladder.} These three parameters build the grid of dwelling
-sizes a household chooses from. Below the smallest rung is the shelter, $h_1$, which was discussed in Block 2.
+sizes a household chooses from. Below the smallest rung is the shelter, $h_1$, which was \new{calibrated} in Block 2.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$h_2$, the smallest rental size.] The size of the cheapest dwelling is what
 decides how much of its income a poor household must spend to be housed at all. Raise it and the bottom rung is
