@@ -133,6 +133,10 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ALL RED REMOVED AGAIN (06 Oct 20:00, the author: "remove all red"); PDF has no red span. STANDING (the author, same message):
+"keep them. i will tell you when to mention the model moment performance" -- the model values still quoted in Section 5 text
+(kappa_phi_d, h_1, omega_m, kappa_ue_m, h_2, sigma_zeta, pi_eu-bar, tau_ell) STAY; remove one only when the author marks it.
+
 ROUND r199 (06 Oct 19:50; PDF e22e3dfe, 7 comments, pp. 29-30). ALL RED STRIPPED; base_r199 + splice_r199 (0 names moved).
 Removed: the Walker/Degenhardt 'narrower groups' sentence in kappa_phi_d's item (and Walker et al. 2017's reference, cited
 nowhere else; Degenhardt stays, cited in 4.8's footnote); 'which the model gives as' for kappa_ue_d and T_0; 'and over
