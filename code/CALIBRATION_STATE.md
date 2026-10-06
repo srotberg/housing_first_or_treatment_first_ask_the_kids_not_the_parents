@@ -133,6 +133,16 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r174b (06 Oct 01:20; no PDF; the author: 'is the story that income loss is a proportional loss while dying is a
+disproportionate loss?', then 'try to explain in the intro and in the section discussing it in an intuitive way'). Checked
+first in stage 1 (scratchpad/jobloss_by_income.py): a user keeps savings worth 11-16 percent of income, so after a job lost
+to the disorder it keeps about 18 percent of the period's resources at every income from 1.5 to 4 times the average (food
+assistance matters only at the bottom); the utility cost of the job loss falls from 5.9 to 2.4 over that range while the
+cost of dying rises from 8.8 to 9.9. In red, same round: the introduction and Section 3.4 now say a job loss is a
+PROPORTIONAL loss (savings grow with income, so the same share is lost, which shrinks in utility in step with the drug's
+price, like a markup on the drug) and dying a DISPROPORTIONATE one (the whole continuation value and the value of being
+alive, which no saving protects and which grows with income relative to the drug's cost); the log-utility and drug-share
+sentences removed.
 ROUND r174 (06 Oct 01:00; PDF 7968feca, 14 comments). ALL RED STRIPPED; base_r174 + splice_r174. The income-gradient
 explanation rebuilt on the OLD PAPER'S APPENDIX (writing/old/appendix.tex, section A: with log utility a proportional
 unemployment loss only shifts the level of utility, mortality multiplies the whole value of life and changes its slope in
