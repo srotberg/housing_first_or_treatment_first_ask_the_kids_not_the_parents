@@ -133,6 +133,21 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+T = 60 LOOP 2 COMPLETE (06 Oct 17:00) AND ARCHIVED to results/transition_2c/loop2_r2/ (six path seeds, the curve,
+run.log.gz, run_between_paths_saved.log.gz = log lines 37131-51645, early_years.txt, cohort_cev.txt with --terminal
+arm_tf --refs arm_null arm_tf, transition_loop2r2.png against loop 1_r2). DRUG MARKET CONVERGING: mean |distance| over
+years 1-59 2.3e-2, 9.4e-3, 3.1e-3 (loops 0-2), worst 4.8e-2, 3.1e-2, 2.0e-2. BUDGET NOT: worst |residual| 3.1e-3, 3.6e-3,
+6.5e-3, mean 1.4e-3, 1.2e-3, 2.5e-3, years above 3e-3: 1, 12, 24 -- a surplus in years 25-59 peaking at +0.0065 in year
+39. pi_V paths of loops 1 and 2 agree to the third decimal (9.144/9.143 at year 50): pi_V is effectively frozen.
+DIAGNOSIS (tr60_fix/tr.f90, item 10a): step = 0.7*(0.12*gap - acc), acc = 0.9*(acc + step), so for a gap that persists
+across years acc settles at 0.86 of the damped target and each year's step is about 0.0115*gap, a tenth of the intended
+gain (observed: 9.6e-5 at gap 6.0e-3 in year 36). The netting assumes a pi_V step at year s carries one-for-one into
+later years' budgets; across loops the surplus grows instead, as the drug price settles. Paths barely move: h_1 within
+0.002 points of loop 1; the cohort born in year 1 gains +2.68 percent (loop 1: +2.36), cohorts 2-11 +2.5 to +2.8.
+NOT re-pinned into the paper (transition_source stays on loop 1_r2) while the budget diverges. Loop 3 began at 17:00 on
+the same rule. PROPOSED TO THE AUTHOR: stop loop 3 now and restart from loop 2's saved paths with the netting weakened
+(retention 0.9 -> 0.5 gives about 0.049*gap a year, four times the step) or removed.
+
 ROUND r189 (06 Oct 17:05; PDF 8d410164, 18 comments, pp. 21-24). ALL RED STRIPPED; base_r189 + splice_r189 (0 names
 moved). In red: 'through a reduction in the consumption'; the S(y) footnote 'Let y~ = min{y, y^max} denote the
 household's productivity ..., then social security payments are S(y) = ...'; the min sentence of (ftax) MOVED TO A
