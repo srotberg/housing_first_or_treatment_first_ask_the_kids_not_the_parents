@@ -282,8 +282,7 @@ puts most households at a corner where they optimally consume none. Left to its 
 devices, however, that same assumption concentrates use at the \emph{top}, since the
 share of income spent on a luxury good rises with income. What reverses the income
 gradient, as I show, is the increased mortality risk that comes with a SUD: acquiring
-a disorder truncates the expected continuation value of life, and that loss rises
-faster than income does, so in equilibrium use concentrates at the bottom. As far as I know, this is the first theory that can explain both why not everyone uses drugs and why drug users
+a disorder truncates the expected continuation value of life, and that loss rises \new{with income}, so in equilibrium use concentrates at the bottom. As far as I know, this is the first theory that can explain both why not everyone uses drugs and why drug users
 are poorer on average without resting on systematic differences in preferences.
 
 I proceed with two models, a stylized model for the intuition and a full quantitative
@@ -326,7 +325,7 @@ $2$ times its calibrated value, with the other penalty switched off, the death p
 from $3.54$ times average income to $0.52$ times it; the unemployment penalty on its own leaves
 it at $3.54$, against $3.54$ with neither penalty.
 
-The linchpin is how each penalty varies with income. The richer the household, the less a given quantity of the drug costs it in utility terms. Losing a job, on the other hand, does not raise the utility cost on the rich: savings grow with income, so a lost job takes about the same share of every household's resources, and in utility terms it costs a rich household no more than a poor one. No amount of job-loss risk can therefore flip the gradient. Dying is different, because no amount of savings can insure against it: it destroys the whole continuation value, including the value of being alive, and that value grows with income. The richer the household, the more the risk of dying outweighs the drug's lower utility price, so when the death penalty is large enough it is the poor who use rather than the rich.
+The linchpin is \new{whether a penalty can be insured against}. The richer the household, the less a given quantity of the drug costs it in utility terms. Losing a job, on the other hand, does not raise the utility cost on the rich\new{, because it can be insured against}: savings grow with income, so a lost job takes about the same share of every household's resources, and in utility terms it costs a rich household no more than a poor one. No amount of job-loss risk can therefore flip the gradient. Dying is different, because no amount of savings can insure against it: it destroys the whole continuation value, including the value of being alive, and that value grows with income. The richer the household, the more the risk of dying outweighs the drug's lower utility price, so when the death penalty is large enough it is the poor who use rather than the rich.
 
 The experiment is the reform itself. The programme stays at its benchmark
 rationing, with the same probability of drawing a voucher, and only the rule
@@ -1127,19 +1126,17 @@ somebody else.\footnote{Spending what Treatment First saves on a higher $\pi_V$,
 %======================================================================
 \subsection{Stage 2: the child}\label{sec:kids}
 
-Some of the externalities modelled in this paper are the ones imposed on the
-children of households with a SUD. From a model point of view, stage 1 is as if the child only appeared as an adult: nothing its parent did affected it, and nobody counted it before then. This stage adds the child, as the quantitative
-model has it, and refits the model with the child in place.
+\new{Up until this point, I have shown that without externalities, Housing First weakly dominates Treatment First.} Some of the externalities modelled in this paper are the ones imposed on the children of households with a SUD. From a model point of view, stage 1 \new{assumed that} the child only appeared as an adult: nothing its parent did affected it, and nobody counted it before then. This stage adds the child \new{and, with it, the externalities, and then} refits the model with the child in place.
 
 \paragraph{The child in the household.} Each household raises one child
 during its adulthood period. The child shares the household's consumption and housing
-through the square-root equivalence scale $\xi$, while the drug only enters the utility of the parent, so the parent and the child hold different bundles,
+through the equivalence scale $\xi$, while the drug only enters the utility of the parent, so the parent and the child hold different bundles,
 \begin{equation}\label{eq:bundleskid}
 X_P=\Big[\Big(\frac{c}{\xi}\Big)^{1-\gamma}\Big(\frac{h}{\xi}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
 \qquad
 X_c=\Big[\Big(\frac{c}{\xi}\Big)^{1-\gamma}\Big(\frac{h}{\xi}\Big)^{\gamma}\Big]^{1-\theta}\,b^{\theta},
 \end{equation}
-and the parent's flow utility in period 1 becomes
+\new{where $X_P$ denotes the parent's bundle and $X_c$ the child's, and the parent's flow utility in period 1 is}
 \begin{equation}\label{eq:ukid}
 u_1(c,h,v) \;=\; U(X_P)\;+\;\omega_c\,(\xi-1)\,U(X_c)\;+\;\aleph .
 \end{equation}
@@ -1147,13 +1144,13 @@ The child consumes the household's consumption and housing but none of the drug,
 a parent's drug spending reaches it only by taking consumption and housing out of what
 they share, and it counts as $\xi-1$ of the household against the scale. The weight $\omega_c$ is the
 share of the child's utility that the parent takes into account. Without the drug and with
-$\omega_c=1$, the first two terms are $U(X)+(\xi-1)\,U(X)=\xi\,U(X)$, the usual form, which
+$\omega_c=1$, the first two terms \new{become} $\xi\,U(X)$, which
 counts the household as $\xi$ adult equivalents: the parent as one and the child as the
-remaining $\xi-1$. In period 2, when the parent moves into old age, the child leaves and the parent lives alone, $\xi=1$, and flow utility is that of~\eqref{eq:u}.
+remaining $\xi-1$. In period 2, when the parent moves into old age, the child leaves and the parent lives alone, \new{meaning that} $\xi=1$, and flow utility is that of~\eqref{eq:u}.
 
 \paragraph{The child leaves.} At the end of period 1 the child leaves the
-household and becomes an adult, entering period 1 of its own life, with its own child living with it. Its productivity
-is correlated with its parent's, and it is permanently reduced if the parent acquired the disorder while the
+household and becomes an adult, entering period 1 of its own \new{adulthood}, with its own child living with it. Its productivity
+is correlated with its parent's, and it is \new{further} permanently reduced if the parent acquired the disorder while the
 child lived with it,
 \begin{equation}\label{eq:kids}
 \log y_{\text{child}} \;=\; \rho\log y+(1-\rho)\mu_y+\varepsilon
@@ -1161,11 +1158,11 @@ child lived with it,
 \qquad \varepsilon\sim\mathcal N\big(0,\,(1-\rho^2)\,\sigma_y^2\big),
 \end{equation}
 where $\rho$ is the persistence of productivity across generations, $\mu_y=-\sigma_y^2/2$ is the mean of log productivity, which keeps its centre and the variance of $\varepsilon$ its spread the same
-in every generation, and $\delta_d$ is the penalty for the parent's disorder. 
+in every generation, and $\delta_d$ is the \new{earnings penalty} for the parent's disorder.\footnote{\new{The penalty runs through income rather than through anything the child inherits about the drug. Letting the child inherit a greater susceptibility, a higher $\pi_d$, would be inconsistent with the data: a child facing a higher chance of converting use into a SUD optimally uses \emph{less} ex ante, while children of parents with a SUD are \emph{more} likely to use, not less. Income works on both counts, and it works through the channels explored in Section~\ref{sec:who}: lower permanent income is unambiguously bad to receive, and this model already puts users at the bottom, so a child born poorer is mechanically more likely to use, which is aligned with the data. It is also supported by the empirical evidence reviewed in Section~\ref{sec:literature}. The income gradient does the whole job, so the model transmits a SUD across generations without the child inheriting any greater susceptibility to the disorder.}} 
 
 \paragraph{The parent's problem.} The child enters the parent's problem
 twice, once for each part of its life. In childhood it is the second term
-of~\eqref{eq:ukid}. As an adult it is the continuation value $D(y)$, what the parent's
+of~\eqref{eq:ukid}. As an adult it is the continuation value $D(y)$, \new{which measures} what the parent's
 disorder costs its child in the child's own lifetime value,
 \begin{equation}\label{eq:damage}
 D(y)\;=\;\mathbb{E}\big[\bar V_1(y_{\text{child}})\,\big|\,y,\,d'=0\big]
@@ -1174,7 +1171,7 @@ D(y)\;=\;\mathbb{E}\big[\bar V_1(y_{\text{child}})\,\big|\,y,\,d'=0\big]
 where $\bar V_1$ is the value of entering period 1, before its draws, at the child's
 productivity from~\eqref{eq:kids}. $D(y)$ captures the direct impact of the parent's SUD on
 its child's utility, which runs through the child's earnings. It enters as a difference and not
-a level, so it costs the parent nothing unless its use makes the disorder possible. The period 1 problem in~\eqref{eq:v1} in Section~\ref{sec:problem} then becomes
+a level, so it costs the parent nothing unless its use makes the disorder possible. \new{The parent's period-1 problem} in~\eqref{eq:v1} in Section~\ref{sec:problem} then becomes
 \begin{equation}\label{eq:v1kid}
 V_1(y,e,\eta) = \max_{\{k,\,v \ge 0,\,a' \ge 0\}}
 \Big\{ u_1(c,h_k,v)
@@ -1184,23 +1181,8 @@ V_1(y,e,\eta) = \max_{\{k,\,v \ge 0,\,a' \ge 0\}}
 $\omega_c$ multiplies both child terms. A planner who counted the child
 fully would put a weight of one on both, so what the parent leaves out, $1-\omega_c$ of
 the child's terms, is the externality on the child. $D$ is weighted by $\pi(v)$, the chance that the use turns into a disorder. $V_1$ depends on $D$ through the
-parent's problem and $D$ on $V_1$ through the child's, so the two are solved as a
+parent's problem and $D$ on $V_1$ through the \new{child's problem}, so the two are solved as a
 fixed point.
-
-\paragraph{Why income, and not susceptibility.} The penalty runs through
-income rather than through anything the child inherits about the drug.
-Letting the child inherit a greater
-susceptibility, a higher $\pi_d$, fails. A child facing a
-higher chance of converting use into a SUD optimally uses \emph{less} ex ante, which is at odds with the
-data: children of parents with a SUD are \emph{more} likely to use, not less.
-
-In contrast to the above, income works on both counts, and it works through the channels explored in
-Section~\ref{sec:who}: lower permanent income is unambiguously bad to receive,
-and this model already puts users at the bottom, so a child born poorer is
-mechanically more likely to use, which is aligned with the data. It is also
-supported by the empirical evidence reviewed in Section~\ref{sec:literature}. The income
-gradient does the whole job, so the model transmits a SUD across generations
-without the child inheriting any greater susceptibility to the disorder.
 
 \paragraph{Calibrating the child.} With the child added, $\xi$, $\rho$, $\delta_d$ and
 $\omega_c$ need to be calibrated as well. I set $\xi$ to $\sqrt2$, the square-root scale for a household of two (OECD, 2013). The

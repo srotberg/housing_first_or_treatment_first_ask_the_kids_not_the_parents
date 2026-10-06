@@ -133,6 +133,17 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r184 (06 Oct 05:15; PDF 79807892, 23 comments). ALL RED STRIPPED; base_r184 + splice_r184. In red: intro 'that loss
+rises with income' (not 'faster than income does'), 'The linchpin is whether a penalty can be insured against', job loss
+'does not raise the utility cost on the rich, because it can be insured against'; Section 3.7 (stage 2) opens 'Up until this
+point, I have shown that without externalities, Housing First weakly dominates Treatment First', 'stage 1 assumed that',
+'adds the child and, with it, the externalities, and then refits', 'square-root' dropped from the scale ('only for the
+calibration'), 'where X_P denotes the parent's bundle and X_c the child's', 'the first two terms become xi U(X)' (the
+U(X)+(xi-1)U(X) step and 'the usual form' removed), 'meaning that xi = 1', 'period 1 of its own adulthood', 'is further
+permanently reduced', 'earnings penalty', 'which measures what', 'The parent's period-1 problem', 'the child's problem';
+the 'Why income, and not susceptibility' paragraphs moved into a footnote on delta_d, with 'would be inconsistent with the
+data'. Drug market, loop 1 years 1-21 against loop 0_r2: median gap 0.038 -> 0.015, worst 0.048 -> 0.031, 19 of 21 still
+above 0.005.
 ROUND r182 (06 Oct 03:40; no PDF; the author on Altonji et al.: 'it is not written well and clearly how they actually
 estimate things', 'i want a simple-to-follow explanation', 'just explain what they do'). In red, Section 2: the Altonji
 passage replaced by what they do (PSID-type data on both incomes; among families in which parents give, the response of the
