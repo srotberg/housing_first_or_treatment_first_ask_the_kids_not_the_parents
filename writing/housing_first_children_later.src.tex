@@ -2054,7 +2054,7 @@ data. The Model column reports what the model produces against that value, and i
 does so only for the @@n_std_int@@ I calibrate internally, since the other
 @@n_std_ext@@ have no target to reproduce.
 
-\new{The parameters in this section} are not inert in the experiments. For example, the discount
+The parameters in this section are not inert in the experiments. For example, the discount
 factor governs how heavily a household weighs a death later in life, the dispersion
 of productivity determines how many households are poor enough to be at risk of
 homelessness and of acquiring a disorder, and risk aversion governs what insurance
@@ -2064,32 +2064,32 @@ but that they are not specific to this paper.
 \input{tables/tab_standard}
 
 
-\paragraph{Block 7: Preferences.} The four parameters in this block \new{determine} what a household wants, and what it is willing to give up to get it.
+\paragraph{Block 7: Preferences.} The four parameters in this block determine what a household wants, and what it is willing to give up to get it.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\sigma$, risk aversion.] It sets the marginal utility of consumption, so it
 affects every welfare comparison in the paper. Increase it and households want smoother
 consumption and insurance is
-worth more, \new{which then means that} the voucher is worth more. I set it to the standard value of two, following
+worth more, which then means that the voucher is worth more. I set it to the standard value of two, following
 Attanasio and Weber (2010).
 \item[$\gamma$, the weight on housing services.] It is the weight on housing in the
 bundle of consumption and housing, so it sets what a dwelling is worth against
 consumption, and that bundle is what the drug is weighed against. As
-$\gamma$ rises housing is worth more \new{relative to} consumption, households buy more of it,
+$\gamma$ rises housing is worth more relative to consumption, households buy more of it,
 and the share of spending that goes on housing rises with it. $\gamma$ is chosen for the share
 it produces: shelter plus utilities take $@@c_gamma_data@@$ percent of expenditure in the 2024 CEX, which excludes illicit drug spending.
 \item[$\beta$, the discount factor.] It sets how much households discount the
-future, and \new{thus} how much they save and how much the prospect of death deters them from using drugs. As it rises households save more, the
+future, and thus how much they save and how much the prospect of death deters them from using drugs. As it rises households save more, the
  wealth-to-output ratio rises and households are more deterred by death. It is chosen so that wealth over output
 matches the national accounts, a ratio of three, from the Bureau of Economic Analysis (BEA) fixed asset tables
 against National Income and Product Accounts (NIPA) output, both read at the 2023 vintage, the last year the fixed asset tables cover.
 \item[$\xi_j$, the equivalence scale.] The household's consumption and
-dwelling are shared with the child while it lives \new{with its parent}, and thus are divided by
-$\xi_j$ to give what each member gets. Raise it and each member gets less of a given budget, and the child counts for more of the household, through the weight $\xi_j-1$ in~\eqref{eq:futil}. It is the square-root scale, $\sqrt{\new{N_j}}$, where $\new{N_j}$ in the model is set to two while
-the child lives with the parent \new{($j\le J_K$)}, from the parent's age 26 to 50, and to one after the child has left \new{($j>J_K$)}.
+dwelling are shared with the child while it lives with its parent, and thus are divided by
+$\xi_j$ to give what each member gets. Raise it and each member gets less of a given budget, and the child counts for more of the household, through the weight $\xi_j-1$ in~\eqref{eq:futil}. It is the square-root scale, $\sqrt{N_j}$, where $N_j$ in the model is set to two while
+the child lives with the parent ($j\le J_K$), from the parent's age 26 to 50, and to one after the child has left ($j>J_K$).
 \end{description}
 
 \paragraph{Block 8: Rental ladder.} These three parameters build the grid of dwelling
-sizes a household chooses from. Below the smallest rung is the shelter, $h_1$, which was \new{calibrated} in Block 2.
+sizes a household chooses from. Below the smallest rung is the shelter, $h_1$, which was calibrated in Block 2.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$h_2$, the smallest rental size.] The size of the cheapest dwelling is what
 decides how much of its income a poor household must spend to be housed at all. Raise it and the bottom rung is
