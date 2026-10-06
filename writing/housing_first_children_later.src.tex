@@ -1776,7 +1776,9 @@ The tables carry the parameter, its description, the moment and source used to
 fix its value, the value of that moment in the data and in the model, and the value of
 the parameter itself. The text alongside each table adds what a table
 has no room for: the intuition for what each parameter does, and how its moment
-identifies it. \texttt{data/DATA\_APPENDIX.md} in the replication package documents every
+identifies it.
+
+\texttt{data/DATA\_APPENDIX.md} in the replication package documents every
 estimate in full, naming the dataset behind each target, its year and universe,
 and the computation that produces it. The package carries the extracts themselves
 alongside the code that reads them, so nothing has to be downloaded.
@@ -1787,9 +1789,9 @@ Of the @@n_all@@ parameters, @@n_main@@ are specific to this paper and carry its
 with the parameter, its description,
 and the moment and source used to fix its value, which is given in the last
 column. They are discussed one at a time below because they are the parameters a
-reader may want to argue over, and each is taken in the order of the table. For clarity
+reader may want to argue over, and each is taken in the order \new{it appears in} the table. For clarity\new{,}
 the table groups them into numbered blocks, each collecting the parameters that work
-through one mechanism, so that what each parameter does and how it moves the model can
+through \new{similar mechanisms}, so that what each parameter does and how it moves the model can
 be read alongside the others that act along similar lines; the blocks are taken in turn below,
 and those of the standard parameters in Section~\ref{sec:stdparams} continue the
 numbering.
@@ -1803,22 +1805,22 @@ there is for a policy to act on.
 \item[$\theta$, the weight on drugs in utility.]
 It is the parameter that determines the amount spent on drugs when
 the household consumes a strictly positive amount of it. As it rises use rises on both the extensive and intensive
-margins, which means that the externality rises and there is more for
+margins, which means that the \new{externalities rise} and there is more for
 either policy to act on. It is calibrated internally, at $@@c_theta_value@@$, to aggregate drug
 spending by users over their aggregate income, $@@c_theta_data@@$ percent
 in the data, from retail drug spending in Midgette et al.\ (2019) and the
 incomes of adults aged 26 and over who use in NSDUH 2024.
 
-\item[$b$, whether a household uses at all.] The marginal value of the drug goes
+\item[$b$, \new{the marginal utility from the first unit of drugs}.] The marginal value of the drug goes
 as $\theta/(b+v)$, so a larger $b$ makes the first units worth less and a household
-with little to spend buys nothing. As $b$ declines use rises, raising the externality
+with little to spend buys nothing. As $b$ declines use rises, raising the \new{externalities}
 that policy can affect. Its value is chosen to target a participation rate of
 $@@c_b_data@@$ percent, the NSDUH 2024 rate of a drug use disorder of any severity
-among adults aged 26 and over, and the model gives $@@c_b_model@@$ percent.
+among adults aged 26 and over.
 \item[$\pi_d$, the chance that a year of use leads to a SUD.] This is what
 makes using \emph{risky}, and it is the step that turns drug consumption into a
 disorder. Raise it and the
-externality rises, and the moral hazard costs more, since it is $\pi_d$ that converts an
+\new{externalities rise}, and the moral hazard converts an
 extra voucher under Housing First into a higher SUD rate that Treatment First then
 attempts to prevent. Its value is chosen so the model generates the share of users who
 carry a SUD, $@@c_pi_d_data@@$ percent among adults aged 26 and over in NSDUH 2024.
@@ -2140,7 +2142,7 @@ child keeps. It is the channel through which anything that lowers a parent's
 productivity lowers its child's: a parent whose own productivity carries the penalty
 $\delta_d$, because its own parent had a SUD, passes a lower draw on to its child, so a
 parent's SUD lowers productivity beyond the next generation. Raise it and a child's prospects depend more
-on its parent's, and the externality grows. It is set
+on its parent's, and the \new{earnings} externality grows. It is set
 externally at $@@c_rho_value@@$, between the intergenerational elasticities of earnings
 in Solon (1992) and Mazumder (2005).
 \item[$\bar\pi^{eu}$, the job separation rate.] The chance that an employed household

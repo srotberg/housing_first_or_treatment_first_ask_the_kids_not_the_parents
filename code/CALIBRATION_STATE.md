@@ -133,6 +133,16 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r197 (06 Oct 19:20; PDF 85410471, 11 comments, pp. 28-29). ALL RED STRIPPED; base_r197 + splice_r197 (0 names
+moved). In red: the replication-package sentence starts a new paragraph; 'in the order it appears in the table. For clarity,';
+'through similar mechanisms'; b's item is now '$b$, the marginal utility from the first unit of drugs' AND Table 5's row
+description (code/paper/calib_tables.py; the generator marks it red); 'the model gives 8.96 percent' removed from b's item;
+EXTERNALITIES PLURAL where the calibration section means them in general (the author: 'check everywhere in the calibration
+section'): theta 'the externalities rise', b 'raising the externalities', pi_d 'the externalities rise'; pi_d 'the moral
+hazard converts an extra voucher ... ' ('costs more, since it is pi_d that' removed); rho 'the earnings externality grows'
+(it is the earnings one). Left singular: the specific ones (earnings, homelessness) and the concept ('whether something is an
+externality', 'the no-externality comparison').
+
 ALL RED REMOVED (06 Oct 19:05, the author: "remove all red"): strip_red.py on the source and every table, baselines frozen to
 base_r196, splice_r196 (0 names red); the PDF has no red span. The blue \updnum marks on the provisional transition numbers
 (Section 6.3, from loop 1_r2) stay: they are not red, and they go when the converged T = 60 path replaces them.

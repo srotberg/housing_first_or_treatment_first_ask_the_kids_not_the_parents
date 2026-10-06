@@ -174,7 +174,7 @@ ELEVEN = [
         (r'$\theta$', 'Weight on drugs in utility', setcol('theta'),
          r'Drug spending over income, Midgette et al.\ (2019)',
          pc(C['drug_spending_share_data']), pc(THETA_AGG), f(H['relative_share_of_addiction_1'], 3)),
-        (r'$b$', 'Whether a household uses at all', setcol('b'), 'Any drug use disorder, NSDUH 2024',
+        (r'$b$', 'Marginal utility from the first unit of drugs', setcol('b'), 'Any drug use disorder, NSDUH 2024',
          pc(C['participation_rate_data'] / UPLIFT, 2), pc(mom('b total drug users'), 2),
          f(H['addiction_scalar_1'], 4)),
         (r'$\pi_d$', 'Chance that a year of use leads to a SUD', setcol('addiction_onset_base'),
