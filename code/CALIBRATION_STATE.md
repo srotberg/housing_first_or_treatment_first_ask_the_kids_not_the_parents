@@ -133,6 +133,27 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r185 (06 Oct 06:00; PDF 3122dad6, 27 comments). ALL RED STRIPPED; base_r185 + splice_r185. In red, Sections
+3.7-3.9: stage 2's 'Some of the externalities ...' sentence removed; '24-percent earnings loss'; 'I set the weight';
+'better off in the long run under Treatment First'; the dominance sentence removed; 'Breaking the gains by periods of life
+shows @@s2_split@@' (new derived name, 'a rather even split' while childhood/adult is within 2/3-3/2); 'because the child
+enters with a better productivity draw'; 'with no income support' removed from the stage 2 homelessness sentence (the
+introduction's copy of it, line ~347, left as is); transition opening: 'in the stylized model, a reduction in drug use
+actually benefits children even upon impact, and no child is worse off while living at home' (the author wrote 'all
+children'; checked: no stage 2 voucher holder uses under Treatment First, 0.000 percent against 4.016 percent who draw one
+and do not, so no child loses its housing, but children of parents who never use are unaffected), then the author's two
+sentences on the stylized versus full model; 'paths for ...' split into two sentences; 'revokes the voucher from
+income-eligible households carrying a SUD that happened to draw one'; 'which is the price'; 'which the rounded parts below
+do not add up to exactly' removed; stage 3 opens 'Before moving onto the full model, a note is due on the aggregate
+homelessness externality. The externality is modelled such that homelessness imposes a cost on each household's flow
+utility, reducing it by kappa_x H'; 'annual willingness to pay'; s3_kx_phrase now 'Treatment First in the stylized model'.
+OPEN, RAISED BY THE AUTHOR ([6] 'wasn't it 8.95?', [7] 'I think these numbers are off'): stage 2 is calibrated at the BASE
+income distribution (s2_m_part 8.84 against the 8.90 target, s2_m_sud 3.65 against 3.68), but s2_part_hf/s2_sud_hf are at
+the Housing First REST POINT of the generational chain (9.66, 4.00), where children of parents with a SUD carry delta_d, so
+the distribution is poorer and use higher. The benchmark the paper compares against is therefore not the calibrated one.
+Fix proposed to the author: calibrate stage 2 (and stages 3-4) at the Housing First rest point. Section 7 check against the
+full model: its benchmark moments are read off its own stationary distribution, in which newborn productivity is drawn
+from the parent's (Section 4.14), so the gap should not carry across; to confirm before closing.
 ROUND r184 (06 Oct 05:15; PDF 79807892, 23 comments). ALL RED STRIPPED; base_r184 + splice_r184. In red: intro 'that loss
 rises with income' (not 'faster than income does'), 'The linchpin is whether a penalty can be insured against', job loss
 'does not raise the utility cost on the rich, because it can be insured against'; Section 3.7 (stage 2) opens 'Up until this

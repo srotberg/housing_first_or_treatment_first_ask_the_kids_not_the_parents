@@ -10,6 +10,7 @@ time so they are never typed.  Round 9775f014 (the author, 30 September).
   s1_net_b_abs, s1_net_dir     "a 1.30 percentage point increase"
   s1_hf_vs_none     whether Housing First takes use above its level with no programme
   s1_bb_frac        the budget-neutral CEV as a fraction of the same-generosity one ("about half of the")
+  s2_split          whether stage 2's gain splits evenly between childhood and adult life
   s4_close_frac_a   the share of the distance Treatment First closes, with its article
                     ("closes about eighth" read ungrammatically, and 0.157 is a sixth)
 """
@@ -51,9 +52,15 @@ def derived(n):
     import fill
     a = fill.text_precision('s3_cev_tf_nokx', n['s3_cev_tf_nokx'])
     b = fill.text_precision('s3_cev_tf', n['s3_cev_tf'])
-    out['s3_kx_phrase'] = ('it changes essentially nothing about the welfare gain from Treatment First, which remains at'
+    out['s3_kx_phrase'] = ('it changes essentially nothing about the welfare gain from Treatment First in the stylized model, which remains at'
                            if a == b else
-                           f'it barely changes the welfare gain from Treatment First, which moves from ${a}$ to')
+                           f'it barely changes the welfare gain from Treatment First in the stylized model, which moves from ${a}$ to')
+    # how the stage 2 gain splits between childhood and adult life (round r185, the author: "Breaking the gains by
+    # periods of life shows a rather even split"), as words that turn if the two parts drift apart
+    r = _f(n['s2_cev_tf_kid']) / _f(n['s2_cev_tf_adult'])
+    out['s2_split'] = ('a rather even split' if 2.0 / 3.0 <= r <= 1.5 else
+                       'that most of the gain comes in adult life' if r < 2.0 / 3.0 else
+                       'that most of the gain comes in childhood')
     # the children born at the reform gain less than every cohort after them
     out['s4_tr_more'] = 'even more' if _f(n['s4_tr_c2']) > _f(n['s4_tr_c1']) else 'less'
     return out
