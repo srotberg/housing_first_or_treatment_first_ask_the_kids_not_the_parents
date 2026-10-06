@@ -133,6 +133,12 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r182 (06 Oct 03:40; no PDF; the author on Altonji et al.: 'it is not written well and clearly how they actually
+estimate things', 'i want a simple-to-follow explanation', 'just explain what they do'). In red, Section 2: the Altonji
+passage replaced by what they do (PSID-type data on both incomes; among families in which parents give, the response of the
+gift to a dollar more parent income and a dollar less child income; the two together are the move of a dollar from child to
+parent with total income unchanged; perfect altruism says the whole dollar, they find at most thirteen cents, 'less than 13
+cents' in their abstract, NBER w5378).
 T = 60 INTO THE PAPER, PREPARED (06 Oct 03:30). The paper's transition still reads restart 3g loop 0 (30 Sep, the old
 build) through code/paper/transition_source.py. To move it to tr2c_t60 loop 1 when that loop lands: (1) cut the loop-1
 segment of tr2c_t60/run.log (after the first 'TRANSITION PATHS SAVED', through the second) into its own archived run.log,
