@@ -133,6 +133,18 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+T = 60 RESTARTED WITH A FASTER pi_V STEP (06 Oct 17:51; the author: "yes, restart T=60" and "do a faster step if you think
+it's best"). code/transition_fix/patch_transition_fix.py: TR_PI_V_RETENTION 0.9 -> 0.5 (damping 0.7 and the 0.12 pairing
+unchanged), so a persistent gap is stepped about 0.049*gap a year instead of 0.0115*gap. Rebuilt with build_tr60_fix.sh
+(176-line patch check passed, 0 warnings, 0 errors); the old prod binary was byte-identical to the running one, so
+retention is the only change (kept as tr60_fix/hftf_tr_prod.ret09.bak). Staged as the earlier restarts:
+calibration_state.dat, newborn_parent_share.dat, START_EPOCH and the old seeds to tr2c_t60/restart_r3_crash_202610061750/,
+run.log -> run.log.killed.202610061750 (loop 3's first four minutes), PARAM_HANDOVER.txt from the kept copy, seeds = loop
+2_r2's saved drug price and pi_V paths (also results/transition_2c/restart_r3/). Launched by hand: wrapper 863 (in
+tr2c_worker.pid), binary 866, OMP 4; log confirms both seeds read (59 of 59). Loops number from 0 again: archive them as
+results/transition_2c/loop<N>_r3/. Loop 0_r3 should end about 02:00 UTC 7 Oct. WATCH: the budget gap should shrink
+across loops; if pi_V oscillates year to year (the reason retention was introduced), go back towards 0.9.
+
 ROUND r192 (06 Oct 18:15; PDF 4da82b58, 2 comments, pp. 18 and 26). ALL RED STRIPPED; base_r192 + splice_r192 (0 names
 moved). THE AUTHOR CORRECTED r191: 'the first term should have 0 and the second should have d'/d since that is in the
 control of the parent ... using 0 and 1 does not allow the parent to actually control it'. Now D(y,d') = E[V1|y,0] -

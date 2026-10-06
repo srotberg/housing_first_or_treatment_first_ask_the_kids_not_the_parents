@@ -305,7 +305,7 @@ once("                expected_child_value=expected_child_value_own\n",
 once("        integer :: pi_v_s_1=0\n",
      "        integer :: pi_v_s_1=0\n"
      "        ! transition fix item 10\n"
-     "        real(8), parameter :: TR_PI_V_RETENTION=0.9d0, TR_PI_V_DAMPING=0.7d0, TR_PRICE_NEIGHBOUR=0.2d0\n"
+     "        real(8), parameter :: TR_PI_V_RETENTION=0.5d0, TR_PI_V_DAMPING=0.7d0, TR_PRICE_NEIGHBOUR=0.2d0\n"
      "        real(8) :: pi_v_acc_1=0\n"
      "        integer :: tr_lo_1=1, tr_hi_1=1, tr_t_1=1\n",
      "item 10 declarations")
