@@ -2106,15 +2106,15 @@ lives and works, what it
 is expected to earn over its life, how persistent the shocks to it are, and how it
 moves between work and unemployment.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$J$, $J_K$ and $J_R$, the length of life, of \new{child rearing} and of working life, respectively.] A household lives at most
+\item[$J$, $J_K$ and $J_R$, the length of life, of child rearing and of working life, respectively.] A household lives at most
 $J$ periods, has its child at home for its first $J_K$ of them and works until age $J_R$, after which it retires on social security.
 Together they set how many years of life and of earnings a disorder can cost, and $J_K$ how long a parent's drug use reaches its child through what they share. Raise
 either $J$ or $J_R$ and a disorder that shortens life or work costs more; raise $J_K$ and the budget  and childhood homelessness externalities last longer. I set $J=@@c_j_value@@$, so
 that with $j=1$ at age 26 the last age is $@@c_j_age@@$, $J_K=@@c_j_k_value@@$, so that the child lives at home while its parent is 26 to $@@c_j_k_age@@$, and $J_R=@@c_j_r_value@@$, so that retirement begins at age $@@c_j_r_age@@$, the
 full retirement age under social security for those born between 1943 and 1954.
-\item[$\varepsilon(j)$, the age profile of efficiency.] \new{This is the} deterministic hump in
+\item[$\varepsilon(j)$, the age profile of efficiency.] This is the deterministic hump in
 earnings over the life cycle. Without it every
-household \new{with the same productivity} would earn the same at every age, and the ages at which households are
+household with the same productivity would earn the same at every age, and the ages at which households are
 poor, and so at risk of homelessness and of using, would be wrong at both ends of
 working life. I take it as the exponential of a quadratic in age used by
 Greenwood et al.\ (2025), $\varepsilon(j)=\exp\{-(j-1)^2/1800+(j-1)/30\}$ with $j=1$
@@ -2123,25 +2123,25 @@ falls $4$ percent from the peak to age $65$, the last working age.
 
 \item[$\rho_z$ and $\sigma_\zeta$, the productivity process.] Log
 productivity is persistent but not permanent: it follows an autoregressive process
-with persistence $\rho_z$ and shocks \new{with} standard deviation
+with persistence $\rho_z$ and shocks with standard deviation
 $\sigma_\zeta$. $\sigma_\zeta$ is what decides how many households are poor
 enough to be at risk of homelessness, and the share of earnings
 that goes to the bottom half of working households falls in it. I set
 $\rho_z=@@c_rho_z_value@@$, the persistence of the income process in Guvenen et al.\ (2023). $\sigma_\zeta$
 is calibrated to the bottom half's share of earnings among households aged 26 to 65 with
-\new{positive} wage income in the 2022 SCF, $@@c_sigma_zeta_data@@$ percent.
+positive wage income in the 2022 SCF, $@@c_sigma_zeta_data@@$ percent.
 
 \item[$\rho$, the persistence of productivity across generations.] The
 child's log productivity at entry into adulthood is drawn around its parent's with weight $\rho$ and
 around the mean with weight $1-\rho$, so $\rho$ is how much of its parent's current productivity a
 child keeps. It is the channel through which anything that lowers a parent's
 productivity lowers its child's: a parent whose own productivity carries the penalty
-$\delta_d$, because its own parent had a SUD, \new{also} passes a lower draw on to its child, so a
+$\delta_d$, because its own parent had a SUD, also passes a lower draw on to its child, so a
 parent's SUD lowers productivity beyond the next generation. Raise it and a child's prospects depend more
-on its \new{parent's decisions}, and the earnings externality grows. It is set
+on its parent's decisions, and the earnings externality grows. It is set
 externally at $@@c_rho_value@@$, between the intergenerational elasticities of earnings
 in Solon (1992) and Mazumder (2005).
-\item[$\bar\pi^{eu}$, the job separation rate.] \new{This parameter determines the} chance that an employed household
+\item[$\bar\pi^{eu}$, the job separation rate.] This parameter determines the chance that an employed household
 loses its job each year. It is scaled by $\varpi(y)$ in~\eqref{eq:femp}, so separations are likelier at low
 productivity. Raise it and more households lose work each year, so the unemployment
 rate rises with it. It is chosen to reproduce the aggregate
@@ -2150,19 +2150,19 @@ $@@c_bar_pi_eu_data@@$ percent, given the job-finding rate set externally below.
 \item[$\varpi(y)$, separations by productivity.] This parameter tilts the separation rate across
 productivity, so that low-productivity households lose their jobs more often, which is what
 puts them at a higher risk of homelessness. Steepen the tilt and job loss concentrates further among the poorest, and so does the risk of homelessness. It is normalised to average one across households, so
-that $\bar\pi^{eu}$ alone sets the aggregate \new{unemployment} rate. Each productivity node takes the
+that $\bar\pi^{eu}$ alone sets the aggregate unemployment rate. Each productivity node takes the
 unemployment odds of the education group it falls in, from the BLS 2019 annual averages of
 unemployment by educational attainment for ages 25 and over, with education ordering
 productivity by median earnings.
 \item[$\bar\pi^{ue}$, the annual job-finding rate.]  This parameter is the probability that an
-unemployed household finds work each year it is unemployed. With the divisors $\kappa^{ue}_{d}$ and $\kappa^{ue}_{m}$ it sets how long an unemployed household with a SUD or SMI is expected to remain unemployed. Raise it and spells out of work are shorter \new{on average}, so fewer households fall behind on the rent. I set it to
+unemployed household finds work each year it is unemployed. With the divisors $\kappa^{ue}_{d}$ and $\kappa^{ue}_{m}$ it sets how long an unemployed household with a SUD or SMI is expected to remain unemployed. Raise it and spells out of work are shorter on average, so fewer households fall behind on the rent. I set it to
 $@@c_bar_pi_ue_value@@$ from the annual exit rate Krueger et al.\ (2014) estimate on
 matched CPS panels.
-\item[$p_{ui}$, the share of separations that \new{receive UI}.] A household that
+\item[$p_{ui}$, the share of separations that receive UI.] A household that
 loses its job draws UI for one year with probability $p_{ui}$ and nothing
 otherwise. It sets how many of the newly unemployed fall straight to zero
 earnings, and how costly being unemployed is. I set it to $@@c_p_ui_value@@$, since about seven in ten unemployed people who
-worked in the past year \new{did not apply} for UI \new{after losing their job} in the BLS
+worked in the past year did not apply for UI after losing their job in the BLS
 supplement to the CPS for 2022.
 \end{description}
 
@@ -2174,7 +2174,7 @@ next age, before any multiplier. It is the profile every mortality multiplier in
 Section~\ref{sec:fullcal} multiplies, so it is the base the SUD, homelessness and
 SMI hazards scale. Raise it and households expect to live longer, so the life a SUD puts at risk is worth more. I take the profile from  the life table for the total population of the United States in 2010 (Arias, 2014), for ages $26$ to $85$.
 
-\item[$\varsigma_m(j)$, the age profile of SMI onset.] \new{This determines the} shape of onset
+\item[$\varsigma_m(j)$, the age profile of SMI onset.] This determines the shape of onset
 across ages, normalised to one at age $26$, so that $\omega_m$ in Table~\ref{tab:eleven} sets its
 level alone. It is here rather than in Table~\ref{tab:eleven} because, like the age survival profile, it only sets the
 baseline; what actually affects the impact of Housing First versus Treatment First is $\iota$, the multiplier a SUD puts

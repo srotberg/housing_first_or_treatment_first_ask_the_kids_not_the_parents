@@ -133,6 +133,12 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ALL RED REMOVED (06 Oct 21:55, the author: "remove all red"); PDF has no red span. RED_reviews (the author, same time): the repo
+is PRIVATE now; the author wants RED_reviews to stay private if the repo is ever made public, but "i will keep it in the repo for
+now". BEFORE THE REPO IS MADE PUBLIC: move RED_reviews to its own private repo with its history, delete it here with a local-only
+exclude (.git/info/exclude, so its name never appears), rewrite this repo's history to drop it (git filter-repo --path RED_reviews
+--invert-paths) and force-push; every clone then re-clones. Do not do any of it until the author says so.
+
 ROUND r204 (06 Oct 21:40; PDF 54c4f26d, 17 comments, pp. 34-35). RED STRIPPED (commit 50ce7f31); base_r204 + splice_r204 (0
 names moved). In red: J_K 'the length of ... child rearing'; epsilon(j) 'This is the deterministic hump', 'every household with the
 same productivity'; 'shocks with standard deviation'; sigma_zeta 'positive wage income' and its model value REMOVED; rho 'also
