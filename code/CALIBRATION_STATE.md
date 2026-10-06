@@ -133,6 +133,15 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r204 (06 Oct 21:40; PDF 54c4f26d, 17 comments, pp. 34-35). RED STRIPPED (commit 50ce7f31); base_r204 + splice_r204 (0
+names moved). In red: J_K 'the length of ... child rearing'; epsilon(j) 'This is the deterministic hump', 'every household with the
+same productivity'; 'shocks with standard deviation'; sigma_zeta 'positive wage income' and its model value REMOVED; rho 'also
+passes', 'depend more on its parent's decisions' (the author wrote parents'; singular kept, one parent per household); pi_eu-bar
+'This parameter determines the chance' and its model value REMOVED; varpi 'the aggregate unemployment rate'; pi_ue-bar 'shorter on
+average'; p_ui 'the share of separations that receive UI' in the item AND Table 6; 'did not apply for UI after losing their job';
+varsigma_m 'This determines the shape'; a stray space before a full stop fixed. The author also asked how to make the RED_reviews
+folder private (GitHub has no per-folder visibility): options given, waiting on the choice and whether the repo is public.
+
 ROUND r203 (06 Oct 21:15; PDF e6cd075c, 12 comments, pp. 33-34). ALL RED STRIPPED; base_r203 + splice_r203 (0 names moved).
 In red: 5.2 'The parameters in this section are not inert'; Block 7 'determine what a household wants'; sigma 'which then means
 that the voucher is worth more'; gamma 'worth more relative to consumption' and its model share REMOVED (the author marked it);

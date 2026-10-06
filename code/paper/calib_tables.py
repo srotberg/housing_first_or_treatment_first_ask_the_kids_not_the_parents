@@ -338,7 +338,7 @@ STANDARD = [
          f(C['probability_becoming_employed']), NA, f(C['probability_becoming_employed'])),
         # BLS USDL-23-0586 (the author, round b8142d12): about 7 in 10 of the unemployed who
         # worked in the past year had not applied for UI; related_lit/ holds the release
-        (r'$p_{ui}$', 'Share of separations that are insured', 'Ext.', 'UI applicants among the unemployed, BLS 2022',
+        (r'$p_{ui}$', 'Share of separations that receive UI', 'Ext.', 'UI applicants among the unemployed, BLS 2022',
          f(C['probability_of_ui']), NA, f(C['probability_of_ui'])),
     ]),
     ('Baseline survival and SMI onset', [
