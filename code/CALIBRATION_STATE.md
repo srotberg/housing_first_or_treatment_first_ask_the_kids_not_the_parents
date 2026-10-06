@@ -133,6 +133,13 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+NO BLUE IN THE PDF (06 Oct 20:15, the author: "remove the blue I see in the pdf but keep placeholders for yourself for
+things you need to check/update"). New switch \ifshowupdates in the preamble, set \showupdatesfalse: \upd prints nothing,
+\listofupdates and \listofwhys print nothing, \updnum prints its number in black. THE PLACEHOLDERS STAY IN THE SOURCE: the
+\upd tag on 6.3 (src) and the 25 \updnum marks the splice puts on the provisional transition numbers (typeset .tex) are the
+list of what the converged T = 60 path must refresh -- grep for them. \showupdatestrue shows them in blue again. The only
+colour left is inside a figure on p. 15 (its 0.52 and 3.54 labels match the lines).
+
 ALL RED REMOVED AGAIN (06 Oct 20:00, the author: "remove all red"); PDF has no red span. STANDING (the author, same message):
 "keep them. i will tell you when to mention the model moment performance" -- the model values still quoted in Section 5 text
 (kappa_phi_d, h_1, omega_m, kappa_ue_m, h_2, sigma_zeta, pi_eu-bar, tau_ell) STAY; remove one only when the author marks it.

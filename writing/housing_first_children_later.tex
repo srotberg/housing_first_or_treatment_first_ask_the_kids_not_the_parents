@@ -51,13 +51,18 @@
 \usepackage{marginnote}
 % each \upd also flags the margin (marginnote works in minipages and floats, where \marginpar does not) and
 % enters the list printed after the abstract, with its page, so every pending update can be found and clicked to
-\newcommand{\upd}[1]{\phantomsection\addcontentsline{upd}{subsection}{#1}%
-  \marginnote{\color{blue}\textbf{UPDATE}}{\color{blue}\textbf{[UPDATE: #1]}}}
+% HIDDEN IN THE PDF (the author, 6 October: "remove the blue I see in the pdf but keep placeholders for yourself for
+% things you need to check/update"). The \upd tags and \updnum marks stay in the source as the list of what the next
+% simulations refresh -- grep for them -- but print nothing (\upd, \listofupdates) or plain black (\updnum) while
+% \showupdatesfalse. Set \showupdatestrue to see them in blue again.
+\newif\ifshowupdates \showupdatesfalse
+\newcommand{\upd}[1]{\ifshowupdates\phantomsection\addcontentsline{upd}{subsection}{#1}%
+  \marginnote{\color{blue}\textbf{UPDATE}}{\color{blue}\textbf{[UPDATE: #1]}}\fi\ignorespaces}
 \makeatletter
-\newcommand{\listofupdates}{\par\noindent{\color{blue}\textbf{Pending updates from the new simulations}}\par
-  {\small\@starttoc{upd}}}
+\newcommand{\listofupdates}{\ifshowupdates\par\noindent{\color{blue}\textbf{Pending updates from the new simulations}}\par
+  {\small\@starttoc{upd}}\fi}
 \makeatother
-\newcommand{\updnum}[1]{{\color{blue}#1}}
+\newcommand{\updnum}[1]{\ifshowupdates{\color{blue}#1}\else#1\fi}
 % WHAT A ROUND DELETED, AND WHY IT CHANGED (the author, 3 October: "deleted sentences should show as crossed so I
 % know what you delete", and "leave notes for me in case I need to understand why you made a change"). \del prints
 % deleted text struck through in red; \why prints a note in green and lists it, with its page, after the abstract.
@@ -68,8 +73,8 @@
 \newcommand{\why}[1]{\phantomsection\addcontentsline{why}{subsection}{#1}%
   {\color{whygreen}\footnotesize[Why: #1]}}
 \makeatletter
-\newcommand{\listofwhys}{\par\noindent{\color{whygreen}\textbf{Notes on this round's changes}}\par
-  {\small\@starttoc{why}}}
+\newcommand{\listofwhys}{\ifshowupdates\par\noindent{\color{whygreen}\textbf{Notes on this round's changes}}\par
+  {\small\@starttoc{why}}\fi}
 \makeatother
 % A number not computed yet: a slot to fill, never a guess.
 \newcommand{\blank}{\underline{\hspace{2.2em}}}
