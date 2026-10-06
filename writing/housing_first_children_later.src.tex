@@ -1829,10 +1829,7 @@ stylized model, this is a key parameter in the paper. Mortality truncates the va
 hits households with the highest life values hardest and thus reverses the income
 gradient, making the poor the users rather than the rich in equilibrium when $b$ is
 chosen to match the drug use rate. It is calibrated to the average income of users,
-setting it to $@@c_kappa_phi_d_value@@$, \new{in line with the mortality rate ratios of a SUD cited in Section~\ref{sec:literature}: $3.91$ in the Danish registers (Plana-Ripoll et al., 2019) and $6.6$ among Norwegians in specialist care for one (Heiberg et al., 2018). Studies of narrower groups of users bracket these,}
-from hazard ratios of $1.27$ for cocaine and $2.40$ for heroin among
-those who have ever used them (Walker et al., 2017) to a standardised mortality ratio of
-$14.7$ among people dependent on opioids (Degenhardt et al., 2011). At that
+setting it to $@@c_kappa_phi_d_value@@$, in line with the mortality rate ratios of a SUD cited in Section~\ref{sec:literature}: $3.91$ in the Danish registers (Plana-Ripoll et al., 2019) and $6.6$ among Norwegians in specialist care for one (Heiberg et al., 2018). At that
 value users earn $@@c_kappa_phi_d_model@@$ percent of average income in the model,
 against $@@c_kappa_phi_d_data@@$ percent in NSDUH 2024.
 \item[$\aleph$, the flow value of being alive.] $\aleph$ is the other half
@@ -1854,8 +1851,8 @@ household with a SUD who is unemployed finds work at the rate $\bar\pi^{ue}$ div
 by $\kappa^{ue}_{d}$. Raising $\kappa^{ue}_{d}$ makes unemployment spells longer for households
 with a SUD, and thus they are more likely to be unhoused, which is the link from the
 disorder to the street, and which also affects the efficacy of Treatment First to deter drug use. It is internally calibrated to the SUD share of the homeless, $@@c_kappa_ue_d_data@@$ percent in Gutwinski et al.\
-(2021), which the model gives as $@@c_kappa_ue_d_model@@$.
-\item[$h_1$, the service flow of homelessness.] This parameter sets how bad the outside option
+(2021).
+\item[$h_1$, the service flow of homelessness.] This parameter sets how \new{welfare-reducing} the outside option
 is, and the value of being alive is measured against that outside option: a
 household with little to lose from dying is one for which the mortality cost of
 using is smaller. When $h_1$ rises, a shelter is less bad, a voucher is worth less and Treatment First has
@@ -1874,7 +1871,7 @@ $@@c_kappa_phi_h_value@@$ at every age, the mortality ratio for homeless adults 
 Meyer et al.\ (2023).
 \item[$\kappa_{H}$, the employment penalty of homelessness.] This parameter
 decides how much more likely a household in a shelter is to lose its job and how much
-less likely it is to find one: separations are $1+\kappa_H$ times as frequent and job
+less likely it is to find one \new{when unemployed}: separations are $1+\kappa_H$ times as frequent and job
 finding $1-\kappa_H$ times as fast. Housing First mechanically recovers employment while
 Treatment First only does so if, over time, the decline in SUD is large enough that
 fewer households are unemployed and homeless. As this parameter's value rises the cost of
@@ -1884,10 +1881,9 @@ Desmond and Gershenson (2016).
 This parameter determines how low consumption can go, which determines where utility is
 bounded from below for the poorest households with no income, no assets, and no
 vouchers. Raise it and the value of being alive rises, which increases the cost of
-homelessness and SUD, and gives more for Treatment First to deter. It is calibrated internally to food stamp spending over output,
+\new{mortality}, and gives more for Treatment First to deter. It is calibrated internally to food stamp spending over output,
 $@@c_underline_c_data@@$ percent: outlays from the United States Department of
-Agriculture (USDA) over GDP in the data, and over output, which in this model is labour
-income.
+Agriculture (USDA) over GDP in the data.
 \item[$\pi_V$, the chance of drawing a voucher.] This is the policy dial itself.
 On the one hand, increasing it reduces the childhood and aggregate homelessness
 externalities, since more households are housed. On the other hand, increasing it increases the value of
@@ -1902,8 +1898,7 @@ endowment of $T_0$ times average earnings, which sets how likely a young adult i
 to end up in a shelter in its first years. Raise it and fewer young adults become
 homeless, and Treatment First would affect behaviour less during the child-rearing years,
 when parents' choices affect their children's outcomes. Its moment is the share of the
-homeless aged 25 to 34, $@@c_t_0_data@@$ percent in HUD's 2024 PiT count, which the
-model gives as $@@c_t_0_model@@$.
+homeless aged 25 to 34, $@@c_t_0_data@@$ percent in HUD's 2024 PiT count.
 \end{description}
 
 \paragraph{Block 3: SMI chain.} This block determines how much further
@@ -2679,7 +2674,6 @@ Unemployment Insurance.
 \item Vaillant, G. (1995). \emph{The Natural History of Alcoholism Revisited}. Harvard University Press.
 \item van Ours, J. C. (1995). ``The Price Elasticity of Hard Drugs: The Case of Opium in the Dutch East Indies, 1923--1938.'' \emph{Journal of Political Economy} 103(2), 261--79.
 \item Viscusi, W. K. and J. Aldy (2003). ``The Value of a Statistical Life.'' \emph{Journal of Risk and Uncertainty} 27(1), 5--76.
-\item Walker, E.\ R., L.\ A.\ Pratt, C.\ A.\ Schoenborn and B.\ G.\ Druss (2017). ``Excess mortality among people who report lifetime use of illegal drugs in the United States: A 20-year follow-up of a nationally representative survey.'' \emph{Drug and Alcohol Dependence} 171, 31--38.
 \item Walsh, M. E., M. T. Kelliher, J. A. Hubbard and M. A. Cervinski (2025). ``Evaluation of Immunoassay Performance for the Detection of Opioids in Urine.'' \emph{Journal of Applied Laboratory Medicine} 10(3), 559--571.
 \item Yoon, G.\ et al.\ (2013). ``Impact of the number of parents with alcohol use disorder on alcohol use disorder in offspring: a population-based study.'' \emph{Journal of Clinical Psychiatry} 74(8), 795--801.
 \end{list}

@@ -133,6 +133,14 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r199 (06 Oct 19:50; PDF e22e3dfe, 7 comments, pp. 29-30). ALL RED STRIPPED; base_r199 + splice_r199 (0 names moved).
+Removed: the Walker/Degenhardt 'narrower groups' sentence in kappa_phi_d's item (and Walker et al. 2017's reference, cited
+nowhere else; Degenhardt stays, cited in 4.8's footnote); 'which the model gives as' for kappa_ue_d and T_0; 'and over
+output, which in this model is labour income' for c-underline. In red: h_1 'how welfare-reducing the outside option is';
+kappa_H 'to find one when unemployed'; c-underline 'increases the cost of mortality'. Model values still quoted in Section 5
+text: kappa_phi_d (users' income 62 v 74), h_1 (model delivers), omega_m, kappa_ue_m, h_2, sigma_zeta, pi_eu-bar, tau_ell --
+asked the author whether those go too.
+
 ROUND r198 (06 Oct 19:35; PDF 20581ddd, 2 comments, p. 29). ALL RED STRIPPED; base_r198 + splice_r198 (0 names moved).
 kappa_phi_d's item: comma removed ('rather than the rich in equilibrium'); the author asked 'didn't you cite other numbers in
 the intro/lit review?' -- yes: Section 2 cites the SUD mortality rate ratios 3.91 (Plana-Ripoll et al. 2019, Danish registers)
