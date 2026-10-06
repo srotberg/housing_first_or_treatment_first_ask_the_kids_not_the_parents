@@ -133,6 +133,24 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r175 (06 Oct 01:50; PDF 7c2f3746, 16 comments). ALL RED STRIPPED; base_r175 + splice_r175. Checked in the
+stylized model first (scratchpad savings_share.py, drug_vs_penalty.py, vol_dollars.py, assets grid 801 points):
+SAVINGS ARE NOT PROPORTIONAL. Employed households save nothing below about average income; above it the saving rate
+RISES with income (users 3 percent at income 1, 9 at 1.4, 14 at 2.8, 18 at 6; non-users 9 to 13), since UI is capped at
+average income and a SUD job loss draws none. Share of period-2 resources lost to a SUD job loss: 70, 79, 85, 87 percent
+at incomes 0.35, 0.5, 0.7, 1.0 (food assistance is a fixed amount), then 84-85 up to 2.8 and 83 at 4-6. Food assistance cut
+to a tenth leaves job-loss-only users at 3.54 times the mean (fs_channels.py), the same as with no penalty. Utility terms by
+income (employed, no voucher, own quantity, b refitted as in Figure 1): job loss alone at twice strength, net drug value
+0.018 -> 0.193 and job-loss penalty 0.247 -> 0.063 from income 1 to 3.86; mortality alone, death penalty 0.16 (0.3), 0.30
+(1.0), 0.36 (3.86), rising faster than the drug's net value above income 2 and crossing it near 3. At one fixed quantity the
+drug's utility price falls 11-fold from 1 to 3.86, the job-loss penalty 4-fold. Value of life rises 1.26-fold in utility
+from income 1 to 6.7 and 34-fold in dollars (3.4 -> 16.9 times income). In red: intro job-loss sentences (earnings lost,
+savings kept, same share among savers, a share of a larger income costs less utility with these preferences, so the
+penalty falls with income); Altonji (the argument needs a parent that gives, 'would give', no difference to what either
+consumes, back in a larger transfer); 3.4 (cannot offset the falling utility price because it falls with income too, 'to a
+SUD' twice, same share among savers and slightly larger at the top, less utility rather than the same, removed 'exact same
+high-income households', 'that cannot be mitigated', disproportionately more in dollars, the expected cost rises faster than
+the drug's worth once income is high enough). Not applied: 'utility-price' written unhyphenated, as a noun phrase.
 ROUND r174b (06 Oct 01:20; no PDF; the author: 'is the story that income loss is a proportional loss while dying is a
 disproportionate loss?', then 'try to explain in the intro and in the section discussing it in an intuitive way'). Checked
 first in stage 1 (scratchpad/jobloss_by_income.py): a user keeps savings worth 11-16 percent of income, so after a job lost
