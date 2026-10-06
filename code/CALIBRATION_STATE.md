@@ -133,6 +133,15 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+T = 60 INTO THE PAPER, PREPARED (06 Oct 03:30). The paper's transition still reads restart 3g loop 0 (30 Sep, the old
+build) through code/paper/transition_source.py. To move it to tr2c_t60 loop 1 when that loop lands: (1) cut the loop-1
+segment of tr2c_t60/run.log (after the first 'TRANSITION PATHS SAVED', through the second) into its own archived run.log,
+because transition_source reads a log's FIRST pass; (2) repin LOG/TAG there; (3) point transition_series.py's RES arms
+(null_share, tf85 in results/counterfactuals_cf_fix2) and export_results.py's transition block (adir 'old_null_share',
+'old_tf85') at results/transition_2c/arm_null and arm_tf, which hold the same cf.log.gz and final.txt; (4) regenerate the
+series, Figure ftrans and the x_tr*/s4_tr* names, splice in red, and drop the \upd tags whose paragraphs are rewritten.
+Checked on loop 0_r2's archived log: it carries every marker the scripts parse (MECH, SMIDRUG, WELFARE t=26, INIT PARENT
+SHARE RESTORED, PATHS SAVED). Go/no-go on the drug market gap first (loop 0_r2: median 0.025, worst 0.048).
 ROUND r181 (06 Oct 03:20; no PDF; the author: 'remove all red, including from tables and footnote'). The last \new (the
 budget-neutral footnote) stripped; every table file run through strip_red.py (none held red); base_r181 + splice_r181.
 Rendered-page scan: the only red pixels in the PDF are Figure 2's negative CEV bars, which are the figure's own colour, not
