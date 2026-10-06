@@ -133,6 +133,16 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r192 (06 Oct 18:15; PDF 4da82b58, 2 comments, pp. 18 and 26). ALL RED STRIPPED; base_r192 + splice_r192 (0 names
+moved). THE AUTHOR CORRECTED r191: 'the first term should have 0 and the second should have d'/d since that is in the
+control of the parent ... using 0 and 1 does not allow the parent to actually control it'. Now D(y,d') = E[V1|y,0] -
+E[V1|y,d'] in (16), D(y,d) = E[V(1,s_child)|y,0] - E[V(1,s_child)|y,d] in (34), each followed by 'so D(y,0)=0'; the
+stylized parent's problem (17) charges beta omega_c E_d'[D(y,d')] (was pi(v) D(y)), 'The expectation weights D(y,1) by
+pi(v)'; the full Bellman (33) charges beta chi_j omega_c D(y,d) (the 1{d>=1} absorbed). NOTATION ONLY, BOTH CODES MATCH:
+the Fortran's expected_child_value(y,d,h) = E[V_child|y,d,h] - E[V_child|y,0,housed], zeroed for d=0 housed, and
+penalty_child_homeless = 0 so h adds nothing; stylized.child_damage is V(1,0)-V(1,1) charged with pi(v), which is
+E_d'[D(y,d')] because D(y,0)=0.
+
 ROUND r191 (06 Oct 17:50; PDF bc81571c, 6 comments, pp. 18 and 26). ALL RED STRIPPED; base_r191 + splice_r191 (0 names
 moved). The child term D(y) in (16) and (34) now conditions on the PENALTY, 0 or 1, not on the parent's state (the author:
 'the base is 0. writing d=0 makes it seem like the actual state is used'): E[.|y,0] - E[.|y,1], with 'drawn without the
