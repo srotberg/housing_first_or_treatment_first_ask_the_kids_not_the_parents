@@ -133,6 +133,11 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r181 (06 Oct 03:20; no PDF; the author: 'remove all red, including from tables and footnote'). The last \new (the
+budget-neutral footnote) stripped; every table file run through strip_red.py (none held red); base_r181 + splice_r181.
+Rendered-page scan: the only red pixels in the PDF are Figure 2's negative CEV bars, which are the figure's own colour, not
+a change mark. The author also accepted the transition plan: put loop 1 of the T = 60 run (tr2c_t60, restart_r2) into the
+paper when it lands if the drug market has tightened, and refresh numbers and figures as later loops converge.
 ROUND r180 (06 Oct 03:05; PDF 1d228e9b, 1 comment). ALL RED STRIPPED; base_r180 + splice_r180. In red: the budget-neutral
 footnote of Section 3.6 now compares with 'the same pi_V as in the benchmark of stage 1' instead of 'the same generosity'.
 ROUND r179 (06 Oct 03:00; PDF ea928640, 13 comments). ALL RED STRIPPED; base_r179 + splice_r179. Section 3.6, in red, made
