@@ -133,6 +133,12 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r176 (06 Oct 02:25; PDF 20fdd8bd, 11 comments). ALL RED STRIPPED; base_r176 + splice_r176. Wording only, in red:
+intro 'Losing a job, on the other hand, does not raise the cost on the rich'; 3.4 'the household can save', 'Since losing
+the same share ...' (the 'so' removed), the value of being alive 'which no amount of savings can protect', and the mortality
+close rewritten to 'A richer household, therefore, has more to lose by dying, resulting in an expected penalty to using that
+rises with income. This means that once income is high enough the cost outweighs what the drug is worth to the household,
+and at that point it is the rich who stop first.'
 ROUND r175b (06 Oct 02:15; PDF f6fc4d4d, 14 comments on r175's red; the author: 'make the points a bit snappier and
 quicker ... it can be rough and not 100 percent accurate, but true to the ideas'). No strip; added on top of r175's red.
 Intro and Section 3.4 rewritten short, in red: 'The linchpin is'; savings keep the share of resources a lost job takes about
