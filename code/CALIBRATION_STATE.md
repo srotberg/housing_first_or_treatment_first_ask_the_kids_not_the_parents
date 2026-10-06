@@ -133,6 +133,19 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r189 (06 Oct 17:05; PDF 8d410164, 18 comments, pp. 21-24). ALL RED STRIPPED; base_r189 + splice_r189 (0 names
+moved). In red: 'through a reduction in the consumption'; the S(y) footnote 'Let y~ = min{y, y^max} denote the
+household's productivity ..., then social security payments are S(y) = ...'; the min sentence of (ftax) MOVED TO A
+FOOTNOTE (the author: 'put as a footnote'); 'p_r is fixed and held at its benchmark value'; 'any quantity' removed from
+the SUD onset sentence; footnote 'little-to-no consequence'; 'where pi_r-bar is the baseline ... untreated. It has three
+multipliers on it'; 'mu_H is how housing acts on SUD recovery here'; ', since a household in treatment still carries the
+disorder' removed; 'iota > 1 times more likely to develop SMI than one that does not'; 'on SMI onset'; 'an opioid use
+disorder'; 'SMI then affects three objects: the chance of finding a job' -- the author asked 'are you sure? or just the
+chance of finding one?': the author is right. The Fortran's employment_transition multiplies separation by kappa_uem and
+divides finding by kappa_find_smi, but the run's handover has kappa_uem = 1.0 and kappa_find_smi = 7.71; the SUD's
+separation multiple (multiple_of_probabilities_of_employment_if_addicted) is 1.0 too, so (femp)'s 'Neither the SUD nor
+SMI raises separations' holds.
+
 ROUND r188 (06 Oct 16:45; PDF 81bad9f5, 26 comments, pp. 19-22). ALL RED STRIPPED (source only had red; commit 3771724e);
 base_r188 + splice_r188 (= splice_r187, base swapped; 0 names moved). In red: 3.8 'I take up the aggregate homelessness
 externality'; Section 4's list of what the full model adds, answering 'anything else that it has?': 'income risk during
