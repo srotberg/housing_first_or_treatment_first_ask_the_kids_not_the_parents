@@ -1169,7 +1169,7 @@ D(y,d')\;=\;\mathbb{E}\big[\bar V_1(y_{\text{child}})\,\big|\,y,\,0\big]
 -\mathbb{E}\big[\bar V_1(y_{\text{child}})\,\big|\,y,\,d'\big]\;\ge\;0,
 \end{equation}
 where $\bar V_1$ is the value of entering period 1, before its draws, at the child's
-productivity from~\eqref{eq:kids}\new{. The first term is for a parent without the disorder and the second for the parent's own $d'$. So $D(y,0)=0$, and the loss is $D(y,1)$ when the parent's use leads to the disorder.} $D(y,d')$ captures the direct impact of the parent's SUD on
+productivity from~\eqref{eq:kids}. The first term is for a parent without the disorder and the second for the parent's own $d'$. So $D(y,0)=0$, and the loss is $D(y,1)$ when the parent's use leads to the disorder. $D(y,d')$ captures the direct impact of the parent's SUD on
 its child's utility, which runs through the child's earnings. It enters as a difference and not
 a level, so it costs the parent nothing unless its use makes the disorder possible. The parent's period-1 problem in~\eqref{eq:v1} in Section~\ref{sec:problem} then becomes
 \begin{equation}\label{eq:v1kid}
@@ -1641,9 +1641,9 @@ $D(y,d)$ is what the parent's disorder costs the child, in the child's own lifet
 D(y,d)=\mathbb{E}\big[V(1,s_{\text{child}})\,\big|\,y,\ 0\big]
 -\mathbb{E}\big[V(1,s_{\text{child}})\,\big|\,y,\ d\big]\;\ge\;0,
 \end{equation}
-where the child is valued entering at $j=1$ with the endowment $T_0$, employed, \new{and} without the disorder, SMI or a
-voucher\new{. Its} productivity \new{is} drawn as
-in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec} from a parent with productivity $y$\new{. In the first term the parent has never had the disorder, and in the second it has its actual $d$, so $D(y,0)=0$.} It is charged whenever the parent has carried the disorder at some point before the child
+where the child is valued entering at $j=1$ with the endowment $T_0$, employed, and without the disorder, SMI or a
+voucher. Its productivity is drawn as
+in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec} from a parent with productivity $y$. In the first term the parent has never had the disorder, and in the second it has its actual $d$, so $D(y,0)=0$. \new{They are charged ($D(y,d)>0$ for $d\ge1$)} whenever \new{they} carried the disorder at some point before the child
 becomes an adult.
 
 The term is a difference and not a level, and the
@@ -1659,12 +1659,12 @@ One weight $\omega_c$ multiplies both child terms, the flow of childhood and the
 of adulthood, so calibrating it pins the parent's concern for the whole of the child's
 life at once. At $\omega_c=0$ the damage a household does to its child is entirely
 external; at $\omega_c>0$ it internalises the share $\omega_c$ and only $1-\omega_c$
-remains external. \new{The policy functions $h_j(s)$, $v_j(s)$, $\tau_j(s)$ and $a'_j(s)$ are the dwelling, drug use, treatment and saving that solve~\eqref{eq:fbellman} at age $j$ and state $s$.}
+remains external. The policy functions $\new{h(j,s)}$, $\new{v(j,s)}$, $\new{\tau(j,s)}$ and $\new{a'(j,s)}$ are the dwelling, drug use, treatment and saving that solve~\eqref{eq:fbellman} at age $j$ and state $s$.
 
 \subsection{The government}
 
 The government pays social security, UI, food assistance
-\new{and} vouchers \new{under Housing First, with the addition of} the drug tests under Treatment First. It collects the labour and capital income
+and vouchers under Housing First, with the addition of the drug tests under Treatment First. It collects the labour and capital income
 taxes of~\eqref{eq:ftax} in Section~\ref{sec:ftaxes} and the estates of the dead, less the
 endowment $T_0$ given to entering adults ($j=1$),
 \begin{equation}\label{eq:fgovt}
@@ -1683,7 +1683,7 @@ so that $\mathcal R$ equals its benchmark value $\bar{\mathcal R}$.
 The price of the drug clears its market,
 \begin{equation}\label{eq:fdrug}
 p_v=\nu_1 S_v^{1/\varepsilon_s},
-\qquad S_v=\int v(s)\,\mathrm{d}\Phi(s),
+\qquad S_v=\new{\sum_{j=1}^{J}}\int \new{v(j,s)}\,\mathrm{d}\Phi\new{(j,s)},
 \end{equation}
 where $\varepsilon_s$ is the price elasticity of supply and $\nu_1$ is normalised so
 that the price is one in the benchmark, and then held fixed across experiments. The
@@ -1694,15 +1694,15 @@ price itself is not fixed: it adjusts in every experiment to clear the drug mark
 Given the policy functions, the distribution over states evolves by pushing
 households through their choices and then through the shocks,
 \begin{equation}\label{eq:flom}
-\Phi_{j+1}(\mathcal S')\;=\;\int\phi\big(j,h_j(s),d,m\big)\,
-\Gamma\big(\mathcal S'\mid s,\,h_j(s),v_j(s),\tau_j(s),a'_j(s)\big)\,
-\mathrm{d}\Phi_j(s),
+\Phi\new{(j{+}1,\mathcal S')}\;=\;\int\phi\big(j,\new{h(j,s)},d,m\big)\,
+\Gamma\big(\mathcal S'\mid s,\,\new{h(j,s),v(j,s),\tau(j,s),a'(j,s)}\big)\,
+\mathrm{d}\Phi\new{(j,s)},
 \end{equation}
 for every measurable set $\mathcal S'$, together with the inflow of entrants
 \begin{equation}\label{eq:flomnew}
-\Phi_{1}(\mathcal S')\;=\;\frac{\sum_{j\le J_K}\int\chi_j\,
-\mathcal N\big(\mathcal S'\mid s\big)\,\mathrm{d}\Phi_j(s)}
-{\sum_{j\le J_K}\int\chi_j\,\mathrm{d}\Phi_j(s)},
+\Phi\new{(1,\mathcal S')}\;=\;\frac{\sum_{j\le J_K}\int\chi_j\,
+\mathcal N\big(\mathcal S'\mid s\big)\,\mathrm{d}\Phi\new{(j,s)}}
+{\sum_{j\le J_K}\int\chi_j\,\mathrm{d}\Phi\new{(j,s)}},
 \end{equation}
 where $\mathcal N$ places the child according
 to~\eqref{eq:fnewborn} and $\chi_j$ is the weight defined in Section~\ref{sec:fproblem}. The entering cohort has unit
@@ -1727,9 +1727,9 @@ z_{1}^{\text{child}}\;=\;&\rho\,z^{\text{parent}}+(1-\rho)\,\mu+\epsilon\\
 with $z^{\text{parent}}$ the parent's log productivity when its child becomes an adult, $\mu$
 the mean of log productivity at entry and $\epsilon$ normally distributed with mean zero and
 variance $1-\rho^2$ times the variance of log productivity at entry, which keeps that
-variance the same in every generation. \new{The draw is of log productivity, and the child's productivity is $y=e^{z_1^{\text{child}}}$, as in Section~\ref{sec:ftaxes}.} Because the
+variance the same in every generation. The draw is of log productivity, and the child's productivity is $y=e^{z_1^{\text{child}}}$, as in Section~\ref{sec:ftaxes}. Because the
 penalised child's own productivity is lower, its own child inherits a lower draw too,
-so the penalty \new{also} reaches the grandchild through the persistence.
+so the penalty also reaches the grandchild through the persistence.
 
 \subsection{Competitive equilibrium}
 

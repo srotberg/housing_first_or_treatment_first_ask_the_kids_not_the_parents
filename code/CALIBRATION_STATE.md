@@ -133,6 +133,14 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r194 (06 Oct 18:35; PDF 5761332e, 7 comments, pp. 26-27). ALL RED STRIPPED; base_r194 + splice_r194 (0 names moved).
+POLICY FUNCTIONS AND DISTRIBUTIONS NOW TAKE (j,s), like V(j,s) and the equilibrium definition's h_t(j,.) (the author: 'the j has
+to be inside... check everywhere'): the definition at the end of 4.11 h(j,s), v(j,s), tau(j,s), a'(j,s); the drug market (36)
+S_v = sum_j int v(j,s) dPhi(j,s) (was int v(s) dPhi(s), which the author marked 'error'); the law of motion (37) Phi(j+1,S') with
+h(j,s)... and dPhi(j,s); the entrants (38) Phi(1,S') and dPhi(j,s). No h_j(s)-style symbol is left. After (34): 'They are
+charged (D(y,d) > 0 for d >= 1) whenever they carried the disorder ...' -- the author wrote D(y,1) > 0; in the full model d = 1 is
+recovered and d = 2 current, both charged, so d >= 1.
+
 ROUND r193 (06 Oct 18:20; PDF 7f1d65e3, 11 comments, pp. 18, 26, 27). ALL RED STRIPPED; base_r193 + splice_r193 (0 names
 moved). In red: the sentences after (16) and (34) broken up ('history' removed); NEW at the end of 4.11: 'The policy functions
 h_j(s), v_j(s), tau_j(s) and a'_j(s) are the dwelling, drug use, treatment and saving that solve (33) at age j and state s'
