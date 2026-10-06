@@ -326,7 +326,7 @@ $@@s1_scanhi_x@@$ times its calibrated value, with the other penalty switched of
 from $@@s1_r_none@@$ times average income to $@@s1_r_mort_hi@@$ times it; the unemployment penalty on its own leaves
 it at $@@s1_r_unemp_hi@@$, against $@@s1_r_none@@$ with neither penalty.
 
-The linchpin is how each penalty varies with income. The richer the household, the less a given quantity of the drug costs it in utility terms. Losing a job\new{, on the other hand, does not raise the cost on the rich}: savings grow with income, so a lost job takes about the same share of every household's resources, and in utility terms it costs a rich household no more than a poor one. No amount of job-loss risk can therefore flip the gradient. Dying is different, because it cannot be insured against: it destroys the whole continuation value, including the value of being alive, and that value grows with income. The richer the household, the more the risk of dying outweighs the drug's lower utility price, so when the death penalty is large enough it is the poor who use rather than the rich.
+The linchpin is how each penalty varies with income. The richer the household, the less a given quantity of the drug costs it in utility terms. Losing a job, on the other hand, does not raise the \new{utility cost} on the rich: savings grow with income, so a lost job takes about the same share of every household's resources, and in utility terms it costs a rich household no more than a poor one. No amount of job-loss risk can therefore flip the gradient. Dying is different, because \new{no amount of savings can insure against it}: it destroys the whole continuation value, including the value of being alive, and that value grows with income. The richer the household, the more the risk of dying outweighs the drug's lower utility price, so when the death penalty is large enough it is the poor who use rather than the rich.
 
 The experiment is the reform itself. The programme stays at its benchmark
 rationing, with the same probability of drawing a voucher, and only the rule
@@ -1050,11 +1050,11 @@ drug use at the bottom.
 Why should the two channels differ at all, when both punish the household? Because the cost of only one of them rises quickly enough with the household's income. Who uses is decided by a race between two things that change with income. On one side is the utility cost of the drug: a household with a higher income gives up less marginal utility for each dollar it spends on drugs, so buying $v$ units costs a rich household little in terms of utility relative to a poor household.
 
 On the other side are the expected penalties from acquiring a SUD. The unemployment penalty cannot offset the falling utility price of the drug, because it does not rise with income. A job the disorder costs is not
-covered by UI, but the household \new{can save}, and savings grow with income, so a richer household that loses its job to a SUD keeps about the same share of its resources as a poorer one. \new{Since losing} the same share costs a rich household no more in utility terms than a poor one, the penalty weighs on the rich no more than on the poor. Raising it reduces use, but once $b$ brings the drug use rate back to its target, the drug is still cheapest for the rich and use stays at the top.
+covered by UI, but the household can save, and savings grow with income, so a richer household that loses its job to a SUD keeps about the same share of its resources as a poorer one. Since losing the same share costs a rich household no more in utility terms than a poor one, the penalty weighs on the rich no more than on the poor. Raising it reduces use, but once $b$ brings the drug use rate back to its target, the drug is still cheapest for the rich and use stays at the top.
 
 Mortality is a different object. Dying is a disproportionate loss that cannot be mitigated through insurance. It destroys the whole
 continuation value: the consumption of a life still to be lived, and $\aleph$,
-the value of being alive at all, which \new{no amount of savings can protect}. A richer household\new{, therefore,} has more to lose by dying, \new{resulting in an} expected penalty to using \new{that} rises with income\new{. This means that} once income is high enough \new{the cost outweighs} what the drug is worth to the household\new{, and at that point} it is the rich who stop first.
+the value of being alive at all, which no amount of savings can protect. A richer household, therefore, has more to lose by dying, resulting in an expected penalty to using that rises with income. This means that once income is high enough the cost outweighs what the drug is worth to the household, and at that point it is the rich who stop first.
 
 %======================================================================
 \subsection{How does housing assistance shape the \texorpdfstring{drug-use}{drug-use} decision?}\label{sec:mh}
@@ -1062,30 +1062,21 @@ the value of being alive at all, which \new{no amount of savings can protect}. A
 The two forces of question 2, moral hazard and the value of life, can be separated exactly, because they differ in
 what happens to a household that uses. Under Treatment First the voucher is
 withdrawn from any household that violates the sobriety condition, so only the
-value-of-life force operates. Under Housing First it is not, so both channels
-operate. Comparing the two policies at the same generosity therefore isolates
+value-of-life force operates. Under Housing First \new{a voucher is not revoked for sobriety-related reasons, so both the moral-hazard and the value-of-life forces operate}. Comparing the two policies at the same generosity therefore isolates
 the moral-hazard force, and comparing Treatment First with no programme at all
 isolates the value-of-life force.
 
 Panels A and B of Table~\ref{tab:stage1} put numbers on both, in the baseline of stage 1. With no
-programme at all, $@@s1_part_none_b@@$ percent of households use. Treatment First takes that down to $@@s1_part_tf_b@@$ percent, a
-value-of-life force that reduces drug use by $@@s1_vol_b_abs@@$ percentage points.
+programme at all, $@@s1_part_none_b@@$ percent of households use. Treatment First takes that down to $@@s1_part_tf_b@@$ percent, \new{which means that the} value-of-life force reduces drug use by $@@s1_vol_b_abs@@$ percentage points.
 Switching to Housing First then raises it @@s1_hf_vs_none@@, to
 $@@s1_part_hf_b@@$ percent, so the moral-hazard force raises drug use by $@@s1_mh_b@@$
 percentage points and the
-net effect of Housing First is a $@@s1_net_b_abs@@$ percentage-point @@s1_net_dir@@ in drug use relative to
-no vouchers at all. Both comparisons here are between long-run steady states, each the rest point of
+net effect \new{of both forces under} Housing First is a $@@s1_net_b_abs@@$ percentage-point @@s1_net_dir@@ in drug use relative to
+no vouchers at all.\footnote{\new{The SUD rate follows participation one for one, since every user runs the same risk: $@@s1_sud_none_b@@$ percent of households carry the disorder with no programme, $@@s1_sud_tf_b@@$ under Treatment First and $@@s1_sud_hf_b@@$ under Housing First. Homelessness falls under both programmes, from $@@s1_homeless_none_b@@$ percent to $@@s1_homeless_tf_b@@$ under Treatment First and to $@@s1_homeless_hf_b@@$ under Housing First.}} Both comparisons here are between long-run steady states, each the rest point of
 the economy under a policy that has always been in place. Both forces are
 first order and they work against each other, which is the central feature of
-the problem. Anyone asserting that housing the homeless must increase drug use,
+the problem. \new{The point of this analysis, beyond showing how to isolate the forces, is to illustrate that anyone} asserting that housing the homeless must increase drug use,
 or must reduce it, is making a quantitative claim that needs to be tested.
-
-The SUD rate follows participation one for one, since every user runs the same
-risk: $@@s1_sud_none_b@@$ percent of households carry the disorder with no programme,
-$@@s1_sud_tf_b@@$ under Treatment First and $@@s1_sud_hf_b@@$ under Housing First.
-Homelessness falls under both programmes, from
-$@@s1_homeless_none_b@@$ percent to $@@s1_homeless_tf_b@@$ under Treatment First and
-to $@@s1_homeless_hf_b@@$ under Housing First.
 
 \begin{table}[!tb]
 \centering

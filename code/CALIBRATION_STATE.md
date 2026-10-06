@@ -133,6 +133,12 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r177 (06 Oct 02:35; PDF 113d7954, 7 comments). ALL RED STRIPPED; base_r177 + splice_r177. In red: intro 'does not
+raise the utility cost on the rich', 'because no amount of savings can insure against it'; Section 3.5 (two forces) 'a
+voucher is not revoked for sobriety-related reasons, so both the moral-hazard and the value-of-life forces operate', 'which
+means that the value-of-life force reduces drug use by', 'net effect of both forces under Housing First', 'The point of this
+analysis, beyond showing how to isolate the forces, is to illustrate that anyone asserting ...'; the SUD-rate and
+homelessness paragraph moved into a footnote after the net-effect sentence (the author: 'this seems like a footnote').
 ROUND r176 (06 Oct 02:25; PDF 20fdd8bd, 11 comments). ALL RED STRIPPED; base_r176 + splice_r176. Wording only, in red:
 intro 'Losing a job, on the other hand, does not raise the cost on the rich'; 3.4 'the household can save', 'Since losing
 the same share ...' (the 'so' removed), the value of being alive 'which no amount of savings can protect', and the mortality
