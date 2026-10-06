@@ -1694,17 +1694,17 @@ price itself is not fixed: it adjusts in every experiment to clear the drug mark
 Given the policy functions, the distribution over states evolves by pushing
 households through their choices and then through the shocks,
 \begin{equation}\label{eq:flom}
-\Phi(j{+}1,\mathcal S')\;=\;\int_{\new{\mathcal S}}\!\phi\big(j,h(j,s),d,m\big)\,
+\Phi(j{+}1,\mathcal S')\;=\;\int_{\mathcal S}\!\phi\big(j,h(j,s),d,m\big)\,
 \Gamma\big(\mathcal S'\mid s,\,h(j,s),v(j,s),\tau(j,s),a'(j,s)\big)\,
 \mathrm{d}\Phi(j,s),
 \end{equation}
-for \new{$j=1,\dots,J-1$ and} every measurable set $\mathcal S'$ \new{of the state space $\mathcal S$ of~\eqref{eq:fstate}, with the integral over the state $s$ of the households of age $j$,} together with the inflow of entrants
+for $j=1,\dots,J-1$ and every measurable set $\mathcal S'$ of the state space $\mathcal S$ of~\eqref{eq:fstate}, with the integral over the state $s$ of the households of age $j$, together with the inflow of entrants
 \begin{equation}\label{eq:flomnew}
-\Phi(1,\mathcal S')\;=\;\frac{\sum_{j\le J_K}\int_{\new{\mathcal S}}\!\chi_j\,
+\Phi(1,\mathcal S')\;=\;\frac{\sum_{j\le J_K}\int_{\mathcal S}\!\chi_j\,
 \mathcal N\big(\mathcal S'\mid s\big)\,\mathrm{d}\Phi(j,s)}
-{\sum_{j\le J_K}\int_{\new{\mathcal S}}\!\chi_j\,\mathrm{d}\Phi(j,s)},
+{\sum_{j\le J_K}\int_{\mathcal S}\!\chi_j\,\mathrm{d}\Phi(j,s)},
 \end{equation}
-where \new{the integrals are again over $s$,} $\mathcal N$ places the child according
+where the integrals are again over $s$, $\mathcal N$ places the child according
 to~\eqref{eq:fnewborn} and $\chi_j$ is the weight defined in Section~\ref{sec:fproblem}. The entering cohort has unit
 mass every period, so in equilibrium it equals the mass of the dead. Where an
 entrant starts depends on its parent: its productivity is drawn around the parent's, and it
@@ -1724,7 +1724,7 @@ z_{1}^{\text{child}}\;=\;&\rho\,z^{\text{parent}}+(1-\rho)\,\mu+\epsilon\\
 &+\log(1-\delta_d)\,\mathbf{1}\{\text{parent has } d\ge1 \text{ when its child becomes an adult}\},
 \end{aligned}
 \end{equation}
-with \new{$z_1^{\text{child}}$ the child's log productivity at entry, age $j=1$,} $z^{\text{parent}}$ the parent's log productivity when its child becomes an adult, $\mu$
+with $z_1^{\text{child}}$ the child's log productivity at entry, age $j=1$, $z^{\text{parent}}$ the parent's log productivity when its child becomes an adult, $\mu$
 the mean of log productivity at entry and $\epsilon$ normally distributed with mean zero and
 variance $1-\rho^2$ times the variance of log productivity at entry, which keeps that
 variance the same in every generation. The draw is of log productivity, and the child's productivity is $y=e^{z_1^{\text{child}}}$, as in Section~\ref{sec:ftaxes}. Because the

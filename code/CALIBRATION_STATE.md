@@ -133,6 +133,10 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ALL RED REMOVED (06 Oct 19:05, the author: "remove all red"): strip_red.py on the source and every table, baselines frozen to
+base_r196, splice_r196 (0 names red); the PDF has no red span. The blue \updnum marks on the provisional transition numbers
+(Section 6.3, from loop 1_r2) stay: they are not red, and they go when the converged T = 60 path replaces them.
+
 ROUND r195 (06 Oct 18:50; PDF e0300de0, 3 comments, p. 27). ALL RED STRIPPED; base_r195 + splice_r195 (0 names moved). In red:
 the integrals of (37) and (38) carry the subscript S, the state space, as the Bellman's does, and the text says (37) holds 'for
 j = 1,...,J-1 and every measurable set S' of the state space S of (18), with the integral over the state s of the households of
