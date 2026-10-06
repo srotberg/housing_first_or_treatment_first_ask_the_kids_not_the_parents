@@ -184,8 +184,10 @@ ahead of no housing; the calibration takes the unadjusted contrast of housing ag
 
 **g, the treatment effect on recovery — 2.00.** Ext. (`treatment_effect_on_recovery`). Medication for opioid use
 disorder roughly doubles remission: 18.8 percent with buprenorphine-naloxone against 10.4 without, an odds ratio of
-(0.188/0.812)/(0.104/0.896) = 1.99, and randomised trials of agonist medication against placebo at least double
-abstinence (Part V for the study). It replaced 1.35, from an odds ratio of 1.22 for contingency management, which is
+(0.188/0.812)/(0.104/0.896) = 1.99 (Paul et al. 2024, Western Journal of Emergency Medicine 25(6), 869-874: TriNetX
+records 2017-2022, propensity-matched, remission within a year of diagnosis), and randomised trials of agonist
+medication against placebo at least double abstinence (Fudala et al. 2003, NEJM 349(10), 949-958: 17.8 percent of
+urine samples free of opiates with buprenorphine-naloxone against 5.8 with placebo). It replaced 1.35, from an odds ratio of 1.22 for contingency management, which is
 a behavioural adjunct rather than the treatment a Treatment First programme delivers.
 
 **τ̄ᵘ, the utility cost of treatment — 24.5 percent treatment take-up.** Int.; τ̄ᵘ = 4.49 and the benchmark gives
@@ -565,7 +567,7 @@ What the package does not yet document, or does not carry:
    is 0.41.
 4. **The 25 percent SMI share of the homeless**: which diagnoses in Gutwinski et al. (2021) sum to it is not recorded.
 5. **The mean household income of 113,000 dollars** behind the VSL multiple has no recorded source or year.
-6. **g's study**: the buprenorphine-naloxone remission figures, 18.8 against 10.4 percent, carry no citation.
+6. **g's study**: RESOLVED 6 Oct -- Paul et al. (2024) for the remission figures, Fudala et al. (2003) for the placebo trial.
 7. **The progressivity 0.15** is not attributed to a study (Block 11).
 8. **Meyer et al. (2024)**: the table behind the 19.1 percent income of the homeless.
 9. **Not in the package**: the BEA fixed asset tables and NIPA, the USDA SNAP outlays, the BLS 2019 unemployment rates by

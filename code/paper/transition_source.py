@@ -16,15 +16,16 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 # of 5.5e-4 (worst 3.6e-3, above 1e-3 in 22 of 58 years) and the drug market to a median gap of 1.0 per
 # cent of the price (worst 3.4 per cent, above 0.005 in 39 of 59 years), against 2.9 and 5.3 per cent in
 # loop 0_r2.  Not converged: the rule is 0.005 in every year, so every number read from it is provisional.
-# The log here is loop 1's segment alone (from its 'TRANSITION INIT PARENT SHARE RESTORED' to its 'PATHS
-# SAVED'), because the readers take a log's FIRST pass; the full log and the paths are archived in
-# results/transition_2c/loop1_r2/.
-LOG = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop1_r2', 'run.log')
-TAG = 'tr2c_loop1_r2'
+# The log here is loop 2's segment alone (from its 'TRANSITION INIT PARENT SHARE RESTORED' to the CONVERGENCE
+# TERMS after its 'PATHS SAVED', lines 42643-51647 of tr2c_t60/run.log.killed.202610061750), because the readers
+# take a log's FIRST pass; the full log and the paths are archived in results/transition_2c/loop2_r2/. Re-pinned
+# 6 Oct (the author: update the transition's figures and numbers after each iteration). Previous pin: loop 1_r2.
+LOG = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop2_r2', 'run.log')
+TAG = 'tr2c_loop2_r2'
 OUT = os.path.join(ROOT, 'results', 'transition', TAG)
 # the benchmark welfare curve the cohort CEVs are read against, and the two steady states the path is
 # solved between: Housing First with no policy change, and the Treatment First long run, on the same build
-CURVE = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop1_r2', 'welfare_curvebaseline_benchmark.dat')
+CURVE = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop2_r2', 'welfare_curvebaseline_benchmark.dat')
 REF = os.path.join(ROOT, 'results', 'transition_2c')
 REF_NULL, REF_TF = 'arm_null', 'arm_tf'
 # the previous pin, kept for the record: restart 3g's loop 0 on the old build (30 September)

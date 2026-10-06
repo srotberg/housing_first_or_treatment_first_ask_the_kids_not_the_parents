@@ -199,7 +199,7 @@ ELEVEN = [
         # so the SUD does not raise separations and the parameter is inert (audit,
         # 29 September); Section 4 no longer carries it.
         (r'$h_1$', 'Service flow of homelessness', 'Int.',
-         'Homelessness rate, HUD PiT 2023, within a band',
+         r'Homelessness band, HUD PiT 2023 and Burt et al.\ (2001)',
          f'{100 * C["h1_band_lo"]:.2f}--{100 * C["h1_band_hi"]:.2f}\\%',
          pc(mom('h_1 homelessness rate'), 2), f(H['size_homelessness'], 4)),
         (r'$\kappa_{\phi H}$', 'Mortality when homeless', 'Ext.',
@@ -251,7 +251,7 @@ ELEVEN = [
          f(C['milby_recovery_ratio_data']), f(mom('mu_H recovery housed / homeless')),
          f(H['mu_homeless'], 3)),
         (r'$g$', 'Treatment effect on recovery', 'Ext.',
-         'Remission with medication for opioid use disorder',
+         r'Remission on buprenorphine, Paul et al.\ (2024)',
          f(C['treatment_effect_on_recovery']), NA, f(C['treatment_effect_on_recovery'])),
         (r'$\bar\tau^{u}$', 'Utility cost of treatment', setcol('tau_u'), 'Treatment take-up, NSDUH 2024',
          pc(C['treatment_take_up_data']), pc(mom('tau_u treatment take up')),

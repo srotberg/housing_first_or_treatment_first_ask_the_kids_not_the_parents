@@ -133,6 +133,28 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+STANDING (the author, 6 Oct 20:30): "update all the figures and numbers related to the T=60 transition after each
+iteration is done". After every completed loop: cut its forward pass (INIT PARENT SHARE RESTORED loop=N .. the CONVERGENCE
+TERMS after PATHS SAVED loop N) into code/trtf60/tr2c_loopN_rK/run.log with the welfare curve, point
+code/paper/transition_source.py at it, run transition_series.py, transition_figure.py, export_results.py, then
+export_revoked.py and export_pe_noext.py (export_results overwrites their names), and splice in red in the next round.
+ROUND r201 (06 Oct 20:45; PDF 52e0c820, 14 comments, pp. 24, 30-32) + T = 60 LOOP 2_r2 INTO THE PAPER. ALL RED STRIPPED;
+base_r201 + splice_r201. TRANSITION: re-pinned from loop 1_r2 to loop 2_r2 (code/trtf60/tr2c_loop2_r2/run.log = lines
+42643-51647 of tr2c_t60/run.log.killed.202610061750; results/transition/tr2c_loop2_r2/; Figure 3 regenerated); 18
+x_tr*/x_trf* names moved, 9 of them printed and red: born at the reform +2.7 (was +2.4), first decade 2.65 (2.47), parents'
+use in year 1 11.30 (11.82), share of the fall in drug use in year 1 84 (76), price above the long run 36 years (33), SUD 90
+percent of the way by year 27 (29), x_trf_many. No other name moved. The hidden \upd on 6.3 now names loop 2_r2.
+COMMENTS, in red: 4.7 'A household with SMI recovers from it with the probability lambda_m each year, whatever its housing
+and whether or not it carries the SUD' (the author: 'you didn't mention the recovering rate'); kappa_ue_d > 1 and kappa_ue_m
+> 1; lambda_m 'lasts on average'; 'SMI spells, which can be caused by a SUD'; 'less for either policy to affect'; mu_H 'less
+likely'; g 'which matters especially for short-run impacts'; tau_u 'the utility cost is what makes households decline
+treatment that cures them with a higher probability'. Removed: omega_m 'the benchmark gives', kappa_ue_m 'which the model
+gives as', tau_u 'percent do in the model'. CITATIONS (the author: 'citation?' and 'make sure to also cite in the table'): g
+now cites Paul et al. (2024, West J Emerg Med 25(6) 869-874; 18.8 v 10.4 percent remission, TriNetX, propensity matched)
+and Fudala et al. (2003, NEJM 349(10) 949-958; 17.8 v 5.8 percent opiate-free urine, buprenorphine-naloxone v placebo),
+both added to the references and to data/DATA_APPENDIX.md (its open item 6 resolved); Table 5's g row 'Remission on
+buprenorphine, Paul et al. (2024)' and h_1 row 'Homelessness band, HUD PiT 2023 and Burt et al. (2001)'.
+
 NO BLUE IN THE PDF (06 Oct 20:15, the author: "remove the blue I see in the pdf but keep placeholders for yourself for
 things you need to check/update"). New switch \ifshowupdates in the preamble, set \showupdatesfalse: \upd prints nothing,
 \listofupdates and \listofwhys print nothing, \updnum prints its number in black. THE PLACEHOLDERS STAY IN THE SOURCE: the
