@@ -133,6 +133,14 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r175b (06 Oct 02:15; PDF f6fc4d4d, 14 comments on r175's red; the author: 'make the points a bit snappier and
+quicker ... it can be rough and not 100 percent accurate, but true to the ideas'). No strip; added on top of r175's red.
+Intro and Section 3.4 rewritten short, in red: 'The linchpin is'; savings keep the share of resources a lost job takes about
+the same at every income, and in utility it costs a rich household NO MORE than a poor one (the author wrote 'about the
+same'; the model has it falling, 0.125 -> 0.036 from income 1 to 3.86 at calibrated strength, so 'no more than' was
+proposed and accepted); no amount of job-loss risk flips the gradient; dying cannot be insured against and its value
+grows with income; the drug's lower utility price; 3.4 mortality: 'cannot be mitigated through insurance', 'expected
+penalty to using', the dollars clause and the two closing sentences removed.
 ROUND r175 (06 Oct 01:50; PDF 7c2f3746, 16 comments). ALL RED STRIPPED; base_r175 + splice_r175. Checked in the
 stylized model first (scratchpad savings_share.py, drug_vs_penalty.py, vol_dollars.py, assets grid 801 points):
 SAVINGS ARE NOT PROPORTIONAL. Employed households save nothing below about average income; above it the saving rate
