@@ -1257,7 +1257,7 @@ over their whole lives.}
 %======================================================================
 \subsection{Stage 3: the disamenity of homelessness}\label{sec:kx}
 
-Before moving onto the full model, a note is due on the aggregate homelessness externality. The externality is modelled such that homelessness imposes a cost on each household's flow utility, reducing it by $\kappa_x H$, where $H$ is the share of households that is homeless, which every
+Before moving onto the full model, \new{I take up} the aggregate homelessness externality. The externality is modelled such that homelessness imposes a cost on each household's flow utility, reducing it by $\kappa_x H$, where $H$ is the share of households that is homeless, which every
 household takes as given, so the term moves no choice and the calibration of stage 2
 stands unchanged. It enters welfare only, and the child
 bears it like everyone else, once for each period.
@@ -1280,10 +1280,7 @@ $@@s3_cev_tf@@$ percent of lifetime consumption.
 
 By now, I have shown how the main mechanisms in this paper work. This section
 describes the model the paper's numbers come from. It is very similar to the stylized
-model of Section~\ref{sec:stylized}, but includes annual periods and pieces that model
-leaves out: income risk over working life, retirement, recovery and treatment, SMI,
-a higher risk of dying while homeless, a drug test that misses some users, a
-government budget and a drug market. Notation follows
+model of Section~\ref{sec:stylized}, but includes annual periods and pieces that model leaves out: income risk \new{during} working \new{age}, retirement, \new{progressive income taxes, interest on savings, a drug-use decision in every year,} recovery\new{, relapse} and treatment, SMI, a higher risk of dying\new{, worse employment prospects and a lower chance of recovering} while homeless, \new{children who can live with a parent who carries a SUD,} a drug test that misses some users, a \new{balanced government} budget and \new{an endogenous drug price}. Notation follows
 Section~\ref{sec:stylized} wherever the two models share an object: $\gamma$ and
 $\theta$ are the housing and drug weights in both, $\sigma$ the same risk aversion, $b$ is
 the same Stone-Geary shifter, $\aleph$ the same flow value of being alive, $\xi$ the same equivalence
@@ -1292,7 +1289,7 @@ persistence of productivity and penalty, $\psi_{ui}$ and $\bar y$ the same repla
 rate and earnings cap, $\kappa_x$ the same disamenity, $\pi_d$ the same chance that use
 starts a SUD, $\kappa_{\phi d}$ the same mortality multiplier for the disorder, $h_1$ the same
 shelter, $\kappa_V$ and $\pi_V$ the same means test and chance of drawing a voucher, $p_r$ the
-same rent, and $\beta$ is the discount factor.  The values are in Section~\ref{sec:fullcal}.
+same rent, and $\beta$ is the \new{same} discount factor.  The values are in Section~\ref{sec:fullcal}.
 
 \subsection{Demographics and the state and choice sets}
 
@@ -1301,7 +1298,7 @@ at most $J$ annual periods, work while $j<J_R$ and are retired from $J_R$. Each 
 child, who lives in the household for the first $J_K$ years of its adult life and then
 leaves to become an adult with a child of its own. Each period a cohort of unit mass enters at $j=1$, made up of
 the children who leave home that period, at their parent's death if that comes before $J_K$ and at $J_K$
-otherwise (equation~\eqref{eq:flomnew}), so the mass of households is constant in a stationary equilibrium. The individual state is
+otherwise (equation~\eqref{eq:flomnew}), so the mass of households is constant in a stationary equilibrium. The individual state is \new{age $j$ together with}
 \begin{equation}\label{eq:fstate}
 s=(a,\,y,\,e,\,d,\,m,\,\eta)\in
 \mathbb R_+\times\mathcal Y_j\times\{1,2,3\}\times\{0,1,2\}\times\{0,1\}\times\{0,1,2\},
@@ -1315,21 +1312,18 @@ voucher state is $\eta=0$, denoting having no voucher, $\eta=1$, representing
 holding one, and $\eta=2$, standing for exclusion from the programme after failing
 Treatment First's condition.
 
-Each period the household chooses
+Each period the household chooses \new{the bundle}
 \begin{equation}\label{eq:fchoice}
 \big(h,\,v,\,\tau,\,a'\big)\in
 \{h_1,h_2,h_3,h_4\}\times\mathbb R_+\times\{0,1\}\times\mathbb R_+ ,
 \end{equation}
-where $h$ is the dwelling, of which $h_1$ is a shelter, $v$ is drug use, $\tau$
-is whether or not a household is in SUD treatment, available only to a household that carries
-the disorder, and $a'$ is its next period's assets. Labour is inelastically
-supplied: a household that has a job works it.
+where $h$ is the dwelling, of which $h_1$ is a shelter, $v$ is drug \new{consumption}, $\tau$ is whether or not a household is in \new{treatment for SUD}, available only to a household that carries
+the disorder, and $a'$ is its next period's assets. Labour is inelastically supplied \new{when employed}.
 
 \subsection{Preferences}\label{sec:fprefs}
 
 Flow utility is the stylized model's, with the child present for the first $J_K$
-years. Consumption $c$ and housing $h$ are shared through the square-root equivalence
-scale $\xi_j$, which scales for two members while the child is at home and for one
+years. Consumption $c$ and housing $h$ are shared through the equivalence scale $\xi_j$, which scales for two members while the child is at home and for one
 after, and the drug enters the parent's utility alone, so the parent and the child hold the bundles
 \begin{equation}\label{eq:fbundles}
 X_P=\Big[\Big(\frac{c}{\xi_j}\Big)^{1-\gamma}\Big(\frac{h}{\xi_j}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
@@ -1342,24 +1336,19 @@ u\big(c,h,v,\tau\big) \;=\; U(X_P)\;+\;\omega_c\,(\xi_j-1)\,U(X_c)\;+\;\aleph\;-
 \qquad U(X)=\frac{X^{1-\sigma}}{1-\sigma}.
 \end{equation}
 $\gamma$ is housing's share of the non-drug bundle and $\theta$ the drug's share of
-the whole, $\sigma$ is the coefficient of relative risk aversion, $\aleph$ is the flow
-value of being alive, counted once per household, and $\bar\tau^{u}$ is the utility
-cost of a year in treatment, which is described in Section~\ref{sec:fdrug}. The child's term is its own flow utility, weighted by
-$\omega_c$ and counted as $\xi_j-1$ of the household; it gets none of the drug, so a
-parent's drug spending reaches it only through the consumption and housing they
-share. After $J_K$ periods the child leaves to form its own household, $\xi_j=1$, and the child term is gone.
+the whole, $\sigma$ is the coefficient of relative risk aversion, $\aleph$ is \new{a} flow value of being alive, counted once per household, and $\bar\tau^{u}$ is the utility
+cost of a year in treatment, which is described in Section~\ref{sec:fdrug}. The child's term is its own flow utility, \new{which the parent weighs by} $\omega_c$\new{, and is counted} as $\xi_j-1$ of the household; it gets none of the drug, so a parent's drug spending reaches it through \new{the reduction in} the consumption and housing they share. After $J_K$ periods the child leaves to form its own household, and the child term is gone\new{, at which point $\xi_j=1$ for the parent}.
 
 Aggregate homelessness $H$ carries the disamenity $\kappa_x H$ for every household and
 child alive, which is what makes homelessness an externality for everyone rather than only a
 private misfortune. However, it does not affect any household's decision:
-each takes $H$ as given, and the term is left out of the problem it solves.
+each takes $H$ as given.
 Section~\ref{sec:fleftout} takes up its size.
 
 \subsection{Income, taxes and transfers}\label{sec:ftaxes}
 
 \paragraph{Productivity.} Log productivity follows a persistent process over
-working life, $z_{j+1}=\rho_z z_j+\zeta_{j+1}$ with $\zeta\sim\mathcal N(0,\sigma_\zeta^2)$, and it is
-frozen at its last working value in retirement. Earnings on the job are
+working life, $z_{j+1}=\rho_z z_j+\zeta_{j+1}$ with $\zeta\sim\mathcal N(0,\sigma_\zeta^2)$, \new{and is held fixed} at its last working value in retirement. Earnings on the job are
 $y\,\varepsilon(j)$, with $y=e^{z}$ normalised so that $y$ averages one at
 entry and $\varepsilon(j)$ the deterministic age profile. A
 household's productivity at entry is its inheritance from its parent, set out in
@@ -1377,19 +1366,15 @@ y\,\varepsilon(j) & j<J_{R},\ e=1 \quad\text{(employed)}\\[2pt]
 S(y) & j\ge J_{R} \quad\text{(retired)} .
 \end{cases}
 \end{equation}
-UI replaces the share $\psi_{ui}$ of earnings on a base capped
+UI replaces \new{a} share $\psi_{ui}$ of earnings on a base capped
 at $\bar y$, and it is paid only to a share $p_{ui}$ of those losing their job, mimicking the share of
 insured separations. After the first year, unemployed households, insured and uninsured alike, receive
-zero UI ($e=3$). Social security $S(y)$ follows the statutory formula:
-a primary insurance amount that replaces declining shares of the household's
-productivity at its last working age between two bend points, up to the taxable
-maximum, the ceiling above which earnings no longer raise the benefit, with the Supplemental Security Income (SSI) payment, $\underline S$, as its floor, with $y$ in units in which
-it averages one at entry and the benefit scaled by average labour income.\footnote{\label{fn:ss}With $\tilde y=\min\{y,\,y^{\max}\}$ the household's productivity at its last
-working age up to the taxable maximum $y^{\max}$,
+zero UI ($e=3$). Social security $S(y)$ follows the statutory formula.\footnote{\label{fn:ss}With $\tilde y=\min\{y,\,y^{\max}\}$ the household's productivity at its last
+working age up to the taxable maximum $y^{\max}$\new{, the ceiling above which earnings no longer raise the benefit},
 $S(y)=\bar w\max\big\{\underline S,\ \alpha_1\min\{\tilde y,k_1\}+\alpha_2\max\{0,\min\{\tilde y,k_2\}-k_1\}
 +\alpha_3\max\{0,\tilde y-k_2\}\big\}$, where $k_1<k_2$ are the two bend points,
 $\alpha_1>\alpha_2>\alpha_3$ the shares replaced below, between and above them,
-$\underline S$ the SSI payment, and $\bar w$ the benchmark's average labour income. Their values are given in Section~\ref{sec:stdparams}.}
+$\underline S$ the \new{Supplemental Security Income (SSI)} payment, and $\bar w$ the benchmark's average labour income. Their values are given in Section~\ref{sec:stdparams}.}
 
 The SUD and SMI do not
 cut earnings on the job; they act on whether there is a job at all, through the
@@ -1407,8 +1392,7 @@ and capital income at a flat rate, so that after-tax income is
 y^{n}=\min\big\{Y,\ \tau_{\ell}\,Y^{\varphi}\big\}\;+\;(1-\tau_k)\,r\,a ,
 \end{equation}
 where $\tau_{\ell}$ scales after-tax income, and so sets the level of the tax, which falls as $\tau_{\ell}$ rises, and $1-\varphi$ sets
-its progressivity; $\tau_k$ is the flat tax rate on capital income and $r$ is the exogenous
-interest rate on savings.
+its progressivity; $\tau_k$ is the flat tax rate on capital income and $r$ is the exogenous interest rate on savings. \new{The minimum keeps the labour income tax from turning negative: at low incomes $\tau_{\ell}Y^{\varphi}$ exceeds $Y$ itself, and a household there pays no tax rather than receiving a transfer through it.}
 
 \paragraph{Transfers.} Food assistance pays the maximum allotment $\underline c$ less
 the share $\varrho$ of income, and the voucher pays a holder that is eligible this

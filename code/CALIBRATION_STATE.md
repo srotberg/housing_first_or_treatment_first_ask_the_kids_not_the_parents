@@ -133,6 +133,30 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r188 (06 Oct 16:45; PDF 81bad9f5, 26 comments, pp. 19-22). ALL RED STRIPPED (source only had red; commit 3771724e);
+base_r188 + splice_r188 (= splice_r187, base swapped; 0 names moved). In red: 3.8 'I take up the aggregate homelessness
+externality'; Section 4's list of what the full model adds, answering 'anything else that it has?': 'income risk during
+working age, retirement, progressive income taxes, interest on savings, a drug-use decision in every year, recovery,
+relapse and treatment, SMI, a higher risk of dying, worse employment prospects and a lower chance of recovering while
+homeless, children who can live with a parent who carries a SUD, a drug test that misses some users, a balanced
+government budget and an endogenous drug price'; 'beta is the same discount factor'; 'The individual state is age j
+together with s' (answers 'what about j?': V(j,s) keeps age outside s); 'chooses the bundle'; 'drug consumption';
+'treatment for SUD'; 'Labour is inelastically supplied when employed'; 'square-root' removed; 'aleph is a flow value';
+the child term 'which the parent weighs by omega_c, and is counted as xi_j-1 ... reaches it through the reduction in the
+consumption and housing they share ... at which point xi_j=1 for the parent'; 'and the term is left out of the problem it
+solves' removed; productivity 'and is held fixed'; 'UI replaces a share'; the S(y) description removed from the text
+(the author: 'just leave the footnote'), the footnote now carries 'the ceiling above which earnings no longer raise the
+benefit' (the author wrote 'about') and spells out SSI, its first use now; NEW sentence on the min in (ftax): 'The minimum
+keeps the labour income tax from turning negative' -- the Fortran's tax paid is max{Y - tau Y^phi, 0} (line ~29664).
+T = 60 HORIZON (06 Oct 16:00-16:30, the author asked whether T = 60 is long enough): year 59 against the long run, prices
+within 0.2 percent (p_drug 0.857/0.856, pi_V 9.59/9.61), quantities 1-2 percent above and still falling (h_1 0.623/0.613,
+child_hl 1.047/1.031, lambda_d 2.561/2.536, par_sud 3.93/3.89); life_span = 60 so T = 60 is one lifetime and the residue is
+the post-reform children of pre-reform parents. Recommended T = 75 (70 closes homelessness only). THE AUTHOR: let T = 60
+run longer first -- agreed, because loop 2's BUDGET IS DIVERGING in years 28-51 (worst |residual| 3.1e-3 loop 0, 3.6e-3
+loop 1, 6.5e-3 loop 2, surplus peaking +0.0064 at year 40) while the drug market converges (mean |distance| 2.7e-2,
+1.1e-2, 3.5e-3). pi_V moves about 1e-4 a loop. Plan: let loop 3 run (ends about 01:00 UTC 7 Oct); if the budget gap grows
+again, propose a restart from the saved paths with a larger pi_V step; T = 75 only from converged paths.
+
 ROUND r187 (06 Oct 15:45; PDF 491a3b25, 7 comments). ALL RED STRIPPED; base_r187 + splice_r187 (splice_r186's rule:
 moved transition numbers red, unmoved ones blue). In red, Section 3.7-3.8: 'I begin by examining what the optimal degree
 of drug use and SUD is. I do so by setting the weight ...'; the stylized transition's duplicated sentences merged ('children
