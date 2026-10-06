@@ -133,6 +133,13 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+T = 60 LOOP 1 ARCHIVE COMPLETED (06 Oct 13:35, the 13:30 check-in). results/transition_2c/loop1_r2/ now also holds
+run_between_paths_saved.log.gz (log lines 22616-37130: loop 1's backward pass and forward pass), early_years.txt
+(scratchpad/early_years.py on loop 1's segment), cohort_cev.txt (cohort_cev.py with the tr2c curve, --terminal arm_tf and
+--refs arm_null arm_tf; b = 1 +2.36 percent) and transition_loop1r2.png (loop 1_r2 against loop 0_r2). Budget worst 3.6e-3
+in years 28-35 (loop 0_r2: -3.1e-3 in years 48-55): just above the 3e-3 guide, with the sign flipped. The container restarted
+at about 12:20 but only the session's shells: hftf (pid 721, started 5 Oct 10:31) runs on. Loops now take about 8.2 hours
+(loop 1: 23:54 -> 08:08): loop 2 ends about 16:30-17:00 UTC 6 Oct, loop 3 about 01:00 UTC 7 Oct.
 T = 60 LOOP 1 (restart_r2) DONE 06 Oct 08:08, AND IN THE PAPER (the author: "we can put them when you have them").
 Loop 1 against loop 0_r2: drug market median gap 0.0090 (1.0 percent of the price) against 0.0249, worst 0.0305 (3.4
 percent) against 0.0480, above 0.005 in 39 of 59 years against 57; budget median residual 5.5e-4 against 1.35e-3, worst
