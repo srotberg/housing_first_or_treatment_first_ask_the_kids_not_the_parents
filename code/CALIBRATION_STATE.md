@@ -133,6 +133,14 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r187 (06 Oct 15:45; PDF 491a3b25, 7 comments). ALL RED STRIPPED; base_r187 + splice_r187 (splice_r186's rule:
+moved transition numbers red, unmoved ones blue). In red, Section 3.7-3.8: 'I begin by examining what the optimal degree
+of drug use and SUD is. I do so by setting the weight ...'; the stylized transition's duplicated sentences merged ('children
+live with their parents only before the parents can have a SUD, so a parent can still respond to the reform by stopping,
+and its child then escapes the earnings penalty and consumes more at home'); full-model sentence now 'In the full model,
+children do live with parents who have a SUD, and indeed some children are worse off and some become homeless, but most
+children benefit and on net the gain is large.' [2] ('not sure i understand why this is the number', 9.66 -> 7.16) is
+the open stage-2 rest-point question of r185: answered again in chat, recalibration still awaiting the author's decision.
 T = 60 LOOP 1 ARCHIVE COMPLETED (06 Oct 13:35, the 13:30 check-in). results/transition_2c/loop1_r2/ now also holds
 run_between_paths_saved.log.gz (log lines 22616-37130: loop 1's backward pass and forward pass), early_years.txt
 (scratchpad/early_years.py on loop 1's segment), cohort_cev.txt (cohort_cev.py with the tr2c curve, --terminal arm_tf and

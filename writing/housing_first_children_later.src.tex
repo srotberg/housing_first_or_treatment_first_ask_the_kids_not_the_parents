@@ -1188,7 +1188,7 @@ fixed point.
 $\omega_c$ need to be calibrated as well. I set $\xi$ to $\sqrt2$, the square-root scale for a household of two (OECD, 2013). The
 persistence of productivity across generations, $\rho$, is set to $@@s_rho@@$, within the range of the
 intergenerational elasticities of earnings in Section~\ref{sec:literature}. The penalty
-$\delta_d$ is assigned the value $@@s_deltad@@$ in logs to give the \new{$@@s_deltad_pc@@$-percent} earnings loss Nilsson (2017)
+$\delta_d$ is assigned the value $@@s_deltad@@$ in logs to give the $@@s_deltad_pc@@$-percent earnings loss Nilsson (2017)
 measures for children exposed in utero to a temporary Swedish policy that let grocery
 stores in two regions sell strong beer, which made alcohol easier to buy during pregnancy.
 The parent's weight on its child $\omega_c$ is fitted so that switching the child's terms
@@ -1196,17 +1196,16 @@ off, with every other parameter held, raises drug use by $@@s_t_gap@@$ percent, 
 with adults without children in NSDUH 2024 using $@@s_t_gap@@$ percent more than parents. Every other stage 1 parameter is refitted with the child in place, and
 Table~\ref{tab:int} reports both.
 
-\paragraph{The optimal level of drug use.} To examine what the optimal degree of
-drug use and SUD is, \new{I set} the weight a parent puts on its child to one,
+\paragraph{The optimal level of drug use.} \new{I begin by examining} what the optimal degree of drug use and SUD is\new{. I do so by setting} the weight a parent puts on its child to one,
 $\omega_c=1$, so that a parent counts its child fully, with nothing else changed and the
 programme left as it is. In this case, no parent uses at all: participation and the SUD rate
 both fall to $@@s4_part_opt@@$ percent, and homelessness to $@@s4_homeless_opt@@$ percent.
 
 \paragraph{Treatment First with the child counted.} Counting the child's utility in
-welfare, as Section~\ref{sec:cev} describes, a newborn is better off \new{in the long run} under Treatment First than under Housing First, by $@@s2_cev_tf@@$ percent of lifetime consumption. Treatment First cuts participation from $@@s2_part_hf@@$ to $@@s2_part_tf@@$
+welfare, as Section~\ref{sec:cev} describes, a newborn is better off in the long run under Treatment First than under Housing First, by $@@s2_cev_tf@@$ percent of lifetime consumption. Treatment First cuts participation from $@@s2_part_hf@@$ to $@@s2_part_tf@@$
 percent and the share carrying the disorder from $@@s2_sud_hf@@$ to $@@s2_sud_tf@@$
-percent, both at each policy's rest point, so fewer children enter adult life with the penalty\new{. Breaking the gains by periods of life shows @@s2_split@@:} the gain is $@@s2_cev_tf_kid@@$ percent in childhood, because parents spend more of their
-resources on them instead of on drugs, and $@@s2_cev_tf_adult@@$ percent in adult life, \new{because} the child enters with a better \new{productivity draw}. Treatment First @@s2_homeless_dir@@
+percent, both at each policy's rest point, so fewer children enter adult life with the penalty. Breaking the gains by periods of life shows @@s2_split@@: the gain is $@@s2_cev_tf_kid@@$ percent in childhood, because parents spend more of their
+resources on them instead of on drugs, and $@@s2_cev_tf_adult@@$ percent in adult life, because the child enters with a better productivity draw. Treatment First @@s2_homeless_dir@@
 homelessness too, by about $@@s2_homeless_chg_pc@@$ percent, because fewer households have a SUD and lose their jobs, and fewer are themselves poor for having been born to a
 parent with the disorder, so their income is higher.
 
@@ -1217,20 +1216,20 @@ Comparing rest points hides a key tradeoff. Normally, the debate sees Treatment 
 giving back only later. In this model, this happens too: at implementation a household with a SUD can do nothing about
 its condition but loses its voucher, and it is then at a higher risk of homelessness,
 whereas lower substance use pays off only for the
-generations after it. However, in \new{the stylized} model, a reduction in drug use \new{actually benefits children even upon impact, and no child is worse off while living at home}: the children of parents who use drugs but do not yet have a SUD escape the earnings penalty and enjoy larger consumption while still living with their parents if their parents respond to the policy change by stopping. \new{As opposed to the full model, here children live with their parents only during the parents' adulthood, when the parents do not have a SUD yet, so the parents can still respond to the policy change. In the full model, I show that when children do live with parents who have a SUD, some children are worse off and some indeed become homeless, but that most children benefit and on net the gain is large.}
+generations after it. However, in the stylized model, a reduction in drug use actually benefits children even upon impact, and no child is worse off while living at home: \new{children live with their parents only before the parents can have a SUD, so a parent can still respond to the reform by stopping, and its child then escapes the earnings penalty and consumes more at home.} In the full model, children do live with parents who have a SUD, \new{and indeed some} children are worse off and some become homeless, but most children benefit and on net the gain is large.
 
 The reform moves the programme from Housing First to Treatment First at the same
 $\pi_V=@@s_pv@@$, in the model with the child, and every generation alive
 when it lands is counted, each over its own remaining life and against what the old
-rule would have given it. Figure~\ref{fig:trans} shows the \new{paths for} drug use, the disorder and homelessness of each generation as adults, from the adults at the reform on, against the Housing First rest point. \new{It also shows} the welfare of every generation: the old and the adults alive at the reform, their children, and the cohorts born after them.
+rule would have given it. Figure~\ref{fig:trans} shows the paths for drug use, the disorder and homelessness of each generation as adults, from the adults at the reform on, against the Housing First rest point. It also shows the welfare of every generation: the old and the adults alive at the reform, their children, and the cohorts born after them.
 
 The old, in their second period, chose under the old rule,
 carry whatever disorder that choice left them and cannot recover in a terminal period;
-conditionality now \new{revokes} the voucher from \new{income-eligible households carrying a SUD that happened to draw one}, and they lose
+conditionality now revokes the voucher from income-eligible households carrying a SUD that happened to draw one, and they lose
 $@@s4_tr_old_abs@@$ percent of consumption, with $@@s4_tr_old_hl_tf@@$ percent of them
 homeless against $@@s4_tr_old_hl_hf@@$ under the old rule. The adults, in their first
 period with their children at home, who were born into the old distribution, choose
-under the new rule; they lose $@@s4_tr_young_abs@@$ percent over their adult lives, \new{which is} the price of an option removed.
+under the new rule; they lose $@@s4_tr_young_abs@@$ percent over their adult lives, which is the price of an option removed.
 
 Their children, the first cohort born into the reform, gain
 $@@s4_tr_c1@@$ percent: $@@s4_tr_c1_adult@@$ in adult life, since they are the first to
@@ -1258,12 +1257,12 @@ over their whole lives.}
 %======================================================================
 \subsection{Stage 3: the disamenity of homelessness}\label{sec:kx}
 
-\new{Before moving onto the full model, a note is due on the aggregate homelessness externality. The externality is modelled such that homelessness imposes a cost on each household's flow utility, reducing it by} $\kappa_x H$, where $H$ is the share of households that is homeless, which every
+Before moving onto the full model, a note is due on the aggregate homelessness externality. The externality is modelled such that homelessness imposes a cost on each household's flow utility, reducing it by $\kappa_x H$, where $H$ is the share of households that is homeless, which every
 household takes as given, so the term moves no choice and the calibration of stage 2
 stands unchanged. It enters welfare only, and the child
 bears it like everyone else, once for each period.
 
-$\kappa_x$ is solved inside the model from the \new{annual} willingness to pay for ending homelessness in the contingent valuation of Loubi\`ere et al.\ (2020), $@@s3_wtp_pc@@$
+$\kappa_x$ is solved inside the model from the annual willingness to pay for ending homelessness in the contingent valuation of Loubi\`ere et al.\ (2020), $@@s3_wtp_pc@@$
 percent of income. Households in the model spend $@@s3_cshare_pc@@$ percent of their income
 on consumption, so $@@s3_wtp_pc@@$ percent of income translates to $@@s3_wtp_c_pc@@$ percent of consumption. $\kappa_x$ is the
 disamenity per unit of homelessness, in utils per period alive, that costs an adult in
@@ -1273,7 +1272,7 @@ $V\big((1-w)\,c;\,0\big)=V\big(c;\,H\big)$, where $V(c;H)$ is an adult's lifetim
 the stage 2 economy when it consumes $c$ and homelessness is $H$, which it bears as the disamenity
 $\kappa_x H$, and $w$ is the
 willingness to pay as a share of consumption to have $H=0$.} That gives
-$\kappa_x=@@s3_kx@@$. Because the two policies differ little in homelessness, \new{@@s3_kx_phrase@@}
+$\kappa_x=@@s3_kx@@$. Because the two policies differ little in homelessness, @@s3_kx_phrase@@
 $@@s3_cev_tf@@$ percent of lifetime consumption.
 
 %======================================================================
@@ -2566,13 +2565,13 @@ young adults who have not yet started: in the first decade the number of drug us
 a SUD falls by up to $@@x_tr_new_peak_pc@@$ percent, against $@@x_tf_new_pc@@$ percent in the
 long run. @@x_trf_paruse_why@@
 
-Panels (e) and (f) show homelessness and the share of children in a shelter. Homelessness overshoots. It rises by $@@x_trf_h_peak_pc@@$ percent at its peak, in year $@@x_trf_h_peak_yr@@$, \new{@@x_trf_h_tail@@}. @@x_trf_h_why@@ A similar pattern is observed for childhood homelessness: the share of children in a
+Panels (e) and (f) show homelessness and the share of children in a shelter. Homelessness overshoots. It rises by $@@x_trf_h_peak_pc@@$ percent at its peak, in year $@@x_trf_h_peak_yr@@$, @@x_trf_h_tail@@. @@x_trf_h_why@@ A similar pattern is observed for childhood homelessness: the share of children in a
 shelter rises from $@@x_trf_hchild0@@$ to
 $@@x_trf_hchild_peak@@$ percent in year $@@x_trf_hchild_peak_yr@@$, against
 $@@x_trf_hchild_lr@@$ percent in the long run.
 
 Panel (g) shows the CEV of each cohort by its year of birth. Children born at the reform gain about $@@x_tr_cev_b1@@$ percent of lifetime
-consumption, @@x_tr_cev_b1_vs_lr@@. \new{They gain, because the fall in parental drug use reaches far more children than the overshoot in homelessness@@x_trf_many@@. They gain less than in the long run, because they grow up while the share of parents carrying a SUD is still close to its Housing First level, since that share falls only as fast as recovery allows, so more of them spend their childhood with a parent who carries the disorder, and more enter adult life with the earnings penalty. The gain stays near that level for children born while that share is still falling, and rises toward the long run for those born later, whose parents were themselves born after the reform.} Children born in the first ten
+consumption, @@x_tr_cev_b1_vs_lr@@. They gain, because the fall in parental drug use reaches far more children than the overshoot in homelessness@@x_trf_many@@. They gain less than in the long run, because they grow up while the share of parents carrying a SUD is still close to its Housing First level, since that share falls only as fast as recovery allows, so more of them spend their childhood with a parent who carries the disorder, and more enter adult life with the earnings penalty. The gain stays near that level for children born while that share is still falling, and rises toward the long run for those born later, whose parents were themselves born after the reform. Children born in the first ten
 years gain $@@x_trf_cev_dec1@@$ percent on average. Of the adults alive at the reform,
 $@@x_trf_alive_better_pc@@$ percent are better off under it, and even
 $@@x_trf_alive_sud_better_pc@@$ percent of those who carry a SUD when it lands benefit, because the lower drug
