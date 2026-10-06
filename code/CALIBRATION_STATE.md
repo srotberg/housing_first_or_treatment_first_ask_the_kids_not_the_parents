@@ -133,6 +133,13 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+ROUND r198 (06 Oct 19:35; PDF 20581ddd, 2 comments, p. 29). ALL RED STRIPPED; base_r198 + splice_r198 (0 names moved).
+kappa_phi_d's item: comma removed ('rather than the rich in equilibrium'); the author asked 'didn't you cite other numbers in
+the intro/lit review?' -- yes: Section 2 cites the SUD mortality rate ratios 3.91 (Plana-Ripoll et al. 2019, Danish registers)
+and 6.6 (Heiberg et al. 2018, Norwegian specialist care), Section 5 cited Walker (ever-users, 1.27/2.40) and Degenhardt
+(opioid dependence, 14.7). Now in red: 'in line with the mortality rate ratios of a SUD cited in Section 2: 3.91 ... and 6.6
+... Studies of narrower groups of users bracket these, from hazard ratios of 1.27 ... to ... 14.7'. kappa_phi_d = 4.00.
+
 ROUND r197 (06 Oct 19:20; PDF 85410471, 11 comments, pp. 28-29). ALL RED STRIPPED; base_r197 + splice_r197 (0 names
 moved). In red: the replication-package sentence starts a new paragraph; 'in the order it appears in the table. For clarity,';
 'through similar mechanisms'; b's item is now '$b$, the marginal utility from the first unit of drugs' AND Table 5's row
