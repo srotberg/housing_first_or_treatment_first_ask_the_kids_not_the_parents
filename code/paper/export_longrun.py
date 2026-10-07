@@ -406,12 +406,12 @@ def main():
     _aft = pc(o, 'hl_after', 'null_remote')
     _wa = pc(o, 'w_after', 'null_remote')
     out['x_lr_om_h_why'] = (
-        'Homelessness falls because a parent that counts its child as itself bears in full what a '
+        'This is because a parent that counts its child as itself bears in full what a '
         'shelter costs the child, and spends what it has to keep the child housed. Thus, the fall comes in '
         'the years a child lives at home, whereas among households aged 51 to 64, whose children have left, '
         f'homelessness {"rises" if _aft > 0 else "falls"} by {abs(_aft):.0f} percent.'
         if D[o]['h'] < D['null_remote']['h'] and _kid < 0 and _aft > 0 else
-        'Homelessness falls because a parent that counts its child as itself bears in full what a '
+        'This is because a parent that counts its child as itself bears in full what a '
         'shelter costs the child, and spends what it has to keep the child housed.'
         if D[o]['h'] < D['null_remote']['h'] and _kid < 0 else '')
     i = 'internalise'
@@ -441,7 +441,7 @@ def main():
     # (round 4ad85a30, the author: "you have to compare it to the piv in omegac=1"): from its own base
     _p0, _p1 = D[ib]['piv'], D[i]['piv']
     _pw = 'under ' + out['x_lr_in_base_word'] if ib == o else 'in the benchmark'
-    out['x_lr_in_piv_sentence'] = '$\\pi_V$ remains practically unchanged.' if abs(_p1 / _p0 - 1) < 0.01 else (
+    out['x_lr_in_piv_sentence'] = '$\\pi_V$ remains practically unchanged relative to the optimal drug use experiment.' if abs(_p1 / _p0 - 1) < 0.01 else (
         f"$\\pi_V$ {'rises' if _p1 > _p0 else 'falls'}, "
         f"from ${100 * _p0:.2f}$ percent {_pw} to ${100 * _p1:.2f}$ percent, to hold net government revenue at "
         'its benchmark level.')
@@ -602,7 +602,7 @@ def main():
         f"Treatment First cuts drug use by more than full altruism would, ${_tfb}$ percent against ${_omb}$.")
     _hless = abs(pc(t, 'h', 'null_share')) < abs(pc(o, 'h', 'null_remote'))
     out['x_lr_tf_vs_om2'] = (
-        f"Treatment First cuts drug use by more than full altruism would, ${_tfb}$ percent against ${_omb}$, but "
+        f"Treatment First (with externalities) cuts drug use by more than full altruism does, ${_tfb}$ percent against ${_omb}$, but "
         'homelessness by less' if _r > 1.05 and _hless else
         out['x_lr_tf_vs_om'].rstrip('.') + ', and homelessness')
     out['x_lr_tf_of_om_disc'] = (f"Treatment First delivers ${out['x_lr_tf_of_om_pc']}$ percent of that fall"
@@ -617,8 +617,8 @@ def main():
     else:
         out['x_lr_tf_both'] = (f"{'raises' if _trise else 'lowers'} homelessness by only "
                                f"${abs(pc(t, 'h', 'null_share')):.0f}$ percent and "
-                               + ('leaves the share in a shelter roughly constant' if _hflat else
-                                  f"{'raises' if _hc_t > 0 else 'lowers'} the share in a shelter"))
+                               + ('leaves the share of children in a shelter roughly constant' if _hflat else
+                                  f"{'raises' if _hc_t > 0 else 'lowers'} the share of children in a shelter"))
     _drug = ('gets the drug margin roughly right' if 0.85 <= _r <= 1.15 else
              'goes further than full altruism on the drug margin' if _r > 1.15 else
              'falls short of full altruism on the drug margin')
