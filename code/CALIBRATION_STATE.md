@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07 Oct 23:34 T = 60 KILLED BY A CONTAINER RESTART (about 23:32, five minutes after the 23:23 restart, still in loop 0_r4's
+backward pass; log tr2c_t60/run.log.killed.202610072333). RELAUNCHED 23:33 on the same staging (seeds = loop 0_r3's
+paths, cmp identical; state files to tr2c_t60/restart_r4b_crash_202610072333/; PARAM_HANDOVER.txt from the kept copy,
+100 HANDOVER lines): wrapper 558 (tr2c_worker.main.pid), binary 561, both seeds read 59 of 59. Loops still archive as
+loop<N>_r4. Fifth container restart in about 61 hours. Check-in trig_01Mc5pBEqV9a9QjAGteiUENF at 10:30 UTC stands.
+
 07 Oct 23:24 T = 60 RESTARTED (the author: "I suggest to also restart the transition"). Stopped at 20:53 during loop 1_r3
 for the xi = 1 work; loop 0_r3's paths (saved 20:38, cmp identical to results/transition_2c/loop0_r3) are the seeds.
 Staged by hand as the earlier restarts: calibration_state.dat, newborn_parent_share.dat, resume_seed.dat, START_EPOCH,
