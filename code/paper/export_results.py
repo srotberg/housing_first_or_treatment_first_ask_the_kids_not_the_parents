@@ -525,7 +525,7 @@ _cal = json.load(open(os.path.join(HERE, 'calib_numbers.json')))
 _sud_low = _cal.get('u_odds_sud_pos', '').startswith('at the low end') or _cal.get('u_odds_sud_pos') == 'below'
 out['x_odds_hl_margin'] = '' if _hflat else ', the margin Housing First acts on'
 out['x_odds_tilt_sentence'] = (
-    'Since Treatment First leaves the share of children in a shelter where it was, the excess transmission of '
+    'Since Treatment First leaves the share of children in a shelter roughly constant, the excess transmission of '
     'homelessness favours neither policy, while transmission of the SUD '
     + ('at the low end of' if _cal.get('u_odds_sud_pos', '').startswith('at the low end') else 'below')
     + ' the evidence understates what Treatment First does for children, so if it still raises welfare in the '

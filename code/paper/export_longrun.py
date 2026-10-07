@@ -617,7 +617,7 @@ def main():
     else:
         out['x_lr_tf_both'] = (f"{'raises' if _trise else 'lowers'} homelessness by only "
                                f"${abs(pc(t, 'h', 'null_share')):.0f}$ percent and "
-                               + ('leaves the share in a shelter where it was' if _hflat else
+                               + ('leaves the share in a shelter roughly constant' if _hflat else
                                   f"{'raises' if _hc_t > 0 else 'lowers'} the share in a shelter"))
     _drug = ('gets the drug margin roughly right' if 0.85 <= _r <= 1.15 else
              'goes further than full altruism on the drug margin' if _r > 1.15 else
