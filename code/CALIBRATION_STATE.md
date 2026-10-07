@@ -1,5 +1,12 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07 Oct 23:52 T = 60 KILLED BY ANOTHER CONTAINER RESTART (about 23:41), RELAUNCHED 23:42 (log run.log.killed.202610072342,
+state to restart_r4c_crash_202610072342/; wrapper pid in tr2c_worker.main.pid). Both killed logs ended at the same byte
+(132890, age 19 of the first backward period), which looked like the run triggering the restarts, so this launch runs with
+a monitor (tr2c_t60/memwatch.log, every 5 s: RSS, available memory, disk, age): RSS steady at 6.8 GB, 8.8 GB available,
+past age 19 to age 2 by 23:51 with no restart. The identical size is the log's write buffer, not the same failure point;
+the restarts are the environment's. Sixth restart in about 61 hours, two in ten minutes.
+
 07 Oct 23:34 T = 60 KILLED BY A CONTAINER RESTART (about 23:32, five minutes after the 23:23 restart, still in loop 0_r4's
 backward pass; log tr2c_t60/run.log.killed.202610072333). RELAUNCHED 23:33 on the same staging (seeds = loop 0_r3's
 paths, cmp identical; state files to tr2c_t60/restart_r4b_crash_202610072333/; PARAM_HANDOVER.txt from the kept copy,
