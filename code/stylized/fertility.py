@@ -97,6 +97,53 @@ def mixed(par, psi, s, policy=None):
         P=P, Vc=Vc, Vn=Vn)
 
 
+def mixed_stats(par):
+    """calibrate.stats() for the economy with children chosen (par.fert = 1): every moment the
+    stage calibration reads, plus the three fertility ones, parents and non-parents added
+    before any ratio is formed."""
+    from stylized import vsl, priced_out_share
+    policy = par.policy
+    base = with_(par, fert=0)
+    pc, pn, Vc, Vn = values(base, par.psi, policy)
+    P = share(Vc, Vn, par.fert_s)
+    A = aggregates(pc, C.YG, WW * P, policy, C.EDGES, C.CDF, raw=True)
+    B = aggregates(pn, C.YG, WW * (1.0 - P), policy, C.EDGES, C.CDF, raw=True)
+    t = {k: A[k] + B[k] for k in A if k != 'use'}
+    Mc, Mn = float((WW * P).sum()), float((WW * (1.0 - P)).sum())
+    ybar = float((WW * C.YG).sum())
+    fn = WW * (1.0 - P) / max(Mn, 1e-12)
+    use_np, use_p_rw = float((fn * B['use']).sum()), float((fn * A['use']).sum())
+    users_p, users_n = A['part'], B['part']
+    par_user = users_p / max(users_p + users_n, 1e-12)
+    par_nonuser = (Mc - users_p) / max((Mc - users_p) + (Mn - users_n), 1e-12)
+    p1 = float(np.interp(0.0, np.log(C.YG), P))          # the share with a child at y = 1
+    use = WW * 0 + (P * A['use'] + (1.0 - P) * B['use'])
+    m = dict(part=float(t['part']), sud=float(t['sud']),
+             dshare=float(t['spend'] / max(t['uinc'], 1e-12)),
+             prog=float(t['sud'] / max(t['part'], 1e-12)),
+             r_use=float((A['yuse'] + B['yuse']) / max(t['part'], 1e-12) / ybar),
+             homeless=float(t['hl'] / max(t['mass'], 1e-12)),
+             sud_of_homeless=float(t['hl_sud'] / max(t['hl'], 1e-12)),
+             sud_of_homeless2=float(t['hl_sud'] / max(t['hl2'], 1e-12)),
+             hl2=float(t['hl2']), hl_sud=float(t['hl_sud']),
+             housing_share=float(t['hcost'] / max(t['hinc'], 1e-12)),
+             hsmall=float(t['smallmass'] / max(t['housedmass'], 1e-12)),
+             burden50=float(t['burden'] / max(t['mass1'], 1e-12)),
+             networth=float(t['wealth'] * par.years / max(t['winc'], 1e-12)),
+             hspend=float(t['hcost'] / max(t['hexp'], 1e-12)),
+             fshare=float(t['fsp'] / max(t['lab'], 1e-12)),
+             cost=float(t['cost']), use=use, v=None,
+             parent_share=Mc, part_parents=users_p / max(Mc, 1e-12),
+             part_nonparents=users_n / max(Mn, 1e-12),
+             user_parent_ratio=par_user / max(par_nonuser, 1e-12),
+             child_gap=use_np / max(use_p_rw, 1e-12) - 1.0)
+    m['vsl'] = p1 * vsl(pc) + (1.0 - p1) * vsl(pn)
+    m['bot50'] = C._bottom_half_share(C.SIG)
+    m['priced_out'] = priced_out_share(pc, C.YG, C.W)
+    m['P'] = P
+    return m
+
+
 def psi_for_share(par, s, target=PARENT_SHARE, policy=None, lo=-50.0, hi=50.0, iters=40):
     """The warm glow that makes `target` of households have a child, at taste dispersion s.
     The values of having and not having a child are solved once at psi = 0 and the glow is

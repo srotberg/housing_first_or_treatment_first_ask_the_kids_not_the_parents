@@ -580,7 +580,13 @@ def moments(par, it=0):
     # homelessness, the housing share -- are recomputed every single iteration
     # as before, and those are the ones that move fast.
     fresh = (it % _SLOW_EVERY == 0) or ('child_gap' not in _slow_cache)
-    if fresh:
+    if fresh and getattr(par, 'fert', 0):
+        # WITH CHILDREN CHOSEN the gap is the data's own comparison, parents against non-parents
+        # at the same income (fertility.mixed_stats), already in m; held on the corner.
+        _slow_cache['child_gap'] = m['child_gap'] if (m['dshare'] > CORNER and m['part'] > 0) else None
+        _slow_cache['child_sud_or'] = float('nan')     # no delta_d, no penalty to transmit
+        _slow_cache['child_hl_or'] = float('nan')
+    elif fresh:
         if par.omega > 0.0 and m['part'] > CHILD_GAP_FLOOR * 0.08901 \
                 and m['dshare'] > 0.02:
             cf = stats(with_(par, omega=0.0))

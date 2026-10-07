@@ -685,6 +685,13 @@ class P:
     # alive.  Zero for everyone unless the endogenous-fertility test (fertility.py) sets it on
     # the parent's parameters; nothing in the calibrated stages reads it.
     glow = 0.0
+    # THE ENDOGENOUS-FERTILITY VARIANT (fertility.py, stages.py --fert): fert = 1 makes
+    # calibrate.stats() return the economy where each household chooses whether to have a
+    # child, psi is the parent's warm glow per period and fert_s the dispersion of the logit
+    # taste for children.  Off by default; no calibrated stage reads them.
+    fert = 0
+    psi = 0.0
+    fert_s = 0.5
     # chdmg IS DERIVED, NOT A PARAMETER, AND IT IS NO LONGER ZERO.
     #
     # It is the child's expected LOSS in lifetime value from the parent

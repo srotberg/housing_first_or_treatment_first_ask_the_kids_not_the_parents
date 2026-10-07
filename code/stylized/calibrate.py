@@ -719,6 +719,11 @@ def stats(par):
     # change, so every bracket step arrives here with it unset and every solve
     # below runs on a damage computed at THESE parameters.  Solving it anywhere
     # earlier would be solving it at the previous ones.
+    # THE ENDOGENOUS-FERTILITY VARIANT (stylized.P.fert): parents and non-parents, mixed by
+    # the share choosing a child at each income.  See fertility.py.
+    if getattr(par, 'fert', 0):
+        import fertility
+        return fertility.mixed_stats(par)
     par = solve_child_damage(par)
     m = aggregates(par, YG, W, edges=EDGES, cdf=CDF)
     m['vsl'] = vsl(par)

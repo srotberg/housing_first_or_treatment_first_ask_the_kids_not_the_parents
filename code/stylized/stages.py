@@ -121,6 +121,15 @@ FS_TARGET = float(_fc()['food_stamps_share_data'])
 # target and written to another file, leaving calibrated_stage<n>.json as it is.
 VSL_TARGET = None
 OUT_NAME = None
+# --fert (7 October, the author: "keep the model fully endogenous and the child choice is endogenous",
+# "we can start with the stylized model... to see how the results change"): stage 2 with the choice to
+# have a child (fertility.py), delta_d zero, the warm glow psi fitted on the share of adults in their
+# forties who have had a child (NSFG, 79.7), omega_c on the parent/non-parent gap at the same income,
+# and the taste dispersion fert_s held at FERT_S (the users' parenthood ratio is reported).  Starts
+# from calibrated_stage2.json and writes calibrated_stage2_fert.json unless --out says otherwise.
+FERT = False
+FERT_S = 0.5
+PSI_TARGET = 0.797
 STAGE2_VSL = float(_fc()['vsl_data'])
 
 
@@ -172,6 +181,9 @@ def spec(stage):
     # with no insurance under a SUD, a household with the disorder that loses its job and
     # has no savings otherwise has nothing to eat.
     out.append(('cbar', 'fshare', FS_TARGET, +1, 0.30, 0.02, 0.30))
+    if FERT and stage == 2:
+        out = [r for r in out if r[0] != 'delta_d']
+        out.append(('psi', 'parent_share', PSI_TARGET, +1, 0.30, 0.01, 50.0))
     return out
 
 
@@ -197,7 +209,8 @@ def save(par, stage, it, m, worst):
                    {'pi_base', 'beta', 'y_floor', 'u1', 'xi', 'omega', 'delta_d',
                     # the 29 September specification: food stamps, no insurance under
                     # a SUD, and the settings that go with the raised floor
-                    'cbar', 'ui_sud', 'ui_sud_excess', 'repl', 'h2', 'h3', 'yV'})
+                    'cbar', 'ui_sud', 'ui_sud_excess', 'repl', 'h2', 'h3', 'yV',
+                    'fert', 'psi', 'fert_s', 'glow'})
     out = {'_stage': stage, '_iteration': it, '_worst_gap_pc': round(worst, 3),
            '_moments': {k: (round(v, 6) if isinstance(v, float) else v)
                         for k, v in m.items() if not isinstance(v, (list, dict, np.ndarray))}}
@@ -205,6 +218,30 @@ def save(par, stage, it, m, worst):
     if VSL_TARGET is not None:
         out['_vsl_target'] = VSL_TARGET
     json.dump(out, open(os.path.join(HERE, OUT_NAME or f'calibrated_stage{stage}.json'), 'w'), indent=1)
+
+
+def _fert_presolve(v, rounds=2):
+    """psi for the parent share and b for participation, by bisection, before the rule starts:
+    stage 2's b leaves nobody using once parents get a warm glow (fertility.py, 7 October)."""
+    import fertility as F
+    for r in range(rounds):
+        q = with_(P(), **{**v, 'fert': 0})
+        v['psi'] = F.psi_for_share(q, v['fert_s'], target=PSI_TARGET)
+        lo, hi = 0.2 * v['b'], 1.5 * v['b']
+        for _ in range(14):
+            mid = 0.5 * (lo + hi)
+            part = C.stats(with_(P(), **{**v, 'b': mid}))['part']
+            if part > 0.08901:      # participation falls in b, so too many users means b goes up
+                lo = mid
+            else:
+                hi = mid
+        v['b'] = 0.5 * (lo + hi)
+        m = C.stats(with_(P(), **v))
+        print(f'  presolve {r}: psi {v["psi"]:.4f}, b {v["b"]:.5f}: parents {100*m["parent_share"]:.1f}, '
+              f'participation {100*m["part"]:.2f} (parents {100*m["part_parents"]:.2f}, non-parents '
+              f'{100*m["part_nonparents"]:.2f}), child gap {100*m["child_gap"]:+.1f}, user parenthood ratio '
+              f'{m["user_parent_ratio"]:.3f}', flush=True)
+    return v
 
 
 def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None, hold=()):
@@ -251,7 +288,15 @@ def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None, hold=()):
         v.update({k: x for k, x in r.items() if not k.startswith('_')})
         v['y_floor'] = 0.0
         print(f'  resumed stage {stage} from {resume}, iteration {r.get("_iteration")}')
+    if FERT and stage == 2 and not resume:
+        prev = json.load(open(os.path.join(HERE, 'calibrated_stage2.json')))
+        v = {k: x for k, x in prev.items() if not k.startswith('_')}
     v.update(STAGE_SET[stage])
+    if FERT and stage == 2:
+        v.update(delta_d=0.0, fert=1, fert_s=FERT_S, glow=0.0)
+        S.PER_PARAM_STEP['psi'] = 0.01
+        if not resume:
+            v = _fert_presolve(v)
     par = with_(P(), **v)
     print(f'STAGE {stage}: {len(S.SPEC)} parameters live: '
           f'{", ".join(r[0] for r in S.SPEC if r[4] > 0)}; held: '
@@ -304,4 +349,9 @@ if __name__ == '__main__':
             VSL_TARGET = float(a.split('=', 1)[1])
         if a.startswith('--out='):
             OUT_NAME = a.split('=', 1)[1]
+        if a == '--fert':
+            FERT = True
+            OUT_NAME = OUT_NAME or 'calibrated_stage2_fert.json'
+        if a.startswith('--fert_s='):
+            FERT_S = float(a.split('=', 1)[1])
     calibrate(int(sys.argv[1]), resume=args[0] if args else None, hold=hold)
