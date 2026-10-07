@@ -1,0 +1,53 @@
+"""Run:  python3 make_altruism_moment_loneparent.py NSDUH_2024_Tab.csv
+
+Two-person households, NSDUH 2024, 26+: a lone parent with one child under 18 against a married couple with no child,
+and against an unmarried adult living with one other adult (partner, roommate or relative; the public file has no
+cohabitation flag). Drug use matched on age, sex and income, reweighting each way."""
+import sys, numpy as np, pandas as pd
+F = sys.argv[1]
+COLS = {'wt': 'ANALWT2+AF8-C', 'age3': 'AGE3', 'sex': 'IRSEX', 'marit': 'IRMARIT', 'ki17': 'IRKI17+AF8-2',
+        'nrch': 'NRCH17+AF8-2', 'pinc': 'IRPINC3', 'finc': 'IRFAMIN3', 'hh': 'IRHHSIZ2',
+        'illmon': 'ILLMON', 'illyr': 'ILLYR', 'sud': 'UD5ILLANY'}
+hdr = open(F).readline().rstrip('\n').split('\t')
+pos = {k: hdr.index(v) for k, v in COLS.items()}
+rows = []
+with open(F) as f:
+    f.readline()
+    for line in f:
+        p = line.rstrip('\n').split('\t')
+        rows.append([p[pos[k]] for k in COLS])
+d = pd.DataFrame(rows, columns=list(COLS)).apply(pd.to_numeric, errors='coerce')
+d = d[d.age3 >= 7].copy()
+print('NRCH17_2 against IRKI17_2 among 2-person households:\n', pd.crosstab(d[d.hh == 2].nrch, d[d.hh == 2].ki17))
+lone = d[(d.hh == 2) & (d.ki17 == 2) & (d.marit != 1)]
+couple = d[(d.hh == 2) & (d.ki17 == 1) & (d.marit == 1)]
+other = d[(d.hh == 2) & (d.ki17 == 1) & (d.marit != 1)]
+def rate(x, o): return float(np.average(x[o], weights=x.wt))
+def matched(a, b, cells, o):
+    """b reweighted to a's cells: (a's rate, b's rate as if b had a's mix, cover of a)"""
+    wa = a.groupby(cells).wt.sum()
+    ra = a.groupby(cells).apply(lambda g: rate(g, o), include_groups=False)
+    rb = b.groupby(cells).apply(lambda g: rate(g, o), include_groups=False)
+    c = ra.index.intersection(rb.index)
+    sh = wa.loc[c] / wa.loc[c].sum()
+    return float((sh * ra.loc[c]).sum()), float((sh * rb.loc[c]).sum()), float(wa.loc[c].sum() / wa.sum())
+for nm, x in (('lone parent + 1 child', lone), ('married couple, no child', couple), ('unmarried, 2 adults, no child', other)):
+    print(f'{nm:30s} n {len(x):5d}  women {100*rate(x.assign(f=(x.sex==2).astype(float)), "f"):4.0f}%  '
+          f'past month {100*rate(x,"illmon"):5.1f}%  past year {100*rate(x,"illyr"):5.1f}%  disorder {100*rate(x,"sud"):5.1f}%')
+for o in ('illmon', 'illyr', 'sud'):
+    print(f'\n{o}:')
+    for cname, comp in (('married couple', couple), ('unmarried 2 adults', other)):
+        for cells in (['age3', 'sex', 'pinc'], ['age3', 'sex', 'finc'], ['age3', 'sex', 'pinc', 'finc']):
+            a, b, cov = matched(lone, comp, cells, o)
+            b2, a2, cov2 = matched(comp, lone, cells, o)
+            print(f'  vs {cname:18s} on {"+".join(cells):18s}: lone parents {100*a:5.1f} vs {100*b:5.1f} '
+                  f'(non-parents use {100*(b/a-1):+6.1f}%, cover {100*cov:.0f}%)  |  other way: {100*a2:5.1f} vs {100*b2:5.1f} '
+                  f'({100*(b2/a2-1):+6.1f}%, cover {100*cov2:.0f}%)')
+
+print('\nunmarried on both sides, also matched on marital status (never married, divorced or separated, widowed):')
+for o in ('illmon', 'illyr', 'sud'):
+    for cells in (['age3', 'sex', 'marit', 'pinc'], ['age3', 'sex', 'marit', 'finc']):
+        a, b, cov = matched(lone, other, cells, o)
+        b2, a2, cov2 = matched(other, lone, cells, o)
+        print(f'  {o:6s} on {"+".join(cells):20s}: lone parents {100*a:5.1f} vs {100*b:5.1f} ({100*(b/a-1):+6.1f}%, cover {100*cov:.0f}%)'
+              f'  |  other way: {100*a2:5.1f} vs {100*b2:5.1f} ({100*(b2/a2-1):+6.1f}%, cover {100*cov2:.0f}%)')

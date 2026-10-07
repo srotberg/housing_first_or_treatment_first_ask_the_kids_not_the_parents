@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07 Oct 23:12 THE KEY CASE, TWO-PERSON HOUSEHOLDS (the author: "lone parent plus child vs couple no kids";
+data/make_altruism_moment_loneparent.py, NSDUH 2024, 26+). Lone parent with one child under 18 (n 573, 75 percent women):
+past month 20.4, past year 30.6, disorder 10.1. Married couple, no child (n 6185): 11.3, 18.7, 4.7. Unmarried adult with
+one other adult, no child (n 3698; partner, roommate or relative -- no cohabitation flag): 24.0, 34.3, 13.2.
+How much more the non-parents use, past month: vs MARRIED couples, matched on age and sex, -12 to +17 with personal or
+family income and either weighting; marriage itself lowers use and a lone parent is unmarried by definition. vs UNMARRIED
+two-adult households, also matched on marital status: +25 (personal income) and +44 (family income) with the lone
+parents' weights, +7 and +20 with the other group's; past year +17 to +39; disorder +41 to +76. The paper's 18.3 sits
+inside the unmarried range.
+
 07 Oct 23:07 THE ALTRUISM MOMENT AT EQUAL HOUSEHOLD SIZE (the author: "parents to non parents with equal number of members
 in the household"; data/make_altruism_moment_hhsize.py, NSDUH 2024, 26+, past-month use). Adding IRHHSIZ2 to the cells,
 how much more non-parents use: parents reweighted to non-parents' cells -11.3 (cover 43: a quarter of non-parents live
