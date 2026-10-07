@@ -133,6 +133,14 @@ made homeless 3.7 pp (Wald-style), against Costantini's 4.6. Without SMI +0.64 p
 NOT yet in the paper: the paper's comparison is the SMI-and-street split (results/revoked_2c_street), whose worker
 (session_0146XhtbLwNujhJ1e2fbujz2) lost its container at 08:31, woke at its own 10:21 check-in and restarted tf10, then
 hf10, about 100 min each: result about 14:00 UTC.
+T = 60 KILLED AGAIN BY A CONTAINER RESTART (07 Oct about 00:37), the r3 run 6 h 45 min in: loop 0_r3's forward pass at year 9
+of 59, no paths saved, so nothing of it is kept (its log: tr2c_t60/run.log.killed.202610070038; years 1-2 had budget gaps
+1.3e-3 and 2.7e-4). RELAUNCHED 00:38 on the same staging (seeds = loop 2_r2's paths, unchanged; binary = the retention 0.5
+build, unchanged; state files to tr2c_t60/restart_r3b_crash_202610070038/, PARAM_HANDOVER.txt from the kept copy): wrapper 455
+(tr2c_worker.pid), binary 457, both seeds read 59 of 59. Loops still number from 0 and are archived as loop<N>_r3. A loop is
+about 12 h (backward about 6 h, forward about 6 min a year): loop 0_r3 should end about 12:30-13:00 UTC 7 Oct. Third container
+restart in 36 hours (5 Oct 10:25, 6 Oct 17:12, 7 Oct 00:37).
+
 ROUND r206 (06 Oct 22:10; PDF 51a863e6, 6 comments, p. 36). ALL RED STRIPPED; base_r206 + splice_r206 (0 names moved). In red: r
 'This parameter sets the return'; tau_ell 'this parameter sets', 'after tax on average', its model value REMOVED (marked);
 tau_k 'the capital income tax rate' in the item AND Table 6. NOT CHANGED, answered in chat: phi = 0.85 against Heathcote et al.
