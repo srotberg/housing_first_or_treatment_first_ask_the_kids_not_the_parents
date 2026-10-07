@@ -32,12 +32,12 @@ OUT = os.path.join(HERE, '..', 'code', 'paper', 'nsfg_births.json')
 HARD = ['COC12', 'CRACK12', 'CRYSTMTH12', 'INJECT12']
 
 
-def read(stem, kids):
+def read(stem, kids, extra=()):
     sas = open(os.path.join(RAW, f'NSFG_2017_2019_{stem}Setup.sas'), encoding='latin-1').read()
     i = sas.find('\nINPUT\n'); j = sas.find(';', i)
     pos = {m.group(1): (int(m.group(2)), int(m.group(3) or m.group(2)))
            for m in re.finditer(r'(\w+)\s+\$?\s*(\d+)(?:\s*-\s*(\d+))?', sas[i + 7:j])}
-    want = ['AGER', kids, 'NUMKDHH', 'POT12'] + HARD + ['WGT2017_2019']
+    want = ['AGER', kids, 'NUMKDHH', 'POT12'] + HARD + ['WGT2017_2019'] + list(extra)
     d = pd.read_fwf(os.path.join(RAW, f'NSFG_2017_2019_{stem}Data.dat'),
                     colspecs=[(pos[k][0] - 1, pos[k][1]) for k in want], names=want, header=None)
     d = d.apply(pd.to_numeric, errors='coerce').rename(columns={kids: 'KIDS'})
@@ -50,7 +50,14 @@ def read(stem, kids):
     return d
 
 
-W, M = read('FemResp', 'PARITY'), read('Male', 'BIOKIDS')
+# A CHILD STILL UNDER 18 (the author, 7 October: users in their forties have a child of 15 to 20 and still use).
+# Women: the most recent live birth (CMLASTLB, a year) under 18 years before the interview (CMINTVW, a century month).
+# Men: any biological child whose age (BIOAGE1-10) is under 18. Living with the child is not required.
+W = read('FemResp', 'PARITY', ['CMLASTLB', 'CMINTVW'])
+_yr = (1900 + (W.CMINTVW - 1) // 12).where(W.CMINTVW > 1300, W.CMINTVW)
+W['minor'] = (W.KIDS > 0) & (W.CMLASTLB < 9000) & (_yr - W.CMLASTLB < 18)
+M = read('Male', 'BIOKIDS', [f'BIOAGE{k}' for k in range(1, 11)])
+M['minor'] = (M[[f'BIOAGE{k}' for k in range(1, 11)]] < 18).any(axis=1)
 SEXES = {'women': W, 'men': M, 'all': pd.concat([W, M], ignore_index=True)}
 TAG = {'women': '', 'men': 'm_', 'all': 'all_'}
 
@@ -66,11 +73,13 @@ for sex, d in SEXES.items():
     for lo, hi, tag in ((40, 49, '4049'), (35, 49, '3549')):
         x = d[d.AGER.between(lo, hi)]
         print(f'\nNSFG 2017-2019, {sex} {lo}-{hi}, n = {len(x)}')
-        print(f'{"group":48s} {"n":>5s} {"children":>9s} {"any child":>10s} {"own kids <18 at home":>21s}')
+        print(f'{"group":48s} {"n":>5s} {"children":>9s} {"any child":>10s} {"child <18":>10s} {"own kids <18 at home":>21s}')
         for key, g in GROUPS:
             y = x[~x.use] if key == 'nouse' else x[x[key]]
             b, a, k = w(y, y.KIDS), w(y, y.KIDS > 0), w(y, y.NUMKDHH.clip(upper=9))
-            print(f'{g:48s} {len(y):5d} {b:9.2f} {100 * a:9.1f}% {k:21.2f}')
+            mi = w(y, y.minor)
+            print(f'{g:48s} {len(y):5d} {b:9.2f} {100 * a:9.1f}% {100 * mi:9.1f}% {k:21.2f}')
+            out[f'nsfg_{TAG[sex]}minor_{key}_{tag}_pc'] = f'{100 * mi:.0f}'
             out[f'nsfg_{TAG[sex]}births_{key}_{tag}'] = f'{b:.2f}'
             out[f'nsfg_{TAG[sex]}anybirth_{key}_{tag}_pc'] = f'{100 * a:.0f}'
             out[f'nsfg_{TAG[sex]}n_{key}_{tag}'] = str(len(y))

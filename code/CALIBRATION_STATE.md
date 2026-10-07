@@ -1,5 +1,12 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07 Oct 23:55 PAPER (the author: "I think we can use the 47% and 61%"): data/nsfg_births_by_drug_use.py now writes
+nsfg_*minor_*_pc, the share with a child still under 18 (women: last birth under 18 years before the interview; men:
+BIOAGE1-10), co-residence not required; the existing names did not move. In red, after the ever-had-a-child numbers, in
+the introduction (line 247) and the omega_c block (line 542): 47 percent of 40-49 hard users against 61 of non-users have
+a child still under 18. Spliced with splice_r218 (base_r218, as r219); checkers clean except the DC acronym flag, which
+predates the edit; 50 pages.
+
 07 Oct 23:40 CHILD AT HOME, LIKE FOR LIKE (data/make_children_at_home_reweighted.py, NSDUH 2024, 26-49, non-users
 reweighted to the users' age x sex x income x marital cells): past-month users 43.5 against 51.1 (ratio 0.85; raw
 non-users 60.0), disorder of any severity 39.5 against 48.2 (0.82), past-year hard drugs 27.6 against 44.3 (0.62). The
