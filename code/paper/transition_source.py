@@ -11,21 +11,21 @@ archived there before it is pinned.
 import os
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
-# 6 October 08:30 (the author: "we can put them when you have them"): the T = 60 run on the current
-# (2c) build, tr2c_t60, restart_r2, loop 1 -- its second iterate.  The budget clears to a median residual
-# of 5.5e-4 (worst 3.6e-3, above 1e-3 in 22 of 58 years) and the drug market to a median gap of 1.0 per
-# cent of the price (worst 3.4 per cent, above 0.005 in 39 of 59 years), against 2.9 and 5.3 per cent in
-# loop 0_r2.  Not converged: the rule is 0.005 in every year, so every number read from it is provisional.
-# The log here is loop 2's segment alone (from its 'TRANSITION INIT PARENT SHARE RESTORED' to the CONVERGENCE
-# TERMS after its 'PATHS SAVED', lines 42643-51647 of tr2c_t60/run.log.killed.202610061750), because the readers
-# take a log's FIRST pass; the full log and the paths are archived in results/transition_2c/loop2_r2/. Re-pinned
-# 6 Oct (the author: update the transition's figures and numbers after each iteration). Previous pin: loop 1_r2.
-LOG = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop2_r2', 'run.log')
-TAG = 'tr2c_loop2_r2'
+# 7 October 20:38 (the author, 7 Oct: "update the paper when loop 0 finishes"): the T = 60 run on the current
+# (2c) build relaunched from loop 2_r2's saved paths on the retention 0.5 build, tr2c_t60 restart r3, loop 0 --
+# its first iterate from those seeds.  The drug market clears to a median gap of 0.1 per cent of the price (worst
+# 1.35 per cent, above 0.005 in 5 of 59 years), against 1.0 in loop 2_r2; the budget to a median residual of
+# 2.1e-3 (worst 5.3e-3, above 1e-3 in 34 of 58 years), against 5.5e-4.  Not converged (12 open convergence
+# terms), so every number read from it is provisional.  The log here is loop 0_r3's segment alone (from its
+# 'TRANSITION INIT PARENT SHARE RESTORED loop= 0' to the CONVERGENCE TERMS after its 'PATHS SAVED', lines
+# 10133-22617 of tr2c_t60/run.log), because the readers take a log's FIRST pass; the full log and the paths are
+# archived in results/transition_2c/loop0_r3/.  Previous pin: loop 2_r2.
+LOG = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop0_r3', 'run.log')
+TAG = 'tr2c_loop0_r3'
 OUT = os.path.join(ROOT, 'results', 'transition', TAG)
 # the benchmark welfare curve the cohort CEVs are read against, and the two steady states the path is
 # solved between: Housing First with no policy change, and the Treatment First long run, on the same build
-CURVE = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop2_r2', 'welfare_curvebaseline_benchmark.dat')
+CURVE = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop0_r3', 'welfare_curvebaseline_benchmark.dat')
 REF = os.path.join(ROOT, 'results', 'transition_2c')
 REF_NULL, REF_TF = 'arm_null', 'arm_tf'
 # the previous pin, kept for the record: restart 3g's loop 0 on the old build (30 September)
