@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 00:30 PAPER (the author: "we should also add that only about 80% of Americans never have children. That is key as
+well" -- read as about 80 percent HAVE children): data/nsfg_births_by_drug_use.py gains the group 'tot' (everyone),
+nsfg_all_anybirth_tot_4049_pc = 80 (women 83, men 76; no existing name moved). In red at the head of the introduction's
+second block: "Every household in the model has a child, which is close to the data: by their forties, 80 percent of
+Americans have had one." 51 pages.
+
 08 Oct 00:15 PAPER (the author: "the gaps are not orders of magnitude... The gains are maybe 15% lower but it won't
 reverse them", and "it also means the impact on child homelessness is smaller"): in red in the introduction, after "pinned
 down by observed behaviour": 40 percent of 26-49 adults with a drug use disorder have a child under 18 at home against

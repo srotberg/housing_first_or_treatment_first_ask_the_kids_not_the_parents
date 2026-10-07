@@ -66,7 +66,7 @@ def w(x, v):
     return (x.WGT2017_2019 * v).sum() / x.WGT2017_2019.sum()
 
 
-GROUPS = [('nouse', 'no drug use in the last year'), ('use', 'any drug use, marijuana included'),
+GROUPS = [('tot', 'everyone'), ('nouse', 'no drug use in the last year'), ('use', 'any drug use, marijuana included'),
           ('hard', 'a harder drug (cocaine, crack, meth, injecting)'), ('heavy', 'frequent use')]
 out = {}
 for sex, d in SEXES.items():
@@ -75,7 +75,7 @@ for sex, d in SEXES.items():
         print(f'\nNSFG 2017-2019, {sex} {lo}-{hi}, n = {len(x)}')
         print(f'{"group":48s} {"n":>5s} {"children":>9s} {"any child":>10s} {"child <18":>10s} {"own kids <18 at home":>21s}')
         for key, g in GROUPS:
-            y = x[~x.use] if key == 'nouse' else x[x[key]]
+            y = x if key == 'tot' else x[~x.use] if key == 'nouse' else x[x[key]]
             b, a, k = w(y, y.KIDS), w(y, y.KIDS > 0), w(y, y.NUMKDHH.clip(upper=9))
             mi = w(y, y.minor)
             print(f'{g:48s} {len(y):5d} {b:9.2f} {100 * a:9.1f}% {100 * mi:9.1f}% {k:21.2f}')
