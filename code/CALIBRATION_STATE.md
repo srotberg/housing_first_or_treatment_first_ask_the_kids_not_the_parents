@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07 Oct 23:10 DO USERS LIVE WITH THEIR CHILDREN? (data/make_children_at_home_by_use.py, NSDUH 2024, child under 18 in the
+household, weighted). Ages 35-49: no illicit use 66.7 (n 8844), past-month use 49.2 (2753), past-year drug use disorder
+42.3 (1514), past-year hard drug 31.2 (495). Women 35-49: 70.2 non-users, 52.6 with a disorder, 28.1 hard drugs. So
+users are nearly as likely to have HAD a child (NSFG 75 against 81 at 40-49) but far less likely to LIVE with one. The
+author had read the NSFG fact as users living with their children; put to the author.
+
 07 Oct 22:50 WHY USE COLLAPSES AT xi = 1 (stylized stage 2, omega 0, delta_d 0; scratchpad xi_channel.py): with the
 drug's death risk on (kap 0.1156) participation is 10.44 per cent at xi = sqrt 2 and 0.00 at xi = 1; with it off (kap 0)
 79.52 against 71.41. Almost the whole gap runs through mortality. Under sigma = 2 dividing c and h by xi multiplies the
