@@ -1,5 +1,13 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07 Oct 22:50 WHY USE COLLAPSES AT xi = 1 (stylized stage 2, omega 0, delta_d 0; scratchpad xi_channel.py): with the
+drug's death risk on (kap 0.1156) participation is 10.44 per cent at xi = sqrt 2 and 0.00 at xi = 1; with it off (kap 0)
+79.52 against 71.41. Almost the whole gap runs through mortality. Under sigma = 2 dividing c and h by xi multiplies the
+period's flow utility by xi^(1-theta) (about 1.33): the drug's pleasure and its money cost scale together, so the static
+choice is unchanged, but the life after the child leaves, which the drug puts at risk, does not scale. A parent weighs
+that future at about three quarters of what a non-parent does. Under log the division is an additive constant and the
+channel vanishes. My earlier "the drug's gain scales with 1/C" was loose. Put to the author with the NSFG question.
+
 07 Oct 22:35 STYLIZED ENDOGENOUS CHILDREN (stages.py 2 --fert, delta_d dropped), stopped at iteration 100: every
 moment inside ten per cent but one -- vsl 79.9 (80), part 8.66 (8.90), parent_share 0.797 (0.797), psi 1.33, omega 0.0057,
 b 0.0604, aleph 8.39. child_gap stays at -1.00 against +0.18 throughout: NON-PARENTS NEVER USE at any omega the rule tried
