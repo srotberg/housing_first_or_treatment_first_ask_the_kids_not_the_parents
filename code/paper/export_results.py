@@ -660,7 +660,7 @@ out['x_tr_lr_compare'] = (
     f", against ${abs(_e_lr):.0f}$ and ${abs(_h_lr):.0f}$ percent in the long run, respectively")
 out['x_tr_h_rise_why'] = (
     'Homelessness rises at first because the households that already carry a SUD when the reform lands lose '
-    'their vouchers at once, whereas the fall in the number with a SUD, which is what lowers homelessness in the '
+    'their vouchers within a year, whereas the fall in the number with a SUD, which is what lowers homelessness in the '
     'long run, takes years, since recovery is slow.'
     if max(H[k] for k in range(1, 11)) > h0 and _h_lr < 0 else '')
 out['x_tr_h_lr_disc'] = (f", whereas in the long run it lowers homelessness by ${abs(_h_lr):.0f}$ percent" if _h_lr < 0

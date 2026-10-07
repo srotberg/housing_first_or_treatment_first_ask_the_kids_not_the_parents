@@ -154,7 +154,7 @@ def names(S, C, R):
     # (round f9ac1593, the author: 'The' -> 'This happens because', 'allows' -> ', even with more households in
     # treatment,')
     out['x_trf_h_why'] = ('This happens because the households that carry a SUD when the reform lands lose their '
-                          'vouchers at once. That stock shrinks only as fast as recovery allows, even with more '
+                          'vouchers within a year. That stock shrinks only as fast as recovery allows, even with more '
                           'households in treatment (panel (b)), so revocations '
                           'are highest in the first years and fall as the stock thins.'
                           if max(h) > tf['h_1'] > hf['h_1'] else '')
@@ -178,7 +178,7 @@ def names(S, C, R):
     _ch_up = max(ch[i] for i in body) > hf['child_hl']
     out['x_trf_h_sr'] = ('These are long-run outcomes, however. In the first years after the reform '
                          + ('both homelessness and childhood homelessness rise, ' if _ch_up else 'homelessness rises, ')
-                         + 'because the households that already carry a SUD lose their vouchers at once, '
+                         + 'because the households that already carry a SUD lose their vouchers within a year, '
                          'while their number falls only as fast as recovery allows. I take the transition up in Section~\\ref{sec:ftrans}.'
                          if _lowers and max(h) > hf['h_1'] else '')
     out['x_trf_shade_from'] = str(UNCONVERGED_FROM)
@@ -201,7 +201,7 @@ def names(S, C, R):
            f"between ${min(a_all):.0f}$ and ${max(a_all):.0f}$ percent")
         + f", and the share among those with a SUD {'rises' if a_sud[-1] > a_sud[0] else 'falls'} from "
         f"${a_sud[0]:.0f}$ to ${a_sud[-1]:.0f}$ percent as the price comes down further. "
-        + ('Every child and household entering adult life is better off throughout.' if min(a_ent) > 99.95
+        + ('Every household entering adult life at 26 is better off throughout.' if min(a_ent) > 99.95
            and min(c for b, c in cev) > 0 else
            f"At least ${min(a_ent):.0f}$ percent of households entering adult life are better off."))
     d = json.load(open(OUT_JSON))

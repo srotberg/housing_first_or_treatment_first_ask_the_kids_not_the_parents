@@ -336,8 +336,8 @@ def main():
            '\\begin{tabular}{@{}lrrrrrr@{}}', '\\toprule',
            # the two no-externality columns under one spanning head, so that no column is wider than its numbers need
            ' & \\multicolumn{2}{c}{' + hd('h0/0', 'No externalities') + '} & & & & \\\\', '\\cmidrule(lr){2-3}',
-           ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Housing', 'Treatment', 'Optimal', 'Optimal'))) + ' \\\\',
-           ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'First', 'First', 'drug use', 'homelessness'))) + ' \\\\',
+           ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Housing', 'Treatment', 'Full', 'Full'))) + ' \\\\',
+           ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'First', 'First', 'altruism', 'internalisation'))) + ' \\\\',
            '\\midrule'] + body + ['\\bottomrule', '\\end{tabular}']
     open(TAB, 'w').write('\n'.join(tab) + '\n')
     if freeze:
@@ -420,7 +420,7 @@ def main():
     # the arm ran at omega_c = 1, and from the benchmark for the old arm, which did not
     _ho_i = dict(l.split()[:2] for l in open(os.path.join(adir(i), 'PARAM_HANDOVER.arm.txt')) if len(l.split()) >= 2)
     ib = o if abs(float(_ho_i.get('weight_on_child', 0)) - 1) < 1e-9 else 'null_remote'
-    out['x_lr_in_base_word'] = 'optimal drug use' if ib == o else 'the benchmark'
+    out['x_lr_in_base_word'] = 'full altruism' if ib == o else 'the benchmark'
     out['x_lr_in_dh_pc'] = f"{abs(pc(i, 'h', ib)):.0f}"
     out['x_lr_in_dh_dir'] = 'lower' if D[i]['h'] < D[ib]['h'] else 'higher'
     # the verb (the author, 2 October: 'leaves' -> 'reduces')
@@ -428,7 +428,7 @@ def main():
     # households can act on their housing, and many do when they weigh their child (the author, 2
     # October: "many do reduce homelessness when they weigh their child, so it's not that they cannot
     # afford to rent a place"): only when full altruism did lower homelessness
-    out['x_lr_in_many_do'] = (', and many do when they weigh their child, as the optimal drug use column shows'
+    out['x_lr_in_many_do'] = (', and many do when they weigh their child, as the full-altruism column shows'
                               if D[o]['h'] < D['null_remote']['h'] else '')
     out['x_lr_in_b_pc'] = f"{abs(pc(i, 'b', 'null_remote')):.0f}"
     out['x_lr_in_b_dir'] = 'falls' if D[i]['b'] < D['null_remote']['b'] else 'rises'
@@ -441,7 +441,7 @@ def main():
     # (round 4ad85a30, the author: "you have to compare it to the piv in omegac=1"): from its own base
     _p0, _p1 = D[ib]['piv'], D[i]['piv']
     _pw = 'under ' + out['x_lr_in_base_word'] if ib == o else 'in the benchmark'
-    out['x_lr_in_piv_sentence'] = '$\\pi_V$ remains practically unchanged relative to the optimal drug use experiment.' if abs(_p1 / _p0 - 1) < 0.01 else (
+    out['x_lr_in_piv_sentence'] = '$\\pi_V$ remains practically unchanged relative to full altruism.' if abs(_p1 / _p0 - 1) < 0.01 else (
         f"$\\pi_V$ {'rises' if _p1 > _p0 else 'falls'}, "
         f"from ${100 * _p0:.2f}$ percent {_pw} to ${100 * _p1:.2f}$ percent, to hold net government revenue at "
         'its benchmark level.')
