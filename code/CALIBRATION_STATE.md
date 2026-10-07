@@ -141,6 +141,8 @@ build, unchanged; state files to tr2c_t60/restart_r3b_crash_202610070038/, PARAM
 about 12 h (backward about 6 h, forward about 6 min a year): loop 0_r3 should end about 12:30-13:00 UTC 7 Oct. Third container
 restart in 36 hours (5 Oct 10:25, 6 Oct 17:12, 7 Oct 00:37).
 
+STANDING FOR LOOP 0_r3 (the author, 07 Oct about 01:50: "ok, update the paper when loop 0 finishes"): when tr2c_t60/run.log prints 'TRANSITION PATHS SAVED after loop 0', run scratchpad repin_loop0_r3.sh (archives to results/transition_2c/loop0_r3, cuts code/trtf60/tr2c_loop0_r3/run.log, early_years, cohort_cev, plot against loop 2_r2), then re-pin transition_source.py to tr2c_loop0_r3, run transition_series, transition_figure, export_results, export_revoked, export_pe_noext, splice against base_r209 (red-free state) so moved names go red, update the hidden \upd on 6.3, typeset, commit, push, send the PDF. At 01:47 the backward pass was at year 45 of 59 (about 4.5 min a year): paths expected about 11:00-13:00 UTC.
+
 REMOVE ALL RED (07 Oct, after r208): stripped source and tables, refroze (base_r209), splice moved 0 names, PDF has no red text.
 
 ROUND r208 (07 Oct; PDF 04a712a0, 2 comments, pp. 36-37). ALL RED STRIPPED; base_r208 + splice_r208 (0 names moved). Removed 'of the formula in footnote 11' after alpha_1..alpha_3 (the S(y) item already points to fn:ss). Voucher holders not living on wages: 'retired or unemployed' in red (was 'out of work'); non-employed SMI households on DI are non-employed too, so 'unemployed' covers them. Checkers clean (CDC flag pre-existing), 48 pages.
