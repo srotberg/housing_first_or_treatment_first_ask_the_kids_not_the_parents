@@ -1,6 +1,6 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
-07 Oct 23:12 THE ALTRUISM MOMENT AT EQUAL HOUSEHOLD SIZE (the author: "parents to non parents with equal number of members
+07 Oct 23:07 THE ALTRUISM MOMENT AT EQUAL HOUSEHOLD SIZE (the author: "parents to non parents with equal number of members
 in the household"; data/make_altruism_moment_hhsize.py, NSDUH 2024, 26+, past-month use). Adding IRHHSIZ2 to the cells,
 how much more non-parents use: parents reweighted to non-parents' cells -11.3 (cover 43: a quarter of non-parents live
 alone, half in two-person households, where parents are single parents); with family income -3.0 (cover 45); without
