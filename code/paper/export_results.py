@@ -200,7 +200,7 @@ out['x_tf_h_cln0'], out['x_tf_h_cln1'] = f'{100 * _rc0:.2f}', f'{100 * _rc1:.2f}
 # THE BALANCE, IN FULL (round c88b1dda, the author: "you have to explain the balance. on the one hand it puts
 # those with SUD at risk of homelessness, but on the other it reduces SUD which more than offsets it...give the
 # full explanation"; of the split sentence: "not clear"). The change in homelessness splits exactly into the
-# risk of those who still carry a SUD, the number who carry one, and the risk of everyone else:
+# risk of those who still have a SUD, the number who carry one, and the risk of everyone else:
 #   dh = lam1 (rs1 - rs0) + (lam1 - lam0)(rs0 - rc0) + (1 - lam1)(rc1 - rc0)
 _l0, _l1 = _lam['base'], _lam['level']
 _up = 100 * _l1 * (_rs1 - _rs0) / _hh['base']
@@ -338,6 +338,23 @@ out['x_dc_b_takeback'] = _share(_lost)
 out['x_dc_b_restore'] = _share(_back)
 out['x_dc_b_source'] = ('the screen on its own delivers more than the whole reform' if DC_B['cev'] > _tfc else
                         'the screen on its own delivers most of the gain')
+# THE FOUR COMBINATIONS IN ONE TABLE (review item 12; the author, 7 Oct: "make all the text changes ... on 8-17"):
+# the screen with the drug price and pi_V each held at Housing First or adjusting, the last row Treatment First itself
+def _sgn(v, d=0):
+    t = f'{v:.{d}f}'
+    if float(t) == 0:
+        t = t.lstrip('-')
+    return t.replace('-', '$-$')
+_tf_row = {'b': tf['drug use b']['pc'], 'sud': tf['SUD lambda_d']['pc'], 'h': tf['homelessness h_1']['pc'], 'cev': _tfc}
+_rows = [('Held', 'Held', DC_B), ('Clears', 'Held', DC_PV), ('Held', 'Adjusts', DC_P), ('Clears', 'Adjusts', _tf_row)]
+with open(os.path.join(ROOT, 'writing', 'tables', 'tab_decomp.tex'), 'w') as _f:
+    _f.write('% Written by code/paper/export_results.py from results/decomp_2c, decomp_2c_both and the tf85 arm;\n'
+             '% edit the script, not this file. Caption and note are in the paper.\n'
+             '\\begin{tabular}{@{}llrrrr@{}}\n\\toprule\n'
+             'Drug price & $\\pi_V$ & Drug use & SUD & Homelessness & CEV \\\\\n\\midrule\n')
+    for _p, _v, _r in _rows:
+        _f.write(f"{_p} & {_v} & {_sgn(_r['b'])} & {_sgn(_r['sud'])} & {_sgn(_r['h'])} & {_sgn(_r['cev'], 2)} \\\\\n")
+    _f.write('\\bottomrule\n\\end{tabular}\n')
 # THE DRUG TEST'S COST, as the model charges it.  The declaration's comment says the
 # value is in units of average earnings; the budget charges it raw (f90 20654), in
 # the units in which productivity averages one at entry.  So it is quoted against the
@@ -446,7 +463,7 @@ out['x_tf_sudchild1'] = f'{100 * sc1:.2f}'
 out['x_tf_sudchild_pp'] = f"{abs(float(out['x_tf_sudchild1']) - float(out['x_sudchild0'])):.2f}"
 out['x_tf_sudchild_dir'] = 'falls' if sc1 < sc0 else 'rises'
 # the shelter sentence opens with 'In contrast' (the author, 2 October) only when the share of
-# children in a shelter moves the other way from the share living with a parent who carries a SUD
+# children in a shelter moves the other way from the share living with a parent who has a SUD
 out['x_tf_hchild_lead'] = ('In contrast, the' if (child_homeless('tf85') > hc0) != (sc1 > sc0) else 'The')
 # STAGE D: THE SENTENCES THAT TURN WITH THE CHILDREN'S SHELTER SHARE. On the omega_c = 0.085 arms
 # Treatment First lowers homelessness and leaves the share of children in a shelter where it was
@@ -510,13 +527,13 @@ _sud_pp = out['x_tf_sudchild_pp']
 out['x_disc_penalty'] = (
     f"A penalty of that kind would work against Treatment First, but on few children: the share of children "
     f"in a shelter rises by ${out['x_tf_hchild_pp']}$ percentage points while the share living with a parent "
-    f"who carries a SUD {out['x_tf_sudchild_dir']} by ${_sud_pp}$." if _hcup else
+    f"who has a SUD {out['x_tf_sudchild_dir']} by ${_sud_pp}$." if _hcup else
     f"A penalty of that kind would not work against Treatment First in the long run, where the share of "
-    f"children in a shelter does not rise while the share living with a parent who carries a SUD "
+    f"children in a shelter does not rise while the share living with a parent who has a SUD "
     f"{out['x_tf_sudchild_dir']} by ${_sud_pp}$ percentage points." if _hflat else
     f"A penalty of that kind would work in favour of Treatment First in the long run, where the share of "
     f"children in a shelter falls by ${out['x_tf_hchild_pp']}$ percentage points and the share living with a "
-    f"parent who carries a SUD {out['x_tf_sudchild_dir']} by ${_sud_pp}$.")
+    f"parent who has a SUD {out['x_tf_sudchild_dir']} by ${_sud_pp}$.")
 # TABLE 6'S TRANSMISSION BLOCK, against the results (round c88b1dda, the consistency check of Sections 3-5): the
 # tilt of the two odds ratios read against what Treatment First does to the share of children in a shelter; the
 # old sentence said the over-transmission of homelessness loads the model toward Housing First, which holds only
@@ -594,7 +611,7 @@ out['x_disc_tr_kids'] = (
     'consumption even more in the transition.'
     if _b1 > _lr > 0 else
     'Children born at the reform gain less than those born in the long run, because they grow up while the share of '
-    'parents carrying a SUD is still close to its Housing First level, but they still gain.' if _lr > _b1 > 0 else '')
+    'parents with a SUD is still close to its Housing First level, but they still gain.' if _lr > _b1 > 0 else '')
 m = re.search(r'forward pass (\d+) of', cc)
 out['x_tr_pass'] = m.group(1)
 # THE REFORM COHORT'S GAIN IS A CHILDHOOD GAIN (the author, 29 September: the transition's
@@ -659,7 +676,7 @@ out['x_tr_lr_compare'] = (
     f"{'falls' if _h_lr < 0 else 'rises'} by ${abs(_h_lr):.0f}$ percent" if _h_lr < 0 else
     f", against ${abs(_e_lr):.0f}$ and ${abs(_h_lr):.0f}$ percent in the long run, respectively")
 out['x_tr_h_rise_why'] = (
-    'Homelessness rises at first because the households that already carry a SUD when the reform lands lose '
+    'Homelessness rises at first because the households that already have a SUD when the reform lands lose '
     'their vouchers within a year, whereas the fall in the number with a SUD, which is what lowers homelessness in the '
     'long run, takes years, since recovery is slow.'
     if max(H[k] for k in range(1, 11)) > h0 and _h_lr < 0 else '')

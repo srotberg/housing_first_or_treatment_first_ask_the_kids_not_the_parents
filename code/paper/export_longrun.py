@@ -254,7 +254,7 @@ def main():
         ('In treatment, of those with a SUD', 'takeup', lambda v: f'{100 * v:.1f}'),
         None,
         ('Living with a parent who uses drugs', 'par_use', lambda v: f'{100 * v:.2f}'),
-        ('Living with a parent who carries a SUD', 'par_sud', lambda v: f'{100 * v:.2f}'),
+        ('Living with a parent who has a SUD', 'par_sud', lambda v: f'{100 * v:.2f}'),
         ('In a shelter', 'child_hl', lambda v: f'{100 * v:.2f}'),
         None,
         ('CEV of a newborn, percent of lifetime consumption', 'cev_net', lambda v: f'{v:.2f}'.replace('-', '$-$')),
@@ -406,13 +406,13 @@ def main():
     _aft = pc(o, 'hl_after', 'null_remote')
     _wa = pc(o, 'w_after', 'null_remote')
     out['x_lr_om_h_why'] = (
-        'This is because a parent that counts its child as itself bears in full what a '
-        'shelter costs the child, and spends what it has to keep the child housed. Thus, the fall comes in '
+        'This is because a parent who counts their child as themselves bears in full what a '
+        'shelter costs the child, and spends what they have to keep the child housed. Thus, the fall comes in '
         'the years a child lives at home, whereas among households aged 51 to 64, whose children have left, '
         f'homelessness {"rises" if _aft > 0 else "falls"} by {abs(_aft):.0f} percent.'
         if D[o]['h'] < D['null_remote']['h'] and _kid < 0 and _aft > 0 else
-        'This is because a parent that counts its child as itself bears in full what a '
-        'shelter costs the child, and spends what it has to keep the child housed.'
+        'This is because a parent who counts their child as themselves bears in full what a '
+        'shelter costs the child, and spends what they have to keep the child housed.'
         if D[o]['h'] < D['null_remote']['h'] and _kid < 0 else '')
     i = 'internalise'
     # OPTIMAL HOMELESSNESS IS FULL ALTRUISM PLUS THE HOMELESSNESS EXTERNALITY (the author, 2 October: "no,
@@ -776,13 +776,13 @@ def main():
     # understand where the rest of the gains in adulthood come from"): the same three shares of the whole gain
     # (round 538f55b4, the author on 'Lastly, even drug users benefit from the lower equilibrium drug price': "does
     # their welfare rise?", and round 0e3b2441: "flagging to check"). The price helps them, but on net most households
-    # that carry a SUD lose: shares.txt, better by more than the tolerance against the no-policy run
+    # that have a SUD lose: shares.txt, better by more than the tolerance against the no-policy run
     _SH = shares()
     _sb = 100 * _SH['with a SUD'][0] if _SH else None
     # (round 3350a58a, the author: 'although only' -> 'with', 'since they' -> 'despite losing')
     # (round 3672e7b1, the author: "is that about the transition or about the long run?": the long run, the
     # steady-state comparison of Table 7, so the sentence says so)
-    _sud_net = (f', with ${_sb:.0f}$ percent of the households that carry a SUD better off on net in the long run, '
+    _sud_net = (f', with ${_sb:.0f}$ percent of the households that have a SUD better off on net in the long run, '
                 'despite losing access to vouchers' if _sb is not None and _sb < 50 else '')
     out['x_lr_better_tol'] = '0.001'
     # the share alone, for the introduction's list of what differs from the stylized model (the author, 5 October:
@@ -791,7 +791,7 @@ def main():
     out['x_lr_all_better_pc'] = f"{100 * _SH['all households'][0]:.0f}" if _SH else ''
     out['x_lr_approve_sud'] = (
         f"Across all households, ${100 * _SH['all households'][0]:.0f}$ percent are better off, and even ${_sb:.0f}$ "
-        'percent of those that carry a SUD.'
+        'percent of those that have a SUD.'
         if _SH and _sb is not None and _sb < 50 else '')
     out['x_intro_gain'] = (
         f"A newborn gains ${D[t]['cev_net']:.2f}$ percent of lifetime consumption. About ${_kid:.0f}$ percent of that "
@@ -821,6 +821,9 @@ def main():
         + ' (Table~\\ref{tab:longrun}).')
     # the newborns, by the household they are born into (newborn_better(); the Table 7 row of the same name)
     _nb = newborn_better()
+    # the same share as a number, for the transition's sentence on households entering at 26 (review item 9, 7 Oct)
+    if _nb is not None:
+        out['x_lr_nb_better_pc'] = f'{_nb:.0f}'
     out['x_lr_approve_nb'] = (
         '' if _nb is None else
         'So is every newborn, compared with itself born into the same household under Housing First.'

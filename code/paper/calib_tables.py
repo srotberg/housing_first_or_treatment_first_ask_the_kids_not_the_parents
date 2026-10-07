@@ -178,7 +178,7 @@ ELEVEN = [
          pc(C['participation_rate_data'] / UPLIFT, 2), pc(mom('b total drug users'), 2),
          f(H['addiction_scalar_1'], 4)),
         (r'$\pi_d$', 'Chance that a year of use leads to a SUD', setcol('addiction_onset_base'),
-         'Share of users carrying a SUD, NSDUH 2024',
+         'Share of users with a SUD, NSDUH 2024',
          pc(C['sud_rate_data'] / C['participation_rate_data']),
          pc(mom('lambda_d disorder rate') / mom('b total drug users')),
          f(H['addiction_onset_base'], 4)),
@@ -416,7 +416,7 @@ UNTARGETED = [
      (f'{100 * C["employed_share_of_homeless_data"]:.0f}', f'{100 * mom("emp_homeless employed share of homeless"):.1f}'),
      'Meyer et al.\\ (2024)'),
     ('Income of the homeless, over average', one('income of the homeless'), r'Meyer et al.\ (2024)'),
-    ('Block 2: Who uses and who carries a SUD', None, None),
+    ('Block 2: Who uses and who has a SUD', None, None),
     # NSDUH 2023 (the author, 3 October: "should change the year"): the shares are Table 5.3A of the 2023
     # detailed tables, data/drug_use_age_distribution.xlsx, not the 2024 file
     ('Share of users by age, 26--34 to 65+', many(USER_BANDS, 0), 'NSDUH 2023'),
