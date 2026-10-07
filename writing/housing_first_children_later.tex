@@ -2346,7 +2346,7 @@ To test how the model behaves on this dimension, I hold the drug price and $\pi_
 
 The main experiment is the reform the introduction describes. The programme stays
 rationed and only its rule changes, from Housing First, the benchmark, to Treatment
-First, under which a household that uses or carries a SUD loses its voucher if it has one, or does not receive one \new{if it drew one}, when the screen detects it
+First, under which a household that uses or carries a SUD loses its voucher if it has one, or does not receive one if it drew one, when the screen detects it
 (Section~\ref{sec:fvoucher}). Three further experiments, in Section~\ref{sec:longrun}, come with it. The first is Treatment First without the externalities, with the drug price and $\pi_V$ held at their levels under Housing First. The other two
 give the optimal drug use, with a parent that weighs its child fully, and the optimal
 homelessness, with each household weighing the disamenity its own homelessness imposes on
@@ -2355,11 +2355,11 @@ move in the main experiment and in these last two. The probability of drawing a 
 benchmark level, $\bar R$. The drug price clears the drug market, and the tax system is held where it is in the benchmark.
 
 \paragraph{The screen.} Under Treatment First a household fails the condition
-if it uses drugs or carries the disorder. A holder that fails is caught with probability $p_{\mathrm{det}}$ \new{and in that case} loses its
+if it uses drugs or carries the disorder. A holder that fails is caught with probability $p_{\mathrm{det}}$ and in that case loses its
 voucher, and an applicant that draws a voucher is screened the same way before it
 receives one. A household that is caught is excluded from the programme whatever its
 income, and returns to the queue for a voucher with probability $\psi_x$ a year. The
-government pays $c_{\mathrm{test}}$ for every household it screens, \new{and that cost goes inside} the budget
+government pays $c_{\mathrm{test}}$ for every household it screens, and that cost goes inside the budget
 that $\pi_V$ balances. None of these three parameters does anything in the benchmark,
 where no voucher is conditional, so they are set here rather than in
 Section~\ref{sec:fullcal}.
@@ -2367,14 +2367,14 @@ Section~\ref{sec:fullcal}.
 I set the detection rate to $p_{\mathrm{det}}=85$ percent. In a blinded study of 1,000 pain patients, office urine screens detected 92.5 percent of opioid use,
 against confirmation by liquid chromatography and tandem mass spectrometry (Manchikanti et al., 2011). Laboratory
 screens detect 96 to 100 percent across five opioid assays (Walsh et al., 2025).
-The rate in the model is below these, \new{to be} conservative, since a lower rate weakens Treatment First. A household that neither uses nor carries the disorder is never flagged. A screen is positive only above a cutoff concentration,
+The rate in the model is below these, to be conservative, since a lower rate weakens Treatment First. A household that neither uses nor carries the disorder is never flagged. A screen is positive only above a cutoff concentration,
 and a positive screen is confirmed in a laboratory before it has consequences, so a false positive is all but
 ruled out.
 
 The release rate is $\psi_x=1/3$, an expected
 exclusion of three years. That is the same period for which the Housing Choice Voucher programme
 already bars a household evicted from federally assisted housing for drug-related criminal
-activity (Code of Federal Regulations, Title 24, Section 982.553). The test \new{cost} $c_{\mathrm{test}}$ \new{is set to} $0.031$ percent of average earnings in the economy, or
+activity (Code of Federal Regulations, Title 24, Section 982.553). The test cost $c_{\mathrm{test}}$ is set to $0.031$ percent of average earnings in the economy, or
 \$35 a test. That is the upper end of the estimates: the Texas Legislative Budget Board's fiscal note
 for Senate Bill 11 puts a test at \$35 (Legislative Budget Board, 2013), which again loads the experiment against
 Treatment First.
@@ -2385,7 +2385,7 @@ Treatment First.
 Every welfare number in this paper is a CEV, computed as follows. Write
 $V^{b}$ for lifetime value under the benchmark and $V^{c}$ for lifetime value under a
 counterfactual policy. The CEV $\Delta$ is the proportional change in
-\new{non-housing and non-drug} consumption, applied at every date and in every state, that makes a newborn under
+non-housing and non-drug consumption, applied at every date and in every state, that makes a newborn under
 the benchmark as well off as the same newborn under the counterfactual:
 %
 \begin{equation}\label{eq:cev}
@@ -2395,25 +2395,17 @@ V^{b}\big((1+\Delta)\,c\big)\;=\;V^{c}(c) .
 A positive $\Delta$ therefore means the counterfactual is worth that much of a
 permanent consumption gain, and a negative one that it costs that much.
 
-\paragraph{Whose welfare.} Welfare here is measured for newborns. It includes childhood in the parent's household and adult
-life after it. The childhood part is the child's own flow utility from the bundle it shares with its parent. It is
-counted as $\xi-1$ of the household, as it is in the parent's problem, and with the flow value of being alive,
-$(\xi-1)\big[U(X_c)+\aleph\big]$, less the disamenity of aggregate homelessness $\kappa_x H$ that the child bears like
-everyone else. This flow is averaged at each age over the households of that age, summed over the years the child
-lives at home and discounted to its birth. The adult part is the child's value upon entering the economy at age 26,
-discounted by the same years. The child's own childhood counts at weight one here, not at its parent's weight
-$\omega_c$, and that is what brings the externality on the child into welfare. Its adult part is the value its own
-problem maximises, so the child it raises in turn enters there at the weight $\omega_c$. \new{For a child born in period $t$ this is}
+\paragraph{Whose welfare.} \new{Welfare here is measured for newborns, and it includes childhood in the parent's household and adult life after it. For a child born in period $t$ it is}
 %
 \begin{equation}\label{eq:newbornw}
-\new{W_t\;=\;\sum_{j=1}^{J_K}\beta^{\,j-1}\Big\{(\xi_j-1)\,\mathbb{E}_{t+j-1}\big[\,U(X_c)+\aleph\;\big|\;j\,\big]-\kappa_x H_{t+j-1}\Big\}\;+\;\beta^{J_K}\,\mathbb{E}_{t+J_K}\big[\,V_{t+J_K}(1,\cdot)\,\big],}
+\new{W_t\;=\;\sum_{j=1}^{J_K}\beta^{\,j-1}\Big\{(\xi_j-1)\,\mathbb{E}_{t+j-1}\big[\,U\big(X_c(j,s)\big)+\aleph\;\big|\;j\,\big]-\kappa_x H_{t+j-1}\Big\}\;+\;\beta^{J_K}\,\mathbb{E}_{t+J_K}\big[\,V_{t+J_K}(1,s)\;\big|\;1\,\big],}
 \end{equation}
 %
-\new{where $\mathbb{E}_{s}[\,\cdot\,|\,j\,]$ averages over the households of age $j$ in period $s$ under $\Phi_s(j,\cdot)$, and in a steady state the dates drop out.}
+\new{where $\mathbb{E}_{\tau}[\,\cdot\,|\,j\,]$ averages over the states $s$ of the households of age $j$ in period $\tau$, under $\Phi_\tau(j,\cdot)$. The first term is childhood. A household enters the economy at $j=1$ with its child just born, so the households of age $j$ in period $t+j-1$ are the parents of the children born in period $t$, each child in its $j$-th year at home, and $X_c(j,s)$ is the bundle the child shares with its parent in state $s$. The child's own flow utility from that bundle, with the flow value of being alive, is counted as $\xi_j-1$ of the household, as it is in the parent's problem, less the disamenity of aggregate homelessness $\kappa_x H$ that the child bears like everyone else. This flow is averaged over the parents alive at each age, summed over the $J_K$ years the child lives at home and discounted to its birth. The second term is adult life: the child's value upon entering the economy at age 26, discounted by the same $J_K$ years. The child's own childhood counts at weight one here, not at its parent's weight $\omega_c$, and that is what brings the externality on the child into welfare. Its adult part is the value its own problem maximises, so the child it raises in turn enters there at the weight $\omega_c$. In a steady state the dates drop out.}
 
 The value is taken before any of its draws are realised, including the household it is
 born into, so $V^{b}$ and $V^{c}$ are expectations over the productivity draw and
-everything that follows from it, and $\Delta$ equates them.\new{\footnote{The ex-ante expected newborn welfare is the standard criterion in this literature (Conesa et al., 2009; Guvenen et al., 2023).}} The expectation is taken under each policy's own equilibrium distribution rather than a common one. The
+everything that follows from it, and $\Delta$ equates them.\footnote{The ex-ante expected newborn welfare is the standard criterion in this literature (Conesa et al., 2009; Guvenen et al., 2023).} The expectation is taken under each policy's own equilibrium distribution rather than a common one. The
 penalties that set a child's starting productivity depend on what happened to its parent, so the distribution a
 newborn is drawn from is itself something the policy moves.
 
@@ -2427,40 +2419,37 @@ a newborn in the new steady state.
 Table~\ref{tab:longrun} sets the long run under Treatment First and the two optimal
 experiments beside the benchmark, and, in the first two columns, Housing First and Treatment First without the externalities.
 
-\paragraph{Treatment First without externalities.} Without the externalities, the full model gives the ranking of the stylized model. To capture the no-externality case, I set the aggregate homelessness externality to zero, $\kappa_x=0$, and treat the child as appearing only as an adult: its parent does not weigh it, its productivity does not depend on what its parent did, and its childhood, the years its parent is 26 to 50, is not counted in welfare. \new{I recalibrate the model to this configuration.}
+\paragraph{Treatment First without externalities.} Without the externalities, the full model gives the ranking of the stylized model. To capture the no-externality case, I set the aggregate homelessness externality to zero, $\kappa_x=0$, and treat the child as appearing only as an adult: its parent does not weigh it, its productivity does not depend on what its parent did, and its childhood, the years its parent is 26 to 50, is not counted in welfare. I recalibrate the model to this configuration.
 
-With the drug price and $\pi_V$ held at their levels under Housing First, Treatment First cuts drug use by $60$ percent and the share carrying a SUD by $61$ percent, against Housing First with the externalities switched off, while homelessness rises by $3$ percent (first two columns of Table~\ref{tab:longrun}). And yet, no household is better off under Treatment First, with newborns losing $1.50$ percent of lifetime consumption as adults\new{, capturing the value of the option removed}. What follows therefore rests on the externalities on children.
+With the drug price and $\pi_V$ held at their levels under Housing First, Treatment First cuts drug use by $60$ percent and the share carrying a SUD by $61$ percent, against Housing First with the externalities switched off, while homelessness rises by $3$ percent (first two columns of Table~\ref{tab:longrun}). And yet, no household is better off under Treatment First, with newborns losing $1.50$ percent of lifetime consumption as adults, capturing the value of the option removed. What follows therefore rests on the externalities on children.
 
-\paragraph{Treatment First.} Moving to full general equilibrium, with an endogenous drug price and the government's budget clearing, Treatment First cuts drug use by $32$ percent,
+\paragraph{Treatment First \new{with externalities}.} Moving to \new{the full model, with externalities,} an endogenous drug price and the government's budget clearing, Treatment First cuts drug use by $32$ percent,
 from $8.96$ to $6.09$ percent of households, and the share of households carrying
 a SUD by $33$ percent, from $3.81$ to $2.54$ percent of
-households. It also raises the share of households with a SUD who are in treatment, from $24.9$ to $29.3$ percent. Treatment only buys a higher chance of recovering, and Treatment First makes recovering worth more: a household that has recovered and does not use passes the screen and can hold a voucher if it is eligible and offered one. As users who lose their vouchers leave the programme, it costs
-less at a given $\pi_V$. Tax revenue also rises, as fewer adults remain unemployed because of a SUD and more children
+households. It also raises the share of households with a SUD who are in treatment, from $24.9$ to $29.3$ percent. Treatment  buys a higher chance of recovering, and Treatment First makes recovering worth more: a household that has recovered and does not use passes the screen and can hold a voucher if it is eligible and offered one. As users who lose their vouchers leave the programme, it costs
+less at a given $\pi_V$. Tax revenue also rises, \new{because} fewer adults \new{are} unemployed because of a SUD and more children
 inherit higher productivity draws. Thus, $\pi_V$ rises from $6.75$ to
 $9.62$ percent, by $42$ percent, making staying clean of drugs even more desirable. At the same time, taking users out of the drug market lowers the drug price by
 $14$ percent, which draws some households back.\footnote{The qualitative results continue
-to hold with a detection rate of 70 percent and with a more elastic supply of the drug.} Had the price stayed at its
-benchmark level, drug use would have fallen by $74$ percent instead.
+to hold with a detection rate of 70 percent and with a more elastic supply of the drug.}
 
-Treatment First also lowers homelessness by 1 percent, from 0.62 to 0.61 percent of households, as the balance of three effects. First, it revokes the vouchers of households with a SUD and puts them at a higher risk of homelessness. Of them, $5.63$ percent are homeless, against $3.28$ under Housing First. On its own this raises homelessness by $10$ percent. Second, less SUD means less unemployment and so less homelessness. There are a third fewer households with a SUD, which on its own lowers homelessness by $6$ percent. Third, the vouchers it revokes go, through the higher $\pi_V$, to other clean and eligible households, lowering homelessness by $5$ percent. Together the last two more than offset the first. For households aged 26 to 50, the years a child lives with them, the same three effects nearly net to zero, so the share of children in a shelter remains unchanged at $1.03$ percent. \updnum{These are long-run outcomes. However, in the first years after the reform both homelessness and childhood homelessness rise, because the households that already carry a SUD lose their vouchers at once, while their number falls only as fast as recovery allows (Section~\ref{sec:ftrans}).}
+Treatment First also lowers homelessness by 1 percent, from 0.62 to 0.61 percent of households, \new{the result of} the balance of three effects. First, it revokes the vouchers of households with a SUD and puts them at a higher risk of homelessness. Of them, $5.63$ percent are homeless, against $3.28$ under Housing First. On its own this raises homelessness by $10$ percent. Second, less SUD means less unemployment and so less homelessness. There are a third fewer households with a SUD, which on its own lowers homelessness by $6$ percent. Third, the vouchers it revokes go, through the higher $\pi_V$, to other clean and eligible households, lowering homelessness by $5$ percent. Together the last two more than offset the first. For households aged 26 to 50, the years a child lives with them, the same three effects nearly net to zero, so the share of children in a shelter remains unchanged at $1.03$ percent. These are long-run outcomes\new{, however. In} the first years after the reform both homelessness and childhood homelessness rise, because the households that already carry a SUD lose their vouchers at once, while their number falls only as fast as recovery allows\new{. I take the transition up in Section~\ref{sec:ftrans}}.
 
 A newborn is better off under Treatment First by $4.33$ percent of
 lifetime consumption. Welfare rises because the cut in drug use reduces the budget and earnings externalities and, through the government budget, pays for a larger voucher programme, while homelessness, and with it the externalities that run through it, is almost unchanged in the long run. Without the larger voucher programme, the reform would lose
 nearly all of its gain: with $\pi_V$ held at its benchmark level, so that the revenue it frees goes unspent, a
 newborn would gain $0.18$ percent. The cheaper drug, by contrast, works against the overall gain, since it draws users
 back: with the drug price held at its benchmark level and $\pi_V$ still balancing the budget, a newborn would gain $13.11$ percent. With both held at their benchmark values, so that only the
-screen acts, a newborn would gain $5.04$ percent: the screen on its own delivers more than the whole reform, the cheaper drug it brings about takes back
+screen acts, a newborn would gain $5.04$ percent. \new{This means that} the screen on its own delivers more than the whole reform, the cheaper drug it brings about takes back
 nearly all of that, and recycling the revenue into vouchers restores most of what is lost.
 
-About $57$ percent of the gain in lifetime utility comes in childhood. Parents spend
+About $57$ percent of the gain in lifetime utility comes in childhood. \new{The share of children living with a parent who uses drugs falls from $16.32$ to $10.99$ percent, and the share living with one who carries a SUD falls from $5.81$ to $3.89$ percent. As a result, parents} spend
 more on the consumption and housing they share with the child and less on the drug, and they are less likely to
-acquire a SUD and remain unemployed longer because of it, raising childhood consumption further. The share of children living with a parent who uses drugs
-falls from $16.32$ to $10.99$ percent, and the share living with one who carries a SUD
-falls from $5.81$ to $3.89$ percent.
+acquire a SUD and remain unemployed longer because of it, raising childhood consumption further.
 
 The other $43$ percent comes in adult life, from two sources. The first, $11$ percent of the whole gain, is the better productivity a child draws when its own parent does not carry the disorder. Escaping the penalty is worth a lot to each child it spares, about $12$ times what the average child gains at the same productivity. But it spares only about $3$ percent of children: the share of newborns who enter adult life with the penalty falls from $8.99$ to $6.07$ percent.
 
-The second, the remaining $32$ percent, does not come from the child's productivity at all. It is a result of the better economy it lives its adult life in. A clean and eligible household is $42$ percent more likely to draw a voucher. A voucher is worth most to a household that enters adult life with low productivity, because it is the likeliest to need one, and the value of entering adult life rises about $30$ times as much at the lowest productivity as at the highest. This part of the gain is therefore larger for a child whose own parent carried the disorder, since the penalty leaves it with lower productivity. Moreover, even a child who goes on to use drugs pays less for them: the drug is $14$ percent cheaper in equilibrium, so it can consume more of it. Thus, every household that enters adult life at 26 is better off under Treatment First than it would be in the same state under Housing First (Table~\ref{tab:longrun}). Of newborns, $92$ percent are better off under Treatment First than they would be if born into the same household under Housing First. Across all households, $76$ percent are better off, but only $20$ percent of those that carry a SUD, since they lose access to vouchers.
+The second, the remaining $32$ percent, does not come from the child's productivity at all. It is a result of the better economy it lives its adult life in. A clean and eligible household is $42$ percent more likely to draw a voucher. A voucher is worth most to a household that enters adult life with low productivity, because it is the likeliest to need one, and the value of entering adult life rises about $30$ times as much at the lowest productivity as at the highest. This part of the gain is therefore larger for a child whose own parent carried the disorder, since the penalty leaves it with lower productivity. Moreover, even a child who goes on to use drugs pays less for them: the drug is $14$ percent cheaper in equilibrium, so it can consume more of it. Thus, every household that enters adult life at 26 is better off under Treatment First than it would be in the same state under Housing First (Table~\ref{tab:longrun}). Of newborns, $92$ percent are better off under Treatment First than they would be if born into the same household under Housing First. Across all households, $76$ percent are better off, \new{and even} $20$ percent of those that carry a SUD.
 
 
 

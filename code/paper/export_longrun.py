@@ -541,7 +541,7 @@ def main():
     _tk0, _tk1 = D['null_share']['takeup'], D[t]['takeup']
     out['x_lr_tf_treat'] = (
         'It also raises the share of households with a SUD who are in treatment, from '
-        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent. Treatment only buys a higher chance of recovering, and '
+        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent. Treatment buys a higher chance of recovering, and '
         'Treatment First makes recovering worth more: a household that has recovered and does not use passes the '
         'screen and can hold a voucher if it is eligible and offered one.' if _tk1 > _tk0 else '')
     # (round 0e3b2441, the author: 'only' -> 'only buys', 'voucher.' -> 'if eligible and offered a voucher', and on
@@ -790,8 +790,8 @@ def main():
     out['x_lr_sud_better_pc'] = f'{_sb:.0f}' if _sb is not None else ''
     out['x_lr_all_better_pc'] = f"{100 * _SH['all households'][0]:.0f}" if _SH else ''
     out['x_lr_approve_sud'] = (
-        f"Across all households, ${100 * _SH['all households'][0]:.0f}$ percent are better off, but only ${_sb:.0f}$ "
-        'percent of those that carry a SUD, since they lose access to vouchers.'
+        f"Across all households, ${100 * _SH['all households'][0]:.0f}$ percent are better off, and even ${_sb:.0f}$ "
+        'percent of those that carry a SUD.'
         if _SH and _sb is not None and _sb < 50 else '')
     out['x_intro_gain'] = (
         f"A newborn gains ${D[t]['cev_net']:.2f}$ percent of lifetime consumption. About ${_kid:.0f}$ percent of that "

@@ -176,10 +176,10 @@ def names(S, C, R):
     # rises in transition"): 'These are long-run outcomes', and children's homelessness, only where its path before
     # the drifting end rises above the benchmark (the old arms: 1.02 to a peak of 1.14 in year 6)
     _ch_up = max(ch[i] for i in body) > hf['child_hl']
-    out['x_trf_h_sr'] = ('These are long-run outcomes. However, in the first years after the reform '
+    out['x_trf_h_sr'] = ('These are long-run outcomes, however. In the first years after the reform '
                          + ('both homelessness and childhood homelessness rise, ' if _ch_up else 'homelessness rises, ')
                          + 'because the households that already carry a SUD lose their vouchers at once, '
-                         'while their number falls only as fast as recovery allows (Section~\\ref{sec:ftrans}).'
+                         'while their number falls only as fast as recovery allows. I take the transition up in Section~\\ref{sec:ftrans}.'
                          if _lowers and max(h) > hf['h_1'] else '')
     out['x_trf_shade_from'] = str(UNCONVERGED_FROM)
     out['x_trf_shade_born'] = str(UNCONVERGED_FROM - 25)
