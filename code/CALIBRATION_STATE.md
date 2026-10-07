@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07 Oct 23:12 THE ALTRUISM MOMENT AT EQUAL HOUSEHOLD SIZE (the author: "parents to non parents with equal number of members
+in the household"; data/make_altruism_moment_hhsize.py, NSDUH 2024, 26+, past-month use). Adding IRHHSIZ2 to the cells,
+how much more non-parents use: parents reweighted to non-parents' cells -11.3 (cover 43: a quarter of non-parents live
+alone, half in two-person households, where parents are single parents); with family income -3.0 (cover 45); without
+income -22.6 (59); past-year use +2.4. Non-parents reweighted to parents' cells instead: +9.7 (cover 89 of parents),
+with family income +33.2. Within one household size the sign flips: -11 at 2, -15 at 3, -5 at 4, +8 at 5, -22 at 6.
+So at equal size the gap is small and its sign rests on the weighting; non-parents in households of three or more are
+adults living with parents or relatives, not a clean control. Put to the author.
+
 07 Oct 23:02 THE ALTRUISM MOMENT AT EQUAL RESOURCES PER PERSON (data/make_altruism_moment_eqinc.py, NSDUH 2024, 26+, past-month
 use, parents reweighted to non-parents' cells). The omega_c = 0 experiment keeps the child, so its data analogue compares
 parents and non-parents at the same family income per effective person (IRFAMIN3 midpoints / sqrt IRHHSIZ2, weighted
