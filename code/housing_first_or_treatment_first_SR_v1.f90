@@ -35199,7 +35199,9 @@
         ! disagree silently. Checked once, at the only place both are in scope.
         do i=1,life_span
 
-            if (include_varying_household_size==1) then
+            ! The economy without children (no_child_households, 7 October) sets the size
+            ! to one at every age on purpose, so the check is for the economy with them.
+            if ((include_varying_household_size==1) .AND. (no_child_households==0)) then
 
                 if (i<=child_at_home_last_index) then
 
