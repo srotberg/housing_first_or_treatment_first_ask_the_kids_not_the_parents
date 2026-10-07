@@ -1,12 +1,12 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
-08 Oct 00:30 PAPER (the author: "we should also add that only about 80% of Americans never have children. That is key as
+07 Oct 22:49 PAPER (the author: "we should also add that only about 80% of Americans never have children. That is key as
 well" -- read as about 80 percent HAVE children): data/nsfg_births_by_drug_use.py gains the group 'tot' (everyone),
 nsfg_all_anybirth_tot_4049_pc = 80 (women 83, men 76; no existing name moved). In red at the head of the introduction's
 second block: "Every household in the model has a child, which is close to the data: by their forties, 80 percent of
 Americans have had one." 51 pages.
 
-08 Oct 00:15 PAPER (the author: "the gaps are not orders of magnitude... The gains are maybe 15% lower but it won't
+07 Oct 22:48 PAPER (the author: "the gaps are not orders of magnitude... The gains are maybe 15% lower but it won't
 reverse them", and "it also means the impact on child homelessness is smaller"): in red in the introduction, after "pinned
 down by observed behaviour": 40 percent of 26-49 adults with a drug use disorder have a child under 18 at home against
 48 of comparable non-users (nsduh_kh_sud_*, data/make_children_at_home_reweighted.py -> code/paper/nsduh_kids_home.json,
@@ -15,31 +15,31 @@ shrank in proportion, the gain would be only x_kh_gain_bound_pc (10) percent sma
 short-run rise in childhood homelessness smaller too. splice_r218 now also loads nsduh_kids_home.json. Without the
 marital match the ratio is 0.74 and the bound 15.
 
-07 Oct 23:55 PAPER (the author: "I think we can use the 47% and 61%"): data/nsfg_births_by_drug_use.py now writes
+07 Oct 22:45 PAPER (the author: "I think we can use the 47% and 61%"): data/nsfg_births_by_drug_use.py now writes
 nsfg_*minor_*_pc, the share with a child still under 18 (women: last birth under 18 years before the interview; men:
 BIOAGE1-10), co-residence not required; the existing names did not move. In red, after the ever-had-a-child numbers, in
 the introduction (line 247) and the omega_c block (line 542): 47 percent of 40-49 hard users against 61 of non-users have
 a child still under 18. Spliced with splice_r218 (base_r218, as r219); checkers clean except the DC acronym flag, which
 predates the edit; 50 pages.
 
-07 Oct 23:40 CHILD AT HOME, LIKE FOR LIKE (data/make_children_at_home_reweighted.py, NSDUH 2024, 26-49, non-users
+07 Oct 22:43 CHILD AT HOME, LIKE FOR LIKE (data/make_children_at_home_reweighted.py, NSDUH 2024, 26-49, non-users
 reweighted to the users' age x sex x income x marital cells): past-month users 43.5 against 51.1 (ratio 0.85; raw
 non-users 60.0), disorder of any severity 39.5 against 48.2 (0.82), past-year hard drugs 27.6 against 44.3 (0.62). The
 author: "illicit use in past month is not that far behind" -- right once composition is held fixed.
 
-07 Oct 23:25 NSFG, AGES 40-49, PAST-YEAR HARD DRUG USERS (scratchpad nsfg_minor_kids.py, n 70) against non-users (n 2105):
+07 Oct 22:41 NSFG, AGES 40-49, PAST-YEAR HARD DRUG USERS (scratchpad nsfg_minor_kids.py, n 70) against non-users (n 2105):
 own child under 18, 46.8 against 60.9 percent (women: youngest birth under 18 years before the interview; men: BIOAGE);
 any child under 18 at home (NUMKDHH), 35.1 against 61.3; men's own child under 18 at home (BIOHH), 34.1 against 56.2.
 So about half of hard users in their forties use while they have a minor child, but only about a third live with one.
 The author proposed saying users still use when their child is 15-20; offered the wording with the "living with" caveat.
 
-07 Oct 23:10 DO USERS LIVE WITH THEIR CHILDREN? (data/make_children_at_home_by_use.py, NSDUH 2024, child under 18 in the
+07 Oct 22:40 DO USERS LIVE WITH THEIR CHILDREN? (data/make_children_at_home_by_use.py, NSDUH 2024, child under 18 in the
 household, weighted). Ages 35-49: no illicit use 66.7 (n 8844), past-month use 49.2 (2753), past-year drug use disorder
 42.3 (1514), past-year hard drug 31.2 (495). Women 35-49: 70.2 non-users, 52.6 with a disorder, 28.1 hard drugs. So
 users are nearly as likely to have HAD a child (NSFG 75 against 81 at 40-49) but far less likely to LIVE with one. The
 author had read the NSFG fact as users living with their children; put to the author.
 
-07 Oct 22:50 WHY USE COLLAPSES AT xi = 1 (stylized stage 2, omega 0, delta_d 0; scratchpad xi_channel.py): with the
+07 Oct 22:36 WHY USE COLLAPSES AT xi = 1 (stylized stage 2, omega 0, delta_d 0; scratchpad xi_channel.py): with the
 drug's death risk on (kap 0.1156) participation is 10.44 per cent at xi = sqrt 2 and 0.00 at xi = 1; with it off (kap 0)
 79.52 against 71.41. Almost the whole gap runs through mortality. Under sigma = 2 dividing c and h by xi multiplies the
 period's flow utility by xi^(1-theta) (about 1.33): the drug's pleasure and its money cost scale together, so the static
