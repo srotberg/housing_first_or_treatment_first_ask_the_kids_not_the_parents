@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07 Oct 23:25 NSFG, AGES 40-49, PAST-YEAR HARD DRUG USERS (scratchpad nsfg_minor_kids.py, n 70) against non-users (n 2105):
+own child under 18, 46.8 against 60.9 percent (women: youngest birth under 18 years before the interview; men: BIOAGE);
+any child under 18 at home (NUMKDHH), 35.1 against 61.3; men's own child under 18 at home (BIOHH), 34.1 against 56.2.
+So about half of hard users in their forties use while they have a minor child, but only about a third live with one.
+The author proposed saying users still use when their child is 15-20; offered the wording with the "living with" caveat.
+
 07 Oct 23:10 DO USERS LIVE WITH THEIR CHILDREN? (data/make_children_at_home_by_use.py, NSDUH 2024, child under 18 in the
 household, weighted). Ages 35-49: no illicit use 66.7 (n 8844), past-month use 49.2 (2753), past-year drug use disorder
 42.3 (1514), past-year hard drug 31.2 (495). Women 35-49: 70.2 non-users, 52.6 with a disorder, 28.1 hard drugs. So
