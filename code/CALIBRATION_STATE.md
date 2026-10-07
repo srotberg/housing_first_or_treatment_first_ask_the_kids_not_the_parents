@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07 Oct 22:35 STYLIZED ENDOGENOUS CHILDREN (stages.py 2 --fert, delta_d dropped), stopped at iteration 100: every
+moment inside ten per cent but one -- vsl 79.9 (80), part 8.66 (8.90), parent_share 0.797 (0.797), psi 1.33, omega 0.0057,
+b 0.0604, aleph 8.39. child_gap stays at -1.00 against +0.18 throughout: NON-PARENTS NEVER USE at any omega the rule tried
+(0.0021 to 0.0057, still rising). Same sign as the full model's no-child runs (results/nochild_scan, xi = 1, omega 0, three
+blocks: participation 1.06-1.55 per cent against 9.28 with children). Cause: sharing c and h with the child lowers
+per-head consumption, and with sigma = 2 and the drug in the consumption bundle the drug's gain scales with 1/C. Put to the
+author: test a drug utility that does not scale with per-head consumption, stylized first. Checkpoint
+code/stylized/calibrated_stage2_fert.json.
+
 03 Oct 06:00 THE SCREEN ALONE (both-held arm, results/decomp_2c_both, DIST CHECK PASS, pi_V and price never moved):
 drug use -64.3%, SUD -64.6%, homelessness +0.4%, vouchers held -10.8%, net revenue +5.2% unspent; newborn CEV 5.04
 (cf.log.gz, net of the no-policy run). Chain screen -> price (fixpv 0.18) -> recycling (tf 4.33): the cheaper drug takes
