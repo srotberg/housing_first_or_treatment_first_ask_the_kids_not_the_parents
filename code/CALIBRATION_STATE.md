@@ -1,5 +1,13 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07 Oct 23:05 THE ALTRUISM MOMENT AT EQUAL RESOURCES PER PERSON (data/make_altruism_moment_eqinc.py, NSDUH 2024, 26+, past-month
+use, parents reweighted to non-parents' cells). The omega_c = 0 experiment keeps the child, so its data analogue compares
+parents and non-parents at the same family income per effective person (IRFAMIN3 midpoints / sqrt IRHHSIZ2, weighted
+septiles). Non-parents use more by: 18.4 matched on personal income (the paper's), 25.8 on income per effective person
+(cover 83), 20.5 on the poverty level (cover 99), 16.8 on both incomes (cover 69). The resources channel does not drive
+the data gap. THE AGE PATTERN IS NOT ROBUST: matched on income per effective person the ratio is 1.12 at 26-29, 1.04 at
+30-34, 0.65 at 35-49, 0.73 at 50-64 -- do not use "the gap opens with the child and closes when it leaves".
+
 07 Oct 22:49 PAPER (the author: "we should also add that only about 80% of Americans never have children. That is key as
 well" -- read as about 80 percent HAVE children): data/nsfg_births_by_drug_use.py gains the group 'tot' (everyone),
 nsfg_all_anybirth_tot_4049_pc = 80 (women 83, men 76; no existing name moved). In red at the head of the introduction's
