@@ -1,5 +1,10 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07 Oct 23:40 CHILD AT HOME, LIKE FOR LIKE (data/make_children_at_home_reweighted.py, NSDUH 2024, 26-49, non-users
+reweighted to the users' age x sex x income x marital cells): past-month users 43.5 against 51.1 (ratio 0.85; raw
+non-users 60.0), disorder of any severity 39.5 against 48.2 (0.82), past-year hard drugs 27.6 against 44.3 (0.62). The
+author: "illicit use in past month is not that far behind" -- right once composition is held fixed.
+
 07 Oct 23:25 NSFG, AGES 40-49, PAST-YEAR HARD DRUG USERS (scratchpad nsfg_minor_kids.py, n 70) against non-users (n 2105):
 own child under 18, 46.8 against 60.9 percent (women: youngest birth under 18 years before the interview; men: BIOAGE);
 any child under 18 at home (NUMKDHH), 35.1 against 61.3; men's own child under 18 at home (BIOHH), 34.1 against 56.2.
