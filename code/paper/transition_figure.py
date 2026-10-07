@@ -50,10 +50,12 @@ def main():
     plt = run.style()
     # SEVEN PANELS AND THE LEGEND IN THE EIGHTH (round 4ad85a30, the author: "can you also show the drug
     # price?"); the shading of the drifting end is gone with its note (the author: "remove")
-    fig, axs = plt.subplots(2, 4, figsize=(13.2, 6.0))
+    # FOUR ROWS OF TWO, ON A PAGE OF ITS OWN (review item 15, 7 Oct: the eight panels in two rows were too small
+    # to read without zooming at the text width)
+    fig, axs = plt.subplots(4, 2, figsize=(7.0, 7.6))
     t = [0] + [r['t'] for r in S]
     panels = (('b', '(a) Drug use', 'percent of adults', 100),
-              ('lambda_d', '(b) Carrying a SUD', 'percent of adults', 100),
+              ('lambda_d', '(b) With a SUD', 'percent of adults', 100),
               ('p_drug', '(c) Drug price', 'benchmark $=1$', 1),
               ('par_use', '(d) Parents using drugs', 'percent of parents', 100),
               ('h_1', '(e) Homeless', 'percent of households', 100),
@@ -70,9 +72,9 @@ def main():
         lo, hi = min(min(y), sc * tf[key]), max(max(y), sc * hf[key])
         pad = 0.12 * (hi - lo)
         ax.set_ylim(lo - pad, hi + pad)
-    for ax in axs[1, :2]:
+    for ax in axs[2, :]:
         ax.set_xlabel('years since the reform', fontsize=9)
-    ax = axs[1, 2]
+    ax = axs[3, 0]
     born = [r['born'] for r in C]; cev = [r['cev_pc'] - CEV0 for r in C]
     ax.axhline(0.0, color=GREY, lw=0.8)
     ax.axhline(TF_CEV, color=BLUE, ls=':', lw=1.5, label='Treatment First long run')
@@ -86,7 +88,7 @@ def main():
     # (h) THE SHARE BETTER OFF, YEAR BY YEAR (the author, 2 October: "an approval rate of everyone alive at the
     # beginning of the transition", "and show it across time?"), in the eighth slot; the legend goes to (a)
     Bt = rows('better.csv')
-    ax = axs[1, 3]
+    ax = axs[3, 1]
     ax.plot([r['t'] for r in Bt], [100 * r['all'] for r in Bt], '-', color=BLUE, lw=2.0, label='all households')
     ax.plot([r['t'] for r in Bt], [100 * r['with_sud'] for r in Bt], '--', color=BLUE, lw=1.5,
             label='households with a SUD')
@@ -153,7 +155,7 @@ def names(S, C, R):
                                'them come back.' if pu[0] < tf['par_use'] else '')
     # (round f9ac1593, the author: 'The' -> 'This happens because', 'allows' -> ', even with more households in
     # treatment,')
-    out['x_trf_h_why'] = ('This happens because the households that carry a SUD when the reform lands lose their '
+    out['x_trf_h_why'] = ('This happens because the households that have a SUD when the reform lands lose their '
                           'vouchers within a year. That stock shrinks only as fast as recovery allows, even with more '
                           'households in treatment (panel (b)), so revocations '
                           'are highest in the first years and fall as the stock thins.'
@@ -178,7 +180,7 @@ def names(S, C, R):
     _ch_up = max(ch[i] for i in body) > hf['child_hl']
     out['x_trf_h_sr'] = ('These are long-run outcomes, however. In the first years after the reform '
                          + ('both homelessness and childhood homelessness rise, ' if _ch_up else 'homelessness rises, ')
-                         + 'because the households that already carry a SUD lose their vouchers within a year, '
+                         + 'because the households that already have a SUD lose their vouchers within a year, '
                          'while their number falls only as fast as recovery allows. I take the transition up in Section~\\ref{sec:ftrans}.'
                          if _lowers and max(h) > hf['h_1'] else '')
     out['x_trf_shade_from'] = str(UNCONVERGED_FROM)
@@ -186,7 +188,7 @@ def names(S, C, R):
     # the drug price: the years it stays above its long-run level
     p = col('p_drug')
     out['x_trf_price_above_yrs'] = str(next(i for i, v in enumerate(p) if v <= tf['p_drug']))
-    # adults alive at the reform: the share better off, all of them and those carrying a SUD
+    # adults alive at the reform: the share better off, all of them and those with a SUD
     out['x_trf_alive_better_pc'] = f"{100 * R['better_off_all']:.0f}"
     out['x_trf_alive_sud_better_pc'] = f"{100 * R['better_off_sud']:.0f}"
     out['x_trf_alive_sud_worse_pc'] = f"{100 * R['worse_off_sud']:.0f}"

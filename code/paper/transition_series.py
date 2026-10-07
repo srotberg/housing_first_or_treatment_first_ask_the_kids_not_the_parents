@@ -22,7 +22,7 @@ Series per year t (the reform lands at the start of year 1):
                reproduces h_1 is used, and the script stops if neither does.
   par_use      parents using drugs: the share of households aged 26-50 consuming the drug
                (USE_BY_AGE, the same definition as the steady state's DIAG age lines)
-  par_sud      children living with a parent who carries a SUD: households aged 26-50,
+  par_sud      children living with a parent who has a SUD: households aged 26-50,
                from the SUD_BANDS masses (26-34, 35-44, 45-54 bands), as export_results does
   excluded     the share of the population excluded from the voucher (VOUCHER CENSUS)
 Cohorts: the CEV of each cohort born in year b = 1..34 (childhood on the path, adult entry
