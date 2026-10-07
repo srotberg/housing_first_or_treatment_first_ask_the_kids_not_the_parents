@@ -1166,6 +1166,16 @@
         integer :: omega_cf_allowed=1
         integer :: measure_child_gap=0
 
+        ! THE ECONOMY WITHOUT CHILDREN. The author, 7 October: omega_c is not pinned by
+        ! switching its weight off, because a parent also SHARES its consumption and housing with
+        ! the child (the equivalence scale), and NSDUH's parents and non parents differ in that too.
+        ! "We need to run the model with xi=1 at all ages ... and then introduce xi=sqrt(2) and test
+        ! what omega_c would give an 18.3% drop in use." Set through the handover; it makes the
+        ! household size one at every age, so the scale is 1 and the child's flow term, which
+        ! omega_c multiplies by the scale increment, is zero. The child's continuation term is
+        ! omega_c's alone, so a run without children also sets weight_on_child to 0.
+        integer :: no_child_households=0
+
         ! WHETHER A POINT MEASURES THE TWO DRUG PRICE ELASTICITIES. They are
         ! validation moments, not targets -- the participation margin against
         ! Saffer and Chaloupka's -0.63 and the intensive margin against the
@@ -35222,7 +35232,7 @@
             
             if (loop_count<1) then
             
-                write(*,*) "scaled_household_size(i)=", scaled_household_size(i)
+                write(*,*) "scaled_household_size(i)=", scaled_household_size(i), " no_child_households=", no_child_households
                 
             end if
             
@@ -46707,6 +46717,21 @@
                     write(*,*) "HANDOVER measure_child_gap:", &
                         measure_child_gap, "->", handover_value
                     measure_child_gap=max(min(nint(handover_value),1),0)
+
+                ! THE ECONOMY WITHOUT CHILDREN (declaration). The handover is read
+                ! before initialize_variables_and_grids, which builds the square root
+                ! and the scaled sizes from actual_household_size, so setting the size
+                ! here is enough; the two derived arrays are set too in case of a
+                ! later read.
+                case ("no_child_households")
+                    write(*,*) "HANDOVER no_child_households:", &
+                        no_child_households, "->", handover_value
+                    no_child_households=max(min(nint(handover_value),1),0)
+                    if (no_child_households==1) then
+                        actual_household_size=1.d0
+                        sqrt_household_size=1.d0
+                        scaled_household_size=1.d0
+                    end if
 
                 ! THE SUD MORTALITY LEVEL, WHICH IS SETTABLE BUT WAS NOT
                 ! HANDABLE. It is assigned at 8, the midpoint of the 6 to 10
