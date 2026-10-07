@@ -92,6 +92,11 @@ def parse(block):
             S['ALLALIVE'].setdefault(tnum(l), {})[int(d['band'])] = d
         elif ' TRANSITION BETTER OFF t=' in l:
             S['BETTER'][tnum(l)] = {k: float(v) for k, v in KV.findall(l)}
+        elif ' TRANSITION BETTER OFF TOL t=' in l:
+            # the same comparison with a tolerance of 1e-3, which also reports who is WORSE off (the author,
+            # 7 October: 'over eighty percent of them are worse off'), so the rest is not read as worse by default
+            S.setdefault('BETTER_TOL', {})[int(l.split('t=')[1].split()[0])] = {
+                k: float(v) for k, v in re.findall(r'(\w+)=\s*([-+0-9.Ee]+)', l.split('t=', 1)[1].split(None, 1)[1])}
     return S
 
 
@@ -204,7 +209,8 @@ def main():
             w.writerow([k, ages.get(k, ''), d['mass'], d['V_reform'] - d['V_bench'], d['better_off']])
     hf, tf = final_tf85()
     ref = {'hf': {**steady(REF_NULL), **hf}, 'tf': {**steady(REF_TF), **tf},
-           'better_off_all': B['share_all_ages'], 'better_off_sud': B['share_addicted']}
+           'better_off_all': B['share_all_ages'], 'better_off_sud': B['share_addicted'],
+           'worse_off_sud': S['BETTER_TOL'][1]['worse_sud']}
     json.dump(ref, open(os.path.join(OUT, 'reference.json'), 'w'), indent=1)
     print(f'wrote {OUT}: {len(T)} years, {len(rows)} cohorts, {len(A)} age bands')
 

@@ -2495,7 +2495,7 @@ is not a strong enough deterrent, so weighing it does not alter their behaviour 
 run. However, a major consideration for any policy change is its short-run impact on those dimensions as well. To
 evaluate those impacts, I compute the transition from Housing First to Treatment First. The transition starts from the
 benchmark, with the reform landing as an unexpected permanent shock at the start of
-the first year, \new{which I simulate for sixty years until the} Treatment First steady state. The drug market \new{and budget clear every year}. Figure~\ref{fig:ftrans} shows what the transition looks like along \new{eight} key dimensions.
+the first year, which I simulate for sixty years until the Treatment First steady state. The drug market and budget clear every year. Figure~\ref{fig:ftrans} shows what the transition looks like along eight key dimensions.
 
 \begin{figure}[!tb]
 \centering
@@ -2509,24 +2509,23 @@ born on the path, against the benchmark, by its year of birth. Panel (h) is the 
 same state under Housing First, weighted by the benchmark's distribution.}
 \end{figure}
 
-Panels (a) and (d) show drug use and the share of parents who use\new{, respectively}. Drug use falls \new{upon impact}: $@@x_trf_b1_share_pc@@$ percent of its long-run fall happens in
-the first year. This is because the screen acts on the decision to use from the day the reform lands\new{, and households who do not have a SUD have agency over whether they use drugs or not}. A
-household that uses risks losing its voucher at once, or having a voucher offer revoked later, when it may need one but \new{carry} a SUD, while a disorder takes years to clear.
+Panels (a) and (d) show drug use and the share of parents who use, respectively. Drug use falls upon impact: $@@x_trf_b1_share_pc@@$ percent of its long-run fall happens in
+the first year. \new{The share of parents using drugs falls from $@@x_trf_paruse0@@$ to $@@x_trf_paruse1@@$ percent, @@x_trf_paruse1_vs_lr@@ its long-run level of $@@x_trf_paruse_lr@@$ percent. These shares drop because} the screen acts on the decision to use from the day the reform lands, and households who do not have a SUD have agency over whether they use drugs or not\new{: a}
+household that uses risks losing its voucher at once, or having a voucher offer revoked later, when it may need one but carry a SUD, while a disorder takes years to clear.
 
-The share of parents using drugs falls from $@@x_trf_paruse0@@$ to
-$@@x_trf_paruse1@@$ percent, @@x_trf_paruse1_vs_lr@@ its long-run level of $@@x_trf_paruse_lr@@$ percent. Panel (b) shows the
+Panel (b) shows the
 share carrying a SUD. This share falls slowly, because recovery is slow: half of its
 long-run fall is done by year $@@x_trf_sud_half_yr@@$, and nine tenths by year
 $@@x_trf_sud_90_yr@@$. That stock keeps demand for the drug up, and the drug price stays
 above its long-run level for $@@x_trf_price_above_yrs@@$ years (panel (c)). The elevated price deters
-\new{households without a SUD, at every age}: in the first decade the number of drug users without
+households without a SUD, at every age: in the first decade the number of drug users without
 a SUD falls by up to $@@x_tr_new_peak_pc@@$ percent, against $@@x_tf_new_pc@@$ percent in the
-long run. \new{The share of parents who use stays above its long-run level all the same, because it counts the parents who carry a SUD, whose number falls only slowly (panel (b)).} @@x_trf_paruse_why@@
+long run. The share of parents who use stays above its long-run level all the same, because it counts the parents who carry a SUD, whose number falls only slowly (panel (b)). @@x_trf_paruse_why@@
 
-Panels (e) and (f) show homelessness and the share of children in a shelter\new{, respectively}. Homelessness overshoots. It rises by $@@x_trf_h_peak_pc@@$ percent at its peak, in year $@@x_trf_h_peak_yr@@$, @@x_trf_h_tail@@. @@x_trf_h_why@@ A similar pattern is observed for childhood homelessness: the share of children in a
+Panels (e) and (f) show homelessness and the share of children in a shelter, respectively. Homelessness overshoots. It rises by $@@x_trf_h_peak_pc@@$ percent at its peak, in year $@@x_trf_h_peak_yr@@$, @@x_trf_h_tail@@. @@x_trf_h_why@@ A similar pattern is observed for childhood homelessness: the share of children in a
 shelter rises from $@@x_trf_hchild0@@$ to
 $@@x_trf_hchild_peak@@$ percent in year $@@x_trf_hchild_peak_yr@@$, against
-$@@x_trf_hchild_lr@@$ percent in the long run. \new{It rises for the same reason: the parents who carry a SUD when the reform lands lose their vouchers at once, and it comes back down only as their number falls.}
+$@@x_trf_hchild_lr@@$ percent in the long run. It rises for the same reason: the parents who carry a SUD when the reform lands lose their vouchers at once, and it comes back down only as their number falls.
 
 Panel (g) shows the CEV of each cohort by its year of birth. Children born at the reform gain about $@@x_tr_cev_b1@@$ percent of lifetime
 consumption, @@x_tr_cev_b1_vs_lr@@. They gain, because the fall in parental drug use reaches far more children than the overshoot in homelessness@@x_trf_many@@. They gain less than in the long run, because they grow up while the share of parents carrying a SUD is still close to its Housing First level, since that share falls only as fast as recovery allows, so more of them spend their childhood with a parent who carries the disorder, and more enter adult life with the earnings penalty. The gain stays near that level for children born while that share is still falling, and rises toward the long run for those born later, whose parents were themselves born after the reform.
@@ -2539,9 +2538,9 @@ price more than offsets the loss from the sobriety requirement for some of them.
 %======================================================================
 \section{Discussion and implications}\label{sec:discussion}
 
-\new{Going back to the question I started with,} should housing assistance require sobriety? When households are forward looking and weigh the true risk of a
-SUD, the moral hazard that dominates the debate \new{over this question} does not justify conditionality: without externalities
-Housing First \new{wins}. What turns the ranking are externalities imposed on children. In the long run of a
+\new{To return to the question I started with:} should housing assistance require sobriety? When households are forward looking and weigh the true risk of a
+SUD, the moral hazard that dominates the debate over this question does not justify conditionality: without externalities
+Housing First wins. What turns the ranking are externalities imposed on children. In the long run of a
 general-equilibrium model calibrated to United States data, Treatment First cuts drug use by
 $@@x_tf_b_pc@@$ percent and the share of households with a SUD by $@@x_tf_sud_pc@@$ percent, and actually @@x_tf_h_dir@@
 homelessness by $@@x_tf_h_pc@@$ percent. As a result, it raises the welfare of a newborn by $@@x_tf_cev@@$ percent of lifetime
@@ -2556,14 +2555,14 @@ comes down only as the number with a SUD falls, which takes $@@x_trf_sud_90_yr@@
 of its fall. And of those carrying a SUD at the reform, only $@@x_trf_alive_sud_better_pc@@$ percent are better off.
 
 Three lessons follow. First, the arguments for Housing First and Treatment First made by different advocacy
-groups rest on the wrong grounds, and \new{if this framing continues to dominate the discussion, then} the reform will \new{most likely be} judged on the wrong outcomes. The key, which neither side counts, is the
+groups rest on the wrong grounds, and if this framing continues to dominate the discussion, then the reform will most likely be judged on the wrong outcomes. The key, which neither side counts, is the
 impact on the children of the households it deters from using, in what those children
 consume while at home and in what they earn as adults; those are the outcomes on which it should be judged.
 
-Second, the politics of the reform \new{can run} against its own payoff. Its apparent costs \new{would come} first, falling on
-households already carrying a SUD, and \new{would appear} in the homelessness counts during the transition from the Housing
-First benchmark to the long-run equilibrium under Treatment First; its positive effects on homelessness \new{would only} come
-later. Judged \new{even on its first 25 years}, by the PiT count, the reform will look like a failure exactly
+Second, the politics of the reform can run against its own payoff. Its apparent costs would come first, falling on
+households already carrying a SUD, and would appear in the homelessness counts during the transition from the Housing
+First benchmark to the long-run equilibrium under Treatment First; its positive effects on homelessness would only come
+later. Judged even on its first 25 years, by the PiT count, the reform will look like a failure exactly
 when the model's reading is that it is on course, and it will be most exposed to reversal before its long-run positive effects on
 homelessness, the SUD and, most importantly, children have arrived in full.
 
@@ -2576,11 +2575,10 @@ vouchers would give up @@x_dc_pv_share_word@@ the gain: with $\pi_V$ held at its
 $@@x_dc_pv_cev@@$ percent rather than $@@x_tf_cev@@$, and homelessness would @@x_dc_pv_h_dir@@ by $@@x_dc_pv_h_pc@@$ percent.
 
 The second is whom the condition applies to, which may further mitigate the impact on the households that
-already carry a SUD along the transition. The gain comes from deterrence: adults who \new{do not have a SUD and are able to stay clean do so} to keep their
+already carry a SUD along the transition. The gain comes from deterrence: adults who do not have a SUD and are able to stay clean do so to keep their
 access to a voucher. The early cost falls on a different group, the households that already carry a SUD when the
 reform lands. They cannot respond quickly, because recovery from a SUD is slow, so for them the condition brings
-mostly the cost. Their homelessness rises at once, and only $@@x_trf_alive_sud_better_pc@@$ percent of them are
-better off\new{, and even that is just because drug prices are lower}. A condition applied only to new voucher holders, with current holders given a five-to-ten-year \new{grandfather} exemption, for example,
+mostly the cost. Their homelessness rises at once, and \new{$@@x_trf_alive_sud_worse_pc@@$ percent of them are worse off}. A condition applied only to new voucher holders, with current holders given a five-to-ten-year grandfather exemption, for example,
 may strike a good balance between keeping the threat
 for those who can still respond to it and sparing those who cannot.
 

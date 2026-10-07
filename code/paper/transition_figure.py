@@ -189,6 +189,7 @@ def names(S, C, R):
     # adults alive at the reform: the share better off, all of them and those carrying a SUD
     out['x_trf_alive_better_pc'] = f"{100 * R['better_off_all']:.0f}"
     out['x_trf_alive_sud_better_pc'] = f"{100 * R['better_off_sud']:.0f}"
+    out['x_trf_alive_sud_worse_pc'] = f"{100 * R['worse_off_sud']:.0f}"
     # panel (h): the shares over the path
     Bt = rows('better.csv')
     a_all = [100 * r['all'] for r in Bt]; a_sud = [100 * r['with_sud'] for r in Bt]
