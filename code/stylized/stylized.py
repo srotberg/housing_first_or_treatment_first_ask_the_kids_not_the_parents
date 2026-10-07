@@ -679,6 +679,12 @@ class P:
     # the same order the quantitative model took: *"delta_d can be done later
     # again"*.
     omega = 0.09
+    # WARM GLOW FROM HAVING HAD A CHILD (7 October, the author: "if you have a child, you get some
+    # constant utility benefit each period even after the child left").  A flow added in BOTH
+    # periods to a parent's utility, like aleph, so it also raises the parent's value of staying
+    # alive.  Zero for everyone unless the endogenous-fertility test (fertility.py) sets it on
+    # the parent's parameters; nothing in the calibrated stages reads it.
+    glow = 0.0
     # chdmg IS DERIVED, NOT A PARAMETER, AND IT IS NO LONGER ZERO.
     #
     # It is the child's expected LOSS in lifetime value from the parent
@@ -1101,7 +1107,7 @@ def _flow(par, c, h, q=0.0, child=True):
     bracket = (par.b + q) ** (e * phq)
     if kch > 0.0 and par.omega != 0.0:
         bracket = bracket + par.omega * kch * par.b ** (e * phq)
-    return E * bracket / e + par.aleph
+    return E * bracket / e + par.aleph + par.glow
 
 
 def _options(par, rmul):
@@ -1934,7 +1940,7 @@ def threshold(par, ygrid, policy=None, edges=None, cdf=None):
     return PR, np.clip(frac, 0.0, 1.0), VV, BU, BN, INC
 
 
-def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
+def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None, raw=False):
     """
     Everything the calibration and the note read off the model.
 
@@ -1948,7 +1954,10 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
     """
     policy = policy or par.policy
     PR, frac, VV, BU, BN, INC = threshold(par, ygrid, policy, edges, cdf)
-    ww = w / w.sum(); ybar = (ww * ygrid).sum()
+    # raw=True: w is taken as ABSOLUTE masses (a group's share of the population at each node)
+    # and the accumulators are returned unnormalised, so two groups -- parents and non-parents in
+    # the endogenous-fertility test -- can be added before any ratio is formed.
+    ww = w if raw else w / w.sum(); ybar = (ww * ygrid).sum()
     s0, s1 = par.phi0, par.phi0 * (1.0 - par.kap)
 
     part = spend = uinc = sud = 0.0
@@ -2048,6 +2057,11 @@ def aggregates(par, ygrid, w, policy=None, edges=None, cdf=None):
                         lab += m2 * p2 * (inc2 if inc2 >= y - 1e-12 else 0.0)
 
     use = (PR * frac).sum(axis=1)
+    if raw:
+        return dict(part=part, spend=spend, uinc=uinc, sud=sud, hl=hl, hl_sud=hl_sud, hl2=hl2,
+                    hcost=hcost, hinc=hinc, cost=cost, mass=mass, mass1=mass1, burden=burden,
+                    wealth=wealth, winc=winc, hexp=hexp, fsp=fsp, lab=lab, smallmass=smallmass,
+                    housedmass=housedmass, use=use, yuse=float((ww * use * ygrid).sum()))
     return dict(part=float(part), sud=float(sud),
                 # DRUG SPENDING OVER INCOME AMONG USERS, the moment that would
                 # identify theta if it were targeted. Aggregate spending over
