@@ -68,6 +68,11 @@ def derived(n):
         out['x_trf_h_tail'] = (f'and then declines slowly towards its long-run level, ${abs(v):g}$ percent below that under Housing First'
                                if v < 0 else
                                f'against ${v:g}$ percent in the long run, and then declines slowly towards it')
+    # the most the gain from Treatment First could fall if all of the part that comes in childhood shrank with the
+    # share of users living with a child, against comparable non-users (7 October, the author: "the gaps are not orders
+    # of magnitude... The gains are maybe 15% lower but it won't reverse them")
+    if 'nsduh_kh_sud_ratio' in n and 'x_tf_child_share_pc' in n:
+        out['x_kh_gain_bound_pc'] = f"{_f(n['x_tf_child_share_pc']) * (1.0 - _f(n['nsduh_kh_sud_ratio'])):.0f}"
     # the children born at the reform gain less than every cohort after them
     out['s4_tr_more'] = 'even more' if _f(n['s4_tr_c2']) > _f(n['s4_tr_c1']) else 'less'
     return out

@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 00:15 PAPER (the author: "the gaps are not orders of magnitude... The gains are maybe 15% lower but it won't
+reverse them", and "it also means the impact on child homelessness is smaller"): in red in the introduction, after "pinned
+down by observed behaviour": 40 percent of 26-49 adults with a drug use disorder have a child under 18 at home against
+48 of comparable non-users (nsduh_kh_sud_*, data/make_children_at_home_reweighted.py -> code/paper/nsduh_kids_home.json,
+full matching on age, sex, income, marital); even if all of the childhood part of the gain (x_tf_child_share_pc, 57)
+shrank in proportion, the gain would be only x_kh_gain_bound_pc (10) percent smaller (derived_names.py), and the
+short-run rise in childhood homelessness smaller too. splice_r218 now also loads nsduh_kids_home.json. Without the
+marital match the ratio is 0.74 and the bound 15.
+
 07 Oct 23:55 PAPER (the author: "I think we can use the 47% and 61%"): data/nsfg_births_by_drug_use.py now writes
 nsfg_*minor_*_pc, the share with a child still under 18 (women: last birth under 18 years before the interview; men:
 BIOAGE1-10), co-residence not required; the existing names did not move. In red, after the ever-had-a-child numbers, in

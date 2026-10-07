@@ -6,9 +6,14 @@ Past-month users 43.5 against 51.1 percent (raw non-users 60.0); a disorder of a
 drugs in the past year 27.6 against 44.3. Marital status may partly be an outcome of use, so the comparison without it
 (income column) is the other bound.
 
+Writes code/paper/nsduh_kids_home.json: for each group the users' share (nsduh_kh_<g>_pc), the comparable non-users'
+share at the full matching (nsduh_kh_<g>_like_pc) and their ratio unrounded (nsduh_kh_<g>_ratio), g in mon, sud, hard.
+The paper quotes the sud row: the model's users are calibrated to a disorder of any severity.
+
 Run:  python3 make_children_at_home_reweighted.py NSDUH_2024_Tab.csv
 """
-import sys, numpy as np, pandas as pd
+import json, os, sys, numpy as np, pandas as pd
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'code', 'paper', 'nsduh_kids_home.json')
 F = sys.argv[1]
 COLS = {'wt': 'ANALWT2+AF8-C', 'age3': 'AGE3', 'ki17': 'IRKI17+AF8-2', 'coc': 'COCYR', 'crk': 'CRKYR',
         'her': 'HERYR', 'mth': 'METHAMYR', 'illmon': 'ILLMON', 'illyr': 'ILLYR', 'sud': 'UD5ILLANY',
@@ -35,8 +40,9 @@ def rw(users, cells):
     return float((sh * rn.loc[common]).sum()), float(wu.loc[common].sum() / wu.sum())
 print(f'{"26-49":28s} {"users":>7s} {"non-users":>10s} {"non-users like users in:":>26s}')
 print(f'{"":28s} {"":7s} {"raw":>10s} {"age, sex":>12s} {"+ income":>10s} {"+ marital":>10s}')
-for name, g in (('illicit use, past month', d.illmon == 1), ('drug use disorder, past yr', d.sud == 1),
-                ('hard drug, past year', d.hard)):
+out = {}
+for key, name, g in (('mon', 'illicit use, past month', d.illmon == 1), ('sud', 'drug use disorder, past yr', d.sud == 1),
+                     ('hard', 'hard drug, past year', d.hard)):
     u = d[g]
     ru = np.average(u.kid, weights=u.wt)
     rn = np.average(non.kid, weights=non.wt)
@@ -44,3 +50,8 @@ for name, g in (('illicit use, past month', d.illmon == 1), ('drug use disorder,
     b, _ = rw(u, ['age3', 'sex', 'pinc'])
     c, cov = rw(u, ['age3', 'sex', 'pinc', 'marit'])
     print(f'{name:28s} {100*ru:6.1f}% {100*rn:9.1f}% {100*a:11.1f}% {100*b:9.1f}% {100*c:9.1f}%  (n {len(u)}, cover {100*cov:.0f}%)')
+    out[f'nsduh_kh_{key}_pc'] = f'{100 * ru:.0f}'
+    out[f'nsduh_kh_{key}_like_pc'] = f'{100 * c:.0f}'
+    out[f'nsduh_kh_{key}_ratio'] = f'{ru / c:.4f}'
+json.dump(out, open(OUT, 'w'), indent=1, sort_keys=True)
+print('wrote', OUT)
