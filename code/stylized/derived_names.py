@@ -73,6 +73,15 @@ def derived(n):
     # of magnitude... The gains are maybe 15% lower but it won't reverse them")
     if 'nsduh_kh_sud_ratio' in n and 'x_tf_child_share_pc' in n:
         out['x_kh_gain_bound_pc'] = f"{_f(n['x_tf_child_share_pc']) * (1.0 - _f(n['nsduh_kh_sud_ratio'])):.0f}"
+    # the lone-parent comparison in the omega_c item (7 October, the author: "lone parent plus child vs couple no kids"):
+    # whether the range against unmarried two-adult households contains the target, and what the married range does
+    if 'nsduh_lp_unm_lo_pc' in n and 'c_omega_c_data' in n:
+        lo, hi, t = _f(n['nsduh_lp_unm_lo_pc']), _f(n['nsduh_lp_unm_hi_pc']), _f(n['c_omega_c_data'])
+        out['nsduh_lp_contains'] = ('a range that contains' if lo <= t <= hi else
+                                    'a range wholly above' if t < lo else 'a range wholly below')
+        ml, mh = _f(n['nsduh_lp_mar_lo']), _f(n['nsduh_lp_mar_hi'])
+        out['nsduh_lp_mar_phrase'] = ('changes sign with the weighting and with the income held equal' if ml < 0 < mh else
+                                      f'runs from ${ml:g}$ to ${mh:g}$ percent')
     # the children born at the reform gain less than every cohort after them
     out['s4_tr_more'] = 'even more' if _f(n['s4_tr_c2']) > _f(n['s4_tr_c1']) else 'less'
     return out

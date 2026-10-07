@@ -1,9 +1,14 @@
 """Run:  python3 make_altruism_moment_loneparent.py NSDUH_2024_Tab.csv
 
+Writes code/paper/nsduh_loneparent.json: how much more the non-parents use in the past month, lowest and highest over
+personal or family income held equal and each group's weights -- nsduh_lp_unm_lo_pc/hi_pc against unmarried two-adult
+households (also matched on marital status), nsduh_lp_mar_lo/hi against married couples -- and the lone parents' count.
+
 Two-person households, NSDUH 2024, 26+: a lone parent with one child under 18 against a married couple with no child,
 and against an unmarried adult living with one other adult (partner, roommate or relative; the public file has no
 cohabitation flag). Drug use matched on age, sex and income, reweighting each way."""
-import sys, numpy as np, pandas as pd
+import json, os, sys, numpy as np, pandas as pd
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'code', 'paper', 'nsduh_loneparent.json')
 F = sys.argv[1]
 COLS = {'wt': 'ANALWT2+AF8-C', 'age3': 'AGE3', 'sex': 'IRSEX', 'marit': 'IRMARIT', 'ki17': 'IRKI17+AF8-2',
         'nrch': 'NRCH17+AF8-2', 'pinc': 'IRPINC3', 'finc': 'IRFAMIN3', 'hh': 'IRHHSIZ2',
@@ -51,3 +56,19 @@ for o in ('illmon', 'illyr', 'sud'):
         b2, a2, cov2 = matched(other, lone, cells, o)
         print(f'  {o:6s} on {"+".join(cells):20s}: lone parents {100*a:5.1f} vs {100*b:5.1f} ({100*(b/a-1):+6.1f}%, cover {100*cov:.0f}%)'
               f'  |  other way: {100*a2:5.1f} vs {100*b2:5.1f} ({100*(b2/a2-1):+6.1f}%, cover {100*cov2:.0f}%)')
+
+# THE NUMBERS THE PAPER QUOTES (Section 5, the omega_c item): past-month use, personal or family income, each weighting
+def _gaps(comp, extra):
+    out = []
+    for inc in ('pinc', 'finc'):
+        cells = ['age3', 'sex'] + extra + [inc]
+        a, b, _ = matched(lone, comp, cells, 'illmon')
+        out.append(100 * (b / a - 1))
+        b2, a2, _ = matched(comp, lone, cells, 'illmon')
+        out.append(100 * (b2 / a2 - 1))
+    return out
+unm, mar = _gaps(other, ['marit']), _gaps(couple, [])
+res = {'nsduh_lp_unm_lo_pc': f'{min(unm):.0f}', 'nsduh_lp_unm_hi_pc': f'{max(unm):.0f}',
+       'nsduh_lp_mar_lo': f'{min(mar):.0f}', 'nsduh_lp_mar_hi': f'{max(mar):.0f}', 'nsduh_lp_n': f'{len(lone):,}'}
+json.dump(res, open(OUT, 'w'), indent=1, sort_keys=True)
+print('wrote', OUT, res)
