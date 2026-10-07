@@ -1,6 +1,6 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
-07 Oct 23:05 THE ALTRUISM MOMENT AT EQUAL RESOURCES PER PERSON (data/make_altruism_moment_eqinc.py, NSDUH 2024, 26+, past-month
+07 Oct 23:02 THE ALTRUISM MOMENT AT EQUAL RESOURCES PER PERSON (data/make_altruism_moment_eqinc.py, NSDUH 2024, 26+, past-month
 use, parents reweighted to non-parents' cells). The omega_c = 0 experiment keeps the child, so its data analogue compares
 parents and non-parents at the same family income per effective person (IRFAMIN3 midpoints / sqrt IRHHSIZ2, weighted
 septiles). Non-parents use more by: 18.4 matched on personal income (the paper's), 25.8 on income per effective person
