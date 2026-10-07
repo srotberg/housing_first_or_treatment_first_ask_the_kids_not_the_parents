@@ -1,5 +1,17 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+07 Oct 23:24 T = 60 RESTARTED (the author: "I suggest to also restart the transition"). Stopped at 20:53 during loop 1_r3
+for the xi = 1 work; loop 0_r3's paths (saved 20:38, cmp identical to results/transition_2c/loop0_r3) are the seeds.
+Staged by hand as the earlier restarts: calibration_state.dat, newborn_parent_share.dat, resume_seed.dat, START_EPOCH,
+the old seeds and STOPPED_BY_AUTHOR to /home/user/e2_run/code/tr2c_t60/restart_r4_stop_202610072323/; run.log ->
+run.log.stopped.202610072323; PARAM_HANDOVER.txt from the kept copy (read: 100 HANDOVER lines); binary = the tr60_fix
+retention 0.5 build, cmp identical. Launched 23:23: wrapper 23097 (tr2c_worker.main.pid), binary 23100, OMP 4; both seeds
+read 59 of 59. Loops number from 0 again: archive as results/transition_2c/loop<N>_r4/ (loop 0_r4 is the iteration after
+loop 0_r3). A loop is about 10-12 h: loop 0_r4's paths expected about 09:30-11:30 UTC 8 Oct; check-in
+trig_01Mc5pBEqV9a9QjAGteiUENF at 10:30 archives it and updates the paper (standing instruction, 6 Oct). The e2_run
+worker script's status pushes have failed since 19:54 ('push failed after 4 tries'); not used for this launch. Disk: 2.0 GB
+free after deleting the stopped reproduction's solver state.
+
 07 Oct 23:21 OMEGA_C: THE xi = 1 ROUTE IS CLOSED; THE TARGET STAYS AT 18.3 (the author: "Ok, do 1-3").
 (1) Section 5's omega_c item, in red: the lone-parent comparison (nsduh_lp_*, data/make_altruism_moment_loneparent.py ->
 code/paper/nsduh_loneparent.json: 7 to 44 percent against unmarried two-adult households, a range containing 18.3;
