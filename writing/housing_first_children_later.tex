@@ -2346,7 +2346,7 @@ To test how the model behaves on this dimension, I hold the drug price and $\pi_
 
 The main experiment is the reform the introduction describes. The programme stays
 rationed and only its rule changes, from Housing First, the benchmark, to Treatment
-First, under which a household that uses or carries a SUD loses its voucher if it has one, or does not receive one, when the screen detects it
+First, under which a household that uses or carries a SUD loses its voucher if it has one, or does not receive one \new{if it drew one}, when the screen detects it
 (Section~\ref{sec:fvoucher}). Three further experiments, in Section~\ref{sec:longrun}, come with it. The first is Treatment First without the externalities, with the drug price and $\pi_V$ held at their levels under Housing First. The other two
 give the optimal drug use, with a parent that weighs its child fully, and the optimal
 homelessness, with each household weighing the disamenity its own homelessness imposes on
@@ -2355,11 +2355,11 @@ move in the main experiment and in these last two. The probability of drawing a 
 benchmark level, $\bar R$. The drug price clears the drug market, and the tax system is held where it is in the benchmark.
 
 \paragraph{The screen.} Under Treatment First a household fails the condition
-if it uses drugs or carries the disorder. A holder that fails is caught with probability $p_{\mathrm{det}}$ and loses its
+if it uses drugs or carries the disorder. A holder that fails is caught with probability $p_{\mathrm{det}}$ \new{and in that case} loses its
 voucher, and an applicant that draws a voucher is screened the same way before it
 receives one. A household that is caught is excluded from the programme whatever its
 income, and returns to the queue for a voucher with probability $\psi_x$ a year. The
-government pays $c_{\mathrm{test}}$ for every household it screens, inside the budget
+government pays $c_{\mathrm{test}}$ for every household it screens, \new{and that cost goes inside} the budget
 that $\pi_V$ balances. None of these three parameters does anything in the benchmark,
 where no voucher is conditional, so they are set here rather than in
 Section~\ref{sec:fullcal}.
@@ -2367,14 +2367,14 @@ Section~\ref{sec:fullcal}.
 I set the detection rate to $p_{\mathrm{det}}=85$ percent. In a blinded study of 1,000 pain patients, office urine screens detected 92.5 percent of opioid use,
 against confirmation by liquid chromatography and tandem mass spectrometry (Manchikanti et al., 2011). Laboratory
 screens detect 96 to 100 percent across five opioid assays (Walsh et al., 2025).
-The rate in the model is below these, which is conservative, since a lower rate weakens Treatment First. A household that neither uses nor carries the disorder is never flagged. A screen is positive only above a cutoff concentration,
+The rate in the model is below these, \new{to be} conservative, since a lower rate weakens Treatment First. A household that neither uses nor carries the disorder is never flagged. A screen is positive only above a cutoff concentration,
 and a positive screen is confirmed in a laboratory before it has consequences, so a false positive is all but
 ruled out.
 
 The release rate is $\psi_x=1/3$, an expected
 exclusion of three years. That is the same period for which the Housing Choice Voucher programme
 already bars a household evicted from federally assisted housing for drug-related criminal
-activity (Code of Federal Regulations, Title 24, Section 982.553). The test costs $c_{\mathrm{test}}=0.031$ percent of average earnings in the economy, or
+activity (Code of Federal Regulations, Title 24, Section 982.553). The test \new{cost} $c_{\mathrm{test}}$ \new{is set to} $0.031$ percent of average earnings in the economy, or
 \$35 a test. That is the upper end of the estimates: the Texas Legislative Budget Board's fiscal note
 for Senate Bill 11 puts a test at \$35 (Legislative Budget Board, 2013), which again loads the experiment against
 Treatment First.
@@ -2385,7 +2385,7 @@ Treatment First.
 Every welfare number in this paper is a CEV, computed as follows. Write
 $V^{b}$ for lifetime value under the benchmark and $V^{c}$ for lifetime value under a
 counterfactual policy. The CEV $\Delta$ is the proportional change in
-consumption, applied at every date and in every state, that makes a newborn under
+\new{non-housing and non-drug} consumption, applied at every date and in every state, that makes a newborn under
 the benchmark as well off as the same newborn under the counterfactual:
 %
 \begin{equation}\label{eq:cev}
@@ -2403,20 +2403,23 @@ everyone else. This flow is averaged at each age over the households of that age
 lives at home and discounted to its birth. The adult part is the child's value upon entering the economy at age 26,
 discounted by the same years. The child's own childhood counts at weight one here, not at its parent's weight
 $\omega_c$, and that is what brings the externality on the child into welfare. Its adult part is the value its own
-problem maximises, so the child it raises in turn enters there at the weight $\omega_c$.
+problem maximises, so the child it raises in turn enters there at the weight $\omega_c$. \new{For a child born in period $t$ this is}
+%
+\begin{equation}\label{eq:newbornw}
+\new{W_t\;=\;\sum_{j=1}^{J_K}\beta^{\,j-1}\Big\{(\xi_j-1)\,\mathbb{E}_{t+j-1}\big[\,U(X_c)+\aleph\;\big|\;j\,\big]-\kappa_x H_{t+j-1}\Big\}\;+\;\beta^{J_K}\,\mathbb{E}_{t+J_K}\big[\,V_{t+J_K}(1,\cdot)\,\big],}
+\end{equation}
+%
+\new{where $\mathbb{E}_{s}[\,\cdot\,|\,j\,]$ averages over the households of age $j$ in period $s$ under $\Phi_s(j,\cdot)$, and in a steady state the dates drop out.}
 
 The value is taken before any of its draws are realised, including the household it is
 born into, so $V^{b}$ and $V^{c}$ are expectations over the productivity draw and
-everything that follows from it, and $\Delta$ equates them. The expectation is taken under each policy's own equilibrium distribution rather than a common one. The
+everything that follows from it, and $\Delta$ equates them.\new{\footnote{The ex-ante expected newborn welfare is the standard criterion in this literature (Conesa et al., 2009; Guvenen et al., 2023).}} The expectation is taken under each policy's own equilibrium distribution rather than a common one. The
 penalties that set a child's starting productivity depend on what happened to its parent, so the distribution a
-newborn is drawn from is itself something the policy moves. The ex-ante expected newborn
-welfare is the standard criterion in this literature (Conesa et al., 2009; Guvenen et al., 2023).
+newborn is drawn from is itself something the policy moves.
 
 Two horizons are used, and they are the same object measured at different dates: a
 newborn on the date the policy is implemented, who lives through the transition, and
-a newborn in the new steady state. Because both are the ex-ante value of a child at birth, childhood included,
-any difference between them is the transition itself rather than a change
-in who is being counted.
+a newborn in the new steady state.
 
 %----------------------------------------------------------------------
 \subsection{The long run}\label{sec:longrun}
@@ -2424,7 +2427,9 @@ in who is being counted.
 Table~\ref{tab:longrun} sets the long run under Treatment First and the two optimal
 experiments beside the benchmark, and, in the first two columns, Housing First and Treatment First without the externalities.
 
-\paragraph{Treatment First without externalities.} Without the externalities, the full model gives the ranking of the stylized model. To capture the no-externality case, I set the aggregate homelessness externality to zero, $\kappa_x=0$, and treat the child as appearing only as an adult: its parent does not weigh it, its productivity does not depend on what its parent did, and its childhood, the years its parent is 26 to 50, is not counted in welfare. With the drug price and $\pi_V$ held at their levels under Housing First, Treatment First cuts drug use by $60$ percent and the share carrying a SUD by $61$ percent, against Housing First with the same externalities switched off, while homelessness rises by $3$ percent (first two columns of Table~\ref{tab:longrun}). And yet, no household is better off under Treatment First, with newborns losing $1.50$ percent of lifetime consumption as adults. What follows therefore rests on the externalities on children.
+\paragraph{Treatment First without externalities.} Without the externalities, the full model gives the ranking of the stylized model. To capture the no-externality case, I set the aggregate homelessness externality to zero, $\kappa_x=0$, and treat the child as appearing only as an adult: its parent does not weigh it, its productivity does not depend on what its parent did, and its childhood, the years its parent is 26 to 50, is not counted in welfare. \new{I recalibrate the model to this configuration.}
+
+With the drug price and $\pi_V$ held at their levels under Housing First, Treatment First cuts drug use by $60$ percent and the share carrying a SUD by $61$ percent, against Housing First with the externalities switched off, while homelessness rises by $3$ percent (first two columns of Table~\ref{tab:longrun}). And yet, no household is better off under Treatment First, with newborns losing $1.50$ percent of lifetime consumption as adults\new{, capturing the value of the option removed}. What follows therefore rests on the externalities on children.
 
 \paragraph{Treatment First.} Moving to full general equilibrium, with an endogenous drug price and the government's budget clearing, Treatment First cuts drug use by $32$ percent,
 from $8.96$ to $6.09$ percent of households, and the share of households carrying

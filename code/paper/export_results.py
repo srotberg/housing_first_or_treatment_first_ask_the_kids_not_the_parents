@@ -372,7 +372,7 @@ out['x_tf_pdet_pc'] = pc(100 * float(_ho['probability_of_detection']))
 # 2025). The words turn if the rate is ever set at or above the lower of the two.
 _pd = 100 * float(_ho['probability_of_detection'])
 out['x_tf_pdet_where'] = 'below' if _pd < 92.5 else 'at or above'
-out['x_tf_pdet_so'] = (', which is conservative, since a lower rate weakens Treatment First'
+out['x_tf_pdet_so'] = (', to be conservative, since a lower rate weakens Treatment First'
                        if _pd < 92.5 else '')
 out['x_tf_pfp_pc'] = pc(100 * float(_ho['probability_of_false_positive']))
 assert _ho.get('include_voucher_exclusion') == '1', 'tf85 ran without exclusion?'
