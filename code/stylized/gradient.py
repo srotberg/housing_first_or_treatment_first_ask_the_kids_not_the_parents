@@ -285,12 +285,20 @@ def use_set(q):
     lo = max(y_sg(q), q['y_min']) * (1.0 + 1e-9)
     grid = np.exp(np.linspace(np.log(lo), np.log(80.0), 2500))
     d = D(grid, q)
+
+    def root(i):
+        # the crossing between two grid points; if the scalar solve disagrees with the grid on the sign (it can,
+        # by rounding, right at a boundary), the grid point is used
+        try:
+            return brentq(lambda y: float(D(y, q)[0]), grid[i - 1], grid[i])
+        except ValueError:
+            return grid[i]
     out, start = [], None
     for i in range(len(grid)):
         if d[i] > 0 and start is None:
-            start = grid[0] if i == 0 else brentq(lambda y: float(D(y, q)[0]), grid[i - 1], grid[i])
+            start = grid[0] if i == 0 else root(i)
         if d[i] <= 0 and start is not None:
-            out.append((start, brentq(lambda y: float(D(y, q)[0]), grid[i - 1], grid[i])))
+            out.append((start, root(i)))
             start = None
     if start is not None:
         out.append((start, grid[-1]))
