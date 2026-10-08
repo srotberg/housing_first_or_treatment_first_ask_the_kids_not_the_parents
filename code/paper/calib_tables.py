@@ -114,6 +114,10 @@ AVG_LAB = H['max_food_cost'] / float(
     re.findall(r'DIAG max allotment / avg labour income\s*=\s*(\S+)', LOG)[-1])
 THETA_AGG = float(G['theta'].split()[2])
 SMI_USE = json.load(open(os.path.join(ROOT, 'code', 'paper', 'smi_use_ratio.json')))
+# children living with a parent who has a SUD, NSDUH 2024, parents 26 and over, either parent
+# (data/make_children_with_sud_parent.py; the author, 8 October: "just state the 4.6 percent only! why didnt you
+# add to the table?")
+KIDS_SUD = json.load(open(os.path.join(ROOT, 'code', 'paper', 'nsduh_kids_sud.json')))
 # THE DRUG PRICE ELASTICITIES (the author, round ae7a28ed: "where is the extensive and
 # intensive drug price elasticities? they should be in the table"): export_elasticity.py's
 # averages, the same names Section 2 quotes; the data side is the literature range it types.
@@ -454,14 +458,18 @@ UNTARGETED = [
      r'Saffer and Chaloupka (1999), Grossman and Chaloupka (1998)'),
     ('Intensive margin (users)', (f"${RES['x_el_int_lo']}$ to ${RES['x_el_int_hi']}$", f"${RES['x_el_int']}$"),
      r'Grossman and Chaloupka (1998), Olmstead et al.\ (2015)'),
-    ('Block 6: Transmission, odds ratios', None, None),
+    ('Block 6: Transmission', None, None),
     # BOTH STUDIES ON ONE LINE (the author, 1 October: "just add it to the above, combine
     # them in one line"): 1.44 is Mellentin's and 2.51 Yoon's
-    ('Child of a SUD parent acquires a SUD',
+    ('Child of a SUD parent acquires a SUD, odds ratio',
      ('1.44, 2.51', f'{mom("delta_d child SUD odds ratio"):.2f}'),
      r'Mellentin et al.\ (2016), Yoon et al.\ (2013)'),
-    ('Homeless adult had a homeless parent',
+    ('Homeless adult had a homeless parent, odds ratio',
      ('1.8 to 2.4', f'{mom("delta_h child homeless odds ratio"):.2f}'), r'Bassuk et al.\ (1997)'),
+    # the model's share is every child under a parent with a SUD (export_results.py, x_sudchild0); the data's counts
+    # either parent, the upper bound of data/make_children_with_sud_parent.py
+    ('Children living with a parent with a SUD, \\%',
+     (KIDS_SUD['nsduh_kids_sud_hh_pc'], f"{float(RES['x_sudchild0']):.1f}"), 'NSDUH 2024'),
     # THE REVOKED-VOUCHER COMPARISON (round r144, the author: "add the Constantino numbers to the validation table
     # too"): Costantini's IV estimate against the model's three-year mortality gap of the households Treatment First
     # revokes, scaled by the share it puts on the street (code/paper/export_revoked.py); like for like, per household
