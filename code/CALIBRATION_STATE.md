@@ -1,5 +1,12 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 13:05 WHO STOPS IN THE VALIDATION (the author: "use the like for like with the military experiment. Maybe add it
+to the validation?"). code/paper/export_whostops.py (new; run after export_results.py, which rewrites
+results_numbers.json, as export_revoked.py and export_pe_noext.py are) writes x_ws_*: the tested without a SUD, 59 per
+cent stop (Mehay and Pacula 61). Table 5 (untargeted) Block 8: Deterrence, via calib_tables.py (reads lit_numbers.json
+for the 61); Section 5.2 Block 8 paragraph; the introduction's deterrence sentence now quotes 59; Section 6's 64 per cent
+sentence removed (x_dc_b_b_pc no longer printed). All in red, table black.
+
 08 Oct 07:30 BUDGET REBALANCED WITHOUT EXTERNALITIES (results/noext_fixp; the author's test "is the story about moral
 hazard or about externalities"). Treatment First, drug price held at Housing First's (1.0306), pi_V clearing the budget
 against Arm A's net revenue: pi_V 6.75 -> 6.89 per cent, drug use 9.01 -> 3.58, SUD 3.84 -> 1.51, homelessness 0.60 ->

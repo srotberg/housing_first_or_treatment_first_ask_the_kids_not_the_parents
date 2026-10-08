@@ -122,6 +122,8 @@ KIDS_SUD = json.load(open(os.path.join(ROOT, 'code', 'paper', 'nsduh_kids_sud.js
 # intensive drug price elasticities? they should be in the table"): export_elasticity.py's
 # averages, the same names Section 2 quotes; the data side is the literature range it types.
 RES = json.load(open(os.path.join(ROOT, 'code', 'paper', 'results_numbers.json')))
+# the literature's numbers the validation compares with (Mehay and Pacula's military testing)
+LIT = json.load(open(os.path.join(ROOT, 'code', 'paper', 'lit_numbers.json')))
 THETA_NOSUD = float(re.findall(r'drug share, sum spend / sum income\s*=\s*(\S+)\s+(\S+)', LOG)[-1][1])
 
 # omega_c: drug use with the child's weight off and every other parameter the same
@@ -477,6 +479,12 @@ UNTARGETED = [
     ('Block 7: Losing a voucher', None, None),
     ('Three-year mortality, households with SMI put on the street, pp$^{b}$',
      (RES['x_rv_costantini_pp'], RES['x_rv_street_smi_pp']), r'Costantini (2025)'),
+    # WHO STOPS WHEN THE SCREEN ARRIVES (the author, 8 October: "use the like for like with the military experiment. Maybe
+    # add it to the validation?"): Mehay and Pacula's fall in use among service members who stayed, against the share of
+    # the users without a SUD subject to the screen who stop on impact (code/paper/export_whostops.py; run it first)
+    ('Block 8: Deterrence', None, None),
+    ('Users without a SUD who stop when tested$^{c}$',
+     (LIT['mp_stay_rel_pc'], RES['x_ws_tested_nosud_pc']), r'Mehay and Pacula (1999)'),
 ]
 
 
