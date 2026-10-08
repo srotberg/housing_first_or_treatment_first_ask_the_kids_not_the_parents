@@ -9,35 +9,45 @@ government, no child.  The staged model (stages.py, stage_results.py, stylized.p
 what came before and is no longer read by the paper.
 
 THE MODEL.  Two periods of thirty years.  Income y, fixed for life, is lognormal with dispersion sigma_y,
-raised to a floor y_min where it falls below it, and normalised to mean one.  Period 1: c + p_v v = y, the
-bundle X = c^(1-theta) (b+v)^theta, flow utility U(X) + aleph with U(X) = X^(1-sigma)/(1-sigma).  Using at
-all (v > 0) gives a SUD with probability pi_d, whatever the quantity, and a SUD cuts survival into period
-2 from phibar to phibar^kappa.  Period 2: c = y and no drug, so its value is W2(y) = U(X0(y)) + aleph with
-X0(y) = y^(1-theta) b^theta.
+truncated below at y_min, and normalised to mean one.  Period 1: everyone works, c + p_v v = y, the bundle
+X = c^(1-theta) (b+v)^theta, flow utility U(X) + aleph with U(X) = X^(1-sigma)/(1-sigma).  Using at all
+(v > 0) gives a SUD with probability pi_d, whatever the quantity, and a SUD cuts survival into period 2
+from phibar to phibar^kappa.  Period 2: no drug; the household is out of work with probability u0, or u1
+with a SUD (the author, 8 October: "the unemployment risk should just happen in period 2. So everyone is
+employed in period 1"), and out of work it loses its whole income and lives on y_min ("Nothing, down to
+the floor"; "We should also not have ui.. Just full income loss").  So the value of period 2 is
+W2(y, d) = (1 - u_d) U(X0(y)) + u_d U(X0(y_min)) + aleph, with X0(y) = y^(1-theta) b^theta.
 
 THE DECISION IS IN CLOSED FORM.  Given that it uses, a household buys the Cobb-Douglas quantity on full
 income y + p_v b, so X1 = (1-theta)^(1-theta) (theta/p_v)^theta (y + p_v b), and v > 0 only above
 y_sg = (1-theta) p_v b / theta.  It uses if and only if
 
-    D(y) = U(X1(y)) - U(X0(y)) - beta pi_d (phibar - phibar^kappa) W2(y) > 0.
+    D(y) = U(X1(y)) - U(X0(y)) - beta pi_d [phibar W2(y, 0) - phibar^kappa W2(y, 1)] > 0.
 
-The first two terms are what the drug is worth, the last is the expected loss of the life still to be
-lived.  D is negative at y_sg, where the drug is worth nothing, and tends to -beta pi_d (phibar -
-phibar^kappa) aleph at the top, so the users sit in a band [y_lo, y_hi].  Every moment is an integral of
-the lognormal over that band, analytic, so the calibration is a smooth root-find in seconds.
+The first two terms are what the drug is worth, the last the expected loss from a SUD, which splits into
+the mortality channel, beta pi_d (phibar - phibar^kappa) W2(y, 1), and the unemployment channel,
+beta pi_d phibar (u1 - u0) [U(X0(y)) - U(X0(y_min))].  Both rise with income: dying takes old age and
+aleph, unemployment takes the household down to y_min whatever it earned.  D is negative at y_sg, where
+the drug is worth nothing, and at the top, so the users sit in a band.  Every moment is an integral of the
+lognormal over that band, analytic, so the calibration is a smooth root-find in seconds.
 
-THE FLOOR, and why there has to be one.  With sigma = 2 the value of being alive, W2, is negative at low
-enough income, and a household for which being alive is worth less than nothing would buy a sliver of drug
-for the mortality it brings (negative_value_of_life.py is the record of that defect in the old model).
-The quantitative model's safety net rules that out there; here, with no government, incomes are bounded
-below.  Two ways of doing it were tried on 8 October and one failed:
-  - TRUNCATING at the income where W2 = 0, renormalised: matching the bottom half's share then needs
-    sigma_y = 1.32 and cuts 44 per cent of the lognormal, and households just above the cut, with a life
-    worth almost nothing to lose, use: a sliver of spurious users at the bottom.
-  - A FLOOR at 0.24 of mean income, the old model's, with sigma_y set on the lognormal before it: the
-    value of being alive is positive at the floor (it is zero at about 0.21), nobody at the floor uses,
-    and the users are one band.  Anywhere between about 0.21 and the bottom of the users' band gives the
-    same users; the floor decides only how many households sit at it.
+THE FLOOR, y_min, and why there has to be one (the author, 8 October: "You don't need to explain the
+income floor to the reader", so the paper only states it).  With sigma = 2 the value of being alive is
+negative at a low enough income, and a household for which it is negative would buy a sliver of drug for
+the mortality it brings (negative_value_of_life.py is the record of that defect in the old model).  The
+quantitative model's safety net rules that out there; here the lowest income anyone has, in or out of
+work, is y_min = 0.24 of the mean, where being alive is still worth something (it is worth nothing at
+about 0.21).  What was tried on 8 October:
+  - TRUNCATING at the income where being alive is worth nothing, sigma_y fitted to the bottom half's share
+    after the cut: sigma_y 1.32, 44 per cent of the lognormal cut, and a sliver of spurious users just
+    above the cut, whose life is worth almost nothing to lose.  Failed.
+  - POOLING everyone below 0.24 at 0.24, sigma_y set on the lognormal before it: fine at the calibrated
+    point, but 15 per cent of households sit at one income, and past about 1.25 times the calibrated
+    mortality the band of users reaches that atom, the whole atom starts to use at once, and participation
+    cannot be held for Figure 1.  Replaced, because the author wants the figure to run to twice the
+    calibrated strength.
+  - TRUNCATING at 0.24, sigma_y set on the lognormal before the cut (current): no atom, so as either
+    channel strengthens the users slide smoothly to the bottom of the distribution.
 
 usage:  python3 gradient.py      -> gradient.json (the calibration), gradient_numbers.json (g_* names
                                     for fill.py), writing/tables/tab_external.tex and tab_internal.tex,
@@ -68,13 +78,9 @@ FIGURES = os.path.join(ROOT, 'writing', 'figures')
 # MEAN HOUSEHOLD INCOME, the dollar anchor for the VSL sentence in Section 3: CPS ASEC mean household
 # income, in the dollars the text quotes.  Moved here from stage_results.py, which now reads it from here.
 MEAN_HH_INCOME_USD = 113000.0
-# HOW FAR PAST THE CALIBRATED STRENGTH FIGURE 1 RUNS.  It was twice (the author, 29 September: "from
-# nothing to twice the penalty") in the old model; in this one the band of users slides down the income
-# distribution so fast as the risk strengthens that at about 1.25 times the calibrated strength it reaches
-# the floor, the households there start to use, and with 15 per cent of households at that one income
-# participation can no longer be held at its target.  So the figure stops at 1.2, the last point where the
-# floor is inert, which scan() asserts at every point.
-SCAN_HI = 1.2
+# HOW FAR PAST THE CALIBRATED STRENGTH FIGURE 1 RUNS, the author, 29 September: "from nothing to twice the
+# penalty", and 8 October: "No, don't cap the scan", "Just show up to 200%".
+SCAN_HI = 2.0
 # THE INCOME FLOOR, as a share of mean income: see the head of this file.
 Y_FLOOR = 0.24
 
@@ -98,8 +104,12 @@ SUD_RATE = _D['sud_rate']
 SIG_Y = brentq(lambda s: ndtr(-s) - BOT50_TARGET, 0.05, 4.0)
 
 _P = P()
+# THE TWO UNEMPLOYMENT RATES, read from the quantitative model's declarations: the aggregate rate, FRED
+# UNRATE averaged over 2014 to 2024, and the rate among adults aged 26 and over with a SUD, NSDUH 2024.
+U0 = float(FC['unemployment_rate_data'])
+U1 = float(FC['unemployment_rate_sud_data'])
 FIXED = dict(beta=_P.beta, sigma=_P.sigma, phibar=_P.phi0, years=_P.years, p_v=1.0,
-             pi_d=SUD_RATE / TARGET['part'], sig_y=SIG_Y, y_min=Y_FLOOR)
+             pi_d=SUD_RATE / TARGET['part'], sig_y=SIG_Y, y_min=Y_FLOOR, u0=U0, u1=U1)
 FREE = ('aleph', 'b', 'theta', 'kappa')
 MOMENT_OF = dict(aleph='vsl', b='part', theta='dshare', kappa='r_use')
 
@@ -118,8 +128,11 @@ def X1(y, q):
     return (1.0 - th) ** (1.0 - th) * (th / p) ** th * (y + p * q['b'])
 
 
-def W2(y, q):
-    return U(X0(y, q), q['sigma']) + q['aleph']
+def W2(y, q, d=0):
+    """The value of period 2 with SUD status d: out of work with probability u_d, on y_min."""
+    u = q['u1'] if d else q['u0']
+    s = q['sigma']
+    return (1.0 - u) * U(X0(y, q), s) + u * U(X0(q['y_min'], q), s) + q['aleph']
 
 
 def y_sg(q):
@@ -133,13 +146,14 @@ def gain(y, q):
     return np.where(y > y_sg(q), g, 0.0)
 
 
-def mort_cost(y, q):
-    """Expected loss of the life still to be lived, from using at all."""
-    return q['beta'] * q['pi_d'] * (q['phibar'] - q['phibar'] ** q['kappa']) * W2(y, q)
+def cost(y, q):
+    """Expected loss from using at all: the chance of a SUD times what it takes from period 2, through
+    survival and through employment."""
+    return q['beta'] * q['pi_d'] * (q['phibar'] * W2(y, q, 0) - q['phibar'] ** q['kappa'] * W2(y, q, 1))
 
 
 def D(y, q):
-    return gain(y, q) - mort_cost(y, q)
+    return gain(y, q) - cost(y, q)
 
 
 def y_zero(q):
@@ -150,8 +164,8 @@ def y_zero(q):
 
 
 class Dist:
-    """Lognormal with dispersion s and raw mean one, incomes below the floor raised to it, everything then
-    divided by the new mean so that mean income is one and the floor is m in those units."""
+    """Lognormal with dispersion s and raw mean one, truncated below, the survivors renormalised to mean
+    one, so that the lowest income is m in those units."""
 
     def __init__(self, s, m):
         self.s, self.m = s, m
@@ -164,6 +178,7 @@ class Dist:
                 hi = t
         self.t = 0.5 * (lo + hi)
         self.M = self._mean(self.t)
+        self.Ft, self.Pt = float(self._F(self.t)), float(self._PE(self.t))
 
     def _F(self, x):
         return ndtr((np.log(x) + 0.5 * self.s ** 2) / self.s)
@@ -172,24 +187,23 @@ class Dist:
         return ndtr((np.log(x) - 0.5 * self.s ** 2) / self.s)
 
     def _mean(self, t):
-        return t * self._F(t) + 1.0 - self._PE(t)
+        return (1.0 - self._PE(t)) / (1.0 - self._F(t))
 
     @property
-    def floor_share(self):
-        return float(self._F(self.t))
+    def cut_share(self):
+        return self.Ft
 
     def F(self, y):
-        """Share of households with income at or below y (y above the floor, normalised units)."""
-        return self._F(np.asarray(y, dtype=float) * self.M)
+        """Share of households with income below y (normalised units, y at or above the bound)."""
+        x = np.maximum(np.asarray(y, dtype=float) * self.M, self.t)
+        return (self._F(x) - self.Ft) / (1.0 - self.Ft)
 
     def PE(self, y):
-        """Income of households at or below y, as a share of total income (y above the floor)."""
-        x = np.asarray(y, dtype=float) * self.M
-        return (self.t * self._F(self.t) + self._PE(x) - self._PE(self.t)) / self.M
+        """Income of households below y, as a share of total income."""
+        x = np.maximum(np.asarray(y, dtype=float) * self.M, self.t)
+        return (self._PE(x) - self.Pt) / (1.0 - self.Pt)
 
     def quantile(self, p):
-        if p <= self.floor_share:
-            return self.m
         return brentq(lambda y: float(self.F(y)) - p, self.m, 1e3)
 
 
@@ -225,7 +239,7 @@ def vsl(q, y=1.0):
         X, c, pr = X1(y, q), (1.0 - th) * (y + p * q['b']), q['pi_d']
     else:
         X, c, pr = X0(y, q), y, 0.0
-    ew = ((1.0 - pr) + pr * q['phibar'] ** (q['kappa'] - 1.0)) * W2(y, q)
+    ew = (1.0 - pr) * W2(y, q, 0) + pr * q['phibar'] ** (q['kappa'] - 1.0) * W2(y, q, 1)
     u_c = (1.0 - th) * X ** (1.0 - s) / c
     return float(q['beta'] * ew / u_c * q['years'])
 
@@ -239,7 +253,7 @@ def moments(q):
     spend = th * (inc + p * b * part) - p * b * part
     return dict(part=part, r_use=inc / part if part > 0 else float('nan'),
                 dshare=spend / inc if inc > 0 else float('nan'), vsl=vsl(q), intervals=iv,
-                bot50=float(dist.PE(dist.quantile(0.5))), floor_share=dist.floor_share, dist=dist)
+                bot50=float(dist.PE(dist.quantile(0.5))), cut_share=dist.cut_share, dist=dist)
 
 
 def kappa_for_part(q, part):
@@ -286,7 +300,7 @@ def b_for_part(q, part, b0):
     f0 = f(l0)
     if f0 == 0:
         return b0
-    for step in (0.01, 0.02, 0.05, 0.1, 0.2, 0.4, 0.8):
+    for step in (0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.4, 0.8, 1.6):
         for sgn in (1, -1):
             l1 = l0 + sgn * step
             if f(l1) * f0 < 0:
@@ -294,24 +308,40 @@ def b_for_part(q, part, b0):
     raise ValueError('b not bracketed near %g' % b0)
 
 
-def scan(q, n=49):
-    """Figure 1: kappa - 1 scaled from nothing to SCAN_HI times its calibrated value, b refit at every
-    point so participation stays at its calibrated level, walking out from the calibrated point so each
-    refit starts next to its neighbour's.  Every point is checked for the two things the floor is there
-    to guarantee, and for a single band of users."""
+def channel(q, which, x):
+    """The economy with one channel at x times its calibrated strength and the other switched off."""
+    k = 1.0 + x * (q['kappa'] - 1.0)
+    u = q['u0'] + x * (q['u1'] - q['u0'])
+    if which == 'mortality':
+        return {**q, 'kappa': k, 'u1': q['u0']}
+    if which == 'unemployment':
+        return {**q, 'kappa': 1.0, 'u1': u}
+    return {**q, 'kappa': k, 'u1': u}           # both, scaled together: the calibrated model at x = 1
+
+
+def scan(q, which, n=81):
+    """Figure 1: one channel scaled from nothing to SCAN_HI times its calibrated value with the other
+    switched off, b refit at every point so participation stays at its calibrated level, so only who uses
+    changes.  Both curves start from the same economy, the one in which a SUD has no consequences, where
+    the users are everyone above y_sg and b follows in closed form; the walk goes up from there, each refit
+    starting next to its neighbour's.  Every point is checked: the value of being alive positive at the
+    bottom, and participation held."""
     ref = moments(q)['part']
     sc = np.linspace(0.0, SCAN_HI, n)
-    i1 = int(np.argmin(np.abs(sc - 1.0)))
-    r, bs = np.zeros(n), np.zeros(n)
-    for order in (range(i1, -1, -1), range(i1, n)):
-        b = q['b']
-        for i in order:
-            g = {**q, 'kappa': 1.0 + sc[i] * (q['kappa'] - 1.0)}
-            g['b'] = b = b_for_part(g, ref, b)
-            m = moments(g)
-            assert W2(g['y_min'], g) > 0 and float(D(g['y_min'], g)) <= 0, ('floor', sc[i])
-            assert len(m['intervals']) == 1, ('bands', sc[i], m['intervals'])
-            r[i], bs[i] = m['r_use'], b
+    g = channel(q, which, 0.0)
+    ysg = Dist(g['sig_y'], g['y_min']).quantile(1.0 - ref)
+    b = g['theta'] * ysg / ((1.0 - g['theta']) * g['p_v'])
+    r = np.zeros(n)
+    for i, x in enumerate(sc):
+        g = channel(q, which, x)
+        g['b'] = b = b_for_part(g, ref, b)
+        m = moments(g)
+        assert W2(g['y_min'], g) > 0, ('value of being alive at the bottom', which, x)
+        # NOT ONE BAND EVERYWHERE: with the unemployment channel alone past about 1.6 times its strength, b falls
+        # far enough that the very poorest find the drug worth buying, and unemployment takes nothing from a
+        # household already on y_min, so a hair-thin band uses at the bottom.  moments() counts every band.
+        assert abs(m['part'] / ref - 1.0) < 1e-8, ('participation', which, x)
+        r[i] = m['r_use']
     return sc, r
 
 
@@ -331,8 +361,11 @@ def write_tables(q, m):
          f'${tn(q["pi_d"])}$'),
         (r'$\sigma_y$', 'Dispersion of log income',
          f'SCF 2022: bottom half holds {100 * BOT50_TARGET:.1f}\\% of earnings', f'${tn(q["sig_y"])}$'),
-        (r'$y_{\min}$', 'Income floor, over mean income', 'Every household values being alive',
-         f'${tn(q["y_min"])}$'),
+        (r'$y_{\min}$', 'Lowest income, over mean income', 'Set', f'${tn(q["y_min"])}$'),
+        (r'$u_0$', 'Unemployment rate in period 2, no SUD', 'BLS CPS, average 2014--2024',
+         f'${q["u0"]:.3f}$'),
+        (r'$u_1$', 'Unemployment rate in period 2 with a SUD', 'NSDUH 2024, ages 26 and over',
+         f'${tn(q["u1"])}$'),
         (r'$p_v$', 'Price of a unit of drugs', 'Normalisation', f'${tn(q["p_v"])}$'),
     ]
     T = TARGET
@@ -359,55 +392,77 @@ def write_tables(q, m):
     print('   wrote tables/tab_external.tex, tables/tab_internal.tex')
 
 
-def draw(sc, r):
+def draw(curves):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-    plt.rcParams.update({'font.size': 11, 'figure.dpi': 170,
+    plt.rcParams.update({'font.size': 10.5, 'figure.dpi': 170, 'font.family': 'serif',
                          'axes.spines.top': False, 'axes.spines.right': False,
-                         'axes.grid': True, 'grid.alpha': 0.22, 'lines.linewidth': 2.4})
-    fig, ax = plt.subplots(figsize=(7.0, 4.3))
-    ax.plot(100 * sc, r, color='#2C6FAD')
-    ax.axhline(1.0, color='0.45', lw=1.0)
-    ax.axvline(100, color='black', lw=1.0, ls=':')
-    top = max(r) * 1.04
+                         'axes.grid': True, 'grid.alpha': 0.18, 'grid.linestyle': '-',
+                         'legend.frameon': False, 'lines.linewidth': 2.2})
+    col = dict(mortality='#1F5A99', unemployment='#C0662B', both='black')
+    lab = dict(mortality='Mortality risk alone', unemployment='Unemployment risk alone', both='Both')
+    fig, ax = plt.subplots(figsize=(6.6, 4.0))
+    top = 1.08 * max(max(r) for _, r in curves.values())
+    ax.axhspan(0, 1, color='0.93', zorder=0)
+    ax.text(3, 0.5, 'users poorer than average', ha='left', va='center', fontsize=8.5, color='0.45')
+    ax.axhline(1.0, color='0.55', lw=0.9, zorder=1)
+    ax.axvline(100, color='black', lw=0.9, ls=(0, (2, 2)), zorder=1)
+    ax.text(100, top, 'calibrated ', ha='right', va='top', fontsize=8.5)
+    for which in ('both', 'mortality', 'unemployment'):
+        sc, r = curves[which]
+        ax.plot(100 * sc, r, color=col[which], label=lab[which], zorder=3,
+                lw=2.6 if which == 'both' else 2.0)
+        i1 = int(np.argmin(np.abs(sc - 1.0)))
+        ax.plot([100], [r[i1]], 'o', ms=5.5, color=col[which], zorder=4)
+        ax.annotate(f'{r[-1]:.2f}', xy=(100 * sc[-1], r[-1]), xytext=(5, 0), textcoords='offset points',
+                    fontsize=8.5, color=col[which], va='center')
+    r0 = curves['mortality'][1][0]
+    ax.annotate(f'{r0:.2f}', xy=(0, r0), xytext=(5, 5), textcoords='offset points', fontsize=8.5)
+    ax.set_xlim(0, 100 * SCAN_HI + 14)
     ax.set_ylim(0, top)
-    ax.annotate('calibrated', xy=(100, 0.97 * top), ha='center', va='top', fontsize=8,
-                bbox=dict(boxstyle='square,pad=0.15', fc='white', ec='none'))
-    i1 = int(np.argmin(np.abs(sc - 1.0)))
-    ax.plot([100], [r[i1]], 'o', ms=9, mfc='none', mec='black', mew=1.4, zorder=5)
-    for x, y, dx, dy in ((0, r[0], 4, 4), (100 * sc[-1], r[-1], 4, -2)):
-        ax.annotate(f'{y:.2f}', xy=(x, y), xytext=(dx, dy), textcoords='offset points',
-                    fontsize=8.5, color='#2C6FAD', fontweight='bold', va='center')
-    ax.set_xlabel('Strength of the mortality risk of a SUD, percent of its calibrated value')
+    ax.set_xticks(np.arange(0, 100 * SCAN_HI + 1, 25))
+    ax.set_xlabel('Strength of the channel, percent of its calibrated value')
     ax.set_ylabel('Mean income of users / population mean')
-    ax.set_xlim(-3, 100 * SCAN_HI + 11)
+    ax.legend(loc='upper right', bbox_to_anchor=(1.0, 0.93), fontsize=9)
     fig.tight_layout()
     for ext in ('.pdf', '.png'):
         fig.savefig(os.path.join(FIGURES, 'stylized_who_uses' + ext), bbox_inches='tight')
     print('   wrote figures/stylized_who_uses.pdf')
 
 
-def numbers(q, m, sc, r):
+def _cross(sc, r):
+    """Where the users' income first falls below the population mean, by linear interpolation; None if it
+    never does on the scan."""
+    k = int(np.argmax(r < 1.0))
+    if r[k] >= 1.0:
+        return None
+    return sc[k - 1] + (1.0 - r[k - 1]) * (sc[k] - sc[k - 1]) / (r[k] - r[k - 1])
+
+
+def numbers(q, m, curves):
     dist = m['dist']
     (ylo, yhi), = m['intervals']
-    # where users' income crosses the population mean, by linear interpolation on the scan
-    k = int(np.argmax(r < 1.0))
-    cross = sc[k - 1] + (1.0 - r[k - 1]) * (sc[k] - sc[k - 1]) / (r[k] - r[k - 1])
+    at = lambda which, x: curves[which][1][int(np.argmin(np.abs(curves[which][0] - x)))]
+    cm, cu, cb = (_cross(*curves[w]) for w in ('mortality', 'unemployment', 'both'))
     d = dict(
         g_beta=tn(q['beta']), g_beta_ann=f'{q["beta"] ** (1 / q["years"]):.3f}', g_sigma=f'{q["sigma"]:.0f}',
         g_phi0=tn(q['phibar']), g_pid=tn(q['pi_d']), g_t_sud=tn(100 * SUD_RATE), g_t_part=tn(100 * TARGET['part']),
         g_t_bot50=f'{100 * BOT50_TARGET:.1f}', g_sigy=tn(q['sig_y']), g_yfloor=tn(q['y_min']),
-        g_floor_share_pc=f'{100 * m["floor_share"]:.0f}', g_yzero=tn(y_zero(q)),
+        g_u0_pc=f'{100 * q["u0"]:.1f}', g_u1_pc=f'{100 * q["u1"]:.1f}',
         g_t_vsl=f'{TARGET["vsl"]:.0f}', g_vsl_musd=f'{TARGET["vsl"] * MEAN_HH_INCOME_USD / 1e6:.1f}',
         g_mean_hh_usd=f'{MEAN_HH_INCOME_USD:,.0f}', g_t_dshare=f'{100 * TARGET["dshare"]:.1f}',
         g_t_ruse=tn(TARGET['r_use']),
         g_aleph=tn(q['aleph']), g_b=f'{q["b"]:.3f}', g_theta=tn(q['theta']), g_kappa=tn(q['kappa']),
-        g_ysg=tn(y_sg(q)), g_ylo=tn(ylo), g_yhi=tn(yhi),
-        g_pct_lo=f'{100 * float(dist.F(ylo)):.0f}', g_pct_hi=f'{100 * float(dist.F(yhi)):.0f}',
-        g_pct_sg=f'{100 * float(dist.F(y_sg(q))):.0f}',
-        g_r_none=tn(r[0]), g_r_cal=tn(r[int(np.argmin(np.abs(sc - 1.0)))]), g_r_hi=tn(r[-1]),
-        g_scanhi_pc=f'{100 * SCAN_HI:.0f}', g_cross_pc=f'{100 * cross:.0f}',
+        g_ysg=tn(y_sg(q)), g_pct_sg=f'{100 * float(dist.F(y_sg(q))):.0f}',
+        g_r_none=tn(curves['mortality'][1][0]),
+        g_rm_cal=tn(at('mortality', 1.0)), g_rm_hi=tn(at('mortality', SCAN_HI)),
+        g_ru_cal=tn(at('unemployment', 1.0)), g_ru_hi=tn(at('unemployment', SCAN_HI)),
+        g_scanhi_pc=f'{100 * SCAN_HI:.0f}',
+        g_cross_m_pc=f'{100 * cm:.0f}' if cm is not None else '',
+        g_cross_u_pc=f'{100 * cu:.0f}' if cu is not None else '',
+        g_cross_b_pc=f'{100 * cb:.0f}' if cb is not None else '',
+        g_rb_cal=tn(at('both', 1.0)), g_rb_hi=tn(at('both', SCAN_HI)),
     )
     json.dump(d, open(os.path.join(HERE, 'gradient_numbers.json'), 'w'), indent=1, sort_keys=True)
     return d
@@ -421,12 +476,16 @@ def main():
                                      for k in FREE))
     for k in FREE:
         assert abs(m[MOMENT_OF[k]] / TARGET[MOMENT_OF[k]] - 1.0) < 1e-6, k
-    assert len(m['intervals']) == 1 and W2(q['y_min'], q) > 0 and float(D(q['y_min'], q)) <= 0
+    assert len(m['intervals']) == 1 and W2(q['y_min'], q) > 0
+    print(f'  bound {q["y_min"]}: {100 * m["cut_share"]:.1f} per cent of the lognormal cut; being alive worth '
+          f'nothing at {y_zero(q):.3f}; users {m["intervals"]}, y_sg {y_sg(q):.3f}')
     json.dump({k: q[k] for k in q}, open(os.path.join(HERE, 'gradient.json'), 'w'), indent=1)
-    sc, r = scan(q)
+    curves = {w: scan(q, w) for w in ('mortality', 'unemployment', 'both')}
+    for w, (sc, r) in curves.items():
+        print(f'  {w:12s}', ' '.join(f'{x:.2f}' for x in r[::4]))
     write_tables(q, m)
-    draw(sc, r)
-    d = numbers(q, m, sc, r)
+    draw(curves)
+    d = numbers(q, m, curves)
     for k, v in sorted(d.items()):
         print(f'  {k} = {v}')
 

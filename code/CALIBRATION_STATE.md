@@ -4587,3 +4587,22 @@ eq:use), so the four internal parameters fit in seconds and exactly: aleph 6.44 
   transition.py) is the record and is no longer run by build.sh; running it would overwrite Tables 1-2 and
   Figure 1. Users sit in one band, the 52nd to the 61st percentiles; below y_sg = 0.20 (the poorest 11
   per cent) no quantity of the drug is worth buying.
+
+### 8 October, later: unemployment in period 2, full income loss, the scan to 200 per cent
+
+The author: "the unemployment risk should just happen in period 2. So everyone is employed in period 1",
+an unemployed household lives on "Nothing, down to the floor", "We should also not have ui.. Just full
+income loss", "You don't need to explain the income floor to the reader", "don't cap the scan", "Just show
+up to 200%". u0 = 4.9 and u1 = 16.25 per cent from the Fortran declarations (unemployment_rate_data,
+unemployment_rate_sud_data). The income distribution is now TRUNCATED at 0.24 (20 per cent of the
+lognormal cut), not pooled there: the pooled atom is what stopped the scan at 1.2. Refit: aleph 6.60,
+b 0.057, theta 0.22, kappa_phi_d 2.46.
+
+- No consequences: users at 3.51 times the mean. Mortality alone at its calibrated strength: 1.61;
+  unemployment alone: 1.78; both (the calibrated model): 0.74. Each alone crosses the mean only at 158 and
+  153 per cent; both together at 79. Without saving or UI, a job loss to y_min is a loss that rises with
+  income, like death, so the two channels are near substitutes and neither reverses the gradient alone.
+- Both together flatten at 0.27 from about 1.3: the users are then the poorest 8.9 per cent. The drop
+  between 1.15 and 1.3 is a second band opening at the bottom, where unemployment takes nothing.
+- The introduction and the literature review said the mortality channel alone reverses the gradient; both
+  now say the risks of dying and of losing one's job (red, flagged to the author).
