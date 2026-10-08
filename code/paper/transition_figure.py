@@ -87,12 +87,15 @@ def main():
     ax.set_xlim(0, max(born) + 1)
     # (h) THE SHARE BETTER OFF, YEAR BY YEAR (the author, 2 October: "an approval rate of everyone alive at the
     # beginning of the transition", "and show it across time?"), in the eighth slot; the legend goes to (a)
-    Bt = rows('better.csv')
+    # WORSE OFF, not better off (the author, 8 October: "maybe show this as percent worse off?"): the share better
+    # off counts the households the reform leaves untouched as gaining (transition_series.py), the share worse off
+    # does not
+    Bt = rows('worse.csv')
     ax = axs[3, 1]
     ax.plot([r['t'] for r in Bt], [100 * r['all'] for r in Bt], '-', color=BLUE, lw=2.0, label='all households')
     ax.plot([r['t'] for r in Bt], [100 * r['with_sud'] for r in Bt], '--', color=BLUE, lw=1.5,
             label='households with a SUD')
-    ax.set_title('(h) Better off than under Housing First', fontsize=10.5, loc='left')
+    ax.set_title('(h) Worse off than under Housing First', fontsize=10.5, loc='left')
     ax.set_ylabel('percent of households', fontsize=9)
     ax.set_xlabel('years since the reform', fontsize=9)
     ax.set_xlim(-1, 60)
@@ -200,14 +203,14 @@ def names(S, C, R):
     # the share WORSE off over the path (8 October): the better-off share counts households the reform leaves
     # untouched as better off, because the benchmark's value function sits slightly below the re-solve's
     Wt = rows('worse.csv')
-    w_all = [100 * r['all'] for r in Wt]
+    w_all = [100 * r['all'] for r in Wt]; w_sud = [100 * r['with_sud'] for r in Wt]
     out['x_trf_better_sentence'] = (
         'Panel (h) repeats the comparison in every year of the path, for a household in each state weighted as '
         'under Housing First. The share worse off stays '
         + (f"at about ${w_all[0]:.0f}$ percent" if round(min(w_all)) == round(max(w_all)) else
            f"between ${min(w_all):.0f}$ and ${max(w_all):.0f}$ percent")
-        + f", and the share of those with a SUD who are better off {'rises' if a_sud[-1] > a_sud[0] else 'falls'} from "
-        f"${a_sud[0]:.0f}$ to ${a_sud[-1]:.0f}$ percent as the price comes down further. "
+        + f", and the share of those with a SUD who are worse off {'rises' if w_sud[-1] > w_sud[0] else 'falls'} from "
+        f"${w_sud[0]:.0f}$ to ${w_sud[-1]:.0f}$ percent as the price comes down further. "
         + ('Every household entering adult life at 26 is better off throughout.' if min(a_ent) > 99.95
            and min(c for b, c in cev) > 0 else
            f"At least ${min(a_ent):.0f}$ percent of households entering adult life are better off."))

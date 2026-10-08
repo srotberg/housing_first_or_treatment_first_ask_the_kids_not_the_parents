@@ -1,5 +1,26 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 01:37 ROUND r221 (the author's PDF 96e52684, 23 comments). ALL RED STRIPPED; tables frozen; base_r221 + splice_r221.
+In red: intro -- 'both unmarried and of the same age, sex and family income' (a lone parent is unmarried by definition),
+the parenthood paragraph opened as a model statement with the NSFG cited, the 47/61 dropped there as near-duplicate of
+the living-with numbers, 'with ... being smaller too'. Section 2 -- new paragraphs at 'In NSDUH' and 'Drug users', 'had a
+child under 18 at the time of the survey while they used, against 61 percent of those who did not use', footnote without
+'also' and with 'foster care, which is also a very poor environment for a child'; the marital match written as the kind
+of unmarried (here and in Section 5). Section 5 'used'. Table 8 (decomposition) now after the long-run table, CEV column
+only, 'with externalities' in caption and note (export_results.py). Figure panel (h) is now the share WORSE off
+(transition_figure.py, worse.csv), x_trf_better_sentence on worse shares (SUD 86 -> 80). Section 3: the rest-point
+paragraph removed; the stylized omega_c's data counterpart is now the two-person comparison (s_t_gap, sec:fullcal).
+THE STYLIZED REST POINT WAS MOSTLY A GRID ERROR (restpoint.py, TRANSITION_LESSONS 7): the 9.66 against 8.84 came from
+reading SUD off the income nodes (base 4.02 against an exact 3.65); counted exactly, the inherited-penalty adults (3.7 per
+cent) move participation to 8.88. optimal_sud.economy now reports the exact rest point (part_stat, sud_stat,
+homeless_stat). STYLIZED RECALIBRATION IN TWO CLOUD SESSIONS (the author: "Retarget + rest point", "redo stage 1", "two
+separate sessions"): session_01LqQADL1mMT8JpK85pobVhp stage 1 (stages.py 1 calibrated_stage1.json, log
+stage1_oct08_cloud.log), session_015pbTdsa7iQ2pcQn6aFNKqc stage 2 (stages.py 2 calibrated_stage2.json --rest --hold=u1,
+target child gap 0.1949 = sr_calibrate.CHILD_GAP_TARGET, log stage2_rest_oct08_cloud.log). At the old stage 2 the rest
+point's held omega_c = 0 experiment gives 17.5 against 19.5. WHEN BOTH LAND: stage_results.py 1, 2, 3, 4, tables,
+stage_transition.py -> stage_numbers.json, splice_r221, Section 3 numbers in red, PDF. Table 2's 18.3 (comment 14) and
+the 18.3 in Section 3 (15) update then; the table row text is already 'Two-adult over lone-parent households' use'.
+
 08 Oct 01:02 ROUND r220 (the author's PDF bf0424be, 18 comments; "remove all red and put updates in red"). ALL RED STRIPPED
 (and the two struck introduction paragraphs deleted); tables frozen; base_r220 + splice_r220.
 omega_c IDENTIFIED BY THE TWO-PERSON COMPARISON (the author: "unmarried two person household vs lone parent with child,

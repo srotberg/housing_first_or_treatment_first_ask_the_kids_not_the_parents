@@ -240,12 +240,12 @@ population that is homeless, capturing in a reduced-form way the idea that it is
 less safe and pleasant to live in a place with more homelessness.
 
 In the model I design, a parent takes the budget, earnings and childhood homelessness externalities into account only through their imperfect altruism towards their child, and homeless households do not internalise at all the cost their homelessness imposes on everyone else. How much weight a parent puts on their child is calibrated to the difference in drug use between households with and without a child in the data. In the 2024 National Survey on Drug Use and Health
-(NSDUH), an unmarried adult who lives with one other adult and no child uses drugs $@@c_omega_c_data@@$ percent more than a lone parent who lives with one child and has the same age, sex, marital status and family income. Both households have two members and the same income per person, so the
+(NSDUH), an unmarried adult who lives with one other adult and no child uses drugs $@@c_omega_c_data@@$ percent more than a lone parent who lives with one child\new{, both unmarried and of the same age, sex and family income}. Both households have two members and the same income per person, so the
 weight is set so that removing a parent's concern for their child, with the household otherwise unchanged, raises drug use
 in the model by about that much. The part of the child's loss a parent does internalise is
 thus pinned down by observed behaviour.
 
-Every household in the model raises a child, and drug users are nearly as likely as others to be parents. By their forties, $@@nsfg_all_anybirth_tot_4049_pc@@$ percent of Americans have had a child; among those who used hard drugs in the past year the share is $@@nsfg_all_anybirth_hard_4049_pc@@$ percent, against $@@nsfg_all_anybirth_nouse_4049_pc@@$ percent among those who used none, and $@@nsfg_all_minor_hard_4049_pc@@$ percent still have a child under 18 while they use, against $@@nsfg_all_minor_nouse_4049_pc@@$ percent. Users are somewhat less likely to live with their child: $@@nsduh_kh_sud_pc@@$ percent of adults aged 26 to 49 with a drug use disorder have a child under 18 at home, against $@@nsduh_kh_sud_like_pc@@$ percent of adults of the same age, sex, income and marital status who used no illicit drug in the past year. The gap is too small to reverse the results: even if all of the gain from Treatment First that comes in childhood shrank in proportion, the gain would be only $@@x_kh_gain_bound_pc@@$ percent smaller, and the short-run rise in childhood homelessness would be smaller too.
+\new{In the model, every household raises a child. This is close to the data, for drug users as for others: in the National Survey of Family Growth 2017--2019, $@@nsfg_all_anybirth_tot_4049_pc@@$ percent of Americans in their forties have had a child, and so have $@@nsfg_all_anybirth_hard_4049_pc@@$ percent of those who used hard drugs in the past year, against $@@nsfg_all_anybirth_nouse_4049_pc@@$ percent of those who used none.} Users are somewhat less likely to live with their child: $@@nsduh_kh_sud_pc@@$ percent of adults aged 26 to 49 with a drug use disorder have a child under 18 at home, against $@@nsduh_kh_sud_like_pc@@$ percent of adults of the same age, sex, income and marital status who used no illicit drug in the past year. The gap is too small to reverse the results: even if all of the gain from Treatment First that comes in childhood shrank in proportion, the gain would be only $@@x_kh_gain_bound_pc@@$ percent smaller, \new{with} the short-run rise in childhood homelessness \new{being} smaller too.
 
 Given the degree of altruism towards the child, the size of each externality is set by data. The
 budget externality depends on two things: how much a user household spends on the drug, and how likely it is to regain work when a SUD has left it unemployed. Both determine the resources left for the child.
@@ -527,9 +527,13 @@ child with budgets of their own at the same time, linked by the parent's transfe
 and the model does not track the relationship between the two after the child
 becomes an adult. What the model can do is another test, and for
 this paper it is a more relevant one: it compares parents with adults without
-children. In NSDUH 2024, among households of two, an unmarried adult who lives with one other adult and no child uses drugs in the past month $@@c_omega_c_data@@$ percent more than a lone parent who lives with one child, with the lone parents reweighted to the other group's joint distribution of age, sex, marital status and family income so that the gap is behaviour rather than composition. With two members in each household, equal family income is equal income per person. The weight on the child's utility in the
+children.
+
+In NSDUH 2024, among households of two, an unmarried adult who lives with one other adult and no child uses drugs in the past month $@@c_omega_c_data@@$ percent more than a lone parent who lives with one child, with the lone parents reweighted to the other group's joint distribution of age, sex, \new{the kind of unmarried (never married, divorced or separated, or widowed)} and family income so that the gap is behaviour rather than composition. With two members in each household, equal family income is equal income per person. The weight on the child's utility in the
 household's problem is the only thing in the model that makes a household use less
-than it otherwise would, so the weight is set so that setting it to zero (with the household otherwise unchanged) raises drug use by about the same $@@c_omega_c_data@@$ percent. Drug users are also nearly as likely as others to be parents. In the National Survey of Family Growth 2017--2019, men and women aged 40 to 49 who used cocaine, crack or methamphetamine or injected a drug in the past year have had a child at $@@nsfg_all_anybirth_hard_4049_pc@@$ against $@@nsfg_all_anybirth_nouse_4049_pc@@$ percent for those who used none, and $@@nsfg_all_minor_hard_4049_pc@@$ against $@@nsfg_all_minor_nouse_4049_pc@@$ percent have a child still under 18 while still using.\footnote{Users who have a child are also less likely to live with it, partly because the state removes children: parental drug abuse is recorded at more than a third of removals into foster care (AFCARS, FY2017).} The externality is therefore not assumed to be large; its size is
+than it otherwise would, so the weight is set so that setting it to zero (with the household otherwise unchanged) raises drug use by about the same $@@c_omega_c_data@@$ percent.
+
+Drug users are also nearly as likely as others to be parents. In the National Survey of Family Growth 2017--2019, men and women aged 40 to 49 who used cocaine, crack or methamphetamine or injected a drug in the past year have had a child at $@@nsfg_all_anybirth_hard_4049_pc@@$ against $@@nsfg_all_anybirth_nouse_4049_pc@@$ percent for those who used none, and $@@nsfg_all_minor_hard_4049_pc@@$ \new{percent had} a child under 18 \new{at the time of the survey while they used, against $@@nsfg_all_minor_nouse_4049_pc@@$ percent of those who did not use}.\footnote{Users who have a child are less likely to live with it, partly because the state removes children: parental drug abuse is recorded at more than a third of removals into foster \new{care, which is also a very poor environment for a child} (AFCARS, FY2017).} The externality is therefore not assumed to be large; its size is
 calibrated to observed behaviour on exactly the margin this paper is about.
 
 \paragraph{What the hazards are built from.} The model's transitions are not
@@ -1169,7 +1173,7 @@ $\delta_d$ is assigned the value $@@s_deltad@@$ in logs to give the $@@s_deltad_
 measures for children exposed in utero to a temporary Swedish policy that let grocery
 stores in two regions sell strong beer, which made alcohol easier to buy during pregnancy.
 The parent's weight on their child $\omega_c$ is fitted so that switching the child's terms
-off, with every other parameter held, raises drug use by $@@s_t_gap@@$ percent. Switching the terms off keeps the household as it is and removes only the parent's concern for the child, so its counterpart in the data compares adults who differ in whether they have a child but not in their other characteristics: in NSDUH 2024, adults without children use $@@s_t_gap@@$ percent more than parents of the same age, income, sex and marital status. Every other stage 1 parameter is refitted with the child in place, and
+off, with every other parameter held, raises drug use by $@@s_t_gap@@$ percent. Switching the terms off keeps the household as it is and removes only the parent's concern for the child, so its counterpart in the data \new{holds the household fixed too: in NSDUH 2024, an unmarried adult living with one other adult and no child uses drugs $@@s_t_gap@@$ percent more than a lone parent living with one child, both unmarried and of the same age, sex and family income (Section~\ref{sec:fullcal})}. Every other stage 1 parameter is refitted with the child in place, and
 Table~\ref{tab:int} reports both.
 
 \paragraph{Drug use under full altruism.} I begin by examining how much drug use and SUD there is under full altruism. I do so by setting the weight a parent puts on their child to one,
@@ -1180,7 +1184,7 @@ both fall to $@@s4_part_opt@@$ percent, and homelessness to $@@s4_homeless_opt@@
 \paragraph{Treatment First with the child counted.} Counting the child's utility in
 welfare, as Section~\ref{sec:cev} describes, a newborn is better off in the long run under Treatment First than under Housing First, by $@@s2_cev_tf@@$ percent of lifetime consumption. Treatment First cuts participation from $@@s2_part_hf@@$ to $@@s2_part_tf@@$
 percent and the share with the disorder from $@@s2_sud_hf@@$ to $@@s2_sud_tf@@$
-percent, both at each policy's rest point, so fewer children enter adult life with the penalty. These are not the $@@s2_part@@$ percent of Table~\ref{tab:int}, although the parameters are the same, because the two count different populations. Table~\ref{tab:int} measures each moment in one generation, whose parents did not have a SUD. A rest point repeats the economy over generations, so some adults start life with the penalty a parent's SUD left them; they are poorer, and poorer adults use more, which puts participation under Housing First at $@@s2_part_hf@@$ percent. Breaking the gains by periods of life shows @@s2_split@@: the gain is $@@s2_cev_tf_kid@@$ percent in childhood, because parents spend more of their
+percent, both at each policy's rest point, so fewer children enter adult life with the penalty. Breaking the gains by periods of life shows @@s2_split@@: the gain is $@@s2_cev_tf_kid@@$ percent in childhood, because parents spend more of their
 resources on them instead of on drugs, and $@@s2_cev_tf_adult@@$ percent in adult life, because the child enters with a better productivity draw. Treatment First @@s2_homeless_dir@@
 homelessness too, by about $@@s2_homeless_chg_pc@@$ percent, because fewer households have a SUD and lose their jobs, and fewer are themselves poor for having been born to a
 parent with the disorder, so their income is higher.
@@ -1959,7 +1963,7 @@ enters with. As it rises the parent counts more of the child's
 loss, so the budget, earnings and childhood homelessness externalities left for Treatment First
 and Housing First to correct are smaller. It is identified by a counterfactual moment: with every other
 parameter unchanged, drug use with the child given no weight is compared with drug use at
-$\omega_c$. The data moment holds the household fixed as well. In NSDUH 2024, an unmarried adult living with one other adult and no child uses illicit drugs in the past month $@@c_omega_c_data@@$ percent more than a lone parent living with one child, with the lone parents reweighted to the other group's age, sex, marital status and family income; with two members in each household, equal family income is equal income per person. At $\omega_c=@@c_omega_c_value@@$, removing the child's weight raises use by $@@c_omega_c_model@@$ percent in the model. Following the same people over time also shows use falling once they become parents: Bachman et al.\ (1997) link parenthood to declines in drug use among young adults, and Kreager et al.\ (2010) find that motherhood reduces marijuana and alcohol use among women in disadvantaged neighbourhoods.
+$\omega_c$. The data moment holds the household fixed as well. In NSDUH 2024, an unmarried adult living with one other adult and no child \new{used} illicit drugs in the past month $@@c_omega_c_data@@$ percent more than a lone parent living with one child, with the lone parents reweighted to the other group's age, sex, \new{kind of unmarried (never married, divorced or separated, or widowed)} and family income; with two members in each household, equal family income is equal income per person. At $\omega_c=@@c_omega_c_value@@$, removing the child's weight raises use by $@@c_omega_c_model@@$ percent in the model. Following the same people over time also shows use falling once they become parents: Bachman et al.\ (1997) link parenthood to declines in drug use among young adults, and Kreager et al.\ (2010) find that motherhood reduces marijuana and alcohol use among women in disadvantaged neighbourhoods.
 \item[$\delta_d$, earnings the child loses because of a parent's SUD.] The child does not inherit
 the disorder, only a worse
 productivity draw, and that lower expected draw is what makes it likelier to be poor, to use, to
@@ -2405,14 +2409,6 @@ back: with the drug price held at its benchmark level and $\pi_V$ still balancin
 screen acts, a newborn would gain $@@x_dc_b_cev@@$ percent. This means that @@x_dc_b_source@@, the cheaper drug it brings about takes back
 @@x_dc_b_takeback@@ that, and recycling the revenue into vouchers restores @@x_dc_b_restore@@ what is lost.
 
-\begin{table}[!tb]\centering
-\caption{Treatment First with the drug price and the voucher probability held or clearing}\label{tab:decomp}
-\begingroup\scriptsize
-\sbox{\ntbox}{\input{tables/tab_decomp}}\usebox{\ntbox}
-\tabnote{Notes: long-run steady states, Treatment First with the detection rate of Table~\ref{tab:longrun}. Changes are in percent against Housing First, and the CEV is a newborn's, in percent of lifetime consumption. Held means at its Housing First level. When $\pi_V$ is held the revenue the screen frees goes unspent; when it clears the budget, it keeps net government revenue at its benchmark level. The last row is Treatment First as in Table~\ref{tab:longrun}.}
-\endgroup
-\end{table}
-
 About $@@x_tf_child_share_pc@@$ percent of the gain in lifetime utility comes in childhood. The share of children living with a parent who uses drugs @@x_lr_paruse_dir@@ from $@@x_lr_paruse0@@$ to $@@x_lr_paruse1@@$ percent, and the share living with one who has a SUD @@x_tf_sudchild_dir@@ from $@@x_sudchild0@@$ to $@@x_tf_sudchild1@@$ percent. As a result, parents spend
 more on the consumption and housing they share with the child and less on the drug, and they are less likely to
 acquire a SUD and remain unemployed longer because of it, raising childhood consumption further.
@@ -2433,6 +2429,14 @@ internalisation adds to full altruism each household weighing the disamenity of 
 homelessness. Children are those living with households aged 26 to 50, the years a child lives at
 home. The CEV is against the benchmark. A household is better off when its value under Treatment First exceeds
 its value in the same state under Housing First, using the Housing First distribution.}
+\endgroup
+\end{table}
+
+\begin{table}[!tb]\centering
+\caption{Treatment First \new{with externalities}, with the drug price and the voucher probability held or clearing}\label{tab:decomp}
+\begingroup\scriptsize
+\sbox{\ntbox}{\input{tables/tab_decomp}}\usebox{\ntbox}
+\tabnote{Notes: long-run steady states, Treatment First with \new{externalities and} the detection rate of Table~\ref{tab:longrun}. The CEV is a newborn's, in percent of lifetime consumption\new{, against Housing First}. Held means at its Housing First level. When $\pi_V$ is held the revenue the screen frees goes unspent; when it clears the budget, it keeps net government revenue at its benchmark level. The last row is Treatment First as in Table~\ref{tab:longrun}.}
 \endgroup
 \end{table}
 
