@@ -8408,6 +8408,9 @@
         ! eligible are those counted in model_eligibles. Nothing reads these but the DIAG line.
         real(8), dimension(0:2) :: diag_users_by_voucher_state=0
         real(8) :: diag_users_eligible=0, diag_mass_eligible=0
+        ! THE TESTED POPULATION, defined the same under either programme: every eligible holder, and every eligible
+        ! non-holder weighted by its raw offer rate, the set model_drug_tests counts when the voucher is conditional.
+        real(8) :: diag_users_tested=0, diag_mass_tested=0
         ! WHICH CONJUNCT OF THE VOUCHER GATE FAILS. The gate at 18714 is
         ! years_left_on_mortgage_index==1 .AND. amortization_used==1 .AND.
         ! voucher_index==1. The census says voucher_index==1 holds 3.5204 of
@@ -11218,7 +11221,9 @@
                 " holding=", diag_users_by_voucher_state(1)/max(model_mass_by_voucher_state(1),10.d0**(-14)), &
                 " excluded=", diag_users_by_voucher_state(2)/max(model_mass_by_voucher_state(2),10.d0**(-14)), &
                 " eligible=", diag_users_eligible/max(diag_mass_eligible,10.d0**(-14)), &
-                " eligible mass=", diag_mass_eligible
+                " eligible mass=", diag_mass_eligible, &
+                " tested=", diag_users_tested/max(diag_mass_tested,10.d0**(-14)), &
+                " tested mass=", diag_mass_tested, " users tested=", diag_users_tested
             ! AGGREGATE FOOD STAMP SPENDING IS A CHECK NOW, NOT A TARGET.
             ! SNAP is implemented as the programme runs -- allotment by
             ! household size, gross income eligibility at 130 per cent of the
@@ -18374,6 +18379,7 @@
         ! cost of testing as well as the eligibility for a voucher.
         integer :: voucher_category_for_test
         real(8) :: offer_rate_for_test
+        real(8) :: diag_w_tested
 
         ! STATIC STORAGE, BECAUSE THESE ACCUMULATE ACROSS THE TWO PASSES.
         !
@@ -18509,6 +18515,8 @@
         if (accumulating_beta_types==0) diag_users_by_voucher_state=0
         if (accumulating_beta_types==0) diag_users_eligible=0
         if (accumulating_beta_types==0) diag_mass_eligible=0
+        if (accumulating_beta_types==0) diag_users_tested=0
+        if (accumulating_beta_types==0) diag_mass_tested=0
         if (accumulating_beta_types==0) diag_amort_mass=0
         if (accumulating_beta_types==0) diag_inc_mass=0
         if (accumulating_beta_types==0) diag_inc_pass=0
@@ -19058,6 +19066,31 @@
                                             diag_mass_eligible=diag_mass_eligible+distribution_mass_used
                                             if (((addiction_consumption_1>0) .AND. (unemployment_index<=threshold_addiction_index)) .OR. &
                                                 (unemployment_index>threshold_addiction_index)) diag_users_eligible=diag_users_eligible+distribution_mass_used
+
+                                            ! THE TESTED POPULATION, print-only and the same under Housing First and
+                                            ! Treatment First, so the two can be compared on one distribution: weight one
+                                            ! for a holder, the raw offer rate for a non-holder, zero for the excluded.
+                                            if (voucher_index==1) then
+                                                diag_w_tested=1.d0
+                                            elseif (voucher_index==0) then
+                                                call compute_voucher_index_1(val_is_homeless_1,&
+                                                    frac_spent_on_addiction_used,voucher_category_for_test)
+                                                if (voucher_category_for_test==1) then
+                                                    diag_w_tested=probability_of_voucher_benchmark_used_1
+                                                elseif (voucher_category_for_test==2) then
+                                                    diag_w_tested=min(probability_of_voucher_benchmark_used_1*&
+                                                        increased_prob_of_voucher_if_homeless_1,1.d0)
+                                                else
+                                                    diag_w_tested=min(probability_of_voucher_benchmark_used_1*&
+                                                        increased_prob_of_voucher_if_homeless_and_addicted,1.d0)
+                                                end if
+                                            else
+                                                diag_w_tested=0.d0
+                                            end if
+                                            diag_mass_tested=diag_mass_tested+diag_w_tested*distribution_mass_used
+                                            if (((addiction_consumption_1>0) .AND. (unemployment_index<=threshold_addiction_index)) .OR. &
+                                                (unemployment_index>threshold_addiction_index)) &
+                                                diag_users_tested=diag_users_tested+diag_w_tested*distribution_mass_used
 
                                             ! WHO IS TESTED, COUNTED RATHER THAN INFERRED FROM A RATE.
                                             !
