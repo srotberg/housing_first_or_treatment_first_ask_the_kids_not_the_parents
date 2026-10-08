@@ -598,6 +598,9 @@ def numbers():
         'c_j_value': f'{J_MAX}', 'c_j_age': f'{AGE0 + J_MAX}',
         'c_j_r_value': f'{J_RET}', 'c_j_r_age': f'{AGE0 + J_RET}',
         'c_j_k_value': f'{J_K}', 'c_j_k_age': f'{AGE0 + J_K}',
+        # the age J_E corresponds to, for Section 4's footnote (the author, 8 October: "the equivalent of age 80 when the
+        # model runs to age 85")
+        'c_j_e_age': f'{AGE0 + int(C["max_age_to_choose_addiction"])}',
         'c_ssi_floor_earn': f'{H["ssi_floor_level"]:.3f}',
         'c_avg_lab': f'{AVG_LAB:.2f}',
         # the productivity grid's settings that no row carried (audit, 29 September)
