@@ -71,6 +71,11 @@ ARMDIR['pe_b'] = os.path.join(PE, 'arm_B')
 # Arm A's net revenue. Its Arm A is a re-solve of pe_noext's (the same to five digits), so the table keeps pe_a as base
 FX = os.path.join(ROOT, 'results', 'noext_fixp')
 ARMDIR['fx_d'] = os.path.join(FX, 'arm_D')
+# AND WITH THE DRUG PRICE CLEARING TOO (the author, 8 October: "go ahead with all 3"): results/noext_clear, Arm C,
+# Treatment First without the externalities with the drug price and pi_V both clearing. Its Arm A is again a re-solve of
+# pe_noext's (the same to five digits)
+NC = os.path.join(ROOT, 'results', 'noext_clear')
+ARMDIR['nc_c'] = os.path.join(NC, 'arm_C')
 
 
 def adir(arm):
@@ -92,7 +97,8 @@ TABLE = (('pe_a', None), ('pe_b', 'pe_a'), ('null_share', None), ('tf85', 'null_
 # FULL ALTRUISM AND FULL INTERNALISATION GO TO THE APPENDIX (the author, 8 October: "we need to keep the paper tighter,
 # and i think the full altruism is more for the appendix"): the main table keeps the first four columns, and
 # writing/tables/tab_longrun_altruism.tex carries Housing First beside the two benchmarks
-TABLE_MAIN = (('pe_a', None), ('pe_b', 'pe_a'), ('fx_d', 'pe_a'), ('null_share', None), ('tf85', 'null_share'))
+TABLE_MAIN = (('pe_a', None), ('pe_b', 'pe_a'), ('fx_d', 'pe_a'), ('nc_c', 'pe_a'), ('null_share', None),
+              ('tf85', 'null_share'))
 # full internalisation leaves the appendix too (the author, 8 October, on the aggregate homelessness externality: "it
 # doesnt matter ... we can put it in a footnote"); the footnote in Section 5 quotes its one number, x_lr_in_dh_pc
 TABLE_APP = (('null_share', None), ('omega1', 'null_remote'))
@@ -245,7 +251,7 @@ def main():
     for arm, base in ARMS:
         if base:
             D[arm]['cev_net'] = 100 * (D[arm]['cev'] - D[base]['cev'])
-    for arm in ('pe_a', 'pe_b', 'fx_d'):
+    for arm in ('pe_a', 'pe_b', 'fx_d', 'nc_c'):
         f = final(arm)
         D[arm] = dict(steady(arm), price=f['drug price'], piv=f['pi_V (voucher probability)'],
                       b=f['drug use b'], sud=f['SUD lambda_d'], h=f['homelessness h_1'],
@@ -312,6 +318,12 @@ def main():
     D['fx_d'].update(cev_net=100 * _fx['cev']['newborn adult (age 26)']['cev_group'],
                      y26_better=_fs('age 26 (model age 1)'), all_better=_fs('all households'),
                      sud_better=_fs('with a SUD'))
+    # and the column with the drug price clearing too, the same way
+    _nc = json.load(open(os.path.join(NC, 'analysis.json')))
+    _ns = lambda g: 100 * _nc['shares'][g]['abs0.001']['better']
+    D['nc_c'].update(cev_net=100 * _nc['cev']['newborn adult (age 26)']['cev_group'],
+                     y26_better=_ns('age 26 (model age 1)'), all_better=_ns('all households'),
+                     sud_better=_ns('with a SUD'))
     # no CEV for the two optimal arms: each changes the welfare function itself
     D['omega1']['cev_net'] = None
     D['internalise']['cev_net'] = None
@@ -359,11 +371,11 @@ def main():
                 ['\\midrule'] + body + ['\\bottomrule', '\\end{tabular}'])
     # the two no-externality columns under one spanning head, so that no column is wider than its numbers need
     tab = table(TABLE_MAIN, [
-        ' & \\multicolumn{3}{c}{' + hd('h0/0', 'No externalities') + '} & & \\\\', '\\cmidrule(lr){2-4}',
-        ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Treatment', 'Housing', 'Treatment'))) + ' \\\\',
-        ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'First', 'First', 'First'))) + ' \\\\',
-        # which no-externality Treatment First: pi_V held, or clearing the budget
-        ' & & ' + ' & '.join(hd(f'h3/{k}', w) for k, w in enumerate(('$\\pi_V$ held', '$\\pi_V$ clears'))) + ' & & \\\\'])
+        ' & \\multicolumn{4}{c}{' + hd('h0/0', 'No externalities') + '} & & \\\\', '\\cmidrule(lr){2-5}',
+        ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Treatment', 'Treatment', 'Housing', 'Treatment'))) + ' \\\\',
+        ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'First', 'First', 'First', 'First'))) + ' \\\\',
+        # which no-externality Treatment First: pi_V held, pi_V clearing the budget, or the drug price clearing too
+        ' & & ' + ' & '.join(hd(f'h3/{k}', w) for k, w in enumerate(('$\\pi_V$ held', '$\\pi_V$ clears', 'both clear'))) + ' & & \\\\'])
     tab_app = table(TABLE_APP, [
         ' & ' + ' & '.join(hd(f'a1/{k}', w) for k, w in enumerate(('Housing', 'Full'))) + ' \\\\',
         ' & ' + ' & '.join(hd(f'a2/{k}', w) for k, w in enumerate(('First', 'altruism'))) + ' \\\\'])
@@ -399,6 +411,15 @@ def main():
     out['x_fx_all_better_pc'] = f"{F_['all_better']:.0f}"
     out['x_fx_sud_worse_pc'] = f"{100 * _fx['shares']['with a SUD']['abs0.001']['worse']:.0f}"
     out['x_fx_better_cev'] = f"{100 * _fx['cev']['better off (dV>0.001)']['cev_group']:.2f}"
+    # the column with the drug price clearing too: the cheaper drug turns the no-externality loss into a gain
+    N_ = D['nc_c']
+    assert N_['cev_net'] > 0 and N_['price'] < A_['price'], (N_['cev_net'], N_['price'])
+    out['x_nc_newborn_cev'] = f"{N_['cev_net']:.2f}"
+    out['x_nc_price_pc'] = f"{100 * (1 - N_['price'] / A_['price']):.0f}"
+    out['x_nc_piv1_pc'] = f"{100 * N_['piv']:.2f}"
+    out['x_nc_b_pc'] = f"{100 * (1 - N_['b'] / A_['b']):.0f}"
+    out['x_nc_all_better_pc'] = f"{N_['all_better']:.0f}"
+    out['x_nc_sud_worse_pc'] = f"{100 * _nc['shares']['with a SUD']['abs0.001']['worse']:.0f}"
     out['x_lr_om_b_pc'] = f"{abs(pc(o, 'b', 'null_remote')):.0f}"
     out['x_lr_tf_b_pc'] = f"{abs(pc(t, 'b', 'null_share')):.0f}"
     # how much of full altruism's fall in drug use Treatment First delivers
