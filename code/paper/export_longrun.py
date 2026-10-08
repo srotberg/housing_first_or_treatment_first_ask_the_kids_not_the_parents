@@ -83,6 +83,12 @@ ARMS = (('null_share', None), ('tf85', 'null_share'),
 # each experiment beside its own base, Housing First and Treatment First without the externalities first)
 TABLE = (('pe_a', None), ('pe_b', 'pe_a'), ('null_share', None), ('tf85', 'null_share'), ('omega1', 'null_remote'),
          ('internalise', 'null_remote'))
+# FULL ALTRUISM AND FULL INTERNALISATION GO TO THE APPENDIX (the author, 8 October: "we need to keep the paper tighter,
+# and i think the full altruism is more for the appendix"): the main table keeps the first four columns, and
+# writing/tables/tab_longrun_altruism.tex carries Housing First beside the two benchmarks
+TABLE_MAIN = TABLE[:4]
+TABLE_APP = (('null_share', None), ('omega1', 'null_remote'), ('internalise', 'null_remote'))
+TAB_APP = os.path.join(ROOT, 'writing', 'tables', 'tab_longrun_altruism.tex')
 
 
 def log(arm):
@@ -304,41 +310,48 @@ def main():
     def hd(key, w):
         cells[key] = w
         return w if prev.get(key) == w else f'\\textcolor{{red}}{{{w}}}'
-    heads = {1: '\\multicolumn{7}{@{}l}{\\emph{Adults}} \\\\',
-             2: '\\multicolumn{7}{@{}l}{\\emph{Children}} \\\\',
-             3: '\\multicolumn{7}{@{}l}{\\emph{Welfare}} \\\\'}
-    for k in heads:
-        title = re.search(r'\\emph\{([^}]*)\}', heads[k]).group(1)
-        cells[f'panel/{k}'] = title
-        if prev.get(f'panel/{k}') != title:
-            heads[k] = heads[k].replace('\\emph{', '\\emph{\\textcolor{red}{', 1).replace('}} \\\\', '}}} \\\\', 1)
-    body.append(heads[1])
-    part = 1
-    for r in rows:
-        if r is None:
-            part += 1
-            body.append('\\addlinespace')
-            body.append(heads[part])
-            continue
-        lab, key, fmt = r
-        # a row the author has not seen: its label is red too
-        new_row = all(f'{key}/{arm}' not in prev for arm, _ in TABLE)
-        line = [f'\\textcolor{{red}}{{{lab}}}' if new_row and prev else lab]
-        for arm, _ in TABLE:
-            v = D[arm].get(key)
-            c = '--' if v is None else fmt(v)
-            cells[f'{key}/{arm}'] = c
-            line.append(c if prev.get(f'{key}/{arm}') == c else f'\\textcolor{{red}}{{{c}}}')
-        body.append(' & '.join(line) + ' \\\\')
-    tab = ['% Written by code/paper/export_longrun.py from results/counterfactuals_cf_fix2;',
-           '% edit the script, not this file. Caption and note are in the paper.',
-           # every row on one line (round 4ad85a30, the author: "can you put all rows in one line?")
-           '\\begin{tabular}{@{}lrrrrrr@{}}', '\\toprule',
-           # the two no-externality columns under one spanning head, so that no column is wider than its numbers need
-           ' & \\multicolumn{2}{c}{' + hd('h0/0', 'No externalities') + '} & & & & \\\\', '\\cmidrule(lr){2-3}',
-           ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Housing', 'Treatment', 'Full', 'Full'))) + ' \\\\',
-           ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'First', 'First', 'altruism', 'internalisation'))) + ' \\\\',
-           '\\midrule'] + body + ['\\bottomrule', '\\end{tabular}']
+    def table(cols, top):
+        n = len(cols) + 1
+        heads = {1: '\\multicolumn{%d}{@{}l}{\\emph{Adults}} \\\\' % n,
+                 2: '\\multicolumn{%d}{@{}l}{\\emph{Children}} \\\\' % n,
+                 3: '\\multicolumn{%d}{@{}l}{\\emph{Welfare}} \\\\' % n}
+        for k in heads:
+            title = re.search(r'\\emph\{([^}]*)\}', heads[k]).group(1)
+            cells[f'panel/{k}'] = title
+            if prev.get(f'panel/{k}') != title:
+                heads[k] = heads[k].replace('\\emph{', '\\emph{\\textcolor{red}{', 1).replace('}} \\\\', '}}} \\\\', 1)
+        body = [heads[1]]
+        part = 1
+        for r in rows:
+            if r is None:
+                part += 1
+                body.append('\\addlinespace')
+                body.append(heads[part])
+                continue
+            lab, key, fmt = r
+            # a row the author has not seen: its label is red too
+            new_row = all(f'{key}/{arm}' not in prev for arm, _ in cols)
+            line = [f'\\textcolor{{red}}{{{lab}}}' if new_row and prev else lab]
+            for arm, _ in cols:
+                v = D[arm].get(key)
+                c = '--' if v is None else fmt(v)
+                cells[f'{key}/{arm}'] = c
+                line.append(c if prev.get(f'{key}/{arm}') == c else f'\\textcolor{{red}}{{{c}}}')
+            body.append(' & '.join(line) + ' \\\\')
+        return (['% Written by code/paper/export_longrun.py from results/counterfactuals_cf_fix2;',
+                 '% edit the script, not this file. Caption and note are in the paper.',
+                 # every row on one line (round 4ad85a30, the author: "can you put all rows in one line?")
+                 '\\begin{tabular}{@{}l' + 'r' * len(cols) + '@{}}', '\\toprule'] + top +
+                ['\\midrule'] + body + ['\\bottomrule', '\\end{tabular}'])
+    # the two no-externality columns under one spanning head, so that no column is wider than its numbers need
+    tab = table(TABLE_MAIN, [
+        ' & \\multicolumn{2}{c}{' + hd('h0/0', 'No externalities') + '} & & \\\\', '\\cmidrule(lr){2-3}',
+        ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Housing', 'Treatment'))) + ' \\\\',
+        ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'First', 'First'))) + ' \\\\'])
+    tab_app = table(TABLE_APP, [
+        ' & ' + ' & '.join(hd(f'a1/{k}', w) for k, w in enumerate(('Housing', 'Full', 'Full'))) + ' \\\\',
+        ' & ' + ' & '.join(hd(f'a2/{k}', w) for k, w in enumerate(('First', 'altruism', 'internalisation'))) + ' \\\\'])
+    open(TAB_APP, 'w').write('\n'.join(tab_app) + '\n')
     open(TAB, 'w').write('\n'.join(tab) + '\n')
     if freeze:
         json.dump(cells, open(PREV, 'w'), indent=1)
