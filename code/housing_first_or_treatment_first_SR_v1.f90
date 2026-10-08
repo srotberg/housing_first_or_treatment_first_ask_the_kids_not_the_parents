@@ -8411,6 +8411,21 @@
         ! THE TESTED POPULATION, defined the same under either programme: every eligible holder, and every eligible
         ! non-holder weighted by its raw offer rate, the set model_drug_tests counts when the voucher is conditional.
         real(8) :: diag_users_tested=0, diag_mass_tested=0
+        ! WHO STOPS, STATE BY STATE, print-only (8 October; the author: "do a PE iteration on the HF benchmark ... apply
+        ! TF and examine what happens only to the drug use rate of those with vouchers or who are offered a voucher. And
+        ! it has to look only at those with a voucher and who use drugs under HF"). Every run records, for each state of
+        ! the distribution, whether it uses (the guard on model_mass_total_users) and its weight in the tested
+        ! population (diag_w_tested: one for a holder, the offer rate for an eligible non-holder, zero otherwise), and
+        ! writes both to DIAG_STATES_OUT.bin. A run that finds DIAG_HF_STATES.bin (the Housing First reference's file,
+        ! copied in) sums, state by state, the mass that used under Housing First and does not under this programme
+        ! (stop), and the mass that did not and does (start). Meaningful on the impact build only, where both runs sit
+        ! on Housing First's distribution. Index 1 of dg_den is holders (0) or the tested (1); index 2 all users (0) or
+        ! users without a SUD (1), the ones who can stop on impact. Nothing reads these but the DIAG line.
+        real(4), allocatable, dimension(:,:,:,:,:,:,:) :: dg_u, dg_w, dg_hf_u, dg_hf_w
+        integer :: dg_hf_state=0, dg_unit, dg_b, dg_s
+        logical :: dg_exists
+        real(8) :: dg_w_here=0, dg_use_here, dg_hu, dg_hw
+        real(8), dimension(0:1,0:1) :: dg_den=0, dg_stop=0, dg_start=0
         ! WHICH CONJUNCT OF THE VOUCHER GATE FAILS. The gate at 18714 is
         ! years_left_on_mortgage_index==1 .AND. amortization_used==1 .AND.
         ! voucher_index==1. The census says voucher_index==1 holds 3.5204 of
@@ -11224,6 +11239,16 @@
                 " eligible mass=", diag_mass_eligible, &
                 " tested=", diag_users_tested/max(diag_mass_tested,10.d0**(-14)), &
                 " tested mass=", diag_mass_tested, " users tested=", diag_users_tested
+            write(*,*) "DIAG who stops: hf file=", dg_hf_state, &
+                " holders used=", dg_den(0,0), " stop=", dg_stop(0,0), " start=", dg_start(0,0), &
+                " holders no SUD used=", dg_den(0,1), " stop=", dg_stop(0,1), " start=", dg_start(0,1), &
+                " tested used=", dg_den(1,0), " stop=", dg_stop(1,0), " start=", dg_start(1,0), &
+                " tested no SUD used=", dg_den(1,1), " stop=", dg_stop(1,1), " start=", dg_start(1,1)
+            if (allocated(dg_u)) then
+                open(newunit=dg_unit,file='DIAG_STATES_OUT.bin',access='stream',form='unformatted',status='replace')
+                write(dg_unit) dg_u,dg_w
+                close(dg_unit)
+            end if
             ! AGGREGATE FOOD STAMP SPENDING IS A CHECK NOW, NOT A TARGET.
             ! SNAP is implemented as the programme runs -- allotment by
             ! household size, gross income eligibility at 130 per cent of the
@@ -18514,6 +18539,33 @@
         if (accumulating_beta_types==0) model_mass_by_voucher_state=0
         if (accumulating_beta_types==0) diag_users_by_voucher_state=0
         if (accumulating_beta_types==0) diag_users_eligible=0
+        if (.not. allocated(dg_u)) then
+            allocate(dg_u(2,life_span,financial_grid_size,unemployment_grid_size,employment_grid_size,&
+                -1:housing_status_grid_size,0:voucher_state_max))
+            allocate(dg_w(2,life_span,financial_grid_size,unemployment_grid_size,employment_grid_size,&
+                -1:housing_status_grid_size,0:voucher_state_max))
+        end if
+        if (accumulating_beta_types==0) then
+            dg_u=-1.0
+            dg_w=0.0
+            dg_den=0
+            dg_stop=0
+            dg_start=0
+        end if
+        if (dg_hf_state==0) then
+            inquire(file='DIAG_HF_STATES.bin',exist=dg_exists)
+            dg_hf_state=-1
+            if (dg_exists) then
+                allocate(dg_hf_u(2,life_span,financial_grid_size,unemployment_grid_size,employment_grid_size,&
+                    -1:housing_status_grid_size,0:voucher_state_max))
+                allocate(dg_hf_w(2,life_span,financial_grid_size,unemployment_grid_size,employment_grid_size,&
+                    -1:housing_status_grid_size,0:voucher_state_max))
+                open(newunit=dg_unit,file='DIAG_HF_STATES.bin',access='stream',form='unformatted',status='old')
+                read(dg_unit) dg_hf_u,dg_hf_w
+                close(dg_unit)
+                dg_hf_state=1
+            end if
+        end if
         if (accumulating_beta_types==0) diag_mass_eligible=0
         if (accumulating_beta_types==0) diag_users_tested=0
         if (accumulating_beta_types==0) diag_mass_tested=0
@@ -18697,6 +18749,7 @@
                                                
                                 do housing_status_index=(1-has_house)*lowest_housing_grid_point+&
                                     has_house*index_of_smallest_house_hhld_can_buy,housing_status_grid_size-1
+                                    dg_w_here=0
                                                                                                     
                                     lived_in_size_used=policy_function_space_lived_in_size(years_left_on_mortgage_index)%&
                                         vector_transition_real(time_period,age_index,financial_index,&
@@ -19088,6 +19141,7 @@
                                                 diag_w_tested=0.d0
                                             end if
                                             diag_mass_tested=diag_mass_tested+diag_w_tested*distribution_mass_used
+                                            dg_w_here=diag_w_tested
                                             if (((addiction_consumption_1>0) .AND. (unemployment_index<=threshold_addiction_index)) .OR. &
                                                 (unemployment_index>threshold_addiction_index)) &
                                                 diag_users_tested=diag_users_tested+diag_w_tested*distribution_mass_used
@@ -20232,6 +20286,36 @@
                                         
                                     end if
                                     
+                                    ! WHO STOPS (print-only, see dg_u): this state's use and tested weight, and against
+                                    ! Housing First's when its file was found
+                                    dg_b=min(max(current_beta_type,1),2)
+                                    dg_use_here=0
+                                    if (((addiction_consumption_1>0) .AND. (unemployment_index<=threshold_addiction_index)) .OR. &
+                                        (unemployment_index>threshold_addiction_index)) dg_use_here=1
+                                    dg_u(dg_b,age_index,financial_index,unemployment_index,employment_index,&
+                                        housing_status_index,voucher_index)=real(dg_use_here,4)
+                                    dg_w(dg_b,age_index,financial_index,unemployment_index,employment_index,&
+                                        housing_status_index,voucher_index)=real(dg_w_here,4)
+                                    if (dg_hf_state==1) then
+                                        dg_hu=dg_hf_u(dg_b,age_index,financial_index,unemployment_index,employment_index,&
+                                            housing_status_index,voucher_index)
+                                        dg_hw=dg_hf_w(dg_b,age_index,financial_index,unemployment_index,employment_index,&
+                                            housing_status_index,voucher_index)
+                                        if (dg_hu>=0) then
+                                            do dg_s=0,1
+                                                if ((dg_s==1) .AND. (unemployment_index>threshold_addiction_index)) cycle
+                                                if (voucher_index==1) then
+                                                    dg_den(0,dg_s)=dg_den(0,dg_s)+distribution_mass_used*dg_hu
+                                                    dg_stop(0,dg_s)=dg_stop(0,dg_s)+distribution_mass_used*dg_hu*(1-dg_use_here)
+                                                    dg_start(0,dg_s)=dg_start(0,dg_s)+distribution_mass_used*(1-dg_hu)*dg_use_here
+                                                end if
+                                                dg_den(1,dg_s)=dg_den(1,dg_s)+distribution_mass_used*dg_hw*dg_hu
+                                                dg_stop(1,dg_s)=dg_stop(1,dg_s)+distribution_mass_used*dg_hw*dg_hu*(1-dg_use_here)
+                                                dg_start(1,dg_s)=dg_start(1,dg_s)+distribution_mass_used*dg_hw*(1-dg_hu)*dg_use_here
+                                            end do
+                                        end if
+                                    end if
+
                                 end do
                                                                        
                             end do

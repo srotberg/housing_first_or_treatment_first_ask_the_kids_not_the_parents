@@ -138,6 +138,9 @@ echo "benchmark voucher probability $PV"
 rm -rf "$DIR" && cp -a "$BDIR" "$DIR" && cd "$DIR"
 rm -f cf.log cf.err
 cp ../$BUILD/hftf_cf_prod ./hftf_cf
+# DIAG_HF_FROM=<file>: Housing First's per-state choices (DIAG_STATES_OUT.bin of a reference impact run), read by
+# the print-only 'DIAG who stops' line (code/deter_2c/run_whostops.sh); unset, nothing changes.
+if [ -n "${DIAG_HF_FROM:-}" ]; then cp "$DIAG_HF_FROM" DIAG_HF_STATES.bin || { echo "GUARD: cannot copy $DIAG_HF_FROM"; exit 1; }; fi
 # A SEEDED BUILD STARTS FROM A FINISHED RUN'S DISTRIBUTION: SEED_FROM names that run's
 # directory; its counter_arm files become this arm's distribution_stationary{1,2}seed.dat,
 # checked against the benchmark's files for size (the same arrays, one time slot).
