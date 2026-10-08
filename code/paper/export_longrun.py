@@ -76,6 +76,14 @@ ARMDIR['fx_d'] = os.path.join(FX, 'arm_D')
 # pe_noext's (the same to five digits)
 NC = os.path.join(ROOT, 'results', 'noext_clear')
 ARMDIR['nc_c'] = os.path.join(NC, 'arm_C')
+# THE DECOMPOSITION'S THREE RUNS AS COLUMNS (the author, 8 October, on Table 6: "can't you just add the experiments in
+# Table to Table 5?", "the one missing can be added there"): Treatment First with the externalities and the drug price,
+# pi_V or both held at Housing First's, each against null_share like tf85 (export_results.py reads the same runs for the
+# x_dc_* names). Their runs saved no full value functions, so the two shares-better-off rows and the newborns' row
+# print '--' for them, which the table note says
+ARMDIR['dc_b'] = os.path.join(ROOT, 'results', 'decomp_2c_both', 'arm_fixboth')
+ARMDIR['dc_pv'] = os.path.join(ROOT, 'results', 'decomp_2c', 'arm_fixpv')
+ARMDIR['dc_p'] = os.path.join(ROOT, 'results', 'decomp_2c', 'arm_fixp')
 
 
 def adir(arm):
@@ -85,7 +93,8 @@ TAB = os.path.join(ROOT, 'writing', 'tables', 'tab_longrun.tex')
 PREV = os.path.join(HERE, 'tab_longrun_prev.json')
 ARMS = (('null_share', None), ('tf85', 'null_share'),
         ('omega1', 'null_remote'), ('internalise', 'null_remote'),
-        ('old_null_share', None), ('old_tf85', 'old_null_share'), ('old_elast5_85', 'old_null_remote'))
+        ('old_null_share', None), ('old_tf85', 'old_null_share'), ('old_elast5_85', 'old_null_remote'),
+        ('dc_b', 'null_share'), ('dc_pv', 'null_share'), ('dc_p', 'null_share'))
 # the columns of the table: the elastic supply is a footnote (the author, 30 September); optimal
 # homelessness added as a fourth column (the author, 2 October: "You should also add the column for
 # omega_c=1 and internalization of homelessness")
@@ -98,7 +107,7 @@ TABLE = (('pe_a', None), ('pe_b', 'pe_a'), ('null_share', None), ('tf85', 'null_
 # and i think the full altruism is more for the appendix"): the main table keeps the first four columns, and
 # writing/tables/tab_longrun_altruism.tex carries Housing First beside the two benchmarks
 TABLE_MAIN = (('pe_a', None), ('pe_b', 'pe_a'), ('fx_d', 'pe_a'), ('nc_c', 'pe_a'), ('null_share', None),
-              ('tf85', 'null_share'))
+              ('dc_b', 'null_share'), ('dc_pv', 'null_share'), ('dc_p', 'null_share'), ('tf85', 'null_share'))
 # full internalisation leaves the appendix too (the author, 8 October, on the aggregate homelessness externality: "it
 # doesnt matter ... we can put it in a footnote"); the footnote in Section 5 quotes its one number, x_lr_in_dh_pc
 TABLE_APP = (('null_share', None), ('omega1', 'null_remote'))
@@ -304,6 +313,8 @@ def main():
         D['tf85']['sud_better'] = 100 * SH['with a SUD'][0]
     D['tf85']['nb_better'] = 100.0 if D['tf85']['cev_net'] > 0 else 0.0
     D['tf85']['y26_better'] = 100 * D['tf85']['adult']['young_better']
+    for _a in ('dc_b', 'dc_pv', 'dc_p'):
+        D[_a]['y26_better'] = 100 * D[_a]['adult']['young_better']
     # the last column's welfare rows, from the walk on Arm A's distribution (results/pe_noext/RESULT.md): the CEV is the
     # newborn's adult value at 26, since its childhood is the externality the column switches off (the paragraph and the
     # table note say so); better off at the same tolerance as the Treatment First column, 1e-3 utils
@@ -371,11 +382,14 @@ def main():
                 ['\\midrule'] + body + ['\\bottomrule', '\\end{tabular}'])
     # the two no-externality columns under one spanning head, so that no column is wider than its numbers need
     tab = table(TABLE_MAIN, [
-        ' & \\multicolumn{4}{c}{' + hd('h0/0', 'No externalities') + '} & & \\\\', '\\cmidrule(lr){2-5}',
-        ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Treatment', 'Treatment', 'Housing', 'Treatment'))) + ' \\\\',
-        ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'First', 'First', 'First', 'First'))) + ' \\\\',
-        # which no-externality Treatment First: pi_V held, pi_V clearing the budget, or the drug price clearing too
-        ' & & ' + ' & '.join(hd(f'h3/{k}', w) for k, w in enumerate(('$\\pi_V$ held', '$\\pi_V$ clears', 'both clear'))) + ' & & \\\\'])
+        ' & \\multicolumn{4}{c}{' + hd('h0/0', 'No externalities') + '} & \\multicolumn{5}{c}{'
+        + hd('h0/1', 'With externalities') + '} \\\\', '\\cmidrule(lr){2-5}\\cmidrule(lr){6-10}',
+        ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Treatment', 'Treatment', 'Housing', 'Treatment', 'Treatment', 'Treatment', 'Treatment'))) + ' \\\\',
+        ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First',) * 9)) + ' \\\\',
+        # which Treatment First: the drug price and pi_V both held, one of them clearing, or both clearing. 'both held'
+        # in place of the no-externality block's '$\pi_V$ held' once 'price clears' sits in the same row
+        ' & & ' + ' & '.join(hd(f'h3/{k}', w) for k, w in enumerate(('both held', '$\\pi_V$ clears', 'both clear')))
+        + ' & & ' + ' & '.join(hd(f'h3/{k + 3}', w) for k, w in enumerate(('both held', 'price clears', '$\\pi_V$ clears', 'both clear'))) + ' \\\\'])
     tab_app = table(TABLE_APP, [
         ' & ' + ' & '.join(hd(f'a1/{k}', w) for k, w in enumerate(('Housing', 'Full'))) + ' \\\\',
         ' & ' + ' & '.join(hd(f'a2/{k}', w) for k, w in enumerate(('First', 'altruism'))) + ' \\\\'])

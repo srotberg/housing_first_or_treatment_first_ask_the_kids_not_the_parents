@@ -1,33 +1,33 @@
 % Written by code/paper/export_longrun.py from results/counterfactuals_cf_fix2;
 % edit the script, not this file. Caption and note are in the paper.
-\begin{tabular}{@{}lrrrrrr@{}}
+\begin{tabular}{@{}lrrrrrrrrr@{}}
 \toprule
- & \multicolumn{4}{c}{No externalities} & & \\
-\cmidrule(lr){2-5}
- & Housing & Treatment & Treatment & Treatment & Housing & Treatment \\
- & First & First & First & First & First & First \\
- & & $\pi_V$ held & $\pi_V$ clears & both clear & & \\
+ & \multicolumn{4}{c}{No externalities} & \multicolumn{5}{c}{\textcolor{red}{With externalities}} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-10}
+ & Housing & Treatment & Treatment & Treatment & Housing & Treatment & \textcolor{red}{Treatment} & \textcolor{red}{Treatment} & \textcolor{red}{Treatment} \\
+ & First & First & First & First & First & First & \textcolor{red}{First} & \textcolor{red}{First} & \textcolor{red}{First} \\
+ & & \textcolor{red}{both held} & $\pi_V$ clears & both clear & & \textcolor{red}{both held} & \textcolor{red}{price clears} & \textcolor{red}{$\pi_V$ clears} & \textcolor{red}{both clear} \\
 \midrule
-\multicolumn{7}{@{}l}{\emph{Adults}} \\
-Drug price, benchmark $=1$ & 1.03 & 1.03 & 1.03 & 0.91 & 1.00 & 0.86 \\
-Voucher probability $\pi_V$ & 6.75 & 6.75 & 6.89 & 7.61 & 6.75 & 9.62 \\
-Drug use & 9.01 & 3.59 & 3.58 & 6.64 & 8.96 & 6.09 \\
-Carrying a SUD & 3.84 & 1.51 & 1.51 & 2.80 & 3.81 & 2.54 \\
-Homelessness & 0.60 & 0.62 & 0.62 & 0.66 & 0.62 & 0.61 \\
-SUD share of the homeless & 20.5 & 16.1 & 16.2 & 23.2 & 20.2 & 23.3 \\
-In treatment, of those with a SUD & 25.0 & 29.9 & 29.9 & 29.2 & 24.9 & 29.3 \\
+\multicolumn{10}{@{}l}{\emph{Adults}} \\
+Drug price, benchmark $=1$ & 1.03 & 1.03 & 1.03 & 0.91 & 1.00 & \textcolor{red}{1.00} & \textcolor{red}{0.87} & \textcolor{red}{1.00} & 0.86 \\
+Voucher probability $\pi_V$ & 6.75 & 6.75 & 6.89 & 7.61 & 6.75 & \textcolor{red}{6.75} & \textcolor{red}{6.75} & \textcolor{red}{11.45} & 9.62 \\
+Drug use & 9.01 & 3.59 & 3.58 & 6.64 & 8.96 & \textcolor{red}{3.20} & \textcolor{red}{6.53} & \textcolor{red}{2.31} & 6.09 \\
+Carrying a SUD & 3.84 & 1.51 & 1.51 & 2.80 & 3.81 & \textcolor{red}{1.35} & \textcolor{red}{2.71} & \textcolor{red}{0.98} & 2.54 \\
+Homelessness & 0.60 & 0.62 & 0.62 & 0.66 & 0.62 & \textcolor{red}{0.62} & \textcolor{red}{0.70} & \textcolor{red}{0.48} & 0.61 \\
+SUD share of the homeless & 20.5 & 16.1 & 16.2 & 23.2 & 20.2 & \textcolor{red}{14.7} & \textcolor{red}{22.0} & \textcolor{red}{13.7} & 23.3 \\
+In treatment, of those with a SUD & 25.0 & 29.9 & 29.9 & 29.2 & 24.9 & \textcolor{red}{29.9} & \textcolor{red}{29.2} & \textcolor{red}{30.0} & 29.3 \\
 \addlinespace
-\multicolumn{7}{@{}l}{\emph{Children}} \\
-Living with a parent who uses drugs & 16.42 & 6.57 & 6.57 & 12.16 & 16.32 & 10.99 \\
-Living with a parent who has a SUD & 5.84 & 2.32 & 2.32 & 4.29 & 5.81 & 3.89 \\
-In a shelter & 1.01 & 1.04 & 1.03 & 1.11 & 1.03 & 1.03 \\
+\multicolumn{10}{@{}l}{\emph{Children}} \\
+Living with a parent who uses drugs & 16.42 & 6.57 & 6.57 & 12.16 & 16.32 & \textcolor{red}{5.87} & \textcolor{red}{11.76} & \textcolor{red}{4.25} & 10.99 \\
+Living with a parent who has a SUD & 5.84 & 2.32 & 2.32 & 4.29 & 5.81 & \textcolor{red}{2.08} & \textcolor{red}{4.14} & \textcolor{red}{1.52} & 3.89 \\
+In a shelter & 1.01 & 1.04 & 1.03 & 1.11 & 1.03 & \textcolor{red}{1.04} & \textcolor{red}{1.16} & \textcolor{red}{0.82} & 1.03 \\
 \addlinespace
-\multicolumn{7}{@{}l}{\emph{Welfare}} \\
-CEV of a newborn, percent of lifetime consumption & -- & $-$1.50 & $-$1.31 & 0.39 & -- & 4.33 \\
-Share of the newborn's gain that comes in childhood & -- & -- & -- & -- & -- & 57 \\
-Households entering adult life at 26 better off & -- & 0 & 3 & 100 & -- & 100 \\
-All households better off & -- & 0 & 63 & 74 & -- & 76 \\
-Households with a SUD better off & -- & 0 & 0 & 16 & -- & 20 \\
-Newborns better off, by the household they are born into & -- & -- & -- & -- & -- & 92 \\
+\multicolumn{10}{@{}l}{\emph{Welfare}} \\
+CEV of a newborn, percent of lifetime consumption & -- & $-$1.50 & $-$1.31 & 0.39 & -- & \textcolor{red}{5.04} & \textcolor{red}{0.18} & \textcolor{red}{13.11} & 4.33 \\
+Share of the newborn's gain that comes in childhood & -- & -- & -- & -- & -- & \textcolor{red}{89} & \textcolor{red}{14} & \textcolor{red}{74} & 57 \\
+Households entering adult life at 26 better off & -- & 0 & 3 & 100 & -- & \textcolor{red}{0} & \textcolor{red}{1} & \textcolor{red}{100} & 100 \\
+All households better off & -- & 0 & 63 & 74 & -- & \textcolor{red}{--} & \textcolor{red}{--} & \textcolor{red}{--} & 76 \\
+Households with a SUD better off & -- & 0 & 0 & 16 & -- & \textcolor{red}{--} & \textcolor{red}{--} & \textcolor{red}{--} & 20 \\
+Newborns better off, by the household they are born into & -- & -- & -- & -- & -- & \textcolor{red}{--} & \textcolor{red}{--} & \textcolor{red}{--} & 92 \\
 \bottomrule
 \end{tabular}
