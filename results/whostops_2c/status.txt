@@ -1,12 +1,19 @@
-# who stops using under Treatment First, state by state, on Housing First's distribution; 08 Oct 05:10 UTC
+# who stops using under Treatment First, state by state, on Housing First's distribution; 08 Oct 05:30 UTC
 run_deter: gfortran missing, installing (04:37)
 run_deter: free disk 29G, memory 15 GiB, cores 4, threads per solve 2 (04:37)
 run_deter: generating the sources (04:37)
 run_deter: compiling cf_fix2, cf_fix2_impact and cf_fix2_permban_impact (production only, in parallel) (04:37)
 run_deter: impact null wsref on cf_fix2_impact:  (04:38)
+run_deter: reference: 0.0608335618 0.1808173217 0.0796507461 11.6337833103  [use among holders, eligible, tested; eligible mass]; states file 174M (05:10)
+run_deter: impact tf ws850 on cf_fix2_impact: PDET=0.85 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 DIAG_HF_FROM=/home/user/housing_first_or_treatment_first/code/cfarm_null_imp_wsref/DIAG_STATES_OUT.bin (05:10)
 
 == cfarm_null_imp_wsref: 3 passes; use among holders, eligible, tested; eligible mass: 0.0608335618 0.1808173217 0.0796507461 11.6337833103
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0001  0.06753    +0.7%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.4835  -0.03%    +0.4%    -0.3%
   2  1.0001  0.06753    -0.0%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.4946  -0.00%    -0.0%    -0.0%
   3  1.0001  0.06753    -0.0%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.4946  -0.00%    -0.0%    -0.0%
+
+== cfarm_tf_imp_ws850: 2 passes; use among holders, eligible, tested; eligible mass: NA
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  1.0001  0.06753   -36.1%    +0.0%    +0.0%  0.00e+00  0.00e+00   788.0212  +1.53%   -28.3%   +12.3%
+  2  1.0001  0.06753   -37.0%    +0.0%    +0.0%  0.00e+00  0.00e+00   788.0526  +1.62%   -28.8%   +13.1%
