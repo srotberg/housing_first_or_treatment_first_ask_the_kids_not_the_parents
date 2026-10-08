@@ -1735,14 +1735,13 @@ a newborn in the new steady state.
 %----------------------------------------------------------------------
 \subsection{The long run}\label{sec:longrun}
 
-Table~\ref{tab:longrun} sets the long run under Treatment First and the two full-altruism
-experiments beside the benchmark, and, in the first two columns, Housing First and Treatment First without the externalities.
+Table~\ref{tab:longrun} sets the long run under Treatment First beside the benchmark, and, in the \new{first three} columns, Housing First and Treatment First without the externalities.
 
 \paragraph{Treatment First without externalities.} Without the externalities, the full model gives the ranking of the stylized model. To capture the no-externality case, I set the aggregate homelessness externality to zero, $\kappa_x=0$, and treat the child as appearing only as an adult: its parent does not weigh it, its productivity does not depend on what its parent did, and its childhood, the years its parent is 26 to 50, is not counted in welfare. I recalibrate the model to this configuration.
 
-With the drug price and $\pi_V$ held at their levels under Housing First, Treatment First cuts drug use by $@@x_pe_b_pc@@$ percent and the share with a SUD by $@@x_pe_sud_pc@@$ percent, against Housing First with the externalities switched off, while homelessness @@x_pe_h_dir@@ by $@@x_pe_h_pc@@$ percent (first two columns of Table~\ref{tab:longrun}). And yet, no household is better off under Treatment First, with newborns losing $@@x_pe_newborn_cev@@$ percent of lifetime consumption as adults, capturing the value of the option removed. What follows therefore rests on the externalities on children.
+With the drug price and $\pi_V$ held at their levels under Housing First, Treatment First cuts drug use by $@@x_pe_b_pc@@$ percent and the share with a SUD by $@@x_pe_sud_pc@@$ percent, against Housing First with the externalities switched off, while homelessness @@x_pe_h_dir@@ by $@@x_pe_h_pc@@$ percent (first two columns of Table~\ref{tab:longrun}). And yet, no household is better off under Treatment First, with newborns losing $@@x_pe_newborn_cev@@$ percent of lifetime consumption as adults, capturing the value of the option removed. \new{Rebalancing the budget does not change the ranking. When $\pi_V$ instead clears the budget at Housing First's drug price (third column), the screen's savings buy more vouchers: $\pi_V$ @@x_fx_piv_dir@@ from $@@x_fx_piv0_pc@@$ to $@@x_fx_piv1_pc@@$ percent, and $@@x_fx_all_better_pc@@$ percent of households gain, by $@@x_fx_better_cev@@$ percent of consumption on average. The gain is small and spread thin, while the loss is concentrated on the users the screen takes out: $@@x_fx_sud_worse_pc@@$ percent of households with a SUD are worse off, and newborns still lose $@@x_fx_newborn_cev@@$ percent of lifetime consumption as adults.} What follows therefore rests on the externalities on children.
 
-\paragraph{Treatment First with externalities.} Moving to the full model, with externalities, an endogenous drug price and the government's budget clearing, Treatment First (fourth column of Table~\ref{tab:longrun}) cuts drug use by $@@x_tf_b_pc@@$ percent,
+\paragraph{Treatment First with externalities.} Moving to the full model, with externalities, an endogenous drug price and the government's budget clearing, Treatment First (\new{fifth} column of Table~\ref{tab:longrun}) cuts drug use by $@@x_tf_b_pc@@$ percent,
 from $@@x_b0@@$ to $@@x_tf_b1@@$ percent of households, and the share of households with
 a SUD by $@@x_tf_sud_pc@@$ percent, from $@@x_sud0@@$ to $@@x_tf_sud1@@$ percent of
 households. @@x_lr_tf_treat@@ As users who lose their vouchers leave the programme, it costs
@@ -1776,10 +1775,10 @@ acquire a SUD and remain unemployed longer because of it, raising childhood cons
 \caption{The long run under each policy}\label{tab:longrun}
 \begingroup\scriptsize
 \sbox{\ntbox}{\input{tables/tab_longrun}}\usebox{\ntbox}
-\tabnote{Notes: percent unless the row says otherwise; each column is a steady state. The first two columns are Housing First and Treatment First without the externalities, with $\kappa_x=0$ and the child appearing only as an adult. Under Housing First the drug price clears and $\pi_V$ is the benchmark's; under Treatment First both are held there. The CEV in the second column is the newborn's value at 26, against the first column.
-Housing First, the third column, is the benchmark with the externalities. Treatment First screens with a detection rate of
+\tabnote{Notes: percent unless the row says otherwise; each column is a steady state. \new{The first three columns are Housing First and Treatment First without the externalities, with $\kappa_x=0$ and the child appearing only as an adult. Under Housing First the drug price clears and $\pi_V$ is the benchmark's; under Treatment First the drug price is held there, and $\pi_V$ is held there too in the second column and clears the budget against the first column's net revenue in the third. The CEV in the second and third columns is the newborn's value at 26, against the first column.
+Housing First, the fourth column, is the benchmark with the externalities.} Treatment First screens with a detection rate of
 $@@x_tf_pdet_pc@@$ percent, and $\pi_V$ holds net government revenue at its benchmark level
-in every column but the first two. Children are those living with households aged 26 to 50, the years a child lives at
+\new{in the last column}. Children are those living with households aged 26 to 50, the years a child lives at
 home. The CEV is against the benchmark. A household is better off when its value under Treatment First exceeds
 its value in the same state under Housing First, using the Housing First distribution.}
 \endgroup

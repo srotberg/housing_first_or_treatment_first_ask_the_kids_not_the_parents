@@ -65,6 +65,12 @@ for _a in ('elast5_85', 'null_remote', 'null_share', 'tf85'):
 PE = os.path.join(ROOT, 'results', 'pe_noext')
 ARMDIR['pe_a'] = os.path.join(PE, 'arm_A')
 ARMDIR['pe_b'] = os.path.join(PE, 'arm_B')
+# TREATMENT FIRST WITHOUT THE EXTERNALITIES, THE BUDGET REBALANCED (the author, 8 October: "get the full model with budget
+# rebalance and p constant to see if the story is about moral hazard or about externalities", and that it goes "in the
+# table with discussion"): results/noext_fixp, Arm D, the drug price held at Arm A's and pi_V clearing the budget against
+# Arm A's net revenue. Its Arm A is a re-solve of pe_noext's (the same to five digits), so the table keeps pe_a as base
+FX = os.path.join(ROOT, 'results', 'noext_fixp')
+ARMDIR['fx_d'] = os.path.join(FX, 'arm_D')
 
 
 def adir(arm):
@@ -86,7 +92,7 @@ TABLE = (('pe_a', None), ('pe_b', 'pe_a'), ('null_share', None), ('tf85', 'null_
 # FULL ALTRUISM AND FULL INTERNALISATION GO TO THE APPENDIX (the author, 8 October: "we need to keep the paper tighter,
 # and i think the full altruism is more for the appendix"): the main table keeps the first four columns, and
 # writing/tables/tab_longrun_altruism.tex carries Housing First beside the two benchmarks
-TABLE_MAIN = TABLE[:4]
+TABLE_MAIN = (('pe_a', None), ('pe_b', 'pe_a'), ('fx_d', 'pe_a'), ('null_share', None), ('tf85', 'null_share'))
 TABLE_APP = (('null_share', None), ('omega1', 'null_remote'), ('internalise', 'null_remote'))
 TAB_APP = os.path.join(ROOT, 'writing', 'tables', 'tab_longrun_altruism.tex')
 
@@ -237,7 +243,7 @@ def main():
     for arm, base in ARMS:
         if base:
             D[arm]['cev_net'] = 100 * (D[arm]['cev'] - D[base]['cev'])
-    for arm in ('pe_a', 'pe_b'):
+    for arm in ('pe_a', 'pe_b', 'fx_d'):
         f = final(arm)
         D[arm] = dict(steady(arm), price=f['drug price'], piv=f['pi_V (voucher probability)'],
                       b=f['drug use b'], sud=f['SUD lambda_d'], h=f['homelessness h_1'],
@@ -298,6 +304,12 @@ def main():
     D['pe_b'].update(cev_net=100 * _pe['cev']['newborn adult (age 26)']['cev_group'],
                      y26_better=_ps('age 26 (model age 1)'), all_better=_ps('all households'),
                      sud_better=_ps('with a SUD'))
+    # the budget-rebalanced column, from its own walk on Arm A's distribution, the same way
+    _fx = json.load(open(os.path.join(FX, 'analysis.json')))
+    _fs = lambda g: 100 * _fx['shares'][g]['abs0.001']['better']
+    D['fx_d'].update(cev_net=100 * _fx['cev']['newborn adult (age 26)']['cev_group'],
+                     y26_better=_fs('age 26 (model age 1)'), all_better=_fs('all households'),
+                     sud_better=_fs('with a SUD'))
     # no CEV for the two optimal arms: each changes the welfare function itself
     D['omega1']['cev_net'] = None
     D['internalise']['cev_net'] = None
@@ -345,9 +357,11 @@ def main():
                 ['\\midrule'] + body + ['\\bottomrule', '\\end{tabular}'])
     # the two no-externality columns under one spanning head, so that no column is wider than its numbers need
     tab = table(TABLE_MAIN, [
-        ' & \\multicolumn{2}{c}{' + hd('h0/0', 'No externalities') + '} & & \\\\', '\\cmidrule(lr){2-3}',
-        ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Housing', 'Treatment'))) + ' \\\\',
-        ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'First', 'First'))) + ' \\\\'])
+        ' & \\multicolumn{3}{c}{' + hd('h0/0', 'No externalities') + '} & & \\\\', '\\cmidrule(lr){2-4}',
+        ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Treatment', 'Housing', 'Treatment'))) + ' \\\\',
+        ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First', 'First', 'First', 'First', 'First'))) + ' \\\\',
+        # which no-externality Treatment First: pi_V held, or clearing the budget
+        ' & & ' + ' & '.join(hd(f'h3/{k}', w) for k, w in enumerate(('$\\pi_V$ held', '$\\pi_V$ clears'))) + ' & & \\\\'])
     tab_app = table(TABLE_APP, [
         ' & ' + ' & '.join(hd(f'a1/{k}', w) for k, w in enumerate(('Housing', 'Full', 'Full'))) + ' \\\\',
         ' & ' + ' & '.join(hd(f'a2/{k}', w) for k, w in enumerate(('First', 'altruism', 'internalisation'))) + ' \\\\'])
@@ -369,6 +383,20 @@ def main():
         ch = 100 * (B_[k] / A_[k] - 1)
         out[f'x_pe_{k}_pc'] = f'{abs(ch):.0f}'
         out[f'x_pe_{k}_dir'] = 'falls' if ch < 0 else 'rises'
+    # the budget-rebalanced column against the same base (the discussion in the 'without externalities' paragraph)
+    F_ = D['fx_d']
+    for k in ('b', 'sud', 'h'):
+        ch = 100 * (F_[k] / A_[k] - 1)
+        out[f'x_fx_{k}_pc'] = f'{abs(ch):.0f}'
+        out[f'x_fx_{k}_dir'] = 'falls' if ch < 0 else 'rises'
+    out['x_fx_piv0_pc'] = f"{100 * A_['piv']:.2f}"
+    out['x_fx_piv1_pc'] = f"{100 * F_['piv']:.2f}"
+    out['x_fx_piv_dir'] = 'rises' if F_['piv'] > A_['piv'] else 'falls'
+    assert F_['cev_net'] < 0, F_['cev_net']
+    out['x_fx_newborn_cev'] = f"{abs(F_['cev_net']):.2f}"
+    out['x_fx_all_better_pc'] = f"{F_['all_better']:.0f}"
+    out['x_fx_sud_worse_pc'] = f"{100 * _fx['shares']['with a SUD']['abs0.001']['worse']:.0f}"
+    out['x_fx_better_cev'] = f"{100 * _fx['cev']['better off (dV>0.001)']['cev_group']:.2f}"
     out['x_lr_om_b_pc'] = f"{abs(pc(o, 'b', 'null_remote')):.0f}"
     out['x_lr_tf_b_pc'] = f"{abs(pc(t, 'b', 'null_share')):.0f}"
     # how much of full altruism's fall in drug use Treatment First delivers

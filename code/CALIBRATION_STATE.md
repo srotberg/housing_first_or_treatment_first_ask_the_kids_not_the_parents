@@ -1,5 +1,13 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 07:30 BUDGET REBALANCED WITHOUT EXTERNALITIES (results/noext_fixp; the author's test "is the story about moral
+hazard or about externalities"). Treatment First, drug price held at Housing First's (1.0306), pi_V clearing the budget
+against Arm A's net revenue: pi_V 6.75 -> 6.89 per cent, drug use 9.01 -> 3.58, SUD 3.84 -> 1.51, homelessness 0.60 ->
+0.62. Newborn adult CEV -1.31 per cent (pi_V held: -1.50). 63 per cent of households gain (by +0.14 per cent), 96 per
+cent of households with a SUD lose. Rebalancing the budget does not reverse the ranking without externalities. In the
+long-run table as the third column (export_longrun.py, fx_d), discussed in Section 6.2, red. Introduction not touched:
+the author decides its framing on this result.
+
 08 Oct 05:43 WHO STOPS, STATE BY STATE (results/whostops_2c; validation only, the author's decision). Impact build on
 Housing First's distribution, drug price and pi_V held, the paper's Treatment First (0.85, $35 test, three-year
 exclusion). Of the mass that used under Housing First: holders 6.0 per cent stop (all users), 53.2 per cent of holders
