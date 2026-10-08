@@ -53,7 +53,7 @@ import numpy as np
 # THE MOMENT THAT IDENTIFIES omega_c (the author, 8 October: "you need to fix it to the current numbers"): the same
 # two-person comparison as the quantitative model's child_use_gap_data -- unmarried adults living with one other adult
 # and no child against lone parents with one child, NSDUH 2024 (data/make_altruism_moment_loneparent.py). Was 0.1834.
-CHILD_GAP_TARGET = 0.1949
+CHILD_GAP_TARGET = 0.1748   # past-year use, NSDUH 2024 lone-parent comparison (the author, 8 Oct); was 0.1949 (past month)
 
 import calibrate as C
 from calibrate import stats

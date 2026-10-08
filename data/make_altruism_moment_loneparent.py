@@ -71,10 +71,16 @@ unm, mar = _gaps(other, ['marit']), _gaps(couple, [])
 # THE MOMENT THAT IDENTIFIES omega_c (the author, 8 October: "unmarried two person household vs lone parent with child,
 # that identifies omegac exactly"): family income held equal, which with two people in each household is income per
 # person, and lone parents reweighted to the non-parents' cells, the convention of make_altruism_moment.py
+# PAST-YEAR USE (the author, 8 October: "use the past year use....17.5% that is good enough", "and it's exact too"):
+# the model's period is a year, and past-month use gave 19.5. On any drug use disorder, the model's participation
+# definition, the gap is 59 with only 76 lone parents who have one; not used.
 cells_id = ['age3', 'sex', 'marit', 'finc']
-b2, a2, cov_id = matched(other, lone, cells_id, 'illmon')
+b2, a2, cov_id = matched(other, lone, cells_id, 'illyr')
 ident = b2 / a2 - 1
-print(f'IDENTIFYING MOMENT: unmarried two-adult households use {100*ident:.2f}% more than lone parents (cover {100*cov_id:.0f}%)')
+for _o in ('illmon', 'illyr', 'sud'):
+    _b, _a, _ = matched(other, lone, cells_id, _o)
+    print(f'  identifying cells, {_o}: {100*(_b/_a-1):+.1f}%')
+print(f'IDENTIFYING MOMENT (past-year use): unmarried two-adult households use {100*ident:.2f}% more than lone parents (cover {100*cov_id:.0f}%)')
 res = {'nsduh_lp_id_value': f'{ident:.4f}', 'nsduh_lp_id_pc': f'{100 * ident:.1f}',
        'nsduh_lp_unm_lo_pc': f'{min(unm):.0f}', 'nsduh_lp_unm_hi_pc': f'{max(unm):.0f}',
        'nsduh_lp_mar_lo': f'{min(mar):.0f}', 'nsduh_lp_mar_hi': f'{max(mar):.0f}', 'nsduh_lp_n': f'{len(lone):,}'}

@@ -880,7 +880,11 @@
         ! each household equal family income is equal income per person. data/make_altruism_moment_loneparent.py,
         ! nsduh_lp_id_value. The old 1/0.845 - 1 = 0.1834 compared all parents with all non-parents. omega_c = 0.085
         ! is pinned and gives 17.7 per cent, so nothing was refitted.
-        real(8), parameter :: child_use_gap_data=0.1949d0
+        ! PAST-YEAR USE FROM 8 OCTOBER, LATER THE SAME DAY (the author: "use the past year use....17.5% that is good
+        ! enough", "and it's exact too"): the same cells give 17.48 per cent on past-year use, which matches the model's
+        ! annual period; past month gave 19.49. On any drug use disorder the gap is 59 with 76 lone parents who have
+        ! one, not used. omega_c = 0.085 gives 17.7, so again nothing is refitted.
+        real(8), parameter :: child_use_gap_data=0.1748d0
         ! SMALL ON PURPOSE, so omega climbs from zero rather than jumping.
         ! Its moment is a difference between two equilibrium solves and carries
         ! their path in it, so a large step turns that noise into a large move:
