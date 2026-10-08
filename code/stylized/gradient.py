@@ -109,9 +109,15 @@ _P = P()
 U0 = float(FC['unemployment_rate_data'])
 U1 = float(FC['unemployment_rate_sud_data'])
 FIXED = dict(beta=_P.beta, sigma=_P.sigma, phibar=_P.phi0, years=_P.years, p_v=1.0,
-             pi_d=SUD_RATE / TARGET['part'], sig_y=SIG_Y, y_min=Y_FLOOR, u0=U0, u1=U1, save=True)
-FREE = ('aleph', 'b', 'theta', 'kappa')
-MOMENT_OF = dict(aleph='vsl', b='part', theta='dshare', kappa='r_use')
+             pi_d=SUD_RATE / TARGET['part'], sig_y=SIG_Y, y_min=Y_FLOOR, u0=U0, u1=U1, save=True,
+             rho_fs=_P.rho_fs)
+# FOOD ASSISTANCE (the author, 8 October: "without savings, we need food assistance", "we want to show the
+# model without UI and no savings too", "so food assistance is key"): F(y) = max(0, cbar - rho_fs y) on each
+# period's earnings, so a household out of work gets cbar; rho_fs is SNAP's statutory taper, cbar is fitted
+# on SNAP spending over labour income as in the quantitative model.
+TARGET['fshare'] = float(FC['food_stamps_share_data'])
+FREE = ('aleph', 'b', 'theta', 'kappa', 'cbar')
+MOMENT_OF = dict(aleph='vsl', b='part', theta='dshare', kappa='r_use', cbar='fshare')
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -156,17 +162,22 @@ def y_sg(q):
     return (1.0 - q['theta']) * q['p_v'] * q['b'] / q['theta']
 
 
+def FA(inc, q):
+    """Food assistance at earnings inc."""
+    return np.maximum(q['cbar'] - q['rho_fs'] * np.asarray(inc, dtype=float), 0.0)
+
+
 def W(a, y, q, d=0):
     """The value of period 2 with assets a and SUD status d: out of work with probability u_d, and then on its
     savings alone (the author, 8 October: "i rather if there was no UI ... because then it simpler and can
     highlight the savings")."""
     u = q['u1'] if d else q['u0']
-    return (1.0 - u) * _U0(y + a, q) + u * _U0(a, q) + q['aleph']
+    return (1.0 - u) * _U0(y + a + FA(y, q), q) + u * _U0(a + q['cbar'], q) + q['aleph']
 
 
 def _Wp(a, y, q, d=0):
     u = q['u1'] if d else q['u0']
-    return (1.0 - u) * _U0p(y + a, q) + u * _U0p(a, q)
+    return (1.0 - u) * _U0p(y + a + FA(y, q), q) + u * _U0p(a + q['cbar'], q)
 
 
 def _bisect(g, lo, hi, n=64):
@@ -182,23 +193,25 @@ def plan(y, q, use):
     """Saving and the period-1 value at income y, for the household that uses (use) or does not."""
     y = np.atleast_1d(np.asarray(y, dtype=float))
     bt, pf, pi, k = q['beta'], q['phibar'], q['pi_d'], q['kappa']
+    f = FA(y, q)                                   # topped up onto period-1 spending; saving comes out of y
     if use:
         cont = lambda a: (1.0 - pi) * pf * W(a, y, q, 0) + pi * pf ** k * W(a, y, q, 1)
         contp = lambda a: (1.0 - pi) * pf * _Wp(a, y, q, 0) + pi * pf ** k * _Wp(a, y, q, 1)
-        flow, flowp, top = (lambda e: _U1(e, q)), (lambda e: _U1p(e, q)), y - y_sg(q)
+        flow, flowp = (lambda e: _U1(e, q)), (lambda e: _U1p(e, q))
+        top = np.minimum(y * (1.0 - 1e-12), y + f - y_sg(q))
     else:
         cont, contp = (lambda a: pf * W(a, y, q, 0)), (lambda a: pf * _Wp(a, y, q, 0))
         flow, flowp, top = (lambda e: _U0(e, q)), (lambda e: _U0p(e, q)), y * (1.0 - 1e-12)
     ok = top > 0.0
     top = np.maximum(top, 1e-12)
     if q.get('save', True):
-        g = lambda a: flowp(y - a) - bt * contp(a)        # rises in a
+        g = lambda a: flowp(y - a + f) - bt * contp(a)        # rises in a
         a = np.where(g(np.zeros_like(y)) >= 0.0, 0.0,
                      np.where(g(top) <= 0.0, top, _bisect(g, np.zeros_like(y), top)))
     else:
         a = np.zeros_like(y)
-    V = flow(y - a) + q['aleph'] + bt * cont(a)
-    return a, np.where(ok & (y - a > (y_sg(q) if use else 0.0)), V, -np.inf)
+    V = flow(y - a + f) + q['aleph'] + bt * cont(a)
+    return a, np.where(ok & (y - a + f > (y_sg(q) if use else 0.0)), V, -np.inf)
 
 
 def D(y, q):
@@ -290,10 +303,11 @@ def vsl(q, y=1.0):
     marginal utility of period-1 consumption, times the years in a period, as stylized.vsl computes it."""
     use = float(D(y, q)[0]) > 0
     a = float(plan(y, q, use)[0][0])
+    e = y - a + float(FA(y, q))
     if use:
-        u_c, pr = float(_U1p(y - a, q)), q['pi_d']
+        u_c, pr = float(_U1p(e, q)), q['pi_d']
     else:
-        u_c, pr = float(_U0p(y - a, q)), 0.0
+        u_c, pr = float(_U0p(e, q)), 0.0
     ew = (1.0 - pr) * W(a, y, q, 0) + pr * q['phibar'] ** (q['kappa'] - 1.0) * W(a, y, q, 1)
     return float(q['beta'] * ew / u_c * q['years'])
 
@@ -307,8 +321,29 @@ def _saved(q, dist, lo, hi):
     y = np.exp(t)
     z = (np.log(y * dist.M) + 0.5 * dist.s ** 2) / dist.s
     dens = np.exp(-0.5 * z * z) / math.sqrt(2.0 * math.pi) / (dist.s * (1.0 - dist.Ft))   # dF / d log y
-    a = plan(y, q, True)[0]
+    a = plan(y, q, True)[0] - FA(y, q)          # saving, net of the food assistance topped up onto spending
     return float(0.5 * (np.log(hi) - np.log(lo)) * (_GL_W * a * dens).sum())
+
+
+def fshare(q, dist, iv):
+    """Food assistance over labour income, both periods, survivors weighted by their survival."""
+    cuts = sorted({q['y_min'], q['cbar'] / q['rho_fs'], 60.0, *[x for ab in iv for x in ab]})
+    cuts = [c for c in cuts if q['y_min'] <= c <= 60.0]
+    fa = li = 0.0
+    pf, pi, k, u0, u1 = q['phibar'], q['pi_d'], q['kappa'], q['u0'], q['u1']
+    for lo, hi in zip(cuts[:-1], cuts[1:]):
+        t = 0.5 * (np.log(hi) - np.log(lo)) * _GL_X + 0.5 * (np.log(hi) + np.log(lo))
+        y = np.exp(t)
+        z = (np.log(y * dist.M) + 0.5 * dist.s ** 2) / dist.s
+        w = 0.5 * (np.log(hi) - np.log(lo)) * _GL_W * np.exp(-0.5 * z * z) / math.sqrt(2 * math.pi) / (
+            dist.s * (1.0 - dist.Ft))
+        users = any(a <= 0.5 * (lo + hi) <= b for a, b in iv)
+        s0 = (1.0 - pi) * pf if users else pf          # survives clean
+        s1 = pi * pf ** k if users else 0.0            # survives with a SUD
+        f = FA(y, q)
+        fa += float((w * (f + s0 * ((1 - u0) * f + u0 * q['cbar']) + s1 * ((1 - u1) * f + u1 * q['cbar']))).sum())
+        li += float((w * y * (1.0 + s0 * (1 - u0) + s1 * (1 - u1))).sum())
+    return fa / li
 
 
 def moments(q):
@@ -319,7 +354,7 @@ def moments(q):
     sav = sum(_saved(q, dist, a, b) for a, b in iv) if q.get('save', True) else 0.0
     p, th, b = q['p_v'], q['theta'], q['b']
     spend = th * (inc - sav + p * b * part) - p * b * part      # users spend theta of (y - a + p b) less p b
-    return dict(part=part, r_use=inc / part if part > 0 else float('nan'),
+    return dict(part=part, r_use=inc / part if part > 0 else float('nan'), fshare=fshare(q, dist, iv),
                 dshare=spend / inc if inc > 0 else float('nan'), vsl=vsl(q), intervals=iv,
                 bot50=float(dist.PE(dist.quantile(0.5))), cut_share=dist.cut_share, dist=dist)
 
@@ -335,26 +370,26 @@ def kappa_for_part(q, part):
 
 
 def _resid(z, fixed):
-    """vsl, dshare and r_use on (aleph, b, theta); kappa solved inside on participation, which keeps
-    the band of users from vanishing at a trial point and leaving the fit on a flat surface."""
-    al, b, th = np.exp(z)
-    q = full([al, b, th, 2.0], fixed)
+    """vsl, dshare, r_use and fshare on (aleph, b, theta, cbar); kappa solved inside on participation, which
+    keeps the band of users from vanishing at a trial point and leaving the fit on a flat surface."""
+    al, b, th, cb = np.exp(z)
+    q = full([al, b, th, 2.0, cb], fixed)
     try:
         q['kappa'] = kappa_for_part(q, TARGET['part'])
     except (AssertionError, ValueError):
-        return np.full(3, 10.0)
+        return np.full(4, 10.0)
     m = moments(q)
-    return np.array([m[k] / TARGET[k] - 1.0 for k in ('vsl', 'dshare', 'r_use')])
+    return np.array([m[k] / TARGET[k] - 1.0 for k in ('vsl', 'dshare', 'r_use', 'fshare')])
 
 
 def calibrate(start=None, fixed=FIXED):
     """aleph on the VSL, theta on the spending share, b and kappa on participation and the users'
     income, the last two jointly: b moves where the band of users sits, kappa how wide it is."""
-    s = start or dict(aleph=6.6, b=0.057, theta=0.22)
-    r = least_squares(_resid, np.log([s['aleph'], s['b'], s['theta']]), args=(fixed,),
+    s = start or dict(aleph=10.34, b=0.0258, theta=0.236, cbar=0.10)
+    r = least_squares(_resid, np.log([s['aleph'], s['b'], s['theta'], s['cbar']]), args=(fixed,),
                       xtol=1e-15, ftol=1e-15, gtol=1e-15, max_nfev=2000)
-    al, b, th = np.exp(r.x)
-    q = full([al, b, th, 2.0], fixed)
+    al, b, th, cb = np.exp(r.x)
+    q = full([al, b, th, 2.0, cb], fixed)
     q['kappa'] = kappa_for_part(q, TARGET['part'])
     return q
 
@@ -554,9 +589,8 @@ def main():
           f'{float(V1(q["y_min"], q)[0]):.3f}')
     json.dump({k: q[k] for k in q}, open(os.path.join(HERE, 'gradient.json'), 'w'), indent=1)
     panels = {}
-    # ONE PANEL: without UI a household out of work lives on its savings, so with saving switched off it would
-    # have nothing to consume, which at sigma = 2 is minus infinity; the comparison cannot be solved.
-    for title, save in (('With saving (the model)', True),):
+    # TWO PANELS, the second with saving switched off: out of work, a household then lives on food assistance.
+    for title, save in (('With saving (the model)', True), ('Saving switched off', False)):
         g = {**q, 'save': save}
         panels[title] = {w: scan(g, w) for w in ('mortality', 'unemployment')}
         for w, (sc, r) in panels[title].items():
