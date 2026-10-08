@@ -1,5 +1,10 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 04:30 ROUND r226 (the author's PDF a790373d, "keep all red and put any updates in red"). Two comments: the
+decomposition table's note set to the table's width (\tabnote, like Table 6); and whether the 64 percent also holds for
+holders and those offered a voucher on Housing First's distribution -- the author: "what the paper already has is ok
+too"; the measure is results/validate_2c (impact build, price and pi_V held, DIAG holding= and tested=), still running.
+
 08 Oct 04:40 ROUND r225 (the author's PDF 701cf1b9, "keep all red and put updates in red too"; nothing stripped). Five
 comments: the Hall-Jones/Viscusi-Aldy/Costa-Kahn sentences into the aleph footnote; "The model gives every adult aged 26
 to 50 a child at home..." removed; Block 6 quotes only the 4.6 percent (either parent) and Table A-untargeted gets the row
