@@ -1,4 +1,4 @@
-# Treatment First without externalities, drug price held, budget rebalanced (code/noext_clear/run_noext_fixp.sh); 08 Oct 04:54 UTC
+# Treatment First without externalities, drug price held, budget rebalanced (code/noext_clear/run_noext_fixp.sh); 08 Oct 05:24 UTC
 run_noext_fixp: free disk 29G, memory 15 GiB, cores 4, threads per solve 2 (08 Oct 04:16)
 run_noext_fixp: building cf_fix (08 Oct 04:16)
 run_noext_fixp: building cf_fix2 (08 Oct 04:18)
@@ -8,10 +8,13 @@ run_noext_fixp: building cf_walk (08 Oct 04:23)
 run_noext_fixp: arm A (null_pe_noext) on cf_fix2_share_pe, switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0001082 (08 Oct 04:24)
 run_noext_fixp: arm D (tf_noext_fixp) on cf_fix2: detection 0.85, test 0.0004946100, drug price held at 1.0305057924439740, pi_V clearing against 6.3830441 (08 Oct 04:24)
 
-== cfarm_null_pe_noext (1 passes done)
+== cfarm_null_pe_noext (3 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0051  0.06753   +13.0%   +13.0%    -2.0%  1.57e-01  0.00e+00   789.8761  +nan%   +23.7%    +9.4%
+  2  1.0101  0.06753   +11.5%   +11.5%    -1.8%  1.37e-01  0.00e+00   789.8720  +nan%   +21.4%    +8.9%
+  3  1.0152  0.06753    +9.1%    +9.1%    -2.0%  1.08e-01  0.00e+00   789.9153  +nan%   +17.7%    +7.9%
 
-== cfarm_tf_noext_fixp (1 passes done)
+== cfarm_tf_noext_fixp (2 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0305  0.11450   -70.6%   -70.8%   -22.1%  0.00e+00  3.52e-01   792.9817  +nan%   -74.5%   -13.3%
+  2  1.0305  0.11450   -70.6%   -70.8%   -21.9%  0.00e+00  3.37e-01   792.9569  +nan%   -74.5%   -13.4%
