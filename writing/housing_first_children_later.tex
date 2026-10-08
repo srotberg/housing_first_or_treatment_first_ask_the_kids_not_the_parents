@@ -404,13 +404,14 @@ starts a SUD, $\kappa_{\phi d}$ the same mortality multiplier for the disorder, 
 
 \subsection{Demographics and the state and choice sets}
 
-Households form their own household and join the workforce as adults at model age $j=1$, live
-at most $J$ annual periods, work while $j<J_R$ and are retired from $J_R$. \new{Before forming its own household, a child lives with its parent for the first $J_K$ years of the parent's adult life, after which it leaves to form its own household with its own child.} Each period a cohort of unit mass enters at $j=1$, made up of
+\new{At model age $j=1$, an adult leaves its parent's home, joins the workforce and forms its own household, with a child of its own. The household lives at most $J$ annual periods, works while $j<J_R$ and is retired from $J_R$, and its child lives with it for the first $J_K$ years, after which the child leaves to form its own household in turn.}
+
+Each period a cohort of unit mass enters at $j=1$, made up of
 the children who leave home that period, at their parent's death if that comes before $J_K$ and at $J_K$
 otherwise (equation~\eqref{eq:flomnew}), so the mass of households is constant in a stationary equilibrium. The individual state is age $j$ together with
 \begin{equation}\label{eq:fstate}
 s=(a,\,y,\,e,\,d,\,m,\,\eta)\in
-\mathbb R_+\times\new{\mathcal Y(j)}\times\{1,2,3\}\times\{0,1,2\}\times\{0,1\}\times\{0,1,2\},
+\mathbb R_+\times\mathcal Y(j)\times\{1,2,3\}\times\{0,1,2\}\times\{0,1\}\times\{0,1,2\},
 \end{equation}
 where $a$ denotes assets, $y$ productivity, $e$ employment status, $d$ the SUD, $m$
 SMI and $\eta$ the household's standing with the voucher programme. The SUD takes
@@ -431,21 +432,21 @@ the disorder, and $a'$ is its next period's assets. Labour is inelastically supp
 \subsection{Preferences}\label{sec:fprefs}
 
 Flow utility is the stylized model's, with housing in the bundle and the child present for the first $J_K$
-years. Consumption $c$ and housing $h$ are shared through the equivalence scale $\new{\xi(j)}$, which scales for two members while the child is at home and for one
+years. Consumption $c$ and housing $h$ are shared through the equivalence scale $\xi(j)$, which scales for two members while the child is at home and for one
 after, and the drug enters the parent's utility alone, so the parent and the child hold the bundles
 \begin{equation}\label{eq:fbundles}
-X_P=\Big[\Big(\frac{c}{\new{\xi(j)}}\Big)^{1-\gamma}\Big(\frac{h}{\new{\xi(j)}}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
+X_P=\Big[\Big(\frac{c}{\xi(j)}\Big)^{1-\gamma}\Big(\frac{h}{\xi(j)}\Big)^{\gamma}\Big]^{1-\theta}(b+v)^{\theta},
 \qquad
-X_c=\Big[\Big(\frac{c}{\new{\xi(j)}}\Big)^{1-\gamma}\Big(\frac{h}{\new{\xi(j)}}\Big)^{\gamma}\Big]^{1-\theta}b^{\theta},
+X_c=\Big[\Big(\frac{c}{\xi(j)}\Big)^{1-\gamma}\Big(\frac{h}{\xi(j)}\Big)^{\gamma}\Big]^{1-\theta}b^{\theta},
 \end{equation}
 and period utility is
 \begin{equation}\label{eq:futil}
-u\big(c,h,v,\tau\big) \;=\; U(X_P)\;+\;\omega_c\,(\new{\xi(j)}-1)\,U(X_c)\;+\;\aleph\;-\;\tau\,\bar\tau^{u},
+u\big(c,h,v,\tau\big) \;=\; U(X_P)\;+\;\omega_c\,(\xi(j)-1)\,U(X_c)\;+\;\aleph\;-\;\tau\,\bar\tau^{u},
 \qquad U(X)=\frac{X^{1-\sigma}}{1-\sigma}.
 \end{equation}
 $\gamma$ is housing's share of the non-drug bundle and $\theta$ the drug's share of
 the whole, $\sigma$ is the coefficient of relative risk aversion, $\aleph$ is a flow value of being alive, counted once per household, and $\bar\tau^{u}$ is the utility
-cost of a year in treatment, which is described in Section~\ref{sec:fdrug}. The child's term is its own flow utility, which the parent weighs by $\omega_c$, and is counted as $\new{\xi(j)}-1$ of the household; it gets none of the drug, so a parent's drug spending reaches it through a reduction in the consumption and housing they share.
+cost of a year in treatment, which is described in Section~\ref{sec:fdrug}. The child's term is its own flow utility, which the parent weighs by $\omega_c$, and is counted as $\xi(j)-1$ of the household; it gets none of the drug, so a parent's drug spending reaches it through a reduction in the consumption and housing they share.
 
 \subsection{Income, taxes and transfers}\label{sec:ftaxes}
 
@@ -454,7 +455,7 @@ working life, $z_{j+1}=\rho_z z_j+\zeta_{j+1}$ with $\zeta\sim\mathcal N(0,\sigm
 $y\,\varepsilon(j)$, with $y=e^{z}$ normalised so that $y$ averages one at
 entry and $\varepsilon(j)$ the deterministic age profile. A
 household's productivity at entry is its inheritance from its parent, set out in
-Section~\ref{sec:fnewbornsec}; its spread combines $\sigma_\zeta$ with a persistent
+Section~\ref{sec:fcosts}; its spread combines $\sigma_\zeta$ with a persistent
 component drawn at entry, and a child entering with the penalty of that section is on a
 separate block of the grid, with the base grid scaled down for life.
 
@@ -575,19 +576,19 @@ SMI then affects three objects: the chance of finding a job when unemployed, thr
 Section~\ref{sec:fcosts}, and the SUD recovery hazard, through $\mu_m$
 in~\eqref{eq:frecover} in Section~\ref{sec:fdrug}. It does not enter the utility function.
 
-\new{The SMI chain does not depend on housing, because in the At Home / Chez Soi randomised trial housing had no detectable effect on the symptoms of homeless adults with SMI (Stergiopoulos et al., 2015).}
+The SMI chain does not depend on housing, because in the At Home / Chez Soi randomised trial housing had no detectable effect on the symptoms of homeless adults with SMI (Stergiopoulos et al., 2015).
 
 \subsection{What the SUD, SMI, and homelessness cost}\label{sec:fcosts}
 
-\paragraph{Death risk.}\label{sec:fdeath} Write $1-\new{\bar\phi(j)}$ for the probability of dying
+\paragraph{Death risk.}\label{sec:fdeath} Write $1-\bar\phi(j)$ for the probability of dying
 at age $j$ of a household that is housed and has neither the disorder nor SMI; the three
 multipliers below raise it for every other household. Write
-$\new{q^{\,0}(j,h)}=\min\{1,\big(\mathbf{1}\{h=h_1\}\,\kappa_{\phi H}+\mathbf{1}\{h\neq h_1\}\big)\,(1-\new{\bar\phi(j)})\}$ and
-$\new{q^{\,1}(j,h)}=\min\{1,\kappa_{\phi d}\,\big(\mathbf{1}\{h=h_1\}\,\kappa_{\phi H}+\mathbf{1}\{h\neq h_1\}\big)\,(1-\new{\bar\phi(j)})\}$
-for the probability without and with the disorder. The probability of dying is then
+$q^{\,0}(j,h)=\min\{1,\big(\mathbf{1}\{h=h_1\}\,\kappa_{\phi H}+\mathbf{1}\{h\neq h_1\}\big)\,(1-\bar\phi(j))\}$ and
+$q^{\,1}(j,h)=\min\{1,\kappa_{\phi d}\,\big(\mathbf{1}\{h=h_1\}\,\kappa_{\phi H}+\mathbf{1}\{h\neq h_1\}\big)\,(1-\bar\phi(j))\}$
+for the probability \new{of dying} without and with the disorder\new{, respectively}. The probability of dying is then
 \begin{equation}\label{eq:fsurv}
-1-\phi(j,h,d,m)=\min\Big\{1,\ \big(\mathbf{1}\{m=1\}\,\kappa_{\phi m}+\mathbf{1}\{m=0\}\big)\,\new{q^{\,0}(j,h)}
-+\mathbf{1}\{d=2\}\big[\new{q^{\,1}(j,h)}-\new{q^{\,0}(j,h)}\big]\Big\},
+1-\phi(j,h,d,m)=\min\Big\{1,\ \big(\mathbf{1}\{m=1\}\,\kappa_{\phi m}+\mathbf{1}\{m=0\}\big)\,q^{\,0}(j,h)
++\mathbf{1}\{d=2\}\big[q^{\,1}(j,h)-q^{\,0}(j,h)\big]\Big\},
 \end{equation}
 so $\kappa_{\phi H}{}>1$ multiplies the death probability when a household is in a shelter, $\kappa_{\phi d}{}>1$ when a household has a SUD, and $\kappa_{\phi m}>1$ the baseline risk when a household has SMI, to which the excess risk of the disorder is
 added.
@@ -609,9 +610,27 @@ SMI. Neither the SUD nor SMI raises separations; each only reduces the chance of
 shelter.
 
 \paragraph{The child's productivity penalty.} A child whose parent had the disorder at any point while the child lived at home,
-before $J_K$ or before the parent died if that came first, enters the economy with its productivity lowered
-by the proportion $\delta_d$ in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec}, and the penalty stays with the
+before $J_K$ or before the parent died if that came first, \new{starts adult life} with its productivity lowered
+by the proportion $\delta_d$ in~\eqref{eq:fnewborn} \new{below}, and the penalty stays with the
 child for life. The parent weighs it only at its weight $\omega_c$ on the child (Section~\ref{sec:fproblem}), and it is the one cost of the disorder that reaches the child after it has left home.
+
+\new{An entrant starts with the endowment $T_0$, is employed, has never had the
+disorder, holds no voucher, and carries SMI with the prevalence observed at age 26.
+Its log productivity is drawn around its parent's, with the persistence $\rho$ and an
+innovation that keeps the spread of productivity at entry the same in every
+generation, and it is scaled for life by the penalty if the parent had the disorder at any point before their child became an adult, at the parent's death if that comes before $J_K$ and at $J_K$ otherwise,
+}
+\begin{equation}\label{eq:fnewborn}
+\begin{aligned}
+z_{1}^{\text{child}}\;=\;&\rho\,z^{\text{parent}}+(1-\rho)\,\mu+\epsilon\\
+&+\log(1-\delta_d)\,\mathbf{1}\{\text{parent has } d\ge1 \text{ when its child becomes an adult}\},
+\end{aligned}
+\end{equation}
+\new{with $z_1^{\text{child}}$ the child's log productivity at entry, age $j=1$, $z^{\text{parent}}$ the parent's log productivity when its child becomes an adult, $\mu$
+the mean of log productivity at entry and $\epsilon$ normally distributed with mean zero and
+variance $1-\rho^2$ times the variance of log productivity at entry. Because the
+penalised child's own productivity is lower, its own child inherits a lower draw too,
+so the penalty also reaches the grandchild through the persistence.}
 
 \subsection{The voucher and the two policies}\label{sec:fvoucher}
 
@@ -627,10 +646,10 @@ $\pi_V$. Under Housing First that is the whole rule.
 Under Treatment First the programme is conditional. A household fails the condition if
 it uses or has the disorder, $v>0$ or $d=2$, whether or not it is in treatment. Income-eligible holders and income-eligible households that draw a voucher are tested, at a cost
 $c_{\text{test}}$ each to the government, and one that fails is detected with probability
-$p_{\text{det}}$\new{. This means that} enforcement is not perfect: with probability $1-p_{\text{det}}>0$ a household that fails the condition actually gets to keep its voucher. A detected holder keeps this period's payment
-and loses the voucher from the next period; a detected applicant never receives it. \new{In both cases,}
-the household is excluded from the voucher programme for a period of time \new{($\eta=2$)}: it cannot draw a voucher whatever its income, and it
-returns to the lottery \new{($\eta=0$)} with probability $\psi_x$ each year.
+$p_{\text{det}}$. This means that enforcement is not perfect: with probability $1-p_{\text{det}}>0$ a household that fails the condition actually gets to keep its voucher. A detected holder keeps this period's payment
+and loses the voucher from the next period; a detected applicant never receives it. In both cases,
+the household is excluded from the voucher programme for a period of time ($\eta=2$): it cannot draw a voucher whatever its income, and it
+returns to the lottery ($\eta=0$) with probability $\psi_x$ each year.
 
 None of
 $p_{\text{det}}$, $\psi_x$ and $c_{\text{test}}$ binds in the benchmark, where no voucher
@@ -639,16 +658,16 @@ Section~\ref{sec:experiments} rather than in the calibration.
 
 \subsection{The household's dynamic problem}\label{sec:fproblem}
 
-\new{Write $\Gamma\big(s'\mid s,\,h,v,\tau,a'\big)$ for the law of motion of the state that the transitions above define, given the state and the choices.} Putting it together, for $j=1,\dots,J$ and with $V(J{+}1,\cdot)=0$,
+Write $\Gamma\big(s'\mid s,\,h,v,\tau,a'\big)$ for the law of motion of the state that the transitions above define, given the state and the choices. \new{Then,} for $j=1,\dots,J$ and with $V(J{+}1,\cdot)=0$,
 \begin{equation}\label{eq:fbellman}
 \begin{aligned}
 V(j,s)=\max_{\{h,\,v,\,\tau,\,a'\}}\ \Bigg\{\
-&U(X_P)+\omega_c(\new{\xi(j)}-1)\,U(X_c)+\aleph-\tau\bar\tau^{u}\\[2pt]
+&U(X_P)+\omega_c(\xi(j)-1)\,U(X_c)+\aleph-\tau\bar\tau^{u}\\[2pt]
 &+\ \beta\,\phi(j,h,d,m)\!\int_{\mathcal S}\! V(j{+}1,s')\,
 \Gamma\big(\mathrm{d}s'\mid s,h,v,\tau,a'\big)\\[2pt]
-&-\ \beta\,\new{\chi(j)}\,\omega_c\,D(y,d)\Bigg\},
+&-\ \beta\,\chi(j)\,\omega_c\,D(y,d)\Bigg\},
 \qquad
-\new{\chi(j)}=\begin{cases}1-\phi(j,h,d,m) & j<J_K\\ 1 & j=J_K\\ 0 & j>J_K,\end{cases}
+\chi(j)=\begin{cases}1-\phi(j,h,d,m) & j<J_K\\ 1 & j=J_K\\ 0 & j>J_K,\end{cases}
 \end{aligned}
 \end{equation}
 subject to the budget~\eqref{eq:fbudget}, the income and transfer
@@ -656,7 +675,7 @@ rules~\eqref{eq:fincome} to~\eqref{eq:ftrans} in Section~\ref{sec:ftaxes}, and t
 available only to a household with $d=2$ and that no household begins using after $J_E$.
 
 The first line is the flow of~\eqref{eq:futil}. The second is the household's own
-continuation. The third is the child as an adult. It enters when the child leaves: at
+continuation. The third is \new{the impact of the parent on the child's adult value. The latter counts when} the child leaves: at
 $J_K$ with certainty, and before then with the probability that the parent dies first.
 $D(y,d)$ is what the parent's disorder costs the child, in the child's own lifetime value,
 \begin{equation}\label{eq:fchild}
@@ -665,19 +684,14 @@ D(y,d)=\mathbb{E}\big[V(1,s_{\text{child}})\,\big|\,y,\ 0\big]
 \end{equation}
 where the child is valued entering at $j=1$ with the endowment $T_0$, employed, and without the disorder, SMI or a
 voucher. Its productivity is drawn as
-in~\eqref{eq:fnewborn} in Section~\ref{sec:fnewbornsec} from a parent with productivity $y$. In the first term the parent has never had the disorder, and in the second they have their actual $d$, so $D(y,0)=0$. They are charged ($D(y,d)>0$ for $d\ge1$) whenever they carried the disorder at some point before the child
-becomes an adult.
-
-The term is a difference and not a level. Written as a level, $\omega_c$ times the child's value, it
-would be worth more to a household the likelier it is to die, because it is the death
-branch that carries it, so it would pay most to the households with a SUD, for reasons that have nothing to
-do with the child. As a difference, the term is zero for a parent who has never had the disorder and a cost otherwise.
+in~\eqref{eq:fnewborn} in Section~\ref{sec:fcosts} from a parent with productivity $y$. In the first term \new{of~\eqref{eq:fchild}} the parent has never had the disorder, and in the second they have their actual $d$ \new{in the period the child leaves. If they never had a SUD, there is no charge ($D(y,0)=0$). However, if they had a SUD before the child leaves ($d\ge1$), they are charged ($D(y,d)>0$ for $d\ge1$).}\footnote{\new{The term is a difference and not a level. Written as a level, $\omega_c$ times the child's value, it would be worth more to a household the likelier it is to die, because it is the death branch that carries it, so it would pay most to the households with a SUD, for reasons that have nothing to do with the child. As a difference, the term is zero for a parent who has never had the disorder and a cost otherwise.}}
 
 One weight $\omega_c$ multiplies both child terms, the flow of childhood and the value
-of adulthood, so calibrating it pins the parent's concern for the whole of the child's
-life at once. At $\omega_c=0$ the damage a household does to its child is entirely
+of \new{the child's adulthood}. At $\omega_c=0$ the damage a household does to its child is entirely
 external; at $\omega_c>0$ it internalises the share $\omega_c$ and only $1-\omega_c$
-remains external. The policy functions $h(j,s)$, $v(j,s)$, $\tau(j,s)$ and $a'(j,s)$ are the dwelling, drug use, treatment and saving that solve~\eqref{eq:fbellman} at age $j$ and state $s$.
+remains external.
+
+The policy functions $h(j,s)$, $v(j,s)$, $\tau(j,s)$ and $a'(j,s)$ are the dwelling, drug use, treatment and saving that solve~\eqref{eq:fbellman} at age $j$ and state $s$.
 
 \subsection{The government}
 
@@ -686,11 +700,12 @@ and vouchers under Housing First, with the addition of the drug tests under Trea
 taxes of~\eqref{eq:ftax} in Section~\ref{sec:ftaxes} and the estates of the dead, less the
 endowment $T_0$ given to entering adults ($j=1$),
 \begin{equation}\label{eq:fgovt}
-\underbrace{\textstyle\sum \big(Y-\min\{Y,\tau_{\ell}Y^{\varphi}\}\big)+\tau_k\sum ra+\big(\text{estates}-T_0\big)}_{\text{revenue}}
-\;-\;
-\underbrace{\big(S+UI+F+V\!ch+\text{tests}\big)}_{\text{outlay}}
-\;=\;\mathcal R .
+\new{\begin{aligned}
+\mathcal R\;=\;&\underbrace{\sum_{j=1}^{J}\int_{\mathcal S}\Big[\,Y-\min\{Y,\,\tau_{\ell}Y^{\varphi}\}+\tau_k\,r\,a+\big(1-\phi(j,h,d,m)\big)\,a'\,\Big]\,\mathrm d\Phi(j,s)\;-\;T_0}_{\text{revenue}}\\
+&-\;\underbrace{\sum_{j=1}^{J}\int_{\mathcal S}\Big[\,U\!I+S+F+V\!ch+c_{\text{test}}\,\mathbf{1}^{\text{test}}\,\Big]\,\mathrm d\Phi(j,s)}_{\text{outlay}},
+\end{aligned}}
 \end{equation}
+\new{where each integral is over the states $s$ of the households of age $j$, at their choices $h(j,s)$ and $a'(j,s)$; $Y=Y(j,y,e)$ is before-tax income of~\eqref{eq:fincome}, of which $U\!I=Y\,\mathbf 1\{j<J_R,\,e=2\}$ is the unemployment insurance and $S=Y\,\mathbf 1\{j\ge J_R\}$ the social security the government pays; $F$ and $V\!ch$ are the transfers of~\eqref{eq:ftrans}; $(1-\phi)\,a'$ is the estate a household leaves if it dies; $T_0$ is the endowment of the unit mass of entrants; and $\mathbf{1}^{\text{test}}$ is one for a household tested under Treatment First.}
 In the benchmark the tax parameters are set as in Section~\ref{sec:fullcal} and
 $\mathcal R$ is whatever surplus they produce. In every experiment the taxes are
 held at their benchmark values and, unless the experiment holds it, the probability of drawing a voucher $\pi_V$ adjusts
@@ -706,7 +721,7 @@ p_v=\nu_1 S_v^{1/\varepsilon_s},
 where $\varepsilon_s$ is the price elasticity of supply and $\nu_1$ is normalised so
 that the price is one in the benchmark, and then held fixed across experiments.
 
-\subsection{The law of motion and newborns}\label{sec:fnewbornsec}
+\subsection{The law of motion}\label{sec:fnewbornsec}
 
 Given the policy functions, the distribution over states evolves by pushing
 households through their choices and then through the shocks,
@@ -717,27 +732,12 @@ households through their choices and then through the shocks,
 \end{equation}
 for $j=1,\dots,J-1$ and every measurable set $\mathcal S'$ of the state space $\mathcal S$ of~\eqref{eq:fstate}, with the integral over the state $s$ of the households of age $j$, together with the inflow of entrants
 \begin{equation}\label{eq:flomnew}
-\Phi(1,\mathcal S')\;=\;\frac{\sum_{j\le J_K}\int_{\mathcal S}\!\new{\chi(j)}\,
+\Phi(1,\mathcal S')\;=\;\frac{\sum_{j\le J_K}\int_{\mathcal S}\!\chi(j)\,
 \mathcal N\big(\mathcal S'\mid s\big)\,\mathrm{d}\Phi(j,s)}
-{\sum_{j\le J_K}\int_{\mathcal S}\!\new{\chi(j)}\,\mathrm{d}\Phi(j,s)},
+{\sum_{j\le J_K}\int_{\mathcal S}\!\chi(j)\,\mathrm{d}\Phi(j,s)},
 \end{equation}
 where the integrals are again over $s$, $\mathcal N$ places the child according
-to~\eqref{eq:fnewborn} and $\new{\chi(j)}$ is the weight defined in Section~\ref{sec:fproblem}. An entrant starts with the endowment $T_0$, is employed, has never carried the
-disorder, holds no voucher, and carries SMI with the prevalence observed at age 26.
-Its log productivity is drawn around its parent's, with the persistence $\rho$ and an
-innovation that keeps the spread of productivity at entry the same in every
-generation, and it is scaled for life by the penalty if the parent had the disorder at any point before their child became an adult, at the parent's death if that comes before $J_K$ and at $J_K$ otherwise,
-\begin{equation}\label{eq:fnewborn}
-\begin{aligned}
-z_{1}^{\text{child}}\;=\;&\rho\,z^{\text{parent}}+(1-\rho)\,\mu+\epsilon\\
-&+\log(1-\delta_d)\,\mathbf{1}\{\text{parent has } d\ge1 \text{ when its child becomes an adult}\},
-\end{aligned}
-\end{equation}
-with $z_1^{\text{child}}$ the child's log productivity at entry, age $j=1$, $z^{\text{parent}}$ the parent's log productivity when its child becomes an adult, $\mu$
-the mean of log productivity at entry and $\epsilon$ normally distributed with mean zero and
-variance $1-\rho^2$ times the variance of log productivity at entry. Because the
-penalised child's own productivity is lower, its own child inherits a lower draw too,
-so the penalty also reaches the grandchild through the persistence.
+to~\eqref{eq:fnewborn} and $\chi(j)$ is the weight defined in Section~\ref{sec:fproblem}.
 
 \subsection{Competitive equilibrium}
 
@@ -748,7 +748,7 @@ A competitive equilibrium is a collection of
 $\big\{\{h_t(j,\cdot),\,v_t(j,\cdot),\,\tau_t(j,\cdot),\,a'_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$;
 \item distributions $\big\{\{\Phi_t(j,\cdot)\}_{j=1}^{J}\big\}_{t=0}^{\infty}$; and
 \item prices, policies and aggregates
-$\big\{p_{vt},\,\pi_{Vt},\,H_t\big\}_{t=0}^{\infty}$, together with $\bar y$, $y^{\text{med}}$ and
+$\big\{p_{vt},\,\pi_{Vt}\big\}_{t=0}^{\infty}$, together with $\bar y$, $y^{\text{med}}$ and
 $\mathit{FMR}$, which carry no date because they are kept fixed at their benchmark values,
 \end{itemize}
 such that, at every date $t$,
@@ -758,10 +758,9 @@ $\{V_t(j,\cdot)\}_{j=1}^{J}$ are the associated values;
 \item $\Phi_{t+1}(j{+}1,\cdot)$ follows from $\Phi_t(j,\cdot)$ by the law of
 motion~\eqref{eq:flom} together with the entrants of~\eqref{eq:flomnew}
 and~\eqref{eq:fnewborn};
-\item in every experiment in which $\pi_V$ clears, the government budget~\eqref{eq:fgovt} holds at
+\item the government budget~\eqref{eq:fgovt} holds at
 $\pi_{Vt}$ with $\mathcal R=\bar{\mathcal R}$;
-\item unless the experiment holds the drug price, the drug market clears at $p_{vt}$, so~\eqref{eq:fdrug} holds;
-\item the homelessness rate $H_t$ is the aggregate implied by $\Phi_t$.
+\item the drug market clears at $p_{vt}$, so~\eqref{eq:fdrug} holds.
 \end{enumerate}
 A stationary equilibrium is the special case in which all of these are constant and
 $\Phi_{t+1}=\Phi_t$, which is what the calibration and the long-run policy comparisons
@@ -1014,7 +1013,7 @@ NSDUH  2023, and their mean age is $34.6$, against $39.6$ in the data. Unemploym
 households with a SUD is $14.5$ percent, against $16.2$ in the data. Households with SMI
 are $2.64$ times as likely as others to use drugs, against
 $2.44$, and excess deaths due to SUD in the model account for $14.5$ percent of deaths
-at ages 25 to 44, against $20.0$ percent from drug poisonings in \new{the Centers for Disease Control and Prevention (CDC)} WONDER \new{database}. Treatment First and Housing First affect
+at ages 25 to 44, against $20.0$ percent from drug poisonings in the Centers for Disease Control and Prevention (CDC) WONDER database. Treatment First and Housing First affect
 a child through its parent's decisions, and those who use drugs are mostly of child-rearing
 age, in the model as in the data. And since households with SMI use drugs and are homeless at higher rates than the rest of the
 population, the model also carries the notion that it is harder for Treatment First to discourage
@@ -1113,14 +1112,14 @@ permanent consumption gain, and a negative one that it costs that much.
 %
 \begin{equation}\label{eq:newbornw}
 \begin{aligned}
-W_t\;=\;\sum_{j=1}^{J_K}\beta^{\,j-1}\new{S_t(j)}\Big\{&(\new{\xi(j)}-1)\,\mathbb{E}_{t+j-1}\big[\,U\big(X_c(j,s)\big)+\aleph\;\big|\;j\,\big]\\
-&+\;\beta\,\mathbb{E}_{t+j-1}\Big[\,\new{\chi(j)}\!\int_{\mathcal S}\!V_{t+j}(1,s')\,\mathcal N\big(\mathrm{d}s'\mid s\big)\;\Big|\;j\,\Big]\Big\},
+W_t\;=\;\sum_{j=1}^{J_K}\beta^{\,j-1}S_t(j)\Big\{&(\xi(j)-1)\,\mathbb{E}_{t+j-1}\big[\,U\big(X_c(j,s)\big)+\aleph\;\big|\;j\,\big]\\
+&+\;\beta\,\mathbb{E}_{t+j-1}\Big[\,\chi(j)\!\int_{\mathcal S}\!V_{t+j}(1,s')\,\mathcal N\big(\mathrm{d}s'\mid s\big)\;\Big|\;j\,\Big]\Big\},
 \end{aligned}
 \end{equation}
 %
-where $\mathbb{E}_{t+j-1}[\,\cdot\,|\,j\,]$ averages over the states $s$ of the households of age $j$ in period $t+j-1$, under $\Phi_{t+j-1}(j,\cdot)$, and $\new{S_t(j)}=\Phi_{t+j-1}(j,\mathcal S)/\Phi_{t}(1,\mathcal S)$ is the share of the households that entered in period $t$ still alive at age $j$. The first term is childhood. A household joins the workforce at $j=1$ with its child just born, so the households of age $j$ in period $t+j-1$ are the surviving parents of the children born in period $t$, each child in its $j$-th year at home, and $X_c(j,s)$ is the bundle the child shares with its parent who is in state $s$. The child's own flow utility from that bundle, with the flow value of being alive, is counted as $\new{\xi(j)}-1$ of the household, as it is in the parent's problem. A child lives at home only while its parent is alive, so each year of its childhood is weighted by the share $\new{S_t(j)}$ of parents still alive, and discounted to its birth.
+where $\mathbb{E}_{t+j-1}[\,\cdot\,|\,j\,]$ averages over the states $s$ of the households of age $j$ in period $t+j-1$, under $\Phi_{t+j-1}(j,\cdot)$, and $S_t(j)=\Phi_{t+j-1}(j,\mathcal S)/\Phi_{t}(1,\mathcal S)$ is the share of the households that entered in period $t$ still alive at age $j$. The first term is childhood. A household joins the workforce at $j=1$ with its child just born, so the households of age $j$ in period $t+j-1$ are the surviving parents of the children born in period $t$, each child in its $j$-th year at home, and $X_c(j,s)$ is the bundle the child shares with its parent who is in state $s$. The child's own flow utility from that bundle, with the flow value of being alive, is counted as $\xi(j)-1$ of the household, as it is in the parent's problem. A child lives at home only while its parent is alive, so each year of its childhood is weighted by the share $S_t(j)$ of parents still alive, and discounted to its birth.
 
-The last term is adult life, which begins when the child leaves home: after year $j$ with the probability $\new{\chi(j)}$ of the parent's problem~\eqref{eq:fbellman}, the parent's chance of dying in that year before $J_K$, and one at $J_K$. The child then joins the workforce at model age $j=1$, placed by $\mathcal N$ as in~\eqref{eq:flomnew}, with the value $V_{t+j}(1,s')$, discounted by the years it spent at home. The child's own childhood counts at weight one here, not at its parent's weight $\omega_c$, and that is what brings the externality on the child into welfare. Its adult part is the value its own problem maximises, so the child it raises in turn enters there at the weight $\omega_c$. In a steady state the dates drop out.
+The last term is adult life, which begins when the child leaves home: after year $j$ with the probability $\chi(j)$ of the parent's problem~\eqref{eq:fbellman}, the parent's chance of dying in that year before $J_K$, and one at $J_K$. The child then joins the workforce at model age $j=1$, placed by $\mathcal N$ as in~\eqref{eq:flomnew}, with the value $V_{t+j}(1,s')$, discounted by the years it spent at home. The child's own childhood counts at weight one here, not at its parent's weight $\omega_c$, and that is what brings the externality on the child into welfare. Its adult part is the value its own problem maximises, so the child it raises in turn enters there at the weight $\omega_c$. In a steady state the dates drop out.
 
 The value is taken before any of its draws are realised, including the household it is
 born into, so $V^{b}$ and $V^{c}$ are expectations over the productivity draw and
@@ -1311,9 +1310,9 @@ future, and thus how much they save and how much the prospect of death deters th
  wealth-to-output ratio rises and households are more deterred by death. It is chosen so that wealth over output
 matches the national accounts, a ratio of three, from the Bureau of Economic Analysis (BEA) fixed asset tables
 against National Income and Product Accounts (NIPA) output, both read at the 2023 vintage, the last year the fixed asset tables cover.
-\item[$\new{\xi(j)}$, the equivalence scale.] The household's consumption and
+\item[$\xi(j)$, the equivalence scale.] The household's consumption and
 dwelling are shared with the child while it lives with its parent, and thus are divided by
-$\new{\xi(j)}$ to give what each member gets. Raise it and each member gets less of a given budget, and the child counts for more of the household, through the weight $\new{\xi(j)}-1$ in~\eqref{eq:futil}. It is the square-root scale (OECD, 2013), $\sqrt{\new{N(j)}}$, where $\new{N(j)}$ in the model is set to two while
+$\xi(j)$ to give what each member gets. Raise it and each member gets less of a given budget, and the child counts for more of the household, through the weight $\xi(j)-1$ in~\eqref{eq:futil}. It is the square-root scale (OECD, 2013), $\sqrt{N(j)}$, where $N(j)$ in the model is set to two while
 the child lives with the parent ($j\le J_K$), from the parent's age 26 to 50, and to one after the child has left ($j>J_K$).
 \end{description}
 
@@ -1396,7 +1395,7 @@ supplement to the CPS for 2022.
 \paragraph{Block 10: Baseline survival and SMI onset.} These two parameters are the survival and
 the SMI-onset age profiles.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\new{\bar\phi(j)}$, baseline survival by age.] This is the baseline chance of surviving to the
+\item[$\bar\phi(j)$, baseline survival by age.] This is the baseline chance of surviving to the
 next age, before any multiplier. It is the profile every mortality multiplier in
 Section~\ref{sec:fullcal} multiplies, so it is the base the SUD, homelessness and
 SMI hazards scale. Raise it and households expect to live longer, so the life a SUD puts at risk is worth more. I take the profile from  the life table for the total population of the United States in 2010 (Arias, 2014), for ages $26$ to $85$.
