@@ -1,5 +1,13 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 01:44 STYLIZED STAGES DONE. Stage 1 exited at iteration 0 (worst 1.91 inside the 2 per cent rule: nothing in it
+moved). Stage 2 at the rest point (0086a087, calibrated_stage2.json, rest 1): iteration 50, live rows within 1.78;
+omega_c 0.00211 -> 0.00249, child gap 19.25 against 19.49, participation 8.98 at the rest point against 8.90, vsl 80.0.
+child_sud_or 0.94 against the reference 2.00 is unchanged from the old stage 2 (delta_d is Nilsson's, held; reported
+only). Results chain launched in session_011LUhAjyD1TVT54ymMZ1QVM: stage_results.py 1, 2, tables, stage_transition.py
+-> stage_numbers.json, writing/tables, writing/figures (log stylized_results_oct08.log). Then splice_r221, Section 3 in
+red, PDF.
+
 08 Oct 01:37 ROUND r221 (the author's PDF 96e52684, 23 comments). ALL RED STRIPPED; tables frozen; base_r221 + splice_r221.
 In red: intro -- 'both unmarried and of the same age, sex and family income' (a lone parent is unmarried by definition),
 the parenthood paragraph opened as a model statement with the NSFG cited, the 47/61 dropped there as near-duplicate of
