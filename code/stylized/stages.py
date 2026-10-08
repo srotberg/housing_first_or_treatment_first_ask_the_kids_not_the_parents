@@ -136,10 +136,15 @@ FERT_S = 0.5
 # full income loss", "the unemployment risk should just happen in period 2. So everyone is employed in period
 # 1", "U1 should be set such that the fraction homeless and with Sud matches the data. Like the old
 # calibration.... Just a simpler model. All the targets are the same"): stage 1 with no voucher, no food
-# assistance and no UI, everyone at work in period 1, and the food assistance row dropped since there is
-# none.  Saving, housing and the street are kept: an unemployed household lives on what it saved.
+# assistance and no UI, everyone at work in period 1.  Saving, housing and the street are kept: an unemployed
+# household lives on what it saved.
+# FOOD ASSISTANCE CAME BACK the same day, as a floor under consumption only (the author chose "Keep a consumption
+# floor"): with none at all, no household with a SUD was ever homeless at any u1 from 0.05 to 0.40 -- at sigma = 2,
+# facing a full loss of income, every user saves enough to keep paying rent -- so u1 could not reach the SUD
+# share of the homeless (nogov_sweep.log, sweep 1).  It is fitted on SNAP spending as before; still no UI, no
+# voucher, and losing the job is still a full loss of earnings.
 NOGOV = False
-NOGOV_SET = dict(pV=0.0, cbar=0.0, repl=0.0, emp1=0, y_floor=0.0)
+NOGOV_SET = dict(pV=0.0, repl=0.0, emp1=0, y_floor=0.0)
 PSI_TARGET = 0.797
 STAGE2_VSL = float(_fc()['vsl_data'])
 
@@ -191,8 +196,7 @@ def spec(stage):
     # "you may need food stamps for 0 asset, 0 income case.. So keep the food stamps":
     # with no insurance under a SUD, a household with the disorder that loses its job and
     # has no savings otherwise has nothing to eat.
-    if not NOGOV:
-        out.append(('cbar', 'fshare', FS_TARGET, +1, 0.30, 0.02, 0.30))
+    out.append(('cbar', 'fshare', FS_TARGET, +1, 0.30, 0.02, 0.30))
     if FERT and stage == 2:
         out = [r for r in out if r[0] != 'delta_d']
         out.append(('psi', 'parent_share', PSI_TARGET, +1, 0.30, 0.01, 50.0))

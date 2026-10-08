@@ -4,8 +4,8 @@ THE NO-GOVERNMENT STAGE 1, FITTED BY SWEEPS (8 October).
 The author: "the unemployment risk should just happen in period 2. So everyone is employed in period 1",
 "We should also not have ui.. Just full income loss", "U1 should be set such that the fraction homeless and
 with Sud matches the data. Like the old calibration.... Just a simpler model. All the targets are the same".
-The model is stylized.py with stages.NOGOV_SET (no voucher, food assistance or UI; everyone at work in
-period 1; saving, housing and the street kept).
+The model is stylized.py with stages.NOGOV_SET (no voucher or UI; everyone at work in period 1; saving, housing
+and the street kept; food assistance kept as a floor under consumption, fitted on SNAP spending -- see stages.py).
 
 WHY NOT stages.py's STEP RULE.  Run twice on 8 October (stage1_nogov_run1.log, stage1_nogov.log) it parked
 participation near zero: raising aleph to lift the VSL raises the cost of dying for everyone, and b, capped
@@ -33,7 +33,8 @@ import calibrate as C
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, 'calibrated_stage1_nogov.json')
 TGT = dict(vsl=float(stages.STAGE2_VSL), hspend=0.268, homeless=C.TARGET['homeless'], part=C.TARGET['part'],
-           unemployment=0.0485, sud_of_homeless2=0.217, r_use=C.TARGET['r_use'], dshare=stages.DSHARE_TARGET)
+           unemployment=0.0485, sud_of_homeless2=0.217, r_use=C.TARGET['r_use'], dshare=stages.DSHARE_TARGET,
+           fshare=stages.FS_TARGET)
 # (parameter, moment, lower bound, upper bound, b re-solved inside every trial)
 ROWS = [('kap', 'r_use', 0.03, 0.70, True),
         ('aleph', 'vsl', 3.0, 60.0, False),
@@ -41,7 +42,8 @@ ROWS = [('kap', 'r_use', 0.03, 0.70, True),
         ('gam', 'hspend', 0.05, 0.60, False),
         ('th', 'dshare', 0.05, 0.45, True),
         ('u1', 'sud_of_homeless2', None, 0.40, True),
-        ('u0', 'unemployment', 0.005, 0.30, False)]
+        ('u0', 'unemployment', 0.005, 0.30, False),
+        ('cbar', 'fshare', 0.01, 0.40, False)]
 NB, NP = 18, 13          # bisection steps for b and for each parameter
 
 
@@ -97,13 +99,14 @@ def report(par, tag):
     gaps = {k: 100 * (m[k] / TGT[k] - 1) for k in TGT}
     worst = max(abs(g) for g in gaps.values())
     print(f'  {tag}: worst {worst:.2f} %  ' + '  '.join(f'{k}={m[k]:.4g}({gaps[k]:+.1f}%)' for k in TGT), flush=True)
-    print('      ' + '  '.join(f'{k}={getattr(par, k):.5g}' for k in ('aleph', 'gam', 'h1', 'b', 'u0', 'u1', 'kap', 'th')),
+    print('      ' + '  '.join(f'{k}={getattr(par, k):.5g}' for k in ('aleph', 'gam', 'h1', 'b', 'u0', 'u1', 'kap', 'th',
+                                                                         'cbar')),
           flush=True)
     return m, worst
 
 
 def save(par, m, worst, it):
-    out = {k: getattr(par, k) for k in ('aleph', 'gam', 'h1', 'b', 'u0', 'u1', 'kap', 'th', 'beta', 'pi_base',
+    out = {k: getattr(par, k) for k in ('aleph', 'gam', 'h1', 'b', 'u0', 'u1', 'kap', 'th', 'cbar', 'rho_fs', 'beta', 'pi_base',
                                        'h2', 'h3', 'xi', 'omega', 'delta_d', 'y_floor', 'pV', 'cbar', 'repl',
                                        'emp1', 'repl', 'ycap', 'ui_sud', 'ui_sud_excess', 'rest', 'fert', 'psi',
                                        'fert_s', 'glow')}
