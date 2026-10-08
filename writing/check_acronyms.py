@@ -31,6 +31,7 @@ SRC = 'housing_first_children_later.src.tex'
 # Not acronyms, or proper names that stand alone.
 ALLOW = {
     'I', 'A', 'II', 'III', 'IV', 'US', 'UK',      # numerals and countries
+    'DC',                                          # Washington, DC, a publisher's place in the references
     'JAMA', 'NBER',                                # journal and series names in citations
     'DI',                                          # appears only as a maths subscript
     'WONDER',                                      # defined jointly as "(CDC WONDER)"
