@@ -132,6 +132,14 @@ REST = False
 # from calibrated_stage2.json and writes calibrated_stage2_fert.json unless --out says otherwise.
 FERT = False
 FERT_S = 0.5
+# --nogov (8 October, the author: "we then also dont need a government", "We should also not have ui.. Just
+# full income loss", "the unemployment risk should just happen in period 2. So everyone is employed in period
+# 1", "U1 should be set such that the fraction homeless and with Sud matches the data. Like the old
+# calibration.... Just a simpler model. All the targets are the same"): stage 1 with no voucher, no food
+# assistance and no UI, everyone at work in period 1, and the food assistance row dropped since there is
+# none.  Saving, housing and the street are kept: an unemployed household lives on what it saved.
+NOGOV = False
+NOGOV_SET = dict(pV=0.0, cbar=0.0, repl=0.0, emp1=0, y_floor=0.0)
 PSI_TARGET = 0.797
 STAGE2_VSL = float(_fc()['vsl_data'])
 
@@ -183,7 +191,8 @@ def spec(stage):
     # "you may need food stamps for 0 asset, 0 income case.. So keep the food stamps":
     # with no insurance under a SUD, a household with the disorder that loses its job and
     # has no savings otherwise has nothing to eat.
-    out.append(('cbar', 'fshare', FS_TARGET, +1, 0.30, 0.02, 0.30))
+    if not NOGOV:
+        out.append(('cbar', 'fshare', FS_TARGET, +1, 0.30, 0.02, 0.30))
     if FERT and stage == 2:
         out = [r for r in out if r[0] != 'delta_d']
         out.append(('psi', 'parent_share', PSI_TARGET, +1, 0.30, 0.01, 50.0))
@@ -295,6 +304,8 @@ def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None, hold=()):
         prev = json.load(open(os.path.join(HERE, 'calibrated_stage2.json')))
         v = {k: x for k, x in prev.items() if not k.startswith('_')}
     v.update(STAGE_SET[stage])
+    if NOGOV:
+        v.update(NOGOV_SET)
     if REST and stage == 2:
         v.update(rest=1)
     if FERT and stage == 2:
@@ -308,7 +319,8 @@ def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None, hold=()):
           f'{", ".join(r[0] for r in S.SPEC if r[4] == 0) or "none"}')
     print('  set: ' + ', '.join(f'{k}={getattr(par, k):.5g}' for k in
                                 ('xi', 'omega', 'delta_d', 'beta', 'R', 'y_floor', 'u1',
-                                 'h2', 'h3', 'rho', 'pV', 'kappa_r', 'pi_base')), flush=True)
+                                 'h2', 'h3', 'rho', 'pV', 'kappa_r', 'pi_base', 'repl', 'cbar', 'emp1')),
+          flush=True)
     # THE EXIT PASS IS WHAT IS KEPT, never the best pass seen (standing rule): the
     # file is rewritten at every table as a checkpoint and last at the pass the
     # loop stops on, and that vector is the one every later stage and result reads.
@@ -356,6 +368,9 @@ if __name__ == '__main__':
             OUT_NAME = a.split('=', 1)[1]
         if a == '--rest':
             REST = True
+        if a == '--nogov':
+            NOGOV = True
+            OUT_NAME = OUT_NAME or 'calibrated_stage1_nogov.json'
         if a == '--fert':
             FERT = True
             OUT_NAME = OUT_NAME or 'calibrated_stage2_fert.json'

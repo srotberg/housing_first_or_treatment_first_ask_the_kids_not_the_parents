@@ -805,6 +805,10 @@ class P:
     # (food_stamps_share_data).  rho_fs is the statutory taper the quantitative model
     # uses (food_stamp_taper).  cbar = 0 is OFF and reproduces the model without it.
     cbar = 0.0
+    # EVERYONE WORKS IN PERIOD 1 when emp1 = 0 (the author, 8 October: "the unemployment risk should just
+    # happen in period 2. So everyone is employed in period 1").  1 is the old model: period 1 draws
+    # employment on the same lottery as period 2.
+    emp1 = 1
     rho_fs = 0.30
     y_floor = 0.0     # guaranteed minimum realised income; 0 is off.  See
                       # _states for what it is for and what value clears the
@@ -921,7 +925,7 @@ def _fs(par, inc):
     return np.maximum(par.cbar - par.rho_fs * np.asarray(inc, dtype=float), 0.0)
 
 
-def _states(par, d, policy, y, used=0):
+def _states(par, d, policy, y, used=0, p1=False):
     """
     (probability, income level, tenant's rent multiplier) given d and whether
     the household used drugs in period 1.
@@ -971,6 +975,8 @@ def _states(par, d, policy, y, used=0):
         emp = ((1.0 - par.u1, y), (min(par.u0, par.u1), ins), (max(par.u1 - par.u0, 0.0), 0.0))
     else:
         emp = ((1.0 - pu, y), (pu, ins * (par.ui_sud if d == 1 else 1.0)))
+    if p1 and not par.emp1:
+        emp = ((1.0, y),)          # period 1, and everyone works in it
     for pe, inc in emp:
         # A FLOOR UNDER REALISED INCOME.  The author, 12 September: *"you need
         # to limit the lowest income from below so no one has negative value of
@@ -1300,7 +1306,7 @@ def period1(par, y, policy=None):
     cont0 = (s0 * W2c[:, 0])[None, :]
 
     out = []
-    for p, inc, rmul in _states(par, 0, policy, y, used=0):
+    for p, inc, rmul in _states(par, 0, policy, y, used=0, p1=True):
         vg = _vgrid(par, inc)
         pid = _pid(par, vg)[:, None]
         # SURVIVAL INSIDE THE EXPECTATION over the realised disorder. Not
@@ -1556,7 +1562,7 @@ def priced_out_share(par, ygrid, w, policy=None):
     policy = policy or par.policy
     out = mass = 0.0
     for i, y in enumerate(ygrid):
-        for p, inc, rmul in _states(par, 0, policy, float(y), used=0):
+        for p, inc, rmul in _states(par, 0, policy, float(y), used=0, p1=True):
             if p <= 0.0:
                 continue
             m = w[i] * p
@@ -2137,7 +2143,7 @@ def vsl(par, y=1.0, policy=None):
     W2u = W2c if policy == 'HF' else solve_period2(par, y, policy, used=1)[1]
     s0, s1 = par.phi0, par.phi0 * (1.0 - par.kap)
     tot = 0.0
-    for p, inc, rmul in _states(par, 0, policy, y, used=0):
+    for p, inc, rmul in _states(par, 0, policy, y, used=0, p1=True):
         if p <= 1e-14:
             continue
         vg = _vgrid(par, inc)
