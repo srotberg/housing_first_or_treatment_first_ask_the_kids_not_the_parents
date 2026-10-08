@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 02:45 ROUND r223 (the author's PDF 7b70a1c6, 12 comments; "remove all red and put updates in red"). ALL RED STRIPPED
+(source and the regenerated stylized tables); tables frozen; base_r223 = d188d91e (the r222 PDF) + splice_r223. In red:
+'lived'/'was' in the two-person comparison (intro, Sections 2 and 3); 'but only by a small margin' (the author's 'big' ->
+'small'; 'not by a small margin' would reverse it); Section 2 '75 percent of men and women ... had a child, against 81',
+and the at-home clause (35 against 61) removed. STYLIZED RESULTS LANDED (stylized_results_oct08b.log, exit 0, from the
+rest-point stage 2): s_t_gap 18.3 -> 19.5 (the author: "it's ok if stage 2 is at 19.25%"; Table 2 shows 19.3 against
+19.5), Section 3 participation 8.98 -> 7.10 at the rest points (s2_part_hf now equals the calibrated 8.98), CEV 0.44 ->
+0.36, transition numbers red (17 names). Checks pass (old DC and VSL flags only). Next: the ChatGPT review (v2).
+
 08 Oct 01:58 ROUND r222 (the author's PDF 1f87cfd9, 12 comments). ALL RED STRIPPED; tables frozen; base_r222 + splice_r222.
 In red: 'were X percent more likely to have used' wherever the two-person gap is quoted (intro, Sections 2, 3, 5; the
 author: "not that they used 19.5% more, but were 19.5% more likely to use"); 'raises the share who use drugs'. Section 5:
