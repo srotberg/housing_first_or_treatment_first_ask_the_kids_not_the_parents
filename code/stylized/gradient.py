@@ -109,55 +109,107 @@ _P = P()
 U0 = float(FC['unemployment_rate_data'])
 U1 = float(FC['unemployment_rate_sud_data'])
 FIXED = dict(beta=_P.beta, sigma=_P.sigma, phibar=_P.phi0, years=_P.years, p_v=1.0,
-             pi_d=SUD_RATE / TARGET['part'], sig_y=SIG_Y, y_min=Y_FLOOR, u0=U0, u1=U1)
+             pi_d=SUD_RATE / TARGET['part'], sig_y=SIG_Y, y_min=Y_FLOOR, u0=U0, u1=U1, save=True)
 FREE = ('aleph', 'b', 'theta', 'kappa')
 MOMENT_OF = dict(aleph='vsl', b='part', theta='dshare', kappa='r_use')
 
 
 # ---------------------------------------------------------------------------------------------------
+# THE MODEL WITH SAVING (8 October, the author: "Wait, you don't allow savings??", and on the design that
+# shows "which channel does what and why").  Period 1: everyone works and splits y between the period-1 bundle
+# and saving a >= 0 at zero interest.  Period 2: employed, c = y + a; out of work, c = y_min + a.  q['save']
+# False forces a = 0, which is the model of r234, so the two can be compared at one set of parameters.
 def U(X, s):
     return np.log(X) if s == 1.0 else X ** (1.0 - s) / (1.0 - s)
 
 
-def X0(y, q):
-    return y ** (1.0 - q['theta']) * q['b'] ** q['theta']
+def X0(c, q):
+    return np.maximum(c, 1e-300) ** (1.0 - q['theta']) * q['b'] ** q['theta']
 
 
-def X1(y, q):
+def _U0(c, q):
+    return U(X0(c, q), q['sigma'])
+
+
+def _U0p(c, q):
+    c = np.maximum(c, 1e-300)
+    return (1.0 - q['theta']) * X0(c, q) ** (1.0 - q['sigma']) / c
+
+
+def _A(q):
     th, p = q['theta'], q['p_v']
-    return (1.0 - th) ** (1.0 - th) * (th / p) ** th * (y + p * q['b'])
+    return (1.0 - th) ** (1.0 - th) * (th / p) ** th
 
 
-def W2(y, q, d=0):
-    """The value of period 2 with SUD status d: out of work with probability u_d, on y_min."""
-    u = q['u1'] if d else q['u0']
+def _U1(e, q):
+    """Utility of spending e on the period-1 bundle with the drug, at the Cobb-Douglas split."""
+    return U(_A(q) * (e + q['p_v'] * q['b']), q['sigma'])
+
+
+def _U1p(e, q):
     s = q['sigma']
-    return (1.0 - u) * U(X0(y, q), s) + u * U(X0(q['y_min'], q), s) + q['aleph']
+    return _A(q) ** (1.0 - s) * (e + q['p_v'] * q['b']) ** (-s)
 
 
 def y_sg(q):
-    """The income below which no positive quantity of the drug is worth buying."""
+    """The spending below which no positive quantity of the drug is worth buying."""
     return (1.0 - q['theta']) * q['p_v'] * q['b'] / q['theta']
 
 
-def gain(y, q):
-    """What the drug is worth in period-1 utility, zero below y_sg."""
-    g = U(X1(y, q), q['sigma']) - U(X0(y, q), q['sigma'])
-    return np.where(y > y_sg(q), g, 0.0)
+def W(a, y, q, d=0):
+    """The value of period 2 with assets a and SUD status d: out of work with probability u_d, on y_min + a."""
+    u = q['u1'] if d else q['u0']
+    return (1.0 - u) * _U0(y + a, q) + u * _U0(q['y_min'] + a, q) + q['aleph']
 
 
-def cost(y, q):
-    """Expected loss from using at all: the chance of a SUD times what it takes from period 2, through
-    survival and through employment."""
-    return q['beta'] * q['pi_d'] * (q['phibar'] * W2(y, q, 0) - q['phibar'] ** q['kappa'] * W2(y, q, 1))
+def _Wp(a, y, q, d=0):
+    u = q['u1'] if d else q['u0']
+    return (1.0 - u) * _U0p(y + a, q) + u * _U0p(q['y_min'] + a, q)
+
+
+def _bisect(g, lo, hi, n=64):
+    for _ in range(n):
+        mid = 0.5 * (lo + hi)
+        up = g(mid) > 0.0
+        hi = np.where(up, mid, hi)
+        lo = np.where(up, lo, mid)
+    return 0.5 * (lo + hi)
+
+
+def plan(y, q, use):
+    """Saving and the period-1 value at income y, for the household that uses (use) or does not."""
+    y = np.atleast_1d(np.asarray(y, dtype=float))
+    bt, pf, pi, k = q['beta'], q['phibar'], q['pi_d'], q['kappa']
+    if use:
+        cont = lambda a: (1.0 - pi) * pf * W(a, y, q, 0) + pi * pf ** k * W(a, y, q, 1)
+        contp = lambda a: (1.0 - pi) * pf * _Wp(a, y, q, 0) + pi * pf ** k * _Wp(a, y, q, 1)
+        flow, flowp, top = (lambda e: _U1(e, q)), (lambda e: _U1p(e, q)), y - y_sg(q)
+    else:
+        cont, contp = (lambda a: pf * W(a, y, q, 0)), (lambda a: pf * _Wp(a, y, q, 0))
+        flow, flowp, top = (lambda e: _U0(e, q)), (lambda e: _U0p(e, q)), y * (1.0 - 1e-12)
+    ok = top > 0.0
+    top = np.maximum(top, 1e-12)
+    if q.get('save', True):
+        g = lambda a: flowp(y - a) - bt * contp(a)        # rises in a
+        a = np.where(g(np.zeros_like(y)) >= 0.0, 0.0,
+                     np.where(g(top) <= 0.0, top, _bisect(g, np.zeros_like(y), top)))
+    else:
+        a = np.zeros_like(y)
+    V = flow(y - a) + q['aleph'] + bt * cont(a)
+    return a, np.where(ok & (y - a > (y_sg(q) if use else 0.0)), V, -np.inf)
 
 
 def D(y, q):
-    return gain(y, q) - cost(y, q)
+    return plan(y, q, True)[1] - plan(y, q, False)[1]
+
+
+def V1(y, q):
+    """The period-1 value at the drug decision, the better of using and not."""
+    return np.maximum(plan(y, q, True)[1], plan(y, q, False)[1])
 
 
 def y_zero(q):
-    """The income at which being alive is worth nothing, W2 = 0."""
+    """The consumption at which being alive is worth nothing, U + aleph = 0."""
     s = q['sigma']
     xz = (q['aleph'] * (s - 1.0)) ** (-1.0 / (s - 1.0))
     return (xz / q['b'] ** q['theta']) ** (1.0 / (1.0 - q['theta']))
@@ -216,14 +268,14 @@ def full(free, fixed=FIXED):
 def use_set(q):
     """The intervals of income on which the household uses, above the floor."""
     lo = max(y_sg(q), q['y_min']) * (1.0 + 1e-9)
-    grid = np.exp(np.linspace(np.log(lo), np.log(80.0), 4000))
+    grid = np.exp(np.linspace(np.log(lo), np.log(80.0), 2500))
     d = D(grid, q)
     out, start = [], None
     for i in range(len(grid)):
         if d[i] > 0 and start is None:
-            start = grid[0] if i == 0 else brentq(lambda y: float(D(y, q)), grid[i - 1], grid[i])
+            start = grid[0] if i == 0 else brentq(lambda y: float(D(y, q)[0]), grid[i - 1], grid[i])
         if d[i] <= 0 and start is not None:
-            out.append((start, brentq(lambda y: float(D(y, q)), grid[i - 1], grid[i])))
+            out.append((start, brentq(lambda y: float(D(y, q)[0]), grid[i - 1], grid[i])))
             start = None
     if start is not None:
         out.append((start, grid[-1]))
@@ -233,15 +285,28 @@ def use_set(q):
 def vsl(q, y=1.0):
     """The VSL of a household at mean income, in annual incomes: what it would pay in period-1
     consumption for survival, beta times the expected period-2 value per unit of survival over the
-    marginal utility of consumption, times the years in a period, as stylized.vsl computes it."""
-    s, th, p = q['sigma'], q['theta'], q['p_v']
-    if float(D(y, q)) > 0:
-        X, c, pr = X1(y, q), (1.0 - th) * (y + p * q['b']), q['pi_d']
+    marginal utility of period-1 consumption, times the years in a period, as stylized.vsl computes it."""
+    use = float(D(y, q)[0]) > 0
+    a = float(plan(y, q, use)[0][0])
+    if use:
+        u_c, pr = float(_U1p(y - a, q)), q['pi_d']
     else:
-        X, c, pr = X0(y, q), y, 0.0
-    ew = (1.0 - pr) * W2(y, q, 0) + pr * q['phibar'] ** (q['kappa'] - 1.0) * W2(y, q, 1)
-    u_c = (1.0 - th) * X ** (1.0 - s) / c
+        u_c, pr = float(_U0p(y - a, q)), 0.0
+    ew = (1.0 - pr) * W(a, y, q, 0) + pr * q['phibar'] ** (q['kappa'] - 1.0) * W(a, y, q, 1)
     return float(q['beta'] * ew / u_c * q['years'])
+
+
+_GL_X, _GL_W = np.polynomial.legendre.leggauss(48)
+
+
+def _saved(q, dist, lo, hi):
+    """Saving of the users in [lo, hi], integrated over the income distribution (per household)."""
+    t = 0.5 * (np.log(hi) - np.log(lo)) * _GL_X + 0.5 * (np.log(hi) + np.log(lo))
+    y = np.exp(t)
+    z = (np.log(y * dist.M) + 0.5 * dist.s ** 2) / dist.s
+    dens = np.exp(-0.5 * z * z) / math.sqrt(2.0 * math.pi) / (dist.s * (1.0 - dist.Ft))   # dF / d log y
+    a = plan(y, q, True)[0]
+    return float(0.5 * (np.log(hi) - np.log(lo)) * (_GL_W * a * dens).sum())
 
 
 def moments(q):
@@ -249,8 +314,9 @@ def moments(q):
     iv = use_set(q)
     part = sum(float(dist.F(b) - dist.F(a)) for a, b in iv)
     inc = sum(float(dist.PE(b) - dist.PE(a)) for a, b in iv)
+    sav = sum(_saved(q, dist, a, b) for a, b in iv) if q.get('save', True) else 0.0
     p, th, b = q['p_v'], q['theta'], q['b']
-    spend = th * (inc + p * b * part) - p * b * part
+    spend = th * (inc - sav + p * b * part) - p * b * part      # users spend theta of (y - a + p b) less p b
     return dict(part=part, r_use=inc / part if part > 0 else float('nan'),
                 dshare=spend / inc if inc > 0 else float('nan'), vsl=vsl(q), intervals=iv,
                 bot50=float(dist.PE(dist.quantile(0.5))), cut_share=dist.cut_share, dist=dist)
@@ -282,7 +348,7 @@ def _resid(z, fixed):
 def calibrate(start=None, fixed=FIXED):
     """aleph on the VSL, theta on the spending share, b and kappa on participation and the users'
     income, the last two jointly: b moves where the band of users sits, kappa how wide it is."""
-    s = start or dict(aleph=6.44, b=0.0554, theta=0.218)
+    s = start or dict(aleph=6.6, b=0.057, theta=0.22)
     r = least_squares(_resid, np.log([s['aleph'], s['b'], s['theta']]), args=(fixed,),
                       xtol=1e-15, ftol=1e-15, gtol=1e-15, max_nfev=2000)
     al, b, th = np.exp(r.x)
@@ -336,7 +402,9 @@ def scan(q, which, n=81):
         g = channel(q, which, x)
         g['b'] = b = b_for_part(g, ref, b)
         m = moments(g)
-        assert W2(g['y_min'], g) > 0, ('value of being alive at the bottom', which, x)
+        # THE VALUE OF BEING ALIVE IS REQUIRED POSITIVE IN PERIOD 1 ONLY (the author, 8 October: "We don't need
+        # the model to have postivie value of life in period 2. Just period 1"), at the poorest household.
+        assert float(V1(g['y_min'], g)[0]) > 0, ('period-1 value of being alive at the bottom', which, x)
         # NOT ONE BAND EVERYWHERE: with the unemployment channel alone past about 1.6 times its strength, b falls
         # far enough that the very poorest find the drug worth buying, and unemployment takes nothing from a
         # household already on y_min, so a hair-thin band uses at the bottom.  moments() counts every band.
@@ -392,39 +460,42 @@ def write_tables(q, m):
     print('   wrote tables/tab_external.tex, tables/tab_internal.tex')
 
 
-def draw(curves):
+def draw(panels):
+    """Figure 1: users' income as each channel is scaled with the other switched off, in the model (left) and
+    in the same model with saving switched off (right)."""
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-    plt.rcParams.update({'font.size': 10.5, 'figure.dpi': 170, 'font.family': 'serif',
+    plt.rcParams.update({'font.size': 10, 'figure.dpi': 170, 'font.family': 'serif',
                          'axes.spines.top': False, 'axes.spines.right': False,
                          'axes.grid': True, 'grid.alpha': 0.18, 'grid.linestyle': '-',
-                         'legend.frameon': False, 'lines.linewidth': 2.2})
-    col = dict(mortality='#1F5A99', unemployment='#C0662B', both='black')
-    lab = dict(mortality='Mortality risk alone', unemployment='Unemployment risk alone', both='Both')
-    fig, ax = plt.subplots(figsize=(6.6, 4.0))
-    top = 1.08 * max(max(r) for _, r in curves.values())
-    ax.axhspan(0, 1, color='0.93', zorder=0)
-    ax.text(3, 0.5, 'users poorer than average', ha='left', va='center', fontsize=8.5, color='0.45')
-    ax.axhline(1.0, color='0.55', lw=0.9, zorder=1)
-    ax.axvline(100, color='black', lw=0.9, ls=(0, (2, 2)), zorder=1)
-    ax.text(100, top, 'calibrated ', ha='right', va='top', fontsize=8.5)
-    for which in ('both', 'mortality', 'unemployment'):
-        sc, r = curves[which]
-        ax.plot(100 * sc, r, color=col[which], label=lab[which], zorder=3,
-                lw=2.6 if which == 'both' else 2.0)
-        i1 = int(np.argmin(np.abs(sc - 1.0)))
-        ax.plot([100], [r[i1]], 'o', ms=5.5, color=col[which], zorder=4)
-        ax.annotate(f'{r[-1]:.2f}', xy=(100 * sc[-1], r[-1]), xytext=(5, 0), textcoords='offset points',
-                    fontsize=8.5, color=col[which], va='center')
-    r0 = curves['mortality'][1][0]
-    ax.annotate(f'{r0:.2f}', xy=(0, r0), xytext=(5, 5), textcoords='offset points', fontsize=8.5)
-    ax.set_xlim(0, 100 * SCAN_HI + 14)
-    ax.set_ylim(0, top)
-    ax.set_xticks(np.arange(0, 100 * SCAN_HI + 1, 25))
-    ax.set_xlabel('Strength of the channel, percent of its calibrated value')
-    ax.set_ylabel('Mean income of users / population mean')
-    ax.legend(loc='upper right', bbox_to_anchor=(1.0, 0.93), fontsize=9)
+                         'legend.frameon': False, 'lines.linewidth': 2.1})
+    col = dict(mortality='#1F5A99', unemployment='#C0662B')
+    lab = dict(mortality='Mortality risk of a SUD', unemployment='Unemployment risk of a SUD')
+    fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.9), sharey=True)
+    top = 1.08 * max(max(r) for curves in panels.values() for _, r in curves.values())
+    for ax, (title, curves) in zip(axes, panels.items()):
+        ax.axhspan(0, 1, color='0.93', zorder=0)
+        ax.axhline(1.0, color='0.55', lw=0.9, zorder=1)
+        ax.axvline(100, color='black', lw=0.9, ls=(0, (2, 2)), zorder=1)
+        ax.text(100, top, 'calibrated ', ha='right', va='top', fontsize=8)
+        ax.text(4, 0.5, 'users poorer than average', ha='left', va='center', fontsize=8, color='0.45')
+        for which in ('mortality', 'unemployment'):
+            sc, r = curves[which]
+            ax.plot(100 * sc, r, color=col[which], label=lab[which], zorder=3)
+            i1 = int(np.argmin(np.abs(sc - 1.0)))
+            ax.plot([100], [r[i1]], 'o', ms=5, color=col[which], zorder=4)
+            ax.annotate(f'{r[-1]:.2f}', xy=(100 * sc[-1], r[-1]), xytext=(5, 0), textcoords='offset points',
+                        fontsize=8, color=col[which], va='center')
+        r0 = curves['mortality'][1][0]
+        ax.annotate(f'{r0:.2f}', xy=(0, r0), xytext=(4, 5), textcoords='offset points', fontsize=8)
+        ax.set_title(title, fontsize=10)
+        ax.set_xlim(0, 100 * SCAN_HI + 16)
+        ax.set_ylim(0, top)
+        ax.set_xticks(np.arange(0, 100 * SCAN_HI + 1, 50))
+        ax.set_xlabel('Strength of the channel, percent of calibrated')
+    axes[0].set_ylabel('Mean income of users / population mean')
+    axes[0].legend(loc='upper right', bbox_to_anchor=(1.0, 0.93), fontsize=8.5)
     fig.tight_layout()
     for ext in ('.pdf', '.png'):
         fig.savefig(os.path.join(FIGURES, 'stylized_who_uses' + ext), bbox_inches='tight')
@@ -440,30 +511,27 @@ def _cross(sc, r):
     return sc[k - 1] + (1.0 - r[k - 1]) * (sc[k] - sc[k - 1]) / (r[k] - r[k - 1])
 
 
-def numbers(q, m, curves):
+def numbers(q, m, panels):
     dist = m['dist']
-    (ylo, yhi), = m['intervals']
-    at = lambda which, x: curves[which][1][int(np.argmin(np.abs(curves[which][0] - x)))]
-    cm, cu, cb = (_cross(*curves[w]) for w in ('mortality', 'unemployment', 'both'))
     d = dict(
         g_beta=tn(q['beta']), g_beta_ann=f'{q["beta"] ** (1 / q["years"]):.3f}', g_sigma=f'{q["sigma"]:.0f}',
         g_phi0=tn(q['phibar']), g_pid=tn(q['pi_d']), g_t_sud=tn(100 * SUD_RATE), g_t_part=tn(100 * TARGET['part']),
         g_t_bot50=f'{100 * BOT50_TARGET:.1f}', g_sigy=tn(q['sig_y']), g_yfloor=tn(q['y_min']),
-        g_u0_pc=f'{100 * q["u0"]:.1f}', g_u1_pc=f'{100 * q["u1"]:.1f}',
+        g_bot50_model=f'{100 * m["bot50"]:.1f}',
         g_t_vsl=f'{TARGET["vsl"]:.0f}', g_vsl_musd=f'{TARGET["vsl"] * MEAN_HH_INCOME_USD / 1e6:.1f}',
         g_mean_hh_usd=f'{MEAN_HH_INCOME_USD:,.0f}', g_t_dshare=f'{100 * TARGET["dshare"]:.1f}',
         g_t_ruse=tn(TARGET['r_use']),
         g_aleph=tn(q['aleph']), g_b=f'{q["b"]:.3f}', g_theta=tn(q['theta']), g_kappa=tn(q['kappa']),
-        g_ysg=tn(y_sg(q)), g_pct_sg=f'{100 * float(dist.F(y_sg(q))):.0f}',
-        g_r_none=tn(curves['mortality'][1][0]),
-        g_rm_cal=tn(at('mortality', 1.0)), g_rm_hi=tn(at('mortality', SCAN_HI)),
-        g_ru_cal=tn(at('unemployment', 1.0)), g_ru_hi=tn(at('unemployment', SCAN_HI)),
         g_scanhi_pc=f'{100 * SCAN_HI:.0f}',
-        g_cross_m_pc=f'{100 * cm:.0f}' if cm is not None else '',
-        g_cross_u_pc=f'{100 * cu:.0f}' if cu is not None else '',
-        g_cross_b_pc=f'{100 * cb:.0f}' if cb is not None else '',
-        g_rb_cal=tn(at('both', 1.0)), g_rb_hi=tn(at('both', SCAN_HI)),
     )
+    for tag, curves in zip(('', '_ns'), panels.values()):
+        at = lambda which, x: curves[which][1][int(np.argmin(np.abs(curves[which][0] - x)))]
+        cm, cu = _cross(*curves['mortality']), _cross(*curves['unemployment'])
+        d.update({f'g_r_none{tag}': tn(curves['mortality'][1][0]),
+                  f'g_rm_cal{tag}': tn(at('mortality', 1.0)), f'g_rm_hi{tag}': tn(at('mortality', SCAN_HI)),
+                  f'g_ru_cal{tag}': tn(at('unemployment', 1.0)), f'g_ru_hi{tag}': tn(at('unemployment', SCAN_HI)),
+                  f'g_cross_m_pc{tag}': f'{100 * cm:.0f}' if cm is not None else '',
+                  f'g_cross_u_pc{tag}': f'{100 * cu:.0f}' if cu is not None else ''})
     json.dump(d, open(os.path.join(HERE, 'gradient_numbers.json'), 'w'), indent=1, sort_keys=True)
     return d
 
@@ -476,16 +544,20 @@ def main():
                                      for k in FREE))
     for k in FREE:
         assert abs(m[MOMENT_OF[k]] / TARGET[MOMENT_OF[k]] - 1.0) < 1e-6, k
-    assert len(m['intervals']) == 1 and W2(q['y_min'], q) > 0
-    print(f'  bound {q["y_min"]}: {100 * m["cut_share"]:.1f} per cent of the lognormal cut; being alive worth '
-          f'nothing at {y_zero(q):.3f}; users {m["intervals"]}, y_sg {y_sg(q):.3f}')
+    assert float(V1(q['y_min'], q)[0]) > 0
+    print(f'  bound {q["y_min"]}: {100 * m["cut_share"]:.1f} per cent of the lognormal cut, its bottom half holds '
+          f'{100 * m["bot50"]:.1f} per cent; users {m["intervals"]}; period-1 value at the bottom '
+          f'{float(V1(q["y_min"], q)[0]):.3f}')
     json.dump({k: q[k] for k in q}, open(os.path.join(HERE, 'gradient.json'), 'w'), indent=1)
-    curves = {w: scan(q, w) for w in ('mortality', 'unemployment', 'both')}
-    for w, (sc, r) in curves.items():
-        print(f'  {w:12s}', ' '.join(f'{x:.2f}' for x in r[::4]))
+    panels = {}
+    for title, save in (('With saving (the model)', True), ('Saving switched off', False)):
+        g = {**q, 'save': save}
+        panels[title] = {w: scan(g, w) for w in ('mortality', 'unemployment')}
+        for w, (sc, r) in panels[title].items():
+            print(f'  {title[:12]:12s} {w:12s}', ' '.join(f'{x:.2f}' for x in r[::8]), flush=True)
     write_tables(q, m)
-    draw(curves)
-    d = numbers(q, m, curves)
+    draw(panels)
+    d = numbers(q, m, panels)
     for k, v in sorted(d.items()):
         print(f'  {k} = {v}')
 
