@@ -1,5 +1,8 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 03:05 ALL RED REMOVED (the author: "remove all red"). strip_red.py on the source (no table carried red); numbers refilled
+against base_r223b = the current jsons, so none prints red; check_red 0 edits. The next round's baseline is this commit.
+
 08 Oct 02:45 ROUND r223 (the author's PDF 7b70a1c6, 12 comments; "remove all red and put updates in red"). ALL RED STRIPPED
 (source and the regenerated stylized tables); tables frozen; base_r223 = d188d91e (the r222 PDF) + splice_r223. In red:
 'lived'/'was' in the two-person comparison (intro, Sections 2 and 3); 'but only by a small margin' (the author's 'big' ->
