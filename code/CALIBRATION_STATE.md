@@ -4606,3 +4606,22 @@ b 0.057, theta 0.22, kappa_phi_d 2.46.
   between 1.15 and 1.3 is a second band opening at the bottom, where unemployment takes nothing.
 - The introduction and the literature review said the mortality channel alone reverses the gradient; both
   now say the risks of dying and of losing one's job (red, flagged to the author).
+
+### 8 October, evening: the stylized model with saving and food assistance (round r235, in the paper)
+
+The author: no housing, no UI, "focus on savings", food assistance so the model "without UI and no savings" can
+be shown too, u1 from the data since there is no homelessness to fit it to. gradient.py: two periods,
+everyone works in period 1 and can save at zero interest; out of work in period 2 a household lives on its
+savings and food assistance F(e) = max(0, cbar - 0.30 e). Fitted exactly: aleph 8.64 (VSL 80), b 0.032
+(participation 8.90, solved inside), theta 0.22 (spending 16.0), kappa 3.56 (users' income 0.74), cbar 0.098
+(food assistance 0.42 per cent of labour income). b must hold participation and kappa the users' income:
+the other pairing ran kappa to its bound (with food assistance the poorest keep using at any mortality).
+
+Figure 1, each channel 0-200 per cent with the other off, b refit, participation held at the calibrated
+model's in both panels: with saving, mortality alone 0.64 at its calibrated strength, 0.27 at twice it
+(crosses the mean at 73); unemployment alone 3.51 throughout (does nothing). Saving switched off: mortality
+0.71, unemployment 0.75 at their calibrated strengths, both 0.27 at twice. The old stage-1 model (housing,
+UI, food assistance, vouchers) with saving off: unemployment alone 3.64 at 100, 0.56 at 200 (with saving it
+was 3.54 throughout) -- oldmodel_nosave.py.
+
+The container pauses background jobs between turns: long runs go in the foreground.

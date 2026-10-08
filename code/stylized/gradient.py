@@ -443,7 +443,9 @@ def scan(q, which, n=41):
     the users are everyone above y_sg and b follows in closed form; the walk goes up from there, each refit
     starting next to its neighbour's.  Every point is checked: the value of being alive positive at the
     bottom, and participation held."""
-    ref = moments(q)['part']
+    # PARTICIPATION IS HELD AT THE CALIBRATED MODEL'S, with saving, in both panels: with saving switched off at the
+    # calibrated parameters nobody uses at all, so that economy has no participation of its own to hold.
+    ref = moments({**q, 'save': True})['part']
     sc = np.linspace(0.0, SCAN_HI, n)
     g = channel(q, which, 0.0)
     ysg = Dist(g['sig_y'], g['y_min']).quantile(1.0 - ref)
