@@ -1,0 +1,127 @@
+  warm start, omega_c from the floor-era stage 2: aleph=11.253, b=0.053896, th=0.18535, omega=0.0021804, u1=0.099755, kap=0.10959
+  resumed stage 2 from calibrated_stage2.json, iteration 50
+STAGE 2: 11 parameters live: aleph, gam, h1, b, u0, omega, kap, th, cbar; held: u1, delta_d
+  set: xi=1.4142, omega=0.0024925, delta_d=0.27444, beta=0.86038, R=1, y_floor=0, u1=0.10026, h2=0.1, h3=0.4, rho=0.5, pV=0.266, kappa_r=0.3, pi_base=0.41348
+/home/user/housing_first_or_treatment_first/code/stylized/transition.py:573: SyntaxWarning: invalid escape sequence '\%'
+  (axes[0], 1, '(a) Newborn welfare', 'consumption equivalent (\%)'),
+/home/user/housing_first_or_treatment_first/code/stylized/transition.py:574: SyntaxWarning: invalid escape sequence '\%'
+  (axes[1], 3, '(b) Homelessness', 'rate (\%)'),
+/home/user/housing_first_or_treatment_first/code/stylized/transition.py:575: SyntaxWarning: invalid escape sequence '\%'
+  (axes[2], 4, '(c) Share with a SUD', 'rate (\%)')):
+/home/user/housing_first_or_treatment_first/code/stylized/tablered.py:21: SyntaxWarning: invalid escape sequence '\%'
+  number when it holds no letters beyond a unit suffix, which leaves 16.2\%,
+
+  ITERATION 0
+  param          value  moment                   model   target   gap %
+  ----------------------------------------------------------------------
+  aleph       13.35302  vsl                    80.0008  80.0000     0.0
+  gam          0.40053  hspend                  0.2673   0.2680    -0.3
+  h1           0.04074  homeless                0.0062   0.0060     3.1
+  b            0.05252  part                    0.0898   0.0890     0.9
+  u0           0.04651  unemployment            0.0485   0.0485     0.0
+  u1           0.10026  sud_of_homeless2        0.2253   0.2170     3.8
+  omega        0.00249  child_gap               0.1925   0.1748    10.1
+  delta_d      0.27444  child_sud_or            0.9419   2.0000   -52.9
+  kap          0.11548  r_use                   0.7532   0.7400     1.8  smr 2.67
+  th           0.17943  dshare                  0.1583   0.1600    -1.0
+  cbar         0.10448  fshare                  0.0042   0.0042     0.0
+  ----------------------------------------------------------------------
+  worst 52.9 %   median 1.0 %   9 of 11 inside ten
+  OUTPUT  users income/mean 0.7532  drug share 0.1583  networth 0.755  SUD of homeless 0.2253  burden50 0.1435
+  FLOOR   y_floor 0.0000   negative value of life 0.00 %   lowest V 5.40
+  PENALTY delta_d 0.2744 in log income, which is a child income cut of 24.0 per cent
+  ODDS    child homeless 1.230   child SUD 0.942  at delta_d 0.27   (both reported only)
+  LIVE    worst 10.14 %  over aleph, gam, h1, b, u0, omega, kap, th, cbar
+
+  ITERATION 25
+  param          value  moment                   model   target   gap %
+  ----------------------------------------------------------------------
+  aleph       13.35122  vsl                    80.0023  80.0000     0.0
+  gam          0.40053  hspend                  0.2687   0.2680     0.3
+  h1           0.04072  homeless                0.0059   0.0060    -0.9
+  b            0.05260  part                    0.0897   0.0890     0.8
+  u0           0.04651  unemployment            0.0485   0.0485     0.0
+  u1           0.10026  sud_of_homeless2        0.2256   0.2170     4.0
+  omega        0.00237  child_gap               0.1841   0.1748     5.3
+  delta_d      0.27444  child_sud_or            0.9419   2.0000   -52.9
+  kap          0.11561  r_use                   0.7581   0.7400     2.4  smr 2.68
+  th           0.17959  dshare                  0.1586   0.1600    -0.9
+  cbar         0.10446  fshare                  0.0042   0.0042    -0.1
+  ----------------------------------------------------------------------
+  worst 52.9 %   median 0.9 %   10 of 11 inside ten
+  OUTPUT  users income/mean 0.7581  drug share 0.1586  networth 0.765  SUD of homeless 0.2256  burden50 0.1438
+  FLOOR   y_floor 0.0000   negative value of life 0.00 %   lowest V 5.39
+  PENALTY delta_d 0.2744 in log income, which is a child income cut of 24.0 per cent
+  ODDS    child homeless 1.233   child SUD 0.942  at delta_d 0.27   (both reported only)
+  LIVE    worst 5.31 %  over aleph, gam, h1, b, u0, omega, kap, th, cbar
+
+  ITERATION 50
+  param          value  moment                   model   target   gap %
+  ----------------------------------------------------------------------
+  aleph       13.34904  vsl                    79.9986  80.0000    -0.0
+  gam          0.40053  hspend                  0.2673   0.2680    -0.3
+  h1           0.04074  homeless                0.0062   0.0060     3.0
+  b            0.05265  part                    0.0891   0.0890     0.0
+  u0           0.04651  unemployment            0.0485   0.0485    -0.0
+  u1           0.10026  sud_of_homeless2        0.2245   0.2170     3.4
+  omega        0.00223  child_gap               0.1816   0.1748     3.9
+  delta_d      0.27444  child_sud_or            0.9419   2.0000   -52.9
+  kap          0.11571  r_use                   0.7431   0.7400     0.4  smr 2.68
+  th           0.17970  dshare                  0.1587   0.1600    -0.8
+  cbar         0.10447  fshare                  0.0042   0.0042    -0.1
+  ----------------------------------------------------------------------
+  worst 52.9 %   median 0.4 %   10 of 11 inside ten
+  OUTPUT  users income/mean 0.7431  drug share 0.1587  networth 0.754  SUD of homeless 0.2245  burden50 0.1436
+  FLOOR   y_floor 0.0000   negative value of life 0.00 %   lowest V 5.39
+  PENALTY delta_d 0.2744 in log income, which is a child income cut of 24.0 per cent
+  ODDS    child homeless 1.230   child SUD 0.942  at delta_d 0.27   (both reported only)
+  LIVE    worst 3.90 %  over aleph, gam, h1, b, u0, omega, kap, th, cbar
+
+  ITERATION 75
+  param          value  moment                   model   target   gap %
+  ----------------------------------------------------------------------
+  aleph       13.34895  vsl                    79.9983  80.0000    -0.0
+  gam          0.40053  hspend                  0.2674   0.2680    -0.2
+  h1           0.04074  homeless                0.0062   0.0060     3.1
+  b            0.05267  part                    0.0900   0.0890     1.1
+  u0           0.04651  unemployment            0.0485   0.0485     0.0
+  u1           0.10026  sud_of_homeless2        0.2248   0.2170     3.6
+  omega        0.00216  child_gap               0.1701   0.1748    -2.7
+  delta_d      0.27444  child_sud_or            0.9419   2.0000   -52.9
+  kap          0.11580  r_use                   0.7627   0.7400     3.1  smr 2.68
+  th           0.17978  dshare                  0.1599   0.1600    -0.1
+  cbar         0.10447  fshare                  0.0042   0.0042     0.0
+  ----------------------------------------------------------------------
+  worst 52.9 %   median 1.1 %   10 of 11 inside ten
+  OUTPUT  users income/mean 0.7627  drug share 0.1599  networth 0.756  SUD of homeless 0.2248  burden50 0.1436
+  FLOOR   y_floor 0.0000   negative value of life 0.00 %   lowest V 5.39
+  PENALTY delta_d 0.2744 in log income, which is a child income cut of 24.0 per cent
+  ODDS    child homeless 1.230   child SUD 0.942  at delta_d 0.27   (both reported only)
+  LIVE    worst 3.06 %  over aleph, gam, h1, b, u0, omega, kap, th, cbar
+
+  ITERATION 100
+  param          value  moment                   model   target   gap %
+  ----------------------------------------------------------------------
+  aleph       13.34938  vsl                    80.0038  80.0000     0.0
+  gam          0.40054  hspend                  0.2673   0.2680    -0.3
+  h1           0.04074  homeless                0.0062   0.0060     3.0
+  b            0.05271  part                    0.0892   0.0890     0.2
+  u0           0.04651  unemployment            0.0485   0.0485    -0.0
+  u1           0.10026  sud_of_homeless2        0.2248   0.2170     3.6
+  omega        0.00218  child_gap               0.1778   0.1748     1.7
+  delta_d      0.27444  child_sud_or            0.9419   2.0000   -52.9
+  kap          0.11590  r_use                   0.7405   0.7400     0.1  smr 2.68
+  th           0.17989  dshare                  0.1585   0.1600    -0.9
+  cbar         0.10448  fshare                  0.0042   0.0042    -0.1
+  ----------------------------------------------------------------------
+  worst 52.9 %   median 0.3 %   10 of 11 inside ten
+  OUTPUT  users income/mean 0.7405  drug share 0.1585  networth 0.753  SUD of homeless 0.2248  burden50 0.1436
+  FLOOR   y_floor 0.0000   negative value of life 0.00 %   lowest V 5.39
+  PENALTY delta_d 0.2744 in log income, which is a child income cut of 24.0 per cent
+  ODDS    child homeless 1.230   child SUD 0.942  at delta_d 0.27   (both reported only)
+  LIVE    worst 1.73 %  over aleph, gam, h1, b, u0, omega, kap, th, cbar
+
+  every gap inside 2.0 per cent at iteration 100, stopping
+
+STAGE 2 EXIT: iteration 100, worst gap 1.73 per cent, written to calibrated_stage2.json
+cloud_run: exit code 0 at 02:54
