@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 00:14 THE RESTARTS ARE THE SESSION GOING IDLE, NOT THE RUN. A fourth kill at about 00:12 (monitor's last line 00:09,
+RSS 6.8 GB, 8.8 GB free, load 2.9 at OMP 3 nice 19). Every restart since 23:23 came while the session sat idle between
+turns and was found as the next engine firing woke it (23:32, 23:41, 00:02, 00:12): with no background task running the
+container is reclaimed when idle. Until 22:59 background watchers (the fertility and reproduction watchers) kept it
+alive; the earlier one-off restarts (5-7 Oct) fit gaps in watchers too. THE RULE: a detached long run needs a
+run_in_background watcher in the session for its whole life (max 2 h each, re-armed when it reports). RELAUNCHED 00:12
+at OMP 4, nice 10 (log run.log.killed.202610080012, state to restart_r4e_crash_202610080012/; seeds = loop 0_r3's, cmp
+identical; 100 HANDOVER lines; both seeds 59 of 59; wrapper in tr2c_worker.main.pid), with watcher bwmtgys4x (lapses
+about 02:07; re-arm it). The CPU-starvation reading of 00:04 was wrong.
+
 08 Oct 00:04 T = 60 KILLED BY A THIRD CONTAINER RESTART IN 30 MINUTES (about 00:02). The monitor's last line is 23:57:14
 (RSS 6.8 GB, 8.8 GB available, disk unchanged), then nothing until the restart about five minutes later: the container
 froze with memory to spare. Likely cause: the run at OMP 4 on 4 cores starves the session's own processes, its
