@@ -1,5 +1,13 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 03:15 T = 60 STOPPED BY THE AUTHOR ("you can stop the transition i think since we will need to redo all the TF
+experiments"): process group 473 killed at period 21 of loop 0_r4, no paths saved; run.log kept as run.log.stopped.*, a
+STOPPED_BY_AUTHOR file in /home/user/e2_run/code/tr2c_t60. STYLIZED STAGE 2 AT THE PAST-YEAR TARGET landed (stage2_past_year_
+oct08_cloud.log, stylized_results_oct08c.log, exit 0): iteration 100, worst 1.7, child gap 17.78 against 17.48,
+participation 8.92 calibrated and at the Housing First rest point; Section 3 filled, moved numbers red. Intro: the custody
+sentence (the author: "draft that sentence in red"). Deterrence v3 (holders, permanent ban, six-point grid) running in
+session_01Y9VyRvyGZxrX9dsCjqFx5K; the first two deterrence sessions were archived when the design changed.
+
 08 Oct 02:55 THREE CLOUD RUNS FOR THE REVIEW, AND omega_c ON PAST-YEAR USE. (1) The author: "use the past year use....17.5%
 that is good enough", "and it's exact too": child_use_gap_data 0.1748 (Fortran), CHILD_GAP_TARGET 0.1748 (stylized), the
 lone-parent script's identifying moment on ILLYR; Table 4 reads 17.5 against the model's 17.7, omega_c 0.085 unchanged; the
