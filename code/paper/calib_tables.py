@@ -288,7 +288,7 @@ STANDARD = [
          f(H['relative_share_of_housing'], 3)),
         (r'$\beta$', 'Discount factor', setcol('beta'), 'Wealth over output, BEA fixed assets',
          f(C['wealth_to_output_data']), f(mom('beta wealth over output')), f(H['discount_factor'], 3)),
-        (r'$\xi_j$', 'Equivalence scale', 'Ext.', 'Square-root scale, OECD',
+        (r'$\xi(j)$', 'Equivalence scale', 'Ext.', 'Square-root scale, OECD',
          f(math.sqrt(2)), NA, f(math.sqrt(2))),
     ]),
     ('Rental ladder', [
@@ -341,7 +341,7 @@ STANDARD = [
          f(C['probability_of_ui']), NA, f(C['probability_of_ui'])),
     ]),
     ('Baseline survival and SMI onset', [
-        (r'$\bar\phi_j$', 'Baseline survival by age', 'Ext.', 'US life table 2010, Arias (2014)',
+        (r'$\bar\phi(j)$', 'Baseline survival by age', 'Ext.', 'US life table 2010, Arias (2014)',
          'Profile', NA, 'Profile'),
         (r'$\varsigma_m(j)$', 'Age profile of SMI onset', 'Ext.', 'SMI prevalence by age, NSDUH 2024',
          'Profile', NA, 'Profile'),
