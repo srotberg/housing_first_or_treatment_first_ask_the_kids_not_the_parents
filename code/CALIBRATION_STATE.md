@@ -1,5 +1,18 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 02:50 CHATGPT REVIEW (v2), FIRST STEPS. (a) The standard parameters (old Section 5.2, Blocks 7-13, tab_standard)
+moved to Appendix A before the references, tables there numbered A1 (the author: "move the standard parameters to the
+appendix ... with their table"); the three pointers read 'Appendix' in red; CLAUDE.md updated. (b) Print-only DIAG line in
+the Fortran, 'DIAG use by voucher state' (users over mass for none/holding/excluded and among the income-eligible), for
+calibrating the detection rate to Mehay and Pacula's deterrence among the tested at held prices; syntax-checked, not yet
+run. (c) Definition of use (review P0-5; the author: "ok check it"): the model's participation target is NSDUH's any drug
+use disorder (svyrdudany 1-3), while omega_c's 19.5 is past-month use. On the identifying cells (marit + family income,
+lone parents reweighted) the gap is +19.5 past month, +17.5 past year, +59.3 on UD5ILLANY (any illicit drug use disorder;
+76 lone parents with one); simple bootstrap 90 per cent bands -8 to 64, -3 to 40, 4 to 149 (scratchpad lp_check.py,
+lp_boot.py). Not applied: the author decides. (d) Runs agreed, not yet launched: no externalities with price and pi_V
+clearing (needs arm A re-solved, the walk and analyse.py; the old arm dirs are gone), and detection matched to 16 per
+cent deterrence among holders at held prices, then Treatment First at that detection with both clearing.
+
 08 Oct 03:05 ALL RED REMOVED (the author: "remove all red"). strip_red.py on the source (no table carried red); numbers refilled
 against base_r223b = the current jsons, so none prints red; check_red 0 edits. The next round's baseline is this commit.
 

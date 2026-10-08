@@ -8398,6 +8398,12 @@
         ! one, and both explanations tested for that were rejected by their own
         ! predictions.
         real(8), dimension(0:2) :: model_mass_by_voucher_state=0
+        ! DRUG USE BY VOUCHER STATE AND AMONG THE INCOME-ELIGIBLE, print-only (8 October; the author: set the
+        ! detection rate so the screen cuts use as much as the military's random testing did, Mehay and Pacula
+        ! 1999, which is measured among the tested). Users are the guard on model_mass_total_users; the
+        ! eligible are those counted in model_eligibles. Nothing reads these but the DIAG line.
+        real(8), dimension(0:2) :: diag_users_by_voucher_state=0
+        real(8) :: diag_users_eligible=0, diag_mass_eligible=0
         ! WHICH CONJUNCT OF THE VOUCHER GATE FAILS. The gate at 18714 is
         ! years_left_on_mortgage_index==1 .AND. amortization_used==1 .AND.
         ! voucher_index==1. The census says voucher_index==1 holds 3.5204 of
@@ -11203,6 +11209,12 @@
             write(*,*) "DIAG voucher-state mass: none=", model_mass_by_voucher_state(0), &
                 " holding=", model_mass_by_voucher_state(1), &
                 " excluded=", model_mass_by_voucher_state(2)
+            write(*,*) "DIAG use by voucher state: none=", &
+                diag_users_by_voucher_state(0)/max(model_mass_by_voucher_state(0),10.d0**(-14)), &
+                " holding=", diag_users_by_voucher_state(1)/max(model_mass_by_voucher_state(1),10.d0**(-14)), &
+                " excluded=", diag_users_by_voucher_state(2)/max(model_mass_by_voucher_state(2),10.d0**(-14)), &
+                " eligible=", diag_users_eligible/max(diag_mass_eligible,10.d0**(-14)), &
+                " eligible mass=", diag_mass_eligible
             ! AGGREGATE FOOD STAMP SPENDING IS A CHECK NOW, NOT A TARGET.
             ! SNAP is implemented as the programme runs -- allotment by
             ! household size, gross income eligibility at 130 per cent of the
@@ -18490,6 +18502,9 @@
         ! predictions. This says directly whether the bar traps a large group
         ! with nothing left to lose or barely binds at all.
         if (accumulating_beta_types==0) model_mass_by_voucher_state=0
+        if (accumulating_beta_types==0) diag_users_by_voucher_state=0
+        if (accumulating_beta_types==0) diag_users_eligible=0
+        if (accumulating_beta_types==0) diag_mass_eligible=0
         if (accumulating_beta_types==0) diag_amort_mass=0
         if (accumulating_beta_types==0) diag_inc_mass=0
         if (accumulating_beta_types==0) diag_inc_pass=0
@@ -19036,6 +19051,9 @@
                                         if ((amortization_used==1) .AND. (years_left_on_mortgage_index==1)) then
 
                                             model_eligibles(time_period)=model_eligibles(time_period)+distribution_mass_used
+                                            diag_mass_eligible=diag_mass_eligible+distribution_mass_used
+                                            if (((addiction_consumption_1>0) .AND. (unemployment_index<=threshold_addiction_index)) .OR. &
+                                                (unemployment_index>threshold_addiction_index)) diag_users_eligible=diag_users_eligible+distribution_mass_used
 
                                             ! WHO IS TESTED, COUNTED RATHER THAN INFERRED FROM A RATE.
                                             !
@@ -19191,6 +19209,9 @@
                                     ! model_mass_total_users.
                                     if (((addiction_consumption_1>0) .AND. (unemployment_index<=threshold_addiction_index)) .OR. &
                                         (unemployment_index>threshold_addiction_index)) then
+
+                                        diag_users_by_voucher_state(min(max(voucher_index,0),2))=&
+                                            diag_users_by_voucher_state(min(max(voucher_index,0),2))+distribution_mass_used
                                     
                                         ! INCOME INCLUDING INTEREST, TO MATCH THE DENOMINATOR. These ratios divide by
                                         ! model_average_income, which adds r*max(a,0) unconditionally, while the
