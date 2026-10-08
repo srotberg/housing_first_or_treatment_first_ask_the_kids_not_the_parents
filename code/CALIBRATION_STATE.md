@@ -1,5 +1,17 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 02:55 THREE CLOUD RUNS FOR THE REVIEW, AND omega_c ON PAST-YEAR USE. (1) The author: "use the past year use....17.5%
+that is good enough", "and it's exact too": child_use_gap_data 0.1748 (Fortran), CHILD_GAP_TARGET 0.1748 (stylized), the
+lone-parent script's identifying moment on ILLYR; Table 4 reads 17.5 against the model's 17.7, omega_c 0.085 unchanged; the
+paper says 'in the past year' in red (commit 68934280). Stylized stage 2 refit at 17.48 + results chain:
+session_01Sh3uhEDyg1dbY9zT6EwyUu (logs stage2_past_year_oct08_cloud.log, stylized_results_oct08c.log). (2) Deterrence
+(the author: "use the benchmark distribution of HF and then check how many respond to it", matched to Mehay and Pacula's
+16 per cent): code/deter_2c/run_deter.sh in session_01RzbHwcXitUettbVKtByx7L -> results/deter_2c. Impact build
+cf_fix2_impact (fixed_to_benchmark_dis 1), users among the tested (holders + non-holders at the offer rate), detection
+0.85/0.20/0.05, interpolated rate, then Treatment First at it with price and pi_V clearing. (3) No externalities with the
+savings recycled: code/noext_clear/run_noext_clear.sh in session_01H3kYRVhHP6chVQVhga77V5 -> results/noext_clear (arm A
+re-solved, arm C clearing against arm A's 6.3830441, walk, analyse.py). Also: the standard parameters are Appendix A.
+
 08 Oct 02:50 CHATGPT REVIEW (v2), FIRST STEPS. (a) The standard parameters (old Section 5.2, Blocks 7-13, tab_standard)
 moved to Appendix A before the references, tables there numbered A1 (the author: "move the standard parameters to the
 appendix ... with their table"); the three pointers read 'Appendix' in red; CLAUDE.md updated. (b) Print-only DIAG line in
