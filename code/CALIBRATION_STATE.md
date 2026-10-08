@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 00:04 T = 60 KILLED BY A THIRD CONTAINER RESTART IN 30 MINUTES (about 00:02). The monitor's last line is 23:57:14
+(RSS 6.8 GB, 8.8 GB available, disk unchanged), then nothing until the restart about five minutes later: the container
+froze with memory to spare. Likely cause: the run at OMP 4 on 4 cores starves the session's own processes, its
+connections time out (the github MCP server dropped and reconnected at the same times) and the platform recycles the
+container. RELAUNCHED 00:02 at OMP_NUM_THREADS=3 and nice 19, leaving a core free (log run.log.killed.202610080002,
+state and the old monitor log to restart_r4d_crash_202610080002/; seeds = loop 0_r3's paths, cmp identical; 100
+HANDOVER lines; both seeds 59 of 59; pid in tr2c_worker.main.pid; monitor every 15 s with load in memwatch.log).
+About a quarter slower per year; if the restarts stop, this was the cause.
+
 07 Oct 23:52 T = 60 KILLED BY ANOTHER CONTAINER RESTART (about 23:41), RELAUNCHED 23:42 (log run.log.killed.202610072342,
 state to restart_r4c_crash_202610072342/; wrapper pid in tr2c_worker.main.pid). Both killed logs ended at the same byte
 (132890, age 19 of the first backward period), which looked like the run triggering the restarts, so this launch runs with
