@@ -8,6 +8,9 @@ work?", NBER Working Paper 7383 (the author's copy, 8 October). Any illicit drug
   4 is their 30-day difference in differences "about 4 percentage points (10.12 - 14.97 = -4.85)" (p. 15).
   NLSY, past-year marijuana, those who stayed in the military 1980-84: 48.5 -> 13.2; stayed civilian: 45.8 -> 32.0
   (Table 6, p. 30).
+  Navy and Marine Corps commanders had to test 10 to 20 percent of their commands monthly (p. 6). Past-year drug
+  participation, 1984 NLSY, partial effects in points by branch (Table 8, p. 32): Army 11.1, Navy 25.5, Marine Corps
+  16.0, Air Force 25.2; the Army tested less and let junior enlisted keep their careers after a first positive test.
 Viscusi, W. K. and J. E. Aldy (2003), J. Risk and Uncertainty 27(1): income elasticity of the value of a statistical life
   about 0.5 to 0.6 (cross-section). Costa, D. L. and M. E. Kahn (2004), J. Risk and Uncertainty 29(2), "Changes in the
   value of life, 1940-1980": 1.5 to 1.7 (over time).
@@ -19,6 +22,7 @@ mp = dict(mp_mil_py95_pc=6.5, mp_civ_py95_pc=14.7, mp_mil_py80_pc=35.7, mp_civ_p
 # the stayers' relative fall net of the civilian trend: 1 - (13.2/48.5)/(32.0/45.8)
 mp['mp_stay_rel_pc'] = round(100 * (1 - (mp['mp_stay_mil84_pc'] / mp['mp_stay_mil80_pc']) /
                                     (mp['mp_stay_civ84_pc'] / mp['mp_stay_civ80_pc'])))
+mp.update(mp_test_lo=10, mp_test_hi=20, mp_army_pp=11.1, mp_navy_pp=25.5, mp_af_pp=25.2)
 mp.update(va_el_lo=0.5, va_el_hi=0.6, ck_el_lo=1.5, ck_el_hi=1.7)
 out = {k: (f'{v:.1f}' if isinstance(v, float) else f'{v}') for k, v in mp.items()}
 json.dump(out, open(OUT, 'w'), indent=1, sort_keys=True)

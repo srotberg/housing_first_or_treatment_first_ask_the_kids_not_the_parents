@@ -74,6 +74,9 @@
 \definecolor{whygreen}{rgb}{0,0.45,0.2}
 \newcommand{\why}[1]{\phantomsection\addcontentsline{why}{subsection}{#1}%
   {\color{whygreen}\footnotesize[Why: #1]}}
+% \green{...}: text the author asked to keep in green (8 October, on the custody sentence: "keep in green").
+% Not a red mark, so strip_red.py leaves it; it stays green until the author says otherwise.
+\newcommand{\green}[1]{{\color{whygreen}#1}}
 \makeatletter
 \newcommand{\listofwhys}{\ifshowupdates\par\noindent{\color{whygreen}\textbf{Notes on this round's changes}}\par
   {\small\@starttoc{why}}\fi}
@@ -216,7 +219,7 @@ hyperbolic discounting at the moment they decide whether to start using drugs. A
 they account for the true hazard of acquiring a SUD when
 they make that decision, as the evidence suggests (Lundborg and Lindgren, 2002; van Ours, 1995; Grossman
 and Chaloupka, 1998; Saffer and Chaloupka, 1999; Caulkins, 2001; Gallet, 2014;
-Greenwood et al., 2025). Then, \new{at given prices and a given budget}, Housing First weakly dominates Treatment First for every household, because conditionality removes an option from an optimiser and gives it nothing back.
+Greenwood et al., 2025). Then, at given prices and a given budget, Housing First weakly dominates Treatment First for every household, because conditionality removes an option from an optimiser and gives it nothing back.
 
 The case for Treatment First therefore has to rest on what drug use costs somebody other than the user, and this paper focuses on four such costs, externalities that randomised trials have not resolved: two that Housing First leaves in place and two that Treatment
 First creates.
@@ -240,12 +243,12 @@ population that is homeless, capturing in a reduced-form way the idea that it is
 less safe and pleasant to live in a place with more homelessness.
 
 In the model I design, a parent takes the budget, earnings and childhood homelessness externalities into account only through their imperfect altruism towards their child, and homeless households do not internalise at all the cost their homelessness imposes on everyone else. How much weight a parent puts on their child is calibrated to the difference in drug use between households with and without a child in the data. In the 2024 National Survey on Drug Use and Health
-(NSDUH), an unmarried adult who lived with one other adult and no child was \new{$17.5$} percent more likely to have used drugs in the \new{past year} than a lone parent who lived with one child, both unmarried and of the same age, sex and family income. Both households have two members and the same income per person, so the
+(NSDUH), an unmarried adult who lived with one other adult and no child was $17.5$ percent more likely to have used drugs in the past year than a lone parent who lived with one child, both unmarried and of the same age, sex and family income. Both households have two members and the same income per person, so the
 weight is set so that removing a parent's concern for their child, with the household otherwise unchanged, raises the share who use drugs
 in the model by about that much. The part of the child's loss a parent does internalise is
 thus pinned down by observed behaviour.
 
-In the model, every household raises a child. This is close to the data, for drug users as for others: in the National Survey of Family Growth 2017--2019, $80$ percent of Americans in their forties have had a child, and so have $75$ percent of those who used hard drugs in the past year, against $81$ percent of those who used none. Users are somewhat less likely to live with their child, but only by a small margin: $40$ percent of adults aged 26 to 49 with a drug use disorder have a child under 18 at home, against $48$ percent of adults of the same age, sex, income and marital status who used no illicit drug in the past year. The gap is too small to reverse the results: users are $18$ percent less likely than comparable adults to have a child at home, and $57$ percent of the gain from Treatment First comes in childhood, so even if all of that part shrank in proportion, the gain would be only $10$ percent smaller. \new{The model does overstate one thing: every homeless parent with a child at home takes the child into the shelter, whereas most homeless adults have no child with them, partly because shelters for single adults do not take children, so a homeless father's child usually stays with its mother or other relatives. Childhood homelessness is the main cost Treatment First imposes on children, so this works against Treatment First, while the budget and earnings externalities, which run through what a parent spends and earns rather than where the child sleeps, are what drive its gain.}
+In the model, every household raises a child. This is close to the data, for drug users as for others: in the National Survey of Family Growth 2017--2019, $80$ percent of Americans in their forties have had a child, and so have $75$ percent of those who used hard drugs in the past year, against $81$ percent of those who used none. Users are somewhat less likely to live with their child, but only by a small margin: $40$ percent of adults aged 26 to 49 with a drug use disorder have a child under 18 at home, against $48$ percent of adults of the same age, sex, income and marital status who used no illicit drug in the past year. The gap is too small to reverse the results: users are $18$ percent less likely than comparable adults to have a child at home, and $57$ percent of the gain from Treatment First comes in childhood, so even if all of that part shrank in proportion, the gain would be only $10$ percent smaller. \green{The model does overstate one thing: every homeless parent with a child at home takes the child into the shelter, whereas most homeless adults have no child with them, partly because shelters for single adults do not take children, so a homeless father's child usually stays with its mother or other relatives. Childhood homelessness is the main cost Treatment First imposes on children, so this works against Treatment First, while the budget and earnings externalities, which run through what a parent spends and earns rather than where the child sleeps, are what drive its gain.}
 
 Given the degree of altruism towards the child, the size of each externality is set by data. The
 budget externality depends on two things: how much a user household spends on the drug, and how likely it is to regain work when a SUD has left it unemployed. Both determine the resources left for the child.
@@ -279,7 +282,7 @@ puts most households at a corner where they optimally consume none. Left to its 
 devices, however, that same assumption concentrates use at the \emph{top}, since the
 share of income spent on a luxury good rises with income. What reverses the income
 gradient, as I show, is the increased mortality risk that comes with a SUD: acquiring
-a disorder truncates the expected continuation value of life, and that loss rises with income, so in equilibrium use concentrates at the bottom. As far as I know, this is the first theory that can explain both why not everyone uses drugs and why drug users
+a disorder truncates the expected continuation value of life, and that loss rises with income, so in equilibrium use concentrates at the bottom. As far as I know, this is the first \new{quantitative model} that can explain both why not everyone uses drugs and why drug users
 are poorer on average without resting on systematic differences in preferences.
 
 I proceed with two models, a stylized model for the intuition and a full quantitative
@@ -398,9 +401,6 @@ significant change, and some report modest reductions in alcohol-related outcome
 In the design of the model, I draw directly from Milby et al.\ (2005). Among cocaine-dependent homeless adults in day treatment, those given housing stayed abstinent longer than those given none, and those whose housing required abstinence did best. The model takes from this trial the penalty homelessness imposes on recovery.
 
 Another relevant study, which I use to validate the model, is Costantini (2025). Using data on the programmes of the Department of Veterans Affairs and an instrumental-variables design, it finds that enrolling in Housing First lowers the three-year mortality of homeless veterans with mental illness by $4.6$ percentage points, while its Treatment First programmes, which combine short-term housing with treatment, have no lasting effect on mortality. The model produces outcomes consistent with these findings: among households with SMI, those whom a revoked voucher puts on the street are more likely to die within three years than those that keep their voucher, by an amount of the same order (Section~\ref{sec:fvalid}).
-
-\new{\paragraph{Drug testing with a severe penalty.} The closest evidence on how much a drug test with a severe penalty deters drug use comes from the US military, which in 1981 began testing its personnel at random and dismissing those who failed. Mehay and Pacula (1999) compare service members with civilians of the same ages before and after the programme began. Before it, service members were at least as likely as civilians to have used an illicit drug in the past year (\new{$35.7$} against \new{$27.6$} percent); by 1995 they were less than half as likely (\new{$6.5$} against \new{$14.7$} percent). Following the same people, past-year marijuana use fell from \new{$48.5$} to \new{$13.2$} percent among those who stayed in the military between 1980 and 1984, against a fall from \new{$45.8$} to \new{$32.0$} percent among those who stayed civilians. After allowing for the kind of people who choose to enlist, they attribute between \new{$4$} and \new{$16$} percentage points of the gap to the testing.}
-
 A limitation of all of the randomised trials above is that they measure outcomes over six to thirty-six
 months, which is short against a recovery process that
 Vaillant (1995) documents as much more gradual and protracted: at the annual
@@ -413,6 +413,8 @@ importantly, the effects on children and other households that are not in the
 sample.
 
 
+
+\new{\paragraph{Deterrence effects of zero-tolerance policies.} The closest evidence on how much a drug test with a severe penalty deters drug use comes from the US military, which in 1981 began testing its personnel at random and dismissing those who failed. Mehay and Pacula (1999) compare service members with civilians of the same ages before and after the programme began. Before it, service members were at least as likely as civilians to have used an illicit drug in the past year ($35.7$ against $27.6$ percent); by 1995 they were less than half as likely ($6.5$ against $14.7$ percent). Following the same people, past-year marijuana use fell from $48.5$ to $13.2$ percent among those who stayed in the military between 1980 and 1984, against a fall from $45.8$ to $32.0$ percent among those who stayed civilians. After allowing for the kind of people who choose to enlist, they attribute between $4$ and $16$ percentage points of the gap to the testing.}
 
 \paragraph{Economic models of drug use.} Modelling substance use as forward-looking
 optimisation dates to Becker and Murphy (1988), and the assumption is empirically
@@ -531,9 +533,9 @@ becomes an adult. What the model can do is another test, and for
 this paper it is a more relevant one: it compares parents with adults without
 children.
 
-In NSDUH 2024, among households of two, an unmarried adult who lived with one other adult and no child was \new{$17.5$} percent more likely to have used drugs in the \new{past year} than a lone parent who lived with one child, with the lone parents reweighted to the other group's joint distribution of age, sex, the kind of unmarried (never married, divorced or separated, or widowed) and family income so that the gap is behaviour rather than composition. With two members in each household, equal family income is equal income per person. The weight on the child's utility in the
+In NSDUH 2024, among households of two, an unmarried adult who lived with one other adult and no child was $17.5$ percent more likely to have used drugs in the past year than a lone parent who lived with one child, with the lone parents reweighted to the other group's joint distribution of age, sex, the kind of unmarried (never married, divorced or separated, or widowed) and family income so that the gap is behaviour rather than composition. With two members in each household, equal family income is equal income per person. The weight on the child's utility in the
 household's problem is the only thing in the model that makes a household use less
-than it otherwise would, so the weight is set so that setting it to zero (with the household otherwise unchanged) raises the share who use drugs by about the same \new{$17.5$} percent.
+than it otherwise would, so the weight is set so that setting it to zero (with the household otherwise unchanged) raises the share who use drugs by about the same $17.5$ percent.
 
 Drug users are also nearly as likely as others to be parents. In the National Survey of Family Growth 2017--2019, $75$ percent of men and women aged 40 to 49 who used cocaine, crack or methamphetamine or injected a drug in the past year had a child, against $81$ percent for those who used none, and $47$ percent had a child under 18 at the time of the survey while they were using, against $61$ percent of those who did not use.\footnote{Users who have a child are less likely to live with it, partly because the state removes children: parental drug abuse is recorded at more than a third of removals into foster care, which is also a very poor environment for a child (AFCARS, FY2017).} The externality is therefore not assumed to be large; its size is
 calibrated to observed behaviour on exactly the margin this paper is about.
@@ -1175,7 +1177,7 @@ $\delta_d$ is assigned the value $0.27$ in logs to give the $24$-percent earning
 measures for children exposed in utero to a temporary Swedish policy that let grocery
 stores in two regions sell strong beer, which made alcohol easier to buy during pregnancy.
 The parent's weight on their child $\omega_c$ is fitted so that switching the child's terms
-off, with every other parameter held, raises the share who use drugs by \new{$17.5$} percent. Switching the terms off keeps the household as it is and removes only the parent's concern for the child, so its counterpart in the data holds the household fixed too: in NSDUH 2024, an unmarried adult living with one other adult and no child was \new{$17.5$} percent more likely to use drugs than a lone parent living with one child, both unmarried and of the same age, sex and family income (Section~\ref{sec:fullcal}). Every other stage 1 parameter is refitted with the child in place, and
+off, with every other parameter held, raises the share who use drugs by $17.5$ percent. Switching the terms off keeps the household as it is and removes only the parent's concern for the child, so its counterpart in the data holds the household fixed too: in NSDUH 2024, an unmarried adult living with one other adult and no child was $17.5$ percent more likely to use drugs than a lone parent living with one child, both unmarried and of the same age, sex and family income (Section~\ref{sec:fullcal}). Every other stage 1 parameter is refitted with the child in place, and
 Table~\ref{tab:int} reports both.
 
 \paragraph{Drug use under full altruism.} I begin by examining how much drug use and SUD there is under full altruism. I do so by setting the weight a parent puts on their child to one,
@@ -1184,10 +1186,10 @@ programme left as it is. In this case, no parent uses at all: participation and 
 both fall to $0.00$ percent, and homelessness to $0.52$ percent.
 
 \paragraph{Treatment First with the child counted.} Counting the child's utility in
-welfare, as Section~\ref{sec:cev} describes, a newborn is better off in the long run under Treatment First than under Housing First, by \new{$0.35$} percent of lifetime consumption. Treatment First cuts participation from \new{$8.92$} to \new{$7.08$}
-percent and the share with the disorder from \new{$3.69$} to $2.93$
-percent, both at each policy's rest point, so fewer children enter adult life with the penalty. Breaking the gains by periods of life shows a rather even split: the gain is \new{$0.17$} percent in childhood, because parents spend more of their
-resources on them instead of on drugs, and \new{$0.17$} percent in adult life, because the child enters with a better productivity draw. Treatment First lowers
+welfare, as Section~\ref{sec:cev} describes, a newborn is better off in the long run under Treatment First than under Housing First, by $0.35$ percent of lifetime consumption. Treatment First cuts participation from $8.92$ to $7.08$
+percent and the share with the disorder from $3.69$ to $2.93$
+percent, both at each policy's rest point, so fewer children enter adult life with the penalty. Breaking the gains by periods of life shows a rather even split: the gain is $0.17$ percent in childhood, because parents spend more of their
+resources on them instead of on drugs, and $0.17$ percent in adult life, because the child enters with a better productivity draw. Treatment First lowers
 homelessness too, by about $1$ percent, because fewer households have a SUD and lose their jobs, and fewer are themselves poor for having been born to a
 parent with the disorder, so their income is higher.
 
@@ -1255,7 +1257,7 @@ the stage 2 economy when it consumes $c$ and homelessness is $H$, which it bears
 $\kappa_x H$, and $w$ is the
 willingness to pay as a share of consumption to have $H=0$.} That gives
 $\kappa_x=1.37$. Because the two policies differ little in homelessness, it changes essentially nothing about the welfare gain from Treatment First in the stylized model, which remains at
- \new{$0.35$} percent of lifetime consumption.
+$0.35$ percent of lifetime consumption.
 
 %======================================================================
 \section{The quantitative model}\label{sec:full}
@@ -1353,7 +1355,7 @@ zero UI ($e=3$). Social security $S(y)$ follows the statutory formula.\footnote{
 working age up to the taxable maximum $y^{\max}$, the ceiling above which earnings no longer raise the benefit. Then social security payments are $S(y)=\bar w\max\big\{\underline S,\ \alpha_1\min\{\tilde y,k_1\}+\alpha_2\max\{0,\min\{\tilde y,k_2\}-k_1\}
 +\alpha_3\max\{0,\tilde y-k_2\}\big\}$, where $k_1<k_2$ are the two bend points,
 $\alpha_1>\alpha_2>\alpha_3$ the shares replaced below, between and above them,
-$\underline S$ the Supplemental Security Income (SSI) payment, and $\bar w$ the benchmark's average labour income. Their values are given in \new{Appendix}~\ref{sec:stdparams}.}
+$\underline S$ the Supplemental Security Income (SSI) payment, and $\bar w$ the benchmark's average labour income. Their values are given in Appendix~\ref{sec:stdparams}.}
 
 The SUD and SMI do not
 cut earnings on the job; they act on whether there is a job at all, through the
@@ -1759,7 +1761,7 @@ alongside the code that reads them, so nothing has to be downloaded.
 
 \subsection{The twenty-six parameters that carry the story of this paper}
 
-Of the fifty-nine parameters, twenty-six are specific to this paper and carry its main story and policy analysis; the other thirty-three, common to most life-cycle models, are in \new{Appendix}~\ref{sec:stdparams}. The former are set out in Table~\ref{tab:eleven},
+Of the fifty-nine parameters, twenty-six are specific to this paper and carry its main story and policy analysis; the other thirty-three, common to most life-cycle models, are in Appendix~\ref{sec:stdparams}. The former are set out in Table~\ref{tab:eleven},
 with the parameter, its description,
 and the moment and source used to fix its value, which is given in the last
 column. They are discussed one at a time below because they are the parameters a
@@ -1767,7 +1769,7 @@ reader may want to argue over, and each is taken in the order it appears in the 
 the table groups them into numbered blocks, each collecting the parameters that work
 through similar mechanisms, so that what each parameter does and how it moves the model can
 be read alongside the others that act along similar lines; the blocks are taken in turn below,
-and those of the standard parameters in \new{Appendix}~\ref{sec:stdparams} continue the
+and those of the standard parameters in Appendix~\ref{sec:stdparams} continue the
 numbering.
 
 \input{tables/tab_eleven}
@@ -1812,7 +1814,7 @@ $\aleph$ sets what the life being lost is worth. Increase it and use falls, beca
 dying is more costly. Its value is chosen so the model generates a VSL
 of $80$ times average labour income, which is the \$9m of Viscusi and Aldy
 (2003) against a mean household income of \$113,000.\footnote{No household has a
-negative value of life in equilibrium, so death is never an optimal outcome.}
+negative value of life in equilibrium, so death is never an optimal outcome.} \new{Because the value of being alive enters utility additively and utility is concave, the value of a statistical life rises faster than consumption, roughly with its square at the model's risk aversion, as in Hall and Jones (2007). Estimates of how it rises with income are lower across people at a point in time, \new{$0.5$} to \new{$0.6$} in Viscusi and Aldy (2003), and higher over time, \new{$1.5$} to \new{$1.7$} in Costa and Kahn (2004).}
 \end{description}
 
 \paragraph{Block 2: Costs of homelessness and vouchers.} Both
@@ -1965,7 +1967,7 @@ enters with. As it rises the parent counts more of the child's
 loss, so the budget, earnings and childhood homelessness externalities left for Treatment First
 and Housing First to correct are smaller. It is identified by a counterfactual moment: with every other
 parameter unchanged, drug use with the child given no weight is compared with drug use at
-$\omega_c$. The data moment holds the household fixed as well. In NSDUH 2024, an unmarried adult living with one other adult and no child was \new{$17.5$} percent more likely to have used illicit drugs in the \new{past year} than a lone parent living with one child, with the lone parents reweighted to the other group's age, sex, kind of unmarried (never married, divorced or separated, or widowed) and family income; with two members in each household, equal family income is equal income per person. At $\omega_c=0.085$, removing the child's weight raises the share who use by $17.7$ percent in the model.
+$\omega_c$. The data moment holds the household fixed as well. In NSDUH 2024, an unmarried adult living with one other adult and no child was $17.5$ percent more likely to have used illicit drugs in the past year than a lone parent living with one child, with the lone parents reweighted to the other group's age, sex, kind of unmarried (never married, divorced or separated, or widowed) and family income; with two members in each household, equal family income is equal income per person. At $\omega_c=0.085$, removing the child's weight raises the share who use by $17.7$ percent in the model.
 \item[$\delta_d$, earnings the child loses because of a parent's SUD.] The child does not inherit
 the disorder, only a worse
 productivity draw, and that lower expected draw is what makes it likelier to be poor, to use, to
@@ -2074,7 +2076,7 @@ male one, separate the transmission of homelessness from the poverty that accomp
 ratio against the general population would also credit the housing penalty with everything
 else that differs between poor children.} Transmission in the model is therefore
 at the low end of the evidence on the SUD, the margin Treatment First acts on, and
-above it on homelessness. Since Treatment First leaves the share of children in a shelter roughly constant, the excess transmission of homelessness favours neither policy, while transmission of the SUD at the low end of the evidence understates what Treatment First does for children, so if it still raises welfare in the experiments below, that result is conservative.
+above it on homelessness. Since Treatment First leaves the share of children in a shelter roughly constant, the excess transmission of homelessness favours neither policy, while transmission of the SUD at the low end of the evidence understates what Treatment First does for children, so if it still raises welfare in the experiments below, that result is conservative. \new{In the model, $5.81$ percent of children live with a parent who has a SUD, against \new{$3.4$} percent in NSDUH 2024, where the parent is aged 26 to 49 and has a moderate or severe drug use disorder (\new{$8.4$} percent counting mild disorders). The model gives every adult of those ages a child at home, while users are less likely than other adults to live with theirs.}
 
 \paragraph{Block 7: Losing a voucher.} Costantini (2025) uses an instrumental-variables design to estimate that enrolling in Housing First lowers the three-year mortality of homeless veterans with mental illness by $4.6$ percentage points, while transitional Treatment First programmes have no lasting effect on mortality.
 
@@ -2339,7 +2341,7 @@ for those who can still respond to it and sparing those who cannot.
 \clearpage
 \appendix
 \setcounter{table}{0}\renewcommand{\thetable}{A\arabic{table}}
-\section[Standard parameters]{\new{Standard parameters}}\label{sec:stdparams}
+\section[Calibration of the standard parameters]{\new{Calibration of the standard parameters}}\label{sec:stdparams}
 
 The remaining thirty-three parameters are more conventional, and I record the
 values I use so that the calibration can be reproduced. Six of them I calibrate internally,
@@ -2351,7 +2353,7 @@ data. The Model column reports what the model produces against that value, and i
 does so only for the six I calibrate internally, since the other
 twenty-seven have no target to reproduce.
 
-The parameters in this \new{appendix} are not inert in the experiments. For example, the discount
+The parameters in this appendix are not inert in the experiments. For example, the discount
 factor governs how heavily a household weighs a death later in life, the dispersion
 of productivity determines how many households are poor enough to be at risk of
 homelessness and of acquiring a disorder, and risk aversion governs what insurance
@@ -2584,6 +2586,7 @@ the price is free. It normalises units, not behaviour.
 \item Chetty, R., N. Hendren and L. Katz (2016). ``The Effects of Exposure to Better Neighborhoods on Children.'' \emph{American Economic Review} 106(4), 855--902.
 \item Chyn, E. (2018). ``Moved to Opportunity: The Long-Run Effects of Public Housing Demolition on Children.'' \emph{American Economic Review} 108(10), 3028--56.
 \item Conesa, J. C., S. Kitao and D. Krueger (2009). ``Taxing Capital? Not a Bad Idea after All!'' \emph{American Economic Review} 99(1), 25--48.
+\item \new{Costa, D.\ L.\ and M.\ E.\ Kahn (2004). ``Changes in the Value of Life, 1940--1980.'' \emph{Journal of Risk and Uncertainty} 29(2), 159--80.}
 \item Costantini, S. (2025). ``Housing First or Treatment First? Evidence from the VA's Homelessness Programs.'' Working paper, University of California, Berkeley.
 \item Dahl, G. B. and L. Lochner (2012). ``The Impact of Family Income on Child Achievement: Evidence from the Earned Income Tax Credit.'' \emph{American Economic Review} 102(5), 1927--56.
 \item Degenhardt, L. et al.\ (2011). ``Mortality among regular or dependent users of heroin and other opioids: a systematic review.'' \emph{Addiction} 106(1), 32--51.
@@ -2597,6 +2600,7 @@ the price is free. It normalises units, not behaviour.
 \item Gruber, J. and B. K\H{o}szegi (2001). ``Is Addiction `Rational'? Theory and Evidence.'' \emph{Quarterly Journal of Economics} 116(4), 1261--1303.
 \item Gutwinski, S., S. Schreiter, K. Deutscher and S. Fazel (2021). ``The prevalence of mental disorders among homeless people in high-income countries: An updated systematic review and meta-regression analysis.'' \emph{PLOS Medicine} 18(8), e1003750.
 \item Guvenen, F., G. Kambourov, B. Kuruscu, S. Ocampo and D. Chen (2023). ``Use It or Lose It: Efficiency and Redistributional Effects of Wealth Taxation.'' \emph{Quarterly Journal of Economics} 138(2), 835--894.
+\item \new{Hall, R.\ E.\ and C.\ I.\ Jones (2007). ``The Value of Life and the Rise in Health Spending.'' \emph{Quarterly Journal of Economics} 122(1), 39--72.}
 \item Heathcote, J., K. Storesletten and G. Violante (2017). ``Optimal Tax Progressivity: An Analytical Framework.'' \emph{Quarterly Journal of Economics} 132(4), 1693--1754.
 \item Heiberg, I. H. et al.\ (2018). ``Total and cause-specific standardized mortality ratios in patients with schizophrenia and/or substance use disorder.'' \emph{PLoS ONE} 13(8), e0202028.
 \item Hjorth\o j, C., N. Albert and M. Nordentoft (2018). ``Association of substance use disorders with conversion from schizotypal disorder to schizophrenia.'' \emph{JAMA Psychiatry} 75(7), 733--739.
@@ -2614,7 +2618,7 @@ the price is free. It normalises units, not behaviour.
 \item Manchikanti, L., Y. Malla, B. W. Wargo and B. Fellows (2011). ``Comparative Evaluation of the Accuracy of Immunoassay with Liquid Chromatography Tandem Mass Spectrometry of Urine Drug Testing Opioids and Illicit Drugs in Chronic Pain Patients.'' \emph{Pain Physician} 14(2), 175--187.
 \item Mazumder, B. (2005). ``Fortunate Sons: New Estimates of Intergenerational Mobility in the United States Using Social Security Earnings Data.'' \emph{Review of Economics and Statistics} 87(2), 235--255.
 \item McDaniel, C. (2007). ``Average Tax Rates on Consumption, Investment, Labor and Capital in the OECD 1950--2003.'' Working paper, Arizona State University.
-\item \new{Mehay, S.\ L.\ and R.\ L.\ Pacula (1999). ``The Effectiveness of Workplace Drug Prevention Policies: Does `Zero Tolerance' Work?'' NBER Working Paper 7383.}
+\item Mehay, S.\ L.\ and R.\ L.\ Pacula (1999). ``The Effectiveness of Workplace Drug Prevention Policies: Does `Zero Tolerance' Work?'' NBER Working Paper 7383.
 \item Mellentin, A.\ I.\ et al.\ (2016). ``The risk of offspring developing substance use disorders when exposed to one versus two parent(s) with alcohol use disorder: a nationwide, register-based cohort study.'' \emph{Journal of Psychiatric Research} 80.
 \item Meyer, B. D., A. Wyse, G. Meyer, A. Grunwaldt and D. Wu (2024). ``Homelessness and the Persistence of Deprivation: Income, Employment, and Safety Net Participation.'' NBER Working Paper 32323.
 \item Meyer, B. D., A. Wyse and I. Logani (2023). ``Life and Death at the Margins of Society: The Mortality of the U.S. Homeless Population.'' NBER Working Paper 31843.
