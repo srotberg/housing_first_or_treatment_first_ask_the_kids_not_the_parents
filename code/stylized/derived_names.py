@@ -52,6 +52,11 @@ def derived(n):
     import fill
     a = fill.text_precision('s3_cev_tf_nokx', n['s3_cev_tf_nokx'])
     b = fill.text_precision('s3_cev_tf', n['s3_cev_tf'])
+    # the introduction's transition clause (round r229, the author: 'less' -> 'although less'): the conjunction turns
+    # with the comparison, so it never reads 'although even more'
+    if 'x_tr_cev_b1_vs_lr' in n:
+        _v = n['x_tr_cev_b1_vs_lr']
+        out['x_tr_cev_b1_vs_lr_intro'] = ('although ' + _v) if _v.startswith('less') else _v
     out['s3_kx_phrase'] = ('it changes essentially nothing about the welfare gain from Treatment First in the stylized model, which remains at'
                            if a == b else
                            f'it barely changes the welfare gain from Treatment First in the stylized model, which moves from ${a}$ to')
