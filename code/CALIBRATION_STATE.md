@@ -4563,3 +4563,27 @@ Checked in the source before writing it:
 
 A relaunch skips stage 1 when BENCH_DONE and the benchmark files are on disk.
 
+
+## 8 October: the stylized model stripped to the income gradient (code/stylized/gradient.py)
+
+The author: "isnt the point of the stylized model just to show how the mortality reverses the income
+gradient?", "then we only need stage 1", "we then also dont need a government", "it would be good to
+strip everything possible from the model". Section 3 is now gradient.py alone: two periods, income
+lognormal (sigma_y 0.95 from the SCF bottom-half share, set outside), a floor at 0.24 of mean income,
+no saving, housing, employment risk, government or child. The use decision is in closed form (Section 3,
+eq:use), so the four internal parameters fit in seconds and exactly: aleph 6.44 (VSL 80), b 0.055
+(participation 8.90), theta 0.22 (spending 16.0), kappa_phi_d 3.87 (users' income 0.74).
+
+- Without the SUD's mortality risk (b refit) users earn 3.82 times the mean; they fall below the mean at
+  77 per cent of the calibrated strength; 0.58 at 120.
+- The floor has to exist (sigma = 2: the value of being alive is negative below an income of 0.21, and such
+  a household would use for the mortality). Truncating at that point was tried and failed (sigma_y 1.32,
+  44 per cent cut, a sliver of spurious users at the cut). The floor puts 15 per cent of households at it;
+  none of them uses.
+- Figure 1 stops at 120 per cent, not 200: past about 125 per cent the band of users reaches the floor, the
+  floor households start to use and participation cannot be held. scan() asserts the floor is inert at
+  every point it plots.
+- The staged model (stages.py, stage_results.py, run.py, tables.py, welfare.py, children.py,
+  transition.py) is the record and is no longer run by build.sh; running it would overwrite Tables 1-2 and
+  Figure 1. Users sit in one band, the 52nd to the 61st percentiles; below y_sg = 0.20 (the poorest 11
+  per cent) no quantity of the drug is worth buying.

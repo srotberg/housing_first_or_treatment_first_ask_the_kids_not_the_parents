@@ -1,19 +1,16 @@
 #!/bin/sh
 # Rebuild the note from the calibration outwards.
 #
-#   run.py         the two stylized figures        ->  writing/figures/
-#   tables.py      Tables 1 to 4                   ->  writing/tables/
-#   welfare.py     the welfare numbers             ->  (read by fill.py)
-#   children.py    the child's penalty             ->  (read by fill.py)
-#   transition.py  the transition figure           ->  writing/figures/
+#   gradient.py    Section 3, the stylized model stripped to the income gradient (8 October):
+#                  its calibration, Tables 1 and 2 and Figure 1 -> writing/tables/, writing/figures/,
+#                  gradient_numbers.json (read by fill.py).  run.py, tables.py, welfare.py,
+#                  children.py and transition.py are the old staged model's and are no longer run:
+#                  they would overwrite Tables 1 and 2 and Figure 1.
 #   sync_tables.py Tables 5 and 6 from the Fortran ->  writing/tables/, params_numbers.json
 #   fill.py        every @@name@@ in the prose      ->  writing/housing_first_children_later.tex
 #   pdflatex       twice, for the cross references ->  writing/children_first_housing_later.pdf (named after the title)
 #
-# CALIBRATION IS NOT RUN HERE. It takes upwards of half an hour and everything
-# below reads calibrated.json, so it is run on its own and this is run after:
-#
-#   python3 calibrate.py && sh build.sh
+# The stylized calibration IS run here now: gradient.py fits its four parameters in seconds.
 #
 # ORDER MATTERS IN TWO PLACES. sync_tables.py has to run before fill.py, because
 # fill.py merges params_numbers.json to answer the @@q_*@@ placeholders. And
@@ -29,20 +26,8 @@ set -e
 cd "$(dirname "$0")"
 ROOT=$(cd ../.. && pwd)
 
-echo "== figures"
-python3 run.py
-
-echo "== tables"
-python3 tables.py
-
-echo "== welfare"
-python3 welfare.py
-
-echo "== children"
-python3 children.py
-
-echo "== transition"
-python3 transition.py
+echo "== the stylized model: calibration, Tables 1 and 2, Figure 1"
+python3 gradient.py
 
 echo "== the Fortran's constants, all of them"
 python3 "$ROOT/code/paper/export_consts.py"

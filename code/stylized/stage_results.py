@@ -68,34 +68,10 @@ def outcomes(par, policy, pV):
             if k in m and m[k] is not None}
 
 
-# A FIXED VOUCHER BUDGET (the author, 8 October: "why cant we assume there is a fixed budget R and it is spent on
-# vouchers?"). R is what Housing First spends at the calibrated pi_V; under Treatment First pi_V is whatever exhausts
-# the same R. Spending is stats()'s 'cost' (period 1's subsidy plus period 2's, discounted), at the base income
-# distribution in stage 1 and at the rest point in stage 2, where the penalty mixture moves with the policy.
-def budget_pv(par, rest=False, tol=1e-10):
-    import restpoint as RP
-    def spend(policy, pv):
-        q = with_(par, policy=policy, pV=pv)
-        return RP.rest_stats(q)['cost'] if rest else stats(ready(q))['cost']
-    R = spend('HF', par.pV)
-    lo, hi = par.pV, min(1.0, 2.0 * par.pV)
-    assert spend('TF', lo) <= R <= spend('TF', hi), 'the budget is not bracketed'
-    for _ in range(60):
-        mid = 0.5 * (lo + hi)
-        if spend('TF', mid) < R:
-            lo = mid
-        else:
-            hi = mid
-        if hi - lo < tol:
-            break
-    return 0.5 * (lo + hi), R
-
-
-def dominance(par, pV, pV_tf=None):
-    """TF against HF, household by household, as a CEV; Treatment First at pV_tf, the voucher probability that
-    spends the same budget (pV when not given)."""
+def dominance(par, pV):
+    """TF against HF at the same pi_V, household by household, as a CEV."""
     qh = ready(with_(par, policy='HF', pV=pV))
-    qt = ready(with_(par, policy='TF', pV=(pV if pV_tf is None else pV_tf)))
+    qt = ready(with_(par, policy='TF', pV=pV))
     vh = np.array([value1(qh, y, 'HF') for y in C.YG])
     vt = np.array([value1(qt, y, 'TF') for y in C.YG])
     # the level's aleph weight depends on survival, so on the chance of the
@@ -134,10 +110,7 @@ def stage1(par, figure=True):
     d = {}
     for pV, tag in ((par.pV, 'b'),):          # rationed only (the author, 29 September)
         none = outcomes(par, 'HF', 0.0)
-        pv_tf, R = budget_pv(par)
-        d[f's1_pv_tf_{tag}'] = pc(pv_tf, 2)
-        d[f's1_pv_hf_{tag}'] = pc(pV, 2)
-        tf = outcomes(par, 'TF', pv_tf)
+        tf = outcomes(par, 'TF', pV)
         hf = outcomes(par, 'HF', pV)
         for lab, m in (('none', none), ('tf', tf), ('hf', hf)):
             for k in ('part', 'sud', 'homeless'):
@@ -147,7 +120,7 @@ def stage1(par, figure=True):
         d[f's1_vol_{tag}_abs'] = pc(abs(tf['part'] - none['part']))
         d[f's1_mh_{tag}'] = pc(hf['part'] - tf['part'])
         d[f's1_net_{tag}'] = pc(hf['part'] - none['part'])
-        dom = dominance(par, pV, pv_tf)
+        dom = dominance(par, pV)
         _ex = worse_share_exact(par, pV)
         d[f's1_worse_{tag}'] = pc(_ex, 1)
         d[f's1_worse_grid_{tag}'] = pc(dom['worse'], 1)          # the old whole-node count
@@ -349,11 +322,7 @@ def stage2(par):
     d['s2_or_sud'] = f'{ST.child_sud_odds_ratio(q, C.YG, C.W):.2f}'
     d['s2_or_hl'] = f'{ST.child_homeless_odds_ratio(q, C.YG, C.W):.2f}'
     hf = economy(par, 'HF', 'HF')
-    # the fixed voucher budget at stage 2's rest point (see budget_pv)
-    pv_tf, _R = budget_pv(par, rest=True)
-    d['s2_pv_tf'] = pc(pv_tf, 2)
-    d['s2_pv_hf'] = pc(par.pV, 2)
-    tf = economy(par, 'TF', 'TF', pV=pv_tf)
+    tf = economy(par, 'TF', 'TF')
     for tag, e in (('hf', hf), ('tf', tf)):
         d[f's2_sud_{tag}'] = pc(e['sud_stat'], 3)
         d[f's2_homeless_{tag}'] = pc(e['homeless_stat'], 3)
@@ -427,7 +396,7 @@ def _smr(par):
 # MEAN HOUSEHOLD INCOME, the dollar anchor for the VSL sentence in Section 3.3: CPS ASEC
 # mean household income, in the dollars the text quotes.  One place, so the dollar value
 # of the VSL moves with the target rather than being typed beside it.
-MEAN_HH_INCOME_USD = 113000.0
+from gradient import MEAN_HH_INCOME_USD  # one place: gradient.py, which Section 3 now reads
 
 
 def _floor_names():

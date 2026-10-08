@@ -488,7 +488,9 @@ def _params(out):
     # AND THE STAGED STYLIZED MODEL, as s<stage>_<name> and s_<name>
     # (stage_results.py, stage_transition.py), and SECTION 5'S TABLES, as
     # c_<name> (code/paper/calib_tables.py). Leading underscores are raw data.
-    for fn in (os.path.join(HERE, 'stage_numbers.json'),
+    # AND THE STRIPPED STYLIZED MODEL OF SECTION 3, as g_<name> (gradient.py, 8 October).
+    for fn in (os.path.join(HERE, 'gradient_numbers.json'),
+               os.path.join(HERE, 'stage_numbers.json'),
                os.path.normpath(os.path.join(HERE, '..', 'paper', 'calib_numbers.json'))):
         if not os.path.exists(fn):
             print(f'   {os.path.basename(fn)} missing')
