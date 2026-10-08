@@ -190,9 +190,9 @@ against Housing First as the federal government now makes it, see the executive 
 cited above; for the case for it, see the National Alliance to End Homelessness,
 \url{https://endhomelessness.org/blog/ceo-corner-week-of-july-28/}.} \new{Critics of Housing First say that unconditional assistance creates moral hazard: it weakens the incentive to stay sober and in work, so drug use and SUD rise, and with them homelessness. Critics of Treatment First say that conditionality delays stable housing for those who need it most and makes recovery harder. Randomised trials of Housing First find large gains in housing stability and mixed-to-null effects on drug use, but they follow only the participants, for at most three years (Section~\ref{sec:literature}). A model can follow what they cannot: the participants' children, the rest of the economy, and the decades after a reform.}
 
-\new{The case for Treatment First has to rest on what drug use costs somebody other than the user, and I focus on four such costs: two that Housing First leaves in place and two that Treatment First creates. The two it leaves in place fall on the user's children. Children share their parents' consumption and dwelling but not the drug, so every unit a parent spends on drugs, and every unit of earnings lost while a SUD keeps them unemployed, is consumption and housing the child goes without: the \emph{budget externality}. And a child whose parent had a SUD while it lived at home starts adult life with lower productivity: the \emph{earnings externality}. The two Treatment First creates run through homelessness. By denying assistance to drug users, it exposes more of them to the shelter, and a child lives wherever its parent lives: the \emph{childhood homelessness externality}. And every household's utility falls with the share of the population that is homeless: the \emph{aggregate homelessness externality}. In the model, the two that Treatment First removes dominate the two it creates.}
+\new{The case for Treatment First has to rest on what drug use costs somebody other than the user, and I focus on three such costs: two that Housing First leaves in place and one that Treatment First creates. The two it leaves in place fall on the user's children. Children share their parents' consumption and dwelling but not the drug, so every unit a parent spends on drugs, and every unit of earnings lost while a SUD keeps them unemployed, is consumption and housing the child goes without: the \emph{budget externality}. And a child whose parent had a SUD while it lived at home starts adult life with lower productivity: the \emph{earnings externality}. The one Treatment First creates runs through homelessness: by denying assistance to drug users, it exposes more of them to the shelter, and a child lives wherever its parent lives: the \emph{childhood homelessness externality}. In the model, the first two dominate the third.}
 
-\new{A parent takes the first three into account only through imperfect altruism towards the child, and no household internalises the fourth. The weight a parent puts on the child is pinned down by behaviour: in the 2024 National Survey on Drug Use and Health (NSDUH), unmarried adults living with one other adult and no child were $@@c_omega_c_data@@$ percent more likely to have used drugs in the past year than lone parents living with one child, of the same age, sex and family income, and the weight is set so that removing a parent's concern for the child raises drug use in the model by about that much. The size of each externality is then set by data (Section~\ref{sec:fullcal}).}
+\new{A parent takes all three into account only through imperfect altruism towards the child. The weight a parent puts on the child is pinned down by behaviour: in the 2024 National Survey on Drug Use and Health (NSDUH), unmarried adults living with one other adult and no child were $@@c_omega_c_data@@$ percent more likely to have used drugs in the past year than lone parents living with one child, of the same age, sex and family income, and the weight is set so that removing a parent's concern for the child raises drug use in the model by about that much. The size of each externality is then set by data (Section~\ref{sec:fullcal}).}
 
 \new{Whose children bear these costs depends on who uses drugs. Use is concentrated at the bottom of the income distribution, where the average user's income is about $@@f_drug_user_income_data_pc@@$ percent of the average, and most households do not use at all. The literature has explained the two facts together only by assuming that lower-education households have a systematic preference for drugs (Greenwood et al., 2025). I model drugs as a luxury good bought at a price, which puts most households at a corner where they consume none. On its own, that would concentrate use at the \emph{top}; what reverses the gradient is the higher risk of dying that comes with a SUD, a loss that rises with income, so in equilibrium use concentrates at the bottom. As far as I know, this is the first quantitative model that explains both facts without systematic differences in preferences.}
 
@@ -308,9 +308,7 @@ adulthood period, shares its consumption and housing, and inherits a lower
 lifetime productivity if the parent acquired a SUD in that period. This stage brings in the budget, the
 earnings and the childhood homelessness externalities, shows what drug use would be if
 parents counted their children fully, and compares Treatment First with Housing First,
-in the long run and along the transition to it. The third
-adds the aggregate homelessness externality, the disamenity every household
-suffers due to the homelessness of others around it, and shows the results remain essentially unchanged with that addition.
+in the long run and along the transition to it.\footnote{\new{Every household's utility could also fall with the share of the population that is homeless, a disamenity no household weighs when it decides, since each takes that share as given. Set to the annual willingness to pay for ending homelessness in the contingent valuation of Loubi\`ere et al.\ (2020), $@@s3_wtp_pc@@$ percent of income, and because the two policies differ little in homelessness, @@s3_kx_phrase@@ $@@s3_cev_tf@@$ percent of lifetime consumption.}}
 
 The model is qualitative throughout: the calibration is rough by design, there
 is no validation exercise, and components that obscure the mechanisms have
@@ -851,27 +849,6 @@ over their whole lives.}
 \end{figure}
 
 %======================================================================
-\subsection{Stage 3: the disamenity of homelessness}\label{sec:kx}
-
-Before moving onto the full model, I take up the aggregate homelessness externality. The externality is modelled such that homelessness imposes a cost on each household's flow utility, reducing it by $\kappa_x H$, where $H$ is the share of households that is homeless, which every
-household takes as given, so the term moves no choice and the calibration of stage 2
-stands unchanged. It enters welfare only, and the child
-bears it like everyone else, once for each period.
-
-$\kappa_x$ is solved inside the model from the annual willingness to pay for ending homelessness in the contingent valuation of Loubi\`ere et al.\ (2020), $@@s3_wtp_pc@@$
-percent of income. Households in the model spend $@@s3_cshare_pc@@$ percent of their income
-on consumption, so $@@s3_wtp_pc@@$ percent of income translates to $@@s3_wtp_c_pc@@$ percent of consumption. $\kappa_x$ is the
-disamenity per unit of homelessness, in utils per period alive, that costs an adult in
-the stage 2 economy as much over its adult life as giving up $@@s3_wtp_c_pc@@$ percent of
-its consumption in every period.\footnote{\label{fn:kx}$\kappa_x$ solves
-$V\big((1-w)\,c;\,0\big)=V\big(c;\,H\big)$, where $V(c;H)$ is an adult's lifetime value in
-the stage 2 economy when it consumes $c$ and homelessness is $H$, which it bears as the disamenity
-$\kappa_x H$, and $w$ is the
-willingness to pay as a share of consumption to have $H=0$.} That gives
-$\kappa_x=@@s3_kx@@$. Because the two policies differ little in homelessness, @@s3_kx_phrase@@
-$@@s3_cev_tf@@$ percent of lifetime consumption.
-
-%======================================================================
 \section{The quantitative model}\label{sec:full}
 
 By now, I have shown how the main mechanisms in this paper work. This section
@@ -937,7 +914,7 @@ cost of a year in treatment, which is described in Section~\ref{sec:fdrug}. The 
 Aggregate homelessness $H$ carries the disamenity $\kappa_x H$ for every household and
 child alive, which is what makes homelessness an externality for everyone rather than only a
 private misfortune. However, it does not affect any household's decision: each takes $H$ as given.
-Section~\ref{sec:fleftout} takes up its size.
+\new{Its size is set in Section~\ref{sec:fullcal}.}
 
 \subsection{Income, taxes and transfers}\label{sec:ftaxes}
 
@@ -1442,8 +1419,7 @@ mortality, and gives more for Treatment First to deter. It is calibrated interna
 $@@c_underline_c_data@@$ percent: outlays from the United States Department of
 Agriculture (USDA) over GDP in the data.
 \item[$\pi_V$, the chance of drawing a voucher.] This is the policy dial itself.
-On the one hand, increasing it reduces the childhood and aggregate homelessness
-externalities, since more households are housed. On the other hand, increasing it increases the value of
+On the one hand, increasing it reduces the \new{childhood homelessness externality}, since more households are housed. On the other hand, increasing it increases the value of
 being alive, since life is worth more when housed, and thus it allows Treatment First to be more
 effective in deterring drug use and fixing the budget and earnings externalities: the
 whole trade in one parameter. In the benchmark it
@@ -1536,11 +1512,11 @@ in the past year in NSDUH 2024.
 \paragraph{Block 5: Externalities.} The parameters in this block decide whether
 something is an externality and, if so, what its magnitude is. This affects the ranking between Housing First and Treatment
 First, since the no-externality comparison already favours Housing First, because
-households are rational and forward looking (and I show this in the full model as well in Section~\ref{sec:longrun}). The first two are how much of the child a parent counts
-and what a parent's disorder costs the child in earnings, and the third is what the homelessness of strangers costs everybody. All three
+households are rational and forward looking (and I show this in the full model as well in Section~\ref{sec:longrun}). \new{The two are how much of the child a parent counts
+and what a parent's disorder costs the child in earnings. Both}
 concern externalities in the strict sense: one household's choice enters another
 household's utility directly without being internalised by the household making the
-decision.
+decision.\footnote{\new{Every household's flow utility also falls by $\kappa_x$ times the aggregate homelessness rate, which no household can move on its own, so it moves no policy function and prices only what the policies do to the headcount. As it rises, it loads whichever policy houses more people. It is set to the willingness to pay for ending homelessness in the contingent valuation of Loubi\`ere et al.\ (2020), $@@c_kappa_x_data@@$ percent of income, converted to a share of consumption, which gives $\kappa_x=@@c_kappa_x_value@@$. Because the two policies differ little in homelessness, it barely matters for the comparison: in the long run, having each household weigh the disamenity its own homelessness imposes on others lowers homelessness by only $@@x_lr_in_dh_pc@@$ percent beyond what full altruism achieves.}}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$\omega_c$, the parent's weight on their child.] A parent bears $\omega_c$ of what
 their choices cost their child, during their childhood and in the labour productivity draw penalty the child
@@ -1559,14 +1535,6 @@ drug use: Treatment First by deterring the parent from using, Housing First by m
 likely once housed. It is set externally at $@@c_delta_d_value@@$, the earnings loss
 Nilsson (2017) measures for children exposed in utero to a Swedish alcohol
 experiment.\footnote{The penalty carries only $@@x_lr_draw_whole_pc@@$ percent of the welfare gain from Treatment First (Section~\ref{sec:longrun}), so the ranking of the two policies does not rest on its size.}
-\item[$\kappa_x$, the disamenity of homelessness.]\label{sec:fleftout} This parameter
-connects one household's housing status to the utility of another who is not its own child. Each
-household's flow utility falls by $\kappa_x$ times the aggregate homelessness rate,
-which no household can move on its own, so it moves no policy function and prices only
-what the policies do to the headcount. @@x_kx_sentence@@ The estimate I draw from is
-the willingness to pay for ending homelessness in the contingent valuation of
-Loubi\`ere et al.\ (2020), $@@c_kappa_x_data@@$ percent of income. Its value solves the same problem as in the stylized model
-(Section~\ref{sec:kx}, see footnote~\ref{fn:kx}), with that willingness to pay converted to a share of consumption.
 \end{description}
 
 \paragraph{Block 6: Drug market.} \new{One parameter makes the drug price endogenous, so that when drug demand changes, so does the price.}
@@ -1666,7 +1634,7 @@ else that differs between poor children.} Transmission in the model is therefore
 The main experiment is the reform the introduction describes. The programme stays
 rationed and only its rule changes, from Housing First, the benchmark, to Treatment
 First, under which a household that uses or has a SUD loses its voucher if it has one, or does not receive one if it drew one, when the screen detects it
-(Section~\ref{sec:fvoucher}). \new{A further experiment, in Section~\ref{sec:longrun}, comes with it: Treatment First without the externalities, with the drug price and $\pi_V$ held at their levels under Housing First. Two benchmarks that set the scale of the externalities, full altruism and full internalisation, are in Appendix~\ref{sec:altruism}. Two objects
+(Section~\ref{sec:fvoucher}). \new{A further experiment, in Section~\ref{sec:longrun}, comes with it: Treatment First without the externalities, with the drug price and $\pi_V$ held at their levels under Housing First. Full altruism, a benchmark that sets the scale of the externalities on children, is in Appendix~\ref{sec:altruism}. Two objects
 move in the main experiment.} The probability of drawing a voucher, $\pi_V$, adjusts so that net government revenue stays at its
 benchmark level, $\bar R$. The drug price clears the drug market, and the tax system is held where it is in the benchmark.
 
@@ -2108,9 +2076,9 @@ the price is free. It normalises units, not behaviour.
 \clearpage
 
 
-\section[Full altruism and full internalisation]{\new{Full altruism and full internalisation}}\label{sec:altruism}
+\section[Full altruism]{\new{Full altruism}}\label{sec:altruism}
 
-\new{This appendix reports two benchmarks that set the scale of the externalities rather than compare the two policies: full altruism, in which a parent weighs their child as themselves, $\omega_c=1$, so that nothing a parent does to their child is left external; and full internalisation, which adds each household weighing the disamenity its own homelessness imposes on everyone else. Neither has a CEV, because each changes the welfare function itself.}
+\new{This appendix reports a benchmark that sets the scale of the externalities on children rather than compare the two policies: full altruism, in which a parent weighs their child as themselves, $\omega_c=1$, so that nothing a parent does to their child is left external. It has no CEV, because it changes the welfare function itself.}
 
 \new{The second column of Table~\ref{tab:altruism} keeps Housing First but has each parent weigh their child as themselves,
 $\omega_c=1$: the drug use parents would choose if they took in full what their use does to
@@ -2123,21 +2091,14 @@ Notice that @@x_lr_tf_vs_om2@@. Under full altruism homelessness @@x_lr_om_h_dir
 percent, and the share of children in a shelter @@x_lr_om_hchild_dir@@ by
 $@@x_lr_om_hchild_pc@@$ percent. @@x_lr_om_h_why@@ Treatment First, by contrast, @@x_lr_tf_both@@.
 
-@@x_lr_om_piv_sentence@@ @@x_lr_om_piv_why@@
-
-The third column is the same as full altruism, with the
-addition of each household weighing the disamenity its own homelessness imposes on everyone else.
-It @@x_lr_in_dh_verb@@ homelessness by only $@@x_lr_in_dh_pc@@$ percent on top of what @@x_lr_in_base_word@@ achieves,
-because the externality turns out to be very small. Households can save and use less of the drug
-to improve their housing outcomes@@x_lr_in_many_do@@. Nevertheless, the disamenity their homelessness imposes on others
-is not a strong enough deterrent, so weighing it does not alter their behaviour significantly.
-@@x_lr_in_piv_sentence@@}
+@@x_lr_om_piv_sentence@@ @@x_lr_om_piv_why@@}
 
 \begin{table}[!tb]\centering
-\caption{\new{Full altruism and full internalisation in the long run}}\label{tab:altruism}
+\caption{\new{Full altruism in the long run}}\label{tab:altruism}
 \begingroup\scriptsize
 \sbox{\ntbox}{\input{tables/tab_longrun_altruism}}\usebox{\ntbox}
-\tabnote{\new{Notes: long-run steady states, percent unless the row says otherwise. Housing First is the benchmark. Full altruism is Housing First with $\omega_c=1$, and full internalisation adds to it each household weighing the disamenity of its own homelessness; in both, the drug price clears and $\pi_V$ holds net government revenue at its benchmark level. Children are those living with households aged 26 to 50.}}
+\tabnote{\new{Notes: long-run steady states, percent unless the row says otherwise. Housing First is the benchmark. Full altruism is Housing First with $\omega_c=1$; the drug price clears and $\pi_V$ holds net government revenue at its benchmark level. Children are those living with households aged 26 to 50.}}
+
 \endgroup
 \end{table}
 \clearpage

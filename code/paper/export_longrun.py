@@ -93,7 +93,9 @@ TABLE = (('pe_a', None), ('pe_b', 'pe_a'), ('null_share', None), ('tf85', 'null_
 # and i think the full altruism is more for the appendix"): the main table keeps the first four columns, and
 # writing/tables/tab_longrun_altruism.tex carries Housing First beside the two benchmarks
 TABLE_MAIN = (('pe_a', None), ('pe_b', 'pe_a'), ('fx_d', 'pe_a'), ('null_share', None), ('tf85', 'null_share'))
-TABLE_APP = (('null_share', None), ('omega1', 'null_remote'), ('internalise', 'null_remote'))
+# full internalisation leaves the appendix too (the author, 8 October, on the aggregate homelessness externality: "it
+# doesnt matter ... we can put it in a footnote"); the footnote in Section 5 quotes its one number, x_lr_in_dh_pc
+TABLE_APP = (('null_share', None), ('omega1', 'null_remote'))
 TAB_APP = os.path.join(ROOT, 'writing', 'tables', 'tab_longrun_altruism.tex')
 
 
@@ -363,8 +365,8 @@ def main():
         # which no-externality Treatment First: pi_V held, or clearing the budget
         ' & & ' + ' & '.join(hd(f'h3/{k}', w) for k, w in enumerate(('$\\pi_V$ held', '$\\pi_V$ clears'))) + ' & & \\\\'])
     tab_app = table(TABLE_APP, [
-        ' & ' + ' & '.join(hd(f'a1/{k}', w) for k, w in enumerate(('Housing', 'Full', 'Full'))) + ' \\\\',
-        ' & ' + ' & '.join(hd(f'a2/{k}', w) for k, w in enumerate(('First', 'altruism', 'internalisation'))) + ' \\\\'])
+        ' & ' + ' & '.join(hd(f'a1/{k}', w) for k, w in enumerate(('Housing', 'Full'))) + ' \\\\',
+        ' & ' + ' & '.join(hd(f'a2/{k}', w) for k, w in enumerate(('First', 'altruism'))) + ' \\\\'])
     open(TAB_APP, 'w').write('\n'.join(tab_app) + '\n')
     open(TAB, 'w').write('\n'.join(tab) + '\n')
     if freeze:
