@@ -350,10 +350,12 @@ _rows = [('Held', 'Held', DC_B), ('Clears', 'Held', DC_PV), ('Held', 'Clears', D
 with open(os.path.join(ROOT, 'writing', 'tables', 'tab_decomp.tex'), 'w') as _f:
     _f.write('% Written by code/paper/export_results.py from results/decomp_2c, decomp_2c_both and the tf85 arm;\n'
              '% edit the script, not this file. Caption and note are in the paper.\n'
-             '\\begin{tabular}{@{}llr@{}}\n\\toprule\n'
-             'Drug price & $\\pi_V$ & CEV \\\\\n\\midrule\n')     # welfare alone (the author, 8 October)
+             '\\begin{tabular}{@{}llrrrr@{}}\n\\toprule\n'
+             'Drug price & $\\pi_V$ & Drug use & SUD & Homelessness & CEV \\\\\n\\midrule\n')
+    # drug use, SUD and homelessness back beside the CEV, in percent against Housing First (the author, 8 October,
+    # round r225: "maybe bring back the impact on drug use, SUD and homelessness")
     for _p, _v, _r in _rows:
-        _f.write(f"{_p} & {_v} & {_sgn(_r['cev'], 2)} \\\\\n")
+        _f.write(f"{_p} & {_v} & {_sgn(_r['b'])} & {_sgn(_r['sud'])} & {_sgn(_r['h'])} & {_sgn(_r['cev'], 2)} \\\\\n")
     _f.write('\\bottomrule\n\\end{tabular}\n')
 # THE DRUG TEST'S COST, as the model charges it.  The declaration's comment says the
 # value is in units of average earnings; the budget charges it raw (f90 20654), in

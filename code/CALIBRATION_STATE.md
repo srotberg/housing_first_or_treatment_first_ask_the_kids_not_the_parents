@@ -1,5 +1,16 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 04:40 ROUND r225 (the author's PDF 701cf1b9, "keep all red and put updates in red too"; nothing stripped). Five
+comments: the Hall-Jones/Viscusi-Aldy/Costa-Kahn sentences into the aleph footnote; "The model gives every adult aged 26
+to 50 a child at home..." removed; Block 6 quotes only the 4.6 percent (either parent) and Table A-untargeted gets the row
+'Children living with a parent with a SUD, %' 4.6 against the model's 5.8 (calib_tables.py; Block 6 now 'Transmission',
+the odds ratios named in their rows); a paragraph after the decomposition: price and pi_V held, use falls 64 percent,
+against the military's 61 (Mehay and Pacula 1999); Table 8 has drug use, SUD and homelessness again (export_results.py),
+results_numbers.json unchanged after export_results, export_revoked, export_pe_noext. Intro, in red, pending the
+author's choice: what the two camps argue about (the budget sentence is inaccurate, see chat), and 'On the question
+the two sides argue about, the answer is Housing First.' The author asked next for the no-externality run with the
+drug price held and pi_V clearing (does rebalancing the budget alone reverse the ranking?).
+
 08 Oct 03:15 T = 60 STOPPED BY THE AUTHOR ("you can stop the transition i think since we will need to redo all the TF
 experiments"): process group 473 killed at period 21 of loop 0_r4, no paths saved; run.log kept as run.log.stopped.*, a
 STOPPED_BY_AUTHOR file in /home/user/e2_run/code/tr2c_t60. STYLIZED STAGE 2 AT THE PAST-YEAR TARGET landed (stage2_past_year_
