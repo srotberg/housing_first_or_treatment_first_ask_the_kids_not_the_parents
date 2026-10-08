@@ -45,8 +45,26 @@ ROWS = [('kap', 'r_use', 0.03, 0.70, True),
 NB, NP = 18, 13          # bisection steps for b and for each parameter
 
 
+def stats(par):
+    """calibrate.stats plus the unemployment rate, which sr_calibrate.moments adds the same way."""
+    m = C.stats(par)
+    m['unemployment'] = (1.0 - m['sud']) * par.u0 + m['sud'] * par.u1
+    return m
+
+
+def bracket(par, name, mom, lo, hi, iters, tgt):
+    rising = stats(with_(par, **{name: hi}))[mom] > stats(with_(par, **{name: lo}))[mom]
+    for _ in range(iters):
+        mid = math.sqrt(lo * hi)
+        if (stats(with_(par, **{name: mid}))[mom] > tgt) == rising:
+            hi = mid
+        else:
+            lo = mid
+    return math.sqrt(lo * hi)
+
+
 def fit_b(par):
-    return C.bracket(par, 'b', 'part', 1e-4, 1.5, iters=NB, tgt=TGT['part'])
+    return bracket(par, 'b', 'part', 1e-4, 1.5, NB, TGT['part'])
 
 
 def solve_row(par, name, mom, lo, hi, inner):
@@ -54,7 +72,7 @@ def solve_row(par, name, mom, lo, hi, inner):
         q = with_(par, **{name: v})
         if inner:
             q = with_(q, b=fit_b(q))
-        return C.stats(q)[mom], q
+        return stats(q)[mom], q
     f_lo, f_hi = at(lo)[0], at(hi)[0]
     tgt = TGT[mom]
     if (f_lo - tgt) * (f_hi - tgt) > 0:
@@ -75,7 +93,7 @@ def solve_row(par, name, mom, lo, hi, inner):
 
 
 def report(par, tag):
-    m = C.stats(par)
+    m = stats(par)
     gaps = {k: 100 * (m[k] / TGT[k] - 1) for k in TGT}
     worst = max(abs(g) for g in gaps.values())
     print(f'  {tag}: worst {worst:.2f} %  ' + '  '.join(f'{k}={m[k]:.4g}({gaps[k]:+.1f}%)' for k in TGT), flush=True)
