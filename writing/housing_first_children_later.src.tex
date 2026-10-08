@@ -1271,10 +1271,11 @@ acquire a SUD and remain unemployed longer because of it, raising childhood cons
 
 
 
-% on a landscape page: nine columns once the decomposition's three runs joined it (the author, 8 October)
-\begin{sidewaystable}\centering
+% portrait again (the author, 8 October: "any way to fit this table horizontally?"): the header stacks and the
+% column gap is 4pt, 464pt against the 470pt text width
+\begin{table}[!tb]\centering
 \caption{The long run under each policy}\label{tab:longrun}
-\begingroup\scriptsize
+\begingroup\scriptsize\setlength{\tabcolsep}{4pt}
 \sbox{\ntbox}{\input{tables/tab_longrun}}\usebox{\ntbox}
 \tabnote{Notes: percent unless the row says otherwise; each column is a steady state. The first four columns are Housing First and Treatment First without the externalities, with $\kappa_x=0$ and the child appearing only as an adult. Under Housing First the drug price clears and $\pi_V$ is the benchmark's. Under Treatment First, the drug price and $\pi_V$ are both held there in the second column; the drug price is held and $\pi_V$ clears the budget against the first column's net revenue in the third; and both clear in the fourth. The CEV in the second to fourth columns is the newborn's value at 26, against the first column.
 Housing First, the fifth column, is the benchmark with the externalities. Treatment First screens with a detection rate of
@@ -1282,7 +1283,7 @@ $@@x_tf_pdet_pc@@$ percent\new{. In the sixth column the drug price and $\pi_V$ 
 home. The CEV is against the benchmark. A household is better off when its value under Treatment First exceeds
 its value in the same state under Housing First, using the Housing First distribution.}
 \endgroup
-\end{sidewaystable}
+\end{table}
 
 %----------------------------------------------------------------------
 \subsection{The transition}\label{sec:ftrans}

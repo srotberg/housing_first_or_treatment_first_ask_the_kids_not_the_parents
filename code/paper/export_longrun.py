@@ -347,6 +347,12 @@ def main():
     def hd(key, w):
         cells[key] = w
         return w if prev.get(key) == w else f'\\textcolor{{red}}{{{w}}}'
+    def hk(key, w):
+        """a header cell: a plain key as hd(), or (old key, old text) for words the author saw under another layout"""
+        if isinstance(key, str):
+            return hd(key, w)
+        cells[key[0]] = key[1]
+        return w if prev.get(key[0]) == key[1] else f'\\textcolor{{red}}{{{w}}}'
     def table(cols, top):
         n = len(cols) + 1
         heads = {1: '\\multicolumn{%d}{@{}l}{\\emph{Adults}} \\\\' % n,
@@ -384,12 +390,22 @@ def main():
     tab = table(TABLE_MAIN, [
         ' & \\multicolumn{4}{c}{' + hd('h0/0', 'No externalities') + '} & \\multicolumn{5}{c}{'
         + hd('h0/1', 'With externalities') + '} \\\\', '\\cmidrule(lr){2-5}\\cmidrule(lr){6-10}',
-        ' & ' + ' & '.join(hd(f'h1/{k}', w) for k, w in enumerate(('Housing', 'Treatment', 'Treatment', 'Treatment', 'Housing', 'Treatment', 'Treatment', 'Treatment', 'Treatment'))) + ' \\\\',
-        ' & ' + ' & '.join(hd(f'h2/{k}', w) for k, w in enumerate(('First',) * 9)) + ' \\\\',
+        # PORTRAIT (the author, 8 October: "any way to fit this table horizontally?"): one 'Treatment First' over each
+        # block's Treatment First columns and their labels on two short lines, so that no column is wider than its
+        # numbers need; with the paper's tabcolsep of 4pt it is 464pt against the 470pt text width
+        ' & & \\multicolumn{3}{c}{' + hk(('h1/1', 'Treatment'), 'Treatment First') + '} & & \\multicolumn{4}{c}{'
+        + hd('h4/1', 'Treatment First') + '} \\\\', '\\cmidrule(lr){3-5}\\cmidrule(lr){7-10}',
         # which Treatment First: the drug price and pi_V both held, one of them clearing, or both clearing. 'both held'
-        # in place of the no-externality block's '$\pi_V$ held' once 'price clears' sits in the same row
-        ' & & ' + ' & '.join(hd(f'h3/{k}', w) for k, w in enumerate(('both held', '$\\pi_V$ clears', 'both clear')))
-        + ' & & ' + ' & '.join(hd(f'h3/{k + 3}', w) for k, w in enumerate(('both held', 'price clears', '$\\pi_V$ clears', 'both clear'))) + ' \\\\'])
+        # in place of the no-externality block's '$\\pi_V$ held' once 'price clears' sits in the same row
+        # a label whose words the author has seen stays black: the key it had before the stacking, and its whole text
+        ' & ' + ' & '.join(hk(k, w) for k, w in (
+            (('h1/0', 'Housing'), 'Housing'), ('h5/1', 'both'), (('h3/1', '$\\pi_V$ clears'), '$\\pi_V$'),
+            (('h3/2', 'both clear'), 'both'), (('h1/4', 'Housing'), 'Housing'), ('h5/5', 'both'), ('h5/6', 'price'),
+            ('h5/7', '$\\pi_V$'), ('h5/8', 'both'))) + ' \\\\',
+        ' & ' + ' & '.join(hk(k, w) for k, w in (
+            (('h2/0', 'First'), 'First'), ('h6/1', 'held'), (('h3/1', '$\\pi_V$ clears'), 'clears'),
+            (('h3/2', 'both clear'), 'clear'), (('h2/4', 'First'), 'First'), ('h6/5', 'held'), ('h6/6', 'clears'),
+            ('h6/7', 'clears'), ('h6/8', 'clear'))) + ' \\\\'])
     tab_app = table(TABLE_APP, [
         ' & ' + ' & '.join(hd(f'a1/{k}', w) for k, w in enumerate(('Housing', 'Full'))) + ' \\\\',
         ' & ' + ' & '.join(hd(f'a2/{k}', w) for k, w in enumerate(('First', 'altruism'))) + ' \\\\'])
