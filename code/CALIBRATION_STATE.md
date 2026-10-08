@@ -1,5 +1,16 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 01:58 ROUND r222 (the author's PDF 1f87cfd9, 12 comments). ALL RED STRIPPED; tables frozen; base_r222 + splice_r222.
+In red: 'were X percent more likely to have used' wherever the two-person gap is quoted (intro, Sections 2, 3, 5; the
+author: "not that they used 19.5% more, but were 19.5% more likely to use"); 'raises the share who use drugs'. Section 5:
+the Bachman/Kreager sentence and both references removed (comment 9). Intro: 'but not by a big margin', the bound written
+out -- users 18 percent less likely to live with a child (nsduh_kh_sud_gap_pc, derived_names), 57 percent of the gain in
+childhood (x_tf_child_share_pc), so at most about 10 percent smaller; the homelessness clause dropped. Section 2: 'while
+they were using', and the at-home share added: 35 against 61 percent had a child under 18 living with them
+(nsfg_all_kidhh_hard_4049_pc / nouse, nsfg_births_by_drug_use.py). Table 6 upright at scriptsize (tab_untargeted.tex,
+[!tbp]); Table 8's note set to 0.62 textwidth. Checks pass (the old DC and VSL flags only). Stylized Section 3 numbers
+(18.3 -> 19.5) wait on the results chain in session_01XJm21FXz5KCcHL5zLZFLRh (log stylized_results_oct08b.log).
+
 08 Oct 01:44 STYLIZED STAGES DONE. Stage 1 exited at iteration 0 (worst 1.91 inside the 2 per cent rule: nothing in it
 moved). Stage 2 at the rest point (0086a087, calibrated_stage2.json, rest 1): iteration 50, live rows within 1.78;
 omega_c 0.00211 -> 0.00249, child gap 19.25 against 19.49, participation 8.98 at the rest point against 8.90, vsl 80.0.

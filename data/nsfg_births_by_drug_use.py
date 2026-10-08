@@ -80,6 +80,10 @@ for sex, d in SEXES.items():
             mi = w(y, y.minor)
             print(f'{g:48s} {len(y):5d} {b:9.2f} {100 * a:9.1f}% {100 * mi:9.1f}% {k:21.2f}')
             out[f'nsfg_{TAG[sex]}minor_{key}_{tag}_pc'] = f'{100 * mi:.0f}'
+            # A CHILD UNDER 18 LIVING AT HOME (the author, 8 October: "18 living at home with them"): NUMKDHH > 0,
+            # own, adopted, related or legal children under 18 in the household -- the minor share above counts
+            # children wherever they live
+            out[f'nsfg_{TAG[sex]}kidhh_{key}_{tag}_pc'] = f'{100 * w(y, y.NUMKDHH > 0):.0f}'
             out[f'nsfg_{TAG[sex]}births_{key}_{tag}'] = f'{b:.2f}'
             out[f'nsfg_{TAG[sex]}anybirth_{key}_{tag}_pc'] = f'{100 * a:.0f}'
             out[f'nsfg_{TAG[sex]}n_{key}_{tag}'] = str(len(y))

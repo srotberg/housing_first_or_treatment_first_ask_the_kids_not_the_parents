@@ -71,6 +71,10 @@ def derived(n):
     # the most the gain from Treatment First could fall if all of the part that comes in childhood shrank with the
     # share of users living with a child, against comparable non-users (7 October, the author: "the gaps are not orders
     # of magnitude... The gains are maybe 15% lower but it won't reverse them")
+    # how much less likely users are to live with a child than comparable non-users, for the bound's arithmetic
+    # (8 October, the author: "why not 20%? 48 to 40, is 20%, no?")
+    if 'nsduh_kh_sud_ratio' in n:
+        out['nsduh_kh_sud_gap_pc'] = f"{100 * (1.0 - _f(n['nsduh_kh_sud_ratio'])):.0f}"
     if 'nsduh_kh_sud_ratio' in n and 'x_tf_child_share_pc' in n:
         out['x_kh_gain_bound_pc'] = f"{_f(n['x_tf_child_share_pc']) * (1.0 - _f(n['nsduh_kh_sud_ratio'])):.0f}"
     # the lone-parent comparison in the omega_c item (7 October, the author: "lone parent plus child vs couple no kids"):
