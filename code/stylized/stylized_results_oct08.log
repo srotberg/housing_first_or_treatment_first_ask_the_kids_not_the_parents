@@ -1,0 +1,26 @@
+/home/user/housing_first_or_treatment_first/code/stylized/fill.py:329: SyntaxWarning: invalid escape sequence '\s'
+  This used to strip every \new{} ahead of \section{The quantitative model},
+/home/user/housing_first_or_treatment_first/code/stylized/tablered.py:21: SyntaxWarning: invalid escape sequence '\%'
+  number when it holds no letters beyond a unit suffix, which leaves 16.2\%,
+stage 1: calibrated_stage1.json, iteration 0, worst gap 1.905 per cent
+   NOTE: mortality at 1.25: participation 8.48 percent, not 8.95; no b delivers the target here
+Traceback (most recent call last):
+  File "/home/user/housing_first_or_treatment_first/code/stylized/stage_results.py", line 728, in <module>
+    d = stage1(par, figure='--no-figure' not in sys.argv)
+  File "/home/user/housing_first_or_treatment_first/code/stylized/stage_results.py", line 136, in stage1
+    d.update(stage1_figure(par))
+             ~~~~~~~~~~~~~^^^^^
+  File "/home/user/housing_first_or_treatment_first/code/stylized/stage_results.py", line 181, in stage1_figure
+    sc, curves, parts = run.fig_who_uses(par)
+                        ~~~~~~~~~~~~~~~~^^^^^
+  File "/home/user/housing_first_or_treatment_first/code/stylized/run.py", line 149, in fig_who_uses
+    draw_who_uses(sc, dict(curves, part=parts), r_cal=float(stats(base)['r_use']),
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                  part_ref=PART_REF)
+                  ^^^^^^^^^^^^^^^^^^
+  File "/home/user/housing_first_or_treatment_first/code/stylized/run.py", line 157, in draw_who_uses
+    plt = style()
+  File "/home/user/housing_first_or_treatment_first/code/stylized/run.py", line 34, in style
+    import matplotlib
+ModuleNotFoundError: No module named 'matplotlib'
+cloud_run: exit code 1 at 01:49
