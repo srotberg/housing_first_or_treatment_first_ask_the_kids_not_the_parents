@@ -1,5 +1,11 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 00:40 T = 60 KILLED BY A PLATFORM RESTART WITH THE WATCHER RUNNING (about 00:38; the kernel changed from
+6.18.44-fc-v77 to -v80, so the container moved host). The watcher (bwmtgys4x) was stopped with it. So idle reclaim
+explains the 23:28-00:12 kills, but the platform also restarts containers on its own. RELAUNCHED 00:39 (OMP 4, nice 10;
+log run.log.killed.202610080039 at year 3 of 59; state to restart_r4f_crash_202610080039/; seeds = loop 0_r3's, cmp
+identical; 100 HANDOVER lines; both seeds 59 of 59) with a new watcher. Loop 0_r4 now expected about 11:00-13:00 UTC.
+
 08 Oct 00:14 THE RESTARTS ARE THE SESSION GOING IDLE, NOT THE RUN. A fourth kill at about 00:12 (monitor's last line 00:09,
 RSS 6.8 GB, 8.8 GB free, load 2.9 at OMP 3 nice 19). Every restart since 23:23 came while the session sat idle between
 turns and was found as the next engine firing woke it (23:32, 23:41, 00:02, 00:12): with no background task running the
