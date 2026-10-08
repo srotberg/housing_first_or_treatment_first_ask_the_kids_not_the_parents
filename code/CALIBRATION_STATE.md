@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 14:15 NO EXTERNALITIES, PRICE AND pi_V BOTH CLEARING (results/noext_clear, converged pass 14). Price 1.0306 ->
+0.9072, pi_V 6.75 -> 7.61 per cent, drug use 9.01 -> 6.64, SUD 3.84 -> 2.80, homelessness 0.60 -> 0.66. Newborn adult
+CEV +0.39 per cent (every age-26 state better off); population -0.85; 74 per cent of households gain (+0.90), SUD
+households -30. So without externalities Treatment First LOSES at given drug prices (-1.50 pi_V held, -1.31 pi_V clears)
+but GAINS in full GE: the fall in demand lowers the price paid to drug sellers, who are outside the model's economy (no
+rebate of seller revenue), a terms-of-trade gain to the users who remain. Bears on the abstract's last sentence and the
+intro's second paragraph (both quote -1.31 without saying 'at given drug prices'). Reported to the author; paper not yet
+changed for it.
+
 08 Oct 13:05 WHO STOPS IN THE VALIDATION (the author: "use the like for like with the military experiment. Maybe add it
 to the validation?"). code/paper/export_whostops.py (new; run after export_results.py, which rewrites
 results_numbers.json, as export_revoked.py and export_pe_noext.py are) writes x_ws_*: the tested without a SUD, 59 per
