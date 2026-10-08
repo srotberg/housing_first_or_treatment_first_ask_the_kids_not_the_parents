@@ -544,6 +544,19 @@ def main():
     out['x_lr_hl_b1_pc'] = f'{100 * (hb1[1] / hb0[1] - 1):.0f}'
     out['x_lr_hl_b2_pc'] = f'{100 * (hb1[2] / hb0[2] - 1):.0f}'
     # the newborn's gain: net CEV, and the adult part's composition share
+    # THE DECOMPOSITION WALKED THROUGH COLUMN BY COLUMN (the author, 8 October: "explain in section 6 what experiments we
+    # do and walk the reader through each of them"): each held/clearing run against Housing First, its direction word
+    # turning with the number, 'is unchanged' when it rounds to zero
+    def _ch(arm, k):
+        v = pc(arm, k, 'null_share')
+        return 'is unchanged' if round(abs(v)) == 0 else f"{'falls' if v < 0 else 'rises'} by ${abs(v):.0f}$ percent"
+    for _a, _n in (('dc_b', 'dcb'), ('dc_pv', 'dcpv'), ('dc_p', 'dcp')):
+        out[f'x_{_n}_b'] = _ch(_a, 'b')
+        out[f'x_{_n}_h'] = _ch(_a, 'h')
+    _pp = pc('dc_pv', 'price', 'null_share')
+    out['x_dcpv_price_verb'] = 'lowers' if _pp < 0 else 'raises'
+    out['x_dcpv_price_pc'] = f'{abs(_pp):.0f}'
+    out['x_dcp_piv_dir'] = 'rises' if D['dc_p']['piv'] > D['null_share']['piv'] else 'falls'
     out['x_lr_e5_cev'] = f"{D[e]['cev_net']:.2f}"
     out['x_lr_e5_b_pc'] = f"{abs(pc(e, 'b', 'old_null_remote')):.0f}"
     out['x_lr_e5_h_pc'] = f"{abs(pc(e, 'h', 'old_null_remote')):.0f}"
