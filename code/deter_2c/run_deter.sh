@@ -9,8 +9,8 @@
 # Housing First's drug price and pi_V (both held, the budget not cleared): the share of voucher holders who use, under
 # Housing First's policies and under a screen whose penalty is the military's -- a PERMANENT voucher ban (build
 # cf_fix2_permban: voucher_exclusion_release = 0). The deterrence is 1 - (holders' use under the screen) / (holders' use
-# under Housing First), the Fortran's 'DIAG use by voucher state ... holding=' field. Detection rates 0.85, 0.20 and
-# 0.05; the rate giving TARGET_DROP is interpolated between the two that bracket it (from zero at zero detection).
+# under Housing First), the Fortran's 'DIAG use by voucher state ... holding=' field (the author: "just the use").
+# Detection rates 0.02 to 0.85; the rate giving TARGET_DROP is interpolated between the two that bracket it.
 #
 # THEN, AT THAT RATE: the paper's Treatment First (exclusion released at 1/3 a year, build cf_fix2) with the drug price
 # and pi_V clearing against the accepted no-policy net revenue, exactly as the tf85_c35 arm except the detection rate;
@@ -129,19 +129,31 @@ gunzip -c "$REF/files/welfare_curvebaseline_benchmark.dat.gz" > "$CEV_CURVE"
 note "free disk $(df -h "$C" | tail -1 | awk '{print $4}'), memory $(free -g | awk '/Mem/{print $2}') GiB, cores $(nproc), threads per solve $THREADS"
 
 cd "$C"
-for pb in "" 1; do
-    for b in cf_fix cf_fix2; do
-        o=$b${pb:+_permban}
-        [ -x "$C/$o/hftf_cf_prod" ] && [ "$C/$o/hftf_cf_prod" -nt "$C/housing_first_or_treatment_first_SR_v1.f90" ] && continue
-        note "building $o"
-        env ${pb:+PERMBAN=1} bash "cf_runs/build_$b.sh" > "/tmp/deter_build_$o.log" 2>&1 || { note "GUARD: build $o failed: $(tail -3 /tmp/deter_build_$o.log | tr '\n' ' ')"; publish "failed"; exit 1; }
-    done
+# ONLY WHAT THE RUNS USE IS COMPILED (the author: "that deterrence calibration should be very quick to do"). cf_fix and
+# cf_fix_permban are sources the next step patches, so they are generated, not compiled; the three binaries the runs
+# execute (cf_fix2 for the experiment, the two impact builds for the calibration) are compiled production-only, at once.
+need=0
+for o in cf_fix2 cf_fix2_impact cf_fix2_permban_impact; do
+    [ -x "$C/$o/hftf_cf_prod" ] && [ "$C/$o/hftf_cf_prod" -nt "$C/housing_first_or_treatment_first_SR_v1.f90" ] || need=1
 done
+if [ $need = 1 ]; then
+    note "generating the sources"
+    { GEN_ONLY=1 bash cf_runs/build_cf_fix.sh && PERMBAN=1 GEN_ONLY=1 bash cf_runs/build_cf_fix.sh && \
+      GEN_ONLY=1 bash cf_runs/build_cf_fix2.sh && PERMBAN=1 GEN_ONLY=1 bash cf_runs/build_cf_fix2.sh && \
+      IMPACT_BASE=cf_fix2 GEN_ONLY=1 bash deter_2c/build_impact.sh && \
+      IMPACT_BASE=cf_fix2_permban GEN_ONLY=1 bash deter_2c/build_impact.sh; } > /tmp/deter_gen.log 2>&1 \
+        || { note "GUARD: generating the sources failed: $(tail -3 /tmp/deter_gen.log | tr '\n' ' ')"; publish "failed"; exit 1; }
+    note "compiling cf_fix2, cf_fix2_impact and cf_fix2_permban_impact (production only, in parallel)"
+    for o in cf_fix2 cf_fix2_impact cf_fix2_permban_impact; do
+        ( cd "$C/$o" && gfortran -O3 -funroll-loops -fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium \
+            cf.f90 -o hftf_cf_prod 2> build_prod.err ) &
+    done
+    wait
+    for o in cf_fix2 cf_fix2_impact cf_fix2_permban_impact; do
+        [ -x "$C/$o/hftf_cf_prod" ] || { note "GUARD: $o did not compile: $(grep -m2 Error "$C/$o/build_prod.err" | tr '\n' ' ')"; publish "failed"; exit 1; }
+    done
+fi
 for b in cf_fix2 cf_fix2_permban; do
-    if [ ! -x "$C/${b}_impact/hftf_cf_prod" ] || [ "$C/${b}_impact/hftf_cf_prod" -ot "$C/$b/hftf_cf_prod" ]; then
-        note "building ${b}_impact"
-        IMPACT_BASE=$b bash deter_2c/build_impact.sh > "/tmp/deter_build_${b}_impact.log" 2>&1 || { note "GUARD: build ${b}_impact failed: $(tail -3 /tmp/deter_build_${b}_impact.log | tr '\n' ' ')"; publish "failed"; exit 1; }
-    fi
     grep -q "DIAG use by voucher state" "$C/${b}_impact/cf.f90" || { note "GUARD: ${b}_impact lacks the DIAG line"; publish "failed"; exit 1; }
 done
 grep -q "voucher_exclusion_release=0.d0" "$C/cf_fix2_permban_impact/cf.f90" || { note "GUARD: the permanent-ban impact build releases the exclusion"; publish "failed"; exit 1; }
@@ -149,23 +161,29 @@ publish "built"
 
 TF_SET="cost_per_drug_test $CTEST;adjust_taxes 0"
 PB=cf_fix2_permban_impact
-# ROUND 1: Housing First (the reference) alone until the benchmark is unpacked, then the permanent ban at 0.85 beside it
+# THE GRID, cheap because the distribution never moves: Housing First (the reference) alone until the benchmark is
+# done, then the permanent ban at six detection rates, two at a time
+GRID="0.02 0.05 0.10 0.20 0.40 0.85"
+tagof() { python3 -c "print('pb%03d' % round(1000*float('$1')))"; }
 if ! imp_done null ref; then
     imp ref null cf_fix2_impact
-    while [ ! -f "$C/cfarm_bench/BENCH_DONE" ] && alive "$D.imp_ref.pid"; do sleep 10; done
+    wait_all "reference" "$D.imp_ref.pid"     # alone: it unpacks the benchmark, and three solves would not fit in 15 GB
 fi
-imp_done tf pb085 || imp pb085 tf $PB PDET=0.85 EXTRA_SET="$TF_SET"
-wait_all "round 1" "$D.imp_ref.pid" "$D.imp_pb085.pid"
-# ROUND 2
-imp_done tf pb020 || imp pb020 tf $PB PDET=0.20 EXTRA_SET="$TF_SET"
-imp_done tf pb005 || imp pb005 tf $PB PDET=0.05 EXTRA_SET="$TF_SET"
-wait_all "round 2" "$D.imp_pb020.pid" "$D.imp_pb005.pid"
-
-for k in "null ref" "tf pb085" "tf pb020" "tf pb005"; do
-    set -- $k; note "impact $2: $(diag "$C/cfarm_$1_imp_$2/cf.log")  [use among holders, eligible, tested; eligible mass]"
+imp_done null ref || { note "GUARD: the Housing First reference printed no DIAG line: $(tail -3 "$C/cfarm_null_imp_ref.out" | tr '\n' ' ')"; publish "reference failed"; exit 1; }
+set -- $GRID
+while [ $# -gt 0 ]; do
+    pids=""
+    for p in $1 ${2:-}; do
+        t=$(tagof $p); imp_done tf $t || imp $t tf $PB PDET=$p EXTRA_SET="$TF_SET"; pids="$pids $D.imp_$t.pid"
+    done
+    wait_all "grid" $pids
+    shift; [ $# -gt 0 ] && shift
 done
+
+note "impact ref: $(diag "$C/cfarm_null_imp_ref/cf.log")  [use among holders, eligible, tested; eligible mass]"
+for p in $GRID; do t=$(tagof $p); note "impact $t: $(diag "$C/cfarm_tf_imp_$t/cf.log")"; done
 H0=$(holders "$C/cfarm_null_imp_ref/cf.log")
-DROPS=$(for k in "0.05 pb005" "0.20 pb020" "0.85 pb085"; do set -- $k; echo "$1 $(holders "$C/cfarm_tf_imp_$2/cf.log")"; done)
+DROPS=$(for p in $GRID; do echo "$p $(holders "$C/cfarm_tf_imp_$(tagof $p)/cf.log")"; done)
 note "holders' use under Housing First $H0; under the permanent ban: $(echo $DROPS)"
 PSTAR=$(python3 - "$TARGET_DROP" "$H0" <<PYEOF
 import sys
