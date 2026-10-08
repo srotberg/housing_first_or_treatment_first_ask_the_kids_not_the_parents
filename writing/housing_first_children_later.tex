@@ -250,7 +250,7 @@ Homelessness persists across generations too (Bassuk et al., 1997). In the model
 %======================================================================
 \section{A stylized model}\label{sec:stylized}
 
-\new{In the data, fewer than one in ten people use drugs, and their use is concentrated among people with low incomes:} the average user's income is $0.74$ of the population average in the 2024 NSDUH. \new{This section shows how both facts can be explained inside a simple economic model of drug use. The key ideas are two. Drugs are a luxury good, so most people consume none of them. And a SUD carries a risk of dying that cannot be insured against, a loss that grows with income, which deters the rich and not the poor and so reverses the income gradient in drug use.}
+\new{In the data, fewer than one in ten people use drugs, and their use is concentrated among people with low incomes:} the average user's income is $0.74$ of the population average in the 2024 NSDUH. \new{This section shows how both facts can be explained inside a simple economic model of drug use. There are two key ideas. Drugs are a luxury good, so most people consume none of them. And a SUD carries a risk of dying that cannot be insured against, a loss that grows with income, which deters the rich and not the poor and so reverses the income gradient in drug use.}
 
 %======================================================================
 \subsection{The model}\label{sec:env}
@@ -264,7 +264,7 @@ A household is characterised by its \new{productivity} $y$, fixed over its life 
 \begin{equation}\label{eq:fs}
 \new{F(y\,e) \;=\; \max\{0,\ \bar c-\varrho\, y\,e\},}
 \end{equation}
-\new{the maximum benefit $\bar c$ less a share $\varrho$ of earnings, as in the Supplemental Nutrition Assistance Program (SNAP), so that a household out of work receives $\bar c$. Food assistance is in the model for one reason. Section~\ref{sec:who} also solves the model with saving switched off, and a household out of work would then have nothing to consume, which with $\sigma>1$ leaves its problem undefined; food assistance bounds its consumption from below.}
+\new{where $\bar c$ is the maximum benefit and $\varrho$ the share of earnings by which it is reduced, as in the Supplemental Nutrition Assistance Program (SNAP), so that a household out of work receives $\bar c$. Food assistance is in the model for one reason. Section~\ref{sec:who} also solves the model with saving switched off, and a household out of work would then have nothing to consume, which with $\sigma>1$ leaves its problem undefined; food assistance bounds its consumption from below.}
 
 Consumption $c$ and drug consumption $v$ form the bundle
 \begin{equation}\label{eq:bundles}
@@ -287,7 +287,7 @@ being alive, the utility of surviving into a period over and above what is
 consumed in it, which gives mortality a cost that does not vanish even when
 consumption is low.
 
-Using drugs carries the risk of a SUD, the same whatever the quantity,
+Using drugs carries the risk of a SUD \new{($d=1$ if a household has one and $d=0$ if not)}, the same whatever the quantity,
 \begin{equation}\label{eq:hazard}
 \pi(v) \;=\; \pi_d\,\mathbf{1}\{v>0\}.
 \end{equation}
@@ -308,7 +308,7 @@ and one that uses chooses its saving and its drug consumption \new{to maximize i
 \begin{equation}\label{eq:v1}
 V^1(y) \;=\; \new{\max_{\{a\ge0,\ v>0\}}}\ \Big\{U\big(X(y-a+F(y)-p_v v,\,v)\big)+\aleph+\beta\Big[(1-\pi_d)\,\bar\phi\,W(a,y,0)+\pi_d\,\bar\phi^{\,\kappa_{\phi d}}\,W(a,y,1)\Big]\Big\}.
 \end{equation}
-It uses if $V^1(y)>V^0(y)$. A SUD reaches the second period through two channels: the mortality channel, which lowers the chance of living it, and the unemployment channel, which raises the chance of living it \new{unemployed}.\footnote{\new{The result holds as well in a version of this model with housing, a shelter, unemployment insurance and housing vouchers. There, if a SUD has no consequences, the average user earns 3.54 times the population average; the risk of dying alone takes this to 0.52 at twice its calibrated strength, while the risk of losing one's job alone leaves it at 3.54. With saving switched off in that version, the risk of losing one's job alone takes it to 0.56.}}
+It uses if $V^1(y)>V^0(y)$. A SUD reaches the second period through two channels: the mortality channel, which lowers the chance of living it, and the unemployment channel, which raises the chance of living it \new{unemployed}.\footnote{\new{The results in Section~\ref{sec:who} hold also in a version of this model with housing, a shelter, unemployment insurance and housing vouchers. There, if a SUD has no consequences, the average user earns 3.54 times the population average; the risk of dying alone takes this to 0.52 at twice its calibrated strength, while the risk of losing one's job alone leaves it at 3.54. With saving switched off in that version, the risk of losing one's job alone takes it to 0.56.}}
 
 %======================================================================
 \subsection{Calibration}\label{sec:cal}
@@ -331,9 +331,7 @@ mortality channel would be losing to impatience rather than to anything the mode
 is about, so a higher factor corrects for the coarseness of the horizon.} risk aversion is
 $\sigma=2$, as in the quantitative model, and survival over a period, the cumulative chance of surviving from age twenty-six to age fifty-five, is
 $\bar\phi = 0.93$, from the life table for the total population of the United States in 2010
-(Arias, 2014).
-
-\new{The chance that use causes a SUD, $\pi_d=0.41$, is the ratio of the SUD rate to participation in NSDUH 2024, $3.68$ against $8.90$ percent of adults aged 26 and over.}
+(Arias, 2014). \new{The chance that use causes a SUD, $\pi_d=0.41$, is the ratio of the SUD rate to participation in NSDUH 2024, $3.68$ against $8.90$ percent of adults aged 26 and over.}
 
 The dispersion of log \new{productivity} $\sigma_y$ is set so that the poorer half of the lognormal holds $17.2$ percent of total income, as households aged $26$ to $65$ with positive wage and salary income do with their earnings in the 2022 Survey of Consumer Finances (SCF). In the second period, a household without a SUD is out of work with probability $u_0$, $4.9$ percent, the average unemployment rate over 2014 to 2024, and one with a SUD with probability $u_1$, $16.25$ percent, the unemployment rate of adults aged 26 and over with a SUD in the 2024 NSDUH. Food assistance tapers at $\varrho=0.30$, the benefit reduction rate of \new{SNAP}, and the price of a unit of drugs $p_v$ is normalised to one.
 
@@ -341,9 +339,7 @@ The dispersion of log \new{productivity} $\sigma_y$ is set so that the poorer ha
 
 The flow value
 of being alive $\aleph$ is matched to a value of a statistical life (VSL) of 80
-times average annual income \new{(Viscusi and Aldy, 2003).}
-
-The parameter $b$, which sets the marginal utility of the first unit of drugs, is chosen to match a drug participation rate of
+times average annual income \new{(Viscusi and Aldy, 2003).} The parameter $b$, which sets the marginal utility of the first unit of drugs, is chosen to match a drug participation rate of
 $8.90$ percent from the 2024 NSDUH for respondents aged 26 and over with a disorder
 of any severity, and the weight on drugs $\theta$ is set to match the aggregate drug spending over the
 aggregate income of users, $16.0$ percent, from retail spending in Midgette et al.\ (2019) and the incomes of users in
@@ -368,15 +364,15 @@ the income distribution use sits, as Section~\ref{sec:who} shows.
 %======================================================================
 \subsection{Who uses drugs}\label{sec:who}
 
-Drugs are a luxury good bought at a price, so a household with
+Drugs \new{in the model} are a luxury good bought at a price, so a household with
 twice the income gives up less utility per dollar spent on them. If a SUD had no consequences, that would be the only force operating, and drug use
 \new{would concentrate} at the top: with $b$ refitted so that participation stays at $8.90$ percent, the average user then earns 3.51 times the population average. \new{What follows shows that it is the uninsurable risk of dying that reverses this gradient.}
 
 Figure~\ref{fig:who} scales each \new{of the two channels through which a SUD reaches old age, mortality and unemployment,} from nothing to $200$ percent of its calibrated value with the other switched off, by scaling $\kappa_{\phi d}-1$ for the mortality channel and $u_1-u_0$ for the unemployment channel. At every point $b$ is refitted so that participation stays at its calibrated value: the amount of drug use is the same everywhere on the figure, and only who uses changes.
 
-\new{The left panel shows the model. The mortality channel alone takes the average user from 3.51 times the population average down to 0.64 at its calibrated strength, crossing the average at $73$ percent of that strength, and to 0.27 at $200$ percent. In contrast,} the unemployment channel alone leaves the average user at 3.51 times the population average even at $200$ percent: on its own it does not change who uses at all.
+\new{The left panel shows the model, which allows households to save. The mortality channel alone takes the average user from 3.51 times the population average down to 0.64 at its calibrated strength, crossing the average at $73$ percent of that strength, and to 0.27 at $200$ percent. In contrast,} the unemployment channel alone leaves the average user at 3.51 times the population average even at $200$ percent: on its own it does not change who uses at all.
 
-\new{To understand why the risk of dying reverses the gradient and the risk of losing one's job does not, I turn to the right panel, which} switches saving off and leaves every parameter at its calibrated value. The unemployment channel then reverses the gradient as well: on its own it takes the average user to 0.75 times the population average at its calibrated strength, and to 0.27 at $200$ percent.
+\new{To understand why the risk of dying reverses the gradient and the risk of losing one's job does not, I turn to the right panel, which} switches saving off\new{, so households cannot hold precautionary savings against job loss,} and leaves every parameter at its calibrated value. The unemployment channel then reverses the gradient as well: on its own it takes the average user to 0.75 times the population average at its calibrated strength, and to 0.27 at $200$ percent.
 
 \begin{figure}[!tb]
 \centering
@@ -388,9 +384,9 @@ population average, and $b$ is recalibrated at every point so that participation
 the calibrated $8.90$ percent. The \new{vertical} dotted line marks the calibrated strength.}
 \end{figure}
 
-Who uses is decided by a race between two things that change with income, the two sides of $V^1(y)>V^0(y)$. On one side is the utility cost of the drug: a household with a higher income gives up less marginal utility for each dollar it spends on drugs, so buying $v$ units costs a rich household little in terms of utility relative to a poor household.
+Who uses is decided by a race between two things that change with income, \new{the cost of acquiring drugs and the penalty they inflict. The utility cost of the drug declines with income}: a household with a higher income gives up less marginal utility for each dollar it spends on drugs, so buying $v$ units costs a rich household little in terms of utility relative to a poor household.
 
-\new{On the other side is the expected loss from a SUD. Death and unemployment are both losses that rise with income. Unemployment, however, can be partly insured against through saving: a richer household carries more savings into a spell out of work, so the loss is proportional to what it has, and no greater for a rich household than for a poor one. Death cannot be insured against. It destroys the whole continuation value, the consumption of a life still to be lived and $\aleph$, the value of being alive at all, so the loss grows with income, deterring the rich and not the poor. Without saving, losing a job takes a household down to $\bar c$ whatever it earned, so that loss too grows with income, which is why in the right panel the unemployment channel reverses the gradient as well.}
+\new{The penalty inflicted by drugs does not rise with income when it can be partially insured against, but does rise when it cannot be. Unemployment can be partly insured against through saving: a richer household carries more savings into a spell out of work, so the loss is proportional to what it has, and no greater for a rich household than for a poor one. Death, on the other hand, cannot be insured against. It destroys the whole continuation value, the consumption of a life still to be lived and $\aleph$, the value of being alive at all, so the loss grows with income, deterring the rich and not the poor. Without the ability to save, losing a job takes a household down to $\bar c$ whatever it earned, so that loss too grows with income, which is why in the right panel the unemployment channel reverses the gradient as well.}
 
 %======================================================================
 \section{The quantitative model}\label{sec:full}
