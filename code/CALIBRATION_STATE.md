@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 04:45 THE AUTHOR'S DECISIONS ON THE OPEN ITEMS. (1) The introduction's framing waits for the budget result
+(results/noext_fixp). (2) Who stops (results/whostops_2c, the state-by-state measure: Housing First users with a voucher
+or an offer who stop under the paper's Treatment First, distribution fixed, price and pi_V held) is a VALIDATION against
+Mehay and Pacula's 61 per cent, not a calibration: "the numbers will be of similar magnitudes"; no Treatment First
+experiment is redone for it. (3) Food stamps (code/paper/nsduh_snap_use.json: 17.9 per cent of recipients 26+ have a
+drug use disorder against the model's 6.1 per cent of voucher holders) is an internal check only. (4) Treatment First
+without externalities with the budget rebalanced goes into the long-run table as a column, with discussion. The
+deterrence grid (deter_2c) was stopped by the author; its session archived. Validation run (rates, not states): holders
+6.08 -> 5.72 (-6%), tested 7.97 -> 6.42 (-19%), eligible 18.1 -> 10.8 (-40%), all -37%.
+
 08 Oct 04:30 ROUND r226 (the author's PDF a790373d, "keep all red and put any updates in red"). Two comments: the
 decomposition table's note set to the table's width (\tabnote, like Table 6); and whether the 64 percent also holds for
 holders and those offered a voucher on Housing First's distribution -- the author: "what the paper already has is ok
