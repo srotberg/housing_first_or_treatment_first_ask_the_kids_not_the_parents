@@ -369,28 +369,34 @@ def kappa_for_part(q, part):
     return 1.0 + math.exp(brentq(f, lo, hi, xtol=1e-14))
 
 
-def _resid(z, fixed):
-    """vsl, dshare, r_use and fshare on (aleph, b, theta, cbar); kappa solved inside on participation, which
-    keeps the band of users from vanishing at a trial point and leaving the fit on a flat surface."""
-    al, b, th, cb = np.exp(z)
-    q = full([al, b, th, 2.0, cb], fixed)
+def _resid(z, fixed, state):
+    """vsl, dshare, r_use and fshare on (aleph, theta, kappa, cbar); b solved inside on participation, from the
+    last trial's b.  b sets the spending below which the drug is not worth buying, so it is what holds
+    participation; kappa then decides how far up the income distribution the users reach.  The other pairing,
+    kappa on participation (used before food assistance), ran kappa to its bound: with food assistance the
+    poorest, whose old age is worth little, keep using at any mortality, so kappa cannot hold participation."""
+    al, th, km1, cb = np.exp(z)
+    q = full([al, state['b'], th, 1.0 + km1, cb], fixed)
     try:
-        q['kappa'] = kappa_for_part(q, TARGET['part'])
-    except (AssertionError, ValueError):
+        q['b'] = state['b'] = b_for_part(q, TARGET['part'], state['b'])
+    except ValueError:
         return np.full(4, 10.0)
     m = moments(q)
+    if not m['part'] > 0:
+        return np.full(4, 10.0)
     return np.array([m[k] / TARGET[k] - 1.0 for k in ('vsl', 'dshare', 'r_use', 'fshare')])
 
 
 def calibrate(start=None, fixed=FIXED):
-    """aleph on the VSL, theta on the spending share, b and kappa on participation and the users'
-    income, the last two jointly: b moves where the band of users sits, kappa how wide it is."""
-    s = start or dict(aleph=10.34, b=0.0258, theta=0.236, cbar=0.10)
-    r = least_squares(_resid, np.log([s['aleph'], s['b'], s['theta'], s['cbar']]), args=(fixed,),
-                      xtol=1e-15, ftol=1e-15, gtol=1e-15, max_nfev=2000)
-    al, b, th, cb = np.exp(r.x)
-    q = full([al, b, th, 2.0, cb], fixed)
-    q['kappa'] = kappa_for_part(q, TARGET['part'])
+    """aleph on the VSL, theta on the spending share, kappa on the users' income, cbar on food assistance
+    spending, b inside on participation."""
+    s = start or dict(aleph=10.34, b=0.0332, theta=0.236, kappa=3.4, cbar=0.10)
+    state = dict(b=s['b'])
+    r = least_squares(_resid, np.log([s['aleph'], s['theta'], s['kappa'] - 1.0, s['cbar']]), args=(fixed, state),
+                      diff_step=1e-4, xtol=1e-14, ftol=1e-14, gtol=1e-14, max_nfev=400)
+    al, th, km1, cb = np.exp(r.x)
+    q = full([al, state['b'], th, 1.0 + km1, cb], fixed)
+    q['b'] = b_for_part(q, TARGET['part'], state['b'])
     return q
 
 
