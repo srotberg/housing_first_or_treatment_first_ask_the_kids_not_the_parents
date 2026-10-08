@@ -1,5 +1,16 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 19:11 T = 60 RELAUNCHED (the author: "can you run the T=60 transition again to try and finish solving it?").
+Stopped by the author at 03:11 (period 21 of loop 0_r4, nothing saved), so the seeds are again loop 0_r3's paths
+(drug_price_path_seed.txt and pi_v_path_seed.txt cmp identical to results/transition_2c/loop0_r3/*_out.txt); binary
+cmp identical to e2_run/code/tr60_fix/hftf_tr_prod (md5 4c1c6c64), the build behind Table 5's long run (tf85_c35).
+State files, STOPPED_BY_AUTHOR and the old log to tr2c_t60/restart_r5_stop_202610081911/ and run.log.stopped2.*;
+PARAM_HANDOVER.txt from the kept copy (100 HANDOVER lines read); both seeds 59 of 59. Wrapper 3905
+(tr2c_worker.main.pid), binary 3910, OMP 4, nice 10. Watcher bfl0n2s6q (run_in_background, 115 min; re-arm when it
+reports, so the idle container is not reclaimed). Loops archive as results/transition_2c/loop<N>_r5/. A loop is about
+10-12 h: loop 0_r5's paths expected about 05:00-07:00 UTC 9 Oct. Convergence at loop 0_r3: drug gap worst 1.35 per cent
+(5 of 59 years above 0.005), budget residual worst 5.3e-3 (34 of 58 above 1e-3).
+
 08 Oct 14:15 NO EXTERNALITIES, PRICE AND pi_V BOTH CLEARING (results/noext_clear, converged pass 14). Price 1.0306 ->
 0.9072, pi_V 6.75 -> 7.61 per cent, drug use 9.01 -> 6.64, SUD 3.84 -> 2.80, homelessness 0.60 -> 0.66. Newborn adult
 CEV +0.39 per cent (every age-26 state better off); population -0.85; 74 per cent of households gain (+0.90), SUD
