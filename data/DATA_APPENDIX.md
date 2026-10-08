@@ -530,29 +530,27 @@ those first homeless at 15 or below were 2.6 times as likely to have been in fos
 
 # Part IV. The stylized model (Section 3, Tables 1 and 2)
 
-The stylized model's targets are the quantitative model's wherever the two share a moment, and Tables 1 and 2 report
-them; the differences are these.
+The stylized model is `code/stylized/gradient.py` (8 October): two periods, productivity, drugs, saving, a SUD that
+raises the risks of dying and of losing one's job, and food assistance. Its targets are the quantitative model's
+wherever the two share a moment, and Tables 1 and 2 report them; what differs is this.
 
-- **Periods.** A period is thirty years, so β = 0.995 a year compounded, 0.86, saving earns nothing (R = 1), and φ̄ =
-  0.93 is survival from 26 through 55 in the quantitative model's own life table, Arias (2014) (Block 10): the
-  product of the first thirty entries of `actual_survival_probability`, which `stylized.py` reads from the Fortran
-  (`_arias_survival`). Until 3 October it was 0.91, a figure carried over from a source the package never held (the
-  SSA period life table gives 0.92); the author: "it's better to use the same data for consistency".
-- **Two rental units**, set at h₂ = 0.10 and h₃ = 0.40 of mean income, rather than a calibrated smallest rung.
-- **π_d = 0.41, set externally** as 3.68/8.90, since use and the SUD are separated by cohort there.
-- **b and θ** are fitted by the quantitative model's update rule to the same 8.90 and 16.0 percent (θ = 0.18: 15.8
-  percent at stage 1, 16.1 at stage 2).
-- **κ_φd** is fitted to the same 0.74 (2.23 at stage 1, 2.32 at stage 2); **u₁** to the same 21.7 percent SUD share of
-  the homeless; **c̄** to the same 0.42 percent; **h₁** to 0.60 percent, inside the band; **ω_c** to the same 18.3
-  percent (0.0021, 18.2 at stage 2).
-- **ℵ** is aimed at a VSL of 80 at stage 2 and 84 at stage 1.
-- **σ_y** is held at 0.99, where the bottom half's share of earnings is 21.1 percent against the 17.2 target.
-- **u₀** is aimed at the same 4.9 percent unemployment rate; income support replaces half of earnings on a base capped at
-  mean income, and nothing after a job lost to the disorder (U.S. Department of Labor, 2024).
-- **γ** is fitted to the same 26.8 percent (0.40); **π_V = 0.27** and **κ_V = 0.5** are set; a voucher holder pays
-  **κ_r = 0.30 of the market rent**, a simplification of the HUD rule, under which the tenant pays a share of income.
-- **δ_d = 0.27** in logs, −ln(1 − 0.24), the same Nilsson (2017) penalty; **ρ = 0.50**.
-- The child's draw is centred on the mean of log productivity, as in the quantitative model.
+- **Periods.** A period is thirty years, so β = 0.995 a year compounded, 0.86, saving earns nothing, and φ̄ = 0.93 is
+  survival from 26 through 55 in the quantitative model's own life table, Arias (2014) (Block 10): the product of the
+  first thirty entries of `actual_survival_probability`, read from the Fortran.
+- **Productivity** is lognormal with σ_y = 0.95, set so that the poorer half of the lognormal holds 17.2 percent of
+  income (SCF 2022), and **truncated below at y_min = 0.24 of mean income**, the survivors renormalised to mean one.
+  The bound is not a target and is not in Table 1: with σ = 2 the value of being alive is negative at a low enough
+  income, and a household for which it is negative would use drugs for the mortality they bring; the bound keeps
+  every household's period-1 value positive (it reaches zero at about 0.20). It cuts 20 percent of the lognormal, so
+  the model's poorer half holds 21.5 percent rather than 17.2.
+- **π_d = 0.41, set externally** as 3.68/8.90, since use and the SUD are separated by cohort.
+- **u₀ = 4.9 percent and u₁ = 16.25 percent** are the quantitative model's targets (`unemployment_rate_data`,
+  `unemployment_rate_sud_data`), set here rather than fitted: there is no homelessness to fit u₁ to.
+- **Food assistance** F(ye) = max(0, c̄ − ϱye), with ϱ = 0.30, SNAP's benefit reduction rate; c̄ = 0.098 is fitted to
+  the same 0.42 percent of labour income. There is no unemployment insurance.
+- **ℵ** is fitted to a VSL of 80 (8.64), **b** to participation of 8.90 percent (0.032), **θ** to drug spending of
+  16.0 percent of users' income (0.22) and **κ_φd** to users' income of 0.74 of the mean (3.56); all five moments are
+  matched exactly. b is solved for participation inside the fit, since with food assistance κ cannot hold it.
 
 ---
 

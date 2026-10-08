@@ -480,9 +480,10 @@ def write_tables(q, m):
          'US life table 2010, Arias (2014), ages 26--55', f'${tn(q["phibar"])}$'),
         (r'$\pi_d$', 'Chance that use starts a SUD', 'NSDUH 2024: SUD rate over participation',
          f'${tn(q["pi_d"])}$'),
-        (r'$\sigma_y$', 'Dispersion of log income',
+        (r'$\sigma_y$', 'Dispersion of log productivity',
          f'SCF 2022: bottom half holds {100 * BOT50_TARGET:.1f}\\% of earnings', f'${tn(q["sig_y"])}$'),
-        (r'$y_{\min}$', 'Lowest income, over mean income', 'Set', f'${tn(q["y_min"])}$'),
+        # y_min, the bottom of the income distribution, is documented in data/DATA_APPENDIX.md, not in Table 1
+        # (the author, 8 October: "remove. you can put this in the data_appendix")
         (r'$u_0$', 'Unemployment rate in period 2, no SUD', 'BLS CPS, average 2014--2024',
          f'${q["u0"]:.3f}$'),
         (r'$u_1$', 'Unemployment rate in period 2 with a SUD', 'NSDUH 2024, ages 26 and over',
