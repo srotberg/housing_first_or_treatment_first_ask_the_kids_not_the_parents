@@ -1,4 +1,4 @@
-# the detection rate at which a permanent ban deters 0.16 of voucher holders who use, omega_c = 0.085; 08 Oct 04:00 UTC
+# the detection rate at which a permanent ban deters 0.16 of voucher holders who use, omega_c = 0.085; 08 Oct 04:20 UTC
 run_deter: gfortran missing, installing (03:08)
 run_deter: free disk 29G, memory 15 GiB, cores 4, threads per solve 2 (03:08)
 run_deter: generating the sources (03:08)
@@ -6,6 +6,8 @@ run_deter: compiling cf_fix2, cf_fix2_impact and cf_fix2_permban_impact (product
 run_deter: impact null ref on cf_fix2_impact:  (03:09)
 run_deter: impact tf pb020 on cf_fix2_permban_impact: PDET=0.02 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 (03:36)
 run_deter: impact tf pb050 on cf_fix2_permban_impact: PDET=0.05 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 (03:36)
+run_deter: impact tf pb100 on cf_fix2_permban_impact: PDET=0.10 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 (04:00)
+run_deter: impact tf pb200 on cf_fix2_permban_impact: PDET=0.20 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 (04:00)
 
 == cfarm_null_imp_ref: 3 passes; use among holders, eligible, tested; eligible mass: 0.0608335618 0.1808173217 0.0796507461 11.6337833103
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -24,3 +26,13 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   1  1.0001  0.06753   -12.0%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.7082  +0.62%    -9.1%    +3.2%
   2  1.0001  0.06753   -12.7%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.7238  +0.66%    -9.5%    +3.7%
   3  1.0001  0.06753   -12.7%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.7238  +0.66%    -9.5%    +3.7%
+
+== cfarm_tf_imp_pb100: 2 passes; use among holders, eligible, tested; eligible mass: NA
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  1.0001  0.06753   -18.1%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.7800  +0.82%   -14.3%    +4.6%
+  2  1.0001  0.06753   -19.0%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.7954  +0.87%   -15.1%    +4.9%
+
+== cfarm_tf_imp_pb200: 2 passes; use among holders, eligible, tested; eligible mass: NA
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  1.0001  0.06753   -24.9%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.8621  +1.06%   -20.0%    +6.5%
+  2  1.0001  0.06753   -27.4%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.9018  +1.18%   -22.9%    +6.2%
