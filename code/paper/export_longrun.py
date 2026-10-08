@@ -789,9 +789,14 @@ def main():
     # "maybe you can just state which results are different?"): in the stylized model no user gains
     out['x_lr_sud_better_pc'] = f'{_sb:.0f}' if _sb is not None else ''
     out['x_lr_all_better_pc'] = f"{100 * _SH['all households'][0]:.0f}" if _SH else ''
+    # WHO IS NEITHER (8 October, the author on 76 against the transition's 97: "why not 76%?"): within the tolerance,
+    # the rest are unaffected, and results/transition_2c/value_shares.txt puts none of them below 51 (ages 26-50:
+    # better 0.9462, unchanged 0.0000), so the sentence says who they are
+    out['x_lr_all_worse_pc'] = f"{100 * _SH['all households'][1]:.0f}" if _SH else ''
     out['x_lr_approve_sud'] = (
-        f"Across all households, ${100 * _SH['all households'][0]:.0f}$ percent are better off, and even ${_sb:.0f}$ "
-        'percent of those that have a SUD.'
+        f"Across all households, ${100 * _SH['all households'][0]:.0f}$ percent are better off and "
+        f"${100 * _SH['all households'][1]:.0f}$ percent worse off; the rest, all older than 50, are essentially "
+        f"unaffected. Even ${_sb:.0f}$ percent of those that have a SUD are better off."
         if _SH and _sb is not None and _sb < 50 else '')
     out['x_intro_gain'] = (
         f"A newborn gains ${D[t]['cev_net']:.2f}$ percent of lifetime consumption. About ${_kid:.0f}$ percent of that "

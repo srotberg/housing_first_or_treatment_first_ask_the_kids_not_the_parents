@@ -346,7 +346,7 @@ def _sgn(v, d=0):
         t = t.lstrip('-')
     return t.replace('-', '$-$')
 _tf_row = {'b': tf['drug use b']['pc'], 'sud': tf['SUD lambda_d']['pc'], 'h': tf['homelessness h_1']['pc'], 'cev': _tfc}
-_rows = [('Held', 'Held', DC_B), ('Clears', 'Held', DC_PV), ('Held', 'Adjusts', DC_P), ('Clears', 'Adjusts', _tf_row)]
+_rows = [('Held', 'Held', DC_B), ('Clears', 'Held', DC_PV), ('Held', 'Clears', DC_P), ('Clears', 'Clears', _tf_row)]   # 'Clears', not 'Adjusts' (the author, 8 October)
 with open(os.path.join(ROOT, 'writing', 'tables', 'tab_decomp.tex'), 'w') as _f:
     _f.write('% Written by code/paper/export_results.py from results/decomp_2c, decomp_2c_both and the tf85 arm;\n'
              '% edit the script, not this file. Caption and note are in the paper.\n'

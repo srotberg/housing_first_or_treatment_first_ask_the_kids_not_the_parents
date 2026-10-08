@@ -1,5 +1,27 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 01:02 ROUND r220 (the author's PDF bf0424be, 18 comments; "remove all red and put updates in red"). ALL RED STRIPPED
+(and the two struck introduction paragraphs deleted); tables frozen; base_r220 + splice_r220.
+omega_c IDENTIFIED BY THE TWO-PERSON COMPARISON (the author: "unmarried two person household vs lone parent with child,
+that identifies omegac exactly", "we dont have to be so apologetic"): child_use_gap_data = 0.1949 in the Fortran (was
+1/0.845 - 1), nsduh_lp_id_value from data/make_altruism_moment_loneparent.py (family income, lone parents reweighted to the
+non-parents' cells); Table 5's omega_c row reads 19.5 against the model's 17.7, omega_c 0.085 pinned, nothing refitted.
+The intro, Section 2 and Section 5 quote it as c_omega_c_data (calib_numbers) in place of q_omega_c: sync_tables.py has
+crashed since gamma's avg_rent_to_income_data left the Fortran, and run with a guard it would move q_theta, q_b (8.90 ->
+10.50), q_h_1, q_mu_h, q_h_2, q_bar_pi_eu to stale declarations -- NOT RUN; needs its own fix before any q_ name is trusted.
+The 7-44 range, the married-couple sentence, the past-month sentence and the xi = 1 footnote removed. Intro: the
+parenthood paragraph rewritten without repetition; the foster-care footnote moved to Section 2 ('while still using').
+Stylized omega_c: how switching the child's terms off maps into the data (still the all-parents 18.3, s_t_gap). The rest
+point against Table 2 said plainly. Decomposition: announced before the breakdown; 'Adjusts' -> 'Clears' (table,
+caption, note). Full-altruism 'counterfactual, not a social optimum' sentence removed. The outcome that matters most
+named. 97 AGAINST 76: the transition compares with the calibrated benchmark's value function, which sits 0.002-0.014
+utils below the no-policy re-solve's at every age above 26 (0 at 26; scratchpad vdiff_null_bench.py) -- drift between two
+solves, not a missing -kappa_x*H (the author's suspicion: that would be 0.05-0.1 at young ages and largest at 26). So the
+untouched over-50s count as better off against the benchmark and as unaffected against the re-solve. The prose now
+quotes the share WORSE off, the same either way: 3 at the reform (x_trf_alive_worse_pc, transition_series worse.csv)
+and in the long run (x_lr_all_worse_pc; x_lr_approve_sud: 76 better, 3 worse, the rest all older than 50 unaffected).
+51 pages; checks clean but the old DC acronym and VSL citation flags.
+
 08 Oct 00:40 T = 60 KILLED BY A PLATFORM RESTART WITH THE WATCHER RUNNING (about 00:38; the kernel changed from
 6.18.44-fc-v77 to -v80, so the container moved host). The watcher (bwmtgys4x) was stopped with it. So idle reclaim
 explains the 23:28-00:12 kills, but the platform also restarts containers on its own. RELAUNCHED 00:39 (OMP 4, nice 10;

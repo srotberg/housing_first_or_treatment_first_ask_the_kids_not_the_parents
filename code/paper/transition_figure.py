@@ -192,16 +192,21 @@ def names(S, C, R):
     out['x_trf_alive_better_pc'] = f"{100 * R['better_off_all']:.0f}"
     out['x_trf_alive_sud_better_pc'] = f"{100 * R['better_off_sud']:.0f}"
     out['x_trf_alive_sud_worse_pc'] = f"{100 * R['worse_off_sud']:.0f}"
+    out['x_trf_alive_worse_pc'] = f"{100 * R['worse_off_all']:.0f}"
     # panel (h): the shares over the path
     Bt = rows('better.csv')
     a_all = [100 * r['all'] for r in Bt]; a_sud = [100 * r['with_sud'] for r in Bt]
     a_ent = [100 * r['entering'] for r in Bt]
+    # the share WORSE off over the path (8 October): the better-off share counts households the reform leaves
+    # untouched as better off, because the benchmark's value function sits slightly below the re-solve's
+    Wt = rows('worse.csv')
+    w_all = [100 * r['all'] for r in Wt]
     out['x_trf_better_sentence'] = (
         'Panel (h) repeats the comparison in every year of the path, for a household in each state weighted as '
-        'under Housing First. The share better off stays '
-        + (f"at about ${a_all[0]:.0f}$ percent" if round(min(a_all)) == round(max(a_all)) else
-           f"between ${min(a_all):.0f}$ and ${max(a_all):.0f}$ percent")
-        + f", and the share among those with a SUD {'rises' if a_sud[-1] > a_sud[0] else 'falls'} from "
+        'under Housing First. The share worse off stays '
+        + (f"at about ${w_all[0]:.0f}$ percent" if round(min(w_all)) == round(max(w_all)) else
+           f"between ${min(w_all):.0f}$ and ${max(w_all):.0f}$ percent")
+        + f", and the share of those with a SUD who are better off {'rises' if a_sud[-1] > a_sud[0] else 'falls'} from "
         f"${a_sud[0]:.0f}$ to ${a_sud[-1]:.0f}$ percent as the price comes down further. "
         + ('Every household entering adult life at 26 is better off throughout.' if min(a_ent) > 99.95
            and min(c for b, c in cev) > 0 else

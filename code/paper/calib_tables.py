@@ -259,7 +259,7 @@ ELEVEN = [
     ]),
     ('Externalities', [
         (r'$\omega_c$', "Parent's weight on its child", 'Int.',
-         "Non-parents' use over parents', less one, NSDUH 2024",
+         "Two-adult over lone-parent households' use, less one, NSDUH 2024",
          pc(C['child_use_gap_data']), pc(RISE), f(H['weight_on_child'], 3)),   # 0.085, not 0.09: the third decimal is the grid point
         (r'$\delta_d$', "Earnings the child loses because of a parent's SUD", 'Ext.', r'Earnings lost in utero, Nilsson (2017)',
          f(C['penalty_child_addicted']), NA, f(H['penalty_child_addicted'])),

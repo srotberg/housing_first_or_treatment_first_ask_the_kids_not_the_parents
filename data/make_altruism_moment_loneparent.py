@@ -68,7 +68,15 @@ def _gaps(comp, extra):
         out.append(100 * (b2 / a2 - 1))
     return out
 unm, mar = _gaps(other, ['marit']), _gaps(couple, [])
-res = {'nsduh_lp_unm_lo_pc': f'{min(unm):.0f}', 'nsduh_lp_unm_hi_pc': f'{max(unm):.0f}',
+# THE MOMENT THAT IDENTIFIES omega_c (the author, 8 October: "unmarried two person household vs lone parent with child,
+# that identifies omegac exactly"): family income held equal, which with two people in each household is income per
+# person, and lone parents reweighted to the non-parents' cells, the convention of make_altruism_moment.py
+cells_id = ['age3', 'sex', 'marit', 'finc']
+b2, a2, cov_id = matched(other, lone, cells_id, 'illmon')
+ident = b2 / a2 - 1
+print(f'IDENTIFYING MOMENT: unmarried two-adult households use {100*ident:.2f}% more than lone parents (cover {100*cov_id:.0f}%)')
+res = {'nsduh_lp_id_value': f'{ident:.4f}', 'nsduh_lp_id_pc': f'{100 * ident:.1f}',
+       'nsduh_lp_unm_lo_pc': f'{min(unm):.0f}', 'nsduh_lp_unm_hi_pc': f'{max(unm):.0f}',
        'nsduh_lp_mar_lo': f'{min(mar):.0f}', 'nsduh_lp_mar_hi': f'{max(mar):.0f}', 'nsduh_lp_n': f'{len(lone):,}'}
 json.dump(res, open(OUT, 'w'), indent=1, sort_keys=True)
 print('wrote', OUT, res)

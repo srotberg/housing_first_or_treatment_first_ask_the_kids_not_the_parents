@@ -210,7 +210,19 @@ def main():
     hf, tf = final_tf85()
     ref = {'hf': {**steady(REF_NULL), **hf}, 'tf': {**steady(REF_TF), **tf},
            'better_off_all': B['share_all_ages'], 'better_off_sud': B['share_addicted'],
-           'worse_off_sud': S['BETTER_TOL'][1]['worse_sud']}
+           'worse_off_sud': S['BETTER_TOL'][1]['worse_sud'],
+           # WORSE OFF, with the tolerance (8 October, the author: "why not 76%?"): the path is compared with the
+           # calibrated benchmark's value function, which sits 0.002 to 0.014 utils below the no-policy re-solve's at
+           # every age above 26 (scratchpad vdiff_null_bench.py), so households the reform does not touch count as
+           # better off against it and not against the re-solve (76 better, 21 unaffected, 3 worse in the long run).
+           # The share worse off is the same either way, so the prose quotes it.
+           'worse_off_all': S['BETTER_TOL'][1]['worse_all']}
+    with open(os.path.join(OUT, 'worse.csv'), 'w', newline='') as f:
+        w = csv.writer(f)
+        w.writerow(['t', 'all', 'with_sud'])
+        for t in sorted(S['BETTER_TOL']):
+            b = S['BETTER_TOL'][t]
+            w.writerow([t, b['worse_all'], b['worse_sud']])
     json.dump(ref, open(os.path.join(OUT, 'reference.json'), 'w'), indent=1)
     print(f'wrote {OUT}: {len(T)} years, {len(rows)} cohorts, {len(A)} age bands')
 

@@ -872,7 +872,15 @@
         ! rise on that base. The old 0.155 was 1 - 0.845, the same gap measured
         ! against the non parent level instead, so omega was being calibrated to
         ! a target roughly fifteen per cent too small.
-        real(8), parameter :: child_use_gap_data=1.d0/0.845d0-1.d0
+        ! THE MOMENT CHANGED ON 8 OCTOBER (the author: "unmarried two person household vs lone parent with child, that
+        ! identifies omegac exactly"). The experiment switches the child's weight off and keeps the household, so its
+        ! data counterpart keeps the household too: in NSDUH 2024 two-person households, an unmarried adult living with
+        ! one other adult and no child uses 19.49 per cent more (past month) than a lone parent with one child, lone
+        ! parents reweighted to the non-parents' age x sex x marital status x family income cells; with two people in
+        ! each household equal family income is equal income per person. data/make_altruism_moment_loneparent.py,
+        ! nsduh_lp_id_value. The old 1/0.845 - 1 = 0.1834 compared all parents with all non-parents. omega_c = 0.085
+        ! is pinned and gives 17.7 per cent, so nothing was refitted.
+        real(8), parameter :: child_use_gap_data=0.1949d0
         ! SMALL ON PURPOSE, so omega climbs from zero rather than jumping.
         ! Its moment is a difference between two equilibrium solves and carries
         ! their path in it, so a large step turns that noise into a large move:
