@@ -1,5 +1,12 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+08 Oct 05:43 WHO STOPS, STATE BY STATE (results/whostops_2c; validation only, the author's decision). Impact build on
+Housing First's distribution, drug price and pi_V held, the paper's Treatment First (0.85, $35 test, three-year
+exclusion). Of the mass that used under Housing First: holders 6.0 per cent stop (all users), 53.2 per cent of holders
+without a SUD; holders and offered (offer-rate weighted) 19.4 per cent, 58.9 per cent without a SUD. Nobody starts. 89
+per cent of holders who use have a SUD and cannot stop on impact. Against Mehay and Pacula's 61 per cent among stayers.
+The paper's 64 per cent sentence stays unless the author asks.
+
 08 Oct 04:45 THE AUTHOR'S DECISIONS ON THE OPEN ITEMS. (1) The introduction's framing waits for the budget result
 (results/noext_fixp). (2) Who stops (results/whostops_2c, the state-by-state measure: Housing First users with a voucher
 or an offer who stop under the paper's Treatment First, distribution fixed, price and pi_V held) is a VALIDATION against
