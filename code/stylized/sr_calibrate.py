@@ -50,6 +50,10 @@ the scale factored out.
 """
 import math
 import numpy as np
+# THE MOMENT THAT IDENTIFIES omega_c (the author, 8 October: "you need to fix it to the current numbers"): the same
+# two-person comparison as the quantitative model's child_use_gap_data -- unmarried adults living with one other adult
+# and no child against lone parents with one child, NSDUH 2024 (data/make_altruism_moment_loneparent.py). Was 0.1834.
+CHILD_GAP_TARGET = 0.1949
 
 import calibrate as C
 from calibrate import stats
@@ -327,7 +331,7 @@ SPEC = [
     # because Delta(y) is of order 5 and participation is a threshold, so even a
     # tiny weight removes a lot of marginal users.  A parameter sitting on its
     # bound has stopped being calibrated.
-    ('omega',   'child_gap',        0.1834,  +1, 0.30, 1e-6,  1.00),
+    ('omega',   'child_gap',        CHILD_GAP_TARGET,  +1, 0.30, 1e-6,  1.00),
     # delta_d ON THE CHILD SUD ODDS RATIO OF 2, asked for twice.  Sign standard:
     # a bigger income penalty makes the child poorer, poorer children use more,
     # so the ratio RISES in delta_d.
@@ -589,7 +593,7 @@ def moments(par, it=0):
     elif fresh:
         if par.omega > 0.0 and m['part'] > CHILD_GAP_FLOOR * 0.08901 \
                 and m['dshare'] > 0.02:
-            cf = stats(with_(par, omega=0.0))
+            cf = stats(with_(par, omega=0.0, rest_hold=1))     # at the rest point, the mixture is held
             # THE COUNTERFACTUAL HAS TO BE ON THE SAME BRANCH AS THE BASELINE.
             # Guarding the baseline's drug share alone was half a guard.  At
             # iteration 200 the baseline had drug share 0.1028 and users at 0.278

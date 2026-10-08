@@ -692,6 +692,11 @@ class P:
     fert = 0
     psi = 0.0
     fert_s = 0.5
+    # STAGE 2 AT THE REST POINT (restpoint.py, stages.py --rest; the author, 8 October): rest = 1 makes
+    # calibrate.stats() measure every moment over the Housing First rest point's two penalty types,
+    # rest_hold = 1 holds that mixture (the omega = 0 experiment). Off by default.
+    rest = 0
+    rest_hold = 0
     # chdmg IS DERIVED, NOT A PARAMETER, AND IT IS NO LONGER ZERO.
     #
     # It is the child's expected LOSS in lifetime value from the parent

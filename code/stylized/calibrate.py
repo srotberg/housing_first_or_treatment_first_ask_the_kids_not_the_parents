@@ -724,6 +724,10 @@ def stats(par):
     if getattr(par, 'fert', 0):
         import fertility
         return fertility.mixed_stats(par)
+    # STAGE 2 AT THE HOUSING FIRST REST POINT (stylized.P.rest; restpoint.py)
+    if getattr(par, 'rest', 0):
+        import restpoint
+        return restpoint.rest_stats(par)
     par = solve_child_damage(par)
     m = aggregates(par, YG, W, edges=EDGES, cdf=CDF)
     m['vsl'] = vsl(par)

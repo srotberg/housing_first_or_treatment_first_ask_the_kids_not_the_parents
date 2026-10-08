@@ -121,6 +121,9 @@ FS_TARGET = float(_fc()['food_stamps_share_data'])
 # target and written to another file, leaving calibrated_stage<n>.json as it is.
 VSL_TARGET = None
 OUT_NAME = None
+# --rest (8 October, the author: "Retarget + rest point"): stage 2 with every moment measured at the Housing First
+# rest point (restpoint.py) rather than in one generation drawn from the base income distribution.
+REST = False
 # --fert (7 October, the author: "keep the model fully endogenous and the child choice is endogenous",
 # "we can start with the stylized model... to see how the results change"): stage 2 with the choice to
 # have a child (fertility.py), delta_d zero, the warm glow psi fitted on the share of adults in their
@@ -210,7 +213,7 @@ def save(par, stage, it, m, worst):
                     # the 29 September specification: food stamps, no insurance under
                     # a SUD, and the settings that go with the raised floor
                     'cbar', 'ui_sud', 'ui_sud_excess', 'repl', 'h2', 'h3', 'yV',
-                    'fert', 'psi', 'fert_s', 'glow'})
+                    'fert', 'psi', 'fert_s', 'glow', 'rest'})
     out = {'_stage': stage, '_iteration': it, '_worst_gap_pc': round(worst, 3),
            '_moments': {k: (round(v, 6) if isinstance(v, float) else v)
                         for k, v in m.items() if not isinstance(v, (list, dict, np.ndarray))}}
@@ -292,6 +295,8 @@ def calibrate(stage, iters=6000, tol=2.0, every=25, resume=None, hold=()):
         prev = json.load(open(os.path.join(HERE, 'calibrated_stage2.json')))
         v = {k: x for k, x in prev.items() if not k.startswith('_')}
     v.update(STAGE_SET[stage])
+    if REST and stage == 2:
+        v.update(rest=1)
     if FERT and stage == 2:
         v.update(delta_d=0.0, fert=1, fert_s=FERT_S, glow=0.0)
         S.PER_PARAM_STEP['psi'] = 0.01
@@ -349,6 +354,8 @@ if __name__ == '__main__':
             VSL_TARGET = float(a.split('=', 1)[1])
         if a.startswith('--out='):
             OUT_NAME = a.split('=', 1)[1]
+        if a == '--rest':
+            REST = True
         if a == '--fert':
             FERT = True
             OUT_NAME = OUT_NAME or 'calibrated_stage2_fert.json'

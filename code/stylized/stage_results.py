@@ -329,7 +329,7 @@ def stage2(par):
         # PARTICIPATION AT THE REST POINT, LIKE THE SUD RATE BESIDE IT (review, 3 October): e['part'] is
         # at the base income distribution, so the two quoted together implied a conversion other than
         # pi_d. Every user runs the same pi_d, so the rest point's participation is its SUD rate over it.
-        d[f's2_part_{tag}'] = pc(e['sud_stat'] / par.pi_base)
+        d[f's2_part_{tag}'] = pc(e['part_stat'])      # exact at the rest point (restpoint.py, 8 October)
     # WHICH WAY TREATMENT FIRST MOVES CHILDHOOD HOMELESSNESS here, as a word the prose
     # takes rather than types: homeless_stat is period 1, when the child is at home,
     # and the quantitative model moves it the other way, so the sentence has to turn
@@ -440,7 +440,7 @@ def calibration_names(p1, r1, p2, r2):
              s_t_hspend=f'{100 * T["hspend"]:.1f}', s_t_dshare=f'{100 * th_t:.1f}',
              s_t_ruse=f'{T["r_use"]:.2f}', s_t_homeless=f'{100 * T["homeless"]:.2f}',
              s_t_unemp=f'{100 * 0.0485:.2f}', s_t_sudhl=f'{100 * T["sud_of_homeless2"]:.1f}',
-             s_t_gap=f'{100 * 0.1834:.1f}', s_sigy=f'{C.SIG:.3f}')
+             s_t_gap=f'{100 * __import__("sr_calibrate").CHILD_GAP_TARGET:.1f}', s_sigy=f'{C.SIG:.3f}')
     # THE 30 SEPTEMBER SPECIFICATION: food assistance, the raised floor with sigma_y held,
     # the stylized VSL of 84 against the quantitative model's 80, and the dollar value.
     d.update(_floor_names())
@@ -600,7 +600,8 @@ def write_tables(p1, r1, p2, r2):
         (r'$\bar c$', 'Food stamp spending over labour income', f'{100 * stages.FS_TARGET:.2f}\\%',
          mm(m1, 'fshare', lambda x: f'{100 * x:.2f}\\%'), tn(p1.cbar),
          mm(m2, 'fshare', lambda x: f'{100 * x:.2f}\\%'), tn(p2.cbar)),
-        (r'$\omega_c$', 'Use of non-parents over parents, less one, NSDUH 2024', pct(0.1834),
+        (r'$\omega_c$', "Two-adult over lone-parent households' use, less one, NSDUH 2024",
+         pct(__import__('sr_calibrate').CHILD_GAP_TARGET),
          '--', '--', mm(m2, 'child_gap', pct), tn(p2.omega)),
     ]
     # ONE LINE A ROW (the author, 29 September): the target column is l, not a

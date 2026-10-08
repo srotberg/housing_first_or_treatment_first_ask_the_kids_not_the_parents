@@ -247,7 +247,12 @@ def economy(par, label, policy=BASE_POLICY, pV=None):
     """
     q, a_grid, k_grid = grids(par, policy, pV)
     v1, sud, hl, ev = T._policy_grids(par, policy, pV if pV is not None else par.pV)
-    p = T._rest_point(sud, T._hl_by_shift(par, policy, pV if pV is not None else par.pV), par)
+    # THE REST POINT EXACTLY (8 October; restpoint.py): the mixture and the rates it reports from aggregates() at
+    # each penalty type, not from the node grid, which put the SUD rate 10 per cent too high at the base incomes and
+    # too low at the penalised ones. The welfare below still interpolates V1 across the grid, which is smooth.
+    import restpoint as RP
+    rp = RP.rest_stats(with_(par, policy=policy, **({'pV': pV} if pV is not None else {})))
+    p = np.array(rp['rest_p'])
     kbs = _kid_by_shift(par, policy, pV)
 
     adult = _mix(p, a_grid, par)
@@ -256,8 +261,7 @@ def economy(par, label, policy=BASE_POLICY, pV=None):
     m = stats(q)
     return dict(label=label, par=q, p=p,
                 adult=float(adult), kid=float(kid), total=float(adult + kid),
-                sud_stat=T._outcome(p, sud, par),
-                homeless_stat=T._outcome(p, hl, par),
+                sud_stat=rp['sud'], homeless_stat=rp['homeless1'], part_stat=rp['part'],
                 sud_base=m['sud'], part=m['part'], dshare=m['dshare'],
                 homeless_base=m['homeless'], r_use=m['r_use'],
                 a_grid=a_grid, k_grid=k_grid, kbs=kbs,
