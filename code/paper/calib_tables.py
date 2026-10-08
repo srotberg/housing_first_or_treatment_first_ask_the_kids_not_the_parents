@@ -269,15 +269,8 @@ ELEVEN = [
          pc(C['child_use_gap_data']), pc(RISE), f(H['weight_on_child'], 3)),   # 0.085, not 0.09: the third decimal is the grid point
         (r'$\delta_d$', "Earnings the child loses because of a parent's SUD", 'Ext.', r'Earnings lost in utero, Nilsson (2017)',
          f(C['penalty_child_addicted']), NA, f(H['penalty_child_addicted'])),
-        # INTERNAL (review, 3 October): kappa_x is solved inside the model from the willingness to pay
-        (r'$\kappa_x$', 'Disamenity of homelessness', 'Int.',
-         r'Willingness to pay, Loubi\`ere et al.\ (2020)',
-         # THE MODEL CELL IS ON THE INCOME BASIS, like the data's (the author, 1 October:
-         # "you should still use 0.2% since it is income terms too"): kappa_x = 0.93 was
-         # set on 24 September so that the willingness to pay is Loubiere's 0.2 per cent
-         # of income (CALIBRATION_STATE.md), so the cell is that share by construction.
-         # KX_WTP, the same amount against consumption, is c_kappa_x_cons for the prose.
-         pc(KX_X, 2), pc(KX_X, 2), f(H['kappa_x'])),
+        # kappa_x LEAVES THE CALIBRATION (the author, 8 October: "you can remove it from the calibration too"): it is a
+        # footnote to the model's period utility now, without a value (no calibration number in Section 4)
     ]),
     ('Drug market', [
         (r'$\varepsilon_s$', 'Price elasticity of drug supply', 'Ext.', r'Mace et al.\ (2020)',
