@@ -1,22 +1,24 @@
 #!/bin/bash
-# run_deter.sh -- THE SCREEN'S DETERRENCE MATCHED TO THE MILITARY'S (8 October). The author: "use the benchmark
-# distribution of HF and then check how many respond to it", and that share "has to match the 16%" Mehay and Pacula
-# (1999, NBER WP 7383) find for random testing with discharge in the military.
+# run_deter.sh -- THE DETECTION RATE IDENTIFIED FROM THE MILITARY'S DETERRENCE (8 October). The author: "get the detection
+# probability such that in PE, from the benchmark distribution with HF, a drug test with the penalty similar to the one
+# in the military (I think permanent exclusion?), deters only 16% of users", "the deterrence has to be applied only to
+# those with vouchers ... not those outside", "if you account also for others outside the program, you are measuring
+# ... on the wrong margin". Mehay and Pacula (1999, NBER WP 7383): random testing with discharge, about 16 per cent.
 #
-# THE MEASURE. Treatment First's policies, solved at Housing First's drug price and pi_V (both held, the budget not
-# cleared), applied to Housing First's benchmark distribution (build cf_fix2_impact: fixed_to_benchmark_dis = 1, so
-# no run moves the distribution). The population is the tested one, the same under either programme: every
-# income-eligible voucher holder, and every income-eligible non-holder weighted by its offer rate (the Fortran's
-# 'DIAG use by voucher state ... tested=' line). The drop is 1 - (users among the tested under Treatment First) /
-# (the same under Housing First), at detection rates 0.85, 0.20 and 0.05; the rate that gives 16 per cent is
-# interpolated between the two that bracket it (from zero at zero detection below the lowest).
+# THE MEASURE. On Housing First's benchmark distribution, held fixed (build *_impact: fixed_to_benchmark_dis = 1), at
+# Housing First's drug price and pi_V (both held, the budget not cleared): the share of voucher holders who use, under
+# Housing First's policies and under a screen whose penalty is the military's -- a PERMANENT voucher ban (build
+# cf_fix2_permban: voucher_exclusion_release = 0). The deterrence is 1 - (holders' use under the screen) / (holders' use
+# under Housing First), the Fortran's 'DIAG use by voucher state ... holding=' field. Detection rates 0.85, 0.20 and
+# 0.05; the rate giving TARGET_DROP is interpolated between the two that bracket it (from zero at zero detection).
 #
-# THEN THE EXPERIMENT AT THAT RATE: Treatment First on cf_fix2 with the drug price and pi_V clearing against the
-# accepted no-policy net revenue, exactly as the paper's tf85_c35 arm except the detection rate, plus the impact run
-# at the same rate to confirm the 16 per cent.
+# THEN, AT THAT RATE: the paper's Treatment First (exclusion released at 1/3 a year, build cf_fix2) with the drug price
+# and pi_V clearing against the accepted no-policy net revenue, exactly as the tf85_c35 arm except the detection rate;
+# beside it, the impact run with the permanent ban at that rate (the confirmation) and the impact run of the paper's
+# Treatment First at that rate (how much the paper's own screen deters holders on impact).
 #
 # START IT WITH THE BASH TOOL'S run_in_background=true from the repo root:  bash code/deter_2c/run_deter.sh
-# Re-running attaches to a live worker; a finished arm is not run again. Publishes results/deter_2c/status.txt.
+# Re-running attaches to a live worker; a finished run is not repeated. Publishes results/deter_2c/status.txt.
 set -u
 BRANCH=claude/two-period-addiction-hazard-d7gb61
 E=$(cd "$(dirname "$0")" && pwd)
@@ -53,29 +55,33 @@ if [ "${DETER_DETACHED:-0}" != 1 ]; then
     exit 0
 fi
 
-# the tested users' share and the other DIAG figures of an arm's last print
+# holders' use (the measure), then eligible use, the tested population's use, and the eligible mass, from the last print
 diag() {   # <cf.log>
     python3 - "$1" <<'PYEOF'
 import re, sys
-t = open(sys.argv[1], errors='replace').read()
+try:
+    t = open(sys.argv[1], errors='replace').read()
+except OSError:
+    print('NA'); raise SystemExit
 L = [l for l in t.splitlines() if 'DIAG use by voucher state' in l]
 if not L:
     print('NA'); raise SystemExit
 l = L[-1].replace('=', ' = ')
 def g(k):
-    m = re.search(re.escape(k) + r'\s*=\s*(\S+)', l)
+    m = re.search(re.escape(k) + r'\s*=\s*(\S+)', l)   # the first match: 'eligible' before 'eligible mass'
     return float(m.group(1)) if m else float('nan')
-print('%.10f %.10f %.10f %.10f %.10f' % (g('tested'), g('holding'), g('eligible'), g('tested mass'), g('users tested')))
+print('%.10f %.10f %.10f %.10f' % (g('holding'), g('eligible'), g('tested'), g('eligible mass')))
 PYEOF
 }
+holders() { diag "$1" | awk '{print $1}'; }
 
 publish() (
     {
-        echo "# the screen's deterrence matched to $TARGET_DROP among the tested, omega_c = 0.085; $(date -u '+%d %b %H:%M UTC')"
+        echo "# the detection rate at which a permanent ban deters $TARGET_DROP of voucher holders who use, omega_c = 0.085; $(date -u '+%d %b %H:%M UTC')"
         cat "$D.status" 2>/dev/null
         for d in "$C"/cfarm_*_imp_* "$C"/cfarm_tf_2c_det*; do
             [ -f "$d/cf.log" ] || continue
-            echo; echo "== $(basename "$d"): $(grep -ac 'CF MOMENTS' "$d/cf.log") passes; tested/holding/eligible use, tested mass, tested users: $(diag "$d/cf.log")"
+            echo; echo "== $(basename "$d"): $(grep -ac 'CF MOMENTS' "$d/cf.log") passes; use among holders, eligible, tested; eligible mass: $(diag "$d/cf.log")"
             python3 "$C/cf_runs/passes.py" "$d/cf.log" "$C/cf_runs/cev.py" 2>/dev/null | tail -n 4
         done
         true
@@ -92,16 +98,16 @@ publish() (
     note "push failed after 4 tries"
 )
 
-# imp <tag> <null|tf> [VAR=value ...]: an impact run (cf_fix2_impact) at Housing First's price and pi_V
+# imp <tag> <null|tf> <build> [VAR=value ...]: an impact run at Housing First's price and pi_V on the fixed distribution
 imp() {
-    t=$1; a=$2; shift 2
-    note "impact $a $t: $*"
-    ( cd "$C" && env BUILD=cf_fix2_impact OMP_NUM_THREADS=${THREADS:-2} DIAG_TAG="_imp_$t" SEED_FROM=bench \
+    t=$1; a=$2; b=$3; shift 3
+    note "impact $a $t on $b: $*"
+    ( cd "$C" && env BUILD=$b OMP_NUM_THREADS=$THREADS DIAG_TAG="_imp_$t" SEED_FROM=bench \
         PV_START=$V_NULL DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "$@" sh pe_noext/cf_arm_pe.sh "$a" \
         > "$C/cfarm_${a}_imp_$t.out" 2>&1 ) &
     echo $! > "$D.imp_$t.pid"
 }
-imp_done() { [ "$(diag "$C/cfarm_$1_imp_$2/cf.log" 2>/dev/null)" != NA ] && [ -f "$C/cfarm_$1_imp_$2/cf.log" ]; }
+imp_done() { [ -f "$C/cfarm_$1_imp_$2/cf.log" ] && [ "$(diag "$C/cfarm_$1_imp_$2/cf.log")" != NA ]; }
 wait_all() {   # <label> <pid file>...
     l=$1; shift
     while :; do
@@ -120,79 +126,80 @@ command -v gfortran >/dev/null 2>&1 || {
 command -v gfortran >/dev/null || { note "GUARD: no gfortran"; publish "failed"; exit 1; }
 python3 -c "import numpy" 2>/dev/null || pip install -q numpy >/dev/null 2>&1
 gunzip -c "$REF/files/welfare_curvebaseline_benchmark.dat.gz" > "$CEV_CURVE"
-note "free disk $(df -h "$C" | tail -1 | awk '{print $4}'), memory $(free -g | awk '/Mem/{print $2}') GiB, cores $(nproc)"
+note "free disk $(df -h "$C" | tail -1 | awk '{print $4}'), memory $(free -g | awk '/Mem/{print $2}') GiB, cores $(nproc), threads per solve $THREADS"
 
 cd "$C"
-for b in cf_fix cf_fix2; do
-    [ -x "$C/$b/hftf_cf_prod" ] && [ "$C/$b/hftf_cf_prod" -nt "$C/housing_first_or_treatment_first_SR_v1.f90" ] && continue
-    note "building $b"
-    bash "cf_runs/build_$b.sh" > "/tmp/deter_build_$b.log" 2>&1 || { note "GUARD: build $b failed: $(tail -3 /tmp/deter_build_$b.log | tr '\n' ' ')"; publish "failed"; exit 1; }
+for pb in "" 1; do
+    for b in cf_fix cf_fix2; do
+        o=$b${pb:+_permban}
+        [ -x "$C/$o/hftf_cf_prod" ] && [ "$C/$o/hftf_cf_prod" -nt "$C/housing_first_or_treatment_first_SR_v1.f90" ] && continue
+        note "building $o"
+        env ${pb:+PERMBAN=1} bash "cf_runs/build_$b.sh" > "/tmp/deter_build_$o.log" 2>&1 || { note "GUARD: build $o failed: $(tail -3 /tmp/deter_build_$o.log | tr '\n' ' ')"; publish "failed"; exit 1; }
+    done
 done
-if [ ! -x "$C/cf_fix2_impact/hftf_cf_prod" ] || [ "$C/cf_fix2_impact/hftf_cf_prod" -ot "$C/cf_fix2/hftf_cf_prod" ]; then
-    note "building cf_fix2_impact"
-    bash deter_2c/build_impact.sh > /tmp/deter_build_impact.log 2>&1 || { note "GUARD: build cf_fix2_impact failed: $(tail -3 /tmp/deter_build_impact.log | tr '\n' ' ')"; publish "failed"; exit 1; }
-fi
-grep -q "DIAG use by voucher state" "$C/cf_fix2_impact/cf.f90" || { note "GUARD: the impact build lacks the DIAG line"; publish "failed"; exit 1; }
+for b in cf_fix2 cf_fix2_permban; do
+    if [ ! -x "$C/${b}_impact/hftf_cf_prod" ] || [ "$C/${b}_impact/hftf_cf_prod" -ot "$C/$b/hftf_cf_prod" ]; then
+        note "building ${b}_impact"
+        IMPACT_BASE=$b bash deter_2c/build_impact.sh > "/tmp/deter_build_${b}_impact.log" 2>&1 || { note "GUARD: build ${b}_impact failed: $(tail -3 /tmp/deter_build_${b}_impact.log | tr '\n' ' ')"; publish "failed"; exit 1; }
+    fi
+    grep -q "DIAG use by voucher state" "$C/${b}_impact/cf.f90" || { note "GUARD: ${b}_impact lacks the DIAG line"; publish "failed"; exit 1; }
+done
+grep -q "voucher_exclusion_release=0.d0" "$C/cf_fix2_permban_impact/cf.f90" || { note "GUARD: the permanent-ban impact build releases the exclusion"; publish "failed"; exit 1; }
 publish "built"
 
 TF_SET="cost_per_drug_test $CTEST;adjust_taxes 0"
-# ROUND 1: Housing First (the reference) alone until the benchmark is unpacked, then detection 0.85 beside it
+PB=cf_fix2_permban_impact
+# ROUND 1: Housing First (the reference) alone until the benchmark is unpacked, then the permanent ban at 0.85 beside it
 if ! imp_done null ref; then
-    imp ref null
+    imp ref null cf_fix2_impact
     while [ ! -f "$C/cfarm_bench/BENCH_DONE" ] && alive "$D.imp_ref.pid"; do sleep 10; done
 fi
-imp_done tf p085 || imp p085 tf PDET=0.85 EXTRA_SET="$TF_SET"
-wait_all "round 1" "$D.imp_ref.pid" "$D.imp_p085.pid"
+imp_done tf pb085 || imp pb085 tf $PB PDET=0.85 EXTRA_SET="$TF_SET"
+wait_all "round 1" "$D.imp_ref.pid" "$D.imp_pb085.pid"
 # ROUND 2
-imp_done tf p020 || imp p020 tf PDET=0.20 EXTRA_SET="$TF_SET"
-imp_done tf p005 || imp p005 tf PDET=0.05 EXTRA_SET="$TF_SET"
-wait_all "round 2" "$D.imp_p020.pid" "$D.imp_p005.pid"
+imp_done tf pb020 || imp pb020 tf $PB PDET=0.20 EXTRA_SET="$TF_SET"
+imp_done tf pb005 || imp pb005 tf $PB PDET=0.05 EXTRA_SET="$TF_SET"
+wait_all "round 2" "$D.imp_pb020.pid" "$D.imp_pb005.pid"
 
-for k in "null ref" "tf p085" "tf p020" "tf p005"; do
-    set -- $k; note "impact $2: $(diag "$C/cfarm_$1_imp_$2/cf.log")  [tested, holding, eligible use; tested mass; tested users]"
+for k in "null ref" "tf pb085" "tf pb020" "tf pb005"; do
+    set -- $k; note "impact $2: $(diag "$C/cfarm_$1_imp_$2/cf.log")  [use among holders, eligible, tested; eligible mass]"
 done
-PSTAR=$(python3 - "$TARGET_DROP" "$C" <<'PYEOF'
-import sys, re
-tgt, C = float(sys.argv[1]), sys.argv[2]
-def share(d):
-    L = [l for l in open(f'{C}/{d}/cf.log', errors='replace') if 'DIAG use by voucher state' in l]
-    return float(re.search(r'tested=\s*(\S+)', L[-1].replace('=', '= ')).group(1))
-r0 = share('cfarm_null_imp_ref')
-pts = [(0.0, 0.0)] + sorted((p, 1 - share(f'cfarm_tf_imp_{t}') / r0) for p, t in ((0.05, 'p005'), (0.20, 'p020'), (0.85, 'p085')))
+H0=$(holders "$C/cfarm_null_imp_ref/cf.log")
+DROPS=$(for k in "0.05 pb005" "0.20 pb020" "0.85 pb085"; do set -- $k; echo "$1 $(holders "$C/cfarm_tf_imp_$2/cf.log")"; done)
+note "holders' use under Housing First $H0; under the permanent ban: $(echo $DROPS)"
+PSTAR=$(python3 - "$TARGET_DROP" "$H0" <<PYEOF
+import sys
+tgt, h0 = float(sys.argv[1]), float(sys.argv[2])
+rows = [l.split() for l in """$DROPS""".strip().splitlines()]
+pts = [(0.0, 0.0)] + sorted((float(p), 1 - float(h) / h0) for p, h in rows)
+print('drops ' + ', '.join('%.2f: %.1f%%' % (p, 100 * d) for p, d in pts[1:]), file=sys.stderr)
 for (p1, d1), (p2, d2) in zip(pts, pts[1:]):
     if d1 <= tgt <= d2 and d2 > d1:
         print('%.4f' % (p1 + (tgt - d1) * (p2 - p1) / (d2 - d1))); break
 else:
-    print('NA ' + ' '.join('%.2f:%.4f' % x for x in pts))
+    print('NA')
 PYEOF
 )
-note "drops: $(python3 - "$C" <<'PYEOF'
-import sys, re
-C = sys.argv[1]
-def share(d):
-    L = [l for l in open(f'{C}/{d}/cf.log', errors='replace') if 'DIAG use by voucher state' in l]
-    return float(re.search(r'tested=\s*(\S+)', L[-1].replace('=', '= ')).group(1))
-r0 = share('cfarm_null_imp_ref')
-print('Housing First tested users %.4f; ' % r0 + ', '.join('detection %s: %.1f%%' % (p, 100 * (1 - share(f'cfarm_tf_imp_{t}') / r0)) for p, t in (('0.05', 'p005'), ('0.20', 'p020'), ('0.85', 'p085'))))
-PYEOF
-)"
-case "$PSTAR" in NA*) note "GUARD: $TARGET_DROP is not bracketed by the grid: $PSTAR"; publish "target not bracketed"; exit 1 ;; esac
-note "detection rate for a $TARGET_DROP drop among the tested: $PSTAR"
+case "$PSTAR" in NA*|"") note "GUARD: a $TARGET_DROP drop is not bracketed by the grid"; publish "target not bracketed"; exit 1 ;; esac
+note "detection rate at which the permanent ban deters $TARGET_DROP of holders who use: $PSTAR"
 publish "detection $PSTAR"
 TAG=$(python3 -c "print('%03d' % round(1000*float('$PSTAR')))")
 
-# ROUND 3: the experiment at that rate (prices and pi_V clearing) and the impact run confirming the drop
+# ROUND 3: the paper's Treatment First at that rate with the price and pi_V clearing; beside it, one after the other,
+# the permanent ban's impact run at that rate (the confirmation) and the paper's screen's impact run at that rate
 if ! { tail -5 "$C/cfarm_tf_2c_det$TAG.out" 2>/dev/null | grep -q "DIST CHECK PASS"; }; then
     note "Treatment First at detection $PSTAR, price and pi_V clearing against $NET_TARGET"
-    ( cd "$C" && env BUILD=cf_fix2 OMP_NUM_THREADS=${THREADS:-2} DIAG_TAG="_2c_det$TAG" SEED_FROM=bench PDET=$PSTAR \
+    ( cd "$C" && env BUILD=cf_fix2 OMP_NUM_THREADS=$THREADS DIAG_TAG="_2c_det$TAG" SEED_FROM=bench PDET=$PSTAR \
         NET_TARGET="$NET_TARGET" PV_START=$V_TF DRUG_PRICE_START=$P_TF EXTRA_SET="cost_per_drug_test $CTEST" \
         sh pe_noext/cf_arm_pe.sh tf > "$C/cfarm_tf_2c_det$TAG.out" 2>&1 ) &
     echo $! > "$D.main.pid"
 fi
-imp_done tf "c$TAG" || imp "c$TAG" tf PDET=$PSTAR EXTRA_SET="$TF_SET"
-wait_all "round 3" "$D.main.pid" "$D.imp_c$TAG.pid"
+if ! imp_done tf "pbc$TAG"; then imp "pbc$TAG" tf $PB PDET=$PSTAR EXTRA_SET="$TF_SET"; wait_all "round 3a" "$D.imp_pbc$TAG.pid"; fi
+note "confirmation, permanent ban at $PSTAR: holders' use $(holders "$C/cfarm_tf_imp_pbc$TAG/cf.log") against $H0"
+if ! imp_done tf "ty$TAG"; then imp "ty$TAG" tf cf_fix2_impact PDET=$PSTAR EXTRA_SET="$TF_SET"; wait_all "round 3b" "$D.imp_ty$TAG.pid"; fi
+note "the paper's screen at $PSTAR on impact: holders' use $(holders "$C/cfarm_tf_imp_ty$TAG/cf.log") against $H0"
+wait_all "round 3" "$D.main.pid"
 
-note "confirmation, impact at $PSTAR: $(diag "$C/cfarm_tf_imp_c$TAG/cf.log")"
 O="$C/cfarm_tf_2c_det$TAG.out"; L="$C/cfarm_tf_2c_det$TAG/cf.log"
 tail -5 "$O" | grep -q "DIST CHECK PASS" && note "main arm: $(grep -a 'DIST CHECK PASS' "$O")" || note "GUARD: main arm failed its distribution check: $(tail -3 "$O" | tr '\n' ' ')"
 grep -a "TARGET CHECK PASS" "$O" >/dev/null && note "main arm: $(grep -a 'TARGET CHECK PASS' "$O")" || note "GUARD: main arm did not clear the budget against $NET_TARGET"
