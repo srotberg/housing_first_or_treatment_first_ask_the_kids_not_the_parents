@@ -157,14 +157,16 @@ def y_sg(q):
 
 
 def W(a, y, q, d=0):
-    """The value of period 2 with assets a and SUD status d: out of work with probability u_d, on y_min + a."""
+    """The value of period 2 with assets a and SUD status d: out of work with probability u_d, and then on its
+    savings alone (the author, 8 October: "i rather if there was no UI ... because then it simpler and can
+    highlight the savings")."""
     u = q['u1'] if d else q['u0']
-    return (1.0 - u) * _U0(y + a, q) + u * _U0(q['y_min'] + a, q) + q['aleph']
+    return (1.0 - u) * _U0(y + a, q) + u * _U0(a, q) + q['aleph']
 
 
 def _Wp(a, y, q, d=0):
     u = q['u1'] if d else q['u0']
-    return (1.0 - u) * _U0p(y + a, q) + u * _U0p(q['y_min'] + a, q)
+    return (1.0 - u) * _U0p(y + a, q) + u * _U0p(a, q)
 
 
 def _bisect(g, lo, hi, n=64):
@@ -472,7 +474,8 @@ def draw(panels):
                          'legend.frameon': False, 'lines.linewidth': 2.1})
     col = dict(mortality='#1F5A99', unemployment='#C0662B')
     lab = dict(mortality='Mortality risk of a SUD', unemployment='Unemployment risk of a SUD')
-    fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.9), sharey=True)
+    fig, axes = plt.subplots(1, len(panels), figsize=(4.8 * len(panels) + 1.4, 3.9), sharey=True, squeeze=False)
+    axes = axes[0]
     top = 1.08 * max(max(r) for curves in panels.values() for _, r in curves.values())
     for ax, (title, curves) in zip(axes, panels.items()):
         ax.axhspan(0, 1, color='0.93', zorder=0)
@@ -489,7 +492,8 @@ def draw(panels):
                         fontsize=8, color=col[which], va='center')
         r0 = curves['mortality'][1][0]
         ax.annotate(f'{r0:.2f}', xy=(0, r0), xytext=(4, 5), textcoords='offset points', fontsize=8)
-        ax.set_title(title, fontsize=10)
+        if len(panels) > 1:
+            ax.set_title(title, fontsize=10)
         ax.set_xlim(0, 100 * SCAN_HI + 16)
         ax.set_ylim(0, top)
         ax.set_xticks(np.arange(0, 100 * SCAN_HI + 1, 50))
@@ -550,7 +554,9 @@ def main():
           f'{float(V1(q["y_min"], q)[0]):.3f}')
     json.dump({k: q[k] for k in q}, open(os.path.join(HERE, 'gradient.json'), 'w'), indent=1)
     panels = {}
-    for title, save in (('With saving (the model)', True), ('Saving switched off', False)):
+    # ONE PANEL: without UI a household out of work lives on its savings, so with saving switched off it would
+    # have nothing to consume, which at sigma = 2 is minus infinity; the comparison cannot be solved.
+    for title, save in (('With saving (the model)', True),):
         g = {**q, 'save': save}
         panels[title] = {w: scan(g, w) for w in ('mortality', 'unemployment')}
         for w, (sc, r) in panels[title].items():
