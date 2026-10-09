@@ -17,6 +17,15 @@ re-solved as in remote_transition_2c.sh; seeds = loop 0_r5's drug price and pi_V
 values. Loops archive to results/transition_2c_t70/loop<N>/. Compare its years 1-59 with T = 60's: if they match, the
 horizon does not bind; if not, the paper's transition should come from T = 70.
 
+09 Oct 19:43 NO EXTERNALITIES, PARTIAL EQUILIBRIUM AT pi_V 7.61 (the author: "cant you just raise pi_v to 7.61% and keep the
+price at the benchmark and see?", "it should just be a PE run"). code/noext_clear/run_noext_pvhi.sh (run_noext_pclear.sh with
+the price HELD at arm A's 1.0306231, DRUG_MARKET_ADJUSTER 0, pi_V SET to arm C's 0.076132869, adjust_taxes 0; arm A starts at
+its converged price) in session_01Y14po6KKcriBswnLFjLFwc -> results/noext_pvhi. RESULTS SO FAR (newborn adult CEV, no
+externalities): both held -1.50, pi_V clears at the fixed price (6.89) -1.31, price clears with pi_V held (noext_pclear, 0.912)
+-0.89, both clear (0.907, 7.61) +0.39. This run is pi_V 7.61 at the fixed price. Stylized model, referee item 7: log utility
+recalibrated (kappa 11.95, all targets hit, users the bottom 8.4 and top 0.5 per cent); Figure 1 under log: mortality reverses
+past about 1.1x, unemployment with saving never (to 8x), without saving at about 5x (scratchpad logcal; to be written up).
+
 09 Oct 17:15 OMEGA_C = 0.7 SENSITIVITY (the author: "a sensitivity test where omegac=0.7 in the benchmark (like in nishiyama)
 ... show whether the long run welfare effects are similar ... set omegac=0.7, holding everything else fixed and adjusting b to
 match the drug use (start with the one class model so make it faster). And then add the two class model to finish the
