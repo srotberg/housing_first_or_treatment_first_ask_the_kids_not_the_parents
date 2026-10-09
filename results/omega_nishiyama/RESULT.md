@@ -49,6 +49,13 @@ block 4, so the target sits between 0.98 b1* and b1*, and the extra point the pl
 at the block-4 log-b interpolation to 8.956 x 9.189/8.956 = 0.004499171, rather than after the three converge
 (about 3 hours saved). It is taken if it lands within 0.05 points of 8.956; otherwise the four points give b2*.
 
+23:32: the 0.98 and 1.02 b1* workers' solves restarted from the seed (22:30 and 23:12; container restarts, the
+runner restarts a dead solve from the seed by design), so their earlier blocks above are the only record of
+their first pass. Block 6 of the two that bracket the target: 0.004499171 9.218 (path 7.987, 9.476, 9.556,
+9.443, 9.237, 9.218), b1* 8.545 (7.807, 8.757, 8.866, 8.796, 8.599, 8.545). Neither is heading to within 0.05
+of 8.956, so a fifth point was launched at once at the block-6 log-b interpolation to 8.986 (the benchmark of
+record's block 6, which ended 0.03 below it): **0.004510373**, session_01KU25a1Pxrn7ZMCux1H35nZ, 23:33.
+
 b2* = pending.
 
 **INSTRUCTION FROM THE AUTHOR, 9 October 21:00 UTC (relayed by the main session):** *"omega_c=0.686 does
