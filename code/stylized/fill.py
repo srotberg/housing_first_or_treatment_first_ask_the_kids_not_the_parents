@@ -353,7 +353,7 @@ def _black_notes(src):
 #   |x| <  0.1   two significant figures    0.0248 -> 0.025, 0.0014 -> 0.0014
 #                and no trailing zero past the second decimal: 0.040 -> 0.04
 # A name whose third decimal IS the number is listed here and left alone.
-KEEP_THIRD = {'s_beta_ann'}      # 0.995 a year; two decimals would print 1.00
+KEEP_THIRD = {'s_beta_ann', 'g_beta_ann'}      # 0.995 a year; two decimals print 0.99, whose thirtieth power is 0.74, not the 0.86 of Table 1 (referee, 9 October)
 
 
 def text_precision(k, v):
