@@ -44,6 +44,11 @@ Launched 19:23 UTC (CLASSES 2, results/omega_nishiyama_2c/), target the benchmar
 
 b2* = pending.
 
+**INSTRUCTION FROM THE AUTHOR, 9 October 21:00 UTC (relayed by the main session):** *"omega_c=0.686 does
+not have to be exactly calibrated. that one has slack."* Do NOT interpolate a b2* and do NOT launch another
+two-class point. Take whichever of the three running points ends closest to 8.956 per cent once it meets the
+convergence rule, record the drug use it landed on here, and go straight to stage 3 from it.
+
 ## Stage 3: long-run welfare, Housing First and Treatment First
 
 Pending.
