@@ -189,13 +189,13 @@ def steady(arm):
         cev=cev, adult=ad, hl_band=hb, sud_hl_band=hs, sud_band=band, budget=bud, ages=ages)
 
 
-def shares(tol='0.001'):
+def shares(tol='0.001', path=None):
     """WHO IS BETTER OFF IN THE LONG RUN (the author, round f4276e76, on Table 7: "add a row ... for those with
     SUD. I wonder if they are better off", and round 538f55b4 on drug users: "does their welfare rise?").
     results/transition_2c/shares.txt (transition_2c/shares.py, stage E): Treatment First's value against the
     no-policy run's in every state, weighted by the no-policy distribution, better when ahead by more than tol
     utils, so that numerical drift between two solves is not counted as a gain. Returns {group: (better, worse)}."""
-    p = os.path.join(ROOT, 'results', 'transition_2c', 'shares.txt')
+    p = path or os.path.join(ROOT, 'results', 'transition_2c', 'shares.txt')
     out = {}
     if not os.path.exists(p):
         return out
@@ -231,13 +231,13 @@ def age_split():
     return out if {'null', 'tf'} <= set(out) else {}
 
 
-def newborn_better(value='Wnd', tol='0.001'):
+def newborn_better(value='Wnd', tol='0.001', path=None):
     """NEWBORNS BETTER OFF BY THE HOUSEHOLD THEY ARE BORN INTO (the author, round f4276e76: "add a row for the newborn
     children"). results/transition_2c/newborn/shares.json (code/cf_kid on stage E2's arms): a newborn's lifetime value
     under Treatment First against Housing First in the same birth state, weighted by the Housing First newborns.
     Wnd, with no parental death before the child leaves home, is the paper's criterion (Section 6.1 replaces a dead
     parent rather than ending the childhood) and reproduces each arm's newborn welfare. Share in per cent, or None."""
-    p = os.path.join(ROOT, 'results', 'transition_2c', 'newborn', 'shares.json')
+    p = path or os.path.join(ROOT, 'results', 'transition_2c', 'newborn', 'shares.json')
     if not os.path.exists(p):
         return None
     return 100 * json.load(open(p))[value]['by_tolerance'][tol]['all newborns']['better']
@@ -292,8 +292,8 @@ def main():
         # newborns and for adults entering at 26?"). Newborns are alike before birth (Section 6.1), so all or
         # none are better off, as the CEV's sign says; entering adults are compared state by state
         ('Households entering adult life at 26 better off', 'y26_better', lambda v: f'{v:.0f}'),
-        ('All households better off', 'all_better', lambda v: f'{v:.0f}'),
-        ('Households with a SUD better off', 'sud_better', lambda v: f'{v:.0f}'),
+        ('All households better off', 'all_better', lambda v: v if isinstance(v, str) else f'{v:.0f}'),
+        ('Households with a SUD better off', 'sud_better', lambda v: v if isinstance(v, str) else f'{v:.0f}'),
         # the newborns' row (the author, round f4276e76: "add a row for the newborn children"), a placeholder until
         # code/cf_kid's values from stage E2 (results/transition_2c/newborn/) are checked
         ('Newborns better off, by the household they are born into', 'nb_hh_better',
@@ -315,6 +315,17 @@ def main():
     D['tf85']['y26_better'] = 100 * D['tf85']['adult']['young_better']
     for _a in ('dc_b', 'dc_pv', 'dc_p'):
         D[_a]['y26_better'] = 100 * D[_a]['adult']['young_better']
+    # THE DECOMPOSITION COLUMNS' BETTER-OFF ROWS (the author, 9 October: "id like you to rerun them and remove that
+    # sentence from the notes", and "make sure to put the missing things in the table in yellow, so you dont forget to
+    # fill them"): from each column's re-solve (code/extra_2c/remote_decomp_shares.sh, results/decomp_2c_shares/), the
+    # same measures as the last column's; \tocheck (yellow) until a column's files are in
+    for _a, _k in (('dc_b', 'fixboth'), ('dc_pv', 'fixpv'), ('dc_p', 'fixp')):
+        _dir = os.path.join(ROOT, 'results', 'decomp_2c_shares', f'arm_{_k}')
+        _sh = shares(path=os.path.join(_dir, 'shares.txt'))
+        _nbk = newborn_better(path=os.path.join(_dir, 'newborn_shares.json'))
+        D[_a]['all_better'] = 100 * _sh['all households'][0] if _sh else '\\tocheck{--}'
+        D[_a]['sud_better'] = 100 * _sh['with a SUD'][0] if _sh else '\\tocheck{--}'
+        D[_a]['nb_hh_better'] = _nbk if _nbk is not None else '\\tocheck{--}'
     # the last column's welfare rows, from the walk on Arm A's distribution (results/pe_noext/RESULT.md): the CEV is the
     # newborn's adult value at 26, since its childhood is the externality the column switches off (the paragraph and the
     # table note say so); better off at the same tolerance as the Treatment First column, 1e-3 utils
