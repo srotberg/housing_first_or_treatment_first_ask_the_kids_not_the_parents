@@ -17,11 +17,11 @@ Workers launched 17:21 UTC, tag omega-nishiyama, results/omega_nishiyama_1c/. Us
 | b multiple | b | session | blocks | last move | drug users (per cent) |
 |---|---|---|---|---|---|
 | 1.0 | 0.0054222 | session_01NdBwfzqNp91qgcuSYkEzsV | 12, converged | 1.4e-4 | 2.945 |
-| 0.9 | 0.0048800 | session_0188Zxo3q88QEPezmM63zdpv | 9, solving | 1.3e-2 | 5.519 (blocks 5-9: 5.50, 5.59, 5.55, 5.46, 5.52) |
+| 0.9 | 0.0048800 | session_0188Zxo3q88QEPezmM63zdpv | 12, converged 19:40 | 1.5e-4 | 5.446 (5.519 at 19:22) |
 | 0.8 | 0.0043378 | session_01HpATQ5eSn67kkzjZ1A2yxB | 11, converged | 2.9e-4 | 10.409 |
-| 0.7 | 0.0037955 | session_012MgAo6Kkac2cQntP5ZGy1J | 6, solving | 9.3e-3 | 16.03 |
+| 0.7 | 0.0037955 | session_012MgAo6Kkac2cQntP5ZGy1J | 10, solving (20:10) | 1.3e-3 | 15.78 |
 | 0.6 | 0.0032533 | session_01AFm1381E83bfSiXYGky4rk | 10, converged | 6.5e-4 | 21.026 |
-| 0.5 | 0.0027111 | session_01CrA5ZTX54jbmB2nCz3DFyC | 8, solving | 2.9e-3 | 26.63 |
+| 0.5 | 0.0027111 | session_01CrA5ZTX54jbmB2nCz3DFyC | 12, converged 19:53 | 6.4e-4 | 26.035 |
 
 **b1* = 0.004531742** (0.8358 x the benchmark's b): log-b interpolation between 0.8x (10.409) and 0.9x
 (5.519) to the control's 8.593. The 0.9x point had not met the 1e-3 rule (its use has hovered between 5.45
@@ -29,6 +29,7 @@ and 5.59 for five blocks, a large relative move on a small level); at 5.45 b1* w
 cent lower, well inside the stage 2 bracket of +-2 per cent, so stage 2 was launched at 19:23 without waiting.
 At omega_c 0.686 use is far more sensitive to b than at 0.085: a 10 per cent cut in b moves the one-class
 users by about 5 points near the target. To match the benchmark's drug use, b must fall by about 16 per cent.
+With 0.9x converged (5.446) the same interpolation gives 0.004528828, 0.06 per cent below the b1* used; stage 2 stands.
 release_all committed for omega_nishiyama_1c and omega07_1c at 19:25 (no benchmark files needed).
 
 ## Stage 2: two class, matched to 8.956 per cent
