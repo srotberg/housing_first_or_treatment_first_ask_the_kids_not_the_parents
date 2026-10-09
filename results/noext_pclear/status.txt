@@ -1,7 +1,16 @@
-# Treatment First without externalities, price clearing, pi_V held (code/noext_clear/run_noext_pclear.sh); 09 Oct 15:06 UTC
+# Treatment First without externalities, price clearing, pi_V held (code/noext_clear/run_noext_pclear.sh); 09 Oct 15:36 UTC
 run_noext_pclear: free disk 29G, memory 15 GiB, cores 4, threads per solve 2 (09 Oct 14:55)
 run_noext_pclear: building cf_fix (09 Oct 14:55)
 run_noext_pclear: building cf_fix2 (09 Oct 14:57)
 run_noext_pclear: building cf_fix2_share (09 Oct 14:59)
 run_noext_pclear: building the pe builds (09 Oct 15:02)
 run_noext_pclear: building cf_walk (09 Oct 15:04)
+run_noext_pclear: arm A (null_pe_noext) on cf_fix2_share_pe, switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0001082 (09 Oct 15:06)
+run_noext_pclear: arm E (tf_noext_pclear) on cf_fix2: detection 0.85, test 0.0004946100, price clearing from 0.907, pi_V held at 0.067533863 (09 Oct 15:06)
+
+== cfarm_null_pe_noext (1 passes done)
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  1.0051  0.06753   +13.0%   +13.0%    -2.0%  1.57e-01  0.00e+00   789.8756  +nan%   +23.7%    +9.4%
+
+== cfarm_tf_noext_pclear (0 passes done)
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
