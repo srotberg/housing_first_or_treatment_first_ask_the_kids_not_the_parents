@@ -1,5 +1,16 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+09 Oct 14:54 NO EXTERNALITIES, PRICE CLEARING, pi_V HELD -- LAUNCHED (the author, round r254: "Is the gain about piv
+or the cheaper drug? Can you test?"). code/noext_clear/run_noext_pclear.sh in cloud session session_01NYK7M9NnTqhQBx63AUuwju:
+arm A (Housing First, no externalities, re-solved for the walk) and arm E (Treatment First tf85_c35, the switches,
+drug price clearing from 0.907, pi_V held at 0.067533863, adjust_taxes 0), then the walk on A's policies and
+analyse.py A vs E. Pushes results/noext_pclear/status.txt every 30 min; about 10-12 h. WHEN DONE: E against the
+second column (both held, newborns -1.50) is the cheaper drug alone; the fourth (both clear, +0.39) against E is
+what the higher pi_V adds. Rewrite the 6.2 gain sentence (hidden \upd tag there), add the column to Table 5 if
+the author wants it. Why pi_V rises more when the price clears (answered in r253 from the logs): excluded mass
+0.30 vs 0.17, holders 3.25 vs 3.17, voucher spending 0.622 vs 0.606 -- faster turnover; social security +0.05 vs
++0.12 (fewer extra survivors), mostly offset by lower taxes.
+
 09 Oct 10:03 LOOP 0_r5 SAVED; THE PAPER RE-PINNED TO IT. Archived to results/transition_2c/loop0_r5 (log segment
 10133-22617 in code/trtf60/tr2c_loop0_r5; early_years, cohort_cev, transition_loop0r5.png against loop 0_r3) by
 scratchpad repin_loop0_r5.sh. Convergence against loop 0_r3: drug gap median 0.1 per cent both, worst 1.21 (was
