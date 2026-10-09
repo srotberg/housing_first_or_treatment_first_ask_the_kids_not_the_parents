@@ -145,9 +145,13 @@ def names(S, C, R):
     _du = 100 * (hf['par_use'] - pu[0])
     _dh = 100 * (max(ch[i] for i in body) - hf['child_hl'])
     out['x_trf_many'] = (f': in the first year the share of parents who use drugs falls by ${_du:.2f}$ percentage points, '
-                         f'while the share of children in a shelter rises by at most ${_dh:.2f}$ points, so the first '
-                         f'reaches about ${round(_du, 2) / round(_dh, 2):.0f}$ times as many children as the second'
+                         f'while the share of children in a shelter rises by at most ${_dh:.2f}$ points, too few '
+                         f'children to reverse their gain'
                          if _du > 0 and _dh > 0 and _du > 5 * _dh else '')
+    # (9 October, the referee: "Reaching 39 times as many children does not establish that benefits dominate";
+    # the author: "say that the childhood homelessness increases falls on X% of children, which is way too small to
+    # reverse a 2.7% welfare gain in transition"): the ratio is gone from both places, the peak rise stays
+    out['x_trf_hchild_rise_pp'] = f'{_dh:.2f}'
     # the same ratio alone, for Section 2 (the author, round r110: 'even in the short run the absolute increase in
     # childhood homelessness is X times smaller than the mass of children spared a parent who abuses drugs')
     out['x_trf_many_x'] = f'{round(_du, 2) / round(_dh, 2):.0f}' if _du > 0 and _dh > 0 else ''
