@@ -106,7 +106,10 @@ TABLE = (('pe_a', None), ('pe_b', 'pe_a'), ('null_share', None), ('tf85', 'null_
 # FULL ALTRUISM AND FULL INTERNALISATION GO TO THE APPENDIX (the author, 8 October: "we need to keep the paper tighter,
 # and i think the full altruism is more for the appendix"): the main table keeps the first four columns, and
 # writing/tables/tab_longrun_altruism.tex carries Housing First beside the two benchmarks
-TABLE_MAIN = (('pe_a', None), ('pe_b', 'pe_a'), ('fx_d', 'pe_a'), ('nc_c', 'pe_a'), ('null_share', None),
+# THE NO-EXTERNALITY 'BOTH CLEAR' COLUMN LEAVES THE TABLE (the author, 9 October: "remove that experiment and focus on
+# the one that proves whether something is moral hazard", "the pv moving without externalities, can go into a footnote
+# ... a price GE effect that has nothing to do with moral hazard"): nc_c is still read, for the footnote's x_nc_* names
+TABLE_MAIN = (('pe_a', None), ('pe_b', 'pe_a'), ('fx_d', 'pe_a'), ('null_share', None),
               ('dc_b', 'null_share'), ('dc_pv', 'null_share'), ('dc_p', 'null_share'), ('tf85', 'null_share'))
 # full internalisation leaves the appendix too (the author, 8 October, on the aggregate homelessness externality: "it
 # doesnt matter ... we can put it in a footnote"); the footnote in Section 5 quotes its one number, x_lr_in_dh_pc
@@ -399,23 +402,23 @@ def main():
                 ['\\midrule'] + body + ['\\bottomrule', '\\end{tabular}'])
     # the two no-externality columns under one spanning head, so that no column is wider than its numbers need
     tab = table(TABLE_MAIN, [
-        ' & \\multicolumn{4}{c}{' + hd('h0/0', 'No externalities') + '} & \\multicolumn{5}{c}{'
-        + hd('h0/1', 'With externalities') + '} \\\\', '\\cmidrule(lr){2-5}\\cmidrule(lr){6-10}',
+        ' & \\multicolumn{3}{c}{' + hd('h0/0', 'No externalities') + '} & \\multicolumn{5}{c}{'
+        + hd('h0/1', 'With externalities') + '} \\\\', '\\cmidrule(lr){2-4}\\cmidrule(lr){5-9}',
         # PORTRAIT (the author, 8 October: "any way to fit this table horizontally?"): one 'Treatment First' over each
         # block's Treatment First columns and their labels on two short lines, so that no column is wider than its
         # numbers need; with the paper's tabcolsep of 4pt it is 464pt against the 470pt text width
-        ' & & \\multicolumn{3}{c}{' + hk(('h1/1', 'Treatment'), 'Treatment First') + '} & & \\multicolumn{4}{c}{'
-        + hd('h4/1', 'Treatment First') + '} \\\\', '\\cmidrule(lr){3-5}\\cmidrule(lr){7-10}',
+        ' & & \\multicolumn{2}{c}{' + hk(('h1/1', 'Treatment'), 'Treatment First') + '} & & \\multicolumn{4}{c}{'
+        + hd('h4/1', 'Treatment First') + '} \\\\', '\\cmidrule(lr){3-4}\\cmidrule(lr){6-9}',
         # which Treatment First: the drug price and pi_V both held, one of them clearing, or both clearing. 'both held'
         # in place of the no-externality block's '$\\pi_V$ held' once 'price clears' sits in the same row
         # a label whose words the author has seen stays black: the key it had before the stacking, and its whole text
         ' & ' + ' & '.join(hk(k, w) for k, w in (
             (('h1/0', 'Housing'), 'Housing'), ('h5/1', 'both'), (('h3/1', '$\\pi_V$ clears'), '$\\pi_V$'),
-            (('h3/2', 'both clear'), 'both'), (('h1/4', 'Housing'), 'Housing'), ('h5/5', 'both'), ('h5/6', 'price'),
+            (('h1/4', 'Housing'), 'Housing'), ('h5/5', 'both'), ('h5/6', 'price'),
             ('h5/7', '$\\pi_V$'), ('h5/8', 'both'))) + ' \\\\',
         ' & ' + ' & '.join(hk(k, w) for k, w in (
             (('h2/0', 'First'), 'First'), ('h6/1', 'held'), (('h3/1', '$\\pi_V$ clears'), 'clears'),
-            (('h3/2', 'both clear'), 'clear'), (('h2/4', 'First'), 'First'), ('h6/5', 'held'), ('h6/6', 'clears'),
+            (('h2/4', 'First'), 'First'), ('h6/5', 'held'), ('h6/6', 'clears'),
             ('h6/7', 'clears'), ('h6/8', 'clear'))) + ' \\\\'])
     tab_app = table(TABLE_APP, [
         ' & ' + ' & '.join(hd(f'a1/{k}', w) for k, w in enumerate(('Housing', 'Full'))) + ' \\\\',
