@@ -1,5 +1,15 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+09 Oct 10:03 LOOP 0_r5 SAVED; THE PAPER RE-PINNED TO IT. Archived to results/transition_2c/loop0_r5 (log segment
+10133-22617 in code/trtf60/tr2c_loop0_r5; early_years, cohort_cev, transition_loop0r5.png against loop 0_r3) by
+scratchpad repin_loop0_r5.sh. Convergence against loop 0_r3: drug gap median 0.1 per cent both, worst 1.21 (was
+1.35), 5 of 59 years above 0.005 (5); budget residual median 2.0e-3 (2.1e-3), worst 4.5e-3 (5.3e-3), 34 of 59
+above 1e-3 (35). Cohort born at the reform +2.68 per cent (unchanged). transition_source.py -> tr2c_loop0_r5;
+transition_series, transition_figure, export_results, export_revoked, export_pe_noext, export_whostops rerun (no
+name lost); three names moved, two in the prose, red via splice_r251 (the author has not commented since r251):
+x_trf_paruse1 11.30 -> 11.31, x_trf_price_above_yrs 35 -> 36; x_trf_cev_dec1 2.64 -> 2.66 not in the prose.
+Figure 2 regenerated. The run continues into loop 1_r5 (archive as loop1_r5).
+
 08 Oct 19:11 T = 60 RELAUNCHED (the author: "can you run the T=60 transition again to try and finish solving it?").
 Stopped by the author at 03:11 (period 21 of loop 0_r4, nothing saved), so the seeds are again loop 0_r3's paths
 (drug_price_path_seed.txt and pi_v_path_seed.txt cmp identical to results/transition_2c/loop0_r3/*_out.txt); binary
