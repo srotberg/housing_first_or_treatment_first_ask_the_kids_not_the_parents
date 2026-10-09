@@ -197,7 +197,7 @@ ELEVEN = [
          f(C['vsl_data'], 0), f(mom('aleph value of life / income'), 0), f(H['value_of_life'], 1)),
     ]),
     ('Costs of homelessness and vouchers', [
-        (r'$\kappa^{ue}_{d}$', 'How much harder it is to regain employment with a SUD', setcol('find_if_addicted'),
+        (r'$\kappa^{ue}_{d}$', 'How much less likely it is to regain employment with a SUD', setcol('find_if_addicted'),
          r'SUD share of the homeless, Gutwinski et al.\ (2021)',
          pc(C['sud_share_of_homeless']), pc(mom('sud_homeless SUD share of the homeless')),
          f(H['multiple_find_if_addicted'])),
@@ -235,7 +235,7 @@ ELEVEN = [
          'SMI share of the population, NSDUH 2024',
          pc(mom('p_m SMI population share', 1), 2), pc(mom('p_m SMI population share'), 2),
          f(H['smi_onset_level'], 4)),
-        (r'$\kappa^{ue}_{m}$', 'How much harder it is to regain employment with SMI', setcol('kappa_find_smi'),
+        (r'$\kappa^{ue}_{m}$', 'How much less likely it is to regain employment with SMI', setcol('kappa_find_smi'),
          r'SMI share of the homeless, Gutwinski et al.\ (2021)',
          pc(C['smi_share_of_homeless_data'], 0), pc(mom('lambda_m SMI share of the homeless')),
          f(H['kappa_find_smi'])),
