@@ -557,6 +557,16 @@ def main():
     out['x_dcpv_price_verb'] = 'lowers' if _pp < 0 else 'raises'
     out['x_dcpv_price_pc'] = f'{abs(_pp):.0f}'
     out['x_dcp_piv_dir'] = 'rises' if D['dc_p']['piv'] > D['null_share']['piv'] else 'falls'
+    # WHY THE EIGHTH COLUMN CUTS DRUG USE MOST (the author, 9 October: "you should explain why. drug use falls more
+    # because pi_v is higher and pi_v is higher because the higher drug price deters more use"). Against the sixth
+    # column (both held) only pi_V differs; against Treatment First itself only the drug price does. The sentence
+    # stands only while both comparisons go that way.
+    _b_more = D['dc_p']['b'] < D['dc_b']['b']
+    _pv_more = D['dc_p']['piv'] > D[t]['piv'] and D['dc_p']['price'] > D[t]['price']
+    out['x_dcp_why'] = ('Drug use falls by more than with both held because the higher $\\pi_V$ makes a voucher, and '
+                        'so staying clean, worth more, and $\\pi_V$ rises by more than under Treatment First itself '
+                        'because the drug price, held at its Housing First level, deters more use.'
+                        if _b_more and _pv_more else '')
     out['x_lr_e5_cev'] = f"{D[e]['cev_net']:.2f}"
     out['x_lr_e5_b_pc'] = f"{abs(pc(e, 'b', 'old_null_remote')):.0f}"
     out['x_lr_e5_h_pc'] = f"{abs(pc(e, 'h', 'old_null_remote')):.0f}"
@@ -648,7 +658,7 @@ def main():
     _tk0, _tk1 = D['null_share']['takeup'], D[t]['takeup']
     out['x_lr_tf_treat'] = (
         'It also raises the share of households with a SUD who are in treatment, from '
-        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent. Treatment buys a higher chance of recovering, and '
+        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent, because treatment buys a higher chance of recovering, and '
         'Treatment First makes recovering worth more: a household that has recovered and does not use passes the '
         'screen and can hold a voucher if it is eligible and offered one.' if _tk1 > _tk0 else '')
     # (round 0e3b2441, the author: 'only' -> 'only buys', 'voucher.' -> 'if eligible and offered a voucher', and on
@@ -851,9 +861,9 @@ def main():
         _n0, _n1 = ([float(x) for x in open(_v26.format(a)).read().split()] for a in ('null', 'tf'))
         _g26 = [b - a for a, b in zip(_n0, _n1)][:13]
         _r26 = _g26[0] / _g26[-1] if min(_g26) > 0 else None
-    _need = (', and the value of entering adult life rises about ${:.0f}$ times as much at the lowest productivity '
+    _need = (', as the value of entering adult life rises about ${:.0f}$ times as much at the lowest productivity '
              'as at the highest'.format(_r26) if _r26 else '')
-    _poor = (' A voucher is worth most to a household that enters adult life with low productivity, because it is '
+    _poor = (' And a voucher is worth most to a household that enters adult life with low productivity, because it is '
              f'the likeliest to need one{_need}. This part of the gain is therefore larger for a child whose own parent '
              'carried the disorder, since the penalty leaves it with lower productivity.' if _gp > _gc > 0 else '')
     # the drug users' line (the author: "are they better off too in welfare terms actually?" on 'Drug users gain
@@ -866,7 +876,7 @@ def main():
         'percent of the whole gain, is the better productivity a child draws when its own parent does not carry the '
         f"disorder. Escaping the penalty is worth a lot to each child it spares, about ${out['x_lr_pen_ratio']}$ "
         'times what the average child gains at the same productivity. But it spares only about '
-        f"${float(out['x_lr_pen0']) - float(out['x_lr_pen1']):.0f}$ percent of children: the share of newborns who "
+        f"${float(out['x_lr_pen0']) - float(out['x_lr_pen1']):.0f}$ percent of children, since the share of newborns who "
         f"enter adult life with the penalty {out['x_lr_pen_dir']} from ${out['x_lr_pen0']}$ to ${out['x_lr_pen1']}$ "
         # (round r114, the author: "new paragraph" before 'The second')
         f"percent.\n\nThe second, the remaining ${_val:.0f}$ percent, does not come from the child's productivity at "
@@ -878,7 +888,7 @@ def main():
     out['x_lr_adult_poor'] = _poor.strip() if out['x_lr_adult'] else ''
     out['x_lr_adult_drug'] = (
         f'Moreover, even a child who goes on to use drugs pays less for them: the drug is ${abs(_prpc):.0f}$ percent cheaper in '
-        'equilibrium, so it can consume more of it.' if out['x_lr_adult'] else '')
+        'equilibrium.' if out['x_lr_adult'] else '')
     # THE INTRODUCTION'S ACCOUNT OF THE GAIN (round 20b4ddb5, the author: "too long and not clear...i still dont
     # understand where the rest of the gains in adulthood come from"): the same three shares of the whole gain
     # (round 538f55b4, the author on 'Lastly, even drug users benefit from the lower equilibrium drug price': "does
@@ -903,7 +913,7 @@ def main():
     out['x_lr_approve_sud'] = (
         f"Across all households, ${100 * _SH['all households'][0]:.0f}$ percent are better off and "
         f"${100 * _SH['all households'][1]:.0f}$ percent worse off; the rest, all older than 50, are essentially "
-        f"unaffected. Even ${_sb:.0f}$ percent of those that have a SUD are better off."
+        f"unaffected. Finally, even ${_sb:.0f}$ percent of those that have a SUD are better off, due to the lower drug price."
         if _SH and _sb is not None and _sb < 50 else '')
     out['x_intro_gain'] = (
         f"A newborn gains ${D[t]['cev_net']:.2f}$ percent of lifetime consumption. About ${_kid:.0f}$ percent of that "
@@ -940,7 +950,7 @@ def main():
         '' if _nb is None else
         'So is every newborn, compared with itself born into the same household under Housing First.'
         if _nb > 99.95 else
-        f'Of newborns, ${_nb:.0f}$ percent are better off under Treatment First than they would be if born into the '
+        f'Of newborns (including childhood), ${_nb:.0f}$ percent are better off under Treatment First than they would be if born into the '
         'same household under Housing First.')
     d = json.load(open(OUT_JSON))
     d.update(out)

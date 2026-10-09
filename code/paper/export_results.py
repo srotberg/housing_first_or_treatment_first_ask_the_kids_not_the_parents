@@ -255,13 +255,13 @@ out['x_tf_piv_so'] = ', making staying clean of drugs even more desirable' if _p
 # one of the four moves the same way.
 if cev_log('tf85') > CEV0:
     out['x_tf_cev_why'] = (
-        'Welfare rises because the cut in drug use reduces the budget and earnings externalities by '
+        'Welfare rises because the cut in drug use reduces the \\emph{budget and earnings externalities} by '
         'much more than it raises the externalities that run through homelessness, on the child and on '
         # (the author, 2 October: "as Table X has shown"): Table 7 sets the levels side by side, the
         # shares homeless and in a shelter moving by hundredths of a point against SUD's whole points
         'everyone else, which, as Table~\\ref{tab:longrun} has shown, are small in absolute terms next '
         'to the first two.' if _hrise else
-        'Welfare rises because the cut in drug use reduces the budget and earnings externalities, and '
+        'Welfare rises because the cut in drug use reduces the \\emph{budget and earnings externalities}, and '
         'homelessness, and with it the externalities on the child and on everyone else, falls too.'
         if abs(tf['homelessness h_1']['pc']) >= 2 else
         # homelessness all but unchanged (the omega_c = 0.085 arms: -1 per cent, the shelter share flat)
@@ -269,9 +269,9 @@ if cev_log('tf85') > CEV0:
         # homelessness falls by 1 per cent while the shelter share is flat)
         # (3 October: the decomposition shows the cheaper drug LOWERS welfare -- at the benchmark price the
         # gain is larger -- so it is no longer listed beside the voucher programme as a source of the gain)
-        'Welfare rises because the cut in drug use reduces the budget and earnings externalities and, '
+        'Welfare rises because the cut in drug use reduces the \\emph{budget and earnings externalities} and, '
         'through the government budget, pays for a larger voucher programme, while homelessness, and with it '
-        'the externalities that run through it, is almost unchanged in the long run.')
+        'the \\emph{childhood homelessness externality} that runs through it, is almost unchanged in the long run.')
 else:
     out['x_tf_cev_why'] = ''
 
