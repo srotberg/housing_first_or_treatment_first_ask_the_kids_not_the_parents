@@ -110,7 +110,7 @@ TABLE = (('pe_a', None), ('pe_b', 'pe_a'), ('null_share', None), ('tf85', 'null_
 # the one that proves whether something is moral hazard", "the pv moving without externalities, can go into a footnote
 # ... a price GE effect that has nothing to do with moral hazard"): nc_c is still read, for the footnote's x_nc_* names
 TABLE_MAIN = (('pe_a', None), ('pe_b', 'pe_a'), ('fx_d', 'pe_a'), ('null_share', None),
-              ('dc_b', 'null_share'), ('dc_pv', 'null_share'), ('dc_p', 'null_share'), ('tf85', 'null_share'))
+              ('dc_b', 'null_share'), ('dc_p', 'null_share'), ('tf85', 'null_share'))
 # full internalisation leaves the appendix too (the author, 8 October, on the aggregate homelessness externality: "it
 # doesnt matter ... we can put it in a footnote"); the footnote in Section 5 quotes its one number, x_lr_in_dh_pc
 TABLE_APP = (('null_share', None), ('omega1', 'null_remote'))
@@ -400,25 +400,27 @@ def main():
                  # every row on one line (round 4ad85a30, the author: "can you put all rows in one line?")
                  '\\begin{tabular}{@{}l' + 'r' * len(cols) + '@{}}', '\\toprule'] + top +
                 ['\\midrule'] + body + ['\\bottomrule', '\\end{tabular}'])
+    # THE PRICE-CLEARS RUN (dc_pv) IS NO LONGER A COLUMN (the author, 9 October: "move it to a footnote"): the
+    # with-externality block steps from both held to pi_V clearing to both clearing; 6.2 quotes dc_pv in a footnote
     # the two no-externality columns under one spanning head, so that no column is wider than its numbers need
     tab = table(TABLE_MAIN, [
-        ' & \\multicolumn{3}{c}{' + hd('h0/0', 'No externalities') + '} & \\multicolumn{5}{c}{'
-        + hd('h0/1', 'With externalities') + '} \\\\', '\\cmidrule(lr){2-4}\\cmidrule(lr){5-9}',
+        ' & \\multicolumn{3}{c}{' + hd('h0/0', 'No externalities') + '} & \\multicolumn{4}{c}{'
+        + hd('h0/1', 'With externalities') + '} \\\\', '\\cmidrule(lr){2-4}\\cmidrule(lr){5-8}',
         # PORTRAIT (the author, 8 October: "any way to fit this table horizontally?"): one 'Treatment First' over each
         # block's Treatment First columns and their labels on two short lines, so that no column is wider than its
         # numbers need; with the paper's tabcolsep of 4pt it is 464pt against the 470pt text width
-        ' & & \\multicolumn{2}{c}{' + hk(('h1/1', 'Treatment'), 'Treatment First') + '} & & \\multicolumn{4}{c}{'
-        + hd('h4/1', 'Treatment First') + '} \\\\', '\\cmidrule(lr){3-4}\\cmidrule(lr){6-9}',
+        ' & & \\multicolumn{2}{c}{' + hk(('h1/1', 'Treatment'), 'Treatment First') + '} & & \\multicolumn{3}{c}{'
+        + hd('h4/1', 'Treatment First') + '} \\\\', '\\cmidrule(lr){3-4}\\cmidrule(lr){6-8}',
         # which Treatment First: the drug price and pi_V both held, one of them clearing, or both clearing. 'both held'
         # in place of the no-externality block's '$\\pi_V$ held' once 'price clears' sits in the same row
         # a label whose words the author has seen stays black: the key it had before the stacking, and its whole text
         ' & ' + ' & '.join(hk(k, w) for k, w in (
             (('h1/0', 'Housing'), 'Housing'), ('h5/1', 'both'), (('h3/1', '$\\pi_V$ clears'), '$\\pi_V$'),
-            (('h1/4', 'Housing'), 'Housing'), ('h5/5', 'both'), ('h5/6', 'price'),
+            (('h1/4', 'Housing'), 'Housing'), ('h5/5', 'both'),
             ('h5/7', '$\\pi_V$'), ('h5/8', 'both'))) + ' \\\\',
         ' & ' + ' & '.join(hk(k, w) for k, w in (
             (('h2/0', 'First'), 'First'), ('h6/1', 'held'), (('h3/1', '$\\pi_V$ clears'), 'clears'),
-            (('h2/4', 'First'), 'First'), ('h6/5', 'held'), ('h6/6', 'clears'),
+            (('h2/4', 'First'), 'First'), ('h6/5', 'held'),
             ('h6/7', 'clears'), ('h6/8', 'clear'))) + ' \\\\'])
     tab_app = table(TABLE_APP, [
         ' & ' + ' & '.join(hd(f'a1/{k}', w) for k, w in enumerate(('Housing', 'Full'))) + ' \\\\',
@@ -567,6 +569,12 @@ def main():
     for _a, _n in (('dc_b', 'dcb'), ('dc_pv', 'dcpv'), ('dc_p', 'dcp')):
         out[f'x_{_n}_b'] = _ch(_a, 'b')
         out[f'x_{_n}_h'] = _ch(_a, 'h')
+    # THE RUN THAT ISOLATES THE EXTERNALITIES (the author, 9 October: "here you need to give the exact experiment that
+    # shows it"): with both held, the children in a shelter and the share of the gain that comes in childhood
+    out['x_dcb_hchild0'] = f"{100 * D['null_share']['child_hl']:.2f}"
+    out['x_dcb_hchild1'] = f"{100 * D['dc_b']['child_hl']:.2f}"
+    out['x_dcb_hchild_dir'] = 'rises' if D['dc_b']['child_hl'] > D['null_share']['child_hl'] else 'falls'
+    out['x_dcb_child_pc'] = f"{D['dc_b']['child_share']:.0f}"
     _pp = pc('dc_pv', 'price', 'null_share')
     out['x_dcpv_price_verb'] = 'lowers' if _pp < 0 else 'raises'
     out['x_dcpv_price_pc'] = f'{abs(_pp):.0f}'
