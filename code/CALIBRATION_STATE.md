@@ -29,6 +29,10 @@ results/omega07_1c/: the one-class CONTROL at omega_c 0.085, b 0.0054222, and om
 neighbours (CLASSES 2, SCAN omega07_2c), interpolate to the benchmark's 8.956 per cent (its own fit, not the data's 8.90,
 so omega_c is the only difference). STAGE 3: Housing First and Treatment First (tf85_c35, price and pi_V clearing) at
 that benchmark, newborn CEV against 4.33. Footnote at omega_c's calibration item.
+Stage 1 sessions (17:14, tag omega07-1c): control 0.085 session_01QdHZe9tWNJ95ZPEwNtywRD; 0.7 at 1.0x session_011K83Tst94QCdDjNLMksq6r,
+0.9x session_012Hw8yQv5ipbJrpaFA1rymz, 0.8x session_01JKy9GTaH6PyJZop3mumFY7, 0.7x session_01QAUnsrgX4PERnbUs44Terf, 0.6x
+session_01Qv97t998uXrTCkscvn9ZqF, 0.5x session_01Ds9oJ19m968aSTDzTfnBQQ. The one-class benchmark files are not needed:
+commit results/omega07_1c/release_all once b* is read.
 
 09 Oct 14:54 NO EXTERNALITIES, PRICE CLEARING, pi_V HELD -- LAUNCHED (the author, round r254: "Is the gain about piv
 or the cheaper drug? Can you test?"). code/noext_clear/run_noext_pclear.sh in cloud session session_01NYK7M9NnTqhQBx63AUuwju:
