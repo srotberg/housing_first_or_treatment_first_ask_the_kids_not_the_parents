@@ -1,4 +1,4 @@
-# Treatment First without externalities, price clearing, pi_V held (code/noext_clear/run_noext_pclear.sh); 09 Oct 17:37 UTC
+# Treatment First without externalities, price clearing, pi_V held (code/noext_clear/run_noext_pclear.sh); 09 Oct 18:07 UTC
 run_noext_pclear: free disk 29G, memory 15 GiB, cores 4, threads per solve 2 (09 Oct 14:55)
 run_noext_pclear: building cf_fix (09 Oct 14:55)
 run_noext_pclear: building cf_fix2 (09 Oct 14:57)
@@ -8,13 +8,13 @@ run_noext_pclear: building cf_walk (09 Oct 15:04)
 run_noext_pclear: arm A (null_pe_noext) on cf_fix2_share_pe, switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0001082 (09 Oct 15:06)
 run_noext_pclear: arm E (tf_noext_pclear) on cf_fix2: detection 0.85, test 0.0004946100, price clearing from 0.907, pi_V held at 0.067533863 (09 Oct 15:06)
 
-== cfarm_null_pe_noext (5 passes done)
-pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
-  1  1.0051  0.06753   +13.0%   +13.0%    -2.0%  1.57e-01  0.00e+00   789.8756  +nan%   +23.7%    +9.4%
+== cfarm_null_pe_noext (7 passes done)
   2  1.0101  0.06753   +11.5%   +11.5%    -1.8%  1.37e-01  0.00e+00   789.8717  +nan%   +21.4%    +8.9%
   3  1.0152  0.06753    +9.1%    +9.1%    -2.0%  1.08e-01  0.00e+00   789.9152  +nan%   +17.7%    +7.9%
   4  1.0203  0.06753    +8.1%    +8.1%    -1.9%  8.63e-02  0.00e+00   789.9284  +nan%   +15.2%    +6.6%
   5  1.0254  0.06753    +6.3%    +6.4%    -2.0%  6.13e-02  0.00e+00   789.9556  +nan%   +12.1%    +5.5%
+  6  1.0266  0.06753    +1.2%    +1.2%    -2.6%  1.18e-02  0.00e+00   790.0572  +nan%    +5.5%    +4.2%
+  7  1.0303  0.06753    +1.1%    +1.1%    -2.6%  9.37e-03  0.00e+00   790.0581  +nan%    +5.3%    +4.2%
 
 == cfarm_tf_noext_pclear (3 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
