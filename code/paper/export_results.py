@@ -597,8 +597,10 @@ out['x_tr_cev_b1_2'] = f'{float(m.group(1)) - CEV0_TR:.2f}'
 # which is the only one the path converges to; the paper's long run (4.33) is the new arms', whose transition
 # (stage E) has not finished a pass
 _b1x, _lrx = float(m.group(1)) - CEV0_TR, float(out['x_tr_lr_cev'])
+# (round r257, the author on 'Children': "Despite the increase in childhood homelessness, children...still gains,
+# although less than"): the 'although' belongs to the branch, so it goes when the cohort gains more
 out['x_tr_cev_b1_vs_lr'] = ('even more than those born in the long run' if _b1x > _lrx else
-                            'less than those born in the long run')
+                            'although less than those born in the long run')
 # THE DISCUSSION'S TRANSITION (round f4276e76, the author on 'The transition is harder': "I don't think it's harder.
 # I think it has even higher welfare....but from a policy point of view it can look decieving because homelessness
 # would rise for a while"): the cohort born at the reform against the long run of the same computation
@@ -613,7 +615,8 @@ out['x_disc_tr_kids'] = (
     'consumption even more in the transition.'
     if _b1 > _lr > 0 else
     'Children born at the reform gain less than those born in the long run, because they grow up while the share of '
-    'parents with a SUD is still close to its Housing First level, but they still gain.' if _lr > _b1 > 0 else '')
+    'parents with a SUD is still close to its Housing First level, and are thus also more exposed to the '
+    '\\emph{childhood homelessness externality}, but they still gain.' if _lr > _b1 > 0 else '')
 m = re.search(r'forward pass (\d+) of', cc)
 out['x_tr_pass'] = m.group(1)
 # THE REFORM COHORT'S GAIN IS A CHILDHOOD GAIN (the author, 29 September: the transition's
