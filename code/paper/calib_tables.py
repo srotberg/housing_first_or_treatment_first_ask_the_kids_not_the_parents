@@ -598,6 +598,8 @@ def numbers():
         'c_j_value': f'{J_MAX}', 'c_j_age': f'{AGE0 + J_MAX}',
         'c_j_r_value': f'{J_RET}', 'c_j_r_age': f'{AGE0 + J_RET}',
         'c_j_k_value': f'{J_K}', 'c_j_k_age': f'{AGE0 + J_K}',
+        # h_1 as a share of the smallest rental (the author, 9 October: "Its value is X% of the smallest rental")
+        'c_h1_of_h2_pc': f'{100 * H["size_homelessness"] / H["smallest_rental_relative_to_lowest_income"]:.0f}',
         # the age J_E corresponds to, for Section 4's footnote (the author, 8 October: "the equivalent of age 80 when the
         # model runs to age 85")
         'c_j_e_age': f'{AGE0 + int(C["max_age_to_choose_addiction"])}',
