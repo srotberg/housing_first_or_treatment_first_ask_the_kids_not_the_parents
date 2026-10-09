@@ -1,5 +1,20 @@
 # Referee item 7: verification against the code (stylized model, Section 3)
 
+**Verdicts.**
+
+- **A, negative value of life: partly true.** The share is right: 2.47 % of period-2 survivors have a
+  negative realised flow. It applies only to non-users who are out of work in period 2. In period 1 the
+  value of life is negative for 0 % of households, and in period 2 the value of being alive, W, is never
+  negative. So footnote 8 is literally true and is not contradicted.
+- **B, where users sit: mostly true.** Users are a single band at percentiles 50.1 to 59.0, not 52 to 60.
+  Their mean income, 0.74, is above the median of 0.675, so no user is below the median.
+- **C, curvature versus insurability: mostly true.** With sigma = 2 and a VSL proportional to income,
+  users stay the top 8.9 % at every kappa. Under log they stay at the top up to kappa of about 24 and
+  reverse only at 27 to 37. The paper's reversal needs sigma = 2 with additive aleph. Insurability alone
+  does not deliver it, and neither does the no-saving demonstration in the right panel.
+- **D, novelty and "the poor": quoted below.** "First economic theory" appears at line 200. Users are
+  called poor or low-income at lines 164, 200, 258, 396 and 1203.
+
 **Which model.** The paper's Section 3 numbers are not produced by `stylized.py` at
 `calibrated_stage2.json`. Every Section 3 placeholder is a `g_*` name, written by
 `code/stylized/gradient.py` at `code/stylized/gradient.json`. Its docstring says the staged model
@@ -111,7 +126,24 @@ Findings:
   says: 0.65 at the calibrated kappa with unemployment off, 0.74 with it on, and the bottom 8.9 % from
   kappa of about 4.2 to 6.1. **This reproduces the paper's Figure 1 numbers** (0.64, 0.27).
 
-*Unemployment channel under each specification: still running (`c2_unemployment_and_vsl.py`).*
+**The other half of the argument: the unemployment channel alone** (kappa = 1, u1 = u0 + x(u1 - u0), b refitted
+in steps of 0.05; script `c2_unemployment_and_vsl.py`, output `c2_output.txt`). Users' income over the mean:
+
+| x (u1) | sigma=2 additive, saving on / off | log, saving on / off | sigma=2 VSL proportional to income, saving on / off |
+|---|---|---|---|
+| 0.5 (0.11) | 3.51 / 1.83 | 3.51 / 3.51 | 3.51 / 1.83 |
+| **1 (0.1625, calibrated)** | **3.51 / 0.75** | **3.51 / 3.51** | **3.51 / 0.75** |
+| 2 (0.28) | 3.51 / 0.27 | 3.51 / 3.51 | 3.51 / 0.27 |
+| 6 (0.73) | 3.51 / 0.27 | 3.51 / 3.51 | 3.51 / 0.27 |
+| 8 (0.95) | 3.51 / 0.27 | 3.51 / 0.27 | 3.51 / 0.27 |
+
+- The paper's right panel is reproduced: 0.75 at the calibrated strength with saving off, 0.27 at 200 %.
+- With kappa = 1, the value-of-life specification cannot matter, because aleph cancels in the use decision.
+  That is why the last column equals the first.
+- **Under log, the unemployment channel without saving does not reverse the gradient until u1 is about
+  0.95.** So the paper's no-saving demonstration (the right panel) also rests on sigma = 2.
+- With saving on, unemployment never reverses the gradient under any specification. That part of the
+  insurability argument holds whatever the curvature.
 
 **Verdict on the paper's explanation.** Insurability is not sufficient for the reversal, and on these
 numbers it is not what does the work:
