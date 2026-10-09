@@ -19,7 +19,7 @@ Workers launched 17:21 UTC, tag omega-nishiyama, results/omega_nishiyama_1c/. Us
 | 1.0 | 0.0054222 | session_01NdBwfzqNp91qgcuSYkEzsV | 12, converged | 1.4e-4 | 2.945 |
 | 0.9 | 0.0048800 | session_0188Zxo3q88QEPezmM63zdpv | 12, converged 19:40 | 1.5e-4 | 5.446 (5.519 at 19:22) |
 | 0.8 | 0.0043378 | session_01HpATQ5eSn67kkzjZ1A2yxB | 11, converged | 2.9e-4 | 10.409 |
-| 0.7 | 0.0037955 | session_012MgAo6Kkac2cQntP5ZGy1J | 10, solving (20:10) | 1.3e-3 | 15.78 |
+| 0.7 | 0.0037955 | session_012MgAo6Kkac2cQntP5ZGy1J | 12, converged 20:34 | 8.5e-4 | 15.662 |
 | 0.6 | 0.0032533 | session_01AFm1381E83bfSiXYGky4rk | 10, converged | 6.5e-4 | 21.026 |
 | 0.5 | 0.0027111 | session_01CrA5ZTX54jbmB2nCz3DFyC | 12, converged 19:53 | 6.4e-4 | 26.035 |
 
@@ -30,7 +30,7 @@ cent lower, well inside the stage 2 bracket of +-2 per cent, so stage 2 was laun
 At omega_c 0.686 use is far more sensitive to b than at 0.085: a 10 per cent cut in b moves the one-class
 users by about 5 points near the target. To match the benchmark's drug use, b must fall by about 16 per cent.
 With 0.9x converged (5.446) the same interpolation gives 0.004528828, 0.06 per cent below the b1* used; stage 2 stands.
-release_all committed for omega_nishiyama_1c and omega07_1c at 19:25 (no benchmark files needed).
+release_all committed for omega_nishiyama_1c and omega07_1c at 19:25 (no benchmark files needed); all six stage 1 sessions archived after their runs exited.
 
 ## Stage 2: two class, matched to 8.956 per cent
 
@@ -41,6 +41,13 @@ Launched 19:23 UTC (CLASSES 2, results/omega_nishiyama_2c/), target the benchmar
 | 0.004441108 (0.98 b1*) | session_01T2a3SiG27xEZP7A99mdHjH | running | |
 | 0.004531742 (b1*) | session_012BNTu2UEcm6LYfWB3dc2Ji | running | |
 | 0.004622377 (1.02 b1*) | session_01J7fgutKX5TVZPsNqETqHjE | running | |
+| 0.004499171 (early b2*) | session_017yzPk5VxvAqKWXXw5Yyq6y | running, launched 21:14 | |
+
+Block-by-block at 21:13: 0.98 b1* 8.317, 9.972, 9.939, 9.840; b1* 7.807, 8.757; 1.02 b1* 6.751, 8.018, 7.871,
+7.835. The benchmark of record's own path (7.476, 9.177, 9.273, 9.189 ... 8.956) ends 2.5 per cent below its
+block 4, so the target sits between 0.98 b1* and b1*, and the extra point the plan calls for was launched early,
+at the block-4 log-b interpolation to 8.956 x 9.189/8.956 = 0.004499171, rather than after the three converge
+(about 3 hours saved). It is taken if it lands within 0.05 points of 8.956; otherwise the four points give b2*.
 
 b2* = pending.
 
