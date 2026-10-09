@@ -17,6 +17,19 @@ re-solved as in remote_transition_2c.sh; seeds = loop 0_r5's drug price and pi_V
 values. Loops archive to results/transition_2c_t70/loop<N>/. Compare its years 1-59 with T = 60's: if they match, the
 horizon does not bind; if not, the paper's transition should come from T = 70.
 
+09 Oct 17:15 OMEGA_C = 0.7 SENSITIVITY (the author: "a sensitivity test where omegac=0.7 in the benchmark (like in nishiyama)
+... show whether the long run welfare effects are similar ... set omegac=0.7, holding everything else fixed and adjusting b to
+match the drug use (start with the one class model so make it faster). And then add the two class model to finish the
+calibration. That would go into a footnote when we calibrate omegac"). STAGE 1, ONE CLASS: remote_omega_point.sh takes
+CLASSES (5th arg) and SCAN (6th arg); CLASSES=1 builds build_bench_tdm_1c.sh (child_penalty_classes 1, else the benchmark
+build) and warm-starts from code/scan_seed_1c (code/up_10's one-class pair, 23 Sep; the scan seed's calibration_state).
+Everything else is the benchmark of record's handover (b 0.0054222, kappa_uem 1, frozen blocks). Seven cloud points ->
+results/omega07_1c/: the one-class CONTROL at omega_c 0.085, b 0.0054222, and omega_c 0.7 at b = 1.0, 0.9, 0.8, 0.7, 0.6,
+0.5 x 0.0054222. b* = where one-class users at 0.7 equal the control's. STAGE 2, TWO CLASS: omega_c 0.7 at b* and
+neighbours (CLASSES 2, SCAN omega07_2c), interpolate to the benchmark's 8.956 per cent (its own fit, not the data's 8.90,
+so omega_c is the only difference). STAGE 3: Housing First and Treatment First (tf85_c35, price and pi_V clearing) at
+that benchmark, newborn CEV against 4.33. Footnote at omega_c's calibration item.
+
 09 Oct 14:54 NO EXTERNALITIES, PRICE CLEARING, pi_V HELD -- LAUNCHED (the author, round r254: "Is the gain about piv
 or the cheaper drug? Can you test?"). code/noext_clear/run_noext_pclear.sh in cloud session session_01NYK7M9NnTqhQBx63AUuwju:
 arm A (Housing First, no externalities, re-solved for the walk) and arm E (Treatment First tf85_c35, the switches,

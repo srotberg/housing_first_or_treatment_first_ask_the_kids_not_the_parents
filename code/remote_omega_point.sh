@@ -37,6 +37,16 @@ KU="${3:-}"
 # point that is still alive (1 October 05:45: the 03:04 workers' solves died at the 2-hour
 # limit, four were archived and could be replaced, two could not and will restart on their own).
 RUN="${4:-}"
+# OPTIONAL ENVIRONMENT (9 October, the omega_c = 0.7 sensitivity; the author: "set omegac=0.7, holding
+# everything else fixed and adjusting b to match the drug use (start with the one class model so make it
+# faster). And then add the two class model"). CLASSES=1 solves the ONE-CLASS model (build_bench_tdm_1c.sh,
+# warm start code/scan_seed_1c, tag suffix _1c); SCAN=<name> publishes to results/<name>/ instead of the b
+# or omega_c scan's directory. Both unset, nothing below changes.
+# They can also be the FIFTH and SIXTH arguments (an empty fourth keeps RUN unset), so a worker's command
+# starts with "bash code/remote_omega_point.sh" and the permission rule for it still matches:
+#     bash code/remote_omega_point.sh 0.7 0.0048800 1.0 "" 1 omega07_1c
+CLASSES="${5:-${CLASSES:-2}}"
+SCAN="${6:-${SCAN:-}}"
 BRANCH=claude/two-period-addiction-hazard-d7gb61
 C=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$C/.." && pwd)
@@ -45,6 +55,12 @@ if [ -n "$BV" ]; then
 else
     TAG="$W"; R=$REPO/results/omega_c_scan_childsplit
 fi
+if [ "$CLASSES" = 1 ]; then
+    TAG="${TAG}_1c"; BD=$C/bench_tdm_1c; BUILD=$C/build_bench_tdm_1c.sh; SEED=$C/scan_seed_1c; DSIZE=132748200
+else
+    BD=$C/bench_tdm_childsplit; BUILD=$C/build_bench_tdm_childsplit.sh; SEED=$C/scan_seed; DSIZE=265496400
+fi
+[ -n "$SCAN" ] && R=$REPO/results/$SCAN
 mkdir -p "$R"
 D=$C/omega_point_$TAG
 OUT=$R/omega_$TAG.moments.txt
@@ -81,7 +97,7 @@ fi
 
 publish() (  # publish <message>; a subshell, so its cd cannot leak into the caller
     {
-        echo "# scan point, weight_on_child $W, b ${BV:-as in the reference}, kappa_uem ${KU:-as in the reference}, corrected code; $(date -u '+%d %b %H:%M UTC')"
+        echo "# scan point, weight_on_child $W, b ${BV:-as in the reference}, kappa_uem ${KU:-as in the reference}, child_penalty_classes $CLASSES, corrected code; $(date -u '+%d %b %H:%M UTC')"
         cat "$D.status" 2>/dev/null
         [ -f "$D/BUILD_USED" ] && echo "build md5: $(cut -c1-32 "$D/BUILD_USED")"
         [ -f "$D/bench.log" ] && grep -a "HANDOVER weight_on_child\|MOMENT\|BLOCK MOVE\|newborn_parent_share (clean\|FROZEN\|simulation ended" "$D/bench.log"
@@ -110,9 +126,9 @@ command -v gfortran >/dev/null 2>&1 || {
     apt-get install -y -qq gfortran >/dev/null 2>&1
 }
 command -v gfortran >/dev/null || { note "GUARD: no gfortran and it could not be installed"; publish "failed"; exit 1; }
-if [ ! -x "$C/bench_tdm_childsplit/hftf_bench" ]; then
+if [ ! -x "$BD/hftf_bench" ]; then
     note "building"
-    bash "$C/build_bench_tdm_childsplit.sh" > "/tmp/omega_point_build_$W.log" 2>&1 || {
+    bash "$BUILD" > "/tmp/omega_point_build_$W.log" 2>&1 || {
         note "GUARD: build failed: $(tail -3 /tmp/omega_point_build_$W.log | tr '\n' ' ')"; publish "failed"; exit 1; }
 fi
 
@@ -124,10 +140,10 @@ fi
 [ -d "$D" ] && mv "$D" "$D.dead_$(date -u +%H%M%S)"
 mkdir -p "$D" && cd "$D"
 [ -e data ] || ln -s ../../data data
-cp "$C/scan_seed/calibration_state.dat" "$C/scan_seed/calibration_distribution_shape.dat" .
-gunzip -c "$C/scan_seed/calibration_distribution1.dat.gz" > calibration_distribution1.dat
-gunzip -c "$C/scan_seed/calibration_distribution2.dat.gz" > calibration_distribution2.dat
-[ "$(stat -c%s calibration_distribution1.dat)" = "265496400" ] || { note "GUARD: distribution 1 wrong size"; publish "failed"; exit 1; }
+cp "$SEED/calibration_state.dat" "$SEED/calibration_distribution_shape.dat" .
+gunzip -c "$SEED/calibration_distribution1.dat.gz" > calibration_distribution1.dat
+gunzip -c "$SEED/calibration_distribution2.dat.gz" > calibration_distribution2.dat
+[ "$(stat -c%s calibration_distribution1.dat)" = "$DSIZE" ] || { note "GUARD: distribution 1 wrong size"; publish "failed"; exit 1; }
 sed -e "s/^weight_on_child .*/weight_on_child $W/" "$REF" > PARAM_HANDOVER.txt
 [ "$(grep -c "^weight_on_child $W\$" PARAM_HANDOVER.txt)" = 1 ] || { note "GUARD: weight_on_child not $W"; publish "failed"; exit 1; }
 if [ -n "$BV" ]; then
@@ -140,7 +156,7 @@ if [ -n "$KU" ]; then
 fi
 [ "$(wc -l < PARAM_HANDOVER.txt)" = "$(wc -l < "$REF")" ] || { note "GUARD: handover length changed"; publish "failed"; exit 1; }
 cp PARAM_HANDOVER.txt PARAM_HANDOVER.kept.txt
-cp "$C/bench_tdm_childsplit/hftf_bench" ./hftf_bench
+cp "$BD/hftf_bench" ./hftf_bench
 md5sum hftf_bench > BUILD_USED
 [ "${DRY:-0}" = 1 ] && { note "dry run: staged, not launched"; exit 0; }
 

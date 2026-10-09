@@ -1,0 +1,7 @@
+# The one-class warm start for the omega_c = 0.7 sensitivity, 9 October.
+# The author: "set omegac=0.7, holding everything else fixed and adjusting b to match the drug use
+# (start with the one class model so make it faster). And then add the two class model".
+# Distributions: code/up_10 (one class, child_penalty_classes 1, written 23 Sep 03:52), shape 4282200,
+# the newest one-class pair on disk. calibration_state.dat: code/scan_seed's, the two-class seed every
+# benchmark point starts from, so the one-class points start from the same prices.
+# A warm start only: the solve iterates the distribution to its own stationary point.
