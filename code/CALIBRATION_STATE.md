@@ -1,5 +1,14 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+09 Oct 15:40 T = 70 TRANSITION, BESIDE T = 60 (the author: "maybe we should extend the transition to T=70?", "make sure
+to start the T=70 with the same vectors of guesses", "sure, you can run it in parallel"). Why: every T = 60 loop since
+1_r2 ends homelessness at 0.623 and the shelter share at 1.046 against long-run 0.613 and 1.031, still falling, pi_V
+reaching its long-run level only at the end. code/remote_transition_2c_t70.sh in a cloud worker: code/transition_fix/tr70_src.f90
+is the T = 60 binary's exact source (e2_run tr60_fix/tr.f90, md5 4c1c6c64 build) with transition_length 70; the two arms
+re-solved as in remote_transition_2c.sh; seeds = loop 0_r5's drug price and pi_V paths for 1-59 plus ten terminal
+values. Loops archive to results/transition_2c_t70/loop<N>/. Compare its years 1-59 with T = 60's: if they match, the
+horizon does not bind; if not, the paper's transition should come from T = 70.
+
 09 Oct 14:54 NO EXTERNALITIES, PRICE CLEARING, pi_V HELD -- LAUNCHED (the author, round r254: "Is the gain about piv
 or the cheaper drug? Can you test?"). code/noext_clear/run_noext_pclear.sh in cloud session session_01NYK7M9NnTqhQBx63AUuwju:
 arm A (Housing First, no externalities, re-solved for the walk) and arm E (Treatment First tf85_c35, the switches,
