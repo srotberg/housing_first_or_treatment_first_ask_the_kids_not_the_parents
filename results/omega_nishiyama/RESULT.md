@@ -56,6 +56,11 @@ not have to be exactly calibrated. that one has slack."* Do NOT interpolate a b2
 two-class point. Take whichever of the three running points ends closest to 8.956 per cent once it meets the
 convergence rule, record the drug use it landed on here, and go straight to stage 3 from it.
 
+**Clarification, 21:25 UTC (main session):** the fourth point launched at 21:14 may keep running, but do not
+wait for it and do not build a b2* from four points. Start stage 3 from the FIRST of the four points to meet the
+convergence rule within 0.5 points of 8.956 per cent (on current blocks that is most likely b1*, at about 8.8);
+if none does, take the closest converged point.
+
 ## Stage 3: long-run welfare, Housing First and Treatment First
 
 Pending.
