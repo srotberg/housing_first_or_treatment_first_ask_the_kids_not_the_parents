@@ -152,6 +152,9 @@ def names(S, C, R):
     # the author: "say that the childhood homelessness increases falls on X% of children, which is way too small to
     # reverse a 2.7% welfare gain in transition"): the ratio is gone from both places, the peak rise stays
     out['x_trf_hchild_rise_pp'] = f'{_dh:.2f}'
+    # (round r260, the author on 'at any time': "relative to eliminating parents' drug use for X percent of
+    # children"): the first year's fall in the share of parents who use, the same _du as above
+    out['x_trf_paruse_drop_pp'] = f'{_du:.2f}'
     # the same ratio alone, for Section 2 (the author, round r110: 'even in the short run the absolute increase in
     # childhood homelessness is X times smaller than the mass of children spared a parent who abuses drugs')
     out['x_trf_many_x'] = f'{round(_du, 2) / round(_dh, 2):.0f}' if _du > 0 and _dh > 0 else ''
