@@ -23,12 +23,15 @@ STARTS = [dict(aleph=al, b=b, theta=th, kappa=k, cbar=0.0977)
 
 def run(s):
     try:
+        print('start', s, flush=True)
         q = G.calibrate(dict(s), fixed=FIX_LOG)
         m = G.moments(q)
         mom = {k: float(m[k]) for k in KEYS}
         err = max(abs(mom[k] / G.TARGET[k] - 1.0) for k in KEYS)
-        return dict(start=s, q={k: (float(v) if not isinstance(v, bool) else v) for k, v in q.items()},
+        out = dict(start=s, q={k: (float(v) if not isinstance(v, bool) else v) for k, v in q.items()},
                     moments=mom, maxrelerr=err, bands=[list(map(float, iv)) for iv in m['intervals']])
+        json.dump(out, open(os.path.join(OUT, 'start_%d.json' % STARTS.index(s)), 'w'), indent=1)
+        return out
     except Exception as e:  # noqa: BLE001
         return dict(start=s, error=repr(e))
 
@@ -41,7 +44,7 @@ if __name__ == '__main__':
         print(r['start'], '->', r.get('error') or
               (', '.join(f"{k}={r['q'][k]:.5g}" for k in G.FREE), f"maxrelerr={r['maxrelerr']:.2e}"), flush=True)
     ok = [r for r in res if 'error' not in r]
-    best = min(ok, key=lambda r: r['maxrelerr'])
+    best = dict(min(ok, key=lambda r: r['maxrelerr']))
     bm = G.moments(BENCH)
     best['bench'] = dict(q={k: BENCH[k] for k in G.FREE}, moments={k: float(bm[k]) for k in KEYS})
     best['targets'] = {k: float(G.TARGET[k]) for k in KEYS}
