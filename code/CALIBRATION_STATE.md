@@ -1,5 +1,13 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+09 Oct 15:50 TABLE 5'S DECOMPOSITION COLUMNS, BETTER-OFF ROWS -- THREE CLOUD WORKERS (the author: "id like you to rerun
+them and remove that sentence from the notes", "compute them on separate sessions so you can parallelize", "put the
+missing things in the table in yellow"). code/extra_2c/remote_decomp_shares.sh <arm>, one session each: fixboth
+session_012wcAeJN7KT5BKz3bHusUdT, fixpv session_01R7x26reW1AF2qQstDtESx6, fixp session_01PWTG1gW8obEXG3e59pd3YW. Each
+re-solves Housing First and its column side by side, then shares.py and cf_kid -> results/decomp_2c_shares/arm_<arm>/.
+export_longrun.py fills the three rows and shows \tocheck (yellow) until each column is in; the note's 'not computed'
+sentence is removed. When in: export_results chain, splice, typeset; check final.txt against results/decomp_2c*.
+
 09 Oct 15:40 T = 70 TRANSITION, BESIDE T = 60 (the author: "maybe we should extend the transition to T=70?", "make sure
 to start the T=70 with the same vectors of guesses", "sure, you can run it in parallel"). Why: every T = 60 loop since
 1_r2 ends homelessness at 0.623 and the shelter share at 1.046 against long-run 0.613 and 1.031, still falling, pi_V
