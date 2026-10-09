@@ -1,4 +1,4 @@
-# Treatment First without externalities, price clearing, pi_V held (code/noext_clear/run_noext_pvhi.sh); 09 Oct 20:28 UTC
+# Treatment First without externalities, price clearing, pi_V held (code/noext_clear/run_noext_pvhi.sh); 09 Oct 20:58 UTC
 run_noext_pvhi: free disk 29G, memory 15 GiB, cores 4, threads per solve 2 (09 Oct 19:43)
 run_noext_pvhi: building cf_fix (09 Oct 19:43)
 run_noext_pvhi: building cf_fix2 (09 Oct 19:46)
@@ -8,11 +8,12 @@ run_noext_pvhi: building cf_walk (09 Oct 19:52)
 run_noext_pvhi: arm A (null_pe_noext) on cf_fix2_share_pe, switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0306231 (09 Oct 19:53)
 run_noext_pvhi: arm E (tf_noext_pvhi) on cf_fix2: detection 0.85, test 0.0004946100, price HELD at 1.0306231, pi_V SET at 0.076132869 (09 Oct 19:53)
 run_noext_pvhi: free disk 22G, memory 15 GiB, cores 4, threads per solve 2 (09 Oct 20:28)
+run_noext_pvhi: arm A (null_pe_noext) on cf_fix2_share_pe, switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0306231 (09 Oct 20:28)
+run_noext_pvhi: arm E (tf_noext_pvhi) on cf_fix2: detection 0.85, test 0.0004946100, price HELD at 1.0306231, pi_V SET at 0.076132869 (09 Oct 20:28)
 
 == cfarm_null_pe_noext (1 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
-  1  1.0307  0.06753    +0.7%    +0.7%    -2.8%  6.13e-04  0.00e+00   790.0986  +nan%    +4.6%    +3.9%
+  1  1.0307  0.06753    +0.7%    +0.7%    -2.8%  4.28e-04  0.00e+00   790.0986  +nan%    +4.6%    +3.9%
 
-== cfarm_tf_noext_pvhi (1 passes done)
+== cfarm_tf_noext_pvhi (0 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
-  1  1.0306  0.07613   -63.0%   -63.4%    -2.9%  0.00e+00  0.00e+00   791.1808  +nan%   -68.1%   -13.7%
