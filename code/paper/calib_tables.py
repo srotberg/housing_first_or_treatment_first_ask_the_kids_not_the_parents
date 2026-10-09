@@ -317,7 +317,7 @@ STANDARD = [
          f'{J_RET}', NA, f'{J_RET}'),
         (r'$\varepsilon(j)$', 'Age profile of efficiency', 'Ext.',
          r'Hump peaking at age 56, Greenwood et al.\ (2025)', 'Profile', NA, 'Profile'),
-        (r'$\rho_z$', 'Persistence of productivity', 'Ext.', r'Guvenen et al.\ (2023)',
+        (r'$\rho_y$', 'Persistence of productivity', 'Ext.', r'Guvenen et al.\ (2023)',
          f(H['persistence_employment_surviving']), NA, f(H['persistence_employment_surviving'])),
         (r'$\sigma_\zeta$', 'Standard deviation of its shocks', setcol('sigma_y'),
          "Bottom half's share of earnings, SCF 2022",
