@@ -54,6 +54,16 @@ the author wants it. Why pi_V rises more when the price clears (answered in r253
 0.30 vs 0.17, holders 3.25 vs 3.17, voucher spending 0.622 vs 0.606 -- faster turnover; social security +0.05 vs
 +0.12 (fewer extra survivors), mostly offset by lower taxes.
 
+09 Oct 21:51 LOOP 1_r5 SAVED; THE PAPER RE-PINNED TO IT. Archived to results/transition_2c/loop1_r5 (log segment
+28128-37180 in code/trtf60/tr2c_loop1_r5; early_years, cohort_cev, transition_loop1r5.png against loop 0_r5) by
+scratchpad repin_loop1_r5.sh. Convergence against loop 0_r5: drug gap median 0.08 per cent (0.10), worst 1.60
+(1.21), 4 of 59 years above 0.005 (5); budget residual median 9.3e-4 (1.9e-3), worst 2.1e-3 (4.5e-3), 29 of 59
+above 1e-3 (34). Largest path changes loop 0 -> 1: drug use 0.25 points (year 5), SUD 0.02, homelessness and
+children in a shelter 0.001, drug price 0.001, pi_V 0.02 points. Cohort born at the reform +2.68 per cent
+(unchanged), year 59 +4.34 (unchanged). transition_source.py -> tr2c_loop1_r5; transition_series,
+transition_figure and the export chain rerun: one name moved, x_trf_cev_dec1 2.66 -> 2.61, not in the prose.
+Figure 2 regenerated. The run continues into loop 2_r5.
+
 09 Oct 10:03 LOOP 0_r5 SAVED; THE PAPER RE-PINNED TO IT. Archived to results/transition_2c/loop0_r5 (log segment
 10133-22617 in code/trtf60/tr2c_loop0_r5; early_years, cohort_cev, transition_loop0r5.png against loop 0_r3) by
 scratchpad repin_loop0_r5.sh. Convergence against loop 0_r3: drug gap median 0.1 per cent both, worst 1.21 (was

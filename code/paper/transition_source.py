@@ -20,12 +20,12 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 # tr2c_t60/run.log, from its 'TRANSITION INIT PARENT SHARE RESTORED loop= 0' to the CONVERGENCE TERMS after its
 # 'PATHS SAVED'), because the readers take a log's FIRST pass; the full log and the paths are archived in
 # results/transition_2c/loop0_r5/.  Previous pin: loop 0_r3 (7 October 20:38, results/transition_2c/loop0_r3).
-LOG = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop0_r5', 'run.log')
-TAG = 'tr2c_loop0_r5'
+LOG = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop1_r5', 'run.log')
+TAG = 'tr2c_loop1_r5'
 OUT = os.path.join(ROOT, 'results', 'transition', TAG)
 # the benchmark welfare curve the cohort CEVs are read against, and the two steady states the path is
 # solved between: Housing First with no policy change, and the Treatment First long run, on the same build
-CURVE = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop0_r5', 'welfare_curvebaseline_benchmark.dat')
+CURVE = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop1_r5', 'welfare_curvebaseline_benchmark.dat')
 REF = os.path.join(ROOT, 'results', 'transition_2c')
 REF_NULL, REF_TF = 'arm_null', 'arm_tf'
 # the previous pin, kept for the record: restart 3g's loop 0 on the old build (30 September)
