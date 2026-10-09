@@ -48,6 +48,15 @@ def main():
         # the share of the tested who used under Housing First that has a SUD, and cannot stop on impact
         'x_ws_tested_sud_share_pc': f"{100 * (1 - d['tn_used'] / d['t_used']):.0f}",
     }
+    # (round r262, the author: "when we include those with SUD, the model produces about 1/3 of the responses seen
+    # in the other paper"): the share of all tested users who stop against the military's relative fall, as the
+    # nearest simple fraction, so the word turns with either number
+    _lit = json.load(open(os.path.join(os.path.dirname(OUT_JSON), 'lit_numbers.json')))
+    _r = (100 * d['t_stop'] / d['t_used']) / float(_lit['mp_stay_rel_pc'])
+    _fr = min(((1/5, 'a fifth'), (1/4, 'a quarter'), (1/3, 'a third'), (2/5, 'two fifths'), (1/2, 'half'),
+               (3/5, 'three fifths'), (2/3, 'two thirds'), (3/4, 'three quarters'), (1, 'all')),
+              key=lambda q: abs(q[0] - _r))
+    out['x_ws_all_vs_mil'] = _fr[1]
     r = json.load(open(OUT_JSON))
     r.update(out)
     json.dump(r, open(OUT_JSON, 'w'), indent=1, sort_keys=True)
