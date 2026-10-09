@@ -437,7 +437,7 @@ UNTARGETED = [
      f'{100 * mom("renters above 30 pct of income"):.1f}'), 'SCF 2022'),
     ('Rent over income, voucher holders', one('tenant contribution rate'), 'HUD PSH 2023'),
     ('Voucher holders living on wages', one('voucher holders, wages main'), 'HUD PSH 2023'),
-    ('Block 4: Distribution, shares of the total', None, None),
+    ('Block 4: Income and wealth distributions, shares of the total', None, None),
     (r'Income, bottom 1, 5, 10, 20\%',
      many([f'income share bottom {p} pct' for p in (1, 5, 10, 20)], 2), 'SCF 2022'),
     # THE BOTTOM HALF JOINS THE ROW (the author, 1 October: "add the 50% here instead of
