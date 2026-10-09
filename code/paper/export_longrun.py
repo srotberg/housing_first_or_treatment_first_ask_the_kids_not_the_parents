@@ -585,10 +585,10 @@ def main():
     # stands only while both comparisons go that way.
     _b_more = D['dc_p']['b'] < D['dc_b']['b']
     _pv_more = D['dc_p']['piv'] > D[t]['piv'] and D['dc_p']['price'] > D[t]['price']
-    out['x_dcp_why'] = ('Drug use falls by more than with both held because the higher $\\pi_V$ makes a voucher, and '
-                        'so staying clean, worth more, and $\\pi_V$ rises by more than under Treatment First itself '
-                        'because the drug price, held at its Housing First level, deters more use.'
-                        if _b_more and _pv_more else '')
+    # (the author, 9 October: "receiving a voucher more likely, and thus staying clean worth more"; the clause on pi_V
+    # rising by more than under Treatment First itself dropped, "the reader doesnt know this yet")
+    out['x_dcp_why'] = ('Drug use falls by more than with both held because the higher $\\pi_V$ makes receiving a '
+                        'voucher more likely, and thus staying clean worth more.' if _b_more else '')
     out['x_lr_e5_cev'] = f"{D[e]['cev_net']:.2f}"
     out['x_lr_e5_b_pc'] = f"{abs(pc(e, 'b', 'old_null_remote')):.0f}"
     out['x_lr_e5_h_pc'] = f"{abs(pc(e, 'h', 'old_null_remote')):.0f}"
