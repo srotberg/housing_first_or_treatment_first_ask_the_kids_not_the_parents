@@ -506,18 +506,20 @@ until the T = 70 run, `results/transition_2c_t70`, replaces them). No data enter
 
 ---
 
-# Part III. Validation (Table 6)
+# Part III. Validation (Section 5.2, Table 4)
 
 None of these is fitted. Each is produced by the model and is a place it can be caught, so the derivation of the
-data side matters as much as for a target. They follow Table 6, block by block.
+data side matters as much as for a target. They follow Table 4 ("Untargeted moments", `writing/tables/tab_untargeted.tex`,
+written by `code/paper/calib_tables.py`, whose cells it exports as `u_*` in `calib_numbers.json`), block by block.
 
 ## Block 1: Homelessness
 
 **Share of the homeless by age, 25–34, 35–44, 45–54, 55–64 and 65+ — 26.0, 27.2, 21.0, 18.4 and 7.5 percent.**
 HUD point in time count 2024 (`raw/HUD_PIT_counts_by_state_2007_2024.xlsb`, sheet 2024, Total row): 146,859, 153,849,
 118,740, 104,007 and 42,147 out of 565,602 homeless people aged 25 and over (`make_homeless_age.py`,
-`us_homeless_by_age.csv`). The 25–34 share is T₀'s target, so only the other four are checks; pooled, 74.2 percent are
-25 to 54. These are shares of people. HUD's "over 64" also counts the few homeless over 85.
+`us_homeless_by_age.csv`). The 25–34 share is T₀'s target, so only the other four are checks; the prose quotes 35–44,
+27.2, and 55 and over, 25.9 = 18.4 + 7.5 (`u_hl_3544_d`, `u_hl_55p_d`); pooled, 74.2 percent are 25 to 54
+(`u_hl_2554_d`, not quoted). These are shares of people. HUD's "over 64" also counts the few homeless over 85.
 
 **Employed share of the homeless — 46 percent.** Meyer, Wyse, Meyer, Grunwaldt and Wu (2024), NBER Working Paper 32323,
 from the 2010 Census linked to tax and administrative records: 52 percent of the sheltered and 40 percent of the
@@ -535,7 +537,8 @@ in thousands, ages 12 and over, pooled in `drug_use_age_distribution.xlsx` (shee
 48,464, ages 12 to 34 hold 21,941, 35–44 9,281, 45–54 6,582, 55–64 6,048 and 65 and over 4,610. The mean age takes band
 midpoints and 70 for the open band. Three things about this universe: the youngest band starts at 12, because the
 model's first cohort stands in for everyone who began earlier; the object is a substance use disorder with alcohol
-included; and the year is 2023, as Table 6 now says. (Table 6 labels the first band 26–34.) On the drug use
+included; and the year is 2023, as Table 4 says. (Table 4 labels the first band 26–34, and the prose says "67 percent
+of them are 26 to 34, against 45".) On the drug use
 disorder column of the same table the shares are 51.1, 17.4, 12.5, 10.8 and 8.2 and the mean age 37.5; restricted to
 26 and over they are 31.0, 24.6, 17.7, 15.2 and 11.6, mean 44.6.
 
@@ -556,15 +559,17 @@ undetermined, 36,330 deaths at 25 to 44 (`make_overdose.py`, `us_overdose_mortal
 all-cause count, so each band's poisoning death probability is divided by the SSA all-cause probability averaged over
 the same ages (26 to 29 for the first band, where the life table starts): 19.7 percent at 25–29, 23.3 at 30–34, 22.2
 at 35–39 and 18.5 at 40–44, and 20.8 pooled with the bands weighted by population. The model's
-counterpart counts every death its SUD adds at 26 to 44, not only poisonings. (Table 6 prints 20.0, the value typed into
-the Fortran as `observed=0.20`, and the paper's data line gives the year as 2023.) The ICD-10 113 Cause List export kept
+counterpart counts every death its SUD adds at 26 to 44, not only poisonings. (Table 4 and the prose print 20.0,
+`u_deaths_d`, the value typed into the Fortran as `observed=0.20`, and name no year; the 2024 computation here gives
+20.8. The changes file lists the discrepancy.) The ICD-10 113 Cause List export kept
 in `raw/` as SUPERSEDED has only accidental poisoning, X40–X49, which runs 1 to 3 percent below the four drug rows at
 these ages.
 
 ## Block 3: Housing and vouchers
 
 **Renters paying over 30 percent of income — 43.2 percent.** SCF 2022, the universe of h₂'s target (Block 8): every
-non-owner with positive income and rent, weighted, no income band, 12 × rent/income. Keeping the 40 renters with no
+non-owner with positive income and rent, weighted, no income band, 12 × rent/income (`renter_burden_30_data = 0.432`,
+`SCF_cost_burdened_renters_code.txt`). The model's counterpart is housed households, 58.7 percent. Keeping the 40 renters with no
 income and the 345 who pay no rent gives 40.9. The SCF universe is renters, while every household in the model rents.
 
 **Rent over income, voucher holders — 31.2 percent.** HUD Picture of Subsidized Households 2023, tenant-based voucher
@@ -582,7 +587,8 @@ each cut split, as the Fortran walks its own histogram: 0.00012, 0.00311, 0.0091
 
 **Net worth, bottom 1, 5, 10, 20 and 50 percent — −0.16, −0.28, −0.29, −0.23 and 2.2 percent.** SCF 2022, all
 households, `networth` weighted by `wgt`, with the same straddle split: −0.00158, −0.00279, −0.00287, −0.00226 and
-0.02202 (`SCF_wealth_shares.txt`, which `calib_tables.py` reads for the bottom half). For comparison, the Federal
+0.02202 (`SCF_wealth_shares.txt`, which `calib_tables.py` reads for the bottom half; the prose quotes the bottom fifth,
+−0.23, and the bottom half, 2.2). For comparison, the Federal
 Reserve's Distributional Financial Accounts (`raw/FRB_DFA_net_worth_levels_by_percentile_1989_2026.csv`) put the
 bottom half at 2.52 percent averaged over 2022:Q1 to 2026:Q1 and 2.45 in 2026:Q1 (`make_wealth_shares.py --from-year
 2022`, `us_wealth_shares.csv`); the Fortran's `bottom_half_wealth_share_data = 0.025` is that figure, and the paper no
@@ -624,12 +630,78 @@ the comparison separates transmission from the poverty that accompanies it. Ther
 parent's homelessness in the model, so its odds ratio, 6.23 against the general population of homeless adults, comes
 from the persistence of productivity across generations alone.
 
-*Why a general-population comparison would be wrong.* Flatau, Conroy, Spooner, Eardley and Forbes (2013) report that
+*Why a general-population comparison would be wrong* (appendix only; the paper cites neither study below). Flatau, Conroy, Spooner, Eardley and Forbes (2013) report that
 43.0 percent of non-Indigenous Australian homelessness-assistance clients had parents who had experienced
 homelessness. Converting a conditional share to a ratio needs a population base rate, and against one the implied
 ratio is 5 to 6, but that credits the housing penalty with everything else that differs between poor children.
 Cobb-Clark and Zhu (2015) show the difference is substantial: among Journeys Home respondents, all on income support,
 those first homeless at 15 or below were 2.6 times as likely to have been in foster care (42.5 against 16.1 percent).
+
+**Children living with a parent who has a SUD — 4.6 percent.** NSDUH 2024 public use file, respondents aged 26 and
+over (`AGE3` 7 to 11), each weighted by `ANALWT2_C` times `NRCH17_2`, their own children under 18 in the household
+(three or more counted as three), so the unit is a child. The share of those children whose parent has a moderate or
+severe drug use disorder (`SVYRDUDANY` in 2, 3, the model's SUD) is 3.2 percent for the surveyed parent; counting
+either parent, with the other parent of a married respondent assigned the child-weighted rate of married parents of
+the other sex, independently, it is 4.6 percent, the figure Table 4 and the prose quote (`nsduh_kids_sud_hh_pc`). The
+independence makes it an upper bound if partners' disorders go together. On any severity the pair is 8.0 and 12.1.
+`make_children_with_sud_parent.py` → `code/paper/nsduh_kids_sud.json` (reproduced 10 October). The model's 5.81
+percent (Table 4 prints 5.8) is the share of children, households aged 26 to 50, living with a parent who has a SUD.
+
+## Block 7: Losing a voucher
+
+**Three-year mortality of households with SMI put on the street — 4.6 percentage points.** Costantini (2025),
+"Housing First or Treatment First? Evidence from the VA's homelessness programs" (`related_lit/Costantini_2025_*.pdf`,
+abstract, page 1): among nearly 300,000 unhoused veterans with mental illness, enrolling in the Department of
+Veterans Affairs' Housing First programme lowers three-year mortality by 4.6 percentage points against a
+no-programme counterfactual, an instrumental-variables estimate (`COSTANTINI_PP` in `code/paper/export_revoked.py`;
+`x_rv_costantini_pp`). The model's counterpart, 3.6 points (`x_rv_street_smi_pp`), is the three-year mortality gap
+between the households with SMI at revocation whose first housing choice after Treatment First revokes their voucher
+is the street, 10.20 percent, and the same households followed with their voucher kept, 6.63
+(`x_rv_street_smi_dead_tf`, `x_rv_street_smi_dead_hf`), the direct gap with no Wald rescaling, the drug price and
+π_V held, pooled over the holders revoked in years 1 to 3 (the row "SMI, on the street" of
+`results/revoked_2c_street`'s tables, read by `code/paper/export_revoked.py`, which refuses unless the run's guard
+summary passed).
+
+## Block 8: Deterrence
+
+**Users without a SUD who stop when tested — 61 percent.** Mehay and Pacula (1999), "The effectiveness of workplace
+drug prevention policies: does 'zero tolerance' work?", NBER Working Paper 7383 (the author's copy). The US military
+began random testing in 1981 and dismissed those who failed; Navy and Marine Corps commanders had to test 10 to 20
+percent of their commands every month (p. 6). On the NLSY, past-year marijuana use among those who stayed in the
+military fell from 48.5 to 13.2 percent between 1980 and 1984, and among those who stayed civilians from 45.8 to 32.0
+(Table 6, p. 30). The testing therefore cut use among those subject to it by 1 − (13.2/48.5)/(32.0/45.8) = 61 percent
+of what it would otherwise have been (`data/lit_numbers.py` → `code/paper/lit_numbers.json`, `mp_stay_rel_pc`; the
+inputs are `mp_stay_*`, `mp_test_lo`, `mp_test_hi`). Section 2 quotes the same numbers. The measure is any
+past-year use of marijuana, broader than the model's, so the two are compared as proportional responses.
+The model's counterpart, 59 percent (`x_ws_tested_nosud_pc`), applies Treatment First to the benchmark's households
+with the distribution, the drug price and π_V held at Housing First's, and follows each user subject to the screen
+(every voucher holder, and every eligible household offered a voucher, weighted by its offer rate): of those that
+used under Housing First and have no SUD, 59 percent stop and none starts. Those with a SUD are 67 percent of the
+users subject to the screen (`x_ws_tested_sud_share_pc`) and cannot stop on impact; counting them, 19 percent stop
+(`x_ws_tested_all_pc`), about a third of the military's response. `code/paper/export_whostops.py` reads the
+`DIAG who stops` line of `results/whostops_2c/cfarm_tf_imp_ws850/cf.log.gz` (`code/deter_2c/run_whostops.sh`). The
+long-run fall in the footnote, 64 percent, is Table 5's fifth column (8.96 to 3.20 percent).
+
+## Other data the text quotes
+
+Not in Table 4, but stated as data in Sections 1, 2 and 7:
+
+- **771,480 people homeless in the January 2024 point in time count** (Section 1): HUD PiT 2024
+  (`raw/HUD_PIT_counts_by_state_2007_2024.xlsb`, sheet 2024, Total row, column "Overall Homeless"; checked 10 October).
+  The number is typed in the source, not generated.
+- **Users are nearly as likely to be parents** (Section 7): in the National Survey of Family Growth 2017–2019, 75
+  percent of adults aged 40 to 49 who used hard drugs in the past year had a child, against 81 percent of those who
+  used none (`nsfg_all_anybirth_hard_4049_pc`, `nsfg_all_anybirth_nouse_4049_pc`). Female and male respondent files
+  (`raw/NSFG_2017_2019_*`), ages 15 to 49, weighted by `WGT2017_2019`, children ever born (`PARITY`) or fathered
+  (`BIOKIDS`); hard drugs are cocaine, crack, crystal meth or injecting in the last twelve months
+  (`nsfg_births_by_drug_use.py` → `code/paper/nsfg_births.json`).
+- **A child at home** (Section 7): among adults aged 26 to 49, 40 percent of those with a drug use disorder of any
+  severity have a child under 18 at home, against 48 percent of comparable adults who used no illicit drug, the
+  non-users reweighted to the users' cells of age, sex, personal income and marital status (NSDUH 2024;
+  `make_children_at_home_reweighted.py` → `code/paper/nsduh_kids_home.json`, `nsduh_kh_sud_pc`,
+  `nsduh_kh_sud_like_pc`).
+- **The users' income, 0.74 of the average** (Sections 1 and 3) is κ_φd's target (Block 1), and **17.5 percent** (Sections
+  1, 2 and 7) is ω_c's (Block 5).
 
 ---
 
