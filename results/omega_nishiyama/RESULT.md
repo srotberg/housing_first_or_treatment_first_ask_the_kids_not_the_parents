@@ -109,4 +109,9 @@ rough guide only.
 
 ## Stage 3: long-run welfare, Housing First and Treatment First
 
-Pending.
+Running since 02:46 UTC in session_01Pc6TKnc5jiN8mjtwAr1et6 (launched by the main session):
+`bash code/omega_nishiyama/remote_cf_nishiyama.sh results/omega_nishiyama_2c/bench_0.686_b0.004510373_ku1.0
+0.004510373 1.0688562125371026`, Housing First (null) then Treatment First (detection 0.85, $35 test, price and
+pi_V clearing against the new null's net revenue), progress in results/omega_nishiyama/cf/passes.txt. The new
+benchmark's base: drug users 9.0496, SUD 3.8011, homelessness 0.60062 per cent (benchmark of record 8.9563,
+3.8113, 0.61836). Expected: null about 4 hours, Treatment First about 6 more.
