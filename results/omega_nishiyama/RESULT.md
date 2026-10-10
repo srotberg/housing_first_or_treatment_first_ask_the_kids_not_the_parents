@@ -82,6 +82,11 @@ stage 3 from it NOW with code/omega_nishiyama/remote_cf_nishiyama.sh. The other 
 (0.004441108, 0.004499171, 0.004531742) are no longer needed and can be stopped. Record in the stage 3 write-up
 that the sensitivity benchmark has about 7.7 per cent drug users against the benchmark's 8.956.
 
+**02:45 UTC (main session):** the fifth point, **0.004510373**, converged at **9.050 per cent** users (block move
+5.9e-4), within 1.1 per cent of 8.956. It is closer than the 1.02 b1* point the author accepted and is available now,
+so stage 3 runs from it: send_bench committed, stage 3 launched by the main session in a separate cloud session.
+Do not launch another stage 2 point or another stage 3.
+
 ## Stage 3: long-run welfare, Housing First and Treatment First
 
 Pending.
