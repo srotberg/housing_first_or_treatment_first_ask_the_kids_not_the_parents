@@ -87,6 +87,26 @@ that the sensitivity benchmark has about 7.7 per cent drug users against the ben
 so stage 3 runs from it: send_bench committed, stage 3 launched by the main session in a separate cloud session.
 Do not launch another stage 2 point or another stage 3.
 
+**03:10 UTC (orchestrator):** stage 2 closed on the fifth point. Its kappa_x: first KAPPA_X PROBE IMPLIED 0.70897865
+x 1.5076 = **1.0688562** (the benchmark of record's 0.934236), as stage 3 uses. send_bench for the 1.02 b1* point
+withdrawn (it had not converged: it restarted at 23:12 and was at 7.65, move 1.9e-2, at block 10, so the 7.7
+of the 00:30 note was an unconverged reading, and its files are no longer needed); release_<TAG> committed for
+the other four points, the three still solving stopped by archiving their sessions. Last readings:
+
+| b | blocks | last move | drug users (per cent) |
+|---|---|---|---|
+| 0.004441108 (0.98 b1*) | 10, converged | 6.6e-4 | 9.444 |
+| 0.004499171 | 8, stopped | 5.4e-3 | 9.059 |
+| **0.004510373 (fifth, b2*)** | **10, converged** | **5.9e-4** | **9.050** |
+| 0.004531742 (b1*) | 6, stopped | 8.9e-3 | 8.545 |
+| 0.004622377 (1.02 b1*) | 10, stopped | 1.9e-2 | 7.649 |
+
+b2* = **0.004510373** (0.8318 x the benchmark of record's b), drug users 9.050 against 8.956 (+0.094 points).
+The converged 0.98 b1* point (9.444) sits ABOVE the fifth point although its b is lower, as it should, but
+only by 0.39 points for 1.6 per cent less b; in the first passes b1* ran 0.6 points below the fifth for 0.5 per
+cent more b. Use near these b values responds unevenly within single blocks, so the block-level readings were a
+rough guide only.
+
 ## Stage 3: long-run welfare, Housing First and Treatment First
 
 Pending.
