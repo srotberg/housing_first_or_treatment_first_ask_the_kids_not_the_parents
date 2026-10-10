@@ -1,4 +1,4 @@
-# omega_c 0.686 sensitivity, Housing First and Treatment First against results/omega_nishiyama_2c/bench_0.686_b0.004510373_ku1.0 (b 0.004510373, kappa_uem 1.0, kappa_x 1.0688562125371026; base 0.0904959779,0.0380110071,0.0060061733); 10 Oct 11:37 UTC
+# omega_c 0.686 sensitivity, Housing First and Treatment First against results/omega_nishiyama_2c/bench_0.686_b0.004510373_ku1.0 (b 0.004510373, kappa_uem 1.0, kappa_x 1.0688562125371026; base 0.0904959779,0.0380110071,0.0060061733); 10 Oct 11:42 UTC
 remote_cf_nishiyama: gfortran missing, installing (02:46)
 remote_cf_nishiyama: benchmark results/omega_nishiyama_2c/bench_0.686_b0.004510373_ku1.0: omega_c 0.686, b 0.004510373, kappa_x 1.0688562125371026, base (users, SUD, h_1) 0.0904959779,0.0380110071,0.0060061733 (02:46)
 remote_cf_nishiyama: building cf_fix (02:46)
@@ -8,6 +8,7 @@ remote_cf_nishiyama: arm null ACCEPTED (exit 0): VOUCHER CHECK PASS: arm ran at 
 remote_cf_nishiyama: no-policy net revenue 5.7681232016963211 is the TF budget target (04:36)
 remote_cf_nishiyama: test cost 0.0004946100 in model units ($35) (04:36)
 remote_cf_nishiyama: arm tf on cf_fix2: PDET=0.85 NET_TARGET=5.7681232016963211 PV_START=0.0962 DRUG_PRICE_START=0.8555 EXTRA_SET=cost_per_drug_test 0.0004946100 (04:36)
+remote_cf_nishiyama: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.7681232016959996 DIST CHECK PASS: 10 passes, sweeps [70, 70, 70, 70, 72, 70, 72, 70, 70, 70], largest final 4.64e-05 (rule 5e-05, at least 70 sweeps)  (11:42)
 
 == null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -28,3 +29,4 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   7  0.8491  0.09605   -39.2%   -40.0%    -5.1%  7.35e-04  6.71e-03   779.5758  +5.55%
   8  0.8494  0.09564   -39.2%   -40.0%    -4.9%  7.01e-04  2.24e-03   779.5599  +5.51%
   9  0.8495  0.09551   -39.2%   -40.0%    -4.8%  2.41e-04  1.39e-03   779.5535  +5.49%
+ 10  0.8495  0.09543   -39.2%   -40.0%    -4.8%  1.22e-04  3.36e-04   779.5504  +5.48%
