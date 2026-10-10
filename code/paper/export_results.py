@@ -48,6 +48,8 @@ import re
 import subprocess
 import sys
 
+import welfare_nok
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 RES = os.path.join(ROOT, 'results', 'counterfactuals_2c')
@@ -130,13 +132,19 @@ def last_cev(arm):
     return float(rows[-1][col].rstrip('%'))
 
 
-def cev_log(arm):
-    """the arm's CEV off the benchmark's curve, per cent, from its cf.log.gz"""
+def cev_logged(arm):
+    """the arm's CEV as the Fortran logged it, with the kappa_x * H term, off whichever curve that run carried"""
     x = None
     for l in gzip.open(os.path.join(adir(arm), 'cf.log.gz'), 'rt', errors='replace'):
         if 'CEV from the saved benchmark curve' in l:
             x = 100 * float(l.split('x=')[1])
     return x
+
+
+def cev_log(arm):
+    """the arm's CEV off the benchmark's curve, per cent, WITHOUT the kappa_x * H term (welfare_nok.py; 10 October,
+    the author: "compute all the welfare numbers without kappa_x H")"""
+    return welfare_nok.cev_free(adir(arm))
 
 
 def pc(x, nd=0):
@@ -161,10 +169,13 @@ out['x_tf_cev_dir'] = 'better' if cev_log('tf85') > CEV0 else 'worse'
 # the two arms were solved against, named in passes.txt's header
 _nh = open(os.path.join(adir('nish_tf'), '..', 'passes.txt')).readline()
 out['x_nish_omega'] = re.search(r'bench_([0-9.]+)_b', _nh).group(1)
-out['x_nish_cev'] = f"{cev_log('nish_tf') - cev_log('nish_null'):.2f}"
-assert cev_log('nish_tf') > cev_log('nish_null'), 'the omega_c sensitivity no longer favours Treatment First'
+out['x_nish_cev'] = f"{cev_logged('nish_tf') - cev_logged('nish_null'):.2f}"   # off its own benchmark's curve; with the kappa_x term (0.01 utils there)
+assert cev_logged('nish_tf') > cev_logged('nish_null'), 'the omega_c sensitivity no longer favours Treatment First'
 # the long-run gain splits about evenly between childhood and adulthood
-out['x_tf_child_share_pc'] = pc(100 * tf['split']['child'] / tf['split']['total'])
+# (10 October) without the kappa_x * H term, from the same objects as Table tab:whogains (welfare_nok.parts)
+_parts_tf = welfare_nok.parts(adir('tf85'), os.path.join(ROOT, 'results', 'transition_2c', 'arm_tf'),
+                              adir('null_share'), os.path.join(ROOT, 'results', 'transition_2c', 'arm_null'))
+out['x_tf_child_share_pc'] = pc(100 * _parts_tf['C'] / _parts_tf['nb'])
 # THE EXPERIMENT AS RUN (Section 7): pi_V clears the budget, and the screen's
 # parameters are the ARM's handover values, not the Fortran declarations (0.95 and
 # 0.005 there; the arm ran at 0.85 and 0).
@@ -311,9 +322,7 @@ def _dc(arm, sub='decomp_2c'):
     log = os.path.join(ROOT, 'results', sub, f'arm_{arm}', 'cf.log.gz')
     d = _dc_last_pass(arm, sub)
     if os.path.exists(log):
-        for l in gzip.open(log, 'rt', errors='replace'):
-            if 'CEV from the saved benchmark curve' in l:
-                d['cev'] = 100 * float(l.split('x=')[1]) - CEV0
+        d['cev'] = welfare_nok.cev_free(os.path.dirname(log)) - CEV0      # without the kappa_x * H term
         d['final'] = True
     return d
 
@@ -354,6 +363,10 @@ out['x_dcpv_b1'] = f"{_b0 * (1 + DC_PV['b'] / 100):.2f}"
 _arc = math.log((1 + DC_PV['b'] / 100) / (1 + DC_B['b'] / 100)) / math.log(DC_PV['price'] / DC_B['price'])
 out['x_tf_arc_el'] = f"{_arc:.1f}"
 assert _arc < 0, _arc
+# raw pieces for export_welfare.py's percentage-point comparison with the benchmark's elasticity
+out['_dcpv_price_fall'] = 1 - DC_PV['price'] / DC_B['price']
+out['_dcb_b1_raw'] = _b0 * (1 + DC_B['b'] / 100)
+out['_dcpv_b1_raw'] = _b0 * (1 + DC_PV['b'] / 100)
 out['x_dc_b_cev'] = f"{DC_B['cev']:.2f}"
 _lost = (DC_B['cev'] - DC_PV['cev']) / DC_B['cev'] if DC_B['cev'] else 0
 _back = (_tfc - DC_PV['cev']) / (DC_B['cev'] - DC_PV['cev']) if DC_B['cev'] != DC_PV['cev'] else 0

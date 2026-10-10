@@ -23,9 +23,17 @@ Only the LATEST complete forward pass is used: the lines after the last
 periods needed, otherwise the pass before it.
 """
 import re, sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'paper'))
+import welfare_nok as wn      # the kappa_x * H term and the benchmark's curve shift (10 October)
 
 BETA = 0.94609059720286381   # discount_factor, PARAM_HANDOVER
-KAPPA_X = 0.9329             # kappa_x, PARAM_HANDOVER
+KAPPA_X = 0.9329             # kappa_x, PARAM_HANDOVER: the path's childhood identity below still uses it
+# EVERY LIFETIME VALUE AND CEV PRINTED HERE IS WITHOUT THE kappa_x * H TERM (10 October, the author: "compute all the
+# welfare numbers without kappa_x H"): the childhood sum leaves the term out, the adult value at 26 gets the term it
+# carries added back (ADULT_SENS * kappa_x * h_1 of the year the cohort enters), and the curve is shifted by the
+# benchmark's own term. --with-term reproduces the earlier numbers.
+WITH_TERM = '--with-term' in sys.argv
+if WITH_TERM: sys.argv.remove('--with-term')
 CHILD_YEARS = 25
 
 # --terminal <cf.log.gz>: the steady state the path ends in. With it, a cohort whose childhood or adult entry
@@ -72,6 +80,8 @@ def parse(block):
 
 
 xs, ws = zip(*[tuple(map(float, l.split())) for l in open(curve) if l.strip()])
+if not WITH_TERM:
+    ws = tuple(w + wn.SHIFT0 for w in ws)
 
 
 def cev_of(t):
@@ -97,7 +107,11 @@ print(f"forward pass {chosen} of {len(ps) - 1} (0 = the first loop); periods in 
 
 # consistency: the code's own CEV at t=1 from its own with_childhood, through this interpolation
 if 1 in wc and 1 in cev:
-    print(f"check: code's CEV at t=1 {100*cev[1]:+.4f}%  this script on the same welfare {100*cev_of(wc[1]):+.4f}%")
+    _w = (ws if WITH_TERM else tuple(w - wn.SHIFT0 for w in ws))
+    _i = next(k for k in range(1, len(_w)) if _w[k] >= wc[1]); _j = max(1, min(_i, len(_w) - 2))
+    _l0, _l1, _l2 = _w[_j-1], _w[_j], _w[_j+1]; _t = wc[1]
+    _x = (_t-_l1)*(_t-_l2)/((_l0-_l1)*(_l0-_l2))*xs[_j-1] + (_t-_l0)*(_t-_l2)/((_l1-_l0)*(_l1-_l2))*xs[_j] + (_t-_l0)*(_t-_l1)/((_l2-_l0)*(_l2-_l1))*xs[_j+1]
+    print(f"check: code's CEV at t=1 {100*cev[1]:+.4f}%  this script on the same welfare, with the term {100*_x:+.4f}%")
 
 LAST = max(young)
 if TERMINAL:
@@ -125,8 +139,12 @@ last_b = LAST + 1 if TERMINAL else LAST - CHILD_YEARS
 for b in range(1, last_b + 1):
     if not all((b + a - 1) in by and (b + a - 1) in h for a in range(1, CHILD_YEARS + 1)):
         break
-    child = sum(BETA ** (a - 1) * (by[b + a - 1][a - 1] - KAPPA_X * h[b + a - 1]) for a in range(1, CHILD_YEARS + 1))
-    adult = BETA ** CHILD_YEARS * young[b + CHILD_YEARS]
+    if WITH_TERM:
+        child = sum(BETA ** (a - 1) * (by[b + a - 1][a - 1] - KAPPA_X * h[b + a - 1]) for a in range(1, CHILD_YEARS + 1))
+        adult = BETA ** CHILD_YEARS * young[b + CHILD_YEARS]
+    else:
+        child = sum(BETA ** (a - 1) * by[b + a - 1][a - 1] for a in range(1, CHILD_YEARS + 1))
+        adult = BETA ** CHILD_YEARS * (young[b + CHILD_YEARS] + KAPPA_X * wn.ADULT_SENS * h[b + CHILD_YEARS])
     L = child + adult
     print(f"{b:4d}  {L:10.5f}  {100*cev_of(L):+8.4f}%   ({child:.4f}, {adult:.4f})")
     if b == 1:

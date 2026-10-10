@@ -39,6 +39,9 @@ and Treatment First, is copied from code/cfarm_tf_fix2_85 (untracked) into tf85/
 value_at_26_by_node_{benchmark,tf85}.txt: nodes 1-13 with a clean parent, 14-26 penalised.
 """
 import gzip
+
+import welfare_nok
+STEADY_WITH_TERM = []   # arms whose CEV still carries the kappa_x term (no final.txt/log pair)
 import json
 import os
 import re
@@ -155,6 +158,12 @@ def steady(arm):
             band[int(m.group(1))] = float(m.group(2))
         if 'CEV from the saved benchmark curve' in l:
             cev = float(l.split('x=')[1])
+            # WITHOUT the kappa_x * H term where the arm's files allow it (welfare_nok.py, 10 October)
+            _v = welfare_nok.arm_values(adir(arm))
+            if _v:
+                cev = welfare_nok.cev_free(adir(arm)) / 100
+            else:
+                STEADY_WITH_TERM.append(arm)
         # the share of households entering adult life (age index 1) with a higher value than in the
         # benchmark, state by state, weighted by the benchmark's distribution (the Fortran's own check)
         if 'DIAG mean drug quantity, users' in l:
@@ -814,8 +823,14 @@ def main():
     m1, v1 = D[t]['adult']['mass'], D[t]['adult']['vf']
     # blocks: [clean parent, -, penalised, -]
     gap = v0[0] - v0[2]
-    comp = (m0[2] - m1[2]) * gap
-    tot = (m1[0] * v1[0] + m1[2] * v1[2]) / (m1[0] + m1[2]) - (m0[0] * v0[0] + m0[2] * v0[2]) / (m0[0] + m0[2])
+    # THE SPLIT OF ADULT LIFE (10 October): the same objects as Table tab:whogains (export_welfare.py), without the
+    # kappa_x * H term, so that the prose and the table agree: comp is E / beta^J_K, the composition term over the 26
+    # entry nodes at Treatment First's values, and tot - comp is P, the same-state gain of every household at 26.
+    # Before, comp was the penalty class's share change at Housing First's gap alone (11 against 13 percent).
+    _parts = welfare_nok.parts(adir(t), os.path.join(ROOT, 'results', 'transition_2c', 'arm_tf'),
+                               adir('null_share'), os.path.join(ROOT, 'results', 'transition_2c', 'arm_null'))
+    comp = _parts['E'] / _parts['b25']
+    tot = _parts['A'] / _parts['b25']
     adult_utils = D[t]['split'][1]
     assert abs(tot * beta25 / adult_utils - 1) < 0.02, \
         f'ADULTDECOMP {tot * beta25:.4f} does not reproduce the adult part {adult_utils:.4f}'
@@ -877,8 +892,7 @@ def main():
                f"{'more' if _gp > _gc else 'less'}, for a child whose own parent carried it, whom the penalty "
                'leaves with lower productivity'
                if _gc > 0 and _gp > 0 else '')
-    _sp = D[t]['split']
-    _kid = 100 * _sp[0] / _sp[2]
+    _kid = 100 * _parts['C'] / _parts['nb']      # without the kappa_x * H term, as Table tab:whogains
     _draw = (100 - _kid) * comp / tot
     _val = 100 - _kid - _draw
     # the penalty's share of the WHOLE gain, for Section 5's delta_d item (3 October: the ranking does not rest on it)
@@ -907,7 +921,7 @@ def main():
     _qup = None not in _q and _q[1] > _q[0]
     out['x_lr_adult'] = (
         f"The other ${100 - _kid:.0f}$ percent comes in adult life, from two sources. The first, ${_draw:.0f}$ "
-        'percent of the whole gain, is the better productivity a child draws when its own parent does not carry the '
+        'percent of the whole gain, is the better productivity node a child draws, mostly because its own parent does not carry the '
         f"disorder. Escaping the penalty is worth a lot to each child it spares, about ${out['x_lr_pen_ratio']}$ "
         'times what the average child gains at the same productivity. But it spares only about '
         f"${float(out['x_lr_pen0']) - float(out['x_lr_pen1']):.0f}$ percent of children, since the share of newborns who "
