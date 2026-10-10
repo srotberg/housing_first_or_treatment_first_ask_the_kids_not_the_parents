@@ -56,6 +56,12 @@ their first pass. Block 6 of the two that bracket the target: 0.004499171 9.218 
 of 8.956, so a fifth point was launched at once at the block-6 log-b interpolation to 8.986 (the benchmark of
 record's block 6, which ended 0.03 below it): **0.004510373**, session_01KU25a1Pxrn7ZMCux1H35nZ, 23:33.
 
+00:34: every stage 2 solve had restarted from the seed between 23:12 and 23:43 (worker epoch 2: the containers
+were replaced, and the runner restarts a dead solve from the seed by design), so the block-6 numbers above are
+from first passes that no longer exist. All five points now solve from the start, the fifth among them; the
+earliest converge about 03:30-04:00 UTC. The interpolation for the fifth point stands, since the re-runs
+retrace the same paths (b1* block 1: 7.807 then 7.806; 0.98 b1* blocks 1-2: 8.317, 9.972 then 8.318, 9.972).
+
 b2* = pending.
 
 **INSTRUCTION FROM THE AUTHOR, 9 October 21:00 UTC (relayed by the main session):** *"omega_c=0.686 does
