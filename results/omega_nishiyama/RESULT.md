@@ -150,3 +150,28 @@ benchmark's base: drug users 9.0496, SUD 3.8011, homelessness 0.60062 per cent (
 **-0.028 per cent** (paper's null +0.003). Treatment First started 04:36 from price 0.8555, pi_V 0.0962; pass 1:
 users -37.4, SUD -38.2, homelessness -6.6 per cent against the new benchmark (the paper's tf85_c35 pass 1: -30.5,
 -32.0, -2.6).
+
+**Treatment First ACCEPTED 11:42**, 10 passes (TARGET CHECK PASS, cleared against 5.768123; DIST CHECK PASS, largest
+final 4.64e-05). Final, against the new null (results/omega_nishiyama/cf/{null,tf}/final.txt), beside the paper's
+arms (results/transition_2c/arm_tf/final.txt):
+
+**The sensitivity benchmark has 9.05 per cent drug users against the paper's 8.956.**
+
+| | omega_c 0.686: null | omega_c 0.686: Treatment First | change | paper: null | paper: Treatment First | change |
+|---|---|---|---|---|---|---|
+| drug use (per cent) | 9.050 | 5.504 | -39.18% | 8.959 | 6.093 | -31.99% |
+| SUD (per cent) | 3.801 | 2.281 | -40.00% | 3.814 | 2.536 | -33.51% |
+| homelessness (per cent) | 0.6005 | 0.5718 | -4.78% | 0.6185 | 0.6130 | -0.90% |
+| drug price | 1.0000 | 0.8495 | -15.05% | 1.0003 | 0.8555 | -14.47% |
+| pi_V | 0.06753 | 0.09543 | +41.30% | 0.06753 | 0.09615 | +42.37% |
+| CEV from the saved benchmark curve | -0.000283 | 0.054818 | | 0.000031 | 0.043368 | |
+
+**Newborn welfare gain, CEV(tf) - CEV(null): 5.51 per cent at omega_c 0.686, against the paper's 4.33 per cent.**
+0.054818 - (-0.000283) = 0.055101; the paper's is 0.043368 - 0.000031 = 0.043337 (results/counterfactuals_2c/
+tf85_c35/tf and nulltf/null; results/transition_2c/arm_tf's 0.043364 gives the same 4.33). Each CEV is the arm's
+cf.log 'CEV from the saved benchmark curve' line.
+
+The long-run result carries over in sign and mechanism. Treatment First again lowers the drug price by about 15 per
+cent and raises pi_V by about 41 per cent on the same budget. The gain is about a quarter larger: 5.51 against 4.33.
+Drug use falls by 39 rather than 32 per cent. Homelessness falls by 4.8 rather than 0.9 per cent. The welfare split
+(finalstats, utils): childhood +1.20 and adult part +0.85, total +2.05, against the paper's +0.83, +0.64, +1.46.
