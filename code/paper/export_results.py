@@ -321,6 +321,8 @@ out['_dc_passes'] = f"fixpv {DC_PV['pass']}, fixp {DC_P['pass']}"
 _tfc = cev_log('tf85') - CEV0
 out['x_dc_pv_cev'] = f"{DC_PV['cev']:.2f}"
 out['x_dc_p_cev'] = f"{DC_P['cev']:.2f}"
+# the step that lets the drug price clear, from the price-held gain to the main one (round r285, the author: "down to")
+out['x_dcp_tf_dir'] = 'down' if _tfc < DC_P['cev'] else 'up'
 out['x_dc_p_b_pc'] = f"{abs(DC_P['b']):.0f}"
 # (round r114, the author on the price-held gain: "even holding pi_v constant?" -- no: pi_V still clears the budget,
 # and rises further than under Treatment First, so the sentence says so and gives its level)
