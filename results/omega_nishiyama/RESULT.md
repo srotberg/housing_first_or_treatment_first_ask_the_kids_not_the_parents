@@ -68,6 +68,14 @@ wait for it and do not build a b2* from four points. Start stage 3 from the FIRS
 convergence rule within 0.5 points of 8.956 per cent (on current blocks that is most likely b1*, at about 8.8);
 if none does, take the closest converged point.
 
+**DECISION FROM THE AUTHOR, 10 October 00:30 UTC (relayed by the main session):** *"it's ok 7.7 percent. you
+can proceed. it is only a robustness check"*. b2* = **0.004622377** (1.02 b1*, converged, drug users about 7.7 per
+cent; results/omega_nishiyama_2c/bench_0.686_b0.004622377_ku1.0). Have its worker send the benchmark files
+(files/welfare_curvebaseline_benchmark.dat.gz and the rest, as remote_omega_point.sh does on release) and launch
+stage 3 from it NOW with code/omega_nishiyama/remote_cf_nishiyama.sh. The other three two-class points
+(0.004441108, 0.004499171, 0.004531742) are no longer needed and can be stopped. Record in the stage 3 write-up
+that the sensitivity benchmark has about 7.7 per cent drug users against the benchmark's 8.956.
+
 ## Stage 3: long-run welfare, Housing First and Treatment First
 
 Pending.
