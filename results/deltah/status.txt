@@ -1,4 +1,4 @@
-# delta_d 0, delta_h 0.31 on EVER homeless while the child is at home (code/deltah); 10 Oct 21:00 UTC
+# delta_d 0, delta_h 0.31 on EVER homeless while the child is at home (code/deltah); 10 Oct 21:20 UTC
 remote_deltah: gfortran missing, installing (14:39)
 remote_deltah: free disk 29G, memory 15 GiB, cores 4 (14:40)
 remote_deltah: building (14:40)
@@ -9,6 +9,8 @@ remote_deltah: HANDOVER penalty_child_addicted:  0.23999999999999999      ->   0
 remote_deltah: HANDOVER penalty_child_homeless:   0.0000000000000000      ->  0.31000000000000000 (14:42)
 remote_deltah: HANDOVER omega_c_is_pinned:           1 ->           1 (14:42)
 remote_deltah: benchmark exited 0 after 10 blocks; bench.err:  (21:00)
+remote_deltah: benchmark (users, SUD, h_1) 0.0911094944,0.0387626501,0.0062202157 (21:00)
+remote_deltah: arm null on cf_fix2_hh: DRUG_PRICE_START=1.0 EXTRA_SET=penalty_child_addicted 0;penalty_child_homeless 0.31 (21:00)
 
 == benchmark
  newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.91534808225669384        7.5805070236589417E-002   0.0000000000000000        8.8468475067172564E-003
@@ -51,3 +53,6 @@ remote_deltah: benchmark exited 0 after 10 blocks; bench.err:  (21:00)
  INVARIANT PASS                  households receiving food stamps  =     0.1212127587
  INVARIANT PASS       the five age bands hold all of the homeless  =     1.0000000000
  BLOCK MOVE   6.2353305858806702E-004  against a rule of   1.0000000000000000E-003  -- b   9.1109494392961565E-002  lambda_d   3.8762650084985216E-002  h_1   6.2202156594910176E-003  y   1.5824826686888824     
+
+== null
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
