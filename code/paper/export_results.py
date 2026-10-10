@@ -67,7 +67,11 @@ TF_ARM = os.environ.get('TF_ARM', 'tf85_c35/tf')
 ARMDIR = {'null_share': (RES, 'nulltf/null'), 'null_remote': (RES, 'nulltf/null'),
           'tf85': (RES, TF_ARM), 'omega1': (RES, 'omega1_clear/omega1'),
           'internalise': (RES, 'optimal_clear/internalise'),
-          'old_null_share': (TR_REF, TR_NULL), 'old_tf85': (TR_REF, TR_TF)}
+          'old_null_share': (TR_REF, TR_NULL), 'old_tf85': (TR_REF, TR_TF),
+          # THE omega_c SENSITIVITY (the author, 10 October: "say in a footnote where we calibrate omegac that all
+          # the results continue to hold with omega_c=0.686 as in nishiyama"): Nishiyama's weight in the
+          # benchmark, b re-matched to drug use, both arms re-solved (results/omega_nishiyama/RESULT.md)
+          'nish_null': (ROOT, 'results/omega_nishiyama/cf/null'), 'nish_tf': (ROOT, 'results/omega_nishiyama/cf/tf')}
 
 
 def adir(arm):
@@ -152,6 +156,12 @@ out['x_cev0'] = f'{CEV0:.2g}'
 # before the no-policy run's is taken off, which put the prose 0.01 above the table (4.34 against 4.33)
 out['x_tf_cev'] = f"{cev_log('tf85') - CEV0:.2f}"
 out['x_tf_cev_dir'] = 'better' if cev_log('tf85') > CEV0 else 'worse'
+# the same gain at Nishiyama's omega_c, against its own no-policy run; the weight is read off the benchmark
+# the two arms were solved against, named in passes.txt's header
+_nh = open(os.path.join(adir('nish_tf'), '..', 'passes.txt')).readline()
+out['x_nish_omega'] = re.search(r'bench_([0-9.]+)_b', _nh).group(1)
+out['x_nish_cev'] = f"{cev_log('nish_tf') - cev_log('nish_null'):.2f}"
+assert cev_log('nish_tf') > cev_log('nish_null'), 'the omega_c sensitivity no longer favours Treatment First'
 # the long-run gain splits about evenly between childhood and adulthood
 out['x_tf_child_share_pc'] = pc(100 * tf['split']['child'] / tf['split']['total'])
 # THE EXPERIMENT AS RUN (Section 7): pi_V clears the budget, and the screen's
