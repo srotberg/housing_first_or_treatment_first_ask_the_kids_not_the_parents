@@ -151,6 +151,53 @@ benchmark's base: drug users 9.0496, SUD 3.8011, homelessness 0.60062 per cent (
 users -37.4, SUD -38.2, homelessness -6.6 per cent against the new benchmark (the paper's tf85_c35 pass 1: -30.5,
 -32.0, -2.6).
 
+**Treatment First ACCEPTED 11:42 UTC**, 10 passes (TARGET CHECK cleared against the null's 5.7681232; DIST CHECK
+largest final 4.64e-5 against the 5e-5 rule, at least 70 sweeps each).
+
+### Result: the newborn CEV of Treatment First is 5.51 per cent at omega_c 0.686, against 4.33 in the paper
+
+Each CEV is the arm's cf.log.gz 'CEV from the saved benchmark curve' line, read off its own benchmark's curve, and
+the welfare number is CEV(Treatment First) - CEV(Housing First), as code/paper/export_results.py forms x_tf_cev:
+
+| | omega_c 0.085 (paper) | omega_c 0.686 |
+|---|---|---|
+| CEV, Treatment First | +4.3368 | +5.4818 |
+| CEV, Housing First (no policy) | +0.0031 | -0.0283 |
+| **Treatment First minus Housing First** | **+4.33** | **+5.51** |
+
+So the sign and the ranking are unchanged and the gain is about a quarter larger (+1.18 points) when parents
+weigh their child as Nishiyama finds. In the new run the gain splits into +1.20 utils of childhood welfare and +0.85
+of adult welfare (1 per cent of CEV is about 0.33 utils); the paper's final.txt predates that split line.
+
+### Long-run changes, Treatment First against Housing First, each against its own no-policy run
+
+| | omega_c 0.085 (paper): Housing First -> Treatment First | change | omega_c 0.686: Housing First -> Treatment First | change |
+|---|---|---|---|---|
+| drug users (per cent) | 8.958 -> 6.093 | -32.0% | 9.050 -> 5.504 | **-39.2%** |
+| SUD (per cent) | 3.814 -> 2.537 | -33.5% | 3.801 -> 2.281 | **-40.0%** |
+| homelessness (per cent) | 0.6186 -> 0.6130 | -0.9% | 0.6005 -> 0.5718 | **-4.8%** |
+| drug price | 1.0001 -> 0.8555 | -14.5% | 1.0000 -> 0.8495 | -15.1% |
+| pi_V | 0.06753 -> 0.09615 | +42.4% | 0.06753 -> 0.09543 | +41.3% |
+| households holding a voucher | 6.29 -> 7.01 | +11.5% | 6.36 -> 7.25 | +14.0% |
+| treatment take-up | 24.9 -> 29.3 | +17.6% | 24.5 -> 28.0 | +14.3% |
+| SUD share of the homeless | 20.2 -> 23.3 | +15.1% | 16.5 -> 16.4 | -0.7% |
+| voucher spending | 0.689 -> 0.769 | +11.6% | 0.697 -> 0.796 | +14.1% |
+
+(paper columns: results/counterfactuals_2c/nulltf/null/final.txt and tf85_c35/tf/final.txt; new:
+results/omega_nishiyama/cf/null and cf/tf.)
+
+Reading: with the child weighted at 0.686, conditioning the voucher on staying clean cuts use and SUD by about 7
+points more than at 0.085, and homelessness falls by 4.8 per cent rather than 0.9. The two prices that clear move
+almost exactly as in the paper (price -15 against -14.5, pi_V +41 against +42), so the larger gain comes from the
+stronger response of households, not from the markets. The SUD share of the homeless, which rises by 15 per cent in
+the paper's Treatment First, is flat here: the new benchmark's homeless already carry fewer SUDs (16.5 per cent
+against 20.2), and conditionality no longer concentrates them on the street.
+
+Caveats: the new benchmark matches drug use to within 0.09 points (9.050 against 8.956; the author: *"omega_c=0.686
+does not have to be exactly calibrated"*) but not the other targets, which moved as tabulated above (drug spending
+share -26 per cent, SUD share of the homeless -18, income of drug users +13, wealth over output -5); everything else
+was held at the benchmark of record's values, as asked.
+
 **Treatment First ACCEPTED 11:42**, 10 passes (TARGET CHECK PASS, cleared against 5.768123; DIST CHECK PASS, largest
 final 4.64e-05). Final, against the new null (results/omega_nishiyama/cf/{null,tf}/final.txt), beside the paper's
 arms (results/transition_2c/arm_tf/final.txt):
