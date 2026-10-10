@@ -227,7 +227,8 @@ if not _hrise and _up > 0 > _few and _oth < 0 and _few + _oth < -_up:
         'less unemployment and so less homelessness. There are '
         f"{'a third' if round(abs(_l1 / _l0 - 1), 1) == 0.3 else f'{100 * abs(_l1 / _l0 - 1):.0f} percent'} "
         f'fewer households with a SUD, which on its own lowers homelessness by ${abs(_few):.0f}$ percent. '
-        'Third, the vouchers it revokes go, through the higher $\\pi_V$, to other clean and eligible households, '
+        # (round r287, the author: remove 'the vouchers it revokes go,' and 'more vouchers go to')
+        'Third, through the higher $\\pi_V$, more vouchers go to other clean and eligible households, '
         f'lowering homelessness by ${abs(_oth):.0f}$ percent. Together the last two more than offset the first.')
 out['x_tf_h_split'] = (
     'The fall hides a rise among the households the screen acts on: the share of households with a SUD who '

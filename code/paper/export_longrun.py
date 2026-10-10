@@ -579,6 +579,18 @@ def main():
     out['x_dcpv_price_verb'] = 'lowers' if _pp < 0 else 'raises'
     out['x_dcpv_price_pc'] = f'{abs(_pp):.0f}'
     out['x_dcp_piv_dir'] = 'rises' if D['dc_p']['piv'] > D['null_share']['piv'] else 'falls'
+    # (round r287, the author: "what about childhood homelessness?", and "Childhood homelessness drops because of the
+    # additional spending on vouchers lifts other non-user households out of homelessness")
+    out['x_dcp_hchild1'] = f"{100 * D['dc_p']['child_hl']:.2f}"
+    out['x_dcp_hchild_dir'] = 'rises' if D['dc_p']['child_hl'] > D['null_share']['child_hl'] else 'falls'
+    out['x_dcp_hchild_why'] = ('Childhood homelessness falls because the additional spending on vouchers lifts other '
+                               'households, which do not use drugs, out of homelessness.'
+                               if D['dc_p']['child_hl'] < D['null_share']['child_hl'] else '')
+    # (round r287, the author on what raises tax revenue: "I think it's mostly this [children inheriting higher
+    # productivity draws] because in the no externality cases the increase in piv is very small which captures just the
+    # unemployment channel"). The sentence says "mostly" while pi_V's rise at Housing First's drug price with the
+    # externalities is more than twice its rise without them; the SUD share falls by about as much in both columns.
+    assert D['dc_p']['piv'] - D['null_share']['piv'] > 2 * (F_['piv'] - A_['piv']), (D['dc_p']['piv'], F_['piv'])
     # WHY THE EIGHTH COLUMN CUTS DRUG USE MOST (the author, 9 October: "you should explain why. drug use falls more
     # because pi_v is higher and pi_v is higher because the higher drug price deters more use"). Against the sixth
     # column (both held) only pi_V differs; against Treatment First itself only the drug price does. The sentence
