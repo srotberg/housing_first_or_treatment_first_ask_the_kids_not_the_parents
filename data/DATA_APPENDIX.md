@@ -408,28 +408,101 @@ fixed across experiments, in which the price is free.
 
 ---
 
-# Part II. The Treatment First experiment
+# Part II. The Treatment First experiment (Section 6, Table 5)
+
+## The screen: three parameters set with the experiment
 
 These three parameters do nothing in the benchmark, where `voucher_conditional_on_clean = 0`, so they are set with
-the experiment (paper Section 6) rather than calibrated. Their values are in the arm's handover,
-`results/counterfactuals_2c/tf85_c35/tf/PARAM_HANDOVER.arm.txt`.
+the experiment (paper Section 6, "The screen") rather than calibrated, and are not in Tables 3 or A1. The values the
+experiment ran at are in the arm's handover, `results/counterfactuals_2c/tf85_c35/tf/PARAM_HANDOVER.arm.txt`, which
+`code/paper/export_results.py` reads. The Fortran declarations of the first two differ from what was run
+(`probability_of_detection = 0.95`, `probability_of_false_positive = 0.005`); the handover overrides them, and
+the paper quotes the handover.
 
-**p_det, the detection rate — 0.85.** A household that uses or carries the disorder is detected with probability
-0.85, below the 92.5 percent office urine screens achieved against confirmation by liquid chromatography and tandem
-mass spectrometry in a blinded study of 1,000 pain patients (Manchikanti et al., 2011) and the 96 to 100 percent of
-laboratory screens across five opioid assays (Walsh et al., 2025). A lower rate weakens Treatment First, so 0.85 is
-conservative. There are no false positives (`probability_of_false_positive = 0` in the arm): a screen is positive
-only above a cutoff concentration and is confirmed before it has consequences. The paper reports a detection rate of
-0.70 as a robustness check.
+**p_det, the detection rate — 85 percent.** A household that uses or carries the disorder is detected with
+probability 0.85 (`probability_of_detection 0.85` in the handover; `x_tf_pdet_pc`). The paper sets it below the
+evidence to be conservative, since a lower rate weakens the case for Treatment First: office urine screens detected
+92.5 percent of opioid use against confirmation by liquid chromatography and tandem mass spectrometry in a blinded
+study of 1,000 pain patients (Manchikanti et al., 2011), and laboratory screens 96 to 100 percent across five opioid
+assays (Walsh et al., 2025); the paper quotes the pair as 92.5 to 100 percent. The sentence's direction words
+(`x_tf_pdet_where`, `x_tf_pdet_so`) turn if the rate is ever set at or above 92.5. There are no false positives
+(`probability_of_false_positive 0` in the handover): a household that neither uses nor has the disorder is never
+flagged, since a positive screen is confirmed in a laboratory before it has consequences. A footnote reports that
+the qualitative results hold with a detection rate of 70 percent and with a more elastic supply of the drug; the
+only runs behind it are on the earlier benchmark, in `results/counterfactuals_cf_fix2/` (`tf70_cycle`,
+`tf70_damp_partial`, `tf70_remote_damp_cycle`, `tf70_remote_partial` for 70 percent; `elast5_85`, a supply elasticity
+of 5), and were not re-run on the current one (the author, 2 October: "dont run the sensitivity analysis"). The
+70 is typed in the footnote, not generated; Part V.
 
 **ψ_x, the release rate from exclusion — 1/3 a year.** A detected household is excluded and returns to the lottery
-with probability 1/3 a year, an expected three years, the period the Housing Choice Voucher programme bars a household
-evicted from federally assisted housing for drug-related criminal activity (24 CFR 982.553).
+with probability 1/3 a year (`voucher_exclusion_release = 1/3`, a Fortran parameter; `x_psi_x`, `x_ban_years`), an
+expected three years, the period for which the Housing Choice Voucher programme already bars a household evicted
+from federally assisted housing for drug-related criminal activity (24 CFR 982.553).
 
-**c_test, the cost of one screen — 35 dollars, 0.031 percent of average earnings.** The Texas Legislative Budget
+**c_test, the cost of one screen — 0.031 percent of average earnings, 35 dollars.** The Texas Legislative Budget
 Board's fiscal note for Senate Bill 11 (83rd Legislature, 2013) puts a test at 35 dollars, the upper end of the
-per-test estimates, which loads the experiment against Treatment First. Against a mean household income of 112,500
-dollars that is 0.031 percent, 0.00049461 in model units at average labour income 1.5898 (`cost_per_drug_test`).
+per-test estimates, which loads the experiment against Treatment First. The model charges
+`cost_per_drug_test = 0.00049461` (the Fortran declaration and the handover agree) against the benchmark's average
+labour income of 1.5898 (`results/reference/hf_2c_omega_0.085/files/average_labor_incomebaseline_benchmark.dat.gz`),
+0.031 percent (`x_ctest_earn_pc`). In dollars, average labour income is the value of a statistical life over its
+multiple, 9 million / 80 = 112,500 dollars (Block 1), so a test costs 0.00049461/1.5898 × 112,500 = 35 dollars
+(`x_ctest_usd`). The tests cost 0.036 percent of net government revenue under Treatment First (`x_ctest_budget_pc`,
+not quoted).
+
+## What responds in each run, and the columns of Table 5
+
+Every experiment replaces Housing First with Treatment First and keeps the programme rationed and the tax system as
+in the benchmark. Two objects can respond: the drug price, by clearing the drug market, and π_V, by holding net
+government revenue at its benchmark level, so that what the screen saves is spent on vouchers for others. When π_V
+is held, the revenue the screen frees goes unspent. No data enter here beyond Part I and the three parameters
+above; the entries record where each column is read from (`code/paper/export_longrun.py`, which writes
+`writing/tables/tab_longrun.tex` and the `x_lr_*` names; `export_results.py` and `export_pe_noext.py` write the
+`x_*` names the prose quotes).
+
+| column of Table 5 | externalities | drug price | π_V | run |
+|---|---|---|---|---|
+| 1 Housing First | off | clears | benchmark's | `results/pe_noext/arm_A` |
+| 2 Treatment First, both held | off | held at column 1 | held at column 1 | `results/pe_noext/arm_B` |
+| 3 Treatment First, π_V clears | off | held at column 1 | clears against column 1's net revenue | `results/noext_fixp/arm_D` |
+| 4 Housing First (the benchmark) | on | clears | benchmark's | `results/counterfactuals_2c/nulltf/null` |
+| 5 Treatment First, both held | on | held | held | `results/decomp_2c_both/arm_fixboth` |
+| 6 Treatment First, π_V clears | on | held | clears | `results/decomp_2c/arm_fixp` |
+| 7 Treatment First, both clear (the main experiment) | on | clears | clears | `results/counterfactuals_2c/tf85_c35/tf` |
+
+"Without the externalities" means the parent puts no weight on its child, the child's productivity does not depend
+on what its parent did (`weight_on_child`, `penalty_child_addicted` and `penalty_child_homeless` at zero), and
+childhood is not counted in welfare; the model is recalibrated in that configuration (Arm A). Two runs are in
+footnotes rather than columns. The no-externality run with both objects clearing, in which a newborn gains 0.39
+percent as an adult, is `results/noext_clear/arm_C`. The run with the externalities in which only the drug price
+clears and π_V is held (price −13 percent, drug use −27, homelessness +13, a newborn's CEV 0.18 percent;
+`x_dc_pv_*`) is `results/decomp_2c/arm_fixpv`; it was a column until 9 to 10 October and is now a footnote to the
+main experiment's welfare paragraph.
+
+The main experiment's levels: π_V rises from 6.75 to 9.62 percent, the drug price falls by 14 percent (0.86 of the
+benchmark's), drug use falls from 8.96 to 6.09 percent of households and the SUD from 3.81 to 2.54, and a newborn
+gains 4.33 percent of lifetime consumption, 57 percent of it in childhood (Table 5's last column; `x_tf_*`,
+`x_lr_*`).
+
+## The welfare criterion (Section 6.1)
+
+Every welfare number is a consumption-equivalent variation: the proportional change in non-housing, non-drug
+consumption, at every date and in every state, that makes a newborn under the benchmark as well off as under the
+counterfactual. Both values are taken at birth, before any of the newborn's draws are realised, including the
+household it is born into, and each under its own policy's distribution of newborns (the ex-ante newborn criterion
+of Conesa et al., 2009, and Guvenen et al., 2023). Welfare includes childhood in the parent's household, at weight
+one rather than at the parent's ω_c, and adult life from the year the child leaves home. In the no-externality
+columns of Table 5 the CEV is the newborn's value at 26 against column 1, since childhood is not counted there. The
+shares better off compare each state's value under Treatment First with the same state's under Housing First, on
+the Housing First distribution. The computation is the Fortran's `calculate_childhood_utility` and the CEV's
+`childhood_comparison`, and `cohort_cev.py` for the transition's cohorts. The paper itself flags (an `\upd` note at
+"Whose welfare") that every CEV is still computed with each child at home for the full J_K years, without the
+parent's death that the newborn-welfare equation now states; the changes file lists it.
+
+## The transition (Section 6.3)
+
+Provisional: the paper's numbers come from loop 0 of the sixty-year run relaunched from loop 0_r3's paths
+(`results/transition_2c/loop0_r5`), not yet converged, while the text announces seventy years (flagged in the paper
+until the T = 70 run, `results/transition_2c_t70`, replaces them). No data enter beyond Part I and Part II.
 
 ---
 
