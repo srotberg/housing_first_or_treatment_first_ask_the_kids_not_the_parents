@@ -34,6 +34,8 @@ package; Part V lists them. `README.md` lists the files and the regeneration com
 
 # Part I. The quantitative model
 
+Blocks 1 to 6 are Section 5.1 and Table 3; Blocks 7 to 13 are Appendix A and Table A1.
+
 ## Block 1: Who uses drugs
 
 **θ, the weight on drugs in utility — drug spending of users over their income, 16.0 percent.** Int.; θ = 0.165
@@ -257,6 +259,8 @@ a licensed producer works without interstate trade, ordinary banking or federal 
 because it knows of no direct estimate for an illicit drug. The inverse supply is
 p_v = ν₁ S_v^{1/ε_s}, an exponent of 0.68; the code's `drug_supply_curvature` is the cost function's, 1 + 1/1.46 =
 1.68. It is at the lower end of the elasticities used in the drug-supply literature (Rhodes et al., 2002).
+
+*Appendix A: the standard parameters (Table A1).*
 
 ## Block 7: Preferences
 
@@ -529,7 +533,7 @@ Weighted by the 2023 point in time count, 396,494 sheltered and 256,610 unshelte
 **Income of the homeless over average — 19.1 percent.** Meyer et al. (2024), the same linkage (the table number is in
 Part V). The model's counterpart includes food stamps, as the data do.
 
-## Block 2: Who uses and who carries a SUD
+## Block 2: Who uses and who has a SUD
 
 **Share of users by age, 34 or less, 35–44, 45–54, 55–64 and 65+ — 45, 19, 14, 12 and 10 percent; mean age 39.6.**
 NSDUH 2023 detailed tables (`raw/NSDUH_2023_detailed_tables.zip`), Table 5.3A, column "Substance Use Disorder (2023)",
@@ -707,27 +711,61 @@ Not in Table 4, but stated as data in Sections 1, 2 and 7:
 
 # Part IV. The stylized model (Section 3, Tables 1 and 2)
 
-The stylized model is `code/stylized/gradient.py` (8 October): two periods, productivity, drugs, saving, a SUD that
-raises the risks of dying and of losing one's job, and food assistance. Its targets are the quantitative model's
-wherever the two share a moment, and Tables 1 and 2 report them; what differs is this.
+The stylized model is `code/stylized/gradient.py` (8 October; `gradient.json` holds the calibration,
+`gradient_numbers.json` the `g_*` names the prose quotes, and the script writes Tables 1 and 2,
+`writing/tables/tab_external.tex` and `tab_internal.tex`, and Figure 1): two periods of thirty years, productivity
+fixed for life, drugs bought only in the first period, saving at zero interest, a SUD that raises the risks of dying
+and of being out of work in the second period, and food assistance. There is no housing, no government budget, no
+child and no unemployment insurance. Its targets are the quantitative model's wherever the two share a moment, read
+from the same Fortran declarations or data files, so the two models aim at one number. What differs is this.
 
-- **Periods.** A period is thirty years, so β = 0.995 a year compounded, 0.86, saving earns nothing, and φ̄ = 0.93 is
-  survival from 26 through 55 in the quantitative model's own life table, Arias (2014) (Block 10): the product of the
-  first thirty entries of `actual_survival_probability`, read from the Fortran.
-- **Productivity** is lognormal with σ_y = 0.95, set so that the poorer half of the lognormal holds 17.2 percent of
-  income (SCF 2022), and **truncated below at y_min = 0.24 of mean income**, the survivors renormalised to mean one.
-  The bound is not a target and is not in Table 1: with σ = 2 the value of being alive is negative at a low enough
-  income, and a household for which it is negative would use drugs for the mortality they bring; the bound keeps
-  every household's period-1 value positive (it reaches zero at about 0.20). It cuts 20 percent of the lognormal, so
-  the model's poorer half holds 21.5 percent rather than 17.2.
-- **π_d = 0.41, set externally** as 3.68/8.90, since use and the SUD are separated by cohort.
+- **Periods and survival.** β = 0.86 per period is 0.995 a year compounded over thirty years (`g_beta`,
+  `g_beta_ann`; the annual factor is set high on purpose, as the paper's footnote explains). σ = 2. φ̄ = 0.93
+  (0.9293 in `gradient.json`) is survival from 26 through 55 in the quantitative model's own life table, Arias (2014)
+  (Block 10): the product of the first thirty entries of `actual_survival_probability`, read from the Fortran.
+- **Productivity** is lognormal, log y ~ N(−σ_y²/2, σ_y²), with σ_y = 0.95 (0.946) set outside the model so that
+  the poorer half of the lognormal holds 17.2 percent of income, Φ(−σ_y) = 0.172 (`BOT50_TARGET`, the SCF 2022 share
+  of Block 9). The code also **truncates the distribution below at y_min = 0.24 of mean income**, the survivors
+  renormalised to mean one (`Y_FLOOR`; `g_yfloor`). The paper does not state the bound (the author, 8 October: "You
+  don't need to explain the income floor to the reader"), so it is documented here: with σ = 2 the value of being
+  alive is negative at a low enough consumption, and a household for which it is negative would use drugs for the
+  mortality they bring; the bound keeps every household's period-1 value positive (`gradient.py` asserts it), and
+  being alive is worth nothing at a consumption of about 0.17 at the calibrated parameters (`gradient.y_zero`). It
+  cuts 20.1 percent of the lognormal, so the model's poorer half holds 21.5 percent rather than 17.2
+  (`g_bot50_model`; computed 10 October from `gradient.moments`). At the calibration the users are one band of
+  incomes from 0.68 to 0.81 of the mean.
+- **π_d = 0.41, set externally** as the SUD rate over participation, 0.0368/0.08901 = 0.413
+  (`data/drug_spending_target.csv`, rows `sud_rate` and `participation`; NSDUH 2024, 26 and over), since use and the
+  SUD are separated by cohort.
 - **u₀ = 4.9 percent and u₁ = 16.25 percent** are the quantitative model's targets (`unemployment_rate_data`,
-  `unemployment_rate_sud_data`), set here rather than fitted: there is no homelessness to fit u₁ to.
-- **Food assistance** F(ye) = max(0, c̄ − ϱye), with ϱ = 0.30, SNAP's benefit reduction rate; c̄ = 0.098 is fitted to
-  the same 0.42 percent of labour income. There is no unemployment insurance.
-- **ℵ** is fitted to a VSL of 80 (8.64), **b** to participation of 8.90 percent (0.032), **θ** to drug spending of
-  16.0 percent of users' income (0.22) and **κ_φd** to users' income of 0.74 of the mean (3.56); all five moments are
-  matched exactly. b is solved for participation inside the fit, since with food assistance κ cannot hold it.
+  `unemployment_rate_sud_data`; Table 1 prints u₁ as 0.16), set here rather than fitted. A household out of work in
+  the second period earns nothing and consumes its savings plus c̄.
+- **Food assistance** F(ye) = max(0, c̄ − ϱye) on each period's earnings, with ϱ = 0.30, SNAP's benefit reduction
+  rate; c̄ = 0.098 (Table 2 prints 0.10) is fitted to the same 0.42 percent of labour income as the quantitative
+  model's c̲ (`food_stamps_share_data`). There is no unemployment insurance.
+- **p_v = 1** is a normalisation.
+- **The five internal parameters** are fitted jointly and every moment is matched exactly (`gradient.py` asserts a
+  relative error below 10⁻⁶): **ℵ = 8.64** to a VSL of 80 times average income (9 million dollars against a CPS ASEC
+  mean household income of 113,000, `g_vsl_musd`, `g_mean_hh_usd`; Part V for the year); **b = 0.032** to
+  participation of 8.90 percent (0.08901, `drug_spending_target.csv`), solved inside the fit; **θ = 0.22** to drug
+  spending of 16.0 percent of users' income (`drug_spending_share_data`, Block 1); **κ_φd = 3.56** to users' income of
+  0.74 of the mean (`drug_user_income_data`, Block 1); **c̄ = 0.098** as above.
+- **The log-utility footnote** ("All the qualitative results of this section hold with log utility as well, with the
+  model recalibrated to the same targets"). The recalibration is `code/stylized/referee_item7/log_utility/`
+  (`calibrate_log.py`, `tests_log.py`, `single_band_search.py`, `kappa_fine_scan.py`, `knife_edge.py`), with
+  `gradient.py` unmodified and σ = 1, outputs in `results/referee_item7/log_utility/` and the write-up in
+  `results/referee_item7/LOG_UTILITY.md`. All five targets are hit (maximum relative error 8.5 × 10⁻¹³ in
+  `log_calibration.json`) at ℵ = 3.69, b = 0.0030, θ = 0.165, κ_φd = 11.95 and c̄ = 0.0995. **That write-up does not
+  support the footnote as worded**: at log the users are two bands, the bottom 8.44 percent and the top 0.46 percent,
+  rather than one middle band; κ_φd = 11.95 lies above the 3.91 to 6.6 the paper cites; in Figure 1's scan the
+  mortality channel alone leaves the average user at 3.51 times the mean up to its calibrated strength and reverses
+  the gradient only at 110 to 120 percent of it; and the unemployment channel alone never moves users off the top,
+  with saving or without (`figure1_scans_main_session.txt`), so the no-saving demonstration of the right panel does
+  not survive log. The changes file lists it.
+- **The footnote on a version with housing** (Section 3.1: 3.54, 0.52 at twice the calibrated mortality strength,
+  and 0.56 without saving) reads the older staged model: `code/stylized/stage_numbers.json` (`s1_r_none`,
+  `s1_r_mort_hi`, `s1_r_unemp_hi`, from `stage_results.py`) and `oldmodel_nosave_numbers.json` (`g_old_ns_u200`, from
+  `oldmodel_nosave.py`). No data enter beyond what is above.
 
 ---
 
@@ -741,12 +779,20 @@ What the package does not yet document, or does not carry:
 3. **SNAP outlays and GDP** behind 0.42 percent: the fiscal year is not recorded, and 113 billion over 27.7 trillion
    is 0.41.
 4. **The 25 percent SMI share of the homeless**: which diagnoses in Gutwinski et al. (2021) sum to it is not recorded.
-5. **The mean household income of 113,000 dollars** behind the VSL multiple has no recorded source or year.
-6. **g's study**: RESOLVED 6 Oct -- Paul et al. (2024) for the remission figures, Fudala et al. (2003) for the placebo trial.
-7. **The progressivity 0.15** is not attributed to a study (Block 11).
-8. **Meyer et al. (2024)**: the table behind the 19.1 percent income of the homeless.
-9. **Not in the package**: the BEA fixed asset tables and NIPA, the USDA SNAP outlays, the BLS 2019 unemployment rates by
+5. **The mean household income of 113,000 dollars** behind the VSL multiple: `code/stylized/gradient.py` names the
+   CPS ASEC as its source (`MEAN_HH_INCOME_USD`), but not the year, and the extract is not in the package. The
+   test's dollar cost uses 9 million / 80 = 112,500 instead (Part II).
+6. **The progressivity 0.15** is said to be "in line with" Heathcote et al. (2017), whose estimate is 0.181; the
+   value itself is not attributed to a study (Block 11).
+7. **Meyer et al. (2024)**: the table behind the 19.1 percent income of the homeless.
+8. **The detection-rate robustness at 70 percent and the more elastic supply** (Part II): typed in a footnote, and
+   only earlier-benchmark runs exist (`results/counterfactuals_cf_fix2/tf70_*`, `elast5_85`); whether the 70 percent
+   runs converged is not recorded.
+9. **Mehay and Pacula (1999)** is cited from the author's copy and is not in `related_lit/`; Costantini (2025) is.
+10. **Not in the package**: the BEA fixed asset tables and NIPA, the USDA SNAP outlays, the BLS 2019 unemployment rates by
    education behind ϖ(y) and the McDaniel (2007) series.
+
+Resolved since the last revision: g's study (Paul et al., 2024, and Fudala et al., 2003, 6 October).
 
 ---
 
@@ -768,13 +814,27 @@ has. They are listed so that a reader of an older draft can find what happened t
 - **κ_φd = 8, external**: now calibrated, 4.00.
 - **κ_φH falling from 4.41 to 1.09 with age** (Baggett et al., 2013): now a flat 1.60 from Meyer et al. (2023).
 - **g = 1.35** from contingency management: now 2.00.
-- **κ_x entering as 0.002**: now solved inside the model, 0.93.
+- **κ_x entering as 0.002**: later solved inside the model, 0.93, and now dropped (above).
 - **A leisure weight ω_ℓ and curvature σ_ℓ**: labour is supplied inelastically.
 - **A flat social security replacement rate ψ_R = 0.40**: the statutory primary insurance amount replaced it.
 - **The ACS bedroom shares and a ladder curvature ς**: the rungs are set at 4 and 8 times the smallest.
 - **h₂ targeted on a 50 percent employment rate among the homeless**: h₂ targets the over-half burden.
 - **False positives, p_fp = 0.05, and p_det = 0.90**: the experiment has none and detects 85 percent.
 - **A permanent productivity draw σ_y in the quantitative model**: replaced by the persistent process ρ_z, σ_ζ.
+- **ω_c targeted on parents against non-parents**, past-month use (`ILLMON`), 1/0.845 − 1 = 18.3 percent
+  (`make_altruism_moment.py`): replaced on 8 October by unmarried two-adult households against lone parents, which
+  holds the household fixed as the model's counterfactual does, first on past-month use (19.5 percent) and later the
+  same day on past-year use, 17.5 percent, which matches the model's annual period (Block 5).
+- **κ_x, the disamenity of homelessness, solved inside the model at 0.93** to a willingness to pay of 0.20 percent of
+  income (Loubière et al., 2020): no longer a parameter of the paper; it survives only as a footnote in Section 2
+  saying a disamenity of that size barely changes the results (Block 5).
+- **ι's sources as Nielsen et al. (2017), 1.34 for any SUD and 2.74 for opioid use disorder**: the paper now brackets
+  2.00 between Hjorthøj et al. (2018), 1.34, and Nielsen et al. (2017), 6.04 (Block 3).
+- **κ_φd's wider literature range**, Walker et al. (2017) and Degenhardt et al. (2011): the paper now cites only
+  Plana-Ripoll et al. (2019) and Heiberg et al. (2018) (Block 1).
+- **The price-clears-only run as a column of Table 5**: a footnote since 9 to 10 October (Part II).
+- **The stylized model's income floor y_min as income out of work**: out of work the household now lives on its
+  savings plus food assistance; y_min only truncates the productivity distribution (Part IV).
 - **Checks no longer reported**: returns to homelessness within 24 months, standardised mortality ratios of the homeless
   (Baggett et al.), earnings shares of the bottom and top tenth, the income and labour force participation of adults
   with a SUD, and the three treatment-admission figures from TEDS-A.
