@@ -107,6 +107,33 @@ only by 0.39 points for 1.6 per cent less b; in the first passes b1* ran 0.6 poi
 cent more b. Use near these b values responds unevenly within single blocks, so the block-level readings were a
 rough guide only.
 
+## The new benchmark's targeted moments against the benchmark of record
+
+Last moment block of each log (results/reference/hf_2c_omega_0.085/bench.log.gz and
+results/omega_nishiyama_2c/bench_0.686_b0.004510373_ku1.0/bench.log.gz), all other parameters frozen, so these
+are the moments omega_c 0.686 and b 0.004510373 move. Ranked by relative change; the rest move under 2 per cent.
+
+| moment | target | omega_c 0.085 | omega_c 0.686 | change |
+|---|---|---|---|---|
+| burden50, over half of income in h2 | 0.192 | 0.0058 | 0.0000 | -100% (both near zero) |
+| theta, drug spending share | 0.16 | 0.522 | 0.388 | -25.8% |
+| SUD share of the homeless | 0.217 | 0.202 | 0.165 | -18.4% |
+| y_u, income of drug users | 0.74 | 0.620 | 0.703 | +13.4% |
+| mu_H, recovery housed / homeless | 1.473 | 1.455 | 1.311 | -9.9% |
+| beta, wealth over output | 3 | 2.952 | 2.793 | -5.4% |
+| employed share of the homeless | 0.46 | 0.214 | 0.224 | +4.8% |
+| r_smi, SUD ratio SMI over non-SMI | 7.3 | 2.007 | 2.075 | +3.4% |
+| unemployment given SUD | 0.1625 | 0.1448 | 0.1401 | -3.3% |
+| h_1, homelessness rate | 0.004 | 0.00618 | 0.00601 | -2.9% |
+| aleph, value of life / income | 80 | 80.74 | 82.84 | +2.6% |
+| b, drug users | 0.105 | 0.08956 | 0.09050 | +1.0% |
+| lambda_d, disorder rate | 0.04342 | 0.03811 | 0.03801 | -0.3% |
+
+With users held, the stronger weight on the child changes WHO uses: drug users earn more (y_u +13 per cent, moving
+toward its 0.74 target), spend a smaller share on drugs (theta -26 per cent, toward 0.16), and fewer of the homeless
+have a SUD (-18 per cent, away from 0.217). Since b falls 17 per cent to hold use, the composition shift is the
+lower cost of use (lower b) drawing in better-off, lighter users while the parental weight deters the poorest.
+
 ## Stage 3: long-run welfare, Housing First and Treatment First
 
 Running since 02:46 UTC in session_01Pc6TKnc5jiN8mjtwAr1et6 (launched by the main session):
