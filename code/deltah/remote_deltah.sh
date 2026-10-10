@@ -4,7 +4,9 @@
 # Sud enters adult earnings, ie parent was homeless at some point during the childhood of the kid). Run the
 # benchmark with all the parameters fixed but with deltad=0 and deltah=0.31. And then simulate the tf long run in
 # full ge with piv and pv adjusting. I want to see if removing deltad and adding deltah changes the results."
-# Asked how to key it, the author chose EVER homeless while the child is at home (a new state; patch_hh.py).
+# Asked how to key it, the author chose EVER homeless while the child is at home, and then to carry that latch where
+# the SUD history was (patch_latch.py): with delta_d at zero the recovered block is the never block under another
+# name, so the grid grows from 18 to 24 states, not double, and the model keeps two productivity classes.
 #
 #   STAGE A, the benchmark: the benchmark of record's handover (results/reference/hf_2c_omega_0.085,
 #     omega_c 0.085, b 0.0054222, kappa_uem 1.0) with penalty_child_addicted 0 and penalty_child_homeless 0.31,
@@ -97,7 +99,7 @@ if [ ! -x "$C/bench_hh/hftf_bench" ] || [ ! -x "$C/cf_fix2_hh/hftf_cf_prod" ]; t
     note "built: $(grep -h 'latch flips' /tmp/deltah_build.log | tr '\n' ' ' | cut -c1-200)"
 fi
 
-# SWAP AS INSURANCE: the latch doubles the state
+# SWAP AS INSURANCE: the latch adds a third to the state
 if [ -z "$(swapon --show 2>/dev/null)" ] && [ "$(df -BG --output=avail "$C" | tail -1 | tr -dc 0-9)" -ge 12 ]; then
     fallocate -l 4G /var/tmp/deltah.swap 2>/dev/null && chmod 600 /var/tmp/deltah.swap && mkswap /var/tmp/deltah.swap >/dev/null 2>&1 \
         && swapon /var/tmp/deltah.swap 2>/dev/null && note "4 GiB swap on" || note "no swap (could not enable)"
