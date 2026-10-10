@@ -209,7 +209,10 @@ def main():
             w.writerow([k, ages.get(k, ''), d['mass'], d['V_reform'] - d['V_bench'], d['better_off']])
     hf, tf = final_tf85()
     ref = {'hf': {**steady(REF_NULL), **hf}, 'tf': {**steady(REF_TF), **tf},
-           'better_off_all': B['share_all_ages'], 'better_off_sud': B['share_addicted'],
+           'better_off_all': B['share_all_ages'],
+           # with a SUD: the 1e-3 tolerance count, as for the shares worse off (10 October): every household with a SUD
+           # is touched by the reform, so the benchmark's drift below the re-solve does not reach it
+           'better_off_sud': S['BETTER_TOL'][1]['better_sud'],
            'worse_off_sud': S['BETTER_TOL'][1]['worse_sud'],
            # WORSE OFF, with the tolerance (8 October, the author: "why not 76%?"): the path is compared with the
            # calibrated benchmark's value function, which sits 0.002 to 0.014 utils below the no-policy re-solve's at
