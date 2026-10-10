@@ -3,7 +3,9 @@
 Every number the calibration takes from outside the model, with the dataset it comes from, its vintage, its
 universe, and the computation that turns it into the figure the paper reports. The paper's calibration sections
 (3.2 and 5) and Appendix A point here rather than carrying this detail. Brought up to date with the paper on
-10 October 2026 (`DATA_APPENDIX_CHANGES_2026-10-10.md` lists what changed).
+10 October 2026, with a second pass the same day that closed most of the open provenance
+(`DATA_APPENDIX_CHANGES_2026-10-10.md` lists what changed). Web sources are cited with their URL and were accessed on
+10 October 2026.
 
 The entries follow the paper. Part I is the quantitative model, block by block: Blocks 1 to 6 are the twenty-five
 parameters of Section 5.1 and Table 3, Blocks 7 to 13 the thirty-three standard parameters of Appendix A and
@@ -108,7 +110,16 @@ h₁ = 0.0216 and the benchmark gives 0.62 percent. The floor is HUD's point in 
 households: 467,020 homeless individuals at one household each plus 57,563 homeless family households, against
 131,332,360 occupied units (ACS 2023 one-year, B25042), 0.399 percent. A one-night count misses households homeless
 at other times of the year, so the ceiling is the share homeless at some point over a year, from Burt, Aron and Lee
-(2001) (`h1_band_hi = 0.010`; Part V). The calibrated h₁ is 53 percent of the smallest rental, h₂ (`c_h1_of_h2_pc`),
+(2001) (`h1_band_hi = 0.010`). Their estimate is from the 1996 National Survey of Homeless Assistance Providers and
+Clients (NSHAPC): at least 2.3 million adults and children, "nearly 1 percent of the U.S. population", were likely to
+experience a spell of homelessness at least once during a year, and perhaps as many as 3.5 million (Urban Institute,
+"Millions Still Face Homelessness in a Booming Economy", 2000, https://webarchive.urban.org/publications/900050.html,
+and "A New Look at Homelessness in America", https://webarchive.urban.org/publications/900302.html; read from the
+search record of those pages, as the pages themselves could not be fetched from this environment). The ceiling is
+therefore a share of **people**, all ages, in 1996, while the floor is a share of households in 2023; on households
+the annual rate would be lower, since a homeless family is one household and several people. The band's 1.00 is the
+author's rounding of "nearly 1 percent" (the Fortran comment at `h1_band_hi` calls it "the author's approved 0.4 to
+1.0 per cent"). The calibrated h₁ is 53 percent of the smallest rental, h₂ (`c_h1_of_h2_pc`),
 which the item quotes.
 
 **κ_φH, mortality when homeless — 1.60 at every age.** Ext. Meyer, Wyse and Logani (2023), NBER Working Paper
@@ -123,15 +134,33 @@ non-elderly, highest at prime ages; holding one ratio fixed across ages is the m
 well as to loss is the model's assumption.
 
 **c̲, the food stamp maximum allotment — SNAP outlays at 0.42 percent of output.** Int.; c̲ = 0.0879 and the
-benchmark gives 0.43 percent. USDA SNAP outlays of about 113 billion dollars against GDP of about 27.7 trillion
-(Part V for the vintage), declared as `food_stamps_share_data = 0.0042`. The model's counterpart is aggregate food
+benchmark gives 0.43 percent. Fiscal year 2023 (October 2022 to September 2023): SNAP outlays of about 113 billion
+dollars against nominal GDP of about 27.0 trillion, 113/27,000 = 0.42 percent, declared as
+`food_stamps_share_data = 0.0042`. The construction is the one in the paper's first draft (`writing/`, commit
+dc5b53f8, 14 August: "In fiscal year 2023, total ... SNAP benefit payments were approximately \$113 billion ...
+Nominal U.S. GDP in the same year was about \$27.0 trillion", citing USDA ERS, *Trends in SNAP Participation and
+Costs*, and BEA, *Gross Domestic Product, 2023*). The numerator checks: USDA ERS puts federal SNAP spending in FY 2023
+at 112.8 billion dollars (https://www.ers.usda.gov/data-products/charts-of-note/109300). The denominator does not
+check against calendar 2023: the Fortran comment at the moment's print (`SR_v1.f90`, "SNAP outlays near 113 billion
+against a GDP near 27.7 trillion is 0.0041") uses calendar-year GDP, which gives 0.41. 27.0 trillion is closer to
+GDP over the fiscal year; the BEA table it was read from is not recorded (Part V). The model's counterpart is aggregate food
 assistance over output, which in this model is labour income.
 
 **π_V, the chance of drawing a voucher — 26.6 percent of the income-eligible population holding one.** Int.;
-π_V = 0.0675 a year (the prose prints 0.068) and the benchmark gives 27.5 percent (`voucher_coverage_data = 0.266`). The numerator is HUD's Picture of Subsidized Households
-2023, tenant-based voucher row (1,965,742 occupied of 2,364,622 units); the denominator, households below half of
-median income, is not in the package (Part V). The model's voucher is the tenant-based voucher, which is why that
-row is used and not the all-programmes total.
+π_V = 0.0675 a year (the prose prints 0.068) and the benchmark gives 27.5 percent (`voucher_coverage_data = 0.266`).
+*Where 26.6 comes from.* HUD, *Worst Case Housing Needs: 2023 Report to Congress*
+(https://www.huduser.gov/portal/publications/Worst-Case-Housing-Needs-2023.html), on the 2021 American Housing
+Survey: 19.3 million very low-income renter households, income at or below half of area median income, of whom 5.14
+million received federal rental assistance of any kind (vouchers, public housing and project-based assistance);
+5.14/19.3 = 26.6 percent. The construction is the paper's first draft's (commit dc5b53f8, 14 August), and the
+target has been 0.266 since it entered the Fortran (commit 0d5e4bcf, 16 August). The 19.3 million is confirmed by
+the report's summaries (https://housingmatters.urban.org/research-summary/worst-case-housing-needs-reach-new-high);
+the 5.14 million is the draft's and could not be checked against the report from this environment. So the
+denominator is very low-income **renters** in 2021, and the numerator is **all** federal rental assistance, not
+the voucher alone. The paper and Table 3 attribute the figure to HUD's Picture of Subsidized Households 2023; that
+file (`raw/HUD_picture_subsidized_households_2023_by_program_US.xlsx`) supplies the voucher checks of Part III,
+Block 3, but not 26.6: its tenant-based voucher row has 1,965,742 occupied units of 2,364,622, which would need a
+denominator of 7.4 million to give 26.6. The changes file lists the attribution.
 
 **T₀, the endowment at entry to adulthood — 26.0 percent of the homeless aged 25 to 34.** Int.; T₀ = 0.111 times
 average earnings and the benchmark gives 26.4 percent. HUD point in time count 2024 (`raw/HUD_PIT_counts_by_state_2007_2024.xlsb`,
@@ -162,8 +191,12 @@ percent; the model's age distribution has more older households, among whom SMI 
 
 **κ^ue_m, how much harder it is to regain employment with SMI — a 25 percent SMI share of the homeless.** Int.;
 κ^ue_m = 7.71 divides the job-finding rate of a household with SMI (`kappa_find_smi`), and the benchmark gives 24.7
-percent. Gutwinski et al. (2021), the same meta-analysis as κ^ue_d (Part V for the diagnoses behind the 25
-percent; `smi_share_of_homeless_data`). SMI does not raise separations or cut earnings on the job.
+percent. Gutwinski et al. (2021), the same meta-analysis as κ^ue_d (`smi_share_of_homeless_data = 0.25`): the
+pooled prevalence of schizophrenia spectrum disorders, 12.4 percent (95 percent interval 9.5 to 15.7), plus that of
+major depression, 12.6 percent, is 25.0 (https://journals.plos.org/plosmedicine/article?id=10.1371%2Fjournal.pmed.1003750;
+the pair and the sum are recorded in the commits that introduced the target, 29b4400d and 36688011, 14 August).
+Bipolar disorder is not added, and the two are summed as if no one had both, so 25 is an upper bound on the share
+with either diagnosis. SMI does not raise separations or cut earnings on the job.
 
 **μ_m, the SUD recovery multiplier for SMI — 0.82.** Ext. Bradizza, Stasiewicz and Paas (2006), a review of relapse
 among people carrying both a SUD and a mood, anxiety, schizophrenia-spectrum or personality disorder: dual-diagnosis
@@ -274,8 +307,12 @@ the street among them, and a voucher paying part of the rent, the Cobb-Douglas i
 does not hold. Owners enter the CEX at outlay rather than imputed rent, so the true share is somewhat higher.
 
 **β, the discount factor — wealth over output of 3.** Int.; β = 0.946 and the benchmark gives 2.95. BEA fixed asset
-tables against NIPA output, 2023 vintage, the last year the fixed asset tables cover (`wealth_to_output_data`;
-the extract is not in the package, Part V).
+tables against NIPA output, 2023 vintage, the last year the fixed asset tables cover (`wealth_to_output_data`).
+No ratio was computed from a table: the Fortran comment at the declaration says that BEA fixed assets over NIPA
+output puts all private fixed assets at "roughly three" years of GDP and private nonresidential fixed assets at
+"roughly two", and the target was set back to 3.0 on the author's instruction (2 September); the first draft
+(commit dc5b53f8) sets 3 "as in" Guvenen, Kambourov, Kuruscu, Ocampo and Chen (2023). So 3 is a round figure and
+there is no extract to name (Part V).
 
 **ξ_j, the equivalence scale — √2 = 1.41 while the child is at home, 1 after.** Ext. The square-root scale (OECD,
 2013), applied while the parent is 26 to 50.
@@ -332,8 +369,15 @@ January 2014 to December 2023 it is 4.89. π̄ᵉᵘ is scaled across productivi
 **ϖ(y), separations by productivity.** Ext. Each productivity node takes the unemployment odds of the education
 group it falls in, from the BLS 2019 annual averages of unemployment by educational attainment for ages 25 and over,
 with education ordering productivity by median earnings, and the profile is normalised to average one so that π̄ᵉᵘ
-alone sets the aggregate rate. `UNEMPLOYMENT_BY_PRODUCTIVITY.md` sets out the mapping; the BLS figures are not in
-the package (Part V).
+alone sets the aggregate rate. `UNEMPLOYMENT_BY_PRODUCTIVITY.md` sets out the mapping. The table is the CPS annual
+averages for 2019, Table 7, "Employment status of the civilian noninstitutional population 25 years and over by
+educational attainment" (https://www.bls.gov/cps/aa2019/cpsaat07.pdf). The values the Fortran carries
+(`edu_share_1`, `edu_rate_1`) are, as shares of the population 25 and over and unemployment rates: less than high
+school 9.6 and 5.4 percent, high school and no college 27.4 and 3.7, some college or associate degree 26.4 and 3.3,
+bachelor's degree and higher 36.6 and 2.1. The 5.4 is confirmed by BLS
+(https://www.bls.gov/careeroutlook/2020/data-on-display/education-pays.htm); the table itself could not be opened
+from this environment, so the other seven values are as the 3 September note records them, and that note asks for
+them to be checked before publication (Part V).
 
 **π̄ᵘᵉ, the annual job-finding rate — 0.55.** Ext. Krueger, Cramer and Cho (2014), annual exit rates from
 unemployment on matched CPS panels.
@@ -366,12 +410,19 @@ approximately; the level is ω_m's.
 
 **φ, tax progressivity — 0.85.** Ext. The paper says "in line with Heathcote et al. (2017)". The exponent in y^n = min{Y, τ_ℓ Y^φ}, a progressivity 1 − φ = 0.15
 (`curvature_of_labor_income_taxes`). Heathcote, Storesletten and Violante (2017) estimate 1 − φ = 0.181 for the
-United States on federal taxes and transfers, so 0.85 is somewhat less progressive than their estimate; 0.15 is a
-value widely used in this literature (Part V).
+United States on federal taxes and transfers, so 0.85 is somewhat less progressive than their estimate. *What 0.85
+is attributed to.* No single study: the first draft (commit dc5b53f8) set the parameter at 0.85 "based on estimates
+from" Heathcote et al. (2017); the author, 6 and 7 October (`code/CALIBRATION_STATE.md`, rounds r206 and r207):
+"many papers use 0.85", with the paper saying only "in line with Heathcote et al. (2017)" and quoting no number. The
+0.845 in Heathcote, Storesletten and Violante's 2014 *American Economic Review* paper, once taken for this value, is
+the labour-supply factor under their equation (34), not the tax term; that paper's progressivity is 0.185.
 
 **τ_ℓ, the scale of after-tax labour income — an average labour income tax rate of 22.4 percent.** Int.; τ_ℓ = 0.894
-and the benchmark gives 20.9 percent. McDaniel (2007), the average tax rate on labour in the United States, the
-value Guvenen et al. (2023) use. Raising τ_ℓ raises after-tax income, so it lowers the tax.
+and the benchmark gives 20.9 percent. McDaniel (2007), "Average Tax Rates on Consumption, Investment, Labor and
+Capital in the OECD 1950–2003", working paper, Arizona State University: the average tax rate on labour in the
+United States, the value Guvenen et al. (2023) use. The target has been 22.4 since the first draft (commit
+dc5b53f8, "commonly used in macro calibration"); which year or average of years of McDaniel's series gives it is not
+recorded (Part V). Raising τ_ℓ raises after-tax income, so it lowers the tax.
 
 **τ_k, the capital income tax — 0.15.** Ext. The statutory rate on long-term capital gains and qualified dividends
 for the middle of the income distribution (IRS Topic 409).
@@ -435,8 +486,8 @@ flagged, since a positive screen is confirmed in a laboratory before it has cons
 the qualitative results hold with a detection rate of 70 percent and with a more elastic supply of the drug; the
 only runs behind it are on the earlier benchmark, in `results/counterfactuals_cf_fix2/` (`tf70_cycle`,
 `tf70_damp_partial`, `tf70_remote_damp_cycle`, `tf70_remote_partial` for 70 percent; `elast5_85`, a supply elasticity
-of 5), and were not re-run on the current one (the author, 2 October: "dont run the sensitivity analysis"). The
-70 is typed in the footnote, not generated; Part V.
+of 5), and were not re-run on the current one (the author, 2 October: "dont run the sensitivity analysis"). None
+of the 70 percent runs converged; the supply run did. The 70 is typed in the footnote, not generated; Part V.
 
 **ψ_x, the release rate from exclusion — 1/3 a year.** A detected household is excluded and returns to the lottery
 with probability 1/3 a year (`voucher_exclusion_release = 1/3`, a Fortran parameter; `x_psi_x`, `x_ban_years`), an
@@ -504,9 +555,14 @@ parent's death that the newborn-welfare equation now states; the changes file li
 
 ## The transition (Section 6.3)
 
-Provisional: the paper's numbers come from loop 0 of the sixty-year run relaunched from loop 0_r3's paths
-(`results/transition_2c/loop0_r5`), not yet converged, while the text announces seventy years (flagged in the paper
-until the T = 70 run, `results/transition_2c_t70`, replaces them). No data enter beyond Part I and Part II.
+The paper's numbers come from loop 1_r5 of the sixty-year run (`results/transition_2c/loop1_r5`, saved 9 October
+21:51), which has converged against loop 0_r5: the budget residual has a median of 9.3 × 10⁻⁴ across the 59 years
+(worst 2.1 × 10⁻³) and the drug market's gap a median of 0.08 percent (worst 1.60); the cohort born at the reform
+gains 2.68 percent and the one born in year 59 4.34 (`code/CALIBRATION_STATE.md`, 9 October 21:51). A run with
+T = 70 (`results/transition_2c_t70`, started 9 October from loop 0_r5's price and π_V paths) is in progress and
+will replace every number and Figure 2; until it does, the text's "seventy years" is highlighted (`\tocheck`), and
+the paper's own note (`\upd` at Section 6.3) says the welfare numbers are to be recomputed with the parent's death
+in childhood after it. No data enter beyond Part I and Part II.
 
 ---
 
@@ -530,8 +586,13 @@ from the 2010 Census linked to tax and administrative records: 52 percent of the
 unsheltered homeless in formal employment; 46 is the unweighted midpoint (`employed_share_of_homeless_data`).
 Weighted by the 2023 point in time count, 396,494 sheltered and 256,610 unsheltered, the pair gives 47.3.
 
-**Income of the homeless over average — 19.1 percent.** Meyer et al. (2024), the same linkage (the table number is in
-Part V). The model's counterpart includes food stamps, as the data do.
+**Income of the homeless over average — 19.1 percent.** Meyer et al. (2024), the same linkage
+(`homeless_income_share_data = 0.191`). The figure goes back to the submitted paper's table of untargeted moments
+("Avg. income of homeless ... 0.191 × avg. income", citing Meyer, Wyse, Meyer, Grunwaldt and Wu, 2024; first draft,
+commit dc5b53f8), whose text read "average cash income among homeless individuals is approximately 19 percent of
+average population income", and Referee 1 quotes it (comment 2(c)(i), `RED_reviews/reviewer1_R1.pdf`). The table
+of Meyer et al. it was read from is not recorded and the paper could not be opened from this environment (Part V).
+The model's counterpart includes food stamps, as the data do.
 
 ## Block 2: Who uses and who has a SUD
 
@@ -771,28 +832,45 @@ from the same Fortran declarations or data files, so the two models aim at one n
 
 # Part V. Open provenance
 
-What the package does not yet document, or does not carry:
+What the package does not yet document, or does not carry. Each item says what was checked on 10 October (the
+repository, its git history from the first commit, and the web; from this environment the web could be searched but
+not fetched, so a source that only exists as a PDF table could not be read).
 
-1. **The ceiling of h₁'s band**, 1.00 percent from Burt, Aron and Lee (2001): the figure, its year and whether it is
-   a share of people or of households are not recorded.
-2. **π_V's denominator**, the number of households below half of median income behind 26.6 percent, is not named.
-3. **SNAP outlays and GDP** behind 0.42 percent: the fiscal year is not recorded, and 113 billion over 27.7 trillion
-   is 0.41.
-4. **The 25 percent SMI share of the homeless**: which diagnoses in Gutwinski et al. (2021) sum to it is not recorded.
-5. **The mean household income of 113,000 dollars** behind the VSL multiple: `code/stylized/gradient.py` names the
-   CPS ASEC as its source (`MEAN_HH_INCOME_USD`), but not the year, and the extract is not in the package. The
-   test's dollar cost uses 9 million / 80 = 112,500 instead (Part II).
-6. **The progressivity 0.15** is said to be "in line with" Heathcote et al. (2017), whose estimate is 0.181; the
-   value itself is not attributed to a study (Block 11).
-7. **Meyer et al. (2024)**: the table behind the 19.1 percent income of the homeless.
+1. **The year of the 113,000-dollar mean household income** behind the VSL multiple (Block 1, Part IV). It is a
+   constant, `MEAN_HH_INCOME_USD` in `code/stylized/gradient.py`, labelled CPS ASEC; it first appears in the paper's
+   text on 15 August (commit acef0219) and in code on 30 September (2c89f233), never with a year or table. The
+   Census reports that would carry it (P60-282, *Income in the United States: 2023*, and table HINC-01) were found
+   but their mean could not be read. The test's dollar cost uses 9 million / 80 = 112,500 instead (Part II).
+2. **The BEA table behind GDP of 27.0 trillion** in the SNAP target (Block 2). The fiscal year (2023), the outlays
+   (113 billion; ERS 112.8) and the arithmetic are closed; the GDP figure is the first draft's, cited to BEA without a
+   table, and it is below calendar-2023 GDP.
+3. **Meyer et al. (2024)**: the table behind the 19.1 percent income of the homeless (Part III, Block 1). Traced back
+   to the submitted paper's table and Referee 1's quotation, but not to a table of the working paper.
+4. **McDaniel (2007)**: the year, or average of years, of the series that gives 22.4 percent (Block 11).
+5. **The BLS 2019 education table** (Block 9): the table is named (CPS annual averages 2019, Table 7) and its
+   less-than-high-school rate, 5.4, confirmed; the other three rates and the four population shares are as the
+   3 September note records them, unchecked against the table, and the table is not in the package.
+6. **Wealth over output of 3** (Block 7): no BEA or NIPA extract was ever computed; the target is a round figure
+   (see the entry). Nothing to add to the package unless the author wants the ratio computed.
+7. **The 5.14 million assisted renters** behind π_V's 26.6 percent (Block 2): from the first draft; the report's
+   19.3 million is confirmed, the 5.14 million could not be read from the report.
 8. **The detection-rate robustness at 70 percent and the more elastic supply** (Part II): typed in a footnote, and
-   only earlier-benchmark runs exist (`results/counterfactuals_cf_fix2/tf70_*`, `elast5_85`); whether the 70 percent
-   runs converged is not recorded.
+   only earlier-benchmark runs exist, in `results/counterfactuals_cf_fix2/`, and none has been run on the current
+   benchmark (the author, 2 October: "dont run the sensitivity analysis"). Their notes record that **no 70 percent
+   run converged**: `tf70_cycle` stopped in a two-pass cycle, `tf70_damp_partial` was lost at pass 7 to a container
+   restart, `tf70_remote_damp_cycle` stopped at pass 12 when the cycle returned, and `tf70_remote_partial` reached
+   pass 8 with the same behaviour (`NOTE.md` in each). Every pass of the four has drug use 28 to 29 percent below
+   Housing First and a newborn's CEV between +1.43 and +1.76 percent (`passes.txt`), so the sign the footnote
+   claims holds on every pass, but there is no equilibrium. `elast5_85`, a supply elasticity of 5, converged
+   (`RESULT.md`), with a CEV of +2.77 percent at its last pass.
 9. **Mehay and Pacula (1999)** is cited from the author's copy and is not in `related_lit/`; Costantini (2025) is.
-10. **Not in the package**: the BEA fixed asset tables and NIPA, the USDA SNAP outlays, the BLS 2019 unemployment rates by
-   education behind ϖ(y) and the McDaniel (2007) series.
 
-Resolved since the last revision: g's study (Paul et al., 2024, and Fudala et al., 2003, 6 October).
+Resolved: g's study (Paul et al., 2024, and Fudala et al., 2003, 6 October). On 10 October, second pass: the ceiling
+of h₁'s band (Burt, Aron and Lee, 2001: NSHAPC 1996, people, nearly 1 percent; Block 2); π_V's denominator (HUD's
+*Worst Case Housing Needs 2023*, 19.3 million very low-income renters in 2021; Block 2); the SNAP year (fiscal 2023,
+113 billion over 27.0 trillion; Block 2); the 25 percent SMI share (12.4 schizophrenia spectrum plus 12.6 major
+depression in Gutwinski et al., 2021; Block 3); what φ = 0.85 is attributed to (Block 11); the BLS table's name
+(Block 9).
 
 ---
 

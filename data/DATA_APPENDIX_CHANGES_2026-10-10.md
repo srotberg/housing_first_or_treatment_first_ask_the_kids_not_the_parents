@@ -157,3 +157,90 @@ exports, lists the roundings the prose applies (θ 0.17, π_V 0.068, the SSI flo
     sixty-year run's loop 0, as the paper's own note says.
 13. **κ_φd misses its target** by twelve points (62 against 74). This is already visible in Table 3; it is listed
     here because the paper calls the parameter "calibrated to the average income of users".
+
+---
+
+## Second pass (10 October, later)
+
+The author: "Just finish the data appendix". Only `data/DATA_APPENDIX.md` and this file were changed: no paper text,
+code, JSON or data script was touched. Sources were the repository and its full git history, unshallowed for this
+pass. That history includes the paper's first draft, LaTeX added in commit dc5b53f8 on 14 August, with its
+bibliography, and the referee reports in `RED_reviews/`. Web searches were also used, accessed 10 October 2026. From
+this environment the web could be searched but no page could be fetched (bls.gov, census.gov, nber.org and PMC all
+refused), so a value that only lives inside a PDF table could not be read, and the appendix says so wherever that
+mattered.
+
+### Closed, and moved into their blocks
+
+- **h₁'s ceiling (Part I, Block 2).** Burt, Aron and Lee (2001) report the 1996 NSHAPC estimate: at least 2.3 million
+  adults and children, "nearly 1 percent of the U.S. population", likely to be homeless at least once in a year, and
+  perhaps 3.5 million. Sources: https://webarchive.urban.org/publications/900050.html and
+  https://webarchive.urban.org/publications/900302.html. It is a share of **people**, all ages, in 1996. The band's
+  floor is a share of households in 2023.
+- **π_V's 26.6 percent (Block 2).** It is not from the Picture of Subsidized Households. It is HUD's *Worst Case Housing
+  Needs: 2023 Report to Congress*, on the 2021 AHS: 5.14 million of 19.3 million very low-income renter households
+  received federal rental assistance of any kind, and 5.14/19.3 = 26.6. The construction is from the first draft
+  (dc5b53f8), and 0.266 has been in the Fortran since 0d5e4bcf (16 August). The 19.3 million is confirmed at
+  https://housingmatters.urban.org/research-summary/worst-case-housing-needs-reach-new-high. The 5.14 million could
+  not be read from the report itself.
+- **SNAP over output, 0.42 percent (Block 2).** Fiscal year 2023, 113 billion dollars against GDP of "about 27.0
+  trillion", 113/27,000 = 0.42 (first draft, dc5b53f8, citing ERS and BEA). ERS gives FY 2023 federal SNAP spending as
+  112.8 billion (https://www.ers.usda.gov/data-products/charts-of-note/109300). The Fortran comment's 27.7 trillion is
+  calendar-year GDP and gives 0.41, the discrepancy the first pass found.
+- **The 25 percent SMI share of the homeless (Block 3).** Gutwinski et al. (2021): schizophrenia spectrum 12.4 percent
+  plus major depression 12.6 percent gives 25.0. This is recorded in commits 29b4400d and 36688011 (14 August) and
+  confirmed by search against https://journals.plos.org/plosmedicine/article?id=10.1371%2Fjournal.pmed.1003750.
+  Bipolar disorder is not included, and summing the two treats them as disjoint.
+- **φ = 0.85 (Block 11).** It is not attributed to a single study. The first draft said "based on estimates from"
+  Heathcote et al. (2017). The author said "many papers use 0.85" (`CALIBRATION_STATE.md`, r206 and r207). The 2014
+  AER's 0.845 is not a tax parameter.
+- **ϖ(y)'s BLS table (Block 9).** CPS annual averages 2019, Table 7 (https://www.bls.gov/cps/aa2019/cpsaat07.pdf).
+  The appendix now gives the eight values the Fortran carries. The 5.4 percent is confirmed at
+  https://www.bls.gov/careeroutlook/2020/data-on-display/education-pays.htm.
+- **Wealth over output (Block 7).** There is no BEA extract to name. The 3 is a round figure: the Fortran comment calls
+  all private fixed assets "roughly three" years of GDP, the author reset it on 2 September, and the first draft set it
+  "as in" Guvenen et al. (2023). The appendix now says so instead of implying a computed ratio.
+- **McDaniel (2007) (Block 11).** The full title and series years (1950–2003) are now given. The target has been 22.4
+  since the first draft.
+- **Meyer et al. (2024), 19.1 percent (Part III, Block 1).** It is traced to the submitted paper's untargeted-moments
+  table ("0.191 × avg. income") and to Referee 1's comment 2(c)(i), which quotes it. Its table in the working paper is
+  still open (below).
+- **The 70 percent robustness (Part II, Part V).** The first pass said whether those runs converged was not recorded.
+  It is recorded: the `NOTE.md` in each run directory says **none of the four 70 percent runs converged**.
+  - `tf70_cycle` ended in a two-pass cycle.
+  - `tf70_damp_partial` was lost at pass 7.
+  - `tf70_remote_damp_cycle` stopped at pass 12 when the cycle returned.
+  - `tf70_remote_partial` behaved the same way to pass 8.
+
+  On every pass drug use is 28 to 29 percent below Housing First and the newborn CEV is +1.43 to +1.76 percent. So the
+  footnote's sign holds pass by pass, but there is no equilibrium behind "the qualitative results hold". `elast5_85`
+  converged (CEV +2.77). All of these runs are on the earlier benchmark.
+- **The transition (Part II).** The paper's numbers now come from the T = 60 run's loop 1_r5
+  (`results/transition_2c/loop1_r5`, 9 October 21:51). It has converged: budget residual median 9.3 × 10⁻⁴ and drug
+  gap median 0.08 percent. The T = 70 run (`results/transition_2c_t70`) is in progress and will replace it. This
+  supersedes item 12 of the first pass's list, which described loop 0.
+
+### Still open (Part V)
+
+1. The year and table of the 113,000-dollar CPS ASEC mean household income. It is not in the repository or its
+   history, and the Census tables could not be read.
+2. The BEA table behind GDP of 27.0 trillion in the SNAP target.
+3. The table of Meyer et al. (2024) behind 19.1 percent.
+4. Which year or years of McDaniel (2007) give 22.4 percent.
+5. The BLS 2019 shares and the three rates other than 5.4, which are unchecked against the table.
+6. The 5.14 million assisted renters, read from the first draft, not from the HUD report.
+7. The 70 percent and elastic-supply robustness, which has only earlier-benchmark runs, none of them converged at
+   70 percent.
+8. Mehay and Pacula (1999), which is not in `related_lit/`.
+
+### New inconsistencies between the paper and its sources (not fixed; the paper was not to be edited)
+
+14. **π_V's source.** Table 3 ("Recipients over eligible, HUD 2023") and the π_V item ("the 26.6 percent in HUD's
+    Picture of Subsidized Households (PSH), 2023") attribute 26.6 percent to the PSH. It is the *Worst Case Housing
+    Needs 2023* ratio, which covers all federal rental assistance among very low-income renters in 2021, not
+    vouchers. The PSH tenant-based row would need a denominator of 7.4 million to give 26.6.
+15. **SNAP's denominator.** 0.42 percent rests on GDP of 27.0 trillion. Calendar-2023 GDP, as the Fortran comment has
+    it, gives 0.41.
+16. **The 70 percent footnote** says the qualitative results hold. No 70 percent run converged, even on the earlier
+    benchmark (above).
+17. **h₁'s band** mixes a household floor (2023) with a person ceiling (1996).
