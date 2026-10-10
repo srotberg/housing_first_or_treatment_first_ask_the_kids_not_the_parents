@@ -131,8 +131,9 @@ are the moments omega_c 0.686 and b 0.004510373 move. Ranked by relative change;
 
 With users held, the stronger weight on the child changes WHO uses: drug users earn more (y_u +13 per cent, moving
 toward its 0.74 target), spend a smaller share on drugs (theta -26 per cent, toward 0.16), and fewer of the homeless
-have a SUD (-18 per cent, away from 0.217). Since b falls 17 per cent to hold use, the composition shift is the
-lower cost of use (lower b) drawing in better-off, lighter users while the parental weight deters the poorest.
+have a SUD (-18 per cent, away from 0.217). Since b falls 17 per cent to hold use, one reading of the shift is the
+lower cost of use (lower b) drawing in better-off, lighter users while the parental weight deters the poorest
+(a reading of the moments, not tested).
 
 ## Stage 3: long-run welfare, Housing First and Treatment First
 
