@@ -22,6 +22,11 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 # results/transition_2c/loop0_r5/.  Previous pin: loop 0_r3 (7 October 20:38, results/transition_2c/loop0_r3).
 LOG = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop1_r5', 'run.log')
 TAG = 'tr2c_loop1_r5'
+# THE PINNED RUN'S HORIZON AND THE START OF ITS DRIFTING END (10 October, for the T = 70 re-pin): the path covers
+# years 1 to HORIZON - 1, and the figure's peaks are read before UNCONVERGED_FROM, where the terminal condition
+# starts to pull the path. Both move with the pin.
+HORIZON = 60
+UNCONVERGED_FROM = 41
 OUT = os.path.join(ROOT, 'results', 'transition', TAG)
 # the benchmark welfare curve the cohort CEVs are read against, and the two steady states the path is
 # solved between: Housing First with no policy change, and the Treatment First long run, on the same build

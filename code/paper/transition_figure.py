@@ -28,12 +28,11 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
-from transition_source import OUT as IN   # the one pin
+from transition_source import OUT as IN, HORIZON, UNCONVERGED_FROM   # the one pin
 FIG = os.path.join(ROOT, 'writing', 'figures', 'full_transition')
 OUT_JSON = os.path.join(HERE, 'results_numbers.json')
 sys.path.insert(0, os.path.join(ROOT, 'code', 'stylized'))
 
-UNCONVERGED_FROM = 41          # the drifting end of the T = 60 path (see the docstring)
 BLUE, ORANGE, GREY = '#2C6FAD', '#D9822B', '0.45'
 
 
@@ -68,7 +67,7 @@ def main():
         ax.plot([0], [y[0]], 'o', color=ORANGE, ms=5)
         ax.set_title(title, fontsize=10.5, loc='left')
         ax.set_ylabel(ylab, fontsize=9)
-        ax.set_xlim(-1, 60)
+        ax.set_xlim(-1, HORIZON)
         lo, hi = min(min(y), sc * tf[key]), max(max(y), sc * hf[key])
         pad = 0.12 * (hi - lo)
         ax.set_ylim(lo - pad, hi + pad)
@@ -98,7 +97,7 @@ def main():
     ax.set_title('(h) Worse off than under Housing First', fontsize=10.5, loc='left')
     ax.set_ylabel('percent of households', fontsize=9)
     ax.set_xlabel('years since the reform', fontsize=9)
-    ax.set_xlim(-1, 60)
+    ax.set_xlim(-1, HORIZON)
     ax.set_ylim(0, 105)
     ax.legend(fontsize=7.5, loc='center right', frameon=False)
     axs[0, 0].legend(fontsize=7.5, loc='center right')

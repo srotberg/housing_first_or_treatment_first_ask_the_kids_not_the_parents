@@ -46,7 +46,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
-from transition_source import LOG, OUT, CURVE, REF as RES, REF_NULL, REF_TF   # the one pin
+from transition_source import LOG, OUT, CURVE, REF as RES, REF_NULL, REF_TF, HORIZON   # the one pin
 KV = re.compile(r'(\w+)=\s*([-+0-9.E]+)')
 
 
@@ -164,7 +164,7 @@ def main():
         raise SystemExit(f'{LOG} is not on this machine; the series already written are in {OUT}')
     S = parse(first_pass(LOG))
     T = sorted(S['MECH'])
-    assert T == list(range(1, 60)), f'the pass covers {T[0]}..{T[-1]}, not 1..59'
+    assert T == list(range(1, HORIZON)), f'the pass covers {T[0]}..{T[-1]}, not 1..{HORIZON - 1}'
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, 'series.csv'), 'w', newline='') as f:
         w = csv.writer(f)
