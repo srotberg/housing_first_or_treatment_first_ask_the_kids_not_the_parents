@@ -131,6 +131,9 @@ def names(S, C, R):
     out['x_trf_h_lr_pc'] = f"{100 * (tf['h_1'] / hf['h_1'] - 1):.0f}"
     k = max(body, key=lambda i: ch[i])
     out['x_trf_hchild_peak'] = f'{100 * ch[k]:.2f}'
+    # the same peak as a rise on the benchmark, for the abstract and the introduction (the author, 9 October:
+    # "childhood homelessness")
+    out['x_trf_hchild_peak_pc'] = f"{100 * (ch[k] / hf['child_hl'] - 1):.0f}"
     out['x_trf_hchild_peak_yr'] = str(k + 1)
     out['x_trf_hchild_lr'] = f"{100 * tf['child_hl']:.2f}"
     out['x_trf_hchild0'] = f"{100 * hf['child_hl']:.2f}"
