@@ -226,9 +226,25 @@ else
         mv "$MAIN/run.log" "$MAIN/run.log.killed.$(date -u +%Y%m%d%H%M)"
         note "T = 70 RELAUNCH after a killed run (seeds: $(ls "$MAIN"/*_path_seed_out.txt >/dev/null 2>&1 && echo 'its last saved paths' || echo 'the staged seeds, loop 0 again'))"
     fi
+    # THE HANDOVER IS CONSUMED. The binary reads PARAM_HANDOVER.txt and DELETES it, so a relaunch without this line
+    # solves the model at calibration_state.dat's values instead of the arm's (10 Oct: the 00:33 relaunch did exactly
+    # that -- no HANDOVER lines, 5.65 million 'budget does not clear' warnings, killed at 01:37). Restore it from the
+    # copy staging keeps, and refuse to run without it.
+    [ -s "$MAIN/PARAM_HANDOVER.txt" ] || cp "$MAIN/PARAM_HANDOVER.kept.txt" "$MAIN/PARAM_HANDOVER.txt" 2>/dev/null
+    [ -s "$MAIN/PARAM_HANDOVER.txt" ] || { note "GUARD: no PARAM_HANDOVER.txt or .kept.txt in $MAIN"; publish "failed"; exit 1; }
+    # SWAP AS INSURANCE (10 Oct: the 01:37 run was OOM-killed). Only when there is disk to spare and none is on.
+    if [ -z "$(swapon --show 2>/dev/null)" ] && [ "$(df -BG --output=avail "$C" | tail -1 | tr -dc 0-9)" -ge 10 ]; then
+        fallocate -l 4G /var/tmp/tr70.swap 2>/dev/null && chmod 600 /var/tmp/tr70.swap && mkswap /var/tmp/tr70.swap >/dev/null 2>&1 \
+            && swapon /var/tmp/tr70.swap 2>/dev/null && note "4 GiB swap on" || note "no swap (could not enable)"
+    fi
     ( cd "$MAIN" && date +%s > START_EPOCH && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1; echo "exit $?" > MAIN_EXIT ) &
     echo $! > "$D.main.pid"
     note "T = 70 transition started, pid $(cat "$D.main.pid")"
+    for _ in $(seq 1 60); do grep -q -a "HANDOVER" "$MAIN/run.log" 2>/dev/null && break; sleep 5; done
+    grep -q -a "HANDOVER" "$MAIN/run.log" 2>/dev/null || {
+        pkill -P "$(cat "$D.main.pid")" 2>/dev/null; kill "$(cat "$D.main.pid")" 2>/dev/null
+        note "GUARD: the run printed no HANDOVER line in five minutes; killed"; publish "failed"; exit 1; }
+    note "handover applied: $(grep -a -c '^ HANDOVER' "$MAIN/run.log") parameters"
 fi
 publish "T = 70 running"
 
