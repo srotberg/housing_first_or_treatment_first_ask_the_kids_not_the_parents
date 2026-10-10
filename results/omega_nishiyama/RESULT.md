@@ -143,3 +143,10 @@ Running since 02:46 UTC in session_01Pc6TKnc5jiN8mjtwAr1et6 (launched by the mai
 pi_V clearing against the new null's net revenue), progress in results/omega_nishiyama/cf/passes.txt. The new
 benchmark's base: drug users 9.0496, SUD 3.8011, homelessness 0.60062 per cent (benchmark of record 8.9563,
 3.8113, 0.61836). Expected: null about 4 hours, Treatment First about 6 more.
+
+**Housing First (null) ACCEPTED 04:36**, 5 passes (VOUCHER and DIST checks pass): drug price 1.00003, pi_V 0.067534
+(the benchmark's, held), users 9.0497, SUD 3.8012, homelessness 0.60052 per cent; net government revenue
+**5.7681232** (paper's null 5.8918411), the Treatment First budget target; CEV off the new benchmark's curve
+**-0.028 per cent** (paper's null +0.003). Treatment First started 04:36 from price 0.8555, pi_V 0.0962; pass 1:
+users -37.4, SUD -38.2, homelessness -6.6 per cent against the new benchmark (the paper's tf85_c35 pass 1: -30.5,
+-32.0, -2.6).
