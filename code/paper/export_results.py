@@ -43,6 +43,7 @@ import glob
 import gzip
 import json
 import os
+import math
 import re
 import subprocess
 import sys
@@ -302,7 +303,8 @@ def _dc_last_pass(arm, sub='decomp_2c'):
             rows.append(l.split())
     r = rows[-1]   # pass price pi_V b SUD h_1 drug-gap budget-gap welfare CEV V V/user
     pcv = lambda s: float(s.rstrip('%'))
-    return {'b': pcv(r[3]), 'sud': pcv(r[4]), 'h': pcv(r[5]), 'cev': pcv(r[9]), 'piv': float(r[2]), 'pass': int(r[0])}
+    return {'b': pcv(r[3]), 'sud': pcv(r[4]), 'h': pcv(r[5]), 'cev': pcv(r[9]), 'piv': float(r[2]), 'pass': int(r[0]),
+            'price': float(r[1])}
 
 
 def _dc(arm, sub='decomp_2c'):
@@ -343,6 +345,15 @@ out['x_dc_p_cmp'] = 'larger' if DC_P['cev'] > _tfc else 'smaller'
 # screen -> its price response (fixpv) -> recycling (tf): what the cheaper drug takes back of the screen's gain, and
 # how much of that loss recycling the revenue restores, in words that turn with the numbers
 DC_B = _dc('fixboth', 'decomp_2c_both')
+# THE PRICE RESPONSE UNDER THE SCREEN (10 October, the review: "a 13% price fall doubles use, an elasticity near -5"):
+# between the both-held run and the price-only run only the drug price differs, so the arc elasticity of drug use
+# to its price under Treatment First is their log ratio over the log price ratio; levels from the benchmark's
+_b0 = float(out['x_b0'])
+out['x_dcb_b1'] = f"{_b0 * (1 + DC_B['b'] / 100):.2f}"
+out['x_dcpv_b1'] = f"{_b0 * (1 + DC_PV['b'] / 100):.2f}"
+_arc = math.log((1 + DC_PV['b'] / 100) / (1 + DC_B['b'] / 100)) / math.log(DC_PV['price'] / DC_B['price'])
+out['x_tf_arc_el'] = f"{_arc:.1f}"
+assert _arc < 0, _arc
 out['x_dc_b_cev'] = f"{DC_B['cev']:.2f}"
 _lost = (DC_B['cev'] - DC_PV['cev']) / DC_B['cev'] if DC_B['cev'] else 0
 _back = (_tfc - DC_PV['cev']) / (DC_B['cev'] - DC_PV['cev']) if DC_B['cev'] != DC_PV['cev'] else 0
