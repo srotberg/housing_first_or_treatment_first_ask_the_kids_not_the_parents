@@ -93,7 +93,7 @@ exports, lists the roundings the prose applies (θ 0.17, π_V 0.068, the SSI flo
 
 - **"with a detection rate of 70 percent"** (`writing/housing_first_children_later.src.tex:869`, footnote). It is
   typed. The only runs are on the earlier benchmark (`results/counterfactuals_cf_fix2/tf70_cycle`,
-  `tf70_damp_partial`, `tf70_remote_*`), and their names suggest they did not converge cleanly. The same footnote's
+  `tf70_damp_partial`, `tf70_remote_*`), and whether they converged is not recorded. The same footnote's
   "more elastic supply" rests on `elast5_85`, which is also from the earlier benchmark.
 - **Literature values typed in the prose, with no file in the package to check them against:**
   - ι's 1.34 (Hjorthøj et al., 2018) and 6.04 (Nielsen et al., 2017) (`src.tex:802`);
