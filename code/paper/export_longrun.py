@@ -993,7 +993,7 @@ def main():
     # APPROVAL IN THE TEXT (round c88b1dda, the author: "also where are the results on approvals?")
     _y = D[t]['y26_better']
     out['x_lr_approve'] = (
-        ('Thus, every household that enters adult life at 26 is better off under Treatment First than it would be in '
+        ('Every household that enters adult life at 26 is better off under Treatment First than it would be in '
          'the same state under Housing First' if _y > 99.95 else
          f'Of the households that enter adult life at 26, ${_y:.0f}$ percent are better off under Treatment First '
          'than they would be in the same state under Housing First')

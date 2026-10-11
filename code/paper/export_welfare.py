@@ -108,7 +108,7 @@ def main():
          row(r"The newborn's gain, percent of lifetime consumption", 'tot'),
          row(r"\quad childhood its parent does not count, the share $1-\omega_c$", 'extc'),
          row(r"\quad better productivity at entry", 'E'),
-         row(r"\quad its own adult life under Treatment First", 'own'),
+         row(r"\quad its own adult life under Treatment First, the parent's gain discounted to its birth", 'own'),
          row(r"\quad childhood its parent does count, the share $\omega_c$", 'cnt'),
          r'\midrule',
          f"The externality, the first two parts, percent of the gain & {rows['b']['pts']['ext_share']:.0f} & "
@@ -123,7 +123,9 @@ def main():
          r"the newborn's own adult life holds who enters and changes the policy, and equals the parent's own gain "
          r"discounted to the child's birth. The parent's own gain is the change in its value at $j=1$ under each "
          r"policy, for the households Housing First's newborns are born into, as a percent of the parent's own "
-         r"lifetime consumption.}",
+         r"lifetime consumption, undiscounted. It is larger than the newborn's own adult life because the newborn "
+         r"receives the same gain $J_K$ years later, discounted, and because a percent of a newborn's lifetime "
+         r"consumption, most of which is itself far off, is a smaller sum than a percent of an adult's.}",
          r'\endgroup', r'\end{table}']
     open(TAB, 'w').write('\n'.join(L) + '\n')
     d = json.load(open(OUT_JSON))
