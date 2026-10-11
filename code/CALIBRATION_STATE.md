@@ -1,5 +1,13 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+11 Oct 09:20 T = 70 LOOP 1 IN, THE PAPER RE-PINNED TO IT (the author, 11 Oct: re-pin to loop 1 only if a quoted number
+moves). results/transition_2c_t70/loop1 (worst budget residual 1.19e-2, worst drug gap 1.85e-2, both in years 60-69).
+Against loop 0, two quoted numbers moved: half of the long-run fall in SUD done by year 10 (was 11), nine tenths by year 26
+(was 27); the reform cohort's CEV 2.96 (2.95), the peak fall in drug use 30 percent (29); cohort CEVs differ by up to 0.17
+points in years 4-6. transition_source.py points at code/trtf70/tr2c_t70_loop1/run.log, which is the archived log with
+loop 0's pass CUT OUT (transition_series.py reads a log's first pass); series in results/transition/tr2c_t70_loop1. The
+worker keeps iterating; compare each loop as it lands and re-pin on the same rule.
+
 09 Oct 15:50 TABLE 5'S DECOMPOSITION COLUMNS, BETTER-OFF ROWS -- THREE CLOUD WORKERS (the author: "id like you to rerun
 them and remove that sentence from the notes", "compute them on separate sessions so you can parallelize", "put the
 missing things in the table in yellow"). code/extra_2c/remote_decomp_shares.sh <arm>, one session each: fixboth
