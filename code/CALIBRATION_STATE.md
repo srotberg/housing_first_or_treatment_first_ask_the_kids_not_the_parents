@@ -1,5 +1,22 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+11 Oct 12:15 DELTA_H TEST DONE: THE GAIN TURNS INTO A LOSS (results/deltah; code/deltah; the author, 10 Oct 18:25: the result
+as a footnote at Section 2's "Adding one would matter little" sentence, "if the sign flips, do NOT write the footnote; tell the
+author first"). delta_d 0 (from 0.24), delta_h 0.31 on children whose parent was ever homeless while they were at home, every
+other parameter at its benchmark value, omega_c pinned. Benchmark (users, SUD, h_1) 9.11, 3.88, 0.622 (the paper's 8.96, 3.80,
+0.618). Null arm accepted after 6 passes; TF arm (85 percent detection, $35 test, pi_V and price clearing on the null arm's
+net revenue 5.8514) accepted after 8 passes: price 0.878, pi_V 0.0718 (Housing First 0.0675, +6 percent; the paper's arm
+0.0962, +42), drug use -27.0 percent, SUD -28.4, homelessness +12.1 (the paper's -0.9), voucher spending -7.1 percent (the
+paper's +11.6), average labour income -0.2 percent (the paper's +0.8). Newborn CEV the paper's way (childhood at xi - 1, no
+kappa_x term, the delta_h benchmark's own curve): -0.72 percent of lifetime consumption against the paper's +4.52; the
+Fortran's own measure -0.90; childhood -0.23 utils and the adult part -0.064 (both fall; the paper's arm raises both). No
+by-node values in the arms, so no earnings/own split. Mechanism: with delta_d = 0 fewer addicted parents no longer raise
+children's earnings, while each revocation that puts a family in a shelter marks the child with the 31 percent penalty, so
+earnings and revenue fall, the budget tightens and pi_V is cut pass after pass (0.0962 -> 0.0718), homelessness rises above
+the delta_h benchmark and the newborn loses. NOT WRITTEN INTO THE PAPER: the footnote and the Section 2 sentence wait for
+the author's decision (reported in chat 11 Oct 07:41 and 12:20). The rough delta_h transition at T = 60 needs the hh patch
+(code/deltah/patch_hh.py, 56 lines of cf.f90) ported to the transition source; sized below when done.
+
 11 Oct 09:20 T = 70 LOOP 1 IN, THE PAPER RE-PINNED TO IT (the author, 11 Oct: re-pin to loop 1 only if a quoted number
 moves). results/transition_2c_t70/loop1 (worst budget residual 1.19e-2, worst drug gap 1.85e-2, both in years 60-69).
 Against loop 0, two quoted numbers moved: half of the long-run fall in SUD done by year 10 (was 11), nine tenths by year 26
