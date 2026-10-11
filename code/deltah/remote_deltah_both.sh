@@ -101,11 +101,23 @@ if [ ! -x "$C/bench_both/hftf_bench" ] || [ ! -x "$C/cf_fix2_both/hftf_cf_prod" 
     note "built: $(grep -h 'latch flips' /tmp/deltah_both_build.log | tr '\n' ' ' | cut -c1-200)"
 fi
 
-# SWAP AS INSURANCE: the latch adds a third to the state
-if [ -z "$(swapon --show 2>/dev/null)" ] && [ "$(df -BG --output=avail "$C" | tail -1 | tr -dc 0-9)" -ge 12 ]; then
-    fallocate -l 4G /var/tmp/deltah_both.swap 2>/dev/null && chmod 600 /var/tmp/deltah_both.swap && mkswap /var/tmp/deltah_both.swap >/dev/null 2>&1 \
-        && swapon /var/tmp/deltah_both.swap 2>/dev/null && note "4 GiB swap on" || note "no swap (could not enable)"
+# SWAP IS THE MEMORY, NOT INSURANCE (11 October 18:13): the first run was OOM-killed (exit 137) at age 3 of its
+# first backward pass, three hours in, with 15 GiB of RAM and 4 GiB of swap: the four-class, six-block state is
+# about four times the paper's, and the paper's benchmark holds about 4 to 5 GB. The VM's cgroup limit is
+# unbounded, so RAM plus swap is the ceiling; give it the disk (29 GB free on a fresh container), and the
+# publish line below reports RSS, swap in use and the pace so the next check can judge fit and speed.
+SWAP_GB=${SWAP_GB:-24}
+AVAIL_GB=$(df -BG --output=avail "$C" | tail -1 | tr -dc 0-9)
+if [ -z "$(swapon --show 2>/dev/null)" ]; then
+    [ "$AVAIL_GB" -lt $((SWAP_GB + 4)) ] && SWAP_GB=$((AVAIL_GB - 4))
+    if [ "$SWAP_GB" -ge 8 ]; then
+        fallocate -l ${SWAP_GB}G /var/tmp/deltah_both.swap 2>/dev/null && chmod 600 /var/tmp/deltah_both.swap && mkswap /var/tmp/deltah_both.swap >/dev/null 2>&1 \
+            && swapon /var/tmp/deltah_both.swap 2>/dev/null && note "$SWAP_GB GiB swap on (disk had $AVAIL_GB GB free)" || note "GUARD: no swap (could not enable $SWAP_GB GiB)"
+    else
+        note "GUARD: only $AVAIL_GB GB of disk free, too little for swap"
+    fi
 fi
+memline() { echo "rss $(ps -o rss= -p "$1" 2>/dev/null | awk '{printf "%.1f", $1/1048576}') GiB, swap used $(free -m | awk '/Swap/{printf "%.1f", $3/1024}') GiB, $(grep -a AGE_TIME "$2" 2>/dev/null | tail -1 | tr -s ' ' | sed 's/^ //')"; }
 
 # STAGE A: THE BENCHMARK, every parameter fixed
 if [ -s "$BREF/bench_files.tar.gz" ] && [ -s "$BREF/bench.log.gz" ]; then
@@ -142,7 +154,7 @@ else
         if ! grep -q -a "HANDOVER penalty_child_homeless" bench.log; then
             kill "$PID"; note "GUARD: no HANDOVER line in the benchmark log; killed"; publish "failed"; exit 1
         fi
-        kill -0 "$PID" 2>/dev/null && publish "benchmark running, $(grep -ac 'BLOCK MOVE' bench.log) blocks"
+        kill -0 "$PID" 2>/dev/null && publish "benchmark running, $(grep -ac 'BLOCK MOVE' bench.log) blocks; $(memline "$PID" bench.log)"
     done
     wait "$PID"; RC=$?
     note "benchmark exited $RC after $(grep -ac 'BLOCK MOVE' bench.log) blocks; bench.err: $(tail -2 bench.err | tr '\n' ' ')"
@@ -176,7 +188,7 @@ run_arm() (
     P=$!
     while kill -0 "$P" 2>/dev/null; do
         for _ in $(seq 1 120); do kill -0 "$P" 2>/dev/null || break; sleep 10; done
-        kill -0 "$P" 2>/dev/null && publish "$a running, $(grep -ac '^ *distance_govt_budget=' "$C/cfarm_${a}_2c/cf.log" 2>/dev/null) passes"
+        kill -0 "$P" 2>/dev/null && publish "$a running, $(grep -ac '^ *distance_govt_budget=' "$C/cfarm_${a}_2c/cf.log" 2>/dev/null) passes; $(memline "$P" "$C/cfarm_${a}_2c/cf.log")"
     done
     wait "$P"; rc=$?
     O="$C/cfarm_${a}_2c.out"
