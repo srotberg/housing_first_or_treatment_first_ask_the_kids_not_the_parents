@@ -70,6 +70,7 @@ def main():
         out[f'x_wd_extsh_{a}'] = f"{p['ext_share']:.0f}"
         out[f'x_wd_extsh_word_{a}'] = share_word(p['ext_share'])
         out[f'x_wd_nonext_word_{a}'] = share_word(100 - p['ext_share']) if p['ext_share'] < 100 else 'none of it'
+        out[f'x_wd_rest_{a}'] = f2(p['own'] + p['cnt'])            # the gain that is not an externality
         out[f'x_wd_child_pc_{a}'] = f"{p['child_share']:.0f}"
         out[f'x_wd_child_word_{a}'] = share_word(p['child_share'])
         # capitalised, for a sentence start
@@ -81,7 +82,7 @@ def main():
                                  "every parent's own value rises" if r['worse'] < 0.5 else
                                  f"the own value of {r['worse']:.0f} percent of parents falls")
         # the lifetime value in utils, for the record
-        out[f'_wd_utils_{a}'] = {k: round(r[k], 4) for k in ('C', 'Cw', 'A', 'P', 'Aown', 'E', 'nb', 'eq', 'extc', 'cnt')}
+        out[f'_wd_utils_{a}'] = {k: round(r[k], 4) for k in ('C', 'Cw', 'A', 'P', 'Aown', 'Eall', 'E', 'cntE', 'nb', 'eq', 'extc', 'cnt')}
     assert rows['tf']['pts']['tot'] > 0 and rows['tf']['pts']['P'] > 0, 'the main experiment no longer favours Treatment First'
     out['x_wd_omega_pc'] = f"{100 * wn.OMEGA_C:.1f}"                  # the share of the child's flow the parent counts
     out['x_wd_ext_pc'] = f"{100 * (1 - wn.OMEGA_C):.0f}"              # and the share it leaves out
@@ -107,9 +108,9 @@ def main():
          r' & both held & $\pi_V$ clears & both clear \\', r'\midrule',
          row(r"The newborn's gain $\Delta W$, percent of lifetime consumption", 'tot'),
          row(r"\quad Childhood its parent does not count, $(1-\omega_c)\Delta C$", 'extc'),
-         row(r"\quad Better productivity at entry, $E$", 'E'),
+         row(r"\quad Better productivity at entry its parent does not count, $(1-\omega_c)E$", 'E'),
          row(r"\quad The newborn's own adult life under the policy, $\beta^{J_K}\Delta P$", 'own'),
-         row(r"\quad Childhood its parent does count, $\omega_c\Delta C$", 'cnt'),
+         row(r"\quad What its parent does count, $\omega_c(\Delta C+E)$", 'cnt'),
          r'\midrule',
          f"The externality, the first two parts, percent of the gain & {rows['b']['pts']['ext_share']:.0f} & "
          f"{rows['p']['pts']['ext_share']:.0f} & {rows['tf']['pts']['ext_share']:.0f} \\\\",
@@ -118,15 +119,16 @@ def main():
          r"\tabnote{Notes: Treatment First against Housing First in the long run; the columns are the fifth, sixth "
          r"and seventh of Table~\ref{tab:longrun}. The first row is the CEV of~\eqref{eq:cev}. The four rows under it "
          r"sum to it: each is read off the benchmark's welfare curve after the ones above it. Childhood is the change "
-         r"in the child's flow at its weight $\xi-1$, split into the share $\omega_c$ its parent counts and the share "
-         r"$1-\omega_c$ it does not. Better productivity at entry holds the policy and changes only who enters adult life; "
+         r"in the child's flow at its weight $\xi-1$, and better productivity at entry the change in its adult value from who "
+         r"enters; each is split into the share $\omega_c$ its parent counts and the share $1-\omega_c$ it does not. "
+         r"Better productivity at entry holds the policy and changes only who enters adult life; "
          r"the newborn's own adult life holds who enters and changes only the policy, and equals the parent's own gain "
          r"discounted to the child's birth. The parent's own gain is the change in its value at $j=1$ when the policy "
          r"switches from Housing First to Treatment First, with the distribution of entrants held at Housing First's, "
          r"for the households Housing First's newborns are born into, as a percent of the parent's own "
          r"lifetime consumption, undiscounted. It is larger than the newborn's own adult life because the newborn "
-         r"receives the same gain $J_K$ years later, discounted, and because a percent of a newborn's lifetime "
-         r"consumption, most of which is itself far off, is a smaller sum than a percent of an adult's.}",
+         r"receives the same gain $J_K$ years later, discounted, and because the newborn's lifetime consumption, the base "
+         r"of its percent, includes its childhood as well as its adult life.}",
          r'\endgroup', r'\end{table}']
     open(TAB, 'w').write('\n'.join(L) + '\n')
     d = json.load(open(OUT_JSON))

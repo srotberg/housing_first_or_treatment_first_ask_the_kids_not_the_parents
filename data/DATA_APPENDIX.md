@@ -737,6 +737,23 @@ summary passed).
 
 ## Block 8: Deterrence
 
+**Mehay and Pacula's own estimates of the policy's effect — 4 to 16 percentage points, 11 to 45 percent** (`mp_lo_pp`,
+`mp_hi_pp`, `mp_lo_rel_pc`, `mp_hi_rel_pc`). Their regression estimates of the testing policy's effect on the probability of
+past-year use, which allow for who left the military, run from 4 to 16 percentage points; against the 35.7 percent of
+service members using in 1980 (`mp_mil_py80_pc`) that is a fall of 4/35.7 = 11 to 16/35.7 = 45 percent. The model's
+response among all tested users (`x_ws_tested_all_pc`) is compared with this range in Block 8; the 61 percent below is
+the raw comparison among those who stayed.
+
+**The Family Options Study** (`fo_families` 2,282, `fo_children` 5,397, `fo_sites` 12, `fo_cost_pc` 9). Gubits et al.
+(2016), *Family Options Study: 3-Year Impacts of Housing and Services Interventions for Homeless Families*, HUD, and
+Gubits et al. (2018), *Journal of Policy Analysis and Management* 37(4), 835-866: 2,282 families with 5,397 children
+enrolled from emergency shelters in 12 communities, September 2010 to January 2012, randomised to priority access to a
+long-term subsidy, rapid re-housing, transitional housing or usual care; at 37 months the subsidy group had fewer than
+half as many later episodes of homelessness, fewer child separations, school absences and child behaviour problems,
+less food insecurity, adult psychological distress and partner violence, at about 9 percent more cost than usual care
+over the three years. Read from HUD's summary and the JPAM abstract (11 October); the report's PDF is not yet in
+related_lit.
+
 **Users without a SUD who stop when tested — 61 percent.** Mehay and Pacula (1999), "The effectiveness of workplace
 drug prevention policies: does 'zero tolerance' work?", NBER Working Paper 7383 (the author's copy). The US military
 began random testing in 1981 and dismissed those who failed; Navy and Marine Corps commanders had to test 10 to 20

@@ -1,3 +1,22 @@
+11 Oct 23:20 ROUND r305 AND SIX CLOUD JOBS FOR THE REFEREE'S REPORT (the author: "work on all of them and show me in the paper the
+changes in crossed lines and updates in red", "run tests in parallel sessions", "i dont think we need to check so many deltads....
+0 is enough", "i dont think we need to show more cases for omega_c. 0.6868 is large", "we are not doing 1-1 with the real policy. we
+are not saying we do"). PAPER (r305, strikes reinstated, see CLAUDE.md): E split as childhood is, (1-omega_c)E the externality and
+omega_c(Delta C + E) counted (welfare_nok.parts, Table 6 rows and notes; the externality share 50 -> 49 in the main experiment,
+118/66/50 -> 114/64/49); the no-externality economy said to be NOT refitted (it never was); the Family Options Study in Section 2
+(Gubits et al. 2016, 2018; lit numbers fo_*); the financing condition in the abstract (148 words); Mehay and Pacula's own 4-16
+point estimates (11-45 percent of the 1980 base) beside the raw 61, the model's all-tested 19 inside the range; the screen said
+to be no one programme's rule and the benchmark a programme that does not test (24 CFR 982.553 noted); suppliers outside the
+economy; the omega_c = 0.686 footnote with its number (x_nish_cev 5.36 against 4.52); the intro's 'rest' 2.11 -> 2.32 (own +
+counted); the Table 6 note's second reason corrected; PSH spelled out. CLOUD: delta_d = 0 (code/deltad/remote_deltad.sh,
+session_016trsphdR7PfQ54gdSxuTQF, results/deltad/dd0; the 0.05 and 0.12 workers were archived at the author's word);
+Treatment First at detection 0.70 and 0.50 (code/pdet/remote_pdet.sh, sessions session_016v9iw5bS6RcAzLtkrJs7UB and
+session_013j5XYeTB8Re5tgiCC3vPhJ, results/counterfactuals_2c/tf_pdet70, tf_pdet50); the T = 70 loop 2 re-run with the
+entrant-by-parent-age print (code/transition_fix/patch_cohort_print.py, remote_tr70_cohort.sh, session_01E98HguWZS8nXRgWAyUcgm6,
+results/transition_2c_t70_cohort/loop2), which gives the cohort born at the reform along its own life and every child alive at
+the reform by age. NOT launched: equal-budget Housing First, supply elasticities below 1.46 (the author: 1.46 is the low end),
+more omega_c points, the exposure-years penalty, the treatment-compliance screen, shelter and treatment costs in the budget.
+
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
 11 Oct 22:20 THE BOTH-PENALTIES TRANSITION: T = 25, TWO LOOPS (the author: "after the deltah benchmark and TF runs finish, maybe we can try to do 1 T=30 transition, but it doesnt have to be exact. even just 1-2 runs using the converged T=70 transition without deltah"; then, on the memory estimate, "ok, we can do T=25 instead. it's just for a robustness check"). code/deltah/remote_deltah_both_tr25.sh runs IN THE SAME CONTAINER as remote_deltah_both.sh after 'arm tf ACCEPTED' (nothing re-solved): B' Housing First on cf_fix2_share_both (cf_fix2 plus the newborn_parent_share_counter.dat write, with patch_both), SEEDED from the accepted null arm (kept as code/cfarm_null_2c_acc) at its price, for the t = 1 parent share; D the transition binary = transition_fix/tr70_src.f90 + patch_both + transition_length 25, staged by stage_tr_fix.sh with SHARE_LEN=208 (four classes: 52 employment states x 2 x 2; stage_tr_fix.sh now takes SHARE_LEN, default 104), seeds = the paper's T = 70 loop 2 path, periods 1-24, rescaled to this economy's terminal values; E run, archive each loop to results/deltah_both_tr25/loop<N>, stop after loop 1. CHECKED HERE: patch_both applies to tr70_src.f90 and to cf_fix2_share/cf.f90; both compile (-O0) at T = 25 and four classes; the seeding step reproduces on the loop 2 files. MEMORY: about 18 GiB fixed + 0.35 GiB a period = about 27 GiB, inside 15 GiB RAM + 24 GiB swap. TIME: the share pass a few hours, each loop 18-24 h. CAUTION, STANDING: the worker's publish() rebases its checkout onto the branch, so a commit that CHANGES remote_deltah_both.sh or cf_arm_both.sh lands in the running job's tree; bash reads a running script by offset, so never modify those two files while it runs -- new files only (hence cf_arm_both_tr25.sh is generated, not edited in).

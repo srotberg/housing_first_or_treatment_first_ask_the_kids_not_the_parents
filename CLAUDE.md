@@ -144,10 +144,14 @@ as moved.
 
 ## Deletions are struck through, and changes carry a note
 
-**SUPERSEDED FOR STRIKES, 3 October (round r120): the author, *"no need to show striked lines anymore"*.** Changes go in
-red with `\new{}` and deleted text simply goes; do not write `\del{}`, do not run `track_changes.py` to strike, and the
-round's splice drops every `\del` it would generate (`marks.drop_marks` before it writes). Say in chat what was deleted
-when it matters. The rest of this section is kept for the record.
+**STRIKES REINSTATED, 11 October (round r305): the author, *"if you delete something i want to see what you
+deleted"*, *"show me in the paper the changes in crossed lines and updates in red"*.** The r120 waiver (*"no need to
+show striked lines anymore"*) is over: every round runs `track_changes.py` against the source as the author last read
+it, `\del` is defined in the preamble again (`\DeclareRobustCommand{\del}[1]{{\color{red}\sout{#1}}}`), and the
+round's splice keeps the strikes it generates (the `drop_marks` call was removed from `splice_r305.py`; copy that
+splice forward, not an older one). Display maths is skipped by the striker, so a deleted piece of an equation is said
+in a `\why{}` note. **The abstract stays under 150 words** (the author, 11 October: *"if you update the abstract make
+sure its below 150 words"*; it is 148 at r305, counting a filled number as one word).
 
 
 The author, 3 October: *"deleted sentences should show as crossed so I know what you delete"*, and *"leave notes

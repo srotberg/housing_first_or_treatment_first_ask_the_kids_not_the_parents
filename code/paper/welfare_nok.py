@@ -244,18 +244,24 @@ def parts(arm_w, arm_n, base_w, base_n, bench=REF, weight=CHILD_WEIGHT):
     curve = bench.lifetime_curve(weight, with_term=False)
     W0 = weight * Cb + Ab
     pts, w = {}, W0
-    for name, u in (('extc', r['extc']), ('E', r['E']), ('own', r['Aown']), ('cnt', r['cnt'])):
+    # (11 October, the referee: eq. 32 labelled all of E an externality while the parent counts omega_c of it through
+    # the charge D) E is split as the childhood term is: (1 - omega_c) E is the earnings externality, omega_c E is counted
+    r['Eall'] = r['E']
+    r['E'] = (1 - om) * r['Eall']
+    r['cntE'] = om * r['Eall']
+    for name, u in (('extc', r['extc']), ('E', r['E']), ('own', r['Aown']), ('cntC', r['cnt']), ('cntE', r['cntE'])):
         c0 = bench.cev_of(w, curve)
         w += u
         pts[name] = 100 * (bench.cev_of(w, curve) - c0)
     pts['tot'] = 100 * (bench.cev_of(W0 + r['nb'], curve) - bench.cev_of(W0, curve))
+    pts['cnt'] = pts['cntC'] + pts['cntE']        # what the parent counts: omega_c (Delta C + E)
     assert abs(sum(pts[k] for k in ('extc', 'E', 'own', 'cnt')) - pts['tot']) < 1e-9
     ac = bench.adult_curve(with_term=False)
     V0 = vb['V26'] + vb['kx'] * vb['H'] * bench.adult_sens
     pts['P'] = 100 * (bench.cev_of(V0 + P, ac) - bench.cev_of(V0, ac))
     pts['ext'] = pts['extc'] + pts['E']
     pts['ext_share'] = 100 * pts['ext'] / pts['tot']
-    pts['child_share'] = 100 * (pts['extc'] + pts['cnt']) / pts['tot']
+    pts['child_share'] = 100 * (pts['extc'] + pts['cntC']) / pts['tot']
     r['pts'] = pts
     return r
 
