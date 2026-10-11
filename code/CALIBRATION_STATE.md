@@ -1,3 +1,10 @@
+11 Oct 23:46 BOTH PENALTIES DIED AGAIN, A CONTAINER RESTART, RELAUNCHED ONCE. The worker (session_018N3fsfggMz4fumbypJRXwp,
+now epoch 3) reported at 23:38: the container restarted between 23:28 and 23:37, 4.5 h into the benchmark's block 1 (backward pass
+done, distribution converged at 1.9e-5, bench.log last written 23:03, in the statistics stage), last memline rss 13.3 GiB plus 9.3
+GiB swap of 23; no welfare file, nothing to resume from. Relaunched once unchanged (trigger fired once, deleted); the brief: if the
+container restarts again, write the stage and memline into the status file and stop. The benchmark has no checkpoint inside a
+block, so a container that restarts every few hours may never let it finish (25-40 h); that is for the author to weigh.
+
 12 Oct 00:40 ROUND r306: THE AUTHOR'S SIX COMMENTS ON r305 AND THE REFEREE ITEMS 5-12 AND 16 (the author: "remove all red and green
 and put updates in red"; "finish items 1-12"; 14 and 15 left out, 16 "yes be explicit"). Strikes and notes stripped (marks.drop_marks +
 unwrap), base_r306 = the r305 state as read. Family Options cut to one sentence; a clause that no trial randomises a parent's drug
