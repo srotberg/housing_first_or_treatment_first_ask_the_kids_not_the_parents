@@ -702,23 +702,19 @@ _od, _dd = float(out['x_odds_sud']), _cal['c_delta_d_value']
 _nopen_s = out['x_odds_sud_nopen']
 if _nopen < _olo and _od < (_olo + _ohi) / 2:
     out['x_odds_dd_sentence'] = (
-        'The low end also says something about $\\delta_d$ itself. With the penalty switched off, in the economy '
+        'With the penalty switched off, in the economy '
         'without the externalities of Section~\\ref{sec:longrun}, the ratio is $' + _nopen_s + '$: the transmission '
         'runs through $\\delta_d$, and a value that put the model in the middle of the range would be above $'
         + _dd + '$, so the value the calibration uses is likely at the low end of what the evidence supports.')
-    out['x_odds_dd_item'] = ('Block 6 below says the same from the model\'s side: the intergenerational odds ratio the '
-                             'penalty produces sits at the low end of the evidence.')
 elif _nopen < _olo:
     out['x_odds_dd_sentence'] = (
         'With the penalty switched off, in the economy without the externalities of Section~\\ref{sec:longrun}, the '
         'ratio is $' + _nopen_s + '$: the transmission runs through $\\delta_d$, and a value that put the model in '
         'the middle of the range would be below $' + _dd + '$.')
-    out['x_odds_dd_item'] = 'Block 6 below sets the intergenerational odds ratio the penalty produces beside the evidence.'
 else:
     out['x_odds_dd_sentence'] = (
         'With the penalty switched off, in the economy without the externalities of Section~\\ref{sec:longrun}, the '
         'ratio is $' + _nopen_s + '$, so the penalty is not what carries the transmission.')
-    out['x_odds_dd_item'] = 'Block 6 below sets the intergenerational odds ratio the penalty produces beside the evidence.'
 
 # the first forward pass in that log, years 1-10: peak homelessness, and drug users WITHOUT A SUD
 # (exp_pop; total_experimenters_1 in the steady state, the same count on the same base: the
