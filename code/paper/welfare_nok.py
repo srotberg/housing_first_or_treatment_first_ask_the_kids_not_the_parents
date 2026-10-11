@@ -71,6 +71,27 @@ SHIFT0 = KX0 * H0 * K                            # the term in the benchmark's o
 WS_FREE = [w + SHIFT0 for w in WS]
 
 
+# THE ADULT CURVE (the Fortran's 'WELFARE CURVE point k x= w=' lines: the entrants' value at 26 under consumption
+# scaled by 1+x), so that the lifetime curve can be rebuilt with any weight on childhood: lifetime(x) =
+# childhood(x) + beta^K adult(x), hence childhood(x) = lifetime(x) - beta^K adult(x). (11 October, the author:
+# the child's childhood counts at xi-1 in the criterion, as it does in the household's equivalence scale; only
+# omega_c separates the parent from the planner.)
+_AD = {}
+for _l in gzip.open(os.path.join(REF, 'bench.log.gz'), 'rt', errors='replace'):
+    _m = re.search(r'WELFARE CURVE point\s+(\d+)\s+x=\s*(\S+)\s+w=\s*(\S+)', _l)
+    if _m:
+        _AD[int(_m.group(1))] = (float(_m.group(2)), float(_m.group(3)))
+ADULT_CURVE = [_AD[k + 1][1] for k in range(len(XS))]
+assert all(abs(_AD[k + 1][0] - XS[k]) < 1e-9 for k in range(len(XS))), 'adult and lifetime curves on different x'
+B25 = BETA ** CHILD_YEARS
+CHILD_CURVE = [w - B25 * a for w, a in zip(WS, ADULT_CURVE)]      # with the term, as the Fortran wrote it
+
+
+def curve_for_weight(wc):
+    """the lifetime curve WITHOUT the kappa_x term with the child's childhood counted at weight wc"""
+    return [wc * (c + KX0 * H0 * S_CHILD) + (B25 * a + KX0 * H0 * BKD) for c, a in zip(CHILD_CURVE, ADULT_CURVE)]
+
+
 def cev_of(t, ws=None):
     """quadratic Lagrange in w over the bracketing pair and a neighbour, as calculate_welfare_gains and cev.py"""
     ws = WS if ws is None else ws

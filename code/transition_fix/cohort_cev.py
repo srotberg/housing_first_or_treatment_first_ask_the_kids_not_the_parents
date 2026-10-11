@@ -34,6 +34,11 @@ KAPPA_X = 0.9329             # kappa_x, PARAM_HANDOVER: the path's childhood ide
 # benchmark's own term. --with-term reproduces the earlier numbers.
 WITH_TERM = '--with-term' in sys.argv
 if WITH_TERM: sys.argv.remove('--with-term')
+# --child-weight W (11 October): the child's childhood counted at W (the author: xi - 1, the household's own
+# equivalence weight) instead of one; the curve is rebuilt from the benchmark's adult and childhood curves
+CHILD_WEIGHT = 1.0
+if '--child-weight' in sys.argv:
+    _i = sys.argv.index('--child-weight'); CHILD_WEIGHT = float(sys.argv[_i + 1]); del sys.argv[_i:_i + 2]
 CHILD_YEARS = 25
 
 # --terminal <cf.log.gz>: the steady state the path ends in. With it, a cohort whose childhood or adult entry
@@ -81,7 +86,7 @@ def parse(block):
 
 xs, ws = zip(*[tuple(map(float, l.split())) for l in open(curve) if l.strip()])
 if not WITH_TERM:
-    ws = tuple(w + wn.SHIFT0 for w in ws)
+    ws = tuple(w + wn.SHIFT0 for w in ws) if CHILD_WEIGHT == 1.0 else tuple(wn.curve_for_weight(CHILD_WEIGHT))
 
 
 def cev_of(t):
@@ -106,7 +111,7 @@ by, h, young, wc, cev = parse(ps[chosen])
 print(f"forward pass {chosen} of {len(ps) - 1} (0 = the first loop); periods in it: {min(young)}..{max(young)}")
 
 # consistency: the code's own CEV at t=1 from its own with_childhood, through this interpolation
-if 1 in wc and 1 in cev:
+if 1 in wc and 1 in cev and CHILD_WEIGHT == 1.0:   # the code's own CEV counts childhood at one
     _w = (ws if WITH_TERM else tuple(w - wn.SHIFT0 for w in ws))
     _i = next(k for k in range(1, len(_w)) if _w[k] >= wc[1]); _j = max(1, min(_i, len(_w) - 2))
     _l0, _l1, _l2 = _w[_j-1], _w[_j], _w[_j+1]; _t = wc[1]
@@ -143,7 +148,7 @@ for b in range(1, last_b + 1):
         child = sum(BETA ** (a - 1) * (by[b + a - 1][a - 1] - KAPPA_X * h[b + a - 1]) for a in range(1, CHILD_YEARS + 1))
         adult = BETA ** CHILD_YEARS * young[b + CHILD_YEARS]
     else:
-        child = sum(BETA ** (a - 1) * by[b + a - 1][a - 1] for a in range(1, CHILD_YEARS + 1))
+        child = CHILD_WEIGHT * sum(BETA ** (a - 1) * by[b + a - 1][a - 1] for a in range(1, CHILD_YEARS + 1))
         adult = BETA ** CHILD_YEARS * (young[b + CHILD_YEARS] + KAPPA_X * wn.ADULT_SENS * h[b + CHILD_YEARS])
     L = child + adult
     print(f"{b:4d}  {L:10.5f}  {100*cev_of(L):+8.4f}%   ({child:.4f}, {adult:.4f})")
