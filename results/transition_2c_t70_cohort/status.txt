@@ -1,4 +1,4 @@
-# T = 70, loop 2 re-run with the entrant-by-parent-age print (code/transition_fix/remote_tr70_cohort.sh); 11 Oct 23:24 UTC
+# T = 70, loop 2 re-run with the entrant-by-parent-age print (code/transition_fix/remote_tr70_cohort.sh); 11 Oct 23:48 UTC
 remote_tr70_cohort: gfortran missing, installing (23:16)
 remote_tr70_cohort: free disk 29G, memory 15 GiB, cores 4 (23:16)
 remote_tr70_cohort: building cf_fix (23:16)
@@ -7,3 +7,11 @@ remote_tr70_cohort: building cf_fix2_share (23:21)
 remote_tr70_cohort: building tr70_cohort (23:23)
 patched: 56232 -> 56282 lines
 remote_tr70_cohort: tr70_cohort built: c5ff31b2 (23:24)
+remote_tr70_cohort: arm null on cf_fix2_share: DRUG_PRICE_START=1.0001082 (23:24)
+remote_tr70_cohort: arm tf on cf_fix2: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.096152024 DRUG_PRICE_START=0.85551291 EXTRA_SET=cost_per_drug_test 0.0004946100 (23:28)
+
+== arm null
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+
+== arm tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
