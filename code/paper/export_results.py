@@ -169,13 +169,18 @@ out['x_tf_cev_dir'] = 'better' if cev_log('tf85') > CEV0 else 'worse'
 # the two arms were solved against, named in passes.txt's header
 _nh = open(os.path.join(adir('nish_tf'), '..', 'passes.txt')).readline()
 out['x_nish_omega'] = re.search(r'bench_([0-9.]+)_b', _nh).group(1)
-out['x_nish_cev'] = f"{cev_logged('nish_tf') - cev_logged('nish_null'):.2f}"   # off its own benchmark's curve; with the kappa_x term (0.01 utils there)
-assert cev_logged('nish_tf') > cev_logged('nish_null'), 'the omega_c sensitivity no longer favours Treatment First'
+# (11 October) read off ITS benchmark's curves (results/omega_nishiyama_2c, the b2* point of RESULT.md) the paper's
+# way: childhood at xi - 1, without the kappa_x term (1.0689 there)
+_nish_bench = welfare_nok.Bench(os.path.join(ROOT, 'results', 'omega_nishiyama_2c',
+                                             'bench_' + re.search(r'(bench_[0-9.]+_b[0-9.]+_ku[0-9.]+)', _nh).group(1)[6:]))
+out['x_nish_cev'] = f"{welfare_nok.cev_free(adir('nish_tf'), _nish_bench) - welfare_nok.cev_free(adir('nish_null'), _nish_bench):.2f}"
+out['_nish_cev_logged'] = f"{cev_logged('nish_tf') - cev_logged('nish_null'):.2f}"   # the Fortran's: childhood at one, with the term
+assert float(out['x_nish_cev']) > 0, 'the omega_c sensitivity no longer favours Treatment First'
 # the long-run gain splits about evenly between childhood and adulthood
 # (10 October) without the kappa_x * H term, from the same objects as Table tab:whogains (welfare_nok.parts)
 _parts_tf = welfare_nok.parts(adir('tf85'), os.path.join(ROOT, 'results', 'transition_2c', 'arm_tf'),
                               adir('null_share'), os.path.join(ROOT, 'results', 'transition_2c', 'arm_null'))
-out['x_tf_child_share_pc'] = pc(100 * _parts_tf['C'] / _parts_tf['nb'])
+out['x_tf_child_share_pc'] = pc(_parts_tf['pts']['child_share'])     # the childhood rows of Table tab:whogains
 # THE EXPERIMENT AS RUN (Section 7): pi_V clears the budget, and the screen's
 # parameters are the ARM's handover values, not the Fortran declarations (0.95 and
 # 0.005 there; the arm ran at 0.85 and 0).

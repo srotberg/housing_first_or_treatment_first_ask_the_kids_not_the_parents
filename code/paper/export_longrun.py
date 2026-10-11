@@ -308,12 +308,20 @@ def main():
         ('Households with a SUD better off', 'sud_better', lambda v: v if isinstance(v, str) else f'{v:.0f}'),
         # the newborns' row (the author, round f4276e76: "add a row for the newborn children"), a placeholder until
         # code/cf_kid's values from stage E2 (results/transition_2c/newborn/) are checked
-        ('Newborns better off, by the household they are born into', 'nb_hh_better',
-         lambda v: v if isinstance(v, str) else f'{v:.0f}'),
+        # ('Newborns better off, by the household they are born into', 'nb_hh_better', ...): OUT since 11 October --
+        # stage E2's newborn run scored it with childhood at one and saved no per-cell parts, so it cannot be
+        # rescored at the paper's xi - 1 until that stage is re-run with the parts saved
     ]
     for arm, base in [a for a in ARMS if a[1]]:
         s = D[arm]['split']
         D[arm]['child_share'] = 100 * s[0] / s[2] if s and arm not in ('omega1', 'internalise') else None
+    # (11 October) the paper's criterion counts childhood at xi - 1: the three columns with by-node values take the
+    # childhood rows of Table tab:whogains (welfare_nok.parts, in points of lifetime consumption)
+    for _arm, _nodes in (('dc_b', os.path.join(ROOT, 'results', 'decomp_2c_both', 'arm_fixboth')),
+                         ('dc_p', os.path.join(ROOT, 'results', 'decomp_2c', 'arm_fixp')),
+                         ('tf85', os.path.join(ROOT, 'results', 'transition_2c', 'arm_tf'))):
+        D[_arm]['child_share'] = welfare_nok.parts(adir(_arm), _nodes, adir('null_share'),
+                                                   os.path.join(ROOT, 'results', 'transition_2c', 'arm_null'))['pts']['child_share']
     for arm in D:
         D[arm]['nb_better'] = D[arm]['y26_better'] = D[arm]['all_better'] = D[arm]['sud_better'] = None
         D[arm]['nb_hh_better'] = None
@@ -831,6 +839,7 @@ def main():
                                adir('null_share'), os.path.join(ROOT, 'results', 'transition_2c', 'arm_null'))
     comp = _parts['E'] / _parts['b25']
     tot = _parts['A'] / _parts['b25']
+    _pts = _parts['pts']                 # the same split in points of lifetime consumption (Table tab:whogains)
     adult_utils = D[t]['split'][1]
     assert abs(tot * beta25 / adult_utils - 1) < 0.02, \
         f'ADULTDECOMP {tot * beta25:.4f} does not reproduce the adult part {adult_utils:.4f}'
@@ -892,9 +901,9 @@ def main():
                f"{'more' if _gp > _gc else 'less'}, for a child whose own parent carried it, whom the penalty "
                'leaves with lower productivity'
                if _gc > 0 and _gp > 0 else '')
-    _kid = 100 * _parts['C'] / _parts['nb']      # without the kappa_x * H term, as Table tab:whogains
-    _draw = (100 - _kid) * comp / tot
-    _val = 100 - _kid - _draw
+    _kid = _pts['child_share']                   # the childhood rows of Table tab:whogains, percent of the gain
+    _draw = 100 * _pts['E'] / _pts['tot']        # better productivity at entry
+    _val = 100 * _pts['own'] / _pts['tot']       # the newborn's own adult life under the policy
     # the penalty's share of the WHOLE gain, for Section 5's delta_d item (3 October: the ranking does not rest on it)
     out['x_lr_draw_whole_pc'] = f'{_draw:.0f}'
     _pvpc, _prpc = pc(t, 'piv', 'null_share'), pc(t, 'price', 'null_share')
@@ -994,6 +1003,7 @@ def main():
     # the same share as a number, for the transition's sentence on households entering at 26 (review item 9, 7 Oct)
     if _nb is not None:
         out['x_lr_nb_better_pc'] = f'{_nb:.0f}'
+    _nb = None                                   # (11 October) the newborn shares are at childhood weight one; see the row's note
     out['x_lr_approve_nb'] = (
         '' if _nb is None else
         'So is every newborn, compared with itself born into the same household under Housing First.'

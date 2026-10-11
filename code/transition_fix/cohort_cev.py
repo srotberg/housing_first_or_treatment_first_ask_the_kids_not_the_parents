@@ -36,7 +36,7 @@ WITH_TERM = '--with-term' in sys.argv
 if WITH_TERM: sys.argv.remove('--with-term')
 # --child-weight W (11 October): the child's childhood counted at W (the author: xi - 1, the household's own
 # equivalence weight) instead of one; the curve is rebuilt from the benchmark's adult and childhood curves
-CHILD_WEIGHT = 1.0
+CHILD_WEIGHT = wn.CHILD_WEIGHT                     # the paper's (xi - 1); --child-weight 1 gives the Fortran's
 if '--child-weight' in sys.argv:
     _i = sys.argv.index('--child-weight'); CHILD_WEIGHT = float(sys.argv[_i + 1]); del sys.argv[_i:_i + 2]
 CHILD_YEARS = 25
@@ -178,7 +178,7 @@ refs = [("no policy", os.path.join(here, "../../results/counterfactuals_cf_fix2/
 # not the old cf_fix2 arms (the T = 60 run on the 2c build, 6 October)
 if REFS:
     refs = [("no policy", REFS[0]), ("long run (TF 85)", REFS[1])]
-b1_child = sum(BETA ** (a - 1) * (by[a][a - 1] - KAPPA_X * h[a]) for a in range(1, CHILD_YEARS + 1))
+b1_child = CHILD_WEIGHT * sum(BETA ** (a - 1) * (by[a][a - 1] - KAPPA_X * h[a]) for a in range(1, CHILD_YEARS + 1))
 b1_adult = BETA ** CHILD_YEARS * young[1 + CHILD_YEARS]
 print("\nBorn at the reform, split into childhood (ages 1-25, discounted to age 1) and adulthood (from 26):")
 print(f"   {'':18s} {'childhood':>11s} {'adulthood':>11s} {'total':>11s}")
@@ -187,6 +187,7 @@ got = {}
 for name, path in refs:
     if os.path.exists(path):
         c, a = steady(path)
+        c *= CHILD_WEIGHT                      # the same weight on the steady states' childhood
         got[name] = (c, a)
         print(f"   {name:18s} {c:11.4f} {a:11.4f} {c + a:11.4f}")
 if "no policy" in got:
