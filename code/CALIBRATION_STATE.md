@@ -13,8 +13,9 @@ Fortran's own measure -0.90; childhood -0.23 utils and the adult part -0.064 (bo
 by-node values in the arms, so no earnings/own split. Mechanism: with delta_d = 0 fewer addicted parents no longer raise
 children's earnings, while each revocation that puts a family in a shelter marks the child with the 31 percent penalty, so
 earnings and revenue fall, the budget tightens and pi_V is cut pass after pass (0.0962 -> 0.0718), homelessness rises above
-the delta_h benchmark and the newborn loses. NOT WRITTEN INTO THE PAPER: the footnote and the Section 2 sentence wait for
-the author's decision (reported in chat 11 Oct 07:41 and 12:20). THE ROUGH delta_h TRANSITION (the author, 10 Oct: "not exact,
+the delta_h benchmark and the newborn loses. WRITTEN INTO THE PAPER in round r296 (the author, 11 Oct 13:50: "put the deltah result as a footnote in section 2"):
+footnote fn:deltah at Section 2's shelter-penalty sentence, every number from code/paper/export_deltah.py (x_dh_*), and the
+sentence before it now says which penalty the child carries matters (both in red). THE ROUGH delta_h TRANSITION (the author, 10 Oct: "not exact,
 enough for a sense of the numbers"): code/deltah/remote_deltah_tr.sh in a cloud worker, launched 11 Oct 12:30 UTC, session_01Pw9ARoA4Pk9aVRrZoyRidy ->
 results/deltah_tr. The latch patch (patch_latch.py) applies to the transition source unchanged (every anchor found; the
 patched T = 40 source compiles); T = 40 rather than 60 because the latch adds a third to the state and the transition holds
