@@ -11,6 +11,15 @@ archived there before it is pinned.
 import os
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+# 11 October 20:30: loop 2 of the T = 70 run (results/transition_2c_t70/loop2), the third iterate of the prices,
+# re-pinned because quoted numbers moved against loop 1: half of the long-run fall in the number with a SUD is done
+# by year 11 (loop 1: 10; loop 0: 11) and nine tenths by year 27 (26; 27), the year childhood homelessness peaks is 6
+# (7), the first-year fall in the share of parents who use is 5.00 points (5.01); unquoted, the reform cohort's CEV
+# 2.97 (2.96), the peak fall in drug use 29 percent (30), the first decade's CEV 3.16 (3.20). The two SUD years flipped
+# back to loop 0's values, so the path is still oscillating between iterates, not converged. The worst budget residual
+# on the path is 8.14e-3 (loop 1: 1.19e-2) and the worst drug gap 1.20e-2 (1.85e-2). The log carries three forward
+# passes; the plain log here keeps the lines before the first marker and everything from the THIRD (last) marker on.
+# Previous pin: loop 1, below.
 # 11 October 09:15: loop 1 of the T = 70 run (results/transition_2c_t70/loop1), the second iterate of the prices,
 # re-pinned because two quoted numbers moved against loop 0 (the author, 11 October: re-pin to loop 1 only if a
 # quoted number moves): half of the long-run fall in the number with a SUD is done by year 10 (was 11) and nine
@@ -27,8 +36,8 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 # points. The arms the run is solved between (results/transition_2c_t70/arm_*) re-solve the T = 60 arms to a worst
 # relative difference of 2.4e-4 and carry only final.txt, so REF below stays on the T = 60 arms, which carry the
 # logs and the by-node values. Before that: T = 60 loop 1_r5 (9 October 10:03, results/transition_2c/loop1_r5).
-LOG = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_loop1', 'run.log')
-TAG = 'tr2c_t70_loop1'
+LOG = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_loop2', 'run.log')
+TAG = 'tr2c_t70_loop2'
 # THE PINNED RUN'S HORIZON AND THE START OF ITS DRIFTING END: the path covers years 1 to HORIZON - 1, and the
 # figure's peaks are read before UNCONVERGED_FROM, where the path is least converged: the years 60 to 69 that the
 # horizon added were seeded with the terminal prices in loop 0 and have been iterated once in loop 1 (budget
@@ -38,7 +47,7 @@ UNCONVERGED_FROM = 60
 OUT = os.path.join(ROOT, 'results', 'transition', TAG)
 # the benchmark welfare curve the cohort CEVs are read against, and the two steady states the path is
 # solved between: Housing First with no policy change, and the Treatment First long run, on the same build
-CURVE = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_loop1', 'welfare_curvebaseline_benchmark.dat')
+CURVE = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_loop2', 'welfare_curvebaseline_benchmark.dat')
 REF = os.path.join(ROOT, 'results', 'transition_2c')
 REF_NULL, REF_TF = 'arm_null', 'arm_tf'
 # the previous pin, kept for the record: restart 3g's loop 0 on the old build (30 September)
