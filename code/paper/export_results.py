@@ -685,6 +685,41 @@ for l in gzip.open(os.path.join(adir('old_null_share'), 'cf.log.gz'), 'rt', erro
     elif 'UNTARGETED delta_h child homeless odds ratio' in l:
         out['x_odds_hl'] = f"{float(l.split('model=')[1].split()[0]):.2f}"
 
+# THE PENALTY'S SHARE OF THE TRANSMISSION (the author, 11 October: "since we are at the lower bound of estimates,
+# the deltad is likely on the lower end"): the same odds ratio with the penalty switched off, read from the Housing
+# First arm of the economy without the externalities (results/noext_clear/arm_A: delta_d 0, omega_c 0, every other
+# parameter the benchmark's), set beside the benchmark's and the evidence's range (calib_numbers.json). The two
+# sentences, Block 6's and the delta_d item's, take their direction from the numbers: 'at the low end' and 'above'
+# only when the penalty carries the transmission (the no-penalty ratio below the range) and the benchmark sits in
+# the lower half of the range.
+_nopen = None
+for l in gzip.open(os.path.join(ROOT, 'results', 'noext_clear', 'arm_A', 'cf.log.gz'), 'rt', errors='replace'):
+    if 'UNTARGETED delta_d child SUD odds ratio' in l:
+        _nopen = float(l.split('model=')[1].split()[0])
+out['x_odds_sud_nopen'] = f'{_nopen:.2f}'
+_olo, _ohi = float(_cal['u_odds_sud_lo']), float(_cal['u_odds_sud_hi'])
+_od, _dd = float(out['x_odds_sud']), _cal['c_delta_d_value']
+_nopen_s = out['x_odds_sud_nopen']
+if _nopen < _olo and _od < (_olo + _ohi) / 2:
+    out['x_odds_dd_sentence'] = (
+        'The low end also says something about $\\delta_d$ itself. With the penalty switched off, in the economy '
+        'without the externalities of Section~\\ref{sec:longrun}, the ratio is $' + _nopen_s + '$: the transmission '
+        'runs through $\\delta_d$, and a value that put the model in the middle of the range would be above $'
+        + _dd + '$, so the value the calibration uses is likely at the low end of what the evidence supports.')
+    out['x_odds_dd_item'] = ('Block 6 below says the same from the model\'s side: the intergenerational odds ratio the '
+                             'penalty produces sits at the low end of the evidence.')
+elif _nopen < _olo:
+    out['x_odds_dd_sentence'] = (
+        'With the penalty switched off, in the economy without the externalities of Section~\\ref{sec:longrun}, the '
+        'ratio is $' + _nopen_s + '$: the transmission runs through $\\delta_d$, and a value that put the model in '
+        'the middle of the range would be below $' + _dd + '$.')
+    out['x_odds_dd_item'] = 'Block 6 below sets the intergenerational odds ratio the penalty produces beside the evidence.'
+else:
+    out['x_odds_dd_sentence'] = (
+        'With the penalty switched off, in the economy without the externalities of Section~\\ref{sec:longrun}, the '
+        'ratio is $' + _nopen_s + '$, so the penalty is not what carries the transmission.')
+    out['x_odds_dd_item'] = 'Block 6 below sets the intergenerational odds ratio the penalty produces beside the evidence.'
+
 # the first forward pass in that log, years 1-10: peak homelessness, and drug users WITHOUT A SUD
 # (exp_pop; total_experimenters_1 in the steady state, the same count on the same base: the
 # no-reform control's t = 1 value equals the no-policy steady state's, 2.3726) at t = 1
