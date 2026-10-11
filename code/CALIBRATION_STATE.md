@@ -1,5 +1,17 @@
 # 1 October 19:35: STAGE B DONE -- omega_c = 0.085 IS THE BENCHMARK; STAGE C LAUNCHED IN THE CLOUD
 
+11 Oct 15:05 BOTH PENALTIES, THE LONG RUN (the author, 14:35-14:45: "remove deltad is a big problem....we need to bring it back
+in. can you actually solve the model with both deltad=0.24 and deltah=0.31?", "only solve it for the long run", "it is a very
+heavy simulation", "first solve the benchmark with both ... (fix the parameters to what the benchmark with deltad=0.24 and
+deltah=0 are). and then do TF full GE with piv and pv adjusting"). code/deltah/patch_both.py: delta_d on the SUD history and
+delta_h on the homelessness latch side by side (six unemployment blocks, the disorder on top so the threshold tests hold; four
+child classes, the source's own four-class branch; transmit_hl carries the latch-or-homeless-now bit in the housing slot of
+expected_child_value and the parent shares); build_both.sh, cf_arm_both.sh (four threads), remote_deltah_both.sh ->
+results/deltah_both; smoke run clean (index map consistent, threshold 24, grid 36). Worker session_012ekJz1TrmAvDKb2EsoibBh
+launched 15:02 UTC; the state is about four times the paper's, so the benchmark alone may take a day. THE delta_h-ONLY
+TRANSITION WORKER (session_01Pw9ARoA4Pk9aVRrZoyRidy, T = 40) WAS STOPPED AND ARCHIVED at 14:33 (the author: long run only);
+the delta_h-only footnote was REMOVED from the paper in round r297 (the author: "for now remove the deltah footnote").
+
 11 Oct 12:15 DELTA_H TEST DONE: THE GAIN TURNS INTO A LOSS (results/deltah; code/deltah; the author, 10 Oct 18:25: the result
 as a footnote at Section 2's "Adding one would matter little" sentence, "if the sign flips, do NOT write the footnote; tell the
 author first"). delta_d 0 (from 0.24), delta_h 0.31 on children whose parent was ever homeless while they were at home, every

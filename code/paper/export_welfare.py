@@ -105,15 +105,15 @@ def main():
          r'\begingroup\small',
          r'\sbox{\ntbox}{\begin{tabular}{@{}lccc@{}}', r'\toprule',
          r' & both held & $\pi_V$ clears & both clear \\', r'\midrule',
-         row(r"The newborn's gain, percent of lifetime consumption", 'tot'),
-         row(r"\quad childhood its parent does not count, the share $1-\omega_c$", 'extc'),
-         row(r"\quad better productivity at entry", 'E'),
-         row(r"\quad its own adult life under Treatment First, the parent's gain discounted to its birth", 'own'),
-         row(r"\quad childhood its parent does count, the share $\omega_c$", 'cnt'),
+         row(r"The newborn's gain $\Delta W$, percent of lifetime consumption", 'tot'),
+         row(r"\quad Childhood its parent does not count, $(1-\omega_c)\Delta C$", 'extc'),
+         row(r"\quad Better productivity at entry, $E$", 'E'),
+         row(r"\quad The newborn's own adult life under the policy, $\beta^{J_K}\Delta P$", 'own'),
+         row(r"\quad Childhood its parent does count, $\omega_c\Delta C$", 'cnt'),
          r'\midrule',
          f"The externality, the first two parts, percent of the gain & {rows['b']['pts']['ext_share']:.0f} & "
          f"{rows['p']['pts']['ext_share']:.0f} & {rows['tf']['pts']['ext_share']:.0f} \\\\",
-         row(r"The parent's own gain, percent of its lifetime consumption", 'P'),
+         row(r"The parent's own gain $\Delta P$, percent of the parent's lifetime consumption", 'P'),
          r'\bottomrule', r'\end{tabular}}', r'\usebox{\ntbox}',
          r"\tabnote{Notes: Treatment First against Housing First in the long run; the columns are the fifth, sixth "
          r"and seventh of Table~\ref{tab:longrun}. The first row is the CEV of~\eqref{eq:cev}. The four rows under it "
