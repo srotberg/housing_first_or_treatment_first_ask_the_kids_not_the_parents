@@ -65,7 +65,7 @@ OUT = os.path.join(HERE, 'results_numbers.json')
 # results/transition_2c/arm_null and arm_tf, which transition_source.py names; the 'old_*' keys below are those two
 # arms now, kept under their old names so every reader of the transition block is unchanged.
 sys.path.insert(0, HERE)
-from transition_source import REF as TR_REF, REF_NULL as TR_NULL, REF_TF as TR_TF, CURVE as TR_CURVE
+from transition_source import REF as TR_REF, REF_NULL as TR_NULL, REF_TF as TR_TF, CURVE as TR_CURVE, HORIZON as TR_HORIZON
 TF_ARM = os.environ.get('TF_ARM', 'tf85_c35/tf')
 ARMDIR = {'null_share': (RES, 'nulltf/null'), 'null_remote': (RES, 'nulltf/null'),
           'tf85': (RES, TF_ARM), 'omega1': (RES, 'omega1_clear/omega1'),
@@ -628,6 +628,8 @@ cc = subprocess.run([sys.executable, os.path.join(ROOT, 'code', 'transition_fix'
                     capture_output=True, text=True).stdout
 m = re.search(r'THE COHORT BORN AT THE REFORM \(b = 1\): CEV ([+-]\S+)%', cc)
 out['x_tr_cev_b1'] = f'{float(m.group(1)) - CEV0_TR:.1f}'
+# the horizon in words (11 October, T = 70): the pin's, so the sentence turns with it
+out['x_tr_horizon_word'] = {50: 'fifty', 60: 'sixty', 70: 'seventy', 80: 'eighty', 90: 'ninety', 100: 'a hundred'}[TR_HORIZON]
 out['x_tr_cev_b1_2'] = f'{float(m.group(1)) - CEV0_TR:.2f}'
 # (round f9ac1593, the author on ', against 1.39 percent in the long run.': "incorrect....need to use updated
 # figures", 'consumption,' -> 'consumption, even more than...'): against the long run of the SAME computation,

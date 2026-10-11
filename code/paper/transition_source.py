@@ -1,36 +1,37 @@
 """
-WHICH T = 60 TRANSITION PASS THE PAPER READS: one pin, imported by transition_series.py,
+WHICH TRANSITION PASS THE PAPER READS (T = 70 since 11 October): one pin, imported by transition_series.py,
 transition_figure.py and export_results.py, so the figure, its names and the introduction's
 numbers can never come from different passes (on 30 September the newest-log rule had
 moved export_results.py to restart 3c while the figure read restart 3).
 
 LOG is the run log whose FIRST forward pass (loop 0) is read; TAG names the directory under
-results/transition/ the series are written to.  code/trtf60 is not tracked, so a pass is
+results/transition/ the series are written to.  code/trtf60 and code/trtf70 are not tracked, so a pass is
 archived there before it is pinned.
 """
 import os
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
-# 9 October 10:03 (the author, 8 Oct: "can you run the T=60 transition again to try and finish solving it?"): the
-# T = 60 run on the same build (binary md5 4c1c6c64) relaunched from loop 0_r3's saved paths, tr2c_t60 restart r5,
-# loop 0 -- its first iterate from those seeds.  The drug market clears to a median gap of 0.1 per cent of the
-# price (worst 1.21 per cent, above 0.005 in 5 of 59 years), against worst 1.35 in loop 0_r3; the budget to a
-# median residual of 2.0e-3 (worst 4.5e-3, above 1e-3 in 34 of 59 years), against worst 5.3e-3.  Not converged,
-# so every number read from it is provisional.  The log here is loop 0_r5's segment alone (lines 10133-22617 of
-# tr2c_t60/run.log, from its 'TRANSITION INIT PARENT SHARE RESTORED loop= 0' to the CONVERGENCE TERMS after its
-# 'PATHS SAVED'), because the readers take a log's FIRST pass; the full log and the paths are archived in
-# results/transition_2c/loop0_r5/.  Previous pin: loop 0_r3 (7 October 20:38, results/transition_2c/loop0_r3).
-LOG = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop1_r5', 'run.log')
-TAG = 'tr2c_loop1_r5'
-# THE PINNED RUN'S HORIZON AND THE START OF ITS DRIFTING END (10 October, for the T = 70 re-pin): the path covers
-# years 1 to HORIZON - 1, and the figure's peaks are read before UNCONVERGED_FROM, where the terminal condition
-# starts to pull the path. Both move with the pin.
-HORIZON = 60
-UNCONVERGED_FROM = 41
+# 11 October 00:40 (the author: "pin the paper to T=70 now"): the T = 70 run on the same build, started from the
+# converged T = 60 loop 1_r5 paths (code/remote_transition_2c_t70.sh), loop 0, its first iterate from those seeds,
+# archived in results/transition_2c_t70/loop0 (run.log.gz, the paths, the curve) and gunzipped here, since the
+# readers open a plain log and code/trtf70 is not tracked. Every cohort's CEV agrees with the T = 60 pin to within
+# 0.005 points (2.74 against 2.73 for the cohort born at the reform); the worst budget residual on the path is
+# 1.27e-2 and the worst drug gap 1.60e-2, both in the years the longer horizon added. The arms it was solved
+# between (results/transition_2c_t70/arm_*) re-solve the T = 60 arms to a worst relative difference of 2.4e-4 and
+# carry only final.txt, so REF below stays on the T = 60 arms, which carry the logs and the by-node values.
+# Previous pin: T = 60 loop 1_r5 (9 October 10:03, results/transition_2c/loop1_r5).
+LOG = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_loop0', 'run.log')
+TAG = 'tr2c_t70_loop0'
+# THE PINNED RUN'S HORIZON AND THE START OF ITS DRIFTING END: the path covers years 1 to HORIZON - 1, and the
+# figure's peaks are read before UNCONVERGED_FROM, where the path stops being iterated: in this loop 0 the years
+# 60 to 69 that the horizon added carry the terminal prices as seeds (budget residual up to 1.25e-2 there, under
+# 2e-3 before), while years 1 to 59 reproduce the converged T = 60 path to five decimals. Both move with the pin.
+HORIZON = 70
+UNCONVERGED_FROM = 60
 OUT = os.path.join(ROOT, 'results', 'transition', TAG)
 # the benchmark welfare curve the cohort CEVs are read against, and the two steady states the path is
 # solved between: Housing First with no policy change, and the Treatment First long run, on the same build
-CURVE = os.path.join(ROOT, 'code', 'trtf60', 'tr2c_loop1_r5', 'welfare_curvebaseline_benchmark.dat')
+CURVE = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_loop0', 'welfare_curvebaseline_benchmark.dat')
 REF = os.path.join(ROOT, 'results', 'transition_2c')
 REF_NULL, REF_TF = 'arm_null', 'arm_tf'
 # the previous pin, kept for the record: restart 3g's loop 0 on the old build (30 September)
