@@ -274,8 +274,16 @@ used and matched only as a proportional response, not as a level. The same scrip
 married couples without children and with other cell definitions; the paper quotes none of them.
 
 **δ_d, earnings the child loses because of a parent's SUD — 0.24.** Ext. Nilsson (2017), *Journal of Political Economy*
-125(4): children exposed in utero to a temporary Swedish policy that let grocery stores in two regions sell strong
-beer earn about 24 percent less as adults (`penalty_child_addicted = 0.24`). A child whose parent had the SUD at
+125(4), Table 4, Panel A, column 1 (the PDF is in related_lit/): children born to mothers under 21 in the two
+experiment regions and conceived July-October 1967, so exposed from early pregnancy to the policy that let grocery
+stores sell strong beer, have average log earnings at age 32 lower by exp(b)-1 = -0.244 (SE 0.090) than the
+surrounding cohorts and the same cohorts elsewhere (a triple difference); men -0.241 (SE 0.113), women -0.174
+(SE 0.138, insignificant); the abstract rounds it to 'around 20 percent'. Footnote 40: at age 37, or in cumulative
+earnings over ages 26-37, the effect is similar for men and smaller for women; Linnros and Nilsson (2025) follow
+the cohort to 47, cumulative earnings 16 percent lower. The mean effect is driven by the part of the distribution
+below the 40th percentile, with about -14 percent from the 40th to the 80th; years of schooling -0.32 (men -0.52),
+high school completion -6.7 points, welfare receipt +3.5 points. It is an intention-to-treat average over every
+such child, drinkers' and non-drinkers' alike (`penalty_child_addicted = 0.24`). A child whose parent had the SUD at
 any point while it lived at home, before J_K or the parent's death, enters with its productivity lowered by that
 proportion for life. Transmission of the SUD is then untargeted (Part III, Block 6).
 
