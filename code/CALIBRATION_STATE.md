@@ -14,8 +14,14 @@ by-node values in the arms, so no earnings/own split. Mechanism: with delta_d = 
 children's earnings, while each revocation that puts a family in a shelter marks the child with the 31 percent penalty, so
 earnings and revenue fall, the budget tightens and pi_V is cut pass after pass (0.0962 -> 0.0718), homelessness rises above
 the delta_h benchmark and the newborn loses. NOT WRITTEN INTO THE PAPER: the footnote and the Section 2 sentence wait for
-the author's decision (reported in chat 11 Oct 07:41 and 12:20). The rough delta_h transition at T = 60 needs the hh patch
-(code/deltah/patch_hh.py, 56 lines of cf.f90) ported to the transition source; sized below when done.
+the author's decision (reported in chat 11 Oct 07:41 and 12:20). THE ROUGH delta_h TRANSITION (the author, 10 Oct: "not exact,
+enough for a sense of the numbers"): code/deltah/remote_deltah_tr.sh in a cloud worker, launched 11 Oct ~12:50 UTC ->
+results/deltah_tr. The latch patch (patch_latch.py) applies to the transition source unchanged (every anchor found; the
+patched T = 40 source compiles); T = 40 rather than 60 because the latch adds a third to the state and the transition holds
+every period's value function (the paper's T = 70 was OOM-killed once at 15 GiB). The worker re-solves the delta_h benchmark
+(the first worker's container is gone), Housing First on cf_fix2_share_hh (for the t = 1 parent share) and Treatment First on
+cf_fix2_hh warm-started at the accepted long run, compares both with results/deltah, stages the path with stage_tr_fix.sh and
+seeds it with the paper's converged T = 60 path rescaled to this economy's terminal values. About a day of compute.
 
 11 Oct 09:20 T = 70 LOOP 1 IN, THE PAPER RE-PINNED TO IT (the author, 11 Oct: re-pin to loop 1 only if a quoted number
 moves). results/transition_2c_t70/loop1 (worst budget residual 1.19e-2, worst drug gap 1.85e-2, both in years 60-69).
