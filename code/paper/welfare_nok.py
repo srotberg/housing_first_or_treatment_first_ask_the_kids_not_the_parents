@@ -62,10 +62,13 @@ def lagrange(t, xs, ws):
 
 class Bench:
     """a benchmark's handover, kappa_x probe and welfare curves (ref: a directory with PARAM_HANDOVER.bench.txt,
-    bench.log.gz and files/welfare_curvebaseline_benchmark.dat.gz)"""
+    bench.log.gz and files/welfare_curvebaseline_benchmark.dat.gz, or the curve file's path as curve)"""
 
-    def __init__(self, ref):
+    def __init__(self, ref, curve=None):
         self.ref = ref
+        # the curve file: files/welfare_curvebaseline_benchmark.dat.gz under ref unless given (results/deltah keeps it at
+        # the top level)
+        curve = curve or os.path.join(ref, 'files', 'welfare_curvebaseline_benchmark.dat.gz')
         h = _handover(os.path.join(ref, 'PARAM_HANDOVER.bench.txt'))
         self.beta, self.kx, self.omega = h['discount_factor'], h['kappa_x'], h['weight_on_child']
         self.b25 = self.beta ** CHILD_YEARS
@@ -82,8 +85,7 @@ class Bench:
         assert self.H0 and self.bkd, f'{ref}: the benchmark log carries no KAPPA_X PROBE'
         self.K = self.s_child + self.bkd
         self.adult_sens = self.bkd / self.b25            # the same sensitivity at the level of the value at 26
-        rows = [l.split() for l in gzip.open(os.path.join(ref, 'files', 'welfare_curvebaseline_benchmark.dat.gz'),
-                                             'rt') if l.strip()]
+        rows = [l.split() for l in gzip.open(curve, 'rt') if l.strip()]
         self.xs = [float(r[0]) for r in rows]
         self.ws = [float(r[1]) for r in rows]                       # the lifetime curve, childhood at one, with the term
         assert all(b > a for a, b in zip(self.ws, self.ws[1:])), 'curve not increasing'
