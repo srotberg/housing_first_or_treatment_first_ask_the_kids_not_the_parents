@@ -703,8 +703,8 @@ _nopen_s = out['x_odds_sud_nopen']
 if _nopen < _olo and _od < (_olo + _ohi) / 2:
     out['x_odds_dd_sentence'] = (
         'With the penalty switched off, in the economy '
-        'without the externalities of Section~\\ref{sec:longrun}, the ratio is $' + _nopen_s + '$: the transmission '
-        'runs through $\\delta_d$, and a value that put the model in the middle of the range would be above $'
+        'without the externalities of Section~\\ref{sec:longrun}, the SUD odds ratio is $' + _nopen_s + '$: the transmission '
+        'runs through $\\delta_d$, and the value that puts the model in the middle of the range is above $'
         + _dd + '$, so the value the calibration uses is likely at the low end of what the evidence supports.')
 elif _nopen < _olo:
     out['x_odds_dd_sentence'] = (
