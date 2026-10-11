@@ -1,29 +1,21 @@
-\begin{table}[!tb]\centering\small
-\caption{The newborn's gain, who pays for it, and the externality}\label{tab:whogains}
-\begin{tabular}{@{}lccc@{}}
+\begin{table}[!htb]\centering
+\caption{Where the newborn's gain comes from}\label{tab:whogains}
+\begingroup\small
+\sbox{\ntbox}{\begin{tabular}{@{}lccc@{}}
 \toprule
  & both held & $\pi_V$ clears & both clear \\
 \midrule
-\multicolumn{4}{@{}l}{\emph{The three parts, in lifetime utility}} \\
-Child's childhood, $C$ & 1.50 & 3.07 & 0.83 \\
-Child's adult life, $A$ & 0.19 & 1.07 & 0.63 \\
-\quad living under Treatment First as an adult, $\beta^{J_K}P$ & $-$0.19 & 0.66 & 0.45 \\
-\quad starting adult life more productive, $E=A-\beta^{J_K}P$ & 0.39 & 0.41 & 0.19 \\
-Parent's own lifetime value, $P$ & $-$0.77 & 2.63 & 1.80 \\
+The newborn's gain, percent of lifetime consumption & 3.75 & 11.32 & 4.52 \\
+\quad childhood its parent does not count, the share $1-\omega_c$ & 2.60 & 5.41 & 1.42 \\
+\quad better productivity at entry & 1.81 & 2.01 & 0.85 \\
+\quad its own adult life under Treatment First & $-$0.92 & 3.34 & 2.11 \\
+\quad childhood its parent does count, the share $\omega_c$ & 0.25 & 0.56 & 0.14 \\
 \midrule
-\multicolumn{4}{@{}l}{\emph{Three verdicts}} \\
-The household's own, $P$ & $-$0.77 & 2.63 & 1.80 \\
-The newborn's, $C+A$ & 1.69 & 4.14 & 1.46 \\
-\quad as a CEV, percent of lifetime consumption & 5.05 & 12.96 & 4.33 \\
-Equal weights on parent and child, $P+C+A$ & 0.92 & 6.77 & 3.26 \\
-\midrule
-\multicolumn{4}{@{}l}{\emph{The externality}} \\
-In childhood, $(1-\omega_c(\xi-1))\,C$ & 1.45 & 2.96 & 0.80 \\
-In adult life, $E$ & 0.39 & 0.41 & 0.19 \\
-\quad share of the newborn's gain, percent & 108 & 81 & 67 \\
+The externality, the first two parts, percent of the gain & 118 & 66 & 50 \\
+The parent's own gain, percent of its lifetime consumption & $-$1.43 & 5.06 & 3.42 \\
 \bottomrule
-\end{tabular}
-\begin{minipage}{0.97\textwidth}\footnotesize\vspace{2pt}
-Notes: Treatment First against Housing First in the long run, in utils of a newborn's lifetime value, without the homelessness disamenity of footnote~\ref{fn:kappax}; 0.34 utils are about one percent of lifetime consumption. The columns are the fifth, sixth and seventh columns of Table~\ref{tab:longrun}. $C$ and $A$ are the two terms of~\eqref{eq:newbornw}, each policy's own. $P$ is the value at 26 of~\eqref{eq:fbellman} by entry node under each policy, weighted by the Housing First entrants, so the same households are valued under both; it carries the child terms at the parent's weight $\omega_c$. $A$ splits exactly into $\beta^{J_K}P$, the child's own gain from living under the policy as an adult, and $E$, its gain from entering adult life on a better productivity node. The parent counts $\omega_c(\xi-1)$ of its child's flow and $\omega_c$ of the charge $D$, so the externality is the rest of $C$ and, up to that charge, $E$.
-\end{minipage}
+\end{tabular}}
+\usebox{\ntbox}
+\tabnote{Notes: Treatment First against Housing First in the long run; the columns are the fifth, sixth and seventh of Table~\ref{tab:longrun}. The first row is the CEV of~\eqref{eq:cev}. The four rows under it sum to it: each is read off the benchmark's welfare curve after the ones above it. Childhood is the change in the child's flow at its weight $\xi-1$, split into the share $\omega_c$ its parent counts and the share $1-\omega_c$ it does not. Better productivity at entry holds the policy and changes who enters adult life; the newborn's own adult life holds who enters and changes the policy, and equals the parent's own gain discounted to the child's birth. The parent's own gain is the change in its value at $j=1$ under each policy, for the households Housing First's newborns are born into, as a percent of the parent's own lifetime consumption.}
+\endgroup
 \end{table}
