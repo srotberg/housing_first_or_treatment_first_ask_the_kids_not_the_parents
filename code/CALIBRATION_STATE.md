@@ -1,3 +1,19 @@
+12 Oct 00:40 ROUND r306: THE AUTHOR'S SIX COMMENTS ON r305 AND THE REFEREE ITEMS 5-12 AND 16 (the author: "remove all red and green
+and put updates in red"; "finish items 1-12"; 14 and 15 left out, 16 "yes be explicit"). Strikes and notes stripped (marks.drop_marks +
+unwrap), base_r306 = the r305 state as read. Family Options cut to one sentence; a clause that no trial randomises a parent's drug
+use (the childhood evidence is observational); the screen-rule and supplier sentences folded into footnotes; the omega_c = 0.686
+footnote explained from the behavioural response (x_nish_b_pc 39 vs 32, x_nish_sud_pc 40 vs 33, x_nish_h_pc 5 vs 1; prices as in
+the benchmark); Mehay and Pacula's estimates in a footnote with why the leavers belong in the comparison (the model's count
+includes those the screen excludes); Milby's contingent arm beside the model's (milby_* lit numbers 8.32/6.60/4.48, ratio 1.26;
+x_milby_model_impact 1.19, x_milby_model_lr 1.09 from the pinned log's TRANSITION MILBY lines, voucher holders' recovery hazard
+against housed non-holders, both with a SUD); the recommendation stated as conditional; 'over a generation' replaced by the years
+above the benchmark (x_tr_h_above_yrs 61, x_tr_hchild_above_yrs 67) and the cumulative excess (x_tr_hchild_excess_pty 3.85
+point-years, 3.7 years of the benchmark's rate; export_results.py); the CEV's consumption named at the first 4.52; the
+d-notation and kappa_phi_d footnotes; Greenwood sentence softened; Hjorthoj 2023 and AFCARS FY2025 struck from the references;
+the 'no long-run rise' condition (with recycling; the fifth column rises); the code-verification sentence in the title footnote;
+'general equilibrium means the drug price and pi_V, rents and house prices held' in Section 6. NOT DONE: Block 9's count (8
+items, 'ten parameters'; the referee says eleven -- unresolved), the stylized sigma/beta check (next), the yellow spans.
+
 11 Oct 23:20 ROUND r305 AND SIX CLOUD JOBS FOR THE REFEREE'S REPORT (the author: "work on all of them and show me in the paper the
 changes in crossed lines and updates in red", "run tests in parallel sessions", "i dont think we need to check so many deltads....
 0 is enough", "i dont think we need to show more cases for omega_c. 0.6868 is large", "we are not doing 1-1 with the real policy. we

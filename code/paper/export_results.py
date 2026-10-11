@@ -175,6 +175,15 @@ _nish_bench = welfare_nok.Bench(os.path.join(ROOT, 'results', 'omega_nishiyama_2
                                              'bench_' + re.search(r'(bench_[0-9.]+_b[0-9.]+_ku[0-9.]+)', _nh).group(1)[6:]))
 out['x_nish_cev'] = f"{welfare_nok.cev_free(adir('nish_tf'), _nish_bench) - welfare_nok.cev_free(adir('nish_null'), _nish_bench):.2f}"
 out['_nish_cev_logged'] = f"{cev_logged('nish_tf') - cev_logged('nish_null'):.2f}"   # the Fortran's: childhood at one, with the term
+# (12 October, the author: "this has to be better explained") the sensitivity's long-run changes against its own no-policy
+# run, read as the paper's are: the stronger behavioural response is where the larger gain comes from
+_nt = final('nish_tf')
+out['x_nish_b_pc'] = pc(_nt['drug use b']['pc'])
+out['x_nish_sud_pc'] = pc(_nt['SUD lambda_d']['pc'])
+out['x_nish_h_pc'] = pc(_nt['homelessness h_1']['pc'])
+out['x_nish_h_dir'] = 'lowers' if _nt['homelessness h_1']['pc'] < 0 else 'raises'
+out['x_nish_price_pc'] = pc(_nt['drug price']['pc'])
+out['x_nish_piv_pc'] = pc(_nt['pi_V (voucher probability)']['pc'])
 assert float(out['x_nish_cev']) > 0, 'the omega_c sensitivity no longer favours Treatment First'
 # the long-run gain splits about evenly between childhood and adulthood
 # (10 October) without the kappa_x * H term, from the same objects as Table tab:whogains (welfare_nok.parts)
@@ -823,6 +832,26 @@ hc_cross = {t: sum(share[t][a] * MB[t][a] for a in range(25)) / sum(MB[t][:25]) 
 out['x_tr_hchild_peak_pc'] = pc(100 * (max(hc_cross[t] for t in range(1, 11)) / hc0_tr - 1))
 out['x_tr_hchild_peak'] = f'{100 * max(hc_cross[t] for t in range(1, 11)):.2f}'
 out['x_tr_hchild_peak_dir'] = 'rises' if max(hc_cross[t] for t in range(1, 11)) > hc0_tr else 'falls'
+# (12 October, the referee: homelessness stays above the benchmark for about 60 years, not 'a generation'; and
+# 'cumulative exposure, not point-in-time') the last year each is above the benchmark, and the excess summed over
+# those years, in percentage-point-years
+_hy = [t for t in sorted(H) if H[t] > h0]
+_cy = [t for t in sorted(hc_cross) if hc_cross[t] > hc0_tr]
+out['x_tr_h_above_yrs'] = str(max(_hy)) if _hy else '0'
+out['x_tr_hchild_above_yrs'] = str(max(_cy)) if _cy else '0'
+out['x_tr_h_excess_pty'] = f"{sum(100 * (H[t] - h0) for t in _hy):.2f}"
+out['x_tr_hchild_excess_pty'] = f"{sum(100 * (hc_cross[t] - hc0_tr) for t in _cy):.2f}"
+out['x_tr_hchild_excess_bench_yrs'] = f"{sum(hc_cross[t] - hc0_tr for t in _cy) / hc0_tr:.1f}"   # in years of the benchmark's rate
+# MILBY'S ARMS ON THE PATH (12 October, the referee: Milby is a trial of abstinence-contingent housing, the margin the
+# model is said to shut off): the recovery hazard of voucher holders, whose voucher is conditional under Treatment
+# First, against housed households without a voucher, both with a SUD, on impact and in the last period
+_mb = {}
+for l in open(best, errors='replace'):
+    if 'TRANSITION MILBY t=' in l:
+        _d = {k: float(v) for k, v in re.findall(r'(\w+)=\s*(\S+)', l) if k != 't'}
+        _mb[int(l.split('t=')[1].split()[0])] = (_d['rec_voucher'] / _d['mass_voucher']) / (_d['rec_housed_nov'] / _d['mass_housed_nov'])
+out['x_milby_model_impact'] = f"{_mb[1]:.2f}"
+out['x_milby_model_lr'] = f"{_mb[max(_mb)]:.2f}"
 
 json.dump(out, open(OUT, 'w'), indent=1, sort_keys=True)
 print(f'wrote {OUT} (transition from {os.path.relpath(best, ROOT)}, forward pass {out["x_tr_pass"]})')
