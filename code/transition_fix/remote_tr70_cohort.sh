@@ -14,7 +14,7 @@
 # and run the same command again whenever the call is stopped: it ATTACHES to the running worker.
 set -u
 BRANCH=claude/two-period-addiction-hazard-d7gb61
-C=$(cd "$(dirname "$0")" && pwd)
+C=$(cd "$(dirname "$0")/.." && pwd)   # this script lives in code/transition_fix; C is code/
 REPO=$(cd "$C/.." && pwd)
 REF=$REPO/results/reference/hf_2c_omega_0.085
 R=$REPO/results/transition_2c_t70_cohort
