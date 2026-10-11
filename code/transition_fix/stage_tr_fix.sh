@@ -42,7 +42,10 @@ echo "t = 0 distribution from $NULL: $(md5sum "$N/distribution_stationary1baseli
 
 [ -s "$NULL/newborn_parent_share_counter.dat" ] || { echo "REFUSING: $NULL has no newborn_parent_share_counter.dat (run it on cf_fix2_share)"; exit 1; }
 cp "$NULL/newborn_parent_share_counter.dat" "$N/newborn_parent_share_initial.dat"
-python3 -c "import sys; v=[float(l) for l in open('$N/newborn_parent_share_initial.dat') if l.strip()]; assert len(v)==104 and abs(sum(v)-1)<1e-9, (len(v), sum(v)); print('parent share: 104 values, sum', sum(v))"
+# SHARE_LEN: employment_grid_size x 2 x 2 entries, 104 in the paper's two-class economy; the four-class
+# both-penalties economy (deltah/patch_both.py) has 208 (deltah/remote_deltah_both_tr25.sh sets it)
+SHARE_LEN=${SHARE_LEN:-104}
+python3 -c "import sys; v=[float(l) for l in open('$N/newborn_parent_share_initial.dat') if l.strip()]; assert len(v)==$SHARE_LEN and abs(sum(v)-1)<1e-9, (len(v), sum(v)); print('parent share: $SHARE_LEN values, sum', sum(v))"
 
 printf '%15.12f\n' "$TARGET" > "$N/govt_revenues_to_use_in_testsbaseline_benchmark.dat"
 echo "budget target $(cat "$N/govt_revenues_to_use_in_testsbaseline_benchmark.dat")"
