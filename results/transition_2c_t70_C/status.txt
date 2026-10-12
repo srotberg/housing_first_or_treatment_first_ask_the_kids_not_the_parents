@@ -1,5 +1,14 @@
-# the T = 70 transition on RULE C, two loops (code/transition_fix/remote_tr70_C.sh); 12 Oct 19:36 UTC
+# the T = 70 transition on RULE C, two loops (code/transition_fix/remote_tr70_C.sh); 12 Oct 20:00 UTC
 remote_tr70_C: free disk 29G, memory 15 GiB, cores 4 (19:29)
 remote_tr70_C: building cf_fix (19:29)
 remote_tr70_C: building cf_fix2 (19:32)
 remote_tr70_C: building cf_fix2_share (19:34)
+remote_tr70_C: arm null on cf_fix2_share: DRUG_PRICE_START=1.0001082 (19:36)
+remote_tr70_C: terminal arm from the long-run rule-C arm's latest published pass (not yet accepted): price 0.8548, pi_V 0.09887 (19:40)
+remote_tr70_C: arm tf on cf_fix2_treatC: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.09887 DRUG_PRICE_START=0.8548 EXTRA_SET=cost_per_drug_test 0.0004946100 (19:40)
+
+== arm null
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+
+== arm tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
