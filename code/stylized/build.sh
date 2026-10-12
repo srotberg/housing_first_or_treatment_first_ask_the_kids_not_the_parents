@@ -45,16 +45,16 @@ pdflatex -interaction=nonstopmode -jobname=children_first_housing_later housing_
 echo "   wrote writing/children_first_housing_later.pdf"
 
 echo "== checking that nothing in the prose is typed"
-python3 check_numbers.py
+python3 tools/check_numbers.py
 
 echo "== checking that every acronym is defined on first use"
-python3 check_acronyms.py
+python3 tools/check_acronyms.py
 
 echo "== checking the hyphenation of compound modifiers"
-python3 check_hyphens.py
+python3 tools/check_hyphens.py
 
 echo "== checking that no two words have run together"
-python3 check_spacing.py
+python3 tools/check_spacing.py
 
 # THE TABLES AGAINST THE PROSE. check_alignment.py below judges the Set column
 # against the Fortran; this judges it against the note, which is a different
@@ -76,13 +76,13 @@ python3 check_spacing.py
 # were invisible while table cells kept showing red. Both states are valid LaTeX
 # and the build stayed green, which is why nothing caught it.
 echo "== checking that the red mark actually renders red"
-python3 check_red.py
+python3 tools/check_red.py
 
 echo "== checking the citation convention"
-python3 check_citations.py
+python3 tools/check_citations.py
 
 echo "== checking that the tables and the prose say the same thing"
-python3 check_params.py
+python3 tools/check_params.py
 
 # THE SET COLUMN AGAINST THE CODE, AND NOT BY EYE. links.py says the mapping is
 # "checked by eye once", and TRANSITION_LESSONS records the same check as a

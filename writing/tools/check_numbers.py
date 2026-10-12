@@ -30,7 +30,7 @@ import os
 import re
 import sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # writing/: these tools live in writing/tools/
 SRC = os.path.join(HERE, 'housing_first_children_later.src.tex')
 TAB = os.path.join(HERE, 'tables')
 

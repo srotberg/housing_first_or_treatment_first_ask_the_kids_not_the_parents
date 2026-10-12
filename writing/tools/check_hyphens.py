@@ -27,10 +27,12 @@ has to be checked against VERBS.
 Run:  python3 check_hyphens.py
 """
 
+import os
 import re
 import sys
 
-SRC = 'housing_first_children_later.src.tex'
+SRC = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),   # writing/, one up from tools/
+       'housing_first_children_later.src.tex')
 
 # Compounds that take a hyphen when they modify a following noun.
 COMPOUNDS = [

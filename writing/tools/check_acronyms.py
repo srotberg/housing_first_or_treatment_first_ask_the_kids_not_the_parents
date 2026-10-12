@@ -23,10 +23,12 @@ a reason rather than silencing the check.
 Run:  python3 check_acronyms.py
 """
 
+import os
 import re
 import sys
 
-SRC = 'housing_first_children_later.src.tex'
+SRC = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),   # writing/, one up from tools/
+       'housing_first_children_later.src.tex')
 
 # Not acronyms, or proper names that stand alone.
 ALLOW = {

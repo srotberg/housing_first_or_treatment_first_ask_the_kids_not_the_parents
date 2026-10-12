@@ -31,7 +31,7 @@ from that one place.
 3. Run `python3 code/paper/sync_tables.py`. It exports a placeholder named
    `q_<symbol>`.
 4. Quote it in the prose as `@@q_<symbol>@@`, never as a digit.
-5. Run `python3 writing/check_numbers.py`. It should stay clean.
+5. Run `python3 writing/tools/check_numbers.py`. It should stay clean.
 
 ## Numbers that also appear on a figure or in a table
 
@@ -79,7 +79,7 @@ without anyone deciding to mark it. Freeze a new baseline with `--freeze` on
 each, and only once the reader has seen the current round.
 
 Red is cleared at the start of a round only up to the start of the quantitative
-model's section, by `writing/strip_red_before_transition.py`. From Section 4
+model's section, by `writing/tools/strip_red_before_transition.py`. From Section 4
 onward it accumulates until the reader says otherwise.
 
 ## Decimals
@@ -100,7 +100,7 @@ decimals in the intro. i am referring to all numbers not just this"*.
 
 ## The checker
 
-`writing/check_numbers.py` reports any literal in the prose that a table also
+`writing/tools/check_numbers.py` reports any literal in the prose that a table also
 states. It prints rather than fails, because ages, sample sizes, years,
 bibliography page numbers and other papers' odds ratios all collide with
 parameter values. A genuine collision goes in `ALLOW` with a reason; anything
@@ -142,7 +142,7 @@ The acronym belongs in its own brackets, not folded into a citation. "(National
 Survey on Drug Use and Health, NSDUH 2024)" defines nothing; "the 2024 National
 Survey on Drug Use and Health (NSDUH)" does.
 
-`writing/check_acronyms.py` scans the prose, ignoring comments and the
+`writing/tools/check_acronyms.py` scans the prose, ignoring comments and the
 bibliography, and reports any acronym used more than once whose first
 appearance is not a definition. Run it with `check_numbers.py` before sending a
 draft.
@@ -179,7 +179,7 @@ compound: "rational forward-looking households", but "households are rational an
 forward looking". The checker flags it hyphenated before punctuation; a predicative use
 followed by a word ("are forward-looking and weigh") it cannot see, so look for those.
 
-`writing/check_hyphens.py` scans the prose in both directions, for a known
+`writing/tools/check_hyphens.py` scans the prose in both directions, for a known
 compound sitting unhyphenated before a noun and for a hyphen where the phrase is
 a noun. It strips red edit marks first, since a `\textcolor{red}{}` wrapper puts
 a brace between a compound and the noun it modifies and makes a correct phrase

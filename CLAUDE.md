@@ -12,9 +12,9 @@ In short:
   (`@@q_*@@` names come from `code/paper/sync_tables.py`);
 - a sentence asserting one quantity exceeds another takes its direction word
   from `compare()` in `fill.py`, so it turns when the numbers do;
-- `writing/check_numbers.py` catches anything typed that a table also states;
+- `writing/tools/check_numbers.py` catches anything typed that a table also states;
 - red marks what moved, produced by `\new{}` and by `sync_tables.py`, and is
-  cleared by `writing/strip_red_before_transition.py` only ahead of the
+  cleared by `writing/tools/strip_red_before_transition.py` only ahead of the
   quantitative model's section, so Section 4 onward accumulates red until the
   author has read it.
 
@@ -125,9 +125,9 @@ rule was written for.
 
 ## Red accumulates from Section 4 onward, and stripping it is a mistake
 
-`writing/strip_red.py` takes a file and removes every red wrapper in it. It must
+`writing/tools/strip_red.py` takes a file and removes every red wrapper in it. It must
 NOT be run on the whole note between rounds. The stripper for a comment round is
-`writing/strip_red_before_transition.py`, which clears red only up to the end of
+`writing/tools/strip_red_before_transition.py`, which clears red only up to the end of
 Section 3.6 and leaves everything from the transition onward alone, because the
 quantitative half is still being audited and the author reads it by looking at
 everything that has changed since they last saw it, not only at the most recent
@@ -159,14 +159,14 @@ for me in case I need to understand why you made a change"*. Both are standing.
 
 - **Deleted text stays in the paper as `\del{...}`**, red and struck through (ulem's `\sout`), right before
   whatever replaced it. Write the round's edits with `\new{}` as usual, keep a copy of the source as the author
-  last saw it, then run `python3 writing/track_changes.py OLD CUR OUT`: it diffs the two word by word, strikes
+  last saw it, then run `python3 writing/tools/track_changes.py OLD CUR OUT`: it diffs the two word by word, strikes
   every deleted run, wraps any inserted run that is not yet marked, takes the reference list entry by entry,
   and leaves display maths, tables, figures and section titles alone (listed as SKIPPED; say those in a note).
   Generated sentences get the same treatment from the round's splice, which strikes what a moved name used to
   print. Tables stay black, so a table change goes in a note.
 - **A substantive change carries `\why{...}`**, a short green note after it, listed with its page after the
   abstract. Say what was wrong and where the new number or claim comes from. Not for grammar or hyphens.
-- `writing/strip_red.py` removes both, contents and all (`writing/marks.py`), and the checkers skip them.
+- `writing/tools/strip_red.py` removes both, contents and all (`writing/tools/marks.py`), and the checkers skip them.
   Escape `_` in anything struck (`\sout` is not verbatim), and never strike a lone control space.
 
 ## Never write unmarked prose into the paper

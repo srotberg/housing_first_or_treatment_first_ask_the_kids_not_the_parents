@@ -1,7 +1,7 @@
 """Show what a round deleted, struck through, beside what replaced it (the author, 3 October: "deleted
 sentences should show as crossed so I know what you delete").
 
-    python3 writing/track_changes.py OLD CUR OUT
+    python3 writing/tools/track_changes.py OLD CUR OUT
 
 OLD is the source as the author last saw it, CUR the source after the round's edits (insertions in \\new{},
 notes in \\why{}, update tags in \\upd{}). OUT gets CUR with every deleted run as \\del{...} right before what

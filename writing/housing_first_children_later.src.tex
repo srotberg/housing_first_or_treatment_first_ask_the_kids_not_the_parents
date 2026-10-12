@@ -48,7 +48,7 @@
 % a passthrough while any \new remains in the file.
 \newcommand{\new}[1]{{\color{red}#1}}
 % DELETIONS STRUCK THROUGH (the author, 11 October: "if you delete something i want to see what you deleted"):
-% \del prints what a round took out, red and struck; writing/track_changes.py writes it, strip_red.py removes it.
+% \del prints what a round took out, red and struck; writing/tools/track_changes.py writes it, strip_red.py removes it.
 \DeclareRobustCommand{\del}[1]{{\color{red}\sout{#1}}}
 % WHAT THE NEXT SIMULATIONS CHANGE (2 October): \upd tags a paragraph or a sentence, \updnum colours a number or a
 % generated sentence that will be refilled. Blue, so they are never confused with the red of an edit; the red
@@ -71,7 +71,7 @@
 % WHAT A ROUND DELETED, AND WHY IT CHANGED (the author, 3 October: "deleted sentences should show as crossed so I
 % know what you delete", and "leave notes for me in case I need to understand why you made a change"). \del prints
 % deleted text struck through in red; \why prints a note in green and lists it, with its page, after the abstract.
-% Both go, contents and all, when red is stripped (writing/marks.py), and the checkers do not read them.
+% Both go, contents and all, when red is stripped (writing/tools/marks.py), and the checkers do not read them.
 \usepackage[normalem]{ulem}
 % \tocheck{...} HIGHLIGHTS A CLAIM STILL TO BE VERIFIED (the author, 9 October: "we need to verify if this is the
 % reason or the drug price. please highlight it"): yellow in the PDF until the run that settles it is in
