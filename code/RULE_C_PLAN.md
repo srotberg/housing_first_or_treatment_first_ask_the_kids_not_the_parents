@@ -23,6 +23,7 @@ no screen and are NOT re-run. The stylized model (Section 3) has no treatment ch
 | S-fixp | Table 5: price held (= perfectly elastic supply), pi_V clears | session_01Rc5f71NPBc4XASW7thMJEn, remote_decomp_shares_C.sh fixp | - | launched 18:21 |
 | P70 | detection 0.70 | session_01XQrGMFU8DqProc67i3gsbD, code/pdet/remote_pdet_C.sh 0.70 -> results/counterfactuals_2c/tf_pdet70_C | C1 warm start | launched 18:21 |
 | P50 | detection 0.50 | session_01U7N2fZm3a9RRLNJjSYYWY8, code/pdet/remote_pdet_C.sh 0.50 -> results/counterfactuals_2c/tf_pdet50_C | C1 warm start | launched 18:21 |
+| DD0 | delta_d = delta_h = 0, one class: benchmark re-solved, Housing First, Treatment First on rule C, then fixboth and fixp (fixp = perfectly elastic supply, the author's point on the small gain) | session_01McpMNmiZC346o9SRtsHdqz, code/deltad/remote_deltad1c_C.sh + remote_deltad1c_decomp_C.sh -> results/deltad/dd0_1c_C, dd0_1c_C_decomp | - | launched 18:46 |
 | TR | the T = 70 transition on rule C (two loops) and the cohort-print loop | cloud session | C1 accepted | after C1 |
 | PAPER | exporters re-pointed to the rule-C arms, every number regenerated, Section 4's rule and its footnote, the rule-A footnote, introduction and abstract; red, struck deletions, notes | this session | arms land | as they land |
 | CODE | the code/ scripts reorganised (REFEREE_PLAN item 5) | this session | no run executing them | last |
