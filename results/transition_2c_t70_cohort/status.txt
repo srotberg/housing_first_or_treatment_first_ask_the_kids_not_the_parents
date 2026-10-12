@@ -1,4 +1,4 @@
-# T = 70, loop 2 re-run with the entrant-by-parent-age print (code/transition_fix/remote_tr70_cohort.sh); 12 Oct 15:53 UTC
+# T = 70, loop 2 re-run with the entrant-by-parent-age print (code/transition_fix/remote_tr70_cohort.sh); 12 Oct 15:54 UTC
 remote_tr70_cohort: gfortran missing, installing (07:19)
 remote_tr70_cohort: free disk 29G, memory 15 GiB, cores 4 (07:20)
 remote_tr70_cohort: building cf_fix (07:20)
@@ -10,6 +10,10 @@ remote_tr70_cohort: tr70_cohort built: c5ff31b2 (07:26)
 remote_tr70_cohort: arm null on cf_fix2_share: DRUG_PRICE_START=1.0001082 (07:26)
 remote_tr70_cohort: arm tf on cf_fix2: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.096152024 DRUG_PRICE_START=0.85551291 EXTRA_SET=cost_per_drug_test 0.0004946100 (07:29)
 remote_tr70_cohort: arms against the accepted runs: arm_null worst relative difference 2.1e-04; arm_tf worst relative difference 1.7e-04 (15:53)
+remote_tr70_cohort: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/housing_first_or_treatment_first/code/tr2c_t70_cohort -- start with: cd /home/user/housing_first_or_treatment_first/code/tr2c_t70_cohort && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds = loop 1's archived paths (15:54)
+remote_tr70_cohort: 4 GiB swap on (15:54)
+remote_tr70_cohort: T = 70 transition started, pid 17562 (15:54)
+remote_tr70_cohort: handover applied: 100 parameters (15:54)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -32,3 +36,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   9  0.8555  0.09637   -32.0%   -33.5%    -1.0%  1.20e-04  1.90e-03   788.9669  +4.36%   -20.4%   +17.1%
  10  0.8555  0.09626   -32.0%   -33.5%    -0.9%  5.82e-05  1.54e-03   788.9620  +4.35%   -20.4%   +17.0%
  11  0.8555  0.09617   -32.0%   -33.5%    -0.9%  1.48e-06  8.04e-04   788.9594  +4.34%   -20.4%   +17.0%
+
+== tr2c_t70_cohort (T = 70)
