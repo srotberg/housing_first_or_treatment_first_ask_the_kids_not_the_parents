@@ -491,7 +491,9 @@ def _params(out):
     # AND THE STRIPPED STYLIZED MODEL OF SECTION 3, as g_<name> (gradient.py, 8 October).
     for fn in (os.path.join(HERE, 'gradient_numbers.json'), os.path.join(HERE, 'oldmodel_nosave_numbers.json'),
                os.path.join(HERE, 'stage_numbers.json'),
-               os.path.normpath(os.path.join(HERE, '..', 'paper', 'calib_numbers.json'))):
+               os.path.normpath(os.path.join(HERE, '..', 'paper', 'calib_numbers.json')),
+               # the rule-A footnote's numbers, x_ruleA_<name> (code/paper/export_ruleA.py, 12 October)
+               os.path.normpath(os.path.join(HERE, '..', 'paper', 'ruleA_numbers.json'))):
         if not os.path.exists(fn):
             print(f'   {os.path.basename(fn)} missing')
             continue

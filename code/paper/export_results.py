@@ -54,7 +54,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 RES = os.path.join(ROOT, 'results', 'counterfactuals_2c')
 RES_OLD = os.path.join(ROOT, 'results', 'counterfactuals_cf_fix2')
-OUT = os.path.join(HERE, 'results_numbers.json')
+OUT = os.environ.get('EXPORT_OUT', os.path.join(HERE, 'results_numbers.json'))
+# EXPORT_TABLES=0 (export_ruleA.py): read the arms and write the names only, leaving the paper's tables alone
+WRITE_TABLES = os.environ.get('EXPORT_TABLES', '1') != '0'
 # STAGE D (2 October): THE LONG RUN READS THE omega_c = 0.085 ARMS, each the accepted run of its
 # experiment, pi_V clearing the budget in every one (the author: "you need to adjust piv"); the
 # Treatment First arm is the $35 test (the author: "run the cost of the test on the upper end of the
@@ -419,7 +421,7 @@ def _sgn(v, d=0):
     return t.replace('-', '$-$')
 _tf_row = {'b': tf['drug use b']['pc'], 'sud': tf['SUD lambda_d']['pc'], 'h': tf['homelessness h_1']['pc'], 'cev': _tfc}
 _rows = [('Held', 'Held', DC_B), ('Clears', 'Held', DC_PV), ('Held', 'Clears', DC_P), ('Clears', 'Clears', _tf_row)]   # 'Clears', not 'Adjusts' (the author, 8 October)
-with open(os.path.join(ROOT, 'writing', 'tables', 'tab_decomp.tex'), 'w') as _f:
+with open(os.path.join(ROOT, 'writing', 'tables', 'tab_decomp.tex') if WRITE_TABLES else os.devnull, 'w') as _f:
     _f.write('% Written by code/paper/export_results.py from results/decomp_2c, decomp_2c_both and the tf85 arm;\n'
              '% edit the script, not this file. Caption and note are in the paper.\n'
              '\\begin{tabular}{@{}llrrrr@{}}\n\\toprule\n'
@@ -879,7 +881,7 @@ print(f'wrote {OUT} (transition from {os.path.relpath(best, ROOT)}, forward pass
 for k, v in sorted(out.items()):
     print(f'  {k} = {v}')
 # the names the other two exporters own, merged back so the file is whole
-for f in ('export_elasticity.py', 'export_longrun.py', 'transition_figure.py'):
+for f in (('export_elasticity.py', 'export_longrun.py', 'transition_figure.py') if WRITE_TABLES else ()):
     r = subprocess.run([sys.executable, os.path.join(HERE, f)], capture_output=True, text=True)
     if r.returncode:
         sys.exit(f'{f} failed:\n{r.stdout}\n{r.stderr}')
