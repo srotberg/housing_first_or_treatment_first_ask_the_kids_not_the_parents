@@ -1,10 +1,12 @@
-# omega_c 0.686 sensitivity on RULE C, Treatment First against results/omega_nishiyama_2c/bench_0.686_b0.004510373_ku1.0 (b 0.004510373, kappa_uem 1.0, kappa_x 1.0688562125371026; base 0.0904959779,0.0380110071,0.0060061733); Housing First is rule A's (no screen); 12 Oct 19:28 UTC
+# omega_c 0.686 sensitivity on RULE C, Treatment First against results/omega_nishiyama_2c/bench_0.686_b0.004510373_ku1.0 (b 0.004510373, kappa_uem 1.0, kappa_x 1.0688562125371026; base 0.0904959779,0.0380110071,0.0060061733); Housing First is rule A's (no screen); 12 Oct 19:48 UTC
 remote_nish_nodes_C: gfortran missing, installing (19:23)
 remote_nish_nodes_C: free disk 29G, memory 15 GiB, cores 4 (19:23)
 remote_nish_nodes_C: Housing First reused from rule A (results/omega_nishiyama/nodes/null, cf/null); budget target 5.7681232016963211 (19:23)
 remote_nish_nodes_C: building cf_fix (19:23)
 remote_nish_nodes_C: building cf_fix2 (19:25)
 remote_nish_nodes_C: building cf_fix2_treatC (rule C) (19:27)
+remote_nish_nodes_C: warm start at rule A's converged values for this economy: price 0.8494885, pi_V 0.095466831 (19:28)
+remote_nish_nodes_C: arm tf on cf_fix2_treatC (rule C): PDET=0.85 NET_TARGET=5.7681232016963211 PV_START=0.095466831 DRUG_PRICE_START=0.8494885 test 0.0004946100 (19:28)
 
 == null (rule A's, results/omega_nishiyama/nodes/null)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -13,3 +15,6 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   3  1.0005  0.06753    -0.1%    -0.1%    -0.1%  1.28e-03  0.00e+00   777.5265  +0.04%
   4  1.0001  0.06753    -0.0%    -0.0%    -0.0%  1.11e-03  0.00e+00   777.5020  -0.02%
   5  1.0000  0.06753    +0.0%    +0.0%    -0.0%  9.04e-05  0.00e+00   777.4998  -0.03%
+
+== tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
