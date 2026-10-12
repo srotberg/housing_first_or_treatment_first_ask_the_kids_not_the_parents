@@ -15,9 +15,16 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
 == inert1_C2
 remote_treatC2 inert1_C2: free disk 26G, memory 15 GiB, cores 1 (22:55)
 remote_treatC2 inert1_C2: arm null on cf_fix2_treatC2, at most 1 passes; TC2_ABSTAIN=1 TC2_EVKEY=1 TC2_INTERNAL=1 (22:55)
+remote_treatC2 inert1_C2: pass 1 done, 1593 s (23:21)
+remote_treatC2 inert1_C2: pass cap 1 reached after 26 min; stopping the solve (23:22)
+remote_treatC2 inert1_C2: done: 1 passes in 26 min (23:22)
 
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  0.9999  0.06753    -3.1%    -3.1%    -3.0%  1.49e-03  0.00e+00   789.1270  +4.85%    -0.2%    +3.0%
  TREATC2 switches abstain evkey internal           1           1           1
+ ABSTAIN sud=   1.8782137947273350       treated=  0.47014783002538307       treated_v0=   3.1241022701120291E-002  untreated_v0=   5.3951276772900604E-002  holder_treated=   5.0192823957077706E-002  holder_v0share=  0.35838490824555458       housednov_treated=  0.40464849612933207       housednov_v0share=   0.0000000000000000       homeless_treated=   1.5306509938972977E-002  homeless_v0share=  0.86581932429509634     
+ ABSTAIN sud=   1.8782137947273350       treated=  0.47014783002538307       treated_v0=   3.1241022701120291E-002  untreated_v0=   5.3951276772900604E-002  holder_treated=   5.0192823957077706E-002  holder_v0share=  0.35838490824555458       housednov_treated=  0.40464849612933207       housednov_v0share=   0.0000000000000000       homeless_treated=   1.5306509938972977E-002  homeless_v0share=  0.86581932429509634     
+ MILBY SPLIT voucher mass rec treat smi  0.18070351543169816        5.6725730513601256E-003   5.0192823957077706E-002   2.2185669760021183E-002  housed_nov mass rec treat smi   1.6369987449324228        5.0392781414195460E-002  0.40464849612933207       0.14371755500898856     
 
 == inert_C
 remote_treatC2 inert_C: free disk 26G, memory 15 GiB, cores 4 (22:12)
