@@ -99,5 +99,57 @@ rep("""        type(jagged_matrix_integer), dimension(1:2) :: policy_function_ho
             fin_index_frac_mov_to_optimal_benchmark,policy_function_addiction_benchmark
 """)
 
+# THE CALL SITES WHERE A NARROWED ARRAY MEETS A DOUBLE OR FOUR-BYTE DUMMY (15 in the benchmark source). Each is widened
+# at the call, never by changing the dummy, which other callers pass doubles to.
+import re
+
+
+def sub(pat, repl, n):
+    global s
+    s, c = re.subn(pat, repl, s)
+    assert c == n, (c, n, pat[:140])
+
+
+# addiction_transition(..., choice_1, ..., treatment_1, smi): both intent(in) integers, the four recovery tallies
+IX = r'\(time_period,age_index,financial_index,&\n\s*unemployment_index,employment_index,housing_status_index,&\n\s*voucher_index\)'
+sub(r'(addiction_transition\(1,0,&\n\s*)(policy_function_addiction\(years_left_on_mortgage_index\)%&\n\s*vector_transition_integer'
+    + IX + r')(,[12],0\.d0,1,&\n\s*)(policy_function_treatment\(years_left_on_mortgage_index\)%&\n\s*vector_transition_integer'
+    + IX + r')(,smi_of\(unemployment_index\)\))', r'\1int(\2)\3int(\4)\5', 4)
+
+# compute_voucher_index_1(is_homeless, drug_share_1, ...): drug_share_1 is real(8), intent(in)
+sub(r'(call compute_voucher_index_1\(is_homeless_1,&\n\s*)(policy_function_frac_spent_on_addiction_benchmark&\n\s*'
+    r'\(years_left_on_mortgage_index\)%&\n\s*vector_real\(age_index,financial_index,unemployment_index,&\n\s*'
+    r'employment_index,housing_status_index,voucher_index\)),', r'\1real(\2,8),', 1)
+sub(r'(call compute_voucher_index_1\(is_homeless_2,&\n\s*)\((policy_function_frac_spent_on_addiction\(years_left_on_mortgage_index\)%&'
+    r'\n\s*vector_transition_real\(time_period,age_index,financial_index,&\n\s*unemployment_index,employment_index,'
+    r'housing_status_index,voucher_index\))\),', r'\1real(\2,8),', 2)
+
+# internal_computations: no intents. value_function_1 is READ AND WRITTEN (a running maximum, handed back through
+# val_fun_internal, which the caller then stores), so it gets a threadprivate double copy; the housing index and the
+# two tax amounts are only read, so they are widened in place.
+rep("""        real(8) :: val_fun_internal
+""", """        real(8) :: val_fun_internal
+        real(8) :: sp_value_function_in      ! patch_sp.py: the double copy internal_computations reads and updates
+""")
+rep("""        !$omp threadprivate(val_fun_internal)
+""", """        !$omp threadprivate(val_fun_internal)
+        !$omp threadprivate(sp_value_function_in)
+""")
+CELL = ('(time_period,age_index,financial_index,&\n\s*unemployment_index,employment_index,housing_status_index,'
+        'voucher_index\)')
+sub(r'(\n(\s*))call internal_computations&\n(\s*)\((value_function\(years_left_on_mortgage_index\)%&\n\s*'
+    r'vector_transition_real\(time_period,age_index,financial_index,&\n\s*unemployment_index,employment_index,'
+    r'housing_status_index,voucher_index\)),',
+    r'\1sp_value_function_in=\4\n\2call internal_computations&\n\3(sp_value_function_in,', 1)
+sub(r'(space_lived_in_index_used_3,)(policy_function_housing_status_index&\n\s*\(years_left_on_mortgage_index\)%'
+    r'vector_transition_integer&\n\s*\(time_period,age_index,financial_index,unemployment_index,&\n\s*'
+    r'employment_index,housing_status_index,voucher_index\))(,amortization_used_dist,)', r'\1int(\2)\3', 1)
+sub(r'(amortization_used_dist,&\n\s*)(policy_function_wage_income_tax_paid\(years_left_on_mortgage_index\)%&\n\s*'
+    r'vector_transition_real\(time_period,age_index,financial_index,&\n\s*unemployment_index,employment_index,'
+    r'housing_status_index,voucher_index\)),&\n(\s*)(policy_function_mortgage_interest_deductions'
+    r'\(years_left_on_mortgage_index\)%&\n\s*vector_transition_real\(time_period,age_index,financial_index,'
+    r'unemployment_index,&\n\s*employment_index,housing_status_index,voucher_index\)),',
+    r'\1real(\2,8),&\n\3real(\4,8),', 1)
+
 open(dst, 'w').write(s)
 print(f'patch_sp: {src} -> {dst}')
