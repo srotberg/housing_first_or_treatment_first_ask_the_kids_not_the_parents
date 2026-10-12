@@ -10,6 +10,12 @@ Archived at 16:55 UTC, results kept as they stood: runs 1 (pdet50), 2 and 2b (de
 
 The other rule-C runs are added here as their builds are made (the inventory of what the paper reads is scratchpad ruleC_inventory.md, written into this file when it lands). On each check: relaunch a dead rule-C run once, report progress in one line, and write nothing into the paper until the author has seen C1.
 
+PAPER CHANGES FOR RULE C (written once the numbers are in, red, deletions struck):
+- Section 4, the rule under Treatment First ("A household fails the condition if it uses or has the disorder ... whether or not it is in treatment"): rewritten to rule C, citing EO 14321 Sec. 5(b) and the toolkit (related_lit/).
+- Its footnote ("The rule is a sobriety screen, not any one programme's ...", yellow \tocheck): DELETED, the author, 12 Oct: "we dont need the footnote saying we are not doing the TF exactly as the policy anymore. now it matches". Ask whether the Housing Choice Voucher sentence in the same footnote stays.
+- New footnote: rule A (no use and no disorder) gives similar qualitative results, with its numbers.
+- Introduction and abstract: Treatment First described as the order describes it.
+
 ---
 
 # The referee plan (agreed with the author 12 October, 03:15 UTC: "yes to all three, go ahead")
