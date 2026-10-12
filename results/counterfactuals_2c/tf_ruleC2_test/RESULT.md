@@ -1,12 +1,14 @@
 # tf_ruleC2_test -- the abstention option under rule C (cf_fix2_treatC2): RESULT
 
-**PRELIMINARY (12 Oct, ~22:45 UTC). Single-thread inert check (B) still running; the verdict line below is filled when it
-lands. Test C skipped per the coordinating session's addendum 2.**
+**FINAL (12 Oct, 23:30 UTC). B and the compile table PASSED; patch_treatC2.py is READY to be copied over patch_treatC.py
+(keeping the old one as patch_treatC_v1.py; not done here). Test C skipped per the coordinating session's addendum 2;
+no other arm was launched.** Two things the switch-over must handle: `transition_fix/build_tr70_C.sh` refuses the
+larger patch (section 7), and Treatment First changes for clean households too, not only through abstention (section 2).
 
 | check | verdict |
 |---|---|
 | B, inert, 4 threads | NOT DECIDABLE AT 4 THREADS: the same cf_fix2_treatC binary run twice differs in the 4th decimal of welfare (a pre-existing data race, section 3); cf_fix2_treatC2 lands inside that spread |
-| B, inert, 1 thread (bit for bit) | PENDING |
+| B, inert, 1 thread (bit for bit) | **PASSED**: the no-policy arm (no screen), pass 1 from the benchmark, cf_fix2_treatC against cf_fix2_treatC2 at OMP_NUM_THREADS=1: every line of the log identical apart from timing and the two new prints (welfare 789.12700176076169, b 0.086767962688725053, lambda_d 0.036939304740738692, h_1 0.0059992578920585564 in both) |
 | compile / drop-in table | PASSED on every base except `transition_fix/build_tr70_C.sh`, whose own guard refuses the larger patch (use `build_tr70_C2.sh`; section 5) |
 
 ## 1. What was changed, and where
@@ -77,6 +79,20 @@ policies. The noise is about 2e-4 in welfare (0.01 pp of CEV) at pass 1. It is s
 paper, but it means "bit for bit" can only be checked at one thread, and that any two arms the paper differences (e.g.
 a decomposition column of a few hundredths of a point) carry it. **Recommend** a separate, announced change making
 `run_internal_grid` and `labor_supply_2` private.
+
+### The inert check (B), at one thread
+
+`inert1_C/` and `inert1_C2/`: the no-policy arm (voucher_conditional_on_clean=0) from results/reference/hf_2c_omega_0.085,
+one pass each, `OMP_NUM_THREADS=1` (no race), 1593 s each. Diffing the two logs with the timing lines (`AGE_TIME`,
+`time=`) and the two new prints (`TREATC2 switches`, `ABSTAIN`) removed: no difference; cf_fix2_treatC2's log is a
+prefix of cf_fix2_treatC's (the latter has 11 more lines, the start of pass 2, because its pass-cap kill landed later).
+The lines `average_welfare_with_childhood=`, `CF MOMENTS`, `distance_drug_market=`, `drug quantity V=`,
+`net_govt_revenues=` and `MILBY SPLIT` hash to the same md5. No guard text in either log.
+
+| | price | pi_V | b | SUD | h_1 | drug gap | welfare |
+|---|---|---|---|---|---|---|---|
+| cf_fix2_treatC | 0.9999 | 0.06753 | 0.086767962688725053 | 0.036939304740738692 | 0.0059992578920585564 | 1.49e-03 | 789.12700176076169 |
+| cf_fix2_treatC2 | 0.9999 | 0.06753 | 0.086767962688725053 | 0.036939304740738692 | 0.0059992578920585564 | 1.49e-03 | 789.12700176076169 |
 
 ## 4. Drug use counted by the disorder rather than by v>0: every site
 
