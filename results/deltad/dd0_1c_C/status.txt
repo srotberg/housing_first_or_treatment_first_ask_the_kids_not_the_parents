@@ -1,4 +1,4 @@
-# delta_d 0 and delta_h 0, one class, every other parameter as calibrated (code/deltad/remote_deltad1c.sh); 12 Oct 20:38 UTC
+# delta_d 0 and delta_h 0, one class, every other parameter as calibrated (code/deltad/remote_deltad1c.sh); 12 Oct 20:58 UTC
 remote_deltad1c: gfortran missing, installing (18:46)
 remote_deltad1c: free disk 29G, memory 15 GiB, cores 4 (18:46)
 remote_deltad1c: building the one-class benchmark binary (18:46)
@@ -11,6 +11,8 @@ remote_deltad1c: benchmark exited 0 after 11 blocks; bench.err:  (20:06)
 remote_deltad1c: benchmark (users, SUD, h_1) 0.0861443960,0.0366809487,0.0060035633 (20:06)
 remote_deltad1c: arm null on cf_fix2_1c: DRUG_PRICE_START=1.0 EXTRA_SET=penalty_child_addicted 0;penalty_child_homeless 0 (20:06)
 remote_deltad1c: arm null ACCEPTED (exit 0): VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 3 passes, sweeps [70, 70, 72], largest final 4.79e-05 (rule 5e-05, at least 70 sweeps)  (20:38)
+remote_deltad1c: no-policy net revenue 6.1312594896380483 is the TF budget target; test cost 0.0004946100 ($35) (20:38)
+remote_deltad1c: arm tf on cf_fix2_1c_treatC: PDET=0.85 NET_TARGET=6.1312594896380483 PV_START=0.0759 DRUG_PRICE_START=0.8725 EXTRA_SET=cost_per_drug_test 0.0004946100;penalty_child_addicted 0;penalty_child_homeless 0 (20:38)
 
 == benchmark
  newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.90756899950222225        8.3906793129603502E-002   6.0870334695065902E-003   2.4371738986675219E-003
@@ -59,3 +61,7 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   1  1.0001  0.06753    +0.0%    +0.1%    -0.2%  6.66e-04  0.00e+00   789.3967  +0.09%
   2  1.0001  0.06753    +0.0%    +0.0%    +0.0%  2.85e-05  0.00e+00   789.3649  -0.00%
   3  1.0001  0.06753    +0.0%    +0.0%    +0.0%  6.88e-05  0.00e+00   789.3651  -0.00%
+
+== tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  0.8729  0.07590   -27.6%   -28.7%    +5.9%  4.38e-03  1.52e-02   789.4079  +0.12%
