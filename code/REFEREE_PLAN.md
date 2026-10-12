@@ -6,7 +6,7 @@ publishes a status file on the branch every 20 minutes; a run with no commit for
 | # | run | worker session | script | results | expected |
 |---|---|---|---|---|---|
 | 1 | Treatment First at detection 0.50 | session_01U6oSxH75fzw3bcbss5Yoxn | code/pdet/remote_pdet.sh 0.50 | results/counterfactuals_2c/tf_pdet50 | resumes from pass 3; about 4-6 h |
-| 2 | delta_d = delta_h = 0, one class | session_015xAVdM3PZAKWssDvzZrLYp | code/deltad/remote_deltad1c.sh | results/deltad/dd0_1c | benchmark ~2 h, null ~2 h, tf ~3 h |
+| 2 | delta_d = delta_h = 0, one class | session_01L9GRYJjZjPxSkVBUa6u7LR (relaunched 06:41 12 Oct: the first container, session_015xAVdM3PZAKWssDvzZrLYp, disconnected after "benchmark done" at 05:08; the benchmark files were local, so it is solved again) | code/deltad/remote_deltad1c.sh | results/deltad/dd0_1c | benchmark ~2 h, null ~2 h, tf ~3 h; ~13:30 |
 | 3 | transition welfare cohort by cohort (T = 70 loop 2 with the entrant print) | session_011AVKB7xRWCWXnA3g25E5bR | code/transition_fix/remote_tr70_cohort.sh | results/transition_2c_t70_cohort | arms ~6 h, loop ~10 h |
 | 4 | both penalties (delta_d 0.24, delta_h 0.31), long run then T = 25 | session_018N3fsfggMz4fumbypJRXwp | code/deltah/remote_deltah_both.sh (+ _tr25) | results/deltah_both, deltah_both_tr25 | benchmark 25-40 h, arms ~2.5 days, T = 25 ~1 day |
 | 5a | Treatment First with treatment meeting the condition | session_017vq7TAYbFN6WBPXTHviuKH | code/treat/remote_treat.sh treat | results/counterfactuals_2c/tf_treat | ~6 h |
