@@ -1,4 +1,4 @@
-# milby_split against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 12 Oct 03:41 UTC
+# milby_split against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 12 Oct 03:58 UTC
 remote_treat milby_split: gfortran missing, installing (03:16)
 remote_treat milby_split: free disk 29G, memory 15 GiB, cores 4 (03:17)
 remote_treat milby_split: building cf_fix2_split and cf_fix2_treat (03:17)
@@ -9,7 +9,10 @@ remote_treat milby_split: arm tf on cf_fix2_split: PDET=0.85 NET_TARGET=5.891841
 == null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  0.9999  0.06753    -3.1%    -3.1%    -3.0%  1.70e-03  0.00e+00   789.1272  +4.86%    -0.2%    +3.0%
- MILBY SPLIT voucher mass rec treat smi  0.18068110965465425        5.6717116929401786E-003   5.0180602747869438E-002   2.2184710593566321E-002  housed_nov mass rec treat smi   1.6369242799273396        5.0390527237789223E-002  0.40463131588671275       0.14370935002979868     
+  2  0.9999  0.06753    -0.6%    -0.5%    -1.0%  2.72e-04  0.00e+00   787.8801  +1.12%    -0.0%    +0.5%
+ MILBY SPLIT voucher mass rec treat smi  0.19261835918983783        6.0484125839077385E-003   5.3467632624263864E-002   2.3052732766890762E-002  housed_nov mass rec treat smi   1.6718540469038159        5.1419107760362140E-002  0.41111275897928623       0.14520892112407335     
 
 == tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  0.8581  0.09615   -30.5%   -32.0%    -2.5%  2.58e-02  3.15e-01   789.9400  +7.39%   -16.8%   +19.6%
+ MILBY SPLIT voucher mass rec treat smi   6.1510815384037401E-003   2.1250724559442375E-004   2.4757746822008267E-003   5.2021144696219872E-004  housed_nov mass rec treat smi   1.2436988004780911        3.9162448445669233E-002  0.33953785136162251        8.7038670533420820E-002
