@@ -38,6 +38,48 @@ WARM STARTS (the author, 12 Oct: "start the simulations from guesses that equal 
 
 - THE MILBY ROW OF THE VALIDATION TABLE (calib_tables.py, x_milby_model_impact) AND THE MILBY PARAGRAPH: the rule-C FIRST-YEAR recovery ratio of voucher holders against housed households without a voucher, both with a SUD, from the rule-C transition's 'TRANSITION MILBY t=1' line (export_results.py builds x_milby_model_impact from the transition's t=1; point it at the rule-C transition log). The author, 12 Oct: "We need rule c first year too", "That is the number to use in the table". The first-year treatment shares (export_milby_split.py's inversion) from the same line. The long-run ratio (1.37 at C1's pass 4, against 1.09 under rule A and Milby's 1.26) is secondary.
 
+## RELAUNCH ON THE FIXED BUILD (12 Oct, 21:05 UTC)
+
+The author: "You need to fix this bug", then "End the other runs, and start new ones". The bug: under rule C a household
+with the disorder had no option to spend nothing on the drug, so it could never go into treatment and stop using to keep
+its voucher (see the ABSTAIN row). The 12 sessions below were ENDED (archived) at 21:00 and must NOT be relaunched on
+their old briefs or the old build. Their briefs are saved in code/rulec_relaunch/briefs_v1/<id>.md.
+
+KEPT RUNNING: BOTH (session_01V66tfNJk92jP5jndoK5C3F). Its stages A (benchmark) and B (Housing First) have no screen,
+so the fix cannot touch them; it was told at 21:02 to stop at the end of stage B, rebuild cf_fix2_both_spC once
+code/treat/ABSTAIN_READY is on the branch, and only then run stage C.
+
+SWITCH-OVER, when the ABSTAIN session's inert check and compile table pass (the one-to-two-pass test is NOT waited for:
+the relaunched main arm is the test, and the author wants the runs going):
+1. git mv code/treat/patch_treatC.py code/treat/patch_treatC_v1.py; cp code/treat/patch_treatC2.py code/treat/patch_treatC.py;
+   check the "RULE C (patch_treatC.py)" marker and the MILBY SPLIT / TRANSITION MILBY prints are in it; push
+   code/treat/ABSTAIN_READY (one line: the commit of the fixed patch).
+2. Every results folder of the ended runs is COPIED to <folder>_v1 (the record of the buggy run), and in the original
+   folder everything except passes.txt is removed, so each launcher that resumes from its own passes.txt warm-starts at
+   the v1 run's latest price and pi_V, and the first publish of the new run overwrites passes.txt with its own passes.
+   Folders whose stage was not touched by the screen are kept whole: results/deltad/dd0_1c_C's benchmark and null
+   (Housing First), results/omega_nishiyama_C/*/null, every */null.
+3. Relaunch each workstream in a fresh session with its v1 brief plus a preamble: the fixed build, the warm start below,
+   "the folder's passes.txt is the v1 run's and is only a warm start", and for the engineering sessions (NOEXT, VALID,
+   NISH, TR) "your v1 scripts are on the branch; rebuild everything from the fixed patch_treatC.py; verify
+   `grep -c abstain_now` > 0 in every rule-C cf.f90 before solving".
+
+WARM STARTS (latest v1 pass, price / pi_V):
+| id | folder | v1 latest | note |
+|---|---|---|---|
+| C1 | results/counterfactuals_2c/tf_ruleC | 0.8549 / 0.09819 (pass 4) | remote_treatC.sh resumes from passes.txt |
+| S-tf | results/decomp_2c_shares_C/arm_tf | 0.8553 / 0.09615 (pass 2); the script reads tf_ruleC's latest | |
+| S-fixboth | results/decomp_2c_shares_C/arm_fixboth | held at 1.0001 / 0.06753 | nothing to warm |
+| S-fixpv | results/decomp_2c_shares_C/arm_fixpv | 0.8763 / 0.06753 held (pass 1) | script starts at 0.8742 |
+| S-fixp | results/decomp_2c_shares_C/arm_fixp | 1.0001 held / 0.11606 (pass 3) | script starts at 0.11453 |
+| P70 | results/counterfactuals_2c/tf_pdet70_C | 0.8651 / 0.09320 (pass 2) | P0_START/V0_START |
+| P50 | results/counterfactuals_2c/tf_pdet50_C | 0.8793 / 0.08929 (pass 1) | P0_START/V0_START |
+| DD0 | results/deltad/dd0_1c_C (+ _decomp) | tf 0.8729 / 0.07590 (pass 1) | benchmark and null DONE and kept: restore them, do not re-solve |
+| NISH | results/omega_nishiyama_C | tf 0.8537 / 0.09547 (pass 1) | null kept |
+| NOEXT | results/pe_noext_C, noext_fixp_C, noext_clear_C | noext_clear 0.9063 / 0.07613 (pass 2); pe_noext / noext_fixp arm at 1.0203 / 0.06753 | |
+| VALID | results/whostops_2c_C, revoked_2c_C, revoked_2c_street_C | - | who-stops MUST be redone: with the fix a household with the disorder can stop on impact, so rule C no longer equals rule A there |
+| TR | results/transition_2c_t70_C | endpoint tf 0.8555 / 0.09887 | runs after C1 is accepted, on the fixed transition build (build_tr70_C2.sh or the fixed patch) |
+
 ## Gates
 - C1 inert check (pass 1): welfare differs from rule A's 789.9399 at the same start, and the MILBY SPLIT line shows
   voucher holders with a SUD in treatment. Fail -> stop, diagnose, tell the author before anything else launches.
