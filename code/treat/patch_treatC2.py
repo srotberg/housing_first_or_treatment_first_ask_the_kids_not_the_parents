@@ -274,9 +274,9 @@ rep('            write(*,*) "MILBY SPLIT voucher mass rec treat smi", xtab_mass_
     '            write(*,*) "ABSTAIN", &\n'
     '                " sud=", tc2_abst(time_period,0,1), " treated=", tc2_abst(time_period,0,2), " treated_v0=", tc2_abst(time_period,0,3), &\n'
     '                " untreated_v0=", tc2_abst(time_period,0,4), &\n'
-    '                " holder_treated=", tc2_abst(time_period,1,2), " holder_v0share=", tc2_abst(time_period,1,3)/max(tc2_abst(time_period,1,2),1.d-300), &\n'
-    '                " housednov_treated=", tc2_abst(time_period,2,2), " housednov_v0share=", tc2_abst(time_period,2,3)/max(tc2_abst(time_period,2,2),1.d-300), &\n'
-    '                " homeless_treated=", tc2_abst(time_period,3,2), " homeless_v0share=", tc2_abst(time_period,3,3)/max(tc2_abst(time_period,3,2),1.d-300)\n'
+    '                " holder_treated=", tc2_abst(time_period,1,2), " holder_v0share=", tc2_abst(time_period,1,3)/max(tc2_abst(time_period,1,2),1.d-30), &\n'
+    '                " housednov_treated=", tc2_abst(time_period,2,2), " housednov_v0share=", tc2_abst(time_period,2,3)/max(tc2_abst(time_period,2,2),1.d-30), &\n'
+    '                " homeless_treated=", tc2_abst(time_period,3,2), " homeless_v0share=", tc2_abst(time_period,3,3)/max(tc2_abst(time_period,3,2),1.d-30)\n'
     '            write(*,*) "MILBY SPLIT voucher mass rec treat smi", xtab_mass_voucher(time_period), &\n')
 # the OpenMP region around the household problem is default(none)
 rep("                                !$omp& warm_start_a_prime,warm_start_ready,renter_floor_by_age)\n",
@@ -313,9 +313,9 @@ if s.count(tm) == 1:
     '                write(*,*) "TRANSITION ABSTAIN t=", time_index, "", &\n'
     '                    " sud=", tc2_abst(time_index,0,1), " treated=", tc2_abst(time_index,0,2), " treated_v0=", tc2_abst(time_index,0,3), &\n'
     '                    " untreated_v0=", tc2_abst(time_index,0,4), &\n'
-    '                    " holder_treated=", tc2_abst(time_index,1,2), " holder_v0share=", tc2_abst(time_index,1,3)/max(tc2_abst(time_index,1,2),1.d-300), &\n'
-    '                    " housednov_treated=", tc2_abst(time_index,2,2), " housednov_v0share=", tc2_abst(time_index,2,3)/max(tc2_abst(time_index,2,2),1.d-300), &\n'
-    '                    " homeless_treated=", tc2_abst(time_index,3,2), " homeless_v0share=", tc2_abst(time_index,3,3)/max(tc2_abst(time_index,3,2),1.d-300)\n'))
+    '                    " holder_treated=", tc2_abst(time_index,1,2), " holder_v0share=", tc2_abst(time_index,1,3)/max(tc2_abst(time_index,1,2),1.d-30), &\n'
+    '                    " housednov_treated=", tc2_abst(time_index,2,2), " housednov_v0share=", tc2_abst(time_index,2,3)/max(tc2_abst(time_index,2,2),1.d-30), &\n'
+    '                    " homeless_treated=", tc2_abst(time_index,3,2), " homeless_v0share=", tc2_abst(time_index,3,3)/max(tc2_abst(time_index,3,2),1.d-30)\n'))
     print('TRANSITION ABSTAIN t= added')
 open(out, 'w').write(s)
 print(f'treatC2: patched {src} -> {out}')
