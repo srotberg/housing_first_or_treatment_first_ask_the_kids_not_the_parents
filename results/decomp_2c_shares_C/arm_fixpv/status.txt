@@ -1,7 +1,15 @@
-# better-off shares for the decomposition column fixpv (code/extra_2c/remote_decomp_shares.sh); 12 Oct 18:34 UTC
+# better-off shares for the decomposition column fixpv (code/extra_2c/remote_decomp_shares.sh); 12 Oct 19:00 UTC
 remote_decomp_shares_C fixpv: free disk 29G, memory 15 GiB, cores 4 (18:22)
 remote_decomp_shares_C fixpv: building cf_fix (18:22)
 remote_decomp_shares_C fixpv: building cf_fix2 (18:25)
 remote_decomp_shares_C fixpv: building cf_fix2_share (18:28)
 remote_decomp_shares_C fixpv: building cf_kid (18:31)
 remote_decomp_shares_C fixpv: building cf_fix2_treatC (rule C) (18:33)
+remote_decomp_shares_C fixpv: arm null on cf_fix2_share (18:35)
+remote_decomp_shares_C fixpv: arm fixpv on cf_fix2_treatC (rule C): PDET=0.85 PV_START=0.067533863 DRUG_PRICE_START=0.8742 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 (18:40)
+
+== cfarm_null_2c
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+
+== cfarm_tf_2c_fixpv
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
