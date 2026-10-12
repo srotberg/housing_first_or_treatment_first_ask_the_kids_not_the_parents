@@ -1,5 +1,12 @@
 #!/bin/sh
 # cf_arm_both_sp.sh -- cf_arm_both.sh with cf_fix2_both_spC (build_both_sp.sh: single precision, rule C) admitted. A COPY.
+# THE DISK (12 October, remote_deltah_both_C.sh). The four-class benchmark set is about 8.9 GB of formatted text (the paper's
+# 2.2 GB, gzip -l on results/reference/hf_2c_omega_0.085/files, times four), and an arm writes its own counter_arm set of the
+# same size at its end: extracting a copy into cfarm_bench and cp -a'ing it into the arm, as cf_arm_both.sh does, needs 36 GB
+# on a 29 GB disk. So BENCH_DIR=<the solved benchmark's directory> HARD-LINKS the large files (over 1 MB) into cfarm_bench and
+# from there into the arm, and copies the small ones, which are the only ones this script writes over (the budget target).
+# The binary only reads *baseline_benchmark.dat and *seed.dat files (it writes counter_arm names); the launcher checks after
+# each arm that no file of the benchmark's set changed. The seeds are links as well.
 # cf_arm_both.sh -- cf_arm_hh_tr.sh with cf_fix2_both admitted as a BUILD and OMP_NUM_THREADS taken from the environment (11 October,
 # code/deltah/remote_deltah_both.sh runs one arm at a time on four threads). A COPY, as the others.
 # cf_arm_hh_tr.sh -- cf_arm_hh.sh with cf_fix2_share_hh admitted as a BUILD (11 October, code/deltah/remote_deltah_tr.sh): the
@@ -85,6 +92,23 @@ stage_handover() {
   if [ -n "$BENCH_KU" ]; then set_line kappa_uem "$BENCH_KU"; fi
 }
 
+link_set() {  # link_set SRC DST: large files hard-linked, small ones copied, so a write to a small one stays in DST
+  mkdir -p "$2"
+  for f in "$1"/*; do
+    [ -f "$f" ] || continue
+    if [ "$(stat -c%s "$f")" -gt 1048576 ]; then ln "$f" "$2/"; else cp -a "$f" "$2/"; fi
+  done
+}
+if [ -n "$BENCH_DIR" ] && [ ! -f "$BDIR/BENCH_DONE" ]; then
+  [ -s "$BENCH_DIR/welfare_curvebaseline_benchmark.dat" ] && [ -s "$BENCH_DIR/bench.log" ] || { echo "GUARD: $BENCH_DIR lacks the benchmark set or bench.log"; exit 1; }
+  rm -rf "$BDIR" && mkdir -p "$BDIR"
+  for f in "$BENCH_DIR"/*baseline_benchmark.dat; do
+    if [ "$(stat -c%s "$f")" -gt 1048576 ]; then ln "$f" "$BDIR/"; else cp "$f" "$BDIR/"; fi
+  done
+  cp "$BENCH_DIR/bench.log" "$BDIR/bench.log"
+  echo "$BENCH_DIR" > "$BDIR/BENCH_FROM"; date +%s > "$BDIR/BENCH_DONE"
+  echo "STAGE 1 linked from $BENCH_DIR: $(ls "$BDIR" | grep -c baseline_benchmark) benchmark files, $(find "$BDIR" -links +1 -type f | wc -l) of them hard links"
+fi
 # SOLVE THE BENCHMARK ONCE, SHARE IT BY GIT. With BENCH_FROM=<dir holding
 # bench_files.tar.gz and bench.log.gz> (e.g. ../results/counterfactuals_cf_v2/bench)
 # stage 1 is not run: the arm reads that benchmark's *baseline_benchmark.dat set,
@@ -137,7 +161,7 @@ PV=$(grep -a "^ *probability_of_voucher=" "$BDIR/bench.log" | tail -1 | awk '{pr
 python3 -c "import sys; v=float('$PV'); sys.exit(0 if 1e-5<v<1 else 1)" || { echo "GUARD: no benchmark voucher probability in $BDIR/bench.log ('$PV')"; exit 1; }
 echo "benchmark voucher probability $PV"
 
-rm -rf "$DIR" && cp -a "$BDIR" "$DIR" && cd "$DIR"
+rm -rf "$DIR" && link_set "$BDIR" "$DIR" && cd "$DIR"
 rm -f cf.log cf.err
 cp ../$BUILD/hftf_cf_prod ./hftf_cf
 # A SEEDED BUILD STARTS FROM A FINISHED RUN'S DISTRIBUTION: SEED_FROM names that run's
@@ -149,7 +173,7 @@ case "$BUILD" in *b3hs*|cf_tdm*|cf_fix*)
     if [ "$SEED_FROM" = bench ]; then f="../cfarm_bench/distribution_stationary${i}baseline_benchmark.dat"; else f="../$SEED_FROM/distribution_stationary${i}counter_arm.dat"; fi
     [ -s "$f" ] || { echo "GUARD: $f missing"; exit 1; }
     [ "$(stat -c%s "$f")" = "$(stat -c%s distribution_stationary${i}baseline_benchmark.dat)" ] || { echo "GUARD: $f is not the benchmark's size"; exit 1; }
-    cp "$f" "distribution_stationary${i}seed.dat"
+    ln "$f" "distribution_stationary${i}seed.dat"
   done
   echo "seeded from $SEED_FROM: $(md5sum distribution_stationary1seed.dat | cut -c1-12) $(md5sum distribution_stationary2seed.dat | cut -c1-12)" ;;
 esac
@@ -199,7 +223,9 @@ if [ -n "$DRUG_PRICE_START" ]; then set_line drug_price_start "$DRUG_PRICE_START
 # constraint from the former, and the first attempt wrote the latter and
 # cleared against the old value (both hold 6.038875634967).
 if [ -n "$NET_TARGET" ]; then
-  printf '%15.12f\n' "$NET_TARGET" > govt_revenues_to_use_in_testsbaseline_benchmark.dat
+  rm -f govt_revenues_to_use_in_testsbaseline_benchmark.dat.new
+  printf '%15.12f\n' "$NET_TARGET" > govt_revenues_to_use_in_testsbaseline_benchmark.dat.new
+  mv govt_revenues_to_use_in_testsbaseline_benchmark.dat.new govt_revenues_to_use_in_testsbaseline_benchmark.dat
   echo "budget target $(cat govt_revenues_to_use_in_testsbaseline_benchmark.dat) (saved benchmark $(cat ../$BDIR/govt_revenues_to_use_in_testsbaseline_benchmark.dat))"
 fi
 # A DIFFERENT DRUG SUPPLY ELASTICITY NEEDS A REFITTED SUPPLY LEVEL. The counterfactual
