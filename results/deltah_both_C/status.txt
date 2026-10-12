@@ -1,0 +1,17 @@
+# BOTH penalties on rule C: delta_d 0.24 and delta_h 0.31, four child classes, single precision (code/deltah/remote_deltah_both_C.sh); 12 Oct 17:40 UTC, 0 h since the first launch
+# peak rss / rss+swap (GiB): 3.5 3.5; free disk 25G
+=== launch 12 Oct 17:20 UTC
+remote_deltah_both_C: free disk 29G, memory 15 GiB, cores 4 (12 17:20)
+remote_deltah_both_C: 4 GiB swap on (disk had 29 GB free) (12 17:20)
+remote_deltah_both_C: no checkpoint on ckpt/deltah-bothC, the benchmark starts from the age-one cross section (12 17:20)
+remote_deltah_both_C: benchmark: solving from the age-one cross section, at most 16 frozen blocks (12 17:20)
+remote_deltah_both_C: resumed from calibration_state.dat, written after loop          22 (12 17:20)
+remote_deltah_both_C: HANDOVER penalty_child_addicted:  0.23999999999999999      ->  0.23999999999999999 (12 17:20)
+remote_deltah_both_C: HANDOVER penalty_child_homeless:   0.0000000000000000      ->  0.31000000000000000 (12 17:20)
+
+== benchmark
+ resumed from calibration_state.dat, written after loop          22
+ HANDOVER penalty_child_addicted:  0.23999999999999999      ->  0.23999999999999999     
+ HANDOVER penalty_child_homeless:   0.0000000000000000      ->  0.31000000000000000     
+ HANDOVER omega_c_is_pinned:           1 ->           1
+ FROZEN: every adjuster zeroed except weight_on_child's. Only omega_c is calibrated; delta_d is held by hand.
