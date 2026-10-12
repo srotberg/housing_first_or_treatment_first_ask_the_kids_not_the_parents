@@ -40,7 +40,7 @@ two-class delta_d = 0 run (replaced by 2), delta_d 0.05 and 0.12, equal-budget H
    - 6: the omega_c footnote (p.19, marked yellow) gives the sensitivity's gain split into externalities and the rest,
      welfare_nok.parts on results/omega_nishiyama/nodes/{tf,null} with the sensitivity's benchmark, against Table 6's
      last column (the author: "break it down by externalities and non-externalities").
-   - 2b: report to the author with run 2: the delta_d = 0 gain split into the screen alone (fixboth), + recycling (fixp - fixboth), + the cheaper drug (tf - fixp), beside Table 6's 3.75 / 11.32 / 4.52; into the paper only as the author directs.
+   - 2b: report to the author with run 2: the delta_d = 0 gain split into the screen alone (fixboth), + recycling (fixp - fixboth), + the cheaper drug (tf - fixp), beside Table 6's 3.75 / 11.32 / 4.52; into the paper only as the author directs. THE AUTHOR DIRECTED IT, 12 October 14:50: "in the case of deltad=0 we need to explain the the small gain is driven by the small elasticity, and if we used an elasticity like becker, murphy, and grossman, the gains would still be very large". fixp IS that case: with nu_1 fixed, epsilon_s -> infinity holds the price at Housing First's. So the delta_d = 0 sentence (run 2) gets a second clause from fixp's CEV, through an exporter, its direction word from compare() against the clearing arm's CEV; if fixp's gain is NOT large, the sentence says what it is and the author is told before it goes in.
    - 5b: the p.22 Milby paragraph gains the driver: treatment take-up and SMI shares of housed SUD households by voucher
      status, Housing First against Treatment First.
 4. When every run has landed and been written in (4 reported), delete the routine and say so.
