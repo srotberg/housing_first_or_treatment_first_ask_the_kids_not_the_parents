@@ -1,3 +1,17 @@
+# RULE C, 12 OCTOBER 17:00: EVERYTHING BELOW THE LINE IS STOPPED
+
+The author, 12 October: "I think we should redo the whole paper with rule C", "you can stop all the other runs. focus on redoing all the simulations we needed and all the other ones we already did with rule A but for rule c", "all the stuff already in the paper should be redone for rule C including any validation we rely on", and "put a footnote saying that using rule A still gives similar qualitative results". Rule C: a household with the disorder must be in treatment and nobody may use (EO 14321 Sec. 5(b); the ONDCP/HHS/HUD 2026 toolkit's drug-free housing, p. 9); code/treat/patch_treatC.py.
+
+Archived at 16:55 UTC, results kept as they stood: runs 1 (pdet50), 2 and 2b (delta_d = 0), 3 (T = 70 cohort), 5a (rule B, tf_treat3) and the dead run-4 sessions. DO NOT relaunch any of them. The rule-A results already in the paper stay until their rule-C replacements land; rule A's main arm (tf85_c35) becomes the footnote's comparison.
+
+| # | rule-C run | worker session | script | results | status |
+|---|---|---|---|---|---|
+| C1 | main arm: detection 0.85, $35 test, price and pi_V clearing | session_01RuzfgApLN9fv3B7J6B8kpS (launched 17:01) | code/treat/remote_treatC.sh | results/counterfactuals_2c/tf_ruleC | INERT CHECK at pass 1: welfare must differ from rule A's 789.9399 at the same start, and MILBY SPLIT must show voucher holders with a SUD in treatment |
+
+The other rule-C runs are added here as their builds are made (the inventory of what the paper reads is scratchpad ruleC_inventory.md, written into this file when it lands). On each check: relaunch a dead rule-C run once, report progress in one line, and write nothing into the paper until the author has seen C1.
+
+---
+
 # The referee plan (agreed with the author 12 October, 03:15 UTC: "yes to all three, go ahead")
 
 An hourly routine ("referee plan check") fires into the main session and works through this file. Each run below
