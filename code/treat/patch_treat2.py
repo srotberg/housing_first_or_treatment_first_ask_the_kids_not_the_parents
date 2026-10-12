@@ -20,4 +20,23 @@ s = s.replace(old,
     "            if ((unemployment_index>threshold_addiction_index) .AND. (meets_condition_1==0)) fails_1=1\n"
     "            if ((drug_share_1>0) .AND. (.NOT. ((unemployment_index>threshold_addiction_index) .AND. &\n"
     "                (meets_condition_1==1)))) fails_1=1\n")
+# THE HOUSEHOLD'S OWN TREATMENT CHOICE IN THE DISTRIBUTION (12 October, second fix). meets_condition_1 reads
+# treatment_choice_now, a threadprivate that the value-function solve sets to the CANDIDATE treatment inside its choice
+# loop and resets to 0 after it. The distribution (converge_to_stationary_equilibrium) and the homelessness-duration
+# statistics call the screen with it still 0, so no household in treatment ever kept its voucher there and the arm
+# reproduced the paper's to four digits (pass 1 welfare 789.9398 in both). Here the two distribution call sites set it
+# from the household's own policy first, and put it back to 0 after.
+call = ("                                                call compute_voucher_index_1(is_homeless_2,&\n"
+        "                                                    (policy_function_frac_spent_on_addiction(years_left_on_mortgage_index)%&\n"
+        "                                                    vector_transition_real(time_period,age_index,financial_index,&\n"
+        "                                                    unemployment_index,employment_index,housing_status_index,voucher_index)),&\n"
+        "                                                    voucher_index_1)\n")
+assert s.count(call) == 2, s.count(call)
+s = s.replace(call,
+    "                                                ! THE HOUSEHOLD'S OWN TREATMENT CHOICE (patch_treat2.py)\n"
+    "                                                treatment_choice_now=policy_function_treatment(years_left_on_mortgage_index)%&\n"
+    "                                                    vector_transition_integer(time_period,age_index,financial_index,&\n"
+    "                                                    unemployment_index,employment_index,housing_status_index,voucher_index)\n"
+    + call +
+    "                                                treatment_choice_now=0\n")
 open(out, 'w').write(s)
