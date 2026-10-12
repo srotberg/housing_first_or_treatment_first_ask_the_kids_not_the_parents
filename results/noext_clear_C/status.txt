@@ -1,13 +1,14 @@
-# Treatment First without externalities, savings recycled, RULE C (code/noext_clear/run_noext_clear_C.sh); 12 Oct 20:16 UTC
+# Treatment First without externalities, savings recycled, RULE C (code/noext_clear/run_noext_clear_C.sh); 12 Oct 20:36 UTC
 noext_clear_C: free disk 29G, memory 15 GiB, cores 4, threads per solve 2, at most 2 solves (12 Oct 19:34)
 noext_clear_C: arm A (cfarm_null_pe_noext_C) on cf_fix2_share_pe, switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0001082 (Housing First: no screen, unchanged by rule C) (12 Oct 19:35)
 noext_clear_C: arm C (tf_noext_clear_C) on cf_fix2_treatC: detection 0.85, test 0.0004946100, price and pi_V clearing against 6.3830441, from rule A's price 0.90717489, pi_V 0.076132869 (12 Oct 19:35)
 
-== cfarm_null_pe_noext_C (2 passes done)
+== cfarm_null_pe_noext_C (3 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0051  0.06753   +13.0%   +13.0%    -2.0%  1.57e-01  0.00e+00   789.8758  +nan%   +23.7%    +9.5%
   2  1.0101  0.06753   +11.5%   +11.5%    -1.8%  1.37e-01  0.00e+00   789.8718  +nan%   +21.4%    +8.9%
- PE USED pass=    2 housing_price=  1.2048826302576822E+01 drug_price=  1.0101342844803405E+00 pi_V=  6.7533863251354007E-02
+  3  1.0152  0.06753    +9.1%    +9.1%    -2.0%  1.08e-01  0.00e+00   789.9153  +nan%   +17.7%    +7.9%
+ PE USED pass=    3 housing_price=  1.2048922511277366E+01 drug_price=  1.0151849557898509E+00 pi_V=  6.7533863251354007E-02
 
 == cfarm_tf_noext_clear_C (1 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
