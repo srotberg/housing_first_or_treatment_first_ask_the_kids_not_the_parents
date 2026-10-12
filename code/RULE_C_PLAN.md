@@ -59,7 +59,19 @@ the relaunched main arm is the test, and the author wants the runs going):
    the v1 run's latest price and pi_V, and the first publish of the new run overwrites passes.txt with its own passes.
    Folders whose stage was not touched by the screen are kept whole: results/deltad/dd0_1c_C's benchmark and null
    (Housing First), results/omega_nishiyama_C/*/null, every */null.
-3. Relaunch each workstream in a fresh session with its v1 brief plus a preamble: the fixed build, the warm start below,
+3. STAGED, NOT ALL AT ONCE (the author, 12 Oct ~21:20: "Maybe start with the key ones... Don't do all at once"; the weekly
+   usage limit is also near, resetting Fri 16 Oct ~14:00 UTC):
+   STAGE 1: C1 ONLY (the main arm), which is also the test of the fix. After its second pass, report to the author: the
+     ABSTAIN lines (treated households with the disorder who stop vs still use, holders and not), use/SUD/h_1/CEV against
+     the v1 pass, and the MILBY CHECK: the abstinence of voucher holders with a SUD against housed households with a SUD
+     and no voucher, set beside Milby's contingent/non-contingent abstinence ratio (milby_ach_nach_ratio). If the model's
+     ratio is far above Milby's, stopping is too easy and the author decides whether to add a cost of abstaining for a
+     household with the disorder, calibrated to that ratio (the author, 12 Oct: "Should we add some additional cost to
+     being in treatment and not using?"). NOTHING ELSE LAUNCHES BEFORE THAT DECISION.
+   STAGE 2 (after the author's go-ahead): S-tf and the three decompositions (S-fixboth, S-fixpv, S-fixp) and NOEXT, the
+     author's priority ("the main experiments and the no externalities with the decompositions. And then the transition").
+   STAGE 3: TR (when C1 is accepted). STAGE 4: P70, P50, DD0, NISH, VALID.
+   Each relaunch: a fresh session with its v1 brief plus a preamble: the fixed build, the warm start below,
    "the folder's passes.txt is the v1 run's and is only a warm start", and for the engineering sessions (NOEXT, VALID,
    NISH, TR) "your v1 scripts are on the branch; rebuild everything from the fixed patch_treatC.py; verify
    `grep -c abstain_now` > 0 in every rule-C cf.f90 before solving".
