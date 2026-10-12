@@ -7,6 +7,7 @@ publishes a status file on the branch every 20 minutes; a run with no commit for
 |---|---|---|---|---|---|
 | 1 | Treatment First at detection 0.50 | session_01U6oSxH75fzw3bcbss5Yoxn | code/pdet/remote_pdet.sh 0.50 | results/counterfactuals_2c/tf_pdet50 | resumes from pass 3; about 4-6 h |
 | 2 | delta_d = delta_h = 0, one class | session_01L9GRYJjZjPxSkVBUa6u7LR (relaunched 06:41 12 Oct: the first container, session_015xAVdM3PZAKWssDvzZrLYp, disconnected after "benchmark done" at 05:08; the benchmark files were local, so it is solved again) | code/deltad/remote_deltad1c.sh | results/deltad/dd0_1c | benchmark ~2 h, null ~2 h, tf ~3 h; ~13:30 |
+| 2b | delta_d = 0 decomposition: Treatment First with pi_V and the price held (fixboth) and with the price held (fixp), the counterparts of Table 6's first two columns (the author: "sure, do these runs too") | session_01L9GRYJjZjPxSkVBUa6u7LR (run 2's container, after run 2) | code/deltad/remote_deltad1c_decomp.sh | results/deltad/dd0_1c_decomp | ~3-4 h after run 2 |
 | 3 | transition welfare cohort by cohort (T = 70 loop 2 with the entrant print) | session_017djaHFjuRkcptdYGCAMXRx (relaunched 07:19 12 Oct: session_011AVKB7xRWCWXnA3g25E5bR's container disconnected about 05:20, with run 2's; starts from the arms again) | code/transition_fix/remote_tr70_cohort.sh | results/transition_2c_t70_cohort | arms ~6 h, loop ~10 h; ~23:30 |
 | 4 | both penalties (delta_d 0.24, delta_h 0.31), long run then T = 25 | session_018N3fsfggMz4fumbypJRXwp | code/deltah/remote_deltah_both.sh (+ _tr25) | results/deltah_both, deltah_both_tr25 | benchmark 25-40 h, arms ~2.5 days, T = 25 ~1 day |
 | 5a | Treatment First with vouchers conditional on being in treatment (third try, 12 Oct ~14:20: the second, tf_treat2, was inert too -- the screen read a treatment flag the distribution leaves at 0; patch_treat2.py now sets it from each household's own policy) | session_01CJQQueaamcLMeiBTc9HVwx (14:09) | code/treat/remote_treat2.sh | results/counterfactuals_2c/tf_treat3 | ~7 h; ~21:30. INERT CHECK: pass 1 welfare must differ from the paper's 789.9398 |
@@ -39,6 +40,7 @@ two-class delta_d = 0 run (replaced by 2), delta_d 0.05 and 0.12, equal-budget H
    - 6: the omega_c footnote (p.19, marked yellow) gives the sensitivity's gain split into externalities and the rest,
      welfare_nok.parts on results/omega_nishiyama/nodes/{tf,null} with the sensitivity's benchmark, against Table 6's
      last column (the author: "break it down by externalities and non-externalities").
+   - 2b: report to the author with run 2: the delta_d = 0 gain split into the screen alone (fixboth), + recycling (fixp - fixboth), + the cheaper drug (tf - fixp), beside Table 6's 3.75 / 11.32 / 4.52; into the paper only as the author directs.
    - 5b: the p.22 Milby paragraph gains the driver: treatment take-up and SMI shares of housed SUD households by voucher
      status, Housing First against Treatment First.
 4. When every run has landed and been written in (4 reported), delete the routine and say so.
