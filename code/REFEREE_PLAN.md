@@ -11,6 +11,7 @@ publishes a status file on the branch every 20 minutes; a run with no commit for
 | 4 | both penalties (delta_d 0.24, delta_h 0.31), long run then T = 25 | session_018N3fsfggMz4fumbypJRXwp | code/deltah/remote_deltah_both.sh (+ _tr25) | results/deltah_both, deltah_both_tr25 | benchmark 25-40 h, arms ~2.5 days, T = 25 ~1 day |
 | 5a | Treatment First with treatment meeting the condition | session_017vq7TAYbFN6WBPXTHviuKH | code/treat/remote_treat.sh treat | results/counterfactuals_2c/tf_treat | ~6 h |
 | 5b | the paper's two arms with the MILBY SPLIT print | session_016fs45yE21insqcHar6sFj4 | code/treat/remote_treat.sh split | results/counterfactuals_2c/milby_split | ~3-4 h |
+| 6 | the omega_c = 0.686 arms re-solved for their values by node | (launched 12 Oct ~04:00) | code/omega_nishiyama/remote_nish_nodes.sh | results/omega_nishiyama/nodes | ~2-3 h |
 
 Stopped at the author's word: T = 70 (converged enough, "will not change the figures anymore"), detection 0.70, the
 two-class delta_d = 0 run (replaced by 2), delta_d 0.05 and 0.12, equal-budget Housing First.
@@ -34,6 +35,9 @@ two-class delta_d = 0 run (replaced by 2), delta_d 0.05 and 0.12, equal-budget H
    - 4: NOT written into the paper. Report the numbers to the author (gain against 4.52, use, SUD, homelessness, price,
      pi_V; then the T = 25 cohort CEVs); the author decides the two yellow passages.
    - 5a: the footnote on the screen's rule gains the result with treatment meeting the condition.
+   - 6: the omega_c footnote (p.19, marked yellow) gives the sensitivity's gain split into externalities and the rest,
+     welfare_nok.parts on results/omega_nishiyama/nodes/{tf,null} with the sensitivity's benchmark, against Table 6's
+     last column (the author: "break it down by externalities and non-externalities").
    - 5b: the p.22 Milby paragraph gains the driver: treatment take-up and SMI shares of housed SUD households by voucher
      status, Housing First against Treatment First.
 4. When every run has landed and been written in (4 reported), delete the routine and say so.
