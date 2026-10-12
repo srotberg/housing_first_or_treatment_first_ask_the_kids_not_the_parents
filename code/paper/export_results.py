@@ -178,6 +178,18 @@ out['_nish_cev_logged'] = f"{cev_logged('nish_tf') - cev_logged('nish_null'):.2f
 # (12 October, the author: "this has to be better explained") the sensitivity's long-run changes against its own no-policy
 # run, read as the paper's are: the stronger behavioural response is where the larger gain comes from
 _nt = final('nish_tf')
+# (12 October, the author: "so what is the actual reason for the gain then?") the gain at Nishiyama's weight split into
+# childhood and adult life, read off its own benchmark's lifetime curve one after the other, as Table 6 reads the paper's
+_vt, _vn = welfare_nok.arm_values(adir('nish_tf')), welfare_nok.arm_values(adir('nish_null'))
+_Ct, _At = welfare_nok.components(_vt, _nish_bench); _Cn, _An = welfare_nok.components(_vn, _nish_bench)
+_cw = welfare_nok.CHILD_WEIGHT
+_curve = _nish_bench.lifetime_curve(_cw, with_term=False)
+_W0 = _cw * _Cn + _An
+_cev_n = lambda x: 100 * (_nish_bench.cev_of(x, _curve) - _nish_bench.cev_of(_W0, _curve))
+_nish_child = _cev_n(_W0 + _cw * (_Ct - _Cn))
+out['x_nish_child_cev'] = f"{_nish_child:.2f}"
+out['x_nish_adult_cev'] = f"{_cev_n(_W0 + _cw * (_Ct - _Cn) + (_At - _An)) - _nish_child:.2f}"
+out['x_nish_child_ext_cev'] = f"{(1 - _nish_bench.omega) * _nish_child:.2f}"
 out['x_nish_b_pc'] = pc(_nt['drug use b']['pc'])
 out['x_nish_sud_pc'] = pc(_nt['SUD lambda_d']['pc'])
 out['x_nish_h_pc'] = pc(_nt['homelessness h_1']['pc'])
