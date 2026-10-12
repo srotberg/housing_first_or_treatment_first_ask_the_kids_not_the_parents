@@ -25,3 +25,14 @@ no screen and are NOT re-run. The stylized model (Section 3) has no treatment ch
   voucher holders with a SUD in treatment. Fail -> stop, diagnose, tell the author before anything else launches.
 - Every arm: DIST CHECK PASS, budget cleared (TARGET CHECK PASS) where pi_V clears, no GUARD.
 - The paper is rebuilt only from accepted arms; the checkers pass; the author gets the PDF with every change red.
+
+## On each check (every 30 minutes: the routine at :17 and a second at :47)
+The author, 12 Oct: "make sure to check that all the runs are working all the time so we dont waste time".
+1. Fetch. For every live rule-C session: get_session (status_bucket failed or a rate-limit stop = dead) and the last
+   commit on its results folder. Silent for 45 minutes while solving, or 90 while building or in a transition loop that
+   publishes less often = dead.
+2. A run that is alive but not advancing is wasting time too: the pass count must rise at least every 90 minutes, and an
+   arm whose budget gap and drug gap have stopped falling for 4 passes is reported to the author with its passes table.
+3. A dead run is relaunched at once in a fresh session with the same brief (arms resume from their last published pass);
+   a run that dies twice is reported, not relaunched. A rate-limit stop is relaunched on another model if one is available.
+4. One line to the author when nothing changed; a message at once when something died, stalled or landed.
