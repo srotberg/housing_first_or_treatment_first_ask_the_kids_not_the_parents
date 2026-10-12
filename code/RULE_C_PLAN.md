@@ -126,6 +126,15 @@ code/paper/ruleA_numbers.json (export_ruleA.py, DONE 22:21), so switching the ex
 | export_deltah.py 26-27 | counterfactuals_2c (delta_h) | NOT SWITCHED: the four-class run is dropped (the author) |
 Any exporter whose rule-C run is not done by Friday keeps its rule-A path, and the rule-A footnote names it.
 
+## SCOPE OF THE TEXT CHANGES (the author, 12 Oct ~22:35)
+"the only things to change are the TF rule, any footnotes that say the experiment is different from the executive
+order, and anything that describes the experiments in section 6". So: (1) the rule (Section 4's rule and its footnote;
+the introduction's one-line definition of Treatment First, with the SUD acronym moved to it), (2) the struck footnote
+that called the rule no programme's (no other such footnote exists: checked 22:35), (3) Section 6's descriptions of the
+experiments, rewritten with the rule-C numbers. Everything else keeps its prose and only its generated numbers change:
+the J_E footnote stays (reverted 22:30), the military paragraph's wording stays, and the Milby paragraph keeps the
+recovery-hazard counterpart (no switch to abstinence).
+
 ## Gates
 - C1 inert check (pass 1): welfare differs from rule A's 789.9399 at the same start, and the MILBY SPLIT line shows
   voucher holders with a SUD in treatment. Fail -> stop, diagnose, tell the author before anything else launches.
