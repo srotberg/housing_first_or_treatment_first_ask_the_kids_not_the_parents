@@ -1,8 +1,9 @@
-# Treatment First without externalities, drug price held, budget rebalanced, RULE C (code/noext_clear/run_noext_fixp_C.sh); 12 Oct 19:56 UTC
+# Treatment First without externalities, drug price held, budget rebalanced, RULE C (code/noext_clear/run_noext_fixp_C.sh); 12 Oct 20:16 UTC
 noext_fixp_C: free disk 22G, memory 15 GiB, cores 4, threads per solve 2, at most 2 solves (12 Oct 19:36)
 noext_fixp_C: arm D (tf_noext_fixp_C) on cf_fix2_treatC: detection 0.85, test 0.0004946100, drug price held at 1.0305057924439740, pi_V clearing against 6.3830441 from rule A's 0.068872515 (12 Oct 19:36)
 
-== cfarm_null_pe_noext_C (1 passes done)
+== cfarm_null_pe_noext_C (2 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0051  0.06753   +13.0%   +13.0%    -2.0%  1.57e-01  0.00e+00   789.8758  +nan%   +23.7%    +9.5%
- PE USED pass=    1 housing_price=  1.2048737611746377E+01 drug_price=  1.0051087408882291E+00 pi_V=  6.7533863251354007E-02
+  2  1.0101  0.06753   +11.5%   +11.5%    -1.8%  1.37e-01  0.00e+00   789.8718  +nan%   +21.4%    +8.9%
+ PE USED pass=    2 housing_price=  1.2048826302576822E+01 drug_price=  1.0101342844803405E+00 pi_V=  6.7533863251354007E-02
