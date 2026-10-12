@@ -1,5 +1,14 @@
-# nish_nodes against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 12 Oct 04:05 UTC
+# nish_nodes against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 12 Oct 04:25 UTC
 remote_nish_nodes: gfortran missing, installing (04:00)
 remote_nish_nodes: free disk 29G, memory 15 GiB, cores 4 (04:01)
 remote_nish_nodes: building cf_fix (04:01)
 remote_nish_nodes: building cf_fix2 (04:03)
+remote_nish_nodes: the two arms, warm-started at their converged prices, in parallel; budget target 5.7681232016963211 (04:05)
+remote_nish_nodes: arm null on cf_fix2: DRUG_PRICE_START=1.0000345 (04:05)
+remote_nish_nodes: arm tf on cf_fix2: PDET=0.85 NET_TARGET=5.7681232016963211 PV_START=0.095426492 DRUG_PRICE_START=0.8495162 EXTRA_SET=cost_per_drug_test 0.0004946100 (04:09)
+
+== null
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+
+== tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
