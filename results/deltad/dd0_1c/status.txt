@@ -1,4 +1,4 @@
-# delta_d 0 and delta_h 0, one class, every other parameter as calibrated (code/deltad/remote_deltad1c.sh); 12 Oct 09:34 UTC
+# delta_d 0 and delta_h 0, one class, every other parameter as calibrated (code/deltad/remote_deltad1c.sh); 12 Oct 09:54 UTC
 remote_deltad1c: gfortran missing, installing (06:42)
 remote_deltad1c: free disk 29G, memory 15 GiB, cores 4 (06:42)
 remote_deltad1c: building the one-class benchmark binary (06:42)
@@ -10,6 +10,8 @@ remote_deltad1c: benchmark exited 0 after 11 blocks; bench.err:  (08:47)
 remote_deltad1c: benchmark (users, SUD, h_1) 0.0861224238,0.0366588785,0.0060032472 (08:47)
 remote_deltad1c: arm null on cf_fix2_1c: DRUG_PRICE_START=1.0 EXTRA_SET=penalty_child_addicted 0;penalty_child_homeless 0 (08:47)
 remote_deltad1c: arm null ACCEPTED (exit 0): VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 3 passes, sweeps [70, 70, 70], largest final 4.81e-05 (rule 5e-05, at least 70 sweeps)  (09:34)
+remote_deltad1c: no-policy net revenue 6.1312320947108487 is the TF budget target; test cost 0.0004946100 ($35) (09:34)
+remote_deltad1c: arm tf on cf_fix2_1c: PDET=0.85 NET_TARGET=6.1312320947108487 PV_START=0.0962 DRUG_PRICE_START=0.8555 EXTRA_SET=cost_per_drug_test 0.0004946100;penalty_child_addicted 0;penalty_child_homeless 0 (09:34)
 
 == benchmark
  newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.90748734863622671        8.3986580319180049E-002   6.0865017346155266E-003   2.4395693099775141E-003
@@ -58,3 +60,6 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   1  1.0001  0.06753    +0.1%    +0.1%    -0.2%  1.06e-03  0.00e+00   789.3967  +0.09%
   2  1.0002  0.06753    +0.0%    +0.1%    +0.0%  3.28e-04  0.00e+00   789.3649  -0.00%
   3  1.0002  0.06753    +0.0%    +0.1%    +0.0%  1.94e-04  0.00e+00   789.3651  -0.00%
+
+== tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
