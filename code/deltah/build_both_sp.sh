@@ -2,10 +2,11 @@
 # build_both_sp.sh -- THE BOTH-PENALTIES BUILDS IN SINGLE PRECISION, TREATMENT FIRST ON RULE C (12 October).
 # The sources are generated exactly as build_both.sh generates them (the benchmark of record's base with patch_both.py;
 # cf_fix2 with patch_both.py), and then:
-#   code/bench_both_sp/hftf_bench        = patch_sp.py(bench_both source)                      the benchmark
-#   code/cf_fix2_both_spC/hftf_cf_prod   = patch_sp.py(patch_treatC.py(cf_fix2_both source))   the arms, rule C
+#   code/bench_both_sp/hftf_bench        = patch_ssfast.py(patch_sp.py(bench_both source))                      the benchmark
+#   code/cf_fix2_both_spC/hftf_cf_prod   = patch_ssfast.py(patch_sp.py(patch_treatC.py(cf_fix2_both source)))   the arms, rule C
 # patch_sp.py stores the value function and policies in four bytes (integers in two) and keeps the distributions double;
-# patch_treatC.py is the paper's screen from 12 October (in treatment if disordered, nobody may use).
+# patch_treatC.py is the paper's screen from 12 October (in treatment if disordered, nobody may use); patch_ssfast.py takes
+# set_SS_benefits' exactly-zero terms out of its loop nest, which at the four-class state took hours a loop.
 # Nothing is written into code/bench_both or code/cf_fix2_both: a run of build_both.sh's binaries is never disturbed.
 set -e
 CODE=$(cd "$(dirname "$0")/.." && pwd)
@@ -34,8 +35,11 @@ python3 "$CODE/treat/patch_treatC.py" "$G/cf_both.f90" "$G/cf_bothC.f90"
 grep -q "RULE C (patch_treatC.py)" "$G/cf_bothC.f90" || { echo "REFUSING: rule C not in the arms' source"; exit 1; }
 
 B=$CODE/bench_both_sp; A=$CODE/cf_fix2_both_spC; mkdir -p "$B" "$A"
-python3 "$CODE/deltah/patch_sp.py" "$G/bench_both.f90" "$B/cf.f90"
-python3 "$CODE/deltah/patch_sp.py" "$G/cf_bothC.f90" "$A/cf.f90"
+python3 "$CODE/deltah/patch_sp.py" "$G/bench_both.f90" "$G/bench_both_sp.f90"
+python3 "$CODE/deltah/patch_sp.py" "$G/cf_bothC.f90" "$G/cf_bothC_sp.f90"
+# patch_ssfast.py: set_SS_benefits skips its exactly-zero terms ((E*U)^3 x 40 -> (E*U)^2 x 40 at the four-class state)
+python3 "$CODE/deltah/patch_ssfast.py" "$G/bench_both_sp.f90" "$B/cf.f90"
+python3 "$CODE/deltah/patch_ssfast.py" "$G/cf_bothC_sp.f90" "$A/cf.f90"
 ( cd "$B" && gfortran -O3 -funroll-loops $COMMON cf.f90 -o hftf_bench 2> build_prod.err ) &
 ( cd "$A" && gfortran -O3 -funroll-loops $COMMON cf.f90 -o hftf_cf_prod 2> build_prod.err ) &
 wait
