@@ -432,9 +432,9 @@ def main():
         # in place of the no-externality block's '$\\pi_V$ held' once 'price clears' sits in the same row
         # a label whose words the author has seen stays black: the key it had before the stacking, and its whole text
         ' & ' + ' & '.join(hk(k, w) for k, w in (
-            (('h1/0', 'Housing'), 'Housing'), ('h5/1', 'both'), (('h3/1', '$\\pi_V$ clears'), '$\\pi_V$'),
-            (('h1/4', 'Housing'), 'Housing'), ('h5/5', 'both'),
-            ('h5/7', '$\\pi_V$'), ('h5/8', 'both'))) + ' \\\\',
+            (('h1/0', 'Housing'), 'Housing'), ('h5/1', 'Both'), (('h3/1', '$\\pi_V$ clears'), '$\\pi_V$'),
+            (('h1/4', 'Housing'), 'Housing'), ('h5/5', 'Both'),
+            ('h5/7', '$\\pi_V$'), ('h5/8', 'Both'))) + ' \\\\',
         ' & ' + ' & '.join(hk(k, w) for k, w in (
             (('h2/0', 'First'), 'First'), ('h6/1', 'held'), (('h3/1', '$\\pi_V$ clears'), 'clears'),
             (('h2/4', 'First'), 'First'), ('h6/5', 'held'),

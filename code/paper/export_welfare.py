@@ -105,7 +105,7 @@ def main():
          r"\caption{Where the newborn's gain comes from}\label{tab:whogains}",
          r'\begingroup\small',
          r'\sbox{\ntbox}{\begin{tabular}{@{}lccc@{}}', r'\toprule',
-         r' & both held & $\pi_V$ clears & both clear \\', r'\midrule',
+         r' & Both held & $\pi_V$ clears & Both clear \\', r'\midrule',
          row(r"The newborn's gain $\Delta W$, percent of lifetime consumption", 'tot'),
          row(r"\quad Childhood its parent does not count, $(1-\omega_c)\Delta C$", 'extc'),
          row(r"\quad Better productivity at entry its parent does not count, $(1-\omega_c)E$", 'E'),
