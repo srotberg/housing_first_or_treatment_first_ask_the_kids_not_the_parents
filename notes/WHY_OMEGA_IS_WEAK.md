@@ -116,7 +116,7 @@ Nothing has been built. Three options, and the choice is the author's:
 
 ## Reproduction
 
-`scratchpad/omega_deterrent.py` (in the repo). `DeltaV_child` is read from the
+`notes/omega_deterrent.py` (in the repo). `DeltaV_child` is read from the
 `expected_child_value=` print in `code/variant_cf_20260910T161710Z.log`, which
 is the near-benchmark run (b 0.0861, lambda_d 0.0370, h_1 0.0132); the survival
 schedule is `actual_survival_probability` in the Fortran source; the newborn
