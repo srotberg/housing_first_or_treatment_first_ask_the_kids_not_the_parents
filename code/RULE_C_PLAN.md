@@ -107,6 +107,25 @@ results/counterfactuals_2c/tf_ruleC_v1 holds the v1 passes; C1 relaunched on the
 (inert_C2 due ~22:45): if results/counterfactuals_2c/tf_ruleC2_test shows the Housing First pass differs between the old and the
 new build, archive C1 at once and tell the author. Then archive the ABSTAIN session.
 
+## PAPER SWITCH: every rule-A path an exporter reads, and its rule-C replacement (12 Oct 22:25)
+Done when the arm is accepted, one exporter at a time; the rule-A footnote's names are frozen first in
+code/paper/ruleA_numbers.json (export_ruleA.py, DONE 22:21), so switching the exporters cannot move them.
+| exporter (line) | rule A reads | rule C reads |
+|---|---|---|
+| export_results.py TF_ARM (69) | counterfactuals_2c/tf85_c35/tf | counterfactuals_2c/tf_ruleC/tf (env TF_ARM, or change the default) |
+| export_results.py 345/358 (_dc), 393 | decomp_2c/arm_fixpv, arm_fixp; decomp_2c_both/arm_fixboth | decomp_2c_shares_C/arm_fixpv, arm_fixp, arm_fixboth (layout {tf,null}/ from collect_shares_C.sh) |
+| export_results.py 176 (nish curve), 79 | omega_nishiyama_2c, omega_nishiyama/cf/{null,tf} | omega_nishiyama_C (null kept from v1; tf re-run) |
+| export_results.py 213-214, transition_source.py 51, welfare_nok.py 197, export_longrun.py 210-252/838/915 | transition_2c (+ t70) | transition_2c_t70_C / transition_2c_C (TR) |
+| export_results.py 728, export_longrun.py 68-80, export_pe_noext.py 21 | noext_clear, pe_noext, noext_fixp | noext_clear_C, pe_noext_C, noext_fixp_C |
+| export_longrun.py 87-89, 320-322, 343; export_decomp_use.py 7 | decomp_2c, decomp_2c_both, decomp_2c_shares | decomp_2c_shares_C |
+| export_welfare.py 34-37 | decomp_2c_both/arm_fixboth, decomp_2c/arm_fixp, (tf85_c35/tf, transition_2c/arm_tf) | decomp_2c_shares_C/arm_fixboth, arm_fixp, (tf_ruleC/tf or decomp_2c_shares_C/arm_tf, the TR arm) |
+| export_milby_split.py 17 | counterfactuals_2c/milby_split | the long run: tf_ruleC/tf/milby_split.txt; the TABLE ROW: the rule-C transition's TRANSITION MILBY t=1 (RULE_C_PLAN Milby row) |
+| export_whostops.py 26 | whostops_2c | whostops_2c_C |
+| export_revoked.py 24, 55 | revoked_2c, revoked_2c_street | revoked_2c_C (street split dropped unless the budget allows) |
+| export_nish_parts.py 22-23 | omega_nishiyama, omega_nishiyama_2c | omega_nishiyama_C |
+| export_deltah.py 26-27 | counterfactuals_2c (delta_h) | NOT SWITCHED: the four-class run is dropped (the author) |
+Any exporter whose rule-C run is not done by Friday keeps its rule-A path, and the rule-A footnote names it.
+
 ## Gates
 - C1 inert check (pass 1): welfare differs from rule A's 789.9399 at the same start, and the MILBY SPLIT line shows
   voucher holders with a SUD in treatment. Fail -> stop, diagnose, tell the author before anything else launches.
