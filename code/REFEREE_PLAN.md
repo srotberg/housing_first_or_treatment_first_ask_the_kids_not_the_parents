@@ -12,7 +12,7 @@ publishes a status file on the branch every 20 minutes; a run with no commit for
 | 5a | Treatment First with vouchers conditional on being in treatment | session_01P63NqUHxzFAc4T8NAiDtGf (11:21 12 Oct) | code/treat/remote_treat2.sh | results/counterfactuals_2c/tf_treat2 | ~6-7 h; ~18:30 |
 | 5a-old | SUPERSEDED, do not write into the paper: the first version (remote_treat.sh treat) exempted treatment from the disorder test only; a household with a SUD keeps using, so it still failed the use test and the arm reproduced the paper's (pass 8: CEV 4.38 vs 4.37). Left to finish as a check of that diagnosis | session_017vq7TAYbFN6WBPXTHviuKH | code/treat/remote_treat.sh treat | results/counterfactuals_2c/tf_treat | finishing |
 | 5b | the paper's two arms with the MILBY SPLIT print | session_016fs45yE21insqcHar6sFj4 | code/treat/remote_treat.sh split | results/counterfactuals_2c/milby_split | LANDED 10:04 12 Oct; in the paper (round r313, p.22) via code/paper/export_milby_split.py |
-| 6 | the omega_c = 0.686 arms re-solved for their values by node | (launched 12 Oct ~04:00) | code/omega_nishiyama/remote_nish_nodes.sh | results/omega_nishiyama/nodes | ~2-3 h |
+| 6 | the omega_c = 0.686 arms re-solved for their values by node | (launched 12 Oct ~04:00) | code/omega_nishiyama/remote_nish_nodes.sh | results/omega_nishiyama/nodes | LANDED 12:40 12 Oct; in the paper (round r314, p.19 footnote) via code/paper/export_nish_parts.py |
 
 Stopped at the author's word: T = 70 (converged enough, "will not change the figures anymore"), detection 0.70, the
 two-class delta_d = 0 run (replaced by 2), delta_d 0.05 and 0.12, equal-budget Housing First.

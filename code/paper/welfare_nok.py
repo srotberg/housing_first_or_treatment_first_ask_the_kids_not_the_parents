@@ -210,7 +210,7 @@ def v26(d):
     return {(k + 1, 0): v[k] for k in range(13)} | {(k + 1, 1): v[13 + k] for k in range(13)}
 
 
-def parts(arm_w, arm_n, base_w, base_n, bench=REF, weight=CHILD_WEIGHT):
+def parts(arm_w, arm_n, base_w, base_n, bench=REF, weight=CHILD_WEIGHT, m=None):
     """WHERE THE NEWBORN'S GAIN COMES FROM. Treatment First (welfare files in arm_w, by-node values in arm_n)
     against Housing First (base_w, base_n), without the kappa_x term, the child's childhood at `weight`:
       C   the child's childhood at one (the Fortran's), Cw = weight * C
@@ -224,7 +224,9 @@ def parts(arm_w, arm_n, base_w, base_n, bench=REF, weight=CHILD_WEIGHT):
     Points of lifetime consumption ('pts'): the four pieces extc, E, own, cnt read off the benchmark's lifetime curve
     one after another, in that order, so that they sum to the CEV 'tot'; and 'P' on the adult curve, the parent's
     own gain as a percent of its own lifetime consumption."""
-    m = masses()
+    # m: the entry nodes' masses; the paper's newborn run's by default (another economy may pass its own, see
+    # export_nish_parts.py)
+    m = masses() if m is None else m
     vb, va = arm_values(base_w), arm_values(arm_w)
     assert vb and va, (base_w, arm_w)
     Cb, Ab = components(vb, bench)
