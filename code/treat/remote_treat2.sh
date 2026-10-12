@@ -4,11 +4,11 @@
 # since it keeps using the arm reproduced the paper's (see code/treat/patch_treat2.py). Here it passes both tests.
 # The paper's arm otherwise: detection 0.85, the $35 test, the drug price and pi_V clearing against the paper's no-policy
 # net revenue, warm-started at the paper's equilibrium. Build cf_fix2_treat2 (build_treat2.sh), arms through
-# cf_arm_y.sh. Results to results/counterfactuals_2c/tf_treat2/.
+# cf_arm_y.sh. Results to results/counterfactuals_2c/tf_treat3/ (tf_treat2 was the inert second try).
 # START IT WITH THE BASH TOOL'S run_in_background=true from the repo root:  bash code/treat/remote_treat2.sh
 # and run the same command again whenever the call is stopped: it ATTACHES to the running solve.
 set -u
-MODE=treat2; ARM=tf_treat2
+MODE=treat2; ARM=tf_treat3
 CTEST=$(python3 -c "print('%.10f' % (35/(9e6/80)*1.589817990383))")
 NET_TARGET_NULL=5.8918410999831181
 BRANCH=claude/two-period-addiction-hazard-d7gb61
