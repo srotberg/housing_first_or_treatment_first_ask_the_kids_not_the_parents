@@ -26,18 +26,24 @@ mkdir -p "$R"
 D=$C/cf_point_c2_$STEP
 TRAILER=$'\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01WpmVwzkbKX7RRP8t9yBCLv'
 export BENCH_FROM=$REF BENCH_B=0.0054222 BENCH_OMEGA=0.085 BENCH_KU=1.0 KAPPA_X=0.9342362271804227
-export OMP_NUM_THREADS=4 SEED_FROM=bench DIAG_TAG=_c2_$STEP
+export SEED_FROM=bench DIAG_TAG=_c2_$STEP
 export PASSES_BASE="0.089562893104297908,0.038113117586549894,0.0061835672543113307"
 export CEV_CURVE=$D.welfare_curve.dat
 case "$STEP" in
   inert_C)     ARM=null; B=cf_fix2_treatC;  MAXP=1 ;;
   inert_C2)    ARM=null; B=cf_fix2_treatC2; MAXP=1 ;;
+  # THE INERT CHECK AT ONE THREAD: run_internal_grid is SHARED in solve_value_function_and_policy_functions' parallel
+  # loop but written per node (a race present in every build), so two 4-thread runs of the SAME binary differ
+  # (inert_C_run1_loaded against inert_C). One thread has no race, so the two builds can be compared digit for digit.
+  inert1_C)    ARM=null; B=cf_fix2_treatC;  MAXP=1; THREADS=1 ;;
+  inert1_C2)   ARM=null; B=cf_fix2_treatC2; MAXP=1; THREADS=1 ;;
   ruleC2)      ARM=tf;   B=cf_fix2_treatC2; MAXP=2 ;;
   ruleC2_off)  ARM=tf;   B=cf_fix2_treatC2; MAXP=1; export TC2_ABSTAIN=0 TC2_EVKEY=0 TC2_INTERNAL=0 ;;
   ruleC2_noab) ARM=tf;   B=cf_fix2_treatC2; MAXP=1; export TC2_ABSTAIN=0 ;;
-  *) echo "usage: $0 inert_C|inert_C2|ruleC2|ruleC2_off|ruleC2_noab"; exit 1 ;;
+  *) echo "usage: $0 inert_C|inert_C2|inert1_C|inert1_C2|ruleC2|ruleC2_off|ruleC2_noab"; exit 1 ;;
 esac
 DIR=$C/cfarm_${ARM}_c2_$STEP
+export OMP_NUM_THREADS=${THREADS:-4}
 
 note() { echo "remote_treatC2 $STEP: $* ($(date -u +%H:%M))" | tee -a "$D.status"; }
 
