@@ -68,9 +68,18 @@ the relaunched main arm is the test, and the author wants the runs going):
      ratio is far above Milby's, stopping is too easy and the author decides whether to add a cost of abstaining for a
      household with the disorder, calibrated to that ratio (the author, 12 Oct: "Should we add some additional cost to
      being in treatment and not using?"). NOTHING ELSE LAUNCHES BEFORE THAT DECISION.
+   BUDGET (the author, 12 Oct ~21:25: "Prioritize them yourself so we have enough until Friday", "Don't run the four class
+   model"): the weekly limit resets Fri 16 Oct ~14:00 UTC. BOTH (four classes) was ENDED at 21:07 and is DROPPED, as is P50
+   (not quoted in the paper). Workers are Sonnet one-command sessions running the scripts already on the branch; an Opus
+   session only where a script must be written. One check routine an hour (the :47 one was deleted). Order, by what the
+   paper quotes: Table 5 and the abstract (C1, S-tf, decompositions, 26 names incl. the welfare split), the no-externality
+   columns (15 names), the transition (30 names and the Milby first-year row), then the validations and sensitivities
+   (who-stops 4, omega_c 0.686 4, revocations 2, detection 0.70 for footnote's claim, delta_d = 0 for the sentence the
+   author asked for). Anything not done by Friday stays on rule A with the rule-A footnote saying so.
    STAGE 2 (after the author's go-ahead): S-tf and the three decompositions (S-fixboth, S-fixpv, S-fixp) and NOEXT, the
      author's priority ("the main experiments and the no externalities with the decompositions. And then the transition").
-   STAGE 3: TR (when C1 is accepted). STAGE 4: P70, P50, DD0, NISH, VALID.
+   STAGE 3: TR (when C1 is accepted; it is the longest, so it starts the moment C1 is accepted).
+   STAGE 4, in this order and only as the budget allows: VALID who-stops, NISH, P70, DD0, VALID revocations. P50 and BOTH dropped.
    Each relaunch: a fresh session with its v1 brief plus a preamble: the fixed build, the warm start below,
    "the folder's passes.txt is the v1 run's and is only a warm start", and for the engineering sessions (NOEXT, VALID,
    NISH, TR) "your v1 scripts are on the branch; rebuild everything from the fixed patch_treatC.py; verify
