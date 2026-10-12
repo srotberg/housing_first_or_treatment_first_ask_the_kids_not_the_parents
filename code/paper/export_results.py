@@ -190,6 +190,15 @@ _nish_child = _cev_n(_W0 + _cw * (_Ct - _Cn))
 out['x_nish_child_cev'] = f"{_nish_child:.2f}"
 out['x_nish_adult_cev'] = f"{_cev_n(_W0 + _cw * (_Ct - _Cn) + (_At - _An)) - _nish_child:.2f}"
 out['x_nish_child_ext_cev'] = f"{(1 - _nish_bench.omega) * _nish_child:.2f}"
+# the same split for the paper's arms on the benchmark of record, read the same way, so the footnote compares like with like
+_vt0, _vn0 = welfare_nok.arm_values(adir('tf85')), welfare_nok.arm_values(adir('null_share'))
+_Ct0, _At0 = welfare_nok.components(_vt0, welfare_nok.REF); _Cn0, _An0 = welfare_nok.components(_vn0, welfare_nok.REF)
+_curve0 = welfare_nok.REF.lifetime_curve(_cw, with_term=False)
+_W00 = _cw * _Cn0 + _An0
+_cev_0 = lambda x: 100 * (welfare_nok.REF.cev_of(x, _curve0) - welfare_nok.REF.cev_of(_W00, _curve0))
+_tf_child = _cev_0(_W00 + _cw * (_Ct0 - _Cn0))
+out['x_tf_childpart_cev'] = f"{_tf_child:.2f}"
+out['x_tf_adultpart_cev'] = f"{_cev_0(_W00 + _cw * (_Ct0 - _Cn0) + (_At0 - _An0)) - _tf_child:.2f}"
 out['x_nish_b_pc'] = pc(_nt['drug use b']['pc'])
 out['x_nish_sud_pc'] = pc(_nt['SUD lambda_d']['pc'])
 out['x_nish_h_pc'] = pc(_nt['homelessness h_1']['pc'])
