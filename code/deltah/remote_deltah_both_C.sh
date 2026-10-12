@@ -257,6 +257,9 @@ PYEOF
         if ! tail -n +"$START_LINE" bench.log | grep -q -a "HANDOVER penalty_child_homeless"; then
             kill "$PID"; note "GUARD: no HANDOVER line in the benchmark log; killed"; publish "failed"; exit 1
         fi
+        if [ "$(stat -c%s bench.log)" -gt 4000000000 ]; then
+            kill "$PID"; note "GUARD: bench.log passed 4 GB (the first launch printed 975 MB of budget residuals in 30 minutes); killed"; publish "failed"; exit 1
+        fi
         if tail -n +"$START_LINE" bench.log | grep -q -a "HANDOVER IGNORED"; then
             kill "$PID"; note "GUARD: a handover line was ignored: $(grep -a 'HANDOVER IGNORED' bench.log | tail -1)"; publish "failed"; exit 1
         fi
@@ -328,7 +331,10 @@ run_arm() (
     P=$!
     while kill -0 "$P" 2>/dev/null; do
         for _ in $(seq 1 120); do kill -0 "$P" 2>/dev/null || break; sleep 10; done
-        Q=$(pgrep -f -n "hftf_cf$" 2>/dev/null || echo "$P")
+        Q=$(pgrep -x -n hftf_cf 2>/dev/null || echo "$P")
+        if [ "$(stat -c%s "$C/cfarm_${a}_2c/cf.log" 2>/dev/null || echo 0)" -gt 4000000000 ]; then
+            kill "$Q"; note "GUARD: arm $a's cf.log passed 4 GB; killed"
+        fi
         kill -0 "$P" 2>/dev/null && publish "$a running, $(grep -ac '^ *distance_govt_budget=' "$C/cfarm_${a}_2c/cf.log" 2>/dev/null) passes; $(memline "$Q" "$C/cfarm_${a}_2c/cf.log")"
     done
     wait "$P"; rc=$?

@@ -135,8 +135,8 @@ rep("""        !$omp threadprivate(val_fun_internal)
 """, """        !$omp threadprivate(val_fun_internal)
         !$omp threadprivate(sp_value_function_in)
 """)
-CELL = ('(time_period,age_index,financial_index,&\n\s*unemployment_index,employment_index,housing_status_index,'
-        'voucher_index\)')
+CELL = (r'(time_period,age_index,financial_index,&\n\s*unemployment_index,employment_index,housing_status_index,'
+        r'voucher_index\)')
 sub(r'(\n(\s*))call internal_computations&\n(\s*)\((value_function\(years_left_on_mortgage_index\)%&\n\s*'
     r'vector_transition_real\(time_period,age_index,financial_index,&\n\s*unemployment_index,employment_index,'
     r'housing_status_index,voucher_index\)),',
@@ -150,6 +150,21 @@ sub(r'(amortization_used_dist,&\n\s*)(policy_function_wage_income_tax_paid\(year
     r'\(years_left_on_mortgage_index\)%&\n\s*vector_transition_real\(time_period,age_index,financial_index,'
     r'unemployment_index,&\n\s*employment_index,housing_status_index,voucher_index\)),',
     r'\1real(\2,8),&\n\3real(\4,8),', 1)
+
+# THE BUDGET-IDENTITY CHECK AT FOUR-BYTE PRECISION (12 October, the first launch of remote_deltah_both_C.sh).
+# check_budget_constraint_clears rebuilds the budget in double from the STORED policies and prints eleven lines whenever
+# the residual exceeds 5e-8. With consumption, the drug share, total consumption and frac_mov_optimal_1 stored in four
+# bytes the identity holds only to their rounding: the first loop's distribution stage printed 2.2 million residuals
+# (largest 1.9e-6, residual / (eps4 * consumption) at most 7.3, the rest from the savings terms), 975 MB of log in
+# 30 minutes. The check only prints, so its tolerance gets the rounding of what it reads: 4 eps4 times the sum of the
+# identity's magnitudes, at least four times the worst case (c, f*tc, and frac_used times the two grid points).
+rep("""        checking_criterion=5*10.d0**(-8)
+""", """        checking_criterion=5*10.d0**(-8)
+        ! patch_sp.py: the stored policies are four-byte, so the identity holds to their rounding, not to 5e-8
+        checking_criterion=checking_criterion+4*dble(epsilon(1.0))*(&
+            (1+abs(consumption_tax))*(abs(consumption_used)+abs(frac_spent_on_addiction_used*total_consumption_used))+&
+            (abs(financial_grid(fin_index_frac_used))+abs(financial_grid(financial_index_used)))*max(abs(neg_scale_1),1.d0))
+""")
 
 open(dst, 'w').write(s)
 print(f'patch_sp: {src} -> {dst}')
