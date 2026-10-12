@@ -113,7 +113,8 @@ while kill -0 "$P" 2>/dev/null; do
     if [ "$(npass)" -ge "$MAXP" ]; then
         sleep 20   # let the pass's trailing prints land
         note "pass cap $MAXP reached after $(( ($(date +%s)-T0)/60 )) min; stopping the solve"
-        pkill -f "$DIR/hftf_cf" 2>/dev/null; pkill -x hftf_cf 2>/dev/null
+        # only THIS step's solve: the hftf_cf whose working directory is $DIR (two steps may run side by side)
+        for q in $(pgrep -x hftf_cf); do [ "$(readlink /proc/$q/cwd)" = "$DIR" ] && kill "$q"; done
         break
     fi
     if [ $(( $(date +%s)-last )) -ge 1500 ]; then publish "running, $(npass) passes"; last=$(date +%s); fi
