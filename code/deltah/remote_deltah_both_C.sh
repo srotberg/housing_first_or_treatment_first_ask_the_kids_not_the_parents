@@ -5,10 +5,13 @@
 #   BUILDS: code/deltah/build_both_sp.sh -- bench_both_sp/hftf_bench (patch_both + patch_sp: value function and policies
 #     stored in four bytes, integers in two, distributions double) and cf_fix2_both_spC/hftf_cf_prod (patch_both +
 #     patch_treatC, rule C: a household with the disorder must be in treatment and nobody may use, + patch_sp).
-#   MEMORY: the single-precision state; swap only as large as the disk leaves after the runs' own files (SWAP_GB, 4).
-#   DISK: the four-class benchmark set is about 8.9 GB of text and each arm writes another; nothing is tarred or copied.
-#     The arms hard-link the benchmark's large files (cf_arm_both_sp.sh BENCH_DIR), the null arm's counter set is
-#     deleted once it is accepted (its distribution kept), and the launcher checks that no file of the set changed.
+#   MEMORY: the single-precision state, MEASURED on the first loop (12 October): 5.4 GiB through the backward passes, then
+#     13.6 GiB of RSS and 3.7 GiB of swap (17.3 GiB) in the distribution stage, with no swap traffic there (the swapped
+#     part is cold). So 10 GiB of swap (SWAP_GB), topped up if a smaller swap is already on.
+#   DISK: the four-class benchmark set is about 8.9 GB of text; nothing is tarred or copied. The arms hard-link the
+#     benchmark's large files (cf_arm_both_sp.sh BENCH_DIR), send their own value function and policies to /dev/null
+#     (NULL_COUNTER_SET=1: 8.9 GB nothing reads; the distributions kept), and the launcher checks that no file of the
+#     benchmark's set changed. Reserved on the disk besides the swap: 13 GB.
 #   CHECKPOINTS: the benchmark RESUMES IN PLACE. The Fortran writes calibration_state.dat and calibration_distribution
 #     {1,2}.dat at the end of each loop and reads them on start, but the handover is deleted as it is read and 69 of its
 #     97 lines (the grids, the flags, frozen_stop_after_blocks, kappa_x, ...) are not in the state file, so a resume
@@ -157,20 +160,25 @@ fi
 grep -q "RULE C (patch_treatC.py)" "$C/cf_fix2_both_spC/cf.f90" && grep -q "jagged_matrix_transition_real4" "$C/cf_fix2_both_spC/cf.f90" \
     && grep -q "jagged_matrix_transition_real4" "$C/bench_both_sp/cf.f90" || { note "GUARD: the builds are not rule C / single precision"; publish "failed"; exit 1; }
 
-# SWAP: what the disk leaves after the runs' own files. The benchmark set (8.9 GB) and one arm's counter set (8.9 GB)
-# plus the kept null distribution, the checkpoint staging and margin: 23 GB reserved.
-SWAP_GB=${SWAP_GB:-4}
-if [ -z "$(swapon --show 2>/dev/null)" ]; then
+# SWAP: the footprint is 17+ GiB on 15.7 GiB of RAM (measured, header). The disk keeps 13 GB for the runs' own files: the
+# benchmark set (8.9 GB), the calibration distribution (1.2 GB, deleted once the benchmark is done), the two arms'
+# distributions, the checkpoint staging. A swap already on (a re-launch in the same container) is topped up.
+SWAP_GB=${SWAP_GB:-10}
+ON_GB=$(swapon --show=SIZE --bytes --noheadings 2>/dev/null | awk '{s+=$1} END{printf "%d", s/1073741824+0.5}')
+if [ "$ON_GB" -lt "$SWAP_GB" ]; then
     AVAIL_GB=$(df -BG --output=avail "$C" | tail -1 | tr -dc 0-9)
-    NEED=23; [ -f "$BD/BENCH_COMPLETE" ] && NEED=14
-    [ $((AVAIL_GB - NEED)) -lt "$SWAP_GB" ] && SWAP_GB=$((AVAIL_GB - NEED))
-    if [ "$SWAP_GB" -ge 1 ]; then
-        fallocate -l ${SWAP_GB}G /var/tmp/deltah_bothC.swap 2>/dev/null && chmod 600 /var/tmp/deltah_bothC.swap && mkswap /var/tmp/deltah_bothC.swap >/dev/null 2>&1 \
-            && swapon /var/tmp/deltah_bothC.swap 2>/dev/null && note "$SWAP_GB GiB swap on (disk had $AVAIL_GB GB free)" || note "no swap (could not enable $SWAP_GB GiB)"
+    ADD=$((SWAP_GB - ON_GB)); [ $((AVAIL_GB - 13)) -lt "$ADD" ] && ADD=$((AVAIL_GB - 13))
+    if [ "$ADD" -ge 1 ]; then
+        SW=/var/tmp/deltah_bothC.swap.$(date +%s)
+        fallocate -l ${ADD}G "$SW" 2>/dev/null && chmod 600 "$SW" && mkswap "$SW" >/dev/null 2>&1 \
+            && swapon "$SW" 2>/dev/null && note "$ADD GiB swap added to $ON_GB (disk had $AVAIL_GB GB free)" || note "GUARD-WARN: could not add $ADD GiB of swap"
     else
-        note "no swap: $AVAIL_GB GB of disk free, $NEED reserved for the runs"
+        note "GUARD-WARN: swap $ON_GB GiB, and $AVAIL_GB GB of disk free leaves none to add with 13 reserved"
     fi
+else
+    note "swap already on: $ON_GB GiB"
 fi
+export GFORTRAN_UNBUFFERED_PRECONNECTED=y     # the log lines (AGE_TIME, the pace) arrive when written, not in 8 KB lumps
 
 # STAGE A: THE BENCHMARK, every parameter fixed, resumed in place
 if [ ! -f "$BD/BENCH_COMPLETE" ] && [ ! -f "$BD/calibration_state.dat" ]; then
@@ -313,7 +321,7 @@ setcheck() {  # no file of the benchmark's set may change under an arm (they are
 setcheck || { publish "failed"; exit 1; }
 
 export BENCH_DIR=$BD BENCH_B=$BV BENCH_OMEGA=$W BENCH_KU=1.0 KAPPA_X=$KX
-export OMP_NUM_THREADS=4 SEED_FROM=bench DIAG_TAG=_2c BENCH_BIN=$C/bench_both_sp/hftf_bench
+export OMP_NUM_THREADS=4 SEED_FROM=bench DIAG_TAG=_2c BENCH_BIN=$C/bench_both_sp/hftf_bench NULL_COUNTER_SET=1
 export CEV_CURVE=$BD/welfare_curvebaseline_benchmark.dat
 export PASSES_BASE=$(awk '/INVARIANT PASS +drug users/{b=$NF} /INVARIANT PASS +disorder rate/{l=$NF} /INVARIANT PASS +homelessness rate/{h=$NF} END{print b","l","h}' "$BD/bench.log")
 note "benchmark (users, SUD, h_1) $PASSES_BASE"

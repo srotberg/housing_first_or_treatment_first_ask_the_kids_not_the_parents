@@ -247,9 +247,23 @@ print('supply refitted: benchmark quantity %.12f, shifter %.12f -> %.12f, price 
 PYEOF
 fi
 cp PARAM_HANDOVER.txt PARAM_HANDOVER.arm.txt
+# THE ARM'S OWN SET GOES NOWHERE (12 October, remote_deltah_both_C.sh). save_vars_and_functions writes the arm's value
+# function and twelve policies as text at the end, 8.9 GB at the four-class state, which nothing reads (the digest, the
+# CEV and finalstats read cf.log; the counterfactual binary reads only *baseline_benchmark.dat and *seed.dat). With the
+# benchmark's 8.9 GB and the 10 GB of swap the four-class state needs, they do not fit, so each is a symlink to /dev/null
+# (gfortran's status='replace' writes through it; checked). The distributions are kept, as a later seed may want them.
+if [ "${NULL_COUNTER_SET:-0}" = 1 ]; then
+  for nm in value_function policy_function_space_lived_in_size policy_function_labor_supply policy_function_total_consumption \
+            policy_function_consumption policy_function_frac_spent_on_addiction policy_function_years_of_amortization_index \
+            policy_function_housing_status_index policy_function_financial_index fin_index_frac_mov_to_optimal \
+            policy_function_addiction policy_function_treatment frac_mov_optimal_1; do
+    for i in 1 2; do rm -f "${nm}${i}counter_arm.dat"; ln -s /dev/null "${nm}${i}counter_arm.dat"; done
+  done
+  echo "NULL_COUNTER_SET: $(find . -maxdepth 1 -lname /dev/null | wc -l) counter_arm files go to /dev/null"
+fi
 echo "STAGE 2: arm $ARM on the counterfactual binary ..."
 ./hftf_cf > cf.log 2> cf.err
-echo "STAGE 2 exited"
+echo "STAGE 2 exited; the arm directory holds $(du -sh --apparent-size . | cut -f1) ($(find . -maxdepth 1 -type f -links 1 -size +1M | wc -l) large files of its own)"
 grep -a "HANDOVER voucher probability" cf.log | head -1
 PF=$(grep -a "^ *probability_of_voucher=" cf.log | head -1 | awk '{print $2}')
 PA=$(grep -a "^ *probability_of_voucher=" cf.log | tail -1 | awk '{print $2}')
