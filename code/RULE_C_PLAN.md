@@ -146,6 +146,13 @@ Then (~22:40): "look for other places you think are relevant. any change should 
   under rule C they can, so the case for grandfathering rests on what the rule-C transition shows).
 - UNCHANGED: the abstract, the Milby paragraph's wording (numbers only), the treatment-cost item in Section 5.
 
+NOISE CHECK (22:57): the old build run twice gives welfare 789.1269 and 789.1271, voucher mass 0.180592 and 0.180644; the
+fixed build 789.1273 and 0.180623, inside that spread (a pre-existing thread race, about 2e-4 in welfare, 0.01 pp of CEV).
+So the fix is consistent with leaving Housing First unchanged; a one-thread bit-for-bit check is running in the ABSTAIN
+session. Compile table PASSED on every base except transition_fix/build_tr70_C.sh, whose guard refuses the larger patch:
+THE TRANSITION MUST BE BUILT WITH build_tr70_C2.sh. C1's warm start fell back to rule A's 0.8555 / 0.09615 (its first
+publish overwrote passes.txt before it was read); harmless, but the other relaunches should pass P0/V0 explicitly.
+
 ## Gates
 - C1 inert check (pass 1): welfare differs from rule A's 789.9399 at the same start, and the MILBY SPLIT line shows
   voucher holders with a SUD in treatment. Fail -> stop, diagnose, tell the author before anything else launches.
