@@ -33,7 +33,8 @@ grep -q "parameter :: transition_length=(1-solve_transition_dynamics)\*1+solve_t
 [ "$(n 'THE ABSTAINER (patch_treatC2.py)')" = 1 ] || { echo "REFUSING: no abstainer branch in calculate_addiction_spending"; exit 1; }
 [ "$(n 'evx_oc=evx_opp+2\*evx_vidx')" = 2 ] || { echo "REFUSING: the EV key is not in ensure_ev_table and fill_ev_table"; exit 1; }
 [ "$(n "THE HOUSEHOLD'S OWN TREATMENT AND ABSTENTION (patch_treatC2.py)")" = 1 ] || { echo "REFUSING: internal grid not patched"; exit 1; }
-[ "$(n 'ABSTAIN sud treated treated_v0 untreated_v0')" = 1 ] || { echo "REFUSING: no ABSTAIN print"; exit 1; }
+[ "$(n 'write(\*,\*) "ABSTAIN", &')" = 1 ] || { echo "REFUSING: no ABSTAIN print"; exit 1; }
+[ "$(n 'write(\*,\*) "TRANSITION ABSTAIN t=", time_index')" = 1 ] || { echo "REFUSING: no TRANSITION ABSTAIN t= print"; exit 1; }
 md5sum "$C/treat/patch_treatC2.py" | cut -c1-32 > "$OUT/patch_treatC2.md5"
 ( cd "$OUT" && gfortran -O3 -funroll-loops -fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium tr.f90 \
     -o hftf_tr_prod 2> build_prod.err )

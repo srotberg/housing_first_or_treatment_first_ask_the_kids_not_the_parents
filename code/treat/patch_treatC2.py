@@ -42,10 +42,37 @@ household's own treatment choice at the two distribution screen sites; the MILBY
 Runtime switches, read once from the environment (default all 1; each is also gated on the screen): TC2_ABSTAIN,
 TC2_EVKEY, TC2_INTERNAL. With all three 0 the binary is cf_fix2_treatC's arithmetic. Applies to cf_fix2/cf.f90 and to
 transition_fix/tr70_src.f90 (the transition's household problem is the same routine in its own source)."""
-import subprocess, sys
+import os, subprocess, sys
 src, out = sys.argv[1], sys.argv[2]
-subprocess.run([sys.executable, __file__.replace('patch_treatC2.py', 'patch_treatC.py'), src, out], check=True)
+# ---- patch_treatC.py's steps, inlined so this file can replace it under its name (patch_treat.py split, then rule C)
+subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'patch_treat.py'), 'split', src, out], check=True)
 s = open(out).read()
+old = ("            if (unemployment_index>threshold_addiction_index) fails_1=1\n"
+       "            if (drug_share_1>0) fails_1=1\n")
+assert s.count(old) == 1, s.count(old)
+s = s.replace(old,
+    "            ! RULE C (patch_treatC.py): a household with the disorder must be in treatment, and nobody may use\n"
+    "            if ((unemployment_index>threshold_addiction_index) .AND. (meets_condition_1==0)) fails_1=1\n"
+    "            if (drug_share_1>0) fails_1=1\n")
+# THE HOUSEHOLD'S OWN TREATMENT CHOICE IN THE DISTRIBUTION (12 October, second fix). meets_condition_1 reads
+# treatment_choice_now, a threadprivate that the value-function solve sets to the CANDIDATE treatment inside its choice
+# loop and resets to 0 after it. The distribution (converge_to_stationary_equilibrium) and the homelessness-duration
+# statistics call the screen with it still 0, so no household in treatment ever kept its voucher there and the arm
+# reproduced the paper's to four digits (pass 1 welfare 789.9398 in both). Here the two distribution call sites set it
+# from the household's own policy first, and put it back to 0 after.
+call = ("                                                call compute_voucher_index_1(is_homeless_2,&\n"
+        "                                                    (policy_function_frac_spent_on_addiction(years_left_on_mortgage_index)%&\n"
+        "                                                    vector_transition_real(time_period,age_index,financial_index,&\n"
+        "                                                    unemployment_index,employment_index,housing_status_index,voucher_index)),&\n"
+        "                                                    voucher_index_1)\n")
+assert s.count(call) == 2, s.count(call)
+s = s.replace(call,
+    "                                                ! THE HOUSEHOLD'S OWN TREATMENT CHOICE (patch_treatC.py)\n"
+    "                                                treatment_choice_now=policy_function_treatment(years_left_on_mortgage_index)%&\n"
+    "                                                    vector_transition_integer(time_period,age_index,financial_index,&\n"
+    "                                                    unemployment_index,employment_index,housing_status_index,voucher_index)\n"
+    + call +
+    "                                                treatment_choice_now=0\n")
 
 
 def rep(old, new, n=1):
@@ -67,8 +94,10 @@ rep("        integer :: treatment_choice_now=0\n",
     "        integer :: tc2_ab_1=0\n"
     "        ! patch_treatC2.py's three switches, from the environment (TC2_ABSTAIN, TC2_EVKEY, TC2_INTERNAL), default 1\n"
     "        integer :: tc2_abstain_on=1,tc2_evkey_on=1,tc2_internal_on=1,tc2_env_read=0\n"
-    "        ! the ABSTAIN print: (time, holder 0/1, [disorder, treated, treated v=0, untreated v=0])\n"
-    "        real(8), dimension(transition_length,0:1,4) :: tc2_abst=0.d0\n")
+    "        ! the ABSTAIN print: (time, group, measure); group 0 all, 1 voucher holders housed, 2 housed without a\n"
+    "        ! voucher, 3 homeless; measure 1 the disorder, 2 of them in treatment, 3 in treatment with v=0, 4 untreated v=0\n"
+    "        real(8), dimension(transition_length,0:3,4) :: tc2_abst=0.d0\n"
+    "        integer :: tc2_g_1=0\n")
 rep("        !$omp threadprivate(treatment_choice_now)\n",
     "        !$omp threadprivate(treatment_choice_now)\n"
     "        !$omp threadprivate(abstain_now)\n")
@@ -213,29 +242,41 @@ rep("        if (accumulating_beta_types==0) model_addicted(time_period)=0\n",
 rep("                                        total_addited_1=total_addited_1+distribution_mass_used\n",
     "                                        total_addited_1=total_addited_1+distribution_mass_used\n"
     "\n"
-    "                                        ! THE ABSTAIN PRINT'S ACCUMULATORS (patch_treatC2.py)\n"
-    "                                        tc2_abst(time_period,merge(1,0,voucher_index==1),1)=&\n"
-    "                                            tc2_abst(time_period,merge(1,0,voucher_index==1),1)+distribution_mass_used\n"
+    "                                        ! THE ABSTAIN PRINT'S ACCUMULATORS (patch_treatC2.py): Milby's arms, as MILBY SPLIT\n"
+    "                                        ! draws them (housed: housing_status_index_used>=second_lowest_housing_grid_point)\n"
+    "                                        tc2_g_1=3\n"
+    "                                        if (housing_status_index_used>=second_lowest_housing_grid_point) then\n"
+    "                                            tc2_g_1=2\n"
+    "                                            if (voucher_index==1) tc2_g_1=1\n"
+    "                                        end if\n"
+    "                                        tc2_abst(time_period,0,1)=tc2_abst(time_period,0,1)+distribution_mass_used\n"
+    "                                        tc2_abst(time_period,tc2_g_1,1)=tc2_abst(time_period,tc2_g_1,1)+distribution_mass_used\n"
     "                                        if (policy_function_treatment(years_left_on_mortgage_index)%vector_transition_integer&\n"
     "                                            (time_period,age_index,financial_index,unemployment_index,employment_index,&\n"
     "                                            housing_status_index,voucher_index)==1) then\n"
-    "                                            tc2_abst(time_period,merge(1,0,voucher_index==1),2)=&\n"
-    "                                                tc2_abst(time_period,merge(1,0,voucher_index==1),2)+distribution_mass_used\n"
-    "                                            if (frac_spent_on_addiction_used<=0.d0) tc2_abst(time_period,merge(1,0,voucher_index==1),3)=&\n"
-    "                                                tc2_abst(time_period,merge(1,0,voucher_index==1),3)+distribution_mass_used\n"
+    "                                            tc2_abst(time_period,0,2)=tc2_abst(time_period,0,2)+distribution_mass_used\n"
+    "                                            tc2_abst(time_period,tc2_g_1,2)=tc2_abst(time_period,tc2_g_1,2)+distribution_mass_used\n"
+    "                                            if (frac_spent_on_addiction_used<=0.d0) then\n"
+    "                                                tc2_abst(time_period,0,3)=tc2_abst(time_period,0,3)+distribution_mass_used\n"
+    "                                                tc2_abst(time_period,tc2_g_1,3)=tc2_abst(time_period,tc2_g_1,3)+distribution_mass_used\n"
+    "                                            end if\n"
     "                                        elseif (frac_spent_on_addiction_used<=0.d0) then\n"
-    "                                            tc2_abst(time_period,merge(1,0,voucher_index==1),4)=&\n"
-    "                                                tc2_abst(time_period,merge(1,0,voucher_index==1),4)+distribution_mass_used\n"
+    "                                            tc2_abst(time_period,0,4)=tc2_abst(time_period,0,4)+distribution_mass_used\n"
+    "                                            tc2_abst(time_period,tc2_g_1,4)=tc2_abst(time_period,tc2_g_1,4)+distribution_mass_used\n"
     "                                        end if\n")
 rep("        model_total_drug_users(time_period)=model_addicted(time_period)+model_exprimenters(time_period)\n",
     "        model_total_drug_users(time_period)=model_addicted(time_period)+model_exprimenters(time_period)\n"
     "\n"
     "        ! DRUG USE IS v>0 (patch_treatC2.py): the abstainers carry the disorder but do not use. Screen on only.\n"
     "        if ((tc2_abstain_on==1) .AND. " + GATE + ") model_total_drug_users(time_period)=&\n"
-    "            model_total_drug_users(time_period)-sum(tc2_abst(time_period,:,3))\n")
+    "            model_total_drug_users(time_period)-tc2_abst(time_period,0,3)\n")
 rep('            write(*,*) "MILBY SPLIT voucher mass rec treat smi", xtab_mass_voucher(time_period), &\n',
-    '            write(*,*) "ABSTAIN sud treated treated_v0 untreated_v0 holder", tc2_abst(time_period,1,:), &\n'
-    '                " nonholder", tc2_abst(time_period,0,:)\n'
+    '            write(*,*) "ABSTAIN", &\n'
+    '                " sud=", tc2_abst(time_period,0,1), " treated=", tc2_abst(time_period,0,2), " treated_v0=", tc2_abst(time_period,0,3), &\n'
+    '                " untreated_v0=", tc2_abst(time_period,0,4), &\n'
+    '                " holder_treated=", tc2_abst(time_period,1,2), " holder_v0share=", tc2_abst(time_period,1,3)/max(tc2_abst(time_period,1,2),1.d-300), &\n'
+    '                " housednov_treated=", tc2_abst(time_period,2,2), " housednov_v0share=", tc2_abst(time_period,2,3)/max(tc2_abst(time_period,2,2),1.d-300), &\n'
+    '                " homeless_treated=", tc2_abst(time_period,3,2), " homeless_v0share=", tc2_abst(time_period,3,3)/max(tc2_abst(time_period,3,2),1.d-300)\n'
     '            write(*,*) "MILBY SPLIT voucher mass rec treat smi", xtab_mass_voucher(time_period), &\n')
 # the OpenMP region around the household problem is default(none)
 rep("                                !$omp& warm_start_a_prime,warm_start_ready,renter_floor_by_age)\n",
@@ -266,5 +307,15 @@ assert k >= 3 and k == k0, (k, k0)
 print('user rule gated at', k, 'sites')
 rep("                                    if ((unemployment_index>threshold_addiction_index) .OR. (is_addicted==1)) then\n",
     "                                    if (((unemployment_index>threshold_addiction_index) .AND. (tc2_ab_1==0)) .OR. (is_addicted==1)) then\n")
+tm = '                    " mass_homeless=", model_sud_mass_homeless(time_index)\n'
+if s.count(tm) == 1:
+    s = s.replace(tm, tm + (
+    '                write(*,*) "TRANSITION ABSTAIN t=", time_index, "", &\n'
+    '                    " sud=", tc2_abst(time_index,0,1), " treated=", tc2_abst(time_index,0,2), " treated_v0=", tc2_abst(time_index,0,3), &\n'
+    '                    " untreated_v0=", tc2_abst(time_index,0,4), &\n'
+    '                    " holder_treated=", tc2_abst(time_index,1,2), " holder_v0share=", tc2_abst(time_index,1,3)/max(tc2_abst(time_index,1,2),1.d-300), &\n'
+    '                    " housednov_treated=", tc2_abst(time_index,2,2), " housednov_v0share=", tc2_abst(time_index,2,3)/max(tc2_abst(time_index,2,2),1.d-300), &\n'
+    '                    " homeless_treated=", tc2_abst(time_index,3,2), " homeless_v0share=", tc2_abst(time_index,3,3)/max(tc2_abst(time_index,3,2),1.d-300)\n'))
+    print('TRANSITION ABSTAIN t= added')
 open(out, 'w').write(s)
 print(f'treatC2: patched {src} -> {out}')
