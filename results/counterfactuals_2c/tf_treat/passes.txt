@@ -1,9 +1,10 @@
-# tf_treat against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 12 Oct 12:40 UTC
+# tf_treat against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 12 Oct 13:31 UTC
 remote_treat tf_treat: gfortran missing, installing (03:16)
 remote_treat tf_treat: free disk 29G, memory 15 GiB, cores 4 (03:17)
 remote_treat tf_treat: building cf_fix2_split and cf_fix2_treat (03:17)
 remote_treat tf_treat: Treatment First, treatment meets the condition; budget target 5.8918410999831181; test cost 0.0004946100 (03:19)
 remote_treat tf_treat: arm tf on cf_fix2_treat: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.096152024 DRUG_PRICE_START=0.85551291 EXTRA_SET=cost_per_drug_test 0.0004946100 (03:19)
+remote_treat tf_treat: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.8918410999830000 DIST CHECK PASS: 11 passes, sweeps [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70], largest final 2.27e-05 (rule 5e-05, at least 70 sweeps)  (13:31)
 
 == tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -17,4 +18,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   8  0.8554  0.09654   -32.0%   -33.5%    -1.0%  3.92e-04  3.22e-03   788.9735  +4.38%   -20.4%   +17.1%
   9  0.8555  0.09635   -32.0%   -33.5%    -0.9%  1.60e-04  1.98e-03   788.9658  +4.36%   -20.4%   +17.1%
  10  0.8555  0.09623   -32.0%   -33.4%    -0.9%  7.33e-05  1.39e-03   788.9611  +4.35%   -20.4%   +17.1%
- MILBY SPLIT voucher mass rec treat smi   6.1526039180910151E-003   2.1216542541302243E-004   2.4598539337040174E-003   5.1818049838603776E-004  housed_nov mass rec treat smi   1.2149125703085326        3.8277923054061552E-002  0.33242293771280118        8.4317829804067282E-002
+ 11  0.8555  0.09615   -32.0%   -33.4%    -0.9%  2.04e-05  7.87e-04   788.9579  +4.34%   -20.4%   +17.0%
+ MILBY SPLIT voucher mass rec treat smi   6.1484616721109477E-003   2.1202411771794794E-004   2.4582615706322513E-003   5.1783226913308417E-004  housed_nov mass rec treat smi   1.2149476931873100        3.8279157988048068E-002  0.33243762765343421        8.4320384395935061E-002
