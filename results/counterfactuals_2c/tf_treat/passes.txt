@@ -1,4 +1,9 @@
-# tf_treat against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 12 Oct 03:19 UTC
+# tf_treat against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 12 Oct 03:39 UTC
 remote_treat tf_treat: gfortran missing, installing (03:16)
 remote_treat tf_treat: free disk 29G, memory 15 GiB, cores 4 (03:17)
 remote_treat tf_treat: building cf_fix2_split and cf_fix2_treat (03:17)
+remote_treat tf_treat: Treatment First, treatment meets the condition; budget target 5.8918410999831181; test cost 0.0004946100 (03:19)
+remote_treat tf_treat: arm tf on cf_fix2_treat: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.096152024 DRUG_PRICE_START=0.85551291 EXTRA_SET=cost_per_drug_test 0.0004946100 (03:19)
+
+== tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
