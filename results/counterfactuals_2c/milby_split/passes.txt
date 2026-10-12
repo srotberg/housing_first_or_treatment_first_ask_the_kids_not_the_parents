@@ -1,10 +1,11 @@
-# milby_split against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 12 Oct 04:41 UTC
+# milby_split against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 12 Oct 04:47 UTC
 remote_treat milby_split: gfortran missing, installing (03:16)
 remote_treat milby_split: free disk 29G, memory 15 GiB, cores 4 (03:17)
 remote_treat milby_split: building cf_fix2_split and cf_fix2_treat (03:17)
 remote_treat milby_split: the paper's two arms with the MILBY SPLIT print, in parallel (03:18)
 remote_treat milby_split: arm null on cf_fix2_split: DRUG_PRICE_START=1.0001082 (03:18)
 remote_treat milby_split: arm tf on cf_fix2_split: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.096152024 DRUG_PRICE_START=0.85551291 EXTRA_SET=cost_per_drug_test 0.0004946100 (03:21)
+remote_treat milby_split: arm null ACCEPTED (exit 0): VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [70, 72, 73, 74, 70], largest final 4.89e-05 (rule 5e-05, at least 70 sweeps)  (04:47)
 
 == null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -12,7 +13,8 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   2  0.9999  0.06753    -0.6%    -0.5%    -1.0%  2.72e-04  0.00e+00   787.8801  +1.12%    -0.0%    +0.5%
   3  1.0000  0.06753    -0.0%    +0.0%    -0.0%  6.30e-04  0.00e+00   787.5279  +0.09%    +0.1%    +0.1%
   4  1.0002  0.06753    +0.0%    +0.1%    +0.0%  5.81e-04  0.00e+00   787.4996  +0.01%    +0.1%    +0.1%
- MILBY SPLIT voucher mass rec treat smi  0.19467598521788027        6.1103906317723456E-003   5.3925145925334386E-002   2.3252829711521112E-002  housed_nov mass rec treat smi   1.6804515448418067        5.1689679099664182E-002  0.41343438401530064       0.14574194326712411     
+  5  1.0003  0.06753    +0.0%    +0.1%    +0.0%  1.93e-04  0.00e+00   787.4962  +0.00%    +0.1%    +0.0%
+ MILBY SPLIT voucher mass rec treat smi  0.19470167254754603        6.1111316416029311E-003   5.3931152512051023E-002   2.3264238175532297E-002  housed_nov mass rec treat smi   1.6805130458087874        5.1691817510507582E-002  0.41345935142660117       0.14574708672194148     
 
 == tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
