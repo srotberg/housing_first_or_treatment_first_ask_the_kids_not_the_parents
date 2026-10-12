@@ -101,6 +101,12 @@ WARM STARTS (latest v1 pass, price / pi_V):
 | VALID | results/whostops_2c_C, revoked_2c_C, revoked_2c_street_C | - | who-stops MUST be redone: with the fix a household with the disorder can stop on impact, so rule C no longer equals rule A there |
 | TR | results/transition_2c_t70_C | endpoint tf 0.8555 / 0.09887 | runs after C1 is accepted, on the fixed transition build (build_tr70_C2.sh or the fixed patch) |
 
+SWITCH-OVER DONE 12 Oct 22:10 UTC: patch_treatC.py is now the fix (old: patch_treatC_v1.py), code/treat/ABSTAIN_READY pushed,
+results/counterfactuals_2c/tf_ruleC_v1 holds the v1 passes; C1 relaunched on the fixed build in session_01CmU5WFWASpRzVK167PwWdY
+(Sonnet worker, code/treat/remote_treatC.sh, warm start 0.8549 / 0.09819 from the v1 pass 4), BEFORE the inert check finished
+(inert_C2 due ~22:45): if results/counterfactuals_2c/tf_ruleC2_test shows the Housing First pass differs between the old and the
+new build, archive C1 at once and tell the author. Then archive the ABSTAIN session.
+
 ## Gates
 - C1 inert check (pass 1): welfare differs from rule A's 789.9399 at the same start, and the MILBY SPLIT line shows
   voucher holders with a SUD in treatment. Fail -> stop, diagnose, tell the author before anything else launches.
