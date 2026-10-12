@@ -134,6 +134,17 @@ that called the rule no programme's (no other such footnote exists: checked 22:3
 experiments, rewritten with the rule-C numbers. Everything else keeps its prose and only its generated numbers change:
 the J_E footnote stays (reverted 22:30), the military paragraph's wording stays, and the Milby paragraph keeps the
 recovery-hazard counterpart (no switch to abstinence).
+Then (~22:40): "look for other places you think are relevant. any change should be in red". Found, besides the three:
+- DONE now, in red with \why (true whatever the numbers): Section 6's description of the third experiment ("cannot
+  respond quickly" -> can keep the voucher by entering treatment and stopping; the disorder clears slowly), and the
+  transition's "households who do not have a SUD have agency" (+ "as do those with a SUD, who keep their voucher by
+  entering treatment and stopping").
+- WITH THE NUMBERS, in red: Section 5's military paragraph ("those with a SUD ... cannot stop on impact", twice; the
+  rule-C who-stops run decides what replaces it); the transition paragraph on users without a SUD (line ~1031); the
+  Discussion's summary ("households with a SUD lose their vouchers within a year"), its second lesson (the early cost
+  "falling on households already having a SUD") and its design point on grandfathering ("They cannot respond quickly ...";
+  under rule C they can, so the case for grandfathering rests on what the rule-C transition shows).
+- UNCHANGED: the abstract, the Milby paragraph's wording (numbers only), the treatment-cost item in Section 5.
 
 ## Gates
 - C1 inert check (pass 1): welfare differs from rule A's 789.9399 at the same start, and the MILBY SPLIT line shows
