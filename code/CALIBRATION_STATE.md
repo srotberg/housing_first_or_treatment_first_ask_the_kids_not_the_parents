@@ -1,3 +1,16 @@
+12 Oct 00:15 ROUND r307: THE AUTHOR'S 11 COMMENTS ON r306 ("remove all red and crossed lines and put updates in red"). Red and
+strikes stripped; base_r307 = r306 as read; calib_tables.py --freeze before the new row. Family Options: 'the childhood channel'
+dropped, new paragraph at 'These studies'; 'the paragraph on intergenerational transmissions below'; Milby in its own paragraph,
+'conditioning', and only the first-year ratio (1.19 against Milby's 1.26; the author: "Milby is a short run study so the 1.19 is
+the right comparison and it is very similar"); a Milby row in Table 4's Block 8 with note d; the general-equilibrium sentence
+removed (the author: "i think we can remove this", reversing r306's item 16); the years above the benchmark removed; the
+conditional-recommendation sentence removed (the author: "there is a gain even without recycling. it is just smaller"); Block 9
+'ten' -> 'eleven' (the referee's count). Stylized sigma/beta check (scratchpad sigma_beta_check.py, sigma_beta_scan.py):
+recalibrated at sigma 1.5 and 3 and at annual beta 0.98 and 0.946, every target met; with the mortality channel alone at its
+calibrated strength users earn 0.81, 0.55, 0.65 and 0.95 of the mean (0.64 at sigma 2), crossing 1 at 0.95, 0.41, 0.73 and 0.96
+of that strength. Not put in the paper: the author had already tested log utility after recalibrating, and asked why 1.5 is
+needed.
+
 11 Oct 23:46 BOTH PENALTIES DIED AGAIN, A CONTAINER RESTART, RELAUNCHED ONCE. The worker (session_018N3fsfggMz4fumbypJRXwp,
 now epoch 3) reported at 23:38: the container restarted between 23:28 and 23:37, 4.5 h into the benchmark's block 1 (backward pass
 done, distribution converged at 1.9e-5, bench.log last written 23:03, in the statistics stage), last memline rss 13.3 GiB plus 9.3

@@ -478,6 +478,11 @@ UNTARGETED = [
     ('Block 8: Deterrence', None, None),
     ('Users without a SUD who stop when tested$^{c}$',
      (LIT['mp_stay_rel_pc'], RES['x_ws_tested_nosud_pc']), r'Mehay and Pacula (1999)'),
+    # MILBY'S CONTINGENT ARM (12 October, the author: "Where is Milby? it should be here too"): consecutive weeks of
+    # abstinence, contingent over unconditional housing, against the model's recovery-hazard ratio of voucher holders
+    # over housed non-holders, both with a SUD, in the first year of Treatment First (export_results.py)
+    ('Abstinence, contingent over unconditional housing, ratio$^{d}$',
+     (LIT['milby_ach_nach_ratio'], RES['x_milby_model_impact']), r'Milby et al.\ (2005)'),
 ]
 
 
