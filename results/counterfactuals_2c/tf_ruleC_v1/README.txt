@@ -1,0 +1,1 @@
+# v1: rule C WITHOUT the abstention option (patch_treatC_v1.py), ended 12 Oct 21:00 UTC on the author's instruction; kept as the record. results/counterfactuals_2c/tf_ruleC is the relaunch on the fixed build, warm-started from this run's pass 4.
