@@ -250,6 +250,10 @@ results hold even then and state what the drug use response is relative to the 5
 either). SENSITIVITY: ONE long-run Treatment First arm at p*/2 (remote_pdet_C2.sh p*/2, price and pi_V clearing) plus
 ONE who-stops impact run at p*/2 (the exact share stopping at half detection, quoted against 61 at p*). P70 and any
 0.85 sensitivity are dropped; C1 at 0.85 stays on disk but is not quoted.
+NOEXT2 (12:58) FAILED AT ONCE in run_noext_fixp_C.sh: "GUARD: no gfortran" -- the two launchers started side by side
+and the fixp one does not install gfortran (the same race as the first NOEXT launch; that brief had the worker run
+apt-get install gfortran first, the NOEXT2 prompt did not). Not relaunched: it is at 0.85 and obsolete. AT THE p*
+RELAUNCH the no-externality worker must install gfortran BEFORE starting either launcher.
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
