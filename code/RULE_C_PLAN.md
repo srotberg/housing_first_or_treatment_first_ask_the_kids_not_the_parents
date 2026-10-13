@@ -414,3 +414,12 @@ bash code/transition_fix/remote_tr50_C.sh (commit 60de5043): builds, the no-poli
 results/counterfactuals_2c/tf_pdet20_C "arm tf ACCEPTED" before starting the terminal arm from the accepted price and
 pi_V (TF_EARLY=0, the default now), then the T = 50 loops with the horizon check -> results/transition_2c_t50_C.
 No message is needed at acceptance: the launcher sees it on the branch itself.
+
+21:35 TWO WRITERS ON results/noext_clear_C. The old NOEXT container's duplicate Arm C (from 0.907) and NOEXTC2's (from
+0.98) both publish there, and git's rebase -X theirs merges their hunks, so the status file can MIX the two runs (21:31:
+NOEXTC2's header over the old run's pass table). NOEXTC2's Arm C cleared the drug market at 0.985 in two passes and will
+finish first; the moment it does, COPY its results to results/noext_clear_C2 (git cp of arm_A, arm_C, walk, analysis)
+and point the exporters there, because the old copy finishing hours later would overwrite results/noext_clear_C.
+The revocation guard (21:27) was analyse.py crashing on the two-thread logs run_paths_C.sh never runs: fixed in
+08ec5f91; the REVK worker, asked to rerun its own command, did so and the pair PASSED at 21:29 (a worker does act on a
+message that only asks it to continue its original job).
