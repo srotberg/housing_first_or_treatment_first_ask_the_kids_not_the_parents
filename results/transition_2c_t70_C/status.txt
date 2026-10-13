@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE C, two loops (code/transition_fix/remote_tr70_C.sh); 13 Oct 10:09 UTC
+# the T = 70 transition on RULE C, two loops (code/transition_fix/remote_tr70_C.sh); 13 Oct 10:29 UTC
 remote_tr70_C: gfortran missing, installing (09:21)
 remote_tr70_C: free disk 29G, memory 15 GiB, cores 4 (09:21)
 remote_tr70_C: building cf_fix (09:21)
@@ -15,8 +15,10 @@ remote_tr70_C: arm tf on cf_fix2_treatC: PDET=0.85 NET_TARGET=5.8275447063 PV_ST
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  0.9999  0.06753    -3.1%    -3.1%    -3.0%  1.69e-03  0.00e+00   789.1270  +4.85%    -0.2%    +3.0%
   2  0.9999  0.06753    -0.6%    -0.5%    -1.0%  3.00e-04  0.00e+00   787.8800  +1.12%    -0.1%    +0.5%
+  3  1.0000  0.06753    -0.0%    +0.0%    -0.0%  5.45e-04  0.00e+00   787.5282  +0.10%    +0.1%    +0.1%
 
 == arm tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  0.8678  0.09740   -47.0%   -45.6%   -29.4%  4.57e-02  2.42e-01   791.6813  +13.13%   -13.0%   +64.1%
- MILBY SPLIT voucher mass rec treat smi   3.7492784856142686E-002   1.7393836280876645E-003   3.4278200970336653E-002   6.2229210185950033E-003  housed_nov mass rec treat smi   1.0082221326484291        3.0914320418713361E-002  0.24590955189802965        9.1437806033926788E-002
+  2  0.8663  0.09740   -50.3%   -48.9%   -28.6%  2.52e-02  1.71e-02   791.0984  +11.16%   -22.1%   +56.7%
+ MILBY SPLIT voucher mass rec treat smi   3.7062675990124139E-002   1.7212654425345685E-003   3.3928809502286938E-002   6.0677763515809210E-003  housed_nov mass rec treat smi  0.94330731916787802        2.8930204660404735E-002  0.23068640231600890        8.7367503889098669E-002
