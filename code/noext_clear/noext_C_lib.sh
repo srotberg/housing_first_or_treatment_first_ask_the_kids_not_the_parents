@@ -113,11 +113,12 @@ build_all() {
     command -v gfortran >/dev/null || { note "GUARD: no gfortran"; publish "failed"; exit 1; }
     python3 -c "import numpy" 2>/dev/null || pip install -q numpy >/dev/null 2>&1
     exec 6> "$SH/build.lock"; flock 6
-    [ -x "$C/cf_fix2_share_pe_treatC/hftf_cf_prod" ] || bash "$C/treat/build_share_treatC.sh" share_pe > "$W/build_share_pe_treatC.log" 2>&1 || { note "GUARD: build cf_fix2_share_pe_treatC failed"; publish "failed"; exit 1; }
     if [ ! -x "$C/cf_fix2_pe_treatC/hftf_cf_prod" ] || [ ! -x "$C/cf_fix2_treatC/hftf_cf_prod" ] || [ ! -x "$C/cf_walk/hftf_cf_prod" ]; then
         note "building (pe_noext/build_pe_C.sh)"
         bash "$C/pe_noext/build_pe_C.sh" > "$W/build.log" 2>&1 || { note "GUARD: build failed: $(tail -n 2 "$W/build.log" | tr '\n' ' ')"; publish "failed"; exit 1; }
     fi
+    # after build_pe_C.sh, which makes cf_fix2_share_pe (the base this patches)
+    [ -x "$C/cf_fix2_share_pe_treatC/hftf_cf_prod" ] || bash "$C/treat/build_share_treatC.sh" share_pe > "$W/build_share_pe_treatC.log" 2>&1 || { note "GUARD: build cf_fix2_share_pe_treatC failed: $(tail -n 2 "$W/build_share_pe_treatC.log" | tr '\n' ' ')"; publish "failed"; exit 1; }
     flock -u 6; exec 6>&-
     for b in cf_fix2_treatC cf_fix2_pe_treatC; do
         grep -q "RULE C (patch_treatC.py)" "$C/$b/cf.f90" || { note "GUARD: rule C is not in $b"; publish "failed"; exit 1; }
