@@ -65,7 +65,7 @@ if ! { tail -5 "$C/cfarm_null_2c.out" 2>/dev/null | grep -q "DIST CHECK PASS"; }
 fi
 if ! { tail -5 "$C/cfarm_tf_2c_fixboth_C.out" 2>/dev/null | grep -q "DIST CHECK PASS"; }; then
     note "arm fixboth on cf_fix2_treatC (rule C)"
-    ( env BUILD=cf_fix2_treatC OMP_NUM_THREADS=2 DIAG_TAG=_2c_fixboth_C PDET=0.85 PV_START=$V_NULL DRUG_PRICE_START=$P_NULL \
+    ( env BUILD=cf_fix2_treatC OMP_NUM_THREADS=2 DIAG_TAG=_2c_fixboth_C PDET=${RULEC_PDET:-0.20} PV_START=$V_NULL DRUG_PRICE_START=$P_NULL \
         DRUG_MARKET_ADJUSTER=0 EXTRA_SET="cost_per_drug_test $CTEST;adjust_taxes 0" \
         sh treat/cf_arm_C.sh tf > "$C/cfarm_tf_2c_fixboth_C.out" 2>&1 ) &
     echo $! > "$W/arm_fixboth.pid"
