@@ -99,6 +99,7 @@ rep("        integer :: treatment_choice_now=0\n",
     "        ! the ABSTAIN print: (time, group, measure); group 0 all, 1 voucher holders housed, 2 housed without a\n"
     "        ! voucher, 3 homeless; measure 1 the disorder, 2 of them in treatment, 3 in treatment with v=0, 4 untreated v=0\n"
     "        real(8), dimension(transition_length,0:3,4) :: tc2_abst=0.d0\n"
+    "        real(8), dimension(transition_length,0:3,0:1,2) :: tc2_tsmi=0.d0\n"
     "        integer :: tc2_g_1=0\n")
 rep("        !$omp threadprivate(treatment_choice_now)\n",
     "        !$omp threadprivate(treatment_choice_now)\n"
@@ -240,7 +241,8 @@ rep("                                                frac_spent_on_addiction_3,a
 # ---- 4 and 5. use is v>0; the ABSTAIN accumulators and print (govt_revenues_calc)
 rep("        if (accumulating_beta_types==0) model_addicted(time_period)=0\n",
     "        if (accumulating_beta_types==0) model_addicted(time_period)=0\n"
-    "        if (accumulating_beta_types==0) tc2_abst(time_period,:,:)=0.d0\n")
+    "        if (accumulating_beta_types==0) tc2_abst(time_period,:,:)=0.d0\n"
+    "        if (accumulating_beta_types==0) tc2_tsmi(time_period,:,:,:)=0.d0\n")
 rep("                                        total_addited_1=total_addited_1+distribution_mass_used\n",
     "                                        total_addited_1=total_addited_1+distribution_mass_used\n"
     "\n"
@@ -253,11 +255,20 @@ rep("                                        total_addited_1=total_addited_1+dis
     "                                        end if\n"
     "                                        tc2_abst(time_period,0,1)=tc2_abst(time_period,0,1)+distribution_mass_used\n"
     "                                        tc2_abst(time_period,tc2_g_1,1)=tc2_abst(time_period,tc2_g_1,1)+distribution_mass_used\n"
+    "                                        ! TREATSHARE (13 Oct): the same groups split by SMI, for the treatment take-up comparison\n"
+    "                                        tc2_tsmi(time_period,0,smi_of(unemployment_index),1)=&\n"
+    "                                            tc2_tsmi(time_period,0,smi_of(unemployment_index),1)+distribution_mass_used\n"
+    "                                        tc2_tsmi(time_period,tc2_g_1,smi_of(unemployment_index),1)=&\n"
+    "                                            tc2_tsmi(time_period,tc2_g_1,smi_of(unemployment_index),1)+distribution_mass_used\n"
     "                                        if (policy_function_treatment(years_left_on_mortgage_index)%vector_transition_integer&\n"
     "                                            (time_period,age_index,financial_index,unemployment_index,employment_index,&\n"
     "                                            housing_status_index,voucher_index)==1) then\n"
     "                                            tc2_abst(time_period,0,2)=tc2_abst(time_period,0,2)+distribution_mass_used\n"
     "                                            tc2_abst(time_period,tc2_g_1,2)=tc2_abst(time_period,tc2_g_1,2)+distribution_mass_used\n"
+    "                                            tc2_tsmi(time_period,0,smi_of(unemployment_index),2)=&\n"
+    "                                                tc2_tsmi(time_period,0,smi_of(unemployment_index),2)+distribution_mass_used\n"
+    "                                            tc2_tsmi(time_period,tc2_g_1,smi_of(unemployment_index),2)=&\n"
+    "                                                tc2_tsmi(time_period,tc2_g_1,smi_of(unemployment_index),2)+distribution_mass_used\n"
     "                                            if (frac_spent_on_addiction_used<=0.d0) then\n"
     "                                                tc2_abst(time_period,0,3)=tc2_abst(time_period,0,3)+distribution_mass_used\n"
     "                                                tc2_abst(time_period,tc2_g_1,3)=tc2_abst(time_period,tc2_g_1,3)+distribution_mass_used\n"
@@ -281,6 +292,11 @@ rep('            write(*,*) "MILBY SPLIT voucher mass rec treat smi", xtab_mass_
     '                " holder_treated=", tc2_abst(time_period,1,2), " holder_v0share=", tc2_abst(time_period,1,3)/max(tc2_abst(time_period,1,2),1.d-30), &\n'
     '                " housednov_treated=", tc2_abst(time_period,2,2), " housednov_v0share=", tc2_abst(time_period,2,3)/max(tc2_abst(time_period,2,2),1.d-30), &\n'
     '                " homeless_treated=", tc2_abst(time_period,3,2), " homeless_v0share=", tc2_abst(time_period,3,3)/max(tc2_abst(time_period,3,2),1.d-30)\n'
+    '            write(*,*) "TREATSHARE mass treated (households with the disorder, by status and SMI)", &\n'
+    '                " all_smi=", tc2_tsmi(time_period,0,1,1), tc2_tsmi(time_period,0,1,2), " all_nosmi=", tc2_tsmi(time_period,0,0,1), tc2_tsmi(time_period,0,0,2), &\n'
+    '                " holder_smi=", tc2_tsmi(time_period,1,1,1), tc2_tsmi(time_period,1,1,2), " holder_nosmi=", tc2_tsmi(time_period,1,0,1), tc2_tsmi(time_period,1,0,2), &\n'
+    '                " housednov_smi=", tc2_tsmi(time_period,2,1,1), tc2_tsmi(time_period,2,1,2), " housednov_nosmi=", tc2_tsmi(time_period,2,0,1), tc2_tsmi(time_period,2,0,2), &\n'
+    '                " homeless_smi=", tc2_tsmi(time_period,3,1,1), tc2_tsmi(time_period,3,1,2), " homeless_nosmi=", tc2_tsmi(time_period,3,0,1), tc2_tsmi(time_period,3,0,2)\n'
     '            write(*,*) "MILBY SPLIT voucher mass rec treat smi", xtab_mass_voucher(time_period), &\n')
 # the OpenMP region around the household problem is default(none)
 rep("                                !$omp& warm_start_a_prime,warm_start_ready,renter_floor_by_age)\n",
