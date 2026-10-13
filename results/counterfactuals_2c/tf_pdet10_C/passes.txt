@@ -1,5 +1,12 @@
-# counterfactual tf_pdet10_C (detection 0.10) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 13 Oct 17:02 UTC
+# counterfactual tf_pdet10_C (detection 0.10) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 13 Oct 17:23 UTC
 remote_pdet tf_pdet10_C: gfortran missing, installing (16:58)
 remote_pdet tf_pdet10_C: free disk 29G, memory 15 GiB, cores 4 (16:58)
 remote_pdet tf_pdet10_C: building cf_fix (16:58)
 remote_pdet tf_pdet10_C: building cf_fix2 (17:00)
+remote_pdet tf_pdet10_C: building cf_fix2_treatC (rule C) (17:02)
+remote_pdet tf_pdet10_C: warm start at the rule-C main arm's latest pass: price 0.8635, pi_V 0.09740 (17:03)
+remote_pdet tf_pdet10_C: TF budget target: the paper's no-policy net revenue 5.8275447063; test cost 0.0004946100 ($35); detection 0.10 (17:03)
+remote_pdet tf_pdet10_C: arm tf on cf_fix2_treatC: PDET=0.10 NET_TARGET=5.8275447063 PV_START=0.09740 DRUG_PRICE_START=0.8635 EXTRA_SET=cost_per_drug_test 0.0004946100 (17:03)
+
+== tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
