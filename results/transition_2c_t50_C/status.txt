@@ -1,4 +1,4 @@
-# the T = 50 transition on RULE C (code/transition_fix/remote_tr50_C.sh); 13 Oct 21:16 UTC
+# the T = 50 transition on RULE C (code/transition_fix/remote_tr50_C.sh); 13 Oct 21:39 UTC
 remote_tr50_C: free disk 29G, memory 15 GiB, cores 4 (21:09)
 remote_tr50_C: building cf_fix (21:09)
 remote_tr50_C: building cf_fix2 (21:11)
@@ -6,3 +6,9 @@ remote_tr50_C: building cf_fix2_share (21:12)
 remote_tr50_C: building cf_fix2_treatC (21:14)
 remote_tr50_C: building tr50_C (build_tr50_C.sh) (21:15)
 remote_tr50_C: built /home/user/children_first_housing_later/code/tr50_C/hftf_tr_prod 0487a9eb (rule C2 + cohort print, T = 50; patch_treatC2.py d5931f95) (21:16)
+remote_tr50_C: arm null on cf_fix2_share: DRUG_PRICE_START=1.0001082 (21:16)
+remote_tr50_C: terminal arm waits for results/counterfactuals_2c/tf_pdet20_C to be accepted (TF_EARLY=1 would start it early from the latest pass) (21:19)
+
+== arm null
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  0.9999  0.06753    -3.1%    -3.1%    -3.0%  1.72e-03  0.00e+00   789.1272  +4.86%    -0.2%    +3.0%
