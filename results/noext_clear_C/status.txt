@@ -1,9 +1,9 @@
-# Treatment First without externalities, savings recycled, RULE C (code/noext_clear/run_noext_clear_C.sh); 13 Oct 19:13 UTC
+# Treatment First without externalities, savings recycled, RULE C (code/noext_clear/run_noext_clear_C.sh); 13 Oct 19:33 UTC
 noext_clear_C: free disk 29G, memory 15 GiB, cores 4, threads per solve 2, at most 2 solves (13 Oct 16:58)
 noext_clear_C: building (pe_noext/build_pe_C.sh) (13 Oct 16:58)
 noext_clear_C: arm C (tf_noext_clear_C) on cf_fix2_treatC: detection 0.85, test 0.0004946100, price and pi_V clearing against 6.3180936, from rule A's price 0.90717489, pi_V 0.076132869 (13 Oct 17:11)
 
-== cfarm_null_pe_noext_C (6 passes done)
+== cfarm_null_pe_noext_C (7 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0051  0.06753   +12.3%   +13.0%    -2.0%  1.57e-01  0.00e+00   789.8762  +nan%   +23.7%   +10.2%
   2  1.0101  0.06753   +10.7%   +11.5%    -1.8%  1.37e-01  0.00e+00   789.8717  +nan%   +21.4%    +9.7%
@@ -11,12 +11,14 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   4  1.0203  0.06753    +7.3%    +8.1%    -1.9%  8.64e-02  0.00e+00   789.9280  +nan%   +15.2%    +7.3%
   5  1.0254  0.06753    +5.6%    +6.4%    -2.0%  6.12e-02  0.00e+00   789.9555  +nan%   +12.1%    +6.2%
   6  1.0266  0.06753    +0.5%    +1.2%    -2.6%  1.17e-02  0.00e+00   790.0572  +nan%    +5.5%    +5.0%
- PE USED pass=    6 housing_price=  1.2049225679069957E+01 drug_price=  1.0265696282676919E+00 pi_V=  6.7533863251354007E-02
- MILBY SPLIT voucher mass rec treat smi  0.18869729500679830        5.9149579918063482E-003   5.2103743054729361E-002   2.3348454154785189E-002  housed_nov mass rec treat smi   1.7077786548659870        5.2556634585219093E-002  0.42169962718257048       0.15079007671978156     
+  7  1.0303  0.06753    +0.4%    +1.1%    -2.6%  9.36e-03  0.00e+00   790.0582  +nan%    +5.3%    +4.9%
+ PE USED pass=    7 housing_price=  1.2049231065053052E+01 drug_price=  1.0303121495611385E+00 pi_V=  6.7533863251354007E-02
+ MILBY SPLIT voucher mass rec treat smi  0.18846698575679885        5.9071848639925860E-003   5.2014111504331557E-002   2.3298366976354991E-002  housed_nov mass rec treat smi   1.7067296243716736        5.2525472111032659E-002  0.42146507094866414       0.15058468583211884     
 
-== cfarm_tf_noext_clear_C (3 passes done)
+== cfarm_tf_noext_clear_C (4 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  0.9117  0.07613   +13.7%   +16.0%    -7.1%  4.26e-01  5.52e-02   790.1005  +nan%   +52.1%   +33.8%
   2  0.9163  0.07613   +12.8%   +15.0%    -7.2%  4.12e-01  4.07e-02   790.0974  +nan%   +50.5%   +33.5%
   3  0.9209  0.07125    +5.5%    +7.6%    -4.6%  3.39e-01  2.58e-03   790.0071  +nan%   +39.4%   +32.1%
- MILBY SPLIT voucher mass rec treat smi  0.12831728202863571        5.5433479251551336E-003   9.8237858910192918E-002   1.4823464210241655E-002  housed_nov mass rec treat smi   1.8970085392748908        5.8096534087354587E-002  0.45569936923987386       0.15944038359788207     
+  4  0.9255  0.07094    +5.0%    +7.0%    -4.4%  3.19e-01  6.88e-04   789.9945  +nan%   +36.9%   +30.4%
+ MILBY SPLIT voucher mass rec treat smi  0.12742857919559855        5.5058259250251084E-003   9.7577258158547328E-002   1.4664344794732206E-002  housed_nov mass rec treat smi   1.8864177743962149        5.7786907070486421E-002  0.45357517734372294       0.15761081396331356     
