@@ -217,6 +217,18 @@ a SUD on to 33 (getting the disorder no longer costs the voucher, so continuing 
 all-user rows; the internal fix does nothing here. The 59 per cent that matched Mehay and Pacula's 61 was produced by
 the EV-table bug, which was in every Treatment First arm, rule A's included.
 NOEXT DONE 12:28 (noext_clear_C as well; all three no-externality arms finished).
+NOEXT TARGET BUG (found 12:55): noext_C_lib.sh kept rule A's NET_A 6.3830441, which has no treatment spending, while
+the rule-C Arm A (with the public treatment cost) nets 6.3180936; Arms D and C therefore cleared 0.065 too high and pi_V
+fell (6.11 and 6.23 per cent against 6.75) instead of rising. Arm B (PE, no clearing) is unaffected. Fixed NET_A =
+6.3180936; the wrong runs archived as results/noext_fixp_C_wrongtarget, noext_clear_C_wrongtarget. RELAUNCHED 12:58:
+session_017DH6daSd4sKVT7jCVBAGUo runs run_noext_fixp_C.sh and run_noext_clear_C.sh in one container (Arm A re-solved
+first, ~4 h, then D and C; ~10-14 h).
+PE ARM B (correct): against Arm A, use -76.1%, SUD -75.4%, homelessness -14.1% (rule A: -60, -61, +3); newborn adult CEV
+(externality-free) -1.86% (rule A -1.50); population -0.73%; households with a SUD -10.7%. BUT 0.66% of households are
+better off (all with a SUD: 17% of them, +2.6% CEV), where rule A's PE run had none: at fixed prices Treatment First
+should only remove options, so something available only with the screen on (the abstention option, or the internal
+fix, which leaves Housing First's treated households re-priced as untreated) favours it. To be checked with the switches,
+as for who-stops, before the welfare numbers go in the paper; reported to the author.
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
