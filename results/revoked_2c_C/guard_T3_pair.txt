@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/user/children_first_housing_later/code/revoked_2c/analyse.py", line 232, in <module>
+    {'pair3': pair3, 'rest3': rest3, 'main': main}[sys.argv[1]](sys.argv[2:])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/home/user/children_first_housing_later/code/revoked_2c/analyse.py", line 95, in pair3
+    p1, t1, p2, t2 = (load(p) for p in a)
+    ^^^^^^^^^^^^^^
+  File "/home/user/children_first_housing_later/code/revoked_2c/analyse.py", line 95, in <genexpr>
+    p1, t1, p2, t2 = (load(p) for p in a)
+                      ~~~~^^^
+  File "/home/user/children_first_housing_later/code/revoked_2c/analyse.py", line 27, in load
+    L = open(path, errors='replace').read().splitlines()
+        ~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/user/children_first_housing_later/code/revoked_2c/work_C/g_plain3_2t/run.log'
