@@ -1,4 +1,4 @@
-# SMI x street split of the revoked-voucher experiment, RULE C (code/revoked_2c_street/run_paths_C.sh); 13 Oct 21:27 UTC
+# SMI x street split of the revoked-voucher experiment, RULE C (code/revoked_2c_street/run_paths_C.sh); 13 Oct 21:49 UTC
 ## stage 1, the two steady states (code/revoked_2c/run_arms_C.sh)
 run_arms: free disk 29G, memory 15 GiB, cores 4 (13 Oct 17:07)
 run_arms: building cf_fix2_treatC (13 Oct 17:07)
@@ -9,6 +9,11 @@ run_arms: arm fixboth on cf_fix2_treatC (rule C) (13 Oct 17:16)
 run_arms: null_2c: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [70, 70, 70, 70, 70], largest final 1.99e-05 (rule 5e-05, at least 70 sweeps)  (13 Oct 20:24)
 run_arms: tf_2c_fixboth_C: DIST CHECK PASS: 4 passes, sweeps [70, 70, 70, 70], largest final 1.79e-05 (rule 5e-05, at least 70 sweeps)  (13 Oct 20:24)
 run_arms: arms done (13 Oct 20:24)
+run_arms: free disk 17G, memory 15 GiB, cores 4 (13 Oct 21:29)
+run_arms: builds done (13 Oct 21:29)
+run_arms: null_2c: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [70, 70, 70, 70, 70], largest final 1.99e-05 (rule 5e-05, at least 70 sweeps)  (13 Oct 21:29)
+run_arms: tf_2c_fixboth_C: DIST CHECK PASS: 4 passes, sweeps [70, 70, 70, 70], largest final 1.79e-05 (rule 5e-05, at least 70 sweeps)  (13 Oct 21:29)
+run_arms: arms done (13 Oct 21:29)
 ## builds
 split: patched /home/user/children_first_housing_later/code/revoked_2c_street/work_C/tr_fix_src.f90 -> /home/user/children_first_housing_later/code/revoked_2c_street/work_C/tr_fix_C.f90
 user rule gated at 6 sites
@@ -24,3 +29,4 @@ all built
 ## stage 2, the runs
 run_paths_street: waiting for the arms and the builds (13 Oct 17:13)
 run_paths_street: GUARD: revoked_2c/run_paths_C.sh is not running and did not finish (13 Oct 21:27)
+run_paths_street: waiting for the arms and the builds (13 Oct 21:29)
