@@ -191,6 +191,10 @@ bash code/transition_fix/remote_tr70_C.sh, now building with build_tr70_C2.sh (b
 current patch; test-built here first, binary b25b1720) and guarding on patch_treatC2.py's checksum. It re-solves the
 no-policy arm and the terminal arm from C1's accepted price and pi_V, writes results/transition_2c_C/, then two T = 70
 loops into results/transition_2c_t70_C/loop1, loop2 (the Milby row is loop2's TRANSITION MILBY t=1).
+STAGE 4 LAUNCHED 09:22 (pre-fix results archived as _v1): WS session_016gJzSnkiKenKPq4hvGCNib (who-stops,
+run_whostops_C.sh -> results/whostops_2c_C), P70 session_012jh446VKmXz3kJJpV51xYn (remote_pdet_C2.sh 0.70 ->
+results/counterfactuals_2c/tf_pdet70_C, warm start tf_ruleC's accepted pass). Still to launch: NISH, DD0 (targets to
+recompute with the treatment cost), revocations.
 TREATMENT TAKE-UP CHECK (the author, 13 Oct: report it as a factor): New York treatment-first vs Housing First clients
 46% vs 7% in treatment (6.6x; Padgett et al., SSWR 2006 abstract; ask the author for the published paper), against
 the model's voucher holders with a SUD under Treatment First vs under Housing First (pass-3 v2: 91.5% vs 27.7%, 3.3x).
