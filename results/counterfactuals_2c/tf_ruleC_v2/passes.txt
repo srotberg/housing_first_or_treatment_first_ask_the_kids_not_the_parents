@@ -1,0 +1,13 @@
+# tf_ruleC against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 13 Oct 00:30 UTC
+remote_treat tf_ruleC: gfortran missing, installing (22:09)
+remote_treat tf_ruleC: free disk 29G, memory 15 GiB, cores 4 (22:09)
+remote_treat tf_ruleC: building cf_fix2_treatC (22:09)
+remote_treat tf_ruleC: Treatment First under rule C (in treatment if disordered, no use); budget target 5.8918410999831181; test cost 0.0004946100 (22:10)
+remote_treat tf_ruleC: arm tf on cf_fix2_treatC: PDET=0.85 NET_TARGET=5.8918410999831181 PV_START=0.096152024 DRUG_PRICE_START=0.85551291 EXTRA_SET=cost_per_drug_test 0.0004946100 (22:10)
+
+== tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  0.8598  0.09615   -45.8%   -44.4%   -28.7%  8.38e-02  2.26e-01   791.6158  +12.91%    -8.7%   +68.5%
+  2  0.8607  0.09615   -48.3%   -46.9%   -28.0%  1.51e-02  3.14e-03   791.0006  +10.84%   -17.7%   +59.1%
+  3  0.8615  0.09577   -48.9%   -47.5%   -27.5%  6.81e-03  1.94e-02   790.8547  +10.36%   -18.7%   +59.0%
+ MILBY SPLIT voucher mass rec treat smi   3.7000177254546907E-002   1.7182298503687222E-003   3.3873329522102209E-002   6.0776053861284710E-003  housed_nov mass rec treat smi  0.97058391879418882        2.9756954364245827E-002  0.23678462603993464        8.8974315345154084E-002

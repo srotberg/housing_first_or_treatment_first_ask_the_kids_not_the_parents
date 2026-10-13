@@ -32,7 +32,8 @@ D=$C/whostops_worker_C
 TRAILER=$'\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01WpmVwzkbKX7RRP8t9yBCLv'
 TARGET_DROP=${TARGET_DROP:-0.16}
 THREADS=${THREADS:-$(python3 -c "import os; print(max(1, min(4, os.cpu_count() // 2)))")}
-NET_TARGET=5.8918410999831181                 # the accepted no-policy run's net revenue (tf85_c35's target)
+# 13 Oct: Housing First's net revenue with its own treatment spending (treat/net_target_with_treatment.py)
+NET_TARGET=5.8713776057                 # the accepted no-policy run's net revenue (tf85_c35's target)
 CTEST=$(python3 -c "print('%.10f' % (35/(9e6/80)*1.589817990383))")
 P_NULL=1.0001082; V_NULL=0.067533863          # results/counterfactuals_2c/nulltf/null/final.txt
 P_TF=0.85551291;  V_TF=0.096152024            # results/counterfactuals_2c/tf85_c35/tf/final.txt

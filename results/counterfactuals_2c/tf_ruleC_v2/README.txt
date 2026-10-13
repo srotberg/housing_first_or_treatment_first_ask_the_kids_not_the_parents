@@ -1,0 +1,1 @@
+# v2: rule C with the abstention fix, treatment NOT charged to the budget; stopped 13 Oct ~02:30 UTC when the author asked for treatment to be publicly funded in every arm. tf_ruleC is the relaunch with the cost, warm-started from this run's last pass.

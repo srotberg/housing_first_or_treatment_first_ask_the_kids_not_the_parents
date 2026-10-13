@@ -287,6 +287,40 @@ rep("                                !$omp& warm_start_a_prime,warm_start_ready,
     "                                !$omp& warm_start_a_prime,warm_start_ready,renter_floor_by_age,&\n"
     "                                !$omp& tc2_abstain_on,tc2_internal_on,voucher_conditional_on_clean,policy_function_treatment)\n")
 
+# ---- 6. TREATMENT IS PAID FOR BY THE GOVERNMENT (the author, 13 Oct: "I think it should be add to the benchmark too...
+# And all the runs. You need to add it as a cost in the budget"). Each household with the disorder that is in treatment
+# costs the government public_cost_of_treatment a year, charged in govt_spending_on_addicts (whose old per-head cost the
+# author set to zero on 8 September), so it enters net revenue, the budget pi_V clears, every spending total and the
+# transition's budget, in every arm with treatment, Housing First included. Treatment's utility cost to the household is
+# unchanged. VALUE: $3,000 a treated year, Medicaid's spending per user of substance use treatment in 2008 (ASPE, Medicaid
+# Substance Abuse Treatment Spending: Findings Report, 2012), at face value on the paper's dollar scale, as the $35 test
+# is: average labour income is $9m / vsl_data = $112,500, so the model value is 3000/112500 * 1.589818 (the benchmark's
+# average labour income) = 0.0423951. Settable by the handover (public_cost_of_treatment) for a sensitivity run.
+rep("        real(8) :: cost_per_drug_test=0.00049461d0",
+    "        real(8) :: cost_per_drug_test=0.00049461d0\n"
+    "        ! patch_treatC.py (13 Oct): the government's cost of a year of treatment, $3,000 (ASPE, Medicaid 2008) at the\n"
+    "        ! paper's dollar scale, 3000/(9e6/vsl_data)*average labour income of the benchmark (1.589818)\n"
+    "        real(8) :: public_cost_of_treatment=0.0423951d0")
+rep('                case ("cost_per_drug_test")\n',
+    '                case ("public_cost_of_treatment")\n'
+    '                    write(*,*) "HANDOVER public_cost_of_treatment:",&\n'
+    '                        public_cost_of_treatment, "->", handover_value\n'
+    '                    public_cost_of_treatment=max(handover_value,0.d0)\n'
+    '\n'
+    '                case ("cost_per_drug_test")\n')
+rep("                                        govt_spending_on_addicts(time_period)=govt_spending_on_addicts(time_period)+&\n"
+    "                                            addict_cost_govt_as_perc_of_avg_inc*avg_income_to_use_1*distribution_mass_used\n",
+    "                                        govt_spending_on_addicts(time_period)=govt_spending_on_addicts(time_period)+&\n"
+    "                                            addict_cost_govt_as_perc_of_avg_inc*avg_income_to_use_1*distribution_mass_used\n"
+    "                                        ! TREATMENT IS PUBLICLY FUNDED (patch_treatC.py, the author 13 Oct): every arm\n"
+    "                                        if (include_treatment==1) then\n"
+    "                                            if (policy_function_treatment(years_left_on_mortgage_index)%vector_transition_integer&\n"
+    "                                                (time_period,age_index,financial_index,unemployment_index,employment_index,&\n"
+    "                                                housing_status_index,voucher_index)==1) &\n"
+    "                                                govt_spending_on_addicts(time_period)=govt_spending_on_addicts(time_period)+&\n"
+    "                                                public_cost_of_treatment*distribution_mass_used\n"
+    "                                        end if\n")
+
 # ---- 4 (cont.). THE USER RULE AT EVERY SITE: the disorder half excludes the abstainers (screen on only)
 import re
 # the per-node flag, set in govt_revenues_calc right after its own spending line (the first such block after its header)

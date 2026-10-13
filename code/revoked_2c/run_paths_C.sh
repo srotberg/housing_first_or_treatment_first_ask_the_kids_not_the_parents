@@ -17,7 +17,8 @@ set -u
 BRANCH=claude/two-period-addiction-hazard-d7gb61
 R=$(cd "$(dirname "$0")" && pwd); C=$(cd "$R/.." && pwd); REPO=$(cd "$C/.." && pwd)
 W=$R/work_C; OUT=$REPO/results/revoked_2c_C; mkdir -p "$W" "$OUT"; printf "*\n" > "$W/.gitignore"   # work_C is never committed
-NET_TARGET=5.8918410999831181
+# 13 Oct: Housing First's net revenue with its own treatment spending (treat/net_target_with_treatment.py)
+NET_TARGET=5.8713776057
 P_NULL=1.0001082; V_NULL=0.067533863
 TRAILER=$'\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01WpmVwzkbKX7RRP8t9yBCLv'
 
