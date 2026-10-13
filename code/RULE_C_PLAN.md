@@ -192,6 +192,14 @@ Mental Health Journal; 27 Housing First and 48 treatment-first clients with seri
 and 12 months): ASKED THE AUTHOR TO UPLOAD IT. The model side: the TREATSHARE print (S-tf, both arms' cf.log.gz via
 collect_shares_C.sh) gives households with a SUD by status (holder, housed without voucher, homeless) x SMI, mass and
 treated; the counterpart is SMI + SUD voucher holders under each policy (and the screened population as a variant).
+FIRST TREATSHARE READING (13 Oct 06:20, S-fixboth, decomp_2c_shares_C/arm_fixboth/{null,tf}/cf.log.gz): under Housing
+First NO voucher holder with SMI + SUD is in treatment (mass 0.0233, treated exactly 0; all SMI + SUD 0.2%), because
+b_smi_multiple raises their taste for the drug so treatment never pays without the voucher at stake. Non-SMI holders
+with a SUD 31.5%, all holders with a SUD 27.7%. Treatment First at fixed price and pi_V: SMI + SUD holders 96%, non-SMI
+90.5%, all 91.7%. So the like-for-like factor (SMI + SUD holders) is undefined off a zero base; the all-holders factor
+is 3.3 against Padgett's 6.6. The data (46% / 7%) sits between the two: the model's gap is larger in the study's own
+population, smaller across all holders. Equilibrium Treatment First figures come from S-tf; the Housing First side is
+the benchmark and will not change.
 S-fixboth and S-fixpv ALSO RESTARTED 02:15 (the author: "you'll need to rerun everything with the new updates"; every
 run on the same code): S-fixboth session_017GEgxbEZ3Jk93hEDnXbDWa, S-fixpv session_01UfobFPfyCKyp8Lifrev8Cc.
 EVERY RUNNING RUN IS NOW ON: the abstention fix, use counted v>0 in every arm, the $9,426 public treatment cost, and
