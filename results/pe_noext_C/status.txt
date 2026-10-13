@@ -1,4 +1,4 @@
-# PE experiment without externalities, RULE C (code/pe_noext/run_pe_C.sh); 13 Oct 21:33 UTC
+# PE experiment without externalities, RULE C (code/pe_noext/run_pe_C.sh); 13 Oct 21:48 UTC
 pe_noext_C: free disk 29G, memory 15 GiB, cores 4, threads per solve 2, at most 2 solves (13 Oct 16:58)
 pe_noext_C: arm A (cfarm_null_pe_noext_C) on cf_fix2_share_pe_treatC, switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0001082 (Housing First: no screen, unchanged by rule C) (13 Oct 17:11)
 pe_noext_C: arm A: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 9 passes, sweeps [70, 70, 70, 72, 73, 72, 70, 70, 90], largest final 4.11e-05 (rule 5e-05, at least 70 sweeps)  (13 Oct 20:13)
@@ -17,9 +17,10 @@ pe_noext_C: arm B (tf_pe_noext_C) on cf_fix2_pe_treatC: detection 0.85, test 0.0
  PE USED pass=    8 housing_price=  1.2049244506508884E+01 drug_price=  1.0304908852192760E+00 pi_V=  6.7533863251354007E-02
  MILBY SPLIT voucher mass rec treat smi  0.18698057542209073        5.8661744865879167E-003   5.1777072091753057E-002   2.2837063241634269E-002  housed_nov mass rec treat smi   1.6991234949384710        5.2312149071577156E-002  0.42004861334934546       0.14786902143016795     
 
-== cfarm_tf_pe_noext_C (2 passes done)
+== cfarm_tf_pe_noext_C (3 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0305  0.06753   -27.6%   -25.8%    -7.5%  0.00e+00  0.00e+00   790.4915  +nan%   -19.4%   +11.3%
   2  1.0305  0.06753   -27.6%   -25.9%    -7.3%  0.00e+00  0.00e+00   790.4658  +nan%   -19.5%   +11.3%
+  3  1.0305  0.06753   -27.6%   -25.9%    -7.3%  0.00e+00  0.00e+00   790.4661  +nan%   -19.5%   +11.3%
  PE USED pass=    2 housing_price=  1.2049244506508884E+01 drug_price=  1.0304908852192760E+00 pi_V=  6.7533863251354007E-02
- MILBY SPLIT voucher mass rec treat smi   9.1057302635672813E-002   3.9652094570338534E-003   7.0969624254301811E-002   1.0440277176022127E-002  housed_nov mass rec treat smi   1.3046371478010124        3.9974152192022001E-002  0.31420801423084410       0.10979230307214896     
+ MILBY SPLIT voucher mass rec treat smi   9.1052957433967269E-002   3.9649978950014797E-003   7.0965883807359104E-002   1.0441240551556137E-002  housed_nov mass rec treat smi   1.3046280874392460        3.9974580757055171E-002  0.31422947242369115       0.10976599471122324     
