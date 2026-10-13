@@ -382,3 +382,13 @@ rises by 5.5%??"): the -41% is S-fixp (the paper's economy, price held at 1.00);
 externalities, whose own Housing First clears at 1.031, at a non-equilibrium 0.921 with a 34% drug gap), both against
 the paper's benchmark. In the paper's economy Treatment First use is -43% at 1.00 and +12% at 0.868 (the slow-start
 pass): very price-elastic, so the price falls little (estimate 0.93-0.94) and use ends perhaps 15-20% below Housing First.
+
+19:40 NO-EXTERNALITY ARM C FROM A NEARER START (the author: "are you now relaunching the long run with better price
+guess?"). The 16:58 Arm C started at rule A's 0.907; after four passes 0.926, drug gap 0.32, walking 0.5% a pass
+(results/noext_clear_C_slowstart/status.txt). Relaunched in a FRESH container so the NOEXT container's two solve slots
+go to Arms D and B (Arm D had not started: the slot gate let A and C run): NOEXTC2 session_01RAQUXs5kJFd5Ea2zZqHXY8,
+NOEXT_P0=0.98 NOEXT_V0=0.071 bash code/noext_clear/run_noext_clear_C2.sh (re-solves Arm A there, identical inputs).
+Start 0.98 hedges two readings: the paper's economy's two-point slope (0.868 and 1.00) puts the no-externality price
+near 0.97, this run's own pass-to-pass slope near 1.00. The NOEXT session (session_01FXm2FJQcFfyMKvmru6Fdou) was told
+to run code/noext_clear/stop_clear_C.sh (stops only run_noext_clear_C.sh and the solver whose cwd is
+cfarm_tf_noext_clear_C) and never to relaunch run_noext_clear_C.sh; it keeps run_noext_fixp_C.sh and run_pe_C.sh.
