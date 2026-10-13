@@ -407,3 +407,10 @@ can only be stopped by archiving its session, and archive_session was REFUSED he
     results/transition_2c_C.
   * The sign of C20's budget gap comes from pi_V's first move (it moves once the drug market is nearly cleared) or the
     accepted final.txt.
+
+21:09 T = 50 LAUNCHED, WAITING FOR C20 (the author: "yes, you can archive the old T=70...i think T=50 would be enough").
+TR session_01Dkk3xgSVS2rMQbfZroUGd7 ARCHIVED with the author's permission. TR50 session_01Nu3rXPEQeXsPgAsGvrgc5o runs
+bash code/transition_fix/remote_tr50_C.sh (commit 60de5043): builds, the no-policy arm, then waits for
+results/counterfactuals_2c/tf_pdet20_C "arm tf ACCEPTED" before starting the terminal arm from the accepted price and
+pi_V (TF_EARLY=0, the default now), then the T = 50 loops with the horizon check -> results/transition_2c_t50_C.
+No message is needed at acceptance: the launcher sees it on the branch itself.
