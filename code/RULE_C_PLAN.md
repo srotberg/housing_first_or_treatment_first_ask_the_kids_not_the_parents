@@ -208,6 +208,15 @@ results/whostops_2c_C_switch.
 P70 DIED 11:23 (its worker ended its turn at the 2-hour background cut instead of re-attaching; the container was
 reclaimed and the solve lost after pass 1): RELAUNCHED 12:19 as session_015Pws8Uk5eaRhmdxLtKbMcg with the 2-hour cut
 spelled out in the brief. The old session_012jh446VKmXz3kJJpV51xYn is dead; do not message it.
+WHO-STOPS SWITCH DIAGNOSTIC DONE 12:40 (results/whostops_2c_C_switch; holders all / holders no SUD / tested all / tested
+no SUD, per cent): all three switches off 6.6 / 53.2 / 20.7 / 58.9 (rule A's no-SUD rows exactly; the all-user rows
+differ only because the reference no longer counts treated non-spenders as users); EV key off 18.6 / 52.2 / 29.5 / 58.0;
+abstention off 5.8 / 47.3 / 35.2 / 100.0; internal off 76.1 / 33.3 / 89.2 / 100.0 (= all on). So: the EV-KEY FIX moves
+the tested users without a SUD from 59 to 100 and holders without a SUD from 53 to 47; ABSTENTION takes holders without
+a SUD on to 33 (getting the disorder no longer costs the voucher, so continuing to use is cheaper) and drives the
+all-user rows; the internal fix does nothing here. The 59 per cent that matched Mehay and Pacula's 61 was produced by
+the EV-table bug, which was in every Treatment First arm, rule A's included.
+NOEXT DONE 12:28 (noext_clear_C as well; all three no-externality arms finished).
 TREATMENT TAKE-UP CHECK (the author, 13 Oct: report it as a factor): New York treatment-first vs Housing First clients
 46% vs 7% in treatment (6.6x; Padgett et al., SSWR 2006 abstract; ask the author for the published paper), against
 the model's voucher holders with a SUD under Treatment First vs under Housing First (pass-3 v2: 91.5% vs 27.7%, 3.3x).
