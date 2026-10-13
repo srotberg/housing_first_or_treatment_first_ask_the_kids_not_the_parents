@@ -363,3 +363,22 @@ The author, 12 Oct: "make sure to check that all the runs are working all the ti
 3. A dead run is relaunched at once in a fresh session with the same brief (arms resume from their last published pass);
    a run that dies twice is reported, not relaunched. A rate-limit stop is relaunched on another model if one is available.
 4. One line to the author when nothing changed; a message at once when something died, stalled or landed.
+
+19:35 TRANSITION AT T = 50, LAUNCHED ONLY AFTER C20 IS ACCEPTED (the author: "for the old rule A we know T had to be
+70...50 was not enough", "but here we can probably use T=50"; then "we cant run the T=50 yet...we first need the main
+long run experiment"). code/transition_fix/remote_tr50_C.sh (commit e3cd61e9; build_tr50_C.sh test-built here, binary
+0487a9eb): T = 50; seeds = rule A's T = 70 loop-2 paths RESCALED to the rule-C terminal (rescale_seeds_C.py), because
+the transition moves each year's price at most 0.5% a loop and remote_tr70_C.sh's raw rule-A seed ends at 0.857
+against a rule-C terminal near 0.93 -- the T = 70 run as launched could not have closed that; four loops, each with a
+horizon check (horizon_check_C.py, last ten years against the terminal); newborn values after the path.
+THE SWITCH, AT C20's "arm tf ACCEPTED" and not before: message TR session_01Dkk3xgSVS2rMQbfZroUGd7 (create_trigger with
+persistent_session_id + fire_trigger + delete_trigger) to (1) stop remote_tr70_C.sh and its processes (pkill -f
+remote_tr70_C.sh; pkill -f cf_arm_tr2c_C.sh; pkill -x hftf_cf; pkill -x hftf; check with pgrep) and never relaunch it,
+(2) git fetch + rebase, (3) bash code/transition_fix/remote_tr50_C.sh with run_in_background=true, re-run after every
+2-hour cut until "remote_tr50_C: finished". Until then the T = 70 worker keeps running (its terminal arm walks from 0.86
+and is useless, but it keeps the container, its builds and the solved no-policy arm alive for the switch).
+WHY THE TWO NUMBERS DIFFER (the author: "drug use drops by 41% ... when pv is held, but then 8% drop and it drug use
+rises by 5.5%??"): the -41% is S-fixp (the paper's economy, price held at 1.00); the +5.5% is noext_clear (no
+externalities, whose own Housing First clears at 1.031, at a non-equilibrium 0.921 with a 34% drug gap), both against
+the paper's benchmark. In the paper's economy Treatment First use is -43% at 1.00 and +12% at 0.868 (the slow-start
+pass): very price-elastic, so the price falls little (estimate 0.93-0.94) and use ends perhaps 15-20% below Housing First.
