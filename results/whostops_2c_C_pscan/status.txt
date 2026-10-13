@@ -1,12 +1,33 @@
-# who stops using under Treatment First, state by state, on Housing First's distribution; 13 Oct 13:35 UTC
+# who stops using under Treatment First, state by state, on Housing First's distribution; 13 Oct 13:55 UTC
 run_deter_pscan: gfortran missing, installing (13:00)
 run_deter_pscan: free disk 29G, memory 15 GiB, cores 4, threads per solve 2 (13:01)
 run_deter_pscan: building cf_fix2_treatC_impact (cf_fix2 + patch_treatC.py + the fixed distribution) (13:01)
 run_deter_pscan: build: built /home/user/children_first_housing_later/code/cf_fix2_treatC_impact/hftf_cf_prod (rule C, distribution fixed; all patches present) (13:03)
 run_deter_pscan: impact null wsref on cf_fix2_treatC_impact:  (13:03)
+run_deter_pscan: reference: 0.0555847124 0.1780291188 0.0743861992 11.6337833103  [use among holders, eligible, tested; eligible mass]; states file 174M (13:35)
+run_deter_pscan: impact tf ws_p050 on cf_fix2_treatC_impact: PDET=0.05 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 DIAG_HF_FROM=/home/user/children_first_housing_later/code/cfarm_null_imp_wsref/DIAG_STATES_OUT.bin (13:35)
+run_deter_pscan: impact tf ws_p150 on cf_fix2_treatC_impact: PDET=0.15 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 DIAG_HF_FROM=/home/user/children_first_housing_later/code/cfarm_null_imp_wsref/DIAG_STATES_OUT.bin (13:35)
+run_deter_pscan: impact tf ws_p300 on cf_fix2_treatC_impact: PDET=0.30 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 DIAG_HF_FROM=/home/user/children_first_housing_later/code/cfarm_null_imp_wsref/DIAG_STATES_OUT.bin (13:35)
+run_deter_pscan: impact tf ws_p500 on cf_fix2_treatC_impact: PDET=0.50 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 DIAG_HF_FROM=/home/user/children_first_housing_later/code/cfarm_null_imp_wsref/DIAG_STATES_OUT.bin (13:35)
 
 == cfarm_null_imp_wsref: 3 passes; use among holders, eligible, tested; eligible mass: 0.0555847124 0.1780291188 0.0743861992 11.6337833103
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0001  0.06753    -0.0%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.4835  -0.03%    +0.4%    +0.4%
   2  1.0001  0.06753    -0.7%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.4946  -0.00%    -0.0%    +0.7%
   3  1.0001  0.06753    -0.7%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.4946  -0.00%    -0.0%    +0.7%
+
+== cfarm_tf_imp_ws_p050: 1 passes; use among holders, eligible, tested; eligible mass: NA
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  1.0001  0.06753    -8.2%    +0.0%    -0.0%  0.00e+00  0.00e+00   787.5746  +0.23%    -4.8%    +3.7%
+
+== cfarm_tf_imp_ws_p150: 1 passes; use among holders, eligible, tested; eligible mass: NA
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  1.0001  0.06753   -19.5%    +0.0%    -0.0%  0.00e+00  0.00e+00   787.6906  +0.56%   -11.6%    +9.8%
+
+== cfarm_tf_imp_ws_p300: 1 passes; use among holders, eligible, tested; eligible mass: NA
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  1.0001  0.06753   -31.5%    +0.0%    -0.0%  0.00e+00  0.00e+00   787.9356  +1.28%   -17.6%   +20.4%
+
+== cfarm_tf_imp_ws_p500: 1 passes; use among holders, eligible, tested; eligible mass: NA
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  1.0001  0.06753   -45.8%    +0.0%    +0.0%  0.00e+00  0.00e+00   788.3360  +2.46%   -26.2%   +36.2%
