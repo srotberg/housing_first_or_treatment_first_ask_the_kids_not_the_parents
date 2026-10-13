@@ -174,6 +174,19 @@ S-fixpv session_01HJJJLdjar2KkXTSJY5PqgQ, S-fixp session_01NdUvKkjgHa3FvXpoUvayH
 compiles and each Housing First arm reaches its first pass (the shares' null now on cf_fix2_share_treatC through
 treat/cf_arm_C.sh; NOEXT's Arm A on cf_fix2_share_pe_treatC); a GUARD there is a launcher error of mine, fix and relaunch.
 
+TREATMENT IS PUBLICLY FUNDED (the author, 13 Oct ~02:00: "I think it should be add to the benchmark too... And all the
+runs. You need to add it as a cost in the budget"). patch_treatC.py charges public_cost_of_treatment = 0.0423951
+($3,000 a treated year, ASPE Medicaid 2008, at the paper's dollar scale) per treated household with the disorder in
+govt_spending_on_addicts, every arm. The benchmark is not re-solved (no choice reads net revenue there); Housing First's
+budget target falls 5.8918411 -> 5.8713776 (code/treat/net_target_with_treatment.py), set in every rule-C launcher that
+carries it. NISH and DD0 compute their targets from their own no-policy runs, solved before this: recompute at relaunch.
+RESTARTED 02:06 on the new build (the four runs that clear the budget through pi_V): C1 session_01WZxM8zedcX18hNR9P7bz3F,
+S-tf session_01NbfxYTrM4qTfhYadtpiJVu, S-fixp session_01TaC7jteEwm4pv4dujy5j65, NOEXT session_01EaCgScj1yiNsqoJxJL5YAL.
+KEPT: S-fixboth session_01FdoN6xM5HFzHdP4F8kBeVe and S-fixpv session_01HJJJLdjar2KkXTSJY5PqgQ (pi_V held, so the budget
+binds nothing; their allocations and welfare are unchanged by the cost; their printed budget omits treatment). The
+no-cost C1 passes are in results/counterfactuals_2c/tf_ruleC_v2. PAPER: Section 4's government budget gains the
+treatment term and Section 5 the parameter and its source (red, with a note).
+
 ## Gates
 - C1 inert check (pass 1): welfare differs from rule A's 789.9399 at the same start, and the MILBY SPLIT line shows
   voucher holders with a SUD in treatment. Fail -> stop, diagnose, tell the author before anything else launches.
