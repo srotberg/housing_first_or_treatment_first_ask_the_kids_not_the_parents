@@ -270,6 +270,11 @@ session_01BcBGsGiU1qFKr9tVa1632t (0.075, 0.125 -> ..._pts_0p075_0p125), session_
 reproducibility check) and refines. CHECKS before any number goes to the author: hf file = 1; the tested-no-SUD
 denominator equals the reference's 0.0986619 in every run; start = 0; monotone in detection; the reference's use rates
 equal 0.0555847124 / 0.1780291188 / 0.0743861992; every percentage recomputed from the archived cf.log.gz at the end.
+16:26 FIRST NUMBERS (verified from the logs: hf file 1, denominator 0.0986619, start 0, p_det set as asked): detection
+0.15 -> 36.06% of tested users without a SUD stop (all tested users 51.0%, matching the first scan's published 51%);
+0.25 -> 55.24% (all 66.5%). The crossing is ABOVE 0.25: 16:28 THREE MORE CONTAINERS, run_whostops_C_points.sh 0.275 0.30
+(session_01LAFAx64hLWpDskCE1W6Cbh), 0.325 0.35 (session_01AURE7ftkrsfer38L9Aia9z), 0.40 0.50
+(session_01K4GpjSsmNAFsJGJ6CQTYtj); due ~17:50 UTC.
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
