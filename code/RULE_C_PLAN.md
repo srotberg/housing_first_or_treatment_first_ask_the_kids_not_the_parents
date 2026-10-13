@@ -301,6 +301,10 @@ Milby et al. (2005) first-year recovery ratio (transition at 0.20, TRANSITION MI
 model: holders losing the voucher within a year, from the revocations pipeline or a transition print); Costantini (2025)
 mortality of the revoked (REVK); Mehay and Pacula's own policy estimates, 11-45% (use among the tested after year 1).
 OPEN for the author: Padgett also finds Treatment First clients used MORE (65% vs 30%); the model will show less.
+THE AUTHOR (17:12): "You show me the numbers compared to the data and we can decide what to show at the end" -- one
+table, data against the model at 0.20 (and 0.10), every validation; nothing into the paper before the author chooses.
+REPRODUCIBILITY (17:08): PSCAN2's independent 0.10 and 0.20 give 25.8876% and 49.4551% of tested users without a SUD,
+identical to the 0p10_0p20 container's; PSCAN2 archived after it.
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
