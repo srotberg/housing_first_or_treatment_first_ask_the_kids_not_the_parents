@@ -423,3 +423,15 @@ and point the exporters there, because the old copy finishing hours later would 
 The revocation guard (21:27) was analyse.py crashing on the two-thread logs run_paths_C.sh never runs: fixed in
 08ec5f91; the REVK worker, asked to rerun its own command, did so and the pair PASSED at 21:29 (a worker does act on a
 message that only asks it to continue its original job).
+
+22:55 NOEXTC2 DONE, FLOWS RELAUNCHED, FIXP SEE-SAWING.
+- NOEXTC2 (run_noext_clear_C2.sh) finished 22:50: price 0.9849, pi_V 0.06974, use -16.8%, SUD -14.9%, h_1 -6.1%,
+  gaps 2.2e-4 / 3.6e-4. Frozen as results/noext_clear_C2 (b8a23e3a); the PAPER SWITCH row for noext_clear reads
+  noext_clear_C2, not noext_clear_C (the old slow-start Arm C still writes there).
+- BCGHW flows: the crash was cf_arm_flows.sh's seeded-build case not listing cf_flows (no
+  distribution_stationary{1,2}seed.dat), not patch_flows.py. Fixed aefb00ff; relaunched at -O3 in
+  session_019AhRcBkr1snb4enEJx2Wcb. The bounds-checked session 01C2CgE7 is finished; leave it (archive needs the author).
+- S-fixboth newborn shares in (results/decomp_2c_shares_C/arm_fixboth/newborn_shares.txt): 82% of newborns better off.
+- S-fixp (price held, pi_V clearing) jumps between two states: pi_V 0.0917-0.0924 gives use -48%, 0.0932-0.0943 gives
+  -42%, budget gap 6e-3 to 2.4e-2 across passes 4-8. Use FALLS less as pi_V rises, so a discrete switch of a group in
+  between, and the budget may have no root inside the jump. If not settled by pass 10-11, find which cells switch.
