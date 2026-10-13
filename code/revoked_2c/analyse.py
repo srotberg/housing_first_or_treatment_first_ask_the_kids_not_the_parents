@@ -7,6 +7,7 @@
 
 Reads only the REVK lines the tracking module prints and the transition's own TRANSITION lines.
 """
+import os
 import re
 import sys
 
@@ -92,7 +93,11 @@ def grp_diff(x, y):
 
 
 def pair3(a):
-    p1, t1, p2, t2 = (load(p) for p in a)
+    # 13 Oct: the rule-C launcher (run_paths_C.sh) runs the one-thread pair only; the two-thread pair is informational,
+    # so a missing or empty two-thread log is skipped instead of crashing the guard
+    have2 = all(os.path.exists(p) and os.path.getsize(p) > 0 for p in a[2:4])
+    p1, t1 = (load(p) for p in a[:2])
+    p2, t2 = (load(p) for p in a[2:4]) if have2 else (None, None)
     out, ok = ["T = 3 GUARDS, ONE THREAD (plain against tracking)"], True
     A, B = agg_lines(p1), agg_lines(t1)
     diff = [i for i, (x, y) in enumerate(zip(A, B)) if x != y]
@@ -102,6 +107,11 @@ def pair3(a):
         out.append(f"    plain:    {A[i][:160]}\n    tracking: {B[i][:160]}")
     ok &= good
     ok &= check_common(t1, "tracking, one thread", out)
+    if not have2:
+        out.append("THE MODEL'S RACE, for the record: no two-thread pair was run (informational only)")
+        out.append(f"GUARD SUMMARY: {'PASS' if ok else 'FAIL'}")
+        print("\n".join(out))
+        return
     out.append("THE MODEL'S RACE, for the record (two threads; informational):")
     A2 = agg_lines(p2)
     d2 = sum(1 for x, y in zip(A, A2) if x != y)
