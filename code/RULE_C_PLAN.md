@@ -168,6 +168,11 @@ screen arm, is unchanged by this), the Housing First arms of the shares runs and
 patched builds (treat/build_share_treatC.sh: cf_fix2_share_treatC, cf_fix2_share_pe_treatC), so both sides of every
 drug-use change count the same way. The v1 folders of the shares and no-externality runs moved to *_v1. STAGE 2 launched:
 S-tf, S-fixboth, S-fixpv, S-fixp (one worker each, collect_shares_C.sh at the end) and NOEXT (one worker, all three scripts).
+STAGE 2 SESSIONS (launched 00:38, Sonnet workers): S-tf session_01B8SBE89U2yDkdGh6xPt4HP, S-fixboth session_01FdoN6xM5HFzHdP4F8kBeVe,
+S-fixpv session_01HJJJLdjar2KkXTSJY5PqgQ, S-fixp session_01NdUvKkjgHa3FvXpoUvayH7, NOEXT session_0128V3mRDtYC4gCdQxwnq1sJ
+(all three no-externality scripts in one container). C1 is session_01CmU5WFWASpRzVK167PwWdY. FIRST CHECK: each build
+compiles and each Housing First arm reaches its first pass (the shares' null now on cf_fix2_share_treatC through
+treat/cf_arm_C.sh; NOEXT's Arm A on cf_fix2_share_pe_treatC); a GUARD there is a launcher error of mine, fix and relaunch.
 
 ## Gates
 - C1 inert check (pass 1): welfare differs from rule A's 789.9399 at the same start, and the MILBY SPLIT line shows
