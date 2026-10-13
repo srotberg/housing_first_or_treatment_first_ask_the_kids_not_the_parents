@@ -449,6 +449,11 @@ out['x_ctest_usd'] = f'{_ctest / _avg_lab * 9e6 / float(_fn["f_vsl_data"]):.0f}'
 # the declared value was meant as the assay cost as a share of average earnings, so the
 # cost the model charges is below it when average labour income exceeds one
 out['x_ctest_vs_assay'] = 'below' if _avg_lab > 1 else 'above'
+# THE PUBLIC COST OF TREATMENT (13 October, the author: treatment is paid for by the government in every arm): its
+# one declaration is in the rule-C patch (code/treat/patch_treatC2.py, public_cost_of_treatment), $9,426 a treated year
+# at the paper's dollar scale; Section 5 quotes it as a share of average earnings beside the dollars (lit ctreat_usd)
+_ctreat = float(re.search(r'public_cost_of_treatment=([0-9.]+)d0', open(os.path.join(ROOT, 'code', 'treat', 'patch_treatC2.py')).read()).group(1))
+out['x_ctreat_earn_pc'] = f'{100 * _ctreat / _avg_lab:.2g}'
 # the share of net government revenue that the tests cost under Treatment First
 _tests = [float(l.split()[-1]) for l in open(os.path.join(adir('tf85'), 'final.txt'))
           if l.strip().startswith('drug-test cost')][0]

@@ -23,14 +23,19 @@ import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-LOG = os.path.join(ROOT, 'results', 'whostops_2c', 'cfarm_tf_imp_ws850', 'cf.log.gz')
+# RULE C (13 October): the detection rate is calibrated to this response (the author: "pick pdet to match the 59%" -- the
+# data's 61 -- "of all tested users"), so the paper reads the calibrated rate's run and, for the half-rate sensitivity,
+# the run at half of it (code/deter_2c/run_whostops_C_points.sh 0.10 0.20). Rule A's run was whostops_2c/cfarm_tf_imp_ws850.
+WS_DIR = os.path.join(ROOT, 'results', 'whostops_2c_C_pts_0p10_0p20')
+LOG = os.path.join(WS_DIR, 'cfarm_tf_imp_ws_p200', 'cf.log.gz')
+LOG_HALF = os.path.join(WS_DIR, 'cfarm_tf_imp_ws_p100', 'cf.log.gz')
 OUT_JSON = os.path.join(HERE, 'results_numbers.json')
 KEYS = ('hf_file', 'h_used', 'h_stop', 'h_start', 'hn_used', 'hn_stop', 'hn_start',
         't_used', 't_stop', 't_start', 'tn_used', 'tn_stop', 'tn_start')
 
 
-def main():
-    with gzip.open(LOG, 'rt', errors='replace') as f:
+def read(log):
+    with gzip.open(log, 'rt', errors='replace') as f:
         lines = [l for l in f if 'DIAG who stops' in l]
     assert lines, 'no DIAG who stops line'
     v = [float(x) for x in re.findall(r'=\s*([-+0-9.Ee]+)', lines[-1])]
@@ -40,14 +45,27 @@ def main():
     # nobody starts: the screen only removes a reason to use
     for g in ('h', 'hn', 't', 'tn'):
         assert d[g + '_start'] < 1e-12 * max(d[g + '_used'], 1), (g, d[g + '_start'])
+    return d
+
+
+def main():
+    d = read(LOG)
+    h = read(LOG_HALF)
     out = {
         'x_ws_tested_nosud_pc': f"{100 * d['tn_stop'] / d['tn_used']:.0f}",
         'x_ws_tested_all_pc': f"{100 * d['t_stop'] / d['t_used']:.0f}",
         'x_ws_holders_nosud_pc': f"{100 * d['hn_stop'] / d['hn_used']:.0f}",
         'x_ws_holders_all_pc': f"{100 * d['h_stop'] / d['h_used']:.0f}",
-        # the share of the tested who used under Housing First that has a SUD, and cannot stop on impact
+        # the share of the tested who used under Housing First that has a SUD; under rule C it can stop on impact by
+        # entering treatment and stopping, which keeps its voucher
         'x_ws_tested_sud_share_pc': f"{100 * (1 - d['tn_used'] / d['t_used']):.0f}",
+        'x_ws_tested_sud_pc': f"{100 * (d['t_stop'] - d['tn_stop']) / (d['t_used'] - d['tn_used']):.0f}",
+        # the half-rate sensitivity's response (footnote fn:halfrate)
+        'x_ws_half_tested_all_pc': f"{100 * h['t_stop'] / h['t_used']:.0f}",
     }
+    # direction word: users with a SUD stop more (or less) often than users without one
+    _s, _n = (d['t_stop'] - d['tn_stop']) / (d['t_used'] - d['tn_used']), d['tn_stop'] / d['tn_used']
+    out['x_ws_sud_dir'] = 'more' if _s > _n else 'less'
     # (round r262, the author: "when we include those with SUD, the model produces about 1/3 of the responses seen
     # in the other paper"): the share of all tested users who stop against the military's relative fall, as the
     # nearest simple fraction, so the word turns with either number
@@ -57,6 +75,20 @@ def main():
                (3/5, 'three fifths'), (2/3, 'two thirds'), (3/4, 'three quarters'), (1, 'all')),
               key=lambda q: abs(q[0] - _r))
     out['x_ws_all_vs_mil'] = _fr[1]
+    # THE HALF RATE against the military: as a fraction of the 61 per cent, and inside or outside Mehay and Pacula's own
+    # policy estimates (mp_lo_rel_pc to mp_hi_rel_pc), so the words turn with the numbers
+    _rh = (100 * h['t_stop'] / h['t_used']) / float(_lit['mp_stay_rel_pc'])
+    out['x_ws_half_vs_mil'] = min(((1/5, 'a fifth'), (1/4, 'a quarter'), (1/3, 'a third'), (2/5, 'two fifths'),
+                                   (1/2, 'half'), (3/5, 'three fifths'), (2/3, 'two thirds'), (3/4, 'three quarters'),
+                                   (1, 'all')), key=lambda q: abs(q[0] - _rh))[1]
+    _hp = round(100 * h['t_stop'] / h['t_used'])
+    out['x_ws_half_where'] = ('inside' if float(_lit['mp_lo_rel_pc']) <= _hp <= float(_lit['mp_hi_rel_pc'])
+                              else 'outside')
+    # the half rate itself, from the run's own handover line (probability_of_detection), as a percentage
+    with gzip.open(LOG_HALF, 'rt', errors='replace') as f:
+        _pdh = [l for l in f if 'probability_of_detection' in l and 'HANDOVER' in l]
+    assert _pdh, 'no probability_of_detection handover line in the half-rate run'
+    out['x_tf_pdet_half_pc'] = f"{100 * float(_pdh[-1].split()[-1]):.0f}"
     r = json.load(open(OUT_JSON))
     r.update(out)
     json.dump(r, open(OUT_JSON, 'w'), indent=1, sort_keys=True)

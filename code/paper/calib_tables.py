@@ -472,16 +472,13 @@ UNTARGETED = [
     ('Block 7: Losing a voucher', None, None),
     ('Three-year mortality, households with SMI put on the street, pp$^{b}$',
      (RES['x_rv_costantini_pp'], RES['x_rv_street_smi_pp']), r'Costantini (2025)'),
-    # WHO STOPS WHEN THE SCREEN ARRIVES (the author, 8 October: "use the like for like with the military experiment. Maybe
-    # add it to the validation?"): Mehay and Pacula's fall in use among service members who stayed, against the share of
-    # the users without a SUD subject to the screen who stop on impact (code/paper/export_whostops.py; run it first)
-    ('Block 8: Deterrence', None, None),
-    ('Users without a SUD who stop when tested$^{c}$',
-     (LIT['mp_stay_rel_pc'], RES['x_ws_tested_nosud_pc']), r'Mehay and Pacula (1999)'),
+    # 13 October (rule C): the military's response is now the TARGET of the detection rate (Section 6, export_whostops.py),
+    # so the deterrence row left the validation; Milby's trial is Block 8 on its own
+    ('Block 8: Treatment under a condition', None, None),
     # MILBY'S CONTINGENT ARM (12 October, the author: "Where is Milby? it should be here too"): consecutive weeks of
     # abstinence, contingent over unconditional housing, against the model's recovery-hazard ratio of voucher holders
     # over housed non-holders, both with a SUD, in the first year of Treatment First (export_results.py)
-    ('Abstinence, contingent over unconditional housing, ratio$^{d}$',
+    ('Abstinence, contingent over unconditional housing, ratio$^{c}$',
      (LIT['milby_ach_nach_ratio'], RES['x_milby_model_impact']), r'Milby et al.\ (2005)'),
 ]
 
