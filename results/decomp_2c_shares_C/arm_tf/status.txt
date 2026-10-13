@@ -1,4 +1,4 @@
-# better-off shares for the decomposition column tf (code/extra_2c/remote_decomp_shares.sh); 13 Oct 17:09 UTC
+# better-off shares for the decomposition column tf (code/extra_2c/remote_decomp_shares.sh); 13 Oct 17:33 UTC
 remote_decomp_shares_C tf: free disk 29G, memory 15 GiB, cores 4 (16:58)
 remote_decomp_shares_C tf: building cf_fix (16:58)
 remote_decomp_shares_C tf: building cf_fix2 (17:01)
@@ -6,3 +6,11 @@ remote_decomp_shares_C tf: building cf_fix2_share (17:03)
 remote_decomp_shares_C tf: building cf_kid (17:05)
 remote_decomp_shares_C tf: building cf_fix2_share_treatC (Housing First counted as rule C counts use) (17:07)
 remote_decomp_shares_C tf: building cf_fix2_treatC (rule C) (17:08)
+remote_decomp_shares_C tf: arm null on cf_fix2_share_treatC (no screen: Housing First, with use counted as rule C counts it) (17:09)
+remote_decomp_shares_C tf: arm tf on cf_fix2_treatC (rule C): PDET=0.20 NET_TARGET=5.8275447063 PV_START=0.09740 DRUG_PRICE_START=0.8635 EXTRA_SET=cost_per_drug_test 0.0004946100 (17:13)
+
+== cfarm_null_2c
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+
+== cfarm_tf_2c_tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
