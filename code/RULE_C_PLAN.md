@@ -180,8 +180,12 @@ runs. You need to add it as a cost in the budget"). patch_treatC.py charges publ
 govt_spending_on_addicts, every arm. The benchmark is not re-solved (no choice reads net revenue there); Housing First's
 budget target falls 5.8918411 -> 5.8275447 (code/treat/net_target_with_treatment.py), set in every rule-C launcher that
 carries it. NISH and DD0 compute their targets from their own no-policy runs, solved before this: recompute at relaunch.
-RESTARTED 02:06 on the new build (the four runs that clear the budget through pi_V): C1 session_01WZxM8zedcX18hNR9P7bz3F,
-S-tf session_01NbfxYTrM4qTfhYadtpiJVu, S-fixp session_01TaC7jteEwm4pv4dujy5j65, NOEXT session_01EaCgScj1yiNsqoJxJL5YAL.
+RESTARTED 02:11 at $9,426 (the 02:06 launch at $3,000 archived): C1 session_01P9BZwZSsi2ALKeiYxQgLLU (warm start
+0.8615 / 0.09577, the v2 pass record restored into tf_ruleC/passes.txt), S-tf session_01C2HAukgzqfuik1CvgFQoAg, S-fixp
+session_01D5LLBHWG2WNeQu48mh6cEA, NOEXT session_01UQEhx2Zo82w24DLqopVZQg.
+TREATMENT TAKE-UP CHECK (the author, 13 Oct: report it as a factor): New York treatment-first vs Housing First clients
+46% vs 7% in treatment (6.6x; Padgett et al., SSWR 2006 abstract; ask the author for the published paper), against
+the model's voucher holders with a SUD under Treatment First vs under Housing First (pass-3 v2: 91.5% vs 27.7%, 3.3x).
 KEPT: S-fixboth session_01FdoN6xM5HFzHdP4F8kBeVe and S-fixpv session_01HJJJLdjar2KkXTSJY5PqgQ (pi_V held, so the budget
 binds nothing; their allocations and welfare are unchanged by the cost; their printed budget omits treatment). The
 no-cost C1 passes are in results/counterfactuals_2c/tf_ruleC_v2. PAPER: Section 4's government budget gains the
