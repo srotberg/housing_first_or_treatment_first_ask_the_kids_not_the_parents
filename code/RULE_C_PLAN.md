@@ -192,8 +192,11 @@ Mental Health Journal; 27 Housing First and 48 treatment-first clients with seri
 and 12 months): ASKED THE AUTHOR TO UPLOAD IT. The model side: the TREATSHARE print (S-tf, both arms' cf.log.gz via
 collect_shares_C.sh) gives households with a SUD by status (holder, housed without voucher, homeless) x SMI, mass and
 treated; the counterpart is SMI + SUD voucher holders under each policy (and the screened population as a variant).
-KEPT: S-fixboth session_01FdoN6xM5HFzHdP4F8kBeVe and S-fixpv session_01HJJJLdjar2KkXTSJY5PqgQ (pi_V held, so the budget
-binds nothing; their allocations and welfare are unchanged by the cost; their printed budget omits treatment). The
+S-fixboth and S-fixpv ALSO RESTARTED 02:15 (the author: "you'll need to rerun everything with the new updates"; every
+run on the same code): S-fixboth session_017GEgxbEZ3Jk93hEDnXbDWa, S-fixpv session_01UfobFPfyCKyp8Lifrev8Cc.
+EVERY RUNNING RUN IS NOW ON: the abstention fix, use counted v>0 in every arm, the $9,426 public treatment cost, and
+(S-tf, S-fixboth, S-fixpv) the TREATSHARE print. Stages 3-4 (TR, who-stops, P70, NISH, DD0, revocations) will build
+from the same patch when they launch. The
 no-cost C1 passes are in results/counterfactuals_2c/tf_ruleC_v2. PAPER: Section 4's government budget gains the
 treatment term and Section 5 the parameter and its source (red, with a note).
 
