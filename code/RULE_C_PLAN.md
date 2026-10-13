@@ -175,10 +175,10 @@ compiles and each Housing First arm reaches its first pass (the shares' null now
 treat/cf_arm_C.sh; NOEXT's Arm A on cf_fix2_share_pe_treatC); a GUARD there is a launcher error of mine, fix and relaunch.
 
 TREATMENT IS PUBLICLY FUNDED (the author, 13 Oct ~02:00: "I think it should be add to the benchmark too... And all the
-runs. You need to add it as a cost in the budget"). patch_treatC.py charges public_cost_of_treatment = 0.0423951
-($3,000 a treated year, ASPE Medicaid 2008, at the paper's dollar scale) per treated household with the disorder in
+runs. You need to add it as a cost in the budget"). patch_treatC.py charges public_cost_of_treatment = 0.1332056
+($9,426 a treated year, Roebuck, French and McLellan 2003, residential episode; first $3,000, ASPE Medicaid 2008, too low for a year per the author) per treated household with the disorder in
 govt_spending_on_addicts, every arm. The benchmark is not re-solved (no choice reads net revenue there); Housing First's
-budget target falls 5.8918411 -> 5.8713776 (code/treat/net_target_with_treatment.py), set in every rule-C launcher that
+budget target falls 5.8918411 -> 5.8275447 (code/treat/net_target_with_treatment.py), set in every rule-C launcher that
 carries it. NISH and DD0 compute their targets from their own no-policy runs, solved before this: recompute at relaunch.
 RESTARTED 02:06 on the new build (the four runs that clear the budget through pi_V): C1 session_01WZxM8zedcX18hNR9P7bz3F,
 S-tf session_01NbfxYTrM4qTfhYadtpiJVu, S-fixp session_01TaC7jteEwm4pv4dujy5j65, NOEXT session_01EaCgScj1yiNsqoJxJL5YAL.

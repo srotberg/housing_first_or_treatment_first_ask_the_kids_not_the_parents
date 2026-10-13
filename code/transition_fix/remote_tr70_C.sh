@@ -40,8 +40,8 @@ mkdir -p "$R" "$R2"
 D=$C/tr70C_worker
 TRAILER=$'\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01WpmVwzkbKX7RRP8t9yBCLv'
 # 13 Oct: treatment is publicly funded in every arm (patch_treatC.py), so Housing First's net revenue, the target,
-# carries its own treatment spending: treat/net_target_with_treatment.py gives 5.8918411 - 0.0423951 * 0.482685
-NET_TARGET=5.8713776057                 # the accepted no-policy run's net revenue (tf85_c35's and tf_ruleC's target)
+# carries its own treatment spending: treat/net_target_with_treatment.py gives 5.8918411 - 0.1332056 * 0.482685 ($9,426 a treated year)
+NET_TARGET=5.8275447063                 # the accepted no-policy run's net revenue (tf85_c35's and tf_ruleC's target)
 CTEST=$(python3 -c "print('%.10f' % (35/(9e6/80)*1.589817990383))")
 P_NULL=1.0001082; V_NULL=0.067533863          # results/counterfactuals_2c/nulltf/null/final.txt
 REL_TOL=${REL_TOL:-1e-3}                      # re-solved arm against the accepted one (rule A's was 2.4e-4)

@@ -19,7 +19,7 @@ PDET=${1:?detection rate, e.g. 0.70 or 0.50}
 ARM=tf_pdet$(python3 -c "print('%02d' % round(100*$PDET))")_C
 CTEST=$(python3 -c "print('%.10f' % (35/(9e6/80)*1.589817990383))")
 # 13 Oct: Housing First's net revenue with its own treatment spending (treat/net_target_with_treatment.py)
-NET_TARGET_NULL=5.8713776057
+NET_TARGET_NULL=5.8275447063
 BRANCH=claude/two-period-addiction-hazard-d7gb61
 C=$(cd "$(dirname "$0")/.." && pwd)
 REPO=$(cd "$C/.." && pwd)

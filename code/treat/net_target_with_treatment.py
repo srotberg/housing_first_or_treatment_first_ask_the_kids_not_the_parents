@@ -12,7 +12,7 @@ carry, from the no-screen ABSTAIN line of the inert check (results/counterfactua
 import os, re
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 OLD_TARGET = 5.8918410999831181            # the accepted no-policy run's net revenue, before treatment was charged
-COST = 0.0423951                            # patch_treatC.py's public_cost_of_treatment
+COST = 0.1332056                            # patch_treatC.py's public_cost_of_treatment ($9,426)
 
 m = open(os.path.join(ROOT, 'results/counterfactuals_2c/milby_split/null/milby_split.txt')).read().split()
 v_treat = float(m[m.index('smi') + 3])                       # voucher mass rec treat smi -> the third number

@@ -290,15 +290,16 @@ rep("                                !$omp& warm_start_a_prime,warm_start_ready,
 # costs the government public_cost_of_treatment a year, charged in govt_spending_on_addicts (whose old per-head cost the
 # author set to zero on 8 September), so it enters net revenue, the budget pi_V clears, every spending total and the
 # transition's budget, in every arm with treatment, Housing First included. Treatment's utility cost to the household is
-# unchanged. VALUE: $3,000 a treated year, Medicaid's spending per user of substance use treatment in 2008 (ASPE, Medicaid
-# Substance Abuse Treatment Spending: Findings Report, 2012), at face value on the paper's dollar scale, as the $35 test
-# is: average labour income is $9m / vsl_data = $112,500, so the model value is 3000/112500 * 1.589818 (the benchmark's
-# average labour income) = 0.0423951. Settable by the handover (public_cost_of_treatment) for a sensitivity run.
+# unchanged. VALUE (the author, 13 Oct: "I would go with the 9000-9400"): $9,426 a treated year, the average cost of a
+# residential treatment episode in Roebuck, French and McLellan (2003, J. Substance Abuse Treatment 25(1); DATCAP), at face
+# value on the paper's dollar scale, as the $35 test is: average labour income is $9m / vsl_data = $112,500, so the model
+# value is 9426/112500 * 1.589818 (the benchmark's average labour income) = 0.1332056. (First set at $3,000, Medicaid's
+# 2008 spending per user of any treatment, ASPE; the author: too low for a year.) Settable by the handover.
 rep("        real(8) :: cost_per_drug_test=0.00049461d0",
     "        real(8) :: cost_per_drug_test=0.00049461d0\n"
-    "        ! patch_treatC.py (13 Oct): the government's cost of a year of treatment, $3,000 (ASPE, Medicaid 2008) at the\n"
-    "        ! paper's dollar scale, 3000/(9e6/vsl_data)*average labour income of the benchmark (1.589818)\n"
-    "        real(8) :: public_cost_of_treatment=0.0423951d0")
+    "        ! patch_treatC.py (13 Oct): the government's cost of a year of treatment, $9,426 (Roebuck, French and McLellan\n"
+    "        ! 2003, a residential episode) at the paper's dollar scale, 9426/(9e6/vsl_data)*1.589818, the benchmark's average labour income\n"
+    "        real(8) :: public_cost_of_treatment=0.1332056d0")
 rep('                case ("cost_per_drug_test")\n',
     '                case ("public_cost_of_treatment")\n'
     '                    write(*,*) "HANDOVER public_cost_of_treatment:",&\n'

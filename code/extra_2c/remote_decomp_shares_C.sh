@@ -36,8 +36,8 @@ mkdir -p "$R"
 D=$C/decomp_shares_C_$A
 TRAILER=$'\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01WpmVwzkbKX7RRP8t9yBCLv'
 # 13 Oct: treatment is publicly funded in every arm (patch_treatC.py), so Housing First's net revenue, the target,
-# carries its own treatment spending: treat/net_target_with_treatment.py gives 5.8918411 - 0.0423951 * 0.482685
-NET_TARGET=5.8713776057
+# carries its own treatment spending: treat/net_target_with_treatment.py gives 5.8918411 - 0.1332056 * 0.482685 ($9,426 a treated year)
+NET_TARGET=5.8275447063
 CTEST=$(python3 -c "print('%.10f' % (35/(9e6/80)*1.589817990383))")
 P_NULL=1.0001082; V_NULL=0.067533863
 export BENCH_FROM=$REF BENCH_B=0.0054222 BENCH_OMEGA=0.085 BENCH_KU=1.0 KAPPA_X=0.9342362271804227

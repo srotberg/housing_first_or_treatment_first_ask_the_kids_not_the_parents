@@ -14,8 +14,8 @@ set -u
 MODE=treatC; ARM=tf_ruleC
 CTEST=$(python3 -c "print('%.10f' % (35/(9e6/80)*1.589817990383))")
 # 13 Oct: treatment is publicly funded in every arm (patch_treatC.py), so Housing First's net revenue, the target,
-# carries its own treatment spending: treat/net_target_with_treatment.py gives 5.8918411 - 0.0423951 * 0.482685
-NET_TARGET_NULL=5.8713776057
+# carries its own treatment spending: treat/net_target_with_treatment.py gives 5.8918411 - 0.1332056 * 0.482685 ($9,426 a treated year)
+NET_TARGET_NULL=5.8275447063
 BRANCH=claude/two-period-addiction-hazard-d7gb61
 C=$(cd "$(dirname "$0")/.." && pwd)
 REPO=$(cd "$C/.." && pwd)
