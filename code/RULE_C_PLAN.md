@@ -229,6 +229,11 @@ better off (all with a SUD: 17% of them, +2.6% CEV), where rule A's PE run had n
 should only remove options, so something available only with the screen on (the abstention option, or the internal
 fix, which leaves Housing First's treated households re-priced as untreated) favours it. To be checked with the switches,
 as for who-stops, before the welfare numbers go in the paper; reported to the author.
+DETECTION SCAN FOR WHO-STOPS (the author, 13 Oct: "I would look for the detection rate that gives the 61% first"):
+PSCAN session_011jyPCcUtagjooEpr8Ppseo, 13:00, deter_2c/run_whostops_C_pscan.sh -> results/whostops_2c_C_pscan: the
+reference, then detection 0.05 / 0.15 / 0.30 / 0.50, then four points inside the crossing interval, interpolated for
+61 per cent of tested users without a SUD stopping on impact (0.85 gives 100). ~3.5-4 h. The PE better-off check
+(switches on pe_noext Arm B) waits for the author.
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
