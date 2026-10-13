@@ -267,8 +267,10 @@ rep("                                        total_addited_1=total_addited_1+dis
 rep("        model_total_drug_users(time_period)=model_addicted(time_period)+model_exprimenters(time_period)\n",
     "        model_total_drug_users(time_period)=model_addicted(time_period)+model_exprimenters(time_period)\n"
     "\n"
-    "        ! DRUG USE IS v>0 (patch_treatC2.py): the abstainers carry the disorder but do not use. Screen on only.\n"
-    "        if ((tc2_abstain_on==1) .AND. " + GATE + ") model_total_drug_users(time_period)=&\n"
+    "        ! DRUG USE IS v>0 (patch_treatC2.py): the abstainers carry the disorder but do not use. In EVERY arm, screen or\n"
+    "        ! not (the author, 13 Oct: \"Count those in treatment with 0 drug use as non users\"), so that Housing First and\n"
+    "        ! Treatment First count use the same way; a statistic only, no choice reads it.\n"
+    "        if (tc2_abstain_on==1) model_total_drug_users(time_period)=&\n"
     "            model_total_drug_users(time_period)-tc2_abst(time_period,0,3)\n")
 rep('            write(*,*) "MILBY SPLIT voucher mass rec treat smi", xtab_mass_voucher(time_period), &\n',
     '            write(*,*) "ABSTAIN", &\n'
@@ -292,9 +294,9 @@ h = s.index("    subroutine govt_revenues_calc(time_period)")
 i = s.index(blk, h)
 assert i < s.index("    end subroutine", h)
 s = s[:i] + blk + (
-    "                                        ! AN ABSTAINER IS NOT A USER (patch_treatC2.py): the disorder, treated, v=0, screen on\n"
+    "                                        ! AN ABSTAINER IS NOT A USER (patch_treatC2.py): the disorder, treated, v=0, in every arm\n"
     "                                        tc2_ab_1=0\n"
-    "                                        if ((tc2_abstain_on==1) .AND. (voucher_conditional_on_clean==1) .AND. &\n"
+    "                                        if ((tc2_abstain_on==1) .AND. &\n"
     "                                            (unemployment_index>threshold_addiction_index) .AND. (addiction_consumption_1<=0.d0)) then\n"
     "                                            if (policy_function_treatment(years_left_on_mortgage_index)%vector_transition_integer&\n"
     "                                                (time_period,age_index,financial_index,unemployment_index,employment_index,&\n"

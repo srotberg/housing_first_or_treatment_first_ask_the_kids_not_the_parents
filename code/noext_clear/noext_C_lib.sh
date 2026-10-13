@@ -93,8 +93,8 @@ start_gated() {
 start_arm_A() {
     exec 7> "$SH/armA.lock"; flock 7
     if ! arm_ok $A_DIR && ! alive "$SH/arm_A.pid"; then
-        note "arm A ($A_DIR) on cf_fix2_share_pe, switches '$SWITCHES', price clearing from $P_NULL (Housing First: no screen, unchanged by rule C)"
-        start_gated "$SH/arm_A.pid" "$C/$A_DIR.out" env BUILD=cf_fix2_share_pe OMP_NUM_THREADS=$THREADS DIAG_TAG=_pe_noext_C SEED_FROM=bench \
+        note "arm A ($A_DIR) on cf_fix2_share_pe_treatC, switches '$SWITCHES', price clearing from $P_NULL (Housing First: no screen, unchanged by rule C)"
+        start_gated "$SH/arm_A.pid" "$C/$A_DIR.out" env BUILD=cf_fix2_share_pe_treatC OMP_NUM_THREADS=$THREADS DIAG_TAG=_pe_noext_C SEED_FROM=bench \
             DRUG_PRICE_START=$P_NULL EXTRA_SET="$SWITCHES" sh "$C/pe_noext/cf_arm_pe_noext_C.sh" null
         while [ ! -f "$C/cfarm_bench/BENCH_DONE" ] && alive "$SH/arm_A.pid"; do sleep 10; done
     fi
@@ -113,6 +113,7 @@ build_all() {
     command -v gfortran >/dev/null || { note "GUARD: no gfortran"; publish "failed"; exit 1; }
     python3 -c "import numpy" 2>/dev/null || pip install -q numpy >/dev/null 2>&1
     exec 6> "$SH/build.lock"; flock 6
+    [ -x "$C/cf_fix2_share_pe_treatC/hftf_cf_prod" ] || bash "$C/treat/build_share_treatC.sh" share_pe > "$W/build_share_pe_treatC.log" 2>&1 || { note "GUARD: build cf_fix2_share_pe_treatC failed"; publish "failed"; exit 1; }
     if [ ! -x "$C/cf_fix2_pe_treatC/hftf_cf_prod" ] || [ ! -x "$C/cf_fix2_treatC/hftf_cf_prod" ] || [ ! -x "$C/cf_walk/hftf_cf_prod" ]; then
         note "building (pe_noext/build_pe_C.sh)"
         bash "$C/pe_noext/build_pe_C.sh" > "$W/build.log" 2>&1 || { note "GUARD: build failed: $(tail -n 2 "$W/build.log" | tr '\n' ' ')"; publish "failed"; exit 1; }

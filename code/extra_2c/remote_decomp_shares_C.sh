@@ -107,6 +107,7 @@ for b in cf_fix cf_fix2; do
 done
 [ -x "$C/cf_fix2_share/hftf_cf_prod" ] || { note "building cf_fix2_share"; bash transition_fix/build_cf_fix2_share.sh > /tmp/ds_build_share.log 2>&1 || { note "GUARD: build cf_fix2_share failed"; publish "failed"; exit 1; }; }
 [ -x "$C/cf_kid/hftf_cf_kid" ] || { note "building cf_kid"; sh cf_kid/build.sh > /tmp/ds_build_kid.log 2>&1 || { note "GUARD: build cf_kid failed: $(tail -3 /tmp/ds_build_kid.log | tr '\n' ' ')"; publish "failed"; exit 1; }; }
+[ -x "$C/cf_fix2_share_treatC/hftf_cf_prod" ] || { note "building cf_fix2_share_treatC (Housing First counted as rule C counts use)"; bash treat/build_share_treatC.sh share > /tmp/ds_build_share_treatC.log 2>&1 || { note "GUARD: build cf_fix2_share_treatC failed: $(tail -3 /tmp/ds_build_share_treatC.log | tr '\n' ' ')"; publish "failed"; exit 1; }; }
 [ -x "$C/cf_fix2_treatC/hftf_cf_prod" ] || { note "building cf_fix2_treatC (rule C)"; bash treat/build_treatC.sh > /tmp/ds_build_treatC.log 2>&1 || { note "GUARD: build cf_fix2_treatC failed: $(tail -3 /tmp/ds_build_treatC.log | tr '\n' ' ')"; publish "failed"; exit 1; }; }
 grep -q "RULE C (patch_treatC.py)" "$C/cf_fix2_treatC/cf.f90" || { note "GUARD: cf_fix2_treatC is not rule C"; publish "failed"; exit 1; }
 grep -q "if (drug_market_adjuster==0.d0) distance_drug_market=0" "$C/cf_fix2_treatC/cf.f90" || { note "GUARD: no held-price stopping rule"; publish "failed"; exit 1; }
@@ -114,8 +115,8 @@ publish "built"
 
 # Housing First first, alone until it has unpacked the shared benchmark, then the column's arm beside it
 if ! ok cfarm_null_2c "VOUCHER CHECK PASS"; then
-    note "arm null on cf_fix2_share"
-    ( env BUILD=cf_fix2_share OMP_NUM_THREADS=2 DIAG_TAG=_2c DRUG_PRICE_START=$P_NULL sh transition_2c/cf_arm_tr2c.sh null > "$C/cfarm_null_2c.out" 2>&1 ) &
+    note "arm null on cf_fix2_share_treatC (no screen: Housing First, with use counted as rule C counts it)"
+    ( env BUILD=cf_fix2_share_treatC OMP_NUM_THREADS=2 DIAG_TAG=_2c DRUG_PRICE_START=$P_NULL sh treat/cf_arm_C.sh null > "$C/cfarm_null_2c.out" 2>&1 ) &
     echo $! > "$D.null.pid"
     while [ ! -f "$C/cfarm_bench/BENCH_DONE" ] && alive "$D.null.pid"; do sleep 10; done
 fi

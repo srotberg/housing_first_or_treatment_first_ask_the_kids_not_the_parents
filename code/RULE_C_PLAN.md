@@ -161,6 +161,14 @@ AUTHOR: (1) the go for STAGE 2; (2) an extra cost of stopping (recommended: no, 
 like: the fixed build's b drops treated households with a SUD at v=0, the no-policy arm's b keeps them (about 0.4 points
 on the use change); recommended: subtract the comparison arm's own treated_v0 in the exporters.
 
+THE AUTHOR'S DECISIONS, 13 Oct ~00:25: "1. Yes. 2. No, don't add it. 3. Count those in treatment with 0 drug use as non users."
+So: STAGE 2 GO; no extra cost of stopping; and drug use excludes a household with the disorder that is in treatment and
+spends nothing IN EVERY ARM. Done 00:40: patch_treatC.py / patch_treatC2.py count it in every arm (statistic only; C1, a
+screen arm, is unchanged by this), the Housing First arms of the shares runs and of the no-externality runs now run on
+patched builds (treat/build_share_treatC.sh: cf_fix2_share_treatC, cf_fix2_share_pe_treatC), so both sides of every
+drug-use change count the same way. The v1 folders of the shares and no-externality runs moved to *_v1. STAGE 2 launched:
+S-tf, S-fixboth, S-fixpv, S-fixp (one worker each, collect_shares_C.sh at the end) and NOEXT (one worker, all three scripts).
+
 ## Gates
 - C1 inert check (pass 1): welfare differs from rule A's 789.9399 at the same start, and the MILBY SPLIT line shows
   voucher holders with a SUD in treatment. Fail -> stop, diagnose, tell the author before anything else launches.
