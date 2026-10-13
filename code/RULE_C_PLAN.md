@@ -153,6 +153,14 @@ session. Compile table PASSED on every base except transition_fix/build_tr70_C.s
 THE TRANSITION MUST BE BUILT WITH build_tr70_C2.sh. C1's warm start fell back to rule A's 0.8555 / 0.09615 (its first
 publish overwrote passes.txt before it was read); harmless, but the other relaunches should pass P0/V0 explicitly.
 
+STAGE 1 REPORT SENT 13 Oct 00:20 UTC (C1 pass 3: use -48.9%, SUD -47.5%, h_1 -27.5%, CEV +10.36%, gaps 6.8e-3 / 1.9e-2;
+holders with a SUD 91.5% in treatment vs 24.4% of housed non-holders; long-run recovery ratio 1.51 vs Milby 1.26). The
+one-thread inert check PASSED bit for bit (23:23); the ABSTAIN session archived. The C1 worker would not publish the
+ABSTAIN lines (asked twice); they come with the arm's cf.log.gz at its end, or from the S-tf shares run. OPEN FOR THE
+AUTHOR: (1) the go for STAGE 2; (2) an extra cost of stopping (recommended: no, proceed); (3) drug use counted like for
+like: the fixed build's b drops treated households with a SUD at v=0, the no-policy arm's b keeps them (about 0.4 points
+on the use change); recommended: subtract the comparison arm's own treated_v0 in the exporters.
+
 ## Gates
 - C1 inert check (pass 1): welfare differs from rule A's 789.9399 at the same start, and the MILBY SPLIT line shows
   voucher holders with a SUD in treatment. Fail -> stop, diagnose, tell the author before anything else launches.
