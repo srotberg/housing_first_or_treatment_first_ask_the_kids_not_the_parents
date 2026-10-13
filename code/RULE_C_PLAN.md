@@ -263,6 +263,13 @@ output); the worker went idle, no commit after 14:32, the who-stops lines were n
 PSCAN2 session_01YHexQ4gUbb3GFmpvsw2KvL: deter_2c/run_whostops_C_pscan2.sh -> results/whostops_2c_C_pscan2 (two runs
 at a time, finished runs trimmed to their logs; round 1 at 0.02 / 0.05 / 0.10 / 0.20, since the first scan's published
 tested-use rates, all users, fell 29% at 0.05 and 51% at 0.15). ~3.5 h.
+15:25 (the author: "Why an hr?"): THREE MORE CONTAINERS, deter_2c/run_whostops_C_points.sh, each its own reference and
+two rates: session_01AKNDcu3M15zvoera9E9WH5 (0.10, 0.20 -> results/whostops_2c_C_pts_0p10_0p20),
+session_01BcBGsGiU1qFKr9tVa1632t (0.075, 0.125 -> ..._pts_0p075_0p125), session_01RpgCnWwA1wGctvk2vEWJNC (0.15, 0.25 ->
+..._pts_0p15_0p25). With PSCAN2's 0.02 and 0.05, eight points by ~16:45 UTC; PSCAN2 then repeats 0.10 and 0.20 (a
+reproducibility check) and refines. CHECKS before any number goes to the author: hf file = 1; the tested-no-SUD
+denominator equals the reference's 0.0986619 in every run; start = 0; monotone in detection; the reference's use rates
+equal 0.0555847124 / 0.1780291188 / 0.0743861992; every percentage recomputed from the archived cf.log.gz at the end.
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
