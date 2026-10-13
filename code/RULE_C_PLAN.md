@@ -258,6 +258,11 @@ RELAUNCH the no-externality worker must install gfortran BEFORE starting either 
 ended): TR session_015HhjEE3kd2YULdViLpywyh, P70 session_015Pws8Uk5eaRhmdxLtKbMcg (and the dead 012jh446), NOEXT2
 session_017DH6daSd4sKVT7jCVBAGUo, S-tf session_014SMDkjup43SJvf43yQ57Ej, S-fixp session_01D5LLBHWG2WNeQu48mh6cEA.
 ONLY PSCAN (session_011jyPCcUtagjooEpr8Ppseo) RUNS. Everything at 0.85 stops here; the next launches are at p*.
+PSCAN FILLED ITS DISK at the end of round 1 (~14:35; five run directories, each a full copy of the benchmark plus its
+output); the worker went idle, no commit after 14:32, the who-stops lines were never published. RELAUNCHED 15:19 as
+PSCAN2 session_01YHexQ4gUbb3GFmpvsw2KvL: deter_2c/run_whostops_C_pscan2.sh -> results/whostops_2c_C_pscan2 (two runs
+at a time, finished runs trimmed to their logs; round 1 at 0.02 / 0.05 / 0.10 / 0.20, since the first scan's published
+tested-use rates, all users, fell 29% at 0.05 and 51% at 0.15). ~3.5 h.
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
