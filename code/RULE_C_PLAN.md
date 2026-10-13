@@ -392,3 +392,18 @@ Start 0.98 hedges two readings: the paper's economy's two-point slope (0.868 and
 near 0.97, this run's own pass-to-pass slope near 1.00. The NOEXT session (session_01FXm2FJQcFfyMKvmru6Fdou) was told
 to run code/noext_clear/stop_clear_C.sh (stops only run_noext_clear_C.sh and the solver whose cwd is
 cfarm_tf_noext_clear_C) and never to relaunch run_noext_clear_C.sh; it keeps run_noext_fixp_C.sh and run_pe_C.sh.
+
+20:20 WORKERS DO NOT ACT ON TRIGGER MESSAGES. Three create_trigger(persistent_session_id) + fire_trigger instructions
+(NOEXT stop at 19:38 and 19:54, C20's signed net revenue at 19:46) were delivered (each session took a turn within
+seconds) and not acted on: the old run_noext_clear_C.sh published again at 20:13, and C20's 20:01 publish carried no
+net_revenue_signed.txt. A worker treats such a message as a stored routine prompt, not its user. So a running worker
+can only be stopped by archiving its session, and archive_session was REFUSED here by the permission classifier
+(Interfere With Workloads): it needs the author. Consequences:
+  * NOEXT (session_01FXm2FJQcFfyMKvmru6Fdou) still runs the old Arm C beside Arm A, D and B; NOEXTC2 runs Arms A and C
+    from 0.98. Both write results/noext_clear_C. A fresh D+B session (session_01SkXhdbttXYRonPQLgXk4T1) was created
+    together with the refused archive and interrupted while still pending (cancel_queued); check it started nothing.
+  * THE TRANSITION SWITCH CANNOT BE DONE BY MESSAGE. TR (session_01Dkk3xgSVS2rMQbfZroUGd7) must be archived (by the
+    author, or with the author's permission) before remote_tr50_C.sh runs in a fresh session: both write
+    results/transition_2c_C.
+  * The sign of C20's budget gap comes from pi_V's first move (it moves once the drug market is nearly cleared) or the
+    accepted final.txt.
