@@ -234,6 +234,16 @@ PSCAN session_011jyPCcUtagjooEpr8Ppseo, 13:00, deter_2c/run_whostops_C_pscan.sh 
 reference, then detection 0.05 / 0.15 / 0.30 / 0.50, then four points inside the crossing interval, interpolated for
 61 per cent of tested users without a SUD stopping on impact (0.85 gives 100). ~3.5-4 h. The PE better-off check
 (switches on pe_noext Arm B) waits for the author.
+THE AUTHOR, 13 Oct ~13:05: "Try a bunch of numbers to match that evidence... That should be the number we use". So the
+detection rate p* at which 61% of tested users without a SUD stop on impact BECOMES THE PAPER'S DETECTION RATE. Plan:
+(1) wait for PSCAN (~16:30-17:00 UTC); if the curve cannot hit 61 (a jump), tell the author before anything is stopped.
+(2) With p*: stop TR, P70 and NOEXT2 (all at 0.85, obsolete); let S-tf and S-fixp finish (0.85, nearly done). Archive
+every 0.85 rule-C result as *_p85 (tf_ruleC, decomp_2c_shares_C, pe_noext_C, ...) and relaunch at p* to the same paths:
+C1 (remote_pdet_C2.sh p* or remote_treatC.sh with PDET), S-tf, S-fixboth, S-fixpv, S-fixp, pe_noext B, noext D and C,
+who-stops at p*, and TR at once alongside C1 (its launcher starts from C1's latest pass and re-solves if needed). Make
+PDET an env setting in each launcher first (only after the worker running it has stopped). C1 at 0.85 stays as the
+sensitivity; P70 is dropped. Paper: the detection item in Section 5 / the experiment section gets the new value and
+its target (Mehay and Pacula's 61 per cent on impact), and the validation row becomes a calibration target.
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
