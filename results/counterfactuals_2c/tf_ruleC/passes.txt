@@ -1,4 +1,10 @@
-# tf_ruleC against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 13 Oct 02:13 UTC
+# tf_ruleC against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 13 Oct 02:33 UTC
 remote_treat tf_ruleC: gfortran missing, installing (02:11)
 remote_treat tf_ruleC: free disk 29G, memory 15 GiB, cores 4 (02:12)
 remote_treat tf_ruleC: building cf_fix2_treatC (02:12)
+remote_treat tf_ruleC: resuming from the last published pass: price 0.8615, pi_V 0.09577 (02:13)
+remote_treat tf_ruleC: Treatment First under rule C (in treatment if disordered, no use); budget target 5.8275447063; test cost 0.0004946100 (02:13)
+remote_treat tf_ruleC: arm tf on cf_fix2_treatC: PDET=0.85 NET_TARGET=5.8275447063 PV_START=0.09577 DRUG_PRICE_START=0.8615 EXTRA_SET=cost_per_drug_test 0.0004946100 (02:13)
+
+== tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
