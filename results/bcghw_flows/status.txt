@@ -1,4 +1,4 @@
-# Housing First benchmark with the FLOWS print, against Beauregard et al. (2026) (code/bcghw/run_flows.sh); 13 Oct 23:15 UTC
+# Housing First benchmark with the FLOWS print, against Beauregard et al. (2026) (code/bcghw/run_flows.sh); 13 Oct 23:35 UTC
 run_flows: free disk 29G, memory 15 GiB, cores 4 (13 Oct 22:49)
 run_flows: building cf_fix (13 Oct 22:49)
 run_flows: building cf_fix2 (13 Oct 22:51)
@@ -10,6 +10,7 @@ run_flows: arm null on cf_flows (the benchmark's price 1.0001082 and pi_V), 4 th
 == passes
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  0.9999  0.06753    -3.1%    -3.1%    -3.0%  1.76e-03  0.00e+00   789.1269  +nan%    -0.2%    +3.0%
+  2  0.9999  0.06753    -0.6%    -0.5%    -1.0%  3.11e-04  0.00e+00   787.8804  +nan%    -0.1%    +0.5%
 
 == flows
 pass 1
@@ -18,3 +19,9 @@ pass 1
   entry, not employed          : no SUD   3.769%  SUD   4.992%  ratio   1.32   (housed mass 1.731 / 0.2063)
   entry, first ten adult years : no SUD   0.431%  SUD   0.933%  ratio   2.17   (housed mass 9.305 / 0.5425)
   persistence: still homeless a year after entry: all  56.54%, no SUD  54.11%, SUD  75.23%   (entrants 0.09956 / 0.01294)
+pass 2
+  entry, all working ages      : no SUD   0.284%  SUD   0.770%  ratio   2.71   (housed mass 35.67 / 1.752)
+  entry, employed              : no SUD   0.102%  SUD   0.180%  ratio   1.77   (housed mass 33.94 / 1.541)
+  entry, not employed          : no SUD   3.865%  SUD   5.083%  ratio   1.31   (housed mass 1.727 / 0.2107)
+  entry, first ten adult years : no SUD   0.439%  SUD   0.950%  ratio   2.16   (housed mass 9.29 / 0.5565)
+  persistence: still homeless a year after entry: all  56.58%, no SUD  54.10%, SUD  75.15%   (entrants 0.1012 / 0.01349)
