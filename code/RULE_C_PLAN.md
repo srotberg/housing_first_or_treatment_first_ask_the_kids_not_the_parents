@@ -181,11 +181,17 @@ govt_spending_on_addicts, every arm. The benchmark is not re-solved (no choice r
 budget target falls 5.8918411 -> 5.8275447 (code/treat/net_target_with_treatment.py), set in every rule-C launcher that
 carries it. NISH and DD0 compute their targets from their own no-policy runs, solved before this: recompute at relaunch.
 RESTARTED 02:11 at $9,426 (the 02:06 launch at $3,000 archived): C1 session_01P9BZwZSsi2ALKeiYxQgLLU (warm start
-0.8615 / 0.09577, the v2 pass record restored into tf_ruleC/passes.txt), S-tf session_01C2HAukgzqfuik1CvgFQoAg, S-fixp
+0.8615 / 0.09577, the v2 pass record restored into tf_ruleC/passes.txt), S-tf session_014SMDkjup43SJvf43yQ57Ej (relaunched 02:14 with the TREATSHARE print; 01C2HAuk archived), S-fixp
 session_01D5LLBHWG2WNeQu48mh6cEA, NOEXT session_01UQEhx2Zo82w24DLqopVZQg.
 TREATMENT TAKE-UP CHECK (the author, 13 Oct: report it as a factor): New York treatment-first vs Housing First clients
 46% vs 7% in treatment (6.6x; Padgett et al., SSWR 2006 abstract; ask the author for the published paper), against
 the model's voucher holders with a SUD under Treatment First vs under Housing First (pass-3 v2: 91.5% vs 27.7%, 3.3x).
+THE GOOD COMPARISON (the author: "We need a good comparison"): match the study's population, programme status and
+window. The 46%/7% is most likely the New York Recovery Study (Padgett, Stanhope, Henwood and Stefancic 2011, Community
+Mental Health Journal; 27 Housing First and 48 treatment-first clients with serious mental illness, interviewed at 0, 6
+and 12 months): ASKED THE AUTHOR TO UPLOAD IT. The model side: the TREATSHARE print (S-tf, both arms' cf.log.gz via
+collect_shares_C.sh) gives households with a SUD by status (holder, housed without voucher, homeless) x SMI, mass and
+treated; the counterpart is SMI + SUD voucher holders under each policy (and the screened population as a variant).
 KEPT: S-fixboth session_01FdoN6xM5HFzHdP4F8kBeVe and S-fixpv session_01HJJJLdjar2KkXTSJY5PqgQ (pi_V held, so the budget
 binds nothing; their allocations and welfare are unchanged by the cost; their printed budget omits treatment). The
 no-cost C1 passes are in results/counterfactuals_2c/tf_ruleC_v2. PAPER: Section 4's government budget gains the
