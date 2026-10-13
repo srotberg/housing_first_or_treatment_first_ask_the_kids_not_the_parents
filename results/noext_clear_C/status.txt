@@ -1,3 +1,13 @@
-# Treatment First without externalities, savings recycled, RULE C (code/noext_clear/run_noext_clear_C.sh); 13 Oct 17:10 UTC
+# Treatment First without externalities, savings recycled, RULE C (code/noext_clear/run_noext_clear_C.sh); 13 Oct 17:32 UTC
 noext_clear_C: free disk 29G, memory 15 GiB, cores 4, threads per solve 2, at most 2 solves (13 Oct 16:58)
 noext_clear_C: building (pe_noext/build_pe_C.sh) (13 Oct 16:58)
+noext_clear_C: arm C (tf_noext_clear_C) on cf_fix2_treatC: detection 0.85, test 0.0004946100, price and pi_V clearing against 6.3180936, from rule A's price 0.90717489, pi_V 0.076132869 (13 Oct 17:11)
+
+== cfarm_null_pe_noext_C (1 passes done)
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  1.0051  0.06753   +12.3%   +13.0%    -2.0%  1.57e-01  0.00e+00   789.8762  +nan%   +23.7%   +10.2%
+ PE USED pass=    1 housing_price=  1.2048739043786133E+01 drug_price=  1.0051087408882291E+00 pi_V=  6.7533863251354007E-02
+ MILBY SPLIT voucher mass rec treat smi  0.20404124264280063        6.4266557642191245E-003   5.7550194571636210E-002   2.5140057202446733E-002  housed_nov mass rec treat smi   1.9144461324074107        5.8884087103148436E-002  0.47071936384916518       0.16513717506902173     
+
+== cfarm_tf_noext_clear_C (0 passes done)
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
