@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE C, two loops (code/transition_fix/remote_tr70_C.sh); 13 Oct 09:27 UTC
+# the T = 70 transition on RULE C, two loops (code/transition_fix/remote_tr70_C.sh); 13 Oct 09:49 UTC
 remote_tr70_C: gfortran missing, installing (09:21)
 remote_tr70_C: free disk 29G, memory 15 GiB, cores 4 (09:21)
 remote_tr70_C: building cf_fix (09:21)
@@ -7,3 +7,13 @@ remote_tr70_C: building cf_fix2_share (09:24)
 remote_tr70_C: building cf_fix2_treatC (09:25)
 remote_tr70_C: building tr70_C (build_tr70_C2.sh) (09:26)
 remote_tr70_C: built /home/user/children_first_housing_later/code/tr70_C/hftf_tr_prod b25b1720 (rule C2 + cohort print, T = 70; patch_treatC2.py d5931f95) (09:27)
+remote_tr70_C: arm null on cf_fix2_share: DRUG_PRICE_START=1.0001082 (09:27)
+remote_tr70_C: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_ruleC/tf/final.txt): price 0.86347392, pi_V 0.097395854 (09:29)
+remote_tr70_C: arm tf on cf_fix2_treatC: PDET=0.85 NET_TARGET=5.8275447063 PV_START=0.097395854 DRUG_PRICE_START=0.86347392 EXTRA_SET=cost_per_drug_test 0.0004946100 (09:29)
+
+== arm null
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  0.9999  0.06753    -3.1%    -3.1%    -3.0%  1.69e-03  0.00e+00   789.1270  +4.85%    -0.2%    +3.0%
+
+== arm tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
