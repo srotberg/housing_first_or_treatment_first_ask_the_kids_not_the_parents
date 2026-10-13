@@ -29,7 +29,7 @@ start_arm_A
 if ! arm_ok cfarm_tf_noext_fixp_C target; then
     note "arm D (tf_noext_fixp_C) on cf_fix2_treatC: detection 0.85, test $CTEST, drug price held at $P_A0, pi_V clearing against $NET_A from rule A's $V_D0"
     start_gated "$W/arm_D.pid" "$C/cfarm_tf_noext_fixp_C.out" env BUILD=cf_fix2_treatC OMP_NUM_THREADS=$THREADS DIAG_TAG=_noext_fixp_C \
-        SEED_FROM=bench PDET=0.85 NET_TARGET=$NET_A PV_START=$V_D0 DRUG_PRICE_START=$P_A0 DRUG_MARKET_ADJUSTER=0 \
+        SEED_FROM=bench PDET=${RULEC_PDET:-0.20} NET_TARGET=$NET_A PV_START=$V_D0 DRUG_PRICE_START=$P_A0 DRUG_MARKET_ADJUSTER=0 \
         EXTRA_SET="cost_per_drug_test $CTEST;$SWITCHES" sh "$C/pe_noext/cf_arm_pe_noext_C.sh" tf
 fi
 wait_publishing "arms running" "$SH/arm_A.pid" "$W/arm_D.pid"

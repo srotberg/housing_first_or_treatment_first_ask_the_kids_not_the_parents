@@ -35,7 +35,10 @@ REPO=$(cd "$C/.." && pwd)
 REF=$REPO/results/reference/hf_2c_omega_0.085
 R=$REPO/results/transition_2c_t70_C
 R2=$REPO/results/transition_2c_C
-C1R=results/counterfactuals_2c/tf_ruleC        # the accepted long-run rule-C arm, relative to the repo
+# 13 Oct: the paper's detection rate is 0.20 (61% of all tested users stop on impact, Mehay and Pacula); the accepted
+# long-run arm at that rate is pdet/remote_pdet_C2.sh 0.20's. RULEC_PDET and C1R_OVERRIDE override both.
+PDET_C=${RULEC_PDET:-0.20}
+C1R=${C1R_OVERRIDE:-results/counterfactuals_2c/tf_pdet$(python3 -c "print('%02d' % round(100*$PDET_C))")_C}   # the accepted long-run rule-C arm
 mkdir -p "$R" "$R2"
 D=$C/tr70C_worker
 TRAILER=$'\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01WpmVwzkbKX7RRP8t9yBCLv'
@@ -204,7 +207,7 @@ if ! arm_ok null "VOUCHER CHECK PASS" && ! alive "$D.arm_null.pid"; then
 fi
 start_tf() {   # <price> <pi_V> <why>
     note "terminal arm from $3: price $1, pi_V $2"
-    arm tf cf_fix2_treatC PDET=0.85 NET_TARGET="$NET_TARGET" PV_START="$2" DRUG_PRICE_START="$1" EXTRA_SET="cost_per_drug_test $CTEST"
+    arm tf cf_fix2_treatC PDET=$PDET_C NET_TARGET="$NET_TARGET" PV_START="$2" DRUG_PRICE_START="$1" EXTRA_SET="cost_per_drug_test $CTEST"
 }
 if ! arm_ok tf "TARGET CHECK PASS" && ! alive "$D.arm_tf.pid"; then
     if accepted; then

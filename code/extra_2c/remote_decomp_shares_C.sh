@@ -38,6 +38,9 @@ TRAILER=$'\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Se
 # 13 Oct: treatment is publicly funded in every arm (patch_treatC.py), so Housing First's net revenue, the target,
 # carries its own treatment spending: treat/net_target_with_treatment.py gives 5.8918411 - 0.1332056 * 0.482685 ($9,426 a treated year)
 NET_TARGET=5.8275447063
+# 13 Oct (the author): the detection rate at which 61% of all tested users stop on impact, Mehay and Pacula's stayers
+# (results/whostops_2c_C_pts_0p10_0p20: 61.6% at 0.20); RULEC_PDET overrides
+PDET_C=${RULEC_PDET:-0.20}
 CTEST=$(python3 -c "print('%.10f' % (35/(9e6/80)*1.589817990383))")
 P_NULL=1.0001082; V_NULL=0.067533863
 export BENCH_FROM=$REF BENCH_B=0.0054222 BENCH_OMEGA=0.085 BENCH_KU=1.0 KAPPA_X=0.9342362271804227
@@ -51,13 +54,13 @@ LASTC=$(awk '/^== tf/{t=1;next} /^==/{t=0} t && $1 ~ /^[0-9]+$/ {p=$2; v=$3} END
 [ -n "$LASTC" ] && { PC=${LASTC% *}; VC=${LASTC#* }; }
 case "$A" in
   tf)      ACC=$REPO/results/counterfactuals_2c/tf85_c35/tf
-           SET=(PDET=0.85 NET_TARGET=$NET_TARGET PV_START=$VC DRUG_PRICE_START=$PC "EXTRA_SET=cost_per_drug_test $CTEST") ;;
+           SET=(PDET=$PDET_C NET_TARGET=$NET_TARGET PV_START=$VC DRUG_PRICE_START=$PC "EXTRA_SET=cost_per_drug_test $CTEST") ;;
   fixboth) ACC=$REPO/results/decomp_2c_both/arm_fixboth
-           SET=(PDET=0.85 PV_START=$V_NULL DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0") ;;
+           SET=(PDET=$PDET_C PV_START=$V_NULL DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0") ;;
   fixpv)   ACC=$REPO/results/decomp_2c/arm_fixpv
-           SET=(PDET=0.85 PV_START=$V_NULL DRUG_PRICE_START=0.8742 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0") ;;
+           SET=(PDET=$PDET_C PV_START=$V_NULL DRUG_PRICE_START=0.8742 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0") ;;
   fixp)    ACC=$REPO/results/decomp_2c/arm_fixp
-           SET=(PDET=0.85 NET_TARGET=$NET_TARGET PV_START=0.11453 DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST") ;;
+           SET=(PDET=$PDET_C NET_TARGET=$NET_TARGET PV_START=0.11453 DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST") ;;
 esac
 
 note() { echo "remote_decomp_shares_C $A: $* ($(date -u +%H:%M))" | tee -a "$D.status"; }

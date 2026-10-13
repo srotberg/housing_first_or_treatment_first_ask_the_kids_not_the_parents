@@ -37,7 +37,7 @@ note "arm A's last solve used: drug price $P_A, pi_V $PV_A, house price $HP_A"
 if ! arm_ok cfarm_tf_pe_noext_C; then
     note "arm B (tf_pe_noext_C) on cf_fix2_pe_treatC: detection 0.85, test $CTEST, held price $P_A, pi_V $PV_A, house price $HP_A, adjust_taxes 0"
     start_gated "$W/arm_B.pid" "$C/cfarm_tf_pe_noext_C.out" env BUILD=cf_fix2_pe_treatC OMP_NUM_THREADS=$THREADS DIAG_TAG=_pe_noext_C \
-        SEED_FROM=$A_DIR PDET=0.85 PV_START=$PV_A DRUG_PRICE_START=$P_A DRUG_MARKET_ADJUSTER=0 HOUSING_PRICE_HOLD=$HP_A \
+        SEED_FROM=$A_DIR PDET=${RULEC_PDET:-0.20} PV_START=$PV_A DRUG_PRICE_START=$P_A DRUG_MARKET_ADJUSTER=0 HOUSING_PRICE_HOLD=$HP_A \
         EXTRA_SET="cost_per_drug_test $CTEST;adjust_taxes 0;$SWITCHES" sh "$C/pe_noext/cf_arm_pe_noext_C.sh" tf
 fi
 wait_publishing "arm B running" "$W/arm_B.pid"
