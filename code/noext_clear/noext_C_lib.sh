@@ -22,7 +22,10 @@ MAXSOLVES=${MAXSOLVES:-2}
 P_NULL=1.0001082
 CTEST=$(python3 -c "print('%.10f' % (35/(9e6/80)*1.589817990383))")
 SWITCHES="weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0"
-NET_A=6.3830441                    # rule A's pe_noext Arm A, results/pe_noext/arm_A/final.txt, as in the rule-A launchers
+# 13 Oct: Arm A's OWN net revenue on the rule-C build, which charges the $9,426 public treatment cost in every arm
+# (results/pe_noext_C/arm_A/final.txt). The 13 Oct 02:15 runs used rule A's 6.3830441, which has no treatment spending,
+# so Arms D and C had to raise 0.065 more than Housing First does and pi_V cleared too low (results/*_C_wrongtarget).
+NET_A=6.3180936
 A_DIR=cfarm_null_pe_noext_C        # the shared Arm A
 export BENCH_FROM=$REF BENCH_B=0.0054222 BENCH_OMEGA=0.085 BENCH_KU=1.0 KAPPA_X=0 SS_NO_CLASS=1
 export PASSES_BASE="0.089562893104297908,0.038113117586549894,0.0061835672543113307"
