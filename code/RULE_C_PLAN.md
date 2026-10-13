@@ -254,6 +254,10 @@ NOEXT2 (12:58) FAILED AT ONCE in run_noext_fixp_C.sh: "GUARD: no gfortran" -- th
 and the fixp one does not install gfortran (the same race as the first NOEXT launch; that brief had the worker run
 apt-get install gfortran first, the NOEXT2 prompt did not). Not relaunched: it is at 0.85 and obsolete. AT THE p*
 RELAUNCH the no-externality worker must install gfortran BEFORE starting either launcher.
+13 Oct 13:22, THE AUTHOR: "Yes. No need to run them since we need to find pdet". ARCHIVED (containers released, jobs
+ended): TR session_015HhjEE3kd2YULdViLpywyh, P70 session_015Pws8Uk5eaRhmdxLtKbMcg (and the dead 012jh446), NOEXT2
+session_017DH6daSd4sKVT7jCVBAGUo, S-tf session_014SMDkjup43SJvf43yQ57Ej, S-fixp session_01D5LLBHWG2WNeQu48mh6cEA.
+ONLY PSCAN (session_011jyPCcUtagjooEpr8Ppseo) RUNS. Everything at 0.85 stops here; the next launches are at p*.
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
