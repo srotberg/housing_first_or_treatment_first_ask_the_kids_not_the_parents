@@ -195,6 +195,16 @@ STAGE 4 LAUNCHED 09:22 (pre-fix results archived as _v1): WS session_016gJzSnkiK
 run_whostops_C.sh -> results/whostops_2c_C), P70 session_012jh446VKmXz3kJJpV51xYn (remote_pdet_C2.sh 0.70 ->
 results/counterfactuals_2c/tf_pdet70_C, warm start tf_ruleC's accepted pass). Still to launch: NISH, DD0 (targets to
 recompute with the treatment cost), revocations.
+WHO-STOPS DONE 10:39 (results/whostops_2c_C). Holders who used under Housing First and stop under Treatment First:
+all users 76.1% (rule A and pre-fix rule C 6.0%), users without a SUD 33.3% (53.2%); the tested (holders and offered):
+all users 89.1% (19.4%), users without a SUD 100.0% (58.9%; the validation row's x_ws_tested_nosud_pc against Mehay and
+Pacula's 61%). The reference (Housing First) moved too, 0.0608 -> 0.0556 among holders, because treated households
+spending nothing are no longer users. All users jump because a treated household with the disorder can now stop on
+impact. Users WITHOUT a SUD should not change (rule C is rule A for them) unless the EV-key or internal fix does it:
+the EV-key fix says the old code's use candidate did not foresee losing the voucher, which should RAISE stopping, so
+holders' fall from 53% to 33% is unexplained. DIAGNOSTIC 11:21: WSS session_018FkEpr8uTHRhKc5Q3SAXGs runs
+deter_2c/run_whostops_C_switch.sh (all switches off, which must give rule A's numbers, then each switch off alone) ->
+results/whostops_2c_C_switch.
 TREATMENT TAKE-UP CHECK (the author, 13 Oct: report it as a factor): New York treatment-first vs Housing First clients
 46% vs 7% in treatment (6.6x; Padgett et al., SSWR 2006 abstract; ask the author for the published paper), against
 the model's voucher holders with a SUD under Treatment First vs under Housing First (pass-3 v2: 91.5% vs 27.7%, 3.3x).
