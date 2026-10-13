@@ -1,4 +1,4 @@
-# PE experiment without externalities, RULE C (code/pe_noext/run_pe_C.sh); 13 Oct 23:50 UTC
+# PE experiment without externalities, RULE C (code/pe_noext/run_pe_C.sh); 13 Oct 23:59 UTC
 pe_noext_C: free disk 29G, memory 15 GiB, cores 4, threads per solve 2, at most 2 solves (13 Oct 16:58)
 pe_noext_C: arm A (cfarm_null_pe_noext_C) on cf_fix2_share_pe_treatC, switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0001082 (Housing First: no screen, unchanged by rule C) (13 Oct 17:11)
 pe_noext_C: arm A: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 9 passes, sweeps [70, 70, 70, 72, 73, 72, 70, 70, 90], largest final 4.11e-05 (rule 5e-05, at least 70 sweeps)  (13 Oct 20:13)
@@ -7,6 +7,9 @@ pe_noext_C: arm B (tf_pe_noext_C) on cf_fix2_pe_treatC: detection 0.85, test 0.0
 pe_noext_C: arm B: DIST CHECK PASS: 3 passes, sweeps [70, 70, 70], largest final 4.55e-05 (rule 5e-05, at least 70 sweeps)  (13 Oct 21:48)
 pe_noext_C: walk (pe_walk_A_C) on arm A's policies at drug price 1.0304908852192760E+00 (13 Oct 21:48)
 pe_noext_C: push failed after 4 tries (13 Oct 22:10)
+pe_noext_C: walk done (-0.5) (13 Oct 23:58)
+pe_noext_C: analysis written:  newborn adult (age 26) share 0.0197 CEV of the group -1.1533% mean of state CEVs -0.9850% (state CEV off the grid for 0.00e+00 of the group) (13 Oct 23:59)
+pe_noext_C: done (13 Oct 23:59)
 
 == cfarm_null_pe_noext_C (9 passes done)
   2  1.0101  0.06753   +10.7%   +11.5%    -1.8%  1.37e-01  0.00e+00   789.8717  +nan%   +21.4%    +9.7%
@@ -27,3 +30,37 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   3  1.0305  0.06753   -27.6%   -25.9%    -7.3%  0.00e+00  0.00e+00   790.4661  +nan%   -19.5%   +11.3%
  PE USED pass=    2 housing_price=  1.2049244506508884E+01 drug_price=  1.0304908852192760E+00 pi_V=  6.7533863251354007E-02
  MILBY SPLIT voucher mass rec treat smi   9.1052957433967269E-002   3.9649978950014797E-003   7.0965883807359104E-002   1.0441240551556137E-002  housed_nov mass rec treat smi   1.3046280874392460        3.9974580757055171E-002  0.31422947242369115       0.10976599471122324     
+
+== analysis
+file 1: 8564400 states, 1067185 occupied, mass 50.824966, walk could not evaluate mass 0.000e+00
+file 2: 770796 states, 0 occupied, mass 0.000000, walk could not evaluate mass 0.000e+00
+walk at x=0 minus V_A: weighted mean +6.3521e-01, weighted mean |.| 7.3250e-01, max |.| 1.2893e+02 (utils)
+walk increasing in x at 1.000000 of the mass
+
+SHARES (weights: Arm A distribution)
+  all households         mass 1.00000 | strict: better 0.0099 worse 0.7561 | tol 1e-08: better 0.0099 worse 0.7429 same 0.2472 | tol 1e-06: better 0.0099 worse 0.7013 same 0.2888 | tol 0.0001: better 0.0098 worse 0.3046 same 0.6855 | tol 0.001: better 0.0098 worse 0.2484 same 0.7418 | tol 0.01: better 0.0096 worse 0.1715 same 0.8189 | rtol 1e-6: better 0.0098 worse 0.2404 same 0.7498
+  with a SUD             mass 0.03835 | strict: better 0.2588 worse 0.7268 | tol 1e-08: better 0.2574 worse 0.7260 same 0.0166 | tol 1e-06: better 0.2574 worse 0.7260 same 0.0166 | tol 0.0001: better 0.2568 worse 0.7260 same 0.0172 | tol 0.001: better 0.2549 worse 0.7259 same 0.0192 | tol 0.01: better 0.2498 worse 0.7241 same 0.0261 | rtol 1e-6: better 0.2554 worse 0.7259 same 0.0187
+  without a SUD          mass 0.96165 | strict: better 0.0000 worse 0.7573 | tol 1e-08: better 0.0000 worse 0.7436 same 0.2564 | tol 1e-06: better 0.0000 worse 0.7003 same 0.2997 | tol 0.0001: better 0.0000 worse 0.2878 same 0.7122 | tol 0.001: better 0.0000 worse 0.2294 same 0.7706 | tol 0.01: better 0.0000 worse 0.1495 same 0.8505 | rtol 1e-6: better 0.0000 worse 0.2211 same 0.7789
+  age 26 (model age 1)   mass 0.01968 | strict: better 0.0000 worse 1.0000 | tol 1e-08: better 0.0000 worse 1.0000 same 0.0000 | tol 1e-06: better 0.0000 worse 1.0000 same 0.0000 | tol 0.0001: better 0.0000 worse 1.0000 same 0.0000 | tol 0.001: better 0.0000 worse 0.9973 same 0.0027 | tol 0.01: better 0.0000 worse 0.9669 same 0.0331 | rtol 1e-6: better 0.0000 worse 0.9973 same 0.0027
+  largest gain dV +3.1612e+00 utils (age 35, V_A 753.4290, mass 3.713e-22); largest loss -4.9438e+01
+  dV percentiles (1,10,50,90,99), unweighted over occupied states: -2.146e+01 -5.291e+00 -3.697e-05 +0.000e+00 +5.871e-01
+
+CEV (per cent of Arm A consumption, every period for life; negative = Treatment First worse)
+  population                               share 1.0000  CEV of the group -0.4014%   mean of state CEVs -0.2051%  (state CEV off the grid for 1.31e-07 of the group)
+  affected (|dV|>1e-06)                    share 0.7112  CEV of the group -0.4637%   mean of state CEVs -0.2884%  (state CEV off the grid for 1.85e-07 of the group)
+  worse off (dV<-1e-06)                    share 0.7013  CEV of the group -0.4791%   mean of state CEVs -0.3287%  (state CEV off the grid for 1.87e-07 of the group)
+  better off (dV>1e-06)                    share 0.0099  CEV of the group +2.2751%   mean of state CEVs +2.5790%  (state CEV off the grid for 0.00e+00 of the group)
+  with a SUD                               share 0.0383  CEV of the group -5.4667%   mean of state CEVs -3.4139%  (state CEV off the grid for 3.42e-06 of the group)
+  without a SUD                            share 0.9617  CEV of the group -0.1655%   mean of state CEVs -0.0771%  (state CEV off the grid for 0.00e+00 of the group)
+  newborn adult (age 26)                   share 0.0197  CEV of the group -1.1533%   mean of state CEVs -0.9850%  (state CEV off the grid for 0.00e+00 of the group)
+  newborn adult, affected (|dV|>1e-06)     share 0.0197  CEV of the group -1.1533%   mean of state CEVs -0.9850%  (state CEV off the grid for 0.00e+00 of the group)
+  population                               share 1.0000  CEV of the group -0.4014%   mean of state CEVs -0.2051%  (state CEV off the grid for 1.31e-07 of the group)
+  affected (|dV|>0.001)                    share 0.2582  CEV of the group -0.9559%   mean of state CEVs -0.7939%  (state CEV off the grid for 5.09e-07 of the group)
+  worse off (dV<-0.001)                    share 0.2484  CEV of the group -0.9935%   mean of state CEVs -0.9277%  (state CEV off the grid for 5.29e-07 of the group)
+  better off (dV>0.001)                    share 0.0098  CEV of the group +2.2939%   mean of state CEVs +2.6044%  (state CEV off the grid for 0.00e+00 of the group)
+  with a SUD                               share 0.0383  CEV of the group -5.4667%   mean of state CEVs -3.4139%  (state CEV off the grid for 3.42e-06 of the group)
+  without a SUD                            share 0.9617  CEV of the group -0.1655%   mean of state CEVs -0.0771%  (state CEV off the grid for 0.00e+00 of the group)
+  newborn adult (age 26)                   share 0.0197  CEV of the group -1.1533%   mean of state CEVs -0.9850%  (state CEV off the grid for 0.00e+00 of the group)
+  newborn adult, affected (|dV|>0.001)     share 0.0196  CEV of the group -1.1551%   mean of state CEVs -0.9877%  (state CEV off the grid for 0.00e+00 of the group)
+
+  newborn, childhood-inclusive (NOT externality-free): W_A 790.066183 W_B 790.466101 (beta^K 0.250218) CEV +1.1952%
