@@ -305,6 +305,19 @@ THE AUTHOR (17:12): "You show me the numbers compared to the data and we can dec
 table, data against the model at 0.20 (and 0.10), every validation; nothing into the paper before the author chooses.
 REPRODUCIBILITY (17:08): PSCAN2's independent 0.10 and 0.20 give 25.8876% and 49.4551% of tested users without a SUD,
 identical to the 0p10_0p20 container's; PSCAN2 archived after it.
+18:35 RESTART FROM A NEARER PRICE (the author: "Do the decompositions you suggested"). The drug price moves at most
+0.5% a pass (max_drug_price_move = 0.005, the author 8 Sept) and the 16:58 runs started from the 0.85 price 0.86: the
+0.10 run sat at 0.872 after two passes with a 50% drug-market gap (use +21%, an off-equilibrium artefact). Warm starts
+from the year-one use falls (0.85: -52.3%, 0.20: -27.2%, 0.10: -17.7%) and the 0.85 run's price fall per unit of that
+(13.65/52.3): 0.20 -> price 0.93, pi_V 0.082; 0.10 -> 0.955, 0.077 (the 0.85 run's price was the same with pi_V held or
+clearing, 0.861 / 0.864). First passes archived as tf_pdet20_C_slowstart, tf_pdet10_C_slowstart,
+decomp_2c_shares_C_slowstart/arm_tf, arm_fixpv. Relaunched:
+  C20  session_014BV5qjcEFHQ6Z5ueM2HsdF  P0_START=0.93 V0_START=0.082 bash code/pdet/remote_pdet_C2.sh 0.20
+  C10  session_014GswRL6uHo1efdYWSYymZH  P0_START=0.955 V0_START=0.077 bash code/pdet/remote_pdet_C2.sh 0.10
+  S-tf session_018Hx3hhwtWBXMEKme9BjY95  SHARES_P0=0.93 SHARES_V0=0.082 bash code/extra_2c/remote_decomp_shares_C2.sh tf
+  S-fixpv session_016yrmFb79EoSwu8AmVsvAhJ  SHARES_P0=0.93 bash code/extra_2c/remote_decomp_shares_C2.sh fixpv
+Not restarted: S-fixboth and S-fixp (price held), NOEXT (a 4 h Housing First re-solve each restart), TR (re-solves
+its end state from C20's accepted values), REVK.
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
