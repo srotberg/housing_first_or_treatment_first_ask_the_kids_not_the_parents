@@ -1,14 +1,9 @@
-Traceback (most recent call last):
-  File "/home/user/children_first_housing_later/code/revoked_2c/analyse.py", line 232, in <module>
-    {'pair3': pair3, 'rest3': rest3, 'main': main}[sys.argv[1]](sys.argv[2:])
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-  File "/home/user/children_first_housing_later/code/revoked_2c/analyse.py", line 95, in pair3
-    p1, t1, p2, t2 = (load(p) for p in a)
-    ^^^^^^^^^^^^^^
-  File "/home/user/children_first_housing_later/code/revoked_2c/analyse.py", line 95, in <genexpr>
-    p1, t1, p2, t2 = (load(p) for p in a)
-                      ~~~~^^^
-  File "/home/user/children_first_housing_later/code/revoked_2c/analyse.py", line 27, in load
-    L = open(path, errors='replace').read().splitlines()
-        ~~~~^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/home/user/children_first_housing_later/code/revoked_2c/work_C/g_plain3_2t/run.log'
+T = 3 GUARDS, ONE THREAD (plain against tracking)
+  aggregate lines (MECH, CENSUS, BUDGET, DRUG, WELFARE, MILBY, ...): plain 48, tracking 48, differing 0 PASS
+  tracking, one thread: mass accounting, worst |alive + cumulative deaths - starting mass| / starting mass = 1.68e-13 (rule 1e-10) PASS
+  tracking, one thread: shadow kernel against the model's own step (ages 2+), worst max-cell gap / largest cell = 0.00e+00 (rule 1e-12) PASS
+  tracking, one thread: price printed in 2 years: [1.0001082]; pi_V: [0.067533863] PASS
+  tracking, one thread: mass the model's reduction drops each year (below the last age's renter floor; booked as an end-of-life exit): t=1 0.00e+00, t=2 0.00e+00
+  tracking, one thread: one pass and stopped cleanly: True, runtime errors: 0 PASS
+THE MODEL'S RACE, for the record: no two-thread pair was run (informational only)
+GUARD SUMMARY: PASS
