@@ -183,6 +183,14 @@ carries it. NISH and DD0 compute their targets from their own no-policy runs, so
 RESTARTED 02:11 at $9,426 (the 02:06 launch at $3,000 archived): C1 session_01P9BZwZSsi2ALKeiYxQgLLU (warm start
 0.8615 / 0.09577, the v2 pass record restored into tf_ruleC/passes.txt), S-tf session_014SMDkjup43SJvf43yQ57Ej (relaunched 02:14 with the TREATSHARE print; 01C2HAuk archived), S-fixp
 session_01D5LLBHWG2WNeQu48mh6cEA, NOEXT session_01UQEhx2Zo82w24DLqopVZQg.
+13 Oct 08:41 UTC: C1 ACCEPTED after 8 passes (price 0.86347392, pi_V 0.097395854, b 0.0456, SUD 0.0199, h_1 0.00443,
+CEV +10.65%, net revenue 5.82707 against 5.82754). Done by 09:15: S-fixboth (05:23), S-fixpv (08:31), pe_noext_C and
+noext_fixp_C (08:53). Still running: S-tf, S-fixp, noext_clear_C (NOEXT session).
+STAGE 3 LAUNCHED 09:20: TR session_015HhjEE3kd2YULdViLpywyh (Sonnet, code/rulec_relaunch/briefs_v2/TR.md):
+bash code/transition_fix/remote_tr70_C.sh, now building with build_tr70_C2.sh (build_tr70_C.sh's guard refused the
+current patch; test-built here first, binary b25b1720) and guarding on patch_treatC2.py's checksum. It re-solves the
+no-policy arm and the terminal arm from C1's accepted price and pi_V, writes results/transition_2c_C/, then two T = 70
+loops into results/transition_2c_t70_C/loop1, loop2 (the Milby row is loop2's TRANSITION MILBY t=1).
 TREATMENT TAKE-UP CHECK (the author, 13 Oct: report it as a factor): New York treatment-first vs Housing First clients
 46% vs 7% in treatment (6.6x; Padgett et al., SSWR 2006 abstract; ask the author for the published paper), against
 the model's voucher holders with a SUD under Treatment First vs under Housing First (pass-3 v2: 91.5% vs 27.7%, 3.3x).
