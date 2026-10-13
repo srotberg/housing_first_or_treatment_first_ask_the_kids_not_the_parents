@@ -291,6 +291,16 @@ The three containers above 0.25 archived (not needed); PSCAN2 kept until it repe
        -> results/pe_noext_C, noext_fixp_C, noext_clear_C
   TR   session_01Dkk3xgSVS2rMQbfZroUGd7  transition_fix/remote_tr70_C.sh (terminal arm checked against tf_pdet20_C)
        -> results/transition_2c_t70_C, transition_2c_C
+  REVK session_01J1YCiMyKJTj8Uat4Fiv3P9  revoked_2c/run_all_C.sh (the Costantini validation's five-script pipeline at 0.20)
+       -> results/revoked_2c_C, revoked_2c_street_C
+VALIDATING THE EXPERIMENT (the author, 13 Oct ~17:05: "add those little validation results for the counterfactual too.
+The milby comparison, ie, the increase in treatment take up... And anything to validate the experiments"). With Block 8
+moved to the experiment section as the calibration of p_det and c_test, the experiment gets its own validation:
+Milby et al. (2005) first-year recovery ratio (transition at 0.20, TRANSITION MILBY t=1); Padgett et al. (2011) take-up
+46% vs 7% (x6.6; transition year 1 or S-tf TREATSHARE, SMI+SUD holders) and leaving the programme 54% vs 11% (AWOL;
+model: holders losing the voucher within a year, from the revocations pipeline or a transition print); Costantini (2025)
+mortality of the revoked (REVK); Mehay and Pacula's own policy estimates, 11-45% (use among the tested after year 1).
+OPEN for the author: Padgett also finds Treatment First clients used MORE (65% vs 30%); the model will show less.
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
