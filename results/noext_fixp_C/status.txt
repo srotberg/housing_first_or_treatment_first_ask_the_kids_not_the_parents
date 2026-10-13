@@ -1,14 +1,15 @@
-# Treatment First without externalities, drug price held, budget rebalanced, RULE C (code/noext_clear/run_noext_fixp_C.sh); 13 Oct 03:07 UTC
+# Treatment First without externalities, drug price held, budget rebalanced, RULE C (code/noext_clear/run_noext_fixp_C.sh); 13 Oct 03:27 UTC
 noext_fixp_C: free disk 29G, memory 15 GiB, cores 4, threads per solve 2, at most 2 solves (13 Oct 02:12)
 noext_fixp_C: push failed after 4 tries (13 Oct 02:25)
 noext_fixp_C: arm A (cfarm_null_pe_noext_C) on cf_fix2_share_pe_treatC, switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0001082 (Housing First: no screen, unchanged by rule C) (13 Oct 02:25)
 noext_fixp_C: arm D (tf_noext_fixp_C) on cf_fix2_treatC: detection 0.85, test 0.0004946100, drug price held at 1.0305057924439740, pi_V clearing against 6.3830441 from rule A's 0.068872515 (13 Oct 02:26)
 
-== cfarm_null_pe_noext_C (1 passes done)
+== cfarm_null_pe_noext_C (2 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0051  0.06753   +12.3%   +13.0%    -2.0%  1.57e-01  0.00e+00   789.8756  +nan%   +23.7%   +10.2%
- PE USED pass=    1 housing_price=  1.2048737268537700E+01 drug_price=  1.0051087408882291E+00 pi_V=  6.7533863251354007E-02
- MILBY SPLIT voucher mass rec treat smi  0.20405418197053787        6.4267231671419111E-003   5.7540410185616855E-002   2.5142606229275475E-002  housed_nov mass rec treat smi   1.9144132808137451        5.8882683276785142E-002  0.47069329407574179       0.16512180923120828     
+  2  1.0101  0.06753   +10.7%   +11.5%    -1.8%  1.37e-01  0.00e+00   789.8717  +nan%   +21.4%    +9.7%
+ PE USED pass=    2 housing_price=  1.2048822845267033E+01 drug_price=  1.0101342844803405E+00 pi_V=  6.7533863251354007E-02
+ MILBY SPLIT voucher mass rec treat smi  0.20198847537013534        6.3561271064602517E-003   5.6712897196054025E-002   2.4757177329151153E-002  housed_nov mass rec treat smi   1.8888516320187789        5.8086670798690898E-002  0.46385576347929913       0.16203124687165396     
 
 == cfarm_tf_noext_fixp_C (1 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
