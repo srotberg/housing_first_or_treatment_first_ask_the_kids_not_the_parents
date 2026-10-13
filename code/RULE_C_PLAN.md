@@ -244,6 +244,12 @@ who-stops at p*, and TR at once alongside C1 (its launcher starts from C1's late
 PDET an env setting in each launcher first (only after the worker running it has stopped). C1 at 0.85 stays as the
 sensitivity; P70 is dropped. Paper: the detection item in Section 5 / the experiment section gets the new value and
 its target (Mehay and Pacula's 61 per cent on impact), and the validation row becomes a calibration target.
+THE AUTHOR, 13 Oct ~13:15: "pick pdet to match the 59% and then run one sensitivity with half that pdet, and say the
+results hold even then and state what the drug use response is relative to the 59%". The data number is 61
+(mp_stay_rel_pc; 59 was the model's old, bug-made value): TARGET 61 unless the author says 59 (the scan's curve gives
+either). SENSITIVITY: ONE long-run Treatment First arm at p*/2 (remote_pdet_C2.sh p*/2, price and pi_V clearing) plus
+ONE who-stops impact run at p*/2 (the exact share stopping at half detection, quoted against 61 at p*). P70 and any
+0.85 sensitivity are dropped; C1 at 0.85 stays on disk but is not quoted.
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
