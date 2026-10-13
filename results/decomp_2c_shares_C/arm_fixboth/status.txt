@@ -1,4 +1,4 @@
-# better-off shares for the decomposition column fixboth (code/extra_2c/remote_decomp_shares.sh); 13 Oct 22:29 UTC
+# better-off shares for the decomposition column fixboth (code/extra_2c/remote_decomp_shares.sh); 13 Oct 22:30 UTC
 remote_decomp_shares_C fixboth: free disk 29G, memory 15 GiB, cores 4 (16:58)
 remote_decomp_shares_C fixboth: building cf_fix (16:58)
 remote_decomp_shares_C fixboth: building cf_fix2 (17:02)
@@ -9,6 +9,11 @@ remote_decomp_shares_C fixboth: building cf_fix2_treatC (rule C) (17:12)
 remote_decomp_shares_C fixboth: arm null on cf_fix2_share_treatC (no screen: Housing First, with use counted as rule C counts it) (17:13)
 remote_decomp_shares_C fixboth: arm fixboth on cf_fix2_treatC (rule C): PDET=0.20 PV_START=0.067533863 DRUG_PRICE_START=1.0001082 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 (17:19)
 remote_decomp_shares_C fixboth: against the accepted run: worst relative difference 6.4e-01 over drug price, pi_V (voucher probability), drug use b, SUD lambda_d, homelessness h_1 (22:29)
+remote_decomp_shares_C fixboth: shares:  all households mass 50.82797 strict better 0.0325 | tol 0.001: better 0.0092 worse 0.2544 | tol 0.01: better 0.0090 worse 0.1798 (22:30)
+remote_decomp_shares_C fixboth: cf_kid on null_2c FAILED:        cf_fix2_damp share its law of motion). A *permban build has a different voucher rule.        FORCE_BUILD=1 only after checking the two builds' law of motion agree.  (22:30)
+remote_decomp_shares_C fixboth: cf_kid on tf_2c_fixboth FAILED:        cf_fix2_damp share its law of motion). A *permban build has a different voucher rule.        FORCE_BUILD=1 only after checking the two builds' law of motion agree.  (22:30)
+remote_decomp_shares_C fixboth: GUARD: share_newborns failed:                 ~~~~^^^^^^ FileNotFoundError: [Errno 2] No such file or directory: '/home/user/children_first_housing_later/code/decomp_shares_C_fixboth.newborn/tf_2c_fixboth/child_value_summarycounter_arm.txt'  (22:30)
+remote_decomp_shares_C fixboth: done (22:30)
 
 == cfarm_null_2c
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
