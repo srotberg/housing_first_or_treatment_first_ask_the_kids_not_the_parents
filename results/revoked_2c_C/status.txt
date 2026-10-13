@@ -1,4 +1,4 @@
-# revoked-voucher experiment, RULE C (code/revoked_2c/run_paths_C.sh); 13 Oct 21:27 UTC
+# revoked-voucher experiment, RULE C (code/revoked_2c/run_paths_C.sh); 13 Oct 21:29 UTC
 ## stage 1, the two steady states
 run_arms: free disk 29G, memory 15 GiB, cores 4 (13 Oct 17:07)
 run_arms: building cf_fix2_treatC (13 Oct 17:07)
@@ -9,6 +9,11 @@ run_arms: arm fixboth on cf_fix2_treatC (rule C) (13 Oct 17:16)
 run_arms: null_2c: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [70, 70, 70, 70, 70], largest final 1.99e-05 (rule 5e-05, at least 70 sweeps)  (13 Oct 20:24)
 run_arms: tf_2c_fixboth_C: DIST CHECK PASS: 4 passes, sweeps [70, 70, 70, 70], largest final 1.79e-05 (rule 5e-05, at least 70 sweeps)  (13 Oct 20:24)
 run_arms: arms done (13 Oct 20:24)
+run_arms: free disk 17G, memory 15 GiB, cores 4 (13 Oct 21:29)
+run_arms: builds done (13 Oct 21:29)
+run_arms: null_2c: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [70, 70, 70, 70, 70], largest final 1.99e-05 (rule 5e-05, at least 70 sweeps)  (13 Oct 21:29)
+run_arms: tf_2c_fixboth_C: DIST CHECK PASS: 4 passes, sweeps [70, 70, 70, 70], largest final 1.79e-05 (rule 5e-05, at least 70 sweeps)  (13 Oct 21:29)
+run_arms: arms done (13 Oct 21:29)
 -- null_2c
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
 -- tf_2c_fixboth_C
@@ -21,5 +26,7 @@ run_paths: staged /home/user/children_first_housing_later/code/revoked_2c/work_C
 run_paths: T = 3 guard pair running, one thread each (13 Oct 20:25)
 run_paths: T = 3 pair:  (13 Oct 21:27)
 run_paths: GUARD: the T = 3 pair did not pass, stopping before T = 10 (13 Oct 21:27)
+run_paths: waiting for the arms and the builds (13 Oct 21:29)
+run_paths: against rule A's accepted runs (null must match; fixboth is rule C and differs): null: worst relative difference 2.7e-04 (SUD lambda_d) over 7 statistics fixboth: worst relative difference 6.4e-01 (SUD lambda_d) over 7 statistics  (13 Oct 21:29)
 -- g_plain3_1t: 0 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- g_track3_1t: 2 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
