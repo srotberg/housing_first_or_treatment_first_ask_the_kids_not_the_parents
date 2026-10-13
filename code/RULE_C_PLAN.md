@@ -205,6 +205,9 @@ the EV-key fix says the old code's use candidate did not foresee losing the vouc
 holders' fall from 53% to 33% is unexplained. DIAGNOSTIC 11:21: WSS session_018FkEpr8uTHRhKc5Q3SAXGs runs
 deter_2c/run_whostops_C_switch.sh (all switches off, which must give rule A's numbers, then each switch off alone) ->
 results/whostops_2c_C_switch.
+P70 DIED 11:23 (its worker ended its turn at the 2-hour background cut instead of re-attaching; the container was
+reclaimed and the solve lost after pass 1): RELAUNCHED 12:19 as session_015Pws8Uk5eaRhmdxLtKbMcg with the 2-hour cut
+spelled out in the brief. The old session_012jh446VKmXz3kJJpV51xYn is dead; do not message it.
 TREATMENT TAKE-UP CHECK (the author, 13 Oct: report it as a factor): New York treatment-first vs Housing First clients
 46% vs 7% in treatment (6.6x; Padgett et al., SSWR 2006 abstract; ask the author for the published paper), against
 the model's voucher holders with a SUD under Treatment First vs under Housing First (pass-3 v2: 91.5% vs 27.7%, 3.3x).
