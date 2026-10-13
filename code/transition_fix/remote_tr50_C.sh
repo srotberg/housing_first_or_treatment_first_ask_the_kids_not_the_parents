@@ -13,11 +13,12 @@
 #     rescaled, x_C(t) = x0 + (x_A(s) - x0) (x_C(T) - x0) / (x_A(T) - x0), x0 the no-policy value, x_C(T) the rule-C
 #     terminal arm's, s = 1 + (t - 1) 68/48 so rule A's 69 years map onto 49 (as remote_transition_2c.sh rescaled the
 #     old loop 0 for T = 60).
-#   * THE TERMINAL ARM never waits on a stale walk. It starts at once from the long-run arm's latest published pass
-#     (pdet/remote_pdet_C2.sh 0.20, restarted 18:35 from 0.93 / 0.082; TF_P0 / TF_V0 when it has none). When that arm is
-#     ACCEPTED, a terminal arm still running is kept only if its latest price is within 0.5 per cent and its pi_V within
-#     2 per cent of the accepted values, otherwise it is killed and re-solved from them. Either way it must end within
-#     REL_TOL of the accepted final.txt, as before.
+#   * THE TERMINAL ARM never waits on a stale walk. By default (the author: "we first need the main long run
+#     experiment") it starts only when the long-run arm (pdet/remote_pdet_C2.sh 0.20) is ACCEPTED, from the accepted
+#     price and pi_V; the builds and the no-policy arm run meanwhile. With TF_EARLY=1 it starts at once from the
+#     long-run arm's latest published pass (TF_P0 / TF_V0 when it has none), and at acceptance is kept only if its
+#     latest price is within 0.5 per cent and its pi_V within 2 per cent of the accepted values, otherwise it is killed
+#     and re-solved from them. Either way it must end within REL_TOL of the accepted final.txt, as before.
 #   * LOOPS: binary loop k is archived as results/transition_2c_t50_C/loop<k>; the binary is stopped after MAX_LOOPS
 #     (default 4) loops rather than two, since a 0.5 per cent step a loop is slow to correct a seed.
 #   * THE NEWBORN VALUES (cf_kid) run after the transition instead of before it, so the path comes first.
@@ -212,10 +213,14 @@ if ! arm_ok tf "TARGET CHECK PASS" && ! alive "$D.arm_tf.pid"; then
     if accepted; then
         PV=$(branch_file "$C1R/tf/final.txt" | awk '/^ *drug price /{p=$NF} /pi_V \(voucher probability\)/{v=$NF} END{print p, v}')
         start_tf ${PV% *} ${PV#* } "the ACCEPTED long-run rule-C arm ($C1R/tf/final.txt)"
-    else
+    elif [ "${TF_EARLY:-0}" = 1 ]; then
         LAST=$(branch_file "$C1R/passes.txt" | awk '/^== tf/{t=1;next} /^==/{t=0} t && $1 ~ /^[0-9]+$/ {p=$2; v=$3} END{if (p) print p, v}')
         [ -n "$LAST" ] || LAST="${TF_P0:-0.93} ${TF_V0:-0.082}"
         start_tf ${LAST% *} ${LAST#* } "the long-run rule-C arm's latest published pass (not yet accepted)"
+    else
+        # 13 Oct (the author: "we first need the main long run experiment"): by default nothing that depends on the
+        # Treatment First equilibrium starts before $C1R is accepted; the builds and the no-policy arm go ahead
+        note "terminal arm waits for $C1R to be accepted (TF_EARLY=1 would start it early from the latest pass)"
     fi
 fi
 wait_publishing "$D.arm_null.pid" "arms running"
@@ -235,7 +240,12 @@ if [ ! -f "$D.tf_confirmed" ]; then
     [ "$(branch_file code/treat/patch_treatC2.py | md5sum | cut -c1-32)" = "$(cat "$T50/patch_treatC2.md5")" ] \
         || { note "GUARD: patch_treatC2.py on the branch is not the one the builds used; rebuild (rm -rf code/cf_fix2_treatC code/tr50_C code/cfarm_tf_2c*) and relaunch"; publish "failed"; exit 1; }
     branch_file "$C1R/tf/final.txt" > "$R/accepted_tf_ruleC_final.txt"
-    if alive "$D.arm_tf.pid"; then
+    if [ ! -f "$D.arm_tf.pid" ] && ! arm_ok tf "TARGET CHECK PASS"; then
+        PV=$(awk '/^ *drug price /{p=$NF} /pi_V \(voucher probability\)/{v=$NF} END{print p, v}' "$R/accepted_tf_ruleC_final.txt")
+        start_tf ${PV% *} ${PV#* } "the ACCEPTED long-run rule-C arm"
+        FROM_ACCEPTED=1
+    fi
+    if alive "$D.arm_tf.pid" && [ "${FROM_ACCEPTED:-0}" != 1 ]; then
         PV=$(awk '/^ *drug price /{p=$NF} /pi_V \(voucher probability\)/{v=$NF} END{print p, v}' "$R/accepted_tf_ruleC_final.txt")
         PE=$(grep -a "^ *price_of_addictive_good=" "$C/cfarm_tf_2c/cf.log" 2>/dev/null | tail -1 | awk '{print $2}')
         VE=$(grep -a "^ *probability_of_voucher=" "$C/cfarm_tf_2c/cf.log" 2>/dev/null | tail -1 | awk '{print $2}')
