@@ -101,6 +101,14 @@ run_arm() (
     return $ok
 )
 
+# THE WARM START IS READ BEFORE ANYTHING PUBLISHES (13 Oct): the first publish rewrites passes.txt from this container's
+# logs, so reading it after that lost the last published pass and fell back to rule A's equilibrium.
+P0=0.85551291; V0=0.096152024   # the paper's tf85_c35 equilibrium
+LAST=""
+if [ -f "$R/passes.txt" ]; then
+    LAST=$(awk '/^== tf/{t=1;next} /^==/{t=0} t && $1 ~ /^[0-9]+$/ {p=$2; v=$3} END{if (p) print p, v}' "$R/passes.txt")
+    [ -n "$LAST" ] && { P0=${LAST% *}; V0=${LAST#* }; }
+fi
 [ -f "$D.status" ] && mv "$D.status" "$D.status.$(date -u +%H%M%S)"; : > "$D.status"
 command -v gfortran >/dev/null 2>&1 || {
     note "gfortran missing, installing"
@@ -117,11 +125,7 @@ if [ ! -x "$C/cf_fix2_treatC/hftf_cf_prod" ]; then
 fi
 publish "built, starting"
 
-P0=0.85551291; V0=0.096152024   # the paper's tf85_c35 equilibrium
-if [ -f "$R/passes.txt" ]; then
-    LAST=$(awk '/^== tf/{t=1;next} /^==/{t=0} t && $1 ~ /^[0-9]+$/ {p=$2; v=$3} END{if (p) print p, v}' "$R/passes.txt")
-    [ -n "$LAST" ] && { P0=${LAST% *}; V0=${LAST#* }; note "resuming from the last published pass: price $P0, pi_V $V0"; }
-fi
+[ -n "$LAST" ] && note "resuming from the last published pass: price $P0, pi_V $V0"
 note "Treatment First under rule C (in treatment if disordered, no use); budget target $NET_TARGET_NULL; test cost $CTEST"
 run_arm tf cf_fix2_treatC PDET=0.85 NET_TARGET="$NET_TARGET_NULL" PV_START="$V0" DRUG_PRICE_START="$P0" EXTRA_SET="cost_per_drug_test $CTEST"
 publish "complete"
