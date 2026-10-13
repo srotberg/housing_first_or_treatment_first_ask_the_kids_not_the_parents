@@ -217,6 +217,10 @@ a SUD on to 33 (getting the disorder no longer costs the voucher, so continuing 
 all-user rows; the internal fix does nothing here. The 59 per cent that matched Mehay and Pacula's 61 was produced by
 the EV-table bug, which was in every Treatment First arm, rule A's included.
 NOEXT DONE 12:28 (noext_clear_C as well; all three no-externality arms finished).
+DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
+transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
+delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
+"first rise, by up to x_trf_h_peak_pc / x_trf_hchild_peak_pc" sentences need rewording, not only new numbers.
 TREATMENT TAKE-UP CHECK (the author, 13 Oct: report it as a factor): New York treatment-first vs Housing First clients
 46% vs 7% in treatment (6.6x; Padgett et al., SSWR 2006 abstract; ask the author for the published paper), against
 the model's voucher holders with a SUD under Treatment First vs under Housing First (pass-3 v2: 91.5% vs 27.7%, 3.3x).
