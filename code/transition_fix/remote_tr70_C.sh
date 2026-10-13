@@ -9,7 +9,7 @@
 #     The print is print-only, so it is in both loops; the second loop is the one the paper reads it from.
 #   * THE TERMINAL STATE: Treatment First on rule C, re-solved here on cf_fix2_treatC (treat/build_treatC.sh, the
 #     build of the accepted long-run arm results/counterfactuals_2c/tf_ruleC) through transition_2c/cf_arm_tr2c_C.sh,
-#     with the arm's settings (detection 0.85, the $35 test, the budget target 5.8918...). To save the ~10 hours an arm
+#     with the arm's settings (detection 0.85, the $35 test, the budget target NET_TARGET below). To save the ~10 hours an arm
 #     takes, it starts at once from the long-run arm's LATEST PUBLISHED pass; the launcher then waits until that arm's
 #     passes.txt says "arm tf ACCEPTED" and compares: the re-solve stands if its price, pi_V, b, SUD and h_1 are all
 #     within REL_TOL of the accepted final.txt, otherwise it is re-solved from the accepted price and pi_V. It also
@@ -188,8 +188,11 @@ if [ ! -x "$C/cf_fix2_treatC/hftf_cf_prod" ]; then
 fi
 grep -q "RULE C (patch_treatC.py)" "$C/cf_fix2_treatC/cf.f90" || { note "GUARD: cf_fix2_treatC is not rule C"; publish "failed"; exit 1; }
 if [ ! -x "$T70/hftf_tr_prod" ]; then
-    note "building tr70_C"
-    bash transition_fix/build_tr70_C.sh "$T70" > /tmp/tr70C_build_tr.log 2>&1 || { note "GUARD: build tr70_C failed: $(tail -3 /tmp/tr70C_build_tr.log | tr '\n' ' ')"; publish "failed"; exit 1; }
+    # 13 Oct: build_tr70_C2.sh, not build_tr70_C.sh, whose guard expects the one-line rule-C patch and refuses the
+    # current one (abstention, use counted v>0, the public treatment cost, TREATSHARE); patch_treatC2.py differs from
+    # patch_treatC.py only in its header comment
+    note "building tr70_C (build_tr70_C2.sh)"
+    bash transition_fix/build_tr70_C2.sh "$T70" > /tmp/tr70C_build_tr.log 2>&1 || { note "GUARD: build tr70_C failed: $(tail -3 /tmp/tr70C_build_tr.log | tr '\n' ' ')"; publish "failed"; exit 1; }
     note "$(tail -1 /tmp/tr70C_build_tr.log)"
 fi
 publish "built"
@@ -227,8 +230,8 @@ if [ ! -f "$D.tf_confirmed" ]; then
         publish "waiting for the long-run rule-C arm"
     done
     note "long-run rule-C arm ACCEPTED: $(branch_file "$C1R/passes.txt" | grep -m1 'arm tf ACCEPTED')"
-    [ "$(branch_file code/treat/patch_treatC.py | md5sum | cut -c1-32)" = "$(cat "$T70/patch_treatC.md5")" ] \
-        || { note "GUARD: patch_treatC.py on the branch is not the one the builds used; rebuild (rm -rf code/cf_fix2_treatC code/tr70_C code/cfarm_tf_2c*) and relaunch"; publish "failed"; exit 1; }
+    [ "$(branch_file code/treat/patch_treatC2.py | md5sum | cut -c1-32)" = "$(cat "$T70/patch_treatC2.md5")" ] \
+        || { note "GUARD: patch_treatC2.py on the branch is not the one the builds used; rebuild (rm -rf code/cf_fix2_treatC code/tr70_C code/cfarm_tf_2c*) and relaunch"; publish "failed"; exit 1; }
     branch_file "$C1R/tf/final.txt" > "$R/accepted_tf_ruleC_final.txt"
     wait_publishing "$D.arm_tf.pid" "terminal Treatment First arm running"
     W=nan; arm_ok tf "TARGET CHECK PASS" && W=$(compare_tf)
