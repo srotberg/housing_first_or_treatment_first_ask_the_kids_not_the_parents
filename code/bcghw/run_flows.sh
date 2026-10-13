@@ -72,7 +72,15 @@ if [ ! -x "$C/cf_flows/hftf_cf_prod" ]; then
     note "building cf_flows (patch_flows.py on cf_fix2_share)"
     mkdir -p "$C/cf_flows"
     python3 bcghw/patch_flows.py cf_fix2_share/cf.f90 cf_flows/cf.f90 > "$D/build_flows.log" 2>&1 || { note "GUARD: patch failed: $(tail -3 "$D/build_flows.log" | tr '\n' ' ')"; publish "failed"; exit 1; }
-    ( cd "$C/cf_flows" && gfortran -O3 -funroll-loops -fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium cf.f90 -o hftf_cf_prod 2> build_prod.err )
+    # FLOWS_CHECK=1 (13 Oct 22:25): the first launch's solver exited at once with nothing published, so the diagnosis
+    # build is bounds-checked with a backtrace (as the cf builds' hftf_cf_bounds), under the name the arm script runs
+    if [ "${FLOWS_CHECK:-0}" = 1 ]; then
+        OPT="-O1 -fcheck=bounds,pointer -g -fbacktrace"
+    else
+        OPT="-O3 -funroll-loops"
+    fi
+    note "compiling cf_flows with $OPT"
+    ( cd "$C/cf_flows" && gfortran $OPT -fimplicit-none -fopenmp -ffree-line-length-none -mcmodel=medium cf.f90 -o hftf_cf_prod 2> build_prod.err )
     [ -x "$C/cf_flows/hftf_cf_prod" ] || { note "GUARD: cf_flows did not compile: $(grep -m2 Error "$C/cf_flows/build_prod.err" | tr '\n' ' ')"; publish "failed"; exit 1; }
 fi
 publish "built"
@@ -86,7 +94,9 @@ if ! { [ -f "$C/cfarm_null_flows.out" ] && tail -5 "$C/cfarm_null_flows.out" | g
     done
 fi
 tail -5 "$C/cfarm_null_flows.out" | grep -q "DIST CHECK PASS" && grep -q "VOUCHER CHECK PASS" "$C/cfarm_null_flows.out" && ! grep -q GUARD "$C/cfarm_null_flows.out" \
-    || { note "GUARD: the arm failed its checks: $(grep -a GUARD "$C/cfarm_null_flows.out" | head -2 | tr '\n' ' ')$(tail -2 "$C/cfarm_null_flows.out" | tr '\n' ' ')"; publish "failed"; exit 1; }
+    || { note "GUARD: the arm failed its checks: $(grep -a GUARD "$C/cfarm_null_flows.out" | head -2 | tr '\n' ' ')$(tail -2 "$C/cfarm_null_flows.out" | tr '\n' ' ')"
+         { echo "== cf.err (tail)"; tail -n 40 "$ARMDIR/cf.err" 2>/dev/null; echo "== cf.log (tail)"; tail -n 30 "$ARMDIR/cf.log" 2>/dev/null; } > "$R/failure_tail.txt"
+         publish "failed"; exit 1; }
 python3 bcghw/flows_digest.py "$ARMDIR/cf.log" > "$R/flows.txt"
 gzip -c "$ARMDIR/cf.log" > "$R/cf.log.gz"
 note "done: $(grep -c '^pass' "$R/flows.txt") passes; the last is the converged benchmark"
