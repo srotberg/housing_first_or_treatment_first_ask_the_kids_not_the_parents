@@ -145,7 +145,7 @@ cp ../$BUILD/hftf_cf_prod ./hftf_cf
 # A SEEDED BUILD STARTS FROM A FINISHED RUN'S DISTRIBUTION: SEED_FROM names that run's
 # directory; its counter_arm files become this arm's distribution_stationary{1,2}seed.dat,
 # checked against the benchmark's files for size (the same arrays, one time slot).
-case "$BUILD" in *b3hs*|cf_tdm*|cf_fix*)
+case "$BUILD" in *b3hs*|cf_tdm*|cf_fix*|cf_flows)
   [ -n "$SEED_FROM" ] || { echo "GUARD: a seeded build needs SEED_FROM"; exit 1; }
   for i in 1 2; do
     if [ "$SEED_FROM" = bench ]; then f="../cfarm_bench/distribution_stationary${i}baseline_benchmark.dat"; else f="../$SEED_FROM/distribution_stationary${i}counter_arm.dat"; fi
