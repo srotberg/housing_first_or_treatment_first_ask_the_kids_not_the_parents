@@ -275,6 +275,22 @@ equal 0.0555847124 / 0.1780291188 / 0.0743861992; every percentage recomputed fr
 0.25 -> 55.24% (all 66.5%). The crossing is ABOVE 0.25: 16:28 THREE MORE CONTAINERS, run_whostops_C_points.sh 0.275 0.30
 (session_01LAFAx64hLWpDskCE1W6Cbh), 0.325 0.35 (session_01AURE7ftkrsfer38L9Aia9z), 0.40 0.50
 (session_01K4GpjSsmNAFsJGJ6CQTYtj); due ~17:50 UTC.
+16:39 GRID COMPLETE (all verified from logs): tested users without a SUD / ALL tested users stopping on impact:
+0.02 11.5 / -; 0.05 17.6 / -; 0.075 22.2 / 35.5; 0.10 25.9 / 41.3; 0.125 30.0 / 46.6; 0.15 36.1 / 51.0; 0.20 49.5 /
+61.6; 0.25 55.2 / 66.5; 0.85 100 / 89. THE AUTHOR (16:50): "I think it should count all tested users" -> p_det = 0.20
+(61.6% of all tested users stop, Mehay and Pacula's 61; interpolated 0.197). Half-rate sensitivity 0.10 (41.3%).
+Who-stops at both is done: results/whostops_2c_C_pts_0p10_0p20. Rule-C reason for counting all users: under rule C a
+user with a SUD can stop on impact (treatment + abstention), so Block 8's reason for leaving them out is gone.
+The three containers above 0.25 archived (not needed); PSCAN2 kept until it repeats 0.10 and 0.20 (reproducibility).
+16:58 LAUNCHED AT 0.20 (every launcher now defaults to 0.20, RULEC_PDET overrides; 0.85 results archived *_p85):
+  C20  session_01Ew762nUPBnLaz9VF73dA6Z  pdet/remote_pdet_C2.sh 0.20 -> results/counterfactuals_2c/tf_pdet20_C
+  C10  session_01H6FotGSmzvg98twWQfWTYY  pdet/remote_pdet_C2.sh 0.10 -> results/counterfactuals_2c/tf_pdet10_C
+  S-tf session_01TZxWsr5pSTaaWpRt8ycU2J, S-fixboth session_01WfknydYFoDXBRgeyLDnq1j, S-fixpv session_01NcPdayBHZdJfufaHciswDd,
+  S-fixp session_018ixGRpLBP7wDvWBSME5pmF   extra_2c/remote_decomp_shares_C.sh <arm> -> results/decomp_2c_shares_C/arm_*
+  NOEXT session_01FXm2FJQcFfyMKvmru6Fdou  gfortran first, then run_pe_C.sh, run_noext_fixp_C.sh, run_noext_clear_C.sh
+       -> results/pe_noext_C, noext_fixp_C, noext_clear_C
+  TR   session_01Dkk3xgSVS2rMQbfZroUGd7  transition_fix/remote_tr70_C.sh (terminal arm checked against tf_pdet20_C)
+       -> results/transition_2c_t70_C, transition_2c_C
 DELTA_H DROPPED (the author, 13 Oct: "It looks like homelessness and child homelessness are both going to drop even in
 transition... So we won't need the deltah run at all"). No delta_h run on rule C, one class or four; the paper quotes no
 delta_h number (export_deltah.py stays unswitched). If the rule-C transition confirms it, the intro's and Section 6's
