@@ -64,7 +64,11 @@ def share_word(pc):
 
 def main():
     out = {}
-    rows = {a: wn.parts(dw, dn, BASE[0], BASE[1]) for a, (dw, dn) in ARMS.items()}
+    # (14 October) a column whose rule-C run has not landed prints yellow, cells and names, never a number
+    _ok = lambda dw, dn: all(os.path.exists(os.path.join(dw, f)) for f in ('final.txt', 'cf.log.gz')) and \
+        os.path.exists(os.path.join(dn, 'value_at_26_by_node.txt'))
+    PEND = [a for a, (dw, dn) in ARMS.items() if not _ok(dw, dn)]
+    rows = {a: wn.parts(dw, dn, BASE[0], BASE[1]) for a, (dw, dn) in ARMS.items() if a not in PEND}
     f2 = lambda x: f"{x:.2f}"
     for a, r in rows.items():
         p = r['pts']
@@ -101,10 +105,13 @@ def main():
     cev0 = wn.cev_free(BASE[0])
     cev0t = wn.cev_at(BASE[0], wn.CHILD_WEIGHT, with_term=True)
     out['x_wd_kx_max'] = f2(max(abs((wn.cev_free(dw) - cev0) - (wn.cev_at(dw, wn.CHILD_WEIGHT, with_term=True) - cev0t))
-                                for dw, _ in ARMS.values()))
+                                for a, (dw, _) in ARMS.items() if a not in PEND))
     # the table, in points (black: the prose carries the reading)
     s = lambda x: f"{x:.2f}".replace('-', '$-$')
-    row = lambda lab, k: f"{lab} & {s(rows['b']['pts'][k])} & {s(rows['p']['pts'][k])} & {s(rows['tf']['pts'][k])} \\\\"
+    Y = r'\tocheck{--}'
+    c = lambda a, k: Y if a in PEND else s(rows[a]['pts'][k])
+    ce = lambda a: Y if a in PEND else f"{rows[a]['pts']['ext_share']:.0f}"
+    row = lambda lab, k: f"{lab} & {c('b', k)} & {c('p', k)} & {c('tf', k)} \\\\"
     L = [r'\begin{table}[!htb]\centering',
          r"\caption{Where the newborn's gain comes from}\label{tab:whogains}",
          r'\begingroup\small',
@@ -116,12 +123,11 @@ def main():
          row(r"\quad The newborn's own adult life under the policy, $\beta^{J_K}\Delta P$", 'own'),
          row(r"\quad What its parent does count, $\omega_c(\Delta C+E)$", 'cnt'),
          r'\midrule',
-         f"The externality, the first two parts, percent of the gain & {rows['b']['pts']['ext_share']:.0f} & "
-         f"{rows['p']['pts']['ext_share']:.0f} & {rows['tf']['pts']['ext_share']:.0f} \\\\",
+         f"The externality, the first two parts, percent of the gain & {ce('b')} & {ce('p')} & {ce('tf')} \\\\",
          row(r"The parent's own gain $\Delta P$, percent of the parent's lifetime consumption", 'P'),
          r'\bottomrule', r'\end{tabular}}', r'\usebox{\ntbox}',
-         r"\tabnote{Notes: Treatment First against Housing First in the long run; the columns are the fifth, sixth "
-         r"and seventh of Table~\ref{tab:longrun}. The first row is the CEV of~\eqref{eq:cev}. The four rows under it "
+         r"\tabnote{Notes: Treatment First against Housing First in the long run; the columns are the seventh, eighth "
+         r"and eleventh of Table~\ref{tab:longrun}. The first row is the CEV of~\eqref{eq:cev}. The four rows under it "
          r"sum to it: each is read off the benchmark's welfare curve after the ones above it. Childhood is the change "
          r"in the child's flow at its weight $\xi-1$, and better productivity at entry the change in its adult value from who "
          r"enters; each is split into the share $\omega_c$ its parent counts and the share $1-\omega_c$ it does not. "
@@ -146,10 +152,20 @@ def main():
     _r = pp_s / pp_b
     out['x_tf_arc_pp_vs'] = ('about the same as' if 0.8 <= _r < 1.25 else 'half again' if 1.25 <= _r < 1.7 else 'about twice'
                              if 1.7 <= _r < 2.4 else 'about three times' if 2.4 <= _r < 3.5 else f'{_r:.1f} times')
+    # (14 October) a pending column's names, and the price response while the price-clears column is pending (its
+    # raw inputs came from that column's last pass): yellow, never a number
+    _Y = '\\mbox{\\tocheck{--}}'
+    for a in PEND:
+        for k in list(out):
+            if k.startswith('x_wd_') and k.endswith(f'_{a}'):
+                out[k] = _Y
+    if 'tocheck' in str(d.get('x_dc_pv_cev', '')):
+        for k in ('x_tf_arc_pp', 'x_bench_arc_pp', 'x_tf_arc_pp_vs'):
+            out[k] = _Y
     d.update(out)
     json.dump(d, open(OUT_JSON, 'w'), indent=1, sort_keys=True)
-    print(f'export_welfare: {len(out)} names; table -> {TAB}')
-    for a in ('b', 'p', 'tf'):
+    print(f'export_welfare: {len(out)} names; table -> {TAB}' + (f'; PENDING (yellow): {PEND}' if PEND else ''))
+    for a in [x for x in ('b', 'p', 'tf') if x in rows]:
         p = rows[a]['pts']
         print(f"  {a:3s} total {p['tot']:6.2f} = childhood ext {p['extc']:+.2f} + earnings ext {p['E']:+.2f} + own adult "
               f"{p['own']:+.2f} + counted {p['cnt']:+.2f} | externality {p['ext_share']:.0f}% | parent's own {p['P']:+.2f}% "

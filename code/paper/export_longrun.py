@@ -96,6 +96,24 @@ ARMDIR['ne_e'] = os.path.join(NE, 'arm_E')
 ARMDIR['dc_b'] = os.path.join(RC.DC['fixboth'], 'tf')
 ARMDIR['dc_pv'] = os.path.join(RC.DC['fixpv'], 'tf')
 ARMDIR['dc_p'] = os.path.join(RC.DC['fixp'], 'tf')
+# A COLUMN WHOSE RULE-C RUN HAS NOT LANDED (14 October): its rule-A run stands in so that the code runs, and EVERY cell
+# and name it feeds prints \tocheck{--} (yellow), never a number (see PENDING and the end of main)
+_FALLBACK = {'dc_p': (os.path.join(ROOT, 'results', 'decomp_2c', 'arm_fixp'), 'fixp'),
+             'dc_pv': (os.path.join(ROOT, 'results', 'decomp_2c', 'arm_fixpv'), 'fixpv'),
+             'ne_e': (os.path.join(ROOT, 'results', 'noext_pclear', 'arm_E'), None)}
+PENDING = set()
+for _a, (_old, _k) in _FALLBACK.items():
+    if not (os.path.exists(os.path.join(ARMDIR[_a], 'final.txt')) and os.path.exists(os.path.join(ARMDIR[_a], 'cf.log.gz'))):
+        PENDING.add(_a)
+        ARMDIR[_a] = _old
+if 'ne_e' in PENDING:
+    NE = os.path.join(ROOT, 'results', 'noext_pclear')
+_NODES = {'dc_p': os.path.join(RC.DC['fixp'], 'tf'), 'dc_pv': os.path.join(RC.DC['fixpv'], 'tf')}
+for _a in ('dc_p', 'dc_pv'):
+    if _a in PENDING:
+        _NODES[_a] = ARMDIR[_a]
+# the prose names a pending column feeds (export_results.py writes the x_dc_p*/x_dcpv* family from the same runs)
+_PENDING_NAMES = {'dc_p': ('x_dcp_', 'x_dc_p_'), 'dc_pv': ('x_dcpv_', 'x_dc_pv_'), 'ne_e': ('x_ne_',)}
 
 
 def adir(arm):
@@ -240,7 +258,7 @@ def age_split():
     results/transition_2c/age_split.txt (transition_2c/age_split.py on stage E2's two re-solved arms, exact from the
     housing policy). Returns {'null'|'tf': {(lo, hi): dict(sud, h, h_sud, h_clean)}} in per cent, or {} unless both
     arms are exact."""
-    p = os.path.join(ROOT, 'results', 'transition_2c', 'age_split.txt')
+    p = os.path.join(RC.DC['tf'], 'age_split.txt')   # rule C (14 October): finish_tf_C.sh; rule A's was transition_2c
     out, lab = {}, None
     if not os.path.exists(p):
         return {}
@@ -333,8 +351,8 @@ def main():
     # (11 October) the paper's criterion counts childhood at xi - 1: the three columns with by-node values take the
     # childhood rows of Table tab:whogains (welfare_nok.parts, in points of lifetime consumption)
     for _arm, _nodes in (('dc_b', os.path.join(RC.DC['fixboth'], 'tf')),
-                         ('dc_p', os.path.join(RC.DC['fixp'], 'tf')),
-                         ('dc_pv', os.path.join(RC.DC['fixpv'], 'tf')),
+                         ('dc_p', _NODES['dc_p']),
+                         ('dc_pv', _NODES['dc_pv']),
                          ('tf85', RC.TF_NODES)):
         D[_arm]['child_share'] = welfare_nok.parts(adir(_arm), _nodes, adir('null_share'),
                                                    RC.NULL_DIR)['pts']['child_share']
@@ -430,7 +448,7 @@ def main():
             line = [f'\\textcolor{{red}}{{{lab}}}' if new_row and prev else lab]
             for arm, _ in cols:
                 v = D[arm].get(key)
-                c = '--' if v is None else fmt(v)
+                c = '\\tocheck{--}' if arm in PENDING else '--' if v is None else fmt(v)   # pending: yellow
                 cells[f'{key}/{arm}'] = c
                 line.append(c if prev.get(f'{key}/{arm}') == c else f'\\textcolor{{red}}{{{c}}}')
             body.append(' & '.join(line) + ' \\\\')
@@ -786,7 +804,11 @@ def main():
             'For households aged 26 to 50, the years a child lives with them, the same three effects nearly net to '
             f'zero, so the share of children in a shelter remains unchanged at ${_c0:.2f}$ percent.'
             if abs(_ach) < 1 and e1 > 0 > e2 and e3 < 0 and abs(e1 + e2 + e3) < 0.25 * e1
-            and f'{_c0:.2f}' == f'{_c1:.2f}' else '')
+            and f'{_c0:.2f}' == f'{_c1:.2f}' else
+            # (14 October, rule C) homelessness falls at these ages too, and with it the shelter share
+            'For households aged 26 to 50, the years a child lives with them, homelessness falls too, by '
+            f'${abs(_ach):.0f}$ percent, so the share of children in a shelter falls from ${_c0:.2f}$ to ${_c1:.2f}$ '
+            'percent.' if _ach <= -1 and _c1 < _c0 else '')
         if not out['x_lr_children_hl']:
             print('WARNING: the 26-50 children paragraph does not match the split; check age_split.txt',
                   file=sys.stderr)
@@ -868,8 +890,13 @@ def main():
     tot = _parts['A'] / _parts['b25']
     _pts = _parts['pts']                 # the same split in points of lifetime consumption (Table tab:whogains)
     adult_utils = D[t]['split'][1]
-    assert abs(tot * beta25 / adult_utils - 1) < 0.02, \
-        f'ADULTDECOMP {tot * beta25:.4f} does not reproduce the adult part {adult_utils:.4f}'
+    # (14 October) the check compares like with like: the final.txt split carries the kappa_x * H term and parts() does
+    # not (the paper's criterion leaves it out). Under rule A homelessness barely moved, so the term's difference was
+    # nil and A matched the split to 0.1 per cent; under rule C homelessness falls 11 per cent and it no longer is
+    _A_with = (welfare_nok.components(welfare_nok.arm_values(adir(t)), with_term=True)[1]
+               - welfare_nok.components(welfare_nok.arm_values(adir('null_share')), with_term=True)[1])
+    assert abs(_A_with / adult_utils - 1) < 0.02, \
+        f'ADULTDECOMP {_A_with:.4f} (with the term) does not reproduce the adult part {adult_utils:.4f}'
     out['x_lr_draw_pc'] = f'{100 * comp / tot:.0f}'
     out['x_lr_draw_rest'] = 'larger' if comp / tot < 0.5 else 'smaller'
     # WHY THE DRAW IS SO SMALL A PART (the author, 2 October: "how is that possible? i thought that the
@@ -1039,6 +1066,13 @@ def main():
         if _nb > 99.95 else
         f'Of newborns (including childhood), ${_nb:.0f}$ percent are better off under Treatment First than they would be if born into the '
         'same household under Housing First.')
+    # a pending column's names: yellow, never a number (its rule-A stand-in only kept the code running)
+    for _a in PENDING:
+        for _k in list(out):
+            if _k.startswith(_PENDING_NAMES[_a]):
+                out[_k] = '\\mbox{\\tocheck{--}}'
+    if PENDING:
+        print('PENDING (yellow):', ', '.join(sorted(PENDING)))
     d = json.load(open(OUT_JSON))
     d.update(out)
     json.dump(d, open(OUT_JSON, 'w'), indent=1, sort_keys=True)

@@ -909,6 +909,15 @@ for l in open(best, errors='replace'):
 out['x_milby_model_impact'] = f"{_mb[1]:.2f}"
 out['x_milby_model_lr'] = f"{_mb[max(_mb)]:.2f}"
 
+# A DECOMPOSITION COLUMN THAT HAS NOT LANDED (14 October): its names were computed from its last published pass, which
+# is not the paper's welfare criterion and may be a restart's early pass, so each prints yellow, never a number
+_PEND = (([] if DC_P.get('final') else ['x_dc_p_', 'x_dcp_'])
+         + ([] if DC_PV.get('final') else ['x_dc_pv_', 'x_dcpv_', 'x_tf_arc_el', 'x_dc_b_takeback', 'x_dc_b_restore']))
+for _k in list(out):
+    if any(_k.startswith(_p) for _p in _PEND):
+        out[_k] = '\\mbox{\\tocheck{--}}'
+if _PEND:
+    print('PENDING decomposition names (yellow):', ', '.join(_PEND))
 json.dump(out, open(OUT, 'w'), indent=1, sort_keys=True)
 print(f'wrote {OUT} (transition from {os.path.relpath(best, ROOT)}, forward pass {out["x_tr_pass"]})')
 for k, v in sorted(out.items()):

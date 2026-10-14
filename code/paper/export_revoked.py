@@ -21,7 +21,11 @@ import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-RES = os.path.join(ROOT, 'results', 'revoked_2c')
+# RULE C (14 October): the rule-C revocation paths when both have landed; until then rule A's, and export_all_C.sh
+# prints every x_rv_* name yellow (PENDING_C below)
+_RC = os.path.join(ROOT, 'results', 'revoked_2c_C')
+PENDING_C = not all(os.path.exists(os.path.join(_RC, f)) for f in ('tf10_run.log.gz', 'hf10_run.log.gz'))
+RES = os.path.join(ROOT, 'results', 'revoked_2c') if PENDING_C else _RC
 OUT_JSON = os.path.join(HERE, 'results_numbers.json')
 GROUPS = (1, 2, 3)            # revoked in year 1, 2, 3
 AGE0 = 25                     # model age 1 is age 26
@@ -52,7 +56,10 @@ def pooled(G, years, key):
     return sum(G[(g, g + years)][key] * x for g, x in zip(GROUPS, w)) / sum(w)
 
 
-STREET = os.path.join(ROOT, 'results', 'revoked_2c_street', 'tables.md')
+STREET = os.path.join(ROOT, 'results', 'revoked_2c_street_C', 'tables.md')   # rule C (14 October)
+PENDING_STREET = not os.path.exists(STREET)
+if PENDING_STREET:
+    STREET = os.path.join(ROOT, 'results', 'revoked_2c_street', 'tables.md')
 
 
 def street_smi():
