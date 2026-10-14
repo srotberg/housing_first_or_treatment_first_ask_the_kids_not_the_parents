@@ -415,6 +415,13 @@ UNTARGETED = [
      (f'{100 * C["employed_share_of_homeless_data"]:.0f}', f'{100 * mom("emp_homeless employed share of homeless"):.1f}'),
      'Meyer et al.\\ (2024)'),
     ('Income of the homeless, over average', one('income of the homeless'), r'Meyer et al.\ (2024)'),
+    # WHO BECOMES HOMELESS AND FOR HOW LONG (14 October; the author: "Add it to the validation section and I'll decide
+    # what to keep"): Beauregard, Couture, Green, Hicks and Warburton (2026), against the Housing First benchmark's entries
+    # into homelessness and new spells (results/bcghw_flows, code/bcghw; export_bcghw.py)
+    ('Entry into homelessness, SUD over no SUD, ratio$^{b}$',
+     (LIT['bcghw_hr_long'], RES['x_bc_ratio']), r'Beauregard et al.\ (2026)'),
+    ('Still homeless a year after entering$^{c}$',
+     (LIT['bcghw_still_pc'], RES['x_bc_persist_pc']), r'Beauregard et al.\ (2026)'),
     ('Block 2: Who uses and who has a SUD', None, None),
     # NSDUH 2023 (the author, 3 October: "should change the year"): the shares are Table 5.3A of the 2023
     # detailed tables, data/drug_use_age_distribution.xlsx, not the 2024 file
@@ -470,7 +477,7 @@ UNTARGETED = [
     # revokes, scaled by the share it puts on the street (code/paper/export_revoked.py); like for like, per household
     # whose housing changes. Run export_revoked.py first: it writes the x_rv_* names this reads.
     ('Block 7: Losing a voucher', None, None),
-    ('Three-year mortality, households with SMI put on the street, pp$^{b}$',
+    ('Three-year mortality, households with SMI put on the street, pp$^{d}$',
      (RES['x_rv_costantini_pp'], RES['x_rv_street_smi_pp']), r'Costantini (2025)'),
     # 13 October (rule C): the military's response is now the TARGET of the detection rate (Section 6, export_whostops.py),
     # so the deterrence row left the validation; Milby's trial is Block 8 on its own
@@ -478,7 +485,7 @@ UNTARGETED = [
     # MILBY'S CONTINGENT ARM (12 October, the author: "Where is Milby? it should be here too"): consecutive weeks of
     # abstinence, contingent over unconditional housing, against the model's recovery-hazard ratio of voucher holders
     # over housed non-holders, both with a SUD, in the first year of Treatment First (export_results.py)
-    ('Abstinence, contingent over unconditional housing, ratio$^{c}$',
+    ('Abstinence, contingent over unconditional housing, ratio$^{e}$',
      (LIT['milby_ach_nach_ratio'], RES['x_milby_model_impact']), r'Milby et al.\ (2005)'),
 ]
 

@@ -14,6 +14,7 @@ python3 export_whostops.py | tail -1
 python3 export_welfare.py | tail -2
 python3 export_decomp_use.py | tail -1
 python3 export_nish_parts.py | tail -1
+python3 export_bcghw.py | tail -1
 python3 - <<'PYEOF'
 import json, os, sys
 sys.path.insert(0, '.')
@@ -54,3 +55,5 @@ for k in list(d):
 json.dump(d, open(p, 'w'), indent=1, sort_keys=True)
 print(f'export_all_C: {n} names yellow ({", ".join(pend)})')
 PYEOF
+# the validation tables read the names above (Table 4's Block 1 and Block 7 rows): regenerate them last
+python3 calib_tables.py | tail -1
