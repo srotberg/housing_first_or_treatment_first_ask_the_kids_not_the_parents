@@ -435,3 +435,16 @@ message that only asks it to continue its original job).
 - S-fixp (price held, pi_V clearing) jumps between two states: pi_V 0.0917-0.0924 gives use -48%, 0.0932-0.0943 gives
   -42%, budget gap 6e-3 to 2.4e-2 across passes 4-8. Use FALLS less as pi_V rises, so a discrete switch of a group in
   between, and the budget may have no root inside the jump. If not settled by pass 10-11, find which cells switch.
+
+00:25 (14 Oct) FLOWS DONE; FIXP RESTARTED; NOEXT B AND D DONE.
+- BCGHW flows finished (5 passes, simulation_ended, CEV vs benchmark 1.8e-5): results/bcghw_flows/flows.txt. Its GUARD was
+  false: cf_arm_flows.sh's DIST rule did not name cf_flows among the cf_fix builds (5e-6 instead of 5e-5/70); every pass
+  met the cf_fix rule. Fixed in the script. Entry ratio SUD/no SUD 2.70 (theirs 4.56 long-standing, 3.43 new; ours is
+  raw, theirs adjusted); still homeless a year after entry 56.6% (theirs ~25%): the model's homelessness is too
+  persistent at an annual period. Show the author before anything goes into the paper.
+- S-fixp's container restarted (worker_epoch 2) and the job began again at 23:16 from PV_START 0.11453: the nine
+  see-sawing passes are lost. Same start and binary, so it will likely retrace them (~03:00 UTC). Proposed to the author:
+  accept the bracket near pi_V 0.0937 (use -42.2%, h_1 -21%, CEV ~+8.1%) with a note, or rerun with a damped pi_V rule.
+- pe_noext_C (Arm B) and noext_fixp_C (Arm D) done 23:59. Their notes say "detection 0.85" (stale text in the note);
+  the handovers ran 0.20 (HANDOVER probability_of_detection 0.95 -> 0.20). B: use -27.6%, SUD -25.9%, h_1 -7.3%.
+  D: pi_V 0.0693, use -30.7%, SUD -29.0%, h_1 -9.2%.

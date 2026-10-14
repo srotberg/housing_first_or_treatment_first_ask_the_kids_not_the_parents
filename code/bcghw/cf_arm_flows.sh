@@ -252,7 +252,7 @@ fi
 python3 - <<'PYEOF'
 import re
 d = [(int(m.group(1)), float(m.group(2))) for m in re.finditer(r"DIST_DONE sweeps=\s*(\d+)\s+final_distance=\s*(\S+)", open("cf.log", errors="replace").read())]
-tol, lo = (5e-5, 70) if any(k in open("BUILD_USED").read() for k in ("cf_tdm", "cf_fix")) else (5e-6, 1)
+tol, lo = (5e-5, 70) if any(k in open("BUILD_USED").read() for k in ("cf_tdm", "cf_fix", "cf_flows")) else (5e-6, 1)
 bad = [x for x in d if x[1] > tol or x[0] >= 200 or x[0] < lo]
 print(("DIST CHECK PASS: %d passes, sweeps %s, largest final %.2e (rule %.0e, at least %d sweeps)" % (len(d), [x[0] for x in d], max(x[1] for x in d), tol, lo)) if d and not bad else "GUARD FAIL: distribution not solved to %.0e in %d to 199 sweeps: %s" % (tol, lo, bad))
 PYEOF

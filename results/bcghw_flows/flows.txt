@@ -1,0 +1,13 @@
+# Housing First benchmark (no-policy arm, cf_flows = cf_fix2_share + the print-only patch_flows.py), final pass 5 of 5,
+# solved 13-14 Oct (session_019AhRcBkr1snb4enEJx2Wcb). Every pass met the cf_fix distribution rule (>= 70 sweeps, final
+# distance < 5e-5: 81/4.7e-5, 77/4.9e-5, 71/4.9e-5, 85/4.5e-5, 74/3.9e-5); the run ended with a GUARD only because
+# cf_arm_flows.sh did not list cf_flows among the cf_fix builds and checked it against 5e-6 (fixed after the run).
+# CEV against the saved benchmark curve 1.8e-5 (the null reproduces the benchmark). Passes 3-5 agree to the digits shown.
+# Beauregard, Couture, Green, Hicks and Warburton (2026): entry hazard ratio 4.56 (long-standing SUD), 3.43 (new SUD);
+# about 25 per cent still homeless 12 months after first entry.
+pass 5
+  entry, all working ages      : no SUD   0.287%  SUD   0.775%  ratio   2.70   (housed mass 35.65 / 1.762)
+  entry, employed              : no SUD   0.103%  SUD   0.182%  ratio   1.77   (housed mass 33.92 / 1.55)
+  entry, not employed          : no SUD   3.900%  SUD   5.107%  ratio   1.31   (housed mass 1.727 / 0.212)
+  entry, first ten adult years : no SUD   0.447%  SUD   0.961%  ratio   2.15   (housed mass 9.285 / 0.5592)
+  persistence: still homeless a year after entry: all  56.56%, no SUD  54.08%, SUD  75.11%   (entrants 0.1022 / 0.01365)
