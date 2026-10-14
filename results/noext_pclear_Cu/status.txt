@@ -1,9 +1,10 @@
-# Treatment First without externalities, price clearing, pi_V held, RULE C, corrected Housing First (code/noext_clear/run_noext_pclear_Cu.sh); 14 Oct 15:12 UTC
+# Treatment First without externalities, price clearing, pi_V held, RULE C, corrected Housing First (code/noext_clear/run_noext_pclear_Cu.sh); 14 Oct 15:32 UTC
 noext_pclear_Cu: free disk 25G, memory 15 GiB, cores 4, threads per solve 2, at most 2 solves (14 Oct 12:45)
 noext_pclear_Cu: arm E (tf_noext_pclear_Cu) on cf_fix2_treatC: detection 0.20, test 0.0004946100, price clearing from 0.98531264, pi_V held at 0.067533863 (adjust_taxes 0) (14 Oct 12:45)
 noext_pclear_Cu: cfarm_tf_noext_pclear_Cu: DIST CHECK PASS: 3 passes, sweeps [70, 70, 70], largest final 1.33e-05 (rule 5e-05, at least 70 sweeps)  (14 Oct 15:12)
 noext_pclear_Cu: PI_V CHECK PASS: arm E ran at pi_V 6.7533863000000000E-002  (14 Oct 15:12)
 noext_pclear_Cu: arm A's net revenue 6.328338, arm E's 6.3373622 (not cleared) (14 Oct 15:12)
+noext_pclear_Cu: walk (pe_walk_A_Cu) on arm A's policies at drug price 1.0300798518418917E+00 (14 Oct 15:12)
 
 == cfarm_null_pe_noext_Cu (3 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
