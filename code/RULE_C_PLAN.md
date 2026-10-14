@@ -579,3 +579,9 @@ no-trade-off sentence without the individual-child clause; 'still lose'; 'A chea
 reverse the conclusions.'; the Discussion's next sentence names the elasticity of the drug's supply; 6.2 "first five
 columns". ETA given to the author: with-externality columns 18-20 UTC, no-externality and Nishiyama about midnight,
 CA tomorrow morning, T=50 first loop 21-23 UTC and converged tomorrow evening.
+
+15:45 (14 Oct) ROUND r323 (3 comments; "remove all red and put updates in red"). Stripped and frozen as before, base_r323,
+splice_r323, scratchpad r323/build.sh (r322's, no strikes). Table 3 gains c_treat (calib_tables.py reads
+public_cost_of_treatment from patch_treatC2.py; data cell the $9,426 of lit ctreat_usd), so n_main is twenty-six. The
+Discussion's elasticity sentence removed. The third lesson's two design paragraphs are yellow: the author, "these
+lessons are not so correct anymore! we will need to think of new ones" -- candidates proposed in chat, not written.

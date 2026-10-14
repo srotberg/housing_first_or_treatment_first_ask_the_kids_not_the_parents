@@ -111,7 +111,7 @@
 % \input from
 % their own .tex, so a caption saying how many rows its table has could not be
 % generated any other way. Counted off the Set column of the tables themselves.
-\newcommand{\nmain}{twenty-five}
+\newcommand{\nmain}{twenty-six}
 \newcommand{\nstd}{thirty-three}
 % The cut macro below marks a PROPOSED DELETION: red and struck through, so the reader sees what
 % would go before it goes. ulem is not in this installation, and a single rule over a
@@ -780,9 +780,9 @@ report. The sequence version is what the transition between them solves.
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has fifty-eight parameters, some of which vary by age: Thirty-seven are calibrated externally, from data or the literature, and twenty-one internally. The twenty-five that carry this paper's story are in Table~\ref{tab:eleven}, with the moment, source, data and model value behind each, and are discussed below in numbered blocks of parameters that work through similar mechanisms. The other thirty-three, common to most life-cycle models, are in Appendix~\ref{sec:stdparams} to save the reader time; its blocks continue the numbering. Three further parameters govern drug testing and exclusion from the voucher; they play no role in the benchmark and are set with the experiment in Section~\ref{sec:experiments}. \texttt{data/DATA\_APPENDIX.md} in the replication package documents the dataset, year, universe and computation behind every estimate, and the package carries all datasets, so nothing has to be downloaded.
+The model has fifty-nine parameters, some of which vary by age: Thirty-eight are calibrated externally, from data or the literature, and twenty-one internally. The twenty-six that carry this paper's story are in Table~\ref{tab:eleven}, with the moment, source, data and model value behind each, and are discussed below in numbered blocks of parameters that work through similar mechanisms. The other thirty-three, common to most life-cycle models, are in Appendix~\ref{sec:stdparams} to save the reader time; its blocks continue the numbering. Three further parameters govern drug testing and exclusion from the voucher; they play no role in the benchmark and are set with the experiment in Section~\ref{sec:experiments}. \texttt{data/DATA\_APPENDIX.md} in the replication package documents the dataset, year, universe and computation behind every estimate, and the package carries all datasets, so nothing has to be downloaded.
 
-\subsection{The twenty-five parameters that carry the story of this paper}\label{sec:fmainpar}
+\subsection{The twenty-six parameters that carry the story of this paper}\label{sec:fmainpar}
 
 \input{tables/tab_eleven}
 
@@ -936,7 +936,7 @@ a newborn in the new steady state.
 %----------------------------------------------------------------------
 \subsection{The long run}\label{sec:longrun}
 
-Table~\ref{tab:longrun} sets the long run under Treatment First beside the benchmark, and, in the first \new{five} columns, Housing First and Treatment First without the externalities.
+Table~\ref{tab:longrun} sets the long run under Treatment First beside the benchmark, and, in the first  five columns, Housing First and Treatment First without the externalities.
 
 \paragraph{Treatment First without externalities.} To capture the no-externality case, I treat the child as appearing only as an adult: its parent does not weigh it, its productivity does not depend on what its parent did, and its childhood, the years its parent is 26 to 50, is not counted in welfare. Every other parameter keeps its calibrated value: the economy is not refitted, so that the comparison changes nothing but these three switches.
 
@@ -944,7 +944,7 @@ With the drug price and $\pi_V$ held at their levels under Housing First, Treatm
 
 Rebalancing the budget does not change the ranking. When $\pi_V$ instead rebalances the budget at Housing First's drug price (third column), the screen's savings buy more vouchers. Therefore, $\pi_V$ rises from $6.75$ to $6.93$ percent, and $\mbox{\tocheck{--}}$ percent of households gain, but by $\mbox{\tocheck{--}}$ percent of consumption on average. The gain is therefore small and spread thin, while the loss is concentrated on the users the screen takes out: $\mbox{\tocheck{--}}$ percent of households with a SUD are worse off, and newborns still lose $0.89$ percent of lifetime consumption as adults (since childhood is not counted here). The impact of moral hazard on the budget is still not enough to outweigh the loss of that option to households that choose optimally.
 
-If the drug price is also allowed to clear the drug market (fifth column), newborns \new{still} lose $0.54$ percent as adults.  The change from the third column is the general-equilibrium effect of the drug price and not a correction of moral hazard: the screen lowers demand, the price falls by $4$ percent, the cheaper drug draws users back, and more of them are caught and lose their vouchers, which the budget then gives to others.
+If the drug price is also allowed to clear the drug market (fifth column), newborns  still lose $0.54$ percent as adults.  The change from the third column is the general-equilibrium effect of the drug price and not a correction of moral hazard: the screen lowers demand, the price falls by $4$ percent, the cheaper drug draws users back, and more of them are caught and lose their vouchers, which the budget then gives to others.
 
  \paragraph{Treatment First with externalities.} Having ruled out moral hazard as a reason for sobriety conditions, I now test, in the three steps set out above, whether the externalities would be a reason to impose them. Each step is a column of Table~\ref{tab:longrun}. Here I follow what each step does to drug use, to homelessness and to the children, and give its welfare gain; Section~\ref{sec:parts} then takes each gain apart into the externality and the rest.
 
@@ -957,7 +957,7 @@ Letting the drug price clear instead, with $\pi_V$ held at its Housing First lev
 Finally, letting the drug price clear the drug market as well gives the main experiment (last column). Under this configuration, Treatment First cuts drug use by $21$ percent,
 from $8.92$ to $7.07$ percent of households, and the share of households with
 a SUD by $19$ percent, from $3.83$ to $3.08$ percent of
-households. It also raises the share of households with a SUD who are in treatment, from $24.6$ to $29.0$ percent, because a household with a SUD that is in treatment and does not use passes the screen, and because treatment buys a higher chance of recovering, which Treatment First makes worth more: a household that has recovered and does not use passes the screen and can hold a voucher if it is eligible and offered one.\new{\footnote{\new{Under Treatment First a household with a SUD keeps its voucher by entering treatment and stopping. I also ran the experiment in which households with a SUD cannot respond at all: any use and the disorder itself fail the screen, in treatment or not, so treatment cannot help a household keep its voucher, although the government still pays for it. \tocheck{The results continue to hold: Treatment First then cuts drug use by $30$ percent and the share with a SUD by $30$ percent, homelessness falls by more than in the main experiment, by $13$ percent, and a newborn still gains.} The results therefore do not depend on households with a SUD entering treatment and stopping.}}} As users who lose their vouchers leave the programme, it costs
+households. It also raises the share of households with a SUD who are in treatment, from $24.6$ to $29.0$ percent, because a household with a SUD that is in treatment and does not use passes the screen, and because treatment buys a higher chance of recovering, which Treatment First makes worth more: a household that has recovered and does not use passes the screen and can hold a voucher if it is eligible and offered one.\footnote{Under Treatment First a household with a SUD keeps its voucher by entering treatment and stopping. I also ran the experiment in which households with a SUD cannot respond at all: any use and the disorder itself fail the screen, in treatment or not, so treatment cannot help a household keep its voucher, although the government still pays for it. \tocheck{The results continue to hold: Treatment First then cuts drug use by $30$ percent and the share with a SUD by $30$ percent, homelessness falls by more than in the main experiment, by $13$ percent, and a newborn still gains.} The results therefore do not depend on households with a SUD entering treatment and stopping.} As users who lose their vouchers leave the programme, it costs
 less at a given $\pi_V$. Tax revenue also rises, mainly because more children start adult life with higher productivity, and to a lesser extent because fewer adults lose their jobs to a SUD. Thus, $\pi_V$ rises from $6.75$ to
 $7.80$ percent, by $16$ percent, making staying clean of drugs even more desirable. At the same time, taking users out of the drug market lowers the drug price by
 $5$ percent, which draws some households back.
@@ -1056,9 +1056,9 @@ price more than offsets the loss from the sobriety requirement for some of them.
 %======================================================================
 \section{Discussion and implications}\label{sec:discussion}
 
-To close, I return to the question I started with: should housing assistance require sobriety? The answer turns on the children. Moral hazard is real in the model: without the externalities on children, Treatment First cuts drug use by $31$ percent,  yet a newborn is worse off, because the screen takes an option from households that weigh the risks correctly and gives back less through the budget than it takes.  A cheaper drug narrows that loss  \new{but does not reverse the conclusions}. I set \new{the elasticity of the drug's supply} much lower than other studies do, which gives Housing First its best chance in the main experiment: there the cheaper drug draws users back, which means that with a more elastic supply the price would fall less, and Treatment First's gain would be even larger in that case.
+To close, I return to the question I started with: should housing assistance require sobriety? The answer turns on the children. Moral hazard is real in the model: without the externalities on children, Treatment First cuts drug use by $31$ percent,  yet a newborn is worse off, because the screen takes an option from households that weigh the risks correctly and gives back less through the budget than it takes.  A cheaper drug narrows that loss but does not reverse the conclusions.
 
-What turns the verdict is the children. Drug use costs them consumption and housing at home and productivity in adult life, and a parent counts only the share $\omega_c$ of either, so the screen's deterrence is worth far more to the child than to the parent: with the drug price and $\pi_V$ held, the parents lose $1.19$ percent of their own adult lifetime consumption, about what they lose without the externalities, while a newborn gains $2.81$ percent, so the reform gains on net once the children are counted. With the budget rebalanced and the drug price clearing, as a real reform would have them, Treatment First cuts drug use by $21$ percent, lowers homelessness by $11$ percent, and raises a newborn's welfare by $2.57$ percent of lifetime consumption, three quarters of it an externality its parent does not count; the parents gain too, because the higher $\pi_V$ and the cheaper drug outweigh the option the screen removes. \tocheck{Along the transition the households with a SUD lose their vouchers within a year, so homelessness and the share of children in a shelter first rise and come down only as the number with a SUD falls; however, the children born at the reform still gain, by \updnum{$3.0$} percent.}
+ What turns the verdict is the children. Drug use costs them consumption and housing at home and productivity in adult life, and a parent counts only the share $\omega_c$ of either, so the screen's deterrence is worth far more to the child than to the parent: with the drug price and $\pi_V$ held, the parents lose $1.19$ percent of their own adult lifetime consumption, about what they lose without the externalities, while a newborn gains $2.81$ percent, so the reform gains on net once the children are counted. With the budget rebalanced and the drug price clearing, as a real reform would have them, Treatment First cuts drug use by $21$ percent, lowers homelessness by $11$ percent, and raises a newborn's welfare by $2.57$ percent of lifetime consumption, three quarters of it an externality its parent does not count; the parents gain too, because the higher $\pi_V$ and the cheaper drug outweigh the option the screen removes. \tocheck{Along the transition the households with a SUD lose their vouchers within a year, so homelessness and the share of children in a shelter first rise and come down only as the number with a SUD falls; however, the children born at the reform still gain, by \updnum{$3.0$} percent.}
 
 Three lessons follow. First, the arguments for Housing First and Treatment First made by different advocacy
 groups leave out the outcome that matters most: what happens to the children of the households a sobriety requirement deters from using, in what they consume while at home and in what they earn as adults. If this framing continues to dominate the discussion, the reform will most likely be judged on the wrong outcomes.
@@ -1069,21 +1069,21 @@ First benchmark to the long-run equilibrium under Treatment First; its positive 
 later. Judged even on its first 25 years, by the PiT count, the reform will be most exposed to reversal before its long-run positive effects on
 homelessness, the SUD and, most importantly, children have arrived in full.}
 
-Third, the results point to two choices of design that the current debate leaves out. The first is what to do
+\tocheck{Third, the results point to two choices of design that the current debate leaves out. The first is what to do
 with the excess funds the government collects under Treatment First. In my
 experiment, all of them go back into vouchers, so an eligible household that does not use drugs is
 $16$ percent more likely to get one, which is one of the reasons a newborn's adult life is worth
 more. A sobriety requirement introduced without recycling that excess revenue back into more
 vouchers would give up \mbox{\tocheck{--}} the gain: with $\pi_V$ held at its benchmark level, a newborn would gain
-$\mbox{\tocheck{--}}$ percent rather than $2.57$, and homelessness would \mbox{\tocheck{--}} by $\mbox{\tocheck{--}}$ percent.
+$\mbox{\tocheck{--}}$ percent rather than $2.57$, and homelessness would \mbox{\tocheck{--}} by $\mbox{\tocheck{--}}$ percent.}
 
-The second is whom the condition applies to, which may further mitigate the impact on the households that
+\tocheck{The second is whom the condition applies to, which may further mitigate the impact on the households that
 already have a SUD along the transition. The gain comes from deterrence: adults who do not have a SUD and are able to stay clean do so to keep their
 access to a voucher. The early cost falls on a different group, the households that already have a SUD when the
 reform lands. They  can keep their voucher only by entering treatment and stopping, while the disorder itself clears only as fast as recovery allows, so for them the condition brings
-mostly the cost. \tocheck{Their homelessness rises within a year, and \updnum{$86$} percent of them are worse off.} A condition applied only to new voucher holders, with current holders given a five-to-ten-year grandfather exemption, for example,
+mostly the cost. Their homelessness rises within a year, and \updnum{$86$} percent of them are worse off. A condition applied only to new voucher holders, with current holders given a five-to-ten-year grandfather exemption, for example,
 may strike a good balance between keeping the threat
-for those who can still respond to it and sparing those who cannot.
+for those who can still respond to it and sparing those who cannot.}
 
 \clearpage
 \appendix

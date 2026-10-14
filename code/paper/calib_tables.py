@@ -262,6 +262,13 @@ ELEVEN = [
         (r'$\bar\tau^{u}$', 'Utility cost of treatment', setcol('tau_u'), 'Treatment take-up, NSDUH 2024',
          pc(C['treatment_take_up_data']), pc(mom('tau_u treatment take up')),
          f(H['utility_cost_of_treatment'])),
+        # THE PUBLIC COST OF TREATMENT (round r322, the author on Table 3: "you forgot to include C_treat here"): its one
+        # declaration is in the rule-C patch (code/treat/patch_treatC2.py, public_cost_of_treatment), in model units;
+        # the data cell is the residential episode in dollars that Section 5 quotes (lit ctreat_usd)
+        (r'$c_{\text{treat}}$', 'Public cost of a year of treatment', 'Ext.',
+         r'Residential treatment episode, Roebuck et al.\ (2003)', '\\$' + LIT['ctreat_usd'], NA,
+         f(float(re.search(r'public_cost_of_treatment=([0-9.]+)d0',
+                           open(os.path.join(ROOT, 'code', 'treat', 'patch_treatC2.py')).read()).group(1)), 3)),
     ]),
     ('Externalities', [
         (r'$\omega_c$', "Parent's weight on its child", 'Int.',
