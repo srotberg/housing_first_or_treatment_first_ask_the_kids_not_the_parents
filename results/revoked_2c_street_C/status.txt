@@ -1,4 +1,4 @@
-# SMI x street split of the revoked-voucher experiment, RULE C (code/revoked_2c_street/run_paths_C.sh); 14 Oct 02:58 UTC
+# SMI x street split of the revoked-voucher experiment, RULE C (code/revoked_2c_street/run_paths_C.sh); 14 Oct 03:18 UTC
 ## stage 1, the two steady states (code/revoked_2c/run_arms_C.sh)
 run_arms: free disk 29G, memory 15 GiB, cores 4 (13 Oct 17:07)
 run_arms: building cf_fix2_treatC (13 Oct 17:07)
@@ -31,3 +31,10 @@ run_paths_street: waiting for the arms and the builds (13 Oct 17:13)
 run_paths_street: GUARD: revoked_2c/run_paths_C.sh is not running and did not finish (13 Oct 21:27)
 run_paths_street: waiting for the arms and the builds (13 Oct 21:29)
 run_paths_street: against rule A's accepted runs (null must match; fixboth is rule C and differs): null: worst relative difference 2.7e-04 (SUD lambda_d) over 7 statistics fixboth: worst relative difference 6.4e-01 (SUD lambda_d) over 7 statistics  (14 Oct 02:58)
+run_paths_street: g_plain3_1t taken from revoked_2c/work_C (identical tr.f90): exit 0 (14 Oct 02:58)
+run_paths_street: g_track3_1t taken from revoked_2c/work_C (identical tr.f90): exit 0 (14 Oct 02:58)
+run_paths_street: staged g_street3_1t (T=3, terminal cfarm_tf_2c_fixboth_C) (14 Oct 02:58)
+run_paths_street: T = 3 split tracking running alone, one thread (14 Oct 02:58)
+-- g_plain3_1t: 0 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
+-- g_street3_1t: 0 forward periods done; last line:  age_index=          55
+-- g_track3_1t: 2 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
