@@ -474,3 +474,11 @@ treatment, but doesn't give vouchers to those in treatment even if they don't us
   caller); pdet/remote_pdet_CA.sh 0.20 -> results/counterfactuals_2c/tf_pdet20_CA. Budget target 5.8275447063 (Housing
   First with its treatment spending), the $35 test. Warm start P0_START/V0_START = C20's pass 7 (0.9461, 0.07891).
 - One long-run arm only (no shares, no transition) unless the author asks for more.
+
+01:05 (14 Oct) TABLE tab:longrun: ALL USEFUL COMBINATIONS (the author: "You can add all the combinations to table if they
+are actually useful. But make sure the table fits the page and doesn't become horizontal"). dc_pv (pi_V held, price
+clears) is a column again, eighth, before the main experiment; its childhood share from welfare_nok with
+decomp_2c/arm_fixpv's by-node values (rule C: decomp_2c_shares_C/arm_fixpv at the switch). Ten columns, 449pt against
+470pt, portrait. Table note, the dc_pv footnote and the prose's column numbers (dc_b sixth, dc_p seventh) updated in red.
+The one combination with no run is no externalities with only the price clearing; not run (it adds nothing to the
+moral-hazard verdict, which the held-price columns carry, and the budget is short).

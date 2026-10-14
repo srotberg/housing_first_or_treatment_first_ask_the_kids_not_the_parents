@@ -115,8 +115,11 @@ TABLE = (('pe_a', None), ('pe_b', 'pe_a'), ('null_share', None), ('tf85', 'null_
 # AND IT COMES BACK (the author, 14 October, once rule C's newborn loses there too: "Now we can show the price one as well
 # in the table... Where both clear"): the no-externality block steps like the other, both held, pi_V clearing, both
 # clearing, so the moral-hazard verdict reads across all three
+# AND THE PRICE-CLEARS RUN BACK AS A COLUMN (the author, 14 October: "You can add all the combinations to table if they
+# are actually useful. But make sure the table fits the page and doesn't become horizontal"): dc_pv isolates the
+# drug price's own effect, the channel that takes back part of the screen's cut in use; 10 columns stay portrait
 TABLE_MAIN = (('pe_a', None), ('pe_b', 'pe_a'), ('fx_d', 'pe_a'), ('nc_c', 'pe_a'), ('null_share', None),
-              ('dc_b', 'null_share'), ('dc_p', 'null_share'), ('tf85', 'null_share'))
+              ('dc_b', 'null_share'), ('dc_p', 'null_share'), ('dc_pv', 'null_share'), ('tf85', 'null_share'))
 # full internalisation leaves the appendix too (the author, 8 October, on the aggregate homelessness externality: "it
 # doesnt matter ... we can put it in a footnote"); the footnote in Section 5 quotes its one number, x_lr_in_dh_pc
 TABLE_APP = (('null_share', None), ('omega1', 'null_remote'))
@@ -322,6 +325,7 @@ def main():
     # childhood rows of Table tab:whogains (welfare_nok.parts, in points of lifetime consumption)
     for _arm, _nodes in (('dc_b', os.path.join(ROOT, 'results', 'decomp_2c_both', 'arm_fixboth')),
                          ('dc_p', os.path.join(ROOT, 'results', 'decomp_2c', 'arm_fixp')),
+                         ('dc_pv', os.path.join(ROOT, 'results', 'decomp_2c', 'arm_fixpv')),
                          ('tf85', os.path.join(ROOT, 'results', 'transition_2c', 'arm_tf'))):
         D[_arm]['child_share'] = welfare_nok.parts(adir(_arm), _nodes, adir('null_share'),
                                                    os.path.join(ROOT, 'results', 'transition_2c', 'arm_null'))['pts']['child_share']
@@ -424,24 +428,24 @@ def main():
     # with-externality block steps from both held to pi_V clearing to both clearing; 6.2 quotes dc_pv in a footnote
     # the two no-externality columns under one spanning head, so that no column is wider than its numbers need
     tab = table(TABLE_MAIN, [
-        ' & \\multicolumn{4}{c}{' + hd('h0/0', 'No externalities') + '} & \\multicolumn{4}{c}{'
-        + hd('h0/1', 'With externalities') + '} \\\\', '\\cmidrule(lr){2-5}\\cmidrule(lr){6-9}',
+        ' & \\multicolumn{4}{c}{' + hd('h0/0', 'No externalities') + '} & \\multicolumn{5}{c}{'
+        + hd('h0/1', 'With externalities') + '} \\\\', '\\cmidrule(lr){2-5}\\cmidrule(lr){6-10}',
         # PORTRAIT (the author, 8 October: "any way to fit this table horizontally?"): one 'Treatment First' over each
         # block's Treatment First columns and their labels on two short lines, so that no column is wider than its
         # numbers need; with the paper's tabcolsep of 4pt it is 464pt against the 470pt text width
-        ' & & \\multicolumn{3}{c}{' + hk(('h1/1', 'Treatment'), 'Treatment First') + '} & & \\multicolumn{3}{c}{'
-        + hd('h4/1', 'Treatment First') + '} \\\\', '\\cmidrule(lr){3-5}\\cmidrule(lr){7-9}',
+        ' & & \\multicolumn{3}{c}{' + hk(('h1/1', 'Treatment'), 'Treatment First') + '} & & \\multicolumn{4}{c}{'
+        + hd('h4/1', 'Treatment First') + '} \\\\', '\\cmidrule(lr){3-5}\\cmidrule(lr){7-10}',
         # which Treatment First: the drug price and pi_V both held, one of them clearing, or both clearing. 'both held'
         # in place of the no-externality block's '$\\pi_V$ held' once 'price clears' sits in the same row
         # a label whose words the author has seen stays black: the key it had before the stacking, and its whole text
         ' & ' + ' & '.join(hk(k, w) for k, w in (
             (('h1/0', 'Housing'), 'Housing'), ('h5/1', 'Both'), (('h3/1', '$\\pi_V$ clears'), '$\\pi_V$'),
             ('h5/nc', 'Both'), (('h1/4', 'Housing'), 'Housing'), ('h5/5', 'Both'),
-            ('h5/7', '$\\pi_V$'), ('h5/8', 'Both'))) + ' \\\\',
+            ('h5/7', '$\\pi_V$'), ('h5/pv', 'Price'), ('h5/8', 'Both'))) + ' \\\\',
         ' & ' + ' & '.join(hk(k, w) for k, w in (
             (('h2/0', 'First'), 'First'), ('h6/1', 'held'), (('h3/1', '$\\pi_V$ clears'), 'clears'),
             ('h6/nc', 'clear'), (('h2/4', 'First'), 'First'), ('h6/5', 'held'),
-            ('h6/7', 'clears'), ('h6/8', 'clear'))) + ' \\\\'])
+            ('h6/7', 'clears'), ('h6/pv', 'clears'), ('h6/8', 'clear'))) + ' \\\\'])
     tab_app = table(TABLE_APP, [
         ' & ' + ' & '.join(hd(f'a1/{k}', w) for k, w in enumerate(('Housing', 'Full'))) + ' \\\\',
         ' & ' + ' & '.join(hd(f'a2/{k}', w) for k, w in enumerate(('First', 'altruism'))) + ' \\\\'])
