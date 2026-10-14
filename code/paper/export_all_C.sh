@@ -13,6 +13,7 @@ python3 export_pe_noext.py | tail -1
 python3 export_whostops.py | tail -1
 python3 export_welfare.py | tail -2
 python3 export_decomp_use.py | tail -1
+python3 export_nish_parts.py | tail -1
 python3 - <<'PYEOF'
 import json, os, sys
 sys.path.insert(0, '.')
@@ -26,6 +27,21 @@ elif R.PENDING_STREET:
     pend.append('x_rv_street_')
 # the Milby impact row: the rule-C transition's first year (RULE_C_PLAN, the Milby row) has not run
 pend += ['x_milby_model_impact', 'x_milby_model_lr']
+# the omega_c = 0.686 sensitivity is rule A's (no rule-C run): its numbers beside the rule-C benchmark would compare
+# two rules, so they wait, yellow, for the author's call (re-run it on rule C, or say it is rule A's)
+pend += ['x_nish_']
+# names the paper uses that a pending run never wrote (the price-held welfare column, the transition's first year)
+import re
+src = open('../../writing/housing_first_children_later.src.tex').read()
+others = set()
+for f in ('params_numbers.json', 'fortran_numbers.json', 'calib_numbers.json', 'lit_numbers.json', 'decomp_use.json',
+          'ruleA_numbers.json'):
+    if os.path.exists(f):
+        others |= set(json.load(open(f)))
+for k in sorted(set(re.findall(r'@@([a-zA-Z0-9_]+)@@', src))):
+    if k not in d and k not in others and (re.match(r'x_wd_\w+_p$', k) or k.startswith('x_milby_t1_')):
+        d[k] = '\\mbox{\\tocheck{--}}'
+        print('  yellow, not written by a pending run:', k)
 n = 0
 for k in list(d):
     if any(k.startswith(x) for x in pend):
