@@ -1,4 +1,4 @@
-# Treatment First without externalities, savings recycled, RULE C (code/noext_clear/run_noext_clear_C.sh); 14 Oct 02:54 UTC
+# Treatment First without externalities, savings recycled, RULE C (code/noext_clear/run_noext_clear_C.sh); 14 Oct 03:14 UTC
 noext_clear_C: free disk 29G, memory 15 GiB, cores 4, threads per solve 2, at most 2 solves (13 Oct 16:58)
 noext_clear_C: building (pe_noext/build_pe_C.sh) (13 Oct 16:58)
 noext_clear_C: arm C (tf_noext_clear_C) on cf_fix2_treatC: detection 0.85, test 0.0004946100, price and pi_V clearing against 6.3180936, from rule A's price 0.90717489, pi_V 0.076132869 (13 Oct 17:11)
@@ -15,8 +15,7 @@ noext_clear_C: arm C (tf_noext_clear_C) on cf_fix2_treatC: detection 0.85, test 
  PE USED pass=    8 housing_price=  1.2049244506508884E+01 drug_price=  1.0304908852192760E+00 pi_V=  6.7533863251354007E-02
  MILBY SPLIT voucher mass rec treat smi  0.18698057542209073        5.8661744865879167E-003   5.1777072091753057E-002   2.2837063241634269E-002  housed_nov mass rec treat smi   1.6991234949384710        5.2312149071577156E-002  0.42004861334934546       0.14786902143016795     
 
-== cfarm_tf_noext_clear_C (16 passes done)
-  9  0.9488  0.07084    -0.9%    +1.3%    -4.9%  2.29e-01  2.57e-03   790.0931  +nan%   +26.3%   +27.4%
+== cfarm_tf_noext_clear_C (17 passes done)
  10  0.9536  0.07076    -1.6%    +0.6%    -5.0%  2.16e-01  2.02e-03   790.1065  +nan%   +24.9%   +26.9%
  11  0.9583  0.07070    -3.4%    -1.3%    -5.4%  1.88e-01  3.92e-03   790.1475  +nan%   +21.4%   +25.6%
  12  0.9631  0.07058    -3.6%    -1.5%    -5.3%  1.76e-01  2.76e-03   790.1400  +nan%   +20.2%   +24.7%
@@ -24,7 +23,8 @@ noext_clear_C: arm C (tf_noext_clear_C) on cf_fix2_treatC: detection 0.85, test 
  14  0.9728  0.07040    -8.7%    -6.6%    -5.8%  1.10e-01  2.64e-03   790.2233  +nan%   +11.6%   +22.2%
  15  0.9776  0.07032    -9.7%    -7.7%    -5.7%  8.90e-02  3.62e-03   790.2376  +nan%    +9.2%   +20.9%
  16  0.9825  0.07021   -11.0%    -9.0%    -5.7%  7.01e-02  3.53e-03   790.2552  +nan%    +7.0%   +20.3%
- MILBY SPLIT voucher mass rec treat smi  0.11131428572518159        4.8266758017403589E-003   8.5964895849074824E-002   1.2899230551205839E-002  housed_nov mass rec treat smi   1.6021386780387521        4.9051976268871887E-002  0.38437831604012124       0.13503030893175355     
+ 17  0.9874  0.07010   -12.6%   -10.6%    -6.0%  4.22e-02  2.38e-03   790.2753  +nan%    +3.6%   +18.6%
+ MILBY SPLIT voucher mass rec treat smi  0.10994525507544840        4.7739093062931972E-003   8.5172713817071727E-002   1.2738338886484958E-002  housed_nov mass rec treat smi   1.5728526021705769        4.8156397325835792E-002  0.37738222074061761       0.13249229638028648     
 
 == analysis
 file 1: 8564400 states, 1067185 occupied, mass 50.824969, walk could not evaluate mass 0.000e+00
