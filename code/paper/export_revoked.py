@@ -115,6 +115,18 @@ def main():
         # one decimal, as Costantini's 4.6 beside it
         'x_rv_street_smi_pp': f"{st['gap']:.1f}",
     })
+    # BLOCK 7'S CLOSING LINE (the author, 14 October, yes to changing it under rule C): of the revoked households with
+    # SMI, the share the revocation puts on the street, from the Treatment First path's split masses in tables.md; under
+    # rule C almost none (about 0.01 percent), so 'the main cost it imposes on those it screens out' no longer stands
+    T = open(STREET).read().split('Housing First path')[0]
+    sm = [(float(a), float(b)) for a, b in re.findall(r'SMI housed ([0-9.eE+-]+), SMI street ([0-9.eE+-]+)', T)]
+    _sh = 100 * sum(b for _, b in sm) / sum(a + b for a, b in sm) if sm else None
+    out['x_rv_street_close'] = (
+        'Under the rule of Section~\\ref{sec:fvoucher}, however, almost no household with SMI whose voucher is revoked '
+        'ends up on the street: nearly all find housing on their own. For the few who do, a higher risk of death is the '
+        'cost, and the model does not understate it.' if _sh is not None and _sh < 1 else
+        'A higher risk of death is the main cost Treatment First imposes on those it screens out, and the model does '
+        'not understate it.')
     d = json.load(open(OUT_JSON))
     d.update(out)
     json.dump(d, open(OUT_JSON, 'w'), indent=1, sort_keys=True)

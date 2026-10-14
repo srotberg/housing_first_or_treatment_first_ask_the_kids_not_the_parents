@@ -77,7 +77,11 @@ case "$A" in
   fixboth) ACC=$REPO/results/decomp_2c_both/arm_fixboth
            SET=(PDET=$PDET_C PV_START=$V_NULL DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0") ;;
   fixpv)   ACC=$REPO/results/decomp_2c/arm_fixpv
-           SET=(PDET=$PDET_C PV_START=$V_NULL DRUG_PRICE_START=${SHARES_P0:-0.8742} "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0") ;;
+           SET=(PDET=$PDET_C PV_START=$V_NULL DRUG_PRICE_START=${SHARES_P0:-0.8742} "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0")
+           # (14 October) the gated run cycled through three passes (drug use -20.7, -20.7, -21.3 percent) at a drug price
+           # of 0.9442-0.9446 and never met the drift rule; SHARES_HOLD_PRICE=1 holds the price at SHARES_P0 (the cycle's
+           # mean), so the column settles; across the cycle the drug market's gap was 0.8e-3 to 3.7e-3, inside its 5e-3 rule
+           [ "${SHARES_HOLD_PRICE:-0}" = 1 ] && SET+=(DRUG_MARKET_ADJUSTER=0) ;;
   fixp)    ACC=$REPO/results/decomp_2c/arm_fixp
            SET=(PDET=$PDET_C NET_TARGET=$NET_TARGET PV_START=0.11453 DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST") ;;
 esac
