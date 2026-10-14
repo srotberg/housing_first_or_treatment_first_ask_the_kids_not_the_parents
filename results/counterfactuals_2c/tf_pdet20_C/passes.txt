@@ -1,4 +1,4 @@
-# counterfactual tf_pdet20_C (detection 0.20) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 14 Oct 01:42 UTC
+# counterfactual tf_pdet20_C (detection 0.20) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 14 Oct 01:50 UTC
 remote_pdet tf_pdet20_C: gfortran missing, installing (18:35)
 remote_pdet tf_pdet20_C: free disk 29G, memory 15 GiB, cores 4 (18:35)
 remote_pdet tf_pdet20_C: building cf_fix (18:35)
@@ -8,6 +8,7 @@ remote_pdet tf_pdet20_C: warm start at the rule-C main arm's latest pass: price 
 remote_pdet tf_pdet20_C: warm start at the rule-A arm's values: price 0.93, pi_V 0.082 (18:41)
 remote_pdet tf_pdet20_C: TF budget target: the paper's no-policy net revenue 5.8275447063; test cost 0.0004946100 ($35); detection 0.20 (18:41)
 remote_pdet tf_pdet20_C: arm tf on cf_fix2_treatC: PDET=0.20 NET_TARGET=5.8275447063 PV_START=0.082 DRUG_PRICE_START=0.93 EXTRA_SET=cost_per_drug_test 0.0004946100 (18:41)
+remote_pdet tf_pdet20_C: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.8275447063000003 DIST CHECK PASS: 9 passes, sweeps [74, 70, 70, 70, 70, 70, 70, 70, 70], largest final 4.41e-05 (rule 5e-05, at least 70 sweeps)  (01:50)
 
 == tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -19,3 +20,4 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   6  0.9461  0.07875   -21.2%   -19.2%   -10.6%  1.83e-04  2.68e-03   788.6160  +3.30%    -7.8%   +17.0%
   7  0.9461  0.07891   -21.2%   -19.2%   -10.7%  1.19e-05  2.02e-03   788.6263  +3.33%    -7.8%   +17.0%
   8  0.9461  0.07903   -21.2%   -19.2%   -10.8%  1.41e-05  1.18e-03   788.6323  +3.35%    -7.8%   +17.0%
+  9  0.9461  0.07910   -21.2%   -19.2%   -10.8%  2.66e-06  6.75e-04   788.6359  +3.36%    -7.8%   +17.0%
