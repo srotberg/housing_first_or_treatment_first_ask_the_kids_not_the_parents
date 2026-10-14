@@ -1,6 +1,9 @@
-# Treatment First without externalities, drug price held, budget rebalanced, RULE C, corrected Housing First (code/noext_clear/run_noext_fixp_Cu.sh); 14 Oct 13:05 UTC
+# Treatment First without externalities, drug price held, budget rebalanced, RULE C, corrected Housing First (code/noext_clear/run_noext_fixp_Cu.sh); 14 Oct 13:26 UTC
 noext_fixp_Cu: free disk 25G, memory 15 GiB, cores 4, threads per solve 2, at most 2 solves (14 Oct 12:45)
+noext_fixp_Cu: push failed after 4 tries (14 Oct 13:06)
 
-== cfarm_null_pe_noext_Cu (0 passes done)
+== cfarm_null_pe_noext_Cu (1 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
- PE USED pass=    0 housing_price=  1.2048193229648000E+01 drug_price=  1.0304964999999999E+00 pi_V=  6.7533863251354007E-02
+  1  1.0303  0.06753    +0.2%    +0.9%    -2.9%  1.98e-03  0.00e+00   790.0957  +nan%    +4.2%    +4.0%
+ PE USED pass=    1 housing_price=  1.2049262135505339E+01 drug_price=  1.0302989539461600E+00 pi_V=  6.7533863251354007E-02
+ MILBY SPLIT voucher mass rec treat smi  0.18669807642679276        5.8417292065744879E-003   5.1119018171861839E-002   2.3044053626614963E-002  housed_nov mass rec treat smi   1.7057474990435604        5.2372690661223492E-002  0.41601944070244734       0.14883891522593992     
