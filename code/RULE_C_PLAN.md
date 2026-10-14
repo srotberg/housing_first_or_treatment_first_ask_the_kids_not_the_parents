@@ -462,3 +462,15 @@ one as well in the table... Where both clear", once rule C's newborn loses there
   gain": the screen alone, 4.07, exceeds the full 3.30) need branches for the rule-C direction.
 - code/stylized/fill.py stops at TARGET["hsmall"] (KeyError) when run alone here: check how the round build fills
   before the round, not during it.
+
+01:00 (14 Oct) NEW RUN CA: RULE A'S SCREEN ON RULE C'S BUILD, DETECTION 0.20 (the author: "a run with rule a but where
+gov't doesn't give vouchers or revokes them to those with Sud. So treatment doesn't help them retain it ... Use the same
+pdet. Just to be able to answer to those who might say that people can't stop using in treatment. Gov't still pays for
+treatment, but doesn't give vouchers to those in treatment even if they don't use.... Unless they can't detect it").
+- code/treat/patch_treatCA.py = patch_treatC.py, then fails_1 back to rule A's line (the disorder fails in treatment or
+  not; any use fails) and tc2_abstain_on default 0. Source differs from rule C's at those two lines only; compiles.
+  Public treatment cost, EV-table key, own treatment in internal_computations, v>0 use count all kept.
+- build_treatCA.sh -> code/cf_fix2_treatCA; treat/cf_arm_CA.sh (cf_arm_C.sh + cf_fix2_treatCA, threads from the
+  caller); pdet/remote_pdet_CA.sh 0.20 -> results/counterfactuals_2c/tf_pdet20_CA. Budget target 5.8275447063 (Housing
+  First with its treatment spending), the $35 test. Warm start P0_START/V0_START = C20's pass 7 (0.9461, 0.07891).
+- One long-run arm only (no shares, no transition) unless the author asks for more.
