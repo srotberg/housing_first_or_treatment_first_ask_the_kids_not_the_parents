@@ -526,3 +526,24 @@ S-fixpv done 00:46; its worker asked (trigger trig_01TH2UpECvdNHScPD5ZmCghH) to 
   the re-cleared arm moved). Still to decide with the author: the other columns (fixboth's shares are already in the
   diagnostic; fixpv, fixp after their gated runs), the no-externality economy's Arm A on an ungated no-ext build, and
   whether the T = 50 transition (benchmark start, gated) is restarted.
+
+12:35 (14 Oct) THE r320 PDF SENT (~11:55, commit e3a27cf4); THE AUTHOR: "Yes to 1-4". LAUNCHED, all against the corrected
+Housing First (internal_computations fix ungated):
+- CU-fixboth session_017AD88HWnpyuE8Sv5s3WkAQ: remote_decomp_shares_Cu2.sh fixboth -> decomp_2c_shares_Cu/arm_fixboth.
+- CU-fixpv session_01U1xpEbCvGSe8cNQaX8rrY9: SHARES_P0=0.9444 SHARES_HOLD_PRICE=1 ... fixpv (price held at the mean
+  of the gated run's three-pass cycle, which the drift rule could never leave) -> arm_fixpv.
+- CU-fixp session_01HN6Xax8qgdXyBtSBnyEikG: SHARES_HOLD_PV=1 SHARES_V0=0.0924 ... fixp. NO PI_V BALANCES THIS
+  COLUMN: drug use jumps from -48 to -42 percent as pi_V crosses ~0.0930, the budget misses by 1-2 percent either
+  side, so a damped step cannot settle it; pi_V held where the gated run came closest (0.0924, gap 5.7e-3), reported
+  with its budget gap. Old S-fixp session_018ixGRpLBP7wDvWBSME5pmF ARCHIVED (author's yes).
+- TR50Cu session_01S2FhWe1HANhWtUimJa3Xdz: transition_fix/remote_tr50_Cu.sh (Housing First on cf_fix2_share_treatCu,
+  terminal = the corrected main column, REL_TOL 5e-3) -> transition_2c_t50_Cu, transition_2c_Cu. The old TR50 fails
+  its own 1e-3 check by itself.
+- NISHCu session_019UuJRLfh3DFA7qTAsLqqfZ: omega_nishiyama/remote_nish_nodes_Cu.sh (this economy's Housing First
+  re-solved on the corrected build, detection 0.20) -> omega_nishiyama_Cu.
+- NOEXTCu session_01Y88f2Kqz9kxZ3ox8PtS8sE (engineering + run): the no-externality economy with Arm A on an ungated
+  build, NET_A from it, Arms B, D, C, E -> pe_noext_Cu, noext_fixp_Cu, noext_clear_Cu, noext_pclear_Cu.
+- Block 7's closing line generated from the street share (x_rv_street_close; the author: yes to changing it).
+WHEN THEY LAND: rulec_paths.py DC[fixboth|fixpv|fixp] -> decomp_2c_shares_Cu, PE/FX/NC/NE -> the _Cu folders, drop
+STALE_SHARES entries; export_nish_parts.py / export_results.py's nish paths -> omega_nishiyama_Cu; the transition
+exporters -> transition_2c_t50_Cu / transition_2c_Cu. The old S-fixpv (gated, cycling) still runs: ask before archiving.
