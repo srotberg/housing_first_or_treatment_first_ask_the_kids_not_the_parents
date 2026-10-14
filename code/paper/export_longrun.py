@@ -523,6 +523,13 @@ def main():
     assert N_['price'] < A_['price'], (N_['price'], A_['price'])
     out['x_nc_newborn_cev'] = f"{abs(N_['cev_net']):.2f}"
     out['x_nc_newborn_dir'] = 'gain' if N_['cev_net'] > 0 else 'lose'
+    # (round r321) the Discussion's 'A cheaper drug can turn that into a small gain' was rule A's; under rule C the
+    # newborn still loses with the drug price clearing too, so the cheaper drug only narrows the loss
+    out['x_disc_cheaper'] = (
+        'A cheaper drug can turn that into a small gain, but that is not a correction of moral hazard but rather the '
+        "drug market's response, which depends on the elasticity of the drug's supply." if N_['cev_net'] > 0 else
+        'A cheaper drug narrows that loss without reversing it, and that is not a correction of moral hazard but the '
+        "drug market's response, which depends on the elasticity of the drug's supply.")
     out['x_nc_price_pc'] = f"{100 * (1 - N_['price'] / A_['price']):.0f}"
     out['x_nc_piv1_pc'] = f"{100 * N_['piv']:.2f}"
     out['x_nc_b_pc'] = f"{100 * (1 - N_['b'] / A_['b']):.0f}"
@@ -649,6 +656,30 @@ def main():
                            if D['dc_b']['child_hl'] > D['null_share']['child_hl'] else
                            'of the children of the users the screen puts out, who are fewer than the children it keeps '
                            'out of a shelter by cutting use')
+    # (round r321, the author on that sentence: "well, here there is no trade off at all. you need to write it that
+    # way", and "you can say there is no aggregate tradeoff, but for individuals there might be"): when the share of
+    # children in a shelter falls, the whole sentence says so, in Section 6.2 (both held) and the introduction
+    _dcb_up = D['dc_b']['child_hl'] > D['null_share']['child_hl']
+    out['x_dcb_ext_sentence'] = (
+        'These \\emph{budget and earnings externalities}, which Housing First leaves in place, therefore outweigh '
+        'the \\emph{childhood homelessness externality} of the few more children the screen sends to a shelter.'
+        if _dcb_up else
+        'In the aggregate, these \\emph{budget and earnings externalities}, which Housing First leaves in place, come '
+        'with no trade-off against the \\emph{childhood homelessness externality}: by cutting use, the screen keeps '
+        'more children out of a shelter than it sends to one by putting their parents out. For an individual child '
+        'there can still be one, if the screen puts its parent out.')
+    out['x_intro_ext_sentence'] = (
+        'Therefore, the \\emph{budget and earnings externalities} dominate both the \\emph{childhood homelessness '
+        'externality} and the direct loss to the parent from the removal of an option.' if _dcb_up else
+        'In the aggregate, then, there is no trade-off between the externalities: by cutting use, the screen keeps '
+        'more children out of a shelter than it sends to one by putting their parents out, although a child whose '
+        'parent it puts out can still lose its home. What the \\emph{budget and earnings externalities} have to '
+        'outweigh is only the direct loss to the parent from the removal of an option.')
+    # the abstract, on the main experiment's long run
+    out['x_abs_hchild_sentence'] = (
+        "Sobriety conditions reduce these harms more than they expose screened-out users' children to homelessness."
+        if D[t]['child_hl'] > D['null_share']['child_hl'] else
+        'Sobriety conditions reduce these harms and, in aggregate, also childhood homelessness.')
     out['x_dcb_child_pc'] = f"{D['dc_b']['child_share']:.0f}"
     _pp = pc('dc_pv', 'price', 'null_share')
     out['x_dcpv_price_verb'] = 'lowers' if _pp < 0 else 'raises'

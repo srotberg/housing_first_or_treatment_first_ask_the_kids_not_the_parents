@@ -15,6 +15,7 @@ python3 export_welfare.py | tail -2
 python3 export_decomp_use.py | tail -1
 python3 export_nish_parts.py | tail -1
 python3 export_bcghw.py | tail -1
+python3 export_ca.py | tail -1    # round r321: the run in which households with a SUD cannot respond (footnote, introduction)
 python3 - <<'PYEOF'
 import json, os, sys
 sys.path.insert(0, '.')

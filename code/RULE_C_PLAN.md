@@ -547,3 +547,20 @@ Housing First (internal_computations fix ungated):
 WHEN THEY LAND: rulec_paths.py DC[fixboth|fixpv|fixp] -> decomp_2c_shares_Cu, PE/FX/NC/NE -> the _Cu folders, drop
 STALE_SHARES entries; export_nish_parts.py / export_results.py's nish paths -> omega_nishiyama_Cu; the transition
 exporters -> transition_2c_t50_Cu / transition_2c_Cu. The old S-fixpv (gated, cycling) still runs: ask before archiving.
+
+15:00 (14 Oct) ROUND r321 (the author's annotated PDF, 18 comments; "remove all red and crossed lines and put updates in
+red"; "look at sentences that no longer make sense given the new results"). Whole source and tables stripped at the
+author's explicit request; calib_tables and export_longrun baselines frozen; number baseline sec2/base_r321 = HEAD's
+jsons; splice_r321 = splice_r320 on base_r321; scratchpad r321/build.sh (track_changes against r321/src_old.tex, a hook
+that strikes the intro's deterrence sentence by hand and keeps x_trf_h_sr from reading as a replacement).
+- Beauregard et al. removed (paragraph, Table 4 rows, reference): "not directly testable with my model" (68% of their
+  homeless have a SUD against the 21.7% target). Block 7's closing line removed. Footnote on the ninth column moved
+  into 6.2's text. "Lastly..." deterrence sentence removed from the intro.
+- New generated sentences (export_longrun.py): x_abs_hchild_sentence, x_intro_ext_sentence, x_dcb_ext_sentence
+  ("no trade-off in the aggregate, though there can be one for an individual child"), x_disc_cheaper.
+- New footnote (intro, main result): the run in which households with a SUD cannot respond (CA,
+  export_ca.py -> x_ca_*), yellow until CA meets its tolerances; the newborn's gain there is from the run's own print.
+- Transition sentences (abstract, intro, 6.2, Discussion) yellow and noted: still rule A's until TR50Cu lands.
+- Open with the author: Block 7's 2.2 pp (under rule C almost no one with SMI is put on the street, 1.4e-7 of the
+  mass, and 96% of those leave it within a year, so it is not like-for-like with Costantini's three years); Milby's
+  model numbers come from the transition's first year (TR50Cu).
