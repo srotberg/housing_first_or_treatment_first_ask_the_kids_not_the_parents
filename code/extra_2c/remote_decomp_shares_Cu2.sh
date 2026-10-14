@@ -83,7 +83,11 @@ case "$A" in
            # mean), so the column settles; across the cycle the drug market's gap was 0.8e-3 to 3.7e-3, inside its 5e-3 rule
            [ "${SHARES_HOLD_PRICE:-0}" = 1 ] && SET+=(DRUG_MARKET_ADJUSTER=0) ;;
   fixp)    ACC=$REPO/results/decomp_2c/arm_fixp
-           SET=(PDET=$PDET_C NET_TARGET=$NET_TARGET PV_START=0.11453 DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST") ;;
+           SET=(PDET=$PDET_C NET_TARGET=$NET_TARGET PV_START=${SHARES_V0:-0.11453} DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST")
+           # (14 October) NO PI_V BALANCES THIS COLUMN'S BUDGET: in the gated run drug use jumps from -48 to -42 percent as
+           # pi_V crosses about 0.0930, and the budget misses by 1 to 2 percent on either side. SHARES_HOLD_PV=1 holds pi_V at
+           # SHARES_V0 (the paper: where the budget came closest, 0.0924), reported with its budget gap
+           [ "${SHARES_HOLD_PV:-0}" = 1 ] && SET=(PDET=$PDET_C PV_START=$SHARES_V0 DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0") ;;
 esac
 
 note() { echo "remote_decomp_shares_Cu2 $A: $* ($(date -u +%H:%M))" | tee -a "$D.status"; }
@@ -157,7 +161,8 @@ fi
 wait_publishing "$D.null.pid" "$D.arm.pid"
 ok cfarm_null_2c "VOUCHER CHECK PASS" || { note "GUARD: Housing First failed its checks: $(tail -3 "$C/cfarm_null_2c.out" | tr '\n' ' ')"; publish "failed"; exit 1; }
 ok cfarm_tf_2c_$A "DIST CHECK PASS" || { note "GUARD: arm $A failed its checks: $(tail -3 "$C/cfarm_tf_2c_$A.out" | tr '\n' ' ')"; publish "failed"; exit 1; }
-[ "$A" = fixp ] && { grep -a "TARGET CHECK PASS" "$C/cfarm_tf_2c_$A.out" > /dev/null || { note "GUARD: fixp did not clear the budget"; publish "failed"; exit 1; }; }
+[ "$A" = fixp ] && [ "${SHARES_HOLD_PV:-0}" != 1 ] && { grep -a "TARGET CHECK PASS" "$C/cfarm_tf_2c_$A.out" > /dev/null || { note "GUARD: fixp did not clear the budget"; publish "failed"; exit 1; }; }
+[ "${SHARES_HOLD_PV:-0}" = 1 ] && note "pi_V held at $SHARES_V0: net revenue $(awk '/net government revenue/{print $4}' "$R/final.txt") against the corrected Housing First's $NET_TARGET"
 python3 cf_runs/finalstats.py "cfarm_tf_2c_$A/cf.log" cfarm_null_2c/cf.log > "$R/final.txt" 2>&1
 note "against the accepted run: $(python3 - "$R/final.txt" "$ACC/final.txt" <<'PYEOF'
 import re, sys
