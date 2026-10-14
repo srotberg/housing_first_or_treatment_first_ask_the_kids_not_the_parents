@@ -636,8 +636,12 @@ def main():
     _pv_more = D['dc_p']['piv'] > D[t]['piv'] and D['dc_p']['price'] > D[t]['price']
     # (the author, 9 October: "receiving a voucher more likely, and thus staying clean worth more"; the clause on pi_V
     # rising by more than under Treatment First itself dropped, "the reader doesnt know this yet")
+    # (14 October, rule C) with the screen exempting treatment, drug use falls by about as much with pi_V clearing as
+    # with both held (-42 against -43 per cent): then the sentence says that, and nothing about why it falls more
+    _b_close = abs(D['dc_p']['b'] / D['dc_b']['b'] - 1) < 0.05
     out['x_dcp_why'] = ('Drug use falls by more than with both held because the higher $\\pi_V$ makes receiving a '
-                        'voucher more likely, and thus staying clean worth more.' if _b_more else '')
+                        'voucher more likely, and thus staying clean worth more.' if _b_more and not _b_close else
+                        'Drug use falls by about as much as with both held.' if _b_close else '')
     out['x_lr_e5_cev'] = f"{D[e]['cev_net']:.2f}"
     out['x_lr_e5_b_pc'] = f"{abs(pc(e, 'b', 'old_null_remote')):.0f}"
     out['x_lr_e5_h_pc'] = f"{abs(pc(e, 'h', 'old_null_remote')):.0f}"
