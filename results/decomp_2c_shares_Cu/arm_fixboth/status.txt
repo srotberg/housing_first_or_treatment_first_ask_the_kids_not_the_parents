@@ -1,23 +1,8 @@
-# better-off shares for the decomposition column fixboth (code/extra_2c/remote_decomp_shares.sh); 14 Oct 05:08 UTC
-remote_decomp_shares_Cu fixboth: free disk 22G, memory 15 GiB, cores 4 (03:17)
-remote_decomp_shares_Cu fixboth: arm null on cf_fix2_share_treatCu (no screen: Housing First, internal_computations fix ungated) (03:17)
-remote_decomp_shares_Cu fixboth: arm fixboth on cf_fix2_treatC (rule C): PDET=0.20 PV_START=0.067533863 DRUG_PRICE_START=1.0001082 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 (03:17)
-remote_decomp_shares_Cu fixboth: against the accepted run: worst relative difference 6.4e-01 over drug price, pi_V (voucher probability), drug use b, SUD lambda_d, homelessness h_1 (05:08)
-remote_decomp_shares_Cu fixboth: shares:  all households mass 50.82542 strict better 0.0000 | tol 0.001: better 0.0000 worse 0.2654 | tol 0.01: better 0.0000 worse 0.1884 (05:08)
-remote_decomp_shares_Cu fixboth: against the gated run (results/decomp_2c_shares_C/arm_fixboth): null last: ungated [CF MOMENTS distance=   4.8235622253978150E-005  b=   8.9204424643805708E-002  lambda_d=   3.8275998455340791E-002  h_1=   6.1844398825796837E-003] gated [CF MOMENTS distance=   5.1817504966411576E-005  b=   8.8953377368566386E-002  lambda_d=   3.8147690463110999E-002  h_1=   6.1856722059627760E-003]; SUD shares: ungated [with a SUD mass 1.94539 strict better 0.0000 | tol 0.001: better 0.0000 worse 0.9960 | tol 0.01: better 0.0000 worse 0.9514] gated [with a SUD mass 1.93897 strict better 0.2601 | tol 0.001: better 0.2424 worse 0.7396 | tol 0.01: better 0.2369 worse 0.7372] (05:08)
-remote_decomp_shares_Cu fixboth: done (05:08)
-
-== cfarm_null_2c
-pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
-  1  0.9999  0.06753    -3.2%    -2.4%    -2.9%  2.00e-03  0.00e+00   789.1158  +4.82%    -0.3%    +3.0%
-  2  0.9992  0.06753    -1.0%    -0.2%    -1.0%  1.73e-03  0.00e+00   787.8710  +1.09%    -0.3%    +0.7%
-  3  0.9993  0.06753    -0.5%    +0.4%    -0.1%  2.50e-04  0.00e+00   787.5220  +0.08%    -0.1%    +0.4%
-  4  0.9994  0.06753    -0.4%    +0.4%    +0.0%  2.29e-04  0.00e+00   787.4949  -0.00%    -0.1%    +0.3%
-  5  0.9994  0.06753    -0.4%    +0.4%    +0.0%  4.86e-05  0.00e+00   787.4916  -0.01%    -0.1%    +0.3%
-
-== cfarm_tf_2c_fixboth
-pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
-  1  1.0001  0.06753   -40.7%   -39.3%    -9.0%  0.00e+00  0.00e+00   789.7494  +6.79%   -34.2%   +10.9%
-  2  1.0001  0.06753   -43.4%   -41.9%    -8.1%  0.00e+00  0.00e+00   789.0366  +4.58%   -38.4%    +8.7%
-  3  1.0001  0.06753   -43.3%   -41.9%    -7.6%  0.00e+00  0.00e+00   788.8707  +4.07%   -38.5%    +8.6%
-  4  1.0001  0.06753   -43.3%   -41.9%    -7.6%  0.00e+00  0.00e+00   788.8710  +4.07%   -38.5%    +8.6%
+# better-off shares for the decomposition column fixboth (code/extra_2c/remote_decomp_shares.sh); 14 Oct 12:34 UTC
+remote_decomp_shares_Cu2 fixboth: free disk 29G, memory 15 GiB, cores 4 (12:25)
+remote_decomp_shares_Cu2 fixboth: building cf_fix (12:25)
+remote_decomp_shares_Cu2 fixboth: building cf_fix2 (12:27)
+remote_decomp_shares_Cu2 fixboth: building cf_fix2_share (12:29)
+remote_decomp_shares_Cu2 fixboth: building cf_kid (12:31)
+remote_decomp_shares_Cu2 fixboth: building cf_fix2_share_treatCu (Housing First with the internal_computations fix ungated) (12:32)
+remote_decomp_shares_Cu2 fixboth: building cf_fix2_treatC (rule C) (12:33)
