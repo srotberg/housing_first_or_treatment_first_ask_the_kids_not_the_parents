@@ -1,7 +1,10 @@
-# PE experiment without externalities, RULE C, corrected Housing First (code/pe_noext/run_pe_Cu.sh); 14 Oct 13:57 UTC
+# PE experiment without externalities, RULE C, corrected Housing First (code/pe_noext/run_pe_Cu.sh); 14 Oct 14:18 UTC
 pe_noext_Cu: free disk 29G, memory 15 GiB, cores 4, threads per solve 2, at most 2 solves (14 Oct 12:44)
 pe_noext_Cu: arm A (cfarm_null_pe_noext_Cu) on cf_fix2_share_pe_treatCu (internal_computations fix ungated), switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0304965 (14 Oct 12:44)
 pe_noext_Cu: push failed after 4 tries (14 Oct 13:07)
+pe_noext_Cu: arm A: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 3 passes, sweeps [70, 70, 70], largest final 2.40e-05 (rule 5e-05, at least 70 sweeps)  (14 Oct 13:58)
+pe_noext_Cu: arm A's last solve used: drug price 1.0300798518418917E+00, pi_V 6.7533863251354007E-02, house price 1.2049251348729587E+01 (14 Oct 13:58)
+pe_noext_Cu: arm B (tf_pe_noext_Cu) on cf_fix2_pe_treatC: detection 0.85, test 0.0004946100, held price 1.0300798518418917E+00, pi_V 6.7533863251354007E-02, house price 1.2049251348729587E+01, adjust_taxes 0 (14 Oct 13:58)
 
 == cfarm_null_pe_noext_Cu (3 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
