@@ -637,6 +637,15 @@ def main():
     # screen's savings recycled; with pi_V held, it ...'): when both fall, 'falls as well'
     out['x_dcb_hchild_also'] = ('rises' if D['dc_b']['child_hl'] > D['null_share']['child_hl'] else
                                 'falls as well' if D[t]['child_hl'] < D['null_share']['child_hl'] else 'falls')
+    # (14 October, rule C) the introduction's 'while the share of children in a shelter rises only from': the
+    # 'only' belonged to a small rise, and printed 'falls only from 1.03 to 0.95' once the share fell
+    out['x_dcb_hchild_dironly'] = 'rises only' if D['dc_b']['child_hl'] > D['null_share']['child_hl'] else 'falls'
+    # (14 October, rule C) whose childhood homelessness the budget and earnings externalities outweigh: 'the few more
+    # children the screen sends to a shelter' was rule A's, where the share rose; under rule C it falls
+    out['x_dcb_hl_ext'] = ('of the few more children the screen sends to a shelter'
+                           if D['dc_b']['child_hl'] > D['null_share']['child_hl'] else
+                           'of the children of the users the screen puts out, who are fewer than the children it keeps '
+                           'out of a shelter by cutting use')
     out['x_dcb_child_pc'] = f"{D['dc_b']['child_share']:.0f}"
     _pp = pc('dc_pv', 'price', 'null_share')
     out['x_dcpv_price_verb'] = 'lowers' if _pp < 0 else 'raises'
