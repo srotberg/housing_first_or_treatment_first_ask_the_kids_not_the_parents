@@ -1,4 +1,4 @@
-# the T = 50 transition on RULE C (code/transition_fix/remote_tr50_C.sh); 14 Oct 01:53 UTC
+# the T = 50 transition on RULE C (code/transition_fix/remote_tr50_C.sh); 14 Oct 02:13 UTC
 remote_tr50_C: free disk 29G, memory 15 GiB, cores 4 (21:09)
 remote_tr50_C: building cf_fix (21:09)
 remote_tr50_C: building cf_fix2 (21:11)
@@ -11,6 +11,9 @@ remote_tr50_C: terminal arm waits for results/counterfactuals_2c/tf_pdet20_C to 
 remote_tr50_C: waiting for results/counterfactuals_2c/tf_pdet20_C to be accepted (22:52)
 remote_tr50_C: waiting for results/counterfactuals_2c/tf_pdet20_C to be accepted (00:12)
 remote_tr50_C: waiting for results/counterfactuals_2c/tf_pdet20_C to be accepted (01:33)
+remote_tr50_C: long-run rule-C arm ACCEPTED: remote_pdet tf_pdet20_C: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.8275447063000003 DIST CHECK PASS: 9 passes, sweeps [74, 70, 70, 70, 70, 70, 70, 70, 70], largest final 4.41e-05 (rule 5e-05, at least 70 sweeps)  (01:50) (01:53)
+remote_tr50_C: terminal arm from the ACCEPTED long-run rule-C arm: price 0.94610081, pi_V 0.079100383 (01:53)
+remote_tr50_C: arm tf on cf_fix2_treatC: PDET=0.20 NET_TARGET=5.8275447063 PV_START=0.079100383 DRUG_PRICE_START=0.94610081 EXTRA_SET=cost_per_drug_test 0.0004946100 (01:53)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -19,3 +22,6 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   3  1.0000  0.06753    -0.0%    +0.0%    -0.0%  6.73e-04  0.00e+00   787.5281  +0.10%    +0.1%    +0.1%
   4  1.0002  0.06753    +0.0%    +0.1%    +0.0%  5.53e-04  0.00e+00   787.4999  +0.01%    +0.1%    +0.1%
   5  1.0003  0.06753    +0.0%    +0.1%    +0.0%  2.76e-04  0.00e+00   787.4961  +0.00%    +0.1%    +0.0%
+
+== arm tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
