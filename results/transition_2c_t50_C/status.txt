@@ -1,4 +1,4 @@
-# the T = 50 transition on RULE C (code/transition_fix/remote_tr50_C.sh); 14 Oct 13:29 UTC
+# the T = 50 transition on RULE C (code/transition_fix/remote_tr50_C.sh); 14 Oct 13:39 UTC
 remote_tr50_C: free disk 29G, memory 15 GiB, cores 4 (21:09)
 remote_tr50_C: building cf_fix (21:09)
 remote_tr50_C: building cf_fix2 (21:11)
@@ -17,6 +17,7 @@ remote_tr50_C: arm tf on cf_fix2_treatC: PDET=0.20 NET_TARGET=5.8275447063 PV_ST
 remote_tr50_C: terminal arm (started early) NOT within 1e-3 of the accepted arm (3.834e-03, or not accepted): re-solving from the accepted price and pi_V (06:48)
 remote_tr50_C: terminal arm from the ACCEPTED long-run rule-C arm: price 0.94610081, pi_V 0.079100383 (06:48)
 remote_tr50_C: arm tf on cf_fix2_treatC: PDET=0.20 NET_TARGET=5.8275447063 PV_START=0.079100383 DRUG_PRICE_START=0.94610081 EXTRA_SET=cost_per_drug_test 0.0004946100 (06:48)
+remote_tr50_C: GUARD: the terminal re-solve from the accepted values is 2.471e-03 from it, above 1e-3 (13:39)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -38,4 +39,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   8  0.9460  0.07972   -21.2%   -19.3%   -11.2%  5.34e-05  4.23e-03   788.6710  +3.46%    -7.8%   +17.1%
   9  0.9460  0.07947   -21.2%   -19.2%   -11.1%  4.53e-05  1.88e-03   788.6556  +3.42%    -7.8%   +17.1%
  10  0.9460  0.07936   -21.2%   -19.2%   -11.0%  5.04e-05  1.04e-03   788.6497  +3.40%    -7.8%   +17.0%
- MILBY SPLIT voucher mass rec treat smi  0.11244533793753847        4.8952387821908317E-003   8.7493241998376159E-002   1.2663352481547098E-002  housed_nov mass rec treat smi   1.4119626214182728        4.3140276990042331E-002  0.33508635140468118       0.11857214475628905     
+ 11  0.9460  0.07930   -21.2%   -19.2%   -10.9%  8.93e-05  7.77e-04   788.6465  +3.39%    -7.8%   +17.0%
+ MILBY SPLIT voucher mass rec treat smi  0.11239635499186858        4.8932038797675935E-003   8.7459083055663481E-002   1.2657685343892236E-002  housed_nov mass rec treat smi   1.4121469103320312        4.3147242823118034E-002  0.33518265862924235       0.11858284109247612     
