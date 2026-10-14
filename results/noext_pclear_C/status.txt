@@ -1,11 +1,10 @@
-# Treatment First without externalities, price clearing, pi_V held, RULE C (code/noext_clear/run_noext_pclear_C.sh); 14 Oct 04:25 UTC
+# Treatment First without externalities, price clearing, pi_V held, RULE C (code/noext_clear/run_noext_pclear_C.sh); 14 Oct 04:27 UTC
 noext_pclear_C: free disk 29G, memory 15 GiB, cores 4, threads per solve 2, at most 2 solves (14 Oct 00:51)
 noext_pclear_C: building (pe_noext/build_pe_C.sh) (14 Oct 00:51)
 noext_pclear_C: arm A (cfarm_null_pe_noext_C) on cf_fix2_share_pe_treatC, switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0001082 (Housing First: no screen, unchanged by rule C) (14 Oct 01:03)
 noext_pclear_C: arm E (tf_noext_pclear_C) on cf_fix2_treatC: detection 0.20, test 0.0004946100, price clearing from 0.985, pi_V held at 0.067533863 (adjust_taxes 0) (14 Oct 01:04)
 
-== cfarm_null_pe_noext_C (8 passes done)
-  1  1.0051  0.06753   +12.3%   +13.0%    -2.0%  1.57e-01  0.00e+00   789.8758  +nan%   +23.7%   +10.2%
+== cfarm_null_pe_noext_C (9 passes done)
   2  1.0101  0.06753   +10.7%   +11.5%    -1.8%  1.37e-01  0.00e+00   789.8717  +nan%   +21.5%    +9.7%
   3  1.0152  0.06753    +8.3%    +9.1%    -2.0%  1.08e-01  0.00e+00   789.9152  +nan%   +17.7%    +8.7%
   4  1.0203  0.06753    +7.4%    +8.1%    -1.9%  8.65e-02  0.00e+00   789.9279  +nan%   +15.2%    +7.3%
@@ -13,6 +12,7 @@ noext_pclear_C: arm E (tf_noext_pclear_C) on cf_fix2_treatC: detection 0.20, tes
   6  1.0266  0.06753    +0.5%    +1.2%    -2.6%  1.18e-02  0.00e+00   790.0572  +nan%    +5.5%    +5.0%
   7  1.0303  0.06753    +0.4%    +1.1%    -2.6%  9.43e-03  0.00e+00   790.0581  +nan%    +5.3%    +4.9%
   8  1.0306  0.06753    -0.0%    +0.7%    -2.6%  5.51e-04  0.00e+00   790.0665  +nan%    +4.5%    +4.6%
+  9  1.0306  0.06753    -0.1%    +0.7%    -2.6%  1.68e-04  0.00e+00   790.0665  +nan%    +4.5%    +4.6%
  PE USED pass=    8 housing_price=  1.2049247489988112E+01 drug_price=  1.0305636751857470E+00 pi_V=  6.7533863251354007E-02
  MILBY SPLIT voucher mass rec treat smi  0.18701566219291618        5.8673705581483472E-003   5.1789699903325270E-002   2.2836350578798351E-002  housed_nov mass rec treat smi   1.6999263902699486        5.2336740917485330E-002  0.42023355846118882       0.14789238806364879     
 
