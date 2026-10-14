@@ -41,6 +41,7 @@ value_at_26_by_node_{benchmark,tf85}.txt: nodes 1-13 with a clean parent, 14-26 
 import gzip
 
 import welfare_nok
+import rulec_paths as RC   # the rule-C runs (14 October): every path below that moved reads from here
 STEADY_WITH_TERM = []   # arms whose CEV still carries the kappa_x term (no final.txt/log pair)
 import json
 import os
@@ -52,8 +53,10 @@ ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 RES = os.path.join(ROOT, 'results', 'counterfactuals_2c')
 # STAGE D (2 October): the omega_c = 0.085 arms, pi_V clearing the budget in each; the arm names
 # below are the old ones, mapped to the new runs here (export_results.py carries the same map)
-TF_ARM = os.environ.get('TF_ARM', 'tf85_c35/tf')
-ARMDIR = {'null_share': 'nulltf/null', 'null_remote': 'nulltf/null', 'tf85': TF_ARM,
+# RULE C (14 October): the main arm is tf_pdet20_C/tf and Housing First is re-solved beside it on the rule-C build
+# (RC.NULL_DIR); null_remote stays nulltf/null, the base of omega1 and internalise, which have no screen
+TF_ARM = os.environ.get('TF_ARM', RC.TF_ARM)
+ARMDIR = {'null_share': RC.NULL_DIR, 'null_remote': 'nulltf/null', 'tf85': TF_ARM,
           'omega1': 'omega1_clear/omega1', 'internalise': 'optimal_clear/internalise'}
 # THE ELASTIC-SUPPLY ARM WAS NOT RE-RUN (the author, 2 October: "dont run the sensitivity analysis, we
 # already know those answers"), so the x_lr_e5_* names keep the old arms' answer, each measured against
@@ -65,33 +68,34 @@ for _a in ('elast5_85', 'null_remote', 'null_share', 'tf85'):
 # add one column on the right of this which if TF no externalities, right?"): results/pe_noext, Arm B (Treatment First,
 # omega_c and both penalties at zero, the drug price and pi_V held at Arm A's) against Arm A (Housing First with the same
 # switches, the price clearing). Its welfare rows come from the walk (analysis.json), not from the benchmark's curve
-PE = os.path.join(ROOT, 'results', 'pe_noext')
+PE = RC.PE   # rule C (14 October); rule A's was results/pe_noext
 ARMDIR['pe_a'] = os.path.join(PE, 'arm_A')
 ARMDIR['pe_b'] = os.path.join(PE, 'arm_B')
 # TREATMENT FIRST WITHOUT THE EXTERNALITIES, THE BUDGET REBALANCED (the author, 8 October: "get the full model with budget
 # rebalance and p constant to see if the story is about moral hazard or about externalities", and that it goes "in the
 # table with discussion"): results/noext_fixp, Arm D, the drug price held at Arm A's and pi_V clearing the budget against
 # Arm A's net revenue. Its Arm A is a re-solve of pe_noext's (the same to five digits), so the table keeps pe_a as base
-FX = os.path.join(ROOT, 'results', 'noext_fixp')
+FX = RC.FX   # rule C; rule A's was results/noext_fixp
 ARMDIR['fx_d'] = os.path.join(FX, 'arm_D')
 # AND WITH THE DRUG PRICE CLEARING TOO (the author, 8 October: "go ahead with all 3"): results/noext_clear, Arm C,
 # Treatment First without the externalities with the drug price and pi_V both clearing. Its Arm A is again a re-solve of
 # pe_noext's (the same to five digits)
-NC = os.path.join(ROOT, 'results', 'noext_clear')
+NC = RC.NC   # rule C, the nearer start; rule A's was results/noext_clear
 ARMDIR['nc_c'] = os.path.join(NC, 'arm_C')
 # AND WITH ONLY THE DRUG PRICE CLEARING (the author, 14 October: "Sure add the price clears only runs"): results/noext_pclear,
 # Arm E, pi_V held at Housing First's and the budget not cleared, as the with-externality block's dc_pv; rule C's is
 # results/noext_pclear_C (code/noext_clear/run_noext_pclear_C.sh)
-NE = os.path.join(ROOT, 'results', 'noext_pclear')
+NE = RC.NE   # rule C; rule A's was results/noext_pclear
 ARMDIR['ne_e'] = os.path.join(NE, 'arm_E')
 # THE DECOMPOSITION'S THREE RUNS AS COLUMNS (the author, 8 October, on Table 6: "can't you just add the experiments in
 # Table to Table 5?", "the one missing can be added there"): Treatment First with the externalities and the drug price,
 # pi_V or both held at Housing First's, each against null_share like tf85 (export_results.py reads the same runs for the
 # x_dc_* names). Their runs saved no full value functions, so the two shares-better-off rows and the newborns' row
 # print '--' for them, which the table note says
-ARMDIR['dc_b'] = os.path.join(ROOT, 'results', 'decomp_2c_both', 'arm_fixboth')
-ARMDIR['dc_pv'] = os.path.join(ROOT, 'results', 'decomp_2c', 'arm_fixpv')
-ARMDIR['dc_p'] = os.path.join(ROOT, 'results', 'decomp_2c', 'arm_fixp')
+# rule C (14 October): each column re-solved beside Housing First, its arm in tf/ (results/decomp_2c_shares_C)
+ARMDIR['dc_b'] = os.path.join(RC.DC['fixboth'], 'tf')
+ARMDIR['dc_pv'] = os.path.join(RC.DC['fixpv'], 'tf')
+ARMDIR['dc_p'] = os.path.join(RC.DC['fixp'], 'tf')
 
 
 def adir(arm):
@@ -218,7 +222,7 @@ def shares(tol='0.001', path=None):
     results/transition_2c/shares.txt (transition_2c/shares.py, stage E): Treatment First's value against the
     no-policy run's in every state, weighted by the no-policy distribution, better when ahead by more than tol
     utils, so that numerical drift between two solves is not counted as a gain. Returns {group: (better, worse)}."""
-    p = path or os.path.join(ROOT, 'results', 'transition_2c', 'shares.txt')
+    p = path or os.path.join(RC.DC['tf'], 'shares.txt')   # rule C; rule A's was results/transition_2c/shares.txt
     out = {}
     if not os.path.exists(p):
         return out
@@ -260,7 +264,7 @@ def newborn_better(value='Wnd', tol='0.001', path=None):
     under Treatment First against Housing First in the same birth state, weighted by the Housing First newborns.
     Wnd, with no parental death before the child leaves home, is the paper's criterion (Section 6.1 replaces a dead
     parent rather than ending the childhood) and reproduces each arm's newborn welfare. Share in per cent, or None."""
-    p = path or os.path.join(ROOT, 'results', 'transition_2c', 'newborn', 'shares.json')
+    p = path or os.path.join(RC.DC['tf'], 'newborn_shares.json')   # rule C; rule A's was transition_2c/newborn/shares.json
     if not os.path.exists(p):
         return None
     return 100 * json.load(open(p))[value]['by_tolerance'][tol]['all newborns']['better']
@@ -328,12 +332,12 @@ def main():
         D[arm]['child_share'] = 100 * s[0] / s[2] if s and arm not in ('omega1', 'internalise') else None
     # (11 October) the paper's criterion counts childhood at xi - 1: the three columns with by-node values take the
     # childhood rows of Table tab:whogains (welfare_nok.parts, in points of lifetime consumption)
-    for _arm, _nodes in (('dc_b', os.path.join(ROOT, 'results', 'decomp_2c_both', 'arm_fixboth')),
-                         ('dc_p', os.path.join(ROOT, 'results', 'decomp_2c', 'arm_fixp')),
-                         ('dc_pv', os.path.join(ROOT, 'results', 'decomp_2c', 'arm_fixpv')),
-                         ('tf85', os.path.join(ROOT, 'results', 'transition_2c', 'arm_tf'))):
+    for _arm, _nodes in (('dc_b', os.path.join(RC.DC['fixboth'], 'tf')),
+                         ('dc_p', os.path.join(RC.DC['fixp'], 'tf')),
+                         ('dc_pv', os.path.join(RC.DC['fixpv'], 'tf')),
+                         ('tf85', RC.TF_NODES)):
         D[_arm]['child_share'] = welfare_nok.parts(adir(_arm), _nodes, adir('null_share'),
-                                                   os.path.join(ROOT, 'results', 'transition_2c', 'arm_null'))['pts']['child_share']
+                                                   RC.NULL_DIR)['pts']['child_share']
     for arm in D:
         D[arm]['nb_better'] = D[arm]['y26_better'] = D[arm]['all_better'] = D[arm]['sud_better'] = None
         D[arm]['nb_hh_better'] = None
@@ -352,7 +356,7 @@ def main():
     # fill them"): from each column's re-solve (code/extra_2c/remote_decomp_shares.sh, results/decomp_2c_shares/), the
     # same measures as the last column's; \tocheck (yellow) until a column's files are in
     for _a, _k in (('dc_b', 'fixboth'), ('dc_pv', 'fixpv'), ('dc_p', 'fixp')):
-        _dir = os.path.join(ROOT, 'results', 'decomp_2c_shares', f'arm_{_k}')
+        _dir = RC.DC[_k]   # rule C; rule A's was results/decomp_2c_shares/arm_<k>
         _sh = shares(path=os.path.join(_dir, 'shares.txt'))
         _nbk = newborn_better(path=os.path.join(_dir, 'newborn_shares.json'))
         D[_a]['all_better'] = 100 * _sh['all households'][0] if _sh else '\\tocheck{--}'
@@ -859,8 +863,7 @@ def main():
     # kappa_x * H term, so that the prose and the table agree: comp is E / beta^J_K, the composition term over the 26
     # entry nodes at Treatment First's values, and tot - comp is P, the same-state gain of every household at 26.
     # Before, comp was the penalty class's share change at Housing First's gap alone (11 against 13 percent).
-    _parts = welfare_nok.parts(adir(t), os.path.join(ROOT, 'results', 'transition_2c', 'arm_tf'),
-                               adir('null_share'), os.path.join(ROOT, 'results', 'transition_2c', 'arm_null'))
+    _parts = welfare_nok.parts(adir(t), RC.TF_NODES, adir('null_share'), RC.NULL_DIR)
     comp = _parts['E'] / _parts['b25']
     tot = _parts['A'] / _parts['b25']
     _pts = _parts['pts']                 # the same split in points of lifetime consumption (Table tab:whogains)
@@ -936,10 +939,12 @@ def main():
     # HOW MUCH MORE AT THE BOTTOM (the author, 2 October: "if these are the newest numbers, yes"): the value of
     # entering adult life at 26 by productivity node, stage E's re-solved arms (results/transition_2c/arm_*/
     # value_at_26_by_node.txt, nodes 1-13 a clean parent): its gain at the lowest node over its gain at the highest
-    _v26 = os.path.join(ROOT, 'results', 'transition_2c', 'arm_{}', 'value_at_26_by_node.txt')
+    # rule C (14 October): the main arm and Housing First re-solved side by side (results/decomp_2c_shares_C/arm_tf)
+    _v26 = {'null': os.path.join(RC.NULL_DIR, 'value_at_26_by_node.txt'),
+            'tf': os.path.join(RC.TF_NODES, 'value_at_26_by_node.txt')}
     _r26 = None
-    if all(os.path.exists(_v26.format(a)) for a in ('null', 'tf')):
-        _n0, _n1 = ([float(x) for x in open(_v26.format(a)).read().split()] for a in ('null', 'tf'))
+    if all(os.path.exists(_v26[a]) for a in ('null', 'tf')):
+        _n0, _n1 = ([float(x) for x in open(_v26[a]).read().split()] for a in ('null', 'tf'))
         _g26 = [b - a for a, b in zip(_n0, _n1)][:13]
         _r26 = _g26[0] / _g26[-1] if min(_g26) > 0 else None
     _need = (', as the value of entering adult life rises about ${:.0f}$ times as much at the lowest productivity '
