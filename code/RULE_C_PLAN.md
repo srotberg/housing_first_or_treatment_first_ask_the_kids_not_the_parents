@@ -490,3 +490,20 @@ walk; analyse A vs E -> results/noext_pclear_C. export_longrun.py: ne_e (results
 noext_pclear_C) in the no-externality block, fourth column; eleven columns at tabcolsep 3pt, 458pt of 470pt.
 x_nc_newborn_dir added (gain/lose) and the assert that newborns gain when both clear removed (rule C: they lose).
 S-fixpv done 00:46; its worker asked (trigger trig_01TH2UpECvdNHScPD5ZmCghH) to run newborn_C.sh fixpv + collect_shares_C.sh.
+
+01:45 (14 Oct) A CODE ASYMMETRY IN EVERY RULE-C WELFARE COMPARISON, AND A DIAGNOSTIC.
+- Symptom: with price and pi_V held (screen only), 24% of households with a SUD are better off under rule C (decomp
+  fixboth, tol 1e-3; rule A: 0%); without externalities, 25.5% (pe_noext_C; rule A: 0%). A screen that only removes
+  options cannot do that. The share matches the treated share of SUD households (29%).
+- Not the abstention option: treated households without a voucher abstain at 0.004% (ABSTAIN print), so v=0 is not
+  valued for itself. Not the voucher probabilities: under Housing First category 3 draws pi_V like the others.
+- Cause found: patch_treatC2.py's third fix (the household's own treatment before internal_computations) is gated on the
+  screen (voucher_conditional_on_clean==1), and internal_computations OVERWRITES THE NODE'S VALUE
+  (value_function_1=val_fun_internal). So Housing First's treated households are valued as untreated, Treatment First's
+  correctly: the two arms run different arithmetic. Rule A had both on the old arithmetic.
+- Diagnostic (launched 01:45): treat/patch_treatCu.py (the gate removed on that one fix; source differs at one line;
+  syntax-checked), build_share_treatCu.sh, cf_arm_Cu.sh, extra_2c/remote_decomp_shares_Cu.sh fixboth ->
+  results/decomp_2c_shares_Cu/arm_fixboth: Housing First on the ungated build beside the screen-only arm, shares, and
+  the comparison with the gated run. If the SUD share falls to ~0: re-solve every Housing First comparison run on the
+  ungated build (nulls, no-externality Arm A + walks); if Housing First's net revenue moves, the pi_V-clearing arms'
+  target moves too. The PDF waits for this.
