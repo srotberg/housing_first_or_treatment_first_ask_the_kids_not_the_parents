@@ -448,3 +448,17 @@ message that only asks it to continue its original job).
 - pe_noext_C (Arm B) and noext_fixp_C (Arm D) done 23:59. Their notes say "detection 0.85" (stale text in the note);
   the handovers ran 0.20 (HANDOVER probability_of_detection 0.95 -> 0.20). B: use -27.6%, SUD -25.9%, h_1 -7.3%.
   D: pi_V 0.0693, use -30.7%, SUD -29.0%, h_1 -9.2%.
+
+00:50 (14 Oct) TABLE tab:longrun GETS THE NO-EXTERNALITY 'BOTH CLEAR' COLUMN BACK (the author: "Now we can show the price
+one as well in the table... Where both clear", once rule C's newborn loses there too, -0.54% against +0.39% under rule A).
+- export_longrun.py: nc_c in TABLE_MAIN after fx_d; headers span 4+4 (cmidrule 2-5/6-9, 3-5/7-9). 422pt wide at
+  scriptsize/4pt against the 470pt text width (402pt before). Table note renumbered in \new{} with a \why (the striker
+  skips tables, so the replaced words are listed in the note).
+- STILL TO DO IN THE ROUND, with the switch NC -> results/noext_clear_C2: the 6.2 paragraph "If the drug price is also
+  allowed to clear the drug market, newborns gain x_nc_newborn_cev ... That gain is the general-equilibrium effect"
+  must take its direction from the number (newborns LOSE under rule C) and point at the fourth column; "And yet, no
+  household is better off under Treatment First" is false under rule C (1% better off, 26% of SUD households); the
+  decomposition sentences x_dcp_why (use falls LESS with pi_V clearing under rule C) and x_dc_b_source ("most of the
+  gain": the screen alone, 4.07, exceeds the full 3.30) need branches for the rule-C direction.
+- code/stylized/fill.py stops at TARGET["hsmall"] (KeyError) when run alone here: check how the round build fills
+  before the round, not during it.
