@@ -19,6 +19,10 @@ remote_tr50_C: terminal arm re-solved from the accepted values: worst relative d
 remote_tr50_C: arms: null against nulltf/null worst relative difference 4.2e-03; tf against tf_ruleC 5.235e-04 (20:58)
 remote_tr50_C: shares written:   all households                   mass 50.82574  strict better 0.8139 | tol 0.001: better 0.7417 worse 0.0298 | tol 0.01: better 0.7160 worse 0.0293 (20:59)
 remote_tr50_C: age split: 2 of 2 arms exact (21:00)
+remote_tr50_C: T = 50 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t50_C -- start with: cd /home/user/children_first_housing_later/code/tr2c_t50_C && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds rescaled from rule A: drug_price: factor 0.3755; t=1 0.964254, t=2 0.964450, t=5 0.964853, t=10 0.960482, t=25 0.946096, t=49 0.946211 pi_v: factor 0.3582; t=1 0.078183, t=2 0.072730, t=5 0.071730, t=10 0.071675, t=25 0.075820, t=49 0.077980  (21:00)
+remote_tr50_C: 4 GiB swap on (21:00)
+remote_tr50_C: T = 50 transition started, pid 17490 (21:00)
+remote_tr50_C: handover applied: 100 parameters (21:00)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -41,3 +45,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   9  0.9461  0.07814   -21.1%   -19.2%   -10.2%  8.58e-05  2.36e-03   788.5867  +3.21%    -7.8%   +16.9%
  10  0.9462  0.07800   -21.1%   -19.1%   -11.1%  9.04e-04  3.32e-04   788.5870  +3.21%    -7.6%   +17.0%
  MILBY SPLIT voucher mass rec treat smi  0.11115541367216902        4.8435343377174643E-003   8.6672673194529495E-002   1.2531320980676970E-002  housed_nov mass rec treat smi   1.4147269845136063        4.3241517873655967E-002  0.33642716767079445       0.11886055870868219     
+
+== tr2c_t50_C (T = 50, rule C)
