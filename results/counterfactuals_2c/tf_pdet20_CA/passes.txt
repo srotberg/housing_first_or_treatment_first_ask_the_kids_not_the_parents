@@ -1,4 +1,12 @@
-# counterfactual tf_pdet20_CA (detection 0.20) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 14 Oct 00:44 UTC
+# counterfactual tf_pdet20_CA (detection 0.20) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 14 Oct 01:05 UTC
 remote_pdet tf_pdet20_CA: free disk 29G, memory 15 GiB, cores 4 (00:40)
 remote_pdet tf_pdet20_CA: building cf_fix (00:40)
 remote_pdet tf_pdet20_CA: building cf_fix2 (00:42)
+remote_pdet tf_pdet20_CA: building cf_fix2_treatCA (rule A's screen on rule C's build) (00:44)
+remote_pdet tf_pdet20_CA: warm start at the rule-C arm tf_pdet20_C's latest pass: price 0.9461, pi_V 0.07891 (00:45)
+remote_pdet tf_pdet20_CA: warm start at the given values: price 0.9461, pi_V 0.07891 (00:45)
+remote_pdet tf_pdet20_CA: TF budget target: the paper's no-policy net revenue 5.8275447063; test cost 0.0004946100 ($35); detection 0.20 (00:45)
+remote_pdet tf_pdet20_CA: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.8275447063 PV_START=0.07891 DRUG_PRICE_START=0.9461 EXTRA_SET=cost_per_drug_test 0.0004946100 (00:45)
+
+== tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
