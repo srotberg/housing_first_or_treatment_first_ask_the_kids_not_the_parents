@@ -79,6 +79,11 @@ ARMDIR['fx_d'] = os.path.join(FX, 'arm_D')
 # pe_noext's (the same to five digits)
 NC = os.path.join(ROOT, 'results', 'noext_clear')
 ARMDIR['nc_c'] = os.path.join(NC, 'arm_C')
+# AND WITH ONLY THE DRUG PRICE CLEARING (the author, 14 October: "Sure add the price clears only runs"): results/noext_pclear,
+# Arm E, pi_V held at Housing First's and the budget not cleared, as the with-externality block's dc_pv; rule C's is
+# results/noext_pclear_C (code/noext_clear/run_noext_pclear_C.sh)
+NE = os.path.join(ROOT, 'results', 'noext_pclear')
+ARMDIR['ne_e'] = os.path.join(NE, 'arm_E')
 # THE DECOMPOSITION'S THREE RUNS AS COLUMNS (the author, 8 October, on Table 6: "can't you just add the experiments in
 # Table to Table 5?", "the one missing can be added there"): Treatment First with the externalities and the drug price,
 # pi_V or both held at Housing First's, each against null_share like tf85 (export_results.py reads the same runs for the
@@ -118,7 +123,7 @@ TABLE = (('pe_a', None), ('pe_b', 'pe_a'), ('null_share', None), ('tf85', 'null_
 # AND THE PRICE-CLEARS RUN BACK AS A COLUMN (the author, 14 October: "You can add all the combinations to table if they
 # are actually useful. But make sure the table fits the page and doesn't become horizontal"): dc_pv isolates the
 # drug price's own effect, the channel that takes back part of the screen's cut in use; 10 columns stay portrait
-TABLE_MAIN = (('pe_a', None), ('pe_b', 'pe_a'), ('fx_d', 'pe_a'), ('nc_c', 'pe_a'), ('null_share', None),
+TABLE_MAIN = (('pe_a', None), ('pe_b', 'pe_a'), ('fx_d', 'pe_a'), ('ne_e', 'pe_a'), ('nc_c', 'pe_a'), ('null_share', None),
               ('dc_b', 'null_share'), ('dc_p', 'null_share'), ('dc_pv', 'null_share'), ('tf85', 'null_share'))
 # full internalisation leaves the appendix too (the author, 8 October, on the aggregate homelessness externality: "it
 # doesnt matter ... we can put it in a footnote"); the footnote in Section 5 quotes its one number, x_lr_in_dh_pc
@@ -278,7 +283,7 @@ def main():
     for arm, base in ARMS:
         if base:
             D[arm]['cev_net'] = 100 * (D[arm]['cev'] - D[base]['cev'])
-    for arm in ('pe_a', 'pe_b', 'fx_d', 'nc_c'):
+    for arm in ('pe_a', 'pe_b', 'fx_d', 'ne_e', 'nc_c'):
         f = final(arm)
         D[arm] = dict(steady(arm), price=f['drug price'], piv=f['pi_V (voucher probability)'],
                       b=f['drug use b'], sud=f['SUD lambda_d'], h=f['homelessness h_1'],
@@ -373,6 +378,12 @@ def main():
     D['nc_c'].update(cev_net=100 * _nc['cev']['newborn adult (age 26)']['cev_group'],
                      y26_better=_ns('age 26 (model age 1)'), all_better=_ns('all households'),
                      sud_better=_ns('with a SUD'))
+    # and the column with only the drug price clearing, the same way
+    _ne = json.load(open(os.path.join(NE, 'analysis.json')))
+    _es = lambda g: 100 * _ne['shares'][g]['abs0.001']['better']
+    D['ne_e'].update(cev_net=100 * _ne['cev']['newborn adult (age 26)']['cev_group'],
+                     y26_better=_es('age 26 (model age 1)'), all_better=_es('all households'),
+                     sud_better=_es('with a SUD'))
     # no CEV for the two optimal arms: each changes the welfare function itself
     D['omega1']['cev_net'] = None
     D['internalise']['cev_net'] = None
@@ -428,23 +439,23 @@ def main():
     # with-externality block steps from both held to pi_V clearing to both clearing; 6.2 quotes dc_pv in a footnote
     # the two no-externality columns under one spanning head, so that no column is wider than its numbers need
     tab = table(TABLE_MAIN, [
-        ' & \\multicolumn{4}{c}{' + hd('h0/0', 'No externalities') + '} & \\multicolumn{5}{c}{'
-        + hd('h0/1', 'With externalities') + '} \\\\', '\\cmidrule(lr){2-5}\\cmidrule(lr){6-10}',
+        ' & \\multicolumn{5}{c}{' + hd('h0/0', 'No externalities') + '} & \\multicolumn{5}{c}{'
+        + hd('h0/1', 'With externalities') + '} \\\\', '\\cmidrule(lr){2-6}\\cmidrule(lr){7-11}',
         # PORTRAIT (the author, 8 October: "any way to fit this table horizontally?"): one 'Treatment First' over each
         # block's Treatment First columns and their labels on two short lines, so that no column is wider than its
         # numbers need; with the paper's tabcolsep of 4pt it is 464pt against the 470pt text width
-        ' & & \\multicolumn{3}{c}{' + hk(('h1/1', 'Treatment'), 'Treatment First') + '} & & \\multicolumn{4}{c}{'
-        + hd('h4/1', 'Treatment First') + '} \\\\', '\\cmidrule(lr){3-5}\\cmidrule(lr){7-10}',
+        ' & & \\multicolumn{4}{c}{' + hk(('h1/1', 'Treatment'), 'Treatment First') + '} & & \\multicolumn{4}{c}{'
+        + hd('h4/1', 'Treatment First') + '} \\\\', '\\cmidrule(lr){3-6}\\cmidrule(lr){8-11}',
         # which Treatment First: the drug price and pi_V both held, one of them clearing, or both clearing. 'both held'
         # in place of the no-externality block's '$\\pi_V$ held' once 'price clears' sits in the same row
         # a label whose words the author has seen stays black: the key it had before the stacking, and its whole text
         ' & ' + ' & '.join(hk(k, w) for k, w in (
             (('h1/0', 'Housing'), 'Housing'), ('h5/1', 'Both'), (('h3/1', '$\\pi_V$ clears'), '$\\pi_V$'),
-            ('h5/nc', 'Both'), (('h1/4', 'Housing'), 'Housing'), ('h5/5', 'Both'),
+            ('h5/ne', 'Price'), ('h5/nc', 'Both'), (('h1/4', 'Housing'), 'Housing'), ('h5/5', 'Both'),
             ('h5/7', '$\\pi_V$'), ('h5/pv', 'Price'), ('h5/8', 'Both'))) + ' \\\\',
         ' & ' + ' & '.join(hk(k, w) for k, w in (
             (('h2/0', 'First'), 'First'), ('h6/1', 'held'), (('h3/1', '$\\pi_V$ clears'), 'clears'),
-            ('h6/nc', 'clear'), (('h2/4', 'First'), 'First'), ('h6/5', 'held'),
+            ('h6/ne', 'clears'), ('h6/nc', 'clear'), (('h2/4', 'First'), 'First'), ('h6/5', 'held'),
             ('h6/7', 'clears'), ('h6/pv', 'clears'), ('h6/8', 'clear'))) + ' \\\\'])
     tab_app = table(TABLE_APP, [
         ' & ' + ' & '.join(hd(f'a1/{k}', w) for k, w in enumerate(('Housing', 'Full'))) + ' \\\\',
@@ -481,10 +492,12 @@ def main():
     out['x_fx_all_better_pc'] = f"{F_['all_better']:.0f}"
     out['x_fx_sud_worse_pc'] = f"{100 * _fx['shares']['with a SUD']['abs0.001']['worse']:.0f}"
     out['x_fx_better_cev'] = f"{100 * _fx['cev']['better off (dV>0.001)']['cev_group']:.2f}"
-    # the column with the drug price clearing too: the cheaper drug turns the no-externality loss into a gain
+    # the column with the drug price clearing too. Under rule A the cheaper drug turned the no-externality loss into a
+    # gain (+0.39); under rule C the newborn still loses (-0.54), so the sign is a word and the number its size
     N_ = D['nc_c']
-    assert N_['cev_net'] > 0 and N_['price'] < A_['price'], (N_['cev_net'], N_['price'])
-    out['x_nc_newborn_cev'] = f"{N_['cev_net']:.2f}"
+    assert N_['price'] < A_['price'], (N_['price'], A_['price'])
+    out['x_nc_newborn_cev'] = f"{abs(N_['cev_net']):.2f}"
+    out['x_nc_newborn_dir'] = 'gain' if N_['cev_net'] > 0 else 'lose'
     out['x_nc_price_pc'] = f"{100 * (1 - N_['price'] / A_['price']):.0f}"
     out['x_nc_piv1_pc'] = f"{100 * N_['piv']:.2f}"
     out['x_nc_b_pc'] = f"{100 * (1 - N_['b'] / A_['b']):.0f}"

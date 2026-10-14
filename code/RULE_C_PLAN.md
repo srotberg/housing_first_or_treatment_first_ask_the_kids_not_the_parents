@@ -482,3 +482,11 @@ decomp_2c/arm_fixpv's by-node values (rule C: decomp_2c_shares_C/arm_fixpv at th
 470pt, portrait. Table note, the dc_pv footnote and the prose's column numbers (dc_b sixth, dc_p seventh) updated in red.
 The one combination with no run is no externalities with only the price clearing; not run (it adds nothing to the
 moral-hazard verdict, which the held-price columns carry, and the budget is short).
+
+01:20 (14 Oct) THE NO-EXTERNALITY PRICE-CLEARS RUN (the author: "Sure add the price clears only runs"). New launcher
+code/noext_clear/run_noext_pclear_C.sh (run_noext_pclear.sh on the rule-C build via noext_C_lib.sh): Arm A re-solved,
+Arm E = Treatment First at 0.20, price clearing from 0.985, pi_V held at 0.067533863, adjust_taxes 0; pi_V check; the
+walk; analyse A vs E -> results/noext_pclear_C. export_longrun.py: ne_e (results/noext_pclear until the switch, then
+noext_pclear_C) in the no-externality block, fourth column; eleven columns at tabcolsep 3pt, 458pt of 470pt.
+x_nc_newborn_dir added (gain/lose) and the assert that newborns gain when both clear removed (rule C: they lose).
+S-fixpv done 00:46; its worker asked (trigger trig_01TH2UpECvdNHScPD5ZmCghH) to run newborn_C.sh fixpv + collect_shares_C.sh.
