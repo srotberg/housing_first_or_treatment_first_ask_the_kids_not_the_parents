@@ -633,6 +633,10 @@ def main():
     out['x_dcb_hchild0'] = f"{100 * D['null_share']['child_hl']:.2f}"
     out['x_dcb_hchild1'] = f"{100 * D['dc_b']['child_hl']:.2f}"
     out['x_dcb_hchild_dir'] = 'rises' if D['dc_b']['child_hl'] > D['null_share']['child_hl'] else 'falls'
+    # (14 October, rule C) the sentence that sets the held-pi_V column against the main one ('That holds with the
+    # screen's savings recycled; with pi_V held, it ...'): when both fall, 'falls as well'
+    out['x_dcb_hchild_also'] = ('rises' if D['dc_b']['child_hl'] > D['null_share']['child_hl'] else
+                                'falls as well' if D[t]['child_hl'] < D['null_share']['child_hl'] else 'falls')
     out['x_dcb_child_pc'] = f"{D['dc_b']['child_share']:.0f}"
     _pp = pc('dc_pv', 'price', 'null_share')
     out['x_dcpv_price_verb'] = 'lowers' if _pp < 0 else 'raises'
@@ -754,10 +758,13 @@ def main():
     # (Section 4), and under Treatment First a household that has recovered and does not use passes the screen
     _tk0, _tk1 = D['null_share']['takeup'], D[t]['takeup']
     out['x_lr_tf_treat'] = (
+        # (14 October, rule C) treatment is now also how a household with a SUD keeps its voucher: in treatment and not
+        # using, it passes the screen, which is the first reason; recovery's is the second
         'It also raises the share of households with a SUD who are in treatment, from '
-        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent, because treatment buys a higher chance of recovering, and '
-        'Treatment First makes recovering worth more: a household that has recovered and does not use passes the '
-        'screen and can hold a voucher if it is eligible and offered one.' if _tk1 > _tk0 else '')
+        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent, because a household with a SUD that is in treatment and does '
+        'not use passes the screen, and because treatment buys a higher chance of recovering, which Treatment First '
+        'makes worth more: a household that has recovered and does not use passes the screen and can hold a voucher if '
+        'it is eligible and offered one.' if _tk1 > _tk0 else '')
     # (round 0e3b2441, the author: 'only' -> 'only buys', 'voucher.' -> 'if eligible and offered a voucher', and on
     # 'household': "eligible household (check that you use that kind of language in the results section....the
     # eligibility is still key)": every 'more likely to get a voucher' now says the household is eligible)
@@ -1051,6 +1058,9 @@ def main():
     out['x_lr_approve'] = (
         ('Every household that enters adult life at 26 is better off under Treatment First than it would be in '
          'the same state under Housing First' if _y > 99.95 else
+         # (14 October) a share that rounds to 100 but is not all of them
+         'Nearly every household that enters adult life at 26 is better off under Treatment First than it would be in '
+         'the same state under Housing First' if _y >= 99.5 else
          f'Of the households that enter adult life at 26, ${_y:.0f}$ percent are better off under Treatment First '
          'than they would be in the same state under Housing First')
         + ' (Table~\\ref{tab:longrun}).')

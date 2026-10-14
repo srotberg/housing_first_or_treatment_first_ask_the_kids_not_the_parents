@@ -368,6 +368,8 @@ def _dc_last_pass(arm, sub=None):
             cur = l.strip('= \n').startswith(f'cfarm_tf_2c_{arm}')
         elif cur and re.match(r'\s+\d+\s', l):
             rows.append(l.split())
+    if not rows:   # (14 October) a column re-run from scratch has published no pass yet: its names print yellow
+        return {'b': 0.0, 'sud': 0.0, 'h': 0.0, 'cev': 0.0, 'piv': 0.0, 'pass': 0, 'price': 1.0}
     r = rows[-1]   # pass price pi_V b SUD h_1 drug-gap budget-gap welfare CEV V V/user
     pcv = lambda s: float(s.rstrip('%'))
     return {'b': pcv(r[3]), 'sud': pcv(r[4]), 'h': pcv(r[5]), 'cev': pcv(r[9]), 'piv': float(r[2]), 'pass': int(r[0]),
