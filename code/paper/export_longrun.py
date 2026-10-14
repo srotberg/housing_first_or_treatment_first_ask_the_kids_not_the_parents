@@ -1044,8 +1044,11 @@ def main():
     out['x_lr_all_worse_pc'] = f"{100 * _SH['all households'][1]:.0f}" if _SH else ''
     out['x_lr_approve_sud'] = (
         f"Across all households, ${100 * _SH['all households'][0]:.0f}$ percent are better off and "
-        f"${100 * _SH['all households'][1]:.0f}$ percent worse off; the rest, all older than 50, are essentially "
-        f"unaffected. Finally, even ${_sb:.0f}$ percent of those that have a SUD are better off, due to the lower drug price."
+        # (14 October, rule C) who the rest are and why households with a SUD gain were rule A's findings (the value
+        # shares by age, and the drug price as the only gain open to a household that cannot pass the screen); under
+        # rule C one in treatment that stops passes it and draws the higher pi_V, so both clauses are yellow until checked
+        f"${100 * _SH['all households'][1]:.0f}$ percent worse off; \\tocheck{{the rest, all older than 50, are essentially "
+        f"unaffected}}. Finally, even ${_sb:.0f}$ percent of those that have a SUD are better off\\tocheck{{, due to the lower drug price}}."
         if _SH and _sb is not None and _sb < 50 else '')
     out['x_intro_gain'] = (
         f"A newborn gains ${D[t]['cev_net']:.2f}$ percent of lifetime consumption. About ${_kid:.0f}$ percent of that "
