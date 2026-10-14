@@ -18,17 +18,24 @@ import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-A = json.load(open(os.path.join(ROOT, 'results', 'pe_noext', 'analysis.json')))
+# RULE C (14 October): results/pe_noext_C; rule A's was results/pe_noext
+A = json.load(open(os.path.join(ROOT, 'results', 'pe_noext_C', 'analysis.json')))
 OUT_JSON = os.path.join(HERE, 'results_numbers.json')
 NOISE = 1e-9                    # mass share
 
 
 def main():
-    better = A['shares']['all households']['abs1e-06']['better']
-    assert better < NOISE, f'{better} of households better off under Treatment First: the paragraph would be wrong'
+    # (14 October) rule A had nobody better off and the paragraph said so outright; under rule C about one per cent
+    # are, all with a SUD (pending the internal_computations diagnostic), so the clause says what the numbers say,
+    # at the tolerance of the table's better-off rows (1e-3 utils)
+    better = A['shares']['all households']['abs0.001']['better']
+    sud = A['shares']['with a SUD']['abs0.001']['better']
     nb = A['cev']['newborn adult (age 26)']['cev_group']
     assert nb < 0, nb
-    out = {'x_pe_newborn_cev': f'{-100 * nb:.2f}'}
+    out = {'x_pe_newborn_cev': f'{-100 * nb:.2f}',
+           'x_pe_better_clause': ('no household is better off under Treatment First' if better < 0.005 else
+                                  f'only ${100 * better:.0f}$ percent of households are better off under Treatment '
+                                  f'First, ${100 * sud:.0f}$ percent of those with a SUD')}
     d = json.load(open(OUT_JSON))
     d.update(out)
     json.dump(d, open(OUT_JSON, 'w'), indent=1, sort_keys=True)

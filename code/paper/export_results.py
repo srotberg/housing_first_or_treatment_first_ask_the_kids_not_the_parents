@@ -68,8 +68,9 @@ WRITE_TABLES = os.environ.get('EXPORT_TABLES', '1') != '0'
 # arms now, kept under their old names so every reader of the transition block is unchanged.
 sys.path.insert(0, HERE)
 from transition_source import REF as TR_REF, REF_NULL as TR_NULL, REF_TF as TR_TF, CURVE as TR_CURVE, HORIZON as TR_HORIZON
-TF_ARM = os.environ.get('TF_ARM', 'tf85_c35/tf')
-ARMDIR = {'null_share': (RES, 'nulltf/null'), 'null_remote': (RES, 'nulltf/null'),
+import rulec_paths as RC   # RULE C (14 October): the main arm tf_pdet20_C/tf, Housing First re-solved beside it
+TF_ARM = os.environ.get('TF_ARM', RC.TF_ARM)
+ARMDIR = {'null_share': (RES, RC.NULL_DIR), 'null_remote': (RES, 'nulltf/null'),
           'tf85': (RES, TF_ARM), 'omega1': (RES, 'omega1_clear/omega1'),
           'internalise': (RES, 'optimal_clear/internalise'),
           'old_null_share': (TR_REF, TR_NULL), 'old_tf85': (TR_REF, TR_TF),
@@ -167,6 +168,21 @@ out['x_cev0'] = f'{CEV0:.2g}'
 # before the no-policy run's is taken off, which put the prose 0.01 above the table (4.34 against 4.33)
 out['x_tf_cev'] = f"{cev_log('tf85') - CEV0:.2f}"
 out['x_tf_cev_dir'] = 'better' if cev_log('tf85') > CEV0 else 'worse'
+# THE HALF RATE (14 October; the author: "run one sensitivity with half that pdet, and say the results hold even then"):
+# tf_pdet10_C/tf against the same Housing First, for footnote fn:halfrate. Yellow until the run is accepted.
+ARMDIR['tf_half'] = (RES, os.path.relpath(RC.TF_HALF_DIR, RES))
+if os.path.exists(os.path.join(adir('tf_half'), 'final.txt')) and os.path.exists(os.path.join(adir('tf_half'), 'cf.log.gz')):
+    _h = final('tf_half')
+    _bh, _hh = _h['drug use b']['pc'], _h['homelessness h_1']['pc']
+    _vb, _vh = ('cuts' if _bh < 0 else 'raises'), ('cuts' if _hh < 0 else 'raises')
+    out['x_h10_clause'] = (f'{_vb} drug use by ${abs(_bh):.0f}$ and homelessness by ${abs(_hh):.0f}$ percent' if _vb == _vh
+                           else f'{_vb} drug use by ${abs(_bh):.0f}$ percent and {_vh} homelessness by ${abs(_hh):.0f}$ percent')
+    _h10 = cev_log('tf_half') - CEV0
+    assert _h10 > 0, f'the half rate leaves the newborn worse off ({_h10:.2f}): footnote fn:halfrate says better off'
+    out['x_h10_cev'] = f'{_h10:.2f}'
+else:
+    out['x_h10_clause'] = '\\tocheck{--}'
+    out['x_h10_cev'] = '\\mbox{\\tocheck{--}}'   # it sits in maths
 # the same gain at Nishiyama's omega_c, against its own no-policy run; the weight is read off the benchmark
 # the two arms were solved against, named in passes.txt's header
 _nh = open(os.path.join(adir('nish_tf'), '..', 'passes.txt')).readline()
@@ -210,8 +226,7 @@ out['x_nish_piv_pc'] = pc(_nt['pi_V (voucher probability)']['pc'])
 assert float(out['x_nish_cev']) > 0, 'the omega_c sensitivity no longer favours Treatment First'
 # the long-run gain splits about evenly between childhood and adulthood
 # (10 October) without the kappa_x * H term, from the same objects as Table tab:whogains (welfare_nok.parts)
-_parts_tf = welfare_nok.parts(adir('tf85'), os.path.join(ROOT, 'results', 'transition_2c', 'arm_tf'),
-                              adir('null_share'), os.path.join(ROOT, 'results', 'transition_2c', 'arm_null'))
+_parts_tf = welfare_nok.parts(adir('tf85'), RC.TF_NODES, adir('null_share'), RC.NULL_DIR)
 out['x_tf_child_share_pc'] = pc(_parts_tf['pts']['child_share'])     # the childhood rows of Table tab:whogains
 # THE EXPERIMENT AS RUN (Section 7): pi_V clears the budget, and the screen's
 # parameters are the ARM's handover values, not the Fortran declarations (0.95 and
@@ -342,12 +357,16 @@ else:
 # no-policy value (code/extra_2c/remote_decomp_2c.sh). From each arm's cf.log.gz once it has finished (the exact
 # CEV off the curve, as x_tf_cev), until then from the last pass in results/decomp_2c/status.txt, which rounds
 # before the no-policy run's CEV is taken off (0.01 at most). DC_FINAL says which.
-def _dc_last_pass(arm, sub='decomp_2c'):
-    rows, cur = [], None
-    for l in open(os.path.join(ROOT, 'results', sub, 'status.txt')):
-        if l.startswith('== arm '):
-            cur = l.split()[2]
-        elif cur == arm and re.match(r'\s+\d+\s', l):
+# RULE C (14 October): each column is re-solved beside Housing First (results/decomp_2c_shares_C/arm_<k>, rulec_paths).
+# Its top-level final.txt gives the levels and the change against THAT Housing First, with use counted as rule C counts
+# it; its tf/cf.log.gz gives the CEV. Until a column lands, its last published pass (status.txt, block
+# '== cfarm_tf_2c_<k>'), whose changes are against the benchmark, counted the rule-A way.
+def _dc_last_pass(arm, sub=None):
+    rows, cur = [], False
+    for l in open(os.path.join(RC.DC[arm], 'status.txt')):
+        if l.startswith('=='):
+            cur = l.strip('= \n').startswith(f'cfarm_tf_2c_{arm}')
+        elif cur and re.match(r'\s+\d+\s', l):
             rows.append(l.split())
     r = rows[-1]   # pass price pi_V b SUD h_1 drug-gap budget-gap welfare CEV V V/user
     pcv = lambda s: float(s.rstrip('%'))
@@ -355,9 +374,18 @@ def _dc_last_pass(arm, sub='decomp_2c'):
             'price': float(r[1])}
 
 
-def _dc(arm, sub='decomp_2c'):
-    log = os.path.join(ROOT, 'results', sub, f'arm_{arm}', 'cf.log.gz')
-    d = _dc_last_pass(arm, sub)
+def _dc(arm, sub=None):
+    d = _dc_last_pass(arm)
+    f = os.path.join(RC.DC[arm], 'final.txt')
+    if os.path.exists(f):
+        lv, ch = {}, {}
+        for l in open(f):
+            m = re.match(r'\s+(.+?)\s{2,}([-+0-9.Ee]+)\s+no policy\s+([-+0-9.Ee]+)\s+change\s+([-+0-9.]+)%', l)
+            if m:
+                lv[m.group(1).strip()], ch[m.group(1).strip()] = float(m.group(2)), float(m.group(4))
+        d.update(b=ch['drug use b'], sud=ch['SUD lambda_d'], h=ch['homelessness h_1'], price=lv['drug price'],
+                 piv=lv['pi_V (voucher probability)'])
+    log = os.path.join(RC.DC[arm], 'tf', 'cf.log.gz')
     if os.path.exists(log):
         d['cev'] = welfare_nok.cev_free(os.path.dirname(log)) - CEV0      # without the kappa_x * H term
         d['final'] = True
@@ -390,7 +418,7 @@ out['x_dc_p_cmp'] = 'larger' if DC_P['cev'] > _tfc else 'smaller'
 # both pi_V and the drug price held (code/extra_2c/remote_decomp_2c_both.sh, results/decomp_2c_both). Read in the order
 # screen -> its price response (fixpv) -> recycling (tf): what the cheaper drug takes back of the screen's gain, and
 # how much of that loss recycling the revenue restores, in words that turn with the numbers
-DC_B = _dc('fixboth', 'decomp_2c_both')
+DC_B = _dc('fixboth')
 # THE PRICE RESPONSE UNDER THE SCREEN (10 October, the review: "a 13% price fall doubles use, an elasticity near -5"):
 # between the both-held run and the price-only run only the drug price differs, so the arc elasticity of drug use
 # to its price under Treatment First is their log ratio over the log price ratio; levels from the benchmark's

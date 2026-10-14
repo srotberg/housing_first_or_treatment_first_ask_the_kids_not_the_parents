@@ -31,10 +31,14 @@ TAB = os.path.join(ROOT, 'writing', 'tables', 'tab_whogains.tex')
 R = lambda *p: os.path.join(ROOT, 'results', *p)
 # the paper's arms (welfare) and the same economies' by-node values at 26 (the transition's re-solved arms and the
 # decomposition arms, which carry value_at_26_by_node.txt; the re-solves agree with the accepted runs to 1e-5)
-ARMS = {'b': (R('decomp_2c_both', 'arm_fixboth'), R('decomp_2c_both', 'arm_fixboth')),
-        'p': (R('decomp_2c', 'arm_fixp'), R('decomp_2c', 'arm_fixp')),
-        'tf': (R('counterfactuals_2c', 'tf85_c35', 'tf'), R('transition_2c', 'arm_tf'))}
-BASE = (R('counterfactuals_2c', 'nulltf', 'null'), R('transition_2c', 'arm_null'))
+# RULE C (14 October, rulec_paths.py): each decomposition column re-solved beside Housing First carries both its
+# welfare files and its by-node values in tf/; the main arm's by-node values come from its own re-solve (arm_tf/tf)
+import sys; sys.path.insert(0, HERE)
+import rulec_paths as RC
+ARMS = {'b': (os.path.join(RC.DC['fixboth'], 'tf'), os.path.join(RC.DC['fixboth'], 'tf')),
+        'p': (os.path.join(RC.DC['fixp'], 'tf'), os.path.join(RC.DC['fixp'], 'tf')),
+        'tf': (RC.TF_DIR, RC.TF_NODES)}
+BASE = (RC.NULL_DIR, RC.NULL_DIR)
 
 
 def share_word(pc):
