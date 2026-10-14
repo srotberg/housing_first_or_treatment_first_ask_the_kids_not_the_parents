@@ -564,3 +564,6 @@ that strikes the intro's deterrence sentence by hand and keeps x_trf_h_sr from r
 - Open with the author: Block 7's 2.2 pp (under rule C almost no one with SMI is put on the street, 1.4e-7 of the
   mass, and 96% of those leave it within a year, so it is not like-for-like with Costantini's three years); Milby's
   model numbers come from the transition's first year (TR50Cu).
+- 14:30 the author: "remove all the crossed lines". Every \del removed from the r321 source (red \new and green \why
+  kept), rebuilt with splice_r321 directly (no track_changes rerun); the struck version is r321/src_with_strikes.tex in
+  the scratchpad and in commit 8e841632. Whether strikes stop for good (as after r120) is asked, not assumed.
