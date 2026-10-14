@@ -23,6 +23,31 @@ PE = os.path.join(R, 'pe_noext_C')                          # no externalities: 
 FX = os.path.join(R, 'noext_fixp_C')                        # Arm D, pi_V clears
 NC = os.path.join(R, 'noext_clear_C2')                      # Arm C, both clear (the nearer start; not noext_clear_C)
 NE = os.path.join(R, 'noext_pclear_C')                      # Arm E, the price clears
+# THE CORRECTED HOUSING FIRST (14 October, 05:20; code/RULE_C_PLAN.md '05:20 THE DIAGNOSTIC'). patch_treatC2's
+# internal_computations fix was gated on the screen, so Housing First ran the old arithmetic and Treatment First the
+# corrected one; ungated (results/decomp_2c_shares_Cu), the screen alone leaves no household with a SUD better off (24
+# percent before). extra_2c/remote_decomp_shares_Cu2.sh tf re-solves Housing First on the ungated build and the main arm
+# re-cleared against its net revenue (5.8372). Once all its files are in, the main column, Housing First and the welfare
+# split read it; until then the old paths stand and the main column's better-off shares print yellow.
+SCU = os.path.join(R, 'decomp_2c_shares_Cu')
+CU_TF = os.path.join(SCU, 'arm_tf')
+CORRECTED = all(os.path.exists(os.path.join(CU_TF, f)) for f in (
+    'shares.txt', 'newborn_shares.json', 'tf/final.txt', 'tf/cf.log.gz', 'tf/value_at_26_by_node.txt',
+    'null/final.txt', 'null/cf.log.gz', 'null/value_at_26_by_node.txt'))
+if CORRECTED:
+    TF_ARM = os.path.relpath(os.path.join(CU_TF, 'tf'), CF)
+    TF_DIR = TF_NODES = os.path.join(CU_TF, 'tf')
+    NULL_DIR = os.path.join(CU_TF, 'null')
+    DC['tf'] = CU_TF
+# the age split of the children's paragraph: finish_tf_Cu.sh's when it is in, else the gated run's (it supplies only
+# the 26-50 homelessness change, to the whole percent)
+AGE_SPLIT = os.path.join(CU_TF, 'age_split.txt')
+if not os.path.exists(AGE_SPLIT):
+    AGE_SPLIT = os.path.join(SC, 'arm_tf', 'age_split.txt')
+# better-off shares against the corrected Housing First where a column has them; every other rule-C column's were
+# computed against the gated one and print yellow (Table 5's better-off rows, and the sentences that quote them)
+SHARES_FILE = {'fixboth': os.path.join(SCU, 'arm_fixboth', 'shares.txt')}
+STALE_SHARES = {'dc_pv', 'dc_p', 'pe_b', 'fx_d', 'ne_e', 'nc_c'} | (set() if CORRECTED else {'tf85'})
 REVOKED = os.path.join(R, 'revoked_2c_C')
 REVOKED_STREET = os.path.join(R, 'revoked_2c_street_C')
 

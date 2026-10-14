@@ -258,7 +258,7 @@ def age_split():
     results/transition_2c/age_split.txt (transition_2c/age_split.py on stage E2's two re-solved arms, exact from the
     housing policy). Returns {'null'|'tf': {(lo, hi): dict(sud, h, h_sud, h_clean)}} in per cent, or {} unless both
     arms are exact."""
-    p = os.path.join(RC.DC['tf'], 'age_split.txt')   # rule C (14 October): finish_tf_C.sh; rule A's was transition_2c
+    p = RC.AGE_SPLIT   # rule C (14 October): finish_tf_Cu.sh's, else finish_tf_C.sh's; rule A's was transition_2c
     out, lab = {}, None
     if not os.path.exists(p):
         return {}
@@ -375,7 +375,7 @@ def main():
     # same measures as the last column's; \tocheck (yellow) until a column's files are in
     for _a, _k in (('dc_b', 'fixboth'), ('dc_pv', 'fixpv'), ('dc_p', 'fixp')):
         _dir = RC.DC[_k]   # rule C; rule A's was results/decomp_2c_shares/arm_<k>
-        _sh = shares(path=os.path.join(_dir, 'shares.txt'))
+        _sh = shares(path=RC.SHARES_FILE.get(_k, os.path.join(_dir, 'shares.txt')))   # (14 Oct) the corrected Housing First's
         _nbk = newborn_better(path=os.path.join(_dir, 'newborn_shares.json'))
         D[_a]['all_better'] = 100 * _sh['all households'][0] if _sh else '\\tocheck{--}'
         D[_a]['sud_better'] = 100 * _sh['with a SUD'][0] if _sh else '\\tocheck{--}'
@@ -449,6 +449,9 @@ def main():
             for arm, _ in cols:
                 v = D[arm].get(key)
                 c = '\\tocheck{--}' if arm in PENDING else '--' if v is None else fmt(v)   # pending: yellow
+                # (14 October) better-off shares computed against the gated Housing First: yellow until re-solved
+                if key in ('all_better', 'sud_better') and arm in RC.STALE_SHARES and v is not None:
+                    c = '\\tocheck{--}'
                 cells[f'{key}/{arm}'] = c
                 line.append(c if prev.get(f'{key}/{arm}') == c else f'\\textcolor{{red}}{{{c}}}')
             body.append(' & '.join(line) + ' \\\\')

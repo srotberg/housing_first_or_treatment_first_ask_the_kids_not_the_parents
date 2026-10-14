@@ -30,6 +30,11 @@ pend += ['x_milby_model_impact', 'x_milby_model_lr']
 # the omega_c = 0.686 sensitivity is rule A's (no rule-C run): its numbers beside the rule-C benchmark would compare
 # two rules, so they wait, yellow, for the author's call (re-run it on rule C, or say it is rule A's)
 pend += ['x_nish_']
+# (14 October, 05:20) the no-externality economy's better-off shares were computed against the gated Housing First,
+# whose households with a SUD are valued on the old arithmetic (code/RULE_C_PLAN.md '05:20'): yellow until re-solved
+import rulec_paths as RC
+if {'fx_d', 'pe_b'} & RC.STALE_SHARES:
+    pend += ['x_fx_all_better_pc', 'x_fx_sud_worse_pc', 'x_fx_better_cev', 'x_pe_better_clause']
 # names the paper uses that a pending run never wrote (the price-held welfare column, the transition's first year)
 import re
 src = open('../../writing/housing_first_children_later.src.tex').read()
