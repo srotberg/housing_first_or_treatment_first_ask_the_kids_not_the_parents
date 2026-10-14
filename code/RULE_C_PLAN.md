@@ -507,3 +507,22 @@ S-fixpv done 00:46; its worker asked (trigger trig_01TH2UpECvdNHScPD5ZmCghH) to 
   the comparison with the gated run. If the SUD share falls to ~0: re-solve every Housing First comparison run on the
   ungated build (nulls, no-externality Arm A + walks); if Housing First's net revenue moves, the pi_V-clearing arms'
   target moves too. The PDF waits for this.
+
+05:20 (14 Oct) THE DIAGNOSTIC: THE ASYMMETRY WAS REAL, AND IT MOVES ONLY THE SUD SHARES.
+- results/decomp_2c_shares_Cu/arm_fixboth (done 05:08): with the internal_computations fix ungated, so Housing First runs
+  the same arithmetic as Treatment First, the screen alone leaves 0 percent of households with a SUD better off (gated:
+  24.2 at tol 1e-3), 0 of all households (0.9), and the same 99.8 percent of entrants at 26 worse off. The Treatment
+  First arm is bit for bit the gated one (passes 1-4 identical).
+- Housing First itself barely moves: drug price 0.9994 (1.0003), use 8.920 (8.895), SUD 3.828 (3.815), homelessness
+  0.6184 (0.6186), treatment take-up 24.57 (24.92), welfare 787.4916 (787.4962: about +0.01 points on the newborn's
+  CEV). Its net revenue is 5.8372 against 5.8278, 1.6e-3 relative, above the budget tolerance: the pi_V-clearing arms
+  re-clear against it (pi_V perhaps 0.1 point lower).
+- WRONG IN THE r320 TABLES until re-solved: the SUD better-off row in every rule-C column (and all households by up to a
+  point), and the sentences quoting them (x_pe_better_clause, the 71 percent worse off, the main column's 52 percent).
+- LAUNCHED 05:13: CU-tf session_017VnBYL9usdejwN3rLMzpJM, extra_2c/remote_decomp_shares_Cu2.sh tf (SHARES_P0=0.94610081
+  SHARES_V0=0.079100383): the corrected Housing First, the main arm re-cleared against its revenue, shares, newborns
+  (newborn_Cu.sh) and the welfare-split files (collect_shares_Cu.sh) -> results/decomp_2c_shares_Cu/arm_tf. When it
+  lands: rulec_paths.py NULL_DIR, TF_NODES and DC['tf'] -> decomp_2c_shares_Cu/arm_tf (TF_DIR's final numbers too, if
+  the re-cleared arm moved). Still to decide with the author: the other columns (fixboth's shares are already in the
+  diagnostic; fixpv, fixp after their gated runs), the no-externality economy's Arm A on an ungated no-ext build, and
+  whether the T = 50 transition (benchmark start, gated) is restarted.
