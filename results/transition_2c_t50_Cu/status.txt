@@ -1,4 +1,4 @@
-# the T = 50 transition on RULE C (code/transition_fix/remote_tr50_C.sh); 14 Oct 12:36 UTC
+# the T = 50 transition on RULE C (code/transition_fix/remote_tr50_C.sh); 14 Oct 13:00 UTC
 remote_tr50_C: gfortran missing, installing (12:27)
 remote_tr50_C: free disk 29G, memory 15 GiB, cores 4 (12:27)
 remote_tr50_C: building cf_fix (12:27)
@@ -7,3 +7,12 @@ remote_tr50_C: building cf_fix2_share_treatCu (Housing First with the internal_c
 remote_tr50_C: building cf_fix2_treatC (12:34)
 remote_tr50_C: building tr50_C (build_tr50_C.sh) (12:35)
 remote_tr50_C: built /home/user/children_first_housing_later/code/tr50_C/hftf_tr_prod 0487a9eb (rule C2 + cohort print, T = 50; patch_treatC2.py d5931f95) (12:36)
+remote_tr50_C: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (12:36)
+remote_tr50_C: terminal arm from the ACCEPTED long-run rule-C arm (results/decomp_2c_shares_Cu/arm_tf/tf/final.txt): price 0.94626257, pi_V 0.078040993 (12:40)
+remote_tr50_C: arm tf on cf_fix2_treatC: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.078040993 DRUG_PRICE_START=0.94626257 EXTRA_SET=cost_per_drug_test 0.0004946100 (12:40)
+
+== arm null
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+
+== arm tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
