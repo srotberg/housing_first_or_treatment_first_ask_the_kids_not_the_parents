@@ -522,14 +522,14 @@ def main():
     N_ = D['nc_c']
     assert N_['price'] < A_['price'], (N_['price'], A_['price'])
     out['x_nc_newborn_cev'] = f"{abs(N_['cev_net']):.2f}"
-    out['x_nc_newborn_dir'] = 'gain' if N_['cev_net'] > 0 else 'lose'
+    out['x_nc_newborn_dir'] = 'gain' if N_['cev_net'] > 0 else 'still lose'   # r322, the author: "still lose"
     # (round r321) the Discussion's 'A cheaper drug can turn that into a small gain' was rule A's; under rule C the
     # newborn still loses with the drug price clearing too, so the cheaper drug only narrows the loss
     out['x_disc_cheaper'] = (
         'A cheaper drug can turn that into a small gain, but that is not a correction of moral hazard but rather the '
         "drug market's response, which depends on the elasticity of the drug's supply." if N_['cev_net'] > 0 else
-        'A cheaper drug narrows that loss without reversing it, and that is not a correction of moral hazard but the '
-        "drug market's response, which depends on the elasticity of the drug's supply.")
+        # r322, the author: 'without' -> "but does not reverse the conclusions", and the rest of the sentence "remove"
+        'A cheaper drug narrows that loss but does not reverse the conclusions.')
     out['x_nc_price_pc'] = f"{100 * (1 - N_['price'] / A_['price']):.0f}"
     out['x_nc_piv1_pc'] = f"{100 * N_['piv']:.2f}"
     out['x_nc_b_pc'] = f"{100 * (1 - N_['b'] / A_['b']):.0f}"
@@ -672,9 +672,9 @@ def main():
         'Therefore, the \\emph{budget and earnings externalities} dominate both the \\emph{childhood homelessness '
         'externality} and the direct loss to the parent from the removal of an option.' if _dcb_up else
         'In the aggregate, then, there is no trade-off between the externalities: by cutting use, the screen keeps '
-        'more children out of a shelter than it sends to one by putting their parents out, although a child whose '
-        'parent it puts out can still lose its home. What the \\emph{budget and earnings externalities} have to '
-        'outweigh is only the direct loss to the parent from the removal of an option.')
+        'more children out of a shelter than it sends to one by putting their parents out. What the \\emph{budget '
+        'and earnings externalities} have to outweigh is only the direct loss to the parent from the removal of an '
+        'option.')   # r322, the author on 'although a child whose parent it puts out can still lose its home': "remove"
     # the abstract, on the main experiment's long run
     out['x_abs_hchild_sentence'] = (
         "Sobriety conditions reduce these harms more than they expose screened-out users' children to homelessness."

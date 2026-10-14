@@ -567,3 +567,15 @@ that strikes the intro's deterrence sentence by hand and keeps x_trf_h_sr from r
 - 14:30 the author: "remove all the crossed lines". Every \del removed from the r321 source (red \new and green \why
   kept), rebuilt with splice_r321 directly (no track_changes rerun); the struck version is r321/src_with_strikes.tex in
   the scratchpad and in commit 8e841632. Whether strikes stop for good (as after r120) is asked, not assumed.
+
+15:20 (14 Oct) ROUND r322 (6 comments; "remove all crossed lines and red and put updates in red. you can remove all the
+green stuff that is not relevant anymore. just keep yellow for portions that need to be adjusted once the results
+arrive"). Whole source and tables stripped, baselines frozen, base_r322 = HEAD's jsons, splice_r322. No strikes this
+round (the author asked twice to remove crossed lines; scratchpad r322/drop_del.py after track_changes and the splice)
+and no green notes. Section 6.4 is yellow paragraph by paragraph (\soulregister{\ref}{7} lets \ref sit inside \hl), as
+is 6.2's transition sentence. The footnote on the run where households with a SUD cannot respond moved from the
+introduction to 6.2, beside the treatment take-up sentence; "in the long run" out of it. Exporter wording: the intro's
+no-trade-off sentence without the individual-child clause; 'still lose'; 'A cheaper drug narrows that loss but does not
+reverse the conclusions.'; the Discussion's next sentence names the elasticity of the drug's supply; 6.2 "first five
+columns". ETA given to the author: with-externality columns 18-20 UTC, no-externality and Nishiyama about midnight,
+CA tomorrow morning, T=50 first loop 21-23 UTC and converged tomorrow evening.
