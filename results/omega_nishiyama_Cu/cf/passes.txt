@@ -1,0 +1,38 @@
+# omega_c 0.686 sensitivity on RULE C, Treatment First against results/omega_nishiyama_2c/bench_0.686_b0.004510373_ku1.0 (b 0.004510373, kappa_uem 1.0, kappa_x 1.0688562125371026; base 0.0904959779,0.0380110071,0.0060061733); Housing First is rule A's (no screen); 15 Oct 13:01 UTC
+remote_nish_nodes_Cu: gfortran missing, installing (12:28)
+remote_nish_nodes_Cu: free disk 29G, memory 15 GiB, cores 4 (12:29)
+remote_nish_nodes_Cu: building cf_fix (12:29)
+remote_nish_nodes_Cu: building cf_fix2 (12:32)
+remote_nish_nodes_Cu: building cf_fix2_treatC (rule C) (12:36)
+remote_nish_nodes_Cu: building cf_fix2_share (12:38)
+remote_nish_nodes_Cu: building cf_fix2_share_treatCu (Housing First with the internal_computations fix ungated) (12:41)
+remote_nish_nodes_Cu: arm null on cf_fix2_share_treatCu (Housing First, the internal_computations fix ungated), DRUG_PRICE_START=1.0000366 (12:43)
+remote_nish_nodes_Cu: Housing First (corrected) done: net revenue 5.7121909, the Treatment First arm's budget target (18:22)
+remote_nish_nodes_Cu: warm start at the corrected main column's values: price 0.94626257, pi_V 0.078040993 (18:22)
+remote_nish_nodes_Cu: arm tf on cf_fix2_treatC (rule C): PDET=0.20 NET_TARGET=5.7121909 PV_START=0.078040993 DRUG_PRICE_START=0.94626257 test 0.0004946100 (18:22)
+remote_nish_nodes_Cu: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.7121909000000004 DIST CHECK PASS: 12 passes, sweeps [70, 79, 73, 70, 70, 70, 70, 75, 71, 70, 70, 70], largest final 4.94e-05 (rule 5e-05, at least 70 sweeps)  (13:01)
+
+== null (the corrected Housing First, cf_fix2_share_treatCu)
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  1.0028  0.06753    -0.2%    +0.5%    -2.9%  2.79e-02  0.00e+00   779.2508  +4.65%
+  2  1.0023  0.06753    -0.8%    -0.1%    -1.3%  6.76e-03  0.00e+00   777.8739  +0.95%
+  3  1.0016  0.06753    -0.5%    +0.2%    -0.4%  7.02e-03  0.00e+00   777.5164  +0.01%
+  4  0.9992  0.06753    -0.5%    +0.2%    -0.4%  5.91e-03  0.00e+00   777.5009  -0.03%
+  5  1.0000  0.06753    +0.0%    +0.7%    -0.4%  2.81e-03  0.00e+00   777.4960  -0.04%
+  6  1.0001  0.06753    -0.1%    +0.6%    -0.4%  4.97e-04  0.00e+00   777.4903  -0.05%
+  7  1.0002  0.06753    -0.1%    +0.6%    -0.4%  1.38e-04  0.00e+00   777.4902  -0.05%
+
+== tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  0.9494  0.07804   -22.0%   -20.2%   -12.8%  3.14e-02  3.74e-01   780.0546  +6.90%
+  2  0.9452  0.07804   -27.5%   -25.8%   -12.0%  4.24e-02  4.68e-02   779.0600  +4.13%
+  3  0.9431  0.08366   -26.1%   -24.2%   -13.2%  1.38e-02  1.65e-02   779.1541  +4.38%
+  4  0.9426  0.08267   -25.4%   -23.6%   -13.4%  2.62e-03  1.36e-02   779.0884  +4.20%
+  5  0.9428  0.08186   -24.9%   -23.1%   -13.4%  1.36e-03  1.13e-02   779.0235  +4.03%
+  6  0.9432  0.08118   -24.9%   -23.0%   -13.0%  1.14e-03  7.75e-03   778.9747  +3.89%
+  7  0.9431  0.08071   -24.9%   -23.0%   -12.6%  3.67e-04  3.02e-03   778.9419  +3.80%
+  8  0.9431  0.08053   -24.9%   -23.0%   -12.5%  6.54e-05  1.45e-03   778.9341  +3.78%
+  9  0.9431  0.08058   -24.9%   -23.0%   -12.6%  8.05e-05  9.74e-04   778.9341  +3.78%
+ 10  0.9431  0.08056   -24.8%   -23.0%   -12.5%  5.64e-05  1.40e-03   778.9307  +3.77%
+ 11  0.9431  0.08054   -24.9%   -23.0%   -12.5%  5.51e-05  1.55e-03   778.9291  +3.77%
+ 12  0.9431  0.08052   -24.8%   -23.0%   -12.5%  6.22e-05  8.54e-04   778.9302  +3.77%
