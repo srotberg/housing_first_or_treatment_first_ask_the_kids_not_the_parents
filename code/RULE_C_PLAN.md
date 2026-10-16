@@ -670,3 +670,13 @@ remote_tr50_CAu.sh at T = 70 (build_tr70_CA.sh, rescale_seeds_CA70.py, results/t
 polls the branch for the long-run arm's acceptance and starts the terminal arm from its latest pass meanwhile, so it is
 launched now with C1R_OVERRIDE=results/counterfactuals_2c/tf_pdet100_CAuC. If CAuC fails and CAu is accepted first,
 relaunch with C1R_OVERRIDE pointing there.
+
+23:58 (16 Oct) THE BEST PASS (the author: "yes, take the best pass and start the transition"). Neither detection-1.00 run
+settles: near 0.80 drug use jumps between -57 and -63 per cent for a 0.1 per cent price move, and the drug-market gap
+alternates between 1e-2 and 8e-2. results/counterfactuals_2c/tf_pdet100_CAbest is tf_pdet100_CAuC's pass 7 (price
+0.8017, pi_V 0.10240, drug gap 9.64e-3, budget 5.86e-4; drug use -56.6, SUD -56.9, homelessness -26.2 per cent).
+transition_fix/remote_tr70_CAb.sh (a copy of remote_tr70_CAu.sh) holds the terminal price there (DRUG_MARKET_ADJUSTER=0),
+re-clears pi_V, accepts within 5 per cent of the best pass, and runs T = 70 -> results/transition_2c_t70_CAb. The
+waiting T = 70 worker (session_019NDD7S6oXV1WdF9SiLo1p3, transition_2c_t70_CAu) is superseded.
+BLOCK 7: results/revoked_2c_CA100/tables.md is analyse.py's traceback (ZeroDivisionError: a revoked cohort of zero
+starting mass, since at detection 1.00 every user is revoked in the first year); the street stage is running.

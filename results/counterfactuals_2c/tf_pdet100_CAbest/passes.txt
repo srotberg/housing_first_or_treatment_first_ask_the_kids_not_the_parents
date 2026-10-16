@@ -1,0 +1,10 @@
+# THE BEST PASS OF THE DETECTION-1.00 LONG RUNS, taken as the long-run arm (the author, 16 Oct 23:55: "yes, take the best
+# pass and start the transition"). Near a drug price of 0.80 a block of households switches in and out of use between
+# passes, and neither tf_pdet100_CAuC (from 0.777) nor tf_pdet100_CAu (from 0.90) settles inside the drug-market tolerance
+# of 5e-3. This is tf_pdet100_CAuC's pass 7, the smallest drug-market gap of all three runs (9.64e-3; budget 5.86e-4).
+# The T = 70 transition (code/transition_fix/remote_tr70_CAb.sh) holds the price here and re-solves pi_V.
+remote_pdet tf_pdet100_CAbest: arm tf ACCEPTED (by the author's decision, not by the tolerances): tf_pdet100_CAuC pass 7
+
+== tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  7  0.8017  0.10240   -56.6%   -56.9%   -26.2%  9.64e-03  5.86e-04   791.3124  +11.88%   -26.5%   +69.4%
