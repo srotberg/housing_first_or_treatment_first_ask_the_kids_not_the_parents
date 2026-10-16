@@ -99,7 +99,9 @@ def main():
     ax.set_xlabel('years since the reform', fontsize=9)
     ax.set_xlim(-1, HORIZON)
     ax.set_ylim(0, 105)
-    ax.legend(fontsize=7.5, loc='center right', frameon=False)
+    # (round r327, the author: "the legend is not so well placed. can you move it to a better location"): 'center
+    # right' sat on the dashed line, which runs from about 66 down to 51; above it the panel is empty
+    ax.legend(fontsize=7.5, loc='upper right', frameon=False)
     axs[0, 0].legend(fontsize=7.5, loc='center right')
     fig.tight_layout()
     run.save(fig, 'full_transition')
@@ -198,11 +200,12 @@ def names(S, C, R):
                          # (16 October, rule C, T = 50; the author on 'rise': "could rise", on 'SUD': "a SUD but decide
                          # against going to treatment and staying sober", and "even along the transition homelessness
                          # and childhood homelessness do not rise"): the path never rises above the benchmark
+                         # (round r327, the author: "qualitatively reverse", "do not enter", "stay")
                          # (round r326, the author: "One concern is that....", "As I show, this concern does not
                          # materilize:", "to house themselves", "even in the first year")
-                         'These are long-run outcomes, but the transition does not reverse them. One concern is that '
+                         'These are long-run outcomes, but the transition does not qualitatively reverse them. One concern is that '
                          'homelessness and childhood homelessness could rise in the first years after the reform, because the households '
-                         'that already have a SUD but decide against entering treatment and staying sober face losing '
+                         'that already have a SUD but do not enter treatment and stay sober face losing '
                          'their vouchers, while the number with a SUD falls only as fast as recovery allows. As I show, this concern does not materialize: '
                          # (round r325, the author: "is that the reason? or is it because household use less and then
                          # it frees more resources for housing?")

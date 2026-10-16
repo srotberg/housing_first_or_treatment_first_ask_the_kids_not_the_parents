@@ -630,3 +630,9 @@ homelessness sentence (export_results.py) now gives the spending channel the aut
 Flagged to the author, not changed: experiment 1 is described as two runs but 6.2 discusses three and Table 5 has four
 (its fourth column, price clearing with pi_V held, is never discussed); experiment 2 is 'three steps' but has a fourth
 column (the ninth); 'Block 7' and 'Block 8' name both validation blocks and appendix parameter blocks.
+
+16:55 (16 Oct) ROUND r327 (13 comments, and "double check that all numbers throughout the paper are consistent with
+the tables"). Red stripped, comments in red; the panel (h) legend moved to the empty upper right. The check of every
+table against the text (Tables 1-2 of the stylized model, 5, 6, 7, the parameter table and Table A1): agreed except
+Block 1's 55-and-over share (11.4 in the text, 10.7 + 0.8 = 11.5 in the table; calib_tables.py now sums the bands as
+printed) and the SUD unemployment rate (16.25 in Section 3, 16.2 in Block 2 and Table 6; Section 3 now quotes u_unemp_d).

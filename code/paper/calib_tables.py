@@ -648,10 +648,13 @@ def numbers():
     band = lambda k, d=0: mom(f'share of the homeless, band {k}', d) if d else mom(f'share of the homeless, band {k}')
     age_m, age_d = mom('mean age of drug users'), mom('mean age of drug users', 1)
     odds_d, odds_h = mom('delta_d child SUD odds ratio'), mom('delta_h child homeless odds ratio')
+    # a sum of bands is the sum of the bands AS THE TABLE PRINTS THEM (round r327, the check of the text against the
+    # tables: 10.7 + 0.8 in the table, 11.4 in the text, from the unrounded shares)
+    psum = lambda *xs: f'{sum(round(100 * x, 1) for x in xs):.1f}'
     nums.update({
         'u_hl_3544_d': p1(band(2, 1)), 'u_hl_3544_m': p1(band(2)),
-        'u_hl_2554_d': p1(band(1, 1) + band(2, 1) + band(3, 1)), 'u_hl_2554_m': p1(band(1) + band(2) + band(3)),
-        'u_hl_55p_d': p1(band(4, 1) + band(5, 1)), 'u_hl_55p_m': p1(band(4) + band(5)),
+        'u_hl_2554_d': psum(band(1, 1), band(2, 1), band(3, 1)), 'u_hl_2554_m': psum(band(1), band(2), band(3)),
+        'u_hl_55p_d': psum(band(4, 1), band(5, 1)), 'u_hl_55p_m': psum(band(4), band(5)),
         'u_emp_hl_d': f'{100 * C["employed_share_of_homeless_data"]:.0f}',
         'u_emp_hl_m': p1(mom('emp_homeless employed share of homeless')),
         'u_inc_hl_d': p1(mom('income of the homeless', 1)), 'u_inc_hl_m': p1(mom('income of the homeless')),
