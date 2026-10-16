@@ -663,3 +663,10 @@ pi_V 0.116: code/pdet/remote_pdet_CAuC.sh -> results/counterfactuals_2c/tf_pdet1
 Treatment First path running since 18:31, street waiting. tf_pdet10_Cu pass 2 (gaps 6.6e-3, 3.8e-2), tf_pdet05_Cu pass
 1, tf_pdet20_CAu restarted 19:13 from its own pass (0.9033, 0.0888). T = 70: long-run arm ACCEPTED 17:24, terminal arm
 re-solving (pass 2 at 19:24).
+
+21:25 (16 Oct) THE DETECTION-1.00 TRANSITION AT T = 70, READY (the author: "We would need to run a transition to make that
+statement for the conclusion", on homelessness rising along it). transition_fix/remote_tr70_CAu.sh, a copy of
+remote_tr50_CAu.sh at T = 70 (build_tr70_CA.sh, rescale_seeds_CA70.py, results/transition_2c_t70_CAu, MAX_LOOPS 4). It
+polls the branch for the long-run arm's acceptance and starts the terminal arm from its latest pass meanwhile, so it is
+launched now with C1R_OVERRIDE=results/counterfactuals_2c/tf_pdet100_CAuC. If CAuC fails and CAu is accepted first,
+relaunch with C1R_OVERRIDE pointing there.
