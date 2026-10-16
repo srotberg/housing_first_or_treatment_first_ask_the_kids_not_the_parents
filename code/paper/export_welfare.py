@@ -127,7 +127,8 @@ def main():
          row(r"The parent's own gain $\Delta P$, percent of the parent's lifetime consumption", 'P'),
          r'\bottomrule', r'\end{tabular}}', r'\usebox{\ntbox}',
          r"\tabnote{Notes: Treatment First against Housing First in the long run; the columns are the seventh, eighth "
-         r"and eleventh of Table~\ref{tab:longrun}. The first row is the CEV of~\eqref{eq:cev}. The four rows under it "
+         # (round r326, the sweep: Table 5 has ten columns of numbers, so its last is the tenth, as the text says)
+         r"and \new{last} of Table~\ref{tab:longrun}. The first row is the CEV of~\eqref{eq:cev}. The four rows under it "
          r"sum to it: each is read off the benchmark's welfare curve after the ones above it. Childhood is the change "
          r"in the child's flow at its weight $\xi-1$, and better productivity at entry the change in its adult value from who "
          r"enters; each is split into the share $\omega_c$ its parent counts and the share $1-\omega_c$ it does not. "

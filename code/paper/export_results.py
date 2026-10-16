@@ -258,7 +258,10 @@ out['x_tf_h_sentence'] = (
     # homelessness")
     # (round r325, the author on 'It': "In full general equilbrium, TF also")
     f"In full general equilibrium, Treatment First also lowers homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to "
-    f"{out['x_tf_h1']} percent of households: less SUD means less unemployment and so less homelessness, "
+    # (round r326, the sweep: the same reasons as Section 6.4's, which the author gave in r325: "is it because
+    # household use less and then it frees more resources for housing?")
+    f"{out['x_tf_h1']} percent of households: households that stop using spend less on drugs and more on housing, "
+    f"less SUD means less unemployment and so less homelessness, "
     f"and the vouchers it revokes from households with a SUD go, through a higher $\\pi_V$, to other low-income "
     f"households.")
 # WHO THE FALL IN HOMELESSNESS COMES FROM (round 4ad85a30, the author on the introduction: "explain why

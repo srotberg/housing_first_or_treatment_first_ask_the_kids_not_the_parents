@@ -618,3 +618,15 @@ results/transition_2c_t50_CAu, which is then dropped) and launch a FRESH worker 
 remote_tr70_CAu.sh as a copy of remote_tr50_CAu.sh with the T = 70 changes remote_tr70_Cu.sh made to remote_tr50_Cu.sh
 (build at T = 70, extend_seeds_C70.py, horizon_check_C70.py, report_tr70_Cu.py), and runs it ->
 results/transition_2c_t70_CAu.
+
+16:20 (16 Oct) ROUND r326 SWEEP (the author: numbers text against tables, long sentences and paragraphs, explanation
+inconsistencies, "any sentences that can be improved and flow", every change marked). The four reviewer subagents were
+killed by an interruption at 15:32 and could not be resumed, so the sweep was done by hand, section by section; every
+edit is \new{}, every split paragraph opens with \parmark{}. Fixed: Table 7's note called Table 5's last column the
+'eleventh' (it has ten columns of numbers; export_welfare.py); Section 6 wrote $\bar R$ for Section 4's
+$\bar{\mathcal R}$; the delta_d item's 'Block 6 below' pointed at the drug-market block, not the validation's
+transmission block; 6.3's 'the other 0.43 percent' read as if it contained the 0.19 the parent counts; the long-run
+homelessness sentence (export_results.py) now gives the spending channel the author named in r325, as 6.4 does.
+Flagged to the author, not changed: experiment 1 is described as two runs but 6.2 discusses three and Table 5 has four
+(its fourth column, price clearing with pi_V held, is never discussed); experiment 2 is 'three steps' but has a fourth
+column (the ninth); 'Block 7' and 'Block 8' name both validation blocks and appendix parameter blocks.
