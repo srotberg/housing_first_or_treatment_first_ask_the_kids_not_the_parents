@@ -2,10 +2,12 @@
 how much drug use and the SUD fall, for the introduction's comparison with the military's deterrence (the author,
 8 October: "with piv and pv constant, they dropped by 64%", "this should be in the introduction"). Reads the arm's
 final.txt (changes against the no-policy run). usage: python3 code/paper/export_decomp_use.py -> code/paper/decomp_use.json"""
-import json, os, re
+import sys, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # RULE C (14 October): the column re-solved beside Housing First; rule A's was results/decomp_2c_both/arm_fixboth
-F = os.path.join(ROOT, 'results', 'decomp_2c_shares_C', 'arm_fixboth', 'final.txt')
+sys.path.insert(0, os.path.join(ROOT, 'code', 'paper'))
+import rulec_paths as RC   # (16 October) the corrected screen-only column
+F = os.path.join(RC.DC['fixboth'], 'final.txt')
 def chg(label):
     for l in open(F):
         if l.strip().startswith(label):

@@ -15,11 +15,14 @@ is. (The four states that gain are one grid point of mass 2.2e-12, a missed maxi
 """
 import json
 import os
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 # RULE C (14 October): results/pe_noext_C; rule A's was results/pe_noext
-A = json.load(open(os.path.join(ROOT, 'results', 'pe_noext_C', 'analysis.json')))
+sys.path.insert(0, HERE)
+import rulec_paths as RC   # (16 October) the corrected run, results/pe_noext_Cu, once it is in
+A = json.load(open(os.path.join(RC.PE, 'analysis.json')))
 OUT_JSON = os.path.join(HERE, 'results_numbers.json')
 NOISE = 1e-9                    # mass share
 

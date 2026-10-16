@@ -674,7 +674,7 @@ def main():
         'In the aggregate, then, there is no trade-off between the externalities: by cutting use, the screen keeps '
         'more children out of a shelter than it sends to one by putting their parents out. What the \\emph{budget, '
         'earnings and childhood homelessness externalities} have to outweigh is only the direct loss to the parent from '
-        'the removal of an option.')   # r324, the author: "budget, earnings and childhood externalities"   # r322, the author on 'although a child whose parent it puts out can still lose its home': "remove"
+        'the removal of an option (although, as I explain next, even the parent gains from general-equilibrium effects).')   # r324-r325, the author   # r322, the author on 'although a child whose parent it puts out can still lose its home': "remove"
     # the abstract, on the main experiment's long run
     out['x_abs_hchild_sentence'] = (
         "Sobriety conditions reduce these harms more than they expose screened-out users' children to homelessness."
@@ -805,10 +805,9 @@ def main():
         # using, it passes the screen, which is the first reason; recovery's is the second
         # (round r324, the author: "a bit too long...break it down")
         'It also raises the share of households with a SUD who are in treatment, from '
-        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent. A household with a SUD that is in treatment and does not use '
-        'passes the screen. Treatment also buys a higher chance of recovering, which Treatment First makes worth more: a '
-        'household that has recovered and does not use passes the screen too, and can hold a voucher if it is eligible '
-        'and offered one.' if _tk1 > _tk0 else '')
+        # (round r325, the author: '.' -> 'because', and the recovery sentence "can be removed")
+        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent, because a household with a SUD that is in treatment and does '
+        'not use passes the screen.' if _tk1 > _tk0 else '')
     # (round 0e3b2441, the author: 'only' -> 'only buys', 'voucher.' -> 'if eligible and offered a voucher', and on
     # 'household': "eligible household (check that you use that kind of language in the results section....the
     # eligibility is still key)": every 'more likely to get a voucher' now says the household is eligible)
@@ -1079,8 +1078,10 @@ def main():
         # (14 October, rule C) who the rest are and why households with a SUD gain were rule A's findings (the value
         # shares by age, and the drug price as the only gain open to a household that cannot pass the screen); under
         # rule C one in treatment that stops passes it and draws the higher pi_V, so both clauses are yellow until checked
-        f"${100 * _SH['all households'][1]:.0f}$ percent worse off; \\tocheck{{the rest, all older than 50, are essentially "
-        f"unaffected}}. Finally, even ${_sb:.0f}$ percent of those that have a SUD are better off\\tocheck{{, due to the lower drug price}}."
+        # (round r325, the author on the two yellow clauses: "you dont have the asnwers to this?": the shares carry no
+        # ages and no reason, so the clauses go and the numbers stay)
+        f"${100 * _SH['all households'][1]:.0f}$ percent worse off, and the rest are essentially unaffected. Finally, "
+        f"even ${_sb:.0f}$ percent of those that have a SUD are better off."
         if _SH and _sb is not None and _sb < 50 else '')
     out['x_intro_gain'] = (
         f"A newborn gains ${D[t]['cev_net']:.2f}$ percent of lifetime consumption. About ${_kid:.0f}$ percent of that "

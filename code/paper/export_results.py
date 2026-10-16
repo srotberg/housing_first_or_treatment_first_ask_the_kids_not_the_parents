@@ -256,7 +256,8 @@ out['x_tf_h_sentence'] = (
     f"their job." if _hrise else
     # (the author, 2 October, round 4ad85a30: "but also, less SUD means less unemployment and less
     # homelessness")
-    f"It also lowers homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to "
+    # (round r325, the author on 'It': "In full general equilbrium, TF also")
+    f"In full general equilibrium, Treatment First also lowers homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to "
     f"{out['x_tf_h1']} percent of households: less SUD means less unemployment and so less homelessness, "
     f"and the vouchers it revokes from households with a SUD go, through a higher $\\pi_V$, to other low-income "
     f"households.")
@@ -910,6 +911,14 @@ for l in open(best, errors='replace'):
         _mb[int(l.split('t=')[1].split()[0])] = (_d['rec_voucher'] / _d['mass_voucher']) / (_d['rec_housed_nov'] / _d['mass_housed_nov'])
 out['x_milby_model_impact'] = f"{_mb[1]:.2f}"
 out['x_milby_model_lr'] = f"{_mb[max(_mb)]:.2f}"
+# (round r325, the author on Block 8's treatment sentence: "what's happening here? need to explain why this matters for
+# the experiments"): the transition log carries no treatment split, so the shares in treatment are the long run's, from
+# the main arm's MILBY SPLIT (voucher holders with a SUD against housed households with a SUD and no voucher)
+_ms = open(os.path.join(RC.TF_DIR, 'milby_split.txt')).read().split()
+_v = [float(x) for x in _ms[_ms.index('smi') + 1:_ms.index('smi') + 5]]
+_h = [float(x) for x in _ms[_ms.index('housed_nov') + 5:_ms.index('housed_nov') + 9]]
+out['x_milby_lr_treat_v_pc'] = f"{100 * _v[2] / _v[0]:.0f}"
+out['x_milby_lr_treat_h_pc'] = f"{100 * _h[2] / _h[0]:.0f}"
 
 # A DECOMPOSITION COLUMN THAT HAS NOT LANDED (14 October): its names were computed from its last published pass, which
 # is not the paper's welfare criterion and may be a restart's early pass, so each prints yellow, never a number

@@ -599,3 +599,13 @@ on the path; the cohort born at the reform gains 1.8 (long run 2.57). Section 6.
 abstract, introduction and Discussion transition sentences rewritten for it. NEW RUN (the author's comment 34): detection
 1.00 with the CA rule, long run then T = 50 transition, session_01HCs7CLwRjKRkfJPm7g5f4t -> results/counterfactuals_2c/
 tf_pdet100_CAu and results/transition_2c_t50_CAu. The design lessons stay yellow until it lands.
+
+15:00-16:00 (16 Oct) ROUND r325 (31 comments; "yes, run the comparison for block 7"; on 'fifty years': "I say do 70").
+Two workers: session_014eQm4cqvV2NnMDFSRPoCNN, Block 7's revoked-voucher SMI x street split at detection 1.00 under the CA
+rule against the corrected Housing First -> results/revoked_2c_CA100, results/revoked_2c_street_CA100 (point
+export_revoked.py's STREET at it when its tables.md has the GUARD SUMMARY); session_013y8jvfsS8APQgy2mzy1vEj, the rule-C
+T = 70 transition -> results/transition_2c_t70_Cu (re-pin transition_source.py to it when it lands). Fixed two exporters
+still reading the gated runs: export_pe_noext.py (pe_noext_C: 'only 1 percent better off', newborns -1.15; corrected:
+nobody better off, -1.17, as Table 5 says) and export_decomp_use.py (decomp_2c_shares_C/arm_fixboth). Block 8's
+treatment shares are the long run's (78 against 24 percent, the main arm's MILBY SPLIT); the transition log has no split.
+The entrants' path sentence now says what it measures (34 percent of entrants better off in year 1, 99 by year 49).

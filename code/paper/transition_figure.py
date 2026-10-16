@@ -200,9 +200,12 @@ def names(S, C, R):
                          # and childhood homelessness do not rise"): the path never rises above the benchmark
                          'These are long-run outcomes, but the transition does not reverse them. Homelessness and '
                          'childhood homelessness could rise in the first years after the reform, because the households '
-                         'that already have a SUD but decide against entering treatment and staying sober lose their '
-                         'vouchers, while the number with a SUD falls only as fast as recovery allows. They do not: both '
-                         'fall from the first year (Section~\\ref{sec:ftrans}).' if _lowers else '')
+                         'that already have a SUD but decide against entering treatment and staying sober face losing '
+                         'their vouchers, while the number with a SUD falls only as fast as recovery allows. They do not: '
+                         # (round r325, the author: "is that the reason? or is it because household use less and then
+                         # it frees more resources for housing?")
+                         'few households lose their vouchers, and those that stop using spend less on drugs and can '
+                         'afford more housing, so both fall from the first year (Section~\\ref{sec:ftrans}).' if _lowers else '')
     out['x_trf_shade_from'] = str(UNCONVERGED_FROM)
     # (16 October, rule C, T = 50; the author on Panels (e) and (f): "you need to explain why these dont rise, and fall
     # a bit in fact", and on panel (g): "need to explain why the gains are smaller"): the path's own numbers
@@ -252,6 +255,11 @@ def names(S, C, R):
         f"${w_sud[0]:.0f}$ to ${w_sud[-1]:.0f}$ percent as the price comes down further. "
         + ('Every household entering adult life at 26 is better off throughout.' if min(a_ent) > 99.95
            and min(c for b, c in cev) > 0 else
+           # (round r325, the author on 'At least 34 percent': "i thought 99.9% are better off...Are you saying that only
+           # 34% entering adult life in each period of the transition are better off?"): yes, year by year; say so
+           f"Of the households entering adult life at 26, ${a_ent[0]:.0f}$ percent are better off in the first year, "
+           f"when $\\pi_V$ is still close to its Housing First level, and ${a_ent[-1]:.0f}$ percent by year "
+           f"{len(a_ent)}." if a_ent[-1] > a_ent[0] else
            f"At least ${min(a_ent):.0f}$ percent of households entering adult life are better off."))
     d = json.load(open(OUT_JSON))
     d.update(out)
