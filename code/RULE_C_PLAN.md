@@ -609,3 +609,12 @@ still reading the gated runs: export_pe_noext.py (pe_noext_C: 'only 1 percent be
 nobody better off, -1.17, as Table 5 says) and export_decomp_use.py (decomp_2c_shares_C/arm_fixboth). Block 8's
 treatment shares are the long run's (78 against 24 percent, the main arm's MILBY SPLIT); the transition log has no split.
 The entrants' path sentence now says what it measures (34 percent of entrants better off in year 1, 99 by year 49).
+
+15:40 (16 Oct) THE AUTHOR ON THE DETECTION-1.00 TRANSITION: "you can do T=70 in that too". The worker
+session_01HCs7CLwRjKRkfJPm7g5f4t cannot be messaged (cloud sessions are not reachable by SendMessage, and workers
+ignore trigger prompts), and interrupting it now would lose the long run in its container. So: WHEN
+results/counterfactuals_2c/tf_pdet100_CAu IS ACCEPTED, interrupt that worker (it will have started its T = 50,
+results/transition_2c_t50_CAu, which is then dropped) and launch a FRESH worker that makes code/transition_fix/
+remote_tr70_CAu.sh as a copy of remote_tr50_CAu.sh with the T = 70 changes remote_tr70_Cu.sh made to remote_tr50_Cu.sh
+(build at T = 70, extend_seeds_C70.py, horizon_check_C70.py, report_tr70_Cu.py), and runs it ->
+results/transition_2c_t70_CAu.
