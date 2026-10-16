@@ -655,3 +655,11 @@ clause from its cf.log as export_results.py does the half rate's; point rulec_pa
 17:40 (16 Oct) DETECTION 0.05 (the author: "you can also try 5% detectino", "ie, 5% detection and allow those with SUD
 in treatment and sober to retain vouchers", i.e. rule C, the main arm's rule). session_01QE7vbErj5eKqKgP9tB8VWF:
 P0_START=0.982 V0_START=0.0713 bash code/pdet/remote_pdet_C2u.sh 0.05 -> results/counterfactuals_2c/tf_pdet05_Cu.
+
+19:40 (16 Oct) CHECK-IN. The two detection-1.00 runs bracket the clearing price: supply price of the quantity demanded
+0.55 at 0.8435 (CAu, pass 14), 1.70 at 0.626 (CAuB, pass 2); the log interpolation crosses at 0.77-0.78. CAu needs ~17
+more half-per-cent loops (about 01:00-02:00 UTC), CAuB ~40 (it is now only a cross-check). A third start at 0.777,
+pi_V 0.116: code/pdet/remote_pdet_CAuC.sh -> results/counterfactuals_2c/tf_pdet100_CAuC. Block 7: arms done, the T = 10
+Treatment First path running since 18:31, street waiting. tf_pdet10_Cu pass 2 (gaps 6.6e-3, 3.8e-2), tf_pdet05_Cu pass
+1, tf_pdet20_CAu restarted 19:13 from its own pass (0.9033, 0.0888). T = 70: long-run arm ACCEPTED 17:24, terminal arm
+re-solving (pass 2 at 19:24).
