@@ -8,7 +8,9 @@ a change").
 Both go, with their contents, when red is stripped, and neither is prose the checkers should read.
 """
 
-DROP = ('\\del{', '\\why{')
+# \\parmark{} (16 October, the author: "mark any change you make include in paragraphs so i can see them"): a red pilcrow
+# where a round starts a new paragraph; it goes with the strip like the other two
+DROP = ('\\del{', '\\why{', '\\parmark{')
 
 
 def _close(s, j):

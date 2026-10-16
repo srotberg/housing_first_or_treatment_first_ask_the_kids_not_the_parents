@@ -198,14 +198,16 @@ def names(S, C, R):
                          # (16 October, rule C, T = 50; the author on 'rise': "could rise", on 'SUD': "a SUD but decide
                          # against going to treatment and staying sober", and "even along the transition homelessness
                          # and childhood homelessness do not rise"): the path never rises above the benchmark
-                         'These are long-run outcomes, but the transition does not reverse them. Homelessness and '
-                         'childhood homelessness could rise in the first years after the reform, because the households '
+                         # (round r326, the author: "One concern is that....", "As I show, this concern does not
+                         # materilize:", "to house themselves", "even in the first year")
+                         'These are long-run outcomes, but the transition does not reverse them. One concern is that '
+                         'homelessness and childhood homelessness could rise in the first years after the reform, because the households '
                          'that already have a SUD but decide against entering treatment and staying sober face losing '
-                         'their vouchers, while the number with a SUD falls only as fast as recovery allows. They do not: '
+                         'their vouchers, while the number with a SUD falls only as fast as recovery allows. As I show, this concern does not materialize: '
                          # (round r325, the author: "is that the reason? or is it because household use less and then
                          # it frees more resources for housing?")
                          'few households lose their vouchers, and those that stop using spend less on drugs and can '
-                         'afford more housing, so both fall from the first year (Section~\\ref{sec:ftrans}).' if _lowers else '')
+                         'afford to house themselves, so both fall even in the first year (Section~\\ref{sec:ftrans}).' if _lowers else '')
     out['x_trf_shade_from'] = str(UNCONVERGED_FROM)
     # (16 October, rule C, T = 50; the author on Panels (e) and (f): "you need to explain why these dont rise, and fall
     # a bit in fact", and on panel (g): "need to explain why the gains are smaller"): the path's own numbers
