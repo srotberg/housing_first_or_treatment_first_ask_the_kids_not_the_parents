@@ -1,0 +1,24 @@
+# SMI x street split of the revoked-voucher experiment, RULE CA, DETECTION 1.00 (code/revoked_2c_street/run_paths_CA100.sh); 16 Oct 15:24 UTC
+## stage 1, the two steady states (code/revoked_2c/run_arms_CA100.sh)
+run_arms: free disk 29G, memory 15 GiB, cores 4 (16 Oct 14:58)
+run_arms: building cf_fix2_treatCA (16 Oct 14:58)
+run_arms: building cf_fix2_share_treatCu (16 Oct 15:00)
+run_arms: builds done (16 Oct 15:03)
+run_arms: arm null on cf_fix2_share_treatCu (the corrected Housing First) (16 Oct 15:03)
+run_arms: arm fixboth on cf_fix2_treatCA (rule CA, detection 1.00) (16 Oct 15:08)
+## builds
+split: patched /home/user/children_first_housing_later/code/revoked_2c_street/work_CA100/tr_fix_src.f90 -> /home/user/children_first_housing_later/code/revoked_2c_street/work_CA100/tr_fix_C.f90
+user rule gated at 6 sites
+TRANSITION ABSTAIN t= added
+treatC2: patched /home/user/children_first_housing_later/code/revoked_2c_street/work_CA100/tr_fix_src.f90 -> /home/user/children_first_housing_later/code/revoked_2c_street/work_CA100/tr_fix_C.f90
+treatCA: rule A screen, abstention off -> /home/user/children_first_housing_later/code/revoked_2c_street/work_CA100/tr_fix_C.f90
+treatCAu: rule A screen, abstention off, internal_computations fix ungated -> /home/user/children_first_housing_later/code/revoked_2c_street/work_CA100/tr_fix_C.f90
+rule C shadow screen: patched /home/user/children_first_housing_later/code/revoked_2c_street/work_CA100/revk_track.f90
+split confined to the tracking module
+built plain3 (T=3, -O3 -funroll-loops): 2 warnings
+built track3 (T=3, -O3 -funroll-loops): 2 warnings
+built street3 (T=3, -O3 -funroll-loops): 2 warnings
+built street10 (T=10, -O3 -funroll-loops): 2 warnings
+all built
+## stage 2, the runs
+run_paths_street: waiting for the arms and the builds (16 Oct 15:04)
