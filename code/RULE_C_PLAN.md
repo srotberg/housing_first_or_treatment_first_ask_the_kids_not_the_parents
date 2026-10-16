@@ -652,3 +652,6 @@ last pass: remote_pdet_CAu.sh 0.20 (P0_START=0.9048 V0_START=0.0876) -> results/
 remote_pdet_C2u.sh 0.10 (a copy of remote_pdet_C2.sh at the corrected target; P0_START=0.9651 V0_START=0.07511) ->
 results/counterfactuals_2c/tf_pdet10_Cu. When they land: point export_ca.py at tf_pdet20_CAu and fill the newborn
 clause from its cf.log as export_results.py does the half rate's; point rulec_paths.TF_HALF_DIR at tf_pdet10_Cu/tf.
+17:40 (16 Oct) DETECTION 0.05 (the author: "you can also try 5% detectino", "ie, 5% detection and allow those with SUD
+in treatment and sober to retain vouchers", i.e. rule C, the main arm's rule). session_01QE7vbErj5eKqKgP9tB8VWF:
+P0_START=0.982 V0_START=0.0713 bash code/pdet/remote_pdet_C2u.sh 0.05 -> results/counterfactuals_2c/tf_pdet05_Cu.
