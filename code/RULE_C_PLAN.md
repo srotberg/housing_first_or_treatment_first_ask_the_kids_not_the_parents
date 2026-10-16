@@ -643,3 +643,12 @@ of the quantity demanded is 0.386, so with a supply elasticity of 1.46 and deman
 clears near 0.55-0.67, some seventy loops away. session_014GGaH2BLE1DWy6kpPHYLXG runs code/pdet/remote_pdet_CAuB.sh
 (a copy differing only in the arm name) with P0_START=0.62 V0_START=0.12 -> results/counterfactuals_2c/
 tf_pdet100_CAuB. Whichever is ACCEPTED first is the result; the T = 70 transition (15:40 entry) starts from it.
+
+17:50 (16 Oct) THE TWO FOOTNOTE RUNS RE-SOLVED AGAINST THE CORRECTED TARGET (the author: "ok...lets see what we get").
+tf_pdet20_CA (the no-escape footnote) and tf_pdet10_C (the half-rate footnote) cleared the budget against 5.8275447063,
+the gated Housing First's net revenue; the main arm clears against 5.8371628. And tf_pdet20_CA/tf has no cf.log or
+final.txt, so the footnote's yellow newborn clause cannot be computed from it. Two workers, warm-started at each run's
+last pass: remote_pdet_CAu.sh 0.20 (P0_START=0.9048 V0_START=0.0876) -> results/counterfactuals_2c/tf_pdet20_CAu, and
+remote_pdet_C2u.sh 0.10 (a copy of remote_pdet_C2.sh at the corrected target; P0_START=0.9651 V0_START=0.07511) ->
+results/counterfactuals_2c/tf_pdet10_Cu. When they land: point export_ca.py at tf_pdet20_CAu and fill the newborn
+clause from its cf.log as export_results.py does the half rate's; point rulec_paths.TF_HALF_DIR at tf_pdet10_Cu/tf.
