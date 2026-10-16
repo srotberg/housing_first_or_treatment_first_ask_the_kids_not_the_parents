@@ -28,10 +28,10 @@ if R.PENDING_C:
 elif R.PENDING_STREET:
     pend.append('x_rv_street_')
 # the Milby impact row: the rule-C transition's first year (RULE_C_PLAN, the Milby row) has not run
-pend += ['x_milby_model_impact', 'x_milby_model_lr']
+# (16 October) the Milby impact row now comes from the rule-C T = 50 transition's first year (transition_source.py)
 # the omega_c = 0.686 sensitivity is rule A's (no rule-C run): its numbers beside the rule-C benchmark would compare
 # two rules, so they wait, yellow, for the author's call (re-run it on rule C, or say it is rule A's)
-pend += ['x_nish_']
+# (16 October) the omega_c = 0.686 sensitivity re-run on rule C and the corrected Housing First (omega_nishiyama_Cu)
 # (14 October, 05:20) the no-externality economy's better-off shares were computed against the gated Housing First,
 # whose households with a SUD are valued on the old arithmetic (code/RULE_C_PLAN.md '05:20'): yellow until re-solved
 import rulec_paths as RC

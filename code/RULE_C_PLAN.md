@@ -585,3 +585,17 @@ splice_r323, scratchpad r323/build.sh (r322's, no strikes). Table 3 gains c_trea
 public_cost_of_treatment from patch_treatC2.py; data cell the $9,426 of lit ctreat_usd), so n_main is twenty-six. The
 Discussion's elasticity sentence removed. The third lesson's two design paragraphs are yellow: the author, "these
 lessons are not so correct anymore! we will need to think of new ones" -- candidates proposed in chat, not written.
+
+14:00-15:30 (16 Oct) ROUND r324 (51 comments; "remove all red and put updates in red", "update all the numbers you can
+based on our most recent results", "please update the transition figures to include the new T=50", push to main). The
+container restarted overnight and the scratchpad went with it: the round splice is now code/paper/splice.py (in the
+repo; whole-sentence red, no strikes), LaTeX and the Python packages were reinstalled. rulec_paths.py moves the three
+decomposition columns and the four no-externality runs to their corrected (_Cu) runs once their files are in, and
+clears STALE_SHARES; the omega_c = 0.686 check reads omega_nishiyama_Cu/cf; CA is accepted (pass 56). The transition is
+pinned to rule C's T = 50, loop 3 (transition_source.py; the log staged, untracked, in code/trtf50): NOT CONVERGED
+(worst budget residual 2.08e-2; pi_V in years 40-49 2.2 per cent below its terminal value and drifting further with each
+loop, so T = 60 is the open question). Under rule C neither homelessness nor the share of children in a shelter rises
+on the path; the cohort born at the reform gains 1.8 (long run 2.57). Section 6.4's (e)-(f) and (g) paragraphs and the
+abstract, introduction and Discussion transition sentences rewritten for it. NEW RUN (the author's comment 34): detection
+1.00 with the CA rule, long run then T = 50 transition, session_01HCs7CLwRjKRkfJPm7g5f4t -> results/counterfactuals_2c/
+tf_pdet100_CAu and results/transition_2c_t50_CAu. The design lessons stay yellow until it lands.

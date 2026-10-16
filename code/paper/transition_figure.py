@@ -159,7 +159,7 @@ def names(S, C, R):
     out['x_trf_paruse_drop_pp'] = f'{_du:.2f}'
     # the same ratio alone, for Section 2 (the author, round r110: 'even in the short run the absolute increase in
     # childhood homelessness is X times smaller than the mass of children spared a parent who abuses drugs')
-    out['x_trf_many_x'] = f'{round(_du, 2) / round(_dh, 2):.0f}' if _du > 0 and _dh > 0 else ''
+    out['x_trf_many_x'] = f'{round(_du, 2) / round(_dh, 2):.0f}' if _du > 0 and round(_dh, 2) > 0 else ''
     # the intuition for each panel (the author, 2 October: "Are you walking the reader through each of
     # the graphs and explaining why they come out this way?"), only where the path does what it explains
     out['x_trf_paruse_why'] = ('It is also why the share of parents who use starts below its long-run level in '
@@ -194,8 +194,38 @@ def names(S, C, R):
                          + ('both homelessness and childhood homelessness rise, ' if _ch_up else 'homelessness rises, ')
                          + 'because the households that already have a SUD lose their vouchers within a year, '
                          'while their number falls only as fast as recovery allows. I take the transition up in Section~\\ref{sec:ftrans}.'
-                         if _lowers and max(h) > hf['h_1'] else '')
+                         if _lowers and max(h) > hf['h_1'] else
+                         # (16 October, rule C, T = 50; the author on 'rise': "could rise", on 'SUD': "a SUD but decide
+                         # against going to treatment and staying sober", and "even along the transition homelessness
+                         # and childhood homelessness do not rise"): the path never rises above the benchmark
+                         'These are long-run outcomes, but the transition does not reverse them. Homelessness and '
+                         'childhood homelessness could rise in the first years after the reform, because the households '
+                         'that already have a SUD but decide against entering treatment and staying sober lose their '
+                         'vouchers, while the number with a SUD falls only as fast as recovery allows. They do not: both '
+                         'fall from the first year (Section~\\ref{sec:ftrans}).' if _lowers else '')
     out['x_trf_shade_from'] = str(UNCONVERGED_FROM)
+    # (16 October, rule C, T = 50; the author on Panels (e) and (f): "you need to explain why these dont rise, and fall
+    # a bit in fact", and on panel (g): "need to explain why the gains are smaller"): the path's own numbers
+    _T = len(h)
+    out['x_trf_norise'] = '1' if max(h) <= hf['h_1'] * (1 + 1e-3) and max(ch) <= hf['child_hl'] * (1 + 1e-3) else '0'
+    out['x_trf_last_yr'] = str(_T)
+    out['x_trf_h0'] = f"{100 * hf['h_1']:.2f}"
+    out['x_trf_h10'] = f'{100 * h[9]:.2f}'
+    out['x_trf_hlast'] = f'{100 * h[-1]:.2f}'
+    out['x_trf_h_lr'] = f"{100 * tf['h_1']:.2f}"
+    out['x_trf_hchild10'] = f'{100 * ch[9]:.2f}'
+    out['x_trf_hchildlast'] = f'{100 * ch[-1]:.2f}'
+    _ex = col('excluded')
+    out['x_trf_excl_max_pc'] = f'{100 * max(_ex):.2f}'
+    _pv = col('pi_v')
+    out['x_trf_piv_dec1_lo'] = f'{100 * min(_pv[:10]):.2f}'
+    out['x_trf_piv_dec1_hi'] = f'{100 * max(_pv[:10]):.2f}'
+    out['x_trf_piv_lr'] = f"{100 * tf['pi_v']:.2f}"
+    out['x_trf_piv0'] = f"{100 * hf['pi_v']:.2f}"
+    out['x_trf_piv_above_hf'] = '1' if min(_pv) > hf['pi_v'] else '0'
+    out['x_trf_sud10'] = f'{100 * lam[9]:.2f}'
+    out['x_trf_sud0'] = f"{100 * hf['lambda_d']:.2f}"
+    out['x_trf_sud_lr'] = f"{100 * tf['lambda_d']:.2f}"
     out['x_trf_shade_born'] = str(UNCONVERGED_FROM - 25)
     # the drug price: the years it stays above its long-run level
     p = col('p_drug')

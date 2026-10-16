@@ -77,7 +77,7 @@ ARMDIR = {'null_share': (RES, RC.NULL_DIR), 'null_remote': (RES, 'nulltf/null'),
           # THE omega_c SENSITIVITY (the author, 10 October: "say in a footnote where we calibrate omegac that all
           # the results continue to hold with omega_c=0.686 as in nishiyama"): Nishiyama's weight in the
           # benchmark, b re-matched to drug use, both arms re-solved (results/omega_nishiyama/RESULT.md)
-          'nish_null': (ROOT, 'results/omega_nishiyama/cf/null'), 'nish_tf': (ROOT, 'results/omega_nishiyama/cf/tf')}
+          'nish_null': (ROOT, 'results/omega_nishiyama_Cu/cf/null'), 'nish_tf': (ROOT, 'results/omega_nishiyama_Cu/cf/tf')}   # rule C, corrected HF (16 Oct)
 
 
 def adir(arm):
@@ -258,7 +258,7 @@ out['x_tf_h_sentence'] = (
     # homelessness")
     f"It also lowers homelessness by {out['x_tf_h_pc']} percent, from {out['x_h0']} to "
     f"{out['x_tf_h1']} percent of households: less SUD means less unemployment and so less homelessness, "
-    f"and the vouchers it revokes from households with a SUD go, through a higher $\\pi_V$, to other poor "
+    f"and the vouchers it revokes from households with a SUD go, through a higher $\\pi_V$, to other low-income "
     f"households.")
 # WHO THE FALL IN HOMELESSNESS COMES FROM (round 4ad85a30, the author on the introduction: "explain why
 # ... it is worth explaining that result a bit more"): the share homeless among households with a SUD
@@ -309,7 +309,7 @@ out['x_tf_h_why_intro'] = ('' if _hrise else
                            '. On the one hand, it revokes the vouchers of drug users and households with a SUD and puts them at a '
                            'higher risk of homelessness. On the other hand, in the long run, removing the moral '
                            'hazard cuts drug use, so fewer households acquire a SUD, remain unemployed because of it and lose '
-                           'their housing, and the vouchers it revokes go to other poor households instead. '
+                           'their housing, and the vouchers it revokes go to other low-income households instead. '
                            'Together these two effects slightly more than offset the first')
 # THE HOMELESS WHO COULD HAVE AFFORDED HOUSING, in the benchmark (the author, 2 October: "many just
 # can't afford to not be homeless even if they wanted to"): the share homeless by choice

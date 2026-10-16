@@ -19,7 +19,7 @@ sys.path.insert(0, HERE)
 import welfare_nok as w
 
 OUT_JSON = os.path.join(HERE, 'results_numbers.json')
-N = os.path.join(ROOT, 'results', 'omega_nishiyama', 'nodes')
+N = os.path.join(ROOT, 'results', 'omega_nishiyama_Cu', 'cf')   # rule C, the corrected Housing First (16 October): cf/ carries the by-node values for both arms
 BENCH = os.path.join(ROOT, 'results', 'omega_nishiyama_2c', 'bench_0.686_b0.004510373_ku1.0')
 
 if __name__ == '__main__':

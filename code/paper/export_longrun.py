@@ -649,7 +649,7 @@ def main():
                                 'falls as well' if D[t]['child_hl'] < D['null_share']['child_hl'] else 'falls')
     # (14 October, rule C) the introduction's 'while the share of children in a shelter rises only from': the
     # 'only' belonged to a small rise, and printed 'falls only from 1.03 to 0.95' once the share fell
-    out['x_dcb_hchild_dironly'] = 'rises only' if D['dc_b']['child_hl'] > D['null_share']['child_hl'] else 'falls'
+    out['x_dcb_hchild_dironly'] = 'rises only' if D['dc_b']['child_hl'] > D['null_share']['child_hl'] else 'actually falls'   # r324
     # (14 October, rule C) whose childhood homelessness the budget and earnings externalities outweigh: 'the few more
     # children the screen sends to a shelter' was rule A's, where the share rose; under rule C it falls
     out['x_dcb_hl_ext'] = ('of the few more children the screen sends to a shelter'
@@ -672,9 +672,9 @@ def main():
         'Therefore, the \\emph{budget and earnings externalities} dominate both the \\emph{childhood homelessness '
         'externality} and the direct loss to the parent from the removal of an option.' if _dcb_up else
         'In the aggregate, then, there is no trade-off between the externalities: by cutting use, the screen keeps '
-        'more children out of a shelter than it sends to one by putting their parents out. What the \\emph{budget '
-        'and earnings externalities} have to outweigh is only the direct loss to the parent from the removal of an '
-        'option.')   # r322, the author on 'although a child whose parent it puts out can still lose its home': "remove"
+        'more children out of a shelter than it sends to one by putting their parents out. What the \\emph{budget, '
+        'earnings and childhood homelessness externalities} have to outweigh is only the direct loss to the parent from '
+        'the removal of an option.')   # r324, the author: "budget, earnings and childhood externalities"   # r322, the author on 'although a child whose parent it puts out can still lose its home': "remove"
     # the abstract, on the main experiment's long run
     out['x_abs_hchild_sentence'] = (
         "Sobriety conditions reduce these harms more than they expose screened-out users' children to homelessness."
@@ -803,11 +803,12 @@ def main():
     out['x_lr_tf_treat'] = (
         # (14 October, rule C) treatment is now also how a household with a SUD keeps its voucher: in treatment and not
         # using, it passes the screen, which is the first reason; recovery's is the second
+        # (round r324, the author: "a bit too long...break it down")
         'It also raises the share of households with a SUD who are in treatment, from '
-        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent, because a household with a SUD that is in treatment and does '
-        'not use passes the screen, and because treatment buys a higher chance of recovering, which Treatment First '
-        'makes worth more: a household that has recovered and does not use passes the screen and can hold a voucher if '
-        'it is eligible and offered one.' if _tk1 > _tk0 else '')
+        f'${100 * _tk0:.1f}$ to ${100 * _tk1:.1f}$ percent. A household with a SUD that is in treatment and does not use '
+        'passes the screen. Treatment also buys a higher chance of recovering, which Treatment First makes worth more: a '
+        'household that has recovered and does not use passes the screen too, and can hold a voucher if it is eligible '
+        'and offered one.' if _tk1 > _tk0 else '')
     # (round 0e3b2441, the author: 'only' -> 'only buys', 'voucher.' -> 'if eligible and offered a voucher', and on
     # 'household': "eligible household (check that you use that kind of language in the results section....the
     # eligibility is still key)": every 'more likely to get a voucher' now says the household is eligible)
@@ -856,7 +857,7 @@ def main():
             if abs(_ach) < 1 and e1 > 0 > e2 and e3 < 0 and abs(e1 + e2 + e3) < 0.25 * e1
             and f'{_c0:.2f}' == f'{_c1:.2f}' else
             # (14 October, rule C) homelessness falls at these ages too, and with it the shelter share
-            'For households aged 26 to 50, the years a child lives with them, homelessness falls too, by '
+            'For households aged 26 to 50, the years a child lives with them, homelessness also falls by '   # r324
             f'${abs(_ach):.0f}$ percent, so the share of children in a shelter falls from ${_c0:.2f}$ to ${_c1:.2f}$ '
             'percent.' if _ach <= -1 and _c1 < _c0 else '')
         if not out['x_lr_children_hl']:
@@ -1105,8 +1106,9 @@ def main():
         ('Every household that enters adult life at 26 is better off under Treatment First than it would be in '
          'the same state under Housing First' if _y > 99.95 else
          # (14 October) a share that rounds to 100 but is not all of them
-         'Nearly every household that enters adult life at 26 is better off under Treatment First than it would be in '
-         'the same state under Housing First' if _y >= 99.5 else
+         # (round r324, the author on 'Nearly': "why nearly? isnt it 100%?": it is 99.9, which the table rounds to 100)
+         f'Of the households that enter adult life at 26, ${_y:.1f}$ percent are better off under Treatment First than '
+         'they would be in the same state under Housing First' if _y >= 99.5 else
          f'Of the households that enter adult life at 26, ${_y:.0f}$ percent are better off under Treatment First '
          'than they would be in the same state under Housing First')
         + ' (Table~\\ref{tab:longrun}).')

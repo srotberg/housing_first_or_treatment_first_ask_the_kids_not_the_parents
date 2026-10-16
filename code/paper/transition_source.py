@@ -36,19 +36,35 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 # points. The arms the run is solved between (results/transition_2c_t70/arm_*) re-solve the T = 60 arms to a worst
 # relative difference of 2.4e-4 and carry only final.txt, so REF below stays on the T = 60 arms, which carry the
 # logs and the by-node values. Before that: T = 60 loop 1_r5 (9 October 10:03, results/transition_2c/loop1_r5).
-LOG = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_loop2', 'run.log')
-TAG = 'tr2c_t70_loop2'
+# 16 October (round r324, the author: "please update the transition figures to include the new T=50"): RULE C, the
+# corrected Housing First, T = 50, the fourth and last loop (results/transition_2c_t50_Cu/loop3; the binary's loop 0
+# after the 01:49 relaunch, so its log carries one forward pass). NOT CONVERGED: the worst budget residual on the
+# path is 2.08e-2 and the worst drug gap 3.56e-3, and pi_V in years 40-49 sits 2.2 per cent below its terminal value,
+# further than in loop 0 (1.5), so the horizon may be short (T = 60 is the open question). The steady states are the
+# T = 50 run's own terminal re-solves (final.txt, 'no policy' column) and the corrected long-run arms' logs
+# (results/decomp_2c_shares_Cu/arm_tf/{null,tf}/cf.log.gz), staged in code/trtf50/ref (untracked symlinks).
+LOG = os.path.join(ROOT, 'code', 'trtf50', 'tr2c_t50_Cu_loop3', 'run.log')
+TAG = 'tr2c_t50_Cu_loop3'
+HORIZON = 50
+UNCONVERGED_FROM = 40
+OUT = os.path.join(ROOT, 'results', 'transition', TAG)
+CURVE = os.path.join(ROOT, 'results', 'transition_2c_t50_Cu', 'loop3', 'welfare_curvebaseline_benchmark.dat')
+REF = os.path.join(ROOT, 'code', 'trtf50', 'ref')
+REF_NULL, REF_TF = 'arm_null', 'arm_tf'
+# on a fresh machine stage the log first: zcat results/transition_2c_t50_Cu/loop3/run.log.gz > LOG
+# the previous pin (rule A, T = 70, loop 2), kept for the record:
+_RULE_A_LOG = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_loop2', 'run.log')
+_RULE_A_TAG = 'tr2c_t70_loop2'
 # THE PINNED RUN'S HORIZON AND THE START OF ITS DRIFTING END: the path covers years 1 to HORIZON - 1, and the
 # figure's peaks are read before UNCONVERGED_FROM, where the path is least converged: the years 60 to 69 that the
 # horizon added were seeded with the terminal prices in loop 0 and have been iterated once in loop 1 (budget
 # residual up to 1.19e-2 there, under 2e-3 before). Both move with the pin.
-HORIZON = 70
-UNCONVERGED_FROM = 60
-OUT = os.path.join(ROOT, 'results', 'transition', TAG)
+_RULE_A_HORIZON = 70
+_RULE_A_UNCONVERGED_FROM = 60
+_RULE_A_OUT = None
 # the benchmark welfare curve the cohort CEVs are read against, and the two steady states the path is
 # solved between: Housing First with no policy change, and the Treatment First long run, on the same build
-CURVE = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_loop2', 'welfare_curvebaseline_benchmark.dat')
-REF = os.path.join(ROOT, 'results', 'transition_2c')
-REF_NULL, REF_TF = 'arm_null', 'arm_tf'
+_RULE_A_CURVE = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_loop2', 'welfare_curvebaseline_benchmark.dat')
+_RULE_A_REF = os.path.join(ROOT, 'results', 'transition_2c')
 # the previous pin, kept for the record: restart 3g's loop 0 on the old build (30 September)
 #   LOG = code/trtf60/restart3g_loop0/run.log, TAG = 'restart3g_loop0'

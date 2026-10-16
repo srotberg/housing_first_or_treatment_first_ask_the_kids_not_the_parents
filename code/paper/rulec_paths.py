@@ -48,6 +48,22 @@ if not os.path.exists(AGE_SPLIT):
 # computed against the gated one and print yellow (Table 5's better-off rows, and the sentences that quote them)
 SHARES_FILE = {'fixboth': os.path.join(SCU, 'arm_fixboth', 'shares.txt')}
 STALE_SHARES = {'dc_pv', 'dc_p', 'pe_b', 'fx_d', 'ne_e', 'nc_c'} | (set() if CORRECTED else {'tf85'})
+# THE CORRECTED DECOMPOSITION AND NO-EXTERNALITY COLUMNS (landed 14 October, 15:59 to 20:57; round r324). Each column
+# moves to its corrected run once that run's files are all in, and its better-off shares stop printing yellow. The
+# column with the drug price held and pi_V clearing holds pi_V at 0.0924 (remote_decomp_shares_Cu2.sh, SHARES_HOLD_PV):
+# the clearing value sits at a jump in drug use, and there net revenue is 0.2 per cent above Housing First's.
+for _k, _arm in (('fixboth', 'dc_b'), ('fixpv', 'dc_pv'), ('fixp', 'dc_p')):
+    _d = os.path.join(SCU, f'arm_{_k}')
+    if all(os.path.exists(os.path.join(_d, f)) for f in ('final.txt', 'shares.txt', 'newborn_shares.json',
+                                                         'tf/final.txt', 'tf/cf.log.gz', 'status.txt')):
+        DC[_k] = _d
+        SHARES_FILE.pop(_k, None)
+        STALE_SHARES.discard(_arm)
+for _name, _arm, _new in (('PE', 'pe_b', 'pe_noext_Cu'), ('FX', 'fx_d', 'noext_fixp_Cu'), ('NC', 'nc_c', 'noext_clear_Cu'),
+                          ('NE', 'ne_e', 'noext_pclear_Cu')):
+    if os.path.exists(os.path.join(R, _new, 'analysis.json')):
+        globals()[_name] = os.path.join(R, _new)
+        STALE_SHARES.discard(_arm)
 REVOKED = os.path.join(R, 'revoked_2c_C')
 REVOKED_STREET = os.path.join(R, 'revoked_2c_street_C')
 
