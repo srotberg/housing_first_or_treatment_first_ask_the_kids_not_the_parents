@@ -1,4 +1,4 @@
-# SMI x street split of the revoked-voucher experiment, RULE CA, DETECTION 1.00 (code/revoked_2c_street/run_paths_CA100.sh); 16 Oct 17:25 UTC
+# SMI x street split of the revoked-voucher experiment, RULE CA, DETECTION 1.00 (code/revoked_2c_street/run_paths_CA100.sh); 16 Oct 17:45 UTC
 ## stage 1, the two steady states (code/revoked_2c/run_arms_CA100.sh)
 run_arms: free disk 29G, memory 15 GiB, cores 4 (16 Oct 14:58)
 run_arms: building cf_fix2_treatCA (16 Oct 14:58)
@@ -6,6 +6,9 @@ run_arms: building cf_fix2_share_treatCu (16 Oct 15:00)
 run_arms: builds done (16 Oct 15:03)
 run_arms: arm null on cf_fix2_share_treatCu (the corrected Housing First) (16 Oct 15:03)
 run_arms: arm fixboth on cf_fix2_treatCA (rule CA, detection 1.00) (16 Oct 15:08)
+run_arms: null_2c_CA100: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 5 passes, sweeps [70, 84, 77, 70, 70], largest final 4.89e-05 (rule 5e-05, at least 70 sweeps)  (16 Oct 17:37)
+run_arms: tf_2c_fixboth_CA100: DIST CHECK PASS: 4 passes, sweeps [70, 70, 70, 70], largest final 2.71e-06 (rule 5e-05, at least 70 sweeps)  (16 Oct 17:37)
+run_arms: arms done (16 Oct 17:37)
 ## builds
 split: patched /home/user/children_first_housing_later/code/revoked_2c_street/work_CA100/tr_fix_src.f90 -> /home/user/children_first_housing_later/code/revoked_2c_street/work_CA100/tr_fix_C.f90
 user rule gated at 6 sites
