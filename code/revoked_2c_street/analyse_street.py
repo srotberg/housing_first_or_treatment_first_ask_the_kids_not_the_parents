@@ -76,7 +76,7 @@ def split_sum(r, out, name):
             n += 1; exact += (u == v)
             w = max(w, abs(u - v) / max(abs(u), 1e-300))
             if t == c and f in ('mass0', 'alive'):
-                start_gap = max(start_gap, abs(u - v) / u)
+                start_gap = max(start_gap, abs(u - v) / u if u else abs(v))   # a cohort with no mass: its parts must be 0 too
     cells = [d['cell_maxabs_parts_minus_cohort'] for d in r['split'].values()]
     good = n > 0 and w < 1e-12 and cells and max(cells) == 0.0
     out.append(f"  {name}: the four parts summed against the unsplit cohort, {n} comparisons (levels; shares times survivors): "
@@ -86,7 +86,7 @@ def split_sum(r, out, name):
     out.append(f"    (the parts move in separate passes through the same kernel and rejoin in the same cells, so a sum of four "
                f"separately rounded passes can differ from the joint pass in the last bit; at the start the totals "
                f"differ by {start_gap:.1e} relative, the order of summation over the same cells)")
-    bad = [(c, s, k) for (c, s, k, t), d in r['sub'].items() if t == c and abs(d['smi_now'] - s) > 1e-12]
+    bad = [(c, s, k) for (c, s, k, t), d in r['sub'].items() if t == c and d['mass0'] > 0 and abs(d['smi_now'] - s) > 1e-12]   # a part with no mass has no share
     out.append(f"  {name}: SMI share at revocation 1 in the SMI parts, 0 in the others (to 1e-12, the ratio of two sums): {'PASS' if not bad else 'FAIL ' + str(bad[:4])}")
     worst = max([abs(d['acct_close']) for d in r['sub'].values()] + [abs(d['acct']) for d in r['sub'].values()] + [0])
     out.append(f"  {name}: mass accounting in the parts, worst {worst:.1e} (rule 1e-10) {'PASS' if worst < 1e-10 else 'FAIL'}")
