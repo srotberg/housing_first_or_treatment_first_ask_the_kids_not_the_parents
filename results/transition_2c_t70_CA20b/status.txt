@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20 (code/transition_fix/remote_tr70_CA20b.sh, detection 0.20, from the best pass); 17 Oct 16:16 UTC
+# the T = 70 transition on RULE CA at detection 0.20 (code/transition_fix/remote_tr70_CA20b.sh, detection 0.20, from the best pass); 17 Oct 16:50 UTC
 remote_tr70_CA20b: gfortran missing, installing (14:22)
 remote_tr70_CA20b: free disk 29G, memory 15 GiB, cores 4 (14:23)
 remote_tr70_CA20b: building cf_fix (14:23)
@@ -11,6 +11,7 @@ remote_tr70_CA20b: the long-run run's cfarm_tf_2c (if any) moved to cfarm_tf_2c.
 remote_tr70_CA20b: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (14:32)
 remote_tr70_CA20b: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_pdet20_CAbest/tf/final.txt): price 0.90440000, pi_V 0.086240000 (14:36)
 remote_tr70_CA20b: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.086240000 DRUG_PRICE_START=0.90440000 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100 (14:36)
+remote_tr70_CA20b: long-run rule-C arm ACCEPTED: remote_pdet tf_pdet20_CAbest: arm tf ACCEPTED (pass 13 of tf_pdet20_CAu, inside both tolerances) (16:30)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -18,9 +19,11 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   2  0.9992  0.06753    -1.0%    -0.2%    -1.0%  1.74e-03  0.00e+00   787.8710  +1.09%    -0.3%    +0.7%
   3  0.9993  0.06753    -0.5%    +0.4%    -0.1%  1.65e-04  0.00e+00   787.5217  +0.08%    -0.1%    +0.4%
   4  0.9993  0.06753    -0.4%    +0.4%    +0.0%  1.94e-04  0.00e+00   787.4949  -0.00%    -0.1%    +0.3%
+  5  0.9994  0.06753    -0.4%    +0.4%    +0.0%  1.92e-04  0.00e+00   787.4918  -0.01%    -0.1%    +0.3%
 
 == arm tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  0.9044  0.08624   -29.2%   -29.1%   -12.5%  0.00e+00  3.26e-01   790.3717  +8.78%   -11.2%   +25.3%
   2  0.9044  0.08624   -29.0%   -28.9%   -11.3%  0.00e+00  3.50e-02   789.5241  +6.08%   -12.6%   +23.2%
- MILBY SPLIT voucher mass rec treat smi   6.3795131169725086E-002   2.2324680666996558E-003   2.7072227763659827E-002   6.4486248616361401E-003  housed_nov mass rec treat smi   1.2662841656070893        3.9049935369704872E-002  0.31463150852048083       0.10211044061387195     
+  3  0.9044  0.09044   -30.3%   -30.1%   -13.4%  0.00e+00  3.36e-02   789.5347  +6.12%   -13.8%   +23.6%
+ MILBY SPLIT voucher mass rec treat smi   6.4866932817577910E-002   2.2677469260010681E-003   2.7442853491874614E-002   6.5881828582583834E-003  housed_nov mass rec treat smi   1.2441850870602957        3.8338026376160683E-002  0.30799422523812103       0.10071368125407783     
