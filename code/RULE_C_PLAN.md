@@ -739,3 +739,13 @@ rise. x_ne_hchild_pc (children in a shelter, 1.00 long run, -31) added to export
 \new nested in a \new inside \tocheck. Pending: comment 3 (the 0.20 no-escape newborn CEV, from
 results/transition_2c_t70_CA20b/arms/arm_tf when its terminal arm lands; re-point export_ca.py there too), comment 4 (the
 transition figures to T = 70: re-pin transition_source.py to results/transition_2c_t70_Cu loop0 when archived, ~23:00).
+
+18:00 (17 Oct) ROUND r334 (9 comments; "why didnt you update the transition figures? Dont we have some initial T=70
+results?!"). Red cleared, comments in red. THE FULL 1.00 NO-ESCAPE TRANSITION (partial loop-0 log the CAb worker
+published at the author's request, 19 years): with the savings recycled homelessness still rises, +14 per cent in years
+2-3, above Housing First until year 14; children in a shelter +11 per cent, above until year 11; pi_V only 6.9-8.4 per
+cent in years 2-19 against 10.9 in the long run. 6.4's closing paragraph now quotes these (x_ne_tr_* from
+export_noescape.py: the latest archived loop of transition_2c_t70_CAb, else the partial log). The 0.20 rule's children
+in a shelter (x_ne20_hchild_pc) is '--' until results/transition_2c_t70_CA20b/arms lands. The rule-C T = 70 worker asked
+at 17:48 to publish its partial loop-0 log (37 of 69 years done) for a preview of the transition figure; the paper's
+figure is re-pinned when loop 0 is archived (~23:00).
