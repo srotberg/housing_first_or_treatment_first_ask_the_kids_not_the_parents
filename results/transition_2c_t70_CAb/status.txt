@@ -1,10 +1,14 @@
-# the T = 70 transition on RULE CA at detection 1.00 (code/transition_fix/remote_tr70_CAb.sh, from the best pass); 17 Oct 07:21 UTC
+# the T = 70 transition on RULE CA at detection 1.00 (code/transition_fix/remote_tr70_CAb.sh, from the best pass); 17 Oct 07:22 UTC
 remote_tr70_CAb: free disk 17G, memory 15 GiB, cores 4 (07:19)
 remote_tr70_CAb: long-run rule-C arm ACCEPTED: remote_pdet tf_pdet100_CAbest: arm tf ACCEPTED (by the author's decision, not by the tolerances): tf_pdet100_CAuC pass 7 (07:19)
 remote_tr70_CAb: terminal arm (started early) within 1 of the accepted arm: worst relative difference 1.746e-01 (07:19)
 remote_tr70_CAb: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 1.5e-04; tf against the accepted long-run CA arm 1.746e-01 (07:19)
 remote_tr70_CAb: shares written:   all households                   mass 50.82536  strict better 0.8131 | tol 0.001: better 0.7643 worse 0.0278 | tol 0.01: better 0.7489 worse 0.0278 (07:20)
 remote_tr70_CAb: age split: 2 of 2 arms exact (07:21)
+remote_tr70_CAb: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t70_CAb -- start with: cd /home/user/children_first_housing_later/code/tr2c_t70_CAb && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds rescaled from rule C's T = 50 loop3 (x0 0.99942581 0.067533863): drug_price: factor 3.6941; t=1 0.874332, t=2 0.882665, t=5 0.882674, t=10 0.874194, t=25 0.815924, t=49 0.801700, t=69 0.801700 pi_v: factor 4.8403; t=1 0.077098, t=2 0.068868, t=5 0.071820, t=10 0.075576, t=25 0.093587, t=49 0.108961, t=69 0.108961  (07:22)
+remote_tr70_CAb: 4 GiB swap on (07:22)
+remote_tr70_CAb: T = 70 transition started, pid 1449 (07:22)
+remote_tr70_CAb: handover applied: 100 parameters (07:22)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -24,3 +28,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   6  0.8017  0.10865   -64.0%   -64.4%   -30.3%  0.00e+00  2.07e-03   791.8755  +13.80%   -37.9%   +72.8%
   7  0.8017  0.10890   -64.0%   -64.4%   -30.4%  0.00e+00  5.30e-04   791.8864  +13.84%   -37.9%   +72.8%
  MILBY SPLIT voucher mass rec treat smi   0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000       housed_nov mass rec treat smi  0.67261137278145677        2.0717366904887236E-002  0.16632513965499393        5.3331495666794695E-002
+
+== tr2c_t70_CA (T = 70, rule CA, detection 1.00)
