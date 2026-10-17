@@ -701,3 +701,13 @@ and the drifting CAuB worker session_014GGaH2BLE1DWy6kpPHYLXG interrupted.
 cent); a trigger message asked its worker to continue with REL_TOL=1 and it did: T = 70 staged and started 07:22. The
 hedge (CAb2), which had also killed its early arm at 06:32, was interrupted. tf_pdet05_Cu ACCEPTED 06:38: drug use -8.9,
 SUD -8.2, homelessness -3.6 per cent against the corrected Housing First, pi_V 7.14 per cent, newborn CEV +1.01.
+
+14:20 (17 Oct) THE CONCLUSION WRITTEN (the author: "I think then you can write the conclusion"). Discussion lessons 2 and
+3 rewritten in red, out of yellow. Lesson 2: how strict the condition is decides whether its costs come first; the
+strict rule (detection 1.00, no exemption for treatment) does more in the long run (drug use -64, homelessness -30, newborn
++11.33 against +2.57) but, before its savings are recycled (Block 7's ten-year paths, price and pi_V held), homelessness
+rises by up to 15 and children in a shelter by up to 12 percent, still +11 and +6 in year 9. Lesson 3b: under the
+order's rule 66 percent of those with a SUD are worse off in year 1; under the strict rule 28 percent of the revoked are
+homeless in each of years 1-3, against none with the voucher kept. Names from code/paper/export_noescape.py (x_ne_*).
+OPEN: the full no-escape transition (results/transition_2c_t70_CAb, savings recycled) has not landed; when it does, check
+whether homelessness still rises with the savings recycled and say so in lesson 2.
