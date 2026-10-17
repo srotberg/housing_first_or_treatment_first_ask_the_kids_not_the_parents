@@ -194,7 +194,9 @@ def masses():
     """the Housing First newborns' masses over the 26 entry nodes (13 productivity nodes x a clean or penalised
     parent), from stage E2's newborn run"""
     m = {}
-    for l in open(os.path.join(ROOT, 'results', 'transition_2c', 'newborn', 'shares.txt')):
+    # (17 October) from the corrected comparison's newborn step; results/transition_2c/newborn/shares.txt was rule A's
+    # stage E2 (the masses agree to 1e-5, so no printed number moves)
+    for l in open(os.path.join(ROOT, 'results', 'decomp_2c_shares_Cu', 'arm_tf', 'newborn_shares.txt')):
         g = re.match(r'parent node\s+(\d+) class (\d) \(y=\S+\)\s+(\S+)\s', l)
         if g and (int(g.group(1)), int(g.group(2))) not in m:
             m[(int(g.group(1)), int(g.group(2)))] = float(g.group(3))

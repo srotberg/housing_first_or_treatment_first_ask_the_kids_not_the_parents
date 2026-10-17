@@ -695,6 +695,19 @@ out['x_tr_lr_h_pc'] = pc(tf_tr['homelessness h_1']['pc'])
 out['x_tr_hchild0'] = f'{100 * hc0_tr:.2f}'
 sys.path.insert(0, HERE)
 from transition_source import LOG as best   # the one pin
+# THE BUDGET ALONG THE PATH (17 October, the author: "I want all the numbers to be corrected"): the prose said the
+# budget clears every period, but the pinned pass misses the solver's 1e-3 in most years. The worst |net revenue -
+# target| over every year of the pass's first forward pass, as a per-cent share of the target, so the sentence states
+# what the path achieves and moves with the pin.
+_bud = {}
+for _l in open(best, errors='replace'):
+    if 'TRANSITION INIT PARENT SHARE RESTORED' in _l and _bud:
+        break
+    _m = re.search(r'TRANSITION BUDGET loop=\s*\d+\s+t=\s*(\d+)\s+net_govt_revenues=\s*(\S+)\s+constraint=\s*(\S+)', _l)
+    if _m:
+        _bud[int(_m.group(1))] = (float(_m.group(2)), float(_m.group(3)))
+assert len(_bud) >= 20, f'{best}: {len(_bud)} budget lines'
+out['x_tr_bud_worst_pc'] = f"{100 * max(abs(r / c - 1) for r, c in _bud.values()):.2f}"
 tr_dir = os.path.join(ROOT, 'code', 'trtf60')
 if not re.search(r'TRANSITION WELFARE loop=\s*\d+\s+t=\s*26 ', open(best, errors='replace').read()):
     sys.exit(f'{best} does not reach period 26')
@@ -764,7 +777,9 @@ for l in gzip.open(os.path.join(adir('old_null_share'), 'cf.log.gz'), 'rt', erro
 # only when the penalty carries the transmission (the no-penalty ratio below the range) and the benchmark sits in
 # the lower half of the range.
 _nopen = None
-for l in gzip.open(os.path.join(ROOT, 'results', 'noext_clear', 'arm_A', 'cf.log.gz'), 'rt', errors='replace'):
+# (17 October) the corrected run's Arm A (rulec_paths.NC, noext_clear_Cu): results/noext_clear/arm_A predates the
+# correction and the treatment patches; the ratio is 1.0234 against 1.0233, so the printed 1.02 does not move
+for l in gzip.open(os.path.join(RC.NC, 'arm_A', 'cf.log.gz'), 'rt', errors='replace'):
     if 'UNTARGETED delta_d child SUD odds ratio' in l:
         _nopen = float(l.split('model=')[1].split()[0])
 out['x_odds_sud_nopen'] = f'{_nopen:.2f}'

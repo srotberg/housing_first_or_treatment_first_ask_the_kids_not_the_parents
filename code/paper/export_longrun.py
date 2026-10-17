@@ -245,7 +245,7 @@ def shares(tol='0.001', path=None):
     if not os.path.exists(p):
         return out
     for l in open(p):
-        m = re.match(r'\s+(all households|with a SUD|without a SUD)\s.*?tol ' + re.escape(tol)
+        m = re.match(r'\s+(all households|with a SUD|without a SUD|youngest adults \(age index 1\))\s.*?tol ' + re.escape(tol)
                      + r': better (\S+) worse (\S+)', l)
         if m:
             out[m.group(1)] = (float(m.group(2)), float(m.group(3)))
@@ -366,9 +366,11 @@ def main():
         D['tf85']['all_better'] = 100 * SH['all households'][0]
         D['tf85']['sud_better'] = 100 * SH['with a SUD'][0]
     D['tf85']['nb_better'] = 100.0 if D['tf85']['cev_net'] > 0 else 0.0
-    D['tf85']['y26_better'] = 100 * D['tf85']['adult']['young_better']
-    for _a in ('dc_b', 'dc_pv', 'dc_p'):
-        D[_a]['y26_better'] = 100 * D[_a]['adult']['young_better']
+    # ENTERING ADULT LIFE AT 26 (17 October, the author: "I want all the numbers to be corrected"): from the same
+    # shares.txt as the other better-off rows, against the corrected Housing First at 1e-3 utils, as the columns without
+    # the externalities do. The Fortran's own frac_in_support_youngest, read before, compares with the SAVED benchmark,
+    # which predates the correction: the ninth column printed 17 where the corrected comparison gives 5.
+    D['tf85']['y26_better'] = 100 * SH['youngest adults (age index 1)'][0] if SH else 100 * D['tf85']['adult']['young_better']
     # THE DECOMPOSITION COLUMNS' BETTER-OFF ROWS (the author, 9 October: "id like you to rerun them and remove that
     # sentence from the notes", and "make sure to put the missing things in the table in yellow, so you dont forget to
     # fill them"): from each column's re-solve (code/extra_2c/remote_decomp_shares.sh, results/decomp_2c_shares/), the
@@ -379,6 +381,7 @@ def main():
         _nbk = newborn_better(path=os.path.join(_dir, 'newborn_shares.json'))
         D[_a]['all_better'] = 100 * _sh['all households'][0] if _sh else '\\tocheck{--}'
         D[_a]['sud_better'] = 100 * _sh['with a SUD'][0] if _sh else '\\tocheck{--}'
+        D[_a]['y26_better'] = 100 * _sh['youngest adults (age index 1)'][0] if _sh else '\\tocheck{--}'
         D[_a]['nb_hh_better'] = _nbk if _nbk is not None else '\\tocheck{--}'
     # the last column's welfare rows, from the walk on Arm A's distribution (results/pe_noext/RESULT.md): the CEV is the
     # newborn's adult value at 26, since its childhood is the externality the column switches off (the paragraph and the

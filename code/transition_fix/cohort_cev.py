@@ -27,7 +27,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'
 import welfare_nok as wn      # the kappa_x * H term and the benchmark's curve shift (10 October)
 
 BETA = 0.94609059720286381   # discount_factor, PARAM_HANDOVER
-KAPPA_X = 0.9329             # kappa_x, PARAM_HANDOVER: the path's childhood identity below still uses it
+KAPPA_X = 0.9342362271804227 # kappa_x, the benchmark's (KAPPA_X in the launchers; 17 October, was 0.9329, 1e-4 utils)
 # EVERY LIFETIME VALUE AND CEV PRINTED HERE IS WITHOUT THE kappa_x * H TERM (10 October, the author: "compute all the
 # welfare numbers without kappa_x H"): the childhood sum leaves the term out, the adult value at 26 gets the term it
 # carries added back (ADULT_SENS * kappa_x * h_1 of the year the cohort enters), and the curve is shifted by the
