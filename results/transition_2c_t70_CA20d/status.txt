@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20, THE DRUG PRICE CLEARING ALONG THE PATH (code/transition_fix/remote_tr70_CA20d.sh, from the best pass); 17 Oct 22:22 UTC
+# the T = 70 transition on RULE CA at detection 0.20, THE DRUG PRICE CLEARING ALONG THE PATH (code/transition_fix/remote_tr70_CA20d.sh, from the best pass); 17 Oct 22:46 UTC
 remote_tr70_CA20d: gfortran missing, installing (22:14)
 remote_tr70_CA20d: free disk 29G, memory 15 GiB, cores 4 (22:14)
 remote_tr70_CA20d: building cf_fix (22:14)
@@ -8,3 +8,9 @@ remote_tr70_CA20d: building cf_fix2_treatCA (22:20)
 remote_tr70_CA20d: building tr70_CA (build_tr70_CA.sh) (22:21)
 remote_tr70_CA20d: built /home/user/children_first_housing_later/code/tr70_CA/hftf_tr_prod 86ca51b3 (rule CA + cohort print, T = 70; patch_treatCA.py df4efe6a) (22:22)
 remote_tr70_CA20d: the long-run run's cfarm_tf_2c (if any) moved to cfarm_tf_2c.phase1 (22:22)
+remote_tr70_CA20d: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (22:23)
+remote_tr70_CA20d: terminal arm waits for results/counterfactuals_2c/tf_pdet20_CAu to be accepted (TF_EARLY=1 would start it early from the latest pass) (22:26)
+
+== arm null
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  0.9999  0.06753    -3.2%    -2.4%    -2.9%  1.96e-03  0.00e+00   789.1158  +4.82%    -0.3%    +3.0%
