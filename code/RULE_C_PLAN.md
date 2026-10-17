@@ -687,3 +687,11 @@ mortality 10.20 against 6.62 percent with the voucher kept, a gap of 3.6 percent
 was 2.2 at 0.20). export_revoked.py's STREET points at it; Block 7's yellow removed, the setting stated in red in the
 paragraph and in Table 6's note b. revoked_2c_CA100/tables.md (the unsplit analysis) is a traceback (empty cohorts at
 1.00); the paper does not read it.
+
+03:45 (17 Oct) THE BEST-PASS TRANSITION'S TERMINAL ARM WAS RESTARTED BY ITS OWN CHECK. remote_tr70_CAb.sh started the
+terminal arm at 00:08, then at 02:05 found its pi_V (0.1071) more than 2 per cent from the best pass's (0.1024) and
+killed it to re-solve from scratch; when the re-solve ends it GUARDs out unless drug use, the SUD and homelessness are
+also within 5 per cent of the best pass, and at the held price drug use lands on either -55 or -62 per cent. Hedge:
+transition_fix/remote_tr70_CAb2.sh (REL_TOL 1, results/transition_2c_t70_CAb2) in a second worker. The first to reach
+its path is the result. tf_pdet100_CAu ended NOT accepted (exit 143, killed); its worker session_01HCs7CLwRjKRkfJPm7g5f4t
+and the drifting CAuB worker session_014GGaH2BLE1DWy6kpPHYLXG interrupted.
