@@ -16,6 +16,10 @@ remote_tr70_CA20b: terminal arm (started early) within 1 of the accepted arm: wo
 remote_tr70_CA20b: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 7.0e-05; tf against the accepted long-run CA arm 1.514e-02 (22:09)
 remote_tr70_CA20b: shares written:   all households                   mass 50.82541  strict better 0.8150 | tol 0.001: better 0.7456 worse 0.0278 | tol 0.01: better 0.7275 worse 0.0276 (22:11)
 remote_tr70_CA20b: age split: 2 of 2 arms exact (22:11)
+remote_tr70_CA20b: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t70_CA20b -- start with: cd /home/user/children_first_housing_later/code/tr2c_t70_CA20b && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds rescaled from rule C's T = 50 loop3 (x0 0.99936929 0.067533863): drug_price: factor 1.7762; t=1 0.939323, t=2 0.943329, t=5 0.943334, t=10 0.939256, t=25 0.911239, t=49 0.904400, t=69 0.904400 pi_v: factor 2.1177; t=1 0.071718, t=2 0.068118, t=5 0.069409, t=10 0.071052, t=25 0.078932, t=49 0.085659, t=69 0.085659  (22:11)
+remote_tr70_CA20b: 4 GiB swap on (22:11)
+remote_tr70_CA20b: T = 70 transition started, pid 18455 (22:11)
+remote_tr70_CA20b: handover applied: 100 parameters (22:11)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -40,3 +44,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
  11  0.9044  0.08580   -28.8%   -28.8%   -10.5%  0.00e+00  1.46e-03   789.2644  +5.28%   -12.6%   +22.8%
  12  0.9044  0.08571   -28.8%   -28.8%   -10.4%  0.00e+00  8.12e-04   789.2596  +5.26%   -12.6%   +22.8%
  MILBY SPLIT voucher mass rec treat smi   6.3877592393249485E-002   2.2355531724258322E-003   2.7112434560529263E-002   6.4428549807392533E-003  housed_nov mass rec treat smi   1.2692144569420047        3.9152534817516842E-002  0.31582240783666776       0.10219905616378450     
+
+== tr2c_t70_CA (T = 70, rule CA, detection 1.00)
