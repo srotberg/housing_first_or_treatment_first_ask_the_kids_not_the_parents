@@ -1,12 +1,10 @@
-# counterfactual tf_pdet10_Cu (detection 0.10) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 17 Oct 15:58 UTC
+# counterfactual tf_pdet10_Cu (detection 0.10) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 17 Oct 16:18 UTC
 remote_pdet tf_pdet10_Cu: free disk 24G, memory 15 GiB, cores 4 (15:58)
+remote_pdet tf_pdet10_Cu: warm start at the rule-C main arm's latest pass: price 0.8635, pi_V 0.09740 (15:58)
+remote_pdet tf_pdet10_Cu: warm start at the rule-A arm's values: price 0.9651, pi_V 0.07511 (15:58)
+remote_pdet tf_pdet10_Cu: resuming from the last published pass: price 0.9651, pi_V 0.07432 (15:58)
+remote_pdet tf_pdet10_Cu: TF budget target: the paper's no-policy net revenue 5.8371628; test cost 0.0004946100 ($35); detection 0.10 (15:58)
+remote_pdet tf_pdet10_Cu: arm tf on cf_fix2_treatC: PDET=0.10 NET_TARGET=5.8371628 PV_START=0.07432 DRUG_PRICE_START=0.9651 EXTRA_SET=cost_per_drug_test 0.0004946100 (15:58)
 
 == tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
-  1  0.9682  0.07393   -14.7%   -13.0%    -8.8%  9.41e-03  4.10e-01   789.5772  +6.25%    -3.4%   +13.2%
-  2  0.9673  0.07393   -15.0%   -13.3%    -7.2%  9.71e-03  5.00e-02   788.5035  +2.96%    -6.0%   +10.5%
-  3  0.9666  0.07992   -14.4%   -12.6%   -10.5%  3.85e-03  4.50e-02   788.5262  +3.03%    -5.3%   +10.6%
-  4  0.9653  0.07723   -14.3%   -12.5%    -8.7%  3.34e-03  2.78e-02   788.3661  +2.55%    -5.3%   +10.5%
-  5  0.9651  0.07556   -14.1%   -12.4%    -7.5%  5.38e-04  1.37e-02   788.2742  +2.28%    -5.1%   +10.5%
-  6  0.9651  0.07474   -14.1%   -12.4%    -6.9%  1.01e-04  6.98e-03   788.2286  +2.14%    -5.0%   +10.5%
-  7  0.9651  0.07432   -14.0%   -12.3%    -6.6%  1.62e-04  3.93e-03   788.2042  +2.07%    -5.0%   +10.5%
