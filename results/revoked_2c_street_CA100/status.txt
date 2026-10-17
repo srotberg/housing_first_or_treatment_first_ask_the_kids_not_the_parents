@@ -1,3 +1,16 @@
+# RESULT, 17 Oct 03:14 UTC (rule CA, detection 1.00, the corrected Housing First; guards PASS in both pipelines)
+- Who is revoked: everyone revoked is revoked in year 1 (mass 0.1644 of a population of 1); none in years 2 and 3
+  (tags 0), because at detection 1.00 every holder who fails the screen is caught at once. The tables pool over
+  cohort 1 only; analyse.py / analyse_street.py now skip a cohort with no mass (rule C's tables reproduce byte for byte).
+- Of the revoked households with SMI (mass 2.0167e-02, 12.3 per cent of the revoked), 51.9 per cent are put on
+  the street by the revocation (mass 1.0462e-02, 6.4 per cent of all the revoked); the rest stay housed.
+- Of those put on the street, still on the street in every year since the revocation:
+    after 1 year: 96.5 per cent of the starting mass (mass 1.010e-02), 100.0 per cent of the survivors
+    after 2 years: 88.9 per cent of the starting mass (mass 9.301e-03), 95.5 per cent of the survivors
+    after 3 years: 81.8 per cent of the starting mass (mass 8.558e-03), 91.1 per cent of the survivors
+- Costantini comparison (pooled, years 1-3, row 'SMI, on the street'): three-year mortality 10.20 per cent (a) against
+  6.62 per cent (b), gap +3.57 pp (+54 per cent); 4-yr gap +4.55, 6-yr +6.20. All the revoked: 6.86 against 6.06, +0.80 pp.
+
 # SMI x street split of the revoked-voucher experiment, RULE CA, DETECTION 1.00 (code/revoked_2c_street/run_paths_CA100.sh); 17 Oct 03:13 UTC
 ## stage 1, the two steady states (code/revoked_2c/run_arms_CA100.sh)
 run_arms: free disk 29G, memory 15 GiB, cores 4 (16 Oct 14:58)
