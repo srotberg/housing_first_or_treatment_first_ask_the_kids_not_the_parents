@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 17 Oct 01:15 UTC
+# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 17 Oct 01:16 UTC
 remote_tr70_Cu: gfortran missing, installing (14:58)
 remote_tr70_Cu: free disk 29G, memory 15 GiB, cores 4 (14:58)
 remote_tr70_Cu: building cf_fix (14:58)
@@ -19,6 +19,10 @@ remote_tr70_Cu: terminal arm re-solved from the accepted values: worst relative 
 remote_tr70_Cu: arms: null against nulltf/null worst relative difference 4.2e-03; tf against tf_ruleC 1.212e-04 (01:14)
 remote_tr70_Cu: shares written:   all households                   mass 50.82554  strict better 0.8170 | tol 0.001: better 0.7418 worse 0.0297 | tol 0.01: better 0.7161 worse 0.0293 (01:15)
 remote_tr70_Cu: age split: 2 of 2 arms exact (01:15)
+remote_tr70_Cu: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t70_Cu -- start with: cd /home/user/children_first_housing_later/code/tr2c_t70_Cu && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds from rule C's T = 50 loop3, extended: drug_price: year 1 0.965563, 49 0.945901, 59 0.946148, 69 0.946210, terminal 0.946231; pi_v: year 1 0.069510, 49 0.076093, 59 0.077564, 69 0.077932, terminal 0.078054; rent: year 1 1.000000, 49 1.000000, 59 1.000000, 69 1.000000, terminal 1.000000; house_price: year 1 12.048193, 49 12.048193, 59 12.048193, 69 12.048193, terminal 12.048193; lump_sum: year 1 0.000200, 49 0.000000, 59 0.000000, 69 0.000000, terminal 0.000000  (01:16)
+remote_tr70_Cu: 4 GiB swap on (01:16)
+remote_tr70_Cu: T = 70 transition started, pid 23102 (01:16)
+remote_tr70_Cu: handover applied: 100 parameters (01:16)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -41,3 +45,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   9  0.9461  0.07815   -21.1%   -19.2%   -10.2%  1.86e-04  1.75e-03   788.5875  +3.21%    -7.7%   +17.0%
  10  0.9462  0.07805   -21.1%   -19.1%   -11.2%  9.31e-04  1.60e-04   788.5919  +3.23%    -7.6%   +17.1%
  MILBY SPLIT voucher mass rec treat smi  0.11120219989107427        4.8454267864244402E-003   8.6702756562829789E-002   1.2535135845814034E-002  housed_nov mass rec treat smi   1.4147753830806791        4.3243534029960590E-002  0.33645966810032152       0.11886261236276463     
+
+== tr2c_t70_Cu (T = 70, rule C)
