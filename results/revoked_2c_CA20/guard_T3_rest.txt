@@ -1,0 +1,15 @@
+T = 3 GUARDS: Housing First from the tags (one thread), bounds-checked tracking build
+  Housing First, one thread: mass accounting, worst |alive + cumulative deaths - starting mass| / starting mass = 8.80e-14 (rule 1e-10) PASS
+  Housing First, one thread: shadow kernel against the model's own step (ages 2+), worst max-cell gap / largest cell = 0.00e+00 (rule 1e-12) PASS
+  Housing First, one thread: price printed in 2 years: [1.0001082]; pi_V: [0.067533863] PASS
+  Housing First, one thread: mass the model's reduction drops each year (below the last age's renter floor; booked as an end-of-life exit): t=1 0.00e+00, t=2 0.00e+00
+  Housing First, one thread: one pass and stopped cleanly: True, runtime errors: 0 PASS
+  tags written {1: 0.032876026133607315, 2: 0.02581577549637655}, read {1: 0.032876026133607315, 2: 0.02581577549637655} PASS
+  bounds-checked build: periods 2, runtime errors 0; tracked groups against the -O3 build: 6 group-years, worst relative difference 9.4e-12 PASS
+  Housing First t=1: the population moved from t-1 by 5.14e-03 (sum of |change| over cells; alive 50.825565)
+  Housing First t=2: the population moved from t-1 by 4.91e-03 (sum of |change| over cells; alive 50.825574)
+  tf REVK PERIOD DONE t=           1  cpu seconds=   11.344325999999910
+  tf REVK PERIOD DONE t=           2  cpu seconds=   23.593898000000081
+  hf REVK PERIOD DONE t=           1  cpu seconds=   8.2851040000000467
+  hf REVK PERIOD DONE t=           2  cpu seconds=   10.789808999999877
+GUARD SUMMARY: PASS
