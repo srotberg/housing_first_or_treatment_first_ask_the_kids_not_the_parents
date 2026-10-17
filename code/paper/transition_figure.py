@@ -143,6 +143,23 @@ def names(S, C, R):
     out['x_trf_paruse0'] = f"{100 * hf['par_use']:.2f}"
     out['x_trf_paruse_lr'] = f"{100 * tf['par_use']:.2f}"
     out['x_trf_paruse1_vs_lr'] = 'below' if pu[0] < tf['par_use'] else 'above'
+    # WHY, IN THE DIRECTION THE PATH TAKES (17 October, the T = 70 re-pin: at T = 50 the share fell below its long-run
+    # level in the first year and sat slightly above it after; at T = 70 it starts above it and crosses below in year
+    # 11). The two sentences turn with the path instead of asserting one shape.
+    if pu[0] < tf['par_use']:
+        out['x_trf_paruse1_why'] = ('The share of parents who use falls below its long-run level in the first year because the '
+                                    'drug price does not fall to its long-run level at once, so more potential users are deterred.')
+        out['x_trf_paruse_after'] = ('From the second year on, the share of parents who use is slightly above its long-run '
+                                     'level, because it counts the parents who have a SUD, whose number falls only slowly '
+                                     '(panel (b)), and because the falling drug price draws some users back.')
+    else:
+        _kb = next((i + 1 for i, x in enumerate(pu) if x < tf['par_use']), None)
+        assert _kb, 'the share of parents who use never reaches its long-run level along the path'
+        out['x_trf_paruse_below_yr'] = str(_kb)
+        out['x_trf_paruse1_why'] = ('It stays above its long-run level until year ' + str(_kb) + ', because it counts the '
+                                    'parents who have a SUD when the reform lands, whose number falls only slowly '
+                                    '(panel (b)), and from then on moves around it.')
+        out['x_trf_paruse_after'] = ''
     # HOW MANY MORE CHILDREN (round 3350a58a, the author on 'while the former affects many': "(put magnitudes). how
     # many more children does the first affect relative to the second?"): the fall in the share of parents who use
     # in the first year against the largest rise in the share of children in a shelter, both in percentage points

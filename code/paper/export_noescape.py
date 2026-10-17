@@ -117,7 +117,10 @@ out_tr = {
 }
 # THE 0.20 RULE'S CHILDREN IN A SHELTER IN THE LONG RUN (round r334, the author: "what about childhood homelessness?"):
 # from the terminal arm of its T = 70 transition (results/transition_2c_t70_CA20b/arms) once it lands; '--' until then
-A20 = os.path.join(ROOT, 'results', 'transition_2c_t70_CA20b', 'arms')
+# (17 October, 22:30) NOT transition_2c_t70_CA20b: its terminal arm held the price at 0.9044 while pi_V re-cleared and
+# ended with an implied supply price of 0.9118 (drug gap 7.4e-3 against 5e-3); remote_tr70_CA20d.sh re-solves it from
+# the accepted free-price run with both markets clearing
+A20 = os.path.join(ROOT, 'results', 'transition_2c_t70_CA20d', 'arms')
 if os.path.exists(os.path.join(A20, 'arm_tf', 'cf.log.gz')):
     out_tr['x_ne20_hchild_pc'] = f"{100 * abs(child_steady(os.path.join(A20, 'arm_tf')) / child_steady(os.path.join(A20, 'arm_null')) - 1):.0f}"
 else:

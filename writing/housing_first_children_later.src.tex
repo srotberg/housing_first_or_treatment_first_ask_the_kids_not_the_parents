@@ -1025,7 +1025,7 @@ With the drug price and $\pi_V$ held, the first column, the externality is @@x_w
 
 To see what the reform does on the way to the long run, I compute the transition from Housing First to Treatment First. The transition starts from the
 benchmark, with the reform landing as an unexpected permanent shock at the start of
-the first year, which I simulate for @@x_tr_horizon_word@@ years all the way to the Treatment First steady state. The drug market \new{clears every period, and the budget balances to within $@@x_tr_bud_worst_pc@@$ percent of net government revenue in every period}. Figure~\ref{fig:ftrans} shows what the transition looks like along eight key dimensions.
+the first year, which I simulate for @@x_tr_horizon_word@@ years all the way to the Treatment First steady state. \new{In every period the drug price is within $@@x_tr_drug_worst_pc@@$ percent of the price that clears the drug market, and net government revenue within $@@x_tr_bud_worst_pc@@$ percent of its target}. Figure~\ref{fig:ftrans} shows what the transition looks like along eight key dimensions.
 
 \begin{figure}[p]
 \centering
@@ -1040,7 +1040,7 @@ same state under Housing First, weighted by the benchmark's distribution.}
 \end{figure}
 
 Panels (a) and (d) show drug use and the share of parents who use, respectively. Drug use falls upon impact: $@@x_trf_b1_share_pc@@$ percent of its long-run fall happens in
-the first year. The share of parents using drugs falls from $@@x_trf_paruse0@@$ to $@@x_trf_paruse1@@$ percent, @@x_trf_paruse1_vs_lr@@ its long-run level of $@@x_trf_paruse_lr@@$ percent. The share of parents who use falls below its long-run level in the first year because the drug price does not fall to its long-run level at once, so more potential users are deterred. Households without a SUD have agency over whether they use drugs or not; those with a SUD have it too, but at a higher cost, since they keep their voucher only by entering treatment and stopping, which is why the share with a SUD falls more gradually (panel (b)). The screen affects these decisions both directly and through expectations. A voucher holder that uses risks losing its voucher within a year, and a household that uses risks having a voucher offer revoked later, when it may need one but have a SUD, since a disorder takes years to clear.
+the first year. The share of parents using drugs falls from $@@x_trf_paruse0@@$ to $@@x_trf_paruse1@@$ percent, @@x_trf_paruse1_vs_lr@@ its long-run level of $@@x_trf_paruse_lr@@$ percent. @@x_trf_paruse1_why@@ Households without a SUD have agency over whether they use drugs or not; those with a SUD have it too, but at a higher cost, since they keep their voucher only by entering treatment and stopping, which is why the share with a SUD falls more gradually (panel (b)). The screen affects these decisions both directly and through expectations. A voucher holder that uses risks losing its voucher within a year, and a household that uses risks having a voucher offer revoked later, when it may need one but have a SUD, since a disorder takes years to clear.
 
 Panel (b) shows the
 share with a SUD. This share falls slowly, because recovery is slow: half of its
@@ -1049,7 +1049,7 @@ $@@x_trf_sud_90_yr@@$. That stock keeps demand for the drug up, and the drug pri
 above its long-run level for $@@x_trf_price_above_yrs@@$ years (panel (c)). The elevated price deters
 households without a SUD, at every age: in the first decade the number of drug users without
 a SUD falls by up to $@@x_tr_new_peak_pc@@$ percent, against $@@x_tf_new_pc@@$ percent in the
-long run. From the second year on, the share of parents who use is slightly above its long-run level, because it counts the parents who have a SUD, whose number falls only slowly (panel (b)), and because the falling drug price draws some users back.
+long run. @@x_trf_paruse_after@@
 
 Panels (e) and (f) show homelessness and the share of children in a shelter, respectively. Neither rises at any point. Homelessness falls from $@@x_trf_h0@@$ percent of households to $@@x_trf_h10@@$ percent by year 10 and $@@x_trf_hlast@@$ percent by year $@@x_trf_last_yr@@$, against $@@x_trf_h_lr@@$ percent in the long run, and the share of children in a shelter falls from $@@x_trf_hchild0@@$ to $@@x_trf_hchild10@@$ percent by year 10 and $@@x_trf_hchildlast@@$ percent by year $@@x_trf_last_yr@@$, against $@@x_trf_hchild_lr@@$ percent in the long run. Both could have risen, since the households that have a SUD when the reform lands and do not enter treatment and stay sober face losing their vouchers. They do not, for three reasons. First, few households lose their vouchers: one with a SUD keeps its voucher by entering treatment and not using, and the screen catches a user with a probability of only $@@x_tf_pdet_pc@@$ percent a year, so at most $@@x_trf_excl_max_pc@@$ percent of households are excluded from the programme in any year. Second, drug use falls from the first year (panel (a)), so households spend less on drugs and have more left over to house themselves, and fewer acquire a SUD and experience longer unemployment. Third, $\pi_V$ stays above its Housing First level of $@@x_trf_piv0@@$ percent throughout, so the vouchers the screen frees go to other low-income households.
 

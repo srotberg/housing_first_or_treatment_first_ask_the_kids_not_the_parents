@@ -708,6 +708,17 @@ for _l in open(best, errors='replace'):
         _bud[int(_m.group(1))] = (float(_m.group(2)), float(_m.group(3)))
 assert len(_bud) >= 20, f'{best}: {len(_bud)} budget lines'
 out['x_tr_bud_worst_pc'] = f"{100 * max(abs(r / c - 1) for r, c in _bud.values()):.2f}"
+# and the drug market the same way: the worst |implied supply price - price| over the pass, as a per-cent share of the
+# price (the T = 70 pin misses the 5e-3 rule in two years, so the prose can no longer say it clears every period)
+_drg = {}
+for _l in open(best, errors='replace'):
+    if 'TRANSITION INIT PARENT SHARE RESTORED' in _l and _drg:
+        break
+    _m = re.search(r'TRANSITION DRUG t=\s*(\d+)\s+distance=\s*(\S+)\s+price=\s*(\S+)', _l)
+    if _m:
+        _drg[int(_m.group(1))] = abs(float(_m.group(2))) / float(_m.group(3))
+assert len(_drg) == len(_bud), (len(_drg), len(_bud))
+out['x_tr_drug_worst_pc'] = f"{100 * max(_drg.values()):.2f}"
 tr_dir = os.path.join(ROOT, 'code', 'trtf60')
 if not re.search(r'TRANSITION WELFARE loop=\s*\d+\s+t=\s*26 ', open(best, errors='replace').read()):
     sys.exit(f'{best} does not reach period 26')

@@ -43,14 +43,31 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 # further than in loop 0 (1.5), so the horizon may be short (T = 60 is the open question). The steady states are the
 # T = 50 run's own terminal re-solves (final.txt, 'no policy' column) and the corrected long-run arms' logs
 # (results/decomp_2c_shares_Cu/arm_tf/{null,tf}/cf.log.gz), staged in code/trtf50/ref (untracked symlinks).
-LOG = os.path.join(ROOT, 'code', 'trtf50', 'tr2c_t50_Cu_loop3', 'run.log')
-TAG = 'tr2c_t50_Cu_loop3'
-HORIZON = 50
-UNCONVERGED_FROM = 40
+# 17 October, 23:50 (the author, 18:10: "you should update the figures", and before that "why didnt you update the
+# transition figures? Dont we have some intiial T=70 results?!"): RULE C, the corrected Housing First, T = 70, loop 0
+# (results/transition_2c_t70_Cu/loop0, archived 23:4x; code/transition_fix/remote_tr70_Cu.sh). Its seeds are rule C's
+# T = 50 loop-3 paths extended to 69 years (extend_seeds_C70.py), so this first pass is the T = 50 iterate run out to the
+# longer horizon. NOT CONVERGED: the worst budget residual on the path is 1.80e-2 and the worst drug gap 5.98e-3 (the
+# sentence in 6.4 states the budget's worst gap, x_tr_bud_worst_pc); its last ten years sit within 0.01 per cent
+# (price) and 0.25 per cent (pi_V) of the terminal values. The steady states are the run's own re-solved arms
+# (results/transition_2c_t70_Cu/arm_{null,tf}: cf.log.gz, final.txt), the terminal one 1.2e-4 from the accepted
+# rule-C arm. Stage the log on a fresh machine with:
+#   mkdir -p code/trtf70/tr2c_t70_Cu_loop0 && zcat results/transition_2c_t70_Cu/loop0/run.log.gz > code/trtf70/tr2c_t70_Cu_loop0/run.log
+LOG = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_Cu_loop0', 'run.log')
+TAG = 'tr2c_t70_Cu_loop0'
+HORIZON = 70
+UNCONVERGED_FROM = 60
 OUT = os.path.join(ROOT, 'results', 'transition', TAG)
-CURVE = os.path.join(ROOT, 'results', 'transition_2c_t50_Cu', 'loop3', 'welfare_curvebaseline_benchmark.dat')
-REF = os.path.join(ROOT, 'code', 'trtf50', 'ref')
+CURVE = os.path.join(ROOT, 'results', 'transition_2c_t70_Cu', 'loop0', 'welfare_curvebaseline_benchmark.dat')
+REF = os.path.join(ROOT, 'results', 'transition_2c_t70_Cu')
 REF_NULL, REF_TF = 'arm_null', 'arm_tf'
+# the previous pin (rule C, T = 50, loop 3; 16 October to 17 October 23:50), kept for the record:
+_RULE_C_T50_LOG = os.path.join(ROOT, 'code', 'trtf50', 'tr2c_t50_Cu_loop3', 'run.log')
+_RULE_C_T50_TAG = 'tr2c_t50_Cu_loop3'
+_RULE_C_T50_HORIZON = 50
+_RULE_C_T50_UNCONVERGED_FROM = 40
+_RULE_C_T50_CURVE = os.path.join(ROOT, 'results', 'transition_2c_t50_Cu', 'loop3', 'welfare_curvebaseline_benchmark.dat')
+_RULE_C_T50_REF = os.path.join(ROOT, 'code', 'trtf50', 'ref')
 # on a fresh machine stage the log first: zcat results/transition_2c_t50_Cu/loop3/run.log.gz > LOG
 # the previous pin (rule A, T = 70, loop 2), kept for the record:
 _RULE_A_LOG = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_loop2', 'run.log')
