@@ -711,3 +711,12 @@ order's rule 66 percent of those with a SUD are worse off in year 1; under the s
 homeless in each of years 1-3, against none with the voucher kept. Names from code/paper/export_noescape.py (x_ne_*).
 OPEN: the full no-escape transition (results/transition_2c_t70_CAb, savings recycled) has not landed; when it does, check
 whether homelessness still rises with the savings recycled and say so in lesson 2.
+
+14:40 (17 Oct) DETECTION 0.20 WITH NO ESCAPE ALONG THE TRANSITION (the author: "I want to launch both because I want to see
+if homelessness rises with 20% detection and no escape"). Two workers:
+ (a) code/revoked_2c/run_all_CA20.sh: Block 7's pipeline at 0.20 (copies of the *_CA100 scripts, every name CA20) ->
+     results/revoked_2c_CA20, revoked_2c_street_CA20; its tf10/hf10 paths give homelessness and children in a shelter
+     year by year with the price and pi_V held, as export_noescape.py reads the 1.00 ones. About 12 hours.
+ (b) code/transition_fix/remote_tr70_CA20b.sh: T = 70 from results/counterfactuals_2c/tf_pdet20_CAbest (tf_pdet20_CAu's
+     pass 13, inside both tolerances), price held there, pi_V clearing, REL_TOL 1, the early arm no longer killed for
+     drifting -> results/transition_2c_t70_CA20b. A loop takes about 15-20 hours.
