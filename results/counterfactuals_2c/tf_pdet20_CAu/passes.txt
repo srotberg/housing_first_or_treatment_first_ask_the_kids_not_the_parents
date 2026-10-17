@@ -1,19 +1,11 @@
-# counterfactual tf_pdet20_CAu (detection 0.20) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 17 Oct 02:27 UTC
+# counterfactual tf_pdet20_CAu (detection 0.20) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 17 Oct 02:47 UTC
 remote_pdet tf_pdet20_CAu: free disk 24G, memory 15 GiB, cores 4 (02:27)
+remote_pdet tf_pdet20_CAu: warm start at the rule-C arm tf_pdet20_CAu's latest pass: price 0.9052, pi_V 0.08606 (02:27)
+remote_pdet tf_pdet20_CAu: warm start at the given values: price 0.9048, pi_V 0.0876 (02:27)
+remote_pdet tf_pdet20_CAu: resuming from the last published pass: price 0.9052, pi_V 0.08606 (02:27)
+remote_pdet tf_pdet20_CAu: TF budget target: the paper's no-policy net revenue 5.8371628; test cost 0.0004946100 ($35); detection 0.20 (02:27)
+remote_pdet tf_pdet20_CAu: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.08606 DRUG_PRICE_START=0.9052 EXTRA_SET=cost_per_drug_test 0.0004946100 (02:27)
 
 == tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
-  1  0.9051  0.08883   -29.4%   -29.3%   -14.0%  1.82e-02  3.08e-01   790.4916  +9.17%   -11.2%   +25.7%
-  2  0.9047  0.08883   -30.4%   -30.3%   -12.9%  4.78e-03  1.63e-02   789.6818  +6.58%   -14.2%   +23.2%
-  3  0.9041  0.09079   -30.6%   -30.5%   -13.6%  6.14e-03  2.99e-02   789.5708  +6.23%   -14.5%   +23.2%
-  4  0.9043  0.08899   -29.9%   -29.8%   -12.5%  1.72e-03  1.69e-02   789.4704  +5.92%   -13.4%   +23.5%
-  5  0.9044  0.08798   -29.8%   -29.7%   -11.9%  1.73e-03  1.25e-02   789.4144  +5.74%   -13.4%   +23.4%
-  6  0.9051  0.08723   -29.8%   -29.7%   -11.5%  1.59e-03  7.47e-03   789.3758  +5.62%   -13.4%   +23.3%
-  7  0.9047  0.08678   -30.1%   -30.0%   -11.3%  4.12e-03  4.69e-03   789.3583  +5.57%   -14.1%   +22.8%
-  8  0.9053  0.08650   -29.0%   -28.9%   -10.9%  6.34e-03  8.55e-04   789.3180  +5.44%   -12.7%   +22.9%
-  9  0.9050  0.08645   -30.0%   -29.9%   -11.1%  4.54e-03  6.21e-03   789.3318  +5.49%   -14.2%   +22.7%
- 10  0.9056  0.08608   -29.0%   -28.9%   -10.6%  5.61e-03  1.44e-03   789.2947  +5.37%   -12.8%   +22.8%
- 11  0.9054  0.08612   -29.9%   -29.8%   -10.8%  4.18e-03  3.37e-03   789.3085  +5.41%   -14.1%   +22.5%
- 12  0.9054  0.08607   -29.2%   -29.2%   -10.6%  6.42e-04  7.25e-04   789.2961  +5.38%   -13.4%   +22.3%
- 13  0.9056  0.08608   -29.2%   -29.2%   -10.6%  5.53e-04  1.71e-03   789.2912  +5.36%   -13.4%   +22.3%
- 14  0.9052  0.08606   -29.9%   -29.8%   -10.8%  4.15e-03  2.38e-03   789.3048  +5.40%   -14.1%   +22.5%
+  1  0.9068  0.08606   -29.2%   -29.1%   -12.4%  1.59e-02  3.28e-01   790.3634  +8.75%   -11.3%   +25.2%
