@@ -772,3 +772,24 @@ container, stops it, marks its transition finished so a re-attach cannot restart
 exactly the loop 0 remote_tr70_CAc.sh would solve. CAc (regenerated) therefore waits for CAb's loop 0 to save its paths
 (year ~50 of 70 at 21:20, about 01:00 UTC), keeps them as its seeds, and stops CAb only then; its loops archive as loop1
 on. The CAb switch-over request was disabled before it fired; CA20b was switched at 21:24 (its path had not started).
+
+## 17 October, 22:00 -- audit: do the long runs the paper reads clear both markets?
+
+The author: "double check that the long run runs allowed the prices to clear". Every cf.log.gz the exporters read, last
+pass, against the solver's rules (drug market 5e-3, budget 1e-3) and the drug_market_adjuster the run read
+(scratchpad audit.py; the implied supply price where the price is held):
+* CLEAR, as they should: the main rule-C arm (decomp_2c_shares_Cu/arm_tf/tf: drug 7.9e-4, budget 8.2e-4) and its
+  Housing First; no externalities, arm_C (both clear) and arm_D/arm_E (the one that clears does); the 0.05 rule-C run;
+  the Nishiyama arms; the rule-C T = 70 terminal arm; the 0.20 no-escape best pass (tf_pdet20_CAbest).
+* HELD BY DESIGN, labelled in Table 5: 'Both held' (both columns); the price in 'pi_V clears'; pi_V in 'Price clears'.
+  With externalities 'Price clears' holds the price at 0.9444 (the gated cycle's mean), but the implied supply price
+  there is 0.9450: the market clears to 6.7e-4, inside 5e-3.
+* NOT CLEARED: (1) the 1.00 no-escape long run. No pass of tf_pdet100_CAu, CAuB or CAuC cleared the drug market (85
+  passes alternating between drug use -56 and -63 per cent at a price near 0.80, gaps 1.4e-2 to 6e-2), and the terminal
+  arm the paper and the transition read (price held at 0.8017, pi_V cleared to 0.1089) has an implied supply price of
+  0.7219, a 10 per cent gap: x_ne_* is not an equilibrium. (2) Table 5's 'pi_V clears' with externalities: no pi_V
+  balances that budget (14 October: drug use jumps -48 to -42 as pi_V crosses ~0.0930); held at 0.0924 the corrected
+  run's net revenue is 5.8501 against 5.8372, a 2.2e-3 surplus against the 1e-3 rule.
+* OLD BUDGET TARGET (net_govt_revenue_constraint 5.8275 against the corrected 5.8372): tf_pdet20_CA, the footnote's
+  no-escape run (export_ca.py now reads tf_pdet20_CAbest against the corrected Housing First: 30/30/11, was 30/30/12),
+  and tf_pdet10_C, the half rate (tf_pdet10_Cu is re-solving it).
