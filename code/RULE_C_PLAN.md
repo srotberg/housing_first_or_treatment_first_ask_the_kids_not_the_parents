@@ -720,3 +720,10 @@ if homelessness rises with 20% detection and no escape"). Two workers:
  (b) code/transition_fix/remote_tr70_CA20b.sh: T = 70 from results/counterfactuals_2c/tf_pdet20_CAbest (tf_pdet20_CAu's
      pass 13, inside both tolerances), price held there, pi_V clearing, REL_TOL 1, the early arm no longer killed for
      drifting -> results/transition_2c_t70_CA20b. A loop takes about 15-20 hours.
+
+14:50 (17 Oct) NO ESCAPE AT 0.10 AND 0.05, LONG RUN AND T = 70 (the author: "Also do transition for 5% no escape and 10%
+no escape"). Four workers: pdet/remote_pdet_CAu.sh 0.10 (P0_START=0.935 V0_START=0.080) -> tf_pdet10_CAu, and 0.05
+(P0_START=0.962 V0_START=0.075) -> tf_pdet05_CAu, the warm starts between Housing First and the 0.20 no-escape solution;
+transition_fix/remote_tr70_CA10u.sh and remote_tr70_CA05u.sh (copies of remote_tr70_CAu.sh; TF_EARLY=1) poll for those
+arms' acceptance -> results/transition_2c_t70_CA10u, CA05u. If a long run sits on a knife-edge, take its best pass as for
+0.20 and 1.00.
