@@ -749,3 +749,20 @@ export_noescape.py: the latest archived loop of transition_2c_t70_CAb, else the 
 in a shelter (x_ne20_hchild_pc) is '--' until results/transition_2c_t70_CA20b/arms lands. The rule-C T = 70 worker asked
 at 17:48 to publish its partial loop-0 log (37 of 69 years done) for a preview of the transition figure; the paper's
 figure is re-pinned when loop 0 is archived (~23:00).
+
+## 17 October, 21:45 -- the no-escape transitions held the drug price along the whole path
+
+The author: "the transition result has to allow pv and piv to clear in each period", "the point is about the real
+transition with no escape, 20% detection, vs 100%". remote_tr70_CAb.sh (1.00) and remote_tr70_CA20b.sh (0.20) solve the
+terminal arm with the price held at the best pass (DRUG_MARKET_ADJUSTER=0, approved 16 October), and stage_tr_fix.sh
+copies the arm's PARAM_HANDOVER into the transition, so the PATH ran with drug_market_adjuster 0 too: the CAb log reads
+"HANDOVER drug_market_adjuster: 0.2 -> 0.0" and TRANSITION DRUG distance 0 at every t, the price at its seed in every
+loop. pi_V is updated loop by loop, and loop 0 is the seed: budget residual +0.9 to +1.0 per cent of the target in years
+2-4 (a surplus a clearing pi_V would spend on vouchers), -5.4 by year 19, 8.6e-2 at worst. So x_ne_tr_* (the 14/11
+per cent rise, 14/11 years) and "pi_V rises only as the savings accrue" in 6.4's yellow paragraph are NOT a cleared
+result. The screen-only paths (results/revoked_2c_CA*) hold both prices by design and are a diagnostic only.
+Fix: code/transition_fix/remote_tr70_CAc.sh and remote_tr70_CA20c.sh (made by a script from remote_tr70_CA20b.sh): the
+terminal arm is still the best pass, the handover the path reads is reset to drug_market_adjuster 0.1 (the arms' default,
+what the rule-C transition runs with) with a GUARD that the binary read it, MAX_LOOPS 6. Each runs in its predecessor's
+container, stops it, marks its transition finished so a re-attach cannot restart it, and reuses its builds and arms
+(CA20c adopts the terminal arm still solving). The yellow stays until these clear.
