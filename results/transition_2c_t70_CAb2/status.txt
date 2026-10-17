@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 1.00 (code/transition_fix/remote_tr70_CAb2.sh, from the best pass, the hedge); 17 Oct 10:52 UTC
+# the T = 70 transition on RULE CA at detection 1.00 (code/transition_fix/remote_tr70_CAb2.sh, from the best pass, the hedge); 17 Oct 10:53 UTC
 remote_tr70_CAb2: free disk 22G, memory 15 GiB, cores 4 (04:34)
 remote_tr70_CAb2: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (04:34)
 remote_tr70_CAb2: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_pdet100_CAbest/tf/final.txt): price 0.80170000, pi_V 0.102400000 (04:34)
@@ -8,6 +8,8 @@ remote_tr70_CAb2: terminal arm (started early) at price 0.80169999999999997, pi_
 remote_tr70_CAb2: terminal arm (started early) NOT within 1 of the accepted arm (nan, or not accepted): re-solving from the accepted price and pi_V (06:32)
 remote_tr70_CAb2: terminal arm from the ACCEPTED long-run rule-C arm: price 0.80170000, pi_V 0.102400000 (06:32)
 remote_tr70_CAb2: arm tf on cf_fix2_treatCA: PDET=1.00 NET_TARGET=5.8371628 PV_START=0.102400000 DRUG_PRICE_START=0.80170000 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100 (06:32)
+remote_tr70_CAb2: terminal arm re-solved from the accepted values: worst relative difference 1.747e-01 (10:53)
+remote_tr70_CAb2: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 2.2e-04; tf against the accepted long-run CA arm 1.747e-01 (10:53)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
