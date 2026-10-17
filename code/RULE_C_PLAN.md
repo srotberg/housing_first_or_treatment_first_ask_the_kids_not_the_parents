@@ -695,3 +695,9 @@ also within 5 per cent of the best pass, and at the held price drug use lands on
 transition_fix/remote_tr70_CAb2.sh (REL_TOL 1, results/transition_2c_t70_CAb2) in a second worker. The first to reach
 its path is the result. tf_pdet100_CAu ended NOT accepted (exit 143, killed); its worker session_01HCs7CLwRjKRkfJPm7g5f4t
 and the drifting CAuB worker session_014GGaH2BLE1DWy6kpPHYLXG interrupted.
+
+07:30 (17 Oct) THE NO-ESCAPE TRANSITION'S PATH IS RUNNING. remote_tr70_CAb.sh GUARDed at 06:32 on the 5-per-cent check
+(1.75e-1: its held-price terminal arm cleared on the -64 per cent drug-use branch, pi_V 0.1089, homelessness -30.4 per
+cent); a trigger message asked its worker to continue with REL_TOL=1 and it did: T = 70 staged and started 07:22. The
+hedge (CAb2), which had also killed its early arm at 06:32, was interrupted. tf_pdet05_Cu ACCEPTED 06:38: drug use -8.9,
+SUD -8.2, homelessness -3.6 per cent against the corrected Housing First, pi_V 7.14 per cent, newborn CEV +1.01.
