@@ -1,18 +1,24 @@
 #!/bin/bash
-# remote_tr70_CAc.sh -- A COPY of remote_tr70_CA20b.sh at detection 1.00 (17 October, 21:40; the author: "the transition
-# result has to allow pv and piv to clear in each period", "the point is about the real transition with no escape, 20%
-# detection, vs 100%"). THE DRUG PRICE CLEARS ALONG THE PATH. remote_tr70_CAb.sh and remote_tr70_CA20b.sh solve the
-# terminal arm with the drug price held at the best pass (DRUG_MARKET_ADJUSTER=0), and stage_tr_fix.sh copies the arm's
-# PARAM_HANDOVER into the transition, so their paths ran with drug_market_adjuster 0: every year's price stayed at its
-# seed in every loop (the log: "HANDOVER drug_market_adjuster: 0.2 -> 0.0", TRANSITION DRUG distance 0 at every t).
-# Here the terminal arm is still held at the best pass (the market there sits on a knife edge; the author approved the
-# best pass on 16 October), but the handover the path reads is reset to drug_market_adjuster 0.1, the arms' default and
-# what the rule-C transition runs with, so each year's drug price is updated toward clearing every loop, as pi_V is, and
-# a GUARD kills the run if the binary does not read it. MAX_LOOPS 6: the price still moves at most 0.5 per cent a year a
-# loop (max_drug_price_move, the author's rule of 8 September).
-# IT SUPERSEDES remote_tr70_CAb.sh IN THE SAME CONTAINER and reuses its builds and arms: at its start it stops that launcher
-# and any held-price transition it started, marks that transition finished (MAIN_EXIT) so a re-attach of the old launcher
-# cannot restart it, and marks the old newborn step done so a re-attach cannot start that either.
+# remote_tr70_CAc.sh -- A COPY of remote_tr70_CA20b.sh at detection 1.00, written by a script (17 October, 21:40;
+# the author: "the transition result has to allow pv and piv to clear in each period", "the point is about the real
+# transition with no escape, 20% detection, vs 100%"). THE DRUG PRICE CLEARS ALONG THE PATH. remote_tr70_CAb.sh and
+# remote_tr70_CA20b.sh solve the terminal arm with the drug price held at the best pass (DRUG_MARKET_ADJUSTER=0), and
+# stage_tr_fix.sh copies the arm's PARAM_HANDOVER into the transition, so their paths ran with drug_market_adjuster 0:
+# every year's price stayed at its seed in every loop (the log: "HANDOVER drug_market_adjuster: 0.2 -> 0.0", TRANSITION
+# DRUG distance 0 at every t). Here the terminal arm is still held at the best pass (the market there sits on a knife
+# edge; the author approved the best pass on 16 October), but the handover the path reads is reset to
+# drug_market_adjuster 0.1, the arms' default and what the rule-C transition runs with, so each year's drug price is
+# updated toward clearing every loop, as pi_V is, and a GUARD kills the run if the binary does not read it. The price
+# still moves at most 0.5 per cent a year a loop (max_drug_price_move, the author's rule of 8 September).
+# IT SUPERSEDES remote_tr70_CAb.sh IN THE SAME CONTAINER and reuses its builds and arms: it stops that launcher (never
+# in the middle of a git command) and any held-price transition it started, marks that transition finished (MAIN_EXIT)
+# so a re-attach of the old launcher cannot restart it, and marks the old newborn step done so a re-attach cannot
+# start that either.
+# NOTHING IS RECOMPUTED: within a loop both prices sit at their seeds and are updated only at its end, so the
+# held-price run's loop 0 is exactly the loop 0 this run would solve. This launcher therefore waits for that loop 0
+# to save its paths (about 01:00 UTC on 18 October), lets the old launcher archive it (else archives it here), and
+# starts from those paths: pi_V updated once, the drug price still its seed and cleared from here on. Its loop k is
+# archived as loop<k+1>; MAX_LOOPS 7, so loops 1 to 6.
 # Results to results/transition_2c_t70_CAc, worker files code/tr70CAc_worker*. remote_tr70_CA20b.sh's header follows.
 # remote_tr70_CA20b.sh -- A COPY of remote_tr70_CAb.sh at detection 0.20 (17 October; the author: "I want to launch both
 # because I want to see if homelessness rises with 20% detection and no escape"). The long-run arm is
@@ -125,7 +131,7 @@ export CEV_CURVE=$D.welfare_curve.dat
 MAIN=$C/tr2c_t70_CAc
 T70=$C/tr70_CA
 SEEDS=$REPO/results/transition_2c_t50_Cu/loop3   # rule C's T = 50 paths, rescaled to rule CA at staging
-MAX_LOOPS=${MAX_LOOPS:-6}
+MAX_LOOPS=${MAX_LOOPS:-7}
 
 note() { echo "remote_tr70_CAc: $* ($(date -u +%H:%M))" | tee -a "$D.status"; }
 
@@ -250,6 +256,28 @@ note "free disk $(df -h "$C" | tail -1 | awk '{print $4}'), memory $(free -g | a
 # SUPERSEDE THE HELD-PRICE LAUNCHER in this container (see the header)
 OLD=$C/tr70CAb_worker; OLDMAIN=$C/tr2c_t70_CAb
 if [ ! -f "$D.superseded_done" ]; then
+    # THE HELD-PRICE LOOP 0 IS KEPT (see the header): wait for it to save its paths, have it archived, keep its paths
+    if alive "$OLD.main.pid" && ! grep -q -a "TRANSITION PATHS SAVED after loop" "$OLDMAIN/run.log" 2>/dev/null; then
+        # no publishing while it waits: the old launcher still publishes from this repository every 20 minutes
+        note "waiting for the held-price transition's loop 0 to save its paths (it is the loop 0 this run would solve)"
+        while alive "$OLD.main.pid" && ! grep -q -a "TRANSITION PATHS SAVED after loop" "$OLDMAIN/run.log" 2>/dev/null; do
+            sleep 60
+        done
+    fi
+    if grep -q -a "TRANSITION PATHS SAVED after loop" "$OLDMAIN/run.log" 2>/dev/null; then
+        mkdir -p "$D.resume"
+        for f in drug_price pi_v; do cp "$OLDMAIN/${f}_path_seed_out.txt" "$D.resume/" 2>/dev/null; done
+        note "kept the held-price loop 0's saved paths: $(ls "$D.resume" | tr '\n' ' ')"
+        A0=$REPO/results/transition_2c_t70_CAb/loop0
+        for _ in $(seq 1 45); do [ -s "$A0/run.log.gz" ] && break; sleep 60; done
+        if [ ! -s "$A0/run.log.gz" ]; then
+            mkdir -p "$A0"; gzip -c "$OLDMAIN/run.log" > "$A0/run.log.gz"
+            cp "$OLDMAIN"/*_path_seed_out.txt "$OLDMAIN"/welfare_curvebaseline_benchmark.dat "$A0/" 2>/dev/null
+            note "archived the held-price loop 0 to results/transition_2c_t70_CAb/loop0 (its launcher had not)"
+        fi
+    fi
+    # never stop it in the middle of a commit or a push: the two share this repository
+    for _ in $(seq 1 120); do pgrep -x git >/dev/null 2>&1 || break; sleep 2; done
     if alive "$OLD.pid"; then kill "$(cat "$OLD.pid")" 2>/dev/null; sleep 3; note "stopped the held-price launcher remote_tr70_CAb.sh (pid $(cat "$OLD.pid"))"; fi
     if alive "$OLD.main.pid"; then killtree "$(cat "$OLD.main.pid")"; sleep 5; note "stopped the held-price transition (pid $(cat "$OLD.main.pid"))"; fi
     for p in $(pgrep -x hftf 2>/dev/null); do [ "$(readlink /proc/$p/cwd 2>/dev/null)" = "$OLDMAIN" ] && kill "$p" 2>/dev/null; done
@@ -257,6 +285,10 @@ if [ ! -f "$D.superseded_done" ]; then
     mkdir -p "$C/newborn_2c_CA"; touch "$C/newborn_2c_CA/DONE"   # the superseded launcher's newborn step, never to run
     alive "$OLD.arm_tf.pid" && { cp "$OLD.arm_tf.pid" "$D.arm_tf.pid"; note "adopted the terminal arm still solving (pid $(cat "$D.arm_tf.pid"))"; }
     alive "$OLD.arm_null.pid" && cp "$OLD.arm_null.pid" "$D.arm_null.pid"
+    # a lock or a rebase the stopped launcher left behind would break this run's publishing
+    if ! pgrep -x git >/dev/null 2>&1; then
+        ( cd "$REPO" && rm -f .git/index.lock && { [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; } && git rebase --abort ) 2>/dev/null
+    fi
     touch "$D.superseded_done"
 fi
 
@@ -418,6 +450,11 @@ if [ ! -d "$MAIN" ]; then
     X0=$(awk '/^ *drug price /{p=$NF} /pi_V \(voucher probability\)/{v=$NF} END{print p, v}' "$R2/arm_null/final.txt")
     python3 "$C/transition_fix/rescale_seeds_CA70.py" "$MAIN" "$SEEDS" ${X0% *} ${X0#* } > /tmp/tr50CA_seeds.log 2>&1 \
         || { note "GUARD: seeding failed: $(tail -2 /tmp/tr50CA_seeds.log | tr '\n' ' ')"; publish "failed"; exit 1; }
+    if ls "$D.resume"/*_path_seed_out.txt >/dev/null 2>&1; then
+        for f in drug_price pi_v; do cp "$D.resume/${f}_path_seed_out.txt" "$MAIN/${f}_path_seed.txt" || { note "GUARD: no kept $f path"; publish "failed"; exit 1; }; done
+        echo 1 > "$D.loop_offset"
+        note "seeds: the held-price loop 0's saved paths (pi_V updated once, the drug price still its seed and cleared from here on); this run's loop k is archived as loop<k+1>"
+    fi
     for f in drug_price pi_v; do cp "$MAIN/${f}_path_seed.txt" "$MAIN/${f}_path_seed.staged.txt"; done
     note "T = 70 staged: $(tail -2 /tmp/tr50C_stage_main.log | tr '\n' ' '); seeds rescaled from rule C's T = 50 loop3 (x0 $X0): $(tr '\n' ' ' < /tmp/tr50CA_seeds.log)"
 fi

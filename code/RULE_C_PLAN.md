@@ -757,8 +757,9 @@ transition with no escape, 20% detection, vs 100%". remote_tr70_CAb.sh (1.00) an
 terminal arm with the price held at the best pass (DRUG_MARKET_ADJUSTER=0, approved 16 October), and stage_tr_fix.sh
 copies the arm's PARAM_HANDOVER into the transition, so the PATH ran with drug_market_adjuster 0 too: the CAb log reads
 "HANDOVER drug_market_adjuster: 0.2 -> 0.0" and TRANSITION DRUG distance 0 at every t, the price at its seed in every
-loop. pi_V is updated loop by loop, and loop 0 is the seed: budget residual +0.9 to +1.0 per cent of the target in years
-2-4 (a surplus a clearing pi_V would spend on vouchers), -5.4 by year 19, 8.6e-2 at worst. So x_ne_tr_* (the 14/11
+loop. pi_V is updated loop by loop, and loop 0 is the seed: budget residual (absolute, net revenue less the target 5.837) +0.009 to +0.010 in
+years 2-4 (0.16-0.17 per cent of the target, a surplus a clearing pi_V would spend on vouchers), -0.054 by year 19
+(0.9 per cent), 0.086 at worst (1.5 per cent). So x_ne_tr_* (the 14/11
 per cent rise, 14/11 years) and "pi_V rises only as the savings accrue" in 6.4's yellow paragraph are NOT a cleared
 result. The screen-only paths (results/revoked_2c_CA*) hold both prices by design and are a diagnostic only.
 Fix: code/transition_fix/remote_tr70_CAc.sh and remote_tr70_CA20c.sh (made by a script from remote_tr70_CA20b.sh): the
@@ -766,3 +767,8 @@ terminal arm is still the best pass, the handover the path reads is reset to dru
 what the rule-C transition runs with) with a GUARD that the binary read it, MAX_LOOPS 6. Each runs in its predecessor's
 container, stops it, marks its transition finished so a re-attach cannot restart it, and reuses its builds and arms
 (CA20c adopts the terminal arm still solving). The yellow stays until these clear.
+
+21:35: within a loop both prices sit at their seeds and are updated only at its end, so the held-price CAb's loop 0 is
+exactly the loop 0 remote_tr70_CAc.sh would solve. CAc (regenerated) therefore waits for CAb's loop 0 to save its paths
+(year ~50 of 70 at 21:20, about 01:00 UTC), keeps them as its seeds, and stops CAb only then; its loops archive as loop1
+on. The CAb switch-over request was disabled before it fired; CA20b was switched at 21:24 (its path had not started).
