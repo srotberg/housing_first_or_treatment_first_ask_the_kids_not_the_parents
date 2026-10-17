@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 17 Oct 01:05 UTC
+# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 17 Oct 01:14 UTC
 remote_tr70_Cu: gfortran missing, installing (14:58)
 remote_tr70_Cu: free disk 29G, memory 15 GiB, cores 4 (14:58)
 remote_tr70_Cu: building cf_fix (14:58)
@@ -15,6 +15,8 @@ remote_tr70_Cu: terminal arm (started early) at price 0.94735885990158952, pi_V 
 remote_tr70_Cu: terminal arm (started early) NOT within 5e-3 of the accepted arm (nan, or not accepted): re-solving from the accepted price and pi_V (17:24)
 remote_tr70_Cu: terminal arm from the ACCEPTED long-run rule-C arm: price 0.94626257, pi_V 0.078040993 (17:24)
 remote_tr70_Cu: arm tf on cf_fix2_treatC: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.078040993 DRUG_PRICE_START=0.94626257 EXTRA_SET=cost_per_drug_test 0.0004946100 (17:24)
+remote_tr70_Cu: terminal arm re-solved from the accepted values: worst relative difference 1.212e-04 (01:14)
+remote_tr70_Cu: arms: null against nulltf/null worst relative difference 4.2e-03; tf against tf_ruleC 1.212e-04 (01:14)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -35,4 +37,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   7  0.9461  0.07863   -21.2%   -19.2%   -10.5%  9.28e-05  4.72e-03   788.6136  +3.29%    -7.8%   +17.0%
   8  0.9461  0.07834   -21.1%   -19.2%   -10.3%  1.75e-04  3.14e-03   788.5980  +3.24%    -7.7%   +17.0%
   9  0.9461  0.07815   -21.1%   -19.2%   -10.2%  1.86e-04  1.75e-03   788.5875  +3.21%    -7.7%   +17.0%
- MILBY SPLIT voucher mass rec treat smi  0.11146381825372750        4.8575479811258119E-003   8.6932392554037452E-002   1.2554300700693150E-002  housed_nov mass rec treat smi   1.4140380176273417        4.3216828988319432E-002  0.33612485990607882       0.11884047157039354     
+ 10  0.9462  0.07805   -21.1%   -19.1%   -11.2%  9.31e-04  1.60e-04   788.5919  +3.23%    -7.6%   +17.1%
+ MILBY SPLIT voucher mass rec treat smi  0.11120219989107427        4.8454267864244402E-003   8.6702756562829789E-002   1.2535135845814034E-002  housed_nov mass rec treat smi   1.4147753830806791        4.3243534029960590E-002  0.33645966810032152       0.11886261236276463     
