@@ -1,0 +1,40 @@
+# tf_pdet100_CAu: rule CA (the disorder fails the screen in treatment or not, any use fails, treatment publicly paid
+# for, abstention off), detection 1.00, budget target 5.8371628 (the corrected Housing First). NOT ACCEPTED: STOPPED IN A CYCLE.
+# (17 Oct 02:16 UTC, written by the worker; code/pdet/remote_pdet_CAu.sh 1.00, P0_START 0.9048 V0_START 0.0876)
+
+WHAT HAPPENED. 37 passes, 12 hours. The price fell at the 0.5 per cent cap a pass from 0.905 to 0.794 (pass 26) and the
+drug-market gap from 0.41 to 0.07. From pass 27 on, the price sits between 0.795 and 0.801 and drug use JUMPS between
+two levels, about -56 per cent and about -63 per cent against Housing First, as the price crosses roughly 0.797:
+the same kind of jump as rule C's fixp column (drug use -48 to -42 per cent as pi_V crosses 0.0930). Passes 36 and 37
+repeat passes 30 and 31 to every printed digit (price 0.7970/0.8009, drug gap 3.47e-2/2.72e-2): a deterministic
+six-pass cycle, so the arm can never meet its tolerances (drug market 5e-3, budget 1e-3). The binary was stopped after
+pass 37; tf/ holds the logs (cf.log.gz, run.out.gz) and final.txt at pass 37 (one side of the jump).
+
+THE PHASE-2 TRANSITION WAS NOT STARTED: it needs this arm accepted (code/transition_fix/remote_tr50_CAu.sh, built and
+committed; its transition binary compiles).
+
+WHAT THE PASSES SAY ANYWAY (changes against the corrected Housing First, results/decomp_2c_shares_Cu/arm_tf/null:
+price 0.9994, pi_V 0.06753, b 0.08920, SUD 0.03827, h_1 0.006184). Homelessness h_1 is BELOW Housing First at every one of the 37
+passes, on both sides of the jump: by 24 to 39 per cent over the run and 27.8 to 29.7 per cent in the cycle
+(-27.8 on the -56 side of drug use, about -29 on the -63 side); it never rises. The SUD share falls 56 to 63 per cent. Children in a shelter (households 26-50)
+is printed only when a run ends (the DIAG age lines), so there is no value for an unconverged arm.
+
+the last twelve passes (tf/passes.txt; its changes are against the corrected Housing First within 0.1 point: pass 37's
+b 0.03939 is -55.8 per cent of 0.08920):
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+ 26  0.7942  0.11113   -64.1%   -64.5%   -31.3%  7.43e-02  1.10e-02   791.9880  +14.19%   -37.6%   +73.6%
+ 27  0.7954  0.11047   -56.2%   -56.5%   -29.6%  3.12e-02  4.86e-03   791.7822  +13.48%   -24.4%   +72.5%
+ 28  0.7994  0.11018   -56.0%   -56.4%   -29.3%  2.97e-02  3.81e-02   791.6792  +13.12%   -24.5%   +71.8%
+ 29  0.7954  0.10790   -62.8%   -63.2%   -29.6%  5.92e-02  2.97e-02   791.7160  +13.25%   -35.5%   +73.5%
+ 30  0.7969  0.10611   -55.7%   -56.1%   -27.8%  3.47e-02  1.37e-02   791.5538  +12.70%   -23.8%   +72.2%
+ 31  0.8009  0.10652   -56.0%   -56.4%   -27.8%  2.72e-02  1.81e-02   791.5174  +12.57%   -24.6%   +71.4%
+ 32  0.7969  0.10625   -62.8%   -63.2%   -29.1%  6.16e-02  1.97e-02   791.6412  +12.99%   -35.7%   +73.2%
+ 33  0.7981  0.10596   -56.2%   -56.5%   -27.8%  2.66e-02  1.48e-02   791.5546  +12.70%   -24.7%   +71.9%
+ 34  0.7994  0.10607   -56.6%   -56.9%   -27.8%  1.41e-02  1.25e-02   791.5103  +12.55%   -26.2%   +70.0%
+ 35  0.7954  0.10599   -62.5%   -62.9%   -29.0%  5.61e-02  1.56e-02   791.6316  +12.96%   -35.1%   +73.0%
+ 36  0.7970  0.10589   -55.7%   -56.1%   -27.7%  3.47e-02  1.37e-02   791.5416  +12.66%   -23.8%   +72.1%
+ 37  0.8009  0.10598   -56.0%   -56.3%   -27.8%  2.72e-02  1.35e-02   791.4929  +12.49%   -24.6%   +71.4%
+
+OPTIONS (for the author): (1) report the two sides of the jump as a bracket (h_1 -27.8 and -29 per cent, drug use -56
+and -63 per cent, pi_V about 0.106); (2) hold the price at the cycle's mean (about 0.798) and clear pi_V alone, as the
+rule-C fixpv column did, which would end and print children in a shelter; (3) a damped price step. None was started.
