@@ -1,4 +1,4 @@
-# revoked-voucher experiment, RULE CA, DETECTION 0.20 (code/revoked_2c/run_paths_CA20.sh); 17 Oct 17:32 UTC
+# revoked-voucher experiment, RULE CA, DETECTION 0.20 (code/revoked_2c/run_paths_CA20.sh); 17 Oct 17:53 UTC
 ## stage 1, the two steady states
 run_arms: free disk 29G, memory 15 GiB, cores 4 (17 Oct 14:23)
 run_arms: building cf_fix2_treatCA (17 Oct 14:23)
@@ -16,3 +16,8 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
 ## stage 2, the paths
 run_paths: waiting for the arms and the builds (17 Oct 14:27)
 run_paths: against earlier runs (null against the corrected Housing First, must match; fixboth against rule C at 0.20, differs): null: worst relative difference 1.9e-04 (SUD lambda_d) over 7 statistics fixboth: worst relative difference 3.3e-01 (SUD lambda_d) over 7 statistics  (17 Oct 17:32)
+run_paths: staged /home/user/children_first_housing_later/code/revoked_2c/work_CA20/g_plain3_1t (T=3, terminal cfarm_tf_2c_fixboth_CA20): staged /home/user/children_first_housing_later/code/revoked_2c/work_CA20/g_plain (17 Oct 17:32)
+run_paths: staged /home/user/children_first_housing_later/code/revoked_2c/work_CA20/g_track3_1t (T=3, terminal cfarm_tf_2c_fixboth_CA20): staged /home/user/children_first_housing_later/code/revoked_2c/work_CA20/g_track (17 Oct 17:33)
+run_paths: T = 3 guard pair running, one thread each (17 Oct 17:33)
+-- g_plain3_1t: 0 forward periods done; last line:  age_index=          55
+-- g_track3_1t: 0 forward periods done; last line:  age_index=          55
