@@ -209,7 +209,14 @@ def main(a):
                "survivors. 'Still on the street': on the street in every year since the revocation, as a share of the "
                "survivors.\n")
     heads = {}
-    for lab, cohorts in (("pooled, years 1-3", COHORTS), ("year-1 cohort", (1,)), ("year-2 cohort", (2,)), ("year-3 cohort", (3,))):
+    # a cohort with no revoked mass prints no lines (16 Oct: rule CA at detection 1.00 revokes everyone in year 1 and nobody
+    # after); it adds nothing to the pooled sums, so the pooled table is over the cohorts that exist. No-op otherwise.
+    live = tuple(c for c in COHORTS if tf['groups'].get((c, c), {}).get('mass0', 0) > 0)
+    if live != COHORTS:
+        out.append(f"(cohorts with no revoked mass, left out: {', '.join(str(c) for c in COHORTS if c not in live)})\n")
+    for lab, cohorts in (("pooled, years 1-3", live), ("year-1 cohort", (1,)), ("year-2 cohort", (2,)), ("year-3 cohort", (3,))):
+        if not set(cohorts) <= set(live):
+            continue
         S = {nm: summary(tf, hf, sel, cohorts) for nm, sel in SELS}
         tot = S['all (unsplit cohort lines)']['mass']
         out.append(f"## {lab} (revoked mass {tot:.6e})\n")

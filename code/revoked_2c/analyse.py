@@ -200,6 +200,12 @@ def main(a):
         rows = table(tf, hf, g, T)
         if not rows:
             continue
+        if rows[0][4] == 0:   # 16 Oct: a cohort with no revoked mass (rule CA at detection 1.00 revokes only in year 1)
+            out.append(f"## {LABEL[g]}: no revoked mass, no table; it adds nothing to the pooled rows\n")
+            for t, k, x, y, m0, da, db in rows:
+                if g <= 3:
+                    p = pooled.setdefault(k, [0, 0, 0, 0, 0, 0]); p[5] += 1
+            continue
         out.append(f"## {LABEL[g]} (starting mass {rows[0][4]:.6e} of a population of 1)\n")
         out += [head, sep]
         for t, k, x, y, m0, da, db in rows:
