@@ -57,6 +57,12 @@ def pooled(G, years, key):
 
 
 STREET = os.path.join(ROOT, 'results', 'revoked_2c_street_C', 'tables.md')   # rule C (14 October)
+# (16 October; the author: "yes, run the comparison for block 7"): at detection 1.00 with no escape for households with
+# a SUD (rule CA, corrected Housing First), where 6.4 percent of the revoked are households with SMI the revocation puts
+# on the street, against almost none at the paper's 0.20 under rule C, so the comparison rests on a group of some size
+_CA100 = os.path.join(ROOT, 'results', 'revoked_2c_street_CA100', 'tables.md')
+if os.path.exists(_CA100):
+    STREET = _CA100
 PENDING_STREET = not os.path.exists(STREET)
 if PENDING_STREET:
     STREET = os.path.join(ROOT, 'results', 'revoked_2c_street', 'tables.md')

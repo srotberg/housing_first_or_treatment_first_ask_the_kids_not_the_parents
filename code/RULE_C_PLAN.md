@@ -680,3 +680,10 @@ re-clears pi_V, accepts within 5 per cent of the best pass, and runs T = 70 -> r
 waiting T = 70 worker (session_019NDD7S6oXV1WdF9SiLo1p3, transition_2c_t70_CAu) is superseded.
 BLOCK 7: results/revoked_2c_CA100/tables.md is analyse.py's traceback (ZeroDivisionError: a revoked cohort of zero
 starting mass, since at detection 1.00 every user is revoked in the first year); the street stage is running.
+
+03:40 (17 Oct) BLOCK 7 AT DETECTION 1.00 LANDED (results/revoked_2c_street_CA100, GUARD SUMMARY PASS). Households with SMI
+the revocation puts on the street, 6.4 percent of the revoked (against almost none at 0.20 under rule C): three-year
+mortality 10.20 against 6.62 percent with the voucher kept, a gap of 3.6 percentage points against Costantini's 4.6 (it
+was 2.2 at 0.20). export_revoked.py's STREET points at it; Block 7's yellow removed, the setting stated in red in the
+paragraph and in Table 6's note b. revoked_2c_CA100/tables.md (the unsplit analysis) is a traceback (empty cohorts at
+1.00); the paper does not read it.
