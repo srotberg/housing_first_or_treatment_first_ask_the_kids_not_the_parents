@@ -1,0 +1,14 @@
+# revoked-voucher experiment, RULE CA, DETECTION 0.20 (code/revoked_2c/run_paths_CA20.sh); 17 Oct 14:47 UTC
+## stage 1, the two steady states
+run_arms: free disk 29G, memory 15 GiB, cores 4 (17 Oct 14:23)
+run_arms: building cf_fix2_treatCA (17 Oct 14:23)
+run_arms: building cf_fix2_share_treatCu (17 Oct 14:24)
+run_arms: builds done (17 Oct 14:27)
+run_arms: arm null on cf_fix2_share_treatCu (the corrected Housing First) (17 Oct 14:27)
+run_arms: arm fixboth on cf_fix2_treatCA (rule CA, detection 0.20) (17 Oct 14:32)
+-- null_2c_CA20
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+-- tf_2c_fixboth_CA20
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+## stage 2, the paths
+run_paths: waiting for the arms and the builds (17 Oct 14:27)
