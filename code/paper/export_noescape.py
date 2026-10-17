@@ -50,6 +50,19 @@ def path(f):
     return out
 
 
+def child_steady(d):
+    """the share of children in a shelter in a steady state: homelessness of households aged 26-50, mass-weighted, from
+    the arm's DIAG age lines (report_tr50_CA.py's steady())"""
+    rows = {}
+    for l in gzip.open(os.path.join(d, 'cf.log.gz'), 'rt', errors='replace'):
+        m = re.search(r'DIAG age\s+(\d+)\s+homeless=\s*(\S+).*sud=\s*(\S+)\s+mass=\s*(\S+)', l)
+        if m:
+            rows[int(m.group(1))] = (float(m.group(2)), float(m.group(4)))
+    A = [a for a in rows if 26 <= a <= 50]
+    assert len(A) == 25, (d, len(A))
+    return sum(rows[a][0] * rows[a][1] for a in A) / sum(rows[a][1] for a in A)
+
+
 n, t = levels(os.path.join(ARMS, 'arm_null', 'final.txt')), levels(os.path.join(ARMS, 'arm_tf', 'final.txt'))
 pc = lambda k: 100 * (t[k] / n[k] - 1)
 assert pc('homelessness h_1') < 0 and pc('drug use b') < 0
@@ -72,6 +85,8 @@ out = {
     'x_ne_b_pc': f"{abs(pc('drug use b')):.0f}",
     'x_ne_sud_pc': f"{abs(pc('SUD lambda_d')):.0f}",
     'x_ne_h_pc': f"{abs(pc('homelessness h_1')):.0f}",
+    # (round r333) the share of children in a shelter in the long run, against the same Housing First
+    'x_ne_hchild_pc': f"{100 * abs(child_steady(os.path.join(ARMS, 'arm_tf')) / child_steady(os.path.join(ARMS, 'arm_null')) - 1):.0f}",
     'x_ne_piv_pc': f"{100 * t['pi_V (voucher probability)']:.2f}",
     'x_ne_cev': f'{cev:.2f}',
     'x_ne_so_h_pc': f'{max(rise.values()):.0f}',

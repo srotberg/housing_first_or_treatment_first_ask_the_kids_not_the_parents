@@ -727,3 +727,15 @@ no escape"). Four workers: pdet/remote_pdet_CAu.sh 0.10 (P0_START=0.935 V0_START
 transition_fix/remote_tr70_CA10u.sh and remote_tr70_CA05u.sh (copies of remote_tr70_CAu.sh; TF_EARLY=1) poll for those
 arms' acceptance -> results/transition_2c_t70_CA10u, CA05u. If a long run sits on a knife-edge, take its best pass as for
 0.20 and 1.00.
+
+17:50 (17 Oct) ROUND r333 (11 comments; "even if there is no escape, low detection lowers homelessness even in the short
+run. it is when there is no escape and detection is too good that it rises in the short run"; "a policymaker who wants
+to avoid raising homelessness and childhood homelessness should do imperfect enforcement but it needs to deter enough").
+Red cleared. Removed: the introduction's strictness paragraph, Block 7's and Table 6 note b's detection clause, the
+framing sentence, lesson 3 (two lessons now). Lesson 2 rewritten to the author's point and a last paragraph of 6.4 added
+(no escape: catching every user against catching 20 percent), both YELLOW until the 0.20 no-escape transition (and the
+screen-only 0.20 paths) confirm the short run, and the 1.00 full transition says whether recycling removes the early
+rise. x_ne_hchild_pc (children in a shelter, 1.00 long run, -31) added to export_noescape.py. fix_soul.py now unwraps a
+\new nested in a \new inside \tocheck. Pending: comment 3 (the 0.20 no-escape newborn CEV, from
+results/transition_2c_t70_CA20b/arms/arm_tf when its terminal arm lands; re-point export_ca.py there too), comment 4 (the
+transition figures to T = 70: re-pin transition_source.py to results/transition_2c_t70_Cu loop0 when archived, ~23:00).

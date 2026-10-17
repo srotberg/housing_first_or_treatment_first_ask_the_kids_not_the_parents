@@ -60,6 +60,11 @@ def inline_fn(t):
 
 
 body, n1 = within(body, '\\del{', lambda x: inline_fn(unwrap(x, '\\tocheck{')))
-body, n2 = within(body, '\\tocheck{', lambda x: unwrap(unwrap(x, '\\del{', drop=True), '\\new{'))
+def unwrap_all(t, cmd):
+    """unwrap until none is left: a moved number's \\new{v} can sit inside a \\new{...} sentence (round r333)"""
+    while cmd in t:
+        t = unwrap(t, cmd)
+    return t
+body, n2 = within(body, '\\tocheck{', lambda x: unwrap_all(unwrap(x, '\\del{', drop=True), '\\new{'))
 open(p, 'w').write(pre + body)
 print(f'fix_soul: {n1} struck runs, {n2} highlighted runs cleaned')
