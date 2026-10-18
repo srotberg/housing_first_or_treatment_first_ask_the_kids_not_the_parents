@@ -251,6 +251,7 @@ if ! arm_ok tf "TARGET CHECK PASS" && ! alive "$D.arm_tf.pid"; then
     if accepted; then
         PV=$(branch_file "$C1R/tf/final.txt" | awk '/^ *drug price /{p=$NF} /pi_V \(voucher probability\)/{v=$NF} END{print p, v}')
         start_tf ${PV% *} ${PV#* } "the ACCEPTED long-run rule-C arm ($C1R/tf/final.txt)"
+        FROM_ACCEPTED=1   # 18 Oct: started from the accepted values, so not killed at acceptance as an early start (it was, at 17:24 on 16 Oct)
     elif [ "${TF_EARLY:-0}" = 1 ]; then
         LAST=$(branch_file "$C1R/passes.txt" | awk '/^== tf/{t=1;next} /^==/{t=0} t && $1 ~ /^[0-9]+$/ {p=$2; v=$3} END{if (p) print p, v}')
         [ -n "$LAST" ] || LAST="${TF_P0:-0.93} ${TF_V0:-0.082}"
