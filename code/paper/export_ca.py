@@ -17,13 +17,17 @@ allowed the prices to clear"): tf_pdet20_CA cleared both markets but against the
 run on the old budget with the corrected main experiment. It now reads the corrected no-escape run at detection 0.20,
 results/counterfactuals_2c/tf_pdet20_CAbest (pass 13 of tf_pdet20_CAu, NET_TARGET 5.8371628, both markets inside their
 tolerances: drug 3.87e-3, budget 3.08e-4), and takes its changes against the corrected Housing First the main
-experiment is compared with (rulec_paths.NULL_DIR), not against the passes' base."""
+experiment is compared with (rulec_paths.NULL_DIR), not against the passes' base.
+
+18 October, 01:30: the free-price run itself, results/counterfactuals_2c/tf_pdet20_CAu, was accepted at pass 49 (drug
+market 5.3e-5, budget 8.6e-4), so the footnote reads it: the price clears in it, where tf_pdet20_CAbest was one pass of
+it that happened to fall inside both rules."""
 import json, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
 import rulec_paths as RC
-CA = os.path.join(ROOT, 'results', 'counterfactuals_2c', 'tf_pdet20_CAbest')
+CA = os.path.join(ROOT, 'results', 'counterfactuals_2c', 'tf_pdet20_CAu')
 OUT = os.path.join(HERE, 'results_numbers.json')
 def levels(p):
     return {m.group(1).strip(): float(m.group(2)) for m in (re.match(r'\s+(.+?)\s{2,}([-+0-9.Ee]+)(\s|$)', l) for l in open(p)) if m}
@@ -31,7 +35,9 @@ x, y = levels(os.path.join(CA, 'tf', 'final.txt')), levels(os.path.join(RC.NULL_
 b, sud, h = (100 * (x[k] / y[k] - 1) for k in ('drug use b', 'SUD lambda_d', 'homelessness h_1'))
 P = open(os.path.join(CA, 'passes.txt')).read()
 assert 'arm tf ACCEPTED' in P, f'{CA}/passes.txt: not accepted'
-dgap, bgap = (float(v) for v in re.search(r'drug-market gap\s+(\S+) against 5e-3, budget gap\s+(\S+) against 1e-3', P).groups())
+# the last pass of the tf section: pass price pi_V b SUD h_1 drug-gap budget-gap ...
+_last = [l.split() for l in P.split('== tf')[1].splitlines() if re.match(r'\s*\d+\s+\d\.\d+\s', l)][-1]
+dgap, bgap = float(_last[6]), float(_last[7])
 d = json.load(open(OUT))
 tf_h = float(d['x_tf_h_pc'])
 gap = abs(h) - tf_h
@@ -39,7 +45,7 @@ out = {
     'x_ca_b_pc': f'{abs(b):.0f}', 'x_ca_sud_pc': f'{abs(sud):.0f}', 'x_ca_h_pc': f'{abs(h):.0f}',
     'x_ca_h_cmp': 'by more than' if gap > 1 else 'by less than' if gap < -1 else 'by about as much as',
     'x_ca_done': '1' if dgap < 5e-3 and bgap < 1e-3 else '0',
-    'x_ca_pass': re.search(r'pass (\d+) of', P).group(1),
+    'x_ca_pass': _last[0],
 }
 d.update(out); json.dump(d, open(OUT, 'w'), indent=1, sort_keys=True)
 print('export_ca:', out)

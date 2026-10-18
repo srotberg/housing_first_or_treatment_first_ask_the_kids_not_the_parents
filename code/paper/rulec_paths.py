@@ -52,13 +52,17 @@ STALE_SHARES = {'dc_pv', 'dc_p', 'pe_b', 'fx_d', 'ne_e', 'nc_c'} | (set() if COR
 # moves to its corrected run once that run's files are all in, and its better-off shares stop printing yellow. The
 # column with the drug price held and pi_V clearing holds pi_V at 0.0924 (remote_decomp_shares_Cu2.sh, SHARES_HOLD_PV):
 # the clearing value sits at a jump in drug use, and there net revenue is 0.2 per cent above Housing First's.
+# (18 October) decomp_2c_shares_Cu3 first: the held columns re-solved with the price held at the CORRECTED Housing
+# First's (0.99938969; Cu2 held it at the pre-correction 1.0001082), code/extra_2c/remote_decomp_shares_Cu3.sh
+SCU3 = os.path.join(R, 'decomp_2c_shares_Cu3')
 for _k, _arm in (('fixboth', 'dc_b'), ('fixpv', 'dc_pv'), ('fixp', 'dc_p')):
-    _d = os.path.join(SCU, f'arm_{_k}')
-    if all(os.path.exists(os.path.join(_d, f)) for f in ('final.txt', 'shares.txt', 'newborn_shares.json',
-                                                         'tf/final.txt', 'tf/cf.log.gz', 'status.txt')):
-        DC[_k] = _d
-        SHARES_FILE.pop(_k, None)
-        STALE_SHARES.discard(_arm)
+    for _d in (os.path.join(SCU3, f'arm_{_k}'), os.path.join(SCU, f'arm_{_k}')):
+        if all(os.path.exists(os.path.join(_d, f)) for f in ('final.txt', 'shares.txt', 'newborn_shares.json',
+                                                             'tf/final.txt', 'tf/cf.log.gz', 'status.txt')):
+            DC[_k] = _d
+            SHARES_FILE.pop(_k, None)
+            STALE_SHARES.discard(_arm)
+            break
 for _name, _arm, _new in (('PE', 'pe_b', 'pe_noext_Cu'), ('FX', 'fx_d', 'noext_fixp_Cu'), ('NC', 'nc_c', 'noext_clear_Cu'),
                           ('NE', 'ne_e', 'noext_pclear_Cu')):
     if os.path.exists(os.path.join(R, _new, 'analysis.json')):
