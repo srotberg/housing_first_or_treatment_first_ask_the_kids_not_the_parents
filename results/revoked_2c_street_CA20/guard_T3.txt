@@ -1,0 +1,16 @@
+T = 3 GUARDS, ONE THREAD: plain, unsplit tracking, split tracking (Treatment First path)
+  (at T = 3 the forward periods are 1 and 2: cohort 1 is split at the start of period 2 and followed one step; cohorts 2 and 3 are split in the T = 10 runs, whose guards below repeat every split check)
+  aggregate lines (MECH, CENSUS, BUDGET, DRUG, WELFARE, MILBY, ...): plain 48, split 48, differing 0 PASS
+  unsplit tracking against split tracking: every REVK GROUP, POP, TAG, LEAK, INIT, MASK and aggregate line, 68 and 68 lines, differing 0: groups 1-4 reproduced byte for byte PASS
+  split tracking, one thread: mass accounting, worst |alive + cumulative deaths - starting mass| / starting mass = 2.09e-13 (rule 1e-10) PASS
+  split tracking, one thread: shadow kernel against the model's own step (ages 2+), worst max-cell gap / largest cell = 0.00e+00 (rule 1e-12) PASS
+  split tracking, one thread: price printed in 2 years: [1.0001082]; pi_V: [0.067533863] PASS
+  split tracking, one thread: mass the model's reduction drops each year (below the last age's renter floor; booked as an end-of-life exit): t=1 0.00e+00, t=2 0.00e+00
+  split tracking, one thread: one pass and stopped cleanly: True, runtime errors: 0 PASS
+  split tracking, one thread: the four parts summed against the unsplit cohort, 16 comparisons (levels; shares times survivors): 5 bit for bit, worst relative difference 5.4e-14 (rule 1e-12); at the split, cell by cell, max |parts - cohort| = 0.0 over 1 splits (rule 0, a partition of cells) PASS
+    (the parts move in separate passes through the same kernel and rejoin in the same cells, so a sum of four separately rounded passes can differ from the joint pass in the last bit; at the start the totals differ by 4.6e-15 relative, the order of summation over the same cells)
+  split tracking, one thread: SMI share at revocation 1 in the SMI parts, 0 in the others (to 1e-12, the ratio of two sums): PASS
+  split tracking, one thread: mass accounting in the parts, worst 7.0e-14 (rule 1e-10) PASS
+    split of cohort 1 (at t = 2): no SMI housed 2.142703e-02, no SMI street 7.416731e-03, SMI housed 1.934541e-03, SMI street 2.097723e-03; cohort 3.287603e-02; at the last age (no choice, counted housed) 1.575e-05
+  split tracking, one thread: the classification is the kernel's choice: one year after revocation the survivors' homeless share is 1 in every street part and 0 in every housed part, and the persistence mass equals the street part's survivors (4 parts) PASS
+GUARD SUMMARY: PASS
