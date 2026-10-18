@@ -835,3 +835,15 @@ rule C, detection 0.20, both prices clearing; D newborn values (cf_kid_C). Worke
 dd0.12 session_01FjCM1uyiPJg2pphFSAYcGn; results/deltad_Cu/dd{0,0.12}. The footnote (Section 2, end of the Nilsson
 paragraph) is in yellow until both show Treatment First still raising a newborn's welfare and lowering homelessness and
 the share of children in a shelter against their own Housing First.
+
+## 18 October, 18:30 -- Table 5's eighth column at the corrected held price lands on the other side of the jump
+
+results/decomp_2c_shares_Cu4/arm_fixp (pi_V held at 0.0924, the drug price held at the corrected Housing First's
+0.99938969) is in, and rulec_paths reads it. At the same pi_V as the paper's column, the 0.07 per cent lower held
+price puts the economy on the other side of the jump in drug use: drug use -41.8 per cent (was -47.8), homelessness
+-20.4 (-21.1), children in a shelter -19 (-20), net revenue -0.29 per cent of the benchmark's (was +0.22), a newborn's
+gain 6.45 (6.98), the externality two thirds of it (three quarters), the parents 2.42 (2.41). The column is consistent
+with the text now ("the drug price held at its Housing First level"). 6.2's "because drug use falls by more and the
+higher pi_V houses more children" became "because the higher pi_V houses more children" (drug use now falls about as
+much as with both held, which x_dcp_why says). Still open for the author: the Table 5 note's "when it clears, pi_V
+holds net government revenue at its benchmark level" overstates this column (0.29 per cent off).
