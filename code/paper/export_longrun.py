@@ -714,7 +714,7 @@ def main():
     # (round r288, the author: "by X percent", and "of child-rearing age"; r289: "low-income households")
     out['x_dcp_hchild'] = _ch('dc_p', 'child_hl')
     out['x_dcp_hchild_why'] = ('Childhood homelessness falls because the additional spending on vouchers lifts other '
-                               'low-income households of child-rearing age, which do not use drugs, out of homelessness.'
+                               'low-income households of child-rearing age that do not use drugs out of homelessness.'
                                if D['dc_p']['child_hl'] < D['null_share']['child_hl'] else '')
     # (round r287, the author on what raises tax revenue: "I think it's mostly this [children inheriting higher
     # productivity draws] because in the no externality cases the increase in piv is very small which captures just the

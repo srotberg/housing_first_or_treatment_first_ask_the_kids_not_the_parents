@@ -243,7 +243,7 @@ ELEVEN = [
         # we only calibrated the ue case"): kappa_uem is 1, so SMI, like the SUD, acts
         # only on job finding, and the row and the term in the paper's equation went.
         (r'$\mu_m$', 'SUD recovery multiplier for SMI', 'Ext.',
-         r'Dual diagnosis relapse, Bradizza et al.\ (2006)', f(C['mu_m']), NA, f(C['mu_m'])),
+         r'Dual-diagnosis relapse, Bradizza et al.\ (2006)', f(C['mu_m']), NA, f(C['mu_m'])),
         (r'$\kappa_{\phi m}$', 'Mortality multiplier for SMI', 'Ext.', r'Olfson et al.\ (2015)',
          f(C['kappa_phi_m']), NA, f(C['kappa_phi_m'])),
     ]),
@@ -340,7 +340,7 @@ STANDARD = [
         # how this parameter is set?!"): data/UNEMPLOYMENT_BY_PRODUCTIVITY.md
         (r'$\varpi(y)$', 'Separations by productivity', 'Ext.', 'Unemployment by education, BLS 2019',
          'Profile', NA, 'Profile'),
-        (r'$\bar\pi^{ue}$', 'Annual job finding rate', 'Ext.', r'Krueger et al.\ (2014)',
+        (r'$\bar\pi^{ue}$', 'Annual job-finding rate', 'Ext.', r'Krueger et al.\ (2014)',
          f(C['probability_becoming_employed']), NA, f(C['probability_becoming_employed'])),
         # BLS USDL-23-0586 (the author, round b8142d12): about 7 in 10 of the unemployed who
         # worked in the past year had not applied for UI; related_lit/ holds the release

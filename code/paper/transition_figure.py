@@ -53,15 +53,15 @@ def main():
     # to read without zooming at the text width)
     fig, axs = plt.subplots(4, 2, figsize=(7.0, 7.6))
     t = [0] + [r['t'] for r in S]
-    panels = (('b', '(a) Drug use', 'percent of adults', 100),
-              ('lambda_d', '(b) With a SUD', 'percent of adults', 100),
+    panels = (('b', '(a) Drug use', 'percent of households', 100),
+              ('lambda_d', '(b) With a SUD', 'percent of households', 100),
               ('p_drug', '(c) Drug price', 'benchmark $=1$', 1),
               ('par_use', '(d) Parents using drugs', 'percent of parents', 100),
               ('h_1', '(e) Homeless', 'percent of households', 100),
               ('child_hl', '(f) Children in a shelter', 'percent of children', 100))
     for ax, (key, title, ylab, sc) in zip(axs.flat, panels):
         y = [sc * hf[key]] + [sc * r[key] for r in S]
-        ax.axhline(sc * hf[key], color=ORANGE, ls='--', lw=1.5, label='Housing First rest point')
+        ax.axhline(sc * hf[key], color=ORANGE, ls='--', lw=1.5, label='Housing First benchmark')
         ax.axhline(sc * tf[key], color=BLUE, ls=':', lw=1.5, label='Treatment First long run')
         ax.plot(t, y, '-', color=BLUE, lw=2.0, label='Treatment First, year by year')
         ax.plot([0], [y[0]], 'o', color=ORANGE, ms=5)
@@ -158,7 +158,7 @@ def names(S, C, R):
         out['x_trf_paruse_below_yr'] = str(_kb)
         out['x_trf_paruse1_why'] = ('It stays above its long-run level until year ' + str(_kb) + ', because it counts the '
                                     'parents who have a SUD when the reform lands, whose number falls only slowly '
-                                    '(panel (b)), and from then on moves around it.')
+                                    '(panel (b)). From then on it moves around its long-run level.')   # r347 sweep
         out['x_trf_paruse_after'] = ''
     # HOW MANY MORE CHILDREN (round 3350a58a, the author on 'while the former affects many': "(put magnitudes). how
     # many more children does the first affect relative to the second?"): the fall in the share of parents who use
@@ -222,12 +222,12 @@ def names(S, C, R):
                          # materilize:", "to house themselves", "even in the first year")
                          'These are long-run outcomes, but the transition does not qualitatively reverse them. One concern is that '
                          'homelessness and childhood homelessness could rise in the first years after the reform, because the households '
-                         'that already have a SUD but do not enter treatment and stay sober face losing '
-                         'their vouchers, while the number with a SUD falls only as fast as recovery allows. As I show, this concern does not materialize: '
+                         'that already have a SUD face losing their vouchers unless they enter treatment and stay sober, '   # r347 sweep
+                         'while the number with a SUD falls only as fast as recovery allows. As I show, this concern does not materialise: '
                          # (round r325, the author: "is that the reason? or is it because household use less and then
                          # it frees more resources for housing?")
                          'few households lose their vouchers, and those that stop using spend less on drugs and can '
-                         'afford to house themselves, so both fall even in the first year (Section~\\ref{sec:ftrans}).' if _lowers else '')
+                         'afford to house themselves, so neither rises even in the first year (Section~\\ref{sec:ftrans}).' if _lowers else '')
     out['x_trf_shade_from'] = str(UNCONVERGED_FROM)
     # (16 October, rule C, T = 50; the author on Panels (e) and (f): "you need to explain why these dont rise, and fall
     # a bit in fact", and on panel (g): "need to explain why the gains are smaller"): the path's own numbers
@@ -269,7 +269,7 @@ def names(S, C, R):
     Wt = rows('worse.csv')
     w_all = [100 * r['all'] for r in Wt]; w_sud = [100 * r['with_sud'] for r in Wt]
     out['x_trf_better_sentence'] = (
-        'Panel (h) repeats the comparison in every period of the path, for a household in each state weighted as '
+        'Panel (h) repeats the comparison in every period of the path, with households in each state weighted as '
         'under Housing First. The share worse off stays '
         + (f"at about ${w_all[0]:.0f}$ percent" if round(min(w_all)) == round(max(w_all)) else
            f"between ${min(w_all):.0f}$ and ${max(w_all):.0f}$ percent")
@@ -280,7 +280,7 @@ def names(S, C, R):
            # (round r325, the author on 'At least 34 percent': "i thought 99.9% are better off...Are you saying that only
            # 34% entering adult life in each period of the transition are better off?"): yes, year by year; say so
            f"Of the households entering adult life at 26, ${a_ent[0]:.0f}$ percent are better off in the first year, "
-           f"when $\\pi_V$ is still close to its Housing First level, and ${a_ent[-1]:.0f}$ percent by year "
+           f"when $\\pi_V$ is still close to its Housing First level, and ${(f'{a_ent[-1]:.1f}' if 99.5 <= a_ent[-1] < 99.95 else f'{a_ent[-1]:.0f}')}$ percent by year "
            f"{len(a_ent)}." if a_ent[-1] > a_ent[0] else
            f"At least ${min(a_ent):.0f}$ percent of households entering adult life are better off."))
     d = json.load(open(OUT_JSON))

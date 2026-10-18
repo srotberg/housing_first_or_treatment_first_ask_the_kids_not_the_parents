@@ -264,7 +264,7 @@ out['x_tf_h_sentence'] = (
     # sentence: "too long. break it down.")
     f"{out['x_tf_h1']} percent of households, for three reasons. First, households that stop using spend less on drugs, "
     f"and thus more of them can house themselves. Second, less SUD means less unemployment and so less homelessness. "
-    f"Third, the vouchers it revokes from households with a SUD go, through a higher $\\pi_V$, to other low-income "
+    f"Third, the vouchers Treatment First revokes from households with a SUD go, through a higher $\\pi_V$, to other low-income "
     f"households.")
 # WHO THE FALL IN HOMELESSNESS COMES FROM (round 4ad85a30, the author on the introduction: "explain why
 # ... it is worth explaining that result a bit more"): the share homeless among households with a SUD
@@ -802,9 +802,9 @@ _nopen_s = out['x_odds_sud_nopen']
 if _nopen < _olo and _od < (_olo + _ohi) / 2:
     out['x_odds_dd_sentence'] = (
         'With the penalty switched off, in the economy '
-        'without the externalities of Section~\\ref{sec:longrun}, the SUD odds ratio is $' + _nopen_s + '$: the transmission '
-        'runs through $\\delta_d$, and the value that puts the model in the middle of the range is above $'
-        + _dd + '$, so the value the calibration uses is likely at the low end of what the evidence supports.')
+        'without the externalities of Section~\\ref{sec:longrun}, the SUD odds ratio is $' + _nopen_s + '$, so the transmission '
+        'runs through $\\delta_d$. The value of $\\delta_d$ that would put the model in the middle of the range is above $'
+        + _dd + '$, so the calibrated value is likely at the low end of what the evidence supports.')   # r347 sweep
 elif _nopen < _olo:
     out['x_odds_dd_sentence'] = (
         'With the penalty switched off, in the economy without the externalities of Section~\\ref{sec:longrun}, the '

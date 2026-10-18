@@ -139,7 +139,7 @@ def main():
          r"discounted to the child's birth. The parent's own gain is the change in its value at $j=1$ when the policy "
          r"switches from Housing First to Treatment First, with the distribution of entrants held at Housing First's, "
          r"for the households Housing First's newborns are born into, as a percent of the parent's own "
-         r"lifetime consumption, undiscounted. It is larger than the newborn's own adult life because the newborn "
+         r"lifetime consumption, undiscounted. It is larger in absolute value than the newborn's own adult life because the newborn "
          r"receives the same gain $J_K$ years later, discounted, and because the newborn's lifetime consumption, the base "
          r"of its percent, includes its childhood as well as its adult life.}",
          r'\endgroup', r'\end{table}']
