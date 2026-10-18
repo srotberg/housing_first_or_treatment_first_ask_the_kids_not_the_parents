@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20, THE DRUG PRICE CLEARING ALONG THE PATH (code/transition_fix/remote_tr70_CA20e.sh, end state at the cleared long run's price); 18 Oct 22:13 UTC
+# the T = 70 transition on RULE CA at detection 0.20, THE DRUG PRICE CLEARING ALONG THE PATH (code/transition_fix/remote_tr70_CA20e.sh, end state at the cleared long run's price); 18 Oct 22:14 UTC
 remote_tr70_CA20e: free disk 20G, memory 15 GiB, cores 4 (15:34)
 remote_tr70_CA20e: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_pdet20_CAu/tf/final.txt): price 0.90563748, pi_V 0.085920513 (15:35)
 remote_tr70_CA20e: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.085920513 DRUG_PRICE_START=0.90563748 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100 (15:35)
@@ -7,6 +7,11 @@ remote_tr70_CA20e: terminal arm (started early) within 1 of the accepted arm: wo
 remote_tr70_CA20e: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 1.9e-04; tf against the accepted long-run CA arm 1.161e-02 (22:12)
 remote_tr70_CA20e: shares written:   all households                   mass 50.82468  strict better 0.8250 | tol 0.001: better 0.7459 worse 0.0277 | tol 0.01: better 0.7282 worse 0.0276 (22:13)
 remote_tr70_CA20e: age split: 2 of 2 arms exact (22:13)
+remote_tr70_CA20e: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t70_CA20e -- start with: cd /home/user/children_first_housing_later/code/tr2c_t70_CA20e && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds rescaled from rule C's T = 50 loop3 (x0 0.99933907 0.067533863): drug_price: factor 1.7535; t=1 0.940114, t=2 0.944069, t=5 0.944073, t=10 0.940048, t=25 0.912389, t=49 0.905637, t=69 0.905637 pi_v: factor 2.2078; t=1 0.071896, t=2 0.068142, t=5 0.069489, t=10 0.071202, t=25 0.079417, t=49 0.086430, t=69 0.086430  (22:14)
+remote_tr70_CA20e: 4 GiB swap on (22:14)
+remote_tr70_CA20e: T = 70 transition started, pid 13878 (22:14)
+remote_tr70_CA20e: handover applied: 100 parameters (22:14)
+remote_tr70_CA20e: the path's drug price clears: HANDOVER drug_market_adjuster -> 0.10000000000000001 (22:14)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -28,3 +33,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   8  0.9056  0.08658   -30.1%   -30.0%   -11.2%  0.00e+00  1.59e-03   789.3524  +5.55%   -14.2%   +22.7%
   9  0.9056  0.08648   -30.0%   -29.9%   -11.1%  0.00e+00  8.98e-04   789.3484  +5.54%   -14.2%   +22.7%
  MILBY SPLIT voucher mass rec treat smi   6.3089761259829583E-002   2.2071190230610778E-003   2.6749153641809575E-002   6.3843263275835411E-003  housed_nov mass rec treat smi   1.2484412671422231        3.8500188156376139E-002  0.31001677581360143        9.9547713781108854E-002
+
+== tr2c_t70_CA20e (T = 70, rule CA, detection 0.20, drug price clearing)
