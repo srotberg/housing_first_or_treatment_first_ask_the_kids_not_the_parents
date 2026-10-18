@@ -803,3 +803,22 @@ so, generated (x_dcp_jump_piv, x_dc_p_rev_pc from the column's final.txt, 0.22 p
 re-solved with pi_V held at 0.09354 and the price at the corrected Housing First's (remote_decomp_shares_Cu3.sh fixp,
 session_01BmNrng1jocAzG4s8PDKi1h -> results/decomp_2c_shares_Cu3/arm_fixp); rulec_paths prefers Cu3 once it lands, and
 the note's miss then reads that run.
+
+## 18 October, 13:05 -- the 20% no-escape path from the cleared long run; the price-held hedge stopped
+
+The author asked why no transition had initial results, then "yes, do both" to (1) stopping the two dead runs and (2)
+starting the 20% no-escape path now. (1) The 1.00 hedge (remote_tr70_CAb2.sh, price held along the path,
+session_01EKUpZvtXQ5jXkT2MgpB481) is ARCHIVED; its loop 0 stays in results/transition_2c_t70_CAb2/loop0. The first 1.00
+transition (remote_tr70_CAu.sh, session_019NDD7S6oXV1WdF9SiLo1p3, waiting for tf_pdet100_CAuC, which will never be
+accepted) could not be archived: the classifier refused it (Interfere With Workloads), so the author has to. It is idle.
+(2) remote_tr70_CA20d.sh's free-price terminal re-solve had swung around the tolerances for 16 passes (drug 4e-3 to
+5.5e-3, budget 9e-4 to 3e-3) at price 0.9051-0.9056, pi_V 0.0861 against the accepted 0.90564, 0.08592.
+remote_tr70_CA20e.sh (session_01Bw4Fphs8xT328eABnBuUCm, a fresh container) is remote_tr70_CA20c.sh with the long-run
+arm set to the accepted tf_pdet20_CAu: the terminal arm holds the price at 0.90563748 while pi_V clears, and the path
+clears both prices (handover reset to drug_market_adjuster 0.1, GUARDed). CA20d keeps running. BEFORE ANY NUMBER
+READS CA20e: check its terminal arm's implied supply price (as the 17 October audit did; CA20b's held arm at 0.9044 was
+rejected for a 7.4e-3 drug gap). export_noescape.py still reads CA20d's arms.
+
+The yellow passages (footnote 966, 6.4's closing paragraph 1062, the third lesson 1076) all wait on these paths: the
+footnote on a 20% end state (CA20e's arms, ~6-8 hours, or CA20d's), the other two on the 20% and 1.00 paths' first
+pass in which the prices move (CAc's second pass ~11:00 UTC 19 October; CA20e's ~2 days after its arms).
