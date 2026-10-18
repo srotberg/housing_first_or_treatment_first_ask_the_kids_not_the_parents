@@ -676,7 +676,7 @@ def main():
         'In the aggregate, then, there is no trade-off between the externalities: by cutting use, the screen keeps '
         'more children out of a shelter than it sends to one by putting their parents out. What the \\emph{budget, '
         'earnings and childhood homelessness externalities} have to outweigh is only the direct loss to the parent from '
-        'the removal of an option. As I explain next, even the parent gains once general-equilibrium effects are '
+        'the removal of an option. As I explain below, even the parent gains once general-equilibrium effects are '
         'taken into account.')   # 18 October, the author on the brackets: "not sure we need the brackets..."   # r324-r325, the author   # r322, the author on 'although a child whose parent it puts out can still lose its home': "remove"
     # the abstract, on the main experiment's long run
     out['x_abs_hchild_sentence'] = (
