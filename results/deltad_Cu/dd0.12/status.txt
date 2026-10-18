@@ -1,4 +1,4 @@
-# delta_d 0.12, every other parameter as calibrated, the current model: corrected Housing First, rule C, detection 0.20 (code/deltad/remote_deltad_Cu.sh); 18 Oct 22:44 UTC
+# delta_d 0.12, every other parameter as calibrated, the current model: corrected Housing First, rule C, detection 0.20 (code/deltad/remote_deltad_Cu.sh); 18 Oct 22:48 UTC
 remote_deltad_Cu dd0.12: gfortran missing, installing (16:35)
 remote_deltad_Cu dd0.12: free disk 29G, memory 15 GiB, cores 4 (16:35)
 remote_deltad_Cu dd0.12: building the benchmark binary of record (16:35)
@@ -14,6 +14,7 @@ remote_deltad_Cu dd0.12: HANDOVER omega_c_is_pinned:           1 ->           1 
 remote_deltad_Cu dd0.12: benchmark exited 0 after 13 blocks; bench.err:  (21:23)
 remote_deltad_Cu dd0.12: benchmark (users, SUD, h_1) 0.0869808658,0.0370516958,0.0060781100 (21:24)
 remote_deltad_Cu dd0.12: arm null on cf_fix2_share_treatCu (treat/cf_arm_Cu.sh): DRUG_PRICE_START=0.99938969 EXTRA_SET=penalty_child_addicted 0.12 (21:24)
+remote_deltad_Cu dd0.12: arm null ACCEPTED (exit 0): VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 4 passes, sweeps [70, 70, 70, 73], largest final 4.89e-05 (rule 5e-05, at least 70 sweeps)  (22:48)
 
 == benchmark
  newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.90658316362296343        8.4784868760913734E-002   6.1624606077027256E-003   2.4695070084199233E-003
@@ -62,3 +63,4 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   1  0.9994  0.06753    -1.5%    -0.8%    -1.5%  2.30e-04  0.00e+00   789.3593  +2.12%
   2  0.9998  0.06753    +0.2%    +0.9%    -0.2%  3.95e-03  0.00e+00   788.7803  +0.40%
   3  0.9998  0.06753    -0.1%    +0.7%    +0.0%  5.38e-04  0.00e+00   788.6363  -0.02%
+  4  1.0000  0.06753    -0.1%    +0.7%    +0.0%  4.08e-04  0.00e+00   788.6294  -0.04%
