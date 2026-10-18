@@ -1,4 +1,4 @@
-# SMI x street split of the revoked-voucher experiment, RULE CA, DETECTION 0.20 (code/revoked_2c_street/run_paths_CA20.sh); 18 Oct 03:15 UTC
+# SMI x street split of the revoked-voucher experiment, RULE CA, DETECTION 0.20 (code/revoked_2c_street/run_paths_CA20.sh); 18 Oct 03:32 UTC
 ## stage 1, the two steady states (code/revoked_2c/run_arms_CA20.sh)
 run_arms: free disk 29G, memory 15 GiB, cores 4 (17 Oct 14:23)
 run_arms: building cf_fix2_treatCA (17 Oct 14:23)
@@ -37,8 +37,10 @@ run_paths_street: tf10: exit 0; 3 tags (18 Oct 01:55)
 run_paths_street: T = 3 guards: GUARD SUMMARY: PASS (18 Oct 01:55)
 run_paths_street: staged hf10 (T=10, terminal cfarm_null_2c_CA20) (18 Oct 01:55)
 run_paths_street: T = 10 Housing First path running (18 Oct 01:55)
+run_paths_street: hf10: exit 0 (18 Oct 03:31)
+run_paths_street: analysis: HEADLINE SMI, on the street: 6.1 per cent of the revoked; three-year mortality 10.30 (a) against 6.71 (b), gap +3.59 pp (+54 per cent); homeless (a) 100.0, 95.4, 89.5 in years 1-3 HEADLINE SMI, housed: 6.1 per cent of the revoked; three-year mortality 6.39 (a) against 6.20 (b), gap +0.19 pp (+3 per cent); homeless (a) 0.0, 8.6, 15.0 in years 1-3 HEADLINE no SMI, on the street: 20.9 per cent of the revoked; three-year mortality 6.91 (a) against 4.60 (b), gap +2.30 pp (+50 per cent); homeless (a) 100.0, 83.8, 69.5 in years 1-3 HEADLINE no SMI, housed: 66.9 per cent of the revoked; three-year mortality 6.60 (a) against 6.51 (b), gap +0.09 pp (+1 per cent); homeless (a) 0.0, 4.9, 8.2 in years 1-3 HEADLINE all (unsplit cohort lines): 100.0 per cent of the revoked; three-year mortality 6.87 (a) against 6.11 (b), gap +0.77 pp (+13 per cent); homeless (a) 26.8, 26.9, 26.1 in years 1-3  (18 Oct 03:32)
 -- g_plain3_1t: 0 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- g_street3_1t: 2 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- g_track3_1t: 2 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
 -- tf10: 9 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
--- hf10: 6 forward periods done; last line:  AGE_TIME age=  19  wall_s=      7.04  cpu_s=     25.66
+-- hf10: 9 forward periods done; last line:  REVK STOP after loop 0: the paths are fixed, nothing is updated
