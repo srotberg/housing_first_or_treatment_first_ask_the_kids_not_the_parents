@@ -1,10 +1,11 @@
-# counterfactual tf_pdet20_CAu (detection 0.20) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 17 Oct 23:52 UTC
+# counterfactual tf_pdet20_CAu (detection 0.20) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 18 Oct 00:03 UTC
 remote_pdet tf_pdet20_CAu: free disk 24G, memory 15 GiB, cores 4 (02:27)
 remote_pdet tf_pdet20_CAu: warm start at the rule-C arm tf_pdet20_CAu's latest pass: price 0.9052, pi_V 0.08606 (02:27)
 remote_pdet tf_pdet20_CAu: warm start at the given values: price 0.9048, pi_V 0.0876 (02:27)
 remote_pdet tf_pdet20_CAu: resuming from the last published pass: price 0.9052, pi_V 0.08606 (02:27)
 remote_pdet tf_pdet20_CAu: TF budget target: the paper's no-policy net revenue 5.8371628; test cost 0.0004946100 ($35); detection 0.20 (02:27)
 remote_pdet tf_pdet20_CAu: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.08606 DRUG_PRICE_START=0.9052 EXTRA_SET=cost_per_drug_test 0.0004946100 (02:27)
+remote_pdet tf_pdet20_CAu: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.8371627999999998 DIST CHECK PASS: 49 passes, sweeps [71, 70, 71, 71, 72, 70, 70, 70, 70, 70, 75, 70, 70, 71, 77, 73, 78, 70, 79, 74, 70, 70, 84, 72, 70, 70, 76, 74, 71, 73, 70, 76, 70, 70, 71, 70, 70, 71, 70, 70, 70, 92, 71, 71, 82, 71, 70, 70, 70], largest final 4.98e-05 (rule 5e-05, at least 70 sweeps)  (00:03)
 
 == tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -56,3 +57,4 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
  46  0.9056  0.08595   -29.2%   -29.2%   -10.7%  7.36e-05  1.40e-03   789.2827  +5.33%   -13.5%   +22.3%
  47  0.9056  0.08594   -29.2%   -29.2%   -10.7%  6.90e-05  1.53e-03   789.2820  +5.33%   -13.5%   +22.3%
  48  0.9056  0.08593   -29.2%   -29.2%   -10.7%  7.03e-05  1.52e-03   789.2823  +5.33%   -13.5%   +22.3%
+ 49  0.9056  0.08592   -29.2%   -29.2%   -10.7%  5.32e-05  8.55e-04   789.2818  +5.33%   -13.5%   +22.3%
