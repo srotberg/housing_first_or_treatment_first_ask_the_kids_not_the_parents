@@ -5,7 +5,7 @@
 # sweep loop's condition "at least 70 sweeps" -- exactly what code/cf_tdm does in the
 # counterfactual loop. Source untouched. All three builds.
 set -e
-CODE=/home/user/housing_first_or_treatment_first/code
+CODE=$(cd "$(dirname "$0")" && pwd)   # the repo was renamed: workers clone it as children_first_housing_later (18 Oct)
 SRC=$CODE/housing_first_or_treatment_first_SR_v1.f90
 OUT=$CODE/bench_tdm_childsplit; mkdir -p "$OUT"
 ln_of() { n=$(grep -n -F -x -- "$1" "$SRC" | cut -d: -f1); [ "$(echo "$n" | wc -w)" = 1 ] || { echo "REFUSING: anchor not unique: $1"; exit 1; }; echo $n; }
