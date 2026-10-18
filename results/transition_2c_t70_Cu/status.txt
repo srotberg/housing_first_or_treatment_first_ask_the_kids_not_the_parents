@@ -1,29 +1,5 @@
-# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 18 Oct 10:24 UTC
-remote_tr70_Cu: gfortran missing, installing (14:58)
-remote_tr70_Cu: free disk 29G, memory 15 GiB, cores 4 (14:58)
-remote_tr70_Cu: building cf_fix (14:58)
-remote_tr70_Cu: building cf_fix2 (15:00)
-remote_tr70_Cu: building cf_fix2_share_treatCu (Housing First with the internal_computations fix ungated) (15:02)
-remote_tr70_Cu: building cf_fix2_treatC (15:05)
-remote_tr70_Cu: building tr70_C2u (build_tr70_C2.sh) (15:06)
-remote_tr70_Cu: built /home/user/children_first_housing_later/code/tr70_C2u/hftf_tr_prod b25b1720 (rule C2 + cohort print, T = 70; patch_treatC2.py d5931f95) (15:08)
-remote_tr70_Cu: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (15:08)
-remote_tr70_Cu: terminal arm from the ACCEPTED long-run rule-C arm (results/decomp_2c_shares_Cu/arm_tf/tf/final.txt): price 0.94626257, pi_V 0.078040993 (15:11)
-remote_tr70_Cu: arm tf on cf_fix2_treatC: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.078040993 DRUG_PRICE_START=0.94626257 EXTRA_SET=cost_per_drug_test 0.0004946100 (15:11)
-remote_tr70_Cu: long-run rule-C arm ACCEPTED:  (17:24)
-remote_tr70_Cu: terminal arm (started early) at price 0.94735885990158952, pi_V 8.3460800739821789E-002, not close to the accepted 0.94626257 0.078040993: killed, to re-solve from the accepted values (17:24)
-remote_tr70_Cu: terminal arm (started early) NOT within 5e-3 of the accepted arm (nan, or not accepted): re-solving from the accepted price and pi_V (17:24)
-remote_tr70_Cu: terminal arm from the ACCEPTED long-run rule-C arm: price 0.94626257, pi_V 0.078040993 (17:24)
-remote_tr70_Cu: arm tf on cf_fix2_treatC: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.078040993 DRUG_PRICE_START=0.94626257 EXTRA_SET=cost_per_drug_test 0.0004946100 (17:24)
-remote_tr70_Cu: terminal arm re-solved from the accepted values: worst relative difference 1.212e-04 (01:14)
-remote_tr70_Cu: arms: null against nulltf/null worst relative difference 4.2e-03; tf against tf_ruleC 1.212e-04 (01:14)
-remote_tr70_Cu: shares written:   all households                   mass 50.82554  strict better 0.8170 | tol 0.001: better 0.7418 worse 0.0297 | tol 0.01: better 0.7161 worse 0.0293 (01:15)
-remote_tr70_Cu: age split: 2 of 2 arms exact (01:15)
-remote_tr70_Cu: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t70_Cu -- start with: cd /home/user/children_first_housing_later/code/tr2c_t70_Cu && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds from rule C's T = 50 loop3, extended: drug_price: year 1 0.965563, 49 0.945901, 59 0.946148, 69 0.946210, terminal 0.946231; pi_v: year 1 0.069510, 49 0.076093, 59 0.077564, 69 0.077932, terminal 0.078054; rent: year 1 1.000000, 49 1.000000, 59 1.000000, 69 1.000000, terminal 1.000000; house_price: year 1 12.048193, 49 12.048193, 59 12.048193, 69 12.048193, terminal 12.048193; lump_sum: year 1 0.000200, 49 0.000000, 59 0.000000, 69 0.000000, terminal 0.000000  (01:16)
-remote_tr70_Cu: 4 GiB swap on (01:16)
-remote_tr70_Cu: T = 70 transition started, pid 23102 (01:16)
-remote_tr70_Cu: handover applied: 100 parameters (01:16)
-remote_tr70_Cu: binary loop 0 complete, archived to results/transition_2c_t70_Cu/loop0; loop0: drug_price years 60-69 within 0.01% of the terminal 0.946231 (year 1 0.966014, year 60 0.946277, year 69 0.946356); pi_v years 60-69 within 0.25% of the terminal 0.078054 (year 1 0.068001, year 60 0.077991, year 69 0.078143) (23:21)
+# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 18 Oct 10:34 UTC
+remote_tr70_Cu: free disk 8.8G, memory 15 GiB, cores 4 (10:34)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -49,12 +25,12 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
 
 == tr2c_t70_Cu (T = 70, rule C)
   binary loop 0: periods to 69, worst budget residual (t>1) 1.80e-02, worst drug gap 5.98e-03  [paths saved]
-  binary loop 1: periods to 35, worst budget residual (t>1) 1.57e-02, worst drug gap 2.85e-03
+  binary loop 1: periods to 37, worst budget residual (t>1) 1.57e-02, worst drug gap 2.85e-03
   CEV path of the latest forward pass (per cent, t: value):
     1: +0.308  2: +0.508  3: +0.637  4: +0.734  5: +0.805  6: +0.825  7: +0.876  8: +0.948  9: +1.008  10: +1.046
     11: +1.103  12: +1.163  13: +1.171  14: +1.228  15: +1.277  16: +1.325  17: +1.380  18: +1.431  19: +1.513  20: +1.561
     21: +1.617  22: +1.692  23: +1.768  24: +1.855  25: +1.933  26: +2.087  27: +2.186  28: +2.253  29: +2.308  30: +2.366
-    31: +2.387  32: +2.438  33: +2.487  34: +2.534  35: +2.583
+    31: +2.387  32: +2.438  33: +2.487  34: +2.534  35: +2.583  36: +2.628  37: +2.683
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.91735191896920987       share_newborns=  0.34357097629652622       share_addicted=  0.33406432646800649       share_addicted_newborns=   0.0000000000000000
 
 == loop0 (report_tr70_Cu.py: the latest forward pass)
