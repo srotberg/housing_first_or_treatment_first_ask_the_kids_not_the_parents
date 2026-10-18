@@ -269,7 +269,7 @@ def names(S, C, R):
     Wt = rows('worse.csv')
     w_all = [100 * r['all'] for r in Wt]; w_sud = [100 * r['with_sud'] for r in Wt]
     out['x_trf_better_sentence'] = (
-        'Panel (h) repeats the comparison in every year of the path, for a household in each state weighted as '
+        'Panel (h) repeats the comparison in every period of the path, for a household in each state weighted as '
         'under Housing First. The share worse off stays '
         + (f"at about ${w_all[0]:.0f}$ percent" if round(min(w_all)) == round(max(w_all)) else
            f"between ${min(w_all):.0f}$ and ${max(w_all):.0f}$ percent")
