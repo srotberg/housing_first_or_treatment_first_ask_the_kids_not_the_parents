@@ -1,20 +1,5 @@
-# the T = 70 transition on RULE CA at detection 1.00, THE DRUG PRICE CLEARING ALONG THE PATH (code/transition_fix/remote_tr70_CAc.sh, from the best pass); 18 Oct 12:12 UTC
-remote_tr70_CAc: free disk 8.8G, memory 15 GiB, cores 4 (21:31)
-remote_tr70_CAc: waiting for the held-price transition's loop 0 to save its paths (it is the loop 0 this run would solve) (21:31)
-remote_tr70_CAc: kept the held-price loop 0's saved paths: drug_price_path_seed_out.txt pi_v_path_seed_out.txt  (23:53)
-remote_tr70_CAc: stopped the held-price launcher remote_tr70_CAb.sh (pid 363) (00:06)
-remote_tr70_CAc: stopped the held-price transition (pid 1449) (00:07)
-remote_tr70_CAc: cfarm_tf_2c is the superseded launcher's terminal arm: kept (00:07)
-remote_tr70_CAc: long-run rule-C arm ACCEPTED: remote_pdet tf_pdet100_CAbest: arm tf ACCEPTED (by the author's decision, not by the tolerances): tf_pdet100_CAuC pass 7 (00:07)
-remote_tr70_CAc: terminal arm (started early) within 1 of the accepted arm: worst relative difference 1.746e-01 (00:07)
-remote_tr70_CAc: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 1.5e-04; tf against the accepted long-run CA arm 1.746e-01 (00:07)
-remote_tr70_CAc: shares written:   all households                   mass 50.82536  strict better 0.8131 | tol 0.001: better 0.7643 worse 0.0278 | tol 0.01: better 0.7489 worse 0.0278 (00:08)
-remote_tr70_CAc: age split: 2 of 2 arms exact (00:08)
-remote_tr70_CAc: seeds: the held-price loop 0's saved paths (pi_V updated once, the drug price still its seed and cleared from here on); this run's loop k is archived as loop<k+1> (00:09)
-remote_tr70_CAc: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t70_CAc -- start with: cd /home/user/children_first_housing_later/code/tr2c_t70_CAc && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds rescaled from rule C's T = 50 loop3 (x0 0.99942581 0.067533863): drug_price: factor 3.6941; t=1 0.874332, t=2 0.882665, t=5 0.882674, t=10 0.874194, t=25 0.815924, t=49 0.801700, t=69 0.801700 pi_v: factor 4.8403; t=1 0.077098, t=2 0.068868, t=5 0.071820, t=10 0.075576, t=25 0.093587, t=49 0.108961, t=69 0.108961  (00:09)
-remote_tr70_CAc: T = 70 transition started, pid 10169 (00:09)
-remote_tr70_CAc: handover applied: 100 parameters (00:09)
-remote_tr70_CAc: the path's drug price clears: HANDOVER drug_market_adjuster -> 0.10000000000000001 (00:09)
+# the T = 70 transition on RULE CA at detection 1.00, THE DRUG PRICE CLEARING ALONG THE PATH (code/transition_fix/remote_tr70_CAc.sh, from the best pass); 18 Oct 12:16 UTC
+remote_tr70_CAc: free disk 4.6G, memory 15 GiB, cores 4 (12:16)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
