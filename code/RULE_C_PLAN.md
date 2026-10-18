@@ -822,3 +822,16 @@ rejected for a 7.4e-3 drug gap). export_noescape.py still reads CA20d's arms.
 The yellow passages (footnote 966, 6.4's closing paragraph 1062, the third lesson 1076) all wait on these paths: the
 footnote on a 20% end state (CA20e's arms, ~6-8 hours, or CA20d's), the other two on the 20% and 1.00 paths' first
 pass in which the prices move (CAc's second pass ~11:00 UTC 19 October; CA20e's ~2 days after its arms).
+
+## 18 October, 15:45 -- the delta_d checks on the current model
+
+The author: "can you add in the lit review a footnote saying that even if we use delta_d=0 and half, the qualitative
+results continue to hold?", then "please do these checks then for the long run" and "you have to solve the benchmark for
+each first, and then the long run". No such run existed on the current model (results/deltad/dd0* are 12 October, on
+the earlier rule, and never finished there). code/deltad/remote_deltad_Cu.sh <dd> (made from remote_deltad.sh by
+$SP/r352/make_deltad_Cu.py): STAGE A the benchmark with penalty_child_addicted <dd>, every adjuster frozen, omega_c
+pinned; B corrected Housing First (cf_fix2_share_treatCu) against it, its net revenue the target; C Treatment First,
+rule C, detection 0.20, both prices clearing; D newborn values (cf_kid_C). Workers: dd0 session_01XNEE6rjB72r98hfsDqPK2z,
+dd0.12 session_01FjCM1uyiPJg2pphFSAYcGn; results/deltad_Cu/dd{0,0.12}. The footnote (Section 2, end of the Nilsson
+paragraph) is in yellow until both show Treatment First still raising a newborn's welfare and lowering homelessness and
+the share of children in a shelter against their own Housing First.
