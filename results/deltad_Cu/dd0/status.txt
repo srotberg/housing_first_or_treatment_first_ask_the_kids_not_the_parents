@@ -1,4 +1,4 @@
-# delta_d 0, every other parameter as calibrated, the current model: corrected Housing First, rule C, detection 0.20 (code/deltad/remote_deltad_Cu.sh); 18 Oct 23:34 UTC
+# delta_d 0, every other parameter as calibrated, the current model: corrected Housing First, rule C, detection 0.20 (code/deltad/remote_deltad_Cu.sh); 18 Oct 23:37 UTC
 remote_deltad_Cu dd0: gfortran missing, installing (16:35)
 remote_deltad_Cu dd0: free disk 29G, memory 15 GiB, cores 4 (16:35)
 remote_deltad_Cu dd0: building the benchmark binary of record (16:35)
@@ -18,6 +18,11 @@ remote_deltad_Cu dd0: arm null ACCEPTED (exit 0): VOUCHER CHECK PASS: arm ran at
 remote_deltad_Cu dd0: no-policy net revenue 6.0792002586288749 is the TF budget target; test cost 0.0004946100 ($35) (20:51)
 remote_deltad_Cu dd0: arm tf on cf_fix2_treatC (treat/cf_arm_C.sh): PDET=0.20 NET_TARGET=6.0792002586288749 PV_START=0.078054 DRUG_PRICE_START=0.946231 EXTRA_SET=cost_per_drug_test 0.0004946100;penalty_child_addicted 0 (20:51)
 remote_deltad_Cu dd0: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 6.0792002586290002 DIST CHECK PASS: 4 passes, sweeps [70, 72, 70, 76], largest final 2.58e-05 (rule 5e-05, at least 70 sweeps)  (23:34)
+remote_deltad_Cu dd0: shares:  all households mass 50.84832 strict better 0.7541 | tol 0.001: better 0.6365 worse 0.1029 | tol 0.01: better 0.4808 worse 0.1009 (23:34)
+remote_deltad_Cu dd0: cf_kid_C on null_2c (23:34)
+remote_deltad_Cu dd0: cf_kid_C on tf_2c (23:35)
+remote_deltad_Cu dd0: newborns: group mass TF better TF worse within mean W diff (23:37)
+remote_deltad_Cu dd0: STAGE D done (23:37)
 
 == benchmark
  newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.90752782489976902        8.3948238854338372E-002   6.0867536825884678E-003   2.4371825633038072E-003
