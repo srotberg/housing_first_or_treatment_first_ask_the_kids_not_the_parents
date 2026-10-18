@@ -1,4 +1,4 @@
-# delta_d 0, every other parameter as calibrated, the current model: corrected Housing First, rule C, detection 0.20 (code/deltad/remote_deltad_Cu.sh); 18 Oct 20:51 UTC
+# delta_d 0, every other parameter as calibrated, the current model: corrected Housing First, rule C, detection 0.20 (code/deltad/remote_deltad_Cu.sh); 18 Oct 21:11 UTC
 remote_deltad_Cu dd0: gfortran missing, installing (16:35)
 remote_deltad_Cu dd0: free disk 29G, memory 15 GiB, cores 4 (16:35)
 remote_deltad_Cu dd0: building the benchmark binary of record (16:35)
@@ -15,6 +15,8 @@ remote_deltad_Cu dd0: benchmark exited 0 after 11 blocks; bench.err:  (19:47)
 remote_deltad_Cu dd0: benchmark (users, SUD, h_1) 0.0861451027,0.0366818779,0.0060042827 (19:48)
 remote_deltad_Cu dd0: arm null on cf_fix2_share_treatCu (treat/cf_arm_Cu.sh): DRUG_PRICE_START=0.99938969 EXTRA_SET=penalty_child_addicted 0 (19:48)
 remote_deltad_Cu dd0: arm null ACCEPTED (exit 0): VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 3 passes, sweeps [70, 74, 72], largest final 4.92e-05 (rule 5e-05, at least 70 sweeps)  (20:51)
+remote_deltad_Cu dd0: no-policy net revenue 6.0792002586288749 is the TF budget target; test cost 0.0004946100 ($35) (20:51)
+remote_deltad_Cu dd0: arm tf on cf_fix2_treatC (treat/cf_arm_C.sh): PDET=0.20 NET_TARGET=6.0792002586288749 PV_START=0.078054 DRUG_PRICE_START=0.946231 EXTRA_SET=cost_per_drug_test 0.0004946100;penalty_child_addicted 0 (20:51)
 
 == benchmark
  newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.90752782489976902        8.3948238854338372E-002   6.0867536825884678E-003   2.4371825633038072E-003
@@ -63,3 +65,6 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   1  0.9994  0.06753    -0.5%    +0.3%    -0.3%  3.71e-04  0.00e+00   789.3964  +0.09%
   2  0.9993  0.06753    -0.5%    +0.2%    -0.1%  9.43e-04  0.00e+00   789.3655  -0.00%
   3  0.9990  0.06753    -0.5%    +0.3%    -0.1%  7.48e-04  0.00e+00   789.3650  -0.00%
+
+== tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
