@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 18 Oct 07:03 UTC
+# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 18 Oct 07:23 UTC
 remote_tr70_Cu: gfortran missing, installing (14:58)
 remote_tr70_Cu: free disk 29G, memory 15 GiB, cores 4 (14:58)
 remote_tr70_Cu: building cf_fix (14:58)
@@ -49,9 +49,10 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
 
 == tr2c_t70_Cu (T = 70, rule C)
   binary loop 0: periods to 69, worst budget residual (t>1) 1.80e-02, worst drug gap 5.98e-03  [paths saved]
-  binary loop 1: periods to 10, worst budget residual (t>1) 1.57e-02, worst drug gap 1.82e-03
+  binary loop 1: periods to 12, worst budget residual (t>1) 1.57e-02, worst drug gap 2.24e-03
   CEV path of the latest forward pass (per cent, t: value):
     1: +0.308  2: +0.508  3: +0.637  4: +0.734  5: +0.805  6: +0.825  7: +0.876  8: +0.948  9: +1.008  10: +1.046
+    11: +1.103  12: +1.163
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.91735191896920987       share_newborns=  0.34357097629652622       share_addicted=  0.33406432646800649       share_addicted_newborns=   0.0000000000000000
 
 == loop0 (report_tr70_Cu.py: the latest forward pass)
