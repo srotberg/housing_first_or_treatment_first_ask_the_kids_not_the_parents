@@ -1,4 +1,4 @@
-# delta_d 0, every other parameter as calibrated, the current model: corrected Housing First, rule C, detection 0.20 (code/deltad/remote_deltad_Cu.sh); 18 Oct 19:48 UTC
+# delta_d 0, every other parameter as calibrated, the current model: corrected Housing First, rule C, detection 0.20 (code/deltad/remote_deltad_Cu.sh); 18 Oct 20:08 UTC
 remote_deltad_Cu dd0: gfortran missing, installing (16:35)
 remote_deltad_Cu dd0: free disk 29G, memory 15 GiB, cores 4 (16:35)
 remote_deltad_Cu dd0: building the benchmark binary of record (16:35)
@@ -12,6 +12,8 @@ remote_deltad_Cu dd0: benchmark: solving from the scan seed, delta_d 0, at most 
 remote_deltad_Cu dd0: HANDOVER penalty_child_addicted:  0.23999999999999999      ->   0.0000000000000000 (16:45)
 remote_deltad_Cu dd0: HANDOVER omega_c_is_pinned:           1 ->           1 (16:45)
 remote_deltad_Cu dd0: benchmark exited 0 after 11 blocks; bench.err:  (19:47)
+remote_deltad_Cu dd0: benchmark (users, SUD, h_1) 0.0861451027,0.0366818779,0.0060042827 (19:48)
+remote_deltad_Cu dd0: arm null on cf_fix2_share_treatCu (treat/cf_arm_Cu.sh): DRUG_PRICE_START=0.99938969 EXTRA_SET=penalty_child_addicted 0 (19:48)
 
 == benchmark
  newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.90752782489976902        8.3948238854338372E-002   6.0867536825884678E-003   2.4371825633038072E-003
@@ -54,3 +56,6 @@ remote_deltad_Cu dd0: benchmark exited 0 after 11 blocks; bench.err:  (19:47)
  INVARIANT PASS                  households receiving food stamps  =     0.1127573543
  INVARIANT PASS       the five age bands hold all of the homeless  =     1.0000000000
  BLOCK MOVE   2.8849927588424519E-004  against a rule of   1.0000000000000000E-003  -- b   8.6145102704030710E-002  lambda_d   3.6681877876289154E-002  h_1   6.0042827057146695E-003  y   1.6289768588810789     
+
+== null
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
