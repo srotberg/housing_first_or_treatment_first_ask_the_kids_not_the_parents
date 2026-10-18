@@ -793,3 +793,13 @@ pass, against the solver's rules (drug market 5e-3, budget 1e-3) and the drug_ma
 * OLD BUDGET TARGET (net_govt_revenue_constraint 5.8275 against the corrected 5.8372): tf_pdet20_CA, the footnote's
   no-escape run (export_ca.py now reads tf_pdet20_CAbest against the corrected Housing First: 30/30/11, was 30/30/12),
   and tf_pdet10_C, the half rate (tf_pdet10_Cu is re-solving it).
+
+## 18 October, 10:40 -- Table 5's eighth column has no balancing pi_V in the corrected model either
+
+results/decomp_2c_fixp_clear (pi_V free, price held at Housing First's, 15 passes, stopped 10:27): NOT CLEARED. Drug use
+flips between -48 and -42 per cent as pi_V crosses about 0.093 (0.0928 -> 0.0931), and the budget misses on both sides
+(gaps 7.9e-3 to 2.2e-2, one early pass 1.5e-3 at pi_V 0.09354 before the distribution settled). The table note now says
+so, generated (x_dcp_jump_piv, x_dc_p_rev_pc from the column's final.txt, 0.22 per cent at pi_V 0.0924). The column is
+re-solved with pi_V held at 0.09354 and the price at the corrected Housing First's (remote_decomp_shares_Cu3.sh fixp,
+session_01BmNrng1jocAzG4s8PDKi1h -> results/decomp_2c_shares_Cu3/arm_fixp); rulec_paths prefers Cu3 once it lands, and
+the note's miss then reads that run.

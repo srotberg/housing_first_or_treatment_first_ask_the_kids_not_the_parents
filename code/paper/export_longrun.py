@@ -695,6 +695,21 @@ def main():
     out['x_dcpv_price_verb'] = 'lowers' if _pp < 0 else 'raises'
     out['x_dcpv_price_pc'] = f'{abs(_pp):.0f}'
     out['x_dcp_piv_dir'] = 'rises' if D['dc_p']['piv'] > D['null_share']['piv'] else 'falls'
+    # TABLE 5'S EIGHTH COLUMN DOES NOT BALANCE THE BUDGET (18 October, the author: "I want all the numbers to be
+    # corrected"): no pi_V holds net revenue at its benchmark there (results/decomp_2c_fixp_clear, pi_V free for 15
+    # passes: drug use flips between about -48 and -42 percent as pi_V crosses a threshold), so the note says so with
+    # the column's own miss (its final.txt 'net government revenue ... change') and the threshold, the midpoint between
+    # the highest pi_V of a pass on the lower-use side and the lowest of one on the higher-use side
+    _rv = [l for l in open(os.path.join(RC.DC['fixp'], 'final.txt')) if l.strip().startswith('net government revenue')]
+    _rvc = abs(float(re.search(r'change\s+([-+0-9.]+)%', _rv[0]).group(1)))
+    out['x_dc_p_rev_pc'] = f'{_rvc:.2f}'
+    _fc = open(os.path.join(ROOT, 'results', 'decomp_2c_fixp_clear', 'status.txt')).read()
+    assert 'NOT CLEARED' in _fc, 'the free-pi_V test cleared: the column can clear, and the note should not say otherwise'
+    _ps = [(float(r[2]), float(r[3].rstrip('%'))) for r in (l.split() for l in _fc.splitlines())
+           if len(r) > 5 and re.fullmatch(r'\d+', r[0]) and re.fullmatch(r'1\.\d+', r[1])][1:]   # pass 1 is the start
+    _lo = max(v for v, b in _ps if b < -45); _hi = min(v for v, b in _ps if b > -45)
+    assert _lo < _hi, (_lo, _hi)
+    out['x_dcp_jump_piv'] = f'{100 * (_lo + _hi) / 2:.1f}'
     # (round r287, the author: "what about childhood homelessness?", and "Childhood homelessness drops because of the
     # additional spending on vouchers lifts other non-user households out of homelessness")
     # (round r288, the author: "by X percent", and "of child-rearing age"; r289: "low-income households")
