@@ -54,9 +54,14 @@ STALE_SHARES = {'dc_pv', 'dc_p', 'pe_b', 'fx_d', 'ne_e', 'nc_c'} | (set() if COR
 # the clearing value sits at a jump in drug use, and there net revenue is 0.2 per cent above Housing First's.
 # (18 October) decomp_2c_shares_Cu3 first: the held columns re-solved with the price held at the CORRECTED Housing
 # First's (0.99938969; Cu2 held it at the pre-correction 1.0001082), code/extra_2c/remote_decomp_shares_Cu3.sh
+# (18 October, 14:00) NOT Cu3's fixp: held at pi_V 0.09354 it landed past the jump in drug use, net revenue 0.42 per
+# cent below Housing First's, further from clearing than Cu's 0.22 above. Cu4 (remote_decomp_shares_Cu4.sh fixp,
+# SHARES_HOLD_PV=1 SHARES_V0=0.0924) is the paper's pi_V with the corrected held price; Cu's column until it lands.
 SCU3 = os.path.join(R, 'decomp_2c_shares_Cu3')
+SCU4 = os.path.join(R, 'decomp_2c_shares_Cu4')
 for _k, _arm in (('fixboth', 'dc_b'), ('fixpv', 'dc_pv'), ('fixp', 'dc_p')):
-    for _d in (os.path.join(SCU3, f'arm_{_k}'), os.path.join(SCU, f'arm_{_k}')):
+    for _d in ((SCU4 if _k == 'fixp' else SCU3), SCU):
+        _d = os.path.join(_d, f'arm_{_k}')
         if all(os.path.exists(os.path.join(_d, f)) for f in ('final.txt', 'shares.txt', 'newborn_shares.json',
                                                              'tf/final.txt', 'tf/cf.log.gz', 'status.txt')):
             DC[_k] = _d
