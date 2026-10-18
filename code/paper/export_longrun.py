@@ -669,8 +669,7 @@ def main():
         if _dcb_up else
         'In the aggregate, these \\emph{budget and earnings externalities}, which Housing First leaves in place, come '
         'with no trade-off against the \\emph{childhood homelessness externality}: by cutting use, the screen keeps '
-        'more children out of a shelter than it sends to one by putting their parents out. For an individual child '
-        'there can still be one, if the screen puts its parent out.')
+        'more children out of a shelter than it sends to one by putting their parents out.')   # (r345: the individual-child clause removed)
     out['x_intro_ext_sentence'] = (
         'Therefore, the \\emph{budget and earnings externalities} dominate both the \\emph{childhood homelessness '
         'externality} and the direct loss to the parent from the removal of an option.' if _dcb_up else
@@ -881,8 +880,9 @@ def main():
             if abs(_ach) < 1 and e1 > 0 > e2 and e3 < 0 and abs(e1 + e2 + e3) < 0.25 * e1
             and f'{_c0:.2f}' == f'{_c1:.2f}' else
             # (14 October, rule C) homelessness falls at these ages too, and with it the shelter share
+            # (round r345, the author: 'so' -> 'with', 'falls' -> 'falling')
             'For households aged 26 to 50, the years a child lives with them, homelessness also falls by '   # r324
-            f'${abs(_ach):.0f}$ percent, so the share of children in a shelter falls from ${_c0:.2f}$ to ${_c1:.2f}$ '
+            f'${abs(_ach):.0f}$ percent, with the share of children in a shelter falling from ${_c0:.2f}$ to ${_c1:.2f}$ '
             'percent.' if _ach <= -1 and _c1 < _c0 else '')
         if not out['x_lr_children_hl']:
             print('WARNING: the 26-50 children paragraph does not match the split; check age_split.txt',
