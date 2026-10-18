@@ -77,6 +77,8 @@ def main():
             out[f'x_wd_{k}abs_{a}'] = f2(abs(p[k]))
         out[f'x_wd_extsh_{a}'] = f"{p['ext_share']:.0f}"
         out[f'x_wd_extsh_word_{a}'] = share_word(p['ext_share'])
+        # the share alone, for 'of which three quarters is an externality' (the abstract, 18 October)
+        out[f'x_wd_extsh_frac_{a}'] = share_word(p['ext_share']).replace(' of it', '')
         out[f'x_wd_nonext_word_{a}'] = share_word(100 - p['ext_share']) if p['ext_share'] < 100 else 'none of it'
         out[f'x_wd_rest_{a}'] = f2(p['own'] + p['cnt'])            # the gain that is not an externality
         out[f'x_wd_child_pc_{a}'] = f"{p['child_share']:.0f}"
