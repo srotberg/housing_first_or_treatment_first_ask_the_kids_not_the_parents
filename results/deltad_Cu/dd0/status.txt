@@ -1,4 +1,4 @@
-# delta_d 0, every other parameter as calibrated, the current model: corrected Housing First, rule C, detection 0.20 (code/deltad/remote_deltad_Cu.sh); 18 Oct 23:32 UTC
+# delta_d 0, every other parameter as calibrated, the current model: corrected Housing First, rule C, detection 0.20 (code/deltad/remote_deltad_Cu.sh); 18 Oct 23:34 UTC
 remote_deltad_Cu dd0: gfortran missing, installing (16:35)
 remote_deltad_Cu dd0: free disk 29G, memory 15 GiB, cores 4 (16:35)
 remote_deltad_Cu dd0: building the benchmark binary of record (16:35)
@@ -17,6 +17,7 @@ remote_deltad_Cu dd0: arm null on cf_fix2_share_treatCu (treat/cf_arm_Cu.sh): DR
 remote_deltad_Cu dd0: arm null ACCEPTED (exit 0): VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 3 passes, sweeps [70, 74, 72], largest final 4.92e-05 (rule 5e-05, at least 70 sweeps)  (20:51)
 remote_deltad_Cu dd0: no-policy net revenue 6.0792002586288749 is the TF budget target; test cost 0.0004946100 ($35) (20:51)
 remote_deltad_Cu dd0: arm tf on cf_fix2_treatC (treat/cf_arm_C.sh): PDET=0.20 NET_TARGET=6.0792002586288749 PV_START=0.078054 DRUG_PRICE_START=0.946231 EXTRA_SET=cost_per_drug_test 0.0004946100;penalty_child_addicted 0 (20:51)
+remote_deltad_Cu dd0: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 6.0792002586290002 DIST CHECK PASS: 4 passes, sweeps [70, 72, 70, 76], largest final 2.58e-05 (rule 5e-05, at least 70 sweeps)  (23:34)
 
 == benchmark
  newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.90752782489976902        8.3948238854338372E-002   6.0867536825884678E-003   2.4371825633038072E-003
@@ -71,3 +72,4 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   1  0.9453  0.07805   -22.3%   -20.3%   -10.1%  9.26e-03  9.44e-02   790.1915  +2.46%
   2  0.9419  0.07805   -22.4%   -20.4%    -9.9%  8.53e-03  7.96e-02   790.1683  +2.39%
   3  0.9429  0.06851   -21.2%   -19.3%    -4.4%  3.60e-03  1.77e-04   789.6724  +0.90%
+  4  0.9437  0.06848   -21.2%   -19.3%    -4.4%  1.87e-03  9.51e-05   789.6701  +0.90%
