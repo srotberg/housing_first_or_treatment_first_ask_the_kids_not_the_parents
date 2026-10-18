@@ -59,7 +59,11 @@ HORIZON = 70
 UNCONVERGED_FROM = 60
 OUT = os.path.join(ROOT, 'results', 'transition', TAG)
 CURVE = os.path.join(ROOT, 'results', 'transition_2c_t70_Cu', 'loop0', 'welfare_curvebaseline_benchmark.dat')
-REF = os.path.join(ROOT, 'results', 'transition_2c_t70_Cu')
+# (18 October, the author: "in some places you write 2.57 and here you wrote 2.59") the long run the path is compared
+# with is the paper's main arm, as at T = 50: the run's own re-solved terminal arm gives a newborn 2.59 against the main
+# arm's 2.57. code/trtf70/ref (untracked symlinks, as code/trtf50/ref): arm_{null,tf}/cf.log.gz ->
+# results/decomp_2c_shares_Cu/arm_tf/{null,tf}/cf.log.gz, arm_{null,tf}/final.txt -> results/transition_2c_t70_Cu/arm_*/final.txt
+REF = os.path.join(ROOT, 'code', 'trtf70', 'ref')
 REF_NULL, REF_TF = 'arm_null', 'arm_tf'
 # the previous pin (rule C, T = 50, loop 3; 16 October to 17 October 23:50), kept for the record:
 _RULE_C_T50_LOG = os.path.join(ROOT, 'code', 'trtf50', 'tr2c_t50_Cu_loop3', 'run.log')

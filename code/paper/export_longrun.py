@@ -677,12 +677,19 @@ def main():
         'In the aggregate, then, there is no trade-off between the externalities: by cutting use, the screen keeps '
         'more children out of a shelter than it sends to one by putting their parents out. What the \\emph{budget, '
         'earnings and childhood homelessness externalities} have to outweigh is only the direct loss to the parent from '
-        'the removal of an option (although, as I explain next, even the parent gains from general-equilibrium effects).')   # r324-r325, the author   # r322, the author on 'although a child whose parent it puts out can still lose its home': "remove"
+        'the removal of an option (although, as I explain next, even the parent gains once general-equilibrium effects '
+        'are taken into account).')   # r324-r325, the author   # r322, the author on 'although a child whose parent it puts out can still lose its home': "remove"
     # the abstract, on the main experiment's long run
     out['x_abs_hchild_sentence'] = (
         "Sobriety conditions reduce these harms more than they expose screened-out users' children to homelessness."
         if D[t]['child_hl'] > D['null_share']['child_hl'] else
         'Sobriety conditions reduce these harms and, in aggregate, also childhood homelessness.')
+    # (18 October, the author on the abstract: "merge this with the sentence after") the same verdict as a clause of the
+    # long-run sentence, "In the long run, with the screen's savings recycled into vouchers, sobriety conditions ..."
+    out['x_abs_hchild_clause'] = (
+        "reduce these harms more than they expose screened-out users' children to homelessness"
+        if D[t]['child_hl'] > D['null_share']['child_hl'] else
+        'reduce these harms and, in aggregate, also childhood homelessness')
     out['x_dcb_child_pc'] = f"{D['dc_b']['child_share']:.0f}"
     _pp = pc('dc_pv', 'price', 'null_share')
     out['x_dcpv_price_verb'] = 'lowers' if _pp < 0 else 'raises'
