@@ -120,9 +120,13 @@ out_tr = {
 # (17 October, 22:30) NOT transition_2c_t70_CA20b: its terminal arm held the price at 0.9044 while pi_V re-cleared and
 # ended with an implied supply price of 0.9118 (drug gap 7.4e-3 against 5e-3); remote_tr70_CA20d.sh re-solves it from
 # the accepted free-price run with both markets clearing
-A20 = os.path.join(ROOT, 'results', 'transition_2c_t70_CA20d', 'arms')
-if os.path.exists(os.path.join(A20, 'arm_tf', 'cf.log.gz')):
-    out_tr['x_ne20_hchild_pc'] = f"{100 * abs(child_steady(os.path.join(A20, 'arm_tf')) / child_steady(os.path.join(A20, 'arm_null')) - 1):.0f}"
+# (18 October, 23:00) from the cleared long run itself, results/counterfactuals_2c/tf_pdet20_CAu (both markets inside
+# their rules), against the corrected Housing First, as footnote 36's other numbers (export_ca.py): the held-price
+# terminal arm of transition_2c_t70_CA20e gives -11.6 against this -11.2, its implied supply price 5.0e-3 off
+A20T = os.path.join(ROOT, 'results', 'counterfactuals_2c', 'tf_pdet20_CAu', 'tf')
+A20N = os.path.join(ROOT, 'results', 'decomp_2c_shares_Cu', 'arm_tf', 'null')
+if os.path.exists(os.path.join(A20T, 'cf.log.gz')):
+    out_tr['x_ne20_hchild_pc'] = f"{100 * abs(child_steady(A20T) / child_steady(A20N) - 1):.0f}"
 else:
     out_tr['x_ne20_hchild_pc'] = '--'
 out.update(out_tr)

@@ -847,3 +847,15 @@ with the text now ("the drug price held at its Housing First level"). 6.2's "bec
 higher pi_V houses more children" became "because the higher pi_V houses more children" (drug use now falls about as
 much as with both held, which x_dcp_why says). Still open for the author: the Table 5 note's "when it clears, pi_V
 holds net government revenue at its benchmark level" overstates this column (0.29 per cent off).
+
+## 18 October, 23:00 -- footnote 36's yellow cleared
+
+results/transition_2c_t70_CA20e/arms landed (terminal arm at the accepted price 0.9056 held, pi_V re-cleared to 0.0864,
+budget 9.0e-4). Its implied supply price, p_null (V_tf/V_null)^(1/eps_s) with eps_s 1.46 (checked against the solver's
+own distance on two free-price runs: 5.0e-5 against 5.3e-5, 7.1e-4 against 7.9e-4), is 0.9006: a drug gap of 5.0e-3, AT
+the rule. The footnote's numbers therefore come from the cleared long run itself, tf_pdet20_CAu, against the corrected
+Housing First, as its other numbers already did: newborn CEV 4.45 (welfare_nok.cev_free, the main arm's 2.57 the same
+way), so 'a newborn gains at least as much' holds and is now x_ca_nb_clause (export_ca.py); children in a shelter 1.03
+-> 0.91, -11 (x_ne20_hchild_pc, export_noescape.py, which no longer waits for CA20d). The held-price arm gives 4.63 and
+-11.6. CA20e's path runs from that terminal arm; whether its 5.0e-3 drug gap matters for the path is a question for its
+first archived pass.

@@ -47,5 +47,14 @@ out = {
     'x_ca_done': '1' if dgap < 5e-3 and bgap < 1e-3 else '0',
     'x_ca_pass': _last[0],
 }
+# THE NEWBORN, FOOTNOTE 36'S LAST CLAUSE (18 October, 23:00; it was yellow until a 20% no-escape end state landed): the
+# newborn CEV of this cleared long run against the corrected Housing First, the main experiment's way (welfare_nok.cev_free,
+# which gives x_tf_cev for the main arm); the clause keeps the author's 'at least as much' only while it is true
+import welfare_nok
+_nb = welfare_nok.cev_free(os.path.join(CA, 'tf')) - welfare_nok.cev_free(RC.NULL_DIR)
+_tfc = float(d['x_tf_cev'])
+out['x_ca_nb_cev'] = f'{_nb:.2f}'
+out['x_ca_nb_clause'] = ('and a newborn gains at least as much' if round(_nb, 2) >= _tfc else
+                         f'and a newborn gains ${_nb:.2f}$ percent, against ${_tfc:.2f}$ in the main experiment')
 d.update(out); json.dump(d, open(OUT, 'w'), indent=1, sort_keys=True)
 print('export_ca:', out)
