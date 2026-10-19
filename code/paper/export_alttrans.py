@@ -142,7 +142,26 @@ if S['ann'] is None and S['gr'] is None:
     res = Y('The announced transitions and those with five years of exemption for treatment are still running; Table~\\ref{tab:alttrans} adds them as they finish.')
 else:
     res = ' '.join(S[m] if S[m] is not None else Y(f'{LABEL[m]}: the transition is still running.') for m in ('ann', 'gr'))
-out = {'x_at_results': res, 'x_at_years_word': {15: 'fifteen'}[YEARS]}
+# THE NEWBORN'S GAIN UNDER NO EXEMPTION (round r357, the author: "you don't talk about the newborn welfare numbers in
+# that section"): the reform cohort at both detection rates against the main transition's; a number from a run that has
+# not landed, or whose pass is not yet reasonable, prints yellow
+def cev_txt(r):
+    if r is None:
+        return '\\mbox{\\tocheck{--}}'
+    x = f'{abs(r["cev"]):.2f}'
+    return x if r['ok'] else '\\mbox{\\tocheck{' + x + '}}'
+
+
+a, b, m0 = RUNS['ne100'], RUNS['ne20'], float(d['x_tr_cev_b1_2'])
+verb = lambda r: 'gain' if r is None or r['cev'] >= 0 else 'lose'
+if verb(a) == verb(b) == 'gain':
+    ne_cev = (f'Even so, children born at the reform gain ${cev_txt(a)}$ percent of lifetime consumption when every user is '
+              f'caught and ${cev_txt(b)}$ percent when ${PDET}$ percent are, against ${m0:.2f}$ percent in the main transition.')
+else:
+    ne_cev = (f'Children born at the reform {verb(a)} ${cev_txt(a)}$ percent of lifetime consumption when every user is caught '
+              f'and {verb(b)} ${cev_txt(b)}$ percent when ${PDET}$ percent are, against a gain of ${m0:.2f}$ percent in the main '
+              f'transition.')
+out = {'x_at_results': res, 'x_at_years_word': {15: 'fifteen'}[YEARS], 'x_at_ne_cev': ne_cev}
 d.update(out)
 json.dump(d, open(OUT, 'w'), indent=1, sort_keys=True)
 print('export_alttrans:', {k: (None if r is None else (r['src'], f'h {r["hpk"]:+.1f}/{r["hyr"]} c {r["cpk"]:+.1f}/{r["cyr"]} '
