@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20, no phase-in (the no-escape path in a fresh container, a hedge for remote_tr70_CA20e.sh), both prices clearing along the path (code/transition_fix/remote_tr70_CAne.sh); 19 Oct 16:14 UTC
+# the T = 70 transition on RULE CA at detection 0.20, no phase-in (the no-escape path in a fresh container, a hedge for remote_tr70_CA20e.sh), both prices clearing along the path (code/transition_fix/remote_tr70_CAne.sh); 19 Oct 16:38 UTC
 remote_tr70_CAne 0.20 none: gfortran missing, installing (16:05)
 remote_tr70_CAne 0.20 none: free disk 29G, memory 15 GiB, cores 4 (16:05)
 remote_tr70_CAne 0.20 none: building cf_fix (16:05)
@@ -8,3 +8,13 @@ remote_tr70_CAne 0.20 none: building cf_fix2_treatCA (16:12)
 remote_tr70_CAne 0.20 none: building tr70_CAne (build_tr70_CA.sh, no phase-in) (16:13)
 remote_tr70_CAne 0.20 none: built /home/user/children_first_housing_later/code/tr70_CAne/hftf_tr_prod 86ca51b3 (rule CA + cohort print, T = 70; patch_treatCA.py df4efe6a) (16:14)
 remote_tr70_CAne 0.20 none: the long-run run's cfarm_tf_2c (if any) moved to cfarm_tf_2c.phase1 (16:14)
+remote_tr70_CAne 0.20 none: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (16:15)
+remote_tr70_CAne 0.20 none: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_pdet20_CAu/tf/final.txt): price 0.90563748, pi_V 0.085920513 (16:18)
+remote_tr70_CAne 0.20 none: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.085920513 DRUG_PRICE_START=0.90563748 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100 (16:18)
+
+== arm null
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  0.9999  0.06753    -3.2%    -2.4%    -2.9%  1.96e-03  0.00e+00   789.1157  +4.82%    -0.3%    +3.0%
+
+== arm tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
