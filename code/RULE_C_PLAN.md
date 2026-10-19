@@ -913,3 +913,18 @@ somewhere in years 1-7, against 1.5e-2 on the main 1.00 path: the seed holds Hou
 the price moves at most 0.5 per cent a year a loop, so six loops cannot close a gap that size. When loop 0 is archived,
 read the 'implied supply price=' lines by year; if the gap sits in years 1-5 (households cutting use before the screen
 starts), re-seed the announced runs from loop 0's implied prices and relaunch.
+
+16:00 (19 Oct) ROUND r356 (2 comments; the author: "make a new subsection called something like: alternative transition
+specifications", "it should just explain what each experiment does and how the first years of the transition look like
+on homelessness, childhood homelessness and newborn welfare", "the last paragraph of the conclusion should be in yellow
+since we might change it"). New Section 6.5 (sec:alttrans), in red: what each alternative does, Table tab:alttrans, the
+no-escape paragraph moved from the end of 6.4 (opening changed to "In the first alternative,"), and x_at_results (the
+announced and grace sentences, yellow until both detection rates of a rule are in). code/paper/export_alttrans.py
+(in export_all_C.sh after export_noescape.py) reads each run's latest archived loop: largest rise over years 1-15 of
+homelessness and of children in a shelter, the years above Housing First, and the reform cohort's CEV (cohort_cev.py less
+Housing First's cev_free; the main row's is x_tr_cev_b1_2). A row is yellow while its run has no archived loop or its
+pass misses the budget by more than 0.6 per cent or the drug market (5e-3) in more than three years. The helpers path(),
+child_steady() and levels() moved from export_noescape.py to code/paper/trpaths.py (its output unchanged). Section 6's
+opening lists the alternatives (red); the third lesson is in yellow; page 1: "The author owns the code; he wrote ...".
+When a phased run lands: bash code/paper/export_all_C.sh fills its row and sentence; rebuild with splice against the
+round's base.

@@ -23,44 +23,7 @@ PATHS = os.path.join(ROOT, 'results', 'revoked_2c_CA100')
 STREET = os.path.join(ROOT, 'results', 'revoked_2c_street_CA100', 'tables.md')
 
 
-def levels(p):
-    return {m.group(1).strip(): float(m.group(2)) for m in
-            (re.match(r'\s+(.+?)\s{2,}([-+0-9.Ee]+)(\s|$)', l) for l in open(p)) if m}
-
-
-def path(f):
-    """year by year: aggregate homelessness and that of households aged 26-50 (report_tr50_CA.py's child_hl)"""
-    MECH, HB, MB = {}, {}, {}
-    for l in gzip.open(f, 'rt', errors='replace'):
-        if ' TRANSITION MECH t=' in l:
-            MECH[int(l.split('t=')[1].split()[0])] = float(re.search(r'h_1=\s*(\S+)', l).group(1))
-        elif l.startswith(' TRANSITION HOMELESS_BY_AGE t=') or l.startswith(' TRANSITION MASS_BY_AGE t='):
-            f2 = l.split('t=')[1].split()
-            (HB if 'HOMELESS' in l else MB)[int(f2[0])] = [float(x) for x in f2[1:]]
-    out = {}
-    for t, h in MECH.items():
-        hb, mb = HB[t], MB[t]
-        for raw, tol in (([x * 1e-14 for x in hb], 1e-6), ([x * m for x, m in zip(hb, mb)], 5e-4)):
-            if abs(sum(raw) / sum(mb) / h - 1) < tol:
-                hs = [r / m if m > 0 else 0.0 for r, m in zip(raw, mb)]
-                out[t] = (h, sum(hs[a] * mb[a] for a in range(25)) / sum(mb[:25]))
-                break
-        else:
-            sys.exit(f'{f}: HOMELESS_BY_AGE t={t} reproduces h_1 on neither scale')
-    return out
-
-
-def child_steady(d):
-    """the share of children in a shelter in a steady state: homelessness of households aged 26-50, mass-weighted, from
-    the arm's DIAG age lines (report_tr50_CA.py's steady())"""
-    rows = {}
-    for l in gzip.open(os.path.join(d, 'cf.log.gz'), 'rt', errors='replace'):
-        m = re.search(r'DIAG age\s+(\d+)\s+homeless=\s*(\S+).*sud=\s*(\S+)\s+mass=\s*(\S+)', l)
-        if m:
-            rows[int(m.group(1))] = (float(m.group(2)), float(m.group(4)))
-    A = [a for a in rows if 26 <= a <= 50]
-    assert len(A) == 25, (d, len(A))
-    return sum(rows[a][0] * rows[a][1] for a in A) / sum(rows[a][1] for a in A)
+from trpaths import levels, path, child_steady  # noqa: E402  (moved there 19 October, export_alttrans.py reads them too)
 
 
 n, t = levels(os.path.join(ARMS, 'arm_null', 'final.txt')), levels(os.path.join(ARMS, 'arm_tf', 'final.txt'))
