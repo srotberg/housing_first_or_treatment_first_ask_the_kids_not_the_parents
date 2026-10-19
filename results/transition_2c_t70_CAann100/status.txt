@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 1.00, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 19 Oct 11:49 UTC
+# the T = 70 transition on RULE CA at detection 1.00, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 19 Oct 12:10 UTC
 remote_tr70_CAann 1.00 announce: gfortran missing, installing (00:41)
 remote_tr70_CAann 1.00 announce: free disk 29G, memory 15 GiB, cores 4 (00:41)
 remote_tr70_CAann 1.00 announce: building cf_fix (00:41)
@@ -43,3 +43,7 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
  MILBY SPLIT voucher mass rec treat smi   0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000       housed_nov mass rec treat smi  0.67257129449509512        2.0715387835088941E-002  0.16628570906120718        5.3329645279645982E-002
 
 == tr2c_t70_CAann100 (T = 70, rule CA, detection 1.00, announce, lag 5)
+  binary loop 0: periods to 2, worst budget residual (t>1) 1.11e-02, worst drug gap 1.92e-01
+  CEV path of the latest forward pass (per cent, t: value):
+    1: +1.543  2: +2.125
+  latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.93672445501968771       share_newborns=  0.49147042537743629       share_addicted=  0.23434309453077434       share_addicted_newborns=   0.0000000000000000
