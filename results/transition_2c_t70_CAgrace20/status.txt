@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 19 Oct 07:17 UTC
+# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 19 Oct 07:19 UTC
 remote_tr70_CAann 0.20 grace: free disk 22G, memory 15 GiB, cores 4 (01:41)
 remote_tr70_CAann 0.20 grace: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (01:41)
 remote_tr70_CAann 0.20 grace: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_pdet20_CAu/tf/final.txt): price 0.90563748, pi_V 0.085920513 (01:41)
@@ -6,6 +6,8 @@ remote_tr70_CAann 0.20 grace: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.
 remote_tr70_CAann 0.20 grace: long-run rule-C arm ACCEPTED: remote_pdet tf_pdet20_CAu: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.8371627999999998 DIST CHECK PASS: 49 passes, sweeps [71, 70, 71, 71, 72, 70, 70, 70, 70, 70, 75, 70, 70, 71, 77, 73, 78, 70, 79, 74, 70, 70, 84, 72, 70, 70, 76, 74, 71, 73, 70, 76, 70, 70, 71, 70, 70, 71, 70, 70, 70, 92, 71, 71, 82, 71, 70, 70, 70], largest final 4.98e-05 (rule 5e-05, at least 70 sweeps)  (00:03) (03:31)
 remote_tr70_CAann 0.20 grace: terminal arm (started early) within 1 of the accepted arm: worst relative difference 1.163e-02 (07:17)
 remote_tr70_CAann 0.20 grace: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 9.6e-05; tf against the accepted long-run CA arm 1.163e-02 (07:17)
+remote_tr70_CAann 0.20 grace: shares written:   all households                   mass 50.82576  strict better 0.8229 | tol 0.001: better 0.7458 worse 0.0277 | tol 0.01: better 0.7281 worse 0.0276 (07:18)
+remote_tr70_CAann 0.20 grace: age split: 2 of 2 arms exact (07:19)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
