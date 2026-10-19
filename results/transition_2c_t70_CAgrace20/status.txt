@@ -1,8 +1,9 @@
-# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 19 Oct 03:21 UTC
+# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 19 Oct 03:51 UTC
 remote_tr70_CAann 0.20 grace: free disk 22G, memory 15 GiB, cores 4 (01:41)
 remote_tr70_CAann 0.20 grace: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (01:41)
 remote_tr70_CAann 0.20 grace: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_pdet20_CAu/tf/final.txt): price 0.90563748, pi_V 0.085920513 (01:41)
 remote_tr70_CAann 0.20 grace: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.085920513 DRUG_PRICE_START=0.90563748 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100 (01:41)
+remote_tr70_CAann 0.20 grace: long-run rule-C arm ACCEPTED: remote_pdet tf_pdet20_CAu: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.8371627999999998 DIST CHECK PASS: 49 passes, sweeps [71, 70, 71, 71, 72, 70, 70, 70, 70, 70, 75, 70, 70, 71, 77, 73, 78, 70, 79, 74, 70, 70, 84, 72, 70, 70, 76, 74, 71, 73, 70, 76, 70, 70, 71, 70, 70, 71, 70, 70, 70, 92, 71, 71, 82, 71, 70, 70, 70], largest final 4.98e-05 (rule 5e-05, at least 70 sweeps)  (00:03) (03:31)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -10,9 +11,11 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   2  0.9992  0.06753    -1.0%    -0.2%    -1.0%  1.82e-03  0.00e+00   787.8712  +1.09%    -0.3%    +0.7%
   3  0.9993  0.06753    -0.5%    +0.4%    -0.1%  2.84e-04  0.00e+00   787.5223  +0.08%    -0.1%    +0.4%
   4  0.9993  0.06753    -0.4%    +0.4%    -0.0%  1.59e-04  0.00e+00   787.4952  +0.00%    -0.1%    +0.3%
+  5  0.9993  0.06753    -0.4%    +0.4%    +0.0%  1.63e-04  0.00e+00   787.4916  -0.01%    -0.1%    +0.3%
 
 == arm tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  0.9056  0.08592   -29.2%   -29.1%   -12.4%  0.00e+00  3.28e-01   790.3585  +8.74%   -11.4%   +25.2%
   2  0.9056  0.08592   -29.3%   -29.3%   -11.2%  0.00e+00  3.70e-02   789.5139  +6.05%   -13.4%   +22.6%
- MILBY SPLIT voucher mass rec treat smi   6.3421613904832266E-002   2.2199446628921832E-003   2.6926481074983764E-002   6.3666257570194123E-003  housed_nov mass rec treat smi   1.2608311227877522        3.8897333048188772E-002  0.31358239049601333        9.9926872750203080E-002
+  3  0.9056  0.09036   -30.5%   -30.4%   -13.4%  0.00e+00  3.19e-02   789.5372  +6.12%   -14.5%   +23.0%
+ MILBY SPLIT voucher mass rec treat smi   6.4635818175342155E-002   2.2595347761433090E-003   2.7331239547124932E-002   6.5231181675768669E-003  housed_nov mass rec treat smi   1.2391767864816858        3.8194316129500888E-002  0.30686935904235091        9.8604392400159196E-002
