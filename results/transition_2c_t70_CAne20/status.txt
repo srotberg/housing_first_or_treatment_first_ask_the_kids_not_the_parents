@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20, no phase-in (the no-escape path in a fresh container, a hedge for remote_tr70_CA20e.sh), both prices clearing along the path (code/transition_fix/remote_tr70_CAne.sh); 19 Oct 22:53 UTC
+# the T = 70 transition on RULE CA at detection 0.20, no phase-in (the no-escape path in a fresh container, a hedge for remote_tr70_CA20e.sh), both prices clearing along the path (code/transition_fix/remote_tr70_CAne.sh); 19 Oct 23:02 UTC
 remote_tr70_CAne 0.20 none: gfortran missing, installing (16:05)
 remote_tr70_CAne 0.20 none: free disk 29G, memory 15 GiB, cores 4 (16:05)
 remote_tr70_CAne 0.20 none: building cf_fix (16:05)
@@ -12,6 +12,8 @@ remote_tr70_CAne 0.20 none: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=
 remote_tr70_CAne 0.20 none: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_pdet20_CAu/tf/final.txt): price 0.90563748, pi_V 0.085920513 (16:18)
 remote_tr70_CAne 0.20 none: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.085920513 DRUG_PRICE_START=0.90563748 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100 (16:18)
 remote_tr70_CAne 0.20 none: long-run rule-C arm ACCEPTED: remote_pdet tf_pdet20_CAu: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.8371627999999998 DIST CHECK PASS: 49 passes, sweeps [71, 70, 71, 71, 72, 70, 70, 70, 70, 70, 75, 70, 70, 71, 77, 73, 78, 70, 79, 74, 70, 70, 84, 72, 70, 70, 76, 74, 71, 73, 70, 76, 70, 70, 71, 70, 70, 71, 70, 70, 70, 92, 71, 71, 82, 71, 70, 70, 70], largest final 4.98e-05 (rule 5e-05, at least 70 sweeps)  (00:03) (18:12)
+remote_tr70_CAne 0.20 none: terminal arm (started early) within 1 of the accepted arm: worst relative difference 1.161e-02 (23:02)
+remote_tr70_CAne 0.20 none: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 7.3e-05; tf against the accepted long-run CA arm 1.161e-02 (23:02)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -31,4 +33,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   6  0.9056  0.08708   -30.1%   -30.0%   -11.4%  0.00e+00  5.20e-03   789.3765  +5.62%   -14.2%   +22.7%
   7  0.9056  0.08676   -30.1%   -30.0%   -11.3%  0.00e+00  3.04e-03   789.3614  +5.58%   -14.2%   +22.7%
   8  0.9056  0.08658   -30.1%   -30.0%   -11.2%  0.00e+00  1.92e-03   789.3525  +5.55%   -14.2%   +22.7%
- MILBY SPLIT voucher mass rec treat smi   6.3139140581359582E-002   2.2087970639220848E-003   2.6768124772936358E-002   6.3894678519752293E-003  housed_nov mass rec treat smi   1.2481277990316031        3.8488736892010239E-002  0.30986983280173408        9.9535229754251567E-002
+  9  0.9056  0.08647   -30.0%   -29.9%   -11.1%  0.00e+00  9.34e-04   789.3469  +5.53%   -14.2%   +22.7%
+ MILBY SPLIT voucher mass rec treat smi   6.3081094697492138E-002   2.2067887026822062E-003   2.6744432253163055E-002   6.3835406983207580E-003  housed_nov mass rec treat smi   1.2484324770074273        3.8499346248703777E-002  0.30999168001003602        9.9546417836596124E-002
