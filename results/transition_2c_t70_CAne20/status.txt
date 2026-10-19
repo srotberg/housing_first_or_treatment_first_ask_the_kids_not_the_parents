@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20, no phase-in (the no-escape path in a fresh container, a hedge for remote_tr70_CA20e.sh), both prices clearing along the path (code/transition_fix/remote_tr70_CAne.sh); 19 Oct 17:18 UTC
+# the T = 70 transition on RULE CA at detection 0.20, no phase-in (the no-escape path in a fresh container, a hedge for remote_tr70_CA20e.sh), both prices clearing along the path (code/transition_fix/remote_tr70_CAne.sh); 19 Oct 17:38 UTC
 remote_tr70_CAne 0.20 none: gfortran missing, installing (16:05)
 remote_tr70_CAne 0.20 none: free disk 29G, memory 15 GiB, cores 4 (16:05)
 remote_tr70_CAne 0.20 none: building cf_fix (16:05)
@@ -16,8 +16,10 @@ remote_tr70_CAne 0.20 none: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.83
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  0.9999  0.06753    -3.2%    -2.4%    -2.9%  1.96e-03  0.00e+00   789.1157  +4.82%    -0.3%    +3.0%
   2  0.9992  0.06753    -1.0%    -0.2%    -1.0%  1.85e-03  0.00e+00   787.8712  +1.09%    -0.3%    +0.7%
+  3  0.9993  0.06753    -0.5%    +0.4%    -0.1%  3.55e-04  0.00e+00   787.5219  +0.08%    -0.1%    +0.4%
 
 == arm tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  0.9056  0.08592   -29.2%   -29.2%   -12.4%  0.00e+00  3.28e-01   790.3584  +8.74%   -11.4%   +25.2%
- MILBY SPLIT voucher mass rec treat smi   6.2353426907214050E-002   2.1839996480975906E-003   2.6571386165871378E-002   6.4273462625245503E-003  housed_nov mass rec treat smi   1.2643286169620274        3.8998386587692183E-002  0.31480799729593167       0.10362033427181157     
+  2  0.9056  0.08592   -29.3%   -29.2%   -11.2%  0.00e+00  3.74e-02   789.5141  +6.05%   -13.4%   +22.6%
+ MILBY SPLIT voucher mass rec treat smi   6.3426254598586834E-002   2.2201278629640259E-003   2.6929283312271075E-002   6.3671008863641371E-003  housed_nov mass rec treat smi   1.2610116448576865        3.8904179515793613E-002  0.31367724994540686        9.9934764975273427E-002
