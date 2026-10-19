@@ -1,8 +1,9 @@
-# the T = 70 transition on RULE CA at detection 1.00, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 19 Oct 03:44 UTC
+# the T = 70 transition on RULE CA at detection 1.00, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 19 Oct 04:13 UTC
 remote_tr70_CAann 1.00 grace: free disk 22G, memory 15 GiB, cores 4 (01:43)
 remote_tr70_CAann 1.00 grace: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (01:43)
 remote_tr70_CAann 1.00 grace: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_pdet100_CAbest/tf/final.txt): price 0.80170000, pi_V 0.102400000 (01:43)
 remote_tr70_CAann 1.00 grace: arm tf on cf_fix2_treatCA: PDET=1.00 NET_TARGET=5.8371628 PV_START=0.102400000 DRUG_PRICE_START=0.80170000 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100 (01:43)
+remote_tr70_CAann 1.00 grace: long-run rule-C arm ACCEPTED: remote_pdet tf_pdet100_CAbest: arm tf ACCEPTED (by the author's decision, not by the tolerances): tf_pdet100_CAuC pass 7 (03:53)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -10,6 +11,7 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   2  0.9992  0.06753    -1.0%    -0.2%    -1.0%  1.74e-03  0.00e+00   787.8710  +1.09%    -0.3%    +0.7%
   3  0.9993  0.06753    -0.5%    +0.4%    -0.1%  2.76e-04  0.00e+00   787.5229  +0.08%    -0.1%    +0.4%
   4  0.9994  0.06753    -0.4%    +0.4%    +0.0%  2.12e-04  0.00e+00   787.4951  +0.00%    -0.1%    +0.3%
+  5  0.9994  0.06753    -0.4%    +0.4%    +0.0%  6.08e-05  0.00e+00   787.4916  -0.01%    -0.1%    +0.3%
 
 == arm tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
