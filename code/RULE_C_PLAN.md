@@ -899,3 +899,8 @@ homelessness by up to 6 and children in a shelter by up to 4 percent, so the sen
 them at first, though by less (x_ne20_so_* and x_ne20_so_cmp in export_noescape.py, the direction against the 1.00
 transition's 14/11); replace with the 0.20 transition (transition_2c_t70_CA20e) when it lands. Comment 2: "They still
 fall" -> "However, they still fall".
+
+01:30 (19 Oct) ROUND r354 (2 comments, both on the third lesson). Red cleared (base_r354). "fall from the start only if
+... are a real option" -> "do not fall along the transition if ... are not a real option" (the author: "do not fall in
+transition if", "are not a"); the next sentence, which repeated the condition ("When they are not, both rise ..."),
+now reads "Both rise in the first years instead, because ...".
