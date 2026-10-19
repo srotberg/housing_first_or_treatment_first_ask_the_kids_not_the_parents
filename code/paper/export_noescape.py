@@ -63,6 +63,11 @@ out = {
 # pass at the end; the latest archived loop of results/transition_2c_t70_CAb, else the partial loop-0 log its worker
 # published (17 October, 17:40). Peak rises over the first years and the last year each is above Housing First.
 TRD = os.path.join(ROOT, 'results', 'transition_2c_t70_CAb')
+# (19 October, 23:40) the path with the drug price clearing too, remote_tr70_CAc.sh, once it has an archived loop: its
+# loop 0 started from CAb's loop-0 paths, the same arms, and lets the price clear every year
+_CAC = os.path.join(ROOT, 'results', 'transition_2c_t70_CAc')
+if any(d.startswith('loop') and os.path.exists(os.path.join(_CAC, d, 'run.log.gz')) for d in os.listdir(_CAC)):
+    TRD = _CAC
 loops = sorted((d for d in os.listdir(TRD) if d.startswith('loop') and os.path.exists(os.path.join(TRD, d, 'run.log.gz'))),
                key=lambda d: int(d[4:]))
 TRLOG = os.path.join(TRD, loops[-1], 'run.log.gz') if loops else os.path.join(TRD, 'partial_loop0_run.log.gz')

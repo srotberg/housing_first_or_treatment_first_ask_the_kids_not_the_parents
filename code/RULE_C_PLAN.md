@@ -958,3 +958,10 @@ periods 1-5 is 0.78-0.82 against the seeded 0.994 (households cut use as soon as
 0.18-0.22; 0.01-0.09 after. Proposed to the author: re-seed both announced runs from their loop-0 implied prices and
 relaunch (about a day). Table tab:alttrans: periods above Housing First now printed as ranges, with changes under
 0.05 per cent (period 1's +0.02) not counted.
+
+23:40 (19 Oct) TWO MORE FIRST PASSES. CAc (1.00 no exemption, both prices clearing; loop 0): homelessness +13.6 in period
+2, above Housing First to period 15; children +10.8, above to 11; reform cohort +6.74. It replaces CAb's held-price
+loop 0 in x_ne_tr_* (export_noescape.py: x_ne_tr_h_yrs 14 -> 15, the rest unchanged) and in Table tab:alttrans
+(x_at_ne_cev 7.27 -> 6.74). CAgrace20 (grace years at 0.20; loop 0): homelessness below Housing First in periods 2-8
+(to -3.9 in period 6), +0.7 to +1.5 in periods 9-15 (peak period 11), below after; children in a shelter never above;
+reform cohort +3.14; drug distances 0.005-0.037, budget 0.55 per cent.
