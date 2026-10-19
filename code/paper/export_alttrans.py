@@ -32,8 +32,9 @@ TAB = os.path.join(ROOT, 'writing', 'tables', 'tab_alttrans.tex')
 R = os.path.join(ROOT, 'results')
 d = json.load(open(OUT))
 PDET = d['x_tf_pdet_pc']
-YEARS, ABOVE = 15, 0.0          # the window of "the first years", and what counts as above Housing First (percent; 6.4's
-#                                 x_ne_tr_*_yrs count any year above, so the table does too)
+YEARS, ABOVE = 15, 0.05         # the window of "the first years", and what counts as above Housing First (percent; 6.4's
+#                                 x_ne_tr_*_yrs count any year above; 0.05, not 0, from round r359: the announced path's
+#                                 period 1 is +0.02 per cent, Housing First's own numerical noise, and read as above it)
 Y = lambda s: '\\tocheck{' + s + '}'
 
 
@@ -58,7 +59,13 @@ def run(key, rdir, arms, fallback=None):
         t_pk = max(first, key=lambda t: x[t])
         up = [t for t in sorted(x) if x[t] > ABOVE]
         out[k + 'pk'], out[k + 'yr'] = x[t_pk], t_pk
-        out[k + 'span'] = (f'{up[0]}--{up[-1]}' if len(up) > 1 else str(up[0])) if up else 'none'
+        runs = []                       # consecutive periods as ranges: the announced path is below, then above
+        for t in up:
+            if runs and t == runs[-1][1] + 1:
+                runs[-1][1] = t
+            else:
+                runs.append([t, t])
+        out[k + 'span'] = ', '.join(f'{a}--{b}' if b > a else str(a) for a, b in runs) if runs else 'none'
     out['cev'] = float(d['x_tr_cev_b1_2']) if key == 'main' else reform_cohort_cev(loop, null, tf)
     return out
 

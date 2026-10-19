@@ -948,3 +948,13 @@ terminal arm, same seeds) and 7.4-10 for the others. code/transition_fix/remote_
 remote_tr70_CAann.sh with no phase-in: tr70_CA from build_tr70_CA.sh, seeds unshifted, no schedule check; a NEW file, so
 the four workers running remote_tr70_CAann.sh are untouched) runs it in a fresh container -> results/
 transition_2c_t70_CAne20. export_alttrans.py reads it for the no-exemption 0.20 row while CA20e has no archived loop.
+
+21:45 (19 Oct) THE ANNOUNCED 1.00 PATH'S LOOP 0 ARCHIVED (results/transition_2c_t70_CAann100/loop0). Homelessness against
+Housing First: periods 1-6 below (-0.6 to -4.2 per cent, children -0.7 to -5.3), then a jump in period 7 (+5.7) to a peak
+of +7.3 in period 9, above until period 16; children in a shelter peak +3.6 in period 9, above until 12. Against the
+immediate no-escape path (CAb loop 0): +13.8 in period 2, above to 14; children +11.0, above to 11. Reform cohort's
+CEV +4.94 (immediate: +7.27; main transition 1.50). NOT A REASONABLE PASS: the drug market's implied supply price in
+periods 1-5 is 0.78-0.82 against the seeded 0.994 (households cut use as soon as the screen is announced), distance
+0.18-0.22; 0.01-0.09 after. Proposed to the author: re-seed both announced runs from their loop-0 implied prices and
+relaunch (about a day). Table tab:alttrans: periods above Housing First now printed as ranges, with changes under
+0.05 per cent (period 1's +0.02) not counted.
