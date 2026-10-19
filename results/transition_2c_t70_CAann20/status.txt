@@ -8,6 +8,12 @@ remote_tr70_CAann 0.20 announce: terminal arm (started early) within 1 of the ac
 remote_tr70_CAann 0.20 announce: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 8.1e-05; tf against the accepted long-run CA arm 1.165e-02 (09:42)
 remote_tr70_CAann 0.20 announce: shares written:   all households                   mass 50.82518  strict better 0.8135 | tol 0.001: better 0.7458 worse 0.0277 | tol 0.01: better 0.7281 worse 0.0276 (09:43)
 remote_tr70_CAann 0.20 announce: age split: 2 of 2 arms exact (09:44)
+remote_tr70_CAann 0.20 announce: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t70_CAann20 -- start with: cd /home/user/children_first_housing_later/code/tr2c_t70_CAann20 && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds rescaled from rule C's T = 50 loop3 (x0 0.99939753 0.067533863): drug_price: factor 1.7526; t=1 0.940097, t=2 0.944051, t=5 0.944055, t=10 0.940032, t=25 0.912386, t=49 0.905637, t=69 0.905637 pi_v: factor 2.2017; t=1 0.071884, t=2 0.068141, t=5 0.069483, t=10 0.071192, t=25 0.079385, t=49 0.086378, t=69 0.086378  (09:44)
+remote_tr70_CAann 0.20 announce: announce seeds: Housing First for years 1-5, then the main path from the rescaled rule-C paths shifted 5 years: drug_price: t=1 0.999398, t=5 0.999398, t=6 0.940097, t=7 0.944051, t=10 0.944055, t=25 0.922166, t=49 0.905236, t=69 0.905637 pi_v: t=1 0.067534, t=5 0.067534, t=6 0.071884, t=7 0.068141, t=10 0.069483, t=25 0.075649, t=49 0.086582, t=69 0.086378  (09:44)
+remote_tr70_CAann 0.20 announce: 4 GiB swap on (09:44)
+remote_tr70_CAann 0.20 announce: T = 70 transition started, pid 17198 (09:44)
+remote_tr70_CAann 0.20 announce: handover applied: 100 parameters (09:44)
+remote_tr70_CAann 0.20 announce: the path's drug price clears: HANDOVER drug_market_adjuster -> 0.10000000000000001 (09:44)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -30,3 +36,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   9  0.9056  0.08649   -30.0%   -29.9%   -11.1%  0.00e+00  1.01e-03   789.3479  +5.54%   -14.2%   +22.7%
  10  0.9056  0.08643   -30.0%   -30.0%   -11.1%  0.00e+00  8.50e-04   789.3442  +5.52%   -14.2%   +22.7%
  MILBY SPLIT voucher mass rec treat smi   6.3050538415049068E-002   2.2057822667206966E-003   2.6734147608892998E-002   6.3811078836971593E-003  housed_nov mass rec treat smi   1.2482395994590103        3.8493442517229200E-002  0.30994836728662278        9.9546404137342517E-002
+
+== tr2c_t70_CAann20 (T = 70, rule CA, detection 0.20, announce, lag 5)
