@@ -84,8 +84,8 @@ def cells(r):
 
 ROWS = [('Main transition', PDET, 'main'),
         ('No exemption', '100', 'ne100'), ('', PDET, 'ne20'),
-        ('Announced five years ahead', '100', 'ann100'), ('', PDET, 'ann20'),
-        ('Treatment exempt for five years', '100', 'gr100'), ('', PDET, 'gr20')]
+        ('Announced five periods ahead', '100', 'ann100'), ('', PDET, 'ann20'),
+        ('Sobriety while in treatment', '100', 'gr100'), ('\\quad exempt for five periods', PDET, 'gr20')]
 body = []
 for i, (lab, det, k) in enumerate(ROWS):
     if i in (1, 3, 5):
@@ -98,21 +98,21 @@ tab = r"""\begin{table}[!htb]\centering
 \toprule
  & & \multicolumn{2}{c}{Homelessness} & \multicolumn{2}{c}{Children in a shelter} & Newborn's \\
 \cmidrule(lr){3-4}\cmidrule(lr){5-6}
- & $p_{\mathrm{det}}$ & Largest rise & Years above & Largest rise & Years above & gain \\
+ & $p_{\mathrm{det}}$ & Largest rise & Periods above & Largest rise & Periods above & gain \\
 \midrule
 """ + '\n'.join(body) + r"""
 \bottomrule
 \end{tabular}}
 \usebox{\ntbox}
-\tabnote{Notes: Each row is a transition from Housing First to Treatment First with the drug price and $\pi_V$ clearing every year, against Housing First's steady state. Main transition: Section~\ref{sec:ftrans}, where a household with a SUD keeps its voucher by entering treatment and not using. In the other rows it cannot stop using, and the disorder fails the screen even in treatment: from the reform (no exemption), from year six with Housing First until then (announced five years ahead), or from year six with treatment alone passing it until then (treatment exempt for five years). $p_{\mathrm{det}}$ is the detection rate, in percent. Largest rise: the largest percent increase over the first """ + {15: 'fifteen'}[YEARS] + r""" years, with its year in brackets. Years above: the years in which it is above Housing First. Children in a shelter is the homelessness of households aged 26 to 50. Newborn's gain: the CEV of children born at the reform, percent of lifetime consumption. Yellow: the run has not finished a pass of its transition, or its pass does not yet clear the drug market and the budget reasonably.}
+\tabnote{Notes: Each row is a transition from the Housing First benchmark to Treatment First with the drug price and $\pi_V$ clearing every period, against Housing First's steady state. Main transition: Section~\ref{sec:ftrans}, where a household with a SUD keeps its voucher by entering treatment and not using. In the other rows it cannot stop using, and the disorder fails the screen even in treatment: from the reform (no exemption), from period six with Housing First until then (announced five periods ahead), or from period six with treatment alone passing it until then (sobriety while in treatment exempt for five periods). $p_{\mathrm{det}}$ is the detection rate, in percent. Largest rise: the largest percent increase over the first """ + {15: 'fifteen'}[YEARS] + r""" periods, with its period in brackets. Periods above: the periods in which it is above Housing First. Children in a shelter is the homelessness of households aged 26 to 50. Newborn's gain: the CEV of children born at the reform, percent of lifetime consumption.}
 \endgroup
 \end{table}
 """
 open(TAB, 'w').write(tab)
 
 # THE TWO SENTENCES ON THE PHASED-IN RULES, from the numbers; yellow until both detection rates of a rule are in
-LABEL = {'ann': 'Announcing the screen five years before it starts',
-         'gr': 'Letting treatment alone keep the voucher for the first five years'}
+LABEL = {'ann': 'Announcing the screen five periods before it starts',
+         'gr': 'Exempting sobriety while in treatment for the first five periods'}
 
 
 def clause(r):
@@ -139,7 +139,7 @@ def sentence(m):
 
 S = {m: sentence(m) for m in ('ann', 'gr')}
 if S['ann'] is None and S['gr'] is None:
-    res = Y('The announced transitions and those with five years of exemption for treatment are still running; Table~\\ref{tab:alttrans} adds them as they finish.')
+    res = Y('The announced transitions and those exempting sobriety while in treatment for five periods are still running; Table~\\ref{tab:alttrans} adds them as they finish.')
 else:
     res = ' '.join(S[m] if S[m] is not None else Y(f'{LABEL[m]}: the transition is still running.') for m in ('ann', 'gr'))
 # THE NEWBORN'S GAIN UNDER NO EXEMPTION (round r357, the author: "you don't talk about the newborn welfare numbers in
@@ -161,7 +161,11 @@ else:
     ne_cev = (f'Children born at the reform {verb(a)} ${cev_txt(a)}$ percent of lifetime consumption when every user is caught '
               f'and {verb(b)} ${cev_txt(b)}$ percent when ${PDET}$ percent are, against a gain of ${m0:.2f}$ percent in the main '
               f'transition.')
-out = {'x_at_results': res, 'x_at_years_word': {15: 'fifteen'}[YEARS], 'x_at_ne_cev': ne_cev}
+# (round r357, the author on 'Catching 20 percent of users': "only one in five users")
+_inv = 100 / float(PDET)
+assert abs(_inv - round(_inv)) < 1e-9, PDET
+out = {'x_at_results': res, 'x_at_years_word': {15: 'fifteen'}[YEARS], 'x_at_ne_cev': ne_cev,
+       'x_at_pdet_words': 'one in ' + {2: 'two', 4: 'four', 5: 'five', 10: 'ten', 20: 'twenty'}[round(_inv)]}
 d.update(out)
 json.dump(d, open(OUT, 'w'), indent=1, sort_keys=True)
 print('export_alttrans:', {k: (None if r is None else (r['src'], f'h {r["hpk"]:+.1f}/{r["hyr"]} c {r["cpk"]:+.1f}/{r["cyr"]} '

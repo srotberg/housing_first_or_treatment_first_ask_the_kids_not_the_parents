@@ -928,3 +928,11 @@ child_steady() and levels() moved from export_noescape.py to code/paper/trpaths.
 opening lists the alternatives (red); the third lesson is in yellow; page 1: "The author owns the code; he wrote ...".
 When a phased run lands: bash code/paper/export_all_C.sh fills its row and sentence; rebuild with splice against the
 round's base.
+
+15:10 (19 Oct) ROUND r357 (17 comments on Section 6's opening and 6.5). Red cleared (base_r357); the third lesson stays
+yellow. The alternatives sentence in Section 6's opening is its own paragraph, "from the day of the reform", periods for
+years. 6.5: periods for years throughout its new text and Table tab:alttrans ("Periods above"), "look like", "only after
+recovery can they stay sober and pass the screen", "or", "from day one of the reform", "even if it uses drugs", "the
+Housing First benchmark", "(first row)", "Catching only one in five users" (x_at_pdet_words from x_tf_pdet_pc), the
+third alternative renamed "sobriety while in treatment exempt for five periods" (table label and the generated
+sentences), the table note on yellow cells removed.
