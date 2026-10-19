@@ -936,3 +936,8 @@ recovery can they stay sober and pass the screen", "or", "from day one of the re
 Housing First benchmark", "(first row)", "Catching only one in five users" (x_at_pdet_words from x_tf_pdet_pc), the
 third alternative renamed "sobriety while in treatment exempt for five periods" (table label and the generated
 sentences), the table note on yellow cells removed.
+
+15:45 (19 Oct) ROUND r358 (3 comments). Red and green cleared (base_r358). "from the day of the reform" -> "from the first
+day of the reform" (Section 6's opening); the green note under Table tab:alttrans removed (the author: "remove"; no
+note added for this round's table change); the third alternative "exempt for the first five periods" in the table
+label, its note and the placeholder sentence.

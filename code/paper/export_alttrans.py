@@ -85,7 +85,7 @@ def cells(r):
 ROWS = [('Main transition', PDET, 'main'),
         ('No exemption', '100', 'ne100'), ('', PDET, 'ne20'),
         ('Announced five periods ahead', '100', 'ann100'), ('', PDET, 'ann20'),
-        ('Sobriety while in treatment', '100', 'gr100'), ('\\quad exempt for five periods', PDET, 'gr20')]
+        ('Sobriety while in treatment', '100', 'gr100'), ('exempt for the first five periods', PDET, 'gr20')]
 body = []
 for i, (lab, det, k) in enumerate(ROWS):
     if i in (1, 3, 5):
@@ -104,7 +104,7 @@ tab = r"""\begin{table}[!htb]\centering
 \bottomrule
 \end{tabular}}
 \usebox{\ntbox}
-\tabnote{Notes: Each row is a transition from the Housing First benchmark to Treatment First with the drug price and $\pi_V$ clearing every period, against Housing First's steady state. Main transition: Section~\ref{sec:ftrans}, where a household with a SUD keeps its voucher by entering treatment and not using. In the other rows it cannot stop using, and the disorder fails the screen even in treatment: from the reform (no exemption), from period six with Housing First until then (announced five periods ahead), or from period six with treatment alone passing it until then (sobriety while in treatment exempt for five periods). $p_{\mathrm{det}}$ is the detection rate, in percent. Largest rise: the largest percent increase over the first """ + {15: 'fifteen'}[YEARS] + r""" periods, with its period in brackets. Periods above: the periods in which it is above Housing First. Children in a shelter is the homelessness of households aged 26 to 50. Newborn's gain: the CEV of children born at the reform, percent of lifetime consumption.}
+\tabnote{Notes: Each row is a transition from the Housing First benchmark to Treatment First with the drug price and $\pi_V$ clearing every period, against Housing First's steady state. Main transition: Section~\ref{sec:ftrans}, where a household with a SUD keeps its voucher by entering treatment and not using. In the other rows it cannot stop using, and the disorder fails the screen even in treatment: from the reform (no exemption), from period six with Housing First until then (announced five periods ahead), or from period six with treatment alone passing it until then (sobriety while in treatment exempt for the first five periods). $p_{\mathrm{det}}$ is the detection rate, in percent. Largest rise: the largest percent increase over the first """ + {15: 'fifteen'}[YEARS] + r""" periods, with its period in brackets. Periods above: the periods in which it is above Housing First. Children in a shelter is the homelessness of households aged 26 to 50. Newborn's gain: the CEV of children born at the reform, percent of lifetime consumption.}
 \endgroup
 \end{table}
 """
@@ -139,7 +139,7 @@ def sentence(m):
 
 S = {m: sentence(m) for m in ('ann', 'gr')}
 if S['ann'] is None and S['gr'] is None:
-    res = Y('The announced transitions and those exempting sobriety while in treatment for five periods are still running; Table~\\ref{tab:alttrans} adds them as they finish.')
+    res = Y('The announced transitions and those exempting sobriety while in treatment for the first five periods are still running; Table~\\ref{tab:alttrans} adds them as they finish.')
 else:
     res = ' '.join(S[m] if S[m] is not None else Y(f'{LABEL[m]}: the transition is still running.') for m in ('ann', 'gr'))
 # THE NEWBORN'S GAIN UNDER NO EXEMPTION (round r357, the author: "you don't talk about the newborn welfare numbers in
