@@ -16,6 +16,10 @@ SC = os.path.join(R, 'decomp_2c_shares_C')
 TF_ARM = 'tf_pdet20_C/tf'                                   # under CF: the main arm, detection 0.20
 TF_DIR = os.path.join(CF, TF_ARM)
 TF_HALF_DIR = os.path.join(CF, 'tf_pdet10_C', 'tf')         # the half rate, 0.10
+# (19 October) the half rate re-solved against the corrected Housing First's net revenue (pdet/remote_pdet_Cu.sh 0.10,
+# ACCEPTED 11:00): tf_pdet10_C cleared against the old target, 5.8275
+if os.path.exists(os.path.join(CF, 'tf_pdet10_Cu', 'tf', 'cf.log.gz')):
+    TF_HALF_DIR = os.path.join(CF, 'tf_pdet10_Cu', 'tf')
 TF_NODES = os.path.join(SC, 'arm_tf', 'tf')                 # the main arm re-solved beside Housing First: by-node values
 NULL_DIR = os.path.join(SC, 'arm_tf', 'null')               # Housing First: welfare files and by-node values
 DC = {k: os.path.join(SC, f'arm_{k}') for k in ('fixboth', 'fixpv', 'fixp', 'tf')}   # each with tf/ and null/

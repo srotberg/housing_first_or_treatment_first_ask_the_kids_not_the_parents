@@ -904,3 +904,12 @@ fall" -> "However, they still fall".
 ... are a real option" -> "do not fall along the transition if ... are not a real option" (the author: "do not fall in
 transition if", "are not a"); the next sentence, which repeated the condition ("When they are not, both rise ..."),
 now reads "Both rise in the first years instead, because ...".
+
+13:00 (19 Oct) THE HALF RATE RE-POINTED: tf_pdet10_Cu ACCEPTED at 11:00 (cleared against the corrected Housing First's
+5.8372; tf_pdet10_C had cleared against the old 5.8275). rulec_paths.TF_HALF_DIR now reads it when it is in. Footnote
+fn:halfrate moves in red: homelessness 7 -> 6 percent, the newborn's CEV 1.81 -> 1.65; drug use 14 unchanged.
+THE ANNOUNCED 1.00 PATH'S LOOP 0 has a drug-market distance of 0.219 (price units: |implied supply price - price|)
+somewhere in years 1-7, against 1.5e-2 on the main 1.00 path: the seed holds Housing First's price for years 1-5, and
+the price moves at most 0.5 per cent a year a loop, so six loops cannot close a gap that size. When loop 0 is archived,
+read the 'implied supply price=' lines by year; if the gap sits in years 1-5 (households cutting use before the screen
+starts), re-seed the announced runs from loop 0's implied prices and relaunch.
