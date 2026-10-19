@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 19 Oct 21:47 UTC
+# the T = 70 transition on RULE CA at detection 0.20, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 19 Oct 22:08 UTC
 remote_tr70_CAann 0.20 announce: free disk 22G, memory 15 GiB, cores 4 (01:18)
 remote_tr70_CAann 0.20 announce: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (01:18)
 remote_tr70_CAann 0.20 announce: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_pdet20_CAu/tf/final.txt): price 0.90563748, pi_V 0.085920513 (01:18)
@@ -39,11 +39,12 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
  MILBY SPLIT voucher mass rec treat smi   6.3050538415049068E-002   2.2057822667206966E-003   2.6734147608892998E-002   6.3811078836971593E-003  housed_nov mass rec treat smi   1.2482395994590103        3.8493442517229200E-002  0.30994836728662278        9.9546404137342517E-002
 
 == tr2c_t70_CAann20 (T = 70, rule CA, detection 0.20, announce, lag 5)
-  binary loop 0: periods to 28, worst budget residual (t>1) 9.70e-03, worst drug gap 1.23e-01
+  binary loop 0: periods to 31, worst budget residual (t>1) 9.70e-03, worst drug gap 1.23e-01
   CEV path of the latest forward pass (per cent, t: value):
     1: +1.012  2: +1.255  3: +1.366  4: +1.422  5: +1.434  6: +1.598  7: +1.570  8: +1.631  9: +1.781  10: +1.862
     11: +1.908  12: +1.998  13: +2.109  14: +2.247  15: +2.348  16: +2.435  17: +2.542  18: +2.658  19: +2.746  20: +2.857
-    21: +2.958  22: +3.103  23: +3.224  24: +3.363  25: +3.297  26: +3.553  27: +3.836  28: +3.963
+    21: +2.958  22: +3.103  23: +3.224  24: +3.363  25: +3.297  26: +3.553  27: +3.836  28: +3.963  29: +4.166  30: +4.519
+    31: +4.554
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.92325614688761237       share_newborns=  0.19180912093318611       share_addicted=  0.28389905361603002       share_addicted_newborns=   0.0000000000000000
 
 announce checked on the forward pass: ok, 7 lines: screen 0 in years 1-5, 1 from year 6, terminal 1
