@@ -1,9 +1,11 @@
-# the T = 70 transition on RULE CA at detection 0.20, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 19 Oct 09:35 UTC
+# the T = 70 transition on RULE CA at detection 0.20, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 19 Oct 09:42 UTC
 remote_tr70_CAann 0.20 announce: free disk 22G, memory 15 GiB, cores 4 (01:18)
 remote_tr70_CAann 0.20 announce: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (01:18)
 remote_tr70_CAann 0.20 announce: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_pdet20_CAu/tf/final.txt): price 0.90563748, pi_V 0.085920513 (01:18)
 remote_tr70_CAann 0.20 announce: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.085920513 DRUG_PRICE_START=0.90563748 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100 (01:18)
 remote_tr70_CAann 0.20 announce: long-run rule-C arm ACCEPTED: remote_pdet tf_pdet20_CAu: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.8371627999999998 DIST CHECK PASS: 49 passes, sweeps [71, 70, 71, 71, 72, 70, 70, 70, 70, 70, 75, 70, 70, 71, 77, 73, 78, 70, 79, 74, 70, 70, 84, 72, 70, 70, 76, 74, 71, 73, 70, 76, 70, 70, 71, 70, 70, 71, 70, 70, 70, 92, 71, 71, 82, 71, 70, 70, 70], largest final 4.98e-05 (rule 5e-05, at least 70 sweeps)  (00:03) (03:14)
+remote_tr70_CAann 0.20 announce: terminal arm (started early) within 1 of the accepted arm: worst relative difference 1.165e-02 (09:42)
+remote_tr70_CAann 0.20 announce: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 8.1e-05; tf against the accepted long-run CA arm 1.165e-02 (09:42)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -24,4 +26,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   7  0.9056  0.08675   -30.1%   -30.0%   -11.3%  0.00e+00  2.68e-03   789.3607  +5.58%   -14.2%   +22.7%
   8  0.9056  0.08659   -30.1%   -30.0%   -11.2%  0.00e+00  1.62e-03   789.3528  +5.55%   -14.2%   +22.7%
   9  0.9056  0.08649   -30.0%   -29.9%   -11.1%  0.00e+00  1.01e-03   789.3479  +5.54%   -14.2%   +22.7%
- MILBY SPLIT voucher mass rec treat smi   6.3087589700923055E-002   2.2069772457244297E-003   2.6745706481462635E-002   6.3845617068183126E-003  housed_nov mass rec treat smi   1.2484096531578883        3.8498792384490235E-002  0.30999204326832197        9.9544844832518839E-002
+ 10  0.9056  0.08643   -30.0%   -30.0%   -11.1%  0.00e+00  8.50e-04   789.3442  +5.52%   -14.2%   +22.7%
+ MILBY SPLIT voucher mass rec treat smi   6.3050538415049068E-002   2.2057822667206966E-003   2.6734147608892998E-002   6.3811078836971593E-003  housed_nov mass rec treat smi   1.2482395994590103        3.8493442517229200E-002  0.30994836728662278        9.9546404137342517E-002
