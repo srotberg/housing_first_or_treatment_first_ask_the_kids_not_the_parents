@@ -859,3 +859,16 @@ way), so 'a newborn gains at least as much' holds and is now x_ca_nb_clause (exp
 -> 0.91, -11 (x_ne20_hchild_pc, export_noescape.py, which no longer waits for CA20d). The held-price arm gives 4.63 and
 -11.6. CA20e's path runs from that terminal arm; whether its 5.0e-3 drug gap matters for the path is a question for its
 first archived pass.
+
+## 19 October, 00:10 -- the delta_d = 0 check is in; the Section 2 footnote's yellow cleared
+
+results/deltad_Cu/dd0 (benchmark re-solved at delta_d 0, 11 blocks; Housing First accepted, drug gap 7.5e-4; Treatment
+First accepted in 4 passes, drug 1.9e-3, budget 9.5e-5), against its own Housing First: drug use -20.8, SUD -19.5,
+homelessness -4.3, children in a shelter 1.00 -> 0.95 (-4.7), pi_V +1.4 (not +16), newborn CEV +0.31 on its own
+benchmark curve (+0.33 on the paper's), against 2.57. The author: "You can just say that welfare gains continue to arise.
+No need for exact numbers. You can skip the deltad=0.12 since we already know deltad=0 gives a gain", at the first place
+in Section 2 that calls the penalty conservative: the footnote now reads "Welfare gains from Treatment First continue to
+arise even when the penalty is set to zero." (red, yellow cleared). dd0.12 (session_014gxR6UdgHXeDkzy62Su3DY) is left to
+finish on its own and is not used. Told the author: footnote 27's "only 18 percent of the welfare gain" understates what
+switching the penalty off does in general equilibrium (the gain falls by about 88 per cent, mostly through pi_V); they did
+not ask for it to change.
