@@ -872,3 +872,22 @@ arise even when the penalty is set to zero." (red, yellow cleared). dd0.12 (sess
 finish on its own and is not used. Told the author: footnote 27's "only 18 percent of the welfare gain" understates what
 switching the penalty off does in general equilibrium (the gain falls by about 88 per cent, mostly through pi_V); they did
 not ask for it to change.
+
+## 19 October, 01:30 -- the no-escape reform phased in: announced, and with grace years
+
+The author: "assume those with SUD cannot stop using", "whether 100% or 20% can result in decrease in homelessness in
+short run", "Consider HF but with announcement about TF to happen in 5 years. And consider another case in which
+treatment alone is exempted even if there is drug use, but only in the first 5 years". Four fresh workers, each
+code/transition_fix/remote_tr70_CAann.sh <1.00|0.20> <announce|grace> (a copy of remote_tr70_CA20e.sh for a fresh
+container; same arms, same terminal, both prices clearing every year, MAX_LOOPS 6):
+ * announce (patch_announce.py, code/tr70_CAann): the screen OFF in years 1-5 and rule CA from year 6, known from year 1.
+   Two fixes the per-year switch needs: the lottery is zeroed before every rebuild (build_voucher_probabilities never
+   clears the screen's rows, so year 5 would have kept year 6's revocation row beside a stay row of 1), and the
+   own-treatment fix is ungated as the corrected Housing First runs it (tr70_CA gates it on the screen, which was on in
+   every year of the main paths). Seeds: the main path shifted 5 years, Housing First's price and pi_V before.
+ * grace (patch_grace.py, code/tr70_CAgrace): the screen on from year 1; in years 1-5 a household in treatment passes
+   whatever it uses (only one with a SUD can choose treatment); rule CA from year 6. Seeds: the main path unshifted.
+ Both print the year's rule (TRANSITION ANNOUNCE / TRANSITION GRACE) and the launcher kills the run if it is not the one
+ asked for. Results to results/transition_2c_t70_CA{ann,grace}{100,20}; report_tr70_CAann.py gives homelessness and
+ children in a shelter for 25 years against Housing First. Timing: builds and the two arms ~8 hours, then a loop ~a day;
+ the first forward years land about 20-24 hours after launch.
