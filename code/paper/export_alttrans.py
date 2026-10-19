@@ -66,7 +66,8 @@ def run(key, rdir, arms, fallback=None):
 RUNS = {
     'main': run('main', 'transition_2c_t70_Cu', ()),
     'ne100': run('ne100', 'transition_2c_t70_CAc', ('arms',), fallback=('transition_2c_t70_CAb', ('arms',))),
-    'ne20': run('ne20', 'transition_2c_t70_CA20e', ('arms',)),
+    # (19 October, 16:10) the hedge in a fresh container, code/transition_fix/remote_tr70_CAne.sh 0.20, while CA20e has no loop
+    'ne20': run('ne20', 'transition_2c_t70_CA20e', ('arms',), fallback=('transition_2c_t70_CAne20', ('arms',))),
     'ann100': run('ann100', 'transition_2c_t70_CAann100', ('arms',)),
     'ann20': run('ann20', 'transition_2c_t70_CAann20', ('arms',)),
     'gr100': run('gr100', 'transition_2c_t70_CAgrace100', ('arms',)),

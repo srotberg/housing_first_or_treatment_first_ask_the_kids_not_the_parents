@@ -941,3 +941,10 @@ sentences), the table note on yellow cells removed.
 day of the reform" (Section 6's opening); the green note under Table tab:alttrans removed (the author: "remove"; no
 note added for this round's table change); the third alternative "exempt for the first five periods" in the table
 label, its note and the placeholder sentence.
+
+16:15 (19 Oct) A HEDGE FOR THE 0.20 NO-ESCAPE PATH. results/transition_2c_t70_CA20e had been in its backward pass for 14
+hours after its 01:47 restart (status alive every 20 minutes, no forward year), against 8.2 for CAgrace20 (same
+terminal arm, same seeds) and 7.4-10 for the others. code/transition_fix/remote_tr70_CAne.sh (a copy of
+remote_tr70_CAann.sh with no phase-in: tr70_CA from build_tr70_CA.sh, seeds unshifted, no schedule check; a NEW file, so
+the four workers running remote_tr70_CAann.sh are untouched) runs it in a fresh container -> results/
+transition_2c_t70_CAne20. export_alttrans.py reads it for the no-exemption 0.20 row while CA20e has no archived loop.
