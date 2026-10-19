@@ -129,6 +129,21 @@ if os.path.exists(os.path.join(A20T, 'cf.log.gz')):
     out_tr['x_ne20_hchild_pc'] = f"{100 * abs(child_steady(A20T) / child_steady(A20N) - 1):.0f}"
 else:
     out_tr['x_ne20_hchild_pc'] = '--'
+# THE 0.20 RULE'S FIRST YEARS (round r353, the author on "lowers them even along the transition": "Need to fix this").
+# Block 7's ten-year paths at 0.20 (results/revoked_2c_CA20, the screen alone with the drug price and pi_V held at their
+# Housing First levels) raise homelessness too, by less than catching every user does along its transition; the 0.20
+# no-escape transition (results/transition_2c_t70_CA20e) replaces them when it lands
+tf20, hf20 = path(os.path.join(ROOT, 'results', 'revoked_2c_CA20', 'tf10_run.log.gz')), \
+    path(os.path.join(ROOT, 'results', 'revoked_2c_CA20', 'hf10_run.log.gz'))
+T20 = sorted(k for k in tf20 if k in hf20)
+r20 = max(100 * (tf20[k][0] / hf20[k][0] - 1) for k in T20)
+r20c = max(100 * (tf20[k][1] / hf20[k][1] - 1) for k in T20)
+assert r20 > 0 and r20c > 0, 'the 0.20 screen alone no longer raises homelessness: rewrite 6.4 and the third lesson'
+r100, r100c = float(out_tr['x_ne_tr_h_pc']), float(out_tr['x_ne_tr_hchild_pc'])
+out_tr['x_ne20_so_h_pc'] = f'{r20:.0f}'
+out_tr['x_ne20_so_hchild_pc'] = f'{r20c:.0f}'
+out_tr['x_ne20_so_cmp'] = ('though by less' if r20 < r100 - 1 and r20c < r100c - 1 else
+                           'by more' if r20 > r100 + 1 and r20c > r100c + 1 else 'by about as much')
 out.update(out_tr)
 d = json.load(open(OUT))
 d.update(out)

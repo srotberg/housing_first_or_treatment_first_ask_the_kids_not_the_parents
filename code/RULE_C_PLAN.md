@@ -891,3 +891,11 @@ container; same arms, same terminal, both prices clearing every year, MAX_LOOPS 
  asked for. Results to results/transition_2c_t70_CA{ann,grace}{100,20}; report_tr70_CAann.py gives homelessness and
  children in a shelter for 25 years against Housing First. Timing: builds and the two arms ~8 hours, then a loop ~a day;
  the first forward years land about 20-24 hours after launch.
+
+01:10 (19 Oct) ROUND r353 (2 comments; "remove all yellow and red and put updates in red"). Red and yellow cleared (the
+6.4 no-escape paragraph and the third lesson out of \tocheck). Comment 1, "Need to fix this" on "catching 20 percent ...
+lowers them even along the transition": the 0.20 screen-only paths (results/revoked_2c_CA20, price and pi_V held) raise
+homelessness by up to 6 and children in a shelter by up to 4 percent, so the sentence now says the 0.20 rule also raises
+them at first, though by less (x_ne20_so_* and x_ne20_so_cmp in export_noescape.py, the direction against the 1.00
+transition's 14/11); replace with the 0.20 transition (transition_2c_t70_CA20e) when it lands. Comment 2: "They still
+fall" -> "However, they still fall".
