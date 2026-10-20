@@ -1198,7 +1198,7 @@ risk of dying that comes with a SUD reverses the gradient: ..."). The author wil
 writing/ai_check/ holds the paper in four parts and in 15 chunks of at most 2,000 words (chunks_2000/, PDF and text);
 regenerate them if the paper changes before the author uses them. writing/letters/qje_katz.tex is the letter to Katz.
 
-16:50 (20 Oct) ROUND r370 (the author: "remove all red and crossed line. put only updates in red"; one comment). All
+16:35 (20 Oct) ROUND r370 (the author: "remove all red and crossed line. put only updates in red"; one comment). All
 red and every strike from the AI-detector rewrites (passages 1-55) removed; base_r370 frozen with export_alttrans.py
 --freeze and the others. The one update: theta's paragraph opens "The drug's weight in the bundle mostly determines how
 much a household that uses spends on drugs, ..." (was "As the drug's weight in the bundle, it mostly determines"),
