@@ -95,7 +95,8 @@ RUNS = {
     'ann100': run('ann100', 'transition_2c_t70_CAann2_100', ('arms',), fallback=('transition_2c_t70_CAann100', ('arms',))),
     'ann20': run('ann20', 'transition_2c_t70_CAann2_20', ('arms',), fallback=('transition_2c_t70_CAann20', ('arms',))),
     'gr100': run('gr100', 'transition_2c_t70_CAgrace100', ('arms',)),
-    'gr20': run('gr20', 'transition_2c_t70_CAgrace20', ('arms',)),
+    # (20 October, the author: "restart the 20% run") the re-seeded run (remote_tr70_CAgr2.sh) once it lands, else the first
+    'gr20': run('gr20', 'transition_2c_t70_CAgr2_20', ('arms',), fallback=('transition_2c_t70_CAgrace20', ('arms',))),
 }
 
 
