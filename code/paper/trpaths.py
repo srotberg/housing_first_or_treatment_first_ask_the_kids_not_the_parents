@@ -91,3 +91,18 @@ def reform_cohort_cev(loop_dir, null_dir, tf_dir):
     m = re.search(r'THE COHORT BORN AT THE REFORM \(b = 1\): CEV\s+([+-]?\S+)%', r.stdout)
     assert m, f'{loop_dir}: cohort_cev.py printed no reform cohort: {(r.stderr or r.stdout)[-300:]}'
     return float(m.group(1)) - welfare_nok.cev_free(null_dir)
+
+
+def mech_series(f, key='b'):
+    """one quantity of the latest forward pass of a log, period by period: a TRANSITION MECH field (b, lambda_d, p_drug,
+    pi_v, h_1), or 'take_up', the share of households with a SUD in treatment (TRANSITION TREATMENT)"""
+    L = gzip.open(f, 'rt', errors='replace').read().splitlines()
+    start = max([i for i, l in enumerate(L) if 'TRANSITION INIT PARENT SHARE RESTORED' in l] or [0])
+    tag = ' TRANSITION TREATMENT t=' if key == 'take_up' else ' TRANSITION MECH t='
+    out = {}
+    for l in L[start:]:
+        if tag in l:
+            m = re.search(key + r'=\s*(\S+)', l)
+            if m:
+                out[int(l.split('t=')[1].split()[0])] = float(m.group(1))
+    return out

@@ -988,3 +988,14 @@ the way to the implied supply price: at 1.00, 0.994 -> 0.867-0.888). Every 20 mi
 progress.txt: each forward period reached, homelessness and children in a shelter against Housing First, the drug
 distance and pi_V. export_alttrans.py reads the re-seeded runs once they land. The old announced runs keep running.
 The second safeguard (checkpoint the backward pass so a restart resumes the forward pass) is next, for later relaunches.
+
+03:00 (20 Oct) THE PHASED-IN RESULTS IN THE PAPER (the author: "i think you can probably update the paper....the
+exemption for 5 years while in treatment seems pretty good"). Section 6.5 now closes with two generated paragraphs
+(export_alttrans.py, x_at_ann_par and x_at_gr_par, replacing the x_at_results placeholder), and the third lesson takes
+one generated sentence in red and yellow after its yellow paragraph (x_at_lesson): "A temporary exemption keeps that
+rise small: if a household in treatment keeps its voucher, sober or not, for the first five periods, and the screen
+catches one in five users, the share of children in a shelter never rises above its Housing First level and
+homelessness rises by at most 1.5 percent, while newborns still gain." Checked in the logs before writing: the
+announced 1.00 run's drug use is 31 per cent below Housing First in period 1 (at a drug price that is too high), the
+grace-years 0.20 run's treatment take-up is 36 per cent of those with a SUD in periods 1-5 against 25 under Housing First
+(31 after). Numbers from passes that are not yet reasonable print yellow; runs still going print a yellow sentence.

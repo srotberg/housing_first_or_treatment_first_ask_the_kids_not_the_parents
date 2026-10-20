@@ -26,7 +26,7 @@ import json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
-from trpaths import levels, path, child_steady, latest_loop, pass_quality, reform_cohort_cev  # noqa: E402
+from trpaths import levels, path, child_steady, latest_loop, pass_quality, reform_cohort_cev, mech_series  # noqa: E402
 OUT = os.path.join(HERE, 'results_numbers.json')
 TAB = os.path.join(ROOT, 'writing', 'tables', 'tab_alttrans.tex')
 R = os.path.join(ROOT, 'results')
@@ -67,6 +67,13 @@ def run(key, rdir, arms, fallback=None):
                 runs.append([t, t])
         out[k + 'span'] = ', '.join(f'{a}--{b}' if b > a else str(a) for a, b in runs) if runs else 'none'
     out['cev'] = float(d['x_tr_cev_b1_2']) if key == 'main' else reform_cohort_cev(loop, null, tf)
+    # (round r360) what the text cites: drug use and treatment take-up in the first five periods, against Housing First
+    nl = levels(os.path.join(null, 'final.txt'))
+    b, tu = mech_series(os.path.join(loop, 'run.log.gz'), 'b'), mech_series(os.path.join(loop, 'run.log.gz'), 'take_up')
+    out['b1'] = 100 * (b[1] / nl['drug use b'] - 1)
+    out['tu15'] = 100 * sum(tu[t] for t in range(1, 6)) / 5
+    out['tu0'] = 100 * nl['treatment take-up']
+    out['dh'], out['dc'] = dh, dc
     return out
 
 
@@ -119,38 +126,96 @@ tab = r"""\begin{table}[!htb]\centering
 """
 open(TAB, 'w').write(tab)
 
-# THE TWO SENTENCES ON THE PHASED-IN RULES, from the numbers; yellow until both detection rates of a rule are in
-LABEL = {'ann': 'Announcing the screen five periods before it starts',
-         'gr': 'Exempting sobriety while in treatment for the first five periods'}
+# THE PHASED-IN RULES IN THE TEXT (round r360, the author: "update the paper....the exemption for 5 years while in
+# treatment seems pretty good"): one paragraph each, from the numbers; a rate whose run has not landed is said to be
+# running, and a number from a pass that is not yet reasonable prints yellow
+def num(r, x, fmt='.0f'):
+    t = f'{x:{fmt}}'
+    return t if r['ok'] else '\\mbox{\\tocheck{' + t + '}}'
 
 
-def clause(r):
-    if r['hpk'] > ABOVE or r['cpk'] > ABOVE:
-        return (f'raises homelessness by up to ${max(r["hpk"], 0):.0f}$ percent and the share of children in a shelter by '
-                f'up to ${max(r["cpk"], 0):.0f}$ percent')
-    return 'keeps homelessness and the share of children in a shelter from rising above their Housing First levels'
+def below_first(r, k='h'):
+    """the periods from 1 before the path first rises above Housing First"""
+    up = [t for t in sorted(r['d' + k]) if r['d' + k][t] > ABOVE]
+    return (up[0] - 1) if up else None
 
 
-def sentence(m):
-    a, b = RUNS[m + '100'], RUNS[m + '20']
-    if a is None or b is None:
-        return None
-    ca, cb = clause(a), clause(b)
-    s = (f'{LABEL[m]} {ca} at both detection rates' if ca == cb and ca.startswith('keeps') else
-         f'{LABEL[m]} {ca} when the screen catches every user and {cb} when it catches ${PDET}$ percent')
-    v = lambda x: (f'gain ${x:.2f}$' if x >= 0 else f'lose ${-x:.2f}$')
-    if a['cev'] >= 0 and b['cev'] >= 0:
-        s += f', and children born at the reform gain ${a["cev"]:.2f}$ and ${b["cev"]:.2f}$ percent of lifetime consumption, respectively.'
+WORDS = {1: 'period', 2: 'two periods', 3: 'three periods', 4: 'four periods', 5: 'five periods', 6: 'six periods',
+         7: 'seven periods', 8: 'eight periods', 9: 'nine periods', 10: 'ten periods', 11: 'eleven periods',
+         12: 'twelve periods'}
+PENDING = '\\tocheck{{The run catching {} is still in progress.}} '
+
+
+def ann_par():
+    a, b, ne = RUNS['ann100'], RUNS['ann20'], RUNS['ne100']
+    if a is None:
+        return Y('The announced transitions are still running; Table~\\ref{tab:alttrans} adds them as they finish.')
+    s = 'Announcing the screen five periods before it starts '
+    s += ('lowers the rise without removing it. ' if ne is not None and 0 < a['hpk'] < ne['hpk'] else
+          'changes the rise. ')
+    if a['b1'] < -5 and max(a['dh'][t] for t in range(2, 6)) < 0:
+        s += (f'While the screen is only announced, households cut their drug use at once, by ${num(a, -a["b1"])}$ percent in '
+              'the first period when every user will be caught, and homelessness and the share of children in a shelter '
+              'fall below their Housing First levels. ')
+    s += (f'Once it starts revoking vouchers, they rise by up to ${num(a, max(a["hpk"], 0))}$ and '
+          f'${num(a, max(a["cpk"], 0))}$ percent' + (f', against ${ne["hpk"]:.0f}$ and ${ne["cpk"]:.0f}$ percent without the '
+                                                      'announcement' if ne is not None else '') + '. ')
+    if b is None:
+        s += PENDING.format('one in five users')
+    elif b['hpk'] > ABOVE or b['cpk'] > ABOVE:
+        s += (f'When it catches one in five users, they rise by up to ${num(b, max(b["hpk"], 0))}$ and '
+              f'${num(b, max(b["cpk"], 0))}$ percent. ')
     else:
-        s += f'; children born at the reform {v(a["cev"])} and {v(b["cev"])} percent of lifetime consumption, respectively.'
-    return s if a['ok'] and b['ok'] else Y(s)
+        s += 'When it catches one in five users, neither rises above its Housing First level. '
+    s += (f'Children born at the reform gain ${num(a, a["cev"], ".2f")}$ percent of lifetime consumption' +
+          (f' and ${num(b, b["cev"], ".2f")}$ percent, respectively.' if b is not None else '.'))
+    return s
 
 
-S = {m: sentence(m) for m in ('ann', 'gr')}
-if S['ann'] is None and S['gr'] is None:
-    res = Y('The announced transitions and those exempting sobriety while in treatment for the first five periods are still running; Table~\\ref{tab:alttrans} adds them as they finish.')
-else:
-    res = ' '.join(S[m] if S[m] is not None else Y(f'{LABEL[m]}: the transition is still running.') for m in ('ann', 'gr'))
+def gr_par():
+    a, b = RUNS['gr20'], RUNS['gr100']
+    if a is None and b is None:
+        return Y('The transitions with sobriety exempt while in treatment are still running; Table~\\ref{tab:alttrans} '
+                 'adds them as they finish.')
+    r = a if a is not None else b
+    s = ('Exempting sobriety while in treatment for the first five periods lets a household with a SUD keep its voucher '
+         'in those periods by entering treatment, even if it uses drugs, and more of them do: '
+         f'${num(r, r["tu15"])}$ percent of those with a SUD are in treatment, against ${r["tu0"]:.0f}$ percent under '
+         'Housing First. ')
+    if a is not None:
+        k = below_first(a)
+        s += 'When the screen catches one in five users, '
+        if k is None:
+            s += 'homelessness never rises above its Housing First level'
+        else:
+            s += (f'homelessness stays below its Housing First level for the first {WORDS.get(k, str(k) + " periods")} and '
+                  f'rises above it by at most ${num(a, a["hpk"], ".1f")}$ percent after the exemption ends')
+        s += (', and the share of children in a shelter never rises above its Housing First level. ' if a['cpk'] <= ABOVE else
+              f', and the share of children in a shelter by at most ${num(a, a["cpk"], ".1f")}$ percent. ')
+    if b is None:
+        s += PENDING.format('every user')
+    else:
+        s += (f'When every user is caught, homelessness rises by up to ${num(b, max(b["hpk"], 0))}$ percent and the share '
+              f'of children in a shelter by up to ${num(b, max(b["cpk"], 0))}$ percent. ')
+    cevs = [(r_, w) for r_, w in ((a, 'one in five'), (b, 'every')) if r_ is not None]
+    s += 'Children born at the reform gain ' + ' and '.join(f'${num(r_, r_["cev"], ".2f")}$' for r_, _ in cevs) + \
+         ' percent of lifetime consumption' + (', respectively.' if len(cevs) == 2 else '.')
+    return s
+
+
+def lesson():
+    """the sentence the third lesson takes from the exemption at one in five users caught"""
+    a = RUNS['gr20']
+    if a is None:
+        return ''
+    if a['cpk'] <= ABOVE and a['hpk'] < 3:
+        return ('A temporary exemption keeps that rise small: if a household in treatment keeps its voucher, sober or not, '
+                'for the first five periods, and the screen catches one in five users, the share of children in a shelter '
+                f'never rises above its Housing First level and homelessness rises by at most ${a["hpk"]:.1f}$ '   # plain: the paragraph is yellow
+                'percent, while newborns still gain.')
+    return ''
+
+
 # THE NEWBORN'S GAIN UNDER NO EXEMPTION (round r357, the author: "you don't talk about the newborn welfare numbers in
 # that section"): the reform cohort at both detection rates against the main transition's; a number from a run that has
 # not landed, or whose pass is not yet reasonable, prints yellow
@@ -173,7 +238,7 @@ else:
 # (round r357, the author on 'Catching 20 percent of users': "only one in five users")
 _inv = 100 / float(PDET)
 assert abs(_inv - round(_inv)) < 1e-9, PDET
-out = {'x_at_results': res, 'x_at_years_word': {15: 'fifteen'}[YEARS], 'x_at_ne_cev': ne_cev,
+out = {'x_at_results': '', 'x_at_ann_par': ann_par(), 'x_at_gr_par': gr_par(), 'x_at_lesson': lesson(), 'x_at_years_word': {15: 'fifteen'}[YEARS], 'x_at_ne_cev': ne_cev,
        'x_at_pdet_words': 'one in ' + {2: 'two', 4: 'four', 5: 'five', 10: 'ten', 20: 'twenty'}[round(_inv)]}
 d.update(out)
 json.dump(d, open(OUT, 'w'), indent=1, sort_keys=True)
