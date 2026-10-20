@@ -1,0 +1,177 @@
+Productivity. Log productivity follows a persistent process over working life, log yj+1 = ρy log yj + ζj+1 with ζ ∼N(0, σ2
+
+ζ), and is held fixed at its last working value in retirement. Earnings on the job are y ε(j), with y normalised so that it averages one at entry and ε(j) the deterministic age profile. A household’s productivity at entry is its inheritance from its parent, set out in Section 4.8. The spread of productivity at entry combines σζ with a persistent component drawn at entry. A child entering with the penalty of that section has its productivity scaled down for life.
+
+Before-tax income. Before-tax income depends on age and employment,
+
+˜y(j, y, e) =
+
+     
+
+    
+
+y ε(j) j < JR, e = 1 (employed)
+
+ψui min{y ε(j), ¯y} j < JR, e = 2 (insured, first year out of work)
+
+0 j < JR, e = 3 (out of work, uninsured)
+
+S(y) j ≥JR (retired).
+
+(13)
+
+Unemployment insurance (UI) replaces a share ψui of earnings on a base capped at ¯y, and it is paid only to a share pui of those losing their job, mimicking the share of insured separations. After the first year, unemployed households, insured and uninsured alike, receive zero UI (e = 3). Social security S(y) follows the statutory formula.16
+
+16Let ys = min{y, ymax} denote the household’s productivity at its last working age up to the taxable maximum ymax, the ceiling above which earnings no longer raise the benefit. Then social security payments are S(y) = ¯w max
+
+� S, α1 min{ys, k1} + α2 max{0, min{ys, k2} −k1} + α3 max{0, ys −k2}
+
+� , where k1 < k2 are the two bend points, α1 > α2 > α3 the shares replaced below, between and above them, S the Supplemental Security Income (SSI) payment, and ¯w the benchmark’s average labour income. Their values are given in Appendix A.
+
+The SUD and SMI act on whether the household is employed, through the employment transitions below. There is no disability insurance in the model, so SMI brings no income of its own.17
+
+Taxes. Before-tax income is taxed with the Heathcote et al. (2017) function and capital income at a flat rate, so that after-tax income is
+
+yn = min
+
+� ˜y, τℓ˜yφ�
+
++ (1 −τk) r a, (14)
+
+where τℓscales after-tax income and so sets the level of the tax, which falls as τℓrises, and 1 −φ sets its progressivity. The flat tax rate on capital income is τk, and r is the exogenous interest rate on savings.18
+
+Transfers. Food assistance pays the maximum allotment c less the share ϱ of income. The voucher pays a holder that is eligible this period the part of its rent above a tenant contribution of κr of income, up to the fair market rent (FMR),
+
+F = max
+
+� 0, c −ϱ ˆy � ,
+
+Vch = 1{η = 1} 1{ˆy < κV ymed} 1{h̸ = h1} min
+
+� max{0, prh −κrˆy}, max{0, FMR −κrˆy}
+
+� ,
+
+(15)
+
+where ˆy = ˜y + ra is the income both programmes are means-tested on, κV and median income ymed are the eligibility rule in Section 4.9, and FMR is the average rent paid by housed households in the benchmark. A voucher holder in a shelter keeps the voucher and is paid nothing until it rents again, as long as it keeps its eligibility.
+
+Each entering household receives a one-time endowment T0 from bequests left by deceased households, and the government collects the rest of the estates of the dead.
+
+4.4 The budget constraint
+
+The household’s budget constraint is as follows:
+
+c + pvv + a′ = yn + a + T01{j = 1} −pr h 1{h̸ = h1} + Vch + F, c ≥F, v ≥0, a′ ≥0. (16)
+
+Food assistance is paid in kind, so it cannot directly fund the drug, the rent or saving. The drug price is pv, which is endogenous, whereas the rent per unit of housing pr is fixed and held at its benchmark value in every simulation.19 Treatment costs the household utility only; the government pays for it (see Section 4.11).
+
+4.5 Housing and the homelessness loop
+
+Housing is the four-point grid of (10): h1 is literal homelessness, sleeping rough or in an emergency shelter, which is free, and h2 < h3 < h4 are three rental sizes. Homelessness raises mortality (20), worsens both employment margins (21) and lowers the chance of recovering from the SUD (18), but does not affect SMI (Section 4.7).
+
+4.6 Drug use, the SUD, recovery and treatment
+
+A household that does not have the disorder, either d = 0 (never had it) or d = 1 (had it but recovered), acquires it (d = 2) with probability πd if it uses,20
+
+Pr(d′ = 2 | d̸ = 2, v) = πd 1{v > 0}, (17)
+
+17In the data only a minority of adults with SMI receive disability benefits on the basis of a mental disorder: about 3 million, through Social Security Disability Insurance or SSI, against 14.6 million adults with SMI in NSDUH 2023, roughly one in five.
+
+18The minimum keeps the labour income tax from turning negative, since at low incomes τℓ˜yφ exceeds ˜y itself. 19In earlier versions of this work, I solved the model with endogenous labour supply, rents, homeownership and house prices. These margins turned out to have a negligible effect on the results, so for conciseness I removed them and hold the rent fixed.
+
+20In earlier versions of the model, I allowed the probability of developing a SUD to rise with use, but since it had little impact on the results, I removed it for simplicity.
+
+and a household that has recovered can acquire the disorder again. A household may begin using only up to an age JE.21 A household with the SUD recovers, to d = 1, with probability
+
+πr(h, m, τ) = min
+
+� 1, ¯πr � 1{h = h1} µH + 1{h̸ = h1} �� 1{m = 1} µm + 1{m = 0} �
+
+×
+
+� 1{τ = 1} g + 1{τ = 0} �� ,
+
+(18)
+
+where ¯πr is the baseline annual chance of recovering while housed, without SMI and untreated. It has three multipliers: recovery is harder in a shelter (µH < 1), harder with SMI (µm < 1) and more likely in treatment (g > 1).
+
+Treatment τ is a choice, taken at the utility cost ¯τ u in (12), and g is what it buys. Treatment does not stop the household using, and it does not remove the excess mortality of the disorder while the disorder lasts.
+
+4.7 SMI
+
+m is a two-state Markov chain representing SMI, mental illness severe enough to cause substantial functional impairment. It affects a small share of adults, whereas any mental illness affects roughly a quarter of adults and includes mild anxiety. Onset follows an age profile ςm(j), normalised to one at age 26 and scaled by the level ωm, and a household that carries the SUD is ι > 1 times more likely to develop SMI than one that does not,
+
+Pr(m′ = 1 | m = 0, d) = min
+
+� 1, ωm ςm(j) � 1{d = 2} ι + 1{d̸ = 2} �� , Pr(m′ = 0 | m = 1) = λm. (19)
+
+A household with SMI recovers from it with the probability λm each year, whatever its housing and whether or not it carries the SUD.
+
+SMI then affects three objects: the chance of finding a job when unemployed, through (21); mortality, through (20), both in Section 4.8; and the SUD recovery hazard, through µm in (18) in Section 4.6. It does not enter the utility function.
+
+The SMI chain does not depend on housing, because in the At Home / Chez Soi randomised trial, housing had no detectable effect on the symptoms of homeless adults with SMI (Stergiopoulos et al., 2015).
+
+4.8 What the SUD, SMI, and homelessness cost
+
+Death risk. Write 1 −¯ϕ(j) for the probability of dying at age j of a household that is housed and has neither the disorder nor SMI; the three multipliers below raise it for every other household. Write q 0(j, h) = min{1,
+
+� 1{h = h1} κϕH+1{h̸ = h1} � (1−¯ϕ(j))} and q 1(j, h) = min{1, κϕd
+
+� 1{h = h1} κϕH+1{h̸ = h1}
+
+� (1−¯ϕ(j))} for the probability of dying without and with the disorder, respectively. In the stylized model κϕd was an exponent on the survival probability; here it multiplies the death hazard. The probability of dying is then
+
+1 −ϕ(j, h, d, m) = min � 1, � 1{m = 1} κϕm + 1{m = 0} � q 0(j, h) + 1{d = 2}
+
+� q 1(j, h) −q 0(j, h)
+
+�� , (20)
+
+so κϕH > 1 multiplies the death probability when a household is in a shelter, κϕd > 1 when a household has a SUD, and κϕm > 1 the baseline risk when a household has SMI, to which the excess risk of the disorder is added.
+
+21Without this limit, using at old ages has little-to-no consequence: too little life remains for the disorder to damage, so the model produces too much old-age use. The cause is that death is certain at the last age J, so close to it a household knows how little life remains, whereas in real life the vast majority of people do not know exactly when they will die. Its value is in Appendix A. It stops only households without a SUD from starting to use; a household that already has a SUD at that age keeps using.
+
+Unemployment risk. A job is lost with probability πeu and found with probability πue,
+
+πeu(y, h) = min
+
+� 1, ¯πeu ϖ(y) � 1 + 1{h = h1} κH �� ,
+
+πue(h, d′, m′) = min
+
+� 1, ¯πue �
+
+1 −1{h = h1} κH � � 1{d′ = 2} κue d + 1{d′̸ = 2}
+
+�� 1{m′ = 1} κue m + 1{m′ = 0}
+
+� � ,
+
+(21)
+
+with ¯πeu and ¯πue the baseline separation and job-finding rates, ϖ(y) a factor that makes separations likelier at low productivity, and the divisors κue
+
+d and κue
+
+m making a job harder to find with the SUD and with SMI. Neither the SUD nor SMI raises separations; each only reduces the chance of regaining employment. κH does both for a household in a shelter.
+
+The child’s productivity penalty. A child whose parent had the disorder at any point while the child lived at home, before JK or before the parent died if that came first, starts adult life with its productivity lowered by the proportion δd in (22) below, and the penalty stays with the child for life.
+
+A child’s log productivity at entry is drawn around its parent’s, with persistence ρ. The innovation keeps the spread of productivity at entry the same in every generation. If the parent had the disorder at any point before the child became an adult, the penalty scales the child’s productivity down for life:
+
+log ychild
+
+1 = ρ log yparent + (1 −ρ) µ + ϵ
+
++ log(1 −δd) 1{parent has d ≥1 when its child becomes an adult}, (22)
+
+with ychild
+
+1 the child’s productivity in the period it becomes an adult in the workforce (j = 1), yparent the parent’s productivity in the period just before its child becomes an adult, µ the mean of log productivity at entry and ϵ normally distributed with mean zero and variance 1 −ρ2 times the variance of log productivity at entry. Because the penalised child’s own productivity is lower, its own child inherits a lower draw too, so, through the persistence, the penalty ripples through the whole lineage.
+
+4.9 The voucher and the two policies
+
+A household is eligible for a voucher while its income is below the share κV of median income,
+
+ˆy < κV ymed, (23)

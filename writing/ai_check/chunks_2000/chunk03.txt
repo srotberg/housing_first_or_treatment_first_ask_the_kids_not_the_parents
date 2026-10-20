@@ -1,0 +1,113 @@
+4The paper does not focus on the disamenity that homelessness may impose on the rest of the population. In a contingent valuation, Loubi`ere et al. (2020) find that Europeans would pay about 0.2 percent of average earnings a year to end homelessness. I also solved the model with a disamenity of that kind, and it barely changes the results. The welfare numbers in the paper leave it out; with it, at that value, no long-run gain in Table 5 moves by more than 0.14 percentage points.
+
+5Welfare gains from Treatment First decrease but continue to arise even when the penalty is set to zero.
+
+homelessness, and does not raise them even in the short run (Section 6.4), adding such a penalty would only strengthen the case for Treatment First.
+
+Parental altruism towards children. How much of these costs a parent counts depends on the weight it puts on its child. Altonji et al. (1997) reject perfect altruism: when a dollar moves from a grown child to its parent, the parent gives back at most thirteen cents of it. In the model a parent and its grown child do not transfer to each other, so that test cannot be run in it. Instead, the weight is set by behaviour. In the 2024 National Survey on Drug Use and Health (NSDUH), unmarried adults living with one other adult and no child are 17.5 percent more likely to use drugs than lone parents of the same age, sex and family income who have one child. The weight is the one at which removing a parent’s concern for its child raises drug use in the model by as much (Section 5). The externality is then the share of what its choices cost the child that the parent leaves out: one minus that weight.
+
+That a drug user has children it affects is supported by the data. Drug users are nearly as likely as others to be parents: in the National Survey of Family Growth 2017–2019, 75 percent of adults aged 40 to 49 who used hard drugs in the past year had a child, against 81 percent of those who used none. They are only somewhat less likely to live with it.6 Among adults aged 26 to 49, 40 percent of those with a drug use disorder have a child under 18 at home, against 48 percent of comparable adults who used no illicit drug. That gap is too small to matter: even if all of the gain from Treatment First that comes in childhood shrank in proportion to it, the gain would be only 11 percent smaller.7
+
+The hazards and the drug market. Each of the model’s hazards is anchored on, or checked against, a clinical or epidemiological estimate: the excess mortality of a SUD, of homelessness and of SMI (Plana-Ripoll et al., 2019; Heiberg et al., 2018; Meyer et al., 2023; Olfson et al., 2015), the onset of SMI and relapse under dual diagnosis (Nielsen et al., 2017; Bradizza et al., 2006), recovery (Vaillant, 1995; Milby et al., 2005), and the employment cost of losing housing (Desmond and Gershenson, 2016). Section 5 takes them one at a time. Making the drug price endogenous lets a policy that changes the number of users change what using costs everybody else. The model’s demand elasticities are not calibrated and are compared with the estimates of Saffer and Chaloupka (1999), Grossman and Chaloupka (1998) and Olmstead et al. (2015) in Section 5.2; its supply elasticity is set from Mace et al. (2020) in Section 5.
+
+3 A stylized model
+
+In the data, fewer than one in ten adults have a SUD, mild included, which is what this paper counts as use, and their use is concentrated among people with low incomes: the average user’s income is 0.74 of the population average in the 2024 NSDUH. This section shows how both facts can be explained inside a simple economic model of drug use. There are two key ideas. Drugs are a luxury good, so most households consume none of them. And a SUD carries a risk of dying that cannot be insured against, a loss that grows with income, which deters high-income households and not low-income ones and so reverses the income gradient in drug use.
+
+3.1 The model
+
+There are two periods, adulthood and old age, and a continuum of households. A period stands for thirty years of adult life, so the two of them span ages twenty-six to eighty-five. Parameters with a natural annual counterpart are compounded to that length: the discount factor is β per period and ¯ϕ is survival over thirty years.
+
+6Users who have a child are less likely to live with it, partly because the state removes children: parental drug abuse is recorded in more than a third of removals into foster care (AFCARS, FY2017), and foster care is itself a very poor environment for a child.
+
+7The model likely overstates childhood homelessness, since every homeless parent in the model takes its child into the shelter. The overstatement comes from fathers: a homeless mother’s child usually goes with her, but shelters for adult males do not take children, so a homeless father’s child usually stays with its mother or other relatives, and some children are taken into foster care.
+
+A household is characterised by its productivity y, fixed over its life and lognormally distributed across households, log y ∼N(−1
+
+2σ2 y, σ2
+
+y), normalised so that its mean is one. Everyone works in the first period. In the second, a household is out of work with probability u0, or u1 > u0 if it has a SUD. With e = 1 for a household that works and e = 0 for one that does not, a household’s earnings are y e: households out of work earn nothing, and there is no unemployment insurance. What a household can do is save, at zero interest, in the first period; it cannot borrow.
+
+The one transfer is food assistance, paid on each period’s earnings as
+
+F(y e) = max{0, ¯c −ϱ y e}, (1)
+
+where ¯c is the maximum benefit and ϱ the share of earnings by which it is reduced. Food assistance is in the model for one reason. To show the income reversal, Section 3.3 needs to solve the model with saving switched off. A household out of work would then have nothing to consume, which with σ > 1 leaves its problem undefined; food assistance bounds its consumption from below.
+
+Consumption c and drug consumption v form the bundle
+
+X(c, v) = c1−θ(b + v)θ, (2)
+
+and flow utility is
+
+u(c, v) = U
+
+� X(c, v)
+
+� + ℵ, U(X) = X1−σ
+
+1 −σ . (3)
+
+The weight on the drug θ is its share of the whole, and σ is the coefficient of relative risk aversion.8 Drugs can be bought only in the first period, at the price pv. The pair (θ, b) governs the drug term: the marginal utility of the vth unit is proportional to θ/(b+v), so θ mostly sets how much a user uses and b whether anyone uses at all. The Stone-Geary form keeps the first unit’s marginal utility finite, which is what generates non-users: without the shifter b, every household uses whatever the consequences. Finally ℵis the flow value of being alive, the utility of surviving into a period over and above what is consumed in it, which gives mortality a cost that does not vanish even when consumption is low.
+
+Using drugs carries the risk of a SUD (d = 1 if a household has one and d = 0 if not), the same whatever the quantity,
+
+π(v) = πd 1{v > 0}. (4)
+
+The whole risk therefore sits on the decision to use at all, not on how much a user uses.9 Every household enters the first period without a SUD. The SUD is realised at the end of it, and the household survives into the second with probability
+
+ϕ(0) = ¯ϕ, ϕ(1) = ¯ϕ κϕd, (5)
+
+where a SUD lowers the probability of surviving the period by raising it to the power κϕd > 1. The second period is the last and has no drug-use decision, so to a household with savings a and SUD status d it is worth
+
+W(a, y, d) = (1 −ud) U
+
+� X(y + a + F(y), 0)
+
+� + ud U
+
+� X(a + ¯c, 0)
+
+� + ℵ. (6)
+
+In the first period, a household that does not use chooses its saving to maximise its lifetime utility,
+
+V 0(y) = max
+
+{a≥0}
+
+� U
+
+� X(y −a + F(y), 0)
+
+� + ℵ+ β ¯ϕ W(a, y, 0)
+
+� , (7)
+
+and one that uses chooses its saving and its drug consumption to maximise it,
+
+V 1(y) = max {a≥0, v>0}
+
+� U
+
+� X(y −a+F(y)−pvv, v)
+
+� +ℵ+β
+
+� (1−πd) ¯ϕ W(a, y, 0)+πd ¯ϕ κϕd W(a, y, 1)
+
+�� . (8)
+
+It uses if V 1(y) > V 0(y). A SUD reaches the second period through two channels: the mortality channel, which lowers the chance of living it, and the unemployment channel, which raises the chance of living it unemployed.10
+
+8All the qualitative results of this section hold with log utility as well, with the model recalibrated to the same targets. 9The results hold even when I let that probability rise with use. 10The results in Section 3.3 also hold in a version of this model with housing, a shelter, unemployment insurance and housing vouchers. There, if a SUD has no consequences, the average user earns 3.54 times the population average; the risk of dying, on its own, takes this to 0.52 at twice its calibrated strength, while the risk of losing one’s job, on its own, leaves it at 3.54. With saving switched off in that version, the risk of losing one’s job, on its own, takes it to 0.56.
+
+3.2 Calibration
+
+Table 1 lists what is set outside the model and Table 2 what is fitted inside it, where the five parameters are fitted jointly and each moment is matched exactly. Every target is documented in full in the replication package’s data appendix, data/DATA APPENDIX.md, which names the dataset behind each one, its year and universe, and the computation that turns it into the number quoted here. What follows gives the moment and its source; the appendix gives the arithmetic.
+
+3.2.1 External calibration
+
+Preferences and demographics are conventional: the discount factor over a thirty-year period is β = 0.86, which is 0.995 a year compounded,11 and risk aversion is σ = 2, as in the quantitative model. Survival over a period, the cumulative chance of surviving from age twenty-six to age fifty-five, is ¯ϕ = 0.93, from the life table for the total population of the United States in 2010 (Arias, 2014). The chance that use causes a SUD, πd = 0.41, is set so that the ratio of the SUD rate to participation matches the data in the 2024 NSDUH, 3.68 against 8.90 percent of adults aged 26 and over. The dispersion of log productivity σy is set so that the poorer half of the lognormal holds 17.2 percent of total income, the share of earnings held by the poorer half of households aged 26 to 65 with positive wage and salary income in the 2022 Survey of Consumer Finances (SCF). In the second period, a household without a SUD is out of work with probability u0, 4.9 percent, the average unemployment rate from 2014 to 2024, and one with a SUD with probability u1, 16.2 percent, the unemployment rate of adults aged 26 and over with a SUD in the 2024 NSDUH. Food assistance tapers at ϱ = 0.30, the benefit reduction rate of the Supplemental Nutrition Assistance Program (SNAP), and the price of a unit of drugs pv is normalised to one.
+
+3.2.2 Internal calibration
