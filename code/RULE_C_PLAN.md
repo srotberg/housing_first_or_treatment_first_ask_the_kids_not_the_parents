@@ -965,3 +965,17 @@ loop 0 in x_ne_tr_* (export_noescape.py: x_ne_tr_h_yrs 14 -> 15, the rest unchan
 (x_at_ne_cev 7.27 -> 6.74). CAgrace20 (grace years at 0.20; loop 0): homelessness below Housing First in periods 2-8
 (to -3.9 in period 6), +0.7 to +1.5 in periods 9-15 (peak period 11), below after; children in a shelter never above;
 reform cohort +3.14; drug distances 0.005-0.037, budget 0.55 per cent.
+
+02:30 (20 Oct) THE MAIN TRANSITION RE-PINNED TO RULE C T = 70 LOOP 1 (results/transition_2c_t70_Cu/loop1, archived 01:57;
+the binary's loop 0 after the 01:50 relaunch on 19 October, one forward pass; staged at code/trtf70/tr2c_t70_Cu_loop1).
+REASONABLE: worst budget residual 1.21e-2 (0.21 per cent), drug market inside 5e-3 in every year (worst 3.84e-3).
+Moved in the text (red): the reform cohort's CEV 1.50 -> 1.45 (x_tr_cev_b1_2, also the main row of Table 7), adults
+alive worse off 8 -> 11 and those with a SUD better off 34 -> 33, the first-year share of the fall in use 80 -> 81,
+children in a shelter 0.99 -> 1.00 by year 10 and 0.92 -> 0.93 by year 69, homelessness 0.55 -> 0.56 by year 69,
+parents using 13.59 -> 13.57 and above the long run until year 12 (11), pi_V in the first decade 6.78-6.95 ->
+6.55-6.90, the price above its long run 34 -> 33 years, nine tenths of the SUD fall by year 27 (26), panel (h)'s
+worse-off range 2-8 -> 2-11. ONE SENTENCE NO LONGER HELD: "Third, pi_V stays above its Housing First level of 6.75
+percent throughout" -- loop 1's pi_V is 6.55, 6.64, 6.73 in years 1-3. It is now generated (x_trf_piv_reason,
+transition_figure.py): "Third, after the first three years, when it is as low as 6.55 percent, pi_V stays above its
+Housing First level of 6.75 percent, ...". Homelessness and children in a shelter still never rise (year 1 -0.001 per
+cent, then falling), so "Neither rises at any point" and the introduction's claim stand.

@@ -53,12 +53,19 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 # (results/transition_2c_t70_Cu/arm_{null,tf}: cf.log.gz, final.txt), the terminal one 1.2e-4 from the accepted
 # rule-C arm. Stage the log on a fresh machine with:
 #   mkdir -p code/trtf70/tr2c_t70_Cu_loop0 && zcat results/transition_2c_t70_Cu/loop0/run.log.gz > code/trtf70/tr2c_t70_Cu_loop0/run.log
-LOG = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_Cu_loop0', 'run.log')
-TAG = 'tr2c_t70_Cu_loop0'
+# 20 October, 02:10: loop 1 of the same run (results/transition_2c_t70_Cu/loop1; the binary's loop 0 after the 01:50
+# relaunch on 19 October, from loop 0's saved paths, so its log carries one forward pass). REASONABLE in the author's
+# sense (18 October: "it's enough if they are reasonable"): the worst budget residual on the path is 1.21e-2 (0.21 per
+# cent of net revenue, loop 0: 1.80e-2) and the drug market is inside 5e-3 in every year (worst 3.84e-3, loop 0: 5.98e-3).
+# Stage the log with:
+#   mkdir -p code/trtf70/tr2c_t70_Cu_loop1 && zcat results/transition_2c_t70_Cu/loop1/run.log.gz > code/trtf70/tr2c_t70_Cu_loop1/run.log
+# Previous pin: loop 0, above.
+LOG = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_Cu_loop1', 'run.log')
+TAG = 'tr2c_t70_Cu_loop1'
 HORIZON = 70
 UNCONVERGED_FROM = 60
 OUT = os.path.join(ROOT, 'results', 'transition', TAG)
-CURVE = os.path.join(ROOT, 'results', 'transition_2c_t70_Cu', 'loop0', 'welfare_curvebaseline_benchmark.dat')
+CURVE = os.path.join(ROOT, 'results', 'transition_2c_t70_Cu', 'loop1', 'welfare_curvebaseline_benchmark.dat')
 # (18 October, the author: "in some places you write 2.57 and here you wrote 2.59") the long run the path is compared
 # with is the paper's main arm, as at T = 50: the run's own re-solved terminal arm gives a newborn 2.59 against the main
 # arm's 2.57. code/trtf70/ref (untracked symlinks, as code/trtf50/ref): arm_{null,tf}/cf.log.gz ->

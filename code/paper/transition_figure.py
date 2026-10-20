@@ -248,6 +248,22 @@ def names(S, C, R):
     out['x_trf_piv_lr'] = f"{100 * tf['pi_v']:.2f}"
     out['x_trf_piv0'] = f"{100 * hf['pi_v']:.2f}"
     out['x_trf_piv_above_hf'] = '1' if min(_pv) > hf['pi_v'] else '0'
+    # (20 October, re-pinned to loop 1: pi_V is 6.55, 6.64 and 6.73 per cent in years 1-3, below Housing First's 6.75, as
+    # the early treatment spending outruns the savings; loop 0's stayed above throughout) the third reason homelessness
+    # does not rise, from the path, so it turns with it
+    _below = [t + 1 for t, v in enumerate(_pv) if v < hf['pi_v']]
+    _piv0 = f"{100 * hf['pi_v']:.2f}"
+    _nw = {1: 'year', 2: 'two years', 3: 'three years', 4: 'four years', 5: 'five years', 6: 'six years'}
+    if not _below:
+        out['x_trf_piv_reason'] = (f'Third, $\\pi_V$ stays above its Housing First level of ${_piv0}$ percent throughout, so the '
+                                   'vouchers the screen frees go to other low-income households.')
+    elif _below == list(range(1, len(_below) + 1)) and len(_below) in _nw:
+        out['x_trf_piv_reason'] = (f'Third, after the first {_nw[len(_below)]}, when it is as low as '
+                                   f'${100 * min(_pv[:len(_below)]):.2f}$ percent, $\\pi_V$ stays above its Housing First level '
+                                   f'of ${_piv0}$ percent, so the vouchers the screen frees go to other low-income households.')
+    else:
+        out['x_trf_piv_reason'] = (f'Third, $\\pi_V$ is above its Housing First level of ${_piv0}$ percent in all but '
+                                   f'{len(_below)} years, so the vouchers the screen frees go to other low-income households.')
     out['x_trf_sud10'] = f'{100 * lam[9]:.2f}'
     out['x_trf_sud0'] = f"{100 * hf['lambda_d']:.2f}"
     out['x_trf_sud_lr'] = f"{100 * tf['lambda_d']:.2f}"
