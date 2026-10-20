@@ -1168,3 +1168,12 @@ results/transition_2c_t70_Cfix/better_off_t1.txt and the status as soon as it ap
 disk allows, through code/transition_fix/build_tr70_C2ck.sh (new: patch_ckpt.py on the plain rule-C build's own tr.f90,
 59 lines added, none changed, syntax-checked locally), ON if free disk >= 6 + 4 + 4 GB, and a relaunch reseeds from the
 staged flat paths.
+
+13:45 (20 Oct) ROUND r366 (4 comments). Red cleared (base_r366). Abstract: "micro evidence of randomised controlled
+trials" (the author's "randomized", in the paper's British spelling; 148 words). Second lesson: "with the drug price and
+pi_V held, as in a trial, which is too small to move either," (the author: "add here that those are held because this
+is the consistent check compared to the trials that are done on small number of people") and "and even once both
+clear, 67 percent are" (the author: "and even still"); the introduction's matching sentence was not commented and is
+unchanged. Table 7 (the author on the two-line third label: "is there a way to make it clear that this text is for both
+rows?"): each alternative's name is now a line of its own across the table (\multicolumn{7}{@{}l}), its two detection
+rates below it, for all three alternatives so the table has one layout; layout only, no red.

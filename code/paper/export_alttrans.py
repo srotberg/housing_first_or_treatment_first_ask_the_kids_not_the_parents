@@ -114,15 +114,17 @@ def cells(r):
     return c if r['ok'] or not YELLOW_PROVISIONAL else [Y(x) for x in c]
 
 
-ROWS = [('Main transition', PDET, 'main'),
-        ('No exemption', '100', 'ne100'), ('', PDET, 'ne20'),
-        ('Announced five periods ahead', '100', 'ann100'), ('', PDET, 'ann20'),
-        ('Sobriety while in treatment', '100', 'gr100'), ('exempt for the first five periods', PDET, 'gr20')]
-body = []
-for i, (lab, det, k) in enumerate(ROWS):
-    if i in (1, 3, 5):
-        body.append('\\addlinespace')
-    body.append(' & '.join([lab, det] + cells(RUNS[k])) + ' \\\\')
+# (round r366, the author on the third label: "is there a way to make it clear that this text is for both rows?") each
+# alternative's name is a line of its own across the table, with its two detection rates below it
+GROUPS = [('No exemption', [('100', 'ne100'), (PDET, 'ne20')]),
+          ('Announced five periods ahead', [('100', 'ann100'), (PDET, 'ann20')]),
+          ('Sobriety while in treatment exempt for the first five periods', [('100', 'gr100'), (PDET, 'gr20')])]
+body = [' & '.join(['Main transition', PDET] + cells(RUNS['main'])) + ' \\\\']
+for lab, rows in GROUPS:
+    body.append('\\addlinespace')
+    body.append('\\multicolumn{7}{@{}l}{' + lab + '} \\\\')
+    for det, k in rows:
+        body.append(' & '.join(['', det] + cells(RUNS[k])) + ' \\\\')
 tab = r"""\begin{table}[!htb]\centering
 \caption{The first years of the alternative transitions}\label{tab:alttrans}
 \begingroup\small
