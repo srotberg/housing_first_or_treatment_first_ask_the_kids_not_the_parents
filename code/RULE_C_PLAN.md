@@ -999,3 +999,17 @@ homelessness rises by at most 1.5 percent, while newborns still gain." Checked i
 announced 1.00 run's drug use is 31 per cent below Housing First in period 1 (at a drug price that is too high), the
 grace-years 0.20 run's treatment take-up is 36 per cent of those with a SUD in periods 1-5 against 25 under Housing First
 (31 after). Numbers from passes that are not yet reasonable print yellow; runs still going print a yellow sentence.
+
+03:00 (20 Oct) THE SECOND SAFEGUARD, BUILT, FOR THE NEXT RELAUNCH. The forward pass already writes the price and pi_V
+paths every period (a relaunch starts from the latest paths); what a restart loses is the loop's backward pass (8-15
+hours). code/transition_fix/patch_ckpt.py saves VF_CHECKPOINT.bin after each backward pass (the value-function path of
+both tenures and the five paths it was solved under, sizes and a checksum, via a temporary file and a rename), restores
+it at a relaunch's first loop and skips the backward pass (the forward pass re-solves each period's policies from the
+value functions, as the source already relies on), and deletes it at each loop's end; prints TRANSITION CHECKPOINT
+... restored= / SAVED / CLEARED. code/transition_fix/build_tr70_ckpt.sh [OUT] [LAG] [none|announce|grace] builds it on
+top of the mode's source (default OUT code/tr70_CAck_<mode>); compiled -O0 locally without errors, all three modes pass
+their guards. NOT IN THE RUNNING BINARIES (their launchers built before it; their scripts must not change under them).
+To use it in a relaunch: copy the launcher, build with build_tr70_ckpt.sh instead of build_tr70_CAann.sh/build_tr70_CA.sh,
+and before starting the binary after a killed run delete VF_CHECKPOINT.bin if the killed log ends in CHECKPOINT CORRUPT.
+The run directory needs about 1 GB free for the file. First use: confirm 'restored= 1' and that the forward pass's first
+period matches the killed log's.
