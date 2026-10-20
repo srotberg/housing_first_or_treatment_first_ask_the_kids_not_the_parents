@@ -36,6 +36,8 @@ YEARS, ABOVE = 15, 0.05         # the window of "the first years", and what coun
 #                                 x_ne_tr_*_yrs count any year above; 0.05, not 0, from round r359: the announced path's
 #                                 period 1 is +0.02 per cent, Housing First's own numerical noise, and read as above it)
 Y = lambda s: '\\tocheck{' + s + '}'
+WINDOW_100 = 25                 # the periods a 1.00 row is judged on (the reform cohort's childhood)
+PREV = os.path.join(HERE, 'tab_alttrans_prev.json')   # the note as the author last read it (--freeze moves it)
 
 
 def run(key, rdir, arms, fallback=None):
@@ -53,7 +55,10 @@ def run(key, rdir, arms, fallback=None):
     dc = {t: 100 * (c / c0 - 1) for t, (h, c) in p.items()}
     first = [t for t in sorted(p) if t <= YEARS]
     assert len(first) == YEARS, f'{loop}: only {len(first)} of the first {YEARS} years'
-    bud, drug = pass_quality(os.path.join(loop, 'run.log.gz'))
+    # (20 October, the author: "keep the 100% rows with a note") at 1.00 the long run has no clearing drug price (16
+    # October: drug use jumps between -56 and -63 per cent near 0.80), so the path's last periods sit 8-10 per cent off
+    # whatever the loops do; those rows are judged on the periods Table 7 and the reform cohort's childhood use
+    bud, drug = pass_quality(os.path.join(loop, 'run.log.gz'), last=WINDOW_100 if key.endswith('100') else None)
     out = dict(src=os.path.relpath(loop, ROOT), ok=bud <= 6e-3 and drug <= 3, bud=bud, drug=drug)
     for k, x in (('h', dh), ('c', dc)):
         t_pk = max(first, key=lambda t: x[t])
@@ -124,10 +129,19 @@ tab = r"""\begin{table}[!htb]\centering
 \bottomrule
 \end{tabular}}
 \usebox{\ntbox}
-\tabnote{Notes: Each row is a transition from the Housing First benchmark to Treatment First with the drug price and $\pi_V$ clearing every period, against Housing First's steady state. Main transition: Section~\ref{sec:ftrans}, where a household with a SUD keeps its voucher by entering treatment and not using. In the other rows it cannot stop using, and the disorder fails the screen even in treatment: from the reform (no exemption), from period six with Housing First until then (announced five periods ahead), or from period six with treatment alone passing it until then (sobriety while in treatment exempt for the first five periods). $p_{\mathrm{det}}$ is the detection rate, in percent. Largest rise: the largest percent increase over the first """ + {15: 'fifteen'}[YEARS] + r""" periods, with its period in brackets. Periods above: the periods in which it is above Housing First. Children in a shelter is the homelessness of households aged 26 to 50. Newborn's gain: the CEV of children born at the reform, percent of lifetime consumption.}
+\tabnote{Notes: Each row is a transition from the Housing First benchmark to Treatment First with the drug price and $\pi_V$ clearing every period, against Housing First's steady state. Main transition: Section~\ref{sec:ftrans}, where a household with a SUD keeps its voucher by entering treatment and not using. In the other rows it cannot stop using, and the disorder fails the screen even in treatment: from the reform (no exemption), from period six with Housing First until then (announced five periods ahead), or from period six with treatment alone passing it until then (sobriety while in treatment exempt for the first five periods). $p_{\mathrm{det}}$ is the detection rate, in percent. Largest rise: the largest percent increase over the first """ + {15: 'fifteen'}[YEARS] + r""" periods, with its period in brackets. Periods above: the periods in which it is above Housing First. Children in a shelter is the homelessness of households aged 26 to 50. Newborn's gain: the CEV of children born at the reform, percent of lifetime consumption. When every user is caught, no drug price clears the long-run drug market, because drug use jumps as the price moves through the level that would clear it; those transitions end at the long-run solution that comes closest.}
 \endgroup
 \end{table}
 """
+# RED MARKS WHAT MOVED in the note (round r363): a sentence not in the frozen baseline is \\textcolor{red} (as the
+# calibration tables, never \\new, which breaks a table cell); --freeze makes the current note the baseline
+import re as _re
+_m = _re.search(r'\\tabnote\{(.*)\}\n\\endgroup', tab, _re.S)
+_sents = [x for x in _re.split(r'(?<=\.) (?=[A-Z$\\])', _m.group(1)) if x]
+if '--freeze' in sys.argv:
+    json.dump({'note_sentences': _sents}, open(PREV, 'w'), indent=1)
+_prev = set(json.load(open(PREV))['note_sentences']) if os.path.exists(PREV) else set(_sents)
+tab = tab[:_m.start(1)] + ' '.join(x if x in _prev else '\\textcolor{red}{' + x + '}' for x in _sents) + tab[_m.end(1):]
 open(TAB, 'w').write(tab)
 
 # THE PHASED-IN RULES IN THE TEXT (round r360, the author: "update the paper....the exemption for 5 years while in

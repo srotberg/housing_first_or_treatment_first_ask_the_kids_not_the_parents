@@ -57,9 +57,10 @@ def latest_loop(run_dir):
     return os.path.join(run_dir, loops[-1]) if loops else None
 
 
-def pass_quality(f, target=5.8371628):
+def pass_quality(f, target=5.8371628, last=None):
     """the latest complete forward pass of a log: the worst budget residual after year 1 as a share of net revenue,
-    and the number of years whose drug market sits further than 5e-3 from clearing (0 where the price is held)"""
+    and the number of years whose drug market sits further than 5e-3 from clearing (0 where the price is held); with
+    last, only the years up to it"""
     L = gzip.open(f, 'rt', errors='replace').read().splitlines()
     saved = [i for i, l in enumerate(L) if 'TRANSITION PATHS SAVED after loop' in l]
     end = saved[-1] if saved else len(L)
@@ -67,10 +68,10 @@ def pass_quality(f, target=5.8371628):
     bud, drug = 0.0, 0
     for l in L[start:end]:
         m = re.search(r'TRANSITION BUDGET loop=\s*\d+\s+t=\s*(\d+).*residual=\s*(\S+)', l)
-        if m and int(m.group(1)) > 1:
+        if m and int(m.group(1)) > 1 and (last is None or int(m.group(1)) <= last):
             bud = max(bud, abs(float(m.group(2))) / target)
-        m = re.search(r'TRANSITION DRUG t=\s*\d+\s+distance=\s*(\S+)', l)
-        if m and abs(float(m.group(1))) > 5e-3:
+        m = re.search(r'TRANSITION DRUG t=\s*(\d+)\s+distance=\s*(\S+)', l)
+        if m and abs(float(m.group(2))) > 5e-3 and (last is None or int(m.group(1)) <= last):
             drug += 1
     return bud, drug
 

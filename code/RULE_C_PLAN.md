@@ -1091,3 +1091,14 @@ trials find for the households they follow; counting those deterred from using, 
 verdict" (146 words); the introduction's paragraph names the three comparisons with their generated numbers; the second
 lesson's first sentence likewise, and "Those with a SUD do lose from sobriety conditions, in the data and in the model"
 is deleted (no trial measures it), with "Trials, however," -> "They". Red.
+
+04:35 (20 Oct) TABLE 7 KEEPS THE 1.00 ROWS, WITH A NOTE (the author: "keep the 100% rows with a note, and restart the
+20% run"). The note adds (red): "When every user is caught, no drug price clears the long-run drug market, because drug
+use jumps as the price moves through the level that would clear it; those transitions end at the long-run solution that
+comes closest." A 1.00 row is now judged on periods 1-25 only (WINDOW_100 in export_alttrans.py, trpaths.pass_quality's
+last=): budget within 0.6 per cent and the drug market within 5e-3 in all but three of them. None passes yet (CAc 0.62
+per cent and 21 periods off, CAann100 0.36 and 25, CAgrace100 0.91 and 22). THE NOTE'S RED: export_alttrans.py compares
+the note sentence by sentence with code/paper/tab_alttrans_prev.json and prints a new one in \textcolor{red}; at the
+next red strip run `python3 code/paper/export_alttrans.py --freeze` with calib_tables.py --freeze and export_longrun.py
+--freeze, or the sentence stays red. The 20% exemption restart is being prepared in a background agent
+(remote_tr70_CAgr2.sh, reseed_path.py).
