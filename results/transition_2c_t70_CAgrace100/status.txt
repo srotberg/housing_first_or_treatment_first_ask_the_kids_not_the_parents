@@ -1,21 +1,10 @@
-# the T = 70 transition on RULE CA at detection 1.00, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 20 Oct 03:36 UTC
-remote_tr70_CAann 1.00 grace: free disk 22G, memory 15 GiB, cores 4 (01:43)
-remote_tr70_CAann 1.00 grace: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (01:43)
-remote_tr70_CAann 1.00 grace: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_pdet100_CAbest/tf/final.txt): price 0.80170000, pi_V 0.102400000 (01:43)
-remote_tr70_CAann 1.00 grace: arm tf on cf_fix2_treatCA: PDET=1.00 NET_TARGET=5.8371628 PV_START=0.102400000 DRUG_PRICE_START=0.80170000 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100 (01:43)
-remote_tr70_CAann 1.00 grace: long-run rule-C arm ACCEPTED: remote_pdet tf_pdet100_CAbest: arm tf ACCEPTED (by the author's decision, not by the tolerances): tf_pdet100_CAuC pass 7 (03:53)
-remote_tr70_CAann 1.00 grace: terminal arm (started early) within 1 of the accepted arm: worst relative difference 1.747e-01 (06:28)
-remote_tr70_CAann 1.00 grace: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 7.2e-05; tf against the accepted long-run CA arm 1.747e-01 (06:28)
-remote_tr70_CAann 1.00 grace: shares written:   all households                   mass 50.82512  strict better 0.8371 | tol 0.001: better 0.7643 worse 0.0278 | tol 0.01: better 0.7489 worse 0.0278 (06:29)
-remote_tr70_CAann 1.00 grace: age split: 2 of 2 arms exact (06:30)
-remote_tr70_CAann 1.00 grace: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t70_CAgrace100 -- start with: cd /home/user/children_first_housing_later/code/tr2c_t70_CAgrace100 && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds rescaled from rule C's T = 50 loop3 (x0 0.99941714 0.067533863): drug_price: factor 3.6946; t=1 0.874341, t=2 0.882675, t=5 0.882684, t=10 0.874202, t=25 0.815926, t=49 0.801700, t=69 0.801700 pi_v: factor 4.8402; t=1 0.077097, t=2 0.068868, t=5 0.071820, t=10 0.075576, t=25 0.093586, t=49 0.108960, t=69 0.108960  (06:30)
-remote_tr70_CAann 1.00 grace: grace seeds: Housing First for years 1-0, then the main path from results/transition_2c_t70_CAb/loop0 shifted 0 years: drug_price: t=1 0.874332, t=2 0.882665, t=10 0.874194, t=25 0.815924, t=49 0.801700, t=69 0.801700 pi_v: t=1 0.077731, t=2 0.069421, t=10 0.074356, t=25 0.089075, t=49 0.105141, t=69 0.108960  (06:30)
-remote_tr70_CAann 1.00 grace: 4 GiB swap on (06:30)
-remote_tr70_CAann 1.00 grace: T = 70 transition started, pid 10114 (06:30)
-remote_tr70_CAann 1.00 grace: handover applied: 100 parameters (06:30)
-remote_tr70_CAann 1.00 grace: the path's drug price clears: HANDOVER drug_market_adjuster -> 0.10000000000000001 (06:30)
-remote_tr70_CAann 1.00 grace: grace checked: ok, 6 lines: treatment passes in years 1-5, not from year 6, the screen on throughout (17:33)
-remote_tr70_CAann 1.00 grace: binary loop 0 complete, archived to results/transition_2c_t70_CAgrace100/loop0; loop0: drug_price years 60-69 within 0.50% of the terminal 0.801700 (year 1 0.878278, year 60 0.797692, year 69 0.797692); pi_v years 60-69 within 0.98% of the terminal 0.108960 (year 1 0.073279, year 60 0.108394, year 69 0.109512);   PEAK homelessness h_1: year 9, 0.006444, +4.19% against Housing First -- the path RISES above Housing First;   CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 0, completed with the terminal arm): +6.8806% of consumption (03:36)
+# the T = 70 transition on RULE CA at detection 1.00, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 20 Oct 03:37 UTC
+remote_tr70_CAann 1.00 grace: free disk 8.8G, memory 15 GiB, cores 4 (03:37)
+remote_tr70_CAann 1.00 grace: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 7.2e-05; tf against the accepted long-run CA arm 1.747e-01 (03:37)
+remote_tr70_CAann 1.00 grace: T = 70 RELAUNCH after a killed run (seeds: its last saved paths) (03:37)
+remote_tr70_CAann 1.00 grace: T = 70 transition started, pid 1979 (03:37)
+remote_tr70_CAann 1.00 grace: handover applied: 100 parameters (03:37)
+remote_tr70_CAann 1.00 grace: the path's drug price clears: HANDOVER drug_market_adjuster -> 0.10000000000000001 (03:37)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -37,16 +26,6 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
  MILBY SPLIT voucher mass rec treat smi   0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000       housed_nov mass rec treat smi  0.67253054536074197        2.0714510496354911E-002  0.16629150186756816        5.3330394924555137E-002
 
 == tr2c_t70_CAgrace100 (T = 70, rule CA, detection 1.00, grace, lag 5)
-  binary loop 0: periods to 69, worst budget residual (t>1) 5.72e-02, worst drug gap 8.50e-02  [paths saved]
-  CEV path of the latest forward pass (per cent, t: value):
-    1: +2.886  2: +3.505  3: +3.828  4: +4.134  5: +4.371  6: +4.615  7: +4.382  8: +4.598  9: +4.807  10: +5.035
-    11: +5.252  12: +5.473  13: +5.761  14: +5.985  15: +6.225  16: +6.452  17: +6.713  18: +7.004  19: +7.174  20: +7.422
-    21: +7.683  22: +7.989  23: +8.251  24: +9.031  25: +9.165  26: +9.558  27: +10.054  28: +10.257  29: +10.487  30: +10.758
-    31: +10.971  32: +11.198  33: +11.403  34: +11.535  35: +11.728  36: +11.906  37: +12.055  38: +12.251  39: +12.311  40: +12.414
-    41: +12.520  42: +12.586  43: +12.599  44: +12.693  45: +12.721  46: +12.765  47: +12.852  48: +12.918  49: +12.958  50: +13.000
-    51: +13.102  52: +13.218  53: +13.338  54: +13.399  55: +13.443  56: +13.481  57: +13.526  58: +13.551  59: +13.596  60: +13.629
-    61: +13.668  62: +13.702  63: +13.733  64: +13.761  65: +13.780  66: +13.797  67: +13.805  68: +13.808  69: +13.812
-  latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.94975119655473483       share_newborns=  0.53070563048788599       share_addicted=  0.28090952434334432       share_addicted_newborns=   0.0000000000000000
 
 grace checked on the forward pass: ok, 6 lines: treatment passes in years 1-5, not from year 6, the screen on throughout
 
