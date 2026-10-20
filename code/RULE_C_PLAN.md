@@ -1267,3 +1267,7 @@ glued words from r374 (an inserted word with nothing struck got no space after i
 needs its own trailing space); "beyond SUDs" -> "beyond drug use and SUD"; lambda_m's "matters less" -> "declines".
 A spell check of pages 1-20 found nothing else. The author will rewrite the remaining 108 blue sentences (pages 21 on)
 themselves: 86 of 194 done. The detector PDFs (pages1-10, pages11-20) now carry NO red (/pages_det.sh unwraps \new).
+
+19:05 (20 Oct) ALL RED AND STRIKES REMOVED (the author: "remove all crossed lines and red from the pdfs"; base_r376 frozen
+with export_alttrans.py --freeze and the others; splice 0 red). The full paper and the two detector PDFs (pages 1-10,
+11-20) carry no red and no struck text; 108 blue sentences remain from page 21 on, for the author to rewrite.
