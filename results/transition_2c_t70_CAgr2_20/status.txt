@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path, re-seeded (code/transition_fix/remote_tr70_CAgr2.sh); 20 Oct 12:49 UTC
+# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path, re-seeded (code/transition_fix/remote_tr70_CAgr2.sh); 20 Oct 12:50 UTC
 remote_tr70_CAgr2 0.20 grace: gfortran missing, installing (04:02)
 remote_tr70_CAgr2 0.20 grace: free disk 29G, memory 15 GiB, cores 4 (04:02)
 remote_tr70_CAgr2 0.20 grace: building cf_fix (04:02)
@@ -16,6 +16,8 @@ remote_tr70_CAgr2 0.20 grace: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.
 remote_tr70_CAgr2 0.20 grace: long-run rule-C arm ACCEPTED: remote_pdet tf_pdet20_CAu: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.8371627999999998 DIST CHECK PASS: 49 passes, sweeps [71, 70, 71, 71, 72, 70, 70, 70, 70, 70, 75, 70, 70, 71, 77, 73, 78, 70, 79, 74, 70, 70, 84, 72, 70, 70, 76, 74, 71, 73, 70, 76, 70, 70, 71, 70, 70, 71, 70, 70, 70, 92, 71, 71, 82, 71, 70, 70, 70], largest final 4.98e-05 (rule 5e-05, at least 70 sweeps)  (00:03) (06:18)
 remote_tr70_CAgr2 0.20 grace: terminal arm (started early) within 1 of the accepted arm: worst relative difference 1.159e-02 (12:49)
 remote_tr70_CAgr2 0.20 grace: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 1.4e-04; tf against the accepted long-run CA arm 1.159e-02 (12:49)
+remote_tr70_CAgr2 0.20 grace: shares written:   all households                   mass 50.82524  strict better 0.8177 | tol 0.001: better 0.7458 worse 0.0278 | tol 0.01: better 0.7281 worse 0.0276 (12:50)
+remote_tr70_CAgr2 0.20 grace: age split: 2 of 2 arms exact (12:50)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
