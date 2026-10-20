@@ -1177,3 +1177,7 @@ clear, 67 percent are" (the author: "and even still"); the introduction's matchi
 unchanged. Table 7 (the author on the two-line third label: "is there a way to make it clear that this text is for both
 rows?"): each alternative's name is now a line of its own across the table (\multicolumn{7}{@{}l}), its two detection
 rates below it, for all three alternatives so the table has one layout; layout only, no red.
+
+13:55 (20 Oct) ROUND r367 (1 comment). Red cleared (base_r367). The introduction's held-price sentence takes the second
+lesson's wording (the author: "maybe something a bit more explanatory like in the conclusion? why holding them?"):
+", as in a trial, which is too small to move either," and "and even once both clear, 67 percent are". Red.
