@@ -539,11 +539,9 @@ Its value is in Appendix~\ref{sec:stdparams}. It stops only households without a
 &\times\big(\mathbf{1}\{\tau=1\}\,g+\mathbf{1}\{\tau=0\}\big)\Big\},
 \end{aligned}
 \end{equation}
-where $\bar\pi_r$ is the baseline annual chance of recovering while housed, without SMI and untreated. It has three multipliers: recovery is harder in a shelter ($\mu_H<1$), harder with SMI ($\mu_m<1$) and more likely in treatment ($g>1$).
+where $\bar\pi_r$ is the baseline annual chance of recovering while housed, without SMI and untreated. \new{Three multipliers adjust it. Recovery is harder in a shelter ($\mu_H<1$) and with SMI ($\mu_m<1$), and more likely in treatment ($g>1$).}
 
-Treatment $\tau$ is a choice, taken at the utility cost $\bar\tau^u$
-in~\eqref{eq:futil}, and $g$ is what it buys. Treatment does not stop the household
-using, and it does not remove the excess mortality of the disorder while the disorder lasts.
+\new{Households choose treatment $\tau$ at the utility cost $\bar\tau^u$ in~\eqref{eq:futil}, and what they get for it is $g$. Treatment does not stop a household from using, and as long as the disorder lasts it does not remove the disorder's excess mortality.}
 
 \subsection{SMI}\label{sec:fsmi}
 
@@ -610,9 +608,7 @@ A child's log productivity at entry is drawn around its parent's, with persisten
 \end{equation}
 with $y_1^{\text{child}}$ the child's productivity in the period it becomes an adult in the workforce ($j=1$), $y^{\text{parent}}$ the parent's productivity in the period just before its child becomes an adult, $\mu$
 the mean of log productivity at entry and $\epsilon$ normally distributed with mean zero and
-variance $1-\rho^2$ times the variance of log productivity at entry. Because the
-penalised child's own productivity is lower, its own child inherits a lower draw too,
-so, through the persistence, the penalty ripples through the whole lineage.
+variance $1-\rho^2$ times the variance of log productivity at entry. \new{The penalised child's productivity is lower, so its own child inherits a lower draw as well, and through this persistence the penalty passes down the whole lineage.}
 
 \subsection{The voucher and the two policies}\label{sec:fvoucher}
 
@@ -744,9 +740,7 @@ and~\eqref{eq:fnewborn};
 $\pi_{Vt}$ with $\mathcal R=\bar{\mathcal R}$;
 \item the drug market clears at $p_{vt}$, so~\eqref{eq:fdrug} holds.
 \end{enumerate}
-A stationary equilibrium is the special case in which all of these are constant and
-$\Phi_{t+1}=\Phi_t$, which is what the calibration and the long-run policy comparisons
-report. An experiment that holds $\pi_V$ or the drug price at its benchmark value drops the budget or the drug-market condition. The sequence version is what the transition between two stationary equilibria solves.
+\new{A stationary equilibrium is the special case in which all of these are constant and $\Phi_{t+1}=\Phi_t$. The calibration and the long-run policy comparisons report stationary equilibria. When an experiment holds $\pi_V$ or the drug price at its benchmark value, it drops the budget condition or the drug-market condition, respectively. The transition between two stationary equilibria solves the sequence version.}
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
