@@ -1,6 +1,8 @@
 """fix_soul.py TEX -- after the splice: soul's \\hl (\\tocheck) and ulem's \\sout (\\del) cannot nest. Inside a struck
-run, a \\tocheck{X} becomes X; inside a \\tocheck{...}, a moved number's \\del{old} is dropped and its \\new{v} printed
-plain (the highlight already says the passage is being checked)."""
+run, a \\tocheck{X} becomes X; inside a \\tocheck{...}, a moved number's \\del{old} is dropped, and a \\new{v} splits the
+highlight around it, \\tocheck{A }\\new{\\tocheck{v}}\\tocheck{ B}, so it prints red on yellow (20 October, round r362: the
+splice now marks a generated sentence word by word, and the yellow third lesson is one; soul cannot take a colour
+change inside \\hl, and a whole run passed through it as one unit would not break across lines)."""
 import sys
 p = sys.argv[1]
 s = open(p).read()
@@ -65,6 +67,22 @@ def unwrap_all(t, cmd):
     while cmd in t:
         t = unwrap(t, cmd)
     return t
-body, n2 = within(body, '\\tocheck{', lambda x: unwrap_all(unwrap(x, '\\del{', drop=True), '\\new{'))
+def split_red(t):
+    """the body of a \\tocheck{...}: each top-level \\new{v} closes the highlight, prints v red and highlighted, and
+    reopens it (a \\new or a \\tocheck nested in v is flattened, the highlight already covering it)"""
+    out, i = [], 0
+    while True:
+        k = t.find('\\new{', i)
+        if k < 0:
+            out.append(t[i:])
+            return ''.join(out)
+        j = close(t, k + 5)
+        v = unwrap_all(unwrap_all(t[k + 5:j - 1], '\\new{'), '\\tocheck{')
+        out.append(t[i:k] + '}\\new{\\tocheck{' + v + '}}\\tocheck{')
+        i = j
+
+
+body, n2 = within(body, '\\tocheck{', lambda x: split_red(unwrap(x, '\\del{', drop=True)))
+body = body.replace('\\tocheck{}', '').replace('\\tocheck{ }', ' ')
 open(p, 'w').write(pre + body)
 print(f'fix_soul: {n1} struck runs, {n2} highlighted runs cleaned')

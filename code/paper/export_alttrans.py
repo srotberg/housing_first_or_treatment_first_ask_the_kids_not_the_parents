@@ -150,8 +150,19 @@ MAIN = RUNS['main']
 # its voucher by entering treatment and not using, here it cannot, so using drugs risks more (long run: drug use falls
 # 30 per cent at 0.20 here, 21 in the main transition). Said in full the first time a 20 per cent path is compared with
 # the main transition, then referred to.
-MECH = ('a household with a SUD cannot keep its voucher by entering treatment and not using, as it can in the main '
-        'transition, so using drugs risks more and fewer households use them')
+# (round r362, the author on both: "makes no sense") said from the households' side: they cannot stop using, so the
+# disorder puts the voucher at risk until recovery, where in the main transition treatment and sobriety keep it
+def mech_full(when):
+    return (f'Here a household with a SUD cannot stop using, so {when} the disorder puts its voucher at risk until it '
+            'recovers, while in the main transition the household keeps the voucher by entering treatment and not using. '
+            'Starting to use therefore risks more, and fewer households use drugs: ')
+
+
+def mech_short(when):
+    return (f'because {when} a household with a SUD, which cannot stop using, risks its voucher until it recovers, so '
+            'fewer households use drugs: ')
+
+
 SAID = {}
 
 
@@ -220,9 +231,9 @@ def ann_par():
     # (round r361, the author: "and why is the 2.57 higher than the main simulation?")
     w = why_more(b, again=True) if b is not None else None
     if w:
-        s += (f'The second is more than the ${MAIN["cev"]:.2f}$ percent in the main transition, although both screens catch '
-              f'one in five users: once the screen starts, {MECH}. {w[0].upper() + w[1:]}.')
-        SAID['mech'] = 'when the screen is announced'
+        s += (f'The second is also more than the ${MAIN["cev"]:.2f}$ percent in the main transition, although the screen '
+              'catches one in five users in both. ' + mech_full('once the screen starts') + w + '.')
+        SAID['mech'] = True
     return s.rstrip()
 
 
@@ -257,11 +268,11 @@ def gr_par():
     # (round r360, the author on 3.14: "why is it even higher than the main experiment without the exemptions?")
     w = why_more(a, again=True) if a is not None else None
     if w and 'mech' in SAID:
-        s += (f', more than the ${MAIN["cev"]:.2f}$ percent in the main transition, for the same reason as '
-              f'{SAID["mech"]}: ' + w + '.')
+        s += (f', more than the ${MAIN["cev"]:.2f}$ percent in the main transition, ' + mech_short('once the exemption ends')
+              + w + '.')
     elif w:
-        s += (f', more than the ${MAIN["cev"]:.2f}$ percent in the main transition, although both screens catch one in five '
-              f'users: once the exemption ends, {MECH}. {w[0].upper() + w[1:]}.')
+        s += (f', more than the ${MAIN["cev"]:.2f}$ percent in the main transition, although the screen catches one in five '
+              'users in both. ' + mech_full('once the exemption ends') + w + '.')
     else:
         s += '.'
     return s
@@ -273,7 +284,7 @@ def lesson():
     if a is None:
         return ''
     if a['cpk'] <= ABOVE and a['hpk'] < 3:
-        return ('A temporary exemption for those with a SUD keeps the latter from ever rising and keeps the former\'s rise '
+        return ('A temporary exemption for those with a SUD keeps the latter from ever rising and the former\'s rise '
                 'small: if a household in treatment keeps its '
                 'voucher, sober or not, for the first five periods, and the screen catches one in five users, the share of '
                 'children in a shelter never rises above its Housing First level and homelessness rises by at most '
@@ -306,8 +317,8 @@ else:
 _w = why_more(a, again=True) if a is not None and verb(a) == 'gain' else None
 if _w:
     ne_cev += (' They gain more because the screen deters more: it catches every user, and a household with a SUD cannot '
-               'keep its voucher by entering treatment and not using, as it can in the main transition. '
-               + _w[0].upper() + _w[1:] + '.')
+               'stop using, so the disorder costs it its voucher until it recovers, while in the main transition the '
+               'household keeps the voucher by entering treatment and not using. ' + _w[0].upper() + _w[1:] + '.')
 # (round r357, the author on 'Catching 20 percent of users': "only one in five users")
 _inv = 100 / float(PDET)
 assert abs(_inv - round(_inv)) < 1e-9, PDET

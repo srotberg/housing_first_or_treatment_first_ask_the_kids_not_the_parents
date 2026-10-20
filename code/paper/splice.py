@@ -8,9 +8,12 @@ when what it prints differs from what it printed in BASE_DIR, a copy of the roun
 read them (the same basenames as FILES below), or when it is new since then. A transition name (x_tr_*, x_trf_*,
 x_disc_tr*) that did not move is wrapped in \\updnum{}, which prints black unless \\showupdatestrue.
 
-This replaces the round splices that lived in the session's scratchpad and were lost with it (16 October). It is the
-simple form: a generated sentence that moved is red as a whole rather than word by word. Struck text is not produced
-(the author, 14 October: "remove all crossed lines"), and run writing/tools/fix_soul.py on the output before LaTeX.
+This replaces the round splices that lived in the session's scratchpad and were lost with it (16 October). A generated
+SENTENCE that moved is red word by word (20 October, round r362, the author: "remove all red and put only updates in
+red" -- a whole paragraph went red when a clause of it changed): its words are diffed against what it printed in
+BASE_DIR and only the inserted or changed runs are wrapped in \\new{}. A number, or a value of a few words, is red as a
+whole. Struck text is not produced (the author, 14 October: "remove all crossed lines"), and run
+writing/tools/fix_soul.py on the output before LaTeX.
 
     python3 code/paper/splice.py BASE_DIR [REGION_BASE_DIR MARKER]
 
@@ -18,6 +21,7 @@ A REGION (18 October, the author: "remove old red from the intro and abstract"):
 source before the first occurrence of MARKER (e.g. '\\section{Related literature}') is compared with REGION_BASE_DIR
 instead, so a part the author has re-read since BASE_DIR loses the red it carried while the rest keeps accumulating.
 """
+import difflib
 import json
 import os
 import re
@@ -35,6 +39,52 @@ FILES = ('code/paper/results_numbers.json', 'code/paper/params_numbers.json', 'c
          'code/paper/nsduh_loneparent.json', 'code/paper/lit_numbers.json', 'code/paper/nsduh_kids_sud.json',
          'code/paper/decomp_use.json')
 UPD = re.compile(r'^(x_trf?_|x_disc_tr)')
+SENTENCE = 6        # words at brace depth 0 from which a value is diffed word by word
+MERGE = 2           # black words between two red runs that join them
+
+
+def words(t):
+    """split at spaces outside braces and outside $...$, so a \\tocheck{...} or a formula stays one word"""
+    out, cur, depth, math, i = [], [], 0, False, 0
+    while i < len(t):
+        c = t[i]
+        if c == '\\' and i + 1 < len(t):
+            cur.append(t[i:i + 2]); i += 2; continue
+        if c == '{':
+            depth += 1
+        elif c == '}':
+            depth -= 1
+        elif c == '$':
+            math = not math
+        if c == ' ' and depth == 0 and not math:
+            if cur:
+                out.append(''.join(cur)); cur = []
+        else:
+            cur.append(c)
+        i += 1
+    if cur:
+        out.append(''.join(cur))
+    return out
+
+
+def word_red(old, new):
+    """new, with the runs of words not in old wrapped in \\new{}; a deletion leaves nothing red"""
+    a, b = words(old), words(new)
+    seg = []                            # [words, red]
+    for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
+        if j2 > j1:
+            seg.append([b[j1:j2], op != 'equal'])
+    # a word or two left black between two red runs reads as a stray: it joins them
+    for k in range(1, len(seg) - 1):
+        if not seg[k][1] and len(seg[k][0]) <= MERGE and seg[k - 1][1] and seg[k + 1][1]:
+            seg[k][1] = True
+    out = []
+    for w, red in seg:
+        if red and out and out[-1][1]:
+            out[-1][0] += w
+        else:
+            out.append([list(w), red])
+    return ' '.join('\\new{' + ' '.join(w) + '}' if red else ' '.join(w) for w, red in out)
 
 
 def load(paths):
@@ -85,6 +135,10 @@ def fill_part(src, base_dir):
             continue
         if moved(k):
             red.append(k)
+            if k in base and f'$@@{k}@@$' not in src and len(words(v)) >= SENTENCE and \
+                    len(words(str(fill.text_precision(k, base[k])))) >= SENTENCE:
+                src = src.replace(f'@@{k}@@', word_red(str(fill.text_precision(k, base[k])), v))
+                continue
             src = src.replace(f'$@@{k}@@$', f'\\new{{${v}$}}').replace(f'@@{k}@@', f'\\new{{{v}}}')
         elif UPD.match(k):
             src = src.replace(f'$@@{k}@@$', f'\\updnum{{${v}$}}').replace(f'@@{k}@@', f'\\updnum{{{v}}}')

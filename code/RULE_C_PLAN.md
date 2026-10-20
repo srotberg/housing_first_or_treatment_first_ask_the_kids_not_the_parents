@@ -1038,3 +1038,19 @@ entering treatment and not using, here it cannot, so using drugs risks more (lon
 against -21). Said in full the first time (announced paragraph), referred to in the exemption paragraph; the first
 alternative's sentence now names both differences (the rate and the rule). (3) The lesson: "keeps the latter from ever
 rising and keeps the former's rise small" (the author's words).
+
+04:40 (20 Oct) ROUND r362 (3 comments, and "i asked you before you remove all red and you didnt. please remove all
+red and put only updates in red"). WHY THE RED STAYED: the splice marked a generated name that moved red AS A WHOLE, so
+6.5's paragraphs and the third lesson (x_at_ne_cev, x_at_ann_par, x_at_gr_par, x_at_lesson; and the src wrapper
+\new{\tocheck{@@x_at_lesson@@}}) printed entirely red whenever one clause changed. FIX: code/paper/splice.py diffs a
+generated sentence (six words or more at brace depth 0, braces and $...$ kept whole) word by word against what it
+printed in the base and wraps only the inserted or changed runs in \new{} (two black words or fewer between red runs
+join them); a deletion leaves nothing red. writing/tools/fix_soul.py splits a yellow passage around a red run
+(\tocheck{A }\new{\tocheck{v}}\tocheck{ B}) instead of printing it plain, so red shows inside the yellow third lesson,
+and the lesson's src wrapper is plain \tocheck{@@x_at_lesson@@} again. Comments: the two reasons the author found
+"makes no sense" (announced 0.20 and exemption 0.20 against the main transition) now say it from the households' side --
+a household with a SUD cannot stop using, so the disorder puts its voucher at risk until it recovers, while in the
+main transition it keeps the voucher by entering treatment and not using; starting to use risks more and fewer
+households use drugs -- in full in the announced paragraph and in short in the exemption paragraph; the first
+alternative's sentence says the same at 1.00 ("costs it its voucher"). The lesson: "keeps the latter from ever rising
+and the former's rise small" (the second "keeps" removed).
