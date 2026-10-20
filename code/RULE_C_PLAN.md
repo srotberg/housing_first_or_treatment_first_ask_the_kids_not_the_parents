@@ -1186,3 +1186,7 @@ to use language that is not identical to the second lesson of the conclusion. yo
 enrols too few households to change the drug price or the chance of drawing a voucher, so the comparison that matches it
 keeps both at their Housing First levels. Then -- percent of the households that have a SUD at the time of the reform
 lose, and when both adjust, 67 percent still do." and "outweigh these micro effects" (was "them"). Red, against base_r367.
+
+14:10 (20 Oct) ALL RED REMOVED (the author: "remove all red"; base_r368 frozen, export_alttrans.py --freeze with the
+others; splice 0 red, no \new left). Yellow left: only the dashes with no run behind them (Table 7's 0.20 no-exemption
+row and its sentence in 6.5, x_trfix_sud_worse_pc in the introduction and the second lesson).
