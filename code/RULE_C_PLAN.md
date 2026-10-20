@@ -1243,3 +1243,19 @@ testing of service members reduced past-year marijuana use by @@mp_stay_rel_pc@@
 service members who stayed" the author removed; footnote 34 in Section 5 still says 61 is the raw comparison among those
 who stayed and Mehay and Pacula's own estimates are 11-45 per cent -- told to the author). Old text struck, new red.
 writing/children_first_housing_later_pages1-10.pdf regenerated (clean: red, no struck text, no blue).
+
+18:48 (20 Oct) ROUND r374 (the author: "remove all red and put updates in red. make sure that if i have typos, or grammar
+mistakes, you fix them"; 15 comments, pages 4-19, "and then i want pages 11-20 as a seprate pdf"). base_r374 frozen
+with the others (export_alttrans.py --freeze). Each blue sentence the author rewrote replaced by their text in red, the
+old struck; typos and grammar fixed in their text ("Moverover", "earnsy", "intreatment", "chane", "drawl", "whose parent
+who had", "equilibirum", "drugprice", "spends on drug", "raisesthe", "everyage", "disorderin", "This is because,", "..",
+"Treatment First's deters"), numbers and references back as @@names@@ and \ref/\eqref. Meaning fixes told to the
+author: recovery "is likely" -> "is more likely" in treatment; "it increases the risk of mortality" -> "it still raises"
+(the disorder, not treatment); "decides the value of life it" -> "decides the value of life"; iota "how much drug use"
+-> "how much a SUD" affects SMI onset; lambda_m "Treatment First's deters drug use less" -> "Treatment First's
+deterrence of drug use matters less". Slips left from r372-r373 fixed in red: "already adult" -> "adults", "but rather
+take ... and price" -> "to take ... and to price", "counts" -> "would count", "for coarseness" -> "for the
+coarseness", "every target, and" -> "every target and", "switched off both" -> "switched off, both". No blue is left
+before page 21. CAgrace100 loop1 landed (18:41): Table 7's 1.00 exemption row 4.6 (9), 7-14, 0.7 (8), 7-9, CEV 6.58
+(was 4.2/0.2/6.88), budget 0.78 per cent (still above 0.6), x_at_gr_par red. writing/children_first_housing_later_pages
+1-10.pdf regenerated and pages11-20.pdf added (clean builds: red kept, no struck text, no blue).
