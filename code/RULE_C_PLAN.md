@@ -1217,3 +1217,19 @@ excluded). fix_soul.py treats \ai like \tocheck (a moved number splits it in red
 inside it (soul cannot rebuild a control space). strip_red.py leaves \ai alone. When the author sends their own
 wording for a sentence: replace that \ai{...} with \new{their text} (numbers back as @@names@@, no polishing of their
 words), strike the old with track_changes.py, and drop the \ai.
+
+18:00 (20 Oct) ROUND r372: THE AUTHOR'S OWN WORDING FOR THE AI-FLAGGED SENTENCES ON PAGES 1-10 (24 comments; "see my
+comments until page 10 ... give me back in the repo the updates just for the first 10 pages in a new pdf", "put updates
+in red", "i want to run the first 10 pages in the AI detector"). Each blue sentence replaced by the author's text in red,
+the old struck before it (\del{old} \new{new}; no blue is left before Section 4). Their words kept; numbers back as
+@@names@@, references as \ref; only clear slips fixed: missing spaces, "bring"->"brings", "to cost"->"the cost", "bring
+alive"->"being alive", "is a smaller"->"is smaller", "sell"->"to sell", "spend ... to show"->"showing", "in the
+bottom"->"at the bottom", a stray "not." and "..", "each of the strength of each of two"->"the strength of each of the
+two", "housing policy affects homelessness is not tied"->"the effect of housing policy on homelessness is not tied". Four
+accuracy fixes, told to the author: "proportional to" theta/(b+v) kept (the marginal utility is not equal to it);
+"conceived" kept for "gave birth to" (Nilsson's exposure is by conception); "Evidence from other experiments" ->
+"Non-experimental evidence" (Balsa 2008 is not an experiment) and "drinker parents" -> "problem-drinking parents"; "among
+service members who stayed" kept in "They find that ... 61 percent" (Mehay and Pacula's own estimates are 11-45 per
+cent; 61 is the raw comparison). Comment 21 ("remove" on "also reverses the gradient: on") struck "also reverses the
+gradient:" and "it". writing/children_first_housing_later_pages1-10.pdf: pages 1-10 of a clean build (red kept, no
+struck text, no blue) for the detector.
