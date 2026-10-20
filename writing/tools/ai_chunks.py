@@ -3,11 +3,9 @@ feed it to AI detectors", then "i need to break it down the 2000 words at a time
 
     python3 writing/tools/ai_chunks.py
 
-From writing/children_first_housing_later.pdf, writes
-  writing/ai_check/children_first_housing_later_part<k>_pages<a>-<b>.pdf  four parts of about equal length in words,
-                                                                         cut at page breaks;
-  writing/ai_check/chunks_2000/chunk<nn>.pdf and .txt                     the text in chunks of at most 2,000 words, cut
-                                                                         between paragraphs, the reference list left out.
+From writing/children_first_housing_later.pdf, writes writing/ai_check/chunks_2000/chunk<nn>.pdf and .txt: the text in
+chunks of at most 2,000 words, cut between paragraphs, the reference list left out. (The four parts of the first request
+were removed from the repo on the author's request, 20 October.)
 The text is the PDF's own, with words hyphenated across lines rejoined; equations, footnotes and tables come through
 as plain text where they fall on the page. Run it again whenever the paper changes."""
 import html, os, re
@@ -18,24 +16,6 @@ SRC = os.path.join(ROOT, 'writing', 'children_first_housing_later.pdf')
 OUT = os.path.join(ROOT, 'writing', 'ai_check')
 LIMIT = 2000
 doc = pymupdf.open(SRC)
-
-# four parts of about equal length in words
-for f in os.listdir(OUT):
-    if f.endswith('.pdf'):
-        os.remove(os.path.join(OUT, f))
-w = [len(p.get_text().split()) for p in doc]
-total, cuts, run, k = sum(w), [], 0, 1
-for i, x in enumerate(w):
-    run += x
-    if k < 4 and run >= k * total / 4:
-        cuts.append(i + 1); k += 1
-bounds = [0] + cuts + [len(w)]
-for j in range(4):
-    a, b = bounds[j], bounds[j + 1]
-    part = pymupdf.open()
-    part.insert_pdf(doc, from_page=a, to_page=b - 1)
-    part.save(os.path.join(OUT, f'children_first_housing_later_part{j + 1}_pages{a + 1}-{b}.pdf'))
-    print(f'part {j + 1}: pages {a + 1}-{b}, {sum(w[a:b])} words')
 
 # chunks of at most LIMIT words, between paragraphs, up to the reference list
 paras, stop = [], False
