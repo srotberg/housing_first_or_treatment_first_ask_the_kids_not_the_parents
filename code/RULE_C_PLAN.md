@@ -1014,7 +1014,7 @@ and before starting the binary after a killed run delete VF_CHECKPOINT.bin if th
 The run directory needs about 1 GB free for the file. First use: confirm 'restored= 1' and that the forward pass's first
 period matches the killed log's.
 
-03:40 (20 Oct) ROUND r360 (9 comments on 6.5 and the third lesson). Red cleared (base_r360); the third lesson stays
+ (20 Oct) ROUND r360 (9 comments on 6.5 and the third lesson). Red cleared (base_r360); the third lesson stays
 yellow. CAann20 (announced at 0.20) loop 0 landed and fills its row: homelessness +3.1 in period 12, above Housing First
 in 7-19; children in a shelter +0.6 in period 11, above in 9-13; reform cohort +2.57 (not yet a reasonable pass: the
 drug market misses in the announcement periods, as at 1.00). export_alttrans.py: "lowers the rise but does not
@@ -1060,7 +1060,7 @@ periods 2-6, then +3.6 in period 7 to a peak of +4.2 in period 9, above until 13
 (yellow). The exemption paragraph now states both rates in the same words (it printed "by up to 0 percent" for 0.22)
 and gives the 1.00 newborn gain after the 0.20 one's reason.
 
-03:55 (20 Oct) ALL RED REMOVED (the author: "remove all red"; base_r363, splice 0 red). The author asked how close the
+03:45 (20 Oct) ALL RED REMOVED (the author: "remove all red"; base_r363, splice 0 red). The author asked how close the
 yellow is to clearing. What is yellow: Table 7's six alternative rows (30 cells) and 20 passages in 6.5 that quote them,
 plus the third lesson (yellow on the author's instruction). The drug-market gap by period of each latest pass (implied
 supply price against the path's price): at 1.00 (CAc, CAann100, CAgrace100) periods 51-69 sit 8-10 per cent off,
@@ -1071,7 +1071,7 @@ periods 1-30 (CAgrace20 0.4-3.9 per cent in 1-15, CAann20 10.6-12.4 in 1-5), and
 period per loop, a day a loop: about a week of loops unless re-seeded from the implied prices (reseed_implied.py, as the
 announced runs were). Put to the author: the 1.00 decision and a re-seed of the 0.20 exemption run.
 
-04:05 (20 Oct) THE TRIALS IN THE ABSTRACT AND THE INTRODUCTION (the author: "should i say something in the
+03:52 (20 Oct) THE TRIALS IN THE ABSTRACT AND THE INTRODUCTION (the author: "should i say something in the
 intro/abstract about how i generate the micro evidence from trials but show that when accounting for the macro effects,
 the conclusions change?", "something like the second lesson in the conclusion", then "go for it" to the proposed text).
 Abstract, before its last sentence (122 -> 145 words): "As in trials, households with a disorder lose from sobriety
@@ -1079,7 +1079,7 @@ conditions, but counting those deterred from using, and the children, reverses t
 after the long-run decomposition and before the transition: the model reproduces what the trials find for the
 households they follow, and what changes the conclusion is what they do not observe (the second lesson's terms). Red.
 
-04:25 (20 Oct) WHAT THE MODEL REPRODUCES FROM THE TRIALS, said exactly (the author: "it's not just that they lose. can
+03:58 (20 Oct) WHAT THE MODEL REPRODUCES FROM THE TRIALS, said exactly (the author: "it's not just that they lose. can
 you explain exactly what the model reproduces for the trials?", then "sure" to the rewording). The evidence: Milby et
 al. (2005) housing against no housing (targeted, mu_H); Milby's abstinence-contingent against non-contingent housing,
 1.26, the model 1.40 in the condition's first year (Block 8, untargeted); Costantini (2025, not a trial), Housing First
@@ -1092,7 +1092,7 @@ verdict" (146 words); the introduction's paragraph names the three comparisons w
 lesson's first sentence likewise, and "Those with a SUD do lose from sobriety conditions, in the data and in the model"
 is deleted (no trial measures it), with "Trials, however," -> "They". Red.
 
-04:35 (20 Oct) TABLE 7 KEEPS THE 1.00 ROWS, WITH A NOTE (the author: "keep the 100% rows with a note, and restart the
+04:00 (20 Oct) TABLE 7 KEEPS THE 1.00 ROWS, WITH A NOTE (the author: "keep the 100% rows with a note, and restart the
 20% run"). The note adds (red): "When every user is caught, no drug price clears the long-run drug market, because drug
 use jumps as the price moves through the level that would clear it; those transitions end at the long-run solution that
 comes closest." A 1.00 row is now judged on periods 1-25 only (WINDOW_100 in export_alttrans.py, trpaths.pass_quality's
