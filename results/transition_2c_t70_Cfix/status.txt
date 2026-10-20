@@ -1,4 +1,4 @@
-# the T = 70 MAIN transition (rule C, detection 0.20) with the drug price and pi_V HELD at Housing First's (0.99938969, 0.067533863), one loop (code/transition_fix/remote_tr70_Cfix.sh); 20 Oct 17:26 UTC
+# the T = 70 MAIN transition (rule C, detection 0.20) with the drug price and pi_V HELD at Housing First's (0.99938969, 0.067533863), one loop (code/transition_fix/remote_tr70_Cfix.sh); 20 Oct 17:27 UTC
 remote_tr70_Cfix: gfortran missing, installing (13:40)
 remote_tr70_Cfix: free disk 29G, memory 15 GiB, cores 4 (13:40)
 remote_tr70_Cfix: building cf_fix (13:40)
@@ -12,6 +12,12 @@ remote_tr70_Cfix: built /home/user/children_first_housing_later/code/tr70_C2uck/
 remote_tr70_Cfix: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (13:53)
 remote_tr70_Cfix: arm tf on cf_fix2_treatC: PDET=0.20 PV_START=0.067533863 DRUG_PRICE_START=0.99938969 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 (13:57)
 remote_tr70_Cfix: arms done: Treatment First held at drug price 0.99938969, pi_V 0.067533863; against Table 5's held column (/home/user/children_first_housing_later/results/decomp_2c_shares_Cu3/arm_fixboth): worst relative difference 1.3e-04 over drug use b, SUD lambda_d, homelessness h_1 (17:26)
+remote_tr70_Cfix: checkpoint ON: 17 GB free against 14 needed (the file is about 6 GB) (17:26)
+remote_tr70_Cfix: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t70_Cfix -- start with: cd /home/user/children_first_housing_later/code/tr2c_t70_Cfix && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds flat at drug price 0.99938969 and pi_V 0.067533863, handover drug_market_adjuster 0, adjust_taxes 0 (17:27)
+remote_tr70_Cfix: 4 GiB swap on (17:27)
+remote_tr70_Cfix: T = 70 transition started, pid 8646 (17:27)
+remote_tr70_Cfix: handover applied: 100 parameters (17:27)
+remote_tr70_Cfix: the path holds both prices: HANDOVER drug_market_adjuster -> 0.0000000000000000, adjust_taxes -> 0.0000000000000000 (17:27)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -28,3 +34,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   3  0.9994  0.06753   -43.3%   -41.9%    -7.6%  0.00e+00  0.00e+00   788.8709  +4.07%   -38.4%    +8.6%
   4  0.9994  0.06753   -43.3%   -41.8%    -7.6%  0.00e+00  0.00e+00   788.8710  +4.07%   -38.4%    +8.6%
  MILBY SPLIT voucher mass rec treat smi   7.5791038531324045E-002   3.3170413720633087E-003   5.9969612794473721E-002   9.3908851550366206E-003  housed_nov mass rec treat smi   1.0191863562428558        3.1167961340768283E-002  0.24496124162500357        9.6285764550235256E-002
+
+== tr2c_t70_Cfix (T = 70, rule C, both prices held)
