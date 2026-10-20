@@ -1,4 +1,4 @@
-# the T = 70 MAIN transition (rule C, detection 0.20) with the drug price and pi_V HELD at Housing First's (0.99938969, 0.067533863), one loop (code/transition_fix/remote_tr70_Cfix.sh); 20 Oct 13:53 UTC
+# the T = 70 MAIN transition (rule C, detection 0.20) with the drug price and pi_V HELD at Housing First's (0.99938969, 0.067533863), one loop (code/transition_fix/remote_tr70_Cfix.sh); 20 Oct 14:17 UTC
 remote_tr70_Cfix: gfortran missing, installing (13:40)
 remote_tr70_Cfix: free disk 29G, memory 15 GiB, cores 4 (13:40)
 remote_tr70_Cfix: building cf_fix (13:40)
@@ -9,3 +9,11 @@ remote_tr70_Cfix: building tr70_C2u (build_tr70_C2.sh) (13:50)
 remote_tr70_Cfix: built /home/user/children_first_housing_later/code/tr70_C2u/hftf_tr_prod b25b1720 (rule C2 + cohort print, T = 70; patch_treatC2.py d5931f95) (13:51)
 remote_tr70_Cfix: building tr70_C2uck (build_tr70_C2ck.sh, with the backward-pass checkpoint) (13:51)
 remote_tr70_Cfix: built /home/user/children_first_housing_later/code/tr70_C2uck/hftf_tr_prod 6099bed6 (rule C2 + cohort print + checkpoint, T = 70; 59 lines added to /home/user/children_first_housing_later/code/tr70_C2u/tr.f90) (13:53)
+remote_tr70_Cfix: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (13:53)
+remote_tr70_Cfix: arm tf on cf_fix2_treatC: PDET=0.20 PV_START=0.067533863 DRUG_PRICE_START=0.99938969 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 (13:57)
+
+== arm null
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+
+== arm tf
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
