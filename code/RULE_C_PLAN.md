@@ -1078,3 +1078,16 @@ Abstract, before its last sentence (122 -> 145 words): "As in trials, households
 conditions, but counting those deterred from using, and the children, reverses the verdict." Introduction, a paragraph
 after the long-run decomposition and before the transition: the model reproduces what the trials find for the
 households they follow, and what changes the conclusion is what they do not observe (the second lesson's terms). Red.
+
+04:25 (20 Oct) WHAT THE MODEL REPRODUCES FROM THE TRIALS, said exactly (the author: "it's not just that they lose. can
+you explain exactly what the model reproduces for the trials?", then "sure" to the rewording). The evidence: Milby et
+al. (2005) housing against no housing (targeted, mu_H); Milby's abstinence-contingent against non-contingent housing,
+1.26, the model 1.40 in the condition's first year (Block 8, untargeted); Costantini (2025, not a trial), Housing First
+lowers the three-year mortality of homeless veterans with mental illness by 4.6 points, losing a voucher raises it by
+3.6 for households with SMI in the model (Block 7, untargeted); At Home / Chez Soi, SMI unaffected by housing (assumed).
+Not compared: the main trials' housing-stability gains and mixed-to-null drug-use effects. The abstract sentence
+("As in trials, households with a disorder lose from sobriety conditions", unsupported) is now "The model reproduces what
+trials find for the households they follow; counting those deterred from using, the budget and the children changes the
+verdict" (146 words); the introduction's paragraph names the three comparisons with their generated numbers; the second
+lesson's first sentence likewise, and "Those with a SUD do lose from sobriety conditions, in the data and in the model"
+is deleted (no trial measures it), with "Trials, however," -> "They". Red.
