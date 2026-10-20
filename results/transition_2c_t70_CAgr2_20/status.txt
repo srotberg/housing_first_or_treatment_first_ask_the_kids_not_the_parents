@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path, re-seeded (code/transition_fix/remote_tr70_CAgr2.sh); 20 Oct 12:50 UTC
+# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path, re-seeded (code/transition_fix/remote_tr70_CAgr2.sh); 20 Oct 12:51 UTC
 remote_tr70_CAgr2 0.20 grace: gfortran missing, installing (04:02)
 remote_tr70_CAgr2 0.20 grace: free disk 29G, memory 15 GiB, cores 4 (04:02)
 remote_tr70_CAgr2 0.20 grace: building cf_fix (04:02)
@@ -18,6 +18,14 @@ remote_tr70_CAgr2 0.20 grace: terminal arm (started early) within 1 of the accep
 remote_tr70_CAgr2 0.20 grace: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 1.4e-04; tf against the accepted long-run CA arm 1.159e-02 (12:49)
 remote_tr70_CAgr2 0.20 grace: shares written:   all households                   mass 50.82524  strict better 0.8177 | tol 0.001: better 0.7458 worse 0.0278 | tol 0.01: better 0.7281 worse 0.0276 (12:50)
 remote_tr70_CAgr2 0.20 grace: age split: 2 of 2 arms exact (12:50)
+remote_tr70_CAgr2 0.20 grace: checkpoint ON: 17 GB free against 14 needed (the file is about 6 GB) (12:50)
+remote_tr70_CAgr2 0.20 grace: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t70_CAgr2_20 -- start with: cd /home/user/children_first_housing_later/code/tr2c_t70_CAgr2_20 && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds rescaled from rule C's T = 50 loop3 (x0 0.99943308 0.067533863): drug_price: factor 1.7521; t=1 0.940088, t=2 0.944040, t=5 0.944044, t=10 0.940022, t=25 0.912384, t=49 0.905637, t=69 0.905637 pi_v: factor 2.2002; t=1 0.071881, t=2 0.068140, t=5 0.069482, t=10 0.071189, t=25 0.079376, t=49 0.086365, t=69 0.086365  (12:51)
+remote_tr70_CAgr2 0.20 grace: re-seeded from results/transition_2c_t70_CAgrace20/loop0: drug price, periods 1-69, step 0.6, taper 9: t1 0.9404 -> 0.9432 (implied 0.9451), t2 0.9437 -> 0.9412 (implied 0.9395), t3 0.9428 -> 0.9390 (implied 0.9364), t4 0.9430 -> 0.9350 (implied 0.9297), t5 0.9423 -> 0.9324 (implied 0.9257), t6 0.9418 -> 0.9318 (implied 0.9252), t10 0.9372 -> 0.9215 (implied 0.9110), t15 0.9302 -> 0.9105 (implied 0.8974), t20 0.9196 -> 0.9083 (implied 0.9008), t30 0.9057 -> 0.8936 (implied 0.8856), t45 0.9035 -> 0.8937 (implied 0.8872), t60 0.9050 -> 0.9014 (implied 0.8989), t65 0.9051 -> 0.9038 (implied 0.9002), t69 0.9051 -> 0.9051 (implied 0.9005) drug price: largest move 2.37 per cent (period 14) drug_price: t=1 0.943218, t=5 0.932367, t=6 0.931818, t=69 0.905125 pi_v: t=1 0.069189, t=5 0.069616, t=6 0.069989, t=69 0.087024  (12:51)
+remote_tr70_CAgr2 0.20 grace: grace seeds: Housing First for years 1-0, then the main path from the rescaled rule-C paths shifted 0 years: drug_price: t=1 0.940088, t=2 0.944040, t=10 0.940022, t=25 0.912384, t=49 0.905637, t=69 0.905637 pi_v: t=1 0.071881, t=2 0.068140, t=10 0.071189, t=25 0.079376, t=49 0.086365, t=69 0.086365  (12:51)
+remote_tr70_CAgr2 0.20 grace: 4 GiB swap on (12:51)
+remote_tr70_CAgr2 0.20 grace: T = 70 transition started, pid 19095 (12:51)
+remote_tr70_CAgr2 0.20 grace: handover applied: 100 parameters (12:51)
+remote_tr70_CAgr2 0.20 grace: the path's drug price clears: HANDOVER drug_market_adjuster -> 0.10000000000000001 (12:51)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -40,3 +48,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   9  0.9056  0.08648   -30.0%   -29.9%   -11.1%  0.00e+00  1.12e-03   789.3473  +5.53%   -14.2%   +22.7%
  10  0.9056  0.08641   -30.0%   -29.9%   -11.1%  0.00e+00  7.38e-04   789.3439  +5.52%   -14.2%   +22.7%
  MILBY SPLIT voucher mass rec treat smi   6.3048675979987645E-002   2.2056318233565236E-003   2.6729793041724494E-002   6.3802222428686380E-003  housed_nov mass rec treat smi   1.2484378837300971        3.8498245700111573E-002  0.30994264296905427        9.9548682847597714E-002
+
+== tr2c_t70_CAgr2_20 (T = 70, rule CA, detection 0.20, grace, lag 5)
