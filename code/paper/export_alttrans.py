@@ -145,6 +145,14 @@ def below_first(r, k='h'):
 
 
 MAIN = RUNS['main']
+# (round r361, the author on "the screen that follows the exemption deters more": "how can it deter more when both
+# cases have 20 percent detection rate?") the rule, not the rate: in the main transition a household with a SUD keeps
+# its voucher by entering treatment and not using, here it cannot, so using drugs risks more (long run: drug use falls
+# 30 per cent at 0.20 here, 21 in the main transition). Said in full the first time a 20 per cent path is compared with
+# the main transition, then referred to.
+MECH = ('a household with a SUD cannot keep its voucher by entering treatment and not using, as it can in the main '
+        'transition, so using drugs risks more and fewer households use them')
+SAID = {}
 
 
 def pc(x):
@@ -160,7 +168,7 @@ def why_more(r, again=False):
     if r is None or r['cev'] <= MAIN['cev'] or not all(r['lam'][t] < MAIN['lam'][t] for t in range(2, 26)):
         return None
     assert f"{100 * MAIN['lam'][10]:.2f}" == d['x_trf_sud10'], (MAIN['lam'][10], d['x_trf_sud10'])
-    w = (f'${num(r, 100 * r["lam"][10], ".2f")}$ percent of households have a SUD by period ten, against '
+    w = (f'by period ten, ${num(r, 100 * r["lam"][10], ".2f")}$ percent of households have a SUD, against '
          f'${d["x_trf_sud10"]}$ percent' + ('' if again else ' in the main transition') + ', so fewer of these children grow up with a parent who has '
          'the disorder')
     if all(r['pv'][t] > MAIN['pv'][t] for t in range(1, 26)):
@@ -208,7 +216,13 @@ def ann_par():
                                'screen starts at once', less)) if c]
         if why:
             s += (('The first is' if b is not None else 'This is') + f' less than the ${num(ne, ne["cev"], ".2f")}$ percent without the '
-                  'announcement, because ' + ' and '.join(why) + '.')
+                  'announcement, because ' + ' and '.join(why) + '. ')
+    # (round r361, the author: "and why is the 2.57 higher than the main simulation?")
+    w = why_more(b, again=True) if b is not None else None
+    if w:
+        s += (f'The second is more than the ${MAIN["cev"]:.2f}$ percent in the main transition, although both screens catch '
+              f'one in five users: once the screen starts, {MECH}. {w[0].upper() + w[1:]}.')
+        SAID['mech'] = 'when the screen is announced'
     return s.rstrip()
 
 
@@ -242,8 +256,14 @@ def gr_par():
          ' percent of lifetime consumption' + (', respectively' if len(cevs) == 2 else '')
     # (round r360, the author on 3.14: "why is it even higher than the main experiment without the exemptions?")
     w = why_more(a, again=True) if a is not None else None
-    s += (f', more than the ${MAIN["cev"]:.2f}$ percent in the main transition, because the screen that follows the '
-          'exemption deters more: ' + w + '.') if w else '.'
+    if w and 'mech' in SAID:
+        s += (f', more than the ${MAIN["cev"]:.2f}$ percent in the main transition, for the same reason as '
+              f'{SAID["mech"]}: ' + w + '.')
+    elif w:
+        s += (f', more than the ${MAIN["cev"]:.2f}$ percent in the main transition, although both screens catch one in five '
+              f'users: once the exemption ends, {MECH}. {w[0].upper() + w[1:]}.')
+    else:
+        s += '.'
     return s
 
 
@@ -253,7 +273,8 @@ def lesson():
     if a is None:
         return ''
     if a['cpk'] <= ABOVE and a['hpk'] < 3:
-        return ('A temporary exemption for those with a SUD keeps any rise small: if a household in treatment keeps its '
+        return ('A temporary exemption for those with a SUD keeps the latter from ever rising and keeps the former\'s rise '
+                'small: if a household in treatment keeps its '
                 'voucher, sober or not, for the first five periods, and the screen catches one in five users, the share of '
                 'children in a shelter never rises above its Housing First level and homelessness rises by at most '
                 f'${a["hpk"]:.1f}$ percent, '   # plain: the paragraph is yellow
@@ -282,10 +303,11 @@ else:
               f'and {verb(b)} ${cev_txt(b)}$ percent when ${PDET}$ percent are, against a gain of ${m0:.2f}$ percent in the main '
               f'transition.')
 # (round r360, the author on the newborn's gain without the exemption: "explain why more than the main experiment")
-_w = why_more(a) if a is not None and verb(a) == 'gain' else None
+_w = why_more(a, again=True) if a is not None and verb(a) == 'gain' else None
 if _w:
-    ne_cev += (' They gain more because a screen the disorder fails even in treatment deters more: when every user is '
-               'caught, ' + _w + '.')
+    ne_cev += (' They gain more because the screen deters more: it catches every user, and a household with a SUD cannot '
+               'keep its voucher by entering treatment and not using, as it can in the main transition. '
+               + _w[0].upper() + _w[1:] + '.')
 # (round r357, the author on 'Catching 20 percent of users': "only one in five users")
 _inv = 100 / float(PDET)
 assert abs(_inv - round(_inv)) < 1e-9, PDET

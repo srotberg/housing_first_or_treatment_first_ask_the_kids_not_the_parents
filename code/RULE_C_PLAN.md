@@ -1028,3 +1028,13 @@ because pi_V stays at Housing First's 6.75 per cent until the screen starts and 
 cent in period 1 (the cohort's childhood part is two thirds of the gap: 0.246 of 0.369 utils). The third lesson goes
 straight to the exemption (the author: "can remove this"): "A temporary exemption for those with a SUD keeps any rise
 small: ..., with newborns gaining even more than in the main transition" (3.14 against 1.45).
+
+04:10 (20 Oct) ROUND r361 (3 comments). Red cleared (base_r361); the third lesson stays yellow. (1) "why is the 2.57
+higher than the main simulation?": the announced 0.20 path's newborn gain now has its reason, generated in
+export_alttrans.py (why_more on the 0.20 path: 3.27 per cent with a SUD by period ten against 3.47; pi_V is not higher
+in every childhood period there, so that clause does not print). (2) "how can it deter more when both cases have 20
+percent detection rate?": the rule, not the rate -- in the main transition a household with a SUD keeps its voucher by
+entering treatment and not using, here it cannot, so using drugs risks more (long-run drug use -30 per cent at 0.20
+against -21). Said in full the first time (announced paragraph), referred to in the exemption paragraph; the first
+alternative's sentence now names both differences (the rate and the rule). (3) The lesson: "keeps the latter from ever
+rising and keeps the former's rise small" (the author's words).
