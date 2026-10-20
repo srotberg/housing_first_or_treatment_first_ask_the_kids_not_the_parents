@@ -1,10 +1,5 @@
-# counterfactual tf_pdet100_CAuC (detection 1.00) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 20 Oct 02:39 UTC
-remote_pdet tf_pdet100_CAuC: free disk 24G, memory 15 GiB, cores 4 (01:53)
-remote_pdet tf_pdet100_CAuC: warm start at the rule-C arm tf_pdet100_CAuC's latest pass: price 0.7979, pi_V 0.10511 (01:53)
-remote_pdet tf_pdet100_CAuC: warm start at the given values: price 0.777, pi_V 0.116 (01:53)
-remote_pdet tf_pdet100_CAuC: resuming from the last published pass: price 0.7979, pi_V 0.10511 (01:53)
-remote_pdet tf_pdet100_CAuC: TF budget target: the paper's no-policy net revenue 5.8371628; test cost 0.0004946100 ($35); detection 1.00 (01:53)
-remote_pdet tf_pdet100_CAuC: arm tf on cf_fix2_treatCA: PDET=1.00 NET_TARGET=5.8371628 PV_START=0.10511 DRUG_PRICE_START=0.7979 EXTRA_SET=cost_per_drug_test 0.0004946100 (01:53)
+# counterfactual tf_pdet100_CAuC (detection 1.00) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 20 Oct 02:55 UTC
+remote_pdet tf_pdet100_CAuC: free disk 24G, memory 15 GiB, cores 4 (02:55)
 
 == tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -77,3 +72,4 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
  67  0.7975  0.10514   -62.8%   -63.2%   -28.7%  6.26e-02  1.23e-02   791.5974  +12.85%   -35.7%   +73.0%
  68  0.7986  0.10506   -56.2%   -56.5%   -27.5%  2.55e-02  1.95e-02   791.5160  +12.57%   -24.8%   +71.7%
  69  0.7999  0.10518   -56.6%   -56.9%   -27.4%  1.31e-02  7.01e-03   791.4735  +12.42%   -26.3%   +69.9%
+ 70  0.7959  0.10514   -62.5%   -62.9%   -28.6%  5.65e-02  9.83e-03   791.5966  +12.84%   -35.1%   +73.0%
