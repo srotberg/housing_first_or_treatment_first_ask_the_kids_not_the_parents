@@ -1190,3 +1190,10 @@ lose, and when both adjust, 67 percent still do." and "outweigh these micro effe
 14:10 (20 Oct) ALL RED REMOVED (the author: "remove all red"; base_r368 frozen, export_alttrans.py --freeze with the
 others; splice 0 red, no \new left). Yellow left: only the dashes with no run behind them (Table 7's 0.20 no-exemption
 row and its sentence in 6.5, x_trfix_sud_worse_pc in the introduction and the second lesson).
+
+15:55 (20 Oct) ALL RED REMOVED (the author: "remove all red"; base_r369 frozen with export_alttrans.py --freeze and the
+others; splice 0 red). Since base_r368: two introduction sentences an AI detector flagged were rewritten without the
+cleft "What X is Y" and the colon-led list of three, content kept ("The verdict turns on the children. ..."; "The higher
+risk of dying that comes with a SUD reverses the gradient: ..."). The author will send more flagged text tomorrow.
+writing/ai_check/ holds the paper in four parts and in 15 chunks of at most 2,000 words (chunks_2000/, PDF and text);
+regenerate them if the paper changes before the author uses them. writing/letters/qje_katz.tex is the letter to Katz.
