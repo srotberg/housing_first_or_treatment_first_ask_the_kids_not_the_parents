@@ -1181,3 +1181,8 @@ rates below it, for all three alternatives so the table has one layout; layout o
 13:55 (20 Oct) ROUND r367 (1 comment). Red cleared (base_r367). The introduction's held-price sentence takes the second
 lesson's wording (the author: "maybe something a bit more explanatory like in the conclusion? why holding them?"):
 ", as in a trial, which is too small to move either," and "and even once both clear, 67 percent are". Red.
+14:05 (20 Oct) The introduction's held-price sentence reworded so it does not repeat the second lesson (the author: "try
+to use language that is not identical to the second lesson of the conclusion. you used exactly the same words"): "A trial
+enrols too few households to change the drug price or the chance of drawing a voucher, so the comparison that matches it
+keeps both at their Housing First levels. Then -- percent of the households that have a SUD at the time of the reform
+lose, and when both adjust, 67 percent still do." and "outweigh these micro effects" (was "them"). Red, against base_r367.
