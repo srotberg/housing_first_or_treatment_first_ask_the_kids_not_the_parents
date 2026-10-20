@@ -75,8 +75,9 @@ RUNS = {
     'ne100': run('ne100', 'transition_2c_t70_CAc', ('arms',), fallback=('transition_2c_t70_CAb', ('arms',))),
     # (19 October, 16:10) the hedge in a fresh container, code/transition_fix/remote_tr70_CAne.sh 0.20, while CA20e has no loop
     'ne20': run('ne20', 'transition_2c_t70_CA20e', ('arms',), fallback=('transition_2c_t70_CAne20', ('arms',))),
-    'ann100': run('ann100', 'transition_2c_t70_CAann100', ('arms',)),
-    'ann20': run('ann20', 'transition_2c_t70_CAann20', ('arms',)),
+    # (20 October) the re-seeded announced runs (remote_tr70_CAann2.sh) once they land, else the first ones
+    'ann100': run('ann100', 'transition_2c_t70_CAann2_100', ('arms',), fallback=('transition_2c_t70_CAann100', ('arms',))),
+    'ann20': run('ann20', 'transition_2c_t70_CAann2_20', ('arms',), fallback=('transition_2c_t70_CAann20', ('arms',))),
     'gr100': run('gr100', 'transition_2c_t70_CAgrace100', ('arms',)),
     'gr20': run('gr20', 'transition_2c_t70_CAgrace20', ('arms',)),
 }

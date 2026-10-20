@@ -979,3 +979,12 @@ percent throughout" -- loop 1's pi_V is 6.55, 6.64, 6.73 in years 1-3. It is now
 transition_figure.py): "Third, after the first three years, when it is as low as 6.55 percent, pi_V stays above its
 Housing First level of 6.75 percent, ...". Homelessness and children in a shelter still never rise (year 1 -0.001 per
 cent, then falling), so "Neither rises at any point" and the introduction's claim stand.
+
+02:45 (20 Oct) THE ANNOUNCED RUNS RE-SEEDED, AND THE FIRST SAFEGUARD (the author: "you can start the runs with better
+guesses. sure. yes, you can restart the other safeguards too"). code/transition_fix/remote_tr70_CAann2.sh <rate> (a new
+file; remote_tr70_CAann.sh untouched) in two fresh sessions -> results/transition_2c_t70_CAann2_100 and _CAann2_20. Seeds:
+reseed_implied.py on the old run's latest archived loop (its updated paths; the drug price in periods 1-5 moved 0.6 of
+the way to the implied supply price: at 1.00, 0.994 -> 0.867-0.888). Every 20 minutes progress_tr.py publishes
+progress.txt: each forward period reached, homelessness and children in a shelter against Housing First, the drug
+distance and pi_V. export_alttrans.py reads the re-seeded runs once they land. The old announced runs keep running.
+The second safeguard (checkpoint the backward pass so a restart resumes the forward pass) is next, for later relaunches.
