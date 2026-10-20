@@ -1028,9 +1028,9 @@ Exempting sobriety while in treatment for the first five periods lets a househol
 %======================================================================
 \section{Discussion and implications}\label{sec:discussion}
 
-To close, I return to the question I started with: should housing assistance require sobriety? The answer turns on the children, and not on the moral hazard that dominates the policy debate: without the externalities on children, Treatment First cuts drug use by $28$ percent, but a newborn is worse off, because the screen takes an option from households that weigh the risks correctly and gives back less through the budget than it takes.
+To close, I return to the question I started with: should housing assistance require sobriety? \new{The answer depends on the children, not on the moral hazard that dominates the policy debate. Without the externalities on children, Treatment First cuts drug use by $28$ percent, yet a newborn is worse off. The screen takes away an option from households that weigh the risks correctly, and the budget gives back less than the screen takes.}
 
-Drug use costs children consumption and housing at home and productivity in adult life, and a parent counts only the share $\omega_c$ of either, so the screen's deterrence is worth more to the child than to the parent. With the drug price and $\pi_V$ held, the parents lose $1.19$ percent of their own lifetime consumption, about what they lose without the externalities, while a newborn gains $2.82$ percent, so the reform raises welfare on net once the children are counted. With the budget rebalanced and the drug price clearing, as they would be after a real reform, Treatment First cuts drug use by $21$ percent, lowers homelessness by $11$ percent, and raises a newborn's welfare by $2.57$ percent of lifetime consumption, three quarters of it an externality its parent does not count. Once general-equilibrium effects are accounted for, the parents gain too, because the higher $\pi_V$ and the cheaper drug outweigh the option the screen removes. Along the transition, neither homelessness nor the share of children in a shelter rises, and children born at the reform gain \updnum{$1.45$} percent.
+\new{Drug use costs children consumption and housing at home and productivity as adults. A parent counts only the share $\omega_c$ of these costs, so the deterrence the screen provides is worth more to the child than to the parent.} With the drug price and $\pi_V$ held, the parents lose $1.19$ percent of their own lifetime consumption, about what they lose without the externalities, while a newborn gains $2.82$ percent, so the reform raises welfare on net once the children are counted. With the budget rebalanced and the drug price clearing, as they would be after a real reform, Treatment First cuts drug use by $21$ percent, lowers homelessness by $11$ percent, and raises a newborn's welfare by $2.57$ percent of lifetime consumption, three quarters of it an externality its parent does not count. Once general-equilibrium effects are accounted for, the parents gain too, because the higher $\pi_V$ and the cheaper drug outweigh the option the screen removes. Along the transition, neither homelessness nor the share of children in a shelter rises, and children born at the reform gain \updnum{$1.45$} percent.
 
 Three lessons follow. First, the arguments for Housing First and Treatment First made by different advocacy
 groups leave out the outcome that matters most: what happens to the children of the households a sobriety requirement deters from using, in what they consume while living with their parents, in whether they become homeless and in what they earn as adults.
@@ -1044,22 +1044,9 @@ Third, homelessness and childhood homelessness do not fall along the transition 
 \setcounter{table}{0}\renewcommand{\thetable}{A\arabic{table}}
 \section[Calibration of the standard parameters]{Calibration of the standard parameters}\label{sec:stdparams}
 
-The remaining thirty-three parameters are more conventional, and I record the
-values I use so that the calibration can be reproduced. Six of them I calibrate internally,
-against a moment, because no source gives them directly; the other twenty-seven I set
-from outside, from an estimate or from statute. Table~\ref{tab:stdparams} and the
-entries below run in the same seven blocks, and each entry gives the moment or the
-source that fixes the parameter together with the value that moment takes in the
-data. The Model column reports what the model produces against that value, and it
-does so only for the six I calibrate internally, since the other
-twenty-seven have no target to reproduce.
+\new{The remaining thirty-three parameters are more conventional, and I record their values here so that the calibration can be reproduced. I calibrate six of them internally against a moment, because no source gives them directly, and set the other twenty-seven externally from an estimate or from statute. Table~\ref{tab:stdparams} and the entries below follow the same seven blocks. Each entry gives the moment or source that pins down the parameter and the value of that moment in the data. The Model column shows what the model produces for that value, but only for the six parameters calibrated internally, since the other twenty-seven have no target to reproduce.}
 
-The parameters in this appendix are not inert in the experiments. For example, the discount
-factor governs how heavily a household weighs a death later in life, the dispersion
-of productivity determines how many households are poor enough to be at risk of
-homelessness and of acquiring a disorder, and risk aversion governs what insurance
-is worth. What separates them from the parameters of Section~\ref{sec:fullcal} is not that they do nothing,
-but that they are not specific to this paper.
+\new{These parameters still matter for the experiments. The discount factor, for example, governs how much weight a household puts on dying later in life. The dispersion of productivity determines how many households are poor enough to risk homelessness and a disorder, and risk aversion determines what insurance is worth. They differ from the parameters of Section~\ref{sec:fullcal} because they are not specific to this paper, not because they have no effect.}
 
 \input{tables/tab_standard}
 
@@ -1091,25 +1078,19 @@ the child lives with the parent ($j\le J_K$), from the parent's age 26 to 50, an
 \paragraph{Block 8: Rental ladder.} These three parameters build the grid of dwelling
 sizes a household chooses from. Below the smallest rung is the shelter, $h_1$, which was calibrated in Block 2.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$h_2$, the smallest rental size.] The size of the cheapest dwelling is what
-decides how much of its income a poor household must spend to be housed at all. Raise it and the bottom rung is
-larger and dearer, so more households are burdened, and a voucher is worth more to them. It is chosen so that
+\item[$h_2$, the smallest rental size.] \new{The size of the cheapest dwelling determines how much of its income a poor household has to spend to be housed at all. A larger value makes the bottom rung bigger and more expensive, so more households are burdened and a voucher is worth more to them.} It is chosen so that
 the fraction of renters paying more than half of their income for housing is similar to
 the data, $19.2$ percent in the 2022 SCF; the model gives $25.8$
 percent.
-\item[$h_3/h_2$ and $h_4/h_2$, the spacing of the ladder.] These two ratios set how much housing the middle and largest rungs provide, and so what a household that can afford more than the smallest unit can move up to. Raise them and each step up the ladder costs more rent, and fewer households can afford the larger rungs. The two larger
+\item[$h_3/h_2$ and $h_4/h_2$, the spacing of the ladder.] \new{These two ratios set how much housing the middle and largest rungs offer, and therefore what a household that can afford more than the smallest unit can move up to. Larger ratios make each step up the ladder cost more rent, so fewer households can afford the larger rungs.} The two larger
 rungs are set at $4.00$ and $8.00$ times the smallest.
 \end{description}
 
-\paragraph{Block 9: Earnings and employment.} These eleven parameters determine how long a household
-lives and works, what it
-is expected to earn over its life, how persistent the shocks to it are, and how it
-moves between work and unemployment.
+\paragraph{Block 9: Earnings and employment.} \new{These eleven parameters govern how long a household lives and works and what it can expect to earn over its life. They also set how persistent its shocks are and how it moves between work and unemployment.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$J$, $J_K$ and $J_R$, the length of life, of child rearing and of working life, respectively.] A household lives at most
 $J$ periods, has its child at home for its first $J_K$ of them and works until model age $J_R$, after which it retires on social security.
-Together they set how many years of life and of earnings a disorder can cost, and $J_K$ how long a parent's drug use reaches its child through what they share. Raise
-either $J$ or $J_R$ and a disorder that shortens life or work costs more; raise $J_K$ and the \emph{budget and childhood homelessness externalities} last longer. I set $J=60$, so
+\new{Together, $J$ and $J_R$ set how many years of life and of earnings a disorder can cost, and $J_K$ sets how long a parent's drug use reaches its child through what they share. A higher $J$ or $J_R$ makes a disorder that shortens life or work more costly, and a higher $J_K$ makes the \emph{budget and childhood homelessness externalities} last longer.} I set $J=60$, so
 that with $j=1$ at age 26 the last age is $85$, $J_K=25$, so that the child lives at home while its parent is 26 to $50$, and $J_R=41$, so that retirement begins at age $66$, the
 full retirement age under social security for those born between 1943 and 1954.
 \item[$\varepsilon(j)$, the age profile of efficiency.] This is the deterministic hump in
