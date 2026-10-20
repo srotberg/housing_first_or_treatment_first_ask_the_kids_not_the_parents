@@ -1204,3 +1204,6 @@ red and every strike from the AI-detector rewrites (passages 1-55) removed; base
 much a household that uses spends on drugs, ..." (was "As the drug's weight in the bundle, it mostly determines"),
 struck old words before the red new ones (track_changes.py against the stripped source). 43 pages. The check-in on the
 runs uses base_r370 from now on.
+
+16:38 (20 Oct) ALL RED AND STRIKES REMOVED (the author: "remove all red and crossed lines"; base_r371 frozen with
+export_alttrans.py --freeze and the others; splice 0 red, no \new or \del left, 43 pages). The check-in uses base_r371.
