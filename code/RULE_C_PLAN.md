@@ -1059,3 +1059,14 @@ periods 2-6, then +3.6 in period 7 to a peak of +4.2 in period 9, above until 13
 (periods 8-9); reform cohort +6.88 (no exemption at 1.00: +6.74); budget 0.98 per cent, drug market not yet clearing
 (yellow). The exemption paragraph now states both rates in the same words (it printed "by up to 0 percent" for 0.22)
 and gives the 1.00 newborn gain after the 0.20 one's reason.
+
+03:55 (20 Oct) ALL RED REMOVED (the author: "remove all red"; base_r363, splice 0 red). The author asked how close the
+yellow is to clearing. What is yellow: Table 7's six alternative rows (30 cells) and 20 passages in 6.5 that quote them,
+plus the third lesson (yellow on the author's instruction). The drug-market gap by period of each latest pass (implied
+supply price against the path's price): at 1.00 (CAc, CAann100, CAgrace100) periods 51-69 sit 8-10 per cent off,
+because the terminal arm is the 1.00 best pass, which has no clearing price (16 Oct: drug use jumps between -56 and -63
+per cent near 0.80; implied 0.72-0.73 against the held 0.7977-0.8017), so no number of loops turns those rows black under
+the 5e-3 rule. At 0.20 the end state clears (0.5-1.9 per cent in periods 51-69) but the paths are 2-12 per cent off in
+periods 1-30 (CAgrace20 0.4-3.9 per cent in 1-15, CAann20 10.6-12.4 in 1-5), and the price moves at most 0.5 per cent a
+period per loop, a day a loop: about a week of loops unless re-seeded from the implied prices (reseed_implied.py, as the
+announced runs were). Put to the author: the 1.00 decision and a re-seed of the 0.20 exemption run.
