@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path, re-seeded (code/transition_fix/remote_tr70_CAgr2.sh); 20 Oct 23:34 UTC
+# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path, re-seeded (code/transition_fix/remote_tr70_CAgr2.sh); 20 Oct 23:54 UTC
 remote_tr70_CAgr2 0.20 grace: gfortran missing, installing (04:02)
 remote_tr70_CAgr2 0.20 grace: free disk 29G, memory 15 GiB, cores 4 (04:02)
 remote_tr70_CAgr2 0.20 grace: building cf_fix (04:02)
@@ -53,9 +53,9 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
  MILBY SPLIT voucher mass rec treat smi   6.3048675979987645E-002   2.2056318233565236E-003   2.6729793041724494E-002   6.3802222428686380E-003  housed_nov mass rec treat smi   1.2484378837300971        3.8498245700111573E-002  0.30994264296905427        9.9548682847597714E-002
 
 == tr2c_t70_CAgr2_20 (T = 70, rule CA, detection 0.20, grace, lag 5)
-  binary loop 0: periods to 7, worst budget residual (t>1) 2.79e-02, worst drug gap 2.02e-02
+  binary loop 0: periods to 9, worst budget residual (t>1) 2.79e-02, worst drug gap 2.34e-02
   CEV path of the latest forward pass (per cent, t: value):
-    1: +0.892  2: +1.140  3: +1.391  4: +1.524  5: +1.643  6: +1.784  7: +1.788
+    1: +0.892  2: +1.140  3: +1.391  4: +1.524  5: +1.643  6: +1.784  7: +1.788  8: +1.772  9: +1.826
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.93565027121865163       share_newborns=  0.49146851367108779       share_addicted=  0.32959811619602997       share_addicted_newborns=   0.0000000000000000
 
 grace checked on the forward pass: ok, 6 lines: treatment passes in years 1-5, not from year 6, the screen on throughout
