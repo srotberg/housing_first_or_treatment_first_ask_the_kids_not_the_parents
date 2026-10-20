@@ -30,6 +30,14 @@ def worse_sud(log):
 
 loop = latest_loop(RUN)
 w = worse_sud(os.path.join(loop, 'run.log.gz')) if loop else None
+# before the loop archives: the launcher copies the t = 1 lines to better_off_t1.txt as soon as the forward pass prints
+# them (remote_tr70_Cfix.sh), so the number does not wait the 8-14 hours of the rest of the pass
+EARLY = os.path.join(RUN, 'better_off_t1.txt')
+if w is None and os.path.exists(EARLY):
+    for l in open(EARLY):
+        m = re.search(r'BETTER OFF TOL t=\s*1\s.*worse_sud=\s*(\S+)', l)
+        if m:
+            w, loop = float(m.group(1)), EARLY
 d = json.load(open(OUT))
 d['x_trfix_sud_worse_pc'] = f'{100 * w:.0f}' if w is not None else '\\mbox{\\tocheck{--}}'
 json.dump(d, open(OUT, 'w'), indent=1, sort_keys=True)
