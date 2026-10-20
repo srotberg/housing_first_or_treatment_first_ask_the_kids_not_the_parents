@@ -1286,3 +1286,9 @@ check of the whole PDF finds nothing but URLs and terms.
 19:25 (20 Oct) ALL RED AND STRIKES REMOVED (the author: "remove all red and crossed lines"; base_r378 frozen with
 export_alttrans.py --freeze and the others; the two table notes' \del/\textcolor{red} wrappers removed by hand; splice
 0 red, 43 pages). 108 blue sentences remain from page 21 on.
+
+22:31 (20 Oct) CAann2_20 loop0 LANDED (the re-seeded announced 0.20 run) and replaces CAann20/loop0 in Table 7 and 6.5, red
+against base_r378: homelessness +3.4 (12), periods 7-19; children +0.9 (11), periods 8-13; newborn CEV 1.92 (was 2.57);
+budget 0.29 per cent; drug market off in 46 of 69 periods (was 69; the gap is about halved), so still provisional. Its
+SUD share is no longer below the main transition's in every period 2-25, so why_more() no longer explains its newborn
+gain; the explanation now sits in the exemption paragraph (x_at_gr_par), generated.
