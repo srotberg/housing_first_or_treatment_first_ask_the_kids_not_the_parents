@@ -1029,7 +1029,7 @@ cent in period 1 (the cohort's childhood part is two thirds of the gap: 0.246 of
 straight to the exemption (the author: "can remove this"): "A temporary exemption for those with a SUD keeps any rise
 small: ..., with newborns gaining even more than in the main transition" (3.14 against 1.45).
 
-04:10 (20 Oct) ROUND r361 (3 comments). Red cleared (base_r361); the third lesson stays yellow. (1) "why is the 2.57
+03:25 (20 Oct) ROUND r361 (3 comments). Red cleared (base_r361); the third lesson stays yellow. (1) "why is the 2.57
 higher than the main simulation?": the announced 0.20 path's newborn gain now has its reason, generated in
 export_alttrans.py (why_more on the 0.20 path: 3.27 per cent with a SUD by period ten against 3.47; pi_V is not higher
 in every childhood period there, so that clause does not print). (2) "how can it deter more when both cases have 20
@@ -1039,7 +1039,7 @@ against -21). Said in full the first time (announced paragraph), referred to in 
 alternative's sentence now names both differences (the rate and the rule). (3) The lesson: "keeps the latter from ever
 rising and keeps the former's rise small" (the author's words).
 
-04:40 (20 Oct) ROUND r362 (3 comments, and "i asked you before you remove all red and you didnt. please remove all
+03:35 (20 Oct) ROUND r362 (3 comments, and "i asked you before you remove all red and you didnt. please remove all
 red and put only updates in red"). WHY THE RED STAYED: the splice marked a generated name that moved red AS A WHOLE, so
 6.5's paragraphs and the third lesson (x_at_ne_cev, x_at_ann_par, x_at_gr_par, x_at_lesson; and the src wrapper
 \new{\tocheck{@@x_at_lesson@@}}) printed entirely red whenever one clause changed. FIX: code/paper/splice.py diffs a
@@ -1054,3 +1054,8 @@ main transition it keeps the voucher by entering treatment and not using; starti
 households use drugs -- in full in the announced paragraph and in short in the exemption paragraph; the first
 alternative's sentence says the same at 1.00 ("costs it its voucher"). The lesson: "keeps the latter from ever rising
 and the former's rise small" (the second "keeps" removed).
+In the same round, CAgrace100 (the exemption at 1.00; loop 0, archived 03:3x) landed: homelessness below Housing First in
+periods 2-6, then +3.6 in period 7 to a peak of +4.2 in period 9, above until 13; children in a shelter at most +0.2
+(periods 8-9); reform cohort +6.88 (no exemption at 1.00: +6.74); budget 0.98 per cent, drug market not yet clearing
+(yellow). The exemption paragraph now states both rates in the same words (it printed "by up to 0 percent" for 0.22)
+and gives the 1.00 newborn gain after the 0.20 one's reason.

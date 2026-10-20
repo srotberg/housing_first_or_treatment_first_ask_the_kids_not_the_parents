@@ -247,24 +247,23 @@ def gr_par():
          'in those periods by entering treatment, even if it uses drugs, and more of them do: '
          f'${num(r, r["tu15"])}$ percent of those with a SUD are in treatment, against ${r["tu0"]:.0f}$ percent under '
          'Housing First. ')
-    if a is not None:
-        k = below_first(a)
-        s += 'When the screen catches one in five users, '
+    # (round r362) both rates in the same words, the 1.00 path's as the 0.20 one's: it also falls below Housing First
+    # while the exemption lasts, and its children in a shelter rise by 0.2 per cent, which a whole number printed as 0
+    for r_, when in ((a, 'When the screen catches one in five users, '), (b, 'When every user is caught, ')):
+        if r_ is None:
+            s += PENDING.format('one in five users' if r_ is a else 'every user')
+            continue
+        k = below_first(r_)
+        s += when
         if k is None:
             s += 'homelessness never rises above its Housing First level'
         else:
             s += (f'homelessness stays below its Housing First level for the first {WORDS.get(k, str(k) + " periods")} but '
-                  f'rises above it by at most ${num(a, a["hpk"], ".1f")}$ percent after the exemption ends')
-        s += (', and the share of children in a shelter never rises above its Housing First level. ' if a['cpk'] <= ABOVE else
-              f', and the share of children in a shelter by at most ${num(a, a["cpk"], ".1f")}$ percent. ')
-    if b is None:
-        s += PENDING.format('every user')
-    else:
-        s += (f'When every user is caught, homelessness rises by up to ${num(b, max(b["hpk"], 0))}$ percent and the share '
-              f'of children in a shelter by up to ${num(b, max(b["cpk"], 0))}$ percent. ')
-    cevs = [(r_, w) for r_, w in ((a, 'one in five'), (b, 'every')) if r_ is not None]
-    s += 'Children born at the reform gain ' + ' and '.join(f'${num(r_, r_["cev"], ".2f")}$' for r_, _ in cevs) + \
-         ' percent of lifetime consumption' + (', respectively' if len(cevs) == 2 else '')
+                  f'rises above it by at most ${num(r_, r_["hpk"], ".1f")}$ percent after the exemption ends')
+        s += (', and the share of children in a shelter never rises above its Housing First level. ' if r_['cpk'] <= ABOVE
+              else f', and the share of children in a shelter by at most ${num(r_, r_["cpk"], ".1f")}$ percent. ')
+    s += f'Children born at the reform gain ${num(r, r["cev"], ".2f")}$ percent of lifetime consumption' + \
+         (' when one in five users are caught' if a is not None and b is not None else '')
     # (round r360, the author on 3.14: "why is it even higher than the main experiment without the exemptions?")
     w = why_more(a, again=True) if a is not None else None
     if w and 'mech' in SAID:
@@ -275,6 +274,8 @@ def gr_par():
               'users in both. ' + mech_full('once the exemption ends') + w + '.')
     else:
         s += '.'
+    if a is not None and b is not None:
+        s += f' When every user is caught, they gain ${num(b, b["cev"], ".2f")}$ percent.'
     return s
 
 
