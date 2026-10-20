@@ -1070,3 +1070,11 @@ the 5e-3 rule. At 0.20 the end state clears (0.5-1.9 per cent in periods 51-69) 
 periods 1-30 (CAgrace20 0.4-3.9 per cent in 1-15, CAann20 10.6-12.4 in 1-5), and the price moves at most 0.5 per cent a
 period per loop, a day a loop: about a week of loops unless re-seeded from the implied prices (reseed_implied.py, as the
 announced runs were). Put to the author: the 1.00 decision and a re-seed of the 0.20 exemption run.
+
+04:05 (20 Oct) THE TRIALS IN THE ABSTRACT AND THE INTRODUCTION (the author: "should i say something in the
+intro/abstract about how i generate the micro evidence from trials but show that when accounting for the macro effects,
+the conclusions change?", "something like the second lesson in the conclusion", then "go for it" to the proposed text).
+Abstract, before its last sentence (122 -> 145 words): "As in trials, households with a disorder lose from sobriety
+conditions, but counting those deterred from using, and the children, reverses the verdict." Introduction, a paragraph
+after the long-run decomposition and before the transition: the model reproduces what the trials find for the
+households they follow, and what changes the conclusion is what they do not observe (the second lesson's terms). Red.
