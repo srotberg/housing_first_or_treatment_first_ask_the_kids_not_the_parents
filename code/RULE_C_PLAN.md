@@ -1014,7 +1014,7 @@ and before starting the binary after a killed run delete VF_CHECKPOINT.bin if th
 The run directory needs about 1 GB free for the file. First use: confirm 'restored= 1' and that the forward pass's first
 period matches the killed log's.
 
- (20 Oct) ROUND r360 (9 comments on 6.5 and the third lesson). Red cleared (base_r360); the third lesson stays
+03:17 (20 Oct) ROUND r360 (9 comments on 6.5 and the third lesson). Red cleared (base_r360); the third lesson stays
 yellow. CAann20 (announced at 0.20) loop 0 landed and fills its row: homelessness +3.1 in period 12, above Housing First
 in 7-19; children in a shelter +0.6 in period 11, above in 9-13; reform cohort +2.57 (not yet a reasonable pass: the
 drug market misses in the announcement periods, as at 1.00). export_alttrans.py: "lowers the rise but does not
@@ -1029,7 +1029,7 @@ cent in period 1 (the cohort's childhood part is two thirds of the gap: 0.246 of
 straight to the exemption (the author: "can remove this"): "A temporary exemption for those with a SUD keeps any rise
 small: ..., with newborns gaining even more than in the main transition" (3.14 against 1.45).
 
-03:25 (20 Oct) ROUND r361 (3 comments). Red cleared (base_r361); the third lesson stays yellow. (1) "why is the 2.57
+03:28 (20 Oct) ROUND r361 (3 comments). Red cleared (base_r361); the third lesson stays yellow. (1) "why is the 2.57
 higher than the main simulation?": the announced 0.20 path's newborn gain now has its reason, generated in
 export_alttrans.py (why_more on the 0.20 path: 3.27 per cent with a SUD by period ten against 3.47; pi_V is not higher
 in every childhood period there, so that clause does not print). (2) "how can it deter more when both cases have 20
@@ -1039,7 +1039,7 @@ against -21). Said in full the first time (announced paragraph), referred to in 
 alternative's sentence now names both differences (the rate and the rule). (3) The lesson: "keeps the latter from ever
 rising and keeps the former's rise small" (the author's words).
 
-03:35 (20 Oct) ROUND r362 (3 comments, and "i asked you before you remove all red and you didnt. please remove all
+03:36 (20 Oct) ROUND r362 (3 comments, and "i asked you before you remove all red and you didnt. please remove all
 red and put only updates in red"). WHY THE RED STAYED: the splice marked a generated name that moved red AS A WHOLE, so
 6.5's paragraphs and the third lesson (x_at_ne_cev, x_at_ann_par, x_at_gr_par, x_at_lesson; and the src wrapper
 \new{\tocheck{@@x_at_lesson@@}}) printed entirely red whenever one clause changed. FIX: code/paper/splice.py diffs a
