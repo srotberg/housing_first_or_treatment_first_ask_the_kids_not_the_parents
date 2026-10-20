@@ -67,11 +67,19 @@ def words(t):
     return out
 
 
+def plain(w):
+    """a word without its yellow: \\mbox{\\tocheck{x}} and \\tocheck{x} read as x"""
+    return re.sub(r'\\mbox\{\\tocheck\{([^{}]*)\}\}|\\tocheck\{([^{}]*)\}', lambda m: m.group(1) or m.group(2) or '', w)
+
+
 def word_red(old, new):
     """new, with the runs of words not in old wrapped in \\new{}; a deletion leaves nothing red"""
     a, b = words(old), words(new)
     seg = []                            # [words, red]
-    for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
+    # a number that only lost (or gained) its yellow is not an update (round r364: the provisional numbers' yellow
+    # was removed on the author's instruction, their values unchanged)
+    na, nb = [plain(w) for w in a], [plain(w) for w in b]
+    for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, na, nb, autojunk=False).get_opcodes():
         if j2 > j1:
             seg.append([b[j1:j2], op != 'equal'])
     # a word or two left black between two red runs reads as a stray: it joins them

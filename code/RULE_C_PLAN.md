@@ -1118,3 +1118,20 @@ file, else the plain binary; the status says "checkpoint ON/OFF". On a relaunch 
 directory, deletes it if the killed log ends in CHECKPOINT CORRUPT (and relaunches once if the binary stops on it), and
 every TRANSITION CHECKPOINT line (restored=, SAVED, CLEARED) goes into the status. export_alttrans.py does not read the
 run yet: point the 0.20 exemption row at it (fallback CAgrace20) once it archives a loop.
+
+13:25 (20 Oct) ROUND r364 (5 comments). Red cleared (base_r364; export_alttrans.py --freeze with the other freezes).
+(1) Abstract, shorter (the author: "something similar but shorter"): "The model reproduces trial evidence, and users with a
+disorder lose, but effects on other households and children overturn the verdict." (143 words). (2) Introduction (the
+author: "too detailed ... the model captures the micro effects on those with SUD, and they lose on average in the model
+as well. But the macro effects on other households, vouchers and children overtake the micro effects"): the paragraph
+now says that, with x_trf_alive_sud_worse_pc (67 per cent of those with a SUD when the reform lands are worse off; the
+paper has no average CEV for that group, so "most", not "on average"), and ends "on children across the economy" (the
+author's words for "the children's adult lives"). (3) Second lesson: after its evidence sentence, "As that evidence
+implies, those with a SUD lose from Treatment First: 67 percent ... are worse off. The macro effects the trials do not
+capture, however, overturn the conclusions." (replacing "Once the whole economy is taken into account, however, the
+conclusions change."). (4) Table 7 and 6.5 (the author: "if you have initial numbers for the full table, put them all in
+the table and paper, and remove the yellow (but keep the tab on your side ...)"): YELLOW_PROVISIONAL = False in
+export_alttrans.py prints a provisional number plain; THE TAB is code/paper/alttrans_provisional.json (each row's source
+loop, reasonable or not, budget gap, drug periods off), rewritten at every build. Only the 0.20 no-exemption row, which
+has no archived pass, keeps yellow dashes. splice.word_red ignores a number that only lost its yellow (plain()), so the
+provisional numbers did not turn red. The third lesson stays yellow (the author's earlier instruction); asked.

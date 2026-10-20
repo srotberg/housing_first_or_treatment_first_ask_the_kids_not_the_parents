@@ -36,6 +36,12 @@ YEARS, ABOVE = 15, 0.05         # the window of "the first years", and what coun
 #                                 x_ne_tr_*_yrs count any year above; 0.05, not 0, from round r359: the announced path's
 #                                 period 1 is +0.02 per cent, Housing First's own numerical noise, and read as above it)
 Y = lambda s: '\\tocheck{' + s + '}'
+# (20 October, round r364, the author: "if you have initial numbers for the full table, put them all in the table and
+# paper, and remove the yellow (but keep the tab on your side so you know you have to update them later)") a number from
+# a pass that is not yet reasonable prints plain; which ones are provisional is written to alttrans_provisional.json,
+# not the paper. A run with no archived loop still prints a yellow dash: there is no number to show.
+YELLOW_PROVISIONAL = False
+TAB_PROV = os.path.join(HERE, 'alttrans_provisional.json')
 WINDOW_100 = 25                 # the periods a 1.00 row is judged on (the reform cohort's childhood)
 PREV = os.path.join(HERE, 'tab_alttrans_prev.json')   # the note as the author last read it (--freeze moves it)
 
@@ -105,7 +111,7 @@ def cells(r):
         return [Y('--')] * 5
     pk = lambda k: f'{r[k + "pk"]:.1f} ({r[k + "yr"]})' if r[k + 'pk'] > ABOVE else 'none'
     c = [pk('h'), r['hspan'], pk('c'), r['cspan'], f'{r["cev"]:.2f}']
-    return c if r['ok'] else [Y(x) for x in c]
+    return c if r['ok'] or not YELLOW_PROVISIONAL else [Y(x) for x in c]
 
 
 ROWS = [('Main transition', PDET, 'main'),
@@ -144,13 +150,18 @@ if '--freeze' in sys.argv:
 _prev = set(json.load(open(PREV))['note_sentences']) if os.path.exists(PREV) else set(_sents)
 tab = tab[:_m.start(1)] + ' '.join(x if x in _prev else '\\textcolor{red}{' + x + '}' for x in _sents) + tab[_m.end(1):]
 open(TAB, 'w').write(tab)
+# THE TAB ON MY SIDE: every row's source and whether its pass is reasonable yet (a provisional row is updated as its
+# runs' later loops archive)
+json.dump({k: (None if r is None else {'src': r['src'], 'reasonable': bool(r['ok']), 'budget_pc': round(100 * r['bud'], 3),
+                                        'drug_periods_off': r['drug']})
+           for k, r in RUNS.items()}, open(TAB_PROV, 'w'), indent=1, sort_keys=True)
 
 # THE PHASED-IN RULES IN THE TEXT (round r360, the author: "update the paper....the exemption for 5 years while in
 # treatment seems pretty good"): one paragraph each, from the numbers; a rate whose run has not landed is said to be
 # running, and a number from a pass that is not yet reasonable prints yellow
 def num(r, x, fmt='.0f'):
     t = f'{x:{fmt}}'
-    return t if r['ok'] else '\\mbox{\\tocheck{' + t + '}}'
+    return t if r['ok'] or not YELLOW_PROVISIONAL else '\\mbox{\\tocheck{' + t + '}}'
 
 
 def below_first(r, k='h'):
@@ -317,7 +328,7 @@ def cev_txt(r):
     if r is None:
         return '\\mbox{\\tocheck{--}}'
     x = f'{abs(r["cev"]):.2f}'
-    return x if r['ok'] else '\\mbox{\\tocheck{' + x + '}}'
+    return x if r['ok'] or not YELLOW_PROVISIONAL else '\\mbox{\\tocheck{' + x + '}}'
 
 
 a, b, m0 = RUNS['ne100'], RUNS['ne20'], float(d['x_tr_cev_b1_2'])
