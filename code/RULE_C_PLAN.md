@@ -1259,3 +1259,11 @@ coarseness", "every target, and" -> "every target and", "switched off both" -> "
 before page 21. CAgrace100 loop1 landed (18:41): Table 7's 1.00 exemption row 4.6 (9), 7-14, 0.7 (8), 7-9, CEV 6.58
 (was 4.2/0.2/6.88), budget 0.78 per cent (still above 0.6), x_at_gr_par red. writing/children_first_housing_later_pages
 1-10.pdf regenerated and pages11-20.pdf added (clean builds: red kept, no struck text, no blue).
+
+19:02 (20 Oct) ROUND r375 (the author: "remove all crossed lines and all red. put updates in red. give me the 11-20 page
+pdf again with no red in it", then "i will write the whole thing myself. fix the full pdf until page 20 and give me the
+11-20 pdf"). base_r375 frozen with the others. Four fixes in red: "totake", "toprice" and "thecoarseness" were MY
+glued words from r374 (an inserted word with nothing struck got no space after it -- in a round script, an insertion
+needs its own trailing space); "beyond SUDs" -> "beyond drug use and SUD"; lambda_m's "matters less" -> "declines".
+A spell check of pages 1-20 found nothing else. The author will rewrite the remaining 108 blue sentences (pages 21 on)
+themselves: 86 of 194 done. The detector PDFs (pages1-10, pages11-20) now carry NO red (/pages_det.sh unwraps \new).
