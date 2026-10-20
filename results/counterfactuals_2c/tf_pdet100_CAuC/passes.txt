@@ -1,12 +1,11 @@
-# counterfactual tf_pdet100_CAuC (detection 1.00) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 20 Oct 05:16 UTC
+# counterfactual tf_pdet100_CAuC (detection 1.00) against results/reference/hf_2c_omega_0.085 (omega_c 0.085, b 0.0054222, kappa_uem 1.0, kappa_x 0.934236); 20 Oct 05:36 UTC
 remote_pdet tf_pdet100_CAuC: free disk 24G, memory 15 GiB, cores 4 (05:16)
+remote_pdet tf_pdet100_CAuC: warm start at the rule-C arm tf_pdet100_CAuC's latest pass: price 0.8010, pi_V 0.10614 (05:16)
+remote_pdet tf_pdet100_CAuC: warm start at the given values: price 0.777, pi_V 0.116 (05:16)
+remote_pdet tf_pdet100_CAuC: resuming from the last published pass: price 0.8010, pi_V 0.10614 (05:16)
+remote_pdet tf_pdet100_CAuC: TF budget target: the paper's no-policy net revenue 5.8371628; test cost 0.0004946100 ($35); detection 1.00 (05:16)
+remote_pdet tf_pdet100_CAuC: arm tf on cf_fix2_treatCA: PDET=1.00 NET_TARGET=5.8371628 PV_START=0.10614 DRUG_PRICE_START=0.8010 EXTRA_SET=cost_per_drug_test 0.0004946100 (05:16)
 
 == tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
-  1  0.7999  0.10514   -54.1%   -54.4%   -28.1%  7.41e-02  1.89e-01   792.0375  +14.36%   -18.4%   +77.7%
-  2  0.7982  0.10514   -62.4%   -62.8%   -28.8%  5.45e-02  2.67e-03   791.6980  +13.19%   -34.9%   +73.0%
-  3  0.7985  0.10546   -56.7%   -57.1%   -27.6%  1.31e-02  1.47e-02   791.5354  +12.63%   -26.3%   +70.4%
-  4  0.7945  0.10722   -62.5%   -62.9%   -29.4%  5.41e-02  1.95e-02   791.7037  +13.21%   -35.0%   +73.3%
-  5  0.7964  0.10605   -54.7%   -55.1%   -27.6%  4.88e-02  1.36e-02   791.5300  +12.62%   -22.0%   +72.2%
-  6  0.7990  0.10646   -56.0%   -56.3%   -27.7%  2.83e-02  2.12e-02   791.5038  +12.53%   -24.5%   +71.5%
-  7  0.8010  0.10614   -56.6%   -56.9%   -27.8%  1.23e-02  1.77e-02   791.4879  +12.47%   -26.3%   +69.8%
+  1  0.8049  0.10614   -55.2%   -55.5%   -28.6%  3.87e-02  1.82e-01   792.0924  +14.55%   -22.5%   +72.9%
