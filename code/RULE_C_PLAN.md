@@ -1135,3 +1135,16 @@ export_alttrans.py prints a provisional number plain; THE TAB is code/paper/altt
 loop, reasonable or not, budget gap, drug periods off), rewritten at every build. Only the 0.20 no-exemption row, which
 has no archived pass, keeps yellow dashes. splice.word_red ignores a number that only lost its yellow (plain()), so the
 provisional numbers did not turn red. The third lesson stays yellow (the author's earlier instruction); asked.
+
+13:50 (20 Oct) ROUND r365 (6 comments). Red cleared (base_r365). Abstract: "micro evidence", "macro effects" (the author's
+words; 144 words). Second lesson: "the micro evidence behind Housing First". The 67 per cent of those with a SUD at the
+reform who are worse off (x_trf_alive_sud_worse_pc, prices clearing) now comes after the same share with the drug price
+and pi_V HELD (the author: "you need to report how many of them lose when the pv and piv are constant!", "you may have
+to simulate this transition", "that transition only needs one iteration"): x_trfix_sud_worse_pc, code/paper/
+export_trfix.py (in export_all_C.sh), from results/transition_2c_t70_Cfix's 'TRANSITION BETTER OFF TOL t= 1' worse_sud,
+the field transition_series.py reads for the 67; a yellow dash until that run archives its loop. The run (main
+transition, rule C 0.20, prices held, one pass) is being launched by a background agent (remote_tr70_Cfix.sh). For
+reference, the long-run held-price comparison (decomp fixboth, shares.txt): 96 per cent of households with a SUD worse
+off -- a steady state, not those alive at the reform, so not quoted. The third lesson is no longer yellow (the author:
+"remove this yellow and just leave in your notes that you have to double check this after all the simulations are
+done"): THE NOTE is in code/paper/alttrans_provisional.json, '_to_check_when_all_runs_are_reasonable'.

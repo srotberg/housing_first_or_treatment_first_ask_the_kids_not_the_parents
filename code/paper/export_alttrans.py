@@ -152,9 +152,15 @@ tab = tab[:_m.start(1)] + ' '.join(x if x in _prev else '\\textcolor{red}{' + x 
 open(TAB, 'w').write(tab)
 # THE TAB ON MY SIDE: every row's source and whether its pass is reasonable yet (a provisional row is updated as its
 # runs' later loops archive)
-json.dump({k: (None if r is None else {'src': r['src'], 'reasonable': bool(r['ok']), 'budget_pc': round(100 * r['bud'], 3),
-                                        'drug_periods_off': r['drug']})
-           for k, r in RUNS.items()}, open(TAB_PROV, 'w'), indent=1, sort_keys=True)
+_tab = {k: (None if r is None else {'src': r['src'], 'reasonable': bool(r['ok']), 'budget_pc': round(100 * r['bud'], 3),
+                                    'drug_periods_off': r['drug']})
+        for k, r in RUNS.items()}
+# (round r365, the author on the third lesson: "remove this yellow and just leave in your notes that you have to double
+# check this after all the simulations are done") the lesson prints black; this is the note
+_tab['_to_check_when_all_runs_are_reasonable'] = [
+    'the third lesson (conclusion): its first sentence and x_at_lesson -- re-read against the final alternative transitions',
+    "6.5's paragraphs (x_at_ne_cev, x_at_ann_par, x_at_gr_par) and Table 7's rows: every number provisional while its row is"]
+json.dump(_tab, open(TAB_PROV, 'w'), indent=1, sort_keys=True)
 
 # THE PHASED-IN RULES IN THE TEXT (round r360, the author: "update the paper....the exemption for 5 years while in
 # treatment seems pretty good"): one paragraph each, from the numbers; a rate whose run has not landed is said to be
