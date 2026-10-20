@@ -1233,3 +1233,13 @@ service members who stayed" kept in "They find that ... 61 percent" (Mehay and P
 cent; 61 is the raw comparison). Comment 21 ("remove" on "also reverses the gradient: on") struck "also reverses the
 gradient:" and "it". writing/children_first_housing_later_pages1-10.pdf: pages 1-10 of a clean build (red kept, no
 struck text, no blue) for the detector.
+
+18:12 (20 Oct) ROUND r373 (the author: "remove all red and all crossed lines and put updates in red"; two comments, page 4;
+base_r373 frozen with export_alttrans.py --freeze and the others; blue \ai sentences kept, 137 left, none before
+Section 4). The trials' limitations paragraph in the author's words ("These studies, however, consider effects on
+participants over six to thirty-six months, ..."; "a short period", "recovery process" and "thirty-six" fixed), which
+drops the closing sentence on what no trial follows. The military evidence in the author's words: "They find that drug
+testing of service members reduced past-year marijuana use by @@mp_stay_rel_pc@@ percent." (the qualifier "among
+service members who stayed" the author removed; footnote 34 in Section 5 still says 61 is the raw comparison among those
+who stayed and Mehay and Pacula's own estimates are 11-45 per cent -- told to the author). Old text struck, new red.
+writing/children_first_housing_later_pages1-10.pdf regenerated (clean: red, no struck text, no blue).
