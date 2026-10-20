@@ -1128,7 +1128,7 @@ unemployment rate in the Current Population Survey (CPS) of the Bureau of Labor 
 $4.9$ percent, given the job-finding rate set externally below.
 \item[$\varpi(y)$, separations by productivity.] This parameter tilts the separation rate across
 productivity, so that low-productivity households lose their jobs more often, which is what
-puts them at a higher risk of homelessness. Steepen the tilt and job loss concentrates further among the poorest, and so does the risk of homelessness. It is normalised to average one across households, so
+puts them at a higher risk of homelessness. \new{A steeper tilt concentrates job loss even more among the poorest, and the risk of homelessness with it.} It is normalised to average one across households, so
 that $\bar\pi^{eu}$ alone sets the aggregate unemployment rate. Each productivity node takes the
 unemployment odds of the education group it falls in, from the BLS 2019 annual averages of
 unemployment by educational attainment for ages 25 and over, with the education groups ordered along productivity by their median earnings.
@@ -1159,11 +1159,11 @@ reproduces a log-linear fit to the share of adults carrying SMI at each age in N
 
 \paragraph{Block 11: Interest and taxes.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$r$, the risk-free rate.] This parameter sets the return on saving. Raise it and saving pays more, so households hold more assets to carry them through a spell out of work or without a voucher. I set it to three percent, from Kaplan et al.\
+\item[$r$, the risk-free rate.] This parameter sets the return on saving. \new{A higher rate makes saving pay more, so households hold more assets to see them through a spell out of work or without a voucher.} I set it to three percent, from Kaplan et al.\
 (2020).
 
 \item[$\varphi$, tax progressivity.] This is the exponent on income in the tax schedule of
-Section~\ref{sec:ftaxes}, and it determines the progressivity of the labour income tax. Lower it and the tax is more progressive, so households with low incomes, among them most voucher holders and most drug users, keep more of what they earn. It is set to $0.85$, in line with Heathcote et al.\ (2017). 
+Section~\ref{sec:ftaxes}, and it determines the progressivity of the labour income tax. \new{A lower value makes the tax more progressive, so households with low incomes keep more of what they earn, and most voucher holders and most drug users are among them.} It is set to $0.85$, in line with Heathcote et al.\ (2017). 
 
 \item[$\tau_{\ell}$, the scale of after-tax labour income.] Given $\varphi$, this parameter sets how much
 of their labour income households keep after tax on average, so raising it lowers the tax liability. It does not move in the experiments: the budget is
@@ -1171,7 +1171,7 @@ balanced by $\pi_V$ instead. It is calibrated to
 an average labour income tax rate of $22.4$ percent,
 which is what McDaniel (2007) measures for the United States and what Guvenen et al.\ (2023) use.
 
-\item[$\tau_k$, the capital income tax rate.] This parameter affects the after-tax return on savings. Raise it and saving pays less, so households hold fewer assets to fall back on. I set it to fifteen percent, consistent
+\item[$\tau_k$, the capital income tax rate.] This parameter affects the after-tax return on savings. \new{A higher rate makes saving pay less, so households hold fewer assets to fall back on.} I set it to fifteen percent, consistent
 with the statutory United States rate on long-term capital gains and qualified
 dividends for the middle of the income distribution, which the Internal Revenue
 Service (IRS) sets out in Topic 409
