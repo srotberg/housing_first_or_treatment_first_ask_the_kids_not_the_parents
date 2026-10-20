@@ -1102,3 +1102,19 @@ the note sentence by sentence with code/paper/tab_alttrans_prev.json and prints 
 next red strip run `python3 code/paper/export_alttrans.py --freeze` with calib_tables.py --freeze and export_longrun.py
 --freeze, or the sentence stays red. The 20% exemption restart is being prepared in a background agent
 (remote_tr70_CAgr2.sh, reseed_path.py).
+
+04:02 (20 Oct) THE 0.20 EXEMPTION RUN RESTARTED FROM ITS IMPLIED PRICES (the author: "restart the 20% run").
+code/transition_fix/remote_tr70_CAgr2.sh 0.20 (a copy of remote_tr70_CAann2.sh, MODE grace, built as remote_tr70_CAann.sh
+grace builds it; remote_tr70_CAann2.sh untouched) in a fresh session, session_01TRiWgJkAReAo2cCbsxpuek ->
+results/transition_2c_t70_CAgr2_20. It solves the two arms (~8 h), then re-seeds from results/transition_2c_t70_CAgrace20's
+latest archived loop with code/transition_fix/reseed_path.py 1 69 0.6 9: pi_V its updated path, the drug price in every
+period moved 0.6 of the way to the implied supply price, tapering to zero over periods 61-69 (on loop 0: t1 0.9404 ->
+0.9432, t2 0.9437 -> 0.9412, t3 0.9428 -> 0.9390, t4 0.9430 -> 0.9350, t5 0.9423 -> 0.9324, t10 0.9372 -> 0.9215, t15
+0.9302 -> 0.9105, t30 0.9057 -> 0.8936, t60 0.9050 -> 0.9014, t69 unchanged; largest move 2.4 per cent, period 14).
+THE CHECKPOINT, first use: the launcher also builds code/tr70_CAgr2ck (build_tr70_ckpt.sh grace), accepted only if its
+source is the plain one with lines added and the same patches' md5 (checked locally: 59 lines added, none changed), and
+at staging uses it if the free disk is at least 6 GB (the value-function paths, 5.2-5.6 GB) + 4 margin + 4 for the swap
+file, else the plain binary; the status says "checkpoint ON/OFF". On a relaunch it keeps VF_CHECKPOINT.bin in the run
+directory, deletes it if the killed log ends in CHECKPOINT CORRUPT (and relaunches once if the binary stops on it), and
+every TRANSITION CHECKPOINT line (restored=, SAVED, CLEARED) goes into the status. export_alttrans.py does not read the
+run yet: point the 0.20 exemption row at it (fallback CAgrace20) once it archives a loop.
