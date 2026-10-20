@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 1.00, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 20 Oct 10:55 UTC
+# the T = 70 transition on RULE CA at detection 1.00, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 20 Oct 10:56 UTC
 remote_tr70_CAann2 1.00 announce: gfortran missing, installing (02:45)
 remote_tr70_CAann2 1.00 announce: free disk 29G, memory 15 GiB, cores 4 (02:45)
 remote_tr70_CAann2 1.00 announce: building cf_fix (02:45)
@@ -16,6 +16,13 @@ remote_tr70_CAann2 1.00 announce: terminal arm (started early) within 1 of the a
 remote_tr70_CAann2 1.00 announce: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 9.3e-05; tf against the accepted long-run CA arm 1.748e-01 (10:53)
 remote_tr70_CAann2 1.00 announce: shares written:   all households                   mass 50.82556  strict better 0.8182 | tol 0.001: better 0.7643 worse 0.0278 | tol 0.01: better 0.7489 worse 0.0278 (10:55)
 remote_tr70_CAann2 1.00 announce: age split: 2 of 2 arms exact (10:55)
+remote_tr70_CAann2 1.00 announce: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t70_CAann2_100 -- start with: cd /home/user/children_first_housing_later/code/tr2c_t70_CAann2_100 && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds rescaled from rule C's T = 50 loop3 (x0 0.9994151 0.067533863): drug_price: factor 3.6947; t=1 0.874343, t=2 0.882677, t=5 0.882686, t=10 0.874204, t=25 0.815926, t=49 0.801700, t=69 0.801700 pi_v: factor 4.8391; t=1 0.077095, t=2 0.068868, t=5 0.071819, t=10 0.075574, t=25 0.093581, t=49 0.108951, t=69 0.108951  (10:56)
+remote_tr70_CAann2 1.00 announce: re-seeded from results/transition_2c_t70_CAann100/loop0: drug price, periods 1-5: 0.9943 -> 0.8878 (implied 0.8168), 0.9943 -> 0.8822 (implied 0.8074), 0.9943 -> 0.8772 (implied 0.7991), 0.9943 -> 0.8720 (implied 0.7904), 0.9955 -> 0.8667 (implied 0.7808) drug_price: t=1 0.887831, t=5 0.866705, t=6 0.873764, t=69 0.797692 pi_v: t=1 0.066600, t=5 0.067116, t=6 0.078730, t=69 0.109936  (10:56)
+remote_tr70_CAann2 1.00 announce: announce seeds: Housing First for years 1-5, then the main path from results/transition_2c_t70_CAc/loop0 (from the branch) shifted 5 years: drug_price: t=1 0.999415, t=5 0.999415, t=6 0.885591, t=7 0.890553, t=10 0.886967, t=25 0.832744, t=49 0.800875, t=69 0.801700 pi_v: t=1 0.067534, t=5 0.067534, t=6 0.079662, t=7 0.070690, t=10 0.071492, t=25 0.078118, t=49 0.102426, t=69 0.109457  (10:56)
+remote_tr70_CAann2 1.00 announce: 4 GiB swap on (10:56)
+remote_tr70_CAann2 1.00 announce: T = 70 transition started, pid 17328 (10:56)
+remote_tr70_CAann2 1.00 announce: handover applied: 96 parameters (10:56)
+remote_tr70_CAann2 1.00 announce: the path's drug price clears: HANDOVER drug_market_adjuster -> 0.10000000000000001 (10:56)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -35,3 +42,5 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   6  0.8017  0.10865   -64.0%   -64.4%   -30.3%  0.00e+00  1.99e-03   791.8754  +13.80%   -37.9%   +72.8%
   7  0.8017  0.10889   -64.1%   -64.4%   -30.4%  0.00e+00  4.96e-04   791.8859  +13.83%   -37.9%   +72.8%
  MILBY SPLIT voucher mass rec treat smi   0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000       housed_nov mass rec treat smi  0.67243257502053044        2.0710559438213934E-002  0.16623122110249761        5.3329173879676652E-002
+
+== tr2c_t70_CAann2_100 (T = 70, rule CA, detection 1.00, announce, lag 5)
