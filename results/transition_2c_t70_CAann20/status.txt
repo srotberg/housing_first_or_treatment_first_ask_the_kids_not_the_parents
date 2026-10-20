@@ -1,21 +1,5 @@
-# the T = 70 transition on RULE CA at detection 0.20, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 20 Oct 02:49 UTC
-remote_tr70_CAann 0.20 announce: free disk 22G, memory 15 GiB, cores 4 (01:18)
-remote_tr70_CAann 0.20 announce: arm null on cf_fix2_share_treatCu: DRUG_PRICE_START=1.0001082 (01:18)
-remote_tr70_CAann 0.20 announce: terminal arm from the ACCEPTED long-run rule-C arm (results/counterfactuals_2c/tf_pdet20_CAu/tf/final.txt): price 0.90563748, pi_V 0.085920513 (01:18)
-remote_tr70_CAann 0.20 announce: arm tf on cf_fix2_treatCA: PDET=0.20 NET_TARGET=5.8371628 PV_START=0.085920513 DRUG_PRICE_START=0.90563748 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100 (01:18)
-remote_tr70_CAann 0.20 announce: long-run rule-C arm ACCEPTED: remote_pdet tf_pdet20_CAu: arm tf ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.8371627999999998 DIST CHECK PASS: 49 passes, sweeps [71, 70, 71, 71, 72, 70, 70, 70, 70, 70, 75, 70, 70, 71, 77, 73, 78, 70, 79, 74, 70, 70, 84, 72, 70, 70, 76, 74, 71, 73, 70, 76, 70, 70, 71, 70, 70, 71, 70, 70, 70, 92, 71, 71, 82, 71, 70, 70, 70], largest final 4.98e-05 (rule 5e-05, at least 70 sweeps)  (00:03) (03:14)
-remote_tr70_CAann 0.20 announce: terminal arm (started early) within 1 of the accepted arm: worst relative difference 1.165e-02 (09:42)
-remote_tr70_CAann 0.20 announce: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 8.1e-05; tf against the accepted long-run CA arm 1.165e-02 (09:42)
-remote_tr70_CAann 0.20 announce: shares written:   all households                   mass 50.82518  strict better 0.8135 | tol 0.001: better 0.7458 worse 0.0277 | tol 0.01: better 0.7281 worse 0.0276 (09:43)
-remote_tr70_CAann 0.20 announce: age split: 2 of 2 arms exact (09:44)
-remote_tr70_CAann 0.20 announce: T = 70 staged: all inputs present -- the transition has everything it opens for reading staged /home/user/children_first_housing_later/code/tr2c_t70_CAann20 -- start with: cd /home/user/children_first_housing_later/code/tr2c_t70_CAann20 && OMP_NUM_THREADS=4 ./hftf > run.log 2>&1 ; seeds rescaled from rule C's T = 50 loop3 (x0 0.99939753 0.067533863): drug_price: factor 1.7526; t=1 0.940097, t=2 0.944051, t=5 0.944055, t=10 0.940032, t=25 0.912386, t=49 0.905637, t=69 0.905637 pi_v: factor 2.2017; t=1 0.071884, t=2 0.068141, t=5 0.069483, t=10 0.071192, t=25 0.079385, t=49 0.086378, t=69 0.086378  (09:44)
-remote_tr70_CAann 0.20 announce: announce seeds: Housing First for years 1-5, then the main path from the rescaled rule-C paths shifted 5 years: drug_price: t=1 0.999398, t=5 0.999398, t=6 0.940097, t=7 0.944051, t=10 0.944055, t=25 0.922166, t=49 0.905236, t=69 0.905637 pi_v: t=1 0.067534, t=5 0.067534, t=6 0.071884, t=7 0.068141, t=10 0.069483, t=25 0.075649, t=49 0.086582, t=69 0.086378  (09:44)
-remote_tr70_CAann 0.20 announce: 4 GiB swap on (09:44)
-remote_tr70_CAann 0.20 announce: T = 70 transition started, pid 17198 (09:44)
-remote_tr70_CAann 0.20 announce: handover applied: 100 parameters (09:44)
-remote_tr70_CAann 0.20 announce: the path's drug price clears: HANDOVER drug_market_adjuster -> 0.10000000000000001 (09:44)
-remote_tr70_CAann 0.20 announce: announce checked: ok, 7 lines: screen 0 in years 1-5, 1 from year 6, terminal 1 (18:47)
-remote_tr70_CAann 0.20 announce: binary loop 0 complete, archived to results/transition_2c_t70_CAann20/loop0; loop0: drug_price years 60-69 within 0.10% of the terminal 0.905637 (year 1 0.994401, year 60 0.904704, year 69 0.905084); pi_v years 60-69 within 1.15% of the terminal 0.086378 (year 1 0.066977, year 60 0.086861, year 69 0.087201);   PEAK homelessness h_1: year 12, 0.006377, +3.11% against Housing First -- the path RISES above Housing First;   CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 0, completed with the terminal arm): +2.5667% of consumption (02:49)
+# the T = 70 transition on RULE CA at detection 0.20, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 20 Oct 02:54 UTC
+remote_tr70_CAann 0.20 announce: free disk 8.8G, memory 15 GiB, cores 4 (02:54)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
