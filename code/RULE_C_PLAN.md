@@ -1282,3 +1282,7 @@ more slips, fixed in red: "as well as the same cohorts" -> "and than", "take tho
 "therefore would" -> "would therefore", "consequences to" -> "of", "how much beyond drug use and SUD Treatment First
 prevents" -> "how much Treatment First prevents beyond drug use and SUD". Double spaces the strips left removed. A spell
 check of the whole PDF finds nothing but URLs and terms.
+
+19:25 (20 Oct) ALL RED AND STRIKES REMOVED (the author: "remove all red and crossed lines"; base_r378 frozen with
+export_alttrans.py --freeze and the others; the two table notes' \del/\textcolor{red} wrappers removed by hand; splice
+0 red, 43 pages). 108 blue sentences remain from page 21 on.
