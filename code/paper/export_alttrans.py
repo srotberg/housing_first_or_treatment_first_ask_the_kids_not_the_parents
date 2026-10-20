@@ -73,6 +73,10 @@ def run(key, rdir, arms, fallback=None):
     out['b1'] = 100 * (b[1] / nl['drug use b'] - 1)
     out['tu15'] = 100 * sum(tu[t] for t in range(1, 6)) / 5
     out['tu0'] = 100 * nl['treatment take-up']
+    # (round r360, the author on the newborn's gains: "explain why more than the main experiment", "why is this less
+    # than the 6.74 with no exemptions?") the share with a SUD and pi_V along the reform cohort's childhood
+    out['lam'], out['pv'] = mech_series(os.path.join(loop, 'run.log.gz'), 'lambda_d'), mech_series(os.path.join(loop, 'run.log.gz'), 'pi_v')
+    out['pv0'] = nl['pi_V (voucher probability)']
     out['dh'], out['dc'] = dh, dc
     return out
 
@@ -140,6 +144,30 @@ def below_first(r, k='h'):
     return (up[0] - 1) if up else None
 
 
+MAIN = RUNS['main']
+
+
+def pc(x):
+    """a percent rise in the text: whole numbers, one decimal below one"""
+    return '.1f' if abs(x) < 1 else '.0f'
+
+
+def why_more(r, again=False):
+    """(round r360) why children born at the reform gain more on a path than in the main transition, in the paper's own
+    terms (Section 6.4's reform cohort): fewer of them grow up with a parent who has a SUD, and pi_V is higher. The
+    share with a SUD by period ten (the main transition's is x_trf_sud10, the number 6.4 quotes); None if the path's
+    cohort does not gain more or its share is not lower"""
+    if r is None or r['cev'] <= MAIN['cev'] or not all(r['lam'][t] < MAIN['lam'][t] for t in range(2, 26)):
+        return None
+    assert f"{100 * MAIN['lam'][10]:.2f}" == d['x_trf_sud10'], (MAIN['lam'][10], d['x_trf_sud10'])
+    w = (f'${num(r, 100 * r["lam"][10], ".2f")}$ percent of households have a SUD by period ten, against '
+         f'${d["x_trf_sud10"]}$ percent' + ('' if again else ' in the main transition') + ', so fewer of these children grow up with a parent who has '
+         'the disorder')
+    if all(r['pv'][t] > MAIN['pv'][t] for t in range(1, 26)):
+        w += ', and $\\pi_V$ is higher throughout their childhood'
+    return w
+
+
 WORDS = {1: 'period', 2: 'two periods', 3: 'three periods', 4: 'four periods', 5: 'five periods', 6: 'six periods',
          7: 'seven periods', 8: 'eight periods', 9: 'nine periods', 10: 'ten periods', 11: 'eleven periods',
          12: 'twelve periods'}
@@ -151,25 +179,37 @@ def ann_par():
     if a is None:
         return Y('The announced transitions are still running; Table~\\ref{tab:alttrans} adds them as they finish.')
     s = 'Announcing the screen five periods before it starts '
-    s += ('lowers the rise without removing it. ' if ne is not None and 0 < a['hpk'] < ne['hpk'] else
+    s += ('lowers the rise but does not eliminate it. ' if ne is not None and 0 < a['hpk'] < ne['hpk'] else
           'changes the rise. ')
     if a['b1'] < -5 and max(a['dh'][t] for t in range(2, 6)) < 0:
-        s += (f'While the screen is only announced, households cut their drug use at once, by ${num(a, -a["b1"])}$ percent in '
-              'the first period when every user will be caught, and homelessness and the share of children in a shelter '
-              'fall below their Housing First levels. ')
+        # (round r360, the author on "when every user will be caught": "but HF continue for 5 years, no?")
+        s += ('While Housing First continues, households cut their drug use at once in anticipation of a screen that will '
+              f'catch every user, by ${num(a, -a["b1"])}$ percent in the first period, and homelessness and the share of '
+              'children in a shelter fall below their Housing First levels. ')
     s += (f'Once it starts revoking vouchers, they rise by up to ${num(a, max(a["hpk"], 0))}$ and '
           f'${num(a, max(a["cpk"], 0))}$ percent' + (f', against ${ne["hpk"]:.0f}$ and ${ne["cpk"]:.0f}$ percent without the '
                                                       'announcement' if ne is not None else '') + '. ')
     if b is None:
         s += PENDING.format('one in five users')
     elif b['hpk'] > ABOVE or b['cpk'] > ABOVE:
-        s += (f'When it catches one in five users, they rise by up to ${num(b, max(b["hpk"], 0))}$ and '
-              f'${num(b, max(b["cpk"], 0))}$ percent. ')
+        s += (f'When it catches one in five users, they rise by up to ${num(b, max(b["hpk"], 0), pc(b["hpk"]))}$ and '
+              f'${num(b, max(b["cpk"], 0), pc(b["cpk"]))}$ percent. ')
     else:
         s += 'When it catches one in five users, neither rises above its Housing First level. '
-    s += (f'Children born at the reform gain ${num(a, a["cev"], ".2f")}$ percent of lifetime consumption' +
-          (f' and ${num(b, b["cev"], ".2f")}$ percent, respectively.' if b is not None else '.'))
-    return s
+    s += (f'Children born at the reform gain ${num(a, a["cev"], ".2f")}$ percent of lifetime consumption when every user is '
+          'caught' + (f' and ${num(b, b["cev"], ".2f")}$ percent when one in five users are' if b is not None else '') + '. ')
+    # (round r360, the author on 4.94: "why is this less than the 6.74 with no exemptions?") the cohort's first five
+    # periods: pi_V held at Housing First's (no voucher is revoked before the screen starts) and a smaller fall in use
+    if ne is not None and a['cev'] < ne['cev']:
+        flat = max(a['pv'][t] for t in range(1, 6)) <= a['pv0'] * 1.005 < a['pv'][6]
+        less = a['b1'] > ne['b1']
+        why = [w for w, c in (('$\\pi_V$ does not rise until the screen starts', flat),
+                              (f'drug use falls by less in the first period than the ${num(ne, -ne["b1"])}$ percent when the '
+                               'screen starts at once', less)) if c]
+        if why:
+            s += (('The first is' if b is not None else 'This is') + f' less than the ${num(ne, ne["cev"], ".2f")}$ percent without the '
+                  'announcement, because ' + ' and '.join(why) + '.')
+    return s.rstrip()
 
 
 def gr_par():
@@ -188,7 +228,7 @@ def gr_par():
         if k is None:
             s += 'homelessness never rises above its Housing First level'
         else:
-            s += (f'homelessness stays below its Housing First level for the first {WORDS.get(k, str(k) + " periods")} and '
+            s += (f'homelessness stays below its Housing First level for the first {WORDS.get(k, str(k) + " periods")} but '
                   f'rises above it by at most ${num(a, a["hpk"], ".1f")}$ percent after the exemption ends')
         s += (', and the share of children in a shelter never rises above its Housing First level. ' if a['cpk'] <= ABOVE else
               f', and the share of children in a shelter by at most ${num(a, a["cpk"], ".1f")}$ percent. ')
@@ -199,7 +239,11 @@ def gr_par():
               f'of children in a shelter by up to ${num(b, max(b["cpk"], 0))}$ percent. ')
     cevs = [(r_, w) for r_, w in ((a, 'one in five'), (b, 'every')) if r_ is not None]
     s += 'Children born at the reform gain ' + ' and '.join(f'${num(r_, r_["cev"], ".2f")}$' for r_, _ in cevs) + \
-         ' percent of lifetime consumption' + (', respectively.' if len(cevs) == 2 else '.')
+         ' percent of lifetime consumption' + (', respectively' if len(cevs) == 2 else '')
+    # (round r360, the author on 3.14: "why is it even higher than the main experiment without the exemptions?")
+    w = why_more(a, again=True) if a is not None else None
+    s += (f', more than the ${MAIN["cev"]:.2f}$ percent in the main transition, because the screen that follows the '
+          'exemption deters more: ' + w + '.') if w else '.'
     return s
 
 
@@ -209,10 +253,12 @@ def lesson():
     if a is None:
         return ''
     if a['cpk'] <= ABOVE and a['hpk'] < 3:
-        return ('A temporary exemption keeps that rise small: if a household in treatment keeps its voucher, sober or not, '
-                'for the first five periods, and the screen catches one in five users, the share of children in a shelter '
-                f'never rises above its Housing First level and homelessness rises by at most ${a["hpk"]:.1f}$ '   # plain: the paragraph is yellow
-                'percent, while newborns still gain.')
+        return ('A temporary exemption for those with a SUD keeps any rise small: if a household in treatment keeps its '
+                'voucher, sober or not, for the first five periods, and the screen catches one in five users, the share of '
+                'children in a shelter never rises above its Housing First level and homelessness rises by at most '
+                f'${a["hpk"]:.1f}$ percent, '   # plain: the paragraph is yellow
+                + ('with newborns gaining even more than in the main transition.' if a['cev'] > MAIN['cev'] else
+                   'while newborns still gain.' if a['cev'] > 0 else 'but newborns lose.'))
     return ''
 
 
@@ -235,6 +281,11 @@ else:
     ne_cev = (f'Children born at the reform {verb(a)} ${cev_txt(a)}$ percent of lifetime consumption when every user is caught '
               f'and {verb(b)} ${cev_txt(b)}$ percent when ${PDET}$ percent are, against a gain of ${m0:.2f}$ percent in the main '
               f'transition.')
+# (round r360, the author on the newborn's gain without the exemption: "explain why more than the main experiment")
+_w = why_more(a) if a is not None and verb(a) == 'gain' else None
+if _w:
+    ne_cev += (' They gain more because a screen the disorder fails even in treatment deters more: when every user is '
+               'caught, ' + _w + '.')
 # (round r357, the author on 'Catching 20 percent of users': "only one in five users")
 _inv = 100 / float(PDET)
 assert abs(_inv - round(_inv)) < 1e-9, PDET

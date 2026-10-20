@@ -1013,3 +1013,18 @@ To use it in a relaunch: copy the launcher, build with build_tr70_ckpt.sh instea
 and before starting the binary after a killed run delete VF_CHECKPOINT.bin if the killed log ends in CHECKPOINT CORRUPT.
 The run directory needs about 1 GB free for the file. First use: confirm 'restored= 1' and that the forward pass's first
 period matches the killed log's.
+
+03:40 (20 Oct) ROUND r360 (9 comments on 6.5 and the third lesson). Red cleared (base_r360); the third lesson stays
+yellow. CAann20 (announced at 0.20) loop 0 landed and fills its row: homelessness +3.1 in period 12, above Housing First
+in 7-19; children in a shelter +0.6 in period 11, above in 9-13; reform cohort +2.57 (not yet a reasonable pass: the
+drug market misses in the announcement periods, as at 1.00). export_alttrans.py: "lowers the rise but does not
+eliminate it"; the announced drug-use sentence says Housing First continues while the screen is only announced ("in
+anticipation of a screen that will catch every user"); "but rises above it"; rises under one percent print one decimal.
+Three generated explanations of the newborn's gains, each checked against the paths before it prints: (1) no
+exemption gains more than the main transition because the share with a SUD falls faster (2.80 per cent by period ten at
+1.00, against the main transition's x_trf_sud10 3.47) and pi_V is higher in every period of the cohort's childhood;
+(6) the 0.20 exemption likewise (3.22 by period ten); (4) the announced 1.00 path gains less than the immediate one
+because pi_V stays at Housing First's 6.75 per cent until the screen starts and drug use falls 31 rather than 40 per
+cent in period 1 (the cohort's childhood part is two thirds of the gap: 0.246 of 0.369 utils). The third lesson goes
+straight to the exemption (the author: "can remove this"): "A temporary exemption for those with a SUD keeps any rise
+small: ..., with newborns gaining even more than in the main transition" (3.14 against 1.45).
