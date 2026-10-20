@@ -1207,3 +1207,13 @@ runs uses base_r370 from now on.
 
 16:38 (20 Oct) ALL RED AND STRIKES REMOVED (the author: "remove all red and crossed lines"; base_r371 frozen with
 export_alttrans.py --freeze and the others; splice 0 red, no \new or \del left, 43 pages). The check-in uses base_r371.
+
+16:49 (20 Oct) THE AI-FLAGGED SENTENCES HIGHLIGHTED IN BLUE (the author: "almost all the previous sentences are still
+highlighted by the AI detector", "i need to bring it down to 0% AI", then "highlight for me the sentences, and ill try
+to write them myself"). \ai{...} (preamble: soul \hl in aiblue) wraps every sentence whose words changed between
+eb24d2fdc (base_r368, before any rewrite) and base_r371: the two introduction sentences of da167dc31 and passages 1-55,
+194 sentences on 26 pages (word diff, expanded to whole sentences; footnotes, headers, \item labels and displays
+excluded). fix_soul.py treats \ai like \tocheck (a moved number splits it in red) and turns 'et al.\ ' into a tie
+inside it (soul cannot rebuild a control space). strip_red.py leaves \ai alone. When the author sends their own
+wording for a sentence: replace that \ai{...} with \new{their text} (numbers back as @@names@@, no polishing of their
+words), strike the old with track_changes.py, and drop the \ai.

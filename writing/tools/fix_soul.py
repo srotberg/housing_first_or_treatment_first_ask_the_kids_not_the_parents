@@ -67,9 +67,9 @@ def unwrap_all(t, cmd):
     while cmd in t:
         t = unwrap(t, cmd)
     return t
-def split_red(t):
-    """the body of a \\tocheck{...}: each top-level \\new{v} closes the highlight, prints v red and highlighted, and
-    reopens it (a \\new or a \\tocheck nested in v is flattened, the highlight already covering it)"""
+def split_red(t, hl='\\tocheck{'):
+    """the body of a \\tocheck{...} (or an \\ai{...}): each top-level \\new{v} closes the highlight, prints v red and
+    highlighted, and reopens it (a \\new or a \\tocheck nested in v is flattened, the highlight already covering it)"""
     out, i = [], 0
     while True:
         k = t.find('\\new{', i)
@@ -78,11 +78,15 @@ def split_red(t):
             return ''.join(out)
         j = close(t, k + 5)
         v = unwrap_all(unwrap_all(t[k + 5:j - 1], '\\new{'), '\\tocheck{')
-        out.append(t[i:k] + '}\\new{\\tocheck{' + v + '}}\\tocheck{')
+        out.append(t[i:k] + '}\\new{' + hl + v + '}}' + hl)
         i = j
 
 
 body, n2 = within(body, '\\tocheck{', lambda x: split_red(unwrap(x, '\\del{', drop=True)))
 body = body.replace('\\tocheck{}', '').replace('\\tocheck{ }', ' ')
+# the blue AI-flagged sentences (20 October) are soul highlights too: the same treatment
+# (soul cannot rebuild a control space, as in 'et al.\\ (2022)': inside the highlight it becomes a tie)
+body, n3 = within(body, '\\ai{', lambda x: split_red(unwrap(x, '\\del{', drop=True), '\\ai{').replace('\\ ', '~'))
+body = body.replace('\\ai{}', '').replace('\\ai{ }', ' ')
 open(p, 'w').write(pre + body)
-print(f'fix_soul: {n1} struck runs, {n2} highlighted runs cleaned')
+print(f'fix_soul: {n1} struck runs, {n2} highlighted runs and {n3} AI-flagged runs cleaned')
