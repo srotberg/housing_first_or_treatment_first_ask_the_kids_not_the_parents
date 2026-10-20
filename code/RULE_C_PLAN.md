@@ -1271,3 +1271,14 @@ themselves: 86 of 194 done. The detector PDFs (pages1-10, pages11-20) now carry 
 19:05 (20 Oct) ALL RED AND STRIKES REMOVED (the author: "remove all crossed lines and red from the pdfs"; base_r376 frozen
 with export_alttrans.py --freeze and the others; splice 0 red). The full paper and the two detector PDFs (pages 1-10,
 11-20) carry no red and no struck text; 108 blue sentences remain from page 21 on, for the author to rewrite.
+
+19:21 (20 Oct) ROUND r377 (the author: "remove all red and put only updates in red. remove all crossed out lines", then "you
+can also remove the pdfs for 1-10 and 11-20", then "make sure there are not grammar mistakes or typos"). base_r377
+frozen with the others. Block 4's opening and the n.a. note of tab_eleven and tab_standard in the author's words (red,
+old struck; "how quickly" given its verb, "a households" -> "a household"; "how much treatment raises recovery" added
+for g). The pages 1-10 and 11-20 PDFs removed. A grammar pass over all 91 sentences the author has rewritten found nine
+more slips, fixed in red: "as well as the same cohorts" -> "and than", "take those" -> "take the existing estimates",
+"how much drugs" -> "how much of the drug", commas after "externally", "DATA_APPENDIX.md)" and "calibrated model",
+"therefore would" -> "would therefore", "consequences to" -> "of", "how much beyond drug use and SUD Treatment First
+prevents" -> "how much Treatment First prevents beyond drug use and SUD". Double spaces the strips left removed. A spell
+check of the whole PDF finds nothing but URLs and terms.
