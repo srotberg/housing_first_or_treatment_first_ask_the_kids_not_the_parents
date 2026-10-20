@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 20 Oct 21:06 UTC
+# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 20 Oct 21:26 UTC
 remote_tr70_Cu: free disk 8.7G, memory 15 GiB, cores 4 (02:41)
 remote_tr70_Cu: arms: null against nulltf/null worst relative difference 4.2e-03; tf against tf_ruleC 1.212e-04 (02:41)
 remote_tr70_Cu: T = 70 RELAUNCH after a killed run (seeds: its last saved paths) (02:41)
@@ -29,13 +29,14 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
  MILBY SPLIT voucher mass rec treat smi  0.11120219989107427        4.8454267864244402E-003   8.6702756562829789E-002   1.2535135845814034E-002  housed_nov mass rec treat smi   1.4147753830806791        4.3243534029960590E-002  0.33645966810032152       0.11886261236276463     
 
 == tr2c_t70_Cu (T = 70, rule C)
-  binary loop 0: periods to 50, worst budget residual (t>1) 1.07e-02, worst drug gap 5.07e-03
+  binary loop 0: periods to 52, worst budget residual (t>1) 1.07e-02, worst drug gap 5.07e-03
   CEV path of the latest forward pass (per cent, t: value):
     1: +0.257  2: +0.387  3: +0.526  4: +0.628  5: +0.737  6: +0.769  7: +0.831  8: +0.895  9: +0.943  10: +1.002
     11: +1.061  12: +1.135  13: +1.203  14: +1.214  15: +1.268  16: +1.315  17: +1.361  18: +1.409  19: +1.469  20: +1.553
     21: +1.611  22: +1.674  23: +1.743  24: +1.823  25: +1.922  26: +2.061  27: +2.163  28: +2.224  29: +2.288  30: +2.353
     31: +2.378  32: +2.460  33: +2.487  34: +2.538  35: +2.587  36: +2.631  37: +2.681  38: +2.711  39: +2.717  40: +2.726
     41: +2.747  42: +2.762  43: +2.774  44: +2.785  45: +2.805  46: +2.810  47: +2.824  48: +2.846  49: +2.868  50: +2.899
+    51: +2.920  52: +2.967
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.87038473893505774       share_newborns=  0.33190768420787964       share_addicted=  0.32814132559186121       share_addicted_newborns=   0.0000000000000000
 
 == loop0 (report_tr70_Cu.py: the latest forward pass)
