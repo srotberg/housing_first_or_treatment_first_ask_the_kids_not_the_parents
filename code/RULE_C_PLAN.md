@@ -1148,3 +1148,23 @@ reference, the long-run held-price comparison (decomp fixboth, shares.txt): 96 p
 off -- a steady state, not those alive at the reform, so not quoted. The third lesson is no longer yellow (the author:
 "remove this yellow and just leave in your notes that you have to double check this after all the simulations are
 done"): THE NOTE is in code/paper/alttrans_provisional.json, '_to_check_when_all_runs_are_reasonable'.
+
+13:40 (20 Oct) THE MAIN TRANSITION WITH BOTH PRICES HELD, ONE LOOP (the author, on the 67 per cent of households with a
+SUD at the reform who are worse off: "you need to report how many of them lose when the pv and piv are constant", "you
+may have to simulate this transition", "that transition only needs one iteration"). code/transition_fix/
+remote_tr70_Cfix.sh (new; remote_tr70_Cu.sh, which a worker still runs, untouched) in session_014NWqivkMRLg2nJ6B74mLEy
+-> results/transition_2c_t70_Cfix. Rule C at detection 0.20, T = 70, the main run's builds and Housing First arm; the
+terminal arm is Table 5's held column re-solved (cf_fix2_treatC, DRUG_MARKET_ADJUSTER=0 at P_HELD 0.99938969, adjust_taxes
+0 at V_HELD 0.067533863, as remote_decomp_shares_Cu3.sh's fixboth), checked to hold both exactly and compared with
+results/decomp_2c_shares_Cu3/arm_fixboth/final.txt. Staging seeds both paths flat at the held values (checked), the
+handover keeps drug_market_adjuster 0 and adjust_taxes 0 (checked in the run's HANDOVER lines), and the forward pass's
+period 1 must print p_drug and pi_v at the held values. Loop 0's forward pass reads only the seeds, so MAX_LOOPS=1: the
+binary is stopped once loop 0 is archived. Rent and the house price are constant in the main run too; the lump sum is the
+binary's own ramp, as there. THE NUMBER: 'TRANSITION BETTER OFF TOL t=   1 ... worse_sud=' (the share of households with
+a SUD alive at the reform who are worse off, tolerance 1e-3; transition_series.py's worse_off_sud, the paper's
+x_trf_alive_sud_worse_pc, 67 in the main transition), printed at the START of the forward pass and copied to
+results/transition_2c_t70_Cfix/better_off_t1.txt and the status as soon as it appears: about 2-3 hours of arms plus the
+8-15 hour backward pass after launch. Safeguards: progress.txt every 20 minutes; the backward-pass checkpoint where the
+disk allows, through code/transition_fix/build_tr70_C2ck.sh (new: patch_ckpt.py on the plain rule-C build's own tr.f90,
+59 lines added, none changed, syntax-checked locally), ON if free disk >= 6 + 4 + 4 GB, and a relaunch reseeds from the
+staged flat paths.
