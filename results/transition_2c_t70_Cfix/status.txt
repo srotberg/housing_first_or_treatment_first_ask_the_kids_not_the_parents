@@ -1,4 +1,4 @@
-# the T = 70 MAIN transition (rule C, detection 0.20) with the drug price and pi_V HELD at Housing First's (0.99938969, 0.067533863), one loop (code/transition_fix/remote_tr70_Cfix.sh); 21 Oct 14:13 UTC
+# the T = 70 MAIN transition (rule C, detection 0.20) with the drug price and pi_V HELD at Housing First's (0.99938969, 0.067533863), one loop (code/transition_fix/remote_tr70_Cfix.sh); 21 Oct 14:16 UTC
 remote_tr70_Cfix: gfortran missing, installing (13:40)
 remote_tr70_Cfix: free disk 29G, memory 15 GiB, cores 4 (13:40)
 remote_tr70_Cfix: building cf_fix (13:40)
@@ -22,6 +22,10 @@ remote_tr70_Cfix: TRANSITION CHECKPOINT loop= 0 restored= 0 (17:47)
 remote_tr70_Cfix: TRANSITION CHECKPOINT SAVED loop= 0 elements= 653464075 (02:30)
 remote_tr70_Cfix: held on the forward pass: period 1 at drug price and pi_V 0.99938969 0.067533863 (02:50)
 remote_tr70_Cfix: alive at the reform, prices held:  TRANSITION BETTER OFF TOL t= 1 tol= 1.00E-03 better_all= 0.767100 worse_all= 0.207110 better_sud= 0.264115 worse_sud= 0.735574 better_entering= 0.000000 worse_entering= 0.990613 (02:50)
+remote_tr70_Cfix: TRANSITION CHECKPOINT CLEARED loop= 0 (14:16)
+remote_tr70_Cfix: binary loop 0 complete, archived to results/transition_2c_t70_Cfix/loop0 (14:16)
+remote_tr70_Cfix: loop0 archived (one loop: both prices held, nothing to clear): stopping the binary (14:16)
+remote_tr70_Cfix: T = 70 transition ended: stopped after 1 loop (14:16)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -40,7 +44,7 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
  MILBY SPLIT voucher mass rec treat smi   7.5791038531324045E-002   3.3170413720633087E-003   5.9969612794473721E-002   9.3908851550366206E-003  housed_nov mass rec treat smi   1.0191863562428558        3.1167961340768283E-002  0.24496124162500357        9.6285764550235256E-002
 
 == tr2c_t70_Cfix (T = 70, rule C, both prices held)
-  binary loop 0: periods to 68, worst budget residual (t>1) 1.97e-01 (pi_V held: not cleared), worst drug gap 0.00e+00 (price held: not cleared)
+  binary loop 0: periods to 69, worst budget residual (t>1) 1.97e-01 (pi_V held: not cleared), worst drug gap 0.00e+00 (price held: not cleared)  [paths saved]
   CEV path of the latest forward pass (per cent, t: value):
     1: +1.002  2: +1.220  3: +1.359  4: +1.442  5: +1.510  6: +1.568  7: +1.622  8: +1.673  9: +1.724  10: +1.776
     11: +1.831  12: +1.878  13: +1.927  14: +1.974  15: +2.018  16: +2.059  17: +2.097  18: +2.133  19: +2.170  20: +2.218
@@ -48,6 +52,16 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
     31: +3.217  32: +3.264  33: +3.304  34: +3.337  35: +3.373  36: +3.405  37: +3.434  38: +3.460  39: +3.484  40: +3.509
     41: +3.531  42: +3.552  43: +3.571  44: +3.587  45: +3.608  46: +3.628  47: +3.655  48: +3.685  49: +3.713  50: +3.738
     51: +3.768  52: +3.818  53: +3.878  54: +3.900  55: +3.919  56: +3.937  57: +3.951  58: +3.964  59: +3.976  60: +3.984
-    61: +3.993  62: +4.001  63: +4.007  64: +4.012  65: +4.018  66: +4.021  67: +4.025  68: +4.029
+    61: +3.993  62: +4.001  63: +4.007  64: +4.012  65: +4.018  66: +4.021  67: +4.025  68: +4.029  69: +4.032
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.78316028827811990       share_newborns=   2.6131101299396121E-003  share_addicted=  0.26436694227149665       share_addicted_newborns=   0.0000000000000000
   latest TRANSITION BETTER OFF TOL t=   1 tol= 1.00E-03 better_all=  0.767100 worse_all=  0.207110 better_sud=  0.264115 worse_sud=  0.735574 better_entering=  0.000000 worse_entering=  0.990613
+
+== loop0 (report_tr70_Cu.py)
+  binary loop 0, periods 1-69: worst budget residual (t>1) 1.97e-01, worst drug gap 0.00e+00
+  long run (terminal Treatment First): h_1 0.005712, children in a shelter 0.009493; Housing First (start): h_1 0.006185, children in a shelter 0.010292
+  year        h_1  vs long run    vs HF  children in a shelter  vs long run    vs HF
+     1   0.006185       +8.27%   -0.00%               0.010292       +8.42%   -0.00%
+    10   0.006015       +5.29%   -2.75%               0.009914       +4.44%   -3.67%
+    30   0.005810       +1.71%   -6.06%               0.009583       +0.95%   -6.89%
+    50   0.005749       +0.64%   -7.05%               0.009532       +0.41%   -7.38%
+    69   0.005717       +0.09%   -7.56%               0.009499       +0.06%   -7.71%
