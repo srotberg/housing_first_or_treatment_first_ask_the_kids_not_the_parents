@@ -1345,3 +1345,20 @@ the two horizons, the case without externalities). Fixed: "captures" -> "capture
 lifetime value, just not by the child's years at home). The two sentences after it (the parent at j=1, and why the
 child's own child enters A_t with weight omega_c) the author found unclear: left blue, explained to the author in chat.
 44 blue sentences left (896 words); 150 of 194 done.
+
+03:04 (21 Oct) ROUND r383 (10 comments, pages 26-33; base_r383 frozen with the others). In the author's words, red with
+the old struck: the parent's value "is not discounted because the parent is already at age j=1, while a newborn child
+will reach that age only J_K periods into their life" (the two sentences after it struck, the author: "maybe best to
+remove it"), "weight on it", Delta P's paragraph, "This part is not an externality ..." struck, what the parent counts,
+the conclusion's opening and the children's costs. Fixed: "the the", "enterants into adults" -> "entrants into
+adulthood", "theearnings", "whensober", "invokedl", "the argument that dominate" -> "dominates", "awayan", a comma
+pair round "in an economy without the externalities on children". Meaning, told to the author: "since it includes the
+general-equilibrium effects" -> "and it includes"; "when pi_V and the drug price clear" -> "or"; "holding everything
+other than the general-equilibrium effects constant" -> "with the distribution of entrants held at Housing First's"
+(Delta P varies the policy, not only the general equilibrium). The author asked whether "Suppose the policy stays at
+Treatment First and only who enters adult life changes" is right and why "two reasons": it is Delta E = Delta A -
+beta^{J_K} Delta P (policy at Treatment First, entrants change); the second reason is the next paragraph's Delta P;
+answered in chat. 28 blue sentences left (576 words); 166 of 194 done.
+CFIX LANDED: the share with a SUD at the reform that is worse off with the drug price and pi_V held is 74 per cent
+(better_off_t1.txt, worse_sud at tol 1e-3, forward pass's first period; the backward pass's checkpoint was saved at
+02:30), against 67 per cent when both clear: the introduction's and the second lesson's yellow dashes are filled (red).
