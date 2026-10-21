@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 21 Oct 09:49 UTC
+# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 21 Oct 13:30 UTC
 remote_tr70_Cu: free disk 8.7G, memory 15 GiB, cores 4 (02:41)
 remote_tr70_Cu: arms: null against nulltf/null worst relative difference 4.2e-03; tf against tf_ruleC 1.212e-04 (02:41)
 remote_tr70_Cu: T = 70 RELAUNCH after a killed run (seeds: its last saved paths) (02:41)
@@ -31,11 +31,14 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
 
 == tr2c_t70_Cu (T = 70, rule C)
   binary loop 0: periods to 69, worst budget residual (t>1) 1.07e-02, worst drug gap 5.07e-03  [paths saved]
-  binary loop 1: periods to 26, worst budget residual (t>1) 9.39e-03, worst drug gap 3.96e-03
+  binary loop 1: periods to 55, worst budget residual (t>1) 9.39e-03, worst drug gap 3.96e-03
   CEV path of the latest forward pass (per cent, t: value):
     1: +0.247  2: +0.368  3: +0.533  4: +0.612  5: +0.720  6: +0.758  7: +0.824  8: +0.890  9: +0.939  10: +0.999
     11: +1.060  12: +1.135  13: +1.156  14: +1.210  15: +1.264  16: +1.311  17: +1.358  18: +1.406  19: +1.464  20: +1.549
-    21: +1.607  22: +1.665  23: +1.736  24: +1.822  25: +1.917  26: +2.059
+    21: +1.607  22: +1.665  23: +1.736  24: +1.822  25: +1.917  26: +2.059  27: +2.161  28: +2.223  29: +2.288  30: +2.354
+    31: +2.383  32: +2.435  33: +2.490  34: +2.542  35: +2.591  36: +2.635  37: +2.685  38: +2.687  39: +2.717  40: +2.725
+    41: +2.743  42: +2.759  43: +2.770  44: +2.799  45: +2.795  46: +2.806  47: +2.823  48: +2.843  49: +2.864  50: +2.898
+    51: +2.920  52: +2.968  53: +3.046  54: +3.058  55: +3.071
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.85547334208344483       share_newborns=  0.33190768420787964       share_addicted=  0.32800423320827571       share_addicted_newborns=   0.0000000000000000
 
 == loop0 (report_tr70_Cu.py: the latest forward pass)
