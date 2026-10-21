@@ -1521,3 +1521,12 @@ The author: "when you update the paper from now on with new numbers, no need to 
 just put the new numbers in black instead of the old ones". Standing, in CLAUDE.md: after the export, re-freeze the table
 baselines and splice against a base copied from the current number files. Applied now: the r403 red in 6.5 (the announced
 runs) is black (base_r404 = the current numbers).
+
+## 21 October (r405): the letter to Katz, the author's second round
+
+28 comments applied with \del/\new: the decision date (yellow placeholder, \tofill), "You explained that", "completely changed the
+paper, such that it is essentially a new paper", "model and mechanisms", "also use", the literature sentence, the RCT point at the
+end of the first paragraph, "The advance in economic knowledge", the first paper's finding cut, "drops the loss of consortium",
+"This is because conditionality takes away an option...", the altruism calibration (NSDUH, as the paper says), "an endogenous
+drug price", "falling/funding", "I assume that households with a SUD...", "consider", "Specifically,", the closing two sentences.
+hmargin 0.75in, vmargin 0.5in, parskip 0.3em: one page without the strikes (the red copy runs four lines over).
