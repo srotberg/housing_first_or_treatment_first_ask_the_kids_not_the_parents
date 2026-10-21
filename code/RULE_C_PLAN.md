@@ -1386,3 +1386,9 @@ arm: E = A - beta^J_K P), and one sentence on it (the author: "use yours then", 
 Delta E is computed using the prices under TF"): "I value both distributions under Treatment First's policy, drug price
 and probability of drawing a voucher, so that the second part below equals the parent's own gain exactly."
 Conclusion: "generates more gain to the child than it costs the parent". "carrythe", "omega_cof" fixed.
+
+03:50 (21 Oct) ROUND r387 (the author: "remove all red and crossed lines. and give me the paper without the appendix and
+references so i can run it with the AI detector"; base_r387 frozen with the others). One comment ("remove" on "it"):
+"than it costs the parent" -> "than cost to the parent" (dropping "it" alone leaves no grammar; red, old struck).
+writing/children_first_housing_later_no_appendix.pdf: the paper cut at \appendix (34 pages, through the conclusion; no
+appendix, no references), with no red, no struck text and no blue, for the detector.
