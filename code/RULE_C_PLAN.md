@@ -1336,3 +1336,12 @@ Fixed: "keep the drug price stays fixed", "deterringusers", "both run", "breaks 
 no externalities" (the first experiment's runs had none; the second's steps have them); "can only keep their
 assistance" -> "can only be sure of keeping" (detection is imperfect); "I therefore set it" -> "I set it" (its reason,
 "no programme reports that", went with the rewrite). 55 blue sentences left (1,111 words); 139 of 194 done.
+
+02:40 (21 Oct) ROUND r382 (12 comments, pages 24-26; base_r382 frozen with the others). Red, old struck: "but" out,
+"isolates", "households", "keep" (the author reverts r381's "be sure of keeping"), "concerns", and the welfare section
+in the author's words (birth under the veil of ignorance, the sign of Delta, newborn welfare, the externality's weight,
+the two horizons, the case without externalities). Fixed: "captures" -> "captured", "its childhood, is not counted" ->
+"its childhood is not counted"; "is not discounted" kept with "in this way" (the parent's value is a discounted
+lifetime value, just not by the child's years at home). The two sentences after it (the parent at j=1, and why the
+child's own child enters A_t with weight omega_c) the author found unclear: left blue, explained to the author in chat.
+44 blue sentences left (896 words); 150 of 194 done.
