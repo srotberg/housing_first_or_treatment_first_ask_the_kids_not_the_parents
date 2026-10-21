@@ -1486,3 +1486,18 @@ CAann100 loop2 (announce 1.00: peak 7.4 -> 7.3, children 3.7 -> 3.6, first-perio
 budget 0.15%, drug off 23 of periods 1-25) and CAgrace100 loop3 (exemption 1.00: peak 5.0 (9) -> 5.2 (7), children 1.3 ->
 1.7, CEV 6.37 -> 6.24; budget 0.59%, drug off 12, both better than loop2). Cu loop3 landed too; the main row is unchanged
 and the figure stays on loop1. The footnote link is black now.
+
+## 21 October (r401): the letter to Katz, the author's comments
+
+The author's 28 comments on qje_katz.pdf applied with \del/\new (my r399 red accepted): "under the title", the
+parenthetical removed, "The question in the new paper... are all new. Among the changes, the model...", the two-period
+sentence rewritten ("uninsurable risk due to a SUD"), addiction -> SUD, "rationed vouchers", "as an exogenous parameter",
+"Instead, I show that the answer depends on the impact that Treatment First has on the children through its impact on
+drug use", "during childhood", "but a voucher revoked exposes the child to childhood homelessness. The parent only counts a
+part of these effects.", "because the savings ... more vouchers to sober households", "about three quarters of them are
+worse off" (74 per cent, prices held), "are the macro effects that trials do not control for", "SUD during their childhood",
+"under Treatment First is set based on", "(veterans in the study)", "The model also now includes other new elements",
+"I also included transitions", "due to low detection and households entering treatment", "about 7 percent more vouchers"
+(share of households holding a voucher +6.83 per cent in the long run, arm_tf/final.txt), "transition specifications, in
+which ... include ... and show that the impact ... depends on the reform's design". Typos fixed (throuugh, externaltiies,
+Specifially, specifiations), TF -> Treatment First. 10pt, 0.8in, parskip 0.35em: one page once the strikes go.
