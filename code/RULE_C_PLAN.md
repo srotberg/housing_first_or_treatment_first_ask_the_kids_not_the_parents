@@ -1397,3 +1397,16 @@ appendix, no references), with no red, no struck text and no blue, for the detec
 (the detector flags them): the thirty-year-period footnote (four sentences), the n.a. table note (tab_eleven and
 tab_standard, written with a tie after "n.a." since soul cannot take a control space), Block 1's opening sentence, the
 voucher-rent footnote, and the parent's-value sentence. 30 blue runs now.
+
+04:37 (21 Oct) ROUND r388 (18 comments; base_r388 frozen with the others). Every remaining blue sentence replaced by the
+author's wording, typos and grammar fixed, red with the old struck: the thirty-year footnote, both n.a. notes (tables
+in \textcolor{red}), Block 1's opening, the voucher-rent footnote, the parent's welfare change, 6.4's reform cohort,
+Appendix A's opening paragraphs, h_2, the ladder, Block 9, J/J_R/J_K, the tilt, r, the progressivity, tau_k, UI.
+Fixed: "distance future", "casethe", "the tenant pay", "voucher holder", "an lower", "many parameter, many which",
+"thirty three parameter", "andthe", "in same seven blocks", "muchweight", "are cost burdened, are more likely ... and a
+voucher", "how much housing services are", "the affect", "expect earn", "low productivity households", "a higher the
+risk", "psi's value if lower" -> "its value is lower" (the parameter is varphi), "ratereduces", "discourages households
+to save", "a households", "Table X" -> Table~\ref{tab:eleven}, double full stops. Meaning, told to the author: "J and
+J_R set the maximum years of life" -> "the maximum number of years a household can live and work, respectively" (J_R is
+the retirement age). NO BLUE LEFT: all 194 flagged sentences (plus the author's six later additions) rewritten.
+CAgrace100 loop2 landed: Table 7's 1.00 exemption row 5.0 (9), 1.3 (7), CEV 6.37; x_at_gr_par red.
