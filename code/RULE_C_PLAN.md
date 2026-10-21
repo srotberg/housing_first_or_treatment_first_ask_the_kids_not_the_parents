@@ -1371,3 +1371,11 @@ the loss it inflicts on the parent"). Grammar read through in the final text; sp
 the Delta E paragraph means: explained in chat (the two reasons are Delta E, entrants change under Treatment First, and
 Delta P, the policy changes for the same entrants; omega_c of Delta E is counted by the parent through D(y,d), the rest
 is the earnings externality); its sentences are still blue for the author to rewrite. 28 blue sentences left.
+
+03:31 (21 Oct) ROUND r385 (the author: "remove all red, put updates in red and address this specific paragraph in blue as
+well"; base_r385 frozen with the others). "Specifically, I show that although" (the author's "Specifially" fixed),
+"the screen creates". The Delta E paragraph rewritten at the author's request (red, old struck): a new one-sentence
+paragraph before both headings ("I split the change in adult life, Delta A, into two parts that add up to it
+exactly."), then "Better productivity at entry." in plain first-person sentences (keep Treatment First, compare
+entrants under the two policies, fewer carry the penalty, Delta E, omega_c counted through D(y,d), the rest the
+earnings externality). Written by me, so the detector may flag it: told the author. 23 blue sentences left (505 words).
