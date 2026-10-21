@@ -1478,3 +1478,11 @@ re-edited with the paper's current numbers and wording (abstract, intro, 6.1, 6.
 hazard alone does not justify conditionality", the three externalities, childhood homelessness -11, parents +0.69 in GE, 67 per cent
 of those with a SUD worse off, the three reasons the transition does not rise, the alternatives (14 per cent; 1.6 with the exemption);
 changes \new, removals \del (ulem added). Squeezed to one page at 10pt, 0.9in margins (11pt ran to two with or without the strikes).
+
+## Round r400 (21 October)
+
+Red and strikes from r399 removed (base_r400). Two later passes landed since and move 6.5 and Table 7, so they are red:
+CAann100 loop2 (announce 1.00: peak 7.4 -> 7.3, children 3.7 -> 3.6, first-period drug fall 30 -> 29, CEV 4.62 -> 4.54;
+budget 0.15%, drug off 23 of periods 1-25) and CAgrace100 loop3 (exemption 1.00: peak 5.0 (9) -> 5.2 (7), children 1.3 ->
+1.7, CEV 6.37 -> 6.24; budget 0.59%, drug off 12, both better than loop2). Cu loop3 landed too; the main row is unchanged
+and the figure stays on loop1. The footnote link is black now.
