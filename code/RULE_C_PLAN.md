@@ -1530,3 +1530,10 @@ end of the first paragraph, "The advance in economic knowledge", the first paper
 "This is because conditionality takes away an option...", the altruism calibration (NSDUH, as the paper says), "an endogenous
 drug price", "falling/funding", "I assume that households with a SUD...", "consider", "Specifically,", the closing two sentences.
 hmargin 0.75in, vmargin 0.5in, parskip 0.3em: one page without the strikes (the red copy runs four lines over).
+
+## 21 October, 23:20: let them finish, then freeze
+
+The author: "Ok, let them finish. And update the numbers at the end. It seems like the results are quite final". Waiting for
+CAgr2_20 loop1 (~01:30 UTC), CAann2_20 loop2 (~06:00 UTC) and CAann2_100 loop1 (~08:30 UTC 22 Oct); then one rebuild with the
+numbers in black, and code/paper/alttrans_final.json written from alttrans_provisional.json's src (every row, main included):
+export_alttrans.py and export_noescape.py read it first, so loops that land later move neither Table 7 nor 6.4/6.5.

@@ -46,9 +46,21 @@ WINDOW_100 = 25                 # the periods a 1.00 row is judged on (the refor
 PREV = os.path.join(HERE, 'tab_alttrans_prev.json')   # the note as the author last read it (--freeze moves it)
 
 
+# (21 October, the author: "Ok, let them finish. And update the numbers at the end. It seems like the results are quite
+# final") once the last passes have landed, alttrans_final.json pins each row to the loop it shows ({key: "results/<run>/
+# loopN"}, written from alttrans_provisional.json's src), so loops that land later cannot move Table 7 or 6.5
+FINAL = os.path.join(HERE, 'alttrans_final.json')
+_FINAL = json.load(open(FINAL)) if os.path.exists(FINAL) else {}
+
+
 def run(key, rdir, arms, fallback=None):
     """the row's numbers, or None while the run has no archived loop"""
-    loop = latest_loop(os.path.join(R, rdir))
+    if key in _FINAL:
+        rdir = _FINAL[key].split('/')[1]
+        loop = os.path.join(ROOT, _FINAL[key])
+        assert os.path.exists(os.path.join(loop, 'run.log.gz')), _FINAL[key]
+    else:
+        loop = latest_loop(os.path.join(R, rdir))
     if loop is None and fallback:
         rdir, arms = fallback
         loop = latest_loop(os.path.join(R, rdir))

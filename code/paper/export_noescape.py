@@ -71,6 +71,10 @@ if any(d.startswith('loop') and os.path.exists(os.path.join(_CAC, d, 'run.log.gz
 loops = sorted((d for d in os.listdir(TRD) if d.startswith('loop') and os.path.exists(os.path.join(TRD, d, 'run.log.gz'))),
                key=lambda d: int(d[4:]))
 TRLOG = os.path.join(TRD, loops[-1], 'run.log.gz') if loops else os.path.join(TRD, 'partial_loop0_run.log.gz')
+# (21 October) the final pin Table 7 reads (export_alttrans.FINAL), so later loops cannot move 6.4 either
+_FINAL = json.load(open(os.path.join(HERE, 'alttrans_final.json'))) if os.path.exists(os.path.join(HERE, 'alttrans_final.json')) else {}
+if 'ne100' in _FINAL:
+    TRLOG = os.path.join(ROOT, _FINAL['ne100'], 'run.log.gz')
 tr = path(TRLOG)
 h0, c0 = levels(os.path.join(ARMS, 'arm_null', 'final.txt'))['homelessness h_1'], child_steady(os.path.join(ARMS, 'arm_null'))
 TT = sorted(tr)
@@ -112,6 +116,8 @@ assert r20 > 0 and r20c > 0, 'the 0.20 screen alone no longer raises homelessnes
 # recycled and the drug price falls"
 L20 = latest_loop(os.path.join(ROOT, 'results', 'transition_2c_t70_CA20e')) or \
     latest_loop(os.path.join(ROOT, 'results', 'transition_2c_t70_CAne20'))
+if 'ne20' in _FINAL:
+    L20 = os.path.join(ROOT, _FINAL['ne20'])
 if L20:
     p20 = path(os.path.join(L20, 'run.log.gz'))
     r20 = 100 * (max(v[0] for v in p20.values()) / h0 - 1)
