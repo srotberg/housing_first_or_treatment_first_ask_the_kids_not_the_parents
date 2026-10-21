@@ -1,14 +1,16 @@
-\documentclass[11pt]{article}
-\usepackage[margin=1in]{geometry}
+\documentclass[10pt]{article}
+\usepackage[margin=0.9in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{xcolor,soul}\sethlcolor{yellow}
+\usepackage[normalem]{ulem}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.45em}
+\setlength{\parskip}{0.4em}
 \pagestyle{empty}
 % the two facts only the author knows, highlighted until filled in
 \newcommand{\tofill}[1]{\hl{#1}}
 \newcommand{\new}[1]{{\color{red}#1}}   % what changed since the author's comments
+\newcommand{\del}[1]{{\color{red}\sout{#1}}}   % what was removed
 \begin{document}
 
 Professor Lawrence F.\ Katz\\
@@ -16,18 +18,17 @@ Editor, \textit{The Quarterly Journal of Economics}
 
 Dear Professor Katz,
 
-When you declined my paper ``Housing First or Treatment First?'' (MS 45355), you did not see a large enough advance or a sufficiently compelling empirical base. I have since written a different paper, ``Housing First or Treatment First? Ask the Kids, Not the Parents,'' that addresses both, and I would like to ask whether you would consider it as a new submission. Its question, its model, its experiments and its conclusion are new: the model now includes children and the externalities a parent's drug use imposes on them. Even what the two share is now shown clearly, in a simple, stripped-down two-period model: uninsurable risk generates the concentration of drug use at the bottom of the income distribution, without assuming, as the literature does, preferences that differ systematically with income.
+When you declined my paper ``Housing First or Treatment First?'' (MS 45355), you did not see a large enough advance or a sufficiently compelling empirical base. I have since written a different paper, \new{under a title that keeps the question and adds the answer,} ``Housing First or Treatment First? Ask the Kids, Not the Parents,'' that addresses both, and I would like to ask whether you would consider it as a new submission. Its question, its model, its experiments and its conclusion are new: the model now includes children and the externalities a parent's drug use imposes on them. Even what the two share is now shown clearly, in a simple, stripped-down two-period model: \del{uninsurable risk generates the concentration of drug use at the bottom of the income distribution} \new{use concentrates among low-income households because a substance use disorder's mortality risk, unlike its unemployment risk, is uninsurable}, without assuming, as the literature does, preferences that differ systematically with income.
 
-\textbf{The advance.} The first paper asked whether conditioning housing assistance on sobriety reduces addiction and homelessness through moral hazard. It found that, with the number of vouchers fixed, conditionality lowers addiction but raises homelessness and lowers welfare; Treatment First came out ahead only with universal vouchers and with a cost of premature death to survivors (loss of consortium) added to welfare by hand. The new paper drops that term and shows that moral hazard does not decide the question: without effects on children, a newborn is worse off under Treatment First, by 1.09 percent of lifetime consumption, even though drug use falls. The answer turns on the children. A parent's drug use costs the child consumption and housing at home, and earnings as an adult, and the parent counts these only in part. Within the existing rationed programme, Treatment First cuts drug use by 21 percent and homelessness by 11 percent, and raises a newborn's welfare by 2.57 percent, three quarters of it an externality the parent does not count. The model reproduces many micro findings of randomised controlled trials, including that households with a disorder lose from the condition. What reverses the verdict is what trials cannot observe: the households the condition deters from using, the vouchers its savings fund, and the children.
+\textbf{The advance.} The first paper asked whether conditioning housing assistance on sobriety reduces addiction and homelessness through moral hazard. It found that, with the number of vouchers fixed, conditionality lowers addiction but raises homelessness and lowers welfare; Treatment First came out ahead only with universal vouchers and with a cost of premature death to survivors (loss of consortium) added to welfare by hand. The new paper drops that term and shows that moral hazard \del{does not decide the question} \new{alone does not justify conditionality}: without effects on children, a newborn is worse off under Treatment First, by 1.09 percent of lifetime consumption, even though drug use falls \new{and the drug test's savings buy vouchers for other households}. The answer turns on the children\new{, through three externalities}. A parent's drug use costs the child consumption and housing at home, and earnings as an adult, and the parent counts these only in part. Within the existing rationed programme, Treatment First cuts drug use by 21 percent and homelessness by 11 percent, \new{and childhood homelessness, the externality its critics believe it creates, by 11 percent as well. It} raises a newborn's welfare by 2.57 percent, three quarters of it an externality the parent does not count\new{, and in general equilibrium the parents gain too, by 0.69 percent of their own consumption}. The model reproduces many micro findings of randomised controlled trials, including that households with a disorder lose from the condition\new{: 67 percent of them are worse off}. What reverses the verdict is what trials cannot observe: the households the condition deters from using, the vouchers its savings fund, and the children.
 
 \textbf{The empirical base.} Each mechanism that drives the answer is now pinned to direct evidence. The earnings penalty a child bears from a parent's disorder is set to the natural-experiment estimate of Nilsson (2017), the deterrence of the drug test to the US military's random testing (Mehay and Pacula, 1999), and the effect of housing on recovery to the randomised trial of Milby et al.\ (2005). Without being targeted, the model reproduces that trial's effect of making housing conditional on abstinence (1.40 against 1.26) and the effect of Housing First on the three-year mortality of homeless veterans with mental illness (3.6 against 4.6 percentage points; Costantini, 2025).
 
-\textbf{The model and the transition.} Its other new elements are serious mental illness, a choice of treatment, a drug price that clears its market (it was held fixed in the first paper), and a budget balanced through the rationing of vouchers rather than through taxes. In the transition, which covers every cohort alive at the reform and clears the drug price and the budget every period, homelessness and childhood homelessness never rise, and children born at the reform gain 1.45 percent. Alternative transitions, with households unable to stop using, an announced screen or a temporary exemption in treatment, show how the first years depend on the reform's design.
+\textbf{The model and the transition.} Its other new elements are serious mental illness, a choice of treatment, a drug price that clears its market (it was held fixed in the first paper), and a budget balanced through the rationing of vouchers rather than through taxes. In the transition, which covers every cohort alive at the reform and clears the drug price and the budget every period, homelessness and childhood homelessness never rise, and children born at the reform gain 1.45 percent. \new{They do not rise because few households lose their vouchers, drug use falls from the first year, and the screen's savings fund vouchers for others.} Alternative transitions, with households unable to stop using, an announced screen or a temporary exemption in treatment, show how the first years depend on the reform's design\new{: catching every user with no exemption raises homelessness by up to 14 percent at first, while a five-period exemption for households in treatment holds the rise to 1.6 percent and keeps childhood homelessness below its Housing First level}.
 
 The question is current: in July 2025 an executive order directed federal agencies to end support for Housing First. Both papers are attached to this email. I would be grateful for your guidance.
 
-Sincerely,
-
+Sincerely,\\
 Shahar Rotberg\\
 Canada Mortgage and Housing Corporation
 

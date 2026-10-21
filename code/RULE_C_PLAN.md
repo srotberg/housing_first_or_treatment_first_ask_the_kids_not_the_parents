@@ -1469,3 +1469,12 @@ round-1 letters (README, preamble comment, the five letters, PDFs rebuilt), and 
 writing/letters/qje_katz.tex (PDF rebuilt). Left as they are: the RED letters' "submitted as Housing First or Treatment
 First?" (the manuscript's original title), the QJE letter's declined MS 45355, Costantini (2025)'s title, historical
 notes and the GitHub URL. All red and struck text removed (base_r398).
+
+## 21 October (r399): the replication link and the letter to Katz
+
+The title footnote's link is the renamed repository, https://github.com/srotberg/housing_first_or_treatment_first_ask_the_kids_not_the_parents
+(the author's screenshot), in red with the old one struck; nothing else in the paper moved (base_r398). writing/letters/qje_katz.tex
+re-edited with the paper's current numbers and wording (abstract, intro, 6.1, 6.4, 6.5): the uninsurable mortality risk, "moral
+hazard alone does not justify conditionality", the three externalities, childhood homelessness -11, parents +0.69 in GE, 67 per cent
+of those with a SUD worse off, the three reasons the transition does not rise, the alternatives (14 per cent; 1.6 with the exemption);
+changes \new, removals \del (ulem added). Squeezed to one page at 10pt, 0.9in margins (11pt ran to two with or without the strikes).
