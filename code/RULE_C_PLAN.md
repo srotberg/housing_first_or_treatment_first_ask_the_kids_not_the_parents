@@ -1311,3 +1311,14 @@ footnote removed (struck), Costantini, Milby, the two adjusting objects and the 
 by others" -> "borne by others", the meaning). 83 blue sentences left (1,706 words); 111 of 194 done. OPEN: the author
 asks whether the model's homelessness odds ratio (u_odds_hl_m, 6.23) should be computed within the bottom of the
 productivity distribution, as Bassuk et al. compare poor housed with poor homeless mothers -- not yet checked.
+
+01:28 (21 Oct) ROUND r380 (the author: "remove all red and put updates in red. and remove all crossed lines"; 13 comments,
+pages 21-24, on their own rewritten text; base_r380 frozen with the others). Red, old struck: "As this parameter's value
+rises", "does" for "would", "are therefore poor" and "As a result, Treatment First's direct effects ...", the
+Costantini sentence ("this matters because in the model, the effect of losing a voucher on the survival rates ..."),
+"did" and "horizon" (Milby), and the two objects paragraph in the author's words ("allow it to adjust" -> "allow to
+adjust", $\pi_V$ kept, "Thus, whatever the screen saves ..." struck, "Overall, I conduct three experiments."). 83 blue
+sentences left. The author asked to compute the homelessness odds ratio for the bottom of the productivity
+distribution, as Bassuk et al.: a background job (a copy of the benchmark build with a DIAG line, in the scratchpad) is
+computing it; within one productivity node the model's exposed and unexposed rates are equal by construction (no
+penalty for growing up in a shelter), so the restricted ratio will be near 1.
