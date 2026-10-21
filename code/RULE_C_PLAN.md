@@ -1501,3 +1501,9 @@ worse off" (74 per cent, prices held), "are the macro effects that trials do not
 (share of households holding a voucher +6.83 per cent in the long run, arm_tf/final.txt), "transition specifications, in
 which ... include ... and show that the impact ... depends on the reform's design". Typos fixed (throuugh, externaltiies,
 Specifially, specifiations), TF -> Treatment First. 10pt, 0.8in, parskip 0.35em: one page once the strikes go.
+
+## Round r402 (21 October)
+
+All red and strikes removed from the paper and from the letter to Katz (base_r402 = the current numbers, so the one pass
+that landed during the build, the 0.20 no-exemption row 5.4 (7) -> 5.3 (6), CEV 3.09 -> 3.02, is black; told to the author
+in chat). Whole-paper spell check: no typos (28 unknown words, all technical terms or British spellings).
