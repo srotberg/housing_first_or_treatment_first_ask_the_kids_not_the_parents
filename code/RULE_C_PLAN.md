@@ -1362,3 +1362,12 @@ answered in chat. 28 blue sentences left (576 words); 166 of 194 done.
 CFIX LANDED: the share with a SUD at the reform that is worse off with the drug price and pi_V held is 74 per cent
 (better_off_t1.txt, worse_sud at tol 1e-3, forward pass's first period; the backward pass's checkpoint was saved at
 02:30), against 67 per cent when both clear: the introduction's and the second lesson's yellow dashes are filled (red).
+
+03:26 (21 Oct) ROUND r384 (13 comments on the author's own text, pages 28 and 33; base_r384 frozen with the others; red,
+old struck): Delta P's paragraph ("and only change the policy", "where the drug is cheaper and it is easier to draw a
+voucher when sober", "because it includes", "can adjust", "This captures the gain Delta P") and the conclusion's
+opening ("Yes"/"No" in quotes, "but", "And I show that although", ", because", "then demonstrate", "But because", "than
+the loss it inflicts on the parent"). Grammar read through in the final text; spell check clean. The author asked what
+the Delta E paragraph means: explained in chat (the two reasons are Delta E, entrants change under Treatment First, and
+Delta P, the policy changes for the same entrants; omega_c of Delta E is counted by the parent through D(y,d), the rest
+is the earnings externality); its sentences are still blue for the author to rewrite. 28 blue sentences left.
