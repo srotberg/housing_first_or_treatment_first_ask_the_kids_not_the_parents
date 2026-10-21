@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 21 Oct 15:11 UTC
+# the T = 70 transition on RULE C from the corrected Housing First (code/transition_fix/remote_tr70_Cu.sh); 21 Oct 15:31 UTC
 remote_tr70_Cu: free disk 8.7G, memory 15 GiB, cores 4 (02:41)
 remote_tr70_Cu: arms: null against nulltf/null worst relative difference 4.2e-03; tf against tf_ruleC 1.212e-04 (02:41)
 remote_tr70_Cu: T = 70 RELAUNCH after a killed run (seeds: its last saved paths) (02:41)
@@ -6,6 +6,9 @@ remote_tr70_Cu: T = 70 transition started, pid 1850 (02:41)
 remote_tr70_Cu: handover applied: 100 parameters (02:41)
 remote_tr70_Cu: relaunch: the binary's loop 0 is archived as loop2 (02:41)
 remote_tr70_Cu: binary loop 0 complete, archived to results/transition_2c_t70_Cu/loop2; loop2: drug_price years 60-69 within 0.03% of the terminal 0.946231 (year 1 0.967076, year 60 0.946465, year 69 0.946467); pi_v years 60-69 within 0.91% of the terminal 0.078054 (year 1 0.063610, year 60 0.078454, year 69 0.078337) (00:07)
+remote_tr70_Cu: binary loop 1 complete, archived to results/transition_2c_t70_Cu/loop3; loop3: drug_price years 60-69 within 0.05% of the terminal 0.946231 (year 1 0.967559, year 60 0.946693, year 69 0.946588); pi_v years 60-69 within 1.11% of the terminal 0.078054 (year 1 0.062822, year 60 0.078603, year 69 0.078353) (15:31)
+remote_tr70_Cu: loop3 archived (4 loops): stopping the binary (15:31)
+remote_tr70_Cu: T = 70 transition ended: stopped after 4 loops (15:31)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -31,7 +34,7 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
 
 == tr2c_t70_Cu (T = 70, rule C)
   binary loop 0: periods to 69, worst budget residual (t>1) 1.07e-02, worst drug gap 5.07e-03  [paths saved]
-  binary loop 1: periods to 67, worst budget residual (t>1) 9.39e-03, worst drug gap 3.96e-03
+  binary loop 1: periods to 69, worst budget residual (t>1) 9.39e-03, worst drug gap 3.96e-03  [paths saved]
   CEV path of the latest forward pass (per cent, t: value):
     1: +0.247  2: +0.368  3: +0.533  4: +0.612  5: +0.720  6: +0.758  7: +0.824  8: +0.890  9: +0.939  10: +0.999
     11: +1.060  12: +1.135  13: +1.156  14: +1.210  15: +1.264  16: +1.311  17: +1.358  18: +1.406  19: +1.464  20: +1.549
@@ -39,7 +42,7 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
     31: +2.383  32: +2.435  33: +2.490  34: +2.542  35: +2.591  36: +2.635  37: +2.685  38: +2.687  39: +2.717  40: +2.725
     41: +2.743  42: +2.759  43: +2.770  44: +2.799  45: +2.795  46: +2.806  47: +2.823  48: +2.843  49: +2.864  50: +2.898
     51: +2.920  52: +2.968  53: +3.046  54: +3.058  55: +3.071  56: +3.100  57: +3.126  58: +3.361  59: +3.330  60: +3.281
-    61: +3.251  62: +3.249  63: +3.246  64: +3.237  65: +3.236  66: +3.237  67: +3.231
+    61: +3.251  62: +3.249  63: +3.246  64: +3.237  65: +3.236  66: +3.237  67: +3.231  68: +3.228  69: +3.224
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.85547334208344483       share_newborns=  0.33190768420787964       share_addicted=  0.32800423320827571       share_addicted_newborns=   0.0000000000000000
 
 == loop0 (report_tr70_Cu.py: the latest forward pass)
@@ -72,7 +75,18 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
     50   0.005592       +1.81%   -9.57%               0.009299       +1.60%   -9.64%
     69   0.005551       +1.05%  -10.25%               0.009268       +1.27%   -9.94%
 
+== loop3 (report_tr70_Cu.py: the latest forward pass)
+  binary loop 1, periods 1-69: worst budget residual (t>1) 9.39e-03, worst drug gap 3.96e-03
+  long run (terminal Treatment First): h_1 0.005493, children in a shelter 0.009152; Housing First (start): h_1 0.006184, children in a shelter 0.010291
+  year        h_1  vs long run    vs HF  children in a shelter  vs long run    vs HF
+     1   0.006185      +12.59%   +0.00%               0.010291      +12.45%   -0.00%
+    10   0.006045      +10.04%   -2.26%               0.009977       +9.01%   -3.06%
+    30   0.005767       +4.99%   -6.75%               0.009540       +4.24%   -7.30%
+    50   0.005594       +1.83%   -9.55%               0.009301       +1.62%   -9.62%
+    69   0.005545       +0.95%  -10.34%               0.009259       +1.17%  -10.03%
+
 == horizon check (the last ten years against the terminal values)
 loop0: drug_price years 60-69 within 0.01% of the terminal 0.946231 (year 1 0.966014, year 60 0.946277, year 69 0.946356); pi_v years 60-69 within 0.25% of the terminal 0.078054 (year 1 0.068001, year 60 0.077991, year 69 0.078143)
 loop1: drug_price years 60-69 within 0.02% of the terminal 0.946231 (year 1 0.966941, year 60 0.946385, year 69 0.946428); pi_v years 60-69 within 0.63% of the terminal 0.078054 (year 1 0.064505, year 60 0.078253, year 69 0.078261)
 loop2: drug_price years 60-69 within 0.03% of the terminal 0.946231 (year 1 0.967076, year 60 0.946465, year 69 0.946467); pi_v years 60-69 within 0.91% of the terminal 0.078054 (year 1 0.063610, year 60 0.078454, year 69 0.078337)
+loop3: drug_price years 60-69 within 0.05% of the terminal 0.946231 (year 1 0.967559, year 60 0.946693, year 69 0.946588); pi_v years 60-69 within 1.11% of the terminal 0.078054 (year 1 0.062822, year 60 0.078603, year 69 0.078353)
