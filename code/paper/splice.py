@@ -73,26 +73,67 @@ def plain(w):
 
 
 def word_red(old, new):
-    """new, with the runs of words not in old wrapped in \\new{}; a deletion leaves nothing red"""
+    """new, with the runs of words not in old wrapped in \\new{} and the words of old it drops struck before them in
+    \\del{} (21 October; standing since round r305, the author: "if you delete something i want to see what you
+    deleted": until now a moved sentence showed only what it gained)"""
     a, b = words(old), words(new)
-    seg = []                            # [words, red]
+    seg = []                            # [old words, new words, changed]
     # a number that only lost (or gained) its yellow is not an update (round r364: the provisional numbers' yellow
     # was removed on the author's instruction, their values unchanged)
     na, nb = [plain(w) for w in a], [plain(w) for w in b]
     for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, na, nb, autojunk=False).get_opcodes():
-        if j2 > j1:
-            seg.append([b[j1:j2], op != 'equal'])
-    # a word or two left black between two red runs reads as a stray: it joins them
+        seg.append([[plain(w) for w in a[i1:i2]], b[j1:j2], op != 'equal'])
+    # a word or two left black between two changed runs reads as a stray: it joins them
     for k in range(1, len(seg) - 1):
-        if not seg[k][1] and len(seg[k][0]) <= MERGE and seg[k - 1][1] and seg[k + 1][1]:
-            seg[k][1] = True
+        if not seg[k][2] and len(seg[k][1]) <= MERGE and seg[k - 1][2] and seg[k + 1][2]:
+            seg[k][2] = True
     out = []
-    for w, red in seg:
-        if red and out and out[-1][1]:
-            out[-1][0] += w
+    for o, n, ch in seg:
+        if ch and out and out[-1][2]:
+            out[-1][0] += o; out[-1][1] += n
         else:
-            out.append([list(w), red])
-    return ' '.join('\\new{' + ' '.join(w) + '}' if red else ' '.join(w) for w, red in out)
+            out.append([list(o), list(n), ch])
+    parts = []
+    for o, n, ch in out:
+        if not ch:
+            parts.append(' '.join(n))
+            continue
+        if o:
+            parts.append('\\del{' + ' '.join(o) + '}')
+        if n:
+            parts.append('\\new{' + ' '.join(n) + '}')
+    return ' '.join(x for x in parts if x)
+
+
+def in_math(src, i):
+    """whether position i of the source is inside inline or display maths, counted from the paragraph it is in"""
+    par = src.rfind('\n\n', 0, i)
+    pre = '\n'.join(re.sub(r'(?<!\\)%.*', '', l) for l in src[par + 1:i].split('\n'))
+    pre = pre.replace('\\$', '')
+    if pre.count('$') % 2:
+        return True
+    # \[ opens display maths, but not as the tail of a line break with spacing, \\[2pt]
+    last = lambda pat: max((m.start() for m in re.finditer(pat, src[:i])), default=-1)
+    for o, c in ((r'(?<!\\)\\\[', r'(?<!\\)\\\]'), (r'\\begin\{equation', r'\\end\{equation'),
+                 (r'\\begin\{align', r'\\end\{align')):
+        if last(o) > last(c):
+            return True
+    return False
+
+
+def struck(src, k, old, v):
+    """each placeholder of k as \\del{old} \\new{v}, or \\new{v} alone where it sits inside maths"""
+    old = plain(old)
+    src = src.replace(f'$@@{k}@@$', f'\\del{{${old}$}} \\new{{${v}$}}' if old.strip() else f'\\new{{${v}$}}')
+    out, i, tag = [], 0, f'@@{k}@@'
+    while True:
+        j = src.find(tag, i)
+        if j < 0:
+            out.append(src[i:]); break
+        out.append(src[i:j])
+        out.append(f'\\new{{{v}}}' if in_math(src, j) or not old.strip() else f'\\del{{{old}}} \\new{{{v}}}')
+        i = j + len(tag)
+    return ''.join(out)
 
 
 def load(paths):
@@ -146,6 +187,9 @@ def fill_part(src, base_dir):
             if k in base and f'$@@{k}@@$' not in src and len(words(v)) >= SENTENCE and \
                     len(words(str(fill.text_precision(k, base[k])))) >= SENTENCE:
                 src = src.replace(f'@@{k}@@', word_red(str(fill.text_precision(k, base[k])), v))
+                continue
+            if k in base:
+                src = struck(src, k, str(fill.text_precision(k, base[k])), v)
                 continue
             src = src.replace(f'$@@{k}@@$', f'\\new{{${v}$}}').replace(f'@@{k}@@', f'\\new{{{v}}}')
         elif UPD.match(k):

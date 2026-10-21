@@ -28,7 +28,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
-from transition_source import OUT as IN, HORIZON, UNCONVERGED_FROM   # the one pin
+from transition_source import OUT as IN, HORIZON, UNCONVERGED_FROM, SHOWN   # the one pin
 FIG = os.path.join(ROOT, 'writing', 'figures', 'full_transition')
 OUT_JSON = os.path.join(HERE, 'results_numbers.json')
 sys.path.insert(0, os.path.join(ROOT, 'code', 'stylized'))
@@ -37,8 +37,11 @@ BLUE, ORANGE, GREY = '#2C6FAD', '#D9822B', '0.45'
 
 
 def rows(name):
+    """years 1 to SHOWN only, and the cohorts born in them (21 October: the horizon's last decade is not shown,
+    transition_source.SHOWN)"""
     with open(os.path.join(IN, name)) as f:
-        return [{k: float(v) for k, v in r.items() if k != 'ages'} for r in csv.DictReader(f)]
+        out = [{k: float(v) for k, v in r.items() if k != 'ages'} for r in csv.DictReader(f)]
+    return [r for r in out if r.get('t', r.get('born', 0)) <= SHOWN]
 
 
 def main():
@@ -67,7 +70,7 @@ def main():
         ax.plot([0], [y[0]], 'o', color=ORANGE, ms=5)
         ax.set_title(title, fontsize=10.5, loc='left')
         ax.set_ylabel(ylab, fontsize=9)
-        ax.set_xlim(-1, HORIZON)
+        ax.set_xlim(-1, SHOWN)
         lo, hi = min(min(y), sc * tf[key]), max(max(y), sc * hf[key])
         pad = 0.12 * (hi - lo)
         ax.set_ylim(lo - pad, hi + pad)
@@ -83,7 +86,7 @@ def main():
     ax.set_title('(g) Welfare by year of birth, CEV', fontsize=10.5, loc='left')
     ax.set_ylabel('percent of lifetime consumption', fontsize=9)
     ax.set_xlabel('year of birth, after the reform', fontsize=9)
-    ax.set_xlim(0, max(born) + 1)
+    ax.set_xlim(0, SHOWN)
     # (h) THE SHARE BETTER OFF, YEAR BY YEAR (the author, 2 October: "an approval rate of everyone alive at the
     # beginning of the transition", "and show it across time?"), in the eighth slot; the legend goes to (a)
     # WORSE OFF, not better off (the author, 8 October: "maybe show this as percent worse off?"): the share better
@@ -97,7 +100,7 @@ def main():
     ax.set_title('(h) Worse off than under Housing First', fontsize=10.5, loc='left')
     ax.set_ylabel('percent of households', fontsize=9)
     ax.set_xlabel('years since the reform', fontsize=9)
-    ax.set_xlim(-1, HORIZON)
+    ax.set_xlim(-1, SHOWN)
     ax.set_ylim(0, 105)
     # (round r327, the author: "the legend is not so well placed. can you move it to a better location"): 'center
     # right' sat on the dashed line, which runs from about 66 down to 51; above it the panel is empty

@@ -1427,3 +1427,14 @@ proofreading fixes stay in red: "point in this research", "I scale", Stone--Gear
 J_E" / "The limit", iota "prevalence of SMI more", "cannabis, using", "and the other four are free", "the
 participants did", "As in the case", "lives with it"; generated: export_alttrans.py "and more households do"
 (struck by hand in the .tex: the splice only reds it), calib_tables.py tau_k source "long-term" (table cell red).
+
+## Round r393 (21 October): the transition shown for sixty years
+
+The author: the homelessness panels "tick up" at the end, no T = 80. Diagnosis: every cohort entering adult life from
+year 60 (loop 1; 58 in loop 2) is homeless at age 29 at 0.945 per cent against 0.849 for every earlier cohort and 0.849
+in the long run itself (arm_tf DIAG age 29); a jump between neighbouring cohorts with pi_V and the price flat, that
+moves between iterates: the horizon's last decade, not an age cycle. transition_source.SHOWN = 60: the figure (all
+eight panels, panel (g) the cohorts born in years 1-60), its x_trf_* names, x_tr_horizon_word ("sixty", the author:
+"so i dont claim 70 years of transition") and the budget and drug gaps (unchanged) read years 1-60. Moved: 6.4's "0.56
+by year 69" -> 0.55 by 60, children 0.93 -> 0.92, panel (h)'s "by year 69" -> 60. splice.py now strikes what a moved
+name used to print (\del{old} \new{new}; \new alone inside maths), as the standing r305 rule asks.

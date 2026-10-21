@@ -696,7 +696,7 @@ out['_cev_null_share_tr'] = CEV0_TR
 out['x_tr_lr_h_pc'] = pc(tf_tr['homelessness h_1']['pc'])
 out['x_tr_hchild0'] = f'{100 * hc0_tr:.2f}'
 sys.path.insert(0, HERE)
-from transition_source import LOG as best   # the one pin
+from transition_source import LOG as best, SHOWN as TR_SHOWN   # the one pin; the years the paper shows (21 October)
 # THE BUDGET ALONG THE PATH (17 October, the author: "I want all the numbers to be corrected"): the prose said the
 # budget clears every period, but the pinned pass misses the solver's 1e-3 in most years. The worst |net revenue -
 # target| over every year of the pass's first forward pass, as a per-cent share of the target, so the sentence states
@@ -706,7 +706,7 @@ for _l in open(best, errors='replace'):
     if 'TRANSITION INIT PARENT SHARE RESTORED' in _l and _bud:
         break
     _m = re.search(r'TRANSITION BUDGET loop=\s*\d+\s+t=\s*(\d+)\s+net_govt_revenues=\s*(\S+)\s+constraint=\s*(\S+)', _l)
-    if _m:
+    if _m and int(_m.group(1)) <= TR_SHOWN:
         _bud[int(_m.group(1))] = (float(_m.group(2)), float(_m.group(3)))
 assert len(_bud) >= 20, f'{best}: {len(_bud)} budget lines'
 out['x_tr_bud_worst_pc'] = f"{100 * max(abs(r / c - 1) for r, c in _bud.values()):.2f}"
@@ -717,7 +717,7 @@ for _l in open(best, errors='replace'):
     if 'TRANSITION INIT PARENT SHARE RESTORED' in _l and _drg:
         break
     _m = re.search(r'TRANSITION DRUG t=\s*(\d+)\s+distance=\s*(\S+)\s+price=\s*(\S+)', _l)
-    if _m:
+    if _m and int(_m.group(1)) <= TR_SHOWN:
         _drg[int(_m.group(1))] = abs(float(_m.group(2))) / float(_m.group(3))
 assert len(_drg) == len(_bud), (len(_drg), len(_bud))
 out['x_tr_drug_worst_pc'] = f"{100 * max(_drg.values()):.2f}"
@@ -730,8 +730,9 @@ cc = subprocess.run([sys.executable, os.path.join(ROOT, 'code', 'transition_fix'
                     capture_output=True, text=True).stdout
 m = re.search(r'THE COHORT BORN AT THE REFORM \(b = 1\): CEV ([+-]\S+)%', cc)
 out['x_tr_cev_b1'] = f'{float(m.group(1)) - CEV0_TR:.1f}'
-# the horizon in words (11 October, T = 70): the pin's, so the sentence turns with it
-out['x_tr_horizon_word'] = {50: 'fifty', 60: 'sixty', 70: 'seventy', 80: 'eighty', 90: 'ninety', 100: 'a hundred'}[TR_HORIZON]
+# the horizon in words (11 October, T = 70): the pin's, so the sentence turns with it; the years the paper SHOWS since
+# 21 October (the author: "change the words from seventy to sixty in the text so i dont claim 70 years of transition")
+out['x_tr_horizon_word'] = {50: 'fifty', 60: 'sixty', 70: 'seventy', 80: 'eighty', 90: 'ninety', 100: 'a hundred'}[TR_SHOWN]
 out['x_tr_cev_b1_2'] = f'{float(m.group(1)) - CEV0_TR:.2f}'
 # (round f9ac1593, the author on ', against 1.39 percent in the long run.': "incorrect....need to use updated
 # figures", 'consumption,' -> 'consumption, even more than...'): against the long run of the SAME computation,

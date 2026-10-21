@@ -64,6 +64,15 @@ LOG = os.path.join(ROOT, 'code', 'trtf70', 'tr2c_t70_Cu_loop1', 'run.log')
 TAG = 'tr2c_t70_Cu_loop1'
 HORIZON = 70
 UNCONVERGED_FROM = 60
+# THE YEARS THE PAPER SHOWS (21 October, the author: "make the homelessness and childhood homelessness graphs a bit
+# more smooth at the end ... i dont want to run a T=80 transition", then "change the words from seventy to sixty in the
+# text so i dont claim 70 years of transition", "and any other place that refers to the transition"). The figure, its
+# names, the horizon word and the budget and drug gaps read years 1 to SHOWN only. Why: every cohort entering adult life
+# from year 60 (loop 1; year 58 in loop 2) is homeless at age 29 at 0.945 per cent against 0.849 for every cohort before
+# it and 0.849 in the long run itself (arm_tf DIAG age 29), a jump between neighbouring cohorts with pi_V and the drug
+# price flat to the fourth decimal, which moves between iterates: an artefact of the horizon's last decade, so the path
+# ticks up from year 61-63 to end above the long run. Years SHOWN+1 to 69 stay in the run and in series.csv.
+SHOWN = 60
 OUT = os.path.join(ROOT, 'results', 'transition', TAG)
 CURVE = os.path.join(ROOT, 'results', 'transition_2c_t70_Cu', 'loop1', 'welfare_curvebaseline_benchmark.dat')
 # (18 October, the author: "in some places you write 2.57 and here you wrote 2.59") the long run the path is compared
