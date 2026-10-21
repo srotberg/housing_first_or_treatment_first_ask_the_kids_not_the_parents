@@ -1302,3 +1302,12 @@ every user" dropped, since at 0.20 it does not. Later loops also in: CAann100 lo
 loop1 (1.8 (11), children never above, CEV 2.98); the third lesson's "at most 1.8 percent" follows. The main transition
 has a loop2 (budget 0.18 per cent, drug 1 period off); 6.4 stays pinned to loop1. CAgr2_20 forward pass started (14
 periods by 00:35): nearly the old CAgrace20 loop1 path (homelessness +1.6 against +1.8 at period 11).
+
+01:11 (21 Oct) ROUND r379 (the author: "remove all red and put updates in red", "tell me how many more sentences are left",
+"make sure to fix any grammar and typos in the comments"; nine comments, pages 21-23). base_r379 frozen with the others.
+The author's wording, grammar and typos fixed, in red with the old struck: epsilon_s and its footnote (", which faces no
+such cap," struck from the footnote's last sentence, its cap now gone), the homeless ages, the odds sentence, its
+footnote removed (struck), Costantini, Milby, the two adjusting objects and the experiments, moral hazard ("borne not
+by others" -> "borne by others", the meaning). 83 blue sentences left (1,706 words); 111 of 194 done. OPEN: the author
+asks whether the model's homelessness odds ratio (u_odds_hl_m, 6.23) should be computed within the bottom of the
+productivity distribution, as Bassuk et al. compare poor housed with poor homeless mothers -- not yet checked.
