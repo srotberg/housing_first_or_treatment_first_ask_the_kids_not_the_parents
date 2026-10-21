@@ -1,4 +1,4 @@
-# the T = 70 MAIN transition (rule C, detection 0.20) with the drug price and pi_V HELD at Housing First's (0.99938969, 0.067533863), one loop (code/transition_fix/remote_tr70_Cfix.sh); 21 Oct 05:51 UTC
+# the T = 70 MAIN transition (rule C, detection 0.20) with the drug price and pi_V HELD at Housing First's (0.99938969, 0.067533863), one loop (code/transition_fix/remote_tr70_Cfix.sh); 21 Oct 06:11 UTC
 remote_tr70_Cfix: gfortran missing, installing (13:40)
 remote_tr70_Cfix: free disk 29G, memory 15 GiB, cores 4 (13:40)
 remote_tr70_Cfix: building cf_fix (13:40)
@@ -40,10 +40,10 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
  MILBY SPLIT voucher mass rec treat smi   7.5791038531324045E-002   3.3170413720633087E-003   5.9969612794473721E-002   9.3908851550366206E-003  housed_nov mass rec treat smi   1.0191863562428558        3.1167961340768283E-002  0.24496124162500357        9.6285764550235256E-002
 
 == tr2c_t70_Cfix (T = 70, rule C, both prices held)
-  binary loop 0: periods to 21, worst budget residual (t>1) 3.01e-02 (pi_V held: not cleared), worst drug gap 0.00e+00 (price held: not cleared)
+  binary loop 0: periods to 23, worst budget residual (t>1) 3.65e-02 (pi_V held: not cleared), worst drug gap 0.00e+00 (price held: not cleared)
   CEV path of the latest forward pass (per cent, t: value):
     1: +1.002  2: +1.220  3: +1.359  4: +1.442  5: +1.510  6: +1.568  7: +1.622  8: +1.673  9: +1.724  10: +1.776
     11: +1.831  12: +1.878  13: +1.927  14: +1.974  15: +2.018  16: +2.059  17: +2.097  18: +2.133  19: +2.170  20: +2.218
-    21: +2.293
+    21: +2.293  22: +2.375  23: +2.456
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.78316028827811990       share_newborns=   2.6131101299396121E-003  share_addicted=  0.26436694227149665       share_addicted_newborns=   0.0000000000000000
   latest TRANSITION BETTER OFF TOL t=   1 tol= 1.00E-03 better_all=  0.767100 worse_all=  0.207110 better_sud=  0.264115 worse_sud=  0.735574 better_entering=  0.000000 worse_entering=  0.990613
