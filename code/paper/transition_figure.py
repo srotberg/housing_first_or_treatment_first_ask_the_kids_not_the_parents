@@ -287,6 +287,9 @@ def names(S, C, R):
     # untouched as better off, because the benchmark's value function sits slightly below the re-solve's
     Wt = rows('worse.csv')
     w_all = [100 * r['all'] for r in Wt]; w_sud = [100 * r['with_sud'] for r in Wt]
+    # the entrants' share is quoted at the year before the last one shown (21 October, the author: "instead of saying
+    # 99.9 percent by year 60 say by year 59")
+    _ye = len(a_ent) - 1
     out['x_trf_better_sentence'] = (
         'Panel (h) repeats the comparison in every period of the path, with households in each state weighted as '
         'under Housing First. The share worse off stays '
@@ -299,8 +302,8 @@ def names(S, C, R):
            # (round r325, the author on 'At least 34 percent': "i thought 99.9% are better off...Are you saying that only
            # 34% entering adult life in each period of the transition are better off?"): yes, year by year; say so
            f"Of the households entering adult life at 26, ${a_ent[0]:.0f}$ percent are better off in the first year, "
-           f"when $\\pi_V$ is still close to its Housing First level, and ${(f'{a_ent[-1]:.1f}' if 99.5 <= a_ent[-1] < 99.95 else f'{a_ent[-1]:.0f}')}$ percent by year "
-           f"{len(a_ent)}." if a_ent[-1] > a_ent[0] else
+           f"when $\\pi_V$ is still close to its Housing First level, and ${(f'{a_ent[_ye - 1]:.1f}' if 99.5 <= a_ent[_ye - 1] < 99.95 else f'{a_ent[_ye - 1]:.0f}')}$ percent by year "
+           f"{_ye}." if a_ent[_ye - 1] > a_ent[0] else
            f"At least ${min(a_ent):.0f}$ percent of households entering adult life are better off."))
     d = json.load(open(OUT_JSON))
     d.update(out)

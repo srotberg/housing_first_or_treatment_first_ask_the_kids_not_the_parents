@@ -1438,3 +1438,8 @@ eight panels, panel (g) the cohorts born in years 1-60), its x_trf_* names, x_tr
 "so i dont claim 70 years of transition") and the budget and drug gaps (unchanged) read years 1-60. Moved: 6.4's "0.56
 by year 69" -> 0.55 by 60, children 0.93 -> 0.92, panel (h)'s "by year 69" -> 60. splice.py now strikes what a moved
 name used to print (\del{old} \new{new}; \new alone inside maths), as the standing r305 rule asks.
+
+## Round r394 (21 October)
+
+Red and strikes from r393 removed (base_r394). Panel (h)'s sentence quotes the entrants' share at year 59, the year
+before the last one shown (the author: "instead of saying 99.9 percent by year 60 say by year 59"); 99.89 there.
