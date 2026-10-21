@@ -1049,9 +1049,9 @@ Third, homelessness and childhood homelessness do not fall along the transition 
 \setcounter{table}{0}\renewcommand{\thetable}{A\arabic{table}}
 \section[Calibration of the standard parameters]{Calibration of the standard parameters}\label{sec:stdparams}
 
-  My full calibration contains many parameters, many of which are more conventional and used in many papers. Here, I show how I set those @@n_std@@ parameters. I calibrate @@n_std_int@@ of them internally and set the other @@n_std_ext@@ externally from \del{an estimate} \new{estimates} in the literature or from statute. Table~\ref{tab:stdparams} and the entries below proceed in the same seven blocks. In each entry, I give the moment or source that pins down the parameter and the value of that moment in the data. For the internally calibrated parameters, the Model column also presents the model's performance.
+  My full calibration contains many parameters, many of which are more conventional and used in many papers. Here, I show how I set those @@n_std@@ parameters. I calibrate @@n_std_int@@ of them internally and set the other @@n_std_ext@@ externally from estimates in the literature or from statute. Table~\ref{tab:stdparams} and the entries below proceed in the same seven blocks. In each entry, I give the moment or source that pins down the parameter and the value of that moment in the data. For the internally calibrated parameters, the Model column also presents the model's performance.
 
- None of these parameters are inert. They too matter for the experiments, but they are more standard and matter less for the results than the parameters \del{I go through} \new{that I covered} in the main text. For instance, the discount factor affects how much weight households give to dying in a later period. The dispersion of productivity determines how many households are poor enough to be willing to risk having a disorder, and risk aversion determines how much households value the insurance of housing assistance.
+ None of these parameters are inert. They too matter for the experiments, but they are more standard and matter less for the results than the parameters that I covered in the main text. For instance, the discount factor affects how much weight households give to dying in a later period. The dispersion of productivity determines how many households are poor enough to be willing to risk having a disorder, and risk aversion determines how much households value the insurance of housing assistance.
 
 \input{tables/tab_standard}
 
@@ -1083,7 +1083,7 @@ the child lives with the parent ($j\le J_K$), from the parent's age 26 to 50, an
 \paragraph{Block 8: Rental ladder.} These three parameters build the grid of dwelling
 sizes a household chooses from. Below the smallest rung is the shelter, $h_1$, which was calibrated in Block 2.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$h_2$, the smallest rental size.]   The size of the smallest dwelling is what determines how much \new{of its income} a poor household has to spend to avoid homelessness. When the smallest dwelling is larger, it is more expensive to \del{rent,} \new{rent it,} and thus more households are cost burdened and more likely to become homeless, and a voucher is worth more to them. It is chosen so that
+\item[$h_2$, the smallest rental size.]   The size of the smallest dwelling is what determines how much of its income a poor household has to spend to avoid homelessness. When the smallest dwelling is larger, it is more expensive to rent\del{ it}, and thus more households are cost burdened and more likely to become homeless, and a voucher is worth more to them. It is chosen so that
 the fraction of renters paying more than half of their income for housing is similar to
 the data, $@@c_h_2_data@@$ percent in the 2022 SCF; the model gives $@@c_h_2_model@@$
 percent.
@@ -1091,7 +1091,7 @@ percent.
 rungs are set at $@@c_h_3_h_2_value@@$ and $@@c_h_4_h_2_value@@$ times the smallest.
 \end{description}
 
-\paragraph{Block 9: Earnings and employment.}   This block has eleven parameters that govern the maximum \new{number of periods of} life a household can live, until what age it works, and what it can expect to earn while it is of working age. These parameters also set how persistent and frequent shocks to employment and productivity are.
+\paragraph{Block 9: Earnings and employment.}   This block has eleven parameters that govern the maximum \del{number of} periods of life a household can live, until what age it works, and what it can expect to earn while it is of working age. These parameters also set how persistent and frequent shocks to employment and productivity are.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
 \item[$J$, $J_K$ and $J_R$, the length of life, of child rearing and of working life, respectively.] A household lives at most
 $J$ periods, has its child at home for its first $J_K$ of them and works until model age $J_R$, after which it retires on social security.
@@ -1164,7 +1164,7 @@ reproduces a log-linear fit to the share of adults carrying SMI at each age in N
 
 \paragraph{Block 11: Interest and taxes.}
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$r$, the risk-free rate.] This parameter sets the return on saving.   A higher interest rate improves \del{returns} \new{the return} on savings, and thus households accumulate more assets, which help cushion them during spells of unemployment. I set it to three percent, from Kaplan et al.\
+\item[$r$, the risk-free rate.] This parameter sets the return on saving.   A higher interest rate improves the return on savings, and thus households accumulate more assets, which help cushion them during spells of unemployment. I set it to three percent, from Kaplan et al.\
 (2020).
 
 \item[$\varphi$, tax progressivity.] This is the exponent on income in the tax schedule of

@@ -1414,3 +1414,7 @@ CAgrace100 loop2 landed: Table 7's 1.00 exemption row 5.0 (9), 1.3 (7), CEV 6.37
 04:50 (21 Oct) ROUND r389 (six word edits in Appendix A; base_r389 frozen with the others; the two table notes' red and
 strikes removed by hand). Red, old struck: "estimates", "that I covered", "how much of its income", "rent it", "the
 maximum number of periods of life" (the author's "maximum periods of life" given "number of"), "the return".
+
+04:56 (21 Oct) ROUND r390 (base_r390 frozen with the others): "rent it," -> "rent," and "maximum number of periods" ->
+"maximum periods" (the author's removals; old struck). writing/children_first_housing_later_appendix.pdf: Appendix A
+alone (pages 35-39 of a clean build: no red, no struck text), for the AI detector.
