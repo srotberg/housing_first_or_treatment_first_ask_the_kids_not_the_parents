@@ -1,4 +1,4 @@
-This file shows you how to run the simulations in "Housing First, Children Later", by Shahar Rotberg.
+This file shows you how to run the simulations in "Housing First or Treatment First? Ask the Kids, Not the Parents", by Shahar Rotberg.
 
 Before running each simulation you will have to run the following commands:
 

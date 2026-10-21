@@ -1,7 +1,7 @@
 
 ## Numbers in the paper
 
-Every number in `writing/housing_first_or_treatment_first.src.tex` is generated, never
+Every number in `writing/housing_first_or_treatment_first_ask_the_kids.src.tex` is generated, never
 typed. The rules and the pipeline are in `writing/NUMBERS.md`; read it before
 adding a parameter, a target or a result.
 

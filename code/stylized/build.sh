@@ -7,8 +7,8 @@
 #                  children.py and transition.py are the old staged model's and are no longer run:
 #                  they would overwrite Tables 1 and 2 and Figure 1.
 #   sync_tables.py Tables 5 and 6 from the Fortran ->  writing/tables/, params_numbers.json
-#   fill.py        every @@name@@ in the prose      ->  writing/housing_first_or_treatment_first.tex
-#   pdflatex       twice, for the cross references ->  writing/housing_first_or_treatment_first.pdf (named after the title)
+#   fill.py        every @@name@@ in the prose      ->  writing/housing_first_or_treatment_first_ask_the_kids.tex
+#   pdflatex       twice, for the cross references ->  writing/housing_first_or_treatment_first_ask_the_kids.pdf (named after the title)
 #
 # The stylized calibration IS run here now: gradient.py fits its four parameters in seconds.
 #
@@ -40,9 +40,9 @@ python3 fill.py
 
 echo "== note"
 cd "$ROOT/writing"
-pdflatex -interaction=nonstopmode -jobname=housing_first_or_treatment_first housing_first_or_treatment_first.tex > /dev/null
-pdflatex -interaction=nonstopmode -jobname=housing_first_or_treatment_first housing_first_or_treatment_first.tex > /dev/null
-echo "   wrote writing/housing_first_or_treatment_first.pdf"
+pdflatex -interaction=nonstopmode -jobname=housing_first_or_treatment_first_ask_the_kids housing_first_or_treatment_first_ask_the_kids.tex > /dev/null
+pdflatex -interaction=nonstopmode -jobname=housing_first_or_treatment_first_ask_the_kids housing_first_or_treatment_first_ask_the_kids.tex > /dev/null
+echo "   wrote writing/housing_first_or_treatment_first_ask_the_kids.pdf"
 
 echo "== checking that nothing in the prose is typed"
 python3 tools/check_numbers.py

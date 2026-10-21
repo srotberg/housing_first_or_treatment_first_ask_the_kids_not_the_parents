@@ -1,7 +1,7 @@
 # Round 1 response letters
 
 Draft responses to RED-D-26-00078, submitted as *Housing First or Treatment First?*
-and resubmitted as **Housing First, Children Later**. Five letters, four of them
+and resubmitted as **Housing First or Treatment First? Ask the Kids, Not the Parents**. Five letters, four of them
 comment by comment. Everything said back to a referee is in **red**; the black italic
 block above each response is the referee's own text.
 

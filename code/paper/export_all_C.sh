@@ -42,7 +42,7 @@ if {'fx_d', 'pe_b'} & RC.STALE_SHARES:
     pend += ['x_fx_all_better_pc', 'x_fx_sud_worse_pc', 'x_fx_better_cev', 'x_pe_better_clause']
 # names the paper uses that a pending run never wrote (the price-held welfare column, the transition's first year)
 import re
-src = open('../../writing/housing_first_or_treatment_first.src.tex').read()
+src = open('../../writing/housing_first_or_treatment_first_ask_the_kids.src.tex').read()
 others = set()
 for f in ('params_numbers.json', 'fortran_numbers.json', 'calib_numbers.json', 'lit_numbers.json', 'decomp_use.json',
           'ruleA_numbers.json'):

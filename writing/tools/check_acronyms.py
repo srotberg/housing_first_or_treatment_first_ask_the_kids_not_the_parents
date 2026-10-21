@@ -28,7 +28,7 @@ import re
 import sys
 
 SRC = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),   # writing/, one up from tools/
-       'housing_first_or_treatment_first.src.tex')
+       'housing_first_or_treatment_first_ask_the_kids.src.tex')
 
 # Not acronyms, or proper names that stand alone.
 ALLOW = {

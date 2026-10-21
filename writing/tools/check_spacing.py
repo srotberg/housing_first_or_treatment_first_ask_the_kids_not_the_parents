@@ -40,9 +40,9 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # writing/: these tools live in writing/tools/
-SRC = os.path.join(HERE, 'housing_first_or_treatment_first.src.tex')
-BUILT = os.path.join(HERE, 'housing_first_or_treatment_first.tex')
-PDF = os.path.join(HERE, 'housing_first_or_treatment_first.pdf')
+SRC = os.path.join(HERE, 'housing_first_or_treatment_first_ask_the_kids.src.tex')
+BUILT = os.path.join(HERE, 'housing_first_or_treatment_first_ask_the_kids.tex')
+PDF = os.path.join(HERE, 'housing_first_or_treatment_first_ask_the_kids.pdf')
 
 # Words that legitimately run two words together, or that the paper uses as one
 # token. Kept short on purpose: a long allow list hides the bug it is meant to

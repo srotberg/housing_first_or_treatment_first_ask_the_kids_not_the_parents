@@ -26,7 +26,7 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # writing/: these tools live in writing/tools/
-SRC = os.path.join(HERE, 'housing_first_or_treatment_first.src.tex')
+SRC = os.path.join(HERE, 'housing_first_or_treatment_first_ask_the_kids.src.tex')
 
 DEFN = re.compile(r'^\s*\\newcommand\{\\new\}\[1\]\{(.*)\}\s*$', re.M)
 

@@ -1459,3 +1459,13 @@ housing_first_children_later.{src.tex,tex} and children_first_housing_later.pdf)
 updated (splice.py, export_all_C.sh, build.sh, fill.py, verify.py, writing/tools/check_*.py, strip_red_before_transition.py,
 ai_chunks.py), and README.md and CLAUDE.md. Build: pdflatex -jobname=housing_first_or_treatment_first
 housing_first_or_treatment_first.tex. The GitHub URL in the title footnote is the repository's and is unchanged.
+
+## 21 October: the file name after the full title, the title everywhere, red removed (r398)
+
+The paper's files are writing/housing_first_or_treatment_first_ask_the_kids.{src.tex,tex,pdf} (the author: name them
+after the full title); scripts, README.md and CLAUDE.md follow. The title "Housing First or Treatment First? Ask the Kids,
+Not the Parents" replaces "Housing First, Children Later" in README.md, code/archive/run_files/readme.txt and the RED
+round-1 letters (README, preamble comment, the five letters, PDFs rebuilt), and "Children First, Housing Later" in
+writing/letters/qje_katz.tex (PDF rebuilt). Left as they are: the RED letters' "submitted as Housing First or Treatment
+First?" (the manuscript's original title), the QJE letter's declined MS 45355, Costantini (2025)'s title, historical
+notes and the GitHub URL. All red and struck text removed (base_r398).

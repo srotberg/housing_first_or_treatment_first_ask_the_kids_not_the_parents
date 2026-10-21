@@ -2,7 +2,7 @@
 
     python3 code/paper/splice.py BASE_DIR
 
-writing/housing_first_or_treatment_first.src.tex -> writing/housing_first_or_treatment_first.tex, the whole file (the preamble
+writing/housing_first_or_treatment_first_ask_the_kids.src.tex -> writing/housing_first_or_treatment_first_ask_the_kids.tex, the whole file (the preamble
 has @@n_main@@ and @@n_std@@ too). A name prints at the text precision (fill.text_precision). It is red, \\new{...},
 when what it prints differs from what it printed in BASE_DIR, a copy of the round's number files as the author last
 read them (the same basenames as FILES below), or when it is new since then. A transition name (x_tr_*, x_trf_*,
@@ -150,7 +150,7 @@ def load(paths):
 
 
 def main(base_dir, region_base_dir=None, marker=None):
-    src = open(os.path.join(ROOT, 'writing', 'housing_first_or_treatment_first.src.tex')).read()
+    src = open(os.path.join(ROOT, 'writing', 'housing_first_or_treatment_first_ask_the_kids.src.tex')).read()
     if region_base_dir:
         i = src.index(marker)
         head, red_h = fill_part(src[:i], region_base_dir)
@@ -159,7 +159,7 @@ def main(base_dir, region_base_dir=None, marker=None):
         print(f'splice: before {marker!r} against {region_base_dir}: {len(red_h)} red: {", ".join(sorted(red_h))}')
     else:
         out, red = fill_part(src, base_dir)
-    open(os.path.join(ROOT, 'writing', 'housing_first_or_treatment_first.tex'), 'w').write(out)
+    open(os.path.join(ROOT, 'writing', 'housing_first_or_treatment_first_ask_the_kids.tex'), 'w').write(out)
     used = set(re.findall(r'@@([a-zA-Z0-9_]+)@@', src))
     print(f'splice: {len(used)} names, {len(red)} red: {", ".join(sorted(red))}')
 

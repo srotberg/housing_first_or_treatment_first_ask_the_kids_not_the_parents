@@ -19,7 +19,7 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # writing/: these tools live in writing/tools/
-SRC = os.path.join(HERE, 'housing_first_or_treatment_first.src.tex')
+SRC = os.path.join(HERE, 'housing_first_or_treatment_first_ask_the_kids.src.tex')
 TABLES = os.path.join(HERE, 'tables')
 
 # A surname: a capital, then letters, and the accent macros this bibliography

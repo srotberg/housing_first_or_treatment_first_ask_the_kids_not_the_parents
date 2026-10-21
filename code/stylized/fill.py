@@ -1,9 +1,9 @@
 """
 Fill the note's inline numbers straight from the model.
 
-Every number quoted in the prose of housing_first_or_treatment_first.tex is written as a
-placeholder @@name@@ in housing_first_or_treatment_first.src.tex, and this file computes each one
-and writes housing_first_or_treatment_first.tex. Nothing in the note can then drift away from the
+Every number quoted in the prose of housing_first_or_treatment_first_ask_the_kids.tex is written as a
+placeholder @@name@@ in housing_first_or_treatment_first_ask_the_kids.src.tex, and this file computes each one
+and writes housing_first_or_treatment_first_ask_the_kids.tex. Nothing in the note can then drift away from the
 code, which is the same discipline the tables already follow.
 
 Run:  python3 fill.py
@@ -568,7 +568,7 @@ if __name__ == '__main__':
     if prev is None:
         print('   numbers_prev.json missing: nothing will be marked red')
     n, moved = mark(n, prev)
-    src = open(os.path.join(WRITE, 'housing_first_or_treatment_first.src.tex')).read()
+    src = open(os.path.join(WRITE, 'housing_first_or_treatment_first_ask_the_kids.src.tex')).read()
     missing = set()
     for k in sorted(n, key=len, reverse=True):
         src = src.replace(f'@@{k}@@', n[k])
@@ -576,7 +576,7 @@ if __name__ == '__main__':
     for m in re.findall(r'@@[a-zA-Z_0-9]+@@', src):
         missing.add(m)
     src = _black_notes(src)
-    open(os.path.join(WRITE, 'housing_first_or_treatment_first.tex'), 'w').write(src)
+    open(os.path.join(WRITE, 'housing_first_or_treatment_first_ask_the_kids.tex'), 'w').write(src)
     for k in sorted(n):
         print(f'   {k:12s} {n[k]}')
     print(f'\n   {len(moved)} number(s) moved and are marked red:')
@@ -585,4 +585,4 @@ if __name__ == '__main__':
     if missing:
         print('\n   UNFILLED PLACEHOLDERS:', ' '.join(sorted(missing)))
     else:
-        print('\n   wrote housing_first_or_treatment_first.tex, every placeholder filled')
+        print('\n   wrote housing_first_or_treatment_first_ask_the_kids.tex, every placeholder filled')
