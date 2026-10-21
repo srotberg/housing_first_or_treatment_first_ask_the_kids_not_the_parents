@@ -93,3 +93,21 @@ loop0: drug_price years 60-69 within 0.01% of the terminal 0.946231 (year 1 0.96
 loop1: drug_price years 60-69 within 0.02% of the terminal 0.946231 (year 1 0.966941, year 60 0.946385, year 69 0.946428); pi_v years 60-69 within 0.63% of the terminal 0.078054 (year 1 0.064505, year 60 0.078253, year 69 0.078261)
 loop2: drug_price years 60-69 within 0.03% of the terminal 0.946231 (year 1 0.967076, year 60 0.946465, year 69 0.946467); pi_v years 60-69 within 0.91% of the terminal 0.078054 (year 1 0.063610, year 60 0.078454, year 69 0.078337)
 loop3: drug_price years 60-69 within 0.05% of the terminal 0.946231 (year 1 0.967559, year 60 0.946693, year 69 0.946588); pi_v years 60-69 within 1.11% of the terminal 0.078054 (year 1 0.062822, year 60 0.078603, year 69 0.078353)
+
+== FINAL (21 Oct 15:40 UTC): four loops done, the binary stopped after loop3; the newborn values STOPPED ON A GUARD
+NEWBORN VALUES NOT COMPUTED FOR THE NO-POLICY ARM. cf_kid/run_child_value.sh refused the null arm:
+  "GUARD: the arm was solved by 'cf_fix2_share_treatCu'; this binary is cf_fix2's model (cf_fix2, cf_fix2_share and
+   cf_fix2_damp share its law of motion) ... FORCE_BUILD=1 only after checking the two builds' law of motion agree."
+so newborn/shares.txt is empty (share_newborns.py found no null summary) and only newborn/summary_tf.txt exists. The
+T = 50 run (remote_tr50_Cu.sh) hit the same guard ("share_newborns FAILED"). Not forced: whether cf_fix2_share_treatCu's
+law of motion agrees with cf_fix2's (it differs by the ungated internal_computations fix) is the check the guard asks for.
+THE PATH, loops 0-3 (report_tr70_Cu.py; homelessness h_1 and children in a shelter, households aged 26-50, against the
+long run h_1 0.005493 / 0.009152):
+  year 69, h_1:      +0.29% (loop0)  +1.16% (loop1)  +1.05% (loop2)  +0.95% (loop3)
+  year 69, children: +0.23%          +1.37%          +1.27%          +1.17%
+  worst budget residual (t>1): 1.80e-2, 1.21e-2, 1.07e-2, 9.39e-3 (all at t=2; t=1 is -2.0e-2 every loop)
+  horizon, pi_V years 60-69 from its terminal 0.078054: 0.25%, 0.63%, 0.91%, 1.11% -- ABOVE it and widening each loop
+  (year-60 pi_V 0.07799, 0.07825, 0.07845, 0.07860), as at T = 50 it drifted BELOW and widened; year-1 pi_V falls
+  0.0680, 0.0645, 0.0636, 0.0628. The price stays within 0.05% of its terminal 0.946231.
+NOT CONVERGED at T = 70 either: the end of the pi_V path keeps drifting, so the longer horizon did not settle it.
+Loop1 and loop2 were each resumed after a container restart (loop1 from the binary's mid-loop save at year 58).
