@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 21 Oct 08:26 UTC
+# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 21 Oct 08:46 UTC
 remote_tr70_CAann 0.20 grace: free disk 8.8G, memory 15 GiB, cores 4 (03:38)
 remote_tr70_CAann 0.20 grace: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 9.6e-05; tf against the accepted long-run CA arm 1.163e-02 (03:38)
 remote_tr70_CAann 0.20 grace: T = 70 RELAUNCH after a killed run (seeds: its last saved paths) (03:38)
@@ -31,10 +31,10 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
 
 == tr2c_t70_CAgrace20 (T = 70, rule CA, detection 0.20, grace, lag 5)
   binary loop 0: periods to 69, worst budget residual (t>1) 2.44e-02, worst drug gap 2.82e-02  [paths saved]
-  binary loop 1: periods to 13, worst budget residual (t>1) 2.14e-02, worst drug gap 1.65e-02
+  binary loop 1: periods to 15, worst budget residual (t>1) 2.14e-02, worst drug gap 2.00e-02
   CEV path of the latest forward pass (per cent, t: value):
     1: +0.766  2: +1.037  3: +1.341  4: +1.523  5: +1.684  6: +1.863  7: +1.877  8: +1.915  9: +2.027  10: +2.081
-    11: +2.141  12: +2.207  13: +2.327
+    11: +2.141  12: +2.207  13: +2.327  14: +2.416  15: +2.516
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.90912860519157990       share_newborns=  0.34518131679221331       share_addicted=  0.31848003584886614       share_addicted_newborns=   0.0000000000000000
 
 grace checked on the forward pass: ok, 6 lines: treatment passes in years 1-5, not from year 6, the screen on throughout
