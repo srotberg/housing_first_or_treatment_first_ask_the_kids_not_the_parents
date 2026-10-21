@@ -1514,3 +1514,10 @@ The re-seeded announced 1.00 run replaces CAann100 loop2 in Table 7 (as planned)
 4.4 (9) against 3.6 (9), above Housing First 7-17 / 7-13, reform cohort CEV 3.46 against 4.54; budget 0.40% against 0.15%,
 drug off 23 of periods 1-25 in both. The gap in CEV between two passes of the same experiment is flagged to the author.
 CAann2_20 loop1 also landed: 3.3 (12), 0.9 (10), CEV 1.91 (was 3.4, 0.9 (11), 1.92). Red against base_r402.
+
+## 21 October (r404): numbers that move go in black
+
+The author: "when you update the paper from now on with new numbers, no need to cross old numbers and put new ones in red.
+just put the new numbers in black instead of the old ones". Standing, in CLAUDE.md: after the export, re-freeze the table
+baselines and splice against a base copied from the current number files. Applied now: the r403 red in 6.5 (the announced
+runs) is black (base_r404 = the current numbers).

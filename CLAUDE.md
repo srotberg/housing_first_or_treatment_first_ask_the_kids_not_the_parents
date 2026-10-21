@@ -154,6 +154,13 @@ in a `\why{}` note. **The abstract stays under 150 words** (the author, 11 Octob
 sure its below 150 words"*; it is 148 at r305, counting a filled number as one word).
 
 
+**NUMBERS THAT MOVE BECAUSE A RUN LANDED GO IN BLACK, 21 October:** the author, *"when you update the paper from now
+on with new numbers, no need to cross old numbers and put new ones in red. just put the new numbers in black instead of
+the old ones"*. After the export, freeze the table baselines again (`calib_tables.py --freeze`, `export_longrun.py
+--freeze`, `export_alttrans.py --freeze`) and splice against a base copied from the current number files, so a moved
+name prints black and unstruck; generated sentences that change with the numbers are black too. Red and strikes stay
+for the author's own edits and for prose I change on request; say in chat which numbers moved.
+
 The author, 3 October: *"deleted sentences should show as crossed so I know what you delete"*, and *"leave notes
 for me in case I need to understand why you made a change"*. Both are standing.
 
