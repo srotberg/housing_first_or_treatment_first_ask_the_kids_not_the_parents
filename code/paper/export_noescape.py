@@ -23,7 +23,7 @@ PATHS = os.path.join(ROOT, 'results', 'revoked_2c_CA100')
 STREET = os.path.join(ROOT, 'results', 'revoked_2c_street_CA100', 'tables.md')
 
 
-from trpaths import levels, path, child_steady  # noqa: E402  (moved there 19 October, export_alttrans.py reads them too)
+from trpaths import levels, path, child_steady, latest_loop  # noqa: E402  (moved there 19 October, export_alttrans.py reads them too)
 
 
 n, t = levels(os.path.join(ARMS, 'arm_null', 'final.txt')), levels(os.path.join(ARMS, 'arm_tf', 'final.txt'))
@@ -107,6 +107,15 @@ T20 = sorted(k for k in tf20 if k in hf20)
 r20 = max(100 * (tf20[k][0] / hf20[k][0] - 1) for k in T20)
 r20c = max(100 * (tf20[k][1] / hf20[k][1] - 1) for k in T20)
 assert r20 > 0 and r20c > 0, 'the 0.20 screen alone no longer raises homelessness: rewrite 6.4 and the third lesson'
+# (21 October) the 0.20 no-exemption transition itself has landed (results/transition_2c_t70_CA20e/loop0; the hedge
+# _CAne20 if it has none): its peaks replace the screen-only paths above, and 6.5 drops "before its savings are
+# recycled and the drug price falls"
+L20 = latest_loop(os.path.join(ROOT, 'results', 'transition_2c_t70_CA20e')) or \
+    latest_loop(os.path.join(ROOT, 'results', 'transition_2c_t70_CAne20'))
+if L20:
+    p20 = path(os.path.join(L20, 'run.log.gz'))
+    r20 = 100 * (max(v[0] for v in p20.values()) / h0 - 1)
+    r20c = 100 * (max(v[1] for v in p20.values()) / c0 - 1)
 r100, r100c = float(out_tr['x_ne_tr_h_pc']), float(out_tr['x_ne_tr_hchild_pc'])
 out_tr['x_ne20_so_h_pc'] = f'{r20:.0f}'
 out_tr['x_ne20_so_hchild_pc'] = f'{r20c:.0f}'

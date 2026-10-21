@@ -1292,3 +1292,13 @@ against base_r378: homelessness +3.4 (12), periods 7-19; children +0.9 (11), per
 budget 0.29 per cent; drug market off in 46 of 69 periods (was 69; the gap is about halved), so still provisional. Its
 SUD share is no longer below the main transition's in every period 2-25, so why_more() no longer explains its newborn
 gain; the explanation now sits in the exemption paragraph (x_at_gr_par), generated.
+
+00:42 (21 Oct) CA20e loop0 LANDED: Table 7's 0.20 no-exemption row filled (no more yellow there): homelessness +5.4 (7),
+periods 2-17; children +3.1 (5), periods 2-11; newborn CEV 3.09; budget 0.29 per cent; drug market off in 46 periods,
+so provisional. export_noescape.py's x_ne20_so_* now read the transition's peaks (5 and 3, were the screen-only 6 and 4)
+and 6.5 strikes "before its savings are recycled and the drug price falls,". x_at_ne_cev's reason covers both rows once
+the 0.20 cohort also gains more for the same reason (SUD share by period ten 2.80 and 3.24 against 3.47): "it catches
+every user" dropped, since at 0.20 it does not. Later loops also in: CAann100 loop1 (7.4 (9), 3.7 (9), CEV 4.62), CAgrace20
+loop1 (1.8 (11), children never above, CEV 2.98); the third lesson's "at most 1.8 percent" follows. The main transition
+has a loop2 (budget 0.18 per cent, drug 1 period off); 6.4 stays pinned to loop1. CAgr2_20 forward pass started (14
+periods by 00:35): nearly the old CAgrace20 loop1 path (homelessness +1.6 against +1.8 at period 11).

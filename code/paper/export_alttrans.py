@@ -350,10 +350,21 @@ else:
               f'transition.')
 # (round r360, the author on the newborn's gain without the exemption: "explain why more than the main experiment")
 _w = why_more(a, again=True) if a is not None and verb(a) == 'gain' else None
+# (21 October) once the 0.20 path has landed and its cohort gains more for the same reason, the reason covers both, and
+# "it catches every user" goes, since at 0.20 it does not
+_wb = why_more(b, again=True) if _w and b is not None and verb(b) == 'gain' else None
 if _w:
-    ne_cev += (' They gain more because the screen deters more: it catches every user, and a household with a SUD cannot '
-               'stop using, so the disorder costs it its voucher until it recovers, while in the main transition the '
-               'household keeps the voucher by entering treatment and not using. ' + _w[0].upper() + _w[1:] + '.')
+    ne_cev += (' They gain more because the screen deters more: ' + ('' if _wb else 'it catches every user, and ') +
+               'a household with a SUD cannot stop using, so the disorder costs it its voucher until it recovers, while '
+               'in the main transition the household keeps the voucher by entering treatment and not using. ')
+    if _wb:
+        ne_cev += (f'By period ten, ${num(a, 100 * a["lam"][10], ".2f")}$ percent of households have a SUD when every user '
+                   f'is caught and ${num(b, 100 * b["lam"][10], ".2f")}$ percent when ${PDET}$ percent are, against '
+                   f'${d["x_trf_sud10"]}$ percent, so fewer of these children grow up with a parent who has the disorder'
+                   + (', and $\\pi_V$ is higher throughout their childhood'
+                      if all(r['pv'][t] > MAIN['pv'][t] for r in (a, b) for t in range(1, 26)) else '') + '.')
+    else:
+        ne_cev += _w[0].upper() + _w[1:] + '.'
 # (round r357, the author on 'Catching 20 percent of users': "only one in five users")
 _inv = 100 / float(PDET)
 assert abs(_inv - round(_inv)) < 1e-9, PDET
