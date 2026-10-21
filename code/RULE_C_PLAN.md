@@ -1392,3 +1392,8 @@ references so i can run it with the AI detector"; base_r387 frozen with the othe
 "than it costs the parent" -> "than cost to the parent" (dropping "it" alone leaves no grammar; red, old struck).
 writing/children_first_housing_later_no_appendix.pdf: the paper cut at \appendix (34 pages, through the conclusion; no
 appendix, no references), with no red, no struck text and no blue, for the detector.
+
+03:55 (21 Oct) More of the author's own sentences highlighted blue (\ai) at their request, for them to rewrite
+(the detector flags them): the thirty-year-period footnote (four sentences), the n.a. table note (tab_eleven and
+tab_standard, written with a tie after "n.a." since soul cannot take a control space), Block 1's opening sentence, the
+voucher-rent footnote, and the parent's-value sentence. 30 blue runs now.
