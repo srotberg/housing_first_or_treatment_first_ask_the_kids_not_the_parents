@@ -1507,3 +1507,10 @@ Specifially, specifiations), TF -> Treatment First. 10pt, 0.8in, parskip 0.35em:
 All red and strikes removed from the paper and from the letter to Katz (base_r402 = the current numbers, so the one pass
 that landed during the build, the 0.20 no-exemption row 5.4 (7) -> 5.3 (6), CEV 3.09 -> 3.02, is black; told to the author
 in chat). Whole-paper spell check: no typos (28 unknown words, all technical terms or British spellings).
+
+## 17:40 (21 October): CAann2_100 loop0 landed (r403)
+
+The re-seeded announced 1.00 run replaces CAann100 loop2 in Table 7 (as planned): peak 7.9 (10) against 7.3 (9), children
+4.4 (9) against 3.6 (9), above Housing First 7-17 / 7-13, reform cohort CEV 3.46 against 4.54; budget 0.40% against 0.15%,
+drug off 23 of periods 1-25 in both. The gap in CEV between two passes of the same experiment is flagged to the author.
+CAann2_20 loop1 also landed: 3.3 (12), 0.9 (10), CEV 1.91 (was 3.4, 0.9 (11), 1.92). Red against base_r402.
