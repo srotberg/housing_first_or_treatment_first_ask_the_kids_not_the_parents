@@ -3,7 +3,7 @@ feed it to AI detectors", then "i need to break it down the 2000 words at a time
 
     python3 writing/tools/ai_chunks.py
 
-From writing/children_first_housing_later.pdf, writes writing/ai_check/chunks_2000/chunk<nn>.pdf and .txt: the text in
+From writing/housing_first_or_treatment_first.pdf, writes writing/ai_check/chunks_2000/chunk<nn>.pdf and .txt: the text in
 chunks of at most 2,000 words, cut between paragraphs, the reference list left out. (The four parts of the first request
 were removed from the repo on the author's request, 20 October.)
 The text is the PDF's own, with words hyphenated across lines rejoined; equations, footnotes and tables come through
@@ -12,7 +12,7 @@ import html, os, re
 import pymupdf
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
-SRC = os.path.join(ROOT, 'writing', 'children_first_housing_later.pdf')
+SRC = os.path.join(ROOT, 'writing', 'housing_first_or_treatment_first.pdf')
 OUT = os.path.join(ROOT, 'writing', 'ai_check')
 LIMIT = 2000
 doc = pymupdf.open(SRC)

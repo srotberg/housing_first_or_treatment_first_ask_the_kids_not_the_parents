@@ -454,7 +454,7 @@ for _key in _BOTH:
         f'fill.py says {_v}; tables.py prints something else')
 
 print('\n=== 8. the paper quotes what the tables state ===')
-src = open(os.path.join(TAB, '..', 'housing_first_children_later.tex'), encoding='utf-8').read()
+src = open(os.path.join(TAB, '..', 'housing_first_or_treatment_first.tex'), encoding='utf-8').read()
 for label, val in (('participation under HF at universal cover', f'{100*mh["part"]:.2f}'),
                    ('outlay under TF', f'{mt["cost"]:.4f}'),
                    ('outlay under HF', f'{mh["cost"]:.4f}')):

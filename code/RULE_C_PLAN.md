@@ -1450,3 +1450,12 @@ The re-seeded 0.20 exemption run's first pass replaces CAgrace20 loop1 in Table 
 against +1.8 (11), above 9-16 (was 8-16), children never above, reform cohort CEV 2.87 (2.98). Less converged than the
 old loop 1: worst budget 0.65% of revenue (0.42), drug market off 5e-3 in 68 years (41). CAc loop1 landed too: the
 1.00 no-exemption CEV 6.74 -> 6.57 (budget 0.42%, drug 17 years off). Built in red against base_r395.
+
+## 21 October: the new title and file names
+
+The author: the title is now "Housing First or Treatment First? Ask the Kids, Not the Parents" (in red, the old one
+struck), and the paper's files are writing/housing_first_or_treatment_first.{src.tex,tex,pdf} (were
+housing_first_children_later.{src.tex,tex} and children_first_housing_later.pdf). Every script that named them is
+updated (splice.py, export_all_C.sh, build.sh, fill.py, verify.py, writing/tools/check_*.py, strip_red_before_transition.py,
+ai_chunks.py), and README.md and CLAUDE.md. Build: pdflatex -jobname=housing_first_or_treatment_first
+housing_first_or_treatment_first.tex. The GitHub URL in the title footnote is the repository's and is unchanged.

@@ -22,7 +22,7 @@ import re
 import sys
 
 P = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),   # writing/, one up from tools/
-     'housing_first_children_later.src.tex')
+     'housing_first_or_treatment_first.src.tex')
 # THE ANCHOR IS THE LABEL, not the section title, because the title is itself
 # wrapped in red at the moment and a stripper that keyed on the title would
 # stop finding it the first time it ran.
