@@ -1322,3 +1322,17 @@ sentences left. The author asked to compute the homelessness odds ratio for the 
 distribution, as Bassuk et al.: a background job (a copy of the benchmark build with a DIAG line, in the scratchpad) is
 computing it; within one productivity node the model's exposed and unexposed rates are equal by construction (no
 penalty for growing up in a shelter), so the restricted ratio will be near 1.
+
+02:08 (21 Oct) ROUND r381 (the author: "remove all red and put updates in red. remove also all crossed lines", "make sure
+to fix any grammatical errors and typos"; 15 comments, pages 21-24; base_r381 frozen with the others). In the author's
+words, red with the old struck: "fall harder on", the two objects ("Within each of my experiments, I play around with
+two objects. The first object is the drug price: I either hold it fixed or allow it to clear ..."), the first
+experiment's paragraph, the second's steps, the drug price last, the transition, the screen, the military evidence and
+its footnote (61 the raw comparison among those who stayed, 11 to 45 accounting for those who left), the counterpart.
+Fixed: "keep the drug price stays fixed", "deterringusers", "both run", "breaks downthe", "wouldafter",
+"equilibirum", "many period", "or is eligible and was offered", "stayed..", "between 11 to 45", "compared to" -> "than",
+"can only harm itself" -> "the household itself", the relative clauses "which I either hold fixed or allow it" made
+"the drug price: I either hold it fixed or allow it". Meaning, told to the author: "with no externalities" -> "which had
+no externalities" (the first experiment's runs had none; the second's steps have them); "can only keep their
+assistance" -> "can only be sure of keeping" (detection is imperfect); "I therefore set it" -> "I set it" (its reason,
+"no programme reports that", went with the rewrite). 55 blue sentences left (1,111 words); 139 of 194 done.
