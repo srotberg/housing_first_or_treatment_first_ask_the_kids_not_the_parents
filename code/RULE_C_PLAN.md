@@ -1379,3 +1379,10 @@ paragraph before both headings ("I split the change in adult life, Delta A, into
 exactly."), then "Better productivity at entry." in plain first-person sentences (keep Treatment First, compare
 entrants under the two policies, fewer carry the penalty, Delta E, omega_c counted through D(y,d), the rest the
 earnings externality). Written by me, so the detector may flag it: told the author. 23 blue sentences left (505 words).
+
+03:46 (21 Oct) ROUND r386 (base_r386 frozen with the others). The Delta E paragraph in the author's words (red, old
+struck), "holding ... at their benchmark levels" taken out (welfare_nok.parts values Delta E under Treatment First's
+arm: E = A - beta^J_K P), and one sentence on it (the author: "use yours then", "just add one sentence to explain how the
+Delta E is computed using the prices under TF"): "I value both distributions under Treatment First's policy, drug price
+and probability of drawing a voucher, so that the second part below equals the parent's own gain exactly."
+Conclusion: "generates more gain to the child than it costs the parent". "carrythe", "omega_cof" fixed.
