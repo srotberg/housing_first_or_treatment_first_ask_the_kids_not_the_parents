@@ -1418,3 +1418,12 @@ maximum number of periods of life" (the author's "maximum periods of life" given
 04:56 (21 Oct) ROUND r390 (base_r390 frozen with the others): "rent it," -> "rent," and "maximum number of periods" ->
 "maximum periods" (the author's removals; old struck). writing/children_first_housing_later_appendix.pdf: Appendix A
 alone (pages 35-39 of a clean build: no red, no struck text), for the AI detector.
+
+## Round r391 (21 October)
+
+Red from r390 stripped (base_r391). The author's rewrites of the four appendix sentences flagged blue (Block 7's
+opening, sigma, the job-finding rate) replace them, with "their" -> "they" and "raise" -> "raised". The whole-paper
+proofreading fixes stay in red: "point in this research", "I scale", Stone--Geary, J_E footnote's "The value of
+J_E" / "The limit", iota "prevalence of SMI more", "cannabis, using", "and the other four are free", "the
+participants did", "As in the case", "lives with it"; generated: export_alttrans.py "and more households do"
+(struck by hand in the .tex: the splice only reds it), calib_tables.py tau_k source "long-term" (table cell red).

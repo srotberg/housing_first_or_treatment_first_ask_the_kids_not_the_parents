@@ -362,7 +362,7 @@ STANDARD = [
         (r'$\tau_{\ell}$', 'Level of the labour income tax', setcol('tau_ell'), r'Average labour income tax, McDaniel (2007)',
          pc(C['average_labor_income_tax_data']), pc(mom('tau_l average labour income tax')),
          f(H['labor_income_tax_rate'], 3)),
-        (r'$\tau_k$', 'Capital income tax rate', 'Ext.', 'US long-run rate on gains and dividends',
+        (r'$\tau_k$', 'Capital income tax rate', 'Ext.', 'US long-term rate on gains and dividends',
          f(C['investment_income_tax']), NA, f(C['investment_income_tax'])),
     ]),
     ("Social security benefits and programmes' rules", [

@@ -278,7 +278,7 @@ def gr_par():
                  'adds them as they finish.')
     r = a if a is not None else b
     s = ('Exempting sobriety while in treatment for the first five periods lets a household with a SUD keep its voucher '
-         'in those periods by entering treatment, even if it uses drugs, and more of them do: '
+         'in those periods by entering treatment, even if it uses drugs, and more households do: '
          f'${num(r, r["tu15"])}$ percent of those with a SUD are in treatment, against ${r["tu0"]:.0f}$ percent under '
          'Housing First. ')
     # (round r362) both rates in the same words, the 1.00 path's as the 0.20 one's: it also falls below Housing First
