@@ -1410,3 +1410,7 @@ to save", "a households", "Table X" -> Table~\ref{tab:eleven}, double full stops
 J_R set the maximum years of life" -> "the maximum number of years a household can live and work, respectively" (J_R is
 the retirement age). NO BLUE LEFT: all 194 flagged sentences (plus the author's six later additions) rewritten.
 CAgrace100 loop2 landed: Table 7's 1.00 exemption row 5.0 (9), 1.3 (7), CEV 6.37; x_at_gr_par red.
+
+04:50 (21 Oct) ROUND r389 (six word edits in Appendix A; base_r389 frozen with the others; the two table notes' red and
+strikes removed by hand). Red, old struck: "estimates", "that I covered", "how much of its income", "rent it", "the
+maximum number of periods of life" (the author's "maximum periods of life" given "number of"), "the return".
