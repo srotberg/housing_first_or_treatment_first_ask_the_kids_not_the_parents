@@ -1443,3 +1443,10 @@ name used to print (\del{old} \new{new}; \new alone inside maths), as the standi
 
 Red and strikes from r393 removed (base_r394). Panel (h)'s sentence quotes the entrants' share at year 59, the year
 before the last one shown (the author: "instead of saying 99.9 percent by year 60 say by year 59"); 99.89 there.
+
+## 10:20 (21 October): CAgr2_20 loop0 landed
+
+The re-seeded 0.20 exemption run's first pass replaces CAgrace20 loop1 in Table 7 (as planned): homelessness peak +1.6 (11)
+against +1.8 (11), above 9-16 (was 8-16), children never above, reform cohort CEV 2.87 (2.98). Less converged than the
+old loop 1: worst budget 0.65% of revenue (0.42), drug market off 5e-3 in 68 years (41). CAc loop1 landed too: the
+1.00 no-exemption CEV 6.74 -> 6.57 (budget 0.42%, drug 17 years off). Built in red against base_r395.
