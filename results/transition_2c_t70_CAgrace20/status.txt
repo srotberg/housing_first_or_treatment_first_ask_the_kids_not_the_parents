@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 22 Oct 00:51 UTC
+# the T = 70 transition on RULE CA at detection 0.20, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 22 Oct 01:11 UTC
 remote_tr70_CAann 0.20 grace: free disk 8.8G, memory 15 GiB, cores 4 (03:38)
 remote_tr70_CAann 0.20 grace: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 9.6e-05; tf against the accepted long-run CA arm 1.163e-02 (03:38)
 remote_tr70_CAann 0.20 grace: T = 70 RELAUNCH after a killed run (seeds: its last saved paths) (03:38)
@@ -33,11 +33,11 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
 == tr2c_t70_CAgrace20 (T = 70, rule CA, detection 0.20, grace, lag 5)
   binary loop 0: periods to 69, worst budget residual (t>1) 2.44e-02, worst drug gap 2.82e-02  [paths saved]
   binary loop 1: periods to 69, worst budget residual (t>1) 2.14e-02, worst drug gap 2.09e-02  [paths saved]
-  binary loop 2: periods to 21, worst budget residual (t>1) 1.88e-02, worst drug gap 1.03e-02
+  binary loop 2: periods to 24, worst budget residual (t>1) 1.88e-02, worst drug gap 1.03e-02
   CEV path of the latest forward pass (per cent, t: value):
     1: +0.766  2: +0.993  3: +1.245  4: +1.452  5: +1.633  6: +1.801  7: +1.815  8: +1.848  9: +1.919  10: +1.993
     11: +2.084  12: +2.184  13: +2.265  14: +2.386  15: +2.396  16: +2.311  17: +2.385  18: +2.464  19: +2.543  20: +2.639
-    21: +2.782
+    21: +2.782  22: +2.871  23: +2.947  24: +3.085
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.89497049586609978       share_newborns=  0.34518131679221331       share_addicted=  0.31951916055770480       share_addicted_newborns=   0.0000000000000000
 
 grace checked on the forward pass: ok, 6 lines: treatment passes in years 1-5, not from year 6, the screen on throughout
