@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 1.00, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 22 Oct 00:49 UTC
+# the T = 70 transition on RULE CA at detection 1.00, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 22 Oct 01:09 UTC
 remote_tr70_CAann 1.00 grace: free disk 8.8G, memory 15 GiB, cores 4 (03:37)
 remote_tr70_CAann 1.00 grace: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 7.2e-05; tf against the accepted long-run CA arm 1.747e-01 (03:37)
 remote_tr70_CAann 1.00 grace: T = 70 RELAUNCH after a killed run (seeds: its last saved paths) (03:37)
@@ -33,14 +33,15 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   binary loop 0: periods to 69, worst budget residual (t>1) 4.57e-02, worst drug gap 3.84e-02  [paths saved]
   binary loop 1: periods to 69, worst budget residual (t>1) 3.96e-02, worst drug gap 3.07e-02  [paths saved]
   binary loop 2: periods to 69, worst budget residual (t>1) 3.46e-02, worst drug gap 2.43e-02  [paths saved]
-  binary loop 3: periods to 59, worst budget residual (t>1) 3.02e-02, worst drug gap 1.90e-02
+  binary loop 3: periods to 63, worst budget residual (t>1) 3.02e-02, worst drug gap 1.90e-02
   CEV path of the latest forward pass (per cent, t: value):
     1: +2.577  2: +3.137  3: +3.239  4: +3.567  5: +3.809  6: +4.126  7: +3.943  8: +4.202  9: +4.424  10: +4.620
     11: +4.812  12: +5.082  13: +5.290  14: +5.475  15: +5.566  16: +5.750  17: +5.944  18: +6.066  19: +6.211  20: +6.429
     21: +6.672  22: +6.965  23: +7.309  24: +7.566  25: +7.891  26: +8.134  27: +8.655  28: +8.884  29: +9.423  30: +9.680
     31: +9.860  32: +9.996  33: +10.102  34: +10.255  35: +10.419  36: +10.569  37: +10.671  38: +10.792  39: +10.888  40: +10.971
     41: +11.025  42: +11.126  43: +11.160  44: +11.168  45: +11.205  46: +11.247  47: +11.379  48: +11.442  49: +11.527  50: +11.608
-    51: +11.704  52: +11.823  53: +12.181  54: +12.257  55: +12.356  56: +12.491  57: +12.637  58: +12.726  59: +12.802
+    51: +11.704  52: +11.823  53: +12.181  54: +12.257  55: +12.356  56: +12.491  57: +12.637  58: +12.726  59: +12.802  60: +12.892
+    61: +12.971  62: +13.045  63: +13.125
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.91437748064860302       share_newborns=  0.49146885833595461       share_addicted=  0.27378387319452513       share_addicted_newborns=   0.0000000000000000
 
 grace checked on the forward pass: ok, 6 lines: treatment passes in years 1-5, not from year 6, the screen on throughout
