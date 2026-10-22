@@ -1,12 +1,5 @@
-# the T = 70 transition on RULE CA at detection 0.20, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 21 Oct 23:51 UTC
-remote_tr70_CAann2 0.20 announce: free disk 8.7G, memory 15 GiB, cores 4 (01:44)
-remote_tr70_CAann2 0.20 announce: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 3.5e-05; tf against the accepted long-run CA arm 1.173e-02 (01:45)
-remote_tr70_CAann2 0.20 announce: T = 70 RELAUNCH after a killed run (seeds: its last saved paths) (01:45)
-remote_tr70_CAann2 0.20 announce: T = 70 transition started, pid 909 (01:45)
-remote_tr70_CAann2 0.20 announce: handover applied: 100 parameters (01:45)
-remote_tr70_CAann2 0.20 announce: the path's drug price clears: HANDOVER drug_market_adjuster -> 0.10000000000000001 (01:45)
-remote_tr70_CAann2 0.20 announce: relaunch: the binary's loop 0 is archived as loop1 (01:45)
-remote_tr70_CAann2 0.20 announce: binary loop 0 complete, archived to results/transition_2c_t70_CAann2_20/loop1; loop1: drug_price years 60-69 within 0.07% of the terminal 0.905637 (year 1 0.943323, year 60 0.905001, year 69 0.905206); pi_v years 60-69 within 1.57% of the terminal 0.086403 (year 1 0.066175, year 60 0.086272, year 69 0.087621);   PEAK homelessness h_1: year 12, 0.006388, +3.30% against Housing First -- the path RISES above Housing First;   CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 0, completed with the terminal arm): +1.9127% of consumption (16:49)
+# the T = 70 transition on RULE CA at detection 0.20, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 22 Oct 00:04 UTC
+remote_tr70_CAann2 0.20 announce: free disk 8.7G, memory 15 GiB, cores 4 (00:04)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -31,12 +24,12 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
 
 == tr2c_t70_CAann2_20 (T = 70, rule CA, detection 0.20, announce, lag 5)
   binary loop 0: periods to 69, worst budget residual (t>1) 1.40e-02, worst drug gap 5.98e-02  [paths saved]
-  binary loop 1: periods to 34, worst budget residual (t>1) 5.42e-03, worst drug gap 4.68e-02
+  binary loop 1: periods to 37, worst budget residual (t>1) 5.42e-03, worst drug gap 4.68e-02
   CEV path of the latest forward pass (per cent, t: value):
     1: +0.496  2: +0.546  3: +0.667  4: +0.743  5: +0.636  6: +1.491  7: +1.456  8: +1.589  9: +1.682  10: +1.763
     11: +1.833  12: +1.933  13: +1.964  14: +2.096  15: +2.184  16: +2.276  17: +2.354  18: +2.487  19: +2.555  20: +2.594
     21: +2.527  22: +2.619  23: +2.711  24: +2.833  25: +2.945  26: +3.146  27: +3.343  28: +3.497  29: +3.599  30: +4.006
-    31: +4.095  32: +4.232  33: +4.387  34: +4.382
+    31: +4.095  32: +4.232  33: +4.387  34: +4.382  35: +4.449  36: +4.513  37: +4.682
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.92865717788491353       share_newborns=  0.48985562062840632       share_addicted=  0.31995929433621856       share_addicted_newborns=   0.0000000000000000
 
 announce checked on the forward pass: ok, 7 lines: screen 0 in years 1-5, 1 from year 6, terminal 1
