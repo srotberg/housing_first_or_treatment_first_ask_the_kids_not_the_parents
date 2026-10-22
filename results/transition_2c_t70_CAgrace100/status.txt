@@ -1,4 +1,4 @@
-# the T = 70 transition on RULE CA at detection 1.00, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 22 Oct 01:29 UTC
+# the T = 70 transition on RULE CA at detection 1.00, grace (treatment passes the screen in years 1-5, no escape from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 22 Oct 01:49 UTC
 remote_tr70_CAann 1.00 grace: free disk 8.8G, memory 15 GiB, cores 4 (03:37)
 remote_tr70_CAann 1.00 grace: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 7.2e-05; tf against the accepted long-run CA arm 1.747e-01 (03:37)
 remote_tr70_CAann 1.00 grace: T = 70 RELAUNCH after a killed run (seeds: its last saved paths) (03:37)
@@ -9,6 +9,7 @@ remote_tr70_CAann 1.00 grace: relaunch: the binary's loop 0 is archived as loop1
 remote_tr70_CAann 1.00 grace: binary loop 0 complete, archived to results/transition_2c_t70_CAgrace100/loop1; loop1: drug_price years 60-69 within 0.87% of the terminal 0.801700 (year 1 0.881433, year 60 0.795466, year 69 0.794738); pi_v years 60-69 within 0.88% of the terminal 0.108960 (year 1 0.069442, year 60 0.108025, year 69 0.108971);   PEAK homelessness h_1: year 9, 0.006470, +4.61% against Housing First -- the path RISES above Housing First;   CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 0, completed with the terminal arm): +6.5786% of consumption (18:41)
 remote_tr70_CAann 1.00 grace: binary loop 1 complete, archived to results/transition_2c_t70_CAgrace100/loop2; loop2: drug_price years 60-69 within 0.70% of the terminal 0.801700 (year 1 0.885846, year 60 0.798109, year 69 0.796101); pi_v years 60-69 within 1.20% of the terminal 0.108960 (year 1 0.066118, year 60 0.107656, year 69 0.108301);   PEAK homelessness h_1: year 9, 0.006492, +4.97% against Housing First -- the path RISES above Housing First;   CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 1, completed with the terminal arm): +6.3728% of consumption (04:23)
 remote_tr70_CAann 1.00 grace: binary loop 2 complete, archived to results/transition_2c_t70_CAgrace100/loop3; loop3: drug_price years 60-69 within 0.77% of the terminal 0.801700 (year 1 0.889937, year 60 0.797299, year 69 0.795518); pi_v years 60-69 within 1.43% of the terminal 0.108960 (year 1 0.063212, year 60 0.107406, year 69 0.107758);   PEAK homelessness h_1: year 7, 0.006509, +5.24% against Housing First -- the path RISES above Housing First;   CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 2, completed with the terminal arm): +6.2363% of consumption (15:46)
+remote_tr70_CAann 1.00 grace: binary loop 3 complete, archived to results/transition_2c_t70_CAgrace100/loop4; loop4: drug_price years 60-69 within 1.05% of the terminal 0.801700 (year 1 0.893280, year 60 0.795738, year 69 0.793282); pi_v years 60-69 within 1.44% of the terminal 0.108960 (year 1 0.060676, year 60 0.107389, year 69 0.107393);   PEAK homelessness h_1: year 7, 0.006525, +5.51% against Housing First -- the path RISES above Housing First;   CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 3, completed with the terminal arm): +6.2019% of consumption (01:49)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -33,7 +34,7 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   binary loop 0: periods to 69, worst budget residual (t>1) 4.57e-02, worst drug gap 3.84e-02  [paths saved]
   binary loop 1: periods to 69, worst budget residual (t>1) 3.96e-02, worst drug gap 3.07e-02  [paths saved]
   binary loop 2: periods to 69, worst budget residual (t>1) 3.46e-02, worst drug gap 2.43e-02  [paths saved]
-  binary loop 3: periods to 67, worst budget residual (t>1) 3.02e-02, worst drug gap 2.15e-02
+  binary loop 3: periods to 69, worst budget residual (t>1) 3.02e-02, worst drug gap 2.25e-02  [paths saved]
   CEV path of the latest forward pass (per cent, t: value):
     1: +2.577  2: +3.137  3: +3.239  4: +3.567  5: +3.809  6: +4.126  7: +3.943  8: +4.202  9: +4.424  10: +4.620
     11: +4.812  12: +5.082  13: +5.290  14: +5.475  15: +5.566  16: +5.750  17: +5.944  18: +6.066  19: +6.211  20: +6.429
@@ -41,7 +42,7 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
     31: +9.860  32: +9.996  33: +10.102  34: +10.255  35: +10.419  36: +10.569  37: +10.671  38: +10.792  39: +10.888  40: +10.971
     41: +11.025  42: +11.126  43: +11.160  44: +11.168  45: +11.205  46: +11.247  47: +11.379  48: +11.442  49: +11.527  50: +11.608
     51: +11.704  52: +11.823  53: +12.181  54: +12.257  55: +12.356  56: +12.491  57: +12.637  58: +12.726  59: +12.802  60: +12.892
-    61: +12.971  62: +13.045  63: +13.125  64: +13.185  65: +13.227  66: +13.275  67: +13.290
+    61: +12.971  62: +13.045  63: +13.125  64: +13.185  65: +13.227  66: +13.275  67: +13.290  68: +13.297  69: +13.298
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.91437748064860302       share_newborns=  0.49146885833595461       share_addicted=  0.27378387319452513       share_addicted_newborns=   0.0000000000000000
 
 grace checked on the forward pass: ok, 6 lines: treatment passes in years 1-5, not from year 6, the screen on throughout
@@ -186,8 +187,44 @@ grace checked on the forward pass: ok, 6 lines: treatment passes in years 1-5, n
   CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 2, completed with the terminal arm): +6.2363% of consumption
   (the model's own TRANSITION CEV at t = 1, the cohort entering adulthood at the reform: +2.622%)
 
+== THE AUTHOR'S QUESTION, loop4: does homelessness or the share of children in a shelter rise, and the reform cohort's CEV
+# rule-CA transition, grace, lag 5, at detection 1.00, binary loop 3: the forward pass ending at log line 78345, periods 1-69; generated by code/transition_fix/report_tr70_CAann.py
+# Housing First (start, /home/user/children_first_housing_later/results/transition_2c_t70_CAgrace100/arms/arm_null): h_1 0.006185, children in a shelter 0.010292; Treatment First long run (terminal, /home/user/children_first_housing_later/results/transition_2c_t70_CAgrace100/arms/arm_tf): h_1 0.004304 (-30.41%), children in a shelter 0.007142 (-30.61%)
+  year        h_1    vs HF  children in a shelter    vs HF
+     1   0.006185   +0.01%               0.010292   +0.00%
+     2   0.006088   -1.56%               0.010080   -2.06%
+     3   0.006075   -1.77%               0.010044   -2.41%
+     4   0.006024   -2.59%               0.009935   -3.46%
+     5   0.005992   -3.12%               0.009869   -4.10%
+     6   0.005940   -3.96%               0.009769   -5.08%
+     7   0.006525   +5.51%               0.010493   +1.95%
+     8   0.006514   +5.33%               0.010448   +1.51%
+     9   0.006515   +5.35%               0.010420   +1.25%
+    10   0.006474   +4.67%               0.010321   +0.28%
+    11   0.006420   +3.81%               0.010201   -0.89%
+    12   0.006357   +2.79%               0.010065   -2.21%
+    13   0.006292   +1.73%               0.009929   -3.52%
+    14   0.006224   +0.63%               0.009793   -4.85%
+    15   0.006150   -0.56%               0.009647   -6.27%
+    16   0.006079   -1.71%               0.009508   -7.62%
+    17   0.006009   -2.84%               0.009373   -8.93%
+    18   0.005941   -3.93%               0.009244  -10.18%
+    19   0.005874   -5.02%               0.009118  -11.40%
+    20   0.005807   -6.10%               0.009001  -12.55%
+    21   0.005742   -7.16%               0.008893  -13.59%
+    22   0.005677   -8.21%               0.008794  -14.56%
+    23   0.005614   -9.22%               0.008707  -15.40%
+    24   0.005553  -10.22%               0.008629  -16.15%
+    25   0.005489  -11.25%               0.008564  -16.79%
+  PEAK homelessness h_1: year 7, 0.006525, +5.51% against Housing First -- the path RISES above Housing First
+  PEAK children in a shelter: year 7, 0.010493, +1.95% against Housing First -- the path RISES above Housing First
+  years with h_1 or children in a shelter above Housing First: 1, 7, 8, 9, 10, 11, 12, 13, 14
+  CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 3, completed with the terminal arm): +6.2019% of consumption
+  (the model's own TRANSITION CEV at t = 1, the cohort entering adulthood at the reform: +2.577%)
+
 == horizon check (the last ten years against the terminal values)
 loop0: drug_price years 60-69 within 0.50% of the terminal 0.801700 (year 1 0.878278, year 60 0.797692, year 69 0.797692); pi_v years 60-69 within 0.98% of the terminal 0.108960 (year 1 0.073279, year 60 0.108394, year 69 0.109512)
 loop1: drug_price years 60-69 within 0.87% of the terminal 0.801700 (year 1 0.881433, year 60 0.795466, year 69 0.794738); pi_v years 60-69 within 0.88% of the terminal 0.108960 (year 1 0.069442, year 60 0.108025, year 69 0.108971)
 loop2: drug_price years 60-69 within 0.70% of the terminal 0.801700 (year 1 0.885846, year 60 0.798109, year 69 0.796101); pi_v years 60-69 within 1.20% of the terminal 0.108960 (year 1 0.066118, year 60 0.107656, year 69 0.108301)
 loop3: drug_price years 60-69 within 0.77% of the terminal 0.801700 (year 1 0.889937, year 60 0.797299, year 69 0.795518); pi_v years 60-69 within 1.43% of the terminal 0.108960 (year 1 0.063212, year 60 0.107406, year 69 0.107758)
+loop4: drug_price years 60-69 within 1.05% of the terminal 0.801700 (year 1 0.893280, year 60 0.795738, year 69 0.793282); pi_v years 60-69 within 1.44% of the terminal 0.108960 (year 1 0.060676, year 60 0.107389, year 69 0.107393)
