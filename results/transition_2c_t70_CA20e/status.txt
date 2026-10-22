@@ -1,13 +1,5 @@
-# the T = 70 transition on RULE CA at detection 0.20, THE DRUG PRICE CLEARING ALONG THE PATH (code/transition_fix/remote_tr70_CA20e.sh, end state at the cleared long run's price); 22 Oct 03:49 UTC
-remote_tr70_CA20e: free disk 8.7G, memory 15 GiB, cores 4 (03:14)
-remote_tr70_CA20e: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 1.9e-04; tf against the accepted long-run CA arm 1.161e-02 (03:15)
-remote_tr70_CA20e: T = 70 RELAUNCH after a killed run (seeds: its last saved paths) (03:15)
-remote_tr70_CA20e: T = 70 transition started, pid 1973 (03:15)
-remote_tr70_CA20e: handover applied: 100 parameters (03:15)
-remote_tr70_CA20e: the path's drug price clears: HANDOVER drug_market_adjuster -> 0.10000000000000001 (03:15)
-remote_tr70_CA20e: relaunch: the binary's loop 0 is archived as loop0 (03:15)
-remote_tr70_CA20e: binary loop 0 complete, archived to results/transition_2c_t70_CA20e/loop0; loop0: drug_price years 60-69 within 0.02% of the terminal 0.905637 (year 1 0.939960, year 60 0.905442, year 69 0.905437); pi_v years 60-69 within 0.71% of the terminal 0.086430 (year 1 0.070831, year 60 0.086611, year 69 0.086841);   PEAK homelessness h_1: year 7, 0.006519, +5.41% against Housing First -- the path RISES above Housing First;   CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 0, completed with the terminal arm): +3.0880% of consumption (00:21)
-remote_tr70_CA20e: binary loop 1 complete, archived to results/transition_2c_t70_CA20e/loop1; loop1: drug_price years 60-69 within 0.03% of the terminal 0.905637 (year 1 0.939596, year 60 0.905421, year 69 0.905353); pi_v years 60-69 within 1.18% of the terminal 0.086430 (year 1 0.070391, year 60 0.086744, year 69 0.087025);   PEAK homelessness h_1: year 6, 0.006514, +5.33% against Housing First -- the path RISES above Housing First;   CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 1, completed with the terminal arm): +3.0217% of consumption (16:05)
+# the T = 70 transition on RULE CA at detection 0.20, THE DRUG PRICE CLEARING ALONG THE PATH (code/transition_fix/remote_tr70_CA20e.sh, end state at the cleared long run's price); 22 Oct 04:07 UTC
+remote_tr70_CA20e: free disk 8.6G, memory 15 GiB, cores 4 (04:07)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -33,13 +25,13 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
 == tr2c_t70_CA20e (T = 70, rule CA, detection 0.20, drug price clearing)
   binary loop 0: periods to 69, worst budget residual (t>1) 1.68e-02, worst drug gap 2.81e-02  [paths saved]
   binary loop 1: periods to 69, worst budget residual (t>1) 1.36e-02, worst drug gap 2.09e-02  [paths saved]
-  binary loop 2: periods to 44, worst budget residual (t>1) 1.10e-02, worst drug gap 1.02e-02
+  binary loop 2: periods to 47, worst budget residual (t>1) 1.15e-02, worst drug gap 1.02e-02
   CEV path of the latest forward pass (per cent, t: value):
     1: +0.936  2: +1.099  3: +1.225  4: +1.348  5: +1.462  6: +1.552  7: +1.642  8: +1.693  9: +1.805  10: +1.921
     11: +2.052  12: +2.090  13: +2.236  14: +2.359  15: +2.384  16: +2.292  17: +2.379  18: +2.456  19: +2.538  20: +2.641
     21: +2.771  22: +2.916  23: +3.010  24: +3.122  25: +3.275  26: +3.488  27: +4.019  28: +4.065  29: +4.140  30: +4.186
     31: +4.385  32: +4.393  33: +4.467  34: +4.624  35: +4.700  36: +4.743  37: +4.785  38: +4.832  39: +4.877  40: +4.902
-    41: +4.924  42: +4.870  43: +4.881  44: +4.889
+    41: +4.924  42: +4.870  43: +4.881  44: +4.889  45: +4.898  46: +4.912  47: +4.936
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.93844129798141918       share_newborns=  0.49146753398064646       share_addicted=  0.30117096219138295       share_addicted_newborns=   0.0000000000000000
 
 == THE AUTHOR'S QUESTION, loop0: does homelessness or the share of children in a shelter rise, and the reform cohort's CEV
