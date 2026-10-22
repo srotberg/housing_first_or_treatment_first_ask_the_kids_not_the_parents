@@ -1,13 +1,5 @@
-# the T = 70 transition on RULE CA at detection 0.20, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 22 Oct 03:49 UTC
-remote_tr70_CAann 0.20 announce: free disk 8.8G, memory 15 GiB, cores 4 (03:16)
-remote_tr70_CAann 0.20 announce: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 8.1e-05; tf against the accepted long-run CA arm 1.165e-02 (03:16)
-remote_tr70_CAann 0.20 announce: T = 70 RELAUNCH after a killed run (seeds: its last saved paths) (03:16)
-remote_tr70_CAann 0.20 announce: T = 70 transition started, pid 979 (03:16)
-remote_tr70_CAann 0.20 announce: handover applied: 100 parameters (03:16)
-remote_tr70_CAann 0.20 announce: the path's drug price clears: HANDOVER drug_market_adjuster -> 0.10000000000000001 (03:16)
-remote_tr70_CAann 0.20 announce: relaunch: the binary's loop 0 is archived as loop1 (03:16)
-remote_tr70_CAann 0.20 announce: binary loop 0 complete, archived to results/transition_2c_t70_CAann20/loop1; loop1: drug_price years 60-69 within 0.09% of the terminal 0.905637 (year 1 0.989429, year 60 0.904838, year 69 0.905117); pi_v years 60-69 within 1.70% of the terminal 0.086378 (year 1 0.066497, year 60 0.086955, year 69 0.087503);   PEAK homelessness h_1: year 11, 0.006372, +3.04% against Housing First -- the path RISES above Housing First;   CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 0, completed with the terminal arm): +2.5708% of consumption (00:42)
-remote_tr70_CAann 0.20 announce: binary loop 1 complete, archived to results/transition_2c_t70_CAann20/loop2; loop2: drug_price years 60-69 within 0.09% of the terminal 0.905637 (year 1 0.984481, year 60 0.904862, year 69 0.905159); pi_v years 60-69 within 2.00% of the terminal 0.086378 (year 1 0.066078, year 60 0.086884, year 69 0.087587);   PEAK homelessness h_1: year 11, 0.006371, +3.02% against Housing First -- the path RISES above Housing First;   CEV OF THE COHORT BORN AT THE REFORM (cohort_cev.py, pass 1, completed with the terminal arm): +2.5432% of consumption (16:26)
+# the T = 70 transition on RULE CA at detection 0.20, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 22 Oct 04:07 UTC
+remote_tr70_CAann 0.20 announce: free disk 8.6G, memory 15 GiB, cores 4 (04:07)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -34,13 +26,13 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
 == tr2c_t70_CAann20 (T = 70, rule CA, detection 0.20, announce, lag 5)
   binary loop 0: periods to 69, worst budget residual (t>1) 1.35e-02, worst drug gap 1.15e-01  [paths saved]
   binary loop 1: periods to 69, worst budget residual (t>1) 1.24e-02, worst drug gap 1.07e-01  [paths saved]
-  binary loop 2: periods to 42, worst budget residual (t>1) 7.47e-03, worst drug gap 9.88e-02
+  binary loop 2: periods to 44, worst budget residual (t>1) 1.06e-02, worst drug gap 9.88e-02
   CEV path of the latest forward pass (per cent, t: value):
     1: +0.979  2: +1.122  3: +1.253  4: +1.305  5: +1.327  6: +1.468  7: +1.455  8: +1.521  9: +1.651  10: +1.728
     11: +1.826  12: +1.929  13: +2.020  14: +2.149  15: +2.241  16: +2.287  17: +2.384  18: +2.513  19: +2.596  20: +2.509
     21: +2.619  22: +2.732  23: +2.842  24: +2.913  25: +3.020  26: +3.266  27: +3.548  28: +3.892  29: +4.010  30: +4.144
     31: +4.284  32: +4.306  33: +4.353  34: +4.403  35: +4.505  36: +4.553  37: +4.744  38: +4.820  39: +4.843  40: +4.928
-    41: +4.953  42: +4.981
+    41: +4.953  42: +4.981  43: +5.005  44: +5.027
   latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.91840747699023406       share_newborns=  0.47819525949764408       share_addicted=  0.29908605062107624       share_addicted_newborns=   0.0000000000000000
 
 announce checked on the forward pass: ok, 7 lines: screen 0 in years 1-5, 1 from year 6, terminal 1
