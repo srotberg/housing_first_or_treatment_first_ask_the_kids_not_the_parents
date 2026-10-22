@@ -1,6 +1,10 @@
 # the T = 70 transition on RULE CA at detection 1.00, announce (the screen off in years 1-5 and on from year 6), both prices clearing along the path (code/transition_fix/remote_tr70_CAann.sh); 22 Oct 03:45 UTC
 remote_tr70_CAann2 1.00 announce: free disk 8.7G, memory 15 GiB, cores 4 (03:45)
 remote_tr70_CAann2 1.00 announce: arms: null against the corrected Housing First (decomp_2c_shares_Cu/arm_tf/null) worst relative difference 9.3e-05; tf against the accepted long-run CA arm 1.748e-01 (03:45)
+remote_tr70_CAann2 1.00 announce: T = 70 RELAUNCH after a killed run (seeds: its last saved paths) (03:45)
+remote_tr70_CAann2 1.00 announce: T = 70 transition started, pid 896 (03:45)
+remote_tr70_CAann2 1.00 announce: handover applied: 100 parameters (03:45)
+remote_tr70_CAann2 1.00 announce: the path's drug price clears: HANDOVER drug_market_adjuster -> 0.10000000000000001 (03:45)
 
 == arm null
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -22,11 +26,6 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
  MILBY SPLIT voucher mass rec treat smi   0.0000000000000000        0.0000000000000000        0.0000000000000000        0.0000000000000000       housed_nov mass rec treat smi  0.67243257502053044        2.0710559438213934E-002  0.16623122110249761        5.3329173879676652E-002
 
 == tr2c_t70_CAann2_100 (T = 70, rule CA, detection 1.00, announce, lag 5)
-  binary loop 0: periods to 69, worst budget residual (t>1) 3.69e-02, worst drug gap 1.28e-01  [paths saved]
-  binary loop 1: periods to 2, worst budget residual (t>1) 7.67e-03, worst drug gap 9.55e-02
-  CEV path of the latest forward pass (per cent, t: value):
-    1: +0.796  2: +0.943
-  latest TRANSITION BETTER OFF t=           1  share_all_ages=  0.93606990041208871       share_newborns=  0.49146584696167889       share_addicted=  0.27485935336895950       share_addicted_newborns=   0.0000000000000000
 
 announce checked on the forward pass: ok, 6 lines: screen 0 in years 1-5, 1 from year 6, terminal 1
 
