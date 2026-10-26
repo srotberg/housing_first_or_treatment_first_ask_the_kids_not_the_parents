@@ -1,5 +1,13 @@
 # Job-market presentation
 
+**The talk is the LaTeX Beamer deck**: `latex/slides.tex`, built by `latex/build.sh` into
+`housing_first_or_treatment_first_slides.pdf` (43 slides: 40, a closing slide and two backup tables). It uses the
+paper's own figures from `writing/figures/` and inputs Table 5 and the stylized model's two tables from
+`writing/tables/`; every other number is typed from the paper (round r419) and must be changed by hand if the
+paper's moves. Speaker notes are in `\note{}`.
+
+The HTML version below is the earlier draft of the same talk.
+
 *Housing First or Treatment First? Ask the Kids, Not the Parents*: 42 slides, for a talk of about an hour with questions.
 
 The deck is published as a private Slides artifact: https://claude.ai/artifact/SEeod85RRfvQRUqTLAW2SN
