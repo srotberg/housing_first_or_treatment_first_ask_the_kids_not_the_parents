@@ -124,9 +124,12 @@ def main():
               + ('flatter and ' if m_hi - m_lo < d_hi - d_lo else '')
               + f'lower than in the data, ${f1(m_lo)}$ to ${f1(m_hi)}$ percent against ${f1(d_lo)}$ to ${f1(d_hi)}$.')
         if my[0] > dy[0] and m_yu < d_yu:
-            s += (' Both differences lower the average income of users in the model, which is why it falls short of its '
+            s += (' Both differences lower the average income of users in the model, which is why it falls slightly short of its '
                   'target in Table~\\ref{tab:eleven}.')
     out['x_ui_sentence'] = s
+    # Block 2's closing sentence says users are poorer than the average household 'in the model as in the data'
+    assert (m_yu < 1) == (d_yu < 1), 'model and data users sit on opposite sides of the mean: reword Block 2'
+    out['x_ui_poorer'] = 'poorer than' if m_yu < 1 else 'at least as rich as'
     d = json.load(open(OUT_JSON))
     d.update(out)
     json.dump(d, open(OUT_JSON, 'w'), indent=1, sort_keys=True)
