@@ -1,157 +1,81 @@
 # Round 1 response letters
 
-Draft responses to RED-D-26-00078, submitted as *Housing First or Treatment First?*
-and resubmitted as **Housing First or Treatment First? Ask the Kids, Not the Parents**. Five letters, four of them
-comment by comment. Everything said back to a referee is in **red**; the black italic
-block above each response is the referee's own text.
-
-All five open by stating the title change and why it happened, because it is the
-first thing a referee will notice and because the reason for it is the substance of
-the revision: the case for conditionality has to rest outside the household's own
-objective, and the externality that decides it is intergenerational.
+Responses to RED-D-26-00078, submitted as *Housing First or Treatment First?* and resubmitted as
+**Housing First or Treatment First? Ask the Kids, Not the Parents**. Five letters, four of them comment by
+comment. Everything said back to a referee is in **red**; the black italic block above each response is the
+referee's own text, untouched.
 
 | file | covers |
 |---|---|
-| `response_editor.tex` | Cover letter to Karabarbounis, plus the big summary of what changed |
-| `response_AE.tex` | A1 to A20 |
-| `response_R1.tex` | 1(a) to 1(e), 2(a) to 2(f), 3(a) to 3(d), 4(a) to 4(d), and the 10 smaller comments |
+| `response_editor.tex` | Cover letter to Karabarbounis: what the paper now finds, what was built, cut and added, errors in the previous version, calibration and validation, Costantini, push-back and what the paper does not do |
+| `response_AE.tex` | A1 to A20, plus the AE's closing paragraph on simplifying secondary dimensions |
+| `response_R1.tex` | 1(a) to 1(e), 2(a) to 2(f), 3(a) to 3(d), 4(a) to 4(d), and the ten smaller comments |
 | `response_R2.tex` | C1 to C6, D1 |
 | `response_R3.tex` | M1(a) to M1(c), M2(a) to M2(d), m1 to m3 |
 
-Build with `./build.sh`. `enumitem` is not in this TeX installation, so list
-spacing is set directly in `preamble.tex`.
+Build with `./build.sh` (it deletes every letter's aux files, so never run it while another build is going).
+`enumitem` is not in this TeX installation, so list spacing is set directly in `preamble.tex`.
+
+## Revised against the paper of 26 October 2026 (round r414)
+
+The letters had been drafted against a much earlier version of the new paper, and every response was
+re-checked against the current one. Every number in a response is now one the paper states, and every
+section, table, figure and footnote number is as printed in the r414 PDF. **Footnote numbers will shift if
+footnotes are added before them**, and the transition numbers quoted (1.45, 81, 11, 67, 74 and so on) are
+still marked for refresh in the paper; if either moves, the letters must follow.
+
+What changed most, because the paper changed:
+
+* **Labour supply is gone from the model** (footnote 19). The letters used to defend keeping it, solved from
+  the first order condition; they now concede A3 and answer R3's m1 accordingly.
+* **The quantitative transition is solved and reported** (Sections 6.4 and 6.5, Figure 3, Table 7), where
+  the letters used to say it was switched off.
+* **The homelessness disamenity is not in the benchmark**, only a robustness run (footnote 4: no long-run
+  gain moves by more than 0.14 points). The letters used to call it the baseline.
+* **Costantini:** the paper compares only his Housing First arm (Validation Block 7, 3.6 against 4.6
+  percentage points); the `\tbd` table is gone, and the letters say there is no counterpart to his Treatment
+  First arm.
+* **R1's 2(c)(i) is now a concession, not a push-back.** The paper targets his 74 percent (users' income over
+  the average); the model reaches 62, and Figure 2 shows why.
+* **Abramson and Van Nieuwerburgh (A15):** the push-back is gone; the model no longer has a fiscal cost of
+  homelessness, so no comparison is made.
+* The "errors in the previous version" list is down to four items that the paper supports.
 
 ## House rules
 
-* **No hyphens** anywhere in my own prose. Referee quotes keep theirs, since
-  they are verbatim.
-* **Singular voice.** I, me, my. Not we, us, our. Referee quotes are exempt.
-* **Labour supply is solved from the first order condition, not off a grid.** An
-  earlier draft of these letters called it coarse in three places. Each period the
-  household sets the marginal utility of leisure against the after tax marginal wage
-  and the model solves that condition by a secant method; the curvature on leisure
-  delivers a Frisch elasticity of 0.5 and the weight on leisure is calibrated to
-  average hours.
-* Every response says what was done, not what could be done.
-* Four flags mark responses that need a second read before submission:
-  `\concede`, `\correction`, `\newresult`, `\open`.
+* **No hyphens** in my own prose. Referee quotes keep theirs, since they are verbatim.
+* **Singular voice.** I, me, my. Never we, us, our.
+* Never "TF" or "HF"; "percent", not "per cent"; British spelling, except "stylized", which follows the
+  paper's section title.
+* Every response says what was done, not what could be done, and ends by saying where in the paper it is.
+* Flags, in bold, for a second read before submission: `\concede`, `\correction`, `\newresult`, and `\open`
+  for a request the paper does not meet. `\thisround` and `\tbd` are retired.
 
-## Numbers still missing
+## Requests the paper does not meet (each marked `\open` where it is answered)
 
-`\tbd{}` marks them and they print in bold, so they cannot be missed on a read
-through. Currently two, both the same object:
+* **AE:** mortality as a separate outcome (A9); Costantini's Treatment First arm, and Cohen (2024),
+  Brounstein and Wieselthier (2026), Humphries et al. (2026) not cited (A14); no comparison with Abramson and
+  Van Nieuwerburgh or the Council of Economic Advisers (A15); Vaillant's alcoholism remission rate still sets
+  baseline recovery (A17); no universal voucher experiment (A18); no direct wage penalty on users (A20).
+* **R1:** the mortality against unemployment comparison is made in the stylized model, not the full one
+  (1(d)); no run without SMI (1(a)); misses on users' income and the homeless (2(c)); no Jacobian or
+  sensitivity statistic (2(f)); no false positives (4(b)); no stigma or administrative burden (4(c)); no
+  systematic sensitivity (4(d)); the age limit on starting to use stays (S1).
+* **R2:** disamenity only as robustness, Corbae, Glover and Nattinger (2024) not cited (C2); no policy
+  function plots (C4); no generosity or optimal design (C6); the two larger rental sizes are set, without a
+  moment or a sensitivity (D1).
+* **R3:** no drug use among voucher holders (M1(a)); no gradient by severity (M1(c)); no use by assets or
+  employment (M2(b)); no optimal programme (M2(c)); no labour supply elasticity (m1); no graphs against the
+  value of life (m2); no continuous voucher sweep (m3).
 
-* the Housing First arm of the Costantini validation, in `response_editor.tex`
-  and `response_AE.tex`
-* the Treatment First arm of the same
+## Statements in the letters that are inference, not the paper's words (check before sending)
 
-Both come from `hftf_exper` once the calibration finishes.
-
-## What was added after the first draft
-
-`\thisround` marks every place where something that was a plan in the first draft
-of these letters is **built and running in the Fortran**, not merely written into
-the model. `\open` marks the reverse: in the written model, not yet in the code.
-The distinction is now enforced rather than assumed, and three claims moved from
-the first flag to the second when it was checked against the source:
-
-| claim | where | status |
-|---|---|---|
-| the drug price clears a finite supply curve | R3, R1, AE | **built.** There is a supply curve, `drug_supply_shifter * quantity^(curvature-1)`, an implied price, and an update loop; the elasticity is 1.46 |
-| serious mental illness is a state of the model | R1, editor, AE | **built.** `number_of_smi_states = 2`, and the state index carries `m` |
-| the homelessness disamenity is priced | R2 C2, editor | **built.** `kappa_x` is declared at 0.002 and enters flow utility as `-kappa_x*model_fraction_homeless(1)` |
-| the quantitative model solves a transition path | R1 3(d), editor | **written, not running.** `solve_transition_dynamics` is a parameter fixed at 0, so the transition branches are compiled out. The stylized model's transition IS solved and reported |
-
-All three of the first list have closed. The fourth row is the one that has not,
-and it replaced a claim that said "Done": R1's 3(d) and the editor letter now
-distinguish the stylized model's transition, which is solved and carries that
-section's result, from the quantitative model's, which is written and switched
-off while the calibration runs. The alternative is letting a referee find the
-switch.
-
-Three further things were corrected in this pass:
-
-* **The cannabis supply elasticity was attributed to the wrong paper.** It is Mace,
-  Patel and Seegert (2020), not Hansen, Miller and Weber, and the value is 1.46
-  rather than a baseline of 2 bracketed by cigarettes and gasoline. Those markets
-  share none of the frictions of an illicit one, so they no longer bracket anything.
-  Fixed in R1, R3, the AE letter and the editor letter.
-* **The homelessness disamenity had the wrong figure as its baseline.** The paper
-  takes the higher of Loubiere et al.'s two numbers, 0.20 per cent of average
-  earnings, because setting it high favours Housing First and a ranking that
-  survives that is the stronger claim. R2's C2 said the opposite.
-* **The stylized model is Section 3 of the new paper**, not section 2, and it is
-  calibrated rather than only derived.
-
-What IS built and running: the taste for drugs no longer changes with addiction,
-the housing access elasticity has a parameter of its own, children are valued at
-every age rather than at a terminal date, four hazards vary with age,
-homeownership is out, the rental grid is calibrated to the ACS size distribution,
-and three numbers were wrong and are corrected.
-
-**The Stone-Geary shifter no longer varies at all.** This is the one place where
-these letters now promise something different from the first draft, so it is worth
-knowing before reading them. We had said the shifter would fall with the disorder,
-with mental illness and with homelessness. It does none of those: flow utility is
-the same function of consumption, housing and drugs in every state and after every
-choice. Housing is a *choice*, so a preference depending on it is a preference over
-a choice, and it would give a user a reason to pick the street because the drug is
-worth more there. The elasticity R2 asked for in C1 runs through the recovery
-hazard instead, which is six times worse on the street, is a transition
-probability rather than a taste, and is what Milby actually measures. The upshot is
-that C1 and C5 turn out to be the same request, which the letters now say.
-
-**The homelessness disamenity is back, and now in the code.** An earlier draft
-dropped it, which was a change of mind against Referee 2 who had asked for it. It
-is carried again, priced from Loubiere et al.'s contingent valuation and on the
-headcount alone with no extra weight on the homeless who carry a disorder, since
-that is what the survey asked about. The baseline is the HIGHER of their two
-figures, 0.20 per cent of average earnings, because a larger disamenity favours
-whichever policy houses more people and a ranking that survives it is the stronger
-claim. The editor letter had that backwards and now does not.
-
-**The Stone-Geary shifter is now constant too**, which goes further than R2's C5
-and R3's M2(a) asked. Flow utility is the same function of consumption, housing
-and drugs in every state and after every choice. The housing access elasticity R2
-asked for in C1 runs through the recovery hazard instead, which is six times worse
-on the street, is a transition probability rather than a taste, and is what Milby
-reports. So C1 and C5 turn out to be the same request.
-
-## Still to do before submission
-
-* **The editor letter's overview belongs in the other four as well.** The summary
-  of what changed, and why the title changed with it, is currently only in
-  `response_editor.tex`. Each referee and the AE should eventually get a version of
-  it, tailored to what they asked for. Deliberately not done yet: the four letters
-  now carry only the two sentence title note.
-
-## The four places we push back
-
-Worth reviewing together, because pushing back after a rejection is the part
-most likely to go wrong in tone.
-
-1. **Costantini (AE, A14).** Neither of his coefficients is our Experiment 1:
-   both are local average treatment effects against no housing intervention, so
-   both live on the generosity margin. And his Treatment First is Grant and Per
-   Diem, time limited transitional housing, whose null he himself attributes to
-   the expiry. We do not rest on the argument: we run both of his experiments in
-   the model.
-2. **Abramson and Van Nieuwerburgh (AE, A15).** Their 2,500 dollars a month is
-   an assumption inside their calibration, stated as such, with the components
-   in their footnote 11. It cannot validate our number. We report the comparison
-   and describe it accurately.
-3. **R1 comment 2(c)(i).** His 74 per cent is measured over people with a use
-   disorder; the model figure he compares it against is over people who use.
-   Different populations. We target both, separately, which is a sharper test.
-   His underlying complaint was right.
-4. **R1 smaller comment 1.** The cap was on initiation, not on use, so it is not
-   inconsistent with the age profile of use. But the previous draft used one word
-   for both, so the confusion is ours, and a hard truncation was a poor way to
-   represent a smooth regularity in any case. Replaced by an age profile.
-
-## Things we tell them we got wrong
-
-Listed in `response_editor.tex` section 3. Six items. Two of them, the
-unemployment rate given a substance use disorder and the homelessness mortality
-multiplier, biased the previous version toward R1's rival hypothesis in comment
-1(d), which is worth stating plainly rather than burying.
+* Leaving out a fiscal cost of homelessness does not favour Treatment First, since Treatment First lowers
+  homelessness (AE A15, R2 C6, R3 M2(c)); and the editor letter's reason for removing it.
+* A parent's choices reach its child's adult life only through productivity (R2 C3).
+* The reasons given for not citing Corbae (R2 C2), for showing the mechanism in the stylized model (R2 C4),
+  for not reporting mortality separately (AE A9), and for having no rationing-free experiment (AE A18).
+* A household that already has a SUD risks nothing further by using in the benchmark (R3 M2(b)); the Meyer
+  comparison is with households of similar means (R3 M1(b)).
+* The description of Costantini's design (AE A14), checked against his paper in `related_lit`, and the
+  previous draft's source for the 37 percent, Kuhn and Culhane (1998) (AE A16, editor letter).
