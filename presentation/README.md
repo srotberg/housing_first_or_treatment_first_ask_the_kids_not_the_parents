@@ -10,6 +10,7 @@ The deck is published as a private Slides artifact: https://claude.ai/artifact/S
 | `project/deck.json` | slide order, the six sections, fonts |
 | `project/slides/<id>.html` | one slide each, inline styles, 1920×1080; speaker notes in `<aside>` |
 | `figures/` | the three paper figures the deck shows, copied from `writing/figures/` |
+| `charts.py` | writes the four results slides as charts with their explanations (28, 31, 33, 39): `python3 presentation/charts.py`, then republish those four |
 
 The slides show the figures as uploaded copies (`/_blob/...` URLs in the HTML):
 `sty-figure` is `stylized_who_uses.png` (Figure 1), `val-income` is `use_by_income.png`
