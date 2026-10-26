@@ -19,7 +19,7 @@ changes, upload the new PNG to the artifact and swap the URL in that slide.
 
 Every number on a slide is the paper's as of 26 October 2026 (round r414). The deck is not
 generated from the number files, so a number that moves in the paper has to be changed here by
-hand; `val-income` will move when the final pass of the by-income run lands.
+hand. `val-income` carries the by-income run's final pass (26 October, 15:09 UTC).
 
 Sections: 1 motivation and findings (slides 1–10), 2 the stylized model (11–15),
 3 the quantitative model (16–20), 4 calibration and validation (21–26),
