@@ -19,6 +19,7 @@ python3 export_ca.py | tail -1    # round r321: the run in which households with
 python3 export_noescape.py | tail -1    # 17 Oct: the strict rule (detection 1.00, no exemption for treatment) for the Discussion
 python3 export_alttrans.py | tail -1    # 19 Oct: Section 6.5 and Table tab:alttrans, the alternative transitions
 python3 export_trfix.py | tail -1    # 20 Oct: the share with a SUD worse off with the prices held (the main transition, one pass)
+python3 use_by_income_figure.py | tail -1    # 26 Oct: drug use by income relative to the mean, model and NSDUH (5.3, Block 2)
 python3 - <<'PYEOF'
 import json, os, sys
 sys.path.insert(0, '.')

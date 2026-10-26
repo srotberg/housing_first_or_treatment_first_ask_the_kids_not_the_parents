@@ -1537,3 +1537,14 @@ The author: "Ok, let them finish. And update the numbers at the end. It seems li
 CAgr2_20 loop1 (~01:30 UTC), CAann2_20 loop2 (~06:00 UTC) and CAann2_100 loop1 (~08:30 UTC 22 Oct); then one rebuild with the
 numbers in black, and code/paper/alttrans_final.json written from alttrans_provisional.json's src (every row, main included):
 export_alttrans.py and export_noescape.py read it first, so loops that land later move neither Table 7 nor 6.4/6.5.
+
+## 26 October: drug use by income, model against NSDUH (5.3, Block 2, fig:usebyincome)
+
+The author: "So for each income to average income showing the use rate. Data and model", then "This is fantastic and should be
+in the validation". The model's own by-income output reads income cut-offs that are never set; code/paper/use_by_income/patch_useinc.py
+adds a print-only DIAG USEINC histogram (y_u guard and income concept). The benchmark (decomp_2c_shares_Cu null arm) re-solved locally
+in $SP/druginc/run_bench; passes 1 and 2 agree within half a point per band; results/use_by_income/benchmark_useinc.txt holds the
+latest block (refresh with use_by_income_figure.py --from-log when the run ends). code/paper/use_by_income_figure.py draws
+writing/figures/use_by_income.pdf and writes x_ui_*; export_all_C.sh runs it. In the paper: a sentence and the figure in red at the end
+of Block 2. Also in black (standing rule): CAgr2_20 loop1 (0.20 exemption: CEV 2.87 -> 2.72, above 9-16 -> 8-16) and CAgrace100
+loop4 (1.00 exemption: 5.2 -> 5.5, 1.7 -> 2.0, CEV 6.24 -> 6.20) landed before the workers stopped on 22 Oct.
