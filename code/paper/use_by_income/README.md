@@ -25,3 +25,8 @@ How the 26 October run was made:
 The run's passes agree to within half a point in every band (pass 1: 17.6, 13.2, 5.4, 5.8, 5.9, 6.2, 4.2 percent;
 pass 2: 18.2, 12.8, 5.8, 6.1, 5.9, 6.3, 4.2), and the users' income over the mean is 0.628 in both, against the
 benchmark's 0.62 in Table 5.
+
+The run finished at 15:09 UTC on 26 October, after ten passes, and the figure and Block 2's sentence are drawn from the
+last of them: 18.3, 12.9, 5.9, 6.1, 5.9, 6.3 and 4.2 percent, with drug use at 8.92 percent of households, the
+benchmark's own, and the users' income over the mean 0.626. Against pass 2, only the bottom band's printed value moved
+(18.2 to 18.3).
