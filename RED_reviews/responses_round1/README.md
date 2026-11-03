@@ -32,7 +32,7 @@ What changed most, because the paper changed:
   the letters used to say it was switched off.
 * **The homelessness disamenity is not in the benchmark**, only a robustness run (footnote 4: no long-run
   gain moves by more than 0.14 points). The letters used to call it the baseline.
-* **Costantini:** the paper compares only his Housing First arm (Validation Block 7, 3.6 against 4.6
+* **Costantini:** the paper compares only Costantini's Housing First arm (Validation Block 7, 3.6 against 4.6
   percentage points); the `\tbd` table is gone, and the letters say there is no counterpart to his Treatment
   First arm.
 * **R1's 2(c)(i) is now a concession, not a push-back.** The paper targets his 74 percent (users' income over
