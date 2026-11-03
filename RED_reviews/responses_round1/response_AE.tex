@@ -19,26 +19,29 @@ Referee~2's comment C3 point to, and no longer on a loss of consortium added to
 welfare after the model is solved (A9).
 
 \textbf{What changed, under your three headings.} On the mechanisms, Section~3 is a
-new two period model, calibrated, that isolates the one mechanism the rest of the
-paper depends on: drug use concentrates at the bottom of the income distribution
-because the mortality risk of a substance use disorder (SUD) cannot be insured,
-while its unemployment risk can. The quantitative model drops the ingredients you
-questioned in A2 to A7: labour supply, homeownership, house prices and rents, the
-unemployment insurance (UI) benefit state and the type dependent transfers. It
-also drops the loss of consortium, and the fiscal cost the previous draft charged
-for each homeless household and each household with a SUD (A15). It adds detail where you asked for it, in the
-joint process of homelessness, drug use and income: serious mental illness (SMI),
-recovery that is harder on the street, treatment as a choice, an endogenous drug
-price, and children who share their parent's consumption and dwelling and whose
-adult productivity depends on their parent's SUD. No preference varies with any
-state. On the policies, Treatment First now requires a household with a SUD to be
-in treatment, and its drug test catches only some users, costs the government
-money, and excludes those it catches for a time. On the quantification, every
-internally calibrated parameter is reported with its data and model moment, the
-26 parameters that carry the story are separated from the 33 standard ones, and
-Section~5.2 validates the model on moments it was not fitted to, including the
-two pieces of evidence you and Referee~2 pointed to, Costantini (2025) and Milby
-et al.\ (2005).
+new two period model, calibrated, that isolates one mechanism: drug use
+concentrates at the bottom of the income distribution because the mortality risk
+of a substance use disorder (SUD) cannot be insured, while its unemployment risk
+can. The quantitative model drops most of the ingredients you questioned in A2 to
+A7: labour supply, homeownership, the clearing of house prices and rents, the
+separate unemployment insurance (UI) state and the type dependent transfers. It
+keeps general equilibrium, now in the drug price and the government budget (A5),
+and builds the link between generations that the previous draft only described
+(A6). It also drops the
+loss of consortium, and the fiscal cost the previous draft charged for each
+homeless household and each household with a SUD (A15). It adds serious mental
+illness (SMI), treatment as a choice, and children who share their parent's
+consumption and dwelling and whose adult productivity depends on their parent's
+SUD. No preference parameter varies with the disorder, SMI, income or housing. On
+the policies, Treatment First now requires a household with a SUD to be in
+treatment, and its drug test catches only some users, costs the government money,
+and excludes those it catches for a time. On the quantification, every internally
+calibrated parameter is reported with its data and model moment, the 26 parameters
+that carry the story are separated from the 33 standard ones, and Section~5.2
+validates the model on moments it was not fitted to, among them Costantini's
+(2025) Housing First estimate, which you pointed to, and the contrast between
+conditional and unconditional housing in Milby et al.\ (2005), the trial Referee~2
+pointed to.
 
 The answer has changed with the model. Moral hazard alone does not justify
 conditionality: with the externalities on children removed, a newborn is worse
@@ -50,8 +53,10 @@ percent, and raises a newborn's welfare by 2.57 percent of lifetime consumption.
 Three quarters of that gain is an externality on the child that its parent does
 not count, and in general equilibrium the parents gain too, by 0.69 percent of
 their own. The paper now also solves the transition, starting from the benchmark
-distribution: neither homelessness nor the share of children in a shelter rises in
-any year, and children born at the reform gain 1.45 percent.
+distribution. In the main transition neither homelessness nor the share of
+children in a shelter rises in any year, and children born at the reform gain
+1.45 percent. In the alternative transitions, where households with a SUD cannot
+stop using, homelessness does rise for a time (Section~6.5).
 }
 
 %======================================================================
@@ -74,42 +79,49 @@ the risk of a SUD, and a SUD brings two risks: a lower chance of surviving into 
 second period and a higher chance of being out of work in it. The model is dynamic
 rather than static, which is the point of Referee~1's comment 1(e): the cost of a
 SUD arrives in the second period, so the decision to use is a decision about a
-continuation value, and a static model cannot represent it. It is also calibrated,
-to the same United States data as the quantitative model (Tables~1 and~2), and its
-five internally calibrated parameters hit their targets exactly, so its results are
-numbers rather than signs.
+continuation value. It is also calibrated, to the same United States data as the
+quantitative model (Tables~1 and~2), and its five internally calibrated parameters
+hit their targets exactly, so its results are numbers rather than signs.
 
-It is built to show one thing, on which the rest of the paper relies: why drug use
-concentrates at the bottom of the income distribution. Fewer than one in ten adults
-have a SUD, mild included, and the average user's income is 0.74 of the population
-average in the 2024 National Survey on Drug Use and Health (NSDUH). In the model
-drugs are a luxury good, so without consequences use would concentrate at the top:
-the average user would earn 3.51 times the population average. Figure~1 then turns
-on each risk on its own. The risk of dying alone takes the average user to 0.64
-times the average at its calibrated strength. The risk of unemployment alone leaves
-it at 3.51 even at twice its calibrated strength, because a household can save
-against it, so the loss is roughly proportional to its income. Death cannot be
-insured against, and what it destroys grows with income. With saving switched off,
-unemployment reverses the gradient as well, which confirms that insurability is
-what separates the two. Footnote~10 reports the same result in a version with
-housing, a shelter, UI and vouchers.
+It is built to show one thing: why drug use concentrates at the bottom of the
+income distribution. Fewer than one in ten adults have a drug use disorder, mild
+included, which is what the paper counts as use, and the average user's income is
+0.74 of the population average in the 2024 National Survey on Drug Use and Health
+(NSDUH). In the model drugs are a luxury good, so without consequences use would
+concentrate at the top: the average user would earn 3.51 times the population
+average. Figure~1 then turns on each risk on its own. The risk of dying alone takes
+the average user to 0.64 times the average at its calibrated strength. The risk of
+unemployment alone leaves it at 3.51 even at twice its calibrated strength, because
+a household can save against it, so the loss is roughly proportional to its
+income. Death cannot be insured against, and what it destroys grows with income.
+With saving switched off, unemployment reverses the gradient as well, because the
+loss from losing a job then grows with income too. Footnote~10 reports the same
+result in a version with housing, a shelter, UI and vouchers.
 
 This motivates two decisions in the quantitative model, which keeps the stylized
-model's preferences and its two risks. No preference varies with income, or with
-any other state (A8): the income gradient comes from the mortality risk. And the
-mortality multiplier of a SUD is calibrated to the income of users relative to the
-average, because it is the parameter that decides how far down the income
-distribution use sits (Block~1 of Section~5.1).
+model's preferences and its two risks. No preference parameter varies with income
+(A8): the income gradient comes from the mortality risk. And the mortality
+multiplier of a SUD is calibrated to the income of users relative to the average,
+because it is the parameter that decides how far down the income distribution use
+sits (Block~1 of Section~5.1). The quantitative model falls short of that target:
+users earn 62 percent of the average, against 74 percent in the data.
 
-On the stylized facts: the two above open Section~3. Figure~2 in Section~5.2 shows
-the share of households that use drugs at each level of income relative to the
-mean, in the model and in NSDUH 2024, and use is highest at the bottom and lowest
-at the top in both: 18.3 percent against 13.7 below 0.22 of the mean, and 4.2
-against 4.8 above 1.62 times it. The relationships with unemployment and housing
-are in the quantitative model, since the stylized model leaves housing out to
-isolate the one mechanism. Unemployment among households with a SUD is 14.5 percent
-in the model against 16.2 in NSDUH 2024 (Table~4, Block~2), and the shares of the
-homeless with a SUD and with SMI are calibration targets (A13 and A16).
+On the stylized facts: the two above open Section~3. Figure~2 in Section~5.2, which
+is not targeted, shows the share of households that use drugs at each level of
+income relative to the mean, in the quantitative model and in NSDUH 2024. Use is
+highest at the bottom and lowest at the top in both: 18.3 percent against 13.7
+below 0.22 of the mean, and 4.2 against 4.8 above 1.62 times it. Between 0.43 and
+1.62 times the mean, use in the model is flatter and lower than in the data, 5.9 to
+6.3 percent against 7.2 to 10.2, which is why users' income falls short of its
+target. Unemployment among households with a SUD is 14.5 percent in the model
+against 16.2 in NSDUH 2024 (Table~4, Block~2), and the shares of the homeless with a
+SUD and with SMI are calibration targets (A13 and A16).
+
+\open The stylized model derives one of the relationships you list, between income
+and drug use. It takes the unemployment risk of a SUD from the data and leaves
+housing out, since its sole purpose, as the introduction says, is to show why the
+income gradient reverses. The relationships with unemployment and housing are
+shown only in the quantitative model.
 
 This is in Section~3 (Tables~1 and~2, Figure~1), with the facts in Section~5.2
 (Figure~2 and Table~4).
@@ -123,20 +135,19 @@ This is in Section~3 (Tables~1 and~2, Figure~1), with the facts in Section~5.2
 \concede Not as a state of its own, and it is no longer one. In the previous draft
 a household that drew UI kept it for its whole spell, which needed a separate
 state. UI now lasts one year: a share of those who lose their job receive it in
-their first year out of work, and after that no unemployed household receives
-anything. This is folded into employment status, which takes three values:
-employed, insured in the first year out of work, and uninsured (equation~13,
-Section~4.3). Nothing about it has to be identified from data on drug use: the
-replacement rate and the cap come from state law as the Department of Labor
-compiles it, and the share insured from the Bureau of Labor Statistics (Blocks~9
-and~12 of Appendix~A).
+their first year out of work, and after that no unemployed household receives UI.
+This is folded into employment status, which takes three values: employed, insured
+in the first year out of work, and uninsured (equation~13, Section~4.3). Nothing
+about it has to be identified from data on drug use: the replacement rate and the
+cap come from state law as the Department of Labor compiles it, and the share
+insured from the Bureau of Labor Statistics (Blocks~9 and~12 of Appendix~A).
 
 I keep UI in this simple form because the paper's mechanism contrasts the
 unemployment risk of a SUD, which households can insure, with its mortality risk,
 which they cannot, and UI is one of the ways the first is insured, together with
-saving and food assistance. Because it stops after a year, the extra time out of
-work that a SUD causes is spent without it, which is how a SUD's effect on finding
-a job raises the chance of losing housing (Block~2 of Section~5.1).
+saving and food assistance. Because it stops after a year, a household whose SUD
+keeps it out of work for longer spends the extra time without it, and a household
+out of work longer is likelier to lose its housing (Block~2 of Section~5.1).
 
 This is in Section~4.3 and Appendix~A.
 \end{response}
@@ -152,23 +163,20 @@ homeownership and house prices. These margins had a negligible effect on the
 results, so I removed them (footnote~19, Section~4.4). An employed household now
 supplies its labour inelastically (Section~4.1).
 
-The employment margin the paper needs is kept, and it is the extensive one: whether
-a household works at all. A SUD and SMI each make a job harder to find, and
-homelessness makes a job both easier to lose and harder to find (equation~21,
-Section~4.8). These are the margins with data behind them. The SUD and SMI
-multipliers are calibrated to the shares of the homeless with each condition
-(Blocks~2 and~3 of Section~5.1), the penalty of homelessness is set from Desmond
-and Gershenson (2016), and the unemployment rate of households with a SUD is a
-validation moment, 14.5 percent in the model against 16.2 in NSDUH 2024 (Table~4,
-Block~2).
+What the model keeps is employment, which is not chosen: a household loses and
+finds jobs at rates that depend on its state. A SUD and SMI each make a job harder
+to find, and homelessness makes a job both easier to lose and harder to find
+(equation~21, Section~4.8). The SUD and SMI divisors are calibrated to the shares of
+the homeless with each condition (Blocks~2 and~3 of Section~5.1), the penalty of
+homelessness is set from Desmond and Gershenson (2016), and the unemployment rate of
+households with a SUD is a validation moment (A13).
 
-This also answers Referee~3's minor comment 1, which asked why the labour supply
+This also bears on Referee~3's minor comment 1, which asked why the labour supply
 elasticity plays no clearer role when the budget is balanced with labour taxes. The
 budget is no longer balanced with taxes. The tax parameters are held at their
 benchmark values in every experiment, and the probability of drawing a voucher,
 $\pi_V$, adjusts so that net government revenue stays at its benchmark level
-(Section~4.11). No experiment raises a labour tax, so there is no deadweight loss
-of that kind for a labour supply elasticity to govern.
+(Section~4.11). No experiment raises a labour tax.
 
 This is in Sections~4.1, 4.4 and~4.11.
 \end{response}
@@ -180,26 +188,26 @@ homelessness and houses?''
 \end{referee}
 \begin{response}
 \concede It is not needed, and it is gone, together with house prices
-(footnote~19). The housing choice is now a shelter and three rental sizes, and the
-rent per unit of housing is held at its benchmark value in every experiment
-(Sections~4.4 and~4.5). The shelter is literal homelessness, sleeping rough or in
-an emergency shelter, and its service flow is calibrated to the homelessness rate
-(Block~2 of Section~5.1).
+(footnote~19). The housing choice is now close to what you suggest, a shelter
+against renting, and the rent per unit of housing is held at its benchmark value in
+every experiment (Sections~4.4 and~4.5). The shelter is literal homelessness,
+sleeping rough or in an emergency shelter, and its service flow is calibrated to
+the homelessness rate (Block~2 of Section~5.1).
 
-I keep three rental sizes rather than a single housed state because how much of its
-income a poor household must spend to stay housed is what Treatment First puts at
-stake when it conditions the voucher. The smallest size is calibrated to the share
-of renters paying more than half their income in rent, 19.2 percent in the 2022
-Survey of Consumer Finances (SCF) against 25.8 in the model, and the two larger
-sizes are set, not calibrated, at four and eight times the smallest (Block~8 of
-Appendix~A). With these, 58.7 percent of housed households spend more than thirty
-percent of their income on rent, against 43.2 percent of renters in the SCF, and a
-voucher holder pays 39.0 percent of its income in rent, against 31.2 in the
-Picture of Subsidized Households of the Department of Housing and Urban
-Development (HUD), because a holder that rents above the fair market rent pays the
-difference itself (Table~4, Block~3). This also bears on Referee~2's detail comment
-on the housing grid, which had seven points of which three were calibrated: it now
-has four, of which two are calibrated.
+Renting comes in three sizes rather than one, so that a household that can afford
+more than the smallest unit can rent more (Block~8 of Appendix~A). The smallest size
+sets how much of its income a poor household must spend to stay housed, which is
+what Treatment First puts at stake when it conditions the voucher. It is calibrated
+to the share of renters paying more than half their income in rent, 19.2 percent in
+the 2022 Survey of Consumer Finances (SCF) against 25.8 in the model; the two larger
+sizes are set, not calibrated, at four and eight times the smallest. With these,
+58.7 percent of housed households spend more than thirty percent of their income on
+rent, against 43.2 percent of renters in the SCF, and a voucher holder pays 39.0
+percent of its income in rent, against 31.2 in the Picture of Subsidized Households
+of the Department of Housing and Urban Development (HUD), because a holder that
+rents above the fair market rent pays the difference itself (Table~4, Block~3).
+Referee~2's detail comment noted that the housing grid had seven points, of which
+three were calibrated; it now has four, of which two are calibrated.
 
 This is in Sections~4.4 and~4.5, Block~2 of Section~5.1 and Block~8 of Appendix~A.
 \end{response}
@@ -221,20 +229,22 @@ clears a supply curve whose price elasticity is 1.46, the estimate of Mace et al
 (2020) for cannabis in Washington State (Section~4.12, Block~6 of Section~5.1). I
 know of no direct estimate for an illicit drug. Cannabis is the closest market I
 found, because it is still a Schedule~I substance at the federal level, so its
-suppliers operate under federal prohibition (footnote~31).
+suppliers operate under federal prohibition. Their estimate is over a month, and
+the paper notes that the long run elasticity of an illicit supply is likely higher,
+in which case the drug price would fall less (footnote~31).
 
 Both matter, which is why the policy analysis needs them, and Table~5 adds them
 one at a time so that the reader can see by how much. With the externalities on
 children and both held at their Housing First levels, Treatment First cuts drug
 use by 43 percent, a newborn gains 2.82 percent of lifetime consumption, and the
 parents lose 1.19 percent of theirs. Letting $\pi_V$ clear spends the screen's
-savings on vouchers for other households, and the parents then gain 2.42 percent.
-Letting the drug price clear as well brings the fall in drug use down to 21 percent,
-because the price falls by 5 percent and draws some households back into use. In
-the main experiment, with both clearing, a newborn gains 2.57 percent and the
-parents 0.69 percent. The partial equilibrium fall in drug use is twice the general
-equilibrium one, and the partial equilibrium gets the sign of the parents' welfare
-wrong.
+savings on vouchers for other households: the newborn's gain rises to 6.45 percent,
+and the parents gain 2.42 percent. Letting the drug price clear as well brings the
+fall in drug use down to 21 percent, because the price falls by 5 percent and draws
+some households back into use. In the main experiment, with both clearing, a
+newborn gains 2.57 percent and the parents 0.69 percent. Holding both at their
+Housing First levels doubles the fall in drug use and gets the sign of the parents'
+welfare wrong.
 
 This is in Sections~4.11 and~4.12, with the results by step in Section~6.2 and
 Table~5.
@@ -247,11 +257,12 @@ without intergenerational linkages?''
 \end{referee}
 \begin{response}
 \newresult You were right that the previous draft discussed intergenerational
-transmission with nothing in the model behind it: productivity persisted across
-generations, but nothing a parent did reached its child. Referee~2's comment C3
-asked for the opposite fix, a real linkage, on the ground that parents care about
-their children's outcomes. I built the linkage, and it now decides the paper's
-answer, which is why the title changed.
+transmission with nothing in the model behind it. Its Section~4.1.3 described
+permanent productivity as evolving across generations, but newborns drew it from an
+exogenous distribution, so nothing a parent did reached its child. Referee~2
+(comment C3) pointed towards a real linkage, since parents care about their
+children. I built one, and it now decides the paper's answer, which is why the
+title changed.
 
 There are three links. First, the child lives with its parent for its first 25
 years and shares the parent's consumption and dwelling, but not the drug. Every
@@ -267,33 +278,24 @@ child's adult life (Section~4.10). The share it leaves out, $1-\omega_c$, is an
 externality. This gives three externalities on the child: the budget, earnings and
 childhood homelessness externalities.
 
-What the parent's disorder costs the child's adult life enters the parent's problem
-as a difference, $D(y,d)$ in equation~(25): the child's value with a parent who
-never had the disorder, less its value with the parent's actual history. It is zero
-for a parent who never had a SUD and a cost otherwise. Written as a level, $\omega_c$
-times the child's value, it would be worth more the likelier the parent is to die,
-and so would pay most to households with a SUD for reasons that have nothing to do
-with the child (footnote~23). Because the charge depends on whether the parent ever
-had the disorder, the disorder state takes three values: never, recovered and
-current (Section~4.1).
-
-Each link is disciplined by evidence. The penalty, $\delta_d=0.24$, is the earnings
-loss at age 32 that Nilsson (2017) measures for children exposed in the womb to a
-Swedish alcohol experiment; to my knowledge, it is the only natural experiment
-estimate of how a parental substance shock reaches a child's adult earnings. It is
-checked indirectly: in the model, a child of a parent with a SUD has 1.46 times the
-odds of acquiring one, at the low end of the 1.44 to 2.51 in Mellentin et al.\
-(2016) and Yoon et al.\ (2013), and with the penalty switched off the odds ratio
-is 1.02 in the economy without the externalities, so the transmission runs
-through $\delta_d$ (Table~4, Block~6). The weight
-$\omega_c$ is calibrated, to 0.085, from behaviour. In NSDUH 2024, an unmarried
-adult living with one other adult and no child is 17.5 percent more likely to have
-used illicit drugs in the past year than a lone parent living with one child,
-reweighted to the same age, sex, marital status and family income. $\omega_c$ is
-set so that removing the parent's concern for its child raises drug use in the
-model by as much, 17.7 percent (Block~5 of Section~5.1). And 5.8 percent of
-children in the model live with a parent who has a SUD, against 4.6 percent in
-NSDUH 2024.
+The penalty and the weight are set from evidence. $\delta_d=0.24$ is the earnings
+loss at age 32 that Nilsson (2017) measures for children of mothers under 21
+exposed in the womb to a Swedish alcohol experiment. To my knowledge it is the only
+natural experiment estimate of how a parental substance shock reaches a child's
+adult earnings, although exposure in the womb does not map one to one into a
+parent's disorder after the child is born (Section~2). It is checked indirectly: in
+the model, a child of a parent with a SUD has 1.46 times the odds of acquiring one,
+at the low end of the 1.44 to 2.51 in Mellentin et al.\ (2016) and Yoon et al.\
+(2013), and with the penalty switched off the odds ratio is 1.02 in the economy
+without the externalities, so the transmission runs through $\delta_d$ (Table~4,
+Block~6). The weight $\omega_c$ is calibrated, to 0.085, from behaviour. In NSDUH
+2024, an unmarried adult living with one other adult and no child is 17.5 percent
+more likely to have used illicit drugs in the past year than a lone parent living
+with one child, reweighted to the same age, sex, marital status and family income.
+$\omega_c$ is set so that removing the parent's concern for its child raises drug
+use in the model by as much, 17.7 percent (Block~5 of Section~5.1). And 5.8 percent
+of children in the model live with a parent who has a SUD, against 4.6 percent in
+NSDUH 2024 (Table~4, Block~6).
 
 How much rests on the linkage is shown directly. The first five columns of
 Table~5 remove the children: the parent gives them no weight, their productivity
@@ -319,14 +321,14 @@ And why is it important that the bequests are type-dependent?''
 \end{referee}
 \begin{response}
 \concede It was not important, and both are gone. In the previous draft every
-living household received a transfer each period from the estates of the dead, and
-the transfer depended on its productivity. Now only a household entering adult life
-receives anything: a one time endowment, $T_0$, the same for every entrant, paid out
-of the estates of the households who die, and the government collects the rest of
-the estates (Section~4.3 and equation~26). $T_0$ has a job in the calibration: it
-decides how likely a young adult is to start out in a shelter, and it is calibrated
-to the share of the homeless aged 25 to 34, 26.0 percent in HUD's 2024 point in
-time (PiT) count against 26.4 in the model.
+living household received a transfer each period, financed by the estates of the
+dead, and the transfer rose with its productivity. Now only a household entering
+adult life receives anything from the estates: a one time endowment, $T_0$, the
+same for every entrant, and the government collects the rest (Section~4.3 and
+equation~26). $T_0$ has a job in the calibration: it sets how likely a young adult
+is to end up in a shelter in its first years, and it is calibrated to the share of
+the homeless aged 25 to 34, 26.0 percent in HUD's 2024 point in time (PiT) count
+against 26.4 in the model.
 
 This is in Section~4.3 and Block~2 of Section~5.1.
 \end{response}
@@ -342,12 +344,15 @@ for sensitivity analysis, the paper would benefit from a more focused analysis i
 the body of the paper.''
 \end{referee}
 \begin{response}
-This is what the revision did. The secondary dimensions of A2 to A7 are cut or
-reduced to their simplest form: labour supply, homeownership, house prices and
-rents, the separate UI state and the type dependent transfers. So is one dimension
-of the drug choice: the chance that use leads to a SUD no longer rises with how
-much a household uses (footnote~20). Rather than carry the cut margins in an
-appendix, I report in footnote~19 that they had a negligible effect on the results.
+Of the ingredients in A2 to A7, labour supply, homeownership, the clearing of house
+prices and rents, the separate UI state and the type dependent transfers are cut or
+reduced to their simplest form. So is one dimension of the drug choice: the chance
+that use leads to a SUD no longer rises with how much a household uses
+(footnote~20). Two are kept, for the reasons in A5 and A6: general equilibrium, now
+in the drug price and the budget rather than in housing, and the link between
+generations, which is now built into the model. The cut margins are not carried in
+an appendix: footnote~19 states that they had a negligible effect on the results in
+earlier versions, and the paper does not show those runs.
 
 The joint process of homelessness, drug use and income is modelled in more detail,
 and its links run both ways. A SUD makes a job harder to find, and a household out
@@ -356,9 +361,10 @@ lose and harder to find, raises mortality, and lowers the chance of recovering f
 a SUD (Sections~4.5, 4.6 and~4.8). SMI is a state of the model: a SUD makes it more
 likely to start, and it makes a job harder to find, raises mortality and makes
 recovery from a SUD less likely (Section~4.7). Treatment is a choice that raises
-recovery (Section~4.6). And a parent's SUD reaches its child's consumption, housing
-and adult productivity (A6). Each hazard is anchored on, or checked against, a
-clinical or epidemiological estimate (Section~2 and Blocks~2 to~4 of Section~5.1).
+recovery (Section~4.6). And a parent's drug use and SUD reach its child's
+consumption and housing, and its SUD the child's adult productivity (A6). Each
+hazard is anchored on, or checked against, a clinical or epidemiological estimate
+(Section~2 and Blocks~2 to~4 of Section~5.1).
 
 This is in Section~4 and Section~5.1.
 \end{response}
@@ -370,36 +376,38 @@ invariant to addiction but let the marginal utility vary by addiction by changin
 the parameter b decrease by addiction status.''
 \end{referee}
 \begin{response}
-I went further than your suggestion: no preference parameter varies with anything.
-The Cobb-Douglas weights and the shifter $b$ are the same for every household in
-every state, with or without a SUD or SMI, housed or homeless (equations~11
-and~12, Section~4.2). SMI does not enter the utility function at all
+The Cobb--Douglas weights are now invariant to the disorder, as you suggest, and so
+is $b$: no preference parameter varies with the disorder, SMI, income or housing
+(equations~11 and~12, Section~4.2). SMI does not enter the utility function at all
 (Section~4.7). The one term in flow utility beyond the parent's and the child's
 bundles and the value of being alive is the utility cost of a year in treatment,
 which a household pays only if it chooses treatment.
 
-The reason is the concern behind your comment, and behind Referee~2's comment C5
-and Referee~3's comment M2(a). Utility rises with $b$, so if $b$ fell with the
-disorder, a household that acquired one would also have its utility from a given
-bundle lowered by assumption. A policy that prevented disorders would then raise
-welfare through that assumption as well as through behaviour, and that mechanical
-part is what the three of you were worried about. With preferences fixed, a SUD
-costs a household only through what it does to its budget and to the hazards it
-faces: a higher chance of dying, a job that is harder to find, a higher chance of
-SMI, and, for its child, a lower adult productivity. Each of these is set from, or
-calibrated to, data (Section~5.1), so the welfare effects in Section~6 come from behaviour and these
-costs alone.
+I did not let $b$ fall with the disorder, because of the concern behind your
+comment and behind Referee~2's comment C5 and Referee~3's comment M2(a). Utility
+rises with $b$, so if $b$ fell with the disorder, a household that acquired one
+would also have its utility from a given bundle lowered by assumption. A policy that
+prevented disorders would then raise welfare through that assumption as well as
+through behaviour. With preferences fixed, a SUD costs a household only through
+what it does to its budget and to the hazards it faces: a higher chance of dying, a
+job that is harder to find, a higher chance of SMI, and, for its child, a lower
+adult productivity. Each of these is set from, or calibrated to, data
+(Section~5.1).
 
 Two consequences follow. First, the income gradient in drug use cannot come from
-preferences that differ with income, which is how the literature has produced it
-(Greenwood et al., 2025); it comes from the uninsurable mortality risk of a SUD, as
-the stylized model shows (A1). Second, the effect of housing on drug use cannot
-come from a preference either. It runs through the chance of recovering, which is
-lower in a shelter (A13).
+preferences that differ across households, which is how the literature has
+produced it, with preferences that differ by education (Greenwood et al., 2025); it
+comes from the uninsurable mortality risk of a SUD, as the stylized model shows
+(A1). Second, the effect of housing on drug use cannot come from a preference
+either. It runs through the hazards a household faces, among them the chance of
+recovering, which is lower in a shelter (A13).
 
-On robustness to preferences: the stylized model's results hold with log utility
-(footnote~8), and the parent's weight on its child, the preference parameter that
-decides how much of the gain is an externality, is varied in footnote~28 (A6).
+\open The paper does not solve the version you suggest, with $b$ falling with the
+disorder, so it does not report how the results change under it. Its robustness to
+preferences is two checks: the qualitative results of the stylized model hold with
+log utility (footnote~8), and the parent's weight on its child, the preference
+parameter that decides how much of the gain is an externality, is raised to 0.69 in
+footnote~28 (A6).
 
 This is in Sections~4.2 and~4.7.
 \end{response}
@@ -416,11 +424,11 @@ mortality consequences.''
 \concede The loss of consortium is gone. Referee~1's version of the objection, that
 the truly conservative value for a parameter with no source is zero and that zero
 reversed the ranking, was right. Nothing is now added to welfare after the model is
-solved. Welfare is the newborn's expected lifetime value in the model (equations~30
-and~31, Section~6.1), and a death is valued only for what it costs within the
-model, chiefly the flow value of being alive, $\aleph$, which is calibrated to a
-value of a statistical life (VSL) of 80 times average labour income, 81 in the model (Block~1
-of Section~5.1).
+solved. Welfare is the newborn's expected lifetime value in the model, childhood
+included (equations~30 and~31, Section~6.1), and a death is valued only for what it
+costs within the model, chiefly the flow value of being alive, $\aleph$, which is
+calibrated to a value of a statistical life (VSL) of 80 times average labour
+income, 81 in the model (Block~1 of Section~5.1).
 
 The case for Treatment First now rests on something the model contains. With the
 children removed, a newborn loses under Treatment First; with them, it gains, and
@@ -432,13 +440,13 @@ average earnings a year, and no long run gain in Table~5 moves by more than 0.14
 percentage points (footnote~4).
 
 \open The paper does not report the mortality consequences of the policies as a
-separate dimension. Your suggestion was a way to keep an ad hoc valuation of deaths
-out of the welfare ranking, and with the adjustment gone the welfare numbers no
-longer contain one. The model's mortality is checked instead against the evidence on
-losing housing: losing a voucher raises the three year mortality of households with
-SMI by about 3.6 percentage points, against the 4.6 by which Housing First lowers it
-among homeless veterans with mental illness in Costantini (2025) (Table~4,
-Block~7; see A14).
+separate dimension. I did not add them because your suggestion was a way to keep an
+ad hoc valuation of deaths out of the welfare ranking, and with the adjustment gone
+the welfare numbers no longer contain one. The model's mortality is checked instead
+against the evidence on losing housing: with the drug price and $\pi_V$ held, losing
+a voucher raises the three year mortality of households with SMI by about 3.6
+percentage points, against the 4.6 by which Housing First lowers it among homeless
+veterans with mental illness in Costantini (2025) (Table~4, Block~7; see A14).
 
 This is in Section~6.1 and Block~1 of Section~5.1, with the disamenity in
 footnote~4.
@@ -456,7 +464,8 @@ direct role in impacting the transition out of addiction.''
 \end{referee}
 \begin{response}
 \concede You and Referee~1 (comment 1(b)) were right: a policy named Treatment
-First contained no treatment, and recovery was random.
+First contained no treatment, and recovery could not be chosen. It depended only on
+luck and on housing.
 
 A household with a SUD now chooses each year whether to be in treatment
 (Section~4.6). Treatment doubles its chance of recovering, which is how much
@@ -471,19 +480,19 @@ treatment competes with vouchers in the budget (Block~4 of Section~5.1). Recover
 also depends on housing and on SMI: it is less likely in a shelter, by a multiplier
 calibrated to Milby et al.\ (2005), and less likely with SMI.
 
-Treatment First now requires treatment: a household with a SUD keeps its voucher
-only if it is in treatment and does not use, as the July 2025 executive order
+Treatment First now requires treatment: a household with a SUD fails the condition
+unless it is in treatment and does not use, as the July 2025 executive order
 directs and as the guidance implementing it requires of drug free housing
 (Section~4.9). In the main experiment, the share of households with a SUD who are in
-treatment rises from 24.6 to 29.0 percent (Table~5). The policy's direct effect on
-recovery is checked against Milby et al.\ (2005), the one trial that compares
-housing contingent on abstinence with housing without conditions: in the first year
-of Treatment First, voucher holders with a SUD recover 1.40 times as fast as housed
+treatment rises from 24.6 to 29.0 percent (Table~5). The policy's effect on recovery
+is checked against Milby et al.\ (2005), the one trial that compares housing
+contingent on abstinence with housing without conditions: in the first year of
+Treatment First, voucher holders with a SUD recover 1.40 times as fast as housed
 households with a SUD and no voucher, against a ratio of 1.26 in the trial's weeks
-of abstinence (Table~4, Block~8). The results do not depend on treatment: when a
-household with a SUD cannot keep its voucher by entering treatment, Treatment First
-cuts drug use by 29 percent and homelessness by 11 percent, and a newborn gains at
-least as much (footnote~38).
+of abstinence (Table~4, Block~8). The results do not depend on households with a
+SUD entering treatment and stopping: when treatment cannot help a household with a
+SUD keep its voucher, Treatment First cuts drug use by 29 percent and homelessness
+by 11 percent, and a newborn gains at least as much (footnote~38).
 
 This is in Sections~4.6 and~4.9, Block~4 of Section~5.1 and Block~8 of
 Section~5.2.
@@ -500,9 +509,9 @@ Done. Under Treatment First, voucher holders and households that draw a voucher 
 tested, and one that fails the condition is caught only with some probability, so a
 user can keep its voucher (Section~4.9). The detection rate is 20 percent a year,
 set so that the screen deters use as much as the closest evidence on a drug test
-with a severe penalty, the US military's random testing: Mehay and Pacula (1999)
-find that service members became 61 percent less likely to have used marijuana in
-the past year, and in the model 62 percent of the users who face the screen stop
+with a severe penalty, the US military's random testing. Mehay and Pacula (1999)
+find that it reduced past year marijuana use among the service members who stayed
+by 61 percent, and in the model 62 percent of the users who face the screen stop
 when it is introduced. Each test costs the government \$35, 0.031 percent of
 average earnings, the upper end of the estimates (Legislative Budget Board, 2013),
 so testing competes with vouchers in the budget. A household that is caught loses
@@ -511,21 +520,26 @@ probability one third a year. That is an expected exclusion of three years, the
 period for which the Housing Choice Voucher programme already bars a household
 evicted for drug related criminal activity.
 
-Referee~1's other features in comment 4 are handled as follows. False positives are
-not in the model: a household that does not use, and is in treatment if it has a
-SUD, is never flagged, because a positive screen is confirmed in a laboratory
-before it has consequences. The cost of complying, for a household with a SUD, is
-the utility cost of treatment, which is calibrated to take up (A10). Stigma and
-administrative burdens beyond the cost of the test are not in the model.
-
 The results hold at half the detection rate. At 10 percent, 41 percent of the users
 subject to the screen stop on impact, inside the 11 to 45 percent range that Mehay
 and Pacula find once those who left the military are counted. In the long run,
 Treatment First then cuts drug use by 14 percent and homelessness by 6 percent, and
 a newborn gains 1.65 percent, against 2.57 at the calibrated rate (footnotes~33
 and~35). The previous draft's assumption, that every user is caught, appears in the
-alternative transitions (Table~7): it raises homelessness by up to 14 percent in the
-first years, so how much the screen catches decides what happens along the way.
+alternative transitions, where households with a SUD also cannot stop using
+(Section~6.5, Table~7). There, with no exemption for treatment, catching every user
+raises homelessness by up to 14 percent in the first years, against up to 5 percent
+when one user in five is caught, so how much the screen catches decides what
+happens along the way.
+
+\open Three of Referee~1's points in comment 4 are not in the paper. There are no
+false positives: a household that does not use, and is in treatment if it has a
+SUD, is never flagged, since, as Section~6 puts it, a positive screen is confirmed
+in a laboratory before it has consequences. There is no stigma or administrative
+burden beyond the cost of the test; for a household with a SUD, the cost of
+complying is entering treatment, whose utility cost is calibrated to take up (A10).
+And sensitivity to the parameters that are hard to identify, comment 4(d), is shown
+only through single robustness runs (A18), not a systematic exercise.
 
 This is in Section~4.9, in the paragraph on the screen at the start of Section~6,
 and in Section~6.5.
@@ -542,35 +556,49 @@ the model does not match up to non-targeted moments, casting doubt on any
 counterfactual policy experiments.''
 \end{referee}
 \begin{response}
-\concede You were right on both counts, and both are addressed. Table~3 reports,
-for each of the 26 parameters that carry the story, the moment, its source, its
-value in the data and in the model, and the parameter's value; Table~A1 in
-Appendix~A does the same for the 33 standard parameters. Of the 59 parameters, 21
-are calibrated internally, and every one of them has its data and model moment side
-by side, so the reader can judge the fit. The two largest misses, in percentage
-points, are stated in the text: users earn 62 percent of the average in the model against 74 percent in the
-data (Block~1 of Section~5.1), and 25.8 percent of renters pay more than half their
-income in rent against 19.2 percent (Block~8 of Appendix~A).
+\concede You were right on both counts. The fit is now shown in full. Table~3
+reports, for each of the 26 parameters that carry the story, the moment, its
+source, its value in the data and in the model, and the parameter's value;
+Table~A1 in Appendix~A does the same for the 33 standard parameters. Of the 59
+parameters, 21 are calibrated internally, and every one of them has its data and
+model moment side by side, so the reader can judge the fit. The two largest misses,
+in percentage points, are stated in the text: users earn 62 percent of the average
+in the model against 74 percent in the data (Block~1 of Section~5.1), and 25.8
+percent of renters pay more than half their income in rent against 19.2 percent
+(Block~8 of Appendix~A). The calibration targets only the average income of users;
+use by income in the model is highest at the bottom and lowest at the top, as in the
+data, but flatter and lower in the middle, which is why users' income falls short
+(Figure~2; see A1).
 
 Validation is Section~5.2 and Table~4, in eight blocks, each of which says why it
-matters for the experiments. The model does well on what the experiments turn on.
-Drug use by income has the shape of the data (Figure~2). The odds that a child of a
-parent with a SUD acquires one, 1.46, are within the range of the evidence.
-Unemployment among households with a SUD is 14.5 percent against 16.2, and
-households with SMI are 2.64 times as likely as others to use drugs, against 2.44.
-And the model reproduces two pieces of evidence it was not fitted to: the mortality
-cost of losing housing for households with SMI (Costantini, 2025) and the effect of
-conditioning housing on abstinence (Milby et al., 2005), which A13 and A14 discuss.
+matters for the experiments. The model comes close on several moments it was not
+fitted to. The odds that a child of a parent with a SUD acquires one, 1.46, are at
+the low end of the evidence. Unemployment among households with a SUD is 14.5
+percent against 16.2, and households with SMI are 2.64 times as likely as others to
+use drugs, against 2.44. And it comes close to two pieces of evidence that bear
+directly on the experiments: the mortality cost of losing housing for households
+with SMI, 3.6 percentage points against 4.6 in Costantini (2025), and the effect of
+conditioning housing on abstinence, a ratio of 1.40 against 1.26 in Milby et al.\
+(2005), which A13 and A14 discuss.
 
 The misses that Referee~1 identified in comment 2(c) are smaller but not gone, and
 Table~4 shows them. The model's homeless are poorer and less often employed than in
 the data: 21.4 percent are employed, against 46, and their income is 6.5 percent of
 the average, against 19.1 in Meyer et al.\ (2024). They are also younger: 37.9
 percent are 35 to 44, against 27.2, and 11.5 percent are 55 and over, against 25.9.
-Users are younger too, with a mean age of 34.6 against 39.6. And the participation
-elasticity of drug demand is $-1.32$, larger in absolute value than the estimates of
-$-0.3$ to $-0.9$; since Treatment First lowers the drug price, a larger price
-response works against it (Block~5).
+Users are younger too, with a mean age of 34.6 against 39.6, as well as poorer. The
+paper says why the age and income of users matter: both policies reach a child
+through its parent, so the age of users decides how many children their use
+touches, and the vouchers are means tested, so the lower users sit in the income
+distribution, the more of them, and of their children, the screen reaches (Block~2
+of Section~5.2). And the participation elasticity of drug demand is $-1.32$, larger
+in absolute value than the estimates of $-0.3$ to $-0.9$; since Treatment First
+lowers the drug price, a larger price response works against it (Block~5 of
+Section~5.2).
+
+\open The rest of Referee~1's comment 2 is answered in my letter to him. One request
+there is not met: the paper reports no Jacobian of the moments with respect to the
+parameters and no sensitivity statistic (comment 2(f)).
 
 This is in Section~5.1 (Table~3), Section~5.2 (Table~4 and Figure~2) and
 Appendix~A (Table~A1).
@@ -584,23 +612,23 @@ homelessness to drug addiction. The model should highlight these key elasticitie
 in the analysis and show that the model is able to match them.''
 \end{referee}
 \begin{response}
-Both are now in the calibration, with the trial evidence that Referee~2 pointed to,
-and each has its own entry in Section~5.1 saying what it does to the two policies.
+Both links are now disciplined by evidence, the first with the trial that Referee~2
+pointed to, and each has its own entry in Section~5.1 saying what it does to the
+two policies.
 
-\textbf{The elasticity of drug use to housing access.} In the model, housing
-reaches drug use through recovery: a household with a SUD is less likely to recover
-in a shelter, by the multiplier $\mu_H$ (equation~18). As $\mu_H$ falls, housing
-buys more recovery and Housing First does more to cure a SUD. It is calibrated to
-Milby et al.\ (2005), who randomised homeless adults with a cocaine disorder in
-treatment into no housing, housing contingent on abstinence, and housing without
-conditions: housing improved recovery by 47.3 percent, a ratio of 1.47 in the data
-against 1.45 in the model (Block~4 of Section~5.1). The trial's second contrast,
-contingent against unconditional housing, is the closest evidence there is on what
-Treatment First does to those it houses. It is not targeted, and the model comes
-close: 1.40 against 1.26 (Table~4, Block~8). The response of drug use to the
-condition itself is set by the detection rate, against the military's random
-testing (A11), and its response to the drug price is a validation moment (Table~4,
-Block~5).
+\textbf{The elasticity of drug use to housing access.} The channel the paper
+disciplines is recovery: a household with a SUD is less likely to recover in a
+shelter, by the multiplier $\mu_H$ (equation~18). As $\mu_H$ falls, housing buys
+more recovery and Housing First does more to cure a SUD. It is calibrated to Milby
+et al.\ (2005), who randomised homeless adults with a cocaine disorder in treatment
+into no housing, housing contingent on abstinence, and housing without conditions:
+housing improved recovery by 47.3 percent, a ratio of 1.47 in the data against 1.45
+in the model (Block~4 of Section~5.1). The trial's second contrast, contingent
+against unconditional housing, is the closest evidence on what Treatment First does
+to those it houses. It is not targeted, and the model comes close: 1.40 against
+1.26 (Table~4, Block~8). The response of drug use to the condition itself is set by
+the detection rate, against the military's random testing (A11), and its response
+to the drug price is a validation moment (Table~4, Block~5).
 
 \textbf{The elasticity of homelessness to a SUD.} A SUD makes a job harder to find,
 by the divisor $\kappa^{ue}_d$, and a household out of work longer is likelier to
@@ -613,9 +641,9 @@ holds for SMI, whose divisor is calibrated to the SMI share of the homeless, 25
 percent against 24.7 in the model. Table~5 reports the SUD share of the homeless in
 every experiment.
 
-Neither runs through preferences (A8). Housing reaches drug use through the hazards
-a household faces, which is also what the trial measures: Milby et al.\ report
-abstinence by arm.
+\open The second is not reported as an elasticity. The paper disciplines it through
+a share and an unemployment rate, and does not compare a response of homelessness to
+a SUD with an estimate.
 
 This is in Blocks~2 and~4 of Section~5.1 and Blocks~2, 5 and~8 of Section~5.2.
 \end{response}
@@ -628,37 +656,38 @@ Treatment First has no long-term health effects, in contrast with the model
 simulations of this paper.''
 \end{referee}
 \begin{response}
-\correction I read the comparison differently, and the paper now makes it
-explicitly. Costantini estimates the effect of each of two programmes of the
-Department of Veterans Affairs against no housing intervention. His Housing First is
-the voucher programme the department runs with HUD, and his Treatment First is short term
-transitional housing run by local contractors. The model reproduces his Housing
-First finding. In Block~7 of Section~5.2, with the drug price and $\pi_V$ held, I
-compare households with SMI whom Treatment First's revocation puts on the street
-with the same households had they kept their voucher: losing it raises their three
-year mortality by about 3.6 percentage points, against the 4.6 by which enrolling in
-Housing First lowers it among his homeless veterans with mental illness (Table~4).
-The mortality cost of losing housing in the model is of the same order as the one he
-measures.
+\newresult The paper now compares the model with Costantini's Housing First
+estimate. Costantini estimates the effect of each of two programmes of the
+Department of Veterans Affairs against no housing intervention. His Housing First
+is the voucher programme the department runs with HUD, and his Treatment First is
+short term transitional housing run by local contractors. In Block~7 of
+Section~5.2, with the drug price and $\pi_V$ held, I compare households with SMI
+whom Treatment First's revocation puts on the street with the same households had
+they kept their voucher: losing it raises their three year mortality by about 3.6
+percentage points, against the 4.6 by which enrolling in Housing First lowers it
+among his homeless veterans with mental illness (Table~4). The mortality cost of
+losing housing in the model is of the same order as the one he measures.
 
-\open The paper reports no model counterpart to his Treatment First estimate. His
-estimate compares a stay in transitional housing with no programme at all. The
-paper's Treatment First is a different object: the same permanent voucher as
-Housing First, kept only on condition of sobriety and, for a household with a SUD,
-of treatment. The model has no time limited programme to set against his finding.
+\open The paper reports no model counterpart to his Treatment First estimate. I
+have not made one because his estimate compares a stay in transitional housing with
+no programme at all, while the paper's Treatment First is a different object: the
+same permanent voucher as Housing First, kept only on condition of sobriety and,
+for a household with a SUD, of treatment. The model has no time limited programme
+to set against his finding.
 
-Where his evidence and the paper overlap, they agree. Like the trials, his
-estimates speak to the households that enrol, within a given environment. The model
-agrees at that level: with the drug price and $\pi_V$ held at their Housing First
-levels, as in a trial, 74 percent of the households that have a SUD when the reform
-lands are worse off under Treatment First, and 67 percent still are when both clear
-(Section~7). What reverses the comparison lies outside what such designs observe:
-the households the condition deters from starting to use, the vouchers its savings
-buy for others, and the children (Section~7).
+On the contrast you draw with the model, I read his estimates as Section~7 reads
+the trials: they speak to households already in a bind, within a given
+environment. In the model those households lose from Treatment First too. With the
+drug price and $\pi_V$ held at their Housing First levels, as in a trial, 74 percent
+of the households that have a SUD when the reform lands are worse off under
+Treatment First, and 67 percent still are when both clear. What reverses the
+comparison lies outside what such designs observe: the households the condition
+deters from starting to use, the vouchers its savings buy for others, and the
+children (Section~7).
 
 On the other papers you name: Abramson (2026) is now cited in Section~2, on how
 eviction policy changes who becomes homeless. \open Cohen (2024), Brounstein and
-Wieselthier (2026) and Humphries et al.\ (2026) are not cited in the current draft.
+Wieselthier (2026) and Humphries et al.\ (2026) are not cited.
 
 On your final question in this paragraph, whether a SUD has direct effects on
 productivity, see A20.
@@ -683,21 +712,20 @@ Section~4.11) pays UI, social security, food assistance, vouchers, drug tests an
 treatment, and has no item for the shelter. The only public cost tied to a SUD is
 treatment, \$9,426 a year for each household that takes it up (Block~4 of
 Section~5.1). So neither the previous draft's figures nor Abramson and Van
-Nieuwerburgh's enter the paper.
-
-Leaving these costs out does not favour Treatment First. In the main experiment,
-Treatment First lowers homelessness by 11 percent and the share of households with a
-SUD by 19 percent in the long run, and along the transition homelessness does not
-rise in any year (Sections~6.2 and~6.4). At those allocations, a positive cost per
-homeless household or per household with a SUD would add to what Treatment First
-saves the budget. This also settles Referee~2's comment C6 that the previous
-draft's cost of an unhoused household was high and exceeded the rent on the
-smallest unit: in the new model it is zero.
+Nieuwerburgh's enter the paper. This also answers Referee~2's remark in comment C6
+that the previous draft's cost of an unhoused household was high and exceeded the
+rent on the smallest unit: in the new model it is zero.
 
 \open For the same reason, the paper does not compare Abramson and Van
-Nieuwerburgh's figures with those of the Council of Economic Advisers, and does not
-cite their paper: there is no fiscal cost of homelessness in the model for either
-figure to discipline.
+Nieuwerburgh's figures with those of the Council of Economic Advisers, does not
+cite their paper, and has no robustness run with a fiscal cost of homelessness:
+there is no such cost in the model for either figure to discipline. The paper does
+not show how the results would change with one. My reading is that leaving it out
+does not favour Treatment First. In the main experiment, Treatment First lowers
+homelessness by 11 percent and the share of households with a SUD by 19 percent in
+the long run, and homelessness does not rise in any year of the main transition
+(Sections~6.2 and~6.4); at those allocations, a cost per homeless household or per
+household with a SUD would add to what Treatment First saves the budget.
 
 This is in Section~4.11.
 \end{response}
@@ -715,19 +743,19 @@ targeting.''
 previous draft took it as the midpoint of a range of substance abuse rates among
 homeless adults in New York City and Philadelphia (Kuhn and Culhane, 1998), a
 measure of substance abuse in general that varied with the population and the
-definition. The paper is about drugs, so the target is now the prevalence of drug
-use disorders among homeless people in the meta analysis of Gutwinski et al.\
-(2021), 21.7 percent. It calibrates how much harder a SUD makes it to find a job,
-and the model gives 20.2 percent (Table~3, Block~2).
+definition. The target is now the prevalence of drug use disorders among homeless
+people in high income countries in the meta analysis of Gutwinski et al.\ (2021),
+21.7 percent. It calibrates how much harder a SUD makes it to find a job, and the
+model gives 20.2 percent (Table~3, Block~2).
 
 On the definition: the homeless state is literal homelessness, sleeping rough or in
-an emergency shelter (Section~4.5). A household that doubles up is housed in the
-model. The homelessness rate is pinned not to a point but to a band, 0.40 to 1.00
-percent of households: the floor is HUD's 2023 PiT count, which counts people in
-shelters and on the street on a single night, and the ceiling is the share homeless
-at some point over a year, from Burt et al.\ (2001). The model gives 0.62 percent.
-The other moments of the homeless come from HUD's 2024 PiT count, for their ages,
-and from Meyer et al.\ (2024), for their employment and income (Table~4, Block~1).
+an emergency shelter (Section~4.5). Doubling up is not a state of the model. The
+homelessness rate is pinned not to a point but to a band, 0.40 to 1.00 percent of
+households: the floor is HUD's 2023 PiT count, which counts people in shelters and
+on the street on a single night, and the ceiling is the share homeless at some
+point over a year, from Burt et al.\ (2001). The model gives 0.62 percent. The other
+moments of the homeless come from HUD's 2024 PiT count, for their ages, and from
+Meyer et al.\ (2024), for their employment and income (Table~4, Block~1).
 
 This is in Section~4.5, Block~2 of Section~5.1 and Block~1 of Section~5.2.
 \end{response}
@@ -747,7 +775,8 @@ not clear that the 10-year recovery rates for alcoholism (Vaillant, 1995) would
 apply to substance use disorder for the homeless.''
 \end{referee}
 \begin{response}
-Rewritten, along the three lines you set out.
+Rewritten, along the lines you set out, with one exception, Vaillant, which is
+still open.
 
 \textbf{Insight rather than a list.} Section~5.1 groups the 26 parameters that carry
 the paper's story into six blocks by the mechanism they work through: who uses
@@ -762,28 +791,28 @@ matters for the experiments.
 \textbf{Standard against new.} The 33 parameters common to most life cycle models,
 for preferences, the rental ladder, earnings and employment, survival and the onset
 of SMI, interest and taxes, social security and programme rules, and the rest of the
-drug market, are in Appendix~A with
-Table~A1, separate from the 26 in Table~3. Every row of both tables says whether the
-parameter is set externally or calibrated internally, and for the internal ones
-gives the data and the model value.
+drug market, are in Appendix~A with Table~A1, separate from the 26 in Table~3.
+Every row of both tables says whether the parameter is set externally or calibrated
+internally, and for the internal ones gives the data and the model value.
 
 \textbf{Vintages and replication.} The surveys are named with their waves: NSDUH
 2024, the 2022 SCF, HUD's PiT counts of 2023 and 2024, the 2024 Consumer
 Expenditure Survey, and the Current Population Survey over 2014 to 2024, among
-others. Estimates
-taken from studies keep the study's date, which is why some are older. The
+others. Estimates taken from studies keep the study's date, and some are old,
+Vaillant (1995), Burt et al.\ (2001) and Roebuck et al.\ (2003) among them. The
 replication package's \pname{data/DATA\_APPENDIX.md} documents the dataset, year,
 universe and computation behind every estimate, and the package carries all the
 datasets, so nothing has to be downloaded (Section~5).
 
-\textbf{Vaillant.} \concede You are right that a ten year remission rate for
+\textbf{Vaillant.} \open You are right that a ten year remission rate for
 alcoholism is not obviously the remission rate of a drug use disorder among the
-homeless. The paper still uses it, but only for the baseline: the annual chance that
-a housed household with a SUD recovers, 0.025, is the hazard implied by Vaillant's
-ten year remission rate (Block~4 of Section~5.1). It is no longer applied to the
-homeless. Recovery in a shelter is that baseline scaled by $\mu_H$, which is
+homeless, and the paper still uses it. The baseline annual chance that a housed
+household with a SUD recovers, 0.025, is the hazard implied by Vaillant's ten year
+remission rate (Block~4 of Section~5.1), as in the previous draft, and the paper
+gives no further justification for applying it to drugs. What has changed is
+recovery in a shelter: it is that baseline scaled by $\mu_H$, which is now
 calibrated to Milby et al.\ (2005), whose participants were homeless adults with a
-cocaine disorder in treatment, the population the parameter is about (A13).
+cocaine disorder in treatment (A13).
 
 This is in Section~5 and Appendix~A.
 \end{response}
@@ -796,28 +825,28 @@ third experiment in this case seem to be most relevant singling out what is the
 better policy under rationed quantities and non-rationed settings.''
 \end{referee}
 \begin{response}
-Done, with one difference from your suggestion that I state plainly below. The
+Done in part; the difference from your suggestion is stated plainly below. The
 paper now asks one question, whether the existing rationed programme should require
-sobriety, and has three experiments (Section~6). The first removes the externalities
-on children and asks whether moral hazard alone justifies Treatment First; it does
-not. The second introduces Treatment First in the full model in steps, letting
-first $\pi_V$ and then the drug price clear, so that each general equilibrium effect
-is shown on its own; the last step is the main experiment. Both are in Table~5. The
-third is the transition from Housing First to Treatment First, with both clearing
-every period (Figure~3). The alternative transitions, in which households with a SUD
-cannot stop using, take a short section and one table (Section~6.5, Table~7), and
-the robustness runs are reported in a sentence or a footnote each: half the
-detection rate, a higher weight on the child, no earnings penalty, no response
-through treatment, and a homelessness disamenity.
+sobriety, and has three experiments (Section~6). The first removes the
+externalities on children and asks whether moral hazard alone justifies Treatment
+First; it does not. The second introduces Treatment First in the full model in
+steps, letting first $\pi_V$ and then the drug price clear, so that each general
+equilibrium effect is shown on its own; the last step is the main experiment. Both
+are in Table~5. The third is the transition from Housing First to Treatment First,
+with both clearing every period (Figure~3). The robustness runs are reported in a
+sentence or a footnote each: half the detection rate, a higher weight on the child,
+no earnings penalty, no response through treatment, and a homelessness disamenity.
+The alternative transitions, in which households with a SUD cannot stop using, stay
+in the body rather than an appendix, in a short section with one table
+(Section~6.5, Table~7), because the third lesson of Section~7 rests on them.
 
-\open The difference is that no experiment removes the rationing. Every experiment
-keeps the programme rationed, so the previous draft's third experiment, Treatment
-First against Housing First with universal vouchers, is not in the paper. The reason
-is the question: the executive order and HUD's funding notice that motivate the
-paper change the conditions attached to the assistance that exists, not its scale
-(Section~1). The size of the programme still moves in the experiments, because
-$\pi_V$ spends what the screen saves: in the main experiment it rises from 6.75 to
-7.80 percent.
+\open No experiment removes the rationing. Every experiment keeps the programme
+rationed, so the previous draft's third experiment, Treatment First against
+Housing First with universal vouchers, is not in the paper. I left it out because
+the paper asks the question the executive order raises, whether the existing,
+rationed programme should require sobriety (Section~1). The size of the programme
+still moves in the experiments, because $\pi_V$ spends what the screen saves: in
+the main experiment it rises from 6.75 to 7.80 percent.
 
 This is in Section~6.
 \end{response}
@@ -849,14 +878,15 @@ rate divided by $\kappa^{ue}_d$, so its spells out of work last longer
 rate of households with a SUD is 14.5 percent in the model against 16.2 in NSDUH
 2024 (Table~4, Block~2).
 
-The productivity effect the model does have is on the next generation, and it is
-central to the results: a child whose parent had a SUD while it lived at home
-starts adult life with its productivity lowered by $\delta_d=0.24$, for life (A6).
-This is the earnings externality, worth 0.46 percent of a newborn's lifetime
-consumption in the main experiment, 18 percent of the gain (Table~6 and
-footnote~30).
+The productivity effect the model does have is on the next generation: a child
+whose parent had a SUD while it lived at home starts adult life with its
+productivity lowered by $\delta_d=0.24$, for life (A6). This is the earnings
+externality, worth 0.46 percent of a newborn's lifetime consumption in the main
+experiment, 18 percent of the gain (Table~6). The paper notes that the ranking of
+the two policies does not rest on the penalty's size (footnote~30), and Treatment
+First still raises welfare with the penalty set to zero (footnote~5).
 
-This is in Section~4.8 and Block~5 of Section~5.1.
+This is in Section~4.8, Block~5 of Section~5.1 and Section~6.3.
 \end{response}
 
 \end{document}
