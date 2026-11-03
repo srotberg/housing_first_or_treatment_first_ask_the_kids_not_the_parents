@@ -51,31 +51,49 @@ What changed most, because the paper changed:
 * Flags, in bold, for a second read before submission: `\concede`, `\correction`, `\newresult`, and `\open`
   for a request the paper does not meet. `\thisround` and `\tbd` are retired.
 
-## Requests the paper does not meet (each marked `\open` where it is answered)
+## Second pass, 3 November 2026 (round r419)
 
-* **AE:** mortality as a separate outcome (A9); Costantini's Treatment First arm, and Cohen (2024),
-  Brounstein and Wieselthier (2026), Humphries et al. (2026) not cited (A14); no comparison with Abramson and
-  Van Nieuwerburgh or the Council of Economic Advisers (A15); Vaillant's alcoholism remission rate still sets
-  baseline recovery (A17); no universal voucher experiment (A18); no direct wage penalty on users (A20).
-* **R1:** the mortality against unemployment comparison is made in the stylized model, not the full one
-  (1(d)); no run without SMI (1(a)); misses on users' income and the homeless (2(c)); no Jacobian or
-  sensitivity statistic (2(f)); no false positives (4(b)); no stigma or administrative burden (4(c)); no
-  systematic sensitivity (4(d)); the age limit on starting to use stays (S1).
-* **R2:** disamenity only as robustness, Corbae, Glover and Nattinger (2024) not cited (C2); no policy
-  function plots (C4); no generosity or optimal design (C6); the two larger rental sizes are set, without a
-  moment or a sensitivity (D1).
-* **R3:** no drug use among voucher holders (M1(a)); no gradient by severity (M1(c)); no use by assets or
-  employment (M2(b)); no optimal programme (M2(c)); no labour supply elasticity (m1); no graphs against the
-  value of life (m2); no continuous voucher sweep (m3).
+Each letter was checked again, sentence by sentence, against its report and the paper as it now stands, with
+one priority above the rest: the paper must be represented correctly. Statements the paper does not support
+were removed; reasons the paper does not give are now worded as mine ("I removed ...", "I would expect ...");
+"never rises" is limited to the main transition; "15 and 11 years" became Table 7's periods; Costantini is
+compared on the Housing First arm only, "of the same order"; claims about the version the referees read were
+checked against `writing/old/housing_first_or_treatment_first.pdf`, and one error item in the editor letter
+that did not hold (the old homelessness target as a person rate against a household agent: the old model's
+agent was an individual) was removed. Every request the paper does not meet now has its own plain `\open`.
 
-## Statements in the letters that are inference, not the paper's words (check before sending)
+## Requests the paper does not meet (each marked `\open`)
 
-* Leaving out a fiscal cost of homelessness does not favour Treatment First, since Treatment First lowers
-  homelessness (AE A15, R2 C6, R3 M2(c)); and the editor letter's reason for removing it.
-* A parent's choices reach its child's adult life only through productivity (R2 C3).
-* The reasons given for not citing Corbae (R2 C2), for showing the mechanism in the stylized model (R2 C4),
-  for not reporting mortality separately (AE A9), and for having no rationing-free experiment (AE A18).
-* A household that already has a SUD risks nothing further by using in the benchmark (R3 M2(b)); the Meyer
-  comparison is with households of similar means (R3 M1(b)).
-* The description of Costantini's design (AE A14), checked against his paper in `related_lit`, and the
-  previous draft's source for the 37 percent, Kuhn and Culhane (1998) (AE A16, editor letter).
+* **AE:** the stylized model derives only the income gradient (A1); the version with $b$ falling with the
+  disorder is not solved (A8); mortality is not reported as an outcome (A9); no false positives, stigma or
+  systematic sensitivity (A11); no Jacobian or sensitivity statistic (A12); the elasticity of homelessness to a
+  SUD is not reported as such (A13); no model counterpart to Costantini's Treatment First arm, and Cohen (2024),
+  Brounstein and Wieselthier (2026) and Humphries et al. (2026) are not cited (A14); no fiscal cost of
+  homelessness and no comparison with Abramson and Van Nieuwerburgh (A15); Vaillant's alcoholism remission rate
+  still sets baseline recovery (A17); no universal voucher experiment, and the alternative transitions stay in
+  the body (A18); no direct wage penalty on users (A20).
+* **R1:** no run without SMI (1(a)); the mortality against unemployment comparison is made in the stylized model
+  only (1(d)); users' income and the homeless' employment, income and age are still missed (2(c)); the response
+  of homelessness to voucher access, of employment to vouchers and of drug use to generosity are not compared
+  with evidence such as the Family Options Study (2(d)); the model's moments are not defined in an appendix
+  (2(e)); no Jacobian (2(f)); no false positives (4(b)); no stigma or administrative burden (4(c)); no results
+  with the hazards changed (4(d)); the age limit on starting to use stays (S1); no column of percent changes (S2).
+* **R2:** disamenity only as robustness, Corbae, Glover and Nattinger (2024) not cited (C2); no policy function
+  plots (C4); no broader eligibility, more generous voucher or optimal design (C6); the two larger rental sizes
+  are set without a source, a moment or a sensitivity (D1).
+* **R3:** no drug use among voucher holders, and no comparison with the trials on voucher receipt and
+  homelessness (M1(a)); no gradient by severity (M1(c)); welfare is not recomputed under another utility
+  function (M2(a)); no use by assets or employment status (M2(b)); no optimal programme, no fiscal cost per
+  homeless household and no direct externality of drug use beyond the user's own child (M2(c)); no labour supply
+  elasticity (m1); no sensitivity for any parameter of the quantitative model (m2); no continuous voucher sweep (m3).
+
+## Worded as my reading, not the paper's finding (check before sending)
+
+* Leaving out a fiscal cost of homelessness would not favour Treatment First, since Treatment First lowers
+  homelessness (AE A15, R2 C6, R3 M2(c)): each letter now says the paper does not test it.
+* The reasons for: showing the mechanism in the stylized model (R2 C4), not reporting mortality separately
+  (AE A9), having no rationing-free experiment (AE A18), having no counterpart to Costantini's Treatment First
+  arm (AE A14), and dropping the generosity comparison (R3 m3).
+* R3 M2(a): a new concession, that the drug sits in a non-separable bundle with consumption and housing at
+  $\sigma=2$, so preferences still shape how use affects the value of the other goods. **Please read it.**
+* R1 1(c): that the paper's price offset is more likely too large than too small, inferred from footnote 31.
