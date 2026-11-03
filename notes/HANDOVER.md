@@ -191,7 +191,7 @@ calibrated values to a file each loop.
 
 ## 6. The letters
 
-Five letters in `RED_reviews/responses_round1`, built with `./build.sh`.
+Five letters in `HF_or_TF_RED_reviews/responses_round1`, built with `./build.sh`.
 `\thisround` means **built and running in the Fortran**; `\open` means in the
 written model only. That distinction was audited against the source and three
 claims moved: the drug supply curve, the homelessness disamenity, and serious

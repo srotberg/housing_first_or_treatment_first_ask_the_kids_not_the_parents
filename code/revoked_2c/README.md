@@ -3,8 +3,8 @@
 The author, 4 October: *"Can we test a short run experiment with fixed prices and fixed pi_V, where you do Treatment
 First and check what happens to the SUD of those whose voucher was revoked in the first 3 years?"*, and the MORTALITY of
 those households *"relative to what would happen to them if they had stayed housed"*. For the associate editor's
-comment on Costantini (2025) (RED_reviews/AE_R1.txt; placeholders `\tbd{HF LATE}`, `\tbd{TF LATE}` in
-RED_reviews/responses_round1/response_AE.tex). Results: `results/revoked_2c/`.
+comment on Costantini (2025) (HF_or_TF_RED_reviews/AE_R1.txt; placeholders `\tbd{HF LATE}`, `\tbd{TF LATE}` in
+HF_or_TF_RED_reviews/responses_round1/response_AE.tex). Results: `results/revoked_2c/`.
 
 ## Design
 

@@ -710,6 +710,7 @@ is PRIVATE now; the author wants RED_reviews to stay private if the repo is ever
 now". BEFORE THE REPO IS MADE PUBLIC: move RED_reviews to its own private repo with its history, delete it here with a local-only
 exclude (.git/info/exclude, so its name never appears), rewrite this repo's history to drop it (git filter-repo --path RED_reviews
 --invert-paths) and force-push; every clone then re-clones. Do not do any of it until the author says so.
+DONE IN PART, 3 November 2026 (the author: "move the red reviews and responses there"): RED_reviews was split out with its history into the private repository srotberg/HF_or_TF_RED_reviews and deleted here. This repository's history was NOT rewritten, so the folder is still in its past commits; rewriting it needs a force push and the author's go-ahead.
 
 ROUND r204 (06 Oct 21:40; PDF 54c4f26d, 17 comments, pp. 34-35). RED STRIPPED (commit 50ce7f31); base_r204 + splice_r204 (0
 names moved). In red: J_K 'the length of ... child rearing'; epsilon(j) 'This is the deterministic hump', 'every household with the

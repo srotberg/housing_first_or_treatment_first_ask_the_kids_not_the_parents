@@ -598,7 +598,7 @@ Weighted by the 2023 point in time count, 396,494 sheltered and 256,610 unshelte
 (`homeless_income_share_data = 0.191`). The figure goes back to the submitted paper's table of untargeted moments
 ("Avg. income of homeless ... 0.191 × avg. income", citing Meyer, Wyse, Meyer, Grunwaldt and Wu, 2024; first draft,
 commit dc5b53f8), whose text read "average cash income among homeless individuals is approximately 19 percent of
-average population income", and Referee 1 quotes it (comment 2(c)(i), `RED_reviews/reviewer1_R1.pdf`). The table
+average population income", and Referee 1 quotes it (comment 2(c)(i), `HF_or_TF_RED_reviews/reviewer1_R1.pdf`). The table
 of Meyer et al. it was read from is not recorded and the paper could not be opened from this environment (Part V).
 The model's counterpart includes food stamps, as the data do.
 

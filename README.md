@@ -14,7 +14,7 @@ Replication material for **"Housing First or Treatment First? Ask the Kids, Not 
 | `data/` | Stata and text code that produces the calibration targets from the public microdata, with a README of its own. |
 | `output/` | Saved simulation output from benchmark and counterfactual runs. |
 | `related_lit/` | Notes on the literature the paper draws on. |
-| `RED_reviews/` | Referee reports and response material from the earlier round. |
+| *(moved)* | The RED referee reports and response letters are in the private repository `srotberg/HF_or_TF_RED_reviews` (paths written `HF_or_TF_RED_reviews/...` below refer to it). |
 
 ## The two models
 

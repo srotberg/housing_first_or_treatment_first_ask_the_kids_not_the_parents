@@ -165,7 +165,7 @@ exports, lists the roundings the prose applies (θ 0.17, π_V 0.068, the SSI flo
 The author: "Just finish the data appendix". Only `data/DATA_APPENDIX.md` and this file were changed: no paper text,
 code, JSON or data script was touched. Sources were the repository and its full git history, unshallowed for this
 pass. That history includes the paper's first draft, LaTeX added in commit dc5b53f8 on 14 August, with its
-bibliography, and the referee reports in `RED_reviews/`. Web searches were also used, accessed 10 October 2026. From
+bibliography, and the referee reports in `HF_or_TF_RED_reviews` (a separate private repository). Web searches were also used, accessed 10 October 2026. From
 this environment the web could be searched but no page could be fetched (bls.gov, census.gov, nber.org and PMC all
 refused), so a value that only lives inside a PDF table could not be read, and the appendix says so wherever that
 mattered.
