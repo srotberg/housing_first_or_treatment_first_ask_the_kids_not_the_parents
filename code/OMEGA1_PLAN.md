@@ -81,6 +81,11 @@ on the omega_c = 1 Housing First distribution, drug price and pi_V held, share o
 - The letters count the robustness checks: eleven, six of them along the transition (common_blocks.py, ROB). If the
   0.69 footnote goes and nothing else changes, that count stands.
 
+THE TABLE (the author, 6 November 16:35): "in the table, you just want to show the welfare effects, no need to show
+the impacts on drug use levels". So the new section's table reports, for each of the four columns, the newborn's
+welfare change and its split (childhood, adult life; the part the parent counts) and the parents' welfare, and no
+drug use, SUD or homelessness levels; those, if needed at all, go in a sentence. Detection 0.15 (60 percent stop).
+
 ## 3. The paper, once the results are in (in red; numbers as @@names@@; directions from compare())
 
 The author: "the experiment should come also in the paper", "the introduction as well and the abstract should be

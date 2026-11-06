@@ -1,3 +1,16 @@
+06 Nov 16:31 OMEGA_C = 1, STAGE 2 DONE AND STAGE 3 LAUNCHED. Share of ALL tested users who stop on impact (t_stop/t_used,
+the main experiment's measure, impact year, price and pi_V held; price held at the benchmark's 1.000 since the null was
+not in, against 1.0036 in the null so far): 0.15 -> 60.06, 0.20 -> 67.14, 0.25 -> 74.28, 0.30 -> 81.75 (scan.txt in
+results/whostops_omega1_pts_0p15_0p20 and _0p25_0p30). DETECTION 0.15 (60 against 61; the author: "does not have to give
+exact numbers"). Calibration as agreed: b only (0.00479), every other parameter at the benchmark's (the author: "it
+doesnt have to be fully recalibrated"); moments that drift: homelessness 0.54 (0.62), SUD share of the homeless 14.8
+(20.2), SMI share of the homeless 21.1 (24.7), Milby ratio 1.27 (1.46), users' income 0.79 (0.62), VSL 74 (81). It is
+the THIRD EXPERIMENT (the author). Columns, OMEGA1_B=0.00479 OMEGA1_PDET=0.15: fixboth (OMEGA1_WAIT_NULL=1, the price
+held at the null's) session_019aHjYdu9SonXsQhYzXNQam; fixpv session_019aHjYfb5Zqn8r238VeRugG; fixp
+session_019aHjYcQ7fqCtHZmA9XD1is; tf session_019aHjYfkLvwpeHnEiAG55Nv. The author: "i want to see the PE one first"
+(fixboth); and for the paper's table: "you just want to show the welfare effects, no need to show the impacts on drug
+use levels".
+
 06 Nov 15:25 OMEGA_C = 1, STAGE 2 AND THE NULL LAUNCHED. The b = 0.00479 benchmark files landed (90 files, worker
 session_019aHjYeSeHPLnhTVtaryVAy). Stage 2, bash code/omega1/run_whostops_omega1.sh <p> <p> OMEGA1_B=0.00479: 0.15 0.20
 session_019aHjYetghS2DimWvFcpfnr, 0.25 0.30 session_019aHjYfFRcgqCxokjK4FQEe (target: 61 percent of ALL tested users stop,
