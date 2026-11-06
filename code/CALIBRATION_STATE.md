@@ -1,3 +1,12 @@
+06 Nov 15:36 OMEGA_C = 1, STAGE 1 REGRID. Block 1 of the first grid (0.00380 / 0.00393 / 0.00406 / 0.00419) puts users at
+18.63 / 17.28 / 15.52 / 13.77 percent, and block 1 runs BELOW the final value in the 0.686 and benchmark scans (7.88 ->
+9.05, 7.48 -> 8.96), so all four will end far above 8.956. At a given b, use is HIGHER at omega_c = 1 than at 0.686
+(block 1 at b = 0.00419: 13.8 here against about 11 extrapolated at 0.686), so the 0.085 -> 0.686 extrapolation pointed
+the wrong way. Block-1 target about 7.8 (final/block-1 ratio about 1.15), slope about -13.5 pp per 0.001: b* about
+0.0046 to 0.0049. NEW GRID launched 15:36 UTC: 0.00455 session_019aHjYfukUHmLsUEZoDa5Mg, 0.00467
+session_019aHjYdcb3bd4wvFMy7a2Aj, 0.00479 session_019aHjYeSeHPLnhTVtaryVAy, 0.00491 session_019aHjYdBNExSk64qgRMKAoo. The
+first four keep running: they map the curve at higher use. Release them (release_<tag>) once a b* is chosen.
+
 06 Nov 14:47 OMEGA_C = 1, STAGE 1 LAUNCHED: THE b SCAN (the author, comments on the AE letter: "we need to understand why
 welfare rises when omega_c is higher...and if it rises even when omega_c=1", "calibrate omega_c=1 with about 8.9 percent drug
 use (use the omega_c=0.689 to go from a good starting point, and adjust b until you have the right share of drug use). then we
