@@ -175,7 +175,7 @@
 \begin{center}
 \begin{minipage}{0.86\textwidth}
 \begin{center}\textbf{Abstract}\end{center}
-\noindent Should housing assistance require sobriety? A general-equilibrium model of homelessness, drug use, drug prices and mortality is calibrated to US data. Use concentrates among low-income households because a substance use disorder's mortality risk, unlike its unemployment risk, is uninsurable. Drug use harms users' children, cutting their consumption and, through a parent's disorder, their adult earnings. In the long run, sobriety conditions @@x_abs_hchild_clause@@. Consequently, a newborn's welfare rises by $@@x_tf_cev@@$ percent of lifetime consumption, of which @@x_wd_extsh_frac_tf@@ is an externality its parent does not count, and in general equilibrium parents gain too. Even along the transition, homelessness and childhood homelessness do not rise, and newborns still gain. The model reproduces micro evidence of randomised controlled trials, and users with a disorder lose, but macro effects on other households and children overturn the verdict. Moral hazard alone does not justify conditionality.
+\noindent Should housing assistance require sobriety? A general-equilibrium model of homelessness, drug use, drug prices and mortality is calibrated to US data. Use concentrates among low-income households because a substance use disorder's mortality risk, unlike its unemployment risk, is uninsurable. Drug use harms users' children, cutting their consumption and, through a parent's disorder, their adult earnings. In the long run, sobriety conditions @@x_abs_hchild_clause@@. Consequently, a newborn's welfare rises by $@@x_tf_cev@@$ percent of lifetime consumption, \del{of which @@x_wd_extsh_frac_tf@@ is an externality its parent does not count,} and in general equilibrium parents gain too. \del{Even along the transition, homelessness and childhood homelessness do not rise, and newborns still gain. The model reproduces micro evidence of randomised controlled trials, and users with a disorder lose, but macro effects on other households and children overturn the verdict.} \new{The gain reflects an externality, since parents count children only in part, and a missing market, since children cannot pay parents to abstain. Along the transition, homelessness does not rise and newborns still gain. As in randomised controlled trials, users with a disorder lose, but effects on other households and children overturn the verdict.}\why{The missing market is now in the abstract. To keep it under 150 words, the externality's share of the gain moved out (the introduction still gives it), and the transition and trial sentences are shorter.} Moral hazard alone does not justify conditionality.
 
 \vspace{0.6em}
 \noindent\textit{Keywords:} homelessness; housing vouchers; substance
@@ -236,16 +236,16 @@ evaluates programmes that provide rapid housing without conditioning on sobriety
 and finds large and persistent improvements in housing stability and reductions in
 shelter and other public-service use (Tsemberis et al., 2004; Padgett et al., 2006; Larimer et al., 2009; Goering et al., 2014; Aubry et
 al., 2016). Evidence on substance use is mixed: most studies find no statistically
-significant change, and some report modest reductions in alcohol-related outcomes. Costantini (2025) finds that enrolling in Housing First lowers the mortality of homeless veterans with mental illness, while the Treatment First programmes of the Department of Veterans Affairs have no lasting effect on it; Section~\ref{sec:fvalid} compares the model with this finding. \new{Evidence from Los Angeles County points the
-same way. Cohen (2024) finds that placing homeless single adults in housing programmes quickly makes them less likely
+significant change, and some report modest reductions in alcohol-related outcomes. Costantini (2025) finds that enrolling in Housing First lowers the mortality of homeless veterans with mental illness, while the Treatment First programmes of the Department of Veterans Affairs have no lasting effect on it; Section~\ref{sec:fvalid} compares the model with this finding. \del{Evidence from Los Angeles County points the
+same way.} \new{Quasi-experimental evidence from Los Angeles County also finds that housing programmes benefit the people they house.} Cohen (2024) finds that placing homeless single adults in housing programmes quickly makes them less likely
 to return to the homeless support system, lowers crime and reduces their reliance on emergency cash assistance.
 Brounstein and Wieselthier (2026) find that a two-year rapid rehousing programme raises employment, while permanent
-supportive housing leaves the employment and earnings of its recipients unchanged.} The one trial of homeless families, HUD's Family Options Study, followed @@fo_families@@ families for three years: an unconditional subsidy reduced later homelessness, family separations and the children's school absences and behaviour problems (Gubits et al., 2016, 2018).
+supportive housing leaves the employment and earnings of its recipients unchanged. The one trial of homeless families, HUD's Family Options Study, followed @@fo_families@@ families for three years: an unconditional subsidy reduced later homelessness, family separations and the children's school absences and behaviour problems (Gubits et al., 2016, 2018).
 
  These studies, however, consider effects on participants over six to thirty-six months, which is a short period of time relative to the recovery process that Vaillant (1995) documents.  Moreover, a deeper limitation of a trial is the scope. A trial randomises households within a fixed environment, and thus ignores exactly the effects that in this paper decide the welfare comparison. These are the impact on the behaviour of households outside the sample, the consequences for the government's budget, and, most importantly, the effects on children across the economy, not only those of participants.
 
 \paragraph{Deterrence effects of zero-tolerance policies.} The closest evidence on how much a drug test with a severe penalty deters drug use comes from the US military, which in 1981 began testing its personnel at random, $@@mp_test_lo@@$ to $@@mp_test_hi@@$ percent of a unit every month, and dismissing those who failed. Mehay and Pacula (1999) use this policy change to compare service members with civilians, following the same people
-over time. \new{To my knowledge, it is the only study that measures how much such a test deters drug use.}    They find that drug testing of service members reduced past-year marijuana use by $@@mp_stay_rel_pc@@$ percent.  Section~\ref{sec:experiments} uses this response to set how often Treatment First's screen catches a user.
+over time. To my knowledge, it is the only study that measures how much such a test deters drug use.    They find that drug testing of service members reduced past-year marijuana use by $@@mp_stay_rel_pc@@$ percent.  Section~\ref{sec:experiments} uses this response to set how often Treatment First's screen catches a user.
 
 \paragraph{Economic models of drug use.} Modelling substance use as forward-looking
 optimisation dates to Becker and Murphy (1988), and the assumption is empirically
@@ -255,8 +255,8 @@ present-biased households over-consume relative to their own long-run preference
 
 \paragraph{General-equilibrium models of homelessness.} I build directly on
 \.{I}mrohoro\u{g}lu and Zhao (2022), who model homelessness as a rational
-response to income risk, mental-health shocks, housing costs and housing policy (see also Abramson, 2026, on how eviction policy changes who becomes homeless, \new{Humphries et al., 2025, on how much
-rental assistance and delays in eviction court reduce evictions,} and Rotberg and Zhang, 2024, on rent control's effect on homelessness).
+response to income risk, mental-health shocks, housing costs and housing policy (see also Abramson, 2026, on how eviction policy changes who becomes homeless, Humphries et al., 2025, on how much
+rental assistance and delays in eviction court reduce evictions, and Rotberg and Zhang, 2024, on rent control's effect on homelessness).
   In their framework, the effect of housing policy on homelessness is not tied to drug use, and thus a policy that requires sobriety has no margin to affect. My model includes that margin by adding endogenous drug use, disorder and recovery, along with mortality that depends on a household's state.\footnote{\label{fn:kappax}The paper does not focus on the disamenity that homelessness may impose on the rest of the population. In a contingent valuation, Loubi\`ere et al.\ (2020) find that Europeans would pay about $@@f_kappa_x_pc@@$ percent of average earnings a year to end homelessness. I also solved the model with a disamenity of that kind, and it barely changes the results. The welfare numbers in the paper leave it out; with it, at that value, no long-run gain in Table~\ref{tab:longrun} moves by more than $@@x_wd_kx_max@@$ percentage points.}
 
 \paragraph{Intergenerational transmissions.}  The \emph{earnings externality} depends on the connection between a parent's SUD and its child's adult earnings. Parental drug abuse is recorded in more than a third of removals into foster care (Adoption and Foster Care Analysis and Reporting System (AFCARS), FY2017), household substance abuse is one of the adverse childhood experiences of Felitti et al.\ (1998), and children of a parent with a SUD are more likely to acquire one themselves (Mellentin et al., 2016; Yoon et al., 2013). A parent who stays unemployed longer and spends on the drug has less to invest in the child, and that investment shows up in adult earnings: family income raises children's achievement (Dahl and Lochner, 2012), parental investment in education accounts for roughly half of the intergenerational correlation in earnings (Restuccia and Urrutia, 2004), and a year of schooling returns around ten percent (Card, 1999).
@@ -568,8 +568,8 @@ A household with SMI recovers from it with the probability $\lambda_m$ each year
 
 SMI then affects three objects: the chance of finding a job when unemployed, through~\eqref{eq:femp}; mortality, through~\eqref{eq:fsurv}, both in
 Section~\ref{sec:fcosts}; and the SUD recovery hazard, through $\mu_m$
-in~\eqref{eq:frecover} in Section~\ref{sec:fdrug}. It does not enter the utility function. \new{This is because a SUD makes SMI more likely, so if utility fell with SMI, a
-policy that deters drug use would raise welfare by assumption rather than through behaviour.} The SMI chain does not
+in~\eqref{eq:frecover} in Section~\ref{sec:fdrug}. It does not enter the utility function. This is because a SUD makes SMI more likely, so if utility fell with SMI, a
+policy that deters drug use would raise welfare by assumption rather than through behaviour. The SMI chain does not
 depend on housing, because in the At Home / Chez Soi randomised trial, housing had no detectable effect on the symptoms of homeless adults with SMI (Stergiopoulos et al., 2015).
 
 \subsection{What the SUD, SMI, and homelessness cost}\label{sec:fcosts}
@@ -779,9 +779,9 @@ The model has @@n_all@@ parameters, some of which vary by age. @@n_ext_cap@@ are
 \item[$\kappa_{H}$, the employment penalty of homelessness.] This parameter sets how much likelier a household in a shelter is to lose its job and how much less likely it is to find one: separations are $1+\kappa_H$ times as frequent and job finding $1-\kappa_H$ times as fast. Housing First recovers that employment directly, whereas Treatment First does so only as the fall in SUD lowers unemployment and homelessness over time. As $\kappa_H$ rises, homelessness costs more, and both policies have more to act on. It is set externally at $@@c_kappa_h_value@@$, from Desmond and Gershenson (2016).
 \item[$\underline c$, the food stamp maximum allotment.] This parameter sets how low consumption can go for the poorest households, with no income, assets or voucher, and so where utility is bounded from below. As it rises, the value of being alive rises, mortality costs more and Treatment First has more to deter. It is calibrated internally to food stamp spending over output, $@@c_underline_c_data@@$ percent: outlays from the United States Department of Agriculture (USDA) over GDP.
 \item[$\pi_V$, the chance of drawing a voucher.] This is the policy dial itself, and it holds the whole trade-off. Raising it houses more households, which reduces the \emph{childhood homelessness externality}, and makes life worth more, which makes Treatment First's deterrence more effective. In the benchmark it is calibrated internally, at $@@c_pi_v_value@@$, so that the share of income-eligible households who hold a voucher is aligned with the $@@c_pi_v_data@@$ percent in HUD's Picture of Subsidized Households, 2023.
-\item[$T_0$, the endowment at entry to adulthood ($j=1$).] A child who becomes an adult starts adult life with $T_0$ times average earnings, which sets how likely a young adult is to end up in a shelter in its first years. \new{It captures, in a reduced form,
+\item[$T_0$, the endowment at entry to adulthood ($j=1$).] A child who becomes an adult starts adult life with $T_0$ times average earnings, which sets how likely a young adult is to end up in a shelter in its first years. It captures, in a reduced form,
 the financial help that young adults receive from their parents, such as inter vivos transfers, gifts or help with
-housing, which cannot be observed directly in the data.}   As it rises, fewer parents are homeless, and Treatment First has less of an effect on drug use during parenthood, and thus less of an effect on children. Its moment is the share of the homeless aged 25 to 34, $@@c_t_0_data@@$ percent in HUD's 2024 PiT count.
+housing, which cannot be observed directly in the data.   As it rises, fewer parents are homeless, and Treatment First has less of an effect on drug use during parenthood, and thus less of an effect on children. Its moment is the share of the homeless aged 25 to 34, $@@c_t_0_data@@$ percent in HUD's 2024 PiT count.
 \end{description}
 
 \paragraph{Block 3: SMI chain.}   This block determines how much  Treatment First prevents beyond drug use and SUD. This is because a SUD raises the chance of SMI, and SMI lowers employment and raises mortality.
@@ -796,11 +796,11 @@ housing, which cannot be observed directly in the data.}   As it rises, fewer pa
 
 \paragraph{Block 4: Recovery and treatment.} Both policies work through this block: Treatment First encourages seeking treatment, and Housing First buys recovery by housing people, since recovery is likelier while housed.  The first two parameters determine how quickly recovery happens, the next two decide how much treatment raises recovery and how likely a household with a SUD is to go to treatment, and the last parameter determines how much it costs the government to send a household to treatment for a SUD.
 \begin{description}\setlength{\itemsep}{0.25em}\setlength{\parskip}{0em}
-\item[$\bar\pi_r$, the baseline SUD recovery rate.] This parameter is the annual chance that a housed household recovers from a SUD, the level everything else in the block scales. As it rises, disorders are expected to end more quickly on their own, and there is less for either policy to do. It is set externally at $@@c_bar_pi_r_value@@$, the annual hazard implied by the ten-year remission rate in Vaillant (1995). \new{I use a remission rate over ten years
+\item[$\bar\pi_r$, the baseline SUD recovery rate.] This parameter is the annual chance that a housed household recovers from a SUD, the level everything else in the block scales. As it rises, disorders are expected to end more quickly on their own, and there is less for either policy to do. It is set externally at $@@c_bar_pi_r_value@@$, the annual hazard implied by the ten-year remission rate in Vaillant (1995). 
+\del{I use a remission rate over ten years
 because a household carries the disorder for many years, while the trials of Housing First follow participants for at
 most three. Moreover, this baseline is only the starting point for recovery: housing, through $\mu_H$, and treatment,
-through $g$, then scale it.}
-\item[$\mu_H$, SUD recovery when homeless.] This parameter sets how much less likely recovery is in a shelter, and so how much recovery a voucher buys beyond shelter. As it falls, housing buys more recovery and Housing First is more effective in curing a SUD; near one, Housing First has little effect. It targets the effect of housing on recovery in Milby et al.\ (2005), who find that housing improves recovery chances by $47.3$ percent.
+through $g$, then scale it.} \item[$\mu_H$, SUD recovery when homeless.] This parameter sets how much less likely recovery is in a shelter, and so how much recovery a voucher buys beyond shelter. As it falls, housing buys more recovery and Housing First is more effective in curing a SUD; near one, Housing First has little effect. It targets the effect of housing on recovery in Milby et al.\ (2005), who find that housing improves recovery chances by $47.3$ percent.
 \item[$g$, the treatment effect on recovery.] The instrument through which Treatment First reaches households that already have a SUD, which matters most in the short run. As it rises, treatment is likelier to end a SUD, and Treatment First has a larger margin to act on. It is set externally at $@@c_g_value@@$, which is how much medication for opioid use disorder raises remission: rates near double those without it (Paul et al., 2024), and randomised trials of agonist medication against placebo find at least as large an effect on abstinence (Fudala et al., 2003).
 \item[$\bar\tau^{u}$, the utility cost of treatment.] Take-up is a choice, and this utility cost is what makes households decline a treatment that would raise their chance of recovering. As it rises, fewer take treatment up, and Treatment First induces fewer households with a SUD to seek it. It is calibrated internally to treatment take-up: $@@c_bar_tau_u_data@@$ percent of adults with a SUD received substance use treatment in the past year in NSDUH 2024.
 \item[$c_{\text{treat}}$, the public cost of a year of treatment.] This parameter is what the government pays for each household with a SUD that takes up treatment, under both policies. It ties treatment to the government's budget. Treatment First raises take-up, since entering treatment and stopping is how a household with a SUD keeps its voucher, so part of what the screen saves goes on treatment rather than on vouchers for others. As $c_{\text{treat}}$ rises, Treatment First frees less for vouchers and $\pi_V$ rises less. It is set externally to \$@@ctreat_usd@@ a year, $@@x_ctreat_earn_pc@@$ percent of average earnings, the cost of a residential treatment episode in Roebuck et al.\ (2003).
@@ -876,13 +876,13 @@ The third experiment is the transition from Housing First to Treatment First in 
 
 After the main transition, I explore alternative transitions in which households with a SUD cannot stop using (Section~\ref{sec:alttrans}): the screen with no exemption for treatment from the first day of the reform, the same screen announced five periods before it starts, and the same screen with treatment alone keeping the voucher for its first five periods, each at two detection rates. Section~\ref{sec:cev} defines the welfare criterion all three use.
 
-\paragraph{The screen.}    The detection rate $p_{\mathrm{det}}$ is the annual chance that the government catches a user who has a voucher or who is offered one. This detection rate therefore determines how risky using is, and as a result, how strongly Treatment First deters use. As the detection rate rises, the government is more likely to catch users, and more users stop. I  set it so that the screen deters use as much as a drug test with a severe penalty does in the closest evidence, the US military's random testing (Section~\ref{sec:literature}).  After the military began testing at random and dismissing those who failed, service members who stayed were $@@mp_stay_rel_pc@@$ percent less likely to use marijuana in the past year than the non-treated group (Mehay and Pacula, 1999).\footnote{  The $@@mp_stay_rel_pc@@$ percent figure is the raw comparison among members who stayed. Accounting for those who left, the decline in use was between $@@mp_lo_rel_pc@@$ and $@@mp_hi_rel_pc@@$ percent. At half the calibrated rate, $@@x_ws_half_tested_all_pc@@$ percent of the users subject to the screen stop, @@x_ws_half_where@@ that range (footnote~\ref{fn:halfrate}). \new{At a quarter of the calibrated rate,
-$@@x_ws_quarter_tested_all_pc@@$ percent stop, @@x_ws_quarter_where@@ the same range.}}
+\paragraph{The screen.}    The detection rate $p_{\mathrm{det}}$ is the annual chance that the government catches a user who has a voucher or who is offered one. This detection rate therefore determines how risky using is, and as a result, how strongly Treatment First deters use. As the detection rate rises, the government is more likely to catch users, and more users stop. I  set it so that the screen deters use as much as a drug test with a severe penalty does in the closest evidence, the US military's random testing (Section~\ref{sec:literature}).  After the military began testing at random and dismissing those who failed, service members who stayed were $@@mp_stay_rel_pc@@$ percent less likely to use marijuana in the past year than the non-treated group (Mehay and Pacula, 1999).\footnote{  The $@@mp_stay_rel_pc@@$ percent figure is the raw comparison among members who stayed. Accounting for those who left, the decline in use was between $@@mp_lo_rel_pc@@$ and $@@mp_hi_rel_pc@@$ percent. At half the calibrated rate, $@@x_ws_half_tested_all_pc@@$ percent of the users subject to the screen stop, @@x_ws_half_where@@ that range (footnote~\ref{fn:halfrate}). At a quarter of the calibrated rate,
+$@@x_ws_quarter_tested_all_pc@@$ percent stop, @@x_ws_quarter_where@@ the same range.}
 
-  In the model, the counterpart applies Treatment First to the household distribution, drug price and $\pi_V$ from the Housing First benchmark. And it follows each user who faces the screen, whether they hold a voucher or are eligible and were offered one. With $p_{\mathrm{det}}=@@x_tf_pdet_pc@@$ percent, $@@x_ws_tested_all_pc@@$ percent of them stop when the screen is introduced,\footnote{The military figure is for any past-year use of marijuana, a broader measure than the model's, whose users have a disorder of any drug, marijuana among them. Therefore, the two are compared as proportional responses.} and none starts.\footnote{\label{fn:halfrate}At half the rate ($p_{\mathrm{det}}=@@x_tf_pdet_half_pc@@$ percent), $@@x_ws_half_tested_all_pc@@$ percent of the users subject to the screen stop on impact, about @@x_ws_half_vs_mil@@ of the military's response. The results hold: in the long run, with the drug price and $\pi_V$ clearing, Treatment First @@x_h10_clause@@, against $@@x_tf_b_pc@@$ and $@@x_tf_h_pc@@$ percent, respectively, at the calibrated rate, and a newborn is better off by $@@x_h10_cev@@$ percent of lifetime consumption, against $@@x_tf_cev@@$. \new{At a quarter of the rate ($p_{\mathrm{det}}=@@x_tf_pdet_quarter_pc@@$ percent), $@@x_ws_quarter_tested_all_pc@@$ percent of
+  In the model, the counterpart applies Treatment First to the household distribution, drug price and $\pi_V$ from the Housing First benchmark. And it follows each user who faces the screen, whether they hold a voucher or are eligible and were offered one. With $p_{\mathrm{det}}=@@x_tf_pdet_pc@@$ percent, $@@x_ws_tested_all_pc@@$ percent of them stop when the screen is introduced,\footnote{The military figure is for any past-year use of marijuana, a broader measure than the model's, whose users have a disorder of any drug, marijuana among them. Therefore, the two are compared as proportional responses.} and none starts.\footnote{\label{fn:halfrate}At half the rate ($p_{\mathrm{det}}=@@x_tf_pdet_half_pc@@$ percent), $@@x_ws_half_tested_all_pc@@$ percent of the users subject to the screen stop on impact, about @@x_ws_half_vs_mil@@ of the military's response. The results hold: in the long run, with the drug price and $\pi_V$ clearing, Treatment First @@x_h10_clause@@, against $@@x_tf_b_pc@@$ and $@@x_tf_h_pc@@$ percent, respectively, at the calibrated rate, and a newborn is better off by $@@x_h10_cev@@$ percent of lifetime consumption, against $@@x_tf_cev@@$. At a quarter of the rate ($p_{\mathrm{det}}=@@x_tf_pdet_quarter_pc@@$ percent), $@@x_ws_quarter_tested_all_pc@@$ percent of
 the users subject to the screen stop on impact, @@x_ws_quarter_where@@ the range that Mehay and Pacula find once those who
 left the military are counted. In the long run, Treatment First still @@x_h05_clause@@, and a newborn is @@x_h05_dir@@ off
-by $@@x_h05_cev@@$ percent.}} A household that does not use, and is in treatment if it has the disorder, is never flagged. \new{This is because,
+by $@@x_h05_cev@@$ percent.} A household that does not use, and is in treatment if it has the disorder, is never flagged.\footnote{\new{In practice, a false positive is essentially impossible: a drug test reports a positive only above a cutoff concentration, and a positive screen is then confirmed in a laboratory by a second, more specific test before it has any consequences.}} \del{This is because,
 in practice, a false positive is essentially impossible: a drug test reports a positive only above a cutoff
 concentration, and a positive screen is then confirmed in a laboratory by a second, more specific test before it
 has any consequences.}
@@ -1074,7 +1074,109 @@ Second, the model agrees with the micro evidence behind Housing First on the hou
 Third, homelessness and childhood homelessness do not fall along the transition if treatment and sobriety are not a real option for the households that already have a SUD. @@x_at_lesson@@
 
 \clearpage
+
+
+\section*{References}
+
+
+
+{\normalsize
+\setlength{\parindent}{0em}
+\begin{list}{}{\setlength{\leftmargin}{1.5em}\setlength{\itemindent}{-1.5em}\setlength{\itemsep}{0.35em}\setlength{\parsep}{0em}}
+\item Abbott, B., G. Gallipoli, C. Meghir and G. L. Violante (2019). ``Education Policy and Intergenerational Transfers in Equilibrium.'' \emph{Journal of Political Economy} 127(6), 2569--2624.
+\item Abramson, B. (2026). ``The Equilibrium Effects of Eviction Policies.'' \emph{Journal of Finance}, published online, \url{https://doi.org/10.1111/jofi.70046}.
+\item AFCARS. \emph{Adoption and Foster Care Analysis and Reporting System}, US Department of Health and Human Services, Administration for Children and Families, FY2017 release.
+\item Altonji, J., F. Hayashi and L. Kotlikoff (1997). ``Parental Altruism and Inter Vivos Transfers: Theory and Evidence.'' \emph{Journal of Political Economy} 105(6), 1121--66.
+\item Arias, E. (2014). ``United States Life Tables, 2010.'' \emph{National Vital Statistics Reports} 63(7). Hyattsville, MD: National Center for Health Statistics.
+\item {\AA}sb{\o}, G. et al.\ (2022). ``The Time Is Ripe for a Consensus Definition of Clinical Recovery in First-Episode Psychosis: Suggestions Based on a 10-Year Follow-Up Study.'' \emph{Schizophrenia Bulletin} 48(4), 839--49.
+\item Attanasio, O. P. and G. Weber (2010). ``Consumption and Saving: Models of Intertemporal Allocation and Their Implications for Public Policy.'' \emph{Journal of Economic Literature} 48(3), 693--751.
+\item Aubry, T. et al.\ (2016). ``A Multiple-City RCT of Housing First With Assertive Community Treatment for Homeless Canadians With Serious Mental Illness.'' \emph{Psychiatric Services} 67(3), 275--81.
+\item Arrow, K. J. (1963). ``Uncertainty and the Welfare Economics of Medical Care.'' \emph{American Economic Review} 53(5), 941--973.
+\item Balsa, A. I. (2008). ``Parental Problem-drinking and Adult Children's Labor Market Outcomes.'' \emph{Journal of Human Resources} 43(2), 454--486.
+\item Barro, R. J. and G. S. Becker (1989). ``Fertility Choice in a Model of Economic Growth.'' \emph{Econometrica} 57(2), 481--501.
+\item Bassuk, E. L., J. C. Buckner, L. F. Weinreb, A. Browne, S. S. Bassuk, R. Dawson and J. N. Perloff (1997). ``Homelessness in Female-Headed Families: Childhood and Adult Risk and Protective Factors.'' \emph{American Journal of Public Health} 87(2), 241--248.
+\item Becker, G. S. and K. M. Murphy (1988). ``A Theory of Rational Addiction.'' \emph{Journal of Political Economy} 96(4), 675--700.
+\item Becker, G. S., K. M. Murphy and M. Grossman (2006). ``The Market for Illegal Goods: The Case of Drugs.'' \emph{Journal of Political Economy} 114(1), 38--60.
+\item Bradizza, C. M., P. R. Stasiewicz and N. D. Paas (2006). ``Relapse to alcohol and drug use among individuals diagnosed with co-occurring mental health and substance use disorders: A review.'' \emph{Clinical Psychology Review} 26(2), 162--78.
+\item Brounstein, J. and J. Wieselthier (2026). ``The Labor Market Impacts of Unconditional Housing out of Homelessness.'' Working paper.
+\item Burt, M. R., L. Y. Aron and E. Lee (2001). \emph{Helping America's Homeless: Emergency Shelter or Affordable Housing?} Washington, DC: Urban Institute Press.
+\item Card, D. (1999). ``The Causal Effect of Education on Earnings.'' In O. Ashenfelter and D. Card (eds.), \emph{Handbook of Labor Economics}, vol.\ 3A, 1801--63. Amsterdam: Elsevier.
+\item Caulkins, J. P. (2001). ``Drug Prices and Emergency Department Mentions for Cocaine and Heroin.'' \emph{American Journal of Public Health} 91(9), 1446--48.
+\item Chetty, R., N. Hendren, P. Kline and E. Saez (2014). ``Where is the Land of Opportunity? The Geography of Intergenerational Mobility in the United States.'' \emph{Quarterly Journal of Economics} 129(4), 1553--1623.
+\item Chetty, R., N. Hendren and L. Katz (2016). ``The Effects of Exposure to Better Neighborhoods on Children.'' \emph{American Economic Review} 106(4), 855--902.
+\item Chyn, E. (2018). ``Moved to Opportunity: The Long-Run Effects of Public Housing Demolition on Children.'' \emph{American Economic Review} 108(10), 3028--56.
+\item Cohen, E. (2024). ``Housing the Homeless: The Effect of Placing Single Adults Experiencing Homelessness in Housing Programs on Future Homelessness and Socioeconomic Outcomes.'' \emph{American Economic Journal: Applied Economics} 16(2), 130--175.
+\item Conesa, J. C., S. Kitao and D. Krueger (2009). ``Taxing Capital? Not a Bad Idea after All!'' \emph{American Economic Review} 99(1), 25--48.
+\item Costa, D.\ L.\ and M.\ E.\ Kahn (2004). ``Changes in the Value of Life, 1940--1980.'' \emph{Journal of Risk and Uncertainty} 29(2), 159--80.
+\item Costantini, S. (2025). ``Housing First or Treatment First? Evidence from the VA's Homelessness Programs.'' Working paper, University of California, Berkeley.
+\item Dahl, G. B. and L. Lochner (2012). ``The Impact of Family Income on Child Achievement: Evidence from the Earned Income Tax Credit.'' \emph{American Economic Review} 102(5), 1927--56.
+\item Desmond, M. and C. Gershenson (2016). ``Housing and Employment Insecurity among the Working Poor.'' \emph{Social Problems} 63(1), 46--67.
+\item Eide, S. (2020). ``Housing First and Homelessness: The Rhetoric and the Reality.'' Manhattan Institute.
+\item Felitti, V. et al.\ (1998). ``Relationship of Childhood Abuse and Household Dysfunction to Many of the Leading Causes of Death in Adults.'' \emph{American Journal of Preventive Medicine} 14(4), 245--58.
+\item Fudala, P. J. et al.\ (2003). ``Office-based treatment of opiate addiction with a sublingual-tablet formulation of buprenorphine and naloxone.'' \emph{New England Journal of Medicine} 349(10), 949--958.
+\item Gallet, C. A. (2014). ``Can Price Get the Monkey Off Our Back? A Meta-Analysis of Illicit Drug Demand.'' \emph{Health Economics} 23(1), 55--68.
+\item Goering, P. et al.\ (2014). \emph{National At Home/Chez Soi Final Report}. Mental Health Commission of Canada.
+\item Greenwood, J., N. Guner and K. A. Kopecky (2025). ``The Downward Spiral: A Macroeconomic Analysis of the Opioid Crisis.'' Working paper.
+\item Grossman, M. and F. Chaloupka (1998). ``The demand for cocaine by young adults: a rational addiction approach.'' \emph{Journal of Health Economics} 17(4), 427--74.
+\item Gruber, J. and B. K\H{o}szegi (2001). ``Is Addiction `Rational'? Theory and Evidence.'' \emph{Quarterly Journal of Economics} 116(4), 1261--1303.
+\item Gubits, D., M. Shinn, M. Wood, S. Bell, S. Dastrup, C. Solari, S. Brown, D. McInnis, T. McCall and U. Kattel (2016). ``Family Options Study: 3-Year Impacts of Housing and Services Interventions for Homeless Families.'' US Department of Housing and Urban Development, Office of Policy Development and Research.
+\item Gubits, D., M. Shinn, M. Wood, S. R. Brown, S. R. Dastrup and S. H. Bell (2018). ``What Interventions Work Best for Families Who Experience Homelessness? Impact Estimates from the Family Options Study.'' \emph{Journal of Policy Analysis and Management} 37(4), 835--866.
+\item Gutwinski, S., S. Schreiter, K. Deutscher and S. Fazel (2021). ``The prevalence of mental disorders among homeless people in high-income countries: An updated systematic review and meta-regression analysis.'' \emph{PLOS Medicine} 18(8), e1003750.
+\item Guvenen, F., G. Kambourov, B. Kuruscu, S. Ocampo and D. Chen (2023). ``Use It or Lose It: Efficiency and Redistributional Effects of Wealth Taxation.'' \emph{Quarterly Journal of Economics} 138(2), 835--894.
+\item Hall, R.\ E.\ and C.\ I.\ Jones (2007). ``The Value of Life and the Rise in Health Spending.'' \emph{Quarterly Journal of Economics} 122(1), 39--72.
+\item Heathcote, J., K. Storesletten and G. Violante (2017). ``Optimal Tax Progressivity: An Analytical Framework.'' \emph{Quarterly Journal of Economics} 132(4), 1693--1754.
+\item Heiberg, I. H. et al.\ (2018). ``Total and cause-specific standardized mortality ratios in patients with schizophrenia and/or substance use disorder.'' \emph{PLoS ONE} 13(8), e0202028.
+\item Hjorth\o j, C., N. Albert and M. Nordentoft (2018). ``Association of substance use disorders with conversion from schizotypal disorder to schizophrenia.'' \emph{JAMA Psychiatry} 75(7), 733--739.
+\item Humphries, J. E., S. T. Nelson, D. L. Nguyen, W. van Dijk and D. C. Waldinger (2025). ``Nonpayment and Eviction in the Rental Housing Market.'' NBER Working Paper 33155.
+\item \.{I}mrohoro\u{g}lu, A. and K. Zhao (2022). ``Homelessness.'' Working paper.
+\item Kaplan, G., K. Mitman and G. L. Violante (2020). ``The Housing Boom and Bust: Model Meets Evidence.'' \emph{Journal of Political Economy} 128(9), 3285--3345.
+\item Krueger, A. B., J. Cramer and D. Cho (2014). ``Are the Long-Term Unemployed on the Margins of the Labor Market?'' \emph{Brookings Papers on Economic Activity}, Spring, 229--99.
+\item Laibson, D. (1997). ``Golden Eggs and Hyperbolic Discounting.'' \emph{Quarterly Journal of Economics} 112(2), 443--77.
+\item Larimer, M. E. et al.\ (2009). ``Health Care and Public Service Use and Costs Before and After Provision of Housing for Chronically Homeless Persons With Severe Alcohol Problems.'' \emph{JAMA} 301(13), 1349--57.
+\item Lee, S. Y. and A. Seshadri (2019). ``On the Intergenerational Transmission of Economic Status.'' \emph{Journal of Political Economy} 127(2), 855--921.
+\item Legislative Budget Board (2013). ``Fiscal Note, 83rd Legislative Regular Session: SB 11.'' Texas Legislature, Austin.
+\item Loubi\`ere, S. et al.\ (2020). ``Europeans' willingness to pay for ending homelessness: A contingent valuation study.'' \emph{Social Science \& Medicine} 247, 112802.
+\item Lundborg, P. and B. Lindgren (2002). ``Risk Perceptions and Alcohol Consumption among Young People.'' \emph{Journal of Risk and Uncertainty} 25(2), 165--83.
+\item Mace, C., E. Patel and N. Seegert (2020). ``Marijuana Taxation and Imperfect Competition.'' \emph{National Tax Journal} 73(2), 545--92.
+\item Mazumder, B. (2005). ``Fortunate Sons: New Estimates of Intergenerational Mobility in the United States Using Social Security Earnings Data.'' \emph{Review of Economics and Statistics} 87(2), 235--255.
+\item McDaniel, C. (2007). ``Average Tax Rates on Consumption, Investment, Labor and Capital in the OECD 1950--2003.'' Working paper, Arizona State University.
+\item Mehay, S.\ L.\ and R.\ L.\ Pacula (1999). ``The Effectiveness of Workplace Drug Prevention Policies: Does `Zero Tolerance' Work?'' NBER Working Paper 7383.
+\item Mellentin, A.\ I.\ et al.\ (2016). ``The risk of offspring developing substance use disorders when exposed to one versus two parent(s) with alcohol use disorder: a nationwide, register-based cohort study.'' \emph{Journal of Psychiatric Research} 80.
+\item Meyer, B. D., A. Wyse, G. Meyer, A. Grunwaldt and D. Wu (2024). ``Homelessness and the Persistence of Deprivation: Income, Employment, and Safety Net Participation.'' NBER Working Paper 32323.
+\item Meyer, B. D., A. Wyse and I. Logani (2023). ``Life and Death at the Margins of Society: The Mortality of the U.S. Homeless Population.'' NBER Working Paper 31843.
+\item Midgette, G., S. Davenport, J. P. Caulkins and B. Kilmer (2019). ``What America's Users Spend on Illegal Drugs, 2006--2016.'' Santa Monica, CA: RAND Corporation.
+\item Milby, J., J. Schumacher, D. Wallace, M. Freedman and R. Vuchinich (2005). ``To house or not to house: the effects of providing housing to homeless substance abusers in treatment.'' \emph{American Journal of Public Health} 95(7), 1259--65.
+\item Nielsen, S. M., N. B. Toftdahl, M. Nordentoft and C. Hjorthoj (2017). ``Association between alcohol, cannabis, and other illicit substance abuse and risk of developing schizophrenia: a nationwide population based register study.'' \emph{Psychological Medicine} 47(9), 1668--1677.
+\item Nilsson, J. P. (2017). ``Alcohol Availability, Prenatal Conditions, and Long-Term Economic Outcomes.'' \emph{Journal of Political Economy} 125(4), 1149--1207.
+\item Nishiyama, S. (2000). ``Measuring Time Preference and Parental Altruism.'' Technical Paper 2000-7, Congressional Budget Office, Washington, DC.
+\item OECD (2013). \emph{OECD Framework for Statistics on the Distribution of Household Income, Consumption and Wealth}. Paris: OECD Publishing.
+\item Olfson, M. et al.\ (2015). ``Premature mortality among adults with schizophrenia in the United States.'' \emph{JAMA Psychiatry} 72(12), 1172--81.
+\item Olmstead, T. et al.\ (2015). ``The price elasticity of demand for heroin.'' \emph{Journal of Health Economics} 41, 59--71.
+\item Padgett, D. K., L. Gulcur and S. Tsemberis (2006). ``Housing First Services for People Who Are Homeless with Co-Occurring Serious Mental Illness and Substance Abuse.'' \emph{Research on Social Work Practice} 16(1), 74--83.
+\item Paul, K. K. et al.\ (2024). ``Buprenorphine-naloxone for opioid use disorder: reduction in mortality and increased remission.'' \emph{Western Journal of Emergency Medicine} 25(6), 869--874.
+\item Pauly, M. V. (1968). ``The Economics of Moral Hazard: Comment.'' \emph{American Economic Review} 58(3), 531--537.
+\item Plana-Ripoll, O. et al.\ (2019). ``A comprehensive analysis of mortality-related health metrics associated with mental disorders: a nationwide, register-based cohort study.'' \emph{The Lancet} 394(10211), 1827--35.
+\item Restuccia, D. and C. Urrutia (2004). ``Intergenerational Persistence of Earnings: The Role of Early and College Education.'' \emph{American Economic Review} 94(5), 1354--78.
+\item Rotberg, S.\ and L.\ Zhang (2024). ``The Welfare Consequences of Rent Controls.'' Working paper.
+\item Roebuck, M.\ C., M.\ T.\ French and A.\ T.\ McLellan (2003). ``DATStats: Results from 85 Studies Using the Drug Abuse Treatment Cost Analysis Program.'' \emph{Journal of Substance Abuse Treatment} 25(1), 51--57.
+\item Saffer, H. and F. Chaloupka (1999). ``The demand for illicit drugs.'' \emph{Economic Inquiry} 37(3), 401--11.
+\item Solon, G. (1992). ``Intergenerational Income Mobility in the United States.'' \emph{American Economic Review} 82(3), 393--408.
+\item Stergiopoulos, V. et al.\ (2015). ``Effect of Scattered-Site Housing Using Rent Supplements and Intensive Case Management on Housing Stability Among Homeless Adults With Mental Illness: A Randomized Trial.'' \emph{JAMA} 313(9), 905--15.
+\item Tsemberis, S., L. Gulcur and M. Nakae (2004). ``Housing First, Consumer Choice, and Harm Reduction for Homeless Individuals With a Dual Diagnosis.'' \emph{American Journal of Public Health} 94(4), 651--56.
+\item U.S.\ Department of Labor (2024). \emph{Comparison of State Unemployment
+Insurance Laws}. Washington, DC: Employment and Training Administration, Office of
+Unemployment Insurance.
+\item Vaillant, G. (1995). \emph{The Natural History of Alcoholism Revisited}. Harvard University Press.
+\item van Ours, J. C. (1995). ``The Price Elasticity of Hard Drugs: The Case of Opium in the Dutch East Indies, 1923--1938.'' \emph{Journal of Political Economy} 103(2), 261--79.
+\item Viscusi, W. K. and J. Aldy (2003). ``The Value of a Statistical Life.'' \emph{Journal of Risk and Uncertainty} 27(1), 5--76.
+\item Yoon, G.\ et al.\ (2013). ``Impact of the number of parents with alcohol use disorder on alcohol use disorder in offspring: a population-based study.'' \emph{Journal of Clinical Psychiatry} 74(8), 795--801.
+\end{list}
+
+\noindent Data: Substance Abuse and Mental Health Services Administration, SAMHSA (NSDUH 2024 and 2023, TEDS-A 2022); HUD (Point in Time 2023 and 2024, Picture of Subsidized Households 2023); BLS (CPS, Consumer Expenditure Survey 2024); Federal Reserve (SCF 2022); BEA (fixed asset tables, NIPA); CDC (WONDER 2023, National Survey of Family Growth 2017--2019, US life tables 2010); SSA; USDA.\par}
+
+\clearpage
 \appendix
+\why{The appendix now comes after the references, as you asked.}
 \setcounter{table}{0}\renewcommand{\thetable}{A\arabic{table}}
 \section[Calibration of the standard parameters]{Calibration of the standard parameters}\label{sec:stdparams}
 
@@ -1255,106 +1357,5 @@ then held fixed.
 equals demand at $p_v=1$ in the benchmark, and kept fixed across experiments, in which the price is free to adjust. It normalises units, not behaviour.
 
 \end{description}
-
-\clearpage
-
-
-\section*{References}
-
-
-
-{\normalsize
-\setlength{\parindent}{0em}
-\begin{list}{}{\setlength{\leftmargin}{1.5em}\setlength{\itemindent}{-1.5em}\setlength{\itemsep}{0.35em}\setlength{\parsep}{0em}}
-\item Abbott, B., G. Gallipoli, C. Meghir and G. L. Violante (2019). ``Education Policy and Intergenerational Transfers in Equilibrium.'' \emph{Journal of Political Economy} 127(6), 2569--2624.
-\item Abramson, B. (2026). ``The Equilibrium Effects of Eviction Policies.'' \emph{Journal of Finance}, published online, \url{https://doi.org/10.1111/jofi.70046}.
-\item AFCARS. \emph{Adoption and Foster Care Analysis and Reporting System}, US Department of Health and Human Services, Administration for Children and Families, FY2017 release.
-\item Altonji, J., F. Hayashi and L. Kotlikoff (1997). ``Parental Altruism and Inter Vivos Transfers: Theory and Evidence.'' \emph{Journal of Political Economy} 105(6), 1121--66.
-\item Arias, E. (2014). ``United States Life Tables, 2010.'' \emph{National Vital Statistics Reports} 63(7). Hyattsville, MD: National Center for Health Statistics.
-\item {\AA}sb{\o}, G. et al.\ (2022). ``The Time Is Ripe for a Consensus Definition of Clinical Recovery in First-Episode Psychosis: Suggestions Based on a 10-Year Follow-Up Study.'' \emph{Schizophrenia Bulletin} 48(4), 839--49.
-\item Attanasio, O. P. and G. Weber (2010). ``Consumption and Saving: Models of Intertemporal Allocation and Their Implications for Public Policy.'' \emph{Journal of Economic Literature} 48(3), 693--751.
-\item Aubry, T. et al.\ (2016). ``A Multiple-City RCT of Housing First With Assertive Community Treatment for Homeless Canadians With Serious Mental Illness.'' \emph{Psychiatric Services} 67(3), 275--81.
-\item Arrow, K. J. (1963). ``Uncertainty and the Welfare Economics of Medical Care.'' \emph{American Economic Review} 53(5), 941--973.
-\item Balsa, A. I. (2008). ``Parental Problem-drinking and Adult Children's Labor Market Outcomes.'' \emph{Journal of Human Resources} 43(2), 454--486.
-\item Barro, R. J. and G. S. Becker (1989). ``Fertility Choice in a Model of Economic Growth.'' \emph{Econometrica} 57(2), 481--501.
-\item Bassuk, E. L., J. C. Buckner, L. F. Weinreb, A. Browne, S. S. Bassuk, R. Dawson and J. N. Perloff (1997). ``Homelessness in Female-Headed Families: Childhood and Adult Risk and Protective Factors.'' \emph{American Journal of Public Health} 87(2), 241--248.
-\item Becker, G. S. and K. M. Murphy (1988). ``A Theory of Rational Addiction.'' \emph{Journal of Political Economy} 96(4), 675--700.
-\item Becker, G. S., K. M. Murphy and M. Grossman (2006). ``The Market for Illegal Goods: The Case of Drugs.'' \emph{Journal of Political Economy} 114(1), 38--60.
-\item Bradizza, C. M., P. R. Stasiewicz and N. D. Paas (2006). ``Relapse to alcohol and drug use among individuals diagnosed with co-occurring mental health and substance use disorders: A review.'' \emph{Clinical Psychology Review} 26(2), 162--78.
-\item \new{Brounstein, J. and J. Wieselthier (2026). ``The Labor Market Impacts of Unconditional Housing out of Homelessness.'' Working paper.}
-\item Burt, M. R., L. Y. Aron and E. Lee (2001). \emph{Helping America's Homeless: Emergency Shelter or Affordable Housing?} Washington, DC: Urban Institute Press.
-\item Card, D. (1999). ``The Causal Effect of Education on Earnings.'' In O. Ashenfelter and D. Card (eds.), \emph{Handbook of Labor Economics}, vol.\ 3A, 1801--63. Amsterdam: Elsevier.
-\item Caulkins, J. P. (2001). ``Drug Prices and Emergency Department Mentions for Cocaine and Heroin.'' \emph{American Journal of Public Health} 91(9), 1446--48.
-\item Chetty, R., N. Hendren, P. Kline and E. Saez (2014). ``Where is the Land of Opportunity? The Geography of Intergenerational Mobility in the United States.'' \emph{Quarterly Journal of Economics} 129(4), 1553--1623.
-\item Chetty, R., N. Hendren and L. Katz (2016). ``The Effects of Exposure to Better Neighborhoods on Children.'' \emph{American Economic Review} 106(4), 855--902.
-\item Chyn, E. (2018). ``Moved to Opportunity: The Long-Run Effects of Public Housing Demolition on Children.'' \emph{American Economic Review} 108(10), 3028--56.
-\item \new{Cohen, E. (2024). ``Housing the Homeless: The Effect of Placing Single Adults Experiencing Homelessness in Housing Programs on Future Homelessness and Socioeconomic Outcomes.'' \emph{American Economic Journal: Applied Economics} 16(2), 130--175.}
-\item Conesa, J. C., S. Kitao and D. Krueger (2009). ``Taxing Capital? Not a Bad Idea after All!'' \emph{American Economic Review} 99(1), 25--48.
-\item Costa, D.\ L.\ and M.\ E.\ Kahn (2004). ``Changes in the Value of Life, 1940--1980.'' \emph{Journal of Risk and Uncertainty} 29(2), 159--80.
-\item Costantini, S. (2025). ``Housing First or Treatment First? Evidence from the VA's Homelessness Programs.'' Working paper, University of California, Berkeley.
-\item Dahl, G. B. and L. Lochner (2012). ``The Impact of Family Income on Child Achievement: Evidence from the Earned Income Tax Credit.'' \emph{American Economic Review} 102(5), 1927--56.
-\item Desmond, M. and C. Gershenson (2016). ``Housing and Employment Insecurity among the Working Poor.'' \emph{Social Problems} 63(1), 46--67.
-\item Eide, S. (2020). ``Housing First and Homelessness: The Rhetoric and the Reality.'' Manhattan Institute.
-\item Felitti, V. et al.\ (1998). ``Relationship of Childhood Abuse and Household Dysfunction to Many of the Leading Causes of Death in Adults.'' \emph{American Journal of Preventive Medicine} 14(4), 245--58.
-\item Fudala, P. J. et al.\ (2003). ``Office-based treatment of opiate addiction with a sublingual-tablet formulation of buprenorphine and naloxone.'' \emph{New England Journal of Medicine} 349(10), 949--958.
-\item Gallet, C. A. (2014). ``Can Price Get the Monkey Off Our Back? A Meta-Analysis of Illicit Drug Demand.'' \emph{Health Economics} 23(1), 55--68.
-\item Goering, P. et al.\ (2014). \emph{National At Home/Chez Soi Final Report}. Mental Health Commission of Canada.
-\item Greenwood, J., N. Guner and K. A. Kopecky (2025). ``The Downward Spiral: A Macroeconomic Analysis of the Opioid Crisis.'' Working paper.
-\item Grossman, M. and F. Chaloupka (1998). ``The demand for cocaine by young adults: a rational addiction approach.'' \emph{Journal of Health Economics} 17(4), 427--74.
-\item Gruber, J. and B. K\H{o}szegi (2001). ``Is Addiction `Rational'? Theory and Evidence.'' \emph{Quarterly Journal of Economics} 116(4), 1261--1303.
-\item Gubits, D., M. Shinn, M. Wood, S. Bell, S. Dastrup, C. Solari, S. Brown, D. McInnis, T. McCall and U. Kattel (2016). ``Family Options Study: 3-Year Impacts of Housing and Services Interventions for Homeless Families.'' US Department of Housing and Urban Development, Office of Policy Development and Research.
-\item Gubits, D., M. Shinn, M. Wood, S. R. Brown, S. R. Dastrup and S. H. Bell (2018). ``What Interventions Work Best for Families Who Experience Homelessness? Impact Estimates from the Family Options Study.'' \emph{Journal of Policy Analysis and Management} 37(4), 835--866.
-\item Gutwinski, S., S. Schreiter, K. Deutscher and S. Fazel (2021). ``The prevalence of mental disorders among homeless people in high-income countries: An updated systematic review and meta-regression analysis.'' \emph{PLOS Medicine} 18(8), e1003750.
-\item Guvenen, F., G. Kambourov, B. Kuruscu, S. Ocampo and D. Chen (2023). ``Use It or Lose It: Efficiency and Redistributional Effects of Wealth Taxation.'' \emph{Quarterly Journal of Economics} 138(2), 835--894.
-\item Hall, R.\ E.\ and C.\ I.\ Jones (2007). ``The Value of Life and the Rise in Health Spending.'' \emph{Quarterly Journal of Economics} 122(1), 39--72.
-\item Heathcote, J., K. Storesletten and G. Violante (2017). ``Optimal Tax Progressivity: An Analytical Framework.'' \emph{Quarterly Journal of Economics} 132(4), 1693--1754.
-\item Heiberg, I. H. et al.\ (2018). ``Total and cause-specific standardized mortality ratios in patients with schizophrenia and/or substance use disorder.'' \emph{PLoS ONE} 13(8), e0202028.
-\item Hjorth\o j, C., N. Albert and M. Nordentoft (2018). ``Association of substance use disorders with conversion from schizotypal disorder to schizophrenia.'' \emph{JAMA Psychiatry} 75(7), 733--739.
-\item \new{Humphries, J. E., S. T. Nelson, D. L. Nguyen, W. van Dijk and D. C. Waldinger (2025). ``Nonpayment and Eviction in the Rental Housing Market.'' NBER Working Paper 33155.}
-\item \.{I}mrohoro\u{g}lu, A. and K. Zhao (2022). ``Homelessness.'' Working paper.
-\item Kaplan, G., K. Mitman and G. L. Violante (2020). ``The Housing Boom and Bust: Model Meets Evidence.'' \emph{Journal of Political Economy} 128(9), 3285--3345.
-\item Krueger, A. B., J. Cramer and D. Cho (2014). ``Are the Long-Term Unemployed on the Margins of the Labor Market?'' \emph{Brookings Papers on Economic Activity}, Spring, 229--99.
-\item Laibson, D. (1997). ``Golden Eggs and Hyperbolic Discounting.'' \emph{Quarterly Journal of Economics} 112(2), 443--77.
-\item Larimer, M. E. et al.\ (2009). ``Health Care and Public Service Use and Costs Before and After Provision of Housing for Chronically Homeless Persons With Severe Alcohol Problems.'' \emph{JAMA} 301(13), 1349--57.
-\item Lee, S. Y. and A. Seshadri (2019). ``On the Intergenerational Transmission of Economic Status.'' \emph{Journal of Political Economy} 127(2), 855--921.
-\item Legislative Budget Board (2013). ``Fiscal Note, 83rd Legislative Regular Session: SB 11.'' Texas Legislature, Austin.
-\item Loubi\`ere, S. et al.\ (2020). ``Europeans' willingness to pay for ending homelessness: A contingent valuation study.'' \emph{Social Science \& Medicine} 247, 112802.
-\item Lundborg, P. and B. Lindgren (2002). ``Risk Perceptions and Alcohol Consumption among Young People.'' \emph{Journal of Risk and Uncertainty} 25(2), 165--83.
-\item Mace, C., E. Patel and N. Seegert (2020). ``Marijuana Taxation and Imperfect Competition.'' \emph{National Tax Journal} 73(2), 545--92.
-\item Mazumder, B. (2005). ``Fortunate Sons: New Estimates of Intergenerational Mobility in the United States Using Social Security Earnings Data.'' \emph{Review of Economics and Statistics} 87(2), 235--255.
-\item McDaniel, C. (2007). ``Average Tax Rates on Consumption, Investment, Labor and Capital in the OECD 1950--2003.'' Working paper, Arizona State University.
-\item Mehay, S.\ L.\ and R.\ L.\ Pacula (1999). ``The Effectiveness of Workplace Drug Prevention Policies: Does `Zero Tolerance' Work?'' NBER Working Paper 7383.
-\item Mellentin, A.\ I.\ et al.\ (2016). ``The risk of offspring developing substance use disorders when exposed to one versus two parent(s) with alcohol use disorder: a nationwide, register-based cohort study.'' \emph{Journal of Psychiatric Research} 80.
-\item Meyer, B. D., A. Wyse, G. Meyer, A. Grunwaldt and D. Wu (2024). ``Homelessness and the Persistence of Deprivation: Income, Employment, and Safety Net Participation.'' NBER Working Paper 32323.
-\item Meyer, B. D., A. Wyse and I. Logani (2023). ``Life and Death at the Margins of Society: The Mortality of the U.S. Homeless Population.'' NBER Working Paper 31843.
-\item Midgette, G., S. Davenport, J. P. Caulkins and B. Kilmer (2019). ``What America's Users Spend on Illegal Drugs, 2006--2016.'' Santa Monica, CA: RAND Corporation.
-\item Milby, J., J. Schumacher, D. Wallace, M. Freedman and R. Vuchinich (2005). ``To house or not to house: the effects of providing housing to homeless substance abusers in treatment.'' \emph{American Journal of Public Health} 95(7), 1259--65.
-\item Nielsen, S. M., N. B. Toftdahl, M. Nordentoft and C. Hjorthoj (2017). ``Association between alcohol, cannabis, and other illicit substance abuse and risk of developing schizophrenia: a nationwide population based register study.'' \emph{Psychological Medicine} 47(9), 1668--1677.
-\item Nilsson, J. P. (2017). ``Alcohol Availability, Prenatal Conditions, and Long-Term Economic Outcomes.'' \emph{Journal of Political Economy} 125(4), 1149--1207.
-\item Nishiyama, S. (2000). ``Measuring Time Preference and Parental Altruism.'' Technical Paper 2000-7, Congressional Budget Office, Washington, DC.
-\item OECD (2013). \emph{OECD Framework for Statistics on the Distribution of Household Income, Consumption and Wealth}. Paris: OECD Publishing.
-\item Olfson, M. et al.\ (2015). ``Premature mortality among adults with schizophrenia in the United States.'' \emph{JAMA Psychiatry} 72(12), 1172--81.
-\item Olmstead, T. et al.\ (2015). ``The price elasticity of demand for heroin.'' \emph{Journal of Health Economics} 41, 59--71.
-\item Padgett, D. K., L. Gulcur and S. Tsemberis (2006). ``Housing First Services for People Who Are Homeless with Co-Occurring Serious Mental Illness and Substance Abuse.'' \emph{Research on Social Work Practice} 16(1), 74--83.
-\item Paul, K. K. et al.\ (2024). ``Buprenorphine-naloxone for opioid use disorder: reduction in mortality and increased remission.'' \emph{Western Journal of Emergency Medicine} 25(6), 869--874.
-\item Pauly, M. V. (1968). ``The Economics of Moral Hazard: Comment.'' \emph{American Economic Review} 58(3), 531--537.
-\item Plana-Ripoll, O. et al.\ (2019). ``A comprehensive analysis of mortality-related health metrics associated with mental disorders: a nationwide, register-based cohort study.'' \emph{The Lancet} 394(10211), 1827--35.
-\item Restuccia, D. and C. Urrutia (2004). ``Intergenerational Persistence of Earnings: The Role of Early and College Education.'' \emph{American Economic Review} 94(5), 1354--78.
-\item Rotberg, S.\ and L.\ Zhang (2024). ``The Welfare Consequences of Rent Controls.'' Working paper.
-\item Roebuck, M.\ C., M.\ T.\ French and A.\ T.\ McLellan (2003). ``DATStats: Results from 85 Studies Using the Drug Abuse Treatment Cost Analysis Program.'' \emph{Journal of Substance Abuse Treatment} 25(1), 51--57.
-\item Saffer, H. and F. Chaloupka (1999). ``The demand for illicit drugs.'' \emph{Economic Inquiry} 37(3), 401--11.
-\item Solon, G. (1992). ``Intergenerational Income Mobility in the United States.'' \emph{American Economic Review} 82(3), 393--408.
-\item Stergiopoulos, V. et al.\ (2015). ``Effect of Scattered-Site Housing Using Rent Supplements and Intensive Case Management on Housing Stability Among Homeless Adults With Mental Illness: A Randomized Trial.'' \emph{JAMA} 313(9), 905--15.
-\item Tsemberis, S., L. Gulcur and M. Nakae (2004). ``Housing First, Consumer Choice, and Harm Reduction for Homeless Individuals With a Dual Diagnosis.'' \emph{American Journal of Public Health} 94(4), 651--56.
-\item U.S.\ Department of Labor (2024). \emph{Comparison of State Unemployment
-Insurance Laws}. Washington, DC: Employment and Training Administration, Office of
-Unemployment Insurance.
-\item Vaillant, G. (1995). \emph{The Natural History of Alcoholism Revisited}. Harvard University Press.
-\item van Ours, J. C. (1995). ``The Price Elasticity of Hard Drugs: The Case of Opium in the Dutch East Indies, 1923--1938.'' \emph{Journal of Political Economy} 103(2), 261--79.
-\item Viscusi, W. K. and J. Aldy (2003). ``The Value of a Statistical Life.'' \emph{Journal of Risk and Uncertainty} 27(1), 5--76.
-\item Yoon, G.\ et al.\ (2013). ``Impact of the number of parents with alcohol use disorder on alcohol use disorder in offspring: a population-based study.'' \emph{Journal of Clinical Psychiatry} 74(8), 795--801.
-\end{list}
-
-\noindent Data: Substance Abuse and Mental Health Services Administration, SAMHSA (NSDUH 2024 and 2023, TEDS-A 2022); HUD (Point in Time 2023 and 2024, Picture of Subsidized Households 2023); BLS (CPS, Consumer Expenditure Survey 2024); Federal Reserve (SCF 2022); BEA (fixed asset tables, NIPA); CDC (WONDER 2023, National Survey of Family Growth 2017--2019, US life tables 2010); SSA; USDA.\par}
 
 \end{document}
