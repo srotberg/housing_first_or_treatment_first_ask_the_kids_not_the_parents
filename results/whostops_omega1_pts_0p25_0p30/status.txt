@@ -1,4 +1,4 @@
-# who stops using under Treatment First at omega_c = 1, state by state, on Housing First's distribution: results/omega1_2c/bench_1.0_b0.00479_ku1.0 (b 0.00479, kappa_x 1.2214072953252457; base 0.0920201366,0.0387563780,0.0053935193), price 1.0000000000000000 and pi_V 6.7533863251354007E-002 held (the price the benchmark's own, results/omega1_2c/bench_1.0_b0.00479_ku1.0/bench.log.gz: no re-solved Housing First at omega_c = 1 in this checkout); 06 Nov 19:46 UTC
+# who stops using under Treatment First at omega_c = 1, state by state, on Housing First's distribution: results/omega1_2c/bench_1.0_b0.00479_ku1.0 (b 0.00479, kappa_x 1.2214072953252457; base 0.0920201366,0.0387563780,0.0053935193), price 1.0000000000000000 and pi_V 6.7533863251354007E-002 held (the price the benchmark's own, results/omega1_2c/bench_1.0_b0.00479_ku1.0/bench.log.gz: no re-solved Housing First at omega_c = 1 in this checkout); 06 Nov 19:50 UTC
 run_whostops_omega1: gfortran missing, installing (19:24)
 run_whostops_omega1: free disk 28G, memory 15 GiB, cores 4, threads per solve 2 (19:25)
 run_whostops_omega1: building cf_fix2_treatC_impact (cf_fix2 + patch_treatC.py + the fixed distribution) (19:25)
@@ -6,7 +6,8 @@ run_whostops_omega1: build: built /home/user/housing_first_or_treatment_first/co
 run_whostops_omega1: benchmark results/omega1_2c/bench_1.0_b0.00479_ku1.0: kappa_x 1.2214072953252457 (probe 0.81016668567607175 x 1.5076), base 0.0920201366,0.0387563780,0.0053935193; Housing First's price 1.0000000000000000 (the benchmark's own, results/omega1_2c/bench_1.0_b0.00479_ku1.0/bench.log.gz: no re-solved Housing First at omega_c = 1 in this checkout), pi_V 6.7533863251354007E-002 (the benchmark's) (19:26)
 run_whostops_omega1: impact null wo1ref on cf_fix2_treatC_impact:  (19:26)
 
-== cfarm_null_imp_wo1ref: 2 passes; use among holders, eligible, tested; eligible mass: NA
+== cfarm_null_imp_wo1ref: 3 passes; use among holders, eligible, tested; eligible mass: 0.0472414480 0.1443516363 0.0626412099 11.7591519551
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0000  0.06753    +1.2%    +0.0%    -0.1%  0.00e+00  0.00e+00   775.5301  -0.07%
   2  1.0000  0.06753    -0.6%    +0.0%    -0.0%  0.00e+00  0.00e+00   775.5346  -0.06%
+  3  1.0000  0.06753    -0.6%    +0.0%    -0.0%  0.00e+00  0.00e+00   775.5348  -0.06%
