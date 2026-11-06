@@ -1,0 +1,49 @@
+hedonic with PUMA FE: renters n=337625, PUMAs=2462, weighted R2=0.396, smearing=1.106
+model rungs at the paper's dollar scale: $240, $959, $1919 a month; log midpoints $480, $1357
+model mean housing spending $1774 a month
+
+renters' gross rent + owners' hedonic rent (PUMA FE) + renter residual  (householder 26-85, N=119.5m)
+   p10 756  p50 1700  p90 3429  mean 1960;  p50/p10 2.25, p90/p10 4.54
+   paper-dollar rungs, log-midpoint bins  :   3.9  30.8  65.2
+   paper-dollar rungs, rung-floor bins    :  17.2  41.3  41.5
+   base = data p10 ($756), log midpoints:  41.9  53.6   4.5
+   paper-dollar rungs, log-mid, 26-50 with own child + 51-85:   4.2  30.4  65.4
+
+renters' gross rent + owners' hedonic rent (PUMA FE), no residual  (householder 26-85, N=119.5m)
+   p10 910  p50 1690  p90 2898  mean 1820;  p50/p10 1.86, p90/p10 3.18
+   paper-dollar rungs, log-midpoint bins  :   2.0  30.5  67.6
+   paper-dollar rungs, rung-floor bins    :  12.0  48.7  39.3
+   base = data p10 ($910), log midpoints:  56.2  43.4   0.4
+   paper-dollar rungs, log-mid, 26-50 with own child + 51-85:   2.1  30.0  67.9
+
+renters' gross rent + owners' value x 5%/12 (dispersion upper bound)  (householder 26-85, N=119.5m)
+   p10 417  p50 1384  p90 3320  mean 1802;  p50/p10 3.32, p90/p10 7.97
+   paper-dollar rungs, log-midpoint bins  :  11.4  37.8  50.8
+   paper-dollar rungs, rung-floor bins    :  30.7  39.3  30.0
+   base = data p10 ($417), log midpoints:  23.5  56.2  20.3
+   paper-dollar rungs, log-mid, 26-50 with own child + 51-85:  12.5  37.5  50.1
+
+gross rent, cash renters only  (householder 26-85, N=37.2m)
+   p10 620  p50 1412  p90 2680  mean 1585;  p50/p10 2.28, p90/p10 4.32
+   paper-dollar rungs, log-midpoint bins  :   6.3  40.6  53.1
+   paper-dollar rungs, rung-floor bins    :  25.0  47.7  27.4
+   base = data p10 ($620), log midpoints:  40.6  55.4   4.1
+   paper-dollar rungs, log-mid, 26-50 with own child + 51-85:   8.2  42.5  49.3
+
+model universe re-weighted by age (26-50 all with own child <18, 51-85 all), {0,1}/{2}/{3+}: 7.6 21.3 71.0
+
+model universe re-weighted by age (26-50 all with own child <18, 51-85 all), {0}/{1}/{2+}: 1.4 6.2 92.4
+
+no-cash-rent occupied units, share of 26-85: 1.55%
+
+=== scale sensitivity, PUMA-FE + residual measure, householder 26-85
+14.3th percentile $885/month; the model's top share needs a dollar scale x0.652 of the paper's, i.e. average labour income $73,377
+   average labour income $   73,377: rungs $156/626/1252, shares 1.8 12.5 85.7
+   average labour income $   82,149: rungs $175/701/1401, shares 2.3 16.3 81.5
+   average labour income $  112,500: rungs $240/959/1919, shares 3.9 30.8 65.2
+   average labour income $  128,857: rungs $275/1099/2198, shares 5.1 38.6 56.3
+
+=== scale at which the model's mean housing spending equals the data mean
+   renters' gross rent + owners' hedonic rent (PUMA FE) + renter residual: scale x1.105 (average labour income $124,262), shares 4.8 36.4 58.9
+   renters' gross rent + owners' hedonic rent (PUMA FE), no residual: scale x1.026 (average labour income $115,435), shares 2.1 32.3 65.7
+   renters' gross rent + owners' value x 5%/12 (dispersion upper bound): scale x1.016 (average labour income $114,273), shares 11.5 38.4 50.2
