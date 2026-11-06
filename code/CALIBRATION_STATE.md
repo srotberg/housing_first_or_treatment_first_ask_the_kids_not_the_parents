@@ -1,3 +1,10 @@
+06 Nov 15:25 OMEGA_C = 1, STAGE 2 AND THE NULL LAUNCHED. The b = 0.00479 benchmark files landed (90 files, worker
+session_019aHjYeSeHPLnhTVtaryVAy). Stage 2, bash code/omega1/run_whostops_omega1.sh <p> <p> OMEGA1_B=0.00479: 0.15 0.20
+session_019aHjYetghS2DimWvFcpfnr, 0.25 0.30 session_019aHjYfFRcgqCxokjK4FQEe (target: 61 percent of ALL tested users stop,
+t_stop/t_used). Stage 3 null, bash code/omega1/remote_omega1_arm.sh null OMEGA1_B=0.00479: session_019aHjYeb9FxPYvNY5uxTvts.
+Sonnet workers, env env_01XJWRaQeK2Z3GoW6SFXob5D, tags omega1-stage2 / omega1-stage3. NEXT: the four columns at the
+calibrated detection rate once stage 2 is in.
+
 06 Nov 15:20 OMEGA_C = 1, STAGE 1 DONE: b = 0.00479 IS THE BENCHMARK. Converged at block 10 (block move 5.1e-4 against
 1e-3), users 9.20 percent against 8.90 in the data (8.96 in the benchmark of record), inside the author's 8.5 to 9.4.
 Users by block: 7.90 9.62 9.61 9.39 9.12 9.22 9.24 9.16 9.20 9.20. The others: 0.00455 11.48 (done), 0.00467 10.27
