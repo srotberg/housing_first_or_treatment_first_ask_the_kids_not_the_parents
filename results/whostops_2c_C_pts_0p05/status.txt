@@ -1,12 +1,19 @@
-# who stops using under Treatment First, state by state, on Housing First's distribution; 06 Nov 15:16 UTC
+# who stops using under Treatment First, state by state, on Housing First's distribution; 06 Nov 15:36 UTC
 run_deter_points: gfortran missing, installing (14:52)
 run_deter_points: free disk 29G, memory 15 GiB, cores 4, threads per solve 2 (14:52)
 run_deter_points: building cf_fix2_treatC_impact (cf_fix2 + patch_treatC.py + the fixed distribution) (14:52)
 run_deter_points: build: built /home/user/housing_first_or_treatment_first/code/cf_fix2_treatC_impact/hftf_cf_prod (rule C, distribution fixed; all patches present) (14:53)
 run_deter_points: impact null wsref on cf_fix2_treatC_impact:  (14:54)
+run_deter_points: reference: 0.0555847124 0.1780291188 0.0743861992 11.6337833103  [use among holders, eligible, tested; eligible mass]; states file 174M (15:16)
+run_deter_points: impact tf ws_p050 on cf_fix2_treatC_impact: PDET=0.05 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 DIAG_HF_FROM=/home/user/housing_first_or_treatment_first/code/whostops_worker_Cpts_0p05.hf_states.bin (15:16)
 
 == cfarm_null_imp_wsref: 3 passes; use among holders, eligible, tested; eligible mass: 0.0555847124 0.1780291188 0.0743861992 11.6337833103
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0001  0.06753    -0.0%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.4835  -0.03%    +0.4%    +0.4%
   2  1.0001  0.06753    -0.7%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.4946  -0.00%    -0.0%    +0.7%
   3  1.0001  0.06753    -0.7%    +0.0%    +0.0%  0.00e+00  0.00e+00   787.4946  -0.00%    -0.0%    +0.7%
+
+== cfarm_tf_imp_ws_p050: 2 passes; use among holders, eligible, tested; eligible mass: NA
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
+  1  1.0001  0.06753    -8.2%    +0.0%    -0.0%  0.00e+00  0.00e+00   787.5746  +0.23%    -4.8%    +3.7%
+  2  1.0001  0.06753   -10.5%    +0.0%    -0.0%  0.00e+00  0.00e+00   787.6191  +0.36%    -6.6%    +4.3%
