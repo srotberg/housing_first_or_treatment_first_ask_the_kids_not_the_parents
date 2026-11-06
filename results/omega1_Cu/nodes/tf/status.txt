@@ -1,7 +1,10 @@
-# omega_c 1.0 on RULE C, column tf against results/omega1_2c/bench_1.0_b0.00479_ku1.0 (b 0.00479, kappa_uem 1.0, kappa_x 1.2214072953252457; base 0.0920201366,0.0387563780,0.0053935193); detection 0.15; Housing First re-solved on cf_fix2_share_treatCu; 06 Nov 22:15 UTC
+# omega_c 1.0 on RULE C, column tf against results/omega1_2c/bench_1.0_b0.00479_ku1.0 (b 0.00479, kappa_uem 1.0, kappa_x 1.2214072953252457; base 0.0920201366,0.0387563780,0.0053935193); detection 0.15; Housing First re-solved on cf_fix2_share_treatCu; 06 Nov 22:36 UTC
 remote_omega1_arm tf: free disk 24G, memory 15 GiB, cores 4 (22:15)
 remote_omega1_arm tf: benchmark results/omega1_2c/bench_1.0_b0.00479_ku1.0: kappa_x 1.2214072953252457 (probe 0.81016668567607175 x 1.5076), base 0.0920201366,0.0387563780,0.0053935193, pi_V 6.7533863251354007E-002, price 1.0000000000000000 (22:15)
+remote_omega1_arm tf: Housing First (corrected, checkout): net revenue 5.6758895, drug price 1.0021339, pi_V 0.067533863 (22:16)
+remote_omega1_arm tf: resuming from this column's last published pass: price 0.9558, pi_V 0.07804 (22:16)
+remote_omega1_arm tf: column tf on cf_fix2_treatC (rule C): PDET=0.15 NET_TARGET=5.6758895 PV_START=0.07804 DRUG_PRICE_START=0.9558 EXTRA_SET=cost_per_drug_test 0.0004946100 (22:16)
 
 == tf
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
-  1  0.9558  0.07804   -11.7%    -9.9%   -11.1%  7.78e-02  3.78e-01   777.9239  +6.23%
+  1  0.9588  0.07804   -16.4%   -14.6%   -11.7%  3.05e-02  3.77e-01   777.9479  +6.29%
