@@ -1,3 +1,15 @@
+06 Nov 15:20 OMEGA_C = 1, STAGE 1 DONE: b = 0.00479 IS THE BENCHMARK. Converged at block 10 (block move 5.1e-4 against
+1e-3), users 9.20 percent against 8.90 in the data (8.96 in the benchmark of record), inside the author's 8.5 to 9.4.
+Users by block: 7.90 9.62 9.61 9.39 9.12 9.22 9.24 9.16 9.20 9.20. The others: 0.00455 11.48 (done), 0.00467 10.27
+(block 9), 0.00491 8.45 (done), hedge 0.00482 8.91 at block 5 (not converged; waiting for it would mean hours more and
+the author asked for a decent fit, not an exact one). send_bench_1.0_b0.00479_ku1.0 committed; release_<tag> for 0.00455,
+0.00467, 0.00482 and 0.00491. NEXT: when bench_1.0_b0.00479_ku1.0/files/ lands, launch STAGE 2 (run_whostops_omega1.sh,
+two workers: 0.15 0.20 and 0.25 0.30) and the null (remote_omega1_arm.sh null), OMEGA1_B=0.00479.
+THE PAPER'S PLACE FOR IT (decided with the letters, round r422): the third experiment, a new Section 6.4 after the
+decomposition, with its own table; the transition becomes 6.5, the alternative transitions 6.6 and their table Table 8.
+The letters cite it as "the third experiment (Section [TO FILL: 6.4])"; renumber their 6.4 / 6.5 / Table 7 when it lands.
+The omega_c = 0.69 run is gone from the letters (replaced by the weight of one); its footnote stays in the paper until then.
+
 06 Nov 17:08 OMEGA_C = 1, STAGE 1: THE NEW GRID BRACKETS. Users by block (percent): 0.00455 10.26 11.76 11.84; 0.00467
 8.63 10.71 10.68; 0.00479 7.90 9.62 9.61; 0.00491 7.04 8.59 8.54. From block 3 to the end the first grid fell by 0.4 to
 0.7 and the 0.686 and benchmark runs by 0.2 to 0.4, so 0.00479 should end near 9.1 to 9.3 and 0.00491 near 8.1 to 8.2.

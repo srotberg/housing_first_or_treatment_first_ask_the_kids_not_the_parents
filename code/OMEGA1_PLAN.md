@@ -68,6 +68,19 @@ stage 1b re-run; otherwise interpolate and run b*. Stage 2 is the main experimen
 on the omega_c = 1 Housing First distribution, drug price and pi_V held, share of the tested users who stop = 61
 (Mehay and Pacula's stayers). Stage 3: the four columns at that detection rate.
 
+## 2b. Decided 6 November, 15:20 UTC-4
+
+- Benchmark: b = 0.00479, users 9.20 (CALIBRATION_STATE.md, 06 Nov 15:20).
+- Place in the paper: the THIRD experiment, a new Section 6.4 after the decomposition (6.3), with its own table. The
+  transition moves to 6.5, the alternative transitions to 6.6 and their table to Table 8. Every letter already points
+  to it as "the third experiment (Section [TO FILL: 6.4])" (the author: "in each letter you should make it clear where it
+  is"); renumber the letters' 6.4, 6.5 and Table 7 when the section goes in.
+- Section 2's literature on contracts between parents and children is IN (round r422): Becker and Murphy (1988a), Boldrin
+  and Montes (2005), Rangel (2003), Cigno (1993), each checked against the journal. Item 7 below is done.
+- The letters no longer mention the omega_c = 0.69 run; footnote 28 of the paper goes when the section goes in (item 8).
+- The letters count the robustness checks: eleven, six of them along the transition (common_blocks.py, ROB). If the
+  0.69 footnote goes and nothing else changes, that count stands.
+
 ## 3. The paper, once the results are in (in red; numbers as @@names@@; directions from compare())
 
 The author: "the experiment should come also in the paper", "the introduction as well and the abstract should be
