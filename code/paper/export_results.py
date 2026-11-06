@@ -183,6 +183,20 @@ if os.path.exists(os.path.join(adir('tf_half'), 'final.txt')) and os.path.exists
 else:
     out['x_h10_clause'] = '\\tocheck{--}'
     out['x_h10_cev'] = '\\mbox{\\tocheck{--}}'   # it sits in maths
+# THE QUARTER RATE (6 November; the author, on the AE letter: "even at half and a quarter of the detection rate. right? we
+# tried 5% too?"): tf_pdet05_Cu/tf, accepted 17 October against the same Housing First, for footnote fn:halfrate
+ARMDIR['tf_quarter'] = (RES, os.path.join('tf_pdet05_Cu', 'tf'))
+_qh = [l for l in open(os.path.join(adir('tf_quarter'), 'PARAM_HANDOVER.arm.txt')) if l.startswith('probability_of_detection ')]
+assert _qh, 'no probability_of_detection line in the quarter-rate run'
+out['x_tf_pdet_quarter_pc'] = f"{100 * float(_qh[-1].split()[-1]):.0f}"
+_q = final('tf_quarter')
+_bq, _hq = _q['drug use b']['pc'], _q['homelessness h_1']['pc']
+_vbq, _vhq = ('cuts' if _bq < 0 else 'raises'), ('cuts' if _hq < 0 else 'raises')
+out['x_h05_clause'] = (f'{_vbq} drug use by ${abs(_bq):.0f}$ and homelessness by ${abs(_hq):.0f}$ percent' if _vbq == _vhq
+                       else f'{_vbq} drug use by ${abs(_bq):.0f}$ percent and {_vhq} homelessness by ${abs(_hq):.0f}$ percent')
+_h05 = cev_log('tf_quarter') - CEV0
+out['x_h05_cev'] = f'{abs(_h05):.2f}'
+out['x_h05_dir'] = 'better' if _h05 > 0 else 'worse'
 # the same gain at Nishiyama's omega_c, against its own no-policy run; the weight is read off the benchmark
 # the two arms were solved against, named in passes.txt's header
 _nh = open(os.path.join(adir('nish_tf'), '..', 'passes.txt')).readline()
