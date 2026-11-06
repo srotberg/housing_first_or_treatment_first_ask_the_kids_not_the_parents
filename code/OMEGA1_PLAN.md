@@ -93,6 +93,15 @@ footnote if it does not.
 - AE letter: all 142 comments applied (6 November), except those that wait for omega_c = 1.
 - Editor, R1, R2, R3: the author's comment PDFs arrived 6 November; apply them next.
 
+- CROSS-LETTER CONSISTENCY (the author, 6 November: "any letter that can use arguments from other letters, should have
+  them", "you need to put this argument everywhere it appears"): after the comment rounds, one pass over all five
+  letters so that the same issue gets the same, strongest argument everywhere (false positives, robustness checks,
+  Vaillant, Costantini, Milby, the disamenity, fiscal costs, stigma, users' income, the homeless misses, Cohen and
+  Brounstein and Wieselthier and Humphries et al., now cited in Section 2).
+- False positives (the author): "in reality it is 0% since they give a range and lab tests so it is essentially
+  impossible": a positive only above a cutoff concentration, confirmed in a laboratory by a second, more specific
+  test; essentially zero among confirmed tests. In the paper's screen paragraph (red, r420) and every letter.
+
 ## 5. Open questions for the author (asked in chat, 6 November)
 
 - The SMI use ratio: the paper compares the model's 2.64 with 2.44, but the 2.44 uses a broader definition of use;
