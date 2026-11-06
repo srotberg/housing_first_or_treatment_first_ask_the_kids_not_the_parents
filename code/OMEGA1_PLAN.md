@@ -85,6 +85,8 @@ THE TABLE (the author, 6 November 16:35): "in the table, you just want to show t
 the impacts on drug use levels". So the new section's table reports, for each of the four columns, the newborn's
 welfare change and its split (childhood, adult life; the part the parent counts) and the parents' welfare, and no
 drug use, SUD or homelessness levels; those, if needed at all, go in a sentence. Detection 0.15 (60 percent stop).
+And: "you dont need to show the fit or the levels of other things", "the point is to understand the change in welfare".
+So the section does not report the omega_c = 1 economy's fit or levels; it reports and explains the welfare change.
 
 ## 3. The paper, once the results are in (in red; numbers as @@names@@; directions from compare())
 
