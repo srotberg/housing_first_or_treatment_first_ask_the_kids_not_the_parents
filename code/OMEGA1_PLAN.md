@@ -45,6 +45,13 @@ can gain, through childhood (C) against adult life (A).
 | 3b | the other three columns, as Table 5 (the author: "piv and pv held, piv held and pv not, pv held and piv not, and both not. like we did with the others"): pi_V held / price clears; price held / pi_V clears; both clear | the decomp_2c_shares_Cu pattern (arm_fixboth, arm_fixp, arm_fixpv, arm_tf) | ~14:00, 7 Nov |
 | 4 | per column: newborn CEV, its split into childhood (C) and adult life (A), the externality and the counted part, the parents' own welfare, drug use, SUD, homelessness, children in a homeless shelter, pi_V, price | export_nish_parts.py / export_results.py pattern; welfare_nok.cev_free against the omega_c = 1 benchmark's own curve | after 3b |
 
+SCRIPTS READY (6 November, dry-run tested, code/omega1/): `bash code/omega1/run_whostops_omega1.sh <p>... OMEGA1_B=<b>`
+(stage 2; prints the share of ALL tested users who stop, the paper's measure) and `bash code/omega1/remote_omega1_arm.sh
+<null|fixboth|fixp|fixpv|tf> OMEGA1_B=<b> OMEGA1_PDET=<p>` (stage 3); worker prompts in code/omega1/WORKER_PROMPTS.md.
+NOTE: in the main experiment's Table 5 the two middle columns did not clear (fixpv held the price at 0.9444, fixp held
+pi_V at 0.0924; task 'Table 5 pi_V clears column: clear or document'); the omega_c = 1 columns clear by default, with
+OMEGA1_HOLD_PRICE / OMEGA1_HOLD_PV fallbacks. Tell the author.
+
 Also: detection 0.05 in the main economy already exists (results/counterfactuals_2c/tf_pdet05_Cu, accepted 17 Oct:
 drug use -8.9, SUD -8.2, homelessness -3.6 percent, newborn CEV +1.01 on the paper's measure). Its impact share
 (who stops at 0.05) is running: `bash code/deter_2c/run_whostops_C_points.sh 0.05`, session_019aHjYeFNdEjhqxwQ7QNCXn
