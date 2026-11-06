@@ -53,6 +53,14 @@ drug use -8.9, SUD -8.2, homelessness -3.6 percent, newborn CEV +1.01 on the pap
 Keep the author posted after each stage (b scan, benchmark, first answer, clearing columns). A check-in fires every
 two hours (send_later).
 
+**The author, 6 November, 12:00 UTC-4:** "Make sure you get close to the 8.9% drug use with omegac=1. Doesn't have to
+be exact though. A decent fit is enough. Then we have to see what p_det gives the reaction as in the data, holding
+prices constant and piv constant, like we did in the main experiment. And then, we want to simulate the tf with the
+various piv and pv." So: accept a b point whose final users are within about 0.4 pp of 8.96 (8.5 to 9.4) without a
+stage 1b re-run; otherwise interpolate and run b*. Stage 2 is the main experiment's calibration exactly: the impact run
+on the omega_c = 1 Housing First distribution, drug price and pi_V held, share of the tested users who stop = 61
+(Mehay and Pacula's stayers). Stage 3: the four columns at that detection rate.
+
 ## 3. The paper, once the results are in (in red; numbers as @@names@@; directions from compare())
 
 The author: "the experiment should come also in the paper", "the introduction as well and the abstract should be
