@@ -29,6 +29,9 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 WS_DIR = os.path.join(ROOT, 'results', 'whostops_2c_C_pts_0p10_0p20')
 LOG = os.path.join(WS_DIR, 'cfarm_tf_imp_ws_p200', 'cf.log.gz')
 LOG_HALF = os.path.join(WS_DIR, 'cfarm_tf_imp_ws_p100', 'cf.log.gz')
+# the quarter rate (6 November; the author: "even at half and a quarter of the detection rate"): its own run, against its
+# own Housing First reference on the same build (code/deter_2c/run_whostops_C_points.sh 0.05)
+LOG_QUARTER = os.path.join(ROOT, 'results', 'whostops_2c_C_pts_0p05', 'cfarm_tf_imp_ws_p050', 'cf.log.gz')
 OUT_JSON = os.path.join(HERE, 'results_numbers.json')
 KEYS = ('hf_file', 'h_used', 'h_stop', 'h_start', 'hn_used', 'hn_stop', 'hn_start',
         't_used', 't_stop', 't_start', 'tn_used', 'tn_stop', 'tn_start')
@@ -89,6 +92,12 @@ def main():
         _pdh = [l for l in f if 'probability_of_detection' in l and 'HANDOVER' in l]
     assert _pdh, 'no probability_of_detection handover line in the half-rate run'
     out['x_tf_pdet_half_pc'] = f"{100 * float(_pdh[-1].split()[-1]):.0f}"
+    # THE QUARTER RATE: the share of the tested users who stop on impact, and inside or outside Mehay and Pacula's range
+    q = read(LOG_QUARTER)
+    _qp = round(100 * q['t_stop'] / q['t_used'])
+    out['x_ws_quarter_tested_all_pc'] = f"{_qp:.0f}"
+    out['x_ws_quarter_where'] = ('inside' if float(_lit['mp_lo_rel_pc']) <= _qp <= float(_lit['mp_hi_rel_pc'])
+                                 else 'outside')
     r = json.load(open(OUT_JSON))
     r.update(out)
     json.dump(r, open(OUT_JSON, 'w'), indent=1, sort_keys=True)
