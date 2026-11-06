@@ -1,3 +1,10 @@
+06 Nov 17:08 OMEGA_C = 1, STAGE 1: THE NEW GRID BRACKETS. Users by block (percent): 0.00455 10.26 11.76 11.84; 0.00467
+8.63 10.71 10.68; 0.00479 7.90 9.62 9.61; 0.00491 7.04 8.59 8.54. From block 3 to the end the first grid fell by 0.4 to
+0.7 and the 0.686 and benchmark runs by 0.2 to 0.4, so 0.00479 should end near 9.1 to 9.3 and 0.00491 near 8.1 to 8.2.
+The author's tolerance (12:00 UTC-4): a decent fit, within about 0.4 pp of 8.96. HEDGE launched at the interpolated
+b* = 0.00482 (session in the create_session record, tag omega1-2c). The first grid (0.00380 to 0.00419) is released
+(release_<tag> committed): its points end at 15 to 19 percent.
+
 06 Nov 15:36 OMEGA_C = 1, STAGE 1 REGRID. Block 1 of the first grid (0.00380 / 0.00393 / 0.00406 / 0.00419) puts users at
 18.63 / 17.28 / 15.52 / 13.77 percent, and block 1 runs BELOW the final value in the 0.686 and benchmark scans (7.88 ->
 9.05, 7.48 -> 8.96), so all four will end far above 8.956. At a given b, use is HIGHER at omega_c = 1 than at 0.686
