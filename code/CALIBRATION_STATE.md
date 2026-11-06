@@ -1,3 +1,25 @@
+06 Nov 14:47 OMEGA_C = 1, STAGE 1 LAUNCHED: THE b SCAN (the author, comments on the AE letter: "we need to understand why
+welfare rises when omega_c is higher...and if it rises even when omega_c=1", "calibrate omega_c=1 with about 8.9 percent drug
+use (use the omega_c=0.689 to go from a good starting point, and adjust b until you have the right share of drug use). then we
+calibrate the p_det to get 61% reduction in drug use in the short-run like in the main experiment. And then we show what
+happens to the child welfare and parent welfare in the long run holding piv and pv fixed", "start by working on that
+specifically first"). The story to test: a child would pay its parent to abstain if it could borrow against its future
+income; it cannot (a missing intergenerational contract, Becker and Murphy 1988), and the condition is a crude substitute.
+Prediction: with pi_V and the price held, parents lose and newborns gain through childhood (C) against adult life (A).
+STAGE 1, exactly as the omega_c = 0.686 Stage 2: bash code/remote_omega_point.sh 1.0 <b> 1.0 "" 2 omega1_2c (two-class
+build, the reference handover with weight_on_child 1.0 and b set, kappa_uem 1.0, scan seed), target the benchmark of
+record's own users 8.956 (results/reference/hf_2c_omega_0.085). b grid from the 0.085 -> 0.686 move (0.0054222 ->
+0.004510, users 9.05), extrapolated linearly to 1.0 (~0.00404): 0.00380 session_019aHjYf7oV2zekkoERHpqbN, 0.00393
+session_019aHjYd6ZWWmAQG3LSDYJef, 0.00406 session_019aHjYdc9zhXfZnqWnx2bum, 0.00419 session_019aHjYdcJS6gQrL8xKb6SaF (Sonnet
+workers, tag omega1-2c). Results to results/omega1_2c/. NEXT: interpolate b* for 8.956, run it (STAGE 1b), send_bench it;
+STAGE 2 who-stops detection scan at omega_c = 1 (deter_2c/run_whostops_C_pscan2.sh pattern, REF = the omega_c = 1 benchmark)
+for 61; STAGE 3 Housing First (null) and Treatment First at that detection: both held, price clears, pi_V clears, both
+clear (remote_nish_nodes_Cu.sh pattern); welfare split C / A and the parent's. DETECTION 0.05 in the main economy already
+exists: results/counterfactuals_2c/tf_pdet05_Cu, accepted 17 Oct (drug use -9.2, homelessness -3.6, CEV +1.23).
+WHEN THE RESULTS ARE IN (the author): the experiment in the paper after the main long-run experiment, the story in the
+introduction, the abstract slightly rewritten (under 150 words), the reasons Treatment First wins without externalities
+adjusted, and all five letters.
+
 12 Oct 14:09 THE SIX CALIBRATION-ENGINE ROUTINES PAUSED (the author: "should stop it if it doesnt help"): trig_015grVgUd21CFsp8RpLGt2BY (:01), trig_01XppicnBf6kDF2m2bCUn9LQ (:11), trig_01TB1sJDaQiEXaPAgBoMSAPt (:21), trig_01ADXmRUFNbfkTXZg93MMdso (:31), trig_018UrCYQznUcjygKUDHoEbh1 (:41), trig_011LkgcqyoCR2sP7EMeDPNnd (:50), disabled (not deleted; update_trigger enabled=true brings each back). The calibration is frozen, so every firing found nothing to do and spent the account's usage, whose limit had stopped every worker overnight. THE BOTH-PENALTIES RUN, rebuilt in single precision with checkpoints (the author: "do 1 and 2 together"), starts only after the other referee runs finish (the author: "sure wait for the rest to finish").
 
 12 Oct 08:51 BOTH PENALTIES DEAD A THIRD TIME, NOT RELAUNCHED (the author decides). session_018N3fsfggMz4fumbypJRXwp (epoch 3 since 23:46, then epoch 4) last published at 07:48: still the benchmark's block 1, no block finished after 8 h, AGE_TIME frozen at age 2 since 04:47 (the statistics stage, where the 23:28 container restart also struck), rss 13.3 GiB + swap 9.3 GiB, flat since 05:47; peak rss + swap 22.6 GiB, inside 15 + 23 GiB. At 08:18 get_session showed the session FAILED, 'You've reached your Fable limit' (the worker ran on claude-fable-5-1, seven-day limit, resets Fri 16 Oct 14:00 UTC), container disconnected; no commit since. The 05:42 re-brief (T=25 confirmation line) was never answered. Options put to the author: relaunch once on a Sonnet worker (benchmark from scratch, 25-40 h, and two of three attempts have died in block 1); a coarser asset grid with the paper's arm re-solved on the same grid; single-precision value functions; or dropping the test. The both-penalties 4-hourly check (09:40) stands down until the author answers.
