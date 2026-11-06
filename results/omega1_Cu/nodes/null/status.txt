@@ -1,4 +1,4 @@
-# omega_c 1.0 on RULE C, column null against results/omega1_2c/bench_1.0_b0.00479_ku1.0 (b 0.00479, kappa_uem 1.0, kappa_x 1.2214072953252457; base 0.0920201366,0.0387563780,0.0053935193); detection none, no screen; Housing First re-solved on cf_fix2_share_treatCu; 06 Nov 19:30 UTC
+# omega_c 1.0 on RULE C, column null against results/omega1_2c/bench_1.0_b0.00479_ku1.0 (b 0.00479, kappa_uem 1.0, kappa_x 1.2214072953252457; base 0.0920201366,0.0387563780,0.0053935193); detection none, no screen; Housing First re-solved on cf_fix2_share_treatCu; 06 Nov 19:50 UTC
 remote_omega1_arm null: gfortran missing, installing (19:24)
 remote_omega1_arm null: free disk 28G, memory 15 GiB, cores 4 (19:25)
 remote_omega1_arm null: benchmark results/omega1_2c/bench_1.0_b0.00479_ku1.0: kappa_x 1.2214072953252457 (probe 0.81016668567607175 x 1.5076), base 0.0920201366,0.0387563780,0.0053935193, pi_V 6.7533863251354007E-002, price 1.0000000000000000 (19:25)
@@ -6,3 +6,7 @@ remote_omega1_arm null: building cf_fix (19:25)
 remote_omega1_arm null: building cf_fix2 (19:26)
 remote_omega1_arm null: building cf_fix2_share (19:28)
 remote_omega1_arm null: building cf_fix2_share_treatCu (Housing First with the internal_computations fix ungated) (19:30)
+remote_omega1_arm null: arm null on cf_fix2_share_treatCu (Housing First, the internal_computations fix ungated), DRUG_PRICE_START=1.0000000000000000 (the benchmark's) (19:30)
+
+== null (the corrected Housing First, cf_fix2_share_treatCu)
+pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
