@@ -10,6 +10,8 @@ run_whostops_omega1: impact tf wo1_p250 on cf_fix2_treatC_impact: PDET=0.25 EXTR
 run_whostops_omega1: impact tf wo1_p300 on cf_fix2_treatC_impact: PDET=0.30 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0 DIAG_HF_FROM=/home/user/housing_first_or_treatment_first/code/whostops_worker_omega1_pts_0p25_0p30.hf_states.bin (19:50)
 run_whostops_omega1: detection 0.25: 74.2828 per cent of ALL tested users stop (the calibrated share, target 61), 79.6705 per cent of tested users without a SUD (20:18)
 run_whostops_omega1: detection 0.30: 81.7472 per cent of ALL tested users stop (the calibrated share, target 61), 97.6269 per cent of tested users without a SUD (20:18)
+run_whostops_omega1: points (detection, per cent of tested users without a SUD who stop, per cent of ALL tested users who stop; target 61 on the last): 0.25 79.6705 74.2828;0.30 97.6269 81.7472; (20:18)
+run_whostops_omega1: detection points done (20:18)
 
 == cfarm_null_imp_wo1ref: 3 passes; use among holders, eligible, tested; eligible mass: 0.0472414480 0.1443516363 0.0626412099 11.7591519551
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
