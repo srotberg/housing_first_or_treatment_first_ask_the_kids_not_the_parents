@@ -1,7 +1,9 @@
-# scan point, weight_on_child 1.0, b 0.00479, kappa_uem 1.0, child_penalty_classes 2, corrected code; 06 Nov 18:58 UTC
+# scan point, weight_on_child 1.0, b 0.00479, kappa_uem 1.0, child_penalty_classes 2, corrected code; 06 Nov 19:06 UTC
 remote_omega_point 1.0_b0.00479_ku1.0: gfortran missing, installing (15:36)
 remote_omega_point 1.0_b0.00479_ku1.0: building (15:36)
 remote_omega_point 1.0_b0.00479_ku1.0: solving, 4 cores (15:38)
+remote_omega_point 1.0_b0.00479_ku1.0: solve exited 0 after 10 blocks; bench.err:  (19:06)
+remote_omega_point 1.0_b0.00479_ku1.0: benchmark files held here, 90 files, 129M (19:06)
 build md5: 726be7866f5a4cdcf502207bb652ac35
  HANDOVER weight_on_child:   0.0000000000000000      ->   1.0000000000000000     
  FROZEN: every adjuster zeroed except weight_on_child's. Only omega_c is calibrated; delta_d is held by hand.
@@ -1008,3 +1010,34 @@ build md5: 726be7866f5a4cdcf502207bb652ac35
  newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.90324575099947968        8.9652916854533513E-002   5.7819661547360030E-003   1.3193659912509692E-003
  newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.90324575099947968        8.9652916854533513E-002   5.7819661547360030E-003   1.3193659912509692E-003
  newborn_parent_share (clean housed, disordered housed, clean street, disordered street)=  0.90324575099947968        8.9652916854533513E-002   5.7819661547360030E-003   1.3193659912509692E-003
+ ===== ALL TARGETED MOMENTS =====
+ MOMENT sigma_y   bottom half labour income share model=  0.16221275235146018       target=  0.17199999999999999     
+ MOMENT tau_l     average labour income tax   model=  0.20992447870727618       target=  0.22400000691413879     
+ MOMENT omega_l   labour supply / total hours model=   1.0000000000000000       target=  0.46999999880790710     
+ MOMENT beta      wealth over output          model=   2.7708195506458586       target=   3.0000000000000000     
+ MOMENT h_2       above half of spending      model=  0.19089199022085968       target=  0.10100000000000001     
+ MOMENT h_3       share in the largest unit   model=  0.85947068845767505       target=  0.62672300000000003     
+ MOMENT gamma     housing over expenditure    model=  0.26343797027265936       target=  0.26800000667572021     
+ MOMENT h_1       homelessness rate           model=   5.3935192870753707E-003  target=   4.0000001899898052E-003
+ MOMENT b         total drug users            model=   9.2020136625958940E-002  target=  0.10502000153064728     
+ MOMENT lambda_d  disorder rate               model=   3.8756378032160858E-002  target=   4.3423999100923538E-002
+ MOMENT theta     drug spending share         model=  0.31491481225647838       target=  0.15999999642372131     
+ MOMENT aleph     value of life / income      model=   74.053719686885444       target=   80.000000000000000     
+ MOMENT pi_eu     unemployment rate           model=   5.5977820247762412E-002  target=   4.8999998718500137E-002
+ MOMENT kappa_ued unemployment given SUD      model=  0.13612549516505570       target=  0.16249999403953552     
+ MOMENT kappa_uem employment given SMI        model=  0.83858636474712389       target=  0.30000001192092896     
+ MOMENT p_m       SMI population share        model=   4.8330502939767400E-002  target=   4.8193997977124578E-002
+ MOMENT lambda_m  SMI share of the homeless   model=  0.21104855904545339       target=  0.25000000000000000     
+ MOMENT r_smi     SUD ratio SMI over non-SMI  model=   2.0587221427492053       target=   7.3000001907348633     
+ MOMENT pi_V      eligibles with a voucher    model=  0.27559326562737113       target=  0.26600000262260437     
+ MOMENT cbar      food stamps / income        model=   4.3065554944079400E-003  target=   4.1999998502433300E-003
+ MOMENT tau_u     treatment take up           model=  0.24651577189604099       target=  0.24500000476837158     
+ MOMENT mu_H      recovery housed / homeless  model=   1.2658407261149898       target=   1.4732142857142856     
+ MOMENT w_bot     net worth share, bottom half model=   6.5340318596762578E-002  target=   2.5000000000000001E-002
+ MOMENT burden50  over half of income, in h2 model=   0.0000000000000000       target=  0.19200000000000000     
+ MOMENT sud_homeless SUD share of the homeless model=  0.14822018979305826       target=  0.21699999272823334     
+ MOMENT emp_homeless employed share of homeless model=  0.24349231861949050       target=  0.46000000834465027     
+ MOMENT y_u       income of drug users        model=  0.78871947245272278       target=  0.73999999999999999     
+ ===== END OF MOMENTS =====
+ BLOCK MOVE   5.1378649130802867E-004  against a rule of   1.0000000000000000E-003  -- b   9.2020136625958940E-002  lambda_d   3.8756378032160858E-002  h_1   5.3935192870753707E-003  y   1.5884883307505731     
+ simulation ended
