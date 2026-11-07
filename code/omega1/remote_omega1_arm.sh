@@ -85,7 +85,10 @@ for a in "$@"; do
     esac
 done
 case "$COL" in null|fixboth|fixp|fixpv|tf) ;; *) echo "usage: remote_omega1_arm.sh <null|fixboth|fixp|fixpv|tf> [OMEGA1_B=<b>] [OMEGA1_PDET=<p>]"; exit 1 ;; esac
-ARM=omega1_$COL
+# OMEGA1_TAG (7 November): a re-run of a column under another name, so it cannot collide with a run of the same column
+# still alive elsewhere (the omega_c = 1 tf column cycled at the default price step; its damped re-run is tf_damped)
+NAME="$COL${OMEGA1_TAG:-}"
+ARM=omega1_$NAME
 BRANCH=claude/two-period-addiction-hazard-d7gb61
 C=$(cd "$(dirname "$0")/.." && pwd)
 REPO=$(cd "$C/.." && pwd)
@@ -121,7 +124,7 @@ fi
 [ "${OMEGA1_HOLD_PV:-0}" = 1 ] && { [ "$COL" = fixp ] && [ -n "${OMEGA1_V0:-}" ] || { echo "GUARD: OMEGA1_HOLD_PV=1 is for fixp and needs OMEGA1_V0, the pi_V to hold"; exit 1; }; }
 RC=$REPO/results/omega1_Cu
 R=$RC/nodes
-T=$R/$COL                      # this column's running status, and its files at the end (the 0.686 script's nodes/{null,tf})
+T=$R/$NAME                      # this column's running status, and its files at the end (the 0.686 script's nodes/{null,tf})
 NF=$RC/cf/null                 # the re-solved Housing First's accepted files, net_target.txt among them
 [ "${OMEGA1_DRY:-0}" = 1 ] || mkdir -p "$T"
 D=$C/cf_point_$ARM
@@ -136,7 +139,7 @@ export OMP_NUM_THREADS=4 SEED_FROM=bench
 export PASSES_BASE="$PB_B,$PB_L,$PB_H"
 export CEV_CURVE=$D.welfare_curve.dat
 NULLRUN=cfarm_null_o1;      NULLLOG=$C/$NULLRUN/cf.log   # the corrected Housing First, solved here (column null)
-TFRUN=cfarm_tf_o1_$COL;     TFLOG=$C/$TFRUN/cf.log       # the Treatment First column, solved here
+TFRUN=cfarm_tf_o1_$NAME;     TFLOG=$C/$TFRUN/cf.log       # the Treatment First column, solved here
 NULLCMP=                                                  # the null's cf.log(.gz) each final.txt compares with
 
 note() { echo "remote_omega1_arm $COL: $* ($(date -u +%H:%M))" | tee -a "$D.status"; }
@@ -331,7 +334,10 @@ elif [ "$COL" != fixboth ]; then note "warm start at the main column's values: p
 # the column's settings; HP / HV are the price / pi_V it holds (empty: that one clears), for the HELD CHECK
 HP=; HV=
 case "$COL" in
-  tf)      SET=(PDET=$PDET NET_TARGET=$NET_TARGET_NULL PV_START=$V0 DRUG_PRICE_START=$P0 "EXTRA_SET=cost_per_drug_test $CTEST") ;;
+  tf)      SET=(PDET=$PDET NET_TARGET=$NET_TARGET_NULL PV_START=$V0 DRUG_PRICE_START=$P0 "EXTRA_SET=cost_per_drug_test $CTEST")
+           # OMEGA1_ADJ (7 November): a smaller price step where the default 0.1 cycles (treat/cf_arm_C.sh: the old arm 3
+           # cycled at 0.2 and converged at 0.1)
+           [ -n "${OMEGA1_ADJ:-}" ] && SET+=(DRUG_MARKET_ADJUSTER=$OMEGA1_ADJ) ;;
   fixboth) SET=(PDET=$PDET PV_START=$V_NULL DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0")
            HP=$P_NULL; HV=$V_NULL ;;
   fixpv)   SET=(PDET=$PDET PV_START=$V_NULL DRUG_PRICE_START=$P0 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0")
@@ -344,7 +350,7 @@ esac
 CLEARS_BUDGET=0; case " ${SET[*]} " in *" NET_TARGET="*) CLEARS_BUDGET=1 ;; esac
 if [ "${OMEGA1_DRY:-0}" = 1 ]; then
     note "DRY: column $COL would run as: BUILD=cf_fix2_treatC DIAG_TAG=_o1_$COL ${SET[*]} sh treat/cf_arm_C.sh tf (BENCH_FROM=$BENCH_FROM BENCH_B=$BENCH_B BENCH_OMEGA=$BENCH_OMEGA BENCH_KU=$BENCH_KU KAPPA_X=$KAPPA_X SEED_FROM=$SEED_FROM); clears the budget $CLEARS_BUDGET, holds the price at ${HP:-(clears)}, pi_V at ${HV:-(clears)}; compared with ${NULLCMP:-no null yet}"
-    note "DRY: its files would go to ${T#$REPO/} and, accepted, ${RC#$REPO/}/cf/$COL; nothing solved, nothing committed"
+    note "DRY: its files would go to ${T#$REPO/} and, accepted, ${RC#$REPO/}/cf/$NAME; nothing solved, nothing committed"
     exit 0
 fi
 
@@ -381,9 +387,9 @@ cp "$C/$TFRUN/welfare_by_employment_youngestcounter_arm.txt" "$T/value_at_26_by_
 [ "$rc" = 0 ] || ok=1
 if [ "$ok" = 0 ]; then
     note "column $COL ACCEPTED (exit $rc): $(tr '\n' ' ' < "$T/checks.txt")"
-    mkdir -p "$RC/cf/$COL"
+    mkdir -p "$RC/cf/$NAME"
     for f in run.out.gz cf.log.gz PARAM_HANDOVER.arm.txt checks.txt final.txt passes.txt milby.txt value_at_26_by_node.txt; do
-        [ -f "$T/$f" ] && cp "$T/$f" "$RC/cf/$COL/"
+        [ -f "$T/$f" ] && cp "$T/$f" "$RC/cf/$NAME/"
     done
     publish "$COL finished"
 else note "column $COL NOT accepted (exit $rc): $(tail -3 "$O" | tr '\n' ' ')"; fi

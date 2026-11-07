@@ -73,6 +73,9 @@ if __name__ == '__main__':
     rows = {}
     for tag, col, _ in COLS:
         d = os.path.join(CF, col)
+        # the both-clear column cycled at the default price step and was re-run damped (7 November): its re-run wins
+        if col == 'tf' and accepted(os.path.join(CF, 'tf_damped')):
+            d = os.path.join(CF, 'tf_damped')
         if not accepted(d):
             continue
         r = w.parts(d, d, os.path.join(CF, 'null'), os.path.join(CF, 'null'), bench=B, m=m)
