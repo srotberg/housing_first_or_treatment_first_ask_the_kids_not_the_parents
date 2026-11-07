@@ -58,6 +58,14 @@ def stop_share():
     raise SystemExit(f'no detection {PDET} line in {SCAN}')
 
 
+def final_change(d, label):
+    """the percent change a column's final.txt reports for one line (e.g. 'drug use b', 'drug price')"""
+    for l in open(os.path.join(d, 'final.txt')):
+        if l.strip().startswith(label + ' '):
+            return float(re.search(r'change\s+([-+]?[\d.]+)%', l).group(1))
+    raise SystemExit(f'no {label!r} line in {d}/final.txt')
+
+
 def num(x):
     return f"{x:.2f}".replace('-', '$-$') if x < 0 else f"{x:.2f}"
 
@@ -96,9 +104,17 @@ if __name__ == '__main__':
             f'x_om1_gain_pc_{tag}': f"{gain:.0f}",
             f'x_om1_tot_dir_{tag}': 'gains' if p['tot'] > 0 else 'loses',
             f'x_om1_P_dir_{tag}': 'gain' if p['P'] > 0 else 'lose',
+            # drug use and the drug price, for the sentences that explain a column (not in the table: the author)
+            f'x_om1_bdrop_{tag}': f"{(-final_change(d, 'drug use b') or 0.0) + 0.0:.2f}",
+            f'x_om1_pdrop_{tag}': f"{(-final_change(d, 'drug price') or 0.0) + 0.0:.2f}",
+            f'x_om1_pvrise_{tag}': f"{(final_change(d, 'pi_V (voucher probability)') or 0.0) + 0.0:.2f}",
             f'x_om1_parents_{tag}': ("every parent loses" if gain < 0.5 else "every parent gains" if gain > 99.5
                                      else f"{gain:.0f} percent of parents gain"),
         })
+    # the first column against the main experiment's (Section 6.4: "the gain is @@x_om1_held_vs_main@@ compared to")
+    if 'held' in rows:
+        main = float(json.load(open(OUT_JSON))['x_dc_b_cev'])
+        out['x_om1_held_vs_main'] = 'smaller' if rows['held']['tot'] < main else 'larger'
     # the table: welfare only (the author)
     hdr = ' & '.join(lab for _, _, lab in COLS)
     cell = lambda tag, k: num(rows[tag][k]) if tag in rows else 'running'
