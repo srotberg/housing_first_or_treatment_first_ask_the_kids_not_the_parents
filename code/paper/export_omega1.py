@@ -66,6 +66,26 @@ def final_change(d, label):
     raise SystemExit(f'no {label!r} line in {d}/final.txt')
 
 
+def tf_misses(d):
+    """how far the both-clear column misses the drug market and the budget (7 November: the drug market flips between
+    two states near 0.957, so the column is solved with the price, and if need be pi_V, held): the drug-market miss is
+    the last implied supply price against the price held, and the budget miss net revenue against Housing First's"""
+    import gzip
+    implied = None
+    with gzip.open(os.path.join(d, 'cf.log.gz'), 'rt', errors='replace') as fh:
+        for l in fh:
+            if 'implied supply price=' in l:
+                implied = float(l.split('=')[1].split()[0])
+    price = budget = None
+    for l in open(os.path.join(d, 'final.txt')):
+        if l.strip().startswith('drug price '):
+            price = float(l.split()[2])
+        if l.strip().startswith('net government revenue '):
+            budget = float(re.search(r'change\s+([-+]?[\d.]+)%', l).group(1))
+    assert implied is not None and price is not None and budget is not None, d
+    return 100 * abs(implied - price) / price, abs(budget)
+
+
 def num(x):
     return f"{x:.2f}".replace('-', '$-$') if x < 0 else f"{x:.2f}"
 
@@ -90,6 +110,8 @@ if __name__ == '__main__':
                     break
         if not accepted(d):
             continue
+        if col == 'tf':
+            tf_dir = d
         r = w.parts(d, d, os.path.join(CF, 'null'), os.path.join(CF, 'null'), bench=B, m=m)
         p = r['pts']
         assert abs(p['ext']) < 1e-9, (col, p['ext'])          # no externality at a weight of one
@@ -111,6 +133,12 @@ if __name__ == '__main__':
             f'x_om1_parents_{tag}': ("every parent loses" if gain < 0.5 else "every parent gains" if gain > 99.5
                                      else f"{gain:.0f} percent of parents gain"),
         })
+    # how the both-clear column was solved, and what it misses (the note to Table tab:omega1)
+    if 'tf' in rows:
+        miss_d, miss_b = tf_misses(tf_dir)
+        out['x_om1_tf_miss_pc'] = f"{miss_d:.2f}"
+        out['x_om1_tf_budget_miss_pc'] = f"{miss_b:.2f}"
+        out['x_om1_tf_run'] = os.path.basename(tf_dir)
     # the first column against the main experiment's (Section 6.4: "the gain is @@x_om1_held_vs_main@@ compared to")
     if 'held' in rows:
         main = float(json.load(open(OUT_JSON))['x_dc_b_cev'])
