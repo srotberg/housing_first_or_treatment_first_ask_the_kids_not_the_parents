@@ -1,3 +1,13 @@
+07 Nov 01:40 (UTC-4) OMEGA_C = 1, tf_damped WAS SOLVING UNSEEN: A BUG IN THE OMEGA1_TAG EDIT. The script launched the
+solver with DIAG_TAG=_o1_$COL, so it solved in cfarm_tf_o1_tf, while its status and its files at the end read $TFRUN =
+cfarm_tf_o1_tf_damped: from 03:36 to 05:16 UTC it published no pass ("tf running,  passes"), and at the end it would have
+found no 26-node file and been NOT accepted. Its container was replaced at 05:20 and it restarted from the midpoint with
+the same fault. Fixed (cf055ddc1): DIAG_TAG=_o1_$NAME; on attaching, a tagged run started before the fix gets
+cfarm_tf_o1_tf_damped linked to cfarm_tf_o1_tf, so the solve running now becomes visible and keeps its files; and
+OMEGA1_P0 / OMEGA1_V0 now replace only the main column's warm start, so a later restart resumes from the column's last
+published pass. The worker can't be messaged (no reachable agents), so the link comes when its 2-hour call ends and it
+re-runs the command, about 07:20 UTC; passes should publish from about 07:40 UTC. Tested on a stand-in solve here.
+
 07 Nov 00:35 (UTC-4) OMEGA_C = 1, THE pi_V-CLEARS COLUMN IS IN (fixp, price held at 1.0021, pi_V clears at 0.08287, +22.7
 percent; accepted, 7 passes, largest final 3.7e-5). NEWBORN +3.18 (main 6.45): childhood +1.85, better productivity at
 entry +0.94, own adult life +0.39. PARENTS +0.59; 98 percent gain (2 of 26 entry nodes lose). Parents' split (approximate,
