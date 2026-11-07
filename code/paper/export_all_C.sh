@@ -14,6 +14,7 @@ python3 export_whostops.py | tail -1
 python3 export_welfare.py | tail -2
 python3 export_decomp_use.py | tail -1
 python3 export_nish_parts.py | tail -1
+python3 export_omega1.py | tail -1    # 7 Nov: the third experiment, a weight of one on the child (Section 6.4, Table tab:omega1)
 python3 export_bcghw.py | tail -1
 python3 export_ca.py | tail -1    # round r321: the run in which households with a SUD cannot respond (footnote, introduction)
 python3 export_noescape.py | tail -1    # 17 Oct: the strict rule (detection 1.00, no exemption for treatment) for the Discussion
