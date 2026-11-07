@@ -1,3 +1,10 @@
+07 Nov 17:03 (UTC-5) OMEGA_C = 1, THE BOTH-CLEAR COLUMN IS IN (tf_both: price 0.9565 and pi_V 0.07589 held, accepted at
+pass 4, 22:03 UTC; tf_held did not converge by its deadline, pass 15, and still flips with pi_V near 0.0760). Drug price
+-4.55 percent, pi_V +12.37, drug use -18.83; misses: drug market 0.06 percent, budget 0.12 percent (export_omega1.py:
+x_om1_tf_miss_pc, x_om1_tf_budget_miss_pc). NEWBORN +1.73 (main 2.57): childhood +1.02, entry +0.54, own adult life
++0.17. PARENTS +0.25, 88 percent gain (5 of 26 entry nodes lose); split (approximate): own life -0.33, child's
+childhood +0.38, child's start +0.20. Section 6.4 paragraph and Table 7's note added in red (r442).
+
 07 Nov 14:55 (UTC-5) OMEGA_C = 1, THE BOTH-CLEAR COLUMN: THE AUTHOR'S RULE. "You can hold piv as well if the run can't fully
 clear. So hold it where it's close to clearing if running it doesn't converge. But let it go a bit longer so it has a chance
 to clear on its own. But don't remove that column." tf_held (price 0.9565, pi_V clearing) is at pass 12, back in the farther
