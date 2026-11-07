@@ -1,3 +1,13 @@
+07 Nov 23:31 (UTC-4, 6 Nov) OMEGA_C = 1, THE BOTH-CLEAR COLUMN CYCLES; RE-RUN DAMPED AS tf_damped. Passes 6 to 12 of tf
+settle into a three-pass cycle: the drug price 0.9575 / 0.9572 / 0.9563 / 0.9577 / 0.9574 / 0.9561 / 0.9576, drug use
+-17.2 percent when the price is below about 0.957 and -15.1 above it, the drug-market gap 3e-3 to 1.5e-2 against the
+1e-3 rule; the newborn's gain steady at +2.15 to +2.19 throughout. The default step (DRUG_MARKET_ADJUSTER 0.1) is the
+one at which the 0.686 run's tf converged; the old arm 3 cycled at 0.2 and converged at 0.1 (treat/cf_arm_C.sh), so
+halve it again. remote_omega1_arm.sh takes OMEGA1_TAG (the column's files under another name) and OMEGA1_ADJ (the
+step); the worker session_019aHjYfkLvwpeHnEiAG55Nv was interrupted (not archived) and session_019aHjYfeRyp9JMipFWjjfJG
+runs `tf OMEGA1_B=0.00479 OMEGA1_PDET=0.15 OMEGA1_TAG=_damped OMEGA1_ADJ=0.05 OMEGA1_P0=0.9569 OMEGA1_V0=0.07653`, the
+cycle's midpoint. export_omega1.py takes cf/tf_damped when it is accepted. fixp at pass 5, gaps small.
+
 07 Nov 21:20 (UTC-4, 6 Nov) OMEGA_C = 1, THE PE COLUMN IS IN (fixboth, price 1.0021 and pi_V 0.06753 held at Housing First's,
 detection 0.15; accepted, 5 passes). welfare_nok.parts against Bench(results/omega1_2c/bench_1.0_b0.00479_ku1.0), HF
 newborn masses normalised (as export_nish_parts.py); the same code reproduces the main PE column (2.82, parents -1.19).
