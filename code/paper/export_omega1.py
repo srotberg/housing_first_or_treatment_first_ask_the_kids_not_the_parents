@@ -126,6 +126,7 @@ if __name__ == '__main__':
             f'x_om1_gain_pc_{tag}': f"{gain:.0f}",
             f'x_om1_tot_dir_{tag}': 'gains' if p['tot'] > 0 else 'loses',
             f'x_om1_P_dir_{tag}': 'gain' if p['P'] > 0 else 'lose',
+            f'x_om1_P_noun_{tag}': 'gain' if p['P'] > 0 else 'loss',
             # drug use and the drug price, for the sentences that explain a column (not in the table: the author)
             f'x_om1_bdrop_{tag}': f"{(-final_change(d, 'drug use b') or 0.0) + 0.0:.2f}",
             f'x_om1_pdrop_{tag}': f"{(-final_change(d, 'drug price') or 0.0) + 0.0:.2f}",
