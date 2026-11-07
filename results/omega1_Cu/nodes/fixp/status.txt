@@ -1,9 +1,10 @@
-# omega_c 1.0 on RULE C, column fixp against results/omega1_2c/bench_1.0_b0.00479_ku1.0 (b 0.00479, kappa_uem 1.0, kappa_x 1.2214072953252457; base 0.0920201366,0.0387563780,0.0053935193); detection 0.15; Housing First re-solved on cf_fix2_share_treatCu; 07 Nov 04:00 UTC
+# omega_c 1.0 on RULE C, column fixp against results/omega1_2c/bench_1.0_b0.00479_ku1.0 (b 0.00479, kappa_uem 1.0, kappa_x 1.2214072953252457; base 0.0920201366,0.0387563780,0.0053935193); detection 0.15; Housing First re-solved on cf_fix2_share_treatCu; 07 Nov 04:15 UTC
 remote_omega1_arm fixp: free disk 24G, memory 15 GiB, cores 4 (01:00)
 remote_omega1_arm fixp: benchmark results/omega1_2c/bench_1.0_b0.00479_ku1.0: kappa_x 1.2214072953252457 (probe 0.81016668567607175 x 1.5076), base 0.0920201366,0.0387563780,0.0053935193, pi_V 6.7533863251354007E-002, price 1.0000000000000000 (01:00)
 remote_omega1_arm fixp: Housing First (corrected, checkout): net revenue 5.6758895, drug price 1.0021339, pi_V 0.067533863 (01:00)
 remote_omega1_arm fixp: resuming from this column's last published pass: price 1.0021, pi_V 0.08836 (01:00)
 remote_omega1_arm fixp: column fixp on cf_fix2_treatC (rule C): PDET=0.15 NET_TARGET=5.6758895 PV_START=0.08836 DRUG_PRICE_START=1.0021339 DRUG_MARKET_ADJUSTER=0 EXTRA_SET=cost_per_drug_test 0.0004946100 (01:00)
+remote_omega1_arm fixp: column fixp ACCEPTED (exit 0): TARGET CHECK PASS: cleared against 5.6758895000000003 DIST CHECK PASS: 7 passes, sweeps [70, 70, 70, 70, 70, 70, 70], largest final 3.70e-05 (rule 5e-05, at least 70 sweeps) HELD CHECK PASS: drug price 1.0021339, held at 1.0021339  (04:15)
 
 == fixp
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
@@ -13,3 +14,4 @@ pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfa
   4  1.0021  0.08364   -31.4%   -29.4%   -13.1%  0.00e+00  7.63e-04   777.1297  +4.08%
   5  1.0021  0.08355   -31.4%   -29.4%   -13.1%  0.00e+00  4.66e-03   777.1102  +4.03%
   6  1.0021  0.08299   -31.3%   -29.3%   -12.8%  0.00e+00  1.02e-03   777.0751  +3.93%
+  7  1.0021  0.08287   -31.3%   -29.3%   -12.8%  0.00e+00  5.46e-04   777.0673  +3.91%
