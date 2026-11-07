@@ -144,6 +144,12 @@ as moved.
 
 ## Deletions are struck through, and changes carry a note
 
+**STRIKES WAIVED AGAIN, 7 November (round r428): the author, *"no need to show striked out lines anymore"*.** In the
+paper, deleted text now simply goes: strip the red at the start of a round, make the edits, mark only the insertions
+with `\new{}` (by hand, or `track_changes.py` with its `\del{}` runs dropped), and splice and build as usual. Updates
+stay red and `\why{}` notes stay. This supersedes the r305 reinstatement below for the paper; the letters were not
+mentioned and keep their own rule (changes in red, removals struck in red).
+
 **STRIKES REINSTATED, 11 October (round r305): the author, *"if you delete something i want to see what you
 deleted"*, *"show me in the paper the changes in crossed lines and updates in red"*.** The r120 waiver (*"no need to
 show striked lines anymore"*) is over: every round runs `track_changes.py` against the source as the author last read
