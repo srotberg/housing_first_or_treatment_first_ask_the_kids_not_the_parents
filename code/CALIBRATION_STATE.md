@@ -1,3 +1,13 @@
+07 Nov 08:37 (UTC-4) OMEGA_C = 1, THE BOTH-CLEAR COLUMN: THE CLOSER STATE, PRICE HELD AT 0.9565. The author: "Just take the
+equilibrium that is closer even though there is a slight miss on the drug market". Of the two states near 0.957 the
+closer is drug use -18.9 percent (gap 2.6e-3 to 2.8e-3, a 0.26 percent miss); the other is -17.2 (gap about 1e-2).
+The looping run never writes final files for one pass, so the column is solved once with the price held at pass 11's
+0.9565 (gap 2.61e-3, budget gap 3.0e-5; passes 8, 10, 11 and 13, at 0.9565 to 0.9570, all landed in the closer state),
+pi_V and the budget clearing: session_019aHjYg7wwcRTJArZHiCmJW runs `tf OMEGA1_B=0.00479 OMEGA1_PDET=0.15 OMEGA1_TAG=_held
+OMEGA1_HOLD_PRICE=1 OMEGA1_P0=0.9565 OMEGA1_V0=0.07669` (dry-run checked); export_omega1.py takes cf/tf_held. Its final
+drug gap goes in Table tab:omega1's note. tf_damped (session_019aHjYfeRyp9JMipFWjjfJG) and the old tf
+(session_019aHjYfkLvwpeHnEiAG55Nv) still loop; not archived (no go-ahead).
+
 07 Nov 07:00 (UTC-4) OMEGA_C = 1, tf_damped FLIPS TOO: NO STEP CLEARS THE DRUG MARKET. At the halved step (0.05) the
 price walked 0.9587 to 0.9566 by pass 8, and then the flips came back AT ONE PRICE: pass 7 at 0.9572 drug use -19.0 (gap
 5.5e-3), pass 9 at 0.9571 -17.3 (gap 1.0e-2), pass 10 at 0.9570 -18.9 (gap 2.8e-3). The drug market has two states near
