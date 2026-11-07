@@ -1,3 +1,11 @@
+07 Nov 11:45 (UTC-4) OMEGA_C = 1, tf_held SETTLES IN THE FARTHER STATE; THE AUTHOR: "sure let it finish". With the price held
+at 0.9565, passes 4 and 5 put drug use at -17.3 and -17.2 percent: the farther of the two states (about a 1 percent miss
+on the drug market in the damped run), not the -18.9 one the author chose. The state is not set by the price alone (the
+damped run was at -18.9 at this same price). Welfare is all but the same in either state (the damped run's logged CEV
++2.21 to +2.23 in both), so the author lets it finish. The miss is not in the status with the price held
+(distance_drug_market is zeroed when drug_market_adjuster = 0): take it from cf.log's last "implied supply price"
+line, |implied - 0.9565| / 0.9565, export it as a name, and state it in Table tab:omega1's note.
+
 07 Nov 08:37 (UTC-4) OMEGA_C = 1, THE BOTH-CLEAR COLUMN: THE CLOSER STATE, PRICE HELD AT 0.9565. The author: "Just take the
 equilibrium that is closer even though there is a slight miss on the drug market". Of the two states near 0.957 the
 closer is drug use -18.9 percent (gap 2.6e-3 to 2.8e-3, a 0.26 percent miss); the other is -17.2 (gap about 1e-2).
