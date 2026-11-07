@@ -1,3 +1,11 @@
+07 Nov 00:35 (UTC-4) OMEGA_C = 1, THE pi_V-CLEARS COLUMN IS IN (fixp, price held at 1.0021, pi_V clears at 0.08287, +22.7
+percent; accepted, 7 passes, largest final 3.7e-5). NEWBORN +3.18 (main 6.45): childhood +1.85, better productivity at
+entry +0.94, own adult life +0.39. PARENTS +0.59; 98 percent gain (2 of 26 entry nodes lose). Parents' split (approximate,
+as for fixboth): own life -0.44, child's childhood +0.69, child's start +0.35, so the parent's own life still loses and the
+gain is the child's part it counts. Exported (export_omega1.py: Table tab:omega1's second column). The old tf worker
+(session_019aHjYfkLvwpeHnEiAG55Nv) re-ran its command after the interrupt, on a new container (04:23 UTC), and is cycling
+again at the default step; it writes only nodes/tf. tf_damped built and solving since 03:36 UTC, no pass yet.
+
 07 Nov 23:31 (UTC-4, 6 Nov) OMEGA_C = 1, THE BOTH-CLEAR COLUMN CYCLES; RE-RUN DAMPED AS tf_damped. Passes 6 to 12 of tf
 settle into a three-pass cycle: the drug price 0.9575 / 0.9572 / 0.9563 / 0.9577 / 0.9574 / 0.9561 / 0.9576, drug use
 -17.2 percent when the price is below about 0.957 and -15.1 above it, the drug-market gap 3e-3 to 1.5e-2 against the
