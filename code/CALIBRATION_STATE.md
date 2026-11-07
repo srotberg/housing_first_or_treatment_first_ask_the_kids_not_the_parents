@@ -1,3 +1,12 @@
+07 Nov 14:55 (UTC-5) OMEGA_C = 1, THE BOTH-CLEAR COLUMN: THE AUTHOR'S RULE. "You can hold piv as well if the run can't fully
+clear. So hold it where it's close to clearing if running it doesn't converge. But let it go a bit longer so it has a chance
+to clear on its own. But don't remove that column." tf_held (price 0.9565, pi_V clearing) is at pass 12, back in the farther
+state for two passes (-17.1 percent; pi_V 0.07601, 0.07620, drifting up and away from the flip near 0.0760). It gets until
+about pass 15 (16:45 UTC-5). In parallel, as insurance, session_019aHjYe9VuMVgkYa3jSeUrg runs `tf OMEGA1_B=0.00479
+OMEGA1_PDET=0.15 OMEGA1_TAG=_both OMEGA1_HOLD_PRICE=1 OMEGA1_HOLD_PV=1 OMEGA1_P0=0.9565 OMEGA1_V0=0.07589`: pi_V held at pass
+9's 0.07589, the smallest budget gap of the recent passes (1.26e-3). export_omega1.py takes tf_held if accepted, else
+tf_both. The table note then says which.
+
 07 Nov 14:07 (UTC-5) OMEGA_C = 1, tf_held FLIPS WITH pi_V: IT CANNOT SETTLE. Passes 8 to 11 with the price held at 0.9565:
 drug use -17.1 / -18.7 / -18.7 / -17.1 as pi_V moves 0.07600 / 0.07589 / 0.07582 / 0.07601 (the closer state below about
 0.0759, the farther above); the moments rule (5e-4 in levels) never holds across a flip. The logged CEV is +2.03 to +2.10

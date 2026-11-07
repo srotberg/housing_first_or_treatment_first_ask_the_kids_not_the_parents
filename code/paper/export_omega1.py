@@ -84,7 +84,7 @@ if __name__ == '__main__':
         # the both-clear column cycled at the default price step and was re-run damped (7 November); if that flips
         # too, the price is held at the flips' mean with pi_V clearing (tf_held): the latest accepted re-run wins
         if col == 'tf':
-            for alt in ('tf_both', 'tf_held', 'tf_damped'):
+            for alt in ('tf_held', 'tf_both', 'tf_damped'):   # the author: the clearing run if it converges, else both held
                 if accepted(os.path.join(CF, alt)):
                     d = os.path.join(CF, alt)
                     break
