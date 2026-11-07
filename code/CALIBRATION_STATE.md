@@ -1,3 +1,13 @@
+07 Nov 21:20 (UTC-4, 6 Nov) OMEGA_C = 1, THE PE COLUMN IS IN (fixboth, price 1.0021 and pi_V 0.06753 held at Housing First's,
+detection 0.15; accepted, 5 passes). welfare_nok.parts against Bench(results/omega1_2c/bench_1.0_b0.00479_ku1.0), HF
+newborn masses normalised (as export_nish_parts.py); the same code reproduces the main PE column (2.82, parents -1.19).
+NEWBORN +1.09 (main 2.82): childhood +1.26, better productivity at entry +1.10, own adult life under the policy -1.27;
+externality 0 (omega_c = 1), all counted by the parent. PARENTS -1.92 (main -1.19); every parent's own value falls (26 of
+26 entry nodes). Parents' split (approximate: the child's childhood enters the parent's value at 26 at omega_c(xi-1) C,
+the charge for the child's start taken as omega_c E): own life -2.79, child's childhood +0.47, child's start +0.40.
+fixpv (pi_V held, price clears, 0.958): newborn +0.41, parents -1.03, 18 percent of parents gain (8 of 26 nodes).
+tf at pass 7; fixp restarted a third time at 01:00 UTC.
+
 06 Nov 16:31 OMEGA_C = 1, STAGE 2 DONE AND STAGE 3 LAUNCHED. Share of ALL tested users who stop on impact (t_stop/t_used,
 the main experiment's measure, impact year, price and pi_V held; price held at the benchmark's 1.000 since the null was
 not in, against 1.0036 in the null so far): 0.15 -> 60.06, 0.20 -> 67.14, 0.25 -> 74.28, 0.30 -> 81.75 (scan.txt in
