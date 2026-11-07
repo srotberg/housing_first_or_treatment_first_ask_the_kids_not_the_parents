@@ -73,9 +73,13 @@ if __name__ == '__main__':
     rows = {}
     for tag, col, _ in COLS:
         d = os.path.join(CF, col)
-        # the both-clear column cycled at the default price step and was re-run damped (7 November): its re-run wins
-        if col == 'tf' and accepted(os.path.join(CF, 'tf_damped')):
-            d = os.path.join(CF, 'tf_damped')
+        # the both-clear column cycled at the default price step and was re-run damped (7 November); if that flips
+        # too, the price is held at the flips' mean with pi_V clearing (tf_held): the latest accepted re-run wins
+        if col == 'tf':
+            for alt in ('tf_held', 'tf_damped'):
+                if accepted(os.path.join(CF, alt)):
+                    d = os.path.join(CF, alt)
+                    break
         if not accepted(d):
             continue
         r = w.parts(d, d, os.path.join(CF, 'null'), os.path.join(CF, 'null'), bench=B, m=m)

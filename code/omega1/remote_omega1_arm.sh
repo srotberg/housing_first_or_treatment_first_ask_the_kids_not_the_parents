@@ -121,7 +121,8 @@ if [ "$COL" != null ]; then
     python3 -c "import sys; p = float('$PDET'); sys.exit(0 if 0 < p <= 1 else 1)" 2>/dev/null \
         || { echo "GUARD: OMEGA1_PDET (the detection rate, e.g. 0.20) is unset or not in (0, 1]: '$PDET'"; exit 1; }
 fi
-[ "${OMEGA1_HOLD_PRICE:-0}" = 1 ] && { [ "$COL" = fixpv ] && [ -n "${OMEGA1_P0:-}" ] || { echo "GUARD: OMEGA1_HOLD_PRICE=1 is for fixpv and needs OMEGA1_P0, the price to hold"; exit 1; }; }
+[ "${OMEGA1_HOLD_PRICE:-0}" = 1 ] && { case "$COL" in fixpv|tf) true ;; *) false ;; esac && [ -n "${OMEGA1_P0:-}" ] || { echo "GUARD: OMEGA1_HOLD_PRICE=1 is for fixpv or tf and needs OMEGA1_P0, the price to hold"; exit 1; }; }
+[ "${OMEGA1_HOLD_PRICE:-0}" = 1 ] && [ -n "${OMEGA1_ADJ:-}" ] && { echo "GUARD: OMEGA1_HOLD_PRICE=1 holds the price; OMEGA1_ADJ sets its step: give one"; exit 1; }
 [ "${OMEGA1_HOLD_PV:-0}" = 1 ] && { [ "$COL" = fixp ] && [ -n "${OMEGA1_V0:-}" ] || { echo "GUARD: OMEGA1_HOLD_PV=1 is for fixp and needs OMEGA1_V0, the pi_V to hold"; exit 1; }; }
 RC=$REPO/results/omega1_Cu
 R=$RC/nodes
@@ -344,7 +345,11 @@ case "$COL" in
   tf)      SET=(PDET=$PDET NET_TARGET=$NET_TARGET_NULL PV_START=$V0 DRUG_PRICE_START=$P0 "EXTRA_SET=cost_per_drug_test $CTEST")
            # OMEGA1_ADJ (7 November): a smaller price step where the default 0.1 cycles (treat/cf_arm_C.sh: the old arm 3
            # cycled at 0.2 and converged at 0.1)
-           [ -n "${OMEGA1_ADJ:-}" ] && SET+=(DRUG_MARKET_ADJUSTER=$OMEGA1_ADJ) ;;
+           [ -n "${OMEGA1_ADJ:-}" ] && SET+=(DRUG_MARKET_ADJUSTER=$OMEGA1_ADJ)
+           # OMEGA1_HOLD_PRICE=1 (7 November): where the drug market flips between two states at one price and no
+           # step clears it, hold the price at OMEGA1_P0 (the flips' mean) and clear pi_V and the budget, as the main
+           # experiment's fixpv was held at its cycle's mean
+           [ "${OMEGA1_HOLD_PRICE:-0}" = 1 ] && { SET+=(DRUG_MARKET_ADJUSTER=0); HP=$P0; } ;;
   fixboth) SET=(PDET=$PDET PV_START=$V_NULL DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0")
            HP=$P_NULL; HV=$V_NULL ;;
   fixpv)   SET=(PDET=$PDET PV_START=$V_NULL DRUG_PRICE_START=$P0 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0")

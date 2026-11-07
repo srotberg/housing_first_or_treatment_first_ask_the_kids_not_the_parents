@@ -1,3 +1,12 @@
+07 Nov 07:00 (UTC-4) OMEGA_C = 1, tf_damped FLIPS TOO: NO STEP CLEARS THE DRUG MARKET. At the halved step (0.05) the
+price walked 0.9587 to 0.9566 by pass 8, and then the flips came back AT ONE PRICE: pass 7 at 0.9572 drug use -19.0 (gap
+5.5e-3), pass 9 at 0.9571 -17.3 (gap 1.0e-2), pass 10 at 0.9570 -18.9 (gap 2.8e-3). The drug market has two states near
+0.957 and the gap never falls below about 2.8e-3 (rule 1e-3), so a smaller step cannot help. The newborn's gain is
++2.19 to +2.24 in either state (passes 5 to 10). Prepared, NOT launched (the author decides): OMEGA1_HOLD_PRICE=1 for tf,
+`tf OMEGA1_B=0.00479 OMEGA1_PDET=0.15 OMEGA1_TAG=_held OMEGA1_HOLD_PRICE=1 OMEGA1_P0=0.9570 OMEGA1_V0=0.0768`: the price held
+at the flips' mean (0.9570: the late passes of both runs average 0.9570), pi_V and the budget clearing, as the main
+experiment's fixpv was held at its cycle's mean; export_omega1.py would take cf/tf_held. Dry-run checked.
+
 07 Nov 01:40 (UTC-4) OMEGA_C = 1, tf_damped WAS SOLVING UNSEEN: A BUG IN THE OMEGA1_TAG EDIT. The script launched the
 solver with DIAG_TAG=_o1_$COL, so it solved in cfarm_tf_o1_tf, while its status and its files at the end read $TFRUN =
 cfarm_tf_o1_tf_damped: from 03:36 to 05:16 UTC it published no pass ("tf running,  passes"), and at the end it would have
