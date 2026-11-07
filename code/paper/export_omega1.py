@@ -115,6 +115,13 @@ if __name__ == '__main__':
     if 'held' in rows:
         main = float(json.load(open(OUT_JSON))['x_dc_b_cev'])
         out['x_om1_held_vs_main'] = 'smaller' if rows['held']['tot'] < main else 'larger'
+    # the price-clears column against partial equilibrium (Section 6.4, the author: "they gain less than the PE, right?
+    # maybe explain it like that"): the newborn's gain, its childhood and entry parts, and the parents' loss
+    if 'held' in rows and 'prc' in rows:
+        h, c = rows['held'], rows['prc']
+        out['x_om1_tot_prc_vs_held'] = 'less' if c['tot'] < h['tot'] else 'more'
+        out['x_om1_early_prc_vs_held'] = 'less' if c['child'] + c['entry'] < h['child'] + h['entry'] else 'more'
+        out['x_om1_loss_prc_vs_held'] = 'less' if abs(c['P']) < abs(h['P']) else 'more'
     # the table: welfare only (the author)
     hdr = ' & '.join(lab for _, _, lab in COLS)
     cell = lambda tag, k: num(rows[tag][k]) if tag in rows else 'running'
