@@ -123,7 +123,8 @@ if [ "$COL" != null ]; then
 fi
 [ "${OMEGA1_HOLD_PRICE:-0}" = 1 ] && { case "$COL" in fixpv|tf) true ;; *) false ;; esac && [ -n "${OMEGA1_P0:-}" ] || { echo "GUARD: OMEGA1_HOLD_PRICE=1 is for fixpv or tf and needs OMEGA1_P0, the price to hold"; exit 1; }; }
 [ "${OMEGA1_HOLD_PRICE:-0}" = 1 ] && [ -n "${OMEGA1_ADJ:-}" ] && { echo "GUARD: OMEGA1_HOLD_PRICE=1 holds the price; OMEGA1_ADJ sets its step: give one"; exit 1; }
-[ "${OMEGA1_HOLD_PV:-0}" = 1 ] && { [ "$COL" = fixp ] && [ -n "${OMEGA1_V0:-}" ] || { echo "GUARD: OMEGA1_HOLD_PV=1 is for fixp and needs OMEGA1_V0, the pi_V to hold"; exit 1; }; }
+[ "${OMEGA1_HOLD_PV:-0}" = 1 ] && { case "$COL" in fixp|tf) true ;; *) false ;; esac && [ -n "${OMEGA1_V0:-}" ] || { echo "GUARD: OMEGA1_HOLD_PV=1 is for fixp or tf and needs OMEGA1_V0, the pi_V to hold"; exit 1; }; }
+[ "$COL" = tf ] && [ "${OMEGA1_HOLD_PV:-0}" = 1 ] && [ "${OMEGA1_HOLD_PRICE:-0}" != 1 ] && { echo "GUARD: for tf, OMEGA1_HOLD_PV=1 goes with OMEGA1_HOLD_PRICE=1 (both held at Treatment First's values)"; exit 1; }
 RC=$REPO/results/omega1_Cu
 R=$RC/nodes
 T=$R/$NAME                      # this column's running status, and its files at the end (the 0.686 script's nodes/{null,tf})
@@ -349,7 +350,11 @@ case "$COL" in
            # OMEGA1_HOLD_PRICE=1 (7 November): where the drug market flips between two states at one price and no
            # step clears it, hold the price at OMEGA1_P0 (the flips' mean) and clear pi_V and the budget, as the main
            # experiment's fixpv was held at its cycle's mean
-           [ "${OMEGA1_HOLD_PRICE:-0}" = 1 ] && { SET+=(DRUG_MARKET_ADJUSTER=0); HP=$P0; } ;;
+           [ "${OMEGA1_HOLD_PRICE:-0}" = 1 ] && { SET+=(DRUG_MARKET_ADJUSTER=0); HP=$P0; }
+           # OMEGA1_HOLD_PV=1 with OMEGA1_HOLD_PRICE=1 (7 November): with the price held the market still flips with pi_V
+           # (tf_held: -17.1 / -18.7 percent drug use as pi_V crosses about 0.0760), so hold pi_V too, at OMEGA1_V0, with
+           # the budget left open as in fixboth
+           [ "${OMEGA1_HOLD_PV:-0}" = 1 ] && { SET=(PDET=$PDET PV_START=$V0 DRUG_PRICE_START=$P0 DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0"); HP=$P0; HV=$V0; } ;;
   fixboth) SET=(PDET=$PDET PV_START=$V_NULL DRUG_PRICE_START=$P_NULL DRUG_MARKET_ADJUSTER=0 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0")
            HP=$P_NULL; HV=$V_NULL ;;
   fixpv)   SET=(PDET=$PDET PV_START=$V_NULL DRUG_PRICE_START=$P0 "EXTRA_SET=cost_per_drug_test $CTEST;adjust_taxes 0")

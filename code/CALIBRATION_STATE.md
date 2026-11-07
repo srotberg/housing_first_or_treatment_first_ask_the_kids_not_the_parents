@@ -1,3 +1,11 @@
+07 Nov 14:07 (UTC-5) OMEGA_C = 1, tf_held FLIPS WITH pi_V: IT CANNOT SETTLE. Passes 8 to 11 with the price held at 0.9565:
+drug use -17.1 / -18.7 / -18.7 / -17.1 as pi_V moves 0.07600 / 0.07589 / 0.07582 / 0.07601 (the closer state below about
+0.0759, the farther above); the moments rule (5e-4 in levels) never holds across a flip. The logged CEV is +2.03 to +2.10
+in either state. Prepared, NOT launched (the author decides): hold pi_V too, at 0.07585 (the closer state the author first
+chose), with the budget left open as in fixboth: `tf OMEGA1_B=0.00479 OMEGA1_PDET=0.15 OMEGA1_TAG=_both OMEGA1_HOLD_PRICE=1
+OMEGA1_HOLD_PV=1 OMEGA1_P0=0.9565 OMEGA1_V0=0.07585` (dry-run checked); fixboth settled in 5 passes. export_omega1.py
+takes cf/tf_both first.
+
 07 Nov 11:45 (UTC-4) OMEGA_C = 1, tf_held SETTLES IN THE FARTHER STATE; THE AUTHOR: "sure let it finish". With the price held
 at 0.9565, passes 4 and 5 put drug use at -17.3 and -17.2 percent: the farther of the two states (about a 1 percent miss
 on the drug market in the damped run), not the -18.9 one the author chose. The state is not set by the price alone (the
