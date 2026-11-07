@@ -37,7 +37,8 @@
 #     price_of_addictive_good, 1 by construction), said in its status as a stand-in to re-run; OMEGA1_WAIT_NULL=1 makes
 #     them wait too. Table 5's held columns hold the corrected Housing First's price (decomp_2c_shares_Cu3, 0.99938969).
 #   * WARM STARTS: the main column's converged values (P0, V0 below, from results/decomp_2c_shares_Cu*/arm_<column>), or
-#     this column's own last published pass on a restart, as the 0.686 script; OMEGA1_P0 / OMEGA1_V0 override both.
+#     this column's own last published pass on a restart, as the 0.686 script; OMEGA1_P0 / OMEGA1_V0 replace the
+#     first (7 November: they used to override both, so a restarted tagged run went back to its start).
 #   * A HELD CHECK in the held columns: the last pass ran at the held price or pi_V (final.txt against the value set).
 #   * RESULTS to results/omega1_Cu/nodes/<column>/ and, accepted, results/omega1_Cu/cf/<column>/ (final.txt, cf.log.gz,
 #     passes.txt, checks.txt, PARAM_HANDOVER.arm.txt, value_at_26_by_node.txt; Treatment First also run.out.gz and
@@ -147,6 +148,11 @@ note() { echo "remote_omega1_arm $COL: $* ($(date -u +%H:%M))" | tee -a "$D.stat
 if [ "${CF_POINT_DETACHED:-0}" != 1 ] && [ "${OMEGA1_DRY:-0}" != 1 ]; then
     if [ -f "$D.pid" ] && kill -0 "$(cat "$D.pid")" 2>/dev/null; then
         echo "remote_omega1_arm $COL: attaching to the running solve, pid $(cat "$D.pid")"
+        # a tagged re-run started before 7 November 05:45 UTC solved under DIAG_TAG _o1_$COL, so its folder is
+        # cfarm_tf_o1_$COL while its status and its files at the end read $TFRUN: point the one at the other
+        if [ "$NAME" != "$COL" ] && [ ! -e "$C/$TFRUN" ] && [ -d "$C/cfarm_tf_o1_$COL" ]; then
+            ln -s "cfarm_tf_o1_$COL" "$C/$TFRUN" && echo "remote_omega1_arm $COL: linked $TFRUN to cfarm_tf_o1_$COL, the folder this solve writes"
+        fi
     else
         ( CF_POINT_DETACHED=1 setsid nohup bash "$0" "$@" > "/tmp/cf_point_$ARM.detached.log" 2>&1 < /dev/null &
           echo $! > "$D.pid" )
@@ -329,8 +335,9 @@ if [ -n "$LAST" ] && [ "$COL" != fixboth ]; then
     case "$COL" in tf) P0=${LAST% *}; V0=${LAST#* } ;; fixpv) P0=${LAST% *} ;; fixp) V0=${LAST#* } ;; esac
     note "resuming from this column's last published pass: price ${LAST% *}, pi_V ${LAST#* }"
 elif [ "$COL" != fixboth ]; then note "warm start at the main column's values: price ${P0:-held}, pi_V ${V0:-held}"; fi
-[ -n "${OMEGA1_P0:-}" ] && [ -n "$P0" ] && { P0=$OMEGA1_P0; note "OMEGA1_P0: price from $P0"; }
-[ -n "${OMEGA1_V0:-}" ] && [ -n "$V0" ] && { V0=$OMEGA1_V0; note "OMEGA1_V0: pi_V from $V0"; }
+# OMEGA1_P0 / OMEGA1_V0 replace the main column's values only: a restart resumes from this column's own last pass
+[ -z "$LAST" ] && [ -n "${OMEGA1_P0:-}" ] && [ -n "$P0" ] && { P0=$OMEGA1_P0; note "OMEGA1_P0: price from $P0"; }
+[ -z "$LAST" ] && [ -n "${OMEGA1_V0:-}" ] && [ -n "$V0" ] && { V0=$OMEGA1_V0; note "OMEGA1_V0: pi_V from $V0"; }
 # the column's settings; HP / HV are the price / pi_V it holds (empty: that one clears), for the HELD CHECK
 HP=; HV=
 case "$COL" in
@@ -349,13 +356,13 @@ case "$COL" in
 esac
 CLEARS_BUDGET=0; case " ${SET[*]} " in *" NET_TARGET="*) CLEARS_BUDGET=1 ;; esac
 if [ "${OMEGA1_DRY:-0}" = 1 ]; then
-    note "DRY: column $COL would run as: BUILD=cf_fix2_treatC DIAG_TAG=_o1_$COL ${SET[*]} sh treat/cf_arm_C.sh tf (BENCH_FROM=$BENCH_FROM BENCH_B=$BENCH_B BENCH_OMEGA=$BENCH_OMEGA BENCH_KU=$BENCH_KU KAPPA_X=$KAPPA_X SEED_FROM=$SEED_FROM); clears the budget $CLEARS_BUDGET, holds the price at ${HP:-(clears)}, pi_V at ${HV:-(clears)}; compared with ${NULLCMP:-no null yet}"
+    note "DRY: column $COL would run as: BUILD=cf_fix2_treatC DIAG_TAG=_o1_$NAME ${SET[*]} sh treat/cf_arm_C.sh tf (BENCH_FROM=$BENCH_FROM BENCH_B=$BENCH_B BENCH_OMEGA=$BENCH_OMEGA BENCH_KU=$BENCH_KU KAPPA_X=$KAPPA_X SEED_FROM=$SEED_FROM); clears the budget $CLEARS_BUDGET, holds the price at ${HP:-(clears)}, pi_V at ${HV:-(clears)}; compared with ${NULLCMP:-no null yet}"
     note "DRY: its files would go to ${T#$REPO/} and, accepted, ${RC#$REPO/}/cf/$NAME; nothing solved, nothing committed"
     exit 0
 fi
 
 note "column $COL on cf_fix2_treatC (rule C): ${SET[*]}"
-env BUILD=cf_fix2_treatC DIAG_TAG=_o1_$COL "${SET[@]}" sh treat/cf_arm_C.sh tf > "$C/$TFRUN.out" 2>&1 &
+env BUILD=cf_fix2_treatC DIAG_TAG=_o1_$NAME "${SET[@]}" sh treat/cf_arm_C.sh tf > "$C/$TFRUN.out" 2>&1 &
 P=$!
 while kill -0 "$P" 2>/dev/null; do
     for _ in $(seq 1 120); do kill -0 "$P" 2>/dev/null || break; sleep 10; done
