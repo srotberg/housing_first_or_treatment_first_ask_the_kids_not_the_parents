@@ -79,13 +79,18 @@ tr = path(TRLOG)
 h0, c0 = levels(os.path.join(ARMS, 'arm_null', 'final.txt'))['homelessness h_1'], child_steady(os.path.join(ARMS, 'arm_null'))
 TT = sorted(tr)
 assert len(TT) >= 15, f'{TRLOG}: only {len(TT)} years'
-up = [k for k in TT if tr[k][0] > h0]; upc = [k for k in TT if tr[k][1] > c0]
+# above Housing First by more than 0.05 percent, Table 8's rule (export_alttrans.ABOVE): period 1's +0.03 percent for
+# children in a shelter is numerical noise, and counting it printed "11 years" against the table's periods 2 to 11
+ABOVE_PC = 0.05
+up = [k for k in TT if 100 * (tr[k][0] / h0 - 1) > ABOVE_PC]; upc = [k for k in TT if 100 * (tr[k][1] / c0 - 1) > ABOVE_PC]
 assert up and upc and max(up) < TT[-1] and max(upc) < TT[-1], 'the rise does not end within the years published'
 out_tr = {
     'x_ne_tr_h_pc': f'{100 * (max(tr[k][0] for k in TT) / h0 - 1):.0f}',
     'x_ne_tr_hchild_pc': f'{100 * (max(tr[k][1] for k in TT) / c0 - 1):.0f}',
-    'x_ne_tr_h_yrs': str(max(up)),
-    'x_ne_tr_hchild_yrs': str(max(upc)),
+    # how many periods each stays above Housing First, not the last such period (7 November: the children's rise runs
+    # from period 2 to 11, which the paper printed as "11 years")
+    'x_ne_tr_h_yrs': str(len(up)),
+    'x_ne_tr_hchild_yrs': str(len(upc)),
 }
 # THE 0.20 RULE'S CHILDREN IN A SHELTER IN THE LONG RUN (round r334, the author: "what about childhood homelessness?"):
 # from the terminal arm of its T = 70 transition (results/transition_2c_t70_CA20b/arms) once it lands; '--' until then
