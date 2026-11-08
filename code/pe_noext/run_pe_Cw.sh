@@ -28,6 +28,11 @@ case "${RULEC_PDET:-}" in 0.[0-9]*) ;; *) echo "GUARD: RULEC_PDET (the detection
 TAG=pe_noext_Cw; STATUS=pe.status
 HEADER="PE experiment without externalities, RULE C, corrected Housing First, at detection $RULEC_PDET (code/pe_noext/run_pe_Cw.sh)"
 _C=$(cd "$(dirname "$0")/.." && pwd)
+# (8 November) the columns run in their own sessions (pe_noext/run_noext_col.sh): when results/noext_pdet/columns_elsewhere
+# is in the checkout, a launch from run_noext_pdet.sh does nothing; run_noext_col.sh sets NOEXT_COLS_HERE=1
+if [ -f "$_C/../results/noext_pdet/columns_elsewhere" ] && [ "${NOEXT_COLS_HERE:-0}" != 1 ]; then
+    echo "$(basename "$0"): the columns run in their own sessions (results/noext_pdet/columns_elsewhere): nothing to do here"; exit 0
+fi
 W=$_C/pe_noext/work_Cw; R=$(cd "$_C/.." && pwd)/results/pe_noext_Cw
 ARMS_SHOWN="cfarm_null_pe_noext_Cu cfarm_tf_pe_noext_Cw"
 . "$_C/noext_clear/noext_Cu_lib.sh"
