@@ -1,3 +1,8 @@
+08 Nov 12:58 (UTC-5) AND TWO SINGLE RATES (the author: "Run each on a separate session so you can use more CPU"):
+run_noext_pdet_1.sh 0.125 session_019aHjYfKk5MFekg6zhpEPz6, 0.275 session_019aHjYdCZgBFMmMDH5qAJvo (results/
+noext_pdet_1_p125, _p275), four threads each. The other rates gain nothing from a session of their own: each new session
+re-solves arm A and the reference first (about 75 minutes), so it reports no earlier than the jobs already running.
+
 08 Nov 12:56 (UTC-5) THE FIRST EXPERIMENT'S DETECTION RATE: FIVE MORE SESSIONS (the author: "Can you use additional
 sessions to minimize time?"). run_noext_pdet_x.sh (0.175 0.225 0.125 0.275) session_019aHjYfevjatZ21pnkvZrYC; one column
 each, run_noext_col.sh pe session_019aHjYdgvjYHUrgepxr2fyM, fixp session_019aHjYcJ4YC5mAYytmpF8qc, pclear
