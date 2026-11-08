@@ -1,3 +1,11 @@
+08 Nov 12:56 (UTC-5) THE FIRST EXPERIMENT'S DETECTION RATE: FIVE MORE SESSIONS (the author: "Can you use additional
+sessions to minimize time?"). run_noext_pdet_x.sh (0.175 0.225 0.125 0.275) session_019aHjYfevjatZ21pnkvZrYC; one column
+each, run_noext_col.sh pe session_019aHjYdgvjYHUrgepxr2fyM, fixp session_019aHjYcJ4YC5mAYytmpF8qc, pclear
+session_019aHjYcUzMz68cQdD1PhKfv, clear session_019aHjYedUuJp87bmpRdkL2D: arm A and the walk at four threads now, then
+wait for results/noext_pdet/columns_pdet.txt, WRITTEN BY HAND from both scans' points (closest to 61), then the column
+alone. results/noext_pdet/columns_elsewhere stops run_noext_pdet.sh launching the columns itself. The main job's arm A
+was at pass 3 at 12:55.
+
 08 Nov 11:57 (UTC-5) THE FIRST EXPERIMENT'S OWN DETECTION RATE: LAUNCHED. The author: "can you rechoose p_det for the no
 externalities simulations to get the same drug use reaction? and tell the reader you do", "ok do it properly". The first
 experiment (no children: weight_on_child 0, both child penalties 0) ran at the main experiment's 0.20, chosen with
