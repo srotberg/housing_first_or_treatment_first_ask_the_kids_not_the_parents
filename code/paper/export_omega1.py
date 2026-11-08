@@ -129,6 +129,8 @@ if __name__ == '__main__':
             f'x_om1_P_noun_{tag}': 'gain' if p['P'] > 0 else 'loss',
             # drug use and the drug price, for the sentences that explain a column (not in the table: the author)
             f'x_om1_bdrop_{tag}': f"{(-final_change(d, 'drug use b') or 0.0) + 0.0:.2f}",
+            # (8 November) the fall in the share with a SUD, for the footnote on the on-impact target (export_impact.py)
+            f'x_om1_sudrop_{tag}': f"{(-final_change(d, 'SUD lambda_d') or 0.0) + 0.0:.0f}",
             f'x_om1_pdrop_{tag}': f"{(-final_change(d, 'drug price') or 0.0) + 0.0:.2f}",
             f'x_om1_pvrise_{tag}': f"{(final_change(d, 'pi_V (voucher probability)') or 0.0) + 0.0:.2f}",
             f'x_om1_parents_{tag}': ("every parent loses" if gain < 0.5 else "every parent gains" if gain > 99.5

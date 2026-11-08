@@ -641,6 +641,10 @@ def main():
     for _a, _n in (('dc_b', 'dcb'), ('dc_pv', 'dcpv'), ('dc_p', 'dcp')):
         out[f'x_{_n}_b'] = _ch(_a, 'b')
         out[f'x_{_n}_h'] = _ch(_a, 'h')
+    # (8 November) the both-held column's falls in drug use and in the share with a SUD as numbers, for the footnote
+    # that sets them against the detection rate's on-impact target (export_impact.py)
+    out['x_dcb_b_pc'] = f"{abs(pc('dc_b', 'b', 'null_share')):.0f}"
+    out['x_dcb_sud_pc'] = f"{abs(pc('dc_b', 'sud', 'null_share')):.0f}"
     # THE RUN THAT ISOLATES THE EXTERNALITIES (the author, 9 October: "here you need to give the exact experiment that
     # shows it"): with both held, the children in a shelter and the share of the gain that comes in childhood
     out['x_dcb_hchild0'] = f"{100 * D['null_share']['child_hl']:.2f}"
