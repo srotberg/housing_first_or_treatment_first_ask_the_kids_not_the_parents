@@ -1,3 +1,11 @@
+08 Nov 13:58 (UTC-5) THE FIRST EXPERIMENT KEEPS 0.20 (the author: "in that case we can probably keep the 20% p_det and no
+need to change anything"). Its who-stops on arm A's distribution: 0.15 -> 48.3, 0.20 -> 56.8, 0.25 -> 63.3, 0.30 -> 67.2
+per cent of all tested users (target 61; the main economy gives 61.6 at 0.20, omega_c = 1 gave 67.1 at 0.20 and was
+re-set to 0.15). results/noext_pdet/columns_pdet.txt = 0.20, so the four run_noext_col.sh sessions stop ('0.20 stands')
+and the _Cu columns stay the paper's. The scans still running (the 0.23 refinement, 0.225/0.175, 0.125, 0.275) only add
+points. Still to do: the footnotes on the partial-equilibrium falls in drug use (export_impact.py, nx at 0.20 once
+results/noext_pdet/cfarm_tf_imp_nx_p200/cf.log.gz is saved at the end of the main job's scan).
+
 08 Nov 12:58 (UTC-5) AND TWO SINGLE RATES (the author: "Run each on a separate session so you can use more CPU"):
 run_noext_pdet_1.sh 0.125 session_019aHjYfKk5MFekg6zhpEPz6, 0.275 session_019aHjYdCZgBFMmMDH5qAJvo (results/
 noext_pdet_1_p125, _p275), four threads each. The other rates gain nothing from a session of their own: each new session
