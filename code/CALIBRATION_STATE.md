@@ -1,3 +1,15 @@
+08 Nov 11:57 (UTC-5) THE FIRST EXPERIMENT'S OWN DETECTION RATE: LAUNCHED. The author: "can you rechoose p_det for the no
+externalities simulations to get the same drug use reaction? and tell the reader you do", "ok do it properly". The first
+experiment (no children: weight_on_child 0, both child penalties 0) ran at the main experiment's 0.20, chosen with
+children. code/pe_noext/run_noext_pdet.sh (session_019aHjYcwdFVp31Y5E72YQZY, tag noext-pdet): re-solves its Housing
+First (arm A, warm start 1.0300799), measures who stops on impact ON ARM A'S DISTRIBUTION at its price and pi_V
+(cf_arm_pe_noext_ws.sh FIXED_DIST_FROM; share of ALL tested users, target 61) at 0.15 0.20 0.25 0.30, refines if the
+closest is more than 1.5 off, writes results/noext_pdet/chosen_pdet.txt, and unless it is 0.20 runs the four columns
+at it (results/{pe_noext,noext_fixp,noext_pclear,noext_clear}_Cw). NEXT: when the choice lands, the paper's footnotes
+on the partial-equilibrium falls in drug use (the author: "where the PE drug use decline is different, put a footnote
+explaining why they are different than the 61%") and the sentence telling the reader; when the columns land, switch
+rulec_paths.py's PE/FX/NE/NC to the _Cw runs and Table 5's note to the first experiment's rate.
+
 07 Nov 17:03 (UTC-5) OMEGA_C = 1, THE BOTH-CLEAR COLUMN IS IN (tf_both: price 0.9565 and pi_V 0.07589 held, accepted at
 pass 4, 22:03 UTC; tf_held did not converge by its deadline, pass 15, and still flips with pi_V near 0.0760). Drug price
 -4.55 percent, pi_V +12.37, drug use -18.83; misses: drug market 0.06 percent, budget 0.12 percent (export_omega1.py:
