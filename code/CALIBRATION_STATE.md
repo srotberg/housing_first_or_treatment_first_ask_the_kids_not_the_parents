@@ -1,3 +1,7 @@
+08 Nov (UTC-5, evening) THE OLD OMEGA_C = 1 BOTH-CLEAR WORKERS ARCHIVED (the author: "You can archive them"): tf
+session_019aHjYfkLvwpeHnEiAG55Nv, tf_damped session_019aHjYfeRyp9JMipFWjjfJG, tf held at 0.9565
+session_019aHjYg7wwcRTJArZHiCmJW. The paper's fourth column is tf_both, accepted on 7 November; these were still cycling.
+
 08 Nov 14:32 (UTC-5) THE MAIN JOB'S LAST PUSHES NEVER LANDED. session_019aHjYcwdFVp31Y5E72YQZY ended at 14:13 (the 0.23
 refinement, the choice, the four _Cw launchers exiting on columns_elsewhere as intended), but nothing it published after
 13:51 reached the branch (nine sessions and the old omega_c = 1 tf workers pushing at once; its publish gives up after
