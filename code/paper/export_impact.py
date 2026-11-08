@@ -89,7 +89,15 @@ def main():
             out['x_nx_pdet_pc'] = f'{100 * p:g}'
             out['x_nx_stop_pc'] = f"{r['stop']:.0f}"
         else:
-            print(f'  (the first experiment: no log for {t} yet)')
+            # until the point's log is saved (at the end of run_noext_pdet.sh's scan), the share that stops from the
+            # status line the job publishes for each point
+            st = os.path.join(RES, 'noext_pdet', 'status.txt')
+            M = [m for m in re.finditer(r'detection ([0-9.]+): ([0-9.]+) per cent of ALL tested', open(st, errors='replace').read())
+                 if abs(float(m.group(1)) - p) < 1e-9]
+            if M:
+                out['x_nx_pdet_pc'] = f'{100 * p:g}'
+                out['x_nx_stop_pc'] = f"{float(M[-1].group(2)):.0f}"
+            print(f'  (the first experiment: no log for {t} yet; the share that stops from the status line)')
     cur.update(out)
     json.dump(cur, open(OUT_JSON, 'w'), indent=1, sort_keys=True)
     for k, v in sorted(out.items()):
