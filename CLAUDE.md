@@ -144,6 +144,8 @@ as moved.
 
 ## Deletions are struck through, and changes carry a note
 
+**CHANGES SHOWN AGAINST THE MOST RECENT VERSION, 8 November (round r459): the author, *"In the letters and in the paper make sure to show me changes from the most recent version"*.** This supersedes the r428 waiver below. Every round, in the paper and the letters alike: strip the red, make the edits with `\new{}` (paper) or plain (letters), then diff against the source as the author last saw it, `writing/tools/track_changes.py OLD CUR OUT` for the paper and `mark_changes.py OLD CUR OUT` per letter, so insertions print red and removals print red and struck. `\del` is red and struck again (r451). A deleted footnote cannot go inside `\sout`: show it as struck text, `[footnote N: ...]`.
+
 **STRIKES WAIVED AGAIN, 7 November (round r428): the author, *"no need to show striked out lines anymore"*.** In the
 paper, deleted text now simply goes: strip the red at the start of a round, make the edits, mark only the insertions
 with `\new{}` (by hand, or `track_changes.py` with its `\del{}` runs dropped), and splice and build as usual. Updates
