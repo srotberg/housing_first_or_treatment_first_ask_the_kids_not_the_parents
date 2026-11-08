@@ -1,4 +1,4 @@
-# The first experiment's detection rate (who stops on impact in the no-children economy), then its four columns at it (code/pe_noext/run_noext_pdet.sh); 08 Nov 18:18 UTC
+# The first experiment's detection rate (who stops on impact in the no-children economy), then its four columns at it (code/pe_noext/run_noext_pdet.sh); 08 Nov 18:35 UTC
 noext_pdet: free disk 28G, memory 15 GiB, cores 4; target 61 per cent of all tested users; grid 0.15 0.20 0.25 0.30 (08 Nov 16:57)
 noext_pdet: building (pe_noext/build_pe_C.sh) (08 Nov 16:58)
 noext_pdet: building cf_fix2_treatC_impact (treat/build_treatC_impact_C.sh) (08 Nov 17:09)
@@ -6,6 +6,10 @@ noext_pdet: arm A (cfarm_null_pe_noext_Cu) on cf_fix2_share_pe_treatCu (internal
 noext_pdet: arm A: VOUCHER CHECK PASS: arm ran at 6.7533863251354007E-002, benchmark 6.7533863251354007E-002 DIST CHECK PASS: 4 passes, sweeps [72, 70, 70, 71], largest final 4.90e-05 (rule 5e-05, at least 70 sweeps) ; last solve's drug price 1.0297930329552625E+00, pi_V 6.7533863251354007E-02; drug use 0.089892231 (14 October: 0.089691198) (08 Nov 18:03)
 noext_pdet: impact null nxref (4 threads): EXTRA_SET=weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0 (08 Nov 18:03)
 noext_pdet: reference: drug use 8.9707660377669959E-002 (arm A 0.089892231); use among holders, eligible, tested; eligible mass: 0.0580143650 0.1851240016 0.0783376867 11.1603562484; states file 174M (08 Nov 18:18)
+noext_pdet: impact tf nx_p150 (2 threads): PDET=0.15 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0;weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0 DIAG_HF_FROM=/home/user/housing_first_or_treatment_first/code/pe_noext/work_pdet/hf_states.bin (08 Nov 18:18)
+noext_pdet: impact tf nx_p200 (2 threads): PDET=0.20 EXTRA_SET=cost_per_drug_test 0.0004946100;adjust_taxes 0;weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0 DIAG_HF_FROM=/home/user/housing_first_or_treatment_first/code/pe_noext/work_pdet/hf_states.bin (08 Nov 18:18)
+noext_pdet: detection 0.15: 48.3058 per cent of ALL tested users stop (target 61), 32.1372 per cent of those without a SUD (08 Nov 18:35)
+noext_pdet: detection 0.20: 56.8229 per cent of ALL tested users stop (target 61), 40.4330 per cent of those without a SUD (08 Nov 18:35)
 
 == cfarm_null_pe_noext_Cu (4 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
