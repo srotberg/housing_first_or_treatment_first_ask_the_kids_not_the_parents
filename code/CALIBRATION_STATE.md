@@ -1,3 +1,11 @@
+08 Nov 14:32 (UTC-5) THE MAIN JOB'S LAST PUSHES NEVER LANDED. session_019aHjYcwdFVp31Y5E72YQZY ended at 14:13 (the 0.23
+refinement, the choice, the four _Cw launchers exiting on columns_elsewhere as intended), but nothing it published after
+13:51 reached the branch (nine sessions and the old omega_c = 1 tf workers pushing at once; its publish gives up after
+four tries), so results/noext_pdet holds no logs. A cloud session cannot be messaged, so run_noext_pdet_1.sh 0.20 runs
+again in session_019aHjYcKJhwqgryTBTTp6XY, told to push until results/noext_pdet_1_p200's two logs are on the branch;
+export_impact.py finds them by glob. The column sessions fixp, pclear and clear stood down ('0.20 stands'); pe was
+still on its walk at 14:03.
+
 08 Nov 13:58 (UTC-5) THE FIRST EXPERIMENT KEEPS 0.20 (the author: "in that case we can probably keep the 20% p_det and no
 need to change anything"). Its who-stops on arm A's distribution: 0.15 -> 48.3, 0.20 -> 56.8, 0.25 -> 63.3, 0.30 -> 67.2
 per cent of all tested users (target 61; the main economy gives 61.6 at 0.20, omega_c = 1 gave 67.1 at 0.20 and was
