@@ -1,13 +1,14 @@
-# The first experiment's detection rate, the in-between points (code/pe_noext/run_noext_pdet_x.sh); 08 Nov 18:48 UTC
+# The first experiment's detection rate, the in-between points (code/pe_noext/run_noext_pdet_x.sh); 08 Nov 19:02 UTC
 noext_pdet_x: free disk 28G, memory 15 GiB, cores 4; target 61 per cent of all tested users; grid 0.175 0.225 0.125 0.275 (08 Nov 17:56)
 noext_pdet_x: building (pe_noext/build_pe_C.sh) (08 Nov 17:56)
 noext_pdet_x: building cf_fix2_treatC_impact (treat/build_treatC_impact_C.sh) (08 Nov 18:07)
 noext_pdet_x: arm A (cfarm_null_pe_noext_Cu) on cf_fix2_share_pe_treatCu (internal_computations fix ungated), switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0300798518418917E+00 (08 Nov 18:08)
 
-== cfarm_null_pe_noext_Cu (3 passes done)
+== cfarm_null_pe_noext_Cu (4 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0299  0.06753    +0.2%    +0.9%    -2.9%  1.34e-03  0.00e+00   790.0963  +nan%    +4.2%    +4.0%
   2  1.0298  0.06753    +0.1%    +0.9%    -2.7%  1.66e-03  0.00e+00   790.0638  +nan%    +4.2%    +4.0%
   3  1.0298  0.06753    +0.4%    +1.1%    -2.6%  3.85e-05  0.00e+00   790.0591  +nan%    +4.4%    +4.0%
+  4  1.0298  0.06753    +0.4%    +1.1%    -2.6%  1.74e-05  0.00e+00   790.0592  +nan%    +4.4%    +4.0%
  PE USED pass=    3 housing_price=  1.2049244321604421E+01 drug_price=  1.0297834677768911E+00 pi_V=  6.7533863251354007E-02
- MILBY SPLIT voucher mass rec treat smi  0.18727529179861191        5.8570415467503164E-003   5.1193182189110606E-002   2.3260085791171833E-002  housed_nov mass rec treat smi   1.7084222291944728        5.2440364337664414E-002  0.41635980517581467       0.15054834066931475     
+ MILBY SPLIT voucher mass rec treat smi  0.18731325798117215        5.8588164574987084E-003   5.1226091497776891E-002   2.3259413915359302E-002  housed_nov mass rec treat smi   1.7084608936335219        5.2445294952383682E-002  0.41651857889009458       0.15054978811667502     
