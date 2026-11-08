@@ -1,14 +1,16 @@
-# The first experiment's detection rate, the point 0.20 alone (code/pe_noext/run_noext_pdet_1.sh); 08 Nov 20:24 UTC
+# The first experiment's detection rate, the point 0.20 alone (code/pe_noext/run_noext_pdet_1.sh); 08 Nov 20:40 UTC
 noext_pdet_1_p200: free disk 28G, memory 15 GiB, cores 4; target 61 per cent of all tested users; grid 0.20 (08 Nov 19:32)
 noext_pdet_1_p200: building (pe_noext/build_pe_C.sh) (08 Nov 19:32)
 noext_pdet_1_p200: building cf_fix2_treatC_impact (treat/build_treatC_impact_C.sh) (08 Nov 19:42)
 noext_pdet_1_p200: arm A (cfarm_null_pe_noext_Cu) on cf_fix2_share_pe_treatCu (internal_computations fix ungated), switches 'weight_on_child 0;penalty_child_addicted 0;penalty_child_homeless 0', price clearing from 1.0300798518418917E+00 (08 Nov 19:43)
 noext_pdet_1_p200: push failed after 4 tries (08 Nov 20:04)
+noext_pdet_1_p200: push failed after 4 tries (08 Nov 20:25)
 
-== cfarm_null_pe_noext_Cu (3 passes done)
+== cfarm_null_pe_noext_Cu (4 passes done)
 pass  price    pi_V     b(chg)   SUD(chg)  h_1(chg)  drug gap  budget gap  welfare    CEV     V(chg)  V/user(chg)
   1  1.0299  0.06753    +0.2%    +0.9%    -2.9%  1.36e-03  0.00e+00   790.0961  +nan%    +4.2%    +4.0%
   2  1.0298  0.06753    +0.1%    +0.9%    -2.7%  1.68e-03  0.00e+00   790.0639  +nan%    +4.2%    +4.0%
   3  1.0298  0.06753    +0.4%    +1.1%    -2.6%  5.77e-05  0.00e+00   790.0591  +nan%    +4.4%    +4.0%
+  4  1.0298  0.06753    +0.4%    +1.1%    -2.6%  2.40e-05  0.00e+00   790.0595  +nan%    +4.4%    +4.0%
  PE USED pass=    3 housing_price=  1.2049242019817136E+01 drug_price=  1.0297814066794719E+00 pi_V=  6.7533863251354007E-02
- MILBY SPLIT voucher mass rec treat smi  0.18726992103284526        5.8575043952888897E-003   5.1217297031834842E-002   2.3261364322725010E-002  housed_nov mass rec treat smi   1.7084757358848390        5.2443632850227302E-002  0.41643875396916724       0.15055784447811779     
+ MILBY SPLIT voucher mass rec treat smi  0.18729352173691072        5.8578861729787386E-003   5.1208896906801124E-002   2.3260972498655767E-002  housed_nov mass rec treat smi   1.7083773833924425        5.2439852265680695E-002  0.41638482278435135       0.15055198846439449     
