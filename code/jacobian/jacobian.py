@@ -81,6 +81,17 @@ def valid(key, log):
     c = open(chk).read()
     if c.startswith('OK') and not c.startswith('OK-SKIP'):
         return True
+    if key == 'h2':
+        # run_jacobian_dat.sh looked for the handover echo as 'smallest rental' (its table's '_ for a space'), but the
+        # binary prints 'HANDOVER smallest_rental:', so the read-back came up empty and the check said FAIL. The two other
+        # read-backs it prints (the benchmark file and the value the last pass printed) are the raised value; so is the
+        # echo under its real label. Accept the run when all three equal the value the check was looking for.
+        m = re.match(r"FAIL h2_dat: handover read back '', file '(\S+)', last pass printed '(\S+)', not (\S+)", c)
+        h = re.findall(r'HANDOVER smallest_rental:\s*\S+\s*->\s*(\S+)', log)
+        if not (m and h):
+            return False
+        want = float(m.group(3))
+        return all(abs(float(v) / want - 1) < 1e-9 for v in (m.group(1), m.group(2), h[-1])) and 'DIST_DONE' in log
     if key != 'piV' or 'GUARD FAIL: arm ran at voucher probability' not in c:
         return False
     h = re.findall(r'HANDOVER voucher probability:\s*\S+\s*->\s*(\S+)', log)
