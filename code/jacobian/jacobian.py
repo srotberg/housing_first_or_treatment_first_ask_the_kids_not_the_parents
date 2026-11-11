@@ -49,7 +49,7 @@ PARAMS = [
     ('aleph',   r'$\aleph$',            0.01,  ('Value of a statistical life',      'aleph value of life / income')),
     ('kued',    r'$\kappa^{ue}_{d}$',   0.01,  ('SUD share of the homeless',        'sud_homeless SUD share of the homeless')),
     ('h1',      r'$h_1$',               0.01,  ('Homelessness',                     'h_1 homelessness rate')),
-    ('cmin',    r'$\bar c$',             0.01,  ('Food stamps over output',          'cbar food stamps / income')),
+    ('cmin',    r'$\underline c$',       0.01,  ('Food stamps over output',          'cbar food stamps / income')),
     ('piV',     r'$\pi_V$',             0.01,  ('Recipients over eligible',         'pi_V eligibles with a voucher')),
     ('T0',      r'$T_0$',               0.01,  ('Homeless aged 25 to 34',           'share of the homeless, band 1')),
     ('omega_m', r'$\omega_m$',          0.01,  ('SMI share of the population',      'p_m SMI population share')),

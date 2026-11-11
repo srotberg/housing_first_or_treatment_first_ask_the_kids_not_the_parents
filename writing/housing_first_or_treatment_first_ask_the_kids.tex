@@ -296,9 +296,9 @@ A household is characterised by its productivity $y$, fixed over its life and lo
 
 The one transfer is food assistance, paid on each period's earnings as
 \begin{equation}\label{eq:fs}
-F(y\,e) \;=\; \max\{0,\ \bar c-\varrho\, y\,e\},
+F(y\,e) \;=\; \max\{0,\ \underline c-\varrho\, y\,e\},
 \end{equation}
-where $\bar c$ is the maximum benefit and $\varrho$ the share of earnings by which it is reduced. Food assistance is in the model for one reason. To show the income reversal, Section~\ref{sec:who} needs to solve the model with saving switched off. A household out of work would then have nothing to consume, which with $\sigma>1$ leaves its problem undefined; food assistance bounds its consumption from below.
+where \del{$\bar c$} \new{$\underline c$} is the maximum benefit and $\varrho$ the share of earnings by which it is reduced. \why{The author: $\underline c$ throughout, since with no income it is the lowest consumption a household can reach. It replaces $\bar c$ here, in the two equations of this section, in the transfer equation of Section~\ref{sec:full} and in Tables~\ref{tab:int} and~\ref{tab:eleven}; Sections~\ref{sec:full} and~\ref{sec:fullcal} go back to the symbol they used before the last version.} Food assistance is in the model for one reason. To show the income reversal, Section~\ref{sec:who} needs to solve the model with saving switched off. A household out of work would then have nothing to consume, which with $\sigma>1$ leaves its problem undefined; food assistance bounds its consumption from below.
 
 Consumption $c$ and drug consumption $v$ form the bundle
 \begin{equation}\label{eq:bundles}
@@ -324,7 +324,7 @@ at all, not on how much a user uses.\footnote{The results hold even when I let t
 \end{equation}
 where a SUD lowers the probability of surviving the period by raising it to the power $\kappa_{\phi d}$$\,>1$. The second period is the last and has no drug-use decision, so to a household with savings $a$ and SUD status $d$ it is worth
 \begin{equation}\label{eq:w2}
-W(a,y,d) \;=\; (1-u_d)\,U\big(X(y+a+F(y),0)\big)\;+\;u_d\,U\big(X(a+\bar c,0)\big)\;+\;\aleph.
+W(a,y,d) \;=\; (1-u_d)\,U\big(X(y+a+F(y),0)\big)\;+\;u_d\,U\big(X(a+\underline c,0)\big)\;+\;\aleph.
 \end{equation}
 In the first period, a household that does not use chooses its saving to maximise its lifetime utility,
 \begin{equation}\label{eq:v0}
@@ -359,7 +359,7 @@ of being alive $\aleph$ is matched to a value of a statistical life (VSL) of 80
 times average annual income (Viscusi and Aldy, 2003).\footnote{No household has a negative value of life in period 1, so death is never an optimal choice.} The parameter $b$, which sets the marginal utility of the first unit of drugs, is chosen to match a drug participation rate of
 $8.90$ percent, the share of respondents aged 26 and over in the 2024 NSDUH with a drug use disorder of any severity. The weight on drugs $\theta$ is set to match the aggregate drug spending over the
 aggregate income of users, $16.0$ percent, from retail spending in Midgette et al.\ (2019) and the incomes of users in
-the 2024 NSDUH. The level of food assistance $\bar c$ is set so that total food assistance is $0.42$ percent of total labour income, the ratio of SNAP outlays to gross domestic product (GDP).
+the 2024 NSDUH. The level of food assistance \del{$\bar c$} \new{$\underline c$} is set so that total food assistance is $0.42$ percent of total labour income, the ratio of SNAP outlays to gross domestic product (GDP).
 
 The mortality exponent $\kappa_{\phi d}$ is set to match the average income of users,
 $0.74$ of the population average in the 2024 NSDUH, because the death risk is what decides how far down
@@ -401,7 +401,7 @@ the calibrated $8.90$ percent. The vertical dotted line marks the calibrated str
 
   Who uses depends on two things that vary with income. The first is the cost of acquiring drugs, and the second is the penalty drugs inflict. The utility cost of the drug falls with income, because a household with more income gives up less marginal utility for each dollar it spends on drugs. Therefore, ceteris paribus, drugs cost a rich household less than a poor one.
 
-The penalty inflicted by drugs does not rise with income when it can be partially insured against, but does rise when it cannot be.   A richer household can save more to protect itself in the event of unemployment. Thus, its loss is roughly proportional to its income. As a result, in utility terms, the cost of losing its employment is about the same as the cost imposed on a poor household. Death, on the other hand, cannot be insured against.   Dying eliminates the full continuation value of being alive, and that loss grows with income, so it deters high-income households but not low-income ones. Without the ability to save, losing a job takes a household down to $\bar c$ whatever it earned, so that loss too grows with income, which is why in the right panel the unemployment channel reverses the gradient as well.
+The penalty inflicted by drugs does not rise with income when it can be partially insured against, but does rise when it cannot be.   A richer household can save more to protect itself in the event of unemployment. Thus, its loss is roughly proportional to its income. As a result, in utility terms, the cost of losing its employment is about the same as the cost imposed on a poor household. Death, on the other hand, cannot be insured against.   Dying eliminates the full continuation value of being alive, and that loss grows with income, so it deters high-income households but not low-income ones. Without the ability to save, losing a job takes a household down to \del{$\bar c$} \new{$\underline c$} whatever it earned, so that loss too grows with income, which is why in the right panel the unemployment channel reverses the gradient as well.
 
 %======================================================================
 \section{The quantitative model}\label{sec:full}
@@ -495,13 +495,13 @@ y^{n}=\min\big\{\tilde y,\ \tau_{\ell}\,\tilde y^{\varphi}\big\}\;+\;(1-\tau_k)\
 where $\tau_{\ell}$ scales after-tax income and so sets the level of the tax, which falls as $\tau_{\ell}$ rises, and $1-\varphi$ sets
 its progressivity. The flat tax rate on capital income is $\tau_k$, and $r$ is the exogenous interest rate on savings.\footnote{The minimum keeps the labour income tax from turning negative, since at low incomes $\tau_{\ell}\tilde y^{\varphi}$ exceeds $\tilde y$ itself.}
 
-\paragraph{Transfers.} Food assistance pays the maximum allotment \del{$\underline c$} \new{$\bar c$} less
-the share $\varrho$ of income. \why{The author: one symbol for the maximum allotment, $\bar c$ as in Section~\ref{sec:stylized}, in place of the underlined $c$ used from Section~\ref{sec:full} on. It changes here, in the transfer equation below, in its entry in Section~\ref{sec:fullcal} and in Table~\ref{tab:eleven}.} The voucher pays a holder that is eligible this
+\paragraph{Transfers.} Food assistance pays the maximum allotment \del{$\bar c$} \new{$\underline c$} less
+the share $\varrho$ of income. The voucher pays a holder that is eligible this
 period the part of its rent above a tenant contribution of $\kappa_r$ of income, up
 to the fair market rent ($\mathit{FMR}$),
 \begin{equation}\label{eq:ftrans}
 \begin{aligned}
-F&=\max\big\{0,\ \bar c-\varrho\,\hat y\big\},\\
+F&=\max\big\{0,\ \underline c-\varrho\,\hat y\big\},\\
 V\!ch&=\mathbf{1}\{\eta=1\}\,\mathbf{1}\{\hat y<\kappa_V y^{\text{med}}\}\,\mathbf{1}\{h\neq h_1\}\,
 \min\Big\{\max\{0,\ p_r h-\kappa_r\hat y\},\ \max\{0,\ \mathit{FMR}-\kappa_r\hat y\}\Big\},
 \end{aligned}
@@ -779,7 +779,7 @@ The model has fifty-nine parameters, some of which vary by age. Thirty-eight are
 \item[$h_1$, the service flow of homelessness.] This parameter sets how welfare reducing the outside option is, which affects the value of life: a household with little to lose from dying faces a smaller mortality cost of using. As $h_1$ rises, a shelter is less welfare reducing, a voucher is worth less and Treatment First has less to act on. It targets a homelessness rate within 0.40 to 1.00 percent of households: the floor is HUD's 2023 PiT count, which counts a single night; the ceiling is the share homeless at some point over a year, from Burt et al.\ (2001). Its value is $53$ percent of the smallest rental (Appendix~\ref{sec:stdparams}), and the model delivers an aggregate homelessness rate of $0.62$ percent.
 \item[$\kappa_{\phi H}$, mortality when homeless.] This parameter sets how much more likely a homeless household is to die. As it rises, the cost of homelessness rises, a voucher is worth more and Treatment First's deterrence is stronger. It is set externally to multiply baseline mortality by $1.60$ at every age, the mortality ratio for homeless adults against poor housed adults in Meyer et al.\ (2023).
 \item[$\kappa_{H}$, the employment penalty of homelessness.] This parameter sets how much likelier a household in a shelter is to lose its job and how much less likely it is to find one: separations are $1+\kappa_H$ times as frequent and job finding $1-\kappa_H$ times as fast. Housing First recovers that employment directly, whereas Treatment First does so only as the fall in SUD lowers unemployment and homelessness over time. As $\kappa_H$ rises, homelessness costs more, and both policies have more to act on. It is set externally at $0.20$, from Desmond and Gershenson (2016).
-\item[\del{$\underline c$} \new{$\bar c$}, the food stamp maximum allotment.] This parameter sets how low consumption can go for the poorest households, with no income, assets or voucher, and so where utility is bounded from below. As it rises, the value of being alive rises, mortality costs more and Treatment First has more to deter. It is calibrated internally to food stamp spending over output, $0.42$ percent: outlays from the United States Department of Agriculture (USDA) over GDP.
+\item[\del{$\bar c$} \new{$\underline c$}, the food stamp maximum allotment.] This parameter sets how low consumption can go for the poorest households, with no income, assets or voucher, and so where utility is bounded from below. As it rises, the value of being alive rises, mortality costs more and Treatment First has more to deter. It is calibrated internally to food stamp spending over output, $0.42$ percent: outlays from the United States Department of Agriculture (USDA) over GDP.
 \item[$\pi_V$, the chance of drawing a voucher.] This is the policy dial itself, and it holds the whole trade-off. Raising it houses more households, which reduces the \emph{childhood homelessness externality}, and makes life worth more, which makes Treatment First's deterrence more effective. In the benchmark it is calibrated internally, at $0.068$, so that the share of income-eligible households who hold a voucher is aligned with the $26.6$ percent in HUD's Picture of Subsidized Households, 2023.
 \item[$T_0$, the endowment at entry to adulthood ($j=1$).] A child who becomes an adult starts adult life with $T_0$ times average earnings, which sets how likely a young adult is to end up in a shelter in its first years. It captures, in a reduced form,
 the financial help that young adults receive from their parents, such as inter vivos transfers, gifts or help with

@@ -246,7 +246,7 @@ ELEVEN = [
          f(1 + C['increased_risk_of_death_homeless']), NA, f(1 + C['increased_risk_of_death_homeless'])),
         (r'$\kappa_{H}$', 'Employment penalty of homelessness', 'Ext.', r'Desmond and Gershenson (2016)',
          f(H['increased_prob_if_homeless']), NA, f(H['increased_prob_if_homeless'])),
-        (r'$\bar c$', 'Food stamp maximum allotment', setcol('c_bar'),
+        (r'$\underline c$', 'Food stamp maximum allotment', setcol('c_bar'),
          'SNAP outlays over output',
          pc(C['food_stamps_share_data'], 2), pc(mom('cbar food stamps / income'), 2),
          f(H['max_food_cost'], 4)),

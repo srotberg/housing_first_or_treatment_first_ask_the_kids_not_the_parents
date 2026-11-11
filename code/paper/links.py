@@ -36,7 +36,7 @@ LINKS = {
     r'$\rho_d$':                 'employed_share_of_homeless_data',
     r'$\kappa_{ued}$':           'unemployment_rate_sud_data',
     r'$h_1$':                    'fraction_homeless_data',
-    r'$\bar c$':                'food_stamps_share_data',
+    r'$\underline c$':           'food_stamps_share_data',
     r'$\pi_V$':                  'voucher_coverage_data',
     # LAMBDA_M IS THE RECOVERY HAZARD, NOT THE MOMENT IT USED TO CARRY.
     # This still pointed at smi_share_of_homeless_data, so Table 11 stated
