@@ -22,9 +22,31 @@ h2       own moment +0.864            largest +10.554 on Use, no weight on the c
 sigma    own moment -1.380            largest +30.970 on Use, no weight on the child
 pieu     own moment +0.904            largest +0.904 on Unemployment rate
 taul     own moment -3.743            largest -3.743 on Average labour income tax
-(the square block waits for omega_c's column: 3 cells missing)
+
+square block (21 parameters by 21 moments): rank 21, singular values 417 to 0.0302, condition number 1.38e+04
+own moment is the largest in its row for 6 of 21: kuem, muH, tauu, omega_c, pieu, taul
+own parameter moves its moment the most (largest in its column) for 4 of 21: muH, beta, sigma, taul
+    Drug spending over income: own theta +1.115, largest beta -5.724
+    Drug use: own b -6.545, largest beta -197.020
+    Share of users with a SUD: own pi_d +0.584, largest beta -3.403
+    Income of users over average: own kphid -4.332, largest beta -123.759
+    Value of a statistical life: own aleph +2.928, largest beta -4.254
+    SUD share of the homeless: own kued +0.190, largest beta -115.111
+    Homelessness: own h1 +0.273, largest beta -33.015
+    Food stamps over output: own cmin +2.225, largest beta -23.218
+    Recipients over eligible: own piV +0.703, largest beta -5.405
+    Homeless aged 25 to 34: own T0 -0.222, largest beta +4.026
+    SMI share of the population: own omega_m +0.319, largest beta -3.857
+    SMI share of the homeless: own kuem +0.276, largest beta +17.563
+    Treatment take-up: own tauu -3.663, largest beta +68.490
+    Use, no weight on the child: own omega_c +1.275, largest beta +314.238
+    Housing over expenditure: own gamma +0.200, largest beta -1.981
+    Renters paying over half: own h2 +0.864, largest gamma +1.157
+    Unemployment rate: own pieu +0.904, largest beta -14.724
 
 noise floor from 3 repeat solves of the benchmark (beta, gamma, h1): largest relative difference 1.33e-04 (SMI share of the homeless), i.e. 0.013 in elasticity units at a one percent step and 0.066 at the discount factor's 0.2 percent
+all (21 by 21): smallest singular value 0.0302, with the noise 0.0289 to 0.0313; its direction omega_c +0.78, T0 -0.34, aleph +0.29, h1 +0.27
+without omega_c (20 by 20): smallest singular value 0.0416, with the noise 0.0385 to 0.0443; its direction T0 -0.52, aleph +0.46, kphid -0.45, kued +0.34
 T0 at a 10 percent step: own moment -0.222 (one percent: +0.014); Value of a statistical life +0.56, Homeless aged 25 to 34 -0.22, Homelessness -0.10, Drug use -0.07
 cmin at a 5 percent step: own moment +2.350 (one percent: +2.225); Food stamps over output +2.35, Homeless aged 25 to 34 -0.53, Value of a statistical life +0.31, Abstinence, housed over homeless +0.28
 h1 at a -5 percent step: own moment +0.358 (one percent: +0.273); Homelessness +0.36, Abstinence, housed over homeless +0.25, Homeless aged 25 to 34 +0.24, Drug use +0.19
