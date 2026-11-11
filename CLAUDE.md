@@ -144,6 +144,14 @@ as moved.
 
 ## Deletions are struck through, and changes carry a note
 
+**DO NOT RUN `code/stylized/build.sh` TO BUILD A ROUND, 11 November.** Its `sync_tables.py` step crashes on a stale link
+(`avg_rent_to_income_data`), but only after it has rewritten `writing/tables/tab_eleven.tex`: in r468 that put the
+declared Fortran target, 10.50 percent, in place of the NSDUH 8.90 percent in Table 3's Data cell for $b$, and 0.067 for
+$\lambda_m$'s 0.066, both in red; they were committed unnoticed, described to the author as already there, and the author
+found them ("why did you change the 8.9% to 10.50%??"). Build a round as r463 to r472 did: `splice.py BASE` (a copy of the
+number files), `writing/tools/fix_soul.py`, `pdflatex` twice, then the checkers one by one. Before committing, run `git diff`
+on `writing/tables/` and every number file against the last clean commit, and account for every line.
+
 **RED IS NOT CLEARED BETWEEN ROUNDS, 11 November (round r471): the author, *"Don't clear red you added in the last 10 hrs. I want to see all the changes you made in the last 10 hrs. Also striked out"*.** This supersedes "strip the red" in the r459 rule below. A round no longer starts by stripping anything. Every round marks its changes against the last version the author asked to be cleaned (r467, commit f23e4a9, on 11 November): take that commit's source as OLD (`git show f23e4a9:writing/...src.tex`), the current content with this round's and every earlier uncleared round's insertions in `\new{}` and notes in `\why{}` as CUR, and run `track_changes.py OLD CUR OUT`, so red and strikes accumulate until the author asks for them to go. An edit later undone nets to nothing against the clean version and shows no mark. When the author next asks for the red to go, strip it and record the new clean commit here.
 
 **CHANGES SHOWN AGAINST THE MOST RECENT VERSION, 8 November (round r459): the author, *"In the letters and in the paper make sure to show me changes from the most recent version"*.** This supersedes the r428 waiver below. Every round, in the paper and the letters alike: strip the red, make the edits with `\new{}` (paper) or plain (letters), then diff against the source as the author last saw it, `writing/tools/track_changes.py OLD CUR OUT` for the paper and `mark_changes.py OLD CUR OUT` per letter, so insertions print red and removals print red and struck. `\del` is red and struck again (r451). A deleted footnote cannot go inside `\sout`: show it as struck text, `[footnote N: ...]`.
