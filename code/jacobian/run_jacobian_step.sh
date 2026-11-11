@@ -1,10 +1,12 @@
 #!/bin/bash
 # run_jacobian_step.sh KEY... -- run_jacobian_dat.sh at a LARGER STEP, JAC_STEP (11 November).
 #
-# The one-percent step leaves h_2's own moment (renters paying over half of their income) at +0.017, inside the
-# repeat-solve noise. This solves it again at JAC_STEP (e.g. 0.05) to tell a flat moment from one that moves in jumps the
-# small step does not reach. Results go to results/jacobian/<KEY>_dat_s<JAC_STEP*1000>/ and are NOT read into the
-# Jacobian; jacobian.py reports them beside it. Otherwise identical to run_jacobian_dat.sh, whose header explains the file
+# The one-percent step leaves h_2's own moment (renters paying over half of their income) at +0.017 and T_0's (the
+# share of the homeless aged 25 to 34) at +0.014, inside the repeat-solve noise. This solves a key again at JAC_STEP
+# (e.g. 0.05) to tell a flat moment from one that moves in jumps the small step does not reach. Results go to
+# results/jacobian/<KEY>_dat_s<JAC_STEP*1000>/ for the six imported parameters (the file raised too) and to
+# results/jacobian/<KEY>_s<JAC_STEP*1000>/ for the others (the handover alone, as in run_jacobian.sh); they are NOT read
+# into the Jacobian, and jacobian.py reports them beside it. Otherwise identical to run_jacobian_dat.sh, whose header explains the file
 # that is raised, with one fix: the check looks for h_2's handover echo under its printed label, 'smallest_rental'.
 # run_jacobian_dat.sh KEY... -- THE JACOBIAN'S SIX IMPORTED PARAMETERS (11 November), run_jacobian.sh with the fix.
 #
@@ -113,49 +115,61 @@ note "set up on $(hostname): $(nproc) cores, $(free -g | awk '/Mem/{print $2}') 
 
 # ---------------------------------------------------------------- one solve
 run_one() {
-    K=$1; D=cfarm_null_jacdat_$K$SUF; R=$OUT/${K}_dat$SUF
-    if [ -f "$R/check.txt" ] && grep -q "^OK" "$R/check.txt"; then note "${K}_dat$SUF already done"; return 0; fi
+    K=$1
+    set -- $(dat "$K"); DNAME=${1:-}; FMT=${2:-}
+    if [ -n "$DNAME" ]; then T=${K}_dat$SUF; else T=$K$SUF; fi   # a parameter with no file to raise has no _dat
+    D=cfarm_null_jacdat_$T; R=$OUT/$T
+    if [ -f "$R/check.txt" ] && grep -q "^OK" "$R/check.txt"; then note "$T already done"; return 0; fi
     mkdir -p "$R"
     set -- $(row "$K"); NAME=${1:-}; STEP=${2:-}; ECHO=${3:--}
     if [ "$ECHO" = - ]; then ECHO=$NAME; else ECHO=${ECHO//_/ }; fi
     [ "$K" = h2 ] && ECHO=smallest_rental
     STEP=$JAC_STEP
-    set -- $(dat "$K"); DNAME=${1:-}; FMT=${2:-}
-    [ -n "$NAME" ] && [ -n "$DNAME" ] || { note "GUARD: $K is not one of the six imported parameters"; return 1; }
+    [ -n "$NAME" ] || { note "GUARD: unknown key $K"; return 1; }
     OLD=$(awk -v n="$NAME" '$1==n {print $2}' "$HANDOVER")
     python3 -c "float('$OLD')" 2>/dev/null || { note "GUARD: $NAME has no value in the handover ('$OLD')"; return 1; }
     NEW=$(python3 -c "print(repr(float('$OLD'.replace('D','E')) * (1 + $STEP)))")
-    FOLD=$(cat "$C/cfarm_bench/${DNAME}baseline_benchmark.dat" | tr -d ' ')
-    python3 -c "import sys; sys.exit(0 if abs(float('$FOLD')/float('$OLD')-1)<1e-9 else 1)" \
-        || { note "GUARD: the benchmark file holds $DNAME=$FOLD, not the handover's $OLD"; return 1; }
-    note "${K}_dat$SUF: start ($NAME $OLD -> $NEW; file $DNAME $FOLD -> $NEW)"
-    env BUILD=cf_fix2_share_treatCu OMP_NUM_THREADS=2 DIAG_TAG=_jacdat_$K$SUF DRUG_PRICE_START=$P_HELD DRUG_MARKET_ADJUSTER=0 \
-        "EXTRA_SET=$NAME $NEW" "DAT_SET=$DNAME $NEW $FMT" sh treat/cf_arm_Cj.sh null > "$C/$D.out" 2>&1
+    if [ -n "$DNAME" ]; then
+        FOLD=$(cat "$C/cfarm_bench/${DNAME}baseline_benchmark.dat" | tr -d ' ')
+        python3 -c "import sys; sys.exit(0 if abs(float('$FOLD')/float('$OLD')-1)<1e-9 else 1)" \
+            || { note "GUARD: the benchmark file holds $DNAME=$FOLD, not the handover's $OLD"; return 1; }
+        note "$T: start ($NAME $OLD -> $NEW; file $DNAME $FOLD -> $NEW)"
+        env BUILD=cf_fix2_share_treatCu OMP_NUM_THREADS=2 DIAG_TAG=_jacdat_$T DRUG_PRICE_START=$P_HELD DRUG_MARKET_ADJUSTER=0 \
+            "EXTRA_SET=$NAME $NEW" "DAT_SET=$DNAME $NEW $FMT" sh treat/cf_arm_Cj.sh null > "$C/$D.out" 2>&1
+    else
+        note "$T: start ($NAME $OLD -> $NEW)"
+        env BUILD=cf_fix2_share_treatCu OMP_NUM_THREADS=2 DIAG_TAG=_jacdat_$T DRUG_PRICE_START=$P_HELD DRUG_MARKET_ADJUSTER=0 \
+            "EXTRA_SET=$NAME $NEW" sh treat/cf_arm_Cj.sh null > "$C/$D.out" 2>&1
+    fi
     rc=$?
     L="$C/$D/cf.log"
     {
         if [ $rc = 0 ] && tail -5 "$C/$D.out" | grep -q "DIST CHECK PASS" && ! grep -q GUARD "$C/$D.out" && [ -s "$L" ]; then
             got=$(grep -a "HANDOVER $ECHO:" "$L" | tail -1 | awk '{print $NF}')
-            fil=$(grep -a "^DAT_SET $DNAME:" "$C/$D.out" | tail -1 | sed 's/.*-> \[ *\([^] ]*\) *\].*/\1/')
-            prt=$(grep -a "^ *$DNAME= " "$L" | tail -1 | awk '{print $NF}')
+            if [ -n "$DNAME" ]; then
+                fil=$(grep -a "^DAT_SET $DNAME:" "$C/$D.out" | tail -1 | sed 's/.*-> \[ *\([^] ]*\) *\].*/\1/')
+                prt=$(grep -a "^ *$DNAME= " "$L" | tail -1 | awk '{print $NF}')
+            else
+                fil=$NEW; prt=''
+            fi
             python3 -c "
 import sys
 new = float('$NEW'); ok = abs(float('$got')/new-1) < 1e-9 and abs(float('$fil')/new-1) < 1e-9
 prt = '$prt'
 ok = ok and (prt == '' or abs(float(prt)/new-1) < 1e-9)
 sys.exit(0 if ok else 1)" 2>/dev/null \
-                && echo "OK ${K}_dat$SUF $NAME $OLD -> $NEW (handover read back $got; file $fil; last pass printed ${prt:-nothing})" \
-                || echo "FAIL ${K}_dat$SUF: handover read back '$got', file '$fil', last pass printed '$prt', not $NEW"
+                && echo "OK $T $NAME $OLD -> $NEW (handover read back $got${DNAME:+; file $fil; last pass printed ${prt:-nothing}})" \
+                || echo "FAIL $T: handover read back '$got', file '$fil', last pass printed '$prt', not $NEW"
         else
-            echo "FAIL ${K}_dat$SUF: rc $rc; $(tail -3 "$C/$D.out" | tr '\n' ' ')"
+            echo "FAIL $T: rc $rc; $(tail -3 "$C/$D.out" | tr '\n' ' ')"
         fi
     } > "$R/check.txt"
     [ -s "$L" ] && gzip -c "$L" > "$R/cf.log.gz"
     cp "$C/$D/PARAM_HANDOVER.txt" "$R/" 2>/dev/null
     cp "$C/$D.out" "$R/run.out" 2>/dev/null
-    note "${K}_dat$SUF: $(cat "$R/check.txt")"
+    note "$T: $(cat "$R/check.txt")"
     grep -q "^OK" "$R/check.txt" && rm -rf "$C/$D"
-    push "${K}_dat$SUF $(head -c 60 "$R/check.txt")"
+    push "$T $(head -c 60 "$R/check.txt")"
 }
 
 # ---------------------------------------------------------------- the queue, MAXPAR at a time

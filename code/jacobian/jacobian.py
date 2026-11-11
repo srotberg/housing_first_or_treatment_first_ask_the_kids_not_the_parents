@@ -194,9 +194,9 @@ def main():
             bound = sum((worst[jj] / step[k]) ** 2 for k in sq for jj in range(len(MOMENTS))) ** 0.5
             out.append(f'the noise can move a singular value by at most {bound:.3g}; the smallest is {sv.min():.3g}, so the '
                        f'rank is {"robust to" if sv.min() > bound else "NOT robust to"} it')
-    # h2 again at a larger step (run_jacobian_step.sh), to tell a flat own moment from a lumpy one
+    # h2 and T0 again at a larger step (run_jacobian_step.sh), to tell a flat own moment from a lumpy one
     for d in sorted(os.listdir(RES)):
-        m = re.match(r'(\w+?)_dat_s(\d+)$', d)
+        m = re.match(r'(\w+?)(?:_dat)?_s(\d+)$', d)
         if m and base is not None:
             k, big = m.group(1), int(m.group(2)) / 1000
             log_path = os.path.join(RES, d, 'cf.log.gz')
