@@ -255,33 +255,33 @@ def figure(E, labs, out=FIG):
     plt.rcParams.update({'font.family': 'serif', 'mathtext.fontset': 'cm'})
     cmap = matplotlib.colormaps['RdBu_r'].copy()
     cmap.set_bad('#d9d9d9')
-    fig, ax = plt.subplots(figsize=(10, 8.4))
+    fig, ax = plt.subplots(figsize=(7.0, 7.3))   # printed at the letter's text width, 6.4 inches
     im = ax.imshow(np.ma.masked_invalid(A), cmap=cmap, norm=norm, aspect='auto')
     ax.set_xticks(range(len(labs)))
-    ax.set_xticklabels(labs, rotation=60, ha='right', fontsize=8)
+    ax.set_xticklabels(labs, rotation=60, ha='right', rotation_mode='anchor', fontsize=6.8)
     ax.set_yticks(range(len(keys)))
-    ax.set_yticklabels(syms, fontsize=9.5)
-    ax.set_xlabel('Targeted moment (in the order of the parameter it is paired with)', fontsize=8.5)
-    ax.set_ylabel('Parameter raised', fontsize=8.5)
+    ax.set_yticklabels(syms, fontsize=8.5)
+    ax.set_xlabel('Targeted moment (in the order of the parameter it is matched to)', fontsize=7.5)
+    ax.set_ylabel('Parameter raised', fontsize=7.5)
     for i in range(A.shape[0]):
         for j in range(A.shape[1]):
             v = A[i, j]
             if np.isfinite(v) and abs(v) >= 0.05:
                 txt = f'{v:.0f}' if abs(v) >= 10 else (f'{v:.1f}' if abs(v) >= 1 else f'{v:.2f}')
-                ax.text(j, i, txt.replace('-', '\N{MINUS SIGN}'), ha='center', va='center', fontsize=5.6,
+                ax.text(j, i, txt.replace('-', '\N{MINUS SIGN}'), ha='center', va='center', fontsize=4.9,
                         color='white' if abs(norm(v) - 0.5) > 0.33 else '#1a1a1a')
     for i, p in enumerate(PARAMS):   # outline each parameter's own moment
         if p[3] is not None:
             j = labs.index(p[3][0])
-            ax.add_patch(plt.Rectangle((j - .5, i - .5), 1, 1, fill=False, edgecolor='black', linewidth=1.4))
+            ax.add_patch(plt.Rectangle((j - .5, i - .5), 1, 1, fill=False, edgecolor='black', linewidth=1.1))
     ax.set_xticks(np.arange(-.5, len(labs), 1), minor=True)
     ax.set_yticks(np.arange(-.5, len(keys), 1), minor=True)
-    ax.grid(which='minor', color='white', linewidth=0.8)
+    ax.grid(which='minor', color='white', linewidth=0.6)
     ax.tick_params(which='minor', length=0)
     ticks = [t for t in (-100, -10, -1, -0.1, 0, 0.1, 1, 10, 100) if abs(t) <= vmax]
-    cb = fig.colorbar(im, ax=ax, fraction=0.03, pad=0.02, ticks=ticks)
-    cb.ax.set_yticklabels([f'{t:g}'.replace('-', '\N{MINUS SIGN}') for t in ticks], fontsize=7.5)
-    cb.set_label('Percent change in the moment for a one percent rise in the parameter (symmetric log scale)', fontsize=8)
+    cb = fig.colorbar(im, ax=ax, fraction=0.035, pad=0.015, ticks=ticks)
+    cb.ax.set_yticklabels([f'{t:g}'.replace('-', '\N{MINUS SIGN}') for t in ticks], fontsize=6.5)
+    cb.set_label('Percent change in the moment for a one percent rise in the parameter (log scale beyond 0.1)', fontsize=6.5)
     fig.tight_layout()
     os.makedirs(os.path.dirname(out), exist_ok=True)
     fig.savefig(out + '.pdf')
