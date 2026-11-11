@@ -48,7 +48,7 @@ PARAMS = [
     ('aleph',   r'$\aleph$',            0.01,  ('Value of a statistical life',      'aleph value of life / income')),
     ('kued',    r'$\kappa^{ue}_{d}$',   0.01,  ('SUD share of the homeless',        'sud_homeless SUD share of the homeless')),
     ('h1',      r'$h_1$',               0.01,  ('Homelessness',                     'h_1 homelessness rate')),
-    ('cmin',    r'$\underline c$',      0.01,  ('Food stamps over output',          'cbar food stamps / income')),
+    ('cmin',    r'$\underline{c}$',      0.01,  ('Food stamps over output',          'cbar food stamps / income')),
     ('piV',     r'$\pi_V$',             0.01,  ('Recipients over eligible',         'pi_V eligibles with a voucher')),
     ('T0',      r'$T_0$',               0.01,  ('Homeless aged 25 to 34',           'share of the homeless, band 1')),
     ('omega_m', r'$\omega_m$',          0.01,  ('SMI share of the population',      'p_m SMI population share')),
@@ -95,6 +95,14 @@ def read_moments(key):
     log = gzip.open(path, 'rt', errors='replace').read()
     if not valid(key, log):
         return None
+    return parse(log)
+
+
+def read_log(path):
+    return parse(gzip.open(path, 'rt', errors='replace').read())
+
+
+def parse(log):
     M = {}
     for l in log.splitlines():
         m = re.match(r'\s*(MOMENT|UNTARGETED)\s+(.*?)\s+model=\s*(\S+)', l)
@@ -147,6 +155,26 @@ def main():
                 f'singular values {sv.max():.3g} to {sv.min():.3g}, condition number {sv.max() / sv.min():.3g}']
         own_largest = [k for k in sq if abs(E[k][sq.index(k)]) == max(abs(v) for v in E[k])]
         out.append(f'own moment is the largest in its row for {len(own_largest)} of {len(sq)}: {", ".join(own_largest)}')
+        col_top = [k for j, k in enumerate(sq) if abs(A[j, j]) == np.abs(A[:, j]).max()]
+        out.append(f'own parameter moves its moment the most (largest in its column) for {len(col_top)} of {len(sq)}: '
+                   f'{", ".join(col_top)}')
+        for j, k in enumerate(sq):
+            if k not in col_top:
+                i = int(np.abs(A[:, j]).argmax())
+                out.append(f'    {labs[j]}: own {k} {A[j, j]:+.3f}, largest {sq[i]} {A[i, j]:+.3f}')
+    # the noise floor: the void runs solved the benchmark again, so their distance from the base is numerical noise
+    voids = [k for k in DAT_KEYS if os.path.exists(os.path.join(RES, k, 'VOID.txt'))
+             and os.path.exists(os.path.join(RES, k, 'cf.log.gz'))]
+    if voids:
+        noise = []
+        for k in voids:
+            M = read_log(os.path.join(RES, k, 'cf.log.gz'))
+            noise.append([abs(M[m] / base[m] - 1) for lab, m in MOMENTS])
+        worst = [max(col) for col in zip(*noise)]
+        j = max(range(len(worst)), key=lambda i: worst[i])
+        out += ['', f'noise floor from {len(voids)} repeat solves of the benchmark ({", ".join(voids)}): largest relative '
+                f'difference {worst[j]:.2e} ({labs[j]}), i.e. {worst[j] / 0.01:.3f} in elasticity units at a one percent step '
+                f'and {worst[j] / 0.002:.3f} at the discount factor\'s 0.2 percent']
     open(os.path.join(RES, 'summary.txt'), 'w').write('\n'.join(out) + '\n')
     print('\n'.join(out))
     json.dump({'moments': labs, 'elasticities': E}, open(os.path.join(RES, 'elasticities.json'), 'w'), indent=1)
@@ -163,6 +191,7 @@ def figure(E, labs):
     syms = [p[1] for p in PARAMS]
     A = np.array([E[k] for k in keys])
     lim = np.percentile(np.abs(A), 95)
+    plt.rcParams.update({'font.family': 'serif', 'mathtext.fontset': 'cm'})
     fig, ax = plt.subplots(figsize=(10, 8.2))
     im = ax.imshow(np.clip(A, -lim, lim), cmap='RdBu_r', vmin=-lim, vmax=lim, aspect='auto')
     ax.set_xticks(range(len(labs)))
@@ -174,6 +203,10 @@ def figure(E, labs):
             if abs(A[i, j]) >= 0.05:
                 ax.text(j, i, f'{A[i, j]:.1f}' if abs(A[i, j]) >= 1 else f'{A[i, j]:.2f}', ha='center', va='center',
                         fontsize=5.5, color='white' if abs(A[i, j]) > 0.6 * lim else 'black')
+    for i, p in enumerate(PARAMS):   # outline each parameter's own moment
+        if p[3] is not None:
+            j = labs.index(p[3][0])
+            ax.add_patch(plt.Rectangle((j - .5, i - .5), 1, 1, fill=False, edgecolor='black', linewidth=1.3))
     ax.set_xticks(np.arange(-.5, len(labs), 1), minor=True)
     ax.set_yticks(np.arange(-.5, len(keys), 1), minor=True)
     ax.grid(which='minor', color='white', linewidth=0.6)
