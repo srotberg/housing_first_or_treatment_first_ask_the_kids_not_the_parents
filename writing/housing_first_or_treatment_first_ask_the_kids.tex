@@ -756,7 +756,7 @@ $\pi_{Vt}$ with $\mathcal R=\bar{\mathcal R}$;
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has fifty-nine parameters, some of which vary by age. Thirty-eight are calibrated externally, from data or the literature, and twenty-one internally. The twenty-six that carry this paper's story are in Table~\ref{tab:eleven}, with the moment, source, data and model value behind each, and are discussed below in numbered blocks of parameters that work through similar mechanisms. The other thirty-three, common to most life-cycle models, are in Appendix~\ref{sec:stdparams} to save the reader time; its blocks continue the numbering. Three further parameters govern drug testing and exclusion from the voucher; they play no role in the benchmark and are set with the experiment in Section~\ref{sec:experiments}. \texttt{data/DATA\_APPENDIX.md} in the replication package documents the dataset, year, universe and computation behind every estimate, and the package carries all datasets, so nothing has to be downloaded.
+The model has fifty-nine parameters, some of which vary by age. Thirty-eight are calibrated externally, from data or the literature, and twenty-one internally. The twenty-six that carry this paper's story are in Table~\ref{tab:eleven}, with the moment, source, data and model value behind each, and are discussed below in numbered blocks of parameters that work through similar mechanisms. The other thirty-three, common to most life-cycle models, are in Appendix~\ref{sec:stdparams} to save the reader time; its blocks continue the numbering. \new{Appendix~\ref{sec:jacobian} shows how each of the twenty-one internally calibrated parameters moves each targeted moment.} \why{The author: the Jacobian Referee~1 asked for (comment 2(f)) is now Appendix~B, with this sentence pointing to it. The appendix's title and its figure are new as well, though not in red.} Three further parameters govern drug testing and exclusion from the voucher; they play no role in the benchmark and are set with the experiment in Section~\ref{sec:experiments}. \texttt{data/DATA\_APPENDIX.md} in the replication package documents the dataset, year, universe and computation behind every estimate, and the package carries all datasets, so nothing has to be downloaded.
 
 \subsection{The twenty-six parameters that carry the story of this paper}\label{sec:fmainpar}
 
@@ -1387,5 +1387,20 @@ then held fixed.
 equals demand at $p_v=1$ in the benchmark, and kept fixed across experiments, in which the price is free to adjust. It normalises units, not behaviour.
 
 \end{description}
+
+\clearpage
+\setcounter{figure}{0}\renewcommand{\thefigure}{B\arabic{figure}}
+\section{The calibration's Jacobian}\label{sec:jacobian}
+
+\new{Figure~\ref{fig:jacobian} shows how each of the twenty-one internally calibrated parameters moves each targeted moment. I raise one parameter at a time, solve the steady state of the benchmark again with the other parameters at their calibrated values and the drug price at its benchmark value, as in the calibration, and report the percent change in each moment for each percent by which the parameter rises. The step is \new{$1$} percent, and \new{$0.2$} percent for the discount factor, whose effects are large. Two moments count households on a grid, the share of renters paying over half of their income and the share of the homeless aged 25 to 34, and they move in steps that a small change does not reach. Their parameters, $h_2$ and $T_0$, are therefore raised by \new{$5$} and \new{$10$} percent. Solving the benchmark again without changing any parameter moves a moment by at most \new{$0.013$} in these units, so every number printed in the figure is well above the numerical error.}
+
+\new{Each parameter moves the moment it is matched to, outlined in its row, and the matrix of the \new{twenty} parameters with a moment of their own and those moments has full rank. Identification is nonetheless joint. The parameters that govern drug use, $\theta$, $b$, $\pi_d$, $\kappa_{\phi d}$ and $\aleph$, all move the level of drug use, and their own moments tell them apart. Of the five, only $\theta$ raises drug spending over income, only $\pi_d$ raises the share of users with a SUD, and $\aleph$ raises the VSL the most. The discount factor moves almost every moment, and it moves wealth over output more than any other parameter does. The parent's weight on its child, $\omega_c$, has no column, because its moment, the rise in drug use when the child is given no weight, needs a second solve for every parameter.}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/jacobian.pdf}
+\caption{\new{The calibration's Jacobian}}\label{fig:jacobian}
+\notes{\textwidth}{\new{Notes: each cell is the percent change in a targeted moment (column) for each percent by which a parameter (row) rises, from the steady state of Housing First solved again with the other parameters at their calibrated values and the drug price held. The outlined cell is the moment the parameter is matched to in Section~\ref{sec:fullcal} and Appendix~\ref{sec:stdparams}. Numbers smaller than \new{$0.05$} in absolute value are not printed, and the colour scale is logarithmic beyond \new{$0.1$} in absolute value.}}
+\end{figure}
 
 \end{document}

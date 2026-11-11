@@ -49,7 +49,7 @@ PARAMS = [
     ('aleph',   r'$\aleph$',            0.01,  ('Value of a statistical life',      'aleph value of life / income')),
     ('kued',    r'$\kappa^{ue}_{d}$',   0.01,  ('SUD share of the homeless',        'sud_homeless SUD share of the homeless')),
     ('h1',      r'$h_1$',               0.01,  ('Homelessness',                     'h_1 homelessness rate')),
-    ('cmin',    r'$\underline c$',       0.01,  ('Food stamps over output',          'cbar food stamps / income')),
+    ('cmin',    r'$\underline{c}$',     0.01,  ('Food stamps over output',          'cbar food stamps / income')),
     ('piV',     r'$\pi_V$',             0.01,  ('Recipients over eligible',         'pi_V eligibles with a voucher')),
     ('T0',      r'$T_0$',               0.01,  ('Homeless aged 25 to 34',           'share of the homeless, band 1')),
     ('omega_m', r'$\omega_m$',          0.01,  ('SMI share of the population',      'p_m SMI population share')),
@@ -74,7 +74,11 @@ DAT_KEYS = ('beta', 'gamma', 'aleph', 'h1', 'taul', 'h2')
 # steps, because they count households on a grid: a one percent rise leaves both inside the repeat-solve noise (+0.017,
 # +0.014), while run_jacobian_step.sh's larger steps move them clearly. Their rows in the Jacobian, the figure and the
 # rank are the arc elasticities over the larger step; the one-percent rows are kept in elasticities.json beside them.
-LARGE = {'h2': 'h2_dat_s100', 'T0': 'T0_s100'}
+# h2 is the paper's parameter, the bottom of a ladder whose upper rungs are set as multiples of it (Table A1: h3/h2 and
+# h4/h2), so its run moves the whole ladder; run_jacobian_rung.sh's runs, h2 alone with h3 and h4 held, are reported beside it.
+LARGE = {'h2': 'h2_dat_s50', 'T0': 'T0_s100'}
+WORDS = {19: 'nineteen', 20: 'twenty', 21: 'twenty-one'}
+NUMBERS = os.path.join(ROOT, 'code', 'paper', 'jacobian_numbers.json')
 
 
 def run_dir(key):
@@ -265,6 +269,16 @@ def main():
         else:
             jo = labs.index(own[0])
             out.append(f'{k} at a {100 * big:g} percent step: own moment {e_big[jo]:+.3f} (one percent: {E1[k][jo]:+.3f}); {top}')
+    # THE NUMBERS APPENDIX B QUOTES, read by code/paper/splice.py like every other number file
+    if len(sq) == len(MOMENTS) and voids:
+        import numpy as np
+        nums = {'j_step_pc': '1', 'j_beta_step_pc': f'{100 * [p[2] for p in PARAMS if p[0] == "beta"][0]:g}',
+                'j_noise': f'{worst[j] / 0.01:.3f}', 'j_n_own': WORDS.get(len(sq), str(len(sq))),
+                'j_print_min': '0.05', 'j_lin': '0.1',
+                'j_rank_full': 'yes' if np.linalg.matrix_rank(A) == len(sq) else 'no'}
+        for k, b in used_large.items():
+            nums[f'j_{k.lower()}_step_pc'] = f'{100 * b:g}'
+        json.dump(nums, open(NUMBERS, 'w'), indent=1)
     open(os.path.join(RES, 'summary.txt'), 'w').write('\n'.join(out) + '\n')
     print('\n'.join(out))
     json.dump({'moments': labs, 'elasticities': E, 'large_steps': used_large,

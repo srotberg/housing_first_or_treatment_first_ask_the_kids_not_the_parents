@@ -1,5 +1,5 @@
 21 of 21 parameters solved: theta, b, pi_d, kphid, aleph, kued, h1, cmin, piV, T0, omega_m, kuem, muH, tauu, omega_c, gamma, beta, h2, sigma, pieu, taul
-rows at a larger step: T0 10 percent
+rows at a larger step: h2 5 percent, T0 10 percent
 
 theta    own moment +1.115            largest +13.150 on Drug use
 b        own moment -6.545            largest -6.545 on Drug use
@@ -18,12 +18,12 @@ tauu     own moment -3.663            largest -3.663 on Treatment take-up
 omega_c  no moment of its own         largest -0.029 on Drug spending over income
 gamma    own moment +0.200            largest -1.210 on Homeless aged 25 to 34
 beta     own moment +9.688            largest -197.020 on Drug use
-h2       own moment +0.017            largest -5.850 on Drug use
+h2       own moment +0.864            largest -3.405 on Drug use
 sigma    own moment -1.380            largest -2.950 on Drug use
 pieu     own moment +0.904            largest +0.904 on Unemployment rate
 taul     own moment -3.743            largest -3.743 on Average labour income tax
 
-square block (20 parameters by 20 moments): rank 20, singular values 274 to 0.0432, condition number 6.34e+03
+square block (20 parameters by 20 moments): rank 20, singular values 274 to 0.0416, condition number 6.59e+03
 own moment is the largest in its row for 8 of 20: b, cmin, omega_m, kuem, muH, tauu, pieu, taul
 own parameter moves its moment the most (largest in its column) for 4 of 20: muH, beta, sigma, taul
     Drug spending over income: own theta +1.115, largest beta -5.724
@@ -40,11 +40,11 @@ own parameter moves its moment the most (largest in its column) for 4 of 20: muH
     SMI share of the homeless: own kuem +0.276, largest beta +17.563
     Treatment take-up: own tauu -3.663, largest beta +68.490
     Housing over expenditure: own gamma +0.200, largest beta -1.981
-    Renters paying over half: own h2 +0.017, largest gamma +1.157
+    Renters paying over half: own h2 +0.864, largest gamma +1.157
     Unemployment rate: own pieu +0.904, largest beta -14.724
 
 noise floor from 3 repeat solves of the benchmark (beta, gamma, h1): largest relative difference 1.33e-04 (SMI share of the homeless), i.e. 0.013 in elasticity units at a one percent step and 0.066 at the discount factor's 0.2 percent
-all (20 by 20): smallest singular value 0.0432, with the noise 0.0395 to 0.0468; its direction kued +0.51, T0 -0.50, kphid -0.43, aleph +0.41
-without kued (19 by 19): smallest singular value 0.0474, with the noise 0.0444 to 0.0504; its direction h1 +0.54, kphid -0.49, aleph +0.46, T0 -0.45
+all (20 by 20): smallest singular value 0.0416, with the noise 0.0383 to 0.0444; its direction T0 -0.52, aleph +0.46, kphid -0.45, kued +0.34
+without T0 (19 by 19): smallest singular value 0.0577, with the noise 0.0565 to 0.0583; its direction h1 +0.77, aleph +0.34, kphid -0.32, b -0.26
 T0 at a 10 percent step: own moment -0.222 (one percent: +0.014); Value of a statistical life +0.56, Homeless aged 25 to 34 -0.22, Homelessness -0.10, Drug use -0.07
 h2 at a 5 percent step: own moment +0.864 (one percent: +0.017); Drug use -3.40, Income of users over average -2.31, SUD share of the homeless -1.52, Renters paying over half +0.86
