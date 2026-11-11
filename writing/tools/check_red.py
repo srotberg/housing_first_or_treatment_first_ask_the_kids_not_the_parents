@@ -60,4 +60,12 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    rc = main()
+    # \\del must print red as well as struck (the author: "show me all the updates in striked out red")
+    src = open(SRC).read() if 'SRC' in globals() else ''
+    if src and '\\DeclareRobustCommand{\\del}' in src and '\\DeclareRobustCommand{\\del}[1]{{\\color{red}\\sout{#1}}}' not in src:
+        print('the \\del macro is not red: restore \\DeclareRobustCommand{\\del}[1]{{\\color{red}\\sout{#1}}}')
+        rc = 1
+    elif src:
+        print('   \\del renders red and struck')
+    sys.exit(rc)

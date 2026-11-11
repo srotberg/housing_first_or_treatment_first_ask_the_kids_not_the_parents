@@ -77,7 +77,7 @@ DAT_KEYS = ('beta', 'gamma', 'aleph', 'h1', 'taul', 'h2')
 # h2 is the paper's parameter, the bottom of a ladder whose upper rungs are set as multiples of it (Table A1: h3/h2 and
 # h4/h2), so its run moves the whole ladder; run_jacobian_rung.sh's runs, h2 alone with h3 and h4 held, are reported beside it.
 LARGE = {'h2': 'h2_dat_s50', 'T0': 'T0_s100'}
-WORDS = {19: 'nineteen', 20: 'twenty', 21: 'twenty-one'}
+WORDS = {19: 'nineteen', 20: 'twenty', 21: 'twenty one'}
 NUMBERS = os.path.join(ROOT, 'code', 'paper', 'jacobian_numbers.json')
 
 

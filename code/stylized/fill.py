@@ -48,12 +48,13 @@ _TENS = {2: 'twenty', 3: 'thirty', 4: 'forty', 5: 'fifty', 6: 'sixty',
 
 
 def _word(n):
-    """The paper spells these out, HYPHENATED as standard English writes them: fifty-four
-    (review, 3 October; they were open before)."""
+    """The paper spells these out WITHOUT A HYPHEN: fifty nine, twenty six (the author, 11 November: "Please do not
+    write numbers like this with hyphens ... it should be twenty six"). This reverses the review of 3 October, which had
+    hyphenated them."""
     if n in _ONES:
         return _ONES[n]
     t, u = divmod(n, 10)
-    return _TENS[t] + ('-' + _ONES[u] if u else '')
+    return _TENS[t] + (' ' + _ONES[u] if u else '')
 
 
 def _param_counts():
