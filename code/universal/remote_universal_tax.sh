@@ -123,15 +123,15 @@ if ! ok cfarm_tf_univt; then
 fi
 while alive "$D.null.pid" || alive "$D.tf.pid"; do
     for _ in $(seq 1 120); do { alive "$D.null.pid" || alive "$D.tf.pid"; } || break; sleep 10; done
-    for a in null tf; do L="$C/cfarm_${a}_univ/cf.log"; [ -f "$L" ] && note "$a: $(grep -a -c 'expected_child_value=' "$L") passes, last price $(grep -a 'price_of_addictive_good=' "$L" | tail -1 | awk '{print $NF}')"; done
+    for a in null tf; do L="$C/cfarm_${a}_univt/cf.log"; [ -f "$L" ] && note "$a: $(grep -a -c 'expected_child_value=' "$L") passes, last price $(grep -a 'price_of_addictive_good=' "$L" | tail -1 | awk '{print $NF}')"; done
     publish "running"
 done
 
 for a in null tf; do
     mkdir -p "$R/$a"
-    [ -s "$C/cfarm_${a}_univ/cf.log" ] && gzip -c "$C/cfarm_${a}_univ/cf.log" > "$R/$a/cf.log.gz"
-    cp "$C/cfarm_${a}_univ.out" "$R/$a/run.out" 2>/dev/null
-    cp "$C/cfarm_${a}_univ/PARAM_HANDOVER.txt" "$R/$a/" 2>/dev/null
+    [ -s "$C/cfarm_${a}_univt/cf.log" ] && gzip -c "$C/cfarm_${a}_univt/cf.log" > "$R/$a/cf.log.gz"
+    cp "$C/cfarm_${a}_univt.out" "$R/$a/run.out" 2>/dev/null
+    cp "$C/cfarm_${a}_univt/PARAM_HANDOVER.txt" "$R/$a/" 2>/dev/null
 done
 ok cfarm_null_univt || { note "GUARD: Housing First did not converge at pi_V 1: $(tail -3 "$C/cfarm_null_univt.out" | tr '\n' ' ')"; publish "failed"; exit 1; }
 ok cfarm_tf_univt || { note "GUARD: Treatment First did not converge at pi_V 1: $(tail -3 "$C/cfarm_tf_univt.out" | tr '\n' ' ')"; publish "failed"; exit 1; }
