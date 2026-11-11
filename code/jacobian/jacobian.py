@@ -231,25 +231,44 @@ def main():
                 out.append(f'{"without " + drop[0] if drop else "all"} ({len(keys)} by {len(keys)}): smallest singular value '
                            f'{sd[-1]:.3g}, with the noise {np.percentile(draws, 5):.3g} to {np.percentile(draws, 95):.3g}; '
                            f'its direction ' + ', '.join(f'{keys[jj]} {u[jj]:+.2f}' for jj in np.argsort(-np.abs(u))[:4]))
-    # h2 and T0 again at a larger step (run_jacobian_step.sh), to tell a flat own moment from a lumpy one
+    # OTHER STEPS (run_jacobian_step.sh, run_jacobian_omega.sh): h2 and T0 at a larger step, to tell a flat own moment from
+    # a lumpy one; the parameters whose effects the text describes, at five percent (the author: "1% may not be enough");
+    # omega_c at -100 percent, i.e. at zero, the arc its own moment is defined on. piV's runs fail cf_arm's voucher check by
+    # design, as at one percent, and are accepted on the same terms.
+    def step_ok(d, log):
+        c = open(os.path.join(RES, d, 'check.txt')).read()
+        if c.startswith('OK'):
+            return True
+        if d.startswith('piV') and 'arm ran at voucher probability' in c:
+            h = re.findall(r'HANDOVER voucher probability:\s*\S+\s*->\s*(\S+)', log)
+            pp = re.findall(r'^\s*probability_of_voucher=\s*(\S+)', log, re.M)
+            return bool(h and pp and abs(float(pp[-1]) / float(h[-1]) - 1) < 1e-9 and 'DIST_DONE' in log)
+        return False
+    others = {}
     for d in sorted(os.listdir(RES)):
-        m = re.match(r'(\w+?)(?:_dat)?_s(\d+)$', d)
-        if m and base is not None:
-            k, big = m.group(1), int(m.group(2)) / 1000
-            log_path = os.path.join(RES, d, 'cf.log.gz')
-            chk = os.path.join(RES, d, 'check.txt')
-            if os.path.exists(log_path) and os.path.exists(chk) and open(chk).read().startswith('OK'):
-                M = read_log(log_path)
-                own = [p[3] for p in PARAMS if p[0] == k][0]
-                e_big = [(M[mm] / base[mm] - 1) / big for lab, mm in MOMENTS]
-                jo = labs.index(own[0])
-                out.append(f'{k} at a {100 * big:g} percent step: own moment {e_big[jo]:+.3f} (one percent: '
-                           f'{E1[k][jo]:+.3f}); ' + ', '.join(f'{labs[jj]} {e_big[jj]:+.2f}' for jj in
-                                                            sorted(range(len(labs)), key=lambda i: -abs(e_big[i]))[:4]))
+        m = re.match(r'(\w+?)(?:_dat)?_s(-?\d+)$', d)
+        if not m or not os.path.exists(os.path.join(RES, d, 'check.txt')) or not os.path.exists(os.path.join(RES, d, 'cf.log.gz')):
+            continue
+        log = gzip.open(os.path.join(RES, d, 'cf.log.gz'), 'rt', errors='replace').read()
+        if not step_ok(d, log):
+            continue
+        k, big = m.group(1), int(m.group(2)) / 1000
+        M = parse(log)
+        e_big = [(M[mm] / base[mm] - 1) / big for lab, mm in MOMENTS]
+        others[d] = {'key': k, 'step': big, 'e': e_big, 'drug users': M['b total drug users']}
+        own = [p[3] for p in PARAMS if p[0] == k][0]
+        top = ', '.join(f'{labs[jj]} {e_big[jj]:+.2f}' for jj in sorted(range(len(labs)), key=lambda i: -abs(e_big[i]))[:4])
+        if own is None:
+            out.append(f'{k} at a {100 * big:g} percent step: no moment of its own; drug use {e_big[labs.index("Drug use")]:+.4f} '
+                       f'(one percent: {E1[k][labs.index("Drug use")]:+.4f}), i.e. drug users {M["b total drug users"]:.6f} against '
+                       f'{base["b total drug users"]:.6f}; {top}')
+        else:
+            jo = labs.index(own[0])
+            out.append(f'{k} at a {100 * big:g} percent step: own moment {e_big[jo]:+.3f} (one percent: {E1[k][jo]:+.3f}); {top}')
     open(os.path.join(RES, 'summary.txt'), 'w').write('\n'.join(out) + '\n')
     print('\n'.join(out))
     json.dump({'moments': labs, 'elasticities': E, 'large_steps': used_large,
-               'elasticities_one_percent': {k: E1[k] for k in used_large}},
+               'elasticities_one_percent': {k: E1[k] for k in used_large}, 'other_steps': others},
               open(os.path.join(RES, 'elasticities.json'), 'w'), indent=1)
     if '--no-figure' not in sys.argv and len(done) == len(PARAMS):
         figure(E, labs, large=used_large)
