@@ -188,12 +188,31 @@ def main():
                 f'difference {worst[j]:.2e} ({labs[j]}), i.e. {worst[j] / 0.01:.3f} in elasticity units at a one percent step '
                 f'and {worst[j] / 0.002:.3f} at the discount factor\'s 0.2 percent']
         if len(sq) == len(MOMENTS):
-            # Weyl: no singular value moves by more than the noise matrix's 2-norm, which is at most its Frobenius norm,
-            # an entry per cell of (that moment's worst repeat-solve difference) / (that row's step)
+            # HOW MUCH THE NOISE CAN MOVE THE SMALLEST SINGULAR VALUE. Weyl's bound (the noise matrix's Frobenius norm,
+            # every cell at its moment's worst repeat-solve difference) is far too loose here: it says 0.16 against a
+            # smallest singular value of 0.004 with T0 and 0.06 without, and so calls both singular. Instead each row of
+            # the noise matrix is drawn as one of the repeat solves' own error vectors, with a random sign, over that
+            # row's step, which is what a perturbed run's error looks like; 2,000 draws give the 5 to 95 percent range of
+            # the smallest singular value of A + noise. Done for the full block and without the parameter that loads
+            # most on the weakest direction.
+            import numpy as np
             step = {k: st for k, s, st, own in PARAMS}
-            bound = sum((worst[jj] / step[k]) ** 2 for k in sq for jj in range(len(MOMENTS))) ** 0.5
-            out.append(f'the noise can move a singular value by at most {bound:.3g}; the smallest is {sv.min():.3g}, so the '
-                       f'rank is {"robust to" if sv.min() > bound else "NOT robust to"} it')
+            errs = np.array([[read_log(os.path.join(RES, k, 'cf.log.gz'))[m] / base[m] - 1 for lab, m in MOMENTS]
+                             for k in voids])
+            rng = np.random.default_rng(0)
+            U, sv_all, _ = np.linalg.svd(A)
+            weak = sq[int(np.abs(U[:, -1]).argmax())]
+            for drop in ((), (weak,)):
+                keys = [k for k in sq if k not in drop]
+                cols = [jj for jj, k in enumerate(sq) if k not in drop]
+                Ad = np.array([[E[k][jj] for jj in cols] for k in keys])
+                Ud, sd, _ = np.linalg.svd(Ad)
+                draws = [np.linalg.svd(Ad + np.array([errs[rng.integers(len(errs))][cols] * rng.choice([-1, 1]) / step[k]
+                                                       for k in keys]), compute_uv=False)[-1] for t in range(2000)]
+                u = Ud[:, -1]
+                out.append(f'{"without " + drop[0] if drop else "all"} ({len(keys)} by {len(keys)}): smallest singular value '
+                           f'{sd[-1]:.3g}, with the noise {np.percentile(draws, 5):.3g} to {np.percentile(draws, 95):.3g}; '
+                           f'its direction ' + ', '.join(f'{keys[jj]} {u[jj]:+.2f}' for jj in np.argsort(-np.abs(u))[:4]))
     # h2 and T0 again at a larger step (run_jacobian_step.sh), to tell a flat own moment from a lumpy one
     for d in sorted(os.listdir(RES)):
         m = re.match(r'(\w+?)(?:_dat)?_s(\d+)$', d)
