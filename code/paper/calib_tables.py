@@ -145,6 +145,39 @@ for _k in ('renters above 30 pct of income', 'over half of income, all renters')
 B_ON = M['b total drug users'][0]
 RISE = B_OFF / B_ON - 1
 
+# THE MODEL COLUMN IS THE BENCHMARK THE EXPERIMENTS USE (r463; the author on the take-up: "the paper should have the
+# numbers correctly shown in the tables. so if the calibration shows some number, the counterfactual should show the
+# same number!"). Table 5's Housing First is the benchmark re-solved on the corrected build beside Treatment First
+# (rulec_paths.NULL_DIR), which counts use as the screen does and moved, for example, drug use from 8.96 to 8.92 and
+# take-up from 24.9 to 24.6 per cent at the same parameters. Every MOMENT and UNTARGETED line, and the aggregate drug
+# spending share, therefore come from that run's log, so Tables 3, 4 and A1 show the same economy as Table 5. The
+# parameter values stay those of the handover (the same in both runs), and three things stay on the calibration run,
+# because the re-solve has no counterpart: the kappa_x probe, the dollar scale AVG_LAB, and B_ON for the omega_c moment,
+# whose omega_c = 0 reading B_OFF was taken on the calibration build (mixing the two builds would move it by counting
+# alone).
+import rulec_paths as _RC   # noqa: E402
+CF_LOG = gzip.open(os.path.join(_RC.NULL_DIR, 'cf.log.gz'), 'rt', errors='replace').read()
+_n = 0
+for l in CF_LOG.splitlines():
+    m = re.match(r'\s*(MOMENT|UNTARGETED)\s+(.*?)\s+model=\s*(\S+)(?:\s+(?:target|observed)=\s*(\S+))?', l)
+    if m:
+        _k = re.sub(r'\s+', ' ', m.group(2).strip())
+        assert _k in M, ('the re-solved benchmark prints a moment the calibration run does not', _k)
+        M[_k] = (float(m.group(3)),) + tuple(M[_k][1:])
+        _n += 1
+assert _n >= len(M) - 2, (_n, len(M))
+with tempfile.NamedTemporaryFile('w', suffix='.log', delete=False) as t:
+    t.write(CF_LOG)
+_G = {}
+for l in subprocess.run([sys.executable, os.path.join(ROOT, 'code', 'gaps_table.py'), t.name],
+                        capture_output=True, text=True).stdout.splitlines():
+    q = l.split()
+    if len(q) >= 4 and re.fullmatch(r'[a-zA-Z_0-9]+', q[0]) and q[0] != 'parameter':
+        _G[q[0]] = l
+os.unlink(t.name)
+THETA_AGG = float(_G['theta'].split()[2])
+THETA_NOSUD = float(re.findall(r'drug share, sum spend / sum income\s*=\s*(\S+)\s+(\S+)', CF_LOG)[-1][1])
+
 
 # THE SCF'S BOTTOM-HALF SHARE OF NET WORTH, all households, from the SCF extract's own output
 # (data/SCF_wealth_shares.txt, the "50" row, all-households column)

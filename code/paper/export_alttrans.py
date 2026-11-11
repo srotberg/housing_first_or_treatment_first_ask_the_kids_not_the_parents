@@ -380,7 +380,11 @@ if _w:
 # (round r357, the author on 'Catching 20 percent of users': "only one in five users")
 _inv = 100 / float(PDET)
 assert abs(_inv - round(_inv)) < 1e-9, PDET
-out = {'x_at_results': '', 'x_at_ann_par': ann_par(), 'x_at_gr_par': gr_par(), 'x_at_lesson': lesson(), 'x_at_years_word': {15: 'fifteen'}[YEARS], 'x_at_ne_cev': ne_cev,
+# (r463, the author: "add right there that the qualitative welfare results hold for higher p_det as well as lower p_det",
+# and "of course we have, p_dect=100%"): the reform cohort's gain when every user is caught, quoted by the screen's
+# paragraph in Section 5, with its verb
+out_ne100 = {'x_at_ne100_cev': cev_txt(a), 'x_at_ne100_verb': verb(a)}
+out = {**out_ne100, 'x_at_results': '', 'x_at_ann_par': ann_par(), 'x_at_gr_par': gr_par(), 'x_at_lesson': lesson(), 'x_at_years_word': {15: 'fifteen'}[YEARS], 'x_at_ne_cev': ne_cev,
        'x_at_pdet_words': 'one in ' + {2: 'two', 4: 'four', 5: 'five', 10: 'ten', 20: 'twenty'}[round(_inv)]}
 d.update(out)
 json.dump(d, open(OUT, 'w'), indent=1, sort_keys=True)
