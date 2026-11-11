@@ -1,5 +1,5 @@
 21 of 21 parameters solved: theta, b, pi_d, kphid, aleph, kued, h1, cmin, piV, T0, omega_m, kuem, muH, tauu, omega_c, gamma, beta, h2, sigma, pieu, taul
-rows at a larger step: h2 5 percent, T0 10 percent
+rows at a larger step: h2 5 percent, T0 10 percent, omega_c 10 percent
 
 theta    own moment +1.115            largest +13.150 on Drug use
 b        own moment -6.545            largest +7.566 on Use, no weight on the child
@@ -8,21 +8,21 @@ kphid    own moment -4.332            largest -7.331 on Drug use
 aleph    own moment +2.928            largest -7.269 on Drug use
 kued     own moment +0.190            largest -1.106 on Use, no weight on the child
 h1       own moment +0.273            largest +0.949 on Abstinence, housed over homeless
-cmin     own moment +2.225            largest +2.225 on Food stamps over output
+cmin     own moment +2.225            largest -2.270 on Use, no weight on the child
 piV      own moment +0.703            largest +0.912 on Abstinence, housed over homeless
 T0       own moment -0.222            largest +0.556 on Value of a statistical life
 omega_m  own moment +0.319            largest +0.319 on SMI share of the population
 kuem     own moment +0.276            largest +0.276 on SMI share of the homeless
 muH      own moment -2.225            largest -2.225 on Abstinence, housed over homeless
 tauu     own moment -3.663            largest -3.663 on Treatment take-up
-omega_c  own moment +0.020            largest -0.029 on Drug spending over income
-gamma    own moment +0.200            largest -1.210 on Homeless aged 25 to 34
-beta     own moment +9.688            largest -197.020 on Drug use
+omega_c  own moment +1.275            largest +1.275 on Use, no weight on the child
+gamma    own moment +0.200            largest +4.172 on Use, no weight on the child
+beta     own moment +9.688            largest +314.238 on Use, no weight on the child
 h2       own moment +0.864            largest +10.554 on Use, no weight on the child
 sigma    own moment -1.380            largest +30.970 on Use, no weight on the child
 pieu     own moment +0.904            largest +0.904 on Unemployment rate
 taul     own moment -3.743            largest -3.743 on Average labour income tax
-(the square block waits for omega_c's column: 9 cells missing)
+(the square block waits for omega_c's column: 6 cells missing)
 
 noise floor from 3 repeat solves of the benchmark (beta, gamma, h1): largest relative difference 1.33e-04 (SMI share of the homeless), i.e. 0.013 in elasticity units at a one percent step and 0.066 at the discount factor's 0.2 percent
 T0 at a 10 percent step: own moment -0.222 (one percent: +0.014); Value of a statistical life +0.56, Homeless aged 25 to 34 -0.22, Homelessness -0.10, Drug use -0.07
@@ -31,6 +31,7 @@ h1 at a -5 percent step: own moment +0.358 (one percent: +0.273); Homelessness +
 h1 at a 5 percent step: own moment +0.225 (one percent: +0.273); Abstinence, housed over homeless +0.32, Value of a statistical life +0.28, Homelessness +0.23, Homeless aged 25 to 34 -0.10
 h2 at a -5 percent step: own moment +0.964 (one percent: +0.017); Drug use -2.48, Income of users over average -1.85, SUD share of the homeless -1.32, Renters paying over half +0.96
 h2 at a 5 percent step: own moment +0.864 (one percent: +0.017); Drug use -3.40, Income of users over average -2.31, SUD share of the homeless -1.52, Renters paying over half +0.86
-omega_c at a -100 percent step: own moment +nan (one percent: +0.020); Drug use -0.20, SUD share of the homeless -0.12, Income of users over average -0.06, Value of a statistical life +0.04
+omega_c at a -100 percent step: own moment +nan (one percent: +nan); Drug use -0.20, SUD share of the homeless -0.12, Income of users over average -0.06, Value of a statistical life +0.04
+omega_c at a 10 percent step: own moment +nan (one percent: +nan); Drug use -0.21, Income of users over average -0.12, SUD share of the homeless -0.10, Drug spending over income -0.03
 piV at a 5 percent step: own moment +0.698 (one percent: +0.703); Recipients over eligible +0.70, Homelessness -0.51, Value of a statistical life +0.28, Abstinence, housed over homeless +0.25
 pi_d at a 5 percent step: own moment +0.523 (one percent: +0.584); Drug use -6.63, Income of users over average -4.20, SUD share of the homeless -3.22, Homelessness -0.80
