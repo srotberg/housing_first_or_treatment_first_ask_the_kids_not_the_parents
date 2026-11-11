@@ -65,7 +65,13 @@ publish() (
 )
 
 : > "$D.status"
-command -v gfortran >/dev/null 2>&1 || { apt-get update -qq >/dev/null 2>&1; apt-get install -y -qq gfortran >/dev/null 2>&1; }
+# RETRY THE INSTALL (11 November 16:25: the first container printed "GUARD: no gfortran" -- apt was still locked or
+# the mirror not yet reachable a minute after start; the other helpers on the same environment installed it).
+for t in 1 2 3 4 5 6 7 8; do
+    command -v gfortran >/dev/null 2>&1 && break
+    apt-get update -qq >/dev/null 2>&1; DEBIAN_FRONTEND=noninteractive apt-get install -y -qq gfortran >/dev/null 2>&1 \
+        || { note "gfortran install attempt $t failed; retrying"; sleep $((15 * t)); }
+done
 command -v gfortran >/dev/null || { note "GUARD: no gfortran"; publish "failed"; exit 1; }
 python3 -c "import numpy" 2>/dev/null || pip install -q numpy >/dev/null 2>&1
 gunzip -c "$REF/files/welfare_curvebaseline_benchmark.dat.gz" > "$CEV_CURVE"
