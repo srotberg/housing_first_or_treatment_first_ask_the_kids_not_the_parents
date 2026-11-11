@@ -143,7 +143,17 @@ for _k in ('renters above 30 pct of income', 'over half of income, all renters')
     assert _v, _k
     M[_k] = (_v[-1],) + tuple(M[_k][1:])
 B_ON = M['b total drug users'][0]
-RISE = B_OFF / B_ON - 1
+# omega_c's MOMENT ON THE BUILD THE EXPERIMENTS USE (11 November; the author: "yes, change Table 3 to 20.0"). The pair
+# above, both on the calibration build, gave 17.7 percent. The benchmark the experiments use, solved again with the
+# child's weight at zero and everything else the same (the Jacobian's runs: results/jacobian/base and omega_c_s-1000,
+# the corrected Housing First with the drug price held), gives 20.0. Table 3 now shows that one, so the calibration and
+# the experiments show the same economy (r463). B_OFF and B_ON stay as they were for the names that quote them.
+def _jac_users(d):
+    chk = os.path.join(ROOT, 'results', 'jacobian', d, 'check.txt')
+    assert open(chk).read().startswith('OK'), (d, 'the run did not pass its check')
+    lg = gzip.open(os.path.join(ROOT, 'results', 'jacobian', d, 'cf.log.gz'), 'rt', errors='replace').read()
+    return float(re.findall(r'MOMENT b\s+total drug users\s+model=\s*([-+0-9.Ee]+)', lg)[-1])
+RISE = _jac_users('omega_c_s-1000') / _jac_users('base') - 1
 
 # THE MODEL COLUMN IS THE BENCHMARK THE EXPERIMENTS USE (r463; the author on the take-up: "the paper should have the
 # numbers correctly shown in the tables. so if the calibration shows some number, the counterfactual should show the

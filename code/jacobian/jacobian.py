@@ -309,7 +309,7 @@ def figure(E, labs, out=FIG, large=None):
     plt.rcParams.update({'font.family': 'serif', 'mathtext.fontset': 'cm'})
     cmap = matplotlib.colormaps['RdBu_r'].copy()
     cmap.set_bad('#d9d9d9')
-    fig, ax = plt.subplots(figsize=(7.0, 7.3))   # printed at the letter's text width, 6.4 inches
+    fig, ax = plt.subplots(figsize=(7.0, 6.2))   # printed at text width; short enough to share a page with Appendix B (the author)
     im = ax.imshow(np.ma.masked_invalid(A), cmap=cmap, norm=norm, aspect='auto')
     ax.set_xticks(range(len(labs)))
     ax.set_xticklabels(labs, rotation=60, ha='right', rotation_mode='anchor', fontsize=6.8)
