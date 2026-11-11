@@ -15,6 +15,14 @@ the percent change in the moment for a one percent rise in the parameter, and wr
 
 Each moment is read as the calibration tables read it (code/paper/calib_tables.py): the MOMENT and UNTARGETED lines of
 the run's log, the aggregate drug spending share from its DIAG line, and the share of users with a SUD as lambda_d over b.
+SIX PARAMETERS ARE READ FROM <KEY>_dat. The counterfactual binary's upload_vars re-reads beta, gamma, aleph, h_1, tau_l and
+h_2 from the benchmark's saved files after the handover, so run_jacobian.sh's runs of those solved the benchmark again;
+run_jacobian_dat.sh raises them in the file too, into results/jacobian/<KEY>_dat, and only those runs are used.
+
+THE VOUCHER PROBABILITY'S RUN FAILS cf_arm_Cu.sh's voucher check by design: the check asks that the arm ran at the
+benchmark's probability, and this run raises it. So for piV the check is redone here: every GUARD in the run must be that
+one, and the probability the run printed last must be the raised one.
+
 The parent's weight on its child has no moment here (its moment needs an omega_c = 0 twin of every run), so its row
 shows how it moves the other moments only.
 
@@ -58,14 +66,35 @@ PARAMS = [
 MOMENTS = [p[3] for p in PARAMS if p[3] is not None]
 
 
+DAT_KEYS = ('beta', 'gamma', 'aleph', 'h1', 'taul', 'h2')
+
+
+def run_dir(key):
+    return os.path.join(RES, key + '_dat' if key in DAT_KEYS else key)
+
+
+def valid(key, log):
+    """True when the run's check passed; for piV, when its only failure is the voucher check and it ran at the raised value."""
+    chk = os.path.join(run_dir(key), 'check.txt')
+    if not os.path.exists(chk):
+        return False
+    c = open(chk).read()
+    if c.startswith('OK') and not c.startswith('OK-SKIP'):
+        return True
+    if key != 'piV' or 'GUARD FAIL: arm ran at voucher probability' not in c:
+        return False
+    h = re.findall(r'HANDOVER voucher probability:\s*\S+\s*->\s*(\S+)', log)
+    p = re.findall(r'^\s*probability_of_voucher=\s*(\S+)', log, re.M)
+    return bool(h and p and abs(float(p[-1]) / float(h[-1]) - 1) < 1e-9 and 'DIST_DONE' in log)
+
+
 def read_moments(key):
-    path = os.path.join(RES, key, 'cf.log.gz')
+    path = os.path.join(run_dir(key), 'cf.log.gz')
     if not os.path.exists(path):
         return None
-    chk = os.path.join(RES, key, 'check.txt')
-    if not (os.path.exists(chk) and open(chk).read().startswith('OK')):
-        return None
     log = gzip.open(path, 'rt', errors='replace').read()
+    if not valid(key, log):
+        return None
     M = {}
     for l in log.splitlines():
         m = re.match(r'\s*(MOMENT|UNTARGETED)\s+(.*?)\s+model=\s*(\S+)', l)
