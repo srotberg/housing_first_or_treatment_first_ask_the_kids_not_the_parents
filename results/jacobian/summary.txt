@@ -1,4 +1,5 @@
 21 of 21 parameters solved: theta, b, pi_d, kphid, aleph, kued, h1, cmin, piV, T0, omega_m, kuem, muH, tauu, omega_c, gamma, beta, h2, sigma, pieu, taul
+rows at a larger step: T0 10 percent
 
 theta    own moment +1.115            largest +13.150 on Drug use
 b        own moment -6.545            largest -6.545 on Drug use
@@ -9,7 +10,7 @@ kued     own moment +0.190            largest -0.547 on Abstinence, housed over 
 h1       own moment +0.273            largest +0.949 on Abstinence, housed over homeless
 cmin     own moment +2.225            largest +2.225 on Food stamps over output
 piV      own moment +0.703            largest +0.912 on Abstinence, housed over homeless
-T0       own moment +0.014            largest +0.565 on Value of a statistical life
+T0       own moment -0.222            largest +0.556 on Value of a statistical life
 omega_m  own moment +0.319            largest +0.319 on SMI share of the population
 kuem     own moment +0.276            largest +0.276 on SMI share of the homeless
 muH      own moment -2.225            largest -2.225 on Abstinence, housed over homeless
@@ -22,7 +23,7 @@ sigma    own moment -1.380            largest -2.950 on Drug use
 pieu     own moment +0.904            largest +0.904 on Unemployment rate
 taul     own moment -3.743            largest -3.743 on Average labour income tax
 
-square block (20 parameters by 20 moments): rank 20, singular values 274 to 0.00438, condition number 6.26e+04
+square block (20 parameters by 20 moments): rank 20, singular values 274 to 0.0432, condition number 6.34e+03
 own moment is the largest in its row for 8 of 20: b, cmin, omega_m, kuem, muH, tauu, pieu, taul
 own parameter moves its moment the most (largest in its column) for 4 of 20: muH, beta, sigma, taul
     Drug spending over income: own theta +1.115, largest beta -5.724
@@ -34,7 +35,7 @@ own parameter moves its moment the most (largest in its column) for 4 of 20: muH
     Homelessness: own h1 +0.273, largest beta -33.015
     Food stamps over output: own cmin +2.225, largest beta -23.218
     Recipients over eligible: own piV +0.703, largest beta -5.405
-    Homeless aged 25 to 34: own T0 +0.014, largest beta +4.026
+    Homeless aged 25 to 34: own T0 -0.222, largest beta +4.026
     SMI share of the population: own omega_m +0.319, largest beta -3.857
     SMI share of the homeless: own kuem +0.276, largest beta +17.563
     Treatment take-up: own tauu -3.663, largest beta +68.490
@@ -43,6 +44,7 @@ own parameter moves its moment the most (largest in its column) for 4 of 20: muH
     Unemployment rate: own pieu +0.904, largest beta -14.724
 
 noise floor from 3 repeat solves of the benchmark (beta, gamma, h1): largest relative difference 1.33e-04 (SMI share of the homeless), i.e. 0.013 in elasticity units at a one percent step and 0.066 at the discount factor's 0.2 percent
-all (20 by 20): smallest singular value 0.00438, with the noise 0.000423 to 0.0111; its direction T0 -0.82, aleph +0.43, kphid -0.34, tauu +0.10
-without T0 (19 by 19): smallest singular value 0.0592, with the noise 0.0562 to 0.0617; its direction kued +0.76, kuem +0.36, h1 +0.33, kphid -0.31
+all (20 by 20): smallest singular value 0.0432, with the noise 0.0395 to 0.0468; its direction kued +0.51, T0 -0.50, kphid -0.43, aleph +0.41
+without kued (19 by 19): smallest singular value 0.0474, with the noise 0.0444 to 0.0504; its direction h1 +0.54, kphid -0.49, aleph +0.46, T0 -0.45
+T0 at a 10 percent step: own moment -0.222 (one percent: +0.014); Value of a statistical life +0.56, Homeless aged 25 to 34 -0.22, Homelessness -0.10, Drug use -0.07
 h2 at a 5 percent step: own moment +0.864 (one percent: +0.017); Drug use -3.40, Income of users over average -2.31, SUD share of the homeless -1.52, Renters paying over half +0.86

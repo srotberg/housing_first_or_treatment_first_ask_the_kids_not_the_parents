@@ -69,6 +69,13 @@ MOMENTS = [p[3] for p in PARAMS if p[3] is not None]
 
 DAT_KEYS = ('beta', 'gamma', 'aleph', 'h1', 'taul', 'h2')
 
+# TWO ROWS ARE TAKEN AT A LARGER STEP (the author, 11 November: "with h2 you also need to do larger increases"). The share
+# of renters paying over half of their income (h_2's moment) and the share of the homeless aged 25 to 34 (T_0's) move in
+# steps, because they count households on a grid: a one percent rise leaves both inside the repeat-solve noise (+0.017,
+# +0.014), while run_jacobian_step.sh's larger steps move them clearly. Their rows in the Jacobian, the figure and the
+# rank are the arc elasticities over the larger step; the one-percent rows are kept in elasticities.json beside them.
+LARGE = {'h2': 'h2_dat_s100', 'T0': 'T0_s100'}
+
 
 def run_dir(key):
     return os.path.join(RES, key + '_dat' if key in DAT_KEYS else key)
@@ -142,6 +149,14 @@ def main():
             continue
         done.append(key)
         E[key] = [(M[k] / base[k] - 1) / step for lab, k in MOMENTS]
+    E1, used_large = dict(E), {}
+    for key, d in LARGE.items():
+        chk, lp = os.path.join(RES, d, 'check.txt'), os.path.join(RES, d, 'cf.log.gz')
+        if key in E and os.path.exists(chk) and open(chk).read().startswith('OK') and os.path.exists(lp):
+            big = int(re.search(r'_s(\d+)$', d).group(1)) / 1000
+            M = read_log(lp)
+            E[key] = [(M[k] / base[k] - 1) / big for lab, k in MOMENTS]
+            used_large[key] = big
     # the table
     rows = ['parameter,' + ','.join(f'"{lab}"' for lab, k in MOMENTS)]
     for key, sym, step, own in PARAMS:
@@ -149,7 +164,10 @@ def main():
             rows.append(key + ',' + ','.join(f'{v:.4f}' for v in E[key]))
     open(os.path.join(RES, 'elasticities.csv'), 'w').write('\n'.join(rows) + '\n')
     # the summary: own-moment elasticity, the largest one, and the square block's rank and conditioning
-    out = [f'{len(done)} of {len(PARAMS)} parameters solved: {", ".join(done)}', '']
+    out = [f'{len(done)} of {len(PARAMS)} parameters solved: {", ".join(done)}']
+    if used_large:
+        out.append('rows at a larger step: ' + ', '.join(f'{k} {100 * b:g} percent' for k, b in used_large.items()))
+    out.append('')
     labs = [lab for lab, k in MOMENTS]
     for key, sym, step, own in PARAMS:
         if key not in E:
@@ -196,7 +214,7 @@ def main():
             # the smallest singular value of A + noise. Done for the full block and without the parameter that loads
             # most on the weakest direction.
             import numpy as np
-            step = {k: st for k, s, st, own in PARAMS}
+            step = {k: used_large.get(k, st) for k, s, st, own in PARAMS}
             errs = np.array([[read_log(os.path.join(RES, k, 'cf.log.gz'))[m] / base[m] - 1 for lab, m in MOMENTS]
                              for k in voids])
             rng = np.random.default_rng(0)
@@ -226,18 +244,20 @@ def main():
                 e_big = [(M[mm] / base[mm] - 1) / big for lab, mm in MOMENTS]
                 jo = labs.index(own[0])
                 out.append(f'{k} at a {100 * big:g} percent step: own moment {e_big[jo]:+.3f} (one percent: '
-                           f'{E[k][jo]:+.3f}); ' + ', '.join(f'{labs[jj]} {e_big[jj]:+.2f}' for jj in
+                           f'{E1[k][jo]:+.3f}); ' + ', '.join(f'{labs[jj]} {e_big[jj]:+.2f}' for jj in
                                                             sorted(range(len(labs)), key=lambda i: -abs(e_big[i]))[:4]))
     open(os.path.join(RES, 'summary.txt'), 'w').write('\n'.join(out) + '\n')
     print('\n'.join(out))
-    json.dump({'moments': labs, 'elasticities': E}, open(os.path.join(RES, 'elasticities.json'), 'w'), indent=1)
+    json.dump({'moments': labs, 'elasticities': E, 'large_steps': used_large,
+               'elasticities_one_percent': {k: E1[k] for k in used_large}},
+              open(os.path.join(RES, 'elasticities.json'), 'w'), indent=1)
     if '--no-figure' not in sys.argv and len(done) == len(PARAMS):
-        figure(E, labs)
+        figure(E, labs, large=used_large)
     elif '--partial' in sys.argv:
-        figure(E, labs, os.path.join(os.environ.get('JAC_PREVIEW_DIR', RES), 'jacobian_partial'))
+        figure(E, labs, os.path.join(os.environ.get('JAC_PREVIEW_DIR', RES), 'jacobian_partial'), large=used_large)
 
 
-def figure(E, labs, out=FIG):
+def figure(E, labs, out=FIG, large=None):
     """The heat map. Colour is on a symmetric log scale, linear within +-0.1 (about eight times the repeat-solve noise),
     because the discount factor's row runs to about 200 while most cells are below 5: a linear scale either saturates
     that row or washes the rest out. Each cell prints its value when it is at least 0.05 in absolute value; the
@@ -248,7 +268,8 @@ def figure(E, labs, out=FIG):
     from matplotlib.colors import SymLogNorm
     import numpy as np
     keys = [p[0] for p in PARAMS]
-    syms = [p[1] for p in PARAMS]
+    large = large or {}
+    syms = [p[1] + (f' ({100 * large[p[0]]:g}%)' if p[0] in large else '') for p in PARAMS]
     A = np.array([E[k] if k in E else [np.nan] * len(labs) for k in keys])
     vmax = 1.05 * np.nanmax(np.abs(A))
     norm = SymLogNorm(linthresh=0.1, linscale=0.6, vmin=-vmax, vmax=vmax, base=10)
