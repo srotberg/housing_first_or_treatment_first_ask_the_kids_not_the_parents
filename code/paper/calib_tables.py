@@ -252,7 +252,7 @@ ELEVEN = [
         (r'$\kappa_{H}$', 'Employment penalty of homelessness', 'Ext.', r'Desmond and Gershenson (2016)',
          f(H['increased_prob_if_homeless']), NA, f(H['increased_prob_if_homeless'])),
         (r'$\underline c$', 'Food stamp maximum allotment', setcol('c_bar'),
-         'SNAP outlays over output',
+         'SNAP outlays over output, 2023',
          pc(C['food_stamps_share_data'], 2), pc(mom('cbar food stamps / income'), 2),
          f(H['max_food_cost'], 4)),
         (r'$\pi_V$', 'Chance of drawing a voucher', setcol('pi_v'),
@@ -474,7 +474,7 @@ UNTARGETED = [
     # numbers as the Block 3 sentence, from smi_use_ratio.json (model measured 23 Sept).
     ('Drug use with SMI over without, ratio', (SMI_USE['c_smi_use_ratio_data'],
      f"{float(SMI_USE['c_smi_use_ratio_model']):.2f}"), 'NSDUH 2024'),
-    ('Drug deaths as a share of deaths, 25--44', one('drug deaths, share of deaths'), 'CDC WONDER'),
+    ('Drug deaths as a share of deaths, 26--44', one('drug deaths, share of deaths'), 'CDC WONDER'),
     # THE TREATMENT BLOCK WENT (the author, round 8a826aab: "remove. we need to find better data
     # that the model actually replicates...and something meaningul"). Its five TEDS-A rows are
     # in git history; the full TEDS-A 2024 file is now data/raw/TEDS-A-2024-DS0001-*.zip.
