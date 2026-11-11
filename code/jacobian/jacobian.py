@@ -302,7 +302,7 @@ def figure(E, labs, out=FIG, large=None):
     import numpy as np
     keys = [p[0] for p in PARAMS]
     large = large or {}
-    syms = [p[1] + (f' ({100 * large[p[0]]:g}%)' if p[0] in large else '') for p in PARAMS]
+    syms = [p[1] for p in PARAMS]   # no step beside a row (the author: 'no need to say this')
     A = np.array([E[k] if k in E else [np.nan] * len(labs) for k in keys])
     vmax = 1.05 * np.nanmax(np.abs(A))
     norm = SymLogNorm(linthresh=0.1, linscale=0.6, vmin=-vmax, vmax=vmax, base=10)
