@@ -2,11 +2,11 @@
 rows at a larger step: h2 5 percent, T0 10 percent
 
 theta    own moment +1.115            largest +13.150 on Drug use
-b        own moment -6.545            largest -6.545 on Drug use
+b        own moment -6.545            largest +7.566 on Use, no weight on the child
 pi_d     own moment +0.584            largest -6.603 on Drug use
 kphid    own moment -4.332            largest -7.331 on Drug use
 aleph    own moment +2.928            largest -7.269 on Drug use
-kued     own moment +0.190            largest -0.547 on Abstinence, housed over homeless
+kued     own moment +0.190            largest -1.106 on Use, no weight on the child
 h1       own moment +0.273            largest +0.949 on Abstinence, housed over homeless
 cmin     own moment +2.225            largest +2.225 on Food stamps over output
 piV      own moment +0.703            largest +0.912 on Abstinence, housed over homeless
@@ -15,38 +15,22 @@ omega_m  own moment +0.319            largest +0.319 on SMI share of the populat
 kuem     own moment +0.276            largest +0.276 on SMI share of the homeless
 muH      own moment -2.225            largest -2.225 on Abstinence, housed over homeless
 tauu     own moment -3.663            largest -3.663 on Treatment take-up
-omega_c  no moment of its own         largest -0.029 on Drug spending over income
+omega_c  own moment +0.020            largest -0.029 on Drug spending over income
 gamma    own moment +0.200            largest -1.210 on Homeless aged 25 to 34
 beta     own moment +9.688            largest -197.020 on Drug use
-h2       own moment +0.864            largest -3.405 on Drug use
-sigma    own moment -1.380            largest -2.950 on Drug use
+h2       own moment +0.864            largest +10.554 on Use, no weight on the child
+sigma    own moment -1.380            largest +30.970 on Use, no weight on the child
 pieu     own moment +0.904            largest +0.904 on Unemployment rate
 taul     own moment -3.743            largest -3.743 on Average labour income tax
-
-square block (20 parameters by 20 moments): rank 20, singular values 274 to 0.0416, condition number 6.59e+03
-own moment is the largest in its row for 8 of 20: b, cmin, omega_m, kuem, muH, tauu, pieu, taul
-own parameter moves its moment the most (largest in its column) for 4 of 20: muH, beta, sigma, taul
-    Drug spending over income: own theta +1.115, largest beta -5.724
-    Drug use: own b -6.545, largest beta -197.020
-    Share of users with a SUD: own pi_d +0.584, largest beta -3.403
-    Income of users over average: own kphid -4.332, largest beta -123.759
-    Value of a statistical life: own aleph +2.928, largest beta -4.254
-    SUD share of the homeless: own kued +0.190, largest beta -115.111
-    Homelessness: own h1 +0.273, largest beta -33.015
-    Food stamps over output: own cmin +2.225, largest beta -23.218
-    Recipients over eligible: own piV +0.703, largest beta -5.405
-    Homeless aged 25 to 34: own T0 -0.222, largest beta +4.026
-    SMI share of the population: own omega_m +0.319, largest beta -3.857
-    SMI share of the homeless: own kuem +0.276, largest beta +17.563
-    Treatment take-up: own tauu -3.663, largest beta +68.490
-    Housing over expenditure: own gamma +0.200, largest beta -1.981
-    Renters paying over half: own h2 +0.864, largest gamma +1.157
-    Unemployment rate: own pieu +0.904, largest beta -14.724
+(the square block waits for omega_c's column: 9 cells missing)
 
 noise floor from 3 repeat solves of the benchmark (beta, gamma, h1): largest relative difference 1.33e-04 (SMI share of the homeless), i.e. 0.013 in elasticity units at a one percent step and 0.066 at the discount factor's 0.2 percent
-all (20 by 20): smallest singular value 0.0416, with the noise 0.0383 to 0.0444; its direction T0 -0.52, aleph +0.46, kphid -0.45, kued +0.34
-without T0 (19 by 19): smallest singular value 0.0577, with the noise 0.0565 to 0.0583; its direction h1 +0.77, aleph +0.34, kphid -0.32, b -0.26
 T0 at a 10 percent step: own moment -0.222 (one percent: +0.014); Value of a statistical life +0.56, Homeless aged 25 to 34 -0.22, Homelessness -0.10, Drug use -0.07
+cmin at a 5 percent step: own moment +2.350 (one percent: +2.225); Food stamps over output +2.35, Homeless aged 25 to 34 -0.53, Value of a statistical life +0.31, Abstinence, housed over homeless +0.28
+h1 at a -5 percent step: own moment +0.358 (one percent: +0.273); Homelessness +0.36, Abstinence, housed over homeless +0.25, Homeless aged 25 to 34 +0.24, Drug use +0.19
+h1 at a 5 percent step: own moment +0.225 (one percent: +0.273); Abstinence, housed over homeless +0.32, Value of a statistical life +0.28, Homelessness +0.23, Homeless aged 25 to 34 -0.10
+h2 at a -5 percent step: own moment +0.964 (one percent: +0.017); Drug use -2.48, Income of users over average -1.85, SUD share of the homeless -1.32, Renters paying over half +0.96
 h2 at a 5 percent step: own moment +0.864 (one percent: +0.017); Drug use -3.40, Income of users over average -2.31, SUD share of the homeless -1.52, Renters paying over half +0.86
-omega_c at a -100 percent step: no moment of its own; drug use -0.2005 (one percent: -0.0033), i.e. drug users 0.107089 against 0.089206; Drug use -0.20, SUD share of the homeless -0.12, Income of users over average -0.06, Value of a statistical life +0.04
+omega_c at a -100 percent step: own moment +nan (one percent: +0.020); Drug use -0.20, SUD share of the homeless -0.12, Income of users over average -0.06, Value of a statistical life +0.04
+piV at a 5 percent step: own moment +0.698 (one percent: +0.703); Recipients over eligible +0.70, Homelessness -0.51, Value of a statistical life +0.28, Abstinence, housed over homeless +0.25
 pi_d at a 5 percent step: own moment +0.523 (one percent: +0.584); Drug use -6.63, Income of users over average -4.20, SUD share of the homeless -3.22, Homelessness -0.80

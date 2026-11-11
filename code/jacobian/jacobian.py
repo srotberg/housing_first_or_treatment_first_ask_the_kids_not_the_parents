@@ -56,7 +56,7 @@ PARAMS = [
     ('kuem',    r'$\kappa^{ue}_{m}$',   0.01,  ('SMI share of the homeless',        'lambda_m SMI share of the homeless')),
     ('muH',     r'$\mu_H$',             0.01,  ('Abstinence, housed over homeless', 'mu_H recovery housed / homeless')),
     ('tauu',    r'$\bar\tau^{u}$',      0.01,  ('Treatment take-up',                'tau_u treatment take up')),
-    ('omega_c', r'$\omega_c$',          0.01,  None),
+    ('omega_c', r'$\omega_c$',          0.01,  ('Use, no weight on the child',      'omega_rise')),
     ('gamma',   r'$\gamma$',            0.01,  ('Housing over expenditure',         'gamma housing over expenditure')),
     ('beta',    r'$\beta$',             0.002, ('Wealth over output',               'beta wealth over output')),
     ('h2',      r'$h_2$',               0.01,  ('Renters paying over half',         'over half of income, all renters')),
@@ -76,7 +76,13 @@ DAT_KEYS = ('beta', 'gamma', 'aleph', 'h1', 'taul', 'h2')
 # rank are the arc elasticities over the larger step; the one-percent rows are kept in elasticities.json beside them.
 # h2 is the paper's parameter, the bottom of a ladder whose upper rungs are set as multiples of it (Table A1: h3/h2 and
 # h4/h2), so its run moves the whole ladder; run_jacobian_rung.sh's runs, h2 alone with h3 and h4 held, are reported beside it.
-LARGE = {'h2': 'h2_dat_s50', 'T0': 'T0_s100'}
+LARGE = {'h2': 'h2_dat_s50', 'T0': 'T0_s100', 'omega_c': 'omega_c_s100'}
+# omega_c's MOMENT (11 November; the author: "i think we need to have omega_c as well, no?"): drug users with the child's
+# weight at zero over drug users at the calibrated weight, minus one, as the calibration measures it. Each row's run has a
+# twin with weight_on_child 0 at the same step (run_jacobian_twin.sh: <row dir>[_s<step>]_w0); omega_c's own row uses the
+# benchmark's twin, omega_c_s-1000, since drug use at a weight of zero does not depend on the weight.
+OMEGA_KEY = 'omega_rise'
+OMEGA_BASE = 'omega_c_s-1000'
 WORDS = {19: 'nineteen', 20: 'twenty', 21: 'twenty one'}
 NUMBERS = os.path.join(ROOT, 'code', 'paper', 'jacobian_numbers.json')
 
@@ -121,6 +127,22 @@ def read_moments(key):
     return parse(log)
 
 
+def twin_users(d):
+    """drug users in a run with the child's weight at zero, or None when it has not landed or did not pass its check
+    (piV's twin fails cf_arm's voucher check by design, as its row does, and is accepted on the same terms)"""
+    chk, lp = os.path.join(RES, d, 'check.txt'), os.path.join(RES, d, 'cf.log.gz')
+    if not (os.path.exists(chk) and os.path.exists(lp)):
+        return None
+    c = open(chk).read()
+    log = gzip.open(lp, 'rt', errors='replace').read()
+    if not (c.startswith('OK') or (d.startswith('piV') and 'voucher probability' in c and 'DIST_DONE' in log)):
+        return None
+    w = re.findall(r'HANDOVER weight_on_child:\s*\S+\s*->\s*(\S+)', log)
+    if not w or abs(float(w[-1])) > 1e-12:
+        return None
+    return parse(log)['b total drug users']
+
+
 def read_log(path):
     return parse(gzip.open(path, 'rt', errors='replace').read())
 
@@ -143,7 +165,7 @@ def main():
     base = read_moments('base')
     if base is None:
         sys.exit('no finished base run in results/jacobian/base')
-    missing = [lab for lab, k in MOMENTS if k not in base]
+    missing = [lab for lab, k in MOMENTS if k not in base and k != OMEGA_KEY]
     if missing:
         sys.exit(f'the base run lacks these moments: {missing}')
     E, done = {}, []
@@ -152,15 +174,35 @@ def main():
         if M is None:
             continue
         done.append(key)
-        E[key] = [(M[k] / base[k] - 1) / step for lab, k in MOMENTS]
+        E[key] = [(M[k] / base[k] - 1) / step if k in M else float('nan') for lab, k in MOMENTS]
     E1, used_large = dict(E), {}
     for key, d in LARGE.items():
         chk, lp = os.path.join(RES, d, 'check.txt'), os.path.join(RES, d, 'cf.log.gz')
         if key in E and os.path.exists(chk) and open(chk).read().startswith('OK') and os.path.exists(lp):
-            big = int(re.search(r'_s(\d+)$', d).group(1)) / 1000
+            big = int(re.search(r'_s(\d+)(?:_rungs)?$', d).group(1)) / 1000
             M = read_log(lp)
-            E[key] = [(M[k] / base[k] - 1) / big for lab, k in MOMENTS]
+            E[key] = [(M[k] / base[k] - 1) / big if k in M else float('nan') for lab, k in MOMENTS]
             used_large[key] = big
+    # omega_c's column, from each row's twin
+    jo = [k for lab, k in MOMENTS].index(OMEGA_KEY)
+    du0 = twin_users(OMEGA_BASE)
+    if du0 is not None:
+        base[OMEGA_KEY] = du0 / base['b total drug users'] - 1
+        for key, sym, step, own in PARAMS:
+            if key not in E:
+                continue
+            rd = LARGE[key] if key in used_large else os.path.basename(run_dir(key))
+            st = used_large.get(key, step)
+            if key == 'omega_c':
+                dt = du0
+            else:
+                tw = rd + '_w0' if re.search(r'_s-?\d+(?:_rungs)?$', rd) else f'{rd}_s{round(st * 1000)}_w0'
+                dt = twin_users(tw)
+            lp = os.path.join(RES, rd, 'cf.log.gz')
+            if dt is None or not os.path.exists(lp):
+                continue
+            du = read_log(lp)['b total drug users']
+            E[key][jo] = ((dt / du - 1) / base[OMEGA_KEY] - 1) / st
     # the table
     rows = ['parameter,' + ','.join(f'"{lab}"' for lab, k in MOMENTS)]
     for key, sym, step, own in PARAMS:
@@ -177,10 +219,14 @@ def main():
         if key not in E:
             continue
         row = E[key]
-        j = max(range(len(row)), key=lambda i: abs(row[i]))
+        j = max(range(len(row)), key=lambda i: abs(row[i]) if row[i] == row[i] else -1)
         own_txt = 'no moment of its own' if own is None else f'own moment {row[labs.index(own[0])]:+.3f}'
         out.append(f'{key:8s} {own_txt:28s} largest {row[j]:+.3f} on {labs[j]}')
     sq = [k for k, s, st, own in PARAMS if own is not None and k in E]
+    import math
+    if any(math.isnan(v) for k in sq for v in E[k]):
+        out.append(f'(the square block waits for omega_c\'s column: {sum(math.isnan(E[k][[m for l, m in MOMENTS].index(OMEGA_KEY)]) for k in sq)} cells missing)')
+        sq = []
     if len(sq) == len(MOMENTS):
         import numpy as np
         A = np.array([E[k] for k in sq])
@@ -203,7 +249,7 @@ def main():
         noise = []
         for k in voids:
             M = read_log(os.path.join(RES, k, 'cf.log.gz'))
-            noise.append([abs(M[m] / base[m] - 1) for lab, m in MOMENTS])
+            noise.append([abs(M[m] / base[m] - 1) if m in M and m in base else 0.0 for lab, m in MOMENTS])
         worst = [max(col) for col in zip(*noise)]
         j = max(range(len(worst)), key=lambda i: worst[i])
         out += ['', f'noise floor from {len(voids)} repeat solves of the benchmark ({", ".join(voids)}): largest relative '
@@ -219,8 +265,8 @@ def main():
             # most on the weakest direction.
             import numpy as np
             step = {k: used_large.get(k, st) for k, s, st, own in PARAMS}
-            errs = np.array([[read_log(os.path.join(RES, k, 'cf.log.gz'))[m] / base[m] - 1 for lab, m in MOMENTS]
-                             for k in voids])
+            errs = np.array([[(lambda M: M[m] / base[m] - 1 if m in M and m in base else 0.0)(read_log(os.path.join(RES, k, 'cf.log.gz')))
+                              for lab, m in MOMENTS] for k in voids])
             rng = np.random.default_rng(0)
             U, sv_all, _ = np.linalg.svd(A)
             weak = sq[int(np.abs(U[:, -1]).argmax())]
@@ -258,7 +304,7 @@ def main():
             continue
         k, big = m.group(1), int(m.group(2)) / 1000
         M = parse(log)
-        e_big = [(M[mm] / base[mm] - 1) / big for lab, mm in MOMENTS]
+        e_big = [(M[mm] / base[mm] - 1) / big if mm in M and mm in base else float('nan') for lab, mm in MOMENTS]
         others[d] = {'key': k, 'step': big, 'e': e_big, 'drug users': M['b total drug users']}
         own = [p[3] for p in PARAMS if p[0] == k][0]
         top = ', '.join(f'{labs[jj]} {e_big[jj]:+.2f}' for jj in sorted(range(len(labs)), key=lambda i: -abs(e_big[i]))[:4])
