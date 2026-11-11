@@ -26,7 +26,8 @@ one, and the probability the run printed last must be the raised one.
 The parent's weight on its child has no moment here (its moment needs an omega_c = 0 twin of every run), so its row
 shows how it moves the other moments only.
 
-usage: python3 code/jacobian/jacobian.py [--no-figure]
+usage: python3 code/jacobian/jacobian.py [--no-figure | --partial]   (--partial draws the unsolved rows grey, into
+       $JAC_PREVIEW_DIR/jacobian_partial.{pdf,png}, results/jacobian by default)
 """
 import gzip
 import json
@@ -186,49 +187,87 @@ def main():
         out += ['', f'noise floor from {len(voids)} repeat solves of the benchmark ({", ".join(voids)}): largest relative '
                 f'difference {worst[j]:.2e} ({labs[j]}), i.e. {worst[j] / 0.01:.3f} in elasticity units at a one percent step '
                 f'and {worst[j] / 0.002:.3f} at the discount factor\'s 0.2 percent']
+        if len(sq) == len(MOMENTS):
+            # Weyl: no singular value moves by more than the noise matrix's 2-norm, which is at most its Frobenius norm,
+            # an entry per cell of (that moment's worst repeat-solve difference) / (that row's step)
+            step = {k: st for k, s, st, own in PARAMS}
+            bound = sum((worst[jj] / step[k]) ** 2 for k in sq for jj in range(len(MOMENTS))) ** 0.5
+            out.append(f'the noise can move a singular value by at most {bound:.3g}; the smallest is {sv.min():.3g}, so the '
+                       f'rank is {"robust to" if sv.min() > bound else "NOT robust to"} it')
+    # h2 again at a larger step (run_jacobian_step.sh), to tell a flat own moment from a lumpy one
+    for d in sorted(os.listdir(RES)):
+        m = re.match(r'(\w+?)_dat_s(\d+)$', d)
+        if m and base is not None:
+            k, big = m.group(1), int(m.group(2)) / 1000
+            log_path = os.path.join(RES, d, 'cf.log.gz')
+            chk = os.path.join(RES, d, 'check.txt')
+            if os.path.exists(log_path) and os.path.exists(chk) and open(chk).read().startswith('OK'):
+                M = read_log(log_path)
+                own = [p[3] for p in PARAMS if p[0] == k][0]
+                e_big = [(M[mm] / base[mm] - 1) / big for lab, mm in MOMENTS]
+                jo = labs.index(own[0])
+                out.append(f'{k} at a {100 * big:g} percent step: own moment {e_big[jo]:+.3f} (one percent: '
+                           f'{E[k][jo]:+.3f}); ' + ', '.join(f'{labs[jj]} {e_big[jj]:+.2f}' for jj in
+                                                            sorted(range(len(labs)), key=lambda i: -abs(e_big[i]))[:4]))
     open(os.path.join(RES, 'summary.txt'), 'w').write('\n'.join(out) + '\n')
     print('\n'.join(out))
     json.dump({'moments': labs, 'elasticities': E}, open(os.path.join(RES, 'elasticities.json'), 'w'), indent=1)
     if '--no-figure' not in sys.argv and len(done) == len(PARAMS):
         figure(E, labs)
+    elif '--partial' in sys.argv:
+        figure(E, labs, os.path.join(os.environ.get('JAC_PREVIEW_DIR', RES), 'jacobian_partial'))
 
 
-def figure(E, labs):
+def figure(E, labs, out=FIG):
+    """The heat map. Colour is on a symmetric log scale, linear within +-0.1 (about eight times the repeat-solve noise),
+    because the discount factor's row runs to about 200 while most cells are below 5: a linear scale either saturates
+    that row or washes the rest out. Each cell prints its value when it is at least 0.05 in absolute value; the
+    parameter's own moment is outlined. A parameter not yet solved is a grey row (a preview, with --partial)."""
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
+    from matplotlib.colors import SymLogNorm
     import numpy as np
     keys = [p[0] for p in PARAMS]
     syms = [p[1] for p in PARAMS]
-    A = np.array([E[k] for k in keys])
-    lim = np.percentile(np.abs(A), 95)
+    A = np.array([E[k] if k in E else [np.nan] * len(labs) for k in keys])
+    vmax = 1.05 * np.nanmax(np.abs(A))
+    norm = SymLogNorm(linthresh=0.1, linscale=0.6, vmin=-vmax, vmax=vmax, base=10)
     plt.rcParams.update({'font.family': 'serif', 'mathtext.fontset': 'cm'})
-    fig, ax = plt.subplots(figsize=(10, 8.2))
-    im = ax.imshow(np.clip(A, -lim, lim), cmap='RdBu_r', vmin=-lim, vmax=lim, aspect='auto')
+    cmap = matplotlib.colormaps['RdBu_r'].copy()
+    cmap.set_bad('#d9d9d9')
+    fig, ax = plt.subplots(figsize=(10, 8.4))
+    im = ax.imshow(np.ma.masked_invalid(A), cmap=cmap, norm=norm, aspect='auto')
     ax.set_xticks(range(len(labs)))
     ax.set_xticklabels(labs, rotation=60, ha='right', fontsize=8)
     ax.set_yticks(range(len(keys)))
-    ax.set_yticklabels(syms, fontsize=9)
+    ax.set_yticklabels(syms, fontsize=9.5)
+    ax.set_xlabel('Targeted moment (in the order of the parameter it is paired with)', fontsize=8.5)
+    ax.set_ylabel('Parameter raised', fontsize=8.5)
     for i in range(A.shape[0]):
         for j in range(A.shape[1]):
-            if abs(A[i, j]) >= 0.05:
-                ax.text(j, i, f'{A[i, j]:.1f}' if abs(A[i, j]) >= 1 else f'{A[i, j]:.2f}', ha='center', va='center',
-                        fontsize=5.5, color='white' if abs(A[i, j]) > 0.6 * lim else 'black')
+            v = A[i, j]
+            if np.isfinite(v) and abs(v) >= 0.05:
+                txt = f'{v:.0f}' if abs(v) >= 10 else (f'{v:.1f}' if abs(v) >= 1 else f'{v:.2f}')
+                ax.text(j, i, txt.replace('-', '\N{MINUS SIGN}'), ha='center', va='center', fontsize=5.6,
+                        color='white' if abs(norm(v) - 0.5) > 0.33 else '#1a1a1a')
     for i, p in enumerate(PARAMS):   # outline each parameter's own moment
         if p[3] is not None:
             j = labs.index(p[3][0])
-            ax.add_patch(plt.Rectangle((j - .5, i - .5), 1, 1, fill=False, edgecolor='black', linewidth=1.3))
+            ax.add_patch(plt.Rectangle((j - .5, i - .5), 1, 1, fill=False, edgecolor='black', linewidth=1.4))
     ax.set_xticks(np.arange(-.5, len(labs), 1), minor=True)
     ax.set_yticks(np.arange(-.5, len(keys), 1), minor=True)
-    ax.grid(which='minor', color='white', linewidth=0.6)
+    ax.grid(which='minor', color='white', linewidth=0.8)
     ax.tick_params(which='minor', length=0)
-    cb = fig.colorbar(im, ax=ax, fraction=0.03, pad=0.02)
-    cb.set_label('Percent change in the moment for a one percent rise in the parameter', fontsize=8)
+    ticks = [t for t in (-100, -10, -1, -0.1, 0, 0.1, 1, 10, 100) if abs(t) <= vmax]
+    cb = fig.colorbar(im, ax=ax, fraction=0.03, pad=0.02, ticks=ticks)
+    cb.ax.set_yticklabels([f'{t:g}'.replace('-', '\N{MINUS SIGN}') for t in ticks], fontsize=7.5)
+    cb.set_label('Percent change in the moment for a one percent rise in the parameter (symmetric log scale)', fontsize=8)
     fig.tight_layout()
-    os.makedirs(os.path.dirname(FIG), exist_ok=True)
-    fig.savefig(FIG + '.pdf')
-    fig.savefig(FIG + '.png', dpi=200)
-    print('wrote', FIG + '.pdf')
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    fig.savefig(out + '.pdf')
+    fig.savefig(out + '.png', dpi=200)
+    print('wrote', out + '.pdf')
 
 
 if __name__ == '__main__':
