@@ -112,6 +112,13 @@ if __name__ == "__main__":
     cwguarded = CWDEF in src
     if cwguarded:
         src = src.replace(CWDEF, "@@CWDEF@@")
+    # AND THE SAME TRAP CAUGHT \\del (found 11 November): its definition is a {\\color{red} group, so the strip of
+    # r452 rewrote it to a plain \\sout and every deletion after it printed struck in black, which the author had asked
+    # to see in red. Both copies of the definition are hidden from the stripper and put back; check_red.py now checks it.
+    DELDEF = "\\DeclareRobustCommand{\\del}[1]{{\\color{red}\\sout{#1}}}"
+    delguarded = DELDEF in src
+    if delguarded:
+        src = src.replace(DELDEF, "@@DELDEF@@")
     before = {t: src.count(t) for t, _ in OPENERS}
     out = strip(src)
     after = {t: out.count(t) for t, _ in OPENERS}
@@ -147,5 +154,7 @@ if __name__ == "__main__":
         out = out.replace("@@NEWDEF@@", guarded)
     if cwguarded:
         out = out.replace("@@CWDEF@@", CWDEF)
+    if delguarded:
+        out = out.replace("@@DELDEF@@", DELDEF)
     open(p, "w").write(out)
     print("stripped:", p, len(src), "->", len(out))

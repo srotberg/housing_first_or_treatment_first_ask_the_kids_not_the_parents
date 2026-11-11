@@ -49,7 +49,7 @@
 \newcommand{\new}[1]{{\color{red}#1}}
 % DELETIONS STRUCK THROUGH (the author, 11 October: "if you delete something i want to see what you deleted"):
 % \del prints what a round took out, red and struck; writing/tools/track_changes.py writes it, strip_red.py removes it.
-\DeclareRobustCommand{\del}[1]{\sout{#1}}
+\DeclareRobustCommand{\del}[1]{{\color{red}\sout{#1}}}
 % WHAT THE NEXT SIMULATIONS CHANGE (2 October): \upd tags a paragraph or a sentence, \updnum colours a number or a
 % generated sentence that will be refilled. Blue, so they are never confused with the red of an edit; the red
 % strippers leave them alone, and each goes when its paragraph is rewritten from the new runs.
@@ -86,7 +86,7 @@
 \definecolor{aiblue}{rgb}{0.72,0.86,1}
 \newcommand{\ai}[1]{{\sethlcolor{aiblue}\hl{#1}}}
 \soulregister{\eqref}{7}
-\DeclareRobustCommand{\del}[1]{\sout{#1}}
+\DeclareRobustCommand{\del}[1]{{\color{red}\sout{#1}}}
 % a red pilcrow where a round starts a new paragraph (16 October); the strip removes it (writing/tools/marks.py)
 \newcommand{\parmark}[1]{\P\ }
 \definecolor{whygreen}{rgb}{0,0.45,0.2}
@@ -119,8 +119,8 @@
 % \input from
 % their own .tex, so a caption saying how many rows its table has could not be
 % generated any other way. Counted off the Set column of the tables themselves.
-\newcommand{\nmain}{twenty-six}
-\newcommand{\nstd}{thirty-three}
+\newcommand{\nmain}{twenty six}
+\newcommand{\nstd}{thirty three}
 % The cut macro below marks a PROPOSED DELETION: red and struck through, so the reader sees what
 % would go before it goes. ulem is not in this installation, and a single rule over a
 % whole phrase cannot break across lines, so the rule is drawn word by word: each word
@@ -243,7 +243,7 @@ to return to the homeless support system, lowers crime and reduces their relianc
 Brounstein and Wieselthier (2026) find that a two-year rapid rehousing programme raises employment, while permanent
 supportive housing leaves the employment and earnings of its recipients unchanged. The one trial of homeless families, HUD's Family Options Study, followed 2,282 families for three years: an unconditional subsidy reduced later homelessness, family separations and the children's school absences and behaviour problems (Gubits et al., 2016, 2018).
 
- These studies, however, consider effects on participants over six to thirty-six months, which is a short period of time relative to the recovery process that Vaillant (1995) documents.  Moreover, a deeper limitation of a trial is the scope. A trial randomises households within a fixed environment, and thus ignores exactly the effects that in this paper decide the welfare comparison. These are the impact on the behaviour of households outside the sample, the consequences for the government's budget, and, most importantly, the effects on children across the economy, not only those of participants.
+ These studies, however, consider effects on participants over six to \del{thirty-six} \new{thirty six} months, which is a short period of time relative to the recovery process that Vaillant (1995) documents.  Moreover, a deeper limitation of a trial is the scope. A trial randomises households within a fixed environment, and thus ignores exactly the effects that in this paper decide the welfare comparison. These are the impact on the behaviour of households outside the sample, the consequences for the government's budget, and, most importantly, the effects on children across the economy, not only those of participants.
 
 \paragraph{Deterrence effects of zero-tolerance policies.} The closest evidence on how much a drug test with a severe penalty deters drug use comes from the US military, which in 1981 began testing its personnel at random, $10$ to $20$ percent of a unit every month, and dismissing those who failed. Mehay and Pacula (1999) use this policy change to compare service members with civilians, following the same people
 over time. To my knowledge, it is the only study that measures how much such a test deters drug use.    They find that drug testing of service members reduced past-year marijuana use by $61$ percent.  Section~\ref{sec:experiments} uses this response to set how often Treatment First's screen catches a user.
@@ -288,7 +288,7 @@ In the data, fewer than one in ten adults have a drug use disorder, mild include
 \subsection{The model}\label{sec:env}
 
 There are two periods, adulthood and old age, and a continuum of households. A period stands for
-thirty years of adult life, so the two of them span ages twenty-six to eighty-five.
+thirty years of adult life, so the two of them span ages \del{twenty-six} \new{twenty six} to \del{eighty-five} \new{eighty five}.
 Parameters with a natural annual counterpart are compounded to that length: the
 discount factor is $\beta$ per period and $\bar\phi$ is survival over thirty years.
 
@@ -298,7 +298,7 @@ The one transfer is food assistance, paid on each period's earnings as
 \begin{equation}\label{eq:fs}
 F(y\,e) \;=\; \max\{0,\ \underline c-\varrho\, y\,e\},
 \end{equation}
-where \del{$\bar c$} \new{$\underline c$} is the maximum benefit and $\varrho$ the share of earnings by which it is reduced. \why{The author: one symbol for the food stamp maximum allotment, $\underline c$, the lowest consumption a household with no income can reach, as in Sections~\ref{sec:full} and~\ref{sec:fullcal}. It replaces $\bar c$ here, in the two equations of this section and in Table~\ref{tab:int}.} Food assistance is in the model for one reason. To show the income reversal, Section~\ref{sec:who} needs to solve the model with saving switched off. A household out of work would then have nothing to consume, which with $\sigma>1$ leaves its problem undefined; food assistance bounds its consumption from below.
+where $\underline c$ is the maximum benefit and $\varrho$ the share of earnings by which it is reduced. Food assistance is in the model for one reason. To show the income reversal, Section~\ref{sec:who} needs to solve the model with saving switched off. A household out of work would then have nothing to consume, which with $\sigma>1$ leaves its problem undefined; food assistance bounds its consumption from below.
 
 Consumption $c$ and drug consumption $v$ form the bundle
 \begin{equation}\label{eq:bundles}
@@ -346,7 +346,7 @@ It uses if $V^1(y)>V^0(y)$. A SUD reaches the second period through two channels
 Preferences and demographics are conventional: the discount factor over a
 thirty-year period is $\beta=0.86$, which is $0.995$ a year compounded,\footnote{The annual discount factor here is higher than the one in the
 quantitative model, and this is deliberate.    A model period is thirty years. This means that the consequences of using drugs arrive only thirty years after the decision. Therefore, with a low discount factor, the risk of death in the distant future would be heavily discounted and dominated by impatience. I therefore apply a higher factor in the stylized model to correct for the coarseness of the horizon. In the full quantitative model, in contrast, the consequences of using drugs are annual, and thus a lower calibrated discount factor is not an issue.} and risk aversion is
-$\sigma=2$, as in the quantitative model. Survival over a period, the cumulative chance of surviving from age twenty-six to age fifty-five, is
+$\sigma=2$, as in the quantitative model. Survival over a period, the cumulative chance of surviving from age \del{twenty-six} \new{twenty six} to age \del{fifty-five} \new{fifty five}, is
 $\bar\phi = 0.93$, from the life table for the total population of the United States in 2010
 (Arias, 2014). The chance that use causes a SUD, $\pi_d=0.41$, is set so that the ratio of the SUD rate to participation matches the data in the 2024 NSDUH, $3.68$ against $8.90$ percent of adults aged 26 and over.
 
@@ -359,7 +359,7 @@ of being alive $\aleph$ is matched to a value of a statistical life (VSL) of 80
 times average annual income (Viscusi and Aldy, 2003).\footnote{No household has a negative value of life in period 1, so death is never an optimal choice.} The parameter $b$, which sets the marginal utility of the first unit of drugs, is chosen to match a drug participation rate of
 $8.90$ percent, the share of respondents aged 26 and over in the 2024 NSDUH with a drug use disorder of any severity. The weight on drugs $\theta$ is set to match the aggregate drug spending over the
 aggregate income of users, $16.0$ percent, from retail spending in Midgette et al.\ (2019) and the incomes of users in
-the 2024 NSDUH. The level of food assistance \del{$\bar c$} \new{$\underline c$} is set so that total food assistance is $0.42$ percent of total labour income, the ratio of SNAP outlays to gross domestic product (GDP).
+the 2024 NSDUH. The level of food assistance $\underline c$ is set so that total food assistance is $0.42$ percent of total labour income, the ratio of SNAP outlays to gross domestic product (GDP).
 
 The mortality exponent $\kappa_{\phi d}$ is set to match the average income of users,
 $0.74$ of the population average in the 2024 NSDUH, because the death risk is what decides how far down
@@ -401,7 +401,7 @@ the calibrated $8.90$ percent. The vertical dotted line marks the calibrated str
 
   Who uses depends on two things that vary with income. The first is the cost of acquiring drugs, and the second is the penalty drugs inflict. The utility cost of the drug falls with income, because a household with more income gives up less marginal utility for each dollar it spends on drugs. Therefore, ceteris paribus, drugs cost a rich household less than a poor one.
 
-The penalty inflicted by drugs does not rise with income when it can be partially insured against, but does rise when it cannot be. A richer household can save more to protect itself in the event of unemployment. Thus, its loss is roughly proportional to its income. As a result, in utility terms, the cost of losing its employment is about the same as the cost imposed on a poor household. Death, on the other hand, cannot be insured against. Dying eliminates the full continuation value of being alive, and that loss grows with income, so it deters high-income households but not low-income ones. Without the ability to save, losing a job takes a household down to \del{$\bar c$} \new{$\underline c$} whatever it earned, so that loss too grows with income, which is why in the right panel the unemployment channel reverses the gradient as well.
+The penalty inflicted by drugs does not rise with income when it can be partially insured against, but does rise when it cannot be. A richer household can save more to protect itself in the event of unemployment. Thus, its loss is roughly proportional to its income. As a result, in utility terms, the cost of losing its employment is about the same as the cost imposed on a poor household. Death, on the other hand, cannot be insured against. Dying eliminates the full continuation value of being alive, and that loss grows with income, so it deters high-income households but not low-income ones. Without the ability to save, losing a job takes a household down to $\underline c$ whatever it earned, so that loss too grows with income, which is why in the right panel the unemployment channel reverses the gradient as well.
 
 %======================================================================
 \section{The quantitative model}\label{sec:full}
@@ -756,9 +756,9 @@ $\pi_{Vt}$ with $\mathcal R=\bar{\mathcal R}$;
 
 \section{Calibrating the quantitative model}\label{sec:fullcal}
 
-The model has fifty-nine parameters, some of which vary by age. Thirty-eight are calibrated externally, from data or the literature, and twenty-one internally. The twenty-six that carry this paper's story are in Table~\ref{tab:eleven}, with the moment, source, data and model value behind each, and are discussed below in numbered blocks of parameters that work through similar mechanisms. The other thirty-three, common to most life-cycle models, are in Appendix~\ref{sec:stdparams} to save the reader time; its blocks continue the numbering. \new{Appendix~\ref{sec:jacobian} shows how each of the twenty-one internally calibrated parameters moves each targeted moment.} \why{The author: the Jacobian Referee~1 asked for (comment 2(f)) is now Appendix~B, with this sentence pointing to it. The appendix's title and its figure are new as well, though not in red.} Three further parameters govern drug testing and exclusion from the voucher; they play no role in the benchmark and are set with the experiment in Section~\ref{sec:experiments}. \texttt{data/DATA\_APPENDIX.md} in the replication package documents the dataset, year, universe and computation behind every estimate, and the package carries all datasets, so nothing has to be downloaded.
+The model has \del{fifty-nine} \new{fifty nine} parameters, some of which vary by age. \del{Thirty-eight} \new{Thirty eight} are calibrated externally, from data or the literature, and \del{twenty-one} \new{twenty one} internally. The \del{twenty-six} \new{twenty six} that carry this paper's story are in Table~\ref{tab:eleven}, with the moment, source, data and model value behind each, and are discussed below in numbered blocks of parameters that work through similar mechanisms. The other \del{thirty-three} \new{thirty three}, common to most life-cycle models, are in Appendix~\ref{sec:stdparams} to save the reader time; its blocks continue the numbering. \why{The author: numbers written as words take no hyphen, here and everywhere (fifty nine, not fifty-nine). The title of Section~\ref{sec:fmainpar} and the caption of Table~\ref{tab:eleven} change the same way, unmarked.} Appendix~\ref{sec:jacobian} shows how each of the \del{twenty-one} \new{twenty one} internally calibrated parameters moves each targeted moment. Three further parameters govern drug testing and exclusion from the voucher; they play no role in the benchmark and are set with the experiment in Section~\ref{sec:experiments}. \texttt{data/DATA\_APPENDIX.md} in the replication package documents the dataset, year, universe and computation behind every estimate, and the package carries all datasets, so nothing has to be downloaded.
 
-\subsection{The twenty-six parameters that carry the story of this paper}\label{sec:fmainpar}
+\subsection{The twenty six parameters that carry the story of this paper}\label{sec:fmainpar}
 
 \input{tables/tab_eleven}
 
@@ -768,7 +768,7 @@ The model has fifty-nine parameters, some of which vary by age. Thirty-eight are
   The weight in utility given to drugs mostly determines what share of its budget a household that uses drugs spends on drugs. To a lesser extent, a higher weight also makes using at all more attractive. As it rises, use therefore rises on both the extensive and the intensive margin, and with it the externalities and what either policy has to act on. It is calibrated internally, at $0.17$, to aggregate drug spending by users over their aggregate income, $16.0$ percent, from retail drug spending in Midgette et al.\ (2019) and, in NSDUH 2024, the incomes of adults aged 26 and over who use drugs.
 
 \item[$b$, the marginal utility from the first unit of drugs.] The marginal value of the first unit of drugs goes as $\theta/b$, so a larger $b$ makes the first units worth less and a household with little to spend buys none. As $b$ falls, the marginal utility from the first unit rises, and so do overall drug use and the externalities that policy can affect. It targets a participation rate of $8.90$ percent, the NSDUH 2024 rate of a drug use disorder of any severity among adults aged 26 and over.\footnote{A user in the model is therefore a household whose use of any illicit drug, marijuana among them, amounts to a disorder, mild included. A household with a SUD is one whose disorder is moderate or severe (next item). Use that never reaches a disorder is not modelled.}
-\item[$\pi_d$, the chance that a year of use leads to a SUD.] By governing how likely drug use is to become a disorder, this parameter determines how risky drug use is. \del{When it rises, the externalities and moral hazard grow.} \new{When it rises, each user is likelier to acquire a SUD, so its use costs its child more and the moral hazard grows. Households therefore use less. As a result, a larger share of users have a SUD, but fewer households have one.} \why{The author: fix the wording. The Jacobian in the letter to Referee~1 (comment 2(f)) shows that a higher $\pi_d$ lowers drug use and the number of households with a SUD, so ``the externalities grow'' held for each user but not in total.} It targets the share of users who have a SUD, $41.3$ percent among adults aged 26 and over in NSDUH 2024.
+\item[$\pi_d$, the chance that a year of use leads to a SUD.] By governing how likely drug use is to become a disorder, this parameter determines how risky drug use is. When it rises, each user is likelier to acquire a SUD, so its use costs its child more and the moral hazard grows. Households therefore use less. As a result, a larger share of users have a SUD, but fewer households have one. It targets the share of users who have a SUD, $41.3$ percent among adults aged 26 and over in NSDUH 2024.
 \item[$\kappa_{\phi d}$, increased mortality with a SUD.] $\kappa_{\phi d}$ sets how much a SUD raises the chance of dying, and mortality truncates a user's value of life. Because this is an uninsurable risk, a rise in $\kappa_{\phi d}$ hits the households with the highest values of life hardest, which reverses the income gradient; as the stylized model of Section~\ref{sec:stylized} shows, this makes it a key parameter. It is calibrated internally, at $4.00$, to the income of users relative to the average, a value within the range of the mortality rate ratios of a SUD in the literature: $3.91$ in the Danish registers (Plana-Ripoll et al., 2019) and $6.6$ among Norwegians in specialist care for a SUD (Heiberg et al., 2018). Users earn $63$ percent of the average in the model against $74$ percent in the data.
 \item[$\aleph$, the flow value of being alive.]   While $\kappa_{\phi d}$ sets how much a SUD raises the chance of dying, $\aleph$ decides the value of life. As it rises, dying costs more and use falls. It targets a VSL of $80$ times average labour income (Viscusi and Aldy, 2003).\footnote{No household has a negative value of life in equilibrium, so death is never optimal. Because the value of being alive enters utility additively and utility is concave, the VSL rises faster than consumption, roughly with its square at the model's risk aversion, as in Hall and Jones (2007). Estimates of the income elasticity of the VSL are lower across people at a point in time, $0.5$ to $0.6$ in Viscusi and Aldy (2003), than over time, $1.5$ to $1.7$ in Costa and Kahn (2004).}
 \end{description}
@@ -1210,7 +1210,7 @@ Unemployment Insurance.
 \setcounter{table}{0}\renewcommand{\thetable}{A\arabic{table}}
 \section[Calibration of the standard parameters]{Calibration of the standard parameters}\label{sec:stdparams}
 
-  My full calibration contains many parameters, many of which are more conventional and used in many papers. Here, I show how I set those thirty-three parameters. I calibrate six of them internally and set the other twenty-seven externally from estimates in the literature or from statute. Table~\ref{tab:stdparams} and the entries below proceed in the same seven blocks. In each entry, I give the moment or source that pins down the parameter and the value of that moment in the data. For the internally calibrated parameters, the Model column also presents the model's performance.
+  My full calibration contains many parameters, many of which are more conventional and used in many papers. Here, I show how I set those \del{thirty-three} \new{thirty three} parameters. I calibrate six of them internally and set the other \del{twenty-seven} \new{twenty seven} externally from estimates in the literature or from statute. Table~\ref{tab:stdparams} and the entries below proceed in the same seven blocks. In each entry, I give the moment or source that pins down the parameter and the value of that moment in the data. For the internally calibrated parameters, the Model column also presents the model's performance.
 
  None of these parameters are inert. They too matter for the experiments, but they are more standard and matter less for the results than the parameters that I covered in the main text. For instance, the discount factor affects how much weight households give to dying in a later period. The dispersion of productivity determines how many households are poor enough to be willing to risk having a disorder, and risk aversion determines how much households value the insurance of housing assistance.
 
@@ -1392,15 +1392,15 @@ equals demand at $p_v=1$ in the benchmark, and kept fixed across experiments, in
 \setcounter{figure}{0}\renewcommand{\thefigure}{B\arabic{figure}}
 \section{The calibration's Jacobian}\label{sec:jacobian}
 
-\new{Figure~\ref{fig:jacobian} shows how each of the twenty-one internally calibrated parameters moves each targeted moment. I raise one parameter at a time, solve the steady state of the benchmark again with the other parameters at their calibrated values and the drug price at its benchmark value, as in the calibration, and report the percent change in each moment for each percent by which the parameter rises. The step is \new{$1$} percent, and \new{$0.2$} percent for the discount factor, whose effects are large. Two moments count households on a grid, the share of renters paying over half of their income and the share of the homeless aged 25 to 34, and they move in steps that a small change does not reach. Their parameters, $h_2$ and $T_0$, are therefore raised by \new{$5$} and \new{$10$} percent. Solving the benchmark again without changing any parameter moves a moment by at most \new{$0.013$} in these units, so every number printed in the figure is well above the numerical error.}
+Figure~\ref{fig:jacobian} shows how each of the \del{twenty-one} \new{twenty one} internally calibrated parameters moves each targeted moment. I raise one parameter at a time, solve the steady state of the benchmark again with the other parameters at their calibrated values and the drug price at its benchmark value, as in the calibration, and report the percent change in each moment for each percent by which the parameter rises. \del{The step is $1$ percent, and $0.2$ percent for the discount factor, whose effects are large. Two moments count households on a grid, the share of renters paying over half of their income and the share of the homeless aged 25 to 34, and they move in steps that a small change does not reach. Their parameters, $h_2$ and $T_0$, are therefore raised by $5$ and $10$ percent. Solving the benchmark again without changing any parameter moves a moment by at most $0.013$ in these units, so every number printed in the figure is well above the numerical error.}
 
-\new{Each parameter moves the moment it is matched to, outlined in its row, and the matrix of the \new{twenty} parameters with a moment of their own and those moments has full rank. Identification is nonetheless joint. The parameters that govern drug use, $\theta$, $b$, $\pi_d$, $\kappa_{\phi d}$ and $\aleph$, all move the level of drug use, and their own moments tell them apart. Of the five, only $\theta$ raises drug spending over income, only $\pi_d$ raises the share of users with a SUD, and $\aleph$ raises the VSL the most. The discount factor moves almost every moment, and it moves wealth over output more than any other parameter does. The parent's weight on its child, $\omega_c$, has no column, because its moment, the rise in drug use when the child is given no weight, needs a second solve for every parameter.}
+Each parameter moves the moment it is matched to, outlined in its row, and the matrix of the twenty parameters with a moment of their own and those moments has full rank. Identification is nonetheless joint. \del{The} \new{For instance, the} parameters that govern drug use, $\theta$, $b$, $\pi_d$, $\kappa_{\phi d}$ and $\aleph$, all move the level of drug use, and their own moments tell them apart. Of the five, only $\theta$ raises drug spending over income, only $\pi_d$ raises the share of users with a SUD, and $\aleph$ raises the VSL the most. The discount factor moves almost every moment, and it moves wealth over output more than any other parameter does\del{. The parent's weight on its child, $\omega_c$, has no column, because its moment, the rise in drug use when the child is given no weight, needs a second solve for every parameter} .
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{figures/jacobian.pdf}
-\caption{\new{The calibration's Jacobian}}\label{fig:jacobian}
-\notes{\textwidth}{\new{Notes: each cell is the percent change in a targeted moment (column) for each percent by which a parameter (row) rises, from the steady state of Housing First solved again with the other parameters at their calibrated values and the drug price held. The outlined cell is the moment the parameter is matched to in Section~\ref{sec:fullcal} and Appendix~\ref{sec:stdparams}. Numbers smaller than \new{$0.05$} in absolute value are not printed, and the colour scale is logarithmic beyond \new{$0.1$} in absolute value.}}
+\caption{The calibration's Jacobian}\label{fig:jacobian}
+\notes{\textwidth}{Notes: each cell is the percent change in a targeted moment (column) for each percent by which a parameter (row) rises, from the steady state of Housing First solved again with the other parameters at their calibrated values and the drug price held. The outlined cell is the moment the parameter is matched to in Section~\ref{sec:fullcal} and Appendix~\ref{sec:stdparams}. Numbers smaller than $0.05$ in absolute value are not printed, and the colour scale is logarithmic beyond $0.1$ in absolute value.}
 \end{figure}
 
 \end{document}
