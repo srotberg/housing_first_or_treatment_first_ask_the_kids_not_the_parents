@@ -434,6 +434,13 @@ def band5(key, nd=1):
     return d, m
 
 
+# DRUG POISONINGS AS A SHARE OF DEATHS AT 25 TO 44, THE DATA (11 November, the author: "switch to 20.8 percent" and
+# "add the year"). The benchmark log prints observed= 0.20, a value typed into the Fortran with no year; the documented
+# computation is 20.8 percent from CDC WONDER provisional mortality, deaths in 2024 (data/DATA_APPENDIX.md, 'Drug
+# poisonings as a share of deaths'). This is the one place the paper reads it from: Table 4 and u_deaths_d.
+CDC_DEATHS_2544 = 0.208
+
+
 def one(key, nd=1, scale=100):
     return f'{scale * mom(key, 1):.{nd}f}', f'{scale * mom(key):.{nd}f}'
 
@@ -474,7 +481,7 @@ UNTARGETED = [
     # numbers as the Block 3 sentence, from smi_use_ratio.json (model measured 23 Sept).
     ('Drug use with SMI over without, ratio', (SMI_USE['c_smi_use_ratio_data'],
      f"{float(SMI_USE['c_smi_use_ratio_model']):.2f}"), 'NSDUH 2024'),
-    ('Drug deaths as a share of deaths, 26--44', one('drug deaths, share of deaths'), 'CDC WONDER'),
+    ('Drug deaths as a share of deaths, 26--44', (f'{100 * CDC_DEATHS_2544:.1f}', one('drug deaths, share of deaths')[1]), 'CDC WONDER 2024'),
     # THE TREATMENT BLOCK WENT (the author, round 8a826aab: "remove. we need to find better data
     # that the model actually replicates...and something meaningul"). Its five TEDS-A rows are
     # in git history; the full TEDS-A 2024 file is now data/raw/TEDS-A-2024-DS0001-*.zip.
@@ -707,7 +714,7 @@ def numbers():
         'u_age_d': f'{age_d:.1f}', 'u_age_m': f'{age_m:.1f}',
         'u_age_dir': 'older' if age_m > age_d else 'younger',
         'u_unemp_d': p1(mom('kappa_ued unemployment given SUD', 1)), 'u_unemp_m': p1(mom('kappa_ued unemployment given SUD')),
-        'u_deaths_d': p1(mom('drug deaths, share of deaths', 1)), 'u_deaths_m': p1(mom('drug deaths, share of deaths')),
+        'u_deaths_d': p1(CDC_DEATHS_2544), 'u_deaths_m': p1(mom('drug deaths, share of deaths')),
         'u_tadm1_d': p1(mom('treatment admissions, band 1', 1)), 'u_tadm1_m': p1(mom('treatment admissions, band 1')),
         'u_tadm55_d': p1(mom('treatment admissions, band 4', 1) + mom('treatment admissions, band 5', 1)),
         'u_tadm55_m': p1(mom('treatment admissions, band 4') + mom('treatment admissions, band 5')),
