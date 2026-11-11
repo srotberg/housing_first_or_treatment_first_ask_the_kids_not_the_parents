@@ -32,6 +32,9 @@ Run:  python3 check_params.py
 
 import os
 import re
+import os as _os, sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from marks import drop_marks  # noqa: E402
 import sys
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # writing/: these tools live in writing/tools/
@@ -120,12 +123,14 @@ def table_rows():
 
 
 def prose_items():
-    body = strip_new(strip_red(open(SRC).read()))
+    # struck text and notes are not the paper's (marks.py), and a struck symbol before a new one in an \\item label
+    # would otherwise hide the entry
+    body = strip_new(strip_red(drop_marks(open(SRC).read())))
     out = {}
     # AN ENTRY MAY COVER TWO PARAMETERS. "\\item[$\\kappa_V$ and $\\kappa_r$, the
     # voucher rules.]" is one entry and two rows, and reading it as a single
     # symbol named "kappa_V and kappa_r" reported both as missing.
-    for m in re.finditer(r'\\item\[((?:\$[^$]+\$(?:\s+and\s+)?)+)', body):
+    for m in re.finditer(r'\\item\[\s*((?:\$[^$]+\$(?:\s+and\s+)?)+)', body):
         syms = re.findall(r'\$([^$]+)\$', m.group(1))
         tail = body[m.end():m.end() + 1400]
         tail = tail.split(r'\item[')[0]
