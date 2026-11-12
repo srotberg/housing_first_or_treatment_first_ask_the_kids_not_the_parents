@@ -94,5 +94,10 @@ assert nums['x_univ_use_dir'] == nums['x_univ_sud_dir'], 'the footnote gives dru
 # x_b0 in results_numbers.json, the number Table 5 prints, read from there so the two cannot disagree.
 b0 = float(json.load(open(os.path.join(HERE, 'results_numbers.json')))['x_b0'])
 nums.update(x_univ_b_hf=f'{100 * n["use"]:.2f}', x_univ_hf_dir='lower' if 100 * n['use'] < b0 else 'raise')
+# UNIVERSAL HOUSING FIRST AGAINST RATIONED HOUSING FIRST (12 November, the author: "You should say that universal HF is
+# better than rationed HF. You can even state the gain."): Housing First's own CEV against the benchmark curve, i.e. against
+# Housing First with rationed vouchers, the benchmark. It is inside the curve (x = 0.46 of a curve that ends at 0.5).
+hf_gain = 100 * cev(n['w'])
+nums.update(x_univ_hf_cev=f'{abs(hf_gain):.0f}', x_univ_hf_cev_dir='raise' if hf_gain > 0 else 'lower')
 json.dump(nums, open(OUT, 'w'), indent=1, sort_keys=True)
 print('\n'.join(lines)); print(nums)
