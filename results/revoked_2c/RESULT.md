@@ -3,7 +3,7 @@
 4 October 2026. The author: *"Can we test a short run experiment with fixed prices and fixed pi_V, where you do
 Treatment First and check what happens to the SUD of those whose voucher was revoked in the first 3 years?"*, and the
 *"MORTALITY of those whose voucher was revoked relative to what would happen to them if they had stayed housed"*. For
-the associate editor's comment on Costantini (2025) (HF_or_TF_RED_reviews/AE_R1.txt). Code and design detail:
+the associate editor's comment on Costantini (2025) (HF_or_TF_RED_reviews/decision/AE_R1.txt). Code and design detail:
 `code/revoked_2c/README.md`. Full tables: `tables.md`. Guards: `guard_T3_pair.txt`, `guard_T3_rest.txt` and the top of
 `tables.md`. Logs: `*_run.log.gz`.
 
