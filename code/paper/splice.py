@@ -38,7 +38,7 @@ FILES = ('code/paper/results_numbers.json', 'code/paper/params_numbers.json', 'c
          'code/paper/nsfg_births.json', 'code/paper/smi_use_ratio.json', 'code/paper/nsduh_kids_home.json',
          'code/paper/nsduh_loneparent.json', 'code/paper/lit_numbers.json', 'code/paper/nsduh_kids_sud.json',
          'code/paper/decomp_use.json', 'code/paper/jacobian_numbers.json',
-         'code/paper/mortality_numbers.json')
+         'code/paper/mortality_numbers.json', 'code/paper/universal_numbers.json')
 UPD = re.compile(r'^(x_trf?_|x_disc_tr)')
 SENTENCE = 6        # words at brace depth 0 from which a value is diffed word by word
 MERGE = 2           # black words between two red runs that join them
