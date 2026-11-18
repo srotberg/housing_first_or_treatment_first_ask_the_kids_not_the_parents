@@ -1,7 +1,12 @@
+% Written by fill_slides.py from slides.src.tex, with the paper's own numbers. Edit slides.src.tex, not this file.
 % Job-market talk: Housing First or Treatment First? Ask the Kids, Not the Parents.
-% Build with presentation/latex/build.sh (pdflatex twice); writes presentation/housing_first_or_treatment_first_slides.pdf.
-% Numbers are the paper's as of round r419. Figures are the paper's own (writing/figures); Table 5 in the
-% backup is input from writing/tables/tab_longrun.tex, and Tables 1 and 2 of the stylized model likewise.
+% Build with presentation/latex/build.sh: fill_slides.py fills this source into slides.tex, then pdflatex twice;
+% writes presentation/housing_first_or_treatment_first_slides.pdf.
+% EVERY NUMBER IS THE PAPER'S, NEVER TYPED: a name between double at signs is a name of the paper's (code/paper/splice.py's
+% number files) or one the deck reads off a table or sentence of the paper (fill_slides.py, DECK); with an equals sign
+% after the opening pair it prints the bare number, for a plot.
+% Figures are the paper's own (writing/figures); Tables 1, 2, 5 and the weight-of-one table are input from
+% writing/tables, and Tables 3, 4 and 7 through the gen_*.tex files fill_slides.py writes from them.
 % Speaker notes are in \note{} (\setbeameroption{show notes on second screen} prints them).
 \documentclass[aspectratio=169,11pt]{beamer}
 \usepackage[T1]{fontenc}
@@ -38,6 +43,8 @@
 \newcommand{\TF}{Treatment First}
 \newcommand{\pc}{\,\%}
 \newcommand{\source}[1]{\par\vfill{\color{lgrey}\tiny #1}}
+% marks the paper's generated tables can carry; on a slide they print plain
+\providecommand{\new}[1]{#1}\providecommand{\updnum}[1]{#1}\providecommand{\tocheck}[1]{#1}
 \pgfplotsset{acad/.style={axis lines*=left, axis line style={gray}, tick style={gray}, tick label style={font=\scriptsize},
   label style={font=\scriptsize}, title style={font=\small\bfseries, color=dblue}, every node near coord/.style={font=\scriptsize, black}}}
 
@@ -121,7 +128,7 @@ Both claims are about the households that receive the assistance\\[0.2em]
 \column{0.47\textwidth}
 \textbf{They cannot see}
 \begin{itemize}
-\item Beyond 6 to 36 months
+\item Beyond three years
 \item The children's adult lives
 \item Households outside the trial
 \item The government's budget
@@ -144,18 +151,20 @@ $\Rightarrow$ a structural model can do all four
 \item Transition from \HF{} to \TF{} over every cohort alive at the reform
 \end{itemize}
 \vspace{0.3cm}
-\textbf{One reform, taken apart}: moral hazard, three externalities on children, and general-equilibrium effects, each switched on separately
+\textbf{One reform, taken apart}: moral hazard, three externalities on children, a missing contract market and general-equilibrium effects, each switched on separately
 \note{Calibrated to the United States. The same reform is run with and without the externalities on children and with each clearing condition on and off.}
 \end{frame}
 
 \begin{frame}{Main findings}
-\begin{enumerate}\setlength\itemsep{0.55em}
+\small
+\begin{enumerate}\setlength\itemsep{0.3em}
 \item \textbf{Moral hazard alone does not justify conditionality.} Without effects on children, a newborn \alert{loses 1.09\pc} of lifetime consumption under \TF{}, although drug use falls by 28\pc
 \item \textbf{The externalities on children do.} With them, and with the drug price and $\pi_V$ clearing, \TF{} cuts drug use by 21\pc{} and homelessness by 11\pc, and a newborn \alert{gains 2.57\pc}; three quarters of it is an externality the parent does not count. Parents gain too, 0.69\pc
+\item \textbf{Not only the externalities: a missing contract market.} With the parent's weight on its child set to one, a newborn still gains 1.09\pc{} with prices held, while every parent loses: a child cannot pay its parent to stay sober
 \item \textbf{Childhood homelessness falls}, by 11\pc, although critics expect conditionality to raise it
 \item \textbf{Transition}: homelessness never rises; children born at the reform gain 1.45\pc. If those with a SUD cannot stop using, the early rise depends on design
 \end{enumerate}
-\note{The headline: yes if you ask the kids, no if you ask only about moral hazard.}
+\note{The headline: yes if you ask the kids, no if you ask only about moral hazard. And the kids' case does not need the externality: with full altruism the sobriety condition stands in for a contract a child cannot write.}
 \end{frame}
 
 \begin{frame}{Mechanism: three externalities on the child}
@@ -185,18 +194,20 @@ Why it matters: vouchers are means-tested, so whose children bear the costs depe
 \end{frame}
 
 \begin{frame}{Related literature}
-\small
-\begin{itemize}\setlength\itemsep{0.45em}
+\footnotesize
+\begin{itemize}\setlength\itemsep{0.3em}
 \item \textbf{Housing First trials}: Tsemberis et al.\ (2004), Goering et al.\ (2014), Aubry et al.\ (2016), Costantini (2025)\\
 $\to$ reproduce their micro effects, then add the macro effects they cannot observe
 \item \textbf{Deterrence of drug testing}: Mehay and Pacula (1999)\\
 $\to$ disciplines how strongly the screen deters use
-\item \textbf{Economic models of drug use}: Becker and Murphy (1988), Greenwood et al.\ (2025)\\
+\item \textbf{Economic models of drug use}: Becker and Murphy (1988b), Greenwood et al.\ (2025)\\
 $\to$ an income gradient from uninsurable mortality risk, not preferences
 \item \textbf{Homelessness in equilibrium}: \.{I}mrohoro\u{g}lu and Zhao (2022), Abramson (2026)\\
 $\to$ add endogenous drug use, disorder and recovery
 \item \textbf{Intergenerational transmission and parental altruism}: Nilsson (2017), Altonji et al.\ (1997)\\
 $\to$ price the externalities on children inside the model
+\item \textbf{Contracts between parents and children}: Becker and Murphy (1988a), Boldrin and Montes (2005), Rangel (2003)\\
+$\to$ the missing contract: a child cannot pay its parent to stay sober
 \end{itemize}
 \note{Closest structural paper: Imrohoroglu and Zhao (2022). Their housing policy has no drug-use margin for a sobriety condition to act on.}
 \end{frame}
@@ -209,10 +220,10 @@ $\to$ price the externalities on children inside the model
 \section{A stylized model: who uses drugs}
 
 \begin{frame}{Stylized model: environment}
-\begin{itemize}\setlength\itemsep{0.35em}
+\begin{itemize}\setlength\itemsep{0.3em}
 \item Two periods of thirty years (ages 26 to 85); productivity $y$ lognormal, mean one, fixed for life
 \item Everyone works in period 1; in period 2 out of work with probability $u_0$, or $u_1>u_0$ with a SUD
-\item Save at zero interest in period 1, no borrowing; food assistance $F(ye)=\max\{0,\bar c-\varrho\,ye\}$
+\item Save at zero interest in period 1, no borrowing; food assistance $F(ye)=\max\{0,\underline c-\varrho\,ye\}$
 \end{itemize}
 \begin{align*}
 X(c,v)&=c^{1-\theta}(b+v)^{\theta}, \qquad u(c,v)=\frac{X^{1-\sigma}}{1-\sigma}+\aleph\\
@@ -228,7 +239,7 @@ X(c,v)&=c^{1-\theta}(b+v)^{\theta}, \qquad u(c,v)=\frac{X^{1-\sigma}}{1-\sigma}+
 \begin{frame}{Stylized model: the decision to use}
 Second period, with savings $a$ and SUD status $d$:
 \[
-W(a,y,d)=(1-u_d)\,U\big(X(y+a+F(y),0)\big)+u_d\,U\big(X(a+\bar c,0)\big)+\aleph
+W(a,y,d)=(1-u_d)\,U\big(X(y+a+F(y),0)\big)+u_d\,U\big(X(a+\underline c,0)\big)+\aleph
 \]
 First period, not using and using:
 \begin{align*}
@@ -317,7 +328,7 @@ Child's productivity at entry:
 \[
 \begin{aligned}
 \log y_{1}^{\text{child}}=\ &\rho\log y^{\text{parent}}+(1-\rho)\mu+\epsilon\\
-&+\log(1-\delta_d)\,\mathbf{1}\{\text{parent had a SUD while the child was at home}\}
+&+\log(1-\delta_d)\,\mathbf{1}\{\text{parent has } d\ge1 \text{ when its child becomes an adult}\}
 \end{aligned}
 \]
 What the parent's disorder costs the child, in its own lifetime value:
@@ -388,6 +399,7 @@ Either can be switched off: this separates the micro effects a trial sees from t
 \item 26 carry the story, in six blocks: who uses drugs; costs of homelessness and vouchers; SMI; recovery and treatment; externalities; the drug market
 \item The other 33 are standard life-cycle parameters
 \item Three parameters bind only in the experiment: detection $p_{\text{det}}$, exclusion $\psi_x$, test cost $c_{\text{test}}$
+\item The calibration's Jacobian (Appendix B) shows how each of the 21 internally calibrated parameters moves each target
 \item Every target and its dataset, year and universe are documented in the replication package
 \end{itemize}
 \note{Each parameter is described in the paper by what it controls, its link to the policies, what happens as it rises, and then its target and source.}
@@ -395,25 +407,9 @@ Either can be switched off: this separates the micro effects a trial sees from t
 
 \begin{frame}{Selected parameters and targets}
 \centering\footnotesize
-\resizebox{\textwidth}{!}{\begin{tabular}{@{}llrrr@{}}
-\toprule
-Parameter & Moment and source & Data & Model & Value\\
-\midrule
-$b$, first unit's marginal utility & Any drug use disorder, NSDUH 2024 & 8.90\% & 8.96\% & 0.0054\\
-$\pi_d$, chance use leads to a SUD & Share of users with a SUD, NSDUH 2024 & 41.3\% & 42.6\% & 0.0345\\
-$\kappa_{\phi d}$, mortality with a SUD & Users' income over average, NSDUH 2024 & 74\% & 62\% & 4.00\\
-$\aleph$, value of being alive & VSL, Viscusi and Aldy (2003) & 80 & 81 & 87.6\\
-$h_1$, service flow of homelessness & Homelessness, HUD PiT and Burt et al.\ (2001) & 0.40--1.00\% & 0.62\% & 0.0216\\
-$\pi_V$, chance of drawing a voucher & Recipients over eligible, HUD 2023 & 26.6\% & 27.5\% & 0.0675\\
-$\mu_H$, recovery when homeless & Abstinence, housed/homeless, Milby et al.\ (2005) & 1.47 & 1.45 & 0.696\\
-$\bar\tau^{u}$, utility cost of treatment & Treatment take-up, NSDUH 2024 & 24.5\% & 24.9\% & 4.49\\
-$\omega_c$, parent's weight on its child & Two-adult over lone-parent use, NSDUH 2024 & 17.5\% & 17.7\% & 0.085\\
-$\delta_d$, child's earnings loss & Earnings lost in utero, Nilsson (2017) & 0.24 & n.a. & 0.24\\
-$\varepsilon_s$, supply elasticity & Mace et al.\ (2020) & 1.46 & n.a. & 1.46\\
-\bottomrule
-\end{tabular}}
+\resizebox{\textwidth}{!}{\input{gen_params}}
 \source{Table 3 of the paper; Model is the \HF{} benchmark.}
-\note{Users' income falls short of its target, 62 against 74 percent; the validation shows where the gap comes from.}
+\note{Users' income falls short of its target, 63 against 74 percent; the validation shows where the gap comes from.}
 \end{frame}
 
 \begin{frame}{Disciplining the externalities}
@@ -421,15 +417,15 @@ $\varepsilon_s$, supply elasticity & Mace et al.\ (2020) & 1.46 & n.a. & 1.46\\
 \begin{itemize}
 \item NSDUH 2024: an unmarried adult living with another adult and no child is 17.5\pc{} more likely to use than a lone parent with one child, reweighted to the same age, sex, marital status and income
 \item The model matches it as the rise in use when the child gets no weight (17.7\pc)
-\item At Nishiyama's (2000) 0.69, \TF{} still raises a newborn's welfare, by 3.18\pc
+\item With a weight of one there is no externality at all, and \TF{} still raises a newborn's welfare (the third experiment)
 \end{itemize}
 \vspace{0.2cm}
 \textbf{Child's earnings penalty}, $\delta_d=0.24$
 \begin{itemize}
 \item The earnings loss at age 32 that Nilsson (2017) measures for children of mothers under 21 exposed in utero to a Swedish alcohol experiment
-\item The earnings externality is only 18\pc{} of the gain; with no penalty \TF{} still gains
+\item The earnings externality is only 18\pc{} of the gain, so the ranking does not rest on the penalty's size
 \end{itemize}
-\note{With a weight of 0.69, less of the gain is an externality, 23 percent against 76, because the parent counts most of what its choices cost the child.}
+\note{The weight is identified by a counterfactual moment: drug use when the child is given no weight, against drug use at the calibrated weight, with every other parameter unchanged. No study measures the earnings cost of a parent's disorder after birth directly; Nilsson's is the closest causal estimate.}
 \end{frame}
 
 \begin{frame}{Disciplining the screen}
@@ -438,7 +434,7 @@ $\varepsilon_s$, supply elasticity & Mace et al.\ (2020) & 1.46 & n.a. & 1.46\\
 \item US military random drug testing with dismissal: those who stayed were 61\pc{} less likely to use marijuana (Mehay and Pacula, 1999)
 \item In the model, with $p_{\text{det}}=20\pc$, 62\pc{} of the users facing the screen stop when it is introduced, and none starts
 \item Compared as proportional responses, since the military measure is broader
-\item At half the rate, 41\pc{} stop, inside the 11 to 45\pc{} range once leavers are counted; a newborn still gains 1.65\pc
+\item At half the rate, 41\pc{} stop, and at a quarter, 29\pc, both inside the 11 to 45\pc{} range once leavers are counted; a newborn still gains 1.65 and 1.01\pc
 \item A test costs \$35 (Texas Legislative Budget Board, 2013), the upper end of the estimates; exclusion lasts three years on average
 \end{itemize}
 \note{The counterpart applies Treatment First to the Housing First distribution, drug price and pi_V, and follows each user who faces the screen. A positive screen is confirmed in a laboratory, so a non-user is never flagged.}
@@ -446,24 +442,9 @@ $\varepsilon_s$, supply elasticity & Mace et al.\ (2020) & 1.46 & n.a. & 1.46\\
 
 \begin{frame}{Validation: untargeted moments}
 \centering\footnotesize
-\resizebox{\textwidth}{!}{\begin{tabular}{@{}lrrl@{}}
-\toprule
-Moment & Data & Model & Source\\
-\midrule
-Abstinence, contingent over unconditional housing, ratio & 1.26 & 1.40 & Milby et al.\ (2005)\\
-Three-year mortality, households with SMI put on the street, pp & 4.6 & 3.6 & Costantini (2025)\\
-Child of a SUD parent acquires a SUD, odds ratio & 1.44, 2.51 & 1.46 & Mellentin et al.; Yoon et al.\\
-Children living with a parent with a SUD, \% & 4.6 & 5.8 & NSDUH 2024\\
-Unemployment given a SUD, \% & 16.2 & 14.5 & NSDUH 2024\\
-Drug use with SMI over without, ratio & 2.44 & 2.64 & NSDUH 2024\\
-Participation price elasticity & $-0.3$ to $-0.9$ & $-1.32$ & Saffer and Chaloupka (1999)\\
-Intensive price elasticity, users & $-0.3$ to $-0.8$ & $-0.63$ & Grossman and Chaloupka (1998)\\
-Homeless adult had a homeless parent, odds ratio & 1.8 to 2.4 & 6.23 & Bassuk et al.\ (1997)\\
-Employed share of the homeless, \% & 46 & 21.4 & Meyer et al.\ (2024)\\
-\bottomrule
-\end{tabular}}
+\resizebox{\textwidth}{!}{\input{gen_untargeted}}
 \source{Table 4 of the paper.}
-\note{A larger price response can only work against Treatment First, since it lowers the drug price and draws households back into use. The homelessness odds ratio and the employment of the homeless are misses.}
+\note{A larger price response can only work against Treatment First, since it lowers the drug price and draws households back into use. The homelessness odds ratio, the employment of the homeless and the share of deaths due to drugs are misses.}
 \end{frame}
 
 \begin{frame}{Validation: drug use by income}
@@ -479,7 +460,7 @@ Employed share of the homeless, \% & 46 & 21.4 & Meyer et al.\ (2024)\\
 \item Vouchers are means-tested, so the lower users sit, the more of them, and of their children, the screen reaches
 \end{itemize}
 \end{columns}
-\source{NSDUH 2024: adults 26+ with a SUD of any severity, by personal income band relative to the mean of band midpoints.}
+\source{NSDUH 2024: adults 26+ with a drug use disorder of any severity, by band of total personal income relative to the mean of the band midpoints.}
 \note{Both differences lower users' average income in the model, which is why it falls slightly short of its 74 percent target.}
 \end{frame}
 
@@ -488,12 +469,13 @@ Employed share of the homeless, \% & 46 & 21.4 & Meyer et al.\ (2024)\\
 
 \begin{frame}{Experiments}
 Replace \HF{} with \TF{}; keep the programme rationed and taxes fixed
-\begin{enumerate}\setlength\itemsep{0.5em}
+\begin{enumerate}\setlength\itemsep{0.35em}
 \item \textbf{Moral hazard alone}: children removed from welfare and from the parent's preferences, their productivity independent of the parent
 \item \textbf{With the children}: the calibrated model, in three steps: the screen alone; then $\pi_V$ clears the budget; then the drug price clears too (the main experiment)
+\item \textbf{A weight of one on the child}: the second experiment with no externality at all, to ask whether a missing contract market is enough
 \item \textbf{Transition}: every cohort alive at the reform, with $p_v$ and $\pi_V$ clearing every year
 \end{enumerate}
-\vspace{0.3cm}
+\vspace{0.1cm}
 Welfare: consumption-equivalent variation (CEV) of a newborn, childhood included
 \[
 W_t=\underbrace{\textstyle\sum_{j=1}^{J_K}\beta^{j-1}(\xi(j)-1)\,\mathbb{E}\,U(X_c)}_{\text{childhood}}+\underbrace{\beta^{J_K}\,\mathbb{E}\,V(1,s)}_{\text{adult life}}
@@ -505,7 +487,7 @@ W_t=\underbrace{\textstyle\sum_{j=1}^{J_K}\beta^{j-1}(\xi(j)-1)\,\mathbb{E}\,U(X
 \begin{columns}[T]
 \column{0.5\textwidth}
 \begin{tikzpicture}
-\begin{axis}[acad, xbar, width=6.1cm, height=4.6cm, bar width=9pt, xmin=-32, xmax=0,
+\begin{axis}[acad, xbar, width=5.5cm, height=4.6cm, bar width=9pt, xmin=-36, xmax=0,
   ytick={1,2,3,4}, yticklabels={Both clear, Price clears, $\pi_V$ clears, Both held}, ymin=0.5, ymax=4.5,
   title={Drug use, change against \HF, \%}, nodes near coords, nodes near coords align={horizontal},
   every node near coord/.append style={anchor=east, xshift=-1pt}]
@@ -514,7 +496,7 @@ W_t=\underbrace{\textstyle\sum_{j=1}^{J_K}\beta^{j-1}(\xi(j)-1)\,\mathbb{E}\,U(X
 \end{tikzpicture}
 \column{0.5\textwidth}
 \begin{tikzpicture}
-\begin{axis}[acad, xbar, width=6.1cm, height=4.6cm, bar width=9pt, xmin=-1.4, xmax=0,
+\begin{axis}[acad, xbar, width=5.5cm, height=4.6cm, bar width=9pt, xmin=-1.4, xmax=0,
   ytick={1,2,3,4}, yticklabels={}, ymin=0.5, ymax=4.5,
   title={Newborn's CEV, \%}, nodes near coords, nodes near coords align={horizontal},
   every node near coord/.append style={anchor=east, xshift=-1pt, /pgf/number format/fixed, /pgf/number format/precision=2, /pgf/number format/fixed zerofill}]
@@ -527,7 +509,7 @@ W_t=\underbrace{\textstyle\sum_{j=1}^{J_K}\beta^{j-1}(\xi(j)-1)\,\mathbb{E}\,U(X
 \item Rows: the drug price and $\pi_V$ held at their \HF{} levels or allowed to clear
 \item Use falls by up to 28\pc, yet a newborn loses in every case: the screen removes an option from households that weigh the risks correctly, and the budget gives little back (with $\pi_V$ clearing, 58\pc{} gain, by 0.05\pc{} on average; 96\pc{} of those with a SUD lose)
 \end{itemize}
-\note{With the price clearing, the newborn loses less, 0.74 percent, but that is the general-equilibrium effect of a cheaper drug, not a correction of moral hazard.}
+\note{With both clearing, the newborn loses less, 0.74 percent, but that is the general-equilibrium effect of a cheaper drug, not a correction of moral hazard.}
 \end{frame}
 
 \begin{frame}{Experiment 2: count the children and every step gains}
@@ -567,6 +549,7 @@ $\pi_V$, \% (benchmark 6.75) & 6.75 & 9.24 & 7.80\\
 \begin{itemize}
 \item Drug use 8.92 $\to$ 7.07\pc; homelessness 0.62 $\to$ 0.55\pc; children in a shelter 1.03 $\to$ 0.92\pc
 \item $\pi_V$ +16\pc, to 7.80\pc; drug price $-$5\pc; treatment among those with a SUD 24.6 $\to$ 29.0\pc
+\item Lives saved: SUD deaths at ages 26 to 44 fall from 14.5 to 12.2\pc{} of deaths; life expectancy at 26 rises by about six weeks
 \end{itemize}
 \note{Tax revenue rises mainly because more children start adult life with higher productivity. A household with a SUD keeps its voucher by entering treatment and stopping; when it cannot respond at all, the results still hold.}
 \end{frame}
@@ -606,6 +589,23 @@ Parent's own gain, \% of its lifetime consumption & $-$1.19 & 2.42 & 0.69\\
 \note{With prices held, the newborn's own adult life is a loss, so the externality is more than all of the gain. In general equilibrium both the child and the parent gain.}
 \end{frame}
 
+\begin{frame}{Experiment 3: a weight of one on the child, and a missing contract market}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\centering\vspace{0.1cm}
+\resizebox{\linewidth}{!}{\input{../../writing/tables/tab_omega1}}
+\par\vspace{0.1cm}{\color{lgrey}\tiny Percent of lifetime consumption, against the recalibrated $\omega_c=1$ benchmark}
+\column{0.45\textwidth}\footnotesize
+\begin{itemize}\setlength\itemsep{0.3em}
+\item $\omega_c=1$: the parent counts all of its child's welfare, so \alert{there is no externality}; $b$ recalibrated, and $p_{\text{det}}=15\pc$, at which 60\pc{} of the users facing the screen stop
+\item Prices held: a newborn still gains 1.09\pc, while every parent loses
+\item The child gains early and pays later, as an adult: it would pay its parent to abstain, but that contract does not exist
+\item The screen is a \alert{second-best} substitute; with both clearing, a newborn gains 1.73\pc{} and 88\pc{} of parents gain
+\end{itemize}
+\end{columns}
+\note{Second best for two reasons: the screen also stops parents whose drug use is worth more to them than any child could pay, and the parents alive at the reform pay without having benefited as children. The welfare criterion counts childhood twice when the parent is fully altruistic (Bernheim, 1989), so the table reports childhood and adult life separately, next to the parents' own change.}
+\end{frame}
+
 \begin{frame}{Who gains, and why trials point the other way}
 \begin{itemize}\setlength\itemsep{0.5em}
 \item 99.9\pc{} of households entering adult life are better off: the screen costs them nothing unless they choose to use
@@ -630,7 +630,7 @@ $\Rightarrow$ the model agrees with the micro evidence on the households it foll
 \item Unexpected, permanent reform in year 1; all cohorts alive; $p_v$ and $\pi_V$ clear every year
 \item 81\pc{} of the fall in drug use happens in year 1; SUD falls slowly (half by year 11)
 \item Homelessness 0.62 $\to$ 0.60 (year 10) $\to$ 0.55\pc; children in a shelter 1.03 $\to$ 1.00 $\to$ 0.92\pc: \alert{neither ever rises}
-\item Children born at the reform gain 1.45\pc; 11\pc{} of adults alive at the reform lose
+\item Children born at the reform gain 1.45\pc; 11\pc{} of adults alive at the reform lose, yet 33\pc{} of those with a SUD gain
 \end{itemize}
 \end{columns}
 \note{The drug price stays above its long-run level for 33 years because those who still have a SUD keep demand up. Children born at the reform gain less because the SUD falls only as fast as recovery allows and pi_V is lower in the first decade.}
@@ -662,7 +662,7 @@ The first reason depends on design: it needs treatment and sobriety to be a real
 \end{tikzpicture}
 \column{0.42\textwidth}
 \begin{tikzpicture}
-\begin{axis}[acad, xbar, width=5.4cm, height=5.0cm, bar width=6pt, bar shift=0pt, xmin=0, xmax=7.8,
+\begin{axis}[acad, xbar, width=5.4cm, height=5.0cm, bar width=6pt, bar shift=0pt, xmin=0, xmax=7.9,
   ytick={1,...,7}, yticklabels={}, ymin=0.4, ymax=7.6, title={Newborn's gain, \%},
   nodes near coords, nodes near coords align={horizontal},
   every node near coord/.append style={/pgf/number format/fixed, /pgf/number format/precision=2, /pgf/number format/fixed zerofill}]
@@ -688,9 +688,10 @@ The first reason depends on design: it needs treatment and sobriety to be a real
 Change & Result\\
 \midrule
 Detection at half the rate, 10\% & Newborn +1.65\%; use $-$14\%, homelessness $-$6\%\\
+Detection at a quarter of the rate, 5\% & Newborn +1.01\%; use $-$9\%, homelessness $-$4\%\\
 Those with a SUD cannot respond at all & Use $-$29\%, homelessness $-$11\%; newborn gains at least as much\\
-Parent's weight on the child at 0.69 (Nishiyama, 2000) & Newborn +3.18\%, 23\% of it an externality\\
-No earnings penalty for the child & \TF{} still raises welfare; the earnings externality is 18\% of the gain\\
+Parent's weight on its child set to one: no externality & Newborn +1.73\%, and +1.09\% with prices held\\
+Universal vouchers, the labour tax balancing the budget & Newborn about +4.7\% against universal \HF{}; universal beats rationed \HF{} by about 46\%\\
 A disamenity of homelessness (Loubi\`ere et al., 2020) & No long-run gain moves by more than 0.14 pp\\
 Log utility in the stylized model & All qualitative results hold\\
 \bottomrule
@@ -702,10 +703,12 @@ Log utility in the stylized model & All qualitative results hold\\
 \textbf{Should housing assistance require sobriety?}
 \begin{itemize}
 \item \alert{Yes}, if the externalities on children are counted; \alert{no}, if the case rests on moral hazard
+\item Nor does it need the externality: with full altruism, a child still gains, because it cannot pay its parent to stay sober
 \end{itemize}
-\vspace{0.2cm}
+\vspace{0.1cm}
 \textbf{Three lessons}
-\begin{enumerate}\setlength\itemsep{0.4em}
+\small
+\begin{enumerate}\setlength\itemsep{0.25em}
 \item Both sides of the debate leave out what matters most: the children of the households a sobriety requirement deters, in what they consume, whether they become homeless and what they earn as adults
 \item The model agrees with the trials on the households they follow, who lose from the condition; the macro effects the trials cannot capture overturn the conclusion
 \item Homelessness does not fall along the way unless treatment and sobriety are a real option for those who already have a SUD; a temporary exemption in treatment keeps childhood homelessness from ever rising
@@ -734,24 +737,7 @@ Shahar Rotberg\par
 
 \begin{frame}{Backup: alternative transitions in full (Table 7)}
 \centering\small
-\resizebox{\textwidth}{!}{\begin{tabular}{@{}lcccccc@{}}
-\toprule
- & & \multicolumn{2}{c}{Homelessness} & \multicolumn{2}{c}{Children in a shelter} & Newborn's\\
-\cmidrule(lr){3-4}\cmidrule(lr){5-6}
- & $p_{\mathrm{det}}$ & Largest rise & Periods above & Largest rise & Periods above & gain\\
-\midrule
-Main transition & 20 & none & none & none & none & 1.45\\
-\addlinespace
-No exemption & 100 & 13.6 (2) & 1--15 & 10.8 (2) & 2--11 & 6.57\\
- & 20 & 5.3 (6) & 2--17 & 3.1 (5) & 2--11 & 3.02\\
-\addlinespace
-Announced five periods ahead & 100 & 7.9 (10) & 7--17 & 4.4 (9) & 7--13 & 3.46\\
- & 20 & 3.3 (12) & 7--19 & 0.9 (10) & 8--13 & 1.91\\
-\addlinespace
-Treatment exempt, first five periods & 100 & 5.5 (7) & 7--14 & 2.0 (7) & 7--10 & 6.20\\
- & 20 & 1.6 (11) & 8--16 & none & none & 2.72\\
-\bottomrule
-\end{tabular}}
+\resizebox{\textwidth}{!}{\input{gen_alttrans}}
 \source{Largest rise above \HF, percent, with the period it occurs in brackets. The drug price and $\pi_V$ clear every period.}
 \end{frame}
 
